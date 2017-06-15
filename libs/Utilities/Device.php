@@ -28,7 +28,7 @@ if ( !trait_exists('Device') ){
 			if ( $override !== false ){return $override;}
 
 			if ( nebula()->get_option('device_detection') ){
-				if ( $GLOBALS["device_detect"]->isMobile() ){
+				if ( isset($GLOBALS["device_detect"]) && $GLOBALS["device_detect"]->isMobile() ){
 					return true;
 				}
 			}
@@ -47,7 +47,7 @@ if ( !trait_exists('Device') ){
 			if ( $override !== false ){return $override;}
 
 			if ( nebula()->get_option('device_detection') ){
-				if ( $GLOBALS["device_detect"]->isTablet() ){
+				if ( isset($GLOBALS["device_detect"]) && $GLOBALS["device_detect"]->isTablet() ){
 					return true;
 				}
 			}
@@ -61,7 +61,7 @@ if ( !trait_exists('Device') ){
 			if ( $override !== false ){return $override;}
 
 			if ( nebula()->get_option('device_detection') ){
-				if ( $GLOBALS["device_detect"]->isDesktop() ){
+				if ( isset($GLOBALS["device_detect"]) && $GLOBALS["device_detect"]->isDesktop() ){
 					return true;
 				}
 			}
@@ -370,7 +370,7 @@ if ( !trait_exists('Device') ){
 			if ( $override !== false ){return $override;}
 
 			if ( nebula()->get_option('device_detection') ){
-				if ( $GLOBALS["device_detect"]->isBot() ){
+				if ( isset($GLOBALS["device_detect"]) && $GLOBALS["device_detect"]->isBot() ){
 					return true;
 				}
 			}

@@ -7,14 +7,17 @@
 ?>
 
 <?php if ( nebula()->get_option('ga_tracking_id') ): //Universal Google Analytics ?>
-	<link rel="dns-prefetch" href="//www.google-analytics.com" />
-
 	<script>
 		window.GAready = false;
 
-		//Nebula uses the "alternative async tracking snippet": https://developers.google.com/analytics/devguides/collection/analyticsjs/#alternative_async_tracking_snippet
+		//Load the alternative async tracking snippet: https://developers.google.com/analytics/devguides/collection/analyticsjs/#alternative_async_tracking_snippet
 		window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
 		ga('create', '<?php echo nebula()->get_option('ga_tracking_id'); ?>', 'auto'<?php echo ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>);
+
+		//Use Beacon if supported. Eventually we can completely remove this when GA uses Beacon by default.
+		if ( 'sendBeacon' in navigator ){
+			ga('set', 'transport', 'beacon');
+		}
 
 		<?php if ( nebula()->get_option('ga_displayfeatures') ): ?>
 			ga('require', 'displayfeatures');
@@ -24,29 +27,15 @@
 			ga('require', 'linkid');
 		<?php endif; ?>
 
-		//Modify the payload if needed before sending data to Google Analytics
-		ga(function(tracker){
-			var originalSendHitTask = tracker.get('sendHitTask'); //Grab a reference to the default sendHitTask function.
-
-			tracker.set('sendHitTask', function(model){
-				//Always make sure events have the page location and title associated with them (in case of session timout)
-				if ( model.get('hitType') === 'event' ){
-					if ( !model.get('location') ){
-						//Send a new pageview if the event does not have contextual data.
-						//This could be due to the user resuming after a session timeout without going to a different page or reloading.
-						tracker.send('pageview');
-					}
-				}
-
-				originalSendHitTask(model); //Send the payload to Google Analytics
-			});
-		});
-
 		<?php
 			//Create various custom dimensions and custom metrics in Google Analytics, then store the index ("dimension3", "metric5", etc.) in Nebula Options.
 			//Note: Ecommerce dimensions are added in nebula_ecommerce.php
 		?>
 		gaCustomDimensions = {
+			gaCID: '<?php echo nebula()->get_option('cd_gacid'); ?>',
+			hitID: '<?php echo nebula()->get_option('cd_hitid'); ?>',
+			hitTime: '<?php echo nebula()->get_option('cd_hittime'); ?>',
+			hitType: '<?php echo nebula()->get_option('cd_hittype'); ?>',
 			author: '<?php echo nebula()->get_option('cd_author'); ?>',
 			businessHours: '<?php echo nebula()->get_option('cd_businesshours'); ?>',
 			categories: '<?php echo nebula()->get_option('cd_categories'); ?>',
@@ -59,7 +48,6 @@
 			geoAccuracy: '<?php echo nebula()->get_option('cd_geoaccuracy'); ?>',
 			geoName: '<?php echo nebula()->get_option('cd_geoname'); ?>',
 			relativeTime: '<?php echo nebula()->get_option('cd_relativetime'); ?>',
-			scrollDepth: '<?php echo nebula()->get_option('cd_scrolldepth'); ?>',
 			sessionID: '<?php echo nebula()->get_option('cd_sessionid'); ?>',
 			poi: '<?php echo nebula()->get_option('cd_notablepoi'); ?>',
 			role: '<?php echo nebula()->get_option('cd_role'); ?>',
@@ -80,6 +68,9 @@
 		}
 
 		gaCustomMetrics = {
+			serverResponseTime: '<?php echo nebula()->get_option('cm_serverresponsetime'); ?>',
+			domReadyTime: '<?php echo nebula()->get_option('cm_domreadytime'); ?>',
+			windowLoadedTime: '<?php echo nebula()->get_option('cm_windowloadedtime'); ?>',
 			formImpressions: '<?php echo nebula()->get_option('cm_formimpressions'); ?>',
 			formStarts: '<?php echo nebula()->get_option('cm_formstarts'); ?>',
 			formSubmissions: '<?php echo nebula()->get_option('cm_formsubmissions'); ?>',
@@ -249,11 +240,6 @@
 				}
 			}
 
-			//User's local timestamp
-			if ( nebula()->get_option('cd_timestamp') ){
-				echo 'ga("set", gaCustomDimensions["timestamp"], localTimestamp());';
-			}
-
 			//First visit timestamp
 			if ( nebula()->get_option('cd_firstinteraction') ){
 				$first_session = nebula()->get_visitor_datapoint('first_session');
@@ -388,6 +374,34 @@
 
 		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
 
+		//Modify the payload before sending data to Google Analytics
+		ga(function(tracker){
+			tracker.set(gaCustomDimensions['gaCID'], tracker.get('clientId'));
+
+			var originalBuildHitTask = tracker.get('buildHitTask'); //Grab a reference to the default sendHitTask function.
+			tracker.set('buildHitTask', function(model){
+				var qt = model.get('queueTime') || 0;
+
+				//Always send hit dimensions with all payloads
+				model.set(gaCustomDimensions['hitID'], uuid(), true);
+				model.set(gaCustomDimensions['hitTime'], String(new Date-qt), true);
+				model.set(gaCustomDimensions['hitType'], model.get('hitType'), true);
+				model.set(gaCustomDimensions['timestamp'], localTimestamp(), true);
+				//model.set(gaCustomDimensions['visibilityState'], document.visibilityState, true); //@TODO "Nebula" 0: Look into how this is useful (would it be "visible" 99% of the time?)
+
+				//Always make sure events have the page location and title associated with them (in case of session timout)
+				if ( model.get('hitType') === 'event' ){
+					if ( !model.get('location') ){
+						//Send a new pageview if the event does not have contextual data.
+						//This could be due to the user resuming after a session timeout without going to a different page or reloading.
+						tracker.send('pageview');
+					}
+				}
+
+				originalBuildHitTask(model); //Send the payload to Google Analytics
+			});
+		});
+
 		ga('send', 'pageview'); //Send pageview with all custom dimensions and metrics
 
 		//Initialize event tracking listeners
@@ -421,6 +435,11 @@
 			});
 		<?php endif; ?>
 
+		//Generate a unique ID for hits and windows
+		function uuid(a){
+			return a ? (a^Math.random()*16 >> a/4).toString(16) : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, uuid);
+		}
+
 		//Get local time string with timezone offset
 		function localTimestamp(){
 			var now = new Date();
@@ -439,6 +458,7 @@
 		function ga(){return false;}
 		function gaCustomDimensions(){return false;}
 		function gaCustomMetrics(){return false;}
+		function uuid(){return false;}
 		function localTimestamp(){return false;}
 	</script>
 <?php endif; ?>

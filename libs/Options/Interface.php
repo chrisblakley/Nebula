@@ -726,6 +726,48 @@
 									<?php $dimension_regex = '^dimension([0-9]{1,3})$'; ?>
 
 									<div class="option-sub-group">
+										<h4>Hit Data</h4>
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon">Google Analytics Client ID (CID)</div>
+												<input type="text" name="nebula_options[cd_gacid]" id="cd_gacid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_gacid']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Store the Google Analytics CID in an accessible dimension for reporting. Scope: User</p>
+											<p class="option-keywords"></p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon">Hit ID</div>
+												<input type="text" name="nebula_options[cd_hitid]" id="cd_hitid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hitid']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Gives each individual hit an ID. Scope: Hit</p>
+											<p class="nebula-help-text more-help form-text text-muted">This will allow for finding median values! All you have to do is add the Hit ID dimension to your report, sort the metric values in ascending order, and then read the middle value.</p>
+											<p class="option-keywords">recommended</p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon">Hit Time</div>
+												<input type="text" name="nebula_options[cd_hittime]" id="cd_hittime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hittime']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Track the time of each individual hit. Scope: Hit</p>
+											<p class="nebula-help-text more-help form-text text-muted">Useful for reporting on specific users.</p>
+											<p class="option-keywords"></p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon">Hit Type</div>
+												<input type="text" name="nebula_options[cd_hittype]" id="cd_hittype" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hittype']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Track the type of each hit (such as pageview, event, exception, etc). Scope: Hit</p>
+											<p class="option-keywords"></p>
+										</div>
+									</div><!-- /sub-group -->
+
+									<div class="option-sub-group">
 										<h4>Post Data</h4>
 
 										<div class="form-group">
@@ -770,16 +812,6 @@
 												<input type="text" name="nebula_options[cd_publishyear]" id="cd_publishyear" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_publishyear']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Sends the year the post was published. Scope: Hit</p>
-											<p class="option-keywords"></p>
-										</div>
-
-										<div class="form-group">
-											<div class="input-group">
-												<div class="input-group-addon">Scroll Depth</div>
-												<input type="text" name="nebula_options[cd_scrolldepth]" id="cd_scrolldepth" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_scrolldepth']; ?>" />
-											</div>
-											<p class="nebula-help-text short-help form-text text-muted">Information tied to the event such as "Scanner" or "Reader". Scope: Hit</p>
-											<p class="nebula-help-text more-help form-text text-muted">This dimension is tied to events, so pageviews will not have data (use the Top Event report).</p>
 											<p class="option-keywords"></p>
 										</div>
 									</div><!-- /sub-group -->
@@ -880,7 +912,7 @@
 											<p class="option-keywords">location recommended</p>
 										</div>
 
-										<div class="form-group">
+										<div class="form-group" dependent-of="visitors_db">
 											<div class="input-group">
 												<div class="input-group-addon">First Interaction</div>
 												<input type="text" name="nebula_options[cd_firstinteraction]" id="cd_firstinteraction" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_firstinteraction']; ?>" />
@@ -1055,6 +1087,40 @@
 									<p class="text-muted">These are optional metrics that can be passed into Google Analytics which allows for 20 custom metrics (or 200 for Google Analytics Premium). To set these up, define the Custom Metric in the Google Analytics property, then paste the metric index string ("metric1", "metric12", etc.) into the appropriate input field below. The scope and format for each metric is noted in their respective help sections. Metrics that require additional code are marked with a *. These are useful for manual interpretation of data, or to be included in Calculated Metrics formulas.</p>
 
 									<?php $metric_regex = '^metric([0-9]{1,3})$'; ?>
+
+									<div class="option-sub-group">
+										<h4>Timing Data</h4>
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon">Server Response</div>
+												<input type="text" name="nebula_options[cm_serverresponsetime]" id="cm_serverresponsetime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_serverresponsetime']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Navigation start until server response finishes (includes PHP rendering time). Scope: Hit, Format: Integer</p>
+											<p class="nebula-help-text short-help form-text text-muted">Use these timing metrics to segment reports based on load times.</p>
+											<p class="option-keywords"></p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon">DOM Ready</div>
+												<input type="text" name="nebula_options[cm_domreadytime]" id="cm_domreadytime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_domreadytime']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Navigation start until DOM ready. Scope: Hit, Format: Integer</p>
+											<p class="nebula-help-text short-help form-text text-muted">Use these timing metrics to segment reports based on load times.</p>
+											<p class="option-keywords"></p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon">Window Loaded</div>
+												<input type="text" name="nebula_options[cm_windowloadedtime]" id="cm_windowloadedtime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_windowloadedtime']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Navigation start until window loaded. Scope: Hit, Format: Integer</p>
+											<p class="nebula-help-text short-help form-text text-muted">Use these timing metrics to segment reports based on load times.</p>
+											<p class="option-keywords"></p>
+										</div>
+									</div><!-- /sub-group -->
 
 									<div class="option-sub-group">
 										<h4>Conversion Data</h4>

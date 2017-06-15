@@ -1203,14 +1203,12 @@ trait Functions {
 
 								history.replaceState(null, document.title, nebula.post.permalink + 'page/' + pageNumber + newQueryStrings);
 								nebula.dom.document.trigger('nebula_infinite_finish');
-								ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 								ga('send', 'event', 'Infinite Query', 'Load More', 'Loaded page ' + pageNumber);
 								nv('increment', 'infinite_query_loads');
 								pageNumber++;
 							},
 							error: function(XMLHttpRequest, textStatus, errorThrown){
 								jQuery(document).trigger('nebula_infinite_finish');
-								ga('set', gaCustomDimensions['timestamp'], localTimestamp());
 								ga('send', 'event', 'Error', 'AJAX Error', 'Infinite Query Load More AJAX');
 								nv('increment', 'ajax_error');
 							},

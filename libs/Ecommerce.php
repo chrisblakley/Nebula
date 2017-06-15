@@ -89,7 +89,6 @@ if ( !trait_exists('Ecommerce') ){
 					echo 'gaCustomDimensions.wooCustomer = "' . $this->get_option('cd_woocustomer') . '";'; //Add to the global custom dimension JavaScript object
 					echo 'ga("set", gaCustomDimensions["wooCustomer"], "Order Received");';
 				}
-				echo 'ga("set", gaCustomDimensions["timestamp"], localTimestamp());';
 				echo 'ga("send", "event", "Ecommerce", "Order Received", "Order Received page load (Success from payment gateway)");';
 			}
 		}

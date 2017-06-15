@@ -645,7 +645,10 @@ if ( !trait_exists('Dashboard') ){
 					}
 				}
 			}
-			echo '</div><!--/todofilewrap-->';
+
+			if ( $todo_instance_counter >= 1 ){
+				echo '</div><!--/todofilewrap-->';
+			}
 		}
 
 		//Developer Info Metabox
