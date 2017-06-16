@@ -65,6 +65,7 @@
 			mqBreakpoint: '<?php echo nebula()->get_option('cd_mqbreakpoint'); ?>',
 			mqResolution: '<?php echo nebula()->get_option('cd_mqresolution'); ?>',
 			mqOrientation: '<?php echo nebula()->get_option('cd_mqorientation'); ?>',
+			visibilityState: '<?php echo nebula()->get_option('cd_visibilitystate'); ?>',
 		}
 
 		gaCustomMetrics = {
@@ -387,7 +388,7 @@
 				model.set(gaCustomDimensions['hitTime'], String(new Date-qt), true);
 				model.set(gaCustomDimensions['hitType'], model.get('hitType'), true);
 				model.set(gaCustomDimensions['timestamp'], localTimestamp(), true);
-				//model.set(gaCustomDimensions['visibilityState'], document.visibilityState, true); //@TODO "Nebula" 0: Look into how this is useful (would it be "visible" 99% of the time?)
+				model.set(gaCustomDimensions['visibilityState'], document.visibilityState, true);
 
 				//Always make sure events have the page location and title associated with them (in case of session timout)
 				if ( model.get('hitType') === 'event' ){

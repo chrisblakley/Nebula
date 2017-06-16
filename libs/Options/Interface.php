@@ -462,7 +462,7 @@
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[adblock_detect]" id="adblock_detect" value="1" <?php checked('1', !empty($nebula_options['adblock_detect'])); ?> /><label for="adblock_detect">Ad Block Detection</label>
 										<p class="nebula-help-text short-help form-text text-muted">Detect if visitors are using ad blocking software.(Default: <?php echo $this->user_friendly_default('adblock_detect'); ?>)</p>
-										<p class="nebula-help-text more-help form-text text-muted">It is strongly recommended to add a custom dimension for "Blocker" within the "Analytics" tab.</p>
+										<p class="nebula-help-text more-help form-text text-muted">It is encouraged to add a custom dimension for "Blocker" within the "Analytics" tab when using this feature.</p>
 										<p class="option-keywords">discretionary</p>
 									</div>
 
@@ -730,7 +730,7 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Google Analytics Client ID (CID)</div>
+												<div class="input-group-addon">Client ID</div>
 												<input type="text" name="nebula_options[cd_gacid]" id="cd_gacid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_gacid']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Store the Google Analytics CID in an accessible dimension for reporting. Scope: User</p>
@@ -763,6 +763,15 @@
 												<input type="text" name="nebula_options[cd_hittype]" id="cd_hittype" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hittype']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Track the type of each hit (such as pageview, event, exception, etc). Scope: Hit</p>
+											<p class="option-keywords"></p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon">Visibility State</div>
+												<input type="text" name="nebula_options[cd_visibilitystate]" id="cd_visibilitystate" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_visibilitystate']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Logs the visibilty state of the window with each hit. Scope: Hit</p>
 											<p class="option-keywords"></p>
 										</div>
 									</div><!-- /sub-group -->
@@ -1097,7 +1106,7 @@
 												<input type="text" name="nebula_options[cm_serverresponsetime]" id="cm_serverresponsetime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_serverresponsetime']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Navigation start until server response finishes (includes PHP rendering time). Scope: Hit, Format: Integer</p>
-											<p class="nebula-help-text short-help form-text text-muted">Use these timing metrics to segment reports based on load times.</p>
+											<p class="nebula-help-text more-help form-text text-muted">Use these timing metrics to segment reports based on load times.</p>
 											<p class="option-keywords"></p>
 										</div>
 
@@ -1107,7 +1116,7 @@
 												<input type="text" name="nebula_options[cm_domreadytime]" id="cm_domreadytime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_domreadytime']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Navigation start until DOM ready. Scope: Hit, Format: Integer</p>
-											<p class="nebula-help-text short-help form-text text-muted">Use these timing metrics to segment reports based on load times.</p>
+											<p class="nebula-help-text more-help form-text text-muted">Use these timing metrics to segment reports based on load times.</p>
 											<p class="option-keywords"></p>
 										</div>
 
@@ -1117,7 +1126,7 @@
 												<input type="text" name="nebula_options[cm_windowloadedtime]" id="cm_windowloadedtime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_windowloadedtime']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Navigation start until window loaded. Scope: Hit, Format: Integer</p>
-											<p class="nebula-help-text short-help form-text text-muted">Use these timing metrics to segment reports based on load times.</p>
+											<p class="nebula-help-text more-help form-text text-muted">Use these timing metrics to segment reports based on load times.</p>
 											<p class="option-keywords"></p>
 										</div>
 									</div><!-- /sub-group -->
@@ -1131,7 +1140,7 @@
 												<input type="text" name="nebula_options[cm_notabledownloads]" id="cm_notabledownloads" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_notabledownloads']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Tracks when a user downloads a notable file. Scope: Hit, Format: Integer</p>
-											<p class="nebula-help-text short-help form-text text-muted">To use, add the class "notable" to either the or its parent.</p>
+											<p class="nebula-help-text more-help form-text text-muted">To use, add the class "notable" to either the or its parent.</p>
 											<p class="option-keywords"></p>
 										</div>
 
@@ -1151,7 +1160,7 @@
 												<input type="text" name="nebula_options[cm_formstarts]" id="cm_formstarts" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_formstarts']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Tracks when a user begins entering a form. Scope: Hit, Format: Integer</p>
-											<p class="nebula-help-text short-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form, somewhere inside it, or to a parent element.</p>
+											<p class="nebula-help-text more-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form, somewhere inside it, or to a parent element.</p>
 											<p class="option-keywords"></p>
 										</div>
 
@@ -1161,7 +1170,7 @@
 												<input type="text" name="nebula_options[cm_formsubmissions]" id="cm_formsubmissions" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_formsubmissions']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Tracks when a user submits a form. Scope: Hit, Format: Integer</p>
-											<p class="nebula-help-text short-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form, somewhere inside it, or to a parent element.</p>
+											<p class="nebula-help-text more-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form, somewhere inside it, or to a parent element.</p>
 											<p class="option-keywords"></p>
 										</div>
 
@@ -1180,7 +1189,7 @@
 												<input type="text" name="nebula_options[cm_maxscroll]" id="cm_maxscroll" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_maxscroll']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Calculates the maximum scroll percentage the user reached per page. Scope: Hit, Format: Integer</p>
-											<p class="nebula-help-text short-help form-text text-muted">Use a calculated Metric in Google Analytics called "Avg. Max Scroll Percentage" of {{Max Scroll Percentage}}/(100*{{Unique Pageviews}}) to show Average Max Scroll Percentage per page. Create a custom report with the metrics "Avg. Max Scroll Percentage" and "Unique Pageviews" and dimensions "Page", "Referral Source", etc.</p>
+											<p class="nebula-help-text more-help form-text text-muted">Use a calculated Metric in Google Analytics called "Avg. Max Scroll Percentage" of {{Max Scroll Percentage}}/(100*{{Unique Pageviews}}) to show Average Max Scroll Percentage per page. Create a custom report with the metrics "Avg. Max Scroll Percentage" and "Unique Pageviews" and dimensions "Page", "Referral Source", etc.</p>
 											<p class="option-keywords"></p>
 										</div>
 									</div><!-- /sub-group -->

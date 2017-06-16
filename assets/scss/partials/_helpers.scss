@@ -13,9 +13,9 @@
 	}
 
 	&.bulging {
-		&:after {content: ""; position: absolute; left: 0; right: 0; bottom: -15px; width: 96%; height: 30px; margin: 0 auto; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(15px))); @include prefix((border-radius: 50%)); @include prefix((transform:scaleY(.3))); z-index: -1; pointer-events: none;}
+		&:after {content: ""; position: absolute; left: 0; right: 0; bottom: -13px; width: 96%; height: 30px; margin: 0 auto; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(25px))); @include prefix((border-radius: 50%)); @include prefix((transform: scaleY(.3))); z-index: -1; pointer-events: none;}
 		&.above {
-			&:before {content: ""; position: absolute; left: 0; right: 0; top: -15px; width: 96%; height: 30px; margin: 0 auto; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(15px))); @include prefix((border-radius: 50%)); @include prefix((transform:scaleY(.3))); z-index: -1; pointer-events: none;}
+			&:before {content: ""; position: absolute; left: 0; right: 0; top: -13px; width: 96%; height: 30px; margin: 0 auto; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(25px))); @include prefix((border-radius: 50%)); @include prefix((transform:scaleY(.3))); z-index: -1; pointer-events: none;}
 		}
 	}
 

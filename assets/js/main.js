@@ -1,16 +1,15 @@
 jQuery.noConflict();
 
+
 /*==========================
  DOM Ready
  ===========================*/
 
 jQuery(function(){
-	jQuery('html').removeClass('no-js').addClass('js'); //In case Modernizr is not being used
-
 	//Utilities
-	getQueryStrings();
 	cacheSelectors();
-	conditionalJSLoading();
+	getQueryStrings();
+	nebula.dom.html.removeClass('no-js').addClass('js'); //In case Modernizr is not being used
 
 	//Navigation
 	mmenus();
@@ -55,15 +54,16 @@ jQuery(function(){
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 }); //End Document Ready
 
+
 /*==========================
  Window Load
  ===========================*/
 
 jQuery(window).on('load', function(){
 	initEventTracking();
+	conditionalJSLoading();
 
 	//Navigation
-	dropdownWidthController();
 	overflowDetector();
 
 	//Search
@@ -75,7 +75,7 @@ jQuery(window).on('load', function(){
 	searchTermHighlighter();
 
 	//Forms
-	nebulaAddressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete'); //move to window load?
+	nebulaAddressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete');
 
 	facebookSDK();
 	facebookConnect();
@@ -83,7 +83,7 @@ jQuery(window).on('load', function(){
 	nebulaBattery();
 	nebulaNetworkConnection();
 
-	lastWidth = jQuery(window).width(); //Prep resize detection (Is this causing a forced reflow?) //move to window load?
+	lastWidth = nebula.dom.window.width(); //Prep resize detection (Is this causing a forced reflow?)
 
 	jQuery('a, li, tr').removeClass('hover');
 	nebula.dom.html.addClass('loaded');
@@ -96,7 +96,7 @@ jQuery(window).on('load', function(){
 			var windowLoaded = Math.round(performance.timing.loadEventStart-performance.timing.navigationStart); //Navigation start until window load
 
 			//Validate each timing result before using them
-			if ( (responseEnd > 0 && responseEnd < 6e6) && (domReady > 0 && domReady < 6e6) && (windowLoaded > 0 && windowLoaded < 6e6) ){
+			if ( (responseEnd > 0 && responseEnd < 6000000) && (domReady > 0 && domReady < 6000000) && (windowLoaded > 0 && windowLoaded < 6000000) ){
 				ga('set', gaCustomMetrics['serverResponseTime'], responseEnd);
 				ga('set', gaCustomMetrics['domReadyTime'], domReady);
 				ga('set', gaCustomMetrics['windowLoadedTime'], windowLoaded);
@@ -122,16 +122,14 @@ jQuery(window).on('load', function(){
 }); //End Window Load
 
 
-
-
 /*==========================
  Window Resize
  ===========================*/
 
 jQuery(window).on('resize', function(){
 	debounce(function(){
-		if ( typeof lastWidth !== 'undefined' && jQuery(window).width() != lastWidth ){ //If the width actually changed
-			lastWidth = jQuery(window).width();
+		if ( typeof lastWidth !== 'undefined' && nebula.dom.window.width() != lastWidth ){ //If the width actually changed
+			lastWidth = nebula.dom.window.width();
 
 			nebulaEqualize();
 			mobileSearchPlaceholder();
@@ -139,30 +137,34 @@ jQuery(window).on('resize', function(){
 	}, 500, 'window resize');
 }); //End Window Resize
 
-//Cache common selectors and set consistent regex patterns
-function cacheSelectors(){
-	//Selectors
-	nebula.dom = {
-		window: jQuery(window),
-		document: jQuery(document),
-		html: jQuery('html'),
-		body: jQuery('body')
-	};
 
-	//Regex Patterns
-	//Test with: if ( regexPattern.email.test(jQuery('input').val()) ){ ... }
-	window.regexPattern = {
-		email: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i, //From JS Lint: Expected ']' and instead saw '['.
-		phone: /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/, //To allow letters, you'll need to convert them to their corresponding number before matching this RegEx.
-		date: {
-			mdy: /^((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))[.\/-](\d{4}|\d{2})$/,
-			ymd: /^(\d{4}|\d{2})[.\/-]((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))$/,
-		},
-		hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/,
-		ip: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
-		url: /\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?/i,
-	};
+//Cache common selectors and set consistent regex patterns
+function cacheSelectors(force){
+	if ( typeof nebula.dom === 'undefined' || !nebula.dom || force ){
+		//Selectors
+		nebula.dom = {
+			window: jQuery(window),
+			document: jQuery(document),
+			html: jQuery('html'),
+			body: jQuery('body')
+		};
+
+		//Regex Patterns
+		//Test with: if ( regexPattern.email.test(jQuery('input').val()) ){ ... }
+		window.regexPattern = {
+			email: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i, //From JS Lint: Expected ']' and instead saw '['.
+			phone: /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/, //To allow letters, you'll need to convert them to their corresponding number before matching this RegEx.
+			date: {
+				mdy: /^((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))[.\/-](\d{4}|\d{2})$/,
+				ymd: /^(\d{4}|\d{2})[.\/-]((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))$/,
+			},
+			hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/,
+			ip: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+			url: /\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?/i,
+		};
+	}
 }
+
 
 /*==========================
  Detection Functions
@@ -409,6 +411,8 @@ function socialSharing(){
 //Call the event tracking functions (since it needs to happen twice).
 function initEventTracking(){
 	once(function(){
+		cacheSelectors(); //If event tracking is initialized by the async GA callback, selectors won't be cached yet
+
 		timeAtLoad = new Date().getTime()/1000;
 		nebulaTimer('time_on_page', 'start');
 
@@ -425,7 +429,7 @@ function initEventTracking(){
 
 		if ( typeof window.ga === 'function' ){
 			window.ga(function(tracker){
-				jQuery(document).trigger('nebula_ga_available', tracker); //Can't cache this document selector due to async loading
+				nebula.dom.document.trigger('nebula_ga_available', tracker);
 				nebula.user.cid = tracker.get('clientId');
 
 				jQuery('form .debuginfo').val(nebula.user.cid);
@@ -437,7 +441,7 @@ function initEventTracking(){
 		}
 
 		if ( !window.GAready ){
-			jQuery(document).trigger('nebula_ga_blocked'); //Can't cache this document selector due to async loading
+			nebula.dom.document.trigger('nebula_ga_blocked');
 			nvData.is_ga_blocked = 1;
 			nv('send', nvData);
 
@@ -767,10 +771,7 @@ function scrollDepth(){
 	nebula.dom.window.on('scroll', function(){
 		once(function(){
 			scrollBegin = performance.now()-scrollReady;
-
-			if ( scrollBegin > 100 ){
-				ga('send', 'event', 'Scroll Depth', 'Began Scrolling', '', Math.round(scrollBegin), {'nonInteraction': true});
-			}
+			ga('send', 'event', 'Scroll Depth', 'Began Scrolling', 'Initial scroll started at ' + nebula.dom.document.scrollTop() + 'px', Math.round(scrollBegin), {'nonInteraction': true}); //Event value is time until scrolling
 		}, 'begin scrolling');
 
 		debounce(function(){
@@ -778,10 +779,7 @@ function scrollDepth(){
 			if ( (nebula.dom.window.height()+nebula.dom.window.scrollTop()) >= nebula.dom.document.height() ){
 				once(function(){
 					scrollEnd = performance.now()-(scrollBegin+scrollReady);
-
-					if ( scrollBegin > 100 && scrollEnd > 500 ){
-						ga('send', 'event', 'Scroll Depth', 'Entire Page', '', Math.round(scrollEnd), {'nonInteraction': true});
-					}
+					ga('send', 'event', 'Scroll Depth', 'Entire Page', '', Math.round(scrollEnd), {'nonInteraction': true}); //Event value is time to reach end
 				}, 'end scrolling');
 			}
 		}, 100, 'scroll depth');
@@ -1667,9 +1665,9 @@ function cf7Functions(){
 	formStarted = {};
 	nebula.dom.document.on('focus', '.wpcf7-form input, .wpcf7-form button, .wpcf7-form textarea', function(e){
 		formID = jQuery(this).closest('div.wpcf7').attr('id');
-		thisField = jQuery(this).attr('name') || jQuery(this).attr('id') || 'Unknown';
+		thisField = e.target.name || e.target.id || 'Unknown';
 
-		if ( !jQuery('form').hasClass('.ignore-form') && !jQuery('form').find('.ignore-form').length && !jQuery('#' + e.target.id).parents('.ignore-form').length && (typeof formStarted[formID] === 'undefined' || !formStarted[formID]) ){
+		if ( !jQuery(this).hasClass('.ignore-form') && !jQuery(this).find('.ignore-form').length && !jQuery(this).parents('.ignore-form').length && (typeof formStarted[formID] === 'undefined' || !formStarted[formID]) ){
 			ga('set', gaCustomMetrics['formStarts'], 1);
 			ga('send', 'event', 'CF7 Form', 'Started Form (Focus)', 'Began filling out form ID: ' + formID + ' (' + thisField + ')');
 			nv('increment', 'contact_funnel_started');
@@ -3958,19 +3956,6 @@ function mmenus(){
 			}
 		}
 	}
-}
-
-//Main dropdown nav dynamic width controller
-function dropdownWidthController(){
-/*
-	jQuery('#primarynav > .sub-menu').each(function(){
-		var bigWidth = 100;
-		if ( jQuery(this).children().width() > bigWidth ){
-			bigWidth = jQuery(this).children().width();
-		}
-		jQuery(this).css('width', bigWidth+15 + 'px');
-	});
-*/
 }
 
 //Vertical subnav expanders

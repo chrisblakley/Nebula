@@ -287,6 +287,7 @@ if ( !trait_exists('Options') ){
 				'cd_mqbreakpoint' => '',
 				'cd_mqresolution' => '',
 				'cd_mqorientation' => '',
+				'cd_visibilitystate' => '',
 
 				'cm_serverresponsetime' => '',
 				'cm_domreadytime' => '',
