@@ -76,8 +76,8 @@ if ( !trait_exists('Security') ){
 
 		//Disable Pingbacks to prevent security issues
 		public function remove_x_pingback($headers){
-			$override = apply_filters('pre_nebula_remove_x_pingback', false, $headers);
-			if ( $override !== false ){return $override;}
+			$override = do_action('pre_nebula_remove_x_pingback', $headers);
+			if ( !empty($override) ){return $override;}
 
 			if ( isset($headers['X-Pingback']) ){
 				unset($headers['X-Pingback']);
@@ -87,8 +87,8 @@ if ( !trait_exists('Security') ){
 
 		//Hijack pingback_url for get_bloginfo (<link rel="pingback" />).
 		public function hijack_pingback_url($output, $property){
-			$override = apply_filters('pre_nebula_hijack_pingback_url', false, $output, $property);
-			if ( $override !== false ){return $override;}
+			$override = do_action('pre_nebula_hijack_pingback_url', $output, $property);
+			if ( !empty($override) ){return $override;}
 
 			return ( $property == 'pingback_url' )? null : $output;
 		}
@@ -105,8 +105,8 @@ if ( !trait_exists('Security') ){
 
 		//Prevent login error messages from giving too much information
 		public function login_errors($error){
-			$override = apply_filters('pre_nebula_login_errors', false, $error);
-			if ( $override !== false ){return $override;}
+			$override = do_action('pre_nebula_login_errors', $error);
+			if ( !empty($override) ){return $override;}
 
 			if ( !$this->is_bot() ){
 				$incorrect_username = '';
@@ -134,8 +134,8 @@ if ( !trait_exists('Security') ){
 
 		//Remove WordPress version from any enqueued scripts
 		public function at_remove_wp_ver_css_js($src){
-			$override = apply_filters('pre_at_remove_wp_ver_css_js', false, $src);
-			if ( $override !== false ){return $override;}
+			$override = do_action('pre_at_remove_wp_ver_css_js', $src);
+			if ( !empty($override) ){return $override;}
 
 			if ( strpos($src, 'ver=') ){
 				$src = remove_query_arg('ver', $src);
@@ -153,8 +153,8 @@ if ( !trait_exists('Security') ){
 
 		//Track Notable Bots
 		function track_notable_bots(){
-			$override = apply_filters('pre_track_notable_bots', false);
-			if ( $override !== false ){return;}
+			$override = do_action('pre_track_notable_bots');
+			if ( !empty($override) ){return;}
 
 			//Google Page Speed
 			if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Google Page Speed') !== false ){

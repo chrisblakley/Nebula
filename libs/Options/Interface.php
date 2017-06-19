@@ -1176,15 +1176,6 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Engaged Readers</div>
-												<input type="text" name="nebula_options[cm_engagedreaders]" id="cm_engagedreaders" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_engagedreaders']; ?>" />
-											</div>
-											<p class="nebula-help-text short-help form-text text-muted">Counts when a user has completed reading an article (and is not determined to be a "scanner"). Scope: Hit, Format: Integer</p>
-											<p class="option-keywords"></p>
-										</div>
-
-										<div class="form-group">
-											<div class="input-group">
 												<div class="input-group-addon">Max Scroll Percent</div>
 												<input type="text" name="nebula_options[cm_maxscroll]" id="cm_maxscroll" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_maxscroll']; ?>" />
 											</div>

@@ -43,8 +43,8 @@ if ( !trait_exists('Dashboard') ){
 
 		//Remove unnecessary Dashboard metaboxes
 		public function remove_dashboard_metaboxes(){
-			$override = apply_filters('pre_remove_dashboard_metaboxes', false);
-			if ( $override !== false ){echo $override; return;}
+			$override = do_action('pre_remove_dashboard_metaboxes');
+			if ( !empty($override) ){echo $override; return;}
 
 			//If necessary, dashboard metaboxes can be unset. To best future-proof, use remove_meta_box().
 			remove_meta_box('dashboard_primary', 'dashboard', 'side'); //Wordpress News
@@ -150,7 +150,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 			while ( $latest_post->have_posts() ){ $latest_post->the_post();
 				echo '<li><i class="fa fa-fw fa-calendar-o"></i> Updated: <strong>' . get_the_modified_date() . '</strong> @ <strong>' . get_the_modified_time() . '</strong>
-					<small style="display: block; margin-left: 20px;"><i class="fa fa-fw fa-file-text-o"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => get_the_title(), 'length' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small>
+					<small style="display: block; margin-left: 20px;"><i class="fa fa-fw fa-file-text-o"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => get_the_title(), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small>
 				</li>';
 			}
 			wp_reset_postdata();

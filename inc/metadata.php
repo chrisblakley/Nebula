@@ -41,7 +41,7 @@
 	<meta name="google-site-verification" content="<?php echo nebula()->get_option('google_search_console_verification'); ?>" />
 <?php endif; ?>
 
-<meta name="description" content="<?php echo nebula()->excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); //Yoast appears to not use meta description... Move it back into the below conditional when Yoast brings it back ?>" />
+<meta name="description" content="<?php echo nebula()->excerpt(array('words' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); //Yoast appears to not use meta description... Move it back into the below conditional when Yoast brings it back ?>" />
 <?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): //If Yoast SEO is not active ?>
 	<link rel="canonical" href="<?php the_permalink(); ?>" />
 <?php endif; ?>
@@ -51,7 +51,7 @@
 	<meta property="og:type" content="business.business" />
 	<meta property="og:locale" content="<?php echo str_replace('-', '_', get_bloginfo('language')); ?>" />
 	<meta property="og:title" content="<?php echo get_the_title(); ?>" />
-	<meta property="og:description" content="<?php echo nebula()->excerpt(array('length' => 30, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
+	<meta property="og:description" content="<?php echo nebula()->excerpt(array('words' => 30, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
 	<meta property="og:url" content="<?php the_permalink(); ?>" />
 	<meta property="og:site_name" content="<?php echo get_bloginfo('name'); ?>" />
 
@@ -143,7 +143,7 @@
 	<?php endif; ?>
 <?php endif; ?>
 <meta name="twitter:title" content="<?php the_title(); ?>" />
-<meta name="twitter:description" content="<?php echo nebula()->excerpt(array('length' => 30, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
+<meta name="twitter:description" content="<?php echo nebula()->excerpt(array('words' => 30, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>" />
 <?php if ( nebula()->get_option('twitter_user') ): ?>
 	<meta name="twitter:site" content="<?php echo nebula()->get_option('twitter_user'); ?>" />
 <?php endif; ?>
@@ -391,7 +391,7 @@
 					"url": "<?php echo get_theme_file_uri('/assets/img/logo.png'); ?>"
 				}
 			},
-			"description": "<?php echo nebula()->excerpt(array('length' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>"
+			"description": "<?php echo nebula()->excerpt(array('words' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>"
 		}
 	</script>
 <?php endif; ?>

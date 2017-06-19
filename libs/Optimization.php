@@ -121,8 +121,8 @@ if ( !trait_exists('Optimization') ){
 				}
 			*/
 		public function prebrowsing(){
-			$override = apply_filters('pre_nebula_prebrowsing', false);
-			if ( $override !== false ){return $override;}
+			$override = do_action('pre_nebula_prebrowsing');
+			if ( !empty($override) ){return $override;}
 
 			//DNS-Prefetch & Preconnect
 			$default_preconnects = array();
@@ -181,8 +181,8 @@ if ( !trait_exists('Optimization') ){
 
 		//Dequeue certain scripts
 		public function dequeues(){
-			$override = apply_filters('pre_nebula_dequeues', false);
-			if ( $override !== false ){return $override;}
+			$override = do_action('pre_nebula_dequeues');
+			if ( !empty($override) ){return $override;}
 
 			if ( !is_admin() ){
 				//Removing CF7 styles in favor of Bootstrap + Nebula
@@ -212,8 +212,8 @@ if ( !trait_exists('Optimization') ){
 
 		//Force settings within plugins
 		public function plugin_force_settings(){
-			$override = apply_filters('pre_nebula_plugin_force_settings', false);
-			if ( $override !== false ){return $override;}
+			$override = do_action('pre_nebula_plugin_force_settings');
+			if ( !empty($override) ){return $override;}
 
 			//Wordpress SEO (Yoast)
 			if ( is_plugin_active('wordpress-seo/wp-seo.php') ){
@@ -246,8 +246,8 @@ if ( !trait_exists('Optimization') ){
 
 		//Disable Emojis
 		public function disable_wp_emojicons(){
-			$override = apply_filters('pre_disable_wp_emojicons', false);
-			if ( $override !== false ){return;}
+			$override = do_action('pre_disable_wp_emojicons');
+			if ( !empty($override) ){return;}
 
 			remove_action('admin_print_styles', 'print_emoji_styles');
 			remove_action('wp_head', 'print_emoji_detection_script', 7);

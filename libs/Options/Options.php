@@ -296,7 +296,6 @@ if ( !trait_exists('Options') ){
 				'cm_formstarts' => '',
 				'cm_formsubmissions' => '',
 				'cm_notabledownloads' => '',
-				'cm_engagedreaders' => '',
 				'cm_videoplaytime' => '',
 				'cm_videostarts' => '',
 				'cm_videocompletions' => '',

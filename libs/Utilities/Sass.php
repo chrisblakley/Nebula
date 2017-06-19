@@ -87,8 +87,8 @@ if ( !trait_exists('Sass') ){
 
 		//Render scss files
 		public function render_scss($location_name=false, $location_paths=false, $force_all=false){
-			$override = apply_filters('pre_nebula_render_scss', false, $location_name, $location_paths, $force_all);
-			if ( $override !== false ){return $override;}
+			$override = do_action('pre_nebula_render_scss', $location_name, $location_paths, $force_all);
+			if ( !empty($override) ){return $override;}
 
 			if ( nebula()->get_option('scss') && !empty($location_name) && !empty($location_paths) ){
 				//Require SCSSPHP
@@ -203,8 +203,8 @@ if ( !trait_exists('Sass') ){
 
 		//Combine developer stylesheets
 		public function combine_dev_stylesheets($directory=null, $directory_uri=null){
-			$override = apply_filters('pre_nebula_combine_dev_stylesheets', false, $directory, $directory_uri);
-			if ( $override !== false ){return $override;}
+			$override = do_action('pre_nebula_combine_dev_stylesheets', $directory, $directory_uri);
+			if ( !empty($override) ){return $override;}
 
 			if ( empty($directory) ){
 				trigger_error('Dev stylesheet directories must be specified for files to be combined.', E_USER_NOTICE);
@@ -257,8 +257,8 @@ if ( !trait_exists('Sass') ){
 
 		//Compile server-side variables into SCSS
 		public function scss_post_compile($scss){
-			$override = apply_filters('pre_nebula_scss_post_compile', false, $scss);
-			if ( $override !== false ){return $override;}
+			$override = do_action('pre_nebula_scss_post_compile', $scss);
+			if ( !empty($override) ){return $override;}
 
 			$scss = preg_replace("(" . str_replace('/', '\/', get_template_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments
 			$scss = preg_replace("(" . str_replace('/', '\/', get_stylesheet_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments (For child themes)
@@ -271,8 +271,8 @@ if ( !trait_exists('Sass') ){
 
 		//Pull certain colors from .../mixins/_variables.scss
 		public function sass_color($color='primary', $theme='child'){
-			$override = apply_filters('pre_sass_color', false, $color, $theme);
-			if ( $override !== false ){return $override;}
+			$override = do_action('pre_sass_color', $color, $theme);
+			if ( !empty($override) ){return $override;}
 
 			if ( is_child_theme() && $theme == 'child' ){
 				$assets_directory = get_stylesheet_directory() . '/assets';

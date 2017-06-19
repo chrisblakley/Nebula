@@ -35,10 +35,14 @@ jQuery(function(){
 	svgImgs();
 
 	//Interaction
-	initPageVisibility();
 	socialSharing();
 	nebulaVideoTracking();
 	animationTriggers();
+
+	visibilityChangeActions();
+	nebula.dom.document.on('visibilitychange', function(){
+		visibilityChangeActions();
+	});
 
 	//Prevent events from sending before the pageview
 	if ( isGoogleAnalyticsReady() ){
@@ -87,6 +91,7 @@ jQuery(window).on('load', function(){
 
 	jQuery('a, li, tr').removeClass('hover');
 	nebula.dom.html.addClass('loaded');
+	nebulaTimer('time_on_page', 'start');
 
 	//https://developer.mozilla.org/en-US/docs/Web/API/PerformanceTiming
 	if ( typeof performance !== 'undefined' ){
@@ -94,6 +99,12 @@ jQuery(window).on('load', function(){
 			var responseEnd = Math.round(performance.timing.responseEnd-performance.timing.navigationStart); //Navigation start until server response finishes
 			var domReady = Math.round(performance.timing.domContentLoadedEventStart-performance.timing.navigationStart); //Navigation start until DOM ready
 			var windowLoaded = Math.round(performance.timing.loadEventStart-performance.timing.navigationStart); //Navigation start until window load
+
+			if ( nebula.dom.html.hasClass('debug') ){
+				console.log('Server Response: ' + responseEnd + 'ms');
+				console.log('DOM Ready: ' + domReady + 'ms');
+				console.log('Window Loaded: ' + windowLoaded + 'ms');
+			}
 
 			//Validate each timing result before using them
 			if ( (responseEnd > 0 && responseEnd < 6000000) && (domReady > 0 && domReady < 6000000) && (windowLoaded > 0 && windowLoaded < 6000000) ){
@@ -160,7 +171,7 @@ function cacheSelectors(force){
 			},
 			hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/,
 			ip: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
-			url: /\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?/i,
+			url: /(\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?)/i,
 		};
 	}
 }
@@ -171,38 +182,19 @@ function cacheSelectors(force){
  ===========================*/
 
 //Page Visibility
-function initPageVisibility(){
-	visFirstHidden = false;
-	visibilityChangeActions();
-	nebula.dom.document.on('visibilitychange', function(){
-		visibilityChangeActions();
-	});
-}
-
 function visibilityChangeActions(){
 	if ( document.visibilityState === 'prerender' ){ //Page was prerendered
 		ga('send', 'event', 'Page Visibility', 'Prerendered', 'Page loaded before tab/window was visible', {'nonInteraction': true});
 		pauseAllVideos(false);
 	}
 
-	if ( getPageVisibility() ){ //Page is hidden
+	if ( document.visibilitystate === 'hidden' ){ //Page is hidden
 		nebula.dom.document.trigger('nebula_page_hidden');
 		nebula.dom.body.addClass('page-visibility-hidden');
 		pauseAllVideos(false);
-		visFirstHidden = true;
 	} else { //Page is visible
-		if ( visFirstHidden ){
-			nebula.dom.document.trigger('nebula_page_visible');
-			nebula.dom.body.removeClass('page-visibility-hidden');
-		}
-	}
-}
-
-function getPageVisibility(){
-	if ( typeof document.hidden !== "undefined" ){
-		return document.hidden;
-	} else {
-		return false;
+		nebula.dom.document.trigger('nebula_page_visible');
+		nebula.dom.body.removeClass('page-visibility-hidden');
 	}
 }
 
@@ -412,9 +404,6 @@ function socialSharing(){
 function initEventTracking(){
 	once(function(){
 		cacheSelectors(); //If event tracking is initialized by the async GA callback, selectors won't be cached yet
-
-		timeAtLoad = new Date().getTime()/1000;
-		nebulaTimer('time_on_page', 'start');
 
 		nvData = {
 			'is_js_enabled': '1',
@@ -2744,12 +2733,22 @@ function once(fn, args, unique){
 		onces = {};
 	}
 
-	if ( typeof fn === 'function' ){ //If the first parameter is a function
-		if ( typeof args === 'string' ){ //If no parameters
-			unique = args;
-			args = [];
-		}
+	if ( typeof args === 'string' ){ //If no parameters
+		unique = args;
+		args = [];
+	}
 
+	//Reset all
+	if ( fn === 'clear' || fn === 'reset' ){
+		onces = {};
+	}
+
+	//Remove a single entry
+	if ( fn === 'remove' ){
+		delete onces[unique];
+	}
+
+	if ( typeof fn === 'function' ){ //If the first parameter is a function
 		if ( typeof onces[unique] === 'undefined' || !onces[unique] ){
 			onces[unique] = true;
 			return fn.apply(this, args);
@@ -2923,7 +2922,10 @@ function nebulaTimer(uniqueID, action, name){
 			//Add the time to User Timing API (if supported)
 			if ( typeof performance.measure !== 'undefined' ){
 				performance.mark(uniqueID + '_end');
-				performance.measure(uniqueID, uniqueID + '_start', uniqueID + '_end');
+
+				if ( performance.getEntriesByName(uniqueID + '_start', 'mark') ){ //Make sure the start mark exists
+					performance.measure(uniqueID, uniqueID + '_start', uniqueID + '_end');
+				}
 			}
 
 			nebulaTimings[uniqueID].stopped = currentTime;

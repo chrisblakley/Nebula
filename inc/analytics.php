@@ -413,6 +413,12 @@
 			if ( typeof initEventTracking === 'function' ){
 				initEventTracking();
 			}
+
+			<?php if ( is_child_theme() ): ?>
+				if ( typeof supplementalEventTracking === 'function' ){
+					supplementalEventTracking();
+				}
+			<?php endif; ?>
 		});
 
 		<?php do_action('nebula_ga_after_send_pageview'); ?>

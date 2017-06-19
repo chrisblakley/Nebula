@@ -272,8 +272,8 @@ trait Functions {
 
 	//Create/Write a manifest JSON file
 	public function manifest_json(){
-		$override = apply_filters('pre_nebula_manifest_json', false);
-		if ( $override !== false ){return;}
+		$override = do_action('pre_nebula_manifest_json');
+		if ( !empty($override) ){return;}
 
 		$manifest_json = '{
 			"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
@@ -352,8 +352,8 @@ trait Functions {
 	//Show different meta data information about the post. Typically used inside the loop.
 	//Example: post_meta('by');
 	public function post_meta($meta){
-		$override = apply_filters('pre_post_meta', false, $meta);
-		if ( $override !== false ){echo $override; return;}
+		$override = do_action('pre_post_meta', $meta);
+		if ( !empty($override) ){echo $override; return;}
 
 		if ( $meta == 'date' || $meta == 'time' || $meta == 'on' || $meta == 'day' || $meta == 'when' ){
 			echo $this->post_date();
@@ -546,22 +546,26 @@ trait Functions {
 	}
 
 	//Use this instead of the_excerpt(); and get_the_excerpt(); to have better control over the excerpt.
-	//Inside the loop (or outside the loop for current post/page): nebula()->excerpt(array('length' => 20, 'ellipsis' => true));
-	//Outside the loop: nebula()->excerpt(array('id' => 572, 'length' => 20, 'ellipsis' => true));
-	//Custom text: nebula()->excerpt(array('text' => 'Lorem ipsum <strong>dolor</strong> sit amet.', 'more' => 'Continue &raquo;', 'length' => 3, 'ellipsis' => true, 'strip_tags' => true));
+	//Inside the loop (or outside the loop for current post/page): nebula()->excerpt(array('words' => 20, 'ellipsis' => true));
+	//Outside the loop: nebula()->excerpt(array('id' => 572, 'words' => 20, 'ellipsis' => true));
+	//Custom text: nebula()->excerpt(array('text' => 'Lorem ipsum <strong>dolor</strong> sit amet.', 'more' => 'Continue &raquo;', 'words' => 3, 'ellipsis' => true, 'strip_tags' => true));
 	public function excerpt($options=array()){
-		$override = apply_filters('pre_nebula_excerpt', false, $options);
-		if ( $override !== false ){return $override;}
+		$override = do_action('pre_nebula_excerpt', $options);
+		if ( !empty($override) ){return $override;}
 
 		$defaults = array(
 			'id' => false,
 			'text' => false,
-			'length' => 55,
+			'characters' => false,
+			'chars' => false, //Alias of "characters"
+			'words' => 55,
+			'length' => false, //Alias of "words"
 			'ellipsis' => false,
 			'url' => false,
 			'more' => 'Read More &raquo;',
 			'strip_shortcodes' => true,
 			'strip_tags' => true,
+			'wrap_links' => false,
 		);
 
 		$data = array_merge($defaults, $options);
@@ -591,10 +595,23 @@ trait Functions {
 			$data['text'] = strip_tags($data['text'], '');
 		}
 
-		//Length
-		if ( !empty($data['length']) && is_int($data['length']) ){
-			$limited = $this->string_limit_words($data['text'], $data['length']); //Returns array: $limited[0] is the string, $limited[1] is boolean if it was limited or not.
-			$data['text'] = $limited['text'];
+		//Characters (or Chars)
+		if ( (!empty($data['characters']) && is_int($data['characters'])) || (!empty($data['chars']) && is_int($data['chars'])) ){
+			$char_limit = ( !empty($data['characters']) )? $data['characters'] : $data['chars'];
+			$chars = $this->word_limit_chars($data['text'], $char_limit); //Returns array: $chars[0] is the string, $chars[1] is boolean if it was limited or not.
+			$data['text'] = $chars['text'];
+		}
+
+		//Words (or Length)
+		if ( (!empty($data['words']) && is_int($data['words'])) || (!empty($data['length']) && is_int($data['length'])) ){
+			$word_limit = ( !empty($data['length']) )? $data['length'] : $data['words'];
+			$words = $this->string_limit_words($data['text'], $word_limit); //Returns array: $words[0] is the string, $words[1] is boolean if it was limited or not.
+			$data['text'] = $words['text'];
+		}
+
+		//Check here for links to wrap
+		if ( $data['wrap_links'] ){
+			$data['text'] = preg_replace('/(\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?)(?![^<]*<\/)/i', '<a class="nebula-excerpt-url" href="$1">$1</a>', $data['text']); //Capture any URL not within < and </ using a negative lookahead (so it plays nice in case strip_tags is false)
 		}
 
 		//Ellipsis
@@ -616,8 +633,8 @@ trait Functions {
 
 	//Display Social Buttons
 	public function social($networks=array('facebook', 'twitter', 'google+'), $counts=0){
-		$override = apply_filters('pre_nebula_social', false, $networks, $counts);
-		if ( $override !== false ){echo $override; return;}
+		$override = do_action('pre_nebula_social', $networks, $counts);
+		if ( !empty($override) ){echo $override; return;}
 
 		if ( is_string($networks) ){ //if $networks is a string, create an array for the string.
 			$networks = array($networks);
@@ -665,8 +682,8 @@ trait Functions {
 	*/
 
 	public function facebook_share($counts=0, $url=false){
-		$override = apply_filters('pre_nebula_facebook_share', false, $counts);
-		if ( $override !== false ){echo $override; return;}
+		$override = do_action('pre_nebula_facebook_share', $counts);
+		if ( !empty($override) ){echo $override; return;}
 		?>
 		<div class="nebula-social-button facebook-share require-fbsdk">
 			<div class="fb-share-button" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>"></div>
@@ -675,8 +692,8 @@ trait Functions {
 
 
 	public function facebook_like($counts=0, $url=false){
-		$override = apply_filters('pre_nebula_facebook_like', false, $counts);
-		if ( $override !== false ){echo $override; return;}
+		$override = do_action('pre_nebula_facebook_like', $counts);
+		if ( !empty($override) ){echo $override; return;}
 		?>
 		<div class="nebula-social-button facebook-like require-fbsdk">
 			<div class="fb-like" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="false"></div>
@@ -684,8 +701,8 @@ trait Functions {
 	<?php }
 
 	public function facebook_both($counts=0, $url=false){
-		$override = apply_filters('pre_nebula_facebook_both', false, $counts);
-		if ( $override !== false ){echo $override; return;}
+		$override = do_action('pre_nebula_facebook_both', $counts);
+		if ( !empty($override) ){echo $override; return;}
 		?>
 		<div class="nebula-social-button facebook-both require-fbsdk">
 			<div class="fb-like" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="true"></div>
@@ -694,8 +711,8 @@ trait Functions {
 
 
 	public function twitter_tweet($counts=0){
-		$override = apply_filters('pre_nebula_twitter_tweet', false, $counts);
-		if ( $override !== false ){echo $override; return;}
+		$override = do_action('pre_nebula_twitter_tweet', $counts);
+		if ( !empty($override) ){echo $override; return;}
 		?>
 		<div class="nebula-social-button twitter-tweet">
 			<a href="https://twitter.com/share" class="twitter-share-button" <?php echo ( $counts != 0 )? '': 'data-count="none"'; ?>>Tweet</a>
@@ -705,8 +722,8 @@ trait Functions {
 	}
 
 	public function twitter_follow($counts=0, $username=false){
-		$override = apply_filters('pre_nebula_twitter_follow', false, $counts, $username);
-		if ( $override !== false ){echo $override; return;}
+		$override = do_action('pre_nebula_twitter_follow', $counts, $username);
+		if ( !empty($override) ){echo $override; return;}
 
 		if ( empty($username) && !$this->get_option('twitter_username') ){
 			return false;
@@ -733,8 +750,8 @@ trait Functions {
 	}
 
 	public function google_plus($counts=0){
-		$override = apply_filters('pre_nebula_google_plus', false, $counts);
-		if ( $override !== false ){echo $override; return;}
+		$override = do_action('pre_nebula_google_plus', $counts);
+		if ( !empty($override) ){echo $override; return;}
 		?>
 		<div class="nebula-social-button google-plus-plus-one">
 			<div class="g-plusone" data-size="medium" <?php echo ( $counts != 0 )? '' : 'data-annotation="none"'; ?>></div>
@@ -747,8 +764,8 @@ trait Functions {
 	}
 
 	public function linkedin_share($counts=0){
-		$override = apply_filters('pre_nebula_linkedin_share', false, $counts);
-		if ( $override !== false ){echo $override; return;}
+		$override = do_action('pre_nebula_linkedin_share', $counts);
+		if ( !empty($override) ){echo $override; return;}
 		?>
 		<div class="nebula-social-button linkedin-share">
 			<?php $this->linkedin_widget_script(); ?>
@@ -758,8 +775,8 @@ trait Functions {
 	}
 
 	public function linkedin_follow($counts=0){
-		$override = apply_filters('pre_nebula_linkedin_follow', false, $counts);
-		if ( $override !== false ){echo $override; return;}
+		$override = do_action('pre_nebula_linkedin_follow', $counts);
+		if ( !empty($override) ){echo $override; return;}
 		?>
 		<div class="nebula-social-button linkedin-follow">
 			<?php $this->linkedin_widget_script(); ?>
@@ -778,8 +795,8 @@ trait Functions {
 	}
 
 	public function pinterest_pin($counts=0){ //@TODO "Nebula" 0: Bubble counts are not showing up...
-		$override = apply_filters('pre_nebula_pinterest_pin', false, $counts);
-		if ( $override !== false ){echo $override; return;}
+		$override = do_action('pre_nebula_pinterest_pin', $counts);
+		if ( !empty($override) ){echo $override; return;}
 
 		if ( has_post_thumbnail() ){
 			$featured_image = $this->get_thumbnail_src(get_the_post_thumbnail($post->ID, 'full'));
@@ -803,8 +820,8 @@ trait Functions {
 	public function vimeo_meta($id, $meta=''){return $this->video_meta('vimeo', $id);}
 	public function youtube_meta($id, $meta=''){return $this->video_meta('youtube', $id);}
 	public function video_meta($provider, $id){
-		$override = apply_filters('pre_video_meta', false, $provider, $id);
-		if ( $override !== false ){return $override;}
+		$override = do_action('pre_video_meta', $provider, $id);
+		if ( !empty($override) ){return $override;}
 
 		$video_metadata = array(
 			'origin' => $this->url_components('basedomain'),
@@ -908,8 +925,8 @@ trait Functions {
 
 	//Breadcrumbs
 	public function breadcrumbs($options=array()){
-		$override = apply_filters('pre_nebula_breadcrumbs', false);
-		if ( $override !== false ){echo $override; return;}
+		$override = do_action('pre_nebula_breadcrumbs');
+		if ( !empty($override) ){echo $override; return;}
 
 		global $post;
 		$defaults = array(
@@ -1055,8 +1072,8 @@ trait Functions {
 
 	//Modified WordPress search form using Bootstrap components
 	public function search_form($placeholder=''){
-		$override = apply_filters('pre_nebula_search_form', false, $placeholder);
-		if ( $override !== false ){echo $override; return;}
+		$override = do_action('pre_nebula_search_form', $placeholder);
+		if ( !empty($override) ){echo $override; return;}
 
 		$value = $placeholder;
 		if ( empty($placeholder) ){
@@ -1082,8 +1099,8 @@ trait Functions {
 
 	//Easily create markup for a Hero area search input
 	public function hero_search($placeholder='What are you looking for?'){
-		$override = apply_filters('pre_nebula_hero_search', false, $placeholder);
-		if ( $override !== false ){echo $override; return;}
+		$override = do_action('pre_nebula_hero_search', $placeholder);
+		if ( !empty($override) ){echo $override; return;}
 
 		$form = '<div id="nebula-hero-formcon">
 				<form id="nebula-hero-search" class="form-group search ignore-form" method="get" action="' . home_url('/') . '">
@@ -1097,8 +1114,8 @@ trait Functions {
 	//Infinite Load
 	// Ajax call handle in nebula()->infinite_load();
 	public function infinite_load_query($args=array('post_status' => 'publish', 'showposts' => 4), $loop=false){
-		$override = apply_filters('pre_nebula_infinite_load_query', false);
-		if ( $override !== false ){return;}
+		$override = do_action('pre_nebula_infinite_load_query');
+		if ( !empty($override) ){return;}
 
 		global $wp_query;
 		if ( empty($args['paged']) ){
@@ -1237,8 +1254,8 @@ trait Functions {
 	public function is_business_open($date=null, $general=false){ return $this->business_open($date, $general); }
 	public function is_business_closed($date=null, $general=false){ return !$this->business_open($date, $general); }
 	public function business_open($date=null, $general=false){
-		$override = apply_filters('pre_business_open', false, $date, $general);
-		if ( $override !== false ){return $override;}
+		$override = do_action('pre_business_open', $date, $general);
+		if ( !empty($override) ){return $override;}
 
 		if ( empty($date) || $date == 'now' ){
 			$date = time();
@@ -1303,8 +1320,8 @@ trait Functions {
 
 	//Get the relative time of day
 	public function relative_time($format=null){
-		$override = apply_filters('pre_nebula_relative_time', false, $format);
-		if ( $override !== false ){return $override;}
+		$override = do_action('pre_nebula_relative_time', $format);
+		if ( !empty($override) ){return $override;}
 
 		if ( $this->contains(date('H'), array('00', '01', '02')) ){
 			$relative_time = array(
@@ -1466,8 +1483,8 @@ trait Functions {
 	//https://developer.yahoo.com/weather/
 	public function weather($zipcode=null, $data=''){
 		if ( $this->get_option('weather') ){
-			$override = apply_filters('pre_nebula_weather', false, $zipcode, $data);
-			if ( $override !== false ){return $override;}
+			$override = do_action('pre_nebula_weather', $zipcode, $data);
+			if ( !empty($override) ){return $override;}
 
 			if ( !empty($zipcode) && is_string($zipcode) && !ctype_digit($zipcode) ){ //ctype_alpha($zipcode)
 				$data = $zipcode;
@@ -1601,8 +1618,8 @@ trait Functions {
 
 	//Determine if the author should be the Company Name or the specific author's name.
 	public function the_author($show_authors=1){
-		$override = apply_filters('pre_nebula_the_author', false, $show_authors);
-		if ( $override !== false ){return $override;}
+		$override = do_action('pre_nebula_the_author', $show_authors);
+		if ( !empty($override) ){return $override;}
 
 		if ( !is_single() || $show_authors == 0 || !$this->get_option('author_bios') ){
 			return $this->get_option('site_owner', get_bloginfo('name'));
@@ -1613,8 +1630,8 @@ trait Functions {
 
 	//Register Widget Areas
 	public function widgets_register(){
-		$override = apply_filters('pre_nebula_widgets_init', false);
-		if ( $override !== false ){return;}
+		$override = do_action('pre_nebula_widgets_init');
+		if ( !empty($override) ){return;}
 
 		//Sidebar 1
 		register_sidebar(array(
@@ -1685,8 +1702,8 @@ trait Functions {
 
 	//Register the Navigation Menus
 	public function nav_menu_locations(){
-		$override = apply_filters('pre_nebula_nav_menu_locations', false);
-		if ( $override !== false ){return;}
+		$override = do_action('pre_nebula_nav_menu_locations');
+		if ( !empty($override) ){return;}
 
 		register_nav_menus(array(
 			'secondary' => 'Secondary Menu',

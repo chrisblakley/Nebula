@@ -485,8 +485,8 @@ if ( !trait_exists('Admin') ){
 
 		//Nebula Theme Update Checker
 		public function theme_json(){
-			$override = apply_filters('pre_nebula_theme_json', false);
-			if ( $override !== false ){return;}
+			$override = do_action('pre_nebula_theme_json');
+			if ( !empty($override) ){return;}
 
 			$nebula_data = get_option('nebula_data');
 
@@ -532,8 +532,8 @@ if ( !trait_exists('Admin') ){
 
 		//Send an email to the current user and site admin that Nebula has been updated.
 		public function theme_update_automation($upgrader_object, $options){
-			$override = apply_filters('pre_nebula_theme_update_automation', false);
-			if ( $override !== false ){return;}
+			$override = do_action('pre_nebula_theme_update_automation');
+			if ( !empty($override) ){return;}
 
 			if ( $options['type'] === 'theme' && $this->in_array_r('Nebula-master', $options['themes']) ){
 				$prev_version = $this->get_data('current_version');
@@ -703,8 +703,8 @@ if ( !trait_exists('Admin') ){
 
 		//Check the current (or passed) PHP version against the PHP support timeline.
 		public function php_version_support($php_version=PHP_VERSION){
-			$override = apply_filters('pre_nebula_php_version_support', false, $php_version);
-			if ( $override !== false ){return $override;}
+			$override = do_action('pre_nebula_php_version_support', $php_version);
+			if ( !empty($override) ){return $override;}
 
 			$php_timeline_json_file = get_template_directory() . '/inc/data/php_timeline.json';
 			$php_timeline = get_transient('nebula_php_timeline');
@@ -862,7 +862,7 @@ if ( !trait_exists('Admin') ){
 			return $cols;
 		}
 
-		public function muc_value( $column_name, $id ){
+		public function muc_value($column_name, $id){
 			if ( $column_name === "media_url" ){
 				echo '<input type="text" width="100%" value="' . wp_get_attachment_url($id) . '" readonly />';
 			}

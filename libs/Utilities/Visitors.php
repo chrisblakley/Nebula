@@ -833,8 +833,8 @@ if ( !trait_exists('Visitors') ){
 		//The controller for Nebula Visitors DB process.
 		//Triggering at get_header allows for template_redirects to happen before fingerprinting (prevents false multipageviews)
 		 public function controller(){
-			$override = apply_filters('pre_nebula_vdb_controller', false);
-			if ( $override !== false ){return $override;}
+			$override = do_action('pre_nebula_vdb_controller');
+			if ( !empty($override) ){return $override;}
 
 			if ( !nebula()->get_option('visitors_db') || nebula()->is_ajax_request() || nebula()->is_bot() || strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'wordpress') !== false ){
 				return false; //Don't add bots to the DB
