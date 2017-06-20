@@ -105,7 +105,7 @@ if ( !trait_exists('Analytics') ){
 				$data['utmcc'] = '__utma=' . $cookies['utma'] . ';+__utmz=' . $cookies['utmz'] . 'utmcsr=' . $cookies['utmcsr'] . '|utmccn=' . $cookies['utmccn'] . '|utmcmd=' . $cookies['utmcmd'] . '|utmctr=' . $cookies['utmctr'] . '|utmcct=' . $cookies['utmcct'] . ';+';
 			}
 
-			return 'https://ssl.google-analytics.com/__utm.gif?' . str_replace('+', '%20', http_build_query($data));
+			return 'https://www.google-analytics.com/__utm.gif?' . str_replace('+', '%20', http_build_query($data));
 		}
 
 		//Send Pageview Function for Server-Side Google Analytics
@@ -300,9 +300,9 @@ if ( !trait_exists('Analytics') ){
 					document.removeEventListener('visibilitychange', loadAbandonTracking);
 					window.onbeforeunload = null;
 
-					var loadAbandonLevel = 'Hard (Unload)';
+					var loadAbandonLevel = 'Unload'; //Typically only desktop browsers trigger this event (sometimes)
 					if ( e.type == 'visibilitychange' ){
-						loadAbandonLevel = 'Soft (Visibility Change)';
+						loadAbandonLevel = 'Visibility Change'; //This more accurately captures mobile browsers and the majority of abandon types
 					}
 
 					//Grab the Google Analytics CID from the cookie (if it exists)
@@ -354,6 +354,17 @@ if ( !trait_exists('Analytics') ){
 				});
 			</script>
 			<?php
+		}
+
+		//Log fatal errors in Google Analytics as crashes
+		public function ga_log_fatal_errors(){
+			$error = error_get_last();
+			if ( $error['type'] == E_ERROR ){
+				$message = strstr($error["message"], ' in /', true);
+				$file = strstr($error["file"], 'wp-content'); //Remove high-level directories to reduce clutter and prevent PII
+
+				nebula()->ga_send_exception($message . ' on line ' . $error["line"] . ' in ' . $file, 1);
+			}
 		}
 	}
 }

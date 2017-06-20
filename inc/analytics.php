@@ -42,6 +42,7 @@
 			tags: '<?php echo nebula()->get_option('cd_tags'); ?>',
 			contactMethod: '<?php echo nebula()->get_option('cd_contactmethod'); ?>',
 			formTiming: '<?php echo nebula()->get_option('cd_formtiming'); ?>',
+			formFlow: '<?php echo nebula()->get_option('cd_formflow'); ?>',
 			firstInteraction: '<?php echo nebula()->get_option('cd_firstinteraction'); ?>',
 			windowType: '<?php echo nebula()->get_option('cd_windowtype'); ?>',
 			geolocation: '<?php echo nebula()->get_option('cd_geolocation'); ?>',

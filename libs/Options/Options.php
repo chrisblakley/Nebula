@@ -262,6 +262,7 @@ if ( !trait_exists('Options') ){
 				'cd_tags' => '',
 				'cd_contactmethod' => '',
 				'cd_formtiming' => '',
+				'cd_formflow' => '',
 				'cd_firstinteraction' => '',
 				'cd_geolocation' => '',
 				'cd_geoname' => '',

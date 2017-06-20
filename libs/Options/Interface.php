@@ -1061,6 +1061,16 @@
 
 										<div class="form-group">
 											<div class="input-group">
+												<div class="input-group-addon">Form Field Path</div>
+												<input type="text" name="nebula_options[cd_formflow]" id="cd_formflow" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_formflow']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Track the field path the user takes through forms. Scope: Session</p>
+											<p class="nebula-help-text more-help form-text text-muted">Because this data is scoped to the session, it will only track the last form of the session. This data can be useful in detecting form abandonment (as submit actions are stored in this dimension too).</p>
+											<p class="option-keywords"></p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
 												<div class="input-group-addon">Video Watcher</div>
 												<input type="text" name="nebula_options[cd_videowatcher]" id="cd_videowatcher" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_videowatcher']; ?>" />
 											</div>

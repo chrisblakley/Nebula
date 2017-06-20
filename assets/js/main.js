@@ -91,41 +91,8 @@ jQuery(window).on('load', function(){
 
 	jQuery('a, li, tr').removeClass('hover');
 	nebula.dom.html.addClass('loaded');
-	nebulaTimer('time_on_page', 'start');
 
-	//https://developer.mozilla.org/en-US/docs/Web/API/PerformanceTiming
-	if ( typeof performance !== 'undefined' ){
-		setTimeout(function(){
-			var responseEnd = Math.round(performance.timing.responseEnd-performance.timing.navigationStart); //Navigation start until server response finishes
-			var domReady = Math.round(performance.timing.domContentLoadedEventStart-performance.timing.navigationStart); //Navigation start until DOM ready
-			var windowLoaded = Math.round(performance.timing.loadEventStart-performance.timing.navigationStart); //Navigation start until window load
-
-			if ( nebula.dom.html.hasClass('debug') ){
-				console.log('Server Response: ' + responseEnd + 'ms');
-				console.log('DOM Ready: ' + domReady + 'ms');
-				console.log('Window Loaded: ' + windowLoaded + 'ms');
-			}
-
-			//Validate each timing result before using them
-			if ( (responseEnd > 0 && responseEnd < 6000000) && (domReady > 0 && domReady < 6000000) && (windowLoaded > 0 && windowLoaded < 6000000) ){
-				ga('set', gaCustomMetrics['serverResponseTime'], responseEnd);
-				ga('set', gaCustomMetrics['domReadyTime'], domReady);
-				ga('set', gaCustomMetrics['windowLoadedTime'], windowLoaded);
-
-				//@todo "Nebula" 0: Can metrics be transported via the timing hittype?
-				ga('send', 'timing', 'Performance Timing', 'Server Response', responseEnd, 'Navigation start until server response finishes (includes PHP execution time)');
-				ga('send', 'timing', 'Performance Timing', 'DOM Ready', Math.round(domReady), 'Navigation start until DOM ready');
-				ga('send', 'timing', 'Performance Timing', 'Window Load', Math.round(windowLoaded), 'Navigation start until window load');
-
-				if ( typeof performance.measure !== 'undefined' ){
-					performance.measure('Server Response', 'navigationStart', 'responseEnd');
-					performance.measure('DOM Ready', 'navigationStart', 'domContentLoadedEventStart');
-					performance.measure('Window Load', 'navigationStart', 'loadEventStart');
-					//console.debug( performance.getEntriesByType('measure') );
-				}
-			}
-		}, 0);
-	}
+	performanceMetrics();
 
 	setTimeout(function(){
 		emphasizeSearchTerms();
@@ -195,6 +162,43 @@ function visibilityChangeActions(){
 	} else { //Page is visible
 		nebula.dom.document.trigger('nebula_page_visible');
 		nebula.dom.body.removeClass('page-visibility-hidden');
+	}
+}
+
+//Record performance timing
+function performanceMetrics(){
+	if ( window.performance && window.performance.timing ){
+		setTimeout(function(){
+			var responseEnd = Math.round(performance.timing.responseEnd-performance.timing.navigationStart); //Navigation start until server response finishes
+			var domReady = Math.round(performance.timing.domContentLoadedEventStart-performance.timing.navigationStart); //Navigation start until DOM ready
+			var windowLoaded = Math.round(performance.timing.loadEventStart-performance.timing.navigationStart); //Navigation start until window load
+
+			if ( nebula.dom.html.hasClass('debug') ){
+				console.log('Server Response: ' + responseEnd + 'ms');
+				console.log('DOM Ready: ' + domReady + 'ms');
+				console.log('Window Loaded: ' + windowLoaded + 'ms');
+			}
+
+			//Validate each timing result before using them
+			if ( (responseEnd > 0 && responseEnd < 6000000) && (domReady > 0 && domReady < 6000000) && (windowLoaded > 0 && windowLoaded < 6000000) ){
+				ga('set', gaCustomMetrics['serverResponseTime'], responseEnd);
+				ga('set', gaCustomMetrics['domReadyTime'], domReady);
+				ga('set', gaCustomMetrics['windowLoadedTime'], windowLoaded);
+				ga('send', 'event', 'Performance Timing', 'track', 'Used to deliver performance metrics to Google Analytics', {'nonInteraction': true});
+
+				//Send as User Timings as well
+				ga('send', 'timing', 'Performance Timing', 'Server Response', responseEnd, 'Navigation start until server response finishes (includes PHP execution time)');
+				ga('send', 'timing', 'Performance Timing', 'DOM Ready', Math.round(domReady), 'Navigation start until DOM ready');
+				ga('send', 'timing', 'Performance Timing', 'Window Load', Math.round(windowLoaded), 'Navigation start until window load');
+
+				if ( typeof performance.measure !== 'undefined' ){
+					performance.measure('Server Response', 'navigationStart', 'responseEnd');
+					performance.measure('DOM Ready', 'navigationStart', 'domContentLoadedEventStart');
+					performance.measure('Window Load', 'navigationStart', 'loadEventStart');
+					//console.debug( performance.getEntriesByType('measure') );
+				}
+			}
+		}, 0);
 	}
 }
 
@@ -686,26 +690,6 @@ function eventTracking(){
 		ga('send', 'event', 'Print', 'Print');
 		nv('append', {'print': window.location});
     }
-
-	//Page Unload
-	window.onbeforeunload = function(){
-		once(function(){
-			//Check form abandonment object/array
-			if ( typeof formStarted !== 'undefined' ){
-				jQuery.each(formStarted, function(key, value){
-					if ( value === true ){
-						ga('send', 'event', 'CF7 Form', 'Abandon', key, {'nonInteraction': true});
-						var formTime = nebulaTimer(key, 'end');
-						ga('send', 'timing', 'CF7 Form', 'Form Abandon (ID: ' + key + ')', Math.round(formTime), 'Initial form focus until window unload (without successful submit)');
-						return false;
-					}
-				});
-			}
-
-		    ga('send', 'timing', 'Time on Page', 'Unload after ' + Math.round(nebulaTimer('time_on_page', 'end')/1000) + ' seconds', nebulaTimer('time_on_page', 'end'), 'Seconds since DOM ready until window unload.'); //Time on Page
-		    nv('increment', 'page_exits'); //Increment exits (but more importantly updates duration)
-		}, 'unload');
-	}
 }
 
 //Ecommerce event tracking
@@ -1636,6 +1620,8 @@ function cf7Functions(){
 		return false;
 	}
 
+	formStarted = {};
+
 	//Replace submit input with a button so a spinner icon can be used instead of the CF7 spin gif (unless it has the class "no-button")
 	jQuery('.wpcf7-form input[type=submit]').each(function(){
 		if ( !jQuery(this).hasClass('no-button') ){
@@ -1651,16 +1637,26 @@ function cf7Functions(){
 		}]);
 	});
 
-	formStarted = {};
+	//For starts and field focuses
 	nebula.dom.document.on('focus', '.wpcf7-form input, .wpcf7-form button, .wpcf7-form textarea', function(e){
 		formID = jQuery(this).closest('div.wpcf7').attr('id');
-		thisField = e.target.name || e.target.id || 'Unknown';
+		thisField = e.target.name || jQuery(this).closest('.form-group').find('label').text() || e.target.id || 'Unknown';
 
-		if ( !jQuery(this).hasClass('.ignore-form') && !jQuery(this).find('.ignore-form').length && !jQuery(this).parents('.ignore-form').length && (typeof formStarted[formID] === 'undefined' || !formStarted[formID]) ){
-			ga('set', gaCustomMetrics['formStarts'], 1);
-			ga('send', 'event', 'CF7 Form', 'Started Form (Focus)', 'Began filling out form ID: ' + formID + ' (' + thisField + ')');
-			nv('increment', 'contact_funnel_started');
-			formStarted[formID] = true;
+		if ( !jQuery(this).hasClass('.ignore-form') && !jQuery(this).find('.ignore-form').length && !jQuery(this).parents('.ignore-form').length ){
+			//Form starts
+			if ( typeof formStarted[formID] === 'undefined' || !formStarted[formID] ){
+				ga('set', gaCustomMetrics['formStarts'], 1);
+				ga('send', 'event', 'CF7 Form', 'Started Form (Focus)', 'Began filling out form ID: ' + formID + ' (' + thisField + ')');
+				nv('increment', 'contact_funnel_started');
+				formStarted[formID] = true;
+			}
+
+			updateFormFlow(formID, thisField);
+
+			//Track individual fields
+			if ( !jQuery(this).is('button') ){
+				ga('send', 'event', 'CF7 Form', 'Field Focus', 'Focus into ' + thisField + '(For ID: ' + formID + ')');
+			}
 		}
 
 		nebulaTimer(formID, 'start', thisField);
@@ -1691,6 +1687,7 @@ function cf7Functions(){
 	//CF7 Invalid (CF7 AJAX response after invalid form)
 	nebula.dom.document.on('wpcf7invalid', function(e){
 		var formTime = nebulaTimer(e.detail.id, 'lap', 'wpcf7-submit-spam');
+		updateFormFlow(formID, '[Invalid]');
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Invalid)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
 		ga('send', 'event', 'CF7 Form', 'Submit (Invalid)', 'Form validation errors occurred on form ID: ' + e.detail.contactFormId);
@@ -1703,6 +1700,7 @@ function cf7Functions(){
 	//General HTML5 validation errors
 	jQuery('.wpcf7-form input').on('invalid', function(){ //Would it be more useful to capture all inputs (rather than just CF7)? How would we categorize this in GA?
 		debounce(function(){
+			updateFormFlow(formID, '[Submit]', 'HTML5 Validation Error');
 			ga('send', 'event', 'CF7 Form', 'Submit (Invalid)', 'General HTML5 validation error');
 		}, 50, 'invalid form');
 	});
@@ -1710,6 +1708,7 @@ function cf7Functions(){
 	//CF7 Spam (CF7 AJAX response after spam detection)
 	nebula.dom.document.on('wpcf7spam', function(e){
 		var formTime = nebulaTimer(e.detail.id, 'end');
+		updateFormFlow(formID, '[Spam]');
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Spam)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
 		ga('send', 'event', 'CF7 Form', 'Submit (Spam)', 'Form submission failed spam tests on form ID: ' + e.detail.contactFormId);
@@ -1721,6 +1720,7 @@ function cf7Functions(){
 	//CF7 Mail Send Failure (CF7 AJAX response after mail failure)
 	nebula.dom.document.on('wpcf7mailfailed', function(e){
 		var formTime = nebulaTimer(e.detail.id, 'end');
+		updateFormFlow(formID, '[Failed]');
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Failed)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
 		ga('send', 'event', 'CF7 Form', 'Submit (Failed)', 'Form submission email send failed for form ID: ' + e.detail.contactFormId);
@@ -1734,6 +1734,7 @@ function cf7Functions(){
 		formStarted[e.detail.id] = false; //Reset abandonment tracker for this form.
 
 		var formTime = nebulaTimer(e.detail.id, 'end');
+		updateFormFlow(formID, '[Success]');
 		if ( !jQuery('#' + e.detail.id).hasClass('.ignore-form') && !jQuery('#' + e.detail.id).find('.ignore-form').length && !jQuery('#' + e.detail.id).parents('.ignore-form').length ){
 			ga('set', gaCustomMetrics['formSubmissions'], 1);
 		}
@@ -1767,6 +1768,26 @@ function cf7Functions(){
 
 		jQuery('#' + e.detail.id).find('button#submit').removeClass('active');
 	});
+}
+
+function updateFormFlow(formID, field, info){
+	if ( typeof formFlow === 'undefined' ){
+		formFlow = {};
+	}
+
+	if ( !info ){
+		info = '';
+	} else {
+		info = ' (' + info + ')';
+	}
+
+	if ( !formFlow[formID] ){
+		formFlow[formID] = field + info;
+	} else {
+		formFlow[formID] += ' > ' + field + info;
+	}
+
+	ga('set', gaCustomDimensions['formFlow'], formFlow[formID]); //Update form field history. scope: session
 }
 
 //Enable localstorage on CF7 text inputs and textareas

@@ -855,16 +855,5 @@ if ( !trait_exists('Utilities') ){
 					break;
 			}
 		}
-
-		//Log fatal errors in Google Analytics as crashes
-		public function ga_log_fatal_errors(){
-			$error = error_get_last();
-			if ( $error['type'] == E_ERROR ){
-				$message = strstr($error["message"], ' in /', true);
-				$file = strstr(str_replace(array(get_template_directory(), get_stylesheet_directory(), ABSPATH), '', $error["file"]), 'wp-content'); //Remove high-level directories to reduce clutter and prevent PII
-
-				nebula()->ga_send_exception($message . ' on line ' . $error["line"] . ' in ' . $file, 1);
-			}
-		}
 	}
 }
