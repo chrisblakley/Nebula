@@ -1061,7 +1061,7 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Form Field Path</div>
+												<div class="input-group-addon">Form Flow</div>
 												<input type="text" name="nebula_options[cd_formflow]" id="cd_formflow" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_formflow']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Track the field path the user takes through forms. Scope: Session</p>
@@ -1103,7 +1103,7 @@
 
 								<div class="option-group">
 									<h3>Custom Metrics</h3>
-									<p class="text-muted">These are optional metrics that can be passed into Google Analytics which allows for 20 custom metrics (or 200 for Google Analytics Premium). To set these up, define the Custom Metric in the Google Analytics property, then paste the metric index string ("metric1", "metric12", etc.) into the appropriate input field below. The scope and format for each metric is noted in their respective help sections. Metrics that require additional code are marked with a *. These are useful for manual interpretation of data, or to be included in Calculated Metrics formulas.</p>
+									<p class="text-muted">These are optional metrics that can be passed into Google Analytics which allows for 20 custom metrics (or 200 for Google Analytics Premium). To set these up, define the Custom Metric in the Google Analytics property, then paste the metric index string ("metric1", "metric12", etc.) into the appropriate input field below. The scope and format for each metric is noted in their respective help sections. Metrics that require additional code are marked with a *. These are useful for manual interpretation of data, or to be included in <a href="https://gearside.com/nebula/get-started/recommendations/google-analytics-calculated-metrics/?utm_campaign=documentation&utm_medium=options&utm_source=custom+metrics" target="_blank">Calculated Metrics formulas</a>.</p>
 
 									<?php $metric_regex = '^metric([0-9]{1,3})$'; ?>
 
@@ -1190,7 +1190,7 @@
 												<input type="text" name="nebula_options[cm_maxscroll]" id="cm_maxscroll" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_maxscroll']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Calculates the maximum scroll percentage the user reached per page. Scope: Hit, Format: Integer</p>
-											<p class="nebula-help-text more-help form-text text-muted">Use a calculated Metric in Google Analytics called "Avg. Max Scroll Percentage" of {{Max Scroll Percentage}}/(100*{{Unique Pageviews}}) to show Average Max Scroll Percentage per page. Create a custom report with the metrics "Avg. Max Scroll Percentage" and "Unique Pageviews" and dimensions "Page", "Referral Source", etc.</p>
+											<p class="nebula-help-text more-help form-text text-muted">Useful as a calculated metric in Google Analytics called "Avg. Max Scroll Percentage" of <code>{{Max Scroll Percentage}}/(100*{{Unique Pageviews}})</code>. Create a custom report with the metrics "Avg. Max Scroll Percentage" and "Unique Pageviews" and dimensions "Page", "Source / Medium", etc.</p>
 											<p class="option-keywords"></p>
 										</div>
 									</div><!-- /sub-group -->
@@ -1258,16 +1258,17 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Page Visible</div>
+												<div class="input-group-addon">Page Visible Time</div>
 												<input type="text" name="nebula_options[cm_pagevisible]" id="cm_pagevisible" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_pagevisible']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">The amount of time (in seconds) the page was in the visible state (tab/window visible) Scope: Hit, Format: Time</p>
+											<p class="nebula-help-text more-help form-text text-muted">Useful with calculated metrics in Google Analytics of "Avg. Page Visible Time / Page" <code>{{Page Visible Time}} / {{Unique Pageviews}}</code> or "Avg. Page Visible Time / Session" <code>{{Page Visible Time}} / {{Sessions}}</code>. Create a custom report with the metrics "Avg. Page Visible Time / Page" and "Unique Pageviews" and dimension "Page", and another with the metrics "Avg. Page Visible Time / Session" and "Unique Pageviews" and dimension "Source / Medium"</p>
 											<p class="option-keywords">autotrack</p>
 										</div>
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Page Hidden</div>
+												<div class="input-group-addon">Page Hidden Time</div>
 												<input type="text" name="nebula_options[cm_pagehidden]" id="cm_pagehidden" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_pagehidden']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">The amount of time (in seconds) the page was in the hidden state (tab/window not visible) Scope: Hit, Format: Time</p>

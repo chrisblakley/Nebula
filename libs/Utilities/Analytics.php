@@ -363,7 +363,7 @@ if ( !trait_exists('Analytics') ){
 				$message = strstr($error["message"], ' in /', true);
 				$file = strstr($error["file"], 'wp-content'); //Remove high-level directories to reduce clutter and prevent PII
 
-				nebula()->ga_send_exception($message . ' on line ' . $error["line"] . ' in ' . $file, 1);
+				nebula()->ga_send_exception('(PHP) ' . $message . ' on line ' . $error["line"] . ' in ' . $file, 1);
 			}
 		}
 	}

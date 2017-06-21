@@ -39,6 +39,7 @@ if ( !trait_exists('Options') ){
 		}
 
 		//Update Nebula options outside of the Nebula Options page
+		public function set_option($option, $value){return $this->update_option($option, $value);}
 		public function update_option($option, $value){
 			$nebula_data = get_option('nebula_options');
 			if ( $nebula_data[$option] != $value ){
@@ -48,6 +49,7 @@ if ( !trait_exists('Options') ){
 		}
 
 		//Retrieve non-option Nebula data
+		public function data($option){return $this->get_data($option);}
 		public function get_data($option){
 			$nebula_data = get_option('nebula_data');
 			if ( empty($nebula_data[$option]) ){
@@ -57,6 +59,7 @@ if ( !trait_exists('Options') ){
 		}
 
 		//Update data outside of the Nebula Options page
+		public function set_data($option, $value){return $this->update_data($option, $value);}
 		public function update_data($option, $value){
 			$nebula_data = get_option('nebula_data');
 			if ( $nebula_data[$option] != $value ){

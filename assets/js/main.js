@@ -666,13 +666,13 @@ function eventTracking(){
 
 	//AJAX Errors
 	nebula.dom.document.ajaxError(function(e, jqXHR, settings, thrownError){
-		ga('send', 'exception', {'exDescription': 'AJAX Error (' + jqXHR.status + '): ' + thrownError + ' on ' + settings.url, 'exFatal': true});
+		ga('send', 'exception', {'exDescription': '(JS) AJAX Error (' + jqXHR.status + '): ' + thrownError + ' on ' + settings.url, 'exFatal': true});
 		//nv('append', {'ajax_errors': e + ' - ' + jqXHR.status + ': ' + thrownError + ' (' + jqXHR.responseText + ') on: ' + settings.url}); //Figure out which of these is the most informative
 	});
 
 	//Window Errors
 	window.onerror = function (message, file, line) {
-		ga('send', 'exception', {'exDescription': message + ' at ' + line + ' of ' + file, 'exFatal': false}); //Is there a better way to detect fatal vs non-fatal errors?
+		ga('send', 'exception', {'exDescription': '(JS) ' + message + ' at ' + line + ' of ' + file, 'exFatal': false}); //Is there a better way to detect fatal vs non-fatal errors?
 	}
 
 	//Capture Print Intent
@@ -785,13 +785,13 @@ function nv(action, data, callback){
 
 	if ( !action || !data || typeof data == 'function' ){
 		console.error('Action and Data Object are both required.');
-		ga('send', 'exception', {'exDescription': 'Action and Data Object are both required in nv()', 'exFatal': false});
+		ga('send', 'exception', {'exDescription': '(JS) Action and Data Object are both required in nv()', 'exFatal': false});
 		return false; //Action and Data are both required.
 	}
 
 	if ( typeof callback == 'string' ){
 		console.error('Data must be passed as an object.');
-		ga('send', 'exception', {'exDescription': 'Data must be passed as an object in nv()', 'exFatal': false});
+		ga('send', 'exception', {'exDescription': '(JS) Data must be passed as an object in nv()', 'exFatal': false});
 		return false;
 	}
 
@@ -833,7 +833,7 @@ function nv(action, data, callback){
 			}
 		},
 		error: function(XMLHttpRequest, textStatus, errorThrown){
-			ga('send', 'exception', {'exDescription': 'AJAX error in nv(): ' + textStatus, 'exFatal': false});
+			ga('send', 'exception', {'exDescription': '(JS) AJAX error in nv(): ' + textStatus, 'exFatal': false});
 		},
 		timeout: 60000
 	});
@@ -895,7 +895,7 @@ function hubspot(mode, type, email, properties, callback){ //@todo "Nebula" 0: U
 				}
 			},
 			error: function(XMLHttpRequest, textStatus, errorThrown){
-				ga('send', 'exception', {'exDescription': 'AJAX error in hubspot(): ' + textStatus, 'exFatal': false});
+				ga('send', 'exception', {'exDescription': '(JS) AJAX error in hubspot(): ' + textStatus, 'exFatal': false});
 			},
 			timeout: 60000
 		});
@@ -968,7 +968,7 @@ function autocompleteSearch(element, types){
 
 	if ( types && !jQuery.isArray(types) ){
 		console.error('autocompleteSearch requires 2nd parameter to be an array.');
-		ga('send', 'exception', {'exDescription': 'autocompleteSearch requires 2nd parameter to be an array', 'exFatal': false});
+		ga('send', 'exception', {'exDescription': '(JS) autocompleteSearch requires 2nd parameter to be an array', 'exFatal': false});
 		return false;
 	}
 
@@ -1036,7 +1036,7 @@ function autocompleteSearch(element, types){
 					error: function(XMLHttpRequest, textStatus, errorThrown){
 						nebula.dom.document.trigger('nebula_autocomplete_search_error', request.term);
 						debounce(function(){
-							ga('send', 'exception', {'exDescription': 'Autocomplete AJAX error: ' + textStatus, 'exFatal': false});
+							ga('send', 'exception', {'exDescription': '(JS) Autocomplete AJAX error: ' + textStatus, 'exFatal': false});
 							nv('append', {'ajax_error': 'Autocomplete Search'});
 						}, 1500, 'autocomplete error buffer');
 						element.closest('form').removeClass('searching');
@@ -1216,7 +1216,7 @@ function advancedSearchPrep(startingAt, waitingText){
 				error: function(XMLHttpRequest, textStatus, errorThrown){
 					jQuery('#advanced-search-results').text('Error: ' + XMLHttpRequest + ', ' + textStatus + ', ' + errorThrown);
 					haveAllEvents = 0;
-					ga('send', 'exception', {'exDescription': 'Advanced Search AJAX error: ' + textStatus, 'exFatal': false});
+					ga('send', 'exception', {'exDescription': '(JS) Advanced Search AJAX error: ' + textStatus, 'exFatal': false});
 					nv('append', {'ajax_errors': 'Advanced Search'});
 				},
 				timeout: 60000
@@ -1655,7 +1655,7 @@ function cf7Functions(){
 
 			//Track individual fields
 			if ( !jQuery(this).is('button') ){
-				ga('send', 'event', 'CF7 Form', 'Field Focus', 'Focus into ' + thisField + '(For ID: ' + formID + ')');
+				ga('send', 'event', 'CF7 Form', 'Field Focus', 'Focus into ' + thisField + ' (Form ID: ' + formID + ')');
 			}
 		}
 
@@ -1686,53 +1686,57 @@ function cf7Functions(){
 
 	//CF7 Invalid (CF7 AJAX response after invalid form)
 	nebula.dom.document.on('wpcf7invalid', function(e){
+		var formID = e.detail.contactFormId || e.detail.id;
 		var formTime = nebulaTimer(e.detail.id, 'lap', 'wpcf7-submit-spam');
 		updateFormFlow(formID, '[Invalid]');
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Invalid)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
-		ga('send', 'event', 'CF7 Form', 'Submit (Invalid)', 'Form validation errors occurred on form ID: ' + e.detail.contactFormId);
-		ga('send', 'exception', {'exDescription': 'Invalid form submission for form ID ' + e.detail.contactFormID, 'exFatal': false});
+		ga('send', 'event', 'CF7 Form', 'Submit (Invalid)', 'Form validation errors occurred on form ID: ' + formID);
+		ga('send', 'exception', {'exDescription': '(JS) Invalid form submission for form ID ' + formID, 'exFatal': false});
 		nebulaScrollTo(jQuery(".wpcf7-not-valid").first()); //Scroll to the first invalid input
 		nv('increment', 'contact_funnel_submit_invalid');
-		nv('append', {'form_submission_error': 'Validation (' + e.detail.contactFormId + ')'});
+		nv('append', {'form_submission_error': 'Validation (' + formID + ')'});
 	});
 
 	//General HTML5 validation errors
 	jQuery('.wpcf7-form input').on('invalid', function(){ //Would it be more useful to capture all inputs (rather than just CF7)? How would we categorize this in GA?
 		debounce(function(){
-			updateFormFlow(formID, '[Submit]', 'HTML5 Validation Error');
+			updateFormFlow(formID, '[HTML5 Validation Error]');
 			ga('send', 'event', 'CF7 Form', 'Submit (Invalid)', 'General HTML5 validation error');
 		}, 50, 'invalid form');
 	});
 
 	//CF7 Spam (CF7 AJAX response after spam detection)
 	nebula.dom.document.on('wpcf7spam', function(e){
+		var formID = e.detail.contactFormId || e.detail.id;
 		var formTime = nebulaTimer(e.detail.id, 'end');
 		updateFormFlow(formID, '[Spam]');
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Spam)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
-		ga('send', 'event', 'CF7 Form', 'Submit (Spam)', 'Form submission failed spam tests on form ID: ' + e.detail.contactFormId);
-		ga('send', 'exception', {'exDescription': 'Spam form submission for form ID ' + e.detail.contactFormID, 'exFatal': false});
+		ga('send', 'event', 'CF7 Form', 'Submit (Spam)', 'Form submission failed spam tests on form ID: ' + formID);
+		ga('send', 'exception', {'exDescription': '(JS) Spam form submission for form ID ' + formID, 'exFatal': false});
 		nv('increment', 'contact_funnel_submit_spam');
-		nv('append', {'form_submission_error': 'Spam (' + e.detail.contactFormId + ')'});
+		nv('append', {'form_submission_error': 'Spam (' + formID + ')'});
 	});
 
 	//CF7 Mail Send Failure (CF7 AJAX response after mail failure)
 	nebula.dom.document.on('wpcf7mailfailed', function(e){
+		var formID = e.detail.contactFormId || e.detail.id;
 		var formTime = nebulaTimer(e.detail.id, 'end');
 		updateFormFlow(formID, '[Failed]');
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Failed)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
-		ga('send', 'event', 'CF7 Form', 'Submit (Failed)', 'Form submission email send failed for form ID: ' + e.detail.contactFormId);
-		ga('send', 'exception', {'exDescription': 'Mail failed to send for form ID ' + e.detail.contactFormID, 'exFatal': true});
+		ga('send', 'event', 'CF7 Form', 'Submit (Failed)', 'Form submission email send failed for form ID: ' + formID);
+		ga('send', 'exception', {'exDescription': '(JS) Mail failed to send for form ID ' + formID, 'exFatal': true});
 		nv('increment', 'contact_funnel_submit_failed');
-		nv('append', {'form_submission_error': 'Failed (' + e.detail.contactFormId + ')'});
+		nv('append', {'form_submission_error': 'Failed (' + formID + ')'});
 	});
 
 	//CF7 Mail Sent Success (CF7 AJAX response after submit success)
 	nebula.dom.document.on('wpcf7mailsent', function(e){
 		formStarted[e.detail.id] = false; //Reset abandonment tracker for this form.
 
+		var formID = e.detail.contactFormId || e.detail.id;
 		var formTime = nebulaTimer(e.detail.id, 'end');
 		updateFormFlow(formID, '[Success]');
 		if ( !jQuery('#' + e.detail.id).hasClass('.ignore-form') && !jQuery('#' + e.detail.id).find('.ignore-form').length && !jQuery('#' + e.detail.id).parents('.ignore-form').length ){
@@ -1740,12 +1744,12 @@ function cf7Functions(){
 		}
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Success)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
-		ga('send', 'timing', 'CF7 Form', 'Form Completion (ID: ' + e.detail.contactFormId + ')', Math.round(formTime), 'Initial form focus until valid submit');
-		ga('send', 'event', 'CF7 Form', 'Submit (Success)', 'Form ID: ' + e.detail.contactFormId);
+		ga('send', 'timing', 'CF7 Form', 'Form Completion (ID: ' + formID + ')', Math.round(formTime), 'Initial form focus until valid submit');
+		ga('send', 'event', 'CF7 Form', 'Submit (Success)', 'Form ID: ' + formID);
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)'});}
 		nv('increment', 'contact_funnel_submit_success');
-		nv('append', {'form_submission_success': e.detail.contactFormId});
-		nv('remove', {'abandoned_form': e.detail.contactFormId});
+		nv('append', {'form_submission_success': formID});
+		nv('remove', {'abandoned_form': formID});
 
 		//Clear localstorage on submit success
 		jQuery('#' + e.detail.id + ' .wpcf7-textarea, #' + e.detail.id + ' .wpcf7-text').each(function(){
@@ -1759,11 +1763,12 @@ function cf7Functions(){
 
 	//CF7 Submit (CF7 AJAX response after any submit attempt). This triggers after the other submit triggers.
 	nebula.dom.document.on('wpcf7submit', function(e){
+		var formID = e.detail.contactFormId || e.detail.id;
 		var formTime = nebulaTimer(e.detail.id, 'lap', 'wpcf7-submit-attempt');
 		nvForm(); //nvForm() here because it triggers after all others. No nv() here so it doesn't overwrite the other (more valuable) data.
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Attempt)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
-		ga('send', 'event', 'CF7 Form', 'Submit (Attempt)', 'Submission attempt for form ID: ' + e.detail.contactFormId); //This event is required for the notable form metric!
+		ga('send', 'event', 'CF7 Form', 'Submit (Attempt)', 'Submission attempt for form ID: ' + formID); //This event is required for the notable form metric!
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)',});}
 
 		jQuery('#' + e.detail.id).find('button#submit').removeClass('active');
@@ -2023,7 +2028,7 @@ function conditionalJSLoading(){
 			        }
 			    });
 			}).fail(function(){
-			    ga('send', 'exception', {'exDescription': 'Google Maps JS API script could not be loaded', 'exFatal': false});
+			    ga('send', 'exception', {'exDescription': '(JS) Google Maps JS API script could not be loaded', 'exFatal': false});
 			});
 		}
 	}
@@ -2033,7 +2038,7 @@ function conditionalJSLoading(){
 		jQuery.getScript(nebula.site.resources.js.chosen).done(function(){
 			chosenSelectOptions();
 		}).fail(function(){
-			ga('send', 'exception', {'exDescription': 'chosen.jquery.min.js could not be loaded', 'exFatal': false});
+			ga('send', 'exception', {'exDescription': '(JS) chosen.jquery.min.js could not be loaded', 'exFatal': false});
 			nv('append', {'js_errors': 'chosen.jquery.min.js could not be loaded'});
 		});
 		nebulaLoadCSS(nebula.site.resources.css.chosen);
@@ -2046,7 +2051,7 @@ function conditionalJSLoading(){
 			dataTablesActions(); //Once loaded, call the DataTables actions. This can be called or overwritten in child.js (or elsewhere)
 			nebula.dom.document.trigger('nebula_datatables_loaded'); //This event can be listened for in child.js (or elsewhere) for when DataTables has finished loading.
         }).fail(function(){
-            ga('send', 'exception', {'exDescription': 'jquery.dataTables.min.js could not be loaded', 'exFatal': false});
+            ga('send', 'exception', {'exDescription': '(JS) jquery.dataTables.min.js could not be loaded', 'exFatal': false});
             nv('append', {'js_errors': 'jquery.dataTables.min.js could not be loaded'});
         });
     }
@@ -2054,7 +2059,7 @@ function conditionalJSLoading(){
 	//Only load Tether library when Bootstrap tooltips are present.
 	if ( jQuery('[data-toggle="tooltip"]').length ){
 		jQuery.getScript(nebula.site.resources.js.tether).fail(function(){
-            ga('send', 'exception', {'exDescription': 'tether.min.js could not be loaded', 'exFatal': false});
+            ga('send', 'exception', {'exDescription': '(JS) tether.min.js could not be loaded', 'exFatal': false});
             nv('append', {'js_errors': 'tether.min.js could not be loaded'});
         });
 	}
@@ -2075,7 +2080,7 @@ function nebulaLoadCSS(url){
 	    try {
 		    document.createStyleSheet(url);
 	    } catch(e){
-		    ga('send', 'exception', {'exDescription': url + ' could not be loaded', 'exFatal': false});
+		    ga('send', 'exception', {'exDescription': '(JS) ' + url + ' could not be loaded', 'exFatal': false});
 		    nv('append', {'css_errors': url + ' could not be loaded'});
 	    }
 	} else {
@@ -2111,7 +2116,7 @@ function nebulaAddressAutocomplete(autocompleteInput, name){
 					    }
 				    });
 				}).fail(function(){
-					ga('send', 'exception', {'exDescription': 'Google Maps Places script could not be loaded', 'exFatal': false});
+					ga('send', 'exception', {'exDescription': '(JS) Google Maps Places script could not be loaded', 'exFatal': false});
 					nv('append', {'js_errors': 'Google Maps Places script could not be loaded'});
 				});
 			}, 100, 'google maps script load');
@@ -2250,7 +2255,7 @@ function requestPosition(){
 				callback: getCurrentPosition()
 			}); //End Google Maps load
 		}).fail(function(){
-			ga('send', 'exception', {'exDescription': 'Google Maps Places script could not be loaded', 'exFatal': false});
+			ga('send', 'exception', {'exDescription': '(JS) Google Maps Places script could not be loaded', 'exFatal': false});
 		});
 	} else {
 		getCurrentPosition();
@@ -2351,7 +2356,7 @@ function geoErrorCallback(error){
     nebula.dom.document.trigger('geolocationError');
     nebula.dom.body.addClass('geo-error');
     ga('set', gaCustomDimensions['geolocation'], geolocationErrorMessage);
-    ga('send', 'exception', {'exDescription': 'Geolocation error: ' + geolocationErrorMessage, 'exFatal': false});
+    ga('send', 'exception', {'exDescription': '(JS) Geolocation error: ' + geolocationErrorMessage, 'exFatal': false});
     nv('append', {'js_errors': geolocationErrorMessage});
 }
 
@@ -2492,11 +2497,11 @@ function errorMitigation(){
 				thisImage.prop('src', fallbackPNG);
 				thisImage.removeClass('svg');
 			}).fail(function() {
-				ga('send', 'exception', {'exDescription': 'Broken Image: ' + imagePath, 'exFatal': false});
+				ga('send', 'exception', {'exDescription': '(JS) Broken Image: ' + imagePath, 'exFatal': false});
 				nv('append', {'html_errors': 'Broken Image: ' + imagePath});
 			});
 		} else {
-			ga('send', 'exception', {'exDescription': 'Broken Image: ' + imagePath, 'exFatal': false});
+			ga('send', 'exception', {'exDescription': '(JS) Broken Image: ' + imagePath, 'exFatal': false});
 			nv('append', {'html_errors': 'Broken Image: ' + imagePath});
 		}
 	});
@@ -3438,7 +3443,7 @@ function onYouTubeIframeAPIReady(e){
 }
 function onPlayerError(e){
 	var videoInfo = e.target.getVideoData();
-	ga('send', 'exception', {'exDescription': 'Youtube API error for ' + videoInfo.title + ': ' + e.data, 'exFatal': false});
+	ga('send', 'exception', {'exDescription': '(JS) Youtube API error for ' + videoInfo.title + ': ' + e.data, 'exFatal': false});
 	nv('append', {'js_errors': videoInfo.title + ' (Code: ' + e.data + ')'});
 }
 function onPlayerReady(e){
@@ -3555,7 +3560,7 @@ function nebulaVimeoTracking(){
         jQuery.getScript(nebula.site.resources.js.vimeo).done(function(){
 			createVimeoPlayers();
 		}).fail(function(){
-			ga('send', 'exception', {'exDescription': 'Vimeo player.js could not be loaded', 'exFatal': false});
+			ga('send', 'exception', {'exDescription': '(JS) Vimeo player.js could not be loaded', 'exFatal': false});
 			nv('append', {'js_errors': 'Vimeo player.js (remote) could not be loaded'});
 		});
 	}
@@ -3820,7 +3825,7 @@ function desktopNotification(title, message, clickCallback, showCallback, closeC
 		}
 		if ( errorCallback ){
 			instance.onerror = function(){
-				ga('send', 'exception', {'exDescription': 'Desktop Notification error', 'exFatal': false});
+				ga('send', 'exception', {'exDescription': '(JS) Desktop Notification error', 'exFatal': false});
 				errorCallback();
 			};
 		}

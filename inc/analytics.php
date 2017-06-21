@@ -380,11 +380,12 @@
 		ga(function(tracker){
 			tracker.set(gaCustomDimensions['gaCID'], tracker.get('clientId'));
 
-			var originalBuildHitTask = tracker.get('buildHitTask'); //Grab a reference to the default sendHitTask function.
+			var originalBuildHitTask = tracker.get('buildHitTask'); //Grab a reference to the default buildHitTask function.
 			tracker.set('buildHitTask', function(model){
 				var qt = model.get('queueTime') || 0;
 
 				//Always send hit dimensions with all payloads
+				//model.set(gaCustomDimensions['gaCID'], tracker.get('clientId'), true);
 				model.set(gaCustomDimensions['hitID'], uuid(), true);
 				model.set(gaCustomDimensions['hitTime'], String(new Date-qt), true);
 				model.set(gaCustomDimensions['hitType'], model.get('hitType'), true);
@@ -406,7 +407,7 @@
 
 		ga('send', 'pageview'); //Send pageview with all custom dimensions and metrics
 
-		//Initialize event tracking listeners
+		//Initialize event tracking listeners (if they are available)
 		ga(function(){
 			window.GAready = true; //Set a global boolean variable
 			document.dispatchEvent(new Event('gaready')); //Trigger an event when GA is ready (without jQuery)

@@ -145,7 +145,7 @@ trait Functions {
 
 		//Fix responsive oEmbeds
 		//Uses Bootstrap classes: http://v4-alpha.getbootstrap.com/components/utilities/#responsive-embeds
-		add_filter('embed_oembed_html', array($this, 'embed_oembed_html' ), 9999, 4);
+		add_filter('embed_oembed_html', array($this, 'oembed_modifiers'), 9999, 4);
 	}
 
 	//Start output buffering so headers can be sent later for HTTP2 Server Push
@@ -2454,10 +2454,10 @@ trait Functions {
 
 	//Fix responsive oEmbeds
 	//Uses Bootstrap classes: http://v4-alpha.getbootstrap.com/components/utilities/#responsive-embeds
-	public function embed_oembed_html($html, $url, $attr, $post_id) {
+	public function oembed_modifiers($html, $url, $attr, $post_id){
 		//Enable the JS API for Youtube videos
 		if ( strstr($html, 'youtube.com/embed/') ){
-			$html = str_replace('feature=oembed', 'feature=oembed&enablejsapi=1', $html);
+			$html = str_replace('feature=oembed', 'feature=oembed&enablejsapi=1&rel=0', $html);
 		}
 
 		//Force an aspect ratio on certain oEmbeds

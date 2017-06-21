@@ -178,7 +178,7 @@ if ( !trait_exists('Shortcodes') ){
 		public function icon_shortcode($atts){
 			extract(shortcode_atts(array('type' => '', 'color' => 'inherit', 'size' => 'inherit', 'class' => ''), $atts));
 
-			if ( strpos($type, 'fa-') == false ){
+			if ( strpos($type, 'fa-') === false ){
 				$type = 'fa-' . $type;
 			}
 			$extra_style = ( !empty($color) )? 'color:' . $color . ';' :'';
@@ -436,10 +436,10 @@ if ( !trait_exists('Shortcodes') ){
 		public function accordion_item_shortcode( $attributes, $content='' ){
 
 			extract( shortcode_atts( array('class' => '', 'style' => '', 'title' => '', 'default' => 'show'), $attributes) );
-			
+
 			$id = 'collapse' . uniqid();
-			
-			$return = '<div class="card"><div class="card-header" rol="tab"><a data-toggle="collapse" data-parent="#accordion" href="#'.$id.'"><h5 class="m-0"><i class="fa fa-plus"></i> '.$title.'</h5></a></div><div id="'.$id.'" class="collapse '.$default.' '.$class.'" role="tabpanel"><div class="card-block">'.$content.'</div></div></div>';		
+
+			$return = '<div class="card"><div class="card-header" rol="tab"><a data-toggle="collapse" data-parent="#accordion" href="#'.$id.'"><h5 class="m-0"><i class="fa fa-plus"></i> '.$title.'</h5></a></div><div id="'.$id.'" class="collapse '.$default.' '.$class.'" role="tabpanel"><div class="card-block">'.$content.'</div></div></div>';
 
 			return $return;
 		}
