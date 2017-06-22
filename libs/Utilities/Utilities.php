@@ -83,7 +83,6 @@ if ( !trait_exists('Utilities') ){
 			return false;
 		}
 
-
 		//Alias for a less confusing is_admin() function to try to prevent security issues
 		public function is_admin_page(){
 			return is_admin();
@@ -516,6 +515,29 @@ if ( !trait_exists('Utilities') ){
 			}
 		}
 
+		//Create a session and cookie
+		public function set_global_session_cookie($name, $value, $types=array('global', 'session', 'cookie')){
+			$string_value = (string) $value;
+			if ( empty($string_value) ){
+				$string_value = 'false';
+			}
+
+			if ( in_array('global', $types) ){
+				$GLOBALS[$name] = $value;
+			}
+
+			if ( in_array('session', $types) ){
+				$_SESSION[$name] = $value;
+			}
+
+			if ( in_array('cookie', $types) ){
+				$_COOKIE[$name] = $string_value;
+				if ( !headers_sent() ){
+					setcookie($name, $string_value, strtotime('January 1, 2035'), COOKIEPATH, COOKIE_DOMAIN); //Note: Do not let this cookie expire past 2038 or it instantly expires.
+				}
+			}
+		}
+
 		//Fuzzy meta sub key finder (Used to query ACF nested repeater fields).
 		//Example: 'key' => 'dates_%_start_date',
 		public function fuzzy_posts_where($where){
@@ -566,15 +588,31 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Traverse multidimensional arrays
+		public function contains($needle, $haystack){return $this->in_array_r($needle, $haystack, 'contains');}
 		public function in_array_r($needle, $haystack, $strict=true){
 			$override = do_action('pre_in_array_r', $needle, $haystack, $strict);
 			if ( !empty($override) ){return $override;}
 
 			foreach ( $haystack as $item ){
-				if ( ($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_r($needle, $item, $strict)) ){
+				if ( $strict === true ){ //If strict, match the type and the value
+					if ( $item === $needle ){
+						return true;
+					}
+				} else {
+					if ( $strict === 'contains' ){ //If strict is 'contains', check if the item contains the needle
+						if ( stripos($item, $needle) !== false ){
+							return true;
+						}
+					} elseif ( $item == $needle ){ //Otherwise check if the item matches the needle (regardless of type)
+						return true;
+					}
+				}
+
+				if ( is_array($item) && in_array_r($needle, $item, $strict) ){ //If the item is an array, recursively check that array
 					return true;
 				}
 			}
+
 			return false;
 		}
 
@@ -613,21 +651,6 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			return $total_size;
-		}
-
-		//Checks to see if an array contains a string.
-		public function contains($str, array $arr){
-			$override = do_action('pre_contains', $str, $arr);
-			if ( !empty($override) ){
-				return $override;
-			}
-
-			foreach ( $arr as $a ){
-				if ( stripos($str, $a) !== false ){
-					return true;
-				}
-			}
-			return false;
 		}
 
 		//Check if a value is a UTC Timestamp

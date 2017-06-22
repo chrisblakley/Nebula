@@ -73,7 +73,7 @@ class DeviceDetector
     /**
      * Current version number of DeviceDetector
      */
-    const VERSION = '3.7.5';
+    const VERSION = '3.7.8';
 
     /**
      * Holds all registered client types
@@ -253,12 +253,9 @@ class DeviceDetector
      */
     public function addClientParser($parser)
     {
-	    require_once(dirname(__FILE__) . '/Parser/Client/FeedReader.php');
-		require_once(dirname(__FILE__) . '/Parser/Client/MobileApp.php');
-		require_once(dirname(__FILE__) . '/Parser/Client/MediaPlayer.php');
-		require_once(dirname(__FILE__) . '/Parser/Client/PIM.php');
-		require_once(dirname(__FILE__) . '/Parser/Client/Browser.php');
-		require_once(dirname(__FILE__) . '/Parser/Client/Library.php');
+	    //BEGIN Nebula fix for required files.
+		require_once(dirname(__FILE__) . '/Parser/Client/' . $parser . '.php');
+		//End Nebula fix for required files.
 
         if (is_string($parser) && class_exists('DeviceDetector\\Parser\\Client\\' . $parser)) {
             $className = 'DeviceDetector\\Parser\\Client\\' . $parser;
@@ -285,12 +282,9 @@ class DeviceDetector
      */
     public function addDeviceParser($parser)
     {
-	    require_once(dirname(__FILE__) . '/Parser/Device/HbbTv.php');
-		require_once(dirname(__FILE__) . '/Parser/Device/Console.php');
-		require_once(dirname(__FILE__) . '/Parser/Device/CarBrowser.php');
-		require_once(dirname(__FILE__) . '/Parser/Device/Camera.php');
-		require_once(dirname(__FILE__) . '/Parser/Device/PortableMediaPlayer.php');
-		require_once(dirname(__FILE__) . '/Parser/Device/Mobile.php');
+	    //BEGIN Nebula fix for required files.
+        require_once(dirname(__FILE__) . '/Parser/Device/' . $parser . '.php');
+		//End Nebula fix for required files.
 
         if (is_string($parser) && class_exists('DeviceDetector\\Parser\\Device\\' . $parser)) {
             $className = 'DeviceDetector\\Parser\\Device\\' . $parser;
@@ -356,7 +350,7 @@ class DeviceDetector
     public function isTouchEnabled()
     {
         $regex = 'Touch';
-        return $this->matchUserAgent($regex);
+        return !!$this->matchUserAgent($regex);
     }
 
     /**
@@ -367,7 +361,7 @@ class DeviceDetector
     protected function hasAndroidTableFragment()
     {
         $regex = 'Android( [\.0-9]+)?; Tablet;';
-        return $this->matchUserAgent($regex);
+        return !!$this->matchUserAgent($regex);
     }
 
     /**
@@ -378,7 +372,7 @@ class DeviceDetector
     protected function hasAndroidMobileFragment()
     {
         $regex = 'Android( [\.0-9]+)?; Mobile;';
-        return $this->matchUserAgent($regex);
+        return !!$this->matchUserAgent($regex);
     }
 
     protected function usesMobileBrowser()

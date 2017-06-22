@@ -2023,12 +2023,13 @@ function conditionalJSLoading(){
 		if ( typeof google == "undefined" || !has(google, 'maps') ){ //If the API has not already been called
 			jQuery.getScript('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){
 			    google.load('maps', '3', {
+			        other_params: 'libraries=places',
 			        callback: function(){
 			        	nebula.dom.document.trigger('nebula_google_maps_api_loaded');
 			        }
 			    });
 			}).fail(function(){
-			    ga('send', 'exception', {'exDescription': '(JS) Google Maps JS API script could not be loaded', 'exFatal': false});
+				ga('send', 'exception', {'exDescription': '(JS) Google Maps script could not be loaded', 'exFatal': true});
 			});
 		}
 	}
@@ -2108,16 +2109,15 @@ function nebulaAddressAutocomplete(autocompleteInput, name){
 			googleAddressAutocompleteCallback(autocompleteInput, name);
 		} else {
 			debounce(function(){
-				jQuery.getScript('https://www.google.com/jsapi', function(){
+				jQuery.getScript('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){
 				    google.load('maps', '3', {
-					    other_params: 'libraries=places&key=' + nebula.site.options.nebula_google_browser_api_key,
-					    callback: function(){
+				        other_params: 'libraries=places',
+				        callback: function(){
 							googleAddressAutocompleteCallback(autocompleteInput, name);
 					    }
 				    });
 				}).fail(function(){
-					ga('send', 'exception', {'exDescription': '(JS) Google Maps Places script could not be loaded', 'exFatal': false});
-					nv('append', {'js_errors': 'Google Maps Places script could not be loaded'});
+					ga('send', 'exception', {'exDescription': '(JS) Google Maps script could not be loaded', 'exFatal': true});
 				});
 			}, 100, 'google maps script load');
 		}
@@ -2248,14 +2248,19 @@ function googleAddressAutocompleteCallback(autocompleteInput, name){
 
 //Request Geolocation
 function requestPosition(){
+	console.log('inside request position');
+
 	if ( typeof google != "undefined" && has(google, 'maps') ){
-		jQuery.getScript('https://www.google.com/jsapi', function(){
-			google.load('maps', '3', {
-				other_params: 'libraries=places&key=' + nebula.site.options.nebula_google_browser_api_key,
-				callback: getCurrentPosition()
-			}); //End Google Maps load
+		console.log('need google map script');
+		jQuery.getScript('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){
+		    google.load('maps', '3', {
+		        other_params: 'libraries=places',
+		        callback: function(){
+		        	getCurrentPosition();
+		        }
+		    });
 		}).fail(function(){
-			ga('send', 'exception', {'exDescription': '(JS) Google Maps Places script could not be loaded', 'exFatal': false});
+			ga('send', 'exception', {'exDescription': '(JS) Google Maps script could not be loaded', 'exFatal': true});
 		});
 	} else {
 		getCurrentPosition();

@@ -5,73 +5,75 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Visitors') ){
 	trait Visitors {
 		public function hooks(){
-			//Register table names in $wpdb global
-			add_action('init', array($this, 'register_table_names'));
-
-			//Nebula Visitor Admin Page
 			if ( nebula()->get_option('visitors_db') ){
-				//Add Visitors menu in admin
-				add_action('admin_menu', array($this, 'admin_menu'));
+				//Register table names in $wpdb global
+				add_action('init', array($this, 'register_table_names'));
+
+				//Nebula Visitor Admin Page
+				if ( nebula()->get_option('visitors_db') ){
+					//Add Visitors menu in admin
+					add_action('admin_menu', array($this, 'admin_menu'));
+				}
+
+				//The controller for Nebula Visitors DB process.
+				//Triggering at get_header allows for template_redirects to happen before fingerprinting (prevents false multipageviews)
+				add_action('get_header', array($this, 'controller'), 11);
+
+				//Get details for user
+				add_action('wp_ajax_nebula_visitor_admin_detail', array($this, 'admin_detail'));
+				add_action('wp_ajax_nopriv_nebula_visitor_admin_detail', array($this, 'admin_detail'));
+
+				//Manually update data from the admin interface
+				add_action('wp_ajax_nebula_ajax_manual_update_visitor', array($this, 'ajax_manual_update_visitor'));
+				add_action('wp_ajax_nopriv_nebula_ajax_manual_update_visitor', array($this, 'ajax_manual_update_visitor'));
+
+				//Find similar visitors by IP or IP and User Agent
+				add_action('wp_ajax_nebula_ajax_similar_visitors', array($this, 'ajax_similar_visitors'));
+				add_action('wp_ajax_nopriv_nebula_ajax_similar_visitors', array($this, 'ajax_similar_visitors'));
+
+				//Manually delete user from the admin interface
+				add_action('wp_ajax_nebula_ajax_manual_delete_visitor', array($this, 'ajax_manual_delete_visitor'));
+				add_action('wp_ajax_nopriv_nebula_ajax_manual_delete_visitor', array($this, 'ajax_manual_delete_visitor'));
+
+				//Manually remove expired visitors from the admin interface
+				add_action('wp_ajax_nebula_ajax_manual_remove_expired', array($this, 'ajax_manual_remove_expired'));
+				add_action('wp_ajax_nopriv_nebula_ajax_manual_remove_expired', array($this, 'ajax_manual_remove_expired'));
+
+				//Manually remove visitors with a Lead Score of 0 (or less)
+				add_action('wp_ajax_nebula_ajax_manual_remove_noscore', array($this, 'ajax_manual_remove_noscore'));
+				add_action('wp_ajax_nopriv_nebula_ajax_manual_remove_noscore', array($this, 'ajax_manual_remove_noscore'));
+
+				//Manually delete the entire Nebula Visitor tables
+				add_action('wp_ajax_nebula_ajax_drop_nv_table', array($this, 'ajax_drop_nv_table'));
+				add_action('wp_ajax_nopriv_nebula_ajax_drop_nv_table', array($this, 'ajax_drop_nv_table'));
+
+				//Nebula Visitor Data
+				add_action('admin_init', array($this, 'create_tables') );
+
+				//Retrieve User Data
+				add_action('wp_ajax_nebula_vdb_ajax_get_visitor_data', array($this, 'ajax_get_visitor_data'));
+				add_action('wp_ajax_nopriv_nebula_vdb_ajax_get_visitor_data', array($this, 'ajax_get_visitor_data'));
+
+				//Vague Data - Only update if it doesn't already exist in the DB
+				add_action('wp_ajax_nebula_ajax_vague_visitor', array($this, 'ajax_vague_visitor'));
+				add_action('wp_ajax_nopriv_nebula_ajax_vague_visitor', array($this, 'ajax_vague_visitor'));
+
+				//Update Visitor Data
+				add_action('wp_ajax_nebula_vdb_ajax_update_visitor', array($this, 'ajax_update_visitor'));
+				add_action('wp_ajax_nopriv_nebula_vdb_ajax_update_visitor', array($this, 'ajax_update_visitor'));
+
+				//Append to Visitor Data
+				add_action('wp_ajax_nebula_vdb_ajax_append_visitor', array($this, 'ajax_append_visitor'));
+				add_action('wp_ajax_nopriv_nebula_vdb_ajax_append_visitor', array($this, 'ajax_append_visitor'));
+
+				//Remove data from the Nebula Visitor DB
+				add_action('wp_ajax_nebula_vdb_ajax_remove_datapoint', array($this, 'ajax_remove_datapoint'));
+				add_action('wp_ajax_nopriv_nebula_vdb_ajax_remove_datapoint', array($this, 'ajax_remove_datapoint'));
+
+				//Increment Visitor Data
+				add_action('wp_ajax_nebula_vdb_ajax_increment_visitor', array($this, 'ajax_increment_visitor'));
+				add_action('wp_ajax_nopriv_nebula_vdb_ajax_increment_visitor', array($this, 'ajax_increment_visitor'));
 			}
-
-			//Get details for user
-			add_action('wp_ajax_nebula_visitor_admin_detail', array($this, 'admin_detail'));
-			add_action('wp_ajax_nopriv_nebula_visitor_admin_detail', array($this, 'admin_detail'));
-
-			//Manually update data from the admin interface
-			add_action('wp_ajax_nebula_ajax_manual_update_visitor', array($this, 'ajax_manual_update_visitor'));
-			add_action('wp_ajax_nopriv_nebula_ajax_manual_update_visitor', array($this, 'ajax_manual_update_visitor'));
-
-			//Find similar visitors by IP or IP and User Agent
-			add_action('wp_ajax_nebula_ajax_similar_visitors', array($this, 'ajax_similar_visitors'));
-			add_action('wp_ajax_nopriv_nebula_ajax_similar_visitors', array($this, 'ajax_similar_visitors'));
-
-			//Manually delete user from the admin interface
-			add_action('wp_ajax_nebula_ajax_manual_delete_visitor', array($this, 'ajax_manual_delete_visitor'));
-			add_action('wp_ajax_nopriv_nebula_ajax_manual_delete_visitor', array($this, 'ajax_manual_delete_visitor'));
-
-			//Manually remove expired visitors from the admin interface
-			add_action('wp_ajax_nebula_ajax_manual_remove_expired', array($this, 'ajax_manual_remove_expired'));
-			add_action('wp_ajax_nopriv_nebula_ajax_manual_remove_expired', array($this, 'ajax_manual_remove_expired'));
-
-			//Manually remove visitors with a Lead Score of 0 (or less)
-			add_action('wp_ajax_nebula_ajax_manual_remove_noscore', array($this, 'ajax_manual_remove_noscore'));
-			add_action('wp_ajax_nopriv_nebula_ajax_manual_remove_noscore', array($this, 'ajax_manual_remove_noscore'));
-
-			//Manually delete the entire Nebula Visitor tables
-			add_action('wp_ajax_nebula_ajax_drop_nv_table', array($this, 'ajax_drop_nv_table'));
-			add_action('wp_ajax_nopriv_nebula_ajax_drop_nv_table', array($this, 'ajax_drop_nv_table'));
-
-			//Nebula Visitor Data
-			add_action('admin_init', array($this, 'create_tables') );
-
-			//The controller for Nebula Visitors DB process.
-			//Triggering at get_header allows for template_redirects to happen before fingerprinting (prevents false multipageviews)
-			add_action('get_header', array($this, 'controller'), 11);
-
-			//Retrieve User Data
-			add_action('wp_ajax_nebula_vdb_ajax_get_visitor_data', array($this, 'ajax_get_visitor_data'));
-			add_action('wp_ajax_nopriv_nebula_vdb_ajax_get_visitor_data', array($this, 'ajax_get_visitor_data'));
-
-			//Vague Data - Only update if it doesn't already exist in the DB
-			add_action('wp_ajax_nebula_ajax_vague_visitor', array($this, 'ajax_vague_visitor'));
-			add_action('wp_ajax_nopriv_nebula_ajax_vague_visitor', array($this, 'ajax_vague_visitor'));
-
-			//Update Visitor Data
-			add_action('wp_ajax_nebula_vdb_ajax_update_visitor', array($this, 'ajax_update_visitor'));
-			add_action('wp_ajax_nopriv_nebula_vdb_ajax_update_visitor', array($this, 'ajax_update_visitor'));
-
-			//Append to Visitor Data
-			add_action('wp_ajax_nebula_vdb_ajax_append_visitor', array($this, 'ajax_append_visitor'));
-			add_action('wp_ajax_nopriv_nebula_vdb_ajax_append_visitor', array($this, 'ajax_append_visitor'));
-
-			//Remove data from the Nebula Visitor DB
-			add_action('wp_ajax_nebula_vdb_ajax_remove_datapoint', array($this, 'ajax_remove_datapoint'));
-			add_action('wp_ajax_nopriv_nebula_vdb_ajax_remove_datapoint', array($this, 'ajax_remove_datapoint'));
-
-			//Increment Visitor Data
-			add_action('wp_ajax_nebula_vdb_ajax_increment_visitor', array($this, 'ajax_increment_visitor'));
-			add_action('wp_ajax_nopriv_nebula_vdb_ajax_increment_visitor', array($this, 'ajax_increment_visitor'));
 		}
 
 		// Register table names in $wpdb global
@@ -1147,20 +1149,20 @@ if ( !trait_exists('Visitors') ){
 		//Figure out which nebula ID to use in priority order
 		public function get_appropriate_nebula_id($check_db=true){
 			//From global variable
-			if ( !empty($GLOBALS['nebula_id']) ){
-				return $GLOBALS['nebula_id'];
+			if ( !empty($GLOBALS['nid']) ){
+				return $GLOBALS['nid'];
 			}
 
 			//From Session
-			if ( isset($_SESSION) && !empty($_SESSION['nebula_id']) ){
-				$this->force_nebula_id_to_visitor($_SESSION['nebula_id']);
-				return $_SESSION['nebula_id'];
+			if ( isset($_SESSION) && !empty($_SESSION['nid']) ){
+				$this->set_global_session_cookie('nid', $_SESSION['nid']);
+				return $_SESSION['nid'];
 			}
 
 			//From Cookie
 			$nebula_id_from_cookie = $this->get_nebula_id_from_cookie();
 			if ( !empty($nebula_id_from_cookie) ){
-				$this->force_nebula_id_to_visitor($nebula_id_from_cookie);
+				$this->set_global_session_cookie('nid', $nebula_id_from_cookie);
 				return $nebula_id_from_cookie;
 			}
 
@@ -1168,26 +1170,26 @@ if ( !trait_exists('Visitors') ){
 			if ( $check_db && nebula()->get_option('visitors_db') ){ //Only run if confirmed returning visitor
 				$nebula_id_from_ga_cid = $this->get_previous_nebula_id_by_ga_cid();
 				if ( !empty($nebula_id_from_ga_cid) ){
-					$this->force_nebula_id_to_visitor($nebula_id_from_ga_cid);
+					$this->set_global_session_cookie('nid', $nebula_id_from_ga_cid);
 					return $nebula_id_from_ga_cid;
 				}
 			}
 
 			//Generate a new Nebula ID
 			$generated_nebula_id = $this->generate_nebula_id();
-			$this->force_nebula_id_to_visitor($generated_nebula_id);
+			$this->set_global_session_cookie('nid', $generated_nebula_id);
 			return $generated_nebula_id;
 		}
 
 		//Check if the visitor is returning
 		public function is_returning_visitor(){
 			//From global variable
-			if ( !empty($GLOBALS['nebula_id']) ){
+			if ( !empty($GLOBALS['nid']) ){
 				return true;
 			}
 
 			//From Session
-			if ( isset($_SESSION) && !empty($_SESSION['nebula_id']) ){
+			if ( isset($_SESSION) && !empty($_SESSION['nid']) ){
 				return true;
 			}
 
@@ -1209,7 +1211,7 @@ if ( !trait_exists('Visitors') ){
 					//@TODO "Nebula" 0: This uses the first result... We want to find a user that is known, or that has a GA CID, else highest score.
 					$unique_new_visitor = (array) $unique_new_visitor[0];
 
-					$this->force_nebula_id_to_visitor($unique_new_visitor['nebula_id']); //Give this user the same Nebula ID
+					$this->set_global_session_cookie('nid', $unique_new_visitor['nebula_id']); //Give this user the same Nebula ID
 					$this->append_visitor_data(array('notices' => 'This user was tracked by fingerprint.'), false);
 					return true;
 				}
@@ -1225,24 +1227,6 @@ if ( !trait_exists('Visitors') ){
 			}
 
 			return false;
-		}
-
-		//Store the Nebula ID in a cookie
-		public function force_nebula_id_to_visitor($forced_nebula_id){
-			//Global
-			$GLOBALS['nebula_id'] = $forced_nebula_id;
-
-			//Session
-			$_SESSION['nebula_id'] = $forced_nebula_id;
-
-			//Cookie
-			$_COOKIE['nid'] = $forced_nebula_id;
-			$nid_expiration = strtotime('January 1, 2035'); //Note: Do not let this cookie expire past 2038 or it instantly expires.
-			if ( !headers_sent() ){
-				setcookie('nid', $forced_nebula_id, $nid_expiration, COOKIEPATH, COOKIE_DOMAIN); //Store the Nebula ID as a cookie called "nid".
-			}
-
-			return true;
 		}
 
 		//Check if the ga_cid exists, and if so use THAT nebula_id again

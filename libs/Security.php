@@ -173,6 +173,10 @@ if ( !trait_exists('Security') ){
 
 		//Check referrer for known spambots and blacklisted domains
 		public function domain_prevention(){
+			if ( isset($_SESSION['blacklisted']) && $_SESSION['blacklisted'] == false ){
+				return false;
+			}
+
 			if ( $this->get_option('domain_blacklisting') ){
 				$blacklisted_domains = $this->get_domain_blacklist();
 
@@ -183,21 +187,18 @@ if ( !trait_exists('Security') ){
 						header('HTTP/1.1 403 Forbidden');
 						die;
 					}
-
 					if ( isset($_SERVER['REMOTE_HOST']) && $this->contains(strtolower($_SERVER['REMOTE_HOST']), $blacklisted_domains) ){
 						$this->ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Hostname: ' . $_SERVER['REMOTE_HOST'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						die;
 					}
-
 					if ( isset($_SERVER['SERVER_NAME']) && $this->contains(strtolower($_SERVER['SERVER_NAME']), $blacklisted_domains) ){
 						$this->ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Server Name: ' . $_SERVER['SERVER_NAME'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						die;
 					}
-
 					if ( isset($_SERVER['REMOTE_ADDR']) && $this->contains(strtolower(gethostbyaddr($_SERVER['REMOTE_ADDR'])), $blacklisted_domains) ){
 						$this->ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Network Hostname: ' . $_SERVER['SERVER_NAME'] . ' (IP: ' . $_SERVER['REMOTE_ADDR'] . ')');
 						do_action('nebula_spambot_prevention');
@@ -207,6 +208,8 @@ if ( !trait_exists('Security') ){
 				} else {
 					$this->ga_send_event('Security Precaution', 'Error', 'spammers.txt has no entries!');
 				}
+
+				$this->set_global_session_cookie('blacklist', false, array('session'));
 			}
 		}
 

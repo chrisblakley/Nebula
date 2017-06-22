@@ -45,6 +45,25 @@
   engine:
     default: 'Gecko'
 
+# Waterfox
+- regex: 'Waterfox(?:/(\d+[\.\d]+))?'
+  name: 'Waterfox'
+  version: '$1'
+  engine:
+    default: 'Gecko'
+
+#AlohaBrowser
+- regex: 'AlohaBrowser(?:/(\d+[\.\d]+))?'
+  name: 'Aloha Browser'
+  version: '$1'
+
+#Epic
+- regex: 'Epic(?:/(\d+[\.\d]+))?'
+  name: 'Epic'
+  version: '$1'
+  engine:
+    default: 'Gecko'
+
 #Fennec (Firefox for mobile)
 - regex: 'Fennec(?:/(\d+[\.\d]+))?'
   name: 'Fennec'
@@ -102,6 +121,11 @@
   version: '$1'
   engine:
     default: 'Blink'
+
+#Iridium
+- regex: 'Iridium(?:/(\d+[\.\d]+))?'
+  name: 'Iridium'
+  version: '$1'
 
 #Iceweasel
 - regex: 'Iceweasel(?:/(\d+[\.\d]+))?'
@@ -174,6 +198,13 @@
   engine:
     default: 'Gecko'
 
+#Firefox Mobile
+- regex: '(Mobile|Tablet).*Firefox(?:/(\d+[\.\d]+))?'
+  name: 'Firefox Mobile'
+  version: '$2'
+  engine:
+    default: 'Gecko'
+
 #Firefox
 - regex: 'Firefox(?:/(\d+[\.\d]+))?'
   name: 'Firefox'
@@ -186,7 +217,7 @@
   engine:
     default: 'Gecko'
 - regex: 'FxiOS/(\d+[\.\d]+)'
-  name: 'Firefox'
+  name: 'Firefox Mobile'
   version: 'iOS $1'
   engine:
     default: 'WebKit'
@@ -229,6 +260,21 @@
   version: '$1'
   engine:
     default: '' # Mosaic in the first versions, then Gecko
+
+#Polarity
+- regex: '(?:Polarity)(?:[/ ](\d+[\.\d]+))?'
+  name: 'Polarity'
+  version: '$1'
+
+#QupZilla
+- regex: '(?:QupZilla)(?:[/ ](\d+[\.\d]+))?'
+  name: 'QupZilla'
+  version: '$1'
+
+#Dooble
+- regex: '(?:Dooble)(?:[/ ](\d+[\.\d]+))?'
+  name: 'Dooble'
+  version: '$1'
 
 #Opera
 - regex: '(?:Opera Tablet.*Version|Opera/.+Opera Mobi.+Version|Mobile.+OPR)/(\d+[\.\d]+)'
@@ -385,9 +431,9 @@
     versions:
       28: 'Blink'
 
-#Epiphany
+#GNOME Web
 - regex: 'Epiphany(?:/(\d+[\.\d]+))?'
-  name: 'Epiphany'
+  name: 'GNOME Web'
   version: '$1'
   engine:
     default: 'Gecko'
@@ -451,6 +497,14 @@
   engine:
     default: 'WebKit'
 
+#UC Browser
+- regex: 'UC[ ]?Browser(?:[ /]?(\d+[\.\d]+))?'
+  name: 'UC Browser'
+  version: '$1'
+- regex: 'UCWEB(?:[ /]?(\d+[\.\d]+))?'
+  name: 'UC Browser'
+  version: '$1'
+
 #Chrome
 - regex: 'CrMo(?:/(\d+[\.\d]+))?'
   name: 'Chrome Mobile'
@@ -490,14 +544,6 @@
     default: 'WebKit'
     versions:
       28: 'Blink'
-
-#UC Browser
-- regex: 'UC[ ]?Browser(?:[ /]?(\d+[\.\d]+))?'
-  name: 'UC Browser'
-  version: '$1'
-- regex: 'UCWEB(?:[ /]?(\d+[\.\d]+))?'
-  name: 'UC Browser'
-  version: '$1'
 
 #Tizen Browser
 - regex: '(?:Tizen|SLP) Browser(?:/(\d+[\.\d]+))?'
@@ -948,6 +994,16 @@
   version: ''
   engine:
     default: 'WebKit'
+
+#Coast
+- regex: 'Coast(?:/(\d+[\.\d]+))?'
+  name: 'Coast'
+  version: '$1'
+
+#Qutebrowser
+- regex: 'qutebrowser(?:/(\d+[\.\d]+))?'
+  name: 'Qutebrowser'
+  version: '$1'
 
 #Safari
 - regex: '(?:(?:iPod|iPad|iPhone).+Version|MobileSafari)/(\d+[\.\d]+)'

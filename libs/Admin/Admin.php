@@ -19,26 +19,107 @@ if ( !trait_exists('Admin') ){
 				$this->AutomationHooks(); // Register Automation hooks
 				$this->DashboardHooks(); // Register Dashboard hooks
 				$this->UsersHooks(); // Register Users hooks
+
+
+				//Enable editor style for the TinyMCE WYSIWYG editor.
+				add_editor_style($this->bootstrap('reboot'));
+				add_editor_style('assets/css/tinymce.css');
+
+				//Force expire query transients when posts/pages are saved.
+				add_action('save_post', array($this, 'clear_transients'));
+
+				//Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
+				add_action('admin_head', array($this, 'admin_favicon'));
+
+				//Add classes to the admin body
+				add_filter('admin_body_class', array($this, 'admin_body_classes'));
+
+				//Send an email to the current user and site admin that Nebula has been updated.
+				add_action('upgrader_process_complete', array($this, 'theme_update_automation'), 10, 2); //Action 'upgrader_post_install' also exists.
+
+				//Control session time (for the "Remember Me" checkbox)
+				add_filter('auth_cookie_expiration', array($this, 'session_expire'));
+
+				//Disable the logged-in monitoring modal
+				remove_action('admin_enqueue_scripts', 'wp_auth_check_load');
+
+				//Nebula Admin Notices
+				if ( $this->get_option('admin_notices') ){
+					add_action('admin_notices',  array($this, 'admin_notices'));
+				}
+
+				//Check if a post slug has a number appended to it (indicating a duplicate post).
+				//add_filter('wp_unique_post_slug', array($this, 'unique_slug_warning_ajax' ), 10, 4); //@TODO "Nebula" 0: This echos when submitting posts from the front end! nebula()->is_admin_page() does not prevent that...
+
+				//Change default values for the upload media box
+				//These can also be changed by navigating to .../wp-admin/options.php
+				add_action('after_setup_theme', array($this, 'custom_media_display_settings'));
+
+				//Add ID column on post/page listings
+				add_filter('manage_posts_columns', array($this, 'id_columns_head'));
+				add_filter('manage_pages_columns', array($this, 'id_columns_head'));
+
+				//ID column content on post/page listings
+				add_action('manage_posts_custom_column', array($this, 'id_columns_content') , 15, 3);
+				add_action('manage_pages_custom_column', array($this, 'id_columns_content') , 15, 3);
+
+				//Remove most Yoast SEO columns
+				$post_types = get_post_types(array('public' => true), 'names');
+				if ( is_array($post_types) && $post_types !== array() ){
+					foreach ( $post_types as $post_type ){
+						add_filter('manage_edit-' . $post_type . '_columns', array($this, 'remove_yoast_columns')); //@TODO "Nebula" 0: This does not always work.
+					}
+				}
+
+				//Duplicate post
+				add_action('admin_action_duplicate_post_as_draft', array($this, 'duplicate_post_as_draft'));
+
+				//Add the duplicate link to action list for post_row_actions (This works for custom post types too).
+				//Additional post types with the following: add_filter('{post type name}_row_actions', 'rd_duplicate_post_link', 10, 2);
+				add_filter('post_row_actions', array($this, 'rd_duplicate_post_link'), 10, 2);
+				add_filter('page_row_actions', array($this, 'rd_duplicate_post_link'), 10, 2);
+
+				//Show File URL column on Media Library listings
+				add_filter('manage_media_columns', array($this, 'muc_column'));
+
+				add_action('manage_media_custom_column', array($this, 'muc_value'), 10, 2);
+
+				//Enable All Settings page for only Developers who are Admins
+				if ( $this->is_dev(true) && current_user_can('manage_options') ){
+					add_action('admin_menu', array($this, 'all_settings_link'));
+				}
+
+				//Clear caches when plugins are activated if W3 Total Cache is active
+				add_action('admin_init', array($this, 'clear_all_w3_caches'));
+
+				//Admin Footer Enhancements
+				//Left Side
+				add_filter('admin_footer_text', array($this, 'change_admin_footer_left'));
+
+				//Right Side
+				add_filter('update_footer', array($this, 'change_admin_footer_right'), 11);
+
+				//Internal Search Keywords Metabox and Custom Field
+				add_action('load-post.php', array($this, 'post_meta_boxes_setup'));
+				add_action('load-post-new.php', array($this, 'post_meta_boxes_setup'));
 			}
 
-			//Enable editor style for the TinyMCE WYSIWYG editor.
-			add_editor_style($this->bootstrap('reboot'));
-			add_editor_style('assets/css/tinymce.css');
+			if ( $this->is_login_page() ){
+				//Custom login screen
+				add_action('login_head', array($this, 'login_ga'));
 
-			//Force expire query transients when posts/pages are saved.
-			add_action('save_post', array($this, 'clear_transients'));
+				//Change link of login logo to live site
+				add_filter('login_headerurl', array($this, 'custom_login_header_url'));
+
+				//Change alt of login image
+				add_filter('login_headertitle', array($this, 'new_wp_login_title'));
+			}
 
 			//Disable auto curly quotes (smart quotes)
 			remove_filter('the_content', 'wptexturize');
 			remove_filter('the_excerpt', 'wptexturize');
 			remove_filter('comment_text', 'wptexturize');
 			add_filter('run_wptexturize', '__return_false');
-
-			//Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
-			add_action('admin_head', array($this, 'admin_favicon'));
-
-			//Add classes to the admin body
-			add_filter('admin_body_class', array($this, 'admin_body_classes'));
 
 			//Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
 			if ( !$this->get_option('admin_bar') ){ //If Admin Bar is disabled
@@ -78,84 +159,6 @@ if ( !trait_exists('Admin') ){
 
 			//When checking for theme updates, store the next and current Nebula versions from the response. Hook is inside the theme-update-checker.php library.
 			add_action('nebula_theme_update_check', array($this, 'theme_update_version_store'), 10, 2);
-
-			//Send an email to the current user and site admin that Nebula has been updated.
-			add_action('upgrader_process_complete', array($this, 'theme_update_automation'), 10, 2); //Action 'upgrader_post_install' also exists.
-
-			//Control session time (for the "Remember Me" checkbox)
-			add_filter('auth_cookie_expiration', array($this, 'session_expire'));
-
-			//Disable the logged-in monitoring modal
-			remove_action('admin_enqueue_scripts', 'wp_auth_check_load');
-
-			//Custom login screen
-			add_action('login_head', array($this, 'login_ga'));
-
-			//Change link of login logo to live site
-			add_filter('login_headerurl', array($this, 'custom_login_header_url'));
-
-			//Change alt of login image
-			add_filter('login_headertitle', array($this, 'new_wp_login_title'));
-
-			//Nebula Admin Notices
-			if ( $this->get_option('admin_notices') ){
-				add_action('admin_notices',  array($this, 'admin_notices'));
-			}
-
-			//Check if a post slug has a number appended to it (indicating a duplicate post).
-			//add_filter('wp_unique_post_slug', array($this, 'unique_slug_warning_ajax' ), 10, 4); //@TODO "Nebula" 0: This echos when submitting posts from the front end! nebula()->is_admin_page() does not prevent that...
-
-			//Change default values for the upload media box
-			//These can also be changed by navigating to .../wp-admin/options.php
-			add_action('after_setup_theme', array($this, 'custom_media_display_settings'));
-
-			//Add ID column on post/page listings
-			add_filter('manage_posts_columns', array($this, 'id_columns_head'));
-			add_filter('manage_pages_columns', array($this, 'id_columns_head'));
-
-			//ID column content on post/page listings
-			add_action('manage_posts_custom_column', array($this, 'id_columns_content') , 15, 3);
-			add_action('manage_pages_custom_column', array($this, 'id_columns_content') , 15, 3);
-
-			//Remove most Yoast SEO columns
-			$post_types = get_post_types(array('public' => true), 'names');
-			if ( is_array($post_types) && $post_types !== array() ){
-				foreach ( $post_types as $post_type ){
-					add_filter('manage_edit-' . $post_type . '_columns', array($this, 'remove_yoast_columns')); //@TODO "Nebula" 0: This does not always work.
-				}
-			}
-
-			//Duplicate post
-			add_action('admin_action_duplicate_post_as_draft', array($this, 'duplicate_post_as_draft'));
-
-			//Add the duplicate link to action list for post_row_actions (This works for custom post types too).
-			//Additional post types with the following: add_filter('{post type name}_row_actions', 'rd_duplicate_post_link', 10, 2);
-			add_filter('post_row_actions', array($this, 'rd_duplicate_post_link'), 10, 2);
-			add_filter('page_row_actions', array($this, 'rd_duplicate_post_link'), 10, 2);
-
-			//Show File URL column on Media Library listings
-			add_filter('manage_media_columns', array($this, 'muc_column'));
-
-			add_action('manage_media_custom_column', array($this, 'muc_value'), 10, 2);
-
-			//Enable All Settings page for only Developers who are Admins
-			if ( $this->is_dev(true) && current_user_can('manage_options') ){
-				add_action('admin_menu', array($this, 'all_settings_link'));
-			}
-
-			//Clear caches when plugins are activated if W3 Total Cache is active
-			add_action('admin_init', array($this, 'clear_all_w3_caches'));
-
-			//Admin Footer Enhancements
-			//Left Side
-			add_filter('admin_footer_text', array($this, 'change_admin_footer_left'));
-
-			//Right Side
-			add_filter('update_footer', array($this, 'change_admin_footer_right'), 11);
-
-			//Internal Search Keywords Metabox and Custom Field
-			add_action('load-post.php', array($this, 'post_meta_boxes_setup'));
-			add_action('load-post-new.php', array($this, 'post_meta_boxes_setup'));
 		}
 
 		//Force expire query transients when posts/pages are saved.

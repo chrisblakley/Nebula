@@ -217,6 +217,57 @@ if ( !trait_exists('Device') ){
 			}
 		}
 
+		//Check for the Tor browser
+		public function is_tor_browser(){
+			//Check session and cookies first
+			if ( (isset($GLOBALS['tor']) && $GLOBALS['tor'] === true) || (isset($_SESSION['tor']) && $_SESSION['tor'] == true) || (isset($_COOKIE['tor']) && $_COOKIE['tor'] == 'true') ){
+				$GLOBALS['tor'] = true;
+				return true;
+			}
+
+			if ( (isset($GLOBALS['tor']) && $GLOBALS['tor'] === false) && (isset($_SESSION['tor']) && $_SESSION['tor'] == false) ){
+				$GLOBALS['tor'] = false;
+				return false;
+			}
+
+			//Scrape entire exit IP list
+			if ( isset($_SERVER['REMOTE_ADDR']) ){
+				$tor_list = get_transient('nebula_tor_list');
+				if ( empty($tor_list) || nebula()->is_debug() ){ //If transient expired or is debug
+					$response = nebula()->remote_get('https://check.torproject.org/cgi-bin/TorBulkExitList.py?ip=' . $_SERVER['SERVER_ADDR']);
+					if ( !is_wp_error($response) ){
+						$tor_list = $response['body'];
+						set_transient('nebula_tor_list', $tor_list, HOUR_IN_SECONDS*36);
+					}
+				}
+
+				//Parse the file
+				if ( !empty($tor_list) ){
+					foreach( explode("\n", $tor_list) as $line ){
+						if ( !empty($line) && strpos($line, '#') === false ){
+							if ( $line == $_SERVER['REMOTE_ADDR'] ){
+								$this->set_global_session_cookie('tor', true);
+								return true;
+							}
+						}
+					}
+				}
+			}
+
+			//Check individual exit point
+			if ( $this->is_available('http://torproject.org') ){
+				$remote_ip_octets = explode(".", $_SERVER['REMOTE_ADDR']);
+				$server_ip_octets = explode(".", $_SERVER['SERVER_ADDR']);
+				if ( gethostbyname($remote_ip_octets[3] . "." . $remote_ip_octets[2] . "." . $remote_ip_octets[1] . "." . $remote_ip_octets[0] . "." . $_SERVER['SERVER_PORT'] . "." . $remote_ip_octets[3] . "." . $remote_ip_octets[2] . "." . $remote_ip_octets[1] . "." . $remote_ip_octets[0] . ".ip-port.exitlist.torproject.org") == "127.0.0.2" ){
+			        $this->set_global_session_cookie('tor', true);
+					return true;
+			    }
+		    }
+
+			$this->set_global_session_cookie('tor', false, array('global', 'session'));
+			return false;
+		}
+
 		//Returns the requested information of the browser being used.
 		public function get_client($info){ return get_browser($info); }
 		public function get_browser($info='name'){
@@ -225,6 +276,15 @@ if ( !trait_exists('Device') ){
 
 			if ( nebula()->get_option('device_detection') ){
 				$client = $GLOBALS["device_detect"]->getClient();
+				if ( $this->is_tor_browser() ){
+					$client = array(
+						'name' => 'Tor',
+						'version' => 0, //Not possible to detect
+						'engine' => 'Gecko',
+						'type' => 'browser',
+					);
+				}
+
 				switch ( strtolower($info) ){
 					case 'full':
 						return $client['name'] . ' ' . $client['version'];
@@ -340,7 +400,7 @@ if ( !trait_exists('Device') ){
 
 			if ( nebula()->get_option('device_detection') ){
 				if ( empty($engine) ){
-					trigger_error('nebula_is_engine requires a parameter of requested engine.');
+					trigger_error('is_engine requires a parameter of requested engine.');
 					return false;
 				}
 
@@ -354,8 +414,8 @@ if ( !trait_exists('Device') ){
 						break;
 				}
 
-				$actual_browser = $GLOBALS["device_detect"]->getClient();
-				if ( strpos(strtolower($actual_browser['engine']), strtolower($engine)) !== false ){
+				$actual_engine = $this->get_browser('engine');
+				if ( strpos(strtolower($actual_engine), strtolower($engine)) !== false ){
 					return true;
 				}
 			}

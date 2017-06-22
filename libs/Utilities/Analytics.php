@@ -272,8 +272,6 @@ if ( !trait_exists('Analytics') ){
 
 			//https://ga-dev-tools.appspot.com/hit-builder/
 
-			//echo '<p>' . http_build_query($data) . '</p>';
-
 			$response = wp_remote_get('https://www.google-analytics.com/collect?payload_data&' . http_build_query($data));
 			return $response;
 		}
