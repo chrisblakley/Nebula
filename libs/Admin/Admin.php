@@ -319,7 +319,7 @@ if ( !trait_exists('Admin') ){
 				}
 			}
 
-			//Check for important warnings for the Admin Bar
+			//Check for important warnings/notifications for the Admin Bar
 			$nebula_warning_icon = '';
 			if ( $this->get_option('admin_notices') ){
 				if ( !$this->get_option('ga_tracking_id') ){
@@ -488,8 +488,8 @@ if ( !trait_exists('Admin') ){
 
 		//Nebula Theme Update Checker
 		public function theme_json(){
-			$override = do_action('pre_nebula_theme_json');
-			if ( !empty($override) ){return;}
+			$override = apply_filters('pre_nebula_theme_json', null);
+			if ( isset($override) ){return;}
 
 			$nebula_data = get_option('nebula_data');
 
@@ -535,8 +535,8 @@ if ( !trait_exists('Admin') ){
 
 		//Send an email to the current user and site admin that Nebula has been updated.
 		public function theme_update_automation($upgrader_object, $options){
-			$override = do_action('pre_nebula_theme_update_automation');
-			if ( !empty($override) ){return;}
+			$override = apply_filters('pre_nebula_theme_update_automation', null);
+			if ( isset($override) ){return;}
 
 			if ( $options['type'] === 'theme' && $this->in_array_r('Nebula-master', $options['themes']) ){
 				$prev_version = $this->get_data('current_version');
@@ -562,7 +562,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				$subject = 'Nebula updated to ' . $new_version . ' for ' . html_entity_decode(get_bloginfo('name')) . '.';
-				$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . '</strong> (Committed: ' . $prev_version_commit_date . ') to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url() . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank" rel="noopener">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
+				$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . '</strong> (Committed: ' . $prev_version_commit_date . ') to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url('/') . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank" rel="noopener">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
 
 				//Set the content type to text/html for the email.
 				add_filter('wp_mail_content_type', function($content_type){
@@ -595,7 +595,7 @@ if ( !trait_exists('Admin') ){
 			return get_option('blogname');
 		}
 
-		//Nebula Admin Notices
+		//Nebula Admin Notices/Warnings/Notifications
 		public function admin_notices(){
 			if ( current_user_can('manage_options') || $this->is_dev() ){
 				//Check PHP version
@@ -633,6 +633,11 @@ if ( !trait_exists('Admin') ){
 				//Check for "Discourage searching engines..." setting
 				if ( get_option('blog_public') == 0 ){
 					echo '<div class="nebula-admin-notice error"><p><a href="options-reading.php">Search Engine Visibility</a> is currently disabled!</p></div>';
+				}
+
+				//Check for /offline page when using Service Worker
+				if ( $this->get_option('service_worker') && is_null('offline') ){
+					echo '<div class="nebula-admin-notice error"><p>It is recommended to make an Offline page when using Service Worker. <a href="post-new.php?post_type=page">Manually add one</a></p></div>';
 				}
 
 				//Check for "Just Another WordPress Blog" tagline
@@ -706,8 +711,8 @@ if ( !trait_exists('Admin') ){
 
 		//Check the current (or passed) PHP version against the PHP support timeline.
 		public function php_version_support($php_version=PHP_VERSION){
-			$override = do_action('pre_nebula_php_version_support', $php_version);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_php_version_support', null, $php_version);
+			if ( isset($override) ){return;}
 
 			$php_timeline_json_file = get_template_directory() . '/inc/data/php_timeline.json';
 			$php_timeline = get_transient('nebula_php_timeline');

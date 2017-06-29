@@ -14,7 +14,6 @@ jQuery(function(){
 	//Navigation
 	mmenus();
 	subnavExpanders();
-	nebulaPrerenderListeners();
 	menuSearchReplacement();
 
 	//Search
@@ -93,6 +92,7 @@ jQuery(window).on('load', function(){
 	nebula.dom.html.addClass('loaded');
 
 	performanceMetrics();
+	nebulaServiceWorker();
 
 	setTimeout(function(){
 		emphasizeSearchTerms();
@@ -115,6 +115,10 @@ jQuery(window).on('resize', function(){
 	}, 500, 'window resize');
 }); //End Window Resize
 
+
+/*==========================
+ Optimization Functions
+ ===========================*/
 
 //Cache common selectors and set consistent regex patterns
 function cacheSelectors(force){
@@ -143,6 +147,129 @@ function cacheSelectors(force){
 	}
 }
 
+//ServiceWorker
+function nebulaServiceWorker(){
+	if ( nebula.site.options.sw && 'serviceWorker' in navigator ){
+		//Register
+		navigator.serviceWorker.register(nebula.site.sw_url).then(function(registration){
+			//console.log('ServiceWorker registration successful with scope: ', registration.scope);
+			//console.debug(registration);
+
+			//Unregister the ServiceWorker on ?debug
+			if ( nebula.dom.html.hasClass('debug') ){
+				registration.unregister();
+			}
+		}, function(err) {
+			ga('send', 'exception', {'exDescription': '(JS) ServiceWorker registration failed: ' + err, 'exFatal': false});
+		});
+
+		//If Service Worker controller exists yet (for postMessage)
+		if ( navigator.serviceWorker.controller ){
+			//navigator.serviceWorker.controller.postMessage('yolo');
+		}
+
+		nebulaPredictiveCacheListeners();
+
+		//Determine storage quota and usage
+		//@todo: does this need to be done here? or can I check this in sw.js? I bet I could move it.
+		if ( 'storageQuota' in navigator ){ //Not working even though it is Chrome 55+... Maybe it's a experiment flag?
+			//console.log('we have storagequota');
+
+			navigator.storageQuota.queryInfo('temporary').then(function(info){
+				//console.log(info.quota); //Result: <quota in bytes>
+				//console.log(info.usage); //Result: <used data in bytes>
+			});
+		}
+
+		//Send data to sw.js
+		//Listen for claiming of our ServiceWorker
+		//Is this the proper way to listen for the SW to be ready? or use "ready" below?
+		navigator.serviceWorker.addEventListener('controllerchange', function(event){ //This is never firing...
+			//console.log('service worker controllerchange!');
+
+			//Listen for changes in the state of our ServiceWorker
+			navigator.serviceWorker.controller.addEventListener('statechange', function(){
+				//console.log('service worker statechange!');
+
+				//If the ServiceWorker becomes "activated", let the user know they can go offline!
+				if ( this.state === 'activated' ){
+					//Show the "You may now use offline" notification
+					//console.log('You may now use offline.');
+				}
+			});
+		});
+
+		//Is this the proper way to listen for the SW to be ready? or use above?
+		navigator.serviceWorker.ready.then(function(registration){
+			//console.log('Service Worker is ready');
+			//registration.active.postMessage('offline_check');
+		});
+
+		//Listen to the sw.js for event:
+		navigator.serviceWorker.addEventListener('message', function(event){
+			//console.log("Received a message from sw.js: ");
+			//console.debug(event.data);
+		});
+	}
+}
+
+//Detections for events specific to predicting the next pageview.
+function nebulaPredictiveCacheListeners(){
+	if ( 'caches' in window && !nebula.dom.body.hasClass('offline') ){
+		//Any post listing page
+		if ( jQuery('.first-post .entry-title a').length ){
+			nebulaAddToCache(jQuery('.first-post .entry-title a').attr('href'));
+		}
+
+		//Internal link hovers
+		var predictiveHoverTimeout;
+		jQuery('a').hover(function(){
+			oThis = jQuery(this);
+
+			if ( !predictiveHoverTimeout ){
+				predictiveHoverTimeout = window.setTimeout(function(){
+					predictiveHoverTimeout = null; //Reset the timer
+					if ( oThis.attr('target') !== '_blank' ){
+						nebulaAddToCache(oThis.attr('href'));
+					}
+				}, 750);
+			}
+		}, function(){
+			if ( predictiveHoverTimeout ){
+				window.clearTimeout(predictiveHoverTimeout);
+				predictiveHoverTimeout = null;
+			}
+		});
+	}
+}
+
+//Add items to the cache
+function nebulaAddToCache(url){
+	if ( 'caches' in window && !nebula.dom.body.hasClass('offline') ){
+		//Since there can be multiple caches, the cache name must match what is in sw.js!
+
+		//Prevent caching of URLs containing certain strings
+		var substrings = ['chrome-extension://', '/wp-login.php', '/wp-admin', 'analytics', 'collect'];
+		var length = substrings.length;
+		while ( length-- ){
+			if ( url.indexOf(substrings[length]) !== -1 ){
+				return false; //Do not cache (disallowed string)
+			}
+		}
+
+		if ( url.length > 1 && url.indexOf('#') !== 0 && url.indexOf('?') === -1 ){
+			caches.open(nebula.site.cache).then(function(cache){
+				cache.add(url);
+			});
+
+			return true;
+		} else {
+			return false; //Do not cache (additional criteria)
+		}
+	} else {
+		return false;
+	}
+}
 
 /*==========================
  Detection Functions
@@ -1013,7 +1140,7 @@ function autocompleteSearch(element, types){
 						ga('set', gaCustomMetrics['autocompleteSearches'], 1);
 						if ( data ){
 							nebula.dom.document.trigger('nebula_autocomplete_search_results', data);
-							nebulaPrerender(data[0].link);
+							nebulaAddToCache(data[0].link);
 							jQuery.each(data, function(index, value){
 								value.label = value.label.replace(/&#038;/g, "\&");
 							});
@@ -1564,52 +1691,10 @@ function showSuggestedGCSEPage(title, url){
 	if ( hostname.test(url) ){
 		jQuery('.gcse-suggestion').attr('href', url).text(title);
 		jQuery('#nebula-drawer.suggestedpage').slideDown();
-		nebulaPrerender(url);
+		nebulaAddToCache(url);
 	}
 }
 
-//Detections for events specific to predicting the next pageview.
-function nebulaPrerenderListeners(){
-	//Any post listing page
-	if ( jQuery('.first-post').length ){
-		nebulaPrerender(jQuery('.first-post').find('.entry-title a').attr('href'));
-	}
-
-	//Internal link hovers
-	jQuery('a').on({
-		'mouseenter focus': function(){
-			var oThis = jQuery(this);
-			if ( oThis.attr('href') !== jQuery('link#prerender').attr('href') && oThis.attr('target') !== '_blank' ){
-				var hoverLength = 500;
-				if ( jQuery('link#prerender').length ){ //If prerender already exists, extend the hover time needed to update
-					hoverLength = 1000;
-				}
-
-				hoverTimer = setTimeout(function(){
-					if ( oThis.is(":hover") ){
-						nebulaPrerender(oThis.attr('href'));
-					}
-				}, hoverLength);
-			}
-		},
-		'mouseleave': function(){
-			if ( typeof hoverTimer !== 'undefined' ){
-				clearTimeout(hoverTimer);
-			}
-		}
-    });
-}
-
-//Actually prerender a URL
-function nebulaPrerender(url){
-	if ( url ){
-		if ( jQuery('link#prerender').length ){
-			jQuery('link#prerender').attr('href', url); //Update prerender link
-		} else {
-			jQuery('head').append('<link id="prerender" rel="prerender" href="' + url + ' />'); //Create new prerender link
-		}
-	}
-}
 
 /*==========================
  Contact Form Functions
@@ -1640,7 +1725,12 @@ function cf7Functions(){
 	//For starts and field focuses
 	nebula.dom.document.on('focus', '.wpcf7-form input, .wpcf7-form button, .wpcf7-form textarea', function(e){
 		formID = jQuery(this).closest('div.wpcf7').attr('id');
+
 		thisField = e.target.name || jQuery(this).closest('.form-group').find('label').text() || e.target.id || 'Unknown';
+		var fieldInfo = '';
+		if ( jQuery(this).attr('type') === 'checkbox' || jQuery(this).attr('type') === 'radio' ){
+			fieldInfo = jQuery(this).attr('value');
+		}
 
 		if ( !jQuery(this).hasClass('.ignore-form') && !jQuery(this).find('.ignore-form').length && !jQuery(this).parents('.ignore-form').length ){
 			//Form starts
@@ -1651,7 +1741,7 @@ function cf7Functions(){
 				formStarted[formID] = true;
 			}
 
-			updateFormFlow(formID, thisField);
+			updateFormFlow(formID, thisField, fieldInfo);
 
 			//Track individual fields
 			if ( !jQuery(this).is('button') ){
@@ -2021,48 +2111,37 @@ function conditionalJSLoading(){
 	//Load the Google Maps API if 'googlemap' class exists
 	if ( jQuery('.googlemap').length ){
 		if ( typeof google == "undefined" || !has(google, 'maps') ){ //If the API has not already been called
-			jQuery.getScript('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){
-			    google.load('maps', '3', {
+			nebulaLoadJS('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){
+				google.load('maps', '3', {
 			        other_params: 'libraries=places',
 			        callback: function(){
 			        	nebula.dom.document.trigger('nebula_google_maps_api_loaded');
 			        }
 			    });
-			}).fail(function(){
-				ga('send', 'exception', {'exDescription': '(JS) Google Maps script could not be loaded', 'exFatal': true});
 			});
 		}
 	}
 
 	//Only load Chosen library if 'chosen-select' class exists.
 	if ( jQuery('.chosen-select').length ){
-		jQuery.getScript(nebula.site.resources.js.chosen).done(function(){
+		nebulaLoadJS(nebula.site.resources.js.chosen, function(){
 			chosenSelectOptions();
-		}).fail(function(){
-			ga('send', 'exception', {'exDescription': '(JS) chosen.jquery.min.js could not be loaded', 'exFatal': false});
-			nv('append', {'js_errors': 'chosen.jquery.min.js could not be loaded'});
 		});
 		nebulaLoadCSS(nebula.site.resources.css.chosen);
 	}
 
 	//Only load dataTables library if dataTables table exists.
     if ( jQuery('.dataTables_wrapper').length ){
-        jQuery.getScript(nebula.site.resources.js.datatables).done(function(){
+        nebulaLoadJS(nebula.site.resources.js.datatables, function(){
             nebulaLoadCSS(nebula.site.resources.css.datatables);
 			dataTablesActions(); //Once loaded, call the DataTables actions. This can be called or overwritten in child.js (or elsewhere)
 			nebula.dom.document.trigger('nebula_datatables_loaded'); //This event can be listened for in child.js (or elsewhere) for when DataTables has finished loading.
-        }).fail(function(){
-            ga('send', 'exception', {'exDescription': '(JS) jquery.dataTables.min.js could not be loaded', 'exFatal': false});
-            nv('append', {'js_errors': 'jquery.dataTables.min.js could not be loaded'});
         });
     }
 
 	//Only load Tether library when Bootstrap tooltips are present.
 	if ( jQuery('[data-toggle="tooltip"]').length ){
-		jQuery.getScript(nebula.site.resources.js.tether).fail(function(){
-            ga('send', 'exception', {'exDescription': '(JS) tether.min.js could not be loaded', 'exFatal': false});
-            nv('append', {'js_errors': 'tether.min.js could not be loaded'});
-        });
+		nebulaLoadJS(nebula.site.resources.js.tether);
 	}
 
 	if ( jQuery('pre.nebula-code').length || jQuery('pre.nebula-code').length ){
@@ -2073,6 +2152,26 @@ function conditionalJSLoading(){
 	if ( jQuery('.flag').length ){
 		nebulaLoadCSS(nebula.site.resources.css.flags);
 	}
+}
+
+//Load a JavaScript resource (and cache it)
+function nebulaLoadJS(url, callback){
+	jQuery.ajax({
+		type: 'GET',
+		url: url,
+		success: function(response){
+			if ( callback ){
+				callback(response);
+			}
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown){
+			ga('send', 'exception', {'exDescription': '(JS) ' + url + ' could not be loaded', 'exFatal': false});
+            nv('append', {'js_errors': url + ' could not be loaded'});
+		},
+		dataType: 'script',
+		cache: true,
+		timeout: 60000
+	});
 }
 
 //Dynamically load CSS files using JS
@@ -2109,15 +2208,13 @@ function nebulaAddressAutocomplete(autocompleteInput, name){
 			googleAddressAutocompleteCallback(autocompleteInput, name);
 		} else {
 			debounce(function(){
-				jQuery.getScript('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){
-				    google.load('maps', '3', {
+				nebulaLoadJS('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){
+					google.load('maps', '3', {
 				        other_params: 'libraries=places',
 				        callback: function(){
 							googleAddressAutocompleteCallback(autocompleteInput, name);
 					    }
 				    });
-				}).fail(function(){
-					ga('send', 'exception', {'exDescription': '(JS) Google Maps script could not be loaded', 'exFatal': true});
 				});
 			}, 100, 'google maps script load');
 		}
@@ -2248,19 +2345,14 @@ function googleAddressAutocompleteCallback(autocompleteInput, name){
 
 //Request Geolocation
 function requestPosition(){
-	console.log('inside request position');
-
 	if ( typeof google != "undefined" && has(google, 'maps') ){
-		console.log('need google map script');
-		jQuery.getScript('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){
-		    google.load('maps', '3', {
+		nebulaLoadJS('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){
+			google.load('maps', '3', {
 		        other_params: 'libraries=places',
 		        callback: function(){
 		        	getCurrentPosition();
 		        }
 		    });
-		}).fail(function(){
-			ga('send', 'exception', {'exDescription': '(JS) Google Maps script could not be loaded', 'exFatal': true});
 		});
 	} else {
 		getCurrentPosition();
@@ -2450,6 +2542,12 @@ function placeLookup(placeID){
 //Zebra-striper, First-child/Last-child, Hover helper functions, add "external" rel to outbound links
 function addHelperClasses(){
 	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'nofollow external noopener'); //Add rel attributes to external links
+
+	if ( navigator.onLine ){
+		nebula.dom.body.removeClass('offline');
+	} else {
+		nebula.dom.body.addClass('offline');
+	}
 
 	//Remove filetype icons from images within <a> tags and buttons.
 	jQuery('a img').closest('a').addClass('no-icon');
@@ -3008,7 +3106,7 @@ function timeAgo(timestamp){ //http://af-design.com/blog/2009/02/10/twitter-like
 	var currentTime = new Date();
 
 	//Browser sanitation
-	if ( jQuery('body').hasClass('internet_explorer') || jQuery('body').hasClass('microsoft_edge') ){
+	if ( nebula.dom.body.hasClass('internet_explorer') || nebula.dom.body.hasClass('microsoft_edge') ){
 		postDate = Date.parse(timestamp.replace(/( \+)/, ' UTC$1'));
 	}
 
@@ -3180,7 +3278,7 @@ function selectText(element, copy, callback){
 }
 
 function copyText(string, callback){
-	jQuery('<div>').attr('id', 'copydiv').text(string).css({'position': 'absolute', 'top': '0', 'left': '-9999px', 'width': '0', 'height': '0', 'opacity': '0', 'color': 'transparent'}).appendTo(jQuery('body'));
+	jQuery('<div>').attr('id', 'copydiv').text(string).css({'position': 'absolute', 'top': '0', 'left': '-9999px', 'width': '0', 'height': '0', 'opacity': '0', 'color': 'transparent'}).appendTo(nebula.dom.body);
 	selectText(jQuery('#copydiv'), true, callback);
 	jQuery('#copydiv').remove();
 	return false;
@@ -3562,12 +3660,9 @@ function onPlayerStateChange(e){
 function nebulaVimeoTracking(){
 	//Load the Vimeo API script (player.js) remotely (with local backup)
 	if ( jQuery('iframe[src*="vimeo"]').length ){
-        jQuery.getScript(nebula.site.resources.js.vimeo).done(function(){
-			createVimeoPlayers();
-		}).fail(function(){
-			ga('send', 'exception', {'exDescription': '(JS) Vimeo player.js could not be loaded', 'exFatal': false});
-			nv('append', {'js_errors': 'Vimeo player.js (remote) could not be loaded'});
-		});
+        nebulaLoadJS(nebula.site.resources.js.vimeo, function(){
+	        createVimeoPlayers();
+        });
 	}
 
 	//To trigger events on these videos, use the syntax: players['PHG-Overview-Video'].api("play");
@@ -3771,6 +3866,17 @@ function pauseAllVideos(force){
 
 //Create desktop notifications
 function desktopNotification(title, message, clickCallback, showCallback, closeCallback, errorCallback){
+
+	//Service Worker Way:
+	if ( 'PushManager' in window ){
+		//https://developers.google.com/web/fundamentals/getting-started/codelabs/push-notifications/
+	}
+
+
+
+
+	//Old Way:
+
 	if ( checkNotificationPermission() ){
 		//Set defaults
 		var defaults = {

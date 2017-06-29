@@ -87,8 +87,8 @@ if ( !trait_exists('Sass') ){
 
 		//Render scss files
 		public function render_scss($location_name=false, $location_paths=false, $force_all=false){
-			$override = do_action('pre_nebula_render_scss', $location_name, $location_paths, $force_all);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_render_scss', null, $location_name, $location_paths, $force_all);
+			if ( isset($override) ){return;}
 
 			if ( nebula()->get_option('scss') && !empty($location_name) && !empty($location_paths) ){
 				//Require SCSSPHP
@@ -203,8 +203,8 @@ if ( !trait_exists('Sass') ){
 
 		//Combine developer stylesheets
 		public function combine_dev_stylesheets($directory=null, $directory_uri=null){
-			$override = do_action('pre_nebula_combine_dev_stylesheets', $directory, $directory_uri);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_combine_dev_stylesheets', null, $directory, $directory_uri);
+			if ( isset($override) ){return;}
 
 			if ( empty($directory) ){
 				trigger_error('Dev stylesheet directories must be specified for files to be combined.', E_USER_NOTICE);
@@ -257,22 +257,32 @@ if ( !trait_exists('Sass') ){
 
 		//Compile server-side variables into SCSS
 		public function scss_post_compile($scss){
-			$override = do_action('pre_nebula_scss_post_compile', $scss);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_scss_post_compile', null, $scss);
+			if ( isset($override) ){return;}
 
 			$scss = preg_replace("(" . str_replace('/', '\/', get_template_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments
 			$scss = preg_replace("(" . str_replace('/', '\/', get_stylesheet_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments (For child themes)
 			do_action('nebula_scss_post_compile');
 			$scss .= "\r\n/* Processed on " . date('l, F j, Y \a\t g:ia', time()) . ' */';
-			nebula()->update_data('scss_last_processed', time());
+
+
+			nebula()->update_data('scss_last_processed', time()); //@todo "Nebula" 0: Only need to do this once (not for every scss file)
+
+			//Update the Service Worker JavaScript file (to clear cache)
+			//@todo "Nebula" 0: Only need to do this once (not for every scss file)
+			if ( $this->get_option('service_worker') && is_writable(get_home_path()) ){
+				if ( file_exists($this->sw_location(false)) ){
+					$this->update_sw_js();
+				}
+			}
 
 			return $scss;
 		}
 
 		//Pull certain colors from .../mixins/_variables.scss
 		public function sass_color($color='primary', $theme='child'){
-			$override = do_action('pre_sass_color', $color, $theme);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_sass_color', null, $color, $theme);
+			if ( isset($override) ){return;}
 
 			if ( is_child_theme() && $theme == 'child' ){
 				$assets_directory = get_stylesheet_directory() . '/assets';

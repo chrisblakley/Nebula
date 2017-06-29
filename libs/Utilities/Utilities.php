@@ -105,8 +105,8 @@ if ( !trait_exists('Utilities') ){
 		//Passing $strict bypasses IP check, so user must be a dev and logged in.
 		//Note: This should not be used for security purposes since IP addresses can be spoofed.
 		public function is_dev($strict=false){
-			$override = do_action('pre_is_dev', $strict);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_is_dev', null, $strict);
+			if ( isset($override) ){return;}
 
 			if ( empty($strict) ){
 				$devIPs = explode(',', $this->get_option('dev_ip'));
@@ -147,8 +147,8 @@ if ( !trait_exists('Utilities') ){
 		//Passing $strict bypasses IP check, so user must be a client and logged in.
 		//Note: This should not be used for security purposes since IP addresses can be spoofed.
 		public function is_client($strict=false){
-			$override = do_action('pre_is_client', $strict);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_is_client', null, $strict);
+			if ( isset($override) ){return;}
 
 			if ( empty($strict) ){
 				$clientIPs = explode(',', $this->get_option('client_ip'));
@@ -198,8 +198,8 @@ if ( !trait_exists('Utilities') ){
 		//Check if user is using the debug query string.
 		//$strict requires the user to be a developer or client. Passing 2 to $strict requires the dev or client to be logged in too.
 		public function is_debug($strict=false){
-			$override = do_action('pre_is_debug', $strict);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_is_debug', null, $strict);
+			if ( isset($override) ){return;}
 
 			$very_strict = ( $strict > 1 )? $strict : false;
 			if ( array_key_exists('debug', $_GET) ){
@@ -218,8 +218,8 @@ if ( !trait_exists('Utilities') ){
 		//Note: This checks if the hostname of the home URL matches any of the valid hostnames.
 		//If the Valid Hostnames option is empty, this will return true as it is unknown.
 		public function is_site_live(){
-			$override = do_action('pre_is_site_live');
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_is_site_live', null);
+			if ( isset($override) ){return;}
 
 			if ( $this->get_option('hostnames') ){
 				if ( strpos($this->get_option('hostnames'), $this->url_components('hostname', home_url())) >= 0 ){
@@ -252,8 +252,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
 		public function requested_url($host="HTTP_HOST"){ //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
-			$override = do_action('pre_nebula_requested_url', $host);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_requested_url', null, $host);
+			if ( isset($override) ){return;}
 
 			$protocol = ( is_ssl() )? 'https' : 'http';
 			$full_url = $protocol . '://' . $_SERVER["$host"] . $_SERVER["REQUEST_URI"];
@@ -262,8 +262,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Separate a URL into it's components.
 		public function url_components($segment="all", $url=null){
-			$override = do_action('pre_nebula_url_components', $segment, $url);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_url_components', null, $segment, $url);
+			if ( isset($override) ){return;}
 
 			//If URL is not passed, get the current page URL.
 			if ( !$url ){
@@ -464,7 +464,7 @@ if ( !trait_exists('Utilities') ){
 
 				case ('file'): //Filename will be just the filename/extension.
 				case ('filename'):
-					if ( $this->contains(basename($url_components['path']), array('.')) ){
+					if ( strpos(basename($url_components['path']), '.') !== false ){
 						return basename($url_components['path']);
 					} else {
 						return false;
@@ -474,7 +474,7 @@ if ( !trait_exists('Utilities') ){
 				case ('type'):
 				case ('filetype'):
 				case ('extension'): //The extension only (without ".")
-					if ( $this->contains(basename($url_components['path']), array('.')) ){
+					if ( strpos(basename($url_components['path']), '.') !== false ){
 						$file_parts = explode('.', $url_components['path']);
 						return $file_parts[1];
 					} else {
@@ -483,7 +483,7 @@ if ( !trait_exists('Utilities') ){
 					break;
 
 				case ('path'): //Path should be just the path without the filename/extension.
-					if ( $this->contains(basename($url_components['path']), array('.')) ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
+					if ( strpos(basename($url_components['path']), '.') !== false ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
 						return str_replace(basename($url_components['path']), '', $url_components['path']);
 					} else {
 						return $url_components['path'];
@@ -541,8 +541,8 @@ if ( !trait_exists('Utilities') ){
 		//Fuzzy meta sub key finder (Used to query ACF nested repeater fields).
 		//Example: 'key' => 'dates_%_start_date',
 		public function fuzzy_posts_where($where){
-			$override = do_action('pre_nebula_fuzzy_posts_where', $where);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_fuzzy_posts_where', null, $where);
+			if ( isset($override) ){return;}
 
 			if ( strpos($where, '_%_') > -1 ){
 				$where = preg_replace("/meta_key = ([\'\"])(.+)_%_/", "meta_key LIKE $1$2_%_", $where);
@@ -552,8 +552,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Text limiter by words
 		public function string_limit_words($string, $word_limit){
-			$override = do_action('pre_string_limit_words', $string, $word_limit);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_string_limit_words', null, $string, $word_limit);
+			if ( isset($override) ){return;}
 
 			$limited['text'] = $string;
 			$limited['is_limited'] = false;
@@ -568,8 +568,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Word limiter by characters
 		public function word_limit_chars($string, $charlimit, $continue=false){
-			$override = do_action('pre_word_limit_chars', $string, $charlimit, $continue);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_word_limit_chars', null, $string, $charlimit, $continue);
+			if ( isset($override) ){return;}
 
 			//1 = "Continue Reading", 2 = "Learn More"
 			if ( strlen(strip_tags($string, '<p><span><a>')) <= $charlimit ){
@@ -590,8 +590,8 @@ if ( !trait_exists('Utilities') ){
 		//Traverse multidimensional arrays
 		public function contains($needle, $haystack){return $this->in_array_r($needle, $haystack, 'contains');}
 		public function in_array_r($needle, $haystack, $strict=true){
-			$override = do_action('pre_in_array_r', $needle, $haystack, $strict);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_in_array_r', null, $needle, $haystack, $strict);
+			if ( isset($override) ){return;}
 
 			foreach ( $haystack as $item ){
 				if ( $strict === true ){ //If strict, match the type and the value
@@ -618,8 +618,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Recursive Glob
 		public function glob_r($pattern, $flags=0){
-			$override = do_action('pre_glob_r', $pattern, $flags);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_glob_r', null, $pattern, $flags);
+			if ( isset($override) ){return;}
 
 			$files = glob($pattern, $flags);
 			foreach ( glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir ){
@@ -631,8 +631,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Add up the filesizes of files in a directory (and it's sub-directories)
 		public function foldersize($path){
-			$override = do_action('pre_foldersize', $path);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_foldersize', null, $path);
+			if ( isset($override) ){return;}
 
 			$total_size = 0;
 			$files = scandir($path);
@@ -679,8 +679,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Check if a website or resource is available
 		public function is_available($url=null, $nocache=false, $lookup_only=false){
-			$override = do_action('pre_nebula_is_available', $url, $nocache, $lookup_only);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_is_available', null, $url, $nocache, $lookup_only);
+			if ( isset($override) ){return;}
 
 			if ( empty($url) || strpos($url, 'http') !== 0 ){
 				trigger_error('Error: Requested URL is either empty or missing acceptable protocol.', E_USER_ERROR);
@@ -742,8 +742,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Check the brightness of a color. 0=darkest, 255=lightest, 256=false
 		public function color_brightness($hex){
-			$override = do_action('pre_nebula_color_brightness', $hex);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_color_brightness', null, $hex);
+			if ( isset($override) ){return;}
 
 			if ( strpos($hex, '#') !== false ){
 				preg_match("/#(?:[0-9a-fA-F]{3,6})/i", $hex, $hex_colors);
@@ -767,8 +767,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Compare values using passed parameters
 		public function compare_operator($a=null, $b=null, $c='=='){
-			$override = do_action('pre_nebula_compare_operator', $a, $b, $c);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_compare_operator', null, $a, $b, $c);
+			if ( isset($override) ){return;}
 
 			if ( empty($a) || empty($b) ){
 				trigger_error('nebula_compare_operator requires values to compare.');
@@ -804,8 +804,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Get Nebula version information
 		public function version($return=false){
-			$override = do_action('pre_nebula_version', $return);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_version', null, $return);
+			if ( isset($override) ){return;}
 
 			$nebula_theme_info = ( is_child_theme() )? wp_get_theme(str_replace('-child', '', get_template())) : wp_get_theme();
 

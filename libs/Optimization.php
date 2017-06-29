@@ -89,9 +89,8 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
-		//@todo "Nebula" 0: Need to test this more before determining if its saving any time or not. On paper, it should speed up initial view, but can't cache resources for repeat view.
 		public function http2_server_push_header($src){
-			if ( !$this->is_admin_page() && 1==2 ){ //If not in the admin section
+			if ( !$this->is_admin_page() && $this->get_option('service_worker') && file_exists($this->sw_location(false)) ){ //If not in the admin section and if Service Worker is enabled (and file exists)
 				$filetype = ( strpos($src, '.css') )? 'style' : 'script'; //Determine the resource type
 				if ( strpos($src, $this->url_components('sld')) > 0 ){ //If local file
 					if ( $this->get_browser() != 'safari' ){ //Disable HTTP2 Server Push on Safari (at least for now)
@@ -121,8 +120,8 @@ if ( !trait_exists('Optimization') ){
 				}
 			*/
 		public function prebrowsing(){
-			$override = do_action('pre_nebula_prebrowsing');
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_prebrowsing', null);
+			if ( isset($override) ){return;}
 
 			//DNS-Prefetch & Preconnect
 			$default_preconnects = array();
@@ -181,8 +180,8 @@ if ( !trait_exists('Optimization') ){
 
 		//Dequeue certain scripts
 		public function dequeues(){
-			$override = do_action('pre_nebula_dequeues');
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_dequeues', null);
+			if ( isset($override) ){return;}
 
 			if ( !is_admin() ){
 				//Removing CF7 styles in favor of Bootstrap + Nebula
@@ -212,8 +211,8 @@ if ( !trait_exists('Optimization') ){
 
 		//Force settings within plugins
 		public function plugin_force_settings(){
-			$override = do_action('pre_nebula_plugin_force_settings');
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_plugin_force_settings', null);
+			if ( isset($override) ){return;}
 
 			//Wordpress SEO (Yoast)
 			if ( is_plugin_active('wordpress-seo/wp-seo.php') ){
@@ -246,8 +245,8 @@ if ( !trait_exists('Optimization') ){
 
 		//Disable Emojis
 		public function disable_wp_emojicons(){
-			$override = do_action('pre_disable_wp_emojicons');
-			if ( !empty($override) ){return;}
+			$override = apply_filters('pre_disable_wp_emojicons', null);
+			if ( isset($override) ){return;}
 
 			remove_action('admin_print_styles', 'print_emoji_styles');
 			remove_action('wp_head', 'print_emoji_detection_script', 7);

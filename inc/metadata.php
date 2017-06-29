@@ -110,7 +110,7 @@
 <?php endif; ?>
 
 <?php if ( nebula()->get_os('name') == 'Android' ): //Android/Chrome ?>
-<link rel="icon preload prefetch" type="image/png" sizes="192x192" href="<?php echo $image_meta_directory; ?>/android-chrome-192x192.png<?php echo $cache_query; ?>" />
+<link rel="icon" type="image/png" sizes="192x192" href="<?php echo $image_meta_directory; ?>/android-chrome-192x192.png<?php echo $cache_query; ?>" />
 <?php endif; ?>
 
 <?php //Facebook Metadata ?>

@@ -112,8 +112,8 @@ if ( !trait_exists('Users') ){
 
 		//Check if a user has been online in the last 10 minutes
 		public function is_user_online($id){
-			$override = do_action('pre_nebula_is_user_online', $id);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_is_user_online', null, $id);
+			if ( isset($override) ){return;}
 
 			$logged_in_users = nebula()->get_data('users_status');
 			return isset($logged_in_users[$id]['last']) && $logged_in_users[$id]['last'] > time()-600; //10 Minutes
@@ -121,8 +121,8 @@ if ( !trait_exists('Users') ){
 
 		//Check when a user was last online.
 		public function user_last_online($id){
-			$override = do_action('pre_nebula_user_last_online', $id);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_user_last_online', null, $id);
+			if ( isset($override) ){return;}
 
 			$logged_in_users = nebula()->get_data('users_status');
 			if ( isset($logged_in_users[$id]['last']) ){
@@ -133,8 +133,8 @@ if ( !trait_exists('Users') ){
 
 		//Get a count of online users, or an array of online user IDs.
 		public function online_users($return='count'){
-			$override = do_action('pre_nebula_online_users', $return);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_online_users', null, $return);
+			if ( isset($override) ){return;}
 
 			$logged_in_users = nebula()->get_data('users_status');
 			if ( empty($logged_in_users) || !is_array($logged_in_users) ){
@@ -155,8 +155,8 @@ if ( !trait_exists('Users') ){
 
 		//Check how many locations a single user is logged in from.
 		public function user_single_concurrent($id){
-			$override = do_action('pre_nebula_user_single_concurrent', $id);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_user_single_concurrent', null, $id);
+			if ( isset($override) ){return;}
 
 			$logged_in_users = nebula()->get_data('users_status');
 			if ( isset($logged_in_users[$id]['unique']) ){
@@ -167,8 +167,8 @@ if ( !trait_exists('Users') ){
 
 		//Additional Contact Info fields
 		public function user_contact_methods( $contact_methods ){
-			$override = do_action('pre_nebula_user_contact_methods', $user); // TODO: Revise this $user
-			if ( !empty($override) ){echo $override; return;}
+			$override = apply_filters('pre_nebula_user_contact_methods', null, $user); // TODO: Revise this $user
+			if ( isset($override) ){return;}
 
 			unset($contact_methods['yim']);
 			unset($contact_methods['aim']);
@@ -202,8 +202,8 @@ if ( !trait_exists('Users') ){
 
 		//Show the fields in the user admin page
 		public function extra_profile_fields($user){
-			$override = do_action('nebula_extra_profile_fields', $user);
-			if ( !empty($override) ){echo $override; return;}
+			do_action('nebula_extra_profile_fields', $user);
+			if ( isset($override) ){return;}
 			?>
 			<h3>Additional Information</h3>
 			<table class="form-table">

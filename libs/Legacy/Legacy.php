@@ -80,8 +80,8 @@ if ( $wp_version < 4.7 ){
 
 //Old Nebula Excerpt that does not use the options array.
 function nebula_the_excerpt($postID=0, $more=0, $length=55, $hellip=0){
-    $override = apply_filters('pre_nebula_the_excerpt', false, $postID, $more, $length, $hellip);
-    if ( $override !== false ){return $override;}
+    $override = apply_filters('pre_nebula_the_excerpt', null, $postID, $more, $length, $hellip);
+    if ( isset($override) ){return;}
 
     if ( $postID && is_int($postID) ){
         $the_post = get_post($postID);

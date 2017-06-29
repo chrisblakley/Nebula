@@ -159,7 +159,7 @@ if ( !trait_exists('Automation') ){
 		}
 
 		public function activation(){
-			wp_remote_get('https://gearside.com/nebula/usage/index.php?r=' . home_url());
+			wp_remote_get('https://gearside.com/nebula/usage/index.php?r=' . home_url('/'));
 
 			//Run express initialization (Nebula Options only)
 			if ( !$this->is_initialized_before() ){

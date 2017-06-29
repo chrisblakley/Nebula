@@ -440,6 +440,13 @@
 									</div>
 
 									<div class="form-group">
+										<input type="checkbox" name="nebula_options[service_worker]" id="service_worker" value="1" <?php checked('1', !empty($nebula_options['service_worker'])); ?> /><label for="service_worker">Service Worker</label>
+										<p class="nebula-help-text short-help form-text text-muted">Utilize a service worker to improve speed, provide content when offline, and other benefits of being a progressive web app. (Default: <?php echo $this->user_friendly_default('service_worker'); ?>)</p>
+										<p class="nebula-help-text more-help form-text text-muted">This also enabled HTTP2 Server Push when available. Enabling this feature requires a service worker JavaScript file. Move the provided sw.js into the root directory (or write your own). Service Worker location: <code><?php echo $this->sw_location(); ?></code></p>
+										<p class="option-keywords">moderate page speed impact</p>
+									</div>
+
+									<div class="form-group">
 										<input type="checkbox" name="nebula_options[device_detection]" id="device_detection" value="1" <?php checked('1', !empty($nebula_options['device_detection'])); ?> /><label for="device_detection">Browser/Device Detection</label>
 										<p class="nebula-help-text short-help form-text text-muted">Detect information about the user's device and browser. (Default: <?php echo $this->user_friendly_default('device_detection'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">Useful for cross-browser support. This also controls the modernizr.js library.</p>
@@ -772,6 +779,16 @@
 												<input type="text" name="nebula_options[cd_visibilitystate]" id="cd_visibilitystate" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_visibilitystate']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Logs the visibilty state of the window with each hit. Scope: Hit</p>
+											<p class="option-keywords"></p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon">Network Connection</div>
+												<input type="text" name="nebula_options[cd_network]" id="cd_network" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_network']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Logs the connection state of the network (Online/Offline). Scope: Hit</p>
+											<p class="nebula-help-text more-help form-text text-muted">Note that browsers report online/offline differently. Connection to a LAN without Internet may be reported as "online".</p>
 											<p class="option-keywords"></p>
 										</div>
 									</div><!-- /sub-group -->

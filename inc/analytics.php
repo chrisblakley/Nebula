@@ -36,6 +36,7 @@
 			hitID: '<?php echo nebula()->get_option('cd_hitid'); ?>',
 			hitTime: '<?php echo nebula()->get_option('cd_hittime'); ?>',
 			hitType: '<?php echo nebula()->get_option('cd_hittype'); ?>',
+			network: '<?php echo nebula()->get_option('cd_network'); ?>',
 			author: '<?php echo nebula()->get_option('cd_author'); ?>',
 			businessHours: '<?php echo nebula()->get_option('cd_businesshours'); ?>',
 			categories: '<?php echo nebula()->get_option('cd_categories'); ?>',
@@ -291,9 +292,10 @@
 		var queryStringDimension = parseInt(gaCustomDimensions['queryString'].replace('dimension', ''));
 		ga('require', 'cleanUrlTracker', {
 			stripQuery: ( queryStringDimension )? true : false,
-			queryDimensionIndex: parseInt(gaCustomDimensions['queryString'].replace('dimension', '')),
+			queryDimensionIndex: queryStringDimension,
+			queryParamsWhitelist: ['s', 'rs'],
 			indexFilename: 'index.php',
-			trailingSlash: 'remove'
+			trailingSlash: 'add'
 		});
 
 		//Autotrack Social Widgets
@@ -391,6 +393,9 @@
 				model.set(gaCustomDimensions['hitType'], model.get('hitType'), true);
 				model.set(gaCustomDimensions['timestamp'], localTimestamp(), true);
 				model.set(gaCustomDimensions['visibilityState'], document.visibilityState, true);
+
+				var connection = ( navigator.onLine )? 'Online' : 'Offline';
+				model.set(gaCustomDimensions['network'], connection, true);
 
 				//Always make sure events have the page location and title associated with them (in case of session timout)
 				if ( model.get('hitType') === 'event' ){

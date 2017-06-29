@@ -15,8 +15,8 @@ if ( !trait_exists('Analytics') ){
 
 		//Handle the parsing of the _ga cookie or setting it to a unique identifier
 		public function ga_parse_cookie(){
-			$override = do_action('pre_ga_parse_cookie');
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_ga_parse_cookie', null);
+			if ( isset($override) ){return;}
 
 			if ( isset($_COOKIE['_ga']) ){
 				list($version, $domainDepth, $cid1, $cid2) = explode('.', $_COOKIE["_ga"], 4);
@@ -30,8 +30,8 @@ if ( !trait_exists('Analytics') ){
 
 		//Generate UUID v4 function (needed to generate a CID when one isn't available)
 		public function ga_generate_UUID(){
-			$override = do_action('pre_ga_generate_UUID');
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_ga_generate_UUID', null);
+			if ( isset($override) ){return;}
 
 			return sprintf(
 				'%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
@@ -45,8 +45,8 @@ if ( !trait_exists('Analytics') ){
 
 		//Generate Domain Hash
 		public function ga_generate_domain_hash($domain){
-			$override = do_action('pre_ga_generate_domain_hash', $domain);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_ga_generate_domain_hash', null, $domain);
+			if ( isset($override) ){return;}
 
 			if ( empty($domain) ){
 				$domain = nebula()->url_components('domain');
@@ -65,8 +65,8 @@ if ( !trait_exists('Analytics') ){
 		//Generate the full path of a Google Analytics __utm.gif with necessary parameters.
 		//https://developers.google.com/analytics/resources/articles/gaTrackingTroubleshooting?csw=1#gifParameters
 		public function ga_UTM_gif($user_cookies=array(), $user_parameters=array()){
-			$override = do_action('pre_ga_UTM_gif', $user_cookies, $user_parameters);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_ga_UTM_gif', null, $user_cookies, $user_parameters);
+			if ( isset($override) ){return;}
 
 			//@TODO "Nebula" 0: Make an AJAX function in Nebula (plugin) to accept a form for each parameter then renders the __utm.gif pixel.
 
@@ -110,8 +110,8 @@ if ( !trait_exists('Analytics') ){
 
 		//Send Pageview Function for Server-Side Google Analytics
 		public function ga_send_pageview($location=null, $title=null, $array=array()){
-			$override = do_action('pre_ga_send_pageview', $location, $title, $array);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_ga_send_pageview', null, $location, $title, $array);
+			if ( isset($override) ){return;}
 
 			if ( empty($location) ){
 				$location = nebula()->requested_url();
@@ -140,8 +140,8 @@ if ( !trait_exists('Analytics') ){
 
 		//Send Event Function for Server-Side Google Analytics
 		public function ga_send_event($category=null, $action=null, $label=null, $value=0, $ni=1, $array=array()){
-			$override = do_action('pre_ga_send_event', $category, $action, $label, $value, $ni, $array);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_ga_send_event', null, $category, $action, $label, $value, $ni, $array);
+			if ( isset($override) ){return;}
 
 			if ( empty($value) ){
 				$value = 0;
@@ -172,8 +172,8 @@ if ( !trait_exists('Analytics') ){
 		//ga_send_custom(array('t' => 'event', 'ec' => 'Category Here', 'ea' => 'Action Here', 'el' => 'Label Here'));
 		//https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
 		public function ga_send_custom($array=array()){ //@TODO "Nebula" 0: Add additional parameters to this function too (like above)!
-			$override = do_action('pre_ga_send_custom', $array);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_ga_send_custom', null, $array);
+			if ( isset($override) ){return;}
 
 			//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
 			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
@@ -200,8 +200,8 @@ if ( !trait_exists('Analytics') ){
 
 		//Send Pageview Function for Server-Side Google Analytics
 		public function ga_send_exception($message=null, $fatal=1, $array=array()){
-			$override = do_action('pre_ga_send_exception', $message, $fatal, $array);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_ga_send_exception', null, $message, $fatal, $array);
+			if ( isset($override) ){return;}
 
 			//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
 			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
@@ -267,8 +267,8 @@ if ( !trait_exists('Analytics') ){
 		//Send Data to Google Analytics
 		//https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event
 		public function ga_send_data($data){
-			$override = do_action('pre_ga_send_data', $data);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_ga_send_data', null, $data);
+			if ( isset($override) ){return;}
 
 			//https://ga-dev-tools.appspot.com/hit-builder/
 

@@ -43,8 +43,8 @@ if ( !trait_exists('Dashboard') ){
 
 		//Remove unnecessary Dashboard metaboxes
 		public function remove_dashboard_metaboxes(){
-			$override = do_action('pre_remove_dashboard_metaboxes');
-			if ( !empty($override) ){echo $override; return;}
+			$override = apply_filters('pre_remove_dashboard_metaboxes', null);
+			if ( isset($override) ){return false;}
 
 			//If necessary, dashboard metaboxes can be unset. To best future-proof, use remove_meta_box().
 			remove_meta_box('dashboard_primary', 'dashboard', 'side'); //Wordpress News
@@ -66,7 +66,7 @@ if ( !trait_exists('Dashboard') ){
 			global $wp_post_types;
 
 			echo '<ul>';
-			echo '<li><i class="fa fa-fw fa-globe"></i> <a href="' . home_url('/') . '" target="_blank" rel="noopener">' . home_url() . '</a></li>';
+			echo '<li><i class="fa fa-fw fa-globe"></i> <a href="' . home_url('/') . '" target="_blank" rel="noopener">' . home_url('/') . '</a></li>';
 
 			//Address
 			if ( $this->get_option('street_address') ){
@@ -613,7 +613,7 @@ if ( !trait_exists('Dashboard') ){
 								preg_match_all('/".*?"|\'.*?\'/', $the_todo_meta, $the_todo_quote_check);
 								if ( !empty($the_todo_quote_check[0][0]) ){
 									$the_todo_cat = substr($the_todo_quote_check[0][0], 1, -1);
-									$the_todo_cat_html = '<span class="todocategory">' . $the_todo_cat . '</span>';
+									$the_todo_cat_html = '<span class="todocategory">' . strip_tags($the_todo_cat) . '</span>';
 								}
 
 								//Get the message

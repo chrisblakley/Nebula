@@ -131,7 +131,7 @@ if ( !trait_exists('Ecommerce') ){
 
 		//JSON-LD for Products
 		public function json_ld_ecommerce(){
-			$override = do_action('pre_nebula_json_ld_ecommerce');
+			$override = apply_filters('pre_nebula_json_ld_ecommerce', false);
 			if ( !empty($override) ){echo $override; return;}
 
 			if ( function_exists('is_product') && is_product() ){ //if is product

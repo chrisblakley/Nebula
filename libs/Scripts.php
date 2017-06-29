@@ -85,6 +85,7 @@ if ( !trait_exists('Scripts') ){
 				'site' => array(
 					'name' => get_bloginfo('name'),
 					'directory' => array(
+						'root' => get_site_url(),
 						'template' => array(
 							'path' => get_template_directory(),
 							'uri' => get_template_directory_uri(),
@@ -95,6 +96,8 @@ if ( !trait_exists('Scripts') ){
 						),
 					),
 					'home_url' => home_url(),
+					'sw_url' => $this->sw_location(),
+					'cache' => $this->get_sw_cache_name(),
 					'domain' => $this->url_components('domain'),
 					'protocol' => $this->url_components('protocol'),
 					'language' => get_bloginfo('language'),
@@ -105,6 +108,7 @@ if ( !trait_exists('Scripts') ){
 					'upload_dir' => $upload_dir['baseurl'],
 					'ecommerce' => false,
 					'options' => array(
+						'sw' => $this->get_option('service_worker'),
 						'gaid' => $this->get_option('ga_tracking_id'),
 						'nebula_cse_id' => $this->get_option('cse_id'),
 						'nebula_google_browser_api_key' => $this->get_option('google_browser_api_key'),

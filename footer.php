@@ -24,7 +24,7 @@
 					</div><!--/row-->
 					<div class="row copyright-con">
 						<div class="col">
-							<p class="copyright">&copy; <?php echo date('Y'); ?> <a href="<?php echo home_url(); ?>"><strong>Nebula</strong></a> <?php echo nebula()->version('full'); ?>, <em>all rights reserved</em>.</p>
+							<p class="copyright">&copy; <?php echo date('Y'); ?> <a href="<?php echo home_url('/'); ?>"><strong>Nebula</strong></a> <?php echo nebula()->version('full'); ?>, <em>all rights reserved</em>.</p>
 
 							<form class="nebula-search search footer-search" method="get" action="<?php echo home_url('/'); ?>">
 								<label class="sr-only" for="nebula-footer-search">Search</label>

@@ -1,7 +1,6 @@
 #@TODO: Move to root directory.
 #@TODO: Rename this file to be: .htaccess
 #@TODO: Find/Replace "yourdomain" with the actual domain name!
-#@NOTE: Non-ghost referral spambots are blocked with PHP logic (to extract data) with a self-updating blacklist. Blocking referral spambots here in .htaccess would prevent that data!
 
 <IfModule mod_headers.c>
 	Header set Connection keep-alive
@@ -132,7 +131,7 @@
 	</IfModule>
 </IfModule>
 
-#Cache filess for certain lengths of time
+#Cache files for certain lengths of time
 #1 YEAR
 <FilesMatch "\.(ico|pdf|flv|png|gif|swf|jpg|jpeg|svg|woff|mp3|css|php|html|js)$">
 	Header set Cache-Control "max-age=29030400, public"
@@ -153,6 +152,15 @@ Header set Cache-Control "max-age=2592000, public"
 	Header unset Cache-Control
 </FilesMatch>
 
+#Disable cache for service worker file
+<FilesMatch "(sw|service-worker|serviceworker).js$">
+	FileETag None
+	Header unset ETag
+	Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+	Header set Pragma "no-cache"
+	Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+</FilesMatch>
+
 #RewriteEngine On
 #RewriteCond %{REQUEST_METHOD} POST
 #RewriteCond %{REQUEST_URI} .wp-comments-post.php
@@ -162,7 +170,7 @@ Header set Cache-Control "max-age=2592000, public"
 
 #301 Redirects Here
 #If in a subdirectory, prepend that directory to all redirects.
-Redirect 301 /wp-content/index.php /
+RedirectMatch 301 /wp-content/index.php /
 
 
 

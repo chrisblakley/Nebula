@@ -40,12 +40,19 @@ trait Functions {
 		add_action('wp_head', array($this, 'console_warnings'));
 
 		//Create/Write a manifest JSON file
-		//if ( is_writable(get_template_directory()) ){
-			//if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-DAY_IN_SECONDS) || $this->is_debug() ){ //yolo uncomment this
+		if ( is_writable(get_template_directory()) ){
+			if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-DAY_IN_SECONDS) || $this->is_debug() ){
 				add_action('init', array($this, 'manifest_json'));
 				add_action('admin_init', array($this, 'manifest_json'));
-			//}
-		//}
+			}
+		}
+
+		//Update Service Worker JavaScript file yolo
+		if ( $this->get_option('service_worker') && is_writable(get_home_path()) ){
+			if ( file_exists($this->sw_location(false)) ){
+				add_action('save_post', array($this, 'update_sw_js'));
+			}
+		}
 
 		//Redirect to favicon to force-clear the cached version when ?favicon is added.
 		add_action('wp_loaded', array($this, 'favicon_cache'));
@@ -261,8 +268,93 @@ trait Functions {
 		}
 	}
 
+	//Get the location URI of the Service Worker JavaScript file.
+	//Override this in your child theme if changing the location or filename of the service worker.
+	public function sw_location($uri=true){
+		$override = apply_filters('pre_sw_location', null);
+		if ( isset($override) ){return;}
+
+		if ( !empty($uri) ){
+			return get_site_url() . '/sw.js';
+		}
+
+		return get_home_path() . 'sw.js';
+	}
+
+	//Get the name of the current service worker cache
+	public function get_sw_cache_name(){
+		$override = apply_filters('pre_nebula_get_sw_cache_name', null);
+		if ( isset($override) ){return;}
+
+		$sw_cache_name = get_transient('nebula_sw_cache_name');
+		if ( empty($sw_cache_name) || nebula()->is_debug() ){
+			if ( $this->get_option('service_worker') && file_exists($this->sw_location(false)) ){
+				WP_Filesystem();
+				global $wp_filesystem;
+				$sw_js = $wp_filesystem->get_contents($this->sw_location(false));
+
+				if ( !empty($sw_js) ){
+					preg_match("/var CACHE_NAME = '(.+)';/", $sw_js, $cache_name);
+					$sw_cache_name = $cache_name[1];
+
+					set_transient('nebula_sw_cache_name', $sw_cache_name, YEAR_IN_SECONDS); //1 year cache (This doesn't really need to expire)
+				}
+			}
+		}
+
+		return $sw_cache_name;
+	}
+
+	//Update variables within the service worker JavaScript file for install caching yolo
+	public function update_sw_js(){
+		$override = apply_filters('pre_nebula_update_swjs', null);
+		if ( isset($override) ){return;}
+
+		WP_Filesystem();
+		global $wp_filesystem;
+		$sw_js = $wp_filesystem->get_contents($this->sw_location(false));
+
+		if ( !empty($sw_js) ){
+			$find = array(
+				"/(var CACHE_NAME = ')(.+)(';)/m",
+				"/(var OFFLINE_URL = ')(.+)(';)/m",
+				"/(var OFFLINE_IMG = ')(.+)(';)/m",
+				"/(var META_ICON = ')(.+)(';)/m",
+				"/(var MANIFEST = ')(.+)(';)/m",
+				"/(var HOME_URL = ')(.+)(';)/m",
+				"/(var START_URL = ')(.+)(';)/m",
+			);
+
+			$new_cache_name = "nebula-" . strtolower(get_option('stylesheet')) . "-" . mt_rand(10000, 99999);
+
+			$replace = array(
+				"$1" . $new_cache_name . "$3",
+				"$1" . home_url('/') . "offline/" . "$3",
+				"$1" . get_theme_file_uri('/assets/img') . "/offline.jpg" . "$3",
+				"$1" . get_theme_file_uri('/assets/img/meta') . "/android-chrome-512x512.png" . "$3",
+				"$1" . $this->manifest_json_location() . "$3",
+				"$1" . home_url('/') . "$3",
+				"$1" . home_url('/') . "?utm_source=homescreen" . "$3",
+			);
+
+			$sw_js = preg_replace($find, $replace, $sw_js);
+			$update_sw_js = $wp_filesystem->put_contents($this->sw_location(false), $sw_js);
+
+			if ( !empty($update_sw_js) ){
+				do_action('nebula_wrote_sw_js');
+				set_transient('nebula_sw_cache_name', $new_cache_name, YEAR_IN_SECONDS); //1 year cache (This doesn't really need to expire since it is updated everytime a new one is generated)
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	//Manifest JSON file location
 	public function manifest_json_location($uri=true){
+		$override = apply_filters('pre_manifest_json_location', null);
+		if ( isset($override) ){return;}
+
 		if ( $uri ){
 			return get_template_directory_uri() . '/inc/manifest.json';
 		}
@@ -272,8 +364,8 @@ trait Functions {
 
 	//Create/Write a manifest JSON file
 	public function manifest_json(){
-		$override = do_action('pre_nebula_manifest_json');
-		if ( !empty($override) ){return;}
+		$override = apply_filters('pre_nebula_manifest_json', null);
+		if ( isset($override) ){return;}
 
 		$manifest_json = '{
 			"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
@@ -283,7 +375,7 @@ trait Functions {
 			"background_color": "#fff",
 			"gcm_sender_id": "' . $this->get_option('gcm_sender_id') . '",
 			"Scope": "/",
-			"start_url": "' . home_url() . '?utm_source=homescreen",
+			"start_url": "' . home_url('/') . '?utm_source=homescreen",
 			"display": "standalone",
 			"orientation": "portrait",
 			"splash_pages": null,
@@ -352,8 +444,8 @@ trait Functions {
 	//Show different meta data information about the post. Typically used inside the loop.
 	//Example: post_meta('by');
 	public function post_meta($meta){
-		$override = do_action('pre_post_meta', $meta);
-		if ( !empty($override) ){echo $override; return;}
+		$override = apply_filters('pre_post_meta', null, $meta);
+		if ( isset($override) ){return;}
 
 		if ( $meta == 'date' || $meta == 'time' || $meta == 'on' || $meta == 'day' || $meta == 'when' ){
 			echo $this->post_date();
@@ -550,8 +642,8 @@ trait Functions {
 	//Outside the loop: nebula()->excerpt(array('id' => 572, 'words' => 20, 'ellipsis' => true));
 	//Custom text: nebula()->excerpt(array('text' => 'Lorem ipsum <strong>dolor</strong> sit amet.', 'more' => 'Continue &raquo;', 'words' => 3, 'ellipsis' => true, 'strip_tags' => true));
 	public function excerpt($options=array()){
-		$override = do_action('pre_nebula_excerpt', $options);
-		if ( !empty($override) ){return $override;}
+		$override = apply_filters('pre_nebula_excerpt', null, $options);
+		if ( isset($override) ){return;}
 
 		$defaults = array(
 			'id' => false,
@@ -633,8 +725,8 @@ trait Functions {
 
 	//Display Social Buttons
 	public function social($networks=array('facebook', 'twitter', 'google+'), $counts=0){
-		$override = do_action('pre_nebula_social', $networks, $counts);
-		if ( !empty($override) ){echo $override; return;}
+		$override = apply_filters('pre_nebula_social', null, $networks, $counts);
+		if ( isset($override) ){return;}
 
 		if ( is_string($networks) ){ //if $networks is a string, create an array for the string.
 			$networks = array($networks);
@@ -682,8 +774,8 @@ trait Functions {
 	*/
 
 	public function facebook_share($counts=0, $url=false){
-		$override = do_action('pre_nebula_facebook_share', $counts);
-		if ( !empty($override) ){echo $override; return;}
+		$override = apply_filters('pre_nebula_facebook_share', null, $counts);
+		if ( isset($override) ){return;}
 		?>
 		<div class="nebula-social-button facebook-share require-fbsdk">
 			<div class="fb-share-button" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>"></div>
@@ -692,8 +784,8 @@ trait Functions {
 
 
 	public function facebook_like($counts=0, $url=false){
-		$override = do_action('pre_nebula_facebook_like', $counts);
-		if ( !empty($override) ){echo $override; return;}
+		$override = apply_filters('pre_nebula_facebook_like', null, $counts);
+		if ( isset($override) ){return;}
 		?>
 		<div class="nebula-social-button facebook-like require-fbsdk">
 			<div class="fb-like" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="false"></div>
@@ -701,8 +793,8 @@ trait Functions {
 	<?php }
 
 	public function facebook_both($counts=0, $url=false){
-		$override = do_action('pre_nebula_facebook_both', $counts);
-		if ( !empty($override) ){echo $override; return;}
+		$override = apply_filters('pre_nebula_facebook_both', null, $counts);
+		if ( isset($override) ){return;}
 		?>
 		<div class="nebula-social-button facebook-both require-fbsdk">
 			<div class="fb-like" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="true"></div>
@@ -711,8 +803,8 @@ trait Functions {
 
 
 	public function twitter_tweet($counts=0){
-		$override = do_action('pre_nebula_twitter_tweet', $counts);
-		if ( !empty($override) ){echo $override; return;}
+		$override = apply_filters('pre_nebula_twitter_tweet', null, $counts);
+		if ( isset($override) ){return;}
 		?>
 		<div class="nebula-social-button twitter-tweet">
 			<a href="https://twitter.com/share" class="twitter-share-button" <?php echo ( $counts != 0 )? '': 'data-count="none"'; ?>>Tweet</a>
@@ -722,8 +814,8 @@ trait Functions {
 	}
 
 	public function twitter_follow($counts=0, $username=false){
-		$override = do_action('pre_nebula_twitter_follow', $counts, $username);
-		if ( !empty($override) ){echo $override; return;}
+		$override = apply_filters('pre_nebula_twitter_follow', null, $counts, $username);
+		if ( isset($override) ){return;}
 
 		if ( empty($username) && !$this->get_option('twitter_username') ){
 			return false;
@@ -750,8 +842,8 @@ trait Functions {
 	}
 
 	public function google_plus($counts=0){
-		$override = do_action('pre_nebula_google_plus', $counts);
-		if ( !empty($override) ){echo $override; return;}
+		$override = apply_filters('pre_nebula_google_plus', null, $counts);
+		if ( isset($override) ){return;}
 		?>
 		<div class="nebula-social-button google-plus-plus-one">
 			<div class="g-plusone" data-size="medium" <?php echo ( $counts != 0 )? '' : 'data-annotation="none"'; ?>></div>
@@ -764,8 +856,8 @@ trait Functions {
 	}
 
 	public function linkedin_share($counts=0){
-		$override = do_action('pre_nebula_linkedin_share', $counts);
-		if ( !empty($override) ){echo $override; return;}
+		$override = apply_filters('pre_nebula_linkedin_share', null, $counts);
+		if ( isset($override) ){return;}
 		?>
 		<div class="nebula-social-button linkedin-share">
 			<?php $this->linkedin_widget_script(); ?>
@@ -775,8 +867,8 @@ trait Functions {
 	}
 
 	public function linkedin_follow($counts=0){
-		$override = do_action('pre_nebula_linkedin_follow', $counts);
-		if ( !empty($override) ){echo $override; return;}
+		$override = apply_filters('pre_nebula_linkedin_follow', null, $counts);
+		if ( isset($override) ){return;}
 		?>
 		<div class="nebula-social-button linkedin-follow">
 			<?php $this->linkedin_widget_script(); ?>
@@ -795,8 +887,8 @@ trait Functions {
 	}
 
 	public function pinterest_pin($counts=0){ //@TODO "Nebula" 0: Bubble counts are not showing up...
-		$override = do_action('pre_nebula_pinterest_pin', $counts);
-		if ( !empty($override) ){echo $override; return;}
+		$override = apply_filters('pre_nebula_pinterest_pin', null, $counts);
+		if ( isset($override) ){return;}
 
 		if ( has_post_thumbnail() ){
 			$featured_image = $this->get_thumbnail_src(get_the_post_thumbnail($post->ID, 'full'));
@@ -820,8 +912,8 @@ trait Functions {
 	public function vimeo_meta($id, $meta=''){return $this->video_meta('vimeo', $id);}
 	public function youtube_meta($id, $meta=''){return $this->video_meta('youtube', $id);}
 	public function video_meta($provider, $id){
-		$override = do_action('pre_video_meta', $provider, $id);
-		if ( !empty($override) ){return $override;}
+		$override = apply_filters('pre_video_meta', null, $provider, $id);
+		if ( isset($override) ){return;}
 
 		$video_metadata = array(
 			'origin' => $this->url_components('basedomain'),
@@ -925,8 +1017,8 @@ trait Functions {
 
 	//Breadcrumbs
 	public function breadcrumbs($options=array()){
-		$override = do_action('pre_nebula_breadcrumbs');
-		if ( !empty($override) ){echo $override; return;}
+		$override = apply_filters('pre_nebula_breadcrumbs', null);
+		if ( isset($override) ){return;}
 
 		global $post;
 		$defaults = array(
@@ -1072,8 +1164,8 @@ trait Functions {
 
 	//Modified WordPress search form using Bootstrap components
 	public function search_form($placeholder=''){
-		$override = do_action('pre_nebula_search_form', $placeholder);
-		if ( !empty($override) ){echo $override; return;}
+		$override = apply_filters('pre_nebula_search_form', null, $placeholder);
+		if ( isset($override) ){return;}
 
 		$value = $placeholder;
 		if ( empty($placeholder) ){
@@ -1099,8 +1191,8 @@ trait Functions {
 
 	//Easily create markup for a Hero area search input
 	public function hero_search($placeholder='What are you looking for?'){
-		$override = do_action('pre_nebula_hero_search', $placeholder);
-		if ( !empty($override) ){echo $override; return;}
+		$override = apply_filters('pre_nebula_hero_search', null, $placeholder);
+		if ( isset($override) ){return;}
 
 		$form = '<div id="nebula-hero-formcon">
 				<form id="nebula-hero-search" class="form-group search ignore-form" method="get" action="' . home_url('/') . '">
@@ -1114,8 +1206,8 @@ trait Functions {
 	//Infinite Load
 	// Ajax call handle in nebula()->infinite_load();
 	public function infinite_load_query($args=array('post_status' => 'publish', 'showposts' => 4), $loop=false){
-		$override = do_action('pre_nebula_infinite_load_query');
-		if ( !empty($override) ){return;}
+		$override = apply_filters('pre_nebula_infinite_load_query', null);
+		if ( isset($override) ){return;}
 
 		global $wp_query;
 		if ( empty($args['paged']) ){
@@ -1254,8 +1346,8 @@ trait Functions {
 	public function is_business_open($date=null, $general=false){ return $this->business_open($date, $general); }
 	public function is_business_closed($date=null, $general=false){ return !$this->business_open($date, $general); }
 	public function business_open($date=null, $general=false){
-		$override = do_action('pre_business_open', $date, $general);
-		if ( !empty($override) ){return $override;}
+		$override = apply_filters('pre_business_open', null, $date, $general);
+		if ( isset($override) ){return;}
 
 		if ( empty($date) || $date == 'now' ){
 			$date = time();
@@ -1320,8 +1412,8 @@ trait Functions {
 
 	//Get the relative time of day
 	public function relative_time($format=null){
-		$override = do_action('pre_nebula_relative_time', $format);
-		if ( !empty($override) ){return $override;}
+		$override = apply_filters('pre_nebula_relative_time', null, $format);
+		if ( isset($override) ){return;}
 
 		if ( $this->contains(date('H'), array('00', '01', '02')) ){
 			$relative_time = array(
@@ -1483,8 +1575,8 @@ trait Functions {
 	//https://developer.yahoo.com/weather/
 	public function weather($zipcode=null, $data=''){
 		if ( $this->get_option('weather') ){
-			$override = do_action('pre_nebula_weather', $zipcode, $data);
-			if ( !empty($override) ){return $override;}
+			$override = apply_filters('pre_nebula_weather', null, $zipcode, $data);
+			if ( isset($override) ){return;}
 
 			if ( !empty($zipcode) && is_string($zipcode) && !ctype_digit($zipcode) ){ //ctype_alpha($zipcode)
 				$data = $zipcode;
@@ -1618,8 +1710,8 @@ trait Functions {
 
 	//Determine if the author should be the Company Name or the specific author's name.
 	public function the_author($show_authors=1){
-		$override = do_action('pre_nebula_the_author', $show_authors);
-		if ( !empty($override) ){return $override;}
+		$override = apply_filters('pre_nebula_the_author', null, $show_authors);
+		if ( isset($override) ){return;}
 
 		if ( !is_single() || $show_authors == 0 || !$this->get_option('author_bios') ){
 			return $this->get_option('site_owner', get_bloginfo('name'));
@@ -1630,8 +1722,8 @@ trait Functions {
 
 	//Register Widget Areas
 	public function widgets_register(){
-		$override = do_action('pre_nebula_widgets_init');
-		if ( !empty($override) ){return;}
+		$override = apply_filters('pre_nebula_widgets_init', null);
+		if ( isset($override) ){return;}
 
 		//Sidebar 1
 		register_sidebar(array(
@@ -1702,8 +1794,8 @@ trait Functions {
 
 	//Register the Navigation Menus
 	public function nav_menu_locations(){
-		$override = do_action('pre_nebula_nav_menu_locations');
-		if ( !empty($override) ){return;}
+		$override = apply_filters('pre_nebula_nav_menu_locations', null);
+		if ( isset($override) ){return;}
 
 		register_nav_menus(array(
 			'secondary' => 'Secondary Menu',
