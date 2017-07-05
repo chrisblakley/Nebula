@@ -635,6 +635,11 @@ if ( !trait_exists('Admin') ){
 					echo '<div class="nebula-admin-notice error"><p><a href="options-reading.php">Search Engine Visibility</a> is currently disabled!</p></div>';
 				}
 
+				//Check for Service Worker JavaScript file when using Service Worker
+				if ( $this->get_option('service_worker') && !file_exists($this->sw_location(false)) ){
+					echo '<div class="nebula-admin-notice error"><p>Service Worker is enabled in <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">Nebula Options</a>, but no Service Worker JavaScript file was found. Either use the <a href="https://github.com/chrisblakley/Nebula/blob/master/Nebula-Child/resources/sw.js" target="_blank">provided sw.js file</a> (by moving it to the root directory), or override the function <a href="https://gearside.com/nebula/functions/sw_location/?utm_campaign=documentation&utm_medium=admin+notice&utm_source=service+worker#override" target="_blank">sw_location()</a> to locate the actual JavaScript file you are using.</p></div>';
+				}
+
 				//Check for /offline page when using Service Worker
 				if ( $this->get_option('service_worker') && is_null('offline') ){
 					echo '<div class="nebula-admin-notice error"><p>It is recommended to make an Offline page when using Service Worker. <a href="post-new.php?post_type=page">Manually add one</a></p></div>';

@@ -4,6 +4,11 @@
 
 <IfModule mod_headers.c>
 	Header set Connection keep-alive
+
+	#Allow cross-origin fonts
+	<FilesMatch "\.(ttf|ttc|otf|eot|woff|font.css|css)$">
+		Header set Access-Control-Allow-Origin "*"
+	</FilesMatch>
 </IfModule>
 
 #BEGIN WordPress

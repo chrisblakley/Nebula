@@ -9,7 +9,10 @@ jQuery(function(){
 	//Utilities
 	cacheSelectors();
 	getQueryStrings();
-	nebula.dom.html.removeClass('no-js').addClass('js'); //In case Modernizr is not being used
+	addHelperClasses();
+	initBootstrapFunctions();
+	svgImgs();
+	errorMitigation();
 
 	//Navigation
 	mmenus();
@@ -21,22 +24,14 @@ jQuery(function(){
 	pageSuggestion();
 
 	//Forms
-	nebulaLiveValidator();
 	cf7Functions();
 	cf7LocalStorage();
-
-	//Helpers
-	addHelperClasses();
-	initBootstrapFunctions();
-	errorMitigation();
-	nebulaEqualize();
-	nebulaScrollTo();
-	svgImgs();
 
 	//Interaction
 	socialSharing();
 	nebulaVideoTracking();
 	animationTriggers();
+	nebulaScrollTo();
 
 	visibilityChangeActions();
 	nebula.dom.document.on('visibilitychange', function(){
@@ -49,14 +44,13 @@ jQuery(function(){
 	}
 
 	//Remove Sass render trigger query
-	if ( get('sass') && !get('persistent') && window.history.replaceState ){
+	if ( get('sass') && !get('persistent') && window.history.replaceState ){ //IE10+
 		window.history.replaceState({}, document.title, removeQueryParameter('sass', window.location.href));
 	}
 
 	jQuery('form .debuginfo').addClass('hidden').css('display', 'none').attr('aria-hidden', 'true').val(nebula.user.cid);
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 }); //End Document Ready
-
 
 /*==========================
  Window Load
@@ -76,9 +70,11 @@ jQuery(window).on('load', function(){
 	advancedSearchTriggers();
 	searchValidator();
 	searchTermHighlighter();
+	emphasizeSearchTerms();
 
 	//Forms
 	nebulaAddressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete');
+	nebulaLiveValidator();
 
 	facebookSDK();
 	facebookConnect();
@@ -87,16 +83,16 @@ jQuery(window).on('load', function(){
 	nebulaNetworkConnection();
 
 	lastWidth = nebula.dom.window.width(); //Prep resize detection (Is this causing a forced reflow?)
-
 	jQuery('a, li, tr').removeClass('hover');
 	nebula.dom.html.addClass('loaded');
 
 	performanceMetrics();
 	nebulaServiceWorker();
 
-	setTimeout(function(){
-		emphasizeSearchTerms();
-	}, 1000);
+	networkAvailable(true); //Call it once on load, then listen for changes
+	jQuery(window).on('offline online', function(){
+		networkAvailable(false);
+	});
 }); //End Window Load
 
 
@@ -109,7 +105,6 @@ jQuery(window).on('resize', function(){
 		if ( typeof lastWidth !== 'undefined' && nebula.dom.window.width() != lastWidth ){ //If the width actually changed
 			lastWidth = nebula.dom.window.width();
 
-			nebulaEqualize();
 			mobileSearchPlaceholder();
 		}
 	}, 500, 'window resize');
@@ -149,7 +144,7 @@ function cacheSelectors(force){
 
 //ServiceWorker
 function nebulaServiceWorker(){
-	if ( nebula.site.options.sw && 'serviceWorker' in navigator ){
+	if ( nebula.site.options.sw && 'serviceWorker' in navigator ){ //Firefox and Chrome only (soon Edge)
 		//Register
 		navigator.serviceWorker.register(nebula.site.sw_url).then(function(registration){
 			//console.log('ServiceWorker registration successful with scope: ', registration.scope);
@@ -232,7 +227,7 @@ function nebulaPredictiveCacheListeners(){
 					if ( oThis.attr('target') !== '_blank' ){
 						nebulaAddToCache(oThis.attr('href'));
 					}
-				}, 750);
+				}, 500);
 			}
 		}, function(){
 			if ( predictiveHoverTimeout ){
@@ -274,6 +269,24 @@ function nebulaAddToCache(url){
 /*==========================
  Detection Functions
  ===========================*/
+
+//Check (or set) network availability (online/offline)
+function networkAvailable(onload){
+	if ( navigator.onLine ){
+		nebula.dom.body.removeClass('offline');
+
+		//If the permalink does not match the current URL, we're viewing an offline page
+		if ( !onload && nebula.post.permalink !== window.location.href ){ //@TODO "Nebula" this detection method won't work if the URL is modified after load (and is causing an infinite loop when Sass is processed!) Maybe only check this conditional when not on initial pageload?
+			//window.location.href = window.location.href; //"Redirect" to the originally requested page
+		}
+	} else {
+		nebula.dom.body.addClass('offline');
+	}
+
+	if ( !onload ){
+		jQuery(document).trigger('nebula_network_change');
+	}
+}
 
 //Page Visibility
 function visibilityChangeActions(){
@@ -364,7 +377,7 @@ function isGoogleAnalyticsReady(){
 function nebulaBattery(){
 	nebula.user.client.device.battery = false;
 
-	if ( 'getBattery' in navigator ){
+	if ( 'getBattery' in navigator ){ //Chrome only
 		navigator.getBattery().then(function(battery){
 			nebulaBatteryData(battery);
 			jQuery(battery).on('chargingchange levelchange', function(){
@@ -506,7 +519,7 @@ function socialSharing(){
     });
 
 	//Web Share API
-	if ( 'share' in navigator ){
+	if ( 'share' in navigator ){ //Not supported yet (Android Chrome Canary only)
 		nebula.dom.document.on('click tap touch', '.webshare', function(){
 			oThis = jQuery(this);
 
@@ -803,7 +816,7 @@ function eventTracking(){
 	}
 
 	//Capture Print Intent
-	if ( 'matchMedia' in window ){
+	if ( 'matchMedia' in window ){ //IE10+
         window.matchMedia('print').addListener(function(media){
         	if ( media.matches ){
         		sendPrintEvent();
@@ -1045,18 +1058,20 @@ function keywordSearch(container, parent, value, filteredClass){
 
 //Menu Search Replacement
 function menuSearchReplacement(){
-	var randomMenuSearchID = Math.floor((Math.random()*100)+1);
-	jQuery('li.nebula-search').html('<form class="wp-menu-nebula-search search nebula-search" method="get" action="' + nebula.site.home_url + '/"><label class="sr-only" for="nebula-menu-search-' + randomMenuSearchID + '">Search</label><input type="search" id="nebula-menu-search-' + randomMenuSearchID + '" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></form>');
-	jQuery('li.nebula-search input').on('focus', function(){
-		jQuery(this).addClass('focus active');
-	});
-	jQuery('li.nebula-search input').on('blur', function(){
-		if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
-			jQuery(this).removeClass('focus active focusError').attr('placeholder', jQuery(this).attr('placeholder'));
-		} else {
-			jQuery(this).removeClass('active');
-		}
-	});
+	if ( jQuery('li.nebula-search').length ){
+		var randomMenuSearchID = Math.floor((Math.random()*100)+1);
+		jQuery('li.nebula-search').html('<form class="wp-menu-nebula-search search nebula-search" method="get" action="' + nebula.site.home_url + '/"><label class="sr-only" for="nebula-menu-search-' + randomMenuSearchID + '">Search</label><input type="search" id="nebula-menu-search-' + randomMenuSearchID + '" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></form>');
+		jQuery('li.nebula-search input').on('focus', function(){
+			jQuery(this).addClass('focus active');
+		});
+		jQuery('li.nebula-search input').on('blur', function(){
+			if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
+				jQuery(this).removeClass('focus active focusError').attr('placeholder', jQuery(this).attr('placeholder'));
+			} else {
+				jQuery(this).removeClass('active');
+			}
+		});
+	}
 }
 
 //Only allow alphanumeric (and some special keys) to return true
@@ -1601,20 +1616,22 @@ function searchTermHighlighter(){
 function emphasizeSearchTerms(){
 	var theSearchTerm = get('s');
 	if ( typeof theSearchTerm !== 'undefined' ){
-		var origBGColor = jQuery('.searchresultword').css('background-color');
-		jQuery('.searchresultword').each(function(i){
-	    	var stallFor = 150 * parseInt(i);
-			jQuery(this).delay(stallFor).animate({
-			    backgroundColor: 'rgba(255, 255, 0, 0.5)',
-			    borderColor: 'rgba(255, 255, 0, 1)',
-			}, 500, 'swing', function(){
-			    jQuery(this).delay(1000).animate({
-				    backgroundColor: origBGColor,
-				}, 1000, 'swing', function(){
-				    jQuery(this).addClass('transitionable');
+		setTimeout(function(){
+			var origBGColor = jQuery('.searchresultword').css('background-color');
+			jQuery('.searchresultword').each(function(i){
+		    	var stallFor = 150 * parseInt(i);
+				jQuery(this).delay(stallFor).animate({
+				    backgroundColor: 'rgba(255, 255, 0, 0.5)',
+				    borderColor: 'rgba(255, 255, 0, 1)',
+				}, 500, 'swing', function(){
+				    jQuery(this).delay(1000).animate({
+					    backgroundColor: origBGColor,
+					}, 1000, 'swing', function(){
+					    jQuery(this).addClass('transitionable');
+					});
 				});
 			});
-		});
+		}, 1000);
 	}
 }
 
@@ -1624,14 +1641,14 @@ function singleResultDrawer(){
 	if ( typeof theSearchTerm !== 'undefined' ){
 		theSearchTerm = theSearchTerm.replace(/\%20|\+/g, ' ').replace(/\%22|"|'/g, '');
 		jQuery('#searchform input#s').val(theSearchTerm);
-	}
 
-	nebula.dom.document.on('click touch tap', '#nebula-drawer .close', function(){
-		var permalink = jQuery(this).attr('href');
-		history.replaceState(null, document.title, permalink);
-		jQuery('#nebula-drawer').slideUp();
-		return false;
-	});
+		nebula.dom.document.on('click touch tap', '#nebula-drawer .close', function(){
+			var permalink = jQuery(this).attr('href');
+			history.replaceState(null, document.title, permalink);
+			jQuery('#nebula-drawer').slideUp();
+			return false;
+		});
+	}
 }
 
 //Page Suggestions for 404 or no search results pages using Google Custom Search Engine
@@ -1647,21 +1664,23 @@ function pageSuggestion(){
 			var phrase = decodeURIComponent(jQuery.trim(path.replace(/\/+/g, ' '))) + ' ' + decodeURIComponent(jQuery.trim(queryStrings[0].replace(/\+/g, ' ')));
 			tryGCSESearch(phrase);
 		}
+
+		nebula.dom.document.on('mousedown touch tap', 'a.gcse-suggestion, a.internal-suggestion', function(e){
+			eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
+			ga('set', gaCustomDimensions['eventIntent'], eventIntent);
+
+			if ( jQuery(this).hasClass('internal-suggestion') ){
+				var suggestionType = 'Internal';
+			} else {
+				var suggestionType = 'GCSE';
+			}
+
+			ga('send', 'event', 'Page Suggestion', suggestionType, jQuery(this).text());
+			nv('append', {'page_suggestion_clicks': jQuery(this).text() + ' (' + suggestionType + ')'});
+		});
+
 	}
 
-	nebula.dom.document.on('mousedown touch tap', 'a.gcse-suggestion, a.internal-suggestion', function(e){
-		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
-		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
-
-		if ( jQuery(this).hasClass('internal-suggestion') ){
-			var suggestionType = 'Internal';
-		} else {
-			var suggestionType = 'GCSE';
-		}
-
-		ga('send', 'event', 'Page Suggestion', suggestionType, jQuery(this).text());
-		nv('append', {'page_suggestion_clicks': jQuery(this).text() + ' (' + suggestionType + ')'});
-	});
 }
 
 function tryGCSESearch(phrase){
@@ -2541,13 +2560,8 @@ function placeLookup(placeID){
 
 //Zebra-striper, First-child/Last-child, Hover helper functions, add "external" rel to outbound links
 function addHelperClasses(){
+	nebula.dom.html.removeClass('no-js').addClass('js'); //In case Modernizr is not being used
 	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'nofollow external noopener'); //Add rel attributes to external links
-
-	if ( navigator.onLine ){
-		nebula.dom.body.removeClass('offline');
-	} else {
-		nebula.dom.body.addClass('offline');
-	}
 
 	//Remove filetype icons from images within <a> tags and buttons.
 	jQuery('a img').closest('a').addClass('no-icon');
@@ -2626,28 +2640,6 @@ function svgImgs(){
 	        }, 'xml');
         }
     });
-}
-
-//Column height equalizer
-function nebulaEqualize(){
-	jQuery('.row.equalize').each(function(){
-		var oThis = jQuery(this);
-		tallestColumn = 0;
-		oThis.children('[class*="col-"]').css('min-height', '0').each(function(i){
-			if ( !jQuery(this).hasClass('no-equalize') ){
-				columnHeight = jQuery(this).outerHeight();
-				if ( columnHeight > tallestColumn ){
-					tallestColumn = columnHeight;
-				}
-			}
-		});
-		oThis.attr('data-equalized', tallestColumn).find('[class*="col-"]:not(.no-equalize)').css('min-height', tallestColumn);
-		nebula.dom.document.trigger('nebula_equalized');
-	});
-
-	nebula.dom.document.on('nebula_infinite_finish', function(){
-		nebulaEqualize();
-	});
 }
 
 //Offset must be an integer
@@ -3361,7 +3353,7 @@ function nebulaHTML5VideoTracking(){
 			}
 
 			oThis.on('play', function(){
-				if ( 'mediaSession' in navigator && oThis.attr('title') ){
+				if ( 'mediaSession' in navigator && oThis.attr('title') ){ //Android Chrome 55+ only
 					navigator.mediaSession.metadata = new MediaMetadata({
 						title: oThis.attr('title'),
 						artist: oThis.attr('artist') || '',
@@ -3868,7 +3860,7 @@ function pauseAllVideos(force){
 function desktopNotification(title, message, clickCallback, showCallback, closeCallback, errorCallback){
 
 	//Service Worker Way:
-	if ( 'PushManager' in window ){
+	if ( 'PushManager' in window ){ //Firefox and Chrome only
 		//https://developers.google.com/web/fundamentals/getting-started/codelabs/push-notifications/
 	}
 
@@ -3952,7 +3944,7 @@ function checkNotificationPermission(){
 		return true;
 	} else if ( Notification.permission !== 'denied' ){
 		Notification.requestPermission(function (permission){
-			if( !('permission' in Notification) ){
+			if( !('permission' in Notification) ){ //Firefox and Chrome only
 				Notification.permission = permission;
 			}
 			if ( permission === "granted" ){
@@ -4012,6 +4004,9 @@ function eventFormNeedReset(){
 }
 
 function mmenus(){
+	//@todo "Nebula" 0: Between Mmenu and jQuery 2 console violations are being triggered: "Added non-passive event listener to a scroll-blocking 'touchmove' event."
+		//This happens whether this function is triggered on DOM ready or Window load
+
 	if ( 'mmenu' in jQuery ){
 		var mobileNav = jQuery('#mobilenav');
 		var mobileNavTriggerIcon = jQuery('a.mobilenavtrigger i');
@@ -4099,15 +4094,17 @@ function mmenus(){
 
 //Vertical subnav expanders
 function subnavExpanders(){
-    jQuery('.xoxo .menu li.menu-item:has(ul)').addClass('has-expander').append('<a class="toplevelvert_expander closed" href="#"><i class="fa fa-caret-left"></i></a>');
-    jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
-    nebula.dom.document.on('click touch tap', '.toplevelvert_expander', function(){
-        jQuery(this).toggleClass('closed open').parent().children('.sub-menu').slideToggle();
-        return false;
-    });
-    //Automatically expand subnav to show current page
-    jQuery('.current-menu-ancestor').children('.toplevelvert_expander').click();
-    jQuery('.current-menu-item').children('.toplevelvert_expander').click();
+	if ( jQuery('.xoxo .menu').length ){
+	    jQuery('.xoxo .menu li.menu-item:has(ul)').addClass('has-expander').append('<a class="toplevelvert_expander closed" href="#"><i class="fa fa-caret-left"></i></a>');
+	    jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
+	    nebula.dom.document.on('click touch tap', '.toplevelvert_expander', function(){
+	        jQuery(this).toggleClass('closed open').parent().children('.sub-menu').slideToggle();
+	        return false;
+	    });
+	    //Automatically expand subnav to show current page
+	    jQuery('.current-menu-ancestor').children('.toplevelvert_expander').click();
+	    jQuery('.current-menu-item').children('.toplevelvert_expander').click();
+    }
 }
 
 /*==========================

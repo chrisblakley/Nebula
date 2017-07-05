@@ -330,7 +330,7 @@ trait Functions {
 			$replace = array(
 				"$1" . $new_cache_name . "$3",
 				"$1" . home_url('/') . "offline/" . "$3",
-				"$1" . get_theme_file_uri('/assets/img') . "/offline.jpg" . "$3",
+				"$1" . get_theme_file_uri('/assets/img') . "/offline.svg" . "$3",
 				"$1" . get_theme_file_uri('/assets/img/meta') . "/android-chrome-512x512.png" . "$3",
 				"$1" . $this->manifest_json_location() . "$3",
 				"$1" . home_url('/') . "$3",
