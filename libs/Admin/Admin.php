@@ -645,6 +645,11 @@ if ( !trait_exists('Admin') ){
 					echo '<div class="nebula-admin-notice error"><p>It is recommended to make an Offline page when using Service Worker. <a href="post-new.php?post_type=page">Manually add one</a></p></div>';
 				}
 
+				//Check for SSL when using Service Worker
+				if ( $this->get_option('service_worker') && !is_ssl() ){
+					echo '<div class="nebula-admin-notice error"><p>Service Worker requires an SSL. Either update the site to https or <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">disable Service Worker</a>.</p></div>';
+				}
+
 				//Check for "Just Another WordPress Blog" tagline
 				if ( strtolower(get_bloginfo('description')) === 'just another wordpress site' ){
 					echo '<div class="nebula-admin-notice error"><p><a href="options-general.php">Site Tagline</a> is still "Just Another WordPress Site"!</p></div>';
