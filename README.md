@@ -1,27 +1,22 @@
 # Nebula
-Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes it is not meant for the end-user.
+Nebula is a WordPress theme framework that focuses on enhancing development. The core features of Nebula make it a powerful tool for designing, developing, and analyzing a WordPress website, but its deliberately prudent code syntax also serves as a learning resource for developers themselves.
 
-![Nebula](https://gearside.com/nebula/wp-content/themes/Nebula-master/screenshot.png)
+![Nebula](https://github.com/chrisblakley/Nebula/blob/master/assets/img/meta/og-thumb.png?raw=true)
 
-Wordpress developers will find all source code not obfuscated, so everything may be customized and altered to fit the needs of the project. Additional comments have been added to help explain what is happening; not only is this framework great for speedy development, but it is also useful for learning advanced Wordpress techniques.
+## Requirements
+Nebula follows [WordPress recommendations](https://wordpress.org/about/requirements/) and does not require any additional installations. To take full advantage of Nebula's features, the following are recommended:
+
+- WordPress Latest
+- PHP 7.0+
+- MySQL 5.6+
+- SSL
 
 ## Installation
-- [Download the .zip file of the Nebula theme.](https://github.com/chrisblakley/Nebula/archive/master.zip) Extract and upload to the /themes directory via FTP.
+- [Download the .zip file of the Nebula theme.](https://github.com/chrisblakley/Nebula/archive/master.zip) Extract and upload to the WordPress /themes directory.
 - Activate the Nebula theme and run the automated initialization.
-- *(Optional)* To use the prepared child theme, move the Nebula-Child directory to the /themes/ directory.
+- *(Optional)* To use the prepared child theme, move the bundled /Nebula-Child directory to the /themes directory.
 - *(Optional)* Activate the Nebula Child theme.
-
-## Using Child Themes in WordPress
-Child themes allow customization without crippling the original theme. This means that the parent Nebula can be easily updated without fear of breaking custom code. All customizations should be done in the child theme by copying the parent files as needed to the appropriate subdirectory within the child theme. When doing this, the file(s) in the child theme will override the file in the parent (except for functions.php and style.css). The main functions.php file in the child theme is run **before** the functions.php file in the parent. The style.css in the child theme is run **after** the style.css in the parent.
-
-**Important Notes:**
-- If renaming either theme, be sure to update the directories to match. The themes can be named however, but it is strongly recommended that the child theme directory match the parent with "-child" added to the end.
-- Make sure the "Template:" setting at the top of the child theme's style.css (or stylesheets/scss/style.scss if using SASS) matches the template directory of the parent theme!
-
-## Additional Guides
-- *[Setup Guide](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=setup+guide)*
-- *[Testing Checklist](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=testing+checklist)*
-- *[Launch Guide](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=launch+checklist)*
+- Follow the [Setup Guide](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=setup+guide) for additional customization and options.
 
 ## Documentation
-Full documentation is available at [https://gearside.com/nebula](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=full+documentation) including custom functionality as well as examples of useful snippets.
+Comprehensive documentation is available at [https://gearside.com/nebula](https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=readme&utm_source=full+documentation) along with a [testing checklist]((https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=testing+checklist)) and [launch guide](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=launch+checklist).
