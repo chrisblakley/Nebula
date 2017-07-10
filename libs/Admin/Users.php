@@ -35,7 +35,7 @@ if ( !trait_exists('Users') ){
 		//Update user online status
 		public function users_status_init(){
 			if ( is_user_logged_in() ){
-				$logged_in_users = nebula()->get_data('users_status');
+				$logged_in_users = $this->get_data('users_status');
 
 				$unique_id = $_SERVER['REMOTE_ADDR'] . '.' . preg_replace("/[^a-zA-Z0-9\.]+/", "", $_SERVER['HTTP_USER_AGENT']);
 				$current_user = wp_get_current_user();
@@ -50,11 +50,11 @@ if ( !trait_exists('Users') ){
 						'ip' => $_SERVER['REMOTE_ADDR'],
 						'unique' => array($unique_id),
 					);
-					nebula()->update_data('users_status', $logged_in_users);
+					$this->update_data('users_status', $logged_in_users);
 				} else {
 					if ( !in_array($unique_id, $logged_in_users[$current_user->ID]['unique']) ){
 						array_push($logged_in_users[$current_user->ID]['unique'], $unique_id);
-						nebula()->update_data('users_status', $logged_in_users);
+						$this->update_data('users_status', $logged_in_users);
 					}
 				}
 			}
@@ -82,22 +82,22 @@ if ( !trait_exists('Users') ){
 			}
 
 			if ( $column_name === 'status' ){
-				if ( nebula()->is_user_online($id) ){
+				if ( $this->is_user_online($id) ){
 					$online_now = '<i class="fa fa-caret-right" style="color: green;"></i> <strong>Online Now</strong>';
-					if ( nebula()->user_single_concurrent($id) > 1 ){
-						$online_now .= '<br/><small>(<strong>' . nebula()->user_single_concurrent($id) . '</strong> locations)</small>';
+					if ( $this->user_single_concurrent($id) > 1 ){
+						$online_now .= '<br/><small>(<strong>' . $this->user_single_concurrent($id) . '</strong> locations)</small>';
 					}
 					return $online_now;
 				} else {
-					return ( nebula()->user_last_online($id) )? '<small>Last Seen: <br /><em>' . date('M j, Y @ g:ia', nebula()->user_last_online($id)) . '</em></small>' : '';
+					return ( $this->user_last_online($id) )? '<small>Last Seen: <br /><em>' . date('M j, Y @ g:ia', $this->user_last_online($id)) . '</em></small>' : '';
 				}
 			}
 
 			if ( $column_name === 'ip' ){
-				$logged_in_users = nebula()->get_data('users_status');
+				$logged_in_users = $this->get_data('users_status');
 				$last_ip = $logged_in_users[$id]['ip'];
 
-				$notable_poi = nebula()->poi($last_ip);
+				$notable_poi = $this->poi($last_ip);
 				if ( !empty($notable_poi) ){
 					$last_ip .= '<br><small>(' . $notable_poi . ')</small>';
 				}
@@ -115,7 +115,7 @@ if ( !trait_exists('Users') ){
 			$override = apply_filters('pre_nebula_is_user_online', null, $id);
 			if ( isset($override) ){return;}
 
-			$logged_in_users = nebula()->get_data('users_status');
+			$logged_in_users = $this->get_data('users_status');
 			return isset($logged_in_users[$id]['last']) && $logged_in_users[$id]['last'] > time()-600; //10 Minutes
 		}
 
@@ -124,7 +124,7 @@ if ( !trait_exists('Users') ){
 			$override = apply_filters('pre_nebula_user_last_online', null, $id);
 			if ( isset($override) ){return;}
 
-			$logged_in_users = nebula()->get_data('users_status');
+			$logged_in_users = $this->get_data('users_status');
 			if ( isset($logged_in_users[$id]['last']) ){
 				return $logged_in_users[$id]['last'];
 			}
@@ -136,7 +136,7 @@ if ( !trait_exists('Users') ){
 			$override = apply_filters('pre_nebula_online_users', null, $return);
 			if ( isset($override) ){return;}
 
-			$logged_in_users = nebula()->get_data('users_status');
+			$logged_in_users = $this->get_data('users_status');
 			if ( empty($logged_in_users) || !is_array($logged_in_users) ){
 				return ( strtolower($return) == 'count' )? 0 : false; //If this happens it indicates an error.
 			}
@@ -158,7 +158,7 @@ if ( !trait_exists('Users') ){
 			$override = apply_filters('pre_nebula_user_single_concurrent', null, $id);
 			if ( isset($override) ){return;}
 
-			$logged_in_users = nebula()->get_data('users_status');
+			$logged_in_users = $this->get_data('users_status');
 			if ( isset($logged_in_users[$id]['unique']) ){
 				return count($logged_in_users[$id]['unique']);
 			}
@@ -292,7 +292,7 @@ if ( !trait_exists('Users') ){
 
 			//If editing own user, update NVDB
 			if ( $user_id === get_current_user_id() ){
-				nebula()->update_visitor(array(
+				$this->update_visitor(array(
 					'job_title' => sanitize_text_field($_POST['jobtitle']),
 					'company' => sanitize_text_field($_POST['jobcompany']),
 					'company_website' => sanitize_text_field($_POST['jobcompanywebsite']),

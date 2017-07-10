@@ -1,6 +1,5 @@
 jQuery.noConflict();
 
-
 /*==========================
  DOM Ready
  ===========================*/
@@ -227,7 +226,7 @@ function nebulaPredictiveCacheListeners(){
 					if ( oThis.attr('target') !== '_blank' ){
 						nebulaAddToCache(oThis.attr('href'));
 					}
-				}, 500);
+				}, 250);
 			}
 		}, function(){
 			if ( predictiveHoverTimeout ){
@@ -2195,22 +2194,7 @@ function nebulaLoadJS(url, callback){
 
 //Dynamically load CSS files using JS
 function nebulaLoadCSS(url){
-	if ( document.createStyleSheet ){
-		 try {
-			  document.createStyleSheet(url);
-		 } catch(e){
-			  ga('send', 'exception', {'exDescription': '(JS) ' + url + ' could not be loaded', 'exFatal': false});
-			  nv('append', {'css_errors': url + ' could not be loaded'});
-		 }
-	} else {
-		 var css;
-		 css = document.createElement('link');
-		 css.rel = 'stylesheet';
-		 css.type = 'text/css';
-		 css.media = "all";
-		 css.href = url;
-		 document.getElementsByTagName("head")[0].appendChild(css);
-	}
+	jQuery('head').append('<link rel="stylesheet" href="' + url + '" type="text/css" media="screen">');
 }
 
 

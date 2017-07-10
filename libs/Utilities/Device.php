@@ -14,7 +14,7 @@ if ( !trait_exists('Device') ){
 		 ===========================*/
 
 		public function detect(){
-			if ( nebula()->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') ){
 					require_once(get_template_directory() . '/inc/vendor/device-detector/DeviceDetector.php'); //Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!
 					$GLOBALS["device_detect"] = new DeviceDetector\DeviceDetector($_SERVER['HTTP_USER_AGENT']);
 					$GLOBALS["device_detect"]->discardBotInformation(); //If called, getBot() will only return true if a bot was detected (speeds up detection a bit)
@@ -27,7 +27,7 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_is_mobile', null);
 			if ( isset($override) ){return;}
 
-			if ( nebula()->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') ){
 				if ( isset($GLOBALS["device_detect"]) && $GLOBALS["device_detect"]->isMobile() ){
 					return true;
 				}
@@ -46,7 +46,7 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_is_tablet', null);
 			if ( isset($override) ){return;}
 
-			if ( nebula()->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') ){
 				if ( isset($GLOBALS["device_detect"]) && $GLOBALS["device_detect"]->isTablet() ){
 					return true;
 				}
@@ -60,7 +60,7 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_is_desktop', null);
 			if ( isset($override) ){return;}
 
-			if ( nebula()->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') ){
 				if ( isset($GLOBALS["device_detect"]) && $GLOBALS["device_detect"]->isDesktop() ){
 					return true;
 				}
@@ -78,7 +78,7 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_get_os', null, $info);
 			if ( isset($override) ){return;}
 
-			if ( nebula()->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') ){
 				$os = $GLOBALS["device_detect"]->getOs();
 				switch ( strtolower($info) ){
 					case 'full':
@@ -115,7 +115,7 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_is_os', null, $os, $version, $comparison);
 			if ( isset($override) ){return;}
 
-			if ( nebula()->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') ){
 				if ( empty($os) ){
 					trigger_error('nebula_is_os requires a parameter of requested operating system.');
 					return false;
@@ -135,9 +135,9 @@ if ( !trait_exists('Device') ){
 				$version_parts = explode('.', $version);
 				if ( strpos(strtolower($actual_os['name']), strtolower($os)) !== false ){
 					if ( !empty($version) ){
-						if ( nebula()->compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //If major version matches
+						if ( $this->compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //If major version matches
 							if ( $version_parts[1] && $version_parts[1] != 0 ){ //If minor version exists and is not 0
-								if ( nebula()->compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //If minor version matches
+								if ( $this->compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //If minor version matches
 									return true;
 								} else {
 									return false;
@@ -160,7 +160,7 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_get_device', null, $info);
 			if ( isset($override) ){return;}
 
-			if ( nebula()->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') ){
 				$info = str_replace(' ', '', $info);
 				switch ( strtolower($info) ){
 					case 'full':
@@ -180,9 +180,9 @@ if ( !trait_exists('Device') ){
 						return $GLOBALS["device_detect"]->getDeviceName();
 						break;
 					case 'formfactor':
-						if ( nebula()->is_mobile() ){
+						if ( $this->is_mobile() ){
 							return 'mobile';
-						} elseif ( nebula()->is_tablet() ){
+						} elseif ( $this->is_tablet() ){
 							return 'tablet';
 						} else {
 							return 'desktop';
@@ -233,8 +233,8 @@ if ( !trait_exists('Device') ){
 			//Scrape entire exit IP list
 			if ( isset($_SERVER['REMOTE_ADDR']) ){
 				$tor_list = get_transient('nebula_tor_list');
-				if ( empty($tor_list) || nebula()->is_debug() ){ //If transient expired or is debug
-					$response = nebula()->remote_get('https://check.torproject.org/cgi-bin/TorBulkExitList.py?ip=' . $_SERVER['SERVER_ADDR']);
+				if ( empty($tor_list) || $this->is_debug() ){ //If transient expired or is debug
+					$response = $this->remote_get('https://check.torproject.org/cgi-bin/TorBulkExitList.py?ip=' . $_SERVER['SERVER_ADDR']);
 					if ( !is_wp_error($response) ){
 						$tor_list = $response['body'];
 						set_transient('nebula_tor_list', $tor_list, HOUR_IN_SECONDS*48);
@@ -277,7 +277,7 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_get_browser', null, $info);
 			if ( isset($override) ){return;}
 
-			if ( nebula()->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') ){
 				$client = $GLOBALS["device_detect"]->getClient();
 				if ( $this->is_tor_browser() ){
 					$client = array(
@@ -339,7 +339,7 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_is_browser', null, $browser, $version, $comparison);
 			if ( isset($override) ){return;}
 
-			if ( nebula()->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') ){
 				if ( empty($browser) ){
 					trigger_error('nebula_is_browser requires a parameter of requested browser.');
 					return false;
@@ -376,9 +376,9 @@ if ( !trait_exists('Device') ){
 				$version_parts = explode('.', $version);
 				if ( strpos(strtolower($actual_browser['name']), strtolower($browser)) !== false ){
 					if ( !empty($version) ){
-						if ( nebula()->compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //Major version comparison
+						if ( $this->compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //Major version comparison
 							if ( !empty($version_parts[1]) ){ //If minor version exists and is not 0
-								if ( nebula()->compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //Minor version comparison
+								if ( $this->compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //Minor version comparison
 									return true;
 								} else {
 									return false;
@@ -401,7 +401,7 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_is_engine', null, $engine);
 			if ( isset($override) ){return;}
 
-			if ( nebula()->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') ){
 				if ( empty($engine) ){
 					trigger_error('is_engine requires a parameter of requested engine.');
 					return false;
@@ -432,7 +432,7 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_is_bot', null);
 			if ( isset($override) ){return;}
 
-			if ( nebula()->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') ){
 				if ( isset($GLOBALS["device_detect"]) && $GLOBALS["device_detect"]->isBot() ){
 					return true;
 				}

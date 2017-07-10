@@ -9,7 +9,7 @@
 	<head>
 		<?php get_template_part('inc/metadata'); //Do not place tags above this. ?>
 		<?php wp_head(); ?>
-		<?php get_template_part('inc/analytics'); //Google Analytics and other analytics trackers. ?>
+		<?php get_template_part('inc/analytics'); ?>
 	</head>
 	<body <?php body_class(); ?>>
 		<div id="body-wrapper">

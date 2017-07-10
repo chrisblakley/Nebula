@@ -4,10 +4,6 @@
  * Child Functions
  */
 
-//nebula_child.php depends on the nebula_options.php functions, so it must be required first.
-//require_once(get_template_directory() . '/libs/nebula_options.php'); //Nebula Options
-
-
 if ( !class_exists('Nebula') ){
 	require_once(get_template_directory() . '/nebula.php');
 	nebula();

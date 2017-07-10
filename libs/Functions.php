@@ -222,49 +222,220 @@ trait Functions {
 		}
 	}
 
-	//Check for warnings and send them to the console.
-	public function console_warnings($console_warnings=array()){
-		if ( $this->is_dev() && $this->get_option('admin_notices') ){
-			if ( empty($console_warnings) || is_string($console_warnings) ){
-				$console_warnings = array();
+	//Check for Nebula warnings
+	public function check_warnings(){
+		if ( (current_user_can('manage_options') || $this->is_dev()) && $this->get_option('admin_notices') ){
+			$nebula_warnings = array();
+
+			//Admin warnings only
+			if ( $this->is_admin_page() ){
+				//Check page slug against categories and tags. //@TODO "Nebula" 0: Consider adding other taxonomies here too
+				global $pagenow;
+				if ( $pagenow === 'post.php' || $pagenow === 'edit.php' ){
+					global $post;
+
+					if ( !empty($post) ){ //If the listing has results
+						foreach ( get_categories() as $category ){
+							if ( $category->slug == $post->post_name ){
+								$nebula_warnings[] = array(
+									'level' => 'error',
+									'description' => 'Page and category slug conflict: <strong>' . $category->slug . '</strong> - Consider changing this page slug.',
+								);
+								return false;
+							}
+						}
+
+						foreach ( get_tags() as $tag ){
+							if ( $tag->slug == $post->post_name ){
+								$nebula_warnings[] = array(
+									'level' => 'error',
+									'description' => 'Page and tag slug conflict: <strong>' . $tag->slug . '</strong> - Consider changing this page slug.'
+								);
+								return false;
+							}
+						}
+					}
+				}
 			}
 
 			//If search indexing is disabled
 			if ( get_option('blog_public') == 0 ){
-				if ( $this->is_site_live() ){
-					$console_warnings[] = array('error', 'Search Engine Visibility is currently disabled!');
-				} elseif ( !$this->get_option('prototype_mode') ){
-					$console_warnings[] = array('warn', 'Search Engine Visibility is currently disabled.');
-				}
+				$nebula_warnings[] = array(
+					'level' => 'error',
+					'description' => '<a href="options-reading.php">Search Engine Visibility</a> is currently disabled!',
+					'url' => 'options-reading.php'
+				);
 			}
 
+			//If website is live and using Prototype Mode
 			if ( $this->is_site_live() && $this->get_option('prototype_mode') ){
-				$console_warnings[] = array('warn', 'Prototype Mode is enabled (' . ucwords($this->dev_phase()) . ')!');
+				$nebula_warnings[] = array(
+					'level' => 'warn',
+					'description' => '<a href="plugins.php">Prototype Mode</a> is enabled (' . ucwords($this->dev_phase()) . ')!'
+				);
 			}
 
-			//If no Google Analytics tracking ID
-			if ( !$this->get_option('ga_tracking_id') ){
-				$console_warnings[] = array('error', 'No Google Analytics tracking ID!');
+			//If Prototype mode is disabled, but Multiple Theme plugin is still activated
+			if ( !$this->get_option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
+				$nebula_warnings[] = array(
+					'level' => 'error',
+					'description' => '<a href="plugins.php">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.',
+					'url' => 'plugins.php'
+				);
 			}
 
-			//If there are warnings, send them to the console.
-			if ( !empty($console_warnings) ){
-				echo '<script>';
-				foreach( $console_warnings as $console_warning ){
-					if ( is_string($console_warning) ){
-						$console_warning = array($console_warning);
-					}
-					if ( !in_array($console_warning[0], array('log', 'warn', 'error')) ){
-						$warn_level = 'log';
-						$the_warning = $console_warning[0];
-					} else {
-						$warn_level = $console_warning[0];
-						$the_warning = $console_warning[1];
-					}
-					echo 'console.' . $warn_level . '("Nebula: ' . $the_warning . '");';
+			//Check PHP version
+			$php_version_lifecycle = $this->php_version_support();
+			if ( $php_version_lifecycle['lifecycle'] === 'security' ){
+				if ( $php_version_lifecycle['end']-time() < 2592000 ){ //1 month
+					$nebula_warnings[] = array(
+						'level' => 'warn',
+						'description' => 'PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end on ' . date('F j, Y', $php_version_lifecycle['end']) . ' <small>(in ' . human_time_diff($php_version_lifecycle['end']) . ')</small>'
+					);
 				}
-				echo '</script>';
+			} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
+				$nebula_warnings[] = array(
+					'level' => 'error',
+					'description' => 'PHP ' . PHP_VERSION . ' <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">no longer receives security updates</a>! End of life occurred on ' . date('F j, Y', $php_version_lifecycle['end']) . ' <small>(' . human_time_diff($php_version_lifecycle['end']) . ' ago)</small>'
+				);
 			}
+
+			//Check for hard Debug Mode
+			if ( WP_DEBUG ){
+				$nebula_warnings[] = array(
+					'level' => 'warn',
+					'description' => '<strong>WP_DEBUG</strong> is enabled <small>(Generally defined in wp-config.php)</small>'
+				);
+			}
+			if ( WP_DEBUG_LOG ){
+				$nebula_warnings[] = array(
+					'level' => 'warn',
+					'description' => 'Debug logging (<strong>WP_DEBUG_LOG</strong>) to /wp-content/debug.log is enabled <small>(Generally defined in wp-config.php)</small>'
+				);
+			}
+			if ( WP_DEBUG_DISPLAY ){
+				$nebula_warnings[] = array(
+					'level' => 'error',
+					'description' => 'Debug errors and warnings are being displayed on the front-end (<Strong>WP_DEBUG_DISPLAY</strong>) <small>(Generally defined in wp-config.php)</small>'
+				);
+			}
+
+			//Check for Google Analytics Tracking ID
+			if ( !$this->get_option('ga_tracking_id') ){
+				$nebula_warnings[] = array(
+					'level' => 'error',
+					'description' => '<a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> is currently not set!',
+					'url' => 'themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id'
+				);
+			}
+
+			//If Enhanced Ecommerce Plugin is missing Google Analytics Tracking ID
+			if ( is_plugin_active('enhanced-e-commerce-for-woocommerce-store/woocommerce-enhanced-ecommerce-google-analytics-integration.php') ){
+				$ee_ga_settings = get_option('woocommerce_enhanced_ecommerce_google_analytics_settings');
+				if ( empty($ee_ga_settings['ga_id']) ){
+					$nebula_warnings[] = array(
+						'level' => 'error',
+						'description' => '<a href="admin.php?page=wc-settings&tab=integration">WooCommerce Enhanced Ecommerce</a> is missing a Google Analytics ID!',
+						'url' => 'admin.php?page=wc-settings&tab=integration'
+					);
+				}
+			}
+
+			//Check if the parent theme template is correctly referenced
+			if ( is_child_theme() ){
+				$active_theme = wp_get_theme();
+				if ( !file_exists(dirname(get_stylesheet_directory()) . '/' . $active_theme->get('Template')) ){
+					$nebula_warnings[] = array(
+						'level' => 'error',
+						'description' => 'A child theme is active, but its parent theme directory <strong>' . $active_theme->get('Template') . '</strong> does not exist!<br/><em>The "Template:" setting in the <a href="' . get_stylesheet_uri() . '" target="_blank" rel="noopener">style.css</a> file of the child theme must match the directory name (above) of the parent theme.</em>'
+					);
+				}
+			}
+
+			//Check if Relevanssi has built an index for search
+			if ( is_plugin_active('relevanssi/relevanssi.php') && !get_option('relevanssi_indexed') ){
+				$nebula_warnings[] = array(
+					'level' => 'error',
+					'description' => '<a href="options-general.php?page=relevanssi%2Frelevanssi.php">Relevanssi</a> must build an index to search the site. This must be triggered manually.'
+				);
+			}
+
+			//Check if Google Optimize is enabled. This alert is because the Google Optimize style snippet will add a whitescreen effect during loading and should be disabled when not actively experimenting.
+			if ( $this->get_option('google_optimize_id') ){
+				$nebula_warnings[] = array(
+					'level' => 'error',
+					'description' => '<a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!'
+				);
+			}
+
+			//Service Worker checks
+			if ( $this->get_option('service_worker') ){
+				//Check for Service Worker JavaScript file when using Service Worker
+				if ( !file_exists($this->sw_location(false)) ){
+					$nebula_warnings[] = array(
+						'level' => 'error',
+						'description' => 'Service Worker is enabled in <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">Nebula Options</a>, but no Service Worker JavaScript file was found. Either use the <a href="https://github.com/chrisblakley/Nebula/blob/master/Nebula-Child/resources/sw.js" target="_blank">provided sw.js file</a> (by moving it to the root directory), or override the function <a href="https://gearside.com/nebula/functions/sw_location/?utm_campaign=documentation&utm_medium=admin+notice&utm_source=service+worker#override" target="_blank">sw_location()</a> to locate the actual JavaScript file you are using.'
+					);
+				}
+
+				//Check for /offline page when using Service Worker
+				$offline_page = get_page_by_path('offline');
+				if ( is_null($offline_page) ){
+					$nebula_warnings[] = array(
+						'level' => 'warn',
+						'description' => 'It is recommended to make an Offline page when using Service Worker. <a href="post-new.php?post_type=page">Manually add one</a>'
+					);
+				}
+
+				//Check for SSL when using Service Worker
+				if ( !is_ssl() ){
+					$nebula_warnings[] = array(
+						'level' => 'warn',
+						'description' => 'Service Worker requires an SSL. Either update the site to https or <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">disable Service Worker</a>.'
+					);
+				}
+			}
+
+			//Check for "Just Another WordPress Blog" tagline
+			if ( strtolower(get_bloginfo('description')) === 'just another wordpress site' ){
+				$nebula_warnings[] = array(
+					'level' => 'warn',
+					'description' => '<a href="options-general.php">Site Tagline</a> is still "Just Another WordPress Site"!'
+				);
+			}
+
+			//Check if all SCSS files were processed manually.
+			if ( $this->get_option('scss') && (isset($_GET['sass']) || isset($_GET['scss'])) ){
+				if ( $this->is_dev() || $this->is_client() ){
+					$nebula_warnings[] = array(
+						'level' => 'log',
+						'description' => 'All SCSS files have been manually processed.'
+					);
+				} else {
+					$nebula_warnings[] = array(
+						'level' => 'error',
+						'description' => 'You do not have permissions to manually process all SCSS files.'
+					);
+				}
+			}
+
+			return $nebula_warnings;
+		}
+
+		return false;
+	}
+
+	//Log warnings in the console
+	public function console_warnings($console_warnings=array()){
+		$warnings = $this->check_warnings();
+
+		//If there are warnings, send them to the console.
+		if ( !empty($warnings) ){
+			echo '<script>';
+			foreach( $warnings as $warning ){
+				echo 'console.' . $warning['level'] . '("Nebula: ' . strip_tags($warning['description']) . '");';
+			}
+			echo '</script>';
 		}
 	}
 
@@ -287,7 +458,7 @@ trait Functions {
 		if ( isset($override) ){return;}
 
 		$sw_cache_name = get_transient('nebula_sw_cache_name');
-		if ( empty($sw_cache_name) || nebula()->is_debug() ){
+		if ( empty($sw_cache_name) || $this->is_debug() ){
 			if ( $this->get_option('service_worker') && file_exists($this->sw_location(false)) ){
 				WP_Filesystem();
 				global $wp_filesystem;
@@ -316,7 +487,7 @@ trait Functions {
 
 		if ( !empty($sw_js) ){
 			$find = array(
-				"/(var CACHE_NAME = ')(.+)(';)/m",
+				"/(var CACHE_NAME = ')(.+)(';)(.+$)?/m",
 				"/(var OFFLINE_URL = ')(.+)(';)/m",
 				"/(var OFFLINE_IMG = ')(.+)(';)/m",
 				"/(var META_ICON = ')(.+)(';)/m",
@@ -328,7 +499,7 @@ trait Functions {
 			$new_cache_name = "nebula-" . strtolower(get_option('stylesheet')) . "-" . mt_rand(10000, 99999);
 
 			$replace = array(
-				"$1" . $new_cache_name . "$3",
+				"$1" . $new_cache_name . "$3" . " //" . date('l, F j, Y g:i:s A'),
 				"$1" . home_url('/') . "offline/" . "$3",
 				"$1" . get_theme_file_uri('/assets/img') . "/offline.svg" . "$3",
 				"$1" . get_theme_file_uri('/assets/img/meta') . "/android-chrome-512x512.png" . "$3",

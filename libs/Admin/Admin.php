@@ -321,34 +321,15 @@ if ( !trait_exists('Admin') ){
 
 			//Check for important warnings/notifications for the Admin Bar
 			$nebula_warning_icon = '';
-			if ( $this->get_option('admin_notices') ){
-				if ( !$this->get_option('ga_tracking_id') ){
-					$nebula_warning_icon = ' <i class="fa fa-fw fa-exclamation-triangle" style="font-family: \'FontAwesome\'; color: #ca3838; margin-left: 5px;"></i>';
-					$nebula_warning_description = 'Google Analytics tracking ID is currently not set!';
-					$nebula_warning_href = 'themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id';
-				}
+			$warnings = $this->check_warnings();
 
-				//Check for "Discourage searching engines..." setting
-				if ( get_option('blog_public') == 0 ){
-					$nebula_warning_icon = ' <i class="fa fa-fw fa-exclamation-triangle" style="font-family: \'FontAwesome\'; color: #ca3838; margin-left: 5px;"></i>';
-					$nebula_warning_description = 'Search Engine Visibility is currently disabled!';
-					$nebula_warning_href = 'options-reading.php';
-				}
-
-				//Check Prototype Mode
-				if ( !$this->get_option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
-					$nebula_warning_icon = ' <i class="fa fa-fw fa-exclamation-triangle" style="font-family: \'FontAwesome\'; color: #ca3838; margin-left: 5px;"></i>';
-					$nebula_warning_description = 'Prototype Mode is disabled, but Multiple Theme plugin is still active.';
-					$nebula_warning_href = 'plugins.php';
-				}
-
-				//Check Enhanced Ecommerce GA Tracking ID
-				if ( is_plugin_active('enhanced-e-commerce-for-woocommerce-store/woocommerce-enhanced-ecommerce-google-analytics-integration.php') ){
-					$ee_ga_settings = get_option('woocommerce_enhanced_ecommerce_google_analytics_settings');
-					if ( empty($ee_ga_settings['ga_id']) ){
+			//If there are warnings display them
+			if ( !empty($warnings) ){
+				foreach( $warnings as $warning ){
+					if ( !empty($warning['url']) ){
 						$nebula_warning_icon = ' <i class="fa fa-fw fa-exclamation-triangle" style="font-family: \'FontAwesome\'; color: #ca3838; margin-left: 5px;"></i>';
-						$nebula_warning_description = 'WooCommerce Enhanced Ecommerce is missing a Google Analytics ID!';
-						$nebula_warning_href = 'admin.php?page=wc-settings&tab=integration';
+						$nebula_warning_description = strip_tags($warning['description']);
+						$nebula_warning_href = $warning['url'];
 					}
 				}
 			}
@@ -597,124 +578,20 @@ if ( !trait_exists('Admin') ){
 
 		//Nebula Admin Notices/Warnings/Notifications
 		public function admin_notices(){
-			if ( current_user_can('manage_options') || $this->is_dev() ){
-				//Check PHP version
-				$php_version_lifecycle = $this->php_version_support();
-				if ( $php_version_lifecycle['lifecycle'] === 'security' ){
-					if ( $php_version_lifecycle['end']-time() < 2592000 ){ //1 month
-						echo '<div class="nebula-admin-notice notice notice-info"><p>PHP <strong>' . PHP_VERSION . '</strong> is nearing end of life. Security updates end on <strong title="In ' . human_time_diff($php_version_lifecycle['end']) . '">' . date('F j, Y', $php_version_lifecycle['end']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">PHP Version Support &raquo;</a></p></div>';
-					}
-				} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
-					echo '<div class="nebula-admin-notice error"><p>PHP <strong>' . PHP_VERSION . '</strong> no longer receives security updates! End of life occurred on <strong title="' . human_time_diff($php_version_lifecycle['end']) . ' ago">' . date('F j, Y', $php_version_lifecycle['end']) . '</strong>. <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">PHP Version Support &raquo;</a></p></div>';
-				}
+			$warnings = $this->check_warnings();
 
-				//Check for hard Debug Mode
-				if ( WP_DEBUG ){
-					$debug_messages = '';
-					$notice_level = 'notice notice-info';
-					if ( WP_DEBUG ){
-						$debug_messages .= '<strong>WP_DEBUG</strong> is enabled. ';
-					}
-					if ( WP_DEBUG_LOG ){
-						$debug_messages .= '<strong>Debug logging</strong> (WP_DEBUG_LOG) to /wp-content/debug.log is enabled. ';
-					}
-					if ( WP_DEBUG_DISPLAY ){
-						$notice_level = 'error';
-						$debug_messages .= 'Debug errors and warnings <strong>are</strong> being displayed on the front-end (WP_DEBUG_DISPLAY)! ';
-					}
-					echo '<div class="nebula-admin-notice ' . $notice_level . '"><p>' . $debug_messages . ' <small>(Generally defined in wp-config.php)</small></p></div>';
-				}
-
-				//Check for Google Analytics Tracking ID
-				if ( !$this->get_option('ga_tracking_id') ){
-					echo '<div class="nebula-admin-notice error"><p><a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> is currently not set!</p></div>';
-				}
-
-				//Check for "Discourage searching engines..." setting
-				if ( get_option('blog_public') == 0 ){
-					echo '<div class="nebula-admin-notice error"><p><a href="options-reading.php">Search Engine Visibility</a> is currently disabled!</p></div>';
-				}
-
-				//Check for Service Worker JavaScript file when using Service Worker
-				if ( $this->get_option('service_worker') && !file_exists($this->sw_location(false)) ){
-					echo '<div class="nebula-admin-notice error"><p>Service Worker is enabled in <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">Nebula Options</a>, but no Service Worker JavaScript file was found. Either use the <a href="https://github.com/chrisblakley/Nebula/blob/master/Nebula-Child/resources/sw.js" target="_blank">provided sw.js file</a> (by moving it to the root directory), or override the function <a href="https://gearside.com/nebula/functions/sw_location/?utm_campaign=documentation&utm_medium=admin+notice&utm_source=service+worker#override" target="_blank">sw_location()</a> to locate the actual JavaScript file you are using.</p></div>';
-				}
-
-				//Check for /offline page when using Service Worker
-				if ( $this->get_option('service_worker') && is_null('offline') ){
-					echo '<div class="nebula-admin-notice error"><p>It is recommended to make an Offline page when using Service Worker. <a href="post-new.php?post_type=page">Manually add one</a></p></div>';
-				}
-
-				//Check for SSL when using Service Worker
-				if ( $this->get_option('service_worker') && !is_ssl() ){
-					echo '<div class="nebula-admin-notice error"><p>Service Worker requires an SSL. Either update the site to https or <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">disable Service Worker</a>.</p></div>';
-				}
-
-				//Check for "Just Another WordPress Blog" tagline
-				if ( strtolower(get_bloginfo('description')) === 'just another wordpress site' ){
-					echo '<div class="nebula-admin-notice error"><p><a href="options-general.php">Site Tagline</a> is still "Just Another WordPress Site"!</p></div>';
-				}
-
-				//Check if all SCSS files were processed manually.
-				if ( $this->get_option('scss') && (isset($_GET['sass']) || isset($_GET['scss'])) ){ //SCSS notice when Nebula Options is updated is in nebula_options.php
-					if ( $this->is_dev() || $this->is_client() ){
-						echo '<div class="nebula-admin-notice notice notice-success"><p>All SCSS files have been manually processed.</p></div>';
-					} else {
-						echo '<div class="nebula-admin-notice error"><p>You do not have permissions to manually process all SCSS files.</p></div>';
-					}
-				}
-
-				//If Prototype mode is disabled, but Multiple Theme plugin is still activated
-				if ( !$this->get_option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
-					echo '<div class="nebula-admin-notice error"><p><a href="plugins.php">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.</p></div>';
-				}
-
-				//If Enhanced Ecommerce Plugin is missing Google Analytics Tracking ID
-				if ( is_plugin_active('enhanced-e-commerce-for-woocommerce-store/woocommerce-enhanced-ecommerce-google-analytics-integration.php') ){
-					$ee_ga_settings = get_option('woocommerce_enhanced_ecommerce_google_analytics_settings');
-					if ( empty($ee_ga_settings['ga_id']) ){
-						echo '<div class="nebula-admin-notice error"><p><a href="admin.php?page=wc-settings&tab=integration">WooCommerce Enhanced Ecommerce</a> is missing a Google Analytics ID!</p></div>';
-					}
-				}
-
-				//Check if the parent theme template is correctly referenced
-				if ( is_child_theme() ){
-					$active_theme = wp_get_theme();
-					if ( !file_exists(dirname(get_stylesheet_directory()) . '/' . $active_theme->get('Template')) ){
-						echo '<div class="nebula-admin-notice error"><p>A child theme is active, but its parent theme directory <strong>' . $active_theme->get('Template') . '</strong> does not exist!<br/><em>The "Template:" setting in the <a href="' . get_stylesheet_uri() . '" target="_blank" rel="noopener">style.css</a> file of the child theme must match the directory name (above) of the parent theme.</em></p></div>';
-					}
-				}
-
-				//Check if Relevanssi has built an index for search
-				if ( is_plugin_active('relevanssi/relevanssi.php') && !get_option('relevanssi_indexed') ){
-					echo '<div class="nebula-admin-notice error"><p><a href="options-general.php?page=relevanssi%2Frelevanssi.php">Relevanssi</a> must build an index to search the site. This must be triggered manually.</p></div>';
-				}
-
-				//Check if Google Optimize is enabled. This alert is because the Google Optimize style snippet will add a whitescreen effect during loading and should be disabled when not actively experimenting.
-				if ( $this->get_option('google_optimize_id') ){
-					echo '<div class="nebula-admin-notice error"><p><a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!</p></div>';
-				}
-			}
-
-			//Check page slug against categories and tags. //@TODO "Nebula" 0: Consider adding other taxonomies here too
-			global $pagenow;
-			if ( $pagenow === 'post.php' || $pagenow === 'edit.php' ){
-				global $post;
-
-				if ( !empty($post) ){ //If the listing has results
-					foreach ( get_categories() as $category ){
-						if ( $category->slug == $post->post_name ){
-							echo '<div class="nebula-admin-notice error"><p>Page and category slug conflict: <strong>' . $category->slug . '</strong> - Consider changing this page slug.</p></div>';
-							return false;
-						}
+			//If there are warnings display them
+			if ( !empty($warnings) ){
+				foreach( $warnings as $warning ){
+					if ( $warning['level'] == 'warn' ){
+						$warning['level'] = 'warning';
 					}
 
-					foreach ( get_tags() as $tag ){
-						if ( $tag->slug == $post->post_name ){
-							echo '<div class="nebula-admin-notice error"><p>Page and tag slug conflict: <strong>' . $tag->slug . '</strong> - Consider changing this page slug.</p></div>';
-							return false;
-						}
+					if ( $warning['level'] == 'log' ){
+						$warning['level'] = 'info';
 					}
+
+					echo '<div class="nebula-admin-notice notice notice-' . $warning['level'] . '"><p>Nebula: ' . $warning['description'] . '</p></div>';
 				}
 			}
 		}

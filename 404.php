@@ -71,11 +71,9 @@ get_header(); ?>
 </div>
 
 <script>
-	if ( document.referrer.length ) {
-		ga('send', 'event', '404 Not Found', 'Referrer: ' + document.referrer, {'nonInteraction': true});
-	} else {
-		ga('send', 'event', '404 Not Found', 'No Referrer (or Unknown)', {'nonInteraction': true});
-	}
+	var jsReferrer = ( document.referrer.length )? document.referrer : '(No JS Referrer)';
+	var phpReferrer = '<?php echo ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '(No PHP Referrer)'; ?>';
+	ga('send', 'event', '404 Not Found', 'JS Referrer: ' + jsReferrer, 'PHP Referrer: ' + phpReferrer, {'nonInteraction': true});
 </script>
 
 <?php get_footer(); ?>

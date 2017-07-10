@@ -49,7 +49,7 @@ if ( !trait_exists('Analytics') ){
 			if ( isset($override) ){return;}
 
 			if ( empty($domain) ){
-				$domain = nebula()->url_components('domain');
+				$domain = $this->url_components('domain');
 			}
 
 			$a = 0;
@@ -70,7 +70,7 @@ if ( !trait_exists('Analytics') ){
 
 			//@TODO "Nebula" 0: Make an AJAX function in Nebula (plugin) to accept a form for each parameter then renders the __utm.gif pixel.
 
-			$domain = nebula()->url_components('domain');
+			$domain = $this->url_components('domain');
 			$cookies = array(
 				'utma' => $this->generate_domain_hash($domain) . '.' . mt_rand(1000000000, 9999999999) . '.' . time() . '.' . time() . '.' . time() . '.1', //Domain Hash . Random ID . Time of First Visit . Time of Last Visit . Time of Current Visit . Session Counter ***Absolutely Required***
 				'utmz' => $this->generate_domain_hash($domain) . '.' . time() . '.1.1.', //Campaign Data (Domain Hash . Time . Counter . Counter)
@@ -84,12 +84,12 @@ if ( !trait_exists('Analytics') ){
 
 			$data = array(
 				'utmwv' => '5.3.8', //Tracking code version *** REQUIRED ***
-				'utmac' => nebula()->get_option('ga_tracking_id'), //Account string, appears on all requests *** REQUIRED ***
+				'utmac' => $this->get_option('ga_tracking_id'), //Account string, appears on all requests *** REQUIRED ***
 				'utmdt' => get_the_title(), //Page title, which is a URL-encoded string *** REQUIRED ***
-				'utmp' => nebula()->url_components('filepath'), //Page request of the current page (current path) *** REQUIRED ***
+				'utmp' => $this->url_components('filepath'), //Page request of the current page (current path) *** REQUIRED ***
 				'utmcc' => '__utma=' . $cookies['utma'] . ';+', //Cookie values. This request parameter sends all the cookies requested from the page. *** REQUIRED ***
 
-				'utmhn' => nebula()->url_components('hostname'), //Host name, which is a URL-encoded string
+				'utmhn' => $this->url_components('hostname'), //Host name, which is a URL-encoded string
 				'utmn' => rand(pow(10, 10-1), pow(10, 10)-1), //Unique ID generated for each GIF request to prevent caching of the GIF image
 				'utms' => '1', //Session requests. Updates every time a __utm.gif request is made. Stops incrementing at 500 (max number of GIF requests per session).
 				'utmul' => str_replace('-', '_', get_bloginfo('language')), //Language encoding for the browser. Some browsers don’t set this, in which case it is set to '-'
@@ -114,7 +114,7 @@ if ( !trait_exists('Analytics') ){
 			if ( isset($override) ){return;}
 
 			if ( empty($location) ){
-				$location = nebula()->requested_url();
+				$location = $this->requested_url();
 			}
 
 			if ( empty($title) ){
@@ -125,7 +125,7 @@ if ( !trait_exists('Analytics') ){
 			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 			$data = array(
 				'v' => 1,
-				'tid' => nebula()->get_option('ga_tracking_id'),
+				'tid' => $this->get_option('ga_tracking_id'),
 				'cid' => $this->ga_parse_cookie(),
 				't' => 'pageview',
 				'dl' => $location,
@@ -151,7 +151,7 @@ if ( !trait_exists('Analytics') ){
 			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 			$data = array(
 				'v' => 1,
-				'tid' => nebula()->get_option('ga_tracking_id'),
+				'tid' => $this->get_option('ga_tracking_id'),
 				'cid' => $this->ga_parse_cookie(),
 				't' => 'event',
 				'ec' => $category, //Category (Required)
@@ -159,7 +159,7 @@ if ( !trait_exists('Analytics') ){
 				'el' => $label, //Label
 				'ev' => $value, //Value
 				'ni' => $ni, //Non-Interaction
-				'dl' => nebula()->requested_url(),
+				'dl' => $this->requested_url(),
 				'dt' => ( get_the_title() )? get_the_title() : '',
 				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
 			);
@@ -179,11 +179,11 @@ if ( !trait_exists('Analytics') ){
 			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 			$defaults = array(
 				'v' => 1,
-				'tid' => nebula()->get_option('ga_tracking_id'),
+				'tid' => $this->get_option('ga_tracking_id'),
 				'cid' => $this->ga_parse_cookie(),
 				't' => '',
 				'ni' => 1,
-				'dl' => nebula()->requested_url(),
+				'dl' => $this->requested_url(),
 				'dt' => ( get_the_title() )? get_the_title() : '',
 				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
 			);
@@ -207,12 +207,12 @@ if ( !trait_exists('Analytics') ){
 			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 			$data = array(
 				'v' => 1,
-				'tid' => nebula()->get_option('ga_tracking_id'),
+				'tid' => $this->get_option('ga_tracking_id'),
 				'cid' => $this->ga_parse_cookie(),
 				't' => 'exception',
 				'exd' => $message,
 				'exf' => $title,
-				'dl' => nebula()->requested_url(),
+				'dl' => $this->requested_url(),
 				'dt' => ( get_the_title() )? get_the_title() : '',
 				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '',
 				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
@@ -224,9 +224,7 @@ if ( !trait_exists('Analytics') ){
 
 		public function ga_ajax(){
 			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-			if ( !nebula()->is_bot() ){
-				echo 'inside ga ajax';
-
+			if ( !$this->is_bot() ){
 				//Location and Title
 				$additional_fields = array(
 					'dl' => sanitize_text_field($_POST['fields']['location']),
@@ -239,8 +237,8 @@ if ( !trait_exists('Analytics') ){
 				}
 
 				//Custom Dimension
-				if ( nebula()->get_option('cd_blocker') ){
-					$additional_fields['cd' . str_replace('dimension', '', nebula()->get_option('cd_blocker'))] = 'Google Analytics Blocker';
+				if ( $this->get_option('cd_blocker') ){
+					$additional_fields['cd' . str_replace('dimension', '', $this->get_option('cd_blocker'))] = 'Google Analytics Blocker';
 				}
 
 				//Pageview
@@ -282,7 +280,7 @@ if ( !trait_exists('Analytics') ){
 				return false;
 			}
 
-			$custom_metric_hitID = ( nebula()->get_option('cd_hitid') )? "'cd" . str_replace('dimension', '', nebula()->get_option('cd_hitid')) . "=" . nebula()->ga_generate_UUID() . "'," : ''; //Create the Measurement Protocol parameter for cd
+			$custom_metric_hitID = ( $this->get_option('cd_hitid') )? "'cd" . str_replace('dimension', '', $this->get_option('cd_hitid')) . "=" . $this->ga_generate_UUID() . "'," : ''; //Create the Measurement Protocol parameter for cd
 
 			?>
 			<script>
@@ -312,7 +310,7 @@ if ( !trait_exists('Analytics') ){
 					}
 
 					navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [
-						'tid=<?php echo nebula()->get_option('ga_tracking_id'); ?>', //Tracking ID
+						'tid=<?php echo $this->get_option('ga_tracking_id'); ?>', //Tracking ID
 						'cid=' + gaCID, //Client ID
 						'v=1', //Protocol Version
 						't=event', //Hit Type
@@ -329,7 +327,7 @@ if ( !trait_exists('Analytics') ){
 
 					//User Timing
 					navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [
-						'tid=<?php echo nebula()->get_option('ga_tracking_id'); ?>', //Tracking ID
+						'tid=<?php echo $this->get_option('ga_tracking_id'); ?>', //Tracking ID
 						'cid=' + gaCID, //Client ID
 						'v=1', //Protocol Version
 						't=timing', //Hit Type
@@ -361,7 +359,7 @@ if ( !trait_exists('Analytics') ){
 				$message = strstr($error["message"], ' in /', true);
 				$file = strstr($error["file"], 'wp-content'); //Remove high-level directories to reduce clutter and prevent PII
 
-				nebula()->ga_send_exception('(PHP) ' . $message . ' on line ' . $error["line"] . ' in ' . $file, 1);
+				$this->ga_send_exception('(PHP) ' . $message . ' on line ' . $error["line"] . ' in ' . $file, 1);
 			}
 		}
 	}

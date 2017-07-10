@@ -3,7 +3,7 @@
 //@TODO: Enable "Service Worker" in Nebula Options (under Functions)
 
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-25345';
+var CACHE_NAME = 'nebula-nebula-child-32484'; //Monday, July 10, 2017 12:18:36 AM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
@@ -20,8 +20,6 @@ var CACHE_FILES = [
 	START_URL,
 	HOME_URL,
 ];
-
-//@todo: How do other people deal with trailing slashes?
 
 //Install
 self.addEventListener('install', function(event){

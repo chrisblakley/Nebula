@@ -6,7 +6,7 @@
 			<div id="footer-section" role="contentinfo">
 				<div class="nebula-color-overlay"></div>
 
-				<?php get_template_part('inc/footer_widgets'); //Footer widget logic. ?>
+				<?php get_template_part('inc/footer_widgets'); ?>
 
 				<div class="container">
 					<div class="row powerfootercon">

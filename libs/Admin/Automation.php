@@ -278,6 +278,13 @@ if ( !trait_exists('Automation') ){
 			$subject = 'Wordpress theme settings reset for ' . get_bloginfo('name');
 			$message = '<p>Wordpress settings have been re-initialized for <strong>' . get_bloginfo('name') . '</strong> by <strong>' . $current_user->display_name . ' <' . $current_user->user_email . '></strong> on <strong>' . date('F j, Y') . '</strong> at <strong> ' . date('g:ia') . '</strong>.</p>';
 
+
+
+
+
+
+
+
 			//@todo "Nebula" 0: Use WPDB here!
 			$connection = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 			$sql = "SELECT * FROM $wpdb->options";
@@ -290,6 +297,13 @@ if ( !trait_exists('Automation') ){
 			}
 			fclose($fp);
 			mysqli_close($connection);
+
+
+
+
+
+
+
 
 			$attachments = array($options_backup_file);
 

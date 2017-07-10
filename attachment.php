@@ -51,13 +51,7 @@ get_header(); ?>
 
 						<div class="entry-social">
 							<span class="nebulasocialcon">
-				        		<?php
-					        		if ( nebula()->is_dev() ) {
-						        		nebula()->post_meta('social', 1);
-					        		} else {
-						        		nebula()->post_meta('social', 0);
-					        		}
-					        	?>
+				        		<?php nebula()->post_meta('social', nebula()->is_dev()); ?>
 				        	</span>
 						</div>
 
@@ -88,7 +82,7 @@ get_header(); ?>
 										<a href="<?php echo $next_attachment_url; ?>" title="<?php echo get_the_title(); ?>"><?php echo wp_get_attachment_image($post->ID, array($content_width, 9999)); ?></a>
 									</div>
 
-									<?php if (1==2): //Might be needed for a gallery page. ?>
+									<?php if ( 1==2 ): //Might be needed for a gallery page. ?>
 										<nav id="nav-below" class="navigation">
 											<div class="nav-previous"><?php previous_image_link(false); ?></div>
 											<div class="nav-next"><?php next_image_link(false); ?></div>

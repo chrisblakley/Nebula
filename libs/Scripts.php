@@ -133,7 +133,7 @@ if ( !trait_exists('Scripts') ){
 					'id' => get_the_id(),
 					'permalink' => get_the_permalink(),
 					'title' => urlencode(get_the_title()),
-					'excerpt' => nebula()->excerpt(array('words' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)),
+					'excerpt' => $this->excerpt(array('words' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)),
 					'author' => urlencode(get_the_author()),
 					'year' => get_the_date('Y'),
 				),
