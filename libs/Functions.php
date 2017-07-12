@@ -595,14 +595,13 @@ trait Functions {
 			return false;
 		}
 
-		$image_id = ( $type !== 'post' )? $id : get_post_thumbnail_id($id); //If the thumbnail (or attachment) ID was passed instead of the post ID
+		$image_id = ( get_post_type($id) === 'attachment' || $type !== 'post' )? $id : get_post_thumbnail_id($id); //If the thumbnail (or attachment) ID was passed instead of the post ID
 
 		if ( strpos($id, '<img') !== false || $size == 'full' ){
 			$image = wp_get_attachment_image_src($image_id, $size);
 			return $image[0];
 		} else {
 			return ( preg_match('~\bsrc="([^"]++)"~', get_the_post_thumbnail($id, $size), $matches) )? $matches[1] : ''; //Use Regex as a last resort if get_the_post_thumbnail() was passed.
-
 		}
 	}
 

@@ -12,23 +12,61 @@ if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 do_action('nebula_preheaders');
 get_header(); ?>
 
-<?php if ( !get_theme_mod('nebula_hide_hero') ): ?>
-	<div id="hero-section" class="nebulashadow inner-top inner-bottom">
-		<div class="nebula-color-overlay"></div>
+<?php if ( get_theme_mod('nebula_hero') ): ?>
+	<div id="hero-section" class="nebulashadow inner-top inner-bottom" <?php echo ( get_theme_mod('nebula_hero_bg_image') )? 'style="background-image: url(' . get_theme_mod('nebula_hero_bg_image') . ');"' : ''; ?>>
+		<?php
+			if ( get_theme_mod('nebula_hero_overlay_color') || get_theme_mod('nebula_hero_overlay_opacity') ){
+				$hero_overlay = 'style="';
+				$hero_overlay .= ( get_theme_mod('nebula_hero_overlay_color') )? 'background: ' . get_theme_mod('nebula_hero_overlay_color') . ';' : '';
+				$hero_overlay .= ( get_theme_mod('nebula_hero_overlay_opacity') )? 'opacity: ' . get_theme_mod('nebula_hero_overlay_opacity') . ';' : '';
+				$hero_overlay .= 'animation: none;"';
+			}
+		?>
+		<div class="nebula-color-overlay" <?php echo ( !empty($hero_overlay) )? $hero_overlay : ''; ?>></div>
 
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<?php if ( get_bloginfo('name') && !get_theme_mod('nebula_hide_blogname') ): ?>
-						<h1><?php echo get_bloginfo('name'); ?></h1>
+					<?php if ( get_theme_mod('nebula_show_hero_title') ): ?>
+						<h1><?php echo ( get_theme_mod('nebula_hero_custom_title') )? get_theme_mod('nebula_hero_custom_title') : get_bloginfo('name'); ?></h1>
 					<?php endif; ?>
 
-					<?php if ( get_bloginfo('description') != '' && !get_theme_mod('nebula_hide_blogdescription') ): ?>
-						<h2><?php echo get_bloginfo('description'); ?></h2>
+					<?php if ( get_theme_mod('nebula_show_hero_description') ): ?>
+						<h2><?php echo ( get_theme_mod('nebula_hero_custom_description') )? get_theme_mod('nebula_hero_custom_description') : get_bloginfo('description'); ?></h2>
 					<?php endif; ?>
 
-					<?php if ( !get_theme_mod('nebula_hide_hero_search') ): ?>
+					<?php if ( get_theme_mod('nebula_hero_search') ): ?>
 						<?php echo nebula()->hero_search(); ?>
+					<?php endif; ?>
+
+					<?php if ( get_theme_mod('nebula_hero_fg_image') ): ?>
+						<?php if ( get_theme_mod('nebula_hero_fg_image_link') ): ?>
+							<a href="<?php echo get_theme_mod('nebula_hero_fg_image_link'); ?>">
+						<?php endif; ?>
+
+						<img src="<?php echo get_theme_mod('nebula_hero_fg_image'); ?>" />
+
+						<?php if ( get_theme_mod('nebula_hero_fg_image_link') ): ?>
+							</a>
+						<?php endif; ?>
+					<?php endif; ?>
+
+					<?php if ( get_theme_mod('nebula_hero_youtube_id') ): ?>
+						<?php $youtube_data = nebula()->video_meta('youtube', get_theme_mod('nebula_hero_youtube_id')); ?>
+						<div class="embed-responsive embed-responsive-16by9">
+							<iframe class="youtube embed-responsive-item" width="560" height="315" src="//www.youtube.com/embed/<?php echo $youtube_data['id']; ?>?wmode=transparent&enablejsapi=1&rel=0"></iframe>
+						</div>
+					<?php endif; ?>
+				</div><!--/col-->
+			</div><!--/row-->
+			<div class="row hero-cta">
+				<div class="col">
+					<?php if ( get_theme_mod('nebula_hero_cta_btn_1_text') && get_theme_mod('nebula_hero_cta_btn_1_url') ): ?>
+						<a class="btn btn-lg btn-primary" href="<?php echo get_theme_mod('nebula_hero_cta_btn_1_url'); ?>"><?php echo get_theme_mod('nebula_hero_cta_btn_1_text'); ?></a>
+					<?php endif; ?>
+
+					<?php if ( get_theme_mod('nebula_hero_cta_btn_2_text') && get_theme_mod('nebula_hero_cta_btn_2_url') ): ?>
+						<a class="btn btn-lg btn-secondary ml-4" href="<?php echo get_theme_mod('nebula_hero_cta_btn_2_url'); ?>"><?php echo get_theme_mod('nebula_hero_cta_btn_2_text'); ?></a>
 					<?php endif; ?>
 				</div><!--/col-->
 			</div><!--/row-->

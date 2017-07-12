@@ -2348,14 +2348,14 @@ function googleAddressAutocompleteCallback(autocompleteInput, name){
 
 //Request Geolocation
 function requestPosition(){
-	if ( typeof google != "undefined" && has(google, 'maps') ){
+	if ( typeof google !== 'undefined' && has(google, 'maps') ){
 		nebulaLoadJS('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){
 			google.load('maps', '3', {
-				  other_params: 'libraries=places',
-				  callback: function(){
-				  	getCurrentPosition();
-				  }
-			  });
+				other_params: 'libraries=places',
+				callback: function(){
+					getCurrentPosition();
+				}
+			});
 		});
 	} else {
 		getCurrentPosition();
@@ -2510,31 +2510,33 @@ function extractFromAddress(components, type){
 
 //Lookup place information
 function placeLookup(placeID){
-	var service = new google.maps.places.PlacesService(jQuery('<div></div>').get(0));
-	service.getDetails({
-		placeId: placeID
-	}, function(place, status){
-		if ( status === google.maps.places.PlacesServiceStatus.OK ){
-			if ( typeof place.name !== 'undefined' ){
-				nebula.session.geolocation.address.place = {
-					id: placeID,
-					name: place.name,
-					url: place.url,
-					website: place.website,
-					phone: place.formatted_phone_number,
-					ratings: {
-						rating: place.rating,
-						total: place.user_ratings_total,
-						reviews: ( typeof place.reviews !== 'undefined' )? place.reviews.length : 0,
-					},
-					utc_offset: place.utc_offset,
-				}
+	if ( has(google, 'maps.places') ){
+		var service = new google.maps.places.PlacesService(jQuery('<div></div>').get(0));
+		service.getDetails({
+			placeId: placeID
+		}, function(place, status){
+			if ( status === google.maps.places.PlacesServiceStatus.OK ){
+				if ( typeof place.name !== 'undefined' ){
+					nebula.session.geolocation.address.place = {
+						id: placeID,
+						name: place.name,
+						url: place.url,
+						website: place.website,
+						phone: place.formatted_phone_number,
+						ratings: {
+							rating: place.rating,
+							total: place.user_ratings_total,
+							reviews: ( typeof place.reviews !== 'undefined' )? place.reviews.length : 0,
+						},
+						utc_offset: place.utc_offset,
+					}
 
-				sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
-				nebula.dom.document.trigger('placeSuccess');
+					sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
+					nebula.dom.document.trigger('placeSuccess');
+				}
 			}
-		}
-	});
+		});
+	}
 }
 
 /*==========================

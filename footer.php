@@ -3,18 +3,29 @@
  * Theme Footer
  */
 ?>
-			<div id="footer-section" role="contentinfo">
-				<div class="nebula-color-overlay"></div>
+			<div id="footer-section" role="contentinfo" <?php echo ( get_theme_mod('nebula_footer_bg_image') )? 'style="background-image: url(' . get_theme_mod('nebula_footer_bg_image') . ');"' : ''; ?>>
+				<?php
+					if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ){
+						$footer_overlay = 'style="';
+						$footer_overlay .= ( get_theme_mod('nebula_footer_overlay_color') )? 'background: ' . get_theme_mod('nebula_footer_overlay_color') . ';' : '';
+						$footer_overlay .= ( get_theme_mod('nebula_footer_overlay_opacity') )? 'opacity: ' . get_theme_mod('nebula_footer_overlay_opacity') . ';' : '';
+						$footer_overlay .= 'animation: none;"';
+					}
+				?>
+				<div class="nebula-color-overlay" <?php echo ( !empty($footer_overlay) )? $footer_overlay : ''; ?>></div>
 
 				<?php get_template_part('inc/footer_widgets'); ?>
 
 				<div class="container">
+					<?php if ( get_theme_mod('nebula_footer_logo') ): ?>
+						<div class="row footerlogocon">
+							<div class="col">
+								<a class="footerlogo" href="<?php echo home_url('/'); ?>"><img class="svg" src="<?php echo get_theme_mod('nebula_footer_logo'); ?>" /></a>
+							</div><!--/col-->
+						</div><!--/row-->
+					<?php endif; ?>
 					<div class="row powerfootercon">
 						<div class="col">
-							<?php if ( get_theme_mod('nebula_footer_logo', false) ): ?>
-								<a class="footerlogo" href="<?php echo home_url('/'); ?>"><img src="<?php echo get_theme_mod('nebula_footer_logo', ''); ?>" /></a>
-							<?php endif; ?>
-
 							<?php if ( has_nav_menu('footer') ): ?>
 								<nav id="powerfooter" role="navigation">
 									<?php wp_nav_menu(array('theme_location' => 'footer', 'depth' => '2')); ?>
