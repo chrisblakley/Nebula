@@ -24,6 +24,9 @@ trait Functions {
 		//Prep custom theme support
 		add_action('after_setup_theme', array($this, 'theme_setup'));
 
+		//Add custom meta icon (favicon) sizes when the site_icon is used via the Customizer
+		add_filter('site_icon_image_sizes', array($this, 'site_icon_sizes'));
+
 		//Add the Posts RSS Feed back in
 		add_action('wp_head', array($this, 'add_back_post_feed'));
 
@@ -47,7 +50,7 @@ trait Functions {
 			}
 		}
 
-		//Update Service Worker JavaScript file yolo
+		//Update Service Worker JavaScript file
 		if ( $this->get_option('service_worker') && is_writable(get_home_path()) ){
 			if ( file_exists($this->sw_location(false)) ){
 				add_action('save_post', array($this, 'update_sw_js'));
@@ -113,6 +116,9 @@ trait Functions {
 		//This function can be called with AJAX or as a standard function.
 		add_action('wp_ajax_nebula_twitter_cache', array($this, 'twitter_cache'));
 		add_action('wp_ajax_nopriv_nebula_twitter_cache', array($this, 'twitter_cache'));
+
+		//Modified WordPress search form using Bootstrap components
+		add_filter('get_search_form', array($this, 'search_form'), 100);
 
 		//Replace text on password protected posts to be more minimal
 		add_filter('the_password_form', array($this, 'password_form_simplify'));
@@ -203,6 +209,13 @@ trait Functions {
 		remove_action('wp_head', 'start_post_rel_link', 10, 0); //Remove start link
 		remove_action('wp_head', 'parent_post_rel_link', 10, 0); //Remove previous link
 		remove_action('wp_head', 'adjacent_posts_rel_link', 10, 0); //Remove relational links for the posts adjacent to the current post
+	}
+
+	//Add custom meta icon (favicon) sizes when the site_icon is used via the Customizer
+	public function site_icon_sizes($core_sizes){
+		$nebula_sizes = array(16, 32, 70, 150, 180, 192, 310);
+		$all_sizes = array_unique(array_merge($core_sizes, $nebula_sizes));
+		return $sizes;
 	}
 
 	//Add the Posts RSS Feed back in
@@ -476,7 +489,7 @@ trait Functions {
 		return $sw_cache_name;
 	}
 
-	//Update variables within the service worker JavaScript file for install caching yolo
+	//Update variables within the service worker JavaScript file for install caching
 	public function update_sw_js(){
 		$override = apply_filters('pre_nebula_update_swjs', null);
 		if ( isset($override) ){return;}
@@ -542,7 +555,7 @@ trait Functions {
 			"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
 			"short_name": "' . get_bloginfo('name') . '",
 			"description": "' . get_bloginfo('description') . '",
-			"theme_color": "' . $this->sass_color('primary') . '",
+			"theme_color": "' . get_theme_mod('nebula_primary_color', $this->sass_color('primary')) . '",
 			"background_color": "#fff",
 			"gcm_sender_id": "' . $this->get_option('gcm_sender_id') . '",
 			"Scope": "/",
@@ -551,17 +564,36 @@ trait Functions {
 			"orientation": "portrait",
 			"splash_pages": null,
 			"icons": [';
-
-		//Loop through all meta images
-		$files = glob(get_theme_file_path('/assets/img/meta') . '/*.png');
-		foreach ( $files as $file ){
-			$filename = $this->url_components('filename', $file);
-			$dimensions = getimagesize($file);
+		if ( has_site_icon() ){
 			$manifest_json .= '{
-				"src": "' . get_theme_file_uri('/assets/img/meta') . '/' . $filename . '",
-				"sizes": "' . $dimensions[0] . 'x' . $dimensions[1] . '",
+				"src": "' . get_site_icon_url(16, get_theme_file_uri('/assets/img/meta') . '/favicon-16x16.png') . '",
+				"sizes": "16x16",
 				"type": "image/png"
-			}, ';
+			}, {
+				"src": "' . get_site_icon_url(32, get_theme_file_uri('/assets/img/meta') . '/favicon-32x32.png') . '",
+				"sizes": "32x32",
+				"type": "image/png"
+			}, {
+				"src": "' . get_site_icon_url(192, get_theme_file_uri('/assets/img/meta') . '/android-chrome-192x192.png') . '",
+				"sizes": "192x192",
+				"type": "image/png"
+			}, {
+				"src": "' . get_site_icon_url(512, get_theme_file_uri('/assets/img/meta') . '/android-chrome-512x512.png') . '",
+				"sizes": "512x512",
+				"type": "image/png"
+			}';
+		} else {
+			//Loop through all meta images
+			$files = glob(get_theme_file_path('/assets/img/meta') . '/*.png');
+			foreach ( $files as $file ){
+				$filename = $this->url_components('filename', $file);
+				$dimensions = getimagesize($file);
+				$manifest_json .= '{
+					"src": "' . get_theme_file_uri('/assets/img/meta') . '/' . $filename . '",
+					"sizes": "' . $dimensions[0] . 'x' . $dimensions[1] . '",
+					"type": "image/png"
+				}, ';
+			}
 		}
 
 		$manifest_json = rtrim($manifest_json,', ') . ']}';
@@ -1333,24 +1365,17 @@ trait Functions {
 	}
 
 	//Modified WordPress search form using Bootstrap components
-	public function search_form($placeholder=''){
-		$override = apply_filters('pre_nebula_search_form', null, $placeholder);
+	public function search_form(){
+		$override = apply_filters('pre_nebula_search_form', null);
 		if ( isset($override) ){return;}
 
-		$value = $placeholder;
-		if ( empty($placeholder) ){
-			$placeholder = 'Search';
-			if ( get_search_query() ){
-				$value = get_search_query();
-				$placeholder = get_search_query();
-			}
-		}
+		$placeholder = ( get_search_query() )? get_search_query() : 'Search';
 
 		$form = '<form id="searchform" class="form-group form-inline ignore-form" role="search" method="get" action="' . home_url('/') . '">
 					<div class="input-group mb-2 mr-sm-2 mb-sm-0">
 						<div class="input-group-addon"><i class="fa fa-search"></i></div>
 						<label class="sr-only" for="s">Search</label>
-						<input id="s" class="form-control ignore-form" type="text" name="s" value="' . $value . '" placeholder="' . $placeholder . '" role="search" />
+						<input id="s" class="form-control ignore-form" type="text" name="s" value="' . get_search_query() . '" placeholder="' . $placeholder . '" role="search" />
 					</div>
 
 					<button id="searchsubmit" class="btn btn-brand wp_search_submit" type="submit">Submit</button>
@@ -1847,24 +1872,6 @@ trait Functions {
 		return false;
 	}
 
-	//Footer Widget Counter
-	public function footer_widget_counter(){
-		$footerWidgetCount = 0;
-		if ( is_active_sidebar('First Footer Widget Area') ){
-			$footerWidgetCount++;
-		}
-		if ( is_active_sidebar('Second Footer Widget Area') ){
-			$footerWidgetCount++;
-		}
-		if ( is_active_sidebar('Third Footer Widget Area') ){
-			$footerWidgetCount++;
-		}
-		if ( is_active_sidebar('Fourth Footer Widget Area') ){
-			$footerWidgetCount++;
-		}
-		return $footerWidgetCount;
-	}
-
 	//Print the PHG logo as text with or without hover animation.
 	public function pinckney_hugo_group($anim){ $this->pinckneyhugogroup($anim); }
 	public function phg($anim){ $this->pinckneyhugogroup($anim); }
@@ -1917,46 +1924,13 @@ trait Functions {
 			'after_title' => '</h3>',
 		));
 
-		//Footer 1
+		//Footer
 		register_sidebar(array(
-			'name' => 'First Footer Widget Area',
-			'id' => 'first-footer-widget-area',
-			'description' => 'The first footer widget area',
-			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-			'after_widget' => '</li>',
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>',
-		));
-
-		//Footer 2
-		register_sidebar(array(
-			'name' => 'Second Footer Widget Area',
-			'id' => 'second-footer-widget-area',
-			'description' => 'The second footer widget area',
-			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-			'after_widget' => '</li>',
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>',
-		));
-
-		//Footer 3
-		register_sidebar(array(
-			'name' => 'Third Footer Widget Area',
-			'id' => 'third-footer-widget-area',
-			'description' => 'The third footer widget area',
-			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-			'after_widget' => '</li>',
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>',
-		));
-
-		//Footer 4
-		register_sidebar(array(
-			'name' => 'Fourth Footer Widget Area',
-			'id' => 'fourth-footer-widget-area',
-			'description' => 'The fourth footer widget area',
-			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-			'after_widget' => '</li>',
+			'name' => 'Footer Widget Area',
+			'id' => 'footer-widget-area',
+			'description' => 'The horizontal footer widget area',
+			'before_widget' => '<div id="%1$s" class="col-md widget-container %2$s">',
+			'after_widget' => '</div>',
 			'before_title' => '<h3 class="widget-title">',
 			'after_title' => '</h3>',
 		));
@@ -2095,11 +2069,11 @@ trait Functions {
 
 	//Replace text on password protected posts to be more minimal
 	public function password_form_simplify(){
-		$output  = '<form class="ignore-form" action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" method="post">';
-		$output .= '<span>Password: </span>';
-		$output .= '<input type="password" class="ignore-form" name="post_password" size="20" />';
-		$output .= '<input type="submit" name="Submit" value="Go" />';
-		$output .= '</form>';
+		$output  = '<form class="ignore-form" action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" method="post">
+						<span>Password: </span>
+						<input type="password" class="ignore-form" name="post_password" size="20" />
+						<input type="submit" name="Submit" value="Go" />
+					</form>';
 		return $output;
 	}
 

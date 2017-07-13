@@ -8,8 +8,8 @@
 	<ul class="xoxo">
 		<?php do_action('nebula_sidebar_open'); //When using this hook remember it is in a UL! ?>
 
-		<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Primary Widget Area') ): ?>
-			<?php //Primary Widget Area ?>
+		<?php if ( is_active_sidebar('Primary Widget Area') ): ?>
+			<?php dynamic_sidebar('Primary Widget Area'); ?>
 		<?php endif; ?>
 
 		<li class="widget-container">
@@ -23,8 +23,8 @@
 			<?php endif; ?>
 		</li>
 
-		<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Secondary Widget Area') ): ?>
-			<?php //Secondary Widget Area ?>
+		<?php if ( is_active_sidebar('Secondary Widget Area') ): ?>
+			<?php dynamic_sidebar('Secondary Widget Area'); ?>
 		<?php endif; ?>
 
 		<?php do_action('nebula_sidebar_close'); //When using this hook remember it is in a UL! ?>

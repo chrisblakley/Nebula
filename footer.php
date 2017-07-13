@@ -3,6 +3,16 @@
  * Theme Footer
  */
 ?>
+			<?php if ( is_active_sidebar('Footer Widget Area') ): ?>
+				<div id="footer-widget-section">
+					<div class="container">
+						<div class="row">
+							<?php dynamic_sidebar('Footer Widget Area'); ?>
+						</div><!--/row-->
+					</div><!--/container-->
+				</div>
+			<?php endif; ?>
+
 			<div id="footer-section" role="contentinfo" <?php echo ( get_theme_mod('nebula_footer_bg_image') )? 'style="background-image: url(' . get_theme_mod('nebula_footer_bg_image') . ');"' : ''; ?>>
 				<?php
 					if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ){
@@ -13,8 +23,6 @@
 					}
 				?>
 				<div class="nebula-color-overlay" <?php echo ( !empty($footer_overlay) )? $footer_overlay : ''; ?>></div>
-
-				<?php get_template_part('inc/footer_widgets'); ?>
 
 				<div class="container">
 					<?php if ( get_theme_mod('nebula_footer_logo') ): ?>

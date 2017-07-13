@@ -6,7 +6,7 @@
 	}
 
 	global $post;
-	$image_meta_directory = get_theme_file_uri('/assets/img/meta');
+	$image_meta_directory = get_theme_file_uri('/assets/img/meta'); //Use this and concatenate the filenames so that it will never revert back to the parent theme if individual meta images are missing.
 	$cache_query = ( nebula()->is_debug() )? '?nocache' . mt_rand(1000, mt_getrandmax()) . '=debug' . mt_rand(1000, mt_getrandmax()) : ''; //Add a random query string when debugging to force-clear the cache.
 
 	/*
@@ -33,9 +33,9 @@
 <meta name="MobileOptimized" content="320" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta class="theme-color" name="theme-color" content="<?php echo nebula()->sass_color('primary'); ?>">
-<meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo nebula()->sass_color('primary'); ?>">
-<meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo nebula()->sass_color('primary'); ?>">
+<meta class="theme-color" name="theme-color" content="<?php echo get_theme_mod('nebula_primary_color', nebula()->sass_color('primary')); ?>">
+<meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo get_theme_mod('nebula_primary_color', nebula()->sass_color('primary')); ?>">
+<meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo get_theme_mod('nebula_primary_color', nebula()->sass_color('primary')); ?>">
 
 <?php if ( nebula()->get_option('google_search_console_verification') ): ?>
 	<meta name="google-site-verification" content="<?php echo nebula()->get_option('google_search_console_verification'); ?>" />
@@ -90,27 +90,27 @@
 <?php endfor; ?>
 
 <?php
-	//Favicons
-
 	//HTTP2 Server Push (currently triggering violations for not being used after preloading...)
 	//header('Link: <' . esc_url(str_replace(nebula()->url_components('basedomain'), '', strtok($image_meta_directory, '?'))) . '/favicon.ico>; rel=preload; as=image', false);
 	//header('Link: <' . esc_url(str_replace(nebula()->url_components('basedomain'), '', strtok($image_meta_directory, '?'))) . '/favicon-16x16.png>; rel=preload; as=image', false);
 	//header('Link: <' . esc_url(str_replace(nebula()->url_components('basedomain'), '', strtok($image_meta_directory, '?'))) . '/favicon-32x32.png>; rel=preload; as=image', false);
 ?>
-<link rel="shortcut icon" type="image/png" href="<?php echo $image_meta_directory; ?>/favicon.ico<?php echo $cache_query; ?>" />
-<link rel="shortcut icon" type="image/png" sizes="16x16" href="<?php echo $image_meta_directory; ?>/favicon-16x16.png<?php echo $cache_query; ?>" />
-<link rel="shortcut icon" type="image/png" sizes="32x32" href="<?php echo $image_meta_directory; ?>/favicon-32x32.png<?php echo $cache_query; ?>" />
+<?php if ( !has_site_icon() ): ?>
+	<link rel="shortcut icon" type="image/png" href="<?php echo $image_meta_directory . '/favicon.ico' . $cache_query; ?>" />
+<?php endif; ?>
+<link rel="shortcut icon" type="image/png" sizes="16x16" href="<?php echo get_site_icon_url(16, $image_meta_directory . '/favicon-16x16.png') . $cache_query; ?>" />
+<link rel="shortcut icon" type="image/png" sizes="32x32" href="<?php echo get_site_icon_url(32, $image_meta_directory . '/favicon-16x16.png') . $cache_query; ?>" />
 
-<?php if ( nebula()->get_browser('name') == 'Safari' ): //Safari ?>
+<?php if ( nebula()->get_browser('name') == 'Safari' && !has_site_icon() ): //Safari ?>
 	<link rel="mask-icon" href="<?php echo $image_meta_directory; ?>/safari-pinned-tab.svg<?php echo $cache_query; ?>" color="<?php echo nebula()->sass_color('primary'); ?>" />
 <?php endif; ?>
 
 <?php if ( nebula()->get_os('name') == 'iOS' ): //Apple iOS ?>
-	<link rel="apple-touch-icon" sizes="180x180" href="<?php echo $image_meta_directory; ?>/apple-touch-icon.png<?php echo $cache_query; ?>" />
+	<link rel="apple-touch-icon" sizes="180x180" href="<?php echo get_site_icon_url(180, $image_meta_directory . '/apple-touch-icon.png') . $cache_query; ?>" />
 <?php endif; ?>
 
 <?php if ( nebula()->get_os('name') == 'Android' ): //Android/Chrome ?>
-<link rel="icon" type="image/png" sizes="192x192" href="<?php echo $image_meta_directory; ?>/android-chrome-192x192.png<?php echo $cache_query; ?>" />
+	<link rel="icon" type="image/png" sizes="192x192" href="<?php echo get_site_icon_url(192, $image_meta_directory . '/android-chrome-192x192.png') . $cache_query; ?>" />
 <?php endif; ?>
 
 <?php //Facebook Metadata ?>
@@ -154,10 +154,12 @@
 <?php if ( nebula()->get_os('name') == 'Windows' ): //Windows Tiles ?>
 	<meta name="application-name" content="<?php echo get_bloginfo('name') ?>" />
 	<meta name="msapplication-TileColor" content="#0098d7" />
-	<meta name="msapplication-square70x70logo" content="<?php echo $image_meta_directory; ?>/mstile-70x70.png<?php echo $cache_query; ?>" />
-	<meta name="msapplication-square150x150logo" content="<?php echo $image_meta_directory; ?>/mstile-150x150.png<?php echo $cache_query; ?>" />
-	<meta name="msapplication-wide310x150logo" content="<?php echo $image_meta_directory; ?>/mstile-310x150.png<?php echo $cache_query; ?>" />
-	<meta name="msapplication-square310x310logo" content="<?php echo $image_meta_directory; ?>/mstile-310x310.png<?php echo $cache_query; ?>" />
+	<meta name="msapplication-square70x70logo" content="<?php echo get_site_icon_url(70, $image_meta_directory . '/mstile-70x70.png') . $cache_query; ?>" />
+	<meta name="msapplication-square150x150logo" content="<?php echo get_site_icon_url(150, $image_meta_directory . '/mstile-150x150.png') . $cache_query; ?>" />
+	<?php if ( !has_site_icon() ): ?>
+		<meta name="msapplication-wide310x150logo" content="<?php echo get_theme_file_uri('/assets/img/meta/mstile-310x150.png') . $cache_query; ?>" />
+	<?php endif; ?>
+	<meta name="msapplication-square310x310logo" content="<?php echo get_site_icon_url(310, $image_meta_directory . '/mstile-310x310.png') . $cache_query; ?>" />
 	<meta name="msapplication-notification" content="frequency=30;polling-uri=http://notifications.buildmypinnedsite.com/?feed=<?php echo get_bloginfo('rss_url'); ?>&amp;id=1;polling-uri2=http://notifications.buildmypinnedsite.com/?feed=<?php echo get_bloginfo('rss_url'); ?>&amp;id=2;polling-uri3=http://notifications.buildmypinnedsite.com/?feed=<?php echo get_bloginfo('rss_url'); ?>&amp;id=3;polling-uri4=http://notifications.buildmypinnedsite.com/?feed=<?php echo get_bloginfo('rss_url'); ?>&amp;id=4;polling-uri5=http://notifications.buildmypinnedsite.com/?feed=<?php echo get_bloginfo('rss_url'); ?>&amp;id=5; cycle=1" />
 <?php endif; ?>
 
@@ -281,8 +283,8 @@
 			"priceRange": "",
 		<?php endif; ?>
 
-		"image": "<?php echo get_theme_file_uri('/assets/img/meta/og-thumb.png'); ?>",
-		"logo": "<?php echo get_theme_file_uri('/assets/img/logo.png'); ?>"
+		"image": "<?php echo $image_meta_directory; ?>/og-thumb.png",
+		"logo": "<?php echo ( get_theme_mod('custom_logo') )? nebula()->get_thumbnail_src(get_theme_mod('custom_logo')) : get_theme_file_uri('/assets/img/logo.png'); ?>"
 	}
 </script>
 
@@ -366,7 +368,7 @@
 			<?php else: ?>
 				"image": {
 					"@type": "ImageObject",
-					"url": "<?php echo get_theme_file_uri('/assets/img/meta/og-thumb.png'); ?>",
+					"url": "<?php echo $image_meta_directory; ?>/og-thumb.png",
 					"width": "1200",
 					"height": "600"
 				},
@@ -388,7 +390,7 @@
 				"name": "<?php echo ( nebula()->get_option('site_owner') )? nebula()->get_option('site_owner') : get_bloginfo('name'); ?>",
 				"logo": {
 					"@type": "ImageObject",
-					"url": "<?php echo get_theme_file_uri('/assets/img/logo.png'); ?>"
+					"url": "<?php echo ( get_theme_mod('custom_logo') )? nebula()->get_thumbnail_src(get_theme_mod('custom_logo')) : get_theme_file_uri('/assets/img/logo.png'); ?>"
 				}
 			},
 			"description": "<?php echo nebula()->excerpt(array('words' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); ?>"
