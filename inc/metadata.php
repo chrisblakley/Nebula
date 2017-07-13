@@ -10,7 +10,7 @@
 	$cache_query = ( nebula()->is_debug() )? '?nocache' . mt_rand(1000, mt_getrandmax()) . '=debug' . mt_rand(1000, mt_getrandmax()) : ''; //Add a random query string when debugging to force-clear the cache.
 
 	/*
-		Use http://realfavicongenerator.net to generate metagraphics.
+		Use http://realfavicongenerator.net to generate metagraphics or upload a 512x512 image to set as the Site Icon in the Customizer.
 
 		Notes:
 			- Safari Pinned Tab and msapplication-TileColor color must be set individually.
@@ -83,10 +83,10 @@
 
 <?php //Open Graph Thumbnails ?>
 <?php if ( file_exists(get_theme_file_path('/assets/img/meta') . '/og-thumb.png') ): ?>
-	<meta property="og:image" content="<?php echo $image_meta_directory; ?>/og-thumb.png<?php echo $cache_query; ?>" />
+	<meta property="og:image" content="<?php echo $image_meta_directory . '/og-thumb.png' . $cache_query; ?>" />
 <?php endif; ?>
 <?php for ( $i = 2; file_exists(get_theme_file_path('/assets/img/meta') . '/og-thumb-' . $i . '.png'); $i++ ): //Check for additional Open Graph thumbnail images named "og-thumb-#.png" ?>
-	<meta property="og:image" content="<?php echo $image_meta_directory; ?>/og-thumb-<?php echo $i; ?>.png<?php echo $cache_query; ?>" />
+	<meta property="og:image" content="<?php echo $image_meta_directory . '/og-thumb-' . $i . '.png' . $cache_query; ?>" />
 <?php endfor; ?>
 
 <?php
@@ -102,7 +102,7 @@
 <link rel="shortcut icon" type="image/png" sizes="32x32" href="<?php echo get_site_icon_url(32, $image_meta_directory . '/favicon-16x16.png') . $cache_query; ?>" />
 
 <?php if ( nebula()->get_browser('name') == 'Safari' && !has_site_icon() ): //Safari ?>
-	<link rel="mask-icon" href="<?php echo $image_meta_directory; ?>/safari-pinned-tab.svg<?php echo $cache_query; ?>" color="<?php echo nebula()->sass_color('primary'); ?>" />
+	<link rel="mask-icon" href="<?php echo $image_meta_directory . '/safari-pinned-tab.svg' . $cache_query; ?>" color="<?php echo nebula()->sass_color('primary'); ?>" />
 <?php endif; ?>
 
 <?php if ( nebula()->get_os('name') == 'iOS' ): //Apple iOS ?>
@@ -128,18 +128,18 @@
 <?php if ( !empty($post) && has_post_thumbnail($post->ID) ): ?>
 	<?php if ( get_the_post_thumbnail($post->ID, 'twitter_large') ): ?>
 		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'twitter_large'); ?>?<?php echo uniqid(); ?>" />
+		<meta name="twitter:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'twitter_large') . '?' . uniqid(); ?>" />
 	<?php else: ?>
 		<meta name="twitter:card" content="summary" />
-		<meta name="twitter:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'twitter_small'); ?>?<?php echo uniqid(); ?>" />
+		<meta name="twitter:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'twitter_small') . '?' . uniqid(); ?>" />
 	<?php endif; ?>
 <?php else: ?>
 	<?php if ( file_exists(get_theme_file_path('/assets/img/meta') . '/twitter-card_large.png') ): ?>
 		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:image" content="<?php echo $image_meta_directory; ?>/twitter-card_large.png?<?php echo uniqid(); ?>" />
+		<meta name="twitter:image" content="<?php echo $image_meta_directory . '/twitter-card_large.png?' . uniqid(); ?>" />
 	<?php else: ?>
 		<meta name="twitter:card" content="summary" />
-		<meta name="twitter:image" content="<?php echo $image_meta_directory; ?>/twitter-card.png?<?php echo uniqid(); ?>" />
+		<meta name="twitter:image" content="<?php echo $image_meta_directory . '/twitter-card.png?' . uniqid(); ?>" />
 	<?php endif; ?>
 <?php endif; ?>
 <meta name="twitter:title" content="<?php the_title(); ?>" />

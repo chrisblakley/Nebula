@@ -616,6 +616,11 @@ if ( !trait_exists('Utilities') ){
 			return false;
 		}
 
+		//Check if an array contains anything from another array
+		public function in_array_any($needles, $haystack){
+			return (bool) array_intersect($needles, $haystack);
+		}
+
 		//Recursive Glob
 		public function glob_r($pattern, $flags=0){
 			$override = apply_filters('pre_glob_r', null, $pattern, $flags);

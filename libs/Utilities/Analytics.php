@@ -25,6 +25,7 @@ if ( !trait_exists('Analytics') ){
 			} else {
 				$cid = $this->ga_generate_UUID();
 			}
+
 			return $cid;
 		}
 

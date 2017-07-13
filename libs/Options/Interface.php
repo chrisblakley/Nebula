@@ -557,7 +557,7 @@
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[admin_notices]" id="admin_notices" value="1" <?php checked('1', !empty($nebula_options['admin_notices'])); ?> /><label for="admin_notices">Nebula Admin Notifications</label>
 										<p class="nebula-help-text short-help form-text text-muted">Show Nebula-specific admin notices (Default: <?php echo $this->user_friendly_default('admin_notices'); ?>)</p>
-										<p class="nebula-help-text more-help form-text text-muted">Note: This does not toggle WordPress core, or plugin, admin notices.</p>
+										<p class="nebula-help-text more-help form-text text-muted">Note: This does not toggle WordPress core or plugin notices.</p>
 										<p class="option-keywords">discretionary</p>
 									</div>
 

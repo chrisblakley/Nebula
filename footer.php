@@ -14,15 +14,17 @@
 			<?php endif; ?>
 
 			<div id="footer-section" role="contentinfo" <?php echo ( get_theme_mod('nebula_footer_bg_image') )? 'style="background-image: url(' . get_theme_mod('nebula_footer_bg_image') . ');"' : ''; ?>>
-				<?php
-					if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ){
-						$footer_overlay = 'style="';
-						$footer_overlay .= ( get_theme_mod('nebula_footer_overlay_color') )? 'background: ' . get_theme_mod('nebula_footer_overlay_color') . ';' : '';
-						$footer_overlay .= ( get_theme_mod('nebula_footer_overlay_opacity') )? 'opacity: ' . get_theme_mod('nebula_footer_overlay_opacity') . ';' : '';
-						$footer_overlay .= 'animation: none;"';
-					}
-				?>
-				<div class="nebula-color-overlay" <?php echo ( !empty($footer_overlay) )? $footer_overlay : ''; ?>></div>
+				<?php if ( get_theme_mod('nebula_footer_overlay', true) ): ?>
+					<?php
+						if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ){
+							$footer_overlay = 'style="';
+							$footer_overlay .= ( get_theme_mod('nebula_footer_overlay_color') )? 'background: ' . get_theme_mod('nebula_footer_overlay_color') . ';' : '';
+							$footer_overlay .= ( get_theme_mod('nebula_footer_overlay_opacity') )? 'opacity: ' . get_theme_mod('nebula_footer_overlay_opacity') . ';' : '';
+							$footer_overlay .= 'animation: none;"';
+						}
+					?>
+					<div class="nebula-color-overlay" <?php echo ( !empty($footer_overlay) )? $footer_overlay : ''; ?>></div>
+				<?php endif; ?>
 
 				<div class="container">
 					<?php if ( get_theme_mod('nebula_footer_logo') ): ?>

@@ -93,7 +93,7 @@ trait Customizer {
 		$wp_customize->add_control('nebula_hero', array(
 			'label' => 'Show Hero Section',
 			'section' => 'static_front_page',
-			'priority' => 30,
+			'priority' => 29,
 			'type' => 'checkbox',
 		));
 
@@ -104,12 +104,21 @@ trait Customizer {
 			'description' => 'Using an optimized .jpg is strongly recommended!',
 			'section' => 'static_front_page',
 			'settings' => 'nebula_hero_bg_image',
-			'priority' => 31
+			'priority' => 30
 		)));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_bg_image', array(
 			'settings' => array('nebula_hero_bg_image'),
 			'selector' => '#hero-section',
 			'container_inclusive' => false,
+		));
+
+		//Hero Overlay
+		$wp_customize->add_setting('nebula_hero_overlay', array('default' => 1));
+		$wp_customize->add_control('nebula_hero_overlay', array(
+			'label' => 'Show Hero Overlay',
+			'section' => 'static_front_page',
+			'priority' => 31,
+			'type' => 'checkbox',
 		));
 
 		//Hero Overlay Color
@@ -170,13 +179,21 @@ trait Customizer {
 			'container_inclusive' => false,
 		));
 
+		//Hero Text Color
+		$wp_customize->add_setting('nebula_hero_text_color', array('default' => null));
+		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_hero_text_color', array(
+			'label' => 'Hero Text Color',
+			'section' => 'static_front_page',
+			'priority' => 38
+		)));
+
 		//Hero Search
 		$wp_customize->add_setting('nebula_hero_search', array('default' => 1));
 		$wp_customize->add_control('nebula_hero_search', array(
 			'label' => 'Show Hero Search',
 			'description' => 'Add an autocomplete search field to your hero section',
 			'section' => 'static_front_page',
-			'priority' => 38,
+			'priority' => 39,
 			'type' => 'checkbox',
 		));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_search', array(
@@ -283,12 +300,21 @@ trait Customizer {
 			'description' => 'Using an optimized .jpg is strongly recommended!',
 			'section' => 'footer',
 			'settings' => 'nebula_footer_bg_image',
-			'priority' => 20
+			'priority' => 19
 		)));
 		$wp_customize->selective_refresh->add_partial('nebula_footer_bg_image', array(
 			'settings' => array('nebula_footer_bg_image'),
 			'selector' => '#footer-section',
 			'container_inclusive' => false,
+		));
+
+		//Footer Overlay
+		$wp_customize->add_setting('nebula_footer_overlay', array('default' => 1));
+		$wp_customize->add_control('nebula_footer_overlay', array(
+			'label' => 'Show Footer Overlay',
+			'section' => 'footer',
+			'priority' => 20,
+			'type' => 'checkbox',
 		));
 
 		//Footer Overlay Color

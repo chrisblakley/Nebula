@@ -1,5 +1,5 @@
 # Nebula
-Nebula is a WordPress theme framework that focuses on enhancing development. The core features of Nebula make it a powerful tool for designing, developing, and analyzing a WordPress website, but its deliberately prudent code syntax also serves as a learning resource for programmers themselves.
+Nebula is a WordPress theme framework that focuses on enhancing development. The core features of Nebula make it a powerful tool for designing, developing, and analyzing WordPress websites consistently, but its deliberately uncomplicated code syntax also serves as a learning resource for programmers themselves.
 
 ![Nebula](https://github.com/chrisblakley/Nebula/blob/master/assets/img/meta/og-thumb.png?raw=true)
 
