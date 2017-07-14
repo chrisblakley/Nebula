@@ -2129,14 +2129,16 @@ function conditionalJSLoading(){
 	//Load the Google Maps API if 'googlemap' class exists
 	if ( jQuery('.googlemap').length ){
 		if ( typeof google == "undefined" || !has(google, 'maps') ){ //If the API has not already been called
-			nebulaLoadJS('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){
+			nebulaLoadJS('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){ //May not need key here, but just to be safe.
 				google.load('maps', '3', {
-					   other_params: 'libraries=places',
-					   callback: function(){
-					   	nebula.dom.document.trigger('nebula_google_maps_api_loaded');
-					   }
-				   });
+					other_params: 'libraries=places&key=' + nebula.site.options.nebula_google_browser_api_key,
+					callback: function(){
+						nebula.dom.document.trigger('nebula_google_maps_api_loaded');
+					}
+				});
 			});
+		} else {
+			nebula.dom.document.trigger('nebula_google_maps_api_loaded'); //Already loaded
 		}
 	}
 
@@ -2211,12 +2213,12 @@ function nebulaAddressAutocomplete(autocompleteInput, name){
 			googleAddressAutocompleteCallback(autocompleteInput, name);
 		} else {
 			debounce(function(){
-				nebulaLoadJS('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){
+				nebulaLoadJS('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){ //May not need key here, but just to be safe.
 					google.load('maps', '3', {
-						other_params: 'libraries=places',
+						other_params: 'libraries=placeskey=' + nebula.site.options.nebula_google_browser_api_key,
 						callback: function(){
 							googleAddressAutocompleteCallback(autocompleteInput, name);
-						 }
+						}
 					});
 				});
 			}, 100, 'google maps script load');
@@ -2349,9 +2351,9 @@ function googleAddressAutocompleteCallback(autocompleteInput, name){
 //Request Geolocation
 function requestPosition(){
 	if ( typeof google !== 'undefined' && has(google, 'maps') ){
-		nebulaLoadJS('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){
+		nebulaLoadJS('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){ //May not need key here, but just to be safe.
 			google.load('maps', '3', {
-				other_params: 'libraries=places',
+				other_params: 'libraries=placeskey=' + nebula.site.options.nebula_google_browser_api_key,
 				callback: function(){
 					getCurrentPosition();
 				}

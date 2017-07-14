@@ -112,15 +112,6 @@ trait Customizer {
 			'container_inclusive' => false,
 		));
 
-		//Hero Overlay
-		$wp_customize->add_setting('nebula_hero_overlay', array('default' => 1));
-		$wp_customize->add_control('nebula_hero_overlay', array(
-			'label' => 'Show Hero Overlay',
-			'section' => 'static_front_page',
-			'priority' => 31,
-			'type' => 'checkbox',
-		));
-
 		//Hero Overlay Color
 		$wp_customize->add_setting('nebula_hero_overlay_color', array('default' => null));
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_hero_overlay_color', array(
@@ -306,15 +297,6 @@ trait Customizer {
 			'settings' => array('nebula_footer_bg_image'),
 			'selector' => '#footer-section',
 			'container_inclusive' => false,
-		));
-
-		//Footer Overlay
-		$wp_customize->add_setting('nebula_footer_overlay', array('default' => 1));
-		$wp_customize->add_control('nebula_footer_overlay', array(
-			'label' => 'Show Footer Overlay',
-			'section' => 'footer',
-			'priority' => 20,
-			'type' => 'checkbox',
 		));
 
 		//Footer Overlay Color
