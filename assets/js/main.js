@@ -51,6 +51,7 @@ jQuery(function(){
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 }); //End Document Ready
 
+
 /*==========================
  Window Load
  ===========================*/
@@ -85,7 +86,6 @@ jQuery(window).on('load', function(){
 	jQuery('a, li, tr').removeClass('hover');
 	nebula.dom.html.addClass('loaded');
 
-	performanceMetrics();
 	nebulaServiceWorker();
 
 	networkAvailable(true); //Call it once on load, then listen for changes
@@ -108,6 +108,20 @@ jQuery(window).on('resize', function(){
 		}
 	}, 500, 'window resize');
 }); //End Window Resize
+
+if ( 'orientation' in screen && 'fullscreenEnabled' in document ){ //Waiting until unprefixed Fullscreen API is available: http://caniuse.com/#feat=fullscreen
+	screen.orientation.addEventListener('change', function(){
+		if ( screen.orientation.type.startsWith('landscape') ){
+			if ( !document.fullscreenElement ){
+				if ( jQuery('video.playing, iframe.playing').length ){
+					jQuery('video.playing, iframe.playing').first()[0].requestFullscreen(); //Get the first video or iframe that is playing (does not include autoplay)
+				}
+			}
+		} else if ( document.fullscreenElement ){
+			document.fullscreenElement.exitFullscreen();
+		}
+	});
+}
 
 
 /*==========================
@@ -629,6 +643,7 @@ function initEventTracking(){
 		}
 
 		cacheSelectors(); //Make sure selectors are cached (since this function can be called from outside this file).
+		performanceMetrics();
 		eventTracking();
 		scrollDepth();
 
@@ -883,7 +898,9 @@ function scrollDepth(){
 	nebula.dom.window.on('scroll', function(){
 		once(function(){
 			scrollBegin = performance.now()-scrollReady;
-			ga('send', 'event', 'Scroll Depth', 'Began Scrolling', 'Initial scroll started at ' + nebula.dom.document.scrollTop() + 'px', Math.round(scrollBegin), {'nonInteraction': true}); //Event value is time until scrolling
+			if ( scrollBegin < 250 ){ //Try to avoid autoscrolls
+				ga('send', 'event', 'Scroll Depth', 'Began Scrolling', 'Initial scroll started at ' + nebula.dom.body.scrollTop() + 'px', Math.round(scrollBegin), {'nonInteraction': true}); //Event value is time until scrolling. //@TODO "Nebula" 0: Considering removing this event altogether...
+			}
 		}, 'begin scrolling');
 
 		debounce(function(){
@@ -3356,24 +3373,24 @@ function nebulaHTML5VideoTracking(){
 					});
 				}
 
-				playAction = 'Play';
-				if ( !isInView(oThis) ){
-					playAction += ' (Not In View)';
+				//Only report to GA for non-autoplay videos
+				if ( !oThis.is('[autoplay]') ){
+					oThis.addClass('playing');
+
+					playAction = 'Play';
+					if ( !isInView(oThis) ){
+						playAction += ' (Not In View)';
+					}
+
+					ga('set', gaCustomMetrics['videoStarts'], 1);
+					ga('set', gaCustomDimensions['videoWatcher'], 'Started');
+					ga('send', 'event', 'Videos', playAction, videoTitle, Math.round(videoData[id].current), {'nonInteraction': videoData[id].autoplay});
+					if ( !videoData[id].autoplay ){
+						nv('append', {'video_play': videoTitle});
+					}
 				}
 
-				//Detect if has autoplay attribute
-				if ( oThis.is('[autoplay]') ){
-					videoData[id].autoplay = true;
-					playAction += ' (Autoplay)';
-				}
-
-				ga('set', gaCustomMetrics['videoStarts'], 1);
-				  ga('set', gaCustomDimensions['videoWatcher'], 'Started');
-				  ga('send', 'event', 'Videos', playAction, videoTitle, Math.round(videoData[id].current), {'nonInteraction': videoData[id].autoplay});
-				  if ( !videoData[id].autoplay ){
-					   nv('append', {'video_play': videoTitle});
-				  }
-				  nebula.dom.document.trigger('nebula_playing_video', id);
+				nebula.dom.document.trigger('nebula_playing_video', id);
 			});
 
 			oThis.on('timeupdate', function(){
@@ -3405,6 +3422,8 @@ function nebulaHTML5VideoTracking(){
 			});
 
 			oThis.on('pause', function(){
+				oThis.removeClass('playing');
+
 				ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
 				ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
 				ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
@@ -3453,6 +3472,8 @@ function nebulaHTML5VideoTracking(){
 			});
 
 			oThis.on('ended', function(){
+				oThis.removeClass('playing');
+
 				ga('set', gaCustomMetrics['videoCompletions'], 1);
 				ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
 				ga('set', gaCustomDimensions['videoWatcher'], 'Ended');
@@ -3567,6 +3588,8 @@ function onPlayerStateChange(e){
 
 		if ( videoData[id].autoplay ){
 			playAction += ' (Autoplay)';
+		} else {
+			jQuery(videoData[id].iframe).addClass('playing');
 		}
 
 		ga('send', 'event', 'Videos', playAction, videoInfo.title, Math.round(videoData[id].current));
@@ -3600,6 +3623,8 @@ function onPlayerStateChange(e){
 		}, updateInterval);
 	}
 	if ( e.data === YT.PlayerState.ENDED ){
+		jQuery(videoData[id].iframe).removeClass('playing');
+
 		clearInterval(youtubePlayProgress);
 		ga('set', gaCustomMetrics['videoCompletions'], 1);
 		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched/1000));
@@ -3619,6 +3644,8 @@ function onPlayerStateChange(e){
 		nv('append', {'video_ended': videoInfo.title});
 		nebula.dom.document.trigger('nebula_ended_video', videoInfo);
 	} else if ( e.data === YT.PlayerState.PAUSED && pauseFlag ){
+		jQuery(videoData[id].iframe).removeClass('playing');
+
 		clearInterval(youtubePlayProgress);
 		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
 		ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
@@ -3698,17 +3725,19 @@ function nebulaVimeoTracking(){
 
 	function vimeoPlay(data){
 		var id = jQuery(this.element).attr('id');
-		 var videoTitle = videoData[id].title;
-		 ga('set', gaCustomMetrics['videoStarts'], 1);
-		 ga('set', gaCustomDimensions['videoWatcher'], 'Started');
+		var videoTitle = videoData[id].title;
+		ga('set', gaCustomMetrics['videoStarts'], 1);
+		ga('set', gaCustomDimensions['videoWatcher'], 'Started');
 
-		 playAction = 'Play';
+		playAction = 'Play';
 		if ( !isInView(jQuery(this)) ){
 			playAction += ' (Not In View)';
 		}
 
 		if ( jQuery(this).attr('src').indexOf('autoplay=1') > 0 ){
 			playAction += ' (Autoplay)';
+		} else {
+			jQuery(this).addClass('playing');
 		}
 
 		 ga('send', 'event', 'Videos', playAction, videoTitle, Math.round(data.seconds));
@@ -3750,6 +3779,8 @@ function nebulaVimeoTracking(){
 	}
 
 	function vimeoPause(data){
+		jQuery(this).removeClass('playing');
+
 		var id = jQuery(this.element).attr('id');
 		var videoTitle = videoData[id].title;
 		ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
@@ -3778,6 +3809,8 @@ function nebulaVimeoTracking(){
 	}
 
 	function vimeoEnded(data){
+		jQuery(this).removeClass('playing');
+
 		var id = jQuery(this.element).attr('id');
 		var videoTitle = videoData[id].title;
 		ga('set', gaCustomMetrics['videoCompletions'], 1);

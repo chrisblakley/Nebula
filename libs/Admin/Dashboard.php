@@ -534,9 +534,9 @@ if ( !trait_exists('Dashboard') ){
 			echo '</ul>';
 		}
 
-		//Extension skip list for both TODO Manager and Developer Metabox
+		//Extension skip list for both To Do Manager and Developer Metabox
 		public function skip_extensions(){
-			return array('.jpg', '.jpeg', '.png', '.gif', '.ico', '.tiff', '.psd', '.ai',  '.apng', '.bmp', '.otf', '.ttf', '.ogv', '.flv', '.fla', '.mpg', '.mpeg', '.avi', '.mov', '.woff', '.eot', '.mp3', '.mp4', '.wmv', '.wma', '.aiff', '.zip', '.zipx', '.rar', '.exe', '.dmg', '.csv', '.swf', '.pdf', '.pdfx', '.pem', '.ppt', '.pptx', '.pps', '.ppsx', '.bak');
+			return array('.jpg', '.jpeg', '.png', '.gif', '.ico', '.tiff', '.psd', '.ai',  '.apng', '.bmp', '.otf', '.ttf', '.ogv', '.flv', '.fla', '.mpg', '.mpeg', '.avi', '.mov', '.woff', '.eot', '.mp3', '.mp4', '.wmv', '.wma', '.aiff', '.zip', '.zipx', '.rar', '.exe', '.dmg', '.csv', '.swf', '.pdf', '.pdfx', '.pem', '.ppt', '.pptx', '.pps', '.ppsx', '.bak'); //Would it be faster to list allowed filetypes instead?
 		}
 
 		//TODO metabox
@@ -580,46 +580,27 @@ if ( !trait_exists('Dashboard') ){
 						$todo_counted = true;
 					}
 
-					$todo_skipFilenames = array('README.md', 'Admin/Dashboard.php', 'debug_log', 'error_log', 'inc/vendor', 'js/vendor', 'resources/', 'procedural/nebula_');
+					$todo_skipFilenames = array('README.md', 'debug_log', 'error_log', '/vendor', 'resources/');
 					if ( !$this->contains(basename($todo_file), $this->skip_extensions()) && !$this->contains($todo_file, $todo_skipFilenames) ){
 						foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
-							if ( stripos($todo_line, '@TODO') !== false ){
+							preg_match("/(@todo)\s?(?'category'[\"\'\`].+[\"\'\`])?\s?(?'priority'\d)?:\s(?'description'.+)/i", $todo_line, $todo_details); //Separate the todo comment into useable groups
+
+							if ( !empty($todo_details) ){
 								$theme = '';
 								$theme_note = '';
 								if ( is_child_theme() ){
+									$theme = 'parent';
+									$theme_note = ' <small>(Parent)</small>';
+
 									if ( $child ){
 										$theme = 'child';
 										$theme_note = ' <small>(Child)</small>';
-									} else {
-										$theme = 'parent';
-										$theme_note = ' <small>(Parent)</small>';
 									}
 								}
 
-								$the_full_todo = substr($todo_line, strpos($todo_line, '@TODO'));
-								$the_todo_meta = current(explode(':', $the_full_todo));
-
-								//Get the priority
-								preg_match_all('!\d+!', $the_todo_meta, $the_todo_ints);
-								$todo_priority = 'empty';
-								if ( !empty($the_todo_ints[0]) ){
-									$todo_priority = $the_todo_ints[0][0];
-								}
-
-								//Get the category
-								$the_todo_quote_check = '';
-								$the_todo_cat = '';
-								$the_todo_cat_html = '';
-								preg_match_all('/".*?"|\'.*?\'/', $the_todo_meta, $the_todo_quote_check);
-								if ( !empty($the_todo_quote_check[0][0]) ){
-									$the_todo_cat = substr($the_todo_quote_check[0][0], 1, -1);
-									$the_todo_cat_html = '<span class="todocategory">' . strip_tags($the_todo_cat) . '</span>';
-								}
-
-								//Get the message
-								$the_todo_text_full = substr($the_full_todo, strpos($the_full_todo, ':')+1);
-								$end_todo_text_strings = array('-->', '?>', '*/');
-								$the_todo_text = explode($end_todo_text_strings[0], str_replace($end_todo_text_strings, $end_todo_text_strings[0], $the_todo_text_full));
+								$todo_priority = ( !empty($todo_details['priority']) )? $todo_details['priority'] : 'empty'; //Get the priority
+								$todo_category = ( !empty($todo_details['category']) )? $todo_details['category'] : ''; //Get the category
+								$todo_description = strip_tags(str_replace(array('-->', '?>', '*/'), '', $todo_details['description'])); //Get the description
 
 								$todo_this_filename = str_replace($todo_dirpath, '', dirname($todo_file)) . '/' . basename($todo_file);
 								if ( $todo_last_filename !== $todo_this_filename ){
@@ -629,7 +610,7 @@ if ( !trait_exists('Dashboard') ){
 									echo '<div class="todofilewrap todo-theme-' . $theme . '"><p class="todofilename">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong><span class="themenote">' . $theme_note . '</span></p>';
 								}
 
-								echo '<div class="linewrap todo-category-' . strtolower(str_replace(' ', '_', $the_todo_cat)) . ' todo-priority-' . strtolower(str_replace(' ', '_', $todo_priority)) . '"><p class="todoresult"> ' . $the_todo_cat_html . ' <a class="linenumber" href="#">Line ' . ($todo_lineNumber+1) . '</a> <span class="todomessage">' . strip_tags($the_todo_text[0]) . '</span></p><div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div></div>';
+								echo '<div class="linewrap todo-category-' . strtolower(str_replace(' ', '_', $todo_category)) . ' todo-priority-' . $todo_priority . '"><p class="todoresult"> <span class="todocategory">' . $todo_category . '</span> <a class="linenumber" href="#">Line ' . ($todo_lineNumber+1) . '</a> <span class="todomessage">' . $todo_description . '</span></p><div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div></div>';
 
 								$todo_last_filename = $todo_this_filename;
 

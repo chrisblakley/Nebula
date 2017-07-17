@@ -191,7 +191,6 @@ if ( !trait_exists('Sass') ){
 								$enhanced_css = $this->scss_post_compile($compiled_css); //Compile server-side variables into SCSS
 								$wp_filesystem->put_contents($css_filepath, $enhanced_css); //Save the rendered CSS.
 								$this->update_data('scss_last_processed', time());
-								$sass_files_processed_count++;
 							}
 						}
 					}

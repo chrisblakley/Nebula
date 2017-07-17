@@ -591,7 +591,7 @@ if ( !trait_exists('Admin') ){
 						$warning['level'] = 'info';
 					}
 
-					echo '<div class="nebula-admin-notice notice notice-' . $warning['level'] . '"><p>Nebula: ' . $warning['description'] . '</p></div>';
+					echo '<div class="nebula-admin-notice notice notice-' . $warning['level'] . '"><p>[Nebula] ' . $warning['description'] . '</p></div>';
 				}
 			}
 		}

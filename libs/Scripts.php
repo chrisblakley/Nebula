@@ -26,7 +26,7 @@ if ( !trait_exists('Scripts') ){
 		public function register_scripts(){
 			// Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
-			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/6.1.0/jquery.mmenu.all.css', null, '6.1.0', 'all'); //@todo "Nebula" 0: This is causing a weird slowdown on the homepage on WebPageTest.org when testing using the Oregon server... Not a huge issue, but curious: https://github.com/chrisblakley/Nebula/issues/1313
+			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/6.1.1/jquery.mmenu.all.css', null, '6.1.1', 'all'); //@todo "Nebula" 0: This is causing a weird slowdown on the homepage on WebPageTest.org when testing using the Oregon server... Not a huge issue, but curious: https://github.com/chrisblakley/Nebula/issues/1313
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap', 'nebula-mmenu'), null, 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, null);
 			wp_register_style('nebula-admin', get_template_directory_uri() . '/assets/css/admin.css', null, null);
@@ -50,7 +50,7 @@ if ( !trait_exists('Scripts') ){
 			$this->register_script('nebula-modernizr_local', get_template_directory_uri() . '/assets/js/vendor/modernizr.min.js', 'defer', null, '3.3.1', false);
 			$this->register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', 'defer', null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
 			$this->register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', 'defer', null, '1.12.1', true);
-			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/6.1.0/jquery.mmenu.all.js', 'defer', null, '6.1.0', true);
+			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/6.1.1/jquery.mmenu.all.js', 'defer', null, '6.1.1', true);
 			$this->register_script('nebula-vimeo', 'https://player.vimeo.com/api/player.js', null, null, null, true);
 			$this->register_script('nebula-tether', 'https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js', 'defer', null, '1.4.0', true); //This is not enqueued or dependent because it is called via main.js only as needed.
 			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.15/js/jquery.dataTables.min.js', 'defer', null, '1.10.15', true); //Datatables is called via main.js only as needed.

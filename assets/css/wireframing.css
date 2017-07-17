@@ -1,2 +1,41 @@
-.nebula-peek,.nebula-iconpeek{display:inline-block;position:relative;overflow:hidden;transition:padding 0.4s easing(easeOutBack)}.nebula-peek:before,.nebula-iconpeek:before{content:"\f061";font-family:"FontAwesome";position:absolute;left:-25px;transition:left 0.4s easing(easeOutBack)}.nebula-peek:hover,.nebula-iconpeek:hover{padding-left:25px}.nebula-peek:hover:before,.nebula-iconpeek:hover:before{left:0}body.nebula-wireframing-wireframe{-webkit-filter:grayscale(100%);-moz-filter:grayscale(100%);-ms-filter:grayscale(100%);-o-filter:grayscale(100%);filter:grayscale(100%)}#wireframing-bar{position:relative;background:black;color:#fff;padding-top:5px;padding-bottom:5px}img,a.logocon{-webkit-filter:none;-moz-filter:none;-ms-filter:none;-o-filter:none;filter:none}.fpo-component{background:#e2e2e2;padding:5px 10px 1px 10px}.fpo-component-con .component-name{display:block;color:#222;text-transform:uppercase;border-bottom:1px solid #444;padding-bottom:2px}.fpo-component-con .component-name .component-icon{font-size:11px}.fpo-component-con .component-comment-toggle{float:right;color:#222}.fpo-component-con .component-comment-toggle:hover,.fpo-component-con .component-comment-toggle.active{color:#0098d7}.fpo-component-con .component-comment-toggle:hover:hover,.fpo-component-con .component-comment-toggle.active:hover{color:#222}.fpo-component-con .component-comment-drawer{display:none;background:#eee;border:1px solid #bbb;border-top:none;padding:0 10px 1px 10px}.fpo-component-con .component-comment-drawer .comment-header{display:block;font-size:0.75rem;color:#222;text-transform:uppercase;border-bottom:1px solid #444;padding-bottom:2px;margin-bottom:4px}.fpo-component-con .component-comment-drawer p{font-size:12}.fpo{background:#e2e2e2;padding:5px 10px 5px 10px;margin-bottom:15px}
-/* Thursday, July 13, 2017 at 11:00:19 AM */
+ /* line 195, /assets/scss/partials/_mixins.scss */ .nebula-peek,.nebula-iconpeek { display:inline-block; position:relative; overflow:hidden; transition:padding 0.4s easing(easeOutBack); }
+
+ /* line 190, /assets/scss/partials/_mixins.scss */ .nebula-peek:before,.nebula-iconpeek:before { content:"\f061"; font-family:"FontAwesome"; position:absolute; left:-25px; transition:left 0.4s easing(easeOutBack); }
+
+ /* line 191, /assets/scss/partials/_mixins.scss */ .nebula-peek:hover,.nebula-iconpeek:hover { padding-left:25px; }
+
+ /* line 192, /assets/scss/partials/_mixins.scss */ .nebula-peek:hover:before,.nebula-iconpeek:hover:before { left:0; }
+
+ /*
+ .element {
+ @include yep(opacity, csstransforms){opacity: 0; transform: translateX(10px);}
+ @include nope(opacity, csstransforms){visibility: hidden; left: 10px;}
+ }
+ */ /* line 4,  */ body.nebula-wireframing-wireframe { -webkit-filter:grayscale(100%); -moz-filter:grayscale(100%); -ms-filter:grayscale(100%); -o-filter:grayscale(100%); filter:grayscale(100%); }
+
+ /* line 6,  */ #wireframing-bar { position:relative; background:black; color:#fff; padding-top:5px; padding-bottom:5px; }
+
+ /* line 8,  */ img,a.logocon { -webkit-filter:none; -moz-filter:none; -ms-filter:none; -o-filter:none; filter:none; }
+
+ /* line 10,  */ .fpo-component { background:#e2e2e2; padding:5px 10px 1px 10px; }
+
+ /* line 11,  */ /* line 12,  */ .fpo-component-con .component-name { display:block; color:#222; text-transform:uppercase; border-bottom:1px solid #444; padding-bottom:2px; }
+
+ /* line 13,  */ .fpo-component-con .component-name .component-icon { font-size:11px; }
+
+ /* line 15,  */ .fpo-component-con .component-comment-toggle { float:right; color:#222; }
+
+ /* line 16,  */ .fpo-component-con .component-comment-toggle:hover,.fpo-component-con .component-comment-toggle.active { color:#0098d7; }
+
+ /* line 18,  */ .fpo-component-con .component-comment-toggle:hover:hover,.fpo-component-con .component-comment-toggle.active:hover { color:#222; }
+
+ /* line 21,  */ .fpo-component-con .component-comment-drawer { display:none; background:#eee; border:1px solid #bbb; border-top:none; padding:0 10px 1px 10px; }
+
+ /* line 22,  */ .fpo-component-con .component-comment-drawer .comment-header { display:block; font-size:0.75rem; color:#222; text-transform:uppercase; border-bottom:1px solid #444; padding-bottom:2px; margin-bottom:4px; }
+
+ /* line 23,  */ .fpo-component-con .component-comment-drawer p { font-size:12; }
+
+ /* line 27,  */ .fpo { background:#e2e2e2; padding:5px 10px 5px 10px; margin-bottom:15px; }
+
+ /* Not sure if I'm a fan of this margin-bottom. */
+/* Monday, July 17, 2017 at 4:24:12 PM */
