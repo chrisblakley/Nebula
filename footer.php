@@ -3,11 +3,11 @@
  * Theme Footer
  */
 ?>
-			<?php if ( is_active_sidebar('Footer Widget Area') ): ?>
+			<?php if ( is_active_sidebar('Footer') ): ?>
 				<div id="footer-widget-section">
 					<div class="container">
 						<div class="row">
-							<?php dynamic_sidebar('Footer Widget Area'); ?>
+							<?php dynamic_sidebar('Footer'); ?>
 						</div><!--/row-->
 					</div><!--/container-->
 				</div>
