@@ -13,16 +13,18 @@ do_action('nebula_preheaders');
 get_header(); ?>
 
 <?php if ( get_theme_mod('nebula_hero', true) ): ?>
-	<div id="hero-section" class="nebulashadow inner-top inner-bottom" <?php echo ( get_theme_mod('nebula_hero_bg_image') )? 'style="background-image: url(' . get_theme_mod('nebula_hero_bg_image') . ');"' : ''; ?>>
-		<?php
-			if ( get_theme_mod('nebula_hero_overlay_color') || get_theme_mod('nebula_hero_overlay_opacity') ){
+	<div id="hero-section" class="nebulashadow inner-top inner-bottom" <?php echo ( get_theme_mod('nebula_hero_bg_image') && get_theme_mod('nebula_hero_overlay_opacity') != 1 )? 'style="background-image: url(' . get_theme_mod('nebula_hero_bg_image') . ');"' : ''; ?>>
+		<?php if ( get_theme_mod('nebula_hero_overlay_color') || get_theme_mod('nebula_hero_overlay_opacity') ): ?>
+			<?php
 				$hero_overlay = 'style="';
 				$hero_overlay .= ( get_theme_mod('nebula_hero_overlay_color') )? 'background: ' . get_theme_mod('nebula_hero_overlay_color') . ';' : '';
 				$hero_overlay .= ( !is_null(get_theme_mod('nebula_hero_overlay_opacity')) )? 'opacity: ' . get_theme_mod('nebula_hero_overlay_opacity') . ';' : '';
 				$hero_overlay .= 'animation: none;"';
-			}
-		?>
-		<div class="nebula-color-overlay" <?php echo ( !empty($hero_overlay) )? $hero_overlay : ''; ?>></div>
+			?>
+			<div class="custom-color-overlay" <?php echo $hero_overlay; ?>></div>
+		<?php else: ?>
+			<div class="nebula-color-overlay"></div>
+		<?php endif; ?>
 
 		<div class="container">
 			<div class="row">

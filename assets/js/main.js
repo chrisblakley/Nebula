@@ -66,8 +66,8 @@ jQuery(window).on('load', function(){
 	//Search
 	wpSearchInput();
 	mobileSearchPlaceholder();
-	initAutocompleteSearch();
-	advancedSearchTriggers();
+	autocompleteSearchListeners();
+	advancedSearchListeners();
 	searchValidator();
 	searchTermHighlighter();
 	emphasizeSearchTerms();
@@ -360,19 +360,18 @@ function overflowDetector(){
 	jQuery('#primarynav .menu > .menu-item').on({
 		'mouseenter focus': function(){
 			var viewportWidth = nebula.dom.window.width();
-		 	var submenuLeft = jQuery(this).offset().left;
-		 	var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width();
-		 	if ( submenuRight > viewportWidth ){
-				jQuery(this).children('.sub-menu').css('left', 'auto').css('right', '0');
-		 	} else {
-				jQuery(this).children('.sub-menu').css('left', '0').css('right', 'auto');
-		 	}
+			var submenuLeft = jQuery(this).offset().left;
+			var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width();
+			if ( submenuRight > viewportWidth ){
+				jQuery(this).children('.sub-menu').css({'left': 'auto', 'right': '0'});
+			} else {
+				jQuery(this).children('.sub-menu').css({'left': '0', 'right': 'auto'});
+			}
 		},
 		'mouseleave': function(){
-			jQuery(this).children('.sub-menu').css('left', '-9999px').css('right', 'auto');
+			jQuery(this).children('.sub-menu').css({'left': '-9999px', 'right': 'auto'});
 		}
 	});
-
 }
 
 //Check if Google Analytics is ready
@@ -772,6 +771,14 @@ function eventTracking(){
 		}
 	});
 
+	//Skip to Content Link Focus/Clicks
+	nebula.dom.document.on('focus', '.sr-only', function(){
+		ga('send', 'event', 'Accessibility Links', 'Focus', jQuery(this).text());
+	});
+	nebula.dom.document.on('click tap touch', '.sr-only', function(){
+		ga('send', 'event', 'Accessibility Links', 'Click', jQuery(this).text());
+	});
+
 	//Word copy tracking
 	var copyCount = 0;
 	var copyOver = 0;
@@ -828,6 +835,15 @@ function eventTracking(){
 	window.onerror = function (message, file, line) {
 		ga('send', 'exception', {'exDescription': '(JS) ' + message + ' at ' + line + ' of ' + file, 'exFatal': false}); //Is there a better way to detect fatal vs non-fatal errors?
 	}
+
+	//Add to Homescreen Prompt (Chrome only)
+	window.addEventListener('beforeinstallprompt', function(event){
+		ga('send', 'event', 'Install Prompt', 'Banner Shown', event.platforms.join(', '));
+
+		event.userChoice.then(function(result){
+			ga('send', 'event', 'Install Prompt', 'User Choice', result.outcome);
+		});
+	});
 
 	//Capture Print Intent
 	if ( 'matchMedia' in window ){ //IE10+
@@ -1106,7 +1122,7 @@ function searchTriggerOnlyChars(e){
 }
 
 //Enable autocomplete search on WordPress core selectors
-function initAutocompleteSearch(){
+function autocompleteSearchListeners(){
 	nebula.dom.document.on('blur', '.nebula-search input', function(){
 		jQuery('.nebula-search').removeClass('searching').removeClass('autocompleted');
 	});
@@ -1167,6 +1183,10 @@ function autocompleteSearch(element, types){
 						types: JSON.stringify(types)
 					},
 					success: function(data){
+
+						console.log('ajax success');
+						console.debug(data);
+
 						nebula.dom.document.trigger('nebula_autocomplete_search_success', data);
 						ga('set', gaCustomMetrics['autocompleteSearches'], 1);
 						if ( data ){
@@ -1237,7 +1257,7 @@ function autocompleteSearch(element, types){
 }
 
 //Advanced Search
-function advancedSearchTriggers(){
+function advancedSearchListeners(){
 	var advancedSearchForm = jQuery('#advanced-search-form');
 	haveAllEvents = 0;
 

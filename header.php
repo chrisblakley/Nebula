@@ -7,10 +7,10 @@
 	</head>
 	<body <?php body_class(); ?>>
 		<div id="body-wrapper">
-			<div id="header-section" role="banner">
-				<div id="fb-root"></div>
-				<?php do_action('nebula_body_open'); ?>
+			<div id="fb-root"></div>
+			<?php do_action('nebula_body_open'); ?>
 
+			<div id="header-section" role="banner">
 				<?php if ( get_theme_mod('nebula_offcanvas_menu', true) || get_theme_mod('nebula_mobile_search', true) ): ?>
 					<div id="mobilebarcon">
 						<div class="row mobilenavcon">

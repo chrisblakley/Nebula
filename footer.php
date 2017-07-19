@@ -13,16 +13,18 @@
 				</div>
 			<?php endif; ?>
 
-			<div id="footer-section" role="contentinfo" <?php echo ( get_theme_mod('nebula_footer_bg_image') )? 'style="background-image: url(' . get_theme_mod('nebula_footer_bg_image') . ');"' : ''; ?>>
-				<?php
-					if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ){
+			<div id="footer-section" role="contentinfo" <?php echo ( get_theme_mod('nebula_footer_bg_image') && get_theme_mod('nebula_footer_overlay_opacity') != 1 )? 'style="background-image: url(' . get_theme_mod('nebula_footer_bg_image') . ');"' : ''; ?>>
+				<?php if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ): ?>
+					<?php
 						$footer_overlay = 'style="';
 						$footer_overlay .= ( get_theme_mod('nebula_footer_overlay_color') )? 'background: ' . get_theme_mod('nebula_footer_overlay_color') . ';' : '';
 						$footer_overlay .= ( !is_null(get_theme_mod('nebula_footer_overlay_opacity')) )? 'opacity: ' . get_theme_mod('nebula_footer_overlay_opacity') . ';' : '';
 						$footer_overlay .= 'animation: none;"';
-					}
-				?>
-				<div class="nebula-color-overlay" <?php echo ( !empty($footer_overlay) )? $footer_overlay : ''; ?>></div>
+					?>
+					<div class="custom-color-overlay" <?php echo $footer_overlay; ?>></div>
+				<?php else: ?>
+					<div class="nebula-color-overlay"></div>
+				<?php endif; ?>
 
 				<div class="container">
 					<?php if ( get_theme_mod('nebula_footer_logo') ): ?>

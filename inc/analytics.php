@@ -418,12 +418,12 @@
 			document.dispatchEvent(new Event('gaready')); //Trigger an event when GA is ready (without jQuery)
 
 			if ( typeof initEventTracking === 'function' ){
-				initEventTracking();
+				//initEventTracking(); //Could this be causing events before the pageview?
 			}
 
 			<?php if ( is_child_theme() ): ?>
 				if ( typeof supplementalEventTracking === 'function' ){
-					supplementalEventTracking();
+					//supplementalEventTracking(); //Could this be causing events before the pageview?
 				}
 			<?php endif; ?>
 		});

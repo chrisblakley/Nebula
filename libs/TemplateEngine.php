@@ -8,46 +8,24 @@ if ( !trait_exists('TemplateEngine') ){
 
 		public function hooks(){
 			$this->templates = array();
-
-			//Default WordPress templates
-			$query_templates = array(
-				'archive',
-				'index',
-				'404',
-				'author',
-				'category',
-				'tag',
-				'taxonomy',
-				'date',
-				'home',
-				'front_page',
-				'page',
-				'search',
-				'single',
-				'embed',
-				'singular',
-				'attachment',
-			);
+			$query_templates = array('archive', 'index', '404', 'author', 'category', 'tag', 'taxonomy', 'date', 'home', 'front_page', 'page', 'search', 'single', 'embed', 'singular', 'attachment'); //Default WordPress templates
 
 			//Add filter hook to any query template
 			foreach ( $query_templates as $query_template ){
 				add_filter("{$query_template}_template_hierarchy", array($this, 'template_hierarchy'));
 			}
 
-			//Add new post type templates
 			add_action('init',  array($this, 'post_type_templates'), 999);
-
-			//Search for plugin templates
 			add_filter('template_include', array($this, 'template_include'));
 		}
 
 		//Stores last wordpress searched templates into $this->templates
 		public function template_hierarchy($templates){
 			$this->templates = $templates;
-
 			return $templates;
 		}
 
+		//Add new post type templates
 		public function post_type_templates(){
 			foreach ( get_post_types('', 'names') as $post_type ){
 				add_filter( "theme_{$post_type}_templates", array($this, 'plugins_templates'), 10, 4);

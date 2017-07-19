@@ -7,24 +7,17 @@ if ( !trait_exists('Scripts') ){
 		public $brain;
 
 		public function hooks(){
-			//Register scripts
 			add_action( 'wp_enqueue_scripts', array($this, 'register_scripts'));
 			add_action( 'admin_enqueue_scripts', array($this, 'register_scripts'));
 			add_action( 'login_enqueue_scripts', array($this, 'register_scripts'));
-
-			//Enqueue frontend scripts
 			add_action( 'wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-
-			//Enqueue login scripts
 			add_action( 'login_enqueue_scripts', array($this, 'login_enqueue_scripts'));
-
-			//Enqueue admin scripts
 			add_action( 'admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 		}
 
 		//Register scripts
 		public function register_scripts(){
-			// Stylesheets
+			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
 			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/6.1.1/jquery.mmenu.all.css', null, '6.1.1', 'all'); //@todo "Nebula" 0: This is causing a weird slowdown on the homepage on WebPageTest.org when testing using the Oregon server... Not a huge issue, but curious: https://github.com/chrisblakley/Nebula/issues/1313
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap', 'nebula-mmenu'), null, 'all');
@@ -41,7 +34,7 @@ if ( !trait_exists('Scripts') ){
 			wp_register_style('nebula-pre', get_template_directory_uri() . '/assets/css/pre.css', null, null);
 			wp_register_style('nebula-flags', get_template_directory_uri() . '/assets/css/flags.css', null, null);
 
-			// Scripts
+			//Scripts
 			//Use CDNJS to pull common libraries: http://cdnjs.com/
 			//nebula_register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
 			$this->jquery();

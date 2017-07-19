@@ -1,6 +1,6 @@
 <?php
 
-// Exit if accessed directly
+//Exit if accessed directly
 if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Dashboard') ){
@@ -11,32 +11,23 @@ if ( !trait_exists('Dashboard') ){
 				add_action('wp_dashboard_setup', array($this, 'remove_dashboard_metaboxes' ));
 			}
 
-			//WordPress Information metabox ("At a Glance" replacement)
 			add_action('wp_dashboard_setup', array($this, 'ataglance_metabox' ));
-
-			//Current User metabox
 			add_action('wp_dashboard_setup', array($this, 'current_user_metabox'));
 
-			//Administrative metabox
 			if ( current_user_can('manage_options') ){
 				add_action('wp_dashboard_setup', array($this, 'administrative_metabox'));
 			}
 
-			//Pinckney Hugo Group metabox
 			add_action('wp_dashboard_setup', array($this, 'phg_metabox'));
 
-			//TODO manager metabox
 			if ( $this->get_option('todo_manager_metabox') && $this->is_dev() ){
 				add_action('wp_dashboard_setup', array($this, 'todo_metabox'));
 			}
 
-			//Developer Info Metabox
-			//If user's email address ends in @pinckneyhugo.com or if IP address matches the dev IP (set in Nebula Options).
 			if ( $this->get_option('dev_info_metabox') && $this->is_dev() ){
 				add_action('wp_dashboard_setup', array($this, 'dev_info_metabox'));
 			}
 
-			//Search theme or plugin files via Developer Information Metabox
 			add_action('wp_ajax_search_theme_files', array($this, 'search_theme_files'));
 			add_action('wp_ajax_nopriv_search_theme_files', array($this, 'search_theme_files'));
 		}
@@ -583,7 +574,7 @@ if ( !trait_exists('Dashboard') ){
 					$todo_skipFilenames = array('README.md', 'debug_log', 'error_log', '/vendor', 'resources/');
 					if ( !$this->contains(basename($todo_file), $this->skip_extensions()) && !$this->contains($todo_file, $todo_skipFilenames) ){
 						foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
-							preg_match("/(@todo)\s?(?'category'[\"\'\`].+[\"\'\`])?\s?(?'priority'\d)?:\s(?'description'.+)/i", $todo_line, $todo_details); //Separate the todo comment into useable groups
+							preg_match("/(@todo)\s?(?'category'[\"\'\`].+?[\"\'\`])?\s?(?'priority'\d)?:\s(?'description'.+)/i", $todo_line, $todo_details); //Separate the todo comment into useable groups
 
 							if ( !empty($todo_details) ){
 								$theme = '';
@@ -599,7 +590,8 @@ if ( !trait_exists('Dashboard') ){
 								}
 
 								$todo_priority = ( !empty($todo_details['priority']) )? $todo_details['priority'] : 'empty'; //Get the priority
-								$todo_category = ( !empty($todo_details['category']) )? $todo_details['category'] : ''; //Get the category
+								$todo_category = ( !empty($todo_details['category']) )? str_replace(array('"', "'", '`'), '', $todo_details['category']) : ''; //Get the category
+								$todo_category_html = ( !empty($todo_category) )? '<span class="todocategory">' . $todo_category . '</span>' : '';
 								$todo_description = strip_tags(str_replace(array('-->', '?>', '*/'), '', $todo_details['description'])); //Get the description
 
 								$todo_this_filename = str_replace($todo_dirpath, '', dirname($todo_file)) . '/' . basename($todo_file);
@@ -610,7 +602,7 @@ if ( !trait_exists('Dashboard') ){
 									echo '<div class="todofilewrap todo-theme-' . $theme . '"><p class="todofilename">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong><span class="themenote">' . $theme_note . '</span></p>';
 								}
 
-								echo '<div class="linewrap todo-category-' . strtolower(str_replace(' ', '_', $todo_category)) . ' todo-priority-' . $todo_priority . '"><p class="todoresult"> <span class="todocategory">' . $todo_category . '</span> <a class="linenumber" href="#">Line ' . ($todo_lineNumber+1) . '</a> <span class="todomessage">' . $todo_description . '</span></p><div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div></div>';
+								echo '<div class="linewrap todo-category-' . strtolower(str_replace(' ', '_', $todo_category)) . ' todo-priority-' . $todo_priority . '"><p class="todoresult"> ' . $todo_category_html . ' <a class="linenumber" href="#">Line ' . ($todo_lineNumber+1) . '</a> <span class="todomessage">' . $todo_description . '</span></p><div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div></div>';
 
 								$todo_last_filename = $todo_this_filename;
 

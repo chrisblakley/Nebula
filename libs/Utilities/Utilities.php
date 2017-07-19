@@ -15,16 +15,11 @@ if ( !trait_exists('Utilities') ){
 		use Sass { Sass::hooks as SassHooks;}
 
 		public function hooks(){
-			//Fuzzy meta sub key finder (Used to query ACF nested repeater fields).
-			//Example: 'key' => 'dates_%_start_date',
 			add_filter('posts_where' , array($this, 'fuzzy_posts_where'));
-
-			$this->AnalyticsHooks(); // Register Analytics hooks
-			$this->VisitorsHooks(); // Register Visitors hooks
-			$this->DeviceHooks(); // Register Device hooks
-			$this->SassHooks(); // Register Sass hooks
-
-			//Log fatal errors in Google Analytics as crashes
+			$this->AnalyticsHooks(); //Register Analytics hooks
+			$this->VisitorsHooks(); //Register Visitors hooks
+			$this->DeviceHooks(); //Register Device hooks
+			$this->SassHooks(); //Register Sass hooks
 			register_shutdown_function(array($this, 'ga_log_fatal_errors'));
 		}
 

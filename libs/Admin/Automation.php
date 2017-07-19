@@ -5,7 +5,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Automation') ){
 	trait Automation {
 		public function hooks(){
-			//may want to only trigger this if Nebula is the active theme...
+			//@TODO "Nebula" 0: May want to only trigger this if Nebula is the active theme...
 
 			global $pagenow;
 
@@ -17,16 +17,13 @@ if ( !trait_exists('Automation') ){
 				add_action('tgmpa_register', array($this, 'register_required_plugins'));
 			}
 
-			//When Nebula has been activated
 			add_action('after_switch_theme', array($this, 'activation_notice'));
 
 			if ( isset($_GET['nebula-initialization']) && $pagenow == 'themes.php' ){ //Or if initializing the theme without AJAX
 				add_action('admin_notices', array($this, 'activation'));
 			}
 
-			//Nebula Initialization (Triggered by either AJAX or manually)
 			add_action('wp_ajax_nebula_initialization', array($this, 'initialization'));
-
 			//add_action('admin_init', array($this, 'force_settings' ), 9); //Uncomment this line to force an initialization date.
 		}
 
@@ -42,17 +39,19 @@ if ( !trait_exists('Automation') ){
 					'slug'	  => 'contact-form-7',
 					'required'  => true,
 				),
-/*
-				//Commented out until it is back on https://wordpress.org/plugins/contact-form-7-to-database-extension/
 				array(
-					'name'	  => 'Contact Form DB',
-					'slug'	  => 'contact-form-7-to-database-extension',
+					'name'	  => 'Save Contact Form 7',
+					'slug'	  => 'save-contact-form-7',
 					'required'  => true,
 				),
-*/
 				array(
 					'name'	  => 'Advanced Custom Fields',
 					'slug'	  => 'advanced-custom-fields',
+					'required'  => false,
+				),
+				array(
+					'name'	  => 'EWWW Image Optimizer',
+					'slug'	  => 'ewww-image-optimizer',
 					'required'  => false,
 				),
 				array(

@@ -7,33 +7,16 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Ecommerce') ){
 	trait Ecommerce {
 		public function hooks(){
-			//Declare support for WooCommerce
 			add_action('after_setup_theme', array($this, 'theme_setup_ecommerce'));
-
-			//Replace WooCommerce start wrapper
 			remove_action('woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10);
 			add_action('woocommerce_before_main_content', array($this, 'custom_woocommerce_start'), 10);
-
-			//Replace WooCommerce end wrapper
 			remove_action('woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10);
 			add_action('woocommerce_after_main_content', array($this, 'custom_woocommerce_end'), 10);
-
-			//WooCommerce admin notifications
 			add_action('admin_notices', array($this, 'woocommerce_admin_notices'));
-
-			//Set custom dimensions before the Google Analytics pageview is sent. DO NOT send any events in this function!
 			add_action('nebula_ga_before_send_pageview', array($this, 'woo_custom_ga_dimensions'));
-
-			//Set dimensions and send events after the Google Analytics pageview is sent
 			add_action('nebula_ga_after_send_pageview', array($this, 'woo_custom_ga_events'));
-
-			//Remove WooCommerce Breadcrumbs
 			//add_action('init', array($this, 'remove_woo_breadcrumbs'));
-
-			//Checkout visitor data
 			add_action('woocommerce_payment_complete', array($this, 'woocommerce_order_data'));
-
-			//JSON-LD for Products
 			add_action('nebula_metadata_end', array($this, 'json_ld_ecommerce'));
 		}
 

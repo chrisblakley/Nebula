@@ -27,10 +27,7 @@ if ( !trait_exists('Prototyping') ){
 					update_option('jr_mt_settings', $mt_settings);
 				}
 
-				//Add wireframing body class
 				add_filter('body_class', array($this, 'wireframing_body_classes'));
-
-				//Add a link to Nebula Wireframing on the Admin Bar
 				add_action('admin_bar_menu', array($this, 'admin_bar_nebula_wireframing'), 900);
 			}
 		}

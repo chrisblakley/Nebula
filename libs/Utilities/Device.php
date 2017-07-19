@@ -5,7 +5,6 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Device') ){
 	trait Device {
 		public function hooks(){
-			//Device Detection - https://github.com/piwik/device-detector
 			add_action('init', array($this, 'detect'));
 		}
 
@@ -13,6 +12,7 @@ if ( !trait_exists('Device') ){
 		 User Agent Parsing Functions/Helpers
 		 ===========================*/
 
+		//Device Detection - https://github.com/piwik/device-detector
 		public function detect(){
 			if ( $this->get_option('device_detection') ){
 					require_once(get_template_directory() . '/inc/vendor/device-detector/DeviceDetector.php'); //Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!

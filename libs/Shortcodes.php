@@ -74,7 +74,7 @@ if ( !trait_exists('Shortcodes') ){
 			add_shortcode('github', array($this, 'github_shortcode'));
 
 			//Accordion
-			$GLOBALS['accordion'] = 0; // TODO: Change to a class var
+			$GLOBALS['accordion'] = 0; //@TODO "Nebula" 0: Change to a class var
 			add_shortcode('accordion', array($this, 'accordion_shortcode'));
 
 			//Accordion_Item
@@ -105,7 +105,7 @@ if ( !trait_exists('Shortcodes') ){
 		/* Usage:
 			$flags = get_flags($atts);
 			if (in_array('your_flag', $flags){
-				// Flag is present
+				//Flag is present
 			}
 		*/
 		public function get_flags($atts){

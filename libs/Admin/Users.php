@@ -5,29 +5,18 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Users') ){
 	trait Users {
 		public function hooks(){
-			//Update user online status
 			add_action('init', array($this, 'users_status_init'));
 			add_action('admin_init', array($this, 'users_status_init'));
-
-			//Add columns to user listings
 			add_filter('manage_users_columns', array($this, 'user_columns_head'));
-
-			//Custom columns content to user listings
 			add_action('manage_users_custom_column', array($this, 'user_columns_content' ), 15, 3);
-
-			//Additional Contact Info fields
 			add_filter('user_contactmethods', array($this, 'user_contact_methods'));
-
-			//Custom User headshot
 			add_action('admin_init', array($this, 'easy_author_image_init'));
 
-			//Show the fields in the user admin page
 			if ( !current_user_can( 'subscriber' ) && !current_user_can( 'contributor' ) ){
 				add_action('show_user_profile', array($this, 'extra_profile_fields'));
 				add_action('edit_user_profile', array($this, 'extra_profile_fields'));
 			}
 
-			//Save the field values to the DB
 			add_action('personal_options_update', array($this, 'save_extra_profile_fields'));
 			add_action('edit_user_profile_update', array($this, 'save_extra_profile_fields'));
 		}
@@ -167,7 +156,7 @@ if ( !trait_exists('Users') ){
 
 		//Additional Contact Info fields
 		public function user_contact_methods( $contact_methods ){
-			$override = apply_filters('pre_nebula_user_contact_methods', null, $user); // TODO: Revise this $user
+			$override = apply_filters('pre_nebula_user_contact_methods', null, $user); //@TODO "Nebula" 0: Revise this $user
 			if ( isset($override) ){return;}
 
 			unset($contact_methods['yim']);

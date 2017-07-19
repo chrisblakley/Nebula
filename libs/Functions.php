@@ -3,8 +3,6 @@
 if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 trait Functions {
-
-	//Social buttons vars
 	public $twitter_widget_loaded;
 	public $google_plus_widget_loaded;
 	public $linkedin_widget_loaded;
@@ -18,31 +16,19 @@ trait Functions {
 		$this->linkedin_widget_loaded = false;
 		$this->pinterest_widget_loaded = false;
 
-		//Start output buffering so headers can be sent later for HTTP2 Server Push
 		add_action('init', array($this, 'nebula_http2_ob_start'));
-
-		//Prep custom theme support
 		add_action('after_setup_theme', array($this, 'theme_setup'));
-
-		//Add custom meta icon (favicon) sizes when the site_icon is used via the Customizer
 		add_filter('site_icon_image_sizes', array($this, 'site_icon_sizes'));
-
-		//Add the Posts RSS Feed back in
 		add_action('wp_head', array($this, 'add_back_post_feed'));
-
-		//Set server timezone to match Wordpress
 		add_action('init', array($this, 'set_default_timezone'), 1);
 		add_action('admin_init', array($this, 'set_default_timezone'), 1);
 
-		//Add the Nebula note to the browser console (if enabled)
-		if ( $this->get_option('console_css') ) {
+		if ( $this->get_option('console_css') ){
 			add_action('wp_head', array($this, 'calling_card'));
 		}
 
-		//Check for warnings and send them to the console.
 		add_action('wp_head', array($this, 'console_warnings'));
 
-		//Create/Write a manifest JSON file
 		if ( is_writable(get_template_directory()) ){
 			if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-DAY_IN_SECONDS) || $this->is_debug() ){
 				add_action('init', array($this, 'manifest_json'));
@@ -50,114 +36,65 @@ trait Functions {
 			}
 		}
 
-		//Update Service Worker JavaScript file
 		if ( $this->get_option('service_worker') && is_writable(get_home_path()) ){
 			if ( file_exists($this->sw_location(false)) ){
 				add_action('save_post', array($this, 'update_sw_js'));
 			}
 		}
 
-		//Redirect to favicon to force-clear the cached version when ?favicon is added.
 		add_action('wp_loaded', array($this, 'favicon_cache'));
-
-		//Google Optimize Style Tag
 		add_action('nebula_head_open', array($this, 'google_optimize_style'));
-
-		//Register Widget Areas
 		add_action('widgets_init', array($this, 'widgets_register'));
-
-		//Register the Navigation Menus
 		add_action('after_setup_theme', array($this, 'nav_menu_locations'));
 
-		if ( !$this->get_option('comments') || $this->get_option('disqus_shortname') ) { //If WP core comments are disabled -or- if Disqus is enabled
-			//Remove the Activity metabox
+		if ( !$this->get_option('comments') || $this->get_option('disqus_shortname') ){ //If WP core comments are disabled -or- if Disqus is enabled
 			add_action('wp_dashboard_setup', array($this, 'remove_activity_metabox'));
-
-			//Remove Comments admin listing column
 			add_filter('manage_posts_columns', array($this, 'remove_pages_count_columns'));
 			add_filter('manage_pages_columns', array($this, 'remove_pages_count_columns'));
 			add_filter('manage_media_columns', array($this, 'remove_pages_count_columns'));
-
-			//Close comments on the front-end
 			add_filter('comments_open', '__return_false', 20, 2);
 			add_filter('pings_open', '__return_false', 20, 2);
 
-			//Remove comments menu from Admin Bar
 			if ( $this->get_option('admin_bar') ){
 				add_action('admin_bar_menu', array($this, 'admin_bar_remove_comments' ), 900);
 			}
 
-			//Remove comments metabox and comments
 			add_action('admin_menu', array($this, 'disable_comments_admin'));
 			add_filter('admin_head', array($this, 'hide_ataglance_comment_counts'));
-
-			//Disable support for comments in post types
 			add_action('admin_init', array($this, 'remove_comments_post_type_support'));
 
-			//Link to Disqus on comments page (if using Disqus)
 			if ( $pagenow == 'edit-comments.php' && $this->get_option('disqus_shortname') ){
 				add_action('admin_notices', array($this, 'disqus_link'));
 			}
 		} else { //If WP core comments are enabled
-			//Enqueue threaded comments script only as needed
 			add_action('comment_form_before', array($this, 'enqueue_comments_reply'));
 		}
 
-		//Disable support for trackbacks in post types
 		add_action('admin_init', array($this, 'disable_trackbacks'));
-
-		//Prefill form fields with comment author cookie
 		add_action('wp_head', array($this, 'comment_author_cookie'));
-
-		//Set the post/page template to a variable
 		add_action('template_include', array($this, 'define_current_template'), 1000);
-
-		//Twitter cached feed
-		//This function can be called with AJAX or as a standard function.
 		add_action('wp_ajax_nebula_twitter_cache', array($this, 'twitter_cache'));
 		add_action('wp_ajax_nopriv_nebula_twitter_cache', array($this, 'twitter_cache'));
-
-		//Modified WordPress search form using Bootstrap components
 		add_filter('get_search_form', array($this, 'search_form'), 100);
-
-		//Replace text on password protected posts to be more minimal
 		add_filter('the_password_form', array($this, 'password_form_simplify'));
-
-		//Always get custom fields with post queries
 		add_filter('the_posts', array($this, 'always_get_post_custom'));
-
-		//Prevent empty search query error (Show all results instead)
 		add_action('pre_get_posts', array($this, 'redirect_empty_search'));
-
-		//Redirect if only single search result
 		add_action('template_redirect', array($this, 'redirect_single_post'));
 
-		//Autocomplete Search AJAX.
 		add_action('wp_ajax_nebula_autocomplete_search', array($this, 'autocomplete_search'));
 		add_action('wp_ajax_nopriv_nebula_autocomplete_search', array($this, 'autocomplete_search'));
 
-		//Advanced Search
 		add_action('wp_ajax_nebula_advanced_search', array($this, 'advanced_search'));
 		add_action('wp_ajax_nopriv_nebula_advanced_search', array($this, 'advanced_search'));
 
-		//Infinite Load AJAX Call
 		add_action('wp_ajax_nebula_infinite_load', array($this, 'infinite_load'));
 		add_action('wp_ajax_nopriv_nebula_infinite_load', array($this, 'infinite_load'));
 
-		//404 page suggestions
 		add_action('wp', array($this, 'internal_suggestions'));
-
-		//Add custom body classes
 		add_filter('body_class', array($this, 'body_classes'));
-
-		//Add additional classes to post wrappers
 		add_filter('post_class', array($this, 'post_classes'));
-
-		//Make sure attachment URLs match the protocol (to prevent mixed content warnings).
+		add_action('nebula_body_open', array($this, 'skip_to_content_link'));
 		add_filter('wp_get_attachment_url', array($this, 'wp_get_attachment_url_force_protocol'));
-
-		//Fix responsive oEmbeds
-		//Uses Bootstrap classes: http://v4-alpha.getbootstrap.com/components/utilities/#responsive-embeds
 		add_filter('embed_oembed_html', array($this, 'oembed_modifiers'), 9999, 4);
 	}
 
@@ -1398,7 +1335,7 @@ trait Functions {
 	}
 
 	//Infinite Load
-	// Ajax call handle in nebula()->infinite_load();
+	//Ajax call handle in nebula()->infinite_load();
 	public function infinite_load_query($args=array('post_status' => 'publish', 'showposts' => 4), $loop=false){
 		$override = apply_filters('pre_nebula_infinite_load_query', null);
 		if ( isset($override) ){return;}
@@ -1674,7 +1611,7 @@ trait Functions {
 		}
 	}
 
-	//Detect location from IP address using https://freegeoip.net/
+	//Detect location from IP address using https://freegeoip.io/
 	public function ip_location($data=null, $ip_address=false){
 		if ( $this->get_option('ip_geolocation') ){
 			if ( empty($ip_address) ){
@@ -1695,7 +1632,7 @@ trait Functions {
 
 				//Get new remote data
 				if ( empty($_SESSION['nebula_ip_geolocation']) ){
-					$response = $this->remote_get('http://freegeoip.net/json/' . $ip_address);
+					$response = $this->remote_get('http://freegeoip.io/json/' . $ip_address);
 					if ( is_wp_error($response) || !is_array($response) || strpos($response['body'], 'Rate limit') === 0 ){
 						return false;
 					}
@@ -1901,22 +1838,11 @@ trait Functions {
 		$override = apply_filters('pre_nebula_widgets_init', null);
 		if ( isset($override) ){return;}
 
-		//Sidebar 1
+		//Sidebar
 		register_sidebar(array(
-			'name' => 'Primary Widget Area',
-			'id' => 'primary-widget-area',
-			'description' => 'The primary widget area', 'boilerplate',
-			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-			'after_widget' => '</li>',
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>',
-		));
-
-		//Sidebar 2
-		register_sidebar(array(
-			'name' => 'Secondary Widget Area',
-			'id' => 'secondary-widget-area',
-			'description' => 'The secondary widget area',
+			'name' => 'Sidebar',
+			'id' => 'sidebar-widget-area',
+			'description' => 'The sidebar widget area',
 			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
 			'after_widget' => '</li>',
 			'before_title' => '<h3 class="widget-title">',
@@ -1925,7 +1851,7 @@ trait Functions {
 
 		//Footer
 		register_sidebar(array(
-			'name' => 'Footer Widget Area',
+			'name' => 'Footer',
 			'id' => 'footer-widget-area',
 			'description' => 'The horizontal footer widget area',
 			'before_widget' => '<div id="%1$s" class="col-md widget-container %2$s">',
@@ -1941,10 +1867,9 @@ trait Functions {
 		if ( isset($override) ){return;}
 
 		register_nav_menus(array(
-			'secondary' => 'Secondary Menu',
+			'utility' => 'Utility Menu',
 			'primary' => 'Primary Menu',
 			'mobile' => 'Mobile Menu',
-			'sidebar' => 'Sidebar Menu',
 			'footer' => 'Footer Menu'
 		));
 	}
@@ -2144,7 +2069,9 @@ trait Functions {
 		}
 
 		$types = array('any');
-		$types = json_decode(sanitize_text_field(trim($_POST['types'])));
+		if ( isset($_POST['types']) ){
+			$types = json_decode(sanitize_text_field(trim($_POST['types'])));
+		}
 
 		//Standard WP search (does not include custom fields)
 		$query1 = new WP_Query(array(
@@ -2198,7 +2125,7 @@ trait Functions {
 		}
 
 		//Find media library items
-		if ( in_array_any(array('any', 'attachment'), $types) ){
+		if ( $this->in_array_any(array('any', 'attachment'), $types) ){
 			$attachments = get_posts(array('post_type' => 'attachment', 's' => $term, 'numberposts' => 10, 'post_status' => null));
 			if ( $attachments ){
 				$attachment_count = 0;
@@ -2234,7 +2161,7 @@ trait Functions {
 		}
 
 		//Find menu items
-		if ( in_array_any(array('any', 'menu'), $types) ){
+		if ( $this->in_array_any(array('any', 'menu'), $types) ){
 			$menus = get_transient('nebula_autocomplete_menus');
 			if ( empty($menus) || $this->is_debug() ){
 				$menus = get_terms('nav_menu');
@@ -2274,7 +2201,7 @@ trait Functions {
 		}
 
 		//Find categories
-		if ( in_array_any(array('any', 'category', 'cat'), $types) ){
+		if ( $this->in_array_any(array('any', 'category', 'cat'), $types) ){
 			$categories = get_transient('nebula_autocomplete_categories');
 			if ( empty($categories) || $this->is_debug() ){
 				$categories = get_categories();
@@ -2299,7 +2226,7 @@ trait Functions {
 		}
 
 		//Find tags
-		if ( in_array_any(array('any', 'tag'), $types) ){
+		if ( $this->in_array_any(array('any', 'tag'), $types) ){
 			$tags = get_transient('nebula_autocomplete_tags');
 			if ( empty($tags) || $this->is_debug() ){
 				$tags = get_tags();
@@ -2324,7 +2251,7 @@ trait Functions {
 		}
 
 		//Find authors (if author bios are enabled)
-		if ( $this->get_option('author_bios') && in_array_any(array('any', 'author'), $types) ){
+		if ( $this->get_option('author_bios') && $this->in_array_any(array('any', 'author'), $types) ){
 			$authors = get_transient('nebula_autocomplete_authors');
 			if ( empty($authors) || $this->is_debug() ){
 				$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
@@ -2691,6 +2618,11 @@ trait Functions {
 		}
 
 		return $classes;
+	}
+
+	//G1 Screen Reader Skip to Content Link https://www.w3.org/TR/WCAG20-TECHS/G1
+	public function skip_to_content_link(){
+		echo '<a class="skip-to-content-link sr-only" href="#content-section" tabindex="0">Skip to Content</a>';
 	}
 
 	//Make sure attachment URLs match the protocol (to prevent mixed content warnings).

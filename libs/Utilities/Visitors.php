@@ -6,77 +6,44 @@ if ( !trait_exists('Visitors') ){
 	trait Visitors {
 		public function hooks(){
 			if ( $this->get_option('visitors_db') ){
-				//Register table names in $wpdb global
 				add_action('init', array($this, 'register_table_names'));
 
-				//Nebula Visitor Admin Page
 				if ( $this->get_option('visitors_db') ){
-					//Add Visitors menu in admin
 					add_action('admin_menu', array($this, 'admin_menu'));
 				}
 
-				//The controller for Nebula Visitors DB process.
-				//Triggering at get_header allows for template_redirects to happen before fingerprinting (prevents false multipageviews)
 				add_action('get_header', array($this, 'controller'), 11);
-
-				//Get details for user
 				add_action('wp_ajax_nebula_visitor_admin_detail', array($this, 'admin_detail'));
 				add_action('wp_ajax_nopriv_nebula_visitor_admin_detail', array($this, 'admin_detail'));
-
-				//Manually update data from the admin interface
 				add_action('wp_ajax_nebula_ajax_manual_update_visitor', array($this, 'ajax_manual_update_visitor'));
 				add_action('wp_ajax_nopriv_nebula_ajax_manual_update_visitor', array($this, 'ajax_manual_update_visitor'));
-
-				//Find similar visitors by IP or IP and User Agent
 				add_action('wp_ajax_nebula_ajax_similar_visitors', array($this, 'ajax_similar_visitors'));
 				add_action('wp_ajax_nopriv_nebula_ajax_similar_visitors', array($this, 'ajax_similar_visitors'));
-
-				//Manually delete user from the admin interface
 				add_action('wp_ajax_nebula_ajax_manual_delete_visitor', array($this, 'ajax_manual_delete_visitor'));
 				add_action('wp_ajax_nopriv_nebula_ajax_manual_delete_visitor', array($this, 'ajax_manual_delete_visitor'));
-
-				//Manually remove expired visitors from the admin interface
 				add_action('wp_ajax_nebula_ajax_manual_remove_expired', array($this, 'ajax_manual_remove_expired'));
 				add_action('wp_ajax_nopriv_nebula_ajax_manual_remove_expired', array($this, 'ajax_manual_remove_expired'));
-
-				//Manually remove visitors with a Lead Score of 0 (or less)
 				add_action('wp_ajax_nebula_ajax_manual_remove_noscore', array($this, 'ajax_manual_remove_noscore'));
 				add_action('wp_ajax_nopriv_nebula_ajax_manual_remove_noscore', array($this, 'ajax_manual_remove_noscore'));
-
-				//Manually delete the entire Nebula Visitor tables
 				add_action('wp_ajax_nebula_ajax_drop_nv_table', array($this, 'ajax_drop_nv_table'));
 				add_action('wp_ajax_nopriv_nebula_ajax_drop_nv_table', array($this, 'ajax_drop_nv_table'));
-
-				//Nebula Visitor Data
 				add_action('admin_init', array($this, 'create_tables') );
-
-				//Retrieve User Data
 				add_action('wp_ajax_nebula_vdb_ajax_get_visitor_data', array($this, 'ajax_get_visitor_data'));
 				add_action('wp_ajax_nopriv_nebula_vdb_ajax_get_visitor_data', array($this, 'ajax_get_visitor_data'));
-
-				//Vague Data - Only update if it doesn't already exist in the DB
 				add_action('wp_ajax_nebula_ajax_vague_visitor', array($this, 'ajax_vague_visitor'));
 				add_action('wp_ajax_nopriv_nebula_ajax_vague_visitor', array($this, 'ajax_vague_visitor'));
-
-				//Update Visitor Data
 				add_action('wp_ajax_nebula_vdb_ajax_update_visitor', array($this, 'ajax_update_visitor'));
 				add_action('wp_ajax_nopriv_nebula_vdb_ajax_update_visitor', array($this, 'ajax_update_visitor'));
-
-				//Append to Visitor Data
 				add_action('wp_ajax_nebula_vdb_ajax_append_visitor', array($this, 'ajax_append_visitor'));
 				add_action('wp_ajax_nopriv_nebula_vdb_ajax_append_visitor', array($this, 'ajax_append_visitor'));
-
-				//Remove data from the Nebula Visitor DB
 				add_action('wp_ajax_nebula_vdb_ajax_remove_datapoint', array($this, 'ajax_remove_datapoint'));
 				add_action('wp_ajax_nopriv_nebula_vdb_ajax_remove_datapoint', array($this, 'ajax_remove_datapoint'));
-
-				//Increment Visitor Data
 				add_action('wp_ajax_nebula_vdb_ajax_increment_visitor', array($this, 'ajax_increment_visitor'));
 				add_action('wp_ajax_nopriv_nebula_vdb_ajax_increment_visitor', array($this, 'ajax_increment_visitor'));
 			}
 		}
 
-		// Register table names in $wpdb global
+		//Register table names in $wpdb global
 		public function register_table_names(){
 			global $wpdb;
 

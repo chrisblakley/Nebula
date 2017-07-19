@@ -5,23 +5,22 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Sass') ){
 	trait Sass {
 		public function hooks(){
-			/*==========================
-				Nebula Sass Compiling
-				Add directories to be checked for .scss files by using the filter "nebula_scss_locations". Example:
-				add_filter('nebula_scss_locations', 'my_plugin_scss_files');
-				function my_plugin_scss_files($scss_locations){
-					$scss_locations['my_plugin'] = array(
-						'directory' => plugin_dir_path(__FILE__),
-						'uri' => plugin_dir_url(__FILE__),
-						'imports' => plugin_dir_path(__FILE__) . '/scss/partials/'
-					);
-					return $scss_locations;
-				}
-			 ===========================*/
-
 			add_action('init', array($this, 'scss_controller'));
 		}
 
+		/*==========================
+			Nebula Sass Compiling
+			Add directories to be checked for .scss files by using the filter "nebula_scss_locations". Example:
+			add_filter('nebula_scss_locations', 'my_plugin_scss_files');
+			function my_plugin_scss_files($scss_locations){
+				$scss_locations['my_plugin'] = array(
+					'directory' => plugin_dir_path(__FILE__),
+					'uri' => plugin_dir_url(__FILE__),
+					'imports' => plugin_dir_path(__FILE__) . '/scss/partials/'
+				);
+				return $scss_locations;
+			}
+		 ===========================*/
 		public function scss_controller(){
 			if ( !is_writable(get_template_directory()) ){
 				trigger_error('The template directory is not writable. Can not compile Sass files!', E_USER_NOTICE);

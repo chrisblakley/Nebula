@@ -5,10 +5,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Analytics') ){
 	trait Analytics {
 		public function hooks(){
-			//Load abandonment tracking
 			add_action('nebula_head_open', array($this, 'ga_track_load_abandons')); //This is the earliest anything can be placed in the <head>
-
-			//Sends events to Google Analytics via AJAX (used if GA is blocked via JavaScript)
 			add_action('wp_ajax_nebula_ga_ajax', array($this, 'ga_ajax'));
 			add_action('wp_ajax_nopriv_nebula_ga_ajax', array($this, 'ga_ajax'));
 		}
@@ -212,7 +209,7 @@ if ( !trait_exists('Analytics') ){
 				'cid' => $this->ga_parse_cookie(),
 				't' => 'exception',
 				'exd' => $message,
-				'exf' => $title,
+				'exf' => $fatal,
 				'dl' => $this->requested_url(),
 				'dt' => ( get_the_title() )? get_the_title() : '',
 				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '',
