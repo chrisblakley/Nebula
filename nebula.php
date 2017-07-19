@@ -56,7 +56,7 @@ if ( !class_exists('Nebula') ){
 
 		//Setup plugin constants
 		private function constants(){
-			define('NEBULA_VER', nebula()->version('full')); //Nebula version
+			define('NEBULA_VER', nebula()->version('raw')); //Nebula version
 			define('NEBULA_DIR', get_template_directory()); //Nebula path
 			define('NEBULA_URL', get_template_directory_uri()); //Nebula URL
 		}

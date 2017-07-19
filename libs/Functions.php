@@ -28,6 +28,7 @@ trait Functions {
 		}
 
 		add_action('wp_head', array($this, 'console_warnings'));
+		add_action('wp_head', array($this, 'subpage_head_no_sass_color'), 100);
 
 		if ( is_writable(get_template_directory()) ){
 			if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-DAY_IN_SECONDS) || $this->is_debug() ){
@@ -168,7 +169,7 @@ trait Functions {
 	//Add the Nebula note to the browser console (if enabled)
 	public function calling_card(){
 		if ( !$this->get_option('device_detection') || ($this->is_desktop() && !$this->is_browser('ie') && !$this->is_browser('edge')) ){
-			echo "<script>console.log('%c Created using Nebula " . $this->version('full') . "', 'padding: 2px 10px; background: #0098d7; color: #fff;');</script>";
+			echo "<script>console.log('%c Created using Nebula " . $this->version('primary') . "', 'padding: 2px 10px; background: #0098d7; color: #fff;');</script>";
 		}
 	}
 
@@ -386,6 +387,18 @@ trait Functions {
 				echo 'console.' . $warning['level'] . '("[Nebula] ' . strip_tags($warning['description']) . '");';
 			}
 			echo '</script>';
+		}
+	}
+
+	//Modify styles if using Customizer colors but have Sass disabled
+	public function subpage_head_no_sass_color(){
+		if ( get_theme_mod('nebula_primary_color') && !nebula()->get_option('scss') ){
+			?>
+				<style>
+					/* Customizer styles if Sass is disabled */
+					#bigheadingcon {background: <?php echo get_theme_mod('nebula_primary_color'); ?>;}
+				</style>
+			<?php
 		}
 	}
 
@@ -2514,7 +2527,7 @@ trait Functions {
 		}
 		$nebula_theme_info = wp_get_theme();
 		$classes[] = 'nebula';
-		$classes[] = 'nebula_' . str_replace('.', '-', $this->version('full'));
+		$classes[] = 'nebula_' . str_replace('.', '-', $this->version('primary'));
 
 		$classes[] = 'lang-' . strtolower(get_bloginfo('language'));
 		if ( is_rtl() ){

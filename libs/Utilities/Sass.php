@@ -264,11 +264,13 @@ if ( !trait_exists('Sass') ){
 
 			$scss = preg_replace("(" . str_replace('/', '\/', get_template_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments
 			$scss = preg_replace("(" . str_replace('/', '\/', get_stylesheet_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments (For child themes)
-			do_action('nebula_scss_post_compile');
+			do_action('nebula_scss_post_compile_every');
 			$scss .= PHP_EOL . '/* ' . date('l, F j, Y \a\t g:i:s A', time()) . ' */';
 
 			//Run these once
 			if ( $this->get_data('need_sass_compile') != 'false' ){
+				do_action('nebula_scss_post_compile_once');
+
 				$this->update_data('scss_last_processed', time());
 				$this->update_data('need_sass_compile', 'false');
 

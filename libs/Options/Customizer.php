@@ -3,12 +3,8 @@
 if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 trait Customizer {
-
 	public function hooks(){
-
-		//Register WordPress Customizer
 		add_action('customize_register', array($this, 'customize_register'));
-
 	}
 
 	//Register WordPress Customizer
@@ -357,11 +353,5 @@ trait Customizer {
 			'selector' => '#footer-section .footer-search',
 			'container_inclusive' => false,
 		));
-
-
-
-
-
-		//@todo "Nebula" 0: Add support for "Additional CSS" option. Should it just be appended to the end of style.scss (via the PHP function) or enqueue a new file, or just embed in the header?
 	}
 }

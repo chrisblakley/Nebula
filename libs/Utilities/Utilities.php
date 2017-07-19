@@ -807,38 +807,15 @@ if ( !trait_exists('Utilities') ){
 			$override = apply_filters('pre_nebula_version', null, $return);
 			if ( isset($override) ){return;}
 
+			$return = str_replace(array(' ', '_', '-'), '', strtolower($return));
 			$nebula_theme_info = ( is_child_theme() )? wp_get_theme(str_replace('-child', '', get_template())) : wp_get_theme();
 
+			if ( $return === 'raw' ){ //Check this first to prevent needing to RegEx altogether
+				return $nebula_theme_info->get('Version');
+			}
 
-/*
-			var_dump($nebula_theme_info['Version']);
-			echo "<br>";
-*/
-
-
-			$nebula_version_split = explode('.', preg_replace('/[a-zA-Z]/', '', $nebula_theme_info->get('Version')));
-			$nebula_version = array(
-				'large' => $nebula_version_split[0],
-				'medium' => $nebula_version_split[1],
-				'small' => $nebula_version_split[2],
-				'full' => $nebula_version_split[0] . '.' . $nebula_version_split[1] . '.' . $nebula_version_split[2]
-			);
-
-			/*
-				May 2016	4.0.x
-				June		4.1.x
-				July		4.2.x
-				August		4.3.x
-				Sept		4.4.x
-				Oct			4.5.x
-				Nov			4.6.x
-				Dec			4.7.x
-				Jan	2017	4.8.x
-				Feb			4.9.x
-				Mar			4.10.x
-				Apr			4.11.x
-				x represents the day of the month.
-			*/
+			preg_match('/(?<primary>(?<large>\d+)\.(?<medium>\d+)\.(?<small>\d+[a-z]?))\.?(?<tiny>\d+)?/i', $nebula_theme_info->get('Version'), $nebula_version);
+			$nebula_version['small'] = preg_replace('/\D/', '', $nebula_version['small']); //Remove letters from small number
 
 			$nebula_version_year = ( $nebula_version['medium'] >= 8 )? 2012+$nebula_version['large']+1 : 2012+$nebula_version['large'];
 			$nebula_months = array('May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April');
@@ -847,10 +824,12 @@ if ( !trait_exists('Utilities') ){
 			$nebula_version_day_formated = ( empty($nebula_version['small']) )? ' ' : ' ' . $nebula_version['small'] . ', ';
 
 			$nebula_version_info = array(
-				'full' => $nebula_version_split[0] . '.' . $nebula_version_split[1] . '.' . $nebula_version_split[2],
-				'large' => $nebula_version_split[0],
-				'medium' => $nebula_version_split[1],
-				'small' => $nebula_version_split[2],
+				'full' => $nebula_version[0],
+				'primary' => $nebula_version['primary'],
+				'large' => $nebula_version['large'],
+				'medium' => $nebula_version['medium'],
+				'small' => $nebula_version['small'],
+				'tiny' => $nebula_version['tiny'],
 				'utc' => strtotime($nebula_version_month . $nebula_version_day_formated . $nebula_version_year),
 				'date' => $nebula_version_month . $nebula_version_day_formated . $nebula_version_year,
 				'year' => $nebula_version_year,
@@ -858,13 +837,16 @@ if ( !trait_exists('Utilities') ){
 				'day' => $nebula_version_day,
 			);
 
-			switch ( str_replace(array(' ', '_', '-'), '', strtolower($return)) ){
-				case ('raw'):
+			switch ( $return ){
+				case ('raw'): //Shouldn't ever be
 					return $nebula_theme_info->get('Version');
 					break;
 				case ('version'):
 				case ('full'):
 					return $nebula_version_info['full'];
+					break;
+				case ('primary'):
+					return $nebula_version_info['primary'];
 					break;
 				case ('date'):
 					return $nebula_version_info['date'];

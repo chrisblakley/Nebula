@@ -433,7 +433,7 @@ if ( !trait_exists('Admin') ){
 			if ( $nebula_data['version_legacy'] === 'true' ){
 				//Check for unsupported version: if newer version of Nebula has a "u" at the end of the version number, disable automated updates.
 				$remote_version_info = get_option('external_theme_updates-Nebula-master');
-				if ( !empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) !== str_replace('u', '', $this->version('full')) ){
+				if ( !empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) !== str_replace('u', '', $this->version('raw')) ){
 					$this->update_data('version_legacy', 'true');
 					$this->update_data('current_version', $this->version('raw'));
 					$this->update_data('current_version_date', $this->version('date'));

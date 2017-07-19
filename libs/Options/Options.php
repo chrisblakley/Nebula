@@ -5,10 +5,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Options') ){
 	trait Options {
 		public function hooks(){
-			//Register all Nebula Options
 			add_action('current_screen', array($this, 'register_options'));
-
-			//Add Nebula admin subpages
 			add_action('admin_menu', array($this, 'admin_sub_menu'));
 		}
 
