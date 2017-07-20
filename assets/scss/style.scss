@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.2.19.3793
+	Version: 5.2.19.7258
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -364,7 +364,9 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 }
 
 //Includes Secondary and Primary navigation rows (which also includes the logo)
-#navigation-section {position: absolute; top: 0; left: 0; width: 100%;}
+#navigation-section {color: pink; position: absolute; top: 0; left: 0; width: 100%;
+	.no-hero & {position: relative;}
+}
 
 //Top "eyebrow" navigation row that appears at desktop sizes.
 #secondarynavcon {position: relative; max-height: 0; opacity: 0; overflow: hidden; background: rgba(0, 0, 0, 0.5); z-index: 3; @include prefix((transition: all 0.5s));
@@ -440,7 +442,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 
 //Homepage Hero
 #hero-section {position: relative; padding: 150px 0; margin: 0; overflow: hidden; background: url($template_directory + "/assets/img/phg/phg-nebula.jpg") no-repeat fixed center center /cover; text-align: center; @include prefix((transition: all 0.5s));
-	.home.page & {padding: 120px 0;
+	.home & {padding: 120px 0;
 		@include media("lg"){padding: 250px 0;};
 	}
 
