@@ -10,6 +10,46 @@ trait Customizer {
 	//Register WordPress Customizer
 	public function customize_register($wp_customize){
 
+
+
+
+
+
+
+		$wp_customize->add_panel('test_panel', array(
+			'priority' => 10,
+			'capability' => 'edit_theme_options',
+			'theme_supports' => '',
+			'title' => 'Test Panel Options',
+			'description' => 'Several settings pertaining my theme',
+		));
+
+
+		$wp_customize->add_section('test_section', array(
+			'title' => 'Test Section',
+			'priority' => 50,
+			'panel'  => 'test_panel',
+		));
+
+		$wp_customize->add_setting('test_setting', array('default' => null));
+		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'test_setting', array(
+			'label' => 'This is a test',
+			'section' => 'test_section',
+			'priority' => 10
+		)));
+
+
+
+
+
+
+
+
+
+
+
+
+
 		/*==========================
 			Site Identity
 		 ===========================*/

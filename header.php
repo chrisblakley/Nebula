@@ -62,7 +62,7 @@
 
 					<div id="logonavcon">
 						<div class="container">
-							<div class="row">
+							<div class="row align-items-center">
 								<div class="col-md-4">
 									<a class="logocon" href="<?php echo home_url('/'); ?>" title="<?php bloginfo('name'); ?>">
 										<img class="svg" src="<?php echo ( get_theme_mod('custom_logo') )? nebula()->get_thumbnail_src(get_theme_mod('custom_logo')) : get_theme_file_uri('/assets/img/logo.svg'); ?>" alt="<?php bloginfo('name'); ?>"/>

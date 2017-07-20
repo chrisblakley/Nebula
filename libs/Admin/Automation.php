@@ -24,6 +24,8 @@ if ( !trait_exists('Automation') ){
 			}
 
 			add_action('wp_ajax_nebula_initialization', array($this, 'initialization'));
+			add_action('admin_init', array($this, 'set_dates'));
+
 			//add_action('admin_init', array($this, 'force_settings' ), 9); //Uncomment this line to force an initialization date.
 		}
 
@@ -153,7 +155,16 @@ if ( !trait_exists('Automation') ){
 			tgmpa($plugins, $config);
 		}
 
+		//Make sure certain data is always set
+		public function set_dates(){
+			$first_activation = $this->get_data('first_activation');
+			if ( empty($first_activation) ){
+				$this->update_data('first_activation', time());
+			}
+		}
+
 		public function activation_notice(){
+			$this->set_dates();
 			add_action('admin_notices', array($this, 'activation'));
 		}
 
@@ -163,7 +174,7 @@ if ( !trait_exists('Automation') ){
 			//Run express initialization (Nebula Options only)
 			if ( !$this->is_initialized_before() ){
 				$this->express_automation();
-				$this->update_data('first_activation', time());
+				$this->set_dates();
 			}
 
 			$is_ajax_initialization = !isset($_GET['nebula-initialization']); //Detect if non-AJAX initialization is needed. If this $_GET is true, it is not AJAX.
