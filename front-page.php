@@ -13,7 +13,7 @@ do_action('nebula_preheaders');
 get_header(); ?>
 
 <?php if ( get_theme_mod('nebula_hero', true) ): ?>
-	<div id="hero-section" class="nebulashadow inner-top inner-bottom" <?php echo ( get_theme_mod('nebula_hero_bg_image') && get_theme_mod('nebula_hero_overlay_opacity') != 1 )? 'style="background-image: url(' . get_theme_mod('nebula_hero_bg_image') . ');"' : ''; ?>>
+	<div id="hero-section" class="nebulashadow inner-top inner-bottom">
 		<?php if ( get_theme_mod('nebula_hero_overlay_color') || get_theme_mod('nebula_hero_overlay_opacity') ): ?>
 			<?php
 				$hero_overlay = 'style="';
