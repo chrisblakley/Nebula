@@ -28,7 +28,7 @@ trait Functions {
 		}
 
 		add_action('wp_head', array($this, 'console_warnings'));
-		add_action('wp_head', array($this, 'no_sass_customizer_styles'), 100);
+		add_action('wp_head', array($this, 'subpage_head_no_sass_color'), 100);
 
 		if ( is_writable(get_template_directory()) ){
 			if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-DAY_IN_SECONDS) || $this->is_debug() ){
@@ -391,20 +391,15 @@ trait Functions {
 	}
 
 	//Modify styles if using Customizer colors but have Sass disabled
-	public function no_sass_customizer_styles(){
-		?>
-			<style>
-
-				<?php if ( get_theme_mod('nebula_primary_color') && !nebula()->get_option('scss') ):?>
+	public function subpage_head_no_sass_color(){
+		if ( get_theme_mod('nebula_primary_color') && !nebula()->get_option('scss') ){
+			?>
+				<style>
+					/* Customizer styles if Sass is disabled */
 					#bigheadingcon {background: <?php echo get_theme_mod('nebula_primary_color'); ?>;}
-				<?php endif; ?>
-
-				<?php if (  get_theme_mod('nebula_hero_bg_image') && get_theme_mod('nebula_hero_overlay_opacity') != 1 ):?>
-					#hero-section {background-image: url( "<?php echo get_theme_mod('nebula_hero_bg_image'); ?>");}
-				<?php endif; ?>
-
-			</style>
-		<?php
+				</style>
+			<?php
+		}
 	}
 
 	//Get the location URI of the Service Worker JavaScript file.
