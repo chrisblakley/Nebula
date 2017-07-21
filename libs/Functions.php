@@ -28,7 +28,7 @@ trait Functions {
 		}
 
 		add_action('wp_head', array($this, 'console_warnings'));
-		add_action('wp_head', array($this, 'no_sass_customizer_styles'), 100);
+		add_action('wp_head', array($this, 'customizer_style_overrides'), 100);
 
 		if ( is_writable(get_template_directory()) ){
 			if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-DAY_IN_SECONDS) || $this->is_debug() ){
@@ -390,19 +390,18 @@ trait Functions {
 		}
 	}
 
-	//Modify styles if using Customizer colors but have Sass disabled
-	public function no_sass_customizer_styles(){
+	//Styles from Customizer settings
+	public function customizer_style_overrides(){
+		//@TODO "Nebula" 0: I'd love to find a way to not print these <style> tags if the Customizer has not been used... without checking every single option.
 		?>
 			<style>
-
-				<?php if ( get_theme_mod('nebula_primary_color') && !nebula()->get_option('scss') ):?>
+				<?php if ( get_theme_mod('nebula_primary_color') && !nebula()->get_option('scss') ): //If set primary without Sass enabled ?>
 					#bigheadingcon {background: <?php echo get_theme_mod('nebula_primary_color'); ?>;}
 				<?php endif; ?>
 
-				<?php if (  get_theme_mod('nebula_hero_bg_image') && get_theme_mod('nebula_hero_overlay_opacity') != 1 ):?>
+				<?php if ( get_theme_mod('nebula_hero_bg_image') && get_theme_mod('nebula_hero_overlay_opacity') != 1 ): //Hero BG ?>
 					#hero-section {background-image: url( "<?php echo get_theme_mod('nebula_hero_bg_image'); ?>");}
 				<?php endif; ?>
-
 			</style>
 		<?php
 	}

@@ -3,7 +3,7 @@
 //@TODO: Enable "Service Worker" in Nebula Options (under Functions)
 
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-74399'; //Thursday, July 20, 2017 11:11:42 AM
+var CACHE_NAME = 'nebula-nebula-child-30852'; //Thursday, July 20, 2017 8:57:16 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
@@ -40,7 +40,7 @@ self.addEventListener('install', function(event){
 
 //Activate
 self.addEventListener('activate', function(event){
-	//@todo: clean up cache here, too (no /wp-admin, no query strings except homescreen)
+	//@todo "Nebula" 0: clean up cache here, too (no /wp-admin, no query strings except homescreen)
 
 	event.waitUntil(
 		caches.keys().then(function(keyList){
@@ -190,9 +190,9 @@ function offlineRequest(request, cache){
 	} else { //The resource is not an HTML page
 		//Fallback logic for non-HTML requests
 
-		if ( /google-analytics\.com\/collect$/i.test(request.url) ){ //@todo: double check this regex (or find a better way)
+		if ( /google-analytics\.com\/collect$/i.test(request.url) ){ //@todo "Nebula" 0: double check this regex (or find a better way)
 			//console.log('[SW] Analytics request! Store it in the outbox until we have connection again!', event.request.url);
-			//@TODO: If the fetch is for google analytics, add the request to the background sync outbox and send it when connection is available again: https://github.com/WICG/BackgroundSync/blob/master/explainer.md
+			//@TODO "Nebula" 0: If the fetch is for google analytics, add the request to the background sync outbox and send it when connection is available again: https://github.com/WICG/BackgroundSync/blob/master/explainer.md
 		}
 
 		//If it is an image format requested, respond with the offline image.
