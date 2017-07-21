@@ -45,11 +45,13 @@
 					</div><!--/row-->
 					<div class="row copyright-con">
 						<div class="col">
-							<?php if ( get_theme_mod('nebula_footer_text', true) ): ?>
-								<p class="copyright"><?php echo get_theme_mod('nebula_footer_text'); ?></p>
-							<?php else:?>
-								<p class="copyright">&copy; <?php echo date('Y'); ?> <a href="<?php echo home_url('/'); ?>"><strong>Nebula</strong></a> <?php echo nebula()->version('primary'); ?>, <em>all rights reserved</em>.</p>
-							<?php endif; ?>
+							<p class="copyright">
+								<?php if ( get_theme_mod('nebula_footer_text') ): ?>
+									<?php echo get_theme_mod('nebula_footer_text'); ?>
+								<?php else:?>
+									&copy; <?php echo date('Y'); ?> <a href="<?php echo home_url('/'); ?>"><strong><?php echo ( nebula()->get_option('site_owner') )? nebula()->get_option('site_owner') : get_bloginfo('name'); ?></strong></a>, <em>all rights reserved</em>.
+								<?php endif; ?>
+							</p>
 
 							<?php if ( get_theme_mod('nebula_footer_search', true) ): ?>
 								<form class="nebula-search search footer-search" method="get" action="<?php echo home_url('/'); ?>">

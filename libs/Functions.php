@@ -2525,6 +2525,12 @@ trait Functions {
 				$classes[] = 'cat-id-' . $category->cat_ID;
 			}
 		}
+
+		//Homepage Hero (Customizer)
+		if ( is_front_page() && !get_theme_mod('nebula_hero', true) ){
+			$classes[] = 'no-hero';
+		}
+
 		$nebula_theme_info = wp_get_theme();
 		$classes[] = 'nebula';
 		$classes[] = 'nebula_' . str_replace('.', '-', $this->version('primary'));

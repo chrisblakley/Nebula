@@ -49,7 +49,7 @@ if ( !trait_exists('Dashboard') ){
 		//WordPress Information metabox ("At a Glance" replacement)
 		public function ataglance_metabox(){
 			global $wp_meta_boxes;
-			wp_add_dashboard_widget('nebula_ataglance', '<img src="' . get_theme_file_uri('/assets/img/meta') . '/favicon-32x32.png" style="float: left; width: 20px;" />&nbsp;' . get_bloginfo('name'), array($this, 'dashboard_nebula_ataglance'));
+			wp_add_dashboard_widget('nebula_ataglance', '<img src="' . get_site_icon_url(32, get_theme_file_uri('/assets/img/meta') . '/favicon-32x32.png') . '" style="float: left; width: 20px;" />&nbsp;' . get_bloginfo('name'), array($this, 'dashboard_nebula_ataglance'));
 		}
 
 		public function dashboard_nebula_ataglance(){

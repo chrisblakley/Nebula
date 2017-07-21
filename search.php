@@ -19,7 +19,7 @@ get_header(); ?>
 				<?php if ( have_posts() ): ?>
 					<h1 class="page-title">Search Results</h1>
 					<p>
-						Your search for "<?php echo get_search_query(); ?>" returned
+						Your search for <span class="search-term">"<?php echo get_search_query(); ?>"</span> returned
 						<?php
 							if ( file_exists(WP_PLUGIN_DIR . '/relevanssi') && $wp_query->found_posts ){ //If Relevanssi is enabled
 								echo $wp_query->found_posts;
@@ -33,7 +33,7 @@ get_header(); ?>
 					</p>
 				<?php else: ?>
 					<h1 class="page title">No Results Found</h1>
-					<p>Your search for "<?php echo get_search_query(); ?>" returned 0 results.</p>
+					<p>Your search for <span class="search-term">"<?php echo get_search_query(); ?>"</span> returned 0 results.</p>
 					<script>
 						ga('send', 'event', 'Internal Search', 'No Results', jQuery('#s').val(), {'nonInteraction': true});
 					</script>

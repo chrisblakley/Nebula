@@ -425,7 +425,7 @@ if ( !trait_exists('Admin') ){
 			$nebula_data = get_option('nebula_data');
 
 			//Always keep current_version up-to-date.
-			if ( strtotime($nebula_data['current_version_date'])-strtotime($this->version('date')) < 0 ){
+			if ( empty($nebula_data['current_version']) || empty($nebula_data['current_version_date']) || strtotime($nebula_data['current_version_date'])-strtotime($this->version('date')) < 0 ){
 				$this->update_data('current_version', $this->version('raw'));
 				$this->update_data('current_version_date', $this->version('date'));
 			}
