@@ -395,6 +395,10 @@ trait Functions {
 		//@TODO "Nebula" 0: I'd love to find a way to not print these <style> tags if the Customizer has not been used... without checking every single option.
 		?>
 			<style>
+				<?php if ( get_theme_mod('nebula_background_color') ): //Background Color ?>
+					body {background: <?php echo get_theme_mod('nebula_background_color'); ?>;}
+				<?php endif; ?>
+
 				<?php if ( get_theme_mod('nebula_primary_color') && !nebula()->get_option('scss') ): //If set primary without Sass enabled ?>
 					#bigheadingcon {background: <?php echo get_theme_mod('nebula_primary_color'); ?>;}
 				<?php endif; ?>

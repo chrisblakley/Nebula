@@ -13,6 +13,11 @@ if ( !trait_exists('Scripts') ){
 			add_action( 'wp_enqueue_scripts', array($this, 'enqueue_scripts'));
 			add_action( 'login_enqueue_scripts', array($this, 'login_enqueue_scripts'));
 			add_action( 'admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
+
+			if ( $this->is_debug() || !empty($GLOBALS['wp_customize']) ){
+				add_filter('style_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
+				add_filter('style_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
+			}
 		}
 
 		//Register scripts
@@ -275,6 +280,11 @@ if ( !trait_exists('Scripts') ){
 
 			//Localized objects (localized to jquery to appear in <head>)
 			wp_localize_script('jquery-core', 'nebula', $this->brain);
+		}
+
+		//Get fresh resources when debugging
+		public function add_debug_query_arg($src){
+			return add_query_arg('debug', str_replace('.', '', $this->version('raw')) . '-' . rand(1000, 9999), $src);
 		}
 	}
 }

@@ -5,6 +5,17 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 trait Customizer {
 	public function hooks(){
 		add_action('customize_register', array($this, 'customize_register'));
+
+		if ( !empty($GLOBALS['wp_customize']) ){
+			add_action('init', array($this, 'customize_sass_render'));
+		}
+		add_action('customize_save_after', array($this, 'customize_sass_render'));
+	}
+
+	//Render Sass on Customizer Preview and Save
+	public function customize_sass_render(){
+		$this->update_data('need_sass_compile', 'true');
+		$this->render_scss('all');
 	}
 
 	//Register WordPress Customizer
@@ -57,6 +68,11 @@ trait Customizer {
 			'section' => 'colors',
 			'priority' => 30
 		)));
+		$wp_customize->selective_refresh->add_partial('nebula_background_color', array( //This doesn't appear to do anything.
+			'settings' => array('nebula_background_color'),
+			'selector' => 'body',
+			'container_inclusive' => false,
+		));
 
 /*
 		//Hero Navigation Scheme
@@ -244,7 +260,7 @@ trait Customizer {
 		$wp_customize->add_setting('nebula_hero_overlay_color', array('default' => null));
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_hero_overlay_color', array(
 			'label' => 'Hero BG Overlay Color',
-			'section' => 'hero',
+			'section' => 'nebula_hero',
 			'priority' => 32,
 			'active_callback' => 'is_front_page',
 		)));

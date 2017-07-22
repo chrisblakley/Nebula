@@ -6,6 +6,14 @@ if ( !trait_exists('Sass') ){
 	trait Sass {
 		public function hooks(){
 			add_action('init', array($this, 'scss_controller'));
+
+
+
+			add_action('customize_save_after', array($this, 'render_scss'));
+			//$this->update_data('need_sass_compile', 'true')
+
+			add_action('customize_preview_init', array($this, 'render_scss'));
+
 		}
 
 		/*==========================
