@@ -685,6 +685,13 @@
 										<p class="option-keywords">minor page speed impact</p>
 									</div>
 
+									<div class="form-group" dependent-of="ga_tracking_id">
+										<input type="checkbox" name="nebula_options[ga_load_abandon]" id="ga_load_abandon" value="1" <?php checked('1', !empty($nebula_options['ga_load_abandon'])); ?> /><label for="ga_load_abandon">Load Abandonment Tracking</label>
+										<p class="nebula-help-text short-help form-text text-muted">Track when visitors leave the page before it finishes loading. (Default: <?php echo $this->user_friendly_default('ga_load_abandon'); ?>)</p>
+										<p class="nebula-help-text more-help form-text text-muted">This is implemented outside of the typical event tracking and because this event happens before the pageview is sent it can very slightly alter user/session data.</p>
+										<p class="option-keywords"></p>
+									</div>
+
 									<div class="form-group">
 										<label for="adwords_remarketing_conversion_id">AdWords Remarketing Conversion ID</label>
 										<input type="text" name="nebula_options[adwords_remarketing_conversion_id]" id="adwords_remarketing_conversion_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['adwords_remarketing_conversion_id']; ?>" placeholder="000000000" />

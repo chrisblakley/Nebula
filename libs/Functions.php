@@ -168,14 +168,14 @@ trait Functions {
 
 	//Add the Nebula note to the browser console (if enabled)
 	public function calling_card(){
-		if ( !$this->get_option('device_detection') || ($this->is_desktop() && !$this->is_browser('ie') && !$this->is_browser('edge')) ){
+		if ( !$this->get_option('device_detection') || ($this->is_desktop() && !$this->is_browser('ie') && !$this->is_browser('edge')) && !is_customize_preview() ){
 			echo "<script>console.log('%c Created using Nebula " . $this->version('primary') . "', 'padding: 2px 10px; background: #0098d7; color: #fff;');</script>";
 		}
 	}
 
 	//Check for Nebula warnings
 	public function check_warnings(){
-		if ( (current_user_can('manage_options') || $this->is_dev()) && $this->get_option('admin_notices') ){
+		if ( (current_user_can('manage_options') || $this->is_dev()) && $this->get_option('admin_notices') && !is_customize_preview() ){
 			$nebula_warnings = array();
 
 			//Admin warnings only
@@ -2528,6 +2528,11 @@ trait Functions {
 			foreach ( get_the_category($post->ID) as $category ){
 				$classes[] = 'cat-id-' . $category->cat_ID;
 			}
+		}
+
+		//Customizer
+		if ( is_customize_preview() ){
+			$classes[] = 'customizer-preview';
 		}
 
 		//Homepage Hero (Customizer)

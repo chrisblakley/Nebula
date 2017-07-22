@@ -274,80 +274,77 @@ if ( !trait_exists('Analytics') ){
 
 		//Load abandonment tracking
 		public function ga_track_load_abandons(){
-			if ( $this->is_bot() ){
-				return false;
-			}
+			if ( $this->get_option('ga_load_abandon') && !$this->is_bot() && !is_customize_preview() ){
+				$custom_metric_hitID = ( $this->get_option('cd_hitid') )? "'cd" . str_replace('dimension', '', $this->get_option('cd_hitid')) . "=" . $this->ga_generate_UUID() . "'," : ''; //Create the Measurement Protocol parameter for cd
+				?>
+				<script>
+					document.addEventListener('visibilitychange', loadAbandonTracking);
+					window.onbeforeunload = loadAbandonTracking;
 
-			$custom_metric_hitID = ( $this->get_option('cd_hitid') )? "'cd" . str_replace('dimension', '', $this->get_option('cd_hitid')) . "=" . $this->ga_generate_UUID() . "'," : ''; //Create the Measurement Protocol parameter for cd
+					function loadAbandonTracking(e){
+						if ( e.type == 'visibilitychange' && document.visibilityState == 'visible' ){
+							return false;
+						}
 
-			?>
-			<script>
-				document.addEventListener('visibilitychange', loadAbandonTracking);
-				window.onbeforeunload = loadAbandonTracking;
-
-				function loadAbandonTracking(e){
-					if ( e.type == 'visibilitychange' && document.visibilityState == 'visible' ){
-						return false;
-					}
-
-					//Remove listeners so this can only trigger once
-					document.removeEventListener('visibilitychange', loadAbandonTracking);
-					window.onbeforeunload = null;
-
-					var loadAbandonLevel = 'Unload'; //Typically only desktop browsers trigger this event (sometimes)
-					if ( e.type == 'visibilitychange' ){
-						loadAbandonLevel = 'Visibility Change'; //This more accurately captures mobile browsers and the majority of abandon types
-					}
-
-					//Grab the Google Analytics CID from the cookie (if it exists)
-					var gaCID = document.cookie.replace(/(?:(?:^|.*;)\s*_ga\s*\=\s*(?:\w+\.\d\.)([^;]*).*$)|^.*$/, '$1');
-					var newReturning = 'Returning visitor or multiple pageview session';
-					if ( !gaCID ){
-						gaCID = (Math.random()*Math.pow(2, 52));
-						newReturning = 'New user or blocking Google Analytics cookie';
-					}
-
-					navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [
-						'tid=<?php echo $this->get_option('ga_tracking_id'); ?>', //Tracking ID
-						'cid=' + gaCID, //Client ID
-						'v=1', //Protocol Version
-						't=event', //Hit Type
-						'ec=Load Abandon', //Event Category
-						'ea=' + loadAbandonLevel, //Event Action
-						'el=' + newReturning, //Event Label
-						'ev=' + Math.round(performance.now()), //Event Value
-						'ni=1', //Non-Interaction Hit
-						'dr=<?php echo ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : ''; ?>', //Document Referrer
-						'dl=' + window.location.href, //Document Location URL
-						'dt=' + document.title, //Document Title
-						<?php echo $custom_metric_hitID; //Unique Hit ID ?>
-					].join('&'));
-
-					//User Timing
-					navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [
-						'tid=<?php echo $this->get_option('ga_tracking_id'); ?>', //Tracking ID
-						'cid=' + gaCID, //Client ID
-						'v=1', //Protocol Version
-						't=timing', //Hit Type
-						'utc=Load Abandon', //Timing Category
-						'utv=' + loadAbandonLevel, //Timing Variable Name
-						'utt=' + Math.round(performance.now()), //Timing Time (milliseconds)
-						'utl=' + newReturning, //Timing Label
-						'dl=' + window.location.href, //Document Location URL
-						'dt=' + document.title, //Document Title
-						<?php echo $custom_metric_hitID; //Unique Hit ID ?>
-					].join('&'));
-				}
-
-				//Remove abandonment listeners on window load
-				window.addEventListener('load', function(){
-					document.removeEventListener('visibilitychange', loadAbandonTracking);
-					if ( window.onbeforeunload === loadAbandonTracking ){
+						//Remove listeners so this can only trigger once
+						document.removeEventListener('visibilitychange', loadAbandonTracking);
 						window.onbeforeunload = null;
+
+						var loadAbandonLevel = 'Unload'; //Typically only desktop browsers trigger this event (sometimes)
+						if ( e.type == 'visibilitychange' ){
+							loadAbandonLevel = 'Visibility Change'; //This more accurately captures mobile browsers and the majority of abandon types
+						}
+
+						//Grab the Google Analytics CID from the cookie (if it exists)
+						var gaCID = document.cookie.replace(/(?:(?:^|.*;)\s*_ga\s*\=\s*(?:\w+\.\d\.)([^;]*).*$)|^.*$/, '$1');
+						var newReturning = 'Returning visitor or multiple pageview session';
+						if ( !gaCID ){
+							gaCID = (Math.random()*Math.pow(2, 52));
+							newReturning = 'New user or blocking Google Analytics cookie';
+						}
+
+						navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [
+							'tid=<?php echo $this->get_option('ga_tracking_id'); ?>', //Tracking ID
+							'cid=' + gaCID, //Client ID
+							'v=1', //Protocol Version
+							't=event', //Hit Type
+							'ec=Load Abandon', //Event Category
+							'ea=' + loadAbandonLevel, //Event Action
+							'el=' + newReturning, //Event Label
+							'ev=' + Math.round(performance.now()), //Event Value
+							'ni=1', //Non-Interaction Hit
+							'dr=<?php echo ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : ''; ?>', //Document Referrer
+							'dl=' + window.location.href, //Document Location URL
+							'dt=' + document.title, //Document Title
+							<?php echo $custom_metric_hitID; //Unique Hit ID ?>
+						].join('&'));
+
+						//User Timing
+						navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [
+							'tid=<?php echo $this->get_option('ga_tracking_id'); ?>', //Tracking ID
+							'cid=' + gaCID, //Client ID
+							'v=1', //Protocol Version
+							't=timing', //Hit Type
+							'utc=Load Abandon', //Timing Category
+							'utv=' + loadAbandonLevel, //Timing Variable Name
+							'utt=' + Math.round(performance.now()), //Timing Time (milliseconds)
+							'utl=' + newReturning, //Timing Label
+							'dl=' + window.location.href, //Document Location URL
+							'dt=' + document.title, //Document Title
+							<?php echo $custom_metric_hitID; //Unique Hit ID ?>
+						].join('&'));
 					}
-				});
-			</script>
-			<?php
+
+					//Remove abandonment listeners on window load
+					window.addEventListener('load', function(){
+						document.removeEventListener('visibilitychange', loadAbandonTracking);
+						if ( window.onbeforeunload === loadAbandonTracking ){
+							window.onbeforeunload = null;
+						}
+					});
+				</script>
+				<?php
+			}
 		}
 
 		//Log fatal errors in Google Analytics as crashes

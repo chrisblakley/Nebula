@@ -253,6 +253,7 @@ if ( !trait_exists('Options') ){
 				'hostnames' => '',
 				'google_search_console_verification' => '',
 				'facebook_custom_audience_pixel_id' => '',
+				'ga_load_abandon' => 0,
 				'cd_gacid' => '',
 				'cd_hitid' => '',
 				'cd_hittime' => '',

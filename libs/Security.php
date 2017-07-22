@@ -129,6 +129,11 @@ if ( !trait_exists('Security') ){
 			$override = apply_filters('pre_track_notable_bots', null);
 			if ( isset($override) ){return;}
 
+			//Ignore users who have already been checked, or are logged in.
+			if ( (isset($_SESSION['blacklisted']) && $_SESSION['blacklisted'] == false) || is_user_logged_in() ){
+				return false;
+			}
+
 			//Google Page Speed
 			if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Google Page Speed') !== false ){
 				if ( $this->url_components('extension') != 'js' ){
@@ -146,7 +151,8 @@ if ( !trait_exists('Security') ){
 
 		//Check referrer for known spambots and blacklisted domains
 		public function domain_prevention(){
-			if ( isset($_SESSION['blacklisted']) && $_SESSION['blacklisted'] == false ){
+			//Skip lookups if user has already been checked or for logged in users.
+			if ( (isset($_SESSION['blacklisted']) && $_SESSION['blacklisted'] == false) || is_user_logged_in() ){
 				return false;
 			}
 

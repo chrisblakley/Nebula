@@ -10,57 +10,35 @@ trait Customizer {
 	//Register WordPress Customizer
 	public function customize_register($wp_customize){
 
-
-
-
-
-
-
-		$wp_customize->add_panel('test_panel', array(
-			'priority' => 10,
-			'capability' => 'edit_theme_options',
-			'theme_supports' => '',
-			'title' => 'Test Panel Options',
-			'description' => 'Several settings pertaining my theme',
-		));
-
-
-		$wp_customize->add_section('test_section', array(
-			'title' => 'Test Section',
-			'priority' => 50,
-			'panel'  => 'test_panel',
-		));
-
-		$wp_customize->add_setting('test_setting', array('default' => null));
-		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'test_setting', array(
-			'label' => 'This is a test',
-			'section' => 'test_section',
-			'priority' => 10
-		)));
-
-
-
-
-
-
-
-
-
-
-
-
-
 		/*==========================
-			Site Identity
+			Brand Panel
 		 ===========================*/
 
+		$wp_customize->add_panel('brand', array(
+			'priority' => 10,
+			'title' => 'Brand',
+			'description' => 'Brand and other colors',
+		));
+
+		$wp_customize->get_section('title_tagline')->panel = 'brand';
+
 		//@todo "Nebula" 0: Get an edit icon to appear on the logo for custom_logo option
+
+		/*==========================
+			Brand Colors Section
+		 ===========================*/
+
+		$wp_customize->add_section('colors', array(
+			'title' => 'Colors',
+			'priority' => 50,
+			'panel'  => 'brand',
+		));
 
 		//Primary color
 		$wp_customize->add_setting('nebula_primary_color', array('default' => null));
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_primary_color', array(
 			'label' => 'Primary Color',
-			'section' => 'title_tagline',
+			'section' => 'colors',
 			'priority' => 10
 		)));
 
@@ -68,7 +46,7 @@ trait Customizer {
 		$wp_customize->add_setting('nebula_secondary_color', array('default' => null));
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_secondary_color', array(
 			'label' => 'Secondary Color',
-			'section' => 'title_tagline',
+			'section' => 'colors',
 			'priority' => 20
 		)));
 
@@ -76,18 +54,96 @@ trait Customizer {
 		$wp_customize->add_setting('nebula_background_color', array('default' => null));
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_background_color', array(
 			'label' => 'Background Color',
-			'section' => 'title_tagline',
+			'section' => 'colors',
 			'priority' => 30
 		)));
 
+		//Hero Navigation Scheme
+		$wp_customize->add_setting('hero_nav_scheme', array('default' => 'light'));
+		$wp_customize->add_control('hero_nav_scheme', array(
+		    'label' => 'Hero Navigation Scheme',
+		    'section' => 'colors',
+		    'priority' => 40,
+		    'type' => 'select',
+		    'choices' => array(
+		        'light' => 'Light',
+		        'brand' => 'Brand',
+		        'dark' => 'Dark',
+		    )
+		));
+
+		//Header Navigation Scheme
+		$wp_customize->add_setting('header_nav_scheme', array('default' => 'light'));
+		$wp_customize->add_control('header_nav_scheme', array(
+		    'label' => 'Subpage Header Navigation Scheme',
+		    'section' => 'colors',
+		    'priority' => 41,
+		    'type' => 'select',
+		    'choices' => array(
+		        'light' => 'Light',
+		        'brand' => 'Brand',
+		        'dark' => 'Dark',
+		    )
+		));
+
+		//Footer Widget Area Navigation Scheme
+		$wp_customize->add_setting('footer_widget_nav_scheme', array('default' => 'light'));
+		$wp_customize->add_control('footer_widget_nav_scheme', array(
+		    'label' => 'Footer Widget Area Navigation Scheme',
+		    'section' => 'colors',
+		    'priority' => 42,
+		    'type' => 'select',
+		    'choices' => array(
+		        'light' => 'Light',
+		        'brand' => 'Brand',
+		        'dark' => 'Dark',
+		    )
+		));
+
+		//Footer Navigation Scheme
+		$wp_customize->add_setting('footer_nav_scheme', array('default' => 'light'));
+		$wp_customize->add_control('footer_nav_scheme', array(
+		    'label' => 'Footer Navigation Scheme',
+		    'section' => 'colors',
+		    'priority' => 43,
+		    'type' => 'select',
+		    'choices' => array(
+		        'light' => 'Light',
+		        'brand' => 'Brand',
+		        'dark' => 'Dark',
+		    )
+		));
+
 
 		/*==========================
-			Overall Site Stuff...... need new name
+			Site Features Section
 		 ===========================*/
 
-		$wp_customize->add_section('overall_stuff', array(
-			'title' => 'Overall Stuff',
-			'priority' => 50,
+		$wp_customize->add_section('site_features', array(
+			'title' => 'Site Features',
+			'priority' => 15,
+		));
+
+		//Menu Position
+		$wp_customize->add_setting('menu_position', array('default' => 'absolute'));
+		$wp_customize->add_control('menu_position', array(
+		    'label' => 'Menu Position',
+		    'section' => 'site_features',
+		    'priority' => 10,
+		    'type' => 'select',
+		    'choices' => array(
+		        'absolute' => 'Over Header',
+		        'relative' => 'Normal',
+		    )
+		));
+
+		//Sticky Nav
+		$wp_customize->add_setting('sticky_nav', array('default' => 0));
+		$wp_customize->add_control('sticky_nav', array(
+			'label' => 'Use Sticky Nav',
+			'section' => 'site_features',
+			'priority' => 15,
+			'type' => 'checkbox',
 		));
 
 		//Offcanvas Menu
@@ -95,7 +151,7 @@ trait Customizer {
 		$wp_customize->add_setting('nebula_offcanvas_menu', array('default' => 1));
 		$wp_customize->add_control('nebula_offcanvas_menu', array(
 			'label' => 'Show Offcanvas Menu (Mobile)',
-			'section' => 'overall_stuff',
+			'section' => 'site_features',
 			'priority' => 35,
 			'type' => 'checkbox',
 		));
@@ -109,7 +165,7 @@ trait Customizer {
 		$wp_customize->add_setting('nebula_mobile_search', array('default' => 1));
 		$wp_customize->add_control('nebula_mobile_search', array(
 			'label' => 'Show Mobile Search',
-			'section' => 'overall_stuff',
+			'section' => 'site_features',
 			'priority' => 36,
 			'type' => 'checkbox',
 		));
@@ -121,16 +177,35 @@ trait Customizer {
 
 
 		/*==========================
-			Static Front Page
+			Home Panel
 		 ===========================*/
+
+		$wp_customize->add_panel('home', array(
+			'priority' => 20,
+			'title' => 'Home',
+			'description' => 'Home page settings',
+		));
+
+		$wp_customize->get_section('static_front_page')->panel = 'home';
+
+		/*==========================
+			Home Hero Section
+		 ===========================*/
+
+		$wp_customize->add_section('hero', array(
+			'title' => 'Hero',
+			'panel' => 'home',
+			'priority' => 500,
+		));
 
 		//Hero header in front page
 		$wp_customize->add_setting('nebula_hero', array('default' => 1));
 		$wp_customize->add_control('nebula_hero', array(
 			'label' => 'Show Hero Section',
-			'section' => 'static_front_page',
+			'section' => 'hero',
 			'priority' => 29,
 			'type' => 'checkbox',
+			'active_callback' => 'is_front_page', //Only show on Front Page
 		));
 
 		//Hero BG Image
@@ -138,9 +213,10 @@ trait Customizer {
 		$wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'nebula_hero_bg_image', array(
 			'label' => 'Hero Background Image',
 			'description' => 'Using an optimized .jpg is strongly recommended!',
-			'section' => 'static_front_page',
+			'section' => 'hero',
 			'settings' => 'nebula_hero_bg_image',
-			'priority' => 30
+			'priority' => 30,
+			'active_callback' => 'is_front_page',
 		)));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_bg_image', array(
 			'settings' => array('nebula_hero_bg_image'),
@@ -152,26 +228,35 @@ trait Customizer {
 		$wp_customize->add_setting('nebula_hero_overlay_color', array('default' => null));
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_hero_overlay_color', array(
 			'label' => 'Hero BG Overlay Color',
-			'section' => 'static_front_page',
-			'priority' => 32
+			'section' => 'hero',
+			'priority' => 32,
+			'active_callback' => 'is_front_page',
 		)));
 
 		//Hero Overlay Opacity
 		$wp_customize->add_setting('nebula_hero_overlay_opacity', array('default' => '0.6'));
 		$wp_customize->add_control('nebula_hero_overlay_opacity', array(
-			'label' => 'Hero BG Overlay Opacity',
+			'type' => 'number',
+			'input_attrs' => array(
+		        'min' => 0,
+		        'max' => 1,
+		        'step' => 0.1,
+		    ),
+		    'label' => 'Hero BG Overlay Opacity',
 			'description' => 'Enter a value between 0 (transparent) and 1 (opaque). Default: 0.6',
-			'section' => 'static_front_page',
-			'priority' => 33
+			'section' => 'hero',
+			'priority' => 33,
+			'active_callback' => 'is_front_page',
 		));
 
 		//Hero Site Title
 		$wp_customize->add_setting('nebula_show_hero_title', array('default' => 1));
 		$wp_customize->add_control('nebula_show_hero_title', array(
 			'label' => 'Show Hero Title',
-			'section' => 'static_front_page',
+			'section' => 'hero',
 			'priority' => 34,
 			'type' => 'checkbox',
+			'active_callback' => 'is_front_page',
 		));
 
 		//Custom Hero Title
@@ -179,17 +264,19 @@ trait Customizer {
 		$wp_customize->add_control('nebula_hero_custom_title', array(
 			'label' => 'Custom Hero Title',
 			'description' => 'Customize the H1 text instead of using the site title',
-			'section' => 'static_front_page',
-			'priority' => 35
+			'section' => 'hero',
+			'priority' => 35,
+			'active_callback' => 'is_front_page',
 		));
 
 		//Hero Site Description
 		$wp_customize->add_setting('nebula_show_hero_description', array('default' => 1));
 		$wp_customize->add_control('nebula_show_hero_description', array(
 			'label' => 'Show Hero Description',
-			'section' => 'static_front_page',
+			'section' => 'hero',
 			'priority' => 36,
 			'type' => 'checkbox',
+			'active_callback' => 'is_front_page',
 		));
 
 		//Hero Description Text
@@ -197,8 +284,9 @@ trait Customizer {
 		$wp_customize->add_control('nebula_hero_custom_description', array(
 			'label' => 'Custom Hero Description',
 			'description' => 'Customize the description text instead of using the site tagline',
-			'section' => 'static_front_page',
-			'priority' => 37
+			'section' => 'hero',
+			'priority' => 37,
+			'active_callback' => 'is_front_page',
 		));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_custom_description', array(
 			'settings' => array('nebula_hero_custom_description'),
@@ -210,8 +298,9 @@ trait Customizer {
 		$wp_customize->add_setting('nebula_hero_text_color', array('default' => null));
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_hero_text_color', array(
 			'label' => 'Hero Text Color',
-			'section' => 'static_front_page',
-			'priority' => 38
+			'section' => 'hero',
+			'priority' => 38,
+			'active_callback' => 'is_front_page',
 		)));
 
 		//Hero Search
@@ -219,9 +308,10 @@ trait Customizer {
 		$wp_customize->add_control('nebula_hero_search', array(
 			'label' => 'Show Hero Search',
 			'description' => 'Add an autocomplete search field to your hero section',
-			'section' => 'static_front_page',
+			'section' => 'hero',
 			'priority' => 39,
 			'type' => 'checkbox',
+			'active_callback' => 'is_front_page',
 		));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_search', array(
 			'settings' => array('nebula_hero_search'),
@@ -233,9 +323,10 @@ trait Customizer {
 		$wp_customize->add_setting('nebula_hero_fg_image', array('default' => null));
 		$wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'nebula_hero_fg_image', array(
 			'label' => 'Hero Foreground Image',
-			'section' => 'static_front_page',
+			'section' => 'hero',
 			'settings' => 'nebula_hero_fg_image',
-			'priority' => 42
+			'priority' => 42,
+			'active_callback' => 'is_front_page',
 		)));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_fg_image', array(
 			'settings' => array('nebula_hero_fg_image'),
@@ -247,8 +338,9 @@ trait Customizer {
 		$wp_customize->add_setting('nebula_hero_fg_image_link', array('default' => null));
 		$wp_customize->add_control('nebula_hero_fg_image_link', array(
 			'label' => 'Hero Foreground Image Link',
-			'section' => 'static_front_page',
-			'priority' => 43
+			'section' => 'hero',
+			'priority' => 43,
+			'active_callback' => 'is_front_page',
 		));
 
 		//Hero Youtube
@@ -256,8 +348,9 @@ trait Customizer {
 		$wp_customize->add_control('nebula_hero_youtube_id', array(
 			'label' => 'Hero Youtube Video ID',
 			'description' => 'The ID of a Youtube video to embed in the hero section',
-			'section' => 'static_front_page',
-			'priority' => 44
+			'section' => 'hero',
+			'priority' => 44,
+			'active_callback' => 'is_front_page',
 		));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_youtube_id', array(
 			'settings' => array('nebula_hero_youtube_id'),
@@ -270,8 +363,9 @@ trait Customizer {
 		$wp_customize->add_setting('nebula_hero_cta_btn_1_text', array('default' => null));
 		$wp_customize->add_control('nebula_hero_cta_btn_1_text', array(
 			'label' => 'Hero CTA Button 1 Text',
-			'section' => 'static_front_page',
-			'priority' => 50
+			'section' => 'hero',
+			'priority' => 50,
+			'active_callback' => 'is_front_page',
 		));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_cta_btn_1_text', array(
 			'settings' => array('nebula_hero_cta_btn_1_text'),
@@ -282,9 +376,11 @@ trait Customizer {
 		//CTA Button 1 URL
 		$wp_customize->add_setting('nebula_hero_cta_btn_1_url', array('default' => null));
 		$wp_customize->add_control('nebula_hero_cta_btn_1_url', array(
+			'type' => 'url',
 			'label' => 'Hero CTA Button 1 URL',
-			'section' => 'static_front_page',
-			'priority' => 51
+			'section' => 'hero',
+			'priority' => 51,
+			'active_callback' => 'is_front_page',
 		));
 
 		//CTA Button 2 Text
@@ -292,8 +388,9 @@ trait Customizer {
 		$wp_customize->add_setting('nebula_hero_cta_btn_2_text', array('default' => null));
 		$wp_customize->add_control('nebula_hero_cta_btn_2_text', array(
 			'label' => 'Hero CTA Button 2 Text',
-			'section' => 'static_front_page',
-			'priority' => 52
+			'section' => 'hero',
+			'priority' => 52,
+			'active_callback' => 'is_front_page',
 		));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_cta_btn_2_text', array(
 			'settings' => array('nebula_hero_cta_btn_2_text'),
@@ -304,10 +401,232 @@ trait Customizer {
 		//CTA Button 2 URL
 		$wp_customize->add_setting('nebula_hero_cta_btn_2_url', array('default' => null));
 		$wp_customize->add_control('nebula_hero_cta_btn_2_url', array(
+			'type' => 'url',
 			'label' => 'Hero CTA Button 2 URL',
-			'section' => 'static_front_page',
-			'priority' => 53
+			'section' => 'hero',
+			'priority' => 53,
+			'active_callback' => 'is_front_page',
 		));
+
+
+		/*==========================
+			Posts Panel
+		 ===========================*/
+
+		$wp_customize->add_panel('posts', array(
+			'priority' => 30,
+			'title' => 'Posts',
+			'description' => 'Post listing and detail settings',
+		));
+
+		/*==========================
+			Posts Header Section
+		 ===========================*/
+
+		$wp_customize->add_section('posts_header', array(
+			'title' => 'Header',
+			'panel' => 'posts',
+			'priority' => 10,
+		));
+
+		//Featured Image Location
+		$wp_customize->add_setting('featured_image_location', array('default' => 'content'));
+		$wp_customize->add_control('featured_image_location', array(
+		    'label' => 'Featured Image Location',
+		    'section' => 'posts_header',
+		    'priority' => 20,
+		    'type' => 'select',
+		    'choices' => array(
+		        'hero' => 'Hero',
+		        'content' => 'In Content',
+		        'disabled' => 'Disabled',
+		    ),
+		    'active_callback' => 'is_singular',
+		));
+
+		//Header Navigation Color Scheme (Same as under Brand panel)
+		$wp_customize->add_control('header_nav_scheme', array(
+		    'label' => 'Navigation Color Scheme',
+		    'section' => 'posts_header',
+		    'priority' => 25,
+		    'type' => 'select',
+		    'choices' => array(
+		        'light' => 'Light',
+		        'brand' => 'Brand',
+		        'dark' => 'Dark',
+		    ),
+		    'active_callback' => 'is_singular',
+		));
+
+		//Header Overlay Color
+		$wp_customize->add_setting('nebula_header_overlay_color', array('default' => null));
+		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_header_overlay_color', array(
+			'label' => 'Header BG Overlay Color',
+			'section' => 'posts_header',
+			'priority' => 30,
+			'active_callback' => 'is_singular',
+		)));
+
+		//Header Overlay Opacity
+		$wp_customize->add_setting('nebula_header_overlay_opacity', array('default' => '0.6'));
+		$wp_customize->add_control('nebula_header_overlay_opacity', array(
+			'type' => 'number',
+			'input_attrs' => array(
+		        'min' => 0,
+		        'max' => 1,
+		        'step' => 0.1,
+		    ),
+		    'label' => 'Header BG Overlay Opacity',
+			'description' => 'Enter a value between 0 (transparent) and 1 (opaque). Default: 0.6',
+			'section' => 'posts_header',
+			'priority' => 33,
+			'active_callback' => 'is_singular',
+		));
+
+		/*==========================
+			Posts Meta Section
+		 ===========================*/
+
+		$wp_customize->add_section('posts_meta', array(
+			'title' => 'Meta',
+			'panel' => 'posts',
+			'priority' => 30,
+		));
+
+		//Post Date Format
+		$wp_customize->add_setting('post_date_format', array('default' => 'relative'));
+		$wp_customize->add_control('post_date_format', array(
+		    'label' => 'Post Date Format',
+		    'section' => 'posts_meta',
+		    'priority' => 20,
+		    'type' => 'select',
+		    'choices' => array(
+		        'mdy' => 'Month, Day, Year',
+		        'my' => 'Month, Year',
+		        'relative' => 'Relative',
+		        'disabled' => 'Disabled',
+		    )
+		));
+
+		//Show Post Author
+		$wp_customize->add_setting('post_author', array('default' => 0));
+		$wp_customize->add_control('post_author', array(
+			'label' => 'Show Post Author',
+			'description' => 'Author Bios must also be enabled in Nebula Options',
+			'section' => 'posts_meta',
+			'priority' => 25,
+			'type' => 'checkbox',
+		));
+
+		//Show Post Categories
+		$wp_customize->add_setting('post_categories', array('default' => 1));
+		$wp_customize->add_control('post_categories', array(
+			'label' => 'Show Post Categories',
+			'section' => 'posts_meta',
+			'priority' => 30,
+			'type' => 'checkbox',
+		));
+
+		//Show Post Tags
+		$wp_customize->add_setting('post_tags', array('default' => 1));
+		$wp_customize->add_control('post_tags', array(
+			'label' => 'Show Post Tags',
+			'section' => 'posts_meta',
+			'priority' => 31,
+			'type' => 'checkbox',
+		));
+
+		//Show Post Comment Count
+		$wp_customize->add_setting('post_comment_count', array('default' => 0));
+		$wp_customize->add_control('post_comment_count', array(
+			'label' => 'Show Post Comment Count',
+			'description' => 'Comments must also be enabled in Nebula Options',
+			'section' => 'posts_meta',
+			'priority' => 35,
+			'type' => 'checkbox',
+		));
+
+		//Excerpt Length
+		$wp_customize->add_setting('nebula_excerpt_length', array('default' => null));
+		$wp_customize->add_control('nebula_excerpt_length', array(
+			'type' => 'number',
+			'input_attrs' => array(
+		        'min' => 0,
+		        'step' => 1,
+		    ),
+		    'label' => 'Nebula Excerpt Length',
+			'section' => 'posts_meta',
+			'priority' => 50,
+		));
+
+		//Excerpt "More" Text
+		$wp_customize->add_setting('nebula_excerpt_more_text', array('default' => null));
+		$wp_customize->add_control('nebula_excerpt_more_text', array(
+			'input_attrs' => array(
+		        'placeholder' => 'Read More &raquo;',
+		    ),
+			'label' => 'Nebula Excerpt "More" Text',
+			'section' => 'posts_meta',
+			'priority' => 51,
+		));
+
+		/*==========================
+			Posts Bottom Section
+		 ===========================*/
+
+		$wp_customize->add_section('posts_bottom', array(
+			'title' => 'Bottom Stuff',
+			'panel' => 'posts',
+			'priority' => 100,
+		));
+
+		//Social Sharing
+		$wp_customize->add_setting('post_social_sharing', array('default' => 0));
+		$wp_customize->add_control('post_social_sharing', array(
+			'label' => 'Show Social Share Buttons',
+			'section' => 'posts_bottom',
+			'priority' => 20,
+			'type' => 'checkbox',
+		));
+
+		//Social Sharing Location
+		$wp_customize->add_setting('post_social_location', array('default' => 'title'));
+		$wp_customize->add_control('post_social_location', array(
+		    'label' => 'Social Sharing Location',
+		    'section' => 'posts_bottom',
+		    'priority' => 21,
+		    'type' => 'select',
+		    'choices' => array(
+		        'header' => 'Header',
+		        'title' => 'After Title',
+		        'bottom' => 'Bottom',
+		    )
+		));
+
+		$wp_customize->add_setting('crosslinks', array('default' => 0));
+		$wp_customize->add_control('crosslinks', array(
+			'label' => 'Show Next/Previous Crosslinks',
+			'section' => 'posts_bottom',
+			'priority' => 40,
+			'type' => 'checkbox',
+		));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -346,6 +665,12 @@ trait Customizer {
 		//Footer Overlay Opacity
 		$wp_customize->add_setting('nebula_footer_overlay_opacity', array('default' => '0.85'));
 		$wp_customize->add_control('nebula_footer_overlay_opacity', array(
+			'type' => 'number',
+			'input_attrs' => array(
+		        'min' => 0,
+		        'max' => 1,
+		        'step' => 0.1,
+		    ),
 			'label' => 'Footer BG Overlay Opacity',
 			'description' => 'Enter a value between 0 (transparent) and 1 (opaque). Default: 0.85',
 			'section' => 'footer',
@@ -393,5 +718,138 @@ trait Customizer {
 			'selector' => '#footer-section .footer-search',
 			'container_inclusive' => false,
 		));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		$wp_customize->add_panel('test_panel', array(
+			'priority' => 10,
+			'title' => 'Test Panel Options',
+			'description' => 'Several settings pertaining my theme',
+		));
+
+
+
+		//doesnt work. settings can not be added to panels (only sections)
+		$wp_customize->add_setting('panel_input_test', array('default' => 'dark'));
+		$wp_customize->add_control('panel_input_test', array(
+		    'label'      => 'Dark or light theme version?',
+		    'section'    => 'test_panel',
+		    'type'       => 'radio',
+		    'choices'    => array(
+		        'dark'   => 'Dark',
+		        'light'  => 'Light',
+		        'brand'  => 'Brand',
+		    )
+		));
+
+
+
+
+
+		$wp_customize->add_panel('test_sub_panel', array(
+			'priority' => 10,
+			'title' => 'Test Panel Options',
+			'description' => 'Several settings pertaining my theme',
+		));
+
+
+
+
+
+		$wp_customize->add_section('test_section', array(
+			'title' => 'Test Section',
+			'priority' => 50,
+			'panel'  => 'test_panel',
+		));
+
+		$wp_customize->add_setting('test_setting', array('default' => null));
+		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'test_setting', array(
+			'label' => 'This is a test',
+			'section' => 'test_section',
+			'priority' => 10
+		)));
+
+
+
+		$wp_customize->add_setting('range_field_id', array(
+			'default' => null,
+			'sanitize_callback' => 'intval',
+		));
+		$wp_customize->add_control('range_field_id', array(
+		    'type' => 'range',
+		    'priority' => 10,
+		    'section' => 'test_section',
+		    'label' => 'Range Field',
+		    'description' => 'This is a test range field that is sanitized by intval',
+		    'input_attrs' => array(
+		        'min' => 0,
+		        'max' => 100,
+		        'step' => 1,
+		        'placeholder' => 'This is a test...',
+		        'class' => 'example-class',
+		        'style' => 'color: #0a0',
+		    ),
+		));
+
+		$wp_customize->add_setting('radio_test', array('default' => 'dark'));
+		$wp_customize->add_control('radio_test', array(
+		    'label'      => 'Dark or light theme version?',
+		    'section'    => 'test_section',
+		    'type'       => 'radio',
+		    'choices'    => array(
+		        'dark'   => 'Dark',
+		        'light'  => 'Light',
+		        'brand'  => 'Brand',
+		    )
+		));
+
+		$wp_customize->add_setting('select_test', array('default' => 'dark'));
+		$wp_customize->add_control('select_test', array(
+		    'label'      => 'Dark or light theme version?',
+		    'section'    => 'test_section',
+		    'type'       => 'select',
+		    'choices'    => array(
+		        'dark'   => 'Dark',
+		        'light'  => 'Light',
+		        'brand'  => 'Brand',
+		    )
+		));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	}
 }

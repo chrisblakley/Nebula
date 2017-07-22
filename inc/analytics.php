@@ -6,7 +6,7 @@
 	}
 ?>
 
-<?php if ( nebula()->get_option('ga_tracking_id') ): //Universal Google Analytics ?>
+<?php if ( nebula()->get_option('ga_tracking_id') && !is_customize_preview() ): //Universal Google Analytics ?>
 	<script>
 		window.GAready = false;
 
@@ -300,7 +300,7 @@
 
 		//Autotrack Social Widgets
 		ga('require', 'socialWidgetTracker', {
-			hitFilter: function(model) {
+			hitFilter: function(model){
 				model.set('hitType', 'event'); //Change the hit type from `social` to `event`.
 
 				//Map the social values to event values.
@@ -349,6 +349,7 @@
 		}
 
 		//Autotrack Impressions (Scroll into view)
+		//Elements themselves are detected in main.js (or child.js)
 		ga('require', 'impressionTracker', {
 			hitFilter: function(model, element){
 				if ( jQuery(element).is('form') && !jQuery(element).find('input[name=s]').length ){
@@ -357,7 +358,7 @@
 					}
 				}
 			}
-		}); //Elements are detected in main.js (or child.js)
+		});
 
 		//Autotrack Max Scroll
 		ga('require', 'maxScrollTracker', {
@@ -477,7 +478,7 @@
 	</script>
 <?php endif; ?>
 
-<?php if ( nebula()->get_option('adwords_remarketing_conversion_id') ): //Google AdWords Remarketing Tag ?>
+<?php if ( nebula()->get_option('adwords_remarketing_conversion_id') && !is_customize_preview() ): //Google AdWords Remarketing Tag ?>
 	<link rel="prefetch" href="//www.googleadservices.com/pagead/conversion.js" />
 
 	<script type="text/javascript">
@@ -495,7 +496,7 @@
 	</noscript>
 <?php endif; ?>
 
-<?php if ( nebula()->get_option('facebook_custom_audience_pixel_id') ): //Facebook Custom Audience ?>
+<?php if ( nebula()->get_option('facebook_custom_audience_pixel_id') && !is_customize_preview() ): //Facebook Custom Audience ?>
 	<link rel="prefetch" href="//connect.facebook.net/en_US/fbevents.js" />
 
 	<script>

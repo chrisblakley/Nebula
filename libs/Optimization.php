@@ -64,7 +64,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
 		public function http2_server_push_header($src){
-			if ( !$this->is_admin_page() && $this->get_option('service_worker') && file_exists($this->sw_location(false)) ){ //If not in the admin section and if Service Worker is enabled (and file exists)
+			if ( !$this->is_admin_page() && $this->get_option('service_worker') && file_exists($this->sw_location(false)) && !is_customize_preview() ){ //If not in the admin section and if Service Worker is enabled (and file exists)
 				$filetype = ( strpos($src, '.css') )? 'style' : 'script'; //Determine the resource type
 				if ( strpos($src, $this->url_components('sld')) > 0 ){ //If local file
 					if ( $this->get_browser() != 'safari' ){ //Disable HTTP2 Server Push on Safari (at least for now)
