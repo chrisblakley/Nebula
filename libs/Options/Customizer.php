@@ -58,6 +58,7 @@ trait Customizer {
 			'priority' => 30
 		)));
 
+/*
 		//Hero Navigation Scheme
 		$wp_customize->add_setting('hero_nav_scheme', array('default' => 'light'));
 		$wp_customize->add_control('hero_nav_scheme', array(
@@ -87,8 +88,8 @@ trait Customizer {
 		));
 
 		//Footer Widget Area Navigation Scheme
-		$wp_customize->add_setting('footer_widget_nav_scheme', array('default' => 'light'));
-		$wp_customize->add_control('footer_widget_nav_scheme', array(
+		$wp_customize->add_setting('fwa_nav_scheme', array('default' => 'light'));
+		$wp_customize->add_control('fwa_nav_scheme', array(
 		    'label' => 'Footer Widget Area Navigation Scheme',
 		    'section' => 'colors',
 		    'priority' => 42,
@@ -113,6 +114,7 @@ trait Customizer {
 		        'dark' => 'Dark',
 		    )
 		));
+*/
 
 
 		/*==========================
@@ -196,6 +198,20 @@ trait Customizer {
 			'title' => 'Hero',
 			'panel' => 'home',
 			'priority' => 500,
+		));
+
+		//Hero Navigation Scheme
+		$wp_customize->add_setting('hero_nav_scheme', array('default' => 'light'));
+		$wp_customize->add_control('hero_nav_scheme', array(
+		    'label' => 'Hero Navigation Scheme',
+		    'section' => 'hero',
+		    'priority' => 20,
+		    'type' => 'select',
+		    'choices' => array(
+		        'light' => 'Light',
+		        'brand' => 'Brand',
+		        'dark' => 'Dark',
+		    )
 		));
 
 		//Hero header in front page
@@ -441,10 +457,11 @@ trait Customizer {
 		        'content' => 'In Content',
 		        'disabled' => 'Disabled',
 		    ),
-		    'active_callback' => 'is_singular',
+		    //'active_callback' => 'is_singular',
 		));
 
 		//Header Navigation Color Scheme (Same as under Brand panel)
+		$wp_customize->add_setting('header_nav_scheme', array('default' => 'light'));
 		$wp_customize->add_control('header_nav_scheme', array(
 		    'label' => 'Navigation Color Scheme',
 		    'section' => 'posts_header',
@@ -455,7 +472,7 @@ trait Customizer {
 		        'brand' => 'Brand',
 		        'dark' => 'Dark',
 		    ),
-		    'active_callback' => 'is_singular',
+		    //'active_callback' => 'is_singular',
 		));
 
 		//Header Overlay Color
@@ -464,7 +481,7 @@ trait Customizer {
 			'label' => 'Header BG Overlay Color',
 			'section' => 'posts_header',
 			'priority' => 30,
-			'active_callback' => 'is_singular',
+			//'active_callback' => 'is_singular',
 		)));
 
 		//Header Overlay Opacity
@@ -480,7 +497,7 @@ trait Customizer {
 			'description' => 'Enter a value between 0 (transparent) and 1 (opaque). Default: 0.6',
 			'section' => 'posts_header',
 			'priority' => 33,
-			'active_callback' => 'is_singular',
+			//'active_callback' => 'is_singular',
 		));
 
 		/*==========================
@@ -491,6 +508,20 @@ trait Customizer {
 			'title' => 'Meta',
 			'panel' => 'posts',
 			'priority' => 30,
+		));
+
+		//Featured Image Location (Same as in Posts Header section)
+		$wp_customize->add_control('featured_image_location', array(
+		    'label' => 'Featured Image Location',
+		    'section' => 'posts_meta',
+		    'priority' => 10,
+		    'type' => 'select',
+		    'choices' => array(
+		        'hero' => 'Hero',
+		        'content' => 'In Content',
+		        'disabled' => 'Disabled',
+		    ),
+		    //'active_callback' => 'is_singular',
 		));
 
 		//Post Date Format
@@ -612,31 +643,110 @@ trait Customizer {
 		));
 
 
+		/*==========================
+			Sidebar Section
+		 ===========================*/
 
+		$wp_customize->add_section('sidebar', array(
+			'title' => 'Sidebar',
+			'priority' => 40,
+		));
 
+		//Accordion Expanders
+		$wp_customize->add_setting('sidebar_accordion_expanders', array('default' => 1));
+		$wp_customize->add_control('sidebar_accordion_expanders', array(
+			'label' => 'Enable Menu Expander Accordions',
+			'section' => 'sidebar',
+			'priority' => 20,
+			'type' => 'checkbox',
+		));
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+		//@TODO "Nebula" 0: Add options for sidebar background color?
 
 
 		/*==========================
-			Footer
+			Footer Widget Area Section
+		 ===========================*/
+
+		$wp_customize->add_section('footer_widget_area', array(
+			'title' => 'Footer Widget Area',
+			'priority' => 120,
+		));
+
+		//Footer Widget Area Navigation Color Scheme (Same as under Brand panel)
+		$wp_customize->add_setting('fwa_nav_scheme', array('default' => 'light'));
+		$wp_customize->add_control('fwa_nav_scheme', array(
+		    'label' => 'Navigation Color Scheme',
+		    'section' => 'footer_widget_area',
+		    'priority' => 25,
+		    'type' => 'select',
+		    'choices' => array(
+		        'light' => 'Light',
+		        'brand' => 'Brand',
+		        'dark' => 'Dark',
+		    ),
+		));
+
+		//Footer Widget Area BG Image
+		$wp_customize->add_setting('nebula_fwa_bg_image', array('default' => null));
+		$wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'nebula_fwa_bg_image', array(
+			'label' => 'Footer Widget Area Background Image',
+			'description' => 'Using an optimized .jpg is strongly recommended!',
+			'section' => 'footer_widget_area',
+			'settings' => 'nebula_hero_bg_image',
+			'priority' => 30,
+		)));
+		$wp_customize->selective_refresh->add_partial('nebula_fwa_bg_image', array(
+			'settings' => array('nebula_hero_bg_image'),
+			'selector' => '#footer-widget-section',
+			'container_inclusive' => false,
+		));
+
+		//Footer Widget Area Overlay Color
+		$wp_customize->add_setting('nebula_fwa_overlay_color', array('default' => null));
+		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_hero_overlay_color', array(
+			'label' => 'Footer Widget Area BG Overlay Color',
+			'section' => 'footer_widget_area',
+			'priority' => 32,
+		)));
+
+		//Footer Widget Area Overlay Opacity
+		$wp_customize->add_setting('nebula_fwa_overlay_opacity', array('default' => '0.6'));
+		$wp_customize->add_control('nebula_fwa_overlay_opacity', array(
+			'type' => 'number',
+			'input_attrs' => array(
+		        'min' => 0,
+		        'max' => 1,
+		        'step' => 0.1,
+		    ),
+		    'label' => 'Footer Widget Area BG Overlay Opacity',
+			'description' => 'Enter a value between 0 (transparent) and 1 (opaque). Default: 0.6',
+			'section' => 'footer_widget_area',
+			'priority' => 33,
+		));
+
+
+		/*==========================
+			Footer Section
 		 ===========================*/
 
 		$wp_customize->add_section('footer', array(
 			'title' => 'Footer',
 			'priority' => 130,
+		));
+
+		//Footer Navigation Color Scheme (Same as under Brand panel)
+		$wp_customize->add_setting('footer_nav_scheme', array('default' => 'light'));
+		$wp_customize->add_control('footer_nav_scheme', array(
+		    'label' => 'Navigation Color Scheme',
+		    'section' => 'footer',
+		    'priority' => 10,
+		    'type' => 'select',
+		    'choices' => array(
+		        'light' => 'Light',
+		        'brand' => 'Brand',
+		        'dark' => 'Dark',
+		    ),
 		));
 
 		//Footer BG Image
@@ -718,138 +828,6 @@ trait Customizer {
 			'selector' => '#footer-section .footer-search',
 			'container_inclusive' => false,
 		));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		$wp_customize->add_panel('test_panel', array(
-			'priority' => 10,
-			'title' => 'Test Panel Options',
-			'description' => 'Several settings pertaining my theme',
-		));
-
-
-
-		//doesnt work. settings can not be added to panels (only sections)
-		$wp_customize->add_setting('panel_input_test', array('default' => 'dark'));
-		$wp_customize->add_control('panel_input_test', array(
-		    'label'      => 'Dark or light theme version?',
-		    'section'    => 'test_panel',
-		    'type'       => 'radio',
-		    'choices'    => array(
-		        'dark'   => 'Dark',
-		        'light'  => 'Light',
-		        'brand'  => 'Brand',
-		    )
-		));
-
-
-
-
-
-		$wp_customize->add_panel('test_sub_panel', array(
-			'priority' => 10,
-			'title' => 'Test Panel Options',
-			'description' => 'Several settings pertaining my theme',
-		));
-
-
-
-
-
-		$wp_customize->add_section('test_section', array(
-			'title' => 'Test Section',
-			'priority' => 50,
-			'panel'  => 'test_panel',
-		));
-
-		$wp_customize->add_setting('test_setting', array('default' => null));
-		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'test_setting', array(
-			'label' => 'This is a test',
-			'section' => 'test_section',
-			'priority' => 10
-		)));
-
-
-
-		$wp_customize->add_setting('range_field_id', array(
-			'default' => null,
-			'sanitize_callback' => 'intval',
-		));
-		$wp_customize->add_control('range_field_id', array(
-		    'type' => 'range',
-		    'priority' => 10,
-		    'section' => 'test_section',
-		    'label' => 'Range Field',
-		    'description' => 'This is a test range field that is sanitized by intval',
-		    'input_attrs' => array(
-		        'min' => 0,
-		        'max' => 100,
-		        'step' => 1,
-		        'placeholder' => 'This is a test...',
-		        'class' => 'example-class',
-		        'style' => 'color: #0a0',
-		    ),
-		));
-
-		$wp_customize->add_setting('radio_test', array('default' => 'dark'));
-		$wp_customize->add_control('radio_test', array(
-		    'label'      => 'Dark or light theme version?',
-		    'section'    => 'test_section',
-		    'type'       => 'radio',
-		    'choices'    => array(
-		        'dark'   => 'Dark',
-		        'light'  => 'Light',
-		        'brand'  => 'Brand',
-		    )
-		));
-
-		$wp_customize->add_setting('select_test', array('default' => 'dark'));
-		$wp_customize->add_control('select_test', array(
-		    'label'      => 'Dark or light theme version?',
-		    'section'    => 'test_section',
-		    'type'       => 'select',
-		    'choices'    => array(
-		        'dark'   => 'Dark',
-		        'light'  => 'Light',
-		        'brand'  => 'Brand',
-		    )
-		));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	}
 }
