@@ -4135,16 +4135,16 @@ function mmenus(){
 
 //Vertical subnav expanders
 function subnavExpanders(){
-	if ( jQuery('.xoxo .menu').length ){
-		 jQuery('.xoxo .menu li.menu-item:has(ul)').addClass('has-expander').append('<a class="toplevelvert_expander closed" href="#"><i class="fa fa-caret-left"></i></a>');
-		 jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
-		 nebula.dom.document.on('click touch tap', '.toplevelvert_expander', function(){
-			 jQuery(this).toggleClass('closed open').parent().children('.sub-menu').slideToggle();
-			 return false;
-		 });
-		 //Automatically expand subnav to show current page
-		 jQuery('.current-menu-ancestor').children('.toplevelvert_expander').click();
-		 jQuery('.current-menu-item').children('.toplevelvert_expander').click();
+	if ( nebula.site.options.sidebar_expanders && jQuery('.xoxo .menu').length ){
+		jQuery('.xoxo .menu li.menu-item:has(ul)').addClass('has-expander').append('<a class="toplevelvert_expander closed" href="#"><i class="fa fa-caret-left"></i></a>');
+		jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
+		nebula.dom.document.on('click touch tap', '.toplevelvert_expander', function(){
+			jQuery(this).toggleClass('closed open').parent().children('.sub-menu').slideToggle();
+			return false;
+		});
+		//Automatically expand subnav to show current page
+		jQuery('.current-menu-ancestor').children('.toplevelvert_expander').click();
+		jQuery('.current-menu-item').children('.toplevelvert_expander').click();
 	}
 }
 

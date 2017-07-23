@@ -59,21 +59,23 @@ get_header(); ?>
 						<div class="entry-content">
 							<?php the_content(); ?>
 
-							<div class="row prevnextcon">
-								<?php if ( get_previous_post_link() ): ?>
-									<div class="<?php echo ( get_next_post_link() )? 'col-md-6' : 'col'; ?> prev-link-con">
-										<p class="prevnext-post-heading prev-post-heading">Previous Post</p>
-			                        	<div class="prevnext-post-link prev-post-link"><?php previous_post_link(); ?></div>
-									</div><!--/col-->
-								<?php endif; ?>
+							<?php if ( get_theme_mod('crosslinks') ): ?>
+								<div class="row prevnextcon">
+									<?php if ( get_previous_post_link() ): ?>
+										<div class="<?php echo ( get_next_post_link() )? 'col-md-6' : 'col'; ?> prev-link-con">
+											<p class="prevnext-post-heading prev-post-heading">Previous Post</p>
+				                        	<div class="prevnext-post-link prev-post-link"><?php previous_post_link(); ?></div>
+										</div><!--/col-->
+									<?php endif; ?>
 
-								<?php if ( get_next_post_link() ): ?>
-									<div class="<?php echo ( get_previous_post_link() )? 'col-md-6' : 'col'; ?> next-link-con">
-										<p class="prevnext-post-heading next-post-heading">Next Post</p>
-			                        	<div class="prevnext-post-link next-post-link"><?php next_post_link(); ?></div>
-									</div><!--/col-->
-								<?php endif; ?>
-							</div><!--/row-->
+									<?php if ( get_next_post_link() ): ?>
+										<div class="<?php echo ( get_previous_post_link() )? 'col-md-6' : 'col'; ?> next-link-con">
+											<p class="prevnext-post-heading next-post-heading">Next Post</p>
+				                        	<div class="prevnext-post-link next-post-link"><?php next_post_link(); ?></div>
+										</div><!--/col-->
+									<?php endif; ?>
+								</div><!--/row-->
+							<?php endif; ?>
 						</div>
 					</article>
 

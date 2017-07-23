@@ -629,21 +629,29 @@ trait Functions {
 	}
 
 	//Date post meta
-	public function post_date($icon=true, $linked=true, $day=true){
-		$the_icon = '';
-		if ( $icon ){
-			$the_icon = '<i class="fa fa-calendar-o"></i> ';
+	public function post_date($options=array()){
+		$defaults = array(
+			'icon' => true,
+			'relative' => false,
+			'linked' => true,
+			'day' => true,
+		);
+
+		$data = array_merge($defaults, $options);
+
+		$icon = ( $data['icon'] )? '<i class="fa fa-calendar-o"></i> ' : '';
+		$relative_date = human_time_diff(get_the_date('U'), current_time('timestamp')) . ' ago';
+
+		if ( $data['relative'] ){
+			return '<span class="posted-on relative-date">' . $icon . $relative_date . '</span>';
 		}
 
-		$the_day = '';
-		if ( $day ){ //If the day should be shown (otherwise, just month and year).
-			$the_day = get_the_date('d') . '/';
-		}
+		$day = ( $data['day'] )? get_the_date('d') . '/' : ''; //If the day should be shown (otherwise, just month and year).
 
-		if ( $linked ){
-			return '<span class="posted-on">' . $the_icon . '<span class="meta-item entry-date" datetime="' . get_the_time('c') . '" itemprop="datePublished" content="' . get_the_date('c') . '">' . '<a href="' . home_url('/') . get_the_date('Y/m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url('/') . get_the_date('Y/m') . '/' . $the_day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
+		if ( $data['linked'] ){
+			return '<span class="posted-on">' . $icon . '<span class="meta-item entry-date" datetime="' . get_the_time('c') . '" itemprop="datePublished" content="' . get_the_date('c') . '">' . '<a href="' . home_url('/') . get_the_date('Y/m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url('/') . get_the_date('Y/m') . '/' . $day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
 		} else {
-			return '<span class="posted-on">' . $the_icon . '<span class="meta-item entry-date" datetime="' . get_the_time('c') . '" itemprop="datePublished" content="' . get_the_date('c') . '">' . get_the_date('F j, Y') . '</span></span>';
+			return '<span class="posted-on">' . $icon . '<span class="meta-item entry-date" datetime="' . get_the_time('c') . '" itemprop="datePublished" content="' . get_the_date('c') . '">' . get_the_date('F j, Y') . '</span></span>';
 		}
 	}
 
@@ -810,11 +818,11 @@ trait Functions {
 			'text' => false,
 			'characters' => false,
 			'chars' => false, //Alias of "characters"
-			'words' => 55,
+			'words' => get_theme_mod('crosslinks', 55),
 			'length' => false, //Alias of "words"
 			'ellipsis' => false,
 			'url' => false,
-			'more' => 'Read More &raquo;',
+			'more' => get_theme_mod('nebula_excerpt_length', 'Read More &raquo;'),
 			'strip_shortcodes' => true,
 			'strip_tags' => true,
 			'wrap_links' => false,

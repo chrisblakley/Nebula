@@ -121,6 +121,7 @@ if ( !trait_exists('Scripts') ){
 						'debug' => $this->is_debug(),
 						'visitors_db' => $this->get_option('visitors_db'),
 						'hubspot_api' => ( $this->get_option('hubspot_api') )? true : false,
+						'sidebar_expanders' => get_theme_mod('sidebar_accordion_expanders', true),
 					),
 					'resources' => array(
 						'css' => $nebula_styles,

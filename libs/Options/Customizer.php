@@ -709,7 +709,7 @@ trait Customizer {
 			'label' => 'Footer Widget Area Background Image',
 			'description' => 'Using an optimized .jpg is strongly recommended!',
 			'section' => 'footer_widget_area',
-			'settings' => 'nebula_hero_bg_image',
+			'settings' => 'nebula_fwa_bg_image',
 			'priority' => 30,
 		)));
 		$wp_customize->selective_refresh->add_partial('nebula_fwa_bg_image', array(
@@ -720,7 +720,7 @@ trait Customizer {
 
 		//Footer Widget Area Overlay Color
 		$wp_customize->add_setting('nebula_fwa_overlay_color', array('default' => null));
-		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_hero_overlay_color', array(
+		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_fwa_overlay_color', array(
 			'label' => 'Footer Widget Area BG Overlay Color',
 			'section' => 'footer_widget_area',
 			'priority' => 32,
