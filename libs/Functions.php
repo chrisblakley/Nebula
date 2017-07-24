@@ -28,7 +28,6 @@ trait Functions {
 		}
 
 		add_action('wp_head', array($this, 'console_warnings'));
-		add_action('wp_head', array($this, 'customizer_style_overrides'), 100);
 
 		if ( is_writable(get_template_directory()) ){
 			if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-DAY_IN_SECONDS) || $this->is_debug() ){
@@ -388,56 +387,6 @@ trait Functions {
 			}
 			echo '</script>';
 		}
-	}
-
-	//Styles from Customizer settings
-	public function customizer_style_overrides(){
-		//@TODO "Nebula" 0: I'd love to find a way to not print these <style> tags if the Customizer has not been used... without checking every single option.
-
-		$nav_schemes = array(
-			'light' => '#fff',
-			'light_alt' => '#aaa',
-			'dark' => '#333',
-			'dark_alt' => '#999',
-			'brand' => get_theme_mod('nebula_primary_color'),
-			'brand_alt' => '',
-		);
-
-		?>
-			<style>
-				<?php if ( get_theme_mod('nebula_background_color') ): //Background Color ?>
-					body {background: <?php echo get_theme_mod('nebula_background_color'); ?>;}
-				<?php endif; ?>
-
-				<?php if ( get_theme_mod('nebula_hero_bg_image') && get_theme_mod('nebula_hero_overlay_opacity') != 1 ): //Hero BG ?>
-					#hero-section {background-image: url( "<?php echo get_theme_mod('nebula_hero_bg_image'); ?>");}
-				<?php endif; ?>
-
-				<?php if ( get_theme_mod('header_nav_scheme') ): //Subpage Header Nav Scheme ?>
-					#primarynav ul li.menu-item a {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme')]; ?>;}
-						#primarynav ul li.menu-item a:hover {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme') . '_alt']; ?>;}
-				<?php endif; ?>
-
-				<?php if ( get_theme_mod('hero_nav_scheme') ): //Hero Nav Scheme ?>
-					.home #primarynav ul li.menu-item a {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme')]; ?>;}
-						.home #primarynav ul li.menu-item a:hover {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme') . '_alt']; ?>;}
-				<?php endif; ?>
-
-				<?php if ( get_theme_mod('nebula_primary_color') && !nebula()->get_option('scss') ): //If set primary without Sass enabled ?>
-					#bigheadingcon {background: <?php echo get_theme_mod('nebula_primary_color'); ?>;}
-				<?php endif; ?>
-
-				<?php if ( get_theme_mod('fwa_nav_scheme') ): //Footer Widget Area Nav Scheme ?>
-					#footer-widget-section a {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme')]; ?>;}
-						#footer-widget-section a:hover {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme') . '_alt']; ?>;}
-				<?php endif; ?>
-
-				<?php if ( get_theme_mod('footer_nav_scheme') ): //Footer Nav Scheme ?>
-					#footer-section a {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme')]; ?>;}
-						#footer-section a:hover {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme') . '_alt']; ?>;}
-				<?php endif; ?>
-			</style>
-		<?php
 	}
 
 	//Get the location URI of the Service Worker JavaScript file.
