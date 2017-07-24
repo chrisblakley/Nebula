@@ -6,14 +6,6 @@ if ( !trait_exists('Sass') ){
 	trait Sass {
 		public function hooks(){
 			add_action('init', array($this, 'scss_controller'));
-
-
-
-			add_action('customize_save_after', array($this, 'render_scss'));
-			//$this->update_data('need_sass_compile', 'true')
-
-			add_action('customize_preview_init', array($this, 'render_scss'));
-
 		}
 
 		/*==========================
@@ -131,11 +123,6 @@ if ( !trait_exists('Sass') ){
 					'primary_color' => get_theme_mod('nebula_primary_color', $this->sass_color('primary')), //From Customizer or child theme Sass variable
 					'secondary_color' => get_theme_mod('nebula_secondary_color', $this->sass_color('secondary')), //From Customizer or child theme Sass variable
 					'background_color' => get_theme_mod('nebula_background_color', $this->sass_color('background')), //From Customizer or child theme Sass variable
-
-					//@todo "Nebula" 0: Having difficulty reseting the Customizer... Once it's used, it'll never fall back to the 2nd parameter above. Below works, but doesn't use the Customizer...
-					//'primary_color' => $this->sass_color('primary'),
-					//'secondary_color' => $this->sass_color('secondary'),
-					//'background_color' => $this->sass_color('background'),
 				);
 				$additional_scss_variables = apply_filters('nebula_scss_variables', array());
 				$all_scss_variables = array_merge($nebula_scss_variables, $additional_scss_variables);
