@@ -547,12 +547,13 @@ trait Customizer {
 		    'section' => 'posts_meta',
 		    'priority' => 20,
 		    'type' => 'select',
-		    'choices' => array(
-		        'mdy' => 'Month, Day, Year',
-		        'my' => 'Month, Year',
-		        'relative' => 'Relative',
-		        'disabled' => 'Disabled',
-		    )
+			'choices' => array(
+				//'F j, Y' => 'Month, Day, Year',
+				//'F Y' => 'Month, Year',
+				'absolute' => 'Absolute',
+				'relative' => 'Relative',
+				'disabled' => 'Disabled',
+			)
 		));
 
 		//Show Post Author

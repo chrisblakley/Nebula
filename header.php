@@ -46,13 +46,13 @@
 				<?php endif; ?>
 
 				<div id="navigation-section">
-					<?php if ( has_nav_menu('secondary') ): ?>
-						<div id="secondarynavcon">
+					<?php if ( has_nav_menu('utility') ): ?>
+						<div id="utilitynavcon">
 							<div class="container">
 								<div class="row">
 									<div class="col">
-										<nav id="secondarynav" role="navigation">
-						        			<?php wp_nav_menu(array('theme_location' => 'secondary', 'depth' => '2')); ?>
+										<nav id="utilitynav" role="navigation">
+						        			<?php wp_nav_menu(array('theme_location' => 'utility', 'depth' => '2')); ?>
 						        		</nav>
 									</div><!--/col-->
 								</div><!--/row-->
