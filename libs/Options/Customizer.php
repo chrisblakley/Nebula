@@ -256,7 +256,7 @@ trait Customizer {
 		$wp_customize->add_setting('nebula_hero_overlay_color', array('default' => null));
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_hero_overlay_color', array(
 			'label' => 'Hero BG Overlay Color',
-			'section' => 'nebula_hero',
+			'section' => 'hero',
 			'priority' => 32,
 			'active_callback' => 'is_front_page',
 		)));
@@ -880,15 +880,36 @@ trait Customizer {
 					#bigheadingcon {background: <?php echo get_theme_mod('nebula_primary_color'); ?>;}
 				<?php endif; ?>
 
+				<?php if ( get_theme_mod('nebula_hero_overlay_color') || get_theme_mod('nebula_hero_overlay_opacity') ): ?>
+					#hero-section .custom-color-overlay {background: <?php echo get_theme_mod('nebula_hero_overlay_color'); ?>; opacity: <?php echo get_theme_mod('nebula_hero_overlay_opacity'); ?>; animation: none;}
+				<?php endif; ?>
+
+				<?php if ( get_theme_mod('nebula_show_hero_title', true) ): ?>
+					#hero-section h1{<?php echo ( get_theme_mod('nebula_hero_text_color') )? 'color:' . get_theme_mod('nebula_hero_text_color') . ';' : ''; ?>}
+				<?php endif; ?>
+
+				<?php if ( get_theme_mod('nebula_show_hero_description', true) ): ?>
+					#hero-section h2{<?php echo ( get_theme_mod('nebula_hero_text_color') )? 'color:' . get_theme_mod('nebula_hero_text_color') . ';' : ''; ?>}
+				<?php endif; ?>
+
 				<?php if ( get_theme_mod('fwa_nav_scheme') ): //Footer Widget Area Nav Scheme ?>
 					#footer-widget-section a {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme')]; ?>;}
 						#footer-widget-section a:hover {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme') . '_alt']; ?>;}
+				<?php endif; ?>
+
+				<?php if ( get_theme_mod('nebula_footer_bg_image') && get_theme_mod('nebula_footer_overlay_opacity') != 1 ):?>
+					#footer-section{background-image: url("<?php echo get_theme_mod('nebula_footer_bg_image'); ?>");}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('footer_nav_scheme') ): //Footer Nav Scheme ?>
 					#footer-section a {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme')]; ?>;}
 						#footer-section a:hover {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme') . '_alt']; ?>;}
 				<?php endif; ?>
+				
+				<?php if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ): ?>
+						#footer-section .custom-color-overlay{background: <?php echo get_theme_mod('nebula_footer_overlay_color'); ?>; opacity: <?php echo get_theme_mod('nebula_footer_overlay_opacity'); ?>; animation: none;}
+				<?php endif; ?>
+
 			</style>
 		<?php
 	}
