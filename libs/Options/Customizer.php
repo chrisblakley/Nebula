@@ -881,16 +881,7 @@ trait Customizer {
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('nebula_hero_overlay_color') || get_theme_mod('nebula_hero_overlay_opacity') ): ?>
-					<?php if ( get_theme_mod('nebula_hero_overlay_color') ):?>
-						#hero-section .custom-color-overlay {background: <?php echo get_theme_mod('nebula_hero_overlay_color'); ?>;}
-					<?php endif;?>
-
-					<?php if ( !is_null(get_theme_mod('nebula_hero_overlay_opacity')) ): ?> 
-						#hero-section .custom-color-overlay {opacity: <?php echo get_theme_mod('nebula_hero_overlay_opacity'); ?>;}
-					<?php endif;?>
-
-					#hero-section .custom-color-overlay{animation: none;}
-				
+					#hero-section .custom-color-overlay {background: <?php echo get_theme_mod('nebula_hero_overlay_color'); ?>; opacity: <?php echo get_theme_mod('nebula_hero_overlay_opacity'); ?>; animation: none;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('nebula_show_hero_title', true) ): ?>
@@ -916,17 +907,7 @@ trait Customizer {
 				<?php endif; ?>
 				
 				<?php if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ): ?>
-
-					<?php if(get_theme_mod('nebula_footer_overlay_color')): ?>
-						#footer-section .custom-color-overlay{background: <?php echo get_theme_mod('nebula_footer_overlay_color'); ?>;}
-					<?php endif; ?>
-
-					<?php if( !is_null(get_theme_mod('nebula_footer_overlay_opacity')) ): ?>
-						#footer-section .custom-color-overlay{opacity: <?php echo get_theme_mod('nebula_footer_overlay_opacity'); ?>;}
-					<?php endif; ?>
-
-					#footer-section .custom-color-overlay{animation: none;}
-				
+						#footer-section .custom-color-overlay{background: <?php echo get_theme_mod('nebula_footer_overlay_color'); ?>; opacity: <?php echo get_theme_mod('nebula_footer_overlay_opacity'); ?>; animation: none;}
 				<?php endif; ?>
 
 			</style>
