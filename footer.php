@@ -7,8 +7,6 @@
 				<div id="footer-widget-section">
 					<?php if ( get_theme_mod('nebula_fwa_overlay_color') || get_theme_mod('nebula_fwa_overlay_opacity') ): ?>
 						<div class="custom-color-overlay"></div>
-					<?php else: ?>
-						<div class="nebula-color-overlay"></div>
 					<?php endif; ?>
 					
 					<div class="container">
