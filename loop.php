@@ -28,11 +28,11 @@
 
 						<div class="entry-meta">
 							<?php if ( is_search() ): ?>
-								<?php //nebula()->meta('type') . ' '; //Enable this to show post types in search results. ?>
+								<?php nebula()->post_meta('type') . ' '; ?>
 							<?php endif; ?>
 
 							<?php if ( !in_array("page", get_post_class()) ): ?>
-								<?php nebula()->post_meta('on'); ?> <?php if ( nebula()->get_option('author_bios') && !is_author() ){ nebula()->post_meta('by'); } ?> <?php nebula()->post_meta('cat'); ?> <?php nebula()->post_meta('tags'); ?>
+								<?php nebula()->post_meta('on'); ?> <?php if ( !is_author() ){ nebula()->post_meta('by'); } ?> <?php nebula()->post_meta('cat'); ?> <?php nebula()->post_meta('tags'); ?>
 							<?php endif; ?>
 						</div>
 
@@ -42,7 +42,7 @@
 							</div>
 						<?php else: ?>
 							<div class="entry-summary">
-								<?php echo nebula()->excerpt(array('words' => 35)); ?>
+								<?php echo nebula()->excerpt(); ?>
 							</div>
 						<?php endif; ?>
 					</div><!--/col-->

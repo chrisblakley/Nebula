@@ -611,7 +611,7 @@ trait Functions {
 	public function post_date($options=array()){
 		$format = get_theme_mod('post_date_format');
 
-		if ( $format === 'disabled' ){
+		if ( $format === 'disabled' || get_theme_mod('post_date_format') === 'disabled' ){
 			return false;
 		}
 
@@ -642,73 +642,77 @@ trait Functions {
 
 	//Author post meta
 	public function post_author($icon=true, $linked=true, $force=false){
-		$the_icon = '';
-		if ( $icon ){
-			$the_icon = '<i class="fa fa-user"></i> ';
-		}
+		if ( ($this->get_option('author_bios') || $force) && get_theme_mod('post_author', true) ){
+			$the_icon = '';
+			if ( $icon ){
+				$icon_html = '<i class="fa fa-user"></i> ';
+			}
 
-		if ( $this->get_option('author_bios') || $force ){
 			if ( $linked && !$force ){
-				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $the_icon . '<span class="meta-item entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '" itemprop="name">' . get_the_author() . '</a></span></span>';
+				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $icon_html . '<span class="meta-item entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '" itemprop="name">' . get_the_author() . '</a></span></span>';
 			} else {
-				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $the_icon . '<span class="meta-item entry-author" itemprop="name">' . get_the_author() . '</span></span>';
+				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $icon_html . '<span class="meta-item entry-author" itemprop="name">' . get_the_author() . '</span></span>';
 			}
 		}
 	}
 
 	//Post type meta
 	public function post_type($icon=true){
-		$post_icon_img = '<i class="fa fa-thumb-tack"></i>';
-		if ( $icon ){
-			global $wp_post_types;
-			$post_type = get_post_type();
+		if ( get_theme_mod('search_result_post_types', true) ){
+			$post_icon_img = '<i class="fa fa-thumb-tack"></i>';
+			if ( $icon ){
+				global $wp_post_types;
+				$post_type = get_post_type();
 
-			if ( $post_type == 'post' ){
-				$post_icon_img = '<i class="fa fa-thumb-tack"></i>';
-			} elseif ( $post_type == 'page' ){
-				$post_icon_img = '<i class="fa fa-file-text"></i>';
-			} else {
-				$post_icon = $wp_post_types[$post_type]->menu_icon;
-				if ( !empty($post_icon) ){
-					if ( strpos('dashicons-', $post_icon) >= 0 ){
-						$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
-					} else {
-						$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" />';
-					}
-				} else {
+				if ( $post_type == 'post' ){
 					$post_icon_img = '<i class="fa fa-thumb-tack"></i>';
+				} elseif ( $post_type == 'page' ){
+					$post_icon_img = '<i class="fa fa-file-text"></i>';
+				} else {
+					$post_icon = $wp_post_types[$post_type]->menu_icon;
+					if ( !empty($post_icon) ){
+						if ( strpos('dashicons-', $post_icon) >= 0 ){
+							$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
+						} else {
+							$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" />';
+						}
+					} else {
+						$post_icon_img = '<i class="fa fa-thumb-tack"></i>';
+					}
 				}
 			}
-		}
 
-		return '<span class="meta-item post-type">' . $post_icon_img . ucwords(get_post_type()) . '</span>';
+			return '<span class="meta-item post-type">' . $post_icon_img . ucwords(get_post_type()) . '</span>';
+		}
 	}
 
 	//Categories post meta
 	public function post_categories($icon=true){
-		$the_icon = '';
-		if ( $icon ){
-			$the_icon = '<i class="fa fa-bookmark"></i> ';
-		}
+		if ( get_theme_mod('post_categories', true) ){
+			$the_icon = '';
+			if ( $icon ){
+				$the_icon = '<i class="fa fa-bookmark"></i> ';
+			}
 
-		if ( is_object_in_taxonomy(get_post_type(), 'category') ){
-			return '<span class="posted-in meta-item post-categories">' . $the_icon . get_the_category_list(', ') . '</span>';
+			if ( is_object_in_taxonomy(get_post_type(), 'category') ){
+				return '<span class="posted-in meta-item post-categories">' . $the_icon . get_the_category_list(', ') . '</span>';
+			}
 		}
-		return '';
 	}
 
 	//Tags post meta
 	public function post_tags($icon=true){
-		$tag_list = get_the_tag_list('', ', ');
-		if ( $tag_list ){
-			$the_icon = '';
-			if ( $icon ){
-				$tag_plural = ( count(get_the_tags()) > 1 )? 'tags' : 'tag';
-				$the_icon = '<i class="fa fa-' . $tag_plural . '"></i> ';
+		if ( get_theme_mod('post_tags', true) ){
+			$tag_list = get_the_tag_list('', ', ');
+			if ( $tag_list ){
+				$the_icon = '';
+				if ( $icon ){
+					$tag_plural = ( count(get_the_tags()) > 1 )? 'tags' : 'tag';
+					$the_icon = '<i class="fa fa-' . $tag_plural . '"></i> ';
+				}
+				return '<span class="posted-in meta-item post-tags">' . $the_icon . $tag_list . '</span>';
 			}
-			return '<span class="posted-in meta-item post-tags">' . $the_icon . $tag_list . '</span>';
 		}
-		return '';
 	}
 
 	//Image dimensions post meta
@@ -766,27 +770,29 @@ trait Functions {
 
 	//Comments post meta
 	public function post_comments($icon=true, $linked=true, $empty=true){
-		$comments_text = 'Comments';
-		if ( get_comments_number() == 0 ){
-			$comment_icon = 'fa-comment-o';
-			$comment_show = ( $empty )? '' : 'hidden'; //If comment link should show if no comments. True = show, False = hidden
-		} elseif ( get_comments_number() == 1 ){
-			$comment_icon = 'fa-comment';
-			$comments_text = 'Comment';
-		} elseif ( get_comments_number() > 1 ){
-			$comment_icon = 'fa-comments';
-		}
+		if ( get_theme_mod('post_comment_count', true) ){
+			$comments_text = 'Comments';
+			if ( get_comments_number() == 0 ){
+				$comment_icon = 'fa-comment-o';
+				$comment_show = ( $empty )? '' : 'hidden'; //If comment link should show if no comments. True = show, False = hidden
+			} elseif ( get_comments_number() == 1 ){
+				$comment_icon = 'fa-comment';
+				$comments_text = 'Comment';
+			} elseif ( get_comments_number() > 1 ){
+				$comment_icon = 'fa-comments';
+			}
 
-		$the_icon = '';
-		if ( $icon ){
-			$the_icon = '<i class="fa ' . $comment_icon . '"></i> ';
-		}
+			$the_icon = '';
+			if ( $icon ){
+				$the_icon = '<i class="fa ' . $comment_icon . '"></i> ';
+			}
 
-		if ( $linked ){
-			$postlink = ( is_single() )? '' : get_the_permalink();
-			return '<span class="meta-item posted-comments ' . $comment_show . '">' . $the_icon . '<a class="nebulametacommentslink" href="' . $postlink . '#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
-		} else {
-			return '<span class="meta-item posted-comments ' . $comment_show . '">' . $the_icon . get_comments_number() . ' ' . $comments_text . '</span>';
+			if ( $linked ){
+				$postlink = ( is_single() )? '' : get_the_permalink();
+				return '<span class="meta-item posted-comments ' . $comment_show . '">' . $the_icon . '<a class="nebulametacommentslink" href="' . $postlink . '#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
+			} else {
+				return '<span class="meta-item posted-comments ' . $comment_show . '">' . $the_icon . get_comments_number() . ' ' . $comments_text . '</span>';
+			}
 		}
 	}
 
@@ -803,7 +809,7 @@ trait Functions {
 			'text' => false,
 			'characters' => false,
 			'chars' => false, //Alias of "characters"
-			'words' => get_theme_mod('crosslinks', 55),
+			'words' => get_theme_mod('nebula_excerpt_length', 55),
 			'length' => false, //Alias of "words"
 			'ellipsis' => false,
 			'url' => false,

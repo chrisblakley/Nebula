@@ -561,6 +561,15 @@ trait Customizer {
 			'type' => 'checkbox',
 		));
 
+		//Show Post Types in Search Results
+		$wp_customize->add_setting('search_result_post_types', array('default' => 0));
+		$wp_customize->add_control('search_result_post_types', array(
+			'label' => 'Show Post Types in Search Results',
+			'section' => 'posts_meta',
+			'priority' => 32,
+			'type' => 'checkbox',
+		));
+
 		//Show Post Comment Count
 		$wp_customize->add_setting('post_comment_count', array('default' => 0));
 		$wp_customize->add_control('post_comment_count', array(
