@@ -32,6 +32,26 @@ trait Customizer {
 		//@todo "Nebula" 0: Get an edit icon to appear on the logo for custom_logo option
 
 		/*==========================
+			Site Identity Section
+			This is a WordPress core section, so we don't need to add it.
+		 ===========================*/
+
+		//One-Color Logo
+		$wp_customize->add_setting('one_color_logo', array('default' => null));
+		$wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'one_color_logo', array(
+			'label' => 'One-Color Logo',
+			'description' => 'A single color logo (typically white) for use on colored backgrounds.',
+			'section' => 'title_tagline',
+			'settings' => 'one_color_logo',
+			'priority' => 9,
+		)));
+		$wp_customize->selective_refresh->add_partial('one_color_logo', array(
+			'settings' => array('one_color_logo'),
+			'selector' => '.logocon a',
+			'container_inclusive' => false,
+		));
+
+		/*==========================
 			Brand Colors Section
 		 ===========================*/
 
@@ -69,64 +89,6 @@ trait Customizer {
 			'selector' => 'body',
 			'container_inclusive' => false,
 		));
-
-/*
-		//Hero Navigation Scheme
-		$wp_customize->add_setting('hero_nav_scheme', array('default' => 'light'));
-		$wp_customize->add_control('hero_nav_scheme', array(
-		    'label' => 'Hero Navigation Scheme',
-		    'section' => 'colors',
-		    'priority' => 40,
-		    'type' => 'select',
-		    'choices' => array(
-		        'light' => 'Light',
-		        'brand' => 'Brand',
-		        'dark' => 'Dark',
-		    )
-		));
-
-		//Header Navigation Scheme
-		$wp_customize->add_setting('header_nav_scheme', array('default' => 'light'));
-		$wp_customize->add_control('header_nav_scheme', array(
-		    'label' => 'Subpage Header Navigation Scheme',
-		    'section' => 'colors',
-		    'priority' => 41,
-		    'type' => 'select',
-		    'choices' => array(
-		        'light' => 'Light',
-		        'brand' => 'Brand',
-		        'dark' => 'Dark',
-		    )
-		));
-
-		//Footer Widget Area Navigation Scheme
-		$wp_customize->add_setting('fwa_nav_scheme', array('default' => 'light'));
-		$wp_customize->add_control('fwa_nav_scheme', array(
-		    'label' => 'Footer Widget Area Navigation Scheme',
-		    'section' => 'colors',
-		    'priority' => 42,
-		    'type' => 'select',
-		    'choices' => array(
-		        'light' => 'Light',
-		        'brand' => 'Brand',
-		        'dark' => 'Dark',
-		    )
-		));
-
-		//Footer Navigation Scheme
-		$wp_customize->add_setting('footer_nav_scheme', array('default' => 'light'));
-		$wp_customize->add_control('footer_nav_scheme', array(
-		    'label' => 'Footer Navigation Scheme',
-		    'section' => 'colors',
-		    'priority' => 43,
-		    'type' => 'select',
-		    'choices' => array(
-		        'light' => 'Light',
-		        'brand' => 'Brand',
-		        'dark' => 'Dark',
-		    )
-		));
-*/
 
 
 		/*==========================
@@ -189,6 +151,19 @@ trait Customizer {
 			'container_inclusive' => false,
 		));
 
+		//Sidebar Position
+		$wp_customize->add_setting('sidebar_position', array('default' => 'right'));
+		$wp_customize->add_control('sidebar_position', array(
+		    'label' => 'Sidebar Position',
+		    'section' => 'site_features',
+		    'priority' => 45,
+		    'type' => 'select',
+		    'choices' => array(
+		        'left' => 'Left',
+		        'right' => 'Right',
+		    )
+		));
+
 
 		/*==========================
 			Home Panel
@@ -210,6 +185,16 @@ trait Customizer {
 			'title' => 'Hero',
 			'panel' => 'home',
 			'priority' => 500,
+		));
+
+		//Use One-Color Logo
+		$wp_customize->add_setting('nebula_hero_single_color_logo', array('default' => 0));
+		$wp_customize->add_control('nebula_hero_single_color_logo', array(
+			'label' => 'Use One-Color Logo',
+			'section' => 'hero',
+			'priority' => 15,
+			'type' => 'checkbox',
+			'active_callback' => 'is_front_page', //Only show on Front Page
 		));
 
 		//Hero Navigation Scheme
@@ -470,6 +455,15 @@ trait Customizer {
 		        'disabled' => 'Disabled',
 		    ),
 		    //'active_callback' => 'is_singular',
+		));
+
+		//Use One-Color Logo
+		$wp_customize->add_setting('nebula_header_single_color_logo', array('default' => 0));
+		$wp_customize->add_control('nebula_header_single_color_logo', array(
+			'label' => 'Use One-Color Logo',
+			'section' => 'posts_header',
+			'priority' => 23,
+			'type' => 'checkbox',
 		));
 
 		//Header Navigation Color Scheme (Same as under Brand panel)
@@ -875,8 +869,8 @@ trait Customizer {
 						.home #primarynav ul li.menu-item a:hover {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme') . '_alt']; ?>;}
 				<?php endif; ?>
 
-				<?php if ( get_theme_mod('nebula_primary_color') && !nebula()->get_option('scss') ): //If set primary without Sass enabled ?>
-					#bigheadingcon {background: <?php echo get_theme_mod('nebula_primary_color'); ?>;}
+				<?php if ( (get_theme_mod('nebula_header_overlay_color') || get_theme_mod('nebula_header_overlay_opacity')) || (get_theme_mod('nebula_primary_color') && !nebula()->get_option('scss')) ): //If set primary without Sass enabled ?>
+					#bigheadingcon {background: <?php echo get_theme_mod('nebula_header_overlay_color', get_theme_mod('nebula_primary_color')); ?>;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('nebula_hero_overlay_color') || get_theme_mod('nebula_hero_overlay_opacity') ): //This condition isn't entirely necessary as the selector is unique to the Customizer ?>

@@ -88,7 +88,7 @@ get_header(); ?>
 					<?php endwhile; ?>
 				<?php endif; ?>
 			</div><!--/col-->
-			<div class="col-md-3 offset-md-1" role="complementary">
+			<div class="col-md-3 offset-md-1 <?php echo ( get_theme_mod('sidebar_position') === 'left' )? 'flex-first' : ''; ?>" role="complementary">
 				<?php get_sidebar(); ?>
 			</div><!--/col-->
 		</div><!--/row-->

@@ -89,12 +89,6 @@
 	<meta property="og:image" content="<?php echo $image_meta_directory . '/og-thumb-' . $i . '.png' . $cache_query; ?>" />
 <?php endfor; ?>
 
-<?php
-	//HTTP2 Server Push (currently triggering violations for not being used after preloading...)
-	//header('Link: <' . esc_url(str_replace(nebula()->url_components('basedomain'), '', strtok($image_meta_directory, '?'))) . '/favicon.ico>; rel=preload; as=image', false);
-	//header('Link: <' . esc_url(str_replace(nebula()->url_components('basedomain'), '', strtok($image_meta_directory, '?'))) . '/favicon-16x16.png>; rel=preload; as=image', false);
-	//header('Link: <' . esc_url(str_replace(nebula()->url_components('basedomain'), '', strtok($image_meta_directory, '?'))) . '/favicon-32x32.png>; rel=preload; as=image', false);
-?>
 <?php if ( !has_site_icon() ): ?>
 	<link rel="shortcut icon" type="image/png" href="<?php echo $image_meta_directory . '/favicon.ico' . $cache_query; ?>" />
 <?php endif; ?>

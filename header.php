@@ -65,7 +65,18 @@
 							<div class="row align-items-center">
 								<div class="col-md-4">
 									<a class="logocon" href="<?php echo home_url('/'); ?>" title="<?php bloginfo('name'); ?>">
-										<img class="svg" src="<?php echo ( get_theme_mod('custom_logo') )? nebula()->get_thumbnail_src(get_theme_mod('custom_logo')) : get_theme_file_uri('/assets/img/logo.svg'); ?>" alt="<?php bloginfo('name'); ?>"/>
+										<?php
+											$logo = get_theme_file_uri('/assets/img/logo.svg');
+											if ( get_theme_mod('custom_logo') ){ //If the Customizer logo exists
+												$logo = nebula()->get_thumbnail_src(get_theme_mod('custom_logo'));
+												if ( get_theme_mod('one_color_logo') ){ //If the one-color logo exists
+													if ( (is_front_page() && get_theme_mod('nebula_hero_single_color_logo')) || (!is_front_page() && get_theme_mod('nebula_header_single_color_logo')) ){ //If it is the frontpage and the home one-color logo is requested -OR- if it is a subpage and the header one-color logo is requested
+														$logo = get_theme_mod('one_color_logo');
+													}
+												}
+											}
+										?>
+										<img class="svg" src="<?php echo $logo; ?>" alt="<?php bloginfo('name'); ?>"/>
 									</a>
 								</div><!--/col-->
 								<div class="col-md-8">
