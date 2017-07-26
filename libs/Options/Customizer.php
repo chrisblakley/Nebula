@@ -879,7 +879,7 @@ trait Customizer {
 				<?php endif; ?>
 
 				<?php if ( (get_theme_mod('nebula_header_overlay_color') || get_theme_mod('nebula_header_overlay_opacity')) || (get_theme_mod('nebula_primary_color') && !nebula()->get_option('scss')) ): //If set primary without Sass enabled ?>
-					#bigheadingcon {background: <?php echo get_theme_mod('nebula_header_overlay_color', get_theme_mod('nebula_primary_color')); ?>;}
+					#bigheadingcon {background: <?php echo get_theme_mod('nebula_header_overlay_color', get_theme_mod('nebula_primary_color')); ?>; opacity: <?php echo get_theme_mod('nebula_header_overlay_opacity'); ?>;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('nebula_hero_overlay_color') || get_theme_mod('nebula_hero_overlay_opacity') ): //This condition isn't entirely necessary as the selector is unique to the Customizer ?>
@@ -893,7 +893,15 @@ trait Customizer {
 				<?php if ( get_theme_mod('nebula_show_hero_description', true) ): ?>
 					#hero-section h2 {<?php echo ( get_theme_mod('nebula_hero_text_color') )? 'color:' . get_theme_mod('nebula_hero_text_color') . ';' : ''; ?>}
 				<?php endif; ?>
+				
+				<?php if ( get_theme_mod('nebula_fwa_bg_image') && get_theme_mod('nebula_fwa_overlay_opacity') != 1 ):?>
+					#footer-widget-section {background-image: url("<?php echo get_theme_mod('nebula_fwa_bg_image'); ?>");}
+				<?php endif; ?>
 
+				<?php if ( get_theme_mod('nebula_fwa_overlay_color') || get_theme_mod('nebula_fwa_overlay_opacity') ):?>
+					#footer-widget-section .custom-color-overlay {background: <?php echo get_theme_mod('nebula_fwa_overlay_color'); ?>;  opacity: <?php echo get_theme_mod('nebula_footer_overlay_opacity'); ?>; animation: none;}
+				<?php endif; ?>
+				
 				<?php if ( get_theme_mod('fwa_nav_scheme') ): //Footer Widget Area Nav Scheme ?>
 					#footer-widget-section a {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme')]; ?>;}
 						#footer-widget-section a:hover {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme') . '_alt']; ?>;}
