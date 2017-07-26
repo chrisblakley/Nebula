@@ -876,6 +876,24 @@ trait Functions {
 		return $data['text'];
 	}
 
+	//Use WP Pagenavi if active, or manually paginate.
+	public function paginate(){
+		if ( is_plugin_active('wp-pagenavi/wp-pagenavi.php') ){
+			wp_pagenavi();
+		} else {
+			global $wp_query;
+			$big = 999999999; //An unlikely integer
+			echo '<div class="wp-pagination">';
+				echo paginate_links(array(
+					'base' => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
+					'format' => '?paged=%#%',
+					'current' => max(1, get_query_var('paged')),
+					'total' => $wp_query->max_num_pages
+				));
+			echo '</div>';
+		}
+	}
+
 	//Display Social Buttons
 	public function social($networks=array('facebook', 'twitter', 'google+'), $counts=0){
 		$override = apply_filters('pre_nebula_social', null, $networks, $counts);

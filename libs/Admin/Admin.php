@@ -291,6 +291,14 @@ if ( !trait_exists('Admin') ){
 				'meta' => array('target' => '_blank', 'rel' => 'noopener')
 			));
 
+			$wp_admin_bar->add_node(array(
+				'parent' => 'nebula',
+				'id' => 'nebula-version',
+				'title' => 'Version <strong>' . $this->version('raw') . '</strong>',
+				'href' => 'https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master',
+				'meta' => array('title' => 'Committed on ' . $this->version('date'), 'style' => 'font-size: 12px;')
+			));
+
 			if ( !empty($nebula_warning_icon) ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula',
@@ -737,7 +745,7 @@ if ( !trait_exists('Admin') ){
 		public function change_admin_footer_right(){
 			global $wp_version;
 			$child = ( is_child_theme() )? ' <small>(Child)</small>' : '';
-			return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . $this->version('date') . '"><a href="https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=footer&utm_source=version" target="_blank" rel="noopener">Nebula</a> <strong class="nebula">' . $this->version('version') . '</strong>' . $child . '</span>';
+			return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . $this->version('date') . '"><a href="https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=footer&utm_source=version" target="_blank" rel="noopener">Nebula</a> <strong class="nebula"><a href="https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master" target="_blank">' . $this->version('version') . '</a></strong>' . $child . '</span>';
 		}
 
 		public function post_meta_boxes_setup(){

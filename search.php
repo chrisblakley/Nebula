@@ -66,23 +66,6 @@ get_header(); ?>
 				<?php if ( have_posts() ): ?>
 					<div id="searchresults">
 						<?php get_template_part('loop', 'search'); ?>
-
-						<?php if ( is_plugin_active('wp-pagenavi/wp-pagenavi.php') ): ?>
-							<?php wp_pagenavi(); ?>
-						<?php else: ?>
-							<?php
-								global $wp_query;
-								$big = 999999999; //An unlikely integer
-								echo '<div class="wp-pagination">';
-									echo paginate_links(array(
-										'base' => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
-										'format' => '?paged=%#%',
-										'current' => max(1, get_query_var('paged')),
-										'total' => $wp_query->max_num_pages
-									));
-								echo '</div>';
-							?>
-						<?php endif; ?>
 					</div><!--/#searchresults-->
 				<?php else: ?>
 					<p>No search results.</p>

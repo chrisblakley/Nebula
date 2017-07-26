@@ -49,5 +49,7 @@
 				</div><!--/row-->
 			</article>
 		<?php endwhile; ?>
+
+		<?php nebula()->paginate(); ?>
 	<?php endif; ?>
 </div><!--/loop-section-->

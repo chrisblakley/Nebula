@@ -143,7 +143,6 @@ get_header(); ?>
 				<?php
 					rewind_posts();
 					get_template_part('loop', 'author');
-					wp_pagenavi();
 				?>
 			</div><!--/col-->
 			<div class="col-md-3 offset-md-1 <?php echo ( get_theme_mod('sidebar_position') === 'left' )? 'flex-first' : ''; ?>" role="complementary">

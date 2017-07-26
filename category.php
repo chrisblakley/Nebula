@@ -40,7 +40,6 @@ get_header(); ?>
 		<div class="row">
 			<div class="col-md-8" role="main">
 				<?php get_template_part('loop', 'category'); ?>
-				<?php wp_pagenavi(); ?>
 			</div><!--/col-->
 			<div class="col-md-3 offset-md-1 <?php echo ( get_theme_mod('sidebar_position') === 'left' )? 'flex-first' : ''; ?>" role="complementary">
 				<?php get_sidebar(); ?>

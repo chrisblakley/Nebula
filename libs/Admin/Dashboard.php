@@ -74,7 +74,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fa fa-fw fa-wordpress"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
 			//Nebula Version
-			echo '<li><i class="fa fa-fw fa-star"></i> <a href="https://gearside.com/nebula" target="_blank" rel="noopener">Nebula</a> <strong>' . $this->version('raw') . '</strong> <small title="' . human_time_diff($this->version('utc')) . ' ago">(Committed: ' . $this->version('date') . ')</small></li>';
+			echo '<li><i class="fa fa-fw fa-star"></i> <a href="https://gearside.com/nebula" target="_blank" rel="noopener">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master" target="_blank">' . $this->version('raw') . '</a></strong> <small title="' . human_time_diff($this->version('utc')) . ' ago">(Committed: ' . $this->version('date') . ')</small></li>';
 
 			//Child Theme
 			if ( is_child_theme() ){

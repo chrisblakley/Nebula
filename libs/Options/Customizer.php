@@ -151,19 +151,6 @@ trait Customizer {
 			'container_inclusive' => false,
 		));
 
-		//Sidebar Position
-		$wp_customize->add_setting('sidebar_position', array('default' => 'right'));
-		$wp_customize->add_control('sidebar_position', array(
-		    'label' => 'Sidebar Position',
-		    'section' => 'site_features',
-		    'priority' => 45,
-		    'type' => 'select',
-		    'choices' => array(
-		        'left' => 'Left',
-		        'right' => 'Right',
-		    )
-		));
-
 
 		/*==========================
 			Home Panel
@@ -657,6 +644,19 @@ trait Customizer {
 		$wp_customize->add_section('sidebar', array(
 			'title' => 'Sidebar',
 			'priority' => 40,
+		));
+
+		//Sidebar Position
+		$wp_customize->add_setting('sidebar_position', array('default' => 'right'));
+		$wp_customize->add_control('sidebar_position', array(
+		    'label' => 'Sidebar Position',
+		    'section' => 'sidebar',
+		    'priority' => 10,
+		    'type' => 'select',
+		    'choices' => array(
+		        'left' => 'Left',
+		        'right' => 'Right',
+		    )
 		));
 
 		//Accordion Expanders
