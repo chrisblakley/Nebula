@@ -62,7 +62,7 @@ get_header(); ?>
 <div id="content-section">
 	<div class="container">
 		<div class="row">
-			<div class="col-md-8" role="main">
+			<div class="col-md" role="main">
 				<?php if ( have_posts() ): ?>
 					<div id="searchresults">
 						<?php get_template_part('loop', 'search'); ?>
@@ -71,7 +71,7 @@ get_header(); ?>
 					<p>No search results.</p>
 				<?php endif; ?>
 			</div><!--/col-->
-			<div class="col-md-3 offset-md-1 <?php echo ( get_theme_mod('sidebar_position') === 'left' )? 'flex-first' : ''; ?>" role="complementary">
+			<div class="col-md-3 <?php echo ( get_theme_mod('sidebar_position') === 'left' )? 'flex-first' : 'offset-md-1'; ?>" role="complementary">
 				<?php get_sidebar(); ?>
 			</div><!--/col-->
 		</div><!--/row-->

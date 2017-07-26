@@ -39,7 +39,7 @@ get_header(); ?>
 <div id="content-section">
 	<div class="container">
 		<div class="row">
-			<div class="col-md-8" role="main">
+			<div class="col-md" role="main">
 				<article id="post-0" class="post error404 not-found">
 					<?php echo nebula()->search_form(); ?>
 
@@ -63,7 +63,7 @@ get_header(); ?>
 					<?php wp_reset_query(); ?>
 				</article>
 			</div><!--/col-->
-			<div class="col-md-3 offset-md-1 <?php echo ( get_theme_mod('sidebar_position') === 'left' )? 'flex-first' : ''; ?>" role="complementary">
+			<div class="col-md-3 <?php echo ( get_theme_mod('sidebar_position') === 'left' )? 'flex-first' : 'offset-md-1'; ?>" role="complementary">
 				<?php get_sidebar(); ?>
 			</div><!--/col-->
 		</div><!--/row-->

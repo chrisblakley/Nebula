@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.2.26.6131
+	Version: 5.2.26.7177
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -724,7 +724,12 @@ li.comment div.comment-meta {display: block;}
 //Nebula expandable sidebar subnav style defaults
 a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10px !important;
 	i {font-size: rem(18px); display: block; width: 100%; @include prefix((transform: rotate(-90deg))); @include prefix((transition: transform 0.25s));}
-	&.closed i {@include prefix((transform: rotate(0deg)));}
+		&.closed i {@include prefix((transform: rotate(0deg)));}
+
+	.flex-first & {right: auto; left: -30px;
+		i {@include prefix((transform: rotate(270deg)));}
+			&.closed i {@include prefix((transform: rotate(180deg)));}
+	}
 }
 
 //Offcanvas Mmenu Modifications
@@ -759,7 +764,7 @@ a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10
 // ===========================
 
 //Footer Widgets
-#footer-widget-section {padding: 50px 0; background: #ddd;
+#footer-widget-section {position: relative; padding: 50px 0; background: #ddd;
 	.widget-container {font-size: rem(16px);
 		.widget-title {font-size: rem(18px); font-weight: 800; margin-bottom: 15px;}
 
