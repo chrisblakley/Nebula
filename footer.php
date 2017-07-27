@@ -8,7 +8,7 @@
 					<?php if ( get_theme_mod('nebula_fwa_overlay_color') || get_theme_mod('nebula_fwa_overlay_opacity') ): ?>
 						<div class="custom-color-overlay"></div>
 					<?php endif; ?>
-					
+
 					<div class="container">
 						<div class="row">
 							<?php dynamic_sidebar('footer-widget-area'); ?>
@@ -28,7 +28,18 @@
 					<?php if ( get_theme_mod('nebula_footer_logo') ): ?>
 						<div class="row footerlogocon">
 							<div class="col">
-								<a class="footerlogo" href="<?php echo home_url('/'); ?>"><img class="svg" src="<?php echo get_theme_mod('nebula_footer_logo'); ?>" /></a>
+								<a class="footerlogo" href="<?php echo home_url('/'); ?>">
+									<?php
+										$logo = get_theme_file_uri('/assets/img/logo.svg');
+										if ( get_theme_mod('custom_logo') ){ //If the Customizer logo exists
+											$logo = nebula()->get_thumbnail_src(get_theme_mod('custom_logo'));
+											if ( get_theme_mod('one_color_logo') && get_theme_mod('nebula_footer_single_color_logo') ){ //If the one-color logo exists and is requested
+												$logo = get_theme_mod('one_color_logo');
+											}
+										}
+									?>
+									<img class="svg" src="<?php echo $logo; ?>" alt="<?php bloginfo('name'); ?>"/>
+								</a>
 							</div><!--/col-->
 						</div><!--/row-->
 					<?php endif; ?>

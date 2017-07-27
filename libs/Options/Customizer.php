@@ -803,18 +803,27 @@ trait Customizer {
 			'priority' => 22
 		));
 
-		//Footer logo
-		$wp_customize->add_setting('nebula_footer_logo', array('default' => null));
-		$wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'nebula_footer_logo', array(
-			'label' => 'Footer Logo',
+		//Show Footer Logo
+		$wp_customize->add_setting('nebula_footer_logo', array('default' => 0));
+		$wp_customize->add_control('nebula_footer_logo', array(
+			'label' => 'Show Footer Logo',
 			'section' => 'footer',
-			'settings' => 'nebula_footer_logo',
-			'priority' => 30
-		)));
+			'priority' => 30,
+			'type' => 'checkbox',
+		));
 		$wp_customize->selective_refresh->add_partial('nebula_footer_logo', array(
 			'settings' => array('nebula_footer_logo'),
 			'selector' => '#footer-section .footerlogo',
 			'container_inclusive' => false,
+		));
+
+		//Use One-Color Logo
+		$wp_customize->add_setting('nebula_footer_single_color_logo', array('default' => 0));
+		$wp_customize->add_control('nebula_footer_single_color_logo', array(
+			'label' => 'Use One-Color Logo',
+			'section' => 'footer',
+			'priority' => 31,
+			'type' => 'checkbox',
 		));
 
 		//Footer text
@@ -893,7 +902,7 @@ trait Customizer {
 				<?php if ( get_theme_mod('nebula_show_hero_description', true) ): ?>
 					#hero-section h2 {<?php echo ( get_theme_mod('nebula_hero_text_color') )? 'color:' . get_theme_mod('nebula_hero_text_color') . ';' : ''; ?>}
 				<?php endif; ?>
-				
+
 				<?php if ( get_theme_mod('nebula_fwa_bg_image') && get_theme_mod('nebula_fwa_overlay_opacity') != 1 ):?>
 					#footer-widget-section {background-image: url("<?php echo get_theme_mod('nebula_fwa_bg_image'); ?>");}
 				<?php endif; ?>
@@ -901,7 +910,7 @@ trait Customizer {
 				<?php if ( get_theme_mod('nebula_fwa_overlay_color') || get_theme_mod('nebula_fwa_overlay_opacity') ):?>
 					#footer-widget-section .custom-color-overlay {background: <?php echo get_theme_mod('nebula_fwa_overlay_color'); ?>;  opacity: <?php echo get_theme_mod('nebula_footer_overlay_opacity'); ?>; animation: none;}
 				<?php endif; ?>
-				
+
 				<?php if ( get_theme_mod('fwa_nav_scheme') ): //Footer Widget Area Nav Scheme ?>
 					#footer-widget-section a {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme')]; ?>;}
 						#footer-widget-section a:hover {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme') . '_alt']; ?>;}
