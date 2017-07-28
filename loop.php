@@ -17,7 +17,7 @@
 		<?php while ( have_posts() ): the_post(); ?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 				<div class="row">
-					<?php if ( has_post_thumbnail() ): ?>
+					<?php if ( has_post_thumbnail() && get_theme_mod('featured_image_location') !== 'disabled' ): ?>
 						<div class="col-md-4">
 							<a href="<?php the_permalink(); ?>"><?php the_post_thumbnail(); ?></a>
 						</div><!--/col-->

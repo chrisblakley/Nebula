@@ -109,20 +109,6 @@ jQuery(window).on('resize', function(){
 	}, 500, 'window resize');
 }); //End Window Resize
 
-if ( 'orientation' in screen && 'fullscreenEnabled' in document ){ //Waiting until unprefixed Fullscreen API is available: http://caniuse.com/#feat=fullscreen
-	screen.orientation.addEventListener('change', function(){
-		if ( screen.orientation.type.startsWith('landscape') ){
-			if ( !document.fullscreenElement ){
-				if ( jQuery('video.playing, iframe.playing').length ){
-					jQuery('video.playing, iframe.playing').first()[0].requestFullscreen(); //Get the first video or iframe that is playing (does not include autoplay)
-				}
-			}
-		} else if ( document.fullscreenElement ){
-			document.fullscreenElement.exitFullscreen();
-		}
-	});
-}
-
 
 /*==========================
  Optimization Functions

@@ -18,6 +18,8 @@ do_action('nebula_preheaders');
 get_header(); ?>
 
 <section id="bigheadingcon">
+	<div class="custom-color-overlay"></div>
+
 	<div class="container title-desc-con">
 		<div class="row">
 			<div class="col">
@@ -48,7 +50,7 @@ get_header(); ?>
 			<div class="col-md" role="main">
 				<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-						<?php if ( has_post_thumbnail() ): ?>
+						<?php if ( has_post_thumbnail() && get_theme_mod('featured_image_location') === 'content' ): ?>
 							<?php the_post_thumbnail(); ?>
 						<?php endif; ?>
 
@@ -82,9 +84,11 @@ get_header(); ?>
 					<?php comments_template(); ?>
 				<?php endwhile; ?>
 			</div><!--/col-->
-			<div class="col-md-3 <?php echo ( get_theme_mod('sidebar_position') === 'left' )? 'flex-first' : 'offset-md-1'; ?>" role="complementary">
-				<?php get_sidebar(); ?>
-			</div><!--/col-->
+			<?php if ( get_theme_mod('sidebar_position') !== 'off' ): ?>
+				<div class="col-md-3 <?php echo ( get_theme_mod('sidebar_position') === 'left' )? 'flex-first' : 'offset-md-1'; ?>" role="complementary">
+					<?php get_sidebar(); ?>
+				</div><!--/col-->
+			<?php endif; ?>
 		</div><!--/row-->
 	</div><!--/container-->
 </div><!--/content-section-->

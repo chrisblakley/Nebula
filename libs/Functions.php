@@ -175,6 +175,12 @@ trait Functions {
 	//Check for Nebula warnings
 	public function check_warnings(){
 		if ( (current_user_can('manage_options') || $this->is_dev()) && $this->get_option('admin_notices') && !is_customize_preview() ){
+			//Check object cache first
+			$nebula_warnings = wp_cache_get('nebula_warnings');
+			if ( !empty($nebula_warnings) ){
+				return $nebula_warnings;
+			}
+
 			$nebula_warnings = array();
 
 			//Admin warnings only
@@ -372,6 +378,20 @@ trait Functions {
 			$additional_nebula_warnings = apply_filters('nebula_warnings', array()); //Allow other functions to hook in to add warnings (like Ecommerce)
 			$all_nebula_warnings = array_merge($nebula_warnings, $additional_nebula_warnings);
 
+			//Sort by warning level
+			usort($all_nebula_warnings, function($itemA, $itemB){
+				$priorities = array('error', 'warn', 'log');
+				$a = array_search($itemA['level'], $priorities);
+				$b = array_search($itemB['level'], $priorities);
+
+				if ( $a == $b ){
+					return 0;
+				}
+
+				return ( $a < $b )? -1 : 1;
+			});
+
+			wp_cache_set('nebula_warnings', $all_nebula_warnings); //Store in object cache
 			return $all_nebula_warnings;
 		}
 

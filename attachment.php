@@ -13,6 +13,8 @@ do_action('nebula_preheaders');
 get_header(); ?>
 
 <section id="bigheadingcon">
+	<div class="custom-color-overlay"></div>
+
 	<div class="container title-desc-con">
 		<div class="row">
 			<div class="col">

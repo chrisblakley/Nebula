@@ -665,6 +665,7 @@ trait Customizer {
 		    'choices' => array(
 		        'left' => 'Left',
 		        'right' => 'Right',
+		        'off' => 'Off',
 		    )
 		));
 
@@ -887,8 +888,14 @@ trait Customizer {
 						.home #primarynav ul li.menu-item a:hover {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme') . '_alt']; ?>;}
 				<?php endif; ?>
 
-				<?php if ( (get_theme_mod('nebula_header_overlay_color') || get_theme_mod('nebula_header_overlay_opacity')) || (get_theme_mod('nebula_primary_color') && !nebula()->get_option('scss')) ): //If set primary without Sass enabled ?>
-					#bigheadingcon {background: <?php echo get_theme_mod('nebula_header_overlay_color', get_theme_mod('nebula_primary_color')); ?>; opacity: <?php echo get_theme_mod('nebula_header_overlay_opacity'); ?>;}
+				<?php if ( get_theme_mod('featured_image_location') === 'hero' ): ?>
+					#bigheadingcon {background: url(<?php echo nebula()->get_thumbnail_src(get_the_id()); ?>) no-repeat center center / cover;}
+				<?php elseif ( get_theme_mod('nebula_primary_color') && !nebula()->get_option('scss') ): ?>
+					#bigheadingcon {background: <?php echo get_theme_mod('nebula_header_overlay_color', get_theme_mod('nebula_primary_color')); ?>;}
+				<?php endif; ?>
+
+				<?php if ( get_theme_mod('nebula_header_overlay_color') || get_theme_mod('nebula_header_overlay_opacity') ): ?>
+					#bigheadingcon .custom-color-overlay {background: <?php echo get_theme_mod('nebula_header_overlay_color', get_theme_mod('nebula_primary_color')); ?>; opacity: <?php echo get_theme_mod('nebula_header_overlay_opacity'); ?>;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('nebula_hero_overlay_color') || get_theme_mod('nebula_hero_overlay_opacity') ): //This condition isn't entirely necessary as the selector is unique to the Customizer ?>
