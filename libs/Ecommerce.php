@@ -12,7 +12,7 @@ if ( !trait_exists('Ecommerce') ){
 			add_action('woocommerce_before_main_content', array($this, 'custom_woocommerce_start'), 10);
 			remove_action('woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10);
 			add_action('woocommerce_after_main_content', array($this, 'custom_woocommerce_end'), 10);
-			add_action('admin_notices', array($this, 'woocommerce_admin_notices'));
+			add_filter('nebula_warnings', array($this, 'woocommerce_admin_notices'));
 			add_action('nebula_ga_before_send_pageview', array($this, 'woo_custom_ga_dimensions'));
 			add_action('nebula_ga_after_send_pageview', array($this, 'woo_custom_ga_events'));
 			//add_action('init', array($this, 'remove_woo_breadcrumbs'));
@@ -36,20 +36,34 @@ if ( !trait_exists('Ecommerce') ){
 		}
 
 		//WooCommerce admin notifications
-		public function woocommerce_admin_notices(){
+		public function woocommerce_admin_notices($nebula_warnings){
 			//Check for problematic plugin WooCommerce Google Analytics Integration
 			if ( is_plugin_active('woocommerce-google-analytics-integration/woocommerce-google-analytics-integration.php') ){
-				echo '<div class="nebula-admin-notice error"><p>It is recommended to deactivate and remove the plugin WooCommerce Google Analytics Integration in favor of the plugin Enhanced Ecommerce Google Analytics Plugin for WooCommerce. <a href="plugins.php">Manage Plugins &raquo;</a></p></div>';
+				$nebula_warnings[] = array(
+					'level' => 'error',
+					'description' => 'It is recommended to deactivate and remove the plugin WooCommerce Google Analytics Integration in favor of the plugin Enhanced Ecommerce Google Analytics Plugin for WooCommerce. <a href="plugins.php">Manage Plugins &raquo;</a>'
+				);
 			} elseif ( file_exists(WP_PLUGIN_DIR . '/woocommerce-google-analytics-integration') ){
-				echo '<div class="nebula-admin-notice notice notice-info"><p>Notice: The plugin WooCommerce Google Analytics Integration is deactivated but should be removed entirely! <a href="plugins.php">Manage Plugins &raquo;</a></p></div>';
+				$nebula_warnings[] = array(
+					'level' => 'warn',
+					'description' => 'The plugin WooCommerce Google Analytics Integration is deactivated but should be removed entirely! <a href="plugins.php">Manage Plugins &raquo;</a>'
+				);
 			}
 
 			//Check for approved plugin Enhanced Ecommerce Google Analytics Plugin for WooCommerce
 			if ( !file_exists(WP_PLUGIN_DIR . '/enhanced-e-commerce-for-woocommerce-store') ){
-				echo '<div class="nebula-admin-notice notice notice-info"><p>WooCommerce is active, but the recommended plugin Enhanced Ecommerce Google Analytics Plugin for WooCommerce is not installed. <a href="themes.php?page=tgmpa-install-plugins">Install Recommended Plugins &raquo;</a></p></div>';
+				$nebula_warnings[] = array(
+					'level' => 'warn',
+					'description' => 'WooCommerce is active, but the recommended plugin Enhanced Ecommerce Google Analytics Plugin for WooCommerce is not installed. <a href="themes.php?page=tgmpa-install-plugins">Install Recommended Plugins &raquo;</a>'
+				);
 			} elseif ( !is_plugin_active('enhanced-e-commerce-for-woocommerce-store/woocommerce-enhanced-ecommerce-google-analytics-integration.php') ){
-				echo '<div class="nebula-admin-notice notice notice-info"><p>WooCommerce is active, but while the recommended plugin Enhanced Ecommerce Google Analytics Plugin for WooCommerce is installed, it is not activated. <a href="plugins.php">Manage Plugins &raquo;</a></p></div>';
+				$nebula_warnings[] = array(
+					'level' => 'warn',
+					'description' => 'WooCommerce is active, but while the recommended plugin Enhanced Ecommerce Google Analytics Plugin for WooCommerce is installed, it is not activated. <a href="plugins.php">Manage Plugins &raquo;</a>'
+				);
 			}
+
+			return $nebula_warnings;
 		}
 
 		//Set custom dimensions before the Google Analytics pageview is sent. DO NOT send any events in this function!

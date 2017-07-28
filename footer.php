@@ -26,8 +26,8 @@
 
 				<div class="container">
 					<?php if ( get_theme_mod('nebula_footer_logo') ): ?>
-						<div class="row footerlogocon">
-							<div class="col">
+						<div class="row justify-content-center footerlogocon">
+							<div class="col-3">
 								<a class="footerlogo" href="<?php echo home_url('/'); ?>">
 									<?php
 										$logo = get_theme_file_uri('/assets/img/logo.svg');

@@ -369,7 +369,10 @@ trait Functions {
 				}
 			}
 
-			return $nebula_warnings;
+			$additional_nebula_warnings = apply_filters('nebula_warnings', array()); //Allow other functions to hook in to add warnings (like Ecommerce)
+			$all_nebula_warnings = array_merge($nebula_warnings, $additional_nebula_warnings);
+
+			return $all_nebula_warnings;
 		}
 
 		return false;
