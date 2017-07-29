@@ -19,7 +19,6 @@
 //add_theme_support('post-formats', array('aside', 'chat', 'status', 'gallery', 'link', 'image', 'quote', 'video', 'audio'));
 
 //Google Analytics Experiments (Split Tests)
-//Documentation: http://gearside.com/nebula/documentation/custom-functionality/split-tests-using-google-analytics-experiments-with-nebula/
 //Add a new condition for each experiment group. There can be as many concurrent experiments as needed (just make sure there is no overlap!)
 add_action('nebula_head_open', 'nebula_ga_experiment_detection');
 function nebula_ga_experiment_detection(){

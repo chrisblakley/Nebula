@@ -16,14 +16,20 @@ get_header(); ?>
 <section id="bigheadingcon">
 	<div class="custom-color-overlay"></div>
 
-	<div class="container title-desc-con">
-		<div class="row">
-			<div class="col">
-				<h1 class="page-title">Not Found</h1>
-				<p>The page you requested could not be found.</p>
-			</div><!--/cols-->
-		</div><!--/row-->
-	</div><!--/container-->
+	<?php if ( get_theme_mod('menu_position', 'over') === 'over' ): ?>
+		<?php get_template_part('inc/navigation'); ?>
+	<?php endif; ?>
+
+	<?php if ( get_theme_mod('title_location', 'hero') === 'hero' ): ?>
+		<div class="container title-desc-con">
+			<div class="row">
+				<div class="col">
+					<h1 class="page-title">Not Found</h1>
+					<p>The page you requested could not be found.</p>
+				</div><!--/cols-->
+			</div><!--/row-->
+		</div><!--/container-->
+	<?php endif; ?>
 
 	<div id="breadcrumb-section" class="full inner dark">
 		<div class="container">
@@ -43,6 +49,11 @@ get_header(); ?>
 		<div class="row">
 			<div class="col-md" role="main">
 				<article id="post-0" class="post error404 not-found">
+					<?php if ( get_theme_mod('title_location') === 'content' ): ?>
+						<h1 class="page-title">Not Found</h1>
+						<p>The page you requested could not be found.</p>
+					<?php endif; ?>
+
 					<?php echo nebula()->search_form(); ?>
 
 					<?php if ( !empty($error_query) && $error_query->have_posts() ): //$error_query is defined in libs/Functions.php ?>

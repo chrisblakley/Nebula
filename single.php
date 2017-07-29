@@ -20,16 +20,22 @@ get_header(); ?>
 <section id="bigheadingcon">
 	<div class="custom-color-overlay"></div>
 
-	<div class="container title-desc-con">
-		<div class="row">
-			<div class="col">
-				<h1 class="entry-title"><?php the_title(); ?></h1>
-				<div class="entry-meta">
-					<?php nebula()->post_meta('on'); ?> <?php nebula()->post_meta('by', 0); ?> <?php nebula()->post_meta('cat'); ?> <?php nebula()->post_meta('tags'); ?>
-				</div>
-			</div><!--/cols-->
-		</div><!--/row-->
-	</div><!--/container-->
+	<?php if ( get_theme_mod('menu_position', 'over') === 'over' ): ?>
+		<?php get_template_part('inc/navigation'); ?>
+	<?php endif; ?>
+
+	<?php if ( get_theme_mod('title_location', 'hero') === 'hero' ): ?>
+		<div class="container title-desc-con">
+			<div class="row">
+				<div class="col">
+					<h1 class="entry-title"><?php the_title(); ?></h1>
+					<div class="entry-meta">
+						<?php nebula()->post_meta('on'); ?> <?php nebula()->post_meta('by', 0); ?> <?php nebula()->post_meta('cat'); ?> <?php nebula()->post_meta('tags'); ?>
+					</div>
+				</div><!--/cols-->
+			</div><!--/row-->
+		</div><!--/container-->
+	<?php endif; ?>
 
 	<div id="breadcrumb-section" class="full inner dark">
 		<div class="container">
@@ -52,6 +58,13 @@ get_header(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 						<?php if ( has_post_thumbnail() && get_theme_mod('featured_image_location') === 'content' ): ?>
 							<?php the_post_thumbnail(); ?>
+						<?php endif; ?>
+
+						<?php if ( get_theme_mod('title_location') === 'content' ): ?>
+							<h1 class="entry-title"><?php the_title(); ?></h1>
+							<div class="entry-meta">
+								<?php nebula()->post_meta('on'); ?> <?php nebula()->post_meta('by', 0); ?> <?php nebula()->post_meta('cat'); ?> <?php nebula()->post_meta('tags'); ?>
+							</div>
 						<?php endif; ?>
 
 						<div class="entry-social">

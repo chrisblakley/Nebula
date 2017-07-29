@@ -22,6 +22,10 @@ get_header(); ?>
 <section id="bigheadingcon">
 	<div class="custom-color-overlay"></div>
 
+	<?php if ( get_theme_mod('menu_position', 'over') === 'over' ): ?>
+		<?php get_template_part('inc/navigation'); ?>
+	<?php endif; ?>
+
 	<div class="container title-desc-con">
 		<div class="row">
 			<div class="col">

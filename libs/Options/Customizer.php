@@ -101,19 +101,20 @@ trait Customizer {
 		));
 
 		//Menu Position
-		$wp_customize->add_setting('menu_position', array('default' => 'absolute'));
+		$wp_customize->add_setting('menu_position', array('default' => 'over'));
 		$wp_customize->add_control('menu_position', array(
 		    'label' => 'Menu Position',
 		    'section' => 'site_features',
 		    'priority' => 10,
 		    'type' => 'select',
 		    'choices' => array(
-		        'absolute' => 'Over Header',
-		        'relative' => 'Normal',
+		        'over' => 'Over Header',
+		        'above' => 'Above (own row)',
 		    )
 		));
 
-		//Sticky Nav
+		//Sticky Nav //@TODO "Nebula" 0: Not sure how best to implement this
+/*
 		$wp_customize->add_setting('sticky_nav', array('default' => 0));
 		$wp_customize->add_control('sticky_nav', array(
 			'label' => 'Use Sticky Nav',
@@ -121,6 +122,7 @@ trait Customizer {
 			'priority' => 15,
 			'type' => 'checkbox',
 		));
+*/
 
 		//Offcanvas Menu
 		//@TODO "Nebula" 0: Ideally need to dequeue Mmenu and change the dependencies on main.js if the user unchecks this one
@@ -491,6 +493,20 @@ trait Customizer {
 			'section' => 'posts_header',
 			'priority' => 33,
 			//'active_callback' => 'is_singular',
+		));
+
+		//Title Location
+		$wp_customize->add_setting('title_location', array('default' => 'hero'));
+		$wp_customize->add_control('title_location', array(
+		    'label' => 'Title Location',
+		    'section' => 'posts_header',
+		    'priority' => 40,
+		    'type' => 'select',
+		    'choices' => array(
+		        'hero' => 'Hero',
+		        'content' => 'In Content',
+		    ),
+		    //'active_callback' => 'is_singular',
 		));
 
 		/*==========================

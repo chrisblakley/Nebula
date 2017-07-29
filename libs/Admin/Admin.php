@@ -30,6 +30,7 @@ if ( !trait_exists('Admin') ){
 				add_action('upgrader_process_complete', array($this, 'theme_update_automation'), 10, 2); //Action 'upgrader_post_install' also exists.
 				add_filter('auth_cookie_expiration', array($this, 'session_expire'));
 				remove_action('admin_enqueue_scripts', 'wp_auth_check_load'); //Disable the logged-in monitoring modal
+				add_filter('upload_mimes', array($this, 'additional_upload_mime_types'));
 
 				if ( $this->get_option('admin_notices') ){
 					add_action('admin_notices',  array($this, 'admin_notices'));
@@ -610,6 +611,12 @@ if ( !trait_exists('Admin') ){
 				</script>';
 			}
 			return $slug;
+		}
+
+		//Allow SVG files to be uploaded to the Media Library
+		public function additional_upload_mime_types($mime_types){
+			$mime_types['svg'] = 'image/svg+xml';
+			return $mime_types;
 		}
 
 		//Change default values for the upload media box

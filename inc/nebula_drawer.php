@@ -2,10 +2,10 @@
 	<div id="nebula-drawer" class="single-result-redirect">
 		<div class="container">
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col">
 					<a class="close" href="<?php echo get_the_permalink(); ?>">&times;</a>
 
-					<h5>Your search returned only one result. You have been automatically redirected.</h5>
+					<h6>Your search returned only one result. You have been automatically redirected.</h6>
 					<?php echo nebula()->search_form(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
@@ -16,8 +16,8 @@
 		<div class="container">
 			<div class="row">
 				<a class="close" href="<?php echo get_the_permalink(); ?>">&times;</a>
-				<div class="col-md-12">
-					<h5>Your search was invalid. Please try again.</h5>
+				<div class="col">
+					<h6>Your search was invalid. Please try again.</h6>
 					<?php echo nebula()->search_form(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
@@ -28,7 +28,9 @@
 	<div id="nebula-drawer" class="container-fluid suggestedpage" style="display: <?php echo ( !empty($error_404_exact_match) )? 'block' : 'none'; ?>">
 		<div class="container">
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col">
+					<a class="close" href="<?php echo get_the_permalink(); ?>">&times;</a>
+
 					<h3>Did you mean?</h3>
 
 					<?php if ( !empty($error_404_exact_match) ): ?>
@@ -36,8 +38,6 @@
 					<?php else: ?>
 						<p><a class="gcse-suggestion" href="#"></a></p>
 					<?php endif; ?>
-
-					<a class="close" href="<?php echo get_the_permalink(); ?>">&times;</a>
 				</div><!--/col-->
 			</div><!--/row-->
 		</div><!--/container-->

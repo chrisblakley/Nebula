@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.2.28.6463
+	Version: 5.2.29.8081
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -365,8 +365,9 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 }
 
 //Includes Utility and Primary navigation rows (which also includes the logo)
-#navigation-section {position: absolute; top: 0; left: 0; width: 100%;
-	.no-hero & {position: relative;}
+#navigation-section {position: relative;
+	&.mp-above {padding-bottom: 20px;}
+	&.mp-over {} //Default
 }
 
 //Top "eyebrow" navigation row that appears at desktop sizes.
@@ -434,35 +435,33 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 }
 
 //Row that contains event specific help: "Did you mean?", "Single result redirection", etc.
-#nebula-drawer {position: relative; @include background-color(#000, 0.05); z-index: 1000; padding-top: 25px; padding-bottom: 30px;
+#nebula-drawer {position: relative; @include background-color(#000, 0.05); z-index: 1000; padding-top: 30px; padding-bottom: 15px;
 	.close {position: absolute; top: 0; right: 0; z-index: 500;}
-	input {width: 200px;}
+	input {max-width: 200px;}
 }
 
 #suggestedpage {display: none;}
 
 //Homepage Hero
-#hero-section {position: relative; padding: 150px 0; margin: 0; overflow: hidden; background: url($template_directory + "/assets/img/phg/phg-nebula.jpg") no-repeat fixed center center /cover; text-align: center; @include prefix((transition: all 0.5s));
-	.home & {padding: 120px 0;
-		@include media("lg"){padding: 250px 0;};
+#hero-section {position: relative; padding: 0; margin: 0; overflow: hidden; background: url($template_directory + "/assets/img/phg/phg-nebula.jpg") no-repeat fixed center center /cover; text-align: center; @include prefix((transition: all 0.5s));
+	#hero-content {margin-top: 200px; margin-bottom: 200px;
+		h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: rem(48px); font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.3); @include prefix((transition: all 0.5s));
+			@include media("md"){font-size: rem(60px);};
+			@include media("lg"){font-size: rem(90px);};
+		}
+
+		h2 {position: relative; text-align: center; color: #fff; margin: 0 0 18px 0; padding: 0; font-size: rem(18px); font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));
+			@include media("md"){font-size: rem(24px);};
+			@include media("lg"){font-size: rem(32px);};
+		}
+
+		h3 {position: relative; text-align: center; color: #fff; margin: 0 0 18px 0; padding: 0; font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));}
+
+		img,
+		iframe {margin-top: 50px;}
+
+		.hero-cta {margin-top: 50px;}
 	}
-
-	h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: rem(48px); font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.3); @include prefix((transition: all 0.5s));
-		@include media("md"){font-size: rem(60px);};
-		@include media("lg"){font-size: rem(90px);};
-	}
-
-	h2 {position: relative; text-align: center; color: #fff; margin: 0 0 18px 0; padding: 0; font-size: rem(18px); font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));
-		@include media("md"){font-size: rem(24px);};
-		@include media("lg"){font-size: rem(32px);};
-	}
-
-	h3 {position: relative; text-align: center; color: #fff; margin: 0 0 18px 0; padding: 0; font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));}
-
-	img,
-	iframe {margin-top: 50px;}
-
-	.hero-cta {margin-top: 50px;}
 }
 
 .custom-color-overlay {position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;}
@@ -476,8 +475,8 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 	100% {@include prefix((filter: hue-rotate(-360deg)));}
 }
 
-#bigheadingcon {position: relative; padding-top: 120px; @include linear-gradient(to bottom, $primary_color, darken($primary_color, 5%));
-	.title-desc-con {margin-top: 65px; margin-bottom: 60px;
+#bigheadingcon {position: relative; @include linear-gradient(to bottom, $primary_color, darken($primary_color, 5%));
+	.title-desc-con {padding-top: 120px; padding-bottom: 60px;
 		h1, h2, h3, h4, h5, h6 {color: #fff;}
 
 		.page-title,

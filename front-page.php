@@ -20,7 +20,11 @@ get_header(); ?>
 			<div class="nebula-color-overlay"></div>
 		<?php endif; ?>
 
-		<div class="container">
+		<?php if ( get_theme_mod('menu_position', 'over') === 'over' ): ?>
+			<?php get_template_part('inc/navigation'); ?>
+		<?php endif; ?>
+
+		<div id="hero-content" class="container">
 			<div class="row">
 				<div class="col">
 					<?php if ( get_theme_mod('nebula_show_hero_title', true) ): ?>
