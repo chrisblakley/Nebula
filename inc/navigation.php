@@ -16,7 +16,7 @@
 	<div id="logonavcon">
 		<div class="container">
 			<div class="row align-items-center">
-				<div class="col-md-4">
+				<div class="col-lg-4">
 					<a class="logocon" href="<?php echo home_url('/'); ?>" title="<?php bloginfo('name'); ?>">
 						<?php
 							$logo = get_theme_file_uri('/assets/img/logo.svg');
@@ -32,7 +32,7 @@
 						<img class="svg" src="<?php echo $logo; ?>" alt="<?php bloginfo('name'); ?>"/>
 					</a>
 				</div><!--/col-->
-				<div class="col-md-8">
+				<div class="col-lg-8">
 					<?php if ( has_nav_menu('primary') ): ?>
 						<nav id="primarynav" class="clearfix">
 							<?php wp_nav_menu(array('theme_location' => 'primary', 'depth' => '2')); ?>

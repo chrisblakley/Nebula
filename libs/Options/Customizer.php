@@ -877,19 +877,19 @@ trait Customizer {
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('header_nav_scheme') ): //Subpage Header Nav Scheme ?>
-					#primarynav ul li.menu-item a,
-					#primarynav ul li.menu-item a:active,
-					#primarynav ul li.menu-item a:visited {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme')]; ?>;}
-						#primarynav ul li.menu-item a:hover,
-						#primarynav ul li.menu-item a:focus {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme') . '_alt']; ?>;}
+					#primarynav ul li.menu-item > a,
+					#primarynav ul li.menu-item > a:active,
+					#primarynav ul li.menu-item > a:visited {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme')]; ?>;}
+						#primarynav ul li.menu-item > a:hover,
+						#primarynav ul li.menu-item > a:focus {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme') . '_alt']; ?>;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('hero_nav_scheme') ): //Hero Nav Scheme ?>
-					.home #primarynav ul li.menu-item a,
-					.home #primarynav ul li.menu-item a:active,
-					.home #primarynav ul li.menu-item a:visited {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme')]; ?>;}
-						.home #primarynav ul li.menu-item a:hover,
-						.home #primarynav ul li.menu-item a:focus {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme') . '_alt']; ?>;}
+					.home #primarynav ul li.menu-item > a,
+					.home #primarynav ul li.menu-item > a:active,
+					.home #primarynav ul li.menu-item > a:visited {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme')]; ?>;}
+						.home #primarynav ul li.menu-item > a:hover,
+						.home #primarynav ul li.menu-item > a:focus {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme') . '_alt']; ?>;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('featured_image_location') === 'hero' ): ?>
@@ -923,11 +923,11 @@ trait Customizer {
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('fwa_nav_scheme') ): //Footer Widget Area Nav Scheme ?>
-					#footer-widget-section a,
-					#footer-widget-section a:active,
-					#footer-widget-section a:visited {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme')]; ?>;}
-						#footer-widget-section a:hover,
-						#footer-widget-section a:focus {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme') . '_alt']; ?>;}
+					#footer-widget-section > a,
+					#footer-widget-section > a:active,
+					#footer-widget-section > a:visited {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme')]; ?>;}
+						#footer-widget-section > a:hover,
+						#footer-widget-section > a:focus {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme') . '_alt']; ?>;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('nebula_footer_bg_image') && get_theme_mod('nebula_footer_overlay_opacity') != 1 ):?>
@@ -935,11 +935,11 @@ trait Customizer {
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('footer_nav_scheme') ): //Footer Nav Scheme ?>
-					#footer-section a,
-					#footer-section a:active,
-					#footer-section a:visited {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme')]; ?>;}
-						#footer-section a:hover,
-						#footer-section a:focus {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme') . '_alt']; ?>;}
+					#footer-section > a,
+					#footer-section > a:active,
+					#footer-section > a:visited {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme')]; ?>;}
+						#footer-section > a:hover,
+						#footer-section > a:focus {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme') . '_alt']; ?>;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ):  //This condition isn't entirely necessary as the selector is unique to the Customizer ?>
