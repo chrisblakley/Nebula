@@ -183,7 +183,6 @@ trait Customizer {
 			'section' => 'hero',
 			'priority' => 15,
 			'type' => 'checkbox',
-			'active_callback' => 'is_front_page', //Only show on Front Page
 		));
 
 		//Hero Navigation Scheme
@@ -207,7 +206,6 @@ trait Customizer {
 			'section' => 'hero',
 			'priority' => 29,
 			'type' => 'checkbox',
-			'active_callback' => 'is_front_page', //Only show on Front Page
 		));
 
 		//Hero BG Image
@@ -218,7 +216,6 @@ trait Customizer {
 			'section' => 'hero',
 			'settings' => 'nebula_hero_bg_image',
 			'priority' => 30,
-			'active_callback' => 'is_front_page',
 		)));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_bg_image', array(
 			'settings' => array('nebula_hero_bg_image'),
@@ -232,7 +229,6 @@ trait Customizer {
 			'label' => 'Hero BG Overlay Color',
 			'section' => 'hero',
 			'priority' => 32,
-			'active_callback' => 'is_front_page',
 		)));
 
 		//Hero Overlay Opacity
@@ -248,7 +244,6 @@ trait Customizer {
 			'description' => 'Enter a value between 0 (transparent) and 1 (opaque). Default: 0.6',
 			'section' => 'hero',
 			'priority' => 33,
-			'active_callback' => 'is_front_page',
 		));
 
 		//Hero Site Title
@@ -258,7 +253,6 @@ trait Customizer {
 			'section' => 'hero',
 			'priority' => 34,
 			'type' => 'checkbox',
-			'active_callback' => 'is_front_page',
 		));
 
 		//Custom Hero Title
@@ -268,7 +262,6 @@ trait Customizer {
 			'description' => 'Customize the H1 text instead of using the site title',
 			'section' => 'hero',
 			'priority' => 35,
-			'active_callback' => 'is_front_page',
 		));
 
 		//Hero Site Description
@@ -278,7 +271,6 @@ trait Customizer {
 			'section' => 'hero',
 			'priority' => 36,
 			'type' => 'checkbox',
-			'active_callback' => 'is_front_page',
 		));
 
 		//Hero Description Text
@@ -288,7 +280,6 @@ trait Customizer {
 			'description' => 'Customize the description text instead of using the site tagline',
 			'section' => 'hero',
 			'priority' => 37,
-			'active_callback' => 'is_front_page',
 		));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_custom_description', array(
 			'settings' => array('nebula_hero_custom_description'),
@@ -302,7 +293,6 @@ trait Customizer {
 			'label' => 'Hero Text Color',
 			'section' => 'hero',
 			'priority' => 38,
-			'active_callback' => 'is_front_page',
 		)));
 
 		//Hero Search
@@ -313,7 +303,6 @@ trait Customizer {
 			'section' => 'hero',
 			'priority' => 39,
 			'type' => 'checkbox',
-			'active_callback' => 'is_front_page',
 		));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_search', array(
 			'settings' => array('nebula_hero_search'),
@@ -328,7 +317,6 @@ trait Customizer {
 			'section' => 'hero',
 			'settings' => 'nebula_hero_fg_image',
 			'priority' => 42,
-			'active_callback' => 'is_front_page',
 		)));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_fg_image', array(
 			'settings' => array('nebula_hero_fg_image'),
@@ -342,7 +330,6 @@ trait Customizer {
 			'label' => 'Hero Foreground Image Link',
 			'section' => 'hero',
 			'priority' => 43,
-			'active_callback' => 'is_front_page',
 		));
 
 		//Hero Youtube
@@ -352,7 +339,6 @@ trait Customizer {
 			'description' => 'The ID of a Youtube video to embed in the hero section',
 			'section' => 'hero',
 			'priority' => 44,
-			'active_callback' => 'is_front_page',
 		));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_youtube_id', array(
 			'settings' => array('nebula_hero_youtube_id'),
@@ -367,7 +353,6 @@ trait Customizer {
 			'label' => 'Hero CTA Button 1 Text',
 			'section' => 'hero',
 			'priority' => 50,
-			'active_callback' => 'is_front_page',
 		));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_cta_btn_1_text', array(
 			'settings' => array('nebula_hero_cta_btn_1_text'),
@@ -382,7 +367,6 @@ trait Customizer {
 			'label' => 'Hero CTA Button 1 URL',
 			'section' => 'hero',
 			'priority' => 51,
-			'active_callback' => 'is_front_page',
 		));
 
 		//CTA Button 2 Text
@@ -392,7 +376,6 @@ trait Customizer {
 			'label' => 'Hero CTA Button 2 Text',
 			'section' => 'hero',
 			'priority' => 52,
-			'active_callback' => 'is_front_page',
 		));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_cta_btn_2_text', array(
 			'settings' => array('nebula_hero_cta_btn_2_text'),
@@ -407,7 +390,6 @@ trait Customizer {
 			'label' => 'Hero CTA Button 2 URL',
 			'section' => 'hero',
 			'priority' => 53,
-			'active_callback' => 'is_front_page',
 		));
 
 
@@ -895,13 +877,19 @@ trait Customizer {
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('header_nav_scheme') ): //Subpage Header Nav Scheme ?>
-					#primarynav ul li.menu-item a {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme')]; ?>;}
-						#primarynav ul li.menu-item a:hover {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme') . '_alt']; ?>;}
+					#primarynav ul li.menu-item a,
+					#primarynav ul li.menu-item a:active,
+					#primarynav ul li.menu-item a:visited {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme')]; ?>;}
+						#primarynav ul li.menu-item a:hover,
+						#primarynav ul li.menu-item a:focus {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme') . '_alt']; ?>;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('hero_nav_scheme') ): //Hero Nav Scheme ?>
-					.home #primarynav ul li.menu-item a {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme')]; ?>;}
-						.home #primarynav ul li.menu-item a:hover {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme') . '_alt']; ?>;}
+					.home #primarynav ul li.menu-item a,
+					.home #primarynav ul li.menu-item a:active,
+					.home #primarynav ul li.menu-item a:visited {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme')]; ?>;}
+						.home #primarynav ul li.menu-item a:hover,
+						.home #primarynav ul li.menu-item a:focus {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme') . '_alt']; ?>;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('featured_image_location') === 'hero' ): ?>
@@ -935,8 +923,11 @@ trait Customizer {
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('fwa_nav_scheme') ): //Footer Widget Area Nav Scheme ?>
-					#footer-widget-section a {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme')]; ?>;}
-						#footer-widget-section a:hover {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme') . '_alt']; ?>;}
+					#footer-widget-section a,
+					#footer-widget-section a:active,
+					#footer-widget-section a:visited {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme')]; ?>;}
+						#footer-widget-section a:hover,
+						#footer-widget-section a:focus {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme') . '_alt']; ?>;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('nebula_footer_bg_image') && get_theme_mod('nebula_footer_overlay_opacity') != 1 ):?>
@@ -944,8 +935,11 @@ trait Customizer {
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('footer_nav_scheme') ): //Footer Nav Scheme ?>
-					#footer-section a {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme')]; ?>;}
-						#footer-section a:hover {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme') . '_alt']; ?>;}
+					#footer-section a,
+					#footer-section a:active,
+					#footer-section a:visited {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme')]; ?>;}
+						#footer-section a:hover,
+						#footer-section a:focus {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme') . '_alt']; ?>;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ):  //This condition isn't entirely necessary as the selector is unique to the Customizer ?>
