@@ -66,7 +66,7 @@ if ( !trait_exists('Utilities') ){
 				$notable_ip_lines = explode("\n", $this->get_option('notableiplist'));
 				foreach ( $notable_ip_lines as $line ){
 					$ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
-					if ( ($ip_info[0][0] === '/' && preg_match($ip_info[0], $ip)) || $ip_info[0] == $ip ){ //If regex pattern and matches IP, or if direct match
+					if ( ($ip_info[0][0] === '/' && preg_match($ip_info[0], $ip)) || $ip_info[0] === $ip ){ //If regex pattern and matches IP, or if direct match
 						return str_replace(array("\r\n", "\r", "\n"), '', $ip_info[1]);
 						break;
 					}
@@ -109,7 +109,7 @@ if ( !trait_exists('Utilities') ){
 					foreach ( $devIPs as $devIP ){
 						$devIP = trim($devIP);
 
-						if ( !empty($devIP) && $devIP[0] != '/' && $devIP == $_SERVER['REMOTE_ADDR'] ){
+						if ( !empty($devIP) && $devIP[0] !== '/' && $devIP === $_SERVER['REMOTE_ADDR'] ){
 							return true;
 						}
 
@@ -128,7 +128,7 @@ if ( !trait_exists('Utilities') ){
 
 					$devEmails = explode(',', $this->get_option('dev_email_domain'));
 					foreach ( $devEmails as $devEmail ){
-						if ( trim($devEmail) == $current_user_domain ){
+						if ( trim($devEmail) === $current_user_domain ){
 							return true;
 						}
 					}
@@ -151,7 +151,7 @@ if ( !trait_exists('Utilities') ){
 					foreach ( $clientIPs as $clientIP ){
 						$clientIP = trim($clientIP);
 
-						if ( !empty($clientIP) && $clientIP[0] != '/' && $clientIP == $_SERVER['REMOTE_ADDR'] ){
+						if ( !empty($clientIP) && $clientIP[0] !== '/' && $clientIP === $_SERVER['REMOTE_ADDR'] ){
 							return true;
 						}
 
@@ -170,7 +170,7 @@ if ( !trait_exists('Utilities') ){
 					//Check if the current user's email domain matches any of the client email domains from Nebula Options
 					$clientEmails = explode(',', $this->get_option('client_email_domain'));
 					foreach ( $clientEmails as $clientEmail ){
-						if ( trim($clientEmail) == $current_user_domain ){
+						if ( trim($clientEmail) === $current_user_domain ){
 							return true;
 						}
 					}
@@ -227,7 +227,7 @@ if ( !trait_exists('Utilities') ){
 
 		//If the request was made via AJAX
 		public function is_ajax_request(){
-			if ( !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' ){
+			if ( !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' ){
 				return true;
 			}
 
@@ -388,7 +388,7 @@ if ( !trait_exists('Utilities') ){
 						return false;
 					}
 
-					if ( $host[0] == 'www' ){
+					if ( $host[0] === 'www' ){
 						return 'www';
 					} else {
 						return false;
@@ -401,7 +401,7 @@ if ( !trait_exists('Utilities') ){
 						return false;
 					}
 
-					if ( $host[0] != 'www' && $host[0] != $sld ){
+					if ( $host[0] !== 'www' && $host[0] !== $sld ){
 						return $host[0];
 					} else {
 						return false;
@@ -571,9 +571,9 @@ if ( !trait_exists('Utilities') ){
 				$newString = strip_tags($string, '<p><span><a>');
 			} else {
 				$newString = preg_replace('/\s+?(\S+)?$/', '', substr(strip_tags($string, '<p><span><a>'), 0, ($charlimit + 1)));
-				if ( $continue == 1 ){
+				if ( $continue === 1 ){
 					$newString = $newString . '&hellip;' . ' <a class="continuereading" href="'. get_permalink() . '">Continue reading <span class="meta-nav">&rarr;</span></a>';
-				} elseif( $continue == 2 ){
+				} elseif( $continue === 2 ){
 					$newString = $newString . '&hellip;' . ' <a class="continuereading" href="'. get_permalink() . '">Learn more &raquo;</a>';
 				} else {
 					$newString = $newString . '&hellip;';
@@ -598,7 +598,7 @@ if ( !trait_exists('Utilities') ){
 						if ( stripos($item, $needle) !== false ){
 							return true;
 						}
-					} elseif ( $item == $needle ){ //Otherwise check if the item matches the needle (regardless of type)
+					} elseif ( $item === $needle ){ //Otherwise check if the item matches the needle (regardless of type)
 						return true;
 					}
 				}
@@ -662,7 +662,7 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			//If the timestamp is greater than May 18, 2033 (This function only supports up to this date to avoid conflicts with phone numbers. We'll have to figure out a new solution then.)
-			if ( strlen($timestamp) == 10 && substr($timestamp, 0, 1) > 1 ){
+			if ( strlen($timestamp) === 10 && substr($timestamp, 0, 1) > 1 ){
 				return false;
 			}
 
@@ -748,7 +748,7 @@ if ( !trait_exists('Utilities') ){
 			if ( strpos($hex, '#') !== false ){
 				preg_match("/#(?:[0-9a-fA-F]{3,6})/i", $hex, $hex_colors);
 
-				if ( strlen($hex_colors[0]) == 4 ){
+				if ( strlen($hex_colors[0]) === 4 ){
 					$values = str_split($hex_colors[0]);
 					$full_hex = '#' . $values[1] . $values[1] . $values[2] . $values[2] . $values[3] . $values[3];
 				} else {
@@ -778,8 +778,9 @@ if ( !trait_exists('Utilities') ){
 			switch ( $c ){
 				case "=":
 				case "==":
+				case "===":
 				case "e":
-					return $a == $b;
+					return $a === $b;
 				case ">=":
 				case "=>":
 				case "gte":

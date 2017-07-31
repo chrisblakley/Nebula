@@ -136,7 +136,7 @@ if ( !trait_exists('Device') ){
 				if ( strpos(strtolower($actual_os['name']), strtolower($os)) !== false ){
 					if ( !empty($version) ){
 						if ( $this->compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //If major version matches
-							if ( $version_parts[1] && $version_parts[1] != 0 ){ //If minor version exists and is not 0
+							if ( $version_parts[1] && $version_parts[1] !== 0 ){ //If minor version exists and is not 0
 								if ( $this->compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //If minor version matches
 									return true;
 								} else {
@@ -218,14 +218,18 @@ if ( !trait_exists('Device') ){
 		}
 
 		//Check for the Tor browser
+		//Nebula only calls this function if Device Detection option is enabled, but it can still be called manually.
 		public function is_tor_browser(){
+			$override = apply_filters('pre_is_tor_browser', null);
+			if ( isset($override) ){return;}
+
 			//Check session and cookies first
-			if ( (isset($GLOBALS['tor']) && $GLOBALS['tor'] === true) || (isset($_SESSION['tor']) && $_SESSION['tor'] == true) || (isset($_COOKIE['tor']) && $_COOKIE['tor'] == 'true') ){
+			if ( (isset($GLOBALS['tor']) && $GLOBALS['tor'] === true) || (isset($_SESSION['tor']) && $_SESSION['tor'] === true) || (isset($_COOKIE['tor']) && $_COOKIE['tor'] == 'true') ){
 				$GLOBALS['tor'] = true;
 				return true;
 			}
 
-			if ( (isset($GLOBALS['tor']) && $GLOBALS['tor'] === false) && (isset($_SESSION['tor']) && $_SESSION['tor'] == false) ){
+			if ( (isset($GLOBALS['tor']) && $GLOBALS['tor'] === false) && (isset($_SESSION['tor']) && $_SESSION['tor'] === false) ){
 				$GLOBALS['tor'] = false;
 				return false;
 			}
@@ -245,7 +249,7 @@ if ( !trait_exists('Device') ){
 				if ( !empty($tor_list) ){
 					foreach( explode("\n", $tor_list) as $line ){
 						if ( !empty($line) && strpos($line, '#') === false ){
-							if ( $line == $_SERVER['REMOTE_ADDR'] ){
+							if ( $line === $_SERVER['REMOTE_ADDR'] ){
 								$this->set_global_session_cookie('tor', true);
 								return true;
 							}
@@ -255,12 +259,12 @@ if ( !trait_exists('Device') ){
 			}
 
 			//Check individual exit point
-			//Note: This would make a remote request to every new user. Commented out for optimization.
+			//Note: This would make a remote request to every new user. Commented out for optimization. Use the override filter to enable in a child theme.
 			/*
 			if ( $this->is_available('http://torproject.org') ){
 				$remote_ip_octets = explode(".", $_SERVER['REMOTE_ADDR']);
 				$server_ip_octets = explode(".", $_SERVER['SERVER_ADDR']);
-				if ( gethostbyname($remote_ip_octets[3] . "." . $remote_ip_octets[2] . "." . $remote_ip_octets[1] . "." . $remote_ip_octets[0] . "." . $_SERVER['SERVER_PORT'] . "." . $remote_ip_octets[3] . "." . $remote_ip_octets[2] . "." . $remote_ip_octets[1] . "." . $remote_ip_octets[0] . ".ip-port.exitlist.torproject.org") == "127.0.0.2" ){
+				if ( gethostbyname($remote_ip_octets[3] . "." . $remote_ip_octets[2] . "." . $remote_ip_octets[1] . "." . $remote_ip_octets[0] . "." . $_SERVER['SERVER_PORT'] . "." . $remote_ip_octets[3] . "." . $remote_ip_octets[2] . "." . $remote_ip_octets[1] . "." . $remote_ip_octets[0] . ".ip-port.exitlist.torproject.org") === "127.0.0.2" ){
 			        $this->set_global_session_cookie('tor', true);
 					return true;
 			    }

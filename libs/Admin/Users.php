@@ -127,7 +127,7 @@ if ( !trait_exists('Users') ){
 
 			$logged_in_users = $this->get_data('users_status');
 			if ( empty($logged_in_users) || !is_array($logged_in_users) ){
-				return ( strtolower($return) == 'count' )? 0 : false; //If this happens it indicates an error.
+				return ( strtolower($return) === 'count' )? 0 : false; //If this happens it indicates an error.
 			}
 
 			$user_online_count = 0;
@@ -139,7 +139,7 @@ if ( !trait_exists('Users') ){
 				}
 			}
 
-			return ( strtolower($return) == 'count' )? $user_online_count : $online_users;
+			return ( strtolower($return) === 'count' )? $user_online_count : $online_users;
 		}
 
 		//Check how many locations a single user is logged in from.
@@ -181,7 +181,7 @@ if ( !trait_exists('Users') ){
 		}
 
 		public function q_replace_thickbox_button_text($translated_text, $text, $domain){
-			if ( $text == 'Insert into Post' ){
+			if ( $text === 'Insert into Post' ){
 				if ( strpos(wp_get_referer(), 'profile') != '' ){
 					return 'Choose this photo.';
 				}

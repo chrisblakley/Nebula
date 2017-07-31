@@ -64,7 +64,7 @@ if ( !trait_exists('Security') ){
 			$override = apply_filters('pre_nebula_hijack_pingback_url', null, $output, $property);
 			if ( isset($override) ){return;}
 
-			return ( $property == 'pingback_url' )? null : $output;
+			return ( $property === 'pingback_url' )? null : $output;
 		}
 
 		//Disable XMLRPC
@@ -130,13 +130,13 @@ if ( !trait_exists('Security') ){
 			if ( isset($override) ){return;}
 
 			//Ignore users who have already been checked, or are logged in.
-			if ( (isset($_SESSION['blacklisted']) && $_SESSION['blacklisted'] == false) || is_user_logged_in() ){
+			if ( (isset($_SESSION['blacklisted']) && $_SESSION['blacklisted'] === false) || is_user_logged_in() ){
 				return false;
 			}
 
 			//Google Page Speed
 			if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Google Page Speed') !== false ){
-				if ( $this->url_components('extension') != 'js' ){
+				if ( $this->url_components('extension') !== 'js' ){
 					global $post;
 					$this->ga_send_event('Notable Bot Visit', 'Google Page Speed', get_the_title($post->ID), null, 0);
 				}
@@ -152,7 +152,7 @@ if ( !trait_exists('Security') ){
 		//Check referrer for known spambots and blacklisted domains
 		public function domain_prevention(){
 			//Skip lookups if user has already been checked or for logged in users.
-			if ( (isset($_SESSION['blacklisted']) && $_SESSION['blacklisted'] == false) || is_user_logged_in() ){
+			if ( (isset($_SESSION['blacklisted']) && $_SESSION['blacklisted'] === false) || is_user_logged_in() ){
 				return false;
 			}
 

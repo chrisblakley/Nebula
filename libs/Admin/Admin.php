@@ -542,11 +542,11 @@ if ( !trait_exists('Admin') ){
 			//If there are warnings display them
 			if ( !empty($warnings) ){
 				foreach( $warnings as $warning ){
-					if ( $warning['level'] == 'warn' ){
+					if ( $warning['level'] === 'warn' ){
 						$warning['level'] = 'warning';
 					}
 
-					if ( $warning['level'] == 'log' ){
+					if ( $warning['level'] === 'log' ){
 						$warning['level'] = 'info';
 					}
 
@@ -802,9 +802,9 @@ if ( !trait_exists('Admin') ){
 			$meta_value = get_post_meta($post_id, 'nebula_internal_search_keywords', true); //Get the meta value of the custom field key.
 			if ( $new_meta_value && empty($meta_value) ){ //If a new meta value was added and there was no previous value, add it.
 				add_post_meta($post_id, 'nebula_internal_search_keywords', $new_meta_value, true);
-			} elseif ( $new_meta_value && $meta_value != $new_meta_value ){ //If the new meta value does not match the old value, update it.
+			} elseif ( $new_meta_value && $meta_value !== $new_meta_value ){ //If the new meta value does not match the old value, update it.
 				update_post_meta($post_id, 'nebula_internal_search_keywords', $new_meta_value);
-			} elseif ( $new_meta_value == '' && $meta_value ){ //If there is no new meta value but an old value exists, delete it.
+			} elseif ( $new_meta_value === '' && $meta_value ){ //If there is no new meta value but an old value exists, delete it.
 				delete_post_meta($post_id, 'nebula_internal_search_keywords', $meta_value);
 			}
 		}

@@ -29,7 +29,7 @@ get_header(); ?>
 	<div class="container title-desc-con">
 		<div class="row">
 			<div class="col">
-				<h1 class="page-title articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h1>
+				<h1 class="page-title articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') !== '' )? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h1>
 			</div><!--/cols-->
 		</div><!--/row-->
 	</div><!--/container-->
@@ -151,11 +151,8 @@ get_header(); ?>
 					get_template_part('loop', 'author');
 				?>
 			</div><!--/col-->
-			<?php if ( get_theme_mod('sidebar_position') !== 'off' ): ?>
-				<div class="col-md-3 <?php echo ( get_theme_mod('sidebar_position') === 'left' )? 'flex-first' : 'offset-md-1'; ?>" role="complementary">
-					<?php get_sidebar(); ?>
-				</div><!--/col-->
-			<?php endif; ?>
+
+			<?php get_sidebar(); ?>
 		</div><!--/row-->
 	</div><!--/container-->
 </div><!--/content-section-->

@@ -33,7 +33,7 @@ if ( !trait_exists('Prototyping') ){
 		}
 
 		public function enqueue_nebula_wireframing(){
-			if ( $this->dev_phase() == 'wireframe' ){
+			if ( $this->dev_phase() === 'wireframe' ){
 				wp_register_style('nebula-wireframing', get_template_directory_uri() . '/stylesheets/css/wireframing.css', array('nebula-main'), null);
 				$this->register_script('nebula-wireframing', get_template_directory_uri() . '/js/wireframing.js', 'defer', array('nebula-main'), null, true);
 
@@ -46,9 +46,9 @@ if ( !trait_exists('Prototyping') ){
 		public function wireframing_body_classes($classes){
 			$classes[] = 'nebula-wireframing';
 
-			if ( $this->dev_phase() == 'wireframe' ){
+			if ( $this->dev_phase() === 'wireframe' ){
 				$classes[] = 'nebula-wireframing-wireframe';
-			} elseif ( $this->dev_phase() == 'staging' ){
+			} elseif ( $this->dev_phase() === 'staging' ){
 				$classes[] = 'nebula-wireframing-staging';
 			} else {
 				$classes[] = 'nebula-wireframing-production';
@@ -59,9 +59,9 @@ if ( !trait_exists('Prototyping') ){
 
 		//Add a link to Nebula Wireframing on the Admin Bar
 		public function admin_bar_nebula_wireframing($wp_admin_bar){
-			if ( $this->dev_phase() == 'wireframe' ){
+			if ( $this->dev_phase() === 'wireframe' ){
 				$wireframe_menu_title = ( !$this->is_admin_page() )? ' (Wireframe)' : '';
-			} elseif ( $this->dev_phase() == 'staging' ){
+			} elseif ( $this->dev_phase() === 'staging' ){
 				$wireframe_menu_title = ( !$this->is_admin_page() )? ' (Staging)' : '';
 			} else {
 				$wireframe_menu_title = ( !$this->is_admin_page() )? ' (Production)' : '';
@@ -76,7 +76,7 @@ if ( !trait_exists('Prototyping') ){
 			if ( $this->dev_phase() ){
 				$permalink = ( $this->is_admin_page() )? home_url() : get_permalink();
 
-				if ( $this->dev_phase() != 'wireframe' && $this->get_option('wireframe_theme') ){
+				if ( $this->dev_phase() !== 'wireframe' && $this->get_option('wireframe_theme') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-prototype',
 						'id' => 'nebula-wireframe-activate',
@@ -85,7 +85,7 @@ if ( !trait_exists('Prototyping') ){
 					));
 				}
 
-				if ( $this->dev_phase() != 'staging' && $this->get_option('staging_theme') ){
+				if ( $this->dev_phase() !== 'staging' && $this->get_option('staging_theme') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-prototype',
 						'id' => 'nebula-staging-activate',
@@ -94,7 +94,7 @@ if ( !trait_exists('Prototyping') ){
 					));
 				}
 
-				if ( ($this->dev_phase() != 'production' || $this->is_admin_page()) ){
+				if ( ($this->dev_phase() !== 'production' || $this->is_admin_page()) ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-prototype',
 						'id' => 'nebula-production-activate',
@@ -121,11 +121,11 @@ if ( !trait_exists('Prototyping') ){
 				return false;
 			}
 
-			if ( isset($_GET['phase']) && $_GET['phase'] == 'wireframe' ){
+			if ( isset($_GET['phase']) && $_GET['phase'] === 'wireframe' ){
 				return 'wireframe';
 			}
 
-			if ( isset($_GET['phase']) && $_GET['phase'] == 'staging' ){
+			if ( isset($_GET['phase']) && $_GET['phase'] === 'staging' ){
 				return 'staging';
 			}
 
@@ -138,9 +138,9 @@ if ( !trait_exists('Prototyping') ){
 				return false;
 			}
 
-			if ( 1==2 ){ //@TODO "Nebula" 0: If there are more than one comments
+			if ( 1 === 2 ){ //@TODO "Nebula" 0: If there are more than one comments
 				$comment_icon = 'fa-comments';
-			} elseif ( 1==2 ){ //@TODO "Nebula" 0: If there is only one comment
+			} elseif ( 1 === 2 ){ //@TODO "Nebula" 0: If there is only one comment
 				$comment_icon = 'fa-comment';
 			} else {
 				$comment_icon = 'fa-comment-o';
@@ -190,7 +190,7 @@ if ( !trait_exists('Prototyping') ){
 				$text_rgb = '0';
 			}
 
-			if ( $bg == 'placeholder' ){
+			if ( $bg === 'placeholder' ){
 				$bg = '';
 				$placeholder = '<svg x="0px" y="0px" width="100%" height="100%" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 1px solid #aaa; z-index: 1;">
 			<line fill="none" stroke="#aaa" stroke-miterlimit="10" x1="0" y1="0" x2="100%" y2="100%"/>
@@ -201,7 +201,7 @@ if ( !trait_exists('Prototyping') ){
 			}
 
 			$icon_html = '';
-			if ( $icon != '' ){
+			if ( $icon !== '' ){
 				if ( strpos($icon, 'fa-') === false ){
 					$icon = 'fa-' . $icon;
 				}
@@ -226,7 +226,7 @@ if ( !trait_exists('Prototyping') ){
 			}
 
 			$imgsrc = '';
-			if ( $type == 'unsplash' || $type == 'photo' ){
+			if ( $type === 'unsplash' || $type === 'photo' ){
 				$imgsrc = unsplash_it(800, 600, 1);
 			} elseif ( strpos($type, '#') !== false ){
 				$color = $type;
@@ -247,9 +247,9 @@ if ( !trait_exists('Prototyping') ){
 				return false;
 			}
 
-			if ( $width == 'bg' || $width == 'background' ){
-				$height = ( $height == '200px' )? 'none' : $height; //$height is type in this case
-				$type = ( $type == 'none' )? '#000' : $type; //$type is color in this case.
+			if ( $width === 'bg' || $width === 'background' ){
+				$height = ( $height === '200px' )? 'none' : $height; //$height is type in this case
+				$type = ( $type === 'none' )? '#000' : $type; //$type is color in this case.
 				return fpo_bg_image($height, $type);
 			}
 
@@ -262,7 +262,7 @@ if ( !trait_exists('Prototyping') ){
 			}
 
 			$imgsrc = '';
-			if ( $type == 'unsplash' || $type == 'photo' || $width == 'unsplash' || $width == 'photo' ){
+			if ( $type === 'unsplash' || $type === 'photo' || $width === 'unsplash' || $width === 'photo' ){
 				$imgsrc = unsplash_it(800, 600, 1);
 			} elseif ( strpos($type, '#') !== false ){
 				$color = $type;

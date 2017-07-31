@@ -19,7 +19,7 @@ if ( !trait_exists('Automation') ){
 
 			add_action('after_switch_theme', array($this, 'activation_notice'));
 
-			if ( isset($_GET['nebula-initialization']) && $pagenow == 'themes.php' ){ //Or if initializing the theme without AJAX
+			if ( isset($_GET['nebula-initialization']) && $pagenow === 'themes.php' ){ //Or if initializing the theme without AJAX
 				add_action('admin_notices', array($this, 'activation'));
 			}
 
@@ -32,107 +32,107 @@ if ( !trait_exists('Automation') ){
 		public function register_required_plugins(){
 			$plugins = array(
 				array(
-					'name'	  => 'Custom Post Type UI',
-					'slug'	  => 'custom-post-type-ui',
+					'name' => 'Custom Post Type UI',
+					'slug' => 'custom-post-type-ui',
+					'required' => false,
+				),
+				array(
+					'name' => 'Contact Form 7',
+					'slug' => 'contact-form-7',
+					'required' => true,
+				),
+				array(
+					'name' => 'Save Contact Form 7',
+					'slug' => 'save-contact-form-7',
+					'required' => true,
+				),
+				array(
+					'name' => 'Advanced Custom Fields',
+					'slug' => 'advanced-custom-fields',
+					'required' => false,
+				),
+				array(
+					'name' => 'EWWW Image Optimizer',
+					'slug' => 'ewww-image-optimizer',
+					'required' => false,
+				),
+				array(
+					'name' => 'Regenerate Thumbnails',
+					'slug' => 'regenerate-thumbnails',
+					'required' => false,
+				),
+				array(
+					'name' => 'W3 Total Cache', //@TODO "Nebula" 0: Find a new caching plugin
+					'slug' => 'w3-total-cache',
+					'required' => false,
+				),
+				array(
+					'name' => 'WP-PageNavi',
+					'slug' => 'wp-pagenavi',
+					'required' => true,
+				),
+				array(
+					'name' => 'Multiple Themes',
+					'slug' => 'jonradio-multiple-themes',
+					'required' => false,
+				),
+				array(
+					'name' => 'TinyMCE Advanced',
+					'slug' => 'tinymce-advanced',
 					'required'  => false,
 				),
 				array(
-					'name'	  => 'Contact Form 7',
-					'slug'	  => 'contact-form-7',
-					'required'  => true,
+					'name' => 'WP Mail SMTP',
+					'slug' => 'wp-mail-smtp',
+					'required' => false,
 				),
 				array(
-					'name'	  => 'Save Contact Form 7',
-					'slug'	  => 'save-contact-form-7',
-					'required'  => true,
+					'name' => 'WooCommerce',
+					'slug' => 'woocommerce',
+					'required' => false,
 				),
 				array(
-					'name'	  => 'Advanced Custom Fields',
-					'slug'	  => 'advanced-custom-fields',
-					'required'  => false,
+					'name' => 'Wordpress SEO by Yoast',
+					'slug' => 'wordpress-seo',
+					'required' => true,
 				),
 				array(
-					'name'	  => 'EWWW Image Optimizer',
-					'slug'	  => 'ewww-image-optimizer',
-					'required'  => false,
+					'name' => 'Relevanssi',
+					'slug' => 'relevanssi',
+					'required' => true,
 				),
 				array(
-					'name'	  => 'Regenerate Thumbnails',
-					'slug'	  => 'regenerate-thumbnails',
-					'required'  => false,
+					'name' => 'Transients Manager',
+					'slug' => 'transients-manager',
+					'required' => false,
 				),
 				array(
-					'name'	  => 'W3 Total Cache', //@TODO "Nebula" 0: Find a new caching plugin
-					'slug'	  => 'w3-total-cache',
-					'required'  => false,
+					'name' => 'UpdraftPlus Backup and Restoration',
+					'slug' => 'updraftplus',
+					'required' => false,
 				),
 				array(
-					'name'	  => 'WP-PageNavi',
-					'slug'	  => 'wp-pagenavi',
-					'required'  => true,
+					'name' => 'Wordfence Security',
+					'slug' => 'wordfence',
+					'required' => false,
 				),
 				array(
-					'name'	  => 'Multiple Themes',
-					'slug'	  => 'jonradio-multiple-themes',
-					'required'  => false,
+					'name' => 'Query Monitor',
+					'slug' => 'query-monitor',
+					'required' => false,
 				),
 				array(
-					'name'	  => 'TinyMCE Advanced',
-					'slug'	  => 'tinymce-advanced',
-					'required'  => false,
-				),
-				array(
-					'name'	  => 'WP Mail SMTP',
-					'slug'	  => 'wp-mail-smtp',
-					'required'  => false,
-				),
-				array(
-					'name'	  => 'WooCommerce',
-					'slug'	  => 'woocommerce',
-					'required'  => false,
-				),
-				array(
-					'name'	  => 'Wordpress SEO by Yoast',
-					'slug'	  => 'wordpress-seo',
-					'required'  => true,
-				),
-				array(
-					'name'	  => 'Relevanssi',
-					'slug'	  => 'relevanssi',
-					'required'  => true,
-				),
-				array(
-					'name'	  => 'Transients Manager',
-					'slug'	  => 'transients-manager',
-					'required'  => false,
-				),
-				array(
-					'name'	  => 'UpdraftPlus Backup and Restoration',
-					'slug'	  => 'updraftplus',
-					'required'  => false,
-				),
-				array(
-					'name'	  => 'Wordfence Security',
-					'slug'	  => 'wordfence',
-					'required'  => false,
-				),
-				array(
-					'name'	  => 'Query Monitor',
-					'slug'	  => 'query-monitor',
-					'required'  => false,
-				),
-				array(
-					'name'	  => '404 to 301',
-					'slug'	  => '404-to-301',
-					'required'  => false,
+					'name' => '404 to 301',
+					'slug' => '404-to-301',
+					'required' => false,
 				),
 			);
 
 			if ( file_exists(WP_PLUGIN_DIR . '/woocommerce') ){
 				array_push($plugins, array(
-					'name'	  => 'Enhanced Ecommerce Google Analytics Plugin for WooCommerce',
-					'slug'	  => 'enhanced-e-commerce-for-woocommerce-store',
-					'required'  => true
+					'name' => 'Enhanced Ecommerce Google Analytics Plugin for WooCommerce',
+					'slug' => 'enhanced-e-commerce-for-woocommerce-store',
+					'required' => true
 				));
 			}
 
@@ -281,7 +281,7 @@ if ( !trait_exists('Automation') ){
 
 			//Carbon copy the admin if reset was done by another user.
 			$admin_user_email = $this->get_option('notification_email', $this->get_option('admin_email'));
-			if ( $admin_user_email != $current_user->user_email ){
+			if ( $admin_user_email !== $current_user->user_email ){
 				$headers[] = 'Cc: ' . $admin_user_email;
 			}
 
@@ -330,7 +330,7 @@ if ( !trait_exists('Automation') ){
 		public function initialization_create_homepage(){
 			$current_front_page = get_option('page_on_front');
 			$sample_page = get_page_by_title('Sample Page');
-			if ( empty($current_front_page) || $current_front_page == $sample_page ){
+			if ( empty($current_front_page) || $current_front_page === $sample_page ){
 				$new_homepage_id = ( !empty($sample_page) )? $sample_page : 0;
 				wp_insert_post(array(
 					'ID' => $new_homepage_id,
@@ -408,7 +408,7 @@ if ( !trait_exists('Automation') ){
 		//Force an initialization date.
 		public function force_settings(){
 			//Force initialization date
-			if ( 1==2 ){
+			if ( 1 === 2 ){
 				$force_date = "May 24, 2014"; //Set the desired initialization date here. Format should be an easily convertable date like: "March 27, 2012"
 				if ( strtotime($force_date) !== false ){ //Check if provided date string is valid
 					$this->update_data('initialized', strtotime($force_date));
@@ -421,7 +421,7 @@ if ( !trait_exists('Automation') ){
 			}
 
 			//Re-allow remote Nebula version updates. Ideally this would be detected automatically and this condition would not be needed.
-			if ( 1==2 ){
+			if ( 1 === 2 ){
 				$this->update_data('version_legacy', 'false');
 				$this->update_data('scss_last_processed', 0);
 				$this->update_data('next_version', '');

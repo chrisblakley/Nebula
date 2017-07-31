@@ -872,7 +872,7 @@ trait Customizer {
 					body {background: <?php echo get_theme_mod('nebula_background_color'); ?>;}
 				<?php endif; ?>
 
-				<?php if ( get_theme_mod('nebula_hero_bg_image') && get_theme_mod('nebula_hero_overlay_opacity') != 1 ): //Hero BG ?>
+				<?php if ( get_theme_mod('nebula_hero_bg_image') && get_theme_mod('nebula_hero_overlay_opacity') !== 1 ): //Hero BG ?>
 					#hero-section {background-image: url( "<?php echo get_theme_mod('nebula_hero_bg_image'); ?>");}
 				<?php endif; ?>
 
@@ -914,7 +914,7 @@ trait Customizer {
 					#hero-section h2 {<?php echo ( get_theme_mod('nebula_hero_text_color') )? 'color:' . get_theme_mod('nebula_hero_text_color') . ';' : ''; ?>}
 				<?php endif; ?>
 
-				<?php if ( get_theme_mod('nebula_fwa_bg_image') && get_theme_mod('nebula_fwa_overlay_opacity') != 1 ):?>
+				<?php if ( get_theme_mod('nebula_fwa_bg_image') && get_theme_mod('nebula_fwa_overlay_opacity') !== 1 ):?>
 					#footer-widget-section {background-image: url("<?php echo get_theme_mod('nebula_fwa_bg_image'); ?>");}
 				<?php endif; ?>
 
@@ -930,7 +930,7 @@ trait Customizer {
 						#footer-widget-section > a:focus {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme') . '_alt']; ?>;}
 				<?php endif; ?>
 
-				<?php if ( get_theme_mod('nebula_footer_bg_image') && get_theme_mod('nebula_footer_overlay_opacity') != 1 ):?>
+				<?php if ( get_theme_mod('nebula_footer_bg_image') && get_theme_mod('nebula_footer_overlay_opacity') !== 1 ):?>
 					#footer-section {background-image: url("<?php echo get_theme_mod('nebula_footer_bg_image'); ?>");}
 				<?php endif; ?>
 

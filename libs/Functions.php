@@ -63,7 +63,7 @@ trait Functions {
 			add_filter('admin_head', array($this, 'hide_ataglance_comment_counts'));
 			add_action('admin_init', array($this, 'remove_comments_post_type_support'));
 
-			if ( $pagenow == 'edit-comments.php' && $this->get_option('disqus_shortname') ){
+			if ( $pagenow === 'edit-comments.php' && $this->get_option('disqus_shortname') ){
 				add_action('admin_notices', array($this, 'disqus_link'));
 			}
 		} else { //If WP core comments are enabled
@@ -192,7 +192,7 @@ trait Functions {
 
 					if ( !empty($post) ){ //If the listing has results
 						foreach ( get_categories() as $category ){
-							if ( $category->slug == $post->post_name ){
+							if ( $category->slug === $post->post_name ){
 								$nebula_warnings[] = array(
 									'level' => 'error',
 									'description' => 'Page and category slug conflict: <strong>' . $category->slug . '</strong> - Consider changing this page slug.',
@@ -202,7 +202,7 @@ trait Functions {
 						}
 
 						foreach ( get_tags() as $tag ){
-							if ( $tag->slug == $post->post_name ){
+							if ( $tag->slug === $post->post_name ){
 								$nebula_warnings[] = array(
 									'level' => 'error',
 									'description' => 'Page and tag slug conflict: <strong>' . $tag->slug . '</strong> - Consider changing this page slug.'
@@ -215,7 +215,7 @@ trait Functions {
 			}
 
 			//If search indexing is disabled
-			if ( get_option('blog_public') == 0 ){
+			if ( get_option('blog_public') === 0 ){
 				$nebula_warnings[] = array(
 					'level' => 'error',
 					'description' => '<a href="options-reading.php">Search Engine Visibility</a> is currently disabled!',
@@ -384,7 +384,7 @@ trait Functions {
 				$a = array_search($itemA['level'], $priorities);
 				$b = array_search($itemB['level'], $priorities);
 
-				if ( $a == $b ){
+				if ( $a === $b ){
 					return 0;
 				}
 
@@ -589,7 +589,7 @@ trait Functions {
 
 		$image_id = ( get_post_type($id) === 'attachment' || $type !== 'post' )? $id : get_post_thumbnail_id($id); //If the thumbnail (or attachment) ID was passed instead of the post ID
 
-		if ( strpos($id, '<img') !== false || $size == 'full' ){
+		if ( strpos($id, '<img') !== false || $size === 'full' ){
 			$image = wp_get_attachment_image_src($image_id, $size);
 			return $image[0];
 		} else {
@@ -609,23 +609,23 @@ trait Functions {
 		$override = apply_filters('pre_post_meta', null, $meta);
 		if ( isset($override) ){return;}
 
-		if ( $meta == 'date' || $meta == 'time' || $meta == 'on' || $meta == 'day' || $meta == 'when' ){
+		if ( $meta === 'date' || $meta === 'time' || $meta === 'on' || $meta === 'day' || $meta === 'when' ){
 			echo $this->post_date();
-		} elseif ( $meta == 'author' || $meta == 'by' ){
+		} elseif ( $meta === 'author' || $meta === 'by' ){
 			echo  $this->post_author();
-		} elseif ( $meta == 'type' || $meta == 'cpt' || $meta == 'post_type' ){
+		} elseif ( $meta === 'type' || $meta === 'cpt' || $meta === 'post_type' ){
 			echo  $this->post_type();
-		} elseif ( $meta == 'categories' || $meta == 'category' || $meta == 'cat' || $meta == 'cats' || $meta == 'in' ){
+		} elseif ( $meta === 'categories' || $meta === 'category' || $meta === 'cat' || $meta === 'cats' || $meta === 'in' ){
 			echo  $this->post_categories();
-		} elseif ( $meta == 'tags' || $meta == 'tag' ){
+		} elseif ( $meta === 'tags' || $meta === 'tag' ){
 			echo  $this->post_tags();
-		} elseif ( $meta == 'dimensions' || $meta == 'size' ){
+		} elseif ( $meta === 'dimensions' || $meta === 'size' ){
 			echo  $this->post_dimensions();
-		} elseif ( $meta == 'exif' || $meta == 'camera' ){
+		} elseif ( $meta === 'exif' || $meta === 'camera' ){
 			echo  $this->post_exif();
-		} elseif ( $meta == 'comments' || $meta == 'comment' ){
+		} elseif ( $meta === 'comments' || $meta === 'comment' ){
 			echo  $this->post_comments();
-		} elseif ( $meta == 'social' || $meta == 'sharing' || $meta == 'share' ){
+		} elseif ( $meta === 'social' || $meta === 'sharing' || $meta === 'share' ){
 			 $this->social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), 0);
 		}
 	}
@@ -687,9 +687,9 @@ trait Functions {
 				global $wp_post_types;
 				$post_type = get_post_type();
 
-				if ( $post_type == 'post' ){
+				if ( $post_type === 'post' ){
 					$post_icon_img = '<i class="fa fa-thumb-tack"></i>';
-				} elseif ( $post_type == 'page' ){
+				} elseif ( $post_type === 'page' ){
 					$post_icon_img = '<i class="fa fa-file-text"></i>';
 				} else {
 					$post_icon = $wp_post_types[$post_type]->menu_icon;
@@ -764,7 +764,7 @@ trait Functions {
 
 		$imgmeta = wp_get_attachment_metadata();
 		if ( $imgmeta ){ //Check for Bad Data
-			if ( $imgmeta['image_meta']['focal_length'] == 0 || $imgmeta['image_meta']['aperture'] == 0 || $imgmeta['image_meta']['shutter_speed'] == 0 || $imgmeta['image_meta']['iso'] == 0 ){
+			if ( $imgmeta['image_meta']['focal_length'] === 0 || $imgmeta['image_meta']['aperture'] === 0 || $imgmeta['image_meta']['shutter_speed'] === 0 || $imgmeta['image_meta']['iso'] === 0 ){
 				$output = 'No valid EXIF data found';
 			} else { //Convert the shutter speed retrieve from database to fraction
 				if ( (1/$imgmeta['image_meta']['shutter_speed']) > 1 ){
@@ -795,10 +795,10 @@ trait Functions {
 	public function post_comments($icon=true, $linked=true, $empty=true){
 		if ( get_theme_mod('post_comment_count', true) ){
 			$comments_text = 'Comments';
-			if ( get_comments_number() == 0 ){
+			if ( get_comments_number() === 0 ){
 				$comment_icon = 'fa-comment-o';
 				$comment_show = ( $empty )? '' : 'hidden'; //If comment link should show if no comments. True = show, False = hidden
-			} elseif ( get_comments_number() == 1 ){
+			} elseif ( get_comments_number() === 1 ){
 				$comment_icon = 'fa-comment';
 				$comments_text = 'Comment';
 			} elseif ( get_comments_number() > 1 ){
@@ -930,7 +930,7 @@ trait Functions {
 
 		if ( is_string($networks) ){ //if $networks is a string, create an array for the string.
 			$networks = array($networks);
-		} elseif ( is_int($networks) && ($networks == 1 || $networks == 0) ){ //If it is an integer of 1 or 0, then set it to $counts
+		} elseif ( is_int($networks) && ($networks === 1 || $networks === 0) ){ //If it is an integer of 1 or 0, then set it to $counts
 			$counts = $networks;
 			$networks = array('facebook', 'twitter', 'google+');
 		} elseif ( !is_array($networks) ){
@@ -978,7 +978,7 @@ trait Functions {
 		if ( isset($override) ){return;}
 		?>
 		<div class="nebula-social-button facebook-share require-fbsdk">
-			<div class="fb-share-button" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>"></div>
+			<div class="fb-share-button" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts !== 0 )? 'button_count' : 'button'; ?>"></div>
 		</div>
 	<?php }
 
@@ -988,7 +988,7 @@ trait Functions {
 		if ( isset($override) ){return;}
 		?>
 		<div class="nebula-social-button facebook-like require-fbsdk">
-			<div class="fb-like" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="false"></div>
+			<div class="fb-like" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts !== 0 )? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="false"></div>
 		</div>
 	<?php }
 
@@ -997,7 +997,7 @@ trait Functions {
 		if ( isset($override) ){return;}
 		?>
 		<div class="nebula-social-button facebook-both require-fbsdk">
-			<div class="fb-like" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts != 0 )? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="true"></div>
+			<div class="fb-like" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts !== 0 )? 'button_count' : 'button'; ?>" data-action="like" data-show-faces="false" data-share="true"></div>
 		</div>
 	<?php }
 
@@ -1007,7 +1007,7 @@ trait Functions {
 		if ( isset($override) ){return;}
 		?>
 		<div class="nebula-social-button twitter-tweet">
-			<a href="https://twitter.com/share" class="twitter-share-button" <?php echo ( $counts != 0 )? '': 'data-count="none"'; ?>>Tweet</a>
+			<a href="https://twitter.com/share" class="twitter-share-button" <?php echo ( $counts !== 0 )? '': 'data-count="none"'; ?>>Tweet</a>
 			<?php $this->twitter_widget_script(); ?>
 		</div>
 		<?php
@@ -1026,7 +1026,7 @@ trait Functions {
 		}
 		?>
 		<div class="nebula-social-button twitter-follow">
-			<a href="https://twitter.com/<?php echo str_replace('@', '', $username); ?>" class="twitter-follow-button" <?php echo ( $counts != 0 )? '': 'data-show-count="false"'; ?> <?php echo ( !empty($username) )? '': 'data-show-screen-name="false"'; ?>>Follow <?php echo $username; ?></a>
+			<a href="https://twitter.com/<?php echo str_replace('@', '', $username); ?>" class="twitter-follow-button" <?php echo ( $counts !== 0 )? '': 'data-show-count="false"'; ?> <?php echo ( !empty($username) )? '': 'data-show-screen-name="false"'; ?>>Follow <?php echo $username; ?></a>
 			<?php $this->twitter_widget_script(); ?>
 		</div>
 		<?php
@@ -1046,7 +1046,7 @@ trait Functions {
 		if ( isset($override) ){return;}
 		?>
 		<div class="nebula-social-button google-plus-plus-one">
-			<div class="g-plusone" data-size="medium" <?php echo ( $counts != 0 )? '' : 'data-annotation="none"'; ?>></div>
+			<div class="g-plusone" data-size="medium" <?php echo ( $counts !== 0 )? '' : 'data-annotation="none"'; ?>></div>
 			<?php if ( empty($this->google_plus_widget_loaded) ) : ?>
 				<script src="https://apis.google.com/js/platform.js" async defer></script>
 				<?php $this->google_plus_widget_loaded = true; ?>
@@ -1061,7 +1061,7 @@ trait Functions {
 		?>
 		<div class="nebula-social-button linkedin-share">
 			<?php $this->linkedin_widget_script(); ?>
-			<script type="IN/Share" <?php echo ( $counts != 0 )? 'data-counter="right"' : ''; ?>></script>
+			<script type="IN/Share" <?php echo ( $counts !== 0 )? 'data-counter="right"' : ''; ?>></script>
 		</div>
 		<?php
 	}
@@ -1072,7 +1072,7 @@ trait Functions {
 		?>
 		<div class="nebula-social-button linkedin-follow">
 			<?php $this->linkedin_widget_script(); ?>
-			<script type="IN/FollowCompany" data-id="1337" <?php echo ( $counts != 0 )? 'data-counter="right"' : ''; ?>></script>
+			<script type="IN/FollowCompany" data-id="1337" <?php echo ( $counts !== 0 )? 'data-counter="right"' : ''; ?>></script>
 		</div>
 		<?php
 	}
@@ -1097,7 +1097,7 @@ trait Functions {
 		}
 		?>
 		<div class="nebula-social-button pinterest-pin">
-			<a href="//www.pinterest.com/pin/create/button/?url=<?php echo get_page_link(); ?>&media=<?php echo $featured_image; ?>&description=<?php echo urlencode(get_the_title()); ?>" data-pin-do="buttonPin" data-pin-config="<?php echo ( $counts != 0 )? 'beside' : 'none'; ?>" data-pin-color="red">
+			<a href="//www.pinterest.com/pin/create/button/?url=<?php echo get_page_link(); ?>&media=<?php echo $featured_image; ?>&description=<?php echo urlencode(get_the_title()); ?>" data-pin-do="buttonPin" data-pin-config="<?php echo ( $counts !== 0 )? 'beside' : 'none'; ?>" data-pin-color="red">
 				<img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_red_20.png" />
 			</a>
 			<?php if ( empty($this->pinterest_pin_widget_loaded) ): ?>
@@ -1131,7 +1131,7 @@ trait Functions {
 		//Get Transients
 		$video_json = get_transient('nebula_' . $provider . '_' . $id);
 		if ( empty($video_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
-			if ( $provider == 'youtube' ){
+			if ( $provider === 'youtube' ){
 				if ( !$this->get_option('google_server_api_key') && $this->is_staff() ){
 					echo '<script>console.warn("No Google Youtube Iframe API key. Youtube videos may not be tracked!");</script>';
 					$video_metadata['error'] = 'No Google Youtube Iframe API key.';
@@ -1144,7 +1144,7 @@ trait Functions {
 				}
 
 				$video_json = $response['body'];
-			} elseif ( $provider == 'vimeo' ){
+			} elseif ( $provider === 'vimeo' ){
 				$response = $this->remote_get('http://vimeo.com/api/v2/video/' . $id . '.json');
 				if ( is_wp_error($response) ){
 					$video_metadata['error'] = 'Vimeo video is unavailable.';
@@ -1161,29 +1161,29 @@ trait Functions {
 		//Check for errors
 		if ( empty($video_json) ){
 			if ( current_user_can('manage_options') || $this->is_dev() ){
-				if ( $provider == 'youtube' ){
+				if ( $provider === 'youtube' ){
 					$video_metadata['error'] = 'A Youtube Data API error occurred. Make sure the Youtube Data API is enabled in the Google Developer Console and the server key is saved in Nebula Options.';
 				} else {
 					$video_metadata['error'] = 'A Vimeo API error occurred (A video with ID ' . $id . ' may not exist). Tracking will not be possible.';
 				}
 			}
 			return $video_metadata;
-		} elseif ( $provider == 'youtube' && !empty($video_json->error) ){
+		} elseif ( $provider === 'youtube' && !empty($video_json->error) ){
 			if ( current_user_can('manage_options') || $this->is_dev() ){
 				$video_metadata['error'] = 'Youtube API Error: ' . $video_json->error->message;
 			}
 			return $video_metadata;
-		} elseif ( $provider == 'youtube' && empty($video_json->items) ){
+		} elseif ( $provider === 'youtube' && empty($video_json->items) ){
 			if ( current_user_can('manage_options') || $this->is_dev() ){
 				$video_metadata['error'] = 'A Youtube video with ID ' . $id . ' does not exist.';
 			}
 			return $video_metadata;
-		} elseif ( $provider == 'vimeo' && is_array($video_json) && empty($video_json[0]) ){
+		} elseif ( $provider === 'vimeo' && is_array($video_json) && empty($video_json[0]) ){
 			$video_metadata['error'] = 'A Vimeo video with ID ' . $id . ' does not exist.';
 		}
 
 		//Build Data
-		if ( $provider == 'youtube' ){
+		if ( $provider === 'youtube' ){
 			$video_metadata['raw'] = $video_json->items[0];
 			$video_metadata['title'] = $video_json->items[0]->snippet->title;
 			$video_metadata['safetitle'] = preg_replace('/(\W)/i', '', $video_json->items[0]->snippet->title);
@@ -1195,7 +1195,7 @@ trait Functions {
 			$start = new DateTime('@0'); //Unix epoch
 			$start->add(new DateInterval($video_json->items[0]->contentDetails->duration));
 			$duration_seconds = intval($start->format('H'))*60*60 + intval($start->format('i'))*60 + intval($start->format('s'));
-		} elseif ( $provider == 'vimeo' ){
+		} elseif ( $provider === 'vimeo' ){
 			$video_metadata['raw'] = $video_json[0];
 			$video_metadata['title'] = $video_json[0]->title;
 			$video_metadata['safetitle'] = preg_replace('/(\W)/i', '', $video_json[0]->title);
@@ -1271,7 +1271,7 @@ trait Functions {
 			echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $data['home_link'] . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $data['home'] . '</a> ' . $delimiter_html . ' ';
 			if ( is_category() ){
 				$thisCat = get_category(get_query_var('cat'), false);
-				if ( $thisCat->parent != 0 ){
+				if ( $thisCat->parent !== 0 ){
 					echo get_category_parents($thisCat->parent, true, ' ' . $delimiter_html . ' ');
 				}
 				echo $data['before'] . 'Category: ' . single_cat_title('', false) . $data['after'];
@@ -1287,7 +1287,7 @@ trait Functions {
 			} elseif ( is_year() ){
 				echo $data['before'] . get_the_time('Y') . $data['after'];
 			} elseif ( is_single() && !is_attachment() ){
-				if ( get_post_type() != 'post' ){
+				if ( get_post_type() !== 'post' ){
 					$post_type = get_post_type_object(get_post_type());
 					$slug = $post_type->rewrite;
 					echo '<a href="' . $data['home_link'] . $slug['slug'] . '/">' . $post_type->labels->singular_name . '</a>';
@@ -1308,7 +1308,7 @@ trait Functions {
 						}
 					}
 				}
-			} elseif ( !is_single() && !is_page() && get_post_type() != 'post' && !is_404() ){
+			} elseif ( !is_single() && !is_page() && get_post_type() !== 'post' && !is_404() ){
 				if ( is_archive() ){ //@TODO "Nebula" 0: Might not be perfect... This may never else out.
 					$userdata = get_user_by('slug', get_query_var('author_name'));
 					echo $data['before'] . $userdata->first_name . ' ' . $userdata->last_name . $data['after'];
@@ -1337,7 +1337,7 @@ trait Functions {
 				$breadcrumbs = array_reverse($breadcrumbs);
 				for ( $i = 0; $i < count($breadcrumbs); $i++ ){
 					echo $breadcrumbs[$i];
-					if ( $i != count($breadcrumbs)-1 ){
+					if ( $i !== count($breadcrumbs)-1 ){
 						echo ' ' . $delimiter_html . ' ';
 					}
 				}
@@ -1541,7 +1541,7 @@ trait Functions {
 		$override = apply_filters('pre_business_open', null, $date, $general);
 		if ( isset($override) ){return;}
 
-		if ( empty($date) || $date == 'now' ){
+		if ( empty($date) || $date === 'now' ){
 			$date = time();
 		} elseif ( strtotime($date) ){
 			$date = strtotime($date . ' ' . date('g:ia', strtotime('now')));
@@ -1562,13 +1562,13 @@ trait Functions {
 			foreach ( $days_off as $key => $day_off ){
 				$days_off[$key] = strtotime($day_off . ' ' . date('Y', $date));
 
-				if ( date('N', $days_off[$key]) == 6 ){ //If the date is a Saturday
+				if ( date('N', $days_off[$key]) === 6 ){ //If the date is a Saturday
 					$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' -1 day');
-				} elseif ( date('N', $days_off[$key]) == 7 ){ //If the date is a Sunday
+				} elseif ( date('N', $days_off[$key]) === 7 ){ //If the date is a Sunday
 					$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' +1 day');
 				}
 
-				if ( date('Ymd', $days_off[$key]) == date('Ymd', $date) ){
+				if ( date('Ymd', $days_off[$key]) === date('Ymd', $date) ){
 					return false;
 				}
 			}
@@ -1887,7 +1887,7 @@ trait Functions {
 		$override = apply_filters('pre_nebula_the_author', null, $show_authors);
 		if ( isset($override) ){return;}
 
-		if ( !is_single() || $show_authors == 0 || !$this->get_option('author_bios') ){
+		if ( !is_single() || $show_authors === 0 || !$this->get_option('author_bios') ){
 			return $this->get_option('site_owner', get_bloginfo('name'));
 		} else {
 			return ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');
@@ -2092,10 +2092,10 @@ trait Functions {
 	public function redirect_single_post(){
 		if ( is_search() ){
 			global $wp_query;
-			if ( $wp_query->post_count == 1 && $wp_query->max_num_pages == 1 ){
+			if ( $wp_query->post_count === 1 && $wp_query->max_num_pages === 1 ){
 				if ( isset($_GET['s']) ){
 					//If the redirected post is the homepage, serve the regular search results page with one result (to prevent a redirect loop)
-					if ( $wp_query->posts['0']->ID != 1 && get_permalink($wp_query->posts['0']->ID) != home_url() . '/' ){
+					if ( $wp_query->posts['0']->ID !== 1 && get_permalink($wp_query->posts['0']->ID) !== home_url() . '/' ){
 
 						if ( !nebula()->is_bot() && strpos(nebula()->ga_parse_cookie(), '.') !== false ){ //If it isn't a bot and the GA CID is actually from the GA cookie (not generated by Nebula)
 							$this->ga_send_event('Internal Search', 'Single Result Redirect', $_GET['s']);
@@ -2320,7 +2320,7 @@ trait Functions {
 			}
 			foreach ( $authors as $author ){
 				$author_name = ( $author->first_name != '' )? $author->first_name . ' ' . $author->last_name : $author->display_name; //might need adjusting here
-				if ( strtolower($author_name) == strtolower($term) ){ //todo: if similarity of author name and query term is higher than X. Return only 1 or 2.
+				if ( strtolower($author_name) === strtolower($term) ){ //todo: if similarity of author name and query term is higher than X. Return only 1 or 2.
 					$suggestion = array();
 					$suggestion['label'] = $author_name;
 					$suggestion['link'] = 'http://google.com/';
@@ -2393,7 +2393,7 @@ trait Functions {
 
 		foreach ( $posts as $post ){
 			$author = null;
-			if ( $this->get_option('author_bios') ){ //&& $post->post_type != 'page' ?
+			if ( $this->get_option('author_bios') ){ //&& $post->post_type !== 'page' ?
 				$author = array(
 					'id' => $post->post_author,
 					'name' => array(
@@ -2419,7 +2419,7 @@ trait Functions {
 
 			$custom_fields = array();
 			foreach ( $post->custom_fields as $custom_field => $custom_value ){
-				if ( substr($custom_field, 0, 1) == '_' ){
+				if ( substr($custom_field, 0, 1) === '_' ){
 					continue;
 				}
 				$custom_fields[$custom_field] = $custom_value[0];
@@ -2499,7 +2499,7 @@ trait Functions {
 				relevanssi_do_query($error_query);
 			}
 
-			if ( !empty($error_query->posts) && $slug_keywords == $error_query->posts[0]->post_name ){
+			if ( !empty($error_query->posts) && $slug_keywords === $error_query->posts[0]->post_name ){
 				global $error_404_exact_match;
 				$error_404_exact_match = $error_query->posts[0];
 			}
@@ -2521,7 +2521,7 @@ trait Functions {
 		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, $this->get_browser('engine'))); //Rendering engine
 
 		//When installed to the homescreen, Chrome is detected as "Chrome Mobile". Supplement it with a "chrome" class.
-		if ( $this->get_browser('name') == 'Chrome Mobile' ){
+		if ( $this->get_browser('name') === 'Chrome Mobile' ){
 			$classes[] = 'chrome';
 		}
 
@@ -2702,7 +2702,7 @@ trait Functions {
 		$http = site_url(false, 'http');
 		$https = site_url(false, 'https');
 
-		if ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ){
+		if ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ){
 			return str_replace($http, $https, $url);
 		} else {
 			return $url;

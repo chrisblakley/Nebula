@@ -4121,8 +4121,8 @@ function mmenus(){
 
 //Vertical subnav expanders
 function subnavExpanders(){
-	if ( nebula.site.options.sidebar_expanders && jQuery('.xoxo .menu').length ){
-		jQuery('.xoxo .menu li.menu-item:has(ul)').addClass('has-expander').append('<a class="toplevelvert_expander closed" href="#"><i class="fa fa-caret-left"></i></a>');
+	if ( nebula.site.options.sidebar_expanders && jQuery('#sidebar-section .menu').length ){
+		jQuery('#sidebar-section .menu li.menu-item:has(ul)').addClass('has-expander').append('<a class="toplevelvert_expander closed" href="#"><i class="fa fa-caret-left"></i></a>');
 		jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
 		nebula.dom.document.on('click touch tap', '.toplevelvert_expander', function(){
 			jQuery(this).toggleClass('closed open').parent().children('.sub-menu').slideToggle();

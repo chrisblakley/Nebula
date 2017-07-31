@@ -70,9 +70,9 @@ get_header(); ?>
 											<?php foreach($taxonomies as $tax): ?>
 												<?php
 													$terms = get_terms($tax);
-													$tax_human = ( $tax == 'category' )? 'Categories' : $tax;
-													$tax_human = ( $tax == 'post_tag' )? 'Tags' : $tax;
-													$tax = ( $tax == 'post_tag' )? 'tag' : $tax;
+													$tax_human = ( $tax === 'category' )? 'Categories' : $tax;
+													$tax_human = ( $tax === 'post_tag' )? 'Tags' : $tax;
+													$tax = ( $tax === 'post_tag' )? 'tag' : $tax;
 												?>
 												<optgroup label="<?php echo $tax_human; ?>">
 													<?php foreach ($terms as $term): ?>
@@ -104,7 +104,7 @@ get_header(); ?>
 										<select id="advanced-search-type" class="chosen-select" multiple data-placeholder="Select post types...">
 											<?php $post_types = get_post_types('', 'names'); ?>
 											<?php foreach ( $post_types as $post_type ): ?>
-												<?php if ( $post_type == 'revision' || $post_type == 'nav_menu_item' || $post_type == 'acf' || $post_type == 'wpcf7_contact_form' ) { continue; } ?>
+												<?php if ( $post_type === 'revision' || $post_type === 'nav_menu_item' || $post_type === 'acf' || $post_type === 'wpcf7_contact_form' ) { continue; } ?>
 												<option value="<?php echo $post_type; ?>"><?php echo ucfirst($post_type); ?></option>
 											<?php endforeach; ?>
 										</select>

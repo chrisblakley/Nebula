@@ -184,7 +184,7 @@ if ( !trait_exists('Visitors') ){
 								//Success
 
 								oThis.closest('.new-data-con').find('.ajax-update-spinner').hide();
-								if ( response == 'success' ){
+								if ( response === 'success' ){
 									//Append to list
 									jQuery('.detail-loop-container').append('<div class="row detail-con"><div class="col-4"><p class="detail-label" data-label="' + safeLabel + '"><strong class="human-label">' + humanLabel + '</strong></p></div><div class="col-8"><p class="user-data-value-con"><span class="user-data-value" data-actual="' + newValue + '">' + newValue + '</span>&nbsp;<a class="edit-this-user-data" href="#"><i class="fa fa-pencil"></i></a></p></div></div>');
 
@@ -223,7 +223,7 @@ if ( !trait_exists('Visitors') ){
 							success: function(response){
 								//Success
 								oThis.closest('.user-data-value-con').find('.ajax-update-spinner').hide();
-								if ( response == 'success' ){
+								if ( response === 'success' ){
 									oThis.closest('.user-data-value-con').html('<span class="user-data-value">' + newValue + '</span>&nbsp;<a class="edit-this-user-data" href="#"><i class="fa fa-pencil"></i></a>');
 								} else {
 									oThis.closest('.user-data-value-con').find('.user-date-editing-note').text('There was a database error.');
@@ -280,7 +280,7 @@ if ( !trait_exists('Visitors') ){
 									//Success
 									console.debug(response);
 
-									if ( response == 'success' ){
+									if ( response === 'success' ){
 										window.location.reload();
 									}
 								},
@@ -306,7 +306,7 @@ if ( !trait_exists('Visitors') ){
 							},
 							success: function(response){
 								//Success
-								if ( response == 'success' ){
+								if ( response === 'success' ){
 									window.location.reload();
 								}
 							},
@@ -331,7 +331,7 @@ if ( !trait_exists('Visitors') ){
 							},
 							success: function(response){
 								//Success
-								if ( response == 'success' ){
+								if ( response === 'success' ){
 									window.location.reload();
 								}
 							},
@@ -420,7 +420,7 @@ if ( !trait_exists('Visitors') ){
 												<td><?php echo $visitor_data['last_modified_on']; ?></td>
 												<?php foreach ( $visitor_data as $column => $value ): ?>
 													<td class="<?php echo $column; ?>">
-														<?php if ( $column == 'notes' && !empty($value) ): ?>
+														<?php if ( $column === 'notes' && !empty($value) ): ?>
 															<div><i class="fa fa-sticky-note" title="<?php echo sanitize_text_field(trim($value)); ?>" style="color: #f7dd00;"></i></div>
 														<?php else: ?>
 															<div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis;">
@@ -505,7 +505,7 @@ if ( !trait_exists('Visitors') ){
 			?>
 				<div id="detail-results" data-nid="<?php echo sanitize_text_field($_POST['data']); ?>">
 					<div>
-						<?php if ( $organized_data['nebula_id'] == $this->get_appropriate_nebula_id() ): ?>
+						<?php if ( $organized_data['nebula_id'] === $this->get_appropriate_nebula_id() ): ?>
 							<div class="visitor-notice-item">
 								<p><i class="fa fa-fw fa-smile-o" style="color: blue;"></i> This visitor is you!</p>
 							</div>
@@ -561,7 +561,7 @@ if ( !trait_exists('Visitors') ){
 								</div>
 								<div class="col-8">
 									<div class="user-data-value-con">
-										<?php if ( is_array($unserialized_value) && count($unserialized_value) == 1 ){ //Convert single array datapoints to strings
+										<?php if ( is_array($unserialized_value) && count($unserialized_value) === 1 ){ //Convert single array datapoints to strings
 											$unserialized_value = implode('', $unserialized_value);
 										}
 
@@ -704,7 +704,7 @@ if ( !trait_exists('Visitors') ){
 			$user_agent = $all_visitor_data['user_agent'];
 
 			$query = "SELECT DISTINCT(" . $wpdb->nebula_visitors . ".nebula_id), " . $wpdb->nebula_visitors . ".* FROM " . $wpdb->nebula_visitors_data . " JOIN " . $wpdb->nebula_visitors . " ON " . $wpdb->nebula_visitors . ".nebula_id = " . $wpdb->nebula_visitors_data . ".nebula_id WHERE (" . $wpdb->nebula_visitors_data . ".label = 'all_ip_addresses' AND " . $wpdb->nebula_visitors_data . ".value LIKE '%" . $ip_address . "%') OR (" . $wpdb->nebula_visitors_data . ".label = 'ip_address' AND " . $wpdb->nebula_visitors_data . ".value LIKE '%" . $ip_address . "%')";
-			if ( $_POST['similar'] == 'ip_useragent' ){
+			if ( $_POST['similar'] === 'ip_useragent' ){
 				$query = "SELECT DISTINCT(" . $wpdb->nebula_visitors . ".nebula_id), " . $wpdb->nebula_visitors . ".* FROM " . $wpdb->nebula_visitors_data . " JOIN " . $wpdb->nebula_visitors . " ON " . $wpdb->nebula_visitors . ".nebula_id = " . $wpdb->nebula_visitors_data . ".nebula_id WHERE ((" . $wpdb->nebula_visitors_data . ".label = 'all_ip_addresses' AND " . $wpdb->nebula_visitors_data . ".value LIKE '%" . $ip_address . "%') OR (" . $wpdb->nebula_visitors_data . ".label = 'ip_address' AND " . $wpdb->nebula_visitors_data . ".value LIKE '%" . $ip_address . "%')) AND " . $wpdb->nebula_visitors . ".user_agent = '" . $user_agent . "'";
 			}
 
@@ -947,7 +947,7 @@ if ( !trait_exists('Visitors') ){
 						$data_type = 'TEXT'; //Default data type
 						if ( is_int($sample_value) ){
 							$data_type = 'INT(12)';
-						} elseif ( strlen($sample_value) == 1 && ($sample_value === '1' || $sample_value === '0') ){
+						} elseif ( strlen($sample_value) === 1 && ($sample_value == '1' || $sample_value == '0') ){
 							$data_type = 'INT(7)';
 						}
 
@@ -1065,11 +1065,11 @@ if ( !trait_exists('Visitors') ){
 
 		//Check if referrer is an email app
 		public function is_email_referrer($referrer=false){
-			if ( $this->url_components('protocol', $referrer) == 'android-app' ){ //Gmail App on Android
+			if ( $this->url_components('protocol', $referrer) === 'android-app' ){ //Gmail App on Android
 				return true;
 			}
 
-			if ( isset($_GET['utm_medium']) && strtolower($_GET['utm_medium']) == 'email' ){ //Email campaigns
+			if ( isset($_GET['utm_medium']) && strtolower($_GET['utm_medium']) === 'email' ){ //Email campaigns
 				return true;
 			}
 
@@ -1106,7 +1106,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Check for external referrer
 		public function is_external_referrer(){
-			if ( !empty($_SERVER['HTTP_REFERER']) && $this->url_components('domain', $_SERVER['HTTP_REFERER']) != $this->url_components('domain') ){
+			if ( !empty($_SERVER['HTTP_REFERER']) && $this->url_components('domain', $_SERVER['HTTP_REFERER']) !== $this->url_components('domain') ){
 				return true;
 			}
 
@@ -1225,13 +1225,13 @@ if ( !trait_exists('Visitors') ){
 				//Get data from cache
 				if ( empty($alt_nebula_id) ){
 					$cached_visitor_data = wp_cache_get('nebula_visitor');
-					if ( $cached_visitor_data && $storage_type != 'fresh' ){ //If the data cache exists and not forcing fresh data
+					if ( $cached_visitor_data && $storage_type !== 'fresh' ){ //If the data cache exists and not forcing fresh data
 						return $cached_visitor_data;
 					}
 				}
 
 				//Get data from Database
-				if ( $storage_type != 'cache' ){
+				if ( $storage_type !== 'cache' ){
 					$nebula_id = ( !empty($alt_nebula_id) )? $alt_nebula_id : $this->get_appropriate_nebula_id();
 
 					global $wpdb;
@@ -1273,7 +1273,7 @@ if ( !trait_exists('Visitors') ){
 
 			//Check if last session ID matches current session ID
 			$last_session_id = $this->get_visitor_datapoint('last_session_id');
-			if ( $last_session_id == $this->nebula_session_id() ){
+			if ( $last_session_id === $this->nebula_session_id() ){
 				return true;
 			}
 
@@ -1283,7 +1283,7 @@ if ( !trait_exists('Visitors') ){
 		//Check if the page was refreshed
 		public function is_page_refresh(){
 			$last_page_viewed = $this->get_visitor_datapoint('last_page_viewed');
-			if ( $last_page_viewed == $this->url_components('all') ){
+			if ( $last_page_viewed === $this->url_components('all') ){
 				return true;
 			}
 
@@ -1333,7 +1333,7 @@ if ( !trait_exists('Visitors') ){
 			if ( $this->get_option('visitors_db') ){
 				$column = sanitize_key($column);
 
-				if ( $column == 'notes' ){
+				if ( $column === 'notes' ){
 					return false;
 				}
 
@@ -1342,7 +1342,7 @@ if ( !trait_exists('Visitors') ){
 					global $wpdb;
 					$requested_data = $wpdb->get_results($wpdb->prepare("SELECT " . $column . " FROM " . $wpdb->nebula_visitors . " WHERE nebula_id = '%s'", $nebula_id));
 
-					if ( !empty($requested_data) && !empty($requested_data[0]) && strtolower(reset($requested_data[0])) != 'null' ){
+					if ( !empty($requested_data) && !empty($requested_data[0]) && strtolower(reset($requested_data[0])) !== 'null' ){
 						return reset($requested_data[0]); //@TODO "Nebula" 0: update so this could return multiple values
 					}
 				}
@@ -1481,7 +1481,7 @@ if ( !trait_exists('Visitors') ){
 					}
 
 					if ( !empty($old_visitor_data) ){
-						if ( !empty($old_visitor_data[$label]) && $old_visitor_data[$label] == $value ){
+						if ( !empty($old_visitor_data[$label]) && $old_visitor_data[$label] === $value ){
 							continue;
 						}
 					}
@@ -1552,7 +1552,7 @@ if ( !trait_exists('Visitors') ){
 							}
 
 							//If next value is one letter more than the previous value, replace the previous with the new.
-							if ( end($all_data[$key]) == substr($value, 0, -1) ){
+							if ( end($all_data[$key]) === substr($value, 0, -1) ){
 								array_pop($all_data[$key]);
 								array_push($all_data[$key], $value);
 							}
@@ -1610,7 +1610,7 @@ if ( !trait_exists('Visitors') ){
 							$db_datapoint = $this->get_visitor_datapoint($label, true);
 
 							if ( is_string($db_datapoint) ){
-								if ( $db_datapoint == $value ){
+								if ( $db_datapoint === $value ){
 									$batch_update_data = $this->update_visitor_data(array($value => false), false); //Remove the entire label
 								}
 							} else {
@@ -2146,7 +2146,7 @@ if ( !trait_exists('Visitors') ){
 							$value = implode(',', $value); //Convert it to a single comma-separated string
 						}
 
-						if ( trim($value) == $points[$label][0] || (strpos($points[$label][0], '/') === 0 && preg_match($points[$label][0], trim($value))) ){
+						if ( trim($value) === $points[$label][0] || (strpos($points[$label][0], '/') === 0 && preg_match($points[$label][0], trim($value))) ){
 							$score += $points[$label][1];
 						}
 					} elseif ( !empty($value) ){ //Just checking if the data exists
@@ -2310,7 +2310,7 @@ if ( !trait_exists('Visitors') ){
 				if ( empty($similar_known_visitors) ){
 					return false;
 				} else { //This visitor is similar to a known visitor
-					if ( $similar_known_visitors[0]->nebula_id == $all_visitor_data['nebula_id'] ){
+					if ( $similar_known_visitors[0]->nebula_id === $all_visitor_data['nebula_id'] ){
 						return false;
 					}
 
@@ -2346,7 +2346,7 @@ if ( !trait_exists('Visitors') ){
 		public function is_known($data=false, $alt_nebula_id=false){
 			if ( $this->get_option('visitors_db') ){
 				//Allow cached results by double-checking Nebula ID
-				if ( $alt_nebula_id == $this->get_appropriate_nebula_id() ){
+				if ( $alt_nebula_id === $this->get_appropriate_nebula_id() ){
 					$alt_nebula_id = false;
 				}
 

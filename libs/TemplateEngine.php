@@ -83,7 +83,7 @@ if ( !trait_exists('TemplateEngine') ){
 			}
 
 			$relative_path = trailingslashit($relative_path);
-			if ( $relative_path == '/' ){
+			if ( $relative_path === '/' ){
 				$relative_path = '';
 			}
 
@@ -91,12 +91,12 @@ if ( !trait_exists('TemplateEngine') ){
 			$files = array();
 
 			foreach ( $results as $result ){
-				if ( $result[0] == '.' ){
+				if ( $result[0] === '.' ){
 					continue;
 				}
 
 				if ( is_dir($path . '/' . $result) ){
-					if ( !$depth || $result == 'CVS' ){
+					if ( !$depth || $result === 'CVS' ){
 						continue;
 					}
 					$found = $this->scandir($path . '/' . $result, $extensions, $depth-1 , $relative_path . $result);

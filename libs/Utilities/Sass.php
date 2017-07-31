@@ -147,8 +147,8 @@ if ( !trait_exists('Sass') ){
 
 					//Skip file conditions (only if not forcing all)
 					if ( empty($force_all) ){
-						$is_wireframing_file = $file_path_info['filename'] == 'wireframing' && !$this->get_option('prototype_mode'); //If file is wireframing.scss but wireframing functionality is disabled, skip file.
-						$is_dev_file = $file_path_info['filename'] == 'dev' && !$this->get_option('dev_stylesheets'); //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
+						$is_wireframing_file = $file_path_info['filename'] === 'wireframing' && !$this->get_option('prototype_mode'); //If file is wireframing.scss but wireframing functionality is disabled, skip file.
+						$is_dev_file = $file_path_info['filename'] === 'dev' && !$this->get_option('dev_stylesheets'); //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
 						$is_admin_file = !$this->is_admin_page() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')); //If viewing front-end, skip WP admin files.
 						if ( $is_wireframing_file || $is_dev_file || $is_admin_file ){
 							continue;
@@ -156,12 +156,12 @@ if ( !trait_exists('Sass') ){
 					}
 
 					//If file exists, and has .scss extension, and doesn't begin with "_".
-					if ( is_file($file) && $file_path_info['extension'] == 'scss' && $file_path_info['filename'][0] != '_' ){
-						$css_filepath = ( $file_path_info['filename'] == 'style' )? $location_paths['directory'] . '/style.css': $location_paths['directory'] . '/assets/css/' . $file_path_info['filename'] . '.css'; //style.css to the root directory. All others to the /css directory in the /assets/scss directory.
+					if ( is_file($file) && $file_path_info['extension'] === 'scss' && $file_path_info['filename'][0] !== '_' ){
+						$css_filepath = ( $file_path_info['filename'] === 'style' )? $location_paths['directory'] . '/style.css': $location_paths['directory'] . '/assets/css/' . $file_path_info['filename'] . '.css'; //style.css to the root directory. All others to the /css directory in the /assets/scss directory.
 						wp_mkdir_p($location_paths['directory'] . '/assets/css'); //Create the /css directory (in case it doesn't exist already).
 
 						//If style.css has been edited after style.scss, save backup but continue compiling SCSS
-						if ( (is_child_theme() && $location_name != 'parent' ) && ($file_path_info['filename'] == 'style' && file_exists($css_filepath) && $this->get_data('scss_last_processed') != '0' && $this->get_data('scss_last_processed')-filemtime($css_filepath) < -30) ){
+						if ( (is_child_theme() && $location_name !== 'parent' ) && ($file_path_info['filename'] === 'style' && file_exists($css_filepath) && $this->get_data('scss_last_processed') != '0' && $this->get_data('scss_last_processed')-filemtime($css_filepath) < -30) ){
 							copy($css_filepath, $css_filepath . '.bak'); //Backup the style.css file to style.css.bak
 							if ( $this->is_dev() || current_user_can('manage_options') ){
 								global $scss_debug_ref;
@@ -225,7 +225,7 @@ if ( !trait_exists('Sass') ){
 					$file_counter++;
 
 					//Include partials in dev.scss //@todo "Nebula" 0: Find a way to prevent hard-coding these partial files. Maybe tap into the $location_paths['imports'] from above (need a specific order other than alphabetical?)?
-					if ( $file_counter == 1 ){
+					if ( $file_counter === 1 ){
 						$import_partials = '';
 						$import_partials .= "@import '../../../../Nebula-master/assets/scss/partials/variables';\r\n";
 						$import_partials .= "@import '../partials/variables';\r\n";
@@ -285,7 +285,7 @@ if ( !trait_exists('Sass') ){
 			$override = apply_filters('pre_sass_color', null, $color, $theme);
 			if ( isset($override) ){return;}
 
-			if ( is_child_theme() && $theme == 'child' ){
+			if ( is_child_theme() && $theme === 'child' ){
 				$assets_directory = get_stylesheet_directory() . '/assets';
 				$transient_name = 'nebula_scss_child_variables';
 			} else {

@@ -194,7 +194,7 @@ if ( !trait_exists('Shortcodes') ){
 			}
 
 			if ( $icon ){
-				if ( strpos($icon, 'fa-' ) == false){
+				if ( strpos($icon, 'fa-') === false){
 					$icon = 'fa-' . $icon;
 				}
 				$icon = '<i class="fa fa-fw ' . $icon . '"></i> ';
@@ -202,7 +202,7 @@ if ( !trait_exists('Shortcodes') ){
 
 			if ( $size ){
 				$size = str_replace(array('small', 'medium', 'large'), array('sm', 'md', 'lg'), $size);
-				if ( strpos($size, 'btn-' ) == false){
+				if ( strpos($size, 'btn-') === false){
 					$size = 'btn-' . $size;
 				}
 			}
@@ -236,7 +236,7 @@ if ( !trait_exists('Shortcodes') ){
 				$q = str_replace(' ', '+', $q);
 				$q = '&q=' . $q;
 			}
-			if ( $mode == 'directions' ){
+			if ( $mode === 'directions' ){
 				if ( $origin != '' ){
 					$origin = str_replace(' ', '+', $origin);
 					$origin = '&origin=' . $origin;
@@ -344,7 +344,7 @@ if ( !trait_exists('Shortcodes') ){
 
 			$pre_tag_open = '';
 			$pre_tag_close = '';
-			if ( strpos($content, '<pre') === false && $force == false ){
+			if ( strpos($content, '<pre') === false && $force === false ){
 				$content = htmlspecialchars_decode($content);
 				$content = htmlspecialchars($content);
 				$pre_tag_open = '<pre class="nebula-code ' . $lang . '">';

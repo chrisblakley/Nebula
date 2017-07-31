@@ -4,14 +4,30 @@
  */
 ?>
 
-<div id="sidebar-section">
-	<ul class="xoxo">
-		<?php do_action('nebula_sidebar_open'); //When using this hook remember it is in a UL! ?>
+<?php if ( get_theme_mod('sidebar_position') !== 'off' ): ?>
+	<div class="col-md-3 <?php echo ( get_theme_mod('sidebar_position') === 'left' )? 'flex-first' : 'offset-md-1'; ?>" role="complementary">
+		<div id="sidebar-section">
+			<div class="row">
+				<div class="col">
+					<?php do_action('nebula_sidebar_open'); ?>
+				</div><!--/col-->
+			</div><!--/row-->
 
-		<?php if ( is_active_sidebar('sidebar-widget-area') ): ?>
-			<?php dynamic_sidebar('sidebar-widget-area'); ?>
-		<?php endif; ?>
+			<div class="row">
+				<div class="col">
+					<?php if ( is_active_sidebar('sidebar-widget-area') ): ?>
+						<ul class="xoxo">
+							<?php dynamic_sidebar('sidebar-widget-area'); ?>
+						</ul>
+					<?php endif; ?>
+				</div><!--/col-->
+			</div><!--/row-->
 
-		<?php do_action('nebula_sidebar_close'); //When using this hook remember it is in a UL! ?>
-	</ul>
-</div>
+			<div class="row">
+				<div class="col">
+					<?php do_action('nebula_sidebar_close'); ?>
+				</div><!--/col-->
+			</div><!--/row-->
+		</div>
+	</div><!--/col-->
+<?php endif; ?>

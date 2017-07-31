@@ -106,7 +106,7 @@ if ( !trait_exists('Dashboard') ){
 					set_transient('nebula_count_posts_' . $post_type, $count_posts, $cache_length);
 				}
 
-				$labels_plural = ( $count_posts->publish == 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
+				$labels_plural = ( $count_posts->publish === 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
 				switch ( $post_type ){
 					case ('post'):
 						$post_icon_img = '<i class="fa fa-fw fa-thumb-tack"></i>';
@@ -148,8 +148,8 @@ if ( !trait_exists('Dashboard') ){
 
 			//Revisions
 			$revision_count = ( WP_POST_REVISIONS == -1 )? 'all' : WP_POST_REVISIONS;
-			$revision_style = ( $revision_count == 0 )? 'style="color: red;"' : '';
-			$revisions_plural = ( $revision_count == 1 )? 'revision' : 'revisions';
+			$revision_style = ( $revision_count === 0 )? 'style="color: red;"' : '';
+			$revisions_plural = ( $revision_count === 1 )? 'revision' : 'revisions';
 			echo '<li><i class="fa fa-fw fa-history"></i> Storing <strong ' . $revision_style . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
 
 			//Plugins
@@ -158,7 +158,7 @@ if ( !trait_exists('Dashboard') ){
 				$all_plugins = get_plugins();
 				set_transient('nebula_count_plugins', $all_plugins, HOUR_IN_SECONDS*36);
 			}
-			$all_plugins_plural = ( count($all_plugins) == 1 )? 'Plugin' : 'Plugins';
+			$all_plugins_plural = ( count($all_plugins) === 1 )? 'Plugin' : 'Plugins';
 			$active_plugins = get_option('active_plugins', array());
 			echo '<li><i class="fa fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> ' . $all_plugins_plural . '</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
 
@@ -170,7 +170,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 			$users_icon = 'users';
 			$users_plural = 'Users';
-			if ( $user_count['total_users'] == 1 ){
+			if ( $user_count['total_users'] === 1 ){
 				$users_plural = 'User';
 				$users_icon = 'user';
 			}
@@ -179,7 +179,7 @@ if ( !trait_exists('Dashboard') ){
 			//Comments
 			if ( $this->get_option('comments') && $this->get_option('disqus_shortname') == '' ){
 				$comments_count = wp_count_comments();
-				$comments_plural = ( $comments_count->approved == 1 )? 'Comment' : 'Comments';
+				$comments_plural = ( $comments_count->approved === 1 )? 'Comment' : 'Comments';
 				echo '<li><i class="fa fa-fw fa-comments-o"></i> <strong>' . $comments_count->approved . '</strong> ' . $comments_plural . '</li>';
 			} else {
 				if ( !$this->get_option('comments') ){
@@ -949,7 +949,7 @@ if ( !trait_exists('Dashboard') ){
 				echo '<strong>' . $instance_counter . '</strong> instances in ';
 			}
 			echo '<strong>' . $file_counter . '</strong> file';
-			echo ( $file_counter == 1 )? '.</p>': 's.</p>';
+			echo ( $file_counter === 1 )? '.</p>': 's.</p>';
 			wp_die();
 		}
 	}

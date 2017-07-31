@@ -60,11 +60,8 @@ get_header(); ?>
 				<?php get_template_part('loop', 'archive'); ?>
 				<?php wp_pagenavi(); ?>
 			</div><!--/col-->
-			<?php if ( get_theme_mod('sidebar_position') !== 'off' ): ?>
-				<div class="col-md-3 <?php echo ( get_theme_mod('sidebar_position') === 'left' )? 'flex-first' : 'offset-md-1'; ?>" role="complementary">
-					<?php get_sidebar(); ?>
-				</div><!--/col-->
-			<?php endif; ?>
+
+			<?php get_sidebar(); ?>
 		</div><!--/row-->
 	</div><!--/container-->
 </div>

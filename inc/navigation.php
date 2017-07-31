@@ -4,7 +4,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col">
-						<nav id="utilitynav" role="navigation">
+						<nav id="utility-nav" role="navigation">
 		        			<?php wp_nav_menu(array('theme_location' => 'utility', 'depth' => '2')); ?>
 		        		</nav>
 					</div><!--/col-->
@@ -34,7 +34,7 @@
 				</div><!--/col-->
 				<div class="col-lg-8">
 					<?php if ( has_nav_menu('primary') ): ?>
-						<nav id="primarynav" class="clearfix">
+						<nav id="primary-nav" class="clearfix">
 							<?php wp_nav_menu(array('theme_location' => 'primary', 'depth' => '2')); ?>
 		        		</nav>
 	        		<?php endif; ?>

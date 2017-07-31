@@ -67,7 +67,7 @@ get_header(); ?>
 									<?php
 										$attachments = array_values(get_children(array('post_parent' => $post->post_parent, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => 'ASC', 'orderby' => 'menu_order ID')));
 										foreach ( $attachments as $k => $attachment ) {
-											if ( $attachment->ID == $post->ID ) {
+											if ( $attachment->ID === $post->ID ) {
 												break;
 											}
 										}
@@ -88,7 +88,7 @@ get_header(); ?>
 										<a href="<?php echo $next_attachment_url; ?>" title="<?php echo get_the_title(); ?>"><?php echo wp_get_attachment_image($post->ID, array($content_width, 9999)); ?></a>
 									</div>
 
-									<?php if ( 1==2 ): //Might be needed for a gallery page. ?>
+									<?php if ( 1 === 2 ): //Might be needed for a gallery page. ?>
 										<nav id="nav-below" class="navigation">
 											<div class="nav-previous"><?php previous_image_link(false); ?></div>
 											<div class="nav-next"><?php next_image_link(false); ?></div>

@@ -28,7 +28,7 @@ if ( !trait_exists('Options') ){
 				return false;
 			}
 
-			if ( filter_var($nebula_options[$option], FILTER_VALIDATE_BOOLEAN) == 1 ){
+			if ( filter_var($nebula_options[$option], FILTER_VALIDATE_BOOLEAN) === 1 ){
 				return true;
 			}
 
@@ -39,7 +39,7 @@ if ( !trait_exists('Options') ){
 		public function set_option($option, $value){return $this->update_option($option, $value);}
 		public function update_option($option, $value){
 			$nebula_data = get_option('nebula_options');
-			if ( $nebula_data[$option] != $value ){
+			if ( $nebula_data[$option] !== $value ){
 				$nebula_data[$option] = $value;
 				update_option('nebula_options', $nebula_data);
 			}
@@ -59,7 +59,7 @@ if ( !trait_exists('Options') ){
 		public function set_data($option, $value){return $this->update_data($option, $value);}
 		public function update_data($option, $value){
 			$nebula_data = get_option('nebula_data');
-			if ( $nebula_data[$option] != $value ){
+			if ( $nebula_data[$option] !== $value ){
 				$nebula_data[$option] = $value;
 				update_option('nebula_data', $nebula_data);
 			}

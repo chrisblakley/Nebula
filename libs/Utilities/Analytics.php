@@ -55,7 +55,7 @@ if ( !trait_exists('Analytics') ){
 				$ascii = ord($domain[$i]);
 				$a = (($a<<6)&268435455)+$ascii+($ascii<<14);
 				$c = $a&266338304;
-				$a = ( $c != 0 )? $a^($c>>21) : $a;
+				$a = ( $c !== 0 )? $a^($c>>21) : $a;
 			}
 			return $a;
 		}
@@ -282,7 +282,7 @@ if ( !trait_exists('Analytics') ){
 					window.onbeforeunload = loadAbandonTracking;
 
 					function loadAbandonTracking(e){
-						if ( e.type == 'visibilitychange' && document.visibilityState == 'visible' ){
+						if ( e.type === 'visibilitychange' && document.visibilityState === 'visible' ){
 							return false;
 						}
 
@@ -291,7 +291,7 @@ if ( !trait_exists('Analytics') ){
 						window.onbeforeunload = null;
 
 						var loadAbandonLevel = 'Unload'; //Typically only desktop browsers trigger this event (sometimes)
-						if ( e.type == 'visibilitychange' ){
+						if ( e.type === 'visibilitychange' ){
 							loadAbandonLevel = 'Visibility Change'; //This more accurately captures mobile browsers and the majority of abandon types
 						}
 
@@ -350,7 +350,7 @@ if ( !trait_exists('Analytics') ){
 		//Log fatal errors in Google Analytics as crashes
 		public function ga_log_fatal_errors(){
 			$error = error_get_last();
-			if ( $error['type'] == E_ERROR ){
+			if ( $error['type'] === E_ERROR ){
 				$message = strstr($error["message"], ' in /', true);
 				$file = strstr($error["file"], 'wp-content'); //Remove high-level directories to reduce clutter and prevent PII
 

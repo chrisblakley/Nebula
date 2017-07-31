@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.2.30.6395
+	Version: 5.2.30.9350
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -372,7 +372,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 
 //Top "eyebrow" navigation row that appears at desktop sizes.
 #utilitynavcon {position: relative; max-height: 0; opacity: 0; overflow: hidden; background: rgba(0, 0, 0, 0.5); z-index: 3; @include prefix((transition: all 0.5s));
-	#utilitynav {position: relative; z-index: 2000;
+	#utility-nav {position: relative; z-index: 2000;
 		ul {float: right; margin: 0;
 			li.menu-item {position: relative; display: inline-block; margin-right: 25px; padding: 0 5px;
 				&:last-child {margin-right: 0;}
@@ -408,7 +408,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 	@include media("lg"){top: 0;};
 }
 
-#primarynav {position: relative; display: none; z-index: 1000;
+#primary-nav {position: relative; display: none; z-index: 1000;
 	ul {@include prefix((transition: all 0.5s));
 		&:first-child {float: right; margin: 0;}
 		li.menu-item {position: relative; display: inline-block; margin-right: 30px; padding: 0 5px;
@@ -691,7 +691,9 @@ li.comment div.comment-meta {display: block;}
 // Sidebar
 // ===========================
 
-.xoxo {padding: 0; margin: 0; list-style: none;
+#sidebar-section {
+	.xoxo {list-style: none; margin: 0; padding: 0;}
+
 	li.widget-container {margin: 10px 0 30px 0;
 		&:first-child {margin-top: 0;}
 
