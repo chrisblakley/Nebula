@@ -34,7 +34,7 @@ if ( !trait_exists('Security') ){
 		//Log template direct access attempts
 		public function log_direct_access_attempts(){
 			if ( array_key_exists('ndaat', $_GET) ){
-				//$this->ga_send_event('Security Precaution', 'Direct Template Access Prevention', 'Template: ' . $_GET['ndaat']);
+				$this->ga_send_event('Security Precaution', 'Direct Template Access Prevention', 'Template: ' . $_GET['ndaat']);
 				header('Location: ' . home_url('/'));
 				die('Error 403: Forbidden.');
 			}
@@ -91,9 +91,9 @@ if ( !trait_exists('Security') ){
 					$incorrect_username_start = strpos($error, 'for the username ')+17;
 					$incorrect_username_stop = strpos($error, ' is incorrect')-$incorrect_username_start;
 					$incorrect_username = strip_tags(substr($error, $incorrect_username_start, $incorrect_username_stop));
-					//$this->ga_send_event('Security Precaution', 'Login Error', 'Attempted User: ' . $incorrect_username, 0, 1, array('dl'=> wp_login_url(), 'dt' => 'Log In'));
+					$this->ga_send_event('Security Precaution', 'Login Error', 'Attempted User: ' . $incorrect_username, 0, 1, array('dl'=> wp_login_url(), 'dt' => 'Log In'));
 				} else {
-					//$this->ga_send_event('Security Precaution', 'Login Error', strip_tags($error), 0, 1, array('dl'=> wp_login_url(), 'dt' => 'Log In'));
+					$this->ga_send_event('Security Precaution', 'Login Error', strip_tags($error), 0, 1, array('dl'=> wp_login_url(), 'dt' => 'Log In'));
 				}
 
 				return 'Login Error.';
@@ -138,14 +138,14 @@ if ( !trait_exists('Security') ){
 			if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Google Page Speed') !== false ){
 				if ( $this->url_components('extension') !== 'js' ){
 					global $post;
-					//$this->ga_send_event('Notable Bot Visit', 'Google Page Speed', get_the_title($post->ID), null, 0);
+					$this->ga_send_event('Notable Bot Visit', 'Google Page Speed', get_the_title($post->ID), null, 0);
 				}
 			}
 
 			//Internet Archive Wayback Machine
 			if ( strpos($_SERVER['HTTP_USER_AGENT'], 'archive.org_bot') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Wayback Save Page') !== false ){
 				global $post;
-				//$this->ga_send_event('Notable Bot Visit', 'Internet Archive Wayback Machine', get_the_title($post->ID), null, 0);
+				$this->ga_send_event('Notable Bot Visit', 'Internet Archive Wayback Machine', get_the_title($post->ID), null, 0);
 			}
 		}
 
@@ -161,31 +161,31 @@ if ( !trait_exists('Security') ){
 
 				if ( count($blacklisted_domains) > 1 ){
 					if ( isset($_SERVER['HTTP_REFERER']) && $this->contains(strtolower($_SERVER['HTTP_REFERER']), $blacklisted_domains) ){
-						//$this->ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Referring Domain: ' . $_SERVER['HTTP_REFERER']);
+						$this->ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Referring Domain: ' . $_SERVER['HTTP_REFERER']);
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						die;
 					}
 					if ( isset($_SERVER['REMOTE_HOST']) && $this->contains(strtolower($_SERVER['REMOTE_HOST']), $blacklisted_domains) ){
-						//$this->ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Hostname: ' . $_SERVER['REMOTE_HOST']);
+						$this->ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Hostname: ' . $_SERVER['REMOTE_HOST']);
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						die;
 					}
 					if ( isset($_SERVER['SERVER_NAME']) && $this->contains(strtolower($_SERVER['SERVER_NAME']), $blacklisted_domains) ){
-						//$this->ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Server Name: ' . $_SERVER['SERVER_NAME']);
+						$this->ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Server Name: ' . $_SERVER['SERVER_NAME']);
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						die;
 					}
 					if ( isset($_SERVER['REMOTE_ADDR']) && $this->contains(strtolower(gethostbyaddr($_SERVER['REMOTE_ADDR'])), $blacklisted_domains) ){
-						//$this->ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Network Hostname: ' . $_SERVER['SERVER_NAME']);
+						$this->ga_send_event('Security Precaution', 'Blacklisted Domain Prevented', 'Network Hostname: ' . $_SERVER['SERVER_NAME']);
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						die;
 					}
 				} else {
-					//$this->ga_send_event('Security Precaution', 'Error', 'spammers.txt has no entries!');
+					$this->ga_send_event('Security Precaution', 'Error', 'spammers.txt has no entries!');
 				}
 
 				$this->set_global_session_cookie('blacklist', false, array('session'));
@@ -235,7 +235,7 @@ if ( !trait_exists('Security') ){
 					}
 				}
 			} else {
-				//$this->ga_send_event('Security Precaution', 'Error', 'spammers.txt was not available!');
+				$this->ga_send_event('Security Precaution', 'Error', 'spammers.txt was not available!');
 			}
 
 			//Add manual and user-added blacklisted domains

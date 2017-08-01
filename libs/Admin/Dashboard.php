@@ -756,38 +756,35 @@ if ( !trait_exists('Dashboard') ){
 			}
 			echo '<li><i class="fa fa-fw fa-picture-o"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> ' . $upload_max . '</li>';
 
-			//Load Times
+			//Server load time
+			echo '<li><i class="fa fa-fw fa-clock-o"></i> Server load time: <strong>' . timer_stop(0, 3) . ' seconds</strong></li>';
+
+			//Browser load time
 			echo '<div id="testloadcon" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>';
 			echo '<script id="testloadscript">
 				jQuery(window).on("load", function(){
-					jQuery(".windowloadtime").css("visibility", "visible");
+					jQuery(".loadtime").css("visibility", "visible");
+					beforeLoad = (new Date()).getTime();
 					var iframe = document.createElement("iframe");
 					iframe.style.width = "1200px";
 					iframe.style.height = "0px";
 					jQuery("#testloadcon").append(iframe);
 					iframe.src = "' . home_url('/') . '";
 					jQuery("#testloadcon iframe").on("load", function(){
-						var iframeResponseEnd = Math.round(iframe.contentWindow.performance.timing.responseEnd-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until server response finishes
-						var iframeDomReady = Math.round(iframe.contentWindow.performance.timing.domContentLoadedEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until DOM ready
-						var iframeWindowLoaded = Math.round(iframe.contentWindow.performance.timing.loadEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until window load
-
-						jQuery(".serverloadtime").html(iframeResponseEnd/1000 + " seconds").attr("title", "Calculated via JS performance timing"); //Server Response Time
-
-						jQuery(".windowloadtime").html(iframeWindowLoaded/1000 + " seconds"); //Window Load Time
-						if ( iframeWindowLoaded > 3000 ){
-							jQuery(".windowslowicon").addClass("fa-warning");
-						}
-
-						jQuery(".serverdetections .fa-spin, #testloadcon, #testloadscript").remove();
+						stopTimer();
 					});
 				});
+				function stopTimer(){
+					var afterLoad = (new Date()).getTime();
+					var result = (afterLoad - beforeLoad)/1000;
+					jQuery(".loadtime").html(result + " seconds");
+					if ( result > 3 ){
+						jQuery(".slowicon").addClass("fa-warning");
+					}
+					jQuery(".serverdetections .fa-spin, #testloadcon, #testloadscript").remove();
+				}
 			</script>';
-
-			//Server Load Time
-			echo '<li><i class="fa fa-fw fa-clock-o"></i> Server response time: <strong class="serverloadtime" title="Calculated via PHP render time">' . timer_stop(0, 3) . ' seconds</strong></li>';
-
-			//Window Load Time
-			echo '<li><i class="fa fa-fw fa-clock-o"></i> Window load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" rel="noopener" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="windowloadtime" style="visibility: hidden;"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="windowslowicon fa" style="color: maroon;"></i></li>';
+			echo '<li><i class="fa fa-fw fa-clock-o"></i> Browser load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" rel="noopener" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="loadtime" style="visibility: hidden;"><i class="fa fa-spinner fa-fw fa-spin"></i></strong></a> <i class="slowicon fa" style="color: maroon;"></i></li>';
 
 			//Initial installation date
 			function initial_install_date(){
