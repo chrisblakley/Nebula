@@ -15,9 +15,9 @@
 
 			<div class="row">
 				<div class="col">
-					<?php if ( is_active_sidebar('sidebar-widget-area') ): ?>
+					<?php if ( is_active_sidebar('primary-widget-area') ): ?>
 						<ul class="xoxo">
-							<?php dynamic_sidebar('sidebar-widget-area'); ?>
+							<?php dynamic_sidebar('primary-widget-area'); ?>
 						</ul>
 					<?php endif; ?>
 				</div><!--/col-->

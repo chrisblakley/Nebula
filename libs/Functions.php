@@ -666,7 +666,7 @@ trait Functions {
 	//Author post meta
 	public function post_author($icon=true, $linked=true, $force=false){
 		if ( ($this->get_option('author_bios') || $force) && get_theme_mod('post_author', true) ){
-			$the_icon = '';
+			$icon_html = '';
 			if ( $icon ){
 				$icon_html = '<i class="fa fa-user"></i> ';
 			}
@@ -1902,8 +1902,8 @@ trait Functions {
 		//Sidebar
 		register_sidebar(array(
 			'name' => 'Sidebar',
-			'id' => 'sidebar-widget-area',
-			'description' => 'The sidebar widget area',
+			'id' => 'primary-widget-area',
+			'description' => 'The sidebar (primary) widget area',
 			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
 			'after_widget' => '</li>',
 			'before_title' => '<h3 class="widget-title">',
