@@ -665,7 +665,7 @@ function eventTracking(){
 	nebula.dom.document.on('mousedown touch tap', "a[href$='.pdf']", function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
-		var fileName = filePath.substr(jQuery(this).attr('href').lastIndexOf("/")+1);
+		var fileName = jQuery(this).attr('href').substr(jQuery(this).attr('href').lastIndexOf("/")+1);
 		ga('send', 'event', 'Download', 'PDF', fileName);
 		if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
 		nv('append', {'pdf_view': fileName});
@@ -2184,7 +2184,9 @@ function conditionalJSLoading(){
 
 	//Only load Tether library when Bootstrap tooltips are present.
 	if ( jQuery('[data-toggle="tooltip"]').length ){
-		nebulaLoadJS(nebula.site.resources.js.tether);
+		nebulaLoadJS(nebula.site.resources.js.tether, function(){
+			window.bsTooltips = true;
+		});
 	}
 
 	if ( jQuery('pre.nebula-code').length || jQuery('pre.nebula-code').length ){
@@ -2665,27 +2667,29 @@ function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow, callback){
 			element = jQuery(element);
 		}
 
-		var willScroll = true;
-		if ( onlyWhenBelow ){
-			var elementTop = element.offset().top-offset;
-			var viewportTop = nebula.dom.document.scrollTop();
-			if ( viewportTop-elementTop <= 0 ){
-				willScroll = false;
-			}
-		}
-
-		if ( willScroll ){
-			if ( !milliseconds ){
-				var milliseconds = 500;
-			}
-
-			jQuery('html, body').animate({
-				scrollTop: element.offset().top-offset
-			}, milliseconds, function(){
-				if ( callback ){
-					callback();
+		if ( element.length ){
+			var willScroll = true;
+			if ( onlyWhenBelow ){
+				var elementTop = element.offset().top-offset;
+				var viewportTop = nebula.dom.document.scrollTop();
+				if ( viewportTop-elementTop <= 0 ){
+					willScroll = false;
 				}
-			});
+			}
+
+			if ( willScroll ){
+				if ( !milliseconds ){
+					var milliseconds = 500;
+				}
+
+				jQuery('html, body').animate({
+					scrollTop: element.offset().top-offset
+				}, milliseconds, function(){
+					if ( callback ){
+						callback();
+					}
+				});
+			}
 		}
 
 		return false;
@@ -3100,7 +3104,7 @@ function millisecondsToString(ms){
 
 //Convert time to relative.
 //For cross-browser support, timestamp must be passed as a string (not a Date object) in the format: Fri Mar 27 21:40:02 +0000 2016
-function timeAgo(timestamp){ //http://af-design.com/blog/2009/02/10/twitter-like-timestamps/
+function timeAgo(timestamp, raw){ //http://af-design.com/blog/2009/02/10/twitter-like-timestamps/
 	if ( typeof timestamp === 'object' ){
 		console.warn('Pass date as string in the format: Fri Mar 27 21:40:02 +0000 2016');
 	}
@@ -3114,6 +3118,11 @@ function timeAgo(timestamp){ //http://af-design.com/blog/2009/02/10/twitter-like
 	}
 
 	var diff = Math.floor((currentTime-postDate)/1000);
+
+	if ( raw ){
+		return diff;
+	}
+
 	if ( diff <= 1 ){ return "just now"; }
 	if ( diff < 20 ){ return diff + " seconds ago"; }
 	if ( diff < 60 ){ return "less than a minute ago"; }
@@ -4044,7 +4053,7 @@ function mmenus(){
 				offCanvas: {
 					position: "left", //"left" (default), "right", "top", "bottom"
 					zposition: "back", //"back" (default), "front", "next"
-				   },
+				},
 				navbars: [{
 					position: "top",
 					content: ["searchfield"]
@@ -4053,17 +4062,25 @@ function mmenus(){
 					content: ["<span>" + nebula.site.name + "</span>"]
 				}],
 				searchfield: {
-				   	add: true,
-				   	search: true,
-				   	placeholder: 'Search',
-				   	noResults: "No navigation items found.",
-				   	showSubPanels: false,
-				   	showTextItems: false,
-				   	resultsPanel: true,
-				   },
-				   counters: true, //Display count of sub-menus
-				   iconPanels: false, //Layer panels on top of each other
-				   extensions: ["theme-light", "effect-slide-menu", "pageshadow"] //Theming, effects, and other extensions
+					add: true,
+					search: true,
+					placeholder: 'Search',
+					noResults: "No navigation items found.",
+					showSubPanels: false,
+					showTextItems: false,
+					resultsPanel: true,
+				},
+				counters: true, //Display count of sub-menus
+				//iconPanels: false, //Layer panels on top of each other
+				extensions: [
+					"theme-light", //Light background
+					"border-full", //Extend list borders full width
+					"fx-listitems-slide", //Animated list items
+					"shadow-page", //Add shadow to the page
+					"shadow-panels", //Add shadow to menu panels
+					"listview-huge", //Larger list items
+					"multiline" //Wrap long titles
+				]
 			}, {
 				//Configuration
 				offCanvas: {
@@ -4085,19 +4102,20 @@ function mmenus(){
 			});
 
 			if ( mobileNav.length ){
-				mobileNav.data('mmenu').bind('opening', function(){
+				mobileNav.data('mmenu').bind('open:start', function(){
 					//When mmenu has started opening
-					mobileNavTriggerIcon.removeClass('fa-bars').addClass('fa-times').closest('.mobilenavtrigger').addClass('active');
+					mobileNavTriggerIcon.removeClass('fa-bars').addClass('fa-times');
+					jQuery('[data-toggle="tooltip"]').tooltip('hide');
 					nebulaTimer('mmenu', 'start');
-				}).bind('opened', function(){
+				}).bind('open:finish', function(){
 					//After mmenu has finished opening
 					history.replaceState(null, document.title, location);
 					history.pushState(null, document.title, location);
-				}).bind('closing', function(){
+				}).bind('close:start', function(){
 					//When mmenu has started closing
-					mobileNavTriggerIcon.removeClass('fa-times').addClass('fa-bars').closest('.mobilenavtrigger').removeClass('active');
+					mobileNavTriggerIcon.removeClass('fa-times').addClass('fa-bars');
 					ga('send', 'timing', 'Mmenu', 'Closed', Math.round(nebulaTimer('mmenu', 'lap')), 'From opening mmenu until closing mmenu');
-				}).bind('closed', function(){
+				}).bind('close:finish', function(){
 					//After mmenu has finished closing
 				});
 			}

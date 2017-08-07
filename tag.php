@@ -23,7 +23,7 @@ get_header(); ?>
 		<div class="row">
 			<div class="col">
 				<h1 class="page-title"><i class="fa fa-fw fa-tag"></i> <?php echo single_tag_title('', false); ?></h1>
-				<?php echo tag_description(); ?>
+				<div class="page-meta"><?php echo tag_description(); ?></div>
 			</div><!--/cols-->
 		</div><!--/row-->
 	</div><!--/container-->

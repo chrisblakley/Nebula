@@ -24,7 +24,7 @@ get_header(); ?>
 			<div class="col">
 				<?php if ( have_posts() ): ?>
 					<h1 class="page-title">Search Results</h1>
-					<p>
+					<p class="page-meta">
 						Your search for <span class="search-term">"<?php echo get_search_query(); ?>"</span> returned
 						<?php
 							if ( file_exists(WP_PLUGIN_DIR . '/relevanssi') && $wp_query->found_posts ){ //If Relevanssi is enabled

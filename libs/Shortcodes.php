@@ -282,7 +282,7 @@ if ( !trait_exists('Shortcodes') ){
 		public function vimeo_shortcode($atts){
 			extract(shortcode_atts(array("id" => null, "height" => '', "width" => '', "autoplay" => '0', "badge" => '1', "byline" => '1', "color" => '00adef', "loop" => '0', "portrait" => '1', "title" => '1'), $atts));
 
-			$vimeo_data = video_meta('vimeo', $id);
+			$vimeo_data = $this->video_meta('vimeo', $id);
 			$vimeo = '<div class="nebula-vimeo embed-responsive embed-responsive-16by9">';
 			if ( !empty($vimeo_data) && empty($vimeo_data['error']) ){
 				$vimeo .= '<iframe id="' . $vimeo_data['safetitle'] . '" class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . $id . '?api=1&player_id=' . $vimeo_data['safetitle'] . '" width="' . $width . '" height="' . $height . '" autoplay="' . $autoplay . '" badge="' . $badge . '" byline="' . $byline . '" color="' . $color . '" loop="' . $loop . '" portrait="' . $portrait . '" title="' . $title . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
@@ -306,7 +306,7 @@ if ( !trait_exists('Shortcodes') ){
 				$ignore_visibility = 'ignore-visibility';
 			}
 
-			$youtube_data = video_meta('youtube', $id);
+			$youtube_data = $this->video_meta('youtube', $id);
 			$youtube = '<div class="nebula-youtube embed-responsive embed-responsive-16by9">';
 			if ( !empty($youtube_data) && empty($youtube_data['error']) ){
 				//Note: removed &origin=' . youtube_meta($id, 'origin') . ' right before &rel= due to console warnings. Doesn't seem to be an issue.

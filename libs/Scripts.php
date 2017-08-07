@@ -157,6 +157,11 @@ if ( !trait_exists('Scripts') ){
 
 			//User Data
 			$this->brain['user'] = array(
+				'id' => get_current_user_id(),
+				'data' => array(
+					'display_name' => $user_info->data->display_name,
+					'email' => $user_info->data->user_email,
+				),
 				'ip' => $_SERVER['REMOTE_ADDR'],
 				'nid' => $this->get_nebula_id(),
 				'cid' => $this->ga_parse_cookie(),

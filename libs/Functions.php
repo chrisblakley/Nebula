@@ -96,6 +96,7 @@ trait Functions {
 		add_action('nebula_body_open', array($this, 'skip_to_content_link'));
 		add_filter('wp_get_attachment_url', array($this, 'wp_get_attachment_url_force_protocol'));
 		add_filter('embed_oembed_html', array($this, 'oembed_modifiers'), 9999, 4);
+		add_filter('acf/settings/google_api_key', array($this, 'acf_google_api_key'));
 	}
 
 	//Start output buffering so headers can be sent later for HTTP2 Server Push
@@ -593,7 +594,12 @@ trait Functions {
 			$image = wp_get_attachment_image_src($image_id, $size);
 			return $image[0];
 		} else {
-			return ( preg_match('~\bsrc="([^"]++)"~', get_the_post_thumbnail($id, $size), $matches) )? $matches[1] : ''; //Use Regex as a last resort if get_the_post_thumbnail() was passed.
+			$img_tag = get_the_post_thumbnail($id, $size);
+			if ( get_post_type($id) === 'attachment' ){
+				$img_tag = wp_get_attachment_image($id, $size);
+			}
+
+			return ( preg_match('~\bsrc="([^"]++)"~', $img_tag, $matches) )? $matches[1] : ''; //Pull the img src from the HTML tag itself
 		}
 	}
 
@@ -651,7 +657,7 @@ trait Functions {
 		$relative_date = human_time_diff(get_the_date('U'), current_time('timestamp')) . ' ago';
 
 		if ( $data['relative'] ){
-			return '<span class="posted-on relative-date">' . $icon . $relative_date . '</span>';
+			return '<span class="posted-on relative-date" title="' . get_the_date('F j, Y') . '">' . $icon . $relative_date . '</span>';
 		}
 
 		$day = ( $data['day'] )? get_the_date('d') . '/' : ''; //If the day should be shown (otherwise, just month and year).
@@ -710,7 +716,7 @@ trait Functions {
 	}
 
 	//Categories post meta
-	public function post_categories($icon=true){
+	public function post_categories($icon=true, $show_uncategorized=true){
 		if ( get_theme_mod('post_categories', true) ){
 			$the_icon = '';
 			if ( $icon ){
@@ -718,7 +724,13 @@ trait Functions {
 			}
 
 			if ( is_object_in_taxonomy(get_post_type(), 'category') ){
-				return '<span class="posted-in meta-item post-categories">' . $the_icon . get_the_category_list(', ') . '</span>';
+				$category_list = get_the_category_list(', ');
+
+				if ( strip_tags($category_list) === 'Uncategorized' && !$show_uncategorized ){
+					return false;
+				}
+
+				return '<span class="posted-in meta-item post-categories">' . $the_icon . $category_list . '</span>';
 			}
 		}
 	}
@@ -795,10 +807,11 @@ trait Functions {
 	public function post_comments($icon=true, $linked=true, $empty=true){
 		if ( get_theme_mod('post_comment_count', true) ){
 			$comments_text = 'Comments';
-			if ( get_comments_number() === 0 ){
+
+			if ( get_comments_number() == 0 ){
 				$comment_icon = 'fa-comment-o';
 				$comment_show = ( $empty )? '' : 'hidden'; //If comment link should show if no comments. True = show, False = hidden
-			} elseif ( get_comments_number() === 1 ){
+			} elseif ( get_comments_number() == 1 ){
 				$comment_icon = 'fa-comment';
 				$comments_text = 'Comment';
 			} elseif ( get_comments_number() > 1 ){
@@ -2725,5 +2738,10 @@ trait Functions {
 		}
 
 		return $html;
+	}
+
+	//Add Google API key to Advanced Custom Fields Google Map field type
+	public function acf_google_api_key(){
+		return nebula()->get_option('google_browser_api_key');
 	}
 }

@@ -411,22 +411,21 @@
 			});
 		});
 
-		ga('send', 'pageview'); //Send pageview with all custom dimensions and metrics
+		ga('send', 'pageview', {
+			'hitCallback': function(){
+				window.GAready = true; //Set a global boolean variable
+				document.dispatchEvent(new Event('gaready')); //Trigger an event when GA is ready (without jQuery)
 
-		//Initialize event tracking listeners (if they are available)
-		ga(function(){
-			window.GAready = true; //Set a global boolean variable
-			document.dispatchEvent(new Event('gaready')); //Trigger an event when GA is ready (without jQuery)
-
-			if ( typeof initEventTracking === 'function' ){
-				//initEventTracking(); //Could this be causing events before the pageview?
-			}
-
-			<?php if ( is_child_theme() ): ?>
-				if ( typeof supplementalEventTracking === 'function' ){
-					//supplementalEventTracking(); //Could this be causing events before the pageview?
+				if ( typeof initEventTracking === 'function' ){
+					initEventTracking();
 				}
-			<?php endif; ?>
+
+				<?php if ( is_child_theme() ): ?>
+					if ( typeof supplementalEventTracking === 'function' ){
+						supplementalEventTracking();
+					}
+				<?php endif; ?>
+			}
 		});
 
 		<?php do_action('nebula_ga_after_send_pageview'); ?>

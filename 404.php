@@ -25,7 +25,7 @@ get_header(); ?>
 			<div class="row">
 				<div class="col">
 					<h1 class="page-title">Not Found</h1>
-					<p>The page you requested could not be found.</p>
+					<p class="page-meta">The page you requested could not be found.</p>
 				</div><!--/cols-->
 			</div><!--/row-->
 		</div><!--/container-->

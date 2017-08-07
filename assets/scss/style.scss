@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.3.2.4926
+	Version: 5.3.7.3431
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -85,7 +85,7 @@ form.nebula-search {position: relative; display: inline-block; margin: 0;
 	&.searching:before {content: '\f110'; @include prefix((animation: fa-spin 2s infinite linear), webkit moz);}
 }
 
-.nebula_the_excerpt {white-space: nowrap;}
+.nebula_excerpt {white-space: nowrap;}
 #wp_search_submit {color: #292b2c !important;
 	&:hover {color: #000 !important;}
 }
@@ -538,6 +538,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 .page-title,
 .entry-title {padding-top: 0; margin-top: 0;}
 
+.page-meta,
 .entry-meta {font-size: rem(14px); line-height: rem(21px); margin: 0 0 10px 0;
 	i {margin-right: 2px; color: #bbb;}
 	.meta-item {display: inline-block; margin-right: 10px;

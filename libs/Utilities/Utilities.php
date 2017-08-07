@@ -468,10 +468,10 @@ if ( !trait_exists('Utilities') ){
 
 				case ('type'):
 				case ('filetype'):
-				case ('extension'): //The extension only (without ".")
+				case ('extension'): //Only the extension (without ".")
 					if ( strpos(basename($url_components['path']), '.') !== false ){
 						$file_parts = explode('.', $url_components['path']);
-						return $file_parts[1];
+						return $file_parts[count($file_parts)-1];
 					} else {
 						return false;
 					}
