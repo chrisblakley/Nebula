@@ -339,6 +339,12 @@
 // These animations happen on hover.
 // ===========================
 
+//Swell
+[nebula-hover*="nebula-swell"]:hover,
+.nebula-swell {@include prefix((transition: transform .4s easing(easeOutBack)));
+	&:hover {transform: scale3d(1.05, 1.05, 1.05);}
+}
+
 //Grow
 [nebula-hover*="nebula-grow"]:hover,
 .nebula-grow {@include prefix((transition: transform .4s easing(easeOutBack)));

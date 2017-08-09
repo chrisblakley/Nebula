@@ -443,8 +443,7 @@ if ( !trait_exists('Device') ){
 			}
 
 			$bot_regex = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http', 'favicon', 'curl', 'coda', 'netcraft');
-			$additional_bot_regex = apply_filters('nebula_bot_regex', array());
-			$all_bot_regex = array_merge($bot_regex, $additional_bot_regex);
+			$all_bot_regex = apply_filters('nebula_bot_regex', $bot_regex);
 			foreach( $all_bot_regex as $bot_regex ){
 				if ( strpos(strtolower($_SERVER['HTTP_USER_AGENT']), $bot_regex) !== false ){
 					return true;

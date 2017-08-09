@@ -242,9 +242,7 @@ if ( !trait_exists('Security') ){
 			$manual_nebula_blacklisted_domains = array(
 				'bitcoinpile.com',
 			);
-			$additional_blacklisted_domains = apply_filters('nebula_blacklisted_domains', array());
-			$all_blacklisted_domains = array_merge($manual_nebula_blacklisted_domains, $additional_blacklisted_domains);
-
+			$all_blacklisted_domains = apply_filters('nebula_blacklisted_domains', $manual_nebula_blacklisted_domains);
 			return array_merge($blacklisted_domains, $all_blacklisted_domains);
 		}
 	}

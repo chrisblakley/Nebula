@@ -970,9 +970,7 @@ if ( !trait_exists('Visitors') ){
 		*/
 		public function is_protected_label($label){
 			$default_protected_labels = array('id', 'nebula_id', 'ga_cid', 'lead_score', 'demographic_score', 'behavior_score');
-
-			$additional_protected_labels = apply_filters('nebula_vdb_protected_labels', array());
-			$all_protected_labels = array_merge($default_protected_labels, $additional_protected_labels);
+			$all_protected_labels = apply_filters('nebula_vdb_protected_labels', $default_protected_labels);
 
 			if ( in_array($label, $all_protected_labels) ){
 				return true;
@@ -2070,9 +2068,7 @@ if ( !trait_exists('Visitors') ){
 					'referrer' => 10,
 				);
 
-				$additional_demographic_points = apply_filters('nebula_vdb_demographic_points', array());
-				$demographic_point_values = array_merge($default_demographic_points, $additional_demographic_points);
-
+				$demographic_point_values = apply_filters('nebula_vdb_demographic_points', $default_demographic_points);
 				return $this->points_adder($data, $demographic_point_values);
 			}
 		}
@@ -2122,8 +2118,7 @@ if ( !trait_exists('Visitors') ){
 					'current_session_duration' => array('0', -10), //Bounced visitors
 				);
 
-				$additional_behavior_points = apply_filters('nebula_vdb_behavior_points', array());
-				$behavior_point_values = array_merge($default_behavior_points, $additional_behavior_points);
+				$behavior_point_values = apply_filters('nebula_vdb_behavior_points', $default_behavior_points);
 
 				$behavior_score = $this->points_adder($data, $behavior_point_values);
 				$behavior_score = floor($behavior_score-(floor((time()-$data['last_seen_on'])/DAY_IN_SECONDS)*0.33)); //Remove .33 points per day since last seen (rounded down)

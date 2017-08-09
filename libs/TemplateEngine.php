@@ -65,7 +65,7 @@ if ( !trait_exists('TemplateEngine') ){
 			}
 
 			if ( isset($plugins_templates[$post_type]) && !empty($plugins_templates[$post_type]) ){
-				return array_merge( $post_templates, $plugins_templates[$post_type]);
+				return array_merge($post_templates, $plugins_templates[$post_type]);
 			} else {
 				return $post_templates;
 			}

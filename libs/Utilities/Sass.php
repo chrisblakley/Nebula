@@ -60,8 +60,7 @@ if ( !trait_exists('Sass') ){
 				}
 
 				//Allow for additional Sass locations to be included. Imports can be an array of directories.
-				$additional_scss_loactions = apply_filters('nebula_scss_locations', array());
-				$all_scss_locations = array_merge($scss_locations, $additional_scss_loactions);
+				$all_scss_locations = apply_filters('nebula_scss_locations', $scss_locations);
 
 				//Check if all Sass files should be rendered
 				$force_all = false;
@@ -124,8 +123,7 @@ if ( !trait_exists('Sass') ){
 					'secondary_color' => get_theme_mod('nebula_secondary_color', $this->sass_color('secondary')), //From Customizer or child theme Sass variable
 					'background_color' => get_theme_mod('nebula_background_color', $this->sass_color('background')), //From Customizer or child theme Sass variable
 				);
-				$additional_scss_variables = apply_filters('nebula_scss_variables', array());
-				$all_scss_variables = array_merge($nebula_scss_variables, $additional_scss_variables);
+				$all_scss_variables = apply_filters('nebula_scss_variables', $nebula_scss_variables);
 				$scss->setVariables($nebula_scss_variables);
 
 				//Imports/Partials (find the last modified time)

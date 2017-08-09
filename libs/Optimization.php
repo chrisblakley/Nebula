@@ -120,16 +120,14 @@ if ( !trait_exists('Optimization') ){
 			}
 
 			//Preconnect
-			$custom_preconnects = apply_filters('nebula_preconnect', $default_preconnects);
-			$preconnects = array_merge($custom_preconnects, array());
+			$preconnects = apply_filters('nebula_preconnect', $default_preconnects);
 			foreach ( $preconnects as $preconnect ){
 				echo '<link rel="preconnect" href="' . $preconnect . '" />';
 			}
 
 			//Prefetch
 			$default_prefetches = array();
-			$custom_prefetches = apply_filters('nebula_prefetches', $default_prefetches);
-			$prefetches = array_merge($custom_prefetches, array());
+			$prefetches = apply_filters('nebula_prefetches', $default_prefetches);
 			foreach ( $prefetches as $prefetch ){
 				echo '<link rel="prefetch" href="' . $prefetch . '" />';
 			}

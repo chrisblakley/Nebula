@@ -30,7 +30,7 @@ if ( !trait_exists('Automation') ){
 		}
 
 		public function register_required_plugins(){
-			$plugins = array(
+			$bundled_plugins = array(
 				array(
 					'name' => 'Custom Post Type UI',
 					'slug' => 'custom-post-type-ui',
@@ -136,6 +136,8 @@ if ( !trait_exists('Automation') ){
 				));
 			}
 
+			$all_bundled_plugins = apply_filters('nebula_bundled_plugins', $bundled_plugins); //Allow other themes and plugins to bundle additional plugins
+
 			$config = array(
 				'id' => 'nebula',
 				'strings' => array(
@@ -152,7 +154,7 @@ if ( !trait_exists('Automation') ){
 				)
 			);
 
-			tgmpa($plugins, $config);
+			tgmpa($all_bundled_plugins, $config);
 		}
 
 		//Make sure certain data is always set

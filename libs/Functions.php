@@ -376,8 +376,7 @@ trait Functions {
 				}
 			}
 
-			$additional_nebula_warnings = apply_filters('nebula_warnings', array()); //Allow other functions to hook in to add warnings (like Ecommerce)
-			$all_nebula_warnings = array_merge($nebula_warnings, $additional_nebula_warnings);
+			$all_nebula_warnings = apply_filters('nebula_warnings', $nebula_warnings); //Allow other functions to hook in to add warnings (like Ecommerce)
 
 			//Sort by warning level
 			usort($all_nebula_warnings, function($itemA, $itemB){
@@ -638,23 +637,22 @@ trait Functions {
 
 	//Date post meta
 	public function post_date($options=array()){
-		$format = get_theme_mod('post_date_format');
-
-		if ( $format === 'disabled' || get_theme_mod('post_date_format') === 'disabled' ){
-			return false;
-		}
-
 		$defaults = array(
 			'icon' => true,
 			'relative' => ( $format === 'relative' )? true : false,
 			'linked' => true,
 			'day' => true,
+			'format' => get_theme_mod('post_date_format'),
 		);
 
 		$data = array_merge($defaults, $options);
 
+		if ( $data['format'] === 'disabled' || get_theme_mod('post_date_format') === 'disabled' ){
+			return false;
+		}
+
 		$icon = ( $data['icon'] )? '<i class="fa fa-calendar-o"></i> ' : '';
-		$relative_date = human_time_diff(get_the_date('U'), current_time('timestamp')) . ' ago';
+		$relative_date = human_time_diff(get_the_date('U'), current_time('timestamp', get_option('gmt_offset'))) . ' ago';
 
 		if ( $data['relative'] ){
 			return '<span class="posted-on relative-date" title="' . get_the_date('F j, Y') . '">' . $icon . $relative_date . '</span>';
@@ -670,14 +668,22 @@ trait Functions {
 	}
 
 	//Author post meta
-	public function post_author($icon=true, $linked=true, $force=false){
-		if ( ($this->get_option('author_bios') || $force) && get_theme_mod('post_author', true) ){
+	public function post_author($options=array()){
+		$defaults = array(
+			'icon' => true, //Show icon
+			'linked' => true, //Link to author page
+			'force' => true, //Override author_bios Nebula option
+		);
+
+		$data = array_merge($defaults, $options);
+
+		if ( ($this->get_option('author_bios') || $data['force']) && get_theme_mod('post_author', true) ){
 			$icon_html = '';
-			if ( $icon ){
+			if ( $data['icon'] ){
 				$icon_html = '<i class="fa fa-user"></i> ';
 			}
 
-			if ( $linked && !$force ){
+			if ( $data['linked'] && !$data['force'] ){
 				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $icon_html . '<span class="meta-item entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '" itemprop="name">' . get_the_author() . '</a></span></span>';
 			} else {
 				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $icon_html . '<span class="meta-item entry-author" itemprop="name">' . get_the_author() . '</span></span>';
@@ -716,18 +722,31 @@ trait Functions {
 	}
 
 	//Categories post meta
-	public function post_categories($icon=true, $show_uncategorized=true){
-		if ( get_theme_mod('post_categories', true) ){
+	public function post_categories($options=array()){
+		$defaults = array(
+			'icon' => true, //Show icon
+			'linked' => true, //Link to category archive
+			'show_uncategorized' => true, //Show "Uncategorized" category
+			'force' => false,
+		);
+
+		$data = array_merge($defaults, $options);
+
+		if ( get_theme_mod('post_categories', true) || $data['force'] ){
 			$the_icon = '';
-			if ( $icon ){
+			if ( $data['icon'] ){
 				$the_icon = '<i class="fa fa-bookmark"></i> ';
 			}
 
 			if ( is_object_in_taxonomy(get_post_type(), 'category') ){
 				$category_list = get_the_category_list(', ');
 
-				if ( strip_tags($category_list) === 'Uncategorized' && !$show_uncategorized ){
+				if ( strip_tags($category_list) === 'Uncategorized' && !$data['show_uncategorized'] ){
 					return false;
+				}
+
+				if ( !$data['linked'] ){
+					$category_list = strip_tags($category_list);
 				}
 
 				return '<span class="posted-in meta-item post-categories">' . $the_icon . $category_list . '</span>';
@@ -736,12 +755,19 @@ trait Functions {
 	}
 
 	//Tags post meta
-	public function post_tags($icon=true){
-		if ( get_theme_mod('post_tags', true) ){
+	public function post_tags($options=array()){
+		$defaults = array(
+			'icon' => true, //Show icon
+			'force' => false
+		);
+
+		$data = array_merge($defaults, $options);
+
+		if ( get_theme_mod('post_tags', true) || $data['force'] ){
 			$tag_list = get_the_tag_list('', ', ');
 			if ( $tag_list ){
 				$the_icon = '';
-				if ( $icon ){
+				if ( $data['icon'] ){
 					$tag_plural = ( count(get_the_tags()) > 1 )? 'tags' : 'tag';
 					$the_icon = '<i class="fa fa-' . $tag_plural . '"></i> ';
 				}
@@ -751,15 +777,22 @@ trait Functions {
 	}
 
 	//Image dimensions post meta
-	public function post_dimensions($icon=true, $linked=true){
+	public function post_dimensions($options=array()){
 		if ( wp_attachment_is_image() ){
+			$defaults = array(
+				'icon' => true, //Show icon
+				'linked' => true, //Link to attachment
+			);
+
+			$data = array_merge($defaults, $options);
+
 			$the_icon = '';
-			if ( $icon ){
+			if ( $data['icon'] ){
 				$the_icon = '<i class="fa fa-expand"></i> ';
 			}
 
 			$metadata = wp_get_attachment_metadata();
-			if ( $linked ){
+			if ( $data['linked'] ){
 				echo '<span class="meta-item meta-dimensions">' . $the_icon . '<a href="' . wp_get_attachment_url() . '" >' . $metadata['width'] . ' &times; ' . $metadata['height'] . '</a></span>';
 			} else {
 				echo '<span class="meta-item meta-dimensions">' . $the_icon . $metadata['width'] . ' &times; ' . $metadata['height'] . '</span>';
@@ -804,13 +837,22 @@ trait Functions {
 	}
 
 	//Comments post meta
-	public function post_comments($icon=true, $linked=true, $empty=true){
-		if ( get_theme_mod('post_comment_count', true) ){
+	public function post_comments($options=array()){
+		$defaults = array(
+			'icon' => true, //Show icon
+			'linked' => true, //Link to comment
+			'empty' => true, //Show if 0 comments
+			'force' => false
+		);
+
+		$data = array_merge($defaults, $options);
+
+		if ( get_theme_mod('post_comment_count', true) || $data['force'] ){
 			$comments_text = 'Comments';
 
 			if ( get_comments_number() == 0 ){
 				$comment_icon = 'fa-comment-o';
-				$comment_show = ( $empty )? '' : 'hidden'; //If comment link should show if no comments. True = show, False = hidden
+				$comment_show = ( $data['empty'] )? '' : 'hidden'; //If comment link should show if no comments. True = show, False = hidden
 			} elseif ( get_comments_number() == 1 ){
 				$comment_icon = 'fa-comment';
 				$comments_text = 'Comment';
@@ -819,11 +861,11 @@ trait Functions {
 			}
 
 			$the_icon = '';
-			if ( $icon ){
+			if ( $data['icon'] ){
 				$the_icon = '<i class="fa ' . $comment_icon . '"></i> ';
 			}
 
-			if ( $linked ){
+			if ( $data['linked'] ){
 				$postlink = ( is_single() )? '' : get_the_permalink();
 				return '<span class="meta-item posted-comments ' . $comment_show . '">' . $the_icon . '<a class="nebulametacommentslink" href="' . $postlink . '#nebulacommentswrapper">' . get_comments_number() . ' ' . $comments_text . '</a></span>';
 			} else {
@@ -2018,7 +2060,7 @@ trait Functions {
 		echo '</script>';
 	}
 
-	//Twitter cached feed
+	//Twitter cached feed //yolo
 	public function twitter_cache($username='Great_Blakes', $listname=null, $numbertweets=5, $includeretweets=1){
 		if ( $_POST['data'] ){
 			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }

@@ -1070,8 +1070,18 @@ function keywordSearch(container, parent, value, filteredClass){
 	if ( !filteredClass ){
 		var filteredClass = 'filtereditem';
 	}
-	jQuery(container).find("*:not(:Contains(" + value + "))").closest(parent).addClass(filteredClass);
-	jQuery(container).find("*:Contains(" + value + ")").closest(parent).removeClass(filteredClass);
+
+	if ( value.length > 2 && value.charAt(0) === '/' && value.slice(-1) === '/' ){
+		var regex = new RegExp(value.substring(1).slice(0, -1), 'i'); //Convert the string to RegEx after removing the first and last /
+
+		jQuery(parent).addClass(filteredClass);
+		jQuery(container).find('*').filter(function(){
+			return regex.test(jQuery(this).text());
+		}).closest(parent).removeClass(filteredClass);
+	} else {
+		jQuery(container).find("*:not(:Contains(" + value + "))").closest(parent).addClass(filteredClass);
+		jQuery(container).find("*:Contains(" + value + ")").closest(parent).removeClass(filteredClass);
+	}
 }
 
 //Menu Search Replacement
