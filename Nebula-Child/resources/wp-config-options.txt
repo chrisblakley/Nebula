@@ -53,11 +53,11 @@ define('WP_DEFAULT_THEME', 'default-theme-folder-name');
 
 define('WPLANG', ''); //WordPress Localized Language.
 
-define('WP_POST_REVISIONS', '5'); //Specify maximum number of Revisions.
+define('WP_POST_REVISIONS', 5); //Specify maximum number of Revisions.
 
 define('MEDIA_TRASH', true); //Media Trash
 
-define('EMPTY_TRASH_DAYS', '15'); //Trash Days
+define('EMPTY_TRASH_DAYS', 15); //Trash Days
 
 //Cron
 define('DISABLE_WP_CRON', 'false' );
@@ -79,8 +79,8 @@ define('RELOCATE', true); //Used to update site URLs
  ===========================*/
 
 //PHP Memory
-define('WP_MEMORY_LIMIT', '64');
-define('WP_MAX_MEMORY_LIMIT', '256');
+define('WP_MEMORY_LIMIT', 64);
+define('WP_MAX_MEMORY_LIMIT', 256);
 
 define('WP_CACHE', true); //WordPress Cache
 
@@ -97,8 +97,8 @@ define('ENFORCE_GZIP', true);
 
 define('WP_AUTO_UPDATE_CORE', true);
 define('AUTOMATIC_UPDATER_DISABLED', true);
-add_filter('auto_update_plugin', '__return_true' );
-add_filter('auto_update_theme', '__return_true' );
+add_filter('auto_update_plugin', '__return_true');
+add_filter('auto_update_theme', '__return_true');
 
 define('FS_METHOD', 'direct'); //Force Direct Install
 

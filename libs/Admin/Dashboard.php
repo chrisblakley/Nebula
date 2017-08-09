@@ -85,7 +85,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( is_multisite() ){
 				$network_admin_link = '';
 				if ( is_super_admin() ){
-					$network_admin_link = ' <a href="' . network_admin_url() . '">(Network Admin)</a></li>';
+					$network_admin_link = ' <small><a href="' . network_admin_url() . '">(Network Admin)</a></small></li>';
 				}
 				echo '<li><i class="fa fa-fw fa-cubes"></i> Multisite' . $network_admin_link;
 			}

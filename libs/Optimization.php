@@ -255,20 +255,3 @@ if ( !trait_exists('Optimization') ){
 		}
 	}
 }
-
-//Disable PHP Magic Quotes.
-//Note: Even in PHP5.4+ and if get_magic_quotes_gpc() is false, this may STILL be needed. I don't know why.
-//@TODO "Nebula" 0: Keep testing this like crazy to remove as soon as possible. This is needed for nebulaSession and nebulaUser cookies.
-$process = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
-while ( list($key, $val) = each($process) ){
-	foreach ( $val as $k => $v ){
-		unset($process[$key][$k]);
-		if ( is_array($v) ){
-			$process[$key][stripslashes($k)] = $v;
-			$process[] = &$process[$key][stripslashes($k)];
-		} else {
-			$process[$key][stripslashes($k)] = stripslashes($v);
-		}
-	}
-}
-unset($process);
