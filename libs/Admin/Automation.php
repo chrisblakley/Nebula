@@ -129,7 +129,7 @@ if ( !trait_exists('Automation') ){
 			);
 
 			if ( file_exists(WP_PLUGIN_DIR . '/woocommerce') ){
-				array_push($plugins, array(
+				array_push($bundled_plugins, array(
 					'name' => 'Enhanced Ecommerce Google Analytics Plugin for WooCommerce',
 					'slug' => 'enhanced-e-commerce-for-woocommerce-store',
 					'required' => true
