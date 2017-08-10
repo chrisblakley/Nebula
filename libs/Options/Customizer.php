@@ -204,7 +204,7 @@ trait Customizer {
 		$wp_customize->add_control('nebula_hero', array(
 			'label' => 'Show Hero Section',
 			'section' => 'hero',
-			'priority' => 29,
+			'priority' => 25,
 			'type' => 'checkbox',
 		));
 
@@ -215,7 +215,7 @@ trait Customizer {
 			'description' => 'Using an optimized .jpg is strongly recommended!',
 			'section' => 'hero',
 			'settings' => 'nebula_hero_bg_image',
-			'priority' => 30,
+			'priority' => 27,
 		)));
 		$wp_customize->selective_refresh->add_partial('nebula_hero_bg_image', array(
 			'settings' => array('nebula_hero_bg_image'),
@@ -228,7 +228,7 @@ trait Customizer {
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_hero_overlay_color', array(
 			'label' => 'Hero BG Overlay Color',
 			'section' => 'hero',
-			'priority' => 32,
+			'priority' => 28,
 		)));
 
 		//Hero Overlay Opacity
@@ -243,7 +243,7 @@ trait Customizer {
 		    'label' => 'Hero BG Overlay Opacity',
 			'description' => 'Enter a value between 0 (transparent) and 1 (opaque). Default: 0.6',
 			'section' => 'hero',
-			'priority' => 33,
+			'priority' => 29,
 		));
 
 		//Hero Site Title
@@ -712,7 +712,7 @@ trait Customizer {
 			'priority' => 30,
 		)));
 		$wp_customize->selective_refresh->add_partial('nebula_fwa_bg_image', array(
-			'settings' => array('nebula_hero_bg_image'),
+			'settings' => array('nebula_fwa_bg_image'),
 			'selector' => '#footer-widget-section',
 			'container_inclusive' => false,
 		));
@@ -877,19 +877,19 @@ trait Customizer {
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('header_nav_scheme') ): //Subpage Header Nav Scheme ?>
-					#primarynav ul li.menu-item > a,
-					#primarynav ul li.menu-item > a:active,
-					#primarynav ul li.menu-item > a:visited {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme')]; ?>;}
-						#primarynav ul li.menu-item > a:hover,
-						#primarynav ul li.menu-item > a:focus {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme') . '_alt']; ?>;}
+					#primary-nav ul li.menu-item > a,
+					#primary-nav ul li.menu-item > a:active,
+					#primary-nav ul li.menu-item > a:visited {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme')]; ?>;}
+						#primary-nav ul li.menu-item > a:hover,
+						#primary-nav ul li.menu-item > a:focus {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme') . '_alt']; ?>;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('hero_nav_scheme') ): //Hero Nav Scheme ?>
-					.home #primarynav ul li.menu-item > a,
-					.home #primarynav ul li.menu-item > a:active,
-					.home #primarynav ul li.menu-item > a:visited {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme')]; ?>;}
-						.home #primarynav ul li.menu-item > a:hover,
-						.home #primarynav ul li.menu-item > a:focus {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme') . '_alt']; ?>;}
+					.home #primary-nav ul li.menu-item > a,
+					.home #primary-nav ul li.menu-item > a:active,
+					.home #primary-nav ul li.menu-item > a:visited {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme')]; ?>;}
+						.home #primary-nav ul li.menu-item > a:hover,
+						.home #primary-nav ul li.menu-item > a:focus {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme') . '_alt']; ?>;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('featured_image_location') === 'hero' ): ?>
@@ -906,12 +906,10 @@ trait Customizer {
 					#hero-section .custom-color-overlay {background: <?php echo get_theme_mod('nebula_hero_overlay_color'); ?>; opacity: <?php echo get_theme_mod('nebula_hero_overlay_opacity'); ?>; animation: none;}
 				<?php endif; ?>
 
-				<?php if ( get_theme_mod('nebula_show_hero_title', true) ): ?>
-					#hero-section h1 {<?php echo ( get_theme_mod('nebula_hero_text_color') )? 'color:' . get_theme_mod('nebula_hero_text_color') . ';' : ''; ?>}
-				<?php endif; ?>
-
-				<?php if ( get_theme_mod('nebula_show_hero_description', true) ): ?>
-					#hero-section h2 {<?php echo ( get_theme_mod('nebula_hero_text_color') )? 'color:' . get_theme_mod('nebula_hero_text_color') . ';' : ''; ?>}
+				<?php if ( get_theme_mod('nebula_hero_text_color') ): ?>
+					#hero-section h1,
+					#hero-section h2,
+					#hero-section p {color: <?php echo get_theme_mod('nebula_hero_text_color'); ?>;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('nebula_fwa_bg_image') && get_theme_mod('nebula_fwa_overlay_opacity') !== 1 ):?>

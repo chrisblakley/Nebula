@@ -4,7 +4,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Shortcodes') ){
 	trait Shortcodes {
-		public function hooks() {
+		public function hooks(){
 			//Div
 			add_shortcode('div', array($this, 'div_shortcode'));
 

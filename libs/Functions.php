@@ -1954,6 +1954,17 @@ trait Functions {
 		$override = apply_filters('pre_nebula_widgets_init', null);
 		if ( isset($override) ){return;}
 
+		//Hero
+		register_sidebar(array(
+			'name' => 'Hero',
+			'id' => 'hero-widget-area',
+			'description' => 'The horizontal hero widget area',
+			'before_widget' => '<div id="%1$s" class="col-md widget-container align-self-center %2$s">',
+			'after_widget' => '</div>',
+			'before_title' => '<h3 class="widget-title">',
+			'after_title' => '</h3>',
+		));
+
 		//Sidebar
 		register_sidebar(array(
 			'name' => 'Sidebar',

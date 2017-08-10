@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.3.9.5303
+	Version: 5.3.10.6556
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -418,8 +418,8 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 			ul.sub-menu {position: absolute; top: 15px; left: -9999px; /* max-width: 250px; */ margin: 0; padding: 5px 0; opacity: 0; text-align: left; @include prefix((transition: top 0.35s easing(easeOutBackBig), opacity 0.25s)); @include background-color(#fff, 0.95); box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2); z-index: 1001;
 				.no-js & {width: 400px;}
 				li {display: block; margin: 0;
-					a {display: block; padding: 5px; margin: 0; color: $primary_color; white-space: nowrap;
-						&:hover {background: $primary_color; color: #fff;}
+					a {display: block; padding: 5px; margin: 0; @include link-colors($primary_color, #fff, $primary_color, $primary_color, #fff); white-space: nowrap;
+						&:hover {background: $primary_color;}
 					}
 					ul.sub-menu {display: none;}
 				}
@@ -444,15 +444,15 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 
 //Homepage Hero
 #hero-section {position: relative; padding: 0; margin: 0; overflow: hidden; background: url($template_directory + "/assets/img/phg/phg-nebula.jpg") no-repeat fixed center center /cover; text-align: center; @include prefix((transition: all 0.5s));
-	#hero-content {margin-top: 80px; margin-bottom: 80px; //yolo
+	#hero-content {margin-top: 80px; margin-bottom: 80px;
 		@include media("md"){margin-top: 200px; margin-bottom: 200px;};
 
-		h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: rem(48px); font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.3); @include prefix((transition: all 0.5s));
+		h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: rem(48px); line-height: 1; font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.1); @include prefix((transition: all 0.5s));
 			@include media("md"){font-size: rem(60px);};
 			@include media("lg"){font-size: rem(90px);};
 		}
 
-		h2 {position: relative; text-align: center; color: #fff; margin: 0 0 18px 0; padding: 0; font-size: rem(18px); font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));
+		h2 {position: relative; text-align: center; color: #fff; margin: 0 0 18px 0; padding: 0; font-size: rem(18px); font-weight: 300; z-index: 1; @include prefix((transition: all 0.5s));
 			@include media("md"){font-size: rem(24px);};
 			@include media("lg"){font-size: rem(32px);};
 		}
@@ -463,6 +463,11 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 		iframe {margin-top: 50px;}
 
 		.hero-cta {margin-top: 50px;}
+
+		#hero-widget-area {
+			img,
+			iframe {margin: 0;}
+		}
 	}
 }
 

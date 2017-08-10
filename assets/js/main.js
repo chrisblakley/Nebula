@@ -313,9 +313,11 @@ function performanceMetrics(){
 			var windowLoaded = Math.round(performance.timing.loadEventStart-performance.timing.navigationStart); //Navigation start until window load
 
 			if ( nebula.dom.html.hasClass('debug') ){
+				console.group('Performance');
 				console.log('Server Response: ' + responseEnd + 'ms');
 				console.log('DOM Ready: ' + domReady + 'ms');
 				console.log('Window Loaded: ' + windowLoaded + 'ms');
+				console.groupEnd();
 			}
 
 			//Validate each timing result before using them

@@ -16,6 +16,7 @@ if ( !class_exists('Nebula') ){
 	require_once get_template_directory() . '/libs/Optimization.php';
 	require_once get_template_directory() . '/libs/Functions.php';
 	require_once get_template_directory() . '/libs/Shortcodes.php';
+	require_once get_template_directory() . '/libs/Widgets.php';
 	require_once get_template_directory() . '/libs/Admin/Admin.php';
 	require_once get_template_directory() . '/libs/Ecommerce.php';
 	require_once get_template_directory() . '/libs/Prototyping.php';
@@ -33,6 +34,7 @@ if ( !class_exists('Nebula') ){
 		use Optimization { Optimization::hooks as OptimizationHooks; }
 		use Functions { Functions::hooks as FunctionsHooks; }
 		use Shortcodes { Shortcodes::hooks as ShortcodesHooks; }
+		use Widgets { Widgets::hooks as WidgetsHooks; }
 		use Admin { Admin::hooks as AdminHooks; }
 		use Ecommerce { Ecommerce::hooks as EcommerceHooks; }
 		use Prototyping { Prototyping::hooks as PrototypingHooks; }
@@ -88,6 +90,7 @@ if ( !class_exists('Nebula') ){
 			$this->CustomizerHooks(); //Register Customizer hooks
 			$this->FunctionsHooks(); // Register Functions hooks
 			$this->ShortcodesHooks(); // Register Shortcodes hooks
+			$this->WidgetsHooks(); // Register Widgets hooks
 
 			if ( nebula()->is_admin_page() || is_admin_bar_showing() ){
 				$this->AdminHooks(); // Register Admin hooks
