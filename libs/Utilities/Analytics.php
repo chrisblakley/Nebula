@@ -6,6 +6,7 @@ if ( !trait_exists('Analytics') ){
 	trait Analytics {
 		public function hooks(){
 			add_action('nebula_head_open', array($this, 'ga_track_load_abandons')); //This is the earliest anything can be placed in the <head>
+			add_action('wp_footer', array($this, 'visualize_scroll_percent'));
 			add_action('wp_ajax_nebula_ga_ajax', array($this, 'ga_ajax'));
 			add_action('wp_ajax_nopriv_nebula_ga_ajax', array($this, 'ga_ajax'));
 		}
@@ -347,6 +348,35 @@ if ( !trait_exists('Analytics') ){
 						}
 					});
 				</script>
+				<?php
+			}
+		}
+
+		//Visualize max scroll percent by adding ?max=16.12 to the URL
+		public function visualize_scroll_percent(){
+			if ( $this->is_staff() ){
+				?>
+					<script>
+						jQuery(window).on('load', function(){
+							if ( <?php echo ( isset($_GET['scroll_max'] )? 'true' : 'false'); ?> ){
+								setTimeout(function(){
+									scrollTop = jQuery(window).scrollTop();
+									pageHeight = jQuery(document).height();
+									viewportHeight = jQuery(window).height();
+									var percentTop = ((pageHeight-viewportHeight)*<?php echo $_GET['scroll_max']; ?>)/100;
+									var divHeight = pageHeight-percentTop;
+
+									jQuery(window).on('scroll', function(){
+										scrollTop = jQuery(window).scrollTop();
+										var currentScrollPercent = ((scrollTop/(pageHeight-viewportHeight))*100).toFixed(2);
+									    console.log('Current Scroll Percent: ' + currentScrollPercent + '%');
+									});
+
+									jQuery('<div style="display: none; position: absolute; top: ' + percentTop + 'px; left: 0; width: 100%; height: ' + divHeight + 'px; border-top: 2px solid red; background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) ' + viewportHeight + 'px); z-index: 999999; pointer-events: none;"></div>').appendTo('body').fadeIn();
+								}, 500);
+							}
+						});
+					</script>
 				<?php
 			}
 		}

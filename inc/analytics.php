@@ -398,15 +398,6 @@
 				var connection = ( navigator.onLine )? 'Online' : 'Offline';
 				model.set(gaCustomDimensions['network'], connection, true);
 
-				//Always make sure events have the page location and title associated with them (in case of session timout)
-				if ( model.get('hitType') === 'event' ){
-					if ( !model.get('location') ){
-						//Send a new pageview if the event does not have contextual data.
-						//This could be due to the user resuming after a session timeout without going to a different page or reloading.
-						tracker.send('pageview');
-					}
-				}
-
 				originalBuildHitTask(model); //Send the payload to Google Analytics
 			});
 		});

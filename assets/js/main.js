@@ -306,7 +306,7 @@ function visibilityChangeActions(){
 
 //Record performance timing
 function performanceMetrics(){
-	if ( window.performance && window.performance.timing ){
+	if ( window.performance && window.performance.timing ){ //Safari 11+
 		setTimeout(function(){
 			var responseEnd = Math.round(performance.timing.responseEnd-performance.timing.navigationStart); //Navigation start until server response finishes
 			var domReady = Math.round(performance.timing.domContentLoadedEventStart-performance.timing.navigationStart); //Navigation start until DOM ready
@@ -897,26 +897,28 @@ function ecommerceTracking(){
 
 //Detect scroll depth
 function scrollDepth(){
-	scrollReady = performance.now();
+	if ( window.performance ){ //Safari 11+
+		scrollReady = performance.now();
 
-	nebula.dom.window.on('scroll', function(){
-		once(function(){
-			scrollBegin = performance.now()-scrollReady;
-			if ( scrollBegin < 250 ){ //Try to avoid autoscrolls
-				ga('send', 'event', 'Scroll Depth', 'Began Scrolling', 'Initial scroll started at ' + nebula.dom.body.scrollTop() + 'px', Math.round(scrollBegin), {'nonInteraction': true}); //Event value is time until scrolling. //@TODO "Nebula" 0: Considering removing this event altogether...
-			}
-		}, 'begin scrolling');
+		nebula.dom.window.on('scroll', function(){
+			once(function(){
+				scrollBegin = performance.now()-scrollReady;
+				if ( scrollBegin < 250 ){ //Try to avoid autoscrolls
+					ga('send', 'event', 'Scroll Depth', 'Began Scrolling', 'Initial scroll started at ' + nebula.dom.body.scrollTop() + 'px', Math.round(scrollBegin), {'nonInteraction': true}); //Event value is time until scrolling. //@TODO "Nebula" 0: Considering removing this event altogether...
+				}
+			}, 'begin scrolling');
 
-		debounce(function(){
-			//If user has reached the bottom of the page
-			if ( (nebula.dom.window.height()+nebula.dom.window.scrollTop()) >= nebula.dom.document.height() ){
-				once(function(){
-					scrollEnd = performance.now()-(scrollBegin+scrollReady);
-					ga('send', 'event', 'Scroll Depth', 'Entire Page', '', Math.round(scrollEnd), {'nonInteraction': true}); //Event value is time to reach end
-				}, 'end scrolling');
-			}
-		}, 100, 'scroll depth');
-	});
+			debounce(function(){
+				//If user has reached the bottom of the page
+				if ( (nebula.dom.window.height()+nebula.dom.window.scrollTop()) >= nebula.dom.document.height() ){
+					once(function(){
+						scrollEnd = performance.now()-(scrollBegin+scrollReady);
+						ga('send', 'event', 'Scroll Depth', 'Entire Page', '', Math.round(scrollEnd), {'nonInteraction': true}); //Event value is time to reach end
+					}, 'end scrolling');
+				}
+			}, 100, 'scroll depth');
+		});
+	}
 }
 
 function isInView(element){
@@ -2975,6 +2977,10 @@ function eraseCookie(name){
 //Time specific events. Unique ID is required. Returns time in milliseconds.
 //Data can be accessed outside of this function via nebulaTimings array.
 function nebulaTimer(uniqueID, action, name){
+	if ( !window.performance ){ //Safari 11+
+		return false;
+	}
+
 	if ( typeof window.nebulaTimings === 'undefined' ){
 		window.nebulaTimings = [];
 	}
