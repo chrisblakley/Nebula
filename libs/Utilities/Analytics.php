@@ -354,7 +354,7 @@ if ( !trait_exists('Analytics') ){
 
 		//Visualize max scroll percent by adding ?max=16.12 to the URL
 		public function visualize_scroll_percent(){
-			if ( isset($_GET['scroll_max'] && $this->is_staff() ){
+			if ( isset($_GET['max_scroll']) && $this->is_staff() ){
 				?>
 					<script>
 						jQuery(window).on('load', function(){
@@ -362,7 +362,7 @@ if ( !trait_exists('Analytics') ){
 								scrollTop = jQuery(window).scrollTop();
 								pageHeight = jQuery(document).height();
 								viewportHeight = jQuery(window).height();
-								var percentTop = ((pageHeight-viewportHeight)*<?php echo $_GET['scroll_max']; ?>)/100;
+								var percentTop = ((pageHeight-viewportHeight)*<?php echo $_GET['max_scroll']; ?>)/100;
 								var divHeight = pageHeight-percentTop;
 
 								jQuery(window).on('scroll', function(){
