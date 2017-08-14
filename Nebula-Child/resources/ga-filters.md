@@ -19,12 +19,6 @@ Filter Type: Custom
 Exclude, Language Settings
 `.{15,}|\s[^\s]*\s|\.|,|\!|\/`
 
-## Security Precautions
-Exclude bot traffic warnings (detected by Nebula) from affecting reporting. These will still show up on the unfiltered view.
-Filter Type: Custom
-Exclude, Event Category
-`Security Precaution`
-
 # Other Filters
 These are filters that may be useful in certain cases, but aren't applicable to all websites.
 

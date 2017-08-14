@@ -25,6 +25,7 @@ if ( !trait_exists('Admin') ){
 				add_editor_style('assets/css/tinymce.css');
 
 				add_action('save_post', array($this, 'clear_transients'));
+				add_action('profile_update', array($this, 'clear_transients'));
 				add_action('admin_head', array($this, 'admin_favicon'));
 				add_filter('admin_body_class', array($this, 'admin_body_classes'));
 				add_action('upgrader_process_complete', array($this, 'theme_update_automation'), 10, 2); //Action 'upgrader_post_install' also exists.

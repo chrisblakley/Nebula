@@ -8,6 +8,6 @@ jQuery(function(){
 	}
 
 	jQuery('#lostpasswordform').submit(function(){
-		ga('send', 'event', 'Security Precaution', 'Password Reset', jQuery('#user_login').val());
+		ga('send', 'exception', {'exDescription': '(Security) Password reset for ' + jQuery('#user_login').val(), 'exFatal': false});
 	});
 }); //End Document Ready

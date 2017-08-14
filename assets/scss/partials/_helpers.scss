@@ -76,7 +76,7 @@
 .filtereditem {display: none;}
 
 // ===========================
-// Bootstrap Helpers
+// Bootstrap Helpers and Overrides
 // ===========================
 
 .btn {cursor: pointer;}
@@ -85,6 +85,8 @@
 	.btn-info:focus,
 	.btn-warning:focus,
 	.btn-danger:focus {color: #fff;}
+
+.nebula-flex-first {order: -1;} //Default flex order is 0. This class forces a column before that.
 
 // ===========================
 // Generic Helpers

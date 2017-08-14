@@ -13,7 +13,7 @@ if ( !trait_exists('Optimization') ){
 			add_filter('style_loader_src', array($this, 'remove_script_version'), 15, 1);
 			add_action('wp_print_scripts', array($this, 'dequeues'), 9999);
 			add_filter('wp_default_scripts', array($this, 'remove_jquery_migrate'));
-			add_action('wp_enqueue_scripts', array($this, 'override_bootstrap_tether'));
+			add_action('wp_enqueue_scripts', array($this, 'override_bootstrap_dependencies'));
 			add_action('admin_init', array($this, 'plugin_force_settings'));
 			add_action('wp_print_scripts', array($this, 'remove_actions'), 9999);
 			add_action('init', array($this, 'disable_wp_emojicons'));
@@ -175,9 +175,9 @@ if ( !trait_exists('Optimization') ){
 			}
 		}
 
-		//Override needing the Tether library for Bootstrap. If Tether is needed, it is dynamically loaded via main.js.
-		public function override_bootstrap_tether(){
-			echo '<script>window.Tether = function(){}</script>'; //Must be a function to bypass Bootstrap check.
+		//Override dependent libraries for Bootstrap. If they are needed, they are dynamically loaded via main.js.
+		public function override_bootstrap_dependencies(){
+			echo '<script>window.Popper = function(){};</script>'; //Must be a function to bypass Bootstrap check.
 		}
 
 		//Force settings within plugins

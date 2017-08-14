@@ -69,7 +69,7 @@ get_header(); ?>
 					<?php endif; ?>
 
 					<?php if ( get_theme_mod('nebula_hero_cta_btn_2_text') && get_theme_mod('nebula_hero_cta_btn_2_url') ): ?>
-						<a class="btn btn-lg btn-secondary ml-4" href="<?php echo get_theme_mod('nebula_hero_cta_btn_2_url'); ?>"><?php echo get_theme_mod('nebula_hero_cta_btn_2_text'); ?></a>
+						<a class="btn btn-lg btn-light ml-4" href="<?php echo get_theme_mod('nebula_hero_cta_btn_2_url'); ?>"><?php echo get_theme_mod('nebula_hero_cta_btn_2_text'); ?></a>
 					<?php endif; ?>
 				</div><!--/col-->
 			</div><!--/row-->

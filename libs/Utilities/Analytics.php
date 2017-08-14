@@ -371,7 +371,7 @@ if ( !trait_exists('Analytics') ){
 								    console.log('Current Scroll Percent: ' + currentScrollPercent + '%');
 								});
 
-								jQuery('<div style="display: none; position: absolute; top: ' + percentTop + 'px; left: 0; width: 100%; height: ' + divHeight + 'px; border-top: 2px solid red; background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) ' + viewportHeight + 'px); z-index: 999999; pointer-events: none;"></div>').appendTo('body').fadeIn();
+								jQuery('<div style="display: none; position: absolute; top: ' + percentTop + 'px; left: 0; width: 100%; height: ' + divHeight + 'px; border-top: 2px solid orange; background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) ' + viewportHeight + 'px); z-index: 999999; pointer-events: none; overflow: hidden;"><div style="position: absolute; top: ' + viewportHeight + 'px; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); border-top: 2px solid red;"></div></div>').appendTo('body').fadeIn();
 							}, 500);
 						});
 					</script>

@@ -1183,10 +1183,6 @@ function autocompleteSearch(element, types){
 						types: JSON.stringify(types)
 					},
 					success: function(data){
-
-						console.log('ajax success');
-						console.debug(data);
-
 						nebula.dom.document.trigger('nebula_autocomplete_search_success', data);
 						ga('set', gaCustomMetrics['autocompleteSearches'], 1);
 						if ( data ){
@@ -2196,9 +2192,9 @@ function conditionalJSLoading(){
 		});
 	}
 
-	//Only load Tether library when Bootstrap tooltips are present.
+	//Only load Popper library when Bootstrap tooltips are present.
 	if ( jQuery('[data-toggle="tooltip"]').length ){
-		nebulaLoadJS(nebula.site.resources.js.tether, function(){
+		nebulaLoadJS(nebula.site.resources.js.popper, function(){
 			window.bsTooltips = true;
 		});
 	}
