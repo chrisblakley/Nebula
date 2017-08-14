@@ -2193,9 +2193,17 @@ function conditionalJSLoading(){
 	}
 
 	//Only load Popper library when Bootstrap tooltips are present.
-	if ( jQuery('[data-toggle="tooltip"]').length ){
+	if ( jQuery('[data-toggle="tooltip"], [data-toggle="popover"]').length ){
 		nebulaLoadJS(nebula.site.resources.js.popper, function(){
-			window.bsTooltips = true;
+			window.bsPopper = true;
+
+			if ( jQuery('[data-toggle="tooltip"]').length ){
+				jQuery('[data-toggle="tooltip"]').tooltip();
+			}
+
+			if ( jQuery('[data-toggle="popover"]').length ){
+				jQuery('[data-toggle="popover"]').popover();
+			}
 		});
 	}
 
