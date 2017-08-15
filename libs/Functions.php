@@ -639,7 +639,7 @@ trait Functions {
 	public function post_date($options=array()){
 		$defaults = array(
 			'icon' => true,
-			'relative' => ( $format === 'relative' )? true : false,
+			'relative' => true,
 			'linked' => true,
 			'day' => true,
 			'format' => get_theme_mod('post_date_format'),

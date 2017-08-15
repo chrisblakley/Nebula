@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.3.14.7272
+	Version: 5.3.14.9785
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -313,9 +313,6 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 //Anchor tags that should not have transitions
 .search-choice-close {@include prefix((transition: none 0.25s));}
 
-//Google AdWords - Remove iframe height
-iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !important; line-height: 0 !important; font-size: 0 !important; margin-top: -13px; float: left;}
-
 .sharing-links {display: block;
 	.nebula-social-button {display: inline-block; margin-right: 10px;
 		span {vertical-align: inherit !important;}
@@ -376,16 +373,13 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 	#utility-nav {position: relative;
 		ul {list-style: none; margin: 0; padding: 0; display: flex; flex-direction: row; justify-content: flex-end;
 			li.menu-item {position: relative;
-				a {display: block; padding: 0 15px; color: #fff; font-size: rem(12px);
-					&:hover,
-					&:focus {background: rgba(0, 0, 0, 0.5);}
-				}
+				a {display: block; padding: 0 15px; color: #fff; font-size: rem(12px);}
 
 				ul.sub-menu {position: absolute; display: block; top: 120%; left: -9999px; height: auto; margin: 0; padding: 5px 0; opacity: 0; text-align: left; @include prefix((transition: top 0.35s easing(easeOutBack), opacity 0.25s)); @include background-color(#fff, 0.95); box-shadow: 0px 15px 50px 0 rgba(0, 0, 0, 0.25); z-index: 1001;
 					.no-js & {width: 400px;}
 
 					li.menu-item {display: block; margin: 0; padding: 0 5px;
-						a {display: block; padding: 0 5px; margin: 0; @include link-colors($primary_color, #fff, $primary_color, $primary_color, #fff); white-space: nowrap;
+						a {display: block; padding: 0 5px; margin: 0; font-size: rem(12px); line-height: rem(14px); @include link-colors($primary_color, #fff, $primary_color, $primary_color, #fff); white-space: nowrap;
 							&:hover {background: $primary_color;}
 						}
 						ul.sub-menu {display: none;}
@@ -394,7 +388,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 
 				&:hover,
 				&:focus {
-					> a {background: $primary_color; color: #fff !important;}
+					> a {background: lighten($primary_color, 5%); color: #fff !important;}
 
 					ul.sub-menu {left: 0; top: 100%; opacity: 1;
 						li {background: none;}
@@ -410,7 +404,9 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 }
 
 //Logo and primary navigation row
-#logonavcon {display: block; position: relative; width: 100%; /* padding-top: 20px; */ text-align: center; box-shadow: none; z-index: 5; @include prefix((transition: all .5s easing(easeInOutCubic)));
+#logonavcon {display: block; position: relative; width: 100%; text-align: center; box-shadow: none; z-index: 5; @include prefix((transition: all .5s easing(easeInOutCubic)));
+	@include media("lg"){top: 0;};
+
 	img,
 	svg {width: 100%; height: auto; @include prefix((transition: all 0.5s));
 		path {fill: #fff;}
@@ -418,13 +414,12 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 
 	.logocon {text-align: left;
 		a {display: inline-block; margin: 0 auto; font-size: rem(21px); padding: 20px 0;
+			@include media("lg"){margin: 0;}
+
 			img,
 			svg {max-width: 225px;}
-			@include media("lg"){margin: 0;}
 		}
 	}
-
-	@include media("lg"){top: 0;};
 }
 
 #primary-nav {position: relative; display: none; z-index: 1000;
@@ -434,13 +429,13 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 		li.menu-item {position: relative; flex-grow: 1; flex-basis: 0;
 			@include media("lg"){flex-grow: initial; flex-basis: initial;};
 
-			a {display: block; padding: 10px 15px; text-align: left; font-size: rem(16px); line-height: rem(21px); @include link-colors(#fff, #aaa, #fff, #fff, #aaa);}
+			a {display: block; padding: 10px 20px; text-align: left; font-size: rem(16px); line-height: rem(21px); @include link-colors(#fff, #aaa, #fff, #fff, #aaa);}
 
 			ul.sub-menu {position: absolute; display: block; top: 120%; left: -9999px; height: auto; margin: 0; padding: 5px 0; opacity: 0; text-align: left; @include prefix((transition: top 0.35s easing(easeOutBack), opacity 0.25s)); @include background-color(#fff, 0.95); box-shadow: 0px 15px 50px 0 rgba(0, 0, 0, 0.25); z-index: 1001;
 				.no-js & {width: 400px;}
 
 				li.menu-item {display: block; margin: 0; padding: 0 5px;
-					a {display: block; padding: 5px; margin: 0; @include link-colors($primary_color, #fff, $primary_color, $primary_color, #fff); white-space: nowrap;
+					a {display: block; padding: 5px; margin: 0; font-size: rem(14px); line-height: rem(21px); @include link-colors($primary_color, #fff, $primary_color, $primary_color, #fff); white-space: nowrap;
 						&:hover {background: $primary_color;}
 					}
 					ul.sub-menu {display: none;}
@@ -449,7 +444,7 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 
 			&:hover,
 			&:focus {
-				> a {background: $primary_color; color: #fff !important;}
+				> a {background: lighten($primary_color, 5%); color: #fff !important;}
 
 				ul.sub-menu {left: 0; top: 100%; opacity: 1;
 					li {background: none;}
@@ -615,21 +610,27 @@ iframe[name='google_conversion_frame'] {height: 0 !important; width: 0 !importan
 .archive .content-section article {margin-bottom: 50px;}
 
 //wp-pagenavi Pagination
-div.wp-pagenavi {float: right; margin-bottom: 20px;
-	span.pages {}
-	span.current {}
-	a.page {}
-	a.nextpostslink {}
-	a.previouspostslink {}
+div.wp-pagenavi {text-align: right; margin-bottom: 20px;
+	span,
+	a {display: inline-block; padding: 0 10px;}
+
+	a {
+		&:hover,
+		&:focus {background: $primary_color; color: #fff; border: 1px solid $primary_color;}
+	}
 }
 
 //WP Core Pagination
-div.wp-pagination {float: right; margin-bottom: 20px;
-	a.page-numbers {
+div.wp-pagination {text-align: right; margin-bottom: 20px;
+	.page-numbers {display: inline-block; padding: 0 10px; border: 1px solid #bfbfbf;
 		&.prev {}
 		&.next {}
 	}
-	span.page-numbers.current {}
+
+	a:hover,
+	a:focus {background: $primary_color; color: #fff; border: 1px solid $primary_color;}
+
+	span.page-numbers.current {font-weight: 800; border-color: #000;}
 }
 
 .wpcf7 ul {padding: 0; max-height: 2000px; list-style: none; overflow: hidden; @include prefix((transition: all 0.75s));}

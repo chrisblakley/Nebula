@@ -2137,21 +2137,6 @@ function applyValidationClasses(element, validation, showFeedback){
 	}
 }
 
-//Google AdWords conversion tracking for AJAX forms
-//Contact Form 7 - Add on_sent_ok: "conversionTracker();" to Additional Settings
-//Parameter should be either boolean (to use thanks.html) or string of another conversion page to use (Default: false).
-function conversionTracker(conversionpage){
-	if ( typeof conversionpage !== 'string' || conversionpage.indexOf('.') <= 0 ){
-		conversionpage = 'thanks.html';
-	}
-
-	var iframe = document.createElement('iframe');
-	iframe.style.width = '0px';
-	iframe.style.height = '0px';
-	document.body.appendChild(iframe);
-	iframe.src = nebula.site.directory.template.uri + '/inc/conversion/' + conversionpage; //@todo "Nebula" 0: Does this need to be updated to support child themes?
-};
-
 
 /*==========================
  Optimization Functions

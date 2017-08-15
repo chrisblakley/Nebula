@@ -3,11 +3,17 @@
 
 .nebula-code-con {margin: 0 0 20px 0;}
 	pre.nebula-code,
- 	.nebula-code-con pre {position: relative; display: block; height: auto; font: normal 12px/22px Monaco, Monospace !important; color: #222; background-color: #e8e8e8; background: -webkit-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -moz-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -ms-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: -o-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); background: repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px); margin: 0; padding: 0 1em; overflow-x: auto; white-space: pre; word-wrap: normal; border: 1px solid #444; border-left: 5px solid #444;}
+ 	.nebula-code-con pre {position: relative; display: block; height: auto; font: normal 12px/22px Monaco, Monospace !important; color: #222; margin: 0; padding: 0 1em; overflow-x: auto; white-space: pre; word-wrap: normal; border: 1px solid #444; border-left: 5px solid #444;
+		background: -webkit-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px);
+		background: -moz-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px);
+		background: -ms-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px);
+		background: -o-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px);
+		background: repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px);
+	}
 
-	.nebula-code.codetitle {display: block; text-align: right; color: #f1672c; font-weight: normal; font-size: 10px; line-height: 10px; margin: 0 0 2px 0; padding: 0; cursor: default;}
+	.nebula-code.codetitle {display: block; text-align: right; color: #f1672c; font-weight: normal; font-size: rem(12px); line-height: rem(12px); margin: 0 0 2px 0; padding: 0; cursor: default;}
 
-.nebula-selectcopy-code {font-size: 10px; float: right; margin-top: -4px; font-weight: normal; opacity: 0.7;
+.nebula-selectcopy-code {font-size: rem(12px); float: right; margin-top: 0; font-weight: normal; opacity: 0.7;
 	&:hover {opacity: 1;}
 	&.success {color: $success_color;}
 	&.error {color: $danger_color;}
@@ -29,7 +35,7 @@
 		pre.nebula-code.#{$language},
 		.nebula-code-con.#{$language} pre,
 		.nebula-code.#{$language} .gist-file {border: 1px solid $color; border-left: 5px solid $color;}
-			.nebula-code.#{$language}::selection {background: lighten($color, 50%); background: rgba(lighten($color, 15%), 0.3);} //::Selection does not work with SASS parent selectors
+			.nebula-code.#{$language}::selection {background: rgba(lighten($color, 10%), 0.4);} //::Selection does not work with SASS parent selectors
 	}
 }
 

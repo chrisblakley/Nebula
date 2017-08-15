@@ -117,7 +117,7 @@ get_header(); ?>
 									<div class="form-group" style="margin-bottom: 0;">
 										<input type="text" name="s" id="s" class="form-control no-autocomplete advanced-search-keyword ignore-form" placeholder="Keyword filter" />
 									</div>
-									<input type="submit" id="searchsubmit" class="btn primary medium" name="submit" value="Search" style="float: right; position: absolute; left: -9999px;" />
+									<input type="submit" id="searchsubmit" class="btn primary medium" name="submit" value="Search" />
 								</div><!--/col-->
 							</div><!--/row-->
 						</form>
