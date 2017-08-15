@@ -540,22 +540,28 @@ if ( !trait_exists('Dashboard') ){
 			do_action('nebula_todo_manager');
 			echo '<p class="todoresults_title"><strong>Active @todo Comments</strong> <a class="todo_help_icon" href="http://gearside.com/wordpress-dashboard-todo-manager/" target="_blank" rel="noopener"><i class="fa fw fa-question-circle"></i> Documentation &raquo;</a></p><div class="todo_results">';
 
-			global $todo_file_counter, $todo_instance_counter;
-			$todo_file_counter = 0;
-			$todo_instance_counter = 0;
-
-			$this->todo_search_files();
+			$todo_counts = $this->todo_search_files();
 
 			echo '</div><!--/todo_results-->';
-			echo '<p>Found <strong>' . $todo_file_counter . ' files</strong> with <strong>' . $todo_instance_counter . ' @todo comments</strong>.</p>';
+			echo '<p>Found <strong>' . $todo_counts['files'] . ' files</strong> with <strong>' . $todo_counts['instances'] . ' @todo comments</strong>.</p>';
 		}
 
-		public function todo_search_files($todo_dirpath=null, $child=false){
-			global $todo_file_counter, $todo_instance_counter;
+		public function todo_search_files($options=array()){
+			$defaults = array(
+				'directory_path' => get_template_directory(),
+				'child' => false, //If currently searching child theme files
+				'files' => 0,
+				'instances' => 0,
+			);
+
+			$data = array_merge($defaults, $options);
+
 			$todo_last_filename = false;
 
-			if ( is_child_theme() && !$child ){
-				$this->todo_search_files(get_stylesheet_directory(), true);
+			if ( is_child_theme() && !$data['child'] ){
+				$current_counts = $this->todo_search_files(array('directory_path' => get_stylesheet_directory(), 'child' => true));
+				$data['files'] = $current_counts['files'];
+				$data['instances'] = $current_counts['instances'];
 			}
 
 			if ( empty($todo_dirpath) ){
@@ -567,12 +573,13 @@ if ( !trait_exists('Dashboard') ){
 				if ( is_file($todo_file) ){
 					if ( strpos(basename($todo_file), '@todo') !== false ){
 						echo '<p class="resulttext">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong></p>';
-						$todo_file_counter++;
+						$data['files']++;
 						$todo_counted = true;
 					}
 
 					$todo_skipFilenames = array('README.md', 'debug_log', 'error_log', '/vendor', 'resources/');
-					if ( !$this->contains(basename($todo_file), $this->skip_extensions()) && !$this->contains($todo_file, $todo_skipFilenames) ){
+
+					if ( !$this->contains($todo_file, $this->skip_extensions()) && !$this->contains($todo_file, $todo_skipFilenames) ){
 						foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
 							preg_match("/(@todo)\s?(?'category'[\"\'\`].+?[\"\'\`])?\s?(?'priority'\d)?:\s(?'description'.+)/i", $todo_line, $todo_details); //Separate the todo comment into useable groups
 
@@ -583,13 +590,14 @@ if ( !trait_exists('Dashboard') ){
 									$theme = 'parent';
 									$theme_note = ' <small>(Parent)</small>';
 
-									if ( $child ){
+									if ( $data['child'] ){
 										$theme = 'child';
 										$theme_note = ' <small>(Child)</small>';
 									}
 								}
 
-								$todo_priority = ( !empty($todo_details['priority']) )? $todo_details['priority'] : 'empty'; //Get the priority
+								$todo_priority = ( $todo_details['priority'] === '' )? 'empty' : intval($todo_details['priority']); //Get the priority
+
 								$todo_category = ( !empty($todo_details['category']) )? str_replace(array('"', "'", '`'), '', $todo_details['category']) : ''; //Get the category
 								$todo_category_html = ( !empty($todo_category) )? '<span class="todocategory">' . $todo_category . '</span>' : '';
 								$todo_description = strip_tags(str_replace(array('-->', '?>', '*/'), '', $todo_details['description'])); //Get the description
@@ -599,6 +607,7 @@ if ( !trait_exists('Dashboard') ){
 									if ( !empty($todo_last_filename) ){
 										echo '</div><!--/todofilewrap-->';
 									}
+
 									echo '<div class="todofilewrap todo-theme-' . $theme . '"><p class="todofilename">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong><span class="themenote">' . $theme_note . '</span></p>';
 								}
 
@@ -606,11 +615,14 @@ if ( !trait_exists('Dashboard') ){
 
 								$todo_last_filename = $todo_this_filename;
 
-								if ( $child && ($todo_priority === 'empty' || $todo_priority > 0) ){ //Only count @todo files/comments on the child theme.
-									$todo_instance_counter++;
-									if ( !$todo_counted ){
-										$todo_file_counter++;
-										$todo_counted = true;
+								if ( ($todo_priority === 'empty' || $todo_priority > 0) ){ //Only count todos with a non-hidden priority
+									if ( !is_child_theme() || (is_child_theme() && $data['child']) ){ //Only count child todo comments if child theme is active
+										$data['instances']++;
+
+										if ( !$todo_counted ){
+											$data['files']++;
+											$todo_counted = true;
+										}
 									}
 								}
 							}
@@ -619,9 +631,11 @@ if ( !trait_exists('Dashboard') ){
 				}
 			}
 
-			if ( $todo_instance_counter >= 1 ){
+			if ( $data['instances'] >= 1 ){
 				echo '</div><!--/todofilewrap-->';
 			}
+
+			return array('files' => $data['files'], 'instances' => $data['instances']);
 		}
 
 		//Developer Info Metabox

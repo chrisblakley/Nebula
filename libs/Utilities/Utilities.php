@@ -583,27 +583,27 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Traverse multidimensional arrays
-		public function contains($needle, $haystack){return $this->in_array_r($needle, $haystack, 'contains');}
-		public function in_array_r($needle, $haystack, $strict=true){
-			$override = apply_filters('pre_in_array_r', null, $needle, $haystack, $strict);
+		public function contains($haystack, $needles){return $this->in_array_r($haystack, $needles, 'contains');}
+		public function in_array_r($haystack, $needles, $strict=true){
+			$override = apply_filters('pre_in_array_r', null, $haystack, $needles, $strict);
 			if ( isset($override) ){return;}
 
-			foreach ( $haystack as $item ){
+			foreach ( $needles as $needle ){
 				if ( $strict === true ){ //If strict, match the type and the value
-					if ( $item === $needle ){
+					if ( $needle === $haystack ){
 						return true;
 					}
 				} else {
 					if ( $strict === 'contains' ){ //If strict is 'contains', check if the item contains the needle
-						if ( stripos($item, $needle) !== false ){
+						if ( stripos($haystack, $needle) !== false ){
 							return true;
 						}
-					} elseif ( $item === $needle ){ //Otherwise check if the item matches the needle (regardless of type)
+					} elseif ( $$needle === $haystack ){ //Otherwise check if the item matches the needle (regardless of type)
 						return true;
 					}
 				}
 
-				if ( is_array($item) && in_array_r($needle, $item, $strict) ){ //If the item is an array, recursively check that array
+				if ( is_array($needle) && in_array_r($haystack, $needle, $strict) ){ //If the item is an array, recursively check that array
 					return true;
 				}
 			}
