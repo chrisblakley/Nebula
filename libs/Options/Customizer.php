@@ -907,9 +907,9 @@ trait Customizer {
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('nebula_hero_text_color') ): ?>
-					#hero-section h1,
-					#hero-section h2,
-					#hero-section p {color: <?php echo get_theme_mod('nebula_hero_text_color'); ?>;}
+					#hero-section #hero-content h1,
+					#hero-section #hero-content h2,
+					#hero-section #hero-content p {color: <?php echo get_theme_mod('nebula_hero_text_color'); ?>;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('nebula_fwa_bg_image') && get_theme_mod('nebula_fwa_overlay_opacity') !== 1 ):?>
