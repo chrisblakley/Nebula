@@ -564,15 +564,15 @@ if ( !trait_exists('Dashboard') ){
 				$data['instances'] = $current_counts['instances'];
 			}
 
-			if ( empty($todo_dirpath) ){
-				$todo_dirpath = get_template_directory();
+			if ( empty($data['directory_path']) ){
+				$data['directory_path'] = get_template_directory();
 			}
 
-			foreach ( $this->glob_r($todo_dirpath . '/*') as $todo_file ){
+			foreach ( $this->glob_r($data['directory_path'] . '/*') as $todo_file ){
 				$todo_counted = false;
 				if ( is_file($todo_file) ){
 					if ( strpos(basename($todo_file), '@todo') !== false ){
-						echo '<p class="resulttext">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong></p>';
+						echo '<p class="resulttext">' . str_replace($data['directory_path'], '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong></p>';
 						$data['files']++;
 						$todo_counted = true;
 					}
@@ -602,13 +602,13 @@ if ( !trait_exists('Dashboard') ){
 								$todo_category_html = ( !empty($todo_category) )? '<span class="todocategory">' . $todo_category . '</span>' : '';
 								$todo_description = strip_tags(str_replace(array('-->', '?>', '*/'), '', $todo_details['description'])); //Get the description
 
-								$todo_this_filename = str_replace($todo_dirpath, '', dirname($todo_file)) . '/' . basename($todo_file);
+								$todo_this_filename = str_replace($data['directory_path'], '', dirname($todo_file)) . '/' . basename($todo_file);
 								if ( $todo_last_filename !== $todo_this_filename ){
 									if ( !empty($todo_last_filename) ){
 										echo '</div><!--/todofilewrap-->';
 									}
 
-									echo '<div class="todofilewrap todo-theme-' . $theme . '"><p class="todofilename">' . str_replace($todo_dirpath, '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong><span class="themenote">' . $theme_note . '</span></p>';
+									echo '<div class="todofilewrap todo-theme-' . $theme . '"><p class="todofilename">' . str_replace($data['directory_path'], '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong><span class="themenote">' . $theme_note . '</span></p>';
 								}
 
 								echo '<div class="linewrap todo-category-' . strtolower(str_replace(' ', '_', $todo_category)) . ' todo-priority-' . $todo_priority . '"><p class="todoresult"> ' . $todo_category_html . ' <a class="linenumber" href="#">Line ' . ($todo_lineNumber+1) . '</a> <span class="todomessage">' . $todo_description . '</span></p><div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div></div>';

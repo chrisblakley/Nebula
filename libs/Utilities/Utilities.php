@@ -25,35 +25,67 @@ if ( !trait_exists('Utilities') ){
 
 		//Generate Nebula Session ID
 		public function nebula_session_id(){
-			$session_info = ( $this->is_debug() )? 'dbg.' : '';
-			$session_info .= ( $this->get_option('prototype_mode') )? 'prt.' : '';
+			$session_data = array();
 
-			if ( $this->is_client() ){
-				$session_info .= 'cli.';
-			} elseif ( $this->is_dev() ){
-				$session_info .= 'dev.';
+			//Time
+			$session_data['t'] = time();
+
+			//Debug
+			if ( $this->is_debug() ){
+				$session_data['d'] = true;
 			}
 
+			//Prototype Mode
+			if ( $this->get_option('prototype_mode') ){
+				$session_data['p'] = true;
+			}
+
+			//Client/Developer
+			if ( $this->is_client() ){
+				$session_data['cli'] = true;
+			}
+			if ( $this->is_dev() ){
+				$session_data['dev'] = true;
+			}
+
+			//Logged in user role
 			if ( is_user_logged_in() ){
 				$user_info = get_userdata(get_current_user_id());
-				$role_abv = 'ukn';
+
+				$session_data['r'] = 'unknown';
 				if ( !empty($user_info->roles) ){
-					$role_abv = substr($user_info->roles[0], 0, 3);
+					$session_data['r'] = $user_info->roles[0];
 				}
-				$session_info .= 'u:' . get_current_user_id() . '.r:' . $role_abv . '.';
+
+				$session_data['uid'] = get_current_user_id();
 			}
 
-			$session_info .= ( $this->is_bot() )? 'bot.' : '';
+			//Bot detection
+			if ( $this->is_bot() ){
+				$session_data['bot'] = true;
+			}
 
-			$wp_session_id = ( session_id() )? session_id() : '!' . uniqid();
-			$ga_cid = $this->ga_parse_cookie();
-
-			$site_live = '';
+			//Site Live
 			if ( !$this->is_site_live() ){
-				$site_live = '.n';
+				$session_data['l'] = false;
 			}
 
-			return time() . '.' . $session_info . 's:' . $wp_session_id . '.c:' . $ga_cid . $site_live;
+			//Session ID
+			$session_data['s'] = ( session_id() )? session_id() : '!' . uniqid();
+
+			//Google Analytics CID
+			$session_data['cid'] = $this->ga_parse_cookie();
+
+			//Additional session information
+			$all_session_data = apply_filters('nebula_session_id', $session_data);
+
+			//Convert to a string
+			$session_id = '';
+			foreach ( $all_session_data as $key => $value ){
+				$session_id .= $key . ':' . $value . ';';
+			}
+
+			return $session_id;
 		}
 
 		//Detect Notable POI

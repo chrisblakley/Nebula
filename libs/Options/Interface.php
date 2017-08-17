@@ -798,6 +798,16 @@
 											<p class="nebula-help-text more-help form-text text-muted">Note that browsers report online/offline differently. Connection to a LAN without Internet may be reported as "online".</p>
 											<p class="option-keywords"></p>
 										</div>
+
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon">Server Referrer</div>
+												<input type="text" name="nebula_options[cd_referrer]" id="cd_referrer" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_network']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Logs the referrer as detected by the server. This populates regardless of UTM acquisition tags. Scope: Session</p>
+											<p class="option-keywords"></p>
+										</div>
 									</div><!-- /sub-group -->
 
 									<div class="option-sub-group">

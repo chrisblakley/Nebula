@@ -37,6 +37,7 @@
 			hitTime: '<?php echo nebula()->get_option('cd_hittime'); ?>',
 			hitType: '<?php echo nebula()->get_option('cd_hittype'); ?>',
 			network: '<?php echo nebula()->get_option('cd_network'); ?>',
+			referrer: '<?php echo nebula()->get_option('cd_referrer'); ?>',
 			author: '<?php echo nebula()->get_option('cd_author'); ?>',
 			businessHours: '<?php echo nebula()->get_option('cd_businesshours'); ?>',
 			categories: '<?php echo nebula()->get_option('cd_categories'); ?>',
@@ -91,6 +92,14 @@
 		}
 
 		<?php
+			//Original Referrer
+			if ( empty($_SESSION['original_referrer']) ){ //Only capture the referrer on the first page of the session (so it doesn't get replaced with an on-site referrer)
+				$original_referrer = ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '(none)';
+				echo 'ga("set", gaCustomDimensions["referrer"], "' . $original_referrer . '");';
+
+				$_SESSION['original_referrer'] = $original_referrer;
+			}
+
 			if ( is_singular() || is_page() ){
 				global $post;
 
@@ -382,6 +391,10 @@
 		//Modify the payload before sending data to Google Analytics
 		ga(function(tracker){
 			tracker.set(gaCustomDimensions['gaCID'], tracker.get('clientId'));
+
+			if ( nebula && nebula.session && nebula.session.id ){
+				nebula.session.id = nebula.session.id.replace(/;cid:(.+);/i, ';cid:' + tracker.get('clientId') + ';'); //Update the CID once assigned
+			}
 
 			var originalBuildHitTask = tracker.get('buildHitTask'); //Grab a reference to the default buildHitTask function.
 			tracker.set('buildHitTask', function(model){

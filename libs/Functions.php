@@ -848,6 +848,7 @@ trait Functions {
 		$data = array_merge($defaults, $options);
 
 		if ( get_theme_mod('post_comment_count', true) || $data['force'] ){
+			$comment_show = '';
 			$comments_text = 'Comments';
 
 			if ( get_comments_number() == 0 ){
@@ -892,6 +893,9 @@ trait Functions {
 			'ellipsis' => false,
 			'url' => false,
 			'more' => get_theme_mod('nebula_excerpt_length', 'Read More &raquo;'),
+			'wp_more' => true,
+			'btn' => false, //Alias of "button"
+			'button' => false,
 			'strip_shortcodes' => true,
 			'strip_tags' => true,
 			'wrap_links' => false,
@@ -905,7 +909,22 @@ trait Functions {
 			if ( empty($the_post) ){
 				return false;
 			}
-			$data['text'] = ( !empty($the_post->post_excerpt) )? $the_post->post_excerpt : $the_post->post_content;
+
+			if ( !empty($the_post->post_excerpt) ){
+				$data['text'] = $the_post->post_excerpt;
+			} else {
+				$data['text'] = $the_post->post_content;
+				if ( $data['wp_more'] ){
+					$wp_more_split = get_extended($the_post->post_content); //Split the content on the WordPress <!--more--> tag
+					$data['text'] = $wp_more_split['main'];
+
+					if ( preg_match('/<!--more(.*?)?-->/', $the_post->post_content, $matches) ){ //Get the custom <!--more Keep Reading--> text. RegEx from: https://core.trac.wordpress.org/browser/tags/4.8/src/wp-includes/post-template.php#L288
+						if ( !empty($matches[1]) ){
+							$data['more'] = strip_tags(wp_kses_no_null(trim($matches[1])));
+						}
+					}
+				}
+			}
 		}
 
 		//Strip Newlines
@@ -954,7 +973,13 @@ trait Functions {
 				$data['url'] = ( !empty($data['id']) )? get_permalink($data['id']) : get_permalink(get_the_id()); //Use the ID if available, or use the current ID.
 			}
 
-			$data['text'] .= ' <a class="nebula_excerpt" href="' . $data['url'] . '">' . $data['more'] . '</a>';
+			//Button
+			if ( $data['button'] || $data['btn'] ){
+				$button = ( $data['button'] )? $data['button'] : $data['btn'];
+				$btn_class = ( is_bool($button) )? 'btn btn-brand' : 'btn ' . $data['button'];
+			}
+
+			$data['text'] .= ' <a class="nebula_excerpt ' . $btn_class . '" href="' . $data['url'] . '">' . $data['more'] . '</a>';
 		}
 
 		return $data['text'];
@@ -1146,7 +1171,7 @@ trait Functions {
 		if ( isset($override) ){return;}
 
 		if ( has_post_thumbnail() ){
-			$featured_image = $this->get_thumbnail_src(get_the_post_thumbnail($post->ID, 'full'));
+			$featured_image = $this->get_thumbnail_src(get_the_post_thumbnail(get_the_id(), 'full'));
 		} else {
 			$featured_image = get_template_directory_uri() . '/assets/img/meta/og-thumb.png'; //@TODO "Nebula" 0: This should probably be a square? Check the recommended dimensions.
 		}
@@ -1961,6 +1986,17 @@ trait Functions {
 			'description' => 'The horizontal hero widget area',
 			'before_widget' => '<div id="%1$s" class="col-md widget-container align-self-center %2$s">',
 			'after_widget' => '</div>',
+			'before_title' => '<h3 class="widget-title">',
+			'after_title' => '</h3>',
+		));
+
+		//Below Hero
+		register_sidebar(array(
+			'name' => 'Below Hero',
+			'id' => 'below-hero-widget-area',
+			'description' => 'The horizontal widget area underneath the hero',
+			'before_widget' => '<div id="%1$s" class="row widget-container justify-content-center"><div class="col align-self-center %2$s">',
+			'after_widget' => '</div></div>',
 			'before_title' => '<h3 class="widget-title">',
 			'after_title' => '</h3>',
 		));
