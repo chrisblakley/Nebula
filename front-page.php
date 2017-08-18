@@ -77,12 +77,6 @@ get_header(); ?>
 	</div><!--/hero-section-->
 <?php endif; ?>
 
-<div id="below-hero-widget-area">
-	<div class="container">
-		<?php dynamic_sidebar('below-hero-widget-area'); ?>
-	</div><!--/container-->
-</div>
-
 <?php get_template_part('inc/nebula_drawer'); ?>
 
 <div id="content-section">

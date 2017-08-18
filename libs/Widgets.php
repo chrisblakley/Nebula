@@ -14,6 +14,59 @@ if ( !trait_exists('Widgets') ){
 	}
 
 	/*==========================
+	 Image (with Link)
+	 ===========================*/
+	class nebula_linked_image extends WP_Widget {
+		function __construct(){
+			parent::__construct('nebula_linked_image', 'Nebula - Linked Image', array('description' => 'Add an image with an optional link.'));
+		}
+
+		//Creating widget front-end
+		public function widget($args, $instance){
+			//Before widget arguments are defined by themes
+			echo $args['before_widget'];
+
+			?>
+				<?php if ( !empty($instance['image']) ): ?>
+					<?php if ( !empty($instance['url']) ): ?>
+						<a href="<?php echo $instance['url']; ?>" <?php echo ( nebula()->url_components('hostname') != nebula()->url_components('hostname', $instance['url']) )? 'target="_blank"' : ''; //Check for external URL ?>>
+					<?php endif; ?>
+							<img src="<?php echo $instance['image']; ?>" />
+					<?php if ( !empty($instance['url']) ): ?>
+						</a>
+					<?php endif; ?>
+				<?php endif; ?>
+			<?php
+
+			//After widget arguments are defined by themes
+			echo $args['after_widget'];
+		}
+
+		//Widget Backend (admin form)
+		public function form($instance){
+			?>
+				<p>
+					<p>Copy the image URL from the <a href="<?php echo admin_url(); ?>upload.php" target="_blank">Media Library</a> or from another location.</p>
+					<label for="<?php echo $this->get_field_id('image'); ?>">Image</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('image'); ?>" name="<?php echo $this->get_field_name('image'); ?>" type="text" value="<?php echo ( isset($instance['image']) )? $instance['image'] : ''; ?>" placeholder="http://" />
+				</p>
+				<p>
+					<label for="<?php echo $this->get_field_id('video_id'); ?>">URL</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('url'); ?>" name="<?php echo $this->get_field_name('url'); ?>" type="text" value="<?php echo ( isset($instance['url']) )? $instance['url'] : ''; ?>" placeholder="http://" />
+				</p>
+			<?php
+		}
+
+		//Updating widget replacing old instances with new
+		public function update($new_instance, $old_instance){
+			$instance = array();
+			$instance['image'] = ( !empty($new_instance['image']) )? strip_tags($new_instance['image']) : '';
+			$instance['url'] = ( !empty($new_instance['url']) )? strip_tags($new_instance['url']) : '';
+			return $instance;
+		}
+	}
+
+	/*==========================
 	 Video
 	 ===========================*/
 	class nebula_video extends WP_Widget {

@@ -110,6 +110,7 @@ trait Customizer {
 		    'choices' => array(
 		        'over' => 'Over Header',
 		        'above' => 'Above (own row)',
+		        'off' => 'Off',
 		    )
 		));
 

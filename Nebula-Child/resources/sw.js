@@ -3,7 +3,7 @@
 //@TODO: Enable "Service Worker" in Nebula Options (under Functions)
 
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-30562'; //Thursday, August 17, 2017 10:47:14 AM
+var CACHE_NAME = 'nebula-nebula-child-99495'; //Friday, August 18, 2017 3:30:32 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
@@ -20,6 +20,12 @@ var CACHE_FILES = [
 	START_URL,
 	HOME_URL,
 ];
+
+//Nebula console log context
+swLogger = console;
+if ( typeof console.context === 'function' ){
+	swLogger = console.context('Service Worker');
+}
 
 //Install
 self.addEventListener('install', function(event){

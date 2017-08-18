@@ -8,7 +8,7 @@ jQuery(function(){
 	//Utilities
 	cacheSelectors();
 	getQueryStrings();
-	addHelperClasses();
+	nebulaHelpers();
 	initBootstrapFunctions();
 	svgImgs();
 	errorMitigation();
@@ -41,14 +41,6 @@ jQuery(function(){
 	if ( isGoogleAnalyticsReady() ){
 		initEventTracking();
 	}
-
-	//Remove Sass render trigger query
-	if ( get('sass') && !get('persistent') && window.history.replaceState ){ //IE10+
-		window.history.replaceState({}, document.title, removeQueryParameter('sass', window.location.href));
-	}
-
-	jQuery('form .debuginfo').addClass('hidden').css('display', 'none').attr('aria-hidden', 'true').val(nebula.session.id);
-	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 }); //End Document Ready
 
 
@@ -124,6 +116,12 @@ function cacheSelectors(force){
 			html: jQuery('html'),
 			body: jQuery('body')
 		};
+
+		//Nebula console log context
+		nebula.logger = console;
+		if ( typeof console.context === 'function' ){
+			nebula.logger = console.context('Nebula');
+		}
 
 		//Regex Patterns
 		//Test with: if ( regexPattern.email.test(jQuery('input').val()) ){ ... }
@@ -564,9 +562,6 @@ function initEventTracking(){
 			window.ga(function(tracker){
 				nebula.dom.document.trigger('nebula_ga_available', tracker);
 				nebula.user.cid = tracker.get('clientId');
-
-				jQuery('form .debuginfo').val(nebula.user.cid);
-
 				nvData.ga_cid = tracker.get('clientId');
 				nvData.is_ga_blocked = 0;
 				nv('send', nvData);
@@ -1756,6 +1751,7 @@ function cf7Functions(){
 		return false;
 	}
 
+	jQuery('.debuginfo').addClass('hidden').css('display', 'none').attr('aria-hidden', 'true');
 	formStarted = {};
 
 	//Replace submit input with a button so a spinner icon can be used instead of the CF7 spin gif (unless it has the class "no-button")
@@ -1817,12 +1813,16 @@ function cf7Functions(){
 		}
 	});
 
-	nebula.dom.document.on('submit', 'form.wpcf7-form', function(){
+	//CF7 before submission
+	nebula.dom.document.on('wpcf7beforesubmit', function(e){
 		jQuery(this).find('button#submit').addClass('active');
 
-		if ( !jQuery.trim(jQuery('form .debuginfo').val()).length ){
-			jQuery('form .debuginfo').val(nebula.user.cid);
-		}
+		//Send debug info with the form
+		jQuery.each(e.detail.inputs, function(index, item) {
+			if ( item.name === 'debuginfo' ){
+				item.value = nebula.session.id;
+			}
+		});
 	});
 
 	//CF7 Invalid (CF7 AJAX response after invalid form)
@@ -1896,10 +1896,6 @@ function cf7Functions(){
 		jQuery('#' + e.detail.id + ' .wpcf7-textarea, #' + e.detail.id + ' .wpcf7-text').each(function(){
 			localStorage.removeItem('cf7_' + jQuery(this).attr('name'));
 		});
-
-		setTimeout(function(){
-			jQuery('form .debuginfo').val(nebula.user.cid); //Re-prep form for another submission
-		}, 1);
 	});
 
 	//CF7 Submit (CF7 AJAX response after any submit attempt). This triggers after the other submit triggers.
@@ -1946,7 +1942,7 @@ function cf7LocalStorage(){
 		var thisLocalStorageVal = localStorage.getItem('cf7_' + jQuery(this).attr('name'));
 
 		//Fill textareas with localstorage data on load
-		if ( !jQuery(this).hasClass('no-storage') && !jQuery(this).hasClass('.wpcf7-captchar') && thisLocalStorageVal && thisLocalStorageVal !== 'undefined' && thisLocalStorageVal !== '' ){
+		if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') && thisLocalStorageVal && thisLocalStorageVal !== 'undefined' && thisLocalStorageVal !== '' ){
 			if ( jQuery(this).val() === '' ){ //Don't overwrite a field that already has text in it!
 				jQuery(this).val(thisLocalStorageVal);
 			}
@@ -1957,7 +1953,7 @@ function cf7LocalStorage(){
 
 		//Update localstorage data
 		jQuery(this).on('keyup blur', function(){
-			if ( !jQuery(this).hasClass('no-storage') && !jQuery(this).hasClass('.wpcf7-captchar') ){
+			if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') ){
 				localStorage.setItem('cf7_' + jQuery(this).attr('name'), jQuery(this).val());
 			}
 		});
@@ -1966,7 +1962,7 @@ function cf7LocalStorage(){
 	//Update matching form fields on other windows/tabs
 	nebula.dom.window.on('storage', function(e){
 		jQuery('.wpcf7-textarea, .wpcf7-text').each(function(){
-		 	if ( !jQuery(this).hasClass('no-storage') && !jQuery(this).hasClass('.wpcf7-captchar') ){
+		 	if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') ){
 				jQuery(this).val(localStorage.getItem('cf7_' + jQuery(this).attr('name')));
 			}
 		 });
@@ -2574,14 +2570,21 @@ function placeLookup(placeID){
  These functions enhance other aspects of the site like HTML/CSS.
  ===========================*/
 
-//Zebra-striper, First-child/Last-child, Hover helper functions, add "external" rel to outbound links
-function addHelperClasses(){
+//Miscellaneous helper classes and functions
+function nebulaHelpers(){
+	//Remove Sass render trigger query
+	if ( get('sass') && !get('persistent') && window.history.replaceState ){ //IE10+
+		window.history.replaceState({}, document.title, removeQueryParameter('sass', window.location.href));
+	}
+
 	nebula.dom.html.removeClass('no-js').addClass('js'); //In case Modernizr is not being used
 	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'nofollow external noopener'); //Add rel attributes to external links
 
 	//Remove filetype icons from images within <a> tags and buttons.
 	jQuery('a img').closest('a').addClass('no-icon');
 	jQuery('.no-icon:not(a)').find('a').addClass('no-icon');
+
+	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 }
 
 function initBootstrapFunctions(){

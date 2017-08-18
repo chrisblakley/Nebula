@@ -48,4 +48,10 @@
 				<?php if ( get_theme_mod('menu_position') === 'above' ): ?>
 					<?php get_template_part('inc/navigation'); ?>
 				<?php endif; ?>
+
+				<div id="header-widget-area">
+					<div class="container">
+						<?php dynamic_sidebar('header-widget-area'); ?>
+					</div><!--/container-->
+				</div>
 			</div><!--/header-section-->

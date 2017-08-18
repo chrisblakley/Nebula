@@ -683,7 +683,20 @@ if ( !trait_exists('Dashboard') ){
 			} else {
 				$php_os_icon = 'fa-upload';
 			}
-			echo '<li><i class="fa fa-fw ' . $php_os_icon . '"></i> Server OS: <strong>' . PHP_OS . '</strong> <small>(' . $_SERVER['SERVER_SOFTWARE'] . ')</small></li>';
+			echo '<li><i class="fa fa-fw ' . $php_os_icon . '"></i> Server OS: <strong>' . PHP_OS . '</strong></li>';
+
+			//Server software
+			$server_software = $_SERVER['SERVER_SOFTWARE'];
+			if ( strlen($server_software) > 10 ){
+				$server_software = strtok($_SERVER['SERVER_SOFTWARE'],  ' '); //Shorten to until the first space
+			}
+			echo '<li><i class="fa fa-fw fa-server"></i> Server Software: <strong>' . $server_software . '</strong></li>';
+
+			//MySQL version
+			if ( function_exists('mysqli_get_client_version') ){
+				$mysql_version = mysqli_get_client_version();
+				echo '<li><i class="fa fa-fw fa-database"></i> MySQL Version: <strong title="Raw: ' . $mysql_version . '">' . floor($mysql_version/10000) . '.' . floor(($mysql_version%10000)/100) . '.' . ($mysql_version%10000)%100 . '</strong></li>';
+			}
 
 			//PHP version
 			$php_version_color = 'inherit';
@@ -704,12 +717,6 @@ if ( !trait_exists('Dashboard') ){
 
 			//PHP memory limit
 			echo '<li><i class="fa fa-fw fa-cogs"></i> PHP Memory Limit: <strong>' . WP_MEMORY_LIMIT . '</strong> ' . $safe_mode . '</li>';
-
-			//MySQL version
-			if ( function_exists('mysqli_get_client_version') ){
-				$mysql_version = mysqli_get_client_version();
-				echo '<li><i class="fa fa-fw fa-database"></i> MySQL Version: <strong title="Raw: ' . $mysql_version . '">' . floor($mysql_version/10000) . '.' . floor(($mysql_version%10000)/100) . '.' . ($mysql_version%10000)%100 . '</strong></li>';
-			}
 
 			//Theme directory size(s)
 			if ( is_child_theme() ){

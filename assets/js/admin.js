@@ -330,6 +330,70 @@ function keywordSearch(container, parent, value, filteredClass){
 	jQuery(container).find("*:Contains(" + value + ")").closest(parent).removeClass(filteredClass);
 }
 
+/*==========================
+ Utility Functions
+ These functions simplify and enhance other JavaScript functions
+ ===========================*/
+
+//Get query string parameters
+function getQueryStrings(){
+	var queries = {};
+	var queryString = document.URL.split('?')[1];
+
+	if ( queryString ){
+		queryStrings = queryString.split('&');
+		for ( var i = 0; i < queryStrings.length; i++ ){
+			hash = queryStrings[i].split('=');
+			if ( hash[1] ){
+				 queries[hash[0]] = hash[1];
+			} else {
+				 queries[hash[0]] = true;
+			}
+		}
+	}
+
+	return queries;
+}
+
+//Search query strings for the passed parameter
+function get(parameter){
+	var queries = getQueryStrings();
+
+	if ( !parameter ){
+		return queries;
+	}
+
+	return queries[parameter] || false;
+}
+
+//Remove a parameter from the query string.
+function removeQueryParameter(key, sourceURL){
+	var baseURL = sourceURL.split('?')[0];
+	var param;
+	var params_arr = [];
+	var queryString = ( sourceURL.indexOf('?') !== -1 )? sourceURL.split('?')[1] : '';
+
+	if ( queryString !== '' ){
+		params_arr = queryString.split('&');
+
+		for ( i = params_arr.length-1; i >= 0; i -= 1 ){
+			param = params_arr[i].split('=')[0];
+			if ( param === key ){
+				params_arr.splice(i, 1);
+			}
+		}
+
+		newURL = baseURL + '?' + params_arr.join('&');
+	}
+
+	//Check if it is empty after parameter removal
+	if ( newURL.split('?')[1] === '' ){
+		return newURL.split("?")[0]; //Return the URL without a query
+	}
+
+	return newURL;
+}
+
 //Custom CSS expression for a case-insensitive contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
 //Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: keywordSearch(container, parent, value);
 jQuery.expr[":"].Contains=function(e,n,t){return(e.textContent||e.innerText||"").toUpperCase().indexOf(t[3].toUpperCase())>=0};

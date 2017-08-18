@@ -1979,6 +1979,17 @@ trait Functions {
 		$override = apply_filters('pre_nebula_widgets_init', null);
 		if ( isset($override) ){return;}
 
+		//Header
+		register_sidebar(array(
+			'name' => 'Header',
+			'id' => 'header-widget-area',
+			'description' => 'The vertical widget area that appears in the header',
+			'before_widget' => '<div id="%1$s" class="row widget-container justify-content-center"><div class="col align-self-center %2$s">',
+			'after_widget' => '</div></div>',
+			'before_title' => '<h3 class="widget-title">',
+			'after_title' => '</h3>',
+		));
+
 		//Hero
 		register_sidebar(array(
 			'name' => 'Hero',
@@ -1986,17 +1997,6 @@ trait Functions {
 			'description' => 'The horizontal hero widget area',
 			'before_widget' => '<div id="%1$s" class="col-md widget-container align-self-center %2$s">',
 			'after_widget' => '</div>',
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>',
-		));
-
-		//Below Hero
-		register_sidebar(array(
-			'name' => 'Below Hero',
-			'id' => 'below-hero-widget-area',
-			'description' => 'The horizontal widget area underneath the hero',
-			'before_widget' => '<div id="%1$s" class="row widget-container justify-content-center"><div class="col align-self-center %2$s">',
-			'after_widget' => '</div></div>',
 			'before_title' => '<h3 class="widget-title">',
 			'after_title' => '</h3>',
 		));

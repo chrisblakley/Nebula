@@ -77,6 +77,11 @@ if ( !trait_exists('Automation') ){
 					'required' => false,
 				),
 				array(
+					'name' => 'Responsive Lightbox',
+					'slug' => 'responsive-lightbox',
+					'required'  => false,
+				),
+				array(
 					'name' => 'TinyMCE Advanced',
 					'slug' => 'tinymce-advanced',
 					'required'  => false,

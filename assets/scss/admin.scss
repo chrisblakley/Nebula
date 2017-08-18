@@ -315,10 +315,10 @@ ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {width: 19px; height: 
 		ul {padding-left: 20px;}
 	}
 
-	.option-group {margin-bottom: 50px;}
+	.option-group {margin-bottom: 40px;}
 
 	.form-group,
-	.multi-form-group {margin-bottom: 25px; transition: opacity 0.25s;
+	.multi-form-group {margin-bottom: 15px; transition: opacity 0.25s;
 		.form-group {margin-bottom: 0;}
 		.form-text {font-size: 12px;}
 	}
@@ -356,9 +356,9 @@ ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {width: 19px; height: 
 	.dependent-note {color: #d9534f; margin: .25rem 0 0 0; padding: 0; font-size: 12px;}
 
 	input[type=checkbox] {height: 0; width: 0; visibility: hidden; display: none;
-		+ label {display: flex; position: relative; align-items: center; cursor: pointer; text-indent: 70px; width: 54px; white-space: nowrap; padding: 0.5rem 0; font-size: 1rem; line-height: 1.25; background: #ddd; border-radius: 1.25rem; margin: 0 15px 0 0; overflow: visible;
-			&:after {content: ''; position: absolute; left: 5px; width: 1.25rem; height: 1.25rem; background: #fff; border-radius: 50%; transition: 0.25s;
-				&:after {width: 1.5rem;}
+		+ label {display: flex; position: relative; align-items: center; cursor: pointer; text-indent: 50px; width: 38px; white-space: nowrap; padding: 0.5rem 0; font-size: 1rem; line-height: 1; background: #ddd; border-radius: 1.25rem; margin: 0 15px 0 0; overflow: visible;
+			&:after {content: ''; position: absolute; top: 6px; left: 5px; width: 1rem; height: 1rem; background: #fff; border-radius: 50%; transition: 0.25s;
+				&:after {width: 1rem;}
 			}
 		}
 	}
