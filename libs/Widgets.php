@@ -9,6 +9,7 @@ if ( !trait_exists('Widgets') ){
 		}
 
 		public function load_nebula_widgets(){
+			register_widget('nebula_linked_image');
 			register_widget('nebula_video');
 		}
 	}
