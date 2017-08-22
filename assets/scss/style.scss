@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.3.18.6462
+	Version: 5.3.22.1151
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -37,7 +37,7 @@ ul {list-style-position: inside;
 }
 
 //Typography
-h1, h2, h3, h4, h5, h6 {line-height: 1.4em; margin-bottom: 0.5em;
+h1, h2, h3, h4, h5, h6 {line-height: 1.15em; margin-bottom: 0.5em;
 	a {color: $primary_color;}
 }
 p, li, dt, dl, div {line-height: 1.625em;}
@@ -190,7 +190,10 @@ html .btn {max-width: 100%; white-space: normal;}
 h3.comment-reply-title {font-size: rem(12px);}
 .logged-in-as {margin: 0;}
 
-.wpcf7-form label {display: block; margin-bottom: 0;}
+.wpcf7-form,
+.nebula-login-form {
+	label {display: block; margin-bottom: 0; font-size: rem(14px);}
+}
 .wpcf7-form br {display: none;}
 
 .debuginfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; font-size: 0px; line-height: 0px; @include background-color(#fff); color: rgba(255, 255, 255, 0); pointer-events: none;}
@@ -575,7 +578,7 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 }
 
 //WordPress WYSIWYG Content
-.entry-content {margin-top: 10px; font-size: rem(14px);
+.entry-content {margin-top: 10px; font-size: rem(16px); line-height: rem(24px);
 	ul {list-style-position: inside; overflow: hidden; padding-left: 20px; list-style: disc;}
 	ol {margin: 0; padding-left: 20px;}
 	img {
@@ -593,6 +596,11 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 }
 
 .entry-caption {font-style: italic; margin-top: 15px;}
+
+//Single Post Widget Area
+#single-post-widget-area {margin-top: 25px;
+	.widget-container {margin-bottom: 25px;}
+}
 
 .prevnextcon {margin-top: 50px; margin-bottom: 30px;}
 	.prev-link-con {text-align: left;}
@@ -706,8 +714,8 @@ h2.articles-by {padding-top: 0;}
 .loop-section article {margin: 60px 0;
 	&:first-of-type {margin-top: 0;}
 
-	.entry-title {font-size: rem(18px); line-height: rem(25px); margin: 0 0 10px 0; font-weight: 800;}
-	.entry-summary {font-size: rem(14px); line-height: rem(21px); margin: 0 0 10px 0; color: #444;}
+	.entry-title {font-size: rem(28px); line-height: rem(32px); margin: 0 0 10px 0; font-weight: 300;}
+	.entry-summary {font-size: rem(16px); line-height: rem(24px); margin: 0 0 10px 0; color: #444;}
 }
 
 //Comments
@@ -735,7 +743,7 @@ li.comment div.comment-meta {display: block;}
 	}
 
 	ul.menu {
-		a {display: block; font-size: rem(14px); line-height: rem(21px); padding-right: 20px;}
+		a {display: block; padding-right: 20px;}
 		li.current-menu-item {
 			a {color: $secondary_color;}
 			.sub-menu a {@include link-colors($primary_color, $secondary_color, $primary_color, $primary_color, $secondary_color);}
@@ -866,24 +874,41 @@ form.footer-search,
 
 
 // ===========================
-// Shortcodes
+// Widgets
 // ===========================
 
-.google-map-overlay {position: relative; overflow: hidden;
-	&:before {content: "Click to enable interactivity."; position: absolute; bottom: -50px; width: 100%; @include background-color(#000, 0.5); text-align: center; color: #fff; overflow: hidden; opacity: 0; @include prefix((transition: all 0.25s));}
-	&.the-map-overlay {cursor: pointer;
-		&:hover:before {@include background-color(#000, 0.9); padding: 24px 0;}
-		&:before {bottom: 6px; opacity: 1; padding: 8px 0; height: auto;}
-		iframe {pointer-events: none;}
+//About the Author
+.about-the-author {
+	&:before {content: ""; display: block; border-top: 5px solid $primary_color; width: 150px; margin-bottom: 25px;}
+
+	.headshot-title-con {display: flex; align-items: center; margin-bottom: 10px;
+		p {margin: 0;}
+		img {max-width: 60px; border-radius: 50%; margin-right: 15px;}
+		h3 {margin: 0;}
+	}
+
+	ul.author-social {display: flex; list-style: none; margin: 0; padding: 0;
+		li {margin-right: 15px;
+			&:last-child {margin-right: 0;}
+			a {font-size: rem(21px);}
+		}
 	}
 }
 
-.ttip {cursor: text;
-	&:before,
-	&:after {bottom: 0%; @include prefix((transition: all 0.25s));}
-	&:hover:after,
-	&:hover:before {bottom: 101%; @include prefix((transition: all 0.25s));}
+//Social Page Links
+ul.about-social {display: flex; list-style: none; margin: 0; padding: 0;
+	li {margin-right: 15px;
+		&:last-child {margin-right: 0;}
+		a {font-size: rem(21px);}
+	}
 }
+
+
+// ===========================
+// Shortcodes
+// ===========================
+
+.nebula-tooltip {border-bottom: 1px dotted #aaa;}
 
 .gist {
 	.line-numbers {font-size: rem(12px);}
@@ -916,14 +941,17 @@ body * {-webkit-animation-duration: 0.1s; -webkit-animation-name: fontfix; -webk
 
 //Print styles
 @include print(){
-	* {/* background: transparent !important;  */ color: #000 !important; box-shadow: none !important; text-shadow: none !important;}
-	a, a:visited {text-decoration: underline;}
+	html {margin-top: 0 !important;} //Still not specific enough
+
+	//* {/* background: transparent !important;  */ color: #000 !important; box-shadow: none !important; text-shadow: none !important;}
+	//a, a:visited {text-decoration: underline;}
 	/* .entry-content a[href]:after {content: " (" attr(href) ")";} */
 
 	.ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {content: "";} /* Don't show links for images, or javascript/internal links */
 	thead {display: table-header-group;}
 	tr, img {page-break-inside: avoid;}
-	img {max-width: 100% !important;}
+	//img {max-width: 100% !important;}
+
 	@page {margin: 0.5cm;}
 	p, h2, h3 {orphans: 3; widows: 3;}
 	h2, h3 {page-break-after: avoid;}

@@ -5,6 +5,8 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Shortcodes') ){
 	trait Shortcodes {
 		public function hooks(){
+			add_shortcode('widget',array($this, 'widget'));
+
 			//Div
 			add_shortcode('div', array($this, 'div_shortcode'));
 
@@ -99,6 +101,40 @@ if ( !trait_exists('Shortcodes') ){
 
 			//Add Nebula Toolbar to TinyMCE
 			add_action('admin_init', array($this, 'add_shortcode_button'));
+		}
+
+		//Call a widget via a shortcode
+		//Use [widget widget_name="nebula_linked_image" image="http://placehold.it/300x300" url="http://google.com"]
+		public function widget($atts){
+			global $wp_widget_factory;
+
+			//Get widget fields
+			$instance = array();
+			foreach ( $atts as $attribute => $value ){
+				if ( $attribute !== 'widget_name' ){
+					$instance[$attribute] = $value;
+				}
+			}
+
+			extract(shortcode_atts(array(
+				'widget_name' => false,
+			), $atts));
+
+			ob_start();
+
+			//Call the widget directly via PHP: https://codex.wordpress.org/Template_Tags/the_widget
+			the_widget(wp_specialchars($widget_name), $instance, array(
+				'widget_id' => 'arbitrary-instance-' . rand(10000, 99999),
+				'before_widget' => '',
+				'after_widget' => '',
+				'before_title' => '',
+				'after_title' => ''
+			));
+
+			$output = ob_get_contents();
+			ob_end_clean();
+
+			return $output;
 		}
 
 		//Get flags where a parameter is declared in $atts that exists without a declared value
@@ -212,7 +248,7 @@ if ( !trait_exists('Shortcodes') ){
 
 		public function space_shortcode($atts){
 			extract(shortcode_atts(array("height" => '20'), $atts));
-			return '<div class="space" style=" height:' . $height . 'px;" ></div>';
+			return '<div class="space" style="height:' . $height . 'px;" ></div>';
 		}
 
 		public function clear_shortcode(){
@@ -220,14 +256,9 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function map_shortcode($atts){
-			extract(shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '',  "region" => '', "width" => '100%', "height" => '350', 'overlay' => false, "class" => '', "style" => ''), $atts));
+			extract(shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '',  "region" => '', "width" => '100%', "height" => '350', "class" => '', "style" => ''), $atts));
 
 			$flags = $this->get_flags($atts);
-			if ( in_array('overlay', $flags) ){
-				$overlay = 'the-map-overlay';
-			} else {
-				$overlay = '';
-			}
 
 			if ( empty($key) ){
 				$key = $this->get_option('google_browser_api_key');
@@ -266,15 +297,7 @@ if ( !trait_exists('Shortcodes') ){
 				$zoom = '&zoom=' . $zoom;
 			}
 
-			$return = '<script>
-						jQuery(window).on("load", function(){
-							jQuery(".the-map-overlay").on("click tap touch", function(){
-								jQuery(this).removeClass("the-map-overlay");
-							});
-						});
-					</script>';
-
-			$return .= '<div class="google-map-overlay ' . $overlay . '"><iframe class="nebula-googlemap-shortcode googlemap ' . $class . '" width="' . $width . '" height="' . $height . '" frameborder="0" src="https://www.google.com/maps/embed/v1/' . $mode . '?key=' . $key . $q . $zoom . $center . '&maptype=' . $maptype . $language . $region . '" style="' . $style . '"></iframe></div>';
+			$return = '<iframe class="nebula-googlemap-shortcode googlemap ' . $class . '" width="' . $width . '" height="' . $height . '" frameborder="0" src="https://www.google.com/maps/embed/v1/' . $mode . '?key=' . $key . $q . $zoom . $center . '&maptype=' . $maptype . $language . $region . '" style="border: 0; ' . $style . '" allowfullscreen></iframe>';
 
 			return $return;
 		}
@@ -434,7 +457,6 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function accordion_item_shortcode( $attributes, $content='' ){
-
 			extract( shortcode_atts( array('class' => '', 'style' => '', 'title' => '', 'default' => 'show'), $attributes) );
 
 			$id = 'collapse' . uniqid();

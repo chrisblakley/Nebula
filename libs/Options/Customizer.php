@@ -213,7 +213,7 @@ trait Customizer {
 		$wp_customize->add_setting('nebula_hero_bg_image', array('default' => null));
 		$wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'nebula_hero_bg_image', array(
 			'label' => 'Hero Background Image',
-			'description' => 'Using an optimized .jpg is strongly recommended!',
+			'description' => 'Using an optimized .jpg is strongly recommended! Use the BG Overlay option with "1" opacity to hide the background image.',
 			'section' => 'hero',
 			'settings' => 'nebula_hero_bg_image',
 			'priority' => 27,
@@ -707,7 +707,7 @@ trait Customizer {
 		$wp_customize->add_setting('nebula_fwa_bg_image', array('default' => null));
 		$wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'nebula_fwa_bg_image', array(
 			'label' => 'Footer Widget Area Background Image',
-			'description' => 'Using an optimized .jpg is strongly recommended!',
+			'description' => 'Using an optimized .jpg is strongly recommended! Use the BG Overlay option with "1" opacity to hide the background image.',
 			'section' => 'footer_widget_area',
 			'settings' => 'nebula_fwa_bg_image',
 			'priority' => 30,
@@ -769,7 +769,7 @@ trait Customizer {
 		$wp_customize->add_setting('nebula_footer_bg_image', array('default' => null));
 		$wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'nebula_footer_bg_image', array(
 			'label' => 'Footer Background Image',
-			'description' => 'Using an optimized .jpg is strongly recommended!',
+			'description' => 'Using an optimized .jpg is strongly recommended! Use the BG Overlay option with "1" opacity to hide the background image.',
 			'section' => 'footer',
 			'settings' => 'nebula_footer_bg_image',
 			'priority' => 19

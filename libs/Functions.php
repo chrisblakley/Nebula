@@ -44,7 +44,6 @@ trait Functions {
 
 		add_action('wp_loaded', array($this, 'favicon_cache'));
 		add_action('nebula_head_open', array($this, 'google_optimize_style'));
-		add_action('widgets_init', array($this, 'widgets_register'));
 		add_action('after_setup_theme', array($this, 'nav_menu_locations'));
 
 		if ( !$this->get_option('comments') || $this->get_option('disqus_shortname') ){ //If WP core comments are disabled -or- if Disqus is enabled
@@ -655,15 +654,15 @@ trait Functions {
 		$relative_date = human_time_diff(get_the_date('U'), current_time('timestamp', get_option('gmt_offset'))) . ' ago';
 
 		if ( $data['relative'] ){
-			return '<span class="posted-on relative-date" title="' . get_the_date('F j, Y') . '">' . $icon . $relative_date . '</span>';
+			return '<span class="posted-on meta-item relative-date" title="' . get_the_date('F j, Y') . '">' . $icon . $relative_date . '</span>';
 		}
 
 		$day = ( $data['day'] )? get_the_date('d') . '/' : ''; //If the day should be shown (otherwise, just month and year).
 
 		if ( $data['linked'] ){
-			return '<span class="posted-on">' . $icon . '<span class="meta-item entry-date" datetime="' . get_the_time('c') . '" itemprop="datePublished" content="' . get_the_date('c') . '">' . '<a href="' . home_url('/') . get_the_date('Y/m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url('/') . get_the_date('Y/m') . '/' . $day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
+			return '<span class="posted-on meta-item">' . $icon . '<span class="entry-date" datetime="' . get_the_time('c') . '" itemprop="datePublished" content="' . get_the_date('c') . '">' . '<a href="' . home_url('/') . get_the_date('Y/m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url('/') . get_the_date('Y/m') . '/' . $day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
 		} else {
-			return '<span class="posted-on">' . $icon . '<span class="meta-item entry-date" datetime="' . get_the_time('c') . '" itemprop="datePublished" content="' . get_the_date('c') . '">' . get_the_date('F j, Y') . '</span></span>';
+			return '<span class="posted-on meta-item">' . $icon . '<span class="entry-date" datetime="' . get_the_time('c') . '" itemprop="datePublished" content="' . get_the_date('c') . '">' . get_the_date('F j, Y') . '</span></span>';
 		}
 	}
 
@@ -974,6 +973,7 @@ trait Functions {
 			}
 
 			//Button
+			$btn_class = '';
 			if ( $data['button'] || $data['btn'] ){
 				$button = ( $data['button'] )? $data['button'] : $data['btn'];
 				$btn_class = ( is_bool($button) )? 'btn btn-brand' : 'btn ' . $data['button'];
@@ -1019,6 +1019,8 @@ trait Functions {
 		$networks = array_map('strtolower', $networks); //Convert $networks to lower case for more flexible string matching later.
 
 		echo '<div class="sharing-links">';
+		echo '<div class="nebula-social-button webshare"><a class="btn btn-secondary btn-sm" href="#" target="_blank"><i class="fa fa-fw fa-share"></i> Share</a></div>';
+
 		foreach ( $networks as $network ){
 			//Facebook
 			if ( in_array($network, array('facebook', 'fb')) ){
@@ -1972,56 +1974,6 @@ trait Functions {
 		} else {
 			return ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');
 		}
-	}
-
-	//Register Widget Areas
-	public function widgets_register(){
-		$override = apply_filters('pre_nebula_widgets_init', null);
-		if ( isset($override) ){return;}
-
-		//Header
-		register_sidebar(array(
-			'name' => 'Header',
-			'id' => 'header-widget-area',
-			'description' => 'The vertical widget area that appears in the header',
-			'before_widget' => '<div id="%1$s" class="row widget-container justify-content-center"><div class="col align-self-center %2$s">',
-			'after_widget' => '</div></div>',
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>',
-		));
-
-		//Hero
-		register_sidebar(array(
-			'name' => 'Hero',
-			'id' => 'hero-widget-area',
-			'description' => 'The horizontal hero widget area',
-			'before_widget' => '<div id="%1$s" class="col-md widget-container align-self-center %2$s">',
-			'after_widget' => '</div>',
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>',
-		));
-
-		//Sidebar
-		register_sidebar(array(
-			'name' => 'Sidebar',
-			'id' => 'primary-widget-area',
-			'description' => 'The sidebar (primary) widget area',
-			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-			'after_widget' => '</li>',
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>',
-		));
-
-		//Footer
-		register_sidebar(array(
-			'name' => 'Footer',
-			'id' => 'footer-widget-area',
-			'description' => 'The horizontal footer widget area',
-			'before_widget' => '<div id="%1$s" class="col-md widget-container %2$s">',
-			'after_widget' => '</div>',
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>',
-		));
 	}
 
 	//Register the Navigation Menus

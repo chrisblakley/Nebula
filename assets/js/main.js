@@ -241,7 +241,7 @@ function nebulaAddToCache(url){
 		//Since there can be multiple caches, the cache name must match what is in sw.js!
 
 		//Prevent caching of URLs containing certain strings
-		var substrings = ['chrome-extension://', '/wp-login.php', '/wp-admin', 'analytics', 'collect'];
+		var substrings = ['chrome-extension://', '/wp-login.php', '/wp-admin', 'analytics', 'collect', 'no-cache'];
 		var length = substrings.length;
 		while ( length-- ){
 			if ( url.indexOf(substrings[length]) !== -1 ){
@@ -4085,7 +4085,7 @@ function mmenus(){
 				extensions: [
 					"theme-light", //Light background
 					"border-full", //Extend list borders full width
-					"fx-listitems-slide", //Animated list items
+					//"fx-listitems-slide", //Animated list items //@todo "Nebula" 0: Test if this is is laggy on mobile devices
 					"shadow-page", //Add shadow to the page
 					"shadow-panels", //Add shadow to menu panels
 					"listview-huge", //Larger list items
@@ -4121,12 +4121,20 @@ function mmenus(){
 					//After mmenu has finished opening
 					history.replaceState(null, document.title, location);
 					history.pushState(null, document.title, location);
+					window.offcanvasBack = true;
 				}).bind('close:start', function(){
 					//When mmenu has started closing
 					mobileNavTriggerIcon.removeClass('fa-times').addClass('fa-bars');
 					ga('send', 'timing', 'Mmenu', 'Closed', Math.round(nebulaTimer('mmenu', 'lap')), 'From opening mmenu until closing mmenu');
 				}).bind('close:finish', function(){
-					//After mmenu has finished closing
+					if ( window.offcanvasBack ){
+						window.history.back(); //Go back to the pushed state so the next back button will function normally (if Mmenu is closed manually without back button)
+					}
+				});
+
+				//Prevent going back twice on back button push
+				jQuery(window).on('popstate', function(e){
+					window.offcanvasBack = false;
 				});
 			}
 

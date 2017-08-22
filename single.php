@@ -29,6 +29,7 @@ get_header(); ?>
 			<div class="row">
 				<div class="col">
 					<h1 class="entry-title"><?php the_title(); ?></h1>
+
 					<div class="entry-meta">
 						<?php nebula()->post_meta('on'); ?> <?php nebula()->post_meta('by', 0); ?> <?php nebula()->post_meta('cat'); ?> <?php nebula()->post_meta('tags'); ?>
 					</div>
@@ -62,37 +63,40 @@ get_header(); ?>
 
 						<?php if ( get_theme_mod('title_location') === 'content' ): ?>
 							<h1 class="entry-title"><?php the_title(); ?></h1>
+
 							<div class="entry-meta">
 								<?php nebula()->post_meta('on'); ?> <?php nebula()->post_meta('by', 0); ?> <?php nebula()->post_meta('cat'); ?> <?php nebula()->post_meta('tags'); ?>
 							</div>
 						<?php endif; ?>
 
-						<div class="entry-social">
-							<?php nebula()->social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), nebula()->is_dev()); ?>
-						</div>
-
 						<div class="entry-content">
 							<?php the_content(); ?>
-
-							<?php if ( get_theme_mod('crosslinks') ): ?>
-								<div class="row prevnextcon">
-									<?php if ( get_previous_post_link() ): ?>
-										<div class="<?php echo ( get_next_post_link() )? 'col-md-6' : 'col'; ?> prev-link-con">
-											<p class="prevnext-post-heading prev-post-heading">Previous <?php echo ucwords(get_post_type()); ?></p>
-				                        	<div class="prevnext-post-link prev-post-link"><?php previous_post_link(); ?></div>
-										</div><!--/col-->
-									<?php endif; ?>
-
-									<?php if ( get_next_post_link() ): ?>
-										<div class="<?php echo ( get_previous_post_link() )? 'col-md-6' : 'col'; ?> next-link-con">
-											<p class="prevnext-post-heading next-post-heading">Next <?php echo ucwords(get_post_type()); ?></p>
-				                        	<div class="prevnext-post-link next-post-link"><?php next_post_link(); ?></div>
-										</div><!--/col-->
-									<?php endif; ?>
-								</div><!--/row-->
-							<?php endif; ?>
 						</div>
 					</article>
+
+					<?php if ( is_active_sidebar('single-post-widget-area') ): ?>
+						<div id="single-post-widget-area">
+							<?php dynamic_sidebar('single-post-widget-area'); ?>
+						</div>
+					<?php endif; ?>
+
+					<?php if ( get_theme_mod('crosslinks') ): ?>
+						<div class="row prevnextcon">
+							<?php if ( get_previous_post_link() ): ?>
+								<div class="<?php echo ( get_next_post_link() )? 'col-md-6' : 'col'; ?> prev-link-con">
+									<p class="prevnext-post-heading prev-post-heading">Previous <?php echo ucwords(get_post_type()); ?></p>
+		                        	<div class="prevnext-post-link prev-post-link"><?php previous_post_link(); ?></div>
+								</div><!--/col-->
+							<?php endif; ?>
+
+							<?php if ( get_next_post_link() ): ?>
+								<div class="<?php echo ( get_previous_post_link() )? 'col-md-6' : 'col'; ?> next-link-con">
+									<p class="prevnext-post-heading next-post-heading">Next <?php echo ucwords(get_post_type()); ?></p>
+		                        	<div class="prevnext-post-link next-post-link"><?php next_post_link(); ?></div>
+								</div><!--/col-->
+							<?php endif; ?>
+						</div><!--/row-->
+					<?php endif; ?>
 
 					<?php comments_template(); ?>
 				<?php endwhile; ?>

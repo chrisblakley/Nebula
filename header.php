@@ -49,9 +49,11 @@
 					<?php get_template_part('inc/navigation'); ?>
 				<?php endif; ?>
 
-				<div id="header-widget-area">
-					<div class="container">
-						<?php dynamic_sidebar('header-widget-area'); ?>
-					</div><!--/container-->
-				</div>
+				<?php if ( is_active_sidebar('header-widget-area') ): ?>
+					<div id="header-widget-area">
+						<div class="container">
+							<?php dynamic_sidebar('header-widget-area'); ?>
+						</div><!--/container-->
+					</div>
+				<?php endif; ?>
 			</div><!--/header-section-->
