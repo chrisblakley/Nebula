@@ -14,6 +14,17 @@ if ( !trait_exists('Widgets') ){
 			$override = apply_filters('pre_register_widget_areas', null);
 			if ( isset($override) ){return;}
 
+			//Sidebar (Primary) (Must be declared first!)
+			register_sidebar(array(
+				'name' => 'Sidebar',
+				'id' => 'primary-widget-area',
+				'description' => 'The sidebar (primary) widget area',
+				'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+				'after_widget' => '</li>',
+				'before_title' => '<h3 class="widget-title">',
+				'after_title' => '</h3>',
+			));
+
 			//Header
 			register_sidebar(array(
 				'name' => 'Header',
@@ -43,17 +54,6 @@ if ( !trait_exists('Widgets') ){
 				'description' => 'Appears after a single post article.',
 				'before_widget' => '<div id="%1$s" class="row widget-container"><div class="col %2$s">',
 				'after_widget' => '</div></div>',
-				'before_title' => '<h3 class="widget-title">',
-				'after_title' => '</h3>',
-			));
-
-			//Sidebar (Primary)
-			register_sidebar(array(
-				'name' => 'Sidebar',
-				'id' => 'primary-widget-area',
-				'description' => 'The sidebar (primary) widget area',
-				'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-				'after_widget' => '</li>',
 				'before_title' => '<h3 class="widget-title">',
 				'after_title' => '</h3>',
 			));
@@ -124,7 +124,7 @@ if ( !trait_exists('Widgets') ){
 									<img src="<?php echo $author_image; ?>" />
 								<?php endif; ?>
 
-								<div class="metadata">
+								<div>
 									<?php if ( !empty($instance['title']) ): ?>
 										<h3><?php echo $instance['title']; ?></h3>
 									<?php else: ?>

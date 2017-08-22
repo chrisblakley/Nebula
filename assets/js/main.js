@@ -1769,6 +1769,13 @@ function cf7Functions(){
 		}]);
 	});
 
+	//Re-init forms inside Bootstrap modals (to enable AJAX submission)
+	jQuery(document).on('shown.bs.modal', function(e){
+		if ( typeof wpcf7.initForm === 'function' && jQuery(e.target).find('.wpcf7-form').length ){
+			wpcf7.initForm(jQuery(e.target).find('.wpcf7-form'));
+		}
+	});
+
 	//For starts and field focuses
 	nebula.dom.document.on('focus', '.wpcf7-form input, .wpcf7-form button, .wpcf7-form textarea', function(e){
 		formID = jQuery(this).closest('div.wpcf7').attr('id');
@@ -1815,10 +1822,10 @@ function cf7Functions(){
 
 	//CF7 before submission
 	nebula.dom.document.on('wpcf7beforesubmit', function(e){
-		jQuery(this).find('button#submit').addClass('active');
+		jQuery(e.target).find('button#submit').addClass('active');
 
 		//Send debug info with the form
-		jQuery.each(e.detail.inputs, function(index, item) {
+		jQuery.each(e.detail.inputs, function(index, item){
 			if ( item.name === 'debuginfo' ){
 				item.value = nebula.session.id;
 			}

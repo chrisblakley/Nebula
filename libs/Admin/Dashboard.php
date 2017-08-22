@@ -530,7 +530,7 @@ if ( !trait_exists('Dashboard') ){
 			return array('.jpg', '.jpeg', '.png', '.gif', '.ico', '.tiff', '.psd', '.ai',  '.apng', '.bmp', '.otf', '.ttf', '.ogv', '.flv', '.fla', '.mpg', '.mpeg', '.avi', '.mov', '.woff', '.eot', '.mp3', '.mp4', '.wmv', '.wma', '.aiff', '.zip', '.zipx', '.rar', '.exe', '.dmg', '.csv', '.swf', '.pdf', '.pdfx', '.pem', '.ppt', '.pptx', '.pps', '.ppsx', '.bak'); //Would it be faster to list allowed filetypes instead?
 		}
 
-		//TODO metabox
+		//TODO Metabox
 		public function todo_metabox(){
 			wp_add_dashboard_widget('todo_manager', 'To-Do Manager', array($this, 'todo_metabox_content'));
 		}
@@ -538,45 +538,97 @@ if ( !trait_exists('Dashboard') ){
 		//TODO metabox content
 		public function todo_metabox_content(){
 			do_action('nebula_todo_manager');
-			echo '<p class="todoresults_title"><strong>Active @todo Comments</strong> <a class="todo_help_icon" href="http://gearside.com/wordpress-dashboard-todo-manager/" target="_blank" rel="noopener"><i class="fa fw fa-question-circle"></i> Documentation &raquo;</a></p><div class="todo_results">';
 
-			$todo_counts = $this->todo_search_files();
+			$todo_items = get_transient('nebula_todo_items');
+			if ( empty($todo_items) || $this->is_debug() ){
+				$todo_items = array(
+					'parent' => $this->todo_search_files(get_template_directory()),
+				);
 
-			echo '</div><!--/todo_results-->';
-			echo '<p>Found <strong>' . $todo_counts['files'] . ' files</strong> with <strong>' . $todo_counts['instances'] . ' @todo comments</strong>.</p>';
-		}
+				if ( is_child_theme() ){
+					$todo_items['child'] = $this->todo_search_files(get_stylesheet_directory());
+				}
 
-		public function todo_search_files($options=array()){
-			$defaults = array(
-				'directory_path' => get_template_directory(),
-				'child' => false, //If currently searching child theme files
-				'files' => 0,
-				'instances' => 0,
-			);
-
-			$data = array_merge($defaults, $options);
-
-			$todo_last_filename = false;
-
-			if ( is_child_theme() && !$data['child'] ){
-				$current_counts = $this->todo_search_files(array('directory_path' => get_stylesheet_directory(), 'child' => true));
-				$data['files'] = $current_counts['files'];
-				$data['instances'] = $current_counts['instances'];
+				$todo_items = apply_filters('nebula_todo_items', $todo_items); //Add locations to the Todo Manager
+				set_transient('nebula_todo_items', $todo_items, MINUTE_IN_SECONDS*5); //5 minute cache
 			}
 
-			if ( empty($data['directory_path']) ){
-				$data['directory_path'] = get_template_directory();
-			}
+			$file_count = 0;
+			$instance_count = 0;
+			?>
+				<p class="todoresults_title">
+					<strong>Active @todo Comments</strong> <a class="todo_help_icon" href="http://gearside.com/wordpress-dashboard-todo-manager/" target="_blank" rel="noopener"><i class="fa fw fa-question-circle"></i> Documentation &raquo;</a>
+				</p>
 
-			foreach ( $this->glob_r($data['directory_path'] . '/*') as $todo_file ){
-				$todo_counted = false;
-				if ( is_file($todo_file) ){
-					if ( strpos(basename($todo_file), '@todo') !== false ){
-						echo '<p class="resulttext">' . str_replace($data['directory_path'], '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong></p>';
-						$data['files']++;
-						$todo_counted = true;
+				<div class="todo_results">
+			<?php
+
+			//Loop through todo array and echo markup
+			foreach ( $todo_items as $location => $todos ){
+				if ( $location === 'parent' && !is_child_theme() ){
+					$location = '';
+				}
+
+				$last_file = false;
+				foreach ( $todos as $todo ){
+					?>
+
+					<?php if ( $last_file !== $todo['filepath'] ): ?>
+						<?php if ( !empty($last_file) ): ?>
+							</div><!-- /todofilewrap -->
+						<?php endif; ?>
+
+						<div class="todofilewrap todo-theme-<?php echo $location; ?>">
+							<p class="todofilename"><?php echo str_replace($todo['directory'], '', dirname($todo['filepath'])); ?>/<strong><?php echo basename($todo['filepath']); ?></strong> <small>(<?php echo ucwords($location); ?>)</small></p>
+					<?php endif; ?>
+
+						<div class="linewrap todo-category-<?php echo strtolower(str_replace(' ', '_', $todo['category'])); ?> todo-priority-<?php echo $todo['priority']; ?>">
+							<p class="todoresult">
+								<?php if ( !empty($todo['category']) ): ?>
+									<span class="todocategory"><?php echo $todo['category']; ?></span>
+								<?php endif; ?>
+
+								<a class="linenumber" href="#">Line <?php echo $todo['line_number']+1; ?></a> <span class="todomessage"><?php echo $todo['description']; ?></span>
+							</p>
+							<div class="precon">
+								<pre class="actualline"><?php echo $todo['line']; ?></pre>
+							</div>
+						</div>
+					<?php
+
+					//Count files and instances
+					if ( ($todo['priority'] === 'empty' || $todo['priority'] > 0) ){ //Only count todos with a non-hidden priority
+						if ( !is_child_theme() || (is_child_theme() && $location === 'child') ){ //Only count child todo comments if child theme is active
+							if ( $last_file !== $todo['filepath'] ){
+								$file_count++;
+							}
+
+							$instance_count++;
+						}
 					}
 
+					$last_file = $todo['filepath'];
+				}
+				?>
+					</div><!-- /todofilewrap -->
+				<?php
+			}
+
+			?>
+				</div><!--/todo_results-->
+				<p>Found <strong><?php echo $file_count; ?> files</strong> with <strong><?php echo $instance_count; ?> @todo comments</strong>.</p>
+			<?php
+		}
+
+		public function todo_search_files($directory=null){
+			if ( empty($directory) ){
+				$directory = get_template_directory();
+			}
+
+			$these_todos = array();
+
+			foreach ( $this->glob_r($directory . '/*') as $todo_file ){
+				if ( is_file($todo_file) ){
 					$todo_skipFilenames = array('README.md', 'debug_log', 'error_log', '/vendor', 'resources/');
 
 					if ( !$this->contains($todo_file, $this->skip_extensions()) && !$this->contains($todo_file, $todo_skipFilenames) ){
@@ -584,58 +636,22 @@ if ( !trait_exists('Dashboard') ){
 							preg_match("/(@todo)\s?(?'category'[\"\'\`].+?[\"\'\`])?\s?(?'priority'\d)?:\s(?'description'.+)/i", $todo_line, $todo_details); //Separate the todo comment into useable groups
 
 							if ( !empty($todo_details) ){
-								$theme = '';
-								$theme_note = '';
-								if ( is_child_theme() ){
-									$theme = 'parent';
-									$theme_note = ' <small>(Parent)</small>';
-
-									if ( $data['child'] ){
-										$theme = 'child';
-										$theme_note = ' <small>(Child)</small>';
-									}
-								}
-
-								$todo_priority = ( $todo_details['priority'] === '' )? 'empty' : intval($todo_details['priority']); //Get the priority
-
-								$todo_category = ( !empty($todo_details['category']) )? str_replace(array('"', "'", '`'), '', $todo_details['category']) : ''; //Get the category
-								$todo_category_html = ( !empty($todo_category) )? '<span class="todocategory">' . $todo_category . '</span>' : '';
-								$todo_description = strip_tags(str_replace(array('-->', '?>', '*/'), '', $todo_details['description'])); //Get the description
-
-								$todo_this_filename = str_replace($data['directory_path'], '', dirname($todo_file)) . '/' . basename($todo_file);
-								if ( $todo_last_filename !== $todo_this_filename ){
-									if ( !empty($todo_last_filename) ){
-										echo '</div><!--/todofilewrap-->';
-									}
-
-									echo '<div class="todofilewrap todo-theme-' . $theme . '"><p class="todofilename">' . str_replace($data['directory_path'], '', dirname($todo_file)) . '/<strong>' . basename($todo_file) . '</strong><span class="themenote">' . $theme_note . '</span></p>';
-								}
-
-								echo '<div class="linewrap todo-category-' . strtolower(str_replace(' ', '_', $todo_category)) . ' todo-priority-' . $todo_priority . '"><p class="todoresult"> ' . $todo_category_html . ' <a class="linenumber" href="#">Line ' . ($todo_lineNumber+1) . '</a> <span class="todomessage">' . $todo_description . '</span></p><div class="precon"><pre class="actualline">' . trim(htmlentities($todo_line)) . '</pre></div></div>';
-
-								$todo_last_filename = $todo_this_filename;
-
-								if ( ($todo_priority === 'empty' || $todo_priority > 0) ){ //Only count todos with a non-hidden priority
-									if ( !is_child_theme() || (is_child_theme() && $data['child']) ){ //Only count child todo comments if child theme is active
-										$data['instances']++;
-
-										if ( !$todo_counted ){
-											$data['files']++;
-											$todo_counted = true;
-										}
-									}
-								}
+								$these_todos[] = array(
+									'directory' => $directory,
+									'filepath' => $todo_file,
+									'line_number' => $todo_lineNumber,
+									'line' => trim(htmlentities($todo_line)),
+									'priority' => ( $todo_details['priority'] === '' )? 'empty' : intval($todo_details['priority']),
+									'category' => ( !empty($todo_details['category']) )? str_replace(array('"', "'", '`'), '', $todo_details['category']) : '',
+									'description' => strip_tags(str_replace(array('-->', '?>', '*/'), '', $todo_details['description'])),
+								);
 							}
 						}
 					}
 				}
 			}
 
-			if ( $data['instances'] >= 1 ){
-				echo '</div><!--/todofilewrap-->';
-			}
-
-			return array('files' => $data['files'], 'instances' => $data['instances']);
+			return $these_todos;
 		}
 
 		//Developer Info Metabox
