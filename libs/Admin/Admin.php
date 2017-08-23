@@ -498,7 +498,8 @@ if ( !trait_exists('Admin') ){
 		}
 
 		public function theme_update_email($prev_version, $prev_version_commit_date, $new_version){
-			if ( $prev_version !== $new_version ){
+			$nebula_update_email_sent = get_transient('nebula_update_email_sent');
+			if ( (empty($nebula_update_email_sent) || $this->is_debug()) && $prev_version !== $new_version ){
 				global $wpdb;
 				$current_user = wp_get_current_user();
 				$to = $current_user->user_email;
@@ -517,7 +518,10 @@ if ( !trait_exists('Admin') ){
 					return 'text/html';
 				});
 
-				wp_mail($to, $subject, $message, $headers);
+				//Send the email, and on success set a transient to prevent multiple emails
+				if ( wp_mail($to, $subject, $message, $headers) ){
+					set_transient('nebula_update_email_sent', true, MINUTE_IN_SECONDS*15);
+				}
 			}
 		}
 

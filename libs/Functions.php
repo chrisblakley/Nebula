@@ -262,18 +262,20 @@ trait Functions {
 					'level' => 'warn',
 					'description' => '<strong>WP_DEBUG</strong> is enabled <small>(Generally defined in wp-config.php)</small>'
 				);
-			}
-			if ( WP_DEBUG_LOG ){
-				$nebula_warnings[] = array(
-					'level' => 'warn',
-					'description' => 'Debug logging (<strong>WP_DEBUG_LOG</strong>) to /wp-content/debug.log is enabled <small>(Generally defined in wp-config.php)</small>'
-				);
-			}
-			if ( WP_DEBUG_DISPLAY ){
-				$nebula_warnings[] = array(
-					'level' => 'error',
-					'description' => 'Debug errors and warnings are being displayed on the front-end (<Strong>WP_DEBUG_DISPLAY</strong>) <small>(Generally defined in wp-config.php)</small>'
-				);
+
+				if ( WP_DEBUG_LOG ){
+					$nebula_warnings[] = array(
+						'level' => 'warn',
+						'description' => 'Debug logging (<strong>WP_DEBUG_LOG</strong>) to /wp-content/debug.log is enabled <small>(Generally defined in wp-config.php)</small>'
+					);
+				}
+
+				if ( WP_DEBUG_DISPLAY ){
+					$nebula_warnings[] = array(
+						'level' => 'error',
+						'description' => 'Debug errors and warnings are being displayed on the front-end (<Strong>WP_DEBUG_DISPLAY</strong>) <small>(Generally defined in wp-config.php)</small>'
+					);
+				}
 			}
 
 			//Check for Google Analytics Tracking ID

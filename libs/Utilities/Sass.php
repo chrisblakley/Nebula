@@ -22,8 +22,8 @@ if ( !trait_exists('Sass') ){
 			}
 		 ===========================*/
 		public function scss_controller(){
-			if ( !is_writable(get_template_directory()) ){
-				trigger_error('The template directory is not writable. Can not compile Sass files!', E_USER_NOTICE);
+			if ( !is_writable(get_template_directory()) || !is_writable(get_template_directory() . '/style.css') ){
+				trigger_error('The template directory or files are not writable. Can not compile Sass files!', E_USER_NOTICE);
 				return false;
 			}
 
