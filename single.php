@@ -80,24 +80,6 @@ get_header(); ?>
 						</div>
 					<?php endif; ?>
 
-					<?php if ( get_theme_mod('crosslinks') ): ?>
-						<div class="row prevnextcon">
-							<?php if ( get_previous_post_link() ): ?>
-								<div class="<?php echo ( get_next_post_link() )? 'col-md-6' : 'col'; ?> prev-link-con">
-									<p class="prevnext-post-heading prev-post-heading">Previous <?php echo ucwords(get_post_type()); ?></p>
-		                        	<div class="prevnext-post-link prev-post-link"><?php previous_post_link(); ?></div>
-								</div><!--/col-->
-							<?php endif; ?>
-
-							<?php if ( get_next_post_link() ): ?>
-								<div class="<?php echo ( get_previous_post_link() )? 'col-md-6' : 'col'; ?> next-link-con">
-									<p class="prevnext-post-heading next-post-heading">Next <?php echo ucwords(get_post_type()); ?></p>
-		                        	<div class="prevnext-post-link next-post-link"><?php next_post_link(); ?></div>
-								</div><!--/col-->
-							<?php endif; ?>
-						</div><!--/row-->
-					<?php endif; ?>
-
 					<?php comments_template(); ?>
 				<?php endwhile; ?>
 			</div><!--/col-->

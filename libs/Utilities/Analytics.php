@@ -266,8 +266,6 @@ if ( !trait_exists('Analytics') ){
 		//Send Data to Google Analytics
 		//https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event
 		public function ga_send_data($data){
-			return false; //@todo "Nebula" 0: Disabling temporarily until (not set) landing pages are under control
-
 			$override = apply_filters('pre_ga_send_data', null, $data);
 			if ( isset($override) ){return;}
 

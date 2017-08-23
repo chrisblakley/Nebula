@@ -570,50 +570,54 @@ if ( !trait_exists('Dashboard') ){
 				}
 
 				$last_file = false;
-				foreach ( $todos as $todo ){
-					?>
 
-					<?php if ( $last_file !== $todo['filepath'] ): ?>
-						<?php if ( !empty($last_file) ): ?>
-							</div><!-- /todofilewrap -->
+				if ( !empty($todos) ){
+					foreach ( $todos as $todo ){
+						?>
+						<?php if ( $last_file !== $todo['filepath'] ): ?>
+							<?php if ( !empty($last_file) ): ?>
+								</div><!-- /todofilewrap -->
+							<?php endif; ?>
+
+							<div class="todofilewrap todo-theme-<?php echo $location; ?>">
+								<p class="todofilename"><?php echo str_replace($todo['directory'], '', dirname($todo['filepath'])); ?>/<strong><?php echo basename($todo['filepath']); ?></strong> <small>(<?php echo ucwords($location); ?>)</small></p>
 						<?php endif; ?>
 
-						<div class="todofilewrap todo-theme-<?php echo $location; ?>">
-							<p class="todofilename"><?php echo str_replace($todo['directory'], '', dirname($todo['filepath'])); ?>/<strong><?php echo basename($todo['filepath']); ?></strong> <small>(<?php echo ucwords($location); ?>)</small></p>
-					<?php endif; ?>
+							<div class="linewrap todo-category-<?php echo strtolower(str_replace(' ', '_', $todo['category'])); ?> todo-priority-<?php echo $todo['priority']; ?>">
+								<p class="todoresult">
+									<?php if ( !empty($todo['category']) ): ?>
+										<span class="todocategory"><?php echo $todo['category']; ?></span>
+									<?php endif; ?>
 
-						<div class="linewrap todo-category-<?php echo strtolower(str_replace(' ', '_', $todo['category'])); ?> todo-priority-<?php echo $todo['priority']; ?>">
-							<p class="todoresult">
-								<?php if ( !empty($todo['category']) ): ?>
-									<span class="todocategory"><?php echo $todo['category']; ?></span>
-								<?php endif; ?>
-
-								<a class="linenumber" href="#">Line <?php echo $todo['line_number']+1; ?></a> <span class="todomessage"><?php echo $todo['description']; ?></span>
-							</p>
-							<div class="precon">
-								<pre class="actualline"><?php echo $todo['line']; ?></pre>
+									<a class="linenumber" href="#">Line <?php echo $todo['line_number']+1; ?></a> <span class="todomessage"><?php echo $todo['description']; ?></span>
+								</p>
+								<div class="precon">
+									<pre class="actualline"><?php echo $todo['line']; ?></pre>
+								</div>
 							</div>
-						</div>
-					<?php
+						<?php
 
-					//Count files and instances
-					if ( ($todo['priority'] === 'empty' || $todo['priority'] > 0) ){ //Only count todos with a non-hidden priority
-						if ( !is_child_theme() || (is_child_theme() && $location === 'child') ){ //Only count child todo comments if child theme is active
-							if ( $last_file !== $todo['filepath'] ){
-								$file_count++;
+						//Count files and instances
+						if ( ($todo['priority'] === 'empty' || $todo['priority'] > 0) ){ //Only count todos with a non-hidden priority
+							if ( !is_child_theme() || (is_child_theme() && $location === 'child') ){ //Only count child todo comments if child theme is active
+								if ( $last_file !== $todo['filepath'] ){
+									$file_count++;
+								}
+
+								$instance_count++;
 							}
-
-							$instance_count++;
 						}
+
+						$last_file = $todo['filepath'];
 					}
 
-					$last_file = $todo['filepath'];
+					echo '</div><!-- /todofilewrap -->';
 				}
-				?>
-					</div><!-- /todofilewrap -->
-				<?php
 			}
 
+			if ( empty($instance_count) ){
+				echo '<p style="margin-top: 50px; text-align: center; font-size: 24px; line-height: 28px; opacity: 0.1;"><i class="fa fa-smile-o" style="font-size: 32px;"></i><br />Nothing!</p>';
+			}
 			?>
 				</div><!--/todo_results-->
 				<p>Found <strong><?php echo $file_count; ?> files</strong> with <strong><?php echo $instance_count; ?> @todo comments</strong>.</p>

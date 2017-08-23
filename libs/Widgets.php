@@ -230,6 +230,64 @@ if ( !trait_exists('Widgets') ){
 
 
 	/*==========================
+	 Cross-links (Next/Previous Post)
+	 ===========================*/
+	class nebula_crosslinks extends WP_Widget {
+		function __construct(){
+			parent::__construct('nebula_crosslinks', 'Nebula - Crosslinks', array('description' => 'Link to the next/previous post'));
+		}
+
+		//Creating widget front-end
+		public function widget($args, $instance){
+			//Before widget arguments are defined by themes
+			echo $args['before_widget'];
+
+			?>
+				<?php if ( !empty($instance['title']) ): ?>
+					<h3><?php echo $instance['title']; ?></h3>
+				<?php endif; ?>
+
+				<div class="row">
+					<?php if ( get_previous_post_link() ): ?>
+						<div class="col prev-link-con">
+							<p class="prevnext-post-heading prev-post-heading">Previous <?php echo ucwords(get_post_type()); ?></p>
+                        	<div class="prevnext-post-link prev-post-link"><?php previous_post_link(); ?></div>
+						</div><!--/col-->
+					<?php endif; ?>
+
+					<?php if ( get_next_post_link() ): ?>
+						<div class="col next-link-con">
+							<p class="prevnext-post-heading next-post-heading">Next <?php echo ucwords(get_post_type()); ?></p>
+                        	<div class="prevnext-post-link next-post-link"><?php next_post_link(); ?></div>
+						</div><!--/col-->
+					<?php endif; ?>
+				</div><!--/row-->
+			<?php
+
+			//After widget arguments are defined by themes
+			echo $args['after_widget'];
+		}
+
+		//Widget Backend (admin form)
+		public function form($instance){
+			?>
+				<p>
+					<label for="<?php echo $this->get_field_id('title'); ?>">Title</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo ( isset($instance['title']) )? $instance['title'] : ''; ?>" />
+				</p>
+			<?php
+		}
+
+		//Updating widget replacing old instances with new
+		public function update($new_instance, $old_instance){
+			$instance = array();
+			$instance['title'] = ( !empty($new_instance['title']) )? strip_tags($new_instance['title']) : '';
+			return $instance;
+		}
+	}
+
+
+	/*==========================
 	 Image (with Link)
 	 ===========================*/
 	class nebula_linked_image extends WP_Widget {

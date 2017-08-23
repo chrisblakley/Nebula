@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.3.22.5826
+	Version: 5.3.22.7190
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -514,11 +514,19 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 			@include media("md"){font-size: rem(48px);};
 		}
 
-		p {color: #fff; font-size: rem(14px); margin-bottom: 10px;
-			@include media("md"){font-size: rem(16px);};
+		p,
+		.page-meta,
+		.entry-meta {color: #fff; font-size: rem(14px); line-height: rem(21px); margin: 10px 0;
+			i {margin-right: 2px; color: #bbb;}
+			.meta-item {display: inline-block; margin-right: 10px;
+				a {color: #999;
+					&:hover {color: $primary_color;}
+				}
+			}
+			.post-tags {font-style: italic;}
 		}
 
-		a {color: #fff; text-decoration: underline; white-space: nowrap;
+		a {color: #fff; white-space: nowrap;
 			&:hover {color: #aaa;}
 		}
 
@@ -601,16 +609,6 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 #single-post-widget-area {margin-top: 25px;
 	.widget-container {margin-bottom: 25px;}
 }
-
-.prevnextcon {margin-top: 50px; margin-bottom: 30px;}
-	.prev-link-con {text-align: left;}
-	.next-link-con {text-align: right;}
-		.prevnext-post-heading {font-size: rem(9px); text-transform: uppercase; font-weight: 800; margin: 0; padding: 0;}
-			.prev-post-heading {}
-			.next-post-heading {}
-		.prevnext-post-link {font-size: rem(12px);}
-			.prev-post-link {}
-			.next-post-link {}
 
 #searchresults article,
 .archive .content-section article {margin-bottom: 50px;}
@@ -894,6 +892,12 @@ form.footer-search,
 		}
 	}
 }
+
+//Cross-links Next/Previous
+.prev-link-con {text-align: left;}
+.next-link-con {text-align: right;}
+	.prevnext-post-heading {font-size: rem(12px); text-transform: uppercase; font-weight: 800; margin: 0; padding: 0;}
+	.prevnext-post-link {font-size: rem(14px);}
 
 //Social Page Links
 ul.about-social {display: flex; list-style: none; margin: 0; padding: 0;

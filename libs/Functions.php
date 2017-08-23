@@ -638,7 +638,7 @@ trait Functions {
 	public function post_date($options=array()){
 		$defaults = array(
 			'icon' => true,
-			'relative' => true,
+			'relative' => ( get_theme_mod('post_date_format') === 'absolute' )? false : true,
 			'linked' => true,
 			'day' => true,
 			'format' => get_theme_mod('post_date_format'),
@@ -646,7 +646,7 @@ trait Functions {
 
 		$data = array_merge($defaults, $options);
 
-		if ( $data['format'] === 'disabled' || get_theme_mod('post_date_format') === 'disabled' ){
+		if ( $data['format'] === 'disabled' ){
 			return false;
 		}
 

@@ -603,47 +603,6 @@ trait Customizer {
 			'priority' => 51,
 		));
 
-		/*==========================
-			Posts Bottom Section
-		 ===========================*/
-
-		$wp_customize->add_section('posts_bottom', array(
-			'title' => 'Bottom Stuff',
-			'panel' => 'posts',
-			'priority' => 100,
-		));
-
-		//Social Sharing
-		$wp_customize->add_setting('post_social_sharing', array('default' => 0));
-		$wp_customize->add_control('post_social_sharing', array(
-			'label' => 'Show Social Share Buttons',
-			'section' => 'posts_bottom',
-			'priority' => 20,
-			'type' => 'checkbox',
-		));
-
-		//Social Sharing Location
-		$wp_customize->add_setting('post_social_location', array('default' => 'title'));
-		$wp_customize->add_control('post_social_location', array(
-		    'label' => 'Social Sharing Location',
-		    'section' => 'posts_bottom',
-		    'priority' => 21,
-		    'type' => 'select',
-		    'choices' => array(
-		        'header' => 'Header',
-		        'title' => 'After Title',
-		        'bottom' => 'Bottom',
-		    )
-		));
-
-		$wp_customize->add_setting('crosslinks', array('default' => 0));
-		$wp_customize->add_control('crosslinks', array(
-			'label' => 'Show Next/Previous Crosslinks',
-			'section' => 'posts_bottom',
-			'priority' => 40,
-			'type' => 'checkbox',
-		));
-
 
 		/*==========================
 			Sidebar Section
