@@ -532,6 +532,8 @@ function socialSharing(){
 
 			return false;
 		});
+
+		createCookie('shareapi', true); //Set a cookie to speed up future page loads by not loading third-party share buttons.
 	} else {
 		jQuery('.webshare').addClass('hidden');
 	}

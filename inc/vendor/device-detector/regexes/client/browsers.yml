@@ -191,6 +191,13 @@
   engine:
     default: 'Gecko'
 
+#Cyberfox
+- regex: 'Cyberfox(?:/(\d+[\.\d]+))?'
+  name: 'Cyberfox'
+  version: '$1'
+  engine:
+    default: 'Gecko'
+
 #Swiftfox
 - regex: 'Firefox/(\d+[\.\d]+).*\(Swiftfox\)'
   name: 'Swiftfox'
@@ -284,7 +291,19 @@
     default: 'Presto'
     versions:
       15: 'Blink'
+- regex: 'Opera/(\d+[\.\d]+).+Opera Mobi'
+  name: 'Opera Mobile'
+  version: '$1'
+  engine:
+    default: 'Presto'
+    versions:
+      15: 'Blink'
 - regex: 'Opera ?Mini/(?:att/)?(\d+[\.\d]+)'
+  name: 'Opera Mini'
+  version: '$1'
+  engine:
+    default: 'Presto'
+- regex: 'Opera ?Mini.+Version/(\d+[\.\d]+)'
   name: 'Opera Mini'
   version: '$1'
   engine:
@@ -717,6 +736,13 @@
   name: 'IBrowse'
   version: '$1'
 
+#iCabMobile
+- regex: 'iCabMobile(?:[ /](\d+[\.\d]+))?'
+  name: 'iCab Mobile'
+  version: '$1'
+  engine:
+     default: 'WebKit'
+
 #iCab
 - regex: 'iCab(?:[ /](\d+[\.\d]+))?'
   name: 'iCab'
@@ -1011,7 +1037,7 @@
   version: '$1'
   engine:
     default: 'WebKit'
-- regex: 'Version/(\d+[\.\d]+).*Mobile.*Safari/'
+- regex: '(?:Version/(\d+[\.\d]+).*)?Mobile.*Safari/'
   name: 'Mobile Safari'
   version: '$1'
   engine:

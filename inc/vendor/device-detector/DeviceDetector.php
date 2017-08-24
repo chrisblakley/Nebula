@@ -8,6 +8,7 @@
 
 /***********
 	Important! This file has been edited to work without Composer. If updating this file, require_once functions must be added!
+	There are 3 groups of Nebula updates (including this one and two in functions below).
 	BEGIN Nebula fix for required files.
 ***********/
 
@@ -73,7 +74,7 @@ class DeviceDetector
     /**
      * Current version number of DeviceDetector
      */
-    const VERSION = '3.7.8';
+    const VERSION = '3.8.1';
 
     /**
      * Holds all registered client types

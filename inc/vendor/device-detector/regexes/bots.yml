@@ -541,6 +541,14 @@
     name: 'Microsoft Corporation'
     url: 'http://www.microsoft.com'
 
+- regex: 'IP-Guide\.com'
+  name: 'IP-Guide Crawler'
+  category: 'Crawler'
+  url: ''
+  producer:
+    name: ''
+    url: 'https://ip-guide.com'
+
 - regex: 'kouio'
   name: 'Kouio'
   url: 'http://kouio.com/'
@@ -675,7 +683,7 @@
     name: 'Jaroslav Kuboš'
     url: ''
 
-- regex: 'Netcraft (Web Server Survey|SSL Server Survey)'
+- regex: 'Netcraft( Web Server Survey| SSL Server Survey|SurveyAgent)'
   name: 'Netcraft Survey Bot'
   category: 'Search bot'
   url: ''
@@ -722,6 +730,14 @@
   producer:
     name: 'Northern Light'
     url: 'http://northernlight.com'
+
+- regex: 'Nmap Scripting Engine'
+  name: 'Nmap'
+  category: 'Security Checker'
+  url: 'https://nmap.org/book/nse.html'
+  producer:
+    name: 'Nmap'
+    url: 'https://nmap.org/'
 
 - regex: 'omgilibot'
   name: 'Omgili bot'
@@ -917,6 +933,11 @@
     name: 'SEO Engine'
     url: 'http://www.seoengine.com'
 
+- regex: 'seoscanners\.net'
+  name: 'Seoscanners.net'
+  category: 'Crawler'
+  url: ''
+
 - regex: 'SkypeUriPreview'
   name: 'Skype URI Preview'
   category: 'Service Agent'
@@ -1097,6 +1118,14 @@
     name: 'Kurt McKee'
     url: 'https://github.com/kurtmckee'
 
+- regex: 'Uptimebot'
+  name: 'Uptimebot'
+  category: 'Site Monitor'
+  url: 'https://uptime.com/uptimebot'
+  producer:
+    name: 'Uptime'
+    url: 'https://uptime.com'
+
 - regex: 'UptimeRobot'
   name: 'Uptime Robot'
   category: 'Site Monitor'
@@ -1269,6 +1298,11 @@
   producer:
     name: 'YunYun'
     url: 'http://www.yunyun.com'
+
+- regex: 'zgrab'
+  name: 'zgrab'
+  category: 'Security Checker'
+  url: 'https://github.com/zmap/zgrab'
 
 - regex: 'Zookabot'
   name: 'Zookabot'

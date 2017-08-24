@@ -62,6 +62,7 @@ abstract class DeviceParserAbstract extends ParserAbstract
      */
     public static $deviceBrands = array(
         '3Q' => '3Q',
+        '4G' => '4Good',
         'AC' => 'Acer',
         'AZ' => 'Ainol',
         'AI' => 'Airness',
@@ -125,6 +126,7 @@ abstract class DeviceParserAbstract extends ParserAbstract
         'DB' => 'Dbtel',
         'DC' => 'DoCoMo',
         'DI' => 'Dicam',
+        'D2' => 'Digma',
         'DL' => 'Dell',
         'DN' => 'DNS',
         'DM' => 'DMM',
@@ -181,6 +183,7 @@ abstract class DeviceParserAbstract extends ParserAbstract
         'IK' => 'iKoMo',
         'IM' => 'i-mate',
         'I1' => 'iOcean',
+        'I2' => 'IconBIT',
         'IW' => 'iNew',
         'IF' => 'Infinix',
         'IN' => 'Innostream',
@@ -219,6 +222,7 @@ abstract class DeviceParserAbstract extends ParserAbstract
         'LO' => 'Loewe',
         'LM' => 'Logicom',
         'LX' => 'Lexibook',
+        'LY' => 'LYF',
         'MJ' => 'Majestic',
         'MA' => 'Manta Multimedia',
         'MB' => 'Mobistel',

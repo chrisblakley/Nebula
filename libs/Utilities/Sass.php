@@ -98,7 +98,7 @@ if ( !trait_exists('Sass') ){
 
 				//Register import directories
 				if ( !is_array($location_paths['imports']) ){
-					$location_paths['imports'] = array($location_paths['imports']);
+					$location_paths['imports'] = array($location_paths['imports']); //Convert to an array if passes as a string
 				}
 				foreach ( $location_paths['imports'] as $imports_directory ){
 					$scss->addImportPath($imports_directory);

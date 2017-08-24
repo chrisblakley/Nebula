@@ -19,6 +19,7 @@ trait Functions {
 		add_action('init', array($this, 'nebula_http2_ob_start'));
 		add_action('after_setup_theme', array($this, 'theme_setup'));
 		add_filter('site_icon_image_sizes', array($this, 'site_icon_sizes'));
+		add_filter('image_size_names_choose', array($this, 'image_size_human_names'));
 		add_action('wp_head', array($this, 'add_back_post_feed'));
 		add_action('init', array($this, 'set_default_timezone'), 1);
 		add_action('admin_init', array($this, 'set_default_timezone'), 1);
@@ -119,13 +120,6 @@ trait Functions {
 		header("X-UA-Compatible: IE=edge"); //Add IE compatibility header
 		header('Developed-with-Nebula: https://gearside.com/nebula'); //Nebula header
 
-		//Add new image sizes
-		add_image_size('square', 512, 512, 1);
-		add_image_size('open_graph_large', 1200, 630, 1);
-		add_image_size('open_graph_small', 600, 315, 1);
-		add_image_size('twitter_large', 280, 150, 1);
-		add_image_size('twitter_small', 200, 200, 1);
-
 		//Removals
 		remove_theme_support('custom-background');
 		remove_theme_support('custom-header');
@@ -146,6 +140,24 @@ trait Functions {
 		remove_action('wp_head', 'start_post_rel_link', 10, 0); //Remove start link
 		remove_action('wp_head', 'parent_post_rel_link', 10, 0); //Remove previous link
 		remove_action('wp_head', 'adjacent_posts_rel_link', 10, 0); //Remove relational links for the posts adjacent to the current post
+
+		//Add new image sizes (Given human-readible names in another function below)
+		add_image_size('square', 512, 512, 1);
+		add_image_size('open_graph_large', 1200, 630, 1);
+		add_image_size('open_graph_small', 600, 315, 1);
+		add_image_size('twitter_large', 280, 150, 1);
+		add_image_size('twitter_small', 200, 200, 1);
+	}
+
+	//Give custom Nebula image sizes human readable names
+	public function image_size_human_names($sizes){
+		return array_merge($sizes, array(
+			'square' => 'Square',
+			'open_graph_large' => 'Open Graph (Large)',
+			'open_graph_small' => 'Open Graph (Small)',
+			'twitter_large' => 'Twitter (Large)',
+			'twitter_small' => 'Twitter (Small)',
+		));
 	}
 
 	//Add custom meta icon (favicon) sizes when the site_icon is used via the Customizer
@@ -1025,7 +1037,7 @@ trait Functions {
 	}
 
 	//Display Social Buttons
-	public function social($networks=array('facebook', 'twitter', 'google+'), $counts=0){
+	public function social($networks=array('share_api', 'facebook', 'twitter', 'google+'), $counts=0){
 		$override = apply_filters('pre_nebula_social', null, $networks, $counts);
 		if ( isset($override) ){return;}
 
@@ -1033,16 +1045,30 @@ trait Functions {
 			$networks = array($networks);
 		} elseif ( is_int($networks) && ($networks === 1 || $networks === 0) ){ //If it is an integer of 1 or 0, then set it to $counts
 			$counts = $networks;
-			$networks = array('facebook', 'twitter', 'google+');
+			$networks = array('share_api', 'facebook', 'twitter', 'google+');
 		} elseif ( !is_array($networks) ){
-			$networks = array('facebook', 'twitter', 'google+');
+			$networks = array('share_api', 'facebook', 'twitter', 'google+');
 		}
-		$networks = array_map('strtolower', $networks); //Convert $networks to lower case for more flexible string matching later.
+
+		//Convert $networks to lower case without dashes/spaces for more flexible string matching later.
+		$networks = array_map(function($value){
+			return str_replace(array(' ', '_', '-'), '', strtolower($value));
+		}, $networks);
 
 		echo '<div class="sharing-links">';
-		echo '<div class="nebula-social-button webshare"><a class="btn btn-secondary btn-sm" href="#" target="_blank"><i class="fa fa-fw fa-share"></i> Share</a></div>';
+
+		//If the 'shareapi' cookie or session exists and 'shareapi' is requested, return *only* the Share API
+		if ( (isset($_COOKIE['shareapi']) || isset($_SESSION['shareapi'])) && in_array($network, array('shareapi')) ){
+			$networks = array('shareapi');
+			$_SESSION['shareapi'] = true; //Set a session in case the cookie is deleted
+		}
 
 		foreach ( $networks as $network ){
+			//Share API
+			if ( in_array($network, array('shareapi')) ){
+				$this->share_api();
+			}
+
 			//Facebook
 			if ( in_array($network, array('facebook', 'fb')) ){
 				$this->facebook_share($counts);
@@ -1054,12 +1080,12 @@ trait Functions {
 			}
 
 			//Google+
-			if ( in_array($network, array('google_plus', 'google', 'googleplus', 'google+', 'g+', 'gplus', 'g_plus', 'google plus', 'google-plus', 'g-plus')) ){
+			if ( in_array($network, array('google', 'googleplus', 'google+', 'g+', 'gplus')) ){
 				$this->google_plus($counts);
 			}
 
 			//LinkedIn
-			if ( in_array($network, array('linkedin', 'li', 'linked-in', 'linked_in')) ){
+			if ( in_array($network, array('linkedin', 'li')) ){
 				$this->linkedin_share($counts);
 			}
 
@@ -1068,13 +1094,24 @@ trait Functions {
 				$this->pinterest_pin($counts);
 			}
 		}
-		echo '</div><!-- /sharing-links -->';
+
+		echo '</div><!--/sharing-links-->';
 	}
 
 	/*
 		Social Button Functions
 		//@TODO "Nebula" 0: Eventually upgrade these to support vertical count bubbles as an option.
 	*/
+
+	public function share_api(){
+		$override = apply_filters('pre_nebula_share_api', null);
+		if ( isset($override) ){return;}
+		?>
+			<div class="nebula-social-button webshare">
+				<a class="btn btn-secondary btn-sm" href="#" target="_blank"><i class="fa fa-fw fa-share"></i> Share</a>
+			</div>
+		<?php
+	}
 
 	public function facebook_share($counts=0, $url=false){
 		$override = apply_filters('pre_nebula_facebook_share', null, $counts);

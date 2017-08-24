@@ -64,6 +64,7 @@ class Browser extends ClientParserAbstract
         'CO' => 'CometBird',
         'CP' => 'ChromePlus',
         'CR' => 'Chromium',
+        'CY' => 'Cyberfox',
         'CS' => 'Cheshire',
         'DB' => 'dbrowser',
         'DE' => 'Deepnet Explorer',
@@ -90,6 +91,7 @@ class Browser extends ClientParserAbstract
         'IA' => 'Iceape',
         'IB' => 'IBrowse',
         'IC' => 'iCab',
+        'I2' => 'iCab Mobile',
         'I1' => 'Iridium',
         'ID' => 'IceDragon',
         'IV' => 'Isivioo',
@@ -208,7 +210,7 @@ class Browser extends ClientParserAbstract
      * @var array
      */
     protected static $mobileOnlyBrowsers = array(
-        '36', 'PU', 'SK', 'OI', 'DB', 'ST', 'BL', 'IV', 'FM', 'C1', 'AL'
+        '36', 'PU', 'SK', 'MF', 'OI', 'OM', 'DB', 'ST', 'BL', 'IV', 'FM', 'C1', 'AL'
     );
 
     /**

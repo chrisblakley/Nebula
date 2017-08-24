@@ -133,8 +133,17 @@ if ( !trait_exists('Widgets') ){
 
 									<?php
 										$job_title_location = array();
-										$job_title_location[] = ( !empty($instance['show_job_info']) )? get_user_meta($user_id, 'jobtitle', true) . ' at ' . get_user_meta($user_id, 'jobcompany', true) : false; //@todo "Nebula" 0: Link the company website
-										$job_title_location[] = ( !empty($instance['show_location']) )? get_user_meta($user_id, 'usercity', true) . ', ' . get_user_meta($user_id, 'userstate', true) : false;
+
+										if ( !empty($instance['show_job_info']) ){
+											$title_company = array(get_user_meta($user_id, 'jobtitle', true));
+											$title_company[] = ( get_user_meta($user_id, 'jobcompanywebsite', true) )? '<a href="' . get_user_meta($user_id, 'jobcompanywebsite', true) . '" target="_blank">' . get_user_meta($user_id, 'jobcompany', true) . '</a>' : get_user_meta($user_id, 'jobcompany', true);
+											$job_title_location[] = implode(' at ', array_filter($title_company));
+										}
+
+										if ( !empty($instance['show_location']) ){
+											$job_title_location[] = implode(',', array_filter(array(get_user_meta($user_id, 'usercity', true), get_user_meta($user_id, 'userstate', true))));
+										}
+
 										$job_title_location = implode(', ', array_filter($job_title_location));
 									?>
 									<?php if ( !empty($job_title_location) ): ?>
@@ -185,32 +194,32 @@ if ( !trait_exists('Widgets') ){
 		//Widget Backend (admin form)
 		public function form($instance){
 			?>
-				<div>
+				<p>
 					<label for="<?php echo $this->get_field_id('title'); ?>">Title</label>
 					<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo ( isset($instance['title']) )? $instance['title'] : ''; ?>" />
 					<span class="nebula-help-text">Leaving this empty will display the author's first name (if available) or fallback to "About the Author".</span>
-				</div>
+				</p>
 
-				<div>
+				<p>
 					<label for="<?php echo $this->get_field_id('user_id'); ?>">User ID</label>
 					<input class="widefat" id="<?php echo $this->get_field_id('user_id'); ?>" name="<?php echo $this->get_field_name('user_id'); ?>" type="text" value="<?php echo ( isset($instance['user_id']) )? $instance['user_id'] : ''; ?>" />
 					<span class="nebula-help-text">This will override the author detection to force a specific user's bio.</span>
-				</div>
+				</p>
 
-				<div>
+				<p>
 				    <input class="checkbox" type="checkbox" <?php checked($instance['show_job_info'], 'on'); ?> id="<?php echo $this->get_field_id('show_job_info'); ?>" name="<?php echo $this->get_field_name('show_job_info'); ?>" />
 				    <label for="<?php echo $this->get_field_id('show_job_info'); ?>"> Show Job Title and Company</label>
-				</div>
+				</p>
 
-				<div>
+				<p>
 				    <input class="checkbox" type="checkbox" <?php checked($instance['show_location'], 'on'); ?> id="<?php echo $this->get_field_id('show_location'); ?>" name="<?php echo $this->get_field_name('show_location'); ?>" />
 				    <label for="<?php echo $this->get_field_id('show_location'); ?>"> Show Location</label>
-				</div>
+				</p>
 
-				<div>
+				<p>
 				    <input class="checkbox" type="checkbox" <?php checked($instance['show_social_links'], 'on'); ?> id="<?php echo $this->get_field_id('show_social_links'); ?>" name="<?php echo $this->get_field_name('show_social_links'); ?>" />
 				    <label for="<?php echo $this->get_field_id('show_social_links'); ?>"> Show Social Media Links</label>
-				</div>
+				</p>
 
 				<p>To avoid needing to use Gravatar for user images, this widget listens for a custom field of "headshot" first.</p>
 			<?php
@@ -523,35 +532,41 @@ if ( !trait_exists('Widgets') ){
 		//Widget Backend (admin form)
 		public function form($instance){
 			?>
-				<div>
+				<p>
 					<label for="<?php echo $this->get_field_id('title'); ?>">Title</label>
 					<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo ( isset($instance['title']) )? $instance['title'] : ''; ?>" />
-				</div>
+				</p>
 
-				<div>
+				<p>
+				    <input class="checkbox" type="checkbox" <?php checked($instance['share_api'], 'on'); ?> id="<?php echo $this->get_field_id('share_api'); ?>" name="<?php echo $this->get_field_name('share_api'); ?>" />
+				    <label for="<?php echo $this->get_field_id('share_api'); ?>"> Share API</label>
+				    <span class="nebula-help-text">Only appears when supported. If selected (and supported) it will replace any third-party buttons (even if checked below) for optimization!</span>
+				</p>
+
+				<p>
 				    <input class="checkbox" type="checkbox" <?php checked($instance['facebook'], 'on'); ?> id="<?php echo $this->get_field_id('facebook'); ?>" name="<?php echo $this->get_field_name('facebook'); ?>" />
 				    <label for="<?php echo $this->get_field_id('facebook'); ?>"> Facebook</label>
-				</div>
+				</p>
 
-				<div>
+				<p>
 				    <input class="checkbox" type="checkbox" <?php checked($instance['twitter'], 'on'); ?> id="<?php echo $this->get_field_id('twitter'); ?>" name="<?php echo $this->get_field_name('twitter'); ?>" />
 				    <label for="<?php echo $this->get_field_id('twitter'); ?>"> Twitter</label>
-				</div>
+				</p>
 
-				<div>
+				<p>
 				    <input class="checkbox" type="checkbox" <?php checked($instance['googleplus'], 'on'); ?> id="<?php echo $this->get_field_id('googleplus'); ?>" name="<?php echo $this->get_field_name('googleplus'); ?>" />
 				    <label for="<?php echo $this->get_field_id('googleplus'); ?>"> Google+</label>
-				</div>
+				</p>
 
-				<div>
+				<p>
 				    <input class="checkbox" type="checkbox" <?php checked($instance['linkedin'], 'on'); ?> id="<?php echo $this->get_field_id('linkedin'); ?>" name="<?php echo $this->get_field_name('linkedin'); ?>" />
 				    <label for="<?php echo $this->get_field_id('linkedin'); ?>"> LinkedIn</label>
-				</div>
+				</p>
 
-				<div>
+				<p>
 				    <input class="checkbox" type="checkbox" <?php checked($instance['pinterest'], 'on'); ?> id="<?php echo $this->get_field_id('pinterest'); ?>" name="<?php echo $this->get_field_name('pinterest'); ?>" />
 				    <label for="<?php echo $this->get_field_id('pinterest'); ?>"> Pinterest</label>
-				</div>
+				</p>
 			<?php
 		}
 
@@ -559,6 +574,7 @@ if ( !trait_exists('Widgets') ){
 		public function update($new_instance, $old_instance){
 			$instance = array();
 			$instance['title'] = ( !empty($new_instance['title']) )? strip_tags($new_instance['title']) : '';
+			$instance['share_api'] = ( !empty($new_instance['share_api']) )? strip_tags($new_instance['share_api']) : '';
 			$instance['facebook'] = ( !empty($new_instance['facebook']) )? strip_tags($new_instance['facebook']) : '';
 			$instance['twitter'] = ( !empty($new_instance['twitter']) )? strip_tags($new_instance['twitter']) : '';
 			$instance['googleplus'] = ( !empty($new_instance['googleplus']) )? strip_tags($new_instance['googleplus']) : '';
