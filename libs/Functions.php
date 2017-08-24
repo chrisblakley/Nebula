@@ -212,6 +212,25 @@ trait Functions {
 						}
 					}
 				}
+
+				//Test the WordPress filesystem method
+				$fs_method_transient = get_transient('nebula_fs_method');
+				if ( empty($fs_method_transient) || $this->is_debug() ){
+					if ( file_exists(get_template_directory() . '/style.css') ){
+						WP_Filesystem();
+						global $wp_filesystem;
+						$test_file = $wp_filesystem->get_contents(get_template_directory() . '/style.css');
+
+						if ( empty($test_file) ){
+							$nebula_warnings[] = array(
+								'level' => 'error',
+								'description' => 'File system permissions error. Consider changing the FS_METHOD in wp-config.php.',
+							);
+						} else {
+							set_transient('nebula_fs_method', true, YEAR_IN_SECONDS); //On success, set a transient. This transient never needs to expire (but it's fine if it does).
+						}
+					}
+				}
 			}
 
 			//If search indexing is disabled

@@ -100,7 +100,7 @@ define('AUTOMATIC_UPDATER_DISABLED', true);
 add_filter('auto_update_plugin', '__return_true');
 add_filter('auto_update_theme', '__return_true');
 
-define('FS_METHOD', 'direct'); //Force Direct Install
+define('FS_METHOD', 'direct'); //Change how the WordPress filesystem attempts to access files. Options include 'direct', 'ssh2', 'ftpext', or 'ftpsockets'
 
 
 /*==========================

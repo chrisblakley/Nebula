@@ -503,7 +503,13 @@ function isCheckedOrHasValue(inputObject){
 
 
 //Option filter
-jQuery('#nebula-option-filter').on('keyup change focus blur', function(){
+jQuery('#nebula-option-filter').on('keydown change focus blur', function(e){
+	//Prevent the form from submitting if pressing enter after searching
+	if ( e.type == 'keydown' && e.keyCode == 13 ){
+		e.preventDefault();
+		return false;
+	}
+
 	if ( jQuery(this).val().length > 0 ){
 		jQuery('#reset-filter').removeClass('hidden');
 
