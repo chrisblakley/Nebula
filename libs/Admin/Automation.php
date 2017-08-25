@@ -243,7 +243,7 @@ if ( !trait_exists('Automation') ){
 		}
 
 		//Nebula Full Initialization (Triggered by either AJAX or manually)
-		public function initialization($ajax=true){
+		public function initialization($ajax=true){ //This default parameter doesn't actually work with AJAX (so we're using the $_POST data below)...
 			if ( current_user_can('manage_options') ){
 				$this->express_automation();
 				$this->full_automation();
@@ -255,7 +255,7 @@ if ( !trait_exists('Automation') ){
 
 				$this->render_scss('all'); //Re-render all SCSS files.
 
-				if ( !empty($ajax) ){ //If AJAX initialization
+				if ( !empty($ajax) || !empty($_POST['ajax']) ){ //If AJAX initialization
 					echo 'successful-nebula-init'; //AJAX listens for this string to determine sucess.
 					wp_die();
 				}

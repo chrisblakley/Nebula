@@ -36,7 +36,7 @@ if ( !trait_exists('Security') ){
 			if ( array_key_exists('ndaat', $_GET) ){
 				$this->ga_send_exception('(Security) Direct Template Access Prevention on ' . $_GET['ndaat'], 0);
 				header('Location: ' . home_url('/'));
-				die('Error 403: Forbidden.');
+				wp_die('Error 403: Forbidden.');
 			}
 		}
 
@@ -44,7 +44,7 @@ if ( !trait_exists('Security') ){
 		public function prevent_bad_query_strings(){
 			if ( array_key_exists('modTest', $_GET) ){
 				header("HTTP/1.1 403 Unauthorized");
-				die('Error 403: Forbidden.');
+				wp_die('Error 403: Forbidden.');
 			}
 		}
 

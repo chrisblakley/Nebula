@@ -481,7 +481,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Get details for user
 		public function admin_detail(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied.'); }
 
 			$this->update_visitor_data(false, true, sanitize_text_field($_POST['data'])); //Update the score without otherwise affecting data.
 
@@ -673,7 +673,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Manually update data from the admin interface
 		public function ajax_manual_update_visitor(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied.'); }
 
 			$nebula_id = sanitize_text_field($_POST['nid']);
 			$label = sanitize_text_field(strtolower(preg_replace(array('/([^a-zA-Z_])/', '/(\s)/'), array('', '_'), $_POST['label'])));
@@ -695,7 +695,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Find similar visitors by IP or IP and User Agent
 		public function ajax_similar_visitors(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied.'); }
 
 			global $wpdb;
 
@@ -723,7 +723,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Manually delete user from the admin interface
 		public function ajax_manual_delete_visitor(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied.'); }
 			if ( !current_user_can('manage_options') ){
 				wp_die('You do not have permissions to remove visitor data.');
 			}
@@ -746,7 +746,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Manually remove expired visitors from the admin interface
 		public function ajax_manual_remove_expired(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied.'); }
 
 			$manual_remove_expired = $this->remove_expired(true);
 
@@ -761,7 +761,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Manually remove visitors with a Lead Score of 0 (or less)
 		public function ajax_manual_remove_noscore(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied.'); }
 
 			global $wpdb;
 
@@ -779,7 +779,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Manually delete the entire Nebula Visitor tables
 		public function ajax_drop_nv_table(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied.'); }
 			if ( !current_user_can('manage_options') ){
 				wp_die('You do not have permissions to do that.');
 			}
@@ -1290,7 +1290,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Retrieve User Data
 		public function ajax_get_visitor_data(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !$this->get_option('visitors_db') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !$this->get_option('visitors_db') ){ wp_die('Permission Denied.'); }
 			$key = sanitize_text_field($_POST['data']);
 			echo json_encode($this->get_visitor_datapoint($key));
 			wp_die();
@@ -1351,7 +1351,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Vague Data - Only update if it doesn't already exist in the DB
 		public function ajax_low_visitor(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied.'); }
 			$data = $_POST['data'];
 			echo $this->vague_visitor($data);
 			wp_die();
@@ -1376,7 +1376,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Update Visitor Data
 		public function ajax_update_visitor(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !$this->get_option('visitors_db') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !$this->get_option('visitors_db') ){ wp_die('Permission Denied.'); }
 			$data = $_POST['data'];
 			echo json_encode($this->update_visitor_data($data));
 			wp_die();
@@ -1517,7 +1517,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Append to Visitor Data
 		public function ajax_append_visitor(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !$this->get_option('visitors_db') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !$this->get_option('visitors_db') ){ wp_die('Permission Denied.'); }
 			$data = $_POST['data']; //json_decode(stripslashes()); but its already an array... why?
 
 			echo json_encode($this->append_visitor_data($data));
@@ -1589,7 +1589,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Remove data from the Nebula Visitor DB
 		public function ajax_remove_datapoint(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !$this->get_option('visitors_db') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !$this->get_option('visitors_db') ){ wp_die('Permission Denied.'); }
 
 			$this->remove_visitor_data($_POST['data']);
 			wp_die();
@@ -1631,7 +1631,7 @@ if ( !trait_exists('Visitors') ){
 
 		//Increment Visitor Data
 		public function ajax_increment_visitor(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !$this->get_option('visitors_db') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') || !$this->get_option('visitors_db') ){ wp_die('Permission Denied.'); }
 			$data = $_POST['data'];
 			echo json_encode($this->increment_visitor_data($data));
 			wp_die();

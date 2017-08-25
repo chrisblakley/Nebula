@@ -139,7 +139,7 @@ if ( !trait_exists('Hubspot') ){
 
         //Create/Update Contact in Hubspot CRM
         public function ajax_send_to_hubspot(){
-            if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+            if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied.'); }
 
             $data = array(
                 'properties' => $_POST['properties'],

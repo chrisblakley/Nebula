@@ -224,7 +224,7 @@ if ( !trait_exists('Analytics') ){
 		public function ga_ajax(){
 			wp_die(); //@todo "Nebula" 0: Disabling this functionality until (not set) landing pages are under control
 
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied.'); }
 			if ( !$this->is_bot() ){
 				//Location and Title
 				$additional_fields = array(

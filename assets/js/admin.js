@@ -183,7 +183,8 @@ function initializationStuff(){
 				type: "POST",
 				url: nebula.site.ajax.url,
 				data: {
-					action: 'nebula_initialization'
+					action: 'nebula_initialization',
+					ajax: true
 				},
 				success: function(data){
 					if ( data.indexOf('successful-nebula-init') !== -1 ){
@@ -211,6 +212,7 @@ function initializationStuff(){
 				},
 				timeout: 60000
 			});
+
 			return false;
 		}
 	});

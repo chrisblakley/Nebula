@@ -919,7 +919,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Search theme or plugin files via Developer Information Metabox
 		public function search_theme_files(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied. Refresh and try again.'); }
 
 			ini_set('max_execution_time', 120);
 			ini_set('memory_limit', '512M');
@@ -927,7 +927,7 @@ if ( !trait_exists('Dashboard') ){
 
 			if ( strlen($searchTerm) < 3 ){
 				echo '<p><strong>Error:</strong> Minimum 3 characters needed to search!</p>';
-				die();
+				wp_die();
 			}
 
 			if ( $_POST['data'][0]['directory'] === 'theme' ){
@@ -953,7 +953,7 @@ if ( !trait_exists('Dashboard') ){
 				$dirpath = $uploadDirectory['basedir'];
 			} else {
 				echo '<p><strong>Error:</strong> Please specify a directory to search!</p>';
-				die();
+				wp_die();
 			}
 
 			echo '<p class="resulttext">Search results for <strong>"' . $searchTerm . '"</strong> in the <strong>' . $_POST['data'][0]['directory'] . '</strong> directory:</p><br />';

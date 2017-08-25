@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.3.24.4923
+	Version: 5.3.25.5975
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -21,7 +21,6 @@
 
 html {height: auto; font-size: 16px; overflow-x: hidden;} //Declare font-size in px here only. Use rem or rem() Sass function everywhere else.
 body {overflow-x: hidden; background: $background_color; -webkit-font-smoothing: antialiased;}
-button, input, select, textarea {font-size: rem(14px);}
 ::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 15%), 0.3);}
 ::-moz-selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 15%), 0.3);}
 
@@ -174,6 +173,7 @@ abbr, acronym {cursor: pointer; border-bottom: none; color: inherit;}
 html .btn {max-width: 100%; white-space: normal;}
 .modal-xl {@include media("xl"){width: 90%; max-width: 1200px;};} //Allows for bigger modal
 .modal-backdrop.show {opacity: 0.8;} //Darker modal backdrop
+.form-check-input {margin-top: 0.35rem;}
 
 //Equalize column heights within a row (Not to be confused with .equalize class that uses main.js)
 .row-table {display: block;
@@ -196,6 +196,14 @@ h3.comment-reply-title {font-size: rem(12px);}
 }
 .wpcf7-form br {display: none;}
 
+//Essential CF7 styles
+span.wpcf7-list-item {display: inline-block; margin: 0 0 0 1em;
+	&.first {margin: 0;}
+}
+span.wpcf7-list-item-label {font-size: rem(14px);
+	&::before,
+	&::after {content: " ";}
+}
 .debuginfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; font-size: 0px; line-height: 0px; @include background-color(#fff); color: rgba(255, 255, 255, 0); pointer-events: none;}
 
 //Nice animated spinner when submit is active
@@ -206,7 +214,7 @@ h3.comment-reply-title {font-size: rem(12px);}
 	}
 }
 
-.wpcf7 .screen-reader-response {display: none;}
+.wpcf7 .screen-reader-response {display: none; font-size: rem(14px);}
 
 .wpcf7-not-valid-tip {color: $danger_color;}
 
