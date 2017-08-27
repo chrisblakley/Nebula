@@ -76,6 +76,7 @@ if ( !trait_exists('Widgets') ){
 			register_widget('nebula_login_form');
 			register_widget('nebula_social_page_links');
 			register_widget('nebula_social_sharing');
+			register_widget('nebula_twitter_tweets');
 			register_widget('nebula_video');
 		}
 	}
@@ -580,6 +581,113 @@ if ( !trait_exists('Widgets') ){
 			$instance['googleplus'] = ( !empty($new_instance['googleplus']) )? strip_tags($new_instance['googleplus']) : '';
 			$instance['linkedin'] = ( !empty($new_instance['linkedin']) )? strip_tags($new_instance['linkedin']) : '';
 			$instance['pinterest'] = ( !empty($new_instance['pinterest']) )? strip_tags($new_instance['pinterest']) : '';
+			return $instance;
+		}
+	}
+
+
+	/*==========================
+	 Twitter
+	 ===========================*/
+	class nebula_twitter_tweets extends WP_Widget {
+		function __construct(){
+			parent::__construct('nebula_twitter_tweets', 'Nebula - Twitter Tweets', array('description' => 'Display one or more tweets from Twitter by a specific user or from a list.'));
+		}
+
+		//Creating widget front-end
+		public function widget($args, $instance){
+			//Before widget arguments are defined by themes
+			echo $args['before_widget'];
+
+			$tweet_options = array(
+				'user' => ( !empty($instance['username']) )? $instance['username'] : false,
+				'list' => ( !empty($instance['list_name']) )? $instance['list_name'] : false,
+				'number' => ( !empty($instance['number_tweets']) )? $instance['number_tweets'] : false,
+				'retweets' => ( !empty($instance['include_retweets']) )? $instance['include_retweets'] : false,
+			);
+
+			$tweets = nebula()->twitter_cache(array_filter($tweet_options));
+			?>
+				<?php if ( !empty($instance['title']) ): ?>
+					<h3><?php echo $instance['title']; ?></h3>
+				<?php endif; ?>
+
+				<?php if ( !empty($tweets) ): ?>
+					<?php
+						$user_html = '<div class="row">
+									<div class="col">
+										<div class="user-profile-con">
+											<img src="' . $tweets[0]->user->profile_image_url_https . '" />
+
+											<div>
+												<h3>' . $tweets[0]->user->name . '</h3>
+												<a href="' . $tweets[0]->user->url . '" target="_blank" title="' . $tweets[0]->user->description . '">@' . $tweets[0]->user->screen_name . '</a>
+											</div>
+										</div>
+									</div><!--/col-->
+								</div><!--/row-->';
+					?>
+
+					<div class="nebula-twitter-widget">
+						<?php if ( empty($instance['list_name']) ): ?>
+							<?php echo $user_html; ?>
+						<?php endif; ?>
+
+						<?php foreach ( $tweets as $tweet ): ?>
+							<?php if ( !empty($instance['list_name']) ): ?>
+								<?php echo $user_html; ?>
+							<?php endif; ?>
+							<div class="row">
+								<div class="col">
+									<p>
+										<span class="tweet"><?php echo $tweet->markup; ?></span>
+										<br /><a href="http://twitter.com/<?php echo $tweet->user->screen_name; ?>/status/<?php echo $tweet->id; ?>" class="tweet-date" target="_blank" title="<?php echo date('l, F j, Y \a\t g:ia', strtotime($tweet->created_at)); ?>"><?php echo human_time_diff(strtotime($tweet->created_at)) . ' ago'; ?></a>
+									</p>
+								</div><!--/col-->
+							</div><!--/row-->
+						<?php endforeach; ?>
+					</div>
+				<?php endif; ?>
+			<?php
+
+			//After widget arguments are defined by themes
+			echo $args['after_widget'];
+		}
+
+		//Widget Backend (admin form)
+		public function form($instance){
+			?>
+				<p>
+					<label for="<?php echo $this->get_field_id('title'); ?>">Title</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo ( isset($instance['title']) )? $instance['title'] : ''; ?>" />
+				</p>
+				<p>
+					<label for="<?php echo $this->get_field_id('username'); ?>">Username</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('username'); ?>" name="<?php echo $this->get_field_name('username'); ?>" type="text" value="<?php echo ( isset($instance['username']) )? $instance['username'] : ''; ?>" />
+				</p>
+				<p>
+					<label for="<?php echo $this->get_field_id('list_name'); ?>">List Name</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('list_name'); ?>" name="<?php echo $this->get_field_name('list_name'); ?>" type="text" value="<?php echo ( isset($instance['list_name']) )? $instance['list_name'] : ''; ?>" />
+				</p>
+				<p>
+					<label for="<?php echo $this->get_field_id('number_tweets'); ?>">Number of Tweets</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('number_tweets'); ?>" name="<?php echo $this->get_field_name('number_tweets'); ?>" type="number" value="<?php echo ( isset($instance['number_tweets']) )? $instance['number_tweets'] : ''; ?>" />
+				</p>
+				<p>
+				    <input class="checkbox" type="checkbox" <?php checked($instance['include_retweets'], 'on'); ?> id="<?php echo $this->get_field_id('include_retweets'); ?>" name="<?php echo $this->get_field_name('include_retweets'); ?>" />
+				    <label for="<?php echo $this->get_field_id('include_retweets'); ?>"> Include Retweets</label>
+				</p>
+			<?php
+		}
+
+		//Updating widget replacing old instances with new
+		public function update($new_instance, $old_instance){
+			$instance = array();
+			$instance['title'] = ( !empty($new_instance['title']) )? strip_tags($new_instance['title']) : '';
+			$instance['username'] = ( !empty($new_instance['username']) )? strip_tags($new_instance['username']) : '';
+			$instance['list_name'] = ( !empty($new_instance['list_name']) )? strip_tags($new_instance['list_name']) : '';
+			$instance['number_tweets'] = ( !empty($new_instance['number_tweets']) )? strip_tags($new_instance['number_tweets']) : '';
+			$instance['include_retweets'] = ( !empty($new_instance['include_retweets']) )? strip_tags($new_instance['include_retweets']) : '';
 			return $instance;
 		}
 	}

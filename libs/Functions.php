@@ -684,7 +684,7 @@ trait Functions {
 		}
 
 		$icon = ( $data['icon'] )? '<i class="fa fa-calendar-o"></i> ' : '';
-		$relative_date = human_time_diff(get_the_date('U'), current_time('timestamp', get_option('gmt_offset'))) . ' ago';
+		$relative_date = human_time_diff(get_the_date('U')) . ' ago';
 
 		if ( $data['relative'] ){
 			return '<span class="posted-on meta-item relative-date" title="' . get_the_date('F j, Y') . '">' . $icon . $relative_date . '</span>';
@@ -2117,28 +2117,37 @@ trait Functions {
 		echo '</script>';
 	}
 
-	//Twitter cached feed //yolo
-	public function twitter_cache($username='Great_Blakes', $listname=null, $numbertweets=5, $includeretweets=1){
-		if ( $_POST['data'] ){
+	//Twitter cached feed
+	public function twitter_cache($options=array()){
+		$defaults = array(
+			'user' => 'Great_Blakes',
+			'list' => null,
+			'number' => 5,
+			'retweets' => 1,
+		);
+
+		$data = array_merge($defaults, $options);
+
+		if ( !empty($_POST['data']) ){
 			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-			$username = ( $_POST['data']['username'] )? sanitize_text_field($_POST['data']['username']) : 'Great_Blakes';
-			$listname = ( $_POST['data']['listname'] )? sanitize_text_field($_POST['data']['listname']) : null; //Only used for list feeds
-			$numbertweets = ( $_POST['data']['numbertweets'] )? sanitize_text_field($_POST['data']['numbertweets']) : 5;
-			$includeretweets = ( $_POST['data']['includeretweets'] )? sanitize_text_field($_POST['data']['includeretweets']) : 1; //1: Yes, 0: No
+			$data['user'] = ( isset($_POST['data']['user']) )? sanitize_text_field($_POST['data']['user']) : $defaults['user'];
+			$data['list'] = ( isset($_POST['data']['list']) )? sanitize_text_field($_POST['data']['list']) : $defaults['list']; //Only used for list feeds
+			$data['number'] = ( isset($_POST['data']['number']) )? sanitize_text_field($_POST['data']['number']) : $defaults['number'];
+			$data['retweets'] = ( isset($_POST['data']['retweets']) )? sanitize_text_field($_POST['data']['retweets']) : $defaults['retweets']; //1: Yes, 0: No
 		}
 
 		error_reporting(0); //Prevent PHP errors from being cached.
 
-		if ( $listname ){
-			$feed = 'https://api.twitter.com/1.1/lists/statuses.json?slug=' . $listname . '&owner_screen_name=' . $username . '&count=' . $numbertweets . '&include_rts=' . $includeretweets;
+		if ( !empty($data['list']) ){
+			$feed = 'https://api.twitter.com/1.1/lists/statuses.json?slug=' . $data['list'] . '&owner_screen_name=' . $data['user'] . '&count=' . $data['number'] . '&include_rts=' . $data['retweets'] . '&tweet_mode=extended';
 		} else {
-			$feed = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=' . $username . '&count=' . $numbertweets . '&include_rts=' . $includeretweets;
+			$feed = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=' . $data['user'] . '&count=' . $data['number'] . '&include_rts=' . $data['retweets'] . '&tweet_mode=extended';
 		}
 
 		$bearer = $this->get_option('twitter_bearer_token', '');
 
-		$tweets = get_transient('nebula_twitter_' . $username);
-		if ( empty($tweets) || $this->is_debug() ){
+		$tweets = get_transient('nebula_twitter_' . $data['user']);
+		if ( empty($tweets) || $this->is_debug() || 1==1 ){ //TODO REMOVE THIS FORCE
 			$args = array('headers' => array('Authorization' => 'Bearer ' . $bearer));
 
 			$response = $this->remote_get($feed, $args);
@@ -2146,18 +2155,33 @@ trait Functions {
 				return false;
 			}
 
-			$tweets = $response['body'];
+			$tweets = json_decode($response['body']);
 
-			if ( !$tweets ){
+			if ( !$tweets && !empty($_POST['data']) ){
 				echo false;
-				exit;
+				wp_die();
 			}
 
-			set_transient('nebula_twitter_' . $username, $tweets, MINUTE_IN_SECONDS*5); //5 minute expiration
+			//Convert usernames, hashtags, and URLs into clickable links and add other markup then add to the $tweets object called 'markup'.
+			foreach ( $tweets as $tweet ){
+				$tweet->markup = preg_replace(array(
+					"/(http\S+)/i", //URLs (must be first)
+					"/@([a-z0-9_]+)/i", //Usernames
+					"/#([a-z0-9_]+)/i", //Hashtags
+					"/(\d+\/(\d+)?)$/i", //Series numbers
+				), array(
+					"<a href='$1', target='_blank' rel='noopener'>$1</a>",
+					"<a href='https://twitter.com/$1', target='_blank' rel='noopener'>@$1</a>",
+					"<a href='https://twitter.com/hashtag/$1', target='_blank' rel='noopener'>#$1</a>",
+					"<small>$1</small>",
+				), trim($tweet->full_text));
+			}
+
+			set_transient('nebula_twitter_' . $data['user'], $tweets, MINUTE_IN_SECONDS*5); //5 minute expiration
 		}
 
-		if ( $_POST['data'] ){
-			echo $tweets;
+		if ( !empty($_POST['data']) ){
+			echo json_encode($tweets);
 			wp_die();
 		} else {
 			return $tweets;

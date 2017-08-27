@@ -470,7 +470,8 @@
 			return Math.round(now/1000) + ' (' + now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds()) + '.' + pad(now.getMilliseconds()) + ' UTC' + dif + pad(tzo/60) + ':' + pad(tzo%60) + ')';
 		}
 	</script>
-	<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+	<script src='https://www.google-analytics.com/analytics.js' async></script>
 <?php else: //If Tracking ID is empty: ?>
 	<script>
 		function ga(){return false;}
