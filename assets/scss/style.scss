@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.3.28.5193
+	Version: 5.3.28.7093
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -542,23 +542,15 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 	}
 }
 
-#breadcrumb-section {position: relative; margin-bottom: 30px;
-	.nebula-breadcrumbs {position: relative; padding: 3px 0; border-bottom: 1px solid #fff; font-size: rem(12px);
-		&:after {content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: #ccc;}
-	}
+#breadcrumb-section {position: relative; margin-bottom: 50px;
+	.nebula-breadcrumbs {position: relative; padding: 3px 0; border-bottom: 1px solid #fff; font-size: rem(12px);}
 
 	&.full {background-color: rgba(0, 0, 0, 0.0225); border-bottom: 1px solid #fff;
-		&:after {content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: #ccc;}
-		.nebula-breadcrumbs {border: none;
-			&:after {display: none;}
-		}
+		.nebula-breadcrumbs {border: none;}
 	}
 
 	&.inner {border: 0; margin: 0;
-		&:after {display: none;}
-		.nebula-breadcrumbs {border: none;
-			&:after {display: none;}
-		}
+		.nebula-breadcrumbs {border: none;}
 	}
 
 	&.dark {background-color: rgba(0, 0, 0, 0.5); color: #fff;
@@ -591,6 +583,10 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 		}
 	}
 	.post-tags {font-style: italic;}
+}
+
+.featured-image {margin-top: 15px; margin-bottom: 15px;
+	img {display: block; width: 100%;}
 }
 
 //WordPress WYSIWYG Content
@@ -722,7 +718,13 @@ h2.articles-by {padding-top: 0;}
 	&:last-of-type {margin-bottom: 0;}
 
 	.entry-title {font-size: rem(28px); line-height: rem(32px); margin: 0 0 10px 0; font-weight: 300;}
-	.featured-image {display: flex; align-items: center; max-height: 400px; overflow: hidden; margin-top: 15px; margin-bottom: 15px;}
+	.featured-image {display: flex; align-items: center; max-height: 400px; overflow: hidden;
+		img {transition: all 0.5s ease;}
+
+		&:hover {
+			img {transform: scale(1.05);}
+		}
+	}
 	.entry-summary {font-size: rem(16px); line-height: rem(24px); margin: 0 0 10px 0; color: #444;}
 }
 

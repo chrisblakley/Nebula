@@ -93,6 +93,9 @@ if ( !trait_exists('Shortcodes') ){
 			add_shortcode('carousel_item', array($this, 'slide_shortcode'));
 			add_shortcode('slide', array($this, 'slide_shortcode'));
 
+			//Query
+			add_shortcode('query', array($this, 'query_shortcode'));
+
 			//Move wpautop filter to AFTER shortcode is processed
 			//@TODO "Nebula" 0: The following may be adding a <br> tag after certain plugin functionality?
 			//remove_filter('the_content', 'wpautop');
@@ -456,14 +459,10 @@ if ( !trait_exists('Shortcodes') ){
 			return $return;
 		}
 
-		public function accordion_item_shortcode( $attributes, $content='' ){
-			extract( shortcode_atts( array('class' => '', 'style' => '', 'title' => '', 'default' => 'show'), $attributes) );
+		public function accordion_item_shortcode($attributes, $content=''){
+			extract(shortcode_atts(array('class' => '', 'style' => '', 'title' => '', 'default' => 'show'), $attributes));
 
-			$id = 'collapse' . uniqid();
-
-			$return = '<div class="card"><div class="card-header" rol="tab"><a data-toggle="collapse" data-parent="#accordion" href="#'.$id.'"><h5 class="m-0"><i class="fa fa-plus"></i> '.$title.'</h5></a></div><div id="'.$id.'" class="collapse '.$default.' '.$class.'" role="tabpanel"><div class="card-block">'.$content.'</div></div></div>';
-
-			return $return;
+			return '<div class="card"><div class="card-header" rol="tab"><a data-toggle="collapse" data-parent="#accordion" href="#collapse' . uniqid() . '"><h5 class="m-0"><i class="fa fa-plus"></i> ' . $title . '</h5></a></div><div id="' . $id . '" class="collapse ' . $default . ' ' . $class . '" role="tabpanel"><div class="card-block">' . $content . '</div></div></div>';
 		}
 
 		public function tooltip_shortcode($atts, $content=''){
@@ -510,6 +509,23 @@ if ( !trait_exists('Shortcodes') ){
 			}
 
 			return '<div class="carousel-item">' . $linkopen . '<img src="' . $content . '">' . $linkclose . '</div>'; //need <div class="carousel-inner">
+		}
+
+		//Query Post Shortcode
+		//[query args="post_type=post&category_name=home-garden"]
+		public function query_shortcode($attributes){
+			extract(shortcode_atts(array('args' => ''), $attributes));
+
+			query_posts($args);
+
+			ob_start(); //Output buffer because the loop echoes
+			get_template_part('loop');
+			$output = ob_get_contents(); //Get the loop contents (buffered)
+			ob_end_clean();
+
+			wp_reset_query();
+
+			return $output;
 		}
 
 		//Remove empty <p> tags from Wordpress content (for nested shortcodes)

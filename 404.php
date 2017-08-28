@@ -29,23 +29,30 @@ get_header(); ?>
 				</div><!--/cols-->
 			</div><!--/row-->
 		</div><!--/container-->
-	<?php endif; ?>
 
-	<div id="breadcrumb-section" class="full inner dark">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<?php nebula()->breadcrumbs(); ?>
-				</div><!--/col-->
-			</div><!--/row-->
-		</div><!--/container-->
-	</div><!--/breadcrumb-section-->
+		<div id="breadcrumb-section" class="full inner dark">
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<?php nebula()->breadcrumbs(); ?>
+					</div><!--/col-->
+				</div><!--/row-->
+			</div><!--/container-->
+		</div><!--/breadcrumb-section-->
+	<?php endif; ?>
 </section>
 
 <?php get_template_part('inc/nebula_drawer'); ?>
 
 <div id="content-section">
 	<div class="container">
+		<?php if ( get_theme_mod('title_location') === 'content' ): ?>
+			<div id="breadcrumb-section" class="row">
+				<div class="col">
+					<?php nebula()->breadcrumbs(); ?>
+				</div><!--/col-->
+			</div><!--/row-->
+		<?php endif; ?>
 		<div class="row">
 			<div class="col-md" role="main">
 				<article id="post-0" class="post error404 not-found">
