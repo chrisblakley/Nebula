@@ -142,6 +142,10 @@ if ( !trait_exists('Analytics') ){
 			$override = apply_filters('pre_ga_send_event', null, $category, $action, $label, $value, $ni, $array);
 			if ( isset($override) ){return;}
 
+			if ( !$this->is_after_first_pageview() ){
+				return false; //Prevent server-side events to be sent before the first pageview
+			}
+
 			if ( empty($value) ){
 				$value = 0;
 			}
@@ -173,6 +177,10 @@ if ( !trait_exists('Analytics') ){
 		public function ga_send_custom($array=array()){ //@TODO "Nebula" 0: Add additional parameters to this function too (like above)!
 			$override = apply_filters('pre_ga_send_custom', null, $array);
 			if ( isset($override) ){return;}
+
+			if ( !$this->is_after_first_pageview() ){
+				return false; //Prevent server-side events to be sent before the first pageview
+			}
 
 			//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
 			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
@@ -276,6 +284,7 @@ if ( !trait_exists('Analytics') ){
 		}
 
 		//Load abandonment tracking
+		//Note: Unlike ga_send_event() this function ignores session page count. These events are typically sent before the pageview.
 		public function ga_track_load_abandons(){
 			if ( $this->get_option('ga_load_abandon') && !$this->is_bot() && !is_customize_preview() ){
 				$custom_metric_hitID = ( $this->get_option('cd_hitid') )? "'cd" . str_replace('dimension', '', $this->get_option('cd_hitid')) . "=" . $this->ga_generate_UUID() . "'," : ''; //Create the Measurement Protocol parameter for cd

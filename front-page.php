@@ -59,22 +59,26 @@ get_header(); ?>
 					<?php endif; ?>
 				</div><!--/col-->
 			</div><!--/row-->
+
 			<?php if ( is_active_sidebar('hero-widget-area') ): ?>
 				<div id="hero-widget-area" class="row justify-content-center">
 					<?php dynamic_sidebar('hero-widget-area'); ?>
 				</div><!--/row-->
 			<?php endif; ?>
-			<div class="row hero-cta">
-				<div class="col">
-					<?php if ( get_theme_mod('nebula_hero_cta_btn_1_text') && get_theme_mod('nebula_hero_cta_btn_1_url') ): ?>
-						<a class="btn btn-lg btn-primary" href="<?php echo get_theme_mod('nebula_hero_cta_btn_1_url'); ?>"><?php echo get_theme_mod('nebula_hero_cta_btn_1_text'); ?></a>
-					<?php endif; ?>
 
-					<?php if ( get_theme_mod('nebula_hero_cta_btn_2_text') && get_theme_mod('nebula_hero_cta_btn_2_url') ): ?>
-						<a class="btn btn-lg btn-light ml-4" href="<?php echo get_theme_mod('nebula_hero_cta_btn_2_url'); ?>"><?php echo get_theme_mod('nebula_hero_cta_btn_2_text'); ?></a>
-					<?php endif; ?>
-				</div><!--/col-->
-			</div><!--/row-->
+			<?php if ( get_theme_mod('nebula_hero_cta_btn_1_text') || get_theme_mod('nebula_hero_cta_btn_2_text') ): ?>
+				<div class="row hero-cta">
+					<div class="col">
+						<?php if ( get_theme_mod('nebula_hero_cta_btn_1_text') && get_theme_mod('nebula_hero_cta_btn_1_url') ): ?>
+							<a class="btn btn-lg btn-primary" href="<?php echo get_theme_mod('nebula_hero_cta_btn_1_url'); ?>"><?php echo get_theme_mod('nebula_hero_cta_btn_1_text'); ?></a>
+						<?php endif; ?>
+
+						<?php if ( get_theme_mod('nebula_hero_cta_btn_2_text') && get_theme_mod('nebula_hero_cta_btn_2_url') ): ?>
+							<a class="btn btn-lg btn-light ml-4" href="<?php echo get_theme_mod('nebula_hero_cta_btn_2_url'); ?>"><?php echo get_theme_mod('nebula_hero_cta_btn_2_text'); ?></a>
+						<?php endif; ?>
+					</div><!--/col-->
+				</div><!--/row-->
+			<?php endif; ?>
 		</div><!--/container-->
 	</div><!--/hero-section-->
 <?php endif; ?>

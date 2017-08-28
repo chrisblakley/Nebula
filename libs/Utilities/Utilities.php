@@ -120,6 +120,15 @@ if ( !trait_exists('Utilities') ){
 			return in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php'));
 		}
 
+		//Check if the current page is not the first. (pagecount is incremented in nebula.php)
+		public function is_after_first_pageview(){
+			if ( isset($_SESSION['pagecount']) && $_SESSION['pagecount'] >= 2 ){
+				return true;
+			}
+
+			return false;
+		}
+
 		//Format phone numbers into the preferred (315) 478-6700 format.
 		public function phone_format($number=false){
 			if ( !empty($number) ){
@@ -593,25 +602,22 @@ if ( !trait_exists('Utilities') ){
 			return $limited;
 		}
 
-		//Word limiter by characters
-		public function word_limit_chars($string, $charlimit, $continue=false){
-			$override = apply_filters('pre_word_limit_chars', null, $string, $charlimit, $continue);
+		//String limiter by characters
+		public function string_limit_chars($string, $char_limit){
+			$override = apply_filters('pre_string_limit_chars', null, $string, $char_limit);
 			if ( isset($override) ){return;}
 
-			//1 = "Continue Reading", 2 = "Learn More"
-			if ( strlen(strip_tags($string, '<p><span><a>')) <= $charlimit ){
-				$newString = strip_tags($string, '<p><span><a>');
-			} else {
-				$newString = preg_replace('/\s+?(\S+)?$/', '', substr(strip_tags($string, '<p><span><a>'), 0, ($charlimit + 1)));
-				if ( $continue === 1 ){
-					$newString = $newString . '&hellip;' . ' <a class="continuereading" href="'. get_permalink() . '">Continue reading <span class="meta-nav">&rarr;</span></a>';
-				} elseif( $continue === 2 ){
-					$newString = $newString . '&hellip;' . ' <a class="continuereading" href="'. get_permalink() . '">Learn more &raquo;</a>';
-				} else {
-					$newString = $newString . '&hellip;';
-				}
+			$limited['text'] = strip_tags($string);
+			$limited['is_limited'] = false;
+
+			if ( strlen($limited['text']) <= $char_limit ){
+				return $limited;
 			}
-			return $newString;
+
+			$limited['text'] = substr($limited['text'], 0, ($char_limit+1));
+			$limited['is_limited'] = true;
+
+			return $limited;
 		}
 
 		//Traverse multidimensional arrays

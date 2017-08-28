@@ -108,7 +108,10 @@ if ( !class_exists('Nebula') ){
 		public function session_start(){
 			if ( !isset($_SESSION) ){
 				session_start();
+				$_SESSION['pagecount'] = 0;
 			}
+
+			$_SESSION['pagecount']++;
 		}
 
 		public function set_content_width(){

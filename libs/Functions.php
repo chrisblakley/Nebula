@@ -79,7 +79,7 @@ trait Functions {
 		add_filter('the_password_form', array($this, 'password_form_simplify'));
 		add_filter('the_posts', array($this, 'always_get_post_custom'));
 		add_action('pre_get_posts', array($this, 'redirect_empty_search'));
-		add_action('template_redirect', array($this, 'redirect_single_post'));
+		add_action('template_redirect', array($this, 'redirect_single_search_result'));
 
 		add_action('wp_ajax_nebula_autocomplete_search', array($this, 'autocomplete_search'));
 		add_action('wp_ajax_nopriv_nebula_autocomplete_search', array($this, 'autocomplete_search'));
@@ -918,6 +918,7 @@ trait Functions {
 		$defaults = array(
 			'id' => false,
 			'text' => false,
+			'paragraphs' => false, //Allow paragraph tags in the excerpt //@todo "Nebula" 0: currently not working
 			'characters' => false,
 			'chars' => false, //Alias of "characters"
 			'words' => get_theme_mod('nebula_excerpt_length', 55),
@@ -972,21 +973,19 @@ trait Functions {
 
 		//Strip Tags
 		if ( $data['strip_tags'] ){
-			$data['text'] = strip_tags($data['text'], '');
+			$allowable_tags = ( !empty($data['paragraphs']) )? 'p' : '';
+			$data['text'] = strip_tags($data['text'], $allowable_tags);
 		}
 
-		//Characters (or Chars)
-		if ( (!empty($data['characters']) && is_int($data['characters'])) || (!empty($data['chars']) && is_int($data['chars'])) ){
+		//Apply string limiters (words or characters)
+		if ( (!empty($data['characters']) && is_int($data['characters'])) || (!empty($data['chars']) && is_int($data['chars'])) ){ //Characters (or Chars)
 			$char_limit = ( !empty($data['characters']) )? $data['characters'] : $data['chars'];
-			$chars = $this->word_limit_chars($data['text'], $char_limit); //Returns array: $chars[0] is the string, $chars[1] is boolean if it was limited or not.
-			$data['text'] = $chars['text'];
-		}
-
-		//Words (or Length)
-		if ( (!empty($data['words']) && is_int($data['words'])) || (!empty($data['length']) && is_int($data['length'])) ){
+			$limited = $this->string_limit_chars($data['text'], $char_limit); //Returns array: $limited['text'] is the string, $limited['is_limited'] is boolean if it was limited or not.
+			$data['text'] = $limited['text'];
+		} elseif ( (!empty($data['words']) && is_int($data['words'])) || (!empty($data['length']) && is_int($data['length'])) ){ //Words (or Length)
 			$word_limit = ( !empty($data['length']) )? $data['length'] : $data['words'];
-			$words = $this->string_limit_words($data['text'], $word_limit); //Returns array: $words[0] is the string, $words[1] is boolean if it was limited or not.
-			$data['text'] = $words['text'];
+			$limited = $this->string_limit_words($data['text'], $word_limit); //Returns array: $limited['text'] is the string, $limited['is_limited'] is boolean if it was limited or not.
+			$data['text'] = $limited['text'];
 		}
 
 		//Check here for links to wrap
@@ -1010,6 +1009,8 @@ trait Functions {
 			if ( $data['button'] || $data['btn'] ){
 				$button = ( $data['button'] )? $data['button'] : $data['btn'];
 				$btn_class = ( is_bool($button) )? 'btn btn-brand' : 'btn ' . $data['button'];
+
+				$data['text'] .= '<br /><br />';
 			}
 
 			$data['text'] .= ' <a class="nebula_excerpt ' . $btn_class . '" href="' . $data['url'] . '">' . $data['more'] . '</a>';
@@ -2162,8 +2163,15 @@ trait Functions {
 				wp_die();
 			}
 
-			//Convert usernames, hashtags, and URLs into clickable links and add other markup then add to the $tweets object called 'markup'.
+			//Add convenient data to the tweet object
 			foreach ( $tweets as $tweet ){
+				$tweet->tweet_url = 'http://twitter.com/' . $tweet->user->screen_name . '/status/' . $tweet->id; //Add Tweet URL
+
+				//Convert times
+				$tweet->time_ago = human_time_diff(strtotime($tweet->created_at)); //Relative time
+				$tweet->time_formatted = date('l, F j, Y \a\t g:ia', strtotime($tweet->created_at)); //Human readable time
+
+				//Convert usernames, hashtags, and URLs into clickable links and add other markup
 				$tweet->markup = preg_replace(array(
 					"/(http\S+)/i", //URLs (must be first)
 					"/@([a-z0-9_]+)/i", //Usernames
@@ -2225,10 +2233,11 @@ trait Functions {
 	}
 
 	//Redirect if only single search result
-	public function redirect_single_post(){
+	public function redirect_single_search_result(){
 		if ( is_search() ){
 			global $wp_query;
-			if ( $wp_query->post_count === 1 && $wp_query->max_num_pages === 1 ){
+
+			if ( $wp_query->post_count == 1 && $wp_query->max_num_pages == 1 ){
 				if ( isset($_GET['s']) ){
 					//If the redirected post is the homepage, serve the regular search results page with one result (to prevent a redirect loop)
 					if ( $wp_query->posts['0']->ID !== 1 && get_permalink($wp_query->posts['0']->ID) !== home_url() . '/' ){

@@ -78,6 +78,10 @@ if ( !trait_exists('Widgets') ){
 			register_widget('nebula_social_sharing');
 			register_widget('nebula_twitter_tweets');
 			register_widget('nebula_video');
+
+			if ( is_plugin_active('advanced-custom-fields-pro/acf.php') ){ //Advanced Custom Fields v5
+				register_widget('nebula_acf');
+			}
 		}
 	}
 
@@ -313,6 +317,13 @@ if ( !trait_exists('Widgets') ){
 			?>
 				<?php if ( !empty($instance['image']) ): ?>
 					<?php if ( !empty($instance['url']) ): ?>
+						<?php
+							//Custom link tags
+							if ( $instance['url'] === '[home_url]' ){
+								$instance['url'] = home_url();
+							}
+						?>
+
 						<a href="<?php echo $instance['url']; ?>" <?php echo ( nebula()->url_components('hostname') != nebula()->url_components('hostname', $instance['url']) )? 'target="_blank"' : ''; //Check for external URL ?>>
 					<?php endif; ?>
 							<img src="<?php echo $instance['image']; ?>" />
@@ -641,7 +652,7 @@ if ( !trait_exists('Widgets') ){
 								<div class="col">
 									<p>
 										<span class="tweet"><?php echo $tweet->markup; ?></span>
-										<br /><a href="http://twitter.com/<?php echo $tweet->user->screen_name; ?>/status/<?php echo $tweet->id; ?>" class="tweet-date" target="_blank" title="<?php echo date('l, F j, Y \a\t g:ia', strtotime($tweet->created_at)); ?>"><?php echo human_time_diff(strtotime($tweet->created_at)) . ' ago'; ?></a>
+										<br /><a href="<?php echo $tweet->tweet_url; ?>" class="tweet-date" target="_blank" title="<?php echo $tweet->time_formatted; ?>"><?php echo $tweet->time_ago . ' ago'; ?></a>
 									</p>
 								</div><!--/col-->
 							</div><!--/row-->
@@ -752,6 +763,39 @@ if ( !trait_exists('Widgets') ){
 			$instance['video_provider'] = ( !empty($new_instance['video_provider']) )? strip_tags($new_instance['video_provider']) : '';
 			$instance['video_id'] = ( !empty($new_instance['video_id']) )? strip_tags($new_instance['video_id']) : '';
 			return $instance;
+		}
+	}
+
+
+	/*==========================
+	 Advanced Custom Fields
+	 Only available when ACF v5 is active. This echoes each field that is assigned to the widget from the Custom Fields settings.
+	 ===========================*/
+	class nebula_acf extends WP_Widget {
+		function __construct(){
+			parent::__construct('nebula_acf', 'Nebula - Advanced Custom Fields', array('description' => 'Integrate ACF fields without hijacking other widgets.'));
+		}
+
+		//Creating widget front-end
+		public function widget($args, $instance){
+			//Before widget arguments are defined by themes
+			echo $args['before_widget'];
+
+			$acf_fields = get_fields('widget_' . $args['widget_id']);
+			foreach ( $acf_fields as $acf_field ): ?>
+				<div class="row">
+					<div class="col">
+						<?php echo $acf_field; ?>
+					</div><!--/col-->
+				</div><!--/row-->
+			<?php endforeach;
+
+			//After widget arguments are defined by themes
+			echo $args['after_widget'];
+		}
+
+		public function form($instance){
+			echo '<p>Note: This widget may not properly update in the Customizer preview. Try saving and refreshing to view changes.</p>';
 		}
 	}
 

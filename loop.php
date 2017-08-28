@@ -17,12 +17,6 @@
 		<?php while ( have_posts() ): the_post(); ?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 				<div class="row">
-					<?php if ( has_post_thumbnail() && get_theme_mod('featured_image_location') !== 'disabled' ): ?>
-						<div class="col-md-4">
-							<a href="<?php the_permalink(); ?>"><?php the_post_thumbnail(); ?></a>
-						</div><!--/col-->
-					<?php endif; ?>
-
 					<div class="col">
 						<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
 
@@ -35,6 +29,12 @@
 								<?php nebula()->post_meta('on'); ?> <?php if ( !is_author() ){ nebula()->post_meta('by'); } ?> <?php nebula()->post_meta('cat'); ?> <?php nebula()->post_meta('tags'); ?>
 							<?php endif; ?>
 						</div>
+
+						<?php if ( has_post_thumbnail() && get_theme_mod('featured_image_location') !== 'disabled' ): ?>
+							<a class="featured-image" href="<?php the_permalink(); ?>">
+								<?php the_post_thumbnail(); ?>
+							</a>
+						<?php endif; ?>
 
 						<?php if ( is_search() && is_plugin_active('relevanssi/relevanssi.php') && $post->relevance_score ): ?>
 							<div class="entry-summary score-<?php echo str_replace('.', '_', $post->relevance_score); ?>">

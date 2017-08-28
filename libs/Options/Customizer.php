@@ -177,6 +177,24 @@ trait Customizer {
 			'priority' => 500,
 		));
 
+		//Hero header in front page
+		$wp_customize->add_setting('nebula_hero', array('default' => 1));
+		$wp_customize->add_control('nebula_hero', array(
+			'label' => 'Show Hero Section',
+			'section' => 'hero',
+			'priority' => 3,
+			'type' => 'checkbox',
+		));
+
+		//Hero Spacing
+		$wp_customize->add_setting('nebula_hero_spacing', array('default' => 1));
+		$wp_customize->add_control('nebula_hero_spacing', array(
+			'label' => 'Add spacing above/below the hero',
+			'section' => 'hero',
+			'priority' => 9,
+			'type' => 'checkbox',
+		));
+
 		//Use One-Color Logo
 		$wp_customize->add_setting('nebula_hero_single_color_logo', array('default' => 0));
 		$wp_customize->add_control('nebula_hero_single_color_logo', array(
@@ -198,15 +216,6 @@ trait Customizer {
 		        'brand' => 'Brand',
 		        'dark' => 'Dark',
 		    )
-		));
-
-		//Hero header in front page
-		$wp_customize->add_setting('nebula_hero', array('default' => 1));
-		$wp_customize->add_control('nebula_hero', array(
-			'label' => 'Show Hero Section',
-			'section' => 'hero',
-			'priority' => 25,
-			'type' => 'checkbox',
 		));
 
 		//Hero BG Image
@@ -710,6 +719,15 @@ trait Customizer {
 			'priority' => 130,
 		));
 
+		//Footer Spacing
+		$wp_customize->add_setting('nebula_footer_spacing', array('default' => 1));
+		$wp_customize->add_control('nebula_footer_spacing', array(
+			'label' => 'Add spacing above/below the footer',
+			'section' => 'footer',
+			'priority' => 6,
+			'type' => 'checkbox',
+		));
+
 		//Footer Navigation Color Scheme (Same as under Brand panel)
 		$wp_customize->add_setting('footer_nav_scheme', array('default' => 'light'));
 		$wp_customize->add_control('footer_nav_scheme', array(
@@ -862,6 +880,10 @@ trait Customizer {
 					#bigheadingcon .custom-color-overlay {background: <?php echo get_theme_mod('nebula_header_overlay_color', get_theme_mod('nebula_primary_color')); ?>; opacity: <?php echo get_theme_mod('nebula_header_overlay_opacity'); ?>;}
 				<?php endif; ?>
 
+				<?php if ( !get_theme_mod('nebula_hero_spacing', true) ): ?>
+					#hero-section #hero-content {margin-top: 0; margin-bottom: 0;}
+				<?php endif; ?>
+
 				<?php if ( get_theme_mod('nebula_hero_overlay_color') || get_theme_mod('nebula_hero_overlay_opacity') ): //This condition isn't entirely necessary as the selector is unique to the Customizer ?>
 					#hero-section .custom-color-overlay {background: <?php echo get_theme_mod('nebula_hero_overlay_color'); ?>; opacity: <?php echo get_theme_mod('nebula_hero_overlay_opacity'); ?>; animation: none;}
 				<?php endif; ?>
@@ -870,6 +892,32 @@ trait Customizer {
 					#hero-section #hero-content h1,
 					#hero-section #hero-content h2,
 					#hero-section #hero-content p {color: <?php echo get_theme_mod('nebula_hero_text_color'); ?>;}
+				<?php endif; ?>
+
+				<?php if ( !get_theme_mod('nebula_footer_spacing', true) ): ?>
+					#footer-section {padding-top: 0; padding-bottom: 50px;}
+				<?php endif; ?>
+
+				<?php if ( get_theme_mod('nebula_footer_bg_image') && get_theme_mod('nebula_footer_overlay_opacity') !== 1 ):?>
+					#footer-section {background-image: url("<?php echo get_theme_mod('nebula_footer_bg_image'); ?>");}
+				<?php endif; ?>
+
+				<?php if ( get_theme_mod('footer_nav_scheme') ): //Footer Nav Scheme ?>
+					#footer-section a:not(.btn),
+					#footer-section a:not(.btn):active,
+					#footer-section a:not(.btn):visited {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme')]; ?>;}
+						#footer-section a:not(.btn):hover,
+						#footer-section a:not(.btn):focus {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme') . '_alt']; ?>;}
+
+					<?php if ( get_theme_mod('footer_nav_scheme') === 'dark' || get_theme_mod('footer_nav_scheme') === 'brand' ): //Handle copyright text and footer search on light backgrounds ?>
+						#footer-section .copyright {color: <?php echo $nav_schemes['dark']; ?>;}
+							form.footer-search:before, #footer-section form.nebula-search:before {color: <?php echo $nav_schemes['dark']; ?>;}
+								form.footer-search input, #footer-section form.nebula-search input {color: <?php echo $nav_schemes['dark']; ?>; border: 1px solid #ccc;}
+					<?php endif; ?>
+				<?php endif; ?>
+
+				<?php if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ):  //This condition isn't entirely necessary as the selector is unique to the Customizer ?>
+					#footer-section .custom-color-overlay {background: <?php echo get_theme_mod('nebula_footer_overlay_color'); ?>; opacity: <?php echo get_theme_mod('nebula_footer_overlay_opacity'); ?>; animation: none;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('nebula_fwa_bg_image') && get_theme_mod('nebula_fwa_overlay_opacity') !== 1 ):?>
@@ -886,22 +934,6 @@ trait Customizer {
 					#footer-widget-section ul li.menu-item > a:visited {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme')]; ?>;}
 						#footer-widget-section ul li.menu-item > a:hover,
 						#footer-widget-section ul li.menu-item > a:focus {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme') . '_alt']; ?>;}
-				<?php endif; ?>
-
-				<?php if ( get_theme_mod('nebula_footer_bg_image') && get_theme_mod('nebula_footer_overlay_opacity') !== 1 ):?>
-					#footer-section {background-image: url("<?php echo get_theme_mod('nebula_footer_bg_image'); ?>");}
-				<?php endif; ?>
-
-				<?php if ( get_theme_mod('footer_nav_scheme') ): //Footer Nav Scheme ?>
-					#footer-section ul li.menu-item > a,
-					#footer-section ul li.menu-item > a:active,
-					#footer-section ul li.menu-item > a:visited {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme')]; ?>;}
-						#footer-section ul li.menu-item > a:hover,
-						#footer-section ul li.menu-item > a:focus {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme') . '_alt']; ?>;}
-				<?php endif; ?>
-
-				<?php if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ):  //This condition isn't entirely necessary as the selector is unique to the Customizer ?>
-					#footer-section .custom-color-overlay {background: <?php echo get_theme_mod('nebula_footer_overlay_color'); ?>; opacity: <?php echo get_theme_mod('nebula_footer_overlay_opacity'); ?>; animation: none;}
 				<?php endif; ?>
 			</style>
 		<?php
