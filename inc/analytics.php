@@ -397,8 +397,19 @@
 			}
 
 			var originalBuildHitTask = tracker.get('buildHitTask'); //Grab a reference to the default buildHitTask function.
-			tracker.set('buildHitTask', function(model){
+			tracker.set('buildHitTask', function(model){ //This runs on every hit send
 				var qt = model.get('queueTime') || 0;
+
+				<?php if ( nebula()->get_option('ga_session_timeout_minutes') && intval(nebula()->get_option('ga_session_timeout_minutes')) >= 5 ): //Send new pageview after session timeout expires ?>
+					if ( model.get('hitType') !== 'pageview' && typeof lastHit === 'object' ){
+						var currentHit = new Date();
+						if ( (currentHit-lastHit) > (<?php echo nebula()->get_option('ga_session_timeout_minutes'); ?>*60000) ){ //If after GA session timeout
+							model.set('campaignSource', '(session timeout)');
+							ga('send', 'pageview');
+						}
+					}
+					lastHit = new Date(); //Update the last GA hit time
+				<?php endif; ?>
 
 				//Always send hit dimensions with all payloads
 				//model.set(gaCustomDimensions['gaCID'], tracker.get('clientId'), true);

@@ -245,6 +245,7 @@ if ( !trait_exists('Options') ){
 
 				//Analytics Tab
 				'ga_tracking_id' => '',
+				'ga_session_timeout_minutes' => '',
 				'ga_wpuserid' => 0,
 				'ga_displayfeatures' => 0,
 				'ga_linkid' => 0,

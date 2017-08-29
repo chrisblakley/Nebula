@@ -606,7 +606,7 @@ function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow){
 		var willScroll = true;
 		if ( onlyWhenBelow ){
 			var elementTop = element.offset().top-offset;
-			var viewportTop = nebula.dom.document.scrollTop();
+			var viewportTop = jQuery(document).scrollTop();
 			if ( viewportTop-elementTop <= 0 ){
 				willScroll = false;
 			}
@@ -656,124 +656,85 @@ function removeQueryParameter(key, sourceURL){
     return rtn;
 }
 
+//Form live (soft) validator
 function nebulaLiveValidator(){
 	//Standard text inputs and select menus
-	jQuery('.nebula-validate-text, .nebula-validate-select').on('keyup change blur', function(e){
+	jQuery(document).on('keyup change blur', '.nebula-validate-text, .nebula-validate-textarea, .nebula-validate-select', function(e){
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( jQuery.trim(jQuery(this).val()).length ){
-			applyValidationClasses(jQuery(this), 'success', false);
+			applyValidationClasses(jQuery(this), 'valid', false);
 		} else {
-			if ( e.type === 'keyup' ){
-				applyValidationClasses(jQuery(this), 'warning', false);
-			} else {
-				applyValidationClasses(jQuery(this), 'danger', true);
-			}
+			applyValidationClasses(jQuery(this), 'invalid', ( e.type !== 'keyup' ));
 		}
 	});
 
 	//RegEx input
-	jQuery('.nebula-validate-regex').on('keyup change blur', function(e){
-		var pattern = new RegExp(jQuery(this).attr('data-valid-regex'));
-
+	jQuery(document).on('keyup change blur', '.nebula-validate-regex', function(e){
+		var pattern = new RegExp(jQuery(this).attr('data-valid-regex'), 'i');
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( pattern.test(jQuery(this).val()) ){
-			applyValidationClasses(jQuery(this), 'success', false);
+			applyValidationClasses(jQuery(this), 'valid', false);
 		} else {
-			if ( e.type === 'keyup' ){
-				applyValidationClasses(jQuery(this), 'warning', false);
-			} else {
-				applyValidationClasses(jQuery(this), 'danger', true);
-			}
+			applyValidationClasses(jQuery(this), 'invalid', ( e.type !== 'keyup' ));
 		}
 	});
 
 	//URL inputs
-	jQuery('.nebula-validate-url').on('keyup change blur', function(e){
+	jQuery(document).on('keyup change blur', '.nebula-validate-url', function(e){
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( regexPattern.url.test(jQuery(this).val()) ){
-			applyValidationClasses(jQuery(this), 'success', false);
+			applyValidationClasses(jQuery(this), 'valid', false);
 		} else {
-			if ( e.type === 'keyup' ){
-				applyValidationClasses(jQuery(this), 'warning', false);
-			} else {
-				applyValidationClasses(jQuery(this), 'danger', true);
-			}
+			applyValidationClasses(jQuery(this), 'invalid', ( e.type !== 'keyup' ));
 		}
 	});
 
 	//Email address inputs
-	jQuery('.nebula-validate-email').on('keyup change blur', function(e){
+	jQuery(document).on('keyup change blur', '.nebula-validate-email', function(e){
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( regexPattern.email.test(jQuery(this).val()) ){
-			applyValidationClasses(jQuery(this), 'success', false);
+			applyValidationClasses(jQuery(this), 'valid', false);
 		} else {
-			if ( e.type === 'keyup' ){
-				applyValidationClasses(jQuery(this), 'warning', false);
-			} else {
-				applyValidationClasses(jQuery(this), 'danger', true);
-			}
+			applyValidationClasses(jQuery(this), 'invalid', ( e.type !== 'keyup' ));
 		}
 	});
 
 	//Phone number inputs
-	jQuery('.nebula-validate-phone').on('keyup change blur', function(e){
+	jQuery(document).on('keyup change blur', '.nebula-validate-phone', function(e){
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( regexPattern.phone.test(jQuery(this).val()) ){
-			applyValidationClasses(jQuery(this), 'success', false);
+			applyValidationClasses(jQuery(this), 'valid', false);
 		} else {
-			if ( e.type === 'keyup' ){
-				applyValidationClasses(jQuery(this), 'warning', false);
-			} else {
-				applyValidationClasses(jQuery(this), 'danger', true);
-			}
+			applyValidationClasses(jQuery(this), 'invalid', ( e.type !== 'keyup' ));
 		}
 	});
 
 	//Date inputs
-	jQuery('.nebula-validate-date').on('keyup change blur', function(e){
+	jQuery(document).on('keyup change blur', '.nebula-validate-date', function(e){
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( regexPattern.date.mdy.test(jQuery(this).val()) ){ //Check for MM/DD/YYYY (and flexible variations)
-			applyValidationClasses(jQuery(this), 'success', false);
+			applyValidationClasses(jQuery(this), 'valid', false);
 		} else if ( regexPattern.date.ymd.test(jQuery(this).val()) ){ //Check for YYYY/MM/DD (and flexible variations)
-			applyValidationClasses(jQuery(this), 'success', false);
+			applyValidationClasses(jQuery(this), 'valid', false);
 		} else if ( strtotime(jQuery(this).val()) && strtotime(jQuery(this).val()) > -2208988800 ){ //Check for textual dates (after 1900) //@TODO "Nebula" 0: The JS version of strtotime() isn't the most accurate function...
-			applyValidationClasses(jQuery(this), 'success', false);
+			applyValidationClasses(jQuery(this), 'valid', false);
 		} else {
-			applyValidationClasses(jQuery(this), 'danger', true);
-		}
-	});
-
-	//Textarea
-	jQuery('.nebula-validate-textarea').on('keyup change blur', function(e){
-		if ( jQuery(this).val() === '' ){
-			applyValidationClasses(jQuery(this), 'reset', false);
-		} else if ( jQuery.trim(jQuery(this).val()).length ){
-			if ( e.type === 'blur' ){
-				applyValidationClasses(jQuery(this), 'success', false);
-			} else {
-				applyValidationClasses(jQuery(this), 'reset', false); //Remove green while focused (typing)
-			}
-		} else {
-			if ( e.type === 'blur' ){
-				applyValidationClasses(jQuery(this), 'danger', true);
-			} else {
-				applyValidationClasses(jQuery(this), 'reset', false); //Remove green while focused (typing)
-			}
+			applyValidationClasses(jQuery(this), 'invalid', ( e.type !== 'keyup' ));
 		}
 	});
 
 	//Checkbox and Radio
-	jQuery('.nebula-validate-checkbox, .nebula-validate-radio').on('change blur', function(e){
-		if ( jQuery(this).parents('.form-group').find('input:checked').length ){
+	jQuery(document).on('change blur', '.nebula-validate-checkbox, .nebula-validate-radio', function(e){
+		if ( jQuery(this).closest('.form-group').find('input:checked').length ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else {
-			applyValidationClasses(jQuery(this), 'danger', true);
+			applyValidationClasses(jQuery(this), 'invalid', true);
 		}
 	});
 }
@@ -787,25 +748,16 @@ function applyValidationClasses(element, validation, showFeedback){
 	}
 
 	if ( validation === 'success' || validation === 'valid' ){
-		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-success')
-			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-success')
-			.find('.wpcf7-not-valid-tip').remove();
-	} else if ( validation === 'warning' ){
-		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-warning')
-			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-warning')
-			.find('.wpcf7-not-valid-tip').remove();
+		element.removeClass('wpcf7-not-valid is-invalid').addClass('is-valid').parent().find('.wpcf7-not-valid-tip').remove();
 	} else if ( validation === 'danger' || validation === 'error' || validation === 'invalid' ){
-		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid').addClass('form-control-danger')
-			.parents('.form-group').removeClass('has-success has-warning has-danger').addClass('has-danger');
+		element.removeClass('wpcf7-not-valid is-valid').addClass('is-invalid');
 	} else if ( validation === 'reset' || validation === 'remove' ){
-		element.removeClass('form-control-success form-control-warning form-control-danger wpcf7-not-valid')
-			.parents('.form-group').removeClass('has-danger has-warning has-success')
-			.find('.wpcf7-not-valid-tip').remove();
+		element.removeClass('wpcf7-not-valid is-invalid is-valid').parent().find('.wpcf7-not-valid-tip').remove();
 	}
 
 	if ( validation === 'feedback' || showFeedback ){
-		element.parents('.form-group').find('.form-control-feedback').removeClass('hidden');
+		element.parent().find('.invalid-feedback').removeClass('hidden');
 	} else {
-		element.parents('.form-group').find('.form-control-feedback').addClass('hidden');
+		element.parent().find('.invalid-feedback').addClass('hidden');
 	}
 }
