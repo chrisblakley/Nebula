@@ -934,6 +934,7 @@ trait Functions {
 			'strip_shortcodes' => true,
 			'strip_tags' => true,
 			'wrap_links' => false,
+			'shorten_urls' => false, //Currently only works with wrap_links
 		);
 
 		$data = array_merge($defaults, $options);
@@ -1008,6 +1009,26 @@ trait Functions {
 		//Check here for links to wrap
 		if ( $data['wrap_links'] ){
 			$data['text'] = preg_replace('/(\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?)(?![^<]*<\/)/i', '<a class="nebula-excerpt-url" href="$1">$1</a>', $data['text']); //Capture any URL not within < and </ using a negative lookahead (so it plays nice in case strip_tags is false)
+		}
+
+		//Shorten visible URL text
+		if ( $data['shorten_urls'] ){
+			$data['text'] = preg_replace_callback('/(<a.+>)(.+)(<\/a>)/', function($matches){
+				$output = $matches[1];
+				if ( strlen($matches[2]) > 20 ){
+					$short_url = str_replace(array('http://', 'https://'), '', $matches[2]);
+					$url_directories = explode('/', $short_url);
+					$short_url = $url_directories[0];
+					if ( count($url_directories) > 1 ){
+						$short_url .= '/...';
+					}
+					$output .= $short_url;
+				} else {
+					$output .= $url;
+				}
+				$output .= $matches[3];
+				return $output;
+			}, $data['text']);
 		}
 
 		//Ellipsis
@@ -1288,7 +1309,7 @@ trait Functions {
 
 		//Get Transients
 		$video_json = get_transient('nebula_' . $provider . '_' . $id);
-		if ( empty($video_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
+		if ( empty($video_json) || 1==1 ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 			if ( $provider === 'youtube' ){
 				if ( !$this->get_option('google_server_api_key') && $this->is_staff() ){
 					echo '<script>console.warn("No Google Youtube Iframe API key. Youtube videos may not be tracked!");</script>';

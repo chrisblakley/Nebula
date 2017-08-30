@@ -4025,6 +4025,11 @@ function mmenus(){
 				},
 				counters: true, //Display count of sub-menus
 				//iconPanels: false, //Layer panels on top of each other
+/*
+				backButton: {
+					close: true //This option currently needs the user to push back twice after closing the mmenu without the back button
+				},
+*/
 				extensions: [
 					"theme-light", //Light background
 					"border-full", //Extend list borders full width
@@ -4070,9 +4075,11 @@ function mmenus(){
 					mobileNavTriggerIcon.removeClass('fa-times').addClass('fa-bars');
 					ga('send', 'timing', 'Mmenu', 'Closed', Math.round(nebulaTimer('mmenu', 'lap')), 'From opening mmenu until closing mmenu');
 				}).bind('close:finish', function(){
-					if ( window.offcanvasBack ){
-						window.history.back(); //Go back to the pushed state so the next back button will function normally (if Mmenu is closed manually without back button)
-					}
+					debounce(function(){ //Debounce to prevent long touches from going back multiple times
+						if ( window.offcanvasBack ){
+							window.history.back(); //Go back to the pushed state so the next back button will function normally (if Mmenu is closed manually without back button)
+						}
+					}, 250, 'mmenu close finish');
 				});
 
 				//Prevent going back twice on back button push

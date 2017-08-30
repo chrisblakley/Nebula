@@ -3,7 +3,7 @@
 //@TODO: Enable "Service Worker" in Nebula Options (under Functions)
 
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-33036'; //Wednesday, August 30, 2017 11:01:46 AM
+var CACHE_NAME = 'nebula-nebula-child-25297'; //Wednesday, August 30, 2017 5:26:13 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
