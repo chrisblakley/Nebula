@@ -3857,17 +3857,6 @@ function pauseAllVideos(force){
 
 //Create desktop notifications
 function desktopNotification(title, message, clickCallback, showCallback, closeCallback, errorCallback){
-
-	//Service Worker Way:
-	if ( 'PushManager' in window ){ //Firefox and Chrome only
-		//https://developers.google.com/web/fundamentals/getting-started/codelabs/push-notifications/
-	}
-
-
-
-
-	//Old Way:
-
 	if ( checkNotificationPermission() ){
 		//Set defaults
 		var defaults = {
@@ -3875,7 +3864,7 @@ function desktopNotification(title, message, clickCallback, showCallback, closeC
 			lang: "en-US", //Language (optional)
 			body: "", //Body message (optional)
 			tag: Math.floor(Math.random()*10000)+1, //Unique tag for notification. Prevents repeat notifications of the same tag. (optional)
-			icon: nebula.site.directory.template.uri + "/assets/img/meta/favicon-160x160.png" //Thumbnail Icon (optional)
+			icon: nebula.site.directory.template.uri + "/assets/img/meta/android-chrome-192x192.png" //Thumbnail Icon (optional)
 		}
 
 		if ( typeof message === "undefined" ){
@@ -3902,7 +3891,7 @@ function desktopNotification(title, message, clickCallback, showCallback, closeC
 			}
 		}
 
-		instance = new Notification(title, message); //Trigger the notification //@TODO "Nebula" 0: This will be deprecated soon. Update to the service worker.
+		instance = new Notification(title, message); //Trigger the notification
 
 		if ( clickCallback ){
 			instance.onclick = function(){
@@ -3932,6 +3921,7 @@ function desktopNotification(title, message, clickCallback, showCallback, closeC
 			};
 		}
 	}
+
 	return false;
 }
 
@@ -3946,7 +3936,7 @@ function checkNotificationPermission(){
 			if( !('permission' in Notification) ){ //Firefox and Chrome only
 				Notification.permission = permission;
 			}
-			if ( permission === "granted" ){
+			if ( permission === 'granted' ){
 				return true;
 			}
 		});

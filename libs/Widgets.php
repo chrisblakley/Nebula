@@ -72,6 +72,8 @@ if ( !trait_exists('Widgets') ){
 
 		public function load_nebula_widgets(){
 			register_widget('nebula_about_the_author');
+			register_widget('nebula_crosslinks');
+			register_widget('nebula_google_maps_embed');
 			register_widget('nebula_linked_image');
 			register_widget('nebula_login_form');
 			register_widget('nebula_social_page_links');
@@ -296,6 +298,199 @@ if ( !trait_exists('Widgets') ){
 		public function update($new_instance, $old_instance){
 			$instance = array();
 			$instance['title'] = ( !empty($new_instance['title']) )? strip_tags($new_instance['title']) : '';
+			return $instance;
+		}
+	}
+
+
+	/*==========================
+	 Google Maps Embed API (Iframe)
+	 ===========================*/
+	class nebula_google_maps_embed extends WP_Widget {
+		function __construct(){
+			parent::__construct('nebula_google_maps_embed', 'Nebula - Google Maps Embed', array('description' => 'Embed a Google Map'));
+		}
+
+		//Creating widget front-end
+		public function widget($args, $instance){
+			//Before widget arguments are defined by themes
+			echo $args['before_widget'];
+
+			?>
+				<?php if ( !empty($instance['title']) ): ?>
+					<h3><?php echo $instance['title']; ?></h3>
+				<?php endif; ?>
+
+				<div class="row">
+					<div class="col">
+						<iframe class="googlemap" width="100%" height="<?php echo ( !empty($instance['height']) )? $instance['height'] : '350'; ?>" frameborder="0"
+							src="https://www.google.com/maps/embed/v1/<?php echo $instance['map_mode']; ?>?key=<?php echo nebula()->option('google_browser_api_key'); ?>
+							<?php echo ( in_array($instance['map_mode'], array('place', 'search')) && !empty($instance['query']) )? '&q=' . $instance['query'] : ''; //Place, Search ?>
+
+							<?php echo ( $instance['map_mode'] === 'directions' && !empty($instance['origin']) )? '&origin=' . $instance['origin'] : ''; //Directions ?>
+							<?php echo ( $instance['map_mode'] === 'directions' && !empty($instance['destination']) )? '&destination=' . $instance['destination'] : ''; //Directions ?>
+							<?php echo ( $instance['map_mode'] === 'directions' && !empty($instance['waypoints']) )? '&waypoints=' . $instance['waypoints'] : ''; //Directions ?>
+							<?php echo ( $instance['map_mode'] === 'directions' && !empty($instance['travel_mode']) )? '&mode=' . $instance['travel_mode'] : ''; //Directions ?>
+							<?php echo ( $instance['map_mode'] === 'directions' && !empty($instance['avoid']) )? '&avoid=' . $instance['avoid'] : ''; //Directions ?>
+							<?php echo ( $instance['map_mode'] === 'directions' && !empty($instance['units']) )? '&units=' . $instance['units'] : ''; //Directions ?>
+
+							<?php echo ( $instance['map_mode'] === 'view' && !empty($instance['latlng']) )? '&center=' . $instance['latlng'] : ''; //View ?>
+
+							<?php echo ( $instance['map_mode'] === 'streetview' && !empty($instance['latlng']) )? '&location=' . $instance['latlng'] : ''; //Streetview ?>
+							<?php echo ( $instance['map_mode'] === 'streetview' && !empty($instance['pano']) )? '&pano=' . $instance['pano'] : ''; //Streetview ?>
+							<?php echo ( $instance['map_mode'] === 'streetview' && !empty($instance['heading']) )? '&heading=' . $instance['heading'] : ''; //Streetview ?>
+							<?php echo ( $instance['map_mode'] === 'streetview' && !empty($instance['pitch']) )? '&pitch=' . $instance['pitch'] : ''; //Streetview ?>
+							<?php echo ( $instance['map_mode'] === 'streetview' && !empty($instance['fov']) )? '&fov=' . $instance['fov'] : ''; //Streetview ?>
+
+							<?php echo ( in_array($instance['map_mode'], array('place', 'search', 'directions', 'view')) && !empty($instance['zoom']) )? '&zoom=' . $instance['zoom'] : ''; ?>
+							<?php echo ( in_array($instance['map_mode'], array('place', 'search', 'directions', 'view')) && !empty($instance['map_type']) )? '&maptype=' . $instance['map_type'] : ''; ?>
+						"></iframe>
+					</div><!--/col-->
+				</div><!--/row-->
+			<?php
+
+			//After widget arguments are defined by themes
+			echo $args['after_widget'];
+		}
+
+		//Widget Backend (admin form)
+		public function form($instance){
+			?>
+				<script>
+					jQuery('.mode_required').addClass('hidden');
+
+					hideShowMapFields(jQuery('.map_mode_select').val());
+					jQuery('.map_mode_select').on('change', function(){
+						hideShowMapFields(jQuery(this).val());
+					});
+
+					function hideShowMapFields(mode){
+						jQuery('.mode_required').each(function(){
+							if ( jQuery(this).attr('data-for').indexOf('mode-' + mode) > -1 ){
+								jQuery(this).removeClass('hidden');
+							} else {
+								jQuery(this).addClass('hidden');
+							}
+						});
+					}
+				</script>
+
+				<p>
+					<label for="<?php echo $this->get_field_id('title'); ?>">Title</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo ( isset($instance['title']) )? $instance['title'] : ''; ?>" />
+				</p>
+				<p>
+					<label for="<?php echo $this->get_field_id('height'); ?>">Height</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('height'); ?>" name="<?php echo $this->get_field_name('height'); ?>" type="number" value="<?php echo ( isset($instance['height']) )? $instance['height'] : ''; ?>" placeholder="350" />
+				</p>
+				<p>
+					<label for="<?php echo $this->get_field_id('map_mode'); ?>">Mode</label>
+					<select id="<?php echo $this->get_field_id('map_mode'); ?>" name="<?php echo $this->get_field_name('map_mode'); ?>" class="widefat map_mode_select" style="width:100%;">
+						<option <?php selected($instance['map_mode'], 'place'); ?> value="place">Place Mode</option>
+						<option <?php selected($instance['map_mode'], 'search'); ?> value="search">Search Mode</option>
+						<option <?php selected($instance['map_mode'], 'directions'); ?> value="directions">Directions Mode</option>
+						<option <?php selected($instance['map_mode'], 'view'); ?> value="view">View Mode</option>
+						<option <?php selected($instance['map_mode'], 'streetview'); ?> value="streetview">Street View Mode</option>
+					</select>
+				</p>
+
+				<p class="mode_required" data-for="mode-place|mode-search">
+					<label for="<?php echo $this->get_field_id('query'); ?>">Query</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('query'); ?>" name="<?php echo $this->get_field_name('query'); ?>" type="text" value="<?php echo ( isset($instance['query']) )? $instance['query'] : ''; ?>" />
+				</p>
+
+				<p class="mode_required" data-for="mode-directions">
+					<label for="<?php echo $this->get_field_id('origin'); ?>">Origin</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('origin'); ?>" name="<?php echo $this->get_field_name('origin'); ?>" type="text" value="<?php echo ( isset($instance['origin']) )? $instance['origin'] : ''; ?>" />
+				</p>
+				<p class="mode_required" data-for="mode-directions">
+					<label for="<?php echo $this->get_field_id('destination'); ?>">Destination</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('destination'); ?>" name="<?php echo $this->get_field_name('destination'); ?>" type="text" value="<?php echo ( isset($instance['destination']) )? $instance['destination'] : ''; ?>" />
+				</p>
+				<p class="mode_required" data-for="mode-directions">
+					<label for="<?php echo $this->get_field_id('waypoints'); ?>">Waypoints</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('waypoints'); ?>" name="<?php echo $this->get_field_name('waypoints'); ?>" type="text" value="<?php echo ( isset($instance['waypoints']) )? $instance['waypoints'] : ''; ?>" placeholder="Pinckney Hugo Group|Blarney Stone" />
+				</p>
+				<p class="mode_required" data-for="mode-directions">
+					<label for="<?php echo $this->get_field_id('travel_mode'); ?>">Travel Mode</label>
+					<select id="<?php echo $this->get_field_id('travel_mode'); ?>" name="<?php echo $this->get_field_name('travel_mode'); ?>" class="widefat" style="width:100%;">
+						<option <?php selected($instance['travel_mode'], ''); ?> value="">Default</option>
+						<option <?php selected($instance['travel_mode'], 'driving'); ?> value="driving">Driving</option>
+						<option <?php selected($instance['travel_mode'], 'walking'); ?> value="walking">Walking</option>
+						<option <?php selected($instance['travel_mode'], 'bicycling'); ?> value="bicycling">Bicycling</option>
+						<option <?php selected($instance['travel_mode'], 'transit'); ?> value="transit">Transit</option>
+						<option <?php selected($instance['travel_mode'], 'flying'); ?> value="flying">Flying</option>
+					</select>
+				</p>
+				<p class="mode_required" data-for="mode-directions">
+					<label for="<?php echo $this->get_field_id('avoid'); ?>">Avoid</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('avoid'); ?>" name="<?php echo $this->get_field_name('avoid'); ?>" type="text" value="<?php echo ( isset($instance['avoid']) )? $instance['avoid'] : ''; ?>" placeholder="tolls|highways" />
+				</p>
+				<p class="mode_required" data-for="mode-directions">
+					<label for="<?php echo $this->get_field_id('units'); ?>">Units</label>
+					<select id="<?php echo $this->get_field_id('units'); ?>" name="<?php echo $this->get_field_name('units'); ?>" class="widefat" style="width:100%;">
+						<option <?php selected($instance['units'], ''); ?> value="">Match Origin</option>
+						<option <?php selected($instance['units'], 'imperial'); ?> value="imperial">Imperial</option>
+						<option <?php selected($instance['units'], 'metric'); ?> value="metric">Metric</option>
+					</select>
+				</p>
+
+				<p class="mode_required" data-for="mode-view|mode-streetview">
+					<label for="<?php echo $this->get_field_id('latlng'); ?>">Latitude/Longitude (Center/Location)</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('latlng'); ?>" name="<?php echo $this->get_field_name('latlng'); ?>" type="text" value="<?php echo ( isset($instance['latlng']) )? $instance['latlng'] : ''; ?>" placeholder="43.0536832,-76.1656511" />
+				</p>
+				<p class="mode_required" data-for="mode-streetview">
+					<label for="<?php echo $this->get_field_id('pano'); ?>">Panorama ID</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('pano'); ?>" name="<?php echo $this->get_field_name('pano'); ?>" type="text" value="<?php echo ( isset($instance['pano']) )? $instance['pano'] : ''; ?>" />
+				</p>
+				<p class="mode_required" data-for="mode-streetview">
+					<label for="<?php echo $this->get_field_id('heading'); ?>">Heading (-180 - 360)</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('heading'); ?>" name="<?php echo $this->get_field_name('heading'); ?>" type="text" value="<?php echo ( isset($instance['heading']) )? $instance['heading'] : ''; ?>" placeholder="0" />
+				</p>
+				<p class="mode_required" data-for="mode-streetview">
+					<label for="<?php echo $this->get_field_id('pitch'); ?>">Pitch (-90:Down - 90:Up)</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('pitch'); ?>" name="<?php echo $this->get_field_name('pitch'); ?>" type="text" value="<?php echo ( isset($instance['pitch']) )? $instance['pitch'] : ''; ?>" placeholder="0" />
+				</p>
+				<p class="mode_required" data-for="mode-streetview">
+					<label for="<?php echo $this->get_field_id('fov'); ?>">Field of View (0 - 100)</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('fov'); ?>" name="<?php echo $this->get_field_name('fov'); ?>" type="text" value="<?php echo ( isset($instance['fov']) )? $instance['fov'] : ''; ?>" placeholder="90" />
+				</p>
+
+				<p class="mode_required" data-for="mode-place|mode-directions|mode-search|mode-view">
+					<label for="<?php echo $this->get_field_id('map_type'); ?>">Map Type</label>
+					<select id="<?php echo $this->get_field_id('map_type'); ?>" name="<?php echo $this->get_field_name('map_type'); ?>" class="widefat" style="width:100%;">
+						<option <?php selected($instance['map_type'], 'roadmap'); ?> value="roadmap">Roadmap</option>
+						<option <?php selected($instance['map_type'], 'satellite'); ?> value="satellite">Satellite</option>
+					</select>
+				</p>
+				<p class="mode_required" data-for="mode-place|mode-directions|mode-search|mode-view">
+					<label for="<?php echo $this->get_field_id('zoom'); ?>">Zoom (0:Far - 21:Close)</label>
+					<input class="widefat" id="<?php echo $this->get_field_id('zoom'); ?>" name="<?php echo $this->get_field_name('zoom'); ?>" type="number" value="<?php echo ( isset($instance['zoom']) )? $instance['zoom'] : ''; ?>" min="0"  max="21" placeholder="18" />
+				</p>
+
+			<?php
+		}
+
+		//Updating widget replacing old instances with new
+		public function update($new_instance, $old_instance){
+			$instance = array();
+			$instance['title'] = ( !empty($new_instance['title']) )? strip_tags($new_instance['title']) : '';
+			$instance['height'] = ( !empty($new_instance['height']) )? strip_tags($new_instance['height']) : '';
+			$instance['map_mode'] = ( !empty($new_instance['map_mode']) )? strip_tags($new_instance['map_mode']) : '';
+			$instance['query'] = ( !empty($new_instance['query']) )? strip_tags($new_instance['query']) : '';
+			$instance['origin'] = ( !empty($new_instance['origin']) )? strip_tags($new_instance['origin']) : '';
+			$instance['destination'] = ( !empty($new_instance['destination']) )? strip_tags($new_instance['destination']) : '';
+			$instance['waypoints'] = ( !empty($new_instance['waypoints']) )? strip_tags($new_instance['waypoints']) : '';
+			$instance['travel_mode'] = ( !empty($new_instance['travel_mode']) )? strip_tags($new_instance['travel_mode']) : '';
+			$instance['avoid'] = ( !empty($new_instance['avoid']) )? strip_tags($new_instance['avoid']) : '';
+			$instance['units'] = ( !empty($new_instance['units']) )? strip_tags($new_instance['units']) : '';
+			$instance['latlng'] = ( !empty($new_instance['latlng']) )? strip_tags($new_instance['latlng']) : '';
+			$instance['pano'] = ( !empty($new_instance['pano']) )? strip_tags($new_instance['pano']) : '';
+			$instance['heading'] = ( !empty($new_instance['heading']) )? strip_tags($new_instance['heading']) : '';
+			$instance['pitch'] = ( !empty($new_instance['pitch']) )? strip_tags($new_instance['pitch']) : '';
+			$instance['fov'] = ( !empty($new_instance['fov']) )? strip_tags($new_instance['fov']) : '';
+			$instance['map_type'] = ( !empty($new_instance['map_type']) )? strip_tags($new_instance['map_type']) : '';
+			$instance['zoom'] = ( !empty($new_instance['zoom']) )? strip_tags($new_instance['zoom']) : '';
 			return $instance;
 		}
 	}

@@ -96,7 +96,9 @@ trait Functions {
 		add_action('nebula_body_open', array($this, 'skip_to_content_link'));
 		add_filter('wp_get_attachment_url', array($this, 'wp_get_attachment_url_force_protocol'));
 		add_filter('embed_oembed_html', array($this, 'oembed_modifiers'), 9999, 4);
+
 		add_filter('acf/settings/google_api_key', array($this, 'acf_google_api_key'));
+		add_filter('wpseo_metadesc', array($this, 'meta_description'));
 	}
 
 	//Start output buffering so headers can be sent later for HTTP2 Server Push
@@ -920,13 +922,13 @@ trait Functions {
 			'text' => false,
 			'paragraphs' => false, //Allow paragraph tags in the excerpt //@todo "Nebula" 0: currently not working
 			'characters' => false,
-			'chars' => false, //Alias of "characters"
 			'words' => get_theme_mod('nebula_excerpt_length', 55),
-			'length' => false, //Alias of "words"
+			'length' => false, //Used for dynamic length, otherwise an alias of "words"
+			'min' => 0, //Minimum length of dynamic sentence
 			'ellipsis' => false,
 			'url' => false,
 			'more' => get_theme_mod('nebula_excerpt_length', 'Read More &raquo;'),
-			'wp_more' => true,
+			'wp_more' => true, //Listen for the WP more tag
 			'btn' => false, //Alias of "button"
 			'button' => false,
 			'strip_shortcodes' => true,
@@ -978,14 +980,29 @@ trait Functions {
 		}
 
 		//Apply string limiters (words or characters)
-		if ( (!empty($data['characters']) && is_int($data['characters'])) || (!empty($data['chars']) && is_int($data['chars'])) ){ //Characters (or Chars)
-			$char_limit = ( !empty($data['characters']) )? $data['characters'] : $data['chars'];
-			$limited = $this->string_limit_chars($data['text'], $char_limit); //Returns array: $limited['text'] is the string, $limited['is_limited'] is boolean if it was limited or not.
+		if ( !empty($data['characters']) && is_int($data['characters']) ){ //Characters
+			$limited = $this->string_limit_chars($data['text'], $data['characters']); //Returns array: $limited['text'] is the string, $limited['is_limited'] is boolean if it was limited or not.
 			$data['text'] = $limited['text'];
 		} elseif ( (!empty($data['words']) && is_int($data['words'])) || (!empty($data['length']) && is_int($data['length'])) ){ //Words (or Length)
-			$word_limit = ( !empty($data['length']) )? $data['length'] : $data['words'];
+			$word_limit = ( !empty($data['length']) && is_int($data['length']) )? $data['length'] : $data['words'];
 			$limited = $this->string_limit_words($data['text'], $word_limit); //Returns array: $limited['text'] is the string, $limited['is_limited'] is boolean if it was limited or not.
 			$data['text'] = $limited['text'];
+		}
+
+		//Apply dynamic sentence length limiter
+		if ( $data['length'] === 'dynamic' ){
+			$last_punctuation = -1;
+			foreach ( array('.', '?', '!') as $punctuation ){
+				$this_punctuation = strrpos($data['text'] . ' ', $punctuation . ' ')+1; //Find the last punctuation (add a space to the end of the string in case it already ends at the punctuation). Add 1 to capture the punctuation, too.
+
+				if ( $this_punctuation > $last_punctuation ){
+					$last_punctuation = $this_punctuation;
+				}
+			}
+
+			if ( $last_punctuation >= $data['min'] ){
+				$data['text'] = substr($data['text'], 0, $last_punctuation); //Remove everything after the last punctuation in the string.
+			}
 		}
 
 		//Check here for links to wrap
@@ -2875,5 +2892,17 @@ trait Functions {
 	//Add Google API key to Advanced Custom Fields Google Map field type
 	public function acf_google_api_key(){
 		return nebula()->get_option('google_browser_api_key');
+	}
+
+	//Generage a meta description (either from Yoast, or via Nebula excerpt)
+	public function meta_description($metadesc, $length=160){
+		if ( empty($metadesc) ){
+			$nebula_metadesc = $this->excerpt(array('length' => 'dynamic', 'characters' => $length, 'more' => '', 'ellipsis' => false, 'strip_tags' => true));
+			if ( empty($nebula_metadesc) ){
+				$nebula_metadesc = get_bloginfo('description');
+			}
+
+			return esc_attr(stripslashes($nebula_metadesc));
+		}
 	}
 }

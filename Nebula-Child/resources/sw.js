@@ -3,7 +3,7 @@
 //@TODO: Enable "Service Worker" in Nebula Options (under Functions)
 
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-48517'; //Tuesday, August 29, 2017 10:28:49 AM
+var CACHE_NAME = 'nebula-nebula-child-33036'; //Wednesday, August 30, 2017 11:01:46 AM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
@@ -251,6 +251,8 @@ self.addEventListener('message', function(event){
 //Push notifications
 //Still need to do the main.js part: https://serviceworke.rs/push-rich_index_doc.html
 self.addEventListener('push', function(event){
+	//console.log('[SW] Push event...');
+
 	event.waitUntil(
 		self.registration.showNotification('Nebula', {
 			lang: 'en',
