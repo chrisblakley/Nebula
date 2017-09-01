@@ -312,11 +312,11 @@ trait Functions {
 			}
 
 			//Check for Google Analytics Tracking ID
-			if ( !$this->get_option('ga_tracking_id') ){
+			if ( !$this->get_option('ga_tracking_id') && !$this->get_option('gtm_id') ){
 				$nebula_warnings[] = array(
 					'level' => 'error',
-					'description' => '<a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> is currently not set!',
-					'url' => 'themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id'
+					'description' => 'A <a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">Google Tag Manager ID</a> is strongly recommended!',
+					'url' => 'themes.php?page=nebula_options&tab=analytics'
 				);
 			}
 

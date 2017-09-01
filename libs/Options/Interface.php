@@ -657,14 +657,21 @@
 						<div class="row">
 							<div class="col-xl-8">
 								<div class="option-group">
-									<div class="form-group important-option">
+									<div class="form-group important-option" important-or="gtm_id">
 										<label for="ga_tracking_id">Google Analytics Tracking ID</label>
 										<input type="text" name="nebula_options[ga_tracking_id]" id="ga_tracking_id" class="form-control nebula-validate-regex" data-valid-regex="^UA-\d+-\d+$" value="<?php echo $nebula_options['ga_tracking_id']; ?>" placeholder="UA-00000000-1" />
 										<p class="nebula-help-text short-help form-text text-muted">This will add the tracking number to the appropriate locations.</p>
 										<p class="option-keywords">remote resource recommended minor page speed impact</p>
 									</div>
 
-									<div class="form-group" dependent-of="ga_tracking_id">
+									<div class="form-group important-option" important-or="ga_tracking_id">
+										<label for="gtm_id">Google Tag Manager ID</label>
+										<input type="text" name="nebula_options[gtm_id]" id="gtm_id" class="form-control nebula-validate-regex" data-valid-regex="^GTM-\S+$" value="<?php echo $nebula_options['gtm_id']; ?>" placeholder="GTM-0000000" />
+										<p class="nebula-help-text short-help form-text text-muted">This will add the Google Tag Manager scripts to the appropriate locations.</p>
+										<p class="option-keywords">remote resource recommended minor page speed impact</p>
+									</div>
+
+									<div class="form-group" dependent-or="ga_tracking_id gtm_id">
 										<label for="ga_session_timeout_minutes">GA Session Timeout (Minutes)</label>
 										<input type="number" name="nebula_options[ga_session_timeout_minutes]" id="ga_session_timeout_minutes" class="form-control nebula-validate-regex" data-valid-regex="^([5-9]|[1-8][0-9]|9[0-9]|1[0-9]{2}|2[0-3][0-9]|240)$" value="<?php echo $nebula_options['ga_session_timeout_minutes']; ?>" step="5" min="5" max="240" placeholder="30" />
 										<p class="nebula-help-text short-help form-text text-muted">Using this will send a new pageview for hits after this duration (in minutes) of inactivity. Make sure it matches your GA Session Timeout setting!</p>
@@ -672,28 +679,28 @@
 										<p class="option-keywords"></p>
 									</div>
 
-									<div class="form-group" dependent-of="ga_tracking_id">
+									<div class="form-group" dependent-or="ga_tracking_id gtm_id">
 										<input type="checkbox" name="nebula_options[ga_wpuserid]" id="ga_wpuserid" value="1" <?php checked('1', !empty($nebula_options['ga_wpuserid'])); ?> /><label for="ga_wpuserid">Use WordPress User ID</label>
 										<p class="nebula-help-text short-help form-text text-muted">Use the WordPress User ID as the Google Analytics User ID. (Default: <?php echo $this->user_friendly_default('ga_wpuserid'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">This allows more accurate user reporting. Note: Users who share accounts (including developers/clients) can cause inaccurate reports! This functionality is most useful when opening sign-ups to the public.</p>
 										<p class="option-keywords"></p>
 									</div>
 
-									<div class="form-group" dependent-of="ga_tracking_id">
+									<div class="form-group" dependent-or="ga_tracking_id gtm_id">
 										<input type="checkbox" name="nebula_options[ga_displayfeatures]" id="ga_displayfeatures" value="1" <?php checked('1', !empty($nebula_options['ga_displayfeatures'])); ?> /><label for="ga_displayfeatures">Display Features</label>
 										<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank" rel="noopener">Google display features</a> in the analytics tag. (Default: <?php echo $this->user_friendly_default('ga_displayfeatures'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">This enables Advertising Features in Google Analytics, such as Remarketing, Demographics and Interest Reporting, and more.</p>
 										<p class="option-keywords"></p>
 									</div>
 
-									<div class="form-group" dependent-of="ga_tracking_id">
+									<div class="form-group" dependent-or="ga_tracking_id gtm_id">
 										<input type="checkbox" name="nebula_options[ga_linkid]" id="ga_linkid" value="1" <?php checked('1', !empty($nebula_options['ga_linkid'])); ?> /><label for="ga_linkid">Enhanced Link Attribution (Link ID)</label>
 										<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-link-attribution" target="_blank" rel="noopener">Enhanced Link Attribution</a> in the Property Settings of the Google Analytics Admin. Be sure to enable it in Google Analytics too! (Default: <?php echo $this->user_friendly_default('ga_linkid'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">This improves the accuracy of your In-Page Analytics report by automatically differentiating between multiple links to the same URL on a single page by using link element IDs. Use the <a href="https://chrome.google.com/webstore/detail/page-analytics-by-google/fnbdnhhicmebfgdgglcdacdapkcihcoh" target="_blank" rel="noopener">Page Analytics by Google</a> Chrome extension to view the page overlay.</p>
 										<p class="option-keywords">minor page speed impact</p>
 									</div>
 
-									<div class="form-group" dependent-of="ga_tracking_id">
+									<div class="form-group" dependent-or="ga_tracking_id gtm_id">
 										<input type="checkbox" name="nebula_options[ga_load_abandon]" id="ga_load_abandon" value="1" <?php checked('1', !empty($nebula_options['ga_load_abandon'])); ?> /><label for="ga_load_abandon">Load Abandonment Tracking</label>
 										<p class="nebula-help-text short-help form-text text-muted">Track when visitors leave the page before it finishes loading. (Default: <?php echo $this->user_friendly_default('ga_load_abandon'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">This is implemented outside of the typical event tracking and because this event happens before the pageview is sent it can very slightly alter user/session data.</p>

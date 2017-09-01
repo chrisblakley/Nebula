@@ -414,9 +414,9 @@ function checkWindowHeightForStickyNav(){
 
 function checkImportants(){
 	jQuery('.important-option').each(function(){
-		if ( !isCheckedOrHasValue(jQuery(this).find('input')) ){
+		if ( !isCheckedOrHasValue(jQuery(this).find('input')) && !isImportantAlternativeValue(jQuery(this).attr('important-or')) ){
 			if ( !jQuery(this).find('.important-warning').length ){ //If the warning isn't already showing
-				jQuery(this).addClass('important-empty').find('label').append('<p class="important-warning">It is highly recommended this option is used!</p>');
+				jQuery(this).addClass('important-empty').find('label').append('<p class="important-warning">It is highly recommended this option (or a related option) is used!</p>');
 			}
 		} else {
 			jQuery(this).removeClass('important-empty');
@@ -433,6 +433,19 @@ function checkImportants(){
 			jQuery('.nav-link[href$=' + jQuery(this).attr('id') + ']').find('.empty-important-tab-warn').remove();
 		}
 	});
+}
+
+//Check if an alternative important ID has value
+function isImportantAlternativeValue(alternateIDs){
+	var anyImportantAltValue = false;
+	jQuery('#' + alternateIDs).each(function(){
+		if ( isCheckedOrHasValue(jQuery(this)) ){
+			anyImportantAltValue = true;
+			return true;
+		}
+	});
+
+	return anyImportantAltValue;
 }
 
 //Use the attribute dependent-of="" with the id of the dependent checkbox

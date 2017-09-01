@@ -868,7 +868,7 @@ if ( !trait_exists('Utilities') ){
 				'large' => $nebula_version['large'],
 				'medium' => $nebula_version['medium'],
 				'small' => $nebula_version['small'],
-				'tiny' => $nebula_version['tiny'],
+				'tiny' => ( isset($nebula_version['tiny']) )? $nebula_version['tiny'] : false,
 				'utc' => strtotime($nebula_version_month . $nebula_version_day_formated . $nebula_version_year),
 				'date' => $nebula_version_month . $nebula_version_day_formated . $nebula_version_year,
 				'year' => $nebula_version_year,
