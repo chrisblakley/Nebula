@@ -701,6 +701,7 @@ function eventTracking(){
 
 		//Ctrl+D or Cmd+D (Bookmark)
 		if ( (e.ctrlKey || e.metaKey) && e.which === 68 ){ //Ctrl+D
+			removeQueryParameter(['utm_campaign', 'utm_medium', 'utm_source', 'utm_content', 'utm_term'], window.location.href); //Remove existing UTM parameters
 			history.replaceState(null, document.title, window.location.href + '?utm_source=bookmark');
 			ga('send', 'event', 'Bookmark', 'Ctrl+D', "User bookmarked the page (with keyboard shortcut)", {'nonInteraction': true});
 		}
@@ -2726,23 +2727,34 @@ function get(parameter){
 
 //Remove a parameter from the query string.
 function removeQueryParameter(key, sourceURL){
-	var baseURL = sourceURL.split('?')[0];
-	var param;
-	var params_arr = [];
-	var queryString = ( sourceURL.indexOf('?') !== -1 )? sourceURL.split('?')[1] : '';
+	if ( typeof key === 'string' ){
+		key = [key];
+	}
 
-	if ( queryString !== '' ){
-		params_arr = queryString.split('&');
-
-		for ( i = params_arr.length-1; i >= 0; i -= 1 ){
-			param = params_arr[i].split('=')[0];
-			if ( param === key ){
-				params_arr.splice(i, 1);
-			}
+	jQuery.each(key, function(index, item){
+		var url = sourceURL;
+		if ( typeof newURL !== 'undefined' ){
+			url = newURL;
 		}
 
-		newURL = baseURL + '?' + params_arr.join('&');
-	}
+		var baseURL = url.split('?')[0];
+		var param;
+		var params_arr = [];
+		var queryString = ( url.indexOf('?') !== -1 )? url.split('?')[1] : '';
+
+		if ( queryString !== '' ){
+			params_arr = queryString.split('&');
+
+			for ( i = params_arr.length-1; i >= 0; i -= 1 ){
+				param = params_arr[i].split('=')[0];
+				if ( param === item ){
+					params_arr.splice(i, 1);
+				}
+			}
+
+			newURL = baseURL + '?' + params_arr.join('&');
+		}
+	});
 
 	//Check if it is empty after parameter removal
 	if ( newURL.split('?')[1] === '' ){
@@ -2895,7 +2907,7 @@ function createCookie(name, value, days){
 	if ( days ){
 		var date = new Date();
 		date.setTime(date.getTime()+(days*24*60*60*1000));
-		var expires = "; expires=" + date.toGMTString();
+		var expires = "; expires=" + date.toGMTString(); //Note: Do not let this cookie expire past 2038 or it instantly expires. http://en.wikipedia.org/wiki/Year_2038_problem
 	} else {
 		var expires = "";
 	}
