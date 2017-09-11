@@ -3,7 +3,7 @@
 //@TODO: Enable "Service Worker" in Nebula Options (under Functions)
 
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-64672'; //Tuesday, September 5, 2017 10:36:51 AM
+var CACHE_NAME = 'nebula-nebula-child-11576'; //Sunday, September 10, 2017 7:59:08 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
@@ -148,7 +148,8 @@ self.addEventListener('fetch', function(event){
 
 //Prevent caching certain resources
 function needNetworkRetrieval(request){
-	if ( request.methd !== 'GET' ){ //Prevent cache for POST and AJAX requests
+	if ( request.method !== 'GET' ){ //Prevent cache for POST and AJAX requests
+		//console.log('[SW] Need network retreival because not a GET request for: ' + request.url);
 		return true; //Yes, need network retreival
 	}
 
@@ -158,6 +159,7 @@ function needNetworkRetrieval(request){
 	//Force network retrieval for any resource that contains the above strings
 	while ( length-- ){
 		if ( request.url.indexOf(substrings[length]) !== -1 ){
+			//console.log('[SW] Need network retreival because matches a string: ' + request.url);
 			return true; //Yes, need network retrieval
 		}
 	}
@@ -169,9 +171,11 @@ function needNetworkRetrieval(request){
 			return false; //No, do not need network retrieval (allow cache)
 		}
 
+		//console.log('[SW] Need network retreival because of query string: ' + request.url);
 		return true; //Yes, need network retrieval
 	}
 
+	//console.log('[SW] Allow from cache for: ' + request.url);
 	return false; //No, do not need network retrieval (allow cache)
 }
 

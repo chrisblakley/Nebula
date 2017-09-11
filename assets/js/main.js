@@ -509,7 +509,7 @@ function socialSharing(){
 	});
 
 	//Web Share API
-	if ( 'share' in navigator ){ //Not supported yet (Android Chrome Canary only)
+	if ( 'share' in navigator ){ //Chrome 61+
 		nebula.dom.document.on('click tap touch', '.webshare', function(){
 			oThis = jQuery(this);
 
@@ -562,7 +562,7 @@ function initEventTracking(){
 			});
 		}
 
-		if ( !window.GAready ){
+		if ( typeof window.GAready !== 'undefined' && !window.GAready ){
 			nebula.dom.document.trigger('nebula_ga_blocked');
 			nvData.is_ga_blocked = 1;
 			nv('send', nvData);
@@ -771,12 +771,12 @@ function eventTracking(){
 		if ( regexPattern.email.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-			ga('send', 'event', 'Contact', 'Email (Copied): ' + emailPhone);
+			ga('send', 'event', 'Contact', 'Email (Copied)', emailPhone);
 			nv('append', {'contact_method': 'Email', 'contacted_email': emailPhone});
 		} else if ( regexPattern.phone.test(emailPhone) ){
 			ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-			ga('send', 'event', 'Contact', 'Phone (Copied): ' + emailPhone);
+			ga('send', 'event', 'Contact', 'Phone (Copied)', emailPhone);
 			nv('append', {'contact_method': 'Phone', 'contacted_phone': emailPhone});
 		}
 
@@ -2726,12 +2726,12 @@ function get(parameter){
 }
 
 //Remove a parameter from the query string.
-function removeQueryParameter(key, sourceURL){
-	if ( typeof key === 'string' ){
-		key = [key];
+function removeQueryParameter(keys, sourceURL){
+	if ( typeof keys === 'string' ){
+		keys = [keys];
 	}
 
-	jQuery.each(key, function(index, item){
+	jQuery.each(keys, function(index, item){
 		var url = sourceURL;
 		if ( typeof newURL !== 'undefined' ){
 			url = newURL;
@@ -3508,9 +3508,124 @@ function onYouTubeIframeAPIReady(e){
 		if ( jQuery(this).attr('src').indexOf('enablejsapi=1') > 0 ){
 			players.youtube[youtubeiframeID] = new YT.Player(youtubeiframeID, { //YT.Player parameter must match the iframe ID!
 				events: {
-					'onReady': onPlayerReady,
-					'onStateChange': onPlayerStateChange,
-					'onError': onPlayerError
+					'onReady': function(e){
+						if ( typeof videoProgress === 'undefined' ){
+							videoProgress = {};
+						}
+
+						var videoInfo = e.target.getVideoData();
+						videoData[videoInfo.video_id] = {
+							'platform': 'youtube', //The platform the video is hosted using.
+							'iframe': e.target.getIframe(), //The player iframe. Selectable with jQuery(videoData[id].iframe)...
+							'player': players.youtube[videoInfo.video_id], //The player ID of this video. Can access the API here.
+							'autoplay': jQuery(e.target.getIframe()).attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the ifrom src.
+							'duration': e.target.getDuration(), //The total duration of the video. Unit: Seconds
+							'current': e.target.getCurrentTime(), //The current position of the video. Units: Seconds
+							'percent': e.target.getCurrentTime()/e.target.getDuration(), //The percent of the current position. Multiply by 100 for actual percent.
+							'engaged': false, //Whether the viewer has watched enough of the video to be considered engaged.
+							'watched': 0, //Amount of time watching the video (regardless of seeking). Accurate to half a second. Units: Seconds
+							'watchedPercent': 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
+							'pausedYet': false, //If this video has been paused yet by the user.
+						};
+					},
+					'onStateChange': function(e){
+						var videoInfo = e.target.getVideoData();
+						var id = videoInfo.video_id;
+
+						videoData[id].current = e.target.getCurrentTime();
+						videoData[id].percent = videoData[id].current/videoData[id].duration;
+
+						if ( e.data === YT.PlayerState.PLAYING ){
+							 ga('set', gaCustomMetrics['videoStarts'], 1);
+							ga('set', gaCustomDimensions['videoWatcher'], 'Started');
+
+							playAction = 'Play';
+							if ( !isInView(jQuery(videoData[id].iframe)) ){
+								playAction += ' (Not In View)';
+							}
+
+							if ( videoData[id].autoplay ){
+								playAction += ' (Autoplay)';
+							} else {
+								jQuery(videoData[id].iframe).addClass('playing');
+							}
+
+							ga('send', 'event', 'Videos', playAction, videoInfo.title, Math.round(videoData[id].current));
+
+							nv('append', {'video_play': videoInfo.title});
+							nebula.dom.document.trigger('nebula_playing_video', videoInfo);
+							pauseFlag = true;
+							updateInterval = 500;
+
+							youtubePlayProgress = setInterval(function(){
+								videoData[id].current = e.target.getCurrentTime();
+								videoData[id].percent = videoInfo.currentTime/videoData[id].duration;
+								videoData[id].watched = videoData[id].watched+(updateInterval/1000);
+								videoData[id].watchedPercent = (videoData[id].watched)/videoData[id].duration;
+
+								if ( videoData[id].watchedPercent > 0.25 && !videoData[id].engaged ){
+									if ( isInView(jQuery(videoData[id].iframe)) ){
+										ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
+
+										engagedAction = 'Engaged';
+										if ( videoData[id].autoplay ){
+											engagedAction += ' (Autoplay)';
+										}
+										ga('send', 'event', 'Videos', engagedAction, videoInfo.title, Math.round(videoData[id].current), {'nonInteraction': true});
+
+										nv('append', {'video_engaged': videoInfo.title});
+										videoData[id].engaged = true;
+										nebula.dom.document.trigger('nebula_engaged_video', videoInfo);
+									}
+								}
+							}, updateInterval);
+						}
+						if ( e.data === YT.PlayerState.ENDED ){
+							jQuery(videoData[id].iframe).removeClass('playing');
+
+							clearInterval(youtubePlayProgress);
+							ga('set', gaCustomMetrics['videoCompletions'], 1);
+							ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched/1000));
+							ga('set', gaCustomDimensions['videoWatcher'], 'Ended');
+
+							endedAction = 'Ended';
+							if ( !isInView(jQuery(videoData[id].iframe)) ){
+								endedAction += ' (Not In View)';
+							}
+
+							if ( videoData[id].autoplay ){
+								endedAction += ' (Autoplay)';
+							}
+
+							ga('send', 'event', 'Videos', endedAction, videoInfo.title, Math.round(videoData[id].current), {'nonInteraction': true});
+							ga('send', 'timing', 'Videos', 'Ended', videoData[id].current*1000, videoInfo.title);
+							nv('append', {'video_ended': videoInfo.title});
+							nebula.dom.document.trigger('nebula_ended_video', videoInfo);
+						} else if ( e.data === YT.PlayerState.PAUSED && pauseFlag ){
+							jQuery(videoData[id].iframe).removeClass('playing');
+
+							clearInterval(youtubePlayProgress);
+							ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
+							ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
+							ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
+
+							if ( !videoData[id].pausedYet ){
+								ga('send', 'event', 'Videos', 'First Pause', videoInfo.title, Math.round(videoData[id].current));
+								videoData[id].pausedYet = true;
+							}
+
+							ga('send', 'event', 'Videos', 'Paused', videoInfo.title, Math.round(videoData[id].current));
+							ga('send', 'timing', 'Videos', 'Paused', videoData[id].current*1000, videoInfo.title);
+							nv('append', {'video_paused': videoInfo.title});
+							nebula.dom.document.trigger('nebula_paused_video', videoInfo);
+							pauseFlag = false;
+						}
+					},
+					'onError': function(e){
+						var videoInfo = e.target.getVideoData();
+						ga('send', 'exception', {'exDescription': '(JS) Youtube API error for ' + videoInfo.title + ': ' + e.data, 'exFatal': false});
+						nv('append', {'js_errors': videoInfo.title + ' (Code: ' + e.data + ')'});
+					}
 				}
 			});
 
@@ -3519,7 +3634,8 @@ function onYouTubeIframeAPIReady(e){
 			console.warn('The enablejsapi parameter was not found for this Youtube iframe. It has been reloaded to enable it. For better optimization, add it to the iframe.');
 
 			//JS API not enabled for this video. Reload the iframe with the correct parameter.
-			jQuery(this).attr('src', jQuery(this).attr('src') + '&enablejsapi=1').on('load', function(){
+			var delimiter = ( jQuery(this).attr('src').indexOf('?') > 0 )? '&' : '?';
+			jQuery(this).attr('src', jQuery(this).attr('src') + delimiter + 'enablejsapi=1').on('load', function(){
 				players.youtube[youtubeiframeID] = new YT.Player(youtubeiframeID, { //YT.Player parameter must match the iframe ID!
 					events: {
 						'onReady': onPlayerReady,
@@ -3534,124 +3650,6 @@ function onYouTubeIframeAPIReady(e){
 	});
 
 	pauseFlag = false;
-}
-function onPlayerError(e){
-	var videoInfo = e.target.getVideoData();
-	ga('send', 'exception', {'exDescription': '(JS) Youtube API error for ' + videoInfo.title + ': ' + e.data, 'exFatal': false});
-	nv('append', {'js_errors': videoInfo.title + ' (Code: ' + e.data + ')'});
-}
-function onPlayerReady(e){
-	if ( typeof videoProgress === 'undefined' ){
-		videoProgress = {};
-	}
-
-	var videoInfo = e.target.getVideoData();
-	videoData[videoInfo.video_id] = {
-		'platform': 'youtube', //The platform the video is hosted using.
-		'iframe': e.target.getIframe(), //The player iframe. Selectable with jQuery(videoData[id].iframe)...
-		'player': players.youtube[videoInfo.video_id], //The player ID of this video. Can access the API here.
-		'autoplay': jQuery(e.target.getIframe()).attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the ifrom src.
-		'duration': e.target.getDuration(), //The total duration of the video. Unit: Seconds
-		'current': e.target.getCurrentTime(), //The current position of the video. Units: Seconds
-		'percent': e.target.getCurrentTime()/e.target.getDuration(), //The percent of the current position. Multiply by 100 for actual percent.
-		'engaged': false, //Whether the viewer has watched enough of the video to be considered engaged.
-		'watched': 0, //Amount of time watching the video (regardless of seeking). Accurate to half a second. Units: Seconds
-		'watchedPercent': 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
-		'pausedYet': false, //If this video has been paused yet by the user.
-	};
-}
-function onPlayerStateChange(e){
-	var videoInfo = e.target.getVideoData();
-	var id = videoInfo.video_id;
-
-	videoData[id].current = e.target.getCurrentTime();
-	videoData[id].percent = videoData[id].current/videoData[id].duration;
-
-	if ( e.data === YT.PlayerState.PLAYING ){
-		 ga('set', gaCustomMetrics['videoStarts'], 1);
-		ga('set', gaCustomDimensions['videoWatcher'], 'Started');
-
-		playAction = 'Play';
-		if ( !isInView(jQuery(videoData[id].iframe)) ){
-			playAction += ' (Not In View)';
-		}
-
-		if ( videoData[id].autoplay ){
-			playAction += ' (Autoplay)';
-		} else {
-			jQuery(videoData[id].iframe).addClass('playing');
-		}
-
-		ga('send', 'event', 'Videos', playAction, videoInfo.title, Math.round(videoData[id].current));
-
-		nv('append', {'video_play': videoInfo.title});
-		nebula.dom.document.trigger('nebula_playing_video', videoInfo);
-		pauseFlag = true;
-		updateInterval = 500;
-
-		youtubePlayProgress = setInterval(function(){
-			videoData[id].current = e.target.getCurrentTime();
-			videoData[id].percent = videoInfo.currentTime/videoData[id].duration;
-			videoData[id].watched = videoData[id].watched+(updateInterval/1000);
-			videoData[id].watchedPercent = (videoData[id].watched)/videoData[id].duration;
-
-			if ( videoData[id].watchedPercent > 0.25 && !videoData[id].engaged ){
-				if ( isInView(jQuery(videoData[id].iframe)) ){
-					ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
-
-					engagedAction = 'Engaged';
-					if ( videoData[id].autoplay ){
-						engagedAction += ' (Autoplay)';
-					}
-					ga('send', 'event', 'Videos', engagedAction, videoInfo.title, Math.round(videoData[id].current), {'nonInteraction': true});
-
-					nv('append', {'video_engaged': videoInfo.title});
-					videoData[id].engaged = true;
-					nebula.dom.document.trigger('nebula_engaged_video', videoInfo);
-				}
-			}
-		}, updateInterval);
-	}
-	if ( e.data === YT.PlayerState.ENDED ){
-		jQuery(videoData[id].iframe).removeClass('playing');
-
-		clearInterval(youtubePlayProgress);
-		ga('set', gaCustomMetrics['videoCompletions'], 1);
-		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched/1000));
-		ga('set', gaCustomDimensions['videoWatcher'], 'Ended');
-
-		endedAction = 'Ended';
-		if ( !isInView(jQuery(videoData[id].iframe)) ){
-			endedAction += ' (Not In View)';
-		}
-
-		if ( videoData[id].autoplay ){
-			endedAction += ' (Autoplay)';
-		}
-
-		ga('send', 'event', 'Videos', endedAction, videoInfo.title, Math.round(videoData[id].current), {'nonInteraction': true});
-		ga('send', 'timing', 'Videos', 'Ended', videoData[id].current*1000, videoInfo.title);
-		nv('append', {'video_ended': videoInfo.title});
-		nebula.dom.document.trigger('nebula_ended_video', videoInfo);
-	} else if ( e.data === YT.PlayerState.PAUSED && pauseFlag ){
-		jQuery(videoData[id].iframe).removeClass('playing');
-
-		clearInterval(youtubePlayProgress);
-		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
-		ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
-		ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
-
-		if ( !videoData[id].pausedYet ){
-			ga('send', 'event', 'Videos', 'First Pause', videoInfo.title, Math.round(videoData[id].current));
-			videoData[id].pausedYet = true;
-		}
-
-		ga('send', 'event', 'Videos', 'Paused', videoInfo.title, Math.round(videoData[id].current));
-		ga('send', 'timing', 'Videos', 'Paused', videoData[id].current*1000, videoInfo.title);
-		nv('append', {'video_paused': videoInfo.title});
-		nebula.dom.document.trigger('nebula_paused_video', videoInfo);
-		pauseFlag = false;
-	}
 }
 
 function nebulaVimeoTracking(){

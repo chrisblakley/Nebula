@@ -23,6 +23,20 @@ if ( !trait_exists('Utilities') ){
 			register_shutdown_function(array($this, 'ga_log_fatal_errors'));
 		}
 
+		//If analytics should be allowed.
+		//Note: be careful using this conditional for AJAX analytics as the request is made by the server IP.
+		public function is_analytics_allowed(){
+			if ( isset($_GET['noga']) ){ //Disable analytics for noga query string
+				return false;
+			}
+
+			if ( $_SERVER['REMOTE_ADDR'] === $_SERVER['SERVER_ADDR'] ){ //Disable analytics for self-requests by the server
+				return false;
+			}
+
+			return true;
+		}
+
 		//Generate Nebula Session ID
 		public function nebula_session_id(){
 			$session_data = array();
@@ -90,21 +104,57 @@ if ( !trait_exists('Utilities') ){
 
 		//Detect Notable POI
 		public function poi($ip=null){
+			$log_file = get_stylesheet_directory() . '/notable_pois.log';
+
+			//Check if poi query string exists
+			if ( isset($_GET['poi']) ){
+				$ip_logged = file_put_contents($log_file, $_SERVER['REMOTE_ADDR'] . ' ' . $_GET['poi'] . PHP_EOL, FILE_APPEND | LOCK_EX); //Log the notable POI. Can't use WP_Filesystem here.
+				return str_replace(array('%20', '+'), ' ', $_GET['poi']);
+			}
+
 			if ( empty($ip) ){
 				$ip = $_SERVER['REMOTE_ADDR'];
 			}
 
-			if ( $this->get_option('notableiplist') ){
-				$notable_ip_lines = explode("\n", $this->get_option('notableiplist'));
-				foreach ( $notable_ip_lines as $line ){
+			$notable_pois = array();
+
+			//Loop through Notable POIs saved in Nebula Options
+			$notable_ip_lines = explode("\n", $this->get_option('notableiplist'));
+			foreach ( $notable_ip_lines as $line ){
+				$ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
+
+				$notable_pois[] = array(
+					'ip' => $ip_info[0],
+					'name' => $ip_info[1]
+				);
+			}
+
+			//Loop through Notable POIs log file (updated when using poi query parameter above). Only use when manageable file size.
+			if ( file_exists($log_file) && filesize($log_file) < 10000 ){ //If log file exists and is less than 10kb
+				foreach ( array_unique(file($log_file)) as $line ){
 					$ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
-					if ( ($ip_info[0][0] === '/' && preg_match($ip_info[0], $ip)) || $ip_info[0] === $ip ){ //If regex pattern and matches IP, or if direct match
-						return str_replace(array("\r\n", "\r", "\n"), '', $ip_info[1]);
-						break;
-					}
+
+					$notable_pois[] = array(
+						'ip' => $ip_info[0],
+						'name' => $ip_info[1]
+					);
 				}
-			} elseif ( isset($_GET['poi']) ){ //If POI query string exists
-				return str_replace(array('%20', '+'), ' ', $_GET['poi']);
+			}
+
+			$all_notable_pois = apply_filters('nebula_notable_pois', $notable_pois);
+			$all_notable_pois = array_map("unserialize", array_unique(array_map("serialize", $all_notable_pois))); //De-dupe multidimensional array
+
+			//Finally, loop through all notable POIs to return a match
+			foreach ( $all_notable_pois as $notable_poi ){
+				//Check for RegEx
+				if ( $notable_poi['ip'][0] === '/' && preg_match($notable_poi['ip'], $ip) ){ //If first character of IP is "/" and the requested IP matches the pattern
+					return str_replace(array("\r\n", "\r", "\n"), '', $notable_poi['name']);
+				}
+
+				//Check direct match
+				if ( $notable_poi['ip'] === $ip ){
+					return str_replace(array("\r\n", "\r", "\n"), '', $notable_poi['name']);
+				}
 			}
 
 			return false;
@@ -279,7 +329,7 @@ if ( !trait_exists('Utilities') ){
 		public function valid_hostname_regex($domains=null){
 			$domains = ( $domains )? $domains : array($this->url_components('domain'));
 			$settingsdomains = ( $this->get_option('hostnames') )? explode(',', $this->get_option('hostnames')) : array($this->url_components('domain'));
-			$fulldomains = array_merge($domains, $settingsdomains, array('googleusercontent.com')); //Enter ONLY the domain and TLD. The wildcard subdomain regex is automatically added.
+			$fulldomains = array_merge($domains, $settingsdomains, array('googleusercontent.com', 'googleweblight.com')); //Enter ONLY the domain and TLD. The wildcard subdomain regex is automatically added.
 			$fulldomains = preg_filter('/^/', '.*', $fulldomains);
 			$fulldomains = str_replace(array(' ', '.', '-'), array('', '\.', '\-'), $fulldomains); //@TODO "Nebula" 0: Add a * to capture subdomains. Final regex should be: \.*gearside\.com|\.*gearsidecreative\.com
 			$fulldomains = array_unique($fulldomains);

@@ -6,7 +6,7 @@
 	}
 ?>
 
-<?php if ( nebula()->get_option('ga_tracking_id') && !is_customize_preview() ): //Universal Google Analytics ?>
+<?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('ga_tracking_id') && !is_customize_preview() ): //Universal Google Analytics ?>
 	<script>
 		window.GAready = false;
 
@@ -485,6 +485,7 @@
 	<script src='https://www.google-analytics.com/analytics.js' async></script>
 <?php else: //If Tracking ID is empty: ?>
 	<script>
+		window.GAready = true; <?php //Set to true to prevent AJAX Google Analytics data ?>
 		function ga(){return false;}
 		function gaCustomDimensions(){return false;}
 		function gaCustomMetrics(){return false;}
@@ -493,7 +494,7 @@
 	</script>
 <?php endif; ?>
 
-<?php if ( nebula()->get_option('gtm_id') && !is_customize_preview() ): //Google Tag Manager ?>
+<?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('gtm_id') && !is_customize_preview() ): //Google Tag Manager ?>
 	<!-- Google Tag Manager -->
 	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -508,7 +509,7 @@
 	<!-- End Google Tag Manager (noscript) -->
 <?php endif; ?>
 
-<?php if ( nebula()->get_option('adwords_remarketing_conversion_id') && !is_customize_preview() ): //Google AdWords Remarketing Tag ?>
+<?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('adwords_remarketing_conversion_id') && !is_customize_preview() ): //Google AdWords Remarketing Tag ?>
 	<link rel="prefetch" href="//www.googleadservices.com/pagead/conversion.js" />
 
 	<script type="text/javascript">
@@ -526,7 +527,7 @@
 	</noscript>
 <?php endif; ?>
 
-<?php if ( nebula()->get_option('facebook_custom_audience_pixel_id') && !is_customize_preview() ): //Facebook Custom Audience ?>
+<?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('facebook_custom_audience_pixel_id') && !is_customize_preview() ): //Facebook Custom Audience ?>
 	<link rel="prefetch" href="//connect.facebook.net/en_US/fbevents.js" />
 
 	<script>

@@ -806,7 +806,7 @@ if ( !trait_exists('Dashboard') ){
 					iframe.style.width = "1200px";
 					iframe.style.height = "0px";
 					jQuery("#testloadcon").append(iframe);
-					iframe.src = "' . home_url('/') . '";
+					iframe.src = "' . home_url('/') . '?noga";
 					jQuery("#testloadcon iframe").on("load", function(){
 						var iframeResponseEnd = Math.round(iframe.contentWindow.performance.timing.responseEnd-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until server response finishes
 						var iframeDomReady = Math.round(iframe.contentWindow.performance.timing.domContentLoadedEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until DOM ready

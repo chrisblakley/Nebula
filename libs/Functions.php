@@ -545,6 +545,8 @@ trait Functions {
 		$override = apply_filters('pre_nebula_manifest_json', null);
 		if ( isset($override) ){return;}
 
+		//@todo "Nebula" 0: consider the differences between "fullscreen" and "standalone" for display https://developer.mozilla.org/en-US/docs/Web/Manifest
+
 		$manifest_json = '{
 			"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
 			"short_name": "' . get_bloginfo('name') . '",
