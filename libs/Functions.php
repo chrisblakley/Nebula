@@ -554,7 +554,7 @@ trait Functions {
 			"theme_color": "' . get_theme_mod('nebula_primary_color', $this->sass_color('primary')) . '",
 			"background_color": "#fff",
 			"gcm_sender_id": "' . $this->get_option('gcm_sender_id') . '",
-			"Scope": "/",
+			"Scope": "' . home_url('/') . '",
 			"start_url": "' . home_url('/') . '?utm_source=homescreen",
 			"display": "standalone",
 			"orientation": "portrait",
@@ -2188,7 +2188,7 @@ trait Functions {
 		$bearer = $this->get_option('twitter_bearer_token', '');
 
 		$tweets = get_transient('nebula_twitter_' . $data['user']);
-		if ( empty($tweets) || $this->is_debug() || 1==1 ){ //TODO REMOVE THIS FORCE
+		if ( empty($tweets) || $this->is_debug() ){
 			$args = array('headers' => array('Authorization' => 'Bearer ' . $bearer));
 
 			$response = $this->remote_get($feed, $args);
@@ -2210,6 +2210,7 @@ trait Functions {
 				//Convert times
 				$tweet->time_ago = human_time_diff(strtotime($tweet->created_at)); //Relative time
 				$tweet->time_formatted = date('l, F j, Y \a\t g:ia', strtotime($tweet->created_at)); //Human readable time
+				$tweet->time_ago_raw = date('U')-strtotime($tweet->created_at);
 
 				//Convert usernames, hashtags, and URLs into clickable links and add other markup
 				$tweet->markup = preg_replace(array(

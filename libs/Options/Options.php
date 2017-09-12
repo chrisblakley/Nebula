@@ -260,6 +260,7 @@ if ( !trait_exists('Options') ){
 				'cd_hitid' => '',
 				'cd_hittime' => '',
 				'cd_hittype' => '',
+				'cd_hitmethod' => '',
 				'cd_network' => '',
 				'cd_referrer' => '',
 				'cd_author' => '',

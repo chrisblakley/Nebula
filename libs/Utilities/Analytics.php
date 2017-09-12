@@ -61,6 +61,23 @@ if ( !trait_exists('Analytics') ){
 			return $a;
 		}
 
+		//Return the index of the custom dimension or metric
+		public function ga_definition_index($definition){
+			return str_replace(array('dimension', 'metric'), '', $definition);
+		}
+
+		//Add measurement protocol parameters for custom definitions
+		public function ga_add_definitions(){
+			$custom_definitions = array();
+
+			//Transport method
+			if ( $this->get_option('cd_hitmethod') ){
+				$custom_definitions['cd' . $this->ga_definition_index($this->get_option('cd_hitmethod'))] = 'Server-Side';
+			}
+
+			return $custom_definitions;
+		}
+
 		//Generate the full path of a Google Analytics __utm.gif with necessary parameters.
 		//https://developers.google.com/analytics/resources/articles/gaTrackingTroubleshooting?csw=1#gifParameters
 		public function ga_UTM_gif($user_cookies=array(), $user_parameters=array()){
@@ -126,14 +143,17 @@ if ( !trait_exists('Analytics') ){
 				'v' => 1,
 				'tid' => $this->get_option('ga_tracking_id'),
 				'cid' => $this->ga_parse_cookie(),
-				't' => 'pageview',
+				'uip' => $_SERVER['REMOTE_ADDR'],
+				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '',
+				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']),
 				'dl' => $location,
 				'dt' => $title,
-				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '',
-				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
+				't' => 'pageview',
 			);
 
-			$data = array_merge($data, $array);
+			$data = array_merge($data, $this->ga_add_definitions()); //Add custom definition parameters
+			$data = array_merge($data, $array); //Add passed parameters
+
 			$this->ga_send_data($data);
 		}
 
@@ -156,18 +176,21 @@ if ( !trait_exists('Analytics') ){
 				'v' => 1,
 				'tid' => $this->get_option('ga_tracking_id'),
 				'cid' => $this->ga_parse_cookie(),
+				'dl' => $this->requested_url(),
+				'dt' => ( get_the_title() )? get_the_title() : '',
+				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']),
+				'uip' => $_SERVER['REMOTE_ADDR'],
 				't' => 'event',
 				'ec' => $category, //Category (Required)
 				'ea' => $action, //Action (Required)
 				'el' => $label, //Label
 				'ev' => $value, //Value
 				'ni' => $ni, //Non-Interaction
-				'dl' => $this->requested_url(),
-				'dt' => ( get_the_title() )? get_the_title() : '',
-				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
 			);
 
-			$data = array_merge($data, $array);
+			$data = array_merge($data, $this->ga_add_definitions()); //Add custom definition parameters
+			$data = array_merge($data, $array); //Add passed parameters
+
 			$this->ga_send_data($data);
 		}
 
@@ -188,14 +211,16 @@ if ( !trait_exists('Analytics') ){
 				'v' => 1,
 				'tid' => $this->get_option('ga_tracking_id'),
 				'cid' => $this->ga_parse_cookie(),
-				't' => '',
-				'ni' => 1,
+				'uip' => $_SERVER['REMOTE_ADDR'],
+				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']),
 				'dl' => $this->requested_url(),
 				'dt' => ( get_the_title() )? get_the_title() : '',
-				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
+				't' => '',
+				'ni' => 1,
 			);
 
-			$data = array_merge($defaults, $array);
+			$data = array_merge($data, $this->ga_add_definitions()); //Add custom definition parameters
+			$data = array_merge($defaults, $array); //Add passed parameters
 
 			if ( !empty($data['t']) ){
 				$this->ga_send_data($data);
@@ -216,22 +241,23 @@ if ( !trait_exists('Analytics') ){
 				'v' => 1,
 				'tid' => $this->get_option('ga_tracking_id'),
 				'cid' => $this->ga_parse_cookie(),
-				't' => 'exception',
-				'exd' => $message,
-				'exf' => $fatal,
+				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']),
+				'uip' => $_SERVER['REMOTE_ADDR'],
 				'dl' => $this->requested_url(),
 				'dt' => ( get_the_title() )? get_the_title() : '',
 				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '',
-				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']) //User Agent
+				't' => 'exception',
+				'exd' => $message,
+				'exf' => $fatal,
 			);
 
-			$data = array_merge($data, $array);
+			$data = array_merge($data, $this->ga_add_definitions()); //Add custom definition parameters
+			$data = array_merge($data, $array); //Add passed parameters
+
 			$this->ga_send_data($data);
 		}
 
 		public function ga_ajax(){
-			wp_die(); //@todo "Nebula" 0: Disabling this functionality until (not set) landing pages are under control
-
 			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied.'); }
 			if ( !$this->is_bot() ){
 				//Location and Title
@@ -247,7 +273,7 @@ if ( !trait_exists('Analytics') ){
 
 				//Custom Dimension
 				if ( $this->get_option('cd_blocker') ){
-					$additional_fields['cd' . str_replace('dimension', '', $this->get_option('cd_blocker'))] = 'Google Analytics Blocker';
+					$additional_fields['cd' . $this->ga_definition_index($this->get_option('cd_blocker'))] = 'Google Analytics Blocker';
 				}
 
 				//Pageview

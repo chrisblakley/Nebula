@@ -36,6 +36,7 @@
 			hitID: '<?php echo nebula()->get_option('cd_hitid'); ?>',
 			hitTime: '<?php echo nebula()->get_option('cd_hittime'); ?>',
 			hitType: '<?php echo nebula()->get_option('cd_hittype'); ?>',
+			hitMethod: '<?php echo nebula()->get_option('cd_hitmethod'); ?>',
 			network: '<?php echo nebula()->get_option('cd_network'); ?>',
 			referrer: '<?php echo nebula()->get_option('cd_referrer'); ?>',
 			author: '<?php echo nebula()->get_option('cd_author'); ?>',
@@ -416,6 +417,10 @@
 				model.set(gaCustomDimensions['hitID'], uuid(), true);
 				model.set(gaCustomDimensions['hitTime'], String(new Date-qt), true);
 				model.set(gaCustomDimensions['hitType'], model.get('hitType'), true);
+
+				var transportMethod = model.get('transport') || 'JavaScript';
+				model.set(gaCustomDimensions['hitMethod'], model.get('transport'), true);
+
 				model.set(gaCustomDimensions['timestamp'], localTimestamp(), true);
 				model.set(gaCustomDimensions['visibilityState'], document.visibilityState, true);
 
