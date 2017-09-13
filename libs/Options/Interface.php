@@ -875,10 +875,10 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Publish Year</div>
-												<input type="text" name="nebula_options[cd_publishyear]" id="cd_publishyear" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_publishyear']; ?>" />
+												<div class="input-group-addon">Publish Date</div>
+												<input type="text" name="nebula_options[cd_publishdate]" id="cd_publishdate" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_publishdate']; ?>" />
 											</div>
-											<p class="nebula-help-text short-help form-text text-muted">Sends the year the post was published. Scope: Hit</p>
+											<p class="nebula-help-text short-help form-text text-muted">Sends the date the post was published in the format <code>YYYY-MM-DD</code>. Scope: Hit</p>
 											<p class="option-keywords"></p>
 										</div>
 									</div><!-- /sub-group -->

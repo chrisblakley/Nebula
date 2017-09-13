@@ -63,7 +63,7 @@
 			wordCount: '<?php echo nebula()->get_option('cd_wordcount'); ?>',
 			weather: '<?php echo nebula()->get_option('cd_weather'); ?>',
 			temperature: '<?php echo nebula()->get_option('cd_temperature'); ?>',
-			publishYear: '<?php echo nebula()->get_option('cd_publishyear'); ?>',
+			publishDate: '<?php echo nebula()->get_option('cd_publishdate'); ?>',
 			blocker: '<?php echo nebula()->get_option('cd_blocker'); ?>',
 			queryString: '<?php echo nebula()->get_option('cd_querystring'); ?>',
 			mqBreakpoint: '<?php echo nebula()->get_option('cd_mqbreakpoint'); ?>',
@@ -111,8 +111,8 @@
 					}
 
 					//Article's published year
-					if ( nebula()->get_option('cd_publishyear') ){
-						echo 'ga("set", gaCustomDimensions["publishYear"], "' . get_the_date('Y') . '");';
+					if ( nebula()->get_option('cd_publishdate') ){
+						echo 'ga("set", gaCustomDimensions["publishDate"], "' . get_the_date('Y-m-d') . '");';
 					}
 				}
 
@@ -203,26 +203,7 @@
 					$user_info = get_userdata(get_current_user_id());
 					$usertype = 'Unknown';
 					if ( !empty($user_info->roles) ){
-						switch ( $user_info->roles[0] ){
-						    case 'administrator':
-						    	$usertype = 'Administrator';
-						    	break;
-						    case 'editor':
-						    	$usertype = 'Editor';
-						    	break;
-						    case 'author':
-						    	$usertype = 'Author';
-						    	break;
-						    case 'contributor':
-						    	$usertype = 'Contributor';
-						    	break;
-						    case 'subscriber':
-						    	$usertype = 'Subscriber';
-						    	break;
-						    default:
-						    	$usertype = ucwords($user_info->roles[0]);
-						    	break;
-						}
+						$usertype = ucwords($user_info->roles[0]);
 					}
 				}
 

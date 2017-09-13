@@ -651,14 +651,16 @@ function eventTracking(){
 		ga('send', 'event', 'Generic Form', 'Submit', formID);
 	});
 
-	//PDF View/Download
-	nebula.dom.document.on('mousedown touch tap', "a[href$='.pdf']", function(e){
-		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
-		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
-		var fileName = jQuery(this).attr('href').substr(jQuery(this).attr('href').lastIndexOf("/")+1);
-		ga('send', 'event', 'Download', 'PDF', fileName);
-		if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
-		nv('append', {'pdf_view': fileName});
+	//Notable File Downloads
+	jQuery.each(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'zipx', 'rar', 'gz', 'tar', 'txt', 'rtf'], function(index, extension){
+		nebula.dom.document.on('mousedown touch tap', "a[href$='." + extension + "']", function(e){
+			eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
+			ga('set', gaCustomDimensions['eventIntent'], eventIntent);
+			var fileName = jQuery(this).attr('href').substr(jQuery(this).attr('href').lastIndexOf("/")+1);
+			ga('send', 'event', 'Download', extension, fileName);
+			if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
+			nv('append', {'file_download': fileName});
+		});
 	});
 
 	//Notable Downloads

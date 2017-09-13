@@ -1,4 +1,8 @@
 <?php
+	/*
+		GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
+		GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
+	*/
 
 if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
@@ -66,18 +70,6 @@ if ( !trait_exists('Analytics') ){
 			return str_replace(array('dimension', 'metric'), '', $definition);
 		}
 
-		//Add measurement protocol parameters for custom definitions
-		public function ga_add_definitions(){
-			$custom_definitions = array();
-
-			//Transport method
-			if ( $this->get_option('cd_hitmethod') ){
-				$custom_definitions['cd' . $this->ga_definition_index($this->get_option('cd_hitmethod'))] = 'Server-Side';
-			}
-
-			return $custom_definitions;
-		}
-
 		//Generate the full path of a Google Analytics __utm.gif with necessary parameters.
 		//https://developers.google.com/analytics/resources/articles/gaTrackingTroubleshooting?csw=1#gifParameters
 		public function ga_UTM_gif($user_cookies=array(), $user_parameters=array()){
@@ -124,34 +116,133 @@ if ( !trait_exists('Analytics') ){
 			return 'https://www.google-analytics.com/__utm.gif?' . str_replace('+', '%20', http_build_query($data));
 		}
 
+		//Handle the AJAX data to build the measurement parameters and send to Google Analytics
+		public function ga_ajax(){
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied.'); }
+			if ( !$this->is_bot() ){
+				//Location and Title
+				$additional_fields = array(
+					'dl' => sanitize_text_field($_POST['fields']['location']),
+					'dt' => sanitize_text_field($_POST['fields']['title']),
+				);
+
+				//UTM Parameters
+				if ( !empty($_POST['fields']['location']) && strpos($_POST['fields']['location'], '?') > 0 ){
+					parse_str($this->url_components('query', $_POST['fields']['location']), $query);
+
+					if ( !empty($query['utm_campaign']) ){
+						$additional_fields['cn'] = $query['utm_campaign'];
+					}
+
+					if ( !empty($query['utm_source']) ){
+						$additional_fields['cs'] = $query['utm_source'];
+					}
+
+					if ( !empty($query['utm_medium']) ){
+						$additional_fields['cm'] = $query['utm_medium'];
+					}
+
+					if ( !empty($query['utm_content']) ){
+						$additional_fields['cc'] = $query['utm_content'];
+					}
+
+					if ( !empty($query['utm_term']) ){
+						$additional_fields['ck'] = $query['utm_term'];
+					}
+				}
+
+				//User Agent
+				if ( !empty($_POST['fields']['ua']) ){
+					$additional_fields['ua'] = $_POST['fields']['ua'];
+				}
+
+				//Custom Dimension
+				if ( $this->get_option('cd_blocker') ){
+					$additional_fields['cd' . $this->ga_definition_index($this->get_option('cd_blocker'))] = 'Google Analytics Blocker';
+				}
+
+				//Pageview
+				if ( $_POST['fields']['hitType'] === 'pageview' ){
+					$this->ga_send_pageview(sanitize_text_field($_POST['fields']['location']), sanitize_text_field($_POST['fields']['title']), $additional_fields);
+				}
+
+				//Event
+				if ( $_POST['fields']['hitType'] === 'event' ){
+					$this->ga_send_event(
+						sanitize_text_field($_POST['fields']['category']),
+						sanitize_text_field($_POST['fields']['action']),
+						sanitize_text_field($_POST['fields']['label']),
+						sanitize_text_field($_POST['fields']['value']),
+						sanitize_text_field($_POST['fields']['ni']),
+						$additional_fields
+					);
+				}
+			}
+
+			wp_die();
+		}
+
+		//Add measurement protocol parameters for custom definitions
+		public function ga_common_parameters($parameters=array()){
+			$default_common_parameters = array(
+				'v' => 1,
+				'tid' => $this->get_option('ga_tracking_id'),
+				'cid' => $this->ga_parse_cookie(),
+				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']),
+				'uip' => $_SERVER['REMOTE_ADDR'],
+				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '',
+				'dl' => $this->requested_url(), //Likely "admin-ajax.php" until overwritten
+				'dt' => ( get_the_title() )? get_the_title() : '', //Likely empty until overwritten
+			);
+
+			//User ID
+			if ( is_user_logged_in() ){
+				$default_common_parameters['uid'] = get_current_user_id(); //User ID
+				if ( $this->get_option('cd_userid') ){
+					$default_common_parameters['cd' . $this->ga_definition_index($this->get_option('cd_userid'))] = get_current_user_id();
+				}
+			}
+
+			//Session ID
+			if ( $this->get_option('cd_sessionid') ){
+				$default_common_parameters['cd' . $this->ga_definition_index($this->get_option('cd_sessionid'))] = nebula()->nebula_session_id();
+			}
+
+			//POI
+			if ( $this->get_option('cd_notablepoi') ){
+				$default_common_parameters['cd' . $this->ga_definition_index($this->get_option('cd_notablepoi'))] = nebula()->poi();
+			}
+
+			//Transport method
+			if ( $this->get_option('cd_hitmethod') ){
+				$default_common_parameters['cd' . $this->ga_definition_index($this->get_option('cd_hitmethod'))] = 'Server-Side';
+			}
+
+			$common_parameters = array_merge($default_common_parameters, $parameters); //Add passed parameters
+
+			return $common_parameters;
+		}
+
 		//Send Pageview Function for Server-Side Google Analytics
 		public function ga_send_pageview($location=null, $title=null, $array=array()){
 			$override = apply_filters('pre_ga_send_pageview', null, $location, $title, $array);
 			if ( isset($override) ){return;}
 
 			if ( empty($location) ){
-				$location = $this->requested_url();
+				$location = $this->requested_url(); //Likely "admin-ajax.php"
 			}
 
 			if ( empty($title) ){
 				$title = ( get_the_title() )? get_the_title() : '';
 			}
 
-			//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
-			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 			$data = array(
-				'v' => 1,
-				'tid' => $this->get_option('ga_tracking_id'),
-				'cid' => $this->ga_parse_cookie(),
-				'uip' => $_SERVER['REMOTE_ADDR'],
-				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '',
-				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']),
+				't' => 'pageview',
 				'dl' => $location,
 				'dt' => $title,
-				't' => 'pageview',
 			);
 
-			$data = array_merge($data, $this->ga_add_definitions()); //Add custom definition parameters
+			$data = array_merge($this->ga_common_parameters(), $data); //Add common parameters
 			$data = array_merge($data, $array); //Add passed parameters
 
 			$this->ga_send_data($data);
@@ -170,16 +261,7 @@ if ( !trait_exists('Analytics') ){
 				$value = 0;
 			}
 
-			//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
-			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 			$data = array(
-				'v' => 1,
-				'tid' => $this->get_option('ga_tracking_id'),
-				'cid' => $this->ga_parse_cookie(),
-				'dl' => $this->requested_url(),
-				'dt' => ( get_the_title() )? get_the_title() : '',
-				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']),
-				'uip' => $_SERVER['REMOTE_ADDR'],
 				't' => 'event',
 				'ec' => $category, //Category (Required)
 				'ea' => $action, //Action (Required)
@@ -188,7 +270,7 @@ if ( !trait_exists('Analytics') ){
 				'ni' => $ni, //Non-Interaction
 			);
 
-			$data = array_merge($data, $this->ga_add_definitions()); //Add custom definition parameters
+			$data = array_merge($data, $this->ga_common_parameters()); //Add custom definition parameters
 			$data = array_merge($data, $array); //Add passed parameters
 
 			$this->ga_send_data($data);
@@ -205,21 +287,12 @@ if ( !trait_exists('Analytics') ){
 				return false; //Prevent server-side events to be sent before the first pageview
 			}
 
-			//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
-			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 			$defaults = array(
-				'v' => 1,
-				'tid' => $this->get_option('ga_tracking_id'),
-				'cid' => $this->ga_parse_cookie(),
-				'uip' => $_SERVER['REMOTE_ADDR'],
-				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']),
-				'dl' => $this->requested_url(),
-				'dt' => ( get_the_title() )? get_the_title() : '',
 				't' => '',
 				'ni' => 1,
 			);
 
-			$data = array_merge($data, $this->ga_add_definitions()); //Add custom definition parameters
+			$data = array_merge($data, $this->ga_common_parameters()); //Add custom definition parameters
 			$data = array_merge($defaults, $array); //Add passed parameters
 
 			if ( !empty($data['t']) ){
@@ -235,66 +308,16 @@ if ( !trait_exists('Analytics') ){
 			$override = apply_filters('pre_ga_send_exception', null, $message, $fatal, $array);
 			if ( isset($override) ){return;}
 
-			//GA Parameter Guide: https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters?hl=en
-			//GA Hit Builder: https://ga-dev-tools.appspot.com/hit-builder/
 			$data = array(
-				'v' => 1,
-				'tid' => $this->get_option('ga_tracking_id'),
-				'cid' => $this->ga_parse_cookie(),
-				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']),
-				'uip' => $_SERVER['REMOTE_ADDR'],
-				'dl' => $this->requested_url(),
-				'dt' => ( get_the_title() )? get_the_title() : '',
-				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '',
 				't' => 'exception',
 				'exd' => $message,
 				'exf' => $fatal,
 			);
 
-			$data = array_merge($data, $this->ga_add_definitions()); //Add custom definition parameters
+			$data = array_merge($data, $this->ga_common_parameters()); //Add custom definition parameters
 			$data = array_merge($data, $array); //Add passed parameters
 
 			$this->ga_send_data($data);
-		}
-
-		public function ga_ajax(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied.'); }
-			if ( !$this->is_bot() ){
-				//Location and Title
-				$additional_fields = array(
-					'dl' => sanitize_text_field($_POST['fields']['location']),
-					'dt' => sanitize_text_field($_POST['fields']['title']),
-				);
-
-				//User Agent
-				if ( !empty($_POST['fields']['ua']) ){
-					$additional_fields['ua'] = $_POST['fields']['ua'];
-				}
-
-				//Custom Dimension
-				if ( $this->get_option('cd_blocker') ){
-					$additional_fields['cd' . $this->ga_definition_index($this->get_option('cd_blocker'))] = 'Google Analytics Blocker';
-				}
-
-				//Pageview
-				if ( $_POST['fields']['hitType'] === 'pageview' ){
-					$this->ga_send_pageview(null, null, $additional_fields);
-				}
-
-				//Event
-				if ( $_POST['fields']['hitType'] === 'event' ){
-					$this->ga_send_event(
-						sanitize_text_field($_POST['fields']['category']),
-						sanitize_text_field($_POST['fields']['action']),
-						sanitize_text_field($_POST['fields']['label']),
-						sanitize_text_field($_POST['fields']['value']),
-						sanitize_text_field($_POST['fields']['ni']),
-						$additional_fields
-					);
-				}
-			}
-
-			wp_die();
 		}
 
 		//Send Data to Google Analytics

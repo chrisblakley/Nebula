@@ -288,7 +288,7 @@ if ( !trait_exists('Options') ){
 				'cd_woocustomer' => '',
 				'cd_weather' => '',
 				'cd_temperature' => '',
-				'cd_publishyear' => '',
+				'cd_publishdate' => '',
 				'cd_wordcount' => '',
 				'cd_blocker' => '',
 				'cd_querystring' => '',

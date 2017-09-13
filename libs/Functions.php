@@ -176,7 +176,12 @@ trait Functions {
 
 	//Set server timezone to match Wordpress
 	public function set_default_timezone(){
-		date_default_timezone_set(get_option('timezone_string', 'America/New_York'));
+		$timezone_option = get_option('timezone_string');
+		if ( empty($timezone_option) ){
+			$timezone_option = 'America/New_York';
+		}
+
+		date_default_timezone_set($timezone_option);
 	}
 
 	//Add the Nebula note to the browser console (if enabled)
