@@ -3327,8 +3327,8 @@ function nebulaHTML5VideoTracking(){
 			var id = oThis.attr('id');
 			var videoTitle = oThis.attr('title') || oThis.attr('id') || false;
 
-			if ( !videoTitle ){
-				return false; //An ID or title is required to track HTML5 videos
+			if ( !videoTitle || oThis.width()*oThis.height() < 200*140 ){ //An ID or title is required to track HTML5 videos, and they must be larger than 200x140
+				return false;
 			}
 
 			players.html5[id] = oThis; //This is just for reference. It isn't used like it is for Youtube and Vimeo.
@@ -3365,10 +3365,10 @@ function nebulaHTML5VideoTracking(){
 					});
 				}
 
+				oThis.addClass('playing');
+
 				//Only report to GA for non-autoplay videos
 				if ( !oThis.is('[autoplay]') ){
-					oThis.addClass('playing');
-
 					playAction = 'Play';
 					if ( !isInView(oThis) ){
 						playAction += ' (Not In View)';

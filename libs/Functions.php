@@ -990,21 +990,23 @@ trait Functions {
 		//Apply string limiters (words or characters)
 		if ( !empty($data['characters']) && is_int($data['characters']) ){ //Characters
 			$limited = $this->string_limit_chars($data['text'], $data['characters']); //Returns array: $limited['text'] is the string, $limited['is_limited'] is boolean if it was limited or not.
-			$data['text'] = $limited['text'];
+			$data['text'] = trim($limited['text']);
 		} elseif ( (!empty($data['words']) && is_int($data['words'])) || (!empty($data['length']) && is_int($data['length'])) ){ //Words (or Length)
 			$word_limit = ( !empty($data['length']) && is_int($data['length']) )? $data['length'] : $data['words'];
 			$limited = $this->string_limit_words($data['text'], $word_limit); //Returns array: $limited['text'] is the string, $limited['is_limited'] is boolean if it was limited or not.
-			$data['text'] = $limited['text'];
+			$data['text'] = trim($limited['text']);
 		}
 
 		//Apply dynamic sentence length limiter
 		if ( $data['length'] === 'dynamic' ){
 			$last_punctuation = -1;
 			foreach ( array('.', '?', '!') as $punctuation ){
-				$this_punctuation = strrpos($data['text'] . ' ', $punctuation . ' ')+1; //Find the last punctuation (add a space to the end of the string in case it already ends at the punctuation). Add 1 to capture the punctuation, too.
+				if ( strrpos($data['text'] . ' ', $punctuation . ' ') ){
+					$this_punctuation = strrpos($data['text'] . ' ', $punctuation . ' ')+1; //Find the last punctuation (add a space to the end of the string in case it already ends at the punctuation). Add 1 to capture the punctuation, too.
 
-				if ( $this_punctuation > $last_punctuation ){
-					$last_punctuation = $this_punctuation;
+					if ( $this_punctuation > $last_punctuation ){
+						$last_punctuation = $this_punctuation;
+					}
 				}
 			}
 
@@ -2924,9 +2926,10 @@ trait Functions {
 	}
 
 	//Generage a meta description (either from Yoast, or via Nebula excerpt)
-	public function meta_description($metadesc, $length=160){
+	//Hooked as a filter called from Yoast (which passes $metadesc), and also called directly
+	public function meta_description($metadesc=null, $length=160){
 		if ( empty($metadesc) ){
-			$nebula_metadesc = $this->excerpt(array('length' => 'dynamic', 'characters' => $length, 'more' => '', 'ellipsis' => false, 'strip_tags' => true));
+			$nebula_metadesc = $this->excerpt(array('length' => 'dynamic', 'characters' => $length, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); //yolo- conflict with dynamic and char length
 			if ( empty($nebula_metadesc) ){
 				$nebula_metadesc = get_bloginfo('description');
 			}
