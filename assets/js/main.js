@@ -643,6 +643,22 @@ function eventTracking(){
 		ga('send', 'event', 'Button Click', btnText, jQuery(this).attr('href'));
 	});
 
+	//Bootstrap "Collapse" Accordions
+	jQuery(document).on('shown.bs.collapse', function(e){
+		ga('send', 'event', 'Accordion', 'Shown', e.target.id);
+	});
+	jQuery(document).on('hidden.bs.collapse', function(e){
+		ga('send', 'event', 'Accordion', 'Hidden', e.target.id);
+	});
+
+	//Bootstrap Modals
+	jQuery(document).on('shown.bs.modal', function(e){
+		ga('send', 'event', 'Modal', 'Shown', e.target.id);
+	});
+	jQuery(document).on('hidden.bs.modal', function(e){
+		ga('send', 'event', 'Modal', 'Hidden', e.target.id);
+	});
+
 	//Generic Form Submissions
 	//This event will be a duplicate if proper event tracking is setup on each form, but serves as a safety net.
 	//It is not recommended to use this event for goal tracking unless absolutely necessary!

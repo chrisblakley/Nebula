@@ -710,7 +710,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( strlen($server_software) > 10 ){
 				$server_software = strtok($_SERVER['SERVER_SOFTWARE'],  ' '); //Shorten to until the first space
 			}
-			echo '<li><i class="fa fa-fw fa-server"></i> Server Software: <strong>' . $server_software . '</strong></li>';
+			echo '<li><i class="fa fa-fw fa-server"></i> Server Software: <strong title="' . $_SERVER['SERVER_SOFTWARE'] . '">' . $server_software . '</strong></li>';
 
 			//MySQL version
 			if ( function_exists('mysqli_get_client_version') ){

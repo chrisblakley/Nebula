@@ -24,7 +24,7 @@
 <?php //These must be the first three tags! ?>
 <meta charset="<?php bloginfo('charset'); ?>" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
 <?php do_action('nebula_head_open'); ?>
 
@@ -167,7 +167,7 @@
 <meta property="place:location:latitude" content="<?php echo nebula()->get_option('latitude'); ?>" />
 <meta property="place:location:longitude" content="<?php echo nebula()->get_option('longitude'); ?>" />
 
-<link rel="manifest" href="<?php echo nebula()->manifest_json_location(); //Manifest for progressive web app data ?>" />
+<link rel="manifest" href="<?php echo nebula()->manifest_json_location(); ?>" />
 <link rel="profile" href="http://gmpg.org/xfn/11" />
 
 <?php nebula()->prebrowsing(); //Prefetch, preconnect, and prerender tags ?>

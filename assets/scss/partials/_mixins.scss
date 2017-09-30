@@ -122,7 +122,7 @@
 
 	//Bootstrap
 	@if $group == "sm" {
-		@media (min-width: 544px){& {@content}} //This size and larger
+		@media (min-width: 576px){& {@content}} //This size and larger
 	}
 	@if $group == "md" {
 		@media (min-width: 768px){& {@content}} //This size and larger

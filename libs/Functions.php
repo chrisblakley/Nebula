@@ -31,7 +31,7 @@ trait Functions {
 		add_action('wp_head', array($this, 'console_warnings'));
 
 		if ( is_writable(get_template_directory()) ){
-			if ( !file_exists($this->manifest_json_location()) || filemtime($this->manifest_json_location()) > (time()-DAY_IN_SECONDS) || $this->is_debug() ){
+			if ( !file_exists($this->manifest_json_location(false)) || filemtime($this->manifest_json_location(false)) > (time()-DAY_IN_SECONDS) || $this->is_debug() ){
 				add_action('init', array($this, 'manifest_json'));
 				add_action('admin_init', array($this, 'manifest_json'));
 			}
@@ -538,7 +538,7 @@ trait Functions {
 		$override = apply_filters('pre_manifest_json_location', null);
 		if ( isset($override) ){return;}
 
-		if ( $uri ){
+		if ( !empty($uri) ){
 			return get_template_directory_uri() . '/inc/manifest.json';
 		}
 
