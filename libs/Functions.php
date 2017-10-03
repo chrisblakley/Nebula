@@ -539,10 +539,10 @@ trait Functions {
 		if ( isset($override) ){return;}
 
 		if ( !empty($uri) ){
-			return get_template_directory_uri() . '/inc/manifest.json';
+			return get_theme_file_uri('/inc/manifest.json');
 		}
 
-		return get_template_directory() . '/inc/manifest.json';
+		return get_theme_file_path('/inc/manifest.json');
 	}
 
 	//Create/Write a manifest JSON file

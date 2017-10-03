@@ -669,7 +669,7 @@ function eventTracking(){
 
 	//Notable File Downloads
 	jQuery.each(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'zipx', 'rar', 'gz', 'tar', 'txt', 'rtf'], function(index, extension){
-		nebula.dom.document.on('mousedown touch tap', "a[href$='." + extension + "']", function(e){
+		nebula.dom.document.on('mousedown touch tap', "a[href$='." + extension + "'], a[href$='." + extension.toUpperCase() + "']", function(e){
 			eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 			ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 			var fileName = jQuery(this).attr('href').substr(jQuery(this).attr('href').lastIndexOf("/")+1);
@@ -1809,9 +1809,9 @@ function cf7Functions(){
 
 			updateFormFlow(formID, thisField, fieldInfo);
 
-			//Track individual fields
+			//Track each individual field focuses
 			if ( !jQuery(this).is('button') ){
-				ga('send', 'event', 'CF7 Form', 'Field Focus', 'Focus into ' + thisField + ' (Form ID: ' + formID + ')');
+				ga('send', 'event', 'CF7 Form', 'Individual Field Focused', 'Focus into ' + thisField + ' (Form ID: ' + formID + ')');
 			}
 		}
 

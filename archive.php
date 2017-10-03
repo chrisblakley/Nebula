@@ -58,7 +58,6 @@ get_header(); ?>
 		<div class="row">
 			<div class="col-md" role="main">
 				<?php get_template_part('loop', 'archive'); ?>
-				<?php wp_pagenavi(); ?>
 			</div><!--/col-->
 
 			<?php get_sidebar(); ?>
