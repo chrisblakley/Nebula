@@ -661,9 +661,9 @@ function eventTracking(){
 
 	//Generic Form Submissions
 	//This event will be a duplicate if proper event tracking is setup on each form, but serves as a safety net.
-	//It is not recommended to use this event for goal tracking unless absolutely necessary!
-	nebula.dom.document.on('submit', 'form', function(){
-		var formID = jQuery(this).attr('id') || 'Unknown ID';
+	//It is not recommended to use this event for goal tracking unless absolutely necessary (this event does not check for submission success)!
+	nebula.dom.document.on('submit', 'form', function(e){
+		var formID = e.target.id || 'form.' + e.target.className.replace(' ', '.');
 		ga('send', 'event', 'Generic Form', 'Submit', formID);
 	});
 
@@ -776,9 +776,7 @@ function eventTracking(){
 
 	//Word copy tracking
 	var copyCount = 0;
-	var copyOver = 0;
 	nebula.dom.document.on('cut copy', function(){
-		copyCount++;
 		var words = [];
 		var selection = window.getSelection() + '';
 		words = selection.split(' ');
@@ -798,7 +796,7 @@ function eventTracking(){
 			nv('append', {'contact_method': 'Phone', 'contacted_phone': emailPhone});
 		}
 
-		if ( copyCount < 13 ){
+		if ( copyCount < 5 ){
 			if ( words.length > 8 ){
 				words = words.slice(0, 8).join(' ');
 				ga('send', 'event', 'Copied Text', words.length + ' words', words + '... [' + wordsLength + ' words]', words.length);
@@ -812,12 +810,9 @@ function eventTracking(){
 					nv('append', {'copied_text': selection});
 				}
 			}
-		} else {
-			if ( copyOver === 0 ){
-				ga('send', 'event', 'Copied Text', '[Copy limit reached]');
-			}
-			copyOver = 1;
 		}
+
+		copyCount++;
 	});
 
 	//AJAX Errors

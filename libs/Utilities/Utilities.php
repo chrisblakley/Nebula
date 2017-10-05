@@ -103,7 +103,11 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Detect Notable POI
-		public function poi($ip=null){
+		public function poi($ip='detect'){
+			if ( is_null($ip) ){
+				return false;
+			}
+
 			$log_file = get_stylesheet_directory() . '/notable_pois.log';
 
 			//Check if poi query string exists
@@ -112,7 +116,7 @@ if ( !trait_exists('Utilities') ){
 				return str_replace(array('%20', '+'), ' ', $_GET['poi']);
 			}
 
-			if ( empty($ip) ){
+			if ( $ip === 'detect' ){
 				$ip = $_SERVER['REMOTE_ADDR'];
 			}
 

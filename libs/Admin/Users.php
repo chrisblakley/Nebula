@@ -85,12 +85,16 @@ if ( !trait_exists('Users') ){
 				$logged_in_users = $this->get_data('users_status');
 				$last_ip = $logged_in_users[$id]['ip'];
 
-				$notable_poi = $this->poi($last_ip);
-				if ( !empty($notable_poi) ){
-					$last_ip .= '<br><small>(' . $notable_poi . ')</small>';
+				if ( !empty($last_ip) ){
+					$notable_poi = $this->poi($last_ip);
+					if ( !empty($notable_poi) ){
+						$last_ip .= '<br><small>(' . $notable_poi . ')</small>';
+					}
+
+					return $last_ip;
 				}
 
-				return $last_ip;
+				return '';
 			}
 
 			if ( $column_name === 'id' ){
