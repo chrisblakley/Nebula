@@ -39,7 +39,7 @@ jQuery(function(){
 			}, 500);
 		});
 
-		jQuery('#nebula-option-filter').trigger('keyup').focus(); //Trigger if a ?filter= parameter is used.
+		jQuery('#nebula-option-filter').trigger('keydown').focus(); //Trigger if a ?filter= parameter is used.
 
 		checkDependents(); //Check all dependents
 		checkImportants();
@@ -60,7 +60,7 @@ jQuery(function(){
 			}
 		});
 
-		jQuery(document).on('click touch tap', '.toggle-more-help', function(){
+		jQuery(document).on('click', '.toggle-more-help', function(){
 			jQuery(this).closest('.form-group, .multi-form-group').find('.more-help').slideToggle();
 			return false;
 		});
@@ -134,10 +134,10 @@ function developerMetaboxes(){
 function wysiwygMods(){
 	//Detect external links in the TinyMCE link modal (to check the "new window" box).
 	linkTargetUsered = 0;
-	jQuery(document).on('click tap touch keydown', '#wp-link-target', function(){
+	jQuery(document).on('click keydown', '#wp-link-target', function(){
 		linkTargetUsered = 1;
 	});
-	jQuery(document).on('click tap touch', '#wp-link-submit, #wp-link-close, #wp-link-backdrop, #wp-link-cancel a', function(){ //If clicking the submit button, the close "x", the modal background, or the cancel link.
+	jQuery(document).on('click', '#wp-link-submit, #wp-link-close, #wp-link-backdrop, #wp-link-cancel a', function(){ //If clicking the submit button, the close "x", the modal background, or the cancel link.
 		linkTargetUsered = 0;
 	});
 	jQuery(document).on('keydown change focus blur paste', '#wp-link-url', function(){ //@TODO "Nebula" 0: This does not trigger when user does NOT type a protocol and pushes tab (WP adds the protocol automatically). Blur is not triggering...
@@ -156,7 +156,7 @@ function wysiwygMods(){
 			}
 		}
 	});
-	jQuery(document).on('click tap touch', '#most-recent-results *, #search-results *', function(){
+	jQuery(document).on('click', '#most-recent-results *, #search-results *', function(){
 		if ( linkTargetUsered === 0 ){
 			jQuery('#wp-link-target').prop('checked', false);
 		}
@@ -166,14 +166,14 @@ function wysiwygMods(){
 //Initialization alerts
 function initializationStuff(){
 	//Re-initialize confirm dialog.
-	jQuery('.reinitializenebula').on('click tap touch', function(){
+	jQuery('.reinitializenebula').on('click', function(){
 		if ( !confirm('This will reset all Nebula options and reset the homepage content! Are you sure you want to re-initialize?') ) {
 			return false;
 		}
 	});
 
 	//Initialize confirm dialog.
-	jQuery('#run-nebula-initialization').on('click tap touch', function(){
+	jQuery('#run-nebula-initialization').on('click', function(){
 		if ( !confirm('This will reset some WordPress settings, all Nebula options, and reset the homepage content! Are you sure you want to initialize?') ) {
 			return false;
 		} else {
@@ -227,7 +227,7 @@ function initializationStuff(){
 //Add user fields for headshot image
 function userHeadshotFields(){
 	if ( jQuery('body').hasClass('profile-php') ){
-		jQuery('#headshot_button').on('click tap touch', function(){
+		jQuery('#headshot_button').on('click', function(){
 			tb_show('Uploading a new headshot!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);
 			return false;
 		});
@@ -242,7 +242,7 @@ function userHeadshotFields(){
 			jQuery('#upload_success').text('Here is a preview of the profile picture you chose.');
 		};
 
-		jQuery('#headshot_remove').on('click tap touch', function(){
+		jQuery('#headshot_remove').on('click', function(){
 			jQuery('#headshot_url').val('');
 			jQuery('#headshot_preview').remove();
 			jQuery('#upload_success').text('Picture removed.');
@@ -250,12 +250,12 @@ function userHeadshotFields(){
 
 
 
-		jQuery('#avatar_button').on('click tap touch', function(){
+		jQuery('#avatar_button').on('click', function(){
 			tb_show('Uploading a new avatar!', 'media-upload.php?referer=profile&amp;type=image&amp;TB_iframe=true&amp;post_id=0', false);
 			return false;
 		});
 
-		jQuery('#avatar_remove').on('click tap touch', function(){
+		jQuery('#avatar_remove').on('click', function(){
 			jQuery('#avatar_url').val('');
 			jQuery('#avatar_preview').remove();
 			jQuery('#upload_success').text('Picture removed.');
@@ -574,13 +574,13 @@ jQuery('#nebula-option-filter').on('keydown change focus blur', function(e){
 	}
 });
 
-jQuery('#reset-filter a').on('click touch tap', function(){
-	jQuery('#nebula-option-filter').val('').trigger('keyup');
+jQuery('#reset-filter a').on('click', function(){
+	jQuery('#nebula-option-filter').val('').trigger('keydown');
 	return false;
 });
 
-jQuery('#preset-filters a').on('click touch tap', function(){
-	jQuery('#nebula-option-filter').val(jQuery(this).attr('filter-text')).trigger('keyup');
+jQuery('#preset-filters a').on('click', function(){
+	jQuery('#nebula-option-filter').val(jQuery(this).attr('filter-text')).trigger('keydown');
 	return false;
 });
 

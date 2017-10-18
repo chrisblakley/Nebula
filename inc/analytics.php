@@ -36,6 +36,7 @@
 			hitID: '<?php echo nebula()->get_option('cd_hitid'); ?>',
 			hitTime: '<?php echo nebula()->get_option('cd_hittime'); ?>',
 			hitType: '<?php echo nebula()->get_option('cd_hittype'); ?>',
+			hitInteractivity: '<?php echo nebula()->get_option('cd_hitinteractivity'); ?>',
 			hitMethod: '<?php echo nebula()->get_option('cd_hitmethod'); ?>',
 			network: '<?php echo nebula()->get_option('cd_network'); ?>',
 			referrer: '<?php echo nebula()->get_option('cd_referrer'); ?>',
@@ -398,6 +399,12 @@
 				model.set(gaCustomDimensions['hitID'], uuid(), true);
 				model.set(gaCustomDimensions['hitTime'], String(new Date-qt), true);
 				model.set(gaCustomDimensions['hitType'], model.get('hitType'), true);
+
+				var interactivity = 'Interaction';
+				if ( model.get('nonInteraction') ){
+					interactivity = 'Non-Interaction';
+				}
+				model.set(gaCustomDimensions['interactivity'], interactivity, true);
 
 				var transportMethod = model.get('transport') || 'JavaScript';
 				model.set(gaCustomDimensions['hitMethod'], model.get('transport'), true);

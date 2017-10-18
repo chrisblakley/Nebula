@@ -138,7 +138,7 @@
 	<?php endif; ?>
 <?php endif; ?>
 <meta name="twitter:title" content="<?php the_title(); ?>" />
-<meta name="twitter:description" content="<?php echo nebula()->meta_description(false, 30); ?>" />
+<meta name="twitter:description" content="<?php echo nebula()->meta_description(false, 200); ?>" />
 
 <?php if ( nebula()->get_option('twitter_user') ): ?>
 	<meta name="twitter:site" content="<?php echo nebula()->get_option('twitter_user'); ?>" />

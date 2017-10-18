@@ -508,7 +508,7 @@ if ( !trait_exists('Utilities') ){
 						return false;
 					}
 
-					if( isset($domain[0]) ) {
+					if ( isset($domain[0]) ){
 						return $domain[0];
 					}
 					break;
@@ -520,7 +520,7 @@ if ( !trait_exists('Utilities') ){
 						return false;
 					}
 
-					if( isset($url_components['scheme']) ){
+					if ( isset($url_components['scheme']) ){
 						return $url_components['scheme'] . '://' . $domain[0];
 					}
 					break;
@@ -547,7 +547,7 @@ if ( !trait_exists('Utilities') ){
 
 				case ('filepath'): //Filepath will be both path and file/extension
 				case ('pathname'):
-					if( isset($url_components['path']) ) {
+					if ( isset($url_components['path']) ){
 						return $url_components['path'];
 					}
 					break;
@@ -583,7 +583,7 @@ if ( !trait_exists('Utilities') ){
 				case ('query'):
 				case ('queries'):
 				case ('search'):
-					if( isset($url_components['query']) ){
+					if ( isset($url_components['query']) ){
 						return $url_components['query'];
 					}
 					break;
@@ -594,7 +594,7 @@ if ( !trait_exists('Utilities') ){
 				case ('hash') :
 				case ('hashtag'):
 				case ('id'):
-					if( isset($url_components['fragment']) ){
+					if ( isset($url_components['fragment']) ){
 						return $url_components['fragment'];
 					}
 					break;

@@ -797,6 +797,16 @@
 
 										<div class="form-group">
 											<div class="input-group">
+												<div class="input-group-addon">Hit Interactivity</div>
+												<input type="text" name="nebula_options[cd_hitinteractivity]" id="cd_hitinteractivity" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hitinteractivity']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Track whether the hit is interactive or non-interactive. Scope: Hit</p>
+											<p class="nebula-help-text more-help form-text text-muted">Useful for determining which events are affecting the bounce rate.</p>
+											<p class="option-keywords"></p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
 												<div class="input-group-addon">Hit Transport Method</div>
 												<input type="text" name="nebula_options[cd_hitmethod]" id="cd_hitmethod" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hitmethod']; ?>" />
 											</div>

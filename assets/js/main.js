@@ -43,7 +43,6 @@ jQuery(function(){
 	}
 }); //End Document Ready
 
-
 /*==========================
  Window Load
  ===========================*/
@@ -467,42 +466,42 @@ function socialSharing(){
 	var enctitle = encodeURI(document.title);
 
 	//Facebook
-	jQuery('.fbshare').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click tap touch', function(){
+	jQuery('.fbshare').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
 		 ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 		 ga('send', 'event', 'Social', 'Share', 'Facebook');
 		nv('append', {'fb_share': encloc});
 	});
 
 	//Twitter
-	jQuery('.twshare').attr('href', 'https://twitter.com/intent/tweet?text=' + enctitle + '&url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click tap touch', function(){
+	jQuery('.twshare').attr('href', 'https://twitter.com/intent/tweet?text=' + enctitle + '&url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
 		 ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 		 ga('send', 'event', 'Social', 'Share', 'Twitter');
 		nv('append', {'twitter_share': encloc});
 	});
 
 	//Google+
-	jQuery('.gshare').attr('href', 'https://plus.google.com/share?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click tap touch', function(){
+	jQuery('.gshare').attr('href', 'https://plus.google.com/share?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
 		 ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 		 ga('send', 'event', 'Social', 'Share', 'Google+');
 		nv('append', {'gplus_share': encloc});
 	});
 
 	//LinkedIn
-	jQuery('.lishare').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click tap touch', function(){
+	jQuery('.lishare').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
 		 ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 		 ga('send', 'event', 'Social', 'Share', 'LinkedIn');
 		nv('append', {'li_share': encloc});
 	});
 
 	//Pinterest
-	jQuery('.pinshare').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click tap touch', function(){
+	jQuery('.pinshare').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
 		 ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 		 ga('send', 'event', 'Social', 'Share', 'Pinterest');
 		nv('append', {'pin_share': encloc});
 	});
 
 	//Email
-	jQuery('.emshare').attr('href', 'mailto:?subject=' + enctitle + '&body=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click tap touch', function(){
+	jQuery('.emshare').attr('href', 'mailto:?subject=' + enctitle + '&body=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
 		 ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 		 ga('send', 'event', 'Social', 'Share', 'Email');
 		nv('append', {'email_share': encloc});
@@ -510,7 +509,7 @@ function socialSharing(){
 
 	//Web Share API
 	if ( 'share' in navigator ){ //Chrome 61+
-		nebula.dom.document.on('click tap touch', '.webshare', function(){
+		nebula.dom.document.on('click', '.webshare', function(){
 			oThis = jQuery(this);
 
 			navigator.share({
@@ -659,6 +658,18 @@ function eventTracking(){
 		ga('send', 'event', 'Modal', 'Hidden', e.target.id);
 	});
 
+	//Bootstrap Carousels (Sliders)
+	jQuery(document).on('slide.bs.carousel', function(e){
+		if ( window.event ){ //Only if sliding manually
+			var sliderName = e.target.id || e.target.title || e.target.className.replace(' ', '.');
+			var activeSlide = jQuery(e.target).find('.carousel-item').eq(e.to);
+			var activeSlideName = activeSlide.attr('id') || activeSlide.attr('title') || 'Unnamed';
+			var prevSlide = jQuery(e.target).find('.carousel-item').eq(e.from);
+			var prevSlideName = prevSlide.attr('id') || prevSlide.attr('title') || 'Unnamed';
+			ga('send', 'event', 'Carousel', sliderName, 'Slide to ' + e.to + ' (' + activeSlideName + ') from ' + e.from + ' (' + prevSlideName + ')');
+		}
+	});
+
 	//Generic Form Submissions
 	//This event will be a duplicate if proper event tracking is setup on each form, but serves as a safety net.
 	//It is not recommended to use this event for goal tracking unless absolutely necessary (this event does not check for submission success)!
@@ -714,7 +725,8 @@ function eventTracking(){
 	nebula.dom.document.on('keydown', function(e){
 		//Ctrl+F or Cmd+F (Find)
 		if ( (e.ctrlKey || e.metaKey) && e.which === 70 ){
-			ga('send', 'event', 'Find on Page', 'Ctrl+F', "User initiated their browser's find tool (with keyboard shortcut)", {'nonInteraction': true});
+			var highlightedText = jQuery.trim(window.getSelection().toString()) || '(No highlighted text when initiating find)';
+			ga('send', 'event', 'Find on Page', 'Ctrl+F', highlightedText, {'nonInteraction': true});
 		}
 
 		//Ctrl+D or Cmd+D (Bookmark)
@@ -732,7 +744,7 @@ function eventTracking(){
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
 		ga('send', 'event', 'Contact', 'Mailto', emailAddress);
-		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Mailto',});}}
+		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Mailto'});}}
 		nv('append', {'contact_method': 'mailto', 'contacted_email': emailAddress});
 	});
 
@@ -743,7 +755,7 @@ function eventTracking(){
 		var phoneNumber = jQuery(this).attr('href').replace('tel:', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
 		ga('send', 'event', 'Contact', 'Click-to-Call', phoneNumber);
-		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Click-to-Call',});}}
+		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Click-to-Call'});}}
 		nv('append', {'contact_method': 'click-to-call', 'contacted_phone': phoneNumber});
 	});
 
@@ -754,14 +766,14 @@ function eventTracking(){
 		var phoneNumber = jQuery(this).attr('href').replace('sms:+', '');
 		ga('set', gaCustomDimensions['contactMethod'], 'SMS');
 		ga('send', 'event', 'Contact', 'SMS', phoneNumber);
-		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'SMS',});}}
+		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'SMS'});}}
 		nv('append', {'contact_method': 'sms', 'contacted_sms': phoneNumber});
 	});
 
 	//Non-Linked Click Attempts
-	jQuery('img').on('click tap touch', function(){
+	jQuery('img').on('click', function(){
 		if ( !jQuery(this).parents('a').length ){
-			ga('send', 'event', 'Non-Linked Click Attempt', 'Image', jQuery(this).attr('src'));
+			ga('send', 'event', 'Non-Linked Click Attempt', 'Image', jQuery(this).attr('src'), {'nonInteraction': true});
 			nv('append', {'non_linked_click': jQuery(this).attr('src')});
 		}
 	});
@@ -770,16 +782,15 @@ function eventTracking(){
 	nebula.dom.document.on('focus', '.sr-only', function(){
 		ga('send', 'event', 'Accessibility Links', 'Focus', jQuery(this).text());
 	});
-	nebula.dom.document.on('click tap touch', '.sr-only', function(){
+	nebula.dom.document.on('click', '.sr-only', function(){
 		ga('send', 'event', 'Accessibility Links', 'Click', jQuery(this).text());
 	});
 
 	//Word copy tracking
 	var copyCount = 0;
 	nebula.dom.document.on('cut copy', function(){
-		var words = [];
-		var selection = window.getSelection() + '';
-		words = selection.split(' ');
+		var selection = window.getSelection().toString();
+		var words = selection.split(' ');
 		wordsLength = words.length;
 
 		//Track Email or Phone copies as contact intent.
@@ -802,7 +813,7 @@ function eventTracking(){
 				ga('send', 'event', 'Copied Text', words.length + ' words', words + '... [' + wordsLength + ' words]', words.length);
 				nv('append', {'copied_text': words + '... [' + wordsLength + ' words]'});
 			} else {
-				if ( selection === '' || selection === ' ' ){
+				if ( jQuery.trim(selection) === '' ){
 					ga('send', 'event', 'Copied Text', '[0 words]');
 					nv('append', {'copied_text': '[0 words]'});
 				} else {
@@ -856,40 +867,40 @@ function eventTracking(){
 //Note: These supplement the plugin Enhanced Ecommerce for WooCommerce
 function ecommerceTracking(){
 	//Add to Cart clicks
-	nebula.dom.document.on('click tap touch', 'a.add_to_cart, .single_add_to_cart_button', function(){ //@todo "Nebula" 0: is there a trigger from WooCommerce this can listen for?
+	nebula.dom.document.on('click', 'a.add_to_cart, .single_add_to_cart_button', function(){ //@todo "Nebula" 0: is there a trigger from WooCommerce this can listen for?
 		ga('send', 'event', 'Ecommerce', 'Add to Cart', jQuery(this).attr('data-product_id'));
 		if ( typeof fbq === 'function' ){fbq('track', 'AddToCart');}
 		nv('append', {'ecommerce_addtocart': jQuery(this).attr('data-product_id')});
 	});
 
 	//Update cart clicks
-	nebula.dom.document.on('click tap touch', '.button[name="update_cart"]', function(){
+	nebula.dom.document.on('click', '.button[name="update_cart"]', function(){
 		ga('send', 'event', 'Ecommerce', 'Update Cart Button', 'Update Cart button click');
 		nv('increment', 'ecommerce_updatecart');
 	});
 
 	//Product Remove buttons
-	nebula.dom.document.on('click tap touch', '.product-remove a.remove', function(){
+	nebula.dom.document.on('click', '.product-remove a.remove', function(){
 		ga('send', 'event', 'Ecommerce', 'Remove this item', jQuery(this).attr('data-product_id'));
 		nv('append', {'ecommerce_removefromcart': jQuery(this).attr('data-product_id')});
 	});
 
 	//Proceed to Checkout
-	nebula.dom.document.on('click tap touch', '.wc-proceed-to-checkout .checkout-button', function(){
+	nebula.dom.document.on('click', '.wc-proceed-to-checkout .checkout-button', function(){
 		ga('send', 'event', 'Ecommerce', 'Proceed to Checkout Button', 'Proceed to Checkout button click');
 		if ( typeof fbq === 'function' ){fbq('track', 'InitiateCheckout');}
 		nv('send', {'ecommerce_checkout': 'Proceed to Checkout'});
 	});
 
 	//Checkout form timing
-	nebula.dom.document.on('click tap touch focus', '#billing_first_name', function(){
+	nebula.dom.document.on('click focus', '#billing_first_name', function(){
 		nebulaTimer('ecommerce_checkout', 'start');
 		ga('send', 'event', 'Ecommerce', 'Started Checkout Form', 'Began filling out the checkout form (Billing First Name)');
 		nv('send', {'ecommerce_checkout': 'Started Checkout Form'});
 	});
 
 	//Place order button
-	nebula.dom.document.on('click tap touch', '#place_order', function(){
+	nebula.dom.document.on('click', '#place_order', function(){
 		ga('send', 'timing', 'Ecommerce', 'Checkout Form', Math.round(nebulaTimer('ecommerce_checkout', 'end')), 'Billing details start to Place Order button click');
 		ga('send', 'event', 'Ecommerce', 'Place Order Button', 'Place Order button click (likely exit to payment gateway)');
 		if ( typeof fbq === 'function' ){fbq('track', 'Purchase');}
@@ -1259,7 +1270,7 @@ function advancedSearchListeners(){
 	var advancedSearchForm = jQuery('#advanced-search-form');
 	haveAllEvents = 0;
 
-	jQuery('a#metatoggle').on('click touch tap', function(){
+	jQuery('a#metatoggle').on('click', function(){
 		jQuery('#advanced-search-meta').toggleClass('active', function(){
 			if ( jQuery('#advanced-search-meta').hasClass('active') ){
 				setTimeout(function(){
@@ -1314,7 +1325,7 @@ function advancedSearchListeners(){
 	});
 
 	//Reset form
-	jQuery('.resetfilters').on('click tap touch', function(){
+	jQuery('.resetfilters').on('click', function(){
 		advancedSearchForm[0].reset();
 		//@TODO "Nebula" 0: Chosen.js fields need to be reset manually... or something?
 		jQuery(this).removeClass('active');
@@ -1323,7 +1334,7 @@ function advancedSearchListeners(){
 	});
 
 	loadMoreEvents = 0;
-	jQuery('#load-more-events').on('click tap touch', function(){
+	jQuery('#load-more-events').on('click', function(){
 		if ( typeof globalEventObject === 'undefined' ){
 			advancedSearchPrep(10);
 
@@ -1350,7 +1361,7 @@ function advancedSearchListeners(){
 
 	//Load Prev Events
 	//@TODO "Nebula" 0: there is a bug here... i think?
-	jQuery('#load-prev-events').on('click tap touch', function(){
+	jQuery('#load-prev-events').on('click', function(){
 		if ( !jQuery(this).hasClass('no-prev-events') ){
 			jQuery('html, body').animate({
 				scrollTop: advancedSearchForm.offset().top-10
@@ -1676,7 +1687,7 @@ function singleResultDrawer(){
 		theSearchTerm = theSearchTerm.replace(/\%20|\+/g, ' ').replace(/\%22|"|'/g, '');
 		jQuery('#searchform input#s').val(theSearchTerm);
 
-		nebula.dom.document.on('click touch tap', '#nebula-drawer .close', function(){
+		nebula.dom.document.on('click', '#nebula-drawer .close', function(){
 			var permalink = jQuery(this).attr('href');
 			history.replaceState(null, document.title, permalink);
 			jQuery('#nebula-drawer').slideUp();
@@ -2668,7 +2679,7 @@ function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow, callback){
 		return false;
 	}
 
-	nebula.dom.document.on('click touch tap', 'a[href^="#"]:not([href="#"])', function(){ //Using an ID as the href.
+	nebula.dom.document.on('click', 'a[href^="#"]:not([href="#"])', function(){ //Using an ID as the href.
 		var avoid = '.no-scroll, .mm-menu, .carousel, .tab-content, .modal, [data-toggle]';
 		if ( jQuery(this).is(avoid) || jQuery(this).parents(avoid).length ){
 			return false;
@@ -2687,7 +2698,7 @@ function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow, callback){
 		}
 	});
 
-	nebula.dom.document.on('click tap touch', '.nebula-scrollto', function(){ //Using the nebula-scrollto class with scrollto attribute.
+	nebula.dom.document.on('click', '.nebula-scrollto', function(){ //Using the nebula-scrollto class with scrollto attribute.
 		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
 		if ( jQuery(this).attr('scrollto') ){
 			var scrollElement = jQuery(this).attr('scroll-to');
@@ -2827,7 +2838,7 @@ function animationTriggers(){
 	});
 
 	//On click
-	nebula.dom.document.on('click tap touch', '.click, [nebula-click]', function(){
+	nebula.dom.document.on('click', '.click, [nebula-click]', function(){
 		var animationClass = jQuery(this).attr('nebula-click') || '';
 		nebulaAnimate(jQuery(this), animationClass);
 	});
@@ -3177,7 +3188,7 @@ function nebulaPre(){
 		jQuery(this).find('p:empty').remove();
 	});
 
-	nebula.dom.document.on('click touch tap', '.nebula-selectcopy-code', function(){
+	nebula.dom.document.on('click', '.nebula-selectcopy-code', function(){
 		 oThis = jQuery(this);
 
 		 if ( jQuery(this).text() === 'Copy to clipboard' ){
@@ -3336,9 +3347,9 @@ function nebulaHTML5VideoTracking(){
 		jQuery('video').each(function(){
 			var oThis = jQuery(this);
 			var id = oThis.attr('id');
-			var videoTitle = oThis.attr('title') || oThis.attr('id') || false;
+			var videoTitle = oThis.attr('title') || id || false;
 
-			if ( !videoTitle || oThis.width()*oThis.height() < 200*140 ){ //An ID or title is required to track HTML5 videos, and they must be larger than 200x140
+			if ( !videoTitle ){ //An ID or title is required to track HTML5 videos
 				return false;
 			}
 
@@ -3351,11 +3362,11 @@ function nebulaHTML5VideoTracking(){
 					'autoplay': false, //Will be overwritten if it is an autoplay video.
 					'current': this.currentTime, //The current position of the video. Units: Seconds
 					'duration': this.duration, //The total duration of the video. Units: Seconds
-					'percent': 0, //The percent of the current position. Multiply by 100 for actual percent.
+					'percent': 0, //The decimal percent of the current position. Multiply by 100 for actual percent.
 					'seeker': false, //Whether the viewer has seeked through the video at least once.
 					'seen': [], //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
 					'watched': 0, //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
-					'watchedPercent': 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
+					'watchedPercent': 0, //The decimal percent of the video watched. Multiply by 100 for actual percent.
 					'pausedYet': false, //If this video has been paused yet by the user.
 				};
 			}
@@ -3510,6 +3521,7 @@ function nebulaYoutubeTracking(){
 		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 	}
 }
+
 function onYouTubeIframeAPIReady(e){
 	jQuery('iframe[src*="youtube"]').each(function(i){
 		var youtubeiframeID = jQuery(this).attr('id');
@@ -3520,125 +3532,10 @@ function onYouTubeIframeAPIReady(e){
 
 		if ( jQuery(this).attr('src').indexOf('enablejsapi=1') > 0 ){
 			players.youtube[youtubeiframeID] = new YT.Player(youtubeiframeID, { //YT.Player parameter must match the iframe ID!
-				events: {
-					'onReady': function(e){
-						if ( typeof videoProgress === 'undefined' ){
-							videoProgress = {};
-						}
-
-						var videoInfo = e.target.getVideoData();
-						videoData[videoInfo.video_id] = {
-							'platform': 'youtube', //The platform the video is hosted using.
-							'iframe': e.target.getIframe(), //The player iframe. Selectable with jQuery(videoData[id].iframe)...
-							'player': players.youtube[videoInfo.video_id], //The player ID of this video. Can access the API here.
-							'autoplay': jQuery(e.target.getIframe()).attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the ifrom src.
-							'duration': e.target.getDuration(), //The total duration of the video. Unit: Seconds
-							'current': e.target.getCurrentTime(), //The current position of the video. Units: Seconds
-							'percent': e.target.getCurrentTime()/e.target.getDuration(), //The percent of the current position. Multiply by 100 for actual percent.
-							'engaged': false, //Whether the viewer has watched enough of the video to be considered engaged.
-							'watched': 0, //Amount of time watching the video (regardless of seeking). Accurate to half a second. Units: Seconds
-							'watchedPercent': 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
-							'pausedYet': false, //If this video has been paused yet by the user.
-						};
-					},
-					'onStateChange': function(e){
-						var videoInfo = e.target.getVideoData();
-						var id = videoInfo.video_id;
-
-						videoData[id].current = e.target.getCurrentTime();
-						videoData[id].percent = videoData[id].current/videoData[id].duration;
-
-						if ( e.data === YT.PlayerState.PLAYING ){
-							 ga('set', gaCustomMetrics['videoStarts'], 1);
-							ga('set', gaCustomDimensions['videoWatcher'], 'Started');
-
-							playAction = 'Play';
-							if ( !isInView(jQuery(videoData[id].iframe)) ){
-								playAction += ' (Not In View)';
-							}
-
-							if ( videoData[id].autoplay ){
-								playAction += ' (Autoplay)';
-							} else {
-								jQuery(videoData[id].iframe).addClass('playing');
-							}
-
-							ga('send', 'event', 'Videos', playAction, videoInfo.title, Math.round(videoData[id].current));
-
-							nv('append', {'video_play': videoInfo.title});
-							nebula.dom.document.trigger('nebula_playing_video', videoInfo);
-							pauseFlag = true;
-							updateInterval = 500;
-
-							youtubePlayProgress = setInterval(function(){
-								videoData[id].current = e.target.getCurrentTime();
-								videoData[id].percent = videoInfo.currentTime/videoData[id].duration;
-								videoData[id].watched = videoData[id].watched+(updateInterval/1000);
-								videoData[id].watchedPercent = (videoData[id].watched)/videoData[id].duration;
-
-								if ( videoData[id].watchedPercent > 0.25 && !videoData[id].engaged ){
-									if ( isInView(jQuery(videoData[id].iframe)) ){
-										ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
-
-										engagedAction = 'Engaged';
-										if ( videoData[id].autoplay ){
-											engagedAction += ' (Autoplay)';
-										}
-										ga('send', 'event', 'Videos', engagedAction, videoInfo.title, Math.round(videoData[id].current), {'nonInteraction': true});
-
-										nv('append', {'video_engaged': videoInfo.title});
-										videoData[id].engaged = true;
-										nebula.dom.document.trigger('nebula_engaged_video', videoInfo);
-									}
-								}
-							}, updateInterval);
-						}
-						if ( e.data === YT.PlayerState.ENDED ){
-							jQuery(videoData[id].iframe).removeClass('playing');
-
-							clearInterval(youtubePlayProgress);
-							ga('set', gaCustomMetrics['videoCompletions'], 1);
-							ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched/1000));
-							ga('set', gaCustomDimensions['videoWatcher'], 'Ended');
-
-							endedAction = 'Ended';
-							if ( !isInView(jQuery(videoData[id].iframe)) ){
-								endedAction += ' (Not In View)';
-							}
-
-							if ( videoData[id].autoplay ){
-								endedAction += ' (Autoplay)';
-							}
-
-							ga('send', 'event', 'Videos', endedAction, videoInfo.title, Math.round(videoData[id].current), {'nonInteraction': true});
-							ga('send', 'timing', 'Videos', 'Ended', videoData[id].current*1000, videoInfo.title);
-							nv('append', {'video_ended': videoInfo.title});
-							nebula.dom.document.trigger('nebula_ended_video', videoInfo);
-						} else if ( e.data === YT.PlayerState.PAUSED && pauseFlag ){
-							jQuery(videoData[id].iframe).removeClass('playing');
-
-							clearInterval(youtubePlayProgress);
-							ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
-							ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
-							ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
-
-							if ( !videoData[id].pausedYet ){
-								ga('send', 'event', 'Videos', 'First Pause', videoInfo.title, Math.round(videoData[id].current));
-								videoData[id].pausedYet = true;
-							}
-
-							ga('send', 'event', 'Videos', 'Paused', videoInfo.title, Math.round(videoData[id].current));
-							ga('send', 'timing', 'Videos', 'Paused', videoData[id].current*1000, videoInfo.title);
-							nv('append', {'video_paused': videoInfo.title});
-							nebula.dom.document.trigger('nebula_paused_video', videoInfo);
-							pauseFlag = false;
-						}
-					},
-					'onError': function(e){
-						var videoInfo = e.target.getVideoData();
-						ga('send', 'exception', {'exDescription': '(JS) Youtube API error for ' + videoInfo.title + ': ' + e.data, 'exFatal': false});
-						nv('append', {'js_errors': videoInfo.title + ' (Code: ' + e.data + ')'});
-					}
+				events: { //If these events are only showing up as "true", try removing the &origin= parameter from the Youtube iframe src.
+					'onReady': nebulaYoutubeReady,
+					'onStateChange': nebulaYoutubeStateChange,
+					'onError': nebulaYoutubeError
 				}
 			});
 
@@ -3651,9 +3548,9 @@ function onYouTubeIframeAPIReady(e){
 			jQuery(this).attr('src', jQuery(this).attr('src') + delimiter + 'enablejsapi=1').on('load', function(){
 				players.youtube[youtubeiframeID] = new YT.Player(youtubeiframeID, { //YT.Player parameter must match the iframe ID!
 					events: {
-						'onReady': onPlayerReady,
-						'onStateChange': onPlayerStateChange,
-						'onError': onPlayerError
+						'onReady': nebulaYoutubeReady,
+						'onStateChange': nebulaYoutubeStateChange,
+						'onError': nebulaYoutubeError
 					}
 				});
 
@@ -3664,6 +3561,144 @@ function onYouTubeIframeAPIReady(e){
 
 	pauseFlag = false;
 }
+
+function nebulaYoutubeReady(e){
+	if ( typeof videoProgress === 'undefined' ){
+		videoProgress = {};
+	}
+
+	var videoInfo = e.target.getVideoData();
+	videoData[videoInfo.video_id] = {
+		'platform': 'youtube', //The platform the video is hosted using.
+		'iframe': e.target.getIframe(), //The player iframe. Selectable with jQuery(videoData[id].iframe)...
+		'player': players.youtube[videoInfo.video_id], //The player ID of this video. Can access the API here.
+		'autoplay': jQuery(e.target.getIframe()).attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the ifrom src.
+		'duration': e.target.getDuration(), //The total duration of the video. Unit: Seconds
+		'current': e.target.getCurrentTime(), //The current position of the video. Units: Seconds
+		'percent': e.target.getCurrentTime()/e.target.getDuration(), //The percent of the current position. Multiply by 100 for actual percent.
+		'engaged': false, //Whether the viewer has watched enough of the video to be considered engaged.
+		'watched': 0, //Amount of time watching the video (regardless of seeking). Accurate to half a second. Units: Seconds
+		'watchedPercent': 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
+		'pausedYet': false, //If this video has been paused yet by the user.
+	};
+}
+
+function nebulaYoutubeStateChange(e){
+	var videoInfo = e.target.getVideoData();
+	var id = videoInfo.video_id;
+
+	videoData[id].current = e.target.getCurrentTime();
+	videoData[id].percent = videoData[id].current/videoData[id].duration;
+
+	if ( e.data === YT.PlayerState.PLAYING ){
+		ga('set', gaCustomMetrics['videoStarts'], 1);
+		ga('set', gaCustomDimensions['videoWatcher'], 'Started');
+
+		playAction = 'Play';
+		if ( !isInView(jQuery(videoData[id].iframe)) ){
+			playAction += ' (Not In View)';
+		}
+
+		if ( videoData[id].autoplay ){
+			playAction += ' (Autoplay)';
+		} else {
+			jQuery(videoData[id].iframe).addClass('playing');
+		}
+
+		ga('send', 'event', 'Videos', playAction, videoInfo.title, Math.round(videoData[id].current));
+
+		nv('append', {'video_play': videoInfo.title});
+		nebula.dom.document.trigger('nebula_playing_video', videoInfo);
+		pauseFlag = true;
+		updateInterval = 500;
+
+		youtubePlayProgress = setInterval(function(){
+			videoData[id].current = e.target.getCurrentTime();
+			videoData[id].percent = videoInfo.currentTime/videoData[id].duration;
+			videoData[id].watched = videoData[id].watched+(updateInterval/1000);
+			videoData[id].watchedPercent = (videoData[id].watched)/videoData[id].duration;
+
+			if ( videoData[id].watchedPercent > 0.25 && !videoData[id].engaged ){
+				if ( isInView(jQuery(videoData[id].iframe)) ){
+					ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
+
+					engagedAction = 'Engaged';
+					if ( videoData[id].autoplay ){
+						engagedAction += ' (Autoplay)';
+					}
+					ga('send', 'event', 'Videos', engagedAction, videoInfo.title, Math.round(videoData[id].current), {'nonInteraction': true});
+
+					nv('append', {'video_engaged': videoInfo.title});
+					videoData[id].engaged = true;
+					nebula.dom.document.trigger('nebula_engaged_video', videoInfo);
+				}
+			}
+		}, updateInterval);
+	}
+
+	if ( e.data === YT.PlayerState.ENDED ){
+		jQuery(videoData[id].iframe).removeClass('playing');
+
+		clearInterval(youtubePlayProgress);
+		ga('set', gaCustomMetrics['videoCompletions'], 1);
+		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched/1000));
+		ga('set', gaCustomDimensions['videoWatcher'], 'Ended');
+
+		endedAction = 'Ended';
+		if ( !isInView(jQuery(videoData[id].iframe)) ){
+			endedAction += ' (Not In View)';
+		}
+
+		if ( videoData[id].autoplay ){
+			endedAction += ' (Autoplay)';
+		}
+
+		ga('send', 'event', 'Videos', endedAction, videoInfo.title, Math.round(videoData[id].current), {'nonInteraction': true});
+		ga('send', 'timing', 'Videos', 'Ended', videoData[id].current*1000, videoInfo.title);
+		nv('append', {'video_ended': videoInfo.title});
+		nebula.dom.document.trigger('nebula_ended_video', videoInfo);
+	} else if ( e.data === YT.PlayerState.PAUSED && pauseFlag ){
+		jQuery(videoData[id].iframe).removeClass('playing');
+
+		clearInterval(youtubePlayProgress);
+		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(videoData[id].watched));
+		ga('set', gaCustomDimensions['videoPercentage'], Math.round(videoData[id].percent*100));
+		ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
+
+		if ( !videoData[id].pausedYet ){
+			ga('send', 'event', 'Videos', 'First Pause', videoInfo.title, Math.round(videoData[id].current));
+			videoData[id].pausedYet = true;
+		}
+
+		ga('send', 'event', 'Videos', 'Paused', videoInfo.title, Math.round(videoData[id].current));
+		ga('send', 'timing', 'Videos', 'Paused', videoData[id].current*1000, videoInfo.title);
+		nv('append', {'video_paused': videoInfo.title});
+		nebula.dom.document.trigger('nebula_paused_video', videoInfo);
+		pauseFlag = false;
+	}
+}
+
+function nebulaYoutubeError(e){
+	var videoInfo = e.target.getVideoData();
+	ga('send', 'exception', {'exDescription': '(JS) Youtube API error for ' + videoInfo.title + ': ' + e.data, 'exFatal': false});
+	nv('append', {'js_errors': videoInfo.title + ' (Code: ' + e.data + ')'});
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function nebulaVimeoTracking(){
 	//Load the Vimeo API script (player.js) remotely (with local backup)
@@ -4111,7 +4146,7 @@ function mmenus(){
 				});
 			}
 
-			nebula.dom.document.on('click tap touch', '.mm-menu li a:not(.mm-next)', function(){
+			nebula.dom.document.on('click', '.mm-menu li a:not(.mm-next)', function(){
 				ga('send', 'timing', 'Mmenu', 'Navigated', Math.round(nebulaTimer('mmenu', 'lap')), 'From opening mmenu until navigation');
 			});
 
@@ -4133,7 +4168,7 @@ function subnavExpanders(){
 	if ( nebula.site.options.sidebar_expanders && jQuery('#sidebar-section .menu').length ){
 		jQuery('#sidebar-section .menu li.menu-item:has(ul)').addClass('has-expander').append('<a class="toplevelvert_expander closed" href="#"><i class="fa fa-caret-left"></i></a>');
 		jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
-		nebula.dom.document.on('click touch tap', '.toplevelvert_expander', function(){
+		nebula.dom.document.on('click', '.toplevelvert_expander', function(){
 			jQuery(this).toggleClass('closed open').parent().children('.sub-menu').slideToggle();
 			return false;
 		});

@@ -104,7 +104,7 @@ if ( !trait_exists('Visitors') ){
 							]
 						});
 
-						jQuery(document).on('click tap touch', '.dataTables_wrapper tbody td', function(){
+						jQuery(document).on('click', '.dataTables_wrapper tbody td', function(){
 							if ( jQuery(this).closest('tr').hasClass('selected') ){
 								jQuery('.dataTables_wrapper tbody tr.selected').removeClass('selected');
 
@@ -143,7 +143,7 @@ if ( !trait_exists('Visitors') ){
 					});
 
 					//Change value to input field for manual updating
-					jQuery(document).on('click tap touch', 'a.edit-this-user-data', function(){
+					jQuery(document).on('click', 'a.edit-this-user-data', function(){
 						var currentActualValue = jQuery.trim(jQuery(this).closest('.user-data-value-con').find('.user-data-value').attr('data-actual'));
 						var currentVisualValue = jQuery.trim(jQuery(this).closest('.user-data-value-con').find('.user-data-value').text());
 
@@ -153,7 +153,7 @@ if ( !trait_exists('Visitors') ){
 					});
 
 					//Cancel editing
-					jQuery(document).on('click tap touch', '.update-user-data-cancel', function(){
+					jQuery(document).on('click', '.update-user-data-cancel', function(){
 						var oldVisualValue = jQuery.trim(jQuery(this).closest('.user-data-value-con').find('#user-data-old-value').val());
 						var oldActualValue = jQuery.trim(jQuery(this).closest('.user-data-value-con').find('#user-data-old-value').attr('data-actual'));
 
@@ -162,7 +162,7 @@ if ( !trait_exists('Visitors') ){
 					});
 
 					//Add new data
-					jQuery(document).on('click tap touch', '#user-detail-add-new-data', function(){
+					jQuery(document).on('click', '#user-detail-add-new-data', function(){
 						oThis = jQuery(this);
 						var newLabel = jQuery('#new-user-data-label').val();
 						var newValue = jQuery('#new-user-data-value').val();
@@ -205,7 +205,7 @@ if ( !trait_exists('Visitors') ){
 					});
 
 					//Send updated detail value to DB
-					jQuery(document).on('click tap touch', '.update-user-data-btn', function(){
+					jQuery(document).on('click', '.update-user-data-btn', function(){
 						oThis = jQuery(this);
 						var newValue = jQuery.trim(oThis.closest('.user-data-value-con').find('#user-data-editing').val());
 
@@ -241,7 +241,7 @@ if ( !trait_exists('Visitors') ){
 					});
 
 					//Find similar users
-					jQuery(document).on('click tap touch', '.similar-visitors-con .btn', function(){
+					jQuery(document).on('click', '.similar-visitors-con .btn', function(){
 						jQuery.ajax({
 							type: "POST",
 							url: nebula.site.ajax.url,
@@ -265,7 +265,7 @@ if ( !trait_exists('Visitors') ){
 					});
 
 					//Delete individual visitor from the DB
-					jQuery(document).on('click tap touch', '#delete-this-user-data', function(){
+					jQuery(document).on('click', '#delete-this-user-data', function(){
 						if ( confirm("Are you sure you want to delete this user data? This can not be undone.") ){
 							jQuery('.delete-this-visitor-icon').removeClass('fa-trash').addClass('fa-spin fa-spinner');
 							jQuery.ajax({
@@ -295,7 +295,7 @@ if ( !trait_exists('Visitors') ){
 					});
 
 					//Remove expired visitors
-					jQuery(document).on('click tap touch', '#delete-expired-visitors', function(){
+					jQuery(document).on('click', '#delete-expired-visitors', function(){
 						jQuery('.remove-expired-visitors-icon').removeClass('fa-trash').addClass('fa-spin fa-spinner');
 						jQuery.ajax({
 							type: "POST",
@@ -320,7 +320,7 @@ if ( !trait_exists('Visitors') ){
 					});
 
 					//Remove 0 score visitors
-					jQuery(document).on('click tap touch', '#delete-noscore-visitors', function(){
+					jQuery(document).on('click', '#delete-noscore-visitors', function(){
 						jQuery('.remove-noscore-visitors-icon').removeClass('fa-trash').addClass('fa-spin fa-spinner');
 						jQuery.ajax({
 							type: "POST",
@@ -345,7 +345,7 @@ if ( !trait_exists('Visitors') ){
 					});
 
 					//Delete and disable Nebula Visitors DB
-					jQuery(document).on('click tap touch', '#delete-everything-and-disable', function(){
+					jQuery(document).on('click', '#delete-everything-and-disable', function(){
 						if ( confirm("Are you sure you want to delete all visitor data and disable this feature? This can not be undone.") ){
 							jQuery('.delete-all-data-icon').removeClass('fa-bomb').addClass('fa-spin fa-spinner');
 							jQuery.ajax({

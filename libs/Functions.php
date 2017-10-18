@@ -1497,13 +1497,8 @@ trait Functions {
 					}
 				}
 			} elseif ( !is_single() && !is_page() && get_post_type() !== 'post' && !is_404() ){
-				if ( is_archive() ){ //@TODO "Nebula" 0: Might not be perfect... This may never else out.
-					$userdata = get_user_by('slug', get_query_var('author_name'));
-					echo $data['before'] . $userdata->first_name . ' ' . $userdata->last_name . $data['after'];
-				} else { //What does this one do?
-					$post_type = get_post_type_object(get_post_type());
-					echo $data['before'] . $post_type->labels->singular_name . $data['after'];
-				}
+				$post_type = get_post_type_object(get_post_type());
+				echo $data['before'] . $post_type->labels->singular_name . $data['after'];
 			} elseif ( is_attachment() ){ //@TODO "Nebula" 0: Check for gallery pages? If so, it should be Home > Parent(s) > Gallery > Attachment
 				if ( !empty($post->post_parent) ){ //@TODO "Nebula" 0: What happens if the page parent is a child of another page?
 					echo '<a href="' . get_permalink($post->post_parent) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_title($post->post_parent) . '</a>' . ' ' . $delimiter_html . ' ' . get_the_title();
@@ -1653,7 +1648,7 @@ trait Functions {
 			jQuery(function(){
 				var pageNumber = <?php echo $args['paged']; ?>+1;
 
-				jQuery('.infinite-load-more').on('click touch tap', function(){
+				jQuery('.infinite-load-more').on('click', function(){
 					var maxPages = jQuery('#infinite-posts-list').attr('data-max-pages');
 					var maxPosts = jQuery('#infinite-posts-list').attr('data-max-posts');
 
@@ -2927,9 +2922,9 @@ trait Functions {
 
 	//Generage a meta description (either from Yoast, or via Nebula excerpt)
 	//Hooked as a filter called from Yoast (which passes $metadesc), and also called directly
-	public function meta_description($metadesc=null, $length=160){
+	public function meta_description($metadesc=null, $chars=160){
 		if ( empty($metadesc) ){
-			$nebula_metadesc = $this->excerpt(array('length' => 'dynamic', 'characters' => $length, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)); //yolo- conflict with dynamic and char length
+			$nebula_metadesc = $this->excerpt(array('length' => 'dynamic', 'characters' => $chars, 'more' => '', 'ellipsis' => false, 'strip_tags' => true));
 			if ( empty($nebula_metadesc) ){
 				$nebula_metadesc = get_bloginfo('description');
 			}

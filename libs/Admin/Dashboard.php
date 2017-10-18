@@ -669,13 +669,23 @@ if ( !trait_exists('Dashboard') ){
 			echo '<ul class="serverdetections">';
 
 			//Domain
-			echo '<li><i class="fa fa-fw fa-info-circle"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" rel="noopener" title="WHOIS Lookup">Domain</a>: <strong>' . $this->url_components('domain') . '</strong></li>';
+			$domain = $this->url_components('domain');
+			if ( empty($domain) ){
+				$domain = '<small>(None)</small>';
+			}
+			echo '<li><i class="fa fa-fw fa-info-circle"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" rel="noopener" title="WHOIS Lookup">Domain</a>: <strong>' . $domain . '</strong></li>';
 
 			//Host
 			function top_domain_name($url){
-				$alldomains = explode(".", $url);
-				return $alldomains[count($alldomains)-2] . "." . $alldomains[count($alldomains)-1];
+				$alldomains = explode('.', $url);
+
+				if ( count($alldomains) > 1 ){
+					return $alldomains[count($alldomains)-2] . "." . $alldomains[count($alldomains)-1];
+				}
+
+				return $url;
 			}
+
 			if ( function_exists('gethostname') ){
 				set_error_handler(function(){ /* ignore errors */ });
 				$dnsrecord = ( dns_get_record(top_domain_name(gethostname()), DNS_NS) )? dns_get_record(top_domain_name(gethostname()), DNS_NS) : '';
