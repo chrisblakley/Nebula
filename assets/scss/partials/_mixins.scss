@@ -76,7 +76,7 @@
 	@if $orientation == "landscape" {
 		@media only screen and (max-width: 1023px){& {@content}} //This size and smaller
 	} @else {
-		@media only screen and (max-width: 767px){& {@content}} //This size and smaller
+		@media only screen and (max-width: #{$md - 1}px){& {@content}} //This size and smaller
 	}
 }
 //.element {@include mobile(){background: red;};}
@@ -122,16 +122,16 @@
 
 	//Bootstrap
 	@if $group == "sm" {
-		@media (min-width: 576px){& {@content}} //This size and larger
+		@media (min-width: #{$sm}px){& {@content}} //This size and larger
 	}
 	@if $group == "md" {
-		@media (min-width: 768px){& {@content}} //This size and larger
+		@media (min-width: #{$md}px){& {@content}} //This size and larger
 	}
 	@if $group == "lg" {
-		@media (min-width: 992px){& {@content}} //This size and larger
+		@media (min-width: #{$lg}px){& {@content}} //This size and larger
 	}
 	@if $group == "xl" {
-		@media (min-width: 1200px){& {@content}} //This size and larger
+		@media (min-width: #{$xl}px){& {@content}} //This size and larger
 	}
 
 	//Nebula Extended Viewports

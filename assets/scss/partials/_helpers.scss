@@ -88,6 +88,16 @@
 
 .nebula-flex-first {order: -1;} //Default flex order is 0. This class forces a column before that.
 
+.col-centered {float: none; margin: 0 auto;}
+.col-sm-centered {@include media("sm"){float: none; margin: 0 auto;}} //This size and larger
+.col-md-centered {@include media("md"){float: none; margin: 0 auto;}} //This size and larger
+.col-lg-centered {@include media("lg"){float: none; margin: 0 auto;}} //This size and larger
+.col-xl-centered {@include media("xl"){float: none; margin: 0 auto;}} //This size and larger
+.col-lte-lg-centered {@media (max-width: #{$xl - 1}px){& {float: none; margin: 0 auto;}}} //This size and smaller
+.col-lte-md-centered {@media (max-width: #{$lg - 1}px){& {float: none; margin: 0 auto;}}} //This size and smaller
+.col-lte-sm-centered {@media (max-width: #{$md - 1}px){& {float: none; margin: 0 auto;}}} //This size and smaller
+.col-xs-centered {@media (max-width: #{$sm - 1}px){& {float: none; margin: 0 auto;}}}
+
 // ===========================
 // Generic Helpers
 // ===========================

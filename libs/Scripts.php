@@ -50,7 +50,7 @@ if ( !trait_exists('Scripts') ){
 			$this->register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', 'defer', null, '1.12.1', true);
 			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/6.1.8/jquery.mmenu.all.js', 'defer', null, '6.1.8', true);
 			$this->register_script('nebula-vimeo', 'https://player.vimeo.com/api/player.js', null, null, null, true);
-			$this->register_script('nebula-popper', 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.5/esm/popper.min.js', 'defer', null, '1.12.5', true); //This is not enqueued or dependent because it is called via main.js only as needed.
+			$this->register_script('nebula-popper', 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js', 'defer', null, '1.12.6', true); //This is not enqueued or dependent because it is called via main.js only as needed.
 			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.16/js/jquery.dataTables.min.js', 'defer', null, '1.10.16', true); //Datatables is called via main.js only as needed.
 			$this->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.jquery.min.js', 'defer', null, '1.8.2', true);
 			$this->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js', 'async', null, '2.4.1', true);

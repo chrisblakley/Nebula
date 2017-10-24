@@ -394,6 +394,11 @@
 					lastHit = new Date(); //Update the last GA hit time
 				<?php endif; ?>
 
+				//Move impression tracking for CF7 forms to the "CF7 Form" event category //@todo "Nebula" 0: If the fieldsObj is ever updated in Autotrack, do this programmatically in main.js
+				if ( model.get('hitType') === 'event' && model.get('eventAction') === 'impression' && model.get('eventLabel').indexOf('wpcf7') > -1 ){
+					model.set('eventCategory', 'CF7 Form', true);
+				}
+
 				//Always send hit dimensions with all payloads
 				//model.set(gaCustomDimensions['gaCID'], tracker.get('clientId'), true);
 				model.set(gaCustomDimensions['hitID'], uuid(), true);

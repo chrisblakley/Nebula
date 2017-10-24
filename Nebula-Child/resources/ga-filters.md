@@ -11,7 +11,7 @@ Exclude, traffic from the IP addresses
 Only allow traffic to valid hostnames. [Generate a valid hostname filter pattern here](https://gearside.com/nebula/utilities/domain-regex-generator/?utm_campaign=documentation&utm_medium=readme&utm_source=ga+filters#customhostnames)
 Filter Type: Custom
 Include, Hostname
-Ex: `\.*gearside.com|\.*gearsidecreative.com|\.*googleusercontent\.com`
+Ex: `\.*gearside.com|\.*gearsidecreative.com|\.*googleusercontent\.com|\.*googleweblight\.com`
 
 ## Spambot Language
 Exclude spambots that modify their language attributes.

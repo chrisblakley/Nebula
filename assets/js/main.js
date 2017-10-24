@@ -630,7 +630,7 @@ function initEventTracking(){
 //Google Analytics Universal Analytics Event Trackers
 function eventTracking(){
 	//Btn Clicks
-	nebula.dom.document.on('mousedown touch tap', "button, .btn", function(e){
+	nebula.dom.document.on('mousedown', "button, .btn", function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 
@@ -680,7 +680,7 @@ function eventTracking(){
 
 	//Notable File Downloads
 	jQuery.each(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'zipx', 'rar', 'gz', 'tar', 'txt', 'rtf'], function(index, extension){
-		nebula.dom.document.on('mousedown touch tap', "a[href$='." + extension + "'], a[href$='." + extension.toUpperCase() + "']", function(e){
+		nebula.dom.document.on('mousedown', "a[href$='." + extension + "'], a[href$='." + extension.toUpperCase() + "']", function(e){
 			eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 			ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 			var fileName = jQuery(this).attr('href').substr(jQuery(this).attr('href').lastIndexOf("/")+1);
@@ -691,7 +691,7 @@ function eventTracking(){
 	});
 
 	//Notable Downloads
-	nebula.dom.document.on('mousedown touch tap', ".notable a, a.notable", function(e){
+	nebula.dom.document.on('mousedown', ".notable a, a.notable", function(e){
 		var filePath = jQuery(this).attr('href');
 		if ( filePath !== '#' ){
 			eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
@@ -738,7 +738,7 @@ function eventTracking(){
 	});
 
 	//Mailto link tracking
-	nebula.dom.document.on('mousedown touch tap', 'a[href^="mailto"]', function(e){
+	nebula.dom.document.on('mousedown', 'a[href^="mailto"]', function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
@@ -749,7 +749,7 @@ function eventTracking(){
 	});
 
 	//Telephone link tracking
-	nebula.dom.document.on('mousedown touch tap', 'a[href^="tel"]', function(e){
+	nebula.dom.document.on('mousedown', 'a[href^="tel"]', function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 		var phoneNumber = jQuery(this).attr('href').replace('tel:', '');
@@ -760,7 +760,7 @@ function eventTracking(){
 	});
 
 	//SMS link tracking
-	nebula.dom.document.on('mousedown touch tap', 'a[href^="sms"]', function(e){
+	nebula.dom.document.on('mousedown', 'a[href^="sms"]', function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 		var phoneNumber = jQuery(this).attr('href').replace('sms:+', '');
@@ -800,11 +800,17 @@ function eventTracking(){
 			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
 			ga('send', 'event', 'Contact', 'Email (Copied)', emailPhone);
 			nv('append', {'contact_method': 'Email', 'contacted_email': emailPhone});
-		} else if ( regexPattern.phone.test(emailPhone) ){
-			ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
-			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
-			ga('send', 'event', 'Contact', 'Phone (Copied)', emailPhone);
-			nv('append', {'contact_method': 'Phone', 'contacted_phone': emailPhone});
+		} else {
+			var alphanumPhone = emailPhone.replace(/\W/g, ''); //Keep only alphanumeric characters
+			var firstFourNumbers = parseInt(alphanumPhone.substring(0, 4)); //Store the first four numbers as an integer
+
+			//If the first three/four chars are numbers and the full string is either 10 or 11 characters (to capture numbers with words) -or- if it matches the phone RegEx pattern
+			if ( (!isNaN(firstFourNumbers) && firstFourNumbers.toString().length >= 3 && (alphanumPhone.length === 10 || alphanumPhone.length === 11)) || regexPattern.phone.test(emailPhone) ){
+				ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
+				ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+				ga('send', 'event', 'Contact', 'Phone (Copied)', emailPhone);
+				nv('append', {'contact_method': 'Phone', 'contacted_phone': emailPhone});
+			}
 		}
 
 		if ( copyCount < 5 ){
@@ -1710,7 +1716,7 @@ function pageSuggestion(){
 			tryGCSESearch(phrase);
 		}
 
-		nebula.dom.document.on('mousedown touch tap', 'a.gcse-suggestion, a.internal-suggestion', function(e){
+		nebula.dom.document.on('mousedown', 'a.gcse-suggestion, a.internal-suggestion', function(e){
 			eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 			ga('set', gaCustomDimensions['eventIntent'], eventIntent);
 
@@ -1781,9 +1787,13 @@ function cf7Functions(){
 
 	//Track CF7 forms when they scroll into view (Autotrack). Currently not possible to change category/action/label for just these impressions.
 	jQuery('.wpcf7-form').each(function(){
+		console.log('observing form');
 		ga('impressionTracker:observeElements', [{
 			'id': jQuery(this).closest('.wpcf7').attr('id') || jQuery(this).attr('id'),
-			'threshold': 0.25
+			'threshold': 0.25,
+			'fieldsObj': { //@todo "Nebula" 0: The fieldsObj doesn't appear to be supported in programmatic impression tracking via Autotrack
+				'eventCategory': 'CF7 Form', //This doesn't do anything right now. There is a task that is modifying the category in inc/analytics.php
+			},
 		}]);
 	});
 
