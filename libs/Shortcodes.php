@@ -512,11 +512,11 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		//Query Post Shortcode
-		//[query args="post_type=post&category_name=home-garden"]
+		//[query args="post_type=post&category_name=home-garden&monthnum=10"]
 		public function query_shortcode($attributes){
 			extract(shortcode_atts(array('args' => ''), $attributes));
 
-			query_posts($args);
+			query_posts(html_entity_decode($args));
 
 			ob_start(); //Output buffer because the loop echoes
 			get_template_part('loop');

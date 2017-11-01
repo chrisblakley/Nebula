@@ -2219,17 +2219,25 @@ function nebulaLoadCSS(url){
 //Places - Address Autocomplete
 //This uses the Google Maps Geocoding API
 //The passed selector must be an input element
-function nebulaAddressAutocomplete(autocompleteInput, name){
+function nebulaAddressAutocomplete(autocompleteInput, uniqueID){
 	if ( jQuery(autocompleteInput).length && jQuery(autocompleteInput).is('input') ){ //If the addressAutocomplete ID exists
 		if ( typeof google != "undefined" && has(google, 'maps') ){
-			googleAddressAutocompleteCallback(autocompleteInput, name);
+			googleAddressAutocompleteCallback(autocompleteInput, uniqueID);
 		} else {
+			//Log all instances to be called after the maps JS library is loaded. This prevents the library from being loaded multiple times.
+			if ( typeof autocompleteInputs === 'undefined' ){
+				autocompleteInputs = {};
+			}
+			autocompleteInputs[uniqueID] = autocompleteInput;
+
 			debounce(function(){
 				nebulaLoadJS('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){ //May not need key here, but just to be safe.
 					google.load('maps', '3', {
 						other_params: 'libraries=placeskey=' + nebula.site.options.nebula_google_browser_api_key,
 						callback: function(){
-							googleAddressAutocompleteCallback(autocompleteInput, name);
+							jQuery.each(autocompleteInputs, function(uniqueID, input){
+								googleAddressAutocompleteCallback(input, uniqueID);
+							});
 						}
 					});
 				});
@@ -2238,18 +2246,18 @@ function nebulaAddressAutocomplete(autocompleteInput, name){
 	}
 }
 
-function googleAddressAutocompleteCallback(autocompleteInput, name){
-	if ( !name ){
-		name = 'addressAutocomplete';
+function googleAddressAutocompleteCallback(autocompleteInput, uniqueID){
+	if ( !uniqueID ){
+		uniqueID = 'addressAutocomplete';
 	}
 
-	window[name] = new google.maps.places.Autocomplete(
+	window[uniqueID] = new google.maps.places.Autocomplete(
 		jQuery(autocompleteInput)[0],
 		{types: ['geocode']} //Restrict the search to geographical location types
 	);
 
-	google.maps.event.addListener(window[name], 'place_changed', function(){ //When the user selects an address from the dropdown, populate the address fields in the form.
-		place = window[name].getPlace(); //Get the place details from the window[name] object.
+	google.maps.event.addListener(window[uniqueID], 'place_changed', function(){ //When the user selects an address from the dropdown, populate the address fields in the form.
+		place = window[uniqueID].getPlace(); //Get the place details from the window[uniqueID] object.
 
 		nebula.user.address = {
 			street: {
@@ -2344,7 +2352,7 @@ function googleAddressAutocompleteCallback(autocompleteInput, name){
 					center: geolocation,
 					radius: position.coords.accuracy
 				});
-				window[name].setBounds(circle.getBounds());
+				window[uniqueID].setBounds(circle.getBounds());
 			});
 		}
 	}).on('keydown', function(e){
