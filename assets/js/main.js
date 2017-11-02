@@ -1787,7 +1787,6 @@ function cf7Functions(){
 
 	//Track CF7 forms when they scroll into view (Autotrack). Currently not possible to change category/action/label for just these impressions.
 	jQuery('.wpcf7-form').each(function(){
-		console.log('observing form');
 		ga('impressionTracker:observeElements', [{
 			'id': jQuery(this).closest('.wpcf7').attr('id') || jQuery(this).attr('id'),
 			'threshold': 0.25,
@@ -2221,6 +2220,10 @@ function nebulaLoadCSS(url){
 //The passed selector must be an input element
 function nebulaAddressAutocomplete(autocompleteInput, uniqueID){
 	if ( jQuery(autocompleteInput).length && jQuery(autocompleteInput).is('input') ){ //If the addressAutocomplete ID exists
+		if ( !uniqueID ){
+			uniqueID = 'unnamed';
+		}
+
 		if ( typeof google != "undefined" && has(google, 'maps') ){
 			googleAddressAutocompleteCallback(autocompleteInput, uniqueID);
 		} else {
@@ -2233,7 +2236,7 @@ function nebulaAddressAutocomplete(autocompleteInput, uniqueID){
 			debounce(function(){
 				nebulaLoadJS('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){ //May not need key here, but just to be safe.
 					google.load('maps', '3', {
-						other_params: 'libraries=placeskey=' + nebula.site.options.nebula_google_browser_api_key,
+						other_params: 'libraries=places&key=' + nebula.site.options.nebula_google_browser_api_key,
 						callback: function(){
 							jQuery.each(autocompleteInputs, function(uniqueID, input){
 								googleAddressAutocompleteCallback(input, uniqueID);
@@ -2247,8 +2250,8 @@ function nebulaAddressAutocomplete(autocompleteInput, uniqueID){
 }
 
 function googleAddressAutocompleteCallback(autocompleteInput, uniqueID){
-	if ( !uniqueID ){
-		uniqueID = 'addressAutocomplete';
+	if ( typeof uniqueID === 'undefined' || uniqueID === 'undefined' ){
+		uniqueID = 'unnamed';
 	}
 
 	window[uniqueID] = new google.maps.places.Autocomplete(
@@ -2258,90 +2261,27 @@ function googleAddressAutocompleteCallback(autocompleteInput, uniqueID){
 
 	google.maps.event.addListener(window[uniqueID], 'place_changed', function(){ //When the user selects an address from the dropdown, populate the address fields in the form.
 		place = window[uniqueID].getPlace(); //Get the place details from the window[uniqueID] object.
+		simplePlace = sanitizeGooglePlaceData(place, uniqueID);
 
-		nebula.user.address = {
-			street: {
-				number: null,
-				name: null,
-				full: null,
-			},
-			city: null,
-			county: null,
-			state: {
-				name: null,
-				abbreviation: null,
-			},
-			country: {
-				name: null,
-				abbreviation: null,
-			},
-			zip: {
-				code: null,
-				suffix: null,
-				full: null,
-			},
-		};
-
-		for ( var i = 0; i < place.address_components.length; i++ ){
-			//Lots of different address types. This function uses only the common ones: https://developers.google.com/maps/documentation/geocoding/#Types
-			switch ( place.address_components[i].types[0] ){
-				case "street_number":
-					nebula.user.address.street.number = place.address_components[i].short_name; //123
-					break;
-				case "route":
-					nebula.user.address.street.name = place.address_components[i].long_name; //Street Name Rd.
-					break;
-				case "locality":
-					nebula.user.address.city = place.address_components[i].long_name; //Liverpool
-					break;
-				case "administrative_area_level_2":
-					nebula.user.address.county = place.address_components[i].long_name; //Onondaga County
-					break;
-				case "administrative_area_level_1":
-					nebula.user.address.state.name = place.address_components[i].long_name; //New York
-					nebula.user.address.state.abbr = place.address_components[i].short_name; //NY
-					break;
-				case "country":
-					nebula.user.address.country.name = place.address_components[i].long_name; //United States
-					nebula.user.address.country.abbr = place.address_components[i].short_name; //US
-					break;
-				case "postal_code":
-					nebula.user.address.zip.code = place.address_components[i].short_name; //13088
-					break;
-				case "postal_code_suffix":
-					nebula.user.address.zip.suffix = place.address_components[i].short_name; //4725
-					break;
-				default:
-					//console.log('Address component ' + place.address_components[i].types[0] + ' not used.');
-			}
-		}
-		if ( has(nebula, 'user.address.street') ){
-			nebula.user.address.street.full = nebula.user.address.street.number + ' ' + nebula.user.address.street.name;
-		}
-		if ( has(nebula, 'user.address.zip') ){
-			nebula.user.address.zip.full = nebula.user.address.zip.code + '-' + nebula.user.address.zip.suffix;
-		}
-
-		nebula.dom.document.trigger('nebula_address_selected', [place, jQuery(autocompleteInput)]);
+		nebula.dom.document.trigger('nebula_address_selected', [place, simplePlace, jQuery(autocompleteInput)]);
 		ga('set', gaCustomDimensions['contactMethod'], 'Autocomplete Address');
-		ga('send', 'event', 'Contact', 'Autocomplete Address', nebula.user.address.city + ', ' + nebula.user.address.state.abbreviation + ' ' + nebula.user.address.zip.code);
+		ga('send', 'event', 'Contact', 'Autocomplete Address', simplePlace.city + ', ' + simplePlace.state.abbreviation + ' ' + simplePlace.zip.code);
 
-		//@TODO "Nebula" 0: If errors, consider switching each to (ex:) 'street_number': ( has(nebula, 'user.address.street') )? nebula.user.address.street.number : ''
 		nv('send', {
-			'street_number': nebula.user.address.street.number,
-			'street_name': nebula.user.address.street.name,
-			'street_full': nebula.user.address.street.full,
-			'city': nebula.user.address.city,
-			'county': nebula.user.address.county,
-			'state_name': nebula.user.address.state.name,
-			'state_abbr': nebula.user.address.state.abbr,
-			'country_name': nebula.user.address.country.name,
-			'country_abbr': nebula.user.address.country.abbr,
-			'zip_code': nebula.user.address.zip.code,
-			'zip_suffix': nebula.user.address.zip.suffix,
-			'zip_full': nebula.user.address.zip.full,
+			'street_number': simplePlace.street.number,
+			'street_name': simplePlace.street.name,
+			'street_full': simplePlace.street.full,
+			'city': simplePlace.city,
+			'county': simplePlace.county,
+			'state_name': simplePlace.state.name,
+			'state_abbr': simplePlace.state.abbr,
+			'country_name': simplePlace.country.name,
+			'country_abbr': simplePlace.country.abbr,
+			'zip_code': simplePlace.zip.code,
+			'zip_suffix': simplePlace.zip.suffix,
+			'zip_full': simplePlace.zip.full,
 		});
-		nv('append', {'address_full': nebula.user.address.street.full + ', ' + nebula.user.address.city + ', ' + nebula.user.address.state.abbr + ' ' + nebula.user.address.zip.code});
+		nv('append', {'address_full': simplePlace.street.full + ', ' + simplePlace.city + ', ' + simplePlace.state.abbr + ' ' + simplePlace.zip.code});
 	});
 
 	jQuery(autocompleteInput).on('focus', function(){
@@ -2366,6 +2306,90 @@ function googleAddressAutocompleteCallback(autocompleteInput, uniqueID){
 			//do any default stuff here.
 		});
 	}
+}
+
+//Organize the Google Place data into an organized (and named) object
+//Use uniqueID to name places like "home", "mailing", "billing", etc.
+function sanitizeGooglePlaceData(place, uniqueID){
+	if ( !place ){
+		console.error('Place data is required for sanitization.');
+		return false;
+	}
+
+	if ( !uniqueID ){
+		uniqueID = 'unnamed';
+	}
+
+	if ( typeof nebula.user.address === 'undefined' ){
+		nebula.user.address = {};
+	}
+
+	nebula.user.address[uniqueID] = {
+		street: {
+			number: null,
+			name: null,
+			full: null,
+		},
+		city: null,
+		county: null,
+		state: {
+			name: null,
+			abbreviation: null,
+		},
+		country: {
+			name: null,
+			abbreviation: null,
+		},
+		zip: {
+			code: null,
+			suffix: null,
+			full: null,
+		},
+	};
+
+	for ( var i = 0; i < place.address_components.length; i++ ){
+		//Lots of different address types. This function uses only the common ones: https://developers.google.com/maps/documentation/geocoding/#Types
+		switch ( place.address_components[i].types[0] ){
+			case "street_number":
+				nebula.user.address[uniqueID].street.number = place.address_components[i].short_name; //123
+				break;
+			case "route":
+				nebula.user.address[uniqueID].street.name = place.address_components[i].long_name; //Street Name Rd.
+				break;
+			case "locality":
+				nebula.user.address[uniqueID].city = place.address_components[i].long_name; //Liverpool
+				break;
+			case "administrative_area_level_2":
+				nebula.user.address[uniqueID].county = place.address_components[i].long_name; //Onondaga County
+				break;
+			case "administrative_area_level_1":
+				nebula.user.address[uniqueID].state.name = place.address_components[i].long_name; //New York
+				nebula.user.address[uniqueID].state.abbr = place.address_components[i].short_name; //NY
+				break;
+			case "country":
+				nebula.user.address[uniqueID].country.name = place.address_components[i].long_name; //United States
+				nebula.user.address[uniqueID].country.abbr = place.address_components[i].short_name; //US
+				break;
+			case "postal_code":
+				nebula.user.address[uniqueID].zip.code = place.address_components[i].short_name; //13088
+				break;
+			case "postal_code_suffix":
+				nebula.user.address[uniqueID].zip.suffix = place.address_components[i].short_name; //4725
+				break;
+			default:
+				//console.log('Address component ' + place.address_components[i].types[0] + ' not used.');
+		}
+	}
+
+	if ( nebula.user.address[uniqueID].street.number && nebula.user.address[uniqueID].street.name ){
+		nebula.user.address[uniqueID].street.full = nebula.user.address[uniqueID].street.number + ' ' + nebula.user.address[uniqueID].street.name;
+	}
+
+	if ( nebula.user.address[uniqueID].zip.code && nebula.user.address[uniqueID].zip.suffix ){
+		nebula.user.address[uniqueID].zip.full = nebula.user.address[uniqueID].zip.code + '-' + nebula.user.address[uniqueID].zip.suffix;
+	}
+
+	return nebula.user.address[uniqueID];
 }
 
 //Request Geolocation
@@ -2589,6 +2613,11 @@ function initBootstrapFunctions(){
 		jQuery('[data-toggle="tooltip"]').tooltip();
 	}
 
+	checkBootstrapToggleButtons();
+	jQuery('[data-toggle=buttons] input').on('change', function(){
+		checkBootstrapToggleButtons();
+	});
+
 	//Carousels - Override this to customize options
 	if ( jQuery('.carousel').length ){
 		jQuery('.carousel').each(function(){
@@ -2615,6 +2644,21 @@ function initBootstrapFunctions(){
 			jQuery(this).carousel();
 		});
 	}
+}
+
+//Add an "inactive" class to toggle buttons when one is checked to allow for additional styling options
+function checkBootstrapToggleButtons(){
+	jQuery('[data-toggle=buttons]').each(function(){
+		if ( jQuery(this).find('input:checked').length ){
+			jQuery(this).find('input').each(function(){
+				if ( jQuery(this).is(':checked') ){
+					jQuery(this).closest('.btn').removeClass('inactive');
+				} else {
+					jQuery(this).closest('.btn').addClass('inactive');
+				}
+			});
+		}
+	});
 }
 
 //Try to fix some errors automatically
@@ -2915,26 +2959,26 @@ function once(fn, args, unique){
 
 //Waits for events to finish before triggering
 //Passing immediate triggers the function on the leading edge (instead of the trailing edge).
-function debounce(callback, wait, uniqueId, immediate){
+function debounce(callback, wait, uniqueID, immediate){
 	if ( typeof debounceTimers === "undefined" ){
 		debounceTimers = {};
 	}
 
-	if ( !uniqueId ){
-		uniqueId = "Don't call this twice without a uniqueId";
+	if ( !uniqueID ){
+		uniqueID = "Don't call this twice without a uniqueID";
 	}
 
 	var context = this, args = arguments;
 	var later = function(){
-		debounceTimers[uniqueId] = null;
+		debounceTimers[uniqueID] = null;
 		if ( !immediate ){
 			 callback.apply(context, args);
 		 }
 	};
-	var callNow = immediate && !debounceTimers[uniqueId];
+	var callNow = immediate && !debounceTimers[uniqueID];
 
-	clearTimeout(debounceTimers[uniqueId]);
-	debounceTimers[uniqueId] = setTimeout(later, wait);
+	clearTimeout(debounceTimers[uniqueID]);
+	debounceTimers[uniqueID] = setTimeout(later, wait);
 	if ( callNow ){
 		 callback.apply(context, args);
 	}

@@ -33,3 +33,6 @@ Converting URIs to lowercase prevents a page's data from being split if a user e
 *Note: This is now handled by Google Autotrack in Nebula.*
 Filter Type: Custom
 Lowercase, Filter Field: Request URI
+
+# Additional Resources
+[LunaMetrics has a great list](https://www.lunametrics.com/blog/2015/12/10/basic-google-analytics-filters/) of additional filters and other best practices for filtering Google Analytics.
