@@ -136,11 +136,11 @@ if ( !trait_exists('Options') ){
 
 			//Latest (IE10+)
 			if ( $file === 'css' ){
-				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap.min.css', null, '4.0.0b', 'all');
+				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/css/bootstrap.min.css', null, '4.0.0b2', 'all');
 			} elseif ( $file === 'js' ){
-				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/js/bootstrap.min.js', 'defer', null, '4.0.0b', true);
+				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.bundle.min.js', 'defer', null, '4.0.0b2', true); //Bundle includes Popper.js
 			} elseif ( $file === 'reboot' ){
-				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap-reboot.min.css';
+				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/css/bootstrap-reboot.min.css';
 			} else {
 				return 'latest';
 			}

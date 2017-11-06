@@ -2160,21 +2160,6 @@ function conditionalJSLoading(){
 		});
 	}
 
-	//Only load Popper library when Bootstrap tooltips are present.
-	if ( jQuery('[data-toggle="tooltip"], [data-toggle="popover"]').length ){
-		nebulaLoadJS(nebula.site.resources.js.popper, function(){
-			window.bsPopper = true;
-
-			if ( jQuery('[data-toggle="tooltip"]').length ){
-				jQuery('[data-toggle="tooltip"]').tooltip();
-			}
-
-			if ( jQuery('[data-toggle="popover"]').length ){
-				jQuery('[data-toggle="popover"]').popover();
-			}
-		});
-	}
-
 	if ( jQuery('pre.nebula-code').length || jQuery('pre.nebula-code').length ){
 		nebulaLoadCSS(nebula.site.resources.css.pre);
 		nebulaPre();
@@ -2265,7 +2250,7 @@ function googleAddressAutocompleteCallback(autocompleteInput, uniqueID){
 
 		nebula.dom.document.trigger('nebula_address_selected', [place, simplePlace, jQuery(autocompleteInput)]);
 		ga('set', gaCustomDimensions['contactMethod'], 'Autocomplete Address');
-		ga('send', 'event', 'Contact', 'Autocomplete Address', simplePlace.city + ', ' + simplePlace.state.abbreviation + ' ' + simplePlace.zip.code);
+		ga('send', 'event', 'Contact', 'Autocomplete Address', simplePlace.city + ', ' + simplePlace.state.abbr + ' ' + simplePlace.zip.code);
 
 		nv('send', {
 			'street_number': simplePlace.street.number,
@@ -2325,26 +2310,12 @@ function sanitizeGooglePlaceData(place, uniqueID){
 	}
 
 	nebula.user.address[uniqueID] = {
-		street: {
-			number: null,
-			name: null,
-			full: null,
-		},
+		street: null,
 		city: null,
 		county: null,
-		state: {
-			name: null,
-			abbreviation: null,
-		},
-		country: {
-			name: null,
-			abbreviation: null,
-		},
-		zip: {
-			code: null,
-			suffix: null,
-			full: null,
-		},
+		state: null,
+		country: null,
+		zip: null,
 	};
 
 	for ( var i = 0; i < place.address_components.length; i++ ){
@@ -2611,6 +2582,11 @@ function initBootstrapFunctions(){
 	//Tooltips
 	if ( jQuery('[data-toggle="tooltip"]').length ){
 		jQuery('[data-toggle="tooltip"]').tooltip();
+	}
+
+	//Popovers
+	if ( jQuery('[data-toggle="popover"]').length ){
+		jQuery('[data-toggle="popover"]').popover();
 	}
 
 	checkBootstrapToggleButtons();
