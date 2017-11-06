@@ -9,7 +9,6 @@ jQuery(function(){
 	cacheSelectors();
 	getQueryStrings();
 	nebulaHelpers();
-	initBootstrapFunctions();
 	svgImgs();
 	errorMitigation();
 
@@ -50,6 +49,7 @@ jQuery(function(){
 jQuery(window).on('load', function(){
 	initEventTracking();
 	conditionalJSLoading();
+	initBootstrapFunctions();
 
 	//Navigation
 	overflowDetector();

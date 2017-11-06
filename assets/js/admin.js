@@ -2,7 +2,6 @@ jQuery.noConflict();
 
 //Document Ready
 jQuery(function(){
-
 	userHeadshotFields();
 	initializationStuff();
 	developerMetaboxes();
@@ -22,7 +21,6 @@ jQuery(function(){
 
 	//If Nebula Options Page
 	if ( window.location.href.indexOf('themes.php?page=nebula_options') > 0 ){
-
 		checkWindowHeightForStickyNav();
 		nebulaLiveValidator();
 

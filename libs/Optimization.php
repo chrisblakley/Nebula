@@ -168,7 +168,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Remove jQuery Migrate, but keep jQuery
 		public function remove_jquery_migrate($scripts){
-			if ( !is_admin() ){
+			if ( $this->get_option('jquery_version') !== 'wordpress' ){
 				$scripts->remove('jquery');
 				$scripts->add('jquery', false, array('jquery-core'), null);
 			}

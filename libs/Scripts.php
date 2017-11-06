@@ -55,7 +55,7 @@ if ( !trait_exists('Scripts') ){
 			$this->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js', 'async', null, '2.4.1', true);
 			$this->register_script('nebula-main', get_template_directory_uri() . '/assets/js/main.js', 'defer', array('nebula-bootstrap', 'jquery-core', 'nebula-jquery_ui', 'nebula-mmenu'), null, true);
 			$this->register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', null, array('jquery-core'), null, true);
-			$this->register_script('nebula-admin', get_template_directory_uri() . '/assets/js/admin.js', 'defer', null, null, true);
+			$this->register_script('nebula-admin', get_template_directory_uri() . '/assets/js/admin.js', 'defer', array('jquery-core'), null, true);
 
 			global $wp_scripts, $wp_styles, $upload_dir;
 			$upload_dir = wp_upload_dir();
@@ -257,17 +257,20 @@ if ( !trait_exists('Scripts') ){
 			}
 
 			//Scripts
+			wp_enqueue_script('jquery-core');
 			wp_enqueue_script('nebula-admin');
 
 			//Nebula Options page
 			$current_screen = get_current_screen();
 			if ( $current_screen->base === 'appearance_page_nebula_options' || $current_screen->base === 'options' ){
+				$this->append_dependency('nebula-admin', 'nebula-bootstrap');
 				wp_enqueue_style('nebula-bootstrap');
 				wp_enqueue_script('nebula-bootstrap');
 			}
 
 			//Nebula Visitors Data page
 			if ( $current_screen->base === 'appearance_page_nebula_visitors_data' ){
+				$this->append_dependency('nebula-admin', 'nebula-bootstrap');
 				wp_enqueue_style('nebula-bootstrap');
 				wp_enqueue_style('nebula-pre');
 				wp_enqueue_style('nebula-datatables');
@@ -283,6 +286,22 @@ if ( !trait_exists('Scripts') ){
 
 			//Localized objects (localized to jquery to appear in <head>)
 			wp_localize_script('jquery-core', 'nebula', $this->brain);
+		}
+
+		//Add $dep (script handle) to the array of dependencies for $handle
+		public function append_dependency($handle, $dep){
+			global $wp_scripts;
+
+			$script = $wp_scripts->query($handle, 'registered');
+			if ( !$script ){
+				return false;
+			}
+
+			if ( !in_array($dep, $script->deps) ){
+				$script->deps[] = $dep;
+			}
+
+			return true;
 		}
 
 		//Get fresh resources when debugging
