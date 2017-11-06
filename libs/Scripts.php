@@ -263,7 +263,6 @@ if ( !trait_exists('Scripts') ){
 			$current_screen = get_current_screen();
 			if ( $current_screen->base === 'appearance_page_nebula_options' || $current_screen->base === 'options' ){
 				wp_enqueue_style('nebula-bootstrap');
-				$this->override_bootstrap_dependencies();
 				wp_enqueue_script('nebula-bootstrap');
 			}
 
