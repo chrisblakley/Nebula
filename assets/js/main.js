@@ -2143,6 +2143,22 @@ function conditionalJSLoading(){
 		}
 	}
 
+	//Only load Popper library when Bootstrap tooltips are present.
+	//Remove for Bootstrap Beta 3
+	if ( jQuery('[data-toggle="tooltip"], [data-toggle="popover"]').length ){
+		nebulaLoadJS(nebula.site.resources.js.popper, function(){
+			window.bsPopper = true;
+
+			if ( jQuery('[data-toggle="tooltip"]').length ){
+				jQuery('[data-toggle="tooltip"]').tooltip();
+			}
+
+			if ( jQuery('[data-toggle="popover"]').length ){
+				jQuery('[data-toggle="popover"]').popover();
+			}
+		});
+	}
+
 	//Only load Chosen library if 'chosen-select' class exists.
 	if ( jQuery('.chosen-select').length ){
 		nebulaLoadJS(nebula.site.resources.js.chosen, function(){
@@ -2579,6 +2595,9 @@ function nebulaHelpers(){
 }
 
 function initBootstrapFunctions(){
+/*
+	//Uncomment this for Bootstrap Beta 3
+
 	//Tooltips
 	if ( jQuery('[data-toggle="tooltip"]').length ){
 		jQuery('[data-toggle="tooltip"]').tooltip();
@@ -2588,6 +2607,7 @@ function initBootstrapFunctions(){
 	if ( jQuery('[data-toggle="popover"]').length ){
 		jQuery('[data-toggle="popover"]').popover();
 	}
+*/
 
 	checkBootstrapToggleButtons();
 	jQuery('[data-toggle=buttons] input').on('change', function(){

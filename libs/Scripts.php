@@ -44,6 +44,7 @@ if ( !trait_exists('Scripts') ){
 			//nebula_register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
 			$this->jquery();
 			$this->bootstrap('js');
+			$this->register_script('nebula-popper', 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js', 'defer', null, '1.12.6', true); //This is not enqueued or dependent because it is called via main.js only as needed. Remove this after Bootstrap Beta 3
 			$this->register_script('nebula-modernizr_dev', get_template_directory_uri() . '/assets/js/vendor/modernizr.dev.js', 'defer', null, '3.3.1', false);
 			$this->register_script('nebula-modernizr_local', get_template_directory_uri() . '/assets/js/vendor/modernizr.min.js', 'defer', null, '3.3.1', false);
 			$this->register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', 'defer', null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
@@ -257,20 +258,21 @@ if ( !trait_exists('Scripts') ){
 			}
 
 			//Scripts
-			wp_enqueue_script('jquery-core');
+			//wp_enqueue_script('jquery-core'); //May need to uncomment for Bootstrap Beta 3
 			wp_enqueue_script('nebula-admin');
 
 			//Nebula Options page
 			$current_screen = get_current_screen();
 			if ( $current_screen->base === 'appearance_page_nebula_options' || $current_screen->base === 'options' ){
-				$this->append_dependency('nebula-admin', 'nebula-bootstrap');
+				//$this->append_dependency('nebula-admin', 'nebula-bootstrap');
 				wp_enqueue_style('nebula-bootstrap');
+				wp_enqueue_script('nebula-popper'); //Remove this for Bootstrap Beta 3
 				wp_enqueue_script('nebula-bootstrap');
 			}
 
 			//Nebula Visitors Data page
 			if ( $current_screen->base === 'appearance_page_nebula_visitors_data' ){
-				$this->append_dependency('nebula-admin', 'nebula-bootstrap');
+				//$this->append_dependency('nebula-admin', 'nebula-bootstrap'); //May need to uncomment for Bootstrap Beta 3
 				wp_enqueue_style('nebula-bootstrap');
 				wp_enqueue_style('nebula-pre');
 				wp_enqueue_style('nebula-datatables');
