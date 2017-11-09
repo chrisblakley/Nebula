@@ -160,8 +160,6 @@ if ( !trait_exists('Options') ){
 
 		//Prepare default option values
 		public function default_options(){
-			echo 'SET DEFAULT OPTIONS<br>';
-
 			$nebula_options_defaults = array(
 				'edited_yet' => 'false',
 
