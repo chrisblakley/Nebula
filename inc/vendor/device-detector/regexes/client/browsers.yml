@@ -12,6 +12,20 @@
   engine:
     default: 'Edge'
 
+# Microsoft Edge for iOS
+- regex: 'EdgiOS[ /](\d+[\.\d]+)'
+  name: 'Microsoft Edge'
+  version: '$1'
+  engine:
+    default: 'WebKit'
+
+# Microsoft Edge for Android
+- regex: 'EdgA[ /](\d+[\.\d]+)'
+  name: 'Microsoft Edge'
+  version: '$1'
+  engine:
+    default: 'Blink'
+
 # 360 Browser
 - regex: 'QIHU 360[ES]E'
   name: '360 Browser'
@@ -191,6 +205,11 @@
   engine:
     default: 'Gecko'
 
+#Firefox Focus / Firefox Klar
+- regex: '(?:Focus|Klar)(?:/(\d+[\.\d]+))?'
+  name: 'Firefox Focus'
+  version: '$1'
+
 #Cyberfox
 - regex: 'Cyberfox(?:/(\d+[\.\d]+))?'
   name: 'Cyberfox'
@@ -322,7 +341,7 @@
     default: 'Presto'
     versions:
       15: 'Blink'
-- regex: '(?:Opera|OPR)[/ ]?(?:9.80.*Version/)?(\d+[\.\d]+)'
+- regex: '(?:Opera[/ ]?|OPR[/ ])(?:9.80.*Version/)?(\d+[\.\d]+)'
   name: 'Opera'
   version: '$1'
   engine:

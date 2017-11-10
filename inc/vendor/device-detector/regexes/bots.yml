@@ -500,8 +500,40 @@
   producer:
     name: 'Google Inc.'
     url: 'http://www.google.com'
+    
+- regex: 'SeznamEmailProxy'
+  name: 'Seznam Email Proxy'
+  category: 'Crawler'
+  url: ''
+  producer:
+    name: 'Seznam.cz, a.s.'
+    url: 'http://www.seznam.cz/'
 
-- regex: 'Googlebot(-Mobile|-Image|-Video|-News)?|Feedfetcher-Google|Google-Test|Google-Site-Verification|Google Web Preview|AdsBot-Google(-Mobile)?|Google-Adwords-Instant|Mediapartners-Google|Google.*/\+/web/snippet|GoogleProducer|Google[ -]Publisher[ -]Plugin'
+- regex: 'Seznam-Zbozi-robot'
+  name: 'Seznam Zbozi.cz'
+  category: 'Crawler'
+  url: ''
+  producer:
+    name: 'Seznam.cz, a.s.'
+    url: 'https://www.zbozi.cz/'
+
+- regex: 'Heurekabot-Feed'
+  name: 'Heureka Feed'
+  category: 'Crawler'
+  url: 'https://sluzby.heureka.cz/napoveda/heurekabot/'
+  producer:
+    name: 'Heureka.cz, a.s.'
+    url: 'https://www.heureka.cz/'
+
+- regex: 'ShopAlike'
+  name: 'ShopAlike'
+  category: 'Crawler'
+  url: ''
+  producer:
+    name: 'Visual Meta'
+    url: 'https://www.shopalike.cz/'
+
+- regex: 'Googlebot(-Mobile|-Image|-Video|-News)?|Feedfetcher-Google|Google-Test|Google-Site-Verification|Google Web Preview|AdsBot-Google(-Mobile)?|Google-Adwords-Instant|Mediapartners-Google|Google.*/\+/web/snippet|GoogleProducer|Google[ -]Publisher[ -]Plugin|Google-Shopping-Quality'
   name: 'Googlebot'
   category: 'Search bot'
   url: 'http://www.google.com/bot.html'
@@ -1018,6 +1050,14 @@
     name: 'Tencent Holdings'
     url: 'http://www.soso.com'
 
+- regex: 'sqlmap/'
+  name: 'sqlmap'
+  category: 'Security Checker'
+  url: 'http://sqlmap.org/'
+  producer:
+    name: 'sqlmap'
+    url: 'http://sqlmap.org/'
+
 - regex: 'SSL Labs'
   name: 'SSL Labs'
   category: 'Validator'
@@ -1077,6 +1117,14 @@
   producer:
     name: ''
     url: ''
+
+- regex: 'trendictionbot'
+  name: 'Trendiction Bot'
+  category: 'Crawler'
+  url: 'http://www.trendiction.de/bot'
+  producer:
+    name: 'Talkwalker Inc.'
+    url: 'http://www.talkwalker.com'
 
 - regex: 'TurnitinBot'
   name: 'TurnitinBot'
@@ -1141,6 +1189,14 @@
   producer:
     name: 'Profound Networks'
     url: 'http://www.profound.net'
+
+- regex: 'Vagabondo'
+  name: 'Vagabondo'
+  category: 'Crawler'
+  url: ''
+  producer:
+    name: 'WiseGuys'
+    url: 'http://www.wise-guys.nl/'
 
 - regex: 'VSMCrawler'
   name: 'Visual Site Mapper Crawler'
@@ -1476,5 +1532,5 @@
     name: 'The Apache Software Foundation'
     url: 'http://www.apache.org/foundation/'
 
-- regex: '[a-z0-9\-_]*((?<!cu)bot|crawler|crawl|checker|archiver|transcoder|spider)([^a-z]|$)'
+- regex: '[a-z0-9\-_]*((?<!cu)bot(?>! TAB|$)|crawler|crawl|checker|archiver|transcoder|spider)([^a-z]|$)'
   name: 'Generic Bot'

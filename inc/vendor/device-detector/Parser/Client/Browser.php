@@ -81,6 +81,7 @@ class Browser extends ClientParserAbstract
         'FD' => 'Fluid',
         'FE' => 'Fennec',
         'FF' => 'Firefox',
+        'FK' => 'Firefox Focus',
         'FL' => 'Flock',
         'FM' => 'Firefox Mobile',
         'FW' => 'Fireweb',
@@ -210,7 +211,7 @@ class Browser extends ClientParserAbstract
      * @var array
      */
     protected static $mobileOnlyBrowsers = array(
-        '36', 'PU', 'SK', 'MF', 'OI', 'OM', 'DB', 'ST', 'BL', 'IV', 'FM', 'C1', 'AL'
+        '36', 'PU', 'SK', 'MF', 'OI', 'OM', 'DB', 'ST', 'BL', 'IV', 'FM', 'C1', 'AL', 'SA'
     );
 
     /**

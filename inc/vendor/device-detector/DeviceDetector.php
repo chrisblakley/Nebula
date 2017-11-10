@@ -74,7 +74,7 @@ class DeviceDetector
     /**
      * Current version number of DeviceDetector
      */
-    const VERSION = '3.8.1';
+    const VERSION = '3.9.0';
 
     /**
      * Holds all registered client types
@@ -254,7 +254,7 @@ class DeviceDetector
      */
     public function addClientParser($parser)
     {
-	    //BEGIN Nebula fix for required files.
+        //BEGIN Nebula fix for required files.
 		require_once(dirname(__FILE__) . '/Parser/Client/' . $parser . '.php');
 		//End Nebula fix for required files.
 

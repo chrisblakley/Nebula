@@ -18,5 +18,5 @@ namespace Leafo\ScssPhp;
  */
 class Version
 {
-    const VERSION = 'v0.6.7';
+    const VERSION = 'v0.7.0'; //this is actually the v0.7.1 release
 }

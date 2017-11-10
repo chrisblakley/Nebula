@@ -3766,7 +3766,7 @@ function nebulaVimeoTracking(){
 		});
 	}
 
-	//To trigger events on these videos, use the syntax: players['PHG-Overview-Video'].api("play");
+	//To trigger events on these videos, use the syntax: players.vimeo['PHG-Overview-Video'].api("play");
 	function createVimeoPlayers(){
 		 jQuery('iframe[src*="vimeo"]').each(function(i){
 			var vimeoiframeID = jQuery(this).attr('id');
@@ -3841,7 +3841,7 @@ function nebulaVimeoTracking(){
 
 	function vimeoTimeUpdate(data){
 		var id = jQuery(this.element).attr('id');
-		 var videoTitle = videoData[id].title;
+		var videoTitle = videoData[id].title;
 
 		videoData[id].duration = data.duration;
 		videoData[id].current = data.seconds;
