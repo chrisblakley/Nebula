@@ -99,7 +99,7 @@ if ( !trait_exists('Options') ){
 
 		//Register the requested jQuery file
 		public function jquery(){
-			if ( $this->get_option('jquery_version') !== 'wordpress' ){
+			if ( !$this->is_admin_page() && !is_customize_preview() && $this->get_option('jquery_version') !== 'wordpress' ){
 				wp_deregister_script('jquery-core');
 				return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js', null, null, '3.2.1', false);
 			}
