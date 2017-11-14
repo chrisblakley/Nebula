@@ -68,10 +68,10 @@ trait Functions {
 			}
 		} else { //If WP core comments are enabled
 			add_action('comment_form_before', array($this, 'enqueue_comments_reply'));
+			add_action('wp_head', array($this, 'comment_author_cookie'));
 		}
 
 		add_action('admin_init', array($this, 'disable_trackbacks'));
-		add_action('wp_head', array($this, 'comment_author_cookie'));
 		add_action('template_include', array($this, 'define_current_template'), 1000);
 		add_action('wp_ajax_nebula_twitter_cache', array($this, 'twitter_cache'));
 		add_action('wp_ajax_nopriv_nebula_twitter_cache', array($this, 'twitter_cache'));
@@ -2113,7 +2113,9 @@ trait Functions {
 	}
 
 	public function hide_ataglance_comment_counts(){
-		echo '<style>li.comment-count, li.comment-mod-count {display: none;}</style>'; //Hide comment counts in "At a Glance" metabox
+		if ( $this->get_option('comments') ){
+			echo '<style>li.comment-count, li.comment-mod-count {display: none;}</style>'; //Hide comment counts in "At a Glance" metabox
+		}
 	}
 
 	//Disable support for comments in post types
@@ -2147,17 +2149,17 @@ trait Functions {
 
 	//Prefill form fields with comment author cookie
 	public function comment_author_cookie(){
-		echo '<script>';
-		if ( isset($_COOKIE['comment_author_' . COOKIEHASH]) ){
-			$commentAuthorName = $_COOKIE['comment_author_' . COOKIEHASH];
-			$commentAuthorEmail = $_COOKIE['comment_author_email_' . COOKIEHASH];
-			echo 'cookieAuthorName = "' . $commentAuthorName . '";';
-			echo 'cookieAuthorEmail = "' . $commentAuthorEmail . '";';
-		} else {
-			echo 'cookieAuthorName = "";';
-			echo 'cookieAuthorEmail = "";';
+		if ( $this->get_option('comments') ){
+			echo '<script>';
+				echo 'cookieAuthorName = "";';
+				echo 'cookieAuthorEmail = "";';
+
+				if ( isset($_COOKIE['comment_author_' . COOKIEHASH]) ){
+					echo 'cookieAuthorName = "' . $_COOKIE['comment_author_' . COOKIEHASH] . '";';
+					echo 'cookieAuthorEmail = "' . $_COOKIE['comment_author_email_' . COOKIEHASH] . '";';
+				}
+			echo '</script>';
 		}
-		echo '</script>';
 	}
 
 	//Twitter cached feed

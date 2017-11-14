@@ -2777,9 +2777,13 @@ function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow, callback){
  ===========================*/
 
 //Get query string parameters
-function getQueryStrings(){
+function getQueryStrings(url){
+	if ( !url ){
+		url = document.URL;
+	}
+
 	var queries = {};
-	var queryString = document.URL.split('?')[1];
+	var queryString = url.split('?')[1];
 
 	if ( queryString ){
 		queryStrings = queryString.split('&');
@@ -2797,8 +2801,8 @@ function getQueryStrings(){
 }
 
 //Search query strings for the passed parameter
-function get(parameter){
-	var queries = getQueryStrings();
+function get(parameter, url){
+	var queries = getQueryStrings(url);
 
 	if ( !parameter ){
 		return queries;
@@ -3625,12 +3629,13 @@ function nebulaYoutubeReady(e){
 		videoProgress = {};
 	}
 
-	var videoInfo = e.target.getVideoData();
-	videoData[videoInfo.video_id] = {
+	var id = get('v', e.target.getVideoUrl()) || jQuery(e.target.getIframe()).attr('id'); //Parse the video URL for the ID or use the iframe ID
+	videoData[id] = {
 		'platform': 'youtube', //The platform the video is hosted using.
 		'iframe': e.target.getIframe(), //The player iframe. Selectable with jQuery(videoData[id].iframe)...
-		'player': players.youtube[videoInfo.video_id], //The player ID of this video. Can access the API here.
+		'player': players.youtube[id], //The player ID of this video. Can access the API here.
 		'autoplay': jQuery(e.target.getIframe()).attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the ifrom src.
+		'title': jQuery(e.target.getIframe()).attr('title') || id,
 		'duration': e.target.getDuration(), //The total duration of the video. Unit: Seconds
 		'current': e.target.getCurrentTime(), //The current position of the video. Units: Seconds
 		'percent': e.target.getCurrentTime()/e.target.getDuration(), //The percent of the current position. Multiply by 100 for actual percent.
@@ -3642,9 +3647,7 @@ function nebulaYoutubeReady(e){
 }
 
 function nebulaYoutubeStateChange(e){
-	var videoInfo = e.target.getVideoData();
-	var id = videoInfo.video_id;
-
+	var id = get('v', e.target.getVideoUrl()) || jQuery(e.target.getIframe()).attr('id'); //Parse the video URL for the ID or use the iframe ID
 	videoData[id].current = e.target.getCurrentTime();
 	videoData[id].percent = videoData[id].current/videoData[id].duration;
 
@@ -3663,16 +3666,16 @@ function nebulaYoutubeStateChange(e){
 			jQuery(videoData[id].iframe).addClass('playing');
 		}
 
-		ga('send', 'event', 'Videos', playAction, videoInfo.title, Math.round(videoData[id].current));
+		ga('send', 'event', 'Videos', playAction, videoData[id].title, Math.round(videoData[id].current));
 
-		nv('append', {'video_play': videoInfo.title});
-		nebula.dom.document.trigger('nebula_playing_video', videoInfo);
+		nv('append', {'video_play': videoData[id].title});
+		nebula.dom.document.trigger('nebula_playing_video', videoData[id]);
 		pauseFlag = true;
 		updateInterval = 500;
 
 		youtubePlayProgress = setInterval(function(){
 			videoData[id].current = e.target.getCurrentTime();
-			videoData[id].percent = videoInfo.currentTime/videoData[id].duration;
+			videoData[id].percent = videoData[id].current/videoData[id].duration;
 			videoData[id].watched = videoData[id].watched+(updateInterval/1000);
 			videoData[id].watchedPercent = (videoData[id].watched)/videoData[id].duration;
 
@@ -3684,11 +3687,11 @@ function nebulaYoutubeStateChange(e){
 					if ( videoData[id].autoplay ){
 						engagedAction += ' (Autoplay)';
 					}
-					ga('send', 'event', 'Videos', engagedAction, videoInfo.title, Math.round(videoData[id].current), {'nonInteraction': true});
+					ga('send', 'event', 'Videos', engagedAction, videoData[id].title, Math.round(videoData[id].current), {'nonInteraction': true});
 
-					nv('append', {'video_engaged': videoInfo.title});
+					nv('append', {'video_engaged': videoData[id].title});
 					videoData[id].engaged = true;
-					nebula.dom.document.trigger('nebula_engaged_video', videoInfo);
+					nebula.dom.document.trigger('nebula_engaged_video', videoData[id]);
 				}
 			}
 		}, updateInterval);
@@ -3711,10 +3714,10 @@ function nebulaYoutubeStateChange(e){
 			endedAction += ' (Autoplay)';
 		}
 
-		ga('send', 'event', 'Videos', endedAction, videoInfo.title, Math.round(videoData[id].current), {'nonInteraction': true});
-		ga('send', 'timing', 'Videos', 'Ended', videoData[id].current*1000, videoInfo.title);
-		nv('append', {'video_ended': videoInfo.title});
-		nebula.dom.document.trigger('nebula_ended_video', videoInfo);
+		ga('send', 'event', 'Videos', endedAction, videoData[id].title, Math.round(videoData[id].current), {'nonInteraction': true});
+		ga('send', 'timing', 'Videos', 'Ended', videoData[id].current*1000, videoData[id].title);
+		nv('append', {'video_ended': videoData[id].title});
+		nebula.dom.document.trigger('nebula_ended_video', videoData[id]);
 	} else if ( e.data === YT.PlayerState.PAUSED && pauseFlag ){
 		jQuery(videoData[id].iframe).removeClass('playing');
 
@@ -3724,22 +3727,22 @@ function nebulaYoutubeStateChange(e){
 		ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
 
 		if ( !videoData[id].pausedYet ){
-			ga('send', 'event', 'Videos', 'First Pause', videoInfo.title, Math.round(videoData[id].current));
+			ga('send', 'event', 'Videos', 'First Pause', videoData[id].title, Math.round(videoData[id].current));
 			videoData[id].pausedYet = true;
 		}
 
-		ga('send', 'event', 'Videos', 'Paused', videoInfo.title, Math.round(videoData[id].current));
-		ga('send', 'timing', 'Videos', 'Paused', videoData[id].current*1000, videoInfo.title);
-		nv('append', {'video_paused': videoInfo.title});
-		nebula.dom.document.trigger('nebula_paused_video', videoInfo);
+		ga('send', 'event', 'Videos', 'Paused', videoData[id].title, Math.round(videoData[id].current));
+		ga('send', 'timing', 'Videos', 'Paused', videoData[id].current*1000, videoData[id].title);
+		nv('append', {'video_paused': videoData[id].title});
+		nebula.dom.document.trigger('nebula_paused_video', videoData[id]);
 		pauseFlag = false;
 	}
 }
 
 function nebulaYoutubeError(e){
-	var videoInfo = e.target.getVideoData();
-	ga('send', 'exception', {'exDescription': '(JS) Youtube API error for ' + videoInfo.title + ': ' + e.data, 'exFatal': false});
-	nv('append', {'js_errors': videoInfo.title + ' (Code: ' + e.data + ')'});
+	var id = get('v', e.target.getVideoUrl()) || jQuery(e.target.getIframe()).attr('id'); //Parse the video URL for the ID or use the iframe ID
+	ga('send', 'exception', {'exDescription': '(JS) Youtube API error for ' + videoData[id].title + ': ' + e.data, 'exFatal': false});
+	nv('append', {'js_errors': id + ' (Code: ' + e.data + ')'});
 }
 
 
