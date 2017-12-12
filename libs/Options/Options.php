@@ -148,10 +148,12 @@ if ( !trait_exists('Options') ){
 			$nebula_data_defaults = array(
 				'first_activation' => '',
 				'initialized' => '',
+				'first_version' => '',
 				'scss_last_processed' => 0,
 				'next_version' => '',
 				'current_version' => $this->version('raw'),
-				'current_version_date' => $this->version('date'),
+				'current_version_date' => $this->version('date'), //Last theme update date
+				'num_theme_updates' => 0,
 				'version_legacy' => 'false',
 				'users_status' => '',
 			);
@@ -252,6 +254,7 @@ if ( !trait_exists('Options') ){
 				'hostnames' => '',
 				'google_search_console_verification' => '',
 				'facebook_custom_audience_pixel_id' => '',
+				'ga_server_side_fallback' => 1,
 				'ga_load_abandon' => 0,
 				'cd_gacid' => '',
 				'cd_hitid' => '',
@@ -259,6 +262,7 @@ if ( !trait_exists('Options') ){
 				'cd_hittype' => '',
 				'cd_hitinteractivity' => '',
 				'cd_hitmethod' => '',
+				'cd_devicememory' => '',
 				'cd_network' => '',
 				'cd_referrer' => '',
 				'cd_author' => '',

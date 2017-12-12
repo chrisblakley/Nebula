@@ -445,7 +445,7 @@ trait Functions {
 		if ( !empty($warnings) ){
 			echo '<script>';
 			foreach( $warnings as $warning ){
-				echo 'console.' . $warning['level'] . '("[Nebula] ' . strip_tags($warning['description']) . '");';
+				echo 'console.' . $warning['level'] . '("[Nebula] ' . addslashes(strip_tags($warning['description'])) . '");';
 			}
 			echo '</script>';
 		}

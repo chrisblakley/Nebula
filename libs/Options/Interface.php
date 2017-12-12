@@ -700,7 +700,13 @@
 										<p class="option-keywords">minor page speed impact</p>
 									</div>
 
-									<div class="form-group" dependent-or="ga_tracking_id gtm_id">
+									<div class="form-group" dependent-or="ga_tracking_id">
+										<input type="checkbox" name="nebula_options[ga_server_side_fallback]" id="ga_server_side_fallback" value="1" <?php checked('1', !empty($nebula_options['ga_server_side_fallback'])); ?> /><label for="ga_server_side_fallback">Server-Side Fallback</label>
+										<p class="nebula-help-text short-help form-text text-muted">If Google Analytics is blocked, or if JavaScript is disabled, capture GA data using a server-side payload. (Default: <?php echo $this->user_friendly_default('ga_server_side_fallback'); ?>)</p>
+										<p class="option-keywords"></p>
+									</div>
+
+									<div class="form-group" dependent-or="ga_tracking_id">
 										<input type="checkbox" name="nebula_options[ga_load_abandon]" id="ga_load_abandon" value="1" <?php checked('1', !empty($nebula_options['ga_load_abandon'])); ?> /><label for="ga_load_abandon">Load Abandonment Tracking</label>
 										<p class="nebula-help-text short-help form-text text-muted">Track when visitors leave the page before it finishes loading. (Default: <?php echo $this->user_friendly_default('ga_load_abandon'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">This is implemented outside of the typical event tracking and because this event happens before the pageview is sent it can very slightly alter user/session data.</p>
@@ -811,6 +817,16 @@
 												<input type="text" name="nebula_options[cd_hitmethod]" id="cd_hitmethod" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hitmethod']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Track the transport method of the hit (such as JavaScript, Beacon, or Server-Side). Scope: Hit</p>
+											<p class="option-keywords"></p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-addon">Device Memory</div>
+												<input type="text" name="nebula_options[cd_devicememory]" id="cd_devicememory" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_devicememory']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Track the available memory of the device as "Lite" or "Full". Scope: Hit</p>
+											<p class="nebula-help-text more-help form-text text-muted">If alternate components are used on the site for "lite" devices, this dimension will show which version was seen by users.</p>
 											<p class="option-keywords"></p>
 										</div>
 
@@ -1703,7 +1719,7 @@
 								<div class="col-xl-8">
 									<div class="option-group">
 										<div class="form-group">
-											<label for="example_option">First Nebula Activation</label>
+											<label for="example_option">First Nebula activation date</label>
 											<input type="text" id="first_activation" class="form-control" value="<?php echo $nebula_data['first_activation']; ?>" readonly />
 											<p class="nebula-help-text short-help form-text text-muted">
 												First activated on: <strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['first_activation']); ?></strong> (<?php echo $years_ago = number_format((time()-$nebula_data['first_activation'])/31622400, 2); ?> <?php echo ( $years_ago === 1 )? 'year' : 'years'; ?> ago)
@@ -1712,7 +1728,7 @@
 										</div>
 
 										<div class="form-group">
-											<label for="initialized">Initialization Date</label>
+											<label for="initialized">Automated initialization date</label>
 											<input type="text" id="initialized" class="form-control" value="<?php echo $nebula_data['initialized']; ?>" readonly />
 											<p class="nebula-help-text short-help form-text text-muted">
 												Initialized on:
@@ -1727,7 +1743,7 @@
 										</div>
 
 										<div class="form-group">
-											<label for="edited_yet">Nebula Options Saved Yet?</label>
+											<label for="edited_yet">Have Nebula options been saved yet?</label>
 											<input type="text" class="form-control" value="<?php echo ( $nebula_options['edited_yet'] )? 'Yes' : 'No'; ?>" readonly />
 											<input type="text" name="nebula_options[edited_yet]" id="edited_yet" class="form-control hidden" value="true" readonly />
 											<p class="nebula-help-text short-help form-text text-muted"></p>
@@ -1735,21 +1751,35 @@
 										</div>
 
 										<div class="form-group">
-											<label for="current_version">Current Nebula Version Number</label>
+											<label for="first_version">First Nebula version when installed</label>
+											<input type="text" id="first_version" class="form-control" value="<?php echo $nebula_data['first_version']; ?>" readonly />
+											<p class="nebula-help-text short-help form-text text-muted">This is the Nebula version number when it was first installed.</p>
+											<p class="option-keywords">readonly</p>
+										</div>
+
+										<div class="form-group">
+											<label for="current_version">Current Nebula version number</label>
 											<input type="text" id="current_version" class="form-control" value="<?php echo $nebula_data['current_version']; ?>" readonly />
 											<p class="nebula-help-text short-help form-text text-muted">This is the Nebula version number when it was last saved. It should match: <strong><?php echo $this->version('raw'); ?></strong></p>
 											<p class="option-keywords">readonly</p>
 										</div>
 
 										<div class="form-group">
-											<label for="current_version_date">Current Nebula Version Date</label>
+											<label for="current_version_date">Current Nebula version date</label>
 											<input type="text" id="current_version_date" class="form-control" value="<?php echo $nebula_data['current_version_date']; ?>" readonly />
 											<p class="nebula-help-text short-help form-text text-muted">This is the Nebula version date when it was last saved. It should match: <strong><?php echo $this->version('date'); ?></strong></p>
 											<p class="option-keywords">readonly</p>
 										</div>
 
 										<div class="form-group">
-											<label for="version_legacy">Legacy Nebula Version?</label>
+											<label for="num_theme_updates">Number of Nebula theme updates</label>
+											<input type="text" id="num_theme_updates" class="form-control" value="<?php echo $nebula_data['num_theme_updates']; ?>" readonly />
+											<p class="nebula-help-text short-help form-text text-muted">The number of times the parent Nebula theme has been updated via WordPress Updates.</p>
+											<p class="option-keywords">readonly</p>
+										</div>
+
+										<div class="form-group">
+											<label for="version_legacy">Legacy Nebula version?</label>
 											<input type="text" id="version_legacy" class="form-control" value="<?php echo $nebula_data['version_legacy']; ?>" readonly />
 											<p class="nebula-help-text short-help form-text text-muted">If a future version is deemed incompatible with previous versions, this will become true, and theme update checks will be disabled.</p>
 											<p class="nebula-help-text more-help form-text text-muted">Incompatible versions are labeled with a "u" at the end of the version number.</p>
@@ -1757,7 +1787,7 @@
 										</div>
 
 										<div class="form-group">
-											<label for="next_version">Next Nebula Version</label>
+											<label for="next_version">Next Nebula version</label>
 											<input type="text" name="nebula_options[next_version]" id="next_version" class="form-control" value="<?php echo $nebula_data['next_version']; ?>" readonly />
 											<p class="nebula-help-text short-help form-text text-muted">The latest version available on <a href="https://github.com/chrisblakley/Nebula" target="_blank">Github</a>.</p>
 											<p class="nebula-help-text more-help form-text text-muted">Re-checks with <a href="/update-core.php">theme update check</a> only when Nebula Child is activated.</p>
@@ -1765,7 +1795,7 @@
 										</div>
 
 										<div class="form-group">
-											<label for="online_users">Online Users</label>
+											<label for="online_users">Online users</label>
 											<input type="text" id="online_users" class="form-control" value="<?php echo $this->online_users(); ?>" readonly />
 											<p class="nebula-help-text short-help form-text text-muted">Currently online and last seen times of logged in users.</p>
 											<p class="nebula-help-text more-help form-text text-muted">A value of 1 or greater indicates it is working.</p>

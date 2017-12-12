@@ -11,11 +11,11 @@
 			<?php do_action('nebula_body_open'); ?>
 
 			<div id="header-section" role="banner">
-				<?php if ( get_theme_mod('nebula_offcanvas_menu', true) || get_theme_mod('nebula_mobile_search', true) ): ?>
+				<?php if ( (get_theme_mod('nebula_offcanvas_menu', true) && (has_nav_menu('mobile') || has_nav_menu('primary'))) || get_theme_mod('nebula_mobile_search', true) ): ?>
 					<div id="mobilebarcon">
 						<div class="row mobilenavcon">
 							<div class="col">
-								<?php if ( get_theme_mod('nebula_offcanvas_menu', true) ): ?>
+								<?php if ( get_theme_mod('nebula_offcanvas_menu', true) && (has_nav_menu('mobile') || has_nav_menu('primary')) ): ?>
 									<a class="mobilenavtrigger alignleft" href="#mobilenav" title="Navigation"><i class="fa fa-bars"></i></a>
 									<nav id="mobilenav" role="navigation">
 										<?php

@@ -47,7 +47,10 @@ jQuery(function(){
  ===========================*/
 
 jQuery(window).on('load', function(){
-	initEventTracking();
+	if ( typeof window.snapchatPageShown === 'undefined' || window.snapchatPageShown === true ){ //Don't automatically begin event tracking for Snapchat preloading
+		initEventTracking();
+	}
+
 	conditionalJSLoading();
 	initBootstrapFunctions();
 
@@ -2587,6 +2590,11 @@ function nebulaHelpers(){
 	nebula.dom.html.removeClass('no-js').addClass('js'); //In case Modernizr is not being used
 	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'nofollow external noopener'); //Add rel attributes to external links
 
+	if ( 'deviceMemory' in navigator ){ //Device Memory - Chrome 64+
+		var deviceMemoryLevel = navigator.deviceMemory < 1 ? 'lite' : 'full';
+		nebula.dom.html.addClass('device-memory-' + deviceMemoryLevel);
+	}
+
 	//Remove filetype icons from images within <a> tags and buttons.
 	jQuery('a img').closest('a').addClass('no-icon');
 	jQuery('.no-icon:not(a)').find('a').addClass('no-icon');
@@ -3649,7 +3657,7 @@ function nebulaYoutubeReady(e){
 		var id = get('v', e.target.getVideoUrl()) || jQuery(e.target.getIframe()).attr('src').split('?')[0].split('/').pop() || jQuery(e.target.getIframe()).attr('id'); //Parse the video URL for the ID or use the iframe ID
 	}
 
-	nebulaVideos[id].platform = 'youtube'; //The platform the video is hosted using. Useful when this object is passed without reference to the object it is currently inside.
+	nebulaVideos[id].platform = 'youtube'; //The platform the video is hosted using.
 	nebulaVideos[id].element = e.target.getIframe(); //The player iframe. Selectable with jQuery(thisVideo.element)...
 	nebulaVideos[id].autoplay = jQuery(e.target.getIframe()).attr('src').indexOf('autoplay=1') > 0; //Look for the autoplay parameter in the ifrom src.
 	nebulaVideos[id].title = videoTitle || jQuery(e.target.getIframe()).attr('title') || id;
@@ -3792,7 +3800,7 @@ function nebulaVimeoTracking(){
 		});
 	}
 
-	//To trigger events on these videos, use the syntax: players.vimeo['PHG-Overview-Video'].api("play");
+	//To trigger events on these videos, use the syntax: nebulaVideos['PHG-Overview-Video'].play();
 	function createVimeoPlayers(){
 		jQuery('iframe[src*="vimeo"]').each(function(i){
 			var id = jQuery(this).attr('id');
@@ -3822,7 +3830,7 @@ function nebulaVimeoTracking(){
 	}
 
 	function vimeoReady(data){
-		nebulaVideos[data.id].platform = 'vimeo'; //The platform the video is hosted using. Useful when this object is passed without reference to the object it is currently inside.
+		nebulaVideos[data.id].platform = 'vimeo'; //The platform the video is hosted using.
 		nebulaVideos[data.id].autoplay = jQuery(nebulaVideos[data.id].element).attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the iframe src.
 		nebulaVideos[data.id].id = data.id;
 		nebulaVideos[data.id].current = 0; //The current position of the video. Units: Seconds

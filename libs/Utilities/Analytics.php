@@ -24,8 +24,11 @@ if ( !trait_exists('Analytics') ){
 				list($version, $domainDepth, $cid1, $cid2) = explode('.', $_COOKIE["_ga"], 4);
 				$contents = array('version' => $version, 'domainDepth' => $domainDepth, 'cid' => $cid1 . '.' . $cid2);
 				$cid = $contents['cid'];
+			} elseif ( isset($_SESSION) && !empty($_SESSION['nebula_cid']) ){
+				$cid = $_SESSION['nebula_cid'];
 			} else {
 				$cid = $this->ga_generate_UUID();
+				$_SESSION['nebula_cid'] = $cid;
 			}
 
 			return $cid;
@@ -118,7 +121,14 @@ if ( !trait_exists('Analytics') ){
 
 		//Handle the AJAX data to build the measurement parameters and send to Google Analytics
 		public function ga_ajax(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){
+				wp_die('Permission Denied.');
+			}
+
+			if ( !$this->get_option('ga_server_side_fallback') ){
+				wp_die('Disabled');
+			}
+
 			if ( !$this->is_bot() ){
 				//Location and Title
 				$additional_fields = array(
@@ -190,6 +200,7 @@ if ( !trait_exists('Analytics') ){
 				'cid' => $this->ga_parse_cookie(),
 				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']),
 				'uip' => $_SERVER['REMOTE_ADDR'],
+				'ul' => locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']),
 				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '',
 				'dl' => $this->requested_url(), //Likely "admin-ajax.php" until overwritten
 				'dt' => ( get_the_title() )? get_the_title() : '', //Likely empty until overwritten
@@ -326,10 +337,14 @@ if ( !trait_exists('Analytics') ){
 			$override = apply_filters('pre_ga_send_data', null, $data);
 			if ( isset($override) ){return;}
 
-			//https://ga-dev-tools.appspot.com/hit-builder/
+			if ( $this->get_option('ga_server_side_fallback') ){
+				//https://ga-dev-tools.appspot.com/hit-builder/
 
-			$response = wp_remote_get('https://www.google-analytics.com/collect?payload_data&' . http_build_query($data));
-			return $response;
+				$response = wp_remote_get('https://www.google-analytics.com/collect?payload_data&' . http_build_query($data));
+				return $response;
+			}
+
+			return false;
 		}
 
 		//Load abandonment tracking

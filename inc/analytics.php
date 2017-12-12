@@ -38,6 +38,7 @@
 			hitType: '<?php echo nebula()->get_option('cd_hittype'); ?>',
 			hitInteractivity: '<?php echo nebula()->get_option('cd_hitinteractivity'); ?>',
 			hitMethod: '<?php echo nebula()->get_option('cd_hitmethod'); ?>',
+			deviceMemory: '<?php echo nebula()->get_option('cd_devicememory'); ?>',
 			network: '<?php echo nebula()->get_option('cd_network'); ?>',
 			referrer: '<?php echo nebula()->get_option('cd_referrer'); ?>',
 			author: '<?php echo nebula()->get_option('cd_author'); ?>',
@@ -420,26 +421,45 @@
 				var connection = ( navigator.onLine )? 'Online' : 'Offline';
 				model.set(gaCustomDimensions['network'], connection, true);
 
+				if ( 'deviceMemory' in navigator ){ //Chrome 64+
+					var deviceMemoryLevel = navigator.deviceMemory < 1 ? 'lite' : 'full';
+					model.set(gaCustomDimensions['deviceMemory'], navigator.deviceMemory + '(' + deviceMemoryLevel + ')', true);
+				} else {
+					model.set(gaCustomDimensions['deviceMemory'], '(not set)', true);
+				}
+
 				originalBuildHitTask(model); //Send the payload to Google Analytics
 			});
 		});
 
-		ga('send', 'pageview', {
-			'hitCallback': function(){
-				window.GAready = true; //Set a global boolean variable
-				document.dispatchEvent(new Event('gaready')); //Trigger an event when GA is ready (without jQuery)
-
-				if ( typeof initEventTracking === 'function' ){
-					initEventTracking();
-				}
-
-				<?php if ( is_child_theme() ): ?>
-					if ( typeof supplementalEventTracking === 'function' ){
-						supplementalEventTracking();
-					}
-				<?php endif; ?>
+		<?php if ( $_SERVER['HTTP_X_PURPOSE'] === 'preview' && isset($_SERVER['HTTP_USER_AGENT']) && strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'snapchat') > 0 ): //Check if viewing in Snapchat ?>
+			window.snapchatPageShown = false;
+			function onSnapchatPageShow(){ //Listen for swipe-up for Snapchat users due to preloading. This function is called from Snapchat itself!
+				window.snapchatPageShown = true;
+				nebulaSendGAPageview();
 			}
-		});
+		<?php else: ?>
+			nebulaSendGAPageview();
+		<?php endif; ?>
+
+		function nebulaSendGAPageview(){
+			ga('send', 'pageview', {
+				'hitCallback': function(){
+					window.GAready = true; //Set a global boolean variable
+					document.dispatchEvent(new Event('gaready')); //Trigger an event when GA is ready (without jQuery)
+
+					if ( typeof initEventTracking === 'function' ){
+						initEventTracking();
+					}
+
+					<?php if ( is_child_theme() ): ?>
+						if ( typeof supplementalEventTracking === 'function' ){
+							supplementalEventTracking();
+						}
+					<?php endif; ?>
+				}
+			});
+		}
 
 		<?php do_action('nebula_ga_after_send_pageview'); ?>
 

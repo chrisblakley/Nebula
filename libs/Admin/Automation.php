@@ -166,6 +166,7 @@ if ( !trait_exists('Automation') ){
 		public function set_dates(){
 			$first_activation = $this->get_data('first_activation');
 			if ( empty($first_activation) ){
+				$this->update_data('first_version', $this->version('raw'));
 				$this->update_data('first_activation', time());
 			}
 		}

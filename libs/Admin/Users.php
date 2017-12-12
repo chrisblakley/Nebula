@@ -234,7 +234,7 @@ if ( !trait_exists('Users') ){
 
 			//If editing own user, update NVDB
 			if ( $this->get_option('visitors_db') && $user_id === get_current_user_id() ){
-				$this->update_visitor(array(
+				$this->update_visitor_data(array(
 					'job_title' => sanitize_text_field($_POST['jobtitle']),
 					'company' => sanitize_text_field($_POST['jobcompany']),
 					'company_website' => sanitize_text_field($_POST['jobcompanywebsite']),
