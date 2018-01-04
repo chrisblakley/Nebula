@@ -314,7 +314,7 @@ function nebula_send_to_hubspot($data=array()){
         if ( empty($data['hubspot_vid']) && empty($data['email_address']) ){ //If calling from AJAX we must lookup VID or Email Address
             global $wpdb;
             $nebula_id = get_nebula_id();
-	    $sql = $wpdb->prepare("SELECT hubspot_vid, email_address FROM nebula_visitors WHERE nebula_id LIKE '%d' AND email_address <> '' OR hubspot_vid <> ''", $nebula_id);
+	    $sql = $wpdb->prepare("SELECT hubspot_vid, email_address FROM nebula_visitors WHERE nebula_id LIKE %s AND email_address <> '' OR hubspot_vid <> ''", $nebula_id);
             $vid_and_email = $wpdb->get_results($sql);
             $vid_and_email = (array) $vid_and_email[0];
             $hubspot_vid = $vid_and_email['hubspot_vid'];
