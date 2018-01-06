@@ -50,11 +50,11 @@ jQuery(function(){
 			//Direct Link icons
 			var thisTab = jQuery(this).closest('.tab-pane').attr('id');
 			var thisOption = jQuery(this).closest('.form-group, .multi-form-group').find('.form-control').attr('id');
-			//jQuery(this).append('<a class="direct-link" href="themes.php?page=nebula_options&tab=' + thisTab + '&option=' + thisOption + '" title="Link to this option" tabindex="-1"><i class="fa fa-fw fa-link"></i></a>'); //@todo "Nebula" 0: this should confirm leaving on click if there are changes to the form!
+			//jQuery(this).append('<a class="direct-link" href="themes.php?page=nebula_options&tab=' + thisTab + '&option=' + thisOption + '" title="Link to this option" tabindex="-1"><i class="fas fa-fw fa-link"></i></a>'); //@todo "Nebula" 0: this should confirm leaving on click if there are changes to the form!
 
 			//More Help expander icons
 			if ( jQuery(this).parent().find('.more-help').length ){
-				jQuery(this).append('<a class="toggle-more-help" href="#" title="Show more information" tabindex="-1"><i class="fa fa-fw fa-question-circle"></i></a>');
+				jQuery(this).append('<a class="toggle-more-help" href="#" title="Show more information" tabindex="-1"><i class="fas fa-fw fa-question-circle"></i></a>');
 			}
 		});
 
@@ -86,7 +86,7 @@ function developerMetaboxes(){
 
 	jQuery(document).on('submit', '.searchfiles', function(e){
 		if ( jQuery('input.findterm').val().trim().length >= 3 ){
-			jQuery('#searchprogress').removeClass().addClass('fa fa-spinner fa-fw fa-spin');
+			jQuery('#searchprogress').removeClass('fa-search').addClass('fas fa-spinner fa-spin fa-fw');
 
 			jQuery.ajax({
 				type: 'POST',
@@ -100,7 +100,7 @@ function developerMetaboxes(){
 					}]
 				},
 				success: function(response){
-					jQuery('#searchprogress').removeClass().addClass('fa fa-search fa-fw');
+					jQuery('#searchprogress').removeClass('fa-spinner fa-spin').addClass('fas fa-search fa-fw');
 					jQuery('div.search_results').html(response).addClass('done');
 				},
 				error: function(XMLHttpRequest, textStatus, errorThrown){
@@ -175,7 +175,7 @@ function initializationStuff(){
 		if ( !confirm('This will reset some WordPress settings, all Nebula options, and reset the homepage content! Are you sure you want to initialize?') ) {
 			return false;
 		} else {
-			jQuery('.nebula-activated-description').html('<i class="fa fa-spinner fa-spin"></i> Running initialization...');
+			jQuery('.nebula-activated-description').html('<i class="fas fa-spinner"></i> Running initialization...');
 
 			jQuery.ajax({
 				type: "POST",
@@ -186,25 +186,25 @@ function initializationStuff(){
 				},
 				success: function(data){
 					if ( data.indexOf('successful-nebula-init') !== -1 ){
-						jQuery('.nebula-activated-title').html('<i class="fa fa-check" style="color: green;"></i> Nebula has been initialized!');
+						jQuery('.nebula-activated-title').html('<i class="fas fa-check" style="color: green;"></i> Nebula has been initialized!');
 						jQuery('.nebula-activated-description').html('Settings have been updated. The home page has been updated and has been set as the static front page in <a href="options-reading.php">Settings > Reading</a>.<br /><strong>Next step:</strong> Configure <a href="themes.php?page=nebula_options">Nebula Options</a>');
 						return false;
 					} else {
 						jQuery('#nebula-activate-success').removeClass('updated').addClass('error');
-						jQuery('.nebula-activated-title').html('<i class="fa fa-times" style="color: #dd3d36;"></i> AJAX Initialization Error.');
+						jQuery('.nebula-activated-title').html('<i class="fas fa-times" style="color: #dd3d36;"></i> AJAX Initialization Error.');
 						jQuery('.nebula-activated-description').html('AJAX initialization has failed. Attempting standard initialization. <strong>This will reload the page in 2 seconds...</strong>');
 						setTimeout(function(){
-							jQuery('.nebula-activated-title').html('<i class="fa fa-spinner fa-spin" style="color: #dd3d36;"></i> AJAX Initialization Error.');
+							jQuery('.nebula-activated-title').html('<i class="fas fa-spinner" style="color: #dd3d36;"></i> AJAX Initialization Error.');
 							window.location = 'themes.php?nebula-initialization=true';
 						}, 2000);
 					}
 				},
 				error: function(XMLHttpRequest, textStatus, errorThrown){
 					jQuery('#nebula-activate-success').removeClass('updated').addClass('error');
-					jQuery('.nebula-activated-title').html('<i class="fa fa-times" style="color: #dd3d36;"></i> AJAX Initialization Error.');
+					jQuery('.nebula-activated-title').html('<i class="fas fa-times" style="color: #dd3d36;"></i> AJAX Initialization Error.');
 					jQuery('.nebula-activated-description').html('An AJAX error has occurred. Attempting standard initialization. <strong>This will reload the page in 2 seconds...</strong>');
 					setTimeout(function(){
-						jQuery('.nebula-activated-title').html('<i class="fa fa-spinner fa-spin" style="color: #dd3d36;"></i> AJAX Initialization Error.');
+						jQuery('.nebula-activated-title').html('<i class="fas fa-spinner" style="color: #dd3d36;"></i> AJAX Initialization Error.');
 						window.location = 'themes.php?nebula-initialization=true';
 					}, 2000);
 				},
@@ -425,7 +425,7 @@ function checkImportants(){
 	jQuery('.tab-pane').each(function(){
 		if ( jQuery(this).find('.important-empty').length ){
 			if ( !jQuery('.nav-link[href$=' + jQuery(this).attr('id') + '] .empty-important-tab-warn').length ){ //If the warning isn't already showing
-				jQuery('.nav-link[href$=' + jQuery(this).attr('id') + ']').append('<i class="fa fa-fw fa-exclamation-triangle empty-important-tab-warn"></i>');
+				jQuery('.nav-link[href$=' + jQuery(this).attr('id') + ']').append('<i class="fas fa-fw fa-exclamation-triangle empty-important-tab-warn"></i>');
 			}
 		} else {
 			jQuery('.nav-link[href$=' + jQuery(this).attr('id') + ']').find('.empty-important-tab-warn').remove();

@@ -10,8 +10,13 @@ $admin_media_queries: (
 	mobile: "(max-width: 500px)",
 );
 
-#wpadminbar i {-webkit-font-smoothing: antialiased;}
-
+//Note: for the front-end, there is a <style> tag for the adminbar in /libs/Admin/Admin.php
+#wpadminbar {
+	i, svg {-webkit-font-smoothing: antialiased;
+		&.fa-fw {width: 1.25em;}
+	}
+	.svg-inline--fa {height: 1em;}
+}
 
 //WordPress Admin sidebar menu to match theme color
 //Non-current page hovers
@@ -78,7 +83,9 @@ th#id {width: 50px;}
 
 //Dev Metabox
 #phg_developer_info {
-	.secured-connection i {color: $success_color;}
+	.secured-connection {
+		i, svg {color: $success_color;}
+	}
 	#testloadcon {pointer-events: none; opacity: 0; visibility: hidden; display: none;}
 	form.searchfiles {display: inline-block; margin-bottom: 10px; width: 90%;
 		input.findterm {padding: 2px 5px; font-size: 12px; border-radius: 4px; width: 46%;}

@@ -1,4 +1,59 @@
 // ===========================
+// Functions
+// ===========================
+
+//.example {font-size: rem(14px);}
+@function rem($size){
+	$remSize: $size/16px;
+	@return #{$remSize}rem;
+}
+
+//.example {color: brand(facebook);}
+//.example {color: brand(flickr, secondary);}
+//.example {color: brand(flickr, 2);}
+@function brand($name, $index: 1){
+	@if $index == 0 {
+		$index: 1;
+	}
+
+	$index_names: (primary: 1, secondary: 2, tertiary: 3, quaternary: 4, quinary: 5, senary: 6, septenary: 7, octonary: 8, nonary: 9, denary: 10);
+	@if map-has-key($index_names, $index) {
+		$index: map_get($index_names, $index);
+	}
+
+	$brand_colors: map-get($brands, $name);
+	@if $index > length($brand_colors) {
+		//@warn '#{$name} does not have a color in the index of #{$index}';
+		$index: 1;
+	}
+
+	@if length($brand_colors) == 1 {
+		@return $brand_colors;
+	}
+
+	@each $current_color in $brand_colors {
+		$i: index($brand_colors, $current_color);
+		//@warn '#{$current_color} is in the index of #{$i}';
+		@if $i == $index {
+			@return $current_color;
+		}
+	}
+}
+
+//.example {@include prefix((transition: right 0.5s easing(easeOutBack)));}
+//.example {@include prefix((transition: right 0.5s easing(custom, "0.190, 1.000, 0.220, 1.000")));}
+@function easing($ease: linear, $custom: ""){
+	@each $name, $values in $easings {
+		@if $ease == $name {
+			@return cubic-bezier(unquote(#{$values}) unquote(#{$custom}));
+		} @else {
+			//@warn '#{$ease} not found in the easings map.';
+		}
+	}
+}
+
+
+// ===========================
 // Mixins
 // ===========================
 
@@ -185,14 +240,16 @@
 
 //Prepend an icon to a link that slides in on hover.
 //a.element {@include iconpeek("\f054");} //Optionally pass a FontAwesome icon from http://fortawesome.github.io/Font-Awesome/icons/ using the provided unicode.
-@mixin iconpeek($icon: "\f061"){
+@mixin iconpeek($icon: "\f061", $style: "Font Awesome 5 Solid"){
     display: inline-block; position: relative; overflow: hidden; transition: padding 0.4s easing(easeOutBack);
-    &:before {content: $icon; font-family: "FontAwesome"; position: absolute; left: -25px; transition: left 0.4s easing(easeOutBack);}
+    &:before {content: $icon; font-family: $style; display: none;}
+    svg {position: absolute; left: -25px; height: 100%; transition: left 0.4s easing(easeOutBack);}
+
     &:hover {padding-left: 25px;
-        &:before {left: 0;}
+        svg {left: 0;}
     }
 }
-.nebula-peek, .nebula-iconpeek {@include iconpeek();}
+.nebula-peek, .nebula-iconpeek, a.nebula-peek, a.nebula-iconpeek {@include iconpeek();}
 
 //.element-solid {@include arrow('top','left', 10px, #4fade3);}
 //.element-border {@include arrow('top','left', 10px, #eee, #4fade3, 6px);}
@@ -272,60 +329,4 @@
 }
 @mixin nope($features...) { //modernizr alias
 	@include modernizr($features, $supports: false){@content;}
-}
-
-
-
-// ===========================
-// Functions
-// ===========================
-
-//.example {font-size: rem(14px);}
-@function rem($size){
-	$remSize: $size/16px;
-	@return #{$remSize}rem;
-}
-
-//.example {color: brand(facebook);}
-//.example {color: brand(flickr, secondary);}
-//.example {color: brand(flickr, 2);}
-@function brand($name, $index: 1){
-	@if $index == 0 {
-		$index: 1;
-	}
-
-	$index_names: (primary: 1, secondary: 2, tertiary: 3, quaternary: 4, quinary: 5, senary: 6, septenary: 7, octonary: 8, nonary: 9, denary: 10);
-	@if map-has-key($index_names, $index) {
-		$index: map_get($index_names, $index);
-	}
-
-	$brand_colors: map-get($brands, $name);
-	@if $index > length($brand_colors) {
-		//@warn '#{$name} does not have a color in the index of #{$index}';
-		$index: 1;
-	}
-
-	@if length($brand_colors) == 1 {
-		@return $brand_colors;
-	}
-
-	@each $current_color in $brand_colors {
-		$i: index($brand_colors, $current_color);
-		//@warn '#{$current_color} is in the index of #{$i}';
-		@if $i == $index {
-			@return $current_color;
-		}
-	}
-}
-
-//.example {@include prefix((transition: right 0.5s easing(easeOutBack)));}
-//.example {@include prefix((transition: right 0.5s easing(custom, "0.190, 1.000, 0.220, 1.000")));}
-@function easing($ease: linear, $custom: ""){
-	@each $name, $values in $easings {
-		@if $ease == $name {
-			@return cubic-bezier(unquote(#{$values}) unquote(#{$custom}));
-		} @else {
-			//@warn '#{$ease} not found in the easings map.';
-		}
-	}
 }

@@ -222,7 +222,7 @@ if ( !trait_exists('Shortcodes') ){
 			}
 			$extra_style = ( !empty($color) )? 'color:' . $color . ';' :'';
 			$extra_style .= ( !empty($size) )? 'font-size:' . $size . ';' :'';
-			return '<i class="' . $class . ' nebula-icon-shortcode ' . 'fa fa-fw ' . $type . '" style="' . $extra_style . '"></i>';
+			return '<i class="' . $class . ' nebula-icon-shortcode ' . 'fas fa-fw ' . $type . '" style="' . $extra_style . '"></i>';
 		}
 
 		public function button_shortcode($atts, $content=''){
@@ -236,7 +236,7 @@ if ( !trait_exists('Shortcodes') ){
 				if ( strpos($icon, 'fa-') === false){
 					$icon = 'fa-' . $icon;
 				}
-				$icon = '<i class="fa fa-fw ' . $icon . '"></i> ';
+				$icon = '<i class="fas fa-fw ' . $icon . '"></i> ';
 			}
 
 			if ( $size ){
@@ -462,7 +462,7 @@ if ( !trait_exists('Shortcodes') ){
 		public function accordion_item_shortcode($attributes, $content=''){
 			extract(shortcode_atts(array('class' => '', 'style' => '', 'title' => '', 'default' => 'show'), $attributes));
 
-			return '<div class="card"><div class="card-header" rol="tab"><a data-toggle="collapse" data-parent="#accordion" href="#collapse' . uniqid() . '"><h5 class="m-0"><i class="fa fa-plus"></i> ' . $title . '</h5></a></div><div id="' . $id . '" class="collapse ' . $default . ' ' . $class . '" role="tabpanel"><div class="card-block">' . $content . '</div></div></div>';
+			return '<div class="card"><div class="card-header" rol="tab"><a data-toggle="collapse" data-parent="#accordion" href="#collapse' . uniqid() . '"><h5 class="m-0"><i class="fas fa-plus"></i> ' . $title . '</h5></a></div><div id="' . $id . '" class="collapse ' . $default . ' ' . $class . '" role="tabpanel"><div class="card-block">' . $content . '</div></div></div>';
 		}
 
 		public function tooltip_shortcode($atts, $content=''){

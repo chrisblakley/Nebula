@@ -20,11 +20,12 @@
 }
 
 //@include nebula_code(javascript jquery js, #2b5797);
-@mixin nebula_code($languages, $color: $text_color, $unicode: false){
+@mixin nebula_code($languages, $color: $text_color, $unicode: false, $style: "Font Awesome 5 Solid"){
 	@each $language in $languages {
 		.nebula-code.codetitle.#{$language} {color: $color;
 			@if $unicode {
-				&:before {content: "\#{$unicode}"; font-family: "FontAwesome"; margin-right: 3px;}
+				&:before {content: "\#{$unicode}"; font-family: $style; display: none;}
+				svg {margin-right: 3px;}
 			}
 		}
 
@@ -40,12 +41,12 @@
 }
 
 @include nebula_code(apache directive, #af2473);
-@include nebula_code(html htm, brand(html), f13b);
+@include nebula_code(html htm, brand(html), f13b, "Font Awesome 5 Brands");
 @include nebula_code(actionscript as, #a42222);
-@include nebula_code(css, brand(css), f13c);
-@include nebula_code(sass scss, brand(sass));
-@include nebula_code(javascript js jquery, brand(javascript));
+@include nebula_code(css, brand(css), f13c, "Font Awesome 5 Brands");
+@include nebula_code(sass scss, brand(sass), f41e, "Font Awesome 5 Brands");
+@include nebula_code(javascript js jquery, brand(javascript), f3b8, "Font Awesome 5 Brands");
 @include nebula_code(php, brand(php));
 @include nebula_code(regex, #666);
-@include nebula_code(shortcode wordpress, brand(wordpress), f19a);
+@include nebula_code(shortcode wordpress, brand(wordpress), f19a, "Font Awesome 5 Brands");
 @include nebula_code(sql mysql, #3e78a6);

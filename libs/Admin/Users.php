@@ -71,7 +71,7 @@ if ( !trait_exists('Users') ){
 
 			if ( $column_name === 'status' ){
 				if ( $this->is_user_online($id) ){
-					$online_now = '<i class="fa fa-caret-right" style="color: green;"></i> <strong>Online Now</strong>';
+					$online_now = '<i class="far fa-caret-right" style="color: green;"></i> <strong>Online Now</strong>';
 					if ( $this->user_single_concurrent($id) > 1 ){
 						$online_now .= '<br/><small>(<strong>' . $this->user_single_concurrent($id) . '</strong> locations)</small>';
 					}
@@ -225,24 +225,13 @@ if ( !trait_exists('Users') ){
 			if ( !current_user_can('edit_user', $user_id) ){
 				return false;
 			}
+
 			update_user_meta($user_id, 'jobtitle', sanitize_text_field($_POST['jobtitle']));
 			update_user_meta($user_id, 'jobcompany', sanitize_text_field($_POST['jobcompany']));
 			update_user_meta($user_id, 'jobcompanywebsite', sanitize_text_field($_POST['jobcompanywebsite']));
 			update_user_meta($user_id, 'usercity', sanitize_text_field($_POST['usercity']));
 			update_user_meta($user_id, 'userstate', sanitize_text_field($_POST['userstate']));
 			update_user_meta($user_id, 'phonenumber', sanitize_text_field($_POST['phonenumber']));
-
-			//If editing own user, update NVDB
-			if ( $this->get_option('visitors_db') && $user_id === get_current_user_id() ){
-				$this->update_visitor_data(array(
-					'job_title' => sanitize_text_field($_POST['jobtitle']),
-					'company' => sanitize_text_field($_POST['jobcompany']),
-					'company_website' => sanitize_text_field($_POST['jobcompanywebsite']),
-					'city' => sanitize_text_field($_POST['usercity']),
-					'state_name' => sanitize_text_field($_POST['userstate']),
-					'phone_number' => sanitize_text_field($_POST['phonenumber']),
-				));
-			}
 		}
 	}
 }

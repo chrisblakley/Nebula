@@ -43,10 +43,8 @@ get_header(); ?>
 					<script>
 						ga('send', 'event', 'Internal Search', 'No Results', jQuery('#s').val(), {'nonInteraction': true});
 					</script>
-					<?php nebula()->append_visitor_data(array('no_search_results' => get_search_query()), false); ?>
 				<?php endif; ?>
 
-				<?php nebula()->append_visitor_data(array('internal_search' => get_search_query())); ?>
 				<?php echo nebula()->search_form(); ?>
 			</div><!--/cols-->
 		</div><!--/row-->

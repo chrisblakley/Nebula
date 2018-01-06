@@ -164,11 +164,13 @@ body:not(.wp-admin) {
 	@each $filetype in $filetypes {
 		@if $specific {
 			a.icon[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
-				&:before {content: "\#{$unicode}"; font-family: "FontAwesome"; color: $color; margin-right: 5px; font-weight: normal;}
+				&:before {content: "\#{$unicode}"; font-family: "Font Awesome 5 Regular"; display: none;}
+				svg {color: $color; margin-right: 7px;}
 			}
 		} @else {
 			a[href$=".#{$filetype}"]:not(.no-icon):not(.btn), li.icon a[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
-				&:before {content: "\#{$unicode}"; font-family: "FontAwesome"; color: $color; margin-right: 5px; font-weight: normal;}
+				&:before {content: "\#{$unicode}"; font-family: "Font Awesome 5 Regular"; display: none;}
+				svg {color: $color; margin-right: 7px;}
 			}
 		}
 	}
@@ -179,7 +181,7 @@ body:not(.wp-admin) {
 @include file_icon(ppt pptx, f1c4, #d04525);
 @include file_icon(pdf pdfx, f1c1, #eb3b00);
 @include file_icon(zip zipx rar gz tar, f1c6, #777);
-@include file_icon(txt rtf, f0f6, #777);
+@include file_icon(txt rtf, f15c, #777);
 @include file_icon(html, f1c9, #f1672c, true);
 @include file_icon(php, f1c9, #5a68a5, true);
 @include file_icon(js, f1c9, #f1bf26, true);

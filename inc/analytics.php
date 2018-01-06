@@ -8,6 +8,8 @@
 
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('ga_tracking_id') && !is_customize_preview() ): //Universal Google Analytics ?>
 	<script>
+		<?php //@todo "Nebula" 0: Consider using the Data Layer for some of the below parameters (declare it here, then push to it below) ?>
+
 		window.GAready = false;
 
 		//Load the alternative async tracking snippet: https://developers.google.com/analytics/devguides/collection/analyticsjs/#alternative_async_tracking_snippet
@@ -39,6 +41,8 @@
 			hitInteractivity: '<?php echo nebula()->get_option('cd_hitinteractivity'); ?>',
 			hitMethod: '<?php echo nebula()->get_option('cd_hitmethod'); ?>',
 			deviceMemory: '<?php echo nebula()->get_option('cd_devicememory'); ?>',
+			batteryMode: '<?php echo nebula()->get_option('cd_batterymode'); ?>',
+			batteryPercent: '<?php echo nebula()->get_option('cd_batterypercent'); ?>',
 			network: '<?php echo nebula()->get_option('cd_network'); ?>',
 			referrer: '<?php echo nebula()->get_option('cd_referrer'); ?>',
 			author: '<?php echo nebula()->get_option('cd_author'); ?>',
@@ -48,7 +52,6 @@
 			contactMethod: '<?php echo nebula()->get_option('cd_contactmethod'); ?>',
 			formTiming: '<?php echo nebula()->get_option('cd_formtiming'); ?>',
 			formFlow: '<?php echo nebula()->get_option('cd_formflow'); ?>',
-			firstInteraction: '<?php echo nebula()->get_option('cd_firstinteraction'); ?>',
 			windowType: '<?php echo nebula()->get_option('cd_windowtype'); ?>',
 			geolocation: '<?php echo nebula()->get_option('cd_geolocation'); ?>',
 			geoAccuracy: '<?php echo nebula()->get_option('cd_geoaccuracy'); ?>',
@@ -78,6 +81,7 @@
 			serverResponseTime: '<?php echo nebula()->get_option('cm_serverresponsetime'); ?>',
 			domReadyTime: '<?php echo nebula()->get_option('cm_domreadytime'); ?>',
 			windowLoadedTime: '<?php echo nebula()->get_option('cm_windowloadedtime'); ?>',
+			batteryLevel: '<?php echo nebula()->get_option('cm_batterylevel'); ?>',
 			formImpressions: '<?php echo nebula()->get_option('cm_formimpressions'); ?>',
 			formStarts: '<?php echo nebula()->get_option('cm_formstarts'); ?>',
 			formSubmissions: '<?php echo nebula()->get_option('cm_formsubmissions'); ?>',
@@ -118,62 +122,25 @@
 					}
 				}
 
-				if ( !is_front_page() ){ //Don't track cat/tags on front page
-					//Categories
-					$post_cats = get_the_category();
-					if ( !empty($post_cats) ){
-						foreach($post_cats as $category){
-							$cats[] = $category->name;
-						}
-						sort($cats);
-						$cat_list = implode(', ', $cats);
-					} else {
-						$cat_list = '(No Categories)';
-					}
-					echo 'nebula.post.categories = "' . $cat_list . '";';
-					if ( nebula()->get_option('cd_categories') ){
-						echo 'ga("set", gaCustomDimensions["categories"], "' . $cat_list . '");';
-					}
+				if ( nebula()->get_option('cd_categories') ){
+					echo 'ga("set", gaCustomDimensions["categories"], nebula.post.categories);';
+				}
 
-					//Tags
-					$post_tags = get_the_tags();
-					if ( !empty($post_tags) ){
-						foreach( get_the_tags() as $tag ){
-							$tags[] = $tag->name;
-						}
-						sort($tags);
-						$tag_list = implode(', ', $tags);
-					} else {
-						$tag_list = '(No Tags)';
-					}
-					echo 'nebula.post.tags = "' . $tag_list . '";';
-					if ( nebula()->get_option('cd_tags') && !is_front_page() ){
-						echo 'ga("set", gaCustomDimensions["tags"], "' . $tag_list . '");';
-					}
+				if ( nebula()->get_option('cd_tags') ){
+					echo 'ga("set", gaCustomDimensions["tags"], nebula.post.tags);';
 				}
 
 				//Word Count
-				$word_count = str_word_count(strip_tags($post->post_content));
-				if ( is_int($word_count) ){
-					if ( nebula()->get_option('cm_wordcount') ){
-						echo 'ga("set", gaCustomMetrics["wordCount"], ' . $word_count . ');';
-					}
+				$word_count = nebula()->word_count();
+				if ( $word_count ){
 					echo 'nebula.post.wordcount = ' . $word_count . ';';
-					if ( $word_count < 10 ){
-						$word_count_range = '<10 words';
-					} elseif ( $word_count < 500 ){
-						$word_count_range = '10 - 499 words';
-					} elseif ( $word_count < 1000 ){
-						$word_count_range = '500 - 999 words';
-					} elseif ( $word_count < 1500 ){
-						$word_count_range = '1,000 - 1,499 words';
-					} elseif ( $word_count < 2000 ){
-						$word_count_range = '1,500 - 1,999 words';
-					} else {
-						$word_count_range = '2,000+ words';
+
+					if ( nebula()->get_option('cm_wordcount') ){
+						echo 'ga("set", gaCustomMetrics["wordCount"], nebula.post.wordcount);';
 					}
+
 					if ( nebula()->get_option('cd_wordcount') ){
-						echo 'ga("set", gaCustomDimensions["wordCount"], "' . $word_count_range . '");';
+						echo 'ga("set", gaCustomDimensions["wordCount"], "' . nebula()->word_count(array('range' => true)) . '");';
 					}
 				}
 			}
@@ -200,25 +167,7 @@
 
 			//Role
 			if ( nebula()->get_option('cd_role') ){
-				$usertype = '';
-				if ( is_user_logged_in() ){
-					$user_info = get_userdata(get_current_user_id());
-					$usertype = 'Unknown';
-					if ( !empty($user_info->roles) ){
-						$usertype = ucwords($user_info->roles[0]);
-					}
-				}
-
-				$staff = '';
-				if ( nebula()->is_dev() ){
-					$staff = ' (Developer)';
-				} elseif ( nebula()->is_client() ){
-					$staff = ' (Client)';
-				}
-
-				if ( !empty($usertype) || !empty($staff) ){
-					echo 'ga("set", gaCustomDimensions["role"], "' . $usertype .  $staff . '");';
-				}
+				echo 'ga("set", gaCustomDimensions["role"], "' . nebula()->user_role() . '");';
 			}
 
 			//Session ID
@@ -233,14 +182,6 @@
 				if ( $current_user && nebula()->get_option('cd_userid') ){
 					echo 'ga("set", gaCustomDimensions["userID"], "' . $current_user->ID . '");';
 					echo 'ga("set", "userId", ' . $current_user->ID . ');';
-				}
-			}
-
-			//First visit timestamp
-			if ( nebula()->get_option('cd_firstinteraction') ){
-				$first_session = nebula()->get_visitor_datapoint('first_session');
-				if ( !empty($first_session) ){
-					echo 'ga("set", gaCustomDimensions["firstInteraction"], "' . time() . '");';
 				}
 			}
 
@@ -432,7 +373,7 @@
 			});
 		});
 
-		<?php if ( $_SERVER['HTTP_X_PURPOSE'] === 'preview' && isset($_SERVER['HTTP_USER_AGENT']) && strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'snapchat') > 0 ): //Check if viewing in Snapchat ?>
+		<?php if ( (isset($_SERVER['HTTP_X_PURPOSE']) && $_SERVER['HTTP_X_PURPOSE'] === 'preview') && (isset($_SERVER['HTTP_USER_AGENT']) && strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'snapchat') > 0) ): //Check if viewing in Snapchat ?>
 			window.snapchatPageShown = false;
 			function onSnapchatPageShow(){ //Listen for swipe-up for Snapchat users due to preloading. This function is called from Snapchat itself!
 				window.snapchatPageShown = true;
@@ -555,19 +496,75 @@
 		t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
 		document,'script','//connect.facebook.net/en_US/fbevents.js');
 
-		<?php if ( nebula()->get_option('visitors_db') ): ?>
-			fbq('init', '<?php echo nebula()->get_option('facebook_custom_audience_pixel_id'); ?>', {
-				em: '<?php echo nebula()->get_visitor_datapoint('email_address'); ?>',
-				fn: '<?php echo nebula()->get_visitor_datapoint('first_name'); ?>',
-				ln: '<?php echo nebula()->get_visitor_datapoint('last_name'); ?>',
-			});
-		<?php else: ?>
-			fbq('init', '<?php echo nebula()->get_option('facebook_custom_audience_pixel_id'); ?>');
-		<?php endif; ?>
-
+		fbq('init', '<?php echo nebula()->get_option('facebook_custom_audience_pixel_id'); ?>'); //@todo "Nebula" 0: Can we *get* data from Hubspot to send email and other info here?
 		fbq('track', 'PageView');
 
 		<?php do_action('nebula_fbq_after_track_pageview'); //Hook into for adding more Facebook custom audience tracking. ?>
 	</script>
 	<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=<?php echo nebula()->get_option('facebook_custom_audience_pixel_id'); ?>&ev=PageView&noscript=1"/></noscript>
 <?php endif; ?>
+
+<?php if ( nebula()->get_option('hubspot_portal') ): //Hubspot CRM ?>
+	<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/<?php echo nebula()->get_option('hubspot_portal'); ?>.js"></script>
+	<script>
+		var _hsq = window._hsq = window._hsq || [];
+		_hsq.push(['setPath', '<?php echo str_replace(get_site_url(), '', get_permalink()); ?>']); //Is this even needed?
+
+		_hsq.push(["identify", {
+			ipaddress: '<?php echo $_SERVER['REMOTE_ADDR']; ?>',
+			user_agent: '<?php echo $_SERVER['HTTP_USER_AGENT']; ?>',
+			session_id: '<?php echo nebula()->nebula_session_id(); //If this hits rate limits, consider removing it ?>',
+		}]);
+
+		<?php if ( is_user_logged_in() ): //if logged into wordpress ?>
+			<?php $user_info = get_userdata(get_current_user_id()); ?>
+
+			_hsq.push(["identify", {
+				email: '<?php echo $user_info->user_email; ?>',
+				firstname: '<?php echo $user_info->first_name; ?>',
+				lastname: '<?php echo $user_info->last_name; ?>',
+				id: <?php echo get_current_user_id(); ?>,
+				username: '<?php echo $user_info->user_login; ?>',
+				role: '<?php echo nebula()->user_role(); ?>',
+				jobtitle: '<?php echo get_user_meta(get_current_user_id(), 'jobtitle', true); ?>',
+				company: '<?php echo get_user_meta(get_current_user_id(), 'jobcompany', true); ?>',
+				website: '<?php echo get_user_meta(get_current_user_id(), 'jobcompanywebsite', true); ?>',
+				city: '<?php echo get_user_meta(get_current_user_id(), 'usercity', true); ?>',
+				state: '<?php echo get_user_meta(get_current_user_id(), 'userstate', true); ?>',
+				phone: '<?php echo get_user_meta(get_current_user_id(), 'phonenumber', true); ?>',
+				notable_poi: '<?php echo nebula()->poi(); ?>',
+				cookies: ( window.navigator.cookieEnabled )? '1' : '0',
+				screen: window.screen.width + 'x' + window.screen.height + ' (' + window.screen.colorDepth + ' bits)',
+			}]);
+		<?php endif; ?>
+
+		<?php if ( nebula()->get_option('device_detection') ): ?>
+			_hsq.push(["identify", {
+				device: '<?php echo nebula()->get_device(); ?>',
+				os: '<?php echo nebula()->get_os(); ?>',
+				browser: '<?php echo nebula()->get_browser(); ?>',
+				bot: '<?php echo ( nebula()->is_bot() )? 1 : 0; ?>',
+			}]);
+		<?php endif; ?>
+
+		<?php do_action('nebula_hubspot_before_send_pageview'); //Hook into for adding more parameters before the pageview is sent. Can override any above identifications too. ?>
+
+		<?php if ( nebula()->get_option('ga_tracking_id') ): //If Google Analytics is used, grab the Client ID before sending the Hubspot pageview ?>
+			if ( typeof window.ga === 'function' ){ //If ga() exists get the CID, otherwise don't wait for it and just send the Hubspot pageview
+				window.ga(function(tracker){
+					_hsq.push(["identify", {
+						ga_cid: tracker.get('clientId'),
+					}]);
+
+					_hsq.push(['trackPageView']);
+				});
+			} else {
+				_hsq.push(['trackPageView']);
+			}
+		<?php else: ?>
+			_hsq.push(['trackPageView']);
+		<?php endif; ?>
+	</script>
+<?php endif; ?>
+
+<?php do_action('nebula_analytics_end'); //Hook into for adding more tracking scripts/services (or copy this entire file to the child theme and modify it directly). ?>

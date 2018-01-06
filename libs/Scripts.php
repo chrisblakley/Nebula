@@ -13,6 +13,7 @@ if ( !trait_exists('Scripts') ){
 			add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
 			add_action('login_enqueue_scripts', array($this, 'login_enqueue_scripts'));
 			add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
+			add_action('wp_enqueue_scripts', array($this, 'font_awesome_config'));
 
 			if ( $this->is_debug() || !empty($GLOBALS['wp_customize']) ){
 				add_filter('style_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
@@ -32,7 +33,7 @@ if ( !trait_exists('Scripts') ){
 				wp_register_style('nebula-google_font', $this->get_option('google_font_url'), array(), null, 'all');
 			}
 			$this->bootstrap('css');
-			wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', null, '4.7.0', 'all');
+			//wp_register_style('nebula-font_awesome', 'https://use.fontawesome.com/releases/v5.0.1/css/all.css', null, '5.0.1', 'all'); //Font Awesome 5 CSS method (Note: Pseudo font-family names would need to change to "Font Awesome 5 Free" in order to work with this method)
 			wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.16/css/jquery.dataTables.min.css', null, '1.10.16', 'all'); //Datatables is called via main.js only as needed.
 			wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.min.css', null, '1.8.2', 'all');
 			wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.structure.min.css', null, '1.12.1', 'all');
@@ -45,6 +46,7 @@ if ( !trait_exists('Scripts') ){
 			$this->jquery();
 			$this->bootstrap('js');
 			$this->register_script('nebula-popper', 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js', 'defer', null, '1.12.6', true); //This is not enqueued or dependent because it is called via main.js only as needed. Remove this after Bootstrap Beta 3
+			$this->register_script('nebula-font_awesome', 'https://use.fontawesome.com/releases/v5.0.1/js/all.js', 'defer', null, '5.0.1', true); //Font Awesome 5 JS SVG method
 			$this->register_script('nebula-modernizr_dev', get_template_directory_uri() . '/assets/js/vendor/modernizr.dev.js', 'defer', null, '3.3.1', false);
 			$this->register_script('nebula-modernizr_local', get_template_directory_uri() . '/assets/js/vendor/modernizr.min.js', 'defer', null, '3.3.1', false);
 			$this->register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', 'defer', null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
@@ -118,8 +120,6 @@ if ( !trait_exists('Scripts') ){
 						'instagram_url' => $this->get_option('instagram_url'),
 						'manage_options' => current_user_can('manage_options'),
 						'debug' => $this->is_debug(),
-						'visitors_db' => $this->get_option('visitors_db'),
-						'hubspot_api' => ( $this->get_option('hubspot_api') )? true : false,
 						'sidebar_expanders' => get_theme_mod('sidebar_accordion_expanders', true),
 					),
 					'resources' => array(
@@ -134,6 +134,8 @@ if ( !trait_exists('Scripts') ){
 					'excerpt' => $this->excerpt(array('words' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)),
 					'author' => urlencode(get_the_author()),
 					'year' => get_the_date('Y'),
+					'categories' => nebula()->post_categories(array('string' => true)),
+					'tags' => nebula()->post_tags(array('string' => true)),
 				),
 				'dom' => null,
 			);
@@ -162,7 +164,6 @@ if ( !trait_exists('Scripts') ){
 					'email' => $user_info->data->user_email,
 				),
 				'ip' => $_SERVER['REMOTE_ADDR'],
-				'nid' => $this->get_nebula_id(),
 				'cid' => $this->ga_parse_cookie(),
 				'client' => array( //Client data is here inside user because the cookie is not transferred between clients.
 					'bot' => $this->is_bot(),
@@ -196,7 +197,10 @@ if ( !trait_exists('Scripts') ){
 			wp_enqueue_style('nebula-bootstrap');
 			wp_enqueue_style('nebula-mmenu');
 			wp_enqueue_style('nebula-main');
-			wp_enqueue_style('nebula-font_awesome');
+
+			//wp_enqueue_style('nebula-font_awesome'); //Font Awesome 5 CSS method
+			wp_enqueue_script('nebula-font_awesome'); //Font Awesome 5 JS SVG method
+
 			if ( $this->get_option('google_font_url') ){
 				wp_enqueue_style('nebula-google_font');
 			}
@@ -251,7 +255,9 @@ if ( !trait_exists('Scripts') ){
 
 			//Stylesheets
 			wp_enqueue_style('nebula-admin');
-			wp_enqueue_style('nebula-font_awesome');
+
+			//wp_enqueue_style('nebula-font_awesome'); //Font Awesome 5 CSS method
+			wp_enqueue_script('nebula-font_awesome'); //Font Awesome 5 JS SVG method
 
 			if ( $this->ip_location() ){
 				wp_enqueue_style('nebula-flags');
@@ -309,6 +315,16 @@ if ( !trait_exists('Scripts') ){
 		//Get fresh resources when debugging
 		public function add_debug_query_arg($src){
 			return add_query_arg('debug', str_replace('.', '', $this->version('raw')) . '-' . rand(1000, 9999), $src);
+		}
+
+		//Prep Font Awesome JavaScript implementation configuration before calling the script itself
+		//https://fontawesome.com/how-to-use/font-awesome-api#configuration
+		public function font_awesome_config(){
+		    echo '<script>
+				window.FontAwesomeConfig = {
+					searchPseudoElements: true, //Replace :before and :after with <svg> icons too
+				}
+			</script>';
 		}
 	}
 }

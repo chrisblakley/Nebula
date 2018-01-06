@@ -114,6 +114,8 @@ if ( !trait_exists('Sass') ){
 					}
 				}
 
+				//$scss->setSourceMap(\Leafo\ScssPhp\Compiler::SOURCE_MAP_FILE); //Adds sourcemap support //@TODO "Nebula" 0: Not working yet
+
 				//Variables
 				$nebula_scss_variables = array(
 					'template_directory' => '"' . get_template_directory_uri() . '"',

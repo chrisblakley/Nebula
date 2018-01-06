@@ -692,7 +692,7 @@ trait Functions {
 			return false;
 		}
 
-		$icon = ( $data['icon'] )? '<i class="fa fa-calendar-o"></i> ' : '';
+		$icon = ( $data['icon'] )? '<i class="far fa-calendar"></i> ' : '';
 		$relative_date = human_time_diff(get_the_date('U')) . ' ago';
 
 		if ( $data['relative'] ){
@@ -721,7 +721,7 @@ trait Functions {
 		if ( ($this->get_option('author_bios') || $data['force']) && get_theme_mod('post_author', true) ){
 			$icon_html = '';
 			if ( $data['icon'] ){
-				$icon_html = '<i class="fa fa-user"></i> ';
+				$icon_html = '<i class="fas fa-user"></i> ';
 			}
 
 			if ( $data['linked'] && !$data['force'] ){
@@ -735,15 +735,15 @@ trait Functions {
 	//Post type meta
 	public function post_type($icon=true){
 		if ( get_theme_mod('search_result_post_types', true) ){
-			$post_icon_img = '<i class="fa fa-thumb-tack"></i>';
+			$post_icon_img = '<i class="fas fa-thumbtack"></i>';
 			if ( $icon ){
 				global $wp_post_types;
 				$post_type = get_post_type();
 
 				if ( $post_type === 'post' ){
-					$post_icon_img = '<i class="fa fa-thumb-tack"></i>';
+					$post_icon_img = '<i class="fas fa-thumbtack"></i>';
 				} elseif ( $post_type === 'page' ){
-					$post_icon_img = '<i class="fa fa-file-text"></i>';
+					$post_icon_img = '<i class="fas fa-file-alt"></i>';
 				} else {
 					$post_icon = $wp_post_types[$post_type]->menu_icon;
 					if ( !empty($post_icon) ){
@@ -753,7 +753,7 @@ trait Functions {
 							$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" />';
 						}
 					} else {
-						$post_icon_img = '<i class="fa fa-thumb-tack"></i>';
+						$post_icon_img = '<i class="fas fa-thumbtack"></i>';
 					}
 				}
 			}
@@ -769,6 +769,7 @@ trait Functions {
 			'linked' => true, //Link to category archive
 			'show_uncategorized' => true, //Show "Uncategorized" category
 			'force' => false,
+			'string' => false, //Return a string with no markup
 		);
 
 		$data = array_merge($defaults, $options);
@@ -776,7 +777,7 @@ trait Functions {
 		if ( get_theme_mod('post_categories', true) || $data['force'] ){
 			$the_icon = '';
 			if ( $data['icon'] ){
-				$the_icon = '<i class="fa fa-bookmark"></i> ';
+				$the_icon = '<i class="fas fa-bookmark"></i> ';
 			}
 
 			if ( is_object_in_taxonomy(get_post_type(), 'category') ){
@@ -790,6 +791,10 @@ trait Functions {
 					$category_list = strip_tags($category_list);
 				}
 
+				if ( $data['string'] ){
+					return strip_tags($category_list);
+				}
+
 				return '<span class="posted-in meta-item post-categories">' . $the_icon . $category_list . '</span>';
 			}
 		}
@@ -799,7 +804,8 @@ trait Functions {
 	public function post_tags($options=array()){
 		$defaults = array(
 			'icon' => true, //Show icon
-			'force' => false
+			'force' => false,
+			'string' => false, //Return a string with no markup
 		);
 
 		$data = array_merge($defaults, $options);
@@ -810,8 +816,13 @@ trait Functions {
 				$the_icon = '';
 				if ( $data['icon'] ){
 					$tag_plural = ( count(get_the_tags()) > 1 )? 'tags' : 'tag';
-					$the_icon = '<i class="fa fa-' . $tag_plural . '"></i> ';
+					$the_icon = '<i class="fas fa-' . $tag_plural . '"></i> ';
 				}
+
+				if ( $data['string'] ){
+					return strip_tags($tag_list);
+				}
+
 				return '<span class="posted-in meta-item post-tags">' . $the_icon . $tag_list . '</span>';
 			}
 		}
@@ -829,7 +840,7 @@ trait Functions {
 
 			$the_icon = '';
 			if ( $data['icon'] ){
-				$the_icon = '<i class="fa fa-expand"></i> ';
+				$the_icon = '<i class="fas fa-expand"></i> ';
 			}
 
 			$metadata = wp_get_attachment_metadata();
@@ -845,7 +856,7 @@ trait Functions {
 	public function post_exif($icon=true){
 		$the_icon = '';
 		if ( $icon ){
-			$the_icon = '<i class="fa fa-camera"></i> ';
+			$the_icon = '<i class="fas fa-camera"></i> ';
 		}
 
 		$imgmeta = wp_get_attachment_metadata();
@@ -904,7 +915,7 @@ trait Functions {
 
 			$the_icon = '';
 			if ( $data['icon'] ){
-				$the_icon = '<i class="fa ' . $comment_icon . '"></i> ';
+				$the_icon = '<i class="fas ' . $comment_icon . '"></i> ';
 			}
 
 			if ( $data['linked'] ){
@@ -1066,6 +1077,44 @@ trait Functions {
 		return $data['text'];
 	}
 
+	public function word_count($options=array()){
+		$override = apply_filters('pre_nebula_word_count', null, $options);
+		if ( isset($override) ){return;}
+
+		global $post;
+		$defaults = array(
+			'content' => $post->post_content,
+			'range' => false,
+		);
+
+		$data = array_merge($defaults, $options);
+
+		$word_count = str_word_count(strip_tags($data['content']));
+		if ( is_int($word_count) ){
+			if ( !$data['range'] ){
+				return $word_count;
+			}
+
+			if ( $word_count < 10 ){
+				$word_count_range = '<10 words';
+			} elseif ( $word_count < 500 ){
+				$word_count_range = '10 - 499 words';
+			} elseif ( $word_count < 1000 ){
+				$word_count_range = '500 - 999 words';
+			} elseif ( $word_count < 1500 ){
+				$word_count_range = '1,000 - 1,499 words';
+			} elseif ( $word_count < 2000 ){
+				$word_count_range = '1,500 - 1,999 words';
+			} else {
+				$word_count_range = '2,000+ words';
+			}
+
+			return $word_count_range;
+		}
+
+		return false;
+	}
+
 	//Use WP Pagenavi if active, or manually paginate.
 	public function paginate(){
 		if ( is_plugin_active('wp-pagenavi/wp-pagenavi.php') ){
@@ -1156,7 +1205,7 @@ trait Functions {
 		if ( isset($override) ){return;}
 		?>
 			<div class="nebula-social-button webshare">
-				<a class="btn btn-secondary btn-sm" href="#" target="_blank"><i class="fa fa-fw fa-share"></i> Share</a>
+				<a class="btn btn-secondary btn-sm" href="#" target="_blank"><i class="fas fa-fw fa-share"></i> Share</a>
 			</div>
 		<?php
 	}
@@ -1410,7 +1459,7 @@ trait Functions {
 		global $post;
 		$defaults = array(
 			'delimiter' => '&rsaquo;', //Delimiter between crumbs
-			'home' => '<i class="fa fa-home"></i>', //Text for the 'Home' link
+			'home' => '<i class="fas fa-home"></i>', //Text for the 'Home' link
 			'home_link' => home_url('/'),
 			'current' => true, //Show/Hide the current title in the breadcrumb
 			'before' => '<span class="current">', //Tag before the current crumb
@@ -1553,7 +1602,7 @@ trait Functions {
 
 		$form = '<form id="searchform" class="form-group form-inline ignore-form" role="search" method="get" action="' . home_url('/') . '">
 					<div class="input-group mb-2 mr-sm-2 mb-sm-0">
-						<div class="input-group-addon mb-2"><i class="fa fa-search"></i></div>
+						<div class="input-group-addon mb-2"><i class="fas fa-search"></i></div>
 						<label class="sr-only" for="s">Search</label>
 						<input id="s" class="form-control ignore-form mb-2" type="text" name="s" value="' . get_search_query() . '" placeholder="' . $placeholder . '" role="search" />
 					</div>
@@ -1571,8 +1620,11 @@ trait Functions {
 
 		$form = '<div id="nebula-hero-formcon">
 				<form id="nebula-hero-search" class="form-group search ignore-form" method="get" action="' . home_url('/') . '">
-					<label class="sr-only" for="nebula-hero-search-input">Autocomplete Search</label>
-					<input id="nebula-hero-search-input" type="search" class="form-control open input search nofade ignore-form" name="s" placeholder="' . $placeholder . '" autocomplete="off" role="search" tabindex="0" x-webkit-speech />
+					<div class="input-group">
+						<i class="fas fa-search"></i>
+						<label class="sr-only" for="nebula-hero-search-input">Autocomplete Search</label>
+						<input id="nebula-hero-search-input" type="search" class="form-control open input search nofade ignore-form" name="s" placeholder="' . $placeholder . '" autocomplete="off" role="search" tabindex="0" x-webkit-speech />
+					</div>
 				</form>
 			</div>';
 		return $form;
@@ -2734,6 +2786,7 @@ trait Functions {
 		if ( is_user_logged_in() ){
 			$classes[] = 'user-logged-in';
 			$classes[] = 'user-' . $current_user->user_login;
+
 			$user_info = get_userdata(get_current_user_id());
 			if ( !empty($user_info->roles) ){
 				$classes[] = 'user-role-' . $user_info->roles[0];

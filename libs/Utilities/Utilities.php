@@ -4,20 +4,17 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Utilities') ){
 	require_once get_template_directory() . '/libs/Utilities/Analytics.php';
-	require_once get_template_directory() . '/libs/Utilities/Visitors.php';
 	require_once get_template_directory() . '/libs/Utilities/Device.php';
 	require_once get_template_directory() . '/libs/Utilities/Sass.php';
 
 	trait Utilities {
 		use Analytics { Analytics::hooks as AnalyticsHooks;}
-		use Visitors { Visitors::hooks as VisitorsHooks;}
 		use Device { Device::hooks as DeviceHooks;}
 		use Sass { Sass::hooks as SassHooks;}
 
 		public function hooks(){
 			add_filter('posts_where' , array($this, 'fuzzy_posts_where'));
 			$this->AnalyticsHooks(); //Register Analytics hooks
-			$this->VisitorsHooks(); //Register Visitors hooks
 			$this->DeviceHooks(); //Register Device hooks
 			$this->SassHooks(); //Register Sass hooks
 			register_shutdown_function(array($this, 'ga_log_fatal_errors'));
@@ -273,6 +270,29 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			return false;
+		}
+
+		//Get the role (and dev/client designation)
+		public function user_role($staff_info=true){
+			$usertype = '';
+			if ( is_user_logged_in() ){
+				$user_info = get_userdata(get_current_user_id()); //yolo
+				$usertype = 'Unknown';
+				if ( !empty($user_info->roles) ){
+					$usertype = ( is_multisite() && is_super_admin() )? 'Super Admin' : ucwords($user_info->roles[0]);
+				}
+			}
+
+			$staff = '';
+			if ( $staff_info ){
+				if ( nebula()->is_dev() ){
+					$staff = ' (Developer)';
+				} elseif ( nebula()->is_client() ){
+					$staff = ' (Client)';
+				}
+			}
+
+			return $usertype . $staff;
 		}
 
 		//Check if the current IP address or logged-in user is a developer or client.
@@ -952,6 +972,203 @@ if ( !trait_exists('Utilities') ){
 					return $nebula_version_info;
 					break;
 			}
+		}
+
+		//Create Custom Properties
+		public function create_hubspot_properties(){
+			if ( nebula()->get_option('hubspot_portal') ){
+				if ( nebula()->get_option('hubspot_api') ){
+					//Get an array of all existing Hubspot CRM contact properties
+					$existing_nebula_properties = $this->get_nebula_hubspot_properties();
+
+					if ( empty($existing_nebula_properties) ){
+						//Create the Nebula group of properties
+						$content = '{
+							"name": "nebula",
+							"displayName": "Nebula",
+							"displayOrder": 5
+						}';
+
+						$this->hubspot_curl('http://api.hubapi.com/contacts/v2/groups?portalId=' . nebula()->get_option('hubspot_portal'), $content);
+					}
+
+					$custom_nebula_properties = array();
+
+					$custom_nebula_properties[] = array(
+						'name' => 'user_agent',
+						'label' => 'User Agent',
+						'description' => "The user agent of the contact's device/browser",
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'session_id',
+						'label' => 'Session ID',
+						'description' => 'The Nebula Session ID given to each session',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'id',
+						'label' => 'User ID',
+						'description' => 'The WordPress ID of logged in users',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'username',
+						'label' => 'Username',
+						'description' => 'The WordPress username of logged in users',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'role',
+						'label' => 'Role',
+						'description' => 'The WordPress role of this user (and any staff notations)',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'cookies',
+						'label' => 'Cookies',
+						'description' => 'Whether this user is allowing/blocking cookies',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'screen',
+						'label' => 'Screen',
+						'description' => "The screen dimensions (and color depth) of the user's device",
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'device',
+						'label' => 'Device',
+						'description' => 'The device being used',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'os',
+						'label' => 'Operating System',
+						'description' => "The operating system of the user's device",
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'browser',
+						'label' => 'Browser',
+						'description' => 'The browser used by this visitor',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'bot',
+						'label' => 'Bot',
+						'description' => 'Whether this user was detected as a bot',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'ga_cid',
+						'label' => 'Google Analytics CID',
+						'description' => 'The Google Analytics Client ID to identify this user in GA',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'internal_search',
+						'label' => 'Internal Search',
+						'description' => 'Keywords from the user internally searching the website',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'mailto_contacted',
+						'label' => 'Mailto Contacted',
+						'description' => 'The email address this user contacted via mailto link',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'phone_contacted',
+						'label' => 'Phone Contacted',
+						'description' => 'The phone number this user contacted via click-to-call link',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'geolocation',
+						'label' => 'Geolocation',
+						'description' => "The latitude/longitude of this user's geolocation (and accuracy)",
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'address_lookup',
+						'label' => 'Address Lookup',
+						'description' => 'An address looked up by the user (may not be their own address)',
+					);
+
+					foreach ( $custom_nebula_properties as $value ){
+						if ( !in_array($value['name'], $existing_nebula_properties) ){
+							$content = '{
+								"name": "' . $value['name'] . '",
+								"label": "' . $value['label'] . '",
+								"description": "' . $value['description'] . '",
+								"groupName": "nebula",
+								"type": "string",
+								"fieldType": "text",
+								"formField": true,
+								"displayOrder": 6,
+								"options": []
+							}';
+
+							$this->hubspot_curl('https://api.hubapi.com/contacts/v2/properties', $content);
+						}
+					}
+				} else {
+					?>
+					<div class="updated notice notice-warning">
+						<p><strong>Hubspot API Key Missing!</strong> <a href="https://app.hubspot.com/hapikeys">Get your API Key</a> then <a href="themes.php?page=nebula_options&tab=apis&option=hubspot_api">enter it here</a> and re-save Nebula Options, or <a href="https://app.hubspot.com/property-settings/<?php echo nebula()->get_option('hubspot_portal'); ?>/contact" target="_blank">manually create contact properties</a>.</p>
+						<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
+					</div>
+
+					<?php
+					//Should also have a note somewhere that custom identifications would need to be created manually (and implemented manually too). Recommend using a different property group than Nebula.
+				}
+			}
+		}
+
+		//Get all existing Hubspot CRM contact properties in the Nebula group
+		public function get_nebula_hubspot_properties(){
+			$all_hubspot_properties = $this->hubspot_curl('https://api.hubapi.com/contacts/v2/properties');
+			$all_hubspot_properties = json_decode($all_hubspot_properties, true);
+
+			$existing_nebula_properties = array();
+			foreach ( $all_hubspot_properties as $property ){
+				if ( $property['groupName'] == 'nebula' ){
+					$existing_nebula_properties[] = $property['name'];
+				}
+			}
+
+			return $existing_nebula_properties;
+		}
+
+		//Send data to Hubspot CRM via PHP curl
+		public function hubspot_curl($url, $content=null){
+			$sep = ( strpos($url, '?') === false )? '?' : '&';
+			$get_url = $url . $sep . 'hapikey=' . nebula()->get_option('hubspot_api');
+
+			if ( !empty($content) ){
+				/*
+					@TODO "Nebula" 0: 409 Conflict response happening. Was probably happening with cURL and just never noticed. -note: this message is from the old nvdb stuff. may not still apply here (and may be less of an issue since this only happens on options save now (instead of every pageload)
+						- Because the fields already exist, Hubspot is responding with "409 Conflict".
+						- This happens ~14 times since each property is sent individually.
+						- I'm pretty sure the data is still transferring just fine.
+						- Query Monitor is going red due to the 400-level response.
+						- This is a Hubspot CRM issue, not WordPress or Nebula (as far as I can tell)
+				*/
+
+				$response = wp_remote_post($get_url, array(
+					'headers'  => array('Content-Type' => 'application/json'),
+					'body' => $content,
+				));
+			} else {
+				$response = wp_remote_get($get_url);
+			}
+
+			if ( !is_wp_error($response) ){
+				return $response['body'];
+			}
+
+			return false;
 		}
 	}
 }

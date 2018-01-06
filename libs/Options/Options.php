@@ -7,6 +7,7 @@ if ( !trait_exists('Options') ){
 		public function hooks(){
 			add_action('current_screen', array($this, 'register_options'));
 			add_action('admin_menu', array($this, 'admin_sub_menu'));
+			add_action('nebula_options_saved', array($this, 'create_hubspot_properties'));
 		}
 
 		/*==========================
@@ -133,11 +134,11 @@ if ( !trait_exists('Options') ){
 
 			//Latest (IE10+)
 			if ( $file === 'css' ){
-				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap.min.css', null, '4.0.0b1', 'all');
+				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.3/css/bootstrap.min.css', null, '4.0.0b3', 'all');
 			} elseif ( $file === 'js' ){
-				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/js/bootstrap.min.js', 'defer', array('jquery-core'), '4.0.0b1', true);
+				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.3/js/bootstrap.bundle.min.js', 'defer', array('jquery-core'), '4.0.0b3', true);
 			} elseif ( $file === 'reboot' ){
-				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/css/bootstrap-reboot.min.css';
+				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.3/css/bootstrap-reboot.min.css';
 			} else {
 				return 'latest';
 			}
@@ -236,7 +237,6 @@ if ( !trait_exists('Options') ){
 				'wp_core_updates_notify' => 1,
 				'plugin_update_warning' => 1,
 				'unnecessary_metaboxes' => 1,
-				'visitors_db' => 0,
 				'scss' => 0,
 				'minify_css' => 0,
 				'dev_stylesheets' => 0,
@@ -263,6 +263,8 @@ if ( !trait_exists('Options') ){
 				'cd_hitinteractivity' => '',
 				'cd_hitmethod' => '',
 				'cd_devicememory' => '',
+				'cd_batterymode' => '',
+				'cd_batterypercent' => '',
 				'cd_network' => '',
 				'cd_referrer' => '',
 				'cd_author' => '',
@@ -272,7 +274,6 @@ if ( !trait_exists('Options') ){
 				'cd_contactmethod' => '',
 				'cd_formtiming' => '',
 				'cd_formflow' => '',
-				'cd_firstinteraction' => '',
 				'cd_geolocation' => '',
 				'cd_geoname' => '',
 				'cd_geoaccuracy' => '',
@@ -302,6 +303,7 @@ if ( !trait_exists('Options') ){
 				'cm_serverresponsetime' => '',
 				'cm_domreadytime' => '',
 				'cm_windowloadedtime' => '',
+				'cm_batterylevel' => '',
 				'cm_formimpressions' => '',
 				'cm_formstarts' => '',
 				'cm_formsubmissions' => '',

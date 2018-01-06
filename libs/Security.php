@@ -9,6 +9,7 @@ if ( !trait_exists('Security') ){
 			add_action('wp_loaded', array($this, 'prevent_bad_query_strings'));
 			add_filter('wp_headers', array($this, 'remove_x_pingback'), 11, 2);
 			add_filter('bloginfo_url', array($this, 'hijack_pingback_url'), 11, 2);
+			add_action('wp_head', array($this, 'security_headers'));
 
 			//Disable XMLRPC
 			add_filter('xmlrpc_enabled', '__return_false');
@@ -28,6 +29,22 @@ if ( !trait_exists('Security') ){
 			//Disable the file editor for non-developers
 			if ( !$this->is_dev() ){
 				define('DISALLOW_FILE_EDIT', true);
+			}
+		}
+
+		//Additional security headers.
+		//Test with https://securityheaders.io/
+		public function security_headers(){
+			if ( is_ssl() ){
+				header('strict-transport-security: max-age=31536000; includeSubDomains'); //https://scotthelme.co.uk/hsts-the-missing-link-in-tls/
+				header('Referrer-Policy: no-referrer-when-downgrade'); //https://scotthelme.co.uk/a-new-security-header-referrer-policy/
+
+				//https://scotthelme.co.uk/hardening-your-http-response-headers/
+				header('x-frame-options: SAMEORIGIN');
+				header('X-XSS-Protection: 1; mode=block');
+				header('X-Content-Type-Options: nosniff');
+
+				//header(''); //@TODO "Nebula" 0: Upcoming spec - https://scotthelme.co.uk/a-new-security-header-expect-ct/
 			}
 		}
 

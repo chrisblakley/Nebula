@@ -195,13 +195,13 @@ if ( !trait_exists('Analytics') ){
 		//Add measurement protocol parameters for custom definitions
 		public function ga_common_parameters($parameters=array()){
 			$default_common_parameters = array(
-				'v' => 1,
-				'tid' => $this->get_option('ga_tracking_id'),
-				'cid' => $this->ga_parse_cookie(),
-				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']),
-				'uip' => $_SERVER['REMOTE_ADDR'],
-				'ul' => locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']),
-				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '',
+				'v' => 1, //Protocol Version
+				'tid' => $this->get_option('ga_tracking_id'), //Tracking ID
+				'cid' => $this->ga_parse_cookie(), //Client ID
+				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']), //User Agent
+				'uip' => $_SERVER['REMOTE_ADDR'], //IP Address
+				'ul' => locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']), //User Language
+				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '', //Referrer
 				'dl' => $this->requested_url(), //Likely "admin-ajax.php" until overwritten
 				'dt' => ( get_the_title() )? get_the_title() : '', //Likely empty until overwritten
 			);
@@ -352,6 +352,12 @@ if ( !trait_exists('Analytics') ){
 		public function ga_track_load_abandons(){
 			if ( $this->get_option('ga_load_abandon') && !$this->is_bot() && !is_customize_preview() ){
 				$custom_metric_hitID = ( $this->get_option('cd_hitid') )? "'cd" . str_replace('dimension', '', $this->get_option('cd_hitid')) . "=" . $this->ga_generate_UUID() . "'," : ''; //Create the Measurement Protocol parameter for cd
+
+				$common_parameters = '';
+				foreach ( $this->ga_common_parameters() as $parameter => $value ){
+					$common_parameters .= $parameter . '="' . $value . '",';
+				}
+
 				?>
 				<script>
 					document.addEventListener('visibilitychange', loadAbandonTracking);
@@ -371,42 +377,28 @@ if ( !trait_exists('Analytics') ){
 							loadAbandonLevel = 'Visibility Change'; //This more accurately captures mobile browsers and the majority of abandon types
 						}
 
-						//Grab the Google Analytics CID from the cookie (if it exists)
-						var gaCID = document.cookie.replace(/(?:(?:^|.*;)\s*_ga\s*\=\s*(?:\w+\.\d\.)([^;]*).*$)|^.*$/, '$1');
-						var newReturning = 'Returning visitor or multiple pageview session';
-						if ( !gaCID ){
-							gaCID = (Math.random()*Math.pow(2, 52));
-							newReturning = 'New user or blocking Google Analytics cookie';
-						}
+						var newReturning = "<?php echo ( isset($_COOKIE['_ga']) )? 'Returning visitor or multiple pageview session' : 'New user or blocking Google Analytics cookie'; ?>";
 
+						//Event
 						navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [
-							'tid=<?php echo $this->get_option('ga_tracking_id'); ?>', //Tracking ID
-							'cid=' + gaCID, //Client ID
-							'v=1', //Protocol Version
+							<?php echo $common_parameters; ?>
 							't=event', //Hit Type
 							'ec=Load Abandon', //Event Category
 							'ea=' + loadAbandonLevel, //Event Action
 							'el=' + newReturning, //Event Label
 							'ev=' + Math.round(performance.now()), //Event Value
 							'ni=1', //Non-Interaction Hit
-							'dr=<?php echo ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : ''; ?>', //Document Referrer
-							'dl=' + window.location.href, //Document Location URL
-							'dt=' + document.title, //Document Title
 							<?php echo $custom_metric_hitID; //Unique Hit ID ?>
 						].join('&'));
 
 						//User Timing
 						navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [
-							'tid=<?php echo $this->get_option('ga_tracking_id'); ?>', //Tracking ID
-							'cid=' + gaCID, //Client ID
-							'v=1', //Protocol Version
+							<?php echo $common_parameters; ?>
 							't=timing', //Hit Type
 							'utc=Load Abandon', //Timing Category
 							'utv=' + loadAbandonLevel, //Timing Variable Name
 							'utt=' + Math.round(performance.now()), //Timing Time (milliseconds)
 							'utl=' + newReturning, //Timing Label
-							'dl=' + window.location.href, //Document Location URL
-							'dt=' + document.title, //Document Title
 							<?php echo $custom_metric_hitID; //Unique Hit ID ?>
 						].join('&'));
 					}

@@ -13,7 +13,6 @@ if ( !trait_exists('Optimization') ){
 			add_filter('style_loader_src', array($this, 'remove_script_version'), 15, 1);
 			add_action('wp_print_scripts', array($this, 'dequeues'), 9999);
 			add_filter('wp_default_scripts', array($this, 'remove_jquery_migrate'));
-			add_action('wp_enqueue_scripts', array($this, 'override_bootstrap_dependencies')); //Remove this in Bootstrap Beta 3
 			add_action('admin_init', array($this, 'plugin_force_settings'));
 			add_action('wp_print_scripts', array($this, 'remove_actions'), 9999);
 			add_action('init', array($this, 'disable_wp_emojicons'));
@@ -114,11 +113,6 @@ if ( !trait_exists('Optimization') ){
 				$default_preconnects[] = '//' . $this->get_option('disqus_shortname') . '.disqus.com';
 			}
 
-			//Hubspot CRM for Nebula Visitors DB
-			if ( $this->get_option('visitors_db') && $this->get_option('hubspot_api') ){
-				$default_preconnects[] = '//api.hubapi.com';
-			}
-
 			//Preconnect
 			$preconnects = apply_filters('nebula_preconnect', $default_preconnects);
 			foreach ( $preconnects as $preconnect ){
@@ -173,12 +167,6 @@ if ( !trait_exists('Optimization') ){
 				$scripts->remove('jquery');
 				$scripts->add('jquery', false, array('jquery-core'), null);
 			}
-		}
-
-		//Override dependent libraries for Bootstrap. If they are needed, they are dynamically loaded via main.js.
-		//Remove this in Bootstrap Beta 3
-		public function override_bootstrap_dependencies(){
-			echo '<script>window.Popper = function(){};</script>'; //Must be a function to bypass Bootstrap check.
 		}
 
 		//Force settings within plugins

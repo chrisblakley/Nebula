@@ -30,14 +30,17 @@
 		if ( !current_user_can('manage_options') && !$this->is_dev() ){
 		    wp_die('You do not have sufficient permissions to access this page.');
 		}
-	?>
 
-	<?php if ( isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true' ): ?>
-	    <div class="updated notice is-dismissible">
-	        <p><strong>Nebula Options</strong> have been updated. All SCSS files have been re-processed.</p>
-	        <button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
-	    </div>
-	<?php endif; ?>
+		if ( isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true' ){
+			do_action('nebula_options_saved');
+			?>
+			<div class="updated notice is-dismissible">
+		        <p><strong>Nebula Options</strong> have been updated. All SCSS files have been re-processed.</p>
+		        <button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
+		    </div>
+			<?php
+		}
+	?>
 
 	<form method="post" action="options.php">
 		<?php
@@ -52,24 +55,26 @@
 				<div class="col-md-3">
 					<div id="stickynav">
 						<ul id="options-navigation" class="nav nav-pills flex-column">
-							<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'metadata' )? 'active' : ''; ?>" href="#metadata" data-toggle="tab"><i class="fa fa-fw fa-tags"></i> Metadata</a></li>
-							<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'functions' )? 'active' : ''; ?>" href="#functions" data-toggle="tab"><i class="fa fa-fw fa-sliders"></i> Functions</a></li>
-							<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'analytics' )? 'active' : ''; ?>" href="#analytics" data-toggle="tab"><i class="fa fa-fw fa-area-chart"></i> Analytics</a></li>
-							<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'apis' )? 'active' : ''; ?>" href="#apis" data-toggle="tab"><i class="fa fa-fw fa-key"></i> APIs</a></li>
-							<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'administration' )? 'active' : ''; ?>" href="#administration" data-toggle="tab"><i class="fa fa-fw fa-briefcase"></i> Administration</a></li>
+							<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'metadata' )? 'active' : ''; ?>" href="#metadata" data-toggle="tab"><i class="fas fa-fw fa-tags"></i> Metadata</a></li>
+							<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'functions' )? 'active' : ''; ?>" href="#functions" data-toggle="tab"><i class="fas fa-fw fa-sliders-h"></i> Functions</a></li>
+							<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'analytics' )? 'active' : ''; ?>" href="#analytics" data-toggle="tab"><i class="fas fa-fw fa-chart-area"></i> Analytics</a></li>
+							<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'apis' )? 'active' : ''; ?>" href="#apis" data-toggle="tab"><i class="fas fa-fw fa-key"></i> APIs</a></li>
+							<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'administration' )? 'active' : ''; ?>" href="#administration" data-toggle="tab"><i class="fas fa-fw fa-briefcase"></i> Administration</a></li>
 							<?php do_action('nebula_options_interface_additional_tabs'); ?>
 							<?php if ( current_user_can('manage_options') ): ?>
-								<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'diagnostic' )? 'active' : ''; ?>" href="#diagnostic" data-toggle="tab"><i class="fa fa-fw fa-life-ring"></i> Diagnostic</a></li>
+								<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'diagnostic' )? 'active' : ''; ?>" href="#diagnostic" data-toggle="tab"><i class="fas fa-fw fa-life-ring"></i> Diagnostic</a></li>
 							<?php endif; ?>
 						</ul>
 
 						<br/><br/><!-- @todo: use margin here -->
 
 						<div class="input-group">
-							<div class="input-group-addon"><i class="fa fa-fw fa-search"></i></div>
+							<div class="input-group-prepend">
+								<div class="input-group-text"><i class="fas fa-fw fa-search"></i></div>
+							</div>
 							<input type="text" id="nebula-option-filter" class="form-control" value="<?php echo $pre_filter; ?>" placeholder="Filter options" />
 						</div>
-						<p id="reset-filter" class="hidden"><a class="btn btn-danger" href="#"><i class="fa fa-fw fa-times"></i> Reset Filter</a></p>
+						<p id="reset-filter" class="hidden"><a class="btn btn-danger" href="#"><i class="fas fa-fw fa-times"></i> Reset Filter</a></p>
 
 						<br/><br/><!-- @todo: use margin here -->
 
@@ -119,7 +124,9 @@
 									<div class="form-group">
 										<label for="contact_email">Contact Email</label>
 										<div class="input-group">
-											<div class="input-group-addon"><i class="fa fa-fw fa-envelope"></i></div>
+											<div class="input-group-prepend">
+												<div class="input-group-text"><i class="far fa-fw fa-envelope"></i></div>
+											</div>
 											<input type="email" name="nebula_options[contact_email]" id="contact_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['contact_email']; ?>" placeholder="<?php echo get_option('admin_email', get_userdata(1)->user_email); ?>" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The main contact email address (visible in the frontend and in metadata).</p>
@@ -130,7 +137,9 @@
 									<div class="form-group">
 										<label for="notification_email">Notification Email</label>
 										<div class="input-group">
-											<div class="input-group-addon"><i class="fa fa-fw fa-envelope"></i></div>
+											<div class="input-group-prepend">
+												<div class="input-group-text"><i class="far fa-fw fa-envelope"></i></div>
+											</div>
 											<input type="email" name="nebula_options[notification_email]" id="notification_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['notification_email']; ?>" placeholder="<?php echo get_option('admin_email', get_userdata(1)->user_email); ?>" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The email address for Nebula notifications.</p>
@@ -153,7 +162,9 @@
 									<div class="form-group">
 										<label for="phone_number">Phone Number</label>
 										<div class="input-group">
-											<div class="input-group-addon"><i class="fa fa-fw fa-phone"></i></div>
+											<div class="input-group-prepend">
+												<div class="input-group-text"><i class="fas fa-fw fa-phone"></i></div>
+											</div>
 											<input type="tel" name="nebula_options[phone_number]" id="phone_number" class="form-control nebula-validate-regex" data-valid-regex="\d-\d{3}-\d{3}-\d{4}" value="<?php echo $nebula_options['phone_number']; ?>" placeholder="1-315-478-6700" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The primary phone number used for Open Graph data. Use the format: "1-315-478-6700".</p>
@@ -163,7 +174,9 @@
 									<div class="form-group">
 										<label for="fax_number">Fax Number</label>
 										<div class="input-group">
-											<div class="input-group-addon"><i class="fa fa-fw fa-fax"></i></div>
+											<div class="input-group-prepend">
+												<div class="input-group-text"><i class="fas fa-fw fa-fax"></i></div>
+											</div>
 											<input type="tel" name="nebula_options[fax_number]" id="fax_number" class="form-control nebula-validate-regex" data-valid-regex="\d-\d{3}-\d{3}-\d{4}" value="<?php echo $nebula_options['fax_number']; ?>" placeholder="1-315-426-1392" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The fax number used for Open Graph data. Use the format: "1-315-426-1392".</p>
@@ -177,7 +190,9 @@
 											<div class="col-sm-6">
 												<div class="form-group">
 													<div class="input-group mb-2">
-														<div class="input-group-addon">Latitude</div>
+														<div class="input-group-prepend">
+															<div class="input-group-text">Latitude</div>
+														</div>
 														<input type="text" name="nebula_options[latitude]" id="latitude" class="form-control nebula-validate-regex" data-valid-regex="^-?\d+(.\d+)?$" value="<?php echo $nebula_options['latitude']; ?>" placeholder="43.0536854" />
 													</div>
 												</div>
@@ -185,7 +200,9 @@
 											<div class="col-sm-6">
 												<div class="form-group">
 													<div class="input-group">
-														<div class="input-group-addon">Longitude</div>
+														<div class="input-group-prepend">
+															<div class="input-group-text">Longitude</div>
+														</div>
 														<input type="text" name="nebula_options[longitude]" id="longitude" class="form-control nebula-validate-regex" data-valid-regex="^-?\d+(.\d+)?$" value="<?php echo $nebula_options['longitude']; ?>" placeholder="-76.1654569" />
 													</div>
 												</div>
@@ -250,7 +267,9 @@
 												<div class="col">
 													<div class="form-group">
 														<div class="input-group" dependent-of="business_hours_<?php echo $weekday; ?>_enabled">
-															<div class="input-group-addon"><span><i class="fa fa-fw fa-clock-o"></i> Open</span></div>
+															<div class="input-group-prepend">
+																<div class="input-group-text"><span><i class="far fa-fw fa-clock"></i> Open</span></div>
+															</div>
 															<input type="text" name="nebula_options[business_hours_<?php echo $weekday; ?>_open]" id="business_hours_<?php echo $weekday; ?>_open" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" value="<?php echo $nebula_options['business_hours_' . $weekday . '_open']; ?>" />
 														</div>
 													</div>
@@ -258,7 +277,9 @@
 												<div class="col">
 													<div class="form-group">
 														<div class="input-group" dependent-of="business_hours_<?php echo $weekday; ?>_enabled">
-															<div class="input-group-addon"><span><i class="fa fa-fw fa-clock-o"></i> Close</span></div>
+															<div class="input-group-prepend">
+																<div class="input-group-text"><span><i class="far fa-fw fa-clock"></i> Close</span></div>
+															</div>
 															<input type="text" name="nebula_options[business_hours_<?php echo $weekday; ?>_close]" id="business_hours_<?php echo $weekday; ?>_close" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" value="<?php echo $nebula_options['business_hours_' . $weekday . '_close']; ?>" />
 														</div>
 													</div>
@@ -287,7 +308,9 @@
 									<div class="form-group">
 										<label for="facebookurl">Facebook</label>
 										<div class="input-group">
-											<div class="input-group-addon"><span><i class="fa fa-fw fa-facebook"></i> URL</span></div>
+											<div class="input-group-prepend">
+												<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> URL</span></div>
+											</div>
 											<input type="text" name="nebula_options[facebook_url]" id="facebook_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['facebook_url']; ?>" placeholder="http://www.facebook.com/PinckneyHugo" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The full URL of your Facebook page.</p>
@@ -296,7 +319,9 @@
 
 									<div class="form-group" dependent-of="facebook_url">
 										<div class="input-group">
-											<div class="input-group-addon"><span><i class="fa fa-fw fa-facebook"></i> Page ID</span></div>
+											<div class="input-group-prepend">
+												<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> Page ID</span></div>
+											</div>
 											<input type="text" name="nebula_options[facebook_page_id]" id="facebook_page_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_page_id']; ?>" placeholder="000000000000000" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The ID of your Facebook page.</p>
@@ -305,7 +330,9 @@
 
 									<div class="form-group" dependent-of="facebook_url">
 										<div class="input-group">
-											<div class="input-group-addon"><span><i class="fa fa-fw fa-facebook"></i> Admin IDs</span></div>
+											<div class="input-group-prepend">
+												<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> Admin IDs</span></div>
+											</div>
 											<input type="text" name="nebula_options[facebook_admin_ids]" id="facebook_admin_ids" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_admin_ids']; ?>" placeholder="0000, 0000, 0000" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">IDs of Facebook administrators.</p>
@@ -315,7 +342,9 @@
 									<div class="form-group">
 										<label for="twitter_username">Twitter</label>
 										<div class="input-group">
-											<div class="input-group-addon"><span><i class="fa fa-fw fa-twitter"></i> Username</span></div>
+											<div class="input-group-prepend">
+												<div class="input-group-text"><span><i class="fab fa-fw fa-twitter"></i> Username</span></div>
+											</div>
 											<input type="text" name="nebula_options[twitter_username]" id="twitter_username" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_username']; ?>" placeholder="@pinckneyhugo" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">Your Twitter username <strong>including the @ symbol</strong>.</p>
@@ -325,7 +354,9 @@
 									<div class="form-group">
 										<label for="linkedin_url">LinkedIn</label>
 										<div class="input-group">
-											<div class="input-group-addon"><span><i class="fa fa-fw fa-linkedin"></i> URL</span></div>
+											<div class="input-group-prepend">
+												<div class="input-group-text"><span><i class="fab fa-fw fa-linkedin"></i> URL</span></div>
+											</div>
 											<input type="text" name="nebula_options[linkedin_url]" id="linkedin_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['linkedin_url']; ?>" placeholder="https://www.linkedin.com/company/pinckney-hugo-group" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The full URL of your LinkedIn profile.</p>
@@ -335,7 +366,9 @@
 									<div class="form-group">
 										<label for="youtube_url">Youtube</label>
 										<div class="input-group">
-											<div class="input-group-addon"><span><i class="fa fa-fw fa-youtube"></i> URL</span></div>
+											<div class="input-group-prepend">
+												<div class="input-group-text"><span><i class="fab fa-fw fa-youtube"></i> URL</span></div>
+											</div>
 											<input type="text" name="nebula_options[youtube_url]" id="youtube_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['youtube_url']; ?>" placeholder="https://www.youtube.com/user/pinckneyhugo" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The full URL of your Youtube channel.</p>
@@ -345,7 +378,9 @@
 									<div class="form-group">
 										<label for="instagram_url">Instagram</label>
 										<div class="input-group">
-											<div class="input-group-addon"><span><i class="fa fa-fw fa-instagram"></i> URL</span></div>
+											<div class="input-group-prepend">
+												<div class="input-group-text"><span><i class="fab fa-fw fa-instagram"></i> URL</span></div>
+											</div>
 											<input type="text" name="nebula_options[instagram_url]" id="instagram_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['instagram_url']; ?>" placeholder="https://www.instagram.com/pinckneyhugo" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The full URL of your Instagram profile.</p>
@@ -355,7 +390,9 @@
 									<div class="form-group">
 										<label for="pinterest_url">Pinterest</label>
 										<div class="input-group">
-											<div class="input-group-addon"><span><i class="fa fa-fw fa-pinterest"></i> URL</span></div>
+											<div class="input-group-prepend">
+												<div class="input-group-text"><span><i class="fab fa-fw fa-pinterest"></i> URL</span></div>
+											</div>
 											<input type="text" name="nebula_options[pinterest_url]" id="pinterest_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['pinterest_url']; ?>" placeholder="https://www.pinterest.com/pinckneyhugo" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The full URL of your Pinterest profile.</p>
@@ -365,7 +402,9 @@
 									<div class="form-group">
 										<label for="google_plus_url">Google+</label>
 										<div class="input-group">
-											<div class="input-group-addon"><span><i class="fa fa-fw fa-google-plus"></i> URL</span></div>
+											<div class="input-group-prepend">
+												<div class="input-group-text"><span><i class="fab fa-fw fa-google-plus"></i> URL</span></div>
+											</div>
 											<input type="text" name="nebula_options[google_plus_url]" id="google_plus_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['google_plus_url']; ?>" placeholder="https://plus.google.com/106644717328415684498/about" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The full URL of your Google+ page.</p>
@@ -456,7 +495,6 @@
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[ip_geolocation]" id="ip_geolocation" value="1" <?php checked('1', !empty($nebula_options['ip_geolocation'])); ?> /><label for="ip_geolocation">IP Geolocation</label>
 										<p class="nebula-help-text short-help form-text text-muted">Lookup the country, region, and city of the user based on their IP address. (Default: <?php echo $this->user_friendly_default('ip_geolocation'); ?>)</p>
-										<p class="nebula-help-text more-help form-text text-muted">This can be used for content as well as analytics (including Visitors Database)</p>
 										<p class="option-keywords">location remote resource minor page speed impact</p>
 									</div>
 
@@ -521,13 +559,6 @@
 										<p class="nebula-help-text short-help form-text text-muted">Control the Wordpress Admin bar globally on the frontend for all users. (Default: <?php echo $this->user_friendly_default('admin_bar'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">Note: When enabled, the Admin Bar can be temporarily toggled using the keyboard shortcut <strong>Alt+A</strong> without needing to disable it permanently for all users.</p>
 										<p class="option-keywords"></p>
-									</div>
-
-									<div class="form-group">
-										<input type="checkbox" name="nebula_options[visitors_db]" id="visitors_db" value="1" <?php checked('1', !empty($nebula_options['visitors_db'])); ?> /><label for="visitors_db">Visitors Database</label>
-										<p class="nebula-help-text short-help form-text text-muted">Adds a table to the database to store visitor usage information. (Default: <?php echo $this->user_friendly_default('visitors_db'); ?>)</p>
-										<p class="nebula-help-text more-help form-text text-muted">This data can be used for insight as well as retargeting/personalization. General events are automatically captured, but refer to the Nebula documentation for instructions on how to interact with data in both JavaScript and PHP. <a href="http://www.hubspot.com/products/crm" target="_blank" rel="noopener">Sign up for Hubspot CRM</a> (free) and add your API key to Nebula Options (under the APIs tab) to send known user data automatically. This integration can cultivate their <a href="http://www.hubspot.com/products/marketing" target="_blank" rel="noopener">full marketing automation service</a>.</p>
-										<p class="option-keywords">moderate page speed impact discretionary</p>
 									</div>
 
 									<div class="form-group">
@@ -709,7 +740,7 @@
 									<div class="form-group" dependent-or="ga_tracking_id">
 										<input type="checkbox" name="nebula_options[ga_load_abandon]" id="ga_load_abandon" value="1" <?php checked('1', !empty($nebula_options['ga_load_abandon'])); ?> /><label for="ga_load_abandon">Load Abandonment Tracking</label>
 										<p class="nebula-help-text short-help form-text text-muted">Track when visitors leave the page before it finishes loading. (Default: <?php echo $this->user_friendly_default('ga_load_abandon'); ?>)</p>
-										<p class="nebula-help-text more-help form-text text-muted">This is implemented outside of the typical event tracking and because this event happens before the pageview is sent it can very slightly alter user/session data.</p>
+										<p class="nebula-help-text more-help form-text text-muted">This is implemented outside of the typical event tracking and because this event happens before the pageview is sent it will slightly alter user/session data (more users than sessions). It is recommended to create a View (and/or a segment) in Google Analytics specific to tracking load abandonment and filter out these hits from the primary reporting view (<code>Sessions > Exclude > Event Category > contains > Load Abandon</code>).</p>
 										<p class="option-keywords"></p>
 									</div>
 
@@ -765,7 +796,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Client ID</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Client ID</div>
+												</div>
 												<input type="text" name="nebula_options[cd_gacid]" id="cd_gacid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_gacid']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Store the Google Analytics CID in an accessible dimension for reporting. Scope: User</p>
@@ -774,7 +807,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Hit ID</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Hit ID</div>
+												</div>
 												<input type="text" name="nebula_options[cd_hitid]" id="cd_hitid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hitid']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Gives each individual hit an ID. Scope: Hit</p>
@@ -784,7 +819,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Hit Time</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Hit Time</div>
+												</div>
 												<input type="text" name="nebula_options[cd_hittime]" id="cd_hittime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hittime']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Track the time of each individual hit. Scope: Hit</p>
@@ -794,7 +831,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Hit Type</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Hit Type</div>
+												</div>
 												<input type="text" name="nebula_options[cd_hittype]" id="cd_hittype" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hittype']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Track the type of each hit (such as pageview, event, exception, etc). Scope: Hit</p>
@@ -803,7 +842,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Hit Interactivity</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Hit Interactivity</div>
+												</div>
 												<input type="text" name="nebula_options[cd_hitinteractivity]" id="cd_hitinteractivity" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hitinteractivity']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Track whether the hit is interactive or non-interactive. Scope: Hit</p>
@@ -813,7 +854,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Hit Transport Method</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Hit Transport Method</div>
+												</div>
 												<input type="text" name="nebula_options[cd_hitmethod]" id="cd_hitmethod" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hitmethod']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Track the transport method of the hit (such as JavaScript, Beacon, or Server-Side). Scope: Hit</p>
@@ -822,7 +865,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Device Memory</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Device Memory</div>
+												</div>
 												<input type="text" name="nebula_options[cd_devicememory]" id="cd_devicememory" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_devicememory']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Track the available memory of the device as "Lite" or "Full". Scope: Hit</p>
@@ -832,7 +877,32 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Visibility State</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Battery Mode</div>
+												</div>
+												<input type="text" name="nebula_options[cd_batterymode]" id="cd_batterymode" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_batterymode']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Track whether the device battery is charging ("Adaptor") or discharging ("Battery"). Scope: Session</p>
+											<p class="nebula-help-text more-help form-text text-muted">This is useful for discerning if users spend more time on the website if their device is plugged in.</p>
+											<p class="option-keywords"></p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-prepend">
+													<div class="input-group-text">Battery Percent</div>
+												</div>
+												<input type="text" name="nebula_options[cd_batterypercent]" id="cd_batterypercent" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_batterypercent']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Track what percentage the device battery level is at currently (rounded to the nearest integer). Scope: Session</p>
+											<p class="option-keywords"></p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-prepend">
+													<div class="input-group-text">Visibility State</div>
+												</div>
 												<input type="text" name="nebula_options[cd_visibilitystate]" id="cd_visibilitystate" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_visibilitystate']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Logs the visibilty state of the window with each hit. Scope: Hit</p>
@@ -841,7 +911,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Network Connection</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Network Connection</div>
+												</div>
 												<input type="text" name="nebula_options[cd_network]" id="cd_network" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_network']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Logs the connection state of the network (Online/Offline). Scope: Hit</p>
@@ -852,7 +924,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Server Referrer</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Server Referrer</div>
+												</div>
 												<input type="text" name="nebula_options[cd_referrer]" id="cd_referrer" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_network']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Logs the referrer as detected by the server. This populates regardless of UTM acquisition tags. Scope: Session</p>
@@ -865,7 +939,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Author</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Author</div>
+												</div>
 												<input type="text" name="nebula_options[cd_author]" id="cd_author" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_author']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Tracks the article author's name on single posts. Scope: Hit</p>
@@ -874,7 +950,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Categories</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Categories</div>
+												</div>
 												<input type="text" name="nebula_options[cd_categories]" id="cd_categories" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_categories']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Tracks the article author's name on single posts. Scope: Hit</p>
@@ -883,7 +961,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Tags</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Tags</div>
+												</div>
 												<input type="text" name="nebula_options[cd_tags]" id="cd_tags" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_tags']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Sends a string of all the post's tags to the pageview hit. Scope: Hit</p>
@@ -892,7 +972,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Word Count</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Word Count</div>
+												</div>
 												<input type="text" name="nebula_options[cd_wordcount]" id="cd_wordcount" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_wordcount']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Sends word count range for single posts. Scope: Hit</p>
@@ -901,7 +983,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Publish Date</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Publish Date</div>
+												</div>
 												<input type="text" name="nebula_options[cd_publishdate]" id="cd_publishdate" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_publishdate']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Sends the date the post was published in the format <code>YYYY-MM-DD</code>. Scope: Hit</p>
@@ -914,7 +998,9 @@
 
 										<div class="form-group" dependent-or="business_hours_sunday_enabled business_hours_monday_enabled business_hours_tuesday_enabled business_hours_wednesday_enabled business_hours_thursday_enabled business_hours_friday_enabled business_hours_saturday_enabled">
 											<div class="input-group">
-												<div class="input-group-addon">Business Hours</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Business Hours</div>
+												</div>
 												<input type="text" name="nebula_options[cd_businesshours]" id="cd_businesshours" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_businesshours']; ?>" />
 											</div>
 											<p class="dependent-note hidden">This option is dependent on Business Hours (Metadata tab).</p>
@@ -924,7 +1010,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Relative Time</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Relative Time</div>
+												</div>
 												<input type="text" name="nebula_options[cd_relativetime]" id="cd_relativetime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_relativetime']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Sends the relative time (Ex: "Late Morning", "Early Evening", etc.) based on the business timezone (via WordPress settings). Scope: Hit</p>
@@ -933,7 +1021,9 @@
 
 										<div class="form-group" dependent-of="weather">
 											<div class="input-group">
-												<div class="input-group-addon">Weather</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Weather</div>
+												</div>
 												<input type="text" name="nebula_options[cd_weather]" id="cd_weather" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_weather']; ?>" />
 											</div>
 											<p class="dependent-note hidden">This option is dependent on Weather Detection (Functions tab) being enabled.</p>
@@ -943,7 +1033,9 @@
 
 										<div class="form-group" dependent-of="weather">
 											<div class="input-group">
-												<div class="input-group-addon">Temperature</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Temperature</div>
+												</div>
 												<input type="text" name="nebula_options[cd_temperature]" id="cd_temperature" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_temperature']; ?>" />
 											</div>
 											<p class="dependent-note hidden">This option is dependent on Weather Detection (Functions tab) being enabled.</p>
@@ -957,7 +1049,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Role</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Role</div>
+												</div>
 												<input type="text" name="nebula_options[cd_role]" id="cd_role" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_role']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Sends the current user's role (as well as staff affiliation if available) for associated users. Scope: User</p>
@@ -967,7 +1061,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Session ID</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Session ID</div>
+												</div>
 												<input type="text" name="nebula_options[cd_sessionid]" id="cd_sessionid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_sessionid']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">ID system so that you can group hits into specific user sessions. Scope: Session</p>
@@ -977,7 +1073,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">User ID</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">User ID</div>
+												</div>
 												<input type="text" name="nebula_options[cd_userid]" id="cd_userid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_userid']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">If allowing visitors to sign up to create WordPress accounts, this will send user IDs to Google Analytics. Scope: User</p>
@@ -987,7 +1085,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Facebook ID</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Facebook ID</div>
+												</div>
 												<input type="text" name="nebula_options[cd_fbid]" id="cd_fbid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_fbid']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Send Facebook ID to Google Analytics when using Facebook Connect API. Scope: User</p>
@@ -997,7 +1097,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Local Timestamp</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Local Timestamp</div>
+												</div>
 												<input type="text" name="nebula_options[cd_timestamp]" id="cd_timestamp" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_timestamp']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Adds a timestamp (in the user's local time) with timezone offset. Scope: Hit</p>
@@ -1005,18 +1107,11 @@
 											<p class="option-keywords">location recommended</p>
 										</div>
 
-										<div class="form-group" dependent-of="visitors_db">
-											<div class="input-group">
-												<div class="input-group-addon">First Interaction</div>
-												<input type="text" name="nebula_options[cd_firstinteraction]" id="cd_firstinteraction" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_firstinteraction']; ?>" />
-											</div>
-											<p class="nebula-help-text short-help form-text text-muted">Stores a timestamp for the first time the user visited the site. Scope: User</p>
-											<p class="option-keywords"></p>
-										</div>
-
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Window Type</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Window Type</div>
+												</div>
 												<input type="text" name="nebula_options[cd_windowtype]" id="cd_windowtype" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_windowtype']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Stores the type of window the site is being accessed from (Ex: Iframe or Standalone App). Scope: Hit</p>
@@ -1026,7 +1121,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Geolocation</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Geolocation</div>
+												</div>
 												<input type="text" name="nebula_options[cd_geolocation]" id="cd_geolocation" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_geolocation']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Allows latitude and longitude coordinates to be sent after being detected. Scope: Session</p>
@@ -1036,7 +1133,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Geolocation Accuracy</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Geolocation Accuracy</div>
+												</div>
 												<input type="text" name="nebula_options[cd_geoaccuracy]" id="cd_geoaccuracy" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_geoaccuracy']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Allows geolocation accuracy to be sent after being detected. Scope: Session</p>
@@ -1046,7 +1145,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Geolocation Name</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Geolocation Name</div>
+												</div>
 												<input type="text" name="nebula_options[cd_geoname]" id="cd_geoname" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_geoname']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Allows named location information to be sent after being detected using map polygons. Scope: Session</p>
@@ -1056,7 +1157,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Blocker Detection</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Blocker Detection</div>
+												</div>
 												<input type="text" name="nebula_options[cd_blocker]" id="cd_blocker" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_blocker']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Detects if the user is blocking resources such as ads or Google Analytics. Scope: Session</p>
@@ -1066,7 +1169,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Query String</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Query String</div>
+												</div>
 												<input type="text" name="nebula_options[cd_querystring]" id="cd_querystring" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_querystring']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Moves the query string from the "page" dimension for cleaner URLs. Scope: Hit</p>
@@ -1076,7 +1181,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Media Query: Breakpoint</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Media Query: Breakpoint</div>
+												</div>
 												<input type="text" name="nebula_options[cd_mqbreakpoint]" id="cd_mqbreakpoint" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_mqbreakpoint']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Detect which media query breakpoint is associated with this hit. Scope: Hit</p>
@@ -1085,7 +1192,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Media Query: Resolution</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Media Query: Resolution</div>
+												</div>
 												<input type="text" name="nebula_options[cd_mqresolution]" id="cd_mqresolution" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_mqresolution']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Detect the resolution factor associated with this hit. Scope: Hit</p>
@@ -1094,7 +1203,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Media Query: Orientation</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Media Query: Orientation</div>
+												</div>
 												<input type="text" name="nebula_options[cd_mqorientation]" id="cd_mqorientation" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_mqorientation']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Detect the device orientation associated with this hit. Scope: Hit</p>
@@ -1103,7 +1214,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Notable POI</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Notable POI</div>
+												</div>
 												<input type="text" name="nebula_options[cd_notablepoi]" id="cd_notablepoi" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_notablepoi']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Stores named locations when detected. Scope: User</p>
@@ -1117,7 +1230,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Event Intent</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Event Intent</div>
+												</div>
 												<input type="text" name="nebula_options[cd_eventintent]" id="cd_eventintent" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_eventintent']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Log whether the event was true, or just a possible intention. Scope: Hit</p>
@@ -1126,7 +1241,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Contact Method</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Contact Method</div>
+												</div>
 												<input type="text" name="nebula_options[cd_contactmethod]" id="cd_contactmethod" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_contactmethod']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">If the user triggers a contact event, the method of contact is stored here. Scope: Session</p>
@@ -1135,7 +1252,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Form Timing</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Form Timing</div>
+												</div>
 												<input type="text" name="nebula_options[cd_formtiming]" id="cd_formtiming" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_formtiming']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Sends form timings along with the each submission. Scope: Hit</p>
@@ -1145,7 +1264,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Form Flow</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Form Flow</div>
+												</div>
 												<input type="text" name="nebula_options[cd_formflow]" id="cd_formflow" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_formflow']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Track the field path the user takes through forms. Scope: Session</p>
@@ -1155,7 +1276,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Video Watcher</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Video Watcher</div>
+												</div>
 												<input type="text" name="nebula_options[cd_videowatcher]" id="cd_videowatcher" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_videowatcher']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Sets a dimension when videos are started and finished. Scope: Session</p>
@@ -1164,7 +1287,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Ecommerce Cart</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Ecommerce Cart</div>
+												</div>
 												<input type="text" name="nebula_options[cd_woocart]" id="cd_woocart" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_woocart']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">If the user has any product(s) in their cart. Scope: Hit</p>
@@ -1173,7 +1298,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Ecommerce Customer</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Ecommerce Customer</div>
+												</div>
 												<input type="text" name="nebula_options[cd_woocustomer]" id="cd_woocustomer" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_woocustomer']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Sets a dimension when a user completes the checkout process in WooCommerce. Scope: User</p>
@@ -1196,7 +1323,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Server Response</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Server Response</div>
+												</div>
 												<input type="text" name="nebula_options[cm_serverresponsetime]" id="cm_serverresponsetime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_serverresponsetime']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Navigation start until server response finishes (includes PHP rendering time). Scope: Hit, Format: Integer</p>
@@ -1206,7 +1335,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">DOM Ready</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">DOM Ready</div>
+												</div>
 												<input type="text" name="nebula_options[cm_domreadytime]" id="cm_domreadytime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_domreadytime']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Navigation start until DOM ready. Scope: Hit, Format: Integer</p>
@@ -1216,7 +1347,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Window Loaded</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Window Loaded</div>
+												</div>
 												<input type="text" name="nebula_options[cm_windowloadedtime]" id="cm_windowloadedtime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_windowloadedtime']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Navigation start until window loaded. Scope: Hit, Format: Integer</p>
@@ -1230,7 +1363,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Notable Downloads</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Notable Downloads</div>
+												</div>
 												<input type="text" name="nebula_options[cm_notabledownloads]" id="cm_notabledownloads" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_notabledownloads']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Tracks when a user downloads a notable file. Scope: Hit, Format: Integer</p>
@@ -1240,7 +1375,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Form Impressions</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Form Impressions</div>
+												</div>
 												<input type="text" name="nebula_options[cm_formimpressions]" id="cm_formimpressions" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_formimpressions']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Tracks when a form is in view as the user scrolls. Scope: Hit, Format: Integer</p>
@@ -1250,7 +1387,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Form Starts</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Form Starts</div>
+												</div>
 												<input type="text" name="nebula_options[cm_formstarts]" id="cm_formstarts" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_formstarts']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Tracks when a user begins entering a form. Scope: Hit, Format: Integer</p>
@@ -1260,7 +1399,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Form Submissions</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Form Submissions</div>
+												</div>
 												<input type="text" name="nebula_options[cm_formsubmissions]" id="cm_formsubmissions" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_formsubmissions']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Tracks when a user submits a form. Scope: Hit, Format: Integer</p>
@@ -1270,7 +1411,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Max Scroll Percent</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Max Scroll Percent</div>
+												</div>
 												<input type="text" name="nebula_options[cm_maxscroll]" id="cm_maxscroll" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_maxscroll']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Calculates the maximum scroll percentage the user reached per page. Scope: Hit, Format: Integer</p>
@@ -1284,7 +1427,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Video Starts</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Video Starts</div>
+												</div>
 												<input type="text" name="nebula_options[cm_videostarts]" id="cm_videostarts" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_videostarts']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Tracks when a user begins playing a video. Scope: Hit, Format: Integer</p>
@@ -1293,7 +1438,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Video Play Time</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Video Play Time</div>
+												</div>
 												<input type="text" name="nebula_options[cm_videoplaytime]" id="cm_videoplaytime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_videoplaytime']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Tracks playing duration when a user pauses or completes a video. Scope: Hit, Format: Time</p>
@@ -1302,7 +1449,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Video Completions</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Video Completions</div>
+												</div>
 												<input type="text" name="nebula_options[cm_videocompletions]" id="cm_videocompletions" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_videocompletions']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Tracks when a user completes playing a video. Scope: Hit, Format: Integer</p>
@@ -1315,7 +1464,20 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Word Count</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Battery Level</div>
+												</div>
+												<input type="text" name="nebula_options[cm_batterylevel]" id="cm_batterylevel" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_batterylevel']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Record the individual battery level for each hit. Scope: Hit, Format: Integer</p>
+											<p class="option-keywords"></p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-prepend">
+													<div class="input-group-text">Word Count</div>
+												</div>
 												<input type="text" name="nebula_options[cm_wordcount]" id="cm_wordcount" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_wordcount']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Sends word count for single posts. Scope: Hit, Format: Integer</p>
@@ -1324,7 +1486,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Autocomplete Searches</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Autocomplete Searches</div>
+												</div>
 												<input type="text" name="nebula_options[cm_autocompletesearches]" id="cm_autocompletesearches" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_autocompletesearches']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Tracks when a set of autocomplete search results is returned to the user (count is the search, not the result quantity). Scope: Hit, Format: Integer</p>
@@ -1333,7 +1497,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Autocomplete Search Clicks</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Autocomplete Search Clicks</div>
+												</div>
 												<input type="text" name="nebula_options[cm_autocompletesearchclicks]" id="cm_autocompletesearchclicks" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_autocompletesearchclicks']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Tracks when a user clicks an autocomplete search result. Scope: Hit, Format: Integer</p>
@@ -1342,7 +1508,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Page Visible Time</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Page Visible Time</div>
+												</div>
 												<input type="text" name="nebula_options[cm_pagevisible]" id="cm_pagevisible" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_pagevisible']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">The amount of time (in seconds) the page was in the visible state (tab/window visible) Scope: Hit, Format: Time</p>
@@ -1352,7 +1520,9 @@
 
 										<div class="form-group">
 											<div class="input-group">
-												<div class="input-group-addon">Page Hidden Time</div>
+												<div class="input-group-prepend">
+													<div class="input-group-text">Page Hidden Time</div>
+												</div>
 												<input type="text" name="nebula_options[cm_pagehidden]" id="cm_pagehidden" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_pagehidden']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">The amount of time (in seconds) the page was in the hidden state (tab/window not visible) Scope: Hit, Format: Time</p>
@@ -1400,13 +1570,17 @@
 									<label for="google_browser_api_key">Google Public API</label>
 
 									<div class="input-group">
-										<div class="input-group-addon">HTTP Restricted</div>
+										<div class="input-group-prepend">
+													<div class="input-group-text">HTTP Restricted</div>
+												</div>
 										<input type="text" name="nebula_options[google_browser_api_key]" id="google_browser_api_key" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_browser_api_key']; ?>" />
 									</div>
 								</div>
 								<div class="form-group">
 									<div class="input-group">
-										<div class="input-group-addon">IP Restricted</div>
+										<div class="input-group-prepend">
+													<div class="input-group-text">IP Restricted</div>
+												</div>
 										<input type="text" name="nebula_options[google_server_api_key]" id="google_server_api_key" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_server_api_key']; ?>" />
 									</div>
 
@@ -1418,7 +1592,9 @@
 								<div class="form-group">
 									<label for="cse_id">Google Custom Search Engine</label>
 									<div class="input-group">
-										<div class="input-group-addon">Engine ID</div>
+										<div class="input-group-prepend">
+													<div class="input-group-text">Engine ID</div>
+												</div>
 										<input type="text" name="nebula_options[cse_id]" id="cse_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['cse_id']; ?>" placeholder="000000000000000000000:aaaaaaaa_aa" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">For <a href="https://gearside.com/nebula/functions/pagesuggestion/?utm_campaign=documentation&utm_medium=options&utm_source=gcse+help" target="_blank" rel="noopener">page suggestions</a> on 404 and No Search Results pages.</p>
@@ -1439,18 +1615,22 @@
 									<label for="hubspot_api">Hubspot</label>
 
 									<div class="input-group">
-										<div class="input-group-addon">API Key</div>
+										<div class="input-group-prepend">
+											<div class="input-group-text">API Key</div>
+										</div>
 										<input type="text" name="nebula_options[hubspot_api]" id="hubspot_api" class="form-control nebula-validate-text" value="<?php echo $nebula_options['hubspot_api']; ?>" />
 									</div>
 								</div>
 								<div class="form-group">
 									<div class="input-group">
-										<div class="input-group-addon">Portal ID</div>
+										<div class="input-group-prepend">
+											<div class="input-group-text">Portal ID</div>
+										</div>
 										<input type="text" name="nebula_options[hubspot_portal]" id="hubspot_portal" class="form-control nebula-validate-text" value="<?php echo $nebula_options['hubspot_portal']; ?>" />
 									</div>
 
 									<p class="nebula-help-text short-help form-text text-muted">Enter your Hubspot API key and Hubspot Portal ID here.</p>
-									<p class="nebula-help-text more-help form-text text-muted">It can be obtained from your <a href="https://app.hubspot.com/hapikeys">API Keys page under Integrations in your account</a>. Your Hubspot Portal ID (or Hub ID) is located in the upper right of your account screen.</p>
+									<p class="nebula-help-text more-help form-text text-muted">It can be obtained from your <a href="https://app.hubspot.com/hapikeys">API Keys page under Integrations in your account</a>. Your Hubspot Portal ID (or Hub ID) is located in the upper right of your <a href="https://app.hubspot.com/" target="_blank">account screen</a> (or within the URL itself). The Portal ID is needed to send data to your Hubspot CRM and the API key will allow for Nebula custom contact properties to be automatically created. Note: You'll still be required to <a href="https://app.hubspot.com/property-settings/<?php echo nebula()->get_option('hubspot_portal'); ?>/contact" target="_blank">create any of your own custom properties</a> (non-Nebula) manually. It is recommended to create your own property group for these separate from the Nebula group.</p>
 									<p class="option-keywords">remote resource major page speed impact crm</p>
 								</div>
 
@@ -1465,7 +1645,9 @@
 								<div class="form-group">
 									<label for="facebook_app_id">Facebook</label>
 									<div class="input-group">
-										<div class="input-group-addon"><span><i class="fa fa-fw fa-facebook"></i> App ID</span></div>
+										<div class="input-group-prepend">
+											<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> App ID</span></div>
+										</div>
 										<input type="text" name="nebula_options[facebook_app_id]" id="facebook_app_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_app_id']; ?>" placeholder="000000000000000" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">The App ID of the associated Facebook page/app.</p>
@@ -1475,7 +1657,9 @@
 
 								<div class="form-group">
 									<div class="input-group">
-										<div class="input-group-addon"><span><i class="fa fa-fw fa-facebook"></i> App Secret</span></div>
+										<div class="input-group-prepend">
+											<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> App Secret</span></div>
+										</div>
 										<input type="text" name="nebula_options[facebook_app_secret]" id="facebook_app_secret" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_app_secret']; ?>" placeholder="00000000000000000000000000000000" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">The App Secret of the associated Facebook page/app.</p>
@@ -1485,7 +1669,9 @@
 
 								<div class="form-group">
 									<div class="input-group">
-										<div class="input-group-addon"><span><i class="fa fa-fw fa-facebook"></i> Access Token</span></div>
+										<div class="input-group-prepend">
+											<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> Access Token</span></div>
+										</div>
 										<input type="text" name="nebula_options[facebook_access_token]" id="facebook_access_token" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_access_token']; ?>" placeholder="000000000000000|000000000000000000000000000" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">The Access Token of the associated Facebook page/app.</p>
@@ -1496,7 +1682,9 @@
 								<div class="form-group">
 									<label for="twitter_consumer_key">Twitter</label>
 									<div class="input-group">
-										<div class="input-group-addon"><span><i class="fa fa-fw fa-twitter"></i> Consumer Key</span></div>
+										<div class="input-group-prepend">
+											<div class="input-group-text"><span><i class="fab fa-fw fa-twitter"></i> Consumer Key</span></div>
+										</div>
 										<input type="text" name="nebula_options[twitter_consumer_key]" id="twitter_consumer_key" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_consumer_key']; ?>" placeholder="000000000000000000000000000000" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">The Consumer Key key is used for generating a bearer token and/or accessing custom Twitter feeds.</p>
@@ -1505,7 +1693,9 @@
 
 								<div class="form-group">
 									<div class="input-group">
-										<div class="input-group-addon"><span><i class="fa fa-fw fa-twitter"></i> Consumer Secret</span></div>
+										<div class="input-group-prepend">
+											<div class="input-group-text"><span><i class="fab fa-fw fa-twitter"></i> Consumer Secret</span></div>
+										</div>
 										<input type="text" name="nebula_options[twitter_consumer_secret]" id="twitter_consumer_secret" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_consumer_secret']; ?>" placeholder="000000000000000000000000000000" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">The Consumer Secret key is used for generating a bearer token and/or accessing custom Twitter feeds.</p>
@@ -1514,7 +1704,9 @@
 
 								<div class="form-group">
 									<div class="input-group">
-										<div class="input-group-addon"><span><i class="fa fa-fw fa-twitter"></i> Bearer Token</span></div>
+										<div class="input-group-prepend">
+											<div class="input-group-text"><span><i class="fab fa-fw fa-twitter"></i> Bearer Token</span></div>
+										</div>
 										<input type="text" name="nebula_options[twitter_bearer_token]" id="twitter_bearer_token" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_bearer_token']; ?>" placeholder="000000000000000000000000000000" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">The bearer token is for creating custom Twitter feeds: <a href="https://gearside.com/nebula/utilities/twitter-bearer-token-generator/?utm_campaign=documentation&utm_medium=options&utm_source=twitter+help" target="_blank" rel="noopener">Generate a bearer token here</a></p>
@@ -1524,7 +1716,9 @@
 								<div class="form-group">
 									<label for="instagram_user_id">Instagram</label>
 									<div class="input-group">
-										<div class="input-group-addon"><span><i class="fa fa-fw fa-instagram"></i> User ID</span></div>
+										<div class="input-group-prepend">
+											<div class="input-group-text"><span><i class="fab fa-fw fa-instagram"></i> User ID</span></div>
+										</div>
 										<input type="text" name="nebula_options[instagram_user_id]" id="instagram_user_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['instagram_user_id']; ?>" placeholder="00000000" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">The user ID and access token are used for creating custom Instagram feeds.</p>
@@ -1534,7 +1728,9 @@
 
 								<div class="form-group">
 									<div class="input-group">
-										<div class="input-group-addon"><span><i class="fa fa-fw fa-instagram"></i> Access Token</span></div>
+										<div class="input-group-prepend">
+											<div class="input-group-text"><span><i class="fab fa-fw fa-instagram"></i> Access Token</span></div>
+										</div>
 										<input type="text" name="nebula_options[instagram_access_token]" id="instagram_access_token" class="form-control nebula-validate-text" value="<?php echo $nebula_options['instagram_access_token']; ?>" placeholder="000000000000000000000000000000" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">The user ID and access token are used for creating custom Instagram feeds.</p>
@@ -1544,7 +1740,9 @@
 
 								<div class="form-group">
 									<div class="input-group">
-										<div class="input-group-addon"><span><i class="fa fa-fw fa-instagram"></i> Client ID</span></div>
+										<div class="input-group-prepend">
+											<div class="input-group-text"><span><i class="fab fa-fw fa-instagram"></i> Client ID</span></div>
+										</div>
 										<input type="text" name="nebula_options[instagram_client_id]" id="instagram_client_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['instagram_client_id']; ?>" placeholder="000000000000000000000000000000" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">For client ID and client secret, register an application using the Instagram API platform then Register a new Client.</p>
@@ -1553,7 +1751,9 @@
 
 								<div class="form-group">
 									<div class="input-group">
-										<div class="input-group-addon"><span><i class="fa fa-fw fa-instagram"></i> Client Secret</span></div>
+										<div class="input-group-prepend">
+											<div class="input-group-text"><span><i class="fab fa-fw fa-instagram"></i> Client Secret</span></div>
+										</div>
 										<input type="text" name="nebula_options[instagram_client_secret]" id="instagram_client_secret" class="form-control nebula-validate-text" value="<?php echo $nebula_options['instagram_client_secret']; ?>" placeholder="000000000000000000000000000000" />
 									</div>
 									<p class="nebula-help-text short-help form-text text-muted">For client ID and client secret, register an application using the Instagram API platform then Register a new Client.</p>

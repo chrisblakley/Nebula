@@ -35,7 +35,7 @@
 .nebula-spin {@include prefix((animation: nebula-spin 2s infinite linear), webkit moz);}
 @include keyframes(nebula-spin){
 	0% {@include prefix((transform: rotate(0deg)), webkit);}
-	100% {@include prefix((transform: rotate(359deg)), webkit);}
+	100% {@include prefix((transform: rotate(360deg)), webkit);}
 }
 
 //Fade out and in

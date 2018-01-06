@@ -26,11 +26,11 @@ get_header(); ?>
 				<h1 class="page-title">
 					<?php if ( is_day() ): ?>
 						<?php //header('Location: ' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/'); ?>
-						<i class="fa fa-fw fa-calendar-o"></i> <?php echo get_the_date(); ?>
+						<i class="far fa-fw fa-calendar"></i> <?php echo get_the_date(); ?>
 					<?php elseif ( is_month() ): ?>
-						<i class="fa fa-fw fa-calendar-o"></i> <?php echo get_the_date('F Y'); ?>
+						<i class="far fa-fw fa-calendar"></i> <?php echo get_the_date('F Y'); ?>
 					<?php elseif ( is_year() ): ?>
-						<i class="fa fa-fw fa-calendar-o"></i> <?php echo get_the_date('Y'); ?>
+						<i class="far fa-fw fa-calendar"></i> <?php echo get_the_date('Y'); ?>
 					<?php else: ?>
 						Archives
 					<?php endif; ?>

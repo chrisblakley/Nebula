@@ -69,7 +69,7 @@ if ( !trait_exists('Prototyping') ){
 
 			$wp_admin_bar->add_node(array(
 				'id' => 'nebula-prototype',
-				'title' => '<i class="fa fa-fw fa-sitemap" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Prototype' . $wireframe_menu_title,
+				'title' => '<i class="far fa-fw fa-sitemap" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Prototype' . $wireframe_menu_title,
 				'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=functions&option=prototype_mode'
 			));
 
@@ -80,7 +80,7 @@ if ( !trait_exists('Prototyping') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-prototype',
 						'id' => 'nebula-wireframe-activate',
-						'title' => '<i class="nebula-admin-fa fa fa-fw fa-flag-o" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> View Wireframe &raquo;',
+						'title' => '<i class="nebula-admin-fa far fa-fw fa-flag" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> View Wireframe &raquo;',
 						'href' => $permalink . '?phase=wireframe',
 					));
 				}
@@ -89,7 +89,7 @@ if ( !trait_exists('Prototyping') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-prototype',
 						'id' => 'nebula-staging-activate',
-						'title' => '<i class="nebula-admin-fa fa fa-fw fa-flag" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> View Staging Site &raquo;',
+						'title' => '<i class="nebula-admin-fa far fa-fw fa-flag" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> View Staging Site &raquo;',
 						'href' => $permalink . '?phase=staging',
 					));
 				}
@@ -98,7 +98,7 @@ if ( !trait_exists('Prototyping') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-prototype',
 						'id' => 'nebula-production-activate',
-						'title' => '<i class="nebula-admin-fa fa fa-fw fa-flag-checkered" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> View Production Site &raquo;',
+						'title' => '<i class="nebula-admin-fa far fa-fw fa-flag-checkered" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> View Production Site &raquo;',
 						'href' => $permalink . '?phase=production',
 					));
 				}
@@ -107,7 +107,7 @@ if ( !trait_exists('Prototyping') ){
 			$wp_admin_bar->add_node(array(
 				'parent' => 'nebula-prototype',
 				'id' => 'nebula-prototype-help',
-				'title' => '<i class="nebula-admin-fa fa fa-fw fa-question" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Help & Documentation &raquo;',
+				'title' => '<i class="nebula-admin-fa far fa-fw fa-question" style="font-family: \'FontAwesome\'; color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;"></i> Help & Documentation &raquo;',
 				'href' => 'https://gearside.com/nebula/functions/fpo/?utm_campaign=documentation&utm_medium=admin+bar&utm_source=prototyping+help',
 				'meta' => array('target' => '_blank', 'rel' => 'noopener')
 			));
@@ -148,7 +148,7 @@ if ( !trait_exists('Prototyping') ){
 
 			echo '<div class="fpo-component-con fpo-component' . $open . '">
 				<div class="component-name fpo-' . strtolower(str_replace(' ', '-', $component)) . '">
-					<i class="component-icon fa ' . $icon . '"></i> <strong>' . $component . '</strong><a class="component-comment-toggle" href="#"><i class="component-icon fa ' . $comment_icon . '"></i></a>
+					<i class="component-icon far ' . $icon . '"></i> <strong>' . $component . '</strong><a class="component-comment-toggle" href="#"><i class="component-icon fas ' . $comment_icon . '"></i></a>
 				</div><!-- /component-name -->
 				<div class="component-comment-drawer nebulashadow bulging">
 					<strong class="comment-header">0 Comments</strong>
@@ -205,7 +205,7 @@ if ( !trait_exists('Prototyping') ){
 				if ( strpos($icon, 'fa-') === false ){
 					$icon = 'fa-' . $icon;
 				}
-				$icon_html = '<i class="fa ' . $icon . '"></i>';
+				$icon_html = '<i class="fas ' . $icon . '"></i>';
 			}
 
 			$return .= '<div class="nebula-fpo ' . $safe_title . ' valign ' . $classes . '" style="position: relative; text-align: center; width: ' . $width . '; height: ' . $height . '; padding: 10px; background: ' . $bg . '; ' . $styles . '">

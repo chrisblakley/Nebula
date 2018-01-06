@@ -64,8 +64,11 @@
 
 							<?php if ( get_theme_mod('nebula_footer_search', true) ): ?>
 								<form class="nebula-search search footer-search" method="get" action="<?php echo home_url('/'); ?>">
-									<label class="sr-only" for="nebula-footer-search">Search</label>
-									<input id="nebula-footer-search" class="open input search" type="search" name="s" placeholder="Search" autocomplete="off" role="search" x-webkit-speech />
+									<div class="input-group">
+										<i class="fas fa-search"></i>
+										<label class="sr-only" for="nebula-footer-search">Search</label>
+										<input id="nebula-footer-search" class="open input search" type="search" name="s" placeholder="Search" autocomplete="off" role="search" x-webkit-speech />
+									</div>
 								</form>
 							<?php endif; ?>
 						</div><!--/col-->

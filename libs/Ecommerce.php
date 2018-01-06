@@ -97,7 +97,7 @@ if ( !trait_exists('Ecommerce') ){
 
 		//Checkout visitor data
 		public function woocommerce_order_data($order_id){
-			if ( $this->get_option('visitors_db') ){
+			if ( $this->get_option('hubspot_portal') ){
 				$order = new WC_Order($order_id);
 
 				//Append order ID and product IDs
@@ -107,22 +107,40 @@ if ( !trait_exists('Ecommerce') ){
 					$products['ecommerce_product_ids'] = $item['product_id'];
 				}
 				$products['ecommerce_order_id'] = $order_id;
-				$this->append_visitor($products);
 
-				//Update Customer data
-				$this->update_visitor_data(array(
-					'wp_role' => 'Customer',
-					'email_address' => $order->billing_email,
-					'first_name' => $order->billing_first_name,
-					'last_name' => $order->billing_last_name,
-					'full_name' => $order->billing_first_name . ' ' . $order->billing_last_name,
-					'street_full' => $order->billing_address_1 . ' ' . $order->billing_address_2,
-					'city' => $order->billing_city,
-					'state_abbr' => $order->billing_state,
-					'zip_code' => $order->billing_postcode,
-					'country' => $order->billing_country,
-					'phone_number' => $order->billing_phone,
-				));
+
+				?>
+
+
+
+
+
+				<?php if ( 1==2 ): //@todo "Nebula" 0: See if this script tag will break anything! If this can't be done here, try the above "woo_custom_ga_events" function... but can order details be accessed from that page? ?>
+				<script>
+					jQuery(function(){
+						_hsq.push(["identify", {
+							role: 'Customer',
+							email: '<?php echo $order->billing_email; ?>',
+							firstname: '<?php echo $order->billing_first_name; ?>',
+							lastname: '<?php echo $order->billing_last_name; ?>',
+							full_name: '<?php echo $order->billing_first_name . ' ' . $order->billing_last_name; ?>',
+							street_full: '<?php echo $order->billing_address_1 . ' ' . $order->billing_address_2; ?>',
+							city: '<?php echo $order->billing_city; ?>',
+							state: '<?php echo $order->billing_state; ?>',
+							zipcode: '<?php echo $order->billing_postcode; ?>',
+							country: '<?php echo $order->billing_country; ?>',
+							phone: '<?php echo $order->billing_phone; ?>',
+						}]);
+					});
+				</script>
+				<?php endif; ?>
+
+
+
+
+
+
+				<?php
 			}
 		}
 
