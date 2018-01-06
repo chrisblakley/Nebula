@@ -105,16 +105,14 @@ if ( !trait_exists('Sass') ){
 				}
 
 				//Set compiling options
-				if ( $this->get_option('minify_css') && !$this->is_debug() ){
-					$scss->setFormatter('Leafo\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving "/*!" comments for WordPress).
-				} else {
-					$scss->setFormatter('Leafo\ScssPhp\Formatter\Compact'); //Compact, but readable, CSS lines
-					if ( $this->is_debug() ){
-						$scss->setLineNumberStyle(\Leafo\ScssPhp\Compiler::LINE_COMMENTS); //Adds line number reference comments in the rendered CSS file for debugging.
-					}
-				}
+				$scss->setFormatter('Leafo\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving "/*!" comments for WordPress).
 
-				//$scss->setSourceMap(\Leafo\ScssPhp\Compiler::SOURCE_MAP_FILE); //Adds sourcemap support //@TODO "Nebula" 0: Not working yet
+				//Source Maps
+				$scss->setSourceMap(1); //0 = No .map, 1 = Inline .map, 2 = Output .map file
+				$scss->setSourceMapOptions(array(
+					'sourceMapBasepath' => $_SERVER['DOCUMENT_ROOT'], //Difference between file & URL locations, removed from all source paths in .map
+					'sourceRoot' => '/', //Added to source path locations if needed
+				));
 
 				//Variables
 				$nebula_scss_variables = array(
@@ -181,7 +179,7 @@ if ( !trait_exists('Sass') ){
 							//If the correlating .css file doesn't contain a comment to prevent overwriting
 							if ( !strpos(strtolower($existing_css_contents), 'scss disabled') ){
 								$this_scss_contents = $wp_filesystem->get_contents($file); //Copy SCSS file contents
-								$compiled_css = $scss->compile($this_scss_contents); //Compile the SCSS
+								$compiled_css = $scss->compile($this_scss_contents, $file); //Compile the SCSS
 								$enhanced_css = $this->scss_post_compile($compiled_css); //Compile server-side variables into SCSS
 								$wp_filesystem->put_contents($css_filepath, $enhanced_css); //Save the rendered CSS.
 								$this->update_data('scss_last_processed', time());

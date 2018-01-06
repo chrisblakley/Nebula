@@ -238,7 +238,6 @@ if ( !trait_exists('Options') ){
 				'plugin_update_warning' => 1,
 				'unnecessary_metaboxes' => 1,
 				'scss' => 0,
-				'minify_css' => 0,
 				'dev_stylesheets' => 0,
 				'console_css' => 1,
 

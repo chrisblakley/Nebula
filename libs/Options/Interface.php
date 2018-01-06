@@ -531,15 +531,8 @@
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[scss]" id="scss" value="1" <?php checked('1', !empty($nebula_options['scss'])); ?> /><label for="scss">Sass</label>
 										<p class="nebula-help-text short-help form-text text-muted">Enable the bundled SCSS compiler. (Default: <?php echo $this->user_friendly_default('scss'); ?>)</p>
-										<p class="nebula-help-text more-help form-text text-muted">Save Nebula Options to manually process all SCSS files. This option will automatically be disabled after 30 days without processing. Last processed: <strong><?php echo ( $nebula_data['scss_last_processed'] )? date('l, F j, Y - g:ia', $nebula_data['scss_last_processed']) : 'Never'; ?></strong></p>
+										<p class="nebula-help-text more-help form-text text-muted">Save Nebula Options to manually process all SCSS files. This option will automatically be disabled after 30 days without processing. CSS files will automatically be minified, but use source maps for debugging. Last processed: <strong><?php echo ( $nebula_data['scss_last_processed'] )? date('l, F j, Y - g:ia', $nebula_data['scss_last_processed']) : 'Never'; ?></strong></p>
 										<p class="option-keywords">sass scss sccs scass css moderate page speed impact</p>
-									</div>
-
-									<div class="form-group" dependent-of="scss">
-										<input type="checkbox" name="nebula_options[minify_css]" id="minify_css" value="1" <?php checked('1', !empty($nebula_options['minify_css'])); ?> /><label for="minify_css">Minify CSS</label>
-										<p class="dependent-note hidden">This option is dependent on Sass (above).</p>
-										<p class="nebula-help-text short-help form-text text-muted">Minify the compiled CSS. (Default: <?php echo $this->user_friendly_default('minify_css'); ?>)</p>
-										<p class="option-keywords">sass scss sccs scass css recommended</p>
 									</div>
 
 									<div class="form-group">
