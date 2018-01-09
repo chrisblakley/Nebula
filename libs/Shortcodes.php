@@ -516,7 +516,12 @@ if ( !trait_exists('Shortcodes') ){
 		public function query_shortcode($attributes){
 			extract(shortcode_atts(array('args' => ''), $attributes));
 
-			query_posts(html_entity_decode($args));
+			//Convert to an array so that 'paged' can be replaced if it is already present (or added if it is not) then convert back to a query string
+			parse_str($args, $args_arr);
+			$args_arr['paged'] = get_query_var('paged');
+			$args = html_entity_decode(urldecode(http_build_query($args_arr)));
+
+			query_posts($args); //Run the query
 
 			ob_start(); //Output buffer because the loop echoes
 			get_template_part('loop');

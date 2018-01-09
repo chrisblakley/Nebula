@@ -692,7 +692,7 @@ trait Functions {
 			return false;
 		}
 
-		$icon = ( $data['icon'] )? '<i class="far fa-calendar"></i> ' : '';
+		$icon = ( $data['icon'] )? '<i class="far fa-fw fa-calendar"></i> ' : '';
 		$relative_date = human_time_diff(get_the_date('U')) . ' ago';
 
 		if ( $data['relative'] ){
@@ -721,7 +721,7 @@ trait Functions {
 		if ( ($this->get_option('author_bios') || $data['force']) && get_theme_mod('post_author', true) ){
 			$icon_html = '';
 			if ( $data['icon'] ){
-				$icon_html = '<i class="fas fa-user"></i> ';
+				$icon_html = '<i class="fas fa-fw fa-user"></i> ';
 			}
 
 			if ( $data['linked'] && !$data['force'] ){
@@ -741,9 +741,9 @@ trait Functions {
 				$post_type = get_post_type();
 
 				if ( $post_type === 'post' ){
-					$post_icon_img = '<i class="fas fa-thumbtack"></i>';
+					$post_icon_img = '<i class="fas fa-fw fa-thumbtack"></i>';
 				} elseif ( $post_type === 'page' ){
-					$post_icon_img = '<i class="fas fa-file-alt"></i>';
+					$post_icon_img = '<i class="fas fa-fw fa-file-alt"></i>';
 				} else {
 					$post_icon = $wp_post_types[$post_type]->menu_icon;
 					if ( !empty($post_icon) ){
@@ -777,7 +777,7 @@ trait Functions {
 		if ( get_theme_mod('post_categories', true) || $data['force'] ){
 			$the_icon = '';
 			if ( $data['icon'] ){
-				$the_icon = '<i class="fas fa-bookmark"></i> ';
+				$the_icon = '<i class="fas fa-fw fa-bookmark"></i> ';
 			}
 
 			if ( is_object_in_taxonomy(get_post_type(), 'category') ){
@@ -816,7 +816,7 @@ trait Functions {
 				$the_icon = '';
 				if ( $data['icon'] ){
 					$tag_plural = ( count(get_the_tags()) > 1 )? 'tags' : 'tag';
-					$the_icon = '<i class="fas fa-' . $tag_plural . '"></i> ';
+					$the_icon = '<i class="fas fa-fw fa-' . $tag_plural . '"></i> ';
 				}
 
 				if ( $data['string'] ){
@@ -840,7 +840,7 @@ trait Functions {
 
 			$the_icon = '';
 			if ( $data['icon'] ){
-				$the_icon = '<i class="fas fa-expand"></i> ';
+				$the_icon = '<i class="fas fa-fw fa-expand"></i> ';
 			}
 
 			$metadata = wp_get_attachment_metadata();
@@ -856,7 +856,7 @@ trait Functions {
 	public function post_exif($icon=true){
 		$the_icon = '';
 		if ( $icon ){
-			$the_icon = '<i class="fas fa-camera"></i> ';
+			$the_icon = '<i class="fas fa-fw fa-camera-retro"></i> ';
 		}
 
 		$imgmeta = wp_get_attachment_metadata();
@@ -915,7 +915,7 @@ trait Functions {
 
 			$the_icon = '';
 			if ( $data['icon'] ){
-				$the_icon = '<i class="fas ' . $comment_icon . '"></i> ';
+				$the_icon = '<i class="fas fa-fw ' . $comment_icon . '"></i> ';
 			}
 
 			if ( $data['linked'] ){
@@ -1602,7 +1602,9 @@ trait Functions {
 
 		$form = '<form id="searchform" class="form-group form-inline ignore-form" role="search" method="get" action="' . home_url('/') . '">
 					<div class="input-group mb-2 mr-sm-2 mb-sm-0">
-						<div class="input-group-addon mb-2"><i class="fas fa-search"></i></div>
+						<div class="input-group-prepend mb-2">
+							<div class="input-group-text"><i class="fas fa-search"></i></div>
+						</div>
 						<label class="sr-only" for="s">Search</label>
 						<input id="s" class="form-control ignore-form mb-2" type="text" name="s" value="' . get_search_query() . '" placeholder="' . $placeholder . '" role="search" />
 					</div>

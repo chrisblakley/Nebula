@@ -83,6 +83,12 @@ jQuery(window).on('load', function(){
 
 	nebulaServiceWorker();
 
+
+
+
+
+
+
 	networkAvailable(true); //Call it once on load, then listen for changes
 	jQuery(window).on('offline online', function(){
 		networkAvailable(false);
@@ -274,13 +280,16 @@ function nebulaAddToCache(url){
 function networkAvailable(onload){
 	if ( navigator.onLine ){
 		nebula.dom.body.removeClass('offline');
+		localStorage.setItem('network_connection', 'online');
 
 		//If the permalink does not match the current URL, we're viewing an offline page
-		if ( !onload && nebula.post.permalink !== window.location.href ){ //@TODO "Nebula" this detection method won't work if the URL is modified after load (and is causing an infinite loop when Sass is processed!) Maybe only check this conditional when not on initial pageload?
-			//window.location.href = window.location.href; //"Redirect" to the originally requested page
+		//Only check if not initial pageload to prevent infinite loop when Sass is processed.
+		if ( !onload && nebula.post.permalink !== window.location.href ){
+			window.location.href = window.location.href; //"Redirect" to the originally requested page
 		}
 	} else {
 		nebula.dom.body.addClass('offline');
+		localStorage.setItem('network_connection', 'offline');
 	}
 
 	if ( !onload ){
@@ -300,6 +309,7 @@ function visibilityChangeActions(){
 		nebula.dom.body.addClass('page-visibility-hidden');
 		pauseAllVideos(false);
 	} else { //Page is visible
+		networkAvailable(false);
 		nebula.dom.document.trigger('nebula_page_visible');
 		nebula.dom.body.removeClass('page-visibility-hidden');
 	}
@@ -973,11 +983,15 @@ function nv(action, data){
 }
 
 //Easily send data to nv() via URL query parameters
-//Use the nv-* format in the URL to pass data to this function. Ex: ?nv-firstname=Chris
+//Use the nv-* format in the URL to pass data to this function. Ex: ?nv-firstname=Chris (can be encoded, too)
 function nvQueryParameters(){
 	var queryParameters = getQueryStrings();
 	var nvData = {};
+
 	jQuery.each(queryParameters, function(index, value){
+		index = decodeURIComponent(index);
+		value = decodeURIComponent(value).replace('+', ' ');
+
 		if ( index.substring(0, 3) === 'nv-' ){
 			var parameter = index.substring(3, index.length);
 			nvData[parameter] = value;

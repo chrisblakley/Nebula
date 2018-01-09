@@ -523,7 +523,7 @@
 				email: '<?php echo $user_info->user_email; ?>',
 				firstname: '<?php echo $user_info->first_name; ?>',
 				lastname: '<?php echo $user_info->last_name; ?>',
-				id: <?php echo get_current_user_id(); ?>,
+				id: '<?php echo get_current_user_id(); ?>',
 				username: '<?php echo $user_info->user_login; ?>',
 				role: '<?php echo nebula()->user_role(); ?>',
 				jobtitle: '<?php echo get_user_meta(get_current_user_id(), 'jobtitle', true); ?>',

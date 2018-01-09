@@ -1096,6 +1096,7 @@ if ( !trait_exists('Utilities') ){
 						'description' => 'An address looked up by the user (may not be their own address)',
 					);
 
+					$properties_created = array();
 					foreach ( $custom_nebula_properties as $value ){
 						if ( !in_array($value['name'], $existing_nebula_properties) ){
 							$content = '{
@@ -1110,8 +1111,18 @@ if ( !trait_exists('Utilities') ){
 								"options": []
 							}';
 
-							$this->hubspot_curl('https://api.hubapi.com/contacts/v2/properties', $content);
+							$response = $this->hubspot_curl('https://api.hubapi.com/contacts/v2/properties', $content);
+							$properties_created[] = $value['name'];
 						}
+					}
+
+					if ( count($properties_created) > 0 ){
+						?>
+						<div class="updated notice notice-warning">
+							<p><strong>Nebula Hubspot properties created!</strong> <?php echo count($properties_created); ?> contact properties were created in Hubspot. Be sure to <a href="https://app.hubspot.com/property-settings/<?php echo nebula()->get_option('hubspot_portal'); ?>/contact" target="_blank">manually create any needed properties</a> specific to this website.</p>
+							<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
+						</div>
+						<?php
 					}
 				} else {
 					?>

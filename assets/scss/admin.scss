@@ -311,9 +311,8 @@ ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {width: 19px; height: 
 	.sticky {position: sticky; top: 60px;}
 
 	.nav-link {font-size: 16px;
-		i {color: #23282d;
-			.active & {color: #fff;}
-		}
+		i, path {color: #23282d; fill: #23282d;}
+		&.active i, &.active path {color: #fff; fill: #fff;}
 
 		i.empty-important-tab-warn {color: #d9534f !important; line-height: 24px; float: right;}
 	}
