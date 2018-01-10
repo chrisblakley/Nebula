@@ -253,7 +253,7 @@ trait Functions {
 			}
 
 			//If search indexing is disabled
-			if ( get_option('blog_public') === 0 ){
+			if ( get_option('blog_public') == 0 ){ //Stored as a string
 				$nebula_warnings[] = array(
 					'level' => 'error',
 					'description' => '<a href="options-reading.php">Search Engine Visibility</a> is currently disabled!',

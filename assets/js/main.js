@@ -83,15 +83,9 @@ jQuery(window).on('load', function(){
 
 	nebulaServiceWorker();
 
-
-
-
-
-
-
-	networkAvailable(true); //Call it once on load, then listen for changes
+	networkAvailable(); //Call it once on load, then listen for changes
 	jQuery(window).on('offline online', function(){
-		networkAvailable(false);
+		networkAvailable();
 	});
 }); //End Window Load
 
@@ -277,24 +271,16 @@ function nebulaAddToCache(url){
  ===========================*/
 
 //Check (or set) network availability (online/offline)
-function networkAvailable(onload){
+function networkAvailable(){
 	if ( navigator.onLine ){
 		nebula.dom.body.removeClass('offline');
 		localStorage.setItem('network_connection', 'online');
-
-		//If the permalink does not match the current URL, we're viewing an offline page
-		//Only check if not initial pageload to prevent infinite loop when Sass is processed.
-		if ( !onload && nebula.post.permalink !== window.location.href ){
-			window.location.href = window.location.href; //"Redirect" to the originally requested page
-		}
 	} else {
 		nebula.dom.body.addClass('offline');
 		localStorage.setItem('network_connection', 'offline');
 	}
 
-	if ( !onload ){
-		jQuery(document).trigger('nebula_network_change');
-	}
+	jQuery(document).trigger('nebula_network_change');
 }
 
 //Page Visibility
@@ -309,7 +295,7 @@ function visibilityChangeActions(){
 		nebula.dom.body.addClass('page-visibility-hidden');
 		pauseAllVideos(false);
 	} else { //Page is visible
-		networkAvailable(false);
+		networkAvailable();
 		nebula.dom.document.trigger('nebula_page_visible');
 		nebula.dom.body.removeClass('page-visibility-hidden');
 	}

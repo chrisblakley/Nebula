@@ -210,12 +210,12 @@ if ( !trait_exists('Security') ){
 			}
 		}
 
-		//Return an array of blacklisted domains from Piwik (or the latest Nebula on Github)
+		//Return an array of blacklisted domains from Matomo (or the latest Nebula on Github)
 		public function get_domain_blacklist(){
 			$domain_blacklist_json_file = get_template_directory() . '/inc/data/domain_blacklist.txt';
 			$domain_blacklist = get_transient('nebula_domain_blacklist');
 			if ( empty($domain_blacklist) || $this->is_debug() ){ //If transient expired or is debug
-				$response = $this->remote_get('https://raw.githubusercontent.com/piwik/referrer-spam-blacklist/master/spammers.txt');
+				$response = $this->remote_get('https://raw.githubusercontent.com/matomo-org/referrer-spam-blacklist/master/spammers.txt');
 				if ( !is_wp_error($response) ){
 					$domain_blacklist = $response['body'];
 				}

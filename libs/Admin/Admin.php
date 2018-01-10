@@ -481,7 +481,7 @@ if ( !trait_exists('Admin') ){
 			if ( !empty($warnings) ){
 				foreach( $warnings as $warning ){
 					if ( !empty($warning['url']) ){
-						$nebula_warning_icon = ' <i class="far fa-fw fa-exclamation-triangle" style="color: #ca3838; margin-left: 5px;"></i>';
+						$nebula_warning_icon = ' <i class="fas fa-fw fa-exclamation-triangle" style="color: #ca3838; margin-left: 5px;"></i>';
 						$nebula_warning_description = strip_tags($warning['description']);
 						$nebula_warning_href = $warning['url'];
 					}
@@ -506,7 +506,7 @@ if ( !trait_exists('Admin') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula',
 					'id' => 'nebula-warning',
-					'title' => '<i class="nebula-admin-fa far fa-fw fa-exclamation-triangle" style="color: #ca3838; margin-right: 5px;"></i> ' . $nebula_warning_description,
+					'title' => '<i class="nebula-admin-fa fas fa-fw fa-exclamation-triangle" style="color: #ca3838; margin-right: 5px;"></i> ' . $nebula_warning_description,
 					'href' => get_admin_url() . $nebula_warning_href,
 				));
 			}
