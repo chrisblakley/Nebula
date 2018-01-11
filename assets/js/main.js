@@ -3553,19 +3553,12 @@ function nebulaYoutubeReady(e){
 		videoProgress = {};
 	}
 
-	if ( e.target.getVideoData ){
-		var id = e.target.getVideoData().id;
-		var videoTitle = e.target.getVideoData().title;
-	} else if ( e.target.getDebugText ){
-		var id = JSON.parse(e.target.getDebugText()).debug_videoId;
-	} else {
-		var id = get('v', e.target.getVideoUrl()) || jQuery(e.target.getIframe()).attr('src').split('?')[0].split('/').pop() || jQuery(e.target.getIframe()).attr('id'); //Parse the video URL for the ID or use the iframe ID
-	}
+	var id = nebulaGetYoutubeID(e.target);
 
 	nebulaVideos[id].platform = 'youtube'; //The platform the video is hosted using.
 	nebulaVideos[id].element = e.target.getIframe(); //The player iframe. Selectable with jQuery(thisVideo.element)...
 	nebulaVideos[id].autoplay = jQuery(e.target.getIframe()).attr('src').indexOf('autoplay=1') > 0; //Look for the autoplay parameter in the ifrom src.
-	nebulaVideos[id].title = videoTitle || jQuery(e.target.getIframe()).attr('title') || id;
+	nebulaVideos[id].title = nebulaGetYoutubeTitle(e.target);
 	nebulaVideos[id].id = id;
 	nebulaVideos[id].duration = e.target.getDuration(); //The total duration of the video. Unit: Seconds
 	nebulaVideos[id].current = e.target.getCurrentTime(); //The current position of the video. Units: Seconds
@@ -3577,17 +3570,8 @@ function nebulaYoutubeReady(e){
 }
 
 function nebulaYoutubeStateChange(e){
-	if ( e.target.getVideoData ){
-		var id = e.target.getVideoData().id;
-		var videoTitle = e.target.getVideoData().title;
-	} else if ( e.target.getDebugText ){
-		var id = JSON.parse(e.target.getDebugText()).debug_videoId;
-	} else {
-		var id = get('v', e.target.getVideoUrl()) || jQuery(e.target.getIframe()).attr('src').split('?')[0].split('/').pop() || jQuery(e.target.getIframe()).attr('id'); //Parse the video URL for the ID or use the iframe ID
-	}
-
-	var thisVideo = nebulaVideos[id];
-	thisVideo.title = videoTitle || jQuery(e.target.getIframe()).attr('title') || id;
+	var thisVideo = nebulaVideos[nebulaGetYoutubeID(e.target)];
+	thisVideo.title = nebulaGetYoutubeTitle(e.target);
 	thisVideo.current = e.target.getCurrentTime();
 	thisVideo.percent = thisVideo.current/thisVideo.duration;
 
@@ -3607,7 +3591,6 @@ function nebulaYoutubeStateChange(e){
 		}
 
 		ga('send', 'event', 'Videos', playAction, thisVideo.title, Math.round(thisVideo.current));
-
 		nv('event', 'Video Play Began: ' + thisVideo.title);
 		nebula.dom.document.trigger('nebula_playing_video', thisVideo);
 		pauseFlag = true;
@@ -3680,20 +3663,44 @@ function nebulaYoutubeStateChange(e){
 }
 
 function nebulaYoutubeError(e){
-	if ( e.target.getVideoData ){
-		var id = e.target.getVideoData().id;
-		var videoTitle = e.target.getVideoData().title;
-	} else if ( e.target.getDebugText ){
-		var id = JSON.parse(e.target.getDebugText()).debug_videoId;
-	} else {
-		var id = get('v', e.target.getVideoUrl()) || jQuery(e.target.getIframe()).attr('src').split('?')[0].split('/').pop() || jQuery(e.target.getIframe()).attr('id'); //Parse the video URL for the ID or use the iframe ID
-	}
-
-	var thisVideo = nebulaVideos[id];
-	thisVideo.title = videoTitle || jQuery(e.target.getIframe()).attr('title') || id;
+	var thisVideo = nebulaVideos[nebulaGetYoutubeID(e.target)];
+	thisVideo.title = nebulaGetYoutubeTitle(e.target);
 
 	ga('send', 'exception', {'exDescription': '(JS) Youtube API error for ' + thisVideo.title + ': ' + e.data, 'exFatal': false});
 	nv('event', 'Youtube API Error');
+}
+
+//Get the ID of the Youtube video (or use best fallback possible)
+function nebulaGetYoutubeID(target){
+	var id;
+
+	//If getVideoData is available in the API
+	if ( target.getVideoData ){
+		id = target.getVideoData().id || target.getVideoData().video_id;
+	}
+
+	//Make sure the ID was available within the getVideoData() otherwise use alternate methods
+	if ( !id ){
+		if ( target.getDebugText ){
+			id = JSON.parse(target.getDebugText()).debug_videoId;
+		} else {
+			id = get('v', target.getVideoUrl()) || jQuery(target.getIframe()).attr('src').split('?')[0].split('/').pop() || jQuery(target.getIframe()).attr('id'); //Parse the video URL for the ID or use the iframe ID
+		}
+	}
+
+	return id;
+}
+
+//Get the title of a Youtube video (or use best fallback possible)
+function nebulaGetYoutubeTitle(target){
+	var videoTitle;
+
+	//If getVideoData is available in the API
+	if ( target.getVideoData ){
+		videoTitle = target.getVideoData().title;
+	}
+
+	return videoTitle || jQuery(target.getIframe()).attr('title') || nebulaGetYoutubeID(target) || false;
 }
 
 //Prepare Vimeo API
