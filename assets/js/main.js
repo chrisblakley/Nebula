@@ -945,10 +945,6 @@ function nv(action, data){
 	}
 
 	if ( action === 'identify' ){
-
-
-		console.log('identifying', data);
-
 		_hsq.push(["identify", data]);
 
 		//Send a virtual pageview because event data doesn't work with free Hubspot accounts (and the identification needs a transport method)
@@ -973,6 +969,7 @@ function nv(action, data){
 function nvQueryParameters(){
 	var queryParameters = getQueryStrings();
 	var nvData = {};
+	var nvRemove = [];
 
 	jQuery.each(queryParameters, function(index, value){
 		index = decodeURIComponent(index);
@@ -981,6 +978,7 @@ function nvQueryParameters(){
 		if ( index.substring(0, 3) === 'nv-' ){
 			var parameter = index.substring(3, index.length);
 			nvData[parameter] = value;
+			nvRemove.push(index);
 		}
 
 		if ( index.substring(0, 4) === 'utm_' ){
@@ -989,8 +987,14 @@ function nvQueryParameters(){
 		}
 	});
 
+	//Send to CRM
 	if ( Object.keys(nvData).length ){
 		nv('identify', nvData);
+	}
+
+	//Remove the nv-* query parameters
+	if ( nvRemove.length > 0 && !get('persistent') && window.history.replaceState ){ //IE10+
+		window.history.replaceState({}, document.title, removeQueryParameter(nvRemove, window.location.href));
 	}
 }
 
@@ -1014,7 +1018,6 @@ function nvForm(){
 	});
 
 	if ( Object.keys(nvFormObj).length ){
-		console.log('nvFormObj has data!', nvFormObj);
 		nv('identify', nvFormObj);
 	}
 }
@@ -2724,7 +2727,7 @@ function get(parameter, url){
 	return queries[parameter] || false;
 }
 
-//Remove a parameter from the query string.
+//Remove an array of parameters from the query string.
 function removeQueryParameter(keys, sourceURL){
 	if ( typeof keys === 'string' ){
 		keys = [keys];
@@ -2756,7 +2759,7 @@ function removeQueryParameter(keys, sourceURL){
 	});
 
 	//Check if it is empty after parameter removal
-	if ( newURL.split('?')[1] === '' ){
+	if ( typeof newURL !== 'undefined' && newURL.split('?')[1] === '' ){
 		return newURL.split("?")[0]; //Return the URL without a query
 	}
 
