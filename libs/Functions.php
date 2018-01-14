@@ -204,29 +204,21 @@ trait Functions {
 
 			//Admin warnings only
 			if ( $this->is_admin_page() ){
-				//Check page slug against categories and tags. //@TODO "Nebula" 0: Consider adding other taxonomies here too
+				//Check page slug against taxonomy terms.
 				global $pagenow;
 				if ( $pagenow === 'post.php' || $pagenow === 'edit.php' ){
 					global $post;
 
 					if ( !empty($post) ){ //If the listing has results
-						foreach ( get_categories() as $category ){
-							if ( $category->slug === $post->post_name ){
-								$nebula_warnings[] = array(
-									'level' => 'error',
-									'description' => 'Page and category slug conflict: <strong>' . $category->slug . '</strong> - Consider changing this page slug.',
-								);
-								return false;
-							}
-						}
-
-						foreach ( get_tags() as $tag ){
-							if ( $tag->slug === $post->post_name ){
-								$nebula_warnings[] = array(
-									'level' => 'error',
-									'description' => 'Page and tag slug conflict: <strong>' . $tag->slug . '</strong> - Consider changing this page slug.'
-								);
-								return false;
+						foreach ( get_taxonomies() as $taxonomy ){ //Loop through all taxonomies
+							foreach ( get_terms($taxonomy, array('hide_empty' => false)) as $term ){ //Loop through all terms within each taxonomy
+								if ( $term->slug === $post->post_name ){
+									$nebula_warnings[] = array(
+										'level' => 'error',
+										'description' => 'Slug conflict with ' . ucwords(str_replace('_', ' ', $taxonomy)) . ': <strong>' . $term->slug . '</strong> - Consider changing this page slug.'
+									);
+									return false;
+								}
 							}
 						}
 					}
@@ -1195,10 +1187,7 @@ trait Functions {
 		echo '</div><!--/sharing-links-->';
 	}
 
-	/*
-		Social Button Functions
-		//@TODO "Nebula" 0: Eventually upgrade these to support vertical count bubbles as an option.
-	*/
+	//Social Button Functions
 
 	public function share_api(){
 		$override = apply_filters('pre_nebula_share_api', null);
