@@ -953,6 +953,15 @@ function nv(action, data){
 		_hsq.push(['trackPageView']);
 
 		//_hsq.push(["trackEvent", data]); //If using an Enterprise Marketing subscription, use this method instead of the trackPageView above
+
+		//Check if email was identified or just supporting data
+		if ( 'email' in data ){
+			if ( regexPattern.email.test(data['email']) ){
+				ga('send', 'event', 'CRM', 'Contact Identified', "A contact's email address in the CRM has been identified.");
+			}
+		} else {
+			ga('send', 'event', 'CRM', 'Supporting Information', 'Information associated with this user has been identified.');
+		}
 	}
 
 	if ( action === 'event' ){
@@ -1031,8 +1040,11 @@ function nvFormRealTime(){
 
 		if ( thisVal.length > 0 ){
 			var cat = /nv-([a-z\_]+)/g.exec(jQuery(this).attr('class'));
+
 			if ( cat ){
-				nv('identify', {cat[1]: thisVal});
+				data = {};
+				data[cat[1]] = thisVal;
+				nv('identify', data);
 			}
 		}
 	});
