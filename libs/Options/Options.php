@@ -344,6 +344,7 @@ if ( !trait_exists('Options') ){
 				'cpanel_url' => '',
 				'hosting_url' => '',
 				'registrar_url' => '',
+				'github_url' => '',
 				'google_adsense_url' => '',
 				'amazon_associates_url' => '',
 				'mention_url' => '',

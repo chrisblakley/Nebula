@@ -1854,6 +1854,13 @@
 									</div>
 
 									<div class="form-group">
+										<label for="registrar_url">Github Repository</label>
+										<input type="text" name="nebula_options[github_url]" id="github_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['github_url']; ?>" />
+										<p class="nebula-help-text short-help form-text text-muted">Link to the Github repo for this website.</p>
+										<p class="option-keywords"></p>
+									</div>
+
+									<div class="form-group">
 										<input type="checkbox" name="nebula_options[google_adsense_url]" id="google_adsense_url" value="1" <?php checked('1', !empty($nebula_options['google_adsense_url'])); ?> /><label for="google_adsense_url">Google AdSense</label>
 										<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://www.google.com/adsense/" target="_blank" rel="noopener">Google AdSense</a> account. (Default: <?php echo $this->user_friendly_default('google_adsense_url'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted"><strong>This is only a dashboard link!</strong> It does nothing beyond add a convenient link on the dashboard.</p>

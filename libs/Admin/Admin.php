@@ -194,6 +194,14 @@ if ( !trait_exists('Admin') ){
 				);
 			}
 
+			if ( $this->get_option('github_url') ){
+				$third_party_tools['administrative'][] = array(
+					'name' => 'Github Repository',
+					'icon' => '<i class="fab fa-fw fa-github"></i>',
+					'url' => $this->get_option('github_url')
+				);
+			}
+
 			if ( $this->get_option('ga_tracking_id') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Google Analytics',
@@ -314,7 +322,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('linkedin_url') ){
 				$third_party_tools['social'][] = array(
 					'name' => 'LinkedIn',
-					'icon' => '<i class="fab fa-fw fa-linkedin-square"></i>',
+					'icon' => '<i class="fab fa-fw fa-linkedin"></i>',
 					'url' => $this->get_option('linkedin_url')
 				);
 			}

@@ -597,10 +597,9 @@ function initEventTracking(){
 		performanceMetrics();
 		eventTracking();
 		scrollDepth();
+		nvFormRealTime();
+		ecommerceTracking();
 
-		if ( has(nebula, 'site.ecommerce') && nebula.site.ecommerce ){
-			ecommerceTracking();
-		}
 	}, 'nebula event tracking');
 }
 
@@ -845,47 +844,49 @@ function eventTracking(){
 //Ecommerce event tracking
 //Note: These supplement the plugin Enhanced Ecommerce for WooCommerce
 function ecommerceTracking(){
-	//Add to Cart clicks
-	nebula.dom.document.on('click', 'a.add_to_cart, .single_add_to_cart_button', function(){ //@todo "Nebula" 0: is there a trigger from WooCommerce this can listen for?
-		ga('send', 'event', 'Ecommerce', 'Add to Cart', jQuery(this).attr('data-product_id'));
-		if ( typeof fbq === 'function' ){fbq('track', 'AddToCart');}
-		nv('event', 'Ecommerce Add to Cart');
-	});
+	if ( has(nebula, 'site.ecommerce') && nebula.site.ecommerce ){
+		//Add to Cart clicks
+		nebula.dom.document.on('click', 'a.add_to_cart, .single_add_to_cart_button', function(){ //@todo "Nebula" 0: is there a trigger from WooCommerce this can listen for?
+			ga('send', 'event', 'Ecommerce', 'Add to Cart', jQuery(this).attr('data-product_id'));
+			if ( typeof fbq === 'function' ){fbq('track', 'AddToCart');}
+			nv('event', 'Ecommerce Add to Cart');
+		});
 
-	//Update cart clicks
-	nebula.dom.document.on('click', '.button[name="update_cart"]', function(){
-		ga('send', 'event', 'Ecommerce', 'Update Cart Button', 'Update Cart button click');
-		nv('event', 'Ecommerce Update Cart');
-	});
+		//Update cart clicks
+		nebula.dom.document.on('click', '.button[name="update_cart"]', function(){
+			ga('send', 'event', 'Ecommerce', 'Update Cart Button', 'Update Cart button click');
+			nv('event', 'Ecommerce Update Cart');
+		});
 
-	//Product Remove buttons
-	nebula.dom.document.on('click', '.product-remove a.remove', function(){
-		ga('send', 'event', 'Ecommerce', 'Remove this item', jQuery(this).attr('data-product_id'));
-		nv('event', 'Ecommerce Remove From Cart');
-	});
+		//Product Remove buttons
+		nebula.dom.document.on('click', '.product-remove a.remove', function(){
+			ga('send', 'event', 'Ecommerce', 'Remove this item', jQuery(this).attr('data-product_id'));
+			nv('event', 'Ecommerce Remove From Cart');
+		});
 
-	//Proceed to Checkout
-	nebula.dom.document.on('click', '.wc-proceed-to-checkout .checkout-button', function(){
-		ga('send', 'event', 'Ecommerce', 'Proceed to Checkout Button', 'Proceed to Checkout button click');
-		if ( typeof fbq === 'function' ){fbq('track', 'InitiateCheckout');}
-		nv('event', 'Ecommerce Proceed to Checkout');
-	});
+		//Proceed to Checkout
+		nebula.dom.document.on('click', '.wc-proceed-to-checkout .checkout-button', function(){
+			ga('send', 'event', 'Ecommerce', 'Proceed to Checkout Button', 'Proceed to Checkout button click');
+			if ( typeof fbq === 'function' ){fbq('track', 'InitiateCheckout');}
+			nv('event', 'Ecommerce Proceed to Checkout');
+		});
 
-	//Checkout form timing
-	nebula.dom.document.on('click focus', '#billing_first_name', function(){
-		nebulaTimer('ecommerce_checkout', 'start');
-		ga('send', 'event', 'Ecommerce', 'Started Checkout Form', 'Began filling out the checkout form (Billing First Name)');
-		nv('event', 'Ecommerce Started Checkout Form');
-	});
+		//Checkout form timing
+		nebula.dom.document.on('click focus', '#billing_first_name', function(){
+			nebulaTimer('ecommerce_checkout', 'start');
+			ga('send', 'event', 'Ecommerce', 'Started Checkout Form', 'Began filling out the checkout form (Billing First Name)');
+			nv('event', 'Ecommerce Started Checkout Form');
+		});
 
-	//Place order button
-	nebula.dom.document.on('click', '#place_order', function(){
-		ga('send', 'timing', 'Ecommerce', 'Checkout Form', Math.round(nebulaTimer('ecommerce_checkout', 'end')), 'Billing details start to Place Order button click');
-		ga('send', 'event', 'Ecommerce', 'Place Order Button', 'Place Order button click (likely exit to payment gateway)');
-		if ( typeof fbq === 'function' ){fbq('track', 'Purchase');}
-		nv('event', 'Ecommerce Placed Order');
-		nv('identify', {hs_lifecyclestage_customer_date: 1}); //@todo "Nebula" 0: What kind of date format does Hubspot expect here?
-	});
+		//Place order button
+		nebula.dom.document.on('click', '#place_order', function(){
+			ga('send', 'timing', 'Ecommerce', 'Checkout Form', Math.round(nebulaTimer('ecommerce_checkout', 'end')), 'Billing details start to Place Order button click');
+			ga('send', 'event', 'Ecommerce', 'Place Order Button', 'Place Order button click (likely exit to payment gateway)');
+			if ( typeof fbq === 'function' ){fbq('track', 'Purchase');}
+			nv('event', 'Ecommerce Placed Order');
+			nv('identify', {hs_lifecyclestage_customer_date: 1}); //@todo "Nebula" 0: What kind of date format does Hubspot expect here?
+		});
+	}
 }
 
 //Detect scroll depth
@@ -1020,6 +1021,21 @@ function nvForm(){
 	if ( Object.keys(nvFormObj).length ){
 		nv('identify', nvFormObj);
 	}
+}
+
+//Listen to form inputs and identify in real-time
+//Add a class to the input field with the category to use. Ex: nv-firstname
+function nvFormRealTime(){
+	jQuery('form [class*="nv-"]').on('blur', function(){
+		var thisVal = jQuery.trim(jQuery(this).val());
+
+		if ( thisVal.length > 0 ){
+			var cat = /nv-([a-z\_]+)/g.exec(jQuery(this).attr('class'));
+			if ( cat ){
+				nv('identify', {cat[1]: thisVal});
+			}
+		}
+	});
 }
 
 /*==========================
@@ -1871,11 +1887,12 @@ function cf7Functions(){
 	nebula.dom.document.on('wpcf7submit', function(e){
 		var formID = e.detail.contactFormId || e.detail.id;
 		var formTime = nebulaTimer(e.detail.id, 'lap', 'wpcf7-submit-attempt');
-		nvForm(); //nvForm() here because it triggers after all others. No nv() here so it doesn't overwrite the other (more valuable) data.
+
 		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Attempt)');
 		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
 		ga('send', 'event', 'CF7 Form', 'Submit (Attempt)', 'Submission attempt for form ID: ' + formID); //This event is required for the notable form metric!
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)',});}
+		nvForm(); //nvForm() here because it triggers after all others. No nv() here so it doesn't overwrite the other (more valuable) data.
 
 		jQuery('#' + e.detail.id).find('button#submit').removeClass('active');
 	});

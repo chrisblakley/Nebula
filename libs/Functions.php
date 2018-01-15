@@ -1516,7 +1516,7 @@ trait Functions {
 				if ( get_post_type() !== 'post' ){
 					$post_type = get_post_type_object(get_post_type());
 					$slug = $post_type->rewrite;
-					echo '<a href="' . $data['home_link'] . $slug['slug'] . '/">' . $post_type->labels->singular_name . '</a>';
+					echo '<a href="' . $data['home_link'] . $slug['slug'] . '/" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $post_type->labels->singular_name . '</a>';
 					if ( !empty($data['current']) ){
 						echo ' ' . $delimiter_html . ' ' . $data['before'] . get_the_title() . $data['after'];
 					}
