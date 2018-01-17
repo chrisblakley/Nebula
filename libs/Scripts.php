@@ -46,7 +46,7 @@ if ( !trait_exists('Scripts') ){
 			$this->jquery();
 			$this->bootstrap('js');
 			$this->register_script('nebula-popper', 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js', 'defer', null, '1.12.6', true); //This is not enqueued or dependent because it is called via main.js only as needed. Remove this after Bootstrap Beta 3
-			$this->register_script('nebula-font_awesome', 'https://use.fontawesome.com/releases/v5.0.1/js/all.js', 'defer', null, '5.0.1', true); //Font Awesome 5 JS SVG method
+			$this->register_script('nebula-font_awesome', 'https://use.fontawesome.com/releases/v5.0.4/js/all.js', 'defer', null, '5.0.4', true); //Font Awesome 5 JS SVG method
 			$this->register_script('nebula-modernizr_dev', get_template_directory_uri() . '/assets/js/vendor/modernizr.dev.js', 'defer', null, '3.3.1', false);
 			$this->register_script('nebula-modernizr_local', get_template_directory_uri() . '/assets/js/vendor/modernizr.min.js', 'defer', null, '3.3.1', false);
 			$this->register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', 'defer', null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
