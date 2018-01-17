@@ -518,7 +518,7 @@ if ( !trait_exists('Shortcodes') ){
 
 			//Convert to an array so that 'paged' can be replaced if it is already present (or added if it is not) then convert back to a query string
 			parse_str($args, $args_arr);
-			$args_arr['paged'] = get_query_var('paged', 1);
+			$args_arr['paged'] = ( get_query_var('paged') )? get_query_var('paged') : get_query_var('page', 0);
 			$args = html_entity_decode(urldecode(http_build_query($args_arr)));
 
 			query_posts($args); //Run the query

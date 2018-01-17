@@ -42,8 +42,8 @@ if ( !trait_exists('Automation') ){
 					'required' => true,
 				),
 				array(
-					'name' => 'Save Contact Form 7',
-					'slug' => 'save-contact-form-7',
+					'name' => 'Contact Form 7 Database Addon – CFDB7',
+					'slug' => 'contact-form-cfdb7',
 					'required' => true,
 				),
 				array(

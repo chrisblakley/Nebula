@@ -1743,7 +1743,7 @@ function cf7Functions(){
 		return false;
 	}
 
-	jQuery('.debuginfo').addClass('hidden').css('display', 'none').attr('aria-hidden', 'true');
+	jQuery('.debuginfo').addClass('hidden').css('display', 'none').attr('aria-hidden', 'true').val(nebula.session.id);
 	formStarted = {};
 
 	//Replace submit input with a button so a spinner icon can be used instead of the CF7 spin gif (unless it has the class "no-button")
@@ -1817,13 +1817,6 @@ function cf7Functions(){
 	//CF7 before submission
 	nebula.dom.document.on('wpcf7beforesubmit', function(e){
 		jQuery(e.target).find('button#submit').addClass('active');
-
-		//Send debug info with the form
-		jQuery.each(e.detail.inputs, function(index, item){
-			if ( item.name === 'debuginfo' ){
-				item.value = nebula.session.id;
-			}
-		});
 	});
 
 	//CF7 Invalid (CF7 AJAX response after invalid form)

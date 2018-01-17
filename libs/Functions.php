@@ -99,6 +99,7 @@ trait Functions {
 
 		add_filter('acf/settings/google_api_key', array($this, 'acf_google_api_key'));
 		add_filter('wpseo_metadesc', array($this, 'meta_description'));
+		add_action('cfdb7_before_save_data', array($this, 'more_contact_form_db_info'));
 	}
 
 	//Start output buffering so headers can be sent later for HTTP2 Server Push
@@ -2959,6 +2960,12 @@ trait Functions {
 		}
 
 		return $html;
+	}
+
+	//Add more columns to contact form DB storage
+	public function more_contact_form_db_info($form_data){
+		$form_data['ip'] = $_SERVER['REMOTE_ADDR'];
+		return $form_data;
 	}
 
 	//Add Google API key to Advanced Custom Fields Google Map field type
