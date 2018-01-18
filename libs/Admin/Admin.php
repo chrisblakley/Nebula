@@ -719,7 +719,7 @@ if ( !trait_exists('Admin') ){
 
 		//Show update warning on Wordpress Core/Plugin update admin pages
 		public function update_warning(){
-			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=" . urlencode(get_bloginfo('name')) . "&utm_content=update+warning" . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . ">Pinckney Hugo Group</a> if there are questions about updates: (315) 478-6700</p></div>";
+			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=" . urlencode(get_bloginfo('name')) . "&utm_content=update+warning" . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . "'>Pinckney Hugo Group</a> if there are questions about updates: (315) 478-6700</p></div>";
 		}
 
 		//Nebula Theme Update Checker
