@@ -99,7 +99,7 @@ trait Functions {
 
 		add_filter('acf/settings/google_api_key', array($this, 'acf_google_api_key'));
 		add_filter('wpseo_metadesc', array($this, 'meta_description'));
-		add_action('cfdb7_before_save_data', array($this, 'more_contact_form_db_info'));
+		add_filter('cfdb7_before_save_data', array($this, 'more_contact_form_db_info'));
 	}
 
 	//Start output buffering so headers can be sent later for HTTP2 Server Push
@@ -398,12 +398,12 @@ trait Functions {
 				if ( $this->is_dev() || $this->is_client() ){
 					$nebula_warnings[] = array(
 						'level' => 'log',
-						'description' => 'All SCSS files have been manually processed.'
+						'description' => 'All Sass files have been manually processed.'
 					);
 				} else {
 					$nebula_warnings[] = array(
 						'level' => 'error',
-						'description' => 'You do not have permissions to manually process all SCSS files.'
+						'description' => 'You do not have permissions to manually process all Sass files.'
 					);
 				}
 			}
@@ -2097,16 +2097,66 @@ trait Functions {
 	}
 
 	//Print the PHG logo as text with or without hover animation.
-	public function pinckney_hugo_group($anim){ $this->pinckneyhugogroup($anim); }
-	public function phg($anim){ $this->pinckneyhugogroup($anim); }
-	public function pinckneyhugogroup($anim=false, $white=false){
-		if ( $anim ){
-			$anim = 'anim';
+	public function pinckney_hugo_group($options){ $this->pinckneyhugogroup($options); }
+	public function phg($options){ $this->pinckneyhugogroup($options); }
+	public function pinckneyhugogroup($options=array()){
+		$defaults = array(
+			'animate' => false,
+			'white' => false,
+			'linked' => true,
+		);
+
+		$data = array_merge($defaults, $options);
+
+		$anim = ( $data['animate'] )? 'anim' : '';
+		$white = ( $data['white'] )? 'white' : '';
+		$html = ( $data['linked'] )? '<a ' : '<span ';
+
+		$html .= 'class="phg ' . $anim . ' ' . $white . '"';
+
+		if ( $data['linked'] ){
+			$html .= ' href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+link+function' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener"';
 		}
-		if ( $white ){
-			$white = 'anim';
+
+		$html .= '><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span>';
+
+		if ( $data['linked'] ){
+			$html .= '</a>';
+		} else {
+			$html .= '</span>';
 		}
-		return '<a class="phg ' . $anim . ' ' . $white . '" href="http://www.pinckneyhugo.com/" target="_blank" rel="noopener"><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span></a>';
+
+		return $html;
+	}
+
+	//Get a datapoint for a user
+	public function get_user_info($datapoint, $options=array()){
+		$defaults = array(
+			'id' => get_current_user_id(),
+			'datapoint' => $datapoint,
+			'prepend' => '',
+			'append' => '',
+		);
+
+		$data = array_merge($defaults, $options);
+
+		if ( empty($data['id']) ){
+			return false;
+		}
+
+		$userdata = get_userdata($data['id']);
+
+		if ( !empty($data['datapoint']) ){
+			$requested_data = $data['datapoint'];
+
+			if ( !empty($userdata->$requested_data) ){
+				return $data['prepend'] . $userdata->$requested_data . $data['append'];
+			} else {
+				return false;
+			}
+		}
+
+		return $userdata;
 	}
 
 	//Determine if the author should be the Company Name or the specific author's name.

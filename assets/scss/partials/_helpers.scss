@@ -206,7 +206,7 @@ a.white, li.icon.white a {@include link-colors(#fff, #ccc);
 	&:hover, &:focus, &:active {background: darken($secondary_color, 10%); border-color: darken($secondary_color, 10%); color: #fff;}
 }
 
-a.phg {margin-left: 3px; padding-left: 15px; background: url($template_directory + "/assets/img/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;
+.phg {margin-left: 3px; padding-left: 15px; background: url($template_directory + "/assets/img/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;
 	&.white {background: url($template_directory + "/assets/img/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size: 13px 8px;
 		span {color: #fff;}
 		&:hover span {color: #aaa;}

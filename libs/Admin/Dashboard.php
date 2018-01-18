@@ -49,7 +49,7 @@ if ( !trait_exists('Dashboard') ){
 		//WordPress Information metabox ("At a Glance" replacement)
 		public function ataglance_metabox(){
 			global $wp_meta_boxes;
-			wp_add_dashboard_widget('nebula_ataglance', '<img src="' . get_site_icon_url(32, get_theme_file_uri('/assets/img/meta') . '/favicon-32x32.png') . '" style="float: left; width: 20px;" />&nbsp;' . get_bloginfo('name'), array($this, 'dashboard_nebula_ataglance'));
+			wp_add_dashboard_widget('nebula_ataglance', '<img src="' . get_site_icon_url(32, get_theme_file_uri('/assets/img/meta') . '/favicon-32x32.png') . '" style="float: left; width: 20px; margin-right: 3px;" />&nbsp;' . get_bloginfo('name'), array($this, 'dashboard_nebula_ataglance'));
 		}
 
 		public function dashboard_nebula_ataglance(){
@@ -133,6 +133,17 @@ if ( !trait_exists('Dashboard') ){
 				echo '<li>' . $post_icon_img . ' <a href="edit.php?post_type=' . $post_type . '"><strong>' . $count_posts->publish . '</strong> ' . $labels_plural . '</a></li>';
 			}
 
+			//Earliest post
+			$earliest_post = get_transient('nebula_earliest_post');
+			if ( empty($earliest_post) || $this->is_debug() ){
+				$earliest_post = new WP_Query(array('post_type' => 'any', 'post_status' => 'publish', 'showposts' => 1, 'orderby' => 'publish_date', 'order' => 'ASC'));
+				set_transient('nebula_earliest_post', $earliest_post, HOUR_IN_SECONDS*12); //This transient is deleted when posts are added/updated, so this could be infinitely long.
+			}
+			while ( $earliest_post->have_posts() ){ $earliest_post->the_post();
+				echo '<li><i class="far fa-fw fa-calendar"></i> Earliest: <strong>' . get_the_date() . '</strong> @ <strong>' . get_the_time() . '</strong></li>';
+			}
+			wp_reset_postdata();
+
 			//Last updated
 			$latest_post = get_transient('nebula_latest_post');
 			if ( empty($latest_post) || $this->is_debug() ){
@@ -198,7 +209,7 @@ if ( !trait_exists('Dashboard') ){
 
 			do_action('nebula_ataglance');
 
-			echo '<p><em>Designed and Developed by ' . $this->pinckneyhugogroup(1) . '</em></p>';
+			echo '<p><em>Designed and Developed by ' . $this->pinckneyhugogroup(array('animate' => true)) . '</em></p>';
 		}
 
 		//Current User metabox
@@ -420,14 +431,13 @@ if ( !trait_exists('Dashboard') ){
 
 		//Pinckney Hugo Group metabox
 		public function phg_metabox(){
-			wp_add_dashboard_widget('nebula_phg', 'Pinckney Hugo Group', array($this, 'dashboard_phg'));
+			wp_add_dashboard_widget('nebula_phg', $this->pinckneyhugogroup(array('linked' => false)), array($this, 'dashboard_phg'));
 		}
 
 		//Pinckney Hugo Group metabox content
 		public function dashboard_phg(){
-			echo '<a href="http://pinckneyhugo.com" target="_blank" rel="noopener"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" /></a>';
+			echo '<a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" /></a>';
 			echo '<ul>';
-			echo '<li>' . $this->pinckneyhugogroup() . '</li>';
 			echo '<li><i class="fas fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener">760 West Genesee Street, Syracuse, NY 13204</a></li>';
 			echo '<li><i class="fas fa-fw fa-phone"></i> (315) 478-6700</li>';
 			echo '</ul>';
@@ -440,7 +450,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//TODO Metabox
 		public function todo_metabox(){
-			wp_add_dashboard_widget('todo_manager', 'To-Do Manager', array($this, 'todo_metabox_content'));
+			wp_add_dashboard_widget('todo_manager', '<i class="fas fa-fw fa-check-square"></i>&nbsp;To-Do Manager', array($this, 'todo_metabox_content'));
 		}
 
 		//TODO metabox content
@@ -765,7 +775,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//SCSS last processed date
 			if ( $this->get_data('scss_last_processed') ){
-				echo '<li><i class="fas fa-fw fa-paint-brush"></i> Sass Processed: <span title="' . human_time_diff($this->get_data('scss_last_processed')) . ' ago" style="cursor: help;"><strong>' . date("F j, Y", $this->get_data('scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", $this->get_data('scss_last_processed')) . '</strong></span></li>';
+				echo '<li><i class="fab fa-fw fa-sass"></i> Sass Processed: <span title="' . human_time_diff($this->get_data('scss_last_processed')) . ' ago" style="cursor: help;"><strong>' . date("F j, Y", $this->get_data('scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", $this->get_data('scss_last_processed')) . '</strong></span></li>';
 			}
 			echo '</ul>';
 

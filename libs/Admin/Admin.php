@@ -95,6 +95,8 @@ if ( !trait_exists('Admin') ){
 				add_action('admin_bar_menu',  array($this, 'admin_bar_menus'), 800);
 				add_action('get_header',  array($this, 'remove_admin_bar_bump')); //TODO "Nebula" 0: Possible to remove and add directly remove action here
 				add_action('wp_head', array($this, 'admin_bar_style_script_overrides'), 11);
+				add_action('wp_head', array($this, 'admin_bar_warning_styles'), 11);
+				add_action('admin_print_styles', array($this, 'admin_bar_warning_styles'), 11);
 			}
 
 			//Disable Wordpress Core update notifications in WP Admin
@@ -289,7 +291,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('hubspot_api') || $this->get_option('hubspot_portal') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Hubspot',
-					'icon' => '<i class="fas fa-fw fa-users"></i>',
+					'icon' => '<i class="fab fa-fw fa-hubspot"></i>',
 					'url' => 'https://app.hubspot.com/reports-dashboard/' . $this->get_option('hubspot_portal')
 				);
 			}
@@ -481,26 +483,30 @@ if ( !trait_exists('Admin') ){
 				}
 			}
 
-			//Check for important warnings/notifications for the Admin Bar
 			$nebula_warning_icon = '';
+			$nebula_adminbar_icon = 'fa-star';
 			$warnings = $this->check_warnings();
 
-			//If there are warnings display them
-			if ( !empty($warnings) ){
-				foreach( $warnings as $warning ){
-					if ( !empty($warning['url']) ){
-						$nebula_warning_icon = ' <i class="fas fa-fw fa-exclamation-triangle" style="color: #ca3838; margin-left: 5px;"></i>';
-						$nebula_warning_description = strip_tags($warning['description']);
-						$nebula_warning_href = $warning['url'];
-					}
+			//Remove "log" level warnings
+			foreach ( $warnings as $key => $warning ){
+				if ( $warning['level'] === 'log' ){
+					unset($warnings[$key]);
 				}
+			}
+
+			if ( !empty($warnings) ){
+				$nebula_adminbar_icon = 'fa-exclamation-triangle';
 			}
 
 			$wp_admin_bar->add_node(array(
 				'id' => 'nebula',
-				'title' => '<i class="nebula-admin-fa far fa-fw fa-star"></i> Nebula' . $nebula_warning_icon,
+				'title' => '<i class="nebula-admin-fa fas fa-fw ' . $nebula_adminbar_icon . '"></i> Nebula',
 				'href' => 'https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=admin+bar&utm_source=nebula',
-				'meta' => array('target' => '_blank', 'rel' => 'noopener')
+				'meta' => array(
+					'target' => '_blank',
+					'rel' => 'noopener',
+					'class' => ( !empty($warnings) )? 'has-warning' : '',
+				)
 			));
 
 			$wp_admin_bar->add_node(array(
@@ -509,6 +515,37 @@ if ( !trait_exists('Admin') ){
 				'title' => 'v<strong>' . $this->version('raw') . '</strong> <span class="nebula-admin-light">(' . $this->version('date') . ')</span>',
 				'href' => 'https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master',
 			));
+
+			//If there are warnings display them
+			if ( !empty($warnings) ){
+				$wp_admin_bar->add_node(array(
+					'parent' => 'nebula',
+					'id' => 'nebula-warnings',
+					'title' => '<i class="nebula-admin-fa fas fa-fw fa-exclamation-triangle"></i> Warnings',
+				));
+
+				foreach( $warnings as $key => $warning ){
+					$warning_icon = 'fa-exclamation-triangle';
+
+					if ( $warning['level'] === 'error' ){
+						$warning_icon = 'fa-exclamation-triangle';
+					} elseif ( $warning['level'] === 'warn' ){
+						$warning_icon = 'fa-info-circle';
+					}
+
+					$wp_admin_bar->add_node(array(
+						'parent' => 'nebula-warnings',
+						'id' => 'nebula-warning-' . $key,
+						'title' => '<i class="fas fa-fw ' . $warning_icon . '" style="margin-left: 5px;"></i> ' . strip_tags($warning['description']),
+						'href' => ( !empty($warning['url']) )? $warning['url'] : '',
+						'meta' => array(
+							'target' => '_blank',
+							'rel' => 'noopener',
+							'class' => 'nebula-warning level-' . $warning['level'],
+						)
+					));
+				}
+			}
 
 			if ( !empty($nebula_warning_icon) ){
 				$wp_admin_bar->add_node(array(
@@ -609,11 +646,31 @@ if ( !trait_exists('Admin') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula',
 					'id' => 'nebula-options-scss',
-					'title' => '<i class="nebula-admin-fa fas fa-fw fa-paint-brush"></i> Re-process All SCSS Files',
+					'title' => '<i class="nebula-admin-fa fab fa-fw fa-sass"></i> Re-process All Sass Files',
 					'href' => esc_url(add_query_arg('sass', 'true')),
 					'meta' => array('title' => 'Last: ' . $scss_last_processed)
 				));
 			}
+		}
+
+		//Colorize Nebula warning nodes in the admin bar
+		public function admin_bar_warning_styles(){
+			if ( is_admin_bar_showing() ){ ?>
+				<style type="text/css">
+					#wpadminbar .svg-inline--fa {color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;}
+					#wpadminbar .nebula-admin-light {font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6); line-height: inherit;}
+
+					#wpadminbar:not(.mobile) .ab-top-menu > #wp-admin-bar-nebula.has-warning > .ab-item {background: #ca3838;}
+						#wpadminbar:not(.mobile) .ab-top-menu > #wp-admin-bar-nebula.has-warning.hover > .ab-item,
+						#wpadminbar:not(.mobile) .ab-top-menu > #wp-admin-bar-nebula.has-warning:hover > .ab-item {background: maroon; color: #fff; transition: all 0.25s ease;}
+
+					#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings {background: #ca3838;}
+						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings > .ab-item,
+						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings > svg {color: #fff;}
+						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings .level-error svg {color: #ca3838;}
+						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings .level-warn svg {color: #f6b83f;}
+				</style>
+			<?php }
 		}
 
 		//Remove core WP admin bar head CSS and add our own
@@ -622,6 +679,7 @@ if ( !trait_exists('Admin') ){
 		}
 
 		//Override some styles and add custom functionality
+		//Used on the front-end, but not in Admin area
 		public function admin_bar_style_script_overrides(){
 			if ( is_admin_bar_showing() ){ ?>
 				<style type="text/css">
@@ -646,9 +704,6 @@ if ( !trait_exists('Admin') ){
 					}
 
 					html.admin-bar-inactive {margin-top: 0 !important;}
-
-					#wpadminbar .svg-inline--fa {color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;}
-					#wpadminbar .nebula-admin-light {font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6); line-height: inherit;}
 				</style>
 
 				<script>
@@ -664,7 +719,7 @@ if ( !trait_exists('Admin') ){
 
 		//Show update warning on Wordpress Core/Plugin update admin pages
 		public function update_warning(){
-			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com/'>Pinckney Hugo Group</a> if there are questions about updates: (315) 478-6700</p></div>";
+			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=" . urlencode(get_bloginfo('name')) . "&utm_content=update+warning" . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . ">Pinckney Hugo Group</a> if there are questions about updates: (315) 478-6700</p></div>";
 		}
 
 		//Nebula Theme Update Checker
