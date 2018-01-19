@@ -129,7 +129,7 @@
 											</div>
 											<input type="email" name="nebula_options[contact_email]" id="contact_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['contact_email']; ?>" placeholder="<?php echo get_option('admin_email', get_userdata(1)->user_email); ?>" />
 										</div>
-										<p class="nebula-help-text short-help form-text text-muted">The main contact email address (visible in the frontend and in metadata).</p>
+										<p class="nebula-help-text short-help form-text text-muted">The main contact email address <strong>(visible in the frontend and in metadata!)</strong>.</p>
 										<p class="nebula-help-text more-help form-text text-muted">If left empty, the admin email address will be used (shown by placeholder).</p>
 										<p class="option-keywords">recommended seo</p>
 									</div>
