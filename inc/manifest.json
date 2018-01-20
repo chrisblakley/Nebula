@@ -11,59 +11,59 @@
 			"orientation": "portrait",
 			"splash_pages": null,
 			"icons": [{
-					"src": "http://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-192x192.png",
+					"src": "https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-192x192.png",
 					"sizes": "192x192",
 					"type": "image/png"
 				}, {
-					"src": "http://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png",
+					"src": "https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png",
 					"sizes": "512x512",
 					"type": "image/png"
 				}, {
-					"src": "http://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/apple-touch-icon.png",
+					"src": "https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/apple-touch-icon.png",
 					"sizes": "180x180",
 					"type": "image/png"
 				}, {
-					"src": "http://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/favicon-16x16.png",
+					"src": "https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/favicon-16x16.png",
 					"sizes": "16x16",
 					"type": "image/png"
 				}, {
-					"src": "http://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/favicon-32x32.png",
+					"src": "https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/favicon-32x32.png",
 					"sizes": "32x32",
 					"type": "image/png"
 				}, {
-					"src": "http://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/mstile-144x144.png",
+					"src": "https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/mstile-144x144.png",
 					"sizes": "144x144",
 					"type": "image/png"
 				}, {
-					"src": "http://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/mstile-150x150.png",
+					"src": "https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/mstile-150x150.png",
 					"sizes": "150x150",
 					"type": "image/png"
 				}, {
-					"src": "http://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/mstile-310x150.png",
+					"src": "https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/mstile-310x150.png",
 					"sizes": "310x150",
 					"type": "image/png"
 				}, {
-					"src": "http://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/mstile-310x310.png",
+					"src": "https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/mstile-310x310.png",
 					"sizes": "310x310",
 					"type": "image/png"
 				}, {
-					"src": "http://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/mstile-70x70.png",
+					"src": "https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/mstile-70x70.png",
 					"sizes": "70x70",
 					"type": "image/png"
 				}, {
-					"src": "http://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/og-thumb-2.png",
+					"src": "https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/og-thumb-2.png",
 					"sizes": "1200x630",
 					"type": "image/png"
 				}, {
-					"src": "http://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/og-thumb.png",
+					"src": "https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/og-thumb.png",
 					"sizes": "1200x600",
 					"type": "image/png"
 				}, {
-					"src": "http://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/twitter-card.png",
+					"src": "https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/twitter-card.png",
 					"sizes": "240x180",
 					"type": "image/png"
 				}, {
-					"src": "http://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/twitter-card_large.png",
+					"src": "https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/twitter-card_large.png",
 					"sizes": "600x330",
 					"type": "image/png"
 				}]}

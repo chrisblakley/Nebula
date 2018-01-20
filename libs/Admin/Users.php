@@ -71,7 +71,7 @@ if ( !trait_exists('Users') ){
 
 			if ( $column_name === 'status' ){
 				if ( $this->is_user_online($id) ){
-					$online_now = '<i class="far fa-caret-right" style="color: green;"></i> <strong>Online Now</strong>';
+					$online_now = '<i class="fas fa-caret-right" style="color: #58c026;"></i> <strong>Online Now</strong>';
 					if ( $this->user_single_concurrent($id) > 1 ){
 						$online_now .= '<br/><small>(<strong>' . $this->user_single_concurrent($id) . '</strong> locations)</small>';
 					}
@@ -83,15 +83,18 @@ if ( !trait_exists('Users') ){
 
 			if ( $column_name === 'ip' ){
 				$logged_in_users = $this->get_data('users_status');
-				$last_ip = $logged_in_users[$id]['ip'];
 
-				if ( !empty($last_ip) ){
-					$notable_poi = $this->poi($last_ip);
-					if ( !empty($notable_poi) ){
-						$last_ip .= '<br><small>(' . $notable_poi . ')</small>';
+				if ( isset($logged_in_users[$id]) ){
+					$last_ip = $logged_in_users[$id]['ip'];
+
+					if ( !empty($last_ip) ){
+						$notable_poi = $this->poi($last_ip);
+						if ( !empty($notable_poi) ){
+							$last_ip .= '<br><small>(' . $notable_poi . ')</small>';
+						}
+
+						return $last_ip;
 					}
-
-					return $last_ip;
 				}
 
 				return '';

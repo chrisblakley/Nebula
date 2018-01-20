@@ -21,7 +21,11 @@
 		$serverProtocol = 'https://';
 	}
 
-	$hostURL = explode(".", gethostname());
+	$host_url = explode(".", gethostname());
+	$host_domain = '';
+	if ( !empty($host_url) ){
+		$host_domain = $host_url[1] . '.' . $host_url[2];
+	}
 ?>
 
 <div class="wrap">
@@ -1840,9 +1844,11 @@
 
 									<div class="form-group">
 										<label for="hosting_url">Hosting</label>
-										<input type="text" name="nebula_options[hosting_url]" id="hosting_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['hosting_url']; ?>" placeholder="http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?>/" />
+										<input type="text" name="nebula_options[hosting_url]" id="hosting_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['hosting_url']; ?>" placeholder="http://<?php echo $host_domain; ?>/" />
 										<p class="nebula-help-text short-help form-text text-muted">Link to the server host for easy access to support and other information.</p>
-										<p class="nebula-help-text more-help form-text text-muted">Server detected as <a href="http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?>" target="_blank" rel="noopener">http://<?php echo $hostURL[1] . '.' . $hostURL[2]; ?></a></p>
+										<?php if ( !empty($host_domain) ): ?>
+											<p class="nebula-help-text more-help form-text text-muted">Server detected as <a href="http://<?php echo $host_domain; ?>" target="_blank" rel="noopener">http://<?php echo $host_domain; ?></a></p>
+										<?php endif; ?>
 										<p class="option-keywords"></p>
 									</div>
 

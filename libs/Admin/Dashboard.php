@@ -28,6 +28,10 @@ if ( !trait_exists('Dashboard') ){
 				add_action('wp_dashboard_setup', array($this, 'dev_info_metabox'));
 			}
 
+			if ( current_user_can('publish_pages') && $this->get_option('hubspot_portal') && $this->get_option('hubspot_api') ){ //Editor or above (and Hubspot API/Portal)
+				add_action('wp_dashboard_setup', array($this, 'hubspot_metabox'));
+			}
+
 			add_action('wp_ajax_search_theme_files', array($this, 'search_theme_files'));
 			add_action('wp_ajax_nopriv_search_theme_files', array($this, 'search_theme_files'));
 		}
@@ -924,6 +928,82 @@ if ( !trait_exists('Dashboard') ){
 			echo '<strong>' . $file_counter . '</strong> file';
 			echo ( $file_counter === 1 )? '.</p>': 's.</p>';
 			wp_die();
+		}
+
+		//Hubspot Contacts
+		public function hubspot_metabox(){
+			wp_add_dashboard_widget('hubspot_contacts', '<i class="fab fa-fw fa-hubspot"></i>&nbsp;Recent Hubspot Contacts', array($this, 'hubspot_contacts_content'));
+		}
+
+		//Hubspot Contacts metabox content
+		public function hubspot_contacts_content(){
+			do_action('nebula_hubspot_contacts');
+
+			$hubspot_contacts_json = get_transient('nebula_hubspot_contacts');
+			if ( empty($hubspot_contacts) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
+
+				$response = $this->remote_get('https://api.hubapi.com/contacts/v1/lists/all/contacts/recent?hapikey=' . $this->get_option('hubspot_api') . '&count=5');
+				if ( is_wp_error($response) ){
+	                return false;
+	            }
+
+				$hubspot_contacts_json = $response['body'];
+				set_transient('nebula_hubspot_contacts', $hubspot_contacts_json, MINUTE_IN_SECONDS*5); //5 minute expiration
+			}
+
+			$hubspot_contacts_json = json_decode($hubspot_contacts_json);
+			if ( !empty($hubspot_contacts_json) ){
+				foreach ( $hubspot_contacts_json->contacts as $contact ){
+/*
+					echo '<pre>';
+					print_r($contact);
+					echo '</pre>';
+*/
+
+					//Get contact's email address
+					$identities = $contact->{'identity-profiles'}[0]->identities;
+					foreach ( $identities as $key => $value ){
+						if ( strtolower($value->type) === 'email' ){
+							$contact_email = $value->value;
+						}
+					}
+
+					//Get contact's name
+					$has_name = true;
+					if ( !empty($contact->properties->firstname) ){
+						$contact_name = trim($contact->properties->firstname->value . ' ' . $contact->properties->lastname->value);
+						if ( !empty($contact->properties->full_name) ){
+							$contact_name = $contact->properties->full_name->value;
+						}
+					}
+
+					if ( empty($contact_name) ){
+						$has_name = false;
+					}
+
+					$display_date = date('F j, Y', $contact->addedAt/1000);
+					$date_icon = 'calendar';
+					if ( date('Y-m-d', $contact->addedAt/1000) === date('Y-m-d') ){
+						$display_date = date('g:ia', $contact->addedAt/1000);
+						$date_icon = 'clock';
+					}
+
+
+					?>
+
+					<p>
+						<?php echo ( $has_name )? '<i class="fas fa-fw fa-user"></i> ' : '<i class="far fa-fw fa-envelope"></i> '; ?><strong><a href="<?php echo $contact->{'profile-url'}; ?>" target="_blank"><?php echo ( $has_name )? $contact_name : $contact_email; ?></a></strong><br>
+						<?php echo ( $has_name )? '<i class="far fa-fw fa-envelope"></i> ' . $contact_email . '<br>' : ''; ?>
+						<i class="far fa-fw fa-<?php echo $date_icon; ?>"></i> <span title="<?php echo human_time_diff($contact->addedAt/1000); ?> ago" style="cursor: help;"><?php echo $display_date; ?></span>
+					</p>
+
+					<?php
+				}
+
+				echo '<p><small><a href="https://app.hubspot.com/sales/' . $this->get_option('hubspot_portal') . '/contacts/list/view/all/" target="_blank">View all Hubspot contacts &raquo;</a></small></p>';
+			} else {
+				echo '<p>No contacts yet. <a href="https://app.hubspot.com/sales/' . $this->get_option('hubspot_portal') . '/contacts/list/view/all/" target="_blank">View on Hubspot &raquo;</a></p>';
+			}
 		}
 	}
 }
