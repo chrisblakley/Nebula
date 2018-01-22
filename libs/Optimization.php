@@ -242,5 +242,16 @@ if ( !trait_exists('Optimization') ){
 			}
 			wp_register_script($handle, $path, $deps, $ver, $in_footer);
 		}
+
+		//Lazy-load images
+		public function lazy_load($src, $options){$this->lazy_img($src, $options);}
+		public function lazy_img($src=false, $attributes=''){
+			?>
+			<samp class="nebula-lazy-position"></samp>
+			<noscript class="nebula-lazy-img">
+				<img src="<?php echo $src; ?>" <?php echo $attributes; ?> />
+			</noscript>
+			<?php
+		}
 	}
 }

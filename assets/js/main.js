@@ -52,6 +52,7 @@ jQuery(window).on('load', function(){
 		initEventTracking();
 	}
 
+	lazyLoadImages();
 	conditionalJSLoading();
 	initBootstrapFunctions();
 
@@ -120,10 +121,10 @@ function cacheSelectors(force){
 			body: jQuery('body')
 		};
 
-		//Nebula console log context
-		nebula.logger = console;
+		//Nebula console log context //@todo "Nebula" 0: When this is supported, consider moving it to a PHP hook so it's available sooner and to all scopes? Maybe it pulls the name of the project for the scope itself from Nebula Options?
+		nebula.console = console;
 		if ( typeof console.context === 'function' ){
-			nebula.logger = console.context('Nebula');
+			nebula.console = console.context('Nebula');
 		}
 
 		//Regex Patterns
@@ -144,7 +145,7 @@ function cacheSelectors(force){
 
 //ServiceWorker
 function nebulaServiceWorker(){
-	if ( nebula.site.options.sw && 'serviceWorker' in navigator ){ //Firefox and Chrome only (soon Edge)
+	if ( nebula.site.options.sw && 'serviceWorker' in navigator ){ //Firefox 44+, Chrome 45+, Edge 17+, Safari 12+
 		//Register
 		navigator.serviceWorker.register(nebula.site.sw_url).then(function(registration){
 			//console.log('ServiceWorker registration successful with scope: ', registration.scope);
@@ -915,6 +916,7 @@ function scrollDepth(){
 	}
 }
 
+//Check if an element is within the viewport
 function isInView(element){
 	if ( typeof element === 'string' ){
 		element = jQuery(element);
@@ -2080,6 +2082,29 @@ function applyValidationClasses(element, validation, showFeedback){
 /*==========================
  Optimization Functions
  ===========================*/
+
+//Load the lazy loaded images
+function lazyLoadImages(){
+	//Load any images in the viewport
+	jQuery('noscript.nebula-lazy-img').each(function(){
+		//If the noscript tag is above the fold load it immediately
+		if ( jQuery(this).prev('.nebula-lazy-position').offset().top < jQuery(window).height() ){
+			jQuery(this).prev('.nebula-lazy-position').remove();
+			jQuery(this).replaceWith(jQuery(this).text()); //Remove the <noscript> tag to reveal the img tag
+		}
+	});
+
+	jQuery('.nebula-lazy-position').remove(); //These are no longer needed
+
+	//Wait for a scroll event to load the rest
+	jQuery(window).on('scroll', function(){
+		jQuery('noscript.nebula-lazy-img').each(function(){
+			jQuery(this).replaceWith(jQuery(this).text()); //Remove the <noscript> tag to reveal the img tag
+		});
+
+		jQuery(this).off('scroll'); //Stop listening to scroll now that all images are loaded
+	});
+}
 
 //Conditional JS Library Loading
 function conditionalJSLoading(){

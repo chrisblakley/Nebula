@@ -128,9 +128,11 @@ if ( !trait_exists('Widgets') ){
 						<div class="col">
 							<div class="headshot-title-con">
 								<?php if ( !empty($author_image) ): ?>
-									<img src="<?php echo $author_image; ?>" />
+									<?php
+										$name_text = ( !empty($author_info->first_name) )? 'About ' . $author_info->first_name : 'About the Author';
+										nebula()->lazy_img($author_image, 'alt="' . $name_text . '"');
+									?>
 								<?php endif; ?>
-
 								<div>
 									<?php if ( !empty($instance['title']) ): ?>
 										<h3><?php echo $instance['title']; ?></h3>
@@ -521,7 +523,9 @@ if ( !trait_exists('Widgets') ){
 
 						<a href="<?php echo $instance['url']; ?>" <?php echo ( nebula()->url_components('hostname') != nebula()->url_components('hostname', $instance['url']) )? 'target="_blank"' : ''; //Check for external URL ?>>
 					<?php endif; ?>
-							<img src="<?php echo $instance['image']; ?>" />
+
+						<?php nebula()->lazy_img($instance['image']); ?>
+
 					<?php if ( !empty($instance['url']) ): ?>
 						</a>
 					<?php endif; ?>

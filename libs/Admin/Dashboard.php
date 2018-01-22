@@ -932,7 +932,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Hubspot Contacts
 		public function hubspot_metabox(){
-			wp_add_dashboard_widget('hubspot_contacts', '<i class="fab fa-fw fa-hubspot"></i>&nbsp;Recent Hubspot Contacts', array($this, 'hubspot_contacts_content'));
+			wp_add_dashboard_widget('hubspot_contacts', '<i class="fab fa-fw fa-hubspot"></i>&nbsp;Latest Hubspot Contacts', array($this, 'hubspot_contacts_content'));
 		}
 
 		//Hubspot Contacts metabox content
@@ -969,16 +969,16 @@ if ( !trait_exists('Dashboard') ){
 					}
 
 					//Get contact's name
-					$has_name = true;
+					$contact_name = false;
+					$has_name = false;
 					if ( !empty($contact->properties->firstname) ){
 						$contact_name = trim($contact->properties->firstname->value . ' ' . $contact->properties->lastname->value);
+
 						if ( !empty($contact->properties->full_name) ){
 							$contact_name = $contact->properties->full_name->value;
 						}
-					}
 
-					if ( empty($contact_name) ){
-						$has_name = false;
+						$has_name = true;
 					}
 
 					$display_date = date('F j, Y', $contact->addedAt/1000);

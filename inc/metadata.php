@@ -38,6 +38,10 @@
 <meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo get_theme_mod('nebula_primary_color', nebula()->sass_color('primary')); ?>">
 <meta http-equiv="Accept-CH" content="Device-Memory">
 
+<?php if ( is_ssl() ): //Upgrade http requests to https (cascades into iframes) ?>
+	<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<?php endif; ?>
+
 <?php if ( nebula()->get_option('google_search_console_verification') ): ?>
 	<meta name="google-site-verification" content="<?php echo nebula()->get_option('google_search_console_verification'); ?>" />
 <?php endif; ?>

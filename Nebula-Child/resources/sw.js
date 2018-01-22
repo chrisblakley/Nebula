@@ -3,7 +3,7 @@
 //@TODO: Enable "Service Worker" in Nebula Options (under Functions)
 
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-77861'; //Friday, January 19, 2018 10:38:57 PM
+var CACHE_NAME = 'nebula-nebula-child-52362'; //Sunday, January 21, 2018 8:55:11 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
@@ -223,7 +223,7 @@ function offlineRequest(request, cache){
 //Tell all clients we are offline
 /*
 function networkPostMessage(availability='online'){
-	console.log('[SW] We are ' + availability + '. Sending message to client...');
+	//console.log('[SW] We are ' + availability + '. Sending message to client...');
 
 	self.clients.matchAll().then(function(clientList){
 		clientList.forEach(function(client){

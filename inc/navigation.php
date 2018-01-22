@@ -27,9 +27,10 @@
 									}
 								}
 							?>
-							<img class="svg" src="<?php echo $logo; ?>" alt="<?php bloginfo('name'); ?>"/>
+
+							<?php nebula()->lazy_img($logo, 'class="svg" alt="' . get_bloginfo('name') . '"'); ?>
 						<?php elseif ( file_exists(get_stylesheet_directory() . '/assets/img/logo.svg') ): //Use the child theme logo.svg image if it exists ?>
-							<img class="svg" src="<?php echo get_stylesheet_directory_uri() . '/assets/img/logo.svg'; ?>" alt="<?php bloginfo('name'); ?>"/>
+							<?php nebula()->lazy_img(get_stylesheet_directory_uri() . '/assets/img/logo.svg', 'class="svg" alt="' . get_bloginfo('name') . '"'); ?>
 						<?php else: //Otherwise fallback to the Site Title text ?>
 							<?php bloginfo('name'); ?>
 						<?php endif; ?>
