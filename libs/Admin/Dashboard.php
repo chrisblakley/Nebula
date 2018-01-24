@@ -953,57 +953,61 @@ if ( !trait_exists('Dashboard') ){
 
 			$hubspot_contacts_json = json_decode($hubspot_contacts_json);
 			if ( !empty($hubspot_contacts_json) ){
-				foreach ( $hubspot_contacts_json->contacts as $contact ){
-/*
-					echo '<pre>';
-					print_r($contact);
-					echo '</pre>';
-*/
+				if ( !empty($hubspot_contacts_json->contacts) ){
+					foreach ( $hubspot_contacts_json->contacts as $contact ){
+	/*
+						echo '<pre>';
+						print_r($contact);
+						echo '</pre>';
+	*/
 
-					//Get contact's email address
-					$identities = $contact->{'identity-profiles'}[0]->identities;
-					foreach ( $identities as $key => $value ){
-						if ( strtolower($value->type) === 'email' ){
-							$contact_email = $value->value;
-						}
-					}
-
-					//Get contact's name
-					$contact_name = false;
-					$has_name = false;
-					if ( !empty($contact->properties->firstname) ){
-						$contact_name = trim($contact->properties->firstname->value . ' ' . $contact->properties->lastname->value);
-
-						if ( !empty($contact->properties->full_name) ){
-							$contact_name = $contact->properties->full_name->value;
+						//Get contact's email address
+						$identities = $contact->{'identity-profiles'}[0]->identities;
+						foreach ( $identities as $key => $value ){
+							if ( strtolower($value->type) === 'email' ){
+								$contact_email = $value->value;
+							}
 						}
 
-						$has_name = true;
+						//Get contact's name
+						$contact_name = false;
+						$has_name = false;
+						if ( !empty($contact->properties->firstname) ){
+							$contact_name = trim($contact->properties->firstname->value . ' ' . $contact->properties->lastname->value);
+
+							if ( !empty($contact->properties->full_name) ){
+								$contact_name = $contact->properties->full_name->value;
+							}
+
+							$has_name = true;
+						}
+
+						$display_date = date('F j, Y', $contact->addedAt/1000);
+						$date_icon = 'calendar';
+						if ( date('Y-m-d', $contact->addedAt/1000) === date('Y-m-d') ){
+							$display_date = date('g:ia', $contact->addedAt/1000);
+							$date_icon = 'clock';
+						}
+
+
+						?>
+
+						<p>
+							<?php echo ( $has_name )? '<i class="fas fa-fw fa-user"></i> ' : '<i class="far fa-fw fa-envelope"></i> '; ?><strong><a href="<?php echo $contact->{'profile-url'}; ?>" target="_blank"><?php echo ( $has_name )? $contact_name : $contact_email; ?></a></strong><br>
+							<?php echo ( $has_name )? '<i class="far fa-fw fa-envelope"></i> ' . $contact_email . '<br>' : ''; ?>
+							<i class="far fa-fw fa-<?php echo $date_icon; ?>"></i> <span title="<?php echo human_time_diff($contact->addedAt/1000); ?> ago" style="cursor: help;"><?php echo $display_date; ?></span>
+						</p>
+
+						<?php
 					}
-
-					$display_date = date('F j, Y', $contact->addedAt/1000);
-					$date_icon = 'calendar';
-					if ( date('Y-m-d', $contact->addedAt/1000) === date('Y-m-d') ){
-						$display_date = date('g:ia', $contact->addedAt/1000);
-						$date_icon = 'clock';
-					}
-
-
-					?>
-
-					<p>
-						<?php echo ( $has_name )? '<i class="fas fa-fw fa-user"></i> ' : '<i class="far fa-fw fa-envelope"></i> '; ?><strong><a href="<?php echo $contact->{'profile-url'}; ?>" target="_blank"><?php echo ( $has_name )? $contact_name : $contact_email; ?></a></strong><br>
-						<?php echo ( $has_name )? '<i class="far fa-fw fa-envelope"></i> ' . $contact_email . '<br>' : ''; ?>
-						<i class="far fa-fw fa-<?php echo $date_icon; ?>"></i> <span title="<?php echo human_time_diff($contact->addedAt/1000); ?> ago" style="cursor: help;"><?php echo $display_date; ?></span>
-					</p>
-
-					<?php
+				} else {
+					echo '<p><small>No contacts yet.</small></p>';
 				}
-
-				echo '<p><small><a href="https://app.hubspot.com/sales/' . $this->get_option('hubspot_portal') . '/contacts/list/view/all/" target="_blank">View all Hubspot contacts &raquo;</a></small></p>';
 			} else {
-				echo '<p>No contacts yet. <a href="https://app.hubspot.com/sales/' . $this->get_option('hubspot_portal') . '/contacts/list/view/all/" target="_blank">View on Hubspot &raquo;</a></p>';
+				echo '<p><small>Hubspot contacts unavailable.</small></p>';
 			}
+
+			echo '<p><small><a href="https://app.hubspot.com/sales/' . $this->get_option('hubspot_portal') . '/contacts/list/view/all/" target="_blank">View on Hubspot &raquo;</a></small></p>';
 		}
 	}
 }

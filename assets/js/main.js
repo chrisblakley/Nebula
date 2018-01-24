@@ -161,7 +161,7 @@ function nebulaServiceWorker(){
 
 		//If Service Worker controller exists yet (for postMessage)
 		if ( navigator.serviceWorker.controller ){
-			//navigator.serviceWorker.controller.postMessage('yolo');
+			//navigator.serviceWorker.controller.postMessage('hello');
 		}
 
 		nebulaPredictiveCacheListeners();
@@ -3823,11 +3823,11 @@ function nebulaVimeoTracking(){
 		ga('set', gaCustomDimensions['videoWatcher'], 'Started');
 
 		playAction = 'Play';
-		if ( !isInView(jQuery(this)) ){
+		if ( !isInView(jQuery(this.element)) ){
 			playAction += ' (Not In View)';
 		}
 
-		if ( jQuery(this).attr('src').indexOf('autoplay=1') > 0 ){
+		if ( thisVideo.autoplay ){
 			playAction += ' (Autoplay)';
 		} else {
 			jQuery(this).addClass('playing');

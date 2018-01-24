@@ -187,6 +187,12 @@ RewriteCond %{QUERY_STRING} GLOBALS(=|[|%[0-9A-Z]{0,2}) [OR]
 RewriteCond %{QUERY_STRING} _REQUEST(=|[|%[0-9A-Z]{0,2})
 RewriteRule ^(.*)$ index.php [F,L]
 
+#Deny access to certain files
+<FilesMatch "(.htaccess|wp-config.php|debug.log|user.ini)$">
+	order allow,deny
+	deny from all
+</FilesMatch>
+
 #Disable directory browsing
 Options All -Indexes
 
@@ -220,15 +226,3 @@ RewriteCond %{QUERY_STRING} _REQUEST(=|[|\%[0-9A-Z]{0,2})
 
 #Send all blocked request to homepage with 403 Forbidden error!
 RewriteRule ^(.*)$ index.php [F,L]
-
-#Deny access to config file from visitors
-<Files wp-config.php>
-	order allow,deny
-	deny from all
-</Files>
-
-#Deny access to htaccess file from visitors
-<Files .htaccess>
-	order allow,deny
-	deny from all
-</Files>
