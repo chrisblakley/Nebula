@@ -1096,6 +1096,36 @@ if ( !trait_exists('Utilities') ){
 						'description' => 'An address looked up by the user (may not be their own address)',
 					);
 
+					$custom_nebula_properties[] = array(
+						'name' => 'utm_campaign',
+						'label' => 'UTM Campaign',
+						'description' => 'The UTM-tagged campaign name.',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'utm_source',
+						'label' => 'UTM Source',
+						'description' => 'The UTM-tagged source.',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'utm_medium',
+						'label' => 'UTM Medium',
+						'description' => 'The UTM-tagged medium.',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'utm_content',
+						'label' => 'UTM Content',
+						'description' => 'The UTM-tagged content.',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'utm_term',
+						'label' => 'UTM Term',
+						'description' => 'The UTM-tagged term.',
+					);
+
 					$properties_created = array();
 					foreach ( $custom_nebula_properties as $value ){
 						if ( !in_array($value['name'], $existing_nebula_properties) ){
