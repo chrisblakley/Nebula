@@ -10,8 +10,6 @@
 	<script>
 		<?php //@todo "Nebula" 0: Consider using the Data Layer for some of the below parameters (declare it here, then push to it below) ?>
 
-		window.GAready = false;
-
 		//Load the alternative async tracking snippet: https://developers.google.com/analytics/devguides/collection/analyticsjs/#alternative_async_tracking_snippet
 		window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
 		ga('create', '<?php echo nebula()->get_option('ga_tracking_id'); ?>', 'auto'<?php echo ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>);
@@ -30,79 +28,10 @@
 		<?php endif; ?>
 
 		<?php
-			//Create various custom dimensions and custom metrics in Google Analytics, then store the index ("dimension3", "metric5", etc.) in Nebula Options.
-			//Note: Ecommerce dimensions are added in nebula_ecommerce.php
-		?>
-		gaCustomDimensions = {
-			gaCID: '<?php echo nebula()->get_option('cd_gacid'); ?>',
-			hitID: '<?php echo nebula()->get_option('cd_hitid'); ?>',
-			hitTime: '<?php echo nebula()->get_option('cd_hittime'); ?>',
-			hitType: '<?php echo nebula()->get_option('cd_hittype'); ?>',
-			hitInteractivity: '<?php echo nebula()->get_option('cd_hitinteractivity'); ?>',
-			hitMethod: '<?php echo nebula()->get_option('cd_hitmethod'); ?>',
-			deviceMemory: '<?php echo nebula()->get_option('cd_devicememory'); ?>',
-			batteryMode: '<?php echo nebula()->get_option('cd_batterymode'); ?>',
-			batteryPercent: '<?php echo nebula()->get_option('cd_batterypercent'); ?>',
-			network: '<?php echo nebula()->get_option('cd_network'); ?>',
-			referrer: '<?php echo nebula()->get_option('cd_referrer'); ?>',
-			author: '<?php echo nebula()->get_option('cd_author'); ?>',
-			businessHours: '<?php echo nebula()->get_option('cd_businesshours'); ?>',
-			categories: '<?php echo nebula()->get_option('cd_categories'); ?>',
-			tags: '<?php echo nebula()->get_option('cd_tags'); ?>',
-			contactMethod: '<?php echo nebula()->get_option('cd_contactmethod'); ?>',
-			formTiming: '<?php echo nebula()->get_option('cd_formtiming'); ?>',
-			formFlow: '<?php echo nebula()->get_option('cd_formflow'); ?>',
-			windowType: '<?php echo nebula()->get_option('cd_windowtype'); ?>',
-			geolocation: '<?php echo nebula()->get_option('cd_geolocation'); ?>',
-			geoAccuracy: '<?php echo nebula()->get_option('cd_geoaccuracy'); ?>',
-			geoName: '<?php echo nebula()->get_option('cd_geoname'); ?>',
-			relativeTime: '<?php echo nebula()->get_option('cd_relativetime'); ?>',
-			sessionID: '<?php echo nebula()->get_option('cd_sessionid'); ?>',
-			poi: '<?php echo nebula()->get_option('cd_notablepoi'); ?>',
-			role: '<?php echo nebula()->get_option('cd_role'); ?>',
-			timestamp: '<?php echo nebula()->get_option('cd_timestamp'); ?>',
-			userID: '<?php echo nebula()->get_option('cd_userid'); ?>',
-			fbID: '<?php echo nebula()->get_option('cd_fbid'); ?>',
-			videoWatcher: '<?php echo nebula()->get_option('cd_videowatcher'); ?>',
-			eventIntent: '<?php echo nebula()->get_option('cd_eventintent'); ?>',
-			wordCount: '<?php echo nebula()->get_option('cd_wordcount'); ?>',
-			weather: '<?php echo nebula()->get_option('cd_weather'); ?>',
-			temperature: '<?php echo nebula()->get_option('cd_temperature'); ?>',
-			publishDate: '<?php echo nebula()->get_option('cd_publishdate'); ?>',
-			blocker: '<?php echo nebula()->get_option('cd_blocker'); ?>',
-			queryString: '<?php echo nebula()->get_option('cd_querystring'); ?>',
-			mqBreakpoint: '<?php echo nebula()->get_option('cd_mqbreakpoint'); ?>',
-			mqResolution: '<?php echo nebula()->get_option('cd_mqresolution'); ?>',
-			mqOrientation: '<?php echo nebula()->get_option('cd_mqorientation'); ?>',
-			visibilityState: '<?php echo nebula()->get_option('cd_visibilitystate'); ?>',
-		}
-
-		gaCustomMetrics = {
-			serverResponseTime: '<?php echo nebula()->get_option('cm_serverresponsetime'); ?>',
-			domReadyTime: '<?php echo nebula()->get_option('cm_domreadytime'); ?>',
-			windowLoadedTime: '<?php echo nebula()->get_option('cm_windowloadedtime'); ?>',
-			batteryLevel: '<?php echo nebula()->get_option('cm_batterylevel'); ?>',
-			formImpressions: '<?php echo nebula()->get_option('cm_formimpressions'); ?>',
-			formStarts: '<?php echo nebula()->get_option('cm_formstarts'); ?>',
-			formSubmissions: '<?php echo nebula()->get_option('cm_formsubmissions'); ?>',
-			notableDownloads: '<?php echo nebula()->get_option('cm_notabledownloads'); ?>',
-			engagedReaders: '<?php echo nebula()->get_option('cm_engagedreaders'); ?>',
-			pageVisible: '<?php echo nebula()->get_option('cm_pagevisible'); ?>',
-			pageHidden: '<?php echo nebula()->get_option('cm_pagehidden'); ?>',
-			videoStarts: '<?php echo nebula()->get_option('cm_videostarts'); ?>',
-			videoPlaytime: '<?php echo nebula()->get_option('cm_videoplaytime'); ?>',
-			videoCompletions: '<?php echo nebula()->get_option('cm_videocompletions'); ?>',
-			autocompleteSearches: '<?php echo nebula()->get_option('cm_autocompletesearches'); ?>',
-			autocompleteSearchClicks: '<?php echo nebula()->get_option('cm_autocompletesearchclicks'); ?>',
-			wordCount: '<?php echo nebula()->get_option('cm_wordcount'); ?>',
-			maxScroll: '<?php echo nebula()->get_option('cm_maxscroll'); ?>',
-		}
-
-		<?php
 			//Original Referrer
 			if ( empty($_SESSION['original_referrer']) ){ //Only capture the referrer on the first page of the session (so it doesn't get replaced with an on-site referrer)
 				$original_referrer = ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '(none)';
-				echo 'ga("set", gaCustomDimensions["referrer"], "' . $original_referrer . '");';
+				echo 'ga("set", nebula.analytics.dimensions.referrer, "' . $original_referrer . '");';
 
 				$_SESSION['original_referrer'] = $original_referrer;
 			}
@@ -113,21 +42,21 @@
 				if ( is_singular() ){
 					//Article author
 					if ( nebula()->get_option('author_bios') && nebula()->get_option('cd_author') ){
-						echo 'ga("set", gaCustomDimensions["author"], "' . get_the_author() . '");';
+						echo 'ga("set", nebula.analytics.dimensions.author, "' . get_the_author() . '");';
 					}
 
 					//Article's published year
 					if ( nebula()->get_option('cd_publishdate') ){
-						echo 'ga("set", gaCustomDimensions["publishDate"], "' . get_the_date('Y-m-d') . '");';
+						echo 'ga("set", nebula.analytics.dimensions.publishDate, "' . get_the_date('Y-m-d') . '");';
 					}
 				}
 
 				if ( nebula()->get_option('cd_categories') ){
-					echo 'ga("set", gaCustomDimensions["categories"], nebula.post.categories);';
+					echo 'ga("set", nebula.analytics.dimensions.categories, nebula.post.categories);';
 				}
 
 				if ( nebula()->get_option('cd_tags') ){
-					echo 'ga("set", gaCustomDimensions["tags"], nebula.post.tags);';
+					echo 'ga("set", nebula.analytics.dimensions.tags, nebula.post.tags);';
 				}
 
 				//Word Count
@@ -136,11 +65,11 @@
 					echo 'nebula.post.wordcount = ' . $word_count . ';';
 
 					if ( nebula()->get_option('cm_wordcount') ){
-						echo 'ga("set", gaCustomMetrics["wordCount"], nebula.post.wordcount);';
+						echo 'ga("set", nebula.analytics.metrics.wordCount, nebula.post.wordcount);';
 					}
 
 					if ( nebula()->get_option('cd_wordcount') ){
-						echo 'ga("set", gaCustomDimensions["wordCount"], "' . nebula()->word_count(array('range' => true)) . '");';
+						echo 'ga("set", nebula.analytics.dimensions.wordCount, "' . nebula()->word_count(array('range' => true)) . '");';
 					}
 				}
 			}
@@ -154,7 +83,7 @@
 				echo 'nebula.user.client.businessopen = false;';
 			}
 			if ( nebula()->get_option('cd_businesshours') ){
-				echo 'ga("set", gaCustomDimensions["businessHours"], "' . $business_open . '");';
+				echo 'ga("set", nebula.analytics.dimensions.businessHours, "' . $business_open . '");';
 			}
 
 			//Relative time ("Late Morning", "Early Evening")
@@ -162,68 +91,68 @@
 				$relative_time = nebula()->relative_time();
 				$time_description = implode(' ', $relative_time['description']);
 				$time_range = $relative_time['standard'][0] . ':00' . $relative_time['ampm'] . ' - ' . $relative_time['standard'][2] . ':59' . $relative_time['ampm'];
-				echo 'ga("set", gaCustomDimensions["relativeTime"], "' . ucwords($time_description) . ' (' . $time_range . ')");';
+				echo 'ga("set", nebula.analytics.dimensions.relativeTime, "' . ucwords($time_description) . ' (' . $time_range . ')");';
 			}
 
 			//Role
 			if ( nebula()->get_option('cd_role') ){
-				echo 'ga("set", gaCustomDimensions["role"], "' . nebula()->user_role() . '");';
+				echo 'ga("set", nebula.analytics.dimensions.role, "' . nebula()->user_role() . '");';
 			}
 
 			//Session ID
 			if ( nebula()->get_option('cd_sessionid') ){
 				echo 'nebula.session.id = "' . nebula()->nebula_session_id() . '";';
-				echo 'ga("set", gaCustomDimensions["sessionID"], nebula.session.id);';
+				echo 'ga("set", nebula.analytics.dimensions.sessionID, nebula.session.id);';
 			}
 
 			//WordPress User ID
 			if ( is_user_logged_in() ){
 				$current_user = wp_get_current_user();
 				if ( $current_user && nebula()->get_option('cd_userid') ){
-					echo 'ga("set", gaCustomDimensions["userID"], "' . $current_user->ID . '");';
+					echo 'ga("set", nebula.analytics.dimensions.userID, "' . $current_user->ID . '");';
 					echo 'ga("set", "userId", ' . $current_user->ID . ');';
 				}
 			}
 
 			//Weather Conditions
 			if ( nebula()->get_option('cd_weather') ){
-				echo 'ga("set", gaCustomDimensions["weather"], "' . nebula()->weather('conditions') . '");';
+				echo 'ga("set", nebula.analytics.dimensions.weather, "' . nebula()->weather('conditions') . '");';
 			}
 			//Temperature Range
 			if ( nebula()->get_option('cd_temperature') ){
 				$temp_round = floor(nebula()->weather('temperature')/5)*5;
 				$temp_round_celcius = round(($temp_round-32)/1.8);
 				$temp_range = strval($temp_round) . '°F - ' . strval($temp_round+4) . '°F (' . strval($temp_round_celcius) . '°C - ' . strval($temp_round_celcius+2) . '°C)';
-				echo 'ga("set", gaCustomDimensions["temperature"], "' . $temp_range . '");';
+				echo 'ga("set", nebula.analytics.dimensions.temperature, "' . $temp_range . '");';
 			}
 
 			//Notable POI (IP Addresses)
 			if ( nebula()->get_option('cd_notablepoi') ){
-				echo 'ga("set", gaCustomDimensions["poi"], "' . nebula()->poi() . '");';
+				echo 'ga("set", nebula.analytics.dimensions.poi, "' . nebula()->poi() . '");';
 			}
 		?>
 
 		//Window Type
 		if ( window !== window.top ){
 			jQuery('html').addClass('in-iframe');
-			ga('set', gaCustomDimensions['windowType'], 'Iframe: ' + window.top.location.href);
+			ga('set', nebula.analytics.dimensions.windowType, 'Iframe: ' + window.top.location.href);
 		}
 		if ( navigator.standalone || window.matchMedia('(display-mode: standalone)').matches ){
 			jQuery('html').addClass('in-standalone-app');
-			ga('set', gaCustomDimensions['windowType'], 'Standalone App');
+			ga('set', nebula.analytics.dimensions.windowType, 'Standalone App');
 		}
 
 		//Autotrack Page Visibility
-		if ( gaCustomMetrics['pageHidden'] && gaCustomMetrics['pageVisible'] ){
+		if ( nebula.analytics.metrics.pageHidden && nebula.analytics.metrics.pageVisible ){
 			ga('require', 'pageVisibilityTracker', {
-				hiddenMetricIndex: parseInt(gaCustomMetrics['pageHidden'].replace('metric', '')),
-				visibleMetricIndex: parseInt(gaCustomMetrics['pageVisible'].replace('metric', '')),
+				hiddenMetricIndex: parseInt(nebula.analytics.metrics.pageHidden.replace('metric', '')),
+				visibleMetricIndex: parseInt(nebula.analytics.metrics.pageVisible.replace('metric', '')),
 				fieldsObj: {nonInteraction: true}
 			});
 		}
 
 		//Autotrack Clean URL
-		var queryStringDimension = parseInt(gaCustomDimensions['queryString'].replace('dimension', ''));
+		var queryStringDimension = parseInt(nebula.analytics.dimensions.queryString.replace('dimension', ''));
 		ga('require', 'cleanUrlTracker', {
 			stripQuery: ( queryStringDimension )? true : false,
 			queryDimensionIndex: queryStringDimension,
@@ -250,11 +179,11 @@
 		});
 
 		//Autotrack Media Queries
-		if ( gaCustomDimensions['mqBreakpoint'] || gaCustomDimensions['mqResolution'] || gaCustomDimensions['mqOrientation'] ){
+		if ( nebula.analytics.dimensions.mqBreakpoint || nebula.analytics.dimensions.mqResolution || nebula.analytics.dimensions.mqOrientation ){
 			ga('require', 'mediaQueryTracker', {
 				definitions: [{
 					name: 'Breakpoint',
-					dimensionIndex: parseInt(gaCustomDimensions['mqBreakpoint'].replace('dimension', '')),
+					dimensionIndex: parseInt(nebula.analytics.dimensions.mqBreakpoint.replace('dimension', '')),
 					items: [
 						{name: 'xs', media: 'all'},
 						{name: 'sm', media: '(min-width: 544px)'},
@@ -264,7 +193,7 @@
 					]
 				}, {
 					name: 'Resolution',
-					dimensionIndex: parseInt(gaCustomDimensions['mqResolution'].replace('dimension', '')),
+					dimensionIndex: parseInt(nebula.analytics.dimensions.mqResolution.replace('dimension', '')),
 					items: [
 						{name: '1x', media: 'all'},
 						{name: '1.5x', media: '(min-resolution: 144dpi)'},
@@ -272,7 +201,7 @@
 					]
 				}, {
 					name: 'Orientation',
-					dimensionIndex: parseInt(gaCustomDimensions['mqOrientation'].replace('dimension', '')),
+					dimensionIndex: parseInt(nebula.analytics.dimensions.mqOrientation.replace('dimension', '')),
 					items: [
 						{name: 'landscape', media: '(orientation: landscape)'},
 						{name: 'portrait', media: '(orientation: portrait)'}
@@ -288,7 +217,7 @@
 			hitFilter: function(model, element){
 				if ( jQuery(element).is('form') && !jQuery(element).find('input[name=s]').length ){
 					if ( !jQuery(element).hasClass('.ignore-form') && !jQuery(element).find('.ignore-form').length && !jQuery(element).parents('.ignore-form').length ){
-						ga('set', gaCustomMetrics['formImpressions'], 1);
+						ga('set', nebula.analytics.metrics.formImpressions, 1);
 					}
 				}
 			}
@@ -296,7 +225,7 @@
 
 		//Autotrack Max Scroll
 		ga('require', 'maxScrollTracker', {
-			maxScrollMetricIndex: parseInt(gaCustomMetrics['maxScroll'].replace('metric', '')),
+			maxScrollMetricIndex: parseInt(nebula.analytics.metrics.maxScroll.replace('metric', '')),
 			hitFilter: function(model){
 				model.set('nonInteraction', true, true); //Set non-interaction to true (prevent scrolling affecting bounce rate)
 			},
@@ -315,7 +244,7 @@
 
 		//Modify the payload before sending data to Google Analytics
 		ga(function(tracker){
-			tracker.set(gaCustomDimensions['gaCID'], tracker.get('clientId'));
+			tracker.set(nebula.analytics.dimensions.gaCID, tracker.get('clientId'));
 
 			if ( nebula && nebula.session && nebula.session.id ){
 				nebula.session.id = nebula.session.id.replace(/;cid:(.+);/i, ';cid:' + tracker.get('clientId') + ';'); //Update the CID once assigned
@@ -342,31 +271,31 @@
 				}
 
 				//Always send hit dimensions with all payloads
-				//model.set(gaCustomDimensions['gaCID'], tracker.get('clientId'), true);
-				model.set(gaCustomDimensions['hitID'], uuid(), true);
-				model.set(gaCustomDimensions['hitTime'], String(new Date-qt), true);
-				model.set(gaCustomDimensions['hitType'], model.get('hitType'), true);
+				//model.set(nebula.analytics.dimensions.gaCID, tracker.get('clientId'), true);
+				model.set(nebula.analytics.dimensions.hitID, uuid(), true);
+				model.set(nebula.analytics.dimensions.hitTime, String(new Date-qt), true);
+				model.set(nebula.analytics.dimensions.hitType, model.get('hitType'), true);
 
 				var interactivity = 'Interaction';
 				if ( model.get('nonInteraction') ){
 					interactivity = 'Non-Interaction';
 				}
-				model.set(gaCustomDimensions['interactivity'], interactivity, true);
+				model.set(nebula.analytics.dimensions.interactivity, interactivity, true);
 
 				var transportMethod = model.get('transport') || 'JavaScript';
-				model.set(gaCustomDimensions['hitMethod'], model.get('transport'), true);
+				model.set(nebula.analytics.dimensions.hitMethod, model.get('transport'), true);
 
-				model.set(gaCustomDimensions['timestamp'], localTimestamp(), true);
-				model.set(gaCustomDimensions['visibilityState'], document.visibilityState, true);
+				model.set(nebula.analytics.dimensions.timestamp, localTimestamp(), true);
+				model.set(nebula.analytics.dimensions.visibilityState, document.visibilityState, true);
 
 				var connection = ( navigator.onLine )? 'Online' : 'Offline';
-				model.set(gaCustomDimensions['network'], connection, true);
+				model.set(nebula.analytics.dimensions.network, connection, true);
 
 				if ( 'deviceMemory' in navigator ){ //Chrome 64+
 					var deviceMemoryLevel = navigator.deviceMemory < 1 ? 'lite' : 'full';
-					model.set(gaCustomDimensions['deviceMemory'], navigator.deviceMemory + '(' + deviceMemoryLevel + ')', true);
+					model.set(nebula.analytics.dimensions.deviceMemory, navigator.deviceMemory + '(' + deviceMemoryLevel + ')', true);
 				} else {
-					model.set(gaCustomDimensions['deviceMemory'], '(not set)', true);
+					model.set(nebula.analytics.dimensions.deviceMemory, '(not set)', true);
 				}
 
 				originalBuildHitTask(model); //Send the payload to Google Analytics
@@ -374,9 +303,9 @@
 		});
 
 		<?php if ( (isset($_SERVER['HTTP_X_PURPOSE']) && $_SERVER['HTTP_X_PURPOSE'] === 'preview') && (isset($_SERVER['HTTP_USER_AGENT']) && strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'snapchat') > 0) ): //Check if viewing in Snapchat ?>
-			window.snapchatPageShown = false;
+			nebula.snapchatPageShown = false;
 			function onSnapchatPageShow(){ //Listen for swipe-up for Snapchat users due to preloading. This function is called from Snapchat itself!
-				window.snapchatPageShown = true;
+				nebula.snapchatPageShown = true;
 				nebulaSendGAPageview();
 			}
 		<?php else: ?>
@@ -386,7 +315,7 @@
 		function nebulaSendGAPageview(){
 			ga('send', 'pageview', {
 				'hitCallback': function(){
-					window.GAready = true; //Set a global boolean variable
+					nebula.analytics.isReady = true; //Set a global boolean variable
 					document.dispatchEvent(new Event('gaready')); //Trigger an event when GA is ready (without jQuery)
 
 					if ( typeof initEventTracking === 'function' ){
@@ -413,7 +342,7 @@
 			}).fail(function(){ <?php //Ad Blocker Detected ?>
 				jQuery('html').addClass('ad-blocker');
 				<?php if ( nebula()->get_option('cd_blocker') ): //Scope: Session. Note: this is set AFTER the pageview is already sent (due to async), so it needs the event below. ?>
-					ga('set', gaCustomDimensions['blocker'], 'Ad Blocker');
+					ga('set', nebula.analytics.dimensions.blocker, 'Ad Blocker');
 				<?php endif; ?>
 
 				if ( nebula.session.flags && nebula.session.flags.adblock !== 'true' ){
@@ -424,12 +353,12 @@
 		<?php endif; ?>
 
 		//Generate a unique ID for hits and windows
-		function uuid(a){
-			return a ? (a^Math.random()*16 >> a/4).toString(16) : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, uuid);
+		nebula.uuid = function(a){
+			return a ? (a^Math.random()*16 >> a/4).toString(16) : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, nebula.uuid);
 		}
 
 		//Get local time string with timezone offset
-		function localTimestamp(){
+		nebula.localTimestamp = function(){
 			var now = new Date();
 			var tzo = -now.getTimezoneOffset();
 			var dif = ( tzo >= 0 )? '+' : '-';
@@ -444,12 +373,10 @@
 	<script src='https://www.google-analytics.com/analytics.js' async></script>
 <?php else: //If Tracking ID is empty: ?>
 	<script>
-		window.GAready = true; <?php //Set to true to prevent AJAX Google Analytics data ?>
-		function ga(){return false;}
-		function gaCustomDimensions(){return false;}
-		function gaCustomMetrics(){return false;}
-		function uuid(){return false;}
-		function localTimestamp(){return false;}
+		nebula.analytics.isReady = true; <?php //Set to true to prevent AJAX Google Analytics data ?>
+		function ga(){}
+		nebula.uuid = function(){}
+		nebula.localTimestamp = function(){}
 	</script>
 <?php endif; ?>
 

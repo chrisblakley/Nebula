@@ -7,7 +7,6 @@ jQuery.noConflict();
 jQuery(function(){
 	//Utilities
 	cacheSelectors();
-	getQueryStrings();
 	nvQueryParameters();
 	nebulaHelpers();
 	svgImgs();
@@ -43,12 +42,13 @@ jQuery(function(){
 	}
 }); //End Document Ready
 
+
 /*==========================
  Window Load
  ===========================*/
 
 jQuery(window).on('load', function(){
-	if ( typeof window.snapchatPageShown === 'undefined' || window.snapchatPageShown === true ){ //Don't automatically begin event tracking for Snapchat preloading
+	if ( typeof nebula.snapchatPageShown === 'undefined' || nebula.snapchatPageShown === true ){ //Don't automatically begin event tracking for Snapchat preloading
 		initEventTracking();
 	}
 
@@ -78,11 +78,11 @@ jQuery(window).on('load', function(){
 	nebulaBattery();
 	nebulaNetworkConnection();
 
-	lastWidth = nebula.dom.window.width(); //Prep resize detection (Is this causing a forced reflow?)
+	nebula.lastWindowWidth = nebula.dom.window.width(); //Prep resize detection (Is this causing a forced reflow?)
 	jQuery('a, li, tr').removeClass('hover');
 	nebula.dom.html.addClass('loaded');
 
-	nebulaServiceWorker();
+	nebulaServiceWorkerInit();
 
 	networkAvailable(); //Call it once on load, then listen for changes
 	jQuery(window).on('offline online', function(){
@@ -97,8 +97,8 @@ jQuery(window).on('load', function(){
 
 jQuery(window).on('resize', function(){
 	debounce(function(){
-		if ( typeof lastWidth !== 'undefined' && nebula.dom.window.width() != lastWidth ){ //If the width actually changed
-			lastWidth = nebula.dom.window.width();
+		if ( typeof nebula.lastWindowWidth !== 'undefined' && nebula.dom.window.width() != nebula.lastWindowWidth ){ //If the width actually changed
+			nebula.lastWindowWidth = nebula.dom.window.width();
 
 			mobileSearchPlaceholder();
 		}
@@ -107,106 +107,74 @@ jQuery(window).on('resize', function(){
 
 
 /*==========================
+ Additional References
+ ===========================*/
+
+nebula.regex = {
+	email: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i, //From JS Lint: Expected ']' and instead saw '['.
+	phone: /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/, //To allow letters, you'll need to convert them to their corresponding number before matching this RegEx.
+	date: {
+		mdy: /^((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))[.\/-](\d{4}|\d{2})$/,
+		ymd: /^(\d{4}|\d{2})[.\/-]((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))$/,
+	},
+	hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/,
+	ip: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+	url: /(\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?)/i,
+};
+
+nebula.timings = [];
+nebula.videos = {};
+
+//Add console context for nebula logs
+//@todo "Nebula" 0: Could be useful here to add a toggle to enable/disable all console logging (like if wordpress is in debug mode or ?debug is present)
+nebula.console = console;
+if ( typeof console.context === 'function' ){
+	nebula.console = console.context('Nebula');
+}
+
+
+/*==========================
  Optimization Functions
  ===========================*/
 
-//Cache common selectors and set consistent regex patterns
-function cacheSelectors(force){
-	if ( typeof nebula.dom === 'undefined' || !nebula.dom || force ){
-		//Selectors
-		nebula.dom = {
-			window: jQuery(window),
-			document: jQuery(document),
-			html: jQuery('html'),
-			body: jQuery('body')
-		};
-
-		//Nebula console log context //@todo "Nebula" 0: When this is supported, consider moving it to a PHP hook so it's available sooner and to all scopes? Maybe it pulls the name of the project for the scope itself from Nebula Options?
-		nebula.console = console;
-		if ( typeof console.context === 'function' ){
-			nebula.console = console.context('Nebula');
-		}
-
-		//Regex Patterns
-		//Test with: if ( regexPattern.email.test(jQuery('input').val()) ){ ... }
-		window.regexPattern = {
-			email: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i, //From JS Lint: Expected ']' and instead saw '['.
-			phone: /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/, //To allow letters, you'll need to convert them to their corresponding number before matching this RegEx.
-			date: {
-				mdy: /^((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))[.\/-](\d{4}|\d{2})$/,
-				ymd: /^(\d{4}|\d{2})[.\/-]((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))$/,
-			},
-			hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/,
-			ip: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
-			url: /(\(?(?:(http|https|ftp):\/\/)?(?:((?:[^\W\s]|\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\W\s]|\.|-)+[\.][^\W\s]{2,4}|localhost(?=\/)|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::(\d*))?([\/]?[^\s\?]*[\/]{1})*(?:\/?([^\s\n\?\[\]\{\}\#]*(?:(?=\.)){1}|[^\s\n\?\[\]\{\}\.\#]*)?([\.]{1}[^\s\?\#]*)?)?(?:\?{1}([^\s\n\#\[\]]*))?([\#][^\s\n]*)?\)?)/i,
-		};
-	}
+//Cache selectors
+function cacheSelectors(){
+	nebula.dom = {
+		document: jQuery(document),
+		window: jQuery(window),
+		html: jQuery('html'),
+		body: jQuery('body'),
+	};
 }
 
 //ServiceWorker
-function nebulaServiceWorker(){
+function nebulaServiceWorkerInit(){
 	if ( nebula.site.options.sw && 'serviceWorker' in navigator ){ //Firefox 44+, Chrome 45+, Edge 17+, Safari 12+
-		//Register
-		navigator.serviceWorker.register(nebula.site.sw_url).then(function(registration){
-			//console.log('ServiceWorker registration successful with scope: ', registration.scope);
-			//console.debug(registration);
-
-			//Unregister the ServiceWorker on ?debug
-			if ( nebula.dom.html.hasClass('debug') ){
-				registration.unregister();
+		navigator.serviceWorker.getRegistrations().then(registrations => { //Get existing SW registrations
+			if ( registrations.length ){
+				registerServiceWorker(); //Already registered, so continue using it.
+			} else {
+				var swScrollHandler = function(){
+					registerServiceWorker();
+					jQuery(window).off('scroll', swScrollHandler); //Stop listening to scroll
+				};
+				nebula.dom.window.on('scroll', swScrollHandler);
 			}
-		}, function(err) {
-			ga('send', 'exception', {'exDescription': '(JS) ServiceWorker registration failed: ' + err, 'exFatal': false});
-		});
-
-		//If Service Worker controller exists yet (for postMessage)
-		if ( navigator.serviceWorker.controller ){
-			//navigator.serviceWorker.controller.postMessage('hello');
-		}
-
-		nebulaPredictiveCacheListeners();
-
-		//Determine storage quota and usage
-		//@todo: does this need to be done here? or can I check this in sw.js? I bet I could move it.
-		if ( 'storageQuota' in navigator ){ //Not working even though it is Chrome 55+... Maybe it's a experiment flag?
-			//console.log('we have storagequota');
-
-			navigator.storageQuota.queryInfo('temporary').then(function(info){
-				//console.log(info.quota); //Result: <quota in bytes>
-				//console.log(info.usage); //Result: <used data in bytes>
-			});
-		}
-
-		//Send data to sw.js
-		//Listen for claiming of our ServiceWorker
-		//Is this the proper way to listen for the SW to be ready? or use "ready" below?
-		navigator.serviceWorker.addEventListener('controllerchange', function(event){ //This is never firing...
-			//console.log('service worker controllerchange!');
-
-			//Listen for changes in the state of our ServiceWorker
-			navigator.serviceWorker.controller.addEventListener('statechange', function(){
-				//console.log('service worker statechange!');
-
-				//If the ServiceWorker becomes "activated", let the user know they can go offline!
-				if ( this.state === 'activated' ){
-					//Show the "You may now use offline" notification
-					//console.log('You may now use offline.');
-				}
-			});
-		});
-
-		//Is this the proper way to listen for the SW to be ready? or use above?
-		navigator.serviceWorker.ready.then(function(registration){
-			//console.log('Service Worker is ready');
-			//registration.active.postMessage('offline_check');
-		});
-
-		//Listen to the sw.js for event:
-		navigator.serviceWorker.addEventListener('message', function(event){
-			//console.log("Received a message from sw.js: ");
-			//console.debug(event.data);
 		});
 	}
+}
+
+function registerServiceWorker(){
+	navigator.serviceWorker.register(nebula.site.sw_url).then(function(registration){
+		nebulaPredictiveCacheListeners();
+
+		//Unregister the ServiceWorker on ?debug
+		if ( nebula.dom.html.hasClass('debug') ){
+			registration.unregister();
+		}
+	}, function(err) {
+		ga('send', 'exception', {'exDescription': '(JS) ServiceWorker registration failed: ' + err, 'exFatal': false});
+	});
 }
 
 //Detections for events specific to predicting the next pageview.
@@ -311,18 +279,18 @@ function performanceMetrics(){
 			var windowLoaded = Math.round(performance.timing.loadEventStart-performance.timing.navigationStart); //Navigation start until window load
 
 			if ( nebula.dom.html.hasClass('debug') ){
-				console.group('Performance');
-				console.log('Server Response: ' + responseEnd + 'ms');
-				console.log('DOM Ready: ' + domReady + 'ms');
-				console.log('Window Loaded: ' + windowLoaded + 'ms');
-				console.groupEnd();
+				nebula.console.group('Performance');
+				nebula.console.log('Server Response: ' + responseEnd + 'ms');
+				nebula.console.log('DOM Ready: ' + domReady + 'ms');
+				nebula.console.log('Window Loaded: ' + windowLoaded + 'ms');
+				nebula.console.groupEnd();
 			}
 
 			//Validate each timing result before using them
 			if ( (responseEnd > 0 && responseEnd < 6000000) && (domReady > 0 && domReady < 6000000) && (windowLoaded > 0 && windowLoaded < 6000000) ){
-				ga('set', gaCustomMetrics['serverResponseTime'], responseEnd);
-				ga('set', gaCustomMetrics['domReadyTime'], domReady);
-				ga('set', gaCustomMetrics['windowLoadedTime'], windowLoaded);
+				ga('set', nebula.analytics.metrics.serverResponseTime, responseEnd);
+				ga('set', nebula.analytics.metrics.domReadyTime, domReady);
+				ga('set', nebula.analytics.metrics.windowLoadedTime, windowLoaded);
 				ga('send', 'event', 'Performance Timing', 'track', 'Used to deliver performance metrics to Google Analytics', {'nonInteraction': true});
 
 				//Send as User Timings as well
@@ -334,7 +302,7 @@ function performanceMetrics(){
 					performance.measure('Server Response', 'navigationStart', 'responseEnd');
 					performance.measure('DOM Ready', 'navigationStart', 'domContentLoadedEventStart');
 					performance.measure('Window Load', 'navigationStart', 'loadEventStart');
-					//console.debug( performance.getEntriesByType('measure') );
+					//nebula.console.debug( performance.getEntriesByType('measure') );
 				}
 			}
 		}, 0);
@@ -362,7 +330,7 @@ function overflowDetector(){
 
 //Check if Google Analytics is ready
 function isGoogleAnalyticsReady(){
-	if ( window.GAready === true ){
+	if ( has(nebula, 'analytics.isReady') ){
 		nebula.dom.html.removeClass('no-gajs');
 		return true;
 	}
@@ -397,9 +365,9 @@ function nebulaBatteryData(battery){
 	};
 
 	//These definitions will be transported with the Performance Metric event payload
-	ga('set', gaCustomDimensions['batteryMode'], nebula.user.client.device.battery.mode);
-	ga('set', gaCustomDimensions['batteryPercent'], nebula.user.client.device.battery.percentage);
-	ga('set', gaCustomMetrics['batteryLevel'], nebula.user.client.device.battery.level);
+	ga('set', nebula.analytics.dimensions.batteryMode, nebula.user.client.device.battery.mode);
+	ga('set', nebula.analytics.dimensions.batteryPercent, nebula.user.client.device.battery.percentage);
+	ga('set', nebula.analytics.metrics.batteryLevel, nebula.user.client.device.battery.level);
 
 	nebula.dom.document.trigger('batteryChange');
 }
@@ -437,7 +405,7 @@ function facebookSDK(){
 
 //Facebook Connect functions
 function facebookConnect(){
-	window.fbConnectFlag = false;
+	nebula.fbConnectFlag = false;
 
 	if ( has(nebula, 'site.options.facebook_app_id') ){
 		window.fbAsyncInit = function(){
@@ -462,42 +430,42 @@ function socialSharing(){
 
 	//Facebook
 	jQuery('.fbshare').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
-		ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Facebook');
 		nv('event', 'Facebook Share');
 	});
 
 	//Twitter
 	jQuery('.twshare').attr('href', 'https://twitter.com/intent/tweet?text=' + enctitle + '&url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
-		ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Twitter');
 		nv('event', 'Twitter Share');
 	});
 
 	//Google+
 	jQuery('.gshare').attr('href', 'https://plus.google.com/share?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
-		ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Google+');
 		nv('event', 'Google+ Share');
 	});
 
 	//LinkedIn
 	jQuery('.lishare').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
-		ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'LinkedIn');
 		nv('event', 'LinkedIn Share');
 	});
 
 	//Pinterest
 	jQuery('.pinshare').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
-		ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Pinterest');
 		nv('event', 'Pinterest Share');
 	});
 
 	//Email
 	jQuery('.emshare').attr('href', 'mailto:?subject=' + enctitle + '&body=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
-		ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Email');
 		nv('event', 'Email Share');
 	});
@@ -543,7 +511,7 @@ function initEventTracking(){
 			});
 		}
 
-		if ( typeof window.GAready !== 'undefined' && !window.GAready ){
+		if ( has(nebula, 'analytics.isReady') && !nebula.analytics.isReady ){
 			nebula.dom.document.trigger('nebula_ga_blocked');
 
 			//Send Pageview
@@ -609,7 +577,7 @@ function eventTracking(){
 	//Btn Clicks
 	nebula.dom.document.on('mousedown', "button, .btn", function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
-		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
+		ga('set', nebula.analytics.dimensions.eventIntent, eventIntent);
 
 		var btnText = jQuery(this).val() || jQuery(this).text();
 		if ( jQuery.trim(btnText) === '' ){
@@ -659,7 +627,7 @@ function eventTracking(){
 	jQuery.each(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'zipx', 'rar', 'gz', 'tar', 'txt', 'rtf'], function(index, extension){
 		nebula.dom.document.on('mousedown', "a[href$='." + extension + "'], a[href$='." + extension.toUpperCase() + "']", function(e){
 			eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
-			ga('set', gaCustomDimensions['eventIntent'], eventIntent);
+			ga('set', nebula.analytics.dimensions.eventIntent, eventIntent);
 			var fileName = jQuery(this).attr('href').substr(jQuery(this).attr('href').lastIndexOf("/")+1);
 			ga('send', 'event', 'Download', extension, fileName);
 			if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: fileName});}
@@ -672,7 +640,7 @@ function eventTracking(){
 		var filePath = jQuery(this).attr('href');
 		if ( filePath !== '#' ){
 			eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
-			ga('set', gaCustomMetrics['notableDownloads'], 1);
+			ga('set', nebula.analytics.metrics.notableDownloads, 1);
 			var linkText = jQuery(this).text();
 			var fileName = filePath.substr(filePath.lastIndexOf("/")+1);
 			ga('send', 'event', 'Download', 'Notable', fileName);
@@ -708,9 +676,9 @@ function eventTracking(){
 	//Mailto link tracking
 	nebula.dom.document.on('mousedown', 'a[href^="mailto"]', function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
-		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
+		ga('set', nebula.analytics.dimensions.eventIntent, eventIntent);
 		var emailAddress = jQuery(this).attr('href').replace('mailto:', '');
-		ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
+		ga('set', nebula.analytics.dimensions.contactMethod, 'Mailto');
 		ga('send', 'event', 'Contact', 'Mailto', emailAddress);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Mailto'});}}
 		nv('event', 'Mailto Click');
@@ -720,9 +688,9 @@ function eventTracking(){
 	//Telephone link tracking
 	nebula.dom.document.on('mousedown', 'a[href^="tel"]', function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
-		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
+		ga('set', nebula.analytics.dimensions.eventIntent, eventIntent);
 		var phoneNumber = jQuery(this).attr('href').replace('tel:', '');
-		ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
+		ga('set', nebula.analytics.dimensions.contactMethod, 'Click-to-Call');
 		ga('send', 'event', 'Contact', 'Click-to-Call', phoneNumber);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Click-to-Call'});}}
 		nv('event', 'Click-to-Call');
@@ -732,9 +700,9 @@ function eventTracking(){
 	//SMS link tracking
 	nebula.dom.document.on('mousedown', 'a[href^="sms"]', function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
-		ga('set', gaCustomDimensions['eventIntent'], eventIntent);
+		ga('set', nebula.analytics.dimensions.eventIntent, eventIntent);
 		var phoneNumber = jQuery(this).attr('href').replace('sms:+', '');
-		ga('set', gaCustomDimensions['contactMethod'], 'SMS');
+		ga('set', nebula.analytics.dimensions.contactMethod, 'SMS');
 		ga('send', 'event', 'Contact', 'SMS', phoneNumber);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'SMS'});}}
 		nv('event', 'SMS');
@@ -766,9 +734,9 @@ function eventTracking(){
 
 		//Track Email or Phone copies as contact intent.
 		emailPhone = jQuery.trim(words.join(' '));
-		if ( regexPattern.email.test(emailPhone) ){
-			ga('set', gaCustomDimensions['contactMethod'], 'Mailto');
-			ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+		if ( nebula.regex.email.test(emailPhone) ){
+			ga('set', nebula.analytics.dimensions.contactMethod, 'Mailto');
+			ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 			ga('send', 'event', 'Contact', 'Email (Copied)', emailPhone);
 			nv('event', 'Email Address Copied');
 			nv('identify', {mailto_contacted: emailPhone});
@@ -777,9 +745,9 @@ function eventTracking(){
 			var firstFourNumbers = parseInt(alphanumPhone.substring(0, 4)); //Store the first four numbers as an integer
 
 			//If the first three/four chars are numbers and the full string is either 10 or 11 characters (to capture numbers with words) -or- if it matches the phone RegEx pattern
-			if ( (!isNaN(firstFourNumbers) && firstFourNumbers.toString().length >= 3 && (alphanumPhone.length === 10 || alphanumPhone.length === 11)) || regexPattern.phone.test(emailPhone) ){
-				ga('set', gaCustomDimensions['contactMethod'], 'Click-to-Call');
-				ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+			if ( (!isNaN(firstFourNumbers) && firstFourNumbers.toString().length >= 3 && (alphanumPhone.length === 10 || alphanumPhone.length === 11)) || nebula.regex.phone.test(emailPhone) ){
+				ga('set', nebula.analytics.dimensions.contactMethod, 'Click-to-Call');
+				ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 				ga('send', 'event', 'Contact', 'Phone (Copied)', emailPhone);
 				nv('event', 'Phone Number Copied');
 				nv('identify', {phone_contacted: emailPhone});
@@ -836,7 +804,7 @@ function eventTracking(){
 		window.onafterprint = sendPrintEvent();
 	}
 	function sendPrintEvent(){
-		ga('set', gaCustomDimensions['eventIntent'], 'Intent');
+		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Print', 'Print');
 		nv('event', 'Print');
 	}
@@ -895,7 +863,7 @@ function scrollDepth(){
 	if ( window.performance ){ //Safari 11+
 		scrollReady = performance.now();
 
-		nebula.dom.window.on('scroll', function(){
+		var scrollDepthHandler = function(){
 			once(function(){
 				scrollBegin = performance.now()-scrollReady;
 				if ( scrollBegin < 250 ){ //Try to avoid autoscrolls
@@ -909,10 +877,12 @@ function scrollDepth(){
 					once(function(){
 						scrollEnd = performance.now()-(scrollBegin+scrollReady);
 						ga('send', 'event', 'Scroll Depth', 'Entire Page', '', Math.round(scrollEnd), {'nonInteraction': true}); //Event value is time to reach end
+						jQuery(window).off('scroll', scrollDepthHandler);
 					}, 'end scrolling');
 				}
 			}, 100, 'scroll depth');
-		});
+		}
+		nebula.dom.window.on('scroll', scrollDepthHandler);
 	}
 }
 
@@ -942,7 +912,7 @@ function nv(action, data){
 	}
 
 	if ( !action || !data || typeof data == 'function' ){
-		console.error('Action and Data Object are both required.');
+		nebula.console.error('Action and Data Object are both required.');
 		ga('send', 'exception', {'exDescription': '(JS) Action and Data Object are both required in nv()', 'exFatal': false});
 		return false; //Action and Data are both required.
 	}
@@ -958,7 +928,7 @@ function nv(action, data){
 
 		//Check if email was identified or just supporting data
 		if ( 'email' in data ){
-			if ( regexPattern.email.test(data['email']) ){
+			if ( nebula.regex.email.test(data['email']) ){
 				ga('send', 'event', 'CRM', 'Contact Identified', "A contact's email address in the CRM has been identified.");
 			}
 		} else {
@@ -1018,7 +988,7 @@ function nvForm(){
 	jQuery('form [class*="nv-"]').each(function(){
 		if ( jQuery.trim(jQuery(this).val()).length ){
 			if ( jQuery(this).attr('class').indexOf('nv-notable_poi') >= 0 ){
-				ga('set', gaCustomDimensions['poi'], jQuery('.notable-poi').val());
+				ga('set', nebula.analytics.dimensions.poi, jQuery('.notable-poi').val());
 			}
 
 			var cat = /nv-([a-z\_]+)/g.exec(jQuery(this).attr('class'));
@@ -1129,7 +1099,7 @@ function autocompleteSearch(element, types){
 	}
 
 	if ( types && !jQuery.isArray(types) ){
-		console.error('autocompleteSearch requires 2nd parameter to be an array.');
+		nebula.console.error('autocompleteSearch requires 2nd parameter to be an array.');
 		ga('send', 'exception', {'exDescription': '(JS) autocompleteSearch requires 2nd parameter to be an array', 'exFatal': false});
 		return false;
 	}
@@ -1172,7 +1142,7 @@ function autocompleteSearch(element, types){
 					},
 					success: function(data){
 						nebula.dom.document.trigger('nebula_autocomplete_search_success', data);
-						ga('set', gaCustomMetrics['autocompleteSearches'], 1);
+						ga('set', nebula.analytics.metrics.autocompleteSearches, 1);
 						if ( data ){
 							nebula.dom.document.trigger('nebula_autocomplete_search_results', data);
 							nebulaAddToCache(data[0].link);
@@ -1213,7 +1183,7 @@ function autocompleteSearch(element, types){
 			},
 			select: function(event, ui){
 				nebula.dom.document.trigger('nebula_autocomplete_search_selected', ui);
-				ga('set', gaCustomMetrics['autocompleteSearchClicks'], 1);
+				ga('set', nebula.analytics.metrics.autocompleteSearchClicks, 1);
 				ga('send', 'event', 'Internal Search', 'Autocomplete Click', ui.item.label);
 				ga('send', 'timing', 'Autocomplete Search', 'Until Navigation', Math.round(nebulaTimer('autocompleteSearch', 'end')), 'From first initial search until navigation');
 				if ( typeof ui.item.external !== 'undefined' ){
@@ -1221,20 +1191,20 @@ function autocompleteSearch(element, types){
 				} else {
 					window.location.href = ui.item.link;
 				}
-			 },
-			 open: function(){
-				  element.closest('form').addClass('autocompleted');
-				  var heroAutoCompleteDropdown = jQuery('.form-identifier-nebula-hero-search');
+			},
+			open: function(){
+				 element.closest('form').addClass('autocompleted');
+				 var heroAutoCompleteDropdown = jQuery('.form-identifier-nebula-hero-search');
 				heroAutoCompleteDropdown.css('max-width', element.outerWidth());
-			 },
-			 close: function(){
+			},
+			close: function(){
 				element.closest('form').removeClass('autocompleted');
-			 },
-			 minLength: 3,
-		 }).data("ui-autocomplete")._renderItem = function(ul, item){
-			  thisSimilarity = ( typeof item.similarity !== 'undefined' )? item.similarity.toFixed(1) + '% Match' : '';
-			  var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a> " + item.label.replace(/\\/g, '') + "</a>").appendTo(ul);
-			  return listItem;
+			},
+			minLength: 3,
+		}).data("ui-autocomplete")._renderItem = function(ul, item){
+			 thisSimilarity = ( typeof item.similarity !== 'undefined' )? item.similarity.toFixed(1) + '% Match' : '';
+			 var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a> " + item.label.replace(/\\/g, '') + "</a>").appendTo(ul);
+			 return listItem;
 		};
 		var thisFormIdentifier = element.closest('form').attr('id') || element.closest('form').attr('name') || element.closest('form').attr('class');
 		element.autocomplete("widget").addClass("form-identifier-" + thisFormIdentifier);
@@ -1640,15 +1610,15 @@ function emphasizeSearchTerms(){
 		setTimeout(function(){
 			var origBGColor = jQuery('.searchresultword').css('background-color');
 			jQuery('.searchresultword').each(function(i){
-			  	var stallFor = 150 * parseInt(i);
+			 	var stallFor = 150 * parseInt(i);
 				jQuery(this).delay(stallFor).animate({
 					backgroundColor: 'rgba(255, 255, 0, 0.5)',
 					borderColor: 'rgba(255, 255, 0, 1)',
 				}, 500, 'swing', function(){
 					jQuery(this).delay(1000).animate({
-						 backgroundColor: origBGColor,
+						backgroundColor: origBGColor,
 					}, 1000, 'swing', function(){
-						 jQuery(this).addClass('transitionable');
+						jQuery(this).addClass('transitionable');
 					});
 				});
 			});
@@ -1688,7 +1658,7 @@ function pageSuggestion(){
 
 		nebula.dom.document.on('mousedown', 'a.gcse-suggestion, a.internal-suggestion', function(e){
 			eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
-			ga('set', gaCustomDimensions['eventIntent'], eventIntent);
+			ga('set', nebula.analytics.dimensions.eventIntent, eventIntent);
 
 			if ( jQuery(this).hasClass('internal-suggestion') ){
 				var suggestionType = 'Internal';
@@ -1786,7 +1756,7 @@ function cf7Functions(){
 		if ( !jQuery(this).hasClass('.ignore-form') && !jQuery(this).find('.ignore-form').length && !jQuery(this).parents('.ignore-form').length ){
 			//Form starts
 			if ( typeof formStarted[formID] === 'undefined' || !formStarted[formID] ){
-				ga('set', gaCustomMetrics['formStarts'], 1);
+				ga('set', nebula.analytics.metrics.formStarts, 1);
 				ga('send', 'event', 'CF7 Form', 'Started Form (Focus)', 'Began filling out form ID: ' + formID + ' (' + thisField + ')');
 				nv('event', 'Contact Form Started');
 				formStarted[formID] = true;
@@ -1803,7 +1773,7 @@ function cf7Functions(){
 		nebulaTimer(formID, 'start', thisField);
 
 		//Individual form field timings
-		if ( typeof nebulaTimings[formID] !== 'undefined' && typeof nebulaTimings[formID].lap[nebulaTimings[formID].laps-1] !== 'undefined' ){
+		if ( typeof nebula.timings[formID] !== 'undefined' && typeof nebula.timings[formID].lap[nebula.timings[formID].laps-1] !== 'undefined' ){
 			var labelText = '';
 			if ( jQuery(this).parent('.label') ){
 				labelText = jQuery(this).parent('.label').text();
@@ -1812,7 +1782,7 @@ function cf7Functions(){
 			} else if ( jQuery(this).attr('placeholder').length ){
 				labelText = ' "' + jQuery(this).attr('placeholder') + '"';
 			}
-			ga('send', 'timing', 'CF7 Form', nebulaTimings[formID].lap[nebulaTimings[formID].laps-1].name + labelText + ' (Form ID: ' + formID + ')', Math.round(nebulaTimings[formID].lap[nebulaTimings[formID].laps-1].duration), 'Amount of time on this input field (until next focus or submit).');
+			ga('send', 'timing', 'CF7 Form', nebula.timings[formID].lap[nebula.timings[formID].laps-1].name + labelText + ' (Form ID: ' + formID + ')', Math.round(nebula.timings[formID].lap[nebula.timings[formID].laps-1].duration), 'Amount of time on this input field (until next focus or submit).');
 		}
 	});
 
@@ -1826,8 +1796,8 @@ function cf7Functions(){
 		var formID = e.detail.contactFormId || e.detail.id;
 		var formTime = nebulaTimer(e.detail.id, 'lap', 'wpcf7-submit-spam');
 		updateFormFlow(formID, '[Invalid]');
-		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Invalid)');
-		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
+		ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Invalid)');
+		ga('set', nebula.analytics.dimensions.formTiming, millisecondsToString(formTime) + 'ms (' + nebula.timings[e.detail.id].laps + ' inputs)');
 		ga('send', 'event', 'CF7 Form', 'Submit (Invalid)', 'Form validation errors occurred on form ID: ' + formID);
 		ga('send', 'exception', {'exDescription': '(JS) Invalid form submission for form ID ' + formID, 'exFatal': false});
 		nebulaScrollTo(jQuery(".wpcf7-not-valid").first()); //Scroll to the first invalid input
@@ -1847,8 +1817,8 @@ function cf7Functions(){
 		var formID = e.detail.contactFormId || e.detail.id;
 		var formTime = nebulaTimer(e.detail.id, 'end');
 		updateFormFlow(formID, '[Spam]');
-		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Spam)');
-		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
+		ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Spam)');
+		ga('set', nebula.analytics.dimensions.formTiming, millisecondsToString(formTime) + 'ms (' + nebula.timings[e.detail.id].laps + ' inputs)');
 		ga('send', 'event', 'CF7 Form', 'Submit (Spam)', 'Form submission failed spam tests on form ID: ' + formID);
 		ga('send', 'exception', {'exDescription': '(JS) Spam form submission for form ID ' + formID, 'exFatal': false});
 		nv('event', 'Contact Form Spam');
@@ -1859,8 +1829,8 @@ function cf7Functions(){
 		var formID = e.detail.contactFormId || e.detail.id;
 		var formTime = nebulaTimer(e.detail.id, 'end');
 		updateFormFlow(formID, '[Failed]');
-		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Failed)');
-		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
+		ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Failed)');
+		ga('set', nebula.analytics.dimensions.formTiming, millisecondsToString(formTime) + 'ms (' + nebula.timings[e.detail.id].laps + ' inputs)');
 		ga('send', 'event', 'CF7 Form', 'Submit (Failed)', 'Form submission email send failed for form ID: ' + formID);
 		ga('send', 'exception', {'exDescription': '(JS) Mail failed to send for form ID ' + formID, 'exFatal': true});
 		nv('event', 'Contact Form Failed');
@@ -1874,10 +1844,10 @@ function cf7Functions(){
 		var formTime = nebulaTimer(e.detail.id, 'end');
 		updateFormFlow(formID, '[Success]');
 		if ( !jQuery('#' + e.detail.id).hasClass('.ignore-form') && !jQuery('#' + e.detail.id).find('.ignore-form').length && !jQuery('#' + e.detail.id).parents('.ignore-form').length ){
-			ga('set', gaCustomMetrics['formSubmissions'], 1);
+			ga('set', nebula.analytics.metrics.formSubmissions, 1);
 		}
-		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Success)');
-		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
+		ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Success)');
+		ga('set', nebula.analytics.dimensions.formTiming, millisecondsToString(formTime) + 'ms (' + nebula.timings[e.detail.id].laps + ' inputs)');
 		ga('send', 'timing', 'CF7 Form', 'Form Completion (ID: ' + formID + ')', Math.round(formTime), 'Initial form focus until valid submit');
 		ga('send', 'event', 'CF7 Form', 'Submit (Success)', 'Form ID: ' + formID);
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)'});}
@@ -1895,8 +1865,8 @@ function cf7Functions(){
 		var formID = e.detail.contactFormId || e.detail.id;
 		var formTime = nebulaTimer(e.detail.id, 'lap', 'wpcf7-submit-attempt');
 
-		ga('set', gaCustomDimensions['contactMethod'], 'CF7 Form (Attempt)');
-		ga('set', gaCustomDimensions['formTiming'], millisecondsToString(formTime) + 'ms (' + nebulaTimings[e.detail.id].laps + ' inputs)');
+		ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Attempt)');
+		ga('set', nebula.analytics.dimensions.formTiming, millisecondsToString(formTime) + 'ms (' + nebula.timings[e.detail.id].laps + ' inputs)');
 		ga('send', 'event', 'CF7 Form', 'Submit (Attempt)', 'Submission attempt for form ID: ' + formID); //This event is required for the notable form metric!
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)',});}
 		nvForm(); //nvForm() here because it triggers after all others. No nv() here so it doesn't overwrite the other (more valuable) data.
@@ -1922,7 +1892,7 @@ function updateFormFlow(formID, field, info){
 		formFlow[formID] += ' > ' + field + info;
 	}
 
-	ga('set', gaCustomDimensions['formFlow'], formFlow[formID]); //Update form field history. scope: session
+	ga('set', nebula.analytics.dimensions.formFlow, formFlow[formID]); //Update form field history. scope: session
 }
 
 //Enable localstorage on CF7 text inputs and textareas
@@ -1955,20 +1925,20 @@ function cf7LocalStorage(){
 	//Update matching form fields on other windows/tabs
 	nebula.dom.window.on('storage', function(e){
 		jQuery('.wpcf7-textarea, .wpcf7-text').each(function(){
-		 	if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') ){
+			if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') ){
 				jQuery(this).val(localStorage.getItem('cf7_' + jQuery(this).attr('name')));
 			}
-		 });
+		});
 	});
 
 	//Clear localstorage when AJAX submit fails (but submit still succeeds)
 	if ( window.location.hash.indexOf('wpcf7') > 0 ){
-		 if ( jQuery(window.location.hash + ' .wpcf7-mail-sent-ok').length ){
-			  jQuery(window.location.hash + ' .wpcf7-textarea, ' + window.location.hash + ' .wpcf7-text').each(function(){
+		if ( jQuery(window.location.hash + ' .wpcf7-mail-sent-ok').length ){
+			 jQuery(window.location.hash + ' .wpcf7-textarea, ' + window.location.hash + ' .wpcf7-text').each(function(){
 				localStorage.removeItem('cf7_' + jQuery(this).attr('name'));
 				jQuery(this).val('').trigger('keyup');
 			});
-		 }
+		}
 	}
 }
 
@@ -2001,7 +1971,7 @@ function nebulaLiveValidator(){
 	nebula.dom.document.on('keyup change blur', '.nebula-validate-url', function(e){
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
-		} else if ( regexPattern.url.test(jQuery(this).val()) ){
+		} else if ( nebula.regex.url.test(jQuery(this).val()) ){
 			applyValidationClasses(jQuery(this), 'valid', false);
 		} else {
 			applyValidationClasses(jQuery(this), 'invalid', ( e.type !== 'keyup' ));
@@ -2012,7 +1982,7 @@ function nebulaLiveValidator(){
 	nebula.dom.document.on('keyup change blur', '.nebula-validate-email', function(e){
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
-		} else if ( regexPattern.email.test(jQuery(this).val()) ){
+		} else if ( nebula.regex.email.test(jQuery(this).val()) ){
 			applyValidationClasses(jQuery(this), 'valid', false);
 		} else {
 			applyValidationClasses(jQuery(this), 'invalid', ( e.type !== 'keyup' ));
@@ -2023,7 +1993,7 @@ function nebulaLiveValidator(){
 	nebula.dom.document.on('keyup change blur', '.nebula-validate-phone', function(e){
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
-		} else if ( regexPattern.phone.test(jQuery(this).val()) ){
+		} else if ( nebula.regex.phone.test(jQuery(this).val()) ){
 			applyValidationClasses(jQuery(this), 'valid', false);
 		} else {
 			applyValidationClasses(jQuery(this), 'invalid', ( e.type !== 'keyup' ));
@@ -2034,9 +2004,9 @@ function nebulaLiveValidator(){
 	nebula.dom.document.on('keyup change blur', '.nebula-validate-date', function(e){
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
-		} else if ( regexPattern.date.mdy.test(jQuery(this).val()) ){ //Check for MM/DD/YYYY (and flexible variations)
+		} else if ( nebula.regex.date.mdy.test(jQuery(this).val()) ){ //Check for MM/DD/YYYY (and flexible variations)
 			applyValidationClasses(jQuery(this), 'valid', false);
-		} else if ( regexPattern.date.ymd.test(jQuery(this).val()) ){ //Check for YYYY/MM/DD (and flexible variations)
+		} else if ( nebula.regex.date.ymd.test(jQuery(this).val()) ){ //Check for YYYY/MM/DD (and flexible variations)
 			applyValidationClasses(jQuery(this), 'valid', false);
 		} else if ( strtotime(jQuery(this).val()) && strtotime(jQuery(this).val()) > -2208988800 ){ //Check for textual dates (after 1900) //@TODO "Nebula" 0: The JS version of strtotime() isn't the most accurate function...
 			applyValidationClasses(jQuery(this), 'valid', false);
@@ -2085,25 +2055,35 @@ function applyValidationClasses(element, validation, showFeedback){
 
 //Load the lazy loaded images
 function lazyLoadImages(){
+	//<img> elements
 	//Load any images in the viewport
 	jQuery('noscript.nebula-lazy-img').each(function(){
 		//If the noscript tag is above the fold load it immediately
-		if ( jQuery(this).prev('.nebula-lazy-position').offset().top < jQuery(window).height() ){
+		if ( jQuery(this).prev('.nebula-lazy-position').offset().top < nebula.dom.window.height() ){
 			jQuery(this).prev('.nebula-lazy-position').remove();
 			jQuery(this).replaceWith(jQuery(this).text()); //Remove the <noscript> tag to reveal the img tag
 		}
 	});
+	jQuery('.nebula-lazy-position').remove(); //These are no longer needed after initial load
 
-	jQuery('.nebula-lazy-position').remove(); //These are no longer needed
+	//Background Images
+	jQuery('.lazy-load').each(function(){
+		if ( jQuery(this).offset().top < nebula.dom.window.height() ){
+			jQuery(this).removeClass('lazy-load').addClass('lazy-loaded');
+		}
+	});
 
 	//Wait for a scroll event to load the rest
-	jQuery(window).on('scroll', function(){
+	var lazyLoadScrollHandler = function(){
+		//<img> elements
 		jQuery('noscript.nebula-lazy-img').each(function(){
 			jQuery(this).replaceWith(jQuery(this).text()); //Remove the <noscript> tag to reveal the img tag
 		});
 
-		jQuery(this).off('scroll'); //Stop listening to scroll now that all images are loaded
-	});
+		jQuery('.lazy-load').removeClass('lazy-load').addClass('lazy-loaded'); //Load background images
+		jQuery(window).off('scroll', lazyLoadScrollHandler); //Stop listening to scroll now that all images are loaded
+	};
+	nebula.dom.window.on('scroll', lazyLoadScrollHandler);
 }
 
 //Conditional JS Library Loading
@@ -2230,7 +2210,7 @@ function googleAddressAutocompleteCallback(autocompleteInput, uniqueID){
 		simplePlace = sanitizeGooglePlaceData(place, uniqueID);
 
 		nebula.dom.document.trigger('nebula_address_selected', [place, simplePlace, jQuery(autocompleteInput)]);
-		ga('set', gaCustomDimensions['contactMethod'], 'Autocomplete Address');
+		ga('set', nebula.analytics.dimensions.contactMethod, 'Autocomplete Address');
 		ga('send', 'event', 'Contact', 'Autocomplete Address', simplePlace.city + ', ' + simplePlace.state.abbr + ' ' + simplePlace.zip.code);
 
 		nv('identify', {
@@ -2276,7 +2256,7 @@ function googleAddressAutocompleteCallback(autocompleteInput, uniqueID){
 //Use uniqueID to name places like "home", "mailing", "billing", etc.
 function sanitizeGooglePlaceData(place, uniqueID){
 	if ( !place ){
-		console.error('Place data is required for sanitization.');
+		nebula.console.error('Place data is required for sanitization.');
 		return false;
 	}
 
@@ -2327,7 +2307,7 @@ function sanitizeGooglePlaceData(place, uniqueID){
 				nebula.user.address[uniqueID].zip.suffix = place.address_components[i].short_name; //4725
 				break;
 			default:
-				//console.log('Address component ' + place.address_components[i].types[0] + ' not used.');
+				//nebula.console.log('Address component ' + place.address_components[i].types[0] + ' not used.');
 		}
 	}
 
@@ -2383,14 +2363,14 @@ function geoSuccessCallback(position){
 			miles: (position.coords.accuracy*0.000621371).toFixed(2),
 		},
 		altitude: { //Above the mean sea level
-			 meters: position.coords.altitude,
-			 miles: (position.coords.altitude*0.000621371).toFixed(2),
-			 accuracy: position.coords.altitudeAccuracy,
+			meters: position.coords.altitude,
+			miles: (position.coords.altitude*0.000621371).toFixed(2),
+			accuracy: position.coords.altitudeAccuracy,
 		},
 		speed: {
-			 mps: position.coords.speed,
-			 kph: (position.coords.speed*3.6).toFixed(2),
-			 mph: (position.coords.speed*2.23694).toFixed(2),
+			mps: position.coords.speed,
+			kph: (position.coords.speed*3.6).toFixed(2),
+			mph: (position.coords.speed*2.23694).toFixed(2),
 		},
 		heading: position.coords.heading, //Degrees clockwise from North
 		address: false
@@ -2398,16 +2378,16 @@ function geoSuccessCallback(position){
 
 	if ( nebula.session.geolocation.accuracy.meters < 50 ){
 		nebula.session.geolocation.accuracy.color = '#00bb00';
-		ga('set', gaCustomDimensions['geoAccuracy'], 'Excellent (<50m)');
+		ga('set', nebula.analytics.dimensions.geoAccuracy, 'Excellent (<50m)');
 	} else if ( nebula.session.geolocation.accuracy.meters > 50 && nebula.session.geolocation.accuracy.meters < 300 ){
 		nebula.session.geolocation.accuracy.color = '#a4ed00';
-		ga('set', gaCustomDimensions['geoAccuracy'], 'Good (50m - 300m)');
+		ga('set', nebula.analytics.dimensions.geoAccuracy, 'Good (50m - 300m)');
 	} else if ( nebula.session.geolocation.accuracy.meters > 300 && nebula.session.geolocation.accuracy.meters < 1500 ){
 		nebula.session.geolocation.accuracy.color = '#ffc600';
-		ga('set', gaCustomDimensions['geoAccuracy'], 'Poor (300m - 1500m)');
+		ga('set', nebula.analytics.dimensions.geoAccuracy, 'Poor (300m - 1500m)');
 	} else {
 		nebula.session.geolocation.accuracy.color = '#ff1900';
-		ga('set', gaCustomDimensions['geoAccuracy'], 'Very Poor (>1500m)');
+		ga('set', nebula.analytics.dimensions.geoAccuracy, 'Very Poor (>1500m)');
 	}
 
 	addressLookup(position.coords.latitude, position.coords.longitude);
@@ -2415,7 +2395,7 @@ function geoSuccessCallback(position){
 	sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
 	nebula.dom.document.trigger('geolocationSuccess');
 	nebula.dom.body.addClass('geo-latlng-' + nebula.session.geolocation.coordinates.latitude.toFixed(4).replace('.', '_') + '_' + nebula.session.geolocation.coordinates.longitude.toFixed(4).replace('.', '_') + ' geo-acc-' + nebula.session.geolocation.accuracy.meters.toFixed(0).replace('.', ''));
-	ga('set', gaCustomDimensions['geolocation'], nebula.session.geolocation.coordinates.latitude.toFixed(4) + ', ' + nebula.session.geolocation.coordinates.longitude.toFixed(4));
+	ga('set', nebula.analytics.dimensions.geolocation, nebula.session.geolocation.coordinates.latitude.toFixed(4) + ', ' + nebula.session.geolocation.coordinates.longitude.toFixed(4));
 	ga('send', 'event', 'Geolocation', nebula.session.geolocation.coordinates.latitude.toFixed(4) + ', ' + nebula.session.geolocation.coordinates.longitude.toFixed(4), 'Accuracy: ' + nebula.session.geolocation.accuracy.meters.toFixed(2) + ' meters');
 	nv('identify', {'geolocation': nebula.session.geolocation.coordinates.latitude.toFixed(4) + ', ' + nebula.session.geolocation.coordinates.longitude.toFixed(4) + ' (Accuracy: ' + nebula.session.geolocation.accuracy.meters.toFixed(2) + ' meters'});
 }
@@ -2442,15 +2422,15 @@ function geoErrorCallback(error){
 	}
 
 	nebula.session.geolocation = {
-		 error: {
-			  code: error.code,
+		error: {
+			code: error.code,
 			description: geolocationErrorMessage
-		 }
+		}
 	}
 
 	nebula.dom.document.trigger('geolocationError');
 	nebula.dom.body.addClass('geo-error');
-	ga('set', gaCustomDimensions['geolocation'], geolocationErrorMessage);
+	ga('set', nebula.analytics.dimensions.geolocation, geolocationErrorMessage);
 	ga('send', 'exception', {'exDescription': '(JS) Geolocation error: ' + geolocationErrorMessage, 'exFatal': false});
 	nv('event', 'Geolocation Error');
 }
@@ -2648,14 +2628,14 @@ function svgImgs(){
 		var oThis = jQuery(this);
 
 		if ( oThis.attr('src').indexOf('.svg') >= 1 ){
-			 jQuery.get(oThis.attr('src'), function(data){
-				 var theSVG = jQuery(data).find('svg'); //Get the SVG tag, ignore the rest
-				 theSVG = theSVG.attr('id', oThis.attr('id')); //Add replaced image's ID to the new SVG
-				 theSVG = theSVG.attr('class', oThis.attr('class') + ' replaced-svg'); //Add replaced image's classes to the new SVG
-				 theSVG = theSVG.attr('data-original-src', oThis.attr('src')); //Add an attribute of the original SVG location
-				 theSVG = theSVG.removeAttr('xmlns:a'); //Remove invalid XML tags
-				 oThis.replaceWith(theSVG); //Replace image with new SVG
-			 }, 'xml');
+			jQuery.get(oThis.attr('src'), function(data){
+				var theSVG = jQuery(data).find('svg'); //Get the SVG tag, ignore the rest
+				theSVG = theSVG.attr('id', oThis.attr('id')); //Add replaced image's ID to the new SVG
+				theSVG = theSVG.attr('class', oThis.attr('class') + ' replaced-svg'); //Add replaced image's classes to the new SVG
+				theSVG = theSVG.attr('data-original-src', oThis.attr('src')); //Add an attribute of the original SVG location
+				theSVG = theSVG.removeAttr('xmlns:a'); //Remove invalid XML tags
+				oThis.replaceWith(theSVG); //Replace image with new SVG
+			}, 'xml');
 		}
 	});
 }
@@ -2753,9 +2733,9 @@ function getQueryStrings(url){
 		for ( var i = 0; i < queryStrings.length; i++ ){
 			hash = queryStrings[i].split('=');
 			if ( hash[1] ){
-				 queries[hash[0]] = hash[1];
+				queries[hash[0]] = hash[1];
 			} else {
-				 queries[hash[0]] = true;
+				queries[hash[0]] = true;
 			}
 		}
 	}
@@ -2935,15 +2915,15 @@ function debounce(callback, wait, uniqueID, immediate){
 	var later = function(){
 		debounceTimers[uniqueID] = null;
 		if ( !immediate ){
-			 callback.apply(context, args);
-		 }
+			callback.apply(context, args);
+		}
 	};
 	var callNow = immediate && !debounceTimers[uniqueID];
 
 	clearTimeout(debounceTimers[uniqueID]);
 	debounceTimers[uniqueID] = setTimeout(later, wait);
 	if ( callNow ){
-		 callback.apply(context, args);
+		callback.apply(context, args);
 	}
 };
 
@@ -2981,14 +2961,14 @@ function eraseCookie(name){
 }
 
 //Time specific events. Unique ID is required. Returns time in milliseconds.
-//Data can be accessed outside of this function via nebulaTimings array.
+//Data can be accessed outside of this function via nebula.timings array.
 function nebulaTimer(uniqueID, action, name){
 	if ( !window.performance ){ //Safari 11+
 		return false;
 	}
 
-	if ( typeof window.nebulaTimings === 'undefined' ){
-		window.nebulaTimings = [];
+	if ( typeof nebula.timings === 'undefined' ){
+		nebula.timings = [];
 	}
 
 	//uniqueID is required
@@ -2997,7 +2977,7 @@ function nebulaTimer(uniqueID, action, name){
 	}
 
 	if ( !action ){
-		if ( typeof nebulaTimings[uniqueID] === 'undefined' ){
+		if ( typeof nebula.timings[uniqueID] === 'undefined' ){
 			action = 'start';
 		} else {
 			action = 'lap';
@@ -3005,25 +2985,25 @@ function nebulaTimer(uniqueID, action, name){
 	}
 
 	//Can not lap or end a timing that has not started.
-	if ( action !== 'start' && typeof nebulaTimings[uniqueID] === 'undefined' ){
+	if ( action !== 'start' && typeof nebula.timings[uniqueID] === 'undefined' ){
 		return false;
 	}
 
 	//Can not modify a timer once it has ended.
-	if ( typeof nebulaTimings[uniqueID] !== 'undefined' && nebulaTimings[uniqueID].total > 0 ){
-		return nebulaTimings[uniqueID].total;
+	if ( typeof nebula.timings[uniqueID] !== 'undefined' && nebula.timings[uniqueID].total > 0 ){
+		return nebula.timings[uniqueID].total;
 	}
 
 	//Update the timing data!
 	currentTime = performance.now();
 
-	if ( action === 'start' && typeof nebulaTimings[uniqueID] === 'undefined' ){
-		nebulaTimings[uniqueID] = {};
-		nebulaTimings[uniqueID].started = currentTime;
-		nebulaTimings[uniqueID].cumulative = 0;
-		nebulaTimings[uniqueID].total = 0;
-		nebulaTimings[uniqueID].lap = [];
-		nebulaTimings[uniqueID].laps = 0;
+	if ( action === 'start' && typeof nebula.timings[uniqueID] === 'undefined' ){
+		nebula.timings[uniqueID] = {};
+		nebula.timings[uniqueID].started = currentTime;
+		nebula.timings[uniqueID].cumulative = 0;
+		nebula.timings[uniqueID].total = 0;
+		nebula.timings[uniqueID].lap = [];
+		nebula.timings[uniqueID].laps = 0;
 
 		thisLap = {
 			name: false,
@@ -3032,10 +3012,10 @@ function nebulaTimer(uniqueID, action, name){
 			duration: 0,
 			progress: 0,
 		};
-		nebulaTimings[uniqueID].lap.push(thisLap);
+		nebula.timings[uniqueID].lap.push(thisLap);
 
 		if ( typeof name !== 'undefined' ){
-			nebulaTimings[uniqueID].lap[0].name = name;
+			nebula.timings[uniqueID].lap[0].name = name;
 		}
 
 		//Add the time to User Timing API (if supported)
@@ -3043,31 +3023,31 @@ function nebulaTimer(uniqueID, action, name){
 			performance.mark(uniqueID + '_start');
 		}
 	} else {
-		lapNumber = nebulaTimings[uniqueID].lap.length;
+		lapNumber = nebula.timings[uniqueID].lap.length;
 
 		//Finalize the times for the previous lap
-		nebulaTimings[uniqueID].lap[lapNumber-1].stopped = currentTime;
-		nebulaTimings[uniqueID].lap[lapNumber-1].duration = currentTime-nebulaTimings[uniqueID].lap[lapNumber-1].started;
-		nebulaTimings[uniqueID].lap[lapNumber-1].progress = currentTime-nebulaTimings[uniqueID].started;
-		nebulaTimings[uniqueID].cumulative = currentTime-nebulaTimings[uniqueID].started;
+		nebula.timings[uniqueID].lap[lapNumber-1].stopped = currentTime;
+		nebula.timings[uniqueID].lap[lapNumber-1].duration = currentTime-nebula.timings[uniqueID].lap[lapNumber-1].started;
+		nebula.timings[uniqueID].lap[lapNumber-1].progress = currentTime-nebula.timings[uniqueID].started;
+		nebula.timings[uniqueID].cumulative = currentTime-nebula.timings[uniqueID].started;
 
 		//An "out" lap means the timing for this lap may not be associated directly with the action (Usually resetting for the next actual timed lap).
 		if ( action === 'start' ){
-			nebulaTimings[uniqueID].lap[lapNumber-1].out = true; //If another 'start' was sent, then the previous lap was an out lap
+			nebula.timings[uniqueID].lap[lapNumber-1].out = true; //If another 'start' was sent, then the previous lap was an out lap
 		} else {
-			nebulaTimings[uniqueID].lap[lapNumber-1].out = false;
+			nebula.timings[uniqueID].lap[lapNumber-1].out = false;
 		}
 
 		//Prepare the current lap
 		if ( action !== 'end' ){
-			nebulaTimings[uniqueID].laps++;
+			nebula.timings[uniqueID].laps++;
 			if ( lapNumber > 0 ){
-				nebulaTimings[uniqueID].lap[lapNumber] = {};
-				nebulaTimings[uniqueID].lap[lapNumber].started = nebulaTimings[uniqueID].lap[lapNumber-1].stopped;
+				nebula.timings[uniqueID].lap[lapNumber] = {};
+				nebula.timings[uniqueID].lap[lapNumber].started = nebula.timings[uniqueID].lap[lapNumber-1].stopped;
 			}
 
 			if ( typeof name !== 'undefined' ){
-				nebulaTimings[uniqueID].lap[lapNumber].name = name;
+				nebula.timings[uniqueID].lap[lapNumber].name = name;
 			}
 
 			//Add the time to User Timing API (if supported)
@@ -3088,13 +3068,13 @@ function nebulaTimer(uniqueID, action, name){
 				}
 			}
 
-			nebulaTimings[uniqueID].stopped = currentTime;
-			nebulaTimings[uniqueID].total = currentTime-nebulaTimings[uniqueID].started;
+			nebula.timings[uniqueID].stopped = currentTime;
+			nebula.timings[uniqueID].total = currentTime-nebula.timings[uniqueID].started;
 			//@todo "Nebula" 0: Add all hot laps together (any non-"out" laps)
-			return nebulaTimings[uniqueID].total;
+			return nebula.timings[uniqueID].total;
 		} else {
-			if ( !nebulaTimings[uniqueID].lap[lapNumber-1].out ){
-				return nebulaTimings[uniqueID].lap[lapNumber-1].duration;
+			if ( !nebula.timings[uniqueID].lap[lapNumber-1].out ){
+				return nebula.timings[uniqueID].lap[lapNumber-1].duration;
 			}
 		}
 	}
@@ -3130,7 +3110,7 @@ function millisecondsToString(ms){
 //For cross-browser support, timestamp must be passed as a string (not a Date object) in the format: Fri Mar 27 21:40:02 +0000 2016
 function timeAgo(timestamp, raw){ //http://af-design.com/blog/2009/02/10/twitter-like-timestamps/
 	if ( typeof timestamp === 'object' ){
-		console.warn('Pass date as string in the format: Fri Mar 27 21:40:02 +0000 2016');
+		nebula.console.warn('Pass date as string in the format: Fri Mar 27 21:40:02 +0000 2016');
 	}
 
 	var postDate = new Date(timestamp);
@@ -3214,40 +3194,40 @@ function nebulaPre(){
 	});
 
 	nebula.dom.document.on('click', '.nebula-selectcopy-code', function(){
-		 oThis = jQuery(this);
+		oThis = jQuery(this);
 
-		 if ( jQuery(this).text() === 'Copy to clipboard' ){
-			  selectText(jQuery(this).closest('.nebula-code-con').find('pre'), 'copy', function(success){
-				   if ( success ){
+		if ( jQuery(this).text() === 'Copy to clipboard' ){
+			 selectText(jQuery(this).closest('.nebula-code-con').find('pre'), 'copy', function(success){
+				  if ( success ){
 					oThis.text('Copied!').removeClass('error').addClass('success');
 					setTimeout(function(){
-						 oThis.text('Copy to clipboard').removeClass('success');
+						oThis.text('Copy to clipboard').removeClass('success');
 					}, 1500);
-				   } else {
+				  } else {
 					jQuery('.nebula-selectcopy-code').each(function(){
-						 jQuery(this).text('Select All');
+						jQuery(this).text('Select All');
 					});
 					oThis.text('Unable to copy.').addClass('error');
 					setTimeout(function(){
-						 oThis.text('Select All').removeClass('error');
+						oThis.text('Select All').removeClass('error');
 					}, 3500);
-				   }
-			  });
-		 } else {
-			  selectText(jQuery(this).closest('.nebula-code-con').find('pre'), function(success){
-				   if ( success ){
+				  }
+			 });
+		} else {
+			 selectText(jQuery(this).closest('.nebula-code-con').find('pre'), function(success){
+				  if ( success ){
 					oThis.text('Selected!').removeClass('error').addClass('success');
 					setTimeout(function(){
-						 oThis.text('Select All').removeClass('success');
+						oThis.text('Select All').removeClass('success');
 					}, 1500);
-				   } else {
+				  } else {
 					jQuery('.nebula-selectcopy-code').each(function(){
-						 jQuery(this).hide();
+						jQuery(this).hide();
 					});
 					oThis.text('Unable to select.').addClass('error');
-				   }
-			  });
-		 }
+				  }
+			 });
+		}
 		return false;
 	});
 }
@@ -3352,8 +3332,8 @@ function dataTablesActions(){
 
 //Initialize Video Functionality and Tracking
 function nebulaVideoTracking(){
-	if ( typeof nebulaVideos === 'undefined' ){
-		nebulaVideos = {}
+	if ( typeof nebula.videos === 'undefined' ){
+		nebula.videos = {}
 	}
 
 	nebulaHTML5VideoTracking();
@@ -3373,28 +3353,28 @@ function nebulaHTML5VideoTracking(){
 				return false;
 			}
 
-			nebulaVideos[id] = {};
-			nebulaVideos[id].platform = 'html5'; //The platform the video is hosted using.
-			nebulaVideos[id].player = id; //The player ID of this video. Can access the API here.
-			nebulaVideos[id].title = videoTitle;
-			nebulaVideos[id].id = id;
-			nebulaVideos[id].element = oThis;
-			nebulaVideos[id].autoplay = ( oThis.attr('autoplay') )? true : false;
-			nebulaVideos[id].percent = 0; //The decimal percent of the current position. Multiply by 100 for actual percent.
-			nebulaVideos[id].seeker = false; //Whether the viewer has seeked through the video at least once.
-			nebulaVideos[id].seen = []; //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
-			nebulaVideos[id].watched = 0; //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
-			nebulaVideos[id].watchedPercent = 0; //The decimal percent of the video watched. Multiply by 100 for actual percent.
-			nebulaVideos[id].pausedYet = false; //If this video has been paused yet by the user.
-			nebulaVideos[id].current = 0; //The current position of the video. Units: Seconds
+			nebula.videos[id] = {};
+			nebula.videos[id].platform = 'html5'; //The platform the video is hosted using.
+			nebula.videos[id].player = id; //The player ID of this video. Can access the API here.
+			nebula.videos[id].title = videoTitle;
+			nebula.videos[id].id = id;
+			nebula.videos[id].element = oThis;
+			nebula.videos[id].autoplay = ( oThis.attr('autoplay') )? true : false;
+			nebula.videos[id].percent = 0; //The decimal percent of the current position. Multiply by 100 for actual percent.
+			nebula.videos[id].seeker = false; //Whether the viewer has seeked through the video at least once.
+			nebula.videos[id].seen = []; //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
+			nebula.videos[id].watched = 0; //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
+			nebula.videos[id].watchedPercent = 0; //The decimal percent of the video watched. Multiply by 100 for actual percent.
+			nebula.videos[id].pausedYet = false; //If this video has been paused yet by the user.
+			nebula.videos[id].current = 0; //The current position of the video. Units: Seconds
 
 			oThis.on('loadedmetadata', function(){
-				nebulaVideos[id].current = this.currentTime;
-				nebulaVideos[id].duration = this.duration; //The total duration of the video. Units: Seconds
+				nebula.videos[id].current = this.currentTime;
+				nebula.videos[id].duration = this.duration; //The total duration of the video. Units: Seconds
 			});
 
 			oThis.on('play', function(){
-				var thisVideo = nebulaVideos[id];
+				var thisVideo = nebula.videos[id];
 
 				if ( 'mediaSession' in navigator && oThis.attr('title') ){ //Android Chrome 55+ only
 					navigator.mediaSession.metadata = new MediaMetadata({
@@ -3420,8 +3400,8 @@ function nebulaHTML5VideoTracking(){
 						playAction += ' (Not In View)';
 					}
 
-					ga('set', gaCustomMetrics['videoStarts'], 1);
-					ga('set', gaCustomDimensions['videoWatcher'], 'Started');
+					ga('set', nebula.analytics.metrics.videoStarts, 1);
+					ga('set', nebula.analytics.dimensions.videoWatcher, 'Started');
 					ga('send', 'event', 'Videos', playAction, videoTitle, Math.round(thisVideo.current), {'nonInteraction': thisVideo.autoplay});
 					if ( !thisVideo.autoplay ){
 						nv('event', 'Video Play Began: ' + thisVideo.title);
@@ -3432,7 +3412,7 @@ function nebulaHTML5VideoTracking(){
 			});
 
 			oThis.on('timeupdate', function(){
-				var thisVideo = nebulaVideos[id];
+				var thisVideo = nebula.videos[id];
 
 				thisVideo.current = this.currentTime; //@todo "Nebula" 0: Still getting NaN on HTML5 autoplay videos sometimes. I think the video begins playing before the metadata is ready...
 				thisVideo.percent = thisVideo.current*100/thisVideo.duration; //Determine watched percent by adding current percents to an array, then count the array!
@@ -3446,7 +3426,7 @@ function nebulaHTML5VideoTracking(){
 
 				if ( thisVideo.watchedPercent > 25 && !thisVideo.engaged ){
 					if ( isInView(oThis) ){
-						ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
+						ga('set', nebula.analytics.dimensions.videoWatcher, 'Engaged');
 
 						engagedAction = 'Engaged';
 						if ( thisVideo.autoplay ){
@@ -3462,12 +3442,12 @@ function nebulaHTML5VideoTracking(){
 			});
 
 			oThis.on('pause', function(){
-				var thisVideo = nebulaVideos[id];
+				var thisVideo = nebula.videos[id];
 				oThis.removeClass('playing');
 
-				ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
-				ga('set', gaCustomMetrics['videoPlaytime'], Math.round(thisVideo.watched));
-				ga('set', gaCustomDimensions['videoPercentage'], Math.round(thisVideo.percent*100));
+				ga('set', nebula.analytics.dimensions.videoWatcher, 'Paused');
+				ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
+				ga('set', nebula.analytics.dimensions.videoPercentage, Math.round(thisVideo.percent*100));
 
 				if ( !thisVideo.pausedYet ){
 					ga('send', 'event', 'Videos', 'First Pause', thisVideo.title, Math.round(thisVideo.current));
@@ -3481,7 +3461,7 @@ function nebulaHTML5VideoTracking(){
 			});
 
 			oThis.on('seeked', function(){
-				var thisVideo = nebulaVideos[id];
+				var thisVideo = nebula.videos[id];
 
 				if ( thisVideo.current == 0 && oThis.is('[loop]') ){ //If the video is set to loop and is starting again
 					//If it is an autoplay video without controls, don't log loops
@@ -3501,7 +3481,7 @@ function nebulaHTML5VideoTracking(){
 					ga('send', 'event', 'Videos', endedAction, thisVideo.title, {'nonInteraction': true});
 				} else { //Otherwise, the user seeked
 					debounce(function(){
-						ga('set', gaCustomDimensions['videoWatcher'], 'Seeker');
+						ga('set', nebula.analytics.dimensions.videoWatcher, 'Seeker');
 						ga('send', 'event', 'Videos', 'Seek', thisVideo.title + ' [to: ' + thisVideo.current.toFixed(0) + ']');
 						nv('event', 'Video Seek: ' + thisVideo.title);
 						thisVideo.seeker = true;
@@ -3511,17 +3491,17 @@ function nebulaHTML5VideoTracking(){
 			});
 
 			oThis.on('volumechange', function(){
-				var thisVideo = nebulaVideos[id];
-				//console.debug(this);
+				var thisVideo = nebula.videos[id];
+				//nebula.console.debug(this);
 			});
 
 			oThis.on('ended', function(){
-				var thisVideo = nebulaVideos[id];
+				var thisVideo = nebula.videos[id];
 				oThis.removeClass('playing');
 
-				ga('set', gaCustomMetrics['videoCompletions'], 1);
-				ga('set', gaCustomMetrics['videoPlaytime'], Math.round(thisVideo.watched));
-				ga('set', gaCustomDimensions['videoWatcher'], 'Ended');
+				ga('set', nebula.analytics.metrics.videoCompletions, 1);
+				ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
+				ga('set', nebula.analytics.dimensions.videoWatcher, 'Ended');
 
 				endedAction = 'Ended';
 				if ( !isInView(oThis) ){
@@ -3562,7 +3542,7 @@ function onYouTubeIframeAPIReady(e){
 		}
 
 		if ( jQuery(this).attr('src').indexOf('enablejsapi=1') > 0 ){
-			nebulaVideos[id] = {
+			nebula.videos[id] = {
 				'player': new YT.Player(id, { //YT.Player parameter must match the iframe ID!
 					events: { //If these events are only showing up as "true", try removing the &origin= parameter from the Youtube iframe src.
 						'onReady': nebulaYoutubeReady,
@@ -3572,14 +3552,14 @@ function onYouTubeIframeAPIReady(e){
 				})
 			}
 
-			nebula.dom.document.trigger('nebula_youtube_players_created', nebulaVideos[id]);
+			nebula.dom.document.trigger('nebula_youtube_players_created', nebula.videos[id]);
 		} else {
-			console.warn('The enablejsapi parameter was not found for this Youtube iframe. It has been reloaded to enable it. For better optimization, and more accurate analytics, add it to the iframe.');
+			nebula.console.warn('The enablejsapi parameter was not found for this Youtube iframe. It has been reloaded to enable it. For better optimization, and more accurate analytics, add it to the iframe.');
 
 			//JS API not enabled for this video. Reload the iframe with the correct parameter.
 			var delimiter = ( jQuery(this).attr('src').indexOf('?') > 0 )? '&' : '?';
 			jQuery(this).attr('src', jQuery(this).attr('src') + delimiter + 'enablejsapi=1').on('load', function(){
-				nebulaVideos[id] = {
+				nebula.videos[id] = {
 					'player': new YT.Player(id, { //YT.Player parameter must match the iframe ID!
 						events: { //If these events are only showing up as "true", try removing the &origin= parameter from the Youtube iframe src.
 							'onReady': nebulaYoutubeReady,
@@ -3590,7 +3570,7 @@ function onYouTubeIframeAPIReady(e){
 					'element': jQuery(this)
 				}
 
-				nebula.dom.document.trigger('nebula_youtube_players_created', nebulaVideos[id]);
+				nebula.dom.document.trigger('nebula_youtube_players_created', nebula.videos[id]);
 			});
 		}
 	});
@@ -3605,29 +3585,29 @@ function nebulaYoutubeReady(e){
 
 	var id = nebulaGetYoutubeID(e.target);
 
-	nebulaVideos[id].platform = 'youtube'; //The platform the video is hosted using.
-	nebulaVideos[id].element = e.target.getIframe(); //The player iframe. Selectable with jQuery(thisVideo.element)...
-	nebulaVideos[id].autoplay = jQuery(e.target.getIframe()).attr('src').indexOf('autoplay=1') > 0; //Look for the autoplay parameter in the ifrom src.
-	nebulaVideos[id].title = nebulaGetYoutubeTitle(e.target);
-	nebulaVideos[id].id = id;
-	nebulaVideos[id].duration = e.target.getDuration(); //The total duration of the video. Unit: Seconds
-	nebulaVideos[id].current = e.target.getCurrentTime(); //The current position of the video. Units: Seconds
-	nebulaVideos[id].percent = e.target.getCurrentTime()/e.target.getDuration(); //The percent of the current position. Multiply by 100 for actual percent.
-	nebulaVideos[id].engaged = false; //Whether the viewer has watched enough of the video to be considered engaged.
-	nebulaVideos[id].watched = 0; //Amount of time watching the video (regardless of seeking). Accurate to half a second. Units: Seconds
-	nebulaVideos[id].watchedPercent = 0; //The decimal percentage of the video watched. Multiply by 100 for actual percent.
-	nebulaVideos[id].pausedYet = false; //If this video has been paused yet by the user.
+	nebula.videos[id].platform = 'youtube'; //The platform the video is hosted using.
+	nebula.videos[id].element = e.target.getIframe(); //The player iframe. Selectable with jQuery(thisVideo.element)...
+	nebula.videos[id].autoplay = jQuery(e.target.getIframe()).attr('src').indexOf('autoplay=1') > 0; //Look for the autoplay parameter in the ifrom src.
+	nebula.videos[id].title = nebulaGetYoutubeTitle(e.target);
+	nebula.videos[id].id = id;
+	nebula.videos[id].duration = e.target.getDuration(); //The total duration of the video. Unit: Seconds
+	nebula.videos[id].current = e.target.getCurrentTime(); //The current position of the video. Units: Seconds
+	nebula.videos[id].percent = e.target.getCurrentTime()/e.target.getDuration(); //The percent of the current position. Multiply by 100 for actual percent.
+	nebula.videos[id].engaged = false; //Whether the viewer has watched enough of the video to be considered engaged.
+	nebula.videos[id].watched = 0; //Amount of time watching the video (regardless of seeking). Accurate to half a second. Units: Seconds
+	nebula.videos[id].watchedPercent = 0; //The decimal percentage of the video watched. Multiply by 100 for actual percent.
+	nebula.videos[id].pausedYet = false; //If this video has been paused yet by the user.
 }
 
 function nebulaYoutubeStateChange(e){
-	var thisVideo = nebulaVideos[nebulaGetYoutubeID(e.target)];
+	var thisVideo = nebula.videos[nebulaGetYoutubeID(e.target)];
 	thisVideo.title = nebulaGetYoutubeTitle(e.target);
 	thisVideo.current = e.target.getCurrentTime();
 	thisVideo.percent = thisVideo.current/thisVideo.duration;
 
 	if ( e.data === YT.PlayerState.PLAYING ){
-		ga('set', gaCustomMetrics['videoStarts'], 1);
-		ga('set', gaCustomDimensions['videoWatcher'], 'Started');
+		ga('set', nebula.analytics.metrics.videoStarts, 1);
+		ga('set', nebula.analytics.dimensions.videoWatcher, 'Started');
 
 		playAction = 'Play';
 		if ( !isInView(jQuery(thisVideo.element)) ){
@@ -3654,7 +3634,7 @@ function nebulaYoutubeStateChange(e){
 
 			if ( thisVideo.watchedPercent > 0.25 && !thisVideo.engaged ){
 				if ( isInView(jQuery(thisVideo.element)) ){
-					ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
+					ga('set', nebula.analytics.dimensions.videoWatcher, 'Engaged');
 
 					engagedAction = 'Engaged';
 					if ( thisVideo.autoplay ){
@@ -3674,9 +3654,9 @@ function nebulaYoutubeStateChange(e){
 		jQuery(thisVideo.element).removeClass('playing');
 
 		clearInterval(youtubePlayProgress);
-		ga('set', gaCustomMetrics['videoCompletions'], 1);
-		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(thisVideo.watched/1000));
-		ga('set', gaCustomDimensions['videoWatcher'], 'Ended');
+		ga('set', nebula.analytics.metrics.videoCompletions, 1);
+		ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched/1000));
+		ga('set', nebula.analytics.dimensions.videoWatcher, 'Ended');
 
 		endedAction = 'Ended';
 		if ( !isInView(jQuery(thisVideo.element)) ){
@@ -3695,9 +3675,9 @@ function nebulaYoutubeStateChange(e){
 		jQuery(thisVideo.element).removeClass('playing');
 
 		clearInterval(youtubePlayProgress);
-		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(thisVideo.watched));
-		ga('set', gaCustomDimensions['videoPercentage'], Math.round(thisVideo.percent*100));
-		ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
+		ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
+		ga('set', nebula.analytics.dimensions.videoPercentage, Math.round(thisVideo.percent*100));
+		ga('set', nebula.analytics.dimensions.videoWatcher, 'Paused');
 
 		if ( !thisVideo.pausedYet ){
 			ga('send', 'event', 'Videos', 'First Pause', thisVideo.title, Math.round(thisVideo.current));
@@ -3713,7 +3693,7 @@ function nebulaYoutubeStateChange(e){
 }
 
 function nebulaYoutubeError(e){
-	var thisVideo = nebulaVideos[nebulaGetYoutubeID(e.target)];
+	var thisVideo = nebula.videos[nebulaGetYoutubeID(e.target)];
 	thisVideo.title = nebulaGetYoutubeTitle(e.target);
 
 	ga('send', 'exception', {'exDescription': '(JS) Youtube API error for ' + thisVideo.title + ': ' + e.data, 'exFatal': false});
@@ -3758,11 +3738,11 @@ function nebulaVimeoTracking(){
 	//Load the Vimeo API script (player.js) remotely (with local backup)
 	if ( jQuery('iframe[src*="vimeo"]').length ){
 		nebulaLoadJS(nebula.site.resources.js.vimeo, function(){
-			 createVimeoPlayers();
+			createVimeoPlayers();
 		});
 	}
 
-	//To trigger events on these videos, use the syntax: nebulaVideos['PHG-Overview-Video'].play();
+	//To trigger events on these videos, use the syntax: nebula.videos['PHG-Overview-Video'].play();
 	function createVimeoPlayers(){
 		jQuery('iframe[src*="vimeo"]').each(function(i){
 			var id = jQuery(this).attr('id');
@@ -3771,19 +3751,19 @@ function nebulaVimeoTracking(){
 				jQuery(this).attr('id', id);
 			}
 
-			nebulaVideos[id] = {
+			nebula.videos[id] = {
 				'player': new Vimeo.Player(jQuery(this)),
 				'element': jQuery(this)
 			};
 
-			nebulaVideos[id].player.on('loaded', vimeoReady);
-			nebulaVideos[id].player.on('play', vimeoPlay);
-			nebulaVideos[id].player.on('timeupdate', vimeoTimeUpdate);
-			nebulaVideos[id].player.on('pause', vimeoPause);
-			nebulaVideos[id].player.on('seeked', vimeoSeeked);
-			nebulaVideos[id].player.on('ended', vimeoEnded);
+			nebula.videos[id].player.on('loaded', vimeoReady);
+			nebula.videos[id].player.on('play', vimeoPlay);
+			nebula.videos[id].player.on('timeupdate', vimeoTimeUpdate);
+			nebula.videos[id].player.on('pause', vimeoPause);
+			nebula.videos[id].player.on('seeked', vimeoSeeked);
+			nebula.videos[id].player.on('ended', vimeoEnded);
 
-			nebula.dom.document.trigger('nebula_vimeo_players_created', nebulaVideos[id]);
+			nebula.dom.document.trigger('nebula_vimeo_players_created', nebula.videos[id]);
 		});
 
 		if ( typeof videoProgress === 'undefined' ){
@@ -3792,35 +3772,35 @@ function nebulaVimeoTracking(){
 	}
 
 	function vimeoReady(data){
-		nebulaVideos[data.id].platform = 'vimeo'; //The platform the video is hosted using.
-		nebulaVideos[data.id].autoplay = jQuery(nebulaVideos[data.id].element).attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the iframe src.
-		nebulaVideos[data.id].id = data.id;
-		nebulaVideos[data.id].current = 0; //The current position of the video. Units: Seconds
-		nebulaVideos[data.id].percent = 0; //The percent of the current position. Multiply by 100 for actual percent.
-		nebulaVideos[data.id].engaged = false; //Whether the viewer has watched enough of the video to be considered engaged.
-		nebulaVideos[data.id].seeker = false; //Whether the viewer has seeked through the video at least once.
-		nebulaVideos[data.id].seen = []; //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
-		nebulaVideos[data.id].watched = 0; //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
-		nebulaVideos[data.id].watchedPercent = 0; //The decimal percentage of the video watched. Multiply by 100 for actual percent.
-		nebulaVideos[data.id].pausedYet = false; //If this video has been paused yet by the user.
+		nebula.videos[data.id].platform = 'vimeo'; //The platform the video is hosted using.
+		nebula.videos[data.id].autoplay = jQuery(nebula.videos[data.id].element).attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the iframe src.
+		nebula.videos[data.id].id = data.id;
+		nebula.videos[data.id].current = 0; //The current position of the video. Units: Seconds
+		nebula.videos[data.id].percent = 0; //The percent of the current position. Multiply by 100 for actual percent.
+		nebula.videos[data.id].engaged = false; //Whether the viewer has watched enough of the video to be considered engaged.
+		nebula.videos[data.id].seeker = false; //Whether the viewer has seeked through the video at least once.
+		nebula.videos[data.id].seen = []; //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
+		nebula.videos[data.id].watched = 0; //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
+		nebula.videos[data.id].watchedPercent = 0; //The decimal percentage of the video watched. Multiply by 100 for actual percent.
+		nebula.videos[data.id].pausedYet = false; //If this video has been paused yet by the user.
 
 		//Duration
-		nebulaVideos[data.id].getDuration().then(function(duration){
-			nebulaVideos[data.id].duration = duration; //The total duration of the video. Units: Seconds
+		nebula.videos[data.id].getDuration().then(function(duration){
+			nebula.videos[data.id].duration = duration; //The total duration of the video. Units: Seconds
 		});
 
 		//Title
-		nebulaVideos[data.id].getVideoTitle().then(function(title){
-			nebulaVideos[data.id].title = title; //The title of the video
+		nebula.videos[data.id].getVideoTitle().then(function(title){
+			nebula.videos[data.id].title = title; //The title of the video
 		});
 	}
 
 	function vimeoPlay(data){
 		var id = data.id || jQuery(this.element).attr('id');
-		var thisVideo = nebulaVideos[id];
+		var thisVideo = nebula.videos[id];
 
-		ga('set', gaCustomMetrics['videoStarts'], 1);
-		ga('set', gaCustomDimensions['videoWatcher'], 'Started');
+		ga('set', nebula.analytics.metrics.videoStarts, 1);
+		ga('set', nebula.analytics.dimensions.videoWatcher, 'Started');
 
 		playAction = 'Play';
 		if ( !isInView(jQuery(this.element)) ){
@@ -3840,7 +3820,7 @@ function nebulaVimeoTracking(){
 
 	function vimeoTimeUpdate(data){
 		var id = data.id || jQuery(this.element).attr('id');
-		var thisVideo = nebulaVideos[id];
+		var thisVideo = nebula.videos[id];
 
 		thisVideo.duration = data.duration;
 		thisVideo.current = data.seconds;
@@ -3856,7 +3836,7 @@ function nebulaVimeoTracking(){
 
 		if ( thisVideo.watchedPercent > 25 && !thisVideo.engaged ){
 			if ( isInView(jQuery(this.element)) ){
-				ga('set', gaCustomDimensions['videoWatcher'], 'Engaged');
+				ga('set', nebula.analytics.dimensions.videoWatcher, 'Engaged');
 
 				engagedAction = 'Engaged';
 				if ( thisVideo.autoplay ){
@@ -3875,10 +3855,10 @@ function nebulaVimeoTracking(){
 		jQuery(this).removeClass('playing');
 
 		var id = data.id || jQuery(this.element).attr('id');
-		var thisVideo = nebulaVideos[id];
-		ga('set', gaCustomDimensions['videoWatcher'], 'Paused');
-		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(thisVideo.watched));
-		ga('set', gaCustomDimensions['videoPercentage'], Math.round(data.percent*100));
+		var thisVideo = nebula.videos[id];
+		ga('set', nebula.analytics.dimensions.videoWatcher, 'Paused');
+		ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
+		ga('set', nebula.analytics.dimensions.videoPercentage, Math.round(data.percent*100));
 
 		if ( !thisVideo.pausedYet && !thisVideo.seeker ){ //Only capture first pause if they didn't seek
 			ga('send', 'event', 'Videos', 'First Pause', thisVideo.title, Math.round(data.seconds));
@@ -3893,9 +3873,9 @@ function nebulaVimeoTracking(){
 
 	function vimeoSeeked(data){
 		var id = data.id || jQuery(this.element).attr('id');
-		var thisVideo = nebulaVideos[id];
+		var thisVideo = nebula.videos[id];
 
-		ga('set', gaCustomDimensions['videoWatcher'], 'Seeker');
+		ga('set', nebula.analytics.dimensions.videoWatcher, 'Seeker');
 		ga('send', 'event', 'Videos', 'Seek', thisVideo.title + ' [to: ' + data.seconds + ']');
 		nv('event', 'Video Seeked: ' + thisVideo.title);
 		thisVideo.seeker = true;
@@ -3906,10 +3886,10 @@ function nebulaVimeoTracking(){
 		jQuery(this).removeClass('playing');
 
 		var id = jQuery(this.element).attr('id');
-		var thisVideo = nebulaVideos[id];
-		ga('set', gaCustomMetrics['videoCompletions'], 1);
-		ga('set', gaCustomMetrics['videoPlaytime'], Math.round(thisVideo.watched));
-		ga('set', gaCustomDimensions['videoWatcher'], 'Ended');
+		var thisVideo = nebula.videos[id];
+		ga('set', nebula.analytics.metrics.videoCompletions, 1);
+		ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
+		ga('set', nebula.analytics.dimensions.videoWatcher, 'Ended');
 
 		endedAction = 'Ended';
 		if ( !isInView(jQuery(this.element)) ){
@@ -3931,7 +3911,7 @@ function nebulaVimeoTracking(){
 //Use class "ignore-visibility" on iframes to allow specific videos to continue playing regardless of page visibility
 //Pass force as true to pause no matter what.
 function pauseAllVideos(force){
-	if ( typeof nebulaVideos === 'undefined' ){
+	if ( typeof nebula.videos === 'undefined' ){
 		return false; //If videos don't exist, then no need to pause
 	}
 
@@ -3939,7 +3919,7 @@ function pauseAllVideos(force){
 		force = false;
 	}
 
-	jQuery.each(nebulaVideos, function(){
+	jQuery.each(nebula.videos, function(){
 		if ( this.platform === 'html5' ){
 			if ( (force || !jQuery(this.element).hasClass('ignore-visibility')) ){
 				jQuery(this.element)[0].pause(); //Pause HTML5 Videos

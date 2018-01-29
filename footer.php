@@ -17,7 +17,7 @@
 				</div>
 			<?php endif; ?>
 
-			<div id="footer-section" role="contentinfo">
+			<div id="footer-section" class="lazy-load" role="contentinfo">
 				<?php if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ): ?>
 					<div class="custom-color-overlay"></div>
 				<?php else: ?>

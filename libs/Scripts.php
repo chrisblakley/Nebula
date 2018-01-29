@@ -25,7 +25,7 @@ if ( !trait_exists('Scripts') ){
 		public function register_scripts(){
 			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
-			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/6.1.8/jquery.mmenu.all.css', null, '6.1.8', 'all');
+			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.0.0/jquery.mmenu.all.css', null, '7.0.0', 'all');
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap', 'nebula-mmenu'), null, 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, null);
 			wp_register_style('nebula-admin', get_template_directory_uri() . '/assets/css/admin.css', null, null);
@@ -33,7 +33,6 @@ if ( !trait_exists('Scripts') ){
 				wp_register_style('nebula-google_font', $this->get_option('google_font_url'), array(), null, 'all');
 			}
 			$this->bootstrap('css');
-			//wp_register_style('nebula-font_awesome', 'https://use.fontawesome.com/releases/v5.0.1/css/all.css', null, '5.0.1', 'all'); //Font Awesome 5 CSS method (Note: Pseudo font-family names would need to change to "Font Awesome 5 Free" in order to work with this method)
 			wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.16/css/jquery.dataTables.min.css', null, '1.10.16', 'all'); //Datatables is called via main.js only as needed.
 			wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.min.css', null, '1.8.2', 'all');
 			wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.structure.min.css', null, '1.12.1', 'all');
@@ -45,18 +44,17 @@ if ( !trait_exists('Scripts') ){
 			//nebula_register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
 			$this->jquery();
 			$this->bootstrap('js');
-			$this->register_script('nebula-popper', 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js', 'defer', null, '1.12.6', true); //This is not enqueued or dependent because it is called via main.js only as needed. Remove this after Bootstrap Beta 3
 			$this->register_script('nebula-font_awesome', 'https://use.fontawesome.com/releases/v5.0.4/js/all.js', 'defer', null, '5.0.4', true); //Font Awesome 5 JS SVG method
 			$this->register_script('nebula-modernizr_dev', get_template_directory_uri() . '/assets/js/vendor/modernizr.dev.js', 'defer', null, '3.3.1', false);
 			$this->register_script('nebula-modernizr_local', get_template_directory_uri() . '/assets/js/vendor/modernizr.min.js', 'defer', null, '3.3.1', false);
 			$this->register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', 'defer', null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
 			$this->register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', 'defer', null, '1.12.1', true);
-			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/6.1.8/jquery.mmenu.all.js', 'defer', null, '6.1.8', true);
+			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.0.0/jquery.mmenu.all.js', 'defer', null, '7.0.0', true);
 			$this->register_script('nebula-vimeo', 'https://player.vimeo.com/api/player.js', null, null, null, true);
 			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.16/js/jquery.dataTables.min.js', 'defer', null, '1.10.16', true); //Datatables is called via main.js only as needed.
 			$this->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.2/chosen.jquery.min.js', 'defer', null, '1.8.2', true);
 			$this->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js', 'async', null, '2.4.1', true);
-			$this->register_script('nebula-main', get_template_directory_uri() . '/assets/js/main.js', 'defer', array('nebula-bootstrap', 'jquery-core', 'nebula-jquery_ui', 'nebula-mmenu'), null, true);
+			$this->register_script('nebula-nebula', get_template_directory_uri() . '/assets/js/nebula.js', 'defer', array('nebula-bootstrap', 'jquery-core', 'nebula-jquery_ui', 'nebula-mmenu'), null, true);
 			$this->register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', null, array('jquery-core'), null, true);
 			$this->register_script('nebula-admin', get_template_directory_uri() . '/assets/js/admin.js', 'defer', array('jquery-core'), null, true);
 
@@ -81,6 +79,10 @@ if ( !trait_exists('Scripts') ){
 
 			//Be careful changing the following array as many JS functions use this data!
 			$this->brain = array(
+				'version' => array(
+					'number' => $this->version('full'),
+					'date' => $this->version('date')
+				),
 				'site' => array(
 					'name' => get_bloginfo('name'),
 					'directory' => array(
@@ -126,6 +128,7 @@ if ( !trait_exists('Scripts') ){
 						'css' => $nebula_styles,
 						'js' => $nebula_scripts,
 					),
+					'ecommerce' => false,
 				),
 				'post' => ( is_search() )? null : array( //Conditional prevents wrong ID being used on search results
 					'id' => get_the_id(),
@@ -134,8 +137,8 @@ if ( !trait_exists('Scripts') ){
 					'excerpt' => $this->excerpt(array('words' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)),
 					'author' => urlencode(get_the_author()),
 					'year' => get_the_date('Y'),
-					'categories' => nebula()->post_categories(array('string' => true)),
-					'tags' => nebula()->post_tags(array('string' => true)),
+					'categories' => $this->post_categories(array('string' => true)),
+					'tags' => $this->post_tags(array('string' => true)),
 				),
 				'dom' => null,
 			);
@@ -151,6 +154,7 @@ if ( !trait_exists('Scripts') ){
 						'adblock' => false,
 						'gablock' => false,
 					),
+					'geolocation' => false
 				);
 			}
 
@@ -188,7 +192,10 @@ if ( !trait_exists('Scripts') ){
 						'type' => $this->get_browser('type'),
 					),
 				),
+				'address' => false
 			);
+
+			$this->brain = apply_filters('nebula_brain', $this->brain); //Allow other functions to hook in to add/modify data
 		}
 
 		//Enqueue frontend scripts
@@ -198,7 +205,6 @@ if ( !trait_exists('Scripts') ){
 			wp_enqueue_style('nebula-mmenu');
 			wp_enqueue_style('nebula-main');
 
-			//wp_enqueue_style('nebula-font_awesome'); //Font Awesome 5 CSS method
 			wp_enqueue_script('nebula-font_awesome'); //Font Awesome 5 JS SVG method
 
 			if ( $this->get_option('google_font_url') ){
@@ -218,10 +224,10 @@ if ( !trait_exists('Scripts') ){
 			wp_enqueue_script('nebula-mmenu');
 			wp_enqueue_script('nebula-bootstrap');
 			wp_enqueue_script('nebula-autotrack');
-			wp_enqueue_script('nebula-main');
+			wp_enqueue_script('nebula-nebula');
 
 			//Localized objects (localized to jquery to appear in <head>)
-			wp_localize_script('jquery-core', 'nebula', $this->brain);
+			wp_localize_script('jquery-core', 'nebula', $this->brain); //rename to nebulaData or something?
 
 			//Conditionals
 			if ( $this->is_debug() ){ //When ?debug query string is used
@@ -240,9 +246,9 @@ if ( !trait_exists('Scripts') ){
 			//Stylesheets
 			wp_enqueue_style('nebula-login');
 			echo '<style>
-	div#login h1 a {background: url(' . get_theme_file_uri('/assets/img/logo.png') . ') center center no-repeat; width: auto; background-size: contain;}
-		.svg div#login h1 a {background: url(' . get_theme_file_uri('/assets/img/logo.svg') . ') center center no-repeat; background-size: contain;}
-</style>';
+				div#login h1 a {background: url(' . get_theme_file_uri('/assets/img/logo.png') . ') center center no-repeat; width: auto; background-size: contain;}
+					.svg div#login h1 a {background: url(' . get_theme_file_uri('/assets/img/logo.svg') . ') center center no-repeat; background-size: contain;}
+			</style>';
 
 			//Scripts
 			wp_enqueue_script('jquery-core');
@@ -255,8 +261,6 @@ if ( !trait_exists('Scripts') ){
 
 			//Stylesheets
 			wp_enqueue_style('nebula-admin');
-
-			//wp_enqueue_style('nebula-font_awesome'); //Font Awesome 5 CSS method
 			wp_enqueue_script('nebula-font_awesome'); //Font Awesome 5 JS SVG method
 
 			if ( $this->ip_location() ){
@@ -293,7 +297,7 @@ if ( !trait_exists('Scripts') ){
 			}
 
 			//Localized objects (localized to jquery to appear in <head>)
-			wp_localize_script('jquery-core', 'nebula', $this->brain);
+			wp_localize_script('jquery-core', 'nebula', $this->brain); //rename to nebulaData or something?
 		}
 
 		//Add $dep (script handle) to the array of dependencies for $handle
@@ -317,8 +321,7 @@ if ( !trait_exists('Scripts') ){
 			return add_query_arg('debug', str_replace('.', '', $this->version('raw')) . '-' . rand(1000, 9999), $src);
 		}
 
-		//Prep Font Awesome JavaScript implementation configuration before calling the script itself
-		//https://fontawesome.com/how-to-use/font-awesome-api#configuration
+		//Prep Font Awesome JavaScript implementation configuration before calling the script itself: https://fontawesome.com/how-to-use/font-awesome-api#configuration
 		public function font_awesome_config(){
 		    echo '<script>
 				window.FontAwesomeConfig = {

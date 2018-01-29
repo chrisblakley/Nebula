@@ -13,6 +13,7 @@ if ( !trait_exists('Analytics') ){
 			add_action('wp_footer', array($this, 'visualize_scroll_percent'));
 			add_action('wp_ajax_nebula_ga_ajax', array($this, 'ga_ajax'));
 			add_action('wp_ajax_nopriv_nebula_ga_ajax', array($this, 'ga_ajax'));
+			add_filter('nebula_brain', array($this, 'ga_definitions'));
 		}
 
 		//Handle the parsing of the _ga cookie or setting it to a unique identifier
@@ -71,6 +72,81 @@ if ( !trait_exists('Analytics') ){
 		//Return the index of the custom dimension or metric
 		public function ga_definition_index($definition){
 			return str_replace(array('dimension', 'metric'), '', $definition);
+		}
+
+		//Store analytics and custom dimensions/metrics into the Nebula data object
+		public function ga_definitions($brain){
+			if ( $this->get_option('ga_tracking_id') || $this->get_option('gtm_id') ){
+				$brain['analytics'] = array(
+					'isReady' => false,
+					'trackingID' => $this->get_option('ga_tracking_id'),
+					'dimensions' => array(
+						'gaCID' => $this->get_option('cd_gacid'),
+						'hitID' => $this->get_option('cd_hitid'),
+						'hitTime' => $this->get_option('cd_hittime'),
+						'hitType' => $this->get_option('cd_hittype'),
+						'hitInteractivity' => $this->get_option('cd_hitinteractivity'),
+						'hitMethod' => $this->get_option('cd_hitmethod'),
+						'deviceMemory' => $this->get_option('cd_devicememory'),
+						'batteryMode' => $this->get_option('cd_batterymode'),
+						'batteryPercent' => $this->get_option('cd_batterypercent'),
+						'network' => $this->get_option('cd_network'),
+						'referrer' => $this->get_option('cd_referrer'),
+						'author' => $this->get_option('cd_author'),
+						'businessHours' => $this->get_option('cd_businesshours'),
+						'categories' => $this->get_option('cd_categories'),
+						'tags' => $this->get_option('cd_tags'),
+						'contactMethod' => $this->get_option('cd_contactmethod'),
+						'formTiming' => $this->get_option('cd_formtiming'),
+						'formFlow' => $this->get_option('cd_formflow'),
+						'windowType' => $this->get_option('cd_windowtype'),
+						'geolocation' => $this->get_option('cd_geolocation'),
+						'geoAccuracy' => $this->get_option('cd_geoaccuracy'),
+						'geoName' => $this->get_option('cd_geoname'),
+						'relativeTime' => $this->get_option('cd_relativetime'),
+						'sessionID' => $this->get_option('cd_sessionid'),
+						'poi' => $this->get_option('cd_notablepoi'),
+						'role' => $this->get_option('cd_role'),
+						'timestamp' => $this->get_option('cd_timestamp'),
+						'userID' => $this->get_option('cd_userid'),
+						'fbID' => $this->get_option('cd_fbid'),
+						'videoWatcher' => $this->get_option('cd_videowatcher'),
+						'eventIntent' => $this->get_option('cd_eventintent'),
+						'wordCount' => $this->get_option('cd_wordcount'),
+						'weather' => $this->get_option('cd_weather'),
+						'temperature' => $this->get_option('cd_temperature'),
+						'publishDate' => $this->get_option('cd_publishdate'),
+						'blocker' => $this->get_option('cd_blocker'),
+						'queryString' => $this->get_option('cd_querystring'),
+						'mqBreakpoint' => $this->get_option('cd_mqbreakpoint'),
+						'mqResolution' => $this->get_option('cd_mqresolution'),
+						'mqOrientation' => $this->get_option('cd_mqorientation'),
+						'visibilityState' => $this->get_option('cd_visibilitystate'),
+					),
+					'metrics' => array(
+						'serverResponseTime' => $this->get_option('cm_serverresponsetime'),
+						'domReadyTime' => $this->get_option('cm_domreadytime'),
+						'windowLoadedTime' => $this->get_option('cm_windowloadedtime'),
+						'batteryLevel' => $this->get_option('cm_batterylevel'),
+						'formImpressions' => $this->get_option('cm_formimpressions'),
+						'formStarts' => $this->get_option('cm_formstarts'),
+						'formSubmissions' => $this->get_option('cm_formsubmissions'),
+						'notableDownloads' => $this->get_option('cm_notabledownloads'),
+						'engagedReaders' => $this->get_option('cm_engagedreaders'),
+						'pageVisible' => $this->get_option('cm_pagevisible'),
+						'pageHidden' => $this->get_option('cm_pagehidden'),
+						'videoStarts' => $this->get_option('cm_videostarts'),
+						'videoPlaytime' => $this->get_option('cm_videoplaytime'),
+						'videoCompletions' => $this->get_option('cm_videocompletions'),
+						'autocompleteSearches' => $this->get_option('cm_autocompletesearches'),
+						'autocompleteSearchClicks' => $this->get_option('cm_autocompletesearchclicks'),
+						'wordCount' => $this->get_option('cm_wordcount'),
+						'maxScroll' => $this->get_option('cm_maxscroll'),
+					),
+				);
+			}
+
+			return $brain;
 		}
 
 		//Generate the full path of a Google Analytics __utm.gif with necessary parameters.

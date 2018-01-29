@@ -13,6 +13,7 @@ if ( !trait_exists('Ecommerce') ){
 			remove_action('woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10);
 			add_action('woocommerce_after_main_content', array($this, 'custom_woocommerce_end'), 10);
 			add_filter('nebula_warnings', array($this, 'woocommerce_admin_notices'));
+			add_filter('nebula_brain', array($this, 'ecommerce_nebula_data'));
 			add_action('nebula_ga_before_send_pageview', array($this, 'woo_custom_ga_dimensions'));
 			add_action('nebula_ga_after_send_pageview', array($this, 'woo_custom_ga_events'));
 			//add_action('init', array($this, 'remove_woo_breadcrumbs'));
@@ -66,13 +67,20 @@ if ( !trait_exists('Ecommerce') ){
 			return $nebula_warnings;
 		}
 
+		//Add custom dimensions/metrics to the Nebula object
+		public function ecommerce_nebula_data($brain){
+			$brain['site']['ecommerce'] = true;
+			$brain['analytics']['dimensions']['wooCart'] = $this->get_option('cd_woocart');
+			$brain['analytics']['dimensions']['wooCustomer'] = $this->get_option('cd_woocustomer');
+			return $brain;
+		}
+
 		//Set custom dimensions before the Google Analytics pageview is sent. DO NOT send any events in this function!
 		public function woo_custom_ga_dimensions(){
 			//Set custom dimension for if the cart is empty or full
 			if ( $this->get_option('cd_woocart') ){
-				echo 'gaCustomDimensions.wooCart = "' . $this->get_option('cd_woocart') . '";'; //Add to the global custom dimension JavaScript object
 				$cart_text = ( WC()->cart->get_cart_contents_count() >= 1 )? 'Full Cart (' . WC()->cart->get_cart_contents_count() . ')' : 'Empty Cart';
-				echo 'ga("set", gaCustomDimensions["wooCart"], "' . $cart_text . '");';
+				echo 'ga("set", nebula.analytics.dimensions.wooCart, "' . $cart_text . '");';
 			}
 		}
 
@@ -83,8 +91,7 @@ if ( !trait_exists('Ecommerce') ){
 			//Set custom dimension and send event on order received page.
 			if ( is_order_received_page() ){
 				if ( $this->get_option('cd_woocustomer') ){
-					echo 'gaCustomDimensions.wooCustomer = "' . $this->get_option('cd_woocustomer') . '";'; //Add to the global custom dimension JavaScript object
-					echo 'ga("set", gaCustomDimensions["wooCustomer"], "Order Received");';
+					echo 'ga("set", nebula.analytics.dimensions.wooCustomer, "Order Received");';
 				}
 				echo 'ga("send", "event", "Ecommerce", "Order Received", "Order Received page load (Success from payment gateway)");';
 			}
@@ -117,21 +124,20 @@ if ( !trait_exists('Ecommerce') ){
 
 				<?php if ( 1==2 ): //@todo "Nebula" 0: See if this script tag will break anything! If this can't be done here, try the above "woo_custom_ga_events" function... but can order details be accessed from that page? ?>
 				<script>
-					jQuery(function(){
-						_hsq.push(["identify", {
-							role: 'Customer',
-							email: '<?php echo $order->billing_email; ?>',
-							firstname: '<?php echo $order->billing_first_name; ?>',
-							lastname: '<?php echo $order->billing_last_name; ?>',
-							full_name: '<?php echo $order->billing_first_name . ' ' . $order->billing_last_name; ?>',
-							street_full: '<?php echo $order->billing_address_1 . ' ' . $order->billing_address_2; ?>',
-							city: '<?php echo $order->billing_city; ?>',
-							state: '<?php echo $order->billing_state; ?>',
-							zipcode: '<?php echo $order->billing_postcode; ?>',
-							country: '<?php echo $order->billing_country; ?>',
-							phone: '<?php echo $order->billing_phone; ?>',
-						}]);
-					});
+					<?php //Don't use nv() here because this is being included with the initial Hubspot data before the pageview is sent ?>
+					_hsq.push(["identify", {
+						role: 'Customer',
+						email: '<?php echo $order->billing_email; ?>',
+						firstname: '<?php echo $order->billing_first_name; ?>',
+						lastname: '<?php echo $order->billing_last_name; ?>',
+						full_name: '<?php echo $order->billing_first_name . ' ' . $order->billing_last_name; ?>',
+						street_full: '<?php echo $order->billing_address_1 . ' ' . $order->billing_address_2; ?>',
+						city: '<?php echo $order->billing_city; ?>',
+						state: '<?php echo $order->billing_state; ?>',
+						zipcode: '<?php echo $order->billing_postcode; ?>',
+						country: '<?php echo $order->billing_country; ?>',
+						phone: '<?php echo $order->billing_phone; ?>',
+					}]);
 				</script>
 				<?php endif; ?>
 
