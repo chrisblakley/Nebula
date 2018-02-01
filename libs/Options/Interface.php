@@ -1791,8 +1791,8 @@
 
 									<div class="form-group">
 										<label for="dev_ip">Developer IPs</label>
-										<input type="text" name="nebula_options[dev_ip]" id="dev_ip" class="form-control nebula-validate-text" value="<?php echo $nebula_options['dev_ip']; ?>" placeholder="<?php echo $_SERVER['REMOTE_ADDR']; ?>" />
-										<p class="nebula-help-text short-help form-text text-muted">Comma-separated IP addresses of the developer to enable specific console logs and other dev info.<br/>Your current IP address is <code><?php echo $_SERVER['REMOTE_ADDR']; ?></code></p>
+										<input type="text" name="nebula_options[dev_ip]" id="dev_ip" class="form-control nebula-validate-text" value="<?php echo $nebula_options['dev_ip']; ?>" placeholder="<?php echo $this->get_ip_address(); ?>" />
+										<p class="nebula-help-text short-help form-text text-muted">Comma-separated IP addresses of the developer to enable specific console logs and other dev info.<br/>Your current IP address is <code><?php echo $this->get_ip_address(); ?></code></p>
 										<p class="nebula-help-text more-help form-text text-muted">RegEx may also be used here. Ex: <code>/192\.168\./i</code></p>
 										<p class="option-keywords">recommended</p>
 									</div>
@@ -1807,8 +1807,8 @@
 
 									<div class="form-group">
 										<label for="client_ip">Client IPs</label>
-										<input type="text" name="nebula_options[client_ip]" id="client_ip" class="form-control nebula-validate-text" value="<?php echo $nebula_options['client_ip']; ?>" placeholder="<?php echo $_SERVER['REMOTE_ADDR']; ?>" />
-										<p class="nebula-help-text short-help form-text text-muted">Comma-separated IP addresses of the client to enable certain features.<br/>Your current IP address is <code><?php echo $_SERVER['REMOTE_ADDR']; ?></code></p>
+										<input type="text" name="nebula_options[client_ip]" id="client_ip" class="form-control nebula-validate-text" value="<?php echo $nebula_options['client_ip']; ?>" placeholder="<?php echo $this->get_ip_address(); ?>" />
+										<p class="nebula-help-text short-help form-text text-muted">Comma-separated IP addresses of the client to enable certain features.<br/>Your current IP address is <code><?php echo $this->get_ip_address(); ?></code></p>
 										<p class="nebula-help-text more-help form-text text-muted">RegEx may also be used here. Ex: <code>/192\.168\./i</code></p>
 										<p class="option-keywords">recommended</p>
 									</div>

@@ -20,6 +20,35 @@ if ( !trait_exists('Utilities') ){
 			register_shutdown_function(array($this, 'ga_log_fatal_errors'));
 		}
 
+		//Attempt to get the most accurate IP address from the visitor
+		public function get_ip_address($force=false){
+			//If this has already been ran once, return from object cache
+			if ( !$force ){
+				$ip = wp_cache_get('nebula_ip_address');
+				if ( !empty($ip) ){
+					return $ip;
+				}
+			}
+
+			$ip_keys = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR');
+			foreach ( $ip_keys as $key ){
+				if ( array_key_exists($key, $_SERVER) === true ){
+					foreach ( explode(',', $_SERVER[$key]) as $ip ){
+						$ip = trim($ip);
+
+						if ( filter_var($ip, FILTER_VALIDATE_IP) ){ //Validate IP
+							wp_cache_set('nebula_ip_address', $ip); //Store in object cache
+							return $ip;
+						}
+					}
+				}
+			}
+
+			echo '<p>No valid IP found... but what about: ' . $_SERVER['REMOTE_ADDR'] . '</p><br><br>';
+
+			return false;
+		}
+
 		//If analytics should be allowed.
 		//Note: be careful using this conditional for AJAX analytics as the request is made by the server IP.
 		public function is_analytics_allowed(){
@@ -27,7 +56,7 @@ if ( !trait_exists('Utilities') ){
 				return false;
 			}
 
-			if ( $_SERVER['REMOTE_ADDR'] === $_SERVER['SERVER_ADDR'] ){ //Disable analytics for self-requests by the server
+			if ( $this->get_ip_address() === $_SERVER['SERVER_ADDR'] ){ //Disable analytics for self-requests by the server
 				return false;
 			}
 
@@ -109,12 +138,12 @@ if ( !trait_exists('Utilities') ){
 
 			//Check if poi query string exists
 			if ( isset($_GET['poi']) ){
-				$ip_logged = file_put_contents($log_file, $_SERVER['REMOTE_ADDR'] . ' ' . $_GET['poi'] . PHP_EOL, FILE_APPEND | LOCK_EX); //Log the notable POI. Can't use WP_Filesystem here.
+				$ip_logged = file_put_contents($log_file, $this->get_ip_address() . ' ' . $_GET['poi'] . PHP_EOL, FILE_APPEND | LOCK_EX); //Log the notable POI. Can't use WP_Filesystem here.
 				return str_replace(array('%20', '+'), ' ', $_GET['poi']);
 			}
 
 			if ( $ip === 'detect' ){
-				$ip = $_SERVER['REMOTE_ADDR'];
+				$ip = $this->get_ip_address();
 			}
 
 			$notable_pois = array();
@@ -201,11 +230,11 @@ if ( !trait_exists('Utilities') ){
 					foreach ( $devIPs as $devIP ){
 						$devIP = trim($devIP);
 
-						if ( !empty($devIP) && $devIP[0] !== '/' && $devIP === $_SERVER['REMOTE_ADDR'] ){
+						if ( !empty($devIP) && $devIP[0] !== '/' && $devIP === $this->get_ip_address() ){
 							return true;
 						}
 
-						if ( !empty($devIP) && $devIP[0] === '/' && preg_match($devIP, $_SERVER['REMOTE_ADDR']) ){
+						if ( !empty($devIP) && $devIP[0] === '/' && preg_match($devIP, $this->get_ip_address()) ){
 							return true;
 						}
 					}
@@ -243,11 +272,11 @@ if ( !trait_exists('Utilities') ){
 					foreach ( $clientIPs as $clientIP ){
 						$clientIP = trim($clientIP);
 
-						if ( !empty($clientIP) && $clientIP[0] !== '/' && $clientIP === $_SERVER['REMOTE_ADDR'] ){
+						if ( !empty($clientIP) && $clientIP[0] !== '/' && $clientIP === $this->get_ip_address() ){
 							return true;
 						}
 
-						if ( !empty($clientIP) && $clientIP[0] === '/' && preg_match($clientIP, $_SERVER['REMOTE_ADDR']) ){
+						if ( !empty($clientIP) && $clientIP[0] === '/' && preg_match($clientIP, $this->get_ip_address()) ){
 							return true;
 						}
 					}

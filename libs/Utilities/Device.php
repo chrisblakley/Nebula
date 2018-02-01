@@ -235,7 +235,8 @@ if ( !trait_exists('Device') ){
 			}
 
 			//Scrape entire exit IP list
-			if ( isset($_SERVER['REMOTE_ADDR']) ){
+			$ip_address = $this->get_ip_address();
+			if ( isset($ip_address) ){
 				$tor_list = get_transient('nebula_tor_list');
 				if ( empty($tor_list) || $this->is_debug() ){ //If transient expired or is debug
 					$response = $this->remote_get('https://check.torproject.org/cgi-bin/TorBulkExitList.py?ip=' . $_SERVER['SERVER_ADDR']);
@@ -249,7 +250,7 @@ if ( !trait_exists('Device') ){
 				if ( !empty($tor_list) ){
 					foreach( explode("\n", $tor_list) as $line ){
 						if ( !empty($line) && strpos($line, '#') === false ){
-							if ( $line === $_SERVER['REMOTE_ADDR'] ){
+							if ( $line === $ip_address ){
 								$this->set_global_session_cookie('tor', true);
 								return true;
 							}
@@ -262,7 +263,7 @@ if ( !trait_exists('Device') ){
 			//Note: This would make a remote request to every new user. Commented out for optimization. Use the override filter to enable in a child theme.
 			/*
 			if ( $this->is_available('http://torproject.org') ){
-				$remote_ip_octets = explode(".", $_SERVER['REMOTE_ADDR']);
+				$remote_ip_octets = explode(".", $this->get_ip_address());
 				$server_ip_octets = explode(".", $_SERVER['SERVER_ADDR']);
 				if ( gethostbyname($remote_ip_octets[3] . "." . $remote_ip_octets[2] . "." . $remote_ip_octets[1] . "." . $remote_ip_octets[0] . "." . $_SERVER['SERVER_PORT'] . "." . $remote_ip_octets[3] . "." . $remote_ip_octets[2] . "." . $remote_ip_octets[1] . "." . $remote_ip_octets[0] . ".ip-port.exitlist.torproject.org") === "127.0.0.2" ){
 			        $this->set_global_session_cookie('tor', true);

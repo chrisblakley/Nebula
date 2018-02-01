@@ -148,7 +148,7 @@ if ( !trait_exists('Scripts') ){
 				$this->brain['session'] = json_decode($_SESSION['nebulaSession'], true); //Replace nebula.session with session data
 			} else {
 				$this->brain['session'] = array(
-					'ip' => $_SERVER['REMOTE_ADDR'],
+					'ip' => $this->get_ip_address(),
 					'id' => $this->nebula_session_id(),
 					'flags' => array(
 						'adblock' => false,
@@ -167,11 +167,11 @@ if ( !trait_exists('Scripts') ){
 					'display_name' => $user_info->data->display_name,
 					'email' => $user_info->data->user_email,
 				),
-				'ip' => $_SERVER['REMOTE_ADDR'],
+				'ip' => $this->get_ip_address(),
 				'cid' => $this->ga_parse_cookie(),
 				'client' => array( //Client data is here inside user because the cookie is not transferred between clients.
 					'bot' => $this->is_bot(),
-					'remote_addr' => $_SERVER['REMOTE_ADDR'],
+					'remote_addr' => $this->get_ip_address(),
 					'device' => array(
 						'full' => $this->get_device('full'),
 						'formfactor' => $this->get_device('formfactor'),

@@ -356,7 +356,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//IP Address
 			echo '<li>';
-			if ( $_SERVER['REMOTE_ADDR'] === '72.43.235.106' ){
+			if ( $this->get_ip_address() === '72.43.235.106' ){
 				echo '<img src="' . get_template_directory_uri() . '/assets/img/phg/phg-symbol.png" style="max-width: 14px;" />';
 			} else {
 				echo '<i class="fas fa-fw fa-globe"></i>';

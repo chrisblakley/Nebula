@@ -2066,6 +2066,8 @@ function lazyLoadImages(){
 	});
 	jQuery('.nebula-lazy-position').remove(); //These are no longer needed after initial load
 
+	svgImgs();
+
 	//Background Images
 	jQuery('.lazy-load').each(function(){
 		if ( jQuery(this).offset().top < nebula.dom.window.height() ){
@@ -2079,6 +2081,8 @@ function lazyLoadImages(){
 		jQuery('noscript.nebula-lazy-img').each(function(){
 			jQuery(this).replaceWith(jQuery(this).text()); //Remove the <noscript> tag to reveal the img tag
 		});
+
+		svgImgs();
 
 		jQuery('.lazy-load').removeClass('lazy-load').addClass('lazy-loaded'); //Load background images
 		jQuery(window).off('scroll', lazyLoadScrollHandler); //Stop listening to scroll now that all images are loaded

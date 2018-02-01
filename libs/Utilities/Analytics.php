@@ -273,7 +273,7 @@ if ( !trait_exists('Analytics') ){
 				'tid' => $this->get_option('ga_tracking_id'), //Tracking ID
 				'cid' => $this->ga_parse_cookie(), //Client ID
 				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']), //User Agent
-				'uip' => $_SERVER['REMOTE_ADDR'], //IP Address
+				'uip' => $this->get_ip_address(), //IP Address
 				'ul' => locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']), //User Language
 				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '', //Referrer
 				'dl' => $this->requested_url(), //Likely "admin-ajax.php" until overwritten

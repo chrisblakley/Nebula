@@ -673,6 +673,7 @@ trait Functions {
 	public function post_date($options=array()){
 		$defaults = array(
 			'icon' => true,
+			'type' => 'published', //"published", "modified", or "both"
 			'relative' => ( get_theme_mod('post_date_format') === 'absolute' )? false : true,
 			'linked' => true,
 			'day' => true,
@@ -686,18 +687,32 @@ trait Functions {
 		}
 
 		$icon = ( $data['icon'] )? '<i class="far fa-fw fa-calendar"></i> ' : '';
-		$relative_date = human_time_diff(get_the_date('U')) . ' ago';
 
-		if ( $data['relative'] ){
-			return '<span class="posted-on meta-item relative-date" title="' . get_the_date('F j, Y') . '">' . $icon . $relative_date . '</span>';
+		//Use the publish or modified date per options
+		$the_date = get_the_date('U');
+		$modified_date_html = '';
+		if ( $data['type'] === 'modified' ){
+			$the_date = get_the_modified_date('U');
+		} elseif ( $data['type'] === 'both' || $data['type'] === 'all' ){
+			$modified_date_format = ( $data['day'] )? get_the_modified_date('F j, Y') : get_the_modified_date('F Y');
+			if ( $data['relative'] ){
+				$modified_date_format = human_time_diff(get_the_modified_date('U')) . ' ago';
+			}
+			$modified_date_html = ' <span class="modified-on meta-item" datetime="' . get_the_modified_date('c') . '">(Updated ' . $modified_date_format . ')</span>';
 		}
 
-		$day = ( $data['day'] )? get_the_date('d') . '/' : ''; //If the day should be shown (otherwise, just month and year).
+		$relative_date = human_time_diff($the_date) . ' ago';
+
+		if ( $data['relative'] ){
+			return '<span class="posted-on meta-item relative-date" title="' . date('F j, Y', $the_date) . '">' . $icon . $relative_date . $modified_date_html . '</span>';
+		}
+
+		$day = ( $data['day'] )? date('d', $the_date) . '/' : ''; //If the day should be shown (otherwise, just month and year).
 
 		if ( $data['linked'] ){
-			return '<span class="posted-on meta-item">' . $icon . '<span class="entry-date" datetime="' . get_the_time('c') . '" itemprop="datePublished" content="' . get_the_date('c') . '">' . '<a href="' . home_url('/') . get_the_date('Y/m') . '/' . '">' . get_the_date('F') . '</a>' . ' ' . '<a href="' . home_url('/') . get_the_date('Y/m') . '/' . $day . '">' . get_the_date('j') . '</a>' . ', ' . '<a href="' . home_url('/') . get_the_date('Y') . '/' . '">' . get_the_date('Y') . '</a>' . '</span></span>';
+			return '<span class="posted-on meta-item">' . $icon . '<span class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . '<a href="' . home_url('/') . date('Y/m', $the_date) . '/' . '">' . date('F', $the_date) . '</a>' . ' ' . '<a href="' . home_url('/') . date('Y/m', $the_date) . '/' . $day . '">' . date('j', $the_date) . '</a>' . ', ' . '<a href="' . home_url('/') . date('Y', $the_date) . '/' . '">' . date('Y', $the_date) . '</a>' . '</span>' . $modified_date_html . '</span>';
 		} else {
-			return '<span class="posted-on meta-item">' . $icon . '<span class="entry-date" datetime="' . get_the_time('c') . '" itemprop="datePublished" content="' . get_the_date('c') . '">' . get_the_date('F j, Y') . '</span></span>';
+			return '<span class="posted-on meta-item">' . $icon . '<span class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . date('F j, Y', $the_date) . '</span>' . $modified_date_html . '</span>';
 		}
 	}
 
@@ -1903,7 +1918,7 @@ trait Functions {
 	public function ip_location($data=null, $ip_address=false){
 		if ( $this->get_option('ip_geolocation') ){
 			if ( empty($ip_address) ){
-				$ip_address = $_SERVER['REMOTE_ADDR'];
+				$ip_address = $this->get_ip_address();
 
 				if ( empty($data) ){
 					return true; //If passed with no parameters, simply check if Nebula Option is enabled
@@ -2203,6 +2218,7 @@ trait Functions {
 	//Remove comments metabox and comments
 	public function disable_comments_admin(){
 		remove_meta_box('dashboard_recent_comments', 'dashboard', 'normal');
+		remove_menu_page( 'edit-comments.php' );
 		//Note: Do not remove the Discussion settings page. The comment blacklist is still used for other things like CF7 forms.
 	}
 
@@ -3014,7 +3030,7 @@ trait Functions {
 
 	//Add more columns to contact form DB storage
 	public function more_contact_form_db_info($form_data){
-		$form_data['ip'] = $_SERVER['REMOTE_ADDR'];
+		$form_data['ip'] = $this->get_ip_address();
 		return $form_data;
 	}
 

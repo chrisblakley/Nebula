@@ -25,7 +25,7 @@ if ( !trait_exists('Users') ){
 			if ( is_user_logged_in() ){
 				$logged_in_users = $this->get_data('users_status');
 
-				$unique_id = $_SERVER['REMOTE_ADDR'] . '.' . preg_replace("/[^a-zA-Z0-9\.]+/", "", $_SERVER['HTTP_USER_AGENT']);
+				$unique_id = $this->get_ip_address() . '.' . preg_replace("/[^a-zA-Z0-9\.]+/", "", $_SERVER['HTTP_USER_AGENT']);
 				$current_user = wp_get_current_user();
 
 				//@TODO "Nebula" 0: Technically, this should be sorted by user ID -then- unique id -then- the rest of the info. Currently, concurrent logins won't reset until they have ALL expired. This could be good enough, though.
@@ -35,7 +35,7 @@ if ( !trait_exists('Users') ){
 						'id' => $current_user->ID,
 						'username' => $current_user->user_login,
 						'last' => time(),
-						'ip' => $_SERVER['REMOTE_ADDR'],
+						'ip' => $this->get_ip_address(),
 						'unique' => array($unique_id),
 					);
 					$this->update_data('users_status', $logged_in_users);
@@ -52,7 +52,7 @@ if ( !trait_exists('Users') ){
 		public function user_columns_head($defaults){
 			$defaults['company'] = 'Company';
 			$defaults['registered'] = 'Registered';
-			$defaults['status'] = 'Status';
+			$defaults['status'] = 'Last Seen';
 			$defaults['ip'] = 'Last IP';
 			$defaults['id'] = 'ID';
 			return $defaults;
@@ -77,7 +77,7 @@ if ( !trait_exists('Users') ){
 					}
 					return $online_now;
 				} else {
-					return ( $this->user_last_online($id) )? '<small>Last Seen: <br /><em>' . date('M j, Y @ g:ia', $this->user_last_online($id)) . '</em></small>' : '';
+					return ( $this->user_last_online($id) )? '<small><em>' . date('M j, Y @ g:ia', $this->user_last_online($id)) . '</em></small>' : '';
 				}
 			}
 

@@ -175,6 +175,7 @@ if ( !trait_exists('Security') ){
 
 			if ( $this->get_option('domain_blacklisting') ){
 				$blacklisted_domains = $this->get_domain_blacklist();
+				$ip_address = $this->get_ip_address();
 
 				if ( count($blacklisted_domains) > 1 ){
 					if ( isset($_SERVER['HTTP_REFERER']) && $this->contains(strtolower($_SERVER['HTTP_REFERER']), $blacklisted_domains) ){
@@ -196,8 +197,8 @@ if ( !trait_exists('Security') ){
 						header('HTTP/1.1 403 Forbidden');
 						die;
 					}
-					if ( isset($_SERVER['REMOTE_ADDR']) && $this->contains(strtolower(gethostbyaddr($_SERVER['REMOTE_ADDR'])), $blacklisted_domains) ){
-						$this->ga_send_exception('(Security) Blacklisted domain prevented. Network Hostname: ' . $_SERVER['REMOTE_ADDR']);
+					if ( isset($ip_address) && $this->contains(strtolower(gethostbyaddr($ip_address)), $blacklisted_domains) ){
+						$this->ga_send_exception('(Security) Blacklisted domain prevented. Network Hostname: ' . $ip_address);
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						die;

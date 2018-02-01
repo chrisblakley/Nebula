@@ -438,7 +438,7 @@
 		_hsq.push(['setPath', '<?php echo str_replace(get_site_url(), '', get_permalink()); ?>']); //Is this even needed?
 
 		_hsq.push(["identify", {
-			ipaddress: '<?php echo $_SERVER['REMOTE_ADDR']; ?>',
+			ipaddress: '<?php echo nebula()->get_ip_address(); ?>',
 			user_agent: '<?php echo $_SERVER['HTTP_USER_AGENT']; ?>',
 			session_id: '<?php echo nebula()->nebula_session_id(); //If this hits rate limits, consider removing it ?>',
 		}]);
