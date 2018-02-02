@@ -940,7 +940,7 @@ if ( !trait_exists('Dashboard') ){
 			do_action('nebula_hubspot_contacts');
 
 			$hubspot_contacts_json = get_transient('nebula_hubspot_contacts');
-			if ( empty($hubspot_contacts) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
+			if ( empty($hubspot_contacts_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 
 				$response = $this->remote_get('https://api.hubapi.com/contacts/v1/lists/all/contacts/recent?hapikey=' . $this->get_option('hubspot_api') . '&count=5');
 				if ( is_wp_error($response) ){
@@ -948,7 +948,7 @@ if ( !trait_exists('Dashboard') ){
 	            }
 
 				$hubspot_contacts_json = $response['body'];
-				set_transient('nebula_hubspot_contacts', $hubspot_contacts_json, MINUTE_IN_SECONDS*5); //5 minute expiration
+				set_transient('nebula_hubspot_contacts', $hubspot_contacts_json, MINUTE_IN_SECONDS*15); //15 minute expiration
 			}
 
 			$hubspot_contacts_json = json_decode($hubspot_contacts_json);

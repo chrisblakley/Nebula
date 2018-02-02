@@ -50,6 +50,7 @@ if ( !trait_exists('Options') ){
 		public function data($option){return $this->get_data($option);}
 		public function get_data($option){
 			$nebula_data = get_option('nebula_data');
+
 			if ( empty($nebula_data[$option]) ){
 				return false;
 			}
@@ -281,6 +282,7 @@ if ( !trait_exists('Options') ){
 				'cd_sessionid' => '',
 				'cd_timestamp' => '',
 				'cd_windowtype' => '',
+				'cd_privacymode' => '',
 				'cd_userid' => '',
 				'cd_fbid' => '',
 				'cd_role' => '',

@@ -16,6 +16,20 @@ if ( !trait_exists('Analytics') ){
 			add_filter('nebula_brain', array($this, 'ga_definitions'));
 		}
 
+		//If analytics should be allowed.
+		//Note: be careful using this conditional for AJAX analytics as the request is made by the server IP.
+		public function is_analytics_allowed(){
+			if ( isset($_GET['noga']) ){ //Disable analytics for noga query string
+				return false;
+			}
+
+			if ( $this->get_ip_address() === $_SERVER['SERVER_ADDR'] ){ //Disable analytics for self-requests by the server
+				return false;
+			}
+
+			return true;
+		}
+
 		//Handle the parsing of the _ga cookie or setting it to a unique identifier
 		public function ga_parse_cookie(){
 			$override = apply_filters('pre_ga_parse_cookie', null);
@@ -99,6 +113,7 @@ if ( !trait_exists('Analytics') ){
 					'formTiming' => $this->get_option('cd_formtiming'),
 					'formFlow' => $this->get_option('cd_formflow'),
 					'windowType' => $this->get_option('cd_windowtype'),
+					'browseMode' => $this->get_option('cd_privacymode'),
 					'geolocation' => $this->get_option('cd_geolocation'),
 					'geoAccuracy' => $this->get_option('cd_geoaccuracy'),
 					'geoName' => $this->get_option('cd_geoname'),

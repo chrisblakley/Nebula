@@ -1119,6 +1119,17 @@
 										<div class="form-group">
 											<div class="input-group">
 												<div class="input-group-prepend">
+													<div class="input-group-text">Privacy Mode</div>
+												</div>
+												<input type="text" name="nebula_options[cd_privacymode]" id="cd_privacymode" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_privacymode']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Stores the browsing mode the site is being accessed using (Ex: Normal or Private). Scope: Session</p>
+											<p class="option-keywords"></p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-prepend">
 													<div class="input-group-text">Geolocation</div>
 												</div>
 												<input type="text" name="nebula_options[cd_geolocation]" id="cd_geolocation" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_geolocation']; ?>" />

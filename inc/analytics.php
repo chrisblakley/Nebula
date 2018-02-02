@@ -132,24 +132,42 @@
 			}
 		?>
 
-		//Window Type
-		if ( window !== window.top ){
-			jQuery('html').addClass('in-iframe');
-			ga('set', nebula.analytics.dimensions.windowType, 'Iframe: ' + window.top.location.href);
-		}
-		if ( navigator.standalone || window.matchMedia('(display-mode: standalone)').matches ){
-			jQuery('html').addClass('in-standalone-app');
-			ga('set', nebula.analytics.dimensions.windowType, 'Standalone App');
-		}
+		<?php if ( nebula()->get_option('cd_windowtype') ): //Window Type ?>
+			if ( window !== window.top ){
+				jQuery('html').addClass('in-iframe');
+				ga('set', nebula.analytics.dimensions.windowType, 'Iframe: ' + window.top.location.href);
+			}
+			if ( navigator.standalone || window.matchMedia('(display-mode: standalone)').matches ){
+				jQuery('html').addClass('in-standalone-app');
+				ga('set', nebula.analytics.dimensions.windowType, 'Standalone App');
+			}
+		<?php endif; ?>
 
-		//Autotrack Page Visibility
-		if ( nebula.analytics.metrics.pageHidden && nebula.analytics.metrics.pageVisible ){
+		<?php if ( nebula()->get_option('cd_privacymode') ): //Detect privacy mode ?>
+			var fileSystem = window.RequestFileSystem || window.webkitRequestFileSystem;
+			if ( fileSystem ){
+				fileSystem(
+					window.TEMPORARY,
+					100,
+					function(){
+						console.log('normal window');
+						ga('set', nebula.analytics.dimensions.browseMode, 'Normal');
+					},
+					function(){
+						console.log('private mode');
+						ga('set', nebula.analytics.dimensions.browseMode, 'Private');
+					}
+				);
+			}
+		<?php endif; ?>
+
+		<?php if ( nebula()->get_option('cm_pagevisible') && nebula()->get_option('cm_pagehidden') ): //Autotrack Page Visibility ?>
 			ga('require', 'pageVisibilityTracker', {
 				hiddenMetricIndex: parseInt(nebula.analytics.metrics.pageHidden.replace('metric', '')),
 				visibleMetricIndex: parseInt(nebula.analytics.metrics.pageVisible.replace('metric', '')),
 				fieldsObj: {nonInteraction: true}
 			});
-		}
+		<?php endif; ?>
 
 		//Autotrack Clean URL
 		var queryStringDimension = parseInt(nebula.analytics.dimensions.queryString.replace('dimension', ''));
@@ -178,8 +196,7 @@
 			}
 		});
 
-		//Autotrack Media Queries
-		if ( nebula.analytics.dimensions.mqBreakpoint || nebula.analytics.dimensions.mqResolution || nebula.analytics.dimensions.mqOrientation ){
+		<?php if ( nebula()->get_option('cd_mqbreakpoint') || nebula()->get_option('cd_mqresolution') || nebula()->get_option('cd_mqorientation') ): //Autotrack Media Queries ?>
 			ga('require', 'mediaQueryTracker', {
 				definitions: [{
 					name: 'Breakpoint',
@@ -209,7 +226,7 @@
 				}],
 				fieldsObj: {nonInteraction: true}
 			});
-		}
+		<?php endif; ?>
 
 		//Autotrack Impressions (Scroll into view)
 		//Elements themselves are detected in main.js (or child.js)

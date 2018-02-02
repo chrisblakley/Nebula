@@ -49,20 +49,6 @@ if ( !trait_exists('Utilities') ){
 			return false;
 		}
 
-		//If analytics should be allowed.
-		//Note: be careful using this conditional for AJAX analytics as the request is made by the server IP.
-		public function is_analytics_allowed(){
-			if ( isset($_GET['noga']) ){ //Disable analytics for noga query string
-				return false;
-			}
-
-			if ( $this->get_ip_address() === $_SERVER['SERVER_ADDR'] ){ //Disable analytics for self-requests by the server
-				return false;
-			}
-
-			return true;
-		}
-
 		//Generate Nebula Session ID
 		public function nebula_session_id(){
 			$session_data = array();
