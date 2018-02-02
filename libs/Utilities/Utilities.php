@@ -44,8 +44,6 @@ if ( !trait_exists('Utilities') ){
 				}
 			}
 
-			echo '<p>No valid IP found... but what about: ' . $_SERVER['REMOTE_ADDR'] . '</p><br><br>';
-
 			return false;
 		}
 
