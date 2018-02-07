@@ -494,7 +494,7 @@
 		<?php do_action('nebula_hubspot_before_send_pageview'); //Hook into for adding more parameters before the pageview is sent. Can override any above identifications too. ?>
 
 		<?php if ( nebula()->get_option('ga_tracking_id') ): //If Google Analytics is used, grab the Client ID before sending the Hubspot pageview ?>
-			if ( typeof window.ga === 'function' ){ //If ga() exists get the CID, otherwise don't wait for it and just send the Hubspot pageview
+			if ( typeof window.ga === 'function' ){ <?php //If ga() exists get the CID, otherwise don't wait for it and just send the Hubspot pageview ?>
 				window.ga(function(tracker){
 					_hsq.push(["identify", {
 						ga_cid: tracker.get('clientId'),

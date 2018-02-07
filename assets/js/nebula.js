@@ -125,13 +125,6 @@ nebula.regex = {
 nebula.timings = [];
 nebula.videos = {};
 
-//Add console context for nebula logs
-//@todo "Nebula" 0: Could be useful here to add a toggle to enable/disable all console logging (like if wordpress is in debug mode or ?debug is present)
-nebula.console = console;
-if ( typeof console.context === 'function' ){
-	nebula.console = console.context('Nebula');
-}
-
 
 /*==========================
  Optimization Functions
@@ -279,11 +272,11 @@ function performanceMetrics(){
 			var windowLoaded = Math.round(performance.timing.loadEventStart-performance.timing.navigationStart); //Navigation start until window load
 
 			if ( nebula.dom.html.hasClass('debug') ){
-				nebula.console.group('Performance');
-				nebula.console.log('Server Response: ' + responseEnd + 'ms');
-				nebula.console.log('DOM Ready: ' + domReady + 'ms');
-				nebula.console.log('Window Loaded: ' + windowLoaded + 'ms');
-				nebula.console.groupEnd();
+				console.group('Performance');
+				console.log('Server Response: ' + responseEnd + 'ms');
+				console.log('DOM Ready: ' + domReady + 'ms');
+				console.log('Window Loaded: ' + windowLoaded + 'ms');
+				console.groupEnd();
 			}
 
 			//Validate each timing result before using them
@@ -302,7 +295,7 @@ function performanceMetrics(){
 					performance.measure('Server Response', 'navigationStart', 'responseEnd');
 					performance.measure('DOM Ready', 'navigationStart', 'domContentLoadedEventStart');
 					performance.measure('Window Load', 'navigationStart', 'loadEventStart');
-					//nebula.console.debug( performance.getEntriesByType('measure') );
+					//console.debug( performance.getEntriesByType('measure') );
 				}
 			}
 		}, 0);
@@ -912,7 +905,7 @@ function nv(action, data){
 	}
 
 	if ( !action || !data || typeof data == 'function' ){
-		nebula.console.error('Action and Data Object are both required.');
+		console.error('Action and Data Object are both required.');
 		ga('send', 'exception', {'exDescription': '(JS) Action and Data Object are both required in nv()', 'exFatal': false});
 		return false; //Action and Data are both required.
 	}
@@ -1099,7 +1092,7 @@ function autocompleteSearch(element, types){
 	}
 
 	if ( types && !jQuery.isArray(types) ){
-		nebula.console.error('autocompleteSearch requires 2nd parameter to be an array.');
+		console.error('autocompleteSearch requires 2nd parameter to be an array.');
 		ga('send', 'exception', {'exDescription': '(JS) autocompleteSearch requires 2nd parameter to be an array', 'exFatal': false});
 		return false;
 	}
@@ -1715,7 +1708,6 @@ function cf7Functions(){
 		return false;
 	}
 
-	jQuery('.debuginfo').addClass('hidden').css('display', 'none').attr('aria-hidden', 'true').val(nebula.session.id);
 	formStarted = {};
 
 	//Replace submit input with a button so a spinner icon can be used instead of the CF7 spin gif (unless it has the class "no-button")
@@ -2260,7 +2252,7 @@ function googleAddressAutocompleteCallback(autocompleteInput, uniqueID){
 //Use uniqueID to name places like "home", "mailing", "billing", etc.
 function sanitizeGooglePlaceData(place, uniqueID){
 	if ( !place ){
-		nebula.console.error('Place data is required for sanitization.');
+		console.error('Place data is required for sanitization.');
 		return false;
 	}
 
@@ -2311,7 +2303,7 @@ function sanitizeGooglePlaceData(place, uniqueID){
 				nebula.user.address[uniqueID].zip.suffix = place.address_components[i].short_name; //4725
 				break;
 			default:
-				//nebula.console.log('Address component ' + place.address_components[i].types[0] + ' not used.');
+				//console.log('Address component ' + place.address_components[i].types[0] + ' not used.');
 		}
 	}
 
@@ -3114,7 +3106,7 @@ function millisecondsToString(ms){
 //For cross-browser support, timestamp must be passed as a string (not a Date object) in the format: Fri Mar 27 21:40:02 +0000 2016
 function timeAgo(timestamp, raw){ //http://af-design.com/blog/2009/02/10/twitter-like-timestamps/
 	if ( typeof timestamp === 'object' ){
-		nebula.console.warn('Pass date as string in the format: Fri Mar 27 21:40:02 +0000 2016');
+		console.warn('Pass date as string in the format: Fri Mar 27 21:40:02 +0000 2016');
 	}
 
 	var postDate = new Date(timestamp);
@@ -3496,7 +3488,7 @@ function nebulaHTML5VideoTracking(){
 
 			oThis.on('volumechange', function(){
 				var thisVideo = nebula.videos[id];
-				//nebula.console.debug(this);
+				//console.debug(this);
 			});
 
 			oThis.on('ended', function(){
@@ -3558,7 +3550,7 @@ function onYouTubeIframeAPIReady(e){
 
 			nebula.dom.document.trigger('nebula_youtube_players_created', nebula.videos[id]);
 		} else {
-			nebula.console.warn('The enablejsapi parameter was not found for this Youtube iframe. It has been reloaded to enable it. For better optimization, and more accurate analytics, add it to the iframe.');
+			console.warn('The enablejsapi parameter was not found for this Youtube iframe. It has been reloaded to enable it. For better optimization, and more accurate analytics, add it to the iframe.');
 
 			//JS API not enabled for this video. Reload the iframe with the correct parameter.
 			var delimiter = ( jQuery(this).attr('src').indexOf('?') > 0 )? '&' : '?';

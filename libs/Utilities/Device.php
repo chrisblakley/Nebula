@@ -164,7 +164,13 @@ if ( !trait_exists('Device') ){
 				$info = str_replace(' ', '', $info);
 				switch ( strtolower($info) ){
 					case 'full':
-						return $GLOBALS["device_detect"]->getBrandName() . ' ' . $GLOBALS["device_detect"]->getModel();
+						$brand_name = $GLOBALS["device_detect"]->getBrandName();
+						$model = $GLOBALS["device_detect"]->getModel();
+						if ( !empty($brand_name) && !empty($model) ){
+							return $brand_name . ' ' . $model;
+						} else {
+							return false;
+						}
 						break;
 					case 'brand':
 					case 'brandname':

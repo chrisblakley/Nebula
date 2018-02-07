@@ -3,7 +3,7 @@
 //@TODO: Enable "Service Worker" in Nebula Options (under Functions)
 
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-61474'; //Thursday, February 1, 2018 9:28:15 PM
+var CACHE_NAME = 'nebula-nebula-child-14221'; //Wednesday, February 7, 2018 8:44:39 AM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
@@ -20,12 +20,6 @@ var CACHE_FILES = [
 	START_URL,
 	HOME_URL,
 ];
-
-//Nebula console log context
-swLogger = console;
-if ( typeof console.context === 'function' ){
-	swLogger = console.context('Service Worker');
-}
 
 //Install
 self.addEventListener('install', function(event){
@@ -71,10 +65,11 @@ self.addEventListener('fetch', function(event){
 	//var thisRequest = new Request(event.request.url, {mode: 'no-cors'}); //Disallow cross-origin requests //Breaks Font Awesome fonts (sometimes)
 
 	//console.log('[SW] We got a fetch request (' + thisRequest.mode + ') for:', thisRequest.url);
+	//console.log('[SW] Fetch request:', thisRequest);
 
 	if ( needNetworkRetrieval(thisRequest) ){
-	   	// ******************
-		// Force network request for certain requests
+		// ******************
+		// Force network retrieval for certain requests
 		// ******************
 
 		//console.log('[SW] Forcing network retrieval by JUST IGNORING IT for', thisRequest.url);
@@ -99,6 +94,10 @@ self.addEventListener('fetch', function(event){
 
     	return; //How do we "return false" inside of respondWith() when it expects a response object? Should I just fake an empty response object?
 	} else {
+		// ******************
+		// Allow response from the cache (if available)
+		// ******************
+
 		event.respondWith(
 			caches.open(CACHE_NAME).then(function(cache){
 				return cache.match(thisRequest).then(function(response){
@@ -174,6 +173,9 @@ function needNetworkRetrieval(request){
 		//console.log('[SW] Need network retreival because of query string: ' + request.url);
 		return true; //Yes, need network retrieval
 	}
+
+	//Force network retrieval for HTML files older than 20 hours (this is to maintain fresh nonces) yolo
+		//if file does not have an extension (or ends in HTML or PHP) and is older than 20 hours return true
 
 	//console.log('[SW] Allow from cache for: ' + request.url);
 	return false; //No, do not need network retrieval (allow cache)

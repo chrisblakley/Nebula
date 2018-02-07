@@ -99,6 +99,11 @@ trait Functions {
 
 		add_filter('acf/settings/google_api_key', array($this, 'acf_google_api_key'));
 		add_filter('wpseo_metadesc', array($this, 'meta_description'));
+
+		if ( is_user_logged_in() ){
+			add_filter('wpcf7_verify_nonce', '__return_true'); //Always verify CF7 nonce for logged-in users (this allows for it to detect user data)
+		}
+		add_filter('wpcf7_special_mail_tags', array($this, 'cf7_custom_special_mail_tags'), 10, 3);
 		add_filter('cfdb7_before_save_data', array($this, 'more_contact_form_db_info'));
 	}
 
@@ -3026,6 +3031,131 @@ trait Functions {
 		}
 
 		return $html;
+	}
+
+	//Add custom special mail tags to Contact Form 7
+	public function cf7_custom_special_mail_tags($output, $name, $html){
+		$submission = WPCF7_Submission::get_instance();
+		if ( !$submission ){
+			return $output;
+		}
+
+		//Contact Email
+		if ( $name === '_nebula_contact_email' ){
+			return ( $this->get_option('contact_email') )? $this->get_option('contact_email') : get_option('admin_email', get_userdata(1)->user_email);
+		}
+
+		//Notification Email
+		if ( $name === '_nebula_notification_email' ){
+			return ( $this->get_option('notification_email') )? $this->get_option('notification_email') : get_option('admin_email', get_userdata(1)->user_email);
+		}
+
+		//Safe From Address
+		if ( $name === '_nebula_safe_from' ){
+			$site_owner = ( $this->get_option('site_owner') )? $this->get_option('site_owner') : get_bloginfo('name');
+			return $site_owner . '<wordpress@' . $this->url_components('domain') . '>';
+		}
+
+		//IP Geolocation
+		if ( $name === '_nebula_ip_geo' ){
+			if ( $this->ip_location() ){
+				$ip_location = $this->ip_location('all');
+				return $ip_location->city . ', ' . $ip_location->region_name;
+			} else {
+				return '';
+			}
+		}
+
+		//Weather
+		if ( $name === '_nebula_weather' ){
+			if ( $this->get_option('weather') ){
+				$ip_zip = ( $this->ip_location() )? $this->ip_location('zip') : '';
+				$temperature = $this->weather($ip_zip, 'temp');
+				if ( !empty($temperature) ){
+					return 'Weather: ' . $temperature . '&deg;F ' . $this->weather($ip_zip, 'conditions');
+				} else {
+					return '';
+				}
+			} else {
+				return '';
+			}
+		}
+
+		//Debug Info
+		if ( $name === 'debuginfo' || $name === '_debuginfo' || $name === '_nebula_debuginfo' || $name === '_nebula_debug' ){
+			$debug_data = 'Nebula ' . $this->version('full') . '<br />';
+			$debug_data .= $this->nebula_session_id() . '<br />';
+
+			//Logged-in User Info
+			$user_id = (int) $submission->get_meta('current_user_id');
+			if ( !empty($user_id) ){
+				$user_info = get_userdata($user_id);
+
+				$debug_data .= 'User: ' . $user_info->user_login . ' (' . $user_info->ID . ')<br/>';
+				$debug_data .= 'Name: ' . $user_info->display_name . '<br />';
+				$debug_data .= 'Email: ' . $user_info->user_email . '<br/>';
+
+				if ( get_the_author_meta('phonenumber', $user_info->ID) ){
+					$debug_data .= 'Phone: ' . get_the_author_meta('phonenumber', $user_info->ID) . '<br/>';
+				}
+
+				if ( get_the_author_meta('jobtitle', $user_info->ID) ){
+					$debug_data .= 'Title: ' . get_the_author_meta('jobtitle', $user_info->ID) . '<br/>';
+				}
+
+				if ( get_the_author_meta('jobcompany', $user_info->ID) ){
+					$debug_data .= 'Company: ' . get_the_author_meta('jobcompany', $user_info->ID) . '<br/>';
+				}
+
+				if ( get_the_author_meta('jobcompanywebsite', $user_info->ID) ){
+					$debug_data .= 'Company Website: ' . get_the_author_meta('jobcompanywebsite', $user_info->ID) . '<br/>';
+				}
+
+				if ( get_the_author_meta('usercity', $user_info->ID) && get_the_author_meta('userstate', $user_info->ID) ){
+					$debug_data .= get_the_author_meta('usercity', $user_info->ID) . ', ' . get_the_author_meta('userstate', $user_info->ID) . '<br/>';
+				}
+
+				$debug_data .= $this->user_role() . '<br />'; //Role
+			}
+
+			//Bot detection
+			if ( $this->is_bot() ){
+				$debug_data .= '<strong>Bot detected!</strong><br />';
+			}
+
+			//Device information
+			if ( isset($_SERVER['HTTP_USER_AGENT']) ){
+				$debug_data .= $_SERVER['HTTP_USER_AGENT'] . '<br />';
+			}
+			if ( $this->get_option('device_detection') ){
+				$debug_data .= ucwords($this->get_device('formfactor'));
+
+				$device = $this->get_device('full');
+				if ( !empty($device) ){
+					$debug_data .= ', ' . $device;
+				}
+
+				$debug_data .= ', ' . $this->get_os();
+				$debug_data .= ', ' . $this->get_browser('full');
+				$debug_data .= '<br />';
+			}
+
+			//IP address (and geolocation if available)
+			$debug_data .= 'IP: ' . $this->get_ip_address();
+			if ( $this->ip_location() ){
+				$ip_location = $this->ip_location('all');
+				$debug_data .= ' (' . $ip_location->city . ', ' . $ip_location->region_name . ')';
+			}
+			$notable_poi = $this->poi();
+			if ( !empty($notable_poi) ){
+				$debug_data .= '[' . $notable_poi . ']';
+			}
+			$debug_data .= '<br />';
+
+			return $debug_data;
+		}
+
+		return $output;
 	}
 
 	//Add more columns to contact form DB storage

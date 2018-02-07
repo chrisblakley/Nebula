@@ -59,12 +59,10 @@
 				<div class="col-md-3">
 					<div id="stickynav">
 						<ul id="options-navigation" class="nav nav-pills flex-column">
-							<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'metadata' )? 'active' : ''; ?>" href="#metadata" data-toggle="tab"><i class="fas fa-fw fa-tags"></i> Metadata</a></li>
-							<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'functions' )? 'active' : ''; ?>" href="#functions" data-toggle="tab"><i class="fas fa-fw fa-sliders-h"></i> Functions</a></li>
-							<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'analytics' )? 'active' : ''; ?>" href="#analytics" data-toggle="tab"><i class="fas fa-fw fa-chart-area"></i> Analytics</a></li>
-							<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'apis' )? 'active' : ''; ?>" href="#apis" data-toggle="tab"><i class="fas fa-fw fa-key"></i> APIs</a></li>
-							<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'administration' )? 'active' : ''; ?>" href="#administration" data-toggle="tab"><i class="fas fa-fw fa-briefcase"></i> Administration</a></li>
-							<?php do_action('nebula_options_interface_additional_tabs'); ?>
+							<?php foreach ( $this->get_option_categories() as $category ): ?>
+								<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === strtolower($category['name']) )? 'active' : ''; ?>" href="#<?php echo strtolower($category['name']); ?>" data-toggle="tab"><i class="fas fa-fw <?php echo $category['icon']; ?>"></i> <?php echo $category['name']; ?></a></li>
+							<?php endforeach; ?>
+
 							<?php if ( current_user_can('manage_options') ): ?>
 								<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'diagnostic' )? 'active' : ''; ?>" href="#diagnostic" data-toggle="tab"><i class="fas fa-fw fa-life-ring"></i> Diagnostic</a></li>
 							<?php endif; ?>
@@ -119,7 +117,7 @@
 
 									<div class="form-group">
 										<label for="site_owner">Site Owner</label>
-										<input type="text" name="nebula_options[site_owner]" id="site_owner" class="form-control nebula-validate-text" value="<?php echo $this->option('site_owner'); ?>" placeholder="<?php echo bloginfo('name'); ?>" />
+										<input type="text" name="nebula_options[site_owner]" id="site_owner" class="form-control nebula-validate-text" value="<?php echo $this->option('site_owner'); ?>" placeholder="<?php echo get_bloginfo('name'); ?>" />
 										<p class="nebula-help-text short-help form-text text-muted">The name of the company (or person) who this website is for.</p>
 										<p class="nebula-help-text more-help form-text text-muted">This is used when using nebula()->the_author(0) with author names disabled.</p>
 										<p class="option-keywords">recommended seo</p>
@@ -1919,7 +1917,7 @@
 
 
 
-					<?php do_action('nebula_options_interface_additional_panes'); ?>
+					<?php do_action('nebula_options_interface_additional_panes'); //Allow for additional panels to be added from plugins or child theme ?>
 
 
 

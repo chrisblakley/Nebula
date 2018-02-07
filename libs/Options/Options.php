@@ -16,6 +16,19 @@ if ( !trait_exists('Options') ){
 		 Data is for values that are used by Nebula functionality to check for reference and conditions.
 		 ===========================*/
 
+		//Get a list of all Nebula Options categories
+		public function get_option_categories(){
+			$categories = array(
+				array('name' => 'Metadata', 'icon' => 'fa-tags'),
+				array('name' => 'Functions', 'icon' => 'fa-sliders-h'),
+				array('name' => 'Analytics', 'icon' => 'fa-chart-area'),
+				array('name' => 'APIs', 'icon' => 'fa-key'),
+				array('name' => 'Administration', 'icon' => 'fa-briefcase'),
+			);
+
+			return apply_filters('nebula_option_categories', $categories); //Allow other functions to hook in to add categories
+		}
+
 		//Check for the option and return it or a fallback.
 		public function option($option, $fallback=false){return $this->get_option($option, $fallback);}
 		public function get_option($option, $fallback=false){
@@ -236,7 +249,7 @@ if ( !trait_exists('Options') ){
 				'weather' => 0,
 				'theme_update_notification' => 1,
 				'wp_core_updates_notify' => 1,
-				'plugin_update_warning' => 1,
+				'plugin_update_warning' => 0,
 				'unnecessary_metaboxes' => 1,
 				'scss' => 0,
 				'dev_stylesheets' => 0,
@@ -384,10 +397,17 @@ if ( !trait_exists('Options') ){
 
 		//Nebula admin subpages
 		public function admin_sub_menu(){
-			add_theme_page('Nebula Options', 'Nebula Options', 'manage_options', 'nebula_options', array($this, 'options_page')); //Nebula Options page
+			//Nebula Options page
+			add_theme_page(
+				'Nebula Options', //Page Title
+				'Nebula Options', //Menu Title
+				'manage_options', //Capabilities
+				'nebula_options', //Menu Slug (Unique)
+				array($this, 'options_page') //Function
+			);
 		}
 
-		//Output the options page
+		//Output the options page interface
 		public function options_page(){
 			require_once(get_template_directory() . '/libs/Options/Interface.php');
 		}

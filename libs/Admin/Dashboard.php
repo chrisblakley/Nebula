@@ -361,7 +361,7 @@ if ( !trait_exists('Dashboard') ){
 			} else {
 				echo '<i class="fas fa-fw fa-globe"></i>';
 			}
-			echo ' IP Address: <a href="http://whatismyipaddress.com/ip/' . $_SERVER["REMOTE_ADDR"] . '" target="_blank" rel="noopener"><strong class="admin-user-info admin-user-ip">' . $_SERVER["REMOTE_ADDR"] . '</strong></a>';
+			echo ' IP Address: <a href="http://whatismyipaddress.com/ip/' . $this->get_ip_address() . '" target="_blank" rel="noopener"><strong class="admin-user-info admin-user-ip">' . $this->get_ip_address() . '</strong></a>';
 			echo '</li>';
 
 			//IP Location
@@ -377,11 +377,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//Weather
 			if ( $this->get_option('weather') ){
-				$ip_zip = '';
-				if ( $this->ip_location() ){
-					$ip_zip = $this->ip_location('zip');
-				}
-
+				$ip_zip = ( $this->ip_location() )? $this->ip_location('zip') : '';
 				$temperature = $this->weather($ip_zip, 'temp');
 				if ( !empty($temperature) ){
 					echo '<li><i class="fas fa-fw fa-cloud"></i> Weather: <strong>' . $temperature . '&deg;F ' . $this->weather($ip_zip, 'conditions') . '</strong></li>';

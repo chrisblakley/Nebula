@@ -609,6 +609,16 @@ if ( !trait_exists('Admin') ){
 				'href' => get_admin_url() . 'themes.php?page=nebula_options'
 			));
 
+			foreach ( $this->get_option_categories() as $category ){
+				$wp_admin_bar->add_node(array(
+					'parent' => 'nebula-options',
+					'id' => 'nebula-options-' . $category['name'],
+					'title' => '<i class="nebula-admin-fa fas fa-fw ' . $category['icon'] . '"></i> ' . $category['name'],
+					'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=' . $category['name'],
+					'meta' => array('target' => '_blank', 'rel' => 'noopener')
+				));
+			}
+
 			$wp_admin_bar->add_node(array(
 				'parent' => 'nebula-options',
 				'id' => 'nebula-options-help',
@@ -719,7 +729,7 @@ if ( !trait_exists('Admin') ){
 
 		//Show update warning on Wordpress Core/Plugin update admin pages
 		public function update_warning(){
-			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress core or plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=" . urlencode(get_bloginfo('name')) . "&utm_content=update+warning" . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . "'>Pinckney Hugo Group</a> if there are questions about updates: (315) 478-6700</p></div>";
+			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=" . urlencode(get_bloginfo('name')) . "&utm_content=update+warning" . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . "'>Pinckney Hugo Group</a> if there are questions about updates: (315) 478-6700</p></div>";
 		}
 
 		//Nebula Theme Update Checker
@@ -1053,7 +1063,7 @@ if ( !trait_exists('Admin') ){
 		public function change_admin_footer_right(){
 			global $wp_version;
 			$child = ( is_child_theme() )? ' <small>(Child)</small>' : '';
-			return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . $this->version('date') . '"><a href="https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=footer&utm_source=version" target="_blank" rel="noopener">Nebula</a> <strong class="nebula"><a href="https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master" target="_blank">' . $this->version('version') . '</a></strong>' . $child . '</span>';
+			return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . $this->version('date') . '"><a href="https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=footer&utm_source=version' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener">Nebula</a> <strong class="nebula"><a href="https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master" target="_blank">' . $this->version('version') . '</a></strong>' . $child . '</span>';
 		}
 
 		public function post_meta_boxes_setup(){
