@@ -161,97 +161,99 @@
 			}
 		<?php endif; ?>
 
-		<?php if ( nebula()->get_option('cm_pagevisible') && nebula()->get_option('cm_pagehidden') ): //Autotrack Page Visibility ?>
-			ga('require', 'pageVisibilityTracker', {
-				hiddenMetricIndex: parseInt(nebula.analytics.metrics.pageHidden.replace('metric', '')),
-				visibleMetricIndex: parseInt(nebula.analytics.metrics.pageVisible.replace('metric', '')),
-				fieldsObj: {nonInteraction: true}
+		<?php if ( 1==1 ): //Autotrack ?>
+			<?php if ( nebula()->get_option('cm_pagevisible') && nebula()->get_option('cm_pagehidden') ): //Autotrack Page Visibility ?>
+				ga('require', 'pageVisibilityTracker', {
+					hiddenMetricIndex: parseInt(nebula.analytics.metrics.pageHidden.replace('metric', '')),
+					visibleMetricIndex: parseInt(nebula.analytics.metrics.pageVisible.replace('metric', '')),
+					fieldsObj: {nonInteraction: true}
+				});
+			<?php endif; ?>
+
+			//Autotrack Clean URL
+			var queryStringDimension = parseInt(nebula.analytics.dimensions.queryString.replace('dimension', ''));
+			ga('require', 'cleanUrlTracker', {
+				stripQuery: ( queryStringDimension )? true : false,
+				queryDimensionIndex: queryStringDimension,
+				queryParamsWhitelist: ['s', 'rs'],
+				indexFilename: 'index.php',
+				trailingSlash: 'add'
 			});
-		<?php endif; ?>
 
-		//Autotrack Clean URL
-		var queryStringDimension = parseInt(nebula.analytics.dimensions.queryString.replace('dimension', ''));
-		ga('require', 'cleanUrlTracker', {
-			stripQuery: ( queryStringDimension )? true : false,
-			queryDimensionIndex: queryStringDimension,
-			queryParamsWhitelist: ['s', 'rs'],
-			indexFilename: 'index.php',
-			trailingSlash: 'add'
-		});
+			//Autotrack Social Widgets
+			ga('require', 'socialWidgetTracker', {
+				hitFilter: function(model){
+					model.set('hitType', 'event'); //Change the hit type from `social` to `event`.
 
-		//Autotrack Social Widgets
-		ga('require', 'socialWidgetTracker', {
-			hitFilter: function(model){
-				model.set('hitType', 'event'); //Change the hit type from `social` to `event`.
+					//Map the social values to event values.
+					model.set('eventCategory', model.get('socialNetwork'));
+					model.set('eventAction', model.get('socialAction'));
+					model.set('eventLabel', model.get('socialTarget'));
 
-				//Map the social values to event values.
-				model.set('eventCategory', model.get('socialNetwork'));
-				model.set('eventAction', model.get('socialAction'));
-				model.set('eventLabel', model.get('socialTarget'));
-
-				//Unset the social values.
-				model.set('socialNetwork', null);
-				model.set('socialAction', null);
-				model.set('socialTarget', null);
-			}
-		});
-
-		<?php if ( nebula()->get_option('cd_mqbreakpoint') || nebula()->get_option('cd_mqresolution') || nebula()->get_option('cd_mqorientation') ): //Autotrack Media Queries ?>
-			ga('require', 'mediaQueryTracker', {
-				definitions: [{
-					name: 'Breakpoint',
-					dimensionIndex: parseInt(nebula.analytics.dimensions.mqBreakpoint.replace('dimension', '')),
-					items: [
-						{name: 'xs', media: 'all'},
-						{name: 'sm', media: '(min-width: 544px)'},
-						{name: 'md', media: '(min-width: 768px)'},
-						{name: 'lg', media: '(min-width: 992px)'},
-						{name: 'xl', media: '(min-width: 1200px)'}
-					]
-				}, {
-					name: 'Resolution',
-					dimensionIndex: parseInt(nebula.analytics.dimensions.mqResolution.replace('dimension', '')),
-					items: [
-						{name: '1x', media: 'all'},
-						{name: '1.5x', media: '(min-resolution: 144dpi)'},
-						{name: '2x', media: '(min-resolution: 192dpi)'}
-					]
-				}, {
-					name: 'Orientation',
-					dimensionIndex: parseInt(nebula.analytics.dimensions.mqOrientation.replace('dimension', '')),
-					items: [
-						{name: 'landscape', media: '(orientation: landscape)'},
-						{name: 'portrait', media: '(orientation: portrait)'}
-					]
-				}],
-				fieldsObj: {nonInteraction: true}
+					//Unset the social values.
+					model.set('socialNetwork', null);
+					model.set('socialAction', null);
+					model.set('socialTarget', null);
+				}
 			});
-		<?php endif; ?>
 
-		//Autotrack Impressions (Scroll into view)
-		//Elements themselves are detected in main.js (or child.js)
-		ga('require', 'impressionTracker', {
-			hitFilter: function(model, element){
-				if ( jQuery(element).is('form') && !jQuery(element).find('input[name=s]').length ){
-					if ( !jQuery(element).hasClass('.ignore-form') && !jQuery(element).find('.ignore-form').length && !jQuery(element).parents('.ignore-form').length ){
-						ga('set', nebula.analytics.metrics.formImpressions, 1);
+			<?php if ( nebula()->get_option('cd_mqbreakpoint') || nebula()->get_option('cd_mqresolution') || nebula()->get_option('cd_mqorientation') ): //Autotrack Media Queries ?>
+				ga('require', 'mediaQueryTracker', {
+					definitions: [{
+						name: 'Breakpoint',
+						dimensionIndex: parseInt(nebula.analytics.dimensions.mqBreakpoint.replace('dimension', '')),
+						items: [
+							{name: 'xs', media: 'all'},
+							{name: 'sm', media: '(min-width: 544px)'},
+							{name: 'md', media: '(min-width: 768px)'},
+							{name: 'lg', media: '(min-width: 992px)'},
+							{name: 'xl', media: '(min-width: 1200px)'}
+						]
+					}, {
+						name: 'Resolution',
+						dimensionIndex: parseInt(nebula.analytics.dimensions.mqResolution.replace('dimension', '')),
+						items: [
+							{name: '1x', media: 'all'},
+							{name: '1.5x', media: '(min-resolution: 144dpi)'},
+							{name: '2x', media: '(min-resolution: 192dpi)'}
+						]
+					}, {
+						name: 'Orientation',
+						dimensionIndex: parseInt(nebula.analytics.dimensions.mqOrientation.replace('dimension', '')),
+						items: [
+							{name: 'landscape', media: '(orientation: landscape)'},
+							{name: 'portrait', media: '(orientation: portrait)'}
+						]
+					}],
+					fieldsObj: {nonInteraction: true}
+				});
+			<?php endif; ?>
+
+			//Autotrack Impressions (Scroll into view)
+			//Elements themselves are detected in main.js (or child.js)
+			ga('require', 'impressionTracker', {
+				hitFilter: function(model, element){
+					if ( jQuery(element).is('form') && !jQuery(element).find('input[name=s]').length ){
+						if ( !jQuery(element).hasClass('.ignore-form') && !jQuery(element).find('.ignore-form').length && !jQuery(element).parents('.ignore-form').length ){
+							ga('set', nebula.analytics.metrics.formImpressions, 1);
+						}
 					}
 				}
-			}
-		});
+			});
 
-		//Autotrack Max Scroll
-		ga('require', 'maxScrollTracker', {
-			maxScrollMetricIndex: parseInt(nebula.analytics.metrics.maxScroll.replace('metric', '')),
-			hitFilter: function(model){
-				model.set('nonInteraction', true, true); //Set non-interaction to true (prevent scrolling affecting bounce rate)
-			},
-		});
+			//Autotrack Max Scroll
+			ga('require', 'maxScrollTracker', {
+				maxScrollMetricIndex: parseInt(nebula.analytics.metrics.maxScroll.replace('metric', '')),
+				hitFilter: function(model){
+					model.set('nonInteraction', true, true); //Set non-interaction to true (prevent scrolling affecting bounce rate)
+				},
+			});
 
-		//Autotrack Outbound Links
-		ga('require', 'outboundLinkTracker', {
-			events: ['click', 'auxclick', 'contextmenu']
-		});
+			//Autotrack Outbound Links
+			ga('require', 'outboundLinkTracker', {
+				events: ['click', 'auxclick', 'contextmenu']
+			});
+		<?php endif; ?>
 
 		<?php if ( nebula()->get_option('google_optimize_id') ): //Google Optimize ?>
 			ga('require', '<?php echo nebula()->get_option('google_optimize_id'); ?>');
@@ -370,12 +372,12 @@
 		<?php endif; ?>
 
 		//Generate a unique ID for hits and windows
-		nebula.uuid = function(a){
-			return a ? (a^Math.random()*16 >> a/4).toString(16) : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, nebula.uuid);
+		function uuid(a){
+			return a ? (a^Math.random()*16 >> a/4).toString(16) : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, uuid;
 		}
 
 		//Get local time string with timezone offset
-		nebula.localTimestamp = function(){
+		function localTimestamp(){
 			var now = new Date();
 			var tzo = -now.getTimezoneOffset();
 			var dif = ( tzo >= 0 )? '+' : '-';
@@ -392,8 +394,8 @@
 	<script>
 		nebula.analytics.isReady = true; <?php //Set to true to prevent AJAX Google Analytics data ?>
 		function ga(){}
-		nebula.uuid = function(){}
-		nebula.localTimestamp = function(){}
+		function uuid(){}
+		function localTimestamp(){}
 	</script>
 <?php endif; ?>
 

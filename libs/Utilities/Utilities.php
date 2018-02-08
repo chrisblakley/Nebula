@@ -1008,6 +1008,12 @@ if ( !trait_exists('Utilities') ){
 					$custom_nebula_properties = array();
 
 					$custom_nebula_properties[] = array(
+						'name' => 'full_name',
+						'label' => 'Full Name',
+						'description' => "The full name of the contact",
+					);
+
+					$custom_nebula_properties[] = array(
 						'name' => 'user_agent',
 						'label' => 'User Agent',
 						'description' => "The user agent of the contact's device/browser",

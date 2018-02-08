@@ -21,16 +21,31 @@ if ( !trait_exists('Optimization') ){
 			add_filter('wpcf7_load_css', '__return_false'); //Disable CF7 CSS resources (in favor of Bootstrap and Nebula overrides)
 		}
 
-		//Control which scripts use defer/async using a query string.
+		public function register_script($handle=null, $src=null, $exec=null, $deps=array(), $ver=false, $in_footer=false){
+			$path = ( !empty($exec) )? $src . '#' . $exec : $src;
+			wp_register_script($handle, $path, $deps, $ver, $in_footer);
+		}
+
+		//Remove version query strings from registered/enqueued styles/scripts (to allow caching)
+		//For debugging (see the "add_debug_query_arg" function in /libs/Scripts.php)
+		public function remove_script_version($src){
+			if ( $this->is_debug() ){
+				return $src;
+			}
+
+			return remove_query_arg('ver', $src);
+		}
+
+		//Control which scripts use defer/async using a hash.
 		public function defer_async_scripts($url){
-			if ( strpos($url, '.js?defer') === false && strpos($url, '.js?async') === false ){
+			if ( strpos($url, '#defer') === false && strpos($url, '#async') === false ){
 				return $url;
 			}
 
-			if ( strpos($url, '.js?defer') ){
-				return str_replace('.js?defer', '.js', $url) . "' defer='defer"; //Add the defer attribute while removing the query string
-			} elseif ( strpos($url, '.js?async') ){
-				return str_replace('.js?async', '.js', $url) . "' async='async"; //Add the async attribute while removing the query string
+			if ( strpos($url, '#defer') ){
+				return str_replace('#defer', '', $url) . "' defer='defer"; //Add the defer attribute while removing the hash
+			} elseif ( strpos($url, '#async') ){
+				return str_replace('#async', '', $url) . "' async='async"; //Add the async attribute while removing the hash
 			}
 		}
 
@@ -138,11 +153,6 @@ if ( !trait_exists('Optimization') ){
 			}
 		}
 
-		//Remove version query strings from registered/enqueued styles/scripts (to allow caching)
-		public function remove_script_version($src){
-			return remove_query_arg('ver', $src);
-		}
-
 		//Dequeue certain scripts
 		public function dequeues(){
 			$override = apply_filters('pre_nebula_dequeues', null);
@@ -232,15 +242,6 @@ if ( !trait_exists('Optimization') ){
 			} else {
 				return array();
 			}
-		}
-
-		public function register_script($handle=null, $src=null, $exec=null, $deps=array(), $ver=false, $in_footer=false){
-			if ( !$this->is_debug() ){
-				$path = ( !empty($exec) )? $src . '?' . $exec : $src;
-			} else {
-				$path = $src;
-			}
-			wp_register_script($handle, $path, $deps, $ver, $in_footer);
 		}
 
 		//Lazy-load images

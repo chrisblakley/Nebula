@@ -59,9 +59,9 @@ add_action('login_enqueue_scripts', 'register_nebula_child_styles');
 add_action('admin_enqueue_scripts', 'register_nebula_child_styles');
 function register_nebula_child_styles(){
 	//wp_register_style($handle, $src, $dependencies, $version, $media);
-	wp_register_style('nebula-child', get_stylesheet_directory_uri() . '/style.css', array('nebula-main'), null, 'all');
-	wp_register_style('nebula-login-child', get_stylesheet_directory_uri() . '/assets/css/login.css', array('nebula-login'), null, 'all');
-	wp_register_style('nebula-admin-child', get_stylesheet_directory_uri() . '/assets/css/admin.css', array('nebula-admin'), null, 'all');
+	wp_register_style('nebula-child', get_stylesheet_directory_uri() . '/style.css', array('nebula-main'), nebula()->version('full'), 'all');
+	wp_register_style('nebula-login-child', get_stylesheet_directory_uri() . '/assets/css/login.css', array('nebula-login'), nebula()->version('full'), 'all');
+	wp_register_style('nebula-admin-child', get_stylesheet_directory_uri() . '/assets/css/admin.css', array('nebula-admin'), nebula()->version('full'), 'all');
 }
 
 
@@ -75,7 +75,7 @@ add_action('admin_enqueue_scripts', 'register_nebula_child_scripts');
 function register_nebula_child_scripts(){
 	//Use CDNJS to pull common libraries: http://cdnjs.com/
 	//nebula()->register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
-	nebula()->register_script('nebula-main', get_stylesheet_directory_uri() . '/assets/js/main.js', 'defer', array('jquery-core', 'nebula-jquery_ui', 'nebula-nebula'), null, true); //nebula.js (in the parent Nebula theme) is defined as a dependant here.
+	nebula()->register_script('nebula-main', get_stylesheet_directory_uri() . '/assets/js/main.js', 'defer', array('jquery-core', 'nebula-jquery_ui', 'nebula-nebula'), nebula()->version('full'), true); //nebula.js (in the parent Nebula theme) is defined as a dependant here.
 }
 
 

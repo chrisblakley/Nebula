@@ -2217,9 +2217,7 @@ function googleAddressAutocompleteCallback(autocompleteInput, uniqueID){
 			'county': simplePlace.county,
 			'state': simplePlace.state.name,
 			'country': simplePlace.country.name,
-			'zip_code': simplePlace.zip.code,
-			'zip_suffix': simplePlace.zip.suffix,
-			'zip_full': simplePlace.zip.full,
+			'zip': simplePlace.zip.code,
 			'address': simplePlace.street.full + ', ' + simplePlace.city + ', ' + simplePlace.state.abbr + ' ' + simplePlace.zip.code
 		});
 	});
