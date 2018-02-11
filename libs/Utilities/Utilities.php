@@ -1026,9 +1026,9 @@ if ( !trait_exists('Utilities') ){
 					);
 
 					$custom_nebula_properties[] = array(
-						'name' => 'id',
-						'label' => 'User ID',
-						'description' => 'The WordPress ID of logged in users',
+						'name' => 'wordpress_id',
+						'label' => 'WordPress User ID',
+						'description' => 'The WordPress User ID of logged in users',
 					);
 
 					$custom_nebula_properties[] = array(
@@ -1041,6 +1041,24 @@ if ( !trait_exists('Utilities') ){
 						'name' => 'role',
 						'label' => 'Role',
 						'description' => 'The WordPress role of this user (and any staff notations)',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'gender',
+						'label' => 'Gender',
+						'description' => "The user's gender",
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'about',
+						'label' => 'About',
+						'description' => "A short bio about the user",
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'birthday',
+						'label' => 'Birthday',
+						'description' => "The user's birthday",
 					);
 
 					$custom_nebula_properties[] = array(
@@ -1083,6 +1101,24 @@ if ( !trait_exists('Utilities') ){
 						'name' => 'ga_cid',
 						'label' => 'Google Analytics CID',
 						'description' => 'The Google Analytics Client ID to identify this user in GA',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'facebook_id',
+						'label' => 'Facebook ID',
+						'description' => "The ID of the user's Facebook profile",
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'profile_photo',
+						'label' => 'Photo',
+						'description' => "The user's profile photo",
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'image',
+						'label' => 'Image',
+						'description' => "An image associated with the user",
 					);
 
 					$custom_nebula_properties[] = array(

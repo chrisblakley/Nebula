@@ -250,6 +250,14 @@ if ( !trait_exists('Admin') ){
 				);
 			}
 
+			if ( $this->get_option('facebook_app_id') ){
+				$third_party_tools['administrative'][] = array(
+					'name' => 'Facebook For Developers',
+					'icon' => '<i class="fab fa-fw fa-facebook-official"></i>',
+					'url' => 'https://developers.facebook.com/'
+				);
+			}
+
 			if ( $this->get_option('google_adsense_url') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Google AdSense',

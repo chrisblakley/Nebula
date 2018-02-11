@@ -129,7 +129,7 @@
 											<div class="input-group-prepend">
 												<div class="input-group-text"><i class="far fa-fw fa-envelope"></i></div>
 											</div>
-											<input type="email" name="nebula_options[contact_email]" id="contact_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['contact_email']; ?>" placeholder="<?php echo get_option('admin_email', get_userdata(1)->user_email); ?>" />
+											<input type="email" name="nebula_options[contact_email]" id="contact_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['contact_email']; ?>" placeholder="<?php echo get_option('admin_email', get_userdata(1)->user_email); ?>" autocomplete="email" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The main contact email address <strong>(visible in the frontend and in metadata!)</strong>.</p>
 										<p class="nebula-help-text more-help form-text text-muted">If left empty, the admin email address will be used (shown by placeholder).</p>
@@ -142,7 +142,7 @@
 											<div class="input-group-prepend">
 												<div class="input-group-text"><i class="far fa-fw fa-envelope"></i></div>
 											</div>
-											<input type="email" name="nebula_options[notification_email]" id="notification_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['notification_email']; ?>" placeholder="<?php echo get_option('admin_email', get_userdata(1)->user_email); ?>" />
+											<input type="email" name="nebula_options[notification_email]" id="notification_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['notification_email']; ?>" placeholder="<?php echo get_option('admin_email', get_userdata(1)->user_email); ?>" autocomplete="email" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The email address for Nebula notifications.</p>
 										<p class="nebula-help-text more-help form-text text-muted">If left empty, the admin email address will be used (shown by placeholder).</p>
@@ -167,7 +167,7 @@
 											<div class="input-group-prepend">
 												<div class="input-group-text"><i class="fas fa-fw fa-phone"></i></div>
 											</div>
-											<input type="tel" name="nebula_options[phone_number]" id="phone_number" class="form-control nebula-validate-regex" data-valid-regex="\d-\d{3}-\d{3}-\d{4}" value="<?php echo $nebula_options['phone_number']; ?>" placeholder="1-315-478-6700" />
+											<input type="tel" name="nebula_options[phone_number]" id="phone_number" class="form-control nebula-validate-regex" data-valid-regex="\d-\d{3}-\d{3}-\d{4}" value="<?php echo $nebula_options['phone_number']; ?>" placeholder="1-315-478-6700" autocomplete="tel" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The primary phone number used for Open Graph data. Use the format: "1-315-478-6700".</p>
 										<p class="option-keywords">recommended seo</p>
@@ -179,7 +179,7 @@
 											<div class="input-group-prepend">
 												<div class="input-group-text"><i class="fas fa-fw fa-fax"></i></div>
 											</div>
-											<input type="tel" name="nebula_options[fax_number]" id="fax_number" class="form-control nebula-validate-regex" data-valid-regex="\d-\d{3}-\d{3}-\d{4}" value="<?php echo $nebula_options['fax_number']; ?>" placeholder="1-315-426-1392" />
+											<input type="tel" name="nebula_options[fax_number]" id="fax_number" class="form-control nebula-validate-regex" data-valid-regex="\d-\d{3}-\d{3}-\d{4}" value="<?php echo $nebula_options['fax_number']; ?>" placeholder="1-315-426-1392" autocomplete="tel" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The fax number used for Open Graph data. Use the format: "1-315-426-1392".</p>
 										<p class="option-keywords"></p>
@@ -218,32 +218,32 @@
 									<div class="multi-form-group">
 										<div class="form-group">
 											<label for="street_address">Address</label>
-											<input type="text" name="nebula_options[street_address]" id="street_address" class="form-control nebula-validate-text mb-2" value="<?php echo $nebula_options['street_address']; ?>" placeholder="760 West Genesee Street" />
+											<input type="text" name="nebula_options[street_address]" id="street_address" class="form-control nebula-validate-text mb-2" value="<?php echo $nebula_options['street_address']; ?>" placeholder="760 West Genesee Street" autocomplete="street-address" />
 										</div>
 
 										<div class="row">
 											<div class="col-sm-5">
 												<div class="form-group">
 													<label for="locality">City</label>
-													<input type="text" name="nebula_options[locality]" id="locality" class="form-control nebula-validate-text mb-2 mr-sm-2 mb-sm-0" value="<?php echo $nebula_options['locality']; ?>" placeholder="Syracuse" />
+													<input type="text" name="nebula_options[locality]" id="locality" class="form-control nebula-validate-text mb-2 mr-sm-2 mb-sm-0" value="<?php echo $nebula_options['locality']; ?>" placeholder="Syracuse" autocomplete="address-level2" />
 												</div>
 											</div>
 											<div class="col-sm-2">
 												<div class="form-group">
 													<label for="region">State</label>
-													<input type="text" name="nebula_options[region]" id="region" class="form-control nebula-validate-text mb-2 mr-sm-2 mb-sm-0" value="<?php echo $nebula_options['region']; ?>" placeholder="NY" />
+													<input type="text" name="nebula_options[region]" id="region" class="form-control nebula-validate-text mb-2 mr-sm-2 mb-sm-0" value="<?php echo $nebula_options['region']; ?>" placeholder="NY" autocomplete="address-level1" />
 												</div>
 											</div>
 											<div class="col-sm-3">
 												<div class="form-group">
 													<label for="postal_code">Zip</label>
-													<input type="text" name="nebula_options[postal_code]" id="postal_code" class="form-control nebula-validate-regex mb-2 mr-sm-2 mb-sm-0" data-valid-regex="\d{5,}" value="<?php echo $nebula_options['postal_code']; ?>" placeholder="13204" />
+													<input type="text" name="nebula_options[postal_code]" id="postal_code" class="form-control nebula-validate-regex mb-2 mr-sm-2 mb-sm-0" data-valid-regex="\d{5,}" value="<?php echo $nebula_options['postal_code']; ?>" placeholder="13204" autocomplete="postal-code" />
 												</div>
 											</div>
 											<div class="col-sm-2">
 												<div class="form-group">
 													<label for="country_name">Country</label>
-													<input type="text" name="nebula_options[country_name]" id="country_name" class="form-control nebula-validate-text mb-2 mr-sm-2 mb-sm-0" value="<?php echo $nebula_options['country_name']; ?>" placeholder="USA" />
+													<input type="text" name="nebula_options[country_name]" id="country_name" class="form-control nebula-validate-text mb-2 mr-sm-2 mb-sm-0" value="<?php echo $nebula_options['country_name']; ?>" placeholder="USA" autocomplete="country" />
 												</div>
 											</div>
 										</div>

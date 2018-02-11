@@ -186,37 +186,37 @@ if ( !trait_exists('Users') ){
 				<tr class="nebula-job-title-wrap">
 					<th><label for="jobtitle">Job Title</label></th>
 					<td>
-						<input id="jobtitle" class="regular-text" type="text" name="jobtitle" value="<?php echo esc_attr(get_the_author_meta('jobtitle', $user->ID)); ?>" /><br />
+						<input id="jobtitle" class="regular-text" type="text" name="jobtitle" value="<?php echo esc_attr(get_the_author_meta('jobtitle', $user->ID)); ?>" autocomplete="organization-title" /><br />
 					</td>
 				</tr>
 				<tr class="nebula-company-wrap">
 					<th><label for="jobcompany">Company</label></th>
 					<td>
-						<input id="jobcompany" class="regular-text" type="text" name="jobcompany" value="<?php echo esc_attr(get_the_author_meta('jobcompany', $user->ID)); ?>" /><br />
+						<input id="jobcompany" class="regular-text" type="text" name="jobcompany" value="<?php echo esc_attr(get_the_author_meta('jobcompany', $user->ID)); ?>" autocomplete="organization" /><br />
 					</td>
 				</tr>
 				<tr class="nebula-company-website-wrap">
 					<th><label for="jobcompanywebsite">Company Website</label></th>
 					<td>
-						<input id="jobcompanywebsite" class="regular-text" type="url" name="jobcompanywebsite" value="<?php echo esc_attr(get_the_author_meta('jobcompanywebsite', $user->ID)); ?>" placeholder="http://" /><br />
+						<input id="jobcompanywebsite" class="regular-text" type="url" name="jobcompanywebsite" value="<?php echo esc_attr(get_the_author_meta('jobcompanywebsite', $user->ID)); ?>" placeholder="http://" autocomplete="url" /><br />
 					</td>
 				</tr>
 				<tr class="nebula-city-wrap">
 					<th><label for="usercity">City</label></th>
 					<td>
-						<input id="usercity" class="regular-text" type="text" name="usercity" value="<?php echo esc_attr(get_the_author_meta('usercity', $user->ID)); ?>" placeholder="City" /><br />
+						<input id="usercity" class="regular-text" type="text" name="usercity" value="<?php echo esc_attr(get_the_author_meta('usercity', $user->ID)); ?>" placeholder="City" autocomplete="address-level2" /><br />
 					</td>
 				</tr>
 				<tr class="nebula-state-wrap">
 					<th><label for="userstate">State</label></th>
 					<td>
-						<input id="userstate" class="regular-text" type="text" name="userstate" value="<?php echo esc_attr(get_the_author_meta('userstate', $user->ID)); ?>" placeholder="State" /><br />
+						<input id="userstate" class="regular-text" type="text" name="userstate" value="<?php echo esc_attr(get_the_author_meta('userstate', $user->ID)); ?>" placeholder="State" autocomplete="address-level1" /><br />
 					</td>
 				</tr>
 				<tr class="nebula-phone-wrap">
 					<th><label for="phoneextension">Phone Number</label></th>
 					<td>
-						<input id="phonenumber" class="regular-text" type="text" name="phonenumber" value="<?php echo esc_attr(get_the_author_meta('phonenumber', $user->ID)); ?>" /><br />
+						<input id="phonenumber" class="regular-text" type="text" name="phonenumber" value="<?php echo esc_attr(get_the_author_meta('phonenumber', $user->ID)); ?>" autocomplete="postal-code" /><br />
 					</td>
 				</tr>
 			</table>

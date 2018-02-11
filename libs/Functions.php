@@ -2360,7 +2360,7 @@ trait Functions {
 	public function password_form_simplify(){
 		$output  = '<form class="ignore-form" action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" method="post">
 						<span>Password: </span>
-						<input type="password" class="ignore-form" name="post_password" size="20" />
+						<input type="password" class="ignore-form" name="post_password" size="20" autocomplete="current-password" />
 						<input type="submit" name="Submit" value="Go" />
 					</form>';
 		return $output;

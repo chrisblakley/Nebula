@@ -74,6 +74,7 @@ jQuery(window).on('load', function(){
 
 	facebookSDK();
 	facebookConnect();
+	prefillFacebookFields();
 
 	nebulaBattery();
 	nebulaNetworkConnection();
@@ -368,7 +369,7 @@ function nebulaBatteryData(battery){
 //Detect Network Connection
 function nebulaNetworkConnection(){
 	var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection || false;
-	if ( connection ) {
+	if ( connection ){
 		nebula.user.client.device.connection = {
 			type: connection.type,
 			metered: connection.metered,
@@ -384,23 +385,21 @@ function nebulaNetworkConnection(){
 
 //Load the SDK asynchronously
 function facebookSDK(){
-	if ( jQuery('[class*="fb-"]').length || jQuery('.require-fbsdk').length ){ //Only load the Facebook SDK when needed
-		(function(d, s, id){
-			var js, fjs = d.getElementsByTagName(s)[0];
-			if (d.getElementById(id)) return;
-			js = d.createElement(s); js.id = id;
-			js.async = true;
-			js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
-			fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));
+	if ( jQuery('[class*="fb-"]:not(.fb-root)').length || jQuery('.require-fbsdk').length ){ //Only load the Facebook SDK when needed
+		(function(d){
+			var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+			js = d.createElement('script'); js.id = id; js.async = true;
+			js.src = "https://connect.facebook.net/" + nebula.site.charset + "/all.js";
+			d.getElementsByTagName('head')[0].appendChild(js);
+		}(document));
 	}
 }
 
 //Facebook Connect functions
 function facebookConnect(){
-	nebula.fbConnectFlag = false;
+	nebula.user.flags.fbconnect = false;
 
-	if ( has(nebula, 'site.options.facebook_app_id') ){
+	if ( nebula.site.options.facebook_app_id ){
 		window.fbAsyncInit = function(){
 			FB.init({
 				appId: nebula.site.options.facebook_app_id,
@@ -410,10 +409,117 @@ function facebookConnect(){
 			});
 
 			nebula.dom.document.trigger('fbinit');
+			checkFacebookStatus();
 		};
 	} else {
 		jQuery('.facebook-connect').remove();
 	}
+}
+
+//Check Facebook Status
+function checkFacebookStatus(){
+	FB.getLoginStatus(function(response){
+		nebula.user.facebook = {'status': response.status}
+		if ( nebula.user.facebook.status === 'connected' ){ //User is logged into Facebook and is connected to this app.
+			FB.api('/me', {fields: 'id,name,first_name,last_name,cover,devices,gender,email,link,locale,timezone'}, function(response){ //Only publicly available fields
+				nebula.user.facebook = {
+					id: response.id,
+					name: {
+						first: response.first_name,
+						last: response.last_name,
+						full: response.name,
+					},
+					gender: response.gender,
+					email: response.email,
+					image: {
+						base: 'https://graph.facebook.com/' + response.id + '/picture',
+						thumbnail: 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100',
+						large: 'https://graph.facebook.com/' + response.id + '/picture?width=1000&height=1000',
+						cover: response.cover.source,
+					},
+					url: response.link,
+					location: {
+						locale: response.locale,
+						timezone: response.timezone,
+					},
+					devices: response.devices
+				}
+
+				nebula.user.name = {
+					first: response.first_name,
+					last: response.last_name,
+					full: response.name,
+				};
+				nebula.user.gender = response.gender;
+				nebula.user.email = response.email;
+				nebula.user.location = {
+					locale: response.locale,
+					timezone: response.timezone,
+				}
+
+				nv('identify', {
+					firstname: response.first_name,
+					lastname: response.last_name,
+					full_name: response.name,
+					email: response.email,
+					facebook_id: response.id,
+					profile_photo: 'https://graph.facebook.com/' + response.id + '/picture?width=1000&height=1000',
+					image: response.cover.source,
+					gender: response.gender,
+				});
+
+				ga('set', nebula.analytics.dimensions.fbID, nebula.user.facebook.id);
+				if ( nebula.user.flags.fbconnect !== true ){
+					ga('send', 'event', 'Social', 'Facebook Connect', nebula.user.facebook.id);
+					nebula.user.flags.fbconnect = true;
+				}
+
+				nebula.dom.body.removeClass('fb-disconnected').addClass('fb-connected fb-' + nebula.user.facebook.id);
+				createCookie('nebulaUser', JSON.stringify(nebula.user));
+				jQuery(document).trigger('fbConnected', response);
+			});
+		} else if ( nebula.user.facebook.status === 'not_authorized' ){ //User is logged into Facebook, but has not connected to this app.
+			nebula.dom.body.removeClass('fb-connected').addClass('fb-not_authorized');
+			jQuery(document).trigger('fbNotAuthorized');
+			nebula.user.flags.fbconnect = false;
+		} else { //User is not logged into Facebook.
+			nebula.dom.body.removeClass('fb-connected').addClass('fb-disconnected');
+			jQuery(document).trigger('fbDisconnected');
+			nebula.user.flags.fbconnect = false;
+		}
+	});
+}
+
+//Fill or clear form inputs with Facebook data
+function prefillFacebookFields(){
+	jQuery(document).on('fbConnected', function(){
+		jQuery('.fb-name, .comment-form-author input, input.name').each(function(){
+			if ( jQuery.trim(jQuery(this).val()) === '' ){
+				jQuery(this).val(nebula.user.facebook.name.full).addClass('fb-filled').trigger('keyup');
+			}
+		});
+		jQuery('.fb-first-name, input.first-name').each(function(){
+			if ( jQuery.trim(jQuery(this).val()) === '' ){
+				jQuery(this).val(nebula.user.facebook.name.first).addClass('fb-filled').trigger('keyup');
+			}
+		});
+		jQuery('.fb-last-name, input.last-name').each(function(){
+			if ( jQuery.trim(jQuery(this).val()) === '' ){
+				jQuery(this).val(nebula.user.facebook.name.last).addClass('fb-filled').trigger('keyup');
+			}
+		});
+		jQuery('.fb-email, .comment-form-email input, .wpcf7-email, input.email').each(function(){
+			if ( jQuery.trim(jQuery(this).val()) === '' ){
+				jQuery(this).val(nebula.user.facebook.email).addClass('fb-filled').trigger('keyup');
+			}
+		});
+	});
+
+	jQuery(document).on('fbNotAuthorized fbDisconnected', function(){
+		jQuery('.fb-filled').each(function(){
+			jQuery(this).val('').removeClass('fb-filled').trigger('keyup');
+		});
+	});
 }
 
 //Social sharing buttons
@@ -631,7 +737,7 @@ function eventTracking(){
 	//Notable Downloads
 	nebula.dom.document.on('mousedown', ".notable a, a.notable", function(e){
 		var filePath = jQuery(this).attr('href');
-		if ( filePath !== '#' ){
+		if ( jQuery.trim(filePath).length && filePath !== '#' ){
 			eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 			ga('set', nebula.analytics.metrics.notableDownloads, 1);
 			var linkText = jQuery(this).text();
