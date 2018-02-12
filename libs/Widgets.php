@@ -170,13 +170,13 @@ if ( !trait_exists('Widgets') ){
 					<?php if ( !empty($instance['show_social_links']) ): ?>
 						<?php
 							$author_social = array(
-								'facebook-official' => ( get_user_meta($user_id, 'facebook', true) )? 'https://www.facebook.com/' . get_user_meta($user_id, 'facebook', true) : false,
+								'facebook' => ( get_user_meta($user_id, 'facebook', true) )? 'https://www.facebook.com/' . get_user_meta($user_id, 'facebook', true) : false,
 								'twitter' => ( get_user_meta($user_id, 'twitter', true) )? nebula()->twitter_url(get_user_meta($user_id, 'twitter', true)) : false,
 								'instagram' => ( get_user_meta($user_id, 'instagram', true) )? 'https://www.instagram.com/' . get_user_meta($user_id, 'instagram', true) : false,
-								'linkedin-square' => ( get_user_meta($user_id, 'instagram', true) )? 'https://www.linkedin.com/' . get_user_meta($user_id, 'instagram', true) : false,
+								'linkedin' => ( get_user_meta($user_id, 'instagram', true) )? 'https://www.linkedin.com/' . get_user_meta($user_id, 'instagram', true) : false,
 								'google-plus' => ( get_user_meta($user_id, 'googleplus', true) )? 'https://plus.google.com/' . get_user_meta($user_id, 'googleplus', true) : false,
 								'pinterest' => ( get_user_meta($user_id, 'pinterest', true) )? 'https://www.pinterest.com/' . get_user_meta($user_id, 'pinterest', true) : false,
-								'youtube-play' => ( get_user_meta($user_id, 'youtube', true) )? 'https://www.youtube.com/user/' . get_user_meta($user_id, 'youtube', true) : false,
+								'youtube' => ( get_user_meta($user_id, 'youtube', true) )? 'https://www.youtube.com/user/' . get_user_meta($user_id, 'youtube', true) : false,
 								'envelope-o' => 'mailto:' . $author_info->user_email
 							);
 							$author_social = array_filter($author_social);
@@ -186,7 +186,7 @@ if ( !trait_exists('Widgets') ){
 								<div class="col">
 									<ul class="author-social">
 										<?php foreach ( $author_social as $icon => $url ): ?>
-											<li><a href="<?php echo $url; ?>" target="_blank"><i class="fas fa-fw fa-<?php echo $icon; ?>"></i></a></li>
+											<li><a href="<?php echo $url; ?>" target="_blank"><i class="<?php echo ( $icon === 'envelope-o' )? 'fas' : 'fab'; ?> fa-fw fa-<?php echo $icon; ?>"></i></a></li>
 										<?php endforeach; ?>
 									</ul>
 								</div><!--/col-->

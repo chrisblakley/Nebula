@@ -2154,17 +2154,26 @@ trait Functions {
 		$defaults = array(
 			'id' => get_current_user_id(),
 			'datapoint' => $datapoint,
+			'fresh' => false,
 			'prepend' => '',
 			'append' => '',
+			'fallback' => false,
 		);
 
 		$data = array_merge($defaults, $options);
 
-		if ( empty($data['id']) ){
-			return false;
+		if ( empty($data['id']) ){ //If there is no user or current user is not logged in
+			return $data['fallback'];
 		}
 
-		$userdata = get_userdata($data['id']);
+		//Get from object cache unless specifically requested fresh data
+		if ( !$data['fresh'] ){
+			$userdata = wp_cache_get('nebula_user_info');
+		}
+		if ( empty($userdata) ){
+			$userdata = get_userdata($data['id']);
+			wp_cache_set('nebula_user_info', $userdata); //Store in object cache
+		}
 
 		if ( !empty($data['datapoint']) ){
 			$requested_data = $data['datapoint'];
@@ -2172,11 +2181,15 @@ trait Functions {
 			if ( !empty($userdata->$requested_data) ){
 				return $data['prepend'] . $userdata->$requested_data . $data['append'];
 			} else {
-				return false;
+				return $data['fallback'];
 			}
 		}
 
-		return $userdata;
+		if ( !empty($userdata) ){
+			return $userdata;
+		}
+
+		return $data['fallback'];
 	}
 
 	//Determine if the author should be the Company Name or the specific author's name.
@@ -3042,12 +3055,12 @@ trait Functions {
 
 		//Contact Email
 		if ( $name === '_nebula_contact_email' ){
-			return ( $this->get_option('contact_email') )? $this->get_option('contact_email') : get_option('admin_email', get_userdata(1)->user_email);
+			return ( $this->get_option('contact_email') )? $this->get_option('contact_email') : get_option('admin_email', $this->get_user_info('user_email', array('id' => 1)));
 		}
 
 		//Notification Email
 		if ( $name === '_nebula_notification_email' ){
-			return ( $this->get_option('notification_email') )? $this->get_option('notification_email') : get_option('admin_email', get_userdata(1)->user_email);
+			return ( $this->get_option('notification_email') )? $this->get_option('notification_email') : get_option('admin_email', $this->get_user_info('user_email', array('id' => 1)));
 		}
 
 		//Safe From Address

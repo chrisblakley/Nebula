@@ -250,14 +250,6 @@ if ( !trait_exists('Admin') ){
 				);
 			}
 
-			if ( $this->get_option('facebook_app_id') ){
-				$third_party_tools['administrative'][] = array(
-					'name' => 'Facebook For Developers',
-					'icon' => '<i class="fab fa-fw fa-facebook-official"></i>',
-					'url' => 'https://developers.facebook.com/'
-				);
-			}
-
 			if ( $this->get_option('google_adsense_url') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Google AdSense',
@@ -279,6 +271,14 @@ if ( !trait_exists('Admin') ){
 				'icon' => '<i class="far fa-fw fa-building"></i>',
 				'url' => 'https://www.google.com/business/'
 			);
+
+			if ( $this->get_option('facebook_app_id') ){
+				$third_party_tools['administrative'][] = array(
+					'name' => 'Facebook For Developers',
+					'icon' => '<i class="fab fa-fw fa-facebook"></i>',
+					'url' => 'https://developers.facebook.com/'
+				);
+			}
 
 			if ( $this->get_option('google_server_api_key') || $this->get_option('google_browser_api_key') ){
 				$third_party_tools['administrative'][] = array(

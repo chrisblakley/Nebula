@@ -26,14 +26,17 @@ if ( !trait_exists('Optimization') ){
 			wp_register_script($handle, $path, $deps, $ver, $in_footer);
 		}
 
-		//Remove version query strings from registered/enqueued styles/scripts (to allow caching)
+		//Remove version query strings from registered/enqueued styles/scripts (to allow caching). Note when troubleshooting: Other plugins may be doing this too.
 		//For debugging (see the "add_debug_query_arg" function in /libs/Scripts.php)
 		public function remove_script_version($src){
 			if ( $this->is_debug() ){
 				return $src;
 			}
 
-			return remove_query_arg('ver', $src);
+			$src = rtrim(remove_query_arg('ver', $src), '?'); //Remove "?" if it is the last character
+			$src = str_replace('?#', '#', $src); //Remove "?" if it is followed by "#" (when using #defer or #async with Nebula)
+
+			return $src;
 		}
 
 		//Control which scripts use defer/async using a hash.

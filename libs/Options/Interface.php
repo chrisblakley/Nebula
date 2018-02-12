@@ -129,7 +129,7 @@
 											<div class="input-group-prepend">
 												<div class="input-group-text"><i class="far fa-fw fa-envelope"></i></div>
 											</div>
-											<input type="email" name="nebula_options[contact_email]" id="contact_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['contact_email']; ?>" placeholder="<?php echo get_option('admin_email', get_userdata(1)->user_email); ?>" autocomplete="email" />
+											<input type="email" name="nebula_options[contact_email]" id="contact_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['contact_email']; ?>" placeholder="<?php echo get_option('admin_email', nebula()->get_user_info('user_email', array('id' => 1))); ?>" autocomplete="email" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The main contact email address <strong>(visible in the frontend and in metadata!)</strong>.</p>
 										<p class="nebula-help-text more-help form-text text-muted">If left empty, the admin email address will be used (shown by placeholder).</p>
@@ -142,7 +142,7 @@
 											<div class="input-group-prepend">
 												<div class="input-group-text"><i class="far fa-fw fa-envelope"></i></div>
 											</div>
-											<input type="email" name="nebula_options[notification_email]" id="notification_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['notification_email']; ?>" placeholder="<?php echo get_option('admin_email', get_userdata(1)->user_email); ?>" autocomplete="email" />
+											<input type="email" name="nebula_options[notification_email]" id="notification_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['notification_email']; ?>" placeholder="<?php echo get_option('admin_email', nebula()->get_user_info('user_email', array('id' => 1))); ?>" autocomplete="email" />
 										</div>
 										<p class="nebula-help-text short-help form-text text-muted">The email address for Nebula notifications.</p>
 										<p class="nebula-help-text more-help form-text text-muted">If left empty, the admin email address will be used (shown by placeholder).</p>

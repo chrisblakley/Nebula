@@ -159,15 +159,15 @@ if ( !trait_exists('Scripts') ){
 				);
 			}
 
-			$user_info = get_userdata(get_current_user_id());
-
 			//User Data
 			$this->brain['user'] = array(
 				'id' => get_current_user_id(),
-				'data' => array(
-					'display_name' => $user_info->data->display_name,
-					'email' => $user_info->data->user_email,
+				'name' => array(
+					'first' => $this->get_user_info('first_name'),
+					'last' => $this->get_user_info('last_name'),
+					'full' => $this->get_user_info('display_name'),
 				),
+				'email' => $this->get_user_info('user_email'),
 				'ip' => $this->get_ip_address(),
 				'cid' => $this->ga_parse_cookie(),
 				'client' => array( //Client data is here inside user because the cookie is not transferred between clients.
@@ -201,6 +201,7 @@ if ( !trait_exists('Scripts') ){
 			);
 
 			$this->brain = apply_filters('nebula_brain', $this->brain); //Allow other functions to hook in to add/modify data
+			$this->brain['user']['known'] = ( !empty($this->brain['user']['email']) )? true : false;
 		}
 
 		//Enqueue frontend scripts

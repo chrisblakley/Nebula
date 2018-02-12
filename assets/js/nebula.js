@@ -1019,6 +1019,10 @@ function nv(action, data){
 	if ( action === 'identify' ){
 		_hsq.push(["identify", data]);
 
+		jQuery.each(data, function(key, value){
+			nebula.user[key] = value;
+		});
+
 		//Send a virtual pageview because event data doesn't work with free Hubspot accounts (and the identification needs a transport method)
 		_hsq.push(['setPath', window.location.href.replace(nebula.site.directory.root, '') + '#virtual-pageview/identify']);
 		_hsq.push(['trackPageView']);
@@ -1027,8 +1031,9 @@ function nv(action, data){
 
 		//Check if email was identified or just supporting data
 		if ( 'email' in data ){
-			if ( nebula.regex.email.test(data['email']) ){
+			if ( !nebula.user.known && nebula.regex.email.test(data['email']) ){
 				ga('send', 'event', 'CRM', 'Contact Identified', "A contact's email address in the CRM has been identified.");
+				nebula.user.known = true;
 			}
 		} else {
 			ga('send', 'event', 'CRM', 'Supporting Information', 'Information associated with this user has been identified.');
@@ -1043,6 +1048,8 @@ function nv(action, data){
 		_hsq.push(['setPath', window.location.href.replace(nebula.site.directory.root, '') + '#virtual-pageview/' + data]);
 		_hsq.push(['trackPageView']);
 	}
+
+	//@TODO "Nebula" 0: AJAX data into session here?
 }
 
 //Easily send data to nv() via URL query parameters

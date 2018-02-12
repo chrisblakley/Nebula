@@ -289,7 +289,7 @@ if ( !trait_exists('Utilities') ){
 		public function user_role($staff_info=true){
 			$usertype = '';
 			if ( is_user_logged_in() ){
-				$user_info = get_userdata(get_current_user_id()); //yolo
+				$user_info = get_userdata(get_current_user_id());
 				$usertype = 'Unknown';
 				if ( !empty($user_info->roles) ){
 					$usertype = ( is_multisite() && is_super_admin() )? 'Super Admin' : ucwords($user_info->roles[0]);

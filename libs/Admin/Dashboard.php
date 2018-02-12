@@ -218,7 +218,6 @@ if ( !trait_exists('Dashboard') ){
 
 		//Current User metabox
 		public function current_user_metabox(){
-			$user_info = get_userdata(get_current_user_id());
 			$headshotURL = esc_attr(get_the_author_meta('headshot_url', get_current_user_id()));
 			$headshot_thumbnail = str_replace('.jpg', '-150x150.jpg' , $headshotURL);
 
@@ -228,7 +227,7 @@ if ( !trait_exists('Dashboard') ){
 				$headshot_html = '<i class="fas fa-fw fa-user"></i>&nbsp;';
 			}
 
-			wp_add_dashboard_widget('nebula_current_user', $headshot_html . $user_info->display_name, array($this, 'dashboard_current_user'));
+			wp_add_dashboard_widget('nebula_current_user', $headshot_html . $this->get_user_info('display_name'), array($this, 'dashboard_current_user'));
 		}
 
 		public function dashboard_current_user(){
