@@ -171,14 +171,16 @@
 			<?php endif; ?>
 
 			//Autotrack Clean URL
-			var queryStringDimension = parseInt(nebula.analytics.dimensions.queryString.replace('dimension', ''));
-			ga('require', 'cleanUrlTracker', {
-				stripQuery: ( queryStringDimension )? true : false,
-				queryDimensionIndex: queryStringDimension,
-				queryParamsWhitelist: ['s', 'rs'],
-				indexFilename: 'index.php',
-				trailingSlash: 'add'
-			});
+			<?php if ( nebula()->get_option('cd_querystring') ): //Autotrack Query String ?>
+				var queryStringDimension = parseInt(nebula.analytics.dimensions.queryString.replace('dimension', ''));
+				ga('require', 'cleanUrlTracker', {
+					stripQuery: ( queryStringDimension )? true : false,
+					queryDimensionIndex: queryStringDimension,
+					queryParamsWhitelist: ['s', 'rs'],
+					indexFilename: 'index.php',
+					trailingSlash: 'add'
+				});
+			<?php endif; ?>
 
 			//Autotrack Social Widgets
 			ga('require', 'socialWidgetTracker', {
@@ -199,32 +201,42 @@
 
 			<?php if ( nebula()->get_option('cd_mqbreakpoint') || nebula()->get_option('cd_mqresolution') || nebula()->get_option('cd_mqorientation') ): //Autotrack Media Queries ?>
 				ga('require', 'mediaQueryTracker', {
-					definitions: [{
-						name: 'Breakpoint',
-						dimensionIndex: parseInt(nebula.analytics.dimensions.mqBreakpoint.replace('dimension', '')),
-						items: [
-							{name: 'xs', media: 'all'},
-							{name: 'sm', media: '(min-width: 544px)'},
-							{name: 'md', media: '(min-width: 768px)'},
-							{name: 'lg', media: '(min-width: 992px)'},
-							{name: 'xl', media: '(min-width: 1200px)'}
-						]
-					}, {
-						name: 'Resolution',
-						dimensionIndex: parseInt(nebula.analytics.dimensions.mqResolution.replace('dimension', '')),
-						items: [
-							{name: '1x', media: 'all'},
-							{name: '1.5x', media: '(min-resolution: 144dpi)'},
-							{name: '2x', media: '(min-resolution: 192dpi)'}
-						]
-					}, {
-						name: 'Orientation',
-						dimensionIndex: parseInt(nebula.analytics.dimensions.mqOrientation.replace('dimension', '')),
-						items: [
-							{name: 'landscape', media: '(orientation: landscape)'},
-							{name: 'portrait', media: '(orientation: portrait)'}
-						]
-					}],
+					definitions: [
+					<?php if ( nebula()->get_option('cd_mqbreakpoint') ): ?>
+						{
+							name: 'Breakpoint',
+							dimensionIndex: parseInt(nebula.analytics.dimensions.mqBreakpoint.replace('dimension', '')),
+							items: [
+								{name: 'xs', media: 'all'},
+								{name: 'sm', media: '(min-width: 544px)'},
+								{name: 'md', media: '(min-width: 768px)'},
+								{name: 'lg', media: '(min-width: 992px)'},
+								{name: 'xl', media: '(min-width: 1200px)'}
+							]
+						},
+					<?php endif; ?>
+					<?php if ( nebula()->get_option('cd_mqresolution') ): ?>
+						{
+							name: 'Resolution',
+							dimensionIndex: parseInt(nebula.analytics.dimensions.mqResolution.replace('dimension', '')),
+							items: [
+								{name: '1x', media: 'all'},
+								{name: '1.5x', media: '(min-resolution: 144dpi)'},
+								{name: '2x', media: '(min-resolution: 192dpi)'}
+							]
+						},
+					<?php endif; ?>
+					<?php if ( nebula()->get_option('cd_mqorientation') ): ?>
+						{
+							name: 'Orientation',
+							dimensionIndex: parseInt(nebula.analytics.dimensions.mqOrientation.replace('dimension', '')),
+							items: [
+								{name: 'landscape', media: '(orientation: landscape)'},
+								{name: 'portrait', media: '(orientation: portrait)'}
+							]
+						}
+					<?php endif; ?>
+					],
 					fieldsObj: {nonInteraction: true}
 				});
 			<?php endif; ?>
@@ -242,12 +254,14 @@
 			});
 
 			//Autotrack Max Scroll
-			ga('require', 'maxScrollTracker', {
-				maxScrollMetricIndex: parseInt(nebula.analytics.metrics.maxScroll.replace('metric', '')),
-				hitFilter: function(model){
-					model.set('nonInteraction', true, true); //Set non-interaction to true (prevent scrolling affecting bounce rate)
-				},
-			});
+			<?php if ( nebula()->get_option('cm_maxscroll') ): //Autotrack Max Scroll ?>
+				ga('require', 'maxScrollTracker', {
+					maxScrollMetricIndex: parseInt(nebula.analytics.metrics.maxScroll.replace('metric', '')),
+					hitFilter: function(model){
+						model.set('nonInteraction', true, true); //Set non-interaction to true (prevent scrolling affecting bounce rate)
+					},
+				});
+			<?php endif; ?>
 
 			//Autotrack Outbound Links
 			ga('require', 'outboundLinkTracker', {

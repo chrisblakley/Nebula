@@ -1937,7 +1937,7 @@
 											<label for="example_option">First Nebula activation date</label>
 											<input type="text" id="first_activation" class="form-control" value="<?php echo $nebula_data['first_activation']; ?>" readonly />
 											<p class="nebula-help-text short-help form-text text-muted">
-												First activated on: <strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['first_activation']); ?></strong> (<?php echo $years_ago = number_format((time()-$nebula_data['first_activation'])/31622400, 2); ?> <?php echo ( $years_ago === 1 )? 'year' : 'years'; ?> ago)
+												First activated on: <strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['first_activation']); ?></strong> (<?php echo human_time_diff($nebula_data['first_activation']); ?> ago)
 											</p>
 											<p class="option-keywords">readonly</p>
 										</div>
@@ -1948,7 +1948,7 @@
 											<p class="nebula-help-text short-help form-text text-muted">
 												Initialized on:
 												<?php if ( !empty($nebula_data['initialized']) ): ?>
-													<strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['initialized']); ?></strong> (<?php echo $years_ago = number_format((time()-$nebula_data['initialized'])/31622400, 2); ?> <?php echo ( $years_ago === 1 )? 'year' : 'years'; ?> ago)
+													<strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['initialized']); ?></strong> (<?php echo human_time_diff($nebula_data['initialized']); ?> ago)
 												<?php else: ?>
 													<strong><a href="/themes.php">Nebula Automation</a> has not been run yet!</strong>
 												<?php endif; ?>
