@@ -13,7 +13,6 @@ jQuery(function(){
 	errorMitigation();
 
 	//Navigation
-	mmenus();
 	subnavExpanders();
 	menuSearchReplacement();
 
@@ -1187,15 +1186,20 @@ function searchTriggerOnlyChars(e){
 
 //Enable autocomplete search on WordPress core selectors
 function autocompleteSearchListeners(){
-	nebula.dom.document.on('blur', '.nebula-search input', function(){
-		jQuery('.nebula-search').removeClass('searching').removeClass('autocompleted');
-	});
+	if ( jQuery('.nebula-search input, input#s, input.search').length ){
+		nebulaLoadJS(nebula.site.resources.scripts.nebula_jquery_ui, function(){
+			nebula.dom.document.on('blur', '.nebula-search input', function(){
+				jQuery('.nebula-search').removeClass('searching').removeClass('autocompleted');
+			});
 
-	jQuery('input#s, input.search').on('keyup paste change', function(e){
-		if ( !jQuery(this).hasClass('no-autocomplete') && jQuery.trim(jQuery(this).val()).length && searchTriggerOnlyChars(e) ){
-			autocompleteSearch(jQuery(this));
-		}
-	});
+			jQuery('input#s, input.search').on('keyup paste change', function(e){
+				if ( !jQuery(this).hasClass('no-autocomplete') && jQuery.trim(jQuery(this).val()).length && searchTriggerOnlyChars(e) ){
+					autocompleteSearch(jQuery(this));
+				}
+			});
+		});
+		nebulaLoadCSS(nebula.site.resources.styles.nebula_jquery_ui);
+	}
 }
 
 //Run an autocomplete search on a passes element.
@@ -1229,7 +1233,7 @@ function autocompleteSearch(element, types){
 			element.closest('.input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
 		}
 
-		element.autocomplete({
+		element.autocomplete({ //jQuery UI dependent
 			position: {
 				my: "left top-2px",
 				at: "left bottom",
@@ -2197,6 +2201,28 @@ function lazyLoadImages(){
 
 //Conditional JS Library Loading
 function conditionalJSLoading(){
+	//Lazy load CSS assets
+	jQuery.each(nebula.site.resources.lazy.styles, function(handle, condition){
+		if ( condition === 'all' || jQuery(condition).length ){
+			nebulaLoadCSS(nebula.site.resources.styles[handle.replace('-', '_')]);
+		}
+	});
+
+	//Lazy load JS assets
+	jQuery.each(nebula.site.resources.lazy.scripts, function(handle, condition){
+		if ( condition === 'all' || jQuery(condition).length ){
+			nebulaLoadJS(nebula.site.resources.scripts[handle.replace('-', '_')]);
+		}
+	});
+
+	//Load Mmenu if trigger exists
+	if ( jQuery('.mobilenavtrigger').length ){
+		nebulaLoadJS(nebula.site.resources.scripts.nebula_mmenu, function(){
+			mmenus();
+		});
+		nebulaLoadCSS(nebula.site.resources.styles.nebula_mmenu);
+	}
+
 	//Load the Google Maps API if 'googlemap' class exists
 	if ( jQuery('.googlemap').length ){
 		if ( typeof google == "undefined" || !has(google, 'maps') ){ //If the API has not already been called
@@ -2215,54 +2241,62 @@ function conditionalJSLoading(){
 
 	//Only load Chosen library if 'chosen-select' class exists.
 	if ( jQuery('.chosen-select').length ){
-		nebulaLoadJS(nebula.site.resources.js.chosen, function(){
+		nebulaLoadJS(nebula.site.resources.scripts.nebula_chosen, function(){
 			chosenSelectOptions();
 		});
-		nebulaLoadCSS(nebula.site.resources.css.chosen);
+		nebulaLoadCSS(nebula.site.resources.styles.nebula_chosen);
 	}
 
 	//Only load dataTables library if dataTables table exists.
 	if ( jQuery('.dataTables_wrapper').length ){
-		nebulaLoadJS(nebula.site.resources.js.datatables, function(){
-			nebulaLoadCSS(nebula.site.resources.css.datatables);
+		nebulaLoadJS(nebula.site.resources.scripts.nebula_datatables, function(){
+			nebulaLoadCSS(nebula.site.resources.styles.nebula_datatables);
 			dataTablesActions(); //Once loaded, call the DataTables actions. This can be called or overwritten in child.js (or elsewhere)
 			nebula.dom.document.trigger('nebula_datatables_loaded'); //This event can be listened for in child.js (or elsewhere) for when DataTables has finished loading.
 		});
 	}
 
 	if ( jQuery('pre.nebula-code').length || jQuery('pre.nebula-code').length ){
-		nebulaLoadCSS(nebula.site.resources.css.pre);
+		nebulaLoadCSS(nebula.site.resources.styles.nebula_pre);
 		nebulaPre();
 	}
 
 	if ( jQuery('.flag').length ){
-		nebulaLoadCSS(nebula.site.resources.css.flags);
+		nebulaLoadCSS(nebula.site.resources.styles.nebula_flags);
 	}
 }
 
 //Load a JavaScript resource (and cache it)
 function nebulaLoadJS(url, callback){
-	jQuery.ajax({
-		type: 'GET',
-		url: url,
-		success: function(response){
-			if ( callback ){
-				callback(response);
-			}
-		},
-		error: function(XMLHttpRequest, textStatus, errorThrown){
-			ga('send', 'exception', {'exDescription': '(JS) ' + url + ' could not be loaded', 'exFatal': false});
-			nv('event', 'JavaScript resource could not be dynamically loaded');
-		},
-		dataType: 'script',
-		cache: true,
-		timeout: 60000
-	});
+	if ( typeof url === 'string' ){
+		jQuery.ajax({
+			type: 'GET',
+			url: url,
+			success: function(response){
+				if ( callback ){
+					callback(response);
+				}
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown){
+				ga('send', 'exception', {'exDescription': '(JS) ' + url + ' could not be loaded', 'exFatal': false});
+				nv('event', 'JavaScript resource could not be dynamically loaded');
+			},
+			dataType: 'script',
+			cache: true,
+			timeout: 60000
+		});
+	} else {
+		console.error('nebulaLoadJS requires a valid URL.');
+	}
 }
 
 //Dynamically load CSS files using JS
 function nebulaLoadCSS(url){
-	jQuery('head').append('<link rel="stylesheet" href="' + url + '" type="text/css" media="screen">');
+	if ( typeof url === 'string' ){
+		jQuery('head').append('<link rel="stylesheet" href="' + url + '" type="text/css" media="screen">');
+	} else {
+		console.error('nebulaLoadCSS requires a valid URL.');
+	}
 }
 
 
@@ -3844,7 +3878,7 @@ function nebulaGetYoutubeTitle(target){
 function nebulaVimeoTracking(){
 	//Load the Vimeo API script (player.js) remotely (with local backup)
 	if ( jQuery('iframe[src*="vimeo"]').length ){
-		nebulaLoadJS(nebula.site.resources.js.vimeo, function(){
+		nebulaLoadJS(nebula.site.resources.scripts.nebula_vimeo, function(){
 			createVimeoPlayers();
 		});
 	}

@@ -7,6 +7,7 @@ if ( !trait_exists('Optimization') ){
 		public function hooks(){
 			add_filter('clean_url', array($this, 'defer_async_scripts'), 11, 1);
 			add_filter('script_loader_tag', array($this, 'defer_async_additional_scripts'), 10);
+			add_filter('nebula_lazy_load_assets', array($this, 'lazy_load_assets'), 10, 1);
 			add_filter('style_loader_src', array($this, 'http2_server_push_header'), 99, 1);
 			add_filter('script_loader_src', array($this, 'http2_server_push_header'), 99, 1);
 			add_filter('script_loader_src', array($this, 'remove_script_version'), 15, 1);
@@ -33,7 +34,7 @@ if ( !trait_exists('Optimization') ){
 				return $src;
 			}
 
-			$src = rtrim(remove_query_arg('ver', $src), '?'); //Remove "?" if it is the last character
+			$src = rtrim(remove_query_arg('ver', $src), '?'); //Remove "?" if it is the last character after removing ?ver parameter
 			$src = str_replace('?#', '#', $src); //Remove "?" if it is followed by "#" (when using #defer or #async with Nebula)
 
 			return $src;
@@ -78,13 +79,25 @@ if ( !trait_exists('Optimization') ){
 			return $tag;
 		}
 
+		//Prep assets for lazy loading. Be careful of dependencies!
+		//Array should be built as: handle => condition
+		public function lazy_load_assets($assets){
+			$assets['styles'] = array(
+				'wp-pagenavi' => '.wp-pagenavi',
+			);
+
+			$assets['scripts'] = array();
+
+			return $assets;
+		}
+
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
 		public function http2_server_push_header($src){
 			if ( !$this->is_admin_page() && $this->get_option('service_worker') && file_exists($this->sw_location(false)) && !is_customize_preview() ){ //If not in the admin section and if Service Worker is enabled (and file exists)
 				$filetype = ( strpos($src, '.css') )? 'style' : 'script'; //Determine the resource type
 				if ( strpos($src, $this->url_components('sld')) > 0 ){ //If local file
 					if ( $this->get_browser() !== 'safari' ){ //Disable HTTP2 Server Push on Safari (at least for now)
-						header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '?'))) . '>; rel=preload; as=' . $filetype, false); //Send the header for the HTTP2 Server Push
+						header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel=preload; as=' . $filetype, false); //Send the header for the HTTP2 Server Push (strtok to remove everything after and including "#")
 					}
 				}
 			}

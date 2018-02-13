@@ -40,6 +40,13 @@ a:not(.btn) {@include link-colors($primary_color, $secondary_color, darken($prim
 
 .herobgcolor {animation: none;}
 
+#logonavcon {
+	img,
+	svg:not(.svg-inline--fa){
+		path {fill: #fff;}
+	}
+}
+
 .xoxo {
 	ul li.current-menu-item {
 		.sub-menu {
