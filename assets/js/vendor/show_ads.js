@@ -1,1 +1,1 @@
-//This script is empty.
+//Empty

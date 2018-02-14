@@ -19,7 +19,7 @@ if ( !trait_exists('Analytics') ){
 		//If analytics should be allowed.
 		//Note: be careful using this conditional for AJAX analytics as the request is made by the server IP.
 		public function is_analytics_allowed(){
-			if ( isset($_GET['noga']) ){ //Disable analytics for noga query string
+			if ( isset($_GET['noga']) || is_customize_preview() ){ //Disable analytics for noga query string
 				return false;
 			}
 

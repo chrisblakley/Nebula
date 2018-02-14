@@ -66,28 +66,18 @@ if ( !trait_exists('Scripts') ){
 				'styles' => array(),
 				'scripts' => array()
 			);
+
+			$lazy_assets = $this->lazy_load_assets();
+
 			foreach ( $wp_styles->registered as $handle => $data ){
-				if ( strpos($data->src, 'http') !== false ){
+				if ( (strpos($handle, 'nebula-') !== false && strpos($handle, 'admin') === false && strpos($handle, 'login') === false) || array_key_exists($handle, $lazy_assets['styles']) ){ //If the handle contains "nebula-" but not "admin" or "login" -or- if the asset is prepped for lazy-loading
 					$nebula_assets['styles'][str_replace('-', '_', $handle)] = str_replace(array('#defer', '#async'), '', $data->src);
 				}
 			}
 			foreach ( $wp_scripts->registered as $handle => $data ){
-				if ( strpos($data->src, 'http') !== false ){
+				if ( (strpos($handle, 'nebula-') !== false && strpos($handle, 'admin') === false && strpos($handle, 'login') === false) || array_key_exists($handle, $lazy_assets['scripts']) ){ //If the handle contains "nebula-" but not "admin" or "login" -or- if the asset is prepped for lazy-loading
 					$nebula_assets['scripts'][str_replace('-', '_', $handle)] = str_replace(array('#defer', '#async'), '', $data->src);
 				}
-			}
-
-			//Prep CSS/JS resources for lazy loading
-			$lazy_load_assets = apply_filters('nebula_lazy_load_assets', array(
-				'styles' => array(),
-				'scripts' => array()
-			));
-
-			foreach ( $lazy_load_assets['styles'] as $handle => $condition ){
-				wp_dequeue_style($handle);
-			}
-			foreach ( $lazy_load_assets['scripts'] as $handle => $condition ){
-				wp_dequeue_script($handle);
 			}
 
 			//Be careful changing the following array as many JS functions use this data!
@@ -141,7 +131,7 @@ if ( !trait_exists('Scripts') ){
 					'resources' => array(
 						'styles' => $nebula_assets['styles'],
 						'scripts' => $nebula_assets['scripts'],
-						'lazy' => $lazy_load_assets,
+						'lazy' => $lazy_assets,
 					),
 					'ecommerce' => false,
 				),
@@ -239,7 +229,11 @@ if ( !trait_exists('Scripts') ){
 			}
 
 			wp_enqueue_script('nebula-bootstrap');
-			wp_enqueue_script('nebula-autotrack');
+
+			if ( $this->is_analytics_allowed() && $this->get_option('ga_tracking_id') ){
+				wp_enqueue_script('nebula-autotrack');
+			}
+
 			wp_enqueue_script('nebula-nebula');
 
 			//Localized objects (localized to jquery to appear in <head>)

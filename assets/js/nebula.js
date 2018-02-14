@@ -51,8 +51,7 @@ jQuery(window).on('load', function(){
 		initEventTracking();
 	}
 
-	lazyLoadImages();
-	conditionalJSLoading();
+	lazyLoadAssets();
 	initBootstrapFunctions();
 
 	//Navigation
@@ -1186,7 +1185,7 @@ function searchTriggerOnlyChars(e){
 
 //Enable autocomplete search on WordPress core selectors
 function autocompleteSearchListeners(){
-	if ( jQuery('.nebula-search input, input#s, input.search').length ){
+	if ( jQuery('.nebula-search input, input#s, input.search').length ){ //yolo
 		nebulaLoadJS(nebula.site.resources.scripts.nebula_jquery_ui, function(){
 			nebula.dom.document.on('blur', '.nebula-search input', function(){
 				jQuery('.nebula-search').removeClass('searching').removeClass('autocompleted');
@@ -1324,111 +1323,117 @@ function autocompleteSearch(element, types){
 //Advanced Search
 function advancedSearchListeners(){
 	var advancedSearchForm = jQuery('#advanced-search-form');
-	haveAllEvents = 0;
 
-	jQuery('a#metatoggle').on('click', function(){
-		jQuery('#advanced-search-meta').toggleClass('active', function(){
-			if ( jQuery('#advanced-search-meta').hasClass('active') ){
-				setTimeout(function(){
-					jQuery('#advanced-search-meta').addClass('finished');
-				}, 500);
-			} else {
-				jQuery('#advanced-search-meta').removeClass('finished');
-			}
+	if ( advancedSearchForm.length ){
+		haveAllEvents = 0;
+
+		jQuery('a#metatoggle').on('click', function(){
+			jQuery('#advanced-search-meta').toggleClass('active', function(){
+				if ( jQuery('#advanced-search-meta').hasClass('active') ){
+					setTimeout(function(){
+						jQuery('#advanced-search-meta').addClass('finished');
+					}, 500);
+				} else {
+					jQuery('#advanced-search-meta').removeClass('finished');
+				}
+			});
+			return false;
 		});
-		return false;
-	});
 
-	jQuery('#s').keyup(function(e){
-		advancedSearchPrep('Typing...');
-		debounce(function(){
-			if ( jQuery('#s').val() ){
-				ga('send', 'event', 'Internal Search', 'Advanced Search', jQuery('#s').val());
-			}
-		}, 1500);
-	});
+		jQuery('#s').keyup(function(e){
+			advancedSearchPrep('Typing...');
+			debounce(function(){
+				if ( jQuery('#s').val() ){
+					ga('send', 'event', 'Internal Search', 'Advanced Search', jQuery('#s').val());
+				}
+			}, 1500);
+		});
 
-	nebula.dom.document.on('change', '#advanced-search-type, #advanced-search-catstags, #advanced-search-author, #advanced-search-date-start, #advanced-search-date-end', function(){
-		advancedSearchPrep();
-		if ( jQuery('#advanced-search-date-start') ){
-			jQuery('#date-end-con').removeClass('hidden');
-		} else { //@TODO "Nebula" 0: Not working...
-			jQuery('#date-end-con').val('').addClass('hidden');
-		}
-	});
-
-	//jQueryUI Datepicker
-	jQuery('#advanced-search-date-start').datepicker({
-		dateFormat: "MM d, yy",
-		altField: "#advanced-search-date-start-alt",
-		altFormat: "@",
-		onSelect: function(){
+		nebula.dom.document.on('change', '#advanced-search-type, #advanced-search-catstags, #advanced-search-author, #advanced-search-date-start, #advanced-search-date-end', function(){
 			advancedSearchPrep();
 			if ( jQuery('#advanced-search-date-start') ){
 				jQuery('#date-end-con').removeClass('hidden');
-			} else {
+			} else { //@TODO "Nebula" 0: Not working...
 				jQuery('#date-end-con').val('').addClass('hidden');
 			}
-		}
-	});
-	jQuery('#advanced-search-date-end').datepicker({
-		dateFormat: "MM d, yy",
-		altField: "#advanced-search-date-end-alt",
-		altFormat: "@",
-		onSelect: function(){
+		});
+
+		//jQueryUI Datepicker
+		nebulaLoadJS(nebula.site.resources.scripts.nebula_jquery_ui, function(){
+			jQuery('#advanced-search-date-start').datepicker({ //jQuery UI
+				dateFormat: "MM d, yy",
+				altField: "#advanced-search-date-start-alt",
+				altFormat: "@",
+				onSelect: function(){
+					advancedSearchPrep();
+					if ( jQuery('#advanced-search-date-start') ){
+						jQuery('#date-end-con').removeClass('hidden');
+					} else {
+						jQuery('#date-end-con').val('').addClass('hidden');
+					}
+				}
+			});
+			jQuery('#advanced-search-date-end').datepicker({ //jQuery UI
+				dateFormat: "MM d, yy",
+				altField: "#advanced-search-date-end-alt",
+				altFormat: "@",
+				onSelect: function(){
+					advancedSearchPrep();
+				}
+			});
+		});
+		nebulaLoadCSS(nebula.site.resources.styles.nebula_jquery_ui);
+
+		//Reset form
+		jQuery('.resetfilters').on('click', function(){
+			advancedSearchForm[0].reset();
+			//@TODO "Nebula" 0: Chosen.js fields need to be reset manually... or something?
+			jQuery(this).removeClass('active');
 			advancedSearchPrep();
-		}
-	});
+			return false;
+		});
 
-	//Reset form
-	jQuery('.resetfilters').on('click', function(){
-		advancedSearchForm[0].reset();
-		//@TODO "Nebula" 0: Chosen.js fields need to be reset manually... or something?
-		jQuery(this).removeClass('active');
-		advancedSearchPrep();
-		return false;
-	});
+		loadMoreEvents = 0;
+		jQuery('#load-more-events').on('click', function(){
+			if ( typeof globalEventObject === 'undefined' ){
+				advancedSearchPrep(10);
 
-	loadMoreEvents = 0;
-	jQuery('#load-more-events').on('click', function(){
-		if ( typeof globalEventObject === 'undefined' ){
-			advancedSearchPrep(10);
+				loadMoreEvents = 10;
 
-			loadMoreEvents = 10;
+				jQuery('html, body').animate({
+					scrollTop: advancedSearchForm.offset().top-10
+				}, 500);
 
-			jQuery('html, body').animate({
-				scrollTop: advancedSearchForm.offset().top-10
-			}, 500);
+				return false;
+			}
+
+			if ( !jQuery(this).hasClass('all-events-loaded') ){
+				loadMoreEvents = loadMoreEvents+10;
+				advancedSearch(loadMoreEvents);
+
+				jQuery('html, body').animate({
+					scrollTop: advancedSearchForm.offset().top-10
+				}, 500);
+			}
 
 			return false;
-		}
+		});
 
-		if ( !jQuery(this).hasClass('all-events-loaded') ){
-			loadMoreEvents = loadMoreEvents+10;
-			advancedSearch(loadMoreEvents);
+		//Load Prev Events
+		//@TODO "Nebula" 0: there is a bug here... i think?
+		jQuery('#load-prev-events').on('click', function(){
+			if ( !jQuery(this).hasClass('no-prev-events') ){
+				jQuery('html, body').animate({
+					scrollTop: advancedSearchForm.offset().top-10
+				}, 500);
 
-			jQuery('html, body').animate({
-				scrollTop: advancedSearchForm.offset().top-10
-			}, 500);
-		}
+				loadMoreEvents = loadMoreEvents-10;
+				advancedSearch(loadMoreEvents);
+			}
 
-		return false;
-	});
-
-	//Load Prev Events
-	//@TODO "Nebula" 0: there is a bug here... i think?
-	jQuery('#load-prev-events').on('click', function(){
-		if ( !jQuery(this).hasClass('no-prev-events') ){
-			jQuery('html, body').animate({
-				scrollTop: advancedSearchForm.offset().top-10
-			}, 500);
-
-			loadMoreEvents = loadMoreEvents-10;
-			advancedSearch(loadMoreEvents);
-		}
-
-		return false;
-	});
+			return false;
+		});
+	}
 }
 
 //Either AJAX for all posts, or search immediately (if in memory)
@@ -2162,45 +2167,10 @@ function applyValidationClasses(element, validation, showFeedback){
  Optimization Functions
  ===========================*/
 
-//Load the lazy loaded images
-function lazyLoadImages(){
-	//<img> elements
-	//Load any images in the viewport
-	jQuery('noscript.nebula-lazy-img').each(function(){
-		//If the noscript tag is above the fold load it immediately
-		if ( jQuery(this).prev('.nebula-lazy-position').offset().top < nebula.dom.window.height() ){
-			jQuery(this).prev('.nebula-lazy-position').remove();
-			jQuery(this).replaceWith(jQuery(this).text()); //Remove the <noscript> tag to reveal the img tag
-		}
-	});
-	jQuery('.nebula-lazy-position').remove(); //These are no longer needed after initial load
+//Lazy load images, styles, and JavaScript assets
+function lazyLoadAssets(){
+	lazyLoadImages();
 
-	svgImgs();
-
-	//Background Images
-	jQuery('.lazy-load').each(function(){
-		if ( jQuery(this).offset().top < nebula.dom.window.height() ){
-			jQuery(this).removeClass('lazy-load').addClass('lazy-loaded');
-		}
-	});
-
-	//Wait for a scroll event to load the rest
-	var lazyLoadScrollHandler = function(){
-		//<img> elements
-		jQuery('noscript.nebula-lazy-img').each(function(){
-			jQuery(this).replaceWith(jQuery(this).text()); //Remove the <noscript> tag to reveal the img tag
-		});
-
-		svgImgs();
-
-		jQuery('.lazy-load').removeClass('lazy-load').addClass('lazy-loaded'); //Load background images
-		jQuery(window).off('scroll', lazyLoadScrollHandler); //Stop listening to scroll now that all images are loaded
-	};
-	nebula.dom.window.on('scroll', lazyLoadScrollHandler);
-}
-
-//Conditional JS Library Loading
-function conditionalJSLoading(){
 	//Lazy load CSS assets
 	jQuery.each(nebula.site.resources.lazy.styles, function(handle, condition){
 		if ( condition === 'all' || jQuery(condition).length ){
@@ -2256,13 +2226,9 @@ function conditionalJSLoading(){
 		});
 	}
 
-	if ( jQuery('pre.nebula-code').length || jQuery('pre.nebula-code').length ){
+	if ( jQuery('pre.nebula-code, pre.nebula-code').length ){
 		nebulaLoadCSS(nebula.site.resources.styles.nebula_pre);
 		nebulaPre();
-	}
-
-	if ( jQuery('.flag').length ){
-		nebulaLoadCSS(nebula.site.resources.styles.nebula_flags);
 	}
 }
 
@@ -2299,6 +2265,42 @@ function nebulaLoadCSS(url){
 	}
 }
 
+//Load the lazy loaded images
+function lazyLoadImages(){
+	//<img> elements
+	//Load any images in the viewport
+	jQuery('noscript.nebula-lazy-img').each(function(){
+		//If the noscript tag is above the fold load it immediately
+		if ( jQuery(this).prev('.nebula-lazy-position').offset().top < nebula.dom.window.height() ){
+			jQuery(this).prev('.nebula-lazy-position').remove();
+			jQuery(this).replaceWith(jQuery(this).text()); //Remove the <noscript> tag to reveal the img tag
+		}
+	});
+	jQuery('.nebula-lazy-position').remove(); //These are no longer needed after initial load
+
+	svgImgs();
+
+	//Background Images
+	jQuery('.lazy-load').each(function(){
+		if ( jQuery(this).offset().top < nebula.dom.window.height() ){
+			jQuery(this).removeClass('lazy-load').addClass('lazy-loaded');
+		}
+	});
+
+	//Wait for a scroll event to load the rest (use var so it can be turned off)
+	var lazyLoadScrollHandler = function(){
+		//<img> elements
+		jQuery('noscript.nebula-lazy-img').each(function(){
+			jQuery(this).replaceWith(jQuery(this).text()); //Remove the <noscript> tag to reveal the img tag
+		});
+
+		svgImgs();
+
+		jQuery('.lazy-load').removeClass('lazy-load').addClass('lazy-loaded'); //Load background images
+		jQuery(window).off('scroll', lazyLoadScrollHandler); //Stop listening to scroll now that all images are loaded
+	};
+	nebula.dom.window.on('scroll', lazyLoadScrollHandler);
+}
 
 /* ==========================================================================
    Google Maps Functions

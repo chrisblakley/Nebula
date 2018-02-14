@@ -6,7 +6,7 @@
 	}
 ?>
 
-<?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('ga_tracking_id') && !is_customize_preview() ): //Universal Google Analytics ?>
+<?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('ga_tracking_id') ): //Universal Google Analytics ?>
 	<script>
 		<?php //@todo "Nebula" 0: Consider using the Data Layer for some of the below parameters (declare it here, then push to it below) ?>
 
@@ -369,18 +369,16 @@
 		<?php if ( !nebula()->is_bot() && ( nebula()->get_option('adblock_detect') ) ): //Detect Ad Blockers (After pageview because asynchronous- uses GA event). ?>
 			jQuery.ajaxSetup({cache: true});
 			jQuery.getScript(nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js').done(function(){
-				if ( nebula.session.flags ){
-					nebula.session.flags.adblock = 'false';
-				}
+				nebula.session.flags.adblock = false;
 			}).fail(function(){ <?php //Ad Blocker Detected ?>
 				jQuery('html').addClass('ad-blocker');
 				<?php if ( nebula()->get_option('cd_blocker') ): //Scope: Session. Note: this is set AFTER the pageview is already sent (due to async), so it needs the event below. ?>
 					ga('set', nebula.analytics.dimensions.blocker, 'Ad Blocker');
 				<?php endif; ?>
 
-				if ( nebula.session.flags && nebula.session.flags.adblock !== 'true' ){
+				if ( nebula.session.flags.adblock != true ){
 					ga('send', 'event', 'Ad Blocker', 'Blocked', 'This user is using ad blocking software.', {'nonInteraction': true}); //Uses an event because it is asynchronous!
-					nebula.session.flags.adblock = 'true';
+					nebula.session.flags.adblock = true;
 				}
 			});
 		<?php endif; ?>
@@ -417,7 +415,7 @@
 	</script>
 <?php endif; ?>
 
-<?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('gtm_id') && !is_customize_preview() ): //Google Tag Manager ?>
+<?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('gtm_id') ): //Google Tag Manager ?>
 	<!-- Google Tag Manager -->
 	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],

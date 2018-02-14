@@ -7,7 +7,8 @@ if ( !trait_exists('Optimization') ){
 		public function hooks(){
 			add_filter('clean_url', array($this, 'defer_async_scripts'), 11, 1);
 			add_filter('script_loader_tag', array($this, 'defer_async_additional_scripts'), 10);
-			add_filter('nebula_lazy_load_assets', array($this, 'lazy_load_assets'), 10, 1);
+			add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
+			add_action('wp_footer', array($this, 'dequeue_lazy_load_scripts'));
 			add_filter('style_loader_src', array($this, 'http2_server_push_header'), 99, 1);
 			add_filter('script_loader_src', array($this, 'http2_server_push_header'), 99, 1);
 			add_filter('script_loader_src', array($this, 'remove_script_version'), 15, 1);
@@ -81,14 +82,34 @@ if ( !trait_exists('Optimization') ){
 
 		//Prep assets for lazy loading. Be careful of dependencies!
 		//Array should be built as: handle => condition
-		public function lazy_load_assets($assets){
-			$assets['styles'] = array(
-				'wp-pagenavi' => '.wp-pagenavi',
+		public function lazy_load_assets(){
+			$assets = array(
+				'styles' => array(
+					'nebula-flags' => '.flag',
+					'wp-pagenavi' => '.wp-pagenavi',
+				),
+				'scripts' => array(),
 			);
 
-			$assets['scripts'] = array();
+			return apply_filters('nebula_lazy_load_assets', $assets); //Allow other plugins/themes to lazy-load assets
+		}
 
-			return $assets;
+		//Dequeue styles prepped for lazy-loading
+		public function dequeue_lazy_load_styles(){
+			$lazy_load_assets = $this->lazy_load_assets();
+
+			foreach ( $lazy_load_assets['styles'] as $handle => $condition ){
+				wp_dequeue_style($handle);
+			}
+		}
+
+		//Dequeue scripts prepped for lazy-loading
+		public function dequeue_lazy_load_scripts(){
+			$lazy_load_assets = $this->lazy_load_assets();
+
+			foreach ( $lazy_load_assets['scripts'] as $handle => $condition ){
+				wp_dequeue_script($handle);
+			}
 		}
 
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
@@ -176,8 +197,8 @@ if ( !trait_exists('Optimization') ){
 
 			if ( !is_admin() ){
 				//Removing CF7 styles in favor of Bootstrap + Nebula
-				wp_deregister_style('contact-form-7');
 				wp_dequeue_style('contact-form-7');
+				wp_deregister_script('wp-embed'); //WP Core WP-Embed - Override this only if embedding external WordPress posts into this WordPress site. Other oEmbeds are NOT AFFECTED by this!
 
 				//Page specific dequeues
 				if ( is_front_page() ){
