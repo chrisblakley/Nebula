@@ -212,7 +212,7 @@ if ( !trait_exists('Scripts') ){
 		function enqueue_scripts($hook){
 			//Stylesheets
 			wp_enqueue_style('nebula-bootstrap');
-			wp_enqueue_style('nebula-nebula');
+			wp_enqueue_style('nebula-main');
 
 			wp_enqueue_script('nebula-font_awesome'); //Font Awesome 5 JS SVG method
 
