@@ -533,8 +533,6 @@ trait Customizer {
 		    'priority' => 20,
 		    'type' => 'select',
 			'choices' => array(
-				//'F j, Y' => 'Month, Day, Year',
-				//'F Y' => 'Month, Year',
 				'absolute' => 'Absolute',
 				'relative' => 'Relative',
 				'disabled' => 'Disabled',

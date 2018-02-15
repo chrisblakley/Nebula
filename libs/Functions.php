@@ -679,15 +679,15 @@ trait Functions {
 		$defaults = array(
 			'icon' => true,
 			'type' => 'published', //"published", "modified", or "both"
-			'relative' => ( get_theme_mod('post_date_format') === 'absolute' )? false : true,
+			'relative' => get_theme_mod('post_date_format'),
 			'linked' => true,
 			'day' => true,
-			'format' => get_theme_mod('post_date_format'),
+			'format' => 'F j, Y',
 		);
 
 		$data = array_merge($defaults, $options);
 
-		if ( $data['format'] === 'disabled' ){
+		if ( $data['relative'] === 'disabled' ){
 			return false;
 		}
 
@@ -699,8 +699,8 @@ trait Functions {
 		if ( $data['type'] === 'modified' ){
 			$the_date = get_the_modified_date('U');
 		} elseif ( $data['type'] === 'both' || $data['type'] === 'all' ){
-			$modified_date_format = ( $data['day'] )? get_the_modified_date('F j, Y') : get_the_modified_date('F Y');
-			if ( $data['relative'] ){
+			$modified_date_format = ( $data['day'] )? get_the_modified_date($data['format']) : get_the_modified_date('F Y');
+			if ( $data['relative'] === 'relative' ){
 				$modified_date_format = human_time_diff(get_the_modified_date('U')) . ' ago';
 			}
 			$modified_date_html = ' <span class="modified-on meta-item" datetime="' . get_the_modified_date('c') . '">(Updated ' . $modified_date_format . ')</span>';
@@ -714,10 +714,10 @@ trait Functions {
 
 		$day = ( $data['day'] )? date('d', $the_date) . '/' : ''; //If the day should be shown (otherwise, just month and year).
 
-		if ( $data['linked'] ){
+		if ( $data['linked'] && !isset($options['format']) ){
 			return '<span class="posted-on meta-item">' . $icon . '<span class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . '<a href="' . home_url('/') . date('Y/m', $the_date) . '/' . '">' . date('F', $the_date) . '</a>' . ' ' . '<a href="' . home_url('/') . date('Y/m', $the_date) . '/' . $day . '">' . date('j', $the_date) . '</a>' . ', ' . '<a href="' . home_url('/') . date('Y', $the_date) . '/' . '">' . date('Y', $the_date) . '</a>' . '</span>' . $modified_date_html . '</span>';
 		} else {
-			return '<span class="posted-on meta-item">' . $icon . '<span class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . date('F j, Y', $the_date) . '</span>' . $modified_date_html . '</span>';
+			return '<span class="posted-on meta-item">' . $icon . '<span class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . date($data['format'], $the_date) . '</span>' . $modified_date_html . '</span>';
 		}
 	}
 
@@ -917,18 +917,18 @@ trait Functions {
 			$comments_text = 'Comments';
 
 			if ( get_comments_number() == 0 ){
-				$comment_icon = 'fa-comment-o';
+				$comment_icon = 'far fa-comment';
 				$comment_show = ( $data['empty'] )? '' : 'hidden'; //If comment link should show if no comments. True = show, False = hidden
 			} elseif ( get_comments_number() == 1 ){
-				$comment_icon = 'fa-comment';
+				$comment_icon = 'fas fa-comment';
 				$comments_text = 'Comment';
 			} elseif ( get_comments_number() > 1 ){
-				$comment_icon = 'fa-comments';
+				$comment_icon = 'fas fa-comments';
 			}
 
 			$the_icon = '';
 			if ( $data['icon'] ){
-				$the_icon = '<i class="fas fa-fw ' . $comment_icon . '"></i> ';
+				$the_icon = '<i class="fa-fw ' . $comment_icon . '"></i> ';
 			}
 
 			if ( $data['linked'] ){
@@ -1377,15 +1377,17 @@ trait Functions {
 
 		//Get Transients
 		$video_json = get_transient('nebula_' . $provider . '_' . $id);
-		if ( empty($video_json) || 1==1 ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
+		if ( empty($video_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 			if ( $provider === 'youtube' ){
 				if ( !$this->get_option('google_server_api_key') && $this->is_staff() ){
+					trigger_error('No Google Youtube Iframe API key. Youtube videos may not be tracked!', E_USER_WARNING);
 					echo '<script>console.warn("No Google Youtube Iframe API key. Youtube videos may not be tracked!");</script>';
 					$video_metadata['error'] = 'No Google Youtube Iframe API key.';
 				}
 
 				$response = $this->remote_get('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . $this->get_option('google_server_api_key'));
 				if ( is_wp_error($response) ){
+					trigger_error('Youtube video is unavailable.', E_USER_WARNING);
 					$video_metadata['error'] = 'Youtube video is unavailable.';
 					return $video_metadata;
 				}
@@ -1394,6 +1396,7 @@ trait Functions {
 			} elseif ( $provider === 'vimeo' ){
 				$response = $this->remote_get('http://vimeo.com/api/v2/video/' . $id . '.json');
 				if ( is_wp_error($response) ){
+					trigger_error('Vimeo video is unavailable.', E_USER_WARNING);
 					$video_metadata['error'] = 'Vimeo video is unavailable.';
 					return $video_metadata;
 				}
@@ -2318,6 +2321,16 @@ trait Functions {
 		}
 
 		$bearer = $this->get_option('twitter_bearer_token', '');
+		if ( empty($bearer) ){
+			trigger_error('A Twitter bearer token is required to get tweets', E_USER_WARNING);
+
+			if ( !empty($_POST['data']) ){
+				echo false;
+				wp_die();
+			} else {
+				return false;
+			}
+		}
 
 		$tweets = get_transient('nebula_twitter_' . $data['user']);
 		if ( empty($tweets) || $this->is_debug() ){
@@ -2330,9 +2343,15 @@ trait Functions {
 
 			$tweets = json_decode($response['body']);
 
-			if ( !$tweets && !empty($_POST['data']) ){
-				echo false;
-				wp_die();
+			if ( empty($tweets) ){
+				trigger_error('No tweets were retrieved. Verify all options are correct and that an active bearer token is being used.', E_USER_NOTICE);
+
+				if ( !empty($_POST['data']) ){
+					echo false;
+					wp_die();
+				} else {
+					return false;
+				}
 			}
 
 			//Add convenient data to the tweet object
@@ -2351,10 +2370,10 @@ trait Functions {
 					"/#([a-z0-9_]+)/i", //Hashtags
 					"/(\d+\/(\d+)?)$/i", //Series numbers
 				), array(
-					"<a href='$1', target='_blank' rel='noopener'>$1</a>",
-					"<a href='https://twitter.com/$1', target='_blank' rel='noopener'>@$1</a>",
-					"<a href='https://twitter.com/hashtag/$1', target='_blank' rel='noopener'>#$1</a>",
-					"<small>$1</small>",
+					"<a class='tweet-embedded-link' href='$1', target='_blank' rel='noopener'>$1</a>",
+					"<a class='tweet-embedded-username' href='https://twitter.com/$1' target='_blank' rel='noopener'>@$1</a>",
+					"<a class='tweet-embedded-hashtag' href='https://twitter.com/hashtag/$1' target='_blank' rel='noopener'>#$1</a>",
+					"<small class='tweet-embedded-series-number'>$1</small>",
 				), trim($tweet->full_text));
 			}
 

@@ -831,7 +831,7 @@ if ( !trait_exists('Widgets') ){
 
 											<div>
 												<h3>' . $tweets[0]->user->name . '</h3>
-												<a href="' . $tweets[0]->user->url . '" target="_blank" title="' . $tweets[0]->user->description . '">@' . $tweets[0]->user->screen_name . '</a>
+												<a href="https://twitter.com/' . $tweets[0]->user->name . '" target="_blank" title="' . $tweets[0]->user->description . '">@' . $tweets[0]->user->screen_name . '</a>
 											</div>
 										</div>
 									</div><!--/col-->
