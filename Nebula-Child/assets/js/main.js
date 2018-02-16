@@ -1,7 +1,7 @@
 jQuery.noConflict();
 
 /*==========================
- DOM Ready (After main.js is loaded)
+ DOM Ready (After nebula.js is loaded)
  ===========================*/
 
 jQuery(function(){

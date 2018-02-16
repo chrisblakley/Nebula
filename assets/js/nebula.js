@@ -1185,7 +1185,7 @@ function searchTriggerOnlyChars(e){
 
 //Enable autocomplete search on WordPress core selectors
 function autocompleteSearchListeners(){
-	if ( jQuery('.nebula-search input, input#s, input.search').length ){ //yolo
+	if ( jQuery('.nebula-search input, input#s, input.search').length ){
 		nebulaLoadJS(nebula.site.resources.scripts.nebula_jquery_ui, function(){
 			nebula.dom.document.on('blur', '.nebula-search input', function(){
 				jQuery('.nebula-search').removeClass('searching').removeClass('autocompleted');
@@ -2221,8 +2221,8 @@ function lazyLoadAssets(){
 	if ( jQuery('.dataTables_wrapper').length ){
 		nebulaLoadJS(nebula.site.resources.scripts.nebula_datatables, function(){
 			nebulaLoadCSS(nebula.site.resources.styles.nebula_datatables);
-			dataTablesActions(); //Once loaded, call the DataTables actions. This can be called or overwritten in child.js (or elsewhere)
-			nebula.dom.document.trigger('nebula_datatables_loaded'); //This event can be listened for in child.js (or elsewhere) for when DataTables has finished loading.
+			dataTablesActions(); //Once loaded, call the DataTables actions. This can be called or overwritten in main.js (or elsewhere)
+			nebula.dom.document.trigger('nebula_datatables_loaded'); //This event can be listened for in main.js (or elsewhere) for when DataTables has finished loading.
 		});
 	}
 
@@ -2299,7 +2299,12 @@ function lazyLoadImages(){
 		jQuery('.lazy-load').removeClass('lazy-load').addClass('lazy-loaded'); //Load background images
 		jQuery(window).off('scroll', lazyLoadScrollHandler); //Stop listening to scroll now that all images are loaded
 	};
+
+	//Load the rest of the files on scroll (or if the page loads pre-scrolled)
 	nebula.dom.window.on('scroll', lazyLoadScrollHandler);
+	if ( jQuery(window).scrollTop() > 200 ){
+		lazyLoadScrollHandler();
+	}
 }
 
 /* ==========================================================================

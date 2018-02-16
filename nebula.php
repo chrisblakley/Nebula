@@ -57,7 +57,7 @@ if ( !class_exists('Nebula') ){
 
 		//Setup plugin constants
 		private function constants(){
-			define('NEBULA_VER', nebula()->version('raw')); //Nebula version
+			define('NEBULA_VER', $this->version('raw')); //Nebula version
 			define('NEBULA_DIR', get_template_directory()); //Nebula path
 			define('NEBULA_URL', get_template_directory_uri()); //Nebula URL
 		}
@@ -158,8 +158,8 @@ if ( !class_exists('Nebula') ){
 			$plugin_name = sanitize_key($plugin_name); //Sanitize plugin name
 
 			if ( empty($plugin_name) || strlen($plugin_name) > 20 ){
-				_doing_it_wrong( __FUNCTION__, __( 'Nebula plugin names must be between 1 and 20 characters in length.' ), NEBULA_VER);
-				return new WP_Error( 'nebula_plugin_name_length_invalid', __( 'Nebula plugin names must be between 1 and 20 characters in length.'));
+				_doing_it_wrong(__FUNCTION__, __('Nebula plugin names must be between 1 and 20 characters in length.'), NEBULA_VER);
+				return new WP_Error('nebula_plugin_name_length_invalid', __('Nebula plugin names must be between 1 and 20 characters in length.'));
 			}
 
 			//If args is the plugin path, then automatically generates an array of arguments

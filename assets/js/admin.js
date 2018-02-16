@@ -590,7 +590,7 @@ jQuery('#preset-filters a').on('click', function(){
 
 
 
-//Functions pulled from main.js for various admin usages (mostly Nebula Options)
+//Functions pulled from nebula.js for various admin usages (mostly Nebula Options)
 
 //Regex Patterns
 //Test with: if ( regexPattern.email.test(jQuery('input').val()) ){ ... }

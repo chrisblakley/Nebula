@@ -242,7 +242,7 @@
 			<?php endif; ?>
 
 			//Autotrack Impressions (Scroll into view)
-			//Elements themselves are detected in main.js (or child.js)
+			//Elements themselves are detected in nebula.js (or main.js)
 			ga('require', 'impressionTracker', {
 				hitFilter: function(model, element){
 					if ( jQuery(element).is('form') && !jQuery(element).find('input[name=s]').length ){
@@ -298,7 +298,7 @@
 					lastHit = new Date(); //Update the last GA hit time
 				<?php endif; ?>
 
-				//Move impression tracking for CF7 forms to the "CF7 Form" event category //@todo "Nebula" 0: If the fieldsObj is ever updated in Autotrack, do this programmatically in main.js
+				//Move impression tracking for CF7 forms to the "CF7 Form" event category //@todo "Nebula" 0: If the fieldsObj is ever updated in Autotrack, do this programmatically in nebula.js
 				if ( model.get('hitType') === 'event' && model.get('eventAction') === 'impression' && model.get('eventLabel').indexOf('wpcf7') > -1 ){
 					model.set('eventCategory', 'CF7 Form', true);
 				}
@@ -330,6 +330,8 @@
 				} else {
 					model.set(nebula.analytics.dimensions.deviceMemory, '(not set)', true);
 				}
+
+				<?php do_action('nebula_ga_additional_tasks'); //Hook into for adding more task operations ?>
 
 				originalBuildHitTask(model); //Send the payload to Google Analytics
 			});

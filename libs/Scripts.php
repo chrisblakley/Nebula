@@ -214,7 +214,9 @@ if ( !trait_exists('Scripts') ){
 			wp_enqueue_style('nebula-bootstrap');
 			wp_enqueue_style('nebula-main');
 
-			wp_enqueue_script('nebula-font_awesome'); //Font Awesome 5 JS SVG method
+			if ( !is_customize_preview() ){ //@todo "Nebula" 0: Remove this when Font Awesome 5 JS works with the Customizer (currently causing an infinite loop which soft-locks the tab)
+				wp_enqueue_script('nebula-font_awesome'); //Font Awesome 5 JS SVG method
+			}
 
 			if ( $this->get_option('google_font_url') ){
 				wp_enqueue_style('nebula-google_font');
@@ -244,7 +246,7 @@ if ( !trait_exists('Scripts') ){
 				wp_enqueue_script('nebula-performance_timing');
 			}
 
-			if ( is_page_template('tpl-search.php') ){ //Form pages (that use selects) or Advanced Search Template. The Chosen library is also dynamically loaded in main.js.
+			if ( is_page_template('tpl-search.php') ){ //Form pages (that use selects) or Advanced Search Template. The Chosen library is also dynamically loaded in nebula.js.
 				wp_enqueue_style('nebula-chosen');
 				wp_enqueue_script('nebula-chosen');
 			}
@@ -270,7 +272,10 @@ if ( !trait_exists('Scripts') ){
 
 			//Stylesheets
 			wp_enqueue_style('nebula-admin');
-			wp_enqueue_script('nebula-font_awesome'); //Font Awesome 5 JS SVG method
+
+			if ( !is_customize_preview() ){ //@todo "Nebula" 0: Remove this when Font Awesome 5 JS works with the Customizer (currently causing an infinite loop which soft-locks the tab)
+				wp_enqueue_script('nebula-font_awesome'); //Font Awesome 5 JS SVG method
+			}
 
 			if ( $this->ip_location() ){
 				wp_enqueue_style('nebula-flags');

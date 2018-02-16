@@ -126,7 +126,6 @@ trait Customizer {
 */
 
 		//Offcanvas Menu
-		//@TODO "Nebula" 0: Ideally need to dequeue Mmenu and change the dependencies on main.js if the user unchecks this one
 		$wp_customize->add_setting('nebula_offcanvas_menu', array('default' => 1));
 		$wp_customize->add_control('nebula_offcanvas_menu', array(
 			'label' => 'Show Offcanvas Menu (Mobile)',
