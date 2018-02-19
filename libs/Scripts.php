@@ -7,12 +7,16 @@ if ( !trait_exists('Scripts') ){
 		public $brain;
 
 		public function hooks(){
+			//Register styles/scripts
 			add_action('wp_enqueue_scripts', array($this, 'register_scripts'));
-			add_action('admin_enqueue_scripts', array($this, 'register_scripts'));
 			add_action('login_enqueue_scripts', array($this, 'register_scripts'));
+			add_action('admin_enqueue_scripts', array($this, 'register_scripts'));
+
+			//Enqueue styles/scripts
 			add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
 			add_action('login_enqueue_scripts', array($this, 'login_enqueue_scripts'));
 			add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
+
 			add_action('wp_enqueue_scripts', array($this, 'font_awesome_config'));
 
 			if ( $this->is_debug() || !empty($GLOBALS['wp_customize']) ){

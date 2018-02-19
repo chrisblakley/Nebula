@@ -36,7 +36,7 @@ if ( !trait_exists('Security') ){
 		//Test with https://securityheaders.io/
 		public function security_headers(){
 			if ( is_ssl() ){
-				header('strict-transport-security: max-age=31536000; includeSubDomains'); //https://scotthelme.co.uk/hsts-the-missing-link-in-tls/
+				header('Strict-Transport-Security: max-age=10886400; includeSubDomains; preload'); //https://scotthelme.co.uk/hsts-the-missing-link-in-tls/
 				header('Referrer-Policy: no-referrer-when-downgrade'); //https://scotthelme.co.uk/a-new-security-header-referrer-policy/
 
 				//https://scotthelme.co.uk/hardening-your-http-response-headers/

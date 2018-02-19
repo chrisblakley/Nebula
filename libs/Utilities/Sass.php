@@ -147,7 +147,7 @@ if ( !trait_exists('Sass') ){
 					if ( empty($force_all) ){
 						$is_wireframing_file = $file_path_info['filename'] === 'wireframing' && !$this->get_option('prototype_mode'); //If file is wireframing.scss but wireframing functionality is disabled, skip file.
 						$is_dev_file = $file_path_info['filename'] === 'dev' && !$this->get_option('dev_stylesheets'); //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
-						$is_admin_file = !$this->is_admin_page() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')); //If viewing front-end, skip WP admin files.
+						$is_admin_file = !$this->is_admin_page() && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')); //If viewing front-end (including login page), skip WP admin files.
 						if ( $is_wireframing_file || $is_dev_file || $is_admin_file ){
 							continue;
 						}

@@ -157,13 +157,20 @@ function nebulaServiceWorkerInit(){
 }
 
 function registerServiceWorker(){
-	navigator.serviceWorker.register(nebula.site.sw_url).then(function(registration){
+	navigator.serviceWorker.register(nebula.site.sw_url).then(function(){
+		return navigator.serviceWorker.ready; //This can be listened for elsewhere with navigator.serviceWorker.ready.then(function(){ ... });
+	}).then(function(registration){
 		nebulaPredictiveCacheListeners();
 
 		//Unregister the ServiceWorker on ?debug
 		if ( nebula.dom.html.hasClass('debug') ){
 			registration.unregister();
 		}
+
+		//Listen for messages from the Service Worker
+		navigator.serviceWorker.addEventListener('message', function(event){
+			nebula.dom.document.trigger('nebula_sw_message', event.data);
+		});
 	}, function(err) {
 		ga('send', 'exception', {'exDescription': '(JS) ServiceWorker registration failed: ' + err, 'exFatal': false});
 	});
@@ -224,6 +231,13 @@ function nebulaAddToCache(url){
 		}
 	} else {
 		return false;
+	}
+}
+
+//Send data to other tabs/windows using the Service Worker
+function nebulaPostMessage(data){
+	if ( navigator.serviceWorker && navigator.serviceWorker.controller ){
+		navigator.serviceWorker.controller.postMessage(data);
 	}
 }
 

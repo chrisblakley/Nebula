@@ -3,7 +3,7 @@
 //@TODO: Enable "Service Worker" in Nebula Options (under Functions)
 
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-41360'; //Friday, February 16, 2018 2:23:23 PM
+var CACHE_NAME = 'nebula-nebula-child-24947'; //Sunday, February 18, 2018 10:29:57 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
@@ -23,6 +23,7 @@ var CACHE_FILES = [
 
 //Install
 self.addEventListener('install', function(event){
+	//console.log('[SW] Inside Install event');
 	//console.log('[SW] Using the cache', CACHE_NAME);
 
 	event.waitUntil(
@@ -31,8 +32,8 @@ self.addEventListener('install', function(event){
 			Promise.all(CACHE_FILES.map(function(url){
 				cache.add(url);
 			}));
-
 		}).then(function(){
+			//console.log('[SW] Skip waiting on install (activate immediately)');
 			self.skipWaiting(); //Activate worker immediately (Warning: older sw versions may be running on other tabs at the same time).
 		})
 	);
@@ -40,6 +41,8 @@ self.addEventListener('install', function(event){
 
 //Activate
 self.addEventListener('activate', function(event){
+	//console.log('[SW] Inside Activate event');
+
 	//@todo "Nebula" 0: clean up cache here, too (no /wp-admin, no query strings except homescreen)
 
 	event.waitUntil(
@@ -52,6 +55,7 @@ self.addEventListener('activate', function(event){
 				}
 			}));
 		}).then(function(){
+			console.log('[SW] Claiming clients (should be available to all pages now)');
 			self.clients.claim(); //Become available to all pages.
 		})
 	);
@@ -222,30 +226,37 @@ function offlineRequest(request, cache){
 }
 
 
-//Tell all clients we are offline
-/*
-function networkPostMessage(availability='online'){
-	//console.log('[SW] We are ' + availability + '. Sending message to client...');
 
-	self.clients.matchAll().then(function(clientList){
-		clientList.forEach(function(client){
-			client.postMessage({message: '[SW] You are currently ' + availability + '!'});
-		});
-	});
-}
-*/
+
 
 
 
 //Listen for message events from the client
 self.addEventListener('message', function(event){
 	//console.log('[SW] "message" event triggered: ' + event.data);
-	//console.debug(event);
 
-	//navigator.serviceWorker.controller.postMessage("Client 1 says '" + event.data + "'"); //controller is undefined here
+	clients.matchAll().then(function(clients){
 
-	//event.ports[0].postMessage('SW Says Hello back!');
+		//console.group();
+
+		// Loop over all available clients
+		clients.forEach(function(client){
+			//No need to update the tab/window (client) that sent the data
+			if ( client.id !== event.source.id ){
+				//console.log('[SW] posting message back to *other* clients...', client.id);
+
+				client.postMessage(event.data); //Post data to a specific client
+			} else {
+				//console.warn('[SW] Skipping message for THIS client id', client.id);
+			}
+		});
+
+		//console.groupEnd();
+	});
 });
+
+
+
 
 
 
