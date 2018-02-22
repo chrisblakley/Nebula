@@ -181,7 +181,17 @@ if ( !trait_exists('Utilities') ){
 
 		//Check if viewing the login page.
 		public function is_login_page(){
-			return in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php'));
+			if ( in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php')) || $_SERVER['PHP_SELF'] == '/wp-login.php' ){
+				return true;
+			}
+
+			$abspath = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, ABSPATH);
+			$included_files = get_included_files();
+			if ( in_array($abspath . 'wp-login.php', $included_files) || in_array($abspath . 'wp-register.php', $included_files) ){
+				return true;
+			}
+
+			return false;
 		}
 
 		//Check if the current page is not the first. (pagecount is incremented in nebula.php)

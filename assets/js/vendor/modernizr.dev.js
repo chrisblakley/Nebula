@@ -1,6 +1,6 @@
 /*!
- * modernizr v3.3.1
- * Build https://modernizr.com/download?-adownload-ambientlight-animation-apng-appearance-applicationcache-atobbtoa-audio-audioloop-audiopreload-backdropfilter-backgroundblendmode-backgroundcliptext-backgroundsize-batteryapi-bdi-beacon-bgpositionshorthand-bgpositionxy-bgrepeatspace_bgrepeatround-bgsizecover-blobconstructor-bloburls-blobworkers-borderimage-borderradius-boxshadow-boxsizing-canvas-canvasblending-canvastext-canvaswinding-capture-checked-classlist-contains-contenteditable-contextmenu-cookies-cors-createelementattrs_createelement_attrs-cryptography-cssall-cssanimations-csscalc-csschunit-csscolumns-cssescape-cssexunit-cssfilters-cssgradients-csshairline-csshyphens_softhyphens_softhyphensfind-cssinvalid-cssmask-csspointerevents-csspositionsticky-csspseudoanimations-csspseudotransitions-cssreflections-cssremunit-cssresize-cssscrollbar-csstransforms-csstransforms3d-csstransitions-cssvalid-cssvhunit-cssvmaxunit-cssvminunit-cssvwunit-cubicbezierrange-customevent-customprotocolhandler-dart-datachannel-datalistelem-dataset-datauri-dataview-dataworkers-details-devicemotion_deviceorientation-directory-displaytable-documentfragment-ellipsis-emoji-es5-es5array-es5date-es5function-es5object-es5string-es5syntax-es5undefined-es6array-es6collections-es6math-es6number-es6object-es6string-eventlistener-eventsource-exiforientation-fetch-fileinput-filereader-filesystem-flash-flexbox-flexboxlegacy-flexboxtweener-flexwrap-fontface-forcetouch-formattribute-formvalidation-framed-fullscreen-gamepads-generatedcontent-generators-geolocation-getrandomvalues-getusermedia-hashchange-hiddenscroll-history-hsla-htmlimports-ie8compat-imgcrossorigin-indexeddb-indexeddbblob-inlinesvg-input-inputformaction-inputformenctype-inputformmethod-inputformtarget-inputtypes-intl-jpeg2000-jpegxr-json-lastchild-ligatures-localizednumber-localstorage-lowbandwidth-lowbattery-matchmedia-mathml-mediaqueries-microdata-multiplebgs-mutationobserver-notification-nthchild-objectfit-olreversed-oninput-opacity-outputelem-overflowscrolling-pagevisibility-peerconnection-performance-picture-placeholder-pointerevents-pointerlock-postmessage-preserve3d-progressbar_meter-promises-proximity-queryselector-quotamanagement-regions-requestanimationframe-requestautocomplete-rgba-ruby-sandbox-scriptasync-scriptdefer-scrollsnappoints-seamless-search-serviceworker-sessionstorage-shapes-sharedworkers-siblinggeneral-sizes-smil-speechrecognition-speechsynthesis-srcdoc-srcset-strictmode-stylescoped-subpixelfont-supports-svg-svgasimg-svgclippaths-svgfilters-svgforeignobject-target-template-templatestrings-textalignlast-textareamaxlength-textshadow-texttrackapi_track-time-todataurljpeg_todataurlpng_todataurlwebp-touchevents-transferables-typedarrays-unicode-unicoderange-unknownelements-urlparser-userdata-userselect-vibrate-video-videoautoplay-videoloop-videopreload-vml-webaudio-webgl-webglextensions-webintents-webp-webpalpha-webpanimation-webplossless_webp_lossless-websockets-websocketsbinary-websqldatabase-webworkers-willchange-wrapflow-xdomainrequest-xhr2-xhrresponsetype-xhrresponsetypearraybuffer-xhrresponsetypeblob-xhrresponsetypedocument-xhrresponsetypejson-xhrresponsetypetext-addtest-atrule-domprefixes-hasevent-mq-prefixed-prefixedcss-prefixedcssvalue-prefixes-setclasses-shiv-testallprops-testprop-teststyles-dontmin
+ * modernizr v3.5.0
+ * Build https://modernizr.com/download?-MessageChannel-adownload-ambientlight-animation-apng-appearance-applicationcache-arrow-atobbtoa-audio-audioloop-audiopreload-backdropfilter-backgroundblendmode-backgroundcliptext-backgroundsize-batteryapi-bdi-beacon-bgpositionshorthand-bgpositionxy-bgrepeatspace_bgrepeatround-bgsizecover-blobconstructor-bloburls-blobworkers-borderimage-borderradius-boxshadow-boxsizing-canvas-canvasblending-canvastext-canvaswinding-capture-checked-classlist-contains-contenteditable-contextmenu-cookies-cors-createelementattrs_createelement_attrs-cryptography-cssall-cssanimations-csscalc-csschunit-csscolumns-cssescape-cssexunit-cssfilters-cssgradients-cssgrid_cssgridlegacy-csshyphens_softhyphens_softhyphensfind-cssinvalid-cssmask-csspointerevents-csspositionsticky-csspseudoanimations-csspseudotransitions-cssreflections-cssremunit-cssresize-cssscrollbar-csstransforms-csstransforms3d-csstransformslevel2-csstransitions-cssvalid-cssvhunit-cssvmaxunit-cssvminunit-cssvwunit-cubicbezierrange-customelements-customevent-customprotocolhandler-dart-datachannel-datalistelem-dataset-datauri-dataview-dataworkers-details-devicemotion_deviceorientation-directory-display_runin-displaytable-documentfragment-ellipsis-emoji-es5-es5array-es5date-es5function-es5object-es5string-es5syntax-es5undefined-es6array-es6collections-es6math-es6number-es6object-es6string-eventlistener-eventsource-exiforientation-fetch-fileinput-filereader-filesystem-flash-flexbox-flexboxlegacy-flexboxtweener-flexwrap-fontface-forcetouch-formattribute-formvalidation-framed-fullscreen-gamepads-generatedcontent-generators-geolocation-getrandomvalues-getusermedia-hairline-hashchange-hidden-hiddenscroll-history-hovermq-hsla-htmlimports-ie8compat-imgcrossorigin-indexeddb-indexeddbblob-inlinesvg-input-inputformaction-inputformenctype-inputformmethod-inputformtarget-inputtypes-intl-jpeg2000-jpegxr-json-lastchild-ligatures-localizednumber-localstorage-lowbandwidth-lowbattery-matchmedia-mathml-mediaqueries-microdata-multiplebgs-mutationobserver-notification-nthchild-objectfit-olreversed-oninput-opacity-outputelem-overflowscrolling-pagevisibility-passiveeventlisteners-peerconnection-performance-picture-placeholder-pointerevents-pointerlock-pointermq-postmessage-preserve3d-progressbar_meter-promises-proximity-queryselector-quotamanagement-regions-requestanimationframe-requestautocomplete-rgba-ruby-sandbox-scriptasync-scriptdefer-scrollsnappoints-seamless-search-serviceworker-sessionstorage-shapes-sharedworkers-siblinggeneral-sizes-smil-speechrecognition-speechsynthesis-srcdoc-srcset-strictmode-stylescoped-subpixelfont-supports-svg-svgasimg-svgclippaths-svgfilters-svgforeignobject-target-template-templatestrings-textalignlast-textareamaxlength-textshadow-texttrackapi_track-time-todataurljpeg_todataurlpng_todataurlwebp-touchevents-transferables-typedarrays-unicode-unicoderange-unknownelements-urlparser-urlsearchparams-userdata-userselect-vibrate-video-videoautoplay-videocrossorigin-videoloop-videopreload-vml-webaudio-webgl-webglextensions-webintents-webp-webpalpha-webpanimation-webplossless_webp_lossless-websockets-websocketsbinary-websqldatabase-webworkers-willchange-wrapflow-xdomainrequest-xhr2-xhrresponsetype-xhrresponsetypearraybuffer-xhrresponsetypeblob-xhrresponsetypedocument-xhrresponsetypejson-xhrresponsetypetext-addtest-atrule-domprefixes-hasevent-mq-prefixed-prefixedcss-prefixedcssvalue-prefixes-setclasses-shiv-testallprops-testprop-teststyles-dontmin
  *
  * Copyright (c)
  *  Faruk Ates
@@ -23,13 +23,14 @@
 */
 
 ;(function(window, document, undefined){;
+define("test/network/beacon", function(){});
 
 
   var classes = [];
-
+  
 
   var tests = [];
-
+  
 
   /**
    *
@@ -41,7 +42,7 @@
 
   var ModernizrProto = {
     // The current version, dummy
-    _version: '3.3.1',
+    _version: '3.5.0',
 
     // Any settings that don't work as separate modules
     // can go in here as configuration.
@@ -78,7 +79,7 @@
     }
   };
 
-
+  
 
   // Fake some of Object.create so we can force non test results to be non "own" properties.
   var Modernizr = function() {};
@@ -88,7 +89,7 @@
   // Overwrite name so constructor name is nicer :D
   Modernizr = new Modernizr();
 
-
+  
 /*!
 {
   "name": "Application Cache",
@@ -193,6 +194,24 @@ Detects support for Cross-Origin Resource Sharing: method of performing XMLHttpR
 */
 
   Modernizr.addTest('cors', 'XMLHttpRequest' in window && 'withCredentials' in new XMLHttpRequest());
+
+/*!
+{
+  "name": "Custom Elements API",
+  "property": "customelements",
+  "tags": ["customelements"],
+  "polyfills": ["customelements"],
+  "notes": [{
+    "name": "Specs for Custom Elements",
+    "href": "https://www.w3.org/TR/custom-elements/"
+  }]
+}
+!*/
+/* DOC
+Detects support for the Custom Elements API, to create custom html elements via js
+*/
+
+  Modernizr.addTest('customelements', 'customElements' in window);
 
 /*!
 {
@@ -363,7 +382,11 @@ Detects support for the History API for manipulating the browser session history
         (ua.indexOf('Android 4.0') !== -1)) &&
         ua.indexOf('Mobile Safari') !== -1 &&
         ua.indexOf('Chrome') === -1 &&
-        ua.indexOf('Windows Phone') === -1) {
+        ua.indexOf('Windows Phone') === -1 &&
+    // Since all documents on file:// share an origin, the History apis are
+    // blocked there as well
+        location.protocol !== 'file:'
+    ) {
       return false;
     }
 
@@ -409,6 +432,28 @@ Detects native support for JSON handling functions.
   //   ... but that should be obvious. :)
 
   Modernizr.addTest('json', 'JSON' in window && 'parse' in JSON && 'stringify' in JSON);
+
+/*!
+{
+  "name": "Message Channel",
+  "property": "MessageChannel",
+  "authors": ["Raju Konga [kongaraju]"],
+  "caniuse" : "MessageChannel",
+  "tags": ["performance", "messagechannel"],
+  "notes": [{
+    "name": "W3C Reference",
+    "href": "https://www.w3.org/TR/2011/WD-webmessaging-20110317/#message-channels"
+  }, {
+    "name": "MDN documentation",
+    "href": "https://developer.mozilla.org/en-US/docs/Web/API/Channel_Messaging_API/Using_channel_messaging"
+  }]
+}
+!*/
+/* DOC
+Detects support for Message Channels, a way to communicate between different browsing contexts like iframes, workers, etc..
+*/
+
+  Modernizr.addTest('messagechannel', 'MessageChannel' in window);
 
 /*!
 {
@@ -554,6 +599,7 @@ Template strings are string literals allowing embedded expressions.
     try {
       // A number of tools, including uglifyjs and require, break on a raw "`", so
       // use an eval to get around that.
+      // eslint-disable-next-line
       eval('``');
       supports = true;
     } catch (e) {}
@@ -713,7 +759,7 @@ Tests for `CSS.escape()` support.
     "href": "http://dev.w3.org/csswg/css3-conditional/#at-supports"
   },{
     "name": "Related Github Issue",
-    "href": "github.com/Modernizr/Modernizr/issues/648"
+    "href": "https://github.com/Modernizr/Modernizr/issues/648"
   },{
     "name": "W3 Info",
     "href": "http://dev.w3.org/csswg/css3-conditional/#the-csssupportsrule-interface"
@@ -795,6 +841,43 @@ Determines if DOM4 MutationObserver support is available.
 
   Modernizr.addTest('mutationobserver',
     !!window.MutationObserver || !!window.WebKitMutationObserver);
+
+/*!
+{
+  "authors": ["Rick Byers"],
+  "name": "Passive event listeners",
+  "notes": [
+    {
+      "name": "WHATWG specification",
+      "href": "https://dom.spec.whatwg.org/#dom-addeventlisteneroptions-passive"
+    },
+    {
+      "name": "WICG explainer",
+      "href": "https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md"
+    }
+  ],
+  "property": "passiveeventlisteners",
+  "tags": ["dom"]
+}
+!*/
+
+/* DOC
+Detects support for the passive option to addEventListener.
+*/
+
+
+  Modernizr.addTest('passiveeventlisteners', function() {
+    var supportsPassiveOption = false;
+    try {
+      var opts = Object.defineProperty({}, 'passive', {
+        get: function() {
+          supportsPassiveOption = true;
+        }
+      });
+      window.addEventListener('test', null, opts);
+    } catch (e) {}
+    return supportsPassiveOption;
+  });
 
 /*!
 {
@@ -995,6 +1078,7 @@ Check if browser accepts ECMAScript 5 syntax.
   Modernizr.addTest('es5syntax', function() {
     var value, obj, stringAccess, getter, setter, reservedWords, zeroWidthChars;
     try {
+      /* eslint no-eval: "off" */
       // Property access on strings
       stringAccess = eval('"foobar"[3] === "b"');
       // Getter in property initializer
@@ -1108,6 +1192,28 @@ Check if browser implements ECMAScript 6 Array per specification.
 
 /*!
 {
+  "name": "ES6 Arrow Functions",
+  "property": "arrow",
+  "authors": ["Vincent Riemer"],
+  "tags": ["es6"]
+}
+!*/
+/* DOC
+Check if browser implements ECMAScript 6 Arrow Functions per specification.
+*/
+
+  Modernizr.addTest('arrow', function() {
+    try {
+      // eslint-disable-next-line
+      eval('()=>{}');
+    } catch (e) {
+      return false;
+    }
+    return true;
+  });
+
+/*!
+{
   "name": "ES6 Collections",
   "property": "es6collections",
   "notes": [{
@@ -1142,7 +1248,6 @@ Check if browser implements ECMAScript 6 Generators per specification.
 
   Modernizr.addTest('generators', function() {
     try {
-      /* jshint evil: true */
       new Function('function* test() {}')();
     } catch (e) {
       return false;
@@ -1302,7 +1407,7 @@ Check if browser implements ECMAScript 6 String per specification.
     String.prototype.repeat &&
     String.prototype.startsWith &&
     String.prototype.endsWith &&
-    String.prototype.contains));
+    String.prototype.includes));
 
 /*!
 {
@@ -1520,8 +1625,11 @@ Tests for XHR2.
   // In FF4, if disabled, window.localStorage should === null.
 
   // Normally, we could not test that directly and need to do a
-  //   `('localStorage' in window) && ` test first because otherwise Firefox will
+  //   `('localStorage' in window)` test first because otherwise Firefox will
   //   throw bugzil.la/365772 if cookies are disabled
+
+  // Similarly, in Chrome with "Block third-party cookies and site data" enabled,
+  // attempting to access `window.sessionStorage` will throw an exception. crbug.com/357625
 
   // Also in iOS5 Private Browsing mode, attempting to use localStorage.setItem
   // will throw the exception:
@@ -1639,6 +1747,32 @@ Check if browser implements the URL constructor for parsing URLs.
 
 /*!
 {
+  "authors": ["Cătălin Mariș"],
+  "name": "URLSearchParams API",
+  "notes": [
+    {
+      "name": "WHATWG specification",
+      "href": "https://url.spec.whatwg.org/#interface-urlsearchparams"
+    },
+    {
+      "name": "MDN documentation",
+      "href": "https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams"
+    }
+  ],
+  "property": "urlsearchparams",
+  "tags": ["querystring", "url"]
+}
+!*/
+
+/* DOC
+Detects support for an API that provides utility methods for working with the query string of a URL.
+*/
+
+
+  Modernizr.addTest('urlsearchparams', 'URLSearchParams' in window);
+
+/*!
+{
   "name": "Binary WebSockets",
   "property": "websocketsbinary",
   "tags": ["websockets"],
@@ -1652,10 +1786,11 @@ Check if browser implements the URL constructor for parsing URLs.
 
   Modernizr.addTest('websocketsbinary', function() {
     var protocol = 'https:' == location.protocol ? 'wss' : 'ws',
-    protoBin;
+      protoBin;
 
     if ('WebSocket' in window) {
-      if (protoBin = 'binaryType' in WebSocket.prototype) {
+      protoBin = 'binaryType' in WebSocket.prototype
+      if (protoBin) {
         return protoBin;
       }
       try {
@@ -1792,7 +1927,7 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
   // expose these for the plugin API. Look in the source for how to join() them against your input
   ModernizrProto._prefixes = prefixes;
 
-
+  
 
   /**
    * is returns a boolean if the typeof an obj is exactly type.
@@ -1865,7 +2000,6 @@ Detects support for the basic `Worker` API from the Web Workers spec. Web Worker
             Modernizr[featureNameSplit[0]] = result;
           } else {
             // cast to a Boolean, if not one already
-            /* jshint -W053 */
             if (Modernizr[featureNameSplit[0]] && !(Modernizr[featureNameSplit[0]] instanceof Boolean)) {
               Modernizr[featureNameSplit[0]] = new Boolean(Modernizr[featureNameSplit[0]]);
             }
@@ -1902,7 +2036,7 @@ Check if browser implements ECMAScript 6 `String.prototype.contains` per specifi
    */
 
   var docElement = document.documentElement;
-
+  
 /*!
 {
   "name": "Context menus",
@@ -2014,7 +2148,7 @@ Append multiple elements to the DOM within a single insertion.
    */
 
   var isSVG = docElement.nodeName.toLowerCase() === 'svg';
-
+  
 
   /**
    * setClasses takes an array of class names and adds them to the root element
@@ -2044,7 +2178,11 @@ Append multiple elements to the DOM within a single insertion.
     if (Modernizr._config.enableClasses) {
       // Add the new classes
       className += ' ' + classPrefix + classes.join(' ' + classPrefix);
-      isSVG ? docElement.className.baseVal = className : docElement.className = className;
+      if (isSVG) {
+        docElement.className.baseVal = className;
+      } else {
+        docElement.className = className;
+      }
     }
 
   }
@@ -2063,7 +2201,6 @@ Append multiple elements to the DOM within a single insertion.
      * @preserve HTML5 Shiv 3.7.3 | @afarkas @jdalton @jon_neal @rem | MIT/GPL2 Licensed
      */
     ;(function(window, document) {
-      /*jshint evil:true */
       /** version */
       var version = '3.7.3';
 
@@ -2267,10 +2404,10 @@ Append multiple elements to the DOM within a single insertion.
                                                         'h.shivMethods&&(' +
                                                         // unroll the `createElement` calls
                                                         getElements().join().replace(/[\w\-:]+/g, function(nodeName) {
-          data.createElem(nodeName);
-          data.frag.createElement(nodeName);
-          return 'c("' + nodeName + '")';
-        }) +
+                                                          data.createElem(nodeName);
+                                                          data.frag.createElement(nodeName);
+                                                          return 'c("' + nodeName + '")';
+                                                        }) +
           ');return n}'
                                                        )(html5, data.frag);
       }
@@ -2384,50 +2521,9 @@ Append multiple elements to the DOM within a single insertion.
         module.exports = html5;
       }
 
-    }(typeof window !== "undefined" ? window : this, document));
+    }(typeof window !== 'undefined' ? window : this, document));
   }
-;
-
-  /**
-   * If the browsers follow the spec, then they would expose vendor-specific style as:
-   *   elem.style.WebkitBorderRadius
-   * instead of something like the following, which would be technically incorrect:
-   *   elem.style.webkitBorderRadius
-
-   * Webkit ghosts their properties in lowercase but Opera & Moz do not.
-   * Microsoft uses a lowercase `ms` instead of the correct `Ms` in IE8+
-   *   erik.eae.net/archives/2008/03/10/21.48.10/
-
-   * More here: github.com/Modernizr/Modernizr/issues/issue/21
-   *
-   * @access private
-   * @returns {string} The string representing the vendor-specific style properties
-   */
-
-  var omPrefixes = 'Moz O ms Webkit';
-
-
-  /**
-   * List of JavaScript DOM values used for tests
-   *
-   * @memberof Modernizr
-   * @name Modernizr._domPrefixes
-   * @optionName Modernizr._domPrefixes
-   * @optionProp domPrefixes
-   * @access public
-   * @example
-   *
-   * Modernizr._domPrefixes is exactly the same as [_prefixes](#modernizr-_prefixes), but rather
-   * than kebab-case properties, all properties are their Capitalized variant
-   *
-   * ```js
-   * Modernizr._domPrefixes === [ "Moz", "O", "ms", "Webkit" ];
-   * ```
-   */
-
-  var domPrefixes = (ModernizrProto._config.usePrefixes ? omPrefixes.toLowerCase().split(' ') : []);
-  ModernizrProto._domPrefixes = domPrefixes;
-
+  ;
 
   /**
    * hasOwnProp is a shim for hasOwnProperty that is needed for Safari 2.0 support
@@ -2460,7 +2556,7 @@ Append multiple elements to the DOM within a single insertion.
     }
   })();
 
-
+  
 
 
    // _l tracks listeners for async tests, as well as tests that execute after the initial run
@@ -2645,7 +2741,6 @@ Append multiple elements to the DOM within a single insertion.
         Modernizr[featureNameSplit[0]] = test;
       } else {
         // cast to a Boolean, if not one already
-        /* jshint -W053 */
         if (Modernizr[featureNameSplit[0]] && !(Modernizr[featureNameSplit[0]] instanceof Boolean)) {
           Modernizr[featureNameSplit[0]] = new Boolean(Modernizr[featureNameSplit[0]]);
         }
@@ -2654,9 +2749,7 @@ Append multiple elements to the DOM within a single insertion.
       }
 
       // Set a single class (either `feature` or `no-feature`)
-      /* jshint -W041 */
       setClasses([(!!test && test != false ? '' : 'no-') + featureNameSplit.join('-')]);
-      /* jshint +W041 */
 
       // Trigger the event
       Modernizr._trigger(feature, test);
@@ -2670,7 +2763,7 @@ Append multiple elements to the DOM within a single insertion.
     ModernizrProto.addTest = addTest;
   });
 
-
+  
 
 /*!
 {
@@ -3006,8 +3099,9 @@ Tests for all forms of webp support (lossless, lossy, alpha, and animated)..
         var result = event && event.type === 'load' ? image.width == 1 : false;
         var baseTest = name === 'webp';
 
-        /* jshint -W053 */
-        addTest(name, baseTest ? new Boolean(result) : result);
+        // if it is the base test, and the result is false, just set a literal false
+        // rather than use the Boolean contrsuctor
+        addTest(name, (baseTest && result) ? new Boolean(result) : result);
 
         if (cb) {
           cb(event);
@@ -3039,6 +3133,7 @@ Tests for all forms of webp support (lossless, lossy, alpha, and animated)..
   "property": "svgasimg",
   "caniuse" : "svg-img",
   "tags": ["svg"],
+  "aliases": ["svgincss"],
   "authors": ["Chris Coyier"],
   "notes": [{
     "name": "HTML5 Spec",
@@ -3085,7 +3180,6 @@ Modernizr.datauri.over32kb  // false in IE8
 
   // https://github.com/Modernizr/Modernizr/issues/14
   Modernizr.addAsyncTest(function() {
-    /* jshint -W053 */
 
     // IE7 throw a mixed content warning on HTTPS for this test, so we'll
     // just blacklist it (we know it doesn't support data URIs anyway)
@@ -3169,12 +3263,12 @@ Detects support for creating Web Workers from Blob URIs.
         URL         = URL || window.MozURL || window.webkitURL || window.MSURL || window.OURL;
       }
       var data    = 'Modernizr',
-          blob,
-          bb,
-          worker,
-          url,
-          timeout,
-          scriptText = 'this.onmessage=function(e){postMessage(e.data)}';
+        blob,
+        bb,
+        worker,
+        url,
+        timeout,
+        scriptText = 'this.onmessage=function(e){postMessage(e.data)}';
 
       try {
         blob = new Blob([scriptText], {type: 'text/javascript'});
@@ -3244,7 +3338,7 @@ Detects support for creating Web Workers from Data URIs.
   Modernizr.addAsyncTest(function() {
     try {
       var data    = 'Modernizr',
-      worker  = new Worker('data:text/javascript;base64,dGhpcy5vbm1lc3NhZ2U9ZnVuY3Rpb24oZSl7cG9zdE1lc3NhZ2UoZS5kYXRhKX0=');
+        worker  = new Worker('data:text/javascript;base64,dGhpcy5vbm1lc3NhZ2U9ZnVuY3Rpb24oZSl7cG9zdE1lc3NhZ2UoZS5kYXRhKX0=');
 
       worker.onmessage = function(e) {
         worker.terminate();
@@ -3269,77 +3363,6 @@ Detects support for creating Web Workers from Data URIs.
       }, 0);
     }
   });
-
-
-  var cssomPrefixes = (ModernizrProto._config.usePrefixes ? omPrefixes.split(' ') : []);
-  ModernizrProto._cssomPrefixes = cssomPrefixes;
-
-
-  /**
-   * atRule returns a given CSS property at-rule (eg @keyframes), possibly in
-   * some prefixed form, or false, in the case of an unsupported rule
-   *
-   * @memberof Modernizr
-   * @name Modernizr.atRule
-   * @optionName Modernizr.atRule()
-   * @optionProp atRule
-   * @access public
-   * @function atRule
-   * @param {string} prop - String name of the @-rule to test for
-   * @returns {string|boolean} The string representing the (possibly prefixed)
-   * valid version of the @-rule, or `false` when it is unsupported.
-   * @example
-   * ```js
-   *  var keyframes = Modernizr.atRule('@keyframes');
-   *
-   *  if (keyframes) {
-   *    // keyframes are supported
-   *    // could be `@-webkit-keyframes` or `@keyframes`
-   *  } else {
-   *    // keyframes === `false`
-   *  }
-   * ```
-   *
-   */
-
-  var atRule = function(prop) {
-    var length = prefixes.length;
-    var cssrule = window.CSSRule;
-    var rule;
-
-    if (typeof cssrule === 'undefined') {
-      return undefined;
-    }
-
-    if (!prop) {
-      return false;
-    }
-
-    // remove literal @ from beginning of provided property
-    prop = prop.replace(/^@/, '');
-
-    // CSSRules use underscores instead of dashes
-    rule = prop.replace(/-/g, '_').toUpperCase() + '_RULE';
-
-    if (rule in cssrule) {
-      return '@' + prop;
-    }
-
-    for (var i = 0; i < length; i++) {
-      // prefixes gives us something like -o-, and we want O_
-      var prefix = prefixes[i];
-      var thisRule = prefix.toUpperCase() + '_' + rule;
-
-      if (thisRule in cssrule) {
-        return '@-' + prefix.toLowerCase() + '-' + prop;
-      }
-    }
-
-    return false;
-  };
-
-  ModernizrProto.atRule = atRule;
-
 
 
   /**
@@ -3441,7 +3464,7 @@ Detects support for creating Web Workers from Data URIs.
 
 
   ModernizrProto.hasEvent = hasEvent;
-
+  
 /*!
 {
   "name": "Ambient Light Events",
@@ -3514,94 +3537,6 @@ There is a custom `search` event implemented in webkit browsers when using an `i
 
 /*!
 {
-  "name": "DOM Pointer Events API",
-  "property": "pointerevents",
-  "tags": ["input"],
-  "authors": ["Stu Cox"],
-  "notes": [
-    {
-      "name": "W3C spec",
-      "href": "https://www.w3.org/TR/pointerevents/"
-    }
-  ],
-  "warnings": ["This property name now refers to W3C DOM PointerEvents: https://github.com/Modernizr/Modernizr/issues/548#issuecomment-12812099"],
-  "polyfills": ["handjs"]
-}
-!*/
-/* DOC
-Detects support for the DOM Pointer Events API, which provides a unified event interface for pointing input devices, as implemented in IE10+.
-*/
-
-  // **Test name hijacked!**
-  // Now refers to W3C DOM PointerEvents spec rather than the CSS pointer-events property.
-  Modernizr.addTest('pointerevents', function() {
-    // Cannot use `.prefixed()` for events, so test each prefix
-    var bool = false,
-    i = domPrefixes.length;
-
-    // Don't forget un-prefixed...
-    bool = Modernizr.hasEvent('pointerdown');
-
-    while (i-- && !bool) {
-      if (hasEvent(domPrefixes[i] + 'pointerdown')) {
-        bool = true;
-      }
-    }
-    return bool;
-  });
-
-
-  /**
-   * prefixedCSSValue is a way test for prefixed css properties (e.g. display: -webkit-flex)
-   *
-   * @memberof Modernizr
-   * @name Modernizr.prefixedCSSValue
-   * @optionName Modernizr.prefixedCSSValue()
-   * @optionProp prefixedCSSValue
-   * @access public
-   * @function prefixedCSSValue
-   * @param {string} prop - String name of the property to test for
-   * @param {string} value - String value of the non prefixed version of the value you want to test for
-   * @returns {string|false} The string representing the (possibly prefixed)
-   * valid version of the property, or `false` when it is unsupported.
-   * @example
-   *
-   * `Modernizr.prefixedCSSValue` is a way test for prefixed css properties (e.g. display: -webkit-flex)
-   *
-   * ```js
-   * Modernizr.prefixedCSSValue('background', 'linear-gradient(left, red, red)')
-   * ```
-   *
-   */
-
-  var prefixedCSSValue = function(prop, value) {
-    var result = false;
-    var elem = createElement('div');
-    var style = elem.style;
-
-    if (prop in style) {
-      var i = domPrefixes.length;
-
-      style[prop] = value;
-      result = style[prop];
-
-      while (i-- && !result) {
-        style[prop] = '-' + domPrefixes[i] + '-' + value;
-        result = style[prop];
-      }
-    }
-
-    if (result === '') {
-      result = false;
-    }
-
-    return result;
-  };
-
-  ModernizrProto.prefixedCSSValue = prefixedCSSValue;
-
-/*!
-{
   "name" : "HTML5 Audio Element",
   "property": "audio",
   "tags" : ["html5", "audio", "media"]
@@ -3625,12 +3560,12 @@ Detects the audio element
   //   It was live in FF3.5.0 and 3.5.1, but fixed in 3.5.2
   //   It was also live in Safari 4.0.0 - 4.0.4, but fixed in 4.0.5
   Modernizr.addTest('audio', function() {
-    /* jshint -W053 */
     var elem = createElement('audio');
     var bool = false;
 
     try {
-      if (bool = !!elem.canPlayType) {
+      bool = !!elem.canPlayType
+      if (bool) {
         bool      = new Boolean(bool);
         bool.ogg  = elem.canPlayType('audio/ogg; codecs="vorbis"') .replace(/^no$/, '');
         bool.mp3  = elem.canPlayType('audio/mpeg; codecs="mp3"')   .replace(/^no$/, '');
@@ -3843,13 +3778,13 @@ Modernizr.video.ogg     // 'probably'
   //   It was also live in Safari 4.0.0 - 4.0.4, but fixed in 4.0.5
 
   Modernizr.addTest('video', function() {
-    /* jshint -W053 */
     var elem = createElement('video');
     var bool = false;
 
     // IE9 Running on Windows Server SKU can cause an exception to be thrown, bug #224
     try {
-      if (bool = !!elem.canPlayType) {
+      bool = !!elem.canPlayType
+      if (bool) {
         bool = new Boolean(bool);
         bool.ogg = elem.canPlayType('video/ogg; codecs="theora"').replace(/^no$/, '');
 
@@ -3892,7 +3827,7 @@ Detects support for VML.
     var supports = false;
     var shape;
 
-     if (!isSVG) {
+    if (!isSVG) {
       containerDiv.innerHTML = '<v:shape id="vml_flag1" adj="1" />';
       shape = containerDiv.firstChild;
       if ('style' in shape) {
@@ -4385,100 +4320,6 @@ Method of allowing calculated values for length units. For example:
 
 /*!
 {
-  "name": "CSS Regions",
-  "caniuse": "css-regions",
-  "authors": ["Mihai Balan"],
-  "property": "regions",
-  "tags": ["css"],
-  "builderAliases": ["css_regions"],
-  "notes": [{
-    "name": "W3C Specification",
-    "href": "https://www.w3.org/TR/css3-regions/"
-  }]
-}
-!*/
-
-  // We start with a CSS parser test then we check page geometry to see if it's affected by regions
-  // Later we might be able to retire the second part, as WebKit builds with the false positives die out
-
-  Modernizr.addTest('regions', function() {
-
-    if (isSVG) {
-      // css regions don't work inside of SVG elements. Rather than update the
-      // below test to work in an SVG context, just exit early to save bytes
-      return false;
-    }
-
-    /* Get the 'flowFrom' property name available in the browser. Either default or vendor prefixed.
-       If the property name can't be found we'll get Boolean 'false' and fail quickly */
-    var flowFromProperty = Modernizr.prefixed('flowFrom');
-    var flowIntoProperty = Modernizr.prefixed('flowInto');
-    var result = false;
-
-    if (!flowFromProperty || !flowIntoProperty) {
-      return result;
-    }
-
-    /* If CSS parsing is there, try to determine if regions actually work. */
-    var iframeContainer = createElement('iframe');
-    var container = createElement('div');
-    var content = createElement('div');
-    var region = createElement('div');
-
-    /* we create a random, unlikely to be generated flow number to make sure we don't
-       clash with anything more vanilla, like 'flow', or 'article', or 'f1' */
-    var flowName = 'modernizr_flow_for_regions_check';
-
-    /* First create a div with two adjacent divs inside it. The first will be the
-       content, the second will be the region. To be able to distinguish between the two,
-       we'll give the region a particular padding */
-    content.innerText = 'M';
-    container.style.cssText = 'top: 150px; left: 150px; padding: 0px;';
-    region.style.cssText = 'width: 50px; height: 50px; padding: 42px;';
-
-    region.style[flowFromProperty] = flowName;
-    container.appendChild(content);
-    container.appendChild(region);
-    docElement.appendChild(container);
-
-    /* Now compute the bounding client rect, before and after attempting to flow the
-       content div in the region div. If regions are enabled, the after bounding rect
-       should reflect the padding of the region div.*/
-    var flowedRect, delta;
-    var plainRect = content.getBoundingClientRect();
-
-
-    content.style[flowIntoProperty] = flowName;
-    flowedRect = content.getBoundingClientRect();
-
-    delta = parseInt(flowedRect.left - plainRect.left, 10);
-    docElement.removeChild(container);
-
-    if (delta == 42) {
-      result = true;
-    } else {
-      /* IE only allows for the content to come from iframes. This has the
-       * side effect of automatic collapsing of iframes once they get the flow-into
-       * property set. checking for a change on the height allows us to detect this
-       * in a sync way, without having to wait for a frame to load */
-
-      docElement.appendChild(iframeContainer);
-      plainRect = iframeContainer.getBoundingClientRect();
-      iframeContainer.style[flowIntoProperty] = flowName;
-      flowedRect = iframeContainer.getBoundingClientRect();
-
-      if (plainRect.height > 0 && plainRect.height !== flowedRect.height && flowedRect.height === 0) {
-        result = true;
-      }
-    }
-
-    content = region = container = iframeContainer = undefined;
-
-    return result;
-  });
-
-/*!
-{
   "name": "CSS Font rem Units",
   "caniuse": "rem",
   "authors": ["nsfmc"],
@@ -4548,8 +4389,16 @@ Detects support for `transform-style: preserve-3d`, for getting a proper 3D pers
 */
 
   Modernizr.addTest('preserve3d', function() {
-    var outerAnchor = createElement('a');
-    var innerAnchor = createElement('a');
+    var outerAnchor, innerAnchor;
+    var CSS = window.CSS;
+    var result = false;
+
+    if (CSS && CSS.supports && CSS.supports('(transform-style: preserve-3d)')) {
+      return true;
+    }
+
+    outerAnchor = createElement('a');
+    innerAnchor = createElement('a');
 
     outerAnchor.style.cssText = 'display: block; transform-style: preserve-3d; transform-origin: right; transform: rotateY(40deg);';
     innerAnchor.style.cssText = 'display: block; width: 9px; height: 1px; background: #000; transform-origin: right; transform: rotateY(40deg);';
@@ -4557,10 +4406,11 @@ Detects support for `transform-style: preserve-3d`, for getting a proper 3D pers
     outerAnchor.appendChild(innerAnchor);
     docElement.appendChild(outerAnchor);
 
-    var result = innerAnchor.getBoundingClientRect();
+    result = innerAnchor.getBoundingClientRect();
     docElement.removeChild(outerAnchor);
 
-    return result.width && result.width < 4;
+    result = result.width && result.width < 4;
+    return result;
   });
 
 /*!
@@ -4607,35 +4457,25 @@ Detects support for `transform-style: preserve-3d`, for getting a proper 3D pers
 
 /*!
 {
-  "name": "bdi Element",
-  "property": "bdi",
+  "name": "[hidden] Attribute",
+  "property": "hidden",
+  "tags": ["dom"],
   "notes": [{
-    "name": "MDN Overview",
-    "href": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/bdi"
-  }]
+    "name": "WHATWG: The hidden attribute",
+    "href": "https://developers.whatwg.org/editing.html#the-hidden-attribute"
+  }, {
+    "name": "original implementation of detect code",
+    "href": "https://github.com/aFarkas/html5shiv/blob/bf4fcc4/src/html5shiv.js#L38"
+  }],
+  "polyfills": ["html5shiv"],
+  "authors": ["Ron Waldon (@jokeyrhyme)"]
 }
 !*/
 /* DOC
-Detect support for the bdi element, a way to have text that is isolated from its possibly bidirectional surroundings
+Does the browser support the HTML5 [hidden] attribute?
 */
 
-  Modernizr.addTest('bdi', function() {
-    var div = createElement('div');
-    var bdi = createElement('bdi');
-
-    bdi.innerHTML = '&#1573;';
-    div.appendChild(bdi);
-
-    docElement.appendChild(div);
-
-    var supports = ((window.getComputedStyle ?
-          getComputedStyle(bdi, null) :
-          bdi.currentStyle).direction === 'rtl');
-
-    docElement.removeChild(div);
-
-    return supports;
-  });
+  Modernizr.addTest('hidden', 'hidden' in createElement('a'));
 
 /*!
 {
@@ -4753,6 +4593,21 @@ Detect support for the bdi element, a way to have text that is isolated from its
 
 /*!
 {
+  "name": "time Element",
+  "property": "time",
+  "tags": ["elem"],
+  "builderAliases": ["elem_time"],
+  "notes": [{
+    "name": "WhatWG Spec",
+    "href": "https://html.spec.whatwg.org/multipage/semantics.html#the-time-element"
+  }]
+}
+!*/
+
+  Modernizr.addTest('time', 'valueAsDate' in createElement('time'));
+
+/*!
+{
   "name": "Track element and Timed Text Track",
   "property": ["texttrackapi", "track"],
   "tags": ["elem"],
@@ -4773,21 +4628,6 @@ Detect support for the bdi element, a way to have text that is isolated from its
 
   // a more strict test for track including UI support: document.createElement('track').kind === 'subtitles'
   Modernizr.addTest('track', 'kind' in createElement('track'));
-
-/*!
-{
-  "name": "time Element",
-  "property": "time",
-  "tags": ["elem"],
-  "builderAliases": ["elem_time"],
-  "notes": [{
-    "name": "WhatWG Spec",
-    "href": "https://html.spec.whatwg.org/multipage/semantics.html#the-time-element"
-  }]
-}
-!*/
-
-  Modernizr.addTest('time', 'valueAsDate' in createElement('time'));
 
 /*!
 {
@@ -4855,35 +4695,6 @@ E.g. iOS < 6 and some android version don't support this
     var elem = createElement('input');
     elem.type = 'file';
     return !elem.disabled;
-  });
-
-/*!
-{
-  "name": "input[directory] Attribute",
-  "property": "directory",
-  "authors": ["silverwind"],
-  "tags": ["file", "input", "attribute"]
-}
-!*/
-/* DOC
-When used on an `<input type="file">`, the `directory` attribute instructs
-the user agent to present a directory selection dialog instead of the usual
-file selection dialog.
-*/
-
-  Modernizr.addTest('fileinputdirectory', function() {
-    var elem = createElement('input'), dir = 'directory';
-    elem.type = 'file';
-    if (dir in elem) {
-      return true;
-    } else {
-      for (var i = 0, len = domPrefixes.length; i < len; i++) {
-        if (domPrefixes[i] + dir in elem) {
-          return true;
-        }
-      }
-    }
-    return false;
   });
 
 /*!
@@ -5058,7 +4869,7 @@ Test for animated png support.
 Detects support for the crossOrigin attribute on images, which allow for cross domain images inside of a canvas without tainting it
 */
 
-    Modernizr.addTest('imgcrossorigin', 'crossOrigin' in createElement('img'));
+  Modernizr.addTest('imgcrossorigin', 'crossOrigin' in createElement('img'));
 
 /*!
 {
@@ -5356,7 +5167,12 @@ Checks for support of the autoplay attribute of the video element.
 
       elem.removeEventListener('playing', testAutoplay, false);
       addTest('videoautoplay', result);
-      elem.parentNode.removeChild(elem);
+
+      // Cleanup, but don't assume elem is still in the page -
+      // an extension (eg Flashblock) may already have removed it.
+      if (elem.parentNode) {
+        elem.parentNode.removeChild(elem);
+      }
     }
 
     //skip the test if video itself, or the autoplay
@@ -5398,6 +5214,24 @@ Checks for support of the autoplay attribute of the video element.
       timeout = setTimeout(testAutoplay, waitTime);
     }, 0);
   });
+
+/*!
+{
+  "name": "Video crossOrigin",
+  "property": "videocrossorigin",
+  "caniuse": "cors",
+  "authors": ["Florian Mailliet"],
+  "notes": [{
+    "name": "MDN documentation",
+    "href": "https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes"
+  }]
+}
+!*/
+/* DOC
+Detects support for the crossOrigin attribute on video tag
+*/
+
+  Modernizr.addTest('videocrossorigin', 'crossOrigin' in createElement('video'));
 
 /*!
 {
@@ -5452,10 +5286,9 @@ if ('OES_vertex_array_object' in Modernizr.webglextensions) {
 
   // Not Async but handles it's own self
   Modernizr.addAsyncTest(function() {
-    /* jshint -W053 */
 
     // Not a good candidate for css classes, so we avoid addTest stuff
-    Modernizr.webglextensions = new Boolean(false);
+    Modernizr.webglextensions = false;
 
     if (!Modernizr.webgl) {
       return;
@@ -5521,6 +5354,235 @@ if ('OES_vertex_array_object' in Modernizr.webglextensions) {
   ;
 
   /**
+   * If the browsers follow the spec, then they would expose vendor-specific styles as:
+   *   elem.style.WebkitBorderRadius
+   * instead of something like the following (which is technically incorrect):
+   *   elem.style.webkitBorderRadius
+
+   * WebKit ghosts their properties in lowercase but Opera & Moz do not.
+   * Microsoft uses a lowercase `ms` instead of the correct `Ms` in IE8+
+   *   erik.eae.net/archives/2008/03/10/21.48.10/
+
+   * More here: github.com/Modernizr/Modernizr/issues/issue/21
+   *
+   * @access private
+   * @returns {string} The string representing the vendor-specific style properties
+   */
+
+  var omPrefixes = 'Moz O ms Webkit';
+  
+
+  /**
+   * List of JavaScript DOM values used for tests
+   *
+   * @memberof Modernizr
+   * @name Modernizr._domPrefixes
+   * @optionName Modernizr._domPrefixes
+   * @optionProp domPrefixes
+   * @access public
+   * @example
+   *
+   * Modernizr._domPrefixes is exactly the same as [_prefixes](#modernizr-_prefixes), but rather
+   * than kebab-case properties, all properties are their Capitalized variant
+   *
+   * ```js
+   * Modernizr._domPrefixes === [ "Moz", "O", "ms", "Webkit" ];
+   * ```
+   */
+
+  var domPrefixes = (ModernizrProto._config.usePrefixes ? omPrefixes.toLowerCase().split(' ') : []);
+  ModernizrProto._domPrefixes = domPrefixes;
+  
+
+  /**
+   * prefixedCSSValue is a way test for prefixed css properties (e.g. display: -webkit-flex)
+   *
+   * @memberof Modernizr
+   * @name Modernizr.prefixedCSSValue
+   * @optionName Modernizr.prefixedCSSValue()
+   * @optionProp prefixedCSSValue
+   * @access public
+   * @function prefixedCSSValue
+   * @param {string} prop - String name of the property to test for
+   * @param {string} value - String value of the non prefixed version of the value you want to test for
+   * @returns {string|false} The string representing the (possibly prefixed)
+   * valid version of the property, or `false` when it is unsupported.
+   * @example
+   *
+   * `Modernizr.prefixedCSSValue` is a way test for prefixed css properties (e.g. display: -webkit-flex)
+   *
+   * ```js
+   * Modernizr.prefixedCSSValue('background', 'linear-gradient(left, red, red)')
+   * ```
+   *
+   */
+
+  var prefixedCSSValue = function(prop, value) {
+    var result = false;
+    var elem = createElement('div');
+    var style = elem.style;
+
+    if (prop in style) {
+      var i = domPrefixes.length;
+
+      style[prop] = value;
+      result = style[prop];
+
+      while (i-- && !result) {
+        style[prop] = '-' + domPrefixes[i] + '-' + value;
+        result = style[prop];
+      }
+    }
+
+    if (result === '') {
+      result = false;
+    }
+
+    return result;
+  };
+
+  ModernizrProto.prefixedCSSValue = prefixedCSSValue;
+  
+/*!
+{
+  "name": "DOM Pointer Events API",
+  "property": "pointerevents",
+  "tags": ["input"],
+  "authors": ["Stu Cox"],
+  "notes": [
+    {
+      "name": "W3C spec",
+      "href": "https://www.w3.org/TR/pointerevents/"
+    }
+  ],
+  "warnings": ["This property name now refers to W3C DOM PointerEvents: https://github.com/Modernizr/Modernizr/issues/548#issuecomment-12812099"],
+  "polyfills": ["handjs","pep"]
+}
+!*/
+/* DOC
+Detects support for the DOM Pointer Events API, which provides a unified event interface for pointing input devices, as implemented in IE10+.
+*/
+
+  // **Test name hijacked!**
+  // Now refers to W3C DOM PointerEvents spec rather than the CSS pointer-events property.
+  Modernizr.addTest('pointerevents', function() {
+    // Cannot use `.prefixed()` for events, so test each prefix
+    var bool = false,
+      i = domPrefixes.length;
+
+    // Don't forget un-prefixed...
+    bool = Modernizr.hasEvent('pointerdown');
+
+    while (i-- && !bool) {
+      if (hasEvent(domPrefixes[i] + 'pointerdown')) {
+        bool = true;
+      }
+    }
+    return bool;
+  });
+
+/*!
+{
+  "name": "input[directory] Attribute",
+  "property": "directory",
+  "authors": ["silverwind"],
+  "tags": ["file", "input", "attribute"]
+}
+!*/
+/* DOC
+When used on an `<input type="file">`, the `directory` attribute instructs
+the user agent to present a directory selection dialog instead of the usual
+file selection dialog.
+*/
+
+  Modernizr.addTest('fileinputdirectory', function() {
+    var elem = createElement('input'), dir = 'directory';
+    elem.type = 'file';
+    if (dir in elem) {
+      return true;
+    } else {
+      for (var i = 0, len = domPrefixes.length; i < len; i++) {
+        if (domPrefixes[i] + dir in elem) {
+          return true;
+        }
+      }
+    }
+    return false;
+  });
+
+
+  var cssomPrefixes = (ModernizrProto._config.usePrefixes ? omPrefixes.split(' ') : []);
+  ModernizrProto._cssomPrefixes = cssomPrefixes;
+  
+
+  /**
+   * atRule returns a given CSS property at-rule (eg @keyframes), possibly in
+   * some prefixed form, or false, in the case of an unsupported rule
+   *
+   * @memberof Modernizr
+   * @name Modernizr.atRule
+   * @optionName Modernizr.atRule()
+   * @optionProp atRule
+   * @access public
+   * @function atRule
+   * @param {string} prop - String name of the @-rule to test for
+   * @returns {string|boolean} The string representing the (possibly prefixed)
+   * valid version of the @-rule, or `false` when it is unsupported.
+   * @example
+   * ```js
+   *  var keyframes = Modernizr.atRule('@keyframes');
+   *
+   *  if (keyframes) {
+   *    // keyframes are supported
+   *    // could be `@-webkit-keyframes` or `@keyframes`
+   *  } else {
+   *    // keyframes === `false`
+   *  }
+   * ```
+   *
+   */
+
+  var atRule = function(prop) {
+    var length = prefixes.length;
+    var cssrule = window.CSSRule;
+    var rule;
+
+    if (typeof cssrule === 'undefined') {
+      return undefined;
+    }
+
+    if (!prop) {
+      return false;
+    }
+
+    // remove literal @ from beginning of provided property
+    prop = prop.replace(/^@/, '');
+
+    // CSSRules use underscores instead of dashes
+    rule = prop.replace(/-/g, '_').toUpperCase() + '_RULE';
+
+    if (rule in cssrule) {
+      return '@' + prop;
+    }
+
+    for (var i = 0; i < length; i++) {
+      // prefixes gives us something like -o-, and we want O_
+      var prefix = prefixes[i];
+      var thisRule = prefix.toUpperCase() + '_' + rule;
+
+      if (thisRule in cssrule) {
+        return '@-' + prefix.toLowerCase() + '-' + prop;
+      }
+    }
+
+    return false;
+  };
+
+  ModernizrProto.atRule = atRule;
+
+  
+
+  /**
    * getBody returns the body of a document, or an element that can stand in for
    * the body if a real body does not exist
    *
@@ -5557,7 +5619,6 @@ Detects Flash support as well as Flash-blocking plugins
 */
 
   Modernizr.addAsyncTest(function() {
-    /* jshint -W053 */
 
     var attachBody = function(body) {
       if (!docElement.contains(body)) {
@@ -5728,6 +5789,7 @@ Detects Flash support as well as Flash-blocking plugins
       body.parentNode.removeChild(body);
       docElement.style.overflow = docOverflow;
       // Trigger layout so kinetic scrolling isn't disabled in iOS6+
+      // eslint-disable-next-line
       docElement.offsetHeight;
     } else {
       div.parentNode.removeChild(div);
@@ -5811,7 +5873,7 @@ Detects Flash support as well as Flash-blocking plugins
 
   ModernizrProto.mq = mq;
 
-
+  
 /*!
 {
   "name": "CSS Media Queries",
@@ -5823,6 +5885,38 @@ Detects Flash support as well as Flash-blocking plugins
 !*/
 
   Modernizr.addTest('mediaqueries', mq('only all'));
+
+/*!
+{
+  "name": "Hover Media Query",
+  "property": "hovermq",
+  "notes": [{
+    "name": "//Name of reference document",
+    "href": "//URL of reference document"
+  }]
+}
+!*/
+/* DOC
+Detect support for Hover based media queries
+*/
+
+  Modernizr.addTest('hovermq', mq(('(hover)')));
+
+/*!
+{
+  "name": "Pointer Media Query",
+  "property": "pointermq",
+  "notes": [{
+    "name": "//Name of reference document",
+    "href": "//URL of reference document"
+  }]
+}
+!*/
+/* DOC
+Detect support for Pointer based media queries
+*/
+
+  Modernizr.addTest('pointermq', mq(('(pointer:coarse),(pointer:fine),(pointer:none)')));
 
 
   /**
@@ -5883,7 +5977,7 @@ Detects Flash support as well as Flash-blocking plugins
    */
 
   var testStyles = ModernizrProto.testStyles = injectElementWithStyles;
-
+  
 /*!
 {
   "name": "Hidden Scrollbar",
@@ -6153,11 +6247,9 @@ Detects if unicode characters are supported in the current document.
 
   var blacklist = (function() {
     var ua = navigator.userAgent;
-    var wkvers = ua.match(/applewebkit\/([0-9]+)/gi) && parseFloat(RegExp.$1);
     var webos = ua.match(/w(eb)?osbrowser/gi);
     var wppre8 = ua.match(/windows phone/gi) && ua.match(/iemobile\/([0-9])+/gi) && parseFloat(RegExp.$1) >= 9;
-    var oldandroid = wkvers < 533 && ua.match(/android/gi);
-    return webos || oldandroid || wppre8;
+    return webos || wppre8;
   }());
   if (blacklist) {
     Modernizr.addTest('fontface', false);
@@ -6191,12 +6283,13 @@ Detects if unicode characters are supported in the current document.
 !*/
 
   testStyles('#modernizr{font:0/0 a}#modernizr:after{content:":)";visibility:hidden;font:7px/1 a}', function(node) {
-    Modernizr.addTest('generatedcontent', node.offsetHeight >= 7);
+    // See bug report on why this value is 6 crbug.com/608142
+    Modernizr.addTest('generatedcontent', node.offsetHeight >= 6);
   });
 
 /*! {
   "name": "hairline",
-  "property": "csshairline",
+  "property": "hairline",
   "tags": ["css"],
   "authors": ["strarsis"],
   "notes": [{
@@ -6308,12 +6401,12 @@ Detects support for the ':nth-child()' CSS pseudo-selector.
 !*/
 
   testStyles('#modernizr{overflow: scroll; width: 40px; height: 40px; }#' + prefixes
-    .join('scrollbar{width:0px}' + ' #modernizr::')
+    .join('scrollbar{width:10px}' + ' #modernizr::')
     .split('#')
     .slice(1)
-    .join('#') + 'scrollbar{width:0px}',
+    .join('#') + 'scrollbar{width:10px}',
   function(node) {
-    Modernizr.addTest('cssscrollbar', node.scrollWidth == 40);
+    Modernizr.addTest('cssscrollbar', 'scrollWidth' in node && node.scrollWidth == 30);
   });
 
 /*!
@@ -6388,57 +6481,6 @@ Detects support for the ':nth-child()' CSS pseudo-selector.
       elem.appendChild(input);
       return input.clientWidth > 10;
     });
-  });
-
-/*!
-{
-  "name": "CSS vh unit",
-  "property": "cssvhunit",
-  "caniuse": "viewport-units",
-  "tags": ["css"],
-  "builderAliases": ["css_vhunit"],
-  "notes": [{
-    "name": "Related Modernizr Issue",
-    "href": "https://github.com/Modernizr/Modernizr/issues/572"
-  },{
-    "name": "Similar JSFiddle",
-    "href": "https://jsfiddle.net/FWeinb/etnYC/"
-  }]
-}
-!*/
-
-  testStyles('#modernizr { height: 50vh; }', function(elem) {
-    var height = parseInt(window.innerHeight / 2, 10);
-    var compStyle = parseInt((window.getComputedStyle ?
-                              getComputedStyle(elem, null) :
-                              elem.currentStyle).height, 10);
-    Modernizr.addTest('cssvhunit', compStyle == height);
-  });
-
-/*!
-{
-  "name": "CSS vw unit",
-  "property": "cssvwunit",
-  "caniuse": "viewport-units",
-  "tags": ["css"],
-  "builderAliases": ["css_vwunit"],
-  "notes": [{
-    "name": "Related Modernizr Issue",
-    "href": "https://github.com/Modernizr/Modernizr/issues/572"
-  },{
-    "name": "JSFiddle Example",
-    "href": "https://jsfiddle.net/FWeinb/etnYC/"
-  }]
-}
-!*/
-
-  testStyles('#modernizr { width: 50vw; }', function(elem) {
-    var width = parseInt(window.innerWidth / 2, 10);
-    var compStyle = parseInt((window.getComputedStyle ?
-                              getComputedStyle(elem, null) :
-                              elem.currentStyle).width, 10);
-
-    Modernizr.addTest('cssvwunit', compStyle == width);
   });
 
 /*!
@@ -6532,7 +6574,7 @@ Detects support for the ':nth-child()' CSS pseudo-selector.
     } catch (e) {
       supportsOnInput = false;
     }
-      return supportsOnInput;
+    return supportsOnInput;
   });
 
 /*!
@@ -6612,7 +6654,7 @@ the test can be combined:
    * @returns {HTMLInputElement}
    */
   var inputElem = createElement('input');
-
+  
 /*!
 {
   "name": "Input attributes",
@@ -6836,12 +6878,15 @@ Detects whether input type="number" is capable of receiving and displaying local
     root.appendChild(el);
     input.focus();
     try {
+      document.execCommand('SelectAll', false); // Overwrite current input value, rather than appending text
       document.execCommand('InsertText', false, '1,1');
     } catch (e) { // prevent warnings in IE
     }
     diff = input.type === 'number' && input.valueAsNumber === 1.1 && input.checkValidity();
     root.removeChild(el);
-    body.fake && root.parentNode.removeChild(root);
+    if (body.fake) {
+      root.parentNode.removeChild(root);
+    }
     return diff;
   });
 
@@ -6862,7 +6907,7 @@ Detects whether input type="number" is capable of receiving and displaying local
     delete modElem.elem;
   });
 
-
+  
 /*!
 {
   "name": "CSS Font ch Units",
@@ -6946,6 +6991,121 @@ Detects whether input type="number" is capable of receiving and displaying local
   });
 
 
+
+  /**
+   * wrapper around getComputedStyle, to fix issues with Firefox returning null when
+   * called inside of a hidden iframe
+   *
+   * @access private
+   * @function computedStyle
+   * @param {HTMLElement|SVGElement} - The element we want to find the computed styles of
+   * @param {string|null} [pseudoSelector]- An optional pseudo element selector (e.g. :before), of null if none
+   * @returns {CSSStyleDeclaration}
+   */
+
+  function computedStyle(elem, pseudo, prop) {
+    var result;
+
+    if ('getComputedStyle' in window) {
+      result = getComputedStyle.call(window, elem, pseudo);
+      var console = window.console;
+
+      if (result !== null) {
+        if (prop) {
+          result = result.getPropertyValue(prop);
+        }
+      } else {
+        if (console) {
+          var method = console.error ? 'error' : 'log';
+          console[method].call(console, 'getComputedStyle returning null, its possible modernizr test results are inaccurate');
+        }
+      }
+    } else {
+      result = !pseudo && elem.currentStyle && elem.currentStyle[prop];
+    }
+
+    return result;
+  }
+
+  ;
+/*!
+{
+  "name": "CSS vh unit",
+  "property": "cssvhunit",
+  "caniuse": "viewport-units",
+  "tags": ["css"],
+  "builderAliases": ["css_vhunit"],
+  "notes": [{
+    "name": "Related Modernizr Issue",
+    "href": "https://github.com/Modernizr/Modernizr/issues/572"
+  },{
+    "name": "Similar JSFiddle",
+    "href": "https://jsfiddle.net/FWeinb/etnYC/"
+  }]
+}
+!*/
+
+  testStyles('#modernizr { height: 50vh; }', function(elem) {
+    var height = parseInt(window.innerHeight / 2, 10);
+    var compStyle = parseInt(computedStyle(elem, null, 'height'), 10);
+    Modernizr.addTest('cssvhunit', compStyle == height);
+  });
+
+/*!
+{
+  "name": "CSS vw unit",
+  "property": "cssvwunit",
+  "caniuse": "viewport-units",
+  "tags": ["css"],
+  "builderAliases": ["css_vwunit"],
+  "notes": [{
+    "name": "Related Modernizr Issue",
+    "href": "https://github.com/Modernizr/Modernizr/issues/572"
+  },{
+    "name": "JSFiddle Example",
+    "href": "https://jsfiddle.net/FWeinb/etnYC/"
+  }]
+}
+!*/
+
+  testStyles('#modernizr { width: 50vw; }', function(elem) {
+    var width = parseInt(window.innerWidth / 2, 10);
+    var compStyle = parseInt(computedStyle(elem, null, 'width'), 10);
+
+    Modernizr.addTest('cssvwunit', compStyle == width);
+  });
+
+/*!
+{
+  "name": "bdi Element",
+  "property": "bdi",
+  "notes": [{
+    "name": "MDN Overview",
+    "href": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/bdi"
+  }]
+}
+!*/
+/* DOC
+Detect support for the bdi element, a way to have text that is isolated from its possibly bidirectional surroundings
+*/
+
+  Modernizr.addTest('bdi', function() {
+    var div = createElement('div');
+    var bdi = createElement('bdi');
+
+    bdi.innerHTML = '&#1573;';
+    div.appendChild(bdi);
+
+    docElement.appendChild(div);
+
+    var supports = computedStyle(bdi, null, 'direction') === 'rtl';
+
+    docElement.removeChild(div);
+
+    return supports;
+  });
+
+
   /**
    * roundedEquals takes two integers and checks if the first is within 1 of the second
    *
@@ -6987,9 +7147,7 @@ Detects whether input type="number" is capable of receiving and displaying local
     var one_vw = fullSizeElem.clientWidth / 100;
     var one_vh = fullSizeElem.clientHeight / 100;
     var expectedWidth = parseInt(Math.max(one_vw, one_vh) * 50, 10);
-    var compWidth = parseInt((window.getComputedStyle ?
-                          getComputedStyle(elem, null) :
-                          elem.currentStyle).width, 10);
+    var compWidth = parseInt(computedStyle(elem, null, 'width'), 10);
 
     Modernizr.addTest('cssvmaxunit', roundedEquals(expectedWidth, compWidth) || roundedEquals(expectedWidth, compWidth - scrollbarWidth));
   }, 3);
@@ -7020,9 +7178,7 @@ Detects whether input type="number" is capable of receiving and displaying local
     var one_vw = fullSizeElem.clientWidth / 100;
     var one_vh = fullSizeElem.clientHeight / 100;
     var expectedWidth = parseInt(Math.min(one_vw, one_vh) * 50, 10);
-    var compWidth = parseInt((window.getComputedStyle ?
-                          getComputedStyle(elem, null) :
-                          elem.currentStyle).width, 10);
+    var compWidth = parseInt(computedStyle(elem, null, 'width'), 10);
 
     Modernizr.addTest('cssvminunit', roundedEquals(expectedWidth, compWidth) || roundedEquals(expectedWidth, compWidth - scrollbarWidth));
   }, 3);
@@ -7053,7 +7209,7 @@ Detects whether input type="number" is capable of receiving and displaying local
     return 'response' in xhr && xhr.responseType == type;
   };
 
-
+  
 /*!
 {
   "name": "XHR responseType='arraybuffer'",
@@ -7154,7 +7310,7 @@ Tests for XMLHttpRequest xhr.responseType='text'.
    */
 
   var toStringFn = ({}).toString;
-
+  
 /*!
 {
   "name": "SVG clip paths",
@@ -7227,7 +7383,7 @@ Detects support for foreignObject tag in SVG.
     delete mStyle.style;
   });
 
-
+  
 
   /**
    * nativeTestProps allows for us to use native feature detection functionality if available.
@@ -7263,7 +7419,7 @@ Detects support for foreignObject tag in SVG.
       }
       conditionText = conditionText.join(' or ');
       return injectElementWithStyles('@supports (' + conditionText + ') { #modernizr { position: absolute; } }', function(node) {
-        return getComputedStyle(node, null).position == 'absolute';
+        return computedStyle(node, null, 'position') == 'absolute';
       });
     }
     return undefined;
@@ -7401,7 +7557,7 @@ Detects support for foreignObject tag in SVG.
   var testProp = ModernizrProto.testProp = function(prop, value, useValue) {
     return testProps([prop], undefined, value, useValue);
   };
-
+  
 /*!
 {
   "name": "CSS textshadow",
@@ -7442,6 +7598,7 @@ Detects support for foreignObject tag in SVG.
    * @param {array.<string>} props - An array of properties to test for
    * @param {object} obj - An object or Element you want to use to test the parameters again
    * @param {boolean|object} elem - An Element to bind the property lookup again. Use `false` to prevent the check
+   * @returns {false|*} returns false if the prop is unsupported, otherwise the value that is supported
    */
   function testDOMProps(props, obj, elem) {
     var item;
@@ -7484,11 +7641,12 @@ Detects support for foreignObject tag in SVG.
    * @param {HTMLElement|SVGElement} [elem] - An element used to test the property and value against
    * @param {string} [value] - A string of a css value
    * @param {boolean} [skipValueTest] - An boolean representing if you want to test if value sticks when set
+   * @returns {false|string} returns the string version of the property, or false if it is unsupported
    */
   function testPropsAll(prop, prefixed, elem, value, skipValueTest) {
 
     var ucProp = prop.charAt(0).toUpperCase() + prop.slice(1),
-    props = (prop + ' ' + cssomPrefixes.join(ucProp + ' ') + ucProp).split(' ');
+      props = (prop + ' ' + cssomPrefixes.join(ucProp + ' ') + ucProp).split(' ');
 
     // did they call .prefixed('boxSizing') or are we just testing a prop?
     if (is(prefixed, 'string') || is(prefixed, 'undefined')) {
@@ -7508,7 +7666,7 @@ Detects support for foreignObject tag in SVG.
   // Modernizr.testAllProps('boxSizing')
   ModernizrProto.testAllProps = testPropsAll;
 
-
+  
 
   /**
    * prefixed returns the prefixed or nonprefixed property name variant of your input
@@ -7592,7 +7750,7 @@ Detects support for foreignObject tag in SVG.
     }
   };
 
-
+  
 
   /**
    * prefixedCSS is just like [prefixed](#modernizr-prefixed), but the returned values are in
@@ -7626,7 +7784,7 @@ Detects support for foreignObject tag in SVG.
     var prefixedProp = prefixed(prop);
     return prefixedProp && domToCSS(prefixedProp);
   };
-
+  
 /*!
 {
   "name": "Battery API",
@@ -7709,7 +7867,7 @@ Force Touch events are available in OS X 10.11 and later on devices equipped wit
 		// github.com/Modernizr/Modernizr/issues/1613
     // Test if the browser supports the force touch event progression (see notes link)
     if (!hasEvent(prefixed('mouseforcewillbegin', window, false), window)) {
-          return false;
+      return false;
     }
 
     // Test if the browser provides thresholds defining a "force touch" from a normal touch/click event
@@ -7766,7 +7924,8 @@ Detects support for the Gamepad API, for access to gamepads and controllers.
   "property": "indexeddb",
   "caniuse": "indexeddb",
   "tags": ["storage"],
-  "polyfills": ["indexeddb"]
+  "polyfills": ["indexeddb"],
+  "async": true
 }
 !*/
 /* DOC
@@ -7778,17 +7937,48 @@ Detects support for the IndexedDB client-side storage API (final spec).
   // - Firefox shipped moz_indexedDB before FF4b9, but since then has been mozIndexedDB
   // For speed, we don't test the legacy (and beta-only) indexedDB
 
-  var indexeddb;
-  try {
-    indexeddb = prefixed('indexedDB', window);
-  } catch (e) {
+  Modernizr.addAsyncTest(function() {
+
+    var indexeddb;
+
+    try {
+      // Firefox throws a Security Error when cookies are disabled
+      indexeddb = prefixed('indexedDB', window);
+    } catch (e) {
+    }
+
+    if (!!indexeddb) {
+      var testDBName = 'modernizr-' + Math.random();
+      var req = indexeddb.open(testDBName);
+
+      req.onerror = function() {
+        if (req.error && req.error.name === 'InvalidStateError') {
+          addTest('indexeddb', false);
+        } else {
+          addTest('indexeddb', true);
+          detectDeleteDatabase(indexeddb, testDBName);
+        }
+      };
+
+      req.onsuccess = function() {
+        addTest('indexeddb', true);
+        detectDeleteDatabase(indexeddb, testDBName);
+      };
+    } else {
+      addTest('indexeddb', false);
+    }
+  });
+
+  function detectDeleteDatabase(indexeddb, testDBName) {
+    var deleteReq = indexeddb.deleteDatabase(testDBName);
+    deleteReq.onsuccess = function() {
+      addTest('indexeddb.deletedatabase', true);
+    };
+    deleteReq.onerror = function() {
+      addTest('indexeddb.deletedatabase', false);
+    };
   }
 
-  Modernizr.addTest('indexeddb', !!indexeddb);
-
-  if (!!indexeddb) {
-    Modernizr.addTest('indexeddb.deletedatabase', 'deleteDatabase' in indexeddb);
-  }
 ;
 /*!
 {
@@ -7806,12 +7996,12 @@ Detects if the browser can save File/Blob objects to IndexedDB
   // For speed, we don't test the legacy (and beta-only) indexedDB
 
   Modernizr.addAsyncTest(function() {
-    /* jshint -W053 */
     var indexeddb;
     var dbname = 'detect-blob-support';
     var supportsBlob = false;
-    var request;
+    var openRequest;
     var db;
+    var putRequest;
 
     try {
       indexeddb = prefixed('indexedDB', window);
@@ -7826,15 +8016,20 @@ Detects if the browser can save File/Blob objects to IndexedDB
     // will throw a `SecurityError`
     try {
       indexeddb.deleteDatabase(dbname).onsuccess = function() {
-        request = indexeddb.open(dbname, 1);
-        request.onupgradeneeded = function() {
-          request.result.createObjectStore('store');
+        openRequest = indexeddb.open(dbname, 1);
+        openRequest.onupgradeneeded = function() {
+          openRequest.result.createObjectStore('store');
         };
-        request.onsuccess = function() {
-          db = request.result;
+        openRequest.onsuccess = function() {
+          db = openRequest.result;
           try {
-            db.transaction('store', 'readwrite').objectStore('store').put(new Blob(), 'key');
-            supportsBlob = true;
+            putRequest = db.transaction('store', 'readwrite').objectStore('store').put(new Blob(), 'key');
+            putRequest.onsuccess = function() {
+              supportsBlob = true;
+            };
+            putRequest.onerror = function() {
+              supportsBlob = false;
+            };
           }
           catch (e) {
             supportsBlob = false;
@@ -8122,6 +8317,100 @@ Detects the ability for the browser to composite backgrounds using blending mode
 
 /*!
 {
+  "name": "CSS Regions",
+  "caniuse": "css-regions",
+  "authors": ["Mihai Balan"],
+  "property": "regions",
+  "tags": ["css"],
+  "builderAliases": ["css_regions"],
+  "notes": [{
+    "name": "W3C Specification",
+    "href": "https://www.w3.org/TR/css3-regions/"
+  }]
+}
+!*/
+
+  // We start with a CSS parser test then we check page geometry to see if it's affected by regions
+  // Later we might be able to retire the second part, as WebKit builds with the false positives die out
+
+  Modernizr.addTest('regions', function() {
+
+    if (isSVG) {
+      // css regions don't work inside of SVG elements. Rather than update the
+      // below test to work in an SVG context, just exit early to save bytes
+      return false;
+    }
+
+    /* Get the 'flowFrom' property name available in the browser. Either default or vendor prefixed.
+       If the property name can't be found we'll get Boolean 'false' and fail quickly */
+    var flowFromProperty = prefixed('flowFrom');
+    var flowIntoProperty = prefixed('flowInto');
+    var result = false;
+
+    if (!flowFromProperty || !flowIntoProperty) {
+      return result;
+    }
+
+    /* If CSS parsing is there, try to determine if regions actually work. */
+    var iframeContainer = createElement('iframe');
+    var container = createElement('div');
+    var content = createElement('div');
+    var region = createElement('div');
+
+    /* we create a random, unlikely to be generated flow number to make sure we don't
+       clash with anything more vanilla, like 'flow', or 'article', or 'f1' */
+    var flowName = 'modernizr_flow_for_regions_check';
+
+    /* First create a div with two adjacent divs inside it. The first will be the
+       content, the second will be the region. To be able to distinguish between the two,
+       we'll give the region a particular padding */
+    content.innerText = 'M';
+    container.style.cssText = 'top: 150px; left: 150px; padding: 0px;';
+    region.style.cssText = 'width: 50px; height: 50px; padding: 42px;';
+
+    region.style[flowFromProperty] = flowName;
+    container.appendChild(content);
+    container.appendChild(region);
+    docElement.appendChild(container);
+
+    /* Now compute the bounding client rect, before and after attempting to flow the
+       content div in the region div. If regions are enabled, the after bounding rect
+       should reflect the padding of the region div.*/
+    var flowedRect, delta;
+    var plainRect = content.getBoundingClientRect();
+
+
+    content.style[flowIntoProperty] = flowName;
+    flowedRect = content.getBoundingClientRect();
+
+    delta = parseInt(flowedRect.left - plainRect.left, 10);
+    docElement.removeChild(container);
+
+    if (delta == 42) {
+      result = true;
+    } else {
+      /* IE only allows for the content to come from iframes. This has the
+       * side effect of automatic collapsing of iframes once they get the flow-into
+       * property set. checking for a change on the height allows us to detect this
+       * in a sync way, without having to wait for a frame to load */
+
+      docElement.appendChild(iframeContainer);
+      plainRect = iframeContainer.getBoundingClientRect();
+      iframeContainer.style[flowIntoProperty] = flowName;
+      flowedRect = iframeContainer.getBoundingClientRect();
+
+      if (plainRect.height > 0 && plainRect.height !== flowedRect.height && flowedRect.height === 0) {
+        result = true;
+      }
+    }
+
+    content = region = container = iframeContainer = undefined;
+
+    return result;
+  });
+
+/*!
+{
   "name": "CSS wrap-flow",
   "property": "wrapflow",
   "tags": ["css"],
@@ -8281,11 +8570,11 @@ Detects whether web workers can use `transferables` objects.
     // Proper test if prerequisites are met
     try {
       var buffer,
-          scriptText = 'var hello = "world"',
-          blob = new Blob([scriptText], {type: 'text/javascript'}),
-          url = URL.createObjectURL(blob),
-          worker = new Worker(url),
-          timeout;
+        scriptText = 'var hello = "world"',
+        blob = new Blob([scriptText], {type: 'text/javascript'}),
+        url = URL.createObjectURL(blob),
+        worker = new Worker(url),
+        timeout;
 
       // Just in case...
       worker.onerror = fail;
@@ -8377,9 +8666,7 @@ Detect for the RTCDataChannel API that allows for transfer data directly from on
       var PeerConnectionConstructor = window[domPrefixes[i] + 'RTCPeerConnection'];
 
       if (PeerConnectionConstructor) {
-        var peerConnection = new PeerConnectionConstructor({
-          'iceServers': [{'url': 'stun:0'}]
-        });
+        var peerConnection = new PeerConnectionConstructor(null);
 
         return 'createDataChannel' in peerConnection;
       }
@@ -8455,7 +8742,7 @@ Detects support for matchMedia.
     return testPropsAll(prop, undefined, undefined, value, skipValueTest);
   }
   ModernizrProto.testAllProps = testAllProps;
-
+  
 /*!
 {
   "name": "Font Ligatures",
@@ -8763,12 +9050,12 @@ Detects the ability to use round and space as properties for background-repeat
 
   (function() {
 
-    /* jshint -W053 */
     Modernizr.addTest('csscolumns', function() {
       var bool = false;
       var test = testAllProps('columnCount');
       try {
-        if (bool = !!test) {
+        bool = !!test
+        if (bool) {
           bool = new Boolean(bool);
         }
       } catch (e) {}
@@ -8794,6 +9081,46 @@ Detects the ability to use round and space as properties for background-repeat
 
   })();
 
+
+/*!
+{
+  "name": "CSS Grid (old & new)",
+  "property": ["cssgrid", "cssgridlegacy"],
+  "authors": ["Faruk Ates"],
+  "tags": ["css"],
+  "notes": [{
+    "name": "The new, standardized CSS Grid",
+    "href": "https://www.w3.org/TR/css3-grid-layout/"
+  }, {
+    "name": "The _old_ CSS Grid (legacy)",
+    "href": "https://www.w3.org/TR/2011/WD-css3-grid-layout-20110407/"
+  }]
+}
+!*/
+
+  // `grid-columns` is only in the old syntax, `grid-column` exists in both and so `grid-template-rows` is used for the new syntax.
+  Modernizr.addTest('cssgridlegacy', testAllProps('grid-columns', '10px', true));
+  Modernizr.addTest('cssgrid', testAllProps('grid-template-rows', 'none', true));
+
+/*!
+{
+  "name": "CSS Display run-in",
+  "property": "display-runin",
+  "authors": ["alanhogan"],
+  "tags": ["css"],
+  "builderAliases": ["css_displayrunin"],
+  "notes": [{
+    "name": "CSS Tricks Article",
+    "href": "https://css-tricks.com/596-run-in/"
+  },{
+    "name": "Related Github Issue",
+    "href": "https://github.com/Modernizr/Modernizr/issues/198"
+  }]
+}
+!*/
+
+  Modernizr.addTest('displayrunin', testAllProps('display', 'run-in'),
+    {aliases: ['display-runin']});
 
 /*!
 {
@@ -9240,7 +9567,7 @@ Test for CSS 3 UI "resize" property
 Detects support for CSS Snap Points
 */
 
-    Modernizr.addTest('scrollsnappoints', testAllProps('scrollSnapType'));
+  Modernizr.addTest('scrollsnappoints', testAllProps('scrollSnapType'));
 
 /*!
 {
@@ -9339,6 +9666,23 @@ Detects support for CSS Snap Points
     }
 
     return ret;
+  });
+
+/*!
+{
+  "name": "CSS Transforms Level 2",
+  "property": "csstransformslevel2",
+  "authors": ["rupl"],
+  "tags": ["css"],
+  "notes": [{
+    "name": "CSSWG Draft Spec",
+    "href": "https://drafts.csswg.org/css-transforms-2/"
+  }]
+}
+!*/
+
+  Modernizr.addTest('csstransformslevel2', function() {
+    return testAllProps('translate', '45px', true);
   });
 
 /*!

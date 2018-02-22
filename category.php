@@ -22,7 +22,7 @@ get_header(); ?>
 	<div class="container title-desc-con">
 		<div class="row">
 			<div class="col">
-				<h1 class="page-title"><i class="fa fa-fw fa-bookmark"></i> <?php echo single_cat_title('', false); ?></h1>
+				<h1 class="page-title"><i class="fas fa-fw fa-bookmark"></i> <?php echo single_cat_title('', false); ?></h1>
 				<div class="page-meta"><?php echo category_description(); ?></div>
 			</div><!--/cols-->
 		</div><!--/row-->

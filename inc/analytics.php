@@ -474,42 +474,44 @@
 		var _hsq = window._hsq = window._hsq || [];
 		_hsq.push(['setPath', '<?php echo str_replace(get_site_url(), '', get_permalink()); ?>']); //Is this even needed?
 
-		_hsq.push(["identify", {
-			ipaddress: '<?php echo nebula()->get_ip_address(); ?>',
-			user_agent: '<?php echo $_SERVER['HTTP_USER_AGENT']; ?>',
-			session_id: '<?php echo nebula()->nebula_session_id(); //If this hits rate limits, consider removing it ?>',
-		}]);
+		<?php
+			$hubspot_identify = array(
+				'ipaddress' => nebula()->get_ip_address(),
+				'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+				'session_id' => nebula()->nebula_session_id(), //If this hits rate limits, consider removing it
+			);
 
-		<?php if ( is_user_logged_in() ): //if logged into wordpress ?>
-			<?php $user_info = get_userdata(get_current_user_id()); ?>
+			if ( is_user_logged_in() ){
+				$user_info = get_userdata(get_current_user_id());
 
-			_hsq.push(["identify", {
-				email: '<?php echo $user_info->user_email; ?>',
-				firstname: '<?php echo $user_info->first_name; ?>',
-				lastname: '<?php echo $user_info->last_name; ?>',
-				wordpress_id: '<?php echo get_current_user_id(); ?>',
-				username: '<?php echo $user_info->user_login; ?>',
-				role: '<?php echo nebula()->user_role(); ?>',
-				jobtitle: '<?php echo get_user_meta(get_current_user_id(), 'jobtitle', true); ?>',
-				company: '<?php echo get_user_meta(get_current_user_id(), 'jobcompany', true); ?>',
-				website: '<?php echo get_user_meta(get_current_user_id(), 'jobcompanywebsite', true); ?>',
-				city: '<?php echo get_user_meta(get_current_user_id(), 'usercity', true); ?>',
-				state: '<?php echo get_user_meta(get_current_user_id(), 'userstate', true); ?>',
-				phone: '<?php echo get_user_meta(get_current_user_id(), 'phonenumber', true); ?>',
-				notable_poi: '<?php echo nebula()->poi(); ?>',
-				cookies: ( window.navigator.cookieEnabled )? '1' : '0',
-				screen: window.screen.width + 'x' + window.screen.height + ' (' + window.screen.colorDepth + ' bits)',
-			}]);
-		<?php endif; ?>
+				$hubspot_identify['email'] = $user_info->user_email;
+				$hubspot_identify['firstname'] = $user_info->first_name;
+				$hubspot_identify['lastname'] = $user_info->last_name;
+				$hubspot_identify['wordpress_id'] = get_current_user_id();
+				$hubspot_identify['username'] = $user_info->user_login;
+				$hubspot_identify['role'] = nebula()->user_role();
+				$hubspot_identify['jobtitle'] = get_user_meta(get_current_user_id(), 'jobtitle', true);
+				$hubspot_identify['company'] = get_user_meta(get_current_user_id(), 'jobcompany', true);
+				$hubspot_identify['website'] = get_user_meta(get_current_user_id(), 'jobcompanywebsite', true);
+				$hubspot_identify['city'] = get_user_meta(get_current_user_id(), 'usercity', true);
+				$hubspot_identify['state'] = get_user_meta(get_current_user_id(), 'userstate', true);
+				$hubspot_identify['phone'] = get_user_meta(get_current_user_id(), 'phonenumber', true);
+				$hubspot_identify['notable_poi'] = nebula()->poi();
+			}
 
-		<?php if ( nebula()->get_option('device_detection') ): ?>
-			_hsq.push(["identify", {
-				device: '<?php echo nebula()->get_device(); ?>',
-				os: '<?php echo nebula()->get_os(); ?>',
-				browser: '<?php echo nebula()->get_browser(); ?>',
-				bot: '<?php echo ( nebula()->is_bot() )? 1 : 0; ?>',
-			}]);
-		<?php endif; ?>
+			if ( nebula()->get_option('device_detection') ){
+				$hubspot_identify['device'] = nebula()->get_device();
+				$hubspot_identify['os'] = nebula()->get_os();
+				$hubspot_identify['browser'] = nebula()->get_browser();
+				$hubspot_identify['bot'] = ( nebula()->is_bot() )? 1 : 0;
+			}
+		?>
+
+		var hubspotIdentify = <?php echo json_encode(apply_filters('nebula_hubspot_identify', $hubspot_identify)); //Allow other functions to hook into Hubspot identifications ?>;
+		hubspotIdentify.cookies = ( window.navigator.cookieEnabled )? '1' : '0';
+		hubspotIdentify.screen = window.screen.width + 'x' + window.screen.height + ' (' + window.screen.colorDepth + ' bits)';
+
+		_hsq.push(["identify", hubspotIdentify]);
 
 		<?php do_action('nebula_hubspot_before_send_pageview'); //Hook into for adding more parameters before the pageview is sent. Can override any above identifications too. ?>
 

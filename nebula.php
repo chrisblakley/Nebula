@@ -92,7 +92,7 @@ if ( !class_exists('Nebula') ){
 			$this->ShortcodesHooks(); // Register Shortcodes hooks
 			$this->WidgetsHooks(); // Register Widgets hooks
 
-			if ( nebula()->is_admin_page() || is_admin_bar_showing() ){
+			if ( $this->is_admin_page() || is_admin_bar_showing() || $this->is_login_page() ){
 				$this->AdminHooks(); // Register Admin hooks
 			}
 

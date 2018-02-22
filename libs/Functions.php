@@ -1474,6 +1474,7 @@ trait Functions {
 			'delimiter' => '&rsaquo;', //Delimiter between crumbs
 			'home' => '<i class="fas fa-home"></i>', //Text for the 'Home' link
 			'home_link' => home_url('/'),
+			'prefix' => 'text',
 			'current' => true, //Show/Hide the current title in the breadcrumb
 			'before' => '<span class="current">', //Tag before the current crumb
 			'after' => '</span>', //Tag after the current crumb
@@ -1501,10 +1502,13 @@ trait Functions {
 					if ( !empty($node_url) ){
 						echo '<a href="' . $node_url . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">';
 					}
+
 					echo $node_text;
+
 					if ( !empty($node_url) ){
 						echo '</a>';
 					}
+
 					echo ' ' . $delimiter_html . ' ';
 				}
 			}
@@ -1524,7 +1528,15 @@ trait Functions {
 				if ( $thisCat->parent !== 0 ){
 					echo get_category_parents($thisCat->parent, true, ' ' . $delimiter_html . ' ');
 				}
-				echo $data['before'] . 'Category: ' . single_cat_title('', false) . $data['after'];
+
+				$prefix = 'Category: ';
+				if ( $data['prefix'] === 'icon' ){
+					$prefix = '<i class="fas fa-bookmark"></i>';
+				} elseif ( !$data['prefix'] || $data['prefix'] === 'off' ){
+					$prefix = '';
+				}
+
+				echo $data['before'] . $prefix . single_cat_title('', false) . $data['after'];
 			} elseif ( is_search() ){
 				echo $data['before'] . 'Search results' . $data['after'];
 			} elseif ( is_day() ){
@@ -1540,7 +1552,9 @@ trait Functions {
 				if ( get_post_type() !== 'post' ){
 					$post_type = get_post_type_object(get_post_type());
 					$slug = $post_type->rewrite;
+
 					echo '<a href="' . $data['home_link'] . $slug['slug'] . '/" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $post_type->labels->singular_name . '</a>';
+
 					if ( !empty($data['current']) ){
 						echo ' ' . $delimiter_html . ' ' . $data['before'] . get_the_title() . $data['after'];
 					}
@@ -1549,10 +1563,13 @@ trait Functions {
 					if ( !empty($cat) ){
 						$cat = $cat[0];
 						$cats = get_category_parents($cat, true, ' ' . $delimiter_html . ' ');
+
 						if ( empty($data['current']) ){
 							$cats = preg_replace("#^(.+)\s" . $delimiter_html . "\s$#", "$1", $cats);
 						}
+
 						echo $cats;
+
 						if ( !empty($data['current']) ){
 							echo $data['before'] . get_the_title() . $data['after'];
 						}
@@ -1574,11 +1591,13 @@ trait Functions {
 			} elseif ( is_page() && $post->post_parent ){
 				$parent_id = $post->post_parent;
 				$breadcrumbs = array();
+
 				while ( $parent_id ){
 					$page = get_page($parent_id);
 					$breadcrumbs[] = '<a href="' . get_permalink($page->ID) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_title($page->ID) . '</a>';
 					$parent_id  = $page->post_parent;
 				}
+
 				$breadcrumbs = array_reverse($breadcrumbs);
 				for ( $i = 0; $i < count($breadcrumbs); $i++ ){
 					echo $breadcrumbs[$i];
@@ -1586,11 +1605,20 @@ trait Functions {
 						echo ' ' . $delimiter_html . ' ';
 					}
 				}
+
 				if ( !empty($data['current']) ){
 					echo ' ' . $delimiter_html . ' ' . $data['before'] . get_the_title() . $data['after'];
 				}
 			} elseif ( is_tag() ){
-				echo $data['before'] . 'Tag: ' . single_tag_title('', false) . $data['after'];
+
+				$prefix = 'Tag: ';
+				if ( $data['prefix'] === 'icon' ){
+					$prefix = '<i class="fas fa-tag"></i>';
+				} elseif ( !$data['prefix'] || $data['prefix'] === 'off' ){
+					$prefix = '';
+				}
+
+				echo $data['before'] . $prefix . single_tag_title('', false) . $data['after'];
 			} elseif ( is_author() ){
 				global $author;
 				$userdata = get_userdata($author);
