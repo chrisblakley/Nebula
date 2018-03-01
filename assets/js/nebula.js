@@ -51,6 +51,7 @@ jQuery(window).on('load', function(){
 		initEventTracking();
 	}
 
+	performanceMetrics();
 	lazyLoadAssets();
 	initBootstrapFunctions();
 
@@ -674,7 +675,6 @@ function initEventTracking(){
 			}
 		}
 
-		performanceMetrics();
 		eventTracking();
 		scrollDepth();
 		nvFormRealTime();
@@ -699,23 +699,23 @@ function eventTracking(){
 	});
 
 	//Bootstrap "Collapse" Accordions
-	jQuery(document).on('shown.bs.collapse', function(e){
+	nebula.dom.document.on('shown.bs.collapse', function(e){
 		ga('send', 'event', 'Accordion', 'Shown', e.target.id);
 	});
-	jQuery(document).on('hidden.bs.collapse', function(e){
+	nebula.dom.document.on('hidden.bs.collapse', function(e){
 		ga('send', 'event', 'Accordion', 'Hidden', e.target.id);
 	});
 
 	//Bootstrap Modals
-	jQuery(document).on('shown.bs.modal', function(e){
+	nebula.dom.document.on('shown.bs.modal', function(e){
 		ga('send', 'event', 'Modal', 'Shown', e.target.id);
 	});
-	jQuery(document).on('hidden.bs.modal', function(e){
+	nebula.dom.document.on('hidden.bs.modal', function(e){
 		ga('send', 'event', 'Modal', 'Hidden', e.target.id);
 	});
 
 	//Bootstrap Carousels (Sliders)
-	jQuery(document).on('slide.bs.carousel', function(e){
+	nebula.dom.document.on('slide.bs.carousel', function(e){
 		if ( window.event ){ //Only if sliding manually
 			var sliderName = e.target.id || e.target.title || e.target.className.replace(' ', '.');
 			var activeSlide = jQuery(e.target).find('.carousel-item').eq(e.to);
@@ -919,6 +919,45 @@ function eventTracking(){
 		ga('send', 'event', 'Print', 'Print');
 		nv('event', 'Print');
 	}
+
+	//Detect Adblock
+	if ( nebula.user.client.bot === false && nebula.site.options.adblock_detect ){
+		jQuery.ajaxSetup({cache: true});
+		jQuery.getScript(nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js').done(function(){
+			nebula.session.flags.adblock = false;
+		}).fail(function(){
+			jQuery('html').addClass('ad-blocker');
+			ga('set', nebula.analytics.dimensions.blocker, 'Ad Blocker');
+
+			if ( nebula.session.flags.adblock != true ){
+				ga('send', 'event', 'Ad Blocker', 'Blocked', 'This user is using ad blocking software.', {'nonInteraction': true}); //Uses an event because it is asynchronous!
+				nebula.session.flags.adblock = true;
+			}
+		});
+	}
+
+	//DataTables Filter
+	nebula.dom.document.on('keyup', '.dataTables_filter input', function (){
+		oThis = jQuery(this);
+		debounce(function(){
+			ga('send', 'event', 'DataTables', 'Search Filter', oThis.val() );
+		}, 1000, 'datatables_search_filter');
+	});
+
+	//DataTables Sorting
+	nebula.dom.document.on('click', 'th.sorting', function(){
+		ga('send', 'event', 'DataTables', 'Sort', jQuery(this).text());
+	});
+
+	//DataTables Pagination
+	nebula.dom.document.on('', 'a.paginate_button ', function(){
+		ga('send', 'event', 'DataTables', 'Paginate', jQuery(this).text());
+	});
+
+	//DataTables Show Entries
+	nebula.dom.document.on('change', '.dataTables_length select', function(){
+		ga('send', 'event', 'DataTables', 'Shown Entries Change', jQuery(this).val());
+	});
 }
 
 //Ecommerce event tracking
@@ -1061,7 +1100,7 @@ function nv(action, data){
 		_hsq.push(['trackPageView']);
 	}
 
-	//@TODO "Nebula" 0: AJAX data into session here?
+	nebula.dom.document.trigger('nv_data', data);
 }
 
 //Easily send data to nv() via URL query parameters

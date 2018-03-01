@@ -174,9 +174,17 @@ if ( !trait_exists('Utilities') ){
 			return false;
 		}
 
-		//Alias for a less confusing is_admin() function to try to prevent security issues
-		public function is_admin_page(){
-			return is_admin();
+		//Check if currently viewing an admin page (or the Customizer)
+		public function is_admin_page($include_customizer=false){
+			if ( is_admin() ){
+				return true;
+			}
+
+			if ( $include_customizer && is_customize_preview() ){
+				return true;
+			}
+
+			return false;
 		}
 
 		//Check if viewing the login page.

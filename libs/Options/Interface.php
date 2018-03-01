@@ -440,13 +440,14 @@
 							<div class="col-xl-8">
 								<div class="option-group">
 									<div class="form-group">
-										<label for="bootstrap_version">jQuery Version</label>
+										<label for="bootstrap_version">jQuery Version (and Load Location)</label>
 										<select name="nebula_options[jquery_version]" id="jquery_version" class="form-control nebula-validate-select">
-											<option value="wordpress" <?php selected('wordpress', $nebula_options['jquery_version']); ?>>WordPress</option>
-											<option value="latest" <?php selected('latest', $nebula_options['jquery_version']); ?>>Latest</option>
+											<option value="wordpress" <?php selected('wordpress', $nebula_options['jquery_version']); ?>>WordPress (Head)</option>
+											<option value="latest" <?php selected('latest', $nebula_options['jquery_version']); ?>>Latest (Head)</option>
+											<option value="footer" <?php selected('footer', $nebula_options['jquery_version']); ?>>Latest (Footer)</option>
 										</select>
-										<p class="nebula-help-text short-help form-text text-muted">Which jQuery version to use. (Default: <?php echo $this->user_friendly_default('jquery_version'); ?>)</p>
-										<p class="nebula-help-text more-help form-text text-muted">Be careful changing this option as some plugins may rely on older versions of jQuery, however some speed improvements may be realized by using alternate versions. If you notice JavaScript bugs, try changing this back to the version bundled with WordPress.</p>
+										<p class="nebula-help-text short-help form-text text-muted">Which jQuery version to use and where to load it (head is blocking, footer is more performant). (Default: <?php echo $this->user_friendly_default('jquery_version'); ?>)</p>
+										<p class="nebula-help-text more-help form-text text-muted">Be careful changing this option as some plugins may rely on older versions of jQuery, however some speed improvements may be realized by using alternate versions and locations. Note: some plugins may override this and bring jQuery back to the head. Remember: if loading in the footer, embedded script tags cannot use jQuery in template files.</p>
 										<p class="option-keywords">internet explorer old support plugins minor page speed impact</p>
 									</div>
 

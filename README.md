@@ -16,7 +16,7 @@ Nebula follows [WordPress recommendations](https://wordpress.org/about/requireme
 - Activate the Nebula theme and run the automated initialization.
 - *(Optional)* To use the prepared child theme, move the bundled /Nebula-Child directory to the /themes directory.
 - *(Optional)* Activate the Nebula Child theme.
-- Follow the [Setup Guide](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=setup+guide) for additional customization and options.
+- Follow the [Setup Guide](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=setup+guide) for additional customization and options.
 
 ## Documentation
-Comprehensive documentation is available at [https://gearside.com/nebula](https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=readme&utm_source=full+documentation) along with a [testing checklist]((https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=testing+checklist)) and [launch guide](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=launch+checklist).
+Comprehensive documentation is available at [https://gearside.com/nebula](https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=full+documentation) along with a [testing checklist]((https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=testing+checklist)) and [launch guide](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=launch+checklist).

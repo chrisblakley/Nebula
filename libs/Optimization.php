@@ -14,13 +14,15 @@ if ( !trait_exists('Optimization') ){
 			add_filter('script_loader_src', array($this, 'remove_script_version'), 15, 1);
 			add_filter('style_loader_src', array($this, 'remove_script_version'), 15, 1);
 			add_action('wp_print_scripts', array($this, 'dequeues'), 9999);
-			add_filter('wp_default_scripts', array($this, 'remove_jquery_migrate'));
 			add_action('admin_init', array($this, 'plugin_force_settings'));
 			add_action('wp_print_scripts', array($this, 'remove_actions'), 9999);
 			add_action('init', array($this, 'disable_wp_emojicons'));
 			add_filter('wp_resource_hints', array($this, 'remove_emoji_prefetch'), 10, 2); //Remove dns-prefetch for emojis
 			add_filter('tiny_mce_plugins', array($this, 'disable_emojicons_tinymce')); //Remove TinyMCE Emojis too
 			add_filter('wpcf7_load_css', '__return_false'); //Disable CF7 CSS resources (in favor of Bootstrap and Nebula overrides)
+			add_filter('wp_default_scripts', array($this, 'remove_jquery_migrate'));
+			add_action('wp_enqueue_scripts', array($this, 'move_jquery_to_footer'));
+			add_action('wp_head', array($this, 'listen_for_jquery_footer_errors'));
 		}
 
 		public function register_script($handle=null, $src=null, $exec=null, $deps=array(), $ver=false, $in_footer=false){
@@ -114,7 +116,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
 		public function http2_server_push_header($src){
-			if ( !$this->is_admin_page() && $this->get_option('service_worker') && file_exists($this->sw_location(false)) && !is_customize_preview() ){ //If not in the admin section and if Service Worker is enabled (and file exists)
+			if ( !$this->is_admin_page(true) && $this->get_option('service_worker') && file_exists($this->sw_location(false)) ){ //If not in the admin section and if Service Worker is enabled (and file exists)
 				$filetype = ( strpos($src, '.css') )? 'style' : 'script'; //Determine the resource type
 				if ( strpos($src, $this->url_components('sld')) > 0 ){ //If local file
 					if ( $this->get_browser() !== 'safari' ){ //Disable HTTP2 Server Push on Safari (at least for now)
@@ -204,6 +206,50 @@ if ( !trait_exists('Optimization') ){
 				if ( is_front_page() ){
 					wp_deregister_style('thickbox'); //WP Core Thickbox - Override if thickbox type gallery IS used on the homepage.
 					wp_deregister_script('thickbox'); //WP Thickbox - Override if thickbox type gallery IS used on the homepage.
+				}
+			}
+		}
+
+		//If Nebula Options are set to load jQuery in the footer, move it there.
+		public function move_jquery_to_footer(){
+			//Let other plugins/themes add to list of pages/posts/whatever when to load jQuery in the <head>
+			//Return true to load jQuery from the <head>
+			if ( apply_filters('nebula_prevent_jquery_footer', false) ){
+				return;
+			}
+
+			if ( !$this->is_admin_page(true) && $this->get_option('jquery_version') === 'footer' ){
+				wp_script_add_data('jquery', 'group', 1);
+				wp_script_add_data('jquery-core', 'group', 1);
+				wp_script_add_data('jquery-migrate', 'group', 1);
+
+			}
+
+			return;
+		}
+
+		//Listen for "jQuery is not defined" errors to provide help
+		public function listen_for_jquery_footer_errors(){
+			//Let other plugins/themes add to list of pages/posts/whatever when to load jQuery in the <head>
+			//Return true to load jQuery from the <head>
+			if ( apply_filters('nebula_prevent_jquery_footer', false) ){
+				return;
+			}
+
+			if ( !$this->is_admin_page(true) && $this->get_option('jquery_version') === 'footer' ){
+				if ( $this->is_dev() ){
+					?>
+					<script>
+						window.addEventListener('error', function(e){
+							var errorMessages = ['jQuery is not defined', "Can't find variable: jQuery"];
+							errorMessages.forEach(function(element, index){
+								if ( e.message.indexOf(element) !== -1 || e.message.indexOf(element.replace('jQuery', '$')) !== -1 ){
+									console.error('[Nebula] jquery.min.js has been moved to the footer so it may not be available at this time. Try moving it back to the head in Nebula Options or move this script tag to the footer.');
+								}
+							});
+						});
+					</script>
+					<?php
 				}
 			}
 		}

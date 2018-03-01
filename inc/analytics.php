@@ -134,11 +134,14 @@
 
 		<?php if ( nebula()->get_option('cd_windowtype') ): //Window Type ?>
 			if ( window !== window.top ){
-				jQuery('html').addClass('in-iframe');
+				var htmlClasses = document.getElementsByTagName('html')[0].getAttribute("class") || '';
+				document.getElementsByTagName('html')[0].setAttribute('class', headCSS + 'in-iframe'); //Use vanilla JS in case jQuery is not yet available
 				ga('set', nebula.analytics.dimensions.windowType, 'Iframe: ' + window.top.location.href);
 			}
+
 			if ( navigator.standalone || window.matchMedia('(display-mode: standalone)').matches ){
-				jQuery('html').addClass('in-standalone-app');
+				var htmlClasses = document.getElementsByTagName('html')[0].getAttribute("class") || '';
+				document.getElementsByTagName('html')[0].setAttribute('class', headCSS + 'in-standalone-app'); //Use vanilla JS in case jQuery is not yet available
 				ga('set', nebula.analytics.dimensions.windowType, 'Standalone App');
 			}
 		<?php endif; ?>
@@ -243,7 +246,7 @@
 
 			//Autotrack Impressions (Scroll into view)
 			//Elements themselves are detected in nebula.js (or main.js)
-			ga('require', 'impressionTracker', {
+			ga('require', 'impressionTracker', { //@todo "Nebula" 0: jQuery may not be available yet... change these to vanilla JS if possible
 				hitFilter: function(model, element){
 					if ( jQuery(element).is('form') && !jQuery(element).find('input[name=s]').length ){
 						if ( !jQuery(element).hasClass('.ignore-form') && !jQuery(element).find('.ignore-form').length && !jQuery(element).parents('.ignore-form').length ){
@@ -367,23 +370,6 @@
 		}
 
 		<?php do_action('nebula_ga_after_send_pageview'); ?>
-
-		<?php if ( !nebula()->is_bot() && ( nebula()->get_option('adblock_detect') ) ): //Detect Ad Blockers (After pageview because asynchronous- uses GA event). ?>
-			jQuery.ajaxSetup({cache: true});
-			jQuery.getScript(nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js').done(function(){
-				nebula.session.flags.adblock = false;
-			}).fail(function(){ <?php //Ad Blocker Detected ?>
-				jQuery('html').addClass('ad-blocker');
-				<?php if ( nebula()->get_option('cd_blocker') ): //Scope: Session. Note: this is set AFTER the pageview is already sent (due to async), so it needs the event below. ?>
-					ga('set', nebula.analytics.dimensions.blocker, 'Ad Blocker');
-				<?php endif; ?>
-
-				if ( nebula.session.flags.adblock != true ){
-					ga('send', 'event', 'Ad Blocker', 'Blocked', 'This user is using ad blocking software.', {'nonInteraction': true}); //Uses an event because it is asynchronous!
-					nebula.session.flags.adblock = true;
-				}
-			});
-		<?php endif; ?>
 
 		//Generate a unique ID for hits and windows
 		function uuid(a){

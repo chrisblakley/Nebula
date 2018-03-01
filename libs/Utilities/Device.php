@@ -83,16 +83,12 @@ if ( !trait_exists('Device') ){
 				switch ( strtolower($info) ){
 					case 'full':
 						return $os['name'] . ' ' . $os['version'];
-						break;
 					case 'name':
 						return $os['name'];
-						break;
 					case 'version':
 						return $os['version'];
-						break;
 					default:
 						return false;
-						break;
 				}
 			}
 
@@ -106,7 +102,6 @@ if ( !trait_exists('Device') ){
 					break;
 				default:
 					return false;
-					break;
 			}
 		}
 
@@ -168,20 +163,16 @@ if ( !trait_exists('Device') ){
 						$model = $GLOBALS["device_detect"]->getModel();
 						if ( !empty($brand_name) && !empty($model) ){
 							return $brand_name . ' ' . $model;
-						} else {
-							return false;
 						}
-						break;
+						return false;
 					case 'brand':
 					case 'brandname':
 					case 'make':
 						return $GLOBALS["device_detect"]->getBrandName();
-						break;
 					case 'model':
 					case 'version':
 					case 'name':
 						return $GLOBALS["device_detect"]->getModel();
-						break;
 					case 'type':
 						return $GLOBALS["device_detect"]->getDeviceName();
 						break;
@@ -190,12 +181,10 @@ if ( !trait_exists('Device') ){
 							return 'mobile';
 						} elseif ( $this->is_tablet() ){
 							return 'tablet';
-						} else {
-							return 'desktop';
 						}
+						return 'desktop';
 					default:
 						return false;
-						break;
 				}
 			}
 
@@ -219,67 +208,7 @@ if ( !trait_exists('Device') ){
 					break;
 				default:
 					return false;
-					break;
 			}
-		}
-
-		//Check for the Tor browser
-		//Nebula only calls this function if Device Detection option is enabled, but it can still be called manually.
-		public function is_tor_browser(){
-			$override = apply_filters('pre_is_tor_browser', null);
-			if ( isset($override) ){return;}
-
-			//Check session and cookies first
-			if ( (isset($GLOBALS['tor']) && $GLOBALS['tor'] === true) || (isset($_SESSION['tor']) && $_SESSION['tor'] === true) || (isset($_COOKIE['tor']) && $_COOKIE['tor'] == 'true') ){
-				$GLOBALS['tor'] = true;
-				return true;
-			}
-
-			if ( (isset($GLOBALS['tor']) && $GLOBALS['tor'] === false) && (isset($_SESSION['tor']) && $_SESSION['tor'] === false) ){
-				$GLOBALS['tor'] = false;
-				return false;
-			}
-
-			//Scrape entire exit IP list
-			$ip_address = $this->get_ip_address();
-			if ( isset($ip_address) ){
-				$tor_list = get_transient('nebula_tor_list');
-				if ( empty($tor_list) || $this->is_debug() ){ //If transient expired or is debug
-					$response = $this->remote_get('https://check.torproject.org/cgi-bin/TorBulkExitList.py?ip=' . $_SERVER['SERVER_ADDR']);
-					if ( !is_wp_error($response) ){
-						$tor_list = $response['body'];
-						set_transient('nebula_tor_list', $tor_list, HOUR_IN_SECONDS*48);
-					}
-				}
-
-				//Parse the file
-				if ( !empty($tor_list) ){
-					foreach( explode("\n", $tor_list) as $line ){
-						if ( !empty($line) && strpos($line, '#') === false ){
-							if ( $line === $ip_address ){
-								$this->set_global_session_cookie('tor', true);
-								return true;
-							}
-						}
-					}
-				}
-			}
-
-			//Check individual exit point
-			//Note: This would make a remote request to every new user. Commented out for optimization. Use the override filter to enable in a child theme.
-			/*
-			if ( $this->is_available('http://torproject.org') ){
-				$remote_ip_octets = explode(".", $this->get_ip_address());
-				$server_ip_octets = explode(".", $_SERVER['SERVER_ADDR']);
-				if ( gethostbyname($remote_ip_octets[3] . "." . $remote_ip_octets[2] . "." . $remote_ip_octets[1] . "." . $remote_ip_octets[0] . "." . $_SERVER['SERVER_PORT'] . "." . $remote_ip_octets[3] . "." . $remote_ip_octets[2] . "." . $remote_ip_octets[1] . "." . $remote_ip_octets[0] . ".ip-port.exitlist.torproject.org") === "127.0.0.2" ){
-			        $this->set_global_session_cookie('tor', true);
-					return true;
-			    }
-		    }
-			*/
-
-			$this->set_global_session_cookie('tor', false, array('global', 'session'));
-			return false;
 		}
 
 		//Returns the requested information of the browser being used.
@@ -288,38 +217,29 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_get_browser', null, $info);
 			if ( isset($override) ){return;}
 
+			//Hook in here to add custom checks to get_browser() calls
+			$additional_checks = apply_filters('nebula_get_browser', false, $info);
+			if ( !empty($additional_checks) ){
+				return $additional_checks;
+			}
+
 			if ( $this->get_option('device_detection') ){
 				$client = $GLOBALS["device_detect"]->getClient();
-				if ( $this->is_tor_browser() ){
-					$client = array(
-						'name' => 'Tor',
-						'version' => 0, //Not possible to detect
-						'engine' => 'Gecko',
-						'type' => 'browser',
-					);
-				}
-
 				switch ( strtolower($info) ){
 					case 'full':
 						return $client['name'] . ' ' . $client['version'];
-						break;
 					case 'name':
 					case 'browser':
 					case 'client':
 						return $client['name'];
-						break;
 					case 'version':
 						return $client['version'];
-						break;
 					case 'engine':
 						return $client['engine'];
-						break;
 					case 'type':
 						return $client['type'];
-						break;
 					default:
 						return false;
-						break;
 				}
 			}
 
@@ -333,15 +253,14 @@ if ( !trait_exists('Device') ){
 					elseif ( $is_opera ){return 'opera';}
 					elseif ( $is_safari ){return 'safari';}
 					elseif ( $is_chrome ){return 'chrome';}
-					break;
+					return false;
 				case 'engine':
 					if ( $is_gecko ){return 'gecko';}
 					elseif ( $is_safari ){return 'webkit';}
 					elseif ( $is_IE ){return 'trident';}
-					break;
+					return false;
 				default:
 					return false;
-					break;
 			}
 		}
 
@@ -454,7 +373,6 @@ if ( !trait_exists('Device') ){
 			foreach( $all_bot_regex as $bot_regex ){
 				if ( strpos(strtolower($_SERVER['HTTP_USER_AGENT']), $bot_regex) !== false ){
 					return true;
-					break;
 				}
 			}
 

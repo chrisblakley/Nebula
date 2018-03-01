@@ -114,9 +114,10 @@ if ( !trait_exists('Options') ){
 
 		//Register the requested jQuery file
 		public function jquery(){
-			if ( !$this->is_admin_page() && !is_customize_preview() && $this->get_option('jquery_version') !== 'wordpress' ){
+			if ( !$this->is_admin_page(true) && $this->get_option('jquery_version') !== 'wordpress' ){
+				$footer = ( !apply_filters('nebula_prevent_jquery_footer', false) && $this->get_option('jquery_version') === 'footer' )? true : false; //Whether to load jQuery in the head or footer
 				wp_deregister_script('jquery-core');
-				return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js', null, null, '3.2.1', false);
+				return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js', null, null, '3.3.1', $footer);
 			}
 		}
 
@@ -365,7 +366,8 @@ if ( !trait_exists('Options') ){
 				'mention_url' => '',
 				'notes' => '',
 			);
-			return $nebula_options_defaults;
+
+			return apply_filters('nebula_default_options', $nebula_options_defaults);
 		}
 
 		//Get the "user friendly" default value for a Nebula Option

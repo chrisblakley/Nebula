@@ -94,7 +94,7 @@ if ( !trait_exists('Admin') ){
 				add_action('wp_before_admin_bar_render', array($this, 'remove_admin_bar_logo'), 0);
 				add_action('admin_bar_menu',  array($this, 'admin_bar_menus'), 800);
 				add_action('get_header',  array($this, 'remove_admin_bar_bump')); //TODO "Nebula" 0: Possible to remove and add directly remove action here
-				add_action('wp_head', array($this, 'admin_bar_style_script_overrides'), 11);
+				add_action('wp_after_admin_bar_render', array($this, 'admin_bar_style_script_overrides'), 11);
 				add_action('wp_head', array($this, 'admin_bar_warning_styles'), 11);
 				add_action('admin_print_styles', array($this, 'admin_bar_warning_styles'), 11);
 			}
@@ -699,7 +699,7 @@ if ( !trait_exists('Admin') ){
 		//Override some styles and add custom functionality
 		//Used on the front-end, but not in Admin area
 		public function admin_bar_style_script_overrides(){
-			if ( is_admin_bar_showing() ){ ?>
+			if ( !$this->is_admin_page(true) && is_admin_bar_showing() ){ ?>
 				<style type="text/css">
 					html {margin-top: 32px !important; transition: margin-top 0.5s linear;}
 					* html body {margin-top: 32px !important;}

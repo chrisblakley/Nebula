@@ -8,10 +8,10 @@ if ( !trait_exists('Dashboard') ){
 		public function hooks(){
 			//Remove unnecessary Dashboard metaboxes
 			if ( $this->get_option('unnecessary_metaboxes') ){
-				add_action('wp_dashboard_setup', array($this, 'remove_dashboard_metaboxes' ));
+				add_action('wp_dashboard_setup', array($this, 'remove_dashboard_metaboxes'));
 			}
 
-			add_action('wp_dashboard_setup', array($this, 'ataglance_metabox' ));
+			add_action('wp_dashboard_setup', array($this, 'ataglance_metabox'));
 			add_action('wp_dashboard_setup', array($this, 'current_user_metabox'));
 
 			if ( current_user_can('manage_options') ){
@@ -212,8 +212,6 @@ if ( !trait_exists('Dashboard') ){
 			echo '</ul>';
 
 			do_action('nebula_ataglance');
-
-			echo '<p><em>Designed and Developed by ' . $this->pinckneyhugogroup(array('animate' => true)) . '</em></p>';
 		}
 
 		//Current User metabox

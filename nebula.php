@@ -81,27 +81,27 @@ if ( !class_exists('Nebula') ){
 			//Adjust the content width when the full width page template is being used
 			add_action('template_redirect', array($this, 'set_content_width'));
 
-			$this->TemplateEngineHooks(); // Register TemplateEngine hooks
-			$this->ScriptHooks(); // Register Script hooks
-			$this->OptionsHooks(); // Register Options hooks
-			$this->UtilitiesHooks(); // Register Utilities hooks
-			$this->SecurityHooks(); // Register Security hooks
-			$this->OptimizationHooks(); // Register Optimization hooks
+			$this->TemplateEngineHooks(); //Register TemplateEngine hooks
+			$this->ScriptHooks(); //Register Script hooks
+			$this->OptionsHooks(); //Register Options hooks
+			$this->UtilitiesHooks(); //Register Utilities hooks
+			$this->SecurityHooks(); //Register Security hooks
+			$this->OptimizationHooks(); //Register Optimization hooks
 			$this->CustomizerHooks(); //Register Customizer hooks
-			$this->FunctionsHooks(); // Register Functions hooks
-			$this->ShortcodesHooks(); // Register Shortcodes hooks
-			$this->WidgetsHooks(); // Register Widgets hooks
+			$this->FunctionsHooks(); //Register Functions hooks
+			$this->ShortcodesHooks(); //Register Shortcodes hooks
+			$this->WidgetsHooks(); //Register Widgets hooks
 
 			if ( $this->is_admin_page() || is_admin_bar_showing() || $this->is_login_page() ){
-				$this->AdminHooks(); // Register Admin hooks
+				$this->AdminHooks(); //Register Admin hooks
 			}
 
 			if ( is_plugin_active('woocommerce/woocommerce.php') ){
-				$this->EcommerceHooks(); // Register Ecommerce hooks
+				$this->EcommerceHooks(); //Register Ecommerce hooks
 			}
 
 			if ( nebula()->get_option('prototype_mode') ){
-				$this->PrototypingHooks(); // Register Prototyping hooks
+				$this->PrototypingHooks(); //Register Prototyping hooks
 			}
 		}
 

@@ -4,8 +4,6 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Scripts') ){
 	trait Scripts {
-		public $brain;
-
 		public function hooks(){
 			//Register styles/scripts
 			add_action('wp_enqueue_scripts', array($this, 'register_scripts'));
@@ -23,6 +21,9 @@ if ( !trait_exists('Scripts') ){
 				add_filter('style_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
 				add_filter('script_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
 			}
+
+			add_action('wp_head', array($this, 'output_nebula_data'));
+			add_action('admin_head', array($this, 'output_nebula_data'));
 		}
 
 		//Register scripts
@@ -48,7 +49,7 @@ if ( !trait_exists('Scripts') ){
 			//nebula_register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
 			$this->jquery();
 			$this->bootstrap('js');
-			$this->register_script('nebula-font_awesome', 'https://use.fontawesome.com/releases/v5.0.6/js/all.js', 'defer', null, '5.0.6', true); //Font Awesome 5 JS SVG method
+			$this->register_script('nebula-font_awesome', get_template_directory_uri() . '/assets/js/vendor/fontawesome-all.min.js', 'async', null, '5.0.7', true); //Font Awesome 5 JS SVG method
 			$this->register_script('nebula-modernizr_dev', get_template_directory_uri() . '/assets/js/vendor/modernizr.dev.js', 'defer', null, '3.5.0', false);
 			$this->register_script('nebula-modernizr_local', get_template_directory_uri() . '/assets/js/vendor/modernizr.min.js', 'defer', null, '3.3.1', false);
 			$this->register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', 'defer', null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
@@ -61,7 +62,10 @@ if ( !trait_exists('Scripts') ){
 			$this->register_script('nebula-nebula', get_template_directory_uri() . '/assets/js/nebula.js', 'defer', array('nebula-bootstrap', 'jquery-core'), $this->version('full'), true);
 			$this->register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', null, array('jquery-core'), $this->version('full'), true);
 			$this->register_script('nebula-admin', get_template_directory_uri() . '/assets/js/admin.js', 'defer', array('jquery-core'), $this->version('full'), true);
+		}
 
+		//Build Nebula data object and output to the <head>
+		public function output_nebula_data(){
 			global $wp_scripts, $wp_styles, $upload_dir;
 			$upload_dir = wp_upload_dir();
 
@@ -85,7 +89,7 @@ if ( !trait_exists('Scripts') ){
 			}
 
 			//Be careful changing the following array as many JS functions use this data!
-			$this->brain = array(
+			$brain = array(
 				'version' => array(
 					'number' => $this->version('full'),
 					'date' => $this->version('date')
@@ -128,6 +132,7 @@ if ( !trait_exists('Scripts') ){
 						'linkedin_url' => $this->get_option('linkedin_url'),
 						'youtube_url' => $this->get_option('youtube_url'),
 						'instagram_url' => $this->get_option('instagram_url'),
+						'adblock_detect' => $this->get_option('adblock_detect'),
 						'manage_options' => current_user_can('manage_options'),
 						'debug' => $this->is_debug(),
 						'sidebar_expanders' => get_theme_mod('sidebar_accordion_expanders', true),
@@ -154,9 +159,9 @@ if ( !trait_exists('Scripts') ){
 
 			//Check for session data
 			if ( isset($_SESSION['nebulaSession']) && json_decode($_SESSION['nebulaSession'], true) ){ //If session exists and is valid JSON
-				$this->brain['session'] = json_decode($_SESSION['nebulaSession'], true); //Replace nebula.session with session data
+				$brain['session'] = json_decode($_SESSION['nebulaSession'], true); //Replace nebula.session with session data
 			} else {
-				$this->brain['session'] = array(
+				$brain['session'] = array(
 					'ip' => $this->get_ip_address(),
 					'id' => $this->nebula_session_id(),
 					'flags' => array(
@@ -168,7 +173,7 @@ if ( !trait_exists('Scripts') ){
 			}
 
 			//User Data
-			$this->brain['user'] = array(
+			$brain['user'] = array(
 				'id' => get_current_user_id(),
 				'name' => array(
 					'first' => $this->get_user_info('first_name'),
@@ -208,8 +213,10 @@ if ( !trait_exists('Scripts') ){
 				),
 			);
 
-			$this->brain = apply_filters('nebula_brain', $this->brain); //Allow other functions to hook in to add/modify data
-			$this->brain['user']['known'] = ( !empty($this->brain['user']['email']) )? true : false;
+			$brain = apply_filters('nebula_brain', $brain); //Allow other functions to hook in to add/modify data
+			$brain['user']['known'] = ( !empty($brain['user']['email']) )? true : false;
+
+			echo '<script type="text/javascript">var nebula = ' . json_encode($brain) . '</script>'; //Output the data to <head>
 		}
 
 		//Enqueue frontend scripts
@@ -241,9 +248,6 @@ if ( !trait_exists('Scripts') ){
 			}
 
 			wp_enqueue_script('nebula-nebula');
-
-			//Localized objects (localized to jquery to appear in <head>)
-			wp_localize_script('jquery-core', 'nebula', $this->brain);
 
 			//Conditionals
 			if ( $this->is_debug() ){ //When ?debug query string is used
@@ -303,9 +307,6 @@ if ( !trait_exists('Scripts') ){
 				wp_enqueue_script('thickbox');
 				wp_enqueue_script('media-upload');
 			}
-
-			//Localized objects (localized to jquery to appear in <head>)
-			wp_localize_script('jquery-core', 'nebula', $this->brain); //rename to nebulaData or something?
 		}
 
 		//Add $dep (script handle) to the array of dependencies for $handle
@@ -331,11 +332,15 @@ if ( !trait_exists('Scripts') ){
 
 		//Prep Font Awesome JavaScript implementation configuration before calling the script itself: https://fontawesome.com/how-to-use/font-awesome-api#configuration
 		public function font_awesome_config(){
-		    echo '<script>
-				window.FontAwesomeConfig = {
-					searchPseudoElements: true, //Replace :before and :after with <svg> icons too
-				}
-			</script>';
+		    $font_awesome_config = '<script type="text/javascript">window.FontAwesomeConfig = {searchPseudoElements: true,'; //Replace :before and :after with <svg> icons too
+
+			if ( $this->is_debug() ){
+				$font_awesome_config .= 'measurePerformance: true,'; //Add markers in the Performance section of developer tools
+			}
+
+			$font_awesome_config = rtrim($font_awesome_config, ',');
+			$font_awesome_config .= '}</script>';
+			echo $font_awesome_config;
 		}
 	}
 }
