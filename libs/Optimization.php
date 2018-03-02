@@ -204,8 +204,8 @@ if ( !trait_exists('Optimization') ){
 
 				//Page specific dequeues
 				if ( is_front_page() ){
-					wp_deregister_style('thickbox'); //WP Core Thickbox - Override if thickbox type gallery IS used on the homepage.
-					wp_deregister_script('thickbox'); //WP Thickbox - Override if thickbox type gallery IS used on the homepage.
+					wp_deregister_style('thickbox'); //WP Core Thickbox - Override this if thickbox type gallery IS used on the homepage.
+					wp_deregister_script('thickbox'); //WP Thickbox - Override this if thickbox type gallery IS used on the homepage.
 				}
 			}
 		}

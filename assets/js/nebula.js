@@ -922,8 +922,13 @@ function eventTracking(){
 
 	//Detect Adblock
 	if ( nebula.user.client.bot === false && nebula.site.options.adblock_detect ){
-		jQuery.ajaxSetup({cache: true});
-		jQuery.getScript(nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js').done(function(){
+		jQuery.ajax({
+			type: 'GET',
+			url: nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js',
+			dataType: 'script',
+			cache: true,
+			timeout: 5000
+		}).done(function(){
 			nebula.session.flags.adblock = false;
 		}).fail(function(){
 			jQuery('html').addClass('ad-blocker');

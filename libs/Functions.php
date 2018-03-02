@@ -1551,7 +1551,11 @@ trait Functions {
 			} elseif ( is_single() && !is_attachment() ){
 				if ( get_post_type() !== 'post' ){
 					$post_type = get_post_type_object(get_post_type());
+
 					$slug = $post_type->rewrite;
+					if ( is_string($post_type->has_archive) ){ //If the post type has a custom archive slug
+						$slug['slug'] = $post_type->has_archive; //Replace slug with the custom archive slug string
+					}
 
 					echo '<a href="' . $data['home_link'] . $slug['slug'] . '/" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $post_type->labels->singular_name . '</a>';
 

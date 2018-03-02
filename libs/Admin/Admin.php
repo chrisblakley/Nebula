@@ -675,6 +675,8 @@ if ( !trait_exists('Admin') ){
 		public function admin_bar_warning_styles(){
 			if ( is_admin_bar_showing() ){ ?>
 				<style type="text/css">
+					#wpadminbar .nebula-admin-fa {font-family: "Font Awesome\ 5 Free"; font-weight: 900;}
+						#wpadminbar .nebula-admin-fa.fab {font-family: "Font Awesome\ 5 Brands";}
 					#wpadminbar .svg-inline--fa {color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;}
 					#wpadminbar .nebula-admin-light {font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6); line-height: inherit;}
 

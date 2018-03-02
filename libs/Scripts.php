@@ -15,8 +15,6 @@ if ( !trait_exists('Scripts') ){
 			add_action('login_enqueue_scripts', array($this, 'login_enqueue_scripts'));
 			add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 
-			add_action('wp_enqueue_scripts', array($this, 'font_awesome_config'));
-
 			if ( $this->is_debug() || !empty($GLOBALS['wp_customize']) ){
 				add_filter('style_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
 				add_filter('script_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
@@ -30,6 +28,7 @@ if ( !trait_exists('Scripts') ){
 		public function register_scripts(){
 			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
+			wp_register_style('nebula-font_awesome', 'https://use.fontawesome.com/releases/v5.0.8/css/all.css', null, '5.0.8', 'all');
 			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.0.3/jquery.mmenu.all.css', null, '7.0.3', 'all');
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap'), $this->version('full'), 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, $this->version('full'), 'all');
@@ -49,7 +48,6 @@ if ( !trait_exists('Scripts') ){
 			//nebula_register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
 			$this->jquery();
 			$this->bootstrap('js');
-			$this->register_script('nebula-font_awesome', get_template_directory_uri() . '/assets/js/vendor/fontawesome-all.min.js', 'async', null, '5.0.7', true); //Font Awesome 5 JS SVG method
 			$this->register_script('nebula-modernizr_dev', get_template_directory_uri() . '/assets/js/vendor/modernizr.dev.js', 'defer', null, '3.5.0', false);
 			$this->register_script('nebula-modernizr_local', get_template_directory_uri() . '/assets/js/vendor/modernizr.min.js', 'defer', null, '3.3.1', false);
 			$this->register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', 'defer', null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
@@ -224,10 +222,7 @@ if ( !trait_exists('Scripts') ){
 			//Stylesheets
 			wp_enqueue_style('nebula-bootstrap');
 			wp_enqueue_style('nebula-main');
-
-			if ( !is_customize_preview() ){ //@todo "Nebula" 0: Remove this when Font Awesome 5 JS works with the Customizer (currently causing an infinite loop which soft-locks the tab)
-				wp_enqueue_script('nebula-font_awesome'); //Font Awesome 5 JS SVG method
-			}
+			wp_enqueue_style('nebula-font_awesome'); //Font Awesome 5 CSS method
 
 			if ( $this->get_option('google_font_url') ){
 				wp_enqueue_style('nebula-google_font');
@@ -280,10 +275,7 @@ if ( !trait_exists('Scripts') ){
 
 			//Stylesheets
 			wp_enqueue_style('nebula-admin');
-
-			if ( !is_customize_preview() ){ //@todo "Nebula" 0: Remove this when Font Awesome 5 JS works with the Customizer (currently causing an infinite loop which soft-locks the tab)
-				wp_enqueue_script('nebula-font_awesome'); //Font Awesome 5 JS SVG method
-			}
+			wp_enqueue_style('nebula-font_awesome'); //Font Awesome 5 CSS method
 
 			if ( $this->ip_location() ){
 				wp_enqueue_style('nebula-flags');
@@ -328,19 +320,6 @@ if ( !trait_exists('Scripts') ){
 		//Get fresh resources when debugging
 		public function add_debug_query_arg($src){
 			return add_query_arg('debug', str_replace('.', '', $this->version('raw')) . '-' . rand(1000, 9999), $src);
-		}
-
-		//Prep Font Awesome JavaScript implementation configuration before calling the script itself: https://fontawesome.com/how-to-use/font-awesome-api#configuration
-		public function font_awesome_config(){
-		    $font_awesome_config = '<script type="text/javascript">window.FontAwesomeConfig = {searchPseudoElements: true,'; //Replace :before and :after with <svg> icons too
-
-			if ( $this->is_debug() ){
-				$font_awesome_config .= 'measurePerformance: true,'; //Add markers in the Performance section of developer tools
-			}
-
-			$font_awesome_config = rtrim($font_awesome_config, ',');
-			$font_awesome_config .= '}</script>';
-			echo $font_awesome_config;
 		}
 	}
 }
