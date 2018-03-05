@@ -1061,9 +1061,13 @@ function isInView(element){
 }
 
 //Send data to the CRM
-function nv(action, data){
+function nv(action, data, sendNow){
 	if ( typeof _hsq === 'undefined' ){
 		return false;
+	}
+
+	if ( !sendNow ){
+		var sendNow = true;
 	}
 
 	if ( !action || !data || typeof data == 'function' ){
@@ -1079,10 +1083,11 @@ function nv(action, data){
 			nebula.user[key] = value;
 		});
 
-		//Send a virtual pageview because event data doesn't work with free Hubspot accounts (and the identification needs a transport method)
-		_hsq.push(['setPath', window.location.href.replace(nebula.site.directory.root, '') + '#virtual-pageview/identify']);
-		_hsq.push(['trackPageView']);
-
+		if ( sendNow ){
+			//Send a virtual pageview because event data doesn't work with free Hubspot accounts (and the identification needs a transport method)
+			_hsq.push(['setPath', window.location.href.replace(nebula.site.directory.root, '') + '#virtual-pageview/identify']);
+			_hsq.push(['trackPageView']);
+		}
 		//_hsq.push(["trackEvent", data]); //If using an Enterprise Marketing subscription, use this method instead of the trackPageView above
 
 		//Check if email was identified or just supporting data
@@ -1102,7 +1107,10 @@ function nv(action, data){
 		_hsq.push(["trackEvent", data]);
 
 		_hsq.push(['setPath', window.location.href.replace(nebula.site.directory.root, '') + '#virtual-pageview/' + data]);
+		var oldTitle = document.title;
+		document.title = document.title + ' (Virtual)';
 		_hsq.push(['trackPageView']);
+		document.title = oldTitle;
 	}
 
 	nebula.dom.document.trigger('nv_data', data);
@@ -1930,7 +1938,8 @@ function cf7Functions(){
 			if ( typeof formStarted[formID] === 'undefined' || !formStarted[formID] ){
 				ga('set', nebula.analytics.metrics.formStarts, 1);
 				ga('send', 'event', 'CF7 Form', 'Started Form (Focus)', 'Began filling out form ID: ' + formID + ' (' + thisField + ')');
-				nv('event', 'Contact Form Started');
+				nv('identify', {'form_contacted': 'CF7 (' + formID + ') Started'}, false);
+				nv('event', 'Contact Form (' + formID + ') Started (' + thisField + ')');
 				formStarted[formID] = true;
 			}
 
@@ -1973,7 +1982,8 @@ function cf7Functions(){
 		ga('send', 'event', 'CF7 Form', 'Submit (Invalid)', 'Form validation errors occurred on form ID: ' + formID);
 		ga('send', 'exception', {'exDescription': '(JS) Invalid form submission for form ID ' + formID, 'exFatal': false});
 		nebulaScrollTo(jQuery(".wpcf7-not-valid").first()); //Scroll to the first invalid input
-		nv('event', 'Contact Form Invalid');
+		nv('identify', {'form_contacted': 'CF7 (' + formID + ') Invalid'}, false);
+		nv('event', 'Contact Form (' + formID + ') Invalid');
 	});
 
 	//General HTML5 validation errors
@@ -1981,6 +1991,7 @@ function cf7Functions(){
 		debounce(function(){
 			updateFormFlow(formID, '[HTML5 Validation Error]');
 			ga('send', 'event', 'CF7 Form', 'Submit (Invalid)', 'General HTML5 validation error');
+			nv('identify', {'form_contacted': 'CF7 HTML5 Validation Error'});
 		}, 50, 'invalid form');
 	});
 
@@ -1993,7 +2004,8 @@ function cf7Functions(){
 		ga('set', nebula.analytics.dimensions.formTiming, millisecondsToString(formTime) + 'ms (' + nebula.timings[e.detail.id].laps + ' inputs)');
 		ga('send', 'event', 'CF7 Form', 'Submit (Spam)', 'Form submission failed spam tests on form ID: ' + formID);
 		ga('send', 'exception', {'exDescription': '(JS) Spam form submission for form ID ' + formID, 'exFatal': false});
-		nv('event', 'Contact Form Spam');
+		nv('identify', {'form_contacted': 'CF7 (' + formID + ') Submit Spam'}, false);
+		nv('event', 'Contact Form (' + formID + ') Spam');
 	});
 
 	//CF7 Mail Send Failure (CF7 AJAX response after mail failure)
@@ -2005,7 +2017,8 @@ function cf7Functions(){
 		ga('set', nebula.analytics.dimensions.formTiming, millisecondsToString(formTime) + 'ms (' + nebula.timings[e.detail.id].laps + ' inputs)');
 		ga('send', 'event', 'CF7 Form', 'Submit (Failed)', 'Form submission email send failed for form ID: ' + formID);
 		ga('send', 'exception', {'exDescription': '(JS) Mail failed to send for form ID ' + formID, 'exFatal': true});
-		nv('event', 'Contact Form Failed');
+		nv('identify', {'form_contacted': 'CF7 (' + formID + ') Submit Failed'}, false);
+		nv('event', 'Contact Form (' + formID + ') Failed');
 	});
 
 	//CF7 Mail Sent Success (CF7 AJAX response after submit success)
@@ -2023,7 +2036,8 @@ function cf7Functions(){
 		ga('send', 'timing', 'CF7 Form', 'Form Completion (ID: ' + formID + ')', Math.round(formTime), 'Initial form focus until valid submit');
 		ga('send', 'event', 'CF7 Form', 'Submit (Success)', 'Form ID: ' + formID);
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)'});}
-		nv('event', 'Contact Form Submit Success');
+		nv('identify', {'form_contacted': 'CF7 (' + formID + ') Submit Success'}, false);
+		nv('event', 'Contact Form (' + formID + ') Submit Success');
 
 		//Clear localstorage on submit success
 		jQuery('#' + e.detail.id + ' .wpcf7-textarea, #' + e.detail.id + ' .wpcf7-text').each(function(){
@@ -2040,7 +2054,8 @@ function cf7Functions(){
 		ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Attempt)');
 		ga('set', nebula.analytics.dimensions.formTiming, millisecondsToString(formTime) + 'ms (' + nebula.timings[e.detail.id].laps + ' inputs)');
 		ga('send', 'event', 'CF7 Form', 'Submit (Attempt)', 'Submission attempt for form ID: ' + formID); //This event is required for the notable form metric!
-		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)',});}
+		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)'});}
+		nv('identify', {'form_contacted': 'CF7 (' + formID + ') Submit Attempt'}, false);
 		nvForm(); //nvForm() here because it triggers after all others. No nv() here so it doesn't overwrite the other (more valuable) data.
 
 		jQuery('#' + e.detail.id).find('button#submit').removeClass('active');

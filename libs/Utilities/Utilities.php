@@ -130,17 +130,18 @@ if ( !trait_exists('Utilities') ){
 				$ip = $this->get_ip_address();
 			}
 
-			$notable_pois = array();
-
 			//Loop through Notable POIs saved in Nebula Options
+			$notable_pois = array();
 			$notable_ip_lines = explode("\n", $this->get_option('notableiplist'));
-			foreach ( $notable_ip_lines as $line ){
-				$ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
+			if ( !empty($notable_ip_lines) ){
+				foreach ( $notable_ip_lines as $line ){
+					$ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
 
-				$notable_pois[] = array(
-					'ip' => $ip_info[0],
-					'name' => $ip_info[1]
-				);
+					$notable_pois[] = array(
+						'ip' => $ip_info[0],
+						'name' => $ip_info[1]
+					);
+				}
 			}
 
 			//Loop through Notable POIs log file (updated when using poi query parameter above). Only use when manageable file size.
@@ -1155,6 +1156,12 @@ if ( !trait_exists('Utilities') ){
 						'name' => 'phone_contacted',
 						'label' => 'Phone Contacted',
 						'description' => 'The phone number this user contacted via click-to-call link',
+					);
+
+					$custom_nebula_properties[] = array(
+						'name' => 'form_contacted',
+						'label' => 'Form Contacted',
+						'description' => 'The form(s) this user filled out and their success with it',
 					);
 
 					$custom_nebula_properties[] = array(

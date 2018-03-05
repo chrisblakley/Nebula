@@ -731,6 +731,8 @@ trait Functions {
 
 		$data = array_merge($defaults, $options);
 
+		//@todo "Nebula" 0: Include support for multi-authors: is_multi_author
+
 		if ( ($this->get_option('author_bios') || $data['force']) && get_theme_mod('post_author', true) ){
 			$icon_html = '';
 			if ( $data['icon'] ){
@@ -1012,11 +1014,11 @@ trait Functions {
 		}
 
 		//Apply string limiters (words or characters)
-		if ( !empty($data['characters']) && is_int($data['characters']) ){ //Characters
-			$limited = $this->string_limit_chars($data['text'], $data['characters']); //Returns array: $limited['text'] is the string, $limited['is_limited'] is boolean if it was limited or not.
+		if ( !empty($data['characters']) && intval($data['characters']) ){ //Characters
+			$limited = $this->string_limit_chars($data['text'], intval($data['characters'])); //Returns array: $limited['text'] is the string, $limited['is_limited'] is boolean if it was limited or not.
 			$data['text'] = trim($limited['text']);
-		} elseif ( (!empty($data['words']) && is_int($data['words'])) || (!empty($data['length']) && is_int($data['length'])) ){ //Words (or Length)
-			$word_limit = ( !empty($data['length']) && is_int($data['length']) )? $data['length'] : $data['words'];
+		} elseif ( (!empty($data['words']) && intval($data['words'])) || (!empty($data['length']) && intval($data['length'])) ){ //Words (or Length)
+			$word_limit = ( !empty($data['length']) && intval($data['length']) )? intval($data['length']) : intval($data['words']);
 			$limited = $this->string_limit_words($data['text'], $word_limit); //Returns array: $limited['text'] is the string, $limited['is_limited'] is boolean if it was limited or not.
 			$data['text'] = trim($limited['text']);
 		}
@@ -1624,6 +1626,8 @@ trait Functions {
 
 				echo $data['before'] . $prefix . single_tag_title('', false) . $data['after'];
 			} elseif ( is_author() ){
+				//@TODO "Nebula" 0: Support for multi author? is_multi_author()
+
 				global $author;
 				$userdata = get_userdata($author);
 				echo $data['before'] . $userdata->display_name . $data['after'];
@@ -2235,6 +2239,7 @@ trait Functions {
 		if ( !is_single() || $show_authors === 0 || !$this->get_option('author_bios') ){
 			return $this->get_option('site_owner', get_bloginfo('name'));
 		} else {
+			//@TODO "Nebula" 0: Add support for multi-authors? is_multi_author()
 			return ( get_the_author_meta('first_name') != '' )? get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name') : get_the_author_meta('display_name');
 		}
 	}
@@ -2597,6 +2602,7 @@ trait Functions {
 				$menus = get_terms('nav_menu');
 				set_transient('nebula_autocomplete_menus', $menus, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 			}
+
 			foreach($menus as $menu){
 				$menu_items = wp_get_nav_menu_items($menu->term_id);
 				foreach ( $menu_items as $key => $menu_item ){
@@ -2637,6 +2643,7 @@ trait Functions {
 				$categories = get_categories();
 				set_transient('nebula_autocomplete_categories', $categories, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 			}
+
 			foreach ( $categories as $category ){
 				$suggestion = array();
 				$cat_count = 0;
@@ -2662,6 +2669,7 @@ trait Functions {
 				$tags = get_tags();
 				set_transient('nebula_autocomplete_tags', $tags, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 			}
+
 			foreach ( $tags as $tag ){
 				$suggestion = array();
 				$tag_count = 0;
@@ -2687,6 +2695,7 @@ trait Functions {
 				$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
 				set_transient('nebula_autocomplete_authors', $authors, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 			}
+
 			foreach ( $authors as $author ){
 				$author_name = ( $author->first_name != '' )? $author->first_name . ' ' . $author->last_name : $author->display_name; //might need adjusting here
 				if ( strtolower($author_name) === strtolower($term) ){ //todo: if similarity of author name and query term is higher than X. Return only 1 or 2.
@@ -2925,22 +2934,26 @@ trait Functions {
 		}
 
 		//Post Information
-		if ( !is_search() && !is_archive() && !is_front_page() ){
+		if ( !is_search() && !is_archive() && !is_front_page() && !is_404() ){
 			global $post;
-			$segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
-			$parents = get_post_ancestors($post->ID);
-			foreach ( $parents as $parent ){
-				if ( !empty($parent) ){
-					$classes[] = 'ancestor-id-' . $parent;
+			if ( isset($post) ){
+				$segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
+				$parents = get_post_ancestors($post->ID);
+				foreach ( $parents as $parent ){
+					if ( !empty($parent) ){
+						$classes[] = 'ancestor-id-' . $parent;
+					}
 				}
-			}
-			foreach ( $segments as $segment ){
-				if ( !empty($segment) ){
-					$classes[] = 'ancestor-of-' . $segment;
+
+				foreach ( $segments as $segment ){
+					if ( !empty($segment) ){
+						$classes[] = 'ancestor-of-' . $segment;
+					}
 				}
-			}
-			foreach ( get_the_category($post->ID) as $category ){
-				$classes[] = 'cat-id-' . $category->cat_ID;
+
+				foreach ( get_the_category($post->ID) as $category ){
+					$classes[] = 'cat-id-' . $category->cat_ID;
+				}
 			}
 		}
 
@@ -3053,6 +3066,9 @@ trait Functions {
 		}
 
 		$classes[] = 'author-id-' . $post->post_author;
+		if ( is_multi_author() ){
+			$classes[] = 'multi-author';
+		}
 
 		//Remove "hentry" meta class on pages or if Author Bios are disabled
 		if ( is_page() || !$this->get_option('author_bios') ){

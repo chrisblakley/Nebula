@@ -234,6 +234,12 @@ if ( !trait_exists('Admin') ){
 				'url' => 'https://www.google.com/webmasters/tools/home'
 			);
 
+			$third_party_tools['administrative'][] = array(
+				'name' => 'Bing Webmaster Tools',
+				'icon' => '<i class="fab fa-fw fa-microsoft"></i>',
+				'url' => 'https://www.bing.com/toolbox/webmaster'
+			);
+
 			if ( $this->get_option('adwords_remarketing_conversion_id') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Google AdWords',
