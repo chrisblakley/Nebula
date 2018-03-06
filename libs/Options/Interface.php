@@ -249,7 +249,7 @@
 										</div>
 
 										<p class="nebula-help-text short-help form-text text-muted">The address of the location (or headquarters if multiple locations).</p>
-										<p class="nebula-help-text more-help form-text text-muted">Use <a href="https://gearside.com/nebula/functions/full_address/" target="_blank" rel="noopener"><code>nebula()->full_address()</code></a> to get the formatted address in one function.</p>
+										<p class="nebula-help-text more-help form-text text-muted">Use <a href="https://gearside.com/nebula/functions/full_address/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=address+help<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener"><code>nebula()->full_address()</code></a> to get the formatted address in one function.</p>
 										<p class="option-keywords">location recommended seo</p>
 									</div>
 
@@ -466,7 +466,6 @@
 
 								<div class="option-group">
 									<h3>Front-End</h3>
-
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[author_bios]" id="author_bios" value="1" <?php checked('1', !empty($nebula_options['author_bios'])); ?> /><label for="author_bios">Author Bios</label>
 										<p class="nebula-help-text short-help form-text text-muted">Allow authors to have bios that show their info (and post archives). (Default: <?php echo $this->user_friendly_default('author_bios'); ?>)</p>
@@ -496,12 +495,6 @@
 									</div>
 
 									<div class="form-group">
-										<input type="checkbox" name="nebula_options[ip_geolocation]" id="ip_geolocation" value="1" <?php checked('1', !empty($nebula_options['ip_geolocation'])); ?> /><label for="ip_geolocation">IP Geolocation</label>
-										<p class="nebula-help-text short-help form-text text-muted">Lookup the country, region, and city of the user based on their IP address. (Default: <?php echo $this->user_friendly_default('ip_geolocation'); ?>)</p>
-										<p class="option-keywords">location remote resource minor page speed impact</p>
-									</div>
-
-									<div class="form-group">
 										<input type="checkbox" name="nebula_options[domain_blacklisting]" id="domain_blacklisting" value="1" <?php checked('1', !empty($nebula_options['domain_blacklisting'])); ?> /><label for="domain_blacklisting">Domain Blacklisting</label>
 										<p class="nebula-help-text short-help form-text text-muted">Block traffic from known spambots and other illegitimate domains. (Default: <?php echo $this->user_friendly_default('domain_blacklisting'); ?>)</p>
 										<p class="option-keywords">security remote resource recommended minor page speed impact</p>
@@ -518,13 +511,6 @@
 										<input type="checkbox" name="nebula_options[console_css]" id="console_css" value="1" <?php checked('1', !empty($nebula_options['console_css'])); ?> /><label for="console_css">Console CSS</label>
 										<p class="nebula-help-text short-help form-text text-muted">Adds CSS to the browser console. (Default: <?php echo $this->user_friendly_default('console_css'); ?>)</p>
 										<p class="option-keywords">discretionary</p>
-									</div>
-
-									<div class="form-group">
-										<input type="checkbox" name="nebula_options[weather]" id="weather" value="1" <?php checked('1', !empty($nebula_options['weather'])); ?> /><label for="weather">Weather Detection</label>
-										<p class="nebula-help-text short-help form-text text-muted">Lookup weather conditions for locations. (Default: <?php echo $this->user_friendly_default('weather'); ?>)</p>
-										<p class="nebula-help-text more-help form-text text-muted">Can be used for changing content as well as analytics.</p>
-										<p class="option-keywords">location remote resource major page speed impact</p>
 									</div>
 								</div><!-- /option-group -->
 
@@ -759,7 +745,7 @@
 										<label for="hostnames">Valid Hostnames</label>
 										<input type="text" name="nebula_options[hostnames]" id="hostnames" class="form-control nebula-validate-text" value="<?php echo $nebula_options['hostnames']; ?>" placeholder="<?php echo $this->url_components('domain'); ?>" />
 										<p class="nebula-help-text short-help form-text text-muted">These help generate regex patterns for Google Analytics filters.</p>
-										<p class="nebula-help-text more-help form-text text-muted">It is also used for the is_site_live() function! Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)! Include this RegEx pattern for a filter/segment <a href="https://gearside.com/nebula/utilities/domain-regex-generator/?utm_campaign=documentation&utm_medium=options&utm_source=valid+hostnames%20help" target="_blank" rel="noopener">(Learn how to use this)</a>: <input type="text" value="<?php echo $this->valid_hostname_regex(); ?>" readonly style="width: 50%;" /></p>
+										<p class="nebula-help-text more-help form-text text-muted">It is also used for the is_site_live() function! Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)! Include this RegEx pattern for a filter/segment <a href="https://gearside.com/nebula/utilities/domain-regex-generator/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=valid+hostnames+help<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener">(Learn how to use this)</a>: <input type="text" value="<?php echo $this->valid_hostname_regex(); ?>" readonly style="width: 50%;" /></p>
 										<p class="option-keywords"></p>
 									</div>
 
@@ -1063,7 +1049,7 @@
 												<input type="text" name="nebula_options[cd_sessionid]" id="cd_sessionid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_sessionid']; ?>" />
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">ID system so that you can group hits into specific user sessions. Scope: Session</p>
-											<p class="nebula-help-text more-help form-text text-muted">This ID is not personally identifiable and therefore fits within the <a href="https://support.google.com/analytics/answer/2795983" target="_blank" rel="noopener">Google Analytics ToS</a> for PII. <a href="https://gearside.com/nebula/functions/nebula_session_id/?utm_campaign=documentation&utm_medium=options&utm_source=session+id%20help" target="_blank" rel="noopener">Session ID Documentation &raquo;</a></p>
+											<p class="nebula-help-text more-help form-text text-muted">This ID is not personally identifiable and therefore fits within the <a href="https://support.google.com/analytics/answer/2795983" target="_blank" rel="noopener">Google Analytics ToS</a> for PII. <a href="https://gearside.com/nebula/functions/nebula_session_id/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=session+id+help<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener">Session ID Documentation &raquo;</a></p>
 											<p class="option-keywords">recommended</p>
 										</div>
 
@@ -1321,7 +1307,7 @@
 
 								<div class="option-group">
 									<h3>Custom Metrics</h3>
-									<p class="text-muted">These are optional metrics that can be passed into Google Analytics which allows for 20 custom metrics (or 200 for Google Analytics Premium). To set these up, define the Custom Metric in the Google Analytics property, then paste the metric index string ("metric1", "metric12", etc.) into the appropriate input field below. The scope and format for each metric is noted in their respective help sections. Metrics that require additional code are marked with a *. These are useful for manual interpretation of data, or to be included in <a href="https://gearside.com/nebula/get-started/recommendations/google-analytics-calculated-metrics/?utm_campaign=documentation&utm_medium=options&utm_source=custom+metrics" target="_blank">Calculated Metrics formulas</a>.</p>
+									<p class="text-muted">These are optional metrics that can be passed into Google Analytics which allows for 20 custom metrics (or 200 for Google Analytics Premium). To set these up, define the Custom Metric in the Google Analytics property, then paste the metric index string ("metric1", "metric12", etc.) into the appropriate input field below. The scope and format for each metric is noted in their respective help sections. Metrics that require additional code are marked with a *. These are useful for manual interpretation of data, or to be included in <a href="https://gearside.com/nebula/get-started/recommendations/google-analytics-calculated-metrics/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=custom+metrics<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank">Calculated Metrics formulas</a>.</p>
 
 									<?php $metric_regex = '^metric([0-9]{1,3})$'; ?>
 
@@ -1604,7 +1590,7 @@
 												</div>
 										<input type="text" name="nebula_options[cse_id]" id="cse_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['cse_id']; ?>" placeholder="000000000000000000000:aaaaaaaa_aa" />
 									</div>
-									<p class="nebula-help-text short-help form-text text-muted">For <a href="https://gearside.com/nebula/functions/pagesuggestion/?utm_campaign=documentation&utm_medium=options&utm_source=gcse+help" target="_blank" rel="noopener">page suggestions</a> on 404 and No Search Results pages.</p>
+									<p class="nebula-help-text short-help form-text text-muted">For <a href="https://gearside.com/nebula/functions/pagesuggestion/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=gcse+help<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener">page suggestions</a> on 404 and No Search Results pages.</p>
 									<p class="nebula-help-text more-help form-text text-muted"><a href="https://www.google.com/cse/manage/all">Register here</a>, then select "Add", input your website's URL in "Sites to Search". Then click the one you just made and click the "Search Engine ID" button.</p>
 									<p class="option-keywords">remote resource minor page speed impact</p>
 								</div>
@@ -1716,7 +1702,7 @@
 										</div>
 										<input type="text" name="nebula_options[twitter_bearer_token]" id="twitter_bearer_token" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_bearer_token']; ?>" placeholder="000000000000000000000000000000" />
 									</div>
-									<p class="nebula-help-text short-help form-text text-muted">The bearer token is for creating custom Twitter feeds: <a href="https://gearside.com/nebula/utilities/twitter-bearer-token-generator/?utm_campaign=documentation&utm_medium=options&utm_source=twitter+help" target="_blank" rel="noopener">Generate a bearer token here</a></p>
+									<p class="nebula-help-text short-help form-text text-muted">The bearer token is for creating custom Twitter feeds: <a href="https://gearside.com/nebula/utilities/twitter-bearer-token-generator/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=twitter+help<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener">Generate a bearer token here</a></p>
 									<p class="option-keywords">social remote resource</p>
 								</div>
 
@@ -1835,7 +1821,7 @@
 										<label for="notableiplist">Notable IPs</label>
 										<textarea name="nebula_options[notableiplist]" id="notableiplist" class="form-control nebula-validate-textarea" rows="6" placeholder="192.168.0.1 Name Here"><?php echo $nebula_options['notableiplist']; ?></textarea>
 										<p class="nebula-help-text short-help form-text text-muted">A list of named IP addresses. Enter each IP (or RegEx to match) on a new line with a space separating the IP address and name.</p>
-										<p class="nebula-help-text more-help form-text text-muted">Name IPs by location to avoid <a href="https://support.google.com/analytics/answer/2795983" target="_blank" rel="noopener">Personally Identifiable Information (PII)</a> issues (Do not use peoples' names). Be sure to set up a Custom Dimension in Google Analytics and add the dimension index in the Analytics tab! Tip: IP data is sent with <a href="https://gearside.com/nebula/examples/contact-form-7/?utm_campaign=documentation&utm_medium=options&utm_source=notable+ips%20help" target="_blank" rel="noopener">Nebula contact forms</a>!</p>
+										<p class="nebula-help-text more-help form-text text-muted">Name IPs by location to avoid <a href="https://support.google.com/analytics/answer/2795983" target="_blank" rel="noopener">Personally Identifiable Information (PII)</a> issues (Do not use peoples' names). Be sure to set up a Custom Dimension in Google Analytics and add the dimension index in the Analytics tab! Tip: IP data is sent with <a href="https://gearside.com/nebula/examples/contact-form-7/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=notable+ips+help<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener">Nebula contact forms</a>!</p>
 										<p class="option-keywords">recommended</p>
 									</div>
 								</div>

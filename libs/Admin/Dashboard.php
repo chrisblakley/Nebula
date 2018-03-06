@@ -78,7 +78,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fab fa-fw fa-wordpress"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
 			//Nebula Version
-			echo '<li><i class="far fa-fw fa-star"></i> <a href="https://gearside.com/nebula" target="_blank" rel="noopener">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master" target="_blank">' . $this->version('raw') . '</a></strong> <small title="' . human_time_diff($this->version('utc')) . ' ago" style="cursor: help;">(Committed: ' . $this->version('date') . ')</small></li>';
+			echo '<li><i class="far fa-fw fa-star"></i> <a href="https://gearside.com/nebula?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master" target="_blank">' . $this->version('raw') . '</a></strong> <small title="' . human_time_diff($this->version('utc')) . ' ago" style="cursor: help;">(Committed: ' . $this->version('date') . ')</small></li>';
 
 			//Child Theme
 			if ( is_child_theme() ){
@@ -361,28 +361,6 @@ if ( !trait_exists('Dashboard') ){
 			echo ' IP Address: <a href="http://whatismyipaddress.com/ip/' . $this->get_ip_address() . '" target="_blank" rel="noopener"><strong class="admin-user-info admin-user-ip">' . $this->get_ip_address() . '</strong></a>';
 			echo '</li>';
 
-			//IP Location
-			if ( $this->ip_location() ){
-				$ip_location = $this->ip_location('all');
-
-				if ( !empty($ip_location) ){
-					echo '<li><i class="fas fa-fw fa-location-arrow"></i> IP Location: <i class="flag flag-' . strtolower($ip_location->country_code) . '"></i> <strong>' . $ip_location->city . ', ' . $ip_location->region_name . '</strong></li>';
-				} else {
-					echo '<li><i class="fas fa-fw fa-location-arrow"></i> IP Location: <em>GeoIP error or rate limit exceeded.</em></li>';
-				}
-			}
-
-			//Weather
-			if ( $this->get_option('weather') ){
-				$ip_zip = ( $this->ip_location() )? $this->ip_location('zip') : '';
-				$temperature = $this->weather($ip_zip, 'temp');
-				if ( !empty($temperature) ){
-					echo '<li><i class="fas fa-fw fa-cloud"></i> Weather: <strong>' . $temperature . '&deg;F ' . $this->weather($ip_zip, 'conditions') . '</strong></li>';
-				} else {
-					echo '<li><i class="fas fa-fw fa-cloud"></i> Weather: <em>API error for zip code ' . $ip_zip . '.</em></li>';
-				}
-			}
-
 			//Multiple locations
 			if ( $this->user_single_concurrent($user_info->ID) > 1 ){
 				echo '<li><i class="far fa-fw fa-users"></i> Active in <strong>' . $this->user_single_concurrent($user_info->ID) . ' locations</strong>.</li>';
@@ -392,6 +370,8 @@ if ( !trait_exists('Dashboard') ){
 			if ( !get_user_option('show_admin_bar_front', $user_info->ID) ){
 				echo '<li><i class="fas fa-fw fa-bars"></i> Admin Bar disabled <small>(for just you via <a href="profile.php">User Profile</a>)</small></li>';
 			}
+
+			do_action('nebula_user_metabox');
 			echo '</ul>';
 
 			echo '<p><small><em><a href="profile.php"><i class="fas fa-fw fa-pencil-alt"></i> Manage your user information</a></em></small></p>';
@@ -473,7 +453,7 @@ if ( !trait_exists('Dashboard') ){
 			$instance_count = 0;
 			?>
 				<p class="todoresults_title">
-					<strong>Active @todo Comments</strong> <a class="todo_help_icon" href="https://gearside.com/wordpress-dashboard-todo-manager/?utm_campaign=nebula&utm_medium=nebula&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=todo+metabox" target="_blank" rel="noopener"><i class="far fw fa-question-circle"></i> Documentation &raquo;</a>
+					<strong>Active @todo Comments</strong> <a class="todo_help_icon" href="https://gearside.com/wordpress-dashboard-todo-manager/?utm_campaign=nebula&utm_medium=nebula&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=todo+metabox<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener"><i class="far fw fa-question-circle"></i> Documentation &raquo;</a>
 				</p>
 
 				<div class="todo_results">

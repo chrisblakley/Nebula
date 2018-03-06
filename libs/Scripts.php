@@ -277,7 +277,7 @@ if ( !trait_exists('Scripts') ){
 			wp_enqueue_style('nebula-admin');
 			wp_enqueue_style('nebula-font_awesome'); //Font Awesome 5 CSS method
 
-			if ( $this->ip_location() ){
+			if ( $this->is_companion_active() && nebula_companion()->ip_location() ){
 				wp_enqueue_style('nebula-flags');
 			}
 

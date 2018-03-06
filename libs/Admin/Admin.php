@@ -515,7 +515,7 @@ if ( !trait_exists('Admin') ){
 			$wp_admin_bar->add_node(array(
 				'id' => 'nebula',
 				'title' => '<i class="nebula-admin-fa fas fa-fw ' . $nebula_adminbar_icon . '"></i> Nebula',
-				'href' => 'https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=admin+bar&utm_source=nebula',
+				'href' => 'https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')),
 				'meta' => array(
 					'target' => '_blank',
 					'rel' => 'noopener',
@@ -637,7 +637,7 @@ if ( !trait_exists('Admin') ){
 				'parent' => 'nebula-options',
 				'id' => 'nebula-options-help',
 				'title' => '<i class="nebula-admin-fa far fa-fw fa-question-circle"></i> Help & Documentation',
-				'href' => 'https://gearside.com/nebula/documentation/options/?utm_campaign=documentation&utm_medium=admin+bar&utm_source=help',
+				'href' => 'https://gearside.com/nebula/documentation/options/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar+help',
 				'meta' => array('target' => '_blank', 'rel' => 'noopener')
 			));
 
@@ -681,8 +681,8 @@ if ( !trait_exists('Admin') ){
 		public function admin_bar_warning_styles(){
 			if ( is_admin_bar_showing() ){ ?>
 				<style type="text/css">
-					#wpadminbar .nebula-admin-fa {font-family: "Font Awesome\ 5 Free"; font-weight: 900;}
-						#wpadminbar .nebula-admin-fa.fab {font-family: "Font Awesome\ 5 Brands";}
+					#wpadminbar .nebula-admin-fa {font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 900;}
+						#wpadminbar .nebula-admin-fa.fab {font-family: "Font Awesome 5 Brands";}
 					#wpadminbar .svg-inline--fa {color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;}
 					#wpadminbar .nebula-admin-light {font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6); line-height: inherit;}
 
@@ -1079,7 +1079,7 @@ if ( !trait_exists('Admin') ){
 		public function change_admin_footer_right(){
 			global $wp_version;
 			$child = ( is_child_theme() )? ' <small>(Child)</small>' : '';
-			return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . $this->version('date') . '"><a href="https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=footer&utm_source=version' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener">Nebula</a> <strong class="nebula"><a href="https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master" target="_blank">' . $this->version('version') . '</a></strong>' . $child . '</span>';
+			return '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener">WordPress</a> <strong>' . $wp_version . '</strong></span>, <span title="Committed: ' . $this->version('date') . '"><a href="https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=footer+version' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener">Nebula</a> <strong class="nebula"><a href="https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master" target="_blank">' . $this->version('version') . '</a></strong>' . $child . '</span>';
 		}
 
 		public function post_meta_boxes_setup(){

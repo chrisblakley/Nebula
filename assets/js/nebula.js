@@ -3564,167 +3564,132 @@ function nebulaVideoTracking(){
 
 //Native HTML5 Videos
 function nebulaHTML5VideoTracking(){
-	if ( jQuery('video:visible').length ){
-		jQuery('video').each(function(){
-			var oThis = jQuery(this);
-			var id = oThis.attr('id');
-			var videoTitle = oThis.attr('title') || id || false;
+	jQuery('video').each(function(){
+		var oThis = jQuery(this);
+		var id = oThis.attr('id');
+		var videoTitle = oThis.attr('title') || id || false;
 
-			if ( !videoTitle ){ //An ID or title is required to track HTML5 videos
-				return false;
+		if ( !videoTitle ){ //An ID or title is required to track HTML5 videos
+			return false;
+		}
+
+		nebula.videos[id] = {};
+		nebula.videos[id].platform = 'html5'; //The platform the video is hosted using.
+		nebula.videos[id].player = id; //The player ID of this video. Can access the API here.
+		nebula.videos[id].title = videoTitle;
+		nebula.videos[id].id = id;
+		nebula.videos[id].element = oThis;
+		nebula.videos[id].autoplay = ( oThis.attr('autoplay') )? true : false;
+		nebula.videos[id].percent = 0; //The decimal percent of the current position. Multiply by 100 for actual percent.
+		nebula.videos[id].seeker = false; //Whether the viewer has seeked through the video at least once.
+		nebula.videos[id].seen = []; //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
+		nebula.videos[id].watched = 0; //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
+		nebula.videos[id].watchedPercent = 0; //The decimal percent of the video watched. Multiply by 100 for actual percent.
+		nebula.videos[id].pausedYet = false; //If this video has been paused yet by the user.
+		nebula.videos[id].current = 0; //The current position of the video. Units: Seconds
+
+		oThis.on('loadedmetadata', function(){
+			nebula.videos[id].current = this.currentTime;
+			nebula.videos[id].duration = this.duration; //The total duration of the video. Units: Seconds
+		});
+
+		oThis.on('play', function(){
+			var thisVideo = nebula.videos[id];
+
+			if ( 'mediaSession' in navigator && oThis.attr('title') ){ //Android Chrome 55+ only
+				navigator.mediaSession.metadata = new MediaMetadata({
+					title: oThis.attr('title'),
+					artist: oThis.attr('artist') || '',
+					album: oThis.attr('album') || '',
+/*
+					artwork: [{
+						src: 'https://dummyimage.com/512x512',
+						sizes: '512x512',
+						type: 'image/png'
+					}]
+*/
+				});
 			}
 
-			nebula.videos[id] = {};
-			nebula.videos[id].platform = 'html5'; //The platform the video is hosted using.
-			nebula.videos[id].player = id; //The player ID of this video. Can access the API here.
-			nebula.videos[id].title = videoTitle;
-			nebula.videos[id].id = id;
-			nebula.videos[id].element = oThis;
-			nebula.videos[id].autoplay = ( oThis.attr('autoplay') )? true : false;
-			nebula.videos[id].percent = 0; //The decimal percent of the current position. Multiply by 100 for actual percent.
-			nebula.videos[id].seeker = false; //Whether the viewer has seeked through the video at least once.
-			nebula.videos[id].seen = []; //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
-			nebula.videos[id].watched = 0; //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
-			nebula.videos[id].watchedPercent = 0; //The decimal percent of the video watched. Multiply by 100 for actual percent.
-			nebula.videos[id].pausedYet = false; //If this video has been paused yet by the user.
-			nebula.videos[id].current = 0; //The current position of the video. Units: Seconds
+			oThis.addClass('playing');
 
-			oThis.on('loadedmetadata', function(){
-				nebula.videos[id].current = this.currentTime;
-				nebula.videos[id].duration = this.duration; //The total duration of the video. Units: Seconds
-			});
-
-			oThis.on('play', function(){
-				var thisVideo = nebula.videos[id];
-
-				if ( 'mediaSession' in navigator && oThis.attr('title') ){ //Android Chrome 55+ only
-					navigator.mediaSession.metadata = new MediaMetadata({
-						title: oThis.attr('title'),
-						artist: oThis.attr('artist') || '',
-						album: oThis.attr('album') || '',
-/*
-						artwork: [{
-							src: 'https://dummyimage.com/512x512',
-							sizes: '512x512',
-							type: 'image/png'
-						}]
-*/
-					});
+			//Only report to GA for non-autoplay videos
+			if ( !oThis.is('[autoplay]') ){
+				playAction = 'Play';
+				if ( !isInView(oThis) ){
+					playAction += ' (Not In View)';
 				}
 
-				oThis.addClass('playing');
-
-				//Only report to GA for non-autoplay videos
-				if ( !oThis.is('[autoplay]') ){
-					playAction = 'Play';
-					if ( !isInView(oThis) ){
-						playAction += ' (Not In View)';
-					}
-
-					ga('set', nebula.analytics.metrics.videoStarts, 1);
-					ga('set', nebula.analytics.dimensions.videoWatcher, 'Started');
-					ga('send', 'event', 'Videos', playAction, videoTitle, Math.round(thisVideo.current), {'nonInteraction': thisVideo.autoplay});
-					if ( !thisVideo.autoplay ){
-						nv('event', 'Video Play Began: ' + thisVideo.title);
-					}
+				ga('set', nebula.analytics.metrics.videoStarts, 1);
+				ga('set', nebula.analytics.dimensions.videoWatcher, 'Started');
+				ga('send', 'event', 'Videos', playAction, videoTitle, Math.round(thisVideo.current), {'nonInteraction': thisVideo.autoplay});
+				if ( !thisVideo.autoplay ){
+					nv('event', 'Video Play Began: ' + thisVideo.title);
 				}
+			}
 
-				nebula.dom.document.trigger('nebula_playing_video', thisVideo);
-			});
+			nebula.dom.document.trigger('nebula_playing_video', thisVideo);
+		});
 
-			oThis.on('timeupdate', function(){
-				var thisVideo = nebula.videos[id];
+		oThis.on('timeupdate', function(){
+			var thisVideo = nebula.videos[id];
 
-				thisVideo.current = this.currentTime; //@todo "Nebula" 0: Still getting NaN on HTML5 autoplay videos sometimes. I think the video begins playing before the metadata is ready...
-				thisVideo.percent = thisVideo.current*100/thisVideo.duration; //Determine watched percent by adding current percents to an array, then count the array!
-				nowSeen = Math.ceil(thisVideo.percent);
-				if ( thisVideo.seen.indexOf(nowSeen) < 0 ){
-					thisVideo.seen.push(nowSeen);
-				}
+			thisVideo.current = this.currentTime; //@todo "Nebula" 0: Still getting NaN on HTML5 autoplay videos sometimes. I think the video begins playing before the metadata is ready...
+			thisVideo.percent = thisVideo.current*100/thisVideo.duration; //Determine watched percent by adding current percents to an array, then count the array!
+			nowSeen = Math.ceil(thisVideo.percent);
+			if ( thisVideo.seen.indexOf(nowSeen) < 0 ){
+				thisVideo.seen.push(nowSeen);
+			}
 
-				thisVideo.watchedPercent = thisVideo.seen.length;
-				thisVideo.watched = (thisVideo.seen.length/100)*thisVideo.duration; //Roughly calculate time watched based on percent seen
+			thisVideo.watchedPercent = thisVideo.seen.length;
+			thisVideo.watched = (thisVideo.seen.length/100)*thisVideo.duration; //Roughly calculate time watched based on percent seen
 
-				if ( thisVideo.watchedPercent > 25 && !thisVideo.engaged ){
-					if ( isInView(oThis) ){
-						ga('set', nebula.analytics.dimensions.videoWatcher, 'Engaged');
+			if ( thisVideo.watchedPercent > 25 && !thisVideo.engaged ){
+				if ( isInView(oThis) ){
+					ga('set', nebula.analytics.dimensions.videoWatcher, 'Engaged');
 
-						engagedAction = 'Engaged';
-						if ( thisVideo.autoplay ){
-							engagedAction += ' (Autoplay)';
-						}
-
-						ga('send', 'event', 'Videos', engagedAction, thisVideo.title, Math.round(thisVideo.current), {'nonInteraction': true});
-						nv('event', 'Video Engagement: ' + thisVideo.title);
-						thisVideo.engaged = true;
-						nebula.dom.document.trigger('nebula_engaged_video', thisVideo);
-					}
-				}
-			});
-
-			oThis.on('pause', function(){
-				var thisVideo = nebula.videos[id];
-				oThis.removeClass('playing');
-
-				ga('set', nebula.analytics.dimensions.videoWatcher, 'Paused');
-				ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
-				ga('set', nebula.analytics.dimensions.videoPercentage, Math.round(thisVideo.percent*100));
-
-				if ( !thisVideo.pausedYet ){
-					ga('send', 'event', 'Videos', 'First Pause', thisVideo.title, Math.round(thisVideo.current));
-					thisVideo.pausedYet = true;
-				}
-
-				ga('send', 'event', 'Videos', 'Paused', thisVideo.title, Math.round(thisVideo.current));
-				ga('send', 'timing', 'Videos', 'Paused', Math.round(thisVideo.current*1000), thisVideo.title);
-				nv('event', 'Video Paused: ' + thisVideo.title);
-				nebula.dom.document.trigger('nebula_paused_video', thisVideo);
-			});
-
-			oThis.on('seeked', function(){
-				var thisVideo = nebula.videos[id];
-
-				if ( thisVideo.current == 0 && oThis.is('[loop]') ){ //If the video is set to loop and is starting again
-					//If it is an autoplay video without controls, don't log loops
-					if ( oThis.is('[autoplay]') && !oThis.is('[controls]') ){
-						return false;
-					}
-
-					endedAction = 'Ended (Looped)';
-					if ( !isInView(oThis) ){
-						endedAction += ' (Not In View)';
-					}
-
+					engagedAction = 'Engaged';
 					if ( thisVideo.autoplay ){
-						endedAction += ' (Autoplay)';
+						engagedAction += ' (Autoplay)';
 					}
 
-					ga('send', 'event', 'Videos', endedAction, thisVideo.title, {'nonInteraction': true});
-				} else { //Otherwise, the user seeked
-					debounce(function(){
-						ga('set', nebula.analytics.dimensions.videoWatcher, 'Seeker');
-						ga('send', 'event', 'Videos', 'Seek', thisVideo.title + ' [to: ' + thisVideo.current.toFixed(0) + ']');
-						nv('event', 'Video Seek: ' + thisVideo.title);
-						thisVideo.seeker = true;
-						nebula.dom.document.trigger('nebula_seeked_video', thisVideo);
-					}, 250, 'video seeking')
+					ga('send', 'event', 'Videos', engagedAction, thisVideo.title, Math.round(thisVideo.current), {'nonInteraction': true});
+					nv('event', 'Video Engagement: ' + thisVideo.title);
+					thisVideo.engaged = true;
+					nebula.dom.document.trigger('nebula_engaged_video', thisVideo);
 				}
-			});
+			}
+		});
 
-			oThis.on('volumechange', function(){
-				var thisVideo = nebula.videos[id];
-				//console.debug(this);
-			});
+		oThis.on('pause', function(){
+			var thisVideo = nebula.videos[id];
+			oThis.removeClass('playing');
 
-			oThis.on('ended', function(){
-				var thisVideo = nebula.videos[id];
-				oThis.removeClass('playing');
+			ga('set', nebula.analytics.dimensions.videoWatcher, 'Paused');
+			ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
+			ga('set', nebula.analytics.dimensions.videoPercentage, Math.round(thisVideo.percent*100));
 
-				ga('set', nebula.analytics.metrics.videoCompletions, 1);
-				ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
-				ga('set', nebula.analytics.dimensions.videoWatcher, 'Ended');
+			if ( !thisVideo.pausedYet ){
+				ga('send', 'event', 'Videos', 'First Pause', thisVideo.title, Math.round(thisVideo.current));
+				thisVideo.pausedYet = true;
+			}
 
-				endedAction = 'Ended';
+			ga('send', 'event', 'Videos', 'Paused', thisVideo.title, Math.round(thisVideo.current));
+			ga('send', 'timing', 'Videos', 'Paused', Math.round(thisVideo.current*1000), thisVideo.title);
+			nv('event', 'Video Paused: ' + thisVideo.title);
+			nebula.dom.document.trigger('nebula_paused_video', thisVideo);
+		});
+
+		oThis.on('seeked', function(){
+			var thisVideo = nebula.videos[id];
+
+			if ( thisVideo.current == 0 && oThis.is('[loop]') ){ //If the video is set to loop and is starting again
+				//If it is an autoplay video without controls, don't log loops
+				if ( oThis.is('[autoplay]') && !oThis.is('[controls]') ){
+					return false;
+				}
+
+				endedAction = 'Ended (Looped)';
 				if ( !isInView(oThis) ){
 					endedAction += ' (Not In View)';
 				}
@@ -3733,14 +3698,47 @@ function nebulaHTML5VideoTracking(){
 					endedAction += ' (Autoplay)';
 				}
 
-				ga('send', 'event', 'Videos', endedAction, thisVideo.title, Math.round(thisVideo.current), {'nonInteraction': true});
-
-				ga('send', 'timing', 'Videos', 'Ended', Math.round(thisVideo.current*1000), thisVideo.title);
-				nv('event', 'Video Ended: ' + thisVideo.title);
-				nebula.dom.document.trigger('nebula_ended_video', thisVideo);
-			});
+				ga('send', 'event', 'Videos', endedAction, thisVideo.title, {'nonInteraction': true});
+			} else { //Otherwise, the user seeked
+				debounce(function(){
+					ga('set', nebula.analytics.dimensions.videoWatcher, 'Seeker');
+					ga('send', 'event', 'Videos', 'Seek', thisVideo.title + ' [to: ' + thisVideo.current.toFixed(0) + ']');
+					nv('event', 'Video Seek: ' + thisVideo.title);
+					thisVideo.seeker = true;
+					nebula.dom.document.trigger('nebula_seeked_video', thisVideo);
+				}, 250, 'video seeking')
+			}
 		});
-	}
+
+		oThis.on('volumechange', function(){
+			var thisVideo = nebula.videos[id];
+			//console.debug(this);
+		});
+
+		oThis.on('ended', function(){
+			var thisVideo = nebula.videos[id];
+			oThis.removeClass('playing');
+
+			ga('set', nebula.analytics.metrics.videoCompletions, 1);
+			ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
+			ga('set', nebula.analytics.dimensions.videoWatcher, 'Ended');
+
+			endedAction = 'Ended';
+			if ( !isInView(oThis) ){
+				endedAction += ' (Not In View)';
+			}
+
+			if ( thisVideo.autoplay ){
+				endedAction += ' (Autoplay)';
+			}
+
+			ga('send', 'event', 'Videos', endedAction, thisVideo.title, Math.round(thisVideo.current), {'nonInteraction': true});
+
+			ga('send', 'timing', 'Videos', 'Ended', Math.round(thisVideo.current*1000), thisVideo.title);
+			nv('event', 'Video Ended: ' + thisVideo.title);
+			nebula.dom.document.trigger('nebula_ended_video', thisVideo);
+		});
+	});
 }
 
 //Prepare Youtube Iframe API

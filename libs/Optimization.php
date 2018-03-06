@@ -152,11 +152,6 @@ if ( !trait_exists('Optimization') ){
 			//DNS-Prefetch & Preconnect
 			$default_preconnects = array();
 
-			//Weather
-			if ( $this->get_option('weather') ){
-				$default_preconnects[] = '//query.yahooapis.com';
-			}
-
 			//GCSE on 404 pages
 			if ( is_404() && $this->get_option('cse_id') ){
 				$default_preconnects[] = '//www.googleapis.com';
