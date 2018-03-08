@@ -62,21 +62,21 @@ get_header(); ?>
 
 					<?php echo nebula()->search_form(); ?>
 
-					<?php if ( !empty($error_query) && $error_query->have_posts() ): //$error_query is defined in libs/Functions.php ?>
+					<?php if ( !empty(nebula()->error_query) && nebula()->error_query->have_posts() ): //Check if the error query (from /libs/Functions.php) found any matches ?>
 						<div id="error-page-suggestions">
 							<h2>Suggestions</h2>
-							<?php while ( $error_query->have_posts() ): ?>
-								<?php $error_query->the_post(); ?>
+							<?php while ( nebula()->error_query->have_posts() ): ?>
+								<?php nebula()->error_query->the_post(); ?>
 
 								<h3 class="suggestion-title entry-title">
-									<?php if ( strpos(get_permalink(), $slug_keywords) ): ?>
+									<?php if ( strpos(get_permalink(), nebula()->slug_keywords) ): ?>
 										<i class="fa fa-fw fa-star" title="Exact match"></i>
 									<?php endif; ?>
 
 									<a class="internal-suggestion" href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a>
 								</h3>
 						    <?php endwhile; ?>
-							<p><a href="<?php echo home_url('/'); ?>?s=<?php echo str_replace('-', '+', $slug_keywords); ?>">View all results &raquo;</a></p>
+							<p><a href="<?php echo home_url('/'); ?>?s=<?php echo str_replace('-', '+', nebula()->slug_keywords); ?>">View all results &raquo;</a></p>
 						</div>
 					<?php endif; ?>
 					<?php wp_reset_query(); ?>

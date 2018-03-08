@@ -9,7 +9,7 @@ if ( !trait_exists('Security') ){
 			add_action('wp_loaded', array($this, 'prevent_bad_query_strings'));
 			add_filter('wp_headers', array($this, 'remove_x_pingback'), 11, 2);
 			add_filter('bloginfo_url', array($this, 'hijack_pingback_url'), 11, 2);
-			add_action('wp_head', array($this, 'security_headers'));
+			add_action('wp_head', array($this, 'security_headers')); //@todo "Nebula" 0: try using 'send_headers' hook instead?
 
 			//Disable XMLRPC
 			add_filter('xmlrpc_enabled', '__return_false');
@@ -168,6 +168,8 @@ if ( !trait_exists('Security') ){
 
 		//Check referrer for known spambots and blacklisted domains
 		public function domain_prevention(){
+			$this->timer('Domain Blacklist');
+
 			//Skip lookups if user has already been checked or for logged in users.
 			if ( (isset($_SESSION['blacklisted']) && $_SESSION['blacklisted'] === false) || is_user_logged_in() ){
 				return false;
@@ -209,6 +211,8 @@ if ( !trait_exists('Security') ){
 
 				$this->set_global_session_cookie('blacklist', false, array('session'));
 			}
+
+			$this->timer('Domain Blacklist', 'end');
 		}
 
 		//Return an array of blacklisted domains from Matomo (or the latest Nebula on Github)

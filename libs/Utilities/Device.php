@@ -15,10 +15,14 @@ if ( !trait_exists('Device') ){
 		//Device Detection - https://github.com/matomo-org/device-detector
 		public function detect(){
 			if ( $this->get_option('device_detection') ){
-					require_once(get_template_directory() . '/inc/vendor/device-detector/DeviceDetector.php'); //Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!
-					$GLOBALS["device_detect"] = new DeviceDetector\DeviceDetector($_SERVER['HTTP_USER_AGENT']);
-					$GLOBALS["device_detect"]->discardBotInformation(); //If called, getBot() will only return true if a bot was detected (speeds up detection a bit)
-					$GLOBALS["device_detect"]->parse();
+				$this->timer('Device Detection');
+
+				require_once(get_template_directory() . '/inc/vendor/device-detector/DeviceDetector.php'); //Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!
+				$this->device = new DeviceDetector\DeviceDetector($_SERVER['HTTP_USER_AGENT']);
+				$this->device->discardBotInformation(); //If called, getBot() will only return true if a bot was detected (speeds up detection a bit)
+				$this->device->parse();
+
+				$this->timer('Device Detection', 'end');
 			}
 		}
 
@@ -28,7 +32,7 @@ if ( !trait_exists('Device') ){
 			if ( isset($override) ){return;}
 
 			if ( $this->get_option('device_detection') ){
-				if ( isset($GLOBALS["device_detect"]) && $GLOBALS["device_detect"]->isMobile() ){
+				if ( isset($this->device) && $this->device->isMobile() ){
 					return true;
 				}
 			}
@@ -47,7 +51,7 @@ if ( !trait_exists('Device') ){
 			if ( isset($override) ){return;}
 
 			if ( $this->get_option('device_detection') ){
-				if ( isset($GLOBALS["device_detect"]) && $GLOBALS["device_detect"]->isTablet() ){
+				if ( isset($this->device) && $this->device->isTablet() ){
 					return true;
 				}
 			}
@@ -61,7 +65,7 @@ if ( !trait_exists('Device') ){
 			if ( isset($override) ){return;}
 
 			if ( $this->get_option('device_detection') ){
-				if ( isset($GLOBALS["device_detect"]) && $GLOBALS["device_detect"]->isDesktop() ){
+				if ( isset($this->device) && $this->device->isDesktop() ){
 					return true;
 				}
 			}
@@ -79,7 +83,7 @@ if ( !trait_exists('Device') ){
 			if ( isset($override) ){return;}
 
 			if ( $this->get_option('device_detection') ){
-				$os = $GLOBALS["device_detect"]->getOs();
+				$os = $this->device->getOs();
 				switch ( strtolower($info) ){
 					case 'full':
 						return $os['name'] . ' ' . $os['version'];
@@ -125,7 +129,7 @@ if ( !trait_exists('Device') ){
 						break;
 				}
 
-				$actual_os = $GLOBALS["device_detect"]->getOs();
+				$actual_os = $this->device->getOs();
 				$actual_version = explode('.', $actual_os['version']);
 				$version_parts = explode('.', $version);
 				if ( strpos(strtolower($actual_os['name']), strtolower($os)) !== false ){
@@ -159,8 +163,8 @@ if ( !trait_exists('Device') ){
 				$info = str_replace(' ', '', $info);
 				switch ( strtolower($info) ){
 					case 'full':
-						$brand_name = $GLOBALS["device_detect"]->getBrandName();
-						$model = $GLOBALS["device_detect"]->getModel();
+						$brand_name = $this->device->getBrandName();
+						$model = $this->device->getModel();
 						if ( !empty($brand_name) && !empty($model) ){
 							return $brand_name . ' ' . $model;
 						}
@@ -168,13 +172,13 @@ if ( !trait_exists('Device') ){
 					case 'brand':
 					case 'brandname':
 					case 'make':
-						return $GLOBALS["device_detect"]->getBrandName();
+						return $this->device->getBrandName();
 					case 'model':
 					case 'version':
 					case 'name':
-						return $GLOBALS["device_detect"]->getModel();
+						return $this->device->getModel();
 					case 'type':
-						return $GLOBALS["device_detect"]->getDeviceName();
+						return $this->device->getDeviceName();
 						break;
 					case 'formfactor':
 						if ( $this->is_mobile() ){
@@ -224,7 +228,7 @@ if ( !trait_exists('Device') ){
 			}
 
 			if ( $this->get_option('device_detection') ){
-				$client = $GLOBALS["device_detect"]->getClient();
+				$client = $this->device->getClient();
 				switch ( strtolower($info) ){
 					case 'full':
 						return $client['name'] . ' ' . $client['version'];
@@ -301,7 +305,7 @@ if ( !trait_exists('Device') ){
 						break;
 				}
 
-				$actual_browser = $GLOBALS["device_detect"]->getClient();
+				$actual_browser = $this->device->getClient();
 				$actual_version = explode('.', $actual_browser['version']);
 				$version_parts = explode('.', $version);
 				if ( strpos(strtolower($actual_browser['name']), strtolower($browser)) !== false ){
@@ -363,7 +367,7 @@ if ( !trait_exists('Device') ){
 			if ( isset($override) ){return;}
 
 			if ( $this->get_option('device_detection') ){
-				if ( isset($GLOBALS["device_detect"]) && $GLOBALS["device_detect"]->isBot() ){
+				if ( isset($this->device) && $this->device->isBot() ){
 					return true;
 				}
 			}

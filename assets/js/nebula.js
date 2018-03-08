@@ -285,13 +285,32 @@ function performanceMetrics(){
 			var domReady = Math.round(performance.timing.domContentLoadedEventStart-performance.timing.navigationStart); //Navigation start until DOM ready
 			var windowLoaded = Math.round(performance.timing.loadEventStart-performance.timing.navigationStart); //Navigation start until window load
 
-			if ( nebula.dom.html.hasClass('debug') ){
-				console.group('Performance');
-				console.log('Server Response: ' + responseEnd + 'ms');
-				console.log('DOM Ready: ' + domReady + 'ms');
-				console.log('Window Loaded: ' + windowLoaded + 'ms');
-				console.groupEnd();
+			clientTimings = {
+				'[JS] Server Response': {
+					'start': 0,
+					'duration': responseEnd,
+					'elapsed': responseEnd
+				},
+				'[JS] DOM Ready': {
+					'start': responseEnd,
+					'duration': domReady-responseEnd,
+					'elapsed': domReady
+				},
+				'[JS] Window Load': {
+					'start': domReady,
+					'duration': windowLoaded-domReady,
+					'elapsed': windowLoaded
+				},
+				'[JS] Load Time (Total)': {
+					'start': 0,
+					'duration': windowLoaded,
+					'elapsed': windowLoaded
+				}
 			}
+
+			console.groupCollapsed('Performance');
+			console.table(jQuery.extend(nebula.site.timings, clientTimings));
+			console.groupEnd();
 
 			//Validate each timing result before using them
 			if ( (responseEnd > 0 && responseEnd < 6000000) && (domReady > 0 && domReady < 6000000) && (windowLoaded > 0 && windowLoaded < 6000000) ){

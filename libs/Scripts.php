@@ -140,6 +140,7 @@ if ( !trait_exists('Scripts') ){
 						'scripts' => $nebula_assets['scripts'],
 						'lazy' => $lazy_assets,
 					),
+					'timings' => false,
 					'ecommerce' => false,
 				),
 				'post' => ( is_search() )? null : array( //Conditional prevents wrong ID being used on search results

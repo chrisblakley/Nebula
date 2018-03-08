@@ -345,13 +345,22 @@ trait Functions {
 				}
 			}
 
-			//Check if the parent theme template is correctly referenced
+			//Child theme checks
 			if ( is_child_theme() ){
+				//Check if the parent theme template is correctly referenced
 				$active_theme = wp_get_theme();
 				if ( !file_exists(dirname(get_stylesheet_directory()) . '/' . $active_theme->get('Template')) ){
 					$nebula_warnings[] = array(
 						'level' => 'error',
 						'description' => 'A child theme is active, but its parent theme directory <strong>' . $active_theme->get('Template') . '</strong> does not exist!<br/><em>The "Template:" setting in the <a href="' . get_stylesheet_uri() . '" target="_blank" rel="noopener">style.css</a> file of the child theme must match the directory name (above) of the parent theme.</em>'
+					);
+				}
+
+				//Check if child theme is active, but missing img meta files
+				if ( !is_dir(get_stylesheet_directory() . '/assets/img/meta') || !file_exists(get_stylesheet_directory() . '/assets/img/meta/favicon.ico') ){
+					$nebula_warnings['child_meta_graphics'] = array(
+						'level' => 'error',
+						'description' => 'A child theme is active, but missing meta graphics!</em>'
 					);
 				}
 			}
@@ -653,7 +662,7 @@ trait Functions {
 
 	//Sets the current post/page template to a variable.
 	function define_current_template($template){
-		$GLOBALS['current_theme_template'] = str_replace(ABSPATH . 'wp-content', '', $template);
+		$this->current_theme_template = str_replace(ABSPATH . 'wp-content', '', $template);
 		return $template;
 	}
 
@@ -1374,6 +1383,8 @@ trait Functions {
 		$override = apply_filters('pre_video_meta', null, $provider, $id);
 		if ( isset($override) ){return;}
 
+		$this->timer('Video Meta (' . $id . ')');
+
 		$video_metadata = array(
 			'origin' => $this->url_components('basedomain'),
 			'id' => $id,
@@ -1472,6 +1483,8 @@ trait Functions {
 			'time' => intval(gmdate("i", $duration_seconds)) . gmdate(":s", $duration_seconds),
 			'seconds' => $duration_seconds
 		);
+
+		$this->timer('Video Meta (' . $id . ')', 'end');
 
 		return $video_metadata;
 	}
@@ -1757,7 +1770,7 @@ trait Functions {
 			</div>
 		</div>
 
-		<script><?php //Must be in PHP so $args can be encoded. ?>
+		<script><?php //Must be in PHP so $args can be encoded. @todo "Nebula" 0: This must have to load in the footer if jQuery is set to the footer...? ?>
 			jQuery(function(){
 				var pageNumber = <?php echo $args['paged']; ?>+1;
 
@@ -2162,6 +2175,8 @@ trait Functions {
 			$data['retweets'] = ( isset($_POST['data']['retweets']) )? sanitize_text_field($_POST['data']['retweets']) : $defaults['retweets']; //1: Yes, 0: No
 		}
 
+		$twitter_timing_id = $this->timer('Twitter Cache (' . $data['user'] . ')', 'start', 'Twitter Cache');
+
 		error_reporting(0); //Prevent PHP errors from being cached.
 
 		if ( !empty($data['list']) ){
@@ -2229,6 +2244,8 @@ trait Functions {
 
 			set_transient('nebula_twitter_' . $data['user'], $tweets, MINUTE_IN_SECONDS*5); //5 minute expiration
 		}
+
+		$this->timer($twitter_timing_id, 'end');
 
 		if ( !empty($_POST['data']) ){
 			echo json_encode($tweets);
@@ -2680,19 +2697,18 @@ trait Functions {
 	//404 page suggestions
 	public function internal_suggestions(){
 		if ( is_404() ){
-			global $slug_keywords;
-			$slug_keywords = array_filter(explode('/', $this->url_components('filepath')));
-			$slug_keywords = end($slug_keywords);
+			$this->slug_keywords = array_filter(explode('/', $this->url_components('filepath')));
+			$this->slug_keywords = end($this->slug_keywords);
 
-			global $error_query;
-			$error_query = new WP_Query(array('post_status' => 'publish', 'posts_per_page' => 4, 's' => str_replace('-', ' ', $slug_keywords)));
+			//Query the DB with clues from the requested URL
+			$this->error_query = new WP_Query(array('post_status' => 'publish', 'posts_per_page' => 4, 's' => str_replace('-', ' ', $this->slug_keywords)));
 			if ( is_plugin_active('relevanssi/relevanssi.php') ){
-				relevanssi_do_query($error_query);
+				relevanssi_do_query($this->error_query);
 			}
 
-			if ( !empty($error_query->posts) && $slug_keywords === $error_query->posts[0]->post_name ){
-				global $error_404_exact_match;
-				$error_404_exact_match = $error_query->posts[0];
+			//Check for an exact match
+			if ( !empty($this->error_query->posts) && $this->slug_keywords === $this->error_query->posts[0]->post_name ){
+				$this->error_404_exact_match = $this->error_query->posts[0];
 			}
 		}
 	}
@@ -2954,21 +2970,6 @@ trait Functions {
 			if ( $this->ip_location() ){
 				$ip_location = $this->ip_location('all');
 				return $ip_location->city . ', ' . $ip_location->region_name;
-			} else {
-				return '';
-			}
-		}
-
-		//Weather
-		if ( $name === '_nebula_weather' ){
-			if ( $this->get_option('weather') ){
-				$ip_zip = ( $this->ip_location() )? $this->ip_location('zip') : '';
-				$temperature = $this->weather($ip_zip, 'temp');
-				if ( !empty($temperature) ){
-					return 'Weather: ' . $temperature . '&deg;F ' . $this->weather($ip_zip, 'conditions');
-				} else {
-					return '';
-				}
 			} else {
 				return '';
 			}

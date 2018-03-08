@@ -9,13 +9,13 @@ if ( !trait_exists('Optimization') ){
 			add_filter('script_loader_tag', array($this, 'defer_async_additional_scripts'), 10);
 			add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
 			add_action('wp_footer', array($this, 'dequeue_lazy_load_scripts'));
-			add_filter('style_loader_src', array($this, 'http2_server_push_header'), 99, 1);
-			add_filter('script_loader_src', array($this, 'http2_server_push_header'), 99, 1);
+			add_filter('style_loader_src', array($this, 'http2_server_push_header'), 99, 1); //@todo "Nebula" 0: try using 'send_headers' hook instead?
+			add_filter('script_loader_src', array($this, 'http2_server_push_header'), 99, 1); //@todo "Nebula" 0: try using 'send_headers' hook instead?
 			add_filter('script_loader_src', array($this, 'remove_script_version'), 15, 1);
 			add_filter('style_loader_src', array($this, 'remove_script_version'), 15, 1);
-			add_action('wp_print_scripts', array($this, 'dequeues'), 9999);
+			add_action('wp_enqueue_scripts', array($this, 'dequeues'), 9999);
 			add_action('admin_init', array($this, 'plugin_force_settings'));
-			add_action('wp_print_scripts', array($this, 'remove_actions'), 9999);
+			add_action('wp_enqueue_scripts', array($this, 'remove_actions'), 9999);
 			add_action('init', array($this, 'disable_wp_emojicons'));
 			add_filter('wp_resource_hints', array($this, 'remove_emoji_prefetch'), 10, 2); //Remove dns-prefetch for emojis
 			add_filter('tiny_mce_plugins', array($this, 'disable_emojicons_tinymce')); //Remove TinyMCE Emojis too
@@ -23,6 +23,9 @@ if ( !trait_exists('Optimization') ){
 			add_filter('wp_default_scripts', array($this, 'remove_jquery_migrate'));
 			add_action('wp_enqueue_scripts', array($this, 'move_jquery_to_footer'));
 			add_action('wp_head', array($this, 'listen_for_jquery_footer_errors'));
+
+			add_action('send_headers', array($this, 'server_timing_header')); //@todo "Nebula" 0: try using 'send_headers' hook instead?
+			add_action('wp_footer', array($this, 'output_console_debug_timings'));
 		}
 
 		public function register_script($handle=null, $src=null, $exec=null, $deps=array(), $ver=false, $in_footer=false){
@@ -128,6 +131,61 @@ if ( !trait_exists('Optimization') ){
 		    return $src;
 		}
 
+		//Set Server Timing header
+		public function server_timing_header(){
+			$this->finalize_timings();
+			$server_timing_header_string = 'Server-Timing: ';
+
+			//Loop through all times
+			foreach ( $this->server_timings as $label => $data ){
+				$time = ( !empty($data['time']) )? $data['time'] : $data;
+
+				//Ignore unfinished, 0 timings, or non-logging entries
+				if ( $label === 'categories' || !empty($data['active']) || round($time*1000) <= 0 || (!empty($data['log']) && $data['log'] === false) ){
+					continue;
+				}
+
+				$name = str_replace(array(' ', '(', ')', '[', ']'), '', strtolower($label));
+				if ( $label === 'PHP [Total]' ){
+					$name = 'total';
+				}
+				$server_timing_header_string .= $name . ';dur=' . round($time*1000) . ';desc="' . $label . '",';
+			}
+
+			header($server_timing_header_string);
+			//header('Server-Timing: what;dur=53;desc="Something", app;dur=47.2;desc="App Stuff", total;dur=2345;desc="Total PHP Execution"');
+		}
+
+		//Include server timings for developers
+		public function output_console_debug_timings(){
+			//if ( $this->is_dev() ){
+				$this->finalize_timings();
+
+				foreach ( $this->server_timings as $label => $data ){
+					$time = ( !empty($data['time']) )? $data['time'] : $data;
+
+					if ( $label === 'categories' || !empty($data['active']) || round($time*1000) <= 0 || (!empty($data['log']) && $data['log'] === false) ){
+						continue;
+					}
+
+					$start_time = ( !empty($data['start']) )? round(($data['start']-$_SERVER['REQUEST_TIME_FLOAT'])*1000) : null;
+
+					$testTimes['[PHP] ' . $label] = array(
+						'start' => $start_time, //Convert seconds to milliseconds
+						'duration' => round($time*1000), //Convert seconds to milliseconds
+						'elapsed' => ( is_float($start_time) )? $start_time+round($time*1000) : null,
+					);
+				}
+
+				//Sort by elapsed time
+				uasort($testTimes, function($a, $b){
+					return $a['elapsed'] - $b['elapsed'];
+				});
+
+				echo '<script type="text/javascript">nebula.site.timings = ' . json_encode($testTimes) . ';</script>'; //Output the data to <head>
+			//}
+		}
+
 		//Determing if a page should be prepped using prefetch, preconnect, or prerender.
 			//DNS-Prefetch = Resolve the DNS only to a domain.
 			//Preconnect = Resolve both DNS and TCP to a domain.
@@ -179,7 +237,7 @@ if ( !trait_exists('Optimization') ){
 			//If an eligible page is determined after load, use the JavaScript nebulaPrerender(url) function.
 			$prerender = false;
 			if ( is_404() ){
-				$prerender = ( !empty($error_404_exact_match) )? $error_404_exact_match : home_url('/');
+				$prerender = ( !empty($this->error_404_exact_match) )? $this->error_404_exact_match : home_url('/');
 			}
 
 			if ( !empty($prerender) ){

@@ -92,6 +92,8 @@ if ( !trait_exists('Sass') ){
 			if ( isset($override) ){return;}
 
 			if ( $this->get_option('scss') && !empty($location_name) && !empty($location_paths) ){
+				$this->timer('Sass (' . $location_name . ')', 'start', 'Sass');
+
 				//Require SCSSPHP
 				require_once(get_template_directory() . '/inc/vendor/scssphp/scss.inc.php'); //SCSSPHP is a compiler for SCSS 3.x
 				$scss = new \Leafo\ScssPhp\Compiler();
@@ -143,6 +145,9 @@ if ( !trait_exists('Sass') ){
 				foreach ( glob($location_paths['directory'] . '/assets/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
 					$file_path_info = pathinfo($file);
 
+					$debug_name = str_replace(WP_CONTENT_DIR, '', $file_path_info['dirname']) . '/' . $file_path_info['basename'];
+					$this->timer('Sass File ' . $debug_name);
+
 					//Skip file conditions (only if not forcing all)
 					if ( empty($force_all) ){
 						$is_wireframing_file = $file_path_info['filename'] === 'wireframing' && !$this->get_option('prototype_mode'); //If file is wireframing.scss but wireframing functionality is disabled, skip file.
@@ -183,10 +188,13 @@ if ( !trait_exists('Sass') ){
 								$enhanced_css = $this->scss_post_compile($compiled_css); //Compile server-side variables into SCSS
 								$wp_filesystem->put_contents($css_filepath, $enhanced_css); //Save the rendered CSS.
 								$this->update_data('scss_last_processed', time());
+								$this->timer('Sass File ' . $debug_name, 'end');
 							}
 						}
 					}
 				}
+
+				$this->timer('Sass (' . $location_name . ')', 'end');
 			}
 		}
 

@@ -175,7 +175,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('hosting_url') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Hosting',
-					'icon' => '<i class="far fa-fw fa-hdd"></i>',
+					'icon' => '<i class="nebula-admin-fa far fa-fw fa-hdd"></i>',
 					'url' => $this->get_option('hosting_url')
 				);
 			}
@@ -183,7 +183,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('cpanel_url') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Server Control Panel',
-					'icon' => '<i class="fas fa-fw fa-cogs"></i>',
+					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-cogs"></i>',
 					'url' => $this->get_option('cpanel_url')
 				);
 			}
@@ -191,7 +191,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('registrar_url') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Domain Registrar',
-					'icon' => '<i class="fas fa-fw fa-globe"></i>',
+					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-globe"></i>',
 					'url' => $this->get_option('registrar_url')
 				);
 			}
@@ -199,7 +199,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('github_url') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Github Repository',
-					'icon' => '<i class="fab fa-fw fa-github"></i>',
+					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-github"></i>',
 					'url' => $this->get_option('github_url')
 				);
 			}
@@ -207,7 +207,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('ga_tracking_id') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Google Analytics',
-					'icon' => '<i class="fas fa-fw fa-chart-area"></i>',
+					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-chart-area"></i>',
 					'url' => 'https://analytics.google.com/analytics/web/'
 				);
 			}
@@ -215,7 +215,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('gtm_id') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Google Tag Manager',
-					'icon' => '<i class="fab fa-fw fa-google"></i>',
+					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-google"></i>',
 					'url' => 'https://tagmanager.google.com'
 				);
 			}
@@ -223,27 +223,27 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('google_optimize_id') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Google Optimize',
-					'icon' => '<i class="fas fa-fw fa-chart-pie"></i>',
+					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-chart-pie"></i>',
 					'url' => 'https://optimize.google.com/optimize/home'
 				);
 			}
 
 			$third_party_tools['administrative'][] = array(
 				'name' => 'Google Search Console',
-				'icon' => '<i class="fab fa-fw fa-google"></i>',
+				'icon' => '<i class="nebula-admin-fa fab fa-fw fa-google"></i>',
 				'url' => 'https://www.google.com/webmasters/tools/home'
 			);
 
 			$third_party_tools['administrative'][] = array(
 				'name' => 'Bing Webmaster Tools',
-				'icon' => '<i class="fab fa-fw fa-microsoft"></i>',
+				'icon' => '<i class="nebula-admin-fa fab fa-fw fa-microsoft"></i>',
 				'url' => 'https://www.bing.com/toolbox/webmaster'
 			);
 
 			if ( $this->get_option('adwords_remarketing_conversion_id') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Google AdWords',
-					'icon' => '<i class="fas fa-fw fa-search-plus"></i>',
+					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-search-plus"></i>',
 					'url' => 'https://adwords.google.com/home/'
 				);
 			}
@@ -251,7 +251,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('facebook_custom_audience_pixel_id') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Facebook Ads Manager',
-					'icon' => '<i class="fab fa-fw fa-facebook-official"></i>',
+					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-facebook-official"></i>',
 					'url' => 'https://www.facebook.com/ads/manager/account/campaigns'
 				);
 			}
@@ -259,7 +259,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('google_adsense_url') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Google AdSense',
-					'icon' => '<i class="fas fa-fw fa-money"></i>',
+					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-money"></i>',
 					'url' => 'https://www.google.com/adsense'
 				);
 			}
@@ -267,21 +267,21 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('amazon_associates_url') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Amazon Associates',
-					'icon' => '<i class="fab fa-fw fa-amazon"></i>',
+					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-amazon"></i>',
 					'url' => 'https://affiliate-program.amazon.com/home'
 				);
 			}
 
 			$third_party_tools['administrative'][] = array(
 				'name' => 'Google My Business',
-				'icon' => '<i class="far fa-fw fa-building"></i>',
+				'icon' => '<i class="nebula-admin-fa far fa-fw fa-building"></i>',
 				'url' => 'https://www.google.com/business/'
 			);
 
 			if ( $this->get_option('facebook_app_id') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Facebook For Developers',
-					'icon' => '<i class="fab fa-fw fa-facebook"></i>',
+					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-facebook"></i>',
 					'url' => 'https://developers.facebook.com/'
 				);
 			}
@@ -289,7 +289,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('google_server_api_key') || $this->get_option('google_browser_api_key') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Google APIs',
-					'icon' => '<i class="fas fa-fw fa-code"></i>',
+					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-code"></i>',
 					'url' => 'https://console.developers.google.com/iam-admin/projects'
 				);
 			}
@@ -297,7 +297,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('cse_id') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Google Custom Search',
-					'icon' => '<i class="fas fa-fw fa-search"></i>',
+					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-search"></i>',
 					'url' => 'https://cse.google.com/cse/all'
 				);
 			}
@@ -305,7 +305,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('hubspot_api') || $this->get_option('hubspot_portal') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Hubspot',
-					'icon' => '<i class="fab fa-fw fa-hubspot"></i>',
+					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-hubspot"></i>',
 					'url' => 'https://app.hubspot.com/reports-dashboard/' . $this->get_option('hubspot_portal')
 				);
 			}
@@ -313,7 +313,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('mention_url') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Mention',
-					'icon' => '<i class="fas fa-fw fa-star"></i>',
+					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-star"></i>',
 					'url' => 'https://web.mention.com'
 				);
 			}
@@ -322,7 +322,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('facebook_url') ){
 				$third_party_tools['social'][] = array(
 					'name' => 'Facebook',
-					'icon' => '<i class="fab fa-fw fa-facebook-square"></i>',
+					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-facebook-square"></i>',
 					'url' => $this->get_option('facebook_url')
 				);
 			}
@@ -330,7 +330,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('twitter_username') ){
 				$third_party_tools['social'][] = array(
 					'name' => 'Twitter',
-					'icon' => '<i class="fab fa-fw fa-twitter-square"></i>',
+					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-twitter-square"></i>',
 					'url' => $this->twitter_url()
 				);
 			}
@@ -338,7 +338,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('linkedin_url') ){
 				$third_party_tools['social'][] = array(
 					'name' => 'LinkedIn',
-					'icon' => '<i class="fab fa-fw fa-linkedin"></i>',
+					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-linkedin"></i>',
 					'url' => $this->get_option('linkedin_url')
 				);
 			}
@@ -346,7 +346,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('youtube_url') ){
 				$third_party_tools['social'][] = array(
 					'name' => 'Youtube',
-					'icon' => '<i class="fab fa-fw fa-youtube-square"></i>',
+					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-youtube"></i>',
 					'url' => $this->get_option('youtube_url')
 				);
 			}
@@ -354,7 +354,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('instagram_url') ){
 				$third_party_tools['social'][] = array(
 					'name' => 'Instagram',
-					'icon' => '<i class="fab fa-fw fa-instagram"></i>',
+					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-instagram"></i>',
 					'url' => $this->get_option('instagram_url')
 				);
 			}
@@ -362,7 +362,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('google_plus_url') ){
 				$third_party_tools['social'][] = array(
 					'name' => 'Google+',
-					'icon' => '<i class="fab fa-fw fa-google-plus-square"></i>',
+					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-google-plus-square"></i>',
 					'url' => $this->get_option('google_plus_url')
 				);
 			}
@@ -370,7 +370,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('disqus_shortname') ){
 				$third_party_tools['social'][] = array(
 					'name' => 'Disqus',
-					'icon' => '<i class="far fa-fw fa-comments"></i>',
+					'icon' => '<i class="nebula-admin-fa far fa-fw fa-comments"></i>',
 					'url' => 'https://' . $this->get_option('disqus_shortname') . '.disqus.com/admin/moderate/'
 				);
 			}
@@ -436,11 +436,11 @@ if ( !trait_exists('Admin') ){
 			));
 
 			//Theme template file
-			if ( !empty($GLOBALS['current_theme_template']) ){
+			if ( !empty($this->current_theme_template) ){
 				$wp_admin_bar->add_node(array(
 					'parent' => $node_id,
 					'id' => 'nebula-template',
-					'title' => '<i class="nebula-admin-fa far fa-fw fa-object-group"></i> Template: ' . basename($GLOBALS['current_theme_template']) . ' <span class="nebula-admin-light">(' . dirname($GLOBALS['current_theme_template']) . ')</span>',
+					'title' => '<i class="nebula-admin-fa far fa-fw fa-object-group"></i> Template: ' . basename($this->current_theme_template) . ' <span class="nebula-admin-light">(' . dirname($this->current_theme_template) . ')</span>',
 					'href' => get_edit_post_link(),
 					'meta' => array('target' => '_blank', 'rel' => 'noopener')
 				));
@@ -550,7 +550,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-warnings',
 						'id' => 'nebula-warning-' . $key,
-						'title' => '<i class="fas fa-fw ' . $warning_icon . '" style="margin-left: 5px;"></i> ' . strip_tags($warning['description']),
+						'title' => '<i class="nebula-admin-fa fas fa-fw ' . $warning_icon . '" style="margin-left: 5px;"></i> ' . strip_tags($warning['description']),
 						'href' => ( !empty($warning['url']) )? $warning['url'] : '',
 						'meta' => array(
 							'target' => '_blank',
@@ -681,7 +681,7 @@ if ( !trait_exists('Admin') ){
 		public function admin_bar_warning_styles(){
 			if ( is_admin_bar_showing() ){ ?>
 				<style type="text/css">
-					#wpadminbar .nebula-admin-fa {font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 900;}
+					#wpadminbar .nebula-admin-fa {font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 300;}
 						#wpadminbar .nebula-admin-fa.fab {font-family: "Font Awesome 5 Brands";}
 					#wpadminbar .svg-inline--fa {color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;}
 					#wpadminbar .nebula-admin-light {font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6); line-height: inherit;}

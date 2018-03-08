@@ -13,6 +13,8 @@ if ( !trait_exists('Utilities') ){
 		use Sass { Sass::hooks as SassHooks;}
 
 		public function hooks(){
+			$this->server_timings = array();
+
 			add_filter('posts_where' , array($this, 'fuzzy_posts_where'));
 			$this->AnalyticsHooks(); //Register Analytics hooks
 			$this->DeviceHooks(); //Register Device hooks
@@ -861,6 +863,9 @@ if ( !trait_exists('Utilities') ){
 
 		//Get a remote resource and if unavailable, don't re-check the resource for 5 minutes.
 		public function remote_get($url, $args=null){
+			$timer_name = $this->url_components('filename', $url);
+			$timer_name = $this->timer('Remote Get (' . $timer_name . ')', 'start', 'Remote Get');
+
 			//Must be a valid URL
 			if ( empty($url) || strpos($url, 'http') !== 0 ){
 				return new WP_Error('broke', 'Requested URL is either empty or missing acceptable protocol.');
@@ -881,6 +886,7 @@ if ( !trait_exists('Utilities') ){
 
 			//Return the response
 			set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*10); //10 minute expiration
+			$this->timer($timer_name, 'end');
 			return $response;
 		}
 
@@ -945,6 +951,100 @@ if ( !trait_exists('Utilities') ){
 					trigger_error('nebula_compare_operator does not allow "' . $c . '".');
 					return false;
 			}
+		}
+
+		//Add server timings to an array
+		//To add time to an entry, simply use the action 'end' on the same unique_id again
+		public function timer($unique_id, $action='start', $category=false){
+			if ( $this->is_admin_page() ){
+				return false;
+			}
+
+			//Unique ID is required
+			if ( empty($unique_id) || in_array(strtolower($unique_id), array('start', 'stop', 'end')) ){
+				return false;
+			}
+
+			if ( $action === 'start' ){
+				//Prevent duplicates by appending a random number to the ID (only when duplicate)
+				if ( !empty($this->server_timings[$unique_id]) ){
+					$unique_id .= '_d' . rand(10000, 99999);
+				}
+
+				$this->server_timings[$unique_id] = array(
+					'start' => microtime(true),
+					'active' => true,
+					'category' => $category
+				);
+
+				return $unique_id; //Return the unique ID in case it was changed so that the 'end' call can know what to use
+			} elseif ( in_array(strtolower($action), array('stop', 'end')) ){
+				if ( !empty($this->server_timings[$unique_id]['start']) ){ //Make sure this timer has started
+					$this->server_timings[$unique_id]['end'] = microtime(true);
+					$this->server_timings[$unique_id]['time'] = $this->server_timings[$unique_id]['end'] - $this->server_timings[$unique_id]['start'];
+					$this->server_timings[$unique_id]['active'] = false;
+
+					//Add to array of this category (if categorization is used)
+					$this_category = $this->server_timings[$unique_id]['category'];
+					if ( !empty($this_category) ){
+						$this->server_timings['categories'][$this_category][] = $this->server_timings[$unique_id]['time'];
+					}
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		//Add more timings to the server timings array
+		public function finalize_timings(){
+			if ( $this->is_admin_page() ){
+				return false;
+			}
+
+			//@todo "Nebula" 0: Add object cache here to prevent going through everything again
+
+			//Add category times together
+			if ( !empty($this->server_timings['categories']) ){
+				foreach ( $this->server_timings['categories'] as $category => $times ){
+					$this->server_timings[$category . ' [Total]'] = array_sum($times);
+				}
+			}
+
+			//Database Queries
+			global $wpdb;
+			$total_query_time = 0;
+			foreach ( $wpdb->queries as $query ){
+				$total_query_time += $query[1];
+			}
+			$this->server_timings['DB Queries [Total]'] = $total_query_time;
+
+			//Resource Usage
+			$resource_usage = getrusage();
+
+			//System resource usage timing
+			$this->server_timings['PHP System'] = array(
+				'start' => $_SERVER['REQUEST_TIME_FLOAT'],
+				'end' => $_SERVER['REQUEST_TIME_FLOAT']+($resource_usage['ru_stime.tv_usec']),
+				'time' => $resource_usage['ru_stime.tv_usec']/1000000
+			);
+
+			//User resource usage timing
+			$this->server_timings['PHP User'] = array(
+				'start' => $_SERVER['REQUEST_TIME_FLOAT'],
+				'end' => $_SERVER['REQUEST_TIME_FLOAT']+($resource_usage['ru_utime.tv_usec']),
+				'time' => $resource_usage['ru_utime.tv_usec']/1000000
+			);
+
+			//Total PHP execution time
+			$this->server_timings['PHP [Total]'] = array(
+				'start' => $_SERVER['REQUEST_TIME_FLOAT'],
+				'end' => microtime(true),
+				'time' => microtime(true)-$_SERVER['REQUEST_TIME_FLOAT']
+			);
+
+			return $this->server_timings;
 		}
 
 		//Get Nebula version information

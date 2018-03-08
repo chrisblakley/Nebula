@@ -5,6 +5,8 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Shortcodes') ){
 	trait Shortcodes {
 		public function hooks(){
+			$this->shortcode_flags = array();
+
 			add_shortcode('widget',array($this, 'widget'));
 
 			//Div
@@ -76,7 +78,6 @@ if ( !trait_exists('Shortcodes') ){
 			add_shortcode('github', array($this, 'github_shortcode'));
 
 			//Accordion
-			$GLOBALS['accordion'] = 0; //@TODO "Nebula" 0: Change to a class var
 			add_shortcode('accordion', array($this, 'accordion_shortcode'));
 
 			//Accordion_Item
@@ -358,9 +359,9 @@ if ( !trait_exists('Shortcodes') ){
 		public function pre_shortcode($atts, $content=''){
 			extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'force' => false, 'br' => false, 'class' => '', 'style' => ''), $atts));
 
-			if ( empty($GLOBALS['pre']) ){
+			if ( empty($this->shortcode_flags['pre']) ){
 				echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/assets/css/pre.css" />';
-				$GLOBALS['pre'] = 1;
+				$this->shortcode_flags['pre'] = 1;
 			}
 
 			$flags = $this->get_flags($atts);
@@ -390,9 +391,9 @@ if ( !trait_exists('Shortcodes') ){
 		public function gist_shortcode($atts, $content=''){
 			extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => ''), $atts));
 
-			if ( empty($GLOBALS['pre']) ){
+			if ( empty($this->shortcode_flags['pre']) ){
 				echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/assets/css/pre.css" />';
-				$GLOBALS['pre'] = 1;
+				$this->shortcode_flags['pre'] = 1;
 			}
 
 			if ( empty($lang) && !empty($language) ){
@@ -421,9 +422,9 @@ if ( !trait_exists('Shortcodes') ){
 				global $wp_filesystem;
 				$file_contents = $wp_filesystem->get_contents($file);
 
-				if ( empty($GLOBALS['pre']) ){
+				if ( empty($this->shortcode_flags['pre']) ){
 					echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/assets/css/pre.css" />';
-					$GLOBALS['pre'] = 1;
+					$this->shortcode_flags['pre'] = 1;
 				}
 
 				if ( empty($lang) && !empty($language) ){
@@ -451,11 +452,8 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function accordion_shortcode($attributes, $content=''){
-
-			extract( shortcode_atts( array('class' => '', 'style' => ''), $attributes) );
-
-			$return = '<div class="accordion '.$class.' style="'.$style.'" role="tablist">'.do_shortcode( $content ).'</div>';
-
+			extract(shortcode_atts(array('class' => '', 'style' => ''), $attributes));
+			$return = '<div class="accordion ' . $class . ' style="' . $style . '" role="tablist">' . do_shortcode($content) . '</div>';
 			return $return;
 		}
 
