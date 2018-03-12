@@ -99,6 +99,7 @@ trait Functions {
 
 		add_filter('acf/settings/google_api_key', array($this, 'acf_google_api_key'));
 		add_filter('wpseo_metadesc', array($this, 'meta_description'));
+		add_filter('wpseo_twitter_card_type', array($this, 'allow_large_twitter_summary'), 10, 2);
 
 		if ( is_user_logged_in() ){
 			add_filter('wpcf7_verify_nonce', '__return_true'); //Always verify CF7 nonce for logged-in users (this allows for it to detect user data)
@@ -209,6 +210,8 @@ trait Functions {
 
 	//Check for Nebula warnings
 	public function check_warnings(){
+		$this->timer('Check Warnings');
+
 		if ( (current_user_can('manage_options') || $this->is_dev()) && $this->get_option('admin_notices') && !is_customize_preview() ){
 			//Check object cache first
 			$nebula_warnings = wp_cache_get('nebula_warnings');
@@ -266,23 +269,6 @@ trait Functions {
 					'level' => 'error',
 					'description' => '<a href="options-reading.php">Search Engine Visibility</a> is currently disabled!',
 					'url' => 'options-reading.php'
-				);
-			}
-
-			//If website is live and using Prototype Mode
-			if ( $this->is_site_live() && $this->get_option('prototype_mode') ){
-				$nebula_warnings[] = array(
-					'level' => 'warn',
-					'description' => '<a href="plugins.php">Prototype Mode</a> is enabled (' . ucwords($this->dev_phase()) . ')!'
-				);
-			}
-
-			//If Prototype mode is disabled, but Multiple Theme plugin is still activated
-			if ( !$this->get_option('prototype_mode') && is_plugin_active('jonradio-multiple-themes/jonradio-multiple-themes.php') ){
-				$nebula_warnings[] = array(
-					'level' => 'error',
-					'description' => '<a href="plugins.php">Prototype Mode</a> is disabled, but <a href="plugins.php">Multiple Theme plugin</a> is still active.',
-					'url' => 'plugins.php'
 				);
 			}
 
@@ -448,6 +434,7 @@ trait Functions {
 			});
 
 			wp_cache_set('nebula_warnings', $all_nebula_warnings); //Store in object cache
+			$this->timer('Check Warnings', 'end');
 			return $all_nebula_warnings;
 		}
 
@@ -483,6 +470,7 @@ trait Functions {
 
 	//Get the name of the current service worker cache
 	public function get_sw_cache_name(){
+		$this->timer('SW Cache Name');
 		$override = apply_filters('pre_nebula_get_sw_cache_name', null);
 		if ( isset($override) ){return;}
 
@@ -502,11 +490,14 @@ trait Functions {
 			}
 		}
 
+		$this->timer('SW Cache Name', 'end');
 		return $sw_cache_name;
 	}
 
 	//Update variables within the service worker JavaScript file for install caching
 	public function update_sw_js(){
+		$this->timer('Update SW');
+
 		$override = apply_filters('pre_nebula_update_swjs', null);
 		if ( isset($override) ){return;}
 
@@ -543,10 +534,12 @@ trait Functions {
 			if ( !empty($update_sw_js) ){
 				do_action('nebula_wrote_sw_js');
 				set_transient('nebula_sw_cache_name', $new_cache_name, YEAR_IN_SECONDS); //1 year cache (This doesn't really need to expire since it is updated everytime a new one is generated)
+				$this->timer('Update SW', 'end');
 				return true;
 			}
 		}
 
+		$this->timer('Update SW', 'end');
 		return false;
 	}
 
@@ -564,6 +557,8 @@ trait Functions {
 
 	//Create/Write a manifest JSON file
 	public function manifest_json(){
+		$this->timer('Write Manifest JSON');
+
 		$override = apply_filters('pre_nebula_manifest_json', null);
 		if ( isset($override) ){return;}
 
@@ -619,6 +614,7 @@ trait Functions {
 		WP_Filesystem();
 		global $wp_filesystem;
 		$wp_filesystem->put_contents($this->manifest_json_location(false), $manifest_json);
+		$this->timer('Write Manifest JSON', 'end');
 	}
 
 	//Redirect to favicon to force-clear the cached version when ?favicon is added to the URL.
@@ -1707,6 +1703,8 @@ trait Functions {
 	//Infinite Load
 	//Ajax call handle in nebula()->infinite_load();
 	public function infinite_load_query($args=array('post_status' => 'publish', 'showposts' => 4), $loop=false){
+		$this->timer('Infinite Load Query');
+
 		$override = apply_filters('pre_nebula_infinite_load_query', null);
 		if ( isset($override) ){return;}
 
@@ -1830,6 +1828,7 @@ trait Functions {
 			});
 		</script>
 		<?php
+		$this->timer('Infinite Load Query', 'end');
 	}
 
 	//Check if business hours exist in Nebula Options
@@ -2324,6 +2323,7 @@ trait Functions {
 	//Autocomplete Search AJAX.
 	public function autocomplete_search(){
 		if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+		$this->timer('Autocomplete Search');
 
 		ini_set('memory_limit', '256M'); //@TODO "Nebula" 0: Ideally this would not be here.
 
@@ -2568,6 +2568,7 @@ trait Functions {
 		$outputArray[] = $suggestion;
 
 		echo json_encode($outputArray, JSON_PRETTY_PRINT);
+		$this->timer('Autocomplete Search', 'end');
 		wp_die();
 	}
 
@@ -2584,6 +2585,7 @@ trait Functions {
 	//Advanced Search
 	public function advanced_search(){
 		if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+		$this->timer('Advanced Search');
 
 		ini_set('memory_limit', '512M'); //Increase memory limit for this script.
 
@@ -2670,6 +2672,7 @@ trait Functions {
 		*/
 
 		echo json_encode($output, JSON_PRETTY_PRINT);
+		$this->timer('Advanced Search', 'end');
 		wp_die();
 	}
 
@@ -2715,6 +2718,8 @@ trait Functions {
 
 	//Add custom body classes
 	public function body_classes($classes){
+		$this->timer('Nebula Body Classes');
+
 		$spaces_and_dots = array(' ', '.');
 		$underscores_and_hyphens = array('_', '-');
 
@@ -2866,11 +2871,14 @@ trait Functions {
 		$classes[] = 'date-ymd-' . strtolower(date('Y-m-d'));
 		$classes[] = 'date-month-' . strtolower(date('F'));
 
+		$this->timer('Nebula Body Classes', 'end');
 		return $classes;
 	}
 
 	//Add additional classes to post wrappers
 	public function post_classes($classes){
+		$this->timer('Nebula Post Classes');
+
 		global $post;
 		global $wp_query;
 
@@ -2904,6 +2912,7 @@ trait Functions {
 			$classes = array_diff($classes, array('hentry'));
 		}
 
+		$this->timer('Nebula Post Classes', 'end');
 		return $classes;
 	}
 
@@ -3074,5 +3083,14 @@ trait Functions {
 
 			return esc_attr(stripslashes($nebula_metadesc));
 		}
+	}
+
+	//Allow using large Twitter cards with Yoast (without upgrading)
+	function allow_large_twitter_summary($value){
+		if ( $value === 'summary' ){ //&& get_the_post_thumbnail($post->ID, 'twitter_large')
+			$value = 'summary_large_image';
+		}
+
+		return $value;
 	}
 }

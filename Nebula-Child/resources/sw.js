@@ -3,7 +3,7 @@
 //@TODO: Enable "Service Worker" in Nebula Options (under Functions)
 
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-29679'; //Thursday, March 8, 2018 10:14:40 AM
+var CACHE_NAME = 'nebula-nebula-child-79910'; //Monday, March 12, 2018 5:32:50 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
@@ -156,7 +156,7 @@ function needNetworkRetrieval(request){
 		return true; //Yes, need network retreival
 	}
 
-	var substrings = ['chrome-extension://', '/wp-login.php', '/wp-admin', 'analytics', 'customize.php', 'customize_', 'no-cache', 'admin-ajax'];
+	var substrings = ['chrome-extension://', '/wp-login.php', '/wp-admin', 'analytics', 'hubspot', 'hs-scripts', 'customize.php', 'customize_', 'no-cache', 'admin-ajax'];
 	var length = substrings.length;
 
 	//Force network retrieval for any resource that contains the above strings

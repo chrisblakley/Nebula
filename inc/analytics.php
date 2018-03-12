@@ -371,6 +371,11 @@
 
 		<?php do_action('nebula_ga_after_send_pageview'); ?>
 
+		<?php if ( is_404() ): //Track 404 Errors ?>
+			var lastReferrer = "<?php echo $_SERVER['HTTP_REFERER']; ?>" || document.referrer || '(Unknown Referrer)';
+			ga('send', 'event', '404 Not Found', <?php nebula()->requested_url(); ?>, 'Referrer: ' + lastReferrer, {'nonInteraction': true});
+		<?php endif; ?>
+
 		//Generate a unique ID for hits and windows
 		function uuid(a){
 			return a ? (a^Math.random()*16 >> a/4).toString(16) : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, uuid);

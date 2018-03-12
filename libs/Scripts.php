@@ -64,6 +64,8 @@ if ( !trait_exists('Scripts') ){
 
 		//Build Nebula data object and output to the <head>
 		public function output_nebula_data(){
+			$this->timer('Output Nebula Data');
+
 			global $wp_scripts, $wp_styles, $upload_dir;
 			$upload_dir = wp_upload_dir();
 
@@ -75,14 +77,42 @@ if ( !trait_exists('Scripts') ){
 
 			$lazy_assets = $this->lazy_load_assets();
 
+			//Prep lazy assets for JS loading later
 			foreach ( $wp_styles->registered as $handle => $data ){
 				if ( (strpos($handle, 'nebula-') !== false && strpos($handle, 'admin') === false && strpos($handle, 'login') === false) || array_key_exists($handle, $lazy_assets['styles']) ){ //If the handle contains "nebula-" but not "admin" or "login" -or- if the asset is prepped for lazy-loading
-					$nebula_assets['styles'][str_replace('-', '_', $handle)] = str_replace(array('#defer', '#async'), '', $data->src);
+					$nebula_assets['styles'][str_replace('-', '_', $handle)] = $data->src;
 				}
 			}
 			foreach ( $wp_scripts->registered as $handle => $data ){
 				if ( (strpos($handle, 'nebula-') !== false && strpos($handle, 'admin') === false && strpos($handle, 'login') === false) || array_key_exists($handle, $lazy_assets['scripts']) ){ //If the handle contains "nebula-" but not "admin" or "login" -or- if the asset is prepped for lazy-loading
 					$nebula_assets['scripts'][str_replace('-', '_', $handle)] = str_replace(array('#defer', '#async'), '', $data->src);
+				}
+			}
+
+			if ( !empty($lazy_assets['styles']) && !$this->is_admin_page() ){
+				//Preload imminent CSS assets
+				foreach ( $lazy_assets['styles'] as $handle => $condition ){
+					if ( !empty($handle) && $condition === 'all' ){ //Lazy loaded assets must have a handle!
+						echo '<link rel="preload" id="' . $handle . '-css-preload" href="' . $wp_styles->registered[$handle]->src . '" as="style">' . PHP_EOL;
+					}
+				}
+
+				//Add <noscript> to so lazy CSS files can be loaded for users without JavaScript
+				echo  '<noscript>' . PHP_EOL;
+				foreach ( $lazy_assets['styles'] as $handle => $condition ){
+					if ( !empty($handle) ){ //Lazy loaded assets must have a handle!
+						echo '<link rel="stylesheet" id="' . $handle . '-css"  href="' . $wp_styles->registered[$handle]->src . '" type="text/css" media="' . $wp_styles->registered[$handle]->args . '" />' . PHP_EOL;
+					}
+				}
+				echo '</noscript>' . PHP_EOL;
+			}
+
+			//Preload imminent JS assets
+			if ( !empty($lazy_assets['scripts']) && !$this->is_admin_page() ){
+				foreach ( $lazy_assets['scripts'] as $handle => $condition ){
+					if ( !empty($handle) && $condition === 'all' ){ //Lazy loaded assets must have a handle!
+						echo '<link rel="preload" id="' . $handle . '-js-preload" href="' . str_replace(array('#defer', '#async'), '', $wp_scripts->registered[$handle]->src) . '" as="script">' . PHP_EOL;
+					}
 				}
 			}
 
@@ -216,6 +246,7 @@ if ( !trait_exists('Scripts') ){
 			$brain['user']['known'] = ( !empty($brain['user']['email']) )? true : false;
 
 			echo '<script type="text/javascript">var nebula = ' . json_encode($brain) . '</script>'; //Output the data to <head>
+			$this->timer('Output Nebula Data', 'end');
 		}
 
 		//Enqueue frontend scripts
@@ -223,7 +254,6 @@ if ( !trait_exists('Scripts') ){
 			//Stylesheets
 			wp_enqueue_style('nebula-bootstrap');
 			wp_enqueue_style('nebula-main');
-			wp_enqueue_style('nebula-font_awesome'); //Font Awesome 5 CSS method
 
 			if ( $this->get_option('google_font_url') ){
 				wp_enqueue_style('nebula-google_font');

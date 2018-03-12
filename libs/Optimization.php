@@ -90,6 +90,7 @@ if ( !trait_exists('Optimization') ){
 		public function lazy_load_assets(){
 			$assets = array(
 				'styles' => array(
+					'nebula-font_awesome' => 'all',
 					'nebula-flags' => '.flag',
 					'wp-pagenavi' => '.wp-pagenavi',
 				),
@@ -138,7 +139,13 @@ if ( !trait_exists('Optimization') ){
 
 			//Loop through all times
 			foreach ( $this->server_timings as $label => $data ){
-				$time = ( !empty($data['time']) )? $data['time'] : $data;
+				if ( !empty($data['time']) ){
+					$time = $data['time'];
+				} elseif ( intval($data) ){
+					$time = intval($data);
+				} else {
+					continue;
+				}
 
 				//Ignore unfinished, 0 timings, or non-logging entries
 				if ( $label === 'categories' || !empty($data['active']) || round($time*1000) <= 0 || (!empty($data['log']) && $data['log'] === false) ){
@@ -153,16 +160,21 @@ if ( !trait_exists('Optimization') ){
 			}
 
 			header($server_timing_header_string);
-			//header('Server-Timing: what;dur=53;desc="Something", app;dur=47.2;desc="App Stuff", total;dur=2345;desc="Total PHP Execution"');
 		}
 
 		//Include server timings for developers
 		public function output_console_debug_timings(){
-			//if ( $this->is_dev() ){
+			//if ( $this->is_dev() ){ //Only output server timings for developers?
 				$this->finalize_timings();
 
 				foreach ( $this->server_timings as $label => $data ){
-					$time = ( !empty($data['time']) )? $data['time'] : $data;
+					if ( !empty($data['time']) ){
+						$time = $data['time'];
+					} elseif ( intval($data) ){
+						$time = intval($data);
+					} else {
+						continue;
+					}
 
 					if ( $label === 'categories' || !empty($data['active']) || round($time*1000) <= 0 || (!empty($data['log']) && $data['log'] === false) ){
 						continue;
@@ -194,6 +206,7 @@ if ( !trait_exists('Optimization') ){
 			//Prerender = Render an entire page (useful for comment next page navigation). Use Audience > User Flow report in Google Analytics for better predictions.
 
 			//Note: WordPress automatically uses dns-prefetch on enqueued resource domains.
+			//Note: Additional preloading for lazy-loaded CSS happens in /libs/Scripts.php
 
 			//To hook into the arrays use:
 			/*

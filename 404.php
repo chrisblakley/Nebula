@@ -88,10 +88,4 @@ get_header(); ?>
 	</div><!--/container-->
 </div>
 
-<script>
-	var jsReferrer = ( document.referrer.length )? document.referrer : '(No JS Referrer)';
-	var phpReferrer = '<?php echo ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '(No PHP Referrer)'; ?>';
-	ga('send', 'event', '404 Not Found', 'JS Referrer: ' + jsReferrer, 'PHP Referrer: ' + phpReferrer, {'nonInteraction': true});
-</script>
-
 <?php get_footer(); ?>

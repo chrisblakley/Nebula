@@ -19,7 +19,6 @@ if ( !class_exists('Nebula') ){
 	require_once get_template_directory() . '/libs/Widgets.php';
 	require_once get_template_directory() . '/libs/Admin/Admin.php';
 	require_once get_template_directory() . '/libs/Ecommerce.php';
-	require_once get_template_directory() . '/libs/Prototyping.php';
 	require_once get_template_directory() . '/libs/Aliases.php';
 	require_once get_template_directory() . '/libs/Legacy/Legacy.php'; //Backwards compatibility
 
@@ -37,7 +36,6 @@ if ( !class_exists('Nebula') ){
 		use Widgets { Widgets::hooks as WidgetsHooks; }
 		use Admin { Admin::hooks as AdminHooks; }
 		use Ecommerce { Ecommerce::hooks as EcommerceHooks; }
-		use Prototyping { Prototyping::hooks as PrototypingHooks; }
 		use Legacy { Legacy::hooks as LegacyHooks; }
 
 		private static $instance;
@@ -98,10 +96,6 @@ if ( !class_exists('Nebula') ){
 
 			if ( is_plugin_active('woocommerce/woocommerce.php') ){
 				$this->EcommerceHooks(); //Register Ecommerce hooks
-			}
-
-			if ( nebula()->get_option('prototype_mode') ){
-				$this->PrototypingHooks(); //Register Prototyping hooks
 			}
 		}
 

@@ -2349,6 +2349,7 @@ function nebulaLoadJS(url, callback){
 }
 
 //Dynamically load CSS files using JS
+//If JavaScript is disabled, these are loaded via <noscript> tags
 function nebulaLoadCSS(url){
 	if ( typeof url === 'string' ){
 		jQuery('head').append('<link rel="stylesheet" href="' + url + '" type="text/css" media="screen">');
@@ -4431,7 +4432,7 @@ function mmenus(){
 //Vertical subnav expanders
 function subnavExpanders(){
 	if ( nebula.site.options.sidebar_expanders && jQuery('#sidebar-section .menu').length ){
-		jQuery('#sidebar-section .menu li.menu-item:has(ul)').addClass('has-expander').append('<a class="toplevelvert_expander closed" href="#"><i class="fas fa-caret-left"></i></a>');
+		jQuery('#sidebar-section .menu li.menu-item:has(ul)').addClass('has-expander').append('<a class="toplevelvert_expander closed" href="#"><i class="fas fa-caret-left"></i> <span class="sr-only">Expand</span></a>');
 		jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
 		nebula.dom.document.on('click', '.toplevelvert_expander', function(){
 			jQuery(this).toggleClass('closed open').parent().children('.sub-menu').slideToggle();

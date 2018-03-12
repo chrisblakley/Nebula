@@ -57,6 +57,7 @@ if ( !trait_exists('Dashboard') ){
 		}
 
 		public function dashboard_nebula_ataglance(){
+			$this->timer('Nebula At-a-Glance Dashboard');
 			global $wp_version;
 			global $wp_post_types;
 
@@ -212,6 +213,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '</ul>';
 
 			do_action('nebula_ataglance');
+			$this->timer('Nebula At-a-Glance Dashboard', 'end');
 		}
 
 		//Current User metabox
@@ -229,6 +231,7 @@ if ( !trait_exists('Dashboard') ){
 		}
 
 		public function dashboard_current_user(){
+			$this->timer('Nebula Current User Dashboard');
 			$user_info = get_userdata(get_current_user_id());
 
 			echo '<ul>';
@@ -375,6 +378,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '</ul>';
 
 			echo '<p><small><em><a href="profile.php"><i class="fas fa-fw fa-pencil-alt"></i> Manage your user information</a></em></small></p>';
+			$this->timer('Nebula Current User Dashboard', 'end');
 		}
 
 		//Administrative metabox
@@ -384,6 +388,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Administrative metabox content
 		public function dashboard_administrative(){
+			$this->timer('Nebula Administrative Dashboard');
 			$third_party_tools = $this->third_party_tools();
 
 			echo '<ul>';
@@ -404,6 +409,7 @@ if ( !trait_exists('Dashboard') ){
 			do_action('nebula_social_metabox');
 			echo '</ul>';
 			echo '<p><small><em>Manage social links in <strong><a href="themes.php?page=nebula_options&filter=social">Nebula Options</a></strong>.</em></small></p>';
+			$this->timer('Nebula Administrative Dashboard', 'end');
 		}
 
 		//Pinckney Hugo Group metabox
@@ -433,6 +439,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//TODO metabox content
 		public function todo_metabox_content(){
+			$this->timer('Nebula Todo Dashboard');
 			do_action('nebula_todo_manager');
 
 			$todo_items = get_transient('nebula_todo_items');
@@ -524,6 +531,7 @@ if ( !trait_exists('Dashboard') ){
 					<?php endif; ?>
 				</p>
 			<?php
+			$this->timer('Nebula Todo Dashboard', 'end');
 		}
 
 		public function todo_search_files($directory=null){
@@ -567,6 +575,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Developer Info Metabox content
 		public function dashboard_developer_info(){
+			$this->timer('Nebula Developer Dashboard');
 			do_action('nebula_developer_info');
 			echo '<ul class="serverdetections">';
 
@@ -665,12 +674,7 @@ if ( !trait_exists('Dashboard') ){
 				}
 
 				echo '<li><i class="fas fa-code"></i> Parent theme directory size: <strong>' . round($nebula_parent_size/1048576, 2) . 'mb</strong> </li>';
-
-				if ( $this->get_option('prototype_mode') ){
-					echo '<li><i class="fas fa-flag-checkered"></i> Production directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>';
-				} else {
-					echo '<li><i class="fas fa-code"></i> Child theme directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>';
-				}
+				echo '<li><i class="fas fa-code"></i> Child theme directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>';
 			} else {
 				$nebula_size = get_transient('nebula_directory_size_theme');
 				if ( empty($nebula_size) || $this->is_debug() ){
@@ -680,17 +684,7 @@ if ( !trait_exists('Dashboard') ){
 				echo '<li><i class="fas fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
 			}
 
-			if ( $this->get_option('prototype_mode') ){
-				if ( $this->get_option('wireframe_theme') ){
-					$nebula_wireframe_size = $this->foldersize(get_theme_root() . '/' . $this->get_option('wireframe_theme'));
-					echo '<li title="' . $this->get_option('wireframe_theme') . '"><i class="fas fa-flag"></i> Wireframe directory size: <strong>' . round($nebula_wireframe_size/1048576, 2) . 'mb</strong> </li>';
-				}
-
-				if ( $this->get_option('staging_theme') ){
-					$nebula_staging_size = $this->foldersize(get_theme_root() . '/' . $this->get_option('staging_theme'));
-					echo '<li title="' . $this->get_option('staging_theme') . '"><i class="fas fa-flag"></i> Staging directory size: <strong>' . round($nebula_staging_size/1048576, 2) . 'mb</strong> </li>';
-				}
-			}
+			do_action('nebula_dev_dashboard_directories');
 
 			//Uploads directory size (and max upload size)
 			$upload_dir = wp_upload_dir();
@@ -764,23 +758,35 @@ if ( !trait_exists('Dashboard') ){
 			echo '</ul>';
 
 			//Directory search
-			echo '<i id="searchprogress" class="fas fa-fw fa-search"></i> <form id="theme" class="searchfiles"><input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory">';
-			if ( $this->get_option('prototype_mode') ){
-				echo '<option value="production">Production</option>';
-				if ( $this->get_option('staging_theme') ){
-					echo '<option value="staging">Staging</option>';
-				}
-				if ( $this->get_option('wireframe_theme') ){
-					echo '<option value="wireframe">Wireframe</option>';
-				}
-				echo '<option value="parent">Parent Theme</option>';
-			} elseif ( is_child_theme() ){
-				echo '<option value="child">Child Theme</option><option value="parent">Parent Theme</option>';
+			$directory_search_options = array('uploads' => '<option value="uploads">Uploads</option>');
+			if ( is_child_theme() ){
+				$directory_search_options['child'] = '<option value="child" selected="selected">Child Theme</option>';
+				$directory_search_options['parent'] = '<option value="parent">Parent Theme</option>';
 			} else {
-				echo '<option value="theme">Theme</option>';
+				$directory_search_options['theme'] = '<option value="theme" selected="selected">Theme</option>';
 			}
-			echo '<option value="plugins">Plugins</option><option value="uploads">Uploads</option></select><input class="searchterm button button-primary" type="submit" value="Search" /></form><br />';
+
+			//Add active plugins to search list
+			$directory_search_options['all_plugins'] = '<option value="all_plugins">All Plugins</option>';
+			$all_plugins = get_plugins();
+			$active_plugins = get_option('active_plugins');
+			foreach ( $active_plugins as $active_plugin ){
+			    if ( isset($all_plugins[$active_plugin]) ){
+					$plugin_name = $all_plugins[$active_plugin]['Name'];
+					$safe_plugin_name = str_replace(array(' ', '-', '/'), '_', strtolower($plugin_name));
+					$directory_search_options[$safe_plugin_name] = '<option value="' . $safe_plugin_name . '">' . $plugin_name . '</option>';
+			    }
+			}
+
+			$all_directory_search_options = apply_filters('nebula_directory_search_options', $directory_search_options); //Allow other functions to hook in to add directories to search
+
+			echo '<form id="theme" class="searchfiles"><i id="searchprogress" class="fas fa-fw fa-search"></i> <input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory">';
+			foreach ( $all_directory_search_options as $name => $option_html ){
+				echo $option_html;
+			}
+			echo '</select><input class="searchterm button button-primary" type="submit" value="Search" /></form><br />';
 			echo '<div class="search_results"></div>';
+			$this->timer('Nebula Developer Dashboard', 'end');
 		}
 
 		//Get last modified filename and date from a directory
@@ -836,34 +842,39 @@ if ( !trait_exists('Dashboard') ){
 			ini_set('max_execution_time', 120);
 			ini_set('memory_limit', '512M');
 			$searchTerm = htmlentities(stripslashes($_POST['data'][0]['searchData']));
+			$requestedDirectory = strtolower(sanitize_text_field($_POST['data'][0]['directory']));
 
 			if ( strlen($searchTerm) < 3 ){
 				echo '<p><strong>Error:</strong> Minimum 3 characters needed to search!</p>';
 				wp_die();
 			}
 
-			if ( $_POST['data'][0]['directory'] === 'theme' ){
-				$dirpath = get_template_directory();
-			} elseif ( $_POST['data'][0]['directory'] === 'parent' ){
-				$dirpath = get_template_directory();
-			} elseif ( $_POST['data'][0]['directory'] === 'child' ){
-				$dirpath = get_stylesheet_directory();
-			} elseif ( $_POST['data'][0]['directory'] === 'wireframe' ){
-				$dirpath = get_theme_root() . '/' . $this->get_option('wireframe_theme');
-			} elseif ( $_POST['data'][0]['directory'] === 'staging' ){
-				$dirpath = get_theme_root() . '/' . $this->get_option('staging_theme');
-			} elseif ( $_POST['data'][0]['directory'] === 'production' ){
-				if ( $this->get_option('production_theme') ){
-					$dirpath = get_theme_root() . '/' . $this->get_option('production_theme');
-				} else {
-					$dirpath = get_stylesheet_directory();
-				}
-			} elseif ( $_POST['data'][0]['directory'] === 'plugins' ){
-				$dirpath = WP_PLUGIN_DIR;
-			} elseif ( $_POST['data'][0]['directory'] === 'uploads' ){
-				$uploadDirectory = wp_upload_dir();
-				$dirpath = $uploadDirectory['basedir'];
-			} else {
+			$uploadDirectory = wp_upload_dir();
+
+			$search_directories = array(
+				'theme' => get_template_directory(),
+				'parent' => get_template_directory(),
+				'child' => get_stylesheet_directory(),
+				'plugins' => WP_PLUGIN_DIR,
+				'all_plugins' => WP_PLUGIN_DIR,
+				'uploads' => $uploadDirectory['basedir'],
+			);
+
+			$all_plugins = get_plugins();
+			$active_plugins = get_option('active_plugins');
+			foreach ( $active_plugins as $active_plugin ){
+			    if ( isset($all_plugins[$active_plugin]) ){
+					$plugin_name = $all_plugins[$active_plugin]['Name'];
+					$safe_plugin_name = str_replace(array(' ', '-', '/'), '_', strtolower($plugin_name));
+					$plugin_folder = explode('/', $active_plugin);
+					$search_directories[$safe_plugin_name] = WP_PLUGIN_DIR . '/' . $plugin_folder[0];
+			    }
+			}
+
+			$all_search_directories = apply_filters('nebula_search_directories', $search_directories); //Allow other functions to hook in to add directories
+
+			$dirpath = $all_search_directories[$requestedDirectory];
+			if ( empty($dirpath) ){
 				echo '<p><strong>Error:</strong> Please specify a directory to search!</p>';
 				wp_die();
 			}
@@ -916,12 +927,13 @@ if ( !trait_exists('Dashboard') ){
 
 		//Hubspot Contacts metabox content
 		public function hubspot_contacts_content(){
+			$this->timer('Nebula Hubspot Dashboard');
 			do_action('nebula_hubspot_contacts');
 
 			$hubspot_contacts_json = get_transient('nebula_hubspot_contacts');
 			if ( empty($hubspot_contacts_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 
-				$response = $this->remote_get('https://api.hubapi.com/contacts/v1/lists/all/contacts/recent?hapikey=' . $this->get_option('hubspot_api') . '&count=5');
+				$response = $this->remote_get('https://api.hubapi.com/contacts/v1/lists/all/contacts/recent?hapikey=' . $this->get_option('hubspot_api') . '&count=4');
 				if ( is_wp_error($response) ){
 	                return false;
 	            }
@@ -951,13 +963,11 @@ if ( !trait_exists('Dashboard') ){
 						//Get contact's name
 						$contact_name = false;
 						$has_name = false;
-						if ( !empty($contact->properties->firstname) ){
+						if ( !empty($contact->properties->firstname) && !empty($contact->properties->firstname) ){
 							$contact_name = trim($contact->properties->firstname->value . ' ' . $contact->properties->lastname->value);
-
-							if ( !empty($contact->properties->full_name) ){
-								$contact_name = $contact->properties->full_name->value;
-							}
-
+							$has_name = true;
+						} elseif ( !empty($contact->properties->full_name) ){
+							$contact_name = $contact->properties->full_name->value;
 							$has_name = true;
 						}
 
@@ -967,8 +977,6 @@ if ( !trait_exists('Dashboard') ){
 							$display_date = date('g:ia', $contact->addedAt/1000);
 							$date_icon = 'clock';
 						}
-
-
 						?>
 
 						<p>
@@ -987,6 +995,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			echo '<p><small><a href="https://app.hubspot.com/sales/' . $this->get_option('hubspot_portal') . '/contacts/list/view/all/" target="_blank">View on Hubspot &raquo;</a></small></p>';
+			$this->timer('Nebula Hubspot Dashboard', 'end');
 		}
 	}
 }

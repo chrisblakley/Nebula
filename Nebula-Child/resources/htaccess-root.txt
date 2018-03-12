@@ -54,7 +54,7 @@
             <IfVersion >= 2.4>
                 FilterDeclare  COMPRESS
                 FilterProvider COMPRESS DEFLATE "%{CONTENT_TYPE} =~ m#^text/(html|css|plain|xml|x-component)#i"
-                FilterProvider COMPRESS DEFLATE "%{CONTENT_TYPE} =~ m#^application/(javascript|json|xml|xhtml+xml|rss+xml|atom+xml|vnd.ms-fontobject|x-font-ttf)#i"
+                FilterProvider COMPRESS DEFLATE "%{CONTENT_TYPE} =~ m#^application/(javascript|json|xml|xhtml+xml|rss+xml|atom+xml|vnd.ms-fontobject|x-font-ttf|x-font-woff)#i"
                 FilterProvider COMPRESS DEFLATE "%{CONTENT_TYPE} =~ m#^image/(png|jpg|jpeg|gif|svg+xml|x-icon)#i"
                 FilterProvider COMPRESS DEFLATE "%{CONTENT_TYPE} = 'font/opentype'"
                 FilterChain    COMPRESS
@@ -75,10 +75,11 @@
                 FilterProvider COMPRESS DEFLATE resp=Content-Type $application/rss+xml
                 FilterProvider COMPRESS DEFLATE resp=Content-Type $application/atom+xml
                 FilterProvider COMPRESS DEFLATE resp=Content-Type $application/vnd.ms-fontobject
+                FilterProvider COMPRESS DEFLATE resp=Content-Type $application/x-font-ttf
+                FilterProvider COMPRESS DEFLATE resp=Content-Type $application/x-font-woff
+                FilterProvider COMPRESS DEFLATE resp=Content-Type $font/opentype
                 FilterProvider COMPRESS DEFLATE resp=Content-Type $image/svg+xml
                 FilterProvider COMPRESS DEFLATE resp=Content-Type $image/x-icon
-                FilterProvider COMPRESS DEFLATE resp=Content-Type $application/x-font-ttf
-                FilterProvider COMPRESS DEFLATE resp=Content-Type $font/opentype
                 FilterProvider COMPRESS DEFLATE resp=Content-Type $image/png
 				FilterProvider COMPRESS DEFLATE resp=Content-Type $image/jpg
 				FilterProvider COMPRESS DEFLATE resp=Content-Type $image/jpeg
@@ -102,10 +103,11 @@
             FilterProvider COMPRESS DEFLATE resp=Content-Type $application/rss+xml
             FilterProvider COMPRESS DEFLATE resp=Content-Type $application/atom+xml
             FilterProvider COMPRESS DEFLATE resp=Content-Type $application/vnd.ms-fontobject
+            FilterProvider COMPRESS DEFLATE resp=Content-Type $application/x-font-ttf
+            FilterProvider COMPRESS DEFLATE resp=Content-Type $application/x-font-woff
+            FilterProvider COMPRESS DEFLATE resp=Content-Type $font/opentype
             FilterProvider COMPRESS DEFLATE resp=Content-Type $image/svg+xml
             FilterProvider COMPRESS DEFLATE resp=Content-Type $image/x-icon
-            FilterProvider COMPRESS DEFLATE resp=Content-Type $application/x-font-ttf
-            FilterProvider COMPRESS DEFLATE resp=Content-Type $font/opentype
             FilterProvider COMPRESS DEFLATE resp=Content-Type $image/png
 			FilterProvider COMPRESS DEFLATE resp=Content-Type $image/jpg
 			FilterProvider COMPRESS DEFLATE resp=Content-Type $image/jpeg
@@ -127,11 +129,20 @@
 			AddOutputFilterByType DEFLATE application/rss+xml
 			AddOutputFilterByType DEFLATE application/javascript
 			AddOutputFilterByType DEFLATE application/x-javascript
+			AddOutputFilterByType DEFLATE application/x-httpd-php
+			AddOutputFilterByType DEFLATE application/x-httpd-fastphp
+			AddOutputFilterByType DEFLATE application/json
+			AddOutputFilterByType DEFLATE application/ld+json
+			AddOutputFilterByType DEFLATE application/x-web-app-manifest+json
+			AddOutputFilterByType DEFLATE application/x-font-ttf
+			AddOutputFilterByType DEFLATE application/x-font-woff
 			AddOutputFilterByType DEFLATE image/png
 			AddOutputFilterByType DEFLATE image/jpg
 			AddOutputFilterByType DEFLATE image/jpeg
 			AddOutputFilterByType DEFLATE image/gif
 			AddOutputFilterByType DEFLATE image/svg+xml
+			AddOutputFilterByType DEFLATE image/x-icon
+			AddOutputFilterByType DEFLATE font/opentype
 		</IfModule>
 	</IfModule>
 </IfModule>

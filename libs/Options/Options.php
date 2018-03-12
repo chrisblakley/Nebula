@@ -232,7 +232,6 @@ if ( !trait_exists('Options') ){
 				//Functions Tab
 				'jquery_version' => 'wordpress',
 				'bootstrap_version' => 'latest',
-				'prototype_mode' => 0,
 				'wireframe_theme' => '',
 				'staging_theme' => '',
 				'production_theme' => '',

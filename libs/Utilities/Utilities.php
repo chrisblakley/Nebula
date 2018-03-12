@@ -51,6 +51,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Generate Nebula Session ID
 		public function nebula_session_id(){
+			$this->timer('Session ID');
+
 			$session_data = array();
 
 			//Time
@@ -59,11 +61,6 @@ if ( !trait_exists('Utilities') ){
 			//Debug
 			if ( $this->is_debug() ){
 				$session_data['d'] = true;
-			}
-
-			//Prototype Mode
-			if ( $this->get_option('prototype_mode') ){
-				$session_data['p'] = true;
 			}
 
 			//Client/Developer
@@ -111,6 +108,7 @@ if ( !trait_exists('Utilities') ){
 				$session_id .= $key . ':' . $value . ';';
 			}
 
+			$this->timer('Session ID', 'end');
 			return $session_id;
 		}
 
@@ -997,18 +995,22 @@ if ( !trait_exists('Utilities') ){
 			return false;
 		}
 
-		//Add more timings to the server timings array
+		//Add category timings together, and add more times to the server timings array
 		public function finalize_timings(){
 			if ( $this->is_admin_page() ){
 				return false;
 			}
 
-			//@todo "Nebula" 0: Add object cache here to prevent going through everything again
+			//Check object cache first
+			$finalized_timings = wp_cache_get('nebula_finalized_timings');
+			if ( !empty($finalized_timings) ){
+				return $finalized_timings;
+			}
 
 			//Add category times together
 			if ( !empty($this->server_timings['categories']) ){
 				foreach ( $this->server_timings['categories'] as $category => $times ){
-					$this->server_timings[$category . ' [Total]'] = array_sum($times);
+					$this->server_timings[$category . ' [Total]'] = array('time' => array_sum($times));
 				}
 			}
 
@@ -1018,7 +1020,7 @@ if ( !trait_exists('Utilities') ){
 			foreach ( $wpdb->queries as $query ){
 				$total_query_time += $query[1];
 			}
-			$this->server_timings['DB Queries [Total]'] = $total_query_time;
+			$this->server_timings['DB Queries [Total]'] = array('time' => $total_query_time);
 
 			//Resource Usage
 			$resource_usage = getrusage();
@@ -1044,6 +1046,7 @@ if ( !trait_exists('Utilities') ){
 				'time' => microtime(true)-$_SERVER['REQUEST_TIME_FLOAT']
 			);
 
+			wp_cache_set('nebula_finalized_timings', $this->server_timings); //Store in object cache
 			return $this->server_timings;
 		}
 

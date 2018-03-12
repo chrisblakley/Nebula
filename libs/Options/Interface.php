@@ -594,54 +594,7 @@
 									</div>
 								</div><!-- /option-group -->
 
-								<div class="option-group">
-									<h3>Prototyping</h3>
 
-									<?php $themes = wp_get_themes(); ?>
-
-									<div class="form-group">
-										<input type="checkbox" name="nebula_options[prototype_mode]" id="prototype_mode" value="1" <?php checked('1', !empty($nebula_options['prototype_mode'])); ?> /><label for="prototype_mode">Prototype Mode</label>
-										<p class="nebula-help-text short-help form-text text-muted">When prototyping, enable this setting. (Default: <?php echo $this->user_friendly_default('prototype_mode'); ?>)</p>
-										<p class="nebula-help-text more-help form-text text-muted">Use the wireframe theme and production theme settings to develop the site while referencing the prototype. Use the staging theme to edit the site or develop new features while the site is live. If the staging theme is the active theme, use the Advanced Setting dropdown for "Theme For Everything" and choose a theme there for general visitors (Note: If using this setting, you may need to select that same theme for the admin-ajax option too!).</p>
-										<p class="option-keywords"></p>
-									</div>
-
-									<div class="form-group" dependent-of="prototype_mode">
-										<label for="wireframe_theme">Wireframe Theme</label>
-										<select name="nebula_options[wireframe_theme]" id="wireframe_theme" class="form-control nebula-validate-select">
-											<option value="" <?php selected('', $nebula_options['wireframe_theme']); ?>>None</option>
-		                                    <?php foreach ( $themes as $key => $value ): ?>
-		                                        <option value="<?php echo $key; ?>" <?php selected($key, $nebula_options['wireframe_theme']); ?>><?php echo $value->get('Name') . ' (' . $key . ')'; ?></option>
-		                                    <?php endforeach; ?>
-										</select>
-										<p class="nebula-help-text short-help form-text text-muted">The theme to use as the wireframe. Viewing this theme will trigger a greyscale view.</p>
-										<p class="option-keywords"></p>
-									</div>
-
-									<div class="form-group" dependent-of="prototype_mode">
-										<label for="staging_theme">Staging Theme</label>
-										<select name="nebula_options[staging_theme]" id="staging_theme" class="form-control nebula-validate-select">
-											<option value="" <?php selected('', $nebula_options['staging_theme']); ?>>None</option>
-		                                    <?php foreach ( $themes as $key => $value ): ?>
-		                                        <option value="<?php echo $key; ?>" <?php selected($key, $nebula_options['staging_theme']); ?>><?php echo $value->get('Name') . ' (' . $key . ')'; ?></option>
-		                                    <?php endforeach; ?>
-										</select>
-										<p class="nebula-help-text short-help form-text text-muted">The theme to use for staging new features. This is useful for site development after launch.</p>
-										<p class="option-keywords"></p>
-									</div>
-
-									<div class="form-group" dependent-of="prototype_mode">
-										<label for="production_theme">Production (Live) Theme</label>
-										<select name="nebula_options[production_theme]" id="production_theme" class="form-control nebula-validate-select">
-											<option value="" <?php selected('', $nebula_options['production_theme']); ?>>None</option>
-		                                    <?php foreach ( $themes as $key => $value ): ?>
-		                                        <option value="<?php echo $key; ?>" <?php selected($key, $nebula_options['production_theme']); ?>><?php echo $value->get('Name') . ' (' . $key . ')'; ?></option>
-		                                    <?php endforeach; ?>
-										</select>
-										<p class="nebula-help-text short-help form-text text-muted">The theme to use for production/live. This theme will become the live site.</p>
-										<p class="option-keywords"></p>
-									</div>
-								</div><!-- /option-group -->
 
 								<?php do_action('nebula_options_interface_functions'); ?>
 							</div><!--/col-->
