@@ -98,6 +98,7 @@ if ( !trait_exists('Widgets') ){
 
 		//Creating widget front-end
 		public function widget($args, $instance){
+			$timer_name = nebula()->timer('About the Author Widget', 'start', 'Nebula Widgets');
 			$user_id = ( !empty($instance['user_id']) )? $instance['user_id'] : get_the_author_id();
 			$author_info = get_userdata($user_id);
 
@@ -198,6 +199,7 @@ if ( !trait_exists('Widgets') ){
 
 			//After widget arguments are defined by themes
 			echo $args['after_widget'];
+			nebula()->timer($timer_name, 'end');
 		}
 
 		//Widget Backend (admin form)
@@ -257,6 +259,7 @@ if ( !trait_exists('Widgets') ){
 
 		//Creating widget front-end
 		public function widget($args, $instance){
+			$timer_name = nebula()->timer('Crosslinks Widget', 'start', 'Nebula Widgets');
 			//Before widget arguments are defined by themes
 			echo $args['before_widget'];
 
@@ -284,6 +287,7 @@ if ( !trait_exists('Widgets') ){
 
 			//After widget arguments are defined by themes
 			echo $args['after_widget'];
+			nebula()->timer($timer_name, 'end');
 		}
 
 		//Widget Backend (admin form)
@@ -315,6 +319,7 @@ if ( !trait_exists('Widgets') ){
 
 		//Creating widget front-end
 		public function widget($args, $instance){
+			$timer_name = nebula()->timer('Google Maps Widget', 'start', 'Nebula Widgets');
 			//Before widget arguments are defined by themes
 			echo $args['before_widget'];
 
@@ -353,6 +358,7 @@ if ( !trait_exists('Widgets') ){
 
 			//After widget arguments are defined by themes
 			echo $args['after_widget'];
+			nebula()->timer($timer_name, 'end');
 		}
 
 		//Widget Backend (admin form)
@@ -508,6 +514,7 @@ if ( !trait_exists('Widgets') ){
 
 		//Creating widget front-end
 		public function widget($args, $instance){
+			$timer_name = nebula()->timer('Linked Image Widget', 'start', 'Nebula Widgets');
 			//Before widget arguments are defined by themes
 			echo $args['before_widget'];
 
@@ -534,6 +541,7 @@ if ( !trait_exists('Widgets') ){
 
 			//After widget arguments are defined by themes
 			echo $args['after_widget'];
+			nebula()->timer($timer_name, 'end');
 		}
 
 		//Widget Backend (admin form)
@@ -571,6 +579,7 @@ if ( !trait_exists('Widgets') ){
 
 		//Creating widget front-end
 		public function widget($args, $instance){
+			$timer_name = nebula()->timer('Login Form Widget', 'start', 'Nebula Widgets');
 			//Before widget arguments are defined by themes
 			echo $args['before_widget'];
 
@@ -610,6 +619,7 @@ if ( !trait_exists('Widgets') ){
 
 			//After widget arguments are defined by themes
 			echo $args['after_widget'];
+			nebula()->timer($timer_name, 'end');
 		}
 
 		//Widget Backend (admin form)
@@ -647,6 +657,7 @@ if ( !trait_exists('Widgets') ){
 
 		//Creating widget front-end
 		public function widget($args, $instance){
+			$timer_name = nebula()->timer('Social Page Links Widget', 'start', 'Nebula Widgets');
 			//Before widget arguments are defined by themes
 			echo $args['before_widget'];
 
@@ -681,6 +692,7 @@ if ( !trait_exists('Widgets') ){
 
 			//After widget arguments are defined by themes
 			echo $args['after_widget'];
+			nebula()->timer($timer_name, 'end');
 		}
 
 		//Widget Backend (admin form)
@@ -712,6 +724,7 @@ if ( !trait_exists('Widgets') ){
 
 		//Creating widget front-end
 		public function widget($args, $instance){
+			$timer_name = nebula()->timer('Social Sharing Widget', 'start', 'Nebula Widgets');
 			//Before widget arguments are defined by themes
 			echo $args['before_widget'];
 
@@ -738,6 +751,7 @@ if ( !trait_exists('Widgets') ){
 
 			//After widget arguments are defined by themes
 			echo $args['after_widget'];
+			nebula()->timer($timer_name, 'end');
 		}
 
 		//Widget Backend (admin form)
@@ -806,6 +820,7 @@ if ( !trait_exists('Widgets') ){
 
 		//Creating widget front-end
 		public function widget($args, $instance){
+			$timer_name = nebula()->timer('Twitter Tweets Widget', 'start', 'Nebula Widgets');
 			//Before widget arguments are defined by themes
 			echo $args['before_widget'];
 
@@ -862,6 +877,7 @@ if ( !trait_exists('Widgets') ){
 
 			//After widget arguments are defined by themes
 			echo $args['after_widget'];
+			nebula()->timer($timer_name, 'end');
 		}
 
 		//Widget Backend (admin form)
@@ -913,6 +929,7 @@ if ( !trait_exists('Widgets') ){
 
 		//Creating widget front-end
 		public function widget($args, $instance){
+			$timer_name = nebula()->timer('Video Widget', 'start', 'Nebula Widgets');
 			//Before widget arguments are defined by themes
 			echo $args['before_widget'];
 
@@ -937,6 +954,7 @@ if ( !trait_exists('Widgets') ){
 
 			//After widget arguments are defined by themes
 			echo $args['after_widget'];
+			nebula()->timer($timer_name, 'end');
 		}
 
 		//Widget Backend (admin form)
@@ -977,6 +995,7 @@ if ( !trait_exists('Widgets') ){
 
 		//Creating widget front-end
 		public function widget($args, $instance){
+			$timer_name = nebula()->timer('Nebula ACF Widget', 'start', 'Nebula Widgets');
 			//Before widget arguments are defined by themes
 			echo $args['before_widget'];
 
@@ -991,6 +1010,7 @@ if ( !trait_exists('Widgets') ){
 
 			//After widget arguments are defined by themes
 			echo $args['after_widget'];
+			nebula()->timer($timer_name, 'end');
 		}
 
 		public function form($instance){

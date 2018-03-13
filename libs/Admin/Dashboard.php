@@ -879,7 +879,7 @@ if ( !trait_exists('Dashboard') ){
 				wp_die();
 			}
 
-			echo '<p class="resulttext">Search results for <strong>"' . $searchTerm . '"</strong> in the <strong>' . $_POST['data'][0]['directory'] . '</strong> directory:</p><br />';
+			echo '<p class="resulttext">Search results for <strong>"' . $searchTerm . '"</strong> in the <strong>' . basename($dirpath) . '</strong> directory:</p><br />';
 
 			$file_counter = 0;
 			$instance_counter = 0;
@@ -897,9 +897,12 @@ if ( !trait_exists('Dashboard') ){
 						foreach ( file($file) as $lineNumber => $line ){
 							if ( stripos(stripslashes($line), $searchTerm) !== false ){
 								$actualLineNumber = $lineNumber+1;
+								$actualLine = $this->string_limit_chars(trim(htmlentities($line)), 200);
+								$actualLine = ( !empty($actualLine['is_limited']) )? trim($actualLine['text']) . '...' : $actualLine['text'];
+
 								echo '<div class="linewrap">
 								<p class="resulttext">' . str_replace($dirpath, '', dirname($file)) . '/<strong>' . basename($file) . '</strong> on <a class="linenumber" href="#">line ' . $actualLineNumber . '</a>.</p>
-								<div class="precon"><pre class="actualline">' . trim(htmlentities($line)) . '</pre></div>
+								<div class="precon"><pre class="actualline">' . $actualLine . '</pre></div>
 							</div>';
 								$instance_counter++;
 								if ( $counted === 0 ){

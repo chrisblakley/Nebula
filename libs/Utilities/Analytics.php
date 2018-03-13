@@ -19,7 +19,7 @@ if ( !trait_exists('Analytics') ){
 		//If analytics should be allowed.
 		//Note: be careful using this conditional for AJAX analytics as the request is made by the server IP.
 		public function is_analytics_allowed(){
-			if ( isset($_GET['noga']) || is_customize_preview() ){ //Disable analytics for noga query string
+			if ( isset($_GET['noga']) || is_customize_preview() ){ //Disable analytics for ?noga query string
 				return false;
 			}
 
@@ -100,6 +100,7 @@ if ( !trait_exists('Analytics') ){
 					'hitType' => $this->get_option('cd_hittype'),
 					'hitInteractivity' => $this->get_option('cd_hitinteractivity'),
 					'hitMethod' => $this->get_option('cd_hitmethod'),
+					'saveData' => $this->get_option('cd_savedata'),
 					'deviceMemory' => $this->get_option('cd_devicememory'),
 					'batteryMode' => $this->get_option('cd_batterymode'),
 					'batteryPercent' => $this->get_option('cd_batterypercent'),

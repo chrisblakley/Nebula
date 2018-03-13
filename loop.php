@@ -1,9 +1,3 @@
-<?php
-/**
- * The loop that displays posts.
- */
-?>
-
 <div class="loop-section">
 	<?php if ( !have_posts() ): //If there are no posts to display (such as an empty archive page). ?>
 		<article id="post-0" class="post error404 not-found">

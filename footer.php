@@ -1,8 +1,3 @@
-<?php
-/**
- * Theme Footer
- */
-?>
 			<?php if ( is_active_sidebar('footer-widget-area') ): ?>
 				<div id="footer-widget-section">
 					<?php if ( get_theme_mod('nebula_fwa_overlay_color') || get_theme_mod('nebula_fwa_overlay_opacity') ): ?>

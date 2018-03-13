@@ -801,6 +801,18 @@
 										<div class="form-group">
 											<div class="input-group">
 												<div class="input-group-prepend">
+													<div class="input-group-text">Save Data</div>
+												</div>
+												<input type="text" name="nebula_options[cd_savedata]" id="cd_savedata" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_savedata']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Track when the user has requested less data usage. Scope: Session</p>
+											<p class="nebula-help-text more-help form-text text-muted">This listens for the <code>HTTP_SAVE_DATA</code> header on the server-side.</p>
+											<p class="option-keywords"></p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-prepend">
 													<div class="input-group-text">Device Memory</div>
 												</div>
 												<input type="text" name="nebula_options[cd_devicememory]" id="cd_devicememory" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_devicememory']; ?>" />

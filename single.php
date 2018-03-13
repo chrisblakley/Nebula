@@ -1,21 +1,22 @@
 <?php
-/**
- * The Template for displaying all single posts.
- */
+	/**
+	 * The Template for displaying all single posts.
+	 */
 
-if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
-	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
-	http_response_code(403);
-	die();
-}
+	if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
+		header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
+		http_response_code(403);
+		die();
+	}
 
-if ( get_post_format() ){
-	get_template_part('format', get_post_format());
-	exit;
-}
+	if ( get_post_format() ){
+		get_template_part('format', get_post_format());
+		exit;
+	}
 
-do_action('nebula_preheaders');
-get_header(); ?>
+	do_action('nebula_preheaders');
+	get_header();
+?>
 
 <section id="bigheadingcon">
 	<div class="custom-color-overlay"></div>

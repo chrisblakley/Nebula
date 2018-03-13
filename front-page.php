@@ -1,16 +1,17 @@
 <?php
-/**
- * The template for displaying the static front page.
- */
+	/**
+	 * The template for displaying the static front page.
+	 */
 
-if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
-	header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
-	http_response_code(403);
-	die();
-}
+	if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
+		header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
+		http_response_code(403);
+		die();
+	}
 
-do_action('nebula_preheaders');
-get_header(); ?>
+	do_action('nebula_preheaders');
+	get_header();
+?>
 
 <?php if ( get_theme_mod('nebula_hero', true) ): ?>
 	<div id="hero-section" class="nebulashadow inner-top inner-bottom">

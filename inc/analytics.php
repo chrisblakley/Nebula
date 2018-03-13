@@ -36,6 +36,10 @@
 				$_SESSION['original_referrer'] = $original_referrer;
 			}
 
+			if ( nebula()->is_save_data() ){
+				echo 'ga("set", nebula.analytics.dimensions.saveData, "Save Data");';
+			}
+
 			if ( is_singular() || is_page() ){
 				global $post;
 

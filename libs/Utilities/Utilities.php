@@ -51,7 +51,13 @@ if ( !trait_exists('Utilities') ){
 
 		//Generate Nebula Session ID
 		public function nebula_session_id(){
-			$this->timer('Session ID');
+			$timer_name = $this->timer('Session ID');
+
+			//Check object cache first
+			$session_id = wp_cache_get('nebula_session_id');
+			if ( !empty($session_id) ){
+				return $session_id;
+			}
 
 			$session_data = array();
 
@@ -108,14 +114,23 @@ if ( !trait_exists('Utilities') ){
 				$session_id .= $key . ':' . $value . ';';
 			}
 
-			$this->timer('Session ID', 'end');
+			wp_cache_set('nebula_session_id', $session_id); //Store in object cache
+			$this->timer($timer_name, 'end');
 			return $session_id;
 		}
 
 		//Detect Notable POI
 		public function poi($ip='detect'){
+			$timer_name = $this->timer('POI Detection', 'start', 'Nebula POI');
+
 			if ( is_null($ip) ){
 				return false;
+			}
+
+			//Check object cache first
+			$poi_match = wp_cache_get('nebula_poi');
+			if ( !empty($poi_match) ){
+				return $poi_match;
 			}
 
 			$log_file = get_stylesheet_directory() . '/notable_pois.log';
@@ -163,15 +178,22 @@ if ( !trait_exists('Utilities') ){
 			foreach ( $all_notable_pois as $notable_poi ){
 				//Check for RegEx
 				if ( $notable_poi['ip'][0] === '/' && preg_match($notable_poi['ip'], $ip) ){ //If first character of IP is "/" and the requested IP matches the pattern
-					return str_replace(array("\r\n", "\r", "\n"), '', $notable_poi['name']);
+					$poi_match = str_replace(array("\r\n", "\r", "\n"), '', $notable_poi['name']);
+					wp_cache_set('nebula_poi', $poi_match); //Store in object cache
+					$this->timer($timer_name, 'end');
+					return $poi_match;
 				}
 
 				//Check direct match
 				if ( $notable_poi['ip'] === $ip ){
-					return str_replace(array("\r\n", "\r", "\n"), '', $notable_poi['name']);
+					$poi_match = str_replace(array("\r\n", "\r", "\n"), '', $notable_poi['name']);
+					wp_cache_set('nebula_poi', $poi_match); //Store in object cache
+					$this->timer($timer_name, 'end');
+					return $poi_match;
 				}
 			}
 
+			$this->timer($timer_name, 'end');
 			return false;
 		}
 

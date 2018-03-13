@@ -28,6 +28,17 @@ if ( !trait_exists('Optimization') ){
 			add_action('wp_footer', array($this, 'output_console_debug_timings'));
 		}
 
+		//Check if the Save Data header exists (to use less data)
+		public function use_less_data(){return $this->is_save_data();}
+		public function is_lite(){return $this->is_save_data();}
+		public function is_save_data(){
+			if ( isset($_SERVER["HTTP_SAVE_DATA"]) && stristr($_SERVER["HTTP_SAVE_DATA"], 'on') !== false ){
+				return true;
+			}
+
+			return false;
+		}
+
 		public function register_script($handle=null, $src=null, $exec=null, $deps=array(), $ver=false, $in_footer=false){
 			$path = ( !empty($exec) )? $src . '#' . $exec : $src;
 			wp_register_script($handle, $path, $deps, $ver, $in_footer);
@@ -86,6 +97,7 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		//Prep assets for lazy loading. Be careful of dependencies!
+		//When lazy loading JS files, the window load listener may not trigger! Be careful!
 		//Array should be built as: handle => condition
 		public function lazy_load_assets(){
 			$assets = array(
@@ -180,12 +192,12 @@ if ( !trait_exists('Optimization') ){
 						continue;
 					}
 
-					$start_time = ( !empty($data['start']) )? round(($data['start']-$_SERVER['REQUEST_TIME_FLOAT'])*1000) : null;
+					$start_time = ( !empty($data['start']) )? round(($data['start']-$_SERVER['REQUEST_TIME_FLOAT'])*1000) : -1;
 
 					$testTimes['[PHP] ' . $label] = array(
 						'start' => $start_time, //Convert seconds to milliseconds
 						'duration' => round($time*1000), //Convert seconds to milliseconds
-						'elapsed' => ( is_float($start_time) )? $start_time+round($time*1000) : null,
+						'elapsed' => ( is_float($start_time) )? $start_time+round($time*1000) : -1,
 					);
 				}
 

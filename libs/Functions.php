@@ -1379,7 +1379,7 @@ trait Functions {
 		$override = apply_filters('pre_video_meta', null, $provider, $id);
 		if ( isset($override) ){return;}
 
-		$this->timer('Video Meta (' . $id . ')');
+		$timer_name = $this->timer('Video Meta (' . $id . ')', 'start', 'Video Meta');
 
 		$video_metadata = array(
 			'origin' => $this->url_components('basedomain'),
@@ -1480,8 +1480,7 @@ trait Functions {
 			'seconds' => $duration_seconds
 		);
 
-		$this->timer('Video Meta (' . $id . ')', 'end');
-
+		$this->timer($timer_name, 'end');
 		return $video_metadata;
 	}
 
@@ -1703,7 +1702,7 @@ trait Functions {
 	//Infinite Load
 	//Ajax call handle in nebula()->infinite_load();
 	public function infinite_load_query($args=array('post_status' => 'publish', 'showposts' => 4), $loop=false){
-		$this->timer('Infinite Load Query');
+		$timer_name = $this->timer('Infinite Load Query');
 
 		$override = apply_filters('pre_nebula_infinite_load_query', null);
 		if ( isset($override) ){return;}
@@ -1828,7 +1827,7 @@ trait Functions {
 			});
 		</script>
 		<?php
-		$this->timer('Infinite Load Query', 'end');
+		$this->timer($timer_name, 'end');
 	}
 
 	//Check if business hours exist in Nebula Options
@@ -2323,7 +2322,7 @@ trait Functions {
 	//Autocomplete Search AJAX.
 	public function autocomplete_search(){
 		if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-		$this->timer('Autocomplete Search');
+		$timer_name = $this->timer('Autocomplete Search');
 
 		ini_set('memory_limit', '256M'); //@TODO "Nebula" 0: Ideally this would not be here.
 
@@ -2568,7 +2567,7 @@ trait Functions {
 		$outputArray[] = $suggestion;
 
 		echo json_encode($outputArray, JSON_PRETTY_PRINT);
-		$this->timer('Autocomplete Search', 'end');
+		$this->timer($timer_name, 'end');
 		wp_die();
 	}
 
@@ -2585,7 +2584,7 @@ trait Functions {
 	//Advanced Search
 	public function advanced_search(){
 		if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-		$this->timer('Advanced Search');
+		$timer_name = $this->timer('Advanced Search');
 
 		ini_set('memory_limit', '512M'); //Increase memory limit for this script.
 
@@ -2672,7 +2671,7 @@ trait Functions {
 		*/
 
 		echo json_encode($output, JSON_PRETTY_PRINT);
-		$this->timer('Advanced Search', 'end');
+		$this->timer($timer_name, 'end');
 		wp_die();
 	}
 
@@ -2722,6 +2721,9 @@ trait Functions {
 
 		$spaces_and_dots = array(' ', '.');
 		$underscores_and_hyphens = array('_', '-');
+
+		//Check the Save Data header
+		$classes[] = ( $this->is_save_data() )? 'save-data' : '';
 
 		//Device
 		$classes[] = strtolower($this->get_device('formfactor')); //Form factor (desktop, tablet, mobile)
