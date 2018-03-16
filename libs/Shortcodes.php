@@ -227,7 +227,7 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function button_shortcode($atts, $content=''){
-			extract(shortcode_atts( array('size' => 'md', 'type' => 'brand', 'icon' => false, 'href' => '#', 'target' => false, 'class' => '', 'style' => ''), $atts));
+			extract(shortcode_atts(array('size' => 'md', 'type' => 'brand', 'icon' => false, 'href' => '#', 'target' => false, 'class' => '', 'style' => ''), $atts));
 
 			if ( $target ){
 				$target = ' target="' . $target . '"';

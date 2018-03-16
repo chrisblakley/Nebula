@@ -26,6 +26,7 @@ if ( !trait_exists('Optimization') ){
 
 			add_action('send_headers', array($this, 'server_timing_header')); //@todo "Nebula" 0: try using 'send_headers' hook instead?
 			add_action('wp_footer', array($this, 'output_console_debug_timings'));
+			add_action('admin_footer', array($this, 'output_console_debug_timings'));
 		}
 
 		//Check if the Save Data header exists (to use less data)
@@ -362,7 +363,7 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		//Override existing functions (typcially from plugins)
-		public function remove_actions(){ //Note: Priorities much MATCH (not exceed) [default if undeclared is 10]
+		public function remove_actions(){ //Note: Priorities much MATCH (not exceed) [default if undeclared, it is 10]
 			if ( $this->is_admin_page() ){ //WP Admin
 				if ( is_plugin_active('event-espresso/espresso.php') ){
 					remove_filter('admin_footer_text', 'espresso_admin_performance'); //Event Espresso - Prevent adding text to WP Admin footer
@@ -387,16 +388,14 @@ if ( !trait_exists('Optimization') ){
 			remove_filter('the_content_feed', 'wp_staticize_emoji');
 			remove_filter('comment_text_rss', 'wp_staticize_emoji');
 		}
-
 		public function remove_emoji_prefetch($hints, $relation_type){
-			if ( 'dns-prefetch' === $relation_type ) {
+			if ( $relation_type === 'dns-prefetch' ){
 				$matches = preg_grep('/emoji/', $hints);
-				return array_diff( $hints, $matches );
+				return array_diff($hints, $matches);
 			}
 
 			return $hints;
 		}
-
 		public function disable_emojicons_tinymce($plugins){
 			if ( is_array($plugins) ){
 				return array_diff($plugins, array('wpemoji'));
@@ -405,15 +404,24 @@ if ( !trait_exists('Optimization') ){
 			}
 		}
 
-		//Lazy-load images
-		public function lazy_load($src, $options){$this->lazy_img($src, $options);}
-		public function lazy_img($src=false, $attributes=''){
+		//Lazy-load anything
+		public function lazy_load($html=''){
 			?>
 			<samp class="nebula-lazy-position"></samp>
-			<noscript class="nebula-lazy-img">
-				<img src="<?php echo $src; ?>" <?php echo $attributes; ?> />
+			<noscript class="nebula-lazy">
+				<?php echo $html; ?>
 			</noscript>
 			<?php
+		}
+
+		//Lazy-load images
+		public function lazy_img($src=false, $attributes=''){
+			$this->lazy_load('<img src="' . $src . '" ' . $attributes . ' />');
+		}
+
+		//Lazy-load iframes
+		public function lazy_iframe($src=false, $attributes=''){
+			$this->lazy_load('<iframe src="' . $src . '" ' . $attributes . ' ></iframe>');
 		}
 	}
 }

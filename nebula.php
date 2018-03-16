@@ -62,8 +62,9 @@ if ( !class_exists('Nebula') ){
 
 		//Set variables
 		private function variables(){
-			global $content_width;
+			$this->time_before_nebula = microtime(true); //Prep the time before Nebula begins
 
+			global $content_width;
 			//$content_width is a global variable used by WordPress for max image upload sizes and media embeds (in pixels).
 			//If the content area is 960px wide, set $content_width = 940; so images and videos will not overflow.
 			if ( !isset($content_width) ){

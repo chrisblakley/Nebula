@@ -26,7 +26,10 @@
 				<?php if ( have_posts() ){ the_post(); } //Queue the first post, then reset before running the loop. ?>
 				<h1 class="page-title">
 					<?php if ( is_day() ): ?>
-						<?php //header('Location: ' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/'); ?>
+						<?php
+							//header('Location: ' . home_url('/') . get_the_date('Y') . '/' . get_the_date('m') . '/');
+							//wp_die();
+						?>
 						<i class="far fa-fw fa-calendar"></i> <?php echo get_the_date(); ?>
 					<?php elseif ( is_month() ): ?>
 						<i class="far fa-fw fa-calendar"></i> <?php echo get_the_date('F Y'); ?>

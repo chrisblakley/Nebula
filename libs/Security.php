@@ -185,25 +185,25 @@ if ( !trait_exists('Security') ){
 
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
-						die;
+						wp_die();
 					}
 					if ( isset($_SERVER['REMOTE_HOST']) && $this->contains(strtolower($_SERVER['REMOTE_HOST']), $blacklisted_domains) ){
 						$this->ga_send_exception('(Security) Blacklisted domain prevented. Hostname: ' . $_SERVER['REMOTE_HOST']);
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
-						die;
+						wp_die();
 					}
 					if ( isset($_SERVER['SERVER_NAME']) && $this->contains(strtolower($_SERVER['SERVER_NAME']), $blacklisted_domains) ){
 						$this->ga_send_exception('(Security) Blacklisted domain prevented. Server Name: ' . $_SERVER['SERVER_NAME']);
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
-						die;
+						wp_die();
 					}
 					if ( isset($ip_address) && $this->contains(strtolower(gethostbyaddr($ip_address)), $blacklisted_domains) ){
 						$this->ga_send_exception('(Security) Blacklisted domain prevented. Network Hostname: ' . $ip_address);
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
-						die;
+						wp_die();
 					}
 				} else {
 					$this->ga_send_exception('(Security) spammers.txt has no entries!', 0);

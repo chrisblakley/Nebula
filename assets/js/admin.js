@@ -70,6 +70,10 @@ jQuery(function(){
 	}
 }); //End Document Ready
 
+jQuery(window).on('load', function(){
+	performanceMetrics();
+});
+
 jQuery(window).resize(function() {
 	//If Nebula Options Page
 	if ( window.location.href.indexOf('themes.php?page=nebula_options') > 0 ){
@@ -770,5 +774,43 @@ function applyValidationClasses(element, validation, showFeedback){
 		element.parent().find('.invalid-feedback').removeClass('hidden');
 	} else {
 		element.parent().find('.invalid-feedback').addClass('hidden');
+	}
+}
+
+//Record performance timing
+function performanceMetrics(){
+	if ( window.performance && window.performance.timing ){ //Safari 11+
+		setTimeout(function(){
+			var responseEnd = Math.round(performance.timing.responseEnd-performance.timing.navigationStart); //Navigation start until server response finishes
+			var domReady = Math.round(performance.timing.domContentLoadedEventStart-performance.timing.navigationStart); //Navigation start until DOM ready
+			var windowLoaded = Math.round(performance.timing.loadEventStart-performance.timing.navigationStart); //Navigation start until window load
+
+			clientTimings = {
+				'[JS] Server Response': {
+					'start': 0,
+					'duration': responseEnd,
+					'elapsed': responseEnd
+				},
+				'[JS] DOM Ready': {
+					'start': responseEnd,
+					'duration': domReady-responseEnd,
+					'elapsed': domReady
+				},
+				'[JS] Window Load': {
+					'start': domReady,
+					'duration': windowLoaded-domReady,
+					'elapsed': windowLoaded
+				},
+				'[JS] Load Time (Total)': {
+					'start': 0,
+					'duration': windowLoaded,
+					'elapsed': windowLoaded
+				}
+			}
+
+			console.groupCollapsed('Performance');
+			console.table(jQuery.extend(nebula.site.timings, clientTimings));
+			console.groupEnd();
+		}, 0);
 	}
 }

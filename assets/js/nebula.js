@@ -2261,7 +2261,7 @@ function applyValidationClasses(element, validation, showFeedback){
 
 //Lazy load images, styles, and JavaScript assets
 function lazyLoadAssets(){
-	lazyLoadImages();
+	lazyLoadHTML();
 
 	//Lazy load CSS assets
 	jQuery.each(nebula.site.resources.lazy.styles, function(handle, condition){
@@ -2358,17 +2358,17 @@ function nebulaLoadCSS(url){
 	}
 }
 
-//Load the lazy loaded images
-function lazyLoadImages(){
-	//<img> elements
-	//Load any images in the viewport
-	jQuery('noscript.nebula-lazy-img').each(function(){
-		//If the noscript tag is above the fold load it immediately
+//Load the lazy loaded HTML
+function lazyLoadHTML(){
+	//Load any images/iframe inside the viewport
+	jQuery('noscript.nebula-lazy').each(function(){
+		//If the element is above the fold load it immediately
 		if ( jQuery(this).prev('.nebula-lazy-position').offset().top < nebula.dom.window.height() ){
 			jQuery(this).prev('.nebula-lazy-position').remove();
-			jQuery(this).replaceWith(jQuery(this).text()); //Remove the <noscript> tag to reveal the img tag
+			jQuery(this).replaceWith(jQuery(this).text()); //Remove the <noscript> tag to reveal the img/iframe tag
 		}
 	});
+
 	jQuery('.nebula-lazy-position').remove(); //These are no longer needed after initial load
 
 	svgImgs();
@@ -2383,8 +2383,8 @@ function lazyLoadImages(){
 	//Wait for a scroll event to load the rest (use var so it can be turned off)
 	var lazyLoadScrollHandler = function(){
 		//<img> elements
-		jQuery('noscript.nebula-lazy-img').each(function(){
-			jQuery(this).replaceWith(jQuery(this).text()); //Remove the <noscript> tag to reveal the img tag
+		jQuery('noscript.nebula-lazy').each(function(){
+			jQuery(this).replaceWith(jQuery(this).text()); //Remove the <noscript> tag to reveal the img/iframe tag
 		});
 
 		svgImgs();

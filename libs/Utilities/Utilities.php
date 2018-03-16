@@ -404,14 +404,23 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Valid Hostname Regex
+		//Enter ONLY the domain and TLD. The wildcard subdomain regex is automatically added.
 		public function valid_hostname_regex($domains=null){
-			$domains = ( $domains )? $domains : array($this->url_components('domain'));
-			$settingsdomains = ( $this->get_option('hostnames') )? explode(',', $this->get_option('hostnames')) : array($this->url_components('domain'));
-			$fulldomains = array_merge($domains, $settingsdomains, array('googleusercontent.com', 'googleweblight.com')); //Enter ONLY the domain and TLD. The wildcard subdomain regex is automatically added.
-			$fulldomains = preg_filter('/^/', '.*', $fulldomains);
-			$fulldomains = str_replace(array(' ', '.', '-'), array('', '\.', '\-'), $fulldomains); //@TODO "Nebula" 0: Add a * to capture subdomains. Final regex should be: \.*gearside\.com|\.*gearsidecreative\.com
-			$fulldomains = array_unique($fulldomains);
-			return implode("|", $fulldomains);
+			$domains = ( !empty($domains) && is_array($domains) )? $domains : array($this->url_components('domain')); //If a domain is not passed, use the current domain
+
+			//Add hostnames from Nebula Options
+			if ( $this->get_option('hostnames') ){
+				$domains = array_merge($domains, explode(',', str_replace(' ', '', $this->get_option('hostnames'))));
+			}
+
+			$domains = array_merge($domains, array('googleusercontent.com', 'googleweblight.com')); //Add default safe valid domains to the list
+			$all_domains = apply_filters('hostname_regex', $domains); //Allow other functions/plugins to add/remove domains from the array
+
+			$all_domains = preg_filter('/^/', '.*', $all_domains); //Add wildcard prefix to all domains
+			$all_domains = str_replace(array(' ', '.', '-'), array('', '\.', '\-'), $all_domains); //Final regex should be: \.*gearside\.com|\.*gearsidecreative\.com
+			$all_domains = array_unique($all_domains); //De-dupe the domain list
+
+			return implode("|", $all_domains); //Return a valid hostname regex string
 		}
 
 		//Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
@@ -844,36 +853,40 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Check if a website or resource is available
-		public function is_available($url=null, $nocache=false, $lookup_only=false){
-			$override = apply_filters('pre_nebula_is_available', null, $url, $nocache, $lookup_only);
+		public function is_available($url=null, $allow_cache=true, $allow_remote_request=true){
+			$override = apply_filters('pre_nebula_is_available', null, $url, $allow_cache, $allow_remote_request);
 			if ( isset($override) ){return;}
 
+			//Make sure the URL is valid
 			if ( empty($url) || strpos($url, 'http') !== 0 ){
 				trigger_error('Error: Requested URL is either empty or missing acceptable protocol.', E_USER_ERROR);
 				return false;
 			}
 
-			$hostname = str_replace('.', '_', $this->url_components('hostname', $url));
+			$hostname = str_replace('.', '_', $this->url_components('hostname', $url)); //The hostname label for transients
 
+			//Check transient first
 			$site_available_buffer = get_transient('nebula_site_available_' . $hostname);
-			if ( !empty($site_available_buffer) && !$nocache ){
+			if ( !empty($site_available_buffer) && $allow_cache ){ //If this hostname was found in a transient and specifically allowing a cached response.
 				if ( $site_available_buffer === 'Available' ){
-					return true;
+					set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*10); //Re-up the transient with a 10 minute expiration
+					return true; //This hostname has worked within the last 10 minutes
 				}
 
 				set_transient('nebula_site_available_' . $hostname, 'Unavailable', MINUTE_IN_SECONDS*10); //10 minute expiration
-				return false;
+				return false; //This hostname has not worked within the last 10 minutes
 			}
 
-			if ( (empty($site_available_buffer) || $nocache) && !$lookup_only ){
+			//Make an actual request to the URL if: the transient was empty or specifically requested a non-cached response, and specifically allowing a lookup
+			if ( (empty($site_available_buffer) || $allow_cache) && $allow_remote_request ){
 				$response = wp_remote_get($url);
-				if ( !is_wp_error($response) && $response['response']['code'] === 200 ){
+				if ( !is_wp_error($response) && $response['response']['code'] === 200 ){ //If the remote request was successful
 					set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*10); //10 minute expiration
 					return true;
 				}
 			}
 
-			if ( $lookup_only ){
+			if ( !$allow_remote_request ){
 				return true; //Resource may not actually be available, but was asked specifically not to check.
 			}
 
@@ -883,7 +896,7 @@ if ( !trait_exists('Utilities') ){
 
 		//Get a remote resource and if unavailable, don't re-check the resource for 5 minutes.
 		public function remote_get($url, $args=null){
-			$timer_name = $this->url_components('filename', $url);
+			$timer_name = str_replace(array('.', '/'), '_', $this->url_components('filename', $url));
 			$timer_name = $this->timer('Remote Get (' . $timer_name . ')', 'start', 'Remote Get');
 
 			//Must be a valid URL
@@ -894,7 +907,8 @@ if ( !trait_exists('Utilities') ){
 			$hostname = str_replace('.', '_', $this->url_components('hostname', $url));
 
 			//Check if the resource was unavailable in the last 10 minutes
-			if ( !$this->is_available($url, false, true) ){
+			if ( !$this->is_available($url, true, false) ){
+				$this->timer($timer_name, 'end');
 				return new WP_Error('unavailable', 'This resource was unavailable within the last 10 minutes.');
 			}
 
@@ -976,10 +990,6 @@ if ( !trait_exists('Utilities') ){
 		//Add server timings to an array
 		//To add time to an entry, simply use the action 'end' on the same unique_id again
 		public function timer($unique_id, $action='start', $category=false){
-			if ( $this->is_admin_page() ){
-				return false;
-			}
-
 			//Unique ID is required
 			if ( empty($unique_id) || in_array(strtolower($unique_id), array('start', 'stop', 'end')) ){
 				return false;
@@ -1019,22 +1029,21 @@ if ( !trait_exists('Utilities') ){
 
 		//Add category timings together, and add more times to the server timings array
 		public function finalize_timings(){
-			if ( $this->is_admin_page() ){
-				return false;
-			}
-
-			//Check object cache first
-			$finalized_timings = wp_cache_get('nebula_finalized_timings');
-			if ( !empty($finalized_timings) ){
-				return $finalized_timings;
-			}
-
 			//Add category times together
 			if ( !empty($this->server_timings['categories']) ){
 				foreach ( $this->server_timings['categories'] as $category => $times ){
-					$this->server_timings[$category . ' [Total]'] = array('time' => array_sum($times));
+					if ( count($times) > 1 ){
+						$this->server_timings[$category . ' [Total]'] = array('time' => array_sum($times));
+					}
 				}
 			}
+
+			//Add pre-Nebula WordPress time
+			$this->server_timings['WordPress Core'] = array(
+				'start' => $_SERVER['REQUEST_TIME_FLOAT'],
+				'end' => $_SERVER['REQUEST_TIME_FLOAT']+$this->time_before_nebula,
+				'time' => $this->time_before_nebula-$_SERVER['REQUEST_TIME_FLOAT']
+			);
 
 			//Database Queries
 			global $wpdb;
@@ -1061,6 +1070,13 @@ if ( !trait_exists('Utilities') ){
 				'time' => $resource_usage['ru_utime.tv_usec']/1000000
 			);
 
+			//Add Nebula total
+			$this->server_timings['Nebula [Total]'] = array(
+				'start' => $this->time_before_nebula,
+				'end' => microtime(true),
+				'time' => microtime(true)-$this->time_before_nebula
+			);
+
 			//Total PHP execution time
 			$this->server_timings['PHP [Total]'] = array(
 				'start' => $_SERVER['REQUEST_TIME_FLOAT'],
@@ -1068,8 +1084,7 @@ if ( !trait_exists('Utilities') ){
 				'time' => microtime(true)-$_SERVER['REQUEST_TIME_FLOAT']
 			);
 
-			wp_cache_set('nebula_finalized_timings', $this->server_timings); //Store in object cache
-			return $this->server_timings;
+			return apply_filters('nebula_finalize_timings', $this->server_timings); //Allow functions/plugins to add/modifiy timings
 		}
 
 		//Get Nebula version information

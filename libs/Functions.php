@@ -22,7 +22,6 @@ trait Functions {
 		add_filter('image_size_names_choose', array($this, 'image_size_human_names'));
 		add_action('wp_head', array($this, 'add_back_post_feed'));
 		add_action('init', array($this, 'set_default_timezone'), 1);
-		add_action('admin_init', array($this, 'set_default_timezone'), 1);
 
 		if ( $this->get_option('console_css') ){
 			add_action('wp_head', array($this, 'calling_card'));
@@ -33,7 +32,6 @@ trait Functions {
 		if ( is_writable(get_template_directory()) ){
 			if ( !file_exists($this->manifest_json_location(false)) || filemtime($this->manifest_json_location(false)) > (time()-DAY_IN_SECONDS) || $this->is_debug() ){
 				add_action('init', array($this, 'manifest_json'));
-				add_action('admin_init', array($this, 'manifest_json'));
 			}
 		}
 
@@ -557,7 +555,7 @@ trait Functions {
 
 	//Create/Write a manifest JSON file
 	public function manifest_json(){
-		$this->timer('Write Manifest JSON');
+		$timer_name = $this->timer('Write Manifest JSON', 'start', 'Manifest');
 
 		$override = apply_filters('pre_nebula_manifest_json', null);
 		if ( isset($override) ){return;}
@@ -614,13 +612,14 @@ trait Functions {
 		WP_Filesystem();
 		global $wp_filesystem;
 		$wp_filesystem->put_contents($this->manifest_json_location(false), $manifest_json);
-		$this->timer('Write Manifest JSON', 'end');
+		$this->timer($timer_name, 'end');
 	}
 
 	//Redirect to favicon to force-clear the cached version when ?favicon is added to the URL.
 	public function favicon_cache(){
 		if ( array_key_exists('favicon', $_GET) ){
 			header('Location: ' . get_theme_file_uri('/assets/img/meta') . '/favicon.ico');
+			wp_die();
 		}
 	}
 
@@ -2282,7 +2281,7 @@ trait Functions {
 				}
 
 				header('Location: ' . home_url('/') . 'search/?invalid');
-				exit;
+				wp_die();
 			} else {
 				return $query;
 			}
