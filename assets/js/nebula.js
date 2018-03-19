@@ -26,7 +26,7 @@ jQuery(function(){
 
 	//Interaction
 	socialSharing();
-	nebulaVideoTracking();
+	initVideoTracking();
 	animationTriggers();
 	nebulaScrollTo();
 
@@ -82,7 +82,7 @@ jQuery(window).on('load', function(){
 	jQuery('a, li, tr').removeClass('hover');
 	nebula.dom.html.addClass('loaded');
 
-	nebulaServiceWorkerInit();
+	initServiceWorker();
 
 	networkAvailable(); //Call it once on load, then listen for changes
 	jQuery(window).on('offline online', function(){
@@ -99,7 +99,6 @@ jQuery(window).on('resize', function(){
 	debounce(function(){
 		if ( typeof nebula.lastWindowWidth !== 'undefined' && nebula.dom.window.width() != nebula.lastWindowWidth ){ //If the width actually changed
 			nebula.lastWindowWidth = nebula.dom.window.width();
-
 			mobileSearchPlaceholder();
 		}
 	}, 500, 'window resize');
@@ -130,7 +129,7 @@ nebula.videos = {};
  Optimization Functions
  ===========================*/
 
-//Cache selectors
+//Cache DOM selectors
 function cacheSelectors(){
 	nebula.dom = {
 		document: jQuery(document),
@@ -140,14 +139,14 @@ function cacheSelectors(){
 	};
 }
 
-//ServiceWorker
-function nebulaServiceWorkerInit(){
+//Nebula Service Worker
+function initServiceWorker(){
 	if ( nebula.site.options.sw && 'serviceWorker' in navigator ){ //Firefox 44+, Chrome 45+, Edge 17+, Safari 12+
 		navigator.serviceWorker.getRegistrations().then(registrations => { //Get existing SW registrations
 			if ( registrations.length ){
 				registerServiceWorker(); //Already registered, so continue using it.
 			} else {
-				var swScrollHandler = function(){
+				var swScrollHandler = function(){ //Wait for a scroll to register
 					registerServiceWorker();
 					jQuery(window).off('scroll', swScrollHandler); //Stop listening to scroll
 				};
@@ -157,6 +156,7 @@ function nebulaServiceWorkerInit(){
 	}
 }
 
+//Register Service Worker
 function registerServiceWorker(){
 	navigator.serviceWorker.register(nebula.site.sw_url).then(function(){
 		return navigator.serviceWorker.ready; //This can be listened for elsewhere with navigator.serviceWorker.ready.then(function(){ ... });
@@ -213,7 +213,7 @@ function nebulaAddToCache(url){
 		//Since there can be multiple caches, the cache name must match what is in sw.js!
 
 		//Prevent caching of URLs containing certain strings
-		var substrings = ['chrome-extension://', '/wp-login.php', '/wp-admin', 'analytics', 'collect', 'no-cache'];
+		var substrings = ['chrome-extension://', '/wp-login.php', '/wp-admin', 'analytics', 'collect', 'no-cache', '//#'];
 		var length = substrings.length;
 		while ( length-- ){
 			if ( url.indexOf(substrings[length]) !== -1 ){
@@ -328,7 +328,6 @@ function performanceMetrics(){
 					performance.measure('Server Response', 'navigationStart', 'responseEnd');
 					performance.measure('DOM Ready', 'navigationStart', 'domContentLoadedEventStart');
 					performance.measure('Window Load', 'navigationStart', 'loadEventStart');
-					//console.debug( performance.getEntriesByType('measure') );
 				}
 			}
 		}, 0);
@@ -337,19 +336,20 @@ function performanceMetrics(){
 
 //Sub-menu viewport overflow detector
 function overflowDetector(){
-	jQuery('#primarynav .menu > .menu-item').on({
-		'mouseenter focus': function(){
-			var viewportWidth = nebula.dom.window.width();
-			var submenuLeft = jQuery(this).offset().left;
-			var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width();
-			if ( submenuRight > viewportWidth ){
-				jQuery(this).children('.sub-menu').css({'left': 'auto', 'right': '0'});
-			} else {
-				jQuery(this).children('.sub-menu').css({'left': '0', 'right': 'auto'});
+	jQuery('.menu > .menu-item').on({
+		'mouseenter focus focusin': function(){
+			if ( jQuery(this).children('.sub-menu').length ){
+				var submenuLeft = jQuery(this).offset().left;
+				var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width();
+				if ( submenuRight > nebula.dom.window.width() ){
+					jQuery(this).children('.sub-menu').addClass('overflowing');
+				} else {
+					jQuery(this).children('.sub-menu').removeClass('overflowing');
+				}
 			}
 		},
 		'mouseleave': function(){
-			jQuery(this).children('.sub-menu').css({'left': '-9999px', 'right': 'auto'});
+			jQuery(this).children('.sub-menu').removeClass('overflowing');
 		}
 	});
 }
@@ -2365,7 +2365,13 @@ function lazyLoadHTML(){
 		//If the element is above the fold load it immediately
 		if ( jQuery(this).prev('.nebula-lazy-position').offset().top < nebula.dom.window.height() ){
 			jQuery(this).prev('.nebula-lazy-position').remove();
-			jQuery(this).replaceWith(jQuery(this).text()); //Remove the <noscript> tag to reveal the img/iframe tag
+
+			//The actual lazy loaded element as a jQuery object
+			var thisContent = jQuery(jQuery(this).text()).on('load loadeddata', function(){
+				nebulaLazyVideoTracking(jQuery(this));
+			});
+
+			jQuery(this).replaceWith(thisContent); //Remove the <noscript> tag to reveal the img/iframe tag
 		}
 	});
 
@@ -2382,9 +2388,13 @@ function lazyLoadHTML(){
 
 	//Wait for a scroll event to load the rest (use var so it can be turned off)
 	var lazyLoadScrollHandler = function(){
-		//<img> elements
 		jQuery('noscript.nebula-lazy').each(function(){
-			jQuery(this).replaceWith(jQuery(this).text()); //Remove the <noscript> tag to reveal the img/iframe tag
+			//The actual lazy loaded element as a jQuery object
+			var thisContent = jQuery(jQuery(this).text()).on('load loadeddata', function(){
+				nebulaLazyVideoTracking(jQuery(this));
+			});
+
+			jQuery(this).replaceWith(thisContent); //Remove the <noscript> tag to reveal the img/iframe tag
 		});
 
 		svgImgs();
@@ -3572,7 +3582,7 @@ function dataTablesActions(){
 }
 
 //Initialize Video Functionality and Tracking
-function nebulaVideoTracking(){
+function initVideoTracking(){
 	if ( typeof nebula.videos === 'undefined' ){
 		nebula.videos = {}
 	}
@@ -3582,169 +3592,156 @@ function nebulaVideoTracking(){
 	nebulaVimeoTracking();
 }
 
+//Track lazy-loaded videos
+//Note: element can be anything! Don't assume it is a video.
+function nebulaLazyVideoTracking(element){
+	//Re-kick the API for lazy-loaded Youtube and Vimeo videos, and enable tracking for lazy-loaded HTML5 videos.
+	if ( element.is('iframe[src*="youtube"]') ){
+		addYoutubePlayer(element.attr('id'), element);
+	} else if ( element.is('iframe[src*="vimeo"]') ){
+		addVimeoPlayer(element.attr('id'), element);
+	} else if ( element.is('video') ){
+		addHTML5VideoPlayer(element.attr('id'), element);
+	}
+}
+
 //Native HTML5 Videos
 function nebulaHTML5VideoTracking(){
 	jQuery('video').each(function(){
-		var oThis = jQuery(this);
-		var id = oThis.attr('id');
-		var videoTitle = oThis.attr('title') || id || false;
+		var id = jQuery(this).attr('id');
 
-		if ( !videoTitle ){ //An ID or title is required to track HTML5 videos
+		if ( typeof nebula.videos[id] === 'object' ){ //If this video is already being tracked ignore it
 			return false;
 		}
 
-		nebula.videos[id] = {};
-		nebula.videos[id].platform = 'html5'; //The platform the video is hosted using.
-		nebula.videos[id].player = id; //The player ID of this video. Can access the API here.
-		nebula.videos[id].title = videoTitle;
-		nebula.videos[id].id = id;
-		nebula.videos[id].element = oThis;
-		nebula.videos[id].autoplay = ( oThis.attr('autoplay') )? true : false;
-		nebula.videos[id].percent = 0; //The decimal percent of the current position. Multiply by 100 for actual percent.
-		nebula.videos[id].seeker = false; //Whether the viewer has seeked through the video at least once.
-		nebula.videos[id].seen = []; //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
-		nebula.videos[id].watched = 0; //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
-		nebula.videos[id].watchedPercent = 0; //The decimal percent of the video watched. Multiply by 100 for actual percent.
-		nebula.videos[id].pausedYet = false; //If this video has been paused yet by the user.
-		nebula.videos[id].current = 0; //The current position of the video. Units: Seconds
+		addHTML5VideoPlayer(id, jQuery(this));
+	});
+}
 
-		oThis.on('loadedmetadata', function(){
-			nebula.videos[id].current = this.currentTime;
-			nebula.videos[id].duration = this.duration; //The total duration of the video. Units: Seconds
-		});
+function addHTML5VideoPlayer(id, element){
+	var videoTitle = element.attr('title') || id || false;
+	if ( !videoTitle ){ //An ID or title is required to track HTML5 videos
+		return false;
+	}
 
-		oThis.on('play', function(){
-			var thisVideo = nebula.videos[id];
+	nebula.videos[id] = {};
+	nebula.videos[id].platform = 'html5'; //The platform the video is hosted using.
+	nebula.videos[id].player = id; //The player ID of this video. Can access the API here.
+	nebula.videos[id].title = videoTitle;
+	nebula.videos[id].id = id;
+	nebula.videos[id].element = element;
+	nebula.videos[id].autoplay = ( element.attr('autoplay') )? true : false;
+	nebula.videos[id].percent = 0; //The decimal percent of the current position. Multiply by 100 for actual percent.
+	nebula.videos[id].seeker = false; //Whether the viewer has seeked through the video at least once.
+	nebula.videos[id].seen = []; //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
+	nebula.videos[id].watched = 0; //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
+	nebula.videos[id].watchedPercent = 0; //The decimal percent of the video watched. Multiply by 100 for actual percent.
+	nebula.videos[id].pausedYet = false; //If this video has been paused yet by the user.
+	nebula.videos[id].current = 0; //The current position of the video. Units: Seconds
 
-			if ( 'mediaSession' in navigator && oThis.attr('title') ){ //Android Chrome 55+ only
-				navigator.mediaSession.metadata = new MediaMetadata({
-					title: oThis.attr('title'),
-					artist: oThis.attr('artist') || '',
-					album: oThis.attr('album') || '',
+	element.on('loadedmetadata', function(){
+		nebula.videos[id].current = this.currentTime;
+		nebula.videos[id].duration = this.duration; //The total duration of the video. Units: Seconds
+	});
+
+	element.on('play', function(){
+		var thisVideo = nebula.videos[id];
+
+		if ( 'mediaSession' in navigator && element.attr('title') ){ //Android Chrome 55+ only
+			navigator.mediaSession.metadata = new MediaMetadata({
+				title: element.attr('title'),
+				artist: element.attr('artist') || '',
+				album: element.attr('album') || '',
 /*
-					artwork: [{
-						src: 'https://dummyimage.com/512x512',
-						sizes: '512x512',
-						type: 'image/png'
-					}]
+				artwork: [{
+					src: 'https://dummyimage.com/512x512',
+					sizes: '512x512',
+					type: 'image/png'
+				}]
 */
-				});
+			});
+		}
+
+		element.addClass('playing');
+
+		//Only report to GA for non-autoplay videos
+		if ( !element.is('[autoplay]') ){
+			playAction = 'Play';
+			if ( !isInView(element) ){
+				playAction += ' (Not In View)';
 			}
 
-			oThis.addClass('playing');
-
-			//Only report to GA for non-autoplay videos
-			if ( !oThis.is('[autoplay]') ){
-				playAction = 'Play';
-				if ( !isInView(oThis) ){
-					playAction += ' (Not In View)';
-				}
-
-				ga('set', nebula.analytics.metrics.videoStarts, 1);
-				ga('set', nebula.analytics.dimensions.videoWatcher, 'Started');
-				ga('send', 'event', 'Videos', playAction, videoTitle, Math.round(thisVideo.current), {'nonInteraction': thisVideo.autoplay});
-				if ( !thisVideo.autoplay ){
-					nv('event', 'Video Play Began: ' + thisVideo.title);
-				}
+			ga('set', nebula.analytics.metrics.videoStarts, 1);
+			ga('set', nebula.analytics.dimensions.videoWatcher, 'Started');
+			ga('send', 'event', 'Videos', playAction, videoTitle, Math.round(thisVideo.current), {'nonInteraction': thisVideo.autoplay});
+			if ( !thisVideo.autoplay ){
+				nv('event', 'Video Play Began: ' + thisVideo.title);
 			}
+		}
 
-			nebula.dom.document.trigger('nebula_playing_video', thisVideo);
-		});
+		nebula.dom.document.trigger('nebula_playing_video', thisVideo);
+	});
 
-		oThis.on('timeupdate', function(){
-			var thisVideo = nebula.videos[id];
+	element.on('timeupdate', function(){
+		var thisVideo = nebula.videos[id];
 
-			thisVideo.current = this.currentTime; //@todo "Nebula" 0: Still getting NaN on HTML5 autoplay videos sometimes. I think the video begins playing before the metadata is ready...
-			thisVideo.percent = thisVideo.current*100/thisVideo.duration; //Determine watched percent by adding current percents to an array, then count the array!
-			nowSeen = Math.ceil(thisVideo.percent);
-			if ( thisVideo.seen.indexOf(nowSeen) < 0 ){
-				thisVideo.seen.push(nowSeen);
-			}
+		thisVideo.current = this.currentTime; //@todo "Nebula" 0: Still getting NaN on HTML5 autoplay videos sometimes. I think the video begins playing before the metadata is ready...
+		thisVideo.percent = thisVideo.current*100/thisVideo.duration; //Determine watched percent by adding current percents to an array, then count the array!
+		nowSeen = Math.ceil(thisVideo.percent);
+		if ( thisVideo.seen.indexOf(nowSeen) < 0 ){
+			thisVideo.seen.push(nowSeen);
+		}
 
-			thisVideo.watchedPercent = thisVideo.seen.length;
-			thisVideo.watched = (thisVideo.seen.length/100)*thisVideo.duration; //Roughly calculate time watched based on percent seen
+		thisVideo.watchedPercent = thisVideo.seen.length;
+		thisVideo.watched = (thisVideo.seen.length/100)*thisVideo.duration; //Roughly calculate time watched based on percent seen
 
-			if ( thisVideo.watchedPercent > 25 && !thisVideo.engaged ){
-				if ( isInView(oThis) ){
-					ga('set', nebula.analytics.dimensions.videoWatcher, 'Engaged');
+		if ( thisVideo.watchedPercent > 25 && !thisVideo.engaged ){
+			if ( isInView(element) ){
+				ga('set', nebula.analytics.dimensions.videoWatcher, 'Engaged');
 
-					engagedAction = 'Engaged';
-					if ( thisVideo.autoplay ){
-						engagedAction += ' (Autoplay)';
-					}
-
-					ga('send', 'event', 'Videos', engagedAction, thisVideo.title, Math.round(thisVideo.current), {'nonInteraction': true});
-					nv('event', 'Video Engagement: ' + thisVideo.title);
-					thisVideo.engaged = true;
-					nebula.dom.document.trigger('nebula_engaged_video', thisVideo);
-				}
-			}
-		});
-
-		oThis.on('pause', function(){
-			var thisVideo = nebula.videos[id];
-			oThis.removeClass('playing');
-
-			ga('set', nebula.analytics.dimensions.videoWatcher, 'Paused');
-			ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
-			ga('set', nebula.analytics.dimensions.videoPercentage, Math.round(thisVideo.percent*100));
-
-			if ( !thisVideo.pausedYet ){
-				ga('send', 'event', 'Videos', 'First Pause', thisVideo.title, Math.round(thisVideo.current));
-				thisVideo.pausedYet = true;
-			}
-
-			ga('send', 'event', 'Videos', 'Paused', thisVideo.title, Math.round(thisVideo.current));
-			ga('send', 'timing', 'Videos', 'Paused', Math.round(thisVideo.current*1000), thisVideo.title);
-			nv('event', 'Video Paused: ' + thisVideo.title);
-			nebula.dom.document.trigger('nebula_paused_video', thisVideo);
-		});
-
-		oThis.on('seeked', function(){
-			var thisVideo = nebula.videos[id];
-
-			if ( thisVideo.current == 0 && oThis.is('[loop]') ){ //If the video is set to loop and is starting again
-				//If it is an autoplay video without controls, don't log loops
-				if ( oThis.is('[autoplay]') && !oThis.is('[controls]') ){
-					return false;
-				}
-
-				endedAction = 'Ended (Looped)';
-				if ( !isInView(oThis) ){
-					endedAction += ' (Not In View)';
-				}
-
+				engagedAction = 'Engaged';
 				if ( thisVideo.autoplay ){
-					endedAction += ' (Autoplay)';
+					engagedAction += ' (Autoplay)';
 				}
 
-				ga('send', 'event', 'Videos', endedAction, thisVideo.title, {'nonInteraction': true});
-			} else { //Otherwise, the user seeked
-				debounce(function(){
-					ga('set', nebula.analytics.dimensions.videoWatcher, 'Seeker');
-					ga('send', 'event', 'Videos', 'Seek', thisVideo.title + ' [to: ' + thisVideo.current.toFixed(0) + ']');
-					nv('event', 'Video Seek: ' + thisVideo.title);
-					thisVideo.seeker = true;
-					nebula.dom.document.trigger('nebula_seeked_video', thisVideo);
-				}, 250, 'video seeking')
+				ga('send', 'event', 'Videos', engagedAction, thisVideo.title, Math.round(thisVideo.current), {'nonInteraction': true});
+				nv('event', 'Video Engagement: ' + thisVideo.title);
+				thisVideo.engaged = true;
+				nebula.dom.document.trigger('nebula_engaged_video', thisVideo);
 			}
-		});
+		}
+	});
 
-		oThis.on('volumechange', function(){
-			var thisVideo = nebula.videos[id];
-			//console.debug(this);
-		});
+	element.on('pause', function(){
+		var thisVideo = nebula.videos[id];
+		element.removeClass('playing');
 
-		oThis.on('ended', function(){
-			var thisVideo = nebula.videos[id];
-			oThis.removeClass('playing');
+		ga('set', nebula.analytics.dimensions.videoWatcher, 'Paused');
+		ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
+		ga('set', nebula.analytics.dimensions.videoPercentage, Math.round(thisVideo.percent*100));
 
-			ga('set', nebula.analytics.metrics.videoCompletions, 1);
-			ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
-			ga('set', nebula.analytics.dimensions.videoWatcher, 'Ended');
+		if ( !thisVideo.pausedYet ){
+			ga('send', 'event', 'Videos', 'First Pause', thisVideo.title, Math.round(thisVideo.current));
+			thisVideo.pausedYet = true;
+		}
 
-			endedAction = 'Ended';
-			if ( !isInView(oThis) ){
+		ga('send', 'event', 'Videos', 'Paused', thisVideo.title, Math.round(thisVideo.current));
+		ga('send', 'timing', 'Videos', 'Paused', Math.round(thisVideo.current*1000), thisVideo.title);
+		nv('event', 'Video Paused: ' + thisVideo.title);
+		nebula.dom.document.trigger('nebula_paused_video', thisVideo);
+	});
+
+	element.on('seeked', function(){
+		var thisVideo = nebula.videos[id];
+
+		if ( thisVideo.current == 0 && element.is('[loop]') ){ //If the video is set to loop and is starting again
+			//If it is an autoplay video without controls, don't log loops
+			if ( element.is('[autoplay]') && !element.is('[controls]') ){
+				return false;
+			}
+
+			endedAction = 'Ended (Looped)';
+			if ( !isInView(element) ){
 				endedAction += ' (Not In View)';
 			}
 
@@ -3752,45 +3749,71 @@ function nebulaHTML5VideoTracking(){
 				endedAction += ' (Autoplay)';
 			}
 
-			ga('send', 'event', 'Videos', endedAction, thisVideo.title, Math.round(thisVideo.current), {'nonInteraction': true});
+			ga('send', 'event', 'Videos', endedAction, thisVideo.title, {'nonInteraction': true});
+		} else { //Otherwise, the user seeked
+			debounce(function(){
+				ga('set', nebula.analytics.dimensions.videoWatcher, 'Seeker');
+				ga('send', 'event', 'Videos', 'Seek', thisVideo.title + ' [to: ' + thisVideo.current.toFixed(0) + ']');
+				nv('event', 'Video Seek: ' + thisVideo.title);
+				thisVideo.seeker = true;
+				nebula.dom.document.trigger('nebula_seeked_video', thisVideo);
+			}, 250, 'video seeking')
+		}
+	});
 
-			ga('send', 'timing', 'Videos', 'Ended', Math.round(thisVideo.current*1000), thisVideo.title);
-			nv('event', 'Video Ended: ' + thisVideo.title);
-			nebula.dom.document.trigger('nebula_ended_video', thisVideo);
-		});
+	element.on('volumechange', function(){
+		var thisVideo = nebula.videos[id];
+		//console.debug(this);
+	});
+
+	element.on('ended', function(){
+		var thisVideo = nebula.videos[id];
+		element.removeClass('playing');
+
+		ga('set', nebula.analytics.metrics.videoCompletions, 1);
+		ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
+		ga('set', nebula.analytics.dimensions.videoWatcher, 'Ended');
+
+		endedAction = 'Ended';
+		if ( !isInView(element) ){
+			endedAction += ' (Not In View)';
+		}
+
+		if ( thisVideo.autoplay ){
+			endedAction += ' (Autoplay)';
+		}
+
+		ga('send', 'event', 'Videos', endedAction, thisVideo.title, Math.round(thisVideo.current), {'nonInteraction': true});
+
+		ga('send', 'timing', 'Videos', 'Ended', Math.round(thisVideo.current*1000), thisVideo.title);
+		nv('event', 'Video Ended: ' + thisVideo.title);
+		nebula.dom.document.trigger('nebula_ended_video', thisVideo);
 	});
 }
 
+
 //Prepare Youtube Iframe API
-//@TODO "Nebula" 0: Add a console warning if Google API key is empty. Possibly in nebula_functions.php in video_meta()
 function nebulaYoutubeTracking(){
-	if ( jQuery('iframe[src*="youtube"]').length ){
-		var tag = document.createElement('script');
-		tag.src = "https://www.youtube.com/iframe_api";
-		var firstScriptTag = document.getElementsByTagName('script')[0];
-		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-	}
+	once(function(){
+		if ( jQuery('iframe[src*="youtube"]').length ){
+			var tag = document.createElement('script');
+			tag.src = "https://www.youtube.com/iframe_api";
+			var firstScriptTag = document.getElementsByTagName('script')[0];
+			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+		}
+	}, 'nebula youtube api');
 }
 
 function onYouTubeIframeAPIReady(e){
-	jQuery('iframe[src*="youtube"]').each(function(i){
-		var id = jQuery(this).attr('id');
+	jQuery('iframe[src*="youtube"]').each(function(i, element){
+		id = jQuery(this).attr('id');
 		if ( !id ){
 			id = jQuery(this).attr('src').split('?')[0].split('/').pop();
 			jQuery(this).attr('id', id);
 		}
 
-		if ( jQuery(this).attr('src').indexOf('enablejsapi=1') > 0 ){
-			nebula.videos[id] = {
-				'player': new YT.Player(id, { //YT.Player parameter must match the iframe ID!
-					events: { //If these events are only showing up as "true", try removing the &origin= parameter from the Youtube iframe src.
-						'onReady': nebulaYoutubeReady,
-						'onStateChange': nebulaYoutubeStateChange,
-						'onError': nebulaYoutubeError
-					}
-				})
-			}
-
+		if ( jQuery(this).attr('src').indexOf('enablejsapi=1') > 0 ){ //If the iframe src already has the API enabled
+			addYoutubePlayer(id);
 			nebula.dom.document.trigger('nebula_youtube_players_created', nebula.videos[id]);
 		} else {
 			console.warn('The enablejsapi parameter was not found for this Youtube iframe. It has been reloaded to enable it. For better optimization, and more accurate analytics, add it to the iframe.');
@@ -3798,23 +3821,33 @@ function onYouTubeIframeAPIReady(e){
 			//JS API not enabled for this video. Reload the iframe with the correct parameter.
 			var delimiter = ( jQuery(this).attr('src').indexOf('?') > 0 )? '&' : '?';
 			jQuery(this).attr('src', jQuery(this).attr('src') + delimiter + 'enablejsapi=1').on('load', function(){
-				nebula.videos[id] = {
-					'player': new YT.Player(id, { //YT.Player parameter must match the iframe ID!
-						events: { //If these events are only showing up as "true", try removing the &origin= parameter from the Youtube iframe src.
-							'onReady': nebulaYoutubeReady,
-							'onStateChange': nebulaYoutubeStateChange,
-							'onError': nebulaYoutubeError
-						}
-					}),
-					'element': jQuery(this)
-				}
-
+				addYoutubePlayer(id, jQuery(this));
 				nebula.dom.document.trigger('nebula_youtube_players_created', nebula.videos[id]);
 			});
 		}
 	});
 
 	pauseFlag = false;
+}
+
+function addYoutubePlayer(id, element){
+	if ( !id ){
+		return false; //A Youtube ID is required to add player
+	}
+
+	nebula.videos[id] = {
+		'player': new YT.Player(id, { //YT.Player parameter must match the iframe ID!
+			events: { //If these events are only showing up as "true", try removing the &origin= parameter from the Youtube iframe src.
+				'onReady': nebulaYoutubeReady,
+				'onStateChange': nebulaYoutubeStateChange,
+				'onError': nebulaYoutubeError
+			}
+		}),
+	}
+
+	if ( element ){
+		nebula.videos[id].element = element;
+	}
 }
 
 function nebulaYoutubeReady(e){
@@ -3980,171 +4013,183 @@ function nebulaVimeoTracking(){
 			createVimeoPlayers();
 		});
 	}
+}
 
-	//To trigger events on these videos, use the syntax: nebula.videos['PHG-Overview-Video'].play();
-	function createVimeoPlayers(){
-		jQuery('iframe[src*="vimeo"]').each(function(i){
-			var id = jQuery(this).attr('id');
-			if ( !id ){
-				id = jQuery(this).attr('src').split('player_id=').pop().split('&')[0];
-				jQuery(this).attr('id', id);
-			}
-
-			nebula.videos[id] = {
-				'player': new Vimeo.Player(jQuery(this)),
-				'element': jQuery(this)
-			};
-
-			nebula.videos[id].player.on('loaded', vimeoReady);
-			nebula.videos[id].player.on('play', vimeoPlay);
-			nebula.videos[id].player.on('timeupdate', vimeoTimeUpdate);
-			nebula.videos[id].player.on('pause', vimeoPause);
-			nebula.videos[id].player.on('seeked', vimeoSeeked);
-			nebula.videos[id].player.on('ended', vimeoEnded);
-
-			nebula.dom.document.trigger('nebula_vimeo_players_created', nebula.videos[id]);
-		});
-
-		if ( typeof videoProgress === 'undefined' ){
-			videoProgress = {};
-		}
-	}
-
-	function vimeoReady(data){
-		nebula.videos[data.id].platform = 'vimeo'; //The platform the video is hosted using.
-		nebula.videos[data.id].autoplay = jQuery(nebula.videos[data.id].element).attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the iframe src.
-		nebula.videos[data.id].id = data.id;
-		nebula.videos[data.id].current = 0; //The current position of the video. Units: Seconds
-		nebula.videos[data.id].percent = 0; //The percent of the current position. Multiply by 100 for actual percent.
-		nebula.videos[data.id].engaged = false; //Whether the viewer has watched enough of the video to be considered engaged.
-		nebula.videos[data.id].seeker = false; //Whether the viewer has seeked through the video at least once.
-		nebula.videos[data.id].seen = []; //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
-		nebula.videos[data.id].watched = 0; //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
-		nebula.videos[data.id].watchedPercent = 0; //The decimal percentage of the video watched. Multiply by 100 for actual percent.
-		nebula.videos[data.id].pausedYet = false; //If this video has been paused yet by the user.
-
-		//Duration
-		nebula.videos[data.id].getDuration().then(function(duration){
-			nebula.videos[data.id].duration = duration; //The total duration of the video. Units: Seconds
-		});
-
-		//Title
-		nebula.videos[data.id].getVideoTitle().then(function(title){
-			nebula.videos[data.id].title = title; //The title of the video
-		});
-	}
-
-	function vimeoPlay(data){
-		var id = data.id || jQuery(this.element).attr('id');
-		var thisVideo = nebula.videos[id];
-
-		ga('set', nebula.analytics.metrics.videoStarts, 1);
-		ga('set', nebula.analytics.dimensions.videoWatcher, 'Started');
-
-		playAction = 'Play';
-		if ( !isInView(jQuery(this.element)) ){
-			playAction += ' (Not In View)';
+//To trigger events on these videos, use the syntax: nebula.videos['PHG-Overview-Video'].play();
+function createVimeoPlayers(){
+	jQuery('iframe[src*="vimeo"]').each(function(i){
+		var id = jQuery(this).attr('id');
+		if ( !id ){
+			id = jQuery(this).attr('src').split('player_id=').pop().split('&')[0];
+			jQuery(this).attr('id', id);
 		}
 
-		if ( thisVideo.autoplay ){
-			playAction += ' (Autoplay)';
-		} else {
-			jQuery(this).addClass('playing');
+		if ( typeof nebula.videos[id] === 'object' ){ //If this video is already being tracked ignore it
+			return false;
 		}
 
-		ga('send', 'event', 'Videos', playAction, thisVideo.title, Math.round(data.seconds));
-		nv('event', 'Video Play Began: ' + thisVideo.title);
-		nebula.dom.document.trigger('nebula_playing_video', thisVideo.title);
-	}
+		addVimeoPlayer(id, jQuery(this));
+		nebula.dom.document.trigger('nebula_vimeo_players_created', nebula.videos[id]);
+	});
 
-	function vimeoTimeUpdate(data){
-		var id = data.id || jQuery(this.element).attr('id');
-		var thisVideo = nebula.videos[id];
-
-		thisVideo.duration = data.duration;
-		thisVideo.current = data.seconds;
-		thisVideo.percent = data.percent;
-
-		//Determine watched percent by adding current percents to an array, then count the array!
-		nowSeen = Math.ceil(data.percent*100);
-		if ( thisVideo.seen.indexOf(nowSeen) < 0 ){
-			thisVideo.seen.push(nowSeen);
-		}
-		thisVideo.watchedPercent = thisVideo.seen.length;
-		thisVideo.watched = (thisVideo.seen.length/100)*thisVideo.duration; //Roughly calculate time watched based on percent seen
-
-		if ( thisVideo.watchedPercent > 25 && !thisVideo.engaged ){
-			if ( isInView(jQuery(this.element)) ){
-				ga('set', nebula.analytics.dimensions.videoWatcher, 'Engaged');
-
-				engagedAction = 'Engaged';
-				if ( thisVideo.autoplay ){
-					engagedAction += ' (Autoplay)';
-				}
-				ga('send', 'event', 'Videos', engagedAction, thisVideo.title, Math.round(data.seconds), {'nonInteraction': true});
-
-				nv('event', 'Video Engaged: ' + thisVideo.title);
-				thisVideo.engaged = true;
-				nebula.dom.document.trigger('nebula_engaged_video', thisVideo.title);
-			}
-		}
-	}
-
-	function vimeoPause(data){
-		jQuery(this).removeClass('playing');
-
-		var id = data.id || jQuery(this.element).attr('id');
-		var thisVideo = nebula.videos[id];
-		ga('set', nebula.analytics.dimensions.videoWatcher, 'Paused');
-		ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
-		ga('set', nebula.analytics.dimensions.videoPercentage, Math.round(data.percent*100));
-
-		if ( !thisVideo.pausedYet && !thisVideo.seeker ){ //Only capture first pause if they didn't seek
-			ga('send', 'event', 'Videos', 'First Pause', thisVideo.title, Math.round(data.seconds));
-			thisVideo.pausedYet = true;
-		}
-
-		ga('send', 'event', 'Videos', 'Paused', thisVideo.title, Math.round(data.seconds));
-		ga('send', 'timing', 'Videos', 'Paused', Math.round(data.seconds*1000), videoTitle);
-		nv('event', 'Video Paused: ' + thisVideo.title);
-		nebula.dom.document.trigger('nebula_paused_video', thisVideo);
-	}
-
-	function vimeoSeeked(data){
-		var id = data.id || jQuery(this.element).attr('id');
-		var thisVideo = nebula.videos[id];
-
-		ga('set', nebula.analytics.dimensions.videoWatcher, 'Seeker');
-		ga('send', 'event', 'Videos', 'Seek', thisVideo.title + ' [to: ' + data.seconds + ']');
-		nv('event', 'Video Seeked: ' + thisVideo.title);
-		thisVideo.seeker = true;
-		nebula.dom.document.trigger('nebula_seeked_video', id);
-	}
-
-	function vimeoEnded(data){
-		jQuery(this).removeClass('playing');
-
-		var id = jQuery(this.element).attr('id');
-		var thisVideo = nebula.videos[id];
-		ga('set', nebula.analytics.metrics.videoCompletions, 1);
-		ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
-		ga('set', nebula.analytics.dimensions.videoWatcher, 'Ended');
-
-		endedAction = 'Ended';
-		if ( !isInView(jQuery(this.element)) ){
-			endedAction += ' (Not In View)';
-		}
-
-		if ( thisVideo.autoplay ){
-			endedAction += ' (Autoplay)';
-		}
-
-		ga('send', 'event', 'Videos', endedAction, thisVideo.title, Math.round(data.seconds), {'nonInteraction': true});
-		ga('send', 'timing', 'Videos', 'Ended', Math.round(thisVideo.watched*1000), thisVideo.title); //Roughly amount of time watched (Can not be over 100% for Vimeo)
-		nv('event', 'Video Ended: ' + thisVideo.title);
-		nebula.dom.document.trigger('nebula_ended_video', thisVideo);
+	if ( typeof videoProgress === 'undefined' ){
+		videoProgress = {};
 	}
 }
+
+function vimeoReady(data){
+	if ( typeof nebula.videos[data.id] === 'object' ){ //If this video is already being tracked ignore it
+		return false;
+	}
+
+	nebula.videos[data.id].platform = 'vimeo'; //The platform the video is hosted using.
+	nebula.videos[data.id].autoplay = jQuery(nebula.videos[data.id].element).attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the iframe src.
+	nebula.videos[data.id].id = data.id;
+	nebula.videos[data.id].current = 0; //The current position of the video. Units: Seconds
+	nebula.videos[data.id].percent = 0; //The percent of the current position. Multiply by 100 for actual percent.
+	nebula.videos[data.id].engaged = false; //Whether the viewer has watched enough of the video to be considered engaged.
+	nebula.videos[data.id].seeker = false; //Whether the viewer has seeked through the video at least once.
+	nebula.videos[data.id].seen = []; //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
+	nebula.videos[data.id].watched = 0; //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
+	nebula.videos[data.id].watchedPercent = 0; //The decimal percentage of the video watched. Multiply by 100 for actual percent.
+	nebula.videos[data.id].pausedYet = false; //If this video has been paused yet by the user.
+
+	//Duration
+	nebula.videos[data.id].getDuration().then(function(duration){
+		nebula.videos[data.id].duration = duration; //The total duration of the video. Units: Seconds
+	});
+
+	//Title
+	nebula.videos[data.id].getVideoTitle().then(function(title){
+		nebula.videos[data.id].title = title; //The title of the video
+	});
+}
+
+function vimeoPlay(data){
+	var id = data.id || jQuery(this.element).attr('id');
+	var thisVideo = nebula.videos[id];
+
+	ga('set', nebula.analytics.metrics.videoStarts, 1);
+	ga('set', nebula.analytics.dimensions.videoWatcher, 'Started');
+
+	playAction = 'Play';
+	if ( !isInView(jQuery(this.element)) ){
+		playAction += ' (Not In View)';
+	}
+
+	if ( thisVideo.autoplay ){
+		playAction += ' (Autoplay)';
+	} else {
+		jQuery(this).addClass('playing');
+	}
+
+	ga('send', 'event', 'Videos', playAction, thisVideo.title, Math.round(data.seconds));
+	nv('event', 'Video Play Began: ' + thisVideo.title);
+	nebula.dom.document.trigger('nebula_playing_video', thisVideo.title);
+}
+
+function vimeoTimeUpdate(data){
+	var id = data.id || jQuery(this.element).attr('id');
+	var thisVideo = nebula.videos[id];
+
+	thisVideo.duration = data.duration;
+	thisVideo.current = data.seconds;
+	thisVideo.percent = data.percent;
+
+	//Determine watched percent by adding current percents to an array, then count the array!
+	nowSeen = Math.ceil(data.percent*100);
+	if ( thisVideo.seen.indexOf(nowSeen) < 0 ){
+		thisVideo.seen.push(nowSeen);
+	}
+	thisVideo.watchedPercent = thisVideo.seen.length;
+	thisVideo.watched = (thisVideo.seen.length/100)*thisVideo.duration; //Roughly calculate time watched based on percent seen
+
+	if ( thisVideo.watchedPercent > 25 && !thisVideo.engaged ){
+		if ( isInView(jQuery(this.element)) ){
+			ga('set', nebula.analytics.dimensions.videoWatcher, 'Engaged');
+
+			engagedAction = 'Engaged';
+			if ( thisVideo.autoplay ){
+				engagedAction += ' (Autoplay)';
+			}
+			ga('send', 'event', 'Videos', engagedAction, thisVideo.title, Math.round(data.seconds), {'nonInteraction': true});
+
+			nv('event', 'Video Engaged: ' + thisVideo.title);
+			thisVideo.engaged = true;
+			nebula.dom.document.trigger('nebula_engaged_video', thisVideo.title);
+		}
+	}
+}
+
+function vimeoPause(data){
+	jQuery(this).removeClass('playing');
+
+	var id = data.id || jQuery(this.element).attr('id');
+	var thisVideo = nebula.videos[id];
+	ga('set', nebula.analytics.dimensions.videoWatcher, 'Paused');
+	ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
+	ga('set', nebula.analytics.dimensions.videoPercentage, Math.round(data.percent*100));
+
+	if ( !thisVideo.pausedYet && !thisVideo.seeker ){ //Only capture first pause if they didn't seek
+		ga('send', 'event', 'Videos', 'First Pause', thisVideo.title, Math.round(data.seconds));
+		thisVideo.pausedYet = true;
+	}
+
+	ga('send', 'event', 'Videos', 'Paused', thisVideo.title, Math.round(data.seconds));
+	ga('send', 'timing', 'Videos', 'Paused', Math.round(data.seconds*1000), videoTitle);
+	nv('event', 'Video Paused: ' + thisVideo.title);
+	nebula.dom.document.trigger('nebula_paused_video', thisVideo);
+}
+
+function vimeoSeeked(data){
+	var id = data.id || jQuery(this.element).attr('id');
+	var thisVideo = nebula.videos[id];
+
+	ga('set', nebula.analytics.dimensions.videoWatcher, 'Seeker');
+	ga('send', 'event', 'Videos', 'Seek', thisVideo.title + ' [to: ' + data.seconds + ']');
+	nv('event', 'Video Seeked: ' + thisVideo.title);
+	thisVideo.seeker = true;
+	nebula.dom.document.trigger('nebula_seeked_video', id);
+}
+
+function vimeoEnded(data){
+	jQuery(this).removeClass('playing');
+
+	var id = jQuery(this.element).attr('id');
+	var thisVideo = nebula.videos[id];
+	ga('set', nebula.analytics.metrics.videoCompletions, 1);
+	ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
+	ga('set', nebula.analytics.dimensions.videoWatcher, 'Ended');
+
+	endedAction = 'Ended';
+	if ( !isInView(jQuery(this.element)) ){
+		endedAction += ' (Not In View)';
+	}
+
+	if ( thisVideo.autoplay ){
+		endedAction += ' (Autoplay)';
+	}
+
+	ga('send', 'event', 'Videos', endedAction, thisVideo.title, Math.round(data.seconds), {'nonInteraction': true});
+	ga('send', 'timing', 'Videos', 'Ended', Math.round(thisVideo.watched*1000), thisVideo.title); //Roughly amount of time watched (Can not be over 100% for Vimeo)
+	nv('event', 'Video Ended: ' + thisVideo.title);
+	nebula.dom.document.trigger('nebula_ended_video', thisVideo);
+}
+
+function addVimeoPlayer(id, element){
+	nebula.videos[id] = {
+		'player': new Vimeo.Player(element),
+		'element': element
+	};
+
+	nebula.videos[id].player.on('loaded', vimeoReady);
+	nebula.videos[id].player.on('play', vimeoPlay);
+	nebula.videos[id].player.on('timeupdate', vimeoTimeUpdate);
+	nebula.videos[id].player.on('pause', vimeoPause);
+	nebula.videos[id].player.on('seeked', vimeoSeeked);
+	nebula.videos[id].player.on('ended', vimeoEnded);
+}
+
 
 //Pause all videos
 //Use class "ignore-visibility" on iframes to allow specific videos to continue playing regardless of page visibility

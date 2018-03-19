@@ -250,7 +250,6 @@ if ( !trait_exists('Options') ){
 				'plugin_update_warning' => 0,
 				'unnecessary_metaboxes' => 1,
 				'scss' => 0,
-				'dev_stylesheets' => 0,
 				'console_css' => 1,
 
 				//Analytics Tab

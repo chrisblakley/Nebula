@@ -523,13 +523,6 @@
 										<p class="nebula-help-text more-help form-text text-muted">Save Nebula Options to manually process all SCSS files. This option will automatically be disabled after 30 days without processing. CSS files will automatically be minified, but use source maps for debugging. Last processed: <strong><?php echo ( $nebula_data['scss_last_processed'] )? date('l, F j, Y - g:ia', $nebula_data['scss_last_processed']) : 'Never'; ?></strong></p>
 										<p class="option-keywords">sass scss sccs scass css moderate page speed impact</p>
 									</div>
-
-									<div class="form-group">
-										<input type="checkbox" name="nebula_options[dev_stylesheets]" id="dev_stylesheets" value="1" <?php checked('1', !empty($nebula_options['dev_stylesheets'])); ?> /><label for="dev_stylesheets">Developer Stylesheets</label>
-										<p class="nebula-help-text short-help form-text text-muted">Allows multiple developers to work on stylesheets simultaneously. (Default: <?php echo $this->user_friendly_default('dev_stylesheets'); ?>)</p>
-										<p class="nebula-help-text more-help form-text text-muted">Combines CSS files within /assets/css/dev/ into /assets/css/dev.css to allow multiple developers to work on a project without overwriting each other while maintaining a small resource footprint.</p>
-										<p class="option-keywords">sass scss sccs scass css minor page speed impact</p>
-									</div>
 								</div><!-- /option-group -->
 							</div><!--/col-->
 							<div class="col-xl-8">

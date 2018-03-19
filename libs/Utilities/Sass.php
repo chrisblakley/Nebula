@@ -136,10 +136,7 @@ if ( !trait_exists('Sass') ){
 					}
 				}
 
-				//Combine Developer Stylesheets
-				if ( $this->get_option('dev_stylesheets') ){
-					$this->combine_dev_stylesheets($location_paths['directory'] . '/assets', $location_paths['uri'] . '/assets');
-				}
+				do_action('nebula_before_sass_compile', $location_paths); //Allow modification of files before looping through to compile Sass
 
 				//Compile each SCSS file
 				foreach ( glob($location_paths['directory'] . '/assets/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
@@ -204,60 +201,6 @@ if ( !trait_exists('Sass') ){
 			echo '<script>console.warn("Warning: Sass compiling is enabled, but it appears that style.css has been manually updated (Reference: ' . $scss_debug_ref . 's)! A style.css.bak backup has been made. If not using Sass, disable it in Nebula Options. Otherwise, make all edits in style.scss in the /assets/scss directory!");</script>';
 		}
 
-		//Combine developer stylesheets
-		public function combine_dev_stylesheets($directory=null, $directory_uri=null){
-			$override = apply_filters('pre_nebula_combine_dev_stylesheets', null, $directory, $directory_uri);
-			if ( isset($override) ){return;}
-
-			if ( empty($directory) ){
-				trigger_error('Dev stylesheet directories must be specified for files to be combined.', E_USER_NOTICE);
-				return false;
-			}
-
-			WP_Filesystem();
-			global $wp_filesystem;
-
-			$file_counter = 0;
-			$automation_warning = "/**** Warning: This is an automated file! Anything added to this file manually will be removed! ****/\r\n\r\n";
-			$dev_stylesheet_files = glob($directory . '/scss/dev/*css');
-			$dev_scss_file = $directory . '/scss/dev.scss';
-
-			if ( !empty($dev_stylesheet_files) || strlen($dev_scss_file) > strlen($automation_warning)+10 ){ //If there are dev SCSS (or CSS) files -or- if dev.scss needs to be reset
-				$wp_filesystem->put_contents($directory . '/scss/dev.scss', $automation_warning); //Empty /assets/scss/dev.scss
-			}
-			foreach ( $dev_stylesheet_files as $file ){
-				$file_path_info = pathinfo($file);
-				if ( is_file($file) && in_array($file_path_info['extension'], array('css', 'scss')) ){
-					$file_counter++;
-
-					//Include partials in dev.scss //@todo "Nebula" 0: Find a way to prevent hard-coding these partial files. Maybe tap into the $location_paths['imports'] from above (need a specific order other than alphabetical?)?
-					if ( $file_counter === 1 ){
-						$import_partials = '';
-						$import_partials .= "@import '../../../../Nebula-master/assets/scss/partials/variables';\r\n";
-						$import_partials .= "@import '../partials/variables';\r\n";
-						$import_partials .= "@import '../../../../Nebula-master/assets/scss/partials/mixins';\r\n";
-						$import_partials .= "@import '../../../../Nebula-master/assets/scss/partials/helpers';\r\n";
-
-						$wp_filesystem->put_contents($dev_scss_file, $automation_warning . $import_partials . "\r\n");
-					}
-
-					$this_scss_contents = $wp_filesystem->get_contents($file); //Copy file contents
-					$empty_scss = ( $this_scss_contents == '' )? ' (empty)' : '';
-					$dev_scss_contents = $wp_filesystem->get_contents($directory . '/scss/dev.scss');
-
-					$dev_scss_contents .= "\r\n\r\n\r\n/*! ==========================================================================\r\n   " . 'File #' . $file_counter . ': ' . $directory_uri . "/scss/dev/" . $file_path_info['filename'] . '.' . $file_path_info['extension'] . $empty_scss . "\r\n   ========================================================================== */\r\n\r\n" . $this_scss_contents . "\r\n\r\n/* End of " . $file_path_info['filename'] . '.' . $file_path_info['extension'] . " */\r\n\r\n\r\n";
-
-					$wp_filesystem->put_contents($directory . '/scss/dev.scss', $dev_scss_contents);
-				}
-			}
-			if ( $file_counter > 0 ){
-				add_action('wp_enqueue_scripts', function(){
-					wp_enqueue_style('nebula-dev_styles-parent', get_template_directory_uri() . '/assets/css/dev.css?c=' . rand(1, 99999), array('nebula-main'), null);
-					wp_enqueue_style('nebula-dev_styles-child', get_stylesheet_directory_uri() . '/assets/css/dev.css?c=' . rand(1, 99999), array('nebula-main'), null);
-				});
-			}
-		}
-
 		//Compile server-side variables into SCSS
 		public function scss_post_compile($scss){
 			$override = apply_filters('pre_nebula_scss_post_compile', null, $scss);
@@ -290,6 +233,8 @@ if ( !trait_exists('Sass') ){
 		public function sass_color($color='primary', $theme='child'){
 			$override = apply_filters('pre_sass_color', null, $color, $theme);
 			if ( isset($override) ){return;}
+
+			$this->timer('Sass Colors', 'start', 'Sass');
 
 			if ( is_child_theme() && $theme === 'child' ){
 				$assets_directory = get_stylesheet_directory() . '/assets';
@@ -341,6 +286,7 @@ if ( !trait_exists('Sass') ){
 			}
 
 			preg_match('/\$' . $color_search . ': (\S*)(;| !default;)/', $scss_variables, $matches);
+			$this->timer('Sass Colors', 'end');
 			return $matches[1];
 		}
 	}

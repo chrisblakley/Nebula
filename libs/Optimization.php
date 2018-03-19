@@ -405,6 +405,7 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		//Lazy-load anything
+		//This markup can be, and is used hard-coded in other places.
 		public function lazy_load($html=''){
 			?>
 			<samp class="nebula-lazy-position"></samp>

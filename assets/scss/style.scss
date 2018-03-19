@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.10.16.4635
+	Version: 5.10.18.5895
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -45,7 +45,7 @@ span {font-size: inherit;}
 
 a:not(.btn) {@include link-colors($primary_color, $secondary_color, darken($primary_color, 15%), $primary_color, $secondary_color); @include prefix((transition: all 0.25s));
 	&:hover,
-	&:focus,
+	&:focus, //Reconsider this one... for a11y...
 	&:active {text-decoration: none; outline: none;}
 }
 
@@ -85,11 +85,13 @@ form.nebula-search {position: relative; display: inline-block; margin: 0;
 
 .nebula_excerpt {white-space: nowrap;}
 #wp_search_submit {color: #292b2c !important;
-	&:hover {color: #000 !important;}
+	&:hover,
+	&:focus {color: #000 !important;}
 }
 #searchsubmit {/* padding: 2px 5px !important; */ background: $primary_color; border: 0; @include prefix((transition: all 0.25s));
 	#bigheadingcon & {background: $secondary_color;}
-	&:hover {background: $secondary_color;}
+	&:hover,
+	&:focus {background: $secondary_color;}
 }
 
 code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; padding: .2rem .4rem; border-radius: .25rem; color: #222;}
@@ -99,7 +101,8 @@ div.nebula-button {margin-bottom: 10px;}
 //Highlight and emphasize search term in results
 .searchresultword {@include background-color($primary_color, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important; @include prefix((transition: none 0.25s));
 	&.transitionable {@include prefix((transition: background 0.25s));}
-	article:hover & {@include background-color(#ff0 !important, 0.5);}
+	article:hover,
+	article:focus & {@include background-color(#ff0 !important, 0.5);}
 }
 .filterresultword {@include background-color(#ff0, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important;}
 
@@ -152,7 +155,8 @@ div.nebula-button {margin-bottom: 10px;}
 
 	.infinite-load-more {position: relative; font-size: rem(18px); padding: 10px;
 		&:after {content: '\f107'; font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 900; position: absolute; bottom: -10px; left: 0; width: 100%; display: block; text-align: center; transition: bottom 0.25s ease;}
-		&:hover:after {bottom: -13px;}
+		&:hover:after,
+		&:focus:after {bottom: -13px;}
 	}
 
 	&.loading .infinite-load-more {opacity: 0; pointer-events: none;}
@@ -320,7 +324,7 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 	a.ui-state-active {color: #fff;}
 	li a {display: inline-block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width: 100%; @include prefix((transition: none 0.25s));}
 
-	.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {margin: 0; border: none; background: $primary_color;}
+	.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover, .ui-button.ui-state-active:focus {margin: 0; border: none; background: $primary_color;}
 
 	@include mobile("landscape"){left: 0 !important; width: 100% !important;}
 }
@@ -349,11 +353,15 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 	.admin-bar & {will-change: auto;} //Prevent this from affecting the admin-bar
 	.mm-opening &:before {@include background-color(#000, 0.7);}
 
+	.skip-to-content-link.sr-only {top: 15px; left: -150px; transition: left 0.4s easing(easeOutBack);
+		&:focus {left: -80px; color: #fff; background: $primary_color; width: auto; height: auto; overflow: visible; margin: 0; padding: 5px 15px 5px 100px; clip: unset; clip-path: unset; z-index: 999999;}
+	}
+
 	@include media("lg"){will-change: auto;};
 }
 
 //Top row that appears at mobile sizes.
-#mobilebarcon {position: relative; background: $primary_color; width: 100%; height: 42px; overflow: hidden; z-index: 1; @include prefix((transition: all 0.5s));
+#mobilebarcon {visibility: visible; position: relative; background: $primary_color; width: 100%; height: 42px; overflow: hidden; z-index: 1; @include prefix((transition: all 0.5s));
 	a {font-size: rem(32px); @include link-colors(#fff, #aaa, #fff, #fff, #aaa); text-decoration: underline;}
 	.mobilenavcon {display: block;
 		#mobileheadersearch {margin-top: 0; margin-left: 20px; width: 74%; height: 42px;
@@ -366,12 +374,14 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 		}
 	}
 	a.mobilenavtrigger {position: relative; font-size: rem(24px); padding: 0 14px; height: 42px; line-height: 42px; text-align: center; text-decoration: none; color: #fff; @include background-color(#fff, 0.25); z-index: 99999;
-		&:hover {color: #fff; @include background-color(#fff, 0.4);}
+		&:hover,
+		&:focus {color: #fff; @include background-color(#fff, 0.4);}
 		&.active {color: #fff; @include background-color(#fff, 0);}
 	}
 
-	@include media("lg"){height: 0;};
+	@include media("lg"){visibility: hidden; height: 0;};
 }
+
 #mobilenav {visibility: hidden; height: 0;
 	&.mm-menu {visibility: visible; height: 100%;}
 }
@@ -384,27 +394,31 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 
 //Extend animated sub menu dropdowns for WordPress menus (Used with the utility nav and primary nav)
 @mixin nebula-dropdown($font-size: 14px, $line-height: 21px){
-	ul.sub-menu {position: absolute; display: block; top: 120%; left: -9999px; height: auto; margin: 0; padding: 5px 0; opacity: 0; text-align: left; @include prefix((transition: top 0.35s easing(easeOutBack), opacity 0.25s)); @include background-color(#fff, 0.95); box-shadow: 0px 15px 50px 0 rgba(0, 0, 0, 0.25); z-index: 1001;
+	ul.sub-menu {position: absolute; display: block; top: 120%; left: -9999px; right: auto; height: auto; margin: 0; padding: 5px 0; opacity: 0; text-align: left; @include prefix((transition: top 0.35s easing(easeOutBack), opacity 0.25s)); @include background-color(#fff, 0.95); box-shadow: 0px 15px 50px 0 rgba(0, 0, 0, 0.25); z-index: 1001;
 		.no-js & {width: 400px;}
 
 		li.menu-item {display: block; margin: 0; padding: 0 5px;
 			a {display: block; padding: 5px; margin: 0; font-size: rem($font-size); line-height: rem($line-height); @include link-colors($primary_color, #fff, $primary_color, $primary_color, #fff); white-space: nowrap;
-				&:hover {background: $primary_color;}
+				&:hover,
+				&:focus {background: $primary_color;}
 			}
 			ul.sub-menu {display: none;}
 		}
 	}
 
 	&:hover,
-	&:focus {
+	&:focus,
+	&:focus-within {
 		> a {background: lighten($primary_color, 5%); color: #fff !important;}
 
-		ul.sub-menu {left: 0; top: 100%; opacity: 1;
+		ul.sub-menu {left: 0; right: auto; top: 100%; opacity: 1;
+			&.overflowing {left: auto; right: 0;}
 			li {background: none;}
 		}
 	}
 
-	.no-js &:last-child:hover ul.sub-menu {left: auto; right: 0;}
+	.no-js &:last-child:hover ul.sub-menu,
+	.no-js &:last-child:focus ul.sub-menu {left: auto; right: 0;}
 }
 
 #utilitynavcon {max-height: 0; opacity: 0; background: rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));
@@ -531,14 +545,16 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 
 			.meta-item {display: inline-block; margin-right: 10px;
 				a {color: #999;
-					&:hover {color: $primary_color;}
+					&:hover,
+					&:focus {color: $primary_color;}
 				}
 			}
 			.post-tags {font-style: italic;}
 		}
 
 		a {color: #fff; white-space: nowrap;
-			&:not(.btn):hover {color: #aaa;}
+			&:not(.btn):hover,
+			&:not(.btn):focus {color: #aaa;}
 		}
 
 		.form-group {margin-bottom: 0;}
@@ -582,7 +598,8 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 	i, svg {margin-right: 2px; color: #bbb;}
 	.meta-item {display: inline-block; margin-right: 10px;
 		a {color: #999;
-			&:hover {color: $primary_color;}
+			&:hover,
+			&:focus {color: $primary_color;}
 		}
 	}
 	.modified-on {font-style: italic; font-size: 0.75em;}
@@ -654,7 +671,8 @@ div.wp-pagination {text-align: right; margin-bottom: 20px;
 }
 
 	a#metatoggle {display: block; background: $primary_color; color: #fff; text-align: center; width: 100%; padding: 5px 10px;
-		&:hover {background: darken($primary_color, 15%);}
+		&:hover,
+		&:focus {background: darken($primary_color, 15%);}
 	}
 	#advanced-search-meta {max-height: 0; margin-bottom: 15px; @include prefix((transition: all 0.5s)); overflow: hidden;
 		&.active {max-height: 250px;}
@@ -673,13 +691,15 @@ div.wp-pagination {text-align: right; margin-bottom: 20px;
 		.post-cats {margin-right: 10px;}
 
 .more-or-prev-events {display: block; width: 100%; height: 50px; line-height: 50px; color: #fff; margin: 25px 0;
-	&:hover {color: #fff;}
+	&:hover,
+	&:focus {color: #fff;}
 	&.all-events-loaded,
 	&.no-prev-events {pointer-events: none; opacity: 0.3;}
 }
 
 a.resetfilters {font-size: rem(12px); color: $danger_color; opacity: 0;
-	&:hover {color: darken($danger_color, 15%);}
+	&:hover,
+	&:focus {color: darken($danger_color, 15%);}
 	&.active {opacity: 1;}
 }
 
@@ -725,7 +745,8 @@ h2.articles-by {padding-top: 0;}
 	.featured-image {display: flex; align-items: center; max-height: 400px; overflow: hidden;
 		img {transition: all 0.5s ease;}
 
-		&:hover {
+		&:hover,
+		&:focus {
 			img {transform: scale(1.05);}
 		}
 	}
@@ -776,7 +797,8 @@ li.comment div.comment-meta {display: block;}
 
 	//Overrides the default Tag Cloud widget. @TODO "Nebula" 0: Come up with a custom widget for tag list.
 	.tagcloud a {display: inline-block; margin: 6px 3px 0 0; padding: 1px 8px; border-radius: 5px; @include background-color($primary_color, 0.1); color: $primary_color; font-size: rem(14px); //Font size needs !important
-		&:hover {@include background-color($primary_color, 0.25); color: $primary_color;}
+		&:hover,
+		&:focus {@include background-color($primary_color, 0.25); color: $primary_color;}
 	}
 }
 
