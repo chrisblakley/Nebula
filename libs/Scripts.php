@@ -92,15 +92,15 @@ if ( !trait_exists('Scripts') ){
 			if ( !empty($lazy_assets['styles']) && !$this->is_admin_page() ){
 				//Preload imminent CSS assets
 				foreach ( $lazy_assets['styles'] as $handle => $condition ){
-					if ( !empty($handle) && $condition === 'all' ){ //Lazy loaded assets must have a handle!
+					if ( !empty($handle) && !empty($wp_styles->registered[$handle]) && $condition === 'all' ){ //Lazy loaded assets must have a handle!
 						echo '<link rel="preload" id="' . $handle . '-css-preload" href="' . $wp_styles->registered[$handle]->src . '" as="style">' . PHP_EOL;
 					}
 				}
 
-				//Add <noscript> to so lazy CSS files can be loaded for users without JavaScript
+				//Add <noscript> so lazy CSS files can be loaded for users without JavaScript
 				echo  '<noscript>' . PHP_EOL;
 				foreach ( $lazy_assets['styles'] as $handle => $condition ){
-					if ( !empty($handle) ){ //Lazy loaded assets must have a handle!
+					if ( !empty($handle) && !empty($wp_styles->registered[$handle]) ){ //Lazy loaded assets must have a handle!
 						echo '<link rel="stylesheet" id="' . $handle . '-css"  href="' . $wp_styles->registered[$handle]->src . '" type="text/css" media="' . $wp_styles->registered[$handle]->args . '" />' . PHP_EOL;
 					}
 				}

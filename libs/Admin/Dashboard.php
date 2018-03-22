@@ -966,7 +966,7 @@ if ( !trait_exists('Dashboard') ){
 						//Get contact's name
 						$contact_name = false;
 						$has_name = false;
-						if ( !empty($contact->properties->firstname) && !empty($contact->properties->firstname) ){
+						if ( !empty($contact->properties->firstname) && !empty($contact->properties->lastname) ){
 							$contact_name = trim($contact->properties->firstname->value . ' ' . $contact->properties->lastname->value);
 							$has_name = true;
 						} elseif ( !empty($contact->properties->full_name) ){

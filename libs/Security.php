@@ -11,13 +11,7 @@ if ( !trait_exists('Security') ){
 			add_filter('bloginfo_url', array($this, 'hijack_pingback_url'), 11, 2);
 			add_action('wp_head', array($this, 'security_headers')); //@todo "Nebula" 0: try using 'send_headers' hook instead?
 
-			//Disable XMLRPC
-			add_filter('xmlrpc_enabled', '__return_false');
-			remove_action('wp_head', 'rsd_link');
 			remove_action('wp_head', 'wlwmanifest_link');
-			add_filter('pre_option_enable_xmlrpc', array($this, 'disable_xmlrpc'));
-
-			add_action('wp', array($this, 'remove_rsd_link'), 9);
 			add_filter('login_errors', array($this, 'login_errors'));
 			add_filter('the_generator', array($this, 'complete_version_removal'));
 			add_filter('style_loader_src', array($this, 'at_remove_wp_ver_css_js' ), 9999);
@@ -82,16 +76,6 @@ if ( !trait_exists('Security') ){
 			if ( isset($override) ){return;}
 
 			return ( $property === 'pingback_url' )? null : $output;
-		}
-
-		//Disable XMLRPC
-		public function disable_xmlrpc($state){
-			return false;
-		}
-
-		//Remove rsd_link from filters (<link rel="EditURI" />).
-		public function remove_rsd_link(){
-			remove_action('wp_head', 'rsd_link');
 		}
 
 		//Prevent login error messages from giving too much information

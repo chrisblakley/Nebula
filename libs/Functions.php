@@ -268,6 +268,16 @@ trait Functions {
 					'description' => '<a href="options-reading.php">Search Engine Visibility</a> is currently disabled!',
 					'url' => 'options-reading.php'
 				);
+			} else {
+				//If not pinging additional update services (blog must be public for this to be available)
+				$ping_sites = get_option('ping_sites');
+				if ( empty($ping_sites) || $ping_sites === 'http://rpc.pingomatic.com/' ){ //If it is empty or only has the default value
+					$nebula_warnings[] = array(
+						'level' => 'warn',
+						'description' => 'Additional <a href="options-writing.php">Update Services</a> should be pinged. <a href="https://codex.wordpress.org/Update_Services" target="_blank" rel="noopener">Recommended update services</a>',
+						'url' => 'options-writing.php'
+					);
+				}
 			}
 
 			//Check PHP version
@@ -690,14 +700,14 @@ trait Functions {
 
 	//Date post meta
 	public function post_date($options=array()){
-		$defaults = array(
+		$defaults = apply_filters('nebula_post_date_defaults', array(
 			'icon' => true,
 			'type' => 'published', //"published", "modified", or "both"
 			'relative' => get_theme_mod('post_date_format'),
 			'linked' => true,
 			'day' => true,
 			'format' => 'F j, Y',
-		);
+		));
 
 		$data = array_merge($defaults, $options);
 
@@ -737,11 +747,11 @@ trait Functions {
 
 	//Author post meta
 	public function post_author($options=array()){
-		$defaults = array(
+		$defaults = apply_filters('nebula_post_author_defaults', array(
 			'icon' => true, //Show icon
 			'linked' => true, //Link to author page
 			'force' => true, //Override author_bios Nebula option
-		);
+		));
 
 		$data = array_merge($defaults, $options);
 
@@ -793,13 +803,13 @@ trait Functions {
 
 	//Categories post meta
 	public function post_categories($options=array()){
-		$defaults = array(
+		$defaults = apply_filters('nebula_post_categories_defaults', array(
 			'icon' => true, //Show icon
 			'linked' => true, //Link to category archive
 			'show_uncategorized' => true, //Show "Uncategorized" category
 			'force' => false,
 			'string' => false, //Return a string with no markup
-		);
+		));
 
 		$data = array_merge($defaults, $options);
 
@@ -831,11 +841,11 @@ trait Functions {
 
 	//Tags post meta
 	public function post_tags($options=array()){
-		$defaults = array(
+		$defaults = apply_filters('nebula_post_tags_defaults', array(
 			'icon' => true, //Show icon
 			'force' => false,
 			'string' => false, //Return a string with no markup
-		);
+		));
 
 		$data = array_merge($defaults, $options);
 
@@ -964,7 +974,7 @@ trait Functions {
 		$override = apply_filters('pre_nebula_excerpt', null, $options);
 		if ( isset($override) ){return;}
 
-		$defaults = array(
+		$defaults = apply_filters('nebula_excerpt_defaults', array(
 			'id' => false,
 			'text' => false,
 			'paragraphs' => false, //Allow paragraph tags in the excerpt //@todo "Nebula" 0: currently not working
@@ -982,7 +992,7 @@ trait Functions {
 			'strip_tags' => true,
 			'wrap_links' => false,
 			'shorten_urls' => false, //Currently only works with wrap_links
-		);
+		));
 
 		$data = array_merge($defaults, $options);
 
@@ -1489,7 +1499,7 @@ trait Functions {
 		if ( isset($override) ){return;}
 
 		global $post;
-		$defaults = array(
+		$defaults = apply_filters('nebula_breadcrumb_defaults', array(
 			'delimiter' => '&rsaquo;', //Delimiter between crumbs
 			'home' => '<i class="fas fa-home"></i>', //Text for the 'Home' link
 			'home_link' => home_url('/'),
@@ -1498,7 +1508,7 @@ trait Functions {
 			'before' => '<span class="current">', //Tag before the current crumb
 			'after' => '</span>', //Tag after the current crumb
 			'force' => false //Override the breadcrumbs with an array of specific links
-		);
+		));
 
 		$data = array_merge($defaults, $options);
 		$delimiter_html = '<span class="arrow">' . $data['delimiter'] . '</span>';
@@ -2155,12 +2165,12 @@ trait Functions {
 
 	//Twitter cached feed
 	public function twitter_cache($options=array()){
-		$defaults = array(
+		$defaults = apply_filters('nebula_twitter_cache_defaults', array(
 			'user' => 'Great_Blakes',
 			'list' => null,
 			'number' => 5,
 			'retweets' => 1,
-		);
+		));
 
 		$data = array_merge($defaults, $options);
 

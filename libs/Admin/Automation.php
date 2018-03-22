@@ -177,7 +177,7 @@ if ( !trait_exists('Automation') ){
 		}
 
 		public function activation(){
-			wp_remote_get('https://gearside.com/nebula/usage/index.php?r=' . home_url('/'));
+			$this->ga_send_pageview(home_url('/'), get_bloginfo('name'), array('tid' => 'UA-36461517-5', 'dh' => ( function_exists('gethostname') )? gethostname() : '', 'cd1' => home_url('/'), 'cd2' => time(), 'cd8' => date("F j, Y, g:i a", time()+timezone_offset_get(timezone_open("America/New_York"), new DateTime())), 'cd3' => get_bloginfo('version'), 'cd4' => get_bloginfo('description'), 'cd5' => get_bloginfo('wpurl'), 'cd7' => $this->ga_parse_cookie(), 'cn' => 'Nebula Activation', 'cs' => home_url('/'), 'cm' => 'WordPress'));
 
 			//Run express initialization (Nebula Options only)
 			if ( !$this->is_initialized_before() ){
