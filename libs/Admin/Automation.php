@@ -62,7 +62,7 @@ if ( !trait_exists('Automation') ){
 					'required' => false,
 				),
 				array(
-					'name' => 'W3 Total Cache', //@TODO "Nebula" 0: Find a new caching plugin
+					'name' => 'W3 Total Cache',
 					'slug' => 'w3-total-cache',
 					'required' => false,
 				),
@@ -177,7 +177,8 @@ if ( !trait_exists('Automation') ){
 		}
 
 		public function activation(){
-			$this->ga_send_pageview(home_url('/'), get_bloginfo('name'), array('tid' => 'UA-36461517-5', 'dh' => ( function_exists('gethostname') )? gethostname() : '', 'cd1' => home_url('/'), 'cd2' => time(), 'cd8' => date("F j, Y, g:i a", time()+timezone_offset_get(timezone_open("America/New_York"), new DateTime())), 'cd3' => get_bloginfo('version'), 'cd4' => get_bloginfo('description'), 'cd5' => get_bloginfo('wpurl'), 'cd7' => $this->ga_parse_cookie(), 'cn' => 'Nebula Activation', 'cs' => home_url('/'), 'cm' => 'WordPress'));
+			$date = new DateTime("now", new DateTimeZone('America/New_York'));
+			$this->ga_send_pageview(home_url('/'), get_bloginfo('name'), array('tid' => 'UA-36461517-5', 'dh' => ( function_exists('gethostname') )? gethostname() : '', 'cd1' => home_url('/'), 'cd2' => time(), 'cd8' => $date->format('F j, Y, g:ia'), 'cd3' => get_bloginfo('version'), 'cd6' => nebula()->version('raw'), 'cd4' => get_bloginfo('description'), 'cd5' => get_bloginfo('wpurl'), 'cd7' => $this->ga_parse_cookie(), 'cd9' => ( is_child_theme() )? 'Child' : 'Parent', 'cn' => 'Nebula Activation', 'cs' => home_url('/'), 'cm' => 'WordPress'), true);
 
 			//Run express initialization (Nebula Options only)
 			if ( !$this->is_initialized_before() ){

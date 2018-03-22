@@ -325,7 +325,7 @@ if ( !trait_exists('Analytics') ){
 		}
 
 		//Send Pageview Function for Server-Side Google Analytics
-		public function ga_send_pageview($location=null, $title=null, $array=array()){
+		public function ga_send_pageview($location=null, $title=null, $array=array(), $force=false){
 			$override = apply_filters('pre_ga_send_pageview', null, $location, $title, $array);
 			if ( isset($override) ){return;}
 
@@ -346,7 +346,7 @@ if ( !trait_exists('Analytics') ){
 			$data = array_merge($this->ga_common_parameters(), $data); //Add common parameters
 			$data = array_merge($data, $array); //Add passed parameters
 
-			$this->ga_send_data($data);
+			$this->ga_send_data($data, $force);
 		}
 
 		//Send Event Function for Server-Side Google Analytics
@@ -423,14 +423,12 @@ if ( !trait_exists('Analytics') ){
 
 		//Send Data to Google Analytics
 		//https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event
-		public function ga_send_data($data){
+		public function ga_send_data($data, $force=false){
 			$override = apply_filters('pre_ga_send_data', null, $data);
 			if ( isset($override) ){return;}
 
-			if ( $this->get_option('ga_server_side_fallback') ){
-				//https://ga-dev-tools.appspot.com/hit-builder/
-
-				$response = wp_remote_get('https://www.google-analytics.com/collect?payload_data&' . http_build_query($data));
+			if ( $force || $this->get_option('ga_server_side_fallback') ){
+				$response = wp_remote_get('https://www.google-analytics.com/collect?payload_data&' . http_build_query($data)); //https://ga-dev-tools.appspot.com/hit-builder/
 				return $response;
 			}
 
