@@ -13,7 +13,6 @@ if ( !trait_exists('Automation') ){
 			//Configuration Documentation: http://tgmpluginactivation.com/configuration/
 			if ( is_admin() && $this->is_dev(true) || current_user_can('manage_options') ){
 				require_once(get_template_directory() . '/inc/vendor/class-tgm-plugin-activation.php');
-
 				add_action('tgmpa_register', array($this, 'register_required_plugins'));
 			}
 
@@ -177,8 +176,7 @@ if ( !trait_exists('Automation') ){
 		}
 
 		public function activation(){
-			$date = new DateTime("now", new DateTimeZone('America/New_York'));
-			$this->ga_send_pageview(home_url('/'), get_bloginfo('name'), array('tid' => 'UA-36461517-5', 'dh' => ( function_exists('gethostname') )? gethostname() : '', 'cd1' => home_url('/'), 'cd2' => time(), 'cd8' => $date->format('F j, Y, g:ia'), 'cd3' => get_bloginfo('version'), 'cd6' => nebula()->version('raw'), 'cd4' => get_bloginfo('description'), 'cd5' => get_bloginfo('wpurl'), 'cd7' => $this->ga_parse_cookie(), 'cd9' => ( is_child_theme() )? 'Child' : 'Parent', 'cn' => 'Nebula Activation', 'cs' => home_url('/'), 'cm' => 'WordPress'), true);
+			$this->usage('Theme Activation');
 
 			//Run express initialization (Nebula Options only)
 			if ( !$this->is_initialized_before() ){
@@ -247,6 +245,7 @@ if ( !trait_exists('Automation') ){
 		//Nebula Full Initialization (Triggered by either AJAX or manually)
 		public function initialization($ajax=true){ //This default parameter doesn't actually work with AJAX (so we're using the $_POST data below)...
 			if ( current_user_can('manage_options') ){
+				$this->usage('Initialization');
 				$this->express_automation();
 				$this->full_automation();
 				$this->initialization_email_prev_settings();

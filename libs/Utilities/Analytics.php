@@ -536,9 +536,43 @@ if ( !trait_exists('Analytics') ){
 			if ( $error['type'] === E_ERROR ){
 				$message = strstr($error["message"], ' in /', true);
 				$file = strstr($error["file"], 'wp-content'); //Remove high-level directories to reduce clutter and prevent PII
-
 				$this->ga_send_exception('(PHP) ' . $message . ' on line ' . $error["line"] . ' in ' . $file, 1);
 			}
+		}
+
+		//Usage data
+		public function usage($action, $data=array()){
+			$date = new DateTime("now", new DateTimeZone('America/New_York'));
+			$defaults = array(
+				'v' => 1,
+				't' => 'pageview',
+				'tid' => 'UA-36461517-5',
+				'cid' => $this->ga_parse_cookie(),
+				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']),
+				'uip' => $this->get_ip_address(),
+				'dh' => ( function_exists('gethostname') )? gethostname() : '',
+				'dl' => $action,
+				'dt' => get_bloginfo('name'),
+				'cd1' => home_url('/'),
+				'cd2' => time(),
+				'cd8' => $date->format('F j, Y, g:ia'),
+				'cd3' => get_bloginfo('version'),
+				'cd6' => $this->version('raw'),
+				'cd4' => get_bloginfo('description'),
+				'cd5' => get_bloginfo('wpurl'),
+				'cd7' => $this->ga_parse_cookie(),
+				'cd9' => ( is_child_theme() )? 'Child' : 'Parent',
+				'cn' => 'Nebula Usage',
+				'cs' => home_url('/'),
+				'cm' => 'WordPress'
+			);
+
+			if ( strtolower($action) === 'theme activation' ){
+				$defaults['cd10'] = ( $this->get_data('first_activation') )? 'Reactivated - First at ' . $this->get_data('first_activation') . ' (' . human_time_diff($this->get_data('first_activation')) . ' ago)' : 'Initial Activation';
+			}
+
+			$data = array_merge($defaults, $data); //Add passed parameters
+			$this->ga_send_data($data, true);
 		}
 	}
 }

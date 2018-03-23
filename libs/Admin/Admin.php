@@ -804,11 +804,13 @@ if ( !trait_exists('Admin') ){
 				$prev_version = $this->get_data('current_version');
 				$prev_version_commit_date = $this->get_data('current_version_date');
 				$new_version = $this->get_data('next_version');
+				$num_theme_updates = $this->get_data('next_version')+1;
+				$this->usage('Automated Theme Update', array('d11' => 'From ' . $prev_version . ' to ' . $new_version, 'cm1' => $num_theme_updates));
 
 				$this->theme_update_email($prev_version, $prev_version_commit_date, $new_version); //Send email with update information
 				$this->update_data('version_legacy', 'false');
 				$this->update_data('need_sass_compile', 'true'); //Compile all SCSS files on next pageview
-				$this->update_data('num_theme_updates', $this->get_data('next_version')+1);
+				$this->update_data('num_theme_updates', $num_theme_updates);
 			}
 		}
 
