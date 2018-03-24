@@ -534,9 +534,18 @@ if ( !trait_exists('Analytics') ){
 		public function ga_log_fatal_errors(){
 			$error = error_get_last();
 			if ( $error['type'] === E_ERROR ){
-				$message = strstr($error["message"], ' in /', true);
-				$file = strstr($error["file"], 'wp-content'); //Remove high-level directories to reduce clutter and prevent PII
-				$this->ga_send_exception('(PHP) ' . $message . ' on line ' . $error["line"] . ' in ' . $file, 1);
+				$message = strstr($error['message'], ' in /', true);
+				$file = strstr($error['file'], 'wp-content'); //Remove high-level directories to reduce clutter and prevent PII
+				$this->ga_send_exception('(PHP) ' . $message . ' on line ' . $error['line'] . ' in ' . $file, 1);
+
+				if ( preg_match('/themes\/Nebula-?(master|parent|\d+\.\d+)?\//', $file) ){ //If the error is in Nebula parent
+					$this->usage('PHP Fatal Error', array(
+						't' => 'exception',
+						'exd' => $message . ' on line ' . $error['line'] . ' in ' . $file,
+						'exf' => true,
+						'cd12' => get_permalink(),
+					));
+				}
 			}
 		}
 
@@ -568,7 +577,7 @@ if ( !trait_exists('Analytics') ){
 			);
 
 			if ( strtolower($action) === 'theme activation' ){
-				$defaults['cd10'] = ( $this->get_data('first_activation') )? 'Reactivated - First at ' . $this->get_data('first_activation') . ' (' . human_time_diff($this->get_data('first_activation')) . ' ago)' : 'Initial Activation';
+				$defaults['cd10'] = ( $this->get_data('first_activation') && time()-$this->get_data('first_activation') > 60 )? 'Reactivated - First at ' . $this->get_data('first_activation') . ' (' . human_time_diff($this->get_data('first_activation')) . ' ago)' : 'Initial Activation';
 			}
 
 			$data = array_merge($defaults, $data); //Add passed parameters

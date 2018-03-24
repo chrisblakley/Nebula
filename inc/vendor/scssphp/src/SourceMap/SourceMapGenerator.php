@@ -2,7 +2,7 @@
 /**
  * SCSSPHP
  *
- * @copyright 2012-2017 Leaf Corcoran
+ * @copyright 2012-2018 Leaf Corcoran
  *
  * @license http://opensource.org/licenses/MIT MIT
  *
@@ -131,7 +131,6 @@ class SourceMapGenerator
     public function saveMap($content)
     {
         $file = $this->options['sourceMapWriteTo'];
-
         $dir  = dirname($file);
 
         // directory does not exist

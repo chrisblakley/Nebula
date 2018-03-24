@@ -159,6 +159,7 @@ trait Functions {
 		remove_action('wp_head', 'adjacent_posts_rel_link', 10, 0); //Remove relational links for the posts adjacent to the current post
 
 		//Add new image sizes (Given human-readible names in another function below)
+		//"max_size" custom image size is defined in /libs/Optimization.php
 		add_image_size('square', 512, 512, 1);
 		add_image_size('open_graph_large', 1200, 630, 1);
 		add_image_size('open_graph_small', 600, 315, 1);
@@ -650,6 +651,7 @@ trait Functions {
 			return false;
 		}
 
+		$size = apply_filters('nebula_thumbnail_src_size', $size);
 		$image_id = ( get_post_type($id) === 'attachment' || $type !== 'post' )? $id : get_post_thumbnail_id($id); //If the thumbnail (or attachment) ID was passed instead of the post ID
 
 		if ( strpos($id, '<img') !== false || $size === 'full' ){

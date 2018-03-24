@@ -1048,10 +1048,12 @@ if ( !trait_exists('Utilities') ){
 			//Database Queries
 			global $wpdb;
 			$total_query_time = 0;
-			foreach ( $wpdb->queries as $query ){
-				$total_query_time += $query[1];
+			if ( !empty($wpdb->queries) ){
+				foreach ( $wpdb->queries as $query ){
+					$total_query_time += $query[1];
+				}
+				$this->server_timings['DB Queries [Total]'] = array('time' => $total_query_time);
 			}
-			$this->server_timings['DB Queries [Total]'] = array('time' => $total_query_time);
 
 			//Resource Usage
 			$resource_usage = getrusage();

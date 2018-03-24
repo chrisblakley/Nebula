@@ -232,9 +232,7 @@ if ( !trait_exists('Options') ){
 				//Functions Tab
 				'jquery_version' => 'wordpress',
 				'bootstrap_version' => 'latest',
-				'wireframe_theme' => '',
-				'staging_theme' => '',
-				'production_theme' => '',
+				'limit_image_dimensions' => 0,
 				'admin_bar' => 1,
 				'admin_notices' => 1,
 				'dev_info_metabox' => 1,

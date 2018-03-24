@@ -203,8 +203,16 @@ a.white, li.icon.white a {@include link-colors(#fff, #ccc);
 	&.active {background: $secondary_color; border-color: $secondary_color;}
 }
 
+.btn-outline-brand {color: $primary_color; background-color: transparent; background-image: none; border-color: $primary_color;
+	&:hover, &:focus, &:active {color: #fff; background-color: $primary_color; border-color: $primary_color;}
+}
+
 .btn.btn-brand-secondary, .btn.btn-brand-secondary:visited {background-color: $secondary_color; border-color: $secondary_color; color: #fff;
 	&:hover, &:focus, &:active {background: darken($secondary_color, 10%); border-color: darken($secondary_color, 10%); color: #fff;}
+}
+
+.btn-outline-brand-secondary {color: $secondary_color; background-color: transparent; background-image: none; border-color: $secondary_color;
+	&:hover, &:focus, &:active {color: #fff; background-color: $secondary_color; border-color: $secondary_color;}
 }
 
 .phg {margin-left: 3px; padding-left: 15px; background: url($template_directory + "/assets/img/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;

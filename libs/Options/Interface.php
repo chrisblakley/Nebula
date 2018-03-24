@@ -36,6 +36,7 @@
 		}
 
 		if ( isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true' ){
+			$this->usage('Nebula Options Saved');
 			do_action('nebula_options_saved');
 			?>
 			<div class="updated notice is-dismissible">
@@ -466,6 +467,13 @@
 
 								<div class="option-group">
 									<h3>Front-End</h3>
+									<div class="form-group">
+										<input type="checkbox" name="nebula_options[limit_image_dimensions]" id="limit_image_dimensions" value="1" <?php checked('1', !empty($nebula_options['limit_image_dimensions'])); ?> /><label for="limit_image_dimensions">Limit Image Dimensions</label>
+										<p class="nebula-help-text short-help form-text text-muted">Limit image sizes to 1200px on the front-end. (Default: <?php echo $this->user_friendly_default('limit_image_dimensions'); ?>)</p>
+										<p class="nebula-help-text more-help form-text text-muted">This attempts to prevent content managers from accidentally loading large filesize images on the front-end.</p>
+										<p class="option-keywords">major page speed impact</p>
+									</div>
+
 									<div class="form-group">
 										<input type="checkbox" name="nebula_options[author_bios]" id="author_bios" value="1" <?php checked('1', !empty($nebula_options['author_bios'])); ?> /><label for="author_bios">Author Bios</label>
 										<p class="nebula-help-text short-help form-text text-muted">Allow authors to have bios that show their info (and post archives). (Default: <?php echo $this->user_friendly_default('author_bios'); ?>)</p>

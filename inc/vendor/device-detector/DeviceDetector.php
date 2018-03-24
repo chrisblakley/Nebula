@@ -17,6 +17,7 @@ namespace DeviceDetector;
 require_once(dirname(__FILE__) . '/Cache/Cache.php');
 require_once(dirname(__FILE__) . '/Cache/StaticCache.php');
 require_once(dirname(__FILE__) . '/Parser/ParserAbstract.php');
+require_once(dirname(__FILE__) . '/Parser/BotParserAbstract.php');
 require_once(dirname(__FILE__) . '/Parser/Bot.php');
 require_once(dirname(__FILE__) . '/Parser/OperatingSystem.php');
 require_once(dirname(__FILE__) . '/Parser/VendorFragment.php');
@@ -36,6 +37,7 @@ require_once(realpath(dirname(__FILE__) . '/..') . '/spyc.php');
 use DeviceDetector\Cache\StaticCache;
 use DeviceDetector\Cache\Cache;
 use DeviceDetector\Parser\Bot;
+use DeviceDetector\Parser\BotParserAbstract;
 use DeviceDetector\Parser\Client\Browser;
 use DeviceDetector\Parser\OperatingSystem;
 use DeviceDetector\Parser\Client\ClientParserAbstract;
@@ -74,7 +76,7 @@ class DeviceDetector
     /**
      * Current version number of DeviceDetector
      */
-    const VERSION = '3.9.0';
+    const VERSION = '3.10.1';
 
     /**
      * Holds all registered client types
@@ -177,6 +179,11 @@ class DeviceDetector
     protected $deviceParsers = array();
 
     /**
+     * @var BotParserAbstract[]
+     */
+    public $botParsers = array();
+
+    /**
      * @var bool
      */
     private $parsed = false;
@@ -205,6 +212,8 @@ class DeviceDetector
         $this->addDeviceParser('Camera');
         $this->addDeviceParser('PortableMediaPlayer');
         $this->addDeviceParser('Mobile');
+
+        $this->addBotParser(new Bot());
     }
 
     public function __call($methodName, $arguments)
@@ -283,7 +292,7 @@ class DeviceDetector
      */
     public function addDeviceParser($parser)
     {
-	    //BEGIN Nebula fix for required files.
+        //BEGIN Nebula fix for required files.
         require_once(dirname(__FILE__) . '/Parser/Device/' . $parser . '.php');
 		//End Nebula fix for required files.
 
@@ -303,6 +312,19 @@ class DeviceDetector
     public function getDeviceParsers()
     {
         return $this->deviceParsers;
+    }
+
+    /**
+     * @param BotParserAbstract $parser
+     */
+    public function addBotParser(BotParserAbstract $parser)
+    {
+        $this->botParsers[] = $parser;
+    }
+
+    public function getBotParsers()
+    {
+        return $this->botParsers;
     }
 
     /**
@@ -623,14 +645,21 @@ class DeviceDetector
             return false;
         }
 
-        $botParser = new Bot();
-        $botParser->setUserAgent($this->getUserAgent());
-        $botParser->setYamlParser($this->getYamlParser());
-        $botParser->setCache($this->getCache());
-        if ($this->discardBotInformation) {
-            $botParser->discardDetails();
+        $parsers = $this->getBotParsers();
+
+        foreach ($parsers as $parser) {
+            $parser->setUserAgent($this->getUserAgent());
+            $parser->setYamlParser($this->getYamlParser());
+            $parser->setCache($this->getCache());
+            if ($this->discardBotInformation) {
+                $parser->discardDetails();
+            }
+            $bot = $parser->parse();
+            if (!empty($bot)) {
+                $this->bot = $bot;
+                break;
+            }
         }
-        $this->bot = $botParser->parse();
     }
 
 

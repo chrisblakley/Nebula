@@ -24,9 +24,73 @@ if ( !trait_exists('Optimization') ){
 			add_action('wp_enqueue_scripts', array($this, 'move_jquery_to_footer'));
 			add_action('wp_head', array($this, 'listen_for_jquery_footer_errors'));
 
-			add_action('send_headers', array($this, 'server_timing_header')); //@todo "Nebula" 0: try using 'send_headers' hook instead?
+			add_action('send_headers', array($this, 'server_timing_header'));
 			add_action('wp_footer', array($this, 'output_console_debug_timings'));
 			add_action('admin_footer', array($this, 'output_console_debug_timings'));
+
+			add_filter('intermediate_image_sizes_advanced', array($this, 'create_max_width_size_proportionally'), 10, 2);
+			add_filter('post_thumbnail_size', array($this, 'limit_thumbnail_size'), 10, 2);
+			add_filter('nebula_thumbnail_src_size', array($this, 'limit_image_size'));
+			add_filter('max_srcset_image_width', array($this, 'smaller_max_srcset_image_width'), 10, 2);
+		}
+
+		//Create max image size for each uploaded image while maintaining aspect ratio
+		//This is done regardless of if the option is enabled to make this size ready if the option becomes enabled later
+		public function create_max_width_size_proportionally($sizes, $metadata){
+			if ( !empty($metadata['width']) && !empty($metadata['height']) ){
+				//Create a max size of 1200px wide
+				$lg_width = $metadata['width'];
+				$lg_height = $metadata['height'];
+				if ( $metadata['width'] > 1200 ){
+					$lg_width = 1200;
+					$lg_height = ($metadata['height']*$lg_width)/$metadata['width']; //Original Height * Desired Width / Original Width = Desired Height
+				}
+
+				$sizes['max_size'] = array(
+					'width'  => $lg_width,
+					'height' => $lg_height,
+					'crop'   => true
+				);
+
+				//Create a max size of 800px wide for use with the Save Data header
+				$sm_width = $metadata['width'];
+				$sm_height = $metadata['height'];
+				if ( $metadata['width'] > 800 ){
+					$sm_width = 800;
+					$sm_height = ($metadata['height']*$sm_width)/$metadata['width']; //Original Height * Desired Width / Original Width = Desired Height
+				}
+
+				$sizes['max_size_less'] = array(
+					'width'  => $sm_width,
+					'height' => $sm_height,
+					'crop'   => true
+				);
+			}
+
+			return $sizes;
+		}
+
+		//Limit image size when being called
+		public function limit_thumbnail_size($size, $id){
+			return $this->limit_image_size($size);
+		}
+		public function limit_image_size($size){
+			if ( $this->get_option('limit_image_dimensions') ){
+				if ( is_string($size) && $size === 'post-thumbnail' || $size === 'full' ){
+					$size = ( $this->is_save_data() )? 'max_size_less' : 'max_size'; //If Save Data header is present (from user) use smaller max size
+				}
+			}
+
+			return $size;
+		}
+
+		//Reduce the max srcset image width from 1600px to 1200px
+		function smaller_max_srcset_image_width($size, $size_array){
+			if ( $this->get_option('limit_image_dimensions') ){
+				$size = ( $this->is_save_data() )? 800 : 1200; //If Save Data header is present (from user) use smaller max size
+			}
+
+			return $size;
 		}
 
 		//Check if the Save Data header exists (to use less data)
