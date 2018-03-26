@@ -9,8 +9,6 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Analytics') ){
 	trait Analytics {
 		public function hooks(){
-			add_action('nebula_head_open', array($this, 'ga_track_load_abandons')); //This is the earliest anything can be placed in the <head>
-			add_action('wp_footer', array($this, 'visualize_scroll_percent'));
 			add_action('wp_ajax_nebula_ga_ajax', array($this, 'ga_ajax'));
 			add_action('wp_ajax_nopriv_nebula_ga_ajax', array($this, 'ga_ajax'));
 			add_filter('nebula_brain', array($this, 'ga_definitions'));
@@ -433,101 +431,6 @@ if ( !trait_exists('Analytics') ){
 			}
 
 			return false;
-		}
-
-		//Load abandonment tracking
-		//Note: Unlike ga_send_event() this function ignores session page count. These events are typically sent before the pageview.
-		public function ga_track_load_abandons(){
-			if ( $this->get_option('ga_load_abandon') && !$this->is_bot() && !is_customize_preview() ){
-				$custom_metric_hitID = ( $this->get_option('cd_hitid') )? "'cd" . str_replace('dimension', '', $this->get_option('cd_hitid')) . "=" . $this->ga_generate_UUID() . "'," : ''; //Create the Measurement Protocol parameter for cd
-
-				$common_parameters = '';
-				foreach ( $this->ga_common_parameters() as $parameter => $value ){
-					$common_parameters .= $parameter . '="' . $value . '",';
-				}
-
-				?>
-				<script>
-					document.addEventListener('visibilitychange', loadAbandonTracking);
-					window.onbeforeunload = loadAbandonTracking;
-
-					function loadAbandonTracking(e){
-						if ( e.type === 'visibilitychange' && document.visibilityState === 'visible' ){
-							return false;
-						}
-
-						//Remove listeners so this can only trigger once
-						document.removeEventListener('visibilitychange', loadAbandonTracking);
-						window.onbeforeunload = null;
-
-						var loadAbandonLevel = 'Unload'; //Typically only desktop browsers trigger this event (sometimes)
-						if ( e.type === 'visibilitychange' ){
-							loadAbandonLevel = 'Visibility Change'; //This more accurately captures mobile browsers and the majority of abandon types
-						}
-
-						var newReturning = "<?php echo ( isset($_COOKIE['_ga']) )? 'Returning visitor or multiple pageview session' : 'New user or blocking Google Analytics cookie'; ?>";
-
-						//Event
-						navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [
-							<?php echo $common_parameters; ?>
-							't=event', //Hit Type
-							'ec=Load Abandon', //Event Category
-							'ea=' + loadAbandonLevel, //Event Action
-							'el=' + newReturning, //Event Label
-							'ev=' + Math.round(performance.now()), //Event Value
-							'ni=1', //Non-Interaction Hit
-							<?php echo $custom_metric_hitID; //Unique Hit ID ?>
-						].join('&'));
-
-						//User Timing
-						navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [
-							<?php echo $common_parameters; ?>
-							't=timing', //Hit Type
-							'utc=Load Abandon', //Timing Category
-							'utv=' + loadAbandonLevel, //Timing Variable Name
-							'utt=' + Math.round(performance.now()), //Timing Time (milliseconds)
-							'utl=' + newReturning, //Timing Label
-							<?php echo $custom_metric_hitID; //Unique Hit ID ?>
-						].join('&'));
-					}
-
-					//Remove abandonment listeners on window load
-					window.addEventListener('load', function(){
-						document.removeEventListener('visibilitychange', loadAbandonTracking);
-						if ( window.onbeforeunload === loadAbandonTracking ){
-							window.onbeforeunload = null;
-						}
-					});
-				</script>
-				<?php
-			}
-		}
-
-		//Visualize max scroll percent by adding ?max=16.12 to the URL
-		public function visualize_scroll_percent(){
-			if ( isset($_GET['max_scroll']) && $this->is_staff() ){
-				?>
-					<script>
-						jQuery(window).on('load', function(){
-							setTimeout(function(){
-								scrollTop = jQuery(window).scrollTop();
-								pageHeight = jQuery(document).height();
-								viewportHeight = jQuery(window).height();
-								var percentTop = ((pageHeight-viewportHeight)*<?php echo $_GET['max_scroll']; ?>)/100;
-								var divHeight = pageHeight-percentTop;
-
-								jQuery(window).on('scroll', function(){
-									scrollTop = jQuery(window).scrollTop();
-									var currentScrollPercent = ((scrollTop/(pageHeight-viewportHeight))*100).toFixed(2);
-								    console.log('Current Scroll Percent: ' + currentScrollPercent + '%');
-								});
-
-								jQuery('<div style="display: none; position: absolute; top: ' + percentTop + 'px; left: 0; width: 100%; height: ' + divHeight + 'px; border-top: 2px solid orange; background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) ' + viewportHeight + 'px); z-index: 999999; pointer-events: none; overflow: hidden;"><div style="position: absolute; top: ' + viewportHeight + 'px; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); border-top: 2px solid red;"></div></div>').appendTo('body').fadeIn();
-							}, 500);
-						});
-					</script>
-				<?php
-			}
 		}
 
 		//Log fatal errors in Google Analytics as crashes

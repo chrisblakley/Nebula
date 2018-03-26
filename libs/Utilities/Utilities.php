@@ -878,8 +878,9 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			//Make an actual request to the URL if: the transient was empty or specifically requested a non-cached response, and specifically allowing a lookup
-			if ( (empty($site_available_buffer) || $allow_cache) && $allow_remote_request ){
+			if ( $allow_remote_request ){
 				$response = wp_remote_head($url); //Only get the head data for slight speed improvement
+
 				if ( !is_wp_error($response) && $response['response']['code'] === 200 ){ //If the remote request was successful
 					set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*10); //10 minute expiration
 					return true;

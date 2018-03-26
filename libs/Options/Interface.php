@@ -526,9 +526,19 @@
 									<h3>Stylesheets</h3>
 
 									<div class="form-group">
+										<?php
+											$last_processed_text = 'Never';
+											if ( !empty($nebula_data['scss_last_processed']) ){
+												$last_processed_text = '<strong>' . date('l, F j, Y - g:ia', $nebula_data['scss_last_processed']) . '</strong> (' . human_time_diff($nebula_data['scss_last_processed']) . ' ago). Will automatically disable if not re-procesed in ' . human_time_diff($nebula_data['scss_last_processed']+(DAY_IN_SECONDS*30)) . '.';
+											}
+										?>
+
 										<input type="checkbox" name="nebula_options[scss]" id="scss" value="1" <?php checked('1', !empty($nebula_options['scss'])); ?> /><label for="scss">Sass</label>
 										<p class="nebula-help-text short-help form-text text-muted">Enable the bundled SCSS compiler. (Default: <?php echo $this->user_friendly_default('scss'); ?>)</p>
-										<p class="nebula-help-text more-help form-text text-muted">Save Nebula Options to manually process all SCSS files. This option will automatically be disabled after 30 days without processing. CSS files will automatically be minified, but use source maps for debugging. Last processed: <strong><?php echo ( $nebula_data['scss_last_processed'] )? date('l, F j, Y - g:ia', $nebula_data['scss_last_processed']) : 'Never'; ?></strong></p>
+										<p class="nebula-help-text more-help form-text text-muted">
+											Save Nebula Options to manually process all SCSS files. This option will automatically be disabled after 30 days without processing. CSS files will automatically be minified, but use source maps for debugging.<br /><br />
+											Last processed: <?php echo $last_processed_text; ?>
+										</p>
 										<p class="option-keywords">sass scss sccs scass css moderate page speed impact</p>
 									</div>
 								</div><!-- /option-group -->
@@ -670,13 +680,6 @@
 									<div class="form-group" dependent-or="ga_tracking_id">
 										<input type="checkbox" name="nebula_options[ga_server_side_fallback]" id="ga_server_side_fallback" value="1" <?php checked('1', !empty($nebula_options['ga_server_side_fallback'])); ?> /><label for="ga_server_side_fallback">Server-Side Fallback</label>
 										<p class="nebula-help-text short-help form-text text-muted">If Google Analytics is blocked, or if JavaScript is disabled, capture GA data using a server-side payload. (Default: <?php echo $this->user_friendly_default('ga_server_side_fallback'); ?>)</p>
-										<p class="option-keywords"></p>
-									</div>
-
-									<div class="form-group" dependent-or="ga_tracking_id">
-										<input type="checkbox" name="nebula_options[ga_load_abandon]" id="ga_load_abandon" value="1" <?php checked('1', !empty($nebula_options['ga_load_abandon'])); ?> /><label for="ga_load_abandon">Load Abandonment Tracking</label>
-										<p class="nebula-help-text short-help form-text text-muted">Track when visitors leave the page before it finishes loading. (Default: <?php echo $this->user_friendly_default('ga_load_abandon'); ?>)</p>
-										<p class="nebula-help-text more-help form-text text-muted">This is implemented outside of the typical event tracking and because this event happens before the pageview is sent it will slightly alter user/session data (more users than sessions). It is recommended to create a View (and/or a segment) in Google Analytics specific to tracking load abandonment and filter out these hits from the primary reporting view (<code>Sessions > Exclude > Event Category > contains > Load Abandon</code>).</p>
 										<p class="option-keywords"></p>
 									</div>
 
