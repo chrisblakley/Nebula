@@ -31,6 +31,12 @@ if ( !trait_exists('Automation') ){
 		public function register_required_plugins(){
 			$bundled_plugins = array(
 				array(
+					'name'  => 'Nebula Companion',
+					'slug' => 'nebula-companion',
+					'source' => 'https://github.com/chrisblakley/Nebula-Companion/archive/master.zip',
+					'required' => false,
+				),
+				array(
 					'name' => 'Custom Post Type UI',
 					'slug' => 'custom-post-type-ui',
 					'required' => false,
