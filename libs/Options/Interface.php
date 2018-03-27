@@ -75,7 +75,7 @@
 							<div class="input-group-prepend">
 								<div class="input-group-text"><i class="fas fa-fw fa-search"></i></div>
 							</div>
-							<input type="text" id="nebula-option-filter" class="form-control" value="<?php echo $pre_filter; ?>" placeholder="Filter options" />
+							<input type="text" id="nebula-option-filter" class="form-control form-control-lg" value="<?php echo $pre_filter; ?>" placeholder="Filter options" />
 						</div>
 						<p id="reset-filter" class="hidden"><a class="btn btn-danger" href="#"><i class="fas fa-fw fa-times"></i> Reset Filter</a></p>
 

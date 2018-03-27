@@ -112,7 +112,7 @@ if ( !trait_exists('Admin') ){
 			}
 
 			add_action('admin_init', array($this, 'theme_json'));
-			add_action('nebula_theme_update_check', array($this, 'theme_update_version_store'), 10, 2);
+			add_filter('puc_request_update_result_theme-Nebula', array($this, 'theme_update_version_store'), 10, 2); //Action handle must match unique name
 		}
 
 		//Force expire query transients when posts/pages are saved.
@@ -771,28 +771,29 @@ if ( !trait_exists('Admin') ){
 					$this->update_data('next_version', 'INCOMPATIBLE');
 				}
 			} elseif ( current_user_can('manage_options') && is_child_theme() ){
-				include(get_template_directory() . '/inc/vendor/theme-update-checker.php'); //Initialize the update checker library.
-				if ( class_exists('ThemeUpdateChecker') ){
-					$theme_update_checker = new ThemeUpdateChecker(
-						'Nebula-master', //This should be the directory slug of the parent theme.
-						'https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/nebula_theme.json' //Note: This file is updated via a plugin, not Nebula itself.
-					);
-				}
+				require_once(get_template_directory() . '/inc/vendor/plugin-update-checker/plugin-update-checker.php');
+				$theme_update_checker = Puc_v4_Factory::buildUpdateChecker(
+					'https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/nebula_theme.json',
+					get_template_directory() . '/functions.php',
+					'Nebula' //The filter hook above must match this
+				);
 			}
 		}
 
 		//When checking for theme updates, store the next and current Nebula versions from the response. Hook is inside the theme-update-checker.php library.
-		public function theme_update_version_store($themeUpdate, $installedVersion){
-			$this->update_data('next_version', $themeUpdate->version);
+		public function theme_update_version_store($update){
+			$this->update_data('next_version', $update->version);
 			$this->update_data('current_version', $this->version('full'));
 			$this->update_data('current_version_date', $this->version('date'));
 
-			if ( strpos($themeUpdate->version, 'u') && str_replace('u', '', $themeUpdate->version) !== str_replace('u', '', $this->version('full')) ){ //If Github version has "u", disable automated updates.
+			if ( strpos($update->version, 'u') && str_replace('u', '', $update->version) !== str_replace('u', '', $this->version('full')) ){ //If Github version has "u", disable automated updates.
 				$this->update_data('version_legacy', 'true');
 			} elseif ( $this->get_data('version_legacy') === 'true' ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
 				$this->update_data('version_legacy', 'false');
 				$this->update_data('theme_update_notification', 'disabled');
 			}
+
+			return $update;
 		}
 
 		//Send an email to the current user and site admin that Nebula has been updated.
