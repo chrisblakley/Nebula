@@ -458,7 +458,8 @@ trait Functions {
 		if ( !empty($warnings) ){
 			echo '<script>';
 			foreach( $warnings as $warning ){
-				echo 'console.' . $warning['level'] . '("[Nebula] ' . addslashes(strip_tags($warning['description'])) . '");';
+				$category = ( !empty($warning['category']) )? $warning['category'] : 'Nebula';
+				echo 'console.' . $warning['level'] . '("[' . $category . '] ' . addslashes(strip_tags($warning['description'])) . '");';
 			}
 			echo '</script>';
 		}
