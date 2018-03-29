@@ -52,10 +52,10 @@ if ( !trait_exists('Options') ){
 		//Update Nebula options outside of the Nebula Options page
 		public function set_option($option, $value){return $this->update_option($option, $value);}
 		public function update_option($option, $value){
-			$nebula_data = get_option('nebula_options');
-			if ( $nebula_data[$option] !== $value ){
-				$nebula_data[$option] = $value;
-				update_option('nebula_options', $nebula_data);
+			$nebula_options = get_option('nebula_options');
+			if ( empty($nebula_options[$option]) || $nebula_options[$option] !== $value ){
+				$nebula_options[$option] = $value;
+				update_option('nebula_options', $nebula_options);
 			}
 		}
 
@@ -74,7 +74,7 @@ if ( !trait_exists('Options') ){
 		public function set_data($option, $value){return $this->update_data($option, $value);}
 		public function update_data($option, $value){
 			$nebula_data = get_option('nebula_data');
-			if ( $nebula_data[$option] !== $value ){
+			if ( empty($nebula_data[$option]) || $nebula_data[$option] !== $value ){
 				$nebula_data[$option] = $value;
 				update_option('nebula_data', $nebula_data);
 			}

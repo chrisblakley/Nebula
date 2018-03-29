@@ -128,7 +128,7 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			//Check object cache first
-			$poi_match = wp_cache_get('nebula_poi');
+			$poi_match = wp_cache_get('nebula_poi_' . str_replace('.', '_', $ip));
 			if ( !empty($poi_match) ){
 				return $poi_match;
 			}
@@ -179,7 +179,7 @@ if ( !trait_exists('Utilities') ){
 				//Check for RegEx
 				if ( $notable_poi['ip'][0] === '/' && preg_match($notable_poi['ip'], $ip) ){ //If first character of IP is "/" and the requested IP matches the pattern
 					$poi_match = str_replace(array("\r\n", "\r", "\n"), '', $notable_poi['name']);
-					wp_cache_set('nebula_poi', $poi_match); //Store in object cache
+					wp_cache_set('nebula_poi_' . str_replace('.', '_', $ip), $poi_match); //Store in object cache
 					$this->timer($timer_name, 'end');
 					return $poi_match;
 				}
@@ -187,12 +187,13 @@ if ( !trait_exists('Utilities') ){
 				//Check direct match
 				if ( $notable_poi['ip'] === $ip ){
 					$poi_match = str_replace(array("\r\n", "\r", "\n"), '', $notable_poi['name']);
-					wp_cache_set('nebula_poi', $poi_match); //Store in object cache
+					wp_cache_set('nebula_poi_' . str_replace('.', '_', $ip), $poi_match); //Store in object cache
 					$this->timer($timer_name, 'end');
 					return $poi_match;
 				}
 			}
 
+			wp_cache_set('nebula_poi_' . str_replace('.', '_', $ip), false); //Store in object cache
 			$this->timer($timer_name, 'end');
 			return false;
 		}

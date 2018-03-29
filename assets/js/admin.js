@@ -124,6 +124,13 @@ function developerMetaboxes(){
 		return false;
 	});
 
+	//Dynamic height for TODO results
+	jQuery('.todo_results').addClass('height-check');
+	if ( jQuery('.todo_results')[0].scrollHeight <= 300 ){
+		jQuery('.todo_results').css('height', jQuery('.todo_results')[0].scrollHeight + 'px');
+	}
+	jQuery('.todo_results').removeClass('height-check');
+
 	//Hide TODO files with only hidden items
 	jQuery('.todofilewrap').each(function(){
 		if ( jQuery(this).find('.linewrap').length === jQuery(this).find('.todo-priority-0').length ){

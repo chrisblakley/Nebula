@@ -784,7 +784,7 @@ if ( !trait_exists('Dashboard') ){
 			foreach ( $all_directory_search_options as $name => $option_html ){
 				echo $option_html;
 			}
-			echo '</select><input class="searchterm button button-primary" type="submit" value="Search" /></form><br />';
+			echo '</select><input class="searchterm button button-primary" type="submit" value="Search" /></form>';
 			echo '<div class="search_results"></div>';
 			$this->timer('Nebula Developer Dashboard', 'end');
 		}
