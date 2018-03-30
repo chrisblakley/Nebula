@@ -73,11 +73,11 @@ if ( !trait_exists('Users') ){
 				if ( $this->is_user_online($id) ){
 					$online_now = '<i class="fas fa-caret-right" style="color: #58c026;"></i> <strong>Online Now</strong>';
 					if ( $this->user_single_concurrent($id) > 1 ){
-						$online_now .= '<br/><small>(<strong>' . $this->user_single_concurrent($id) . '</strong> locations)</small>';
+						$online_now .= '<br /><small>(<strong>' . $this->user_single_concurrent($id) . '</strong> locations)</small>';
 					}
 					return $online_now;
 				} else {
-					return ( $this->user_last_online($id) )? '<small><em>' . date('M j, Y @ g:ia', $this->user_last_online($id)) . '</em></small>' : '';
+					return ( $this->user_last_online($id) )? '<small>' . human_time_diff($this->user_last_online($id)) . ' ago<br /><em>' . date('M j, Y @ g:ia', $this->user_last_online($id)) . '</em></small>' : '';
 				}
 			}
 

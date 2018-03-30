@@ -61,7 +61,7 @@ if ( !trait_exists('Dashboard') ){
 			global $wp_version;
 			global $wp_post_types;
 
-			echo '<ul>';
+			echo '<ul class="nebula-fa-ul">';
 			echo '<li><i class="fas fa-fw fa-globe"></i> <a href="' . home_url('/') . '" target="_blank" rel="noopener">' . home_url('/') . '</a></li>';
 
 			//Address
@@ -234,7 +234,7 @@ if ( !trait_exists('Dashboard') ){
 			$this->timer('Nebula Current User Dashboard');
 			$user_info = get_userdata(get_current_user_id());
 
-			echo '<ul>';
+			echo '<ul class="nebula-fa-ul">';
 			//Company
 			$company = '';
 			if ( get_the_author_meta('jobcompany', $user_info->ID) ){
@@ -391,7 +391,8 @@ if ( !trait_exists('Dashboard') ){
 			$this->timer('Nebula Administrative Dashboard');
 			$third_party_tools = $this->third_party_tools();
 
-			echo '<ul>';
+			echo '<div style="display: flex; flex-wrap: wrap;"><div style="max-width: calc(50% - 15px); margin-right: 15px;">';
+			echo '<ul class="nebula-fa-ul" style="margin-top: 0;">';
 			foreach ( $third_party_tools['administrative'] as $tool ){
 				echo '<li>' . $tool['icon'] . ' <a href="' . $tool['url'] . '" target="_blank" rel="noopener">' . $tool['name'] . '</a></li>';
 			}
@@ -399,9 +400,11 @@ if ( !trait_exists('Dashboard') ){
 			do_action('nebula_administrative_metabox');
 			echo '</ul>';
 			echo '<p><small><em>Manage administrative links in <strong><a href="themes.php?page=nebula_options&tab=administration">Nebula Options</a></strong>.</em></small></p>';
+			echo '</div>';
 
+			echo '<div style="max-width: 50%;">';
 			echo '<h3>Social</h3>';
-			echo '<ul>';
+			echo '<ul class="nebula-fa-ul">';
 			foreach ( $third_party_tools['social'] as $tool ){
 				echo '<li>' . $tool['icon'] . ' <a href="' . $tool['url'] . '" target="_blank" rel="noopener">' . $tool['name'] . '</a></li>';
 			}
@@ -409,6 +412,8 @@ if ( !trait_exists('Dashboard') ){
 			do_action('nebula_social_metabox');
 			echo '</ul>';
 			echo '<p><small><em>Manage social links in <strong><a href="themes.php?page=nebula_options&filter=social">Nebula Options</a></strong>.</em></small></p>';
+			echo '</div></div>';
+
 			$this->timer('Nebula Administrative Dashboard', 'end');
 		}
 
@@ -420,7 +425,7 @@ if ( !trait_exists('Dashboard') ){
 		//Pinckney Hugo Group metabox content
 		public function dashboard_phg(){
 			echo '<a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+photo' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" /></a>';
-			echo '<ul>';
+			echo '<ul class="nebula-fa-ul">';
 			echo '<li><i class="fas fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener">760 West Genesee Street, Syracuse, NY 13204</a></li>';
 			echo '<li><i class="fas fa-fw fa-link"></i> <a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+textlink' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank">PinckneyHugo.com</a></li>';
 			echo '<li><i class="fas fa-fw fa-phone"></i> (315) 478-6700</li>';
@@ -577,7 +582,7 @@ if ( !trait_exists('Dashboard') ){
 		public function dashboard_developer_info(){
 			$this->timer('Nebula Developer Dashboard');
 			do_action('nebula_developer_info');
-			echo '<ul class="serverdetections">';
+			echo '<ul class="nebula-fa-ul serverdetections">';
 
 			//Domain
 			$domain = $this->url_components('domain');

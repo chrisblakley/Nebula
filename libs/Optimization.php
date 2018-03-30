@@ -74,10 +74,14 @@ if ( !trait_exists('Optimization') ){
 		public function limit_thumbnail_size($size, $id){
 			return $this->limit_image_size($size);
 		}
-		public function limit_image_size($size){
+		public function limit_image_size($size, $id){
 			if ( $this->get_option('limit_image_dimensions') ){
-				if ( is_string($size) && $size === 'post-thumbnail' || $size === 'full' ){
-					$size = ( $this->is_save_data() )? 'max_size_less' : 'max_size'; //If Save Data header is present (from user) use smaller max size
+				if ( is_string($size) && ($size === 'post-thumbnail' || $size === 'full') ){
+					if ( $this->is_save_data() ){
+						return 'max_size_less';
+					}
+
+					return 'max_size';
 				}
 			}
 
