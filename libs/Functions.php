@@ -267,7 +267,7 @@ trait Functions {
 				$nebula_warnings[] = array(
 					'level' => 'error',
 					'description' => '<a href="options-reading.php">Search Engine Visibility</a> is currently disabled!',
-					'url' => 'options-reading.php'
+					'url' => get_admin_url() . 'options-reading.php'
 				);
 			} else {
 				//If not pinging additional update services (blog must be public for this to be available)
@@ -276,7 +276,7 @@ trait Functions {
 					$nebula_warnings[] = array(
 						'level' => 'warn',
 						'description' => 'Additional <a href="options-writing.php">Update Services</a> should be pinged. <a href="https://codex.wordpress.org/Update_Services" target="_blank" rel="noopener">Recommended update services</a>',
-						'url' => 'options-writing.php'
+						'url' => get_admin_url() . 'options-writing.php'
 					);
 				}
 			}
@@ -287,13 +287,17 @@ trait Functions {
 				if ( $php_version_lifecycle['end']-time() < 2592000 ){ //1 month
 					$nebula_warnings[] = array(
 						'level' => 'warn',
-						'description' => 'PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end on ' . date('F j, Y', $php_version_lifecycle['end']) . ' <small>(in ' . human_time_diff($php_version_lifecycle['end']) . ')</small>'
+						'description' => 'PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end on ' . date('F j, Y', $php_version_lifecycle['end']) . ' <small>(in ' . human_time_diff($php_version_lifecycle['end']) . ')</small>',
+						'url' => 'http://php.net/supported-versions.php',
+						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					);
 				}
 			} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
 				$nebula_warnings[] = array(
 					'level' => 'error',
-					'description' => 'PHP ' . PHP_VERSION . ' <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">no longer receives security updates</a>! End of life occurred on ' . date('F j, Y', $php_version_lifecycle['end']) . ' <small>(' . human_time_diff($php_version_lifecycle['end']) . ' ago)</small>'
+					'description' => 'PHP ' . PHP_VERSION . ' <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">no longer receives security updates</a>! End of life occurred on ' . date('F j, Y', $php_version_lifecycle['end']) . ' <small>(' . human_time_diff($php_version_lifecycle['end']) . ' ago)</small>',
+					'url' => 'http://php.net/supported-versions.php',
+					'meta' => array('target' => '_blank', 'rel' => 'noopener')
 				);
 			}
 
@@ -324,7 +328,7 @@ trait Functions {
 				$nebula_warnings[] = array(
 					'level' => 'error',
 					'description' => 'A <a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">Google Tag Manager ID</a> is strongly recommended!',
-					'url' => 'themes.php?page=nebula_options&tab=analytics'
+					'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=analytics'
 				);
 			}
 
@@ -335,7 +339,7 @@ trait Functions {
 					$nebula_warnings[] = array(
 						'level' => 'error',
 						'description' => '<a href="admin.php?page=wc-settings&tab=integration">WooCommerce Enhanced Ecommerce</a> is missing a Google Analytics ID!',
-						'url' => 'admin.php?page=wc-settings&tab=integration'
+						'url' => get_admin_url() . 'admin.php?page=wc-settings&tab=integration'
 					);
 				}
 			}
@@ -364,7 +368,8 @@ trait Functions {
 			if ( is_plugin_active('relevanssi/relevanssi.php') && !get_option('relevanssi_indexed') ){
 				$nebula_warnings[] = array(
 					'level' => 'error',
-					'description' => '<a href="options-general.php?page=relevanssi%2Frelevanssi.php">Relevanssi</a> must build an index to search the site. This must be triggered manually.'
+					'description' => '<a href="options-general.php?page=relevanssi%2Frelevanssi.php">Relevanssi</a> must build an index to search the site. This must be triggered manually.',
+					'url' => get_admin_url() . 'options-general.php?page=relevanssi%2Frelevanssi.php'
 				);
 			}
 
@@ -372,7 +377,8 @@ trait Functions {
 			if ( $this->get_option('google_optimize_id') ){
 				$nebula_warnings[] = array(
 					'level' => 'error',
-					'description' => '<a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!'
+					'description' => '<a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!',
+					'url' => 'https://optimize.google.com/optimize/home/'
 				);
 			}
 
@@ -408,7 +414,9 @@ trait Functions {
 			if ( strtolower(get_bloginfo('description')) === 'just another wordpress site' ){
 				$nebula_warnings[] = array(
 					'level' => 'warn',
-					'description' => '<a href="options-general.php">Site Tagline</a> is still "Just Another WordPress Site"!'
+					'description' => '<a href="options-general.php">Site Tagline</a> is still "Just Another WordPress Site"!',
+
+					'url' => get_admin_url() . 'options-general.php'
 				);
 			}
 
@@ -1197,7 +1205,7 @@ trait Functions {
 		echo '<div class="sharing-links">';
 
 		//If the 'shareapi' cookie or session exists and 'shareapi' is requested, return *only* the Share API
-		if ( (isset($_COOKIE['shareapi']) || isset($_SESSION['shareapi'])) && in_array($network, array('shareapi')) ){
+		if ( (isset($_COOKIE['shareapi']) || isset($_SESSION['shareapi'])) && in_array($networks, array('shareapi')) ){
 			$networks = array('shareapi');
 			$_SESSION['shareapi'] = true; //Set a session in case the cookie is deleted
 		}

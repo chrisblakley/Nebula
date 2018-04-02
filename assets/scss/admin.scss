@@ -18,25 +18,30 @@ $admin_media_queries: (
 	.svg-inline--fa {height: 1em;}
 }
 
-//WordPress Admin sidebar menu to match theme color
+//Lighten the primary color if too dark for WordPress menu backgrounds
+$admin_hover_color: lighten($primary_color, 20%);
+@if readable-color($primary_color) == '#000' {
+	$admin_hover_color: $primary_color;
+}
+
 //Non-current page hovers
 #adminmenu .wp-submenu a:focus,
 #adminmenu .wp-submenu a:hover,
 #adminmenu a:hover,
-#adminmenu li.menu-top>a:focus {color: $primary_color;}
+#adminmenu li.menu-top>a:focus {color: $admin_hover_color;}
 
 #adminmenu li.menu-top:hover,
 #adminmenu li.opensub>a.menu-top,
-#adminmenu li>a.menu-top:focus {color: $primary_color;}
+#adminmenu li>a.menu-top:focus {color: $admin_hover_color;}
 
 //Dashicon
 #adminmenu li a:focus div.wp-menu-image:before,
 #adminmenu li.opensub div.wp-menu-image:before,
-#adminmenu li:hover div.wp-menu-image:before {color: $primary_color;}
+#adminmenu li:hover div.wp-menu-image:before {color: $admin_hover_color;}
 
 //Buttons
 #collapse-button:focus,
-#collapse-button:hover {color: $primary_color;}
+#collapse-button:hover {color: $admin_hover_color;}
 
 //Current page
 #adminmenu .wp-has-current-submenu .wp-submenu .wp-submenu-head,
@@ -44,24 +49,38 @@ $admin_media_queries: (
 #adminmenu li.current a.menu-top,
 #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
 .folded #adminmenu li.current.menu-top,
-.folded #adminmenu li.wp-has-current-submenu {background: $primary_color; color: #fff;}
+.folded #adminmenu li.wp-has-current-submenu {background: $primary_color; color: readable-color($primary_color);}
+
+//Current page icon
+#adminmenu .current div.wp-menu-image:before,
+#adminmenu .wp-has-current-submenu div.wp-menu-image:before,
+#adminmenu a.current:hover div.wp-menu-image:before,
+#adminmenu a.wp-has-current-submenu:hover div.wp-menu-image:before,
+#adminmenu li.wp-has-current-submenu a:focus div.wp-menu-image:before,
+#adminmenu li.wp-has-current-submenu.opensub div.wp-menu-image:before,
+#adminmenu li.wp-has-current-submenu:hover div.wp-menu-image:before {color: readable-color($primary_color);}
 
 //WordPress Admin Bar menu to match theme color
-#wpadminbar .ab-top-menu>li.hover>.ab-item, #wpadminbar.nojq .quicklinks .ab-top-menu>li>.ab-item:focus, #wpadminbar:not(.mobile) .ab-top-menu>li:hover>.ab-item, #wpadminbar:not(.mobile) .ab-top-menu>li>.ab-item:focus {color: $primary_color;}
-#wpadminbar:not(.mobile)>#wp-toolbar a:focus span.ab-label, #wpadminbar:not(.mobile)>#wp-toolbar li:hover span.ab-label, #wpadminbar>#wp-toolbar li.hover span.ab-label {color: $primary_color;}
+#wpadminbar .ab-top-menu>li.hover>.ab-item, #wpadminbar.nojq .quicklinks .ab-top-menu>li>.ab-item:focus, #wpadminbar:not(.mobile) .ab-top-menu>li:hover>.ab-item, #wpadminbar:not(.mobile) .ab-top-menu>li>.ab-item:focus {color: $admin_hover_color;}
+#wpadminbar:not(.mobile)>#wp-toolbar a:focus span.ab-label, #wpadminbar:not(.mobile)>#wp-toolbar li:hover span.ab-label, #wpadminbar>#wp-toolbar li.hover span.ab-label {color: $admin_hover_color;}
 
 //Nebula Font Awesome icons
 #wpadminbar li.hover > .ab-item i,
 #wpadminbar:not(.mobile) li:hover > .ab-item i,
-#wpadminbar:not(.mobile) li > .ab-item:focus i {color: $primary_color !important;}
+#wpadminbar:not(.mobile) li > .ab-item:focus i {color: $admin_hover_color !important;}
 
-#wpadminbar .quicklinks .ab-sub-wrapper .menupop.hover>a, #wpadminbar .quicklinks .menupop ul li a:focus, #wpadminbar .quicklinks .menupop ul li a:focus strong, #wpadminbar .quicklinks .menupop ul li a:hover, #wpadminbar .quicklinks .menupop ul li a:hover strong, #wpadminbar .quicklinks .menupop.hover ul li a:focus, #wpadminbar .quicklinks .menupop.hover ul li a:hover, #wpadminbar .quicklinks .menupop.hover ul li div[tabindex]:focus, #wpadminbar .quicklinks .menupop.hover ul li div[tabindex]:hover, #wpadminbar li #adminbarsearch.adminbar-focused:before, #wpadminbar li .ab-item:focus .ab-icon:before, #wpadminbar li .ab-item:focus:before, #wpadminbar li a:focus .ab-icon:before, #wpadminbar li.hover .ab-icon:before, #wpadminbar li.hover .ab-item:before, #wpadminbar li:hover #adminbarsearch:before, #wpadminbar li:hover .ab-icon:before, #wpadminbar li:hover .ab-item:before, #wpadminbar.nojs .quicklinks .menupop:hover ul li a:focus, #wpadminbar.nojs .quicklinks .menupop:hover ul li a:hover {color: $primary_color;}
+#wpadminbar .quicklinks .ab-sub-wrapper .menupop.hover>a, #wpadminbar .quicklinks .menupop ul li a:focus, #wpadminbar .quicklinks .menupop ul li a:focus strong, #wpadminbar .quicklinks .menupop ul li a:hover, #wpadminbar .quicklinks .menupop ul li a:hover strong, #wpadminbar .quicklinks .menupop.hover ul li a:focus, #wpadminbar .quicklinks .menupop.hover ul li a:hover, #wpadminbar .quicklinks .menupop.hover ul li div[tabindex]:focus, #wpadminbar .quicklinks .menupop.hover ul li div[tabindex]:hover, #wpadminbar li #adminbarsearch.adminbar-focused:before, #wpadminbar li .ab-item:focus .ab-icon:before, #wpadminbar li .ab-item:focus:before, #wpadminbar li a:focus .ab-icon:before, #wpadminbar li.hover .ab-icon:before, #wpadminbar li.hover .ab-item:before, #wpadminbar li:hover #adminbarsearch:before, #wpadminbar li:hover .ab-icon:before, #wpadminbar li:hover .ab-item:before, #wpadminbar.nojs .quicklinks .menupop:hover ul li a:focus, #wpadminbar.nojs .quicklinks .menupop:hover ul li a:hover {color: $admin_hover_color;}
 
 //Dashboard Font Awesome Lists
 ul.nebula-fa-ul {margin-left: 1.5em; padding-left: 0;
 	li {position: relative;
 		> i:first-of-type {left: -2em; position: absolute; top: 0.1em; text-align: center; width: 2em; line-height: inherit;}
 	}
+}
+
+//Custom Dashboard 2 cols
+.nebula-metabox-row {display: flex; flex-wrap: wrap;
+	.nebula-metabox-col {max-width: calc(50% - 15px); margin-right: 15px;}
 }
 
 .filtereditem {display: none !important;}

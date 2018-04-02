@@ -13,11 +13,11 @@
 */
 
 //Import partials
-@import '../../../../Nebula-master/assets/scss/partials/variables';
+@import $parent_partials_directory + '/variables';
 @import 'variables'; //Child theme variables
-@import '../../../../Nebula-master/assets/scss/partials/mixins';
-@import '../../../../Nebula-master/assets/scss/partials/helpers';
-@import '../../../../Nebula-master/assets/scss/partials/animations';
+@import $parent_partials_directory + '/mixins';
+@import $parent_partials_directory + '/helpers';
+@import $parent_partials_directory + '/animations';
 
 ::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
 ::-moz-selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}

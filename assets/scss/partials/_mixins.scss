@@ -40,6 +40,19 @@
 	}
 }
 
+//.element {background: #123456; color: readable-color(#123456);}
+@function readable-color($bg){
+	$r: red($bg);
+	$g: green($bg);
+	$b: blue($bg);
+
+	@if ($r*$r*0.299 + $g*$g*0.587 + $b*$b*0.114) > 19000 {
+		@return #000;
+	}
+
+	@return #fff;
+}
+
 //.example {@include prefix((transition: right 0.5s easing(easeOutBack)));}
 //.example {@include prefix((transition: right 0.5s easing(custom, "0.190, 1.000, 0.220, 1.000")));}
 @function easing($ease: linear, $custom: ""){

@@ -72,7 +72,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Limit image size when being called
 		public function limit_thumbnail_size($size, $id){
-			return $this->limit_image_size($size);
+			return $this->limit_image_size($size, $id);
 		}
 		public function limit_image_size($size, $id){
 			if ( $this->get_option('limit_image_dimensions') ){
@@ -172,7 +172,6 @@ if ( !trait_exists('Optimization') ){
 			$assets = array(
 				'styles' => array(
 					'nebula-font_awesome' => 'all',
-					'nebula-flags' => '.flag',
 					'wp-pagenavi' => '.wp-pagenavi',
 				),
 				'scripts' => array(),

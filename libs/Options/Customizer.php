@@ -5,13 +5,13 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 trait Customizer {
 	public function hooks(){
 		add_action('customize_register', array($this, 'customize_register'));
-		add_action('customize_save_after', array($this, 'customize_sass_render'));
-
+		add_action('customize_save_after', array($this, 'customizer_saved_actions'));
 		add_action('wp_head', array($this, 'customizer_style_overrides'), 100);
 	}
 
 	//Render Sass on Customizer Save
-	public function customize_sass_render(){
+	public function customizer_saved_actions(){
+		$this->usage('Customizer Saved');
 		$this->update_data('need_sass_compile', 'true');
 	}
 

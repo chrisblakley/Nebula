@@ -343,7 +343,6 @@ if ( !trait_exists('Analytics') ){
 
 			$data = array_merge($this->ga_common_parameters(), $data); //Add common parameters
 			$data = array_merge($data, $array); //Add passed parameters
-
 			$this->ga_send_data($data, $force);
 		}
 
@@ -371,7 +370,6 @@ if ( !trait_exists('Analytics') ){
 
 			$data = array_merge($data, $this->ga_common_parameters()); //Add custom definition parameters
 			$data = array_merge($data, $array); //Add passed parameters
-
 			$this->ga_send_data($data);
 		}
 
@@ -415,7 +413,6 @@ if ( !trait_exists('Analytics') ){
 
 			$data = array_merge($data, $this->ga_common_parameters()); //Add custom definition parameters
 			$data = array_merge($data, $array); //Add passed parameters
-
 			$this->ga_send_data($data);
 		}
 
@@ -437,16 +434,16 @@ if ( !trait_exists('Analytics') ){
 		public function ga_log_fatal_errors(){
 			$error = error_get_last();
 			if ( $error['type'] === E_ERROR ){
-				$message = strstr($error['message'], ' in /', true);
-				$file = strstr($error['file'], 'wp-content'); //Remove high-level directories to reduce clutter and prevent PII
-				$this->ga_send_exception('(PHP) ' . $message . ' on line ' . $error['line'] . ' in ' . $file, 1);
+				$message = str_replace(WP_CONTENT_DIR, '', strstr($error['message'], ' in /', true)); //Remove high-level directories to reduce clutter and prevent PII
+				$file = str_replace(WP_CONTENT_DIR, '', strstr($error['file'], 'wp-content')); //Remove high-level directories to reduce clutter and prevent PII
+				$this->ga_send_exception('(PHP) ' . $message . ' on line ' . $error['line'] . ' in .../' . $file, 1);
 
-				if ( preg_match('/themes\/Nebula-?(master|parent|\d+\.\d+)?\//', $file) ){ //If the error is in Nebula parent
+				if ( preg_match('/themes\/Nebula-?(master|parent|\d+\.\d+)?\//i', $file) && !strpos(strtolower($file), 'scssphp') ){ //If the error is in Nebula parent and not a Sass compile error
 					$this->usage('PHP Fatal Error', array(
 						't' => 'exception',
 						'exd' => $message . ' on line ' . $error['line'] . ' in ' . $file,
 						'exf' => true,
-						'cd12' => get_permalink(),
+						'cd12' => (( isset($_SERVER['HTTPS']) )? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
 					));
 				}
 			}
@@ -464,7 +461,7 @@ if ( !trait_exists('Analytics') ){
 				'uip' => $this->get_ip_address(),
 				'dh' => ( function_exists('gethostname') )? gethostname() : '',
 				'dl' => $action,
-				'dt' => get_bloginfo('name'),
+				'dt' => get_bloginfo('name'), //Consider urlencode() here
 				'cd1' => home_url('/'),
 				'cd2' => time(),
 				'cd8' => $date->format('F j, Y, g:ia'),
@@ -474,6 +471,7 @@ if ( !trait_exists('Analytics') ){
 				'cd5' => get_bloginfo('wpurl'),
 				'cd7' => $this->ga_parse_cookie(),
 				'cd9' => ( is_child_theme() )? 'Child' : 'Parent',
+				'cd13' => get_current_user_id(),
 				'cn' => 'Nebula Usage',
 				'cs' => home_url('/'),
 				'cm' => 'WordPress'

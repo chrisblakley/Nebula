@@ -39,7 +39,7 @@ if ( !trait_exists('Sass') ){
 
 				//Child theme SCSS locations
 				if ( is_child_theme() ){
-					$scss_locations['parent']['imports'][] = get_stylesheet_directory() . '/assets/scss/partials/';
+					$scss_locations['parent']['imports'][] = get_stylesheet_directory() . '/assets/scss/partials/'; //@todo "Nebula" 0: Clarify here why parent theme needs to know child imports directory
 
 					$scss_locations['child'] = array(
 						'directory' => get_stylesheet_directory(),
@@ -96,28 +96,29 @@ if ( !trait_exists('Sass') ){
 
 				//Require SCSSPHP
 				require_once(get_template_directory() . '/inc/vendor/scssphp/scss.inc.php'); //SCSSPHP is a compiler for SCSS 3.x
-				$scss = new \Leafo\ScssPhp\Compiler();
+				$this->scss = new \Leafo\ScssPhp\Compiler();
 
 				//Register import directories
 				if ( !is_array($location_paths['imports']) ){
 					$location_paths['imports'] = array($location_paths['imports']); //Convert to an array if passes as a string
 				}
 				foreach ( $location_paths['imports'] as $imports_directory ){
-					$scss->addImportPath($imports_directory);
+					$this->scss->addImportPath($imports_directory);
 				}
 
 				//Set compiling options
-				$scss->setFormatter('Leafo\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving "/*!" comments for WordPress).
+				$this->scss->setFormatter('Leafo\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving "/*!" comments for WordPress).
 
 				//Source Maps
-				$scss->setSourceMap(1); //0 = No .map, 1 = Inline .map, 2 = Output .map file
-				$scss->setSourceMapOptions(array(
+				$this->scss->setSourceMap(1); //0 = No .map, 1 = Inline .map, 2 = Output .map file
+				$this->scss->setSourceMapOptions(array(
 					'sourceMapBasepath' => $_SERVER['DOCUMENT_ROOT'], //Difference between file & URL locations, removed from all source paths in .map
 					'sourceRoot' => '/', //Added to source path locations if needed
 				));
 
 				//Variables
 				$nebula_scss_variables = array(
+					'parent_partials_directory' => get_template_directory() . '/assets/scss/partials/',
 					'template_directory' => '"' . get_template_directory_uri() . '"',
 					'stylesheet_directory' => '"' . get_stylesheet_directory_uri() . '"',
 					'this_directory' => '"' . $location_paths['uri'] . '"',
@@ -126,7 +127,7 @@ if ( !trait_exists('Sass') ){
 					'background_color' => get_theme_mod('nebula_background_color', $this->sass_color('background')), //From Customizer or child theme Sass variable
 				);
 				$all_scss_variables = apply_filters('nebula_scss_variables', $nebula_scss_variables);
-				$scss->setVariables($nebula_scss_variables);
+				$this->scss->setVariables($nebula_scss_variables);
 
 				//Imports/Partials (find the last modified time)
 				$latest_import = 0;
@@ -141,7 +142,6 @@ if ( !trait_exists('Sass') ){
 				//Compile each SCSS file
 				foreach ( glob($location_paths['directory'] . '/assets/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
 					$file_path_info = pathinfo($file);
-
 					$debug_name = str_replace(WP_CONTENT_DIR, '', $file_path_info['dirname']) . '/' . $file_path_info['basename'];
 					$this->timer('Sass File ' . $debug_name);
 
@@ -181,7 +181,7 @@ if ( !trait_exists('Sass') ){
 							//If the correlating .css file doesn't contain a comment to prevent overwriting
 							if ( !strpos(strtolower($existing_css_contents), 'scss disabled') ){
 								$this_scss_contents = $wp_filesystem->get_contents($file); //Copy SCSS file contents
-								$compiled_css = $scss->compile($this_scss_contents, $file); //Compile the SCSS
+								$compiled_css = $this->scss->compile($this_scss_contents, $file); //Compile the SCSS
 								$enhanced_css = $this->scss_post_compile($compiled_css); //Compile server-side variables into SCSS
 								$wp_filesystem->put_contents($css_filepath, $enhanced_css); //Save the rendered CSS.
 								$this->update_data('scss_last_processed', time());

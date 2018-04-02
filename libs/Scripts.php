@@ -41,7 +41,6 @@ if ( !trait_exists('Scripts') ){
 			wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.3/chosen.min.css', null, '1.8.3', 'all');
 			wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.structure.min.css', null, '1.12.1', 'all');
 			wp_register_style('nebula-pre', get_template_directory_uri() . '/assets/css/pre.css', null, $this->version('full'), 'all');
-			wp_register_style('nebula-flags', get_template_directory_uri() . '/assets/css/flags.css', null, $this->version('full'), 'all');
 
 			//Scripts
 			//Use CDNJS to pull common libraries: http://cdnjs.com/
@@ -250,7 +249,7 @@ if ( !trait_exists('Scripts') ){
 		}
 
 		//Enqueue frontend scripts
-		function enqueue_scripts($hook){
+		public function enqueue_scripts($hook){
 			//Stylesheets
 			wp_enqueue_style('nebula-bootstrap');
 			wp_enqueue_style('nebula-main');
@@ -287,7 +286,7 @@ if ( !trait_exists('Scripts') ){
 		}
 
 		//Enqueue login scripts
-		function login_enqueue_scripts($hook){
+		public function login_enqueue_scripts($hook){
 			//Stylesheets
 			wp_enqueue_style('nebula-login');
 			echo '<style>
@@ -301,19 +300,14 @@ if ( !trait_exists('Scripts') ){
 		}
 
 		//Enqueue admin scripts
-		function admin_enqueue_scripts($hook){
+		public function admin_enqueue_scripts($hook){
 			$current_screen = get_current_screen();
 
 			//Stylesheets
 			wp_enqueue_style('nebula-admin');
 			wp_enqueue_style('nebula-font_awesome'); //Font Awesome 5 CSS method
 
-			if ( $this->is_companion_active() && nebula_companion()->ip_location() ){
-				wp_enqueue_style('nebula-flags');
-			}
-
 			//Scripts
-			//wp_enqueue_script('jquery-core'); //May need to uncomment for Bootstrap Beta 3
 			wp_enqueue_script('nebula-admin');
 
 			//Nebula Options page

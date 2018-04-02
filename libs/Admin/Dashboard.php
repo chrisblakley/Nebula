@@ -1,6 +1,5 @@
 <?php
 
-//Exit if accessed directly
 if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Dashboard') ){
@@ -157,7 +156,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 			while ( $latest_post->have_posts() ){ $latest_post->the_post();
 				echo '<li><i class="far fa-fw fa-calendar"></i> Updated: <span title="' . human_time_diff(strtotime(get_the_modified_date())) . ' ago" style="cursor: help;"><strong>' . get_the_modified_date() . '</strong> @ <strong>' . get_the_modified_time() . '</strong></span>
-					<small style="display: block; margin-left: 20px;"><i class="far fa-fw fa-file-alt"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => get_the_title(), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small>
+					<small style="display: block;"><i class="far fa-fw fa-file-alt"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => get_the_title(), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small>
 				</li>';
 			}
 			wp_reset_postdata();
@@ -391,7 +390,7 @@ if ( !trait_exists('Dashboard') ){
 			$this->timer('Nebula Administrative Dashboard');
 			$third_party_tools = $this->third_party_tools();
 
-			echo '<div style="display: flex; flex-wrap: wrap;"><div style="max-width: calc(50% - 15px); margin-right: 15px;">';
+			echo '<div class="nebula-metabox-row"><div class="nebula-metabox-col">';
 			echo '<ul class="nebula-fa-ul" style="margin-top: 0;">';
 			foreach ( $third_party_tools['administrative'] as $tool ){
 				echo '<li>' . $tool['icon'] . ' <a href="' . $tool['url'] . '" target="_blank" rel="noopener">' . $tool['name'] . '</a></li>';
