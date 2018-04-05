@@ -649,14 +649,6 @@
 									</div>
 
 									<div class="form-group" dependent-or="ga_tracking_id gtm_id">
-										<label for="ga_session_timeout_minutes">GA Session Timeout (Minutes)</label>
-										<input type="number" name="nebula_options[ga_session_timeout_minutes]" id="ga_session_timeout_minutes" class="form-control nebula-validate-regex" data-valid-regex="^([5-9]|[1-8][0-9]|9[0-9]|1[0-9]{2}|2[0-3][0-9]|240)$" value="<?php echo $nebula_options['ga_session_timeout_minutes']; ?>" step="5" min="5" max="240" placeholder="30" />
-										<p class="nebula-help-text short-help form-text text-muted">Using this will send a new pageview for hits after this duration (in minutes) of inactivity. Make sure it matches your GA Session Timeout setting!</p>
-										<p class="nebula-help-text more-help form-text text-muted">To prevent <code>(not set)</code> landing pages, this will send a new pageview if the user is inactive beyond the GA Session Timeout. GA Default is 30 minutes, but this functionality is only active if it is entered here (Nebula default is disabled). While GA supports a minimum of 1 minute, Nebula only supports a minimum of 5 minutes.</p>
-										<p class="option-keywords"></p>
-									</div>
-
-									<div class="form-group" dependent-or="ga_tracking_id gtm_id">
 										<input type="checkbox" name="nebula_options[ga_wpuserid]" id="ga_wpuserid" value="1" <?php checked('1', !empty($nebula_options['ga_wpuserid'])); ?> /><label for="ga_wpuserid">Use WordPress User ID</label>
 										<p class="nebula-help-text short-help form-text text-muted">Use the WordPress User ID as the Google Analytics User ID. (Default: <?php echo $this->user_friendly_default('ga_wpuserid'); ?>)</p>
 										<p class="nebula-help-text more-help form-text text-muted">This allows more accurate user reporting. Note: Users who share accounts (including developers/clients) can cause inaccurate reports! This functionality is most useful when opening sign-ups to the public.</p>
@@ -1172,6 +1164,17 @@
 											</div>
 											<p class="nebula-help-text short-help form-text text-muted">Detect the device orientation associated with this hit. Scope: Hit</p>
 											<p class="option-keywords">autotrack</p>
+										</div>
+
+										<div class="form-group">
+											<div class="input-group">
+												<div class="input-group-prepend">
+													<div class="input-group-text">Security Note</div>
+												</div>
+												<input type="text" name="nebula_options[cd_securitynote]" id="cd_securitynote" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_securitynote']; ?>" />
+											</div>
+											<p class="nebula-help-text short-help form-text text-muted">Adds a note to the user for potential security issues and on possible bots. Scope: User</p>
+											<p class="option-keywords">recommended</p>
 										</div>
 
 										<div class="form-group">

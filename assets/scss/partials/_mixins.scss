@@ -41,16 +41,16 @@
 }
 
 //.element {background: #123456; color: readable-color(#123456);}
-@function readable-color($bg){
+@function readable-color($bg, $light: #fff, $dark: #000){
 	$r: red($bg);
 	$g: green($bg);
 	$b: blue($bg);
 
-	@if ($r*$r*0.299 + $g*$g*0.587 + $b*$b*0.114) > 19000 {
-		@return #000;
+	@if ($r*$r*0.299 + $g*$g*0.587 + $b*$b*0.114) > 19000 { //If the bg is light
+		@return $dark;
 	}
 
-	@return #fff;
+	@return $light; //Else the bg is dark
 }
 
 //.example {@include prefix((transition: right 0.5s easing(easeOutBack)));}

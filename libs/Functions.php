@@ -78,6 +78,7 @@ trait Functions {
 		add_filter('the_posts', array($this, 'always_get_post_custom'));
 		add_action('pre_get_posts', array($this, 'redirect_empty_search'));
 		add_action('template_redirect', array($this, 'redirect_single_search_result'));
+		add_action('get_header', array($this, 'redirect_author_template'));
 
 		add_action('wp_ajax_nebula_autocomplete_search', array($this, 'autocomplete_search'));
 		add_action('wp_ajax_nopriv_nebula_autocomplete_search', array($this, 'autocomplete_search'));
@@ -284,10 +285,10 @@ trait Functions {
 			//Check PHP version
 			$php_version_lifecycle = $this->php_version_support();
 			if ( $php_version_lifecycle['lifecycle'] === 'security' ){
-				if ( $php_version_lifecycle['end']-time() < 2592000 ){ //1 month
+				if ( $php_version_lifecycle['end']-time() < MONTH_IN_SECONDS ){ //If end of life is within 1 month
 					$nebula_warnings[] = array(
 						'level' => 'warn',
-						'description' => 'PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end on ' . date('F j, Y', $php_version_lifecycle['end']) . ' <small>(in ' . human_time_diff($php_version_lifecycle['end']) . ')</small>',
+						'description' => 'PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end in ' . human_time_diff($php_version_lifecycle['end']) . ' on ' . date('F j, Y', $php_version_lifecycle['end']),
 						'url' => 'http://php.net/supported-versions.php',
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					);
@@ -295,7 +296,7 @@ trait Functions {
 			} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
 				$nebula_warnings[] = array(
 					'level' => 'error',
-					'description' => 'PHP ' . PHP_VERSION . ' <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">no longer receives security updates</a>! End of life occurred on ' . date('F j, Y', $php_version_lifecycle['end']) . ' <small>(' . human_time_diff($php_version_lifecycle['end']) . ' ago)</small>',
+					'description' => 'PHP ' . PHP_VERSION . ' <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">no longer receives security updates</a>! End of life occurred ' . human_time_diff($php_version_lifecycle['end']) . ' ago on ' . date('F j, Y', $php_version_lifecycle['end']),
 					'url' => 'http://php.net/supported-versions.php',
 					'meta' => array('target' => '_blank', 'rel' => 'noopener')
 				);
@@ -580,20 +581,17 @@ trait Functions {
 		$override = apply_filters('pre_nebula_manifest_json', null);
 		if ( isset($override) ){return;}
 
-		//@todo "Nebula" 0: consider the differences between "fullscreen" and "standalone" for display https://developer.mozilla.org/en-US/docs/Web/Manifest
-
 		$manifest_json = '{
 			"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
 			"short_name": "' . get_bloginfo('name') . '",
 			"description": "' . get_bloginfo('description') . '",
 			"theme_color": "' . get_theme_mod('nebula_primary_color', $this->sass_color('primary')) . '",
-			"background_color": "#fff",
+			"background_color": "' . get_theme_mod('nebula_background_color', $this->sass_color('background')) . '",
 			"gcm_sender_id": "' . $this->get_option('gcm_sender_id') . '",
-			"Scope": "' . home_url('/') . '",
+			"scope": "' . home_url('/') . '",
 			"start_url": "' . home_url('/') . '?utm_source=homescreen",
 			"display": "standalone",
 			"orientation": "portrait",
-			"splash_pages": null,
 			"icons": [';
 		if ( has_site_icon() ){
 			$manifest_json .= '{
@@ -639,7 +637,7 @@ trait Functions {
 	public function favicon_cache(){
 		if ( array_key_exists('favicon', $_GET) ){
 			header('Location: ' . get_theme_file_uri('/assets/img/meta') . '/favicon.ico');
-			wp_die();
+			exit;
 		}
 	}
 
@@ -1850,6 +1848,14 @@ trait Functions {
 		$this->timer($timer_name, 'end');
 	}
 
+	//Disable author archives to prevent ?author=1 from showing usernames.
+	public function redirect_author_template(){
+		if ( basename($this->current_theme_template) == 'author.php' /* && !nebula()->get_option('author_bios') */ ){
+			wp_redirect(home_url('/') . '?s=about');
+			exit;
+		}
+	}
+
 	//Check if business hours exist in Nebula Options
 	public function has_business_hours(){
 		foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
@@ -2302,7 +2308,7 @@ trait Functions {
 				}
 
 				header('Location: ' . home_url('/') . 'search/?invalid');
-				wp_die();
+				exit;
 			} else {
 				return $query;
 			}

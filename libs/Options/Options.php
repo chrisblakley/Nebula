@@ -253,7 +253,6 @@ if ( !trait_exists('Options') ){
 				//Analytics Tab
 				'ga_tracking_id' => '',
 				'gtm_id' => '',
-				'ga_session_timeout_minutes' => '',
 				'ga_wpuserid' => 0,
 				'ga_displayfeatures' => 0,
 				'ga_linkid' => 0,
@@ -286,6 +285,7 @@ if ( !trait_exists('Options') ){
 				'cd_geoname' => '',
 				'cd_geoaccuracy' => '',
 				'cd_notablepoi' => '',
+				'cd_securitynote' => '',
 				'cd_relativetime' => '',
 				'cd_sessionid' => '',
 				'cd_timestamp' => '',

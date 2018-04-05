@@ -77,7 +77,8 @@ if ( !trait_exists('Users') ){
 					}
 					return $online_now;
 				} else {
-					return ( $this->user_last_online($id) )? '<small>' . human_time_diff($this->user_last_online($id)) . ' ago<br /><em>' . date('M j, Y @ g:ia', $this->user_last_online($id)) . '</em></small>' : '';
+					$today_icon = ( date('Y-m-d', $this->user_last_online($id)) == date('Y-m-d') )? '<i class="far fa-clock" title="Online today"></i> ' : '<i class="far fa-calendar"></i> ';
+					return ( $this->user_last_online($id) )? '<small>' . $today_icon . human_time_diff($this->user_last_online($id)) . ' ago<br /><em>' . date('M j, Y @ g:ia', $this->user_last_online($id)) . '</em></small>' : '';
 				}
 			}
 

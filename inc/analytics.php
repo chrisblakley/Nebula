@@ -1,8 +1,7 @@
 <?php
 	if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
 		header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
-		http_response_code(403);
-		die();
+		exit;
 	}
 ?>
 
@@ -34,10 +33,6 @@
 				echo 'ga("set", nebula.analytics.dimensions.referrer, "' . $original_referrer . '");';
 
 				$_SESSION['original_referrer'] = $original_referrer;
-			}
-
-			if ( nebula()->is_save_data() ){
-				echo 'ga("set", nebula.analytics.dimensions.saveData, "Save Data");';
 			}
 
 			if ( is_singular() || is_page() ){
@@ -150,6 +145,10 @@
 			}
 		<?php endif; ?>
 
+		<?php if ( nebula()->get_option('cd_savedata') ): ?>
+			ga('set', nebula.analytics.dimensions.saveData, '<?php echo ( nebula()->is_save_data() )? 'Save Data' : 'Normal'; ?>');
+		<?php endif; ?>
+
 		<?php if ( nebula()->get_option('cd_privacymode') ): //Detect privacy mode ?>
 			var fileSystem = window.RequestFileSystem || window.webkitRequestFileSystem;
 			if ( fileSystem ){
@@ -157,11 +156,9 @@
 					window.TEMPORARY,
 					100,
 					function(){
-						console.log('normal window');
 						ga('set', nebula.analytics.dimensions.browseMode, 'Normal');
 					},
 					function(){
-						console.log('private mode');
 						ga('set', nebula.analytics.dimensions.browseMode, 'Private');
 					}
 				);
@@ -294,16 +291,10 @@
 			tracker.set('buildHitTask', function(model){ //This runs on every hit send
 				var qt = model.get('queueTime') || 0;
 
-				<?php if ( nebula()->get_option('ga_session_timeout_minutes') && intval(nebula()->get_option('ga_session_timeout_minutes')) >= 5 ): //Send new pageview after session timeout expires ?>
-					if ( model.get('hitType') !== 'pageview' && typeof lastHit === 'object' ){
-						var currentHit = new Date();
-						if ( (currentHit-lastHit) > (<?php echo nebula()->get_option('ga_session_timeout_minutes'); ?>*60000) ){ //If after GA session timeout
-							model.set('campaignSource', '(session timeout)');
-							ga('send', 'pageview');
-						}
-					}
-					lastHit = new Date(); //Update the last GA hit time
-				<?php endif; ?>
+				//Remove PII if present
+				if ( model.get('location').indexOf('nv-') ){
+					model.set('location', model.get('location').replace(/(nv-.*?)&|(nv-.*?)$/gi, ''), true);
+				}
 
 				//Move impression tracking for CF7 forms to the "CF7 Form" event category //@todo "Nebula" 0: If the fieldsObj is ever updated in Autotrack, do this programmatically in nebula.js
 				if ( model.get('hitType') === 'event' && model.get('eventAction') === 'impression' && model.get('eventLabel').indexOf('wpcf7') > -1 ){

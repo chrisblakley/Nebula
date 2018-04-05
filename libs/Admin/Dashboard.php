@@ -297,60 +297,64 @@ if ( !trait_exists('Dashboard') ){
 			if ( $this->get_option('device_detection') ){
 				//Device
 				if ( $this->is_desktop() ){
-					echo '<li><i class="fas fa-fw fa-desktop"></i> Device: <strong>Desktop</strong></li>'; //@todo "Nebula" 0: Check battery percentage (somehow) for laptop/desktop
+					if ( 1==1 ){//@todo "Nebula" 0: Check battery percentage (somehow) for laptop/desktop
+						echo '<li><i class="fas fa-fw fa-laptop"></i> Device: <strong>Laptop</strong></li>';
+					} else {
+						echo '<li><i class="fas fa-fw fa-desktop"></i> Device: <strong>Desktop</strong></li>';
+					}
 				} elseif ( $this->is_tablet() ){
-					echo '<li><i class="fas fa-fw fa-tablet"></i> Device: <strong>' . $this->get_device('full') . ' (Tablet)</strong></li>';
+					echo '<li><i class="fas fa-fw fa-tablet-alt"></i> Device: <strong>' . $this->get_device('full') . '</strong> <small>(Tablet)</small></li>';
 				} else {
-					echo '<li><i class="fas fa-fw fa-mobile"></i> Device: <strong>' . $this->get_device('full') . ' (Mobile)</strong></li>';
+					echo '<li><i class="fas fa-fw fa-mobile-alt"></i> Device: <strong>' . $this->get_device('full') . '</strong>  <small>(Mobile)</small></li>';
 				}
 
 				//Operating System
 				switch ( strtolower($this->get_os('name')) ){
 					case 'windows':
-						$os_icon = 'fa-windows';
+						$os_icon = 'fab fa-windows';
 						break;
 					case 'mac':
 					case 'ios':
-						$os_icon = 'fa-apple';
+						$os_icon = 'fab fa-apple';
 						break;
 					case 'linux':
-						$os_icon = 'fa-linux';
+						$os_icon = 'fab fa-linux';
 						break;
 					case 'android':
-						$os_icon = 'fa-android';
+						$os_icon = 'fab fa-android';
 						break;
 					default:
-						$os_icon = 'fa-picture-o';
+						$os_icon = 'fas fa-power-off';
 						break;
 				}
-				echo '<li><i class="fab fa-fw ' . $os_icon . '"></i> OS: <strong>' . $this->get_os('full') . '</strong></li>';
+				echo '<li><i class="fa-fw ' . $os_icon . '"></i> OS: <strong>' . $this->get_os('full') . '</strong></li>';
 
 				//Browser
 				switch ( str_replace(array('mobile', ' '), '', strtolower($this->get_browser('name'))) ){
 					case 'edge':
-						$browser_icon = 'fa-edge';
+						$browser_icon = 'fab fa-edge';
 						break;
 					case 'safari':
-						$browser_icon = 'fa-safari';
+						$browser_icon = 'fab fa-safari';
 						break;
 					case 'internet explorer':
-						$browser_icon = 'fa-internet-explorer';
+						$browser_icon = 'fab fa-internet-explorer';
 						break;
 					case 'firefox':
-						$browser_icon = 'fa-firefox';
+						$browser_icon = 'fab fa-firefox';
 						break;
 					case 'chrome':
 					case 'chrome mobile':
-						$browser_icon = 'fa-chrome';
+						$browser_icon = 'fab fa-chrome';
 						break;
 					case 'opera':
-						$browser_icon = 'fa-opera';
+						$browser_icon = 'fab fa-opera';
 						break;
 					default:
-						$browser_icon = 'fa-globe';
+						$browser_icon = 'fas fa-globe';
 						break;
 				}
-				echo '<li><i class="fab fa-fw ' . $browser_icon . '"></i> Browser: <strong>' . $this->get_browser('full') . '</strong></li>';
+				echo '<li><i class="fa-fw ' . $browser_icon . '"></i> Browser: <strong>' . $this->get_browser('full') . '</strong></li>';
 			}
 
 			//IP Address
@@ -365,7 +369,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//Multiple locations
 			if ( $this->user_single_concurrent($user_info->ID) > 1 ){
-				echo '<li><i class="far fa-fw fa-users"></i> Active in <strong>' . $this->user_single_concurrent($user_info->ID) . ' locations</strong>.</li>';
+				echo '<li><i class="fas fa-fw fa-users"></i> Active in <strong>' . $this->user_single_concurrent($user_info->ID) . ' locations</strong>.</li>';
 			}
 
 			//User Admin Bar
@@ -953,12 +957,6 @@ if ( !trait_exists('Dashboard') ){
 			if ( !empty($hubspot_contacts_json) ){
 				if ( !empty($hubspot_contacts_json->contacts) ){
 					foreach ( $hubspot_contacts_json->contacts as $contact ){
-	/*
-						echo '<pre>';
-						print_r($contact);
-						echo '</pre>';
-	*/
-
 						//Get contact's email address
 						$identities = $contact->{'identity-profiles'}[0]->identities;
 						foreach ( $identities as $key => $value ){
@@ -977,19 +975,12 @@ if ( !trait_exists('Dashboard') ){
 							$contact_name = $contact->properties->full_name->value;
 							$has_name = true;
 						}
-
-						$display_date = date('F j, Y', $contact->addedAt/1000);
-						$date_icon = 'calendar';
-						if ( date('Y-m-d', $contact->addedAt/1000) === date('Y-m-d') ){
-							$display_date = date('g:ia', $contact->addedAt/1000);
-							$date_icon = 'clock';
-						}
 						?>
 
 						<p>
 							<?php echo ( $has_name )? '<i class="fas fa-fw fa-user"></i> ' : '<i class="far fa-fw fa-envelope"></i> '; ?><strong><a href="<?php echo $contact->{'profile-url'}; ?>" target="_blank"><?php echo ( $has_name )? $contact_name : $contact_email; ?></a></strong><br>
 							<?php echo ( $has_name )? '<i class="far fa-fw fa-envelope"></i> ' . $contact_email . '<br>' : ''; ?>
-							<i class="far fa-fw fa-<?php echo $date_icon; ?>"></i> <span title="<?php echo human_time_diff($contact->addedAt/1000); ?> ago" style="cursor: help;"><?php echo $display_date; ?></span>
+							<i class="far fa-fw fa-<?php echo ( date('Y-m-d', $contact->addedAt/1000) === date('Y-m-d') )? 'clock' : 'calendar'; ?>"></i> <span title="<?php echo date('F j, Y @ g:ia', $contact->addedAt/1000); ?>" style="cursor: help;"><?php echo human_time_diff($contact->addedAt/1000) . ' ago'; ?></span>
 						</p>
 
 						<?php

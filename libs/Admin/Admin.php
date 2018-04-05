@@ -851,7 +851,14 @@ if ( !trait_exists('Admin') ){
 		//Custom login screen
 		public function login_ga(){
 			if ( empty($_POST['signed_request']) ){
-				echo "<script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create', '" . $this->get_option('ga_tracking_id') . "', 'auto');ga('send', 'pageview');</script><script async src='https://www.google-analytics.com/analytics.js'></script>";
+				?>
+					<script>
+						window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+						ga('create', '<?php echo nebula()->get_option('ga_tracking_id'); ?>', 'auto'<?php echo ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>);
+						ga('send', 'pageview');
+					</script>
+					<script async src='https://www.google-analytics.com/analytics.js'></script>
+				<?php
 			}
 		}
 

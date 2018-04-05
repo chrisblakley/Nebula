@@ -45,9 +45,9 @@ if ( !trait_exists('Security') ){
 		//Log template direct access attempts
 		public function log_direct_access_attempts(){
 			if ( array_key_exists('ndaat', $_GET) ){
-				$this->ga_send_exception('(Security) Direct Template Access Prevention on ' . $_GET['ndaat'], 0);
+				$this->ga_send_exception('(Security) Direct Template Access Prevention on ' . $_GET['ndaat'], 0, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Direct Template Access Attempt'));
 				header('Location: ' . home_url('/'));
-				wp_die('Error 403: Forbidden.');
+				exit;
 			}
 		}
 
@@ -55,7 +55,7 @@ if ( !trait_exists('Security') ){
 		public function prevent_bad_query_strings(){
 			if ( array_key_exists('modTest', $_GET) ){
 				header("HTTP/1.1 403 Unauthorized");
-				wp_die('Error 403: Forbidden.');
+				exit;
 			}
 		}
 
@@ -83,22 +83,25 @@ if ( !trait_exists('Security') ){
 			$override = apply_filters('pre_nebula_login_errors', null, $error);
 			if ( isset($override) ){return;}
 
-			//@TODO "Nebula" 0: This server-side event is causing "(not set)" landing pages because it is triggering before the pageview on the login page.
-				//Sending the event from the server-side is more secure because it hides the login error from the user (whether it was an incorrect user or not).
-				//We could echo a <script> right here that can wait until the pageview is sent, but the login error will be visible in the code source...
+			$dimensions = array('dl'=> wp_login_url(), 'dt' => 'Log In');
+
+			if ( $this->contains($error, array('The password you entered for the username')) ){
+				$incorrect_username_start = strpos($error, 'for the username ')+17;
+				$incorrect_username_stop = strpos($error, ' is incorrect')-$incorrect_username_start;
+				$incorrect_username = strip_tags(substr($error, $incorrect_username_start, $incorrect_username_stop));
+				$this->ga_send_exception('(Security) Login error (incorrect password) for user ' . $incorrect_username, 0, $dimensions);
+			} else {
+				if ( $this->contains($error, array('Invalid username')) && $this->get_option('cd_securitynote') ){ //If no username was entered, tag the user as a potential bot
+					$dimensions['cd' . $this->ga_definition_index($this->get_option('cd_securitynote'))] = 'Possible Bot';
+				}
+				$this->ga_send_exception('(Security) Login error: ' . strip_tags($error), 0, $dimensions);
+			}
 
 			if ( !$this->is_bot() ){
-				if ( $this->contains($error, array('The password you entered for the username')) ){
-					$incorrect_username_start = strpos($error, 'for the username ')+17;
-					$incorrect_username_stop = strpos($error, ' is incorrect')-$incorrect_username_start;
-					$incorrect_username = strip_tags(substr($error, $incorrect_username_start, $incorrect_username_stop));
-					$this->ga_send_exception('(Security) Login error (incorrect password) for user ' . $incorrect_username, 0, array('dl'=> wp_login_url(), 'dt' => 'Log In'));
-				} else {
-					$this->ga_send_exception('(Security) Login error: ' . strip_tags($error), 0, array('dl'=> wp_login_url(), 'dt' => 'Log In'));
-				}
-
 				return 'Login Error.';
 			}
+
+			return '';
 		}
 
 		//Remove Wordpress version info from head and feeds
@@ -165,26 +168,28 @@ if ( !trait_exists('Security') ){
 
 				if ( count($blacklisted_domains) > 1 ){
 					if ( isset($_SERVER['HTTP_REFERER']) && $this->contains(strtolower($_SERVER['HTTP_REFERER']), $blacklisted_domains) ){
-						$this->ga_send_exception('(Security) Blacklisted domain prevented. Referrer: ' . $_SERVER['HTTP_REFERER']);
+						$this->ga_send_exception('(Security) Blacklisted domain prevented. Referrer: ' . $_SERVER['HTTP_REFERER'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Blacklisted Referrer'));
+						do_action('nebula_spambot_prevention');
+						header('HTTP/1.1 403 Forbidden');
+						wp_die();
+					}
 
-						do_action('nebula_spambot_prevention');
-						header('HTTP/1.1 403 Forbidden');
-						wp_die();
-					}
 					if ( isset($_SERVER['REMOTE_HOST']) && $this->contains(strtolower($_SERVER['REMOTE_HOST']), $blacklisted_domains) ){
-						$this->ga_send_exception('(Security) Blacklisted domain prevented. Hostname: ' . $_SERVER['REMOTE_HOST']);
+						$this->ga_send_exception('(Security) Blacklisted domain prevented. Hostname: ' . $_SERVER['REMOTE_HOST'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Blacklisted Hostname'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
+
 					if ( isset($_SERVER['SERVER_NAME']) && $this->contains(strtolower($_SERVER['SERVER_NAME']), $blacklisted_domains) ){
-						$this->ga_send_exception('(Security) Blacklisted domain prevented. Server Name: ' . $_SERVER['SERVER_NAME']);
+						$this->ga_send_exception('(Security) Blacklisted domain prevented. Server Name: ' . $_SERVER['SERVER_NAME'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Blacklisted Server Name'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
+
 					if ( isset($ip_address) && $this->contains(strtolower(gethostbyaddr($ip_address)), $blacklisted_domains) ){
-						$this->ga_send_exception('(Security) Blacklisted domain prevented. Network Hostname: ' . $ip_address);
+						$this->ga_send_exception('(Security) Blacklisted domain prevented. Network Hostname: ' . $ip_address, 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Blacklisted Network Hostname'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();

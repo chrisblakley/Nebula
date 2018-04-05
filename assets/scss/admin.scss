@@ -19,7 +19,7 @@ $admin_media_queries: (
 }
 
 //Lighten the primary color if too dark for WordPress menu backgrounds
-$admin_hover_color: lighten($primary_color, 20%);
+$admin_hover_color: lighten($primary_color, 25%);
 @if readable-color($primary_color) == '#000' {
 	$admin_hover_color: $primary_color;
 }
@@ -75,6 +75,7 @@ $admin_hover_color: lighten($primary_color, 20%);
 ul.nebula-fa-ul {margin-left: 1.5em; padding-left: 0;
 	li {position: relative;
 		> i:first-of-type {left: -2em; position: absolute; top: 0.1em; text-align: center; width: 2em; line-height: inherit;}
+		> img:first-of-type {max-width: 14px; left: -1.5em; position: absolute; top: 0.35em; text-align: center; width: 2em; line-height: inherit;}
 	}
 }
 

@@ -118,6 +118,7 @@ if ( !trait_exists('Analytics') ){
 					'geoName' => $this->get_option('cd_geoname'),
 					'relativeTime' => $this->get_option('cd_relativetime'),
 					'sessionID' => $this->get_option('cd_sessionid'),
+					'securityNote' => $this->get_option('cd_securitynote'),
 					'poi' => $this->get_option('cd_notablepoi'),
 					'role' => $this->get_option('cd_role'),
 					'timestamp' => $this->get_option('cd_timestamp'),

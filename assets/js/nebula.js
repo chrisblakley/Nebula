@@ -82,7 +82,7 @@ jQuery(window).on('load', function(){
 	jQuery('a, li, tr').removeClass('hover');
 	nebula.dom.html.addClass('loaded');
 
-	initServiceWorker();
+	registerServiceWorker();
 
 	networkAvailable(); //Call it once on load, then listen for changes
 	jQuery(window).on('offline online', function(){
@@ -140,41 +140,26 @@ function cacheSelectors(){
 }
 
 //Nebula Service Worker
-function initServiceWorker(){
+function registerServiceWorker(){
 	if ( nebula.site.options.sw && 'serviceWorker' in navigator ){ //Firefox 44+, Chrome 45+, Edge 17+, Safari 12+
-		navigator.serviceWorker.getRegistrations().then(registrations => { //Get existing SW registrations
-			if ( registrations.length ){
-				registerServiceWorker(); //Already registered, so continue using it.
-			} else {
-				var swScrollHandler = function(){ //Wait for a scroll to register
-					registerServiceWorker();
-					jQuery(window).off('scroll', swScrollHandler); //Stop listening to scroll
-				};
-				nebula.dom.window.on('scroll', swScrollHandler);
+		navigator.serviceWorker.register(nebula.site.sw_url).then(function(){
+			return navigator.serviceWorker.ready; //This can be listened for elsewhere with navigator.serviceWorker.ready.then(function(){ ... });
+		}).then(function(registration){
+			nebulaPredictiveCacheListeners();
+
+			//Unregister the ServiceWorker on ?debug
+			if ( nebula.dom.html.hasClass('debug') ){
+				registration.unregister();
 			}
+
+			//Listen for messages from the Service Worker
+			navigator.serviceWorker.addEventListener('message', function(event){
+				nebula.dom.document.trigger('nebula_sw_message', event.data);
+			});
+		}, function(err) {
+			ga('send', 'exception', {'exDescription': '(JS) ServiceWorker registration failed: ' + err, 'exFatal': false});
 		});
 	}
-}
-
-//Register Service Worker
-function registerServiceWorker(){
-	navigator.serviceWorker.register(nebula.site.sw_url).then(function(){
-		return navigator.serviceWorker.ready; //This can be listened for elsewhere with navigator.serviceWorker.ready.then(function(){ ... });
-	}).then(function(registration){
-		nebulaPredictiveCacheListeners();
-
-		//Unregister the ServiceWorker on ?debug
-		if ( nebula.dom.html.hasClass('debug') ){
-			registration.unregister();
-		}
-
-		//Listen for messages from the Service Worker
-		navigator.serviceWorker.addEventListener('message', function(event){
-			nebula.dom.document.trigger('nebula_sw_message', event.data);
-		});
-	}, function(err) {
-		ga('send', 'exception', {'exDescription': '(JS) ServiceWorker registration failed: ' + err, 'exFatal': false});
-	});
 }
 
 //Detections for events specific to predicting the next pageview.
@@ -281,54 +266,45 @@ function visibilityChangeActions(){
 function performanceMetrics(){
 	if ( window.performance && window.performance.timing ){ //Safari 11+
 		setTimeout(function(){
-			var responseEnd = Math.round(performance.timing.responseEnd-performance.timing.navigationStart); //Navigation start until server response finishes
-			var domReady = Math.round(performance.timing.domContentLoadedEventStart-performance.timing.navigationStart); //Navigation start until DOM ready
-			var windowLoaded = Math.round(performance.timing.loadEventStart-performance.timing.navigationStart); //Navigation start until window load
-
-			clientTimings = {
-				'[JS] Server Response': {
-					'start': 0,
-					'duration': responseEnd,
-					'elapsed': responseEnd
-				},
-				'[JS] DOM Ready': {
-					'start': responseEnd,
-					'duration': domReady-responseEnd,
-					'elapsed': domReady
-				},
-				'[JS] Window Load': {
-					'start': domReady,
-					'duration': windowLoaded-domReady,
-					'elapsed': windowLoaded
-				},
-				'[JS] Load Time (Total)': {
-					'start': 0,
-					'duration': windowLoaded,
-					'elapsed': windowLoaded
-				}
+			var timingCalcuations = {
+				'Redirect': {start: Math.round(performance.timing.redirectStart - performance.timing.navigationStart), duration: Math.round(performance.timing.redirectEnd - performance.timing.redirectStart)},
+				'Unload': {start: Math.round(performance.timing.unloadStart - performance.timing.navigationStart), duration: Math.round(performance.timing.unloadEnd - performance.timing.unloadStart)},
+				'App Cache': {start: Math.round(performance.timing.fetchStart - performance.timing.navigationStart), duration: Math.round(performance.timing.domainLookupStart - performance.timing.fetchStart)},
+				'DNS': {start: Math.round(performance.timing.domainLookupStart - performance.timing.navigationStart), duration: Math.round(performance.timing.domainLookupEnd - performance.timing.domainLookupStart)},
+				'TCP': {start: Math.round(performance.timing.connectStart - performance.timing.navigationStart), duration: Math.round(performance.timing.connectEnd - performance.timing.connectStart)},
+				'Request': {start: Math.round(performance.timing.requestStart - performance.timing.navigationStart), duration: Math.round(performance.timing.responseStart - performance.timing.requestStart)},
+				'Response': {start: Math.round(performance.timing.responseStart - performance.timing.navigationStart), duration: Math.round(performance.timing.responseEnd - performance.timing.responseStart)},
+				'Processing': {start: Math.round(performance.timing.domLoading - performance.timing.navigationStart), duration: Math.round(performance.timing.loadEventStart - performance.timing.domLoading)},
+				'onLoad': {start: Math.round(performance.timing.loadEventStart - performance.timing.navigationStart), duration: Math.round(performance.timing.loadEventEnd - performance.timing.loadEventStart)},
+				'DOM Ready': {start: 0, duration: Math.round(performance.timing.domComplete - performance.timing.navigationStart)},
+				'Total Load': {start: 0, duration: Math.round(performance.timing.loadEventEnd - performance.timing.navigationStart)}
 			}
+
+			clientTimings = {};
+			jQuery.each(timingCalcuations, function(name, timings){
+				if ( !isNaN(timings.duration) && timings.duration > 0 && timings.duration < 6000000 ){ //Ignore empty values
+					clientTimings[name] = {
+						start: timings.start,
+						duration: timings.duration,
+						elapsed: timings.start + timings.duration
+					}
+				}
+			});
 
 			console.groupCollapsed('Performance');
 			console.table(jQuery.extend(nebula.site.timings, clientTimings));
 			console.groupEnd();
 
-			//Validate each timing result before using them
-			if ( (responseEnd > 0 && responseEnd < 6000000) && (domReady > 0 && domReady < 6000000) && (windowLoaded > 0 && windowLoaded < 6000000) ){
-				ga('set', nebula.analytics.metrics.serverResponseTime, responseEnd);
-				ga('set', nebula.analytics.metrics.domReadyTime, domReady);
-				ga('set', nebula.analytics.metrics.windowLoadedTime, windowLoaded);
+			if ( clientTimings['Processing'] && clientTimings['DOM Ready'] && clientTimings['Total Load'] ){
+				ga('set', nebula.analytics.metrics.serverResponseTime, timingCalcuations['Processing'].start);
+				ga('set', nebula.analytics.metrics.domReadyTime, timingCalcuations['DOM Ready'].duration);
+				ga('set', nebula.analytics.metrics.windowLoadedTime, timingCalcuations['Total Load'].duration);
 				ga('send', 'event', 'Performance Timing', 'track', 'Used to deliver performance metrics to Google Analytics', {'nonInteraction': true});
 
 				//Send as User Timings as well
-				ga('send', 'timing', 'Performance Timing', 'Server Response', responseEnd, 'Navigation start until server response finishes (includes PHP execution time)');
-				ga('send', 'timing', 'Performance Timing', 'DOM Ready', Math.round(domReady), 'Navigation start until DOM ready');
-				ga('send', 'timing', 'Performance Timing', 'Window Load', Math.round(windowLoaded), 'Navigation start until window load');
-
-				if ( typeof performance.measure !== 'undefined' ){
-					performance.measure('Server Response', 'navigationStart', 'responseEnd');
-					performance.measure('DOM Ready', 'navigationStart', 'domContentLoadedEventStart');
-					performance.measure('Window Load', 'navigationStart', 'loadEventStart');
-				}
+				ga('send', 'timing', 'Performance Timing', 'Server Response', timingCalcuations['Processing'].start, 'Navigation start until server response finishes (includes PHP execution time)');
+				ga('send', 'timing', 'Performance Timing', 'DOM Ready', timingCalcuations['DOM Ready'].duration, 'Navigation start until DOM ready');
+				ga('send', 'timing', 'Performance Timing', 'Window Load', timingCalcuations['Total Load'].duration, 'Navigation start until window load');
 			}
 		}, 0);
 	}
@@ -1995,6 +1971,12 @@ function cf7Functions(){
 	nebula.dom.document.on('wpcf7invalid', function(e){
 		var formID = e.detail.contactFormId || e.detail.id;
 		var formTime = nebulaTimer(e.detail.id, 'lap', 'wpcf7-submit-spam');
+
+		//Apply Bootstrap validation classes to invalid fields
+		jQuery('.wpcf7-not-valid').each(function(){
+			jQuery(this).addClass('is-invalid');
+		});
+
 		updateFormFlow(formID, '[Invalid]');
 		ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Invalid)');
 		ga('set', nebula.analytics.dimensions.formTiming, millisecondsToString(formTime) + 'ms (' + nebula.timings[e.detail.id].laps + ' inputs)');
