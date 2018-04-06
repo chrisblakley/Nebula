@@ -395,12 +395,33 @@ if ( !trait_exists('Admin') ){
 		//Create custom menus within the WordPress Admin Bar
 		public function admin_bar_menus($wp_admin_bar){
 			wp_reset_query(); //Make sure the query is always reset in case the current page has a custom query that isn't reset.
+			global $post;
+
+			$current_id = get_the_id();
+			if ( is_home() ){
+				$current_id = get_option('page_for_posts');
+			}
+
+			$status = get_post_field('post_status', $current_id);
+			$original_date = strtotime(get_post_field('post_date', $current_id));
+			$original_author = get_the_author_meta('display_name' , get_post_field('post_author', $current_id));
+			$modified_date = strtotime(get_post_field('post_modified', $current_id));
+			if ( get_post_meta($current_id, '_edit_last', true) ){
+				$last_user = get_userdata(get_post_meta( $current_id, '_edit_last', true));
+				$modified_author = $last_user->display_name;
+			}
 
 			$node_id = ( $this->is_admin_page() )? 'view' : 'edit';
 			$new_content_node = $wp_admin_bar->get_node($node_id);
 			if ( $new_content_node ){
 				$post_type_object = get_post_type_object(get_post_type());
-				$new_content_node->title = ucfirst($node_id) . ' ' . ucwords($post_type_object->labels->singular_name) . ' <span class="nebula-admin-light">(ID: ' . get_the_id() . ')</span>';
+
+				$current_id = get_the_id();
+				if ( is_home() ){
+					$current_id = get_option('page_for_posts');
+				}
+
+				$new_content_node->title = ucfirst($node_id) . ' ' . ucwords($post_type_object->labels->singular_name) . ' <span class="nebula-admin-light">(ID: ' . $current_id . ')</span>';
 				$wp_admin_bar->add_node($new_content_node);
 			}
 
@@ -409,18 +430,17 @@ if ( !trait_exists('Admin') ){
 			$wp_admin_bar->add_node(array(
 				'parent' => $node_id,
 				'id' => 'nebula-created',
-				'title' => '<i class="nebula-admin-fa far fa-fw fa-calendar"></i> Created: ' . get_the_date() . ' <span class="nebula-admin-light">(' . get_the_author() . ')</span>',
+				'title' => '<i class="nebula-admin-fa far fa-fw fa-calendar"></i> <span title="' . human_time_diff($original_date) . ' ago">Created: ' . date('F j, Y', $original_date) . '</span> <span class="nebula-admin-light">(' . $original_author . ')</span>',
 				'href' => get_edit_post_link(),
 				'meta' => array('target' => '_blank', 'rel' => 'noopener')
 			));
 
 			//Add modified date under View/Edit node
-			if ( get_the_modified_date() !== get_the_date() ){ //If the post has been modified
-				$manage_author = ( get_the_modified_author() )? get_the_modified_author() : get_the_author();
+			if ( get_post_meta($current_id, '_edit_last', true) ){ //If the post has been modified
 				$wp_admin_bar->add_node(array(
 					'parent' => $node_id,
 					'id' => 'nebula-modified',
-					'title' => '<i class="nebula-admin-fa far fa-fw fa-clock"></i> Modified: ' . get_the_modified_date() . ' <span class="nebula-admin-light">(' . $manage_author . ')</span>',
+					'title' => '<i class="nebula-admin-fa far fa-fw fa-clock"></i> <span title="' . human_time_diff($modified_date) . ' ago">Modified: ' . date('F j, Y', $modified_date) . '</span> <span class="nebula-admin-light">(' . $modified_author . ')</span>',
 					'href' => get_edit_post_link(),
 					'meta' => array('target' => '_blank', 'rel' => 'noopener')
 				));
@@ -430,7 +450,7 @@ if ( !trait_exists('Admin') ){
 			$wp_admin_bar->add_node(array(
 				'parent' => $node_id,
 				'id' => 'nebula-status',
-				'title' => '<i class="nebula-admin-fa fas fa-fw fa-map-marker"></i> Status: ' . ucwords(get_post_status()),
+				'title' => '<i class="nebula-admin-fa fas fa-fw fa-map-marker"></i> Status: ' . ucwords($status),
 				'href' => get_edit_post_link(),
 				'meta' => array('target' => '_blank', 'rel' => 'noopener')
 			));
@@ -448,7 +468,7 @@ if ( !trait_exists('Admin') ){
 
 			if ( !empty($post_type_object) ){
 				//Ancestor pages
-				$ancestors = get_post_ancestors(get_the_id());
+				$ancestors = get_post_ancestors($current_id);
 				if ( !empty($ancestors) ){
 					$wp_admin_bar->add_node(array(
 						'parent' => $node_id,
@@ -471,7 +491,7 @@ if ( !trait_exists('Admin') ){
 					$child_pages = new WP_Query(array(
 						'post_type' => $post_type_object->labels->singular_name,
 						'posts_per_page' => -1,
-						'post_parent' => get_the_id(),
+						'post_parent' => $current_id,
 						'order' => 'ASC',
 						'orderby' => 'menu_order'
 					));

@@ -78,7 +78,9 @@ trait Functions {
 		add_filter('the_posts', array($this, 'always_get_post_custom'));
 		add_action('pre_get_posts', array($this, 'redirect_empty_search'));
 		add_action('template_redirect', array($this, 'redirect_single_search_result'));
+
 		add_action('get_header', array($this, 'redirect_author_template'));
+		add_filter('single_template', array($this, 'single_category_template'));
 
 		add_action('wp_ajax_nebula_autocomplete_search', array($this, 'autocomplete_search'));
 		add_action('wp_ajax_nopriv_nebula_autocomplete_search', array($this, 'autocomplete_search'));
@@ -1854,6 +1856,22 @@ trait Functions {
 			wp_redirect(home_url('/') . '?s=about');
 			exit;
 		}
+	}
+
+	//Check for single category templates with the filename single-cat-slug.php or single-cat-id.php
+	public function single_category_template($single_template){
+		global $wp_query, $post;
+
+		//Check for single template by category slug and ID
+		foreach ( get_the_category() as $category ){
+			if ( get_theme_file_path('single-cat-' . $category->slug . '.php') ){
+				return get_theme_file_path('single-cat-' . $category->slug . '.php');
+			} elseif ( get_theme_file_path('single-cat-' . $category->term_id . '.php') ){
+				return get_theme_file_path('single-cat-' . $category->term_id . '.php');
+			}
+		}
+
+		return $single_template;
 	}
 
 	//Check if business hours exist in Nebula Options

@@ -1,6 +1,6 @@
 <?php
 	/**
-	 * The Template for displaying all single posts.
+	 * The template for displaying all single posts.
 	 */
 
 	if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
