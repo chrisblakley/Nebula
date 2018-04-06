@@ -1864,10 +1864,14 @@ trait Functions {
 
 		//Check for single template by category slug and ID
 		foreach ( get_the_category() as $category ){
-			if ( get_theme_file_path('single-cat-' . $category->slug . '.php') ){
-				return get_theme_file_path('single-cat-' . $category->slug . '.php');
-			} elseif ( get_theme_file_path('single-cat-' . $category->term_id . '.php') ){
-				return get_theme_file_path('single-cat-' . $category->term_id . '.php');
+			if ( file_exists(get_stylesheet_directory() . '/single-cat-' . $category->slug . '.php') ){
+				return get_stylesheet_directory() . '/single-cat-' . $category->slug . '.php';
+			} elseif ( file_exists(get_stylesheet_directory() . '/single-cat-' . $category->term_id . '.php') ){
+				return get_stylesheet_directory() . '/single-cat-' . $category->term_id . '.php';
+			} elseif ( file_exists(get_template_directory() . '/single-cat-' . $category->term_id . '.php') ){
+				return get_template_directory() . '/single-cat-' . $category->term_id . '.php';
+			} elseif ( file_exists(get_template_directory() . '/single-cat-' . $category->term_id . '.php') ){
+				return get_template_directory() . '/single-cat-' . $category->term_id . '.php';
 			}
 		}
 
