@@ -711,6 +711,17 @@ if ( !trait_exists('Dashboard') ){
 			}
 			echo '<li><i class="fas fa-fw fa-images"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> ' . $upload_max . '</li>';
 
+			//Service Worker
+			if ( $this->get_option('service_worker') ){
+				if ( !is_ssl() ){
+					echo '<li><i class="fas fa-fw fa-microchip" style="color: red;"></i> <strong>Not</strong> using service worker. No SSL.</li>';
+				} elseif ( !file_exists($this->sw_location(false)) ){
+					echo '<li><i class="fas fa-fw fa-microchip" style="color: red;"></i> <strong>Not</strong> using service worker. Service worker file does not exist.</li>';
+				} else {
+					echo '<li><i class="fas fa-fw fa-microchip"></i> Using service worker</li>';
+				}
+			}
+
 			//Load Times
 			echo '<div id="testloadcon" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>';
 			echo '<script id="testloadscript">

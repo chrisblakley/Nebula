@@ -16,7 +16,7 @@
 						<div class="row mobilenavcon">
 							<div class="col">
 								<?php if ( get_theme_mod('nebula_offcanvas_menu', true) && (has_nav_menu('mobile') || has_nav_menu('primary')) ): ?>
-									<a class="mobilenavtrigger alignleft" href="#mobilenav" title="Navigation"><i class="fa fa-bars"></i></a>
+									<a class="mobilenavtrigger alignleft" href="#mobilenav" title="Navigation"><i class="fas fa-bars"></i></a>
 									<nav id="mobilenav" role="navigation">
 										<?php
 											if ( has_nav_menu('mobile') ){

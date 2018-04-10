@@ -30,7 +30,7 @@ if ( !trait_exists('Optimization') ){
 
 			add_filter('intermediate_image_sizes_advanced', array($this, 'create_max_width_size_proportionally'), 10, 2);
 			add_filter('post_thumbnail_size', array($this, 'limit_thumbnail_size'), 10, 2);
-			add_filter('nebula_thumbnail_src_size', array($this, 'limit_image_size'));
+			add_filter('nebula_thumbnail_src_size', array($this, 'limit_image_size'), 10, 2);
 			add_filter('max_srcset_image_width', array($this, 'smaller_max_srcset_image_width'), 10, 2);
 		}
 
@@ -74,7 +74,7 @@ if ( !trait_exists('Optimization') ){
 		public function limit_thumbnail_size($size, $id){
 			return $this->limit_image_size($size, $id);
 		}
-		public function limit_image_size($size, $id){
+		public function limit_image_size($size, $id=false){
 			if ( $this->get_option('limit_image_dimensions') ){
 				if ( is_string($size) && ($size === 'post-thumbnail' || $size === 'full') ){
 					if ( $this->is_save_data() ){
@@ -330,7 +330,7 @@ if ( !trait_exists('Optimization') ){
 			//If an eligible page is determined after load, use the JavaScript nebulaPrerender(url) function.
 			$prerender = false;
 			if ( is_404() ){
-				$prerender = ( !empty($this->error_404_exact_match) )? $this->error_404_exact_match : home_url('/');
+				$prerender = ( !empty($this->error_404_exact_match) )? get_permalink($this->error_404_exact_match->ID) : home_url('/');
 			}
 
 			if ( !empty($prerender) ){

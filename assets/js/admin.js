@@ -62,11 +62,11 @@ jQuery(function(){
 			jQuery(this).closest('.form-group, .multi-form-group').find('.more-help').slideToggle();
 			return false;
 		});
+	}
 
-		//Remove Sass render trigger query
-		if ( get('sass') && !get('persistent') && window.history.replaceState ){ //IE10+
-			window.history.replaceState({}, document.title, removeQueryParameter('sass', window.location.href));
-		}
+	//Remove Sass render trigger query
+	if ( get('sass') && !get('persistent') && window.history.replaceState ){ //IE10+
+		window.history.replaceState({}, document.title, removeQueryParameter('sass', window.location.href));
 	}
 }); //End Document Ready
 
@@ -351,18 +351,22 @@ function keywordSearch(container, parent, value, filteredClass){
  ===========================*/
 
 //Get query string parameters
-function getQueryStrings(){
+function getQueryStrings(url){
+	if ( !url ){
+		url = document.URL;
+	}
+
 	var queries = {};
-	var queryString = document.URL.split('?')[1];
+	var queryString = url.split('?')[1];
 
 	if ( queryString ){
 		queryStrings = queryString.split('&');
 		for ( var i = 0; i < queryStrings.length; i++ ){
 			hash = queryStrings[i].split('=');
 			if ( hash[1] ){
-				 queries[hash[0]] = hash[1];
+				queries[hash[0]] = hash[1];
 			} else {
-				 queries[hash[0]] = true;
+				queries[hash[0]] = true;
 			}
 		}
 	}
@@ -371,8 +375,8 @@ function getQueryStrings(){
 }
 
 //Search query strings for the passed parameter
-function get(parameter){
-	var queries = getQueryStrings();
+function get(parameter, url){
+	var queries = getQueryStrings(url);
 
 	if ( !parameter ){
 		return queries;
@@ -381,28 +385,39 @@ function get(parameter){
 	return queries[parameter] || false;
 }
 
-//Remove a parameter from the query string.
-function removeQueryParameter(key, sourceURL){
-	var baseURL = sourceURL.split('?')[0];
-	var param;
-	var params_arr = [];
-	var queryString = ( sourceURL.indexOf('?') !== -1 )? sourceURL.split('?')[1] : '';
-
-	if ( queryString !== '' ){
-		params_arr = queryString.split('&');
-
-		for ( i = params_arr.length-1; i >= 0; i -= 1 ){
-			param = params_arr[i].split('=')[0];
-			if ( param === key ){
-				params_arr.splice(i, 1);
-			}
-		}
-
-		newURL = baseURL + '?' + params_arr.join('&');
+//Remove an array of parameters from the query string.
+function removeQueryParameter(keys, sourceURL){
+	if ( typeof keys === 'string' ){
+		keys = [keys];
 	}
 
+	jQuery.each(keys, function(index, item){
+		var url = sourceURL;
+		if ( typeof newURL !== 'undefined' ){
+			url = newURL;
+		}
+
+		var baseURL = url.split('?')[0];
+		var param;
+		var params_arr = [];
+		var queryString = ( url.indexOf('?') !== -1 )? url.split('?')[1] : '';
+
+		if ( queryString !== '' ){
+			params_arr = queryString.split('&');
+
+			for ( i = params_arr.length-1; i >= 0; i -= 1 ){
+				param = params_arr[i].split('=')[0];
+				if ( param === item ){
+					params_arr.splice(i, 1);
+				}
+			}
+
+			newURL = baseURL + '?' + params_arr.join('&');
+		}
+	});
+
 	//Check if it is empty after parameter removal
-	if ( newURL.split('?')[1] === '' ){
+	if ( typeof newURL !== 'undefined' && newURL.split('?')[1] === '' ){
 		return newURL.split("?")[0]; //Return the URL without a query
 	}
 
@@ -589,6 +604,7 @@ jQuery('#nebula-option-filter').on('keydown keyup change focus blur', function(e
 
 jQuery('#reset-filter a').on('click', function(){
 	jQuery('#nebula-option-filter').val('').trigger('keydown');
+	jQuery('.tab-pane').removeClass('active').first().addClass('active');
 	return false;
 });
 

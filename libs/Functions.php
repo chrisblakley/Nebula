@@ -660,8 +660,8 @@ trait Functions {
 			return false;
 		}
 
-		$size = apply_filters('nebula_thumbnail_src_size', $size);
 		$image_id = ( get_post_type($id) === 'attachment' || $type !== 'post' )? $id : get_post_thumbnail_id($id); //If the thumbnail (or attachment) ID was passed instead of the post ID
+		$size = apply_filters('nebula_thumbnail_src_size', $size, $image_id);
 
 		if ( strpos($id, '<img') !== false || $size === 'full' ){
 			$image = wp_get_attachment_image_src($image_id, $size);
@@ -1184,7 +1184,7 @@ trait Functions {
 	}
 
 	//Display Social Buttons
-	public function social($networks=array('share_api', 'facebook', 'twitter', 'google+'), $counts=0){
+	public function social($networks=array('shareapi', 'facebook', 'twitter', 'google+'), $counts=0){
 		$override = apply_filters('pre_nebula_social', null, $networks, $counts);
 		if ( isset($override) ){return;}
 
@@ -1192,9 +1192,9 @@ trait Functions {
 			$networks = array($networks);
 		} elseif ( is_int($networks) && ($networks === 1 || $networks === 0) ){ //If it is an integer of 1 or 0, then set it to $counts
 			$counts = $networks;
-			$networks = array('share_api', 'facebook', 'twitter', 'google+');
+			$networks = array('shareapi', 'facebook', 'twitter', 'google+');
 		} elseif ( !is_array($networks) ){
-			$networks = array('share_api', 'facebook', 'twitter', 'google+');
+			$networks = array('shareapi', 'facebook', 'twitter', 'google+');
 		}
 
 		//Convert $networks to lower case without dashes/spaces for more flexible string matching later.
@@ -1262,7 +1262,7 @@ trait Functions {
 		if ( isset($override) ){return;}
 		?>
 		<div class="nebula-social-button facebook-share require-fbsdk">
-			<div class="fb-share-button" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts !== 0 )? 'button_count' : 'button'; ?>"></div>
+			<div class="fb-share-button" data-href="<?php echo ( !empty($url) )? $url : get_page_link(); ?>" data-layout="<?php echo ( $counts !== 0 )? 'button_count' : 'button'; ?>" data-size="small" data-mobile-iframe="true"></div>
 		</div>
 	<?php }
 
