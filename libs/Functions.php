@@ -1183,7 +1183,73 @@ trait Functions {
 		}
 	}
 
-	//Display Social Buttons
+	//Display non-native social buttons
+	//This is a more optimized solution that does not require SDKs and does not load third-party resources, so these will also be a consistent size.
+	public function share($networks=array('shareapi', 'facebook', 'twitter', 'google+'), $id=false){
+		$override = apply_filters('pre_nebula_share', null, $networks, $id);
+		if ( isset($override) ){return;}
+
+		if ( empty($id) ){
+			$id = get_the_id();
+		}
+
+		$encoded_url = urlencode(get_permalink($id));
+		$encoded_title = urlencode(get_the_title($id));
+
+		//Convert $networks to lower case without dashes/spaces for more flexible string matching later.
+		$networks = array_map(function($value){
+			return str_replace(array(' ', '_', '-'), '', strtolower($value));
+		}, $networks);
+
+		echo '<div class="sharing-links">';
+
+		//If the 'shareapi' cookie or session exists and 'shareapi' is requested, return *only* the Share API
+		if ( (isset($_COOKIE['shareapi']) || isset($_SESSION['shareapi'])) && in_array($networks, array('shareapi')) ){
+			$networks = array('shareapi');
+			$_SESSION['shareapi'] = true; //Set a session in case the cookie is deleted
+		}
+
+		foreach ( $networks as $network ){
+			//Share API
+			if ( in_array($network, array('shareapi')) ){
+				echo '<a class="nebula-share webshare" href="#">Share</a>';
+			}
+
+			//Facebook
+			if ( in_array($network, array('facebook', 'fb')) ){
+				echo '<a class="nebula-share facebook" href="http://www.facebook.com/sharer.php?u=' . $encoded_url . '&t=' . $encoded_title . '" target="_blank" rel="noopener">Share</a>';
+			}
+
+			//Twitter
+			if ( in_array($network, array('twitter')) ){
+				echo '<a class="nebula-share twitter" href="https://twitter.com/intent/tweet?text=' . $encoded_title .  '&url=' . $encoded_url . '" target="_blank" rel="noopener">Tweet</a>';
+			}
+
+			//Google+
+			if ( in_array($network, array('google', 'googleplus', 'google+', 'g+', 'gplus')) ){
+				echo '<a class="nebula-share google-plus" href="https://plus.google.com/share?url=' . $encoded_url . '" target="_blank" rel="noopener">Share</a>';
+			}
+
+			//LinkedIn
+			if ( in_array($network, array('linkedin', 'li')) ){
+				echo '<a class="nebula-share linkedin" href="http://www.linkedin.com/shareArticle?mini=true&url=' . $encoded_url . '&title=' . $encoded_title . '" target="_blank" rel="noopener">Share</a>';
+			}
+
+			//Pinterest
+			if ( in_array($network, array('pinterest', 'pin')) ){
+				echo '<a class="nebula-share pinterest" href="http://pinterest.com/pin/create/button/?url=' . $encoded_url . '" target="_blank" rel="noopener">Share</a>';
+			}
+
+			//Email
+			if ( in_array($network, array('email')) ){
+				echo '<a class="nebula-share email" href="mailto:?subject=' . $encoded_title . '&body=' . $encoded_url . '" target="_blank" rel="noopener">Email</a>';
+			}
+		}
+
+		echo '</div><!--/sharing-links-->';
+	}
+
+	//Display Native Social Buttons
 	public function social($networks=array('shareapi', 'facebook', 'twitter', 'google+'), $counts=0){
 		$override = apply_filters('pre_nebula_social', null, $networks, $counts);
 		if ( isset($override) ){return;}

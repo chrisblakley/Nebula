@@ -11,6 +11,7 @@
 //.example {color: brand(facebook);}
 //.example {color: brand(flickr, secondary);}
 //.example {color: brand(flickr, 2);}
+@function brands($name, $index: 1){@return brand($name, $index);}
 @function brand($name, $index: 1){
 	@if $index == 0 {
 		$index: 1;

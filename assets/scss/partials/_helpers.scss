@@ -157,6 +157,41 @@ ul.list-unstyled {list-style: none; padding-left: 0;}
 	.ig-b-v-24 {background-image: url("https://badges.instagram.com/static/assets/img/ig-badge-view-sprite-24@2x.png"); background-size: 160px 178px;}
 }
 
+//Nebula social share buttons
+a.nebula-share {display: inline-block; padding: 5px 7px; border-radius: 3px; font-size: rem(12px); line-height: 1; color: #fff !important; text-shadow: 1px 1px rgba(0, 0, 0, 0.25); margin-right: 5px;
+	&:last-child {margin-right: 0;}
+	&:before {font-family: "Font Awesome 5 Brands"; margin-right: 4px; text-shadow: none;}
+
+	&.facebook {background: brand(facebook);
+		&:before {content: "\f09a";}
+		&:hover {background: darken(brand(facebook), 15%);}
+	}
+	&.twitter {background: brand(twitter);
+		&:before {content: "\f099";}
+		&:hover {background: darken(brand(twitter), 15%);}
+	}
+	&.linkedin {background: brand(linkedin);
+		&:before {content: "\f0e1";}
+		&:hover {background: darken(brand(linkedin), 15%);}
+	}
+	&.google-plus, &.googleplus {background: brand(googleplus);
+		&:before {content: "\f0d5";}
+		&:hover {background: darken(brand(googleplus), 15%);}
+	}
+	&.pinterest{background: brand(pinterest);
+		&:before {content: "\f0d2";}
+		&:hover {background: darken(brand(pinterest), 15%);}
+	}
+	&.email {background: grey;
+		&:before {content: "\f0e0"; font-family: $font_awesome;}
+		&:hover {background: darken(grey, 15%);}
+	}
+	&.webshare, &.shareapi {background: orange;
+		&:before {content: "\f1e0"; font-family: $font_awesome;}
+		&:hover {background: darken(orange, 15%);}
+	}
+}
+
 // ===========================
 // Special File Type Indicators
 // ===========================

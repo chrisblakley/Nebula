@@ -553,52 +553,61 @@ function prefillFacebookFields(){
 function socialSharing(){
 	var encloc = encodeURI(window.location.href);
 	var enctitle = encodeURI(document.title);
+	var popupTop = jQuery(window).height()/2-275;
+	var popupLeft = jQuery(window).width()/2-225;
+	var popupAttrs = 'top=' + popupTop + ', left=' + popupLeft + ', toolbar=0, location=0, menubar=0, directories=0, scrollbars=0, chrome=yes, personalbar=0';
 
 	//Facebook
-	jQuery('.fbshare').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
+	jQuery('.fbshare, a.nebula-share.facebook').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
+		window.open(jQuery(this).attr('href'), 'facebookShareWindow', 'width=550, height=450, ' + popupAttrs);
 		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Facebook');
 		nv('event', 'Facebook Share');
+		return false;
 	});
 
 	//Twitter
-	jQuery('.twshare').attr('href', 'https://twitter.com/intent/tweet?text=' + enctitle + '&url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
+	jQuery('.twshare, a.nebula-share.twitter').attr('href', 'https://twitter.com/intent/tweet?text=' + enctitle + '&url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
+		window.open(jQuery(this).attr('href'), 'twitterShareWindow', 'width=600, height=254, ' + popupAttrs);
 		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Twitter');
 		nv('event', 'Twitter Share');
 	});
 
 	//Google+
-	jQuery('.gshare').attr('href', 'https://plus.google.com/share?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
+	jQuery('.gshare, a.nebula-share.googleplus').attr('href', 'https://plus.google.com/share?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
+		window.open(jQuery(this).attr('href'), 'googlePlusShareWindow', 'width=515, height=490, ' + popupAttrs);
 		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Google+');
 		nv('event', 'Google+ Share');
 	});
 
 	//LinkedIn
-	jQuery('.lishare').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
+	jQuery('.lishare, a.nebula-share.linkedin').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
+		window.open(jQuery(this).attr('href'), 'linkedinShareWindow', 'width=600, height=473, ' + popupAttrs);
 		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'LinkedIn');
 		nv('event', 'LinkedIn Share');
 	});
 
 	//Pinterest
-	jQuery('.pinshare').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
+	jQuery('.pinshare, a.nebula-share.pinterest').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
+		window.open(jQuery(this).attr('href'), 'pinterestShareWindow', 'width=600, height=450, ' + popupAttrs);
 		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Pinterest');
 		nv('event', 'Pinterest Share');
 	});
 
 	//Email
-	jQuery('.emshare').attr('href', 'mailto:?subject=' + enctitle + '&body=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
+	jQuery('.emshare, a.nebula-share.email').attr('href', 'mailto:?subject=' + enctitle + '&body=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
 		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Email');
 		nv('event', 'Email Share');
 	});
 
 	//Web Share API
-	if ( 'share' in navigator ){ //Chrome 61+
-		nebula.dom.document.on('click', '.webshare', function(){
+	if ( 'share' in navigator && !jQuery('body').hasClass('desktop') ){ //Chrome 61+
+		nebula.dom.document.on('click', 'a.nebula-share.webshare, a.nebula-share.shareapi', function(){
 			oThis = jQuery(this);
 
 			navigator.share({
@@ -609,6 +618,11 @@ function socialSharing(){
 				ga('send', 'event', 'Social', 'Share', 'Web Share API');
 				nv('event', 'Web Share API');
 				oThis.addClass('success');
+				//set cookie yolo
+			}).catch(function(error){
+				ga('send', 'exception', {'exDescription': '(JS) Share API Error: ' + error, 'exFatal': false});
+				oThis.addClass('error').text('Sharing Error');
+				createCookie('shareapi', false);
 			});
 
 			return false;
@@ -616,7 +630,7 @@ function socialSharing(){
 
 		createCookie('shareapi', true); //Set a cookie to speed up future page loads by not loading third-party share buttons.
 	} else {
-		jQuery('.webshare').addClass('hidden');
+		jQuery('a.nebula-share.webshare, a.nebula-share.shareapi').addClass('hidden');
 	}
 }
 
