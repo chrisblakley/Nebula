@@ -418,7 +418,6 @@ trait Functions {
 				$nebula_warnings[] = array(
 					'level' => 'warn',
 					'description' => '<a href="options-general.php">Site Tagline</a> is still "Just Another WordPress Site"!',
-
 					'url' => get_admin_url() . 'options-general.php'
 				);
 			}

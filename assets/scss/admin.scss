@@ -165,6 +165,11 @@ th#id {width: 50px;}
 	pre.actualline {display: table; font-family: monospace; font-size: 10px; margin: 0; color: #666; background: #fff; padding: 2px 5px; border-radius: 5px; resize: none; @include prefix((transition: all 0.25s));}
 }
 
+//Hubspot metabox
+.hubspot_contact {margin-bottom: 15px;
+	li {margin-bottom: 0;}
+}
+
 .nebula-admin-notice {
 	a {text-decoration: none;}
 }

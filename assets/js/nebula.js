@@ -559,43 +559,62 @@ function socialSharing(){
 
 	//Facebook
 	jQuery('.fbshare, a.nebula-share.facebook').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
-		window.open(jQuery(this).attr('href'), 'facebookShareWindow', 'width=550, height=450, ' + popupAttrs);
 		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Facebook');
 		nv('event', 'Facebook Share');
-		return false;
+
+		if ( nebula.dom.body.hasClass('desktop') ){
+			window.open(jQuery(this).attr('href'), 'facebookShareWindow', 'width=550, height=450, ' + popupAttrs);
+			return false;
+		}
 	});
 
 	//Twitter
 	jQuery('.twshare, a.nebula-share.twitter').attr('href', 'https://twitter.com/intent/tweet?text=' + enctitle + '&url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
-		window.open(jQuery(this).attr('href'), 'twitterShareWindow', 'width=600, height=254, ' + popupAttrs);
 		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Twitter');
 		nv('event', 'Twitter Share');
+
+		if ( nebula.dom.body.hasClass('desktop') ){
+			window.open(jQuery(this).attr('href'), 'twitterShareWindow', 'width=600, height=254, ' + popupAttrs);
+			return false;
+		}
 	});
 
 	//Google+
 	jQuery('.gshare, a.nebula-share.googleplus').attr('href', 'https://plus.google.com/share?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
-		window.open(jQuery(this).attr('href'), 'googlePlusShareWindow', 'width=515, height=490, ' + popupAttrs);
 		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Google+');
 		nv('event', 'Google+ Share');
+
+		if ( nebula.dom.body.hasClass('desktop') ){
+			window.open(jQuery(this).attr('href'), 'googlePlusShareWindow', 'width=515, height=490, ' + popupAttrs);
+			return false;
+		}
 	});
 
 	//LinkedIn
 	jQuery('.lishare, a.nebula-share.linkedin').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
-		window.open(jQuery(this).attr('href'), 'linkedinShareWindow', 'width=600, height=473, ' + popupAttrs);
 		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'LinkedIn');
 		nv('event', 'LinkedIn Share');
+
+		if ( nebula.dom.body.hasClass('desktop') ){
+			window.open(jQuery(this).attr('href'), 'linkedinShareWindow', 'width=600, height=473, ' + popupAttrs);
+			return false;
+		}
 	});
 
 	//Pinterest
 	jQuery('.pinshare, a.nebula-share.pinterest').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
-		window.open(jQuery(this).attr('href'), 'pinterestShareWindow', 'width=600, height=450, ' + popupAttrs);
 		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Pinterest');
 		nv('event', 'Pinterest Share');
+
+		if ( nebula.dom.body.hasClass('desktop') ){
+			window.open(jQuery(this).attr('href'), 'pinterestShareWindow', 'width=600, height=450, ' + popupAttrs);
+			return false;
+		}
 	});
 
 	//Email
@@ -606,7 +625,7 @@ function socialSharing(){
 	});
 
 	//Web Share API
-	if ( 'share' in navigator && !jQuery('body').hasClass('desktop') ){ //Chrome 61+
+	if ( 'share' in navigator && !nebula.dom.body.hasClass('desktop') ){ //Chrome 61+
 		nebula.dom.document.on('click', 'a.nebula-share.webshare, a.nebula-share.shareapi', function(){
 			oThis = jQuery(this);
 

@@ -38,7 +38,7 @@ if ( !trait_exists('Device') ){
 			}
 
 			global $is_iphone;
-			if ( $is_iphone ){
+			if ( wp_is_mobile() || $is_iphone ){
 				return true;
 			}
 
@@ -206,10 +206,10 @@ if ( !trait_exists('Device') ){
 					}
 					break;
 				case 'formfactor':
-					if ( $is_iphone ){
+					if ( wp_is_mobile() || $is_iphone ){
 						return 'mobile';
 					}
-					break;
+					return 'desktop';
 				default:
 					return false;
 			}

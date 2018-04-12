@@ -954,8 +954,8 @@ if ( !trait_exists('Dashboard') ){
 
 			$hubspot_contacts_json = get_transient('nebula_hubspot_contacts');
 			if ( empty($hubspot_contacts_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
-
-				$response = $this->remote_get('https://api.hubapi.com/contacts/v1/lists/all/contacts/recent?hapikey=' . $this->get_option('hubspot_api') . '&count=4');
+				$requested_properties = '&property=' . implode('&property=', apply_filters('nebula_hubspot_metabox_properties', array('firstname', 'lastname', 'full_name', 'email', 'createdate')));
+				$response = $this->remote_get('https://api.hubapi.com/contacts/v1/lists/all/contacts/recent?hapikey=' . $this->get_option('hubspot_api') . '&count=4' . $requested_properties);
 				if ( is_wp_error($response) ){
 	                return false;
 	            }
@@ -967,6 +967,8 @@ if ( !trait_exists('Dashboard') ){
 			$hubspot_contacts_json = json_decode($hubspot_contacts_json);
 			if ( !empty($hubspot_contacts_json) ){
 				if ( !empty($hubspot_contacts_json->contacts) ){
+
+
 					foreach ( $hubspot_contacts_json->contacts as $contact ){
 						//Get contact's email address
 						$identities = $contact->{'identity-profiles'}[0]->identities;
@@ -986,15 +988,30 @@ if ( !trait_exists('Dashboard') ){
 							$contact_name = $contact->properties->full_name->value;
 							$has_name = true;
 						}
+
+						echo '<ul class="hubspot_contact">';
+
+						$before_contact = apply_filters('nebula_hubspot_metabox_before_contact', '', $contact);
+						if ( !empty($before_contact) ){
+							echo '<li>' . $before_contact . '</li>';
+						}
 						?>
 
-						<p>
-							<?php echo ( $has_name )? '<i class="fas fa-fw fa-user"></i> ' : '<i class="far fa-fw fa-envelope"></i> '; ?><strong><a href="<?php echo $contact->{'profile-url'}; ?>" target="_blank"><?php echo ( $has_name )? $contact_name : $contact_email; ?></a></strong><br>
-							<?php echo ( $has_name )? '<i class="far fa-fw fa-envelope"></i> ' . $contact_email . '<br>' : ''; ?>
-							<i class="far fa-fw fa-<?php echo ( date('Y-m-d', $contact->addedAt/1000) === date('Y-m-d') )? 'clock' : 'calendar'; ?>"></i> <span title="<?php echo date('F j, Y @ g:ia', $contact->addedAt/1000); ?>" style="cursor: help;"><?php echo human_time_diff($contact->addedAt/1000) . ' ago'; ?></span>
-						</p>
+						<li><?php echo ( $has_name )? '<i class="fas fa-fw fa-user"></i> ' : '<i class="far fa-fw fa-envelope"></i> '; ?><strong><a href="<?php echo $contact->{'profile-url'}; ?>" target="_blank"><?php echo ( $has_name )? $contact_name : $contact_email; ?></a></strong></li>
+
+						<?php if ( $has_name ): ?>
+							<li><i class="far fa-fw fa-envelope"></i> <?php echo $contact_email; ?><br /></li>
+						<?php endif; ?>
+
+						<li><i class="far fa-fw fa-<?php echo ( date('Y-m-d', $contact->addedAt/1000) === date('Y-m-d') )? 'clock' : 'calendar'; ?>"></i> <span title="<?php echo date('F j, Y @ g:ia', $contact->addedAt/1000); ?>" style="cursor: help;"><?php echo human_time_diff($contact->addedAt/1000) . ' ago'; ?></span></li>
 
 						<?php
+						$after_contact = apply_filters('nebula_hubspot_metabox_after_contact', '', $contact);
+						if ( !empty($after_contact) ){
+							echo '<li>' . $after_contact . '</li>';
+						}
+
+						echo '</ul>';
 					}
 				} else {
 					echo '<p><small>No contacts yet.</small></p>';

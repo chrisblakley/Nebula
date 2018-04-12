@@ -899,6 +899,8 @@ if ( !trait_exists('Admin') ){
 			//If there are warnings display them
 			if ( !empty($warnings) ){
 				foreach( $warnings as $warning ){
+					$category = ( !empty($warning['category']) )? '[' . $warning['category'] . ']' : '[Nebula]';
+
 					if ( $warning['level'] === 'warn' ){
 						$warning['level'] = 'warning';
 					}
@@ -907,7 +909,7 @@ if ( !trait_exists('Admin') ){
 						$warning['level'] = 'info';
 					}
 
-					echo '<div class="nebula-admin-notice notice notice-' . $warning['level'] . '"><p>[Nebula] ' . $warning['description'] . '</p></div>'; //@TODO "Nebula" 0: Make these dismissable
+					echo '<div class="nebula-admin-notice notice notice-' . $warning['level'] . '"><p>' . $category . ' ' . $warning['description'] . '</p></div>'; //@TODO "Nebula" 0: Make these dismissable
 				}
 			}
 		}
