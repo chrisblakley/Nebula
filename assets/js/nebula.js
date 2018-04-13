@@ -310,9 +310,11 @@ function performanceMetrics(){
 				}
 			});
 
-			console.groupCollapsed('Performance');
-			console.table(jQuery.extend(nebula.site.timings, clientTimings));
-			console.groupEnd();
+			if ( typeof console.table === 'function' ){
+				console.groupCollapsed('Performance');
+				console.table(jQuery.extend(nebula.site.timings, clientTimings));
+				console.groupEnd();
+			}
 
 			if ( clientTimings['Processing'] && clientTimings['DOM Ready'] && clientTimings['Total Load'] ){
 				ga('set', nebula.analytics.metrics.serverResponseTime, timingCalcuations['Processing'].start);
@@ -2966,7 +2968,7 @@ function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow, callback){
 	}
 
 	nebula.dom.document.on('click', 'a[href^="#"]:not([href="#"])', function(){ //Using an ID as the href.
-		var avoid = '.no-scroll, .mm-menu, .carousel, .tab-content, .modal, [data-toggle]';
+		var avoid = '.no-scroll, .mm-menu, .carousel, .tab-content, .modal, [data-toggle], #wpadminbar, #query-monitor';
 		if ( jQuery(this).is(avoid) || jQuery(this).parents(avoid).length ){
 			return false;
 		}

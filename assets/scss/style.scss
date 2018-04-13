@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.11.12.3835
+	Version: 5.11.12.9992
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -220,7 +220,7 @@ span.wpcf7-list-item-label {font-size: rem(14px);
 
 //Nice animated spinner when submit is active
 .wpcf7-form button#submit {display: inline-block; position: relative; overflow: hidden; transition: all 0.25s ease, padding 0.4s easing(easeOutBack);
-	&:before {content: "\f110"; font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 900; position: absolute; top: 0; left: -25px; height: 100%; display: inline-flex; align-items: center; transition: left 0.4s easing(easeOutBack); animation: nebula-spin 2s infinite linear;}
+	&:before {content: "\f110"; font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 900; position: absolute; top: 0; left: -25px; height: 100%; display: -ms-inline-flexbox; display: inline-flex; -ms-flex-align: center; align-items: center; transition: left 0.4s easing(easeOutBack); animation: nebula-spin 2s infinite linear;}
 
 	&.active {padding-left: 35px;
 	    &:before, svg {left: 10px;}
@@ -280,7 +280,7 @@ div#nebula-hero-formcon {text-align: center; display: none;
 form#nebula-hero-search {display: inline-block; position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; @include prefix((transition: all 0.5s));
 	i, svg {position: absolute; top: rem(12px); left: 13px; font-size: rem(16px); color: #292b2c; pointer-events: none; z-index: 100;}
 
-	input {display: block; width: 100%; font-size: rem(18px); padding-left: 35px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 24px rgba(0, 0, 0, 0.2);
+	input {display: block; width: 100%; font-size: rem(18px); line-height: rem(18px); padding-left: 35px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 24px rgba(0, 0, 0, 0.2);
 		&:focus {@include background-color(#fff, 0.95); box-shadow: 0 0 32px rgba(red($primary_color), green($primary_color), blue($primary_color), 0.6);}
 	}
 
@@ -367,6 +367,8 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 	@include media("lg"){will-change: auto;};
 }
 
+.ie10 #body-wrapper:before {display: none;}
+
 //Top row that appears at mobile sizes.
 #mobilebarcon {visibility: visible; position: relative; background: $primary_color; width: 100%; height: 42px; overflow: hidden; z-index: 1; @include prefix((transition: all 0.5s));
 	a {font-size: rem(32px); @include link-colors(#fff, #aaa, #fff, #fff, #aaa); text-decoration: underline;}
@@ -414,8 +416,16 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 	}
 
 	&:hover,
-	&:focus,
-	&:focus-within {
+	&:focus {
+		> a {background: lighten($primary_color, 5%); color: #fff !important;}
+
+		ul.sub-menu {left: 0; right: auto; top: 100%; opacity: 1;
+			&.overflowing {left: auto; right: 0;}
+			li {background: none;}
+		}
+	}
+
+	&:focus-within { //No IE or Edge Support: https://caniuse.com/#feat=css-focus-within
 		> a {background: lighten($primary_color, 5%); color: #fff !important;}
 
 		ul.sub-menu {left: 0; right: auto; top: 100%; opacity: 1;
@@ -432,7 +442,7 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 	@include media("lg"){height: auto; max-height: 200px; opacity: 1;};
 
 	#utility-nav {position: relative;
-		ul {list-style: none; margin: 0; padding: 0; display: flex; flex-direction: row; justify-content: flex-end;
+		ul {list-style: none; margin: 0; padding: 0; @include display: -ms-flexbox; display: flex; -ms-flex-direction: row; flex-direction: row; -ms-flex-pack: center; justify-content: flex-end;
 			li.menu-item {position: relative;
 				a {display: block; padding: 0 15px; color: #fff; font-size: rem(12px); line-height: rem(18px); color: #fff;}
 				@include nebula-dropdown(12px, 14px);
@@ -467,10 +477,8 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 #primary-nav {position: relative; display: none; z-index: 1000;
 	@include media("lg"){display: block;};
 
-	ul {list-style: none; margin: 0; padding: 0; display: flex; flex-direction: row; justify-content: flex-end; align-items: center;
-		li.menu-item {position: relative; flex-grow: 1; flex-basis: 0;
-			@include media("lg"){flex-grow: initial; flex-basis: initial;};
-
+	ul {list-style: none; margin: 0; padding: 0; display: -ms-flexbox; display: flex; -ms-flex-direction: row; flex-direction: row; -ms-flex-pack: end; justify-content: flex-end; -ms-flex-align: center; align-items: center;
+		li.menu-item {position: relative;
 			a {display: block; padding: 10px 20px; text-align: left; font-size: rem(16px); line-height: rem(21px); color: #fff;}
 			@include nebula-dropdown(14px, 21px);
 		}
@@ -480,7 +488,7 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 #header-widget-area {
 	.widget-container {margin-bottom: 25px; text-align: center;}
 
-	ul.menu {list-style: none; margin: 0; padding: 0; display: flex; flex-direction: row; justify-content: space-between; align-items: center;
+	ul.menu {list-style: none; margin: 0; padding: 0; display: -ms-flexbox; display: flex; -ms-flex-direction: row; flex-direction: row; justify-content: space-between; -ms-flex-align: center; align-items: center;
 		li.menu-item {position: relative;
 			a {display: block; padding: 10px 20px; text-align: center; font-size: rem(16px); line-height: rem(21px); color: $primary_color;}
 			@include nebula-dropdown(14px, 21px);
@@ -751,7 +759,7 @@ h2.articles-by {padding-top: 0;}
 	&:last-of-type {margin-bottom: 0;}
 
 	.entry-title {font-size: rem(28px); line-height: rem(32px); margin: 0 0 10px 0; font-weight: 300;}
-	.featured-image {display: flex; align-items: center; max-height: 400px; overflow: hidden;
+	.featured-image {display: -ms-flexbox; display: flex; -ms-flex-align: center; align-items: center; max-height: 400px; overflow: hidden;
 		img {transition: all 0.5s ease;}
 
 		&:hover,
@@ -879,8 +887,8 @@ a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10
 	@include media("lg"){display: block;};
 
 	#powerfooter {position: relative; z-index: 1000;
-		ul {display: flex; list-style: none; margin-bottom: 25px; z-index: 10;
-			li.menu-item {align-self: stretch; flex: 1;
+		ul {display: -ms-flexbox; display: flex; list-style: none; margin-bottom: 25px; z-index: 10;
+			li.menu-item {-ms-flex-item-align: stretch; align-self: stretch; -ms-flex: 1; flex: 1;
 				&:first-child {}
 				&:last-child {}
 

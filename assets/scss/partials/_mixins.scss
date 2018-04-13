@@ -80,6 +80,7 @@
 				#{"-" + $vendor + "-" + $prop}: #{$value};
 			}
 		}
+
 		#{$prop}: #{$value};
 	}
 }
