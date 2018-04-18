@@ -743,7 +743,7 @@ if ( !trait_exists('Widgets') ){
 								<h3><?php echo $instance['title']; ?></h3>
 							<?php endif; ?>
 
-							<?php echo nebula()->social($social_networks, nebula()->is_staff()); ?>
+							<?php echo ( !empty($instance['native_buttons']) )? nebula()->social($social_networks, nebula()->is_staff()) : nebula()->share($social_networks); ?>
 						</div><!--/col-->
 					</div><!--/row-->
 				<?php endif; ?>
@@ -792,6 +792,12 @@ if ( !trait_exists('Widgets') ){
 				    <input class="checkbox" type="checkbox" <?php checked($instance['pinterest'], 'on'); ?> id="<?php echo $this->get_field_id('pinterest'); ?>" name="<?php echo $this->get_field_name('pinterest'); ?>" />
 				    <label for="<?php echo $this->get_field_id('pinterest'); ?>"> Pinterest</label>
 				</p>
+
+				<p>
+				    <input class="checkbox" type="checkbox" <?php checked($instance['native_buttons'], 'on'); ?> id="<?php echo $this->get_field_id('native_buttons'); ?>" name="<?php echo $this->get_field_name('native_buttons'); ?>" />
+				    <label for="<?php echo $this->get_field_id('native_buttons'); ?>"> Native Buttons</label>
+				    <span class="nebula-help-text">Native social buttons take longer to load and some require additional configuration. Non-native buttons have more consistent styling.</span>
+				</p>
 			<?php
 		}
 
@@ -805,6 +811,7 @@ if ( !trait_exists('Widgets') ){
 			$instance['googleplus'] = ( !empty($new_instance['googleplus']) )? strip_tags($new_instance['googleplus']) : '';
 			$instance['linkedin'] = ( !empty($new_instance['linkedin']) )? strip_tags($new_instance['linkedin']) : '';
 			$instance['pinterest'] = ( !empty($new_instance['pinterest']) )? strip_tags($new_instance['pinterest']) : '';
+			$instance['native_buttons'] = ( !empty($new_instance['native_buttons']) )? strip_tags($new_instance['native_buttons']) : '';
 			return $instance;
 		}
 	}

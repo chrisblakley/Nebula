@@ -2346,7 +2346,7 @@ trait Functions {
 					"/#([a-z0-9_]+)/i", //Hashtags
 					"/(\d+\/(\d+)?)$/i", //Series numbers
 				), array(
-					"<a class='tweet-embedded-link' href='$1', target='_blank' rel='noopener'>$1</a>",
+					"<a class='tweet-embedded-link' href='$1' target='_blank' rel='noopener'>$1</a>",
 					"<a class='tweet-embedded-username' href='https://twitter.com/$1' target='_blank' rel='noopener'>@$1</a>",
 					"<a class='tweet-embedded-hashtag' href='https://twitter.com/hashtag/$1' target='_blank' rel='noopener'>#$1</a>",
 					"<small class='tweet-embedded-series-number'>$1</small>",

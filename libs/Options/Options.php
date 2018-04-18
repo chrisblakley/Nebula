@@ -3,8 +3,14 @@
 if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Options') ){
+	require_once get_template_directory() . '/libs/Options/Metaboxes.php';
+
 	trait Options {
+		use Metaboxes { Metaboxes::hooks as MetaboxesHooks;}
+
 		public function hooks(){
+			$this->MetaboxesHooks(); //Register Options Metaboxes hooks
+
 			add_action('current_screen', array($this, 'register_options'));
 			add_action('admin_menu', array($this, 'admin_sub_menu'));
 			add_action('nebula_options_saved', array($this, 'create_hubspot_properties'));
@@ -106,7 +112,7 @@ if ( !trait_exists('Options') ){
 			}
 
 			if ( !empty($username) ){
-				return 'https://twitter.com/' . $username;
+				return 'https://twitter.com/' . str_replace('@', '', $username);
 			}
 
 			return false;

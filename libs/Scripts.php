@@ -316,6 +316,7 @@ if ( !trait_exists('Scripts') ){
 				//$this->append_dependency('nebula-admin', 'nebula-bootstrap');
 				wp_enqueue_style('nebula-bootstrap');
 				wp_enqueue_script('nebula-bootstrap');
+				wp_enqueue_script('postbox'); //Enables metabox collapse toggling
 			}
 
 			//User Profile edit page

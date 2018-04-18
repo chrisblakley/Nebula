@@ -554,6 +554,7 @@ jQuery('#nebula-option-filter').on('keydown keyup change focus blur', function(e
 	}
 
 	if ( jQuery(this).val().length > 0 ){
+		jQuery('.metabox-holder').addClass('filtering');
 		jQuery('#reset-filter').removeClass('hidden');
 
 		jQuery('#options-navigation').addClass('inactive').find('li a.active').removeClass('active');
@@ -562,7 +563,7 @@ jQuery('#nebula-option-filter').on('keydown keyup change focus blur', function(e
 
 		keywordSearch('#nebula-options-section', '.form-group', jQuery(this).val());
 
-		jQuery('.option-group, .option-sub-group').each(function(){
+		jQuery('.postbox, .option-sub-group').each(function(){
 			if ( jQuery(this).find('.form-group:not(.filtereditem)').length > 0 ){
 				jQuery(this).removeClass('filtereditem');
 			} else {
@@ -590,6 +591,7 @@ jQuery('#nebula-option-filter').on('keydown keyup change focus blur', function(e
 			}
 		});
 	} else {
+		jQuery('.metabox-holder').removeClass('filtering');
 		jQuery('#reset-filter').addClass('hidden');
 
 		jQuery('#options-navigation').removeClass('inactive');
@@ -608,10 +610,11 @@ jQuery('#reset-filter a').on('click', function(){
 	return false;
 });
 
-jQuery('#preset-filters a').on('click', function(){
-	jQuery('#nebula-option-filter').val(jQuery(this).attr('filter-text')).trigger('keydown');
-	return false;
-});
+
+
+
+
+
 
 
 

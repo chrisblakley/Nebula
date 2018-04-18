@@ -1115,40 +1115,55 @@ if ( !trait_exists('Admin') ){
 		}
 
 		public function post_meta_boxes_setup(){
-			add_action('add_meta_boxes', array($this, 'add_internal_post_keywords'));
+			add_action('add_meta_boxes', array($this, 'nebula_add_post_metabox'));
 			add_action('save_post', array($this, 'save_post_class_meta' ), 10, 2);
 		}
 
 		//Internal Search Keywords Metabox and Custom Field
-		public function add_internal_post_keywords(){
+		public function nebula_add_post_metabox(){
 			$builtin_types = array('post', 'page', 'attachment');
 			$custom_types = get_post_types(array('_builtin' => false));
 			$avoid_types = array('acf', 'acf-field-group', 'wpcf7_contact_form');
 
 			foreach ( $builtin_types as $builtin_type ){
-				add_meta_box('nebula-internal-search-keywords', 'Internal Search Keywords', array($this, 'internal_search_keywords_meta_box' ), $builtin_type, 'side', 'default');
+				add_meta_box('nebula-post-data', 'Nebula Post Data', array($this, 'nebula_post_metabox' ), $builtin_type, 'side', 'default');
 			}
 
 			foreach( $custom_types as $custom_type ){
 				if ( !in_array($custom_type, $avoid_types) ){
-					add_meta_box('nebula-internal-search-keywords', 'Internal Search Keywords', array($this, 'internal_search_keywords_meta_box' ), $custom_type, 'side', 'default');
+					add_meta_box('nebula-post-data', 'Nebula Post Data', array($this, 'nebula_post_metabox' ), $custom_type, 'side', 'default');
 				}
 			}
 		}
 
 		//Internal Search Keywords Metabox content
-		function internal_search_keywords_meta_box($object, $box){
-			wp_nonce_field(basename(__FILE__), 'nebula_internal_search_keywords_nonce');
+		function nebula_post_metabox($object, $box){
+			wp_nonce_field(basename(__FILE__), 'nebula_post_nonce');
 			?>
 			<div>
-				<p style="font-size: 12px; color: #444;">Use plurals since parts of words will return in search results (unless plural has a different spelling than singular; then add both).</p>
-				<textarea id="nebula-internal-search-keywords" class="textarea" name="nebula-internal-search-keywords" placeholder="Additional keywords to help find this page..." style="width: 100%; min-height: 150px;"><?php echo get_post_meta($object->ID, 'nebula_internal_search_keywords', true); ?></textarea>
+				<p>
+					<strong>Body Classes</strong>
+					<input type="text" id="nebula-body-classes" class="large-text" name="nebula_body_classes" value="<?php echo get_post_meta($object->ID, 'nebula_body_classes', true); ?>" />
+					<span class="howto">Additional classes to appear on the body tag of this post.</span>
+				</p>
+
+				<p>
+					<strong>Post Classes</strong>
+					<input type="text" id="nebula-post-classes" class="large-text" name="nebula_post_classes" value="<?php echo get_post_meta($object->ID, 'nebula_post_classes', true); ?>" />
+					<span class="howto">Additional classes to appear on the post tag.</span>
+				</p>
+
+				<p>
+					<strong>Internal Search Keywords</strong>
+					<textarea id="nebula-internal-search-keywords" class="textarea large-text" name="nebula_internal_search_keywords" placeholder="Additional keywords to help find this page..." style="min-height: 100px;"><?php echo get_post_meta($object->ID, 'nebula_internal_search_keywords', true); ?></textarea>
+					<span class="howto">Use plurals since parts of words will return in search results (unless plural has a different spelling than singular; then add both).</span>
+				</p>
 			</div>
 			<?php
 		}
 
 		public function save_post_class_meta($post_id, $post){
-			if ( !isset($_POST['nebula_internal_search_keywords_nonce']) || !wp_verify_nonce($_POST['nebula_internal_search_keywords_nonce'], basename(__FILE__)) ){
+			if ( !isset($_POST['nebula_post_nonce']) || !wp_verify_nonce($_POST['nebula_post_nonce'], basename(__FILE__)) ){
 				return $post_id;
 			}
 
@@ -1157,14 +1172,17 @@ if ( !trait_exists('Admin') ){
 				return $post_id;
 			}
 
-			$new_meta_value = sanitize_text_field($_POST['nebula-internal-search-keywords']); //Get the posted data and sanitize it if needed.
-			$meta_value = get_post_meta($post_id, 'nebula_internal_search_keywords', true); //Get the meta value of the custom field key.
-			if ( $new_meta_value && empty($meta_value) ){ //If a new meta value was added and there was no previous value, add it.
-				add_post_meta($post_id, 'nebula_internal_search_keywords', $new_meta_value, true);
-			} elseif ( $new_meta_value && $meta_value !== $new_meta_value ){ //If the new meta value does not match the old value, update it.
-				update_post_meta($post_id, 'nebula_internal_search_keywords', $new_meta_value);
-			} elseif ( $new_meta_value === '' && $meta_value ){ //If there is no new meta value but an old value exists, delete it.
-				delete_post_meta($post_id, 'nebula_internal_search_keywords', $meta_value);
+			$nebula_post_meta_fields = array('nebula_body_classes', 'nebula_post_classes', 'nebula_internal_search_keywords');
+			foreach ( $nebula_post_meta_fields as $nebula_post_meta_field ){
+				$new_meta_value = sanitize_text_field($_POST[$nebula_post_meta_field]); //Get the posted data and sanitize it if needed.
+				$meta_value = get_post_meta($post_id, $nebula_post_meta_field, true); //Get the meta value of the custom field key.
+				if ( $new_meta_value && empty($meta_value) ){ //If a new meta value was added and there was no previous value, add it.
+					add_post_meta($post_id, $nebula_post_meta_field, $new_meta_value, true);
+				} elseif ( $new_meta_value && $meta_value !== $new_meta_value ){ //If the new meta value does not match the old value, update it.
+					update_post_meta($post_id, $nebula_post_meta_field, $new_meta_value);
+				} elseif ( $new_meta_value === '' && $meta_value ){ //If there is no new meta value but an old value exists, delete it.
+					delete_post_meta($post_id, $nebula_post_meta_field, $meta_value);
+				}
 			}
 		}
 	}

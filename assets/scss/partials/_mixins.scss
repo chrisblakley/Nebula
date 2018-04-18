@@ -47,7 +47,7 @@
 	$g: green($bg);
 	$b: blue($bg);
 
-	@if ($r*$r*0.299 + $g*$g*0.587 + $b*$b*0.114) > 19000 { //If the bg is light
+	@if ($r*$r*0.299 + $g*$g*0.587 + $b*$b*0.114) > 22500 { //If the bg is light
 		@return $dark;
 	}
 
