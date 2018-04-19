@@ -9,17 +9,21 @@ if ( !trait_exists('Optimization') ){
 			add_filter('script_loader_tag', array($this, 'defer_async_additional_scripts'), 10);
 			add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
 			add_action('wp_footer', array($this, 'dequeue_lazy_load_scripts'));
-			add_filter('style_loader_src', array($this, 'http2_server_push_header'), 99, 1); //@todo "Nebula" 0: try using 'send_headers' hook instead?
-			add_filter('script_loader_src', array($this, 'http2_server_push_header'), 99, 1); //@todo "Nebula" 0: try using 'send_headers' hook instead?
+			add_filter('style_loader_src', array($this, 'http2_server_push_header'), 99, 1);
+			add_filter('script_loader_src', array($this, 'http2_server_push_header'), 99, 1);
 			add_filter('script_loader_src', array($this, 'remove_script_version'), 15, 1);
 			add_filter('style_loader_src', array($this, 'remove_script_version'), 15, 1);
 			add_action('wp_enqueue_scripts', array($this, 'dequeues'), 9999);
-			add_action('admin_init', array($this, 'plugin_force_settings'));
 			add_action('wp_enqueue_scripts', array($this, 'remove_actions'), 9999);
+
+			add_action('send_headers', array($this, 'service_worker_scope'));
+			add_action('admin_init', array($this, 'plugin_force_settings'));
+
 			add_action('init', array($this, 'disable_wp_emojicons'));
 			add_filter('wp_resource_hints', array($this, 'remove_emoji_prefetch'), 10, 2); //Remove dns-prefetch for emojis
 			add_filter('tiny_mce_plugins', array($this, 'disable_emojicons_tinymce')); //Remove TinyMCE Emojis too
 			add_filter('wpcf7_load_css', '__return_false'); //Disable CF7 CSS resources (in favor of Bootstrap and Nebula overrides)
+
 			add_filter('wp_default_scripts', array($this, 'remove_jquery_migrate'));
 			add_action('wp_enqueue_scripts', array($this, 'move_jquery_to_footer'));
 			add_action('wp_head', array($this, 'listen_for_jquery_footer_errors'));
@@ -195,6 +199,13 @@ if ( !trait_exists('Optimization') ){
 
 			foreach ( $lazy_load_assets['scripts'] as $handle => $condition ){
 				wp_dequeue_script($handle);
+			}
+		}
+
+		//Allow the service worker to control everything without needing to move it out of the theme
+		public function service_worker_scope(){
+			if ( $this->get_option('service_worker') ){
+				header('Service-Worker-Allowed: /');
 			}
 		}
 

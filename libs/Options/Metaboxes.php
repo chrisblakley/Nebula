@@ -702,6 +702,17 @@ if ( !trait_exists('Metaboxes') ){
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-prepend">
+								<div class="input-group-text">Experiment Variation</div>
+							</div>
+							<input type="text" name="nebula_options[cd_experimentvariation]" id="cd_experimentvariation" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_experimentvariation']; ?>" />
+						</div>
+						<p class="nebula-help-text short-help form-text text-muted">Track which variation of an experiment this user was shown. Scope: User</p>
+						<p class="option-keywords"></p>
+					</div>
+
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-prepend">
 								<div class="input-group-text">Save Data</div>
 							</div>
 							<input type="text" name="nebula_options[cd_savedata]" id="cd_savedata" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_savedata']; ?>" />

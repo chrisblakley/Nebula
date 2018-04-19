@@ -165,6 +165,18 @@
 			}
 		<?php endif; ?>
 
+		//Experiment Variation
+		if ( typeof cxApi !== 'undefined' && typeof cxApi.chooseVariation === 'function' ){
+			var variationInfo = 'Variation ' + cxApi.chooseVariation();
+			if ( cxApi.NO_CHOSEN_VARIATION ){
+				variationInfo = 'No Chosen Variation';
+			} else if ( cxApi.NOT_PARTICIPATING ){
+				variationInfo = 'Not Participating';
+			}
+
+			ga('set', nebula.analytics.dimensions.experimentVariation, variationInfo);
+		}
+
 		<?php if ( 1==1 ): //Autotrack ?>
 			<?php if ( nebula()->get_option('cm_pagevisible') && nebula()->get_option('cm_pagehidden') ): //Autotrack Page Visibility ?>
 				ga('require', 'pageVisibilityTracker', {

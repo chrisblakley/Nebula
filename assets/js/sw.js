@@ -1,9 +1,5 @@
-//@TODO: You must have https to use this service worker
-//@TODO: Move to root directory
-//@TODO: Enable "Service Worker" in Nebula Options (under Functions)
-
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-46516'; //Tuesday, April 17, 2018 8:01:22 PM
+var CACHE_NAME = 'nebula-nebula-child-78170'; //Thursday, April 19, 2018 8:36:48 AM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';

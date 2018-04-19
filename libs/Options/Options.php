@@ -274,6 +274,7 @@ if ( !trait_exists('Options') ){
 				'cd_hittype' => '',
 				'cd_hitinteractivity' => '',
 				'cd_hitmethod' => '',
+				'cd_experimentvariation' => '',
 				'cd_savedata' => '',
 				'cd_devicememory' => '',
 				'cd_batterymode' => '',

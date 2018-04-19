@@ -481,6 +481,22 @@ trait Functions {
 		$override = apply_filters('pre_sw_location', null);
 		if ( isset($override) ){return;}
 
+		//Check stylesheet directory, then template directory
+		if ( file_exists(get_stylesheet_directory() . '/assets/js/sw.js') ){
+			if ( !empty($uri) ){
+				return get_stylesheet_directory_uri() . '/assets/js/sw.js';
+			}
+
+			return get_stylesheet_directory() . '/assets/js/sw.js';
+		} elseif ( file_exists(get_template_directory() . '/assets/js/sw.js') ){
+			if ( !empty($uri) ){
+				return get_template_directory_uri() . '/assets/js/sw.js';
+			}
+
+			return get_template_directory() . '/assets/js/sw.js';
+		}
+
+		//Otherwise return root level directory
 		if ( !empty($uri) ){
 			return get_site_url() . '/sw.js';
 		}

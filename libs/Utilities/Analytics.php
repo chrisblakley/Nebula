@@ -98,6 +98,7 @@ if ( !trait_exists('Analytics') ){
 					'hitType' => $this->get_option('cd_hittype'),
 					'hitInteractivity' => $this->get_option('cd_hitinteractivity'),
 					'hitMethod' => $this->get_option('cd_hitmethod'),
+					'experimentVariation' => $this->get_option('cd_experimentvariation'),
 					'saveData' => $this->get_option('cd_savedata'),
 					'deviceMemory' => $this->get_option('cd_devicememory'),
 					'batteryMode' => $this->get_option('cd_batterymode'),

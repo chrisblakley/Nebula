@@ -601,6 +601,7 @@ jQuery('#nebula-option-filter').on('keydown keyup change focus blur', function(e
 		}
 
 		jQuery('.filtereditem').removeClass('filtereditem');
+		jQuery('.tab-pane').removeClass('active').first().addClass('active');
 	}
 });
 
