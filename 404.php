@@ -28,16 +28,6 @@
 				</div><!--/cols-->
 			</div><!--/row-->
 		</div><!--/container-->
-
-		<div id="breadcrumb-section" class="full inner dark">
-			<div class="container">
-				<div class="row">
-					<div class="col">
-						<?php nebula()->breadcrumbs(); ?>
-					</div><!--/col-->
-				</div><!--/row-->
-			</div><!--/container-->
-		</div><!--/breadcrumb-section-->
 	<?php endif; ?>
 </section>
 
@@ -45,15 +35,13 @@
 
 <div id="content-section">
 	<div class="container">
-		<?php if ( get_theme_mod('title_location') === 'content' ): ?>
-			<div id="breadcrumb-section" class="row">
-				<div class="col">
-					<?php nebula()->breadcrumbs(); ?>
-				</div><!--/col-->
-			</div><!--/row-->
-		<?php endif; ?>
 		<div class="row">
-			<div class="col-md" role="main">
+			<div class="col">
+				<?php nebula()->breadcrumbs(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+		<div class="row">
+			<div id="top" class="col-md" role="main">
 				<article id="post-0" class="post error404 not-found">
 					<?php if ( get_theme_mod('title_location') === 'content' ): ?>
 						<h1 class="page-title">Not Found</h1>

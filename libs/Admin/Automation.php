@@ -419,6 +419,20 @@ if ( !trait_exists('Automation') ){
 			return true;
 		}
 
+		//Check if automated Nebula theme updates are allowed
+		public function allow_theme_update(){
+			if ( !nebula()->get_option('theme_update_notification') ){
+				return false;
+			}
+
+			$nebula_data = get_option('nebula_data');
+			if ( $nebula_data['version_legacy'] === 'true' ){
+				return false;
+			}
+
+			return true;
+		}
+
 		//Force an initialization date.
 		public function force_settings(){
 			//Force initialization date

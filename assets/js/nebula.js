@@ -3709,7 +3709,7 @@ function addHTML5VideoPlayer(id, element){
 
 			ga('set', nebula.analytics.metrics.videoStarts, 1);
 			ga('set', nebula.analytics.dimensions.videoWatcher, 'Started');
-			ga('send', 'event', 'Videos', playAction, videoTitle, Math.round(thisVideo.current), {'nonInteraction': thisVideo.autoplay});
+			ga('send', 'event', 'Videos', playAction, videoTitle, {'nonInteraction': thisVideo.autoplay});
 			if ( !thisVideo.autoplay ){
 				nv('event', 'Video Play Began: ' + thisVideo.title);
 			}
@@ -3740,7 +3740,7 @@ function addHTML5VideoPlayer(id, element){
 					engagedAction += ' (Autoplay)';
 				}
 
-				ga('send', 'event', 'Videos', engagedAction, thisVideo.title, Math.round(thisVideo.current), {'nonInteraction': true});
+				ga('send', 'event', 'Videos', engagedAction, thisVideo.title, {'nonInteraction': true});
 				nv('event', 'Video Engagement: ' + thisVideo.title);
 				thisVideo.engaged = true;
 				nebula.dom.document.trigger('nebula_engaged_video', thisVideo);
@@ -3757,11 +3757,11 @@ function addHTML5VideoPlayer(id, element){
 		ga('set', nebula.analytics.dimensions.videoPercentage, Math.round(thisVideo.percent*100));
 
 		if ( !thisVideo.pausedYet ){
-			ga('send', 'event', 'Videos', 'First Pause', thisVideo.title, Math.round(thisVideo.current));
+			ga('send', 'event', 'Videos', 'First Pause', thisVideo.title);
 			thisVideo.pausedYet = true;
 		}
 
-		ga('send', 'event', 'Videos', 'Paused', thisVideo.title, Math.round(thisVideo.current));
+		ga('send', 'event', 'Videos', 'Paused', thisVideo.title);
 		ga('send', 'timing', 'Videos', 'Paused', Math.round(thisVideo.current*1000), thisVideo.title);
 		nv('event', 'Video Paused: ' + thisVideo.title);
 		nebula.dom.document.trigger('nebula_paused_video', thisVideo);
@@ -3819,8 +3819,7 @@ function addHTML5VideoPlayer(id, element){
 			endedAction += ' (Autoplay)';
 		}
 
-		ga('send', 'event', 'Videos', endedAction, thisVideo.title, Math.round(thisVideo.current), {'nonInteraction': true});
-
+		ga('send', 'event', 'Videos', endedAction, thisVideo.title, {'nonInteraction': true});
 		ga('send', 'timing', 'Videos', 'Ended', Math.round(thisVideo.current*1000), thisVideo.title);
 		nv('event', 'Video Ended: ' + thisVideo.title);
 		nebula.dom.document.trigger('nebula_ended_video', thisVideo);
@@ -3928,7 +3927,7 @@ function nebulaYoutubeStateChange(e){
 			jQuery(thisVideo.element).addClass('playing');
 		}
 
-		ga('send', 'event', 'Videos', playAction, thisVideo.title, Math.round(thisVideo.current));
+		ga('send', 'event', 'Videos', playAction, thisVideo.title);
 		nv('event', 'Video Play Began: ' + thisVideo.title);
 		nebula.dom.document.trigger('nebula_playing_video', thisVideo);
 		pauseFlag = true;
@@ -3948,7 +3947,7 @@ function nebulaYoutubeStateChange(e){
 					if ( thisVideo.autoplay ){
 						engagedAction += ' (Autoplay)';
 					}
-					ga('send', 'event', 'Videos', engagedAction, thisVideo.title, Math.round(thisVideo.current), {'nonInteraction': true});
+					ga('send', 'event', 'Videos', engagedAction, thisVideo.title, {'nonInteraction': true});
 
 					nv('event', 'Video Engaged: ' + thisVideo.title);
 					thisVideo.engaged = true;
@@ -3975,7 +3974,7 @@ function nebulaYoutubeStateChange(e){
 			endedAction += ' (Autoplay)';
 		}
 
-		ga('send', 'event', 'Videos', endedAction, thisVideo.title, Math.round(thisVideo.current), {'nonInteraction': true});
+		ga('send', 'event', 'Videos', endedAction, thisVideo.title, {'nonInteraction': true});
 		ga('send', 'timing', 'Videos', 'Ended', thisVideo.current*1000, thisVideo.title);
 		nv('event', 'Video Ended: ' + thisVideo.title);
 		nebula.dom.document.trigger('nebula_ended_video', thisVideo);
@@ -3988,11 +3987,11 @@ function nebulaYoutubeStateChange(e){
 		ga('set', nebula.analytics.dimensions.videoWatcher, 'Paused');
 
 		if ( !thisVideo.pausedYet ){
-			ga('send', 'event', 'Videos', 'First Pause', thisVideo.title, Math.round(thisVideo.current));
+			ga('send', 'event', 'Videos', 'First Pause', thisVideo.title);
 			thisVideo.pausedYet = true;
 		}
 
-		ga('send', 'event', 'Videos', 'Paused', thisVideo.title, Math.round(thisVideo.current));
+		ga('send', 'event', 'Videos', 'Paused', thisVideo.title);
 		ga('send', 'timing', 'Videos', 'Paused', thisVideo.current*1000, thisVideo.title);
 		nv('event', 'Video Paused: ' + thisVideo.title);
 		nebula.dom.document.trigger('nebula_paused_video', thisVideo);
@@ -4119,7 +4118,7 @@ function vimeoPlay(data){
 		jQuery(this).addClass('playing');
 	}
 
-	ga('send', 'event', 'Videos', playAction, thisVideo.title, Math.round(data.seconds));
+	ga('send', 'event', 'Videos', playAction, thisVideo.title);
 	nv('event', 'Video Play Began: ' + thisVideo.title);
 	nebula.dom.document.trigger('nebula_playing_video', thisVideo.title);
 }
@@ -4148,7 +4147,7 @@ function vimeoTimeUpdate(data){
 			if ( thisVideo.autoplay ){
 				engagedAction += ' (Autoplay)';
 			}
-			ga('send', 'event', 'Videos', engagedAction, thisVideo.title, Math.round(data.seconds), {'nonInteraction': true});
+			ga('send', 'event', 'Videos', engagedAction, thisVideo.title, {'nonInteraction': true});
 
 			nv('event', 'Video Engaged: ' + thisVideo.title);
 			thisVideo.engaged = true;
@@ -4167,11 +4166,11 @@ function vimeoPause(data){
 	ga('set', nebula.analytics.dimensions.videoPercentage, Math.round(data.percent*100));
 
 	if ( !thisVideo.pausedYet && !thisVideo.seeker ){ //Only capture first pause if they didn't seek
-		ga('send', 'event', 'Videos', 'First Pause', thisVideo.title, Math.round(data.seconds));
+		ga('send', 'event', 'Videos', 'First Pause', thisVideo.title);
 		thisVideo.pausedYet = true;
 	}
 
-	ga('send', 'event', 'Videos', 'Paused', thisVideo.title, Math.round(data.seconds));
+	ga('send', 'event', 'Videos', 'Paused', thisVideo.title);
 	ga('send', 'timing', 'Videos', 'Paused', Math.round(data.seconds*1000), videoTitle);
 	nv('event', 'Video Paused: ' + thisVideo.title);
 	nebula.dom.document.trigger('nebula_paused_video', thisVideo);
@@ -4206,7 +4205,7 @@ function vimeoEnded(data){
 		endedAction += ' (Autoplay)';
 	}
 
-	ga('send', 'event', 'Videos', endedAction, thisVideo.title, Math.round(data.seconds), {'nonInteraction': true});
+	ga('send', 'event', 'Videos', endedAction, thisVideo.title, {'nonInteraction': true});
 	ga('send', 'timing', 'Videos', 'Ended', Math.round(thisVideo.watched*1000), thisVideo.title); //Roughly amount of time watched (Can not be over 100% for Vimeo)
 	nv('event', 'Video Ended: ' + thisVideo.title);
 	nebula.dom.document.trigger('nebula_ended_video', thisVideo);

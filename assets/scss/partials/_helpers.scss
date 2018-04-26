@@ -201,13 +201,11 @@ a.nebula-share {display: inline-block; padding: 5px 7px; border-radius: 3px; fon
 	@each $filetype in $filetypes {
 		@if $specific {
 			a.icon[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
-				&:before {content: "\#{$unicode}"; font-family: "Font Awesome 5 Regular"; display: none;}
-				svg {color: $color; margin-right: 7px;}
+				&:before {content: "\#{$unicode}"; font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free"; color: $color; margin-right: 7px; font-weight: 300;}
 			}
 		} @else {
 			a[href$=".#{$filetype}"]:not(.no-icon):not(.btn), li.icon a[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
-				&:before {content: "\#{$unicode}"; font-family: "Font Awesome 5 Regular"; display: none;}
-				svg {color: $color; margin-right: 7px;}
+				&:before {content: "\#{$unicode}"; font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free"; color: $color; margin-right: 7px; font-weight: 300;}
 			}
 		}
 	}
@@ -233,6 +231,10 @@ a.white, li.icon.white a {@include link-colors(#fff, #ccc);
 // ===========================
 // Brand colors
 // ===========================
+
+//Backgrounds
+.bg-brand {background-color: $primary_color !important;}
+.bg-brand-secondary {background-color: $secondary_color !important;}
 
 //Brand Primary Button
 .btn.btn-brand,

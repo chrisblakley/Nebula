@@ -26,22 +26,17 @@
 			</div><!--/cols-->
 		</div><!--/row-->
 	</div><!--/container-->
-
-	<div id="breadcrumb-section" class="full inner dark">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<?php nebula()->breadcrumbs(); ?>
-				</div><!--/col-->
-			</div><!--/row-->
-		</div><!--/container-->
-	</div><!--/breadcrumb-section-->
 </section>
 
 <?php get_template_part('inc/nebula_drawer'); ?>
 
 <?php if ( have_posts() ){ the_post(); } //Queue the first post then reset it before the loop. ?>
 <div id="about-the-author" class="container">
+	<div class="row">
+		<div class="col">
+			<?php nebula()->breadcrumbs(); ?>
+		</div><!--/col-->
+	</div><!--/row-->
 	<div class="row">
 	<?php if ( get_the_author_meta('headshot_url') ): ?>
 		<div class="col-md-2">
@@ -53,7 +48,6 @@
 	<?php else : ?>
 		<div class="col">
 	<?php endif; ?>
-
 			<h2 class="author-name">
 				<?php if ( get_the_author_meta('user_url') ): ?>
 					<a href="<?php echo esc_url(get_the_author_meta('user_url')); ?>" target="_blank" rel="noopener">
@@ -138,7 +132,7 @@
 <div id="content-section">
 	<div class="container">
 		<div class="row">
-			<div class="col-md" role="main">
+			<div id="top" class="col-md" role="main">
 				<?php
 					rewind_posts();
 					get_template_part('loop', 'author');

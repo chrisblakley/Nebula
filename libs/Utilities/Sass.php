@@ -122,10 +122,17 @@ if ( !trait_exists('Sass') ){
 					'template_directory' => '"' . get_template_directory_uri() . '"',
 					'stylesheet_directory' => '"' . get_stylesheet_directory_uri() . '"',
 					'this_directory' => '"' . $location_paths['uri'] . '"',
-					'primary_color' => get_theme_mod('nebula_primary_color', $this->sass_color('primary')), //From Customizer or child theme Sass variable
-					'secondary_color' => get_theme_mod('nebula_secondary_color', $this->sass_color('secondary')), //From Customizer or child theme Sass variable
-					'background_color' => get_theme_mod('nebula_background_color', $this->sass_color('background')), //From Customizer or child theme Sass variable
 				);
+
+				$primary_color = get_theme_mod('nebula_primary_color', $this->sass_color('primary')); //From Customizer or child theme Sass variable
+				$nebula_scss_variables['primary_color'] = ( !empty($primary_color) )? $primary_color : 'rgba(0, 0, 0, 0)';
+
+				$secondary_color = get_theme_mod('nebula_secondary_color', $this->sass_color('secondary')); //From Customizer or child theme Sass variable
+				$nebula_scss_variables['secondary_color'] = ( !empty($secondary_color) )? $secondary_color : 'rgba(0, 0, 0, 0)';
+
+				$background_color = get_theme_mod('nebula_background_color', $this->sass_color('background')); //From Customizer or child theme Sass variable
+				$nebula_scss_variables['background_color'] = ( !empty($background_color) )? $background_color : '#f6f6f6';
+
 				$all_scss_variables = apply_filters('nebula_scss_variables', $nebula_scss_variables);
 				$this->scss->setVariables($nebula_scss_variables);
 
@@ -140,28 +147,28 @@ if ( !trait_exists('Sass') ){
 				do_action('nebula_before_sass_compile', $location_paths); //Allow modification of files before looping through to compile Sass
 
 				//Compile each SCSS file
-				foreach ( glob($location_paths['directory'] . '/assets/scss/*.scss') as $file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
-					$file_path_info = pathinfo($file);
-					$debug_name = str_replace(WP_CONTENT_DIR, '', $file_path_info['dirname']) . '/' . $file_path_info['basename'];
+				foreach ( glob($location_paths['directory'] . '/assets/scss/*.scss') as $scss_file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
+					$scss_file_path_info = pathinfo($scss_file);
+					$debug_name = str_replace(WP_CONTENT_DIR, '', $scss_file_path_info['dirname']) . '/' . $scss_file_path_info['basename'];
 					$this->timer('Sass File ' . $debug_name);
 
 					//Skip file conditions (only if not forcing all)
 					if ( empty($force_all) ){
 						//@todo "Nebula" 0: Add hook here so other functions/plugins can add stipulations of when to skip files. Maybe an array instead?
-						$is_dev_file = $file_path_info['filename'] === 'dev' && !$this->get_option('dev_stylesheets'); //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
-						$is_admin_file = (!$this->is_admin_page() && !$this->is_login_page()) && in_array($file_path_info['filename'], array('login', 'admin', 'tinymce')); //If viewing front-end, skip WP admin files.
+						$is_dev_file = $scss_file_path_info['filename'] === 'dev' && !$this->get_option('dev_stylesheets'); //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
+						$is_admin_file = (!$this->is_admin_page() && !$this->is_login_page()) && in_array($scss_file_path_info['filename'], array('login', 'admin', 'tinymce')); //If viewing front-end, skip WP admin files.
 						if ( $is_dev_file || $is_admin_file ){
 							continue;
 						}
 					}
 
 					//If file exists, and has .scss extension, and doesn't begin with "_".
-					if ( is_file($file) && $file_path_info['extension'] === 'scss' && $file_path_info['filename'][0] !== '_' ){
-						$css_filepath = ( $file_path_info['filename'] === 'style' )? $location_paths['directory'] . '/style.css': $location_paths['directory'] . '/assets/css/' . $file_path_info['filename'] . '.css'; //style.css to the root directory. All others to the /css directory in the /assets/scss directory.
+					if ( is_file($scss_file) && $scss_file_path_info['extension'] === 'scss' && $scss_file_path_info['filename'][0] !== '_' ){
+						$css_filepath = ( $scss_file_path_info['filename'] === 'style' )? $location_paths['directory'] . '/style.css': $location_paths['directory'] . '/assets/css/' . $scss_file_path_info['filename'] . '.css'; //style.css to the root directory. All others to the /css directory in the /assets/scss directory.
 						wp_mkdir_p($location_paths['directory'] . '/assets/css'); //Create the /css directory (in case it doesn't exist already).
 
 						//If style.css has been edited after style.scss, save backup but continue compiling SCSS
-						if ( (is_child_theme() && $location_name !== 'parent' ) && ($file_path_info['filename'] === 'style' && file_exists($css_filepath) && $this->get_data('scss_last_processed') != '0' && $this->get_data('scss_last_processed')-filemtime($css_filepath) < -30) ){
+						if ( (is_child_theme() && $location_name !== 'parent' ) && ($scss_file_path_info['filename'] === 'style' && file_exists($css_filepath) && $this->get_data('scss_last_processed') != '0' && $this->get_data('scss_last_processed')-filemtime($css_filepath) < -30) ){
 							copy($css_filepath, $css_filepath . '.bak'); //Backup the style.css file to style.css.bak
 							if ( $this->is_dev() || current_user_can('manage_options') ){
 								global $scss_debug_ref;
@@ -172,7 +179,7 @@ if ( !trait_exists('Sass') ){
 						}
 
 						//If .css file doesn't exist, or is older than .scss file (or any partial), or is debug mode, or forced
-						if ( !file_exists($css_filepath) || filemtime($file) > filemtime($css_filepath) || $latest_import > filemtime($css_filepath) || $this->is_debug() || $force_all ){
+						if ( !file_exists($css_filepath) || filemtime($scss_file) > filemtime($css_filepath) || $latest_import > filemtime($css_filepath) || $this->is_debug() || $force_all ){
 							ini_set('memory_limit', '512M'); //Increase memory limit for this script. //@TODO "Nebula" 0: Is this the best thing to do here? Other options?
 							WP_Filesystem();
 							global $wp_filesystem;
@@ -180,8 +187,28 @@ if ( !trait_exists('Sass') ){
 
 							//If the correlating .css file doesn't contain a comment to prevent overwriting
 							if ( !strpos(strtolower($existing_css_contents), 'scss disabled') ){
-								$this_scss_contents = $wp_filesystem->get_contents($file); //Copy SCSS file contents
-								$compiled_css = $this->scss->compile($this_scss_contents, $file); //Compile the SCSS
+								$this_scss_contents = $wp_filesystem->get_contents($scss_file); //Copy SCSS file contents
+
+								//Catch fatal compilation errors when PHP v7.0+ to provide additional information without crashing
+								if ( version_compare(phpversion(), '7.0.0', '>=') ){
+									try {
+										$compiled_css = $this->scss->compile($this_scss_contents, $scss_file); //Compile the SCSS
+									} catch (\Throwable $error){
+										$unprotected_array = (array) $error;
+										$prefix = chr(0) . '*' . chr(0);
+
+										if ( $this->is_staff() || current_user_can('publish_pages') ){ //Staff or Editors
+											echo '<br><b>Sass compilation error</b>: ' . $unprotected_array[$prefix . 'message'] . ' in <b>' . $scss_file . '</b>. This file has been skipped and was not processed.<br>';
+										} else {
+											echo '<script>console.error("Sass compilation error. Log in for more information.");</script>'; //Log in JS console to avoid disturbing regular visitors
+										}
+
+										continue; //Skip the file that contains errors
+									}
+								} else {
+									$compiled_css = $this->scss->compile($this_scss_contents, $scss_file); //Compile the SCSS
+								}
+
 								$enhanced_css = $this->scss_post_compile($compiled_css); //Compile server-side variables into SCSS
 								$wp_filesystem->put_contents($css_filepath, $enhanced_css); //Save the rendered CSS.
 								$this->update_data('scss_last_processed', time());

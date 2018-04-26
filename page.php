@@ -27,16 +27,6 @@
 				</div><!--/cols-->
 			</div><!--/row-->
 		</div><!--/container-->
-
-		<div id="breadcrumb-section" class="full inner dark">
-			<div class="container">
-				<div class="row">
-					<div class="col">
-						<?php nebula()->breadcrumbs(); ?>
-					</div><!--/col-->
-				</div><!--/row-->
-			</div><!--/container-->
-		</div><!--/breadcrumb-section-->
 	<?php endif; ?>
 </section>
 
@@ -44,15 +34,13 @@
 
 <div id="content-section">
 	<div class="container">
-		<?php if ( get_theme_mod('title_location') === 'content' ): ?>
-			<div id="breadcrumb-section" class="row">
-				<div class="col">
-					<?php nebula()->breadcrumbs(); ?>
-				</div><!--/col-->
-			</div><!--/row-->
-		<?php endif; ?>
 		<div class="row">
-			<div class="col-md" role="main">
+			<div class="col">
+				<?php nebula()->breadcrumbs(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+		<div class="row">
+			<div id="top" class="col-md" role="main">
 				<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 						<?php if ( has_post_thumbnail() && get_theme_mod('featured_image_location') === 'content' ): ?>

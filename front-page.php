@@ -88,7 +88,7 @@
 <div id="content-section">
 	<div class="container">
 		<div class="row">
-			<div class="col-md-8" role="main">
+			<div id="top" class="col-md-8" role="main">
 				<?php if ( get_option('show_on_front') === 'posts' ): //"Your latest posts" ?>
 					<?php get_template_part('loop', 'index'); ?>
 				<?php else: //"A static page" ?>

@@ -86,37 +86,58 @@
 }
 
 //.element a {@include link-colors(red, orange, yellow, green, blue);}
+//.element a {@include link-colors(blue, green);}
 @mixin link-colors($normal, $hover: false, $active: false, $visited: false, $focus: false){
 	color: $normal;
+
 	@if $visited {
 		&:visited {color: $visited;}
+	} @else if $normal {
+		&:visited {color: $normal;}
 	}
+
 	@if $focus {
 		&:focus {color: $focus;}
+	} @else if $hover {
+		&:focus {color: $hover;}
 	}
+
 	@if $hover {
 		&:hover {color: $hover;}
 	}
+
 	@if $active {
 		&:active {color: $active;}
+	} @else if $hover {
+		&:active {color: $hover;}
 	}
 }
 
 //.element a {@include link-bg-colors(red, orange, yellow, green, blue);}
+//.element a {@include link-bg-colors(blue, green);}
 @mixin link-bg-colors($normal, $hover: false, $active: false, $visited: false, $focus: false){
 	background-color: $normal;
 
 	@if $visited {
 		&:visited {background-color: $visited;}
+	} @else if $normal {
+		&:visited {background-color: $normal;}
 	}
+
 	@if $focus {
 		&:focus {background-color: $focus;}
+	} @else if $hover {
+		&:focus {background-color: $hover;}
 	}
+
 	@if $hover {
 		&:hover {background-color: $hover;}
 	}
+
 	@if $active {
 		&:active {background-color: $active;}
+	} @else if $hover {
+		&:active {background-color: $hover;}
 	}
 }
 

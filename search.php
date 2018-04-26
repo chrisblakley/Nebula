@@ -49,16 +49,6 @@
 			</div><!--/cols-->
 		</div><!--/row-->
 	</div><!--/container-->
-
-	<div id="breadcrumb-section" class="full inner dark">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<?php nebula()->breadcrumbs(); ?>
-				</div><!--/col-->
-			</div><!--/row-->
-		</div><!--/container-->
-	</div><!--/breadcrumb-section-->
 </section>
 
 <?php get_template_part('inc/nebula_drawer'); ?>
@@ -66,7 +56,12 @@
 <div id="content-section">
 	<div class="container">
 		<div class="row">
-			<div class="col-md" role="main">
+			<div class="col">
+				<?php nebula()->breadcrumbs(); ?>
+			</div><!--/col-->
+		</div><!--/row-->
+		<div class="row">
+			<div id="top" class="col-md" role="main">
 				<?php if ( have_posts() ): ?>
 					<div id="searchresults">
 						<?php get_template_part('loop', 'search'); ?>

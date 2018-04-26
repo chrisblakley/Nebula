@@ -781,7 +781,7 @@ if ( !trait_exists('Admin') ){
 				$this->update_data('current_version_date', $this->version('date'));
 			}
 
-			if ( $nebula_data['version_legacy'] === 'true' ){
+			if ( $this->allow_theme_update() ){
 				//Check for unsupported version: if newer version of Nebula has a "u" at the end of the version number, disable automated updates.
 				$remote_version_info = get_option('external_theme_updates-Nebula-master');
 				if ( !empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) !== str_replace('u', '', $this->version('raw')) ){
@@ -802,18 +802,22 @@ if ( !trait_exists('Admin') ){
 
 		//When checking for theme updates, store the next and current Nebula versions from the response. Hook is inside the theme-update-checker.php library.
 		public function theme_update_version_store($update){
-			$this->update_data('next_version', $update->version);
-			$this->update_data('current_version', $this->version('full'));
-			$this->update_data('current_version_date', $this->version('date'));
+			if ( $this->allow_theme_update() ){
+				$this->update_data('next_version', $update->version);
+				$this->update_data('current_version', $this->version('full'));
+				$this->update_data('current_version_date', $this->version('date'));
 
-			if ( strpos($update->version, 'u') && str_replace('u', '', $update->version) !== str_replace('u', '', $this->version('full')) ){ //If Github version has "u", disable automated updates.
-				$this->update_data('version_legacy', 'true');
-			} elseif ( $this->get_data('version_legacy') === 'true' ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
-				$this->update_data('version_legacy', 'false');
-				$this->update_data('theme_update_notification', 'disabled');
+				if ( strpos($update->version, 'u') && str_replace('u', '', $update->version) !== str_replace('u', '', $this->version('full')) ){ //If Github version has "u", disable automated updates.
+					$this->update_data('version_legacy', 'true');
+				} elseif ( $this->get_data('version_legacy') === 'true' ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
+					$this->update_data('version_legacy', 'false');
+					$this->update_data('theme_update_notification', 'disabled');
+				}
+
+				return $update;
 			}
 
-			return $update;
+			return false;
 		}
 
 		//Send an email to the current user and site admin that Nebula has been updated.
@@ -821,17 +825,21 @@ if ( !trait_exists('Admin') ){
 			$override = apply_filters('pre_nebula_theme_update_automation', null);
 			if ( isset($override) ){return;}
 
-			if ( $options['type'] === 'theme' && $this->in_array_r('Nebula-master', $options['themes']) ){
-				$prev_version = $this->get_data('current_version');
-				$prev_version_commit_date = $this->get_data('current_version_date');
-				$new_version = $this->get_data('next_version');
-				$num_theme_updates = $this->get_data('next_version')+1;
-				$this->usage('Automated Theme Update', array('d11' => 'From ' . $prev_version . ' to ' . $new_version, 'cm1' => $num_theme_updates));
+			if ( $this->allow_theme_update() ){
+				if ( $options['type'] === 'theme' && $this->in_array_r('Nebula-master', $options['themes']) ){
+					$prev_version = $this->get_data('current_version');
+					$prev_version_commit_date = $this->get_data('current_version_date');
+					$new_version = $this->get_data('next_version');
+					$num_theme_updates = $this->get_data('next_version')+1;
+					$this->usage('Automated Theme Update', array('d11' => 'From ' . $prev_version . ' to ' . $new_version, 'cm1' => $num_theme_updates));
 
-				$this->theme_update_email($prev_version, $prev_version_commit_date, $new_version); //Send email with update information
-				$this->update_data('version_legacy', 'false');
-				$this->update_data('need_sass_compile', 'true'); //Compile all SCSS files on next pageview
-				$this->update_data('num_theme_updates', $num_theme_updates);
+					$this->theme_update_email($prev_version, $prev_version_commit_date, $new_version); //Send email with update information
+					$this->update_data('version_legacy', 'false');
+					$this->update_data('need_sass_compile', 'true'); //Compile all SCSS files on next pageview
+					$this->update_data('num_theme_updates', $num_theme_updates);
+				}
+			} else {
+				$this->update_data('version_legacy', 'true');
 			}
 		}
 

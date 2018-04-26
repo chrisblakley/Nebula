@@ -122,7 +122,11 @@ trait Functions {
 	//Start output buffering so headers can be sent later for HTTP2 Server Push
 	public function nebula_http2_ob_start(){
 	    if ( !$this->is_admin_page() ){
-	    	ob_start();
+			if ( isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ){
+				ob_start('ob_gzhandler'); //Use gzip compression for PHP output (not a replacement for htaccess)
+			} else {
+				ob_start();
+	    	}
 	    }
 	}
 
@@ -1024,7 +1028,16 @@ trait Functions {
 
 		//Establish text
 		if ( empty($data['text']) ){
-			$the_post = ( !empty($data['id']) && is_int($data['id']) )? get_post($data['id']) : get_post(get_the_ID());
+			if ( !empty($data['id']) ){
+				if ( is_object($data['id']) && get_class($data['id']) == 'WP_Post' ){ //If we already have a WP_Post class object
+					$the_post = $data['id'];
+				} elseif ( intval($data['id']) ){ //If an ID is passed
+					$the_post = get_post(intval($data['id']));
+				} else {
+					$the_post = get_post(get_the_ID());
+				}
+			}
+
 			if ( empty($the_post) ){
 				return false;
 			}
@@ -1592,8 +1605,8 @@ trait Functions {
 
 		global $post;
 		$defaults = apply_filters('nebula_breadcrumb_defaults', array(
-			'delimiter' => '&rsaquo;', //Delimiter between crumbs
-			'home' => '<i class="fas fa-home"></i>', //Text for the 'Home' link
+			'delimiter' => '/', //Delimiter between crumbs
+			'home' => get_bloginfo('title'), //Text for the 'Home' link
 			'home_link' => home_url('/'),
 			'prefix' => 'text',
 			'current' => true, //Show/Hide the current title in the breadcrumb

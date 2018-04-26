@@ -34,7 +34,7 @@ h1, h2, h3, h4, h5, h6 {color: $text_color;
 	a {color: $primary_color;}
 }
 
-a:not(.btn) {@include link-colors($primary_color, $secondary_color, darken($primary_color, 15%), $primary_color, $secondary_color);}
+a:not(.btn) {@include link-colors($primary_color, $secondary_color, darken($primary_color, 15%));}
 
 .herobgcolor {animation: none;}
 
@@ -49,7 +49,7 @@ a:not(.btn) {@include link-colors($primary_color, $secondary_color, darken($prim
 	ul li.current-menu-item {
 		.sub-menu {
 			ul li {border-left: 1px solid $secondary_color;
-				a {@include link-colors($primary_color, $secondary_color, darken($primary_color, 15%), $primary_color, $secondary_color);}
+				a {@include link-colors($primary_color, $secondary_color, darken($primary_color, 15%));}
 			}
 		}
 	}
