@@ -104,12 +104,12 @@
 				classes: 'widget btn colorbutton nebula-icon',
 				onclick: function(){
 					ed.focus();
-					ed.selection.setContent('[icon type=home color=COLOR size=SIZE class="CLASSES"]');
+					ed.selection.setContent('[icon type=fas-home color=COLOR size=SIZE class="CLASSES"]');
 				},
 				menu: [{
 					text: 'View all Font Awesome icons »',
 					onclick: function(){
-						window.open('http://fortawesome.github.io/Font-Awesome/icons/', '_blank');
+						window.open('https://fontawesome.com/icons?d=gallery', '_blank');
 					}
 				}]
 			}),

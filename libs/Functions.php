@@ -1033,9 +1033,9 @@ trait Functions {
 					$the_post = $data['id'];
 				} elseif ( intval($data['id']) ){ //If an ID is passed
 					$the_post = get_post(intval($data['id']));
-				} else {
-					$the_post = get_post(get_the_ID());
 				}
+			} else {
+				$the_post = get_post(get_the_ID());
 			}
 
 			if ( empty($the_post) ){
@@ -1946,8 +1946,8 @@ trait Functions {
 
 	//Disable author archives to prevent ?author=1 from showing usernames.
 	public function redirect_author_template(){
-		if ( basename($this->current_theme_template) == 'author.php' /* && !nebula()->get_option('author_bios') */ ){
-			wp_redirect(home_url('/') . '?s=about');
+		if ( basename($this->current_theme_template) == 'author.php' && !nebula()->get_option('author_bios') ){
+			wp_redirect(apply_filters('nebula_no_author_redirect', home_url('/') . '?s=about'));
 			exit;
 		}
 	}

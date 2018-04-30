@@ -116,7 +116,7 @@ if ( !trait_exists('Scripts') ){
 			}
 
 			//Be careful changing the following array as many JS functions use this data!
-			$brain = array(
+			$this->brain = array(
 				'version' => array(
 					'number' => $this->version('full'),
 					'date' => $this->version('date')
@@ -187,9 +187,9 @@ if ( !trait_exists('Scripts') ){
 
 			//Check for session data
 			if ( isset($_SESSION['nebulaSession']) && json_decode($_SESSION['nebulaSession'], true) ){ //If session exists and is valid JSON
-				$brain['session'] = json_decode($_SESSION['nebulaSession'], true); //Replace nebula.session with session data
+				$this->brain['session'] = json_decode($_SESSION['nebulaSession'], true); //Replace nebula.session with session data
 			} else {
-				$brain['session'] = array(
+				$this->brain['session'] = array(
 					'ip' => $this->get_ip_address(),
 					'id' => $this->nebula_session_id(),
 					'flags' => array(
@@ -201,7 +201,7 @@ if ( !trait_exists('Scripts') ){
 			}
 
 			//User Data
-			$brain['user'] = array(
+			$this->brain['user'] = array(
 				'id' => get_current_user_id(),
 				'name' => array(
 					'first' => $this->get_user_info('first_name'),
@@ -241,10 +241,10 @@ if ( !trait_exists('Scripts') ){
 				),
 			);
 
-			$brain = apply_filters('nebula_brain', $brain); //Allow other functions to hook in to add/modify data
-			$brain['user']['known'] = ( !empty($brain['user']['email']) )? true : false;
+			$this->brain = apply_filters('nebula_brain', $this->brain); //Allow other functions to hook in to add/modify data
+			$this->brain['user']['known'] = ( !empty($this->brain['user']['email']) )? true : false;
 
-			echo '<script type="text/javascript">var nebula = ' . json_encode($brain) . '</script>'; //Output the data to <head>
+			echo '<script type="text/javascript">var nebula = ' . json_encode($this->brain) . '</script>'; //Output the data to <head>
 			$this->timer('Output Nebula Data', 'end');
 		}
 

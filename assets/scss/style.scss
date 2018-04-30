@@ -4,7 +4,7 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 5.11.25.9202
+	Version: 5.11.30.4438
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
@@ -20,7 +20,7 @@
 // ===========================
 
 html {height: auto; font-size: 16px; overflow-x: hidden;} //Declare font-size in px here only. Use rem or rem() Sass function everywhere else.
-body {overflow-x: hidden; background: $background_color; -webkit-font-smoothing: antialiased;}
+body {overflow-x: hidden; background: $background_color; -webkit-font-smoothing: antialiased;} //@todo "Nebula" 0: Overflow hidden breaks position sticky... Without it, horizontal scroll happens...
 ::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 15%), 0.3);}
 ::-moz-selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 15%), 0.3);}
 
@@ -139,7 +139,7 @@ div.nebula-button {margin-bottom: 10px;}
 }
 
 .loadmorecon {position: relative; text-align: center; margin: 50px 0;
-	&:before {content: '\f141'; font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 900; position: absolute; top: 10px; left: 0; width: 100%; display: block; text-align: center; opacity: 0; pointer-events: none;}
+	&:before {content: '\f141'; @include font-awesome('solid'); position: absolute; top: 10px; left: 0; width: 100%; display: block; text-align: center; opacity: 0; pointer-events: none;}
 
 	.infinite-loading {display: none; position: absolute; top: 0; left: 0; width: 100%;
 		div {display: inline-block; width: 6px; height: 6px; border-radius: 12px; background: #444; @include prefix((animation: nebula-zoom 1s infinite easing(easeInOutQuad)), webkit moz);
@@ -154,7 +154,7 @@ div.nebula-button {margin-bottom: 10px;}
 	}
 
 	.infinite-load-more {position: relative; font-size: rem(18px); padding: 10px;
-		&:after {content: '\f107'; font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 900; position: absolute; bottom: -10px; left: 0; width: 100%; display: block; text-align: center; transition: bottom 0.25s ease;}
+		&:after {content: '\f107'; @include font-awesome('solid'); position: absolute; bottom: -10px; left: 0; width: 100%; display: block; text-align: center; transition: bottom 0.25s ease;}
 		&:hover:after,
 		&:focus:after {bottom: -13px;}
 	}
@@ -222,7 +222,7 @@ span.wpcf7-list-item-label {font-size: rem(14px);
 
 //Nice animated spinner when submit is active
 .wpcf7-form button#submit {display: inline-block; position: relative; overflow: hidden; transition: all 0.25s ease, padding 0.4s easing(easeOutBack);
-	&:before {content: "\f110"; font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 900; position: absolute; top: 0; left: -25px; height: 100%; display: -ms-inline-flexbox; display: inline-flex; -ms-flex-align: center; align-items: center; transition: left 0.4s easing(easeOutBack); animation: nebula-spin 2s infinite linear;}
+	&:before {content: "\f110"; @include font-awesome('solid'); position: absolute; top: 0; left: -25px; height: 100%; display: -ms-inline-flexbox; display: inline-flex; -ms-flex-align: center; align-items: center; transition: left 0.4s easing(easeOutBack); animation: nebula-spin 2s infinite linear;}
 
 	&.active {padding-left: 35px;
 	    &:before, svg {left: 10px;}
@@ -234,7 +234,7 @@ span.wpcf7-list-item-label {font-size: rem(14px);
 .wpcf7-not-valid-tip {color: $danger_color;}
 
 .wpcf7-response-output {position: relative; width: 100%; margin: 0; border-radius: 4px; font-size: rem(14px); text-align: center; padding: 0;
-	&:before {content: ""; font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 900; font-size: rem(36px); display: block; width: 100%; margin-bottom: 15px; text-align: center;}
+	&:before {content: ""; @include font-awesome('solid'); font-size: rem(36px); display: block; width: 100%; margin-bottom: 15px; text-align: center;}
 
 	&.wpcf7-validation-errors {color: $danger_color; background: rgba(mix($danger_color, #fff, 25%), 0.8); border: 1px solid $danger_color; padding: 25px 10px 15px 10px;
 		&:before {content: "\f057";}
@@ -282,7 +282,7 @@ div#nebula-hero-formcon {text-align: center; display: none;
 form#nebula-hero-search {display: inline-block; position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; @include prefix((transition: all 0.5s));
 	i, svg {position: absolute; top: rem(12px); left: 13px; font-size: rem(16px); color: #292b2c; pointer-events: none; z-index: 100;}
 
-	input {display: block; width: 100%; font-size: rem(18px); line-height: rem(18px); padding-left: 35px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 24px rgba(0, 0, 0, 0.2);
+	input {display: block; width: 100%; font-size: rem(18px); line-height: rem(18px); padding: 8px 0 8px 35px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 24px rgba(0, 0, 0, 0.2);
 		&:focus {@include background-color(#fff, 0.95); box-shadow: 0 0 32px rgba(red($primary_color), green($primary_color), blue($primary_color), 0.6);}
 	}
 
@@ -291,12 +291,12 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 
 .form-identifier-nebula-hero-search { //Only on front-page hero search
 	.external-link a {
-		&:after {content: '\f35d'; font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 900; margin-left: 5px; font-size: rem(10px); opacity: 0.4;}
+		&:after {content: '\f35d'; @include font-awesome('solid'); margin-left: 5px; font-size: rem(10px); opacity: 0.4;}
 	}
 }
 .ui-autocomplete.ui-widget-content li {position: relative;
 	& a {@include link-colors(#292b2c, #292b2c);
-		&:before {content: '\f105'; font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 900; width: 10px; margin-right: 5px; font-size: rem(10px); text-align: center; opacity: 0.5;}
+		&:before {content: '\f105'; @include font-awesome('solid'); width: 10px; margin-right: 5px; font-size: rem(10px); text-align: center; opacity: 0.5;}
 	}
 	&.type-post a:before {content: '\f1ea';}
 	&.type-page a:before {content: '\f15c';}
@@ -796,7 +796,7 @@ li.comment div.comment-meta {display: block;}
 
 	li.widget_archive label {display: none;}
 	li.widget_categories ul li {
-		&:before {content: '\f02e'; font-family: 'Font Awesome 5 Free'; font-weight: 900; margin-right: 5px;}
+		&:before {content: '\f02e'; @include font-awesome('solid'); margin-right: 5px;}
 	}
 
 	//Overrides the default Tag Cloud widget. @TODO "Nebula" 0: Come up with a custom widget for tag list.
@@ -832,7 +832,7 @@ a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10
 .mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-search):not(.mm-noresults):after {margin-left: 0;}
 .mm-menu li.current_page_item {@include background-color(#fff); font-weight: 800; color: #000;
 	a:not(.mm-next) {
-		&:before {content: "\f138"; font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 900; margin-right: 5px; color: rgba(0, 0, 0, 0.6);}
+		&:before {content: "\f138"; @include font-awesome('solid'); margin-right: 5px; color: rgba(0, 0, 0, 0.6);}
 	}
 }
 .mm-listview {
@@ -988,7 +988,7 @@ ul.about-social {display: flex; list-style: none; margin: 0; padding: 0;
 .accordion {position: relative; margin-top: 10px; margin-bottom: 10px;}
 .accordion-item {margin: 4px 0; border: 2px solid #e5e5e5; @include prefix((transition: border-color 0.3s ease));
 	.accordion-toggle .accordion-heading {display: block; padding: 10px 15px; font-size: rem(20px); color: #2c3e50; background-color: #fafafa; cursor: pointer;
-		&:before {content: "\f067"; font-family: "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 900; position: relative; display: inline-block; bottom: 0.1em; margin-right: 10px; color: #000; font-size: rem(12px); @include prefix((transform: rotate(45deg))); @include prefix((transition: all 0.3s ease));}
+		&:before {content: "\f067"; @include font-awesome('solid'); position: relative; display: inline-block; bottom: 0.1em; margin-right: 10px; color: #000; font-size: rem(12px); @include prefix((transform: rotate(45deg))); @include prefix((transition: all 0.3s ease));}
 	}
 
 	&.accordion-collapsed .accordion-toggle .accordion-heading:before {color: #d3d3d3; @include prefix((transform: rotate(0)));}

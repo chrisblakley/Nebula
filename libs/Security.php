@@ -83,25 +83,29 @@ if ( !trait_exists('Security') ){
 			$override = apply_filters('pre_nebula_login_errors', null, $error);
 			if ( isset($override) ){return;}
 
-			$dimensions = array('dl'=> wp_login_url(), 'dt' => 'Log In');
+			if ( isset($_GET['action']) && $_GET['action'] !== 'register' ){
+				$dimensions = array('dl'=> wp_login_url(), 'dt' => 'Log In');
 
-			if ( $this->contains($error, array('The password you entered for the username')) ){
-				$incorrect_username_start = strpos($error, 'for the username ')+17;
-				$incorrect_username_stop = strpos($error, ' is incorrect')-$incorrect_username_start;
-				$incorrect_username = strip_tags(substr($error, $incorrect_username_start, $incorrect_username_stop));
-				$this->ga_send_exception('(Security) Login error (incorrect password) for user ' . $incorrect_username, 0, $dimensions);
-			} else {
-				if ( $this->contains($error, array('Invalid username')) && $this->get_option('cd_securitynote') ){ //If no username was entered, tag the user as a potential bot
-					$dimensions['cd' . $this->ga_definition_index($this->get_option('cd_securitynote'))] = 'Possible Bot';
+				if ( $this->contains($error, array('The password you entered for the username')) ){
+					$incorrect_username_start = strpos($error, 'for the username ')+17;
+					$incorrect_username_stop = strpos($error, ' is incorrect')-$incorrect_username_start;
+					$incorrect_username = strip_tags(substr($error, $incorrect_username_start, $incorrect_username_stop));
+					$this->ga_send_exception('(Security) Login error (incorrect password) for user ' . $incorrect_username, 0, $dimensions);
+				} else {
+					if ( $this->contains($error, array('Invalid username')) && $this->get_option('cd_securitynote') ){ //If no username was entered, tag the user as a potential bot
+						$dimensions['cd' . $this->ga_definition_index($this->get_option('cd_securitynote'))] = 'Possible Bot';
+					}
+					$this->ga_send_exception('(Security) Login error: ' . strip_tags($error), 0, $dimensions);
 				}
-				$this->ga_send_exception('(Security) Login error: ' . strip_tags($error), 0, $dimensions);
+
+				if ( !$this->is_bot() ){
+					return 'Login Error.';
+				}
+
+				return '';
 			}
 
-			if ( !$this->is_bot() ){
-				return 'Login Error.';
-			}
-
-			return '';
+			return $error;
 		}
 
 		//Remove Wordpress version info from head and feeds

@@ -27,7 +27,7 @@ if ( !trait_exists('Sass') ){
 				return false;
 			}
 
-			if ( $this->get_option('scss') ){
+			if ( $this->get_option('scss') && !wp_doing_ajax() ){
 				//Nebula SCSS locations
 				$scss_locations = array(
 					'parent' => array(
@@ -198,7 +198,7 @@ if ( !trait_exists('Sass') ){
 										$prefix = chr(0) . '*' . chr(0);
 
 										if ( $this->is_staff() || current_user_can('publish_pages') ){ //Staff or Editors
-											echo '<br><b>Sass compilation error</b>: ' . $unprotected_array[$prefix . 'message'] . ' in <b>' . $scss_file . '</b>. This file has been skipped and was not processed.<br>';
+											echo '<br><b>Sass compilation error</b>: ' . $unprotected_array[$prefix . 'message'] . ' in <b>' . $scss_file . '</b> (also check partial files on that line). This file has been skipped and was not processed.<br>';
 										} else {
 											echo '<script>console.error("Sass compilation error. Log in for more information.");</script>'; //Log in JS console to avoid disturbing regular visitors
 										}
