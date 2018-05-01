@@ -380,10 +380,12 @@ if ( !trait_exists('Admin') ){
 
 		//CSS override for the frontend
 		public function remove_admin_bar_style_frontend(){
-			echo '<style type="text/css" media="screen">
-					html { margin-top: 0px !important; }
-					* html body { margin-top: 0px !important; }
-				</style>';
+			?>
+				<style type="text/css" media="screen">
+					html {margin-top: 0px !important;}
+					* html body {margin-top: 0px !important;}
+				</style>
+			<?php
 		}
 
 		public function remove_admin_bar_logo() {
@@ -701,8 +703,8 @@ if ( !trait_exists('Admin') ){
 		public function admin_bar_warning_styles(){
 			if ( is_admin_bar_showing() ){ ?>
 				<style type="text/css">
-					#wpadminbar .nebula-admin-fa {font-family: "Font Awesome 5 Solid", "Font Awesome 5 Free"; font-weight: 900;}
-						#wpadminbar .nebula-admin-fa.fab {font-family: "Font Awesome 5 Brands", "Font Awesome 5 Free"; font-weight: 400;}
+					#wpadminbar .nebula-admin-fa {font-family: "Font Awesome 5 Solid", "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 900;}
+						#wpadminbar .nebula-admin-fa.fab {font-family: "Font Awesome 5 Brands", "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 400;}
 					#wpadminbar .svg-inline--fa {color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;}
 					#wpadminbar .nebula-admin-light {font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6); line-height: inherit;}
 
