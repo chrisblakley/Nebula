@@ -2199,7 +2199,11 @@ function nebulaLiveValidator(){
 
 	//RegEx input
 	nebula.dom.document.on('keyup change blur', '.nebula-validate-regex', function(e){
-		var pattern = new RegExp(jQuery(this).attr('data-valid-regex'), 'i');
+		var pattern = new RegExp(jQuery(this).attr('pattern'), 'i');
+		if ( !pattern ){
+			pattern = new RegExp(jQuery(this).attr('data-valid-regex'), 'i'); //@todo "Nebula" 0: This is deprecated. Delete after version 6. Start using the pattern attribute
+		}
+
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( pattern.test(jQuery(this).val()) ){

@@ -1108,7 +1108,7 @@ if ( !trait_exists('Utilities') ){
 
 			$nebula_version_year = ( $nebula_version['medium'] >= 8 )? 2012+$nebula_version['large']+1 : 2012+$nebula_version['large'];
 			$nebula_months = array('May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April');
-			$nebula_version_month = $nebula_months[$nebula_version['medium']];
+			$nebula_version_month = $nebula_months[$nebula_version['medium']%12]; //Modulo 12 so the version can go beyond 11 (and still match the appropriate month)
 			$nebula_version_day = ( empty($nebula_version['small']) )? '' : $nebula_version['small'];
 			$nebula_version_day_formated = ( empty($nebula_version['small']) )? ' ' : ' ' . $nebula_version['small'] . ', ';
 
