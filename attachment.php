@@ -35,7 +35,7 @@
 
 <?php get_template_part('inc/nebula_drawer'); ?>
 
-<div id="content-section">
+<section id="content-section">
 	<div class="container">
 		<div class="row">
 			<div class="col">
@@ -43,7 +43,7 @@
 			</div><!--/col-->
 		</div><!--/row-->
 		<div class="row">
-			<div id="top" class="col" role="main">
+			<main id="top" class="col" role="main">
 				<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 						<div class="entry-meta">
@@ -105,9 +105,9 @@
 						</div><!-- .entry-content -->
 					</article>
 				<?php endwhile; ?>
-			</div><!--/col-->
+			</main><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
-</div><!--/content-section-->
+</section>
 
 <?php get_footer(); ?>

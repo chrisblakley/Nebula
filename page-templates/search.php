@@ -38,7 +38,7 @@
 
 <?php get_template_part('inc/nebula_drawer'); ?>
 
-<div id="content-section">
+<section id="content-section">
 	<div class="container">
 		<div class="row">
 			<div class="col">
@@ -46,7 +46,7 @@
 			</div><!--/col-->
 		</div><!--/row-->
 		<div class="row">
-			<div id="top" class="col-md" role="main">
+			<main id="top" class="col-md" role="main">
 				<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 						<div class="entry-content">
@@ -125,7 +125,7 @@
 							</div><!--/row-->
 						</form>
 						<div style="text-align: right;">
-							<a href="#" class="resetfilters"><i class="fa fa-times"></i> Reset Filters</a>
+							<a href="#" class="resetfilters"><i class="fas fa-times"></i> Reset Filters</a>
 						</div>
 
 						<div id="advanced-search-indicator"></div>
@@ -142,12 +142,11 @@
 						</div><!--/row-->
 					</article>
 				<?php endwhile; ?>
-			</div><!--/col-->
-			<div class="col-md-3 offset-md-1 <?php echo ( get_theme_mod('sidebar_position') === 'left' )? 'flex-first' : ''; ?>" role="complementary">
-				<?php get_sidebar(); ?>
-			</div><!--/col-->
+			</main><!--/col-->
+
+			<?php get_sidebar(); ?>
 		</div><!--/row-->
 	</div><!--/container-->
-</div><!--/content-section-->
+</section>
 
 <?php get_footer(); ?>

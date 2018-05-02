@@ -152,17 +152,19 @@ function registerServiceWorker(){
 			registration.onupdatefound = function(){ //Triggered if sw.js changes
 				//The updatefound event implies that registration.installing is set; see https://w3c.github.io/ServiceWorker/#service-worker-registration-updatefound-event
 				registration.installing.onstatechange = function(){
-					switch ( registration.installing.state ){
-						case 'installed':
-							if ( navigator.serviceWorker.controller ){
-								//At this point, the old content will have been purged and the fresh content will have been added to the cache. It's the perfect time to display a "New content is available; please refresh." message.
-							} else {
-								//At this point, everything has been precached for offline use.
-							}
-							break;
-						case 'redundant':
-							ga('send', 'exception', {'exDescription': '(JS) The installing service worker became redundant.', 'exFatal': false});
-							break;
+					if ( registration.installing ){ //...but that isn't the case sometimes...
+						switch ( registration.installing.state ){
+							case 'installed':
+								if ( navigator.serviceWorker.controller ){
+									//At this point, the old content will have been purged and the fresh content will have been added to the cache. It's the perfect time to display a "New content is available; please refresh." message.
+								} else {
+									//At this point, everything has been precached for offline use.
+								}
+								break;
+							case 'redundant':
+								ga('send', 'exception', {'exDescription': '(JS) The installing service worker became redundant.', 'exFatal': false});
+								break;
+						}
 					}
 				};
 			};

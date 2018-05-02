@@ -31,7 +31,7 @@
 <?php get_template_part('inc/nebula_drawer'); ?>
 
 <?php if ( have_posts() ){ the_post(); } //Queue the first post then reset it before the loop. ?>
-<div id="about-the-author" class="container">
+<section id="about-the-author" class="container">
 	<div class="row">
 		<div class="col">
 			<?php nebula()->breadcrumbs(); ?>
@@ -127,21 +127,21 @@
 			<p class="authorbio"><?php echo esc_html(the_author_meta('description')); ?></p>
 		</div><!--/col-->
 	</div><!--/row-->
-</div><!--/container-->
+</section><!--/container-->
 
-<div id="content-section">
+<section id="content-section">
 	<div class="container">
 		<div class="row">
-			<div id="top" class="col-md" role="main">
+			<main id="top" class="col-md" role="main">
 				<?php
 					rewind_posts();
 					get_template_part('loop', 'author');
 				?>
-			</div><!--/col-->
+			</main><!--/col-->
 
 			<?php get_sidebar(); ?>
 		</div><!--/row-->
 	</div><!--/container-->
-</div><!--/content-section-->
+</section><!--/content-section-->
 
 <?php get_footer(); ?>

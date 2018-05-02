@@ -31,7 +31,7 @@
 
 <?php get_template_part('inc/nebula_drawer'); ?>
 
-<div id="content-section">
+<section id="content-section">
 	<div class="container">
 		<div class="row">
 			<div class="col">
@@ -46,6 +46,6 @@
 			<?php get_sidebar(); ?>
 		</div><!--/row-->
 	</div><!--/container-->
-</div><!--/content-section-->
+</section>
 
 <?php get_footer(); ?>

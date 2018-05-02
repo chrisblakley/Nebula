@@ -30,6 +30,7 @@ if ( !trait_exists('Metaboxes') ){
 				//APIs
 				add_meta_box('nebula_main_apis_metabox', 'Main', array($this, 'nebula_main_apis_metabox'), 'nebula_options', 'apis');
 				add_meta_box('nebula_social_apis_metabox', 'Social', array($this, 'nebula_social_apis_metabox'), 'nebula_options', 'apis_side');
+				add_meta_box('nebula_arbitrary_code_metabox', 'Arbitrary Code', array($this, 'nebula_arbitrary_code_metabox'), 'nebula_options', 'apis');
 
 				//Administration
 				add_meta_box('nebula_staff_users_metabox', 'Staff & Notable Users', array($this, 'nebula_staff_users_metabox'), 'nebula_options', 'administration');
@@ -1634,6 +1635,36 @@ if ( !trait_exists('Metaboxes') ){
 
 			do_action('nebula_options_social_apis_metabox', $nebula_options);
 		}
+
+		public function nebula_arbitrary_code_metabox($nebula_options){
+			?>
+				<div class="form-group">
+					<label for="arbitrary_code_head">Head Code</label>
+					<textarea name="nebula_options[arbitrary_code_head]" id="arbitrary_code_head" class="form-control textarea" rows="3"><?php echo $nebula_options['arbitrary_code_head']; ?></textarea>
+					<p class="nebula-help-text short-help form-text text-muted">Execute this code in the <code>&lt;head&gt;</code> of each page.</p>
+					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group">
+					<label for="arbitrary_code_body">Body Code</label>
+					<textarea name="nebula_options[arbitrary_code_body]" id="arbitrary_code_body" class="form-control textarea" rows="3"><?php echo $nebula_options['arbitrary_code_body']; ?></textarea>
+					<p class="nebula-help-text short-help form-text text-muted">Execute this code just after the opening <code>&lt;body&gt;</code> tag of each page.</p>
+					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group">
+					<label for="arbitrary_code_footer">Footer Code</label>
+					<textarea name="nebula_options[arbitrary_code_footer]" id="arbitrary_code_footer" class="form-control textarea" rows="3"><?php echo $nebula_options['arbitrary_code_footer']; ?></textarea>
+					<p class="nebula-help-text short-help form-text text-muted">Execute this code at the end of of each page just before the closing <code>&lt;/body&gt;</code> tag.</p>
+					<p class="option-keywords"></p>
+				</div>
+			<?php
+		}
+
+
+
+
+
 
 
 		/*==========================

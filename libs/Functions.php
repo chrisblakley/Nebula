@@ -79,6 +79,10 @@ trait Functions {
 		add_action('pre_get_posts', array($this, 'redirect_empty_search'));
 		add_action('template_redirect', array($this, 'redirect_single_search_result'));
 
+		add_action('wp_head', array($this, 'arbitrary_code_head'), 1000);
+		add_action('nebula_body_open', array($this, 'arbitrary_code_body'), 1000);
+		add_action('wp_footer', array($this, 'arbitrary_code_footer'), 1000);
+
 		add_action('get_header', array($this, 'redirect_author_template'));
 		add_filter('single_template', array($this, 'single_category_template'));
 
@@ -3230,11 +3234,22 @@ trait Functions {
 	}
 
 	//Allow using large Twitter cards with Yoast (without upgrading)
-	function allow_large_twitter_summary($value){
+	public function allow_large_twitter_summary($value){
 		if ( $value === 'summary' ){ //&& get_the_post_thumbnail($post->ID, 'twitter_large')
 			$value = 'summary_large_image';
 		}
 
 		return $value;
+	}
+
+	//Execute arbitrary code from the options
+	public function arbitrary_code_head(){
+		echo $this->get_option('arbitrary_code_head');
+	}
+	public function arbitrary_code_body(){
+		echo $this->get_option('arbitrary_code_body');
+	}
+	public function arbitrary_code_footer(){
+		echo $this->get_option('arbitrary_code_footer');
 	}
 }

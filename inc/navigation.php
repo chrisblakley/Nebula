@@ -1,4 +1,4 @@
-<div id="navigation-section" class="mp-<?php echo get_theme_mod('menu_position', 'over'); ?>">
+<section id="navigation-section" class="mp-<?php echo get_theme_mod('menu_position', 'over'); ?>">
 	<?php if ( has_nav_menu('utility') ): ?>
 		<div id="utilitynavcon">
 			<div class="container">
@@ -45,4 +45,4 @@
 			</div><!--/row-->
 		</div><!--/container-->
 	</div>
-</div>
+</section>

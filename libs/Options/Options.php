@@ -351,6 +351,9 @@ if ( !trait_exists('Options') ){
 				'instagram_access_token' => '',
 				'instagram_client_id' => '',
 				'instagram_client_secret' => '',
+				'arbitrary_code_head' => '',
+				'arbitrary_code_body' => '',
+				'arbitrary_code_footer' => '',
 
 				//Administration Tab
 				'dev_ip' => '',

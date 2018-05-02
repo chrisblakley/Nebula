@@ -10,7 +10,7 @@
 			<div id="fb-root"></div>
 			<?php do_action('nebula_body_open'); ?>
 
-			<div id="header-section" role="banner">
+			<header id="header-section" role="banner">
 				<?php if ( (get_theme_mod('nebula_offcanvas_menu', true) && (has_nav_menu('mobile') || has_nav_menu('primary'))) || get_theme_mod('nebula_mobile_search', true) ): ?>
 					<div id="mobilebarcon">
 						<div class="row mobilenavcon">
@@ -56,4 +56,4 @@
 						</div><!--/container-->
 					</div>
 				<?php endif; ?>
-			</div><!--/header-section-->
+			</header>

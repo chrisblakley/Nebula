@@ -1,5 +1,5 @@
 			<?php if ( is_active_sidebar('footer-widget-area') ): ?>
-				<div id="footer-widget-section">
+				<section id="footer-widget-section">
 					<?php if ( get_theme_mod('nebula_fwa_overlay_color') || get_theme_mod('nebula_fwa_overlay_opacity') ): ?>
 						<div class="custom-color-overlay"></div>
 					<?php endif; ?>
@@ -9,10 +9,10 @@
 							<?php dynamic_sidebar('footer-widget-area'); ?>
 						</div><!--/row-->
 					</div><!--/container-->
-				</div>
+				</section>
 			<?php endif; ?>
 
-			<div id="footer-section" class="lazy-load" role="contentinfo">
+			<footer id="footer-section" class="lazy-load" role="contentinfo">
 				<?php if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ): ?>
 					<div class="custom-color-overlay"></div>
 				<?php else: ?>
@@ -71,7 +71,7 @@
 				</div><!--/container-->
 
 				<?php do_action('nebula_footer'); ?>
-			</div>
+			</footer>
 
 			<?php wp_footer(); ?>
 		</div><!--/body-wrapper-->

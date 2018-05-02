@@ -703,8 +703,8 @@ if ( !trait_exists('Admin') ){
 		public function admin_bar_warning_styles(){
 			if ( is_admin_bar_showing() ){ ?>
 				<style type="text/css">
-					#wpadminbar .nebula-admin-fa {font-family: "Font Awesome 5 Solid", "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 900;}
-						#wpadminbar .nebula-admin-fa.fab {font-family: "Font Awesome 5 Brands", "Font Awesome 5 Pro", "Font Awesome 5 Free"; font-weight: 400;}
+					#wpadminbar .nebula-admin-fa {font-family: "Font Awesome 5 Solid", "Font Awesome 5 Free", "Font Awesome 5 Pro"; font-weight: 900;}
+						#wpadminbar .nebula-admin-fa.fab {font-family: "Font Awesome 5 Brands", "Font Awesome 5 Free", "Font Awesome 5 Pro"; font-weight: 400;}
 					#wpadminbar .svg-inline--fa {color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;}
 					#wpadminbar .nebula-admin-light {font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6); line-height: inherit;}
 
@@ -832,7 +832,7 @@ if ( !trait_exists('Admin') ){
 					$prev_version = $this->get_data('current_version');
 					$prev_version_commit_date = $this->get_data('current_version_date');
 					$new_version = $this->get_data('next_version');
-					$num_theme_updates = $this->get_data('next_version')+1;
+					$num_theme_updates = $this->get_data('num_theme_updates')+1;
 					$this->usage('Automated Theme Update', array('d11' => 'From ' . $prev_version . ' to ' . $new_version, 'cm1' => $num_theme_updates));
 
 					$this->theme_update_email($prev_version, $prev_version_commit_date, $new_version); //Send email with update information

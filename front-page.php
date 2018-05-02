@@ -13,7 +13,7 @@
 ?>
 
 <?php if ( get_theme_mod('nebula_hero', true) ): ?>
-	<div id="hero-section" class="nebulashadow inner-top inner-bottom">
+	<section id="hero-section" class="nebulashadow inner-top inner-bottom">
 		<?php if ( get_theme_mod('nebula_hero_overlay_color') || get_theme_mod('nebula_hero_overlay_opacity') ): ?>
 			<div class="custom-color-overlay"></div>
 		<?php else: ?>
@@ -80,15 +80,15 @@
 				</div><!--/row-->
 			<?php endif; ?>
 		</div><!--/container-->
-	</div><!--/hero-section-->
+	</section>
 <?php endif; ?>
 
 <?php get_template_part('inc/nebula_drawer'); ?>
 
-<div id="content-section">
+<section id="content-section">
 	<div class="container">
 		<div class="row">
-			<div id="top" class="col-md-8" role="main">
+			<main id="top" class="col-md-8" role="main">
 				<?php if ( get_option('show_on_front') === 'posts' ): //"Your latest posts" ?>
 					<?php get_template_part('loop', 'index'); ?>
 				<?php else: //"A static page" ?>
@@ -100,11 +100,11 @@
 						</article>
 					<?php endwhile; ?>
 				<?php endif; ?>
-			</div><!--/col-->
+			</main><!--/col-->
 
 			<?php get_sidebar(); ?>
 		</div><!--/row-->
 	</div><!--/container-->
-</div><!--/content-section-->
+</section>
 
 <?php get_footer(); ?>
