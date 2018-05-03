@@ -109,6 +109,32 @@
 	}
 }
 
+//Add a btn and bg helper class
+//@include add-color-class("accent", cyan);
+//@include add-color-class("accent", purple, pink);
+@mixin add-color-class($name, $color, $secondary: null){
+	@if ( $secondary == null ){
+		$secondary: $color;
+	}
+
+	.btn.btn-#{$name},
+	.btn.btn-#{$name}:visited {background-color: $color; border-color: $color; color: readable-color($color);
+		&:hover, &:focus {background: darken($color, 10%); border-color: darken($color, 10%); color: readable-color($color);}
+		&:focus {box-shadow: 0 0 0 0.2rem rgba($color, 0.25);}
+		&:active,
+		&.active {background: $secondary; border-color: $secondary; color: readable-color($secondary);}
+	}
+
+	.btn.btn-outline-#{$name},
+	.btn.btn-outline-#{$name}:visited {color: $color; background-color: transparent; background-image: none; border-color: $color;
+		&:hover, &:focus {color: #fff; background-color: $color; border-color: $color;}
+		&:active,
+		&.active {background-color: $secondary; border-color: $secondary;}
+	}
+
+	.bg-#{$name} {background-color: $color !important;}
+}
+
 //.element a {@include link-colors(red, orange, yellow, green, blue);}
 //.element a {@include link-colors(blue, green);}
 @mixin link-colors($normal, $hover: false, $active: false, $visited: false, $focus: false){
