@@ -1,0 +1,28 @@
+// ===========================
+// Custom Baseline Styles
+// ===========================
+
+html {height: auto; font-size: 16px; overflow-x: hidden;} //Declare font-size in px here only. Use rem or rem() Sass function everywhere else.
+body {overflow-x: hidden; background: $background_color; -webkit-font-smoothing: antialiased;} //@todo "Nebula" 0: Overflow hidden breaks position sticky... Without it, horizontal scroll happens...
+::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 15%), 0.3);}
+::-moz-selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 15%), 0.3);}
+
+img,
+svg {vertical-align: middle; max-width: 100%; height: auto;
+	path {@include prefix((transition: fill 0.25s));}
+}
+
+ul {list-style-position: inside;
+	ul {margin: 4px 0 0 0;}
+	&.menu {padding: 0;}
+}
+
+.chromeframe {margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0;}
+
+a:not(.btn) {@include link-colors($primary_color, $secondary_color, darken($primary_color, 15%)); @include prefix((transition: all 0.25s));
+	&:hover,
+	&:focus, //Reconsider this one... for a11y...
+	&:active {text-decoration: none; outline: none;}
+}
+
+.screen-reader-text {clip: rect(1px, 1px, 1px, 1px); position: absolute !important; height: 1px; width: 1px; overflow: hidden;}

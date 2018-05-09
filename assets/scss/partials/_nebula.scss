@@ -1,0 +1,229 @@
+// ===========================
+// Nebula-specific Feature Styles
+// ===========================
+
+//Infinite Load
+.infinite-start-note {margin: 30px 0;
+	a {font-size: rem(18px);}
+}
+
+.loadmorecon {position: relative; text-align: center; margin: 50px 0;
+	&:before {content: '\f141'; @include font-awesome('solid'); position: absolute; top: 10px; left: 0; width: 100%; display: block; text-align: center; opacity: 0; pointer-events: none;}
+
+	.infinite-loading {display: none; position: absolute; top: 0; left: 0; width: 100%;
+		div {display: inline-block; width: 6px; height: 6px; border-radius: 12px; background: #444; @include prefix((animation: nebula-zoom 1s infinite easing(easeInOutQuad)), webkit moz);
+			&.b {animation-delay: .2s;}
+			&.c {animation-delay: .4s;}
+		}
+	}
+	&.loading .infinite-loading {display: block;}
+
+	&.disabled a {color: #444; opacity: 0.3; pointer-events: none;
+		&:after {content: ''; opacity: 0; pointer-events: none;}
+	}
+
+	.infinite-load-more {position: relative; font-size: rem(18px); padding: 10px;
+		&:after {content: '\f107'; @include font-awesome('solid'); position: absolute; bottom: -10px; left: 0; width: 100%; display: block; text-align: center; transition: bottom 0.25s ease;}
+		&:hover:after,
+		&:focus:after {bottom: -13px;}
+	}
+
+	&.loading .infinite-load-more {opacity: 0; pointer-events: none;}
+}
+
+.lazy-load {background-image: none !important;} //.js here may prevent true lazy loading due to race condition: https://github.com/chrisblakley/Nebula/issues/1558#issuecomment-361121336
+
+//Nebula Search Forms
+form.nebula-search {position: relative; display: inline-block; margin: 0;
+	input {max-width: 30px; padding: 0 6px; color: transparent; font-size: rem(12px); line-height: 1.15rem; border: 1px solid #ccc; border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
+		&:hover {background-color: #fff;}
+		&:focus {max-width: 210px; padding-left: 25px; background-color: #fff; cursor: auto; color: #292b2c;}
+		&.open {max-width: 100%; padding-left: 25px; background-color: #fff; cursor: auto; color: #292b2c;}
+		&.active {border-color: $primary_color; box-shadow: 0 0 5px rgba(red($primary_color), green($primary_color), blue($primary_color), .5);}
+
+		&::-webkit-search-decoration,
+		&::-webkit-search-cancel-button {display: none;}
+
+		&:-moz-placeholder {color: transparent;}
+		&:-ms-input-placeholder {color: transparent;}
+		&::-webkit-input-placeholder {color: transparent;}
+
+		&:focus:-moz-placeholder, &.open:-moz-placeholder {color: #aaa;}
+		&:focus:-ms-input-placeholder, &.open:-ms-input-placeholder {color: #aaa;}
+		&:focus::-webkit-input-placeholder, &.open::-webkit-input-placeholder {color: #aaa;}
+	}
+
+	i, svg {position: absolute; top: rem(4px); left: 7px; font-size: rem(12px); opacity: 0.5; pointer-events: none;}
+}
+
+.nebula_excerpt {white-space: nowrap;}
+
+//jQuery UI Autocomplete Hero Search
+div#nebula-hero-formcon {text-align: center; display: none;
+	@include media("lg"){display: block;}
+}
+
+form#nebula-hero-search {display: inline-block; position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; @include prefix((transition: all 0.5s));
+	i, svg {position: absolute; top: rem(12px); left: 13px; font-size: rem(16px); color: #292b2c; pointer-events: none; z-index: 100;}
+
+	input {display: block; width: 100%; font-size: rem(18px); line-height: rem(18px); padding: 8px 0 8px 35px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 24px rgba(0, 0, 0, 0.2);
+		&:focus {@include background-color(#fff, 0.95); box-shadow: 0 0 32px rgba(red($primary_color), green($primary_color), blue($primary_color), 0.6);}
+	}
+
+	&.autocompleted input {border-bottom-left-radius: 0; border-bottom-right-radius: 0; border: none;}
+}
+
+.form-identifier-nebula-hero-search { //Only on front-page hero search
+	.external-link a {
+		&:after {content: '\f35d'; @include font-awesome('solid'); margin-left: 5px; font-size: rem(10px); opacity: 0.4;}
+	}
+}
+.ui-autocomplete.ui-widget-content li {position: relative;
+	& a {@include link-colors(#292b2c, #292b2c);
+		&:before {content: '\f105'; @include font-awesome('solid'); width: 10px; margin-right: 5px; font-size: rem(10px); text-align: center; opacity: 0.5;}
+	}
+	&.type-post a:before {content: '\f1ea';}
+	&.type-page a:before {content: '\f15c';}
+	&.type-category a:before {content: '\f02e';}
+	&.type-tag a:before {content: '\f02b';}
+	&.type-menu-item a:before {content: '\f0c9';}
+	&.type-event a:before {content: '\f073';}
+	&.type-product a:before {content: '\f07a';}
+	&.type-attachment a:before {content: '\f1c5';}
+	&.file-zip a:before {content: '\f1c6';}
+	&.type-user a:before {content: '\f007';}
+	&.page-home a:before {content: '\f015';}
+	&.sticky-post a:before {content: '\f08d';}
+
+	&.search-link {font-size: rem(12px); border-top: 1px dotted #ddd;
+		a {opacity: 0.7;}
+	}
+	&.more-results a:before {content: '\f002';}
+	&.no-results a:before {content: '\00a0';}
+}
+
+//jQuery UI Autocomplete
+.ui-autocomplete.ui-widget-content {margin-top: -10px; @include background-color(#fff, 0.95); border: none; border-top: 1px dotted #ddd; box-shadow: 1px 6px 9px 0 rgba(0, 0, 0, 0.2); z-index: 9999 !important; overflow: hidden;
+	.ui-menu .ui-menu-item {font-size: rem(12px); padding: 3px 5px;}
+	.ui-state-hover,
+	.ui-widget-content .ui-state-hover,
+	.ui-widget-header .ui-state-hover,
+	li.ui-state-focus,
+	.ui-widget-content li.ui-state-focus,
+	.ui-widget-header li.ui-state-focus,
+	.ui-widget-header li.ui-state-active {margin: 0; font-weight: normal; background: $primary_color; color: #fff; border: none;}
+	.ui-state-hover a,
+	li.ui-state-focus a,
+	a.ui-state-active {color: #fff;}
+	li a {display: inline-block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width: 100%; @include prefix((transition: none 0.25s));}
+
+	.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover, .ui-button.ui-state-active:focus {margin: 0; border: none; background: $primary_color;}
+
+	@include mobile("landscape"){left: 0 !important; width: 100% !important;}
+}
+
+//Anchor tags that should not have transitions
+.search-choice-close {@include prefix((transition: none 0.25s));}
+
+//Highlight and emphasize search term in results
+.searchresultword {@include background-color($primary_color, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important; @include prefix((transition: none 0.25s));
+	&.transitionable {@include prefix((transition: background 0.25s));}
+	article:hover,
+	article:focus & {@include background-color(#ff0 !important, 0.5);}
+}
+.filterresultword {@include background-color(#ff0, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important;}
+
+.search .highlight {@include background-color($primary_color, 0.2);}
+
+//Row that contains event specific help: "Did you mean?", "Single result redirection", etc.
+#nebula-drawer {position: relative; @include background-color(#000, 0.05); z-index: 1000; padding-top: 30px; padding-bottom: 15px;
+	.close {position: absolute; top: 0; right: 0; z-index: 500;}
+	input {max-width: 200px;}
+}
+
+#suggestedpage {display: none;}
+
+
+.nebula-breadcrumbs {position: relative; margin-bottom: 50px; padding: 3px 0; font-size: rem(14px);
+	.arrow {padding: 0 4px; opacity: 0.6;}
+}
+
+//Advanced Search
+#advanced-search-form {margin-bottom: 0; opacity: 1; @include prefix((transition: opacity 0.5s));
+	&.inactive {opacity: 0.3; pointer-events: none;}
+}
+
+	a#metatoggle {display: block; background: $primary_color; color: #fff; text-align: center; width: 100%; padding: 5px 10px;
+		&:hover,
+		&:focus {background: darken($primary_color, 15%);}
+	}
+	#advanced-search-meta {max-height: 0; margin-bottom: 15px; @include prefix((transition: all 0.5s)); overflow: hidden;
+		&.active {max-height: 250px;}
+		&.finished {overflow: visible;}
+	}
+
+	.advanced-search-group.left-side {}
+		#advanced-search-form .advanced-search-date {width: 47%; height: 28px; line-height: 28px;}
+	.right-side .advanced-search-group {margin-bottom: 10px;}
+
+	#advanced-search-form .advanced-search-keyword {width: 100%; font-size: rem(24px); line-height: 1.625em; font-weight: 300; padding: 0 10px; height: 48px; outline: none;}
+
+.advanced-search-result {border-bottom: 1px dotted #ccc; padding-bottom: 10px; margin-top: 5px;}
+	.post-date-time {margin-bottom: 5px;}
+	.post-meta-tags {margin: 0;}
+		.post-cats {margin-right: 10px;}
+
+.more-or-prev-events {display: block; width: 100%; height: 50px; line-height: 50px; color: #fff; margin: 25px 0;
+	&:hover,
+	&:focus {color: #fff;}
+	&.all-events-loaded,
+	&.no-prev-events {pointer-events: none; opacity: 0.3;}
+}
+
+a.resetfilters {font-size: rem(12px); color: $danger_color; opacity: 0;
+	&:hover,
+	&:focus {color: darken($danger_color, 15%);}
+	&.active {opacity: 1;}
+}
+
+#advanced-search-indicator {margin-bottom: 15px;}
+
+#about-the-author {position: relative; background: #eee; padding-top: 30px; padding-bottom: 10px; margin-top: 20px; margin-bottom: 15px;
+	.author-headshot {min-height: 100px; margin-bottom: 20px; text-align: center;
+		img {width: 100%; max-width: 200px; /* border-radius: 500px; */ @include prefix((transition: all 0.75s));}
+		@include media("md"){text-align: left;};
+	}
+	.author-name {display: block; padding-bottom: 15px; text-align: center;
+		@include media("md"){display: inline-block; padding: 0; text-align: left;};
+	}
+	.author-location {display: block; white-space: nowrap; text-align: center;
+		@include media("md"){text-align: left; display: inline-block;}
+	}
+	.author-social {display: block; margin-top: 17px; margin-bottom: 20px; font-size: rem(24px); text-align: center;
+		@include media("md"){display: inline-block; margin-bottom: 0; float: right; font-size: rem(12px);};
+	}
+	.author-meta {margin-top: 5px; margin-bottom: 12px; font-size: rem(12px);
+		i {margin-right: 2px;}
+	}
+	.author-jobtitle {display: block; text-align: center; margin-bottom: 15px;
+		@include media("md"){display: inline-block; text-align: left; margin-bottom: 0;};
+	}
+	.author-contact {float: none; display: block;
+		.author-email,
+		.author-phonenumber {white-space: nowrap; display: block; text-align: center;
+			@include media("md"){display: inline-block; margin-right: 5px; text-align: left;}
+		}
+		@include media("lg"){float: right; display: inline-block;};
+	}
+}
+
+.sharing-links {display: block;
+	.nebula-social-button {display: inline-block; margin-right: 10px;
+		span {vertical-align: inherit !important;}
+	}
+}
+
+#error-page-suggestions {margin-top: 50px;
+	h2 {font-size: rem(21px);}
+	.suggestion-title {font-size: rem(16px); line-height: 28px;}
+}

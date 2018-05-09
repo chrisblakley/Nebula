@@ -1,0 +1,62 @@
+// ===========================
+// Footer
+// ===========================
+
+
+#footer-section {position: relative; padding: 50px 0 150px 0; background: url($template_directory + "/assets/img/phg/phg-nebula-mountain.jpg") no-repeat bottom center / cover; @include prefix((transition: all 0.5s));
+	@include media("lg"){padding: 50px 0 200px 0;};
+	a:not(.btn) {@include link-colors(#fff, #aaa);}
+}
+
+//Footer Logo
+.footerlogocon {text-align: center; margin-bottom: 20px;}
+
+//Footer Widgets
+#footer-widget-section {position: relative; padding: 50px 0; background: #ddd;
+	.widget-container {font-size: rem(16px);
+		.widget-title {font-size: rem(18px); font-weight: 800; margin-bottom: 15px;}
+
+		ul {margin: 0; padding: 0;
+			li {list-style: none; font-size: rem(16px); margin: 0 0 10px 0;}
+		}
+	}
+}
+
+//Power Footer
+.row.powerfootercon {display: none; padding-top: 20px; margin-bottom: 30px;
+	@include media("lg"){display: block;};
+
+	#powerfooter {position: relative; z-index: 1000;
+		ul {display: -ms-flexbox; display: flex; list-style: none; margin-bottom: 25px; z-index: 10;
+			li.menu-item {-ms-flex-item-align: stretch; align-self: stretch; -ms-flex: 1; flex: 1;
+				&:first-child {}
+				&:last-child {}
+
+				a {display: block; font-size: rem(18px); font-weight: 800; margin-bottom: 10px;}
+
+				ul.sub-menu {display: block; margin: 0; padding: 5px 0;
+					li {display: block; margin: 0 0 10px 0; padding: 0;
+						a {display: block; font-size: rem(16px); font-weight: normal; margin-bottom: 0;}
+						ul.sub-menu {display: none;}
+					}
+				}
+			}
+		}
+	}
+}
+
+//Footer Search
+form.footer-search,
+#footer-section form.nebula-search {position: relative; display: block; margin: 10px auto 0 auto; width: 150px; z-index: 10;
+	@include media("md"){display: inline-block; margin: 0 0 0 10px; width: auto;};
+
+	&:before {color: rgba(255, 255, 255, 0.75);}
+	input {background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff;
+		&:focus {background: rgba(255, 255, 255, 0.3);}
+	}
+}
+
+//Footer Copyright
+.copyright-con {position: relative; padding-top: 20px; text-align: center; color: #fff; z-index: 10;
+	p {display: inline-block; font-size: rem(14px); color: #fff;}
+}

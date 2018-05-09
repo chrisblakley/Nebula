@@ -1,0 +1,169 @@
+// ===========================
+// Third-party vendor library customizations
+// This includes OS-specific modifications
+// ===========================
+
+abbr, acronym {cursor: pointer; border-bottom: none; color: inherit;}
+
+.pinterest-pin a {@include prefix((transition: none 0.25s));}
+#___plusone_0 {width: 60px !important;}
+
+html .btn {max-width: 100%; white-space: normal;}
+.modal-xl {@include media("xl"){width: 90%; max-width: 1200px;};} //Allows for bigger modal
+.modal-backdrop.show {opacity: 0.8;} //Darker modal backdrop
+.form-check-input {margin-top: 0.35rem;}
+
+svg.svg-inline--fa {max-width: none;} //Remove max-width: 100% for Font Awesome SVG icons
+
+//Offcanvas Mmenu Modifications
+.mm-menu .mm-navbar a[href]:hover {color: rgba(0, 0, 0, 0.6);}
+.mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-noresults):after {margin-left: 0;}
+.mm-list a {border: none;
+	&.mm-subopen {width: 80px;} /* Sometimes the width does not work. If it is too wide- remove this line. */
+	&.mm-subopen + a, .mm-list a.mm-subopen + span {margin-right: 80px;} /* Sometimes the width does not work. If it is too wide- remove this line. */
+	&.mm-subopen:hover {@include background-color(#000, 0.1);}
+}
+.mm-menu .mm-listview > li a:not(.mm-next) {color: #292b2c;}
+.mm-list > li > a:hover {@include background-color(#000, 0.1);}
+.mm-menu.mm-light .mm-list > li > a.mm-subclose:hover {text-decoration: none; @include background-color(#000, 0.05);}
+.mm-menu.mm-hassearch > .mm-panel > .mm-list:first-child {margin-top: 0px;}
+.mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-search):not(.mm-noresults):after {margin-left: 0;}
+.mm-menu li.current_page_item {@include background-color(#fff); font-weight: 800; color: #000;
+	a:not(.mm-next) {
+		&:before {content: "\f138"; @include font-awesome('solid'); margin-right: 5px; color: rgba(0, 0, 0, 0.6);}
+	}
+}
+.mm-listview {
+	a:hover {@include background-color(#000, 0.05);}
+
+	.mm-next {width: 90px;
+		&:after {@include prefix((transition: right 0.5s easing(custom, "0.175, 0.885, 0.320, 1.275")));}
+		&:hover:after {right: 15px;}
+	}
+}
+.mm-slideout {z-index: auto;}
+
+.wpcf7-form,
+.nebula-login-form {
+	label {display: block; margin-bottom: 0; font-size: rem(14px);}
+	.wpcf7-not-valid-tip {font-size: rem(14px);}
+}
+.wpcf7-form {
+	br {display: none;}
+	.form-check {padding-left: 0; margin-bottom: 1rem;
+		.wpcf7-acceptance {display: block;}
+		.wpcf7-list-item {display: block; margin-left: 0;
+			&:first-of-type {margin-left: 0;} //This is in case horizontal layout is preferred (override display: block above)
+		}
+	}
+}
+
+//Essential CF7 styles
+span.wpcf7-list-item {display: inline-block; margin: 0 0 0 1em;
+	&.first {margin: 0;}
+}
+span.wpcf7-list-item-label {font-size: rem(14px);
+	&::before,
+	&::after {content: " ";}
+}
+.debuginfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; font-size: 0px; line-height: 0px; @include background-color(#fff); color: rgba(255, 255, 255, 0); pointer-events: none;}
+
+//Nice animated spinner when submit is active
+.wpcf7-form button#submit {display: inline-block; position: relative; overflow: hidden; transition: all 0.25s ease, padding 0.4s easing(easeOutBack);
+	&:before {content: "\f110"; @include font-awesome('solid'); position: absolute; top: 0; left: -25px; height: 100%; display: -ms-inline-flexbox; display: inline-flex; -ms-flex-align: center; align-items: center; transition: left 0.4s easing(easeOutBack); animation: nebula-spin 2s infinite linear;}
+
+	&.active {padding-left: 35px;
+	    &:before, svg {left: 10px;}
+	}
+}
+
+.wpcf7 .screen-reader-response {display: none; font-size: rem(14px);}
+
+.wpcf7-not-valid-tip {color: $danger_color;}
+
+.wpcf7-response-output {position: relative; width: 100%; margin: 0; border-radius: 4px; font-size: rem(14px); text-align: center; padding: 0;
+	&:before {content: ""; @include font-awesome('solid'); font-size: rem(36px); display: block; width: 100%; margin-bottom: 15px; text-align: center;}
+
+	&.wpcf7-validation-errors {color: $danger_color; background: rgba(mix($danger_color, #fff, 25%), 0.8); border: 1px solid $danger_color; padding: 25px 10px 15px 10px;
+		&:before {content: "\f057";}
+		svg {display: block;}
+	}
+	&.wpcf7-spam-blocked {color: $danger_color; background: rgba(mix($danger_color, #fff, 25%), 0.8); border: 1px solid $danger_color; padding: 25px 10px 15px 10px;
+		&:before {content: "\f05e";}
+		svg {display: block;}
+	}
+	&.wpcf7-mail-sent-ok {color: $success_color; background: rgba(mix($success_color, #fff, 25%), 0.8); border: 1px solid $success_color; padding: 25px 10px 15px 10px;
+		&:before {content: "\f00c";}
+		svg {display: block;}
+	}
+}
+
+.nebula-empty-required {border: 1px solid $danger_color;}
+
+.wpcf7 ul {padding: 0; max-height: 2000px; list-style: none; overflow: hidden; @include prefix((transition: all 0.75s));}
+	.wpcf7-form.sent ul {max-height: 0;}
+
+//wp-pagenavi Pagination
+div.wp-pagenavi {text-align: right; margin-bottom: 20px;
+	span,
+	a {display: inline-block; padding: 0 10px;}
+
+	a {
+		&:hover,
+		&:focus {background: $primary_color; color: #fff; border: 1px solid $primary_color;}
+	}
+}
+
+//WP Core Pagination
+div.wp-pagination {text-align: right; margin-bottom: 20px;
+	.page-numbers {display: inline-block; padding: 0 10px; border: 1px solid #bfbfbf;
+		&.prev {}
+		&.next {}
+	}
+
+	a:hover,
+	a:focus {background: $primary_color; color: #fff; border: 1px solid $primary_color;}
+
+	span.page-numbers.current {font-weight: 800; border-color: #000;}
+}
+
+//Misc. WP Core styles
+.gallery-caption {font-size: rem(12px);}
+
+//Comments
+li.comment div.comment-meta {display: block;}
+#nebulacommentswrapper {}
+	#disqus_thread {margin-top: 20px;}
+
+//Google Maps
+.googlemapcon {width: 100%; height: 250px;
+	a,
+	i {@include prefix((transition: all 0.25s));}
+}
+	#map_canvas {width: 100%; height: 100%;}
+
+	.mapgeolocation-icon.error {color: $danger_color;}
+
+	.maprefresh {overflow: hidden; white-space: nowrap;
+		&.timeout {color: #aaa; cursor: default;}
+	}
+	.maprefresh-icon.success {color: $success_color;}
+	.mapweather-icon.inactive,
+	.maptraffic-icon.inactive,
+	.maprefresh-icon.inactive,
+	.mapgeolocation-icon.inactive {opacity: 0.4;}
+
+	#googlemap img {max-width: none;} //Prevents glitchy UI within embedded Google maps
+
+.facebook-connect-con {font-size: rem(12px);
+	i,
+	a {@include link-colors(brand(facebook), darken(brand(facebook), 15%)); color: brand(facebook);}
+}
+
+//Windows Chrome Font Bug Fix: http://stackoverflow.com/questions/22011139/google-fonts-are-not-rendering-on-google-chrome @TODO "Nebula" 0: Not Working...
+/*
+body * {-webkit-animation-duration: 0.1s; -webkit-animation-name: fontfix; -webkit-animation-iteration-count: 1; -webkit-animation-timing-function: linear; -webkit-animation-delay: 0.1s;}
+@-webkit-keyframes fontfix{from {opacity: 1;} to {opacity: 1;}}
+*/
+
+@-ms-viewport {width: device-width;} //Delete this when no longer supporting IE11 (or change to @viewport)

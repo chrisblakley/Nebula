@@ -462,6 +462,14 @@ if ( !trait_exists('Metaboxes') ){
 					</p>
 					<p class="option-keywords">sass scss sccs scass css moderate page speed impact</p>
 				</div>
+
+				<div class="form-group" dependent-or="scss">
+					<input type="checkbox" name="nebula_options[critical_css]" id="critical_css" value="1" <?php checked('1', !empty($nebula_options['critical_css'])); ?> /><label for="critical_css">Critical CSS</label>
+					<p class="nebula-help-text short-help form-text text-muted">Output critical CSS for above-the-fold content in the <code>&lt;head&gt;</code> of the document. (Default: <?php echo $this->user_friendly_default('critical_css'); ?>)</p>
+					<p class="dependent-note hidden">This option is dependent on the SCSS compiler.</p>
+					<p class="nebula-help-text more-help form-text text-muted">Styles in critical.css will be embedded in the HTML while also imported into style.css. This improves perceived page load time for users without overcomplicating stylesheets.</p>
+					<p class="option-keywords">sass scss sccs scass css minor page speed impact</p>
+				</div>
 			<?php
 
 			do_action('nebula_options_frontend_metabox', $nebula_options);

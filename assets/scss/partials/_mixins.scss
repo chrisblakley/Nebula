@@ -111,28 +111,36 @@
 
 //Add a btn and bg helper class
 //@include add-color-class("accent", cyan);
-//@include add-color-class("accent", purple, pink);
-@mixin add-color-class($name, $color, $secondary: null){
-	@if ( $secondary == null ){
-		$secondary: $color;
+//@include add-color-class("accent", purple, white);
+@mixin add-color-class($name, $bg, $text: null, $active_bg: null, $active_text: null){
+	@if ( $text == null ){
+		$text: readable-color($bg);
+	}
+
+	@if ( $active_bg == null ){
+		$active_bg: $bg;
+	}
+
+	@if ( $active_text == null ){
+		$active_text: readable-color($active_bg);
 	}
 
 	.btn.btn-#{$name},
-	.btn.btn-#{$name}:visited {background-color: $color; border-color: $color; color: readable-color($color);
-		&:hover, &:focus {background: darken($color, 10%); border-color: darken($color, 10%); color: readable-color($color);}
-		&:focus {box-shadow: 0 0 0 0.2rem rgba($color, 0.25);}
+	.btn.btn-#{$name}:visited {background-color: $bg; border-color: $bg; color: $text;
+		&:hover, &:focus {background: darken($bg, 10%); border-color: darken($bg, 10%); color: $text;}
+		&:focus {box-shadow: 0 0 0 0.2rem rgba($bg, 0.25);}
 		&:active,
-		&.active {background: $secondary; border-color: $secondary; color: readable-color($secondary);}
+		&.active {background: $active_bg; border-color: $active_bg; color: $active_text;}
 	}
 
 	.btn.btn-outline-#{$name},
-	.btn.btn-outline-#{$name}:visited {color: $color; background-color: transparent; background-image: none; border-color: $color;
-		&:hover, &:focus {color: #fff; background-color: $color; border-color: $color;}
+	.btn.btn-outline-#{$name}:visited {color: $bg; background-color: transparent; background-image: none; border-color: $bg;
+		&:hover, &:focus {color: #fff; background-color: $bg; border-color: $bg;}
 		&:active,
-		&.active {background-color: $secondary; border-color: $secondary;}
+		&.active {background-color: $active_bg; border-color: $active_bg;}
 	}
 
-	.bg-#{$name} {background-color: $color !important;}
+	.bg-#{$name} {background-color: $bg !important;}
 }
 
 //.element a {@include link-colors(red, orange, yellow, green, blue);}
@@ -335,7 +343,6 @@
         svg {left: 0;}
     }
 }
-.nebula-peek, .nebula-iconpeek, a.nebula-peek, a.nebula-iconpeek {@include iconpeek();}
 
 //.element-solid {@include arrow('top','left', 10px, #4fade3);}
 //.element-border {@include arrow('top','left', 10px, #eee, #4fade3, 6px);}

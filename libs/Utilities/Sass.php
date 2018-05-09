@@ -233,9 +233,14 @@ if ( !trait_exists('Sass') ){
 			$override = apply_filters('pre_nebula_scss_post_compile', null, $scss);
 			if ( isset($override) ){return;}
 
+			if ( empty($scss) ){
+				return $scss;
+			}
+
 			$scss = preg_replace("(" . str_replace('/', '\/', get_template_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments
 			$scss = preg_replace("(" . str_replace('/', '\/', get_stylesheet_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments (For child themes)
 			do_action('nebula_scss_post_compile_every');
+
 			$scss .= PHP_EOL . '/* ' . date('l, F j, Y \a\t g:i:s A', time()) . ' */';
 
 			//Run these once

@@ -1,0 +1,133 @@
+@import 'variables';
+@import 'mixins';
+@import 'navigation';
+
+// ===========================
+// Header
+// ===========================
+
+//Shade body when Mmenu Opens
+#body-wrapper {will-change: transform;
+	&:before {content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; @include background-color(#000, 0); z-index: 99995; pointer-events: none; @include prefix((transition: all 0.5s));}
+	.admin-bar & {will-change: auto;} //Prevent this from affecting the admin-bar
+	.mm-opening &:before {@include background-color(#000, 0.7);}
+
+	.skip-to-content-link.sr-only {top: 15px; left: -150px; transition: left 0.4s easing(easeOutBack);
+		&:focus {left: -80px; color: #fff; background: $primary_color; width: auto; height: auto; overflow: visible; margin: 0; padding: 5px 15px 5px 100px; clip: unset; clip-path: unset; z-index: 999999;}
+	}
+
+	@include media("lg"){will-change: auto;};
+}
+
+.ie10 #body-wrapper:before {display: none;}
+
+
+//Logo and primary navigation row
+#logonavcon {display: block; position: relative; width: 100%; text-align: center; box-shadow: none; z-index: 5; @include prefix((transition: all .5s easing(easeInOutCubic)));
+	@include media("lg"){top: 0;};
+
+	img,
+	svg:not(.svg-inline--fa) {width: 100%; height: auto; @include prefix((transition: all 0.5s));}
+
+	.logocon {text-align: center;
+		@include media("lg"){text-align: left;}
+
+		a {display: inline-block; margin: 0 auto; font-size: rem(21px); padding: 20px 0;
+			@include media("lg"){margin: 0;}
+
+			img,
+			svg {max-width: 225px;}
+		}
+	}
+}
+
+//Homepage Hero
+#hero-section {position: relative; padding: 0; margin: 0; overflow: hidden; background: url($template_directory + "/assets/img/phg/phg-nebula.jpg") no-repeat fixed center center /cover; text-align: center; @include prefix((transition: all 0.5s));
+	#hero-content {margin-top: 80px; margin-bottom: 80px;
+		@include media("md"){margin-top: 100px; margin-bottom: 100px;};
+
+		h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: rem(48px); line-height: 1; font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.1); @include prefix((transition: all 0.5s));
+			@include media("md"){font-size: rem(60px);};
+			@include media("lg"){font-size: rem(90px);};
+		}
+
+		h2 {position: relative; text-align: center; color: #fff; margin: 0 0 18px 0; padding: 0; font-size: rem(18px); font-weight: 300; z-index: 1; @include prefix((transition: all 0.5s));
+			@include media("md"){font-size: rem(24px);};
+			@include media("lg"){font-size: rem(32px);};
+		}
+
+		h3 {position: relative; text-align: center; color: #fff; margin: 0 0 18px 0; padding: 0; font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));}
+
+		img,
+		iframe {margin-top: 50px;}
+
+		.hero-cta {margin-top: 50px;}
+
+		#hero-widget-area {
+			img,
+			iframe {margin: 0;}
+		}
+	}
+}
+
+.custom-color-overlay {position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;}
+.nebula-color-overlay {position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, #5B22E8, #FF2362); animation: nebulahero 60s infinite linear; opacity: 0.75; z-index: 0; pointer-events: none;
+	#footer-section & {opacity: 0.85;
+		&:after {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1; pointer-events: none;}
+	}
+}
+@keyframes nebulahero {
+	0% {@include prefix((filter: hue-rotate(0deg)));}
+	100% {@include prefix((filter: hue-rotate(-360deg)));}
+}
+
+#header-widget-area {
+	.widget-container {margin-bottom: 25px; text-align: center;}
+
+	ul.menu {list-style: none; margin: 0; padding: 0; display: -ms-flexbox; display: flex; -ms-flex-direction: row; flex-direction: row; justify-content: space-between; -ms-flex-align: center; align-items: center;
+		li.menu-item {position: relative;
+			a {display: block; padding: 10px 20px; text-align: center; font-size: rem(16px); line-height: rem(21px); color: $primary_color;}
+			@include nebula-dropdown(14px, 21px);
+
+			ul.sub-menu li a {text-align: left;}
+		}
+	}
+}
+
+#bigheadingcon {position: relative; @include linear-gradient(to bottom, $primary_color, darken($primary_color, 5%));
+	.title-desc-con {padding-top: 120px; padding-bottom: 60px;
+		h1, h2, h3, h4, h5, h6 {color: #fff;}
+
+		.page-title,
+		.entry-title {font-size: rem(24px); font-weight: normal; margin: 0;
+			@include media("md"){font-size: rem(48px);};
+		}
+
+		p,
+		.page-meta,
+		.entry-meta {color: #fff; font-size: rem(14px); line-height: rem(21px); margin: 10px 0;
+			i, svg {margin-right: 2px; color: #bbb;}
+
+			.meta-item {display: inline-block; margin-right: 10px;
+				a {color: #999;
+					&:hover,
+					&:focus {color: $primary_color;}
+				}
+			}
+			.post-tags {font-style: italic;}
+		}
+
+		a {color: #fff; white-space: nowrap;
+			&:not(.btn):hover,
+			&:not(.btn):focus {color: #aaa;}
+		}
+
+		.form-group {margin-bottom: 0;}
+	}
+}
+
+// ===========================
+// Footer
+// ===========================
+
+#footer-section {position: relative;}

@@ -27,6 +27,7 @@ if ( !trait_exists('Optimization') ){
 			add_filter('wp_default_scripts', array($this, 'remove_jquery_migrate'));
 			add_action('wp_enqueue_scripts', array($this, 'move_jquery_to_footer'));
 			add_action('wp_head', array($this, 'listen_for_jquery_footer_errors'));
+			add_action('wp_head', array($this, 'embed_critical_styles'));
 
 			add_action('send_headers', array($this, 'server_timing_header'));
 			add_action('wp_footer', array($this, 'output_console_debug_timings'));
@@ -416,6 +417,27 @@ if ( !trait_exists('Optimization') ){
 			if ( $this->get_option('jquery_version') !== 'wordpress' ){
 				$scripts->remove('jquery');
 				$scripts->add('jquery', false, array('jquery-core'), null);
+			}
+		}
+
+		//Embed critical CSS styles into the document <head> to improve perceived load time
+		public function embed_critical_styles(){
+			if ( $this->get_option('critical_css') ){
+				$critical_css_files = apply_filters('nebula_critical_css', array(
+					get_template_directory() . '/assets/css/critical.css',
+					get_stylesheet_directory() . '/assets/css/critical.css',
+				));
+
+				if ( !empty($critical_css_files) ){
+					echo '<style class="critical">';
+						foreach ( $critical_css_files as $critical_css_file ){
+							if ( file_exists($critical_css_file) ){
+								include_once($critical_css_file);
+								echo PHP_EOL;
+							}
+						}
+					echo '</style>';
+				}
 			}
 		}
 

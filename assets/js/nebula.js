@@ -21,6 +21,7 @@ jQuery(function(){
 	pageSuggestion();
 
 	//Forms
+	nebulaLiveValidator();
 	cf7Functions();
 	cf7LocalStorage();
 
@@ -69,7 +70,6 @@ jQuery(window).on('load', function(){
 
 	//Forms
 	nebulaAddressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete');
-	nebulaLiveValidator();
 
 	facebookSDK();
 	facebookConnect();
@@ -417,12 +417,13 @@ function nebulaNetworkConnection(){
 //Load the SDK asynchronously
 function facebookSDK(){
 	if ( jQuery('[class*="fb-"]:not(.fb-root)').length || jQuery('.require-fbsdk').length ){ //Only load the Facebook SDK when needed
-		(function(d){
-			var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
-			js = d.createElement('script'); js.id = id; js.async = true;
-			js.src = "https://connect.facebook.net/" + nebula.site.charset + "/all.js";
-			d.getElementsByTagName('head')[0].appendChild(js);
-		}(document));
+		(function(d, s, id) {
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) return;
+			js = d.createElement(s); js.id = id;
+			js.src = 'https://connect.facebook.net/' + nebula.site.charset + '/all.js#xfbml=1&version=v3.0';
+			fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
 	}
 }
 
@@ -2170,7 +2171,8 @@ function cf7LocalStorage(){
 	nebula.dom.window.on('storage', function(e){
 		jQuery('.wpcf7-textarea, .wpcf7-text').each(function(){
 			if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') ){
-				jQuery(this).val(localStorage.getItem('cf7_' + jQuery(this).attr('name')));
+				jQuery(this).val(localStorage.getItem('cf7_' + jQuery(this).attr('name'))).trigger('keyup');
+				console.log('filled');
 			}
 		});
 	});
@@ -2270,6 +2272,18 @@ function nebulaLiveValidator(){
 		} else {
 			applyValidationClasses(jQuery(this), 'invalid', true);
 		}
+	});
+
+	//Highlight empty required fields when focusing/hovering on submit button
+	jQuery(document).on('mouseover focus', 'form [type="submit"], form #submit', function(){ //Must be deferred because Nebula replaces CF7 submit inputs with buttons
+		jQuery(this).closest('form').find('[required], .wpcf7-validates-as-required').each(function(){
+			if ( jQuery.trim(jQuery(this).val()).length == 0 ){
+				jQuery(this).addClass('nebula-empty-required');
+			}
+		});
+	});
+	jQuery(document).on('mouseout blur', 'form [type="submit"], form #submit', function(){ //Must be deferred because Nebula replaces CF7 submit inputs with buttons
+		jQuery(this).closest('form').find('.nebula-empty-required').removeClass('nebula-empty-required');
 	});
 }
 

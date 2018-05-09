@@ -1,5 +1,5 @@
 <?php if ( nebula()->get_option('comments') ): ?>
-	<div id="nebulacommentswrapper">
+	<section id="nebulacommentswrapper">
 		<?php if ( nebula()->get_option('disqus_shortname') ): ?>
 			<div id="disqus_thread"></div>
 			<script type="text/javascript">
@@ -68,5 +68,5 @@
 				<?php comment_form(); ?>
 			</section>
 		<?php endif; ?>
-	</div><!--/nebulacommentswrapper-->
+	</section>
 <?php endif; ?>

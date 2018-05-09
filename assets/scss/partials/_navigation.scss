@@ -1,0 +1,101 @@
+// ===========================
+// Navigation
+// ===========================
+
+//Top row that appears at mobile sizes.
+#mobilebarcon {visibility: visible; position: relative; background: $primary_color; width: 100%; height: 42px; overflow: hidden; z-index: 1; @include prefix((transition: all 0.5s));
+	a {font-size: rem(32px); @include link-colors(#fff, #aaa); text-decoration: underline;}
+	.mobilenavcon {display: block;
+		#mobileheadersearch {margin-top: 0; margin-left: 20px; width: 74%; height: 42px;
+			input {width: 100%; color: #fff; font-size: rem(18px); padding-left: 24px; line-height: 42px; background: none; border: none; outline: none; box-shadow: none; border-radius: 0;}
+			input::-webkit-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
+			input:-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
+			input::-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
+			input:-ms-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
+			&:before {color: #fff; font-size: rem(18px); width: 19px; height: 19px; top: 12px; left: 0;}
+		}
+	}
+	a.mobilenavtrigger {position: relative; font-size: rem(24px); padding: 0 14px; height: 42px; line-height: 42px; text-align: center; text-decoration: none; color: #fff; @include background-color(#fff, 0.25); z-index: 99999;
+		&:hover,
+		&:focus {color: #fff; @include background-color(#fff, 0.4);}
+		&.active {color: #fff; @include background-color(#fff, 0);}
+	}
+
+	@include media("lg"){visibility: hidden; height: 0;};
+}
+
+#mobilenav {visibility: hidden; height: 0;
+	&.mm-menu {visibility: visible; height: 100%;}
+}
+
+//Includes Utility and Primary navigation rows (which also includes the logo)
+#navigation-section {position: relative; z-index: 500;
+	&.mp-above {padding-bottom: 20px;}
+	&.mp-over {} //Default
+}
+
+//Extend animated sub menu dropdowns for WordPress menus (Used with the utility nav and primary nav)
+@mixin nebula-dropdown($font-size: 14px, $line-height: 21px){
+	ul.sub-menu {position: absolute; display: block; top: 120%; left: -9999px; right: auto; height: auto; margin: 0; padding: 5px 0; opacity: 0; text-align: left; @include prefix((transition: top 0.35s easing(easeOutBack), opacity 0.25s)); @include background-color(#fff, 0.95); box-shadow: 0px 15px 50px 0 rgba(0, 0, 0, 0.25); z-index: 1001;
+		.no-js & {width: 400px;}
+
+		li.menu-item {display: block; margin: 0; padding: 0 5px;
+			a {display: block; padding: 5px; margin: 0; font-size: rem($font-size); line-height: rem($line-height); @include link-colors($primary_color, #fff); white-space: nowrap;
+				&:hover,
+				&:focus {background: $primary_color;}
+			}
+			ul.sub-menu {display: none;}
+		}
+	}
+
+	&:hover,
+	&:focus {
+		> a {background: lighten($primary_color, 5%); color: #fff !important;}
+
+		ul.sub-menu {left: 0; right: auto; top: 100%; opacity: 1;
+			&.overflowing {left: auto; right: 0;}
+			li {background: none;}
+		}
+	}
+
+	&:focus-within { //No IE or Edge Support: https://caniuse.com/#feat=css-focus-within
+		> a {background: lighten($primary_color, 5%); color: #fff !important;}
+
+		ul.sub-menu {left: 0; right: auto; top: 100%; opacity: 1;
+			&.overflowing {left: auto; right: 0;}
+			li {background: none;}
+		}
+	}
+
+	.no-js &:last-child:hover ul.sub-menu,
+	.no-js &:last-child:focus ul.sub-menu {left: auto; right: 0;}
+}
+
+#utilitynavcon {max-height: 0; opacity: 0; background: rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));
+	@include media("lg"){height: auto; max-height: 200px; opacity: 1;};
+
+	#utility-nav {position: relative;
+		ul {list-style: none; margin: 0; padding: 0; display: -ms-flexbox; display: flex; -ms-flex-direction: row; flex-direction: row; -ms-flex-pack: center; justify-content: flex-end;
+			li.menu-item {position: relative;
+				a {display: block; padding: 0 15px; color: #fff; font-size: rem(12px); line-height: rem(18px); color: #fff;}
+				@include nebula-dropdown(12px, 14px);
+
+				&.nebula-search {font-size: rem(14px);
+					input {height: 22px; font-size: rem(11px); line-height: 22px;}
+				}
+			}
+		}
+	}
+}
+
+
+#primary-nav {position: relative; display: none; z-index: 1000;
+	@include media("lg"){display: block;};
+
+	ul {list-style: none; margin: 0; padding: 0; display: -ms-flexbox; display: flex; -ms-flex-direction: row; flex-direction: row; -ms-flex-pack: end; justify-content: flex-end; -ms-flex-align: center; align-items: center;
+		li.menu-item {position: relative;
+			a {display: block; padding: 10px 20px; text-align: left; font-size: rem(16px); line-height: rem(21px); color: #fff;}
+			@include nebula-dropdown(14px, 21px);
+		}
+	}
+}

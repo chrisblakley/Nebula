@@ -1,0 +1,58 @@
+// ===========================
+// Forms
+// ===========================
+
+fieldset {border: 0; margin: 0; padding: 0;}
+textarea {resize: vertical;}
+
+#form-messages {
+	.sending {color: $warning_color;}
+	.error {color: $danger_color;}
+	.success {color: $success_color;}
+}
+
+input[type="checkbox"]{-webkit-appearance: checkbox;}
+input[type="radio"]{-webkit-appearance: radio;}
+button {cursor: pointer;}
+
+#wp_search_submit {color: #292b2c !important;
+	&:hover,
+	&:focus {color: #000 !important;}
+}
+#searchsubmit {/* padding: 2px 5px !important; */ background: $primary_color; border: 0; @include prefix((transition: all 0.25s));
+	#bigheadingcon & {background: $secondary_color;}
+	&:hover,
+	&:focus {background: $secondary_color;}
+}
+
+code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; padding: .2rem .4rem; border-radius: .25rem; color: #222;}
+
+div.nebula-button {margin-bottom: 10px;}
+
+//Form Styles
+h3.comment-reply-title {font-size: rem(12px);}
+.logged-in-as {margin: 0;}
+
+//Lighten placeholders and fade them on focus
+//Note: Can not use nested SCSS selectors on placeholder pseudos!
+$placeholder_color: rgba(153, 153, 153, 0.9);
+$placeholder_color_focus: rgba(153, 153, 153, 0) !important;
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), webkit);}
+input:-moz-placeholder,
+textarea:-moz-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), moz);} /* Eventually remove this line. */
+input::-moz-placeholder,
+textarea::-moz-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), moz);}
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), ms);}
+	input:not(.nofade):focus::-webkit-input-placeholder,
+	textarea:not(.nofade):focus::-webkit-input-placeholder {color: $placeholder_color_focus;}
+	input:not(.nofade):focus:-moz-placeholder,
+	textarea:not(.nofade):focus:-moz-placeholder {color: $placeholder_color_focus;} /* Eventually remove this line. */
+	input:not(.nofade):focus::-moz-placeholder,
+	textarea:not(.nofade):focus::-moz-placeholder {color: $placeholder_color_focus;}
+	input:not(.nofade):focus:-ms-input-placeholder,
+	textarea:not(.nofade):focus:-ms-input-placeholder {color: $placeholder_color_focus;}
+
+::-ms-clear {display: none;} //Hide the IE clear "X"
+::-ms-reveal {display: none;} //Hide the IE password reveal button

@@ -1,0 +1,10 @@
+// ===========================
+// Typography
+// ===========================
+
+h1, h2, h3, h4, h5, h6 {line-height: 1.15em; margin-bottom: 0.5em;
+	a {color: $primary_color;}
+}
+
+p, li, dt, dl, div {line-height: 1.625em;}
+span {font-size: inherit;}

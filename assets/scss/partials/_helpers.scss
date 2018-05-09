@@ -2,6 +2,8 @@
 // Special Nebula Helpers
 // ===========================
 
+.nebula-peek, .nebula-iconpeek, a.nebula-peek, a.nebula-iconpeek {@include iconpeek();}
+
 .nebulaborder {padding: 5px; background: #fff; border: 1px solid #aaa;}
 
 .nebulashadow {position: relative;
@@ -66,6 +68,17 @@
 
 .nebulaframe {position: relative; padding: 5px; background: #fff; border: 1px solid #aaa;
 	a& {border: none;}
+}
+
+//Equalize column heights within a row (Not to be confused with .equalize class that uses nebula.js)
+.row-table {display: block;
+    [class*="col-sm"] {display: block; @include media("sm"){display: table-cell; float: none;};}
+    [class*="col-md"] {display: block; @include media("md"){display: table-cell; float: none;};}
+    [class*="col-lg"] {display: block; @include media("lg"){display: table-cell; float: none;};}
+
+    &.sm-cols {@include media("sm"){display: table; table-layout: fixed;}; }
+    &.md-cols {@include media("md"){display: table; table-layout: fixed;}; }
+    &.lg-cols {@include media("lg"){display: table; table-layout: fixed;}; }
 }
 
 //Note: To use nebula-vmiddle, the parent element must have a set height (not a min-height)!
@@ -141,6 +154,12 @@ ul.list-unstyled {list-style: none; padding-left: 0;}
 .wp-caption-text {}
 
 .nowrap, .no-wrap {white-space: nowrap;}
+
+/* Nebula Desktop Helper Styles */
+.disallowed {background: #bbb !important; border: 1px solid #999 !important; cursor: default !important;
+	&.notallowed {cursor: not-allowed !important;}
+}
+.focusError {background-color: #fcc !important; border: 1px solid #f88 !important; @include prefix((transition: all 0.25s));}
 
 // ===========================
 // Social Media Badges
