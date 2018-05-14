@@ -582,6 +582,13 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="option-keywords">minor page speed impact</p>
 				</div>
 
+				<div class="form-group" dependent-or="ga_tracking_id gtm_id">
+					<input type="checkbox" name="nebula_options[ga_anonymize_ip]" id="ga_anonymize_ip" value="1" <?php checked('1', !empty($nebula_options['ga_anonymize_ip'])); ?> /><label for="ga_anonymize_ip">Anonymize All IPs</label>
+					<p class="nebula-help-text short-help form-text text-muted">Anonymize the IP address in Google Analytics for all visitors. (Default: <?php echo $this->user_friendly_default('ga_anonymize_ip'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted"></p>
+					<p class="option-keywords"></p>
+				</div>
+
 				<div class="form-group" dependent-or="ga_tracking_id">
 					<input type="checkbox" name="nebula_options[ga_server_side_fallback]" id="ga_server_side_fallback" value="1" <?php checked('1', !empty($nebula_options['ga_server_side_fallback'])); ?> /><label for="ga_server_side_fallback">Server-Side Fallback</label>
 					<p class="nebula-help-text short-help form-text text-muted">If Google Analytics is blocked, or if JavaScript is disabled, capture GA data using a server-side payload. (Default: <?php echo $this->user_friendly_default('ga_server_side_fallback'); ?>)</p>
@@ -984,17 +991,6 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Stores the type of window the site is being accessed from (Ex: Iframe or Standalone App). Scope: Hit</p>
 						<p class="nebula-help-text more-help form-text text-muted">This only records alternate window types (non-standard browser windows).</p>
-						<p class="option-keywords"></p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Privacy Mode</div>
-							</div>
-							<input type="text" name="nebula_options[cd_privacymode]" id="cd_privacymode" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_privacymode']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Stores the browsing mode the site is being accessed using (Ex: Normal or Private). Scope: Session</p>
 						<p class="option-keywords"></p>
 					</div>
 

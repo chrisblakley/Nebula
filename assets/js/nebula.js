@@ -7,7 +7,6 @@ jQuery.noConflict();
 jQuery(function(){
 	//Utilities
 	cacheSelectors();
-	nvQueryParameters();
 	nebulaHelpers();
 	svgImgs();
 	errorMitigation();
@@ -72,8 +71,6 @@ jQuery(window).on('load', function(){
 	nebulaAddressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete');
 
 	facebookSDK();
-	facebookConnect();
-	prefillFacebookFields();
 
 	nebulaBattery();
 	nebulaNetworkConnection();
@@ -355,6 +352,10 @@ function overflowDetector(){
 
 //Check if Google Analytics is ready
 function isGoogleAnalyticsReady(){
+	if ( navigator.doNotTrack || window.doNotTrack ){
+		return false;
+	}
+
 	if ( has(nebula, 'analytics.isReady') ){
 		nebula.dom.html.removeClass('no-gajs');
 		return true;
@@ -427,132 +428,6 @@ function facebookSDK(){
 	}
 }
 
-//Facebook Connect functions
-function facebookConnect(){
-	nebula.user.flags.fbconnect = false;
-
-	if ( nebula.site.options.facebook_app_id ){
-		window.fbAsyncInit = function(){
-			FB.init({
-				appId: nebula.site.options.facebook_app_id,
-				channelUrl: nebula.site.directory.template.uri + '/inc/channel.php',
-				status: true,
-				xfbml: true
-			});
-
-			nebula.dom.document.trigger('fbinit');
-			checkFacebookStatus();
-		};
-	} else {
-		jQuery('.facebook-connect').remove();
-	}
-}
-
-//Check Facebook Status
-function checkFacebookStatus(){
-	FB.getLoginStatus(function(response){
-		nebula.user.facebook = {'status': response.status}
-		if ( nebula.user.facebook.status === 'connected' ){ //User is logged into Facebook and is connected to this app.
-			FB.api('/me', {fields: 'id,name,first_name,last_name,cover,devices,gender,email,link,locale,timezone'}, function(response){ //Only publicly available fields
-				nebula.user.facebook = {
-					id: response.id,
-					name: {
-						first: response.first_name,
-						last: response.last_name,
-						full: response.name,
-					},
-					gender: response.gender,
-					email: response.email,
-					image: {
-						base: 'https://graph.facebook.com/' + response.id + '/picture',
-						thumbnail: 'https://graph.facebook.com/' + response.id + '/picture?width=100&height=100',
-						large: 'https://graph.facebook.com/' + response.id + '/picture?width=1000&height=1000',
-						cover: response.cover.source,
-					},
-					url: response.link,
-					location: {
-						locale: response.locale,
-						timezone: response.timezone,
-					},
-					devices: response.devices
-				}
-
-				nebula.user.name = {
-					first: response.first_name,
-					last: response.last_name,
-					full: response.name,
-				};
-				nebula.user.gender = response.gender;
-				nebula.user.email = response.email;
-				nebula.user.location = {
-					locale: response.locale,
-					timezone: response.timezone,
-				}
-
-				nv('identify', {
-					firstname: response.first_name,
-					lastname: response.last_name,
-					full_name: response.name,
-					email: response.email,
-					facebook_id: response.id,
-					profile_photo: 'https://graph.facebook.com/' + response.id + '/picture?width=1000&height=1000',
-					image: response.cover.source,
-					gender: response.gender,
-				});
-
-				ga('set', nebula.analytics.dimensions.fbID, nebula.user.facebook.id);
-				if ( nebula.user.flags.fbconnect !== true ){
-					ga('send', 'event', 'Social', 'Facebook Connect', nebula.user.facebook.id);
-					nebula.user.flags.fbconnect = true;
-				}
-
-				nebula.dom.body.removeClass('fb-disconnected').addClass('fb-connected fb-' + nebula.user.facebook.id);
-				createCookie('nebulaUser', JSON.stringify(nebula.user));
-				jQuery(document).trigger('fbConnected', response);
-			});
-		} else if ( nebula.user.facebook.status === 'not_authorized' ){ //User is logged into Facebook, but has not connected to this app.
-			nebula.dom.body.removeClass('fb-connected').addClass('fb-not_authorized');
-			jQuery(document).trigger('fbNotAuthorized');
-			nebula.user.flags.fbconnect = false;
-		} else { //User is not logged into Facebook.
-			nebula.dom.body.removeClass('fb-connected').addClass('fb-disconnected');
-			jQuery(document).trigger('fbDisconnected');
-			nebula.user.flags.fbconnect = false;
-		}
-	});
-}
-
-//Fill or clear form inputs with Facebook data
-function prefillFacebookFields(){
-	jQuery(document).on('fbConnected', function(){
-		jQuery('.fb-name, .comment-form-author input, input.name').each(function(){
-			if ( jQuery.trim(jQuery(this).val()) === '' ){
-				jQuery(this).val(nebula.user.facebook.name.full).addClass('fb-filled').trigger('keyup');
-			}
-		});
-		jQuery('.fb-first-name, input.first-name').each(function(){
-			if ( jQuery.trim(jQuery(this).val()) === '' ){
-				jQuery(this).val(nebula.user.facebook.name.first).addClass('fb-filled').trigger('keyup');
-			}
-		});
-		jQuery('.fb-last-name, input.last-name').each(function(){
-			if ( jQuery.trim(jQuery(this).val()) === '' ){
-				jQuery(this).val(nebula.user.facebook.name.last).addClass('fb-filled').trigger('keyup');
-			}
-		});
-		jQuery('.fb-email, .comment-form-email input, .wpcf7-email, input.email').each(function(){
-			if ( jQuery.trim(jQuery(this).val()) === '' ){
-				jQuery(this).val(nebula.user.facebook.email).addClass('fb-filled').trigger('keyup');
-			}
-		});
-	});
-
-	jQuery(document).on('fbNotAuthorized fbDisconnected', function(){
-		jQuery('.fb-filled').each(function(){
-			jQuery(this).val('').removeClass('fb-filled').trigger('keyup');
-		});
-	});
-}
 
 //Social sharing buttons
 function socialSharing(){
@@ -665,6 +540,10 @@ function socialSharing(){
 
 //Call the event tracking functions (since it needs to happen twice).
 function initEventTracking(){
+	if ( navigator.doNotTrack || window.doNotTrack ){
+		return false;
+	}
+
 	once(function(){
 		cacheSelectors(); //If event tracking is initialized by the async GA callback, selectors won't be cached yet
 
@@ -727,11 +606,11 @@ function initEventTracking(){
 			}
 		}
 
+		nebula.dom.document.trigger('nebula_event_tracking');
+
 		eventTracking();
 		scrollDepth();
-		nvFormRealTime();
 		ecommerceTracking();
-
 	}, 'nebula event tracking');
 }
 
@@ -946,14 +825,19 @@ function eventTracking(){
 		nv('event', 'JavaScript Error');
 	}
 
-	//Add to Homescreen Prompt (Chrome only)
+	//PWA Add to Homescreen Install Prompt
 	window.addEventListener('beforeinstallprompt', function(event){
-		ga('send', 'event', 'Install Prompt', 'Banner Shown', event.platforms.join(', '));
+		ga('send', 'event', 'Progressive Web App', 'Install Prompt Shown', event.platforms.join(', '));
 
 		event.userChoice.then(function(result){
-			ga('send', 'event', 'Install Prompt', 'User Choice', result.outcome);
+			ga('send', 'event', 'Progressive Web App', 'Install Prompt User Choice', result.outcome);
 			nv('event', 'Install Prompt ' + result.outcome);
 		});
+	});
+
+	//PWA Installed
+	window.addEventListener('appinstalled', function(){
+		ga('send', 'event', 'Progressive Web App', 'App Installed', 'The app has been installed');
 	});
 
 	//Capture Print Intent
@@ -1114,6 +998,10 @@ function isInView(element){
 
 //Send data to the CRM
 function nv(action, data, sendNow){
+	if ( navigator.doNotTrack || window.doNotTrack ){
+		return false;
+	}
+
 	if ( typeof _hsq === 'undefined' ){
 		return false;
 	}
@@ -1166,82 +1054,6 @@ function nv(action, data, sendNow){
 	}
 
 	nebula.dom.document.trigger('nv_data', data);
-}
-
-//Easily send data to nv() via URL query parameters
-//Use the nv-* format in the URL to pass data to this function. Ex: ?nv-firstname=Chris (can be encoded, too)
-function nvQueryParameters(){
-	var queryParameters = getQueryStrings();
-	var nvData = {};
-	var nvRemove = [];
-
-	jQuery.each(queryParameters, function(index, value){
-		index = decodeURIComponent(index);
-		value = decodeURIComponent(value).replace('+', ' ');
-
-		if ( index.substring(0, 3) === 'nv-' ){
-			var parameter = index.substring(3, index.length);
-			nvData[parameter] = value;
-			nvRemove.push(index);
-		}
-
-		if ( index.substring(0, 4) === 'utm_' ){
-			var parameter = index.substring(4, index.length);
-			nvData[parameter] = value;
-		}
-	});
-
-	//Send to CRM
-	if ( Object.keys(nvData).length ){
-		nv('identify', nvData);
-	}
-
-	//Remove the nv-* query parameters
-	if ( nvRemove.length > 0 && !get('persistent') && window.history.replaceState ){ //IE10+
-		window.history.replaceState({}, document.title, removeQueryParameter(nvRemove, window.location.href));
-	}
-}
-
-//Easily send form data to nv() with nv-* classes
-//Add a class to the input field with the category to use. Ex: nv-firstname
-//Call this function before sending a ga() event because it sets dimensions too
-function nvForm(){
-	nvFormObj = {};
-	jQuery('form [class*="nv-"]').each(function(){
-		if ( jQuery.trim(jQuery(this).val()).length ){
-			if ( jQuery(this).attr('class').indexOf('nv-notable_poi') >= 0 ){
-				ga('set', nebula.analytics.dimensions.poi, jQuery('.notable-poi').val());
-			}
-
-			var cat = /nv-([a-z\_]+)/g.exec(jQuery(this).attr('class'));
-			if ( cat ){
-				var thisCat = cat[1];
-				nvFormObj[thisCat] = jQuery(this).val();
-			}
-		}
-	});
-
-	if ( Object.keys(nvFormObj).length ){
-		nv('identify', nvFormObj);
-	}
-}
-
-//Listen to form inputs and identify in real-time
-//Add a class to the input field with the category to use. Ex: nv-firstname
-function nvFormRealTime(){
-	jQuery('form [class*="nv-"]').on('blur', function(){
-		var thisVal = jQuery.trim(jQuery(this).val());
-
-		if ( thisVal.length > 0 ){
-			var cat = /nv-([a-z\_]+)/g.exec(jQuery(this).attr('class'));
-
-			if ( cat ){
-				data = {};
-				data[cat[1]] = thisVal;
-				nv('identify', data);
-			}
-		}
-	});
 }
 
 /*==========================
@@ -2114,7 +1926,6 @@ function cf7Functions(){
 		ga('send', 'event', 'CF7 Form', 'Submit (Attempt)', 'Submission attempt for form ID: ' + formID); //This event is required for the notable form metric!
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)'});}
 		nv('identify', {'form_contacted': 'CF7 (' + formID + ') Submit Attempt'}, false);
-		nvForm(); //nvForm() here because it triggers after all others. No nv() here so it doesn't overwrite the other (more valuable) data.
 
 		jQuery('#' + e.detail.id).find('button#submit').removeClass('active');
 	});

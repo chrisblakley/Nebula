@@ -113,7 +113,6 @@ if ( !trait_exists('Analytics') ){
 					'formTiming' => $this->get_option('cd_formtiming'),
 					'formFlow' => $this->get_option('cd_formflow'),
 					'windowType' => $this->get_option('cd_windowtype'),
-					'browseMode' => $this->get_option('cd_privacymode'),
 					'geolocation' => $this->get_option('cd_geolocation'),
 					'geoAccuracy' => $this->get_option('cd_geoaccuracy'),
 					'geoName' => $this->get_option('cd_geoname'),
@@ -317,6 +316,11 @@ if ( !trait_exists('Analytics') ){
 			//Transport method
 			if ( $this->get_option('cd_hitmethod') ){
 				$default_common_parameters['cd' . $this->ga_definition_index($this->get_option('cd_hitmethod'))] = 'Server-Side';
+			}
+
+			//Anonymize IP
+			if ( $this->get_option('ga_anonymize_ip') ){
+				$default_common_parameters['aip'] = 1;
 			}
 
 			$common_parameters = array_merge($default_common_parameters, $parameters); //Add passed parameters

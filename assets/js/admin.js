@@ -52,6 +52,14 @@ jQuery(function(){
 			var thisOption = jQuery(this).closest('.form-group, .multi-form-group').find('.form-control').attr('id');
 			//jQuery(this).append('<a class="direct-link" href="themes.php?page=nebula_options&tab=' + thisTab + '&option=' + thisOption + '" title="Link to this option" tabindex="-1"><i class="fas fa-fw fa-link"></i></a>'); //@todo "Nebula" 0: this should confirm leaving on click if there are changes to the form!
 
+			//Dev handle names
+			var devUsage = '<span class="dev-handle form-text text-muted">Dev usage: <code>nebula()->get_option(\'' + jQuery(this).closest('.form-group').find('[name^=nebula_options]').attr('id') + '\');</code></span>';
+			if ( jQuery(this).parent().find('.more-help').length ){
+				jQuery(this).closest('.form-group').find('.more-help').append(devUsage);
+			} else {
+				jQuery(this).after('<p class="nebula-help-text more-help form-text text-muted">' + devUsage + '</p>');
+			}
+
 			//More Help expander icons
 			if ( jQuery(this).parent().find('.more-help').length ){
 				jQuery(this).append('<a class="toggle-more-help" href="#" title="Show more information" tabindex="-1"><i class="fas fa-fw fa-question-circle"></i></a>');

@@ -7,389 +7,378 @@
 
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('ga_tracking_id') ): //Universal Google Analytics ?>
 	<script>
-		<?php //@todo "Nebula" 0: Consider using the Data Layer for some of the below parameters (declare it here, then push to it below) ?>
+		if ( !navigator.doNotTrack && !window.doNotTrack ){
+			//Load the alternative async tracking snippet: https://developers.google.com/analytics/devguides/collection/analyticsjs/#alternative_async_tracking_snippet
+			window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+			ga('create', '<?php echo nebula()->get_option('ga_tracking_id'); ?>', 'auto'<?php echo ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>);
 
-		//Load the alternative async tracking snippet: https://developers.google.com/analytics/devguides/collection/analyticsjs/#alternative_async_tracking_snippet
-		window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-		ga('create', '<?php echo nebula()->get_option('ga_tracking_id'); ?>', 'auto'<?php echo ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>);
-
-		//Use Beacon if supported. Eventually we can completely remove this when GA uses Beacon by default.
-		if ( 'sendBeacon' in navigator ){
-			ga('set', 'transport', 'beacon');
-		}
-
-		<?php if ( nebula()->get_option('ga_displayfeatures') ): ?>
-			ga('require', 'displayfeatures');
-		<?php endif; ?>
-
-		<?php if ( nebula()->get_option('ga_linkid') ): ?>
-			ga('require', 'linkid');
-		<?php endif; ?>
-
-		<?php
-			//Original Referrer
-			if ( empty($_SESSION['original_referrer']) ){ //Only capture the referrer on the first page of the session (so it doesn't get replaced with an on-site referrer)
-				$original_referrer = ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '(none)';
-				echo 'ga("set", nebula.analytics.dimensions.referrer, "' . $original_referrer . '");';
-
-				$_SESSION['original_referrer'] = $original_referrer;
+			//Use Beacon if supported. Eventually we can completely remove this when GA uses Beacon by default.
+			if ( 'sendBeacon' in navigator ){
+				ga('set', 'transport', 'beacon');
 			}
 
-			if ( is_singular() || is_page() ){
-				global $post;
-
-				if ( is_singular() ){
-					//Article author
-					if ( nebula()->get_option('author_bios') && nebula()->get_option('cd_author') ){
-						echo 'ga("set", nebula.analytics.dimensions.author, "' . get_the_author() . '");';
-					}
-
-					//Article's published year
-					if ( nebula()->get_option('cd_publishdate') ){
-						echo 'ga("set", nebula.analytics.dimensions.publishDate, "' . get_the_date('Y-m-d') . '");';
-					}
-				}
-
-				if ( nebula()->get_option('cd_categories') ){
-					echo 'ga("set", nebula.analytics.dimensions.categories, nebula.post.categories);';
-				}
-
-				if ( nebula()->get_option('cd_tags') ){
-					echo 'ga("set", nebula.analytics.dimensions.tags, nebula.post.tags);';
-				}
-
-				//Word Count
-				$word_count = nebula()->word_count();
-				if ( $word_count ){
-					echo 'nebula.post.wordcount = ' . $word_count . ';';
-
-					if ( nebula()->get_option('cm_wordcount') ){
-						echo 'ga("set", nebula.analytics.metrics.wordCount, nebula.post.wordcount);';
-					}
-
-					if ( nebula()->get_option('cd_wordcount') ){
-						echo 'ga("set", nebula.analytics.dimensions.wordCount, "' . nebula()->word_count(array('range' => true)) . '");';
-					}
-				}
-			}
-
-			//Business Open/Closed
-			if ( nebula()->business_open() ){
-				$business_open = 'During Business Hours';
-				echo 'nebula.user.client.businessopen = true;';
-			} else {
-				$business_open = 'Non-Business Hours';
-				echo 'nebula.user.client.businessopen = false;';
-			}
-			if ( nebula()->get_option('cd_businesshours') ){
-				echo 'ga("set", nebula.analytics.dimensions.businessHours, "' . $business_open . '");';
-			}
-
-			//Relative time ("Late Morning", "Early Evening")
-			if ( nebula()->get_option('cd_relativetime') ){
-				$relative_time = nebula()->relative_time();
-				$time_description = implode(' ', $relative_time['description']);
-				$time_range = $relative_time['standard'][0] . ':00' . $relative_time['ampm'] . ' - ' . $relative_time['standard'][2] . ':59' . $relative_time['ampm'];
-				echo 'ga("set", nebula.analytics.dimensions.relativeTime, "' . ucwords($time_description) . ' (' . $time_range . ')");';
-			}
-
-			//Role
-			if ( nebula()->get_option('cd_role') ){
-				echo 'ga("set", nebula.analytics.dimensions.role, "' . nebula()->user_role() . '");';
-			}
-
-			//Session ID
-			if ( nebula()->get_option('cd_sessionid') ){
-				echo 'nebula.session.id = "' . nebula()->nebula_session_id() . '";';
-				echo 'ga("set", nebula.analytics.dimensions.sessionID, nebula.session.id);';
-			}
-
-			//WordPress User ID
-			if ( is_user_logged_in() ){
-				$current_user = wp_get_current_user();
-				if ( $current_user && nebula()->get_option('cd_userid') ){
-					echo 'ga("set", nebula.analytics.dimensions.userID, "' . $current_user->ID . '");';
-					echo 'ga("set", "userId", ' . $current_user->ID . ');';
-				}
-			}
-
-			//Weather Conditions
-			if ( nebula()->get_option('cd_weather') ){
-				echo 'ga("set", nebula.analytics.dimensions.weather, "' . nebula()->weather('conditions') . '");';
-			}
-			//Temperature Range
-			if ( nebula()->get_option('cd_temperature') ){
-				$temp_round = floor(nebula()->weather('temperature')/5)*5;
-				$temp_round_celcius = round(($temp_round-32)/1.8);
-				$temp_range = strval($temp_round) . '°F - ' . strval($temp_round+4) . '°F (' . strval($temp_round_celcius) . '°C - ' . strval($temp_round_celcius+2) . '°C)';
-				echo 'ga("set", nebula.analytics.dimensions.temperature, "' . $temp_range . '");';
-			}
-
-			//Notable POI (IP Addresses)
-			if ( nebula()->get_option('cd_notablepoi') ){
-				echo 'ga("set", nebula.analytics.dimensions.poi, "' . nebula()->poi() . '");';
-			}
-		?>
-
-		<?php if ( nebula()->get_option('cd_windowtype') ): //Window Type ?>
-			if ( window !== window.top ){
-				var htmlClasses = document.getElementsByTagName('html')[0].getAttribute("class") || '';
-				document.getElementsByTagName('html')[0].setAttribute('class', headCSS + 'in-iframe'); //Use vanilla JS in case jQuery is not yet available
-				ga('set', nebula.analytics.dimensions.windowType, 'Iframe: ' + window.top.location.href);
-			}
-
-			if ( navigator.standalone || window.matchMedia('(display-mode: standalone)').matches ){
-				var htmlClasses = document.getElementsByTagName('html')[0].getAttribute("class") || '';
-				document.getElementsByTagName('html')[0].setAttribute('class', headCSS + 'in-standalone-app'); //Use vanilla JS in case jQuery is not yet available
-				ga('set', nebula.analytics.dimensions.windowType, 'Standalone App');
-			}
-		<?php endif; ?>
-
-		<?php if ( nebula()->get_option('cd_savedata') ): ?>
-			ga('set', nebula.analytics.dimensions.saveData, '<?php echo ( nebula()->is_save_data() )? 'Save Data' : 'Normal'; ?>');
-		<?php endif; ?>
-
-		<?php if ( nebula()->get_option('cd_privacymode') ): //Detect privacy mode ?>
-			var fileSystem = window.RequestFileSystem || window.webkitRequestFileSystem;
-			if ( fileSystem ){
-				fileSystem(
-					window.TEMPORARY,
-					100,
-					function(){
-						ga('set', nebula.analytics.dimensions.browseMode, 'Normal');
-					},
-					function(){
-						ga('set', nebula.analytics.dimensions.browseMode, 'Private');
-					}
-				);
-			}
-		<?php endif; ?>
-
-		//Experiment Variation
-		if ( typeof cxApi !== 'undefined' && typeof cxApi.chooseVariation === 'function' ){
-			var variationInfo = 'Variation ' + cxApi.chooseVariation();
-			if ( cxApi.NO_CHOSEN_VARIATION ){
-				variationInfo = 'No Chosen Variation';
-			} else if ( cxApi.NOT_PARTICIPATING ){
-				variationInfo = 'Not Participating';
-			}
-
-			ga('set', nebula.analytics.dimensions.experimentVariation, variationInfo);
-		}
-
-		<?php if ( 1==1 ): //Autotrack ?>
-			<?php if ( nebula()->get_option('cm_pagevisible') && nebula()->get_option('cm_pagehidden') ): //Autotrack Page Visibility ?>
-				ga('require', 'pageVisibilityTracker', {
-					hiddenMetricIndex: parseInt(nebula.analytics.metrics.pageHidden.replace('metric', '')),
-					visibleMetricIndex: parseInt(nebula.analytics.metrics.pageVisible.replace('metric', '')),
-					fieldsObj: {nonInteraction: true}
-				});
+			<?php if ( nebula()->get_option('ga_displayfeatures') ): ?>
+				ga('require', 'displayfeatures');
 			<?php endif; ?>
 
-			//Autotrack Clean URL
-			<?php if ( nebula()->get_option('cd_querystring') ): //Autotrack Query String ?>
-				var queryStringDimension = parseInt(nebula.analytics.dimensions.queryString.replace('dimension', ''));
-				ga('require', 'cleanUrlTracker', {
-					stripQuery: ( queryStringDimension )? true : false,
-					queryDimensionIndex: queryStringDimension,
-					queryParamsWhitelist: ['s', 'rs'],
-					indexFilename: 'index.php',
-					trailingSlash: 'add'
-				});
+			<?php if ( nebula()->get_option('ga_linkid') ): ?>
+				ga('require', 'linkid');
 			<?php endif; ?>
 
-			//Autotrack Social Widgets
-			ga('require', 'socialWidgetTracker', {
-				hitFilter: function(model){
-					model.set('hitType', 'event'); //Change the hit type from `social` to `event`.
+			<?php if ( nebula()->get_option('ga_anonymize_ip') ): ?>
+				ga('set', 'anonymizeIp', true);
+			<?php endif; ?>
 
-					//Map the social values to event values.
-					model.set('eventCategory', model.get('socialNetwork'));
-					model.set('eventAction', model.get('socialAction'));
-					model.set('eventLabel', model.get('socialTarget'));
+			<?php
+				//Original Referrer
+				if ( empty($_SESSION['original_referrer']) ){ //Only capture the referrer on the first page of the session (so it doesn't get replaced with an on-site referrer)
+					$original_referrer = ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '(none)';
+					echo 'ga("set", nebula.analytics.dimensions.referrer, "' . $original_referrer . '");';
 
-					//Unset the social values.
-					model.set('socialNetwork', null);
-					model.set('socialAction', null);
-					model.set('socialTarget', null);
+					$_SESSION['original_referrer'] = $original_referrer;
 				}
-			});
 
-			<?php if ( nebula()->get_option('cd_mqbreakpoint') || nebula()->get_option('cd_mqresolution') || nebula()->get_option('cd_mqorientation') ): //Autotrack Media Queries ?>
-				ga('require', 'mediaQueryTracker', {
-					definitions: [
-					<?php if ( nebula()->get_option('cd_mqbreakpoint') ): ?>
-						{
-							name: 'Breakpoint',
-							dimensionIndex: parseInt(nebula.analytics.dimensions.mqBreakpoint.replace('dimension', '')),
-							items: [
-								{name: 'xs', media: 'all'},
-								{name: 'sm', media: '(min-width: 544px)'},
-								{name: 'md', media: '(min-width: 768px)'},
-								{name: 'lg', media: '(min-width: 992px)'},
-								{name: 'xl', media: '(min-width: 1200px)'}
-							]
-						},
-					<?php endif; ?>
-					<?php if ( nebula()->get_option('cd_mqresolution') ): ?>
-						{
-							name: 'Resolution',
-							dimensionIndex: parseInt(nebula.analytics.dimensions.mqResolution.replace('dimension', '')),
-							items: [
-								{name: '1x', media: 'all'},
-								{name: '1.5x', media: '(min-resolution: 144dpi)'},
-								{name: '2x', media: '(min-resolution: 192dpi)'}
-							]
-						},
-					<?php endif; ?>
-					<?php if ( nebula()->get_option('cd_mqorientation') ): ?>
-						{
-							name: 'Orientation',
-							dimensionIndex: parseInt(nebula.analytics.dimensions.mqOrientation.replace('dimension', '')),
-							items: [
-								{name: 'landscape', media: '(orientation: landscape)'},
-								{name: 'portrait', media: '(orientation: portrait)'}
-							]
+				if ( is_singular() || is_page() ){
+					global $post;
+
+					if ( is_singular() ){
+						//Article author
+						if ( nebula()->get_option('author_bios') && nebula()->get_option('cd_author') ){
+							echo 'ga("set", nebula.analytics.dimensions.author, "' . get_the_author() . '");';
 						}
-					<?php endif; ?>
-					],
-					fieldsObj: {nonInteraction: true}
-				});
-			<?php endif; ?>
 
-			//Autotrack Impressions (Scroll into view)
-			//Elements themselves are detected in nebula.js (or main.js)
-			ga('require', 'impressionTracker', { //@todo "Nebula" 0: jQuery may not be available yet... change these to vanilla JS if possible
-				hitFilter: function(model, element){
-					if ( jQuery(element).is('form') && !jQuery(element).find('input[name=s]').length ){
-						if ( !jQuery(element).hasClass('.ignore-form') && !jQuery(element).find('.ignore-form').length && !jQuery(element).parents('.ignore-form').length ){
-							ga('set', nebula.analytics.metrics.formImpressions, 1);
+						//Article's published year
+						if ( nebula()->get_option('cd_publishdate') ){
+							echo 'ga("set", nebula.analytics.dimensions.publishDate, "' . get_the_date('Y-m-d') . '");';
+						}
+					}
+
+					if ( nebula()->get_option('cd_categories') ){
+						echo 'ga("set", nebula.analytics.dimensions.categories, nebula.post.categories);';
+					}
+
+					if ( nebula()->get_option('cd_tags') ){
+						echo 'ga("set", nebula.analytics.dimensions.tags, nebula.post.tags);';
+					}
+
+					//Word Count
+					$word_count = nebula()->word_count();
+					if ( $word_count ){
+						echo 'nebula.post.wordcount = ' . $word_count . ';';
+
+						if ( nebula()->get_option('cm_wordcount') ){
+							echo 'ga("set", nebula.analytics.metrics.wordCount, nebula.post.wordcount);';
+						}
+
+						if ( nebula()->get_option('cd_wordcount') ){
+							echo 'ga("set", nebula.analytics.dimensions.wordCount, "' . nebula()->word_count(array('range' => true)) . '");';
 						}
 					}
 				}
-			});
 
-			//Autotrack Max Scroll
-			<?php if ( nebula()->get_option('cm_maxscroll') ): //Autotrack Max Scroll ?>
-				ga('require', 'maxScrollTracker', {
-					maxScrollMetricIndex: parseInt(nebula.analytics.metrics.maxScroll.replace('metric', '')),
-					hitFilter: function(model){
-						model.set('nonInteraction', true, true); //Set non-interaction to true (prevent scrolling affecting bounce rate)
-					},
-				});
-			<?php endif; ?>
-
-			//Autotrack Outbound Links
-			ga('require', 'outboundLinkTracker', {
-				events: ['click', 'auxclick', 'contextmenu']
-			});
-		<?php endif; ?>
-
-		<?php if ( nebula()->get_option('google_optimize_id') ): //Google Optimize ?>
-			ga('require', '<?php echo nebula()->get_option('google_optimize_id'); ?>');
-		<?php endif; ?>
-
-		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
-
-		//Modify the payload before sending data to Google Analytics
-		ga(function(tracker){
-			tracker.set(nebula.analytics.dimensions.gaCID, tracker.get('clientId'));
-
-			if ( nebula && nebula.session && nebula.session.id ){
-				nebula.session.id = nebula.session.id.replace(/;cid:(.+);/i, ';cid:' + tracker.get('clientId') + ';'); //Update the CID once assigned
-			}
-
-			var originalBuildHitTask = tracker.get('buildHitTask'); //Grab a reference to the default buildHitTask function.
-			tracker.set('buildHitTask', function(model){ //This runs on every hit send
-				var qt = model.get('queueTime') || 0;
-
-				//Remove PII if present
-				if ( model.get('location').indexOf('nv-') ){
-					model.set('location', model.get('location').replace(/(nv-.*?)&|(nv-.*?)$/gi, ''), true);
-				}
-
-				//Move impression tracking for CF7 forms to the "CF7 Form" event category //@todo "Nebula" 0: If the fieldsObj is ever updated in Autotrack, do this programmatically in nebula.js
-				if ( model.get('hitType') === 'event' && model.get('eventAction') === 'impression' && model.get('eventLabel').indexOf('wpcf7') > -1 ){
-					model.set('eventCategory', 'CF7 Form', true);
-				}
-
-				//Always send hit dimensions with all payloads
-				//model.set(nebula.analytics.dimensions.gaCID, tracker.get('clientId'), true);
-				model.set(nebula.analytics.dimensions.hitID, uuid(), true);
-				model.set(nebula.analytics.dimensions.hitTime, String(new Date-qt), true);
-				model.set(nebula.analytics.dimensions.hitType, model.get('hitType'), true);
-
-				var interactivity = 'Interaction';
-				if ( model.get('nonInteraction') ){
-					interactivity = 'Non-Interaction';
-				}
-				model.set(nebula.analytics.dimensions.interactivity, interactivity, true);
-
-				var transportMethod = model.get('transport') || 'JavaScript';
-				model.set(nebula.analytics.dimensions.hitMethod, model.get('transport'), true);
-
-				model.set(nebula.analytics.dimensions.timestamp, localTimestamp(), true);
-				model.set(nebula.analytics.dimensions.visibilityState, document.visibilityState, true);
-
-				var connection = ( navigator.onLine )? 'Online' : 'Offline';
-				model.set(nebula.analytics.dimensions.network, connection, true);
-
-				if ( 'deviceMemory' in navigator ){ //Chrome 64+
-					var deviceMemoryLevel = navigator.deviceMemory < 1 ? 'lite' : 'full';
-					model.set(nebula.analytics.dimensions.deviceMemory, navigator.deviceMemory + '(' + deviceMemoryLevel + ')', true);
+				//Business Open/Closed
+				if ( nebula()->business_open() ){
+					$business_open = 'During Business Hours';
+					echo 'nebula.user.client.businessopen = true;';
 				} else {
-					model.set(nebula.analytics.dimensions.deviceMemory, '(not set)', true);
+					$business_open = 'Non-Business Hours';
+					echo 'nebula.user.client.businessopen = false;';
+				}
+				if ( nebula()->get_option('cd_businesshours') ){
+					echo 'ga("set", nebula.analytics.dimensions.businessHours, "' . $business_open . '");';
 				}
 
-				<?php do_action('nebula_ga_additional_tasks'); //Hook into for adding more task operations ?>
+				//Relative time ("Late Morning", "Early Evening")
+				if ( nebula()->get_option('cd_relativetime') ){
+					$relative_time = nebula()->relative_time();
+					$time_description = implode(' ', $relative_time['description']);
+					$time_range = $relative_time['standard'][0] . ':00' . $relative_time['ampm'] . ' - ' . $relative_time['standard'][2] . ':59' . $relative_time['ampm'];
+					echo 'ga("set", nebula.analytics.dimensions.relativeTime, "' . ucwords($time_description) . ' (' . $time_range . ')");';
+				}
 
-				originalBuildHitTask(model); //Send the payload to Google Analytics
-			});
-		});
+				//Role
+				if ( nebula()->get_option('cd_role') ){
+					echo 'ga("set", nebula.analytics.dimensions.role, "' . nebula()->user_role() . '");';
+				}
 
-		<?php if ( (isset($_SERVER['HTTP_X_PURPOSE']) && $_SERVER['HTTP_X_PURPOSE'] === 'preview') && (isset($_SERVER['HTTP_USER_AGENT']) && strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'snapchat') > 0) ): //Check if viewing in Snapchat ?>
-			nebula.snapchatPageShown = false;
-			function onSnapchatPageShow(){ //Listen for swipe-up for Snapchat users due to preloading. This function is called from Snapchat itself!
-				nebula.snapchatPageShown = true;
-				nebulaSendGAPageview();
+				//Session ID
+				if ( nebula()->get_option('cd_sessionid') ){
+					echo 'nebula.session.id = "' . nebula()->nebula_session_id() . '";';
+					echo 'ga("set", nebula.analytics.dimensions.sessionID, nebula.session.id);';
+				}
+
+				//WordPress User ID
+				if ( is_user_logged_in() ){
+					$current_user = wp_get_current_user();
+					if ( $current_user && nebula()->get_option('cd_userid') ){
+						echo 'ga("set", nebula.analytics.dimensions.userID, "' . $current_user->ID . '");';
+						echo 'ga("set", "userId", ' . $current_user->ID . ');';
+					}
+				}
+
+				//Weather Conditions
+				if ( nebula()->get_option('cd_weather') ){
+					echo 'ga("set", nebula.analytics.dimensions.weather, "' . nebula()->weather('conditions') . '");';
+				}
+				//Temperature Range
+				if ( nebula()->get_option('cd_temperature') ){
+					$temp_round = floor(nebula()->weather('temperature')/5)*5;
+					$temp_round_celcius = round(($temp_round-32)/1.8);
+					$temp_range = strval($temp_round) . '°F - ' . strval($temp_round+4) . '°F (' . strval($temp_round_celcius) . '°C - ' . strval($temp_round_celcius+2) . '°C)';
+					echo 'ga("set", nebula.analytics.dimensions.temperature, "' . $temp_range . '");';
+				}
+
+				//Notable POI (IP Addresses)
+				$poi = nebula()->poi();
+				if ( nebula()->get_option('cd_notablepoi') && !empty($poi) ){
+					echo 'ga("set", nebula.analytics.dimensions.poi, "' . $poi . '");';
+				}
+			?>
+
+			<?php if ( nebula()->get_option('cd_windowtype') ): //Window Type ?>
+				if ( window !== window.top ){
+					var htmlClasses = document.getElementsByTagName('html')[0].getAttribute("class") || '';
+					document.getElementsByTagName('html')[0].setAttribute('class', headCSS + 'in-iframe'); //Use vanilla JS in case jQuery is not yet available
+					ga('set', nebula.analytics.dimensions.windowType, 'Iframe: ' + window.top.location.href);
+				}
+
+				if ( navigator.standalone || window.matchMedia('(display-mode: standalone)').matches ){
+					var htmlClasses = document.getElementsByTagName('html')[0].getAttribute("class") || '';
+					document.getElementsByTagName('html')[0].setAttribute('class', headCSS + 'in-standalone-app'); //Use vanilla JS in case jQuery is not yet available
+					ga('set', nebula.analytics.dimensions.windowType, 'Standalone App');
+				}
+			<?php endif; ?>
+
+			<?php if ( nebula()->get_option('cd_savedata') ): ?>
+				ga('set', nebula.analytics.dimensions.saveData, '<?php echo ( nebula()->is_save_data() )? 'Save Data' : 'Normal'; ?>');
+			<?php endif; ?>
+
+			//Experiment Variation
+			if ( typeof cxApi !== 'undefined' && typeof cxApi.chooseVariation === 'function' ){
+				var variationInfo = 'Variation ' + cxApi.chooseVariation();
+				if ( cxApi.NO_CHOSEN_VARIATION ){
+					variationInfo = 'No Chosen Variation';
+				} else if ( cxApi.NOT_PARTICIPATING ){
+					variationInfo = 'Not Participating';
+				}
+
+				ga('set', nebula.analytics.dimensions.experimentVariation, variationInfo);
 			}
-		<?php else: ?>
-			nebulaSendGAPageview();
-		<?php endif; ?>
 
-		function nebulaSendGAPageview(){
-			ga('send', 'pageview', {
-				'hitCallback': function(){
-					nebula.analytics.isReady = true; //Set a global boolean variable
+			<?php if ( 1==1 ): //Autotrack ?>
+				<?php if ( nebula()->get_option('cm_pagevisible') && nebula()->get_option('cm_pagehidden') ): //Autotrack Page Visibility ?>
+					ga('require', 'pageVisibilityTracker', {
+						hiddenMetricIndex: parseInt(nebula.analytics.metrics.pageHidden.replace('metric', '')),
+						visibleMetricIndex: parseInt(nebula.analytics.metrics.pageVisible.replace('metric', '')),
+						fieldsObj: {nonInteraction: true}
+					});
+				<?php endif; ?>
 
-					//Trigger an event when GA is ready (without jQuery)
-					if ( typeof(Event) === 'function' ){ //Modern browsers
-						var gaReadyEvent = new Event('gaready');
-					} else { //IE
-						var gaReadyEvent = document.createEvent('Event');
-						gaReadyEvent.initEvent('gaready', true, true);
+				//Autotrack Clean URL
+				<?php if ( nebula()->get_option('cd_querystring') ): //Autotrack Query String ?>
+					var queryStringDimension = parseInt(nebula.analytics.dimensions.queryString.replace('dimension', ''));
+					ga('require', 'cleanUrlTracker', {
+						stripQuery: ( queryStringDimension )? true : false,
+						queryDimensionIndex: queryStringDimension,
+						queryParamsWhitelist: ['s', 'rs'],
+						indexFilename: 'index.php',
+						trailingSlash: 'add'
+					});
+				<?php endif; ?>
+
+				//Autotrack Social Widgets
+				ga('require', 'socialWidgetTracker', {
+					hitFilter: function(model){
+						model.set('hitType', 'event'); //Change the hit type from `social` to `event`.
+
+						//Map the social values to event values.
+						model.set('eventCategory', model.get('socialNetwork'));
+						model.set('eventAction', model.get('socialAction'));
+						model.set('eventLabel', model.get('socialTarget'));
+
+						//Unset the social values.
+						model.set('socialNetwork', null);
+						model.set('socialAction', null);
+						model.set('socialTarget', null);
 					}
-					document.dispatchEvent(gaReadyEvent); //Eventually just use this: document.dispatchEvent(new Event('gaready'));
+				});
 
-					if ( typeof initEventTracking === 'function' ){
-						initEventTracking();
-					}
+				<?php if ( nebula()->get_option('cd_mqbreakpoint') || nebula()->get_option('cd_mqresolution') || nebula()->get_option('cd_mqorientation') ): //Autotrack Media Queries ?>
+					ga('require', 'mediaQueryTracker', {
+						definitions: [
+						<?php if ( nebula()->get_option('cd_mqbreakpoint') ): ?>
+							{
+								name: 'Breakpoint',
+								dimensionIndex: parseInt(nebula.analytics.dimensions.mqBreakpoint.replace('dimension', '')),
+								items: [
+									{name: 'xs', media: 'all'},
+									{name: 'sm', media: '(min-width: 544px)'},
+									{name: 'md', media: '(min-width: 768px)'},
+									{name: 'lg', media: '(min-width: 992px)'},
+									{name: 'xl', media: '(min-width: 1200px)'}
+								]
+							},
+						<?php endif; ?>
+						<?php if ( nebula()->get_option('cd_mqresolution') ): ?>
+							{
+								name: 'Resolution',
+								dimensionIndex: parseInt(nebula.analytics.dimensions.mqResolution.replace('dimension', '')),
+								items: [
+									{name: '1x', media: 'all'},
+									{name: '1.5x', media: '(min-resolution: 144dpi)'},
+									{name: '2x', media: '(min-resolution: 192dpi)'}
+								]
+							},
+						<?php endif; ?>
+						<?php if ( nebula()->get_option('cd_mqorientation') ): ?>
+							{
+								name: 'Orientation',
+								dimensionIndex: parseInt(nebula.analytics.dimensions.mqOrientation.replace('dimension', '')),
+								items: [
+									{name: 'landscape', media: '(orientation: landscape)'},
+									{name: 'portrait', media: '(orientation: portrait)'}
+								]
+							}
+						<?php endif; ?>
+						],
+						fieldsObj: {nonInteraction: true}
+					});
+				<?php endif; ?>
 
-					<?php if ( is_child_theme() ): ?>
-						if ( typeof supplementalEventTracking === 'function' ){
-							supplementalEventTracking();
+				//Autotrack Impressions (Scroll into view)
+				//Elements themselves are detected in nebula.js (or main.js)
+				ga('require', 'impressionTracker', { //@todo "Nebula" 0: jQuery may not be available yet... change these to vanilla JS if possible
+					hitFilter: function(model, element){
+						if ( jQuery(element).is('form') && !jQuery(element).find('input[name=s]').length ){
+							if ( !jQuery(element).hasClass('.ignore-form') && !jQuery(element).find('.ignore-form').length && !jQuery(element).parents('.ignore-form').length ){
+								ga('set', nebula.analytics.metrics.formImpressions, 1);
+							}
 						}
-					<?php endif; ?>
+					}
+				});
+
+				//Autotrack Max Scroll
+				<?php if ( nebula()->get_option('cm_maxscroll') ): //Autotrack Max Scroll ?>
+					ga('require', 'maxScrollTracker', {
+						maxScrollMetricIndex: parseInt(nebula.analytics.metrics.maxScroll.replace('metric', '')),
+						hitFilter: function(model){
+							model.set('nonInteraction', true, true); //Set non-interaction to true (prevent scrolling affecting bounce rate)
+						},
+					});
+				<?php endif; ?>
+
+				//Autotrack Outbound Links
+				ga('require', 'outboundLinkTracker', {
+					events: ['click', 'auxclick', 'contextmenu']
+				});
+			<?php endif; ?>
+
+			<?php if ( nebula()->get_option('google_optimize_id') ): //Google Optimize ?>
+				ga('require', '<?php echo nebula()->get_option('google_optimize_id'); ?>');
+			<?php endif; ?>
+
+			<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
+
+			//Modify the payload before sending data to Google Analytics
+			ga(function(tracker){
+				tracker.set(nebula.analytics.dimensions.gaCID, tracker.get('clientId'));
+
+				if ( nebula && nebula.session && nebula.session.id ){
+					nebula.session.id = nebula.session.id.replace(/;cid:(.+);/i, ';cid:' + tracker.get('clientId') + ';'); //Update the CID once assigned
 				}
+
+				var originalBuildHitTask = tracker.get('buildHitTask'); //Grab a reference to the default buildHitTask function.
+				tracker.set('buildHitTask', function(model){ //This runs on every hit send
+					var qt = model.get('queueTime') || 0;
+
+					//Remove PII if present
+					if ( model.get('location').indexOf('nv-') ){
+						model.set('location', model.get('location').replace(/(nv-.*?)&|(nv-.*?)$/gi, ''), true);
+					}
+
+					//Move impression tracking for CF7 forms to the "CF7 Form" event category //@todo "Nebula" 0: If the fieldsObj is ever updated in Autotrack, do this programmatically in nebula.js
+					if ( model.get('hitType') === 'event' && model.get('eventAction') === 'impression' && model.get('eventLabel').indexOf('wpcf7') > -1 ){
+						model.set('eventCategory', 'CF7 Form', true);
+					}
+
+					//Always send hit dimensions with all payloads
+					//model.set(nebula.analytics.dimensions.gaCID, tracker.get('clientId'), true);
+					model.set(nebula.analytics.dimensions.hitID, uuid(), true);
+					model.set(nebula.analytics.dimensions.hitTime, String(new Date-qt), true);
+					model.set(nebula.analytics.dimensions.hitType, model.get('hitType'), true);
+
+					var interactivity = 'Interaction';
+					if ( model.get('nonInteraction') ){
+						interactivity = 'Non-Interaction';
+					}
+					model.set(nebula.analytics.dimensions.interactivity, interactivity, true);
+
+					var transportMethod = model.get('transport') || 'JavaScript';
+					model.set(nebula.analytics.dimensions.hitMethod, model.get('transport'), true);
+
+					model.set(nebula.analytics.dimensions.timestamp, localTimestamp(), true);
+					model.set(nebula.analytics.dimensions.visibilityState, document.visibilityState, true);
+
+					var connection = ( navigator.onLine )? 'Online' : 'Offline';
+					model.set(nebula.analytics.dimensions.network, connection, true);
+
+					if ( 'deviceMemory' in navigator ){ //Chrome 64+
+						var deviceMemoryLevel = navigator.deviceMemory < 1 ? 'lite' : 'full';
+						model.set(nebula.analytics.dimensions.deviceMemory, navigator.deviceMemory + '(' + deviceMemoryLevel + ')', true);
+					} else {
+						model.set(nebula.analytics.dimensions.deviceMemory, '(not set)', true);
+					}
+
+					<?php do_action('nebula_ga_additional_tasks'); //Hook into for adding more task operations ?>
+
+					originalBuildHitTask(model); //Send the payload to Google Analytics
+				});
 			});
+
+			<?php if ( (isset($_SERVER['HTTP_X_PURPOSE']) && $_SERVER['HTTP_X_PURPOSE'] === 'preview') && (isset($_SERVER['HTTP_USER_AGENT']) && strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'snapchat') > 0) ): //Check if viewing in Snapchat ?>
+				nebula.snapchatPageShown = false;
+				function onSnapchatPageShow(){ //Listen for swipe-up for Snapchat users due to preloading. This function is called from Snapchat itself!
+					nebula.snapchatPageShown = true;
+					nebulaSendGAPageview();
+				}
+			<?php else: ?>
+				nebulaSendGAPageview();
+			<?php endif; ?>
+
+			function nebulaSendGAPageview(){
+				ga('send', 'pageview', {
+					'hitCallback': function(){
+						nebula.analytics.isReady = true; //Set a global boolean variable
+
+						//Trigger an event when GA is ready (without jQuery)
+						if ( typeof(Event) === 'function' ){ //Modern browsers
+							var gaReadyEvent = new Event('gaready');
+						} else { //IE
+							var gaReadyEvent = document.createEvent('Event');
+							gaReadyEvent.initEvent('gaready', true, true);
+						}
+						document.dispatchEvent(gaReadyEvent); //Eventually just use this: document.dispatchEvent(new Event('gaready'));
+
+						if ( typeof initEventTracking === 'function' ){
+							initEventTracking();
+						}
+
+						<?php if ( is_child_theme() ): ?>
+							if ( typeof supplementalEventTracking === 'function' ){
+								supplementalEventTracking();
+							}
+						<?php endif; ?>
+					}
+				});
+			}
+
+			<?php do_action('nebula_ga_after_send_pageview'); ?>
+
+			<?php if ( is_404() ): //Track 404 Errors ?>
+				var lastReferrer = "<?php echo $_SERVER['HTTP_REFERER']; ?>" || document.referrer || '(Unknown Referrer)';
+				ga('send', 'event', '404 Not Found', <?php nebula()->requested_url(); ?>, 'Referrer: ' + lastReferrer, {'nonInteraction': true});
+			<?php endif; ?>
 		}
-
-		<?php do_action('nebula_ga_after_send_pageview'); ?>
-
-		<?php if ( is_404() ): //Track 404 Errors ?>
-			var lastReferrer = "<?php echo $_SERVER['HTTP_REFERER']; ?>" || document.referrer || '(Unknown Referrer)';
-			ga('send', 'event', '404 Not Found', <?php nebula()->requested_url(); ?>, 'Referrer: ' + lastReferrer, {'nonInteraction': true});
-		<?php endif; ?>
 
 		//Generate a unique ID for hits and windows
 		function uuid(a){
@@ -460,6 +449,10 @@
 	<link rel="prefetch" href="//connect.facebook.net/en_US/fbevents.js" />
 
 	<script>
+		if ( navigator.doNotTrack || window.doNotTrack ){
+			return false;
+		}
+
 		!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 		n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
 		n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
@@ -477,6 +470,10 @@
 <?php if ( nebula()->get_option('hubspot_portal') ): //Hubspot CRM ?>
 	<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/<?php echo nebula()->get_option('hubspot_portal'); ?>.js"></script>
 	<script>
+		if ( navigator.doNotTrack || window.doNotTrack ){
+			return false;
+		}
+
 		var _hsq = window._hsq = window._hsq || [];
 		_hsq.push(['setPath', '<?php echo str_replace(get_site_url(), '', get_permalink()); ?>']); //Is this even needed?
 

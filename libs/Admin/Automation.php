@@ -132,6 +132,11 @@ if ( !trait_exists('Automation') ){
 					'required' => false,
 				),
 				array(
+					'name' => 'All-in-One WP Migration',
+					'slug' => 'all-in-one-wp-migration',
+					'required' => false,
+				),
+				array(
 					'name' => '404 to 301',
 					'slug' => '404-to-301',
 					'required' => false,

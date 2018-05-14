@@ -141,8 +141,10 @@
 		<meta name="twitter:image" content="<?php echo $image_meta_directory . '/twitter-card.png?' . uniqid(); ?>" />
 	<?php endif; ?>
 <?php endif; ?>
-<meta name="twitter:title" content="<?php the_title(); ?>" />
-<meta name="twitter:description" content="<?php echo nebula()->meta_description(false, 200); ?>" />
+<?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): ?>
+	<meta name="twitter:title" content="<?php the_title(); ?>" />
+	<meta name="twitter:description" content="<?php echo nebula()->meta_description(false, 200); ?>" />
+<?php endif; ?>
 
 <?php if ( nebula()->get_option('twitter_user') ): ?>
 	<meta name="twitter:site" content="<?php echo nebula()->get_option('twitter_user'); ?>" />

@@ -1,18 +1,16 @@
 jQuery.noConflict();
 
+//Prevent child theme events from sending before the pageview. Do not add custom event tracking here- add it where noted below!
+jQuery(document).on('nebula_event_tracking', function(){
+	supplementalEventTracking();
+});
+
 /*==========================
  DOM Ready (After nebula.js is loaded)
  ===========================*/
 
 jQuery(function(){
 	cacheSelectors();
-
-	//Prevent child theme events from sending before the pageview. Do not add custom event tracking here- add it where noted below!
-	if ( isGoogleAnalyticsReady() ){
-		supplementalEventTracking();
-	}
-
-
 }); //End Document Ready
 
 
@@ -21,8 +19,6 @@ jQuery(function(){
  ===========================*/
 
 jQuery(window).on('load', function(){
-
-	supplementalEventTracking();
 
 }); //End Window Load
 
@@ -48,13 +44,10 @@ jQuery(window).on('resize', function(){
 function supplementalEventTracking(){
 	cacheSelectors();
 
-	once(function(){
-		//Simple example:
-		//nebula.dom.document.on('click touch tap', '.selector', function(){
-		//	ga('send', 'event', 'Category', 'Action', 'Label');
-		//});
+	//Simple example:
+	//nebula.dom.document.on('click touch tap', '.selector', function(){
+	//	ga('send', 'event', 'Category', 'Action', 'Label');
+	//});
 
-		//Add your custom event tracking here!
-
-	}, 'supplemental event tracking');
+	//Add your custom event tracking here!
 }
