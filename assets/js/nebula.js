@@ -517,7 +517,7 @@ function socialSharing(){
 				ga('send', 'event', 'Social', 'Share', 'Web Share API');
 				nv('event', 'Web Share API');
 				oThis.addClass('success');
-				//set cookie yolo
+				createCookie('shareapi', true);
 			}).catch(function(error){
 				ga('send', 'exception', {'exDescription': '(JS) Share API Error: ' + error, 'exFatal': false});
 				oThis.addClass('error').text('Sharing Error');
@@ -1983,7 +1983,6 @@ function cf7LocalStorage(){
 		jQuery('.wpcf7-textarea, .wpcf7-text').each(function(){
 			if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') ){
 				jQuery(this).val(localStorage.getItem('cf7_' + jQuery(this).attr('name'))).trigger('keyup');
-				console.log('filled');
 			}
 		});
 	});
@@ -2386,13 +2385,29 @@ function sanitizeGooglePlaceData(place, uniqueID){
 		nebula.user.address = {};
 	}
 
+	if ( typeof nebula.user.address !== 'array' ){
+		nebula.user.address = [];
+	}
+
 	nebula.user.address[uniqueID] = {
-		street: null,
+		street: {
+			number: null,
+			name: null
+		},
 		city: null,
 		county: null,
-		state: null,
-		country: null,
-		zip: null,
+		state: {
+			name: null,
+			abbr: null
+		},
+		country: {
+			name: null,
+			abbr: null
+		},
+		zip: {
+			code: null,
+			suffix: null
+		}
 	};
 
 	for ( var i = 0; i < place.address_components.length; i++ ){

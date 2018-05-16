@@ -413,29 +413,25 @@
 <?php endif; ?>
 
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('gtm_id') ): //Google Tag Manager ?>
-	<!-- Google Tag Manager -->
 	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 	})(window,document,'script','dataLayer','<?php echo nebula()->get_option('gtm_id'); ?>');</script>
-	<!-- End Google Tag Manager -->
-
-	<!-- Google Tag Manager (noscript) -->
-	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo nebula()->get_option('gtm_id'); ?>"
-	height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-	<!-- End Google Tag Manager (noscript) -->
+	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo nebula()->get_option('gtm_id'); ?>" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <?php endif; ?>
 
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('adwords_remarketing_conversion_id') && !is_customize_preview() ): //Google AdWords Remarketing Tag ?>
 	<link rel="prefetch" href="//www.googleadservices.com/pagead/conversion.js" />
 
 	<script type="text/javascript">
-		/* <![CDATA[ */
-		var google_conversion_id = <?php echo nebula()->get_option('adwords_remarketing_conversion_id'); ?>;
-		var google_custom_params = window.google_tag_params;
-		var google_remarketing_only = true;
-		/* ]]> */
+		if ( !navigator.doNotTrack && !window.doNotTrack ){
+			/* <![CDATA[ */
+			var google_conversion_id = <?php echo nebula()->get_option('adwords_remarketing_conversion_id'); ?>;
+			var google_custom_params = window.google_tag_params;
+			var google_remarketing_only = true;
+			/* ]]> */
+		}
 	</script>
 	<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js"></script>
 	<noscript>
@@ -449,20 +445,18 @@
 	<link rel="prefetch" href="//connect.facebook.net/en_US/fbevents.js" />
 
 	<script>
-		if ( navigator.doNotTrack || window.doNotTrack ){
-			return false;
+		if ( !navigator.doNotTrack && !window.doNotTrack ){
+			!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+			n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+			n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+			t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+			document,'script','//connect.facebook.net/en_US/fbevents.js');
+
+			fbq('init', '<?php echo nebula()->get_option('facebook_custom_audience_pixel_id'); ?>'); //@todo "Nebula" 0: Can we *get* data from Hubspot to send email and other info here?
+			fbq('track', 'PageView');
+
+			<?php do_action('nebula_fbq_after_track_pageview'); //Hook into for adding more Facebook custom audience tracking. ?>
 		}
-
-		!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-		n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-		n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-		t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-		document,'script','//connect.facebook.net/en_US/fbevents.js');
-
-		fbq('init', '<?php echo nebula()->get_option('facebook_custom_audience_pixel_id'); ?>'); //@todo "Nebula" 0: Can we *get* data from Hubspot to send email and other info here?
-		fbq('track', 'PageView');
-
-		<?php do_action('nebula_fbq_after_track_pageview'); //Hook into for adding more Facebook custom audience tracking. ?>
 	</script>
 	<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=<?php echo nebula()->get_option('facebook_custom_audience_pixel_id'); ?>&ev=PageView&noscript=1"/></noscript>
 <?php endif; ?>
@@ -470,69 +464,67 @@
 <?php if ( nebula()->get_option('hubspot_portal') ): //Hubspot CRM ?>
 	<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/<?php echo nebula()->get_option('hubspot_portal'); ?>.js"></script>
 	<script>
-		if ( navigator.doNotTrack || window.doNotTrack ){
-			return false;
-		}
+		if ( !navigator.doNotTrack && !window.doNotTrack ){
+			var _hsq = window._hsq = window._hsq || [];
+			_hsq.push(['setPath', '<?php echo str_replace(get_site_url(), '', get_permalink()); ?>']); //Is this even needed?
 
-		var _hsq = window._hsq = window._hsq || [];
-		_hsq.push(['setPath', '<?php echo str_replace(get_site_url(), '', get_permalink()); ?>']); //Is this even needed?
+			<?php
+				$hubspot_identify = array(
+					'ipaddress' => nebula()->get_ip_address(),
+					'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+					'session_id' => nebula()->nebula_session_id(), //If this hits rate limits, consider removing it
+				);
 
-		<?php
-			$hubspot_identify = array(
-				'ipaddress' => nebula()->get_ip_address(),
-				'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-				'session_id' => nebula()->nebula_session_id(), //If this hits rate limits, consider removing it
-			);
+				if ( is_user_logged_in() ){
+					$user_info = get_userdata(get_current_user_id());
 
-			if ( is_user_logged_in() ){
-				$user_info = get_userdata(get_current_user_id());
+					$hubspot_identify['email'] = $user_info->user_email;
+					$hubspot_identify['firstname'] = $user_info->first_name;
+					$hubspot_identify['lastname'] = $user_info->last_name;
+					$hubspot_identify['wordpress_id'] = get_current_user_id();
+					$hubspot_identify['username'] = $user_info->user_login;
+					$hubspot_identify['role'] = nebula()->user_role();
+					$hubspot_identify['jobtitle'] = get_user_meta(get_current_user_id(), 'jobtitle', true);
+					$hubspot_identify['company'] = get_user_meta(get_current_user_id(), 'jobcompany', true);
+					$hubspot_identify['website'] = get_user_meta(get_current_user_id(), 'jobcompanywebsite', true);
+					$hubspot_identify['city'] = get_user_meta(get_current_user_id(), 'usercity', true);
+					$hubspot_identify['state'] = get_user_meta(get_current_user_id(), 'userstate', true);
+					$hubspot_identify['phone'] = get_user_meta(get_current_user_id(), 'phonenumber', true);
+					$hubspot_identify['notable_poi'] = nebula()->poi();
+				}
 
-				$hubspot_identify['email'] = $user_info->user_email;
-				$hubspot_identify['firstname'] = $user_info->first_name;
-				$hubspot_identify['lastname'] = $user_info->last_name;
-				$hubspot_identify['wordpress_id'] = get_current_user_id();
-				$hubspot_identify['username'] = $user_info->user_login;
-				$hubspot_identify['role'] = nebula()->user_role();
-				$hubspot_identify['jobtitle'] = get_user_meta(get_current_user_id(), 'jobtitle', true);
-				$hubspot_identify['company'] = get_user_meta(get_current_user_id(), 'jobcompany', true);
-				$hubspot_identify['website'] = get_user_meta(get_current_user_id(), 'jobcompanywebsite', true);
-				$hubspot_identify['city'] = get_user_meta(get_current_user_id(), 'usercity', true);
-				$hubspot_identify['state'] = get_user_meta(get_current_user_id(), 'userstate', true);
-				$hubspot_identify['phone'] = get_user_meta(get_current_user_id(), 'phonenumber', true);
-				$hubspot_identify['notable_poi'] = nebula()->poi();
-			}
+				if ( nebula()->get_option('device_detection') ){
+					$hubspot_identify['device'] = nebula()->get_device();
+					$hubspot_identify['os'] = nebula()->get_os();
+					$hubspot_identify['browser'] = nebula()->get_browser();
+					$hubspot_identify['bot'] = ( nebula()->is_bot() )? 1 : 0;
+				}
+			?>
 
-			if ( nebula()->get_option('device_detection') ){
-				$hubspot_identify['device'] = nebula()->get_device();
-				$hubspot_identify['os'] = nebula()->get_os();
-				$hubspot_identify['browser'] = nebula()->get_browser();
-				$hubspot_identify['bot'] = ( nebula()->is_bot() )? 1 : 0;
-			}
-		?>
+			var hubspotIdentify = <?php echo json_encode(apply_filters('nebula_hubspot_identify', $hubspot_identify)); //Allow other functions to hook into Hubspot identifications ?>;
+			hubspotIdentify.cookies = ( window.navigator.cookieEnabled )? '1' : '0';
+			hubspotIdentify.screen = window.screen.width + 'x' + window.screen.height + ' (' + window.screen.colorDepth + ' bits)';
 
-		var hubspotIdentify = <?php echo json_encode(apply_filters('nebula_hubspot_identify', $hubspot_identify)); //Allow other functions to hook into Hubspot identifications ?>;
-		hubspotIdentify.cookies = ( window.navigator.cookieEnabled )? '1' : '0';
-		hubspotIdentify.screen = window.screen.width + 'x' + window.screen.height + ' (' + window.screen.colorDepth + ' bits)';
+			_hsq.push(["identify", hubspotIdentify]);
 
-		_hsq.push(["identify", hubspotIdentify]);
+			<?php do_action('nebula_hubspot_before_send_pageview'); //Hook into for adding more parameters before the pageview is sent. Can override any above identifications too. ?>
 
-		<?php do_action('nebula_hubspot_before_send_pageview'); //Hook into for adding more parameters before the pageview is sent. Can override any above identifications too. ?>
+			<?php if ( nebula()->get_option('ga_tracking_id') ): //If Google Analytics is used, grab the Client ID before sending the Hubspot pageview ?>
+				if ( typeof window.ga === 'function' ){ <?php //If ga() exists get the CID, otherwise don't wait for it and just send the Hubspot pageview ?>
+					window.ga(function(tracker){
+						_hsq.push(["identify", {
+							ga_cid: tracker.get('clientId'),
+						}]);
 
-		<?php if ( nebula()->get_option('ga_tracking_id') ): //If Google Analytics is used, grab the Client ID before sending the Hubspot pageview ?>
-			if ( typeof window.ga === 'function' ){ <?php //If ga() exists get the CID, otherwise don't wait for it and just send the Hubspot pageview ?>
-				window.ga(function(tracker){
-					_hsq.push(["identify", {
-						ga_cid: tracker.get('clientId'),
-					}]);
-
+						_hsq.push(['trackPageView']);
+					});
+				} else {
 					_hsq.push(['trackPageView']);
-				});
-			} else {
+				}
+			<?php else: ?>
 				_hsq.push(['trackPageView']);
-			}
-		<?php else: ?>
-			_hsq.push(['trackPageView']);
-		<?php endif; ?>
+			<?php endif; ?>
+		}
 	</script>
 <?php endif; ?>
 

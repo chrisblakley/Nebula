@@ -1621,6 +1621,7 @@ trait Functions {
 
 		$data = array_merge($defaults, $options);
 		$delimiter_html = '<span class="arrow">' . $data['delimiter'] . '</span>';
+		$current = $data['before'] . '<a class="current-breadcrumb-link" href="' . get_the_permalink() . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_title() . '</a>' . $data['after'];
 
 		if ( !empty($data['force']) ){ //If using forced override
 			echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">';
@@ -1652,7 +1653,7 @@ trait Functions {
 			}
 
 			if ( !empty($data['current']) ){
-				echo $data['before'] . get_the_title() . $data['after'];
+				echo $current;
 			}
 
 			echo '</div>';
@@ -1698,7 +1699,7 @@ trait Functions {
 					echo '<a href="' . $data['home_link'] . $slug['slug'] . '/" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $post_type->labels->singular_name . '</a>';
 
 					if ( !empty($data['current']) ){
-						echo ' ' . $delimiter_html . ' ' . $data['before'] . get_the_title() . $data['after'];
+						echo ' ' . $delimiter_html . ' ' . $current;
 					}
 				} else {
 					$cat = get_the_category();
@@ -1713,7 +1714,7 @@ trait Functions {
 						echo $cats;
 
 						if ( !empty($data['current']) ){
-							echo $data['before'] . get_the_title() . $data['after'];
+							echo $current;
 						}
 					}
 				}
@@ -1728,7 +1729,7 @@ trait Functions {
 				}
 			} elseif ( is_page() && !$post->post_parent ){
 				if ( !empty($data['current']) ){
-					echo $data['before'] . get_the_title() . $data['after'];
+					echo $current;
 				}
 			} elseif ( is_page() && $post->post_parent ){
 				$parent_id = $post->post_parent;
@@ -1749,7 +1750,7 @@ trait Functions {
 				}
 
 				if ( !empty($data['current']) ){
-					echo ' ' . $delimiter_html . ' ' . $data['before'] . get_the_title() . $data['after'];
+					echo ' ' . $delimiter_html . ' ' . $current;
 				}
 			} elseif ( is_tag() ){
 
