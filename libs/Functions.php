@@ -3123,16 +3123,6 @@ trait Functions {
 			return $site_owner . '<wordpress@' . $this->url_components('domain') . '>';
 		}
 
-		//IP Geolocation
-		if ( $name === '_nebula_ip_geo' ){
-			if ( $this->ip_location() ){
-				$ip_location = $this->ip_location('all');
-				return $ip_location->city . ', ' . $ip_location->region_name;
-			} else {
-				return '';
-			}
-		}
-
 		//Debug Info
 		if ( $name === 'debuginfo' || $name === '_debuginfo' || $name === '_nebula_debuginfo' || $name === '_nebula_debug' ){
 			$debug_data = 'Nebula ' . $this->version('full') . '<br />';
@@ -3192,19 +3182,15 @@ trait Functions {
 				$debug_data .= '<br />';
 			}
 
-			//IP address (and geolocation if available)
+			//IP address
 			$debug_data .= 'IP: ' . $this->get_ip_address();
-			if ( $this->ip_location() ){
-				$ip_location = $this->ip_location('all');
-				$debug_data .= ' (' . $ip_location->city . ', ' . $ip_location->region_name . ')';
-			}
 			$notable_poi = $this->poi();
 			if ( !empty($notable_poi) ){
-				$debug_data .= '[' . $notable_poi . ']';
+				$debug_data .= ' [' . $notable_poi . ']';
 			}
 			$debug_data .= '<br />';
 
-			return $debug_data;
+			return apply_filters('nebula_cf7_debug_data', $debug_data);
 		}
 
 		return $output;
