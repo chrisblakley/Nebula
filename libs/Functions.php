@@ -557,7 +557,6 @@ trait Functions {
 				"/(var META_ICON = ')(.+)(';)/m",
 				"/(var MANIFEST = ')(.+)(';)/m",
 				"/(var HOME_URL = ')(.+)(';)/m",
-				"/(var START_URL = ')(.+)(';)/m",
 			);
 
 			$new_cache_name = "nebula-" . strtolower(get_option('stylesheet')) . "-" . mt_rand(10000, 99999);
@@ -569,7 +568,6 @@ trait Functions {
 				"$1" . get_theme_file_uri('/assets/img/meta') . "/android-chrome-512x512.png" . "$3",
 				"$1" . $this->manifest_json_location() . "$3",
 				"$1" . home_url('/') . "$3",
-				"$1" . home_url('/') . "?utm_source=homescreen" . "$3",
 			);
 
 			$sw_js = preg_replace($find, $replace, $sw_js);

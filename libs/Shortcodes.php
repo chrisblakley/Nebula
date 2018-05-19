@@ -216,14 +216,28 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function icon_shortcode($atts){
-			extract(shortcode_atts(array('type' => '', 'color' => 'inherit', 'size' => 'inherit', 'class' => ''), $atts));
+			extract(shortcode_atts(array('type' => '', 'mode' => 'solid', 'color' => 'inherit', 'size' => 'inherit', 'class' => ''), $atts));
 
+			//Prepend the fa- prefix to the icon name if not provided
 			if ( strpos($type, 'fa-') === false ){
 				$type = 'fa-' . $type;
 			}
+
+			//Choose the appropriate FA weight
+			if ( $mode === 'regular' || $mode === 'r' || $mode === 'far' ){
+				$mode = 'far';
+			} elseif ( $mode === 'light' || $mode === 'l' || $mode === 'fal' ){
+				$mode = 'fal';
+			} elseif ( $mode === 'brand' || $mode === 'b' || $mode === 'fab' ){
+				$mode = 'fab';
+			} else {
+				$mode = 'fas';
+			}
+
 			$extra_style = ( !empty($color) )? 'color:' . $color . ';' :'';
 			$extra_style .= ( !empty($size) )? 'font-size:' . $size . ';' :'';
-			return '<i class="' . $class . ' nebula-icon-shortcode ' . 'fas fa-fw ' . $type . '" style="' . $extra_style . '"></i>';
+
+			return '<i class="' . $class . ' nebula-icon-shortcode ' . $mode . ' fa-fw ' . $type . '" style="' . $extra_style . '"></i>';
 		}
 
 		public function button_shortcode($atts, $content=''){

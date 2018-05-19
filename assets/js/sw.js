@@ -1,11 +1,10 @@
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-55583'; //Wednesday, May 16, 2018 12:50:59 PM
+var CACHE_NAME = 'nebula-nebula-child-58093'; //Saturday, May 19, 2018 12:18:29 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
 var MANIFEST = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/inc/manifest.json';
 var HOME_URL = 'https://gearside.com/nebula/';
-var START_URL = 'https://gearside.com/nebula/?utm_source=homescreen'; //Mobile homescreen start_url
 //END Automated edits
 
 var CACHE_FILES = [
@@ -13,7 +12,6 @@ var CACHE_FILES = [
 	OFFLINE_IMG,
 	META_ICON,
 	MANIFEST,
-	START_URL,
 	HOME_URL,
 ];
 

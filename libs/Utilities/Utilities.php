@@ -133,67 +133,61 @@ if ( !trait_exists('Utilities') ){
 				return $poi_match;
 			}
 
-			$log_file = get_stylesheet_directory() . '/notable_pois.log';
-
-			//Check if poi query string exists
-			if ( isset($_GET['poi']) ){
-				$ip_logged = file_put_contents($log_file, $this->get_ip_address() . ' ' . $_GET['poi'] . PHP_EOL, FILE_APPEND | LOCK_EX); //Log the notable POI. Can't use WP_Filesystem here.
-				return str_replace(array('%20', '+'), ' ', $_GET['poi']);
+			//Allow for other themes/plugins to provide additional detections
+			$additional_detections = apply_filters('nebula_poi', $ip);
+			if ( !empty($additional_detections) ){
+				return $additional_detections;
 			}
 
-			if ( $ip === 'detect' ){
-				$ip = $this->get_ip_address();
-			}
+			if ( $this->get_option('notableiplist') ){
+				if ( $ip === 'detect' ){
+					$ip = $this->get_ip_address();
+				}
 
-			//Loop through Notable POIs saved in Nebula Options
-			$notable_pois = array();
-			$notable_ip_lines = explode("\n", $this->get_option('notableiplist'));
-			if ( !empty($notable_ip_lines) ){
-				foreach ( $notable_ip_lines as $line ){
-					$ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
+				//Loop through Notable POIs saved in Nebula Options
+				$notable_pois = array();
+				$notable_ip_lines = explode("\n", $this->get_option('notableiplist'));
 
-					$notable_pois[] = array(
-						'ip' => $ip_info[0],
-						'name' => $ip_info[1]
-					);
+				if ( !empty($notable_ip_lines) ){
+					foreach ( $notable_ip_lines as $line ){
+						if ( !empty($line) ){
+							$ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
+							$notable_pois[] = array(
+								'ip' => $ip_info[0],
+								'name' => $ip_info[1]
+							);
+						}
+					}
+				}
+
+				$all_notable_pois = apply_filters('nebula_notable_pois', $notable_pois);
+				$all_notable_pois = array_map("unserialize", array_unique(array_map("serialize", $all_notable_pois))); //De-dupe multidimensional array
+				$all_notable_pois = array_filter($all_notable_pois); //Remove empty array elements
+
+				//Finally, loop through all notable POIs to return a match
+				if ( !empty($all_notable_pois) ){
+					foreach ( $all_notable_pois as $notable_poi ){
+						//Check for RegEx
+						if ( $notable_poi['ip'][0] === '/' && preg_match($notable_poi['ip'], $ip) ){ //If first character of IP is "/" and the requested IP matches the pattern
+							$poi_match = str_replace(array("\r\n", "\r", "\n"), '', $notable_poi['name']);
+							wp_cache_set('nebula_poi_' . str_replace('.', '_', $ip), $poi_match); //Store in object cache
+							$this->timer($timer_name, 'end');
+							return $poi_match;
+						}
+
+						//Check direct match
+						if ( $notable_poi['ip'] === $ip ){
+							$poi_match = str_replace(array("\r\n", "\r", "\n"), '', $notable_poi['name']);
+							wp_cache_set('nebula_poi_' . str_replace('.', '_', $ip), $poi_match); //Store in object cache
+							$this->timer($timer_name, 'end');
+							return $poi_match;
+						}
+					}
+
+					wp_cache_set('nebula_poi_' . str_replace('.', '_', $ip), false); //Store in object cache
 				}
 			}
 
-			//Loop through Notable POIs log file (updated when using poi query parameter above). Only use when manageable file size.
-			if ( file_exists($log_file) && filesize($log_file) < 10000 ){ //If log file exists and is less than 10kb
-				foreach ( array_unique(file($log_file)) as $line ){
-					$ip_info = explode(' ', strip_tags($line), 2); //0 = IP Address or RegEx pattern, 1 = Name
-
-					$notable_pois[] = array(
-						'ip' => $ip_info[0],
-						'name' => $ip_info[1]
-					);
-				}
-			}
-
-			$all_notable_pois = apply_filters('nebula_notable_pois', $notable_pois);
-			$all_notable_pois = array_map("unserialize", array_unique(array_map("serialize", $all_notable_pois))); //De-dupe multidimensional array
-
-			//Finally, loop through all notable POIs to return a match
-			foreach ( $all_notable_pois as $notable_poi ){
-				//Check for RegEx
-				if ( $notable_poi['ip'][0] === '/' && preg_match($notable_poi['ip'], $ip) ){ //If first character of IP is "/" and the requested IP matches the pattern
-					$poi_match = str_replace(array("\r\n", "\r", "\n"), '', $notable_poi['name']);
-					wp_cache_set('nebula_poi_' . str_replace('.', '_', $ip), $poi_match); //Store in object cache
-					$this->timer($timer_name, 'end');
-					return $poi_match;
-				}
-
-				//Check direct match
-				if ( $notable_poi['ip'] === $ip ){
-					$poi_match = str_replace(array("\r\n", "\r", "\n"), '', $notable_poi['name']);
-					wp_cache_set('nebula_poi_' . str_replace('.', '_', $ip), $poi_match); //Store in object cache
-					$this->timer($timer_name, 'end');
-					return $poi_match;
-				}
-			}
-
-			wp_cache_set('nebula_poi_' . str_replace('.', '_', $ip), false); //Store in object cache
 			$this->timer($timer_name, 'end');
 			return false;
 		}
