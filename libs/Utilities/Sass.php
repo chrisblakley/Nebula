@@ -119,18 +119,19 @@ if ( !trait_exists('Sass') ){
 				//Variables
 				$nebula_scss_variables = array(
 					'parent_partials_directory' => get_template_directory() . '/assets/scss/partials/',
+					'child_partials_directory' => get_stylesheet_directory() . '/assets/scss/partials/',
 					'template_directory' => '"' . get_template_directory_uri() . '"',
 					'stylesheet_directory' => '"' . get_stylesheet_directory_uri() . '"',
 					'this_directory' => '"' . $location_paths['uri'] . '"',
 				);
 
-				$primary_color = get_theme_mod('nebula_primary_color', $this->sass_color('primary')); //From Customizer or child theme Sass variable
+				$primary_color = rtrim(get_theme_mod('nebula_primary_color', $this->sass_color('primary')), ';'); //From Customizer or child theme Sass variable
 				$nebula_scss_variables['primary_color'] = ( !empty($primary_color) )? $primary_color : 'rgba(0, 0, 0, 0)';
 
-				$secondary_color = get_theme_mod('nebula_secondary_color', $this->sass_color('secondary')); //From Customizer or child theme Sass variable
+				$secondary_color = rtrim(get_theme_mod('nebula_secondary_color', $this->sass_color('secondary')), ';'); //From Customizer or child theme Sass variable
 				$nebula_scss_variables['secondary_color'] = ( !empty($secondary_color) )? $secondary_color : 'rgba(0, 0, 0, 0)';
 
-				$background_color = get_theme_mod('nebula_background_color', $this->sass_color('background')); //From Customizer or child theme Sass variable
+				$background_color = rtrim(get_theme_mod('nebula_background_color', $this->sass_color('background')), ';'); //From Customizer or child theme Sass variable
 				$nebula_scss_variables['background_color'] = ( !empty($background_color) )? $background_color : '#f6f6f6';
 
 				$all_scss_variables = apply_filters('nebula_scss_variables', $nebula_scss_variables);

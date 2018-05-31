@@ -56,3 +56,29 @@ textarea:-ms-input-placeholder {font-weight: 300; color: $placeholder_color; @in
 
 ::-ms-clear {display: none;} //Hide the IE clear "X"
 ::-ms-reveal {display: none;} //Hide the IE password reveal button
+
+//Nebula Search Forms
+form.nebula-search {position: relative; display: inline-block; margin: 0;
+	.input-group {align-items: center;} //Modify Bootstrap to center align Nebula search input content
+
+	input {max-width: 30px; padding: 0 6px; color: transparent; font-size: rem(12px); line-height: 1.15rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
+		&:hover {background-color: rgba(255, 255, 255, 0.3);}
+		&:focus,
+		&.focus {max-width: 210px; padding-left: 25px; cursor: auto; color: #fff; background-color: rgba(255, 255, 255, 0.3);}
+		&.open {max-width: 100%; padding-left: 25px; cursor: auto; color: #fff;}
+		&.active {border-color: $primary_color; box-shadow: 0 0 5px rgba(red($primary_color), green($primary_color), blue($primary_color), 0.5);}
+
+		&::-webkit-search-decoration,
+		&::-webkit-search-cancel-button {display: none;}
+
+		&:-moz-placeholder {color: transparent;}
+		&:-ms-input-placeholder {color: transparent;}
+		&::-webkit-input-placeholder {color: transparent;}
+
+		&:focus:-moz-placeholder, &.open:-moz-placeholder {color: #aaa;}
+		&:focus:-ms-input-placeholder, &.open:-ms-input-placeholder {color: #aaa;}
+		&:focus::-webkit-input-placeholder, &.open::-webkit-input-placeholder {color: #aaa;}
+	}
+
+	i, svg {position: absolute; left: 7px; font-size: rem(12px); color: rgba(255, 255, 255, 0.75); opacity: 0.5; pointer-events: none;}
+}

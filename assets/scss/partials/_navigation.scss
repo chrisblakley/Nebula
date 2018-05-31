@@ -79,10 +79,6 @@
 			li.menu-item {position: relative;
 				a {display: block; padding: 0 15px; color: #fff; font-size: rem(12px); line-height: rem(18px); color: #fff;}
 				@include nebula-dropdown(12px, 14px);
-
-				&.nebula-search {font-size: rem(14px);
-					input {height: 22px; font-size: rem(11px); line-height: 22px;}
-				}
 			}
 		}
 	}

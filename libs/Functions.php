@@ -2508,6 +2508,8 @@ trait Functions {
 		$autocomplete_query->posts = array_unique(array_merge($query1->posts, $query2->posts), SORT_REGULAR);
 		$autocomplete_query->post_count = count($autocomplete_query->posts);
 
+		$suggestions = array();
+
 		//Loop through the posts
 		if ( $autocomplete_query->have_posts() ){
 			while ( $autocomplete_query->have_posts() ){

@@ -473,8 +473,18 @@ if ( !trait_exists('Shortcodes') ){
 
 		public function accordion_item_shortcode($attributes, $content=''){
 			extract(shortcode_atts(array('class' => '', 'style' => '', 'title' => '', 'default' => 'show'), $attributes));
+			$unique_id = uniqid();
 
-			return '<div class="card"><div class="card-header" rol="tab"><a data-toggle="collapse" data-parent="#accordion" href="#collapse' . uniqid() . '"><h5 class="m-0"><i class="fas fa-plus"></i> ' . $title . '</h5></a></div><div id="' . $id . '" class="collapse ' . $default . ' ' . $class . '" role="tabpanel"><div class="card-block">' . $content . '</div></div></div>';
+			return '<div class="card">
+				<div class="card-header" rol="tab">
+					<a data-toggle="collapse" data-parent="#accordion" data-target="#collapse' . $unique_id . '" href="#">
+						<h5 class="m-0"><i class="fas fa-plus"></i> ' . $title . '</h5>
+					</a>
+				</div>
+				<div id="collapse' . $unique_id . '" class="collapse ' . $default . ' ' . $class . '" role="tabpanel">
+					<div class="card-block">' . $content . '</div>
+				</div>
+			</div>';
 		}
 
 		public function tooltip_shortcode($atts, $content=''){

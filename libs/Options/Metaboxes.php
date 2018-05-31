@@ -584,7 +584,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group" dependent-or="ga_tracking_id gtm_id">
 					<input type="checkbox" name="nebula_options[ga_anonymize_ip]" id="ga_anonymize_ip" value="1" <?php checked('1', !empty($nebula_options['ga_anonymize_ip'])); ?> /><label for="ga_anonymize_ip">Anonymize All IPs</label>
-					<p class="nebula-help-text short-help form-text text-muted">Anonymize the IP address in Google Analytics for all visitors. (Default: <?php echo $this->user_friendly_default('ga_anonymize_ip'); ?>)</p>
+					<p class="nebula-help-text short-help form-text text-muted">Anonymize the IP address in Google Analytics for all visitors. <a href="https://support.google.com/analytics/answer/2763052" target="_blank">How it works &raquo;</a> (Default: <?php echo $this->user_friendly_default('ga_anonymize_ip'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted"></p>
 					<p class="option-keywords"></p>
 				</div>

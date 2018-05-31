@@ -45,17 +45,6 @@
 	}
 }
 
-//Footer Search
-form.footer-search,
-#footer-section form.nebula-search {position: relative; display: block; margin: 10px auto 0 auto; width: 150px; z-index: 10;
-	@include media("md"){display: inline-block; margin: 0 0 0 10px; width: auto;};
-
-	&:before {color: rgba(255, 255, 255, 0.75);}
-	input {background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff;
-		&:focus {background: rgba(255, 255, 255, 0.3);}
-	}
-}
-
 //Footer Copyright
 .copyright-con {position: relative; padding-top: 20px; text-align: center; color: #fff; z-index: 10;
 	p {display: inline-block; font-size: rem(14px); color: #fff;}

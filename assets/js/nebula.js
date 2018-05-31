@@ -1082,13 +1082,15 @@ function keywordSearch(container, parent, value, filteredClass){
 
 //Menu Search Replacement
 function menuSearchReplacement(){
-	if ( jQuery('li.nebula-search').length ){
+	if ( jQuery('.nebula-search').length ){
 		var randomMenuSearchID = Math.floor((Math.random()*100)+1);
-		jQuery('li.nebula-search').html('<form class="wp-menu-nebula-search search nebula-search" method="get" action="' + nebula.site.home_url + '/"><label class="sr-only" for="nebula-menu-search-' + randomMenuSearchID + '">Search</label><input type="search" id="nebula-menu-search-' + randomMenuSearchID + '" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></form>');
-		jQuery('li.nebula-search input').on('focus', function(){
+		jQuery('.nebula-search').html('<form class="wp-menu-nebula-search nebula-search search footer-search" method="get" action="' + nebula.site.home_url + '/"><div class="input-group"><i class="fas fa-search"></i><label class="sr-only" for="nebula-menu-search-' + randomMenuSearchID + '">Search</label><input type="search" id="nebula-menu-search-' + randomMenuSearchID + '" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></div></form>');
+
+		jQuery('.nebula-search input').on('focus', function(){
 			jQuery(this).addClass('focus active');
 		});
-		jQuery('li.nebula-search input').on('blur', function(){
+
+		jQuery('.nebula-search input').on('blur', function(){
 			if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
 				jQuery(this).removeClass('focus active focusError').attr('placeholder', jQuery(this).attr('placeholder'));
 			} else {
@@ -2660,7 +2662,7 @@ function nebulaHelpers(){
 	}
 
 	nebula.dom.html.removeClass('no-js').addClass('js'); //In case Modernizr is not being used
-	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'nofollow external noopener'); //Add rel attributes to external links
+	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'nofollow external noopener'); //Add rel attributes to external links. Although search crawlers do use JavaScript, don't rely on this line to instruct them. Use standard HTML attributes whenever possible.
 
 	if ( 'deviceMemory' in navigator ){ //Device Memory - Chrome 64+
 		var deviceMemoryLevel = navigator.deviceMemory < 1 ? 'lite' : 'full';

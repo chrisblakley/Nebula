@@ -33,29 +33,6 @@
 
 .lazy-load {background-image: none !important;} //.js here may prevent true lazy loading due to race condition: https://github.com/chrisblakley/Nebula/issues/1558#issuecomment-361121336
 
-//Nebula Search Forms
-form.nebula-search {position: relative; display: inline-block; margin: 0;
-	input {max-width: 30px; padding: 0 6px; color: transparent; font-size: rem(12px); line-height: 1.15rem; border: 1px solid #ccc; border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
-		&:hover {background-color: #fff;}
-		&:focus {max-width: 210px; padding-left: 25px; background-color: #fff; cursor: auto; color: #292b2c;}
-		&.open {max-width: 100%; padding-left: 25px; background-color: #fff; cursor: auto; color: #292b2c;}
-		&.active {border-color: $primary_color; box-shadow: 0 0 5px rgba(red($primary_color), green($primary_color), blue($primary_color), .5);}
-
-		&::-webkit-search-decoration,
-		&::-webkit-search-cancel-button {display: none;}
-
-		&:-moz-placeholder {color: transparent;}
-		&:-ms-input-placeholder {color: transparent;}
-		&::-webkit-input-placeholder {color: transparent;}
-
-		&:focus:-moz-placeholder, &.open:-moz-placeholder {color: #aaa;}
-		&:focus:-ms-input-placeholder, &.open:-ms-input-placeholder {color: #aaa;}
-		&:focus::-webkit-input-placeholder, &.open::-webkit-input-placeholder {color: #aaa;}
-	}
-
-	i, svg {position: absolute; top: rem(4px); left: 7px; font-size: rem(12px); opacity: 0.5; pointer-events: none;}
-}
-
 .nebula_excerpt {white-space: nowrap;}
 
 //jQuery UI Autocomplete Hero Search
