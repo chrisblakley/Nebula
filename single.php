@@ -33,7 +33,7 @@
 					<div class="entry-meta">
 						<?php nebula()->post_meta('on'); ?> <?php nebula()->post_meta('by', 0); ?> <?php nebula()->post_meta('cat'); ?> <?php nebula()->post_meta('tags'); ?>
 					</div>
-				</div><!--/cols-->
+				</div><!--/col-->
 			</div><!--/row-->
 		</div><!--/container-->
 	<?php endif; ?>

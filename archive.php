@@ -39,7 +39,7 @@
 					<?php endif; ?>
 				</h1>
 				<?php rewind_posts(); //Reset the queue before running the loop. ?>
-			</div><!--/cols-->
+			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
 </section>

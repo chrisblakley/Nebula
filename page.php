@@ -24,7 +24,7 @@
 			<div class="row">
 				<div class="col">
 					<h1 class="entry-title"><?php the_title(); ?></h1>
-				</div><!--/cols-->
+				</div><!--/col-->
 			</div><!--/row-->
 		</div><!--/container-->
 	<?php endif; ?>

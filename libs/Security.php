@@ -118,9 +118,11 @@ if ( !trait_exists('Security') ){
 			$override = apply_filters('pre_at_remove_wp_ver_css_js', null, $src);
 			if ( isset($override) ){return;}
 
+/*
 			if ( strpos($src, 'ver=') ){
 				$src = remove_query_arg('ver', $src);
 			}
+*/
 
 			return $src;
 		}

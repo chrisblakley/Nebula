@@ -1,5 +1,5 @@
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-96371'; //Thursday, May 31, 2018 4:08:12 PM
+var CACHE_NAME = 'nebula-nebula-child-37797'; //Sunday, June 3, 2018 10:21:15 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';

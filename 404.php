@@ -25,7 +25,7 @@
 				<div class="col">
 					<h1 class="page-title">Not Found</h1>
 					<p class="page-meta">The page you requested could not be found.</p>
-				</div><!--/cols-->
+				</div><!--/col-->
 			</div><!--/row-->
 		</div><!--/container-->
 	<?php endif; ?>

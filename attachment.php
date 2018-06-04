@@ -28,7 +28,7 @@
 					<?php endif; ?>
 					<?php the_title(); ?>
 				</h1>
-			</div><!--/cols-->
+			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
 </section>

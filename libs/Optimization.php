@@ -125,7 +125,7 @@ if ( !trait_exists('Optimization') ){
 				return $src;
 			}
 
-			$src = rtrim(remove_query_arg('ver', $src), '?'); //Remove "?" if it is the last character after removing ?ver parameter
+			//$src = rtrim(remove_query_arg('ver', $src), '?'); //Remove "?" if it is the last character after removing ?ver parameter //Commenting this out to see if it works better with Service Workers resource caching...
 			$src = str_replace('?#', '#', $src); //Remove "?" if it is followed by "#" (when using #defer or #async with Nebula)
 
 			return $src;

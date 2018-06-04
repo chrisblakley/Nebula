@@ -23,7 +23,7 @@
 		<div class="row">
 			<div class="col">
 				<h1 class="page-title articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') !== '' )? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h1>
-			</div><!--/cols-->
+			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
 </section>

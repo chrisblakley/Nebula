@@ -24,7 +24,7 @@
 			<div class="col">
 				<h1 class="page-title"><i class="fas fa-fw fa-tag"></i> <?php echo single_tag_title('', false); ?></h1>
 				<div class="page-meta"><?php echo tag_description(); ?></div>
-			</div><!--/cols-->
+			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
 </section>

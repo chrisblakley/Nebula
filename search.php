@@ -46,7 +46,7 @@
 				<?php endif; ?>
 
 				<?php echo nebula()->search_form(); ?>
-			</div><!--/cols-->
+			</div><!--/col-->
 		</div><!--/row-->
 	</div><!--/container-->
 </section>

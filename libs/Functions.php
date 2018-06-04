@@ -1242,37 +1242,37 @@ trait Functions {
 		foreach ( $networks as $network ){
 			//Share API
 			if ( in_array($network, array('shareapi')) ){
-				echo '<a class="nebula-share webshare" href="#">Share</a>';
+				echo '<a class="nebula-share-btn nebula-share webshare" href="#">Share</a>';
 			}
 
 			//Facebook
 			if ( in_array($network, array('facebook', 'fb')) ){
-				echo '<a class="nebula-share facebook" href="http://www.facebook.com/sharer.php?u=' . $encoded_url . '&t=' . $encoded_title . '" target="_blank" rel="noopener">Share</a>';
+				echo '<a class="nebula-share-btn facebook" href="http://www.facebook.com/sharer.php?u=' . $encoded_url . '&t=' . $encoded_title . '" target="_blank" rel="noopener">Share</a>';
 			}
 
 			//Twitter
 			if ( in_array($network, array('twitter')) ){
-				echo '<a class="nebula-share twitter" href="https://twitter.com/intent/tweet?text=' . $encoded_title .  '&url=' . $encoded_url . '" target="_blank" rel="noopener">Tweet</a>';
+				echo '<a class="nebula-share-btn twitter" href="https://twitter.com/intent/tweet?text=' . $encoded_title .  '&url=' . $encoded_url . '" target="_blank" rel="noopener">Tweet</a>';
 			}
 
 			//Google+
 			if ( in_array($network, array('google', 'googleplus', 'google+', 'g+', 'gplus')) ){
-				echo '<a class="nebula-share google-plus" href="https://plus.google.com/share?url=' . $encoded_url . '" target="_blank" rel="noopener">Share</a>';
+				echo '<a class="nebula-share-btn google-plus" href="https://plus.google.com/share?url=' . $encoded_url . '" target="_blank" rel="noopener">Share</a>';
 			}
 
 			//LinkedIn
 			if ( in_array($network, array('linkedin', 'li')) ){
-				echo '<a class="nebula-share linkedin" href="http://www.linkedin.com/shareArticle?mini=true&url=' . $encoded_url . '&title=' . $encoded_title . '" target="_blank" rel="noopener">Share</a>';
+				echo '<a class="nebula-share-btn linkedin" href="http://www.linkedin.com/shareArticle?mini=true&url=' . $encoded_url . '&title=' . $encoded_title . '" target="_blank" rel="noopener">Share</a>';
 			}
 
 			//Pinterest
 			if ( in_array($network, array('pinterest', 'pin')) ){
-				echo '<a class="nebula-share pinterest" href="http://pinterest.com/pin/create/button/?url=' . $encoded_url . '" target="_blank" rel="noopener">Share</a>';
+				echo '<a class="nebula-share-btn pinterest" href="http://pinterest.com/pin/create/button/?url=' . $encoded_url . '" target="_blank" rel="noopener">Share</a>';
 			}
 
 			//Email
 			if ( in_array($network, array('email')) ){
-				echo '<a class="nebula-share email" href="mailto:?subject=' . $encoded_title . '&body=' . $encoded_url . '" target="_blank" rel="noopener">Email</a>';
+				echo '<a class="nebula-share-btn email" href="mailto:?subject=' . $encoded_title . '&body=' . $encoded_url . '" target="_blank" rel="noopener">Email</a>';
 			}
 		}
 

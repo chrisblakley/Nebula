@@ -112,25 +112,25 @@
 //Add a btn and bg helper class
 //@include add-color-class("accent", cyan);
 //@include add-color-class("accent", purple, white);
-@mixin add-color-class($name, $bg, $text: null, $active_bg: null, $active_text: null){
-	@if ( $text == null ){
-		$text: readable-color($bg);
+@mixin add-color-class($name, $bg, $fg: null, $active_bg: null, $active_fg: null){
+	@if ( $fg == null ){
+		$fg: readable-color($bg);
 	}
 
 	@if ( $active_bg == null ){
 		$active_bg: $bg;
 	}
 
-	@if ( $active_text == null ){
-		$active_text: readable-color($active_bg);
+	@if ( $active_fg == null ){
+		$active_fg: readable-color($active_bg);
 	}
 
 	.btn.btn-#{$name},
-	.btn.btn-#{$name}:visited {background-color: $bg; border-color: $bg; color: $text;
-		&:hover, &:focus {background: darken($bg, 10%); border-color: darken($bg, 10%); color: $text;}
+	.btn.btn-#{$name}:visited {background-color: $bg; border-color: $bg; color: $fg;
+		&:hover, &:focus {background: darken($bg, 10%); border-color: darken($bg, 10%); color: $fg;}
 		&:focus {box-shadow: 0 0 0 0.2rem rgba($bg, 0.25);}
 		&:active,
-		&.active {background: $active_bg; border-color: $active_bg; color: $active_text;}
+		&.active {background: $active_bg; border-color: $active_bg; color: $active_fg;}
 	}
 
 	.btn.btn-outline-#{$name},
@@ -141,6 +141,8 @@
 	}
 
 	.bg-#{$name} {background-color: $bg !important;}
+	.border-#{$name} {border-color: $bg !important;}
+	.#{$name}-color {color: $bg !important;}
 }
 
 //.element a {@include link-colors(red, orange, yellow, green, blue);}

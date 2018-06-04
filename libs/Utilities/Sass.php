@@ -68,6 +68,20 @@ if ( !trait_exists('Sass') ){
 					$force_all = true;
 				}
 
+				//Check if partial files have been modified since last Sass process
+				if ( empty($force_all) ){ //If already processing everything, don't need to check individual partial files
+					foreach ( $all_scss_locations as $scss_location ){
+						foreach ( $scss_location['imports'] as $imports_directory ){
+							foreach ( glob($imports_directory . '*') as $import_file ){
+								if ( $this->get_data('scss_last_processed') != '0' && $this->get_data('scss_last_processed')-filemtime($import_file) < -30 ){
+									$force_all = true;
+									break 3; //Break out of all 3 foreach loops
+								}
+							}
+						}
+					}
+				}
+
 				$this->update_data('need_sass_compile', 'true'); //Set this to true as we are compiling so we can use it as a flag to run some thing only once.
 
 				//Find and render .scss files at each location
