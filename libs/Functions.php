@@ -490,6 +490,8 @@ trait Functions {
 		if ( isset($override) ){return;}
 
 		//Check stylesheet directory, then template directory
+		//This allows the SW to be registered, but it cannot intercept fetch requests from this location. Therefore, it must be moved to the root directory.
+/*
 		if ( file_exists(get_stylesheet_directory() . '/assets/js/sw.js') ){
 			if ( !empty($uri) ){
 				return get_stylesheet_directory_uri() . '/assets/js/sw.js';
@@ -503,6 +505,7 @@ trait Functions {
 
 			return get_template_directory() . '/assets/js/sw.js';
 		}
+*/
 
 		//Otherwise return root level directory
 		if ( !empty($uri) ){
@@ -557,6 +560,7 @@ trait Functions {
 				"/(var META_ICON = ')(.+)(';)/m",
 				"/(var MANIFEST = ')(.+)(';)/m",
 				"/(var HOME_URL = ')(.+)(';)/m",
+				"/(var START_URL = ')(.+)(';)/m",
 			);
 
 			$new_cache_name = "nebula-" . strtolower(get_option('stylesheet')) . "-" . mt_rand(10000, 99999);
@@ -568,6 +572,7 @@ trait Functions {
 				"$1" . get_theme_file_uri('/assets/img/meta') . "/android-chrome-512x512.png" . "$3",
 				"$1" . $this->manifest_json_location() . "$3",
 				"$1" . home_url('/') . "$3",
+				"$1" . home_url('/') . "?utm_source=homescreen" . "$3",
 			);
 
 			$sw_js = preg_replace($find, $replace, $sw_js);
@@ -604,6 +609,7 @@ trait Functions {
 		$override = apply_filters('pre_nebula_manifest_json', null);
 		if ( isset($override) ){return;}
 
+		//
 		$manifest_json = '{
 			"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
 			"short_name": "' . get_bloginfo('name') . '",
@@ -3125,49 +3131,49 @@ trait Functions {
 
 		//Debug Info
 		if ( $name === 'debuginfo' || $name === '_debuginfo' || $name === '_nebula_debuginfo' || $name === '_nebula_debug' ){
-			$debug_data = 'Nebula ' . $this->version('full') . '<br />';
-			$debug_data .= $this->nebula_session_id() . '<br />';
+			$debug_data = 'Nebula ' . $this->version('full') . PHP_EOL;
+			$debug_data .= $this->nebula_session_id() . PHP_EOL;
 
 			//Logged-in User Info
 			$user_id = (int) $submission->get_meta('current_user_id');
 			if ( !empty($user_id) ){
 				$user_info = get_userdata($user_id);
 
-				$debug_data .= 'User: ' . $user_info->user_login . ' (' . $user_info->ID . ')<br/>';
-				$debug_data .= 'Name: ' . $user_info->display_name . '<br />';
-				$debug_data .= 'Email: ' . $user_info->user_email . '<br/>';
+				$debug_data .= 'User: ' . $user_info->user_login . ' (' . $user_info->ID . ')' . PHP_EOL;
+				$debug_data .= 'Name: ' . $user_info->display_name . PHP_EOL;
+				$debug_data .= 'Email: ' . $user_info->user_email . PHP_EOL;
 
 				if ( get_the_author_meta('phonenumber', $user_info->ID) ){
-					$debug_data .= 'Phone: ' . get_the_author_meta('phonenumber', $user_info->ID) . '<br/>';
+					$debug_data .= 'Phone: ' . get_the_author_meta('phonenumber', $user_info->ID) . PHP_EOL;
 				}
 
 				if ( get_the_author_meta('jobtitle', $user_info->ID) ){
-					$debug_data .= 'Title: ' . get_the_author_meta('jobtitle', $user_info->ID) . '<br/>';
+					$debug_data .= 'Title: ' . get_the_author_meta('jobtitle', $user_info->ID) . PHP_EOL;
 				}
 
 				if ( get_the_author_meta('jobcompany', $user_info->ID) ){
-					$debug_data .= 'Company: ' . get_the_author_meta('jobcompany', $user_info->ID) . '<br/>';
+					$debug_data .= 'Company: ' . get_the_author_meta('jobcompany', $user_info->ID) . PHP_EOL;
 				}
 
 				if ( get_the_author_meta('jobcompanywebsite', $user_info->ID) ){
-					$debug_data .= 'Company Website: ' . get_the_author_meta('jobcompanywebsite', $user_info->ID) . '<br/>';
+					$debug_data .= 'Company Website: ' . get_the_author_meta('jobcompanywebsite', $user_info->ID) . PHP_EOL;
 				}
 
 				if ( get_the_author_meta('usercity', $user_info->ID) && get_the_author_meta('userstate', $user_info->ID) ){
-					$debug_data .= get_the_author_meta('usercity', $user_info->ID) . ', ' . get_the_author_meta('userstate', $user_info->ID) . '<br/>';
+					$debug_data .= get_the_author_meta('usercity', $user_info->ID) . ', ' . get_the_author_meta('userstate', $user_info->ID) . PHP_EOL;
 				}
 
-				$debug_data .= $this->user_role() . '<br />'; //Role
+				$debug_data .= $this->user_role() . PHP_EOL; //Role
 			}
 
 			//Bot detection
 			if ( $this->is_bot() ){
-				$debug_data .= '<strong>Bot detected!</strong><br />';
+				$debug_data .= '<strong>Bot detected!</strong>' . PHP_EOL;
 			}
 
 			//Device information
 			if ( isset($_SERVER['HTTP_USER_AGENT']) ){
-				$debug_data .= $_SERVER['HTTP_USER_AGENT'] . '<br />';
+				$debug_data .= $_SERVER['HTTP_USER_AGENT'] . PHP_EOL;
 			}
 			if ( $this->get_option('device_detection') ){
 				$debug_data .= ucwords($this->get_device('formfactor'));
@@ -3179,7 +3185,7 @@ trait Functions {
 
 				$debug_data .= ', ' . $this->get_os();
 				$debug_data .= ', ' . $this->get_browser('full');
-				$debug_data .= '<br />';
+				$debug_data .= PHP_EOL;
 			}
 
 			//IP address
@@ -3188,7 +3194,7 @@ trait Functions {
 			if ( !empty($notable_poi) ){
 				$debug_data .= ' [' . $notable_poi . ']';
 			}
-			$debug_data .= '<br />';
+			$debug_data .= PHP_EOL;
 
 			return apply_filters('nebula_cf7_debug_data', $debug_data);
 		}

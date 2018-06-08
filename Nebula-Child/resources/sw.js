@@ -1,10 +1,11 @@
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-37797'; //Sunday, June 3, 2018 10:21:15 PM
+var CACHE_NAME = 'nebula-nebula-child-55477'; //Thursday, June 7, 2018 11:13:07 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
 var MANIFEST = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/inc/manifest.json';
 var HOME_URL = 'https://gearside.com/nebula/';
+var START_URL = 'https://gearside.com/nebula/?utm_source=homescreen';
 //END Automated edits
 
 var CACHE_FILES = [
@@ -13,6 +14,7 @@ var CACHE_FILES = [
 	META_ICON,
 	MANIFEST,
 	HOME_URL,
+	START_URL,
 ];
 
 //Install
@@ -181,7 +183,7 @@ function needNetworkRetrieval(request){
 
 //Offline request logic
 function offlineRequest(request, cache){
-	//console.log('[SW] We are offline (inside offline function). Cannot retrieve', event.request.url);
+	//console.log('[SW] We are offline (inside offline function). Cannot retrieve', request.url);
 
 	if ( request.mode === 'navigate' ){ //If the resource is an HTML page
 		//If the URL does not already end in a trailing slash check the cache for a match with one

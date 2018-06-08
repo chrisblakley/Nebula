@@ -82,14 +82,14 @@ if ( !trait_exists('Gutenberg') ){
 			wp_register_script(
 		        'nebula-latest-posts-block',
 		        get_template_directory_uri() . '/libs/Gutenberg/blocks/latest/latest.js',
-		        array( 'wp-blocks', 'wp-element' )
+		        array('wp-blocks', 'wp-element')
 		    );
 
 			//Editor Style
 		    wp_register_style(
 		        'nebula-latest-posts-block',
 		        get_template_directory_uri() . '/libs/Gutenberg/blocks/latest/latest.css',
-		        array( 'wp-edit-blocks' ),
+		        array('wp-edit-blocks'),
 		        null
 		    );
 
@@ -98,26 +98,104 @@ if ( !trait_exists('Gutenberg') ){
 		        'editor_style'  => 'nebula-latest-posts-block',
 		        'style' => 'nebula-latest-posts-block',
 		        'render_callback' => 'nebula_get_latest_post',
+		    ));
+		}
+
+		//function for the front-end
+		public function nebula_get_latest_post($attributes){
+			echo '<h1>testing</h1>';
+			return 'this would be posts! yay!'; //this never appears
+
+			$recent_posts = wp_get_recent_posts( array(
+		        'numberposts' => 3,
+		        'post_status' => 'publish',
 		    ) );
+
+		    if ( count( $recent_posts ) === 0 ) {
+		        return 'No posts';
+		    }
+
+		    $post = $recent_posts[0];
+		    $post_id = $post['ID'];
+
+		    return sprintf(
+		        '<a class="wp-block-nebula-latest-post" href="%1$s">%2$s</a>',
+		        esc_url( get_permalink( $post_id ) ),
+		        esc_html( get_the_title( $post_id ) )
+		    );
 		}
 
 
-
 	}
 
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+add_action('init', 'youtube_gutenberg_block');
+function youtube_gutenberg_block(){
 	if ( function_exists('register_block_type') ){
-		register_block_type('hiRoy/serverSide', array(
-			'render_callback' => 'hi_roy_render_callback',
-			'attributes' => array(
-				'images' => array(
-					'type' => 'array'
-				)
-			)
+		//Editor Script
+		wp_register_script(
+	        'nebula-youtube-block',
+	        get_template_directory_uri() . '/libs/Gutenberg/blocks/youtube/youtube.js',
+	        array('wp-blocks', 'wp-i18n', 'wp-element') //I dont think wp-i18n is needed for my simple trials
+	    );
+
+		register_block_type('nebula/youtube', array(
+			'editor_script' => 'nebula-youtube-block',
+			'render_callback' => 'nebula_youtube_block_frontend_output',
 		));
 	}
-
-	function hi_roy_render_callback($attributes){
-		$images = $attributes['images'];
-		return '<div><!-- put image gallery here--></div>';
-	}
 }
+
+function nebula_youtube_block_frontend_output($attribites){
+	return '<p>this will be a youtube video one day...</p>'; //returns will appear in the appropriate location
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
