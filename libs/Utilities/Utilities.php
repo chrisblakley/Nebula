@@ -707,14 +707,22 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Fuzzy meta sub key finder (Used to query ACF nested repeater fields).
-		//Example: 'key' => 'dates_%_start_date',
+		//Example: 'key' => 'dates_$_start_date' (repeater > field)
+		//Example: 'key' => 'dish_$_ingredients_$_ingredient' (repeater > repeater > field) Only the first repeater needs the _$_ but others won't hurt
 		public function fuzzy_posts_where($where){
 			$override = apply_filters('pre_nebula_fuzzy_posts_where', null, $where);
 			if ( isset($override) ){return;}
 
-			if ( strpos($where, '_%_') > -1 ){
-				$where = preg_replace("/meta_key = ([\'\"])(.+)_%_/", "meta_key LIKE $1$2_%_", $where);
+			global $wpdb;
+
+			if ( strpos($wpdb->remove_placeholder_escape($where), '_$_') > -1 ){
+				$where = preg_replace(
+					"/meta_key = ([\'\"])(.+)_\$_/",
+					"meta_key LIKE $1$2_\$_",
+					$wpdb->remove_placeholder_escape($where)
+				);
 			}
+
 			return $where;
 		}
 

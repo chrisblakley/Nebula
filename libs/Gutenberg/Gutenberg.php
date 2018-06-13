@@ -9,6 +9,11 @@ if ( !trait_exists('Gutenberg') ){
 				add_action('init', array($this, 'gutenberg_hello_world_block'));
 				add_action('init', array($this, 'gutenberg_style_test_block'));
 				add_action('init', array($this, 'gutenberg_latest_posts_block'));
+
+
+				add_action('init', array($this, 'youtube_gutenberg_block'));
+
+
 			}
 		}
 
@@ -126,43 +131,35 @@ if ( !trait_exists('Gutenberg') ){
 		}
 
 
-	}
-
-
-}
 
 
 
 
 
 
+		//Working Nebula Youtube Block
+		public function youtube_gutenberg_block(){
+			if ( function_exists('register_block_type') ){
+				//Editor Script
+				wp_register_script(
+			        'nebula-youtube-block',
+			        get_template_directory_uri() . '/libs/Gutenberg/blocks/youtube/youtube.js',
+			        array('wp-blocks', 'wp-i18n', 'wp-element') //I dont think wp-i18n is needed for my simple trials
+			    );
 
+				register_block_type('nebula/youtube', array(
+					'editor_script' => 'nebula-youtube-block',
+					//'script' => 'nebula-youtube-block', //Use this to create the element in the "save" object of the block JS file
+					'render_callback' => array($this, 'nebula_youtube_block_frontend_output'), //Use this to create the element in PHP (With attributes passed as a parameter)
+				));
+			}
+		}
 
-
-
-
-
-
-add_action('init', 'youtube_gutenberg_block');
-function youtube_gutenberg_block(){
-	if ( function_exists('register_block_type') ){
-		//Editor Script
-		wp_register_script(
-	        'nebula-youtube-block',
-	        get_template_directory_uri() . '/libs/Gutenberg/blocks/youtube/youtube.js',
-	        array('wp-blocks', 'wp-i18n', 'wp-element') //I dont think wp-i18n is needed for my simple trials
-	    );
-
-		register_block_type('nebula/youtube', array(
-			'editor_script' => 'nebula-youtube-block',
-			'render_callback' => 'nebula_youtube_block_frontend_output',
-		));
-	}
-}
-
-function nebula_youtube_block_frontend_output($attribites){
-	return '<p>this will be a youtube video one day...</p>'; //returns will appear in the appropriate location
-}
+		//Nebula Youtube Block front-end
+		public function nebula_youtube_block_frontend_output($attribites){
+			$youtube_data = nebula()->video_meta('youtube', $attribites['videoID']);
+			return '<div class="nebula-youtube embed-responsive embed-responsive-16by9"><iframe id="' . $youtube_data['safetitle'] . '" class="youtube embed-responsive-item" width="1024" height="768" src="//www.youtube.com/embed/' . $youtube_data['id'] . '?wmode=transparent&enablejsapi=1&rel=0" frameborder="0" allowfullscreen=""></iframe></div>';
+		}
 
 
 
@@ -173,29 +170,7 @@ function nebula_youtube_block_frontend_output($attribites){
 
 
 
+	} //close of trait
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+} //close of if gutenberg is active conditional
