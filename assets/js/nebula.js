@@ -431,8 +431,8 @@ function facebookSDK(){
 
 //Social sharing buttons
 function socialSharing(){
-	var encloc = encodeURI(window.location.href);
-	var enctitle = encodeURI(document.title);
+	var encloc = encodeURIComponent(window.location.href);
+	var enctitle = encodeURIComponent(document.title);
 	var popupTop = jQuery(window).height()/2-275;
 	var popupLeft = jQuery(window).width()/2-225;
 	var popupAttrs = 'top=' + popupTop + ', left=' + popupLeft + ', toolbar=0, location=0, menubar=0, directories=0, scrollbars=0, chrome=yes, personalbar=0';
@@ -3433,6 +3433,11 @@ function copyText(string, callback){
 	selectText(jQuery('#copydiv'), true, callback);
 	jQuery('#copydiv').remove();
 	return false;
+}
+
+//Sanitize text
+function nebulaSanitize(text){
+	return document.createElement('div').appendChild(document.createTextNode(text)).parentNode.innerHTML;
 }
 
 function chosenSelectOptions(){

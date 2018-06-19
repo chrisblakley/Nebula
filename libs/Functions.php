@@ -842,6 +842,7 @@ trait Functions {
 	//Categories post meta
 	public function post_categories($options=array()){
 		$defaults = apply_filters('nebula_post_categories_defaults', array(
+			'id' => get_the_ID(),
 			'icon' => true, //Show icon
 			'linked' => true, //Link to category archive
 			'show_uncategorized' => true, //Show "Uncategorized" category
@@ -858,7 +859,7 @@ trait Functions {
 			}
 
 			if ( is_object_in_taxonomy(get_post_type(), 'category') ){
-				$category_list = get_the_category_list(', ');
+				$category_list = get_the_category_list(', ', '', $data['id']);
 
 				if ( strip_tags($category_list) === 'Uncategorized' && !$data['show_uncategorized'] ){
 					return false;
@@ -880,6 +881,7 @@ trait Functions {
 	//Tags post meta
 	public function post_tags($options=array()){
 		$defaults = apply_filters('nebula_post_tags_defaults', array(
+			'id' => get_the_ID(),
 			'icon' => true, //Show icon
 			'force' => false,
 			'string' => false, //Return a string with no markup
@@ -888,7 +890,7 @@ trait Functions {
 		$data = array_merge($defaults, $options);
 
 		if ( get_theme_mod('post_tags', true) || $data['force'] ){
-			$tag_list = get_the_tag_list('', ', ');
+			$tag_list = get_the_tag_list('', ', ', '', $data['id']);
 			if ( $tag_list ){
 				$the_icon = '';
 				if ( $data['icon'] ){

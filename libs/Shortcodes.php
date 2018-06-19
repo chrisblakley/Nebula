@@ -164,7 +164,7 @@ if ( !trait_exists('Shortcodes') ){
 			extract(shortcode_atts(array("class" => '', "style" => '', "open" => '', "close" => ''), $atts));
 
 			if ( $content ){
-				$div = '<div class="nebula-div ' . $class . '" style="' . $style . '">' . $content . '</div>';
+				$div = '<div class="nebula-div ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div>';
 			} else {
 				if ( $close ){
 					$div = '</div>';

@@ -93,6 +93,8 @@
 <?php for ( $i = 2; file_exists(get_theme_file_path('/assets/img/meta') . '/og-thumb-' . $i . '.png'); $i++ ): //Check for additional Open Graph thumbnail images named "og-thumb-#.png" ?>
 	<meta property="og:image" content="<?php echo $image_meta_directory . '/og-thumb-' . $i . '.png' . $cache_query; ?>" />
 <?php endfor; ?>
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="600" />
 
 <?php if ( !has_site_icon() ): ?>
 	<link rel="shortcut icon" type="image/png" href="<?php echo $image_meta_directory . '/favicon.ico' . $cache_query; ?>" />
