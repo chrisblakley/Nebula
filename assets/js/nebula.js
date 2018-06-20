@@ -1762,6 +1762,8 @@ function cf7Functions(){
 		return false;
 	}
 
+	jQuery('.wpcf7-form p:empty').remove(); //Remove empty <p> tags within CF7 forms
+
 	formStarted = {};
 
 	//Replace submit input with a button so a spinner icon can be used instead of the CF7 spin gif (unless it has the class "no-button")
@@ -1930,6 +1932,7 @@ function cf7Functions(){
 		nv('identify', {'form_contacted': 'CF7 (' + formID + ') Submit Attempt'}, false);
 
 		jQuery('#' + e.detail.id).find('button#submit').removeClass('active');
+		jQuery('.invalid-feedback').addClass('hidden');
 	});
 }
 
@@ -2088,14 +2091,23 @@ function nebulaLiveValidator(){
 
 	//Highlight empty required fields when focusing/hovering on submit button
 	jQuery(document).on('mouseover focus', 'form [type="submit"], form #submit', function(){ //Must be deferred because Nebula replaces CF7 submit inputs with buttons
+		var invalidCount = 0;
+
 		jQuery(this).closest('form').find('[required], .wpcf7-validates-as-required').each(function(){
 			if ( jQuery.trim(jQuery(this).val()).length == 0 ){
 				jQuery(this).addClass('nebula-empty-required');
+				invalidCount++;
 			}
 		});
+
+		if ( invalidCount > 0 ){
+			var invalidCountText = ( invalidCount === 1 )? ' invalid field remains' : ' invalid fields remain';
+			jQuery('form [type="submit"], form #submit').attr('title', invalidCount + invalidCountText);
+		}
 	});
 	jQuery(document).on('mouseout blur', 'form [type="submit"], form #submit', function(){ //Must be deferred because Nebula replaces CF7 submit inputs with buttons
 		jQuery(this).closest('form').find('.nebula-empty-required').removeClass('nebula-empty-required');
+		jQuery('form [type="submit"], form #submit').removeAttr('title');
 	});
 }
 
@@ -2115,10 +2127,21 @@ function applyValidationClasses(element, validation, showFeedback){
 		element.removeClass('wpcf7-not-valid is-invalid is-valid').parent().find('.wpcf7-not-valid-tip').remove();
 	}
 
-	if ( validation === 'feedback' || showFeedback ){
-		element.parent().find('.invalid-feedback').removeClass('hidden');
-	} else {
-		element.parent().find('.invalid-feedback').addClass('hidden');
+	//Find the invalid feedback element (if it exists)
+	var feedbackElement = false;
+	if ( element.parent().find('.invalid-feedback').length ){
+		feedbackElement = element.parent().find('.invalid-feedback');
+	} else if ( element.closest('.form-group').find('.invalid-feedback').length ){
+		feedbackElement = element.closest('.form-group').find('.invalid-feedback');
+	}
+
+	if ( feedbackElement ){
+		if ( validation === 'feedback' || showFeedback ){
+			feedbackElement.removeClass('hidden').show();
+		} else {
+			feedbackElement.addClass('hidden').hide();
+			element.removeClass('wpcf7-not-valid is-invalid is-valid').parent().find('.wpcf7-not-valid-tip').remove();
+		}
 	}
 }
 
