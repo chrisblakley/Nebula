@@ -28,7 +28,7 @@ if ( !trait_exists('Scripts') ){
 		public function register_scripts(){
 			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
-			wp_register_style('nebula-font_awesome', get_template_directory_uri() . '/assets/css/vendor/fontawesome-all.min.css', null, '5.0.10', 'all');
+			wp_register_style('nebula-font_awesome', get_template_directory_uri() . '/assets/css/vendor/fontawesome-all.min.css', null, '5.1.0', 'all');
 			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.0.3/jquery.mmenu.all.css', null, '7.0.3', 'all');
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap'), $this->version('full'), 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, $this->version('full'), 'all');
@@ -181,6 +181,7 @@ if ( !trait_exists('Scripts') ){
 					'year' => get_the_date('Y'),
 					'categories' => $this->post_categories(array('string' => true)),
 					'tags' => $this->post_tags(array('string' => true)),
+					'page' => ( get_query_var('paged') )? get_query_var('paged') : 1
 				),
 				'dom' => null,
 			);

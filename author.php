@@ -12,22 +12,7 @@
 	get_header();
 ?>
 
-<section id="bigheadingcon">
-	<div class="custom-color-overlay"></div>
-
-	<?php if ( get_theme_mod('menu_position', 'over') === 'over' ): ?>
-		<?php get_template_part('inc/navigation'); ?>
-	<?php endif; ?>
-
-	<div class="container title-desc-con">
-		<div class="row">
-			<div class="col">
-				<h1 class="page-title articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') !== '' )? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h1>
-			</div><!--/col-->
-		</div><!--/row-->
-	</div><!--/container-->
-</section>
-
+<?php get_template_part('inc/headercontent'); ?>
 <?php get_template_part('inc/nebula_drawer'); ?>
 
 <?php if ( have_posts() ){ the_post(); } //Queue the first post then reset it before the loop. ?>

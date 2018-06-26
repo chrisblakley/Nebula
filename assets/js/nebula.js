@@ -29,6 +29,7 @@ jQuery(function(){
 	initVideoTracking();
 	animationTriggers();
 	nebulaScrollTo();
+	initBootstrapFunctions();
 
 	visibilityChangeActions();
 	nebula.dom.document.on('visibilitychange', function(){
@@ -53,7 +54,6 @@ jQuery(window).on('load', function(){
 
 	performanceMetrics();
 	lazyLoadAssets();
-	initBootstrapFunctions();
 
 	//Navigation
 	overflowDetector();

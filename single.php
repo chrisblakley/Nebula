@@ -17,28 +17,7 @@
 	get_header();
 ?>
 
-<section id="bigheadingcon">
-	<div class="custom-color-overlay"></div>
-
-	<?php if ( get_theme_mod('menu_position', 'over') === 'over' ): ?>
-		<?php get_template_part('inc/navigation'); ?>
-	<?php endif; ?>
-
-	<?php if ( get_theme_mod('title_location', 'hero') === 'hero' ): ?>
-		<div class="container title-desc-con">
-			<div class="row">
-				<div class="col">
-					<h1 class="entry-title"><?php the_title(); ?></h1>
-
-					<div class="entry-meta">
-						<?php nebula()->post_meta('on'); ?> <?php nebula()->post_meta('by', 0); ?> <?php nebula()->post_meta('cat'); ?> <?php nebula()->post_meta('tags'); ?>
-					</div>
-				</div><!--/col-->
-			</div><!--/row-->
-		</div><!--/container-->
-	<?php endif; ?>
-</section>
-
+<?php get_template_part('inc/headercontent'); ?>
 <?php get_template_part('inc/nebula_drawer'); ?>
 
 <section id="content-section">
