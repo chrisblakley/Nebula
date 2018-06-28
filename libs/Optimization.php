@@ -507,6 +507,11 @@ if ( !trait_exists('Optimization') ){
 		//Lazy-load anything
 		//This markup can be, and is used hard-coded in other places.
 		public function lazy_load($html=''){
+			//Ignore lazy loading wrappers on AJAX requests
+			if ( wp_doing_ajax() ){
+				echo $html;
+			}
+
 			?>
 			<samp class="nebula-lazy-position"></samp>
 			<noscript class="nebula-lazy">

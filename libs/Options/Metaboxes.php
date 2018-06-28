@@ -571,6 +571,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group" dependent-or="ga_tracking_id gtm_id">
 					<input type="checkbox" name="nebula_options[ga_displayfeatures]" id="ga_displayfeatures" value="1" <?php checked('1', !empty($nebula_options['ga_displayfeatures'])); ?> /><label for="ga_displayfeatures">Display Features</label>
 					<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank" rel="noopener">Google display features</a> in the analytics tag. (Default: <?php echo $this->user_friendly_default('ga_displayfeatures'); ?>)</p>
+					<p class="dependent-note hidden">This option is dependent on a Google Analytics Tracking ID.</p>
 					<p class="nebula-help-text more-help form-text text-muted">This enables Advertising Features in Google Analytics, such as Remarketing, Demographics and Interest Reporting, and more.</p>
 					<p class="option-keywords"></p>
 				</div>
@@ -578,6 +579,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group" dependent-or="ga_tracking_id gtm_id">
 					<input type="checkbox" name="nebula_options[ga_linkid]" id="ga_linkid" value="1" <?php checked('1', !empty($nebula_options['ga_linkid'])); ?> /><label for="ga_linkid">Enhanced Link Attribution (Link ID)</label>
 					<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-link-attribution" target="_blank" rel="noopener">Enhanced Link Attribution</a> in the Property Settings of the Google Analytics Admin. Be sure to enable it in Google Analytics too! (Default: <?php echo $this->user_friendly_default('ga_linkid'); ?>)</p>
+					<p class="dependent-note hidden">This option is dependent on a Google Analytics Tracking ID.</p>
 					<p class="nebula-help-text more-help form-text text-muted">This improves the accuracy of your In-Page Analytics report by automatically differentiating between multiple links to the same URL on a single page by using link element IDs. Use the <a href="https://chrome.google.com/webstore/detail/page-analytics-by-google/fnbdnhhicmebfgdgglcdacdapkcihcoh" target="_blank" rel="noopener">Page Analytics by Google</a> Chrome extension to view the page overlay.</p>
 					<p class="option-keywords">minor page speed impact</p>
 				</div>
@@ -585,6 +587,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group" dependent-or="ga_tracking_id gtm_id">
 					<input type="checkbox" name="nebula_options[ga_anonymize_ip]" id="ga_anonymize_ip" value="1" <?php checked('1', !empty($nebula_options['ga_anonymize_ip'])); ?> /><label for="ga_anonymize_ip">Anonymize All IPs</label>
 					<p class="nebula-help-text short-help form-text text-muted">Anonymize the IP address in Google Analytics for all visitors. <a href="https://support.google.com/analytics/answer/2763052" target="_blank">How it works &raquo;</a> (Default: <?php echo $this->user_friendly_default('ga_anonymize_ip'); ?>)</p>
+					<p class="dependent-note hidden">This option is dependent on a Google Analytics Tracking ID.</p>
 					<p class="nebula-help-text more-help form-text text-muted"></p>
 					<p class="option-keywords"></p>
 				</div>
@@ -592,6 +595,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group" dependent-or="ga_tracking_id">
 					<input type="checkbox" name="nebula_options[ga_server_side_fallback]" id="ga_server_side_fallback" value="1" <?php checked('1', !empty($nebula_options['ga_server_side_fallback'])); ?> /><label for="ga_server_side_fallback">Server-Side Fallback</label>
 					<p class="nebula-help-text short-help form-text text-muted">If Google Analytics is blocked, or if JavaScript is disabled, capture GA data using a server-side payload. (Default: <?php echo $this->user_friendly_default('ga_server_side_fallback'); ?>)</p>
+					<p class="dependent-note hidden">This option is dependent on a Google Analytics Tracking ID.</p>
 					<p class="option-keywords"></p>
 				</div>
 

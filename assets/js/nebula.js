@@ -2278,7 +2278,7 @@ function lazyLoadHTML(){
 	});
 
 	//Wait for a scroll event to load the rest (use var so it can be turned off)
-	var lazyLoadScrollHandler = function(){
+	var loadLazyElements = function(){
 		jQuery('noscript.nebula-lazy').each(function(){
 			//The actual lazy loaded element as a jQuery object
 			var thisContent = jQuery(jQuery(this).text()).on('load loadeddata', function(){
@@ -2291,13 +2291,16 @@ function lazyLoadHTML(){
 		svgImgs();
 
 		jQuery('.lazy-load').removeClass('lazy-load').addClass('lazy-loaded'); //Load background images
-		jQuery(window).off('scroll', lazyLoadScrollHandler); //Stop listening to scroll now that all images are loaded
+
+		//Stop listening for load triggers
+		jQuery(window).off('scroll', loadLazyElements);
 	};
 
 	//Load the rest of the files on scroll (or if the page loads pre-scrolled)
-	nebula.dom.window.on('scroll', lazyLoadScrollHandler);
+	nebula.dom.window.on('scroll', loadLazyElements);
+	nebula.dom.window.on('nebula_load', loadLazyElements); //This listener does not get turned off.
 	if ( jQuery(window).scrollTop() > 200 ){
-		lazyLoadScrollHandler();
+		loadLazyElements();
 	}
 }
 
