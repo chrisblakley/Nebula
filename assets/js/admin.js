@@ -186,54 +186,9 @@ function wysiwygMods(){
 
 //Initialization alerts
 function initializationStuff(){
-	//Re-initialize confirm dialog.
-	jQuery('.reinitializenebula').on('click', function(){
-		if ( !confirm('This will reset all Nebula options and reset the homepage content! Are you sure you want to re-initialize?') ) {
-			return false;
-		}
-	});
-
 	//Initialize confirm dialog.
 	jQuery('#run-nebula-initialization').on('click', function(){
 		if ( !confirm('This will reset some WordPress settings, all Nebula options, and reset the homepage content! Are you sure you want to initialize?') ) {
-			return false;
-		} else {
-			jQuery('.nebula-activated-description').html('<i class="fas fa-spinner"></i> Running initialization...');
-
-			jQuery.ajax({
-				type: "POST",
-				url: nebula.site.ajax.url,
-				data: {
-					action: 'nebula_initialization',
-					ajax: true
-				},
-				success: function(data){
-					if ( data.indexOf('successful-nebula-init') !== -1 ){
-						jQuery('.nebula-activated-title').html('<i class="fas fa-check" style="color: green;"></i> Nebula has been initialized!');
-						jQuery('.nebula-activated-description').html('Settings have been updated. The home page has been updated and has been set as the static front page in <a href="options-reading.php">Settings > Reading</a>.<br /><strong>Next step:</strong> Configure <a href="themes.php?page=nebula_options">Nebula Options</a>');
-						return false;
-					} else {
-						jQuery('#nebula-activate-success').removeClass('updated').addClass('error');
-						jQuery('.nebula-activated-title').html('<i class="fas fa-times" style="color: #dd3d36;"></i> AJAX Initialization Error.');
-						jQuery('.nebula-activated-description').html('AJAX initialization has failed. Attempting standard initialization. <strong>This will reload the page in 2 seconds...</strong>');
-						setTimeout(function(){
-							jQuery('.nebula-activated-title').html('<i class="fas fa-spinner" style="color: #dd3d36;"></i> AJAX Initialization Error.');
-							window.location = 'themes.php?nebula-initialization=true';
-						}, 2000);
-					}
-				},
-				error: function(XMLHttpRequest, textStatus, errorThrown){
-					jQuery('#nebula-activate-success').removeClass('updated').addClass('error');
-					jQuery('.nebula-activated-title').html('<i class="fas fa-times" style="color: #dd3d36;"></i> AJAX Initialization Error.');
-					jQuery('.nebula-activated-description').html('An AJAX error has occurred. Attempting standard initialization. <strong>This will reload the page in 2 seconds...</strong>');
-					setTimeout(function(){
-						jQuery('.nebula-activated-title').html('<i class="fas fa-spinner" style="color: #dd3d36;"></i> AJAX Initialization Error.');
-						window.location = 'themes.php?nebula-initialization=true';
-					}, 2000);
-				},
-				timeout: 60000
-			});
-
 			return false;
 		}
 	});

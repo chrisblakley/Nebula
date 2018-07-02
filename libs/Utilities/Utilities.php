@@ -831,6 +831,38 @@ if ( !trait_exists('Utilities') ){
 			return $total_size;
 		}
 
+		//Recursively copy files/directories
+		public function xcopy($source, $destination, $permissions = 0755){
+			//Check for symlinks
+			if ( is_link($source) ){
+				return symlink(readlink($source), $destination);
+			}
+
+			//Simple copy for a file
+			if ( is_file($source) ){
+				return copy($source, $destination);
+			}
+
+			//Make destination directory
+			if ( !is_dir($destination) ){
+				mkdir($destination, $permissions);
+			}
+
+			//Loop through the folder
+			$dir = dir($source);
+			while ( false !== $entry = $dir->read() ){
+				// Skip pointers
+				if ( $entry == '.' || $entry == '..' ){
+					continue;
+				}
+
+				$this->xcopy("$source/$entry", "$destination/$entry", $permissions); //Deep copy directories
+			}
+
+			$dir->close();
+			return true;
+		}
+
 		//Check if a value is a UTC Timestamp
 		//This function only validates UTC timestamps between April 26, 1970 and May 18, 2033 to avoid conflicts (like phone numbers).
 		public function is_utc_timestamp($timestamp){

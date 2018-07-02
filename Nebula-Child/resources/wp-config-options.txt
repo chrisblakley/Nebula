@@ -87,7 +87,7 @@ define('WP_CACHE', true); //WordPress Cache
 //Compression
 define('COMPRESS_CSS', true);
 define('COMPRESS_SCRIPTS', true);
-define('CONCATENATE_SCRIPTS', true); //This combines resources on the WP admin. It is true by default. Changing to false can help debugging admin scripts.
+define('CONCATENATE_SCRIPTS', true); //This combines resources on the WP admin only. It is true by default. Changing to false can help debugging admin scripts.
 define('ENFORCE_GZIP', true);
 
 

@@ -18,11 +18,14 @@ if ( !trait_exists('Automation') ){
 
 			add_action('after_switch_theme', array($this, 'activation_notice'));
 
-			if ( isset($_GET['nebula-initialization']) && $pagenow === 'themes.php' ){ //Or if initializing the theme without AJAX
+			if ( isset($_GET['nebula-initialization']) && $pagenow === 'themes.php' ){
+				add_action('admin_init', array($this, 'initialization'));
+			}
+
+			if ( (isset($_GET['nebula-initialization']) || isset($_GET['initialization-success'])) && $pagenow === 'themes.php' ){
 				add_action('admin_notices', array($this, 'activation'));
 			}
 
-			add_action('wp_ajax_nebula_initialization', array($this, 'initialization'));
 			add_action('admin_init', array($this, 'set_dates'));
 
 			//add_action('admin_init', array($this, 'force_settings' ), 9); //Uncomment this line to force an initialization date.
@@ -194,29 +197,24 @@ if ( !trait_exists('Automation') ){
 				$this->express_automation();
 				$this->set_dates();
 			}
-
-			$is_ajax_initialization = !isset($_GET['nebula-initialization']); //Detect if non-AJAX initialization is needed. If this $_GET is true, it is not AJAX.
-			if ( !$is_ajax_initialization ){
-				$this->initialization(false); //@TODO "Nebula" 0: Wrap in a try/catch. In PHP7 fatal errors can be caught!
-			}
 			?>
 			<?php if ( is_child_theme() ): ?>
 				<div id='nebula-activate-success' class='updated'>
 					<p>
 						<strong class="nebula-activated-title">Nebula child theme has been activated.</strong><br />
 						<span class="nebula-activated-description">
-							Initialization can only be run on the parent theme. If menus were created in the parent theme, they may need to be <a href="nav-menus.php">re-assigned to their corresponding locations</a>.<br />
-							<strong>Next step:</strong> Re-activate Nebula (Parent) to initialize, or configure <a href="themes.php?page=nebula_options">Nebula Options</a>
+							If menus were created in the parent theme (before initialization), they may need to be <a href="nav-menus.php">re-assigned to their corresponding locations</a>.<br />
+							<strong>Next step:</strong> Configure <a href="themes.php?page=nebula_options">Nebula Options</a>
 						</span>
 					</p>
 				</div>
-			<?php elseif ( !$is_ajax_initialization && current_user_can('manage_options') ): ?>
+			<?php elseif ( (isset($_GET['nebula-initialization']) || isset($_GET['initialization-success'])) && current_user_can('manage_options') ): ?>
 				<div id='nebula-activate-success' class='updated'>
 					<p>
 						<strong class="nebula-activated-title">Nebula has been initialized!</strong><br />
 						<span class="nebula-activated-description">
 							Options have been updated. The home page has been updated and has been set as the static front page in <a href='options-reading.php'>Settings > Reading</a>.<br />
-							<strong>Next step:</strong> Activate Nebula Child (below), or configure <a href='themes.php?page=nebula_options'>Nebula Options</a>
+							<strong>Next step:</strong> Configure <a href='themes.php?page=nebula_options'>Nebula Options</a>
 						</span>
 					</p>
 				</div>
@@ -239,7 +237,7 @@ if ( !trait_exists('Automation') ){
 						<p>
 							<strong class="nebula-activated-title">Nebula has been activated!</strong><br />
 							<?php if ( current_user_can('manage_options') ): ?>
-								<span class="nebula-activated-description">To run the automated Nebula initialization process, <a id='run-nebula-initialization' href='themes.php?nebula-initialization=true' style='color: #dd3d36;' title='This will reset some Wordpress core settings and all Nebula options!'>click here</a>. If planning on using a Nebula child theme, initialize <strong>before</strong> activating the child theme.</span>
+								<span class="nebula-activated-description">To run the automated Nebula initialization process, <a id='run-nebula-initialization' href='themes.php?nebula-initialization=true' style='color: #dd3d36;' title='This will reset some Wordpress core settings and all Nebula options!'>click here</a>. This initialization process will move and activate the Nebula child theme automatically (if it does not already exist).</span>
 							<?php else: ?>
 								You have activated Nebula. Contact the site administrator to run the automated Nebula initialization processes.
 							<?php endif; ?>
@@ -248,13 +246,11 @@ if ( !trait_exists('Automation') ){
 				<?php endif; ?>
 			<?php endif; ?>
 			<?php
-
-			$this->update_data('initialized', time());
 			return;
 		}
 
-		//Nebula Full Initialization (Triggered by either AJAX or manually)
-		public function initialization($ajax=true){ //This default parameter doesn't actually work with AJAX (so we're using the $_POST data below)...
+		//Nebula Full Initialization
+		public function initialization(){
 			if ( current_user_can('manage_options') ){
 				$this->usage('Initialization');
 				$this->express_automation();
@@ -265,11 +261,12 @@ if ( !trait_exists('Automation') ){
 					$this->update_data('initialized', time());
 				}
 
+				$activated_child = $this->initialization_activate_child_theme();
+
 				$this->render_scss('all'); //Re-render all SCSS files.
 
-				if ( !empty($ajax) || !empty($_POST['ajax']) ){ //If AJAX initialization
-					echo 'successful-nebula-init'; //AJAX listens for this string to determine sucess.
-					wp_die();
+				if ( $activated_child ){
+					wp_redirect(admin_url('/themes.php?initialization-success'), 301); //Redirect to show new theme activated
 				}
 			}
 		}
@@ -412,6 +409,34 @@ if ( !trait_exists('Automation') ){
 		//Deactivate default sidebar widgets.
 		public function initialization_deactivate_widgets(){
 			update_option('sidebars_widgets', array());
+		}
+
+		//Move and activate the Nebula child theme
+		public function initialization_activate_child_theme(){
+			$theme_name = 'Nebula-Child';
+			$source = get_template_directory() . '/' . $theme_name;
+			$destination = WP_CONTENT_DIR . '/themes/' . $theme_name;
+
+			//Don't do anything if not an admin user or already using a child theme or if Nebula-Child already exists in the themes directory
+			if ( !current_user_can('manage_options') || is_child_theme() || file_exists($destination) ){
+				return false;
+			}
+
+			//Make sure child theme directory exists inside the parent theme
+			if ( file_exists($source) ){
+				$this->xcopy($source, $destination); //Copy to the themes directory
+
+				//Activate the child theme
+				if ( file_exists($destination) ){ //Make sure copy was successful
+					$nebula_child_theme = wp_get_theme($theme_name);
+					if ( $nebula_child_theme->exists() ){
+						switch_theme($theme_name); //Activate the child theme
+						return true; //This triggers a refresh to show the new active theme
+					}
+				}
+			}
+
+			return false;
 		}
 
 		public function is_initialized_before(){
