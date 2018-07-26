@@ -123,43 +123,54 @@ if ( !trait_exists('Options') ){
 			if ( !$this->is_admin_page(true) && $this->get_option('jquery_version') !== 'wordpress' ){
 				$footer = ( !apply_filters('nebula_prevent_jquery_footer', false) && $this->get_option('jquery_version') === 'footer' )? true : false; //Whether to load jQuery in the head or footer
 				wp_deregister_script('jquery-core');
-				return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js', null, null, '3.3.1', $footer);
+				return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js', null, null, '2.2.4', $footer); //jQuery version 3 is asynchronous so beware of the `ready` and `load` not always triggering in that order.
 			}
 		}
 
 		//Register or return the requested Bootstrap file.
 		public function bootstrap($file=false){
-			if ( $this->get_option('bootstrap_version') === 'bootstrap3' ){
-				//Bootstrap 3 (IE8+ Support)
-				if ( $file === 'css' ){
-					return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css', null, '3.3.7', 'all');
-				} elseif ( $file === 'js' ){
-					return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js', 'defer', array('jquery-core'), '3.3.7', true);
-				} elseif ( $file === 'reboot' ){
-					return false;
-				} else {
-					return 'v3';
-				}
-			} elseif ( $this->get_option('bootstrap_version') === 'bootstrap4a5' ){
-				//Bootstrap 4 alpha 5 (IE9+ Support)
-				if ( $file === 'css' ){
-					return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css', null, '4.0.0a5', 'all');
-				} elseif ( $file === 'js' ){
-					return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/js/bootstrap.min.js', 'defer', array('jquery-core'), '4.0.0a5', true);
-				} elseif ( $file === 'reboot' ){
-					return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap-reboot.min.css';
-				} else {
-					return 'v4a5';
+			if ( !$this->is_admin_page() ){
+				if ( $this->get_option('bootstrap_version') === 'bootstrap3' ){
+					//Bootstrap 3 (IE8+ Support)
+					if ( $file === 'css' ){
+						return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css', null, '3.3.7', 'all');
+					} elseif ( $file === 'js' ){
+						return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js', 'defer', array('jquery-core'), '3.3.7', true);
+					} elseif ( $file === 'reboot' ){
+						return false;
+					} else {
+						return 'v3';
+					}
+				} elseif ( $this->get_option('bootstrap_version') === 'bootstrap4a5' ){
+					//Bootstrap 4 alpha 5 (IE9+ Support)
+					if ( $file === 'css' ){
+						return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css', null, '4.0.0a5', 'all');
+					} elseif ( $file === 'js' ){
+						return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/js/bootstrap.min.js', 'defer', array('jquery-core'), '4.0.0a5', true);
+					} elseif ( $file === 'reboot' ){
+						return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap-reboot.min.css';
+					} else {
+						return 'v4a5';
+					}
+				} elseif ( $this->get_option('bootstrap_version') === 'grid' ){
+					//Bootstrap Reboot and Grid only
+					if ( $file === 'css' ){
+						return wp_register_style('nebula-bootstrap', get_template_directory_uri() . '/assets/css/vendor/bootstrap-reboot-grid.css', null, '4.1.3', 'all'); //Served locally to combine multiple resources (Reboot and Grid)
+					} elseif ( $file === 'js' ){
+						return false;
+					} else {
+						return 'grid';
+					}
 				}
 			}
 
 			//Latest (IE10+)
 			if ( $file === 'css' ){
-				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css', null, '4.1.1', 'all');
+				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css', null, '4.1.3', 'all');
 			} elseif ( $file === 'js' ){
-				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.bundle.min.js', 'defer', array('jquery-core'), '4.1.1', true);
+				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js', 'defer', array('jquery-core'), '4.1.3', true);
 			} elseif ( $file === 'reboot' ){
-				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap-reboot.min.css';
+				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.2/css/bootstrap-reboot.min.css';
 			} else {
 				return 'latest';
 			}
@@ -238,6 +249,7 @@ if ( !trait_exists('Options') ){
 				//Functions Tab
 				'jquery_version' => 'wordpress',
 				'bootstrap_version' => 'latest',
+				'allow_bootstrap_js' => 1,
 				'limit_image_dimensions' => 0,
 				'admin_bar' => 1,
 				'admin_notices' => 1,
@@ -269,6 +281,7 @@ if ( !trait_exists('Options') ){
 				'hostnames' => '',
 				'google_search_console_verification' => '',
 				'facebook_custom_audience_pixel_id' => '',
+				'observe_dnt' => 0,
 				'ga_server_side_fallback' => 0,
 				'cd_gacid' => '',
 				'cd_hitid' => '',

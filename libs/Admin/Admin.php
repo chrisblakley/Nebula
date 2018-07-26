@@ -20,6 +20,8 @@ if ( !trait_exists('Admin') ){
 				$this->DashboardHooks(); //Register Dashboard hooks
 				$this->UsersHooks(); //Register Users hooks
 
+				add_filter('nebula_brain', array($this, 'admin_brain'));
+
 				//Enable editor style for the TinyMCE WYSIWYG editor.
 				add_editor_style($this->bootstrap('reboot'));
 				add_editor_style('assets/css/tinymce.css');
@@ -113,6 +115,12 @@ if ( !trait_exists('Admin') ){
 
 			add_action('admin_init', array($this, 'theme_json'));
 			add_filter('puc_request_update_result_theme-Nebula', array($this, 'theme_update_version_store'), 10, 2); //Action handle must match unique name
+		}
+
+		//Add info to the brain variable for admin pages
+		public function admin_brain($brain){
+			$brain['site']['admin_url'] = get_admin_url();
+			return $brain;
 		}
 
 		//Force expire query transients when posts/pages are saved.
@@ -239,6 +247,14 @@ if ( !trait_exists('Admin') ){
 				'icon' => '<i class="nebula-admin-fa fab fa-fw fa-microsoft"></i>',
 				'url' => 'https://www.bing.com/toolbox/webmaster'
 			);
+
+			if ( is_plugin_active('wordpress-seo/wp-seo.php') ){ //If Yoast SEO is active link to its sitemap
+				$third_party_tools['administrative'][] = array(
+					'name' => 'Yoast SEO Sitemap XML',
+					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-sitemap"></i>',
+					'url' => home_url('/') . 'sitemap_index.xml'
+				);
+			}
 
 			if ( $this->get_option('adwords_remarketing_conversion_id') ){
 				$third_party_tools['administrative'][] = array(

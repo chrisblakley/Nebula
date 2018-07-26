@@ -362,7 +362,7 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_assets_metabox($nebula_options){
 			?>
 				<div class="form-group">
-					<label for="bootstrap_version">jQuery Version (and Load Location)</label>
+					<label for="jquery_version">jQuery Version (and Load Location)</label>
 					<select name="nebula_options[jquery_version]" id="jquery_version" class="form-control nebula-validate-select">
 						<option value="wordpress" <?php selected('wordpress', $nebula_options['jquery_version']); ?>>WordPress (Head)</option>
 						<option value="latest" <?php selected('latest', $nebula_options['jquery_version']); ?>>Latest (Head)</option>
@@ -377,12 +377,20 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="bootstrap_version">Bootstrap Version</label>
 					<select name="nebula_options[bootstrap_version]" id="bootstrap_version" class="form-control nebula-validate-select">
 						<option value="latest" <?php selected('latest', $nebula_options['bootstrap_version']); ?>>Latest (IE10+)</option>
+						<option value="grid" <?php selected('grid', $nebula_options['bootstrap_version']); ?>>Grid Only (IE10+)</option>
 						<option value="bootstrap4a5" <?php selected('bootstrap4a5', $nebula_options['bootstrap_version']); ?>>Bootstrap 4 alpha 5 (IE9+)</option>
 						<option value="bootstrap3" <?php selected('bootstrap3', $nebula_options['bootstrap_version']); ?>>Bootstrap 3 (IE8+)</option>
 					</select>
 					<p class="nebula-help-text short-help form-text text-muted">Which Bootstrap version to use. (Default: <?php echo $this->user_friendly_default('bootstrap_version'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">Bootstrap 3 will support IE8+. Bootstrap 4 alpha 5 will support IE9+. Bootstrap latest supports IE10+.</p>
-					<p class="option-keywords">internet explorer old support</p>
+					<p class="nebula-help-text more-help form-text text-muted">Bootstrap 3 will support IE8+. Bootstrap 4 alpha 5 will support IE9+. Bootstrap latest supports IE10+. Grid loads only framework (and reboot) CSS. WordPress admin pages will still load Bootstrap latest regardless of this selection.</p>
+					<p class="option-keywords">internet explorer old support optimization moderate page speed impact</p>
+				</div>
+
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[allow_bootstrap_js]" id="allow_bootstrap_js" value="1" <?php checked('1', !empty($nebula_options['allow_bootstrap_js'])); ?> /><label for="allow_bootstrap_js">Allow Bootstrap JS</label>
+					<p class="nebula-help-text short-help form-text text-muted">Allow Bootstrap JavaScript. (Default: <?php echo $this->user_friendly_default('allow_bootstrap_js'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">Disabling this saves a resource request, but JS functionality of Bootstrap will not work (accordions, sliders, toggles, etc).</p>
+					<p class="option-keywords">moderate page speed impact</p>
 				</div>
 			<?php
 
@@ -590,6 +598,12 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="dependent-note hidden">This option is dependent on a Google Analytics Tracking ID.</p>
 					<p class="nebula-help-text more-help form-text text-muted"></p>
 					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[observe_dnt]" id="observe_dnt" value="1" <?php checked('1', !empty($nebula_options['observe_dnt'])); ?> /><label for="observe_dnt">Observe "Do Not Track" Requests</label>
+					<p class="nebula-help-text short-help form-text text-muted">Comply with user requests of "Do Not Track" (DNT). Analytics data will not be collected for these users. (Default: <?php echo $this->user_friendly_default('observe_dnt'); ?>)</p>
+					<p class="option-keywords">gdpr</p>
 				</div>
 
 				<div class="form-group" dependent-or="ga_tracking_id">

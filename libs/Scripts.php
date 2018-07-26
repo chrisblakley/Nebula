@@ -28,8 +28,8 @@ if ( !trait_exists('Scripts') ){
 		public function register_scripts(){
 			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
-			wp_register_style('nebula-font_awesome', get_template_directory_uri() . '/assets/css/vendor/fontawesome-all.min.css', null, '5.1.0', 'all');
-			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.0.3/jquery.mmenu.all.css', null, '7.0.3', 'all');
+			wp_register_style('nebula-font_awesome', get_template_directory_uri() . '/assets/css/vendor/fontawesome-all.min.css', null, '5.1.1', 'all');
+			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.0.5/jquery.mmenu.all.css', null, '7.0.5', 'all');
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap'), $this->version('full'), 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, $this->version('full'), 'all');
 			wp_register_style('nebula-admin', get_template_directory_uri() . '/assets/css/admin.css', null, $this->version('full'), 'all');
@@ -37,8 +37,8 @@ if ( !trait_exists('Scripts') ){
 				wp_register_style('nebula-google_font', $this->get_option('google_font_url'), array(), null, 'all');
 			}
 			$this->bootstrap('css');
-			wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.16/css/jquery.dataTables.min.css', null, '1.10.16', 'all');
-			wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.5/chosen.min.css', null, '1.8.5', 'all');
+			wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/jquery.dataTables.min.css', null, '1.10.19', 'all');
+			wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css', null, '1.8.7', 'all');
 			wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.structure.min.css', null, '1.12.1', 'all');
 			wp_register_style('nebula-pre', get_template_directory_uri() . '/assets/css/pre.css', null, $this->version('full'), 'all');
 
@@ -46,17 +46,25 @@ if ( !trait_exists('Scripts') ){
 			//Use CDNJS to pull common libraries: http://cdnjs.com/
 			//nebula_register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
 			$this->jquery();
-			$this->bootstrap('js');
+			if ( $this->is_admin_page() || $this->get_option('allow_bootstrap_js') ){
+				$this->bootstrap('js');
+			}
 			$this->register_script('nebula-modernizr_dev', get_template_directory_uri() . '/assets/js/vendor/modernizr.dev.js', 'defer', null, '3.5.0', false);
 			$this->register_script('nebula-modernizr_local', get_template_directory_uri() . '/assets/js/vendor/modernizr.min.js', 'defer', null, '3.3.1', false);
 			$this->register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', 'defer', null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
 			$this->register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', 'defer', null, '1.12.1', true);
-			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.0.3/jquery.mmenu.all.js', 'defer', null, '7.0.3', true);
+			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.0.5/jquery.mmenu.all.js', 'defer', null, '7.0.5', true);
 			$this->register_script('nebula-vimeo', 'https://player.vimeo.com/api/player.js', null, null, null, true);
-			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.16/js/jquery.dataTables.min.js', 'defer', null, '1.10.16', true);
-			$this->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.5/chosen.jquery.min.js', 'defer', null, '1.8.5', true);
+			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/js/jquery.dataTables.min.js', 'defer', null, '1.10.19', true);
+			$this->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js', 'defer', null, '1.8.7', true);
 			$this->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js', 'async', null, '2.4.1', true);
-			$this->register_script('nebula-nebula', get_template_directory_uri() . '/assets/js/nebula.js', 'defer', array('nebula-bootstrap', 'jquery-core'), $this->version('full'), true);
+
+
+
+			//$this->register_script('nebula-nebula', get_template_directory_uri() . '/assets/js/nebula.js', 'defer', array('nebula-bootstrap', 'jquery-core'), $this->version('full'), true);
+			$this->register_script('nebula-nebula', get_template_directory_uri() . '/assets/js/nebula.js', 'defer', array('jquery-core'), $this->version('full'), true); //THIS IS A TEST
+
+
 			$this->register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', null, array('jquery-core'), $this->version('full'), true);
 			$this->register_script('nebula-admin', get_template_directory_uri() . '/assets/js/admin.js', 'defer', array('jquery-core'), $this->version('full'), true);
 		}
@@ -211,6 +219,7 @@ if ( !trait_exists('Scripts') ){
 				),
 				'email' => $this->get_user_info('user_email'),
 				'ip' => $this->get_ip_address(),
+				'dnt' => !$this->is_analytics_allowed(),
 				'cid' => $this->ga_parse_cookie(),
 				'client' => array( //Client data is here inside user because the cookie is not transferred between clients.
 					'bot' => $this->is_bot(),

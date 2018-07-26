@@ -3,7 +3,7 @@
 // ===========================
 
 fieldset {border: 0; margin: 0; padding: 0;}
-textarea {resize: vertical;}
+textarea {resize: vertical; max-width: 100%;}
 
 #form-messages {
 	.sending {color: $warning_color;}

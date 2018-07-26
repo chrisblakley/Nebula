@@ -29,7 +29,6 @@ jQuery(function(){
 	initVideoTracking();
 	animationTriggers();
 	nebulaScrollTo();
-	initBootstrapFunctions();
 
 	visibilityChangeActions();
 	nebula.dom.document.on('visibilitychange', function(){
@@ -48,10 +47,13 @@ jQuery(function(){
  ===========================*/
 
 jQuery(window).on('load', function(){
+	cacheSelectors();
+
 	if ( typeof nebula.snapchatPageShown === 'undefined' || nebula.snapchatPageShown === true ){ //Don't automatically begin event tracking for Snapchat preloading
 		initEventTracking();
 	}
 
+	initBootstrapFunctions();
 	performanceMetrics();
 	lazyLoadAssets();
 
@@ -139,7 +141,11 @@ function cacheSelectors(){
 //Nebula Service Worker
 function registerServiceWorker(){
 	if ( nebula.site.options.sw && 'serviceWorker' in navigator ){ //Firefox 44+, Chrome 45+, Edge 17+, Safari 12+
-		navigator.serviceWorker.register(nebula.site.sw_url, {cache: 'max-age=0'}).then(function(registration){
+		//navigator.serviceWorker.register(nebula.site.sw_url, {cache: 'max-age=0'}).then(function(registration){
+		navigator.serviceWorker.register(nebula.site.sw_url).then(function(registration){
+			//console.log('ServiceWorker registration successful with scope: ', registration.scope);
+			//console.debug(registration);
+
 			//Unregister the ServiceWorker on ?debug
 			if ( nebula.dom.html.hasClass('debug') ){
 				registration.unregister();
@@ -540,7 +546,7 @@ function socialSharing(){
 
 //Call the event tracking functions (since it needs to happen twice).
 function initEventTracking(){
-	if ( navigator.doNotTrack || window.doNotTrack ){
+	if ( nebula.user.dnt ){
 		return false;
 	}
 
@@ -1583,8 +1589,7 @@ function wpSearchInput(){
 	//Set search value as placeholder
 	var searchVal = get('s') || jQuery('#s').val();
 	if ( searchVal ){
-		jQuery('#s').attr('placeholder', searchVal);
-		jQuery('.nebula-search input').attr('placeholder', searchVal);
+		jQuery('#s, .nebula-search input').attr('placeholder', searchVal.replace(/\+/g, ' '));
 	}
 }
 
@@ -1785,7 +1790,7 @@ function cf7Functions(){
 	});
 
 	//Re-init forms inside Bootstrap modals (to enable AJAX submission)
-	jQuery(document).on('shown.bs.modal', function(e){
+	nebula.dom.document.on('shown.bs.modal', function(e){
 		if ( typeof wpcf7.initForm === 'function' && jQuery(e.target).find('.wpcf7-form').length ){
 			wpcf7.initForm(jQuery(e.target).find('.wpcf7-form'));
 		}
@@ -1958,7 +1963,7 @@ function updateFormFlow(formID, field, info){
 
 //Enable localstorage on CF7 text inputs and textareas
 function cf7LocalStorage(){
-	if ( !jQuery('.wpcf7-form').length ){
+	if ( !jQuery('.wpcf7-form').length || jQuery('.ie, .internet_explorer').length ){
 		return false;
 	}
 
@@ -1984,7 +1989,7 @@ function cf7LocalStorage(){
 	});
 
 	//Update matching form fields on other windows/tabs
-	nebula.dom.window.on('storage', function(e){
+	nebula.dom.window.on('storage', function(e){ //This causes an infinite loop in IE11
 		jQuery('.wpcf7-textarea, .wpcf7-text').each(function(){
 			if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') ){
 				jQuery(this).val(localStorage.getItem('cf7_' + jQuery(this).attr('name'))).trigger('keyup');
@@ -2302,6 +2307,11 @@ function lazyLoadHTML(){
 	if ( jQuery(window).scrollTop() > 200 ){
 		loadLazyElements();
 	}
+
+	//Also trigger lazy load after any AJAX success. No "off" here because lazy load items could be inside of the AJAX response.
+	nebula.dom.document.ajaxSuccess(function(){
+		loadLazyElements();
+	});
 }
 
 /* ==========================================================================
@@ -2703,46 +2713,48 @@ function nebulaHelpers(){
 }
 
 function initBootstrapFunctions(){
-	//Tooltips
-	if ( jQuery('[data-toggle="tooltip"]').length ){
-		jQuery('[data-toggle="tooltip"]').tooltip();
-	}
+	if ( typeof bootstrap !== 'undefined' ){
+		//Tooltips
+		if ( jQuery('[data-toggle="tooltip"]').length ){
+			jQuery('[data-toggle="tooltip"]').tooltip();
+		}
 
-	//Popovers
-	if ( jQuery('[data-toggle="popover"]').length ){
-		jQuery('[data-toggle="popover"]').popover();
-	}
+		//Popovers
+		if ( jQuery('[data-toggle="popover"]').length ){
+			jQuery('[data-toggle="popover"]').popover();
+		}
 
-	checkBootstrapToggleButtons();
-	jQuery('[data-toggle=buttons] input').on('change', function(){
 		checkBootstrapToggleButtons();
-	});
-
-	//Carousels - Override this to customize options
-	if ( jQuery('.carousel').length ){
-		jQuery('.carousel').each(function(){
-			if ( jQuery(this).hasClass('auto-indicators') ){
-				var carouselID = jQuery(this).attr('id');
-				var slideCount = jQuery(this).find('.carousel-item').length;
-
-				var i = 0;
-				var markup = '<ol class="carousel-indicators">'; //@TODO "Nebula" 0: Why is there no space between indicators when using this auto-indicators?
-				while ( i < slideCount ){
-					var active = ( i === 0 )? 'class="active"' : '';
-					markup += '<li data-target="#' + carouselID + '" data-slide-to="' + i + '" ' + active + '></li>';
-					i++;
-				}
-				markup += '</ol>';
-				jQuery(this).prepend(markup);
-				jQuery(this).find('.carousel-item').first().addClass('active');
-
-				if ( !jQuery(this).find('.carousel-inner').length ){
-					jQuery(this).find('.carousel-item').wrapAll('<div class="carousel-inner">');
-				}
-			}
-
-			jQuery(this).carousel();
+		jQuery('[data-toggle=buttons] input').on('change', function(){
+			checkBootstrapToggleButtons();
 		});
+
+		//Carousels - Override this to customize options
+		if ( jQuery('.carousel').length ){
+			jQuery('.carousel').each(function(){
+				if ( jQuery(this).hasClass('auto-indicators') ){
+					var carouselID = jQuery(this).attr('id');
+					var slideCount = jQuery(this).find('.carousel-item').length;
+
+					var i = 0;
+					var markup = '<ol class="carousel-indicators">'; //@TODO "Nebula" 0: Why is there no space between indicators when using this auto-indicators?
+					while ( i < slideCount ){
+						var active = ( i === 0 )? 'class="active"' : '';
+						markup += '<li data-target="#' + carouselID + '" data-slide-to="' + i + '" ' + active + '></li>';
+						i++;
+					}
+					markup += '</ol>';
+					jQuery(this).prepend(markup);
+					jQuery(this).find('.carousel-item').first().addClass('active');
+
+					if ( !jQuery(this).find('.carousel-inner').length ){
+						jQuery(this).find('.carousel-item').wrapAll('<div class="carousel-inner">');
+					}
+				}
+
+				jQuery(this).carousel();
+			});
+		}
 	}
 }
 
@@ -2881,15 +2893,23 @@ function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow, callback){
  ===========================*/
 
 //Get query string parameters
-function getQueryStrings(url){
+function getQueryStrings(url, format){
 	if ( !url ){
 		url = document.URL;
+	}
+
+	if ( !format ){
+		format = 'object';
 	}
 
 	var queries = {};
 	var queryString = url.split('?')[1];
 
 	if ( queryString ){
+		if ( format === 'string' ){
+			return '?' + queryString;
+		}
+
 		queryStrings = queryString.split('&');
 		for ( var i = 0; i < queryStrings.length; i++ ){
 			hash = queryStrings[i].split('=');
@@ -3110,9 +3130,9 @@ function readCookie(name){
 		var c = ca[i];
 		while ( c.charAt(0) === ' ' ){
 			c = c.substring(1, c.length);
-			if ( c.indexOf(nameEQ) === 0 ){
-				return c.substring(nameEQ.length, c.length);
-			}
+		}
+		if ( c.indexOf(nameEQ) === 0 ){
+			return c.substring(nameEQ.length, c.length);
 		}
 	}
 	return null;
@@ -3278,7 +3298,7 @@ function timeAgo(timestamp, raw){ //http://af-design.com/blog/2009/02/10/twitter
 	var currentTime = new Date();
 
 	//Browser sanitation
-	if ( nebula.dom.body.hasClass('internet_explorer') || nebula.dom.body.hasClass('microsoft_edge') ){
+	if ( jQuery('.ie, .internet_explorer, .microsoft_edge').length ){
 		postDate = Date.parse(timestamp.replace(/( \+)/, ' UTC$1'));
 	}
 

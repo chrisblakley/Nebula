@@ -1,0 +1,9 @@
+.xoxo {
+	ul li.current-menu-item {
+		.sub-menu {
+			ul li {border-left: 1px solid $secondary_color;
+				a {@include link-colors($primary_color, $secondary_color, darken($primary_color, 15%));}
+			}
+		}
+	}
+}

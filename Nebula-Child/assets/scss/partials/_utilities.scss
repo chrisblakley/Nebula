@@ -1,0 +1,2 @@
+::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}
+::-moz-selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 20%), 0.25); color: darken($text_color, 100%);}

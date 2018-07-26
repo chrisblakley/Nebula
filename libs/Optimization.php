@@ -510,6 +510,7 @@ if ( !trait_exists('Optimization') ){
 			//Ignore lazy loading wrappers on AJAX requests
 			if ( wp_doing_ajax() ){
 				echo $html;
+				return false;
 			}
 
 			?>

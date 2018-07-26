@@ -44,6 +44,10 @@ jQuery(window).on('resize', function(){
 function supplementalEventTracking(){
 	cacheSelectors();
 
+	if ( nebula.user.dnt ){
+		return false;
+	}
+
 	//Simple example:
 	//nebula.dom.document.on('click touch tap', '.selector', function(){
 	//	ga('send', 'event', 'Category', 'Action', 'Label');

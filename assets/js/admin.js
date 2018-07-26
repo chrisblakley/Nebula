@@ -32,6 +32,10 @@ jQuery(function(){
 
 		//Scroll to the top when changing tabs
 		jQuery('a.nav-link').on('shown.bs.tab', function(){
+			//Update the URL to reflect the active tab
+			var url = nebula.site.admin_url + 'themes.php?page=nebula_options' + '&tab=' + jQuery('#options-navigation a.active').attr('href').replace('#', '');
+			history.replaceState(null, document.title, url);
+
 			jQuery('html, body').animate({
 				scrollTop: jQuery('#nebula-options-section').offset().top-1000
 			}, 500);
@@ -403,6 +407,7 @@ function checkWindowHeightForStickyNav(){
 	}
 }
 
+//Check for empty, but important options and show an icon on the navigation item
 function checkImportants(){
 	jQuery('.important-option').each(function(){
 		if ( !isCheckedOrHasValue(jQuery(this).find('input')) && !isImportantAlternativeValue(jQuery(this).attr('important-or')) ){
@@ -510,6 +515,16 @@ function isCheckedOrHasValue(inputObject){
 
 //Option filter
 jQuery('#nebula-option-filter').on('keydown keyup change focus blur', function(e){
+	debounce(function(){
+		if ( jQuery('#nebula-option-filter').val() != '' ){
+			var url = nebula.site.admin_url + 'themes.php?page=nebula_options' + '&filter=' + jQuery('#nebula-option-filter').val();
+		} else {
+			var url = nebula.site.admin_url + 'themes.php?page=nebula_options';
+		}
+
+		history.replaceState(null, document.title, url);
+	}, 1000, 'nebula options filter history api');
+
 	//Prevent the form from submitting if pressing enter after searching
 	if ( e.type == 'keydown' && e.keyCode == 13 ){
 		e.preventDefault();
@@ -808,3 +823,30 @@ function performanceMetrics(){
 		}, 0);
 	}
 }
+
+//Waits for events to finish before triggering
+//Passing immediate triggers the function on the leading edge (instead of the trailing edge).
+function debounce(callback, wait, uniqueID, immediate){
+	if ( typeof debounceTimers === "undefined" ){
+		debounceTimers = {};
+	}
+
+	if ( !uniqueID ){
+		uniqueID = "Don't call this twice without a uniqueID";
+	}
+
+	var context = this, args = arguments;
+	var later = function(){
+		debounceTimers[uniqueID] = null;
+		if ( !immediate ){
+			callback.apply(context, args);
+		}
+	};
+	var callNow = immediate && !debounceTimers[uniqueID];
+
+	clearTimeout(debounceTimers[uniqueID]);
+	debounceTimers[uniqueID] = setTimeout(later, wait);
+	if ( callNow ){
+		callback.apply(context, args);
+	}
+};

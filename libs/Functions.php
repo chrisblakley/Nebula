@@ -609,7 +609,6 @@ trait Functions {
 		$override = apply_filters('pre_nebula_manifest_json', null);
 		if ( isset($override) ){return;}
 
-		//
 		$manifest_json = '{
 			"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
 			"short_name": "' . get_bloginfo('name') . '",
@@ -617,7 +616,7 @@ trait Functions {
 			"theme_color": "' . get_theme_mod('nebula_primary_color', $this->sass_color('primary')) . '",
 			"background_color": "' . get_theme_mod('nebula_background_color', $this->sass_color('background')) . '",
 			"gcm_sender_id": "' . $this->get_option('gcm_sender_id') . '",
-			"scope": "' . home_url('/') . '",
+			"scope": "/",
 			"start_url": "' . home_url('/') . '?utm_source=homescreen",
 			"display": "standalone",
 			"orientation": "portrait",
@@ -2516,13 +2515,16 @@ trait Functions {
 		$autocomplete_query->posts = array_unique(array_merge($query1->posts, $query2->posts), SORT_REGULAR);
 		$autocomplete_query->post_count = count($autocomplete_query->posts);
 
+		$ignore_post_types = apply_filters('nebula_autocomplete_ignore_types', array()); //Allow post types to be globally ignored from autocomplete search
+		$ignore_post_ids = apply_filters('nebula_autocomplete_ignore_ids', array()); //Allow individual posts to be globally ignored from autocomplete search
+
 		$suggestions = array();
 
 		//Loop through the posts
 		if ( $autocomplete_query->have_posts() ){
 			while ( $autocomplete_query->have_posts() ){
 				$autocomplete_query->the_post();
-				if ( !get_the_title() ){ //Ignore results without titles
+				if ( in_array(get_the_id(), $ignore_post_ids) || !get_the_title() ){ //Ignore results without titles
 					continue;
 				}
 				$post = get_post();
@@ -2544,12 +2546,12 @@ trait Functions {
 		}
 
 		//Find media library items
-		if ( $this->in_array_any(array('any', 'attachment'), $types) ){
+		if ( !$this->in_array_any(array('attachment'), $ignore_post_types) && $this->in_array_any(array('any', 'attachment'), $types) ){
 			$attachments = get_posts(array('post_type' => 'attachment', 's' => $term, 'numberposts' => 10, 'post_status' => null));
 			if ( $attachments ){
 				$attachment_count = 0;
 				foreach ( $attachments as $attachment ){
-					if ( strpos(get_attachment_link($attachment->ID), '?attachment_id=') ){ //Skip if media item is not associated with a post.
+					if ( in_array($attachment->ID, $ignore_post_ids) || strpos(get_attachment_link($attachment->ID), '?attachment_id=') ){ //Skip if media item is not associated with a post.
 						continue;
 					}
 					$suggestion = array();
@@ -2580,7 +2582,7 @@ trait Functions {
 		}
 
 		//Find menu items
-		if ( $this->in_array_any(array('any', 'menu'), $types) ){
+		if ( !$this->in_array_any(array('menu'), $ignore_post_types) && $this->in_array_any(array('any', 'menu'), $types) ){
 			$menus = get_transient('nebula_autocomplete_menus');
 			if ( empty($menus) || $this->is_debug() ){
 				$menus = get_terms('nav_menu');
@@ -2621,7 +2623,7 @@ trait Functions {
 		}
 
 		//Find categories
-		if ( $this->in_array_any(array('any', 'category', 'cat'), $types) ){
+		if ( !$this->in_array_any(array('category', 'cat'), $ignore_post_types) && $this->in_array_any(array('any', 'category', 'cat'), $types) ){
 			$categories = get_transient('nebula_autocomplete_categories');
 			if ( empty($categories) || $this->is_debug() ){
 				$categories = get_categories();
@@ -2647,7 +2649,7 @@ trait Functions {
 		}
 
 		//Find tags
-		if ( $this->in_array_any(array('any', 'tag'), $types) ){
+		if ( !$this->in_array_any(array('tag'), $ignore_post_types) && $this->in_array_any(array('any', 'tag'), $types) ){
 			$tags = get_transient('nebula_autocomplete_tags');
 			if ( empty($tags) || $this->is_debug() ){
 				$tags = get_tags();
@@ -2673,7 +2675,7 @@ trait Functions {
 		}
 
 		//Find authors (if author bios are enabled)
-		if ( $this->get_option('author_bios') && $this->in_array_any(array('any', 'author'), $types) ){
+		if ( $this->get_option('author_bios') && !$this->in_array_any(array('author'), $ignore_post_types) && $this->in_array_any(array('any', 'author'), $types) ){
 			$authors = get_transient('nebula_autocomplete_authors');
 			if ( empty($authors) || $this->is_debug() ){
 				$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
@@ -2907,6 +2909,9 @@ trait Functions {
 				$classes[] = 'lte-ie11';
 			}
 		}
+
+		//Alternate Bootstrap versions
+		$classes[] = 'bs-' . $this->get_option('bootstrap_version');
 
 		//User Information
 		$current_user = wp_get_current_user();

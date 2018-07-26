@@ -204,6 +204,7 @@ if ( !trait_exists('Shortcodes') ){
 			return '<div class="nebula-columns col-' . $scale . '-' . $columns . ' ' . $offset . ' ' . $centered . ' ' . $class . '" style="' . $style . '">' . do_shortcode($content) . '</div>';
 		}
 
+		//Note: It is semantically incorrect for an <hr> to appear within a <p> tag, so be careful of WordPress wrapping this shortcode in a <p> tag.
 		public function divider_shortcode($atts){
 			extract(shortcode_atts(array("space" => '0', "above" => '0', "below" => '0'), $atts));
 

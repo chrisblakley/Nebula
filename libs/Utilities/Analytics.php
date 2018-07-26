@@ -17,6 +17,10 @@ if ( !trait_exists('Analytics') ){
 		//If analytics should be allowed.
 		//Note: be careful using this conditional for AJAX analytics as the request is made by the server IP.
 		public function is_analytics_allowed(){
+			if ( $this->option('observe_dnt') && $this->is_do_not_track() ){
+				return false;
+			}
+
 			if ( isset($_GET['noga']) || is_customize_preview() ){ //Disable analytics for ?noga query string
 				return false;
 			}
@@ -26,6 +30,16 @@ if ( !trait_exists('Analytics') ){
 			}
 
 			return true;
+		}
+
+		//If the "Do Not Track" browser setting is enabled
+		//True = DNT, False = tracking allowed
+		public function is_do_not_track(){
+			if ( isset($_SERVER['HTTP_DNT']) && $_SERVER['HTTP_DNT'] == 1 ){
+				return true;
+			}
+
+			return false;
 		}
 
 		//Handle the parsing of the _ga cookie or setting it to a unique identifier

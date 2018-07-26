@@ -1,0 +1,13 @@
+//Change font size here with media queries.
+html {//Declare font-size here in px. Use rem or rem() Sass function everywhere else.
+	@include media("sm"){}
+	@include media("md"){}
+	@include media("lg"){}
+	@include media("xl"){}
+}
+
+h1, h2, h3, h4, h5, h6 {color: $text_color;
+	a {color: $primary_color;}
+}
+
+a:not(.btn) {@include link-colors($primary_color, $secondary_color, darken($primary_color, 15%));}

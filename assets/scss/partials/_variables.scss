@@ -14,10 +14,10 @@ $warning_color: #f6b83f !default;
 $info_color: #00a0d2 !default;
 $success_color: #58c026 !default;
 
-$sm: "576"; //Use --breakpoint-sm here?
-$md: "768"; //Use --breakpoint-md here?
-$lg: "992"; //Use --breakpoint-lg here?
-$xl: "1200"; //Use --breakpoint-xl here?
+$sm: 576; //Use --breakpoint-sm here?
+$md: 768; //Use --breakpoint-md here?
+$lg: 992; //Use --breakpoint-lg here?
+$xl: 1200; //Use --breakpoint-xl here?
 
 $font_awesome: 'Font Awesome 5 Pro', 'Font Awesome 5 Free', 'Font Awesome 5 Brands'; //Convenient stack for Font Awesome icons //DEPRECATED: Eventually delete this
 

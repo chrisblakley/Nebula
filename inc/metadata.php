@@ -174,21 +174,21 @@
 <meta property="place:location:longitude" content="<?php echo nebula()->get_option('longitude'); ?>" />
 
 <link rel="manifest" href="<?php echo nebula()->manifest_json_location(); ?>" />
-<link rel="profile" href="http://gmpg.org/xfn/11" />
+<link rel="profile" href="https://gmpg.org/xfn/11" />
 
 <?php nebula()->prebrowsing(); //Prefetch, preconnect, and prerender tags ?>
 
 <?php
 	//JSON-LD Structured Data
 	//Google Structured Data Documentation: https://developers.google.com/search/docs/data-types/data-type-selector
-	//JSON-LD Examples: http://jsonld.com/
+	//JSON-LD Examples: https://jsonld.com/
 	//Google Structured Data Testing Tool: https://search.google.com/structured-data/testing-tool
 
 	$company_type = ( nebula()->get_option('business_type') )? nebula()->get_option('business_type') : 'LocalBusiness';
 ?>
 <script type="application/ld+json">
 	{
-		"@context": "http://schema.org/",
+		"@context": "https://schema.org/",
 		"@type": "<?php echo $company_type; ?>",
 		"name": "<?php echo ( nebula()->get_option('site_owner') )? nebula()->get_option('site_owner') : get_bloginfo('name'); ?>",
 		"url": "<?php echo home_url('/'); ?>",
@@ -293,7 +293,7 @@
 <?php if ( is_author() && nebula()->get_option('author_bios') ): ?>
 	<script type="application/ld+json">
 		{
-			"@context": "http://schema.org/",
+			"@context": "https://schema.org/",
 			"@type": "Person",
 			"name": "<?php echo get_the_author(); ?>",
 			"email": "<?php echo get_the_author_meta('user_email'); ?>",
@@ -308,7 +308,7 @@
 
 			<?php
 				if ( get_the_author_meta('facebook', $user->ID) ){
-					$person_same_as .= '"http://www.facebook.com/' . get_the_author_meta('facebook', $user->ID) . '",';
+					$person_same_as .= '"https://www.facebook.com/' . get_the_author_meta('facebook', $user->ID) . '",';
 				}
 
 				if ( get_the_author_meta('twitter', $user->ID) ){
@@ -326,7 +326,7 @@
 				}
 
 				if ( get_the_author_meta('instagram', $user->ID) ){
-					$person_same_as .= '"http://instagram.com/' . get_the_author_meta('instagram', $user->ID) . '",';
+					$person_same_as .= '"https://instagram.com/' . get_the_author_meta('instagram', $user->ID) . '",';
 				}
 
 				if ( get_the_author_meta('pinterest', $user->ID) ){
@@ -351,7 +351,7 @@
 <?php if ( is_singular('post') ): //@todo "Nebula" 0: but not products ?>
 	<script type="application/ld+json">
 		{
-			"@context": "http://schema.org/",
+			"@context": "https://schema.org/",
 			"@type": "Article",
 			"mainEntityofPage": {
 				"@type": "WebPage",

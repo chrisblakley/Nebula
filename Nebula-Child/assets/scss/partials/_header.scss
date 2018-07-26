@@ -1,0 +1,8 @@
+.herobgcolor {animation: none;}
+
+#logonavcon {
+	img,
+	svg:not(.svg-inline--fa){
+		path {fill: #fff;}
+	}
+}
