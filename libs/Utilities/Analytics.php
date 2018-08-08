@@ -12,6 +12,10 @@ if ( !trait_exists('Analytics') ){
 			add_action('wp_ajax_nebula_ga_ajax', array($this, 'ga_ajax'));
 			add_action('wp_ajax_nopriv_nebula_ga_ajax', array($this, 'ga_ajax'));
 			add_filter('nebula_brain', array($this, 'ga_definitions'));
+
+			add_filter('the_permalink_rss', array($this, 'add_utm_to_feeds'), 100);
+			add_filter('the_excerpt_rss', array($this, 'add_utm_to_feeds_content_links'), 200);
+			add_filter('the_content_feed', array($this, 'add_utm_to_feeds_content_links'), 200);
 		}
 
 		//If analytics should be allowed.
@@ -343,7 +347,7 @@ if ( !trait_exists('Analytics') ){
 		}
 
 		//Send Pageview Function for Server-Side Google Analytics
-		public function ga_send_pageview($location=null, $title=null, $array=array(), $force=false){
+		public function ga_send_pageview($location=null, $title=null, $array=array()){
 			$override = apply_filters('pre_ga_send_pageview', null, $location, $title, $array);
 			if ( isset($override) ){return;}
 
@@ -363,7 +367,7 @@ if ( !trait_exists('Analytics') ){
 
 			$data = array_merge($this->ga_common_parameters(), $data); //Add common parameters
 			$data = array_merge($data, $array); //Add passed parameters
-			$this->ga_send_data($data, $force);
+			$this->ga_send_data($data);
 		}
 
 		//Send Event Function for Server-Side Google Analytics
@@ -421,6 +425,7 @@ if ( !trait_exists('Analytics') ){
 		}
 
 		//Send Pageview Function for Server-Side Google Analytics
+		//Note this ignores the "Server-Side Fallback" analyitcs Nebula option
 		public function ga_send_exception($message=null, $fatal=1, $array=array()){
 			$override = apply_filters('pre_ga_send_exception', null, $message, $fatal, $array);
 			if ( isset($override) ){return;}
@@ -433,7 +438,7 @@ if ( !trait_exists('Analytics') ){
 
 			$data = array_merge($data, $this->ga_common_parameters()); //Add custom definition parameters
 			$data = array_merge($data, $array); //Add passed parameters
-			$this->ga_send_data($data);
+			$this->ga_send_data($data, true);
 		}
 
 		//Send Data to Google Analytics
@@ -503,6 +508,55 @@ if ( !trait_exists('Analytics') ){
 
 			$data = array_merge($defaults, $data); //Add passed parameters
 			$this->ga_send_data($data, true);
+		}
+
+		//Add Google Analytics UTM parameters to RSS (and other feed) links
+		//Manually control UTM parameters by adding them to the feed URL itself: https://example.com/feed?utm_campaign=summer+sale&utm_source=newsletter&utm_medium=email
+		public function add_utm_to_feeds($link){
+			$utm_query = array();
+
+			//Set the utm_campaign parameter
+			if ( isset($_GET['utm_campaign']) ){
+				$utm_query[] = 'utm_campaign=' . $_GET['utm_campaign'];
+			}
+
+			//Set the utm_source parameter
+			$utm_source = $this->url_components('hostname', site_url()); //Default to the hostname of the site
+			if ( isset($_GET['utm_source']) ){
+				$utm_source = esc_attr($_GET['utm_source']);
+			}
+			$utm_query[] = 'utm_source=' . $utm_source;
+
+			//Set the utm_medium parameter
+			$utm_medium = 'feed';
+			if ( isset($_GET['utm_medium']) ){
+				$utm_medium = esc_attr($_GET['utm_medium']);
+			}
+			$utm_query[] = 'utm_medium=' . $utm_medium;
+
+			//Set the utm_content parameter
+			if ( isset($_GET['utm_content']) ){
+				$utm_query[] = 'utm_content=' . $_GET['utm_content'];
+			}
+
+			$url = explode('?', $link);
+
+			//Merge query parameters
+			$utm_query_str = implode('&amp;', $utm_query);
+			if ( count($url) > 1 ){
+				$url_query = "${url[1]}&amp;{$utm_query_str}";
+			} else {
+				$url_query = $utm_query_str;
+			}
+
+			$tracking_link = "${url[0]}?{$url_query}";
+			return $tracking_link;
+		}
+
+		//Add tracking to self-referencing links in the excerpt and content
+		public function add_utm_to_feeds_content_links($content){
+			$link = get_permalink(get_the_ID());
+			return str_replace($link, $this->add_utm_to_feeds($link), $content);
 		}
 	}
 }

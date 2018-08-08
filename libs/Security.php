@@ -67,6 +67,7 @@ if ( !trait_exists('Security') ){
 			if ( isset($headers['X-Pingback']) ){
 				unset($headers['X-Pingback']);
 			}
+
 			return $headers;
 		}
 

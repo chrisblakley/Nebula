@@ -120,9 +120,10 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 
 #suggestedpage {display: none;}
 
-
-.nebula-breadcrumbs {position: relative; margin-bottom: 50px; padding: 3px 0; font-size: rem(14px);
-	.arrow {padding: 0 4px; opacity: 0.6;}
+ol.nebula-breadcrumbs {display: flex; list-style: none; position: relative; margin-bottom: 50px; padding: 3px 0; font-size: rem(14px);
+	li {
+		&.delimiter {padding: 0 4px; opacity: 0.6;}
+	}
 }
 
 //Advanced Search

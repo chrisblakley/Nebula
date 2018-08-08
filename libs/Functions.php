@@ -681,25 +681,35 @@ trait Functions {
 	}
 
 	//Convenience function to return only the URL for specific thumbnail sizes of an ID.
-	public function get_thumbnail_src($id=null, $size='full', $type='post'){
-		if ( empty($id) ){
+	public function get_thumbnail_src($img=null, $size='full', $type='post'){
+		if ( empty($img) ){
 			return false;
 		}
 
-		$image_id = ( get_post_type($id) === 'attachment' || $type !== 'post' )? $id : get_post_thumbnail_id($id); //If the thumbnail (or attachment) ID was passed instead of the post ID
-		$size = apply_filters('nebula_thumbnail_src_size', $size, $image_id);
-
-		if ( strpos($id, '<img') !== false || $size === 'full' ){
-			$image = wp_get_attachment_image_src($image_id, $size);
-			return $image[0];
-		} else {
-			$img_tag = get_the_post_thumbnail($id, $size);
-			if ( get_post_type($id) === 'attachment' ){
-				$img_tag = wp_get_attachment_image($id, $size);
-			}
-
-			return ( preg_match('~\bsrc="([^"]++)"~', $img_tag, $matches) )? $matches[1] : ''; //Pull the img src from the HTML tag itself
+		//If HTML is passed, immediately parse it with HTML
+		if ( strpos($img, '<img') !== false ){
+			return ( preg_match('~\bsrc="([^"]++)"~', $img, $matches) )? $matches[1] : ''; //Pull the img src from the HTML tag itself
 		}
+
+		$id = intval($img); //Can now use the ID
+		$size = apply_filters('nebula_thumbnail_src_size', $size, $id);
+
+		//If an attachment ID (or thumbnail ID) was passed
+		if ( get_post_type($id) === 'attachment' || $type !== 'post' ){
+			$image = wp_get_attachment_image_src(get_post_thumbnail_id($id), $size);
+
+			if ( !empty($image[0]) ){
+				return $image[0];
+			}
+		}
+
+		//Otherwise get the HTML from the post ID (or if the attachment src did not work above)
+		$img_tag = get_the_post_thumbnail($id, $size);
+		if ( get_post_type($id) === 'attachment' ){
+			$img_tag = wp_get_attachment_image($id, $size);
+		}
+
+		return ( preg_match('~\bsrc="([^"]++)"~', $img_tag, $matches) )? $matches[1] : ''; //Pull the img src from the HTML tag itself
 	}
 
 	//Sets the current post/page template to a variable.
@@ -942,7 +952,7 @@ trait Functions {
 			if ( $imgmeta['image_meta']['focal_length'] === 0 || $imgmeta['image_meta']['aperture'] === 0 || $imgmeta['image_meta']['shutter_speed'] === 0 || $imgmeta['image_meta']['iso'] === 0 ){
 				$output = 'No valid EXIF data found';
 			} else { //Convert the shutter speed retrieve from database to fraction
-				if ( (1/$imgmeta['image_meta']['shutter_speed']) > 1 ){
+				if ( $imgmeta['image_meta']['shutter_speed'] > 0 && (1/$imgmeta['image_meta']['shutter_speed']) > 1 ){
 					if ( (number_format((1/$imgmeta['image_meta']['shutter_speed']), 1)) == 1.3 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 1.5 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 1.6 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 2.5 ){
 						$pshutter = '1/' . number_format((1/$imgmeta['image_meta']['shutter_speed']), 1, '.', '') . ' second';
 					} else {
@@ -1619,17 +1629,17 @@ trait Functions {
 			'home_link' => home_url('/'),
 			'prefix' => 'text',
 			'current' => true, //Show/Hide the current title in the breadcrumb
-			'before' => '<span class="current">', //Tag before the current crumb
-			'after' => '</span>', //Tag after the current crumb
+			'before' => '<li class="current" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">', //Tag before the current crumb
+			'after' => '</li>', //Tag after the current crumb
 			'force' => false //Override the breadcrumbs with an array of specific links
 		));
 
 		$data = array_merge($defaults, $options);
-		$delimiter_html = '<span class="arrow">' . $data['delimiter'] . '</span>';
-		$current = $data['before'] . '<a class="current-breadcrumb-link" href="' . get_the_permalink() . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_title() . '</a>' . $data['after'];
+		$delimiter_html = '<li class="delimiter">' . $data['delimiter'] . '</li>';
+		$current = $data['before'] . '<a class="current-breadcrumb-link" href="' . get_the_permalink() . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title()) . '</span></a>' . $data['after'];
 
 		if ( !empty($data['force']) ){ //If using forced override
-			echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">';
+			echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">';
 
 			foreach ( $data['force'] as $node ){
 				$node_text = ( !empty($node['text']) )? $node['text'] : $node[0];
@@ -1644,13 +1654,13 @@ trait Functions {
 
 				if ( !empty($node_text) ){
 					if ( !empty($node_url) ){
-						echo '<a href="' . $node_url . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">';
+						echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $node_url . '" itemprop="item">';
 					}
 
-					echo $node_text;
+					echo '<span itemprop="name">' . $node_text . '</span>';
 
 					if ( !empty($node_url) ){
-						echo '</a>';
+						echo '</a></li>';
 					}
 
 					echo ' ' . $delimiter_html . ' ';
@@ -1661,12 +1671,12 @@ trait Functions {
 				echo $current;
 			}
 
-			echo '</div>';
+			echo '</ol>';
 		} elseif ( is_home() || is_front_page() ){
-			echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $data['home_link'] . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $data['home'] . '</a></div>';
+			echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . '</span></a></li></ol>';
 			return false;
 		} else {
-			echo '<div class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><a href="' . $data['home_link'] . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $data['home'] . '</a> ' . $delimiter_html . ' ';
+			echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . '</span></a></li> ' . $delimiter_html . ' ';
 			if ( is_category() ){
 				$thisCat = get_category(get_query_var('cat'), false);
 				if ( $thisCat->parent !== 0 ){
@@ -1684,11 +1694,11 @@ trait Functions {
 			} elseif ( is_search() ){
 				echo $data['before'] . 'Search results' . $data['after'];
 			} elseif ( is_day() ){
-				echo '<a href="' . get_year_link(get_the_time('Y')) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_time('Y') . '</a> ' . $delimiter_html . ' ';
-				echo '<a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_time('F') . '</a> ' . $delimiter_html . ' ';
+				echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_year_link(get_the_time('Y')) . '" itemprop="item"><span itemprop="name">' . get_the_time('Y') . '</span></a></li> ' . $delimiter_html . ' ';
+				echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '" itemprop="item"><span itemprop="name">' . get_the_time('F') . '</span></a></li> ' . $delimiter_html . ' ';
 				echo $data['before'] . get_the_time('d') . $data['after'];
 			} elseif ( is_month() ){
-				echo '<a href="' . get_year_link(get_the_time('Y')) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_time('Y') . '</a> ' . $delimiter_html . ' ';
+				echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_year_link(get_the_time('Y')) . '" itemprop="item"><span itemprop="name">' . get_the_time('Y') . '</span></a></li> ' . $delimiter_html . ' ';
 				echo $data['before'] . get_the_time('F') . $data['after'];
 			} elseif ( is_year() ){
 				echo $data['before'] . get_the_time('Y') . $data['after'];
@@ -1701,7 +1711,7 @@ trait Functions {
 						$slug['slug'] = $post_type->has_archive; //Replace slug with the custom archive slug string
 					}
 
-					echo '<a href="' . $data['home_link'] . $slug['slug'] . '/" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . $post_type->labels->singular_name . '</a>';
+					echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . $slug['slug'] . '/" itemprop="item"><span itemprop="name">' . $post_type->labels->singular_name . '</span></a></li>';
 
 					if ( !empty($data['current']) ){
 						echo ' ' . $delimiter_html . ' ' . $current;
@@ -1728,9 +1738,9 @@ trait Functions {
 				echo $data['before'] . $post_type->labels->singular_name . $data['after'];
 			} elseif ( is_attachment() ){ //@TODO "Nebula" 0: Check for gallery pages? If so, it should be Home > Parent(s) > Gallery > Attachment
 				if ( !empty($post->post_parent) ){ //@TODO "Nebula" 0: What happens if the page parent is a child of another page?
-					echo '<a href="' . get_permalink($post->post_parent) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_title($post->post_parent) . '</a>' . ' ' . $delimiter_html . ' ' . get_the_title();
+					echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_permalink($post->post_parent) . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title($post->post_parent)) . '</span></a></li>' . ' ' . $delimiter_html . ' ' . strip_tags(get_the_title());
 				} else {
-					echo get_the_title();
+					echo strip_tags(get_the_title());
 				}
 			} elseif ( is_page() && !$post->post_parent ){
 				if ( !empty($data['current']) ){
@@ -1742,7 +1752,7 @@ trait Functions {
 
 				while ( $parent_id ){
 					$page = get_page($parent_id);
-					$breadcrumbs[] = '<a href="' . get_permalink($page->ID) . '" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">' . get_the_title($page->ID) . '</a>';
+					$breadcrumbs[] = '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_permalink($page->ID) . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title($page->ID)) . '</span></a></li>';
 					$parent_id  = $page->post_parent;
 				}
 
@@ -1780,7 +1790,7 @@ trait Functions {
 			if ( get_query_var('paged') ){
 				echo ' (Page ' . get_query_var('paged') . ')';
 			}
-			echo '</div>';
+			echo '</ol>';
 		}
 	}
 

@@ -30,7 +30,13 @@
 			do_action('nebula_options_saved');
 			?>
 			<div class="updated notice is-dismissible">
-		        <p><strong>Nebula Options</strong> have been updated. All SCSS files have been re-processed.</p>
+				<?php
+					$options_saved_message = '<strong>Nebula Options</strong> have been updated.';
+					if ( $this->get_option('scss') ){
+						$options_saved_message .= ' All Sass files have been re-processed.';
+					}
+				?>
+		        <p><?php echo $options_saved_message; ?></p>
 		        <button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
 		    </div>
 			<?php

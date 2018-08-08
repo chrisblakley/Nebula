@@ -170,7 +170,7 @@ if ( !trait_exists('Options') ){
 			} elseif ( $file === 'js' ){
 				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js', 'defer', array('jquery-core'), '4.1.3', true);
 			} elseif ( $file === 'reboot' ){
-				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.2/css/bootstrap-reboot.min.css';
+				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap-reboot.min.css';
 			} else {
 				return 'latest';
 			}
