@@ -838,7 +838,7 @@ if ( !trait_exists('Admin') ){
 			return false;
 		}
 
-		//Send an email to the current user and site admin that Nebula has been updated.
+		//After theme update has been completed
 		public function theme_update_automation($upgrader_object, $options){
 			$override = apply_filters('pre_nebula_theme_update_automation', null);
 			if ( isset($override) ){return;}
@@ -855,12 +855,14 @@ if ( !trait_exists('Admin') ){
 					$this->update_data('version_legacy', 'false');
 					$this->update_data('need_sass_compile', 'true'); //Compile all SCSS files on next pageview
 					$this->update_data('num_theme_updates', $num_theme_updates);
+					$this->update_data('check_new_options', 'true'); //Check for new Nebula Options on next pageview
 				}
 			} else {
 				$this->update_data('version_legacy', 'true');
 			}
 		}
 
+		//Send an email to the current user and site admin that Nebula has been updated.
 		public function theme_update_email($prev_version, $prev_version_commit_date, $new_version){
 			$nebula_update_email_sent = get_transient('nebula_update_email_sent');
 			if ( (empty($nebula_update_email_sent) || $this->is_debug()) && $prev_version !== $new_version ){

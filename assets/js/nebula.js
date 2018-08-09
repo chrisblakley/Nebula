@@ -831,6 +831,18 @@ function eventTracking(){
 		nv('event', 'JavaScript Error');
 	}
 
+	//Reporting Observer deprecations and interventions
+	if ( typeof window.ReportingObserver !== 'undefined' ){ //Chrome 68+
+		var nebulaReportingObserver = new ReportingObserver(function(reports, observer){
+			for ( report of reports ){
+				if ( report.body.sourceFile.indexOf('extension') < 0 ){ //Ignore browser extensions
+					ga('send', 'exception', {'exDescription': '(JS) Reporting Observer [' + report.type + ']: ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber, 'exFatal': false});
+				}
+			}
+		}, {buffered: true});
+		nebulaReportingObserver.observe();
+	}
+
 	//PWA Add to Homescreen Install Prompt
 	window.addEventListener('beforeinstallprompt', function(event){
 		ga('send', 'event', 'Progressive Web App', 'Install Prompt Shown', event.platforms.join(', '));

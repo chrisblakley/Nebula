@@ -543,6 +543,13 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text short-help form-text text-muted">Control whether or not the plugin update warning appears on admin pages. (Default: <?php echo $this->user_friendly_default('plugin_update_warning'); ?>)</p>
 					<p class="option-keywords">discretionary</p>
 				</div>
+
+				<!-- @todo "Nebula" 0: remove this in 2 versions -->
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[auto_update_test]" id="auto_update_test" value="1" <?php checked('1', !empty($nebula_options['auto_update_test'])); ?> /><label for="auto_update_test">This is a test (<?php var_dump( $nebula_options['auto_update_test'] ); ?>)</label>
+					<p class="nebula-help-text short-help form-text text-muted">Testing. (Default: <?php echo $this->user_friendly_default('auto_update_test'); ?>)</p>
+					<p class="option-keywords"></p>
+				</div>
 			<?php
 
 			do_action('nebula_options_admin_notifications_metabox', $nebula_options);

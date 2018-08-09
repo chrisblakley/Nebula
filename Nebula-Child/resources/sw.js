@@ -1,5 +1,5 @@
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-57881'; //Wednesday, August 8, 2018 8:54:59 AM
+var CACHE_NAME = 'nebula-nebula-child-27905'; //Wednesday, August 8, 2018 11:59:21 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
@@ -19,6 +19,25 @@ var CACHE_FILES = [
 
 
 
+
+
+console.log('(A) about to fetch via sw');
+fetch('https://gearside.com/nebula/get-started/checklists/').then(function(response) {
+	console.log('(A) we got it!', response);
+}).then(function(returnedValue) {
+	console.log('(A) returning the value!', returnedValue);
+}).catch(function(err) {
+	console.log('(A) fetch error:', err);
+});
+
+console.log('(B) about to fetch via sw');
+fetch('https://gearside.com/nebula/').then(function(response) {
+	console.log('(B) we got it!', response);
+}).then(function(returnedValue) {
+	console.log('(B) returning the value!', returnedValue);
+}).catch(function(err) {
+	console.log('(B) fetch error:', err);
+});
 
 
 

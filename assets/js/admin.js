@@ -84,6 +84,82 @@ jQuery(function(){
 
 jQuery(window).on('load', function(){
 	performanceMetrics();
+
+	//Option filter
+	jQuery('#nebula-option-filter').on('keydown keyup change focus blur', function(e){
+		debounce(function(){
+			if ( jQuery('#nebula-option-filter').val() != '' ){
+				var url = nebula.site.admin_url + 'themes.php?page=nebula_options' + '&filter=' + jQuery('#nebula-option-filter').val();
+			} else {
+				var url = nebula.site.admin_url + 'themes.php?page=nebula_options';
+			}
+
+			history.replaceState(null, document.title, url);
+		}, 1000, 'nebula options filter history api');
+
+		//Prevent the form from submitting if pressing enter after searching
+		if ( e.type == 'keydown' && e.keyCode == 13 ){
+			e.preventDefault();
+			return false;
+		}
+
+		if ( jQuery(this).val().length > 0 ){
+			jQuery('.metabox-holder').addClass('filtering');
+			jQuery('#reset-filter').removeClass('hidden');
+
+			jQuery('#options-navigation').addClass('inactive').find('li a.active').removeClass('active');
+
+			jQuery('.tab-pane').addClass('active');
+
+			keywordSearch('#nebula-options-section', '.form-group', jQuery(this).val());
+
+			jQuery('.postbox, .option-sub-group').each(function(){
+				if ( jQuery(this).find('.form-group:not(.filtereditem)').length > 0 ){
+					jQuery(this).removeClass('filtereditem');
+				} else {
+					jQuery(this).addClass('filtereditem');
+				}
+			});
+
+			jQuery('#nebula-options-section div[class^=col]').each(function(){
+				if ( !jQuery(this).parents('.title-row, .save-row, .non-filter').length ){
+					if ( jQuery(this).find('.form-group:not(.filtereditem)').length > 0 ){
+						jQuery(this).removeClass('filtereditem');
+					} else {
+						jQuery(this).addClass('filtereditem');
+					}
+				}
+			});
+
+			jQuery('.tab-pane').each(function(){
+				if ( jQuery(this).find('.form-group:not(.filtereditem)').length > 0 ){
+					jQuery(this).removeClass('filtereditem');
+					jQuery(this).find('.title-row').removeClass('filtereditem');
+				} else {
+					jQuery(this).addClass('filtereditem');
+					jQuery(this).find('.title-row').addClass('filtereditem');
+				}
+			});
+		} else {
+			jQuery('.metabox-holder').removeClass('filtering');
+			jQuery('#reset-filter').addClass('hidden');
+
+			jQuery('#options-navigation').removeClass('inactive');
+
+			if ( !jQuery('#options-navigation li a.active').length ){
+				jQuery('#options-navigation').find('li:first-child a').addClass('active');
+			}
+
+			jQuery('.filtereditem').removeClass('filtereditem');
+			jQuery('.tab-pane').removeClass('active').first().addClass('active');
+		}
+	});
+
+	jQuery('#reset-filter a').on('click', function(){
+		jQuery('#nebula-option-filter').val('').trigger('keydown');
+		jQuery('.tab-pane').removeClass('active').first().addClass('active');
+		return false;
+	});
 });
 
 jQuery(window).resize(function() {
@@ -513,81 +589,7 @@ function isCheckedOrHasValue(inputObject){
 
 
 
-//Option filter
-jQuery('#nebula-option-filter').on('keydown keyup change focus blur', function(e){
-	debounce(function(){
-		if ( jQuery('#nebula-option-filter').val() != '' ){
-			var url = nebula.site.admin_url + 'themes.php?page=nebula_options' + '&filter=' + jQuery('#nebula-option-filter').val();
-		} else {
-			var url = nebula.site.admin_url + 'themes.php?page=nebula_options';
-		}
 
-		history.replaceState(null, document.title, url);
-	}, 1000, 'nebula options filter history api');
-
-	//Prevent the form from submitting if pressing enter after searching
-	if ( e.type == 'keydown' && e.keyCode == 13 ){
-		e.preventDefault();
-		return false;
-	}
-
-	if ( jQuery(this).val().length > 0 ){
-		jQuery('.metabox-holder').addClass('filtering');
-		jQuery('#reset-filter').removeClass('hidden');
-
-		jQuery('#options-navigation').addClass('inactive').find('li a.active').removeClass('active');
-
-		jQuery('.tab-pane').addClass('active');
-
-		keywordSearch('#nebula-options-section', '.form-group', jQuery(this).val());
-
-		jQuery('.postbox, .option-sub-group').each(function(){
-			if ( jQuery(this).find('.form-group:not(.filtereditem)').length > 0 ){
-				jQuery(this).removeClass('filtereditem');
-			} else {
-				jQuery(this).addClass('filtereditem');
-			}
-		});
-
-		jQuery('#nebula-options-section div[class^=col]').each(function(){
-			if ( !jQuery(this).parents('.title-row, .save-row, .non-filter').length ){
-				if ( jQuery(this).find('.form-group:not(.filtereditem)').length > 0 ){
-					jQuery(this).removeClass('filtereditem');
-				} else {
-					jQuery(this).addClass('filtereditem');
-				}
-			}
-		});
-
-		jQuery('.tab-pane').each(function(){
-			if ( jQuery(this).find('.form-group:not(.filtereditem)').length > 0 ){
-				jQuery(this).removeClass('filtereditem');
-				jQuery(this).find('.title-row').removeClass('filtereditem');
-			} else {
-				jQuery(this).addClass('filtereditem');
-				jQuery(this).find('.title-row').addClass('filtereditem');
-			}
-		});
-	} else {
-		jQuery('.metabox-holder').removeClass('filtering');
-		jQuery('#reset-filter').addClass('hidden');
-
-		jQuery('#options-navigation').removeClass('inactive');
-
-		if ( !jQuery('#options-navigation li a.active').length ){
-			jQuery('#options-navigation').find('li:first-child a').addClass('active');
-		}
-
-		jQuery('.filtereditem').removeClass('filtereditem');
-		jQuery('.tab-pane').removeClass('active').first().addClass('active');
-	}
-});
-
-jQuery('#reset-filter a').on('click', function(){
-	jQuery('#nebula-option-filter').val('').trigger('keydown');
-	jQuery('.tab-pane').removeClass('active').first().addClass('active');
-	return false;
-});
 
 
 

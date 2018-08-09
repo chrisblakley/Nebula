@@ -14,6 +14,7 @@ if ( !trait_exists('Options') ){
 			add_action('current_screen', array($this, 'register_options'));
 			add_action('admin_menu', array($this, 'admin_sub_menu'));
 			add_action('nebula_options_saved', array($this, 'create_hubspot_properties'));
+			add_action('init', array($this, 'check_for_new_options'));
 		}
 
 		/*==========================
@@ -58,10 +59,12 @@ if ( !trait_exists('Options') ){
 		//Update Nebula options outside of the Nebula Options page
 		public function set_option($option, $value){return $this->update_option($option, $value);}
 		public function update_option($option, $value){
-			$nebula_options = get_option('nebula_options');
-			if ( empty($nebula_options[$option]) || $nebula_options[$option] !== $value ){
-				$nebula_options[$option] = $value;
-				update_option('nebula_options', $nebula_options);
+			if ( current_user_can('manage_options') ){
+				$nebula_options = get_option('nebula_options');
+				if ( empty($nebula_options[$option]) || $nebula_options[$option] !== $value ){
+					$nebula_options[$option] = $value;
+					update_option('nebula_options', $nebula_options);
+				}
 			}
 		}
 
@@ -189,6 +192,8 @@ if ( !trait_exists('Options') ){
 				'num_theme_updates' => 0,
 				'version_legacy' => 'false',
 				'users_status' => '',
+				'check_new_options' => 'false',
+				'need_sass_compile' => 'false',
 			);
 			return $nebula_data_defaults;
 		}
@@ -383,9 +388,26 @@ if ( !trait_exists('Options') ){
 				'amazon_associates_url' => '',
 				'mention_url' => '',
 				'notes' => '',
+				'auto_update_test' => 1,
 			);
 
 			return apply_filters('nebula_default_options', $nebula_options_defaults);
+		}
+
+		//Check for new options after the theme update. If any are found use their default value.
+		public function check_for_new_options(){
+			if ( $this->get_data('check_new_options', 'true') && current_user_can('manage_options') ){
+				$nebula_options = get_option('nebula_options');
+				$nebula_default_options = $this->default_options();
+				$different_keys = array_diff_key($nebula_default_options, $nebula_options);
+				foreach ( $different_keys as $different_key => $different_value ){
+					if ( is_null($nebula_options[$different_key]) ){
+						$this->update_option($different_key, $nebula_default_options[$different_key]);
+					}
+				}
+
+				$this->update_data('check_new_options', 'false');
+			}
 		}
 
 		//Get the "user friendly" default value for a Nebula Option
