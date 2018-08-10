@@ -251,6 +251,18 @@ if ( !trait_exists('Scripts') ){
 				),
 			);
 
+			//Staff (This is not meant for security checks!)
+			$this->brain['user']['staff'] = false;
+			if ( $this->is_staff() ){
+				if ( $this->is_dev() ){
+					$this->brain['user']['staff'] = 'developer';
+				} elseif ( $this->is_client() ){
+					$this->brain['user']['staff'] = 'client';
+				} else {
+					$this->brain['user']['staff'] = 'staff';
+				}
+			}
+
 			$this->brain = apply_filters('nebula_brain', $this->brain); //Allow other functions to hook in to add/modify data
 			$this->brain['user']['known'] = ( !empty($this->brain['user']['email']) )? true : false;
 

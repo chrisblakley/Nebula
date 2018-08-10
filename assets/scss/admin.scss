@@ -290,7 +290,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 	.option-group {margin-bottom: 40px;} //delete this line
 
 	.form-group,
-	.multi-form-group {margin-bottom: 15px; transition: opacity 0.25s;
+	.multi-form-group {margin-bottom: 15px; transition: opacity 0.25s; padding: 0; border: none; transition: all 0.25s ease;
 		.form-group {margin-bottom: 0;}
 		.form-text {font-size: 12px;}
 	}
@@ -315,7 +315,9 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 	}
 
 	.nebula-help-text {margin: .25rem 0 0 0;
-		&.more-help {display: none;}
+		&.more-help {display: none; padding-top: 4px;
+			.dev-handle {padding-top: 3px;}
+		}
 	}
 
 	.direct-link {margin-left: 5px; color: #666;
@@ -351,8 +353,8 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 
 	.save-row {margin-bottom: 35px;}
 
-	.highlight {padding: 10px 15px; background: #fcf8e3; border: 1px dotted #faf2cc;
-		.nebula-help-text {display: block !important;}
+	.highlight {padding: 10px 15px; background: #fcf8e3; border-left: 4px solid #eed659;
+		label {font-weight: 800;}
 	}
 }
 

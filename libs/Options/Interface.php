@@ -271,24 +271,22 @@
 	</form>
 </div><!-- wrap -->
 
-<?php if ( $direct_option ): ?>
-	<script>
-		if ( jQuery('#<?php echo $direct_option; ?>').length ){
-			if ( jQuery('#<?php echo $direct_option; ?>').parents('.multi-form-group').length ){
-				jQuery('#<?php echo $direct_option; ?>').closest('.multi-form-group').addClass('highlight');
-			} else {
-				jQuery('#<?php echo $direct_option; ?>').closest('.form-group').addClass('highlight');
+<script>
+	nebula.site.admin_url = '<?php echo get_admin_url(); //Add admin URL to Nebula brain object just for Nebula Options page ?>';
+
+	jQuery(function(){
+		<?php if ( $direct_option ): //Automatically highlight options when directly linked (and toggle more info) ?>
+			if ( jQuery('#<?php echo $direct_option; ?>').length ){
+				if ( jQuery('#<?php echo $direct_option; ?>').parents('.form-group, .multi-form-group').length ){
+					jQuery('#<?php echo $direct_option; ?>').closest('.form-group, .multi-form-group').addClass('highlight').find('.more-help').slideToggle();
+				}
+
+				jQuery('html, body').animate({
+					scrollTop: jQuery('#<?php echo $direct_option; ?>').offset().top-95
+				}, 500);
 			}
+		<?php endif; ?>
 
-			jQuery('html, body').animate({
-				scrollTop: jQuery('#<?php echo $direct_option; ?>').offset().top-95
-			}, 500);
-		}
-	</script>
-<?php endif; ?>
-
-<script type="text/javascript">
-	jQuery(function($){
 		jQuery('.if-js-closed').removeClass('if-js-closed').addClass('closed');
 		postboxes.add_postbox_toggles('nebula_options_interface');
 	});

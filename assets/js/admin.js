@@ -51,27 +51,35 @@ jQuery(function(){
 		});
 
 		jQuery('.short-help').each(function(){
-			//Direct Link icons
-			var thisTab = jQuery(this).closest('.tab-pane').attr('id');
-			var thisOption = jQuery(this).closest('.form-group, .multi-form-group').find('.form-control').attr('id');
-			//jQuery(this).append('<a class="direct-link" href="themes.php?page=nebula_options&tab=' + thisTab + '&option=' + thisOption + '" title="Link to this option" tabindex="-1"><i class="fas fa-fw fa-link"></i></a>'); //@todo "Nebula" 0: this should confirm leaving on click if there are changes to the form!
-
-			//Dev handle names
-			var devUsage = '<span class="dev-handle form-text text-muted">Dev usage: <code>nebula()->get_option(\'' + jQuery(this).closest('.form-group').find('[name^=nebula_options]').attr('id') + '\');</code></span>';
-			if ( jQuery(this).parent().find('.more-help').length ){
-				jQuery(this).closest('.form-group').find('.more-help').append(devUsage);
-			} else {
-				jQuery(this).after('<p class="nebula-help-text more-help form-text text-muted">' + devUsage + '</p>');
+			if ( nebula.user.staff === 'developer' ){
+				//Dev handle names
+				var optionHandle = jQuery(this).closest('.form-group').find('[name^=nebula_options]').attr('id');
+				if ( typeof optionHandle !== 'undefined' ){
+					var devUsage = '<span class="dev-handle form-text text-muted">Dev usage: <code>nebula()->get_option(\'' + optionHandle + '\');</code></span>';
+					if ( jQuery(this).parent().find('.more-help').length ){
+						jQuery(this).closest('.form-group').find('.more-help').append(devUsage);
+					} else {
+						jQuery(this).after('<p class="nebula-help-text more-help form-text text-muted">' + devUsage + '</p>');
+					}
+				}
 			}
 
 			//More Help expander icons
 			if ( jQuery(this).parent().find('.more-help').length ){
-				jQuery(this).append('<a class="toggle-more-help" href="#" title="Show more information" tabindex="-1"><i class="fas fa-fw fa-question-circle"></i></a>');
+				jQuery(this).append('<a class="toggle-more-help" href="#" title="Toggle more information" tabindex="-1"><i class="fas fa-fw fa-question-circle"></i></a>');
 			}
 		});
 
+		//Show/hide more information
 		jQuery(document).on('click', '.toggle-more-help', function(){
-			jQuery(this).closest('.form-group, .multi-form-group').find('.more-help').slideToggle();
+			var formGroup = jQuery(this).closest('.form-group, .multi-form-group');
+			jQuery('.form-group.highlight, .multi-form-group.highlight').not(formGroup).removeClass('highlight').find('.more-help').slideUp(); //Un-highlight all other options
+			formGroup.toggleClass('highlight').find('.more-help').slideToggle(); //Toggle highlight on this option
+
+			var thisTab = jQuery(this).closest('.tab-pane').attr('id');
+			var thisOption = jQuery(this).closest('.form-group, .multi-form-group').find('.form-control').attr('id');
+			history.replaceState(null, document.title, nebula.site.admin_url + 'themes.php?page=nebula_options&tab=' + thisTab + '&option=' + thisOption); //Modify the URL so the direct link can be copied
+
 			return false;
 		});
 	}

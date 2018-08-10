@@ -2939,6 +2939,16 @@ trait Functions {
 			$classes[] = 'user-not-logged-in';
 		}
 
+		//Staff
+		if ( $this->is_staff() ){
+			$classes[] = 'is-staff';
+			if ( $this->is_dev() ){
+				$classes[] = 'staff-developer';
+			} elseif ( $this->is_client() ){
+				$classes[] = 'staff-client';
+			}
+		}
+
 		//Post Information
 		if ( !is_search() && !is_archive() && !is_front_page() && !is_404() ){
 			global $post;

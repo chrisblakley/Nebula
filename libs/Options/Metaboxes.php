@@ -54,7 +54,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="site_owner">Site Owner</label>
 					<input type="text" name="nebula_options[site_owner]" id="site_owner" class="form-control nebula-validate-text" value="<?php echo $this->option('site_owner'); ?>" placeholder="<?php echo get_bloginfo('name'); ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">The name of the company (or person) who this website is for.</p>
-					<p class="nebula-help-text more-help form-text text-muted">This is used when using nebula()->the_author(0) with author names disabled.</p>
+					<p class="nebula-help-text more-help form-text text-muted">This is used when using <code>nebula()->the_author(0)</code> with author names disabled.</p>
 					<p class="option-keywords">recommended seo</p>
 				</div>
 
@@ -369,7 +369,7 @@ if ( !trait_exists('Metaboxes') ){
 						<option value="footer" <?php selected('footer', $nebula_options['jquery_version']); ?>>Latest (Footer)</option>
 					</select>
 					<p class="nebula-help-text short-help form-text text-muted">Which jQuery version to use and where to load it (head is blocking, footer is more performant). (Default: <?php echo $this->user_friendly_default('jquery_version'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">Be careful changing this option as some plugins may rely on older versions of jQuery, however some speed improvements may be realized by using alternate versions and locations. Note: some plugins may override this and bring jQuery back to the head. Remember: if loading in the footer, embedded script tags cannot use jQuery in template files.</p>
+					<p class="nebula-help-text more-help form-text text-muted">Be careful changing this option as some plugins may rely on older versions of jQuery, however some speed improvements may be realized by using alternate versions and locations.<br /><strong>Note:</strong> some plugins may override this and bring jQuery back to the head.<br /><strong>Remember:</strong> if loading in the footer, embedded script tags cannot use jQuery in template files.</p>
 					<p class="option-keywords">internet explorer old support plugins minor page speed impact</p>
 				</div>
 
@@ -542,13 +542,6 @@ if ( !trait_exists('Metaboxes') ){
 					<input type="checkbox" name="nebula_options[plugin_update_warning]" id="plugin_update_warning" value="1" <?php checked('1', !empty($nebula_options['plugin_update_warning'])); ?> /><label for="plugin_update_warning">Plugin Warning</label>
 					<p class="nebula-help-text short-help form-text text-muted">Control whether or not the plugin update warning appears on admin pages. (Default: <?php echo $this->user_friendly_default('plugin_update_warning'); ?>)</p>
 					<p class="option-keywords">discretionary</p>
-				</div>
-
-				<!-- @todo "Nebula" 0: remove this in 2 versions -->
-				<div class="form-group">
-					<input type="checkbox" name="nebula_options[auto_update_test]" id="auto_update_test" value="1" <?php checked('1', !empty($nebula_options['auto_update_test'])); ?> /><label for="auto_update_test">This is a test (<?php var_dump( $nebula_options['auto_update_test'] ); ?>)</label>
-					<p class="nebula-help-text short-help form-text text-muted">Testing. (Default: <?php echo $this->user_friendly_default('auto_update_test'); ?>)</p>
-					<p class="option-keywords"></p>
 				</div>
 			<?php
 
@@ -1744,7 +1737,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="notableiplist">Notable IPs</label>
 					<textarea name="nebula_options[notableiplist]" id="notableiplist" class="form-control nebula-validate-textarea" rows="6" placeholder="192.168.0.1 Name Here"><?php echo $nebula_options['notableiplist']; ?></textarea>
 					<p class="nebula-help-text short-help form-text text-muted">A list of named IP addresses. Enter each IP (or RegEx to match) on a new line with a space separating the IP address and name.</p>
-					<p class="nebula-help-text more-help form-text text-muted">Name IPs by location to avoid <a href="https://support.google.com/analytics/answer/2795983" target="_blank" rel="noopener">Personally Identifiable Information (PII)</a> issues (Do not use peoples' names). Be sure to set up a Custom Dimension in Google Analytics and add the dimension index in the Analytics tab! Tip: IP data is sent with <a href="https://gearside.com/nebula/examples/contact-form-7/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=notable+ips+help<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener">Nebula contact forms</a>!</p>
+					<p class="nebula-help-text more-help form-text text-muted">Name IPs by location to avoid <a href="https://support.google.com/analytics/answer/2795983" target="_blank" rel="noopener">Personally Identifiable Information (PII)</a> issues (Do not use peoples' names). Be sure to set up a Custom Dimension in Google Analytics and add the dimension index in the Analytics tab!<br />Tip: IP data can be sent with <a href="https://gearside.com/nebula/examples/contact-form-7/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=notable+ips+help<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener">Nebula contact forms</a>!</p>
 					<p class="option-keywords">recommended</p>
 				</div>
 			<?php
