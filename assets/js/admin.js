@@ -37,7 +37,7 @@ jQuery(function(){
 			history.replaceState(null, document.title, url);
 
 			jQuery('html, body').animate({
-				scrollTop: jQuery('#nebula-options-section').offset().top-1000
+				scrollTop: jQuery('#nebula-options-section').offset().top-100
 			}, 500);
 		});
 
@@ -65,9 +65,9 @@ jQuery(function(){
 			}
 
 			//More Help expander icons
-			if ( jQuery(this).parent().find('.more-help').length ){
+			//if ( jQuery(this).parent().find('.more-help').length ){
 				jQuery(this).append('<a class="toggle-more-help" href="#" title="Toggle more information" tabindex="-1"><i class="fas fa-fw fa-question-circle"></i></a>');
-			}
+			//}
 		});
 
 		//Show/hide more information
@@ -77,8 +77,13 @@ jQuery(function(){
 			formGroup.toggleClass('highlight').find('.more-help').slideToggle(); //Toggle highlight on this option
 
 			var thisTab = jQuery(this).closest('.tab-pane').attr('id');
-			var thisOption = jQuery(this).closest('.form-group, .multi-form-group').find('.form-control').attr('id');
-			history.replaceState(null, document.title, nebula.site.admin_url + 'themes.php?page=nebula_options&tab=' + thisTab + '&option=' + thisOption); //Modify the URL so the direct link can be copied
+			var thisOption = jQuery(this).closest('.form-group, .multi-form-group').find('.form-control').attr('id') || jQuery(this).closest('.form-group, .multi-form-group').find('label').attr('for');
+
+			var url = nebula.site.admin_url + 'themes.php?page=nebula_options&tab=' + thisTab;
+			if ( formGroup.hasClass('highlight') ){
+				url += '&option=' + thisOption;
+			}
+			history.replaceState(null, document.title, url); //Modify the URL so the direct link can be copied
 
 			return false;
 		});
@@ -162,6 +167,11 @@ jQuery(window).on('load', function(){
 			jQuery('.tab-pane').removeClass('active').first().addClass('active');
 		}
 	});
+
+	//Trigger the filter if linking to a pre-filtered search
+	if ( jQuery('#nebula-option-filter').val() ){
+		jQuery('#nebula-option-filter').trigger('keyup');
+	}
 
 	jQuery('#reset-filter a').on('click', function(){
 		jQuery('#nebula-option-filter').val('').trigger('keydown');

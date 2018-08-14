@@ -235,7 +235,7 @@ if ( !trait_exists('Metaboxes') ){
 					<textarea name="nebula_options[business_hours_closed]" id="business_hours_closed" class="form-control nebula-validate-textarea" rows="3"><?php echo $nebula_options['business_hours_closed']; ?></textarea>
 					<p class="dependent-note hidden">This option is dependent on Business Hours (above).</p>
 					<p class="nebula-help-text short-help form-text text-muted">Comma-separated list of special days the business is closed (like holidays).</p>
-					<p class="nebula-help-text more-help form-text text-muted">These can be date formatted, or day of the month (Ex: "7/4" for Independence Day, or "Last Monday of May" for Memorial Day, or "Fourth Thursday of November" for Thanksgiving). <a href="http://mistupid.com/holidays/" target="_blank" rel="noopener">Here is a good reference for holiday occurrences.</a>. Note: This function assumes days off that fall on weekends are observed the Friday before or the Monday after.</p>
+					<p class="nebula-help-text more-help form-text text-muted">These can be date formatted, or day of the month (Ex: "7/4" for Independence Day, or "Last Monday of May" for Memorial Day, or "Fourth Thursday of November" for Thanksgiving). <a href="http://mistupid.com/holidays/" target="_blank" rel="noopener">Here is a good reference for holiday occurrences.</a>.<br /><strong>Note:</strong> This function assumes days off that fall on weekends are observed the Friday before or the Monday after.</p>
 					<p class="option-keywords">seo</p>
 				</div>
 			<?php
@@ -458,14 +458,14 @@ if ( !trait_exists('Metaboxes') ){
 						$nebula_data = get_option('nebula_data');
 						$last_processed_text = 'Never';
 						if ( !empty($nebula_data['scss_last_processed']) ){
-							$last_processed_text = '<strong>' . date('l, F j, Y - g:ia', $nebula_data['scss_last_processed']) . '</strong> (' . human_time_diff($nebula_data['scss_last_processed']) . ' ago). Will automatically disable if not re-procesed in ' . human_time_diff($nebula_data['scss_last_processed']+(DAY_IN_SECONDS*30)) . '.';
+							$last_processed_text = '<strong>' . date('l, F j, Y \a\t g:ia', $nebula_data['scss_last_processed']) . '</strong> (' . human_time_diff($nebula_data['scss_last_processed']) . ' ago). Will automatically disable if not re-procesed in <strong>' . human_time_diff($nebula_data['scss_last_processed']+(DAY_IN_SECONDS*30)) . '</strong>.';
 						}
 					?>
 
 					<input type="checkbox" name="nebula_options[scss]" id="scss" value="1" <?php checked('1', !empty($nebula_options['scss'])); ?> /><label for="scss">Sass</label>
 					<p class="nebula-help-text short-help form-text text-muted">Enable the bundled SCSS compiler. (Default: <?php echo $this->user_friendly_default('scss'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">
-						Save Nebula Options to manually process all SCSS files. This option will automatically be disabled after 30 days without processing. CSS files will automatically be minified, but use source maps for debugging.<br /><br />
+						Save Nebula Options to manually process all SCSS files. This option will automatically be disabled after 30 days without processing. CSS files will automatically be minified, but source maps are available for debugging.<br /><br />
 						Last processed: <?php echo $last_processed_text; ?>
 					</p>
 					<p class="option-keywords">sass scss sccs scass css moderate page speed impact</p>

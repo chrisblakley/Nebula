@@ -2914,7 +2914,6 @@ function getQueryStrings(url, format){
 		format = 'object';
 	}
 
-	var queries = {};
 	var queryString = url.split('?')[1];
 
 	if ( queryString ){
@@ -2922,6 +2921,7 @@ function getQueryStrings(url, format){
 			return '?' + queryString;
 		}
 
+		var queries = {};
 		queryStrings = queryString.split('&');
 		for ( var i = 0; i < queryStrings.length; i++ ){
 			hash = queryStrings[i].split('=');
@@ -2931,9 +2931,15 @@ function getQueryStrings(url, format){
 				queries[hash[0]] = true;
 			}
 		}
+
+		return queries;
 	}
 
-	return queries;
+	if ( format === 'string' ){
+		return '';
+	}
+
+	return false;
 }
 
 //Search query strings for the passed parameter

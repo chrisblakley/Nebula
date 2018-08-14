@@ -310,7 +310,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 	input::-webkit-input-placeholder,
 	textarea::-webkit-input-placeholder {color: #ddd;}
 
-	.toggle-more-help {margin-left: 5px; color: #666;
+	.toggle-more-help {margin-left: 5px; color: #666; box-shadow: none;
 		&:hover {color: #0098d7;}
 	}
 
@@ -355,6 +355,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 
 	.highlight {padding: 10px 15px; background: #fcf8e3; border-left: 4px solid #eed659;
 		label {font-weight: 800;}
+		a.toggle-more-help {color: #5971ee;}
 	}
 }
 

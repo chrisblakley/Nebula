@@ -76,6 +76,7 @@ if ( !trait_exists('Options') ){
 			if ( empty($nebula_data[$option]) ){
 				return false;
 			}
+
 			return $nebula_data[$option];
 		}
 
@@ -396,7 +397,7 @@ if ( !trait_exists('Options') ){
 
 		//Check for new options after the theme update. If any are found use their default value.
 		public function check_for_new_options(){
-			if ( $this->get_data('check_new_options', 'true') && current_user_can('manage_options') ){
+			if ( $this->get_data('check_new_options') === 'true' && current_user_can('manage_options') ){
 				$nebula_options = get_option('nebula_options');
 				$nebula_default_options = $this->default_options();
 				$different_keys = array_diff_key($nebula_default_options, $nebula_options);

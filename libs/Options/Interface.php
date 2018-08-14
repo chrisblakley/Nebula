@@ -278,7 +278,9 @@
 		<?php if ( $direct_option ): //Automatically highlight options when directly linked (and toggle more info) ?>
 			if ( jQuery('#<?php echo $direct_option; ?>').length ){
 				if ( jQuery('#<?php echo $direct_option; ?>').parents('.form-group, .multi-form-group').length ){
-					jQuery('#<?php echo $direct_option; ?>').closest('.form-group, .multi-form-group').addClass('highlight').find('.more-help').slideToggle();
+					jQuery(window).on('load', function(){ //I don't know why we need to wait for window load here since the DOM should be ready by now...
+						jQuery('#<?php echo $direct_option; ?>').closest('.form-group, .multi-form-group').addClass('highlight').find('.more-help').slideDown();
+					});
 				}
 
 				jQuery('html, body').animate({
