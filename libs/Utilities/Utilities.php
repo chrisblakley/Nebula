@@ -904,8 +904,8 @@ if ( !trait_exists('Utilities') ){
 			$site_available_buffer = get_transient('nebula_site_available_' . $hostname);
 			if ( !empty($site_available_buffer) && $allow_cache ){ //If this hostname was found in a transient and specifically allowing a cached response.
 				if ( $site_available_buffer === 'Available' ){
-					set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*10); //Re-up the transient with a 10 minute expiration
-					return true; //This hostname has worked within the last 10 minutes
+					set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*20); //Re-up the transient with a 15 minute expiration
+					return true; //This hostname has worked within the last 20 minutes
 				}
 
 				set_transient('nebula_site_available_' . $hostname, 'Unavailable', MINUTE_IN_SECONDS*10); //10 minute expiration
@@ -917,7 +917,7 @@ if ( !trait_exists('Utilities') ){
 				$response = wp_remote_head($url); //Only get the head data for slight speed improvement
 
 				if ( !is_wp_error($response) && $response['response']['code'] === 200 ){ //If the remote request was successful
-					set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*10); //10 minute expiration
+					set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*20); //20 minute expiration
 					return true;
 				}
 			}
@@ -955,7 +955,7 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			//Return the response
-			set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*10); //10 minute expiration
+			set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*20); //20 minute expiration
 			$this->timer($timer_name, 'end');
 			return $response;
 		}

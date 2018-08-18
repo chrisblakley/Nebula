@@ -44,32 +44,67 @@
 				&:hover,
 				&:focus {background: $primary_color;}
 			}
-			ul.sub-menu {display: none;}
+
+			&.menu-item-has-children {position: relative;
+				> a {padding-right: 35px;}
+				&:after {content: "\f054"; position: absolute; top: 0; right: 18px; height: 100%; display: flex; align-items: center; @include font-awesome('solid'); font-size: 8px; color: #aaa; @include prefix((transition: right 0.25s easing(easeOutBack))); pointer-events: none;}
+			}
+
+			ul.sub-menu {display: none;} //Hide all sub-menus at first
 		}
 	}
 
 	&:hover,
 	&:focus {
-		> a {background: lighten($primary_color, 5%); color: #fff !important;}
-
-		ul.sub-menu {left: 0; right: auto; top: 100%; opacity: 1;
-			&.overflowing {left: auto; right: 0;}
-			li {background: none;}
-		}
+		@include nebula-submenus();
 	}
 
-	&:focus-within { //No IE or Edge Support: https://caniuse.com/#feat=css-focus-within
-		> a {background: lighten($primary_color, 5%); color: #fff !important;}
-
-		ul.sub-menu {left: 0; right: auto; top: 100%; opacity: 1;
-			&.overflowing {left: auto; right: 0;}
-			li {background: none;}
-		}
+	//No IE or Edge Support: https://caniuse.com/#feat=css-focus-within
+	//Once all browsers support this, add to the comma separation above and remove nebula-submenus() mixin
+	&:focus-within {
+		@include nebula-submenus();
 	}
 
 	.no-js &:last-child:hover ul.sub-menu,
 	.no-js &:last-child:focus ul.sub-menu {left: auto; right: 0;}
 }
+
+@mixin nebula-submenus(){
+	> a {background: $primary_color; color: readable-color($primary_color) !important;}
+
+	//First dropdown
+	ul.sub-menu {left: 0; right: auto; top: 100%; opacity: 1;
+		&.overflowing {left: auto; right: 0;}
+		li.menu-item {background: none;
+			ul.sub-menu {display: none;}
+
+			&:hover,
+			&:focus {
+				@include nebula-subsubmenus();
+			}
+
+			//No IE or Edge Support: https://caniuse.com/#feat=css-focus-within
+			//Once all browsers support this, add to the comma separation above and remove nebula-subsubmenus() mixin
+			&:focus-within {
+				@include nebula-subsubmenus();
+			}
+		}
+	}
+}
+
+@mixin nebula-subsubmenus(){
+	&:after {right: 12px; color: readable-color($primary_color);} //Has-children arrow
+
+	//Second "dropdown"
+	> ul.sub-menu {display: block; left: 100%; right: auto; top: 0; opacity: 1;
+		&.overflowing {left: auto; right: 100%; //Second "dropdown" is overflowing the viewport. Move it to the left.
+			ul.sub-menu {left: auto; right: 100%;} //Also move all nested submenus to the left as well.
+		}
+	}
+}
+
+
+
 
 #utilitynavcon {max-height: 0; opacity: 0; background: rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));
 	@include media("lg"){height: auto; max-height: 200px; opacity: 1;};

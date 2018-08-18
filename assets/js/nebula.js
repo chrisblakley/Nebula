@@ -338,12 +338,13 @@ function performanceMetrics(){
 
 //Sub-menu viewport overflow detector
 function overflowDetector(){
-	jQuery('.menu > .menu-item').on({
+	jQuery('.menu li.menu-item').on({
 		'mouseenter focus focusin': function(){
 			if ( jQuery(this).children('.sub-menu').length ){
-				var submenuLeft = jQuery(this).offset().left;
-				var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width();
-				if ( submenuRight > nebula.dom.window.width() ){
+				var submenuLeft = jQuery(this).children('.sub-menu').offset().left; //Left side of the sub-menu
+				var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width(); //Right side of the sub-menu
+
+				if ( submenuRight > nebula.dom.window.width() ){ //If the right side is greater than the width of the viewport
 					jQuery(this).children('.sub-menu').addClass('overflowing');
 				} else {
 					jQuery(this).children('.sub-menu').removeClass('overflowing');
@@ -832,6 +833,8 @@ function eventTracking(){
 	}
 
 	//Reporting Observer deprecations and interventions
+	//@todo Nebula 0: This may be causing "aw snap" errors in Chrome. Disabling for now until the feature is more stable.
+/*
 	if ( typeof window.ReportingObserver !== 'undefined' ){ //Chrome 68+
 		var nebulaReportingObserver = new ReportingObserver(function(reports, observer){
 			for ( report of reports ){
@@ -842,6 +845,7 @@ function eventTracking(){
 		}, {buffered: true});
 		nebulaReportingObserver.observe();
 	}
+*/
 
 	//PWA Add to Homescreen Install Prompt
 	window.addEventListener('beforeinstallprompt', function(event){

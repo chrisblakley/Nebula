@@ -463,7 +463,7 @@ if ( !trait_exists('Dashboard') ){
 				}
 
 				$todo_items = apply_filters('nebula_todo_items', $todo_items); //Add locations to the Todo Manager
-				set_transient('nebula_todo_items', $todo_items, MINUTE_IN_SECONDS*5); //5 minute cache
+				set_transient('nebula_todo_items', $todo_items, MINUTE_IN_SECONDS*30); //30 minute cache
 			}
 
 			$file_count = 0;
@@ -963,7 +963,7 @@ if ( !trait_exists('Dashboard') ){
 	            }
 
 				$hubspot_contacts_json = $response['body'];
-				set_transient('nebula_hubspot_contacts', $hubspot_contacts_json, MINUTE_IN_SECONDS*15); //15 minute expiration
+				set_transient('nebula_hubspot_contacts', $hubspot_contacts_json, MINUTE_IN_SECONDS*30); //30 minute expiration
 			}
 
 			$hubspot_contacts_json = json_decode($hubspot_contacts_json);

@@ -38,7 +38,7 @@
 				<div class="col-lg-8">
 					<?php if ( has_nav_menu('primary') ): ?>
 						<nav id="primary-nav">
-							<?php wp_nav_menu(array('theme_location' => 'primary', 'depth' => '2')); ?>
+							<?php wp_nav_menu(array('theme_location' => 'primary', 'depth' => '4')); ?>
 		        		</nav>
 	        		<?php endif; ?>
 	        	</div><!--/col-->

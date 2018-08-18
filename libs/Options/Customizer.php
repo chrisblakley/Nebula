@@ -881,9 +881,7 @@ trait Customizer {
 					#hero-section #hero-content {margin-top: 0; margin-bottom: 0;}
 				<?php endif; ?>
 
-				<?php if ( get_theme_mod('nebula_hero_overlay_color') || get_theme_mod('nebula_hero_overlay_opacity') ): //This condition isn't entirely necessary as the selector is unique to the Customizer ?>
-					#hero-section .custom-color-overlay {background: <?php echo get_theme_mod('nebula_hero_overlay_color'); ?>; opacity: <?php echo get_theme_mod('nebula_hero_overlay_opacity'); ?>; animation: none;}
-				<?php endif; ?>
+				#hero-section .custom-color-overlay {background: <?php echo get_theme_mod('nebula_hero_overlay_color'); ?>; opacity: <?php echo get_theme_mod('nebula_hero_overlay_opacity'); ?>; animation: none;}
 
 				<?php if ( get_theme_mod('nebula_hero_text_color') ): ?>
 					#hero-section #hero-content h1,

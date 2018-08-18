@@ -12,9 +12,13 @@
 
 //Add new image sizes
 //Certain sizes (like FB Open Graph sizes) are already added, so only add extra sizes that are needed.
-//add_action('after_setup_theme', 'custom_image_sizes');
-//function custom_image_sizes(){
+//add_action('after_setup_theme', function(){
 	//add_image_size('example', 32, 32, 1);
-//}
+//});
+
+//This hook is used when author bios (Nebula Option) is disabled. It will redirect to the About page instead.
+//add_filter('nebula_no_author_redirect', function($url){
+	//return get_permalink(99999); //Use ID for the About Us page here
+//});
 
 ?>

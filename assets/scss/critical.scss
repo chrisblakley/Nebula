@@ -106,12 +106,12 @@
 		p,
 		.page-meta,
 		.entry-meta {color: #fff; font-size: rem(14px); line-height: rem(21px); margin: 10px 0;
-			i, svg {margin-right: 2px; color: #bbb;}
+			i, svg {margin-right: 2px; color: #fff;}
 
 			.meta-item {display: inline-block; margin-right: 10px;
-				a {color: #999;
+				a {color: #fff;
 					&:hover,
-					&:focus {color: $primary_color;}
+					&:focus {color: #aaa;}
 				}
 			}
 			.post-tags {font-style: italic;}

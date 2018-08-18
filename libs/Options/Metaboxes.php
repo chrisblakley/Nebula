@@ -409,7 +409,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[author_bios]" id="author_bios" value="1" <?php checked('1', !empty($nebula_options['author_bios'])); ?> /><label for="author_bios">Author Bios</label>
 					<p class="nebula-help-text short-help form-text text-muted">Allow authors to have bios that show their info (and post archives). (Default: <?php echo $this->user_friendly_default('author_bios'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">This also enables searching by author, and displaying author names on posts. If disabled, the author page attempts to redirect to an About Us page.</p>
+					<p class="nebula-help-text more-help form-text text-muted">This also enables searching by author, and displaying author names on posts.<br />If disabled, the author page attempts to redirect to an <a href="<?php echo home_url('/'); ?>?s=about" target="_blank">About Us page</a> (use the filter hook <code>nebula_no_author_redirect</code> to better control where it redirects- especially if no search results are found when clicking that link).<br />If disabled, remember to also disable the <a href="<?php echo get_admin_url(); ?>/admin.php?page=wpseo_titles#top#archives" target="_blank">Author archives option in Yoast</a> to hide them from the sitemap.</p>
 					<p class="option-keywords">seo</p>
 				</div>
 
