@@ -146,6 +146,10 @@ if ( !trait_exists('Optimization') ){
 
 		//Defer and Async specific scripts. This only works with registered/enqueued scripts!
 		public function defer_async_additional_scripts($tag){
+			if ( $this->is_admin_page() ){ //Do not modify scripts on admin pages (Gutenberg compatibility)
+				return $tag;
+			}
+
 			$to_defer = array('jquery-migrate', 'jquery.form', 'contact-form-7', 'wp-embed'); //Scripts to defer. Strings can be anywhere in the filepath.
 			$to_async = array(); //Scripts to async. Strings can be anywhere in the filepath.
 
@@ -196,8 +200,11 @@ if ( !trait_exists('Optimization') ){
 
 		//Dequeue scripts prepped for lazy-loading
 		public function dequeue_lazy_load_scripts(){
-			$lazy_load_assets = $this->lazy_load_assets();
+			if ( $this->is_admin_page() ){ //Do not modify scripts on admin pages (Gutenberg compatibility)
+				return false;
+			}
 
+			$lazy_load_assets = $this->lazy_load_assets();
 			foreach ( $lazy_load_assets['scripts'] as $handle => $condition ){
 				wp_dequeue_script($handle);
 			}

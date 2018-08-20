@@ -822,13 +822,23 @@ function eventTracking(){
 
 	//AJAX Errors
 	nebula.dom.document.ajaxError(function(e, jqXHR, settings, thrownError){
-		ga('send', 'exception', {'exDescription': '(JS) AJAX Error (' + jqXHR.status + '): ' + thrownError + ' on ' + settings.url, 'exFatal': true});
+		var errorMessage = thrownError;
+		if ( jqXHR.status === 0 ){ //A status of 0 means the error is unknown. Possible network connection issue (like a blocked request).
+			errorMessage = 'Unknown error';
+		}
+
+		ga('send', 'exception', {'exDescription': '(JS) AJAX Error (' + jqXHR.status + '): ' + errorMessage + ' on ' + settings.url, 'exFatal': true});
 		nv('event', 'AJAX Error');
 	});
 
 	//Window Errors
-	window.onerror = function (message, file, line) {
-		ga('send', 'exception', {'exDescription': '(JS) ' + message + ' at ' + line + ' of ' + file, 'exFatal': false}); //Is there a better way to detect fatal vs non-fatal errors?
+	window.onerror = function(message, file, line){
+		var errorMessage = message + ' at ' + line + ' of ' + file;
+		if ( message.toLowerCase().indexOf('script error') > -1 ){ //If it is a script error
+			errorMessage = 'Script error (An error occurred in a script hosted on a different domain)'; //No additional information is available because of the browser's same-origin policy. Use CORS when possible to get additional information.
+		}
+
+		ga('send', 'exception', {'exDescription': '(JS) ' + errorMessage, 'exFatal': false}); //Is there a better way to detect fatal vs non-fatal errors?
 		nv('event', 'JavaScript Error');
 	}
 
@@ -2040,9 +2050,6 @@ function nebulaLiveValidator(){
 	//RegEx input
 	nebula.dom.document.on('keyup change blur', '.nebula-validate-regex', function(e){
 		var pattern = new RegExp(jQuery(this).attr('pattern'), 'i');
-		if ( !pattern ){
-			pattern = new RegExp(jQuery(this).attr('data-valid-regex'), 'i'); //@todo "Nebula" 0: This is deprecated. Delete after version 6. Start using the pattern attribute
-		}
 
 		if ( jQuery(this).val() === '' ){
 			applyValidationClasses(jQuery(this), 'reset', false);
