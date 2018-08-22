@@ -20,9 +20,9 @@
 									<nav id="mobilenav" role="navigation">
 										<?php
 											if ( has_nav_menu('mobile') ){
-												wp_nav_menu(array('theme_location' => 'mobile', 'depth' => '9999'));
+												wp_nav_menu(array('theme_location' => 'mobile'));
 											} elseif ( has_nav_menu('primary') ){
-												wp_nav_menu(array('theme_location' => 'header', 'depth' => '9999'));
+												wp_nav_menu(array('theme_location' => 'header'));
 											}
 										?>
 									</nav>

@@ -396,322 +396,326 @@ if ( !trait_exists('Admin') ){
 
 		//CSS override for the frontend
 		public function remove_admin_bar_style_frontend(){
-			?>
+			if ( is_admin_bar_showing() ){ ?>
 				<style type="text/css" media="screen">
 					html {margin-top: 0px !important;}
 					* html body {margin-top: 0px !important;}
 				</style>
-			<?php
+			<?php }
 		}
 
 		public function remove_admin_bar_logo() {
-			global $wp_admin_bar;
-			$wp_admin_bar->remove_menu('wp-logo');
-			$wp_admin_bar->remove_menu('wpseo-menu'); //Remove Yoast SEO from admin bar
+			if ( is_admin_bar_showing() ){
+				global $wp_admin_bar;
+				$wp_admin_bar->remove_menu('wp-logo');
+				$wp_admin_bar->remove_menu('wpseo-menu'); //Remove Yoast SEO from admin bar
+			}
 		}
 
 		//Create custom menus within the WordPress Admin Bar
 		public function admin_bar_menus($wp_admin_bar){
-			wp_reset_query(); //Make sure the query is always reset in case the current page has a custom query that isn't reset.
-			global $post;
-
-			$current_id = get_the_id();
-			if ( is_home() ){
-				$current_id = get_option('page_for_posts');
-			}
-
-			$status = get_post_field('post_status', $current_id);
-			$original_date = strtotime(get_post_field('post_date', $current_id));
-			$original_author = get_the_author_meta('display_name' , get_post_field('post_author', $current_id));
-			$modified_date = strtotime(get_post_field('post_modified', $current_id));
-			if ( get_post_meta($current_id, '_edit_last', true) ){
-				$last_user = get_userdata(get_post_meta( $current_id, '_edit_last', true));
-				$modified_author = $last_user->display_name;
-			}
-
-			$node_id = ( $this->is_admin_page() )? 'view' : 'edit';
-			$new_content_node = $wp_admin_bar->get_node($node_id);
-			if ( $new_content_node ){
-				$post_type_object = get_post_type_object(get_post_type());
+			if ( is_admin_bar_showing() ){
+				wp_reset_query(); //Make sure the query is always reset in case the current page has a custom query that isn't reset.
+				global $post;
 
 				$current_id = get_the_id();
 				if ( is_home() ){
 					$current_id = get_option('page_for_posts');
 				}
 
-				$new_content_node->title = ucfirst($node_id) . ' ' . ucwords($post_type_object->labels->singular_name) . ' <span class="nebula-admin-light">(ID: ' . $current_id . ')</span>';
-				$wp_admin_bar->add_node($new_content_node);
-			}
-
-			//Add created date under View/Edit node
-			//@TODO "Nebula" 0: get_the_author() is not working when in Admin
-			$wp_admin_bar->add_node(array(
-				'parent' => $node_id,
-				'id' => 'nebula-created',
-				'title' => '<i class="nebula-admin-fa far fa-fw fa-calendar"></i> <span title="' . human_time_diff($original_date) . ' ago">Created: ' . date('F j, Y', $original_date) . '</span> <span class="nebula-admin-light">(' . $original_author . ')</span>',
-				'href' => get_edit_post_link(),
-				'meta' => array('target' => '_blank', 'rel' => 'noopener')
-			));
-
-			//Add modified date under View/Edit node
-			if ( get_post_meta($current_id, '_edit_last', true) ){ //If the post has been modified
-				$wp_admin_bar->add_node(array(
-					'parent' => $node_id,
-					'id' => 'nebula-modified',
-					'title' => '<i class="nebula-admin-fa far fa-fw fa-clock"></i> <span title="' . human_time_diff($modified_date) . ' ago">Modified: ' . date('F j, Y', $modified_date) . '</span> <span class="nebula-admin-light">(' . $modified_author . ')</span>',
-					'href' => get_edit_post_link(),
-					'meta' => array('target' => '_blank', 'rel' => 'noopener')
-				));
-			}
-
-			//Post status (Publish, Draft, Private, etc)
-			$wp_admin_bar->add_node(array(
-				'parent' => $node_id,
-				'id' => 'nebula-status',
-				'title' => '<i class="nebula-admin-fa fas fa-fw fa-map-marker"></i> Status: ' . ucwords($status),
-				'href' => get_edit_post_link(),
-				'meta' => array('target' => '_blank', 'rel' => 'noopener')
-			));
-
-			//Theme template file
-			if ( !empty($this->current_theme_template) ){
-				$wp_admin_bar->add_node(array(
-					'parent' => $node_id,
-					'id' => 'nebula-template',
-					'title' => '<i class="nebula-admin-fa far fa-fw fa-object-group"></i> Template: ' . basename($this->current_theme_template) . ' <span class="nebula-admin-light">(' . dirname($this->current_theme_template) . ')</span>',
-					'href' => get_edit_post_link(),
-					'meta' => array('target' => '_blank', 'rel' => 'noopener')
-				));
-			}
-
-			if ( !empty($post_type_object) ){
-				//Ancestor pages
-				$ancestors = get_post_ancestors($current_id);
-				if ( !empty($ancestors) ){
-					$wp_admin_bar->add_node(array(
-						'parent' => $node_id,
-						'id' => 'nebula-ancestors',
-						'title' => '<i class="nebula-admin-fa fas fa-fw fa-level-up-alt"></i> Ancestor ' . ucwords($post_type_object->labels->name) . ' <small>(' . count($ancestors) . ')</small>',
-					));
-
-					foreach ( $ancestors as $parent ){
-						$wp_admin_bar->add_node(array(
-							'parent' => 'nebula-ancestors',
-							'id' => 'nebula-parent-' . $parent,
-							'title' => '<i class="nebula-admin-fa far fa-fw fa-file"></i> ' . get_the_title($parent),
-							'href' => ( $this->is_admin_page() )? get_edit_post_link($parent) : get_permalink($parent),
-						));
-					}
+				$status = get_post_field('post_status', $current_id);
+				$original_date = strtotime(get_post_field('post_date', $current_id));
+				$original_author = get_the_author_meta('display_name' , get_post_field('post_author', $current_id));
+				$modified_date = strtotime(get_post_field('post_modified', $current_id));
+				if ( get_post_meta($current_id, '_edit_last', true) ){
+					$last_user = get_userdata(get_post_meta( $current_id, '_edit_last', true));
+					$modified_author = $last_user->display_name;
 				}
 
-				if ( !$this->is_admin_page() ){ //@todo "Nebula" 0: Remove this conditional when this bug is fixed: https://core.trac.wordpress.org/ticket/18408
-					//Children pages
-					$child_pages = new WP_Query(array(
-						'post_type' => $post_type_object->labels->singular_name,
-						'posts_per_page' => -1,
-						'post_parent' => $current_id,
-						'order' => 'ASC',
-						'orderby' => 'menu_order'
+				$node_id = ( $this->is_admin_page() )? 'view' : 'edit';
+				$new_content_node = $wp_admin_bar->get_node($node_id);
+				if ( $new_content_node ){
+					$post_type_object = get_post_type_object(get_post_type());
+
+					$current_id = get_the_id();
+					if ( is_home() ){
+						$current_id = get_option('page_for_posts');
+					}
+
+					$new_content_node->title = ucfirst($node_id) . ' ' . ucwords($post_type_object->labels->singular_name) . ' <span class="nebula-admin-light">(ID: ' . $current_id . ')</span>';
+					$wp_admin_bar->add_node($new_content_node);
+				}
+
+				//Add created date under View/Edit node
+				//@TODO "Nebula" 0: get_the_author() is not working when in Admin
+				$wp_admin_bar->add_node(array(
+					'parent' => $node_id,
+					'id' => 'nebula-created',
+					'title' => '<i class="nebula-admin-fa far fa-fw fa-calendar"></i> <span title="' . human_time_diff($original_date) . ' ago">Created: ' . date('F j, Y', $original_date) . '</span> <span class="nebula-admin-light">(' . $original_author . ')</span>',
+					'href' => get_edit_post_link(),
+					'meta' => array('target' => '_blank', 'rel' => 'noopener')
+				));
+
+				//Add modified date under View/Edit node
+				if ( get_post_meta($current_id, '_edit_last', true) ){ //If the post has been modified
+					$wp_admin_bar->add_node(array(
+						'parent' => $node_id,
+						'id' => 'nebula-modified',
+						'title' => '<i class="nebula-admin-fa far fa-fw fa-clock"></i> <span title="' . human_time_diff($modified_date) . ' ago">Modified: ' . date('F j, Y', $modified_date) . '</span> <span class="nebula-admin-light">(' . $modified_author . ')</span>',
+						'href' => get_edit_post_link(),
+						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					));
-					if ( $child_pages->have_posts() ){
+				}
+
+				//Post status (Publish, Draft, Private, etc)
+				$wp_admin_bar->add_node(array(
+					'parent' => $node_id,
+					'id' => 'nebula-status',
+					'title' => '<i class="nebula-admin-fa fas fa-fw fa-map-marker"></i> Status: ' . ucwords($status),
+					'href' => get_edit_post_link(),
+					'meta' => array('target' => '_blank', 'rel' => 'noopener')
+				));
+
+				//Theme template file
+				if ( !empty($this->current_theme_template) ){
+					$wp_admin_bar->add_node(array(
+						'parent' => $node_id,
+						'id' => 'nebula-template',
+						'title' => '<i class="nebula-admin-fa far fa-fw fa-object-group"></i> Template: ' . basename($this->current_theme_template) . ' <span class="nebula-admin-light">(' . dirname($this->current_theme_template) . ')</span>',
+						'href' => get_edit_post_link(),
+						'meta' => array('target' => '_blank', 'rel' => 'noopener')
+					));
+				}
+
+				if ( !empty($post_type_object) ){
+					//Ancestor pages
+					$ancestors = get_post_ancestors($current_id);
+					if ( !empty($ancestors) ){
 						$wp_admin_bar->add_node(array(
 							'parent' => $node_id,
-							'id' => 'nebula-children',
-							'title' => '<i class="nebula-admin-fa fas fa-fw fa-level-down-alt"></i> Children ' . ucwords($post_type_object->labels->name) . ' <small>(' . $child_pages->found_posts . ')</small>',
+							'id' => 'nebula-ancestors',
+							'title' => '<i class="nebula-admin-fa fas fa-fw fa-level-up-alt"></i> Ancestor ' . ucwords($post_type_object->labels->name) . ' <small>(' . count($ancestors) . ')</small>',
 						));
 
-						while ( $child_pages->have_posts() ){
-							$child_pages->the_post();
+						foreach ( $ancestors as $parent ){
 							$wp_admin_bar->add_node(array(
-								'parent' => 'nebula-children',
-								'id' => 'nebula-child-' . get_the_id(),
-								'title' => '<i class="nebula-admin-fa fas fa-fw fa-file"></i> ' . get_the_title(),
-								'href' => ( $this->is_admin_page() )? get_edit_post_link() : get_permalink(),
+								'parent' => 'nebula-ancestors',
+								'id' => 'nebula-parent-' . $parent,
+								'title' => '<i class="nebula-admin-fa far fa-fw fa-file"></i> ' . get_the_title($parent),
+								'href' => ( $this->is_admin_page() )? get_edit_post_link($parent) : get_permalink($parent),
 							));
 						}
 					}
 
-					wp_reset_postdata();
+					if ( !$this->is_admin_page() ){ //@todo "Nebula" 0: Remove this conditional when this bug is fixed: https://core.trac.wordpress.org/ticket/18408
+						//Children pages
+						$child_pages = new WP_Query(array(
+							'post_type' => $post_type_object->labels->singular_name,
+							'posts_per_page' => -1,
+							'post_parent' => $current_id,
+							'order' => 'ASC',
+							'orderby' => 'menu_order'
+						));
+						if ( $child_pages->have_posts() ){
+							$wp_admin_bar->add_node(array(
+								'parent' => $node_id,
+								'id' => 'nebula-children',
+								'title' => '<i class="nebula-admin-fa fas fa-fw fa-level-down-alt"></i> Children ' . ucwords($post_type_object->labels->name) . ' <small>(' . $child_pages->found_posts . ')</small>',
+							));
+
+							while ( $child_pages->have_posts() ){
+								$child_pages->the_post();
+								$wp_admin_bar->add_node(array(
+									'parent' => 'nebula-children',
+									'id' => 'nebula-child-' . get_the_id(),
+									'title' => '<i class="nebula-admin-fa fas fa-fw fa-file"></i> ' . get_the_title(),
+									'href' => ( $this->is_admin_page() )? get_edit_post_link() : get_permalink(),
+								));
+							}
+						}
+
+						wp_reset_postdata();
+					}
 				}
-			}
 
-			$nebula_warning_icon = '';
-			$nebula_adminbar_icon = 'fa-star';
-			$warnings = $this->check_warnings();
+				$nebula_warning_icon = '';
+				$nebula_adminbar_icon = 'fa-star';
+				$warnings = $this->check_warnings();
 
-			//Remove "log" level warnings
-			foreach ( $warnings as $key => $warning ){
-				if ( $warning['level'] === 'log' ){
-					unset($warnings[$key]);
+				//Remove "log" level warnings
+				foreach ( $warnings as $key => $warning ){
+					if ( $warning['level'] === 'log' ){
+						unset($warnings[$key]);
+					}
 				}
-			}
 
-			if ( !empty($warnings) ){
-				$nebula_adminbar_icon = 'fa-exclamation-triangle';
-			}
+				if ( !empty($warnings) ){
+					$nebula_adminbar_icon = 'fa-exclamation-triangle';
+				}
 
-			$wp_admin_bar->add_node(array(
-				'id' => 'nebula',
-				'title' => '<i class="nebula-admin-fa fas fa-fw ' . $nebula_adminbar_icon . '"></i> Nebula',
-				'href' => 'https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')),
-				'meta' => array(
-					'target' => '_blank',
-					'rel' => 'noopener',
-					'class' => ( !empty($warnings) )? 'has-warning' : '',
-				)
-			));
-
-			$wp_admin_bar->add_node(array(
-				'parent' => 'nebula',
-				'id' => 'nebula-version',
-				'title' => 'v<strong>' . $this->version('raw') . '</strong> <span class="nebula-admin-light">(' . $this->version('date') . ')</span>',
-				'href' => 'https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master',
-			));
-
-			//If there are warnings display them
-			if ( !empty($warnings) ){
 				$wp_admin_bar->add_node(array(
-					'parent' => 'nebula',
-					'id' => 'nebula-warnings',
-					'title' => '<i class="nebula-admin-fa fas fa-fw fa-exclamation-triangle"></i> Warnings',
+					'id' => 'nebula',
+					'title' => '<i class="nebula-admin-fa fas fa-fw ' . $nebula_adminbar_icon . '"></i> Nebula',
+					'href' => 'https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')),
+					'meta' => array(
+						'target' => '_blank',
+						'rel' => 'noopener',
+						'class' => ( !empty($warnings) )? 'has-warning' : '',
+					)
 				));
 
-				foreach( $warnings as $key => $warning ){
-					$warning_icon = 'fa-exclamation-triangle';
+				$wp_admin_bar->add_node(array(
+					'parent' => 'nebula',
+					'id' => 'nebula-version',
+					'title' => 'v<strong>' . $this->version('raw') . '</strong> <span class="nebula-admin-light">(' . $this->version('date') . ')</span>',
+					'href' => 'https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master',
+				));
 
-					if ( $warning['level'] === 'error' ){
+				//If there are warnings display them
+				if ( !empty($warnings) ){
+					$wp_admin_bar->add_node(array(
+						'parent' => 'nebula',
+						'id' => 'nebula-warnings',
+						'title' => '<i class="nebula-admin-fa fas fa-fw fa-exclamation-triangle"></i> Warnings',
+					));
+
+					foreach( $warnings as $key => $warning ){
 						$warning_icon = 'fa-exclamation-triangle';
-					} elseif ( $warning['level'] === 'warn' ){
-						$warning_icon = 'fa-info-circle';
-					}
 
-					$wp_admin_bar->add_node(array(
-						'parent' => 'nebula-warnings',
-						'id' => 'nebula-warning-' . $key,
-						'title' => '<i class="nebula-admin-fa fas fa-fw ' . $warning_icon . '" style="margin-left: 5px;"></i> ' . strip_tags($warning['description']),
-						'href' => ( !empty($warning['url']) )? $warning['url'] : '',
-						'meta' => array(
-							'target' => '_blank',
-							'rel' => 'noopener',
-							'class' => 'nebula-warning level-' . $warning['level'],
-						)
-					));
-				}
-			}
+						if ( $warning['level'] === 'error' ){
+							$warning_icon = 'fa-exclamation-triangle';
+						} elseif ( $warning['level'] === 'warn' ){
+							$warning_icon = 'fa-info-circle';
+						}
 
-			if ( !empty($nebula_warning_icon) ){
-				$wp_admin_bar->add_node(array(
-					'parent' => 'nebula',
-					'id' => 'nebula-warning',
-					'title' => '<i class="nebula-admin-fa fas fa-fw fa-exclamation-triangle" style="color: #ca3838; margin-right: 5px;"></i> ' . $nebula_warning_description,
-					'href' => get_admin_url() . $nebula_warning_href,
-				));
-			}
-
-			$third_party_tools = $this->third_party_tools();
-
-			if ( !empty($third_party_tools) ){
-				$wp_admin_bar->add_node(array(
-					'parent' => 'nebula',
-					'id' => 'nebula-tools',
-					'title' => '<i class="nebula-admin-fa fas fa-fw fa-wrench"></i> Tools',
-				));
-
-				if ( !empty($third_party_tools['administrative']) ){
-					$wp_admin_bar->add_node(array(
-						'parent' => 'nebula-tools',
-						'id' => 'nebula-tools-administrive',
-						'title' => 'Administrative',
-					));
-
-					foreach ( $third_party_tools['administrative'] as $tool ){
 						$wp_admin_bar->add_node(array(
-							'parent' => 'nebula-tools-administrive',
-							'id' => 'nebula-tool-' . strtolower(str_replace(' ', '_', $tool['name'])),
-							'title' => $tool['icon'] . ' ' . $tool['name'],
-							'href' => $tool['url'],
-							'meta' => array('target' => '_blank', 'rel' => 'noopener')
+							'parent' => 'nebula-warnings',
+							'id' => 'nebula-warning-' . $key,
+							'title' => '<i class="nebula-admin-fa fas fa-fw ' . $warning_icon . '" style="margin-left: 5px;"></i> ' . strip_tags($warning['description']),
+							'href' => ( !empty($warning['url']) )? $warning['url'] : '',
+							'meta' => array(
+								'target' => '_blank',
+								'rel' => 'noopener',
+								'class' => 'nebula-warning level-' . $warning['level'],
+							)
 						));
 					}
 				}
 
-				if ( !empty($third_party_tools['social']) ){
+				if ( !empty($nebula_warning_icon) ){
 					$wp_admin_bar->add_node(array(
-						'parent' => 'nebula-tools',
-						'id' => 'nebula-tools-social',
-						'title' => 'Social',
+						'parent' => 'nebula',
+						'id' => 'nebula-warning',
+						'title' => '<i class="nebula-admin-fa fas fa-fw fa-exclamation-triangle" style="color: #ca3838; margin-right: 5px;"></i> ' . $nebula_warning_description,
+						'href' => get_admin_url() . $nebula_warning_href,
+					));
+				}
+
+				$third_party_tools = $this->third_party_tools();
+
+				if ( !empty($third_party_tools) ){
+					$wp_admin_bar->add_node(array(
+						'parent' => 'nebula',
+						'id' => 'nebula-tools',
+						'title' => '<i class="nebula-admin-fa fas fa-fw fa-wrench"></i> Tools',
 					));
 
-					foreach ( $third_party_tools['social'] as $tool ){
+					if ( !empty($third_party_tools['administrative']) ){
 						$wp_admin_bar->add_node(array(
-							'parent' => 'nebula-tools-social',
-							'id' => 'nebula-tool-' . strtolower(str_replace(' ', '_', $tool['name'])),
-							'title' => $tool['icon'] . ' ' . $tool['name'],
-							'href' => $tool['url'],
-							'meta' => array('target' => '_blank', 'rel' => 'noopener')
+							'parent' => 'nebula-tools',
+							'id' => 'nebula-tools-administrive',
+							'title' => 'Administrative',
 						));
+
+						foreach ( $third_party_tools['administrative'] as $tool ){
+							$wp_admin_bar->add_node(array(
+								'parent' => 'nebula-tools-administrive',
+								'id' => 'nebula-tool-' . strtolower(str_replace(' ', '_', $tool['name'])),
+								'title' => $tool['icon'] . ' ' . $tool['name'],
+								'href' => $tool['url'],
+								'meta' => array('target' => '_blank', 'rel' => 'noopener')
+							));
+						}
+					}
+
+					if ( !empty($third_party_tools['social']) ){
+						$wp_admin_bar->add_node(array(
+							'parent' => 'nebula-tools',
+							'id' => 'nebula-tools-social',
+							'title' => 'Social',
+						));
+
+						foreach ( $third_party_tools['social'] as $tool ){
+							$wp_admin_bar->add_node(array(
+								'parent' => 'nebula-tools-social',
+								'id' => 'nebula-tool-' . strtolower(str_replace(' ', '_', $tool['name'])),
+								'title' => $tool['icon'] . ' ' . $tool['name'],
+								'href' => $tool['url'],
+								'meta' => array('target' => '_blank', 'rel' => 'noopener')
+							));
+						}
 					}
 				}
-			}
 
-			$wp_admin_bar->add_node(array(
-				'parent' => 'nebula',
-				'id' => 'nebula-options',
-				'title' => '<i class="nebula-admin-fa fas fa-fw fa-cog"></i> Options',
-				'href' => get_admin_url() . 'themes.php?page=nebula_options'
-			));
+				$wp_admin_bar->add_node(array(
+					'parent' => 'nebula',
+					'id' => 'nebula-options',
+					'title' => '<i class="nebula-admin-fa fas fa-fw fa-cog"></i> Options',
+					'href' => get_admin_url() . 'themes.php?page=nebula_options'
+				));
 
-			foreach ( $this->get_option_categories() as $category ){
+				foreach ( $this->get_option_categories() as $category ){
+					$wp_admin_bar->add_node(array(
+						'parent' => 'nebula-options',
+						'id' => 'nebula-options-' . $category['name'],
+						'title' => '<i class="nebula-admin-fa fas fa-fw ' . $category['icon'] . '"></i> ' . $category['name'],
+						'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=' . $category['name'],
+						'meta' => array('target' => '_blank', 'rel' => 'noopener')
+					));
+				}
+
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula-options',
-					'id' => 'nebula-options-' . $category['name'],
-					'title' => '<i class="nebula-admin-fa fas fa-fw ' . $category['icon'] . '"></i> ' . $category['name'],
-					'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=' . $category['name'],
+					'id' => 'nebula-options-help',
+					'title' => '<i class="nebula-admin-fa far fa-fw fa-question-circle"></i> Help & Documentation',
+					'href' => 'https://gearside.com/nebula/documentation/options/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar+help',
 					'meta' => array('target' => '_blank', 'rel' => 'noopener')
 				));
-			}
 
-			$wp_admin_bar->add_node(array(
-				'parent' => 'nebula-options',
-				'id' => 'nebula-options-help',
-				'title' => '<i class="nebula-admin-fa far fa-fw fa-question-circle"></i> Help & Documentation',
-				'href' => 'https://gearside.com/nebula/documentation/options/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar+help',
-				'meta' => array('target' => '_blank', 'rel' => 'noopener')
-			));
-
-			$wp_admin_bar->add_node(array(
-				'parent' => 'nebula',
-				'id' => 'nebula-github',
-				'title' => '<i class="nebula-admin-fa fab fa-fw fa-github"></i> Nebula Github',
-				'href' => 'https://github.com/chrisblakley/Nebula',
-				'meta' => array('target' => '_blank', 'rel' => 'noopener')
-			));
-
-			$wp_admin_bar->add_node(array(
-				'parent' => 'nebula-github',
-				'id' => 'nebula-github-issues',
-				'title' => 'Issues',
-				'href' => 'https://github.com/chrisblakley/Nebula/issues',
-				'meta' => array('target' => '_blank', 'rel' => 'noopener')
-			));
-
-			$wp_admin_bar->add_node(array(
-				'parent' => 'nebula-github',
-				'id' => 'nebula-github-changelog',
-				'title' => 'Changelog',
-				'href' => 'https://github.com/chrisblakley/Nebula/commits/master',
-				'meta' => array('target' => '_blank', 'rel' => 'noopener')
-			));
-
-			if ( $this->get_option('scss') ){
-				$scss_last_processed = ( $this->get_data('scss_last_processed') )? date('l, F j, Y - g:i:sa', $this->get_data('scss_last_processed')) : 'Never';
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula',
-					'id' => 'nebula-options-scss',
-					'title' => '<i class="nebula-admin-fa fab fa-fw fa-sass"></i> Re-process All Sass Files',
-					'href' => esc_url(add_query_arg('sass', 'true')),
-					'meta' => array('title' => 'Last: ' . $scss_last_processed)
+					'id' => 'nebula-github',
+					'title' => '<i class="nebula-admin-fa fab fa-fw fa-github"></i> Nebula Github',
+					'href' => 'https://github.com/chrisblakley/Nebula',
+					'meta' => array('target' => '_blank', 'rel' => 'noopener')
 				));
+
+				$wp_admin_bar->add_node(array(
+					'parent' => 'nebula-github',
+					'id' => 'nebula-github-issues',
+					'title' => 'Issues',
+					'href' => 'https://github.com/chrisblakley/Nebula/issues',
+					'meta' => array('target' => '_blank', 'rel' => 'noopener')
+				));
+
+				$wp_admin_bar->add_node(array(
+					'parent' => 'nebula-github',
+					'id' => 'nebula-github-changelog',
+					'title' => 'Changelog',
+					'href' => 'https://github.com/chrisblakley/Nebula/commits/master',
+					'meta' => array('target' => '_blank', 'rel' => 'noopener')
+				));
+
+				if ( $this->get_option('scss') ){
+					$scss_last_processed = ( $this->get_data('scss_last_processed') )? date('l, F j, Y - g:i:sa', $this->get_data('scss_last_processed')) : 'Never';
+					$wp_admin_bar->add_node(array(
+						'parent' => 'nebula',
+						'id' => 'nebula-options-scss',
+						'title' => '<i class="nebula-admin-fa fab fa-fw fa-sass"></i> Re-process All Sass Files',
+						'href' => esc_url(add_query_arg('sass', 'true')),
+						'meta' => array('title' => 'Last: ' . $scss_last_processed)
+					));
+				}
 			}
 		}
 

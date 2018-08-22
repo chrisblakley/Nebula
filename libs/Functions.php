@@ -2443,6 +2443,7 @@ trait Functions {
 					//$this->ga_send_event('Internal Search', 'Invalid', '(Empty query)');
 				}
 
+				$this->ga_send_exception('(Security) Invalid search query');
 				header('Location: ' . home_url('/') . 'search/?invalid');
 				exit;
 			} else {

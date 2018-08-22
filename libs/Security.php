@@ -5,8 +5,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Security') ){
 	trait Security {
 		public function hooks(){
-			add_action('wp_loaded', array($this, 'log_direct_access_attempts'));
-			add_action('wp_loaded', array($this, 'prevent_bad_query_strings'));
+			add_action('wp_loaded', array($this, 'bad_access_prevention'));
 			add_filter('wp_headers', array($this, 'remove_x_pingback'), 11, 2);
 			add_filter('bloginfo_url', array($this, 'hijack_pingback_url'), 11, 2);
 			add_action('wp_head', array($this, 'security_headers')); //@todo "Nebula" 0: try using 'send_headers' hook instead?
@@ -17,7 +16,7 @@ if ( !trait_exists('Security') ){
 			add_filter('style_loader_src', array($this, 'at_remove_wp_ver_css_js' ), 9999);
 			add_filter('script_loader_src', array($this, 'at_remove_wp_ver_css_js' ), 9999);
 			add_action('check_comment_flood', array($this, 'check_referrer'));
-			add_action('wp_footer', array($this, 'track_notable_bots'));
+			//add_action('wp_footer', array($this, 'track_notable_bots')); //Disabled for now. Not super useful.
 			add_action('wp_loaded', array($this, 'domain_prevention'));
 
 			//Disable the file editor for non-developers
@@ -42,17 +41,16 @@ if ( !trait_exists('Security') ){
 			}
 		}
 
-		//Log template direct access attempts
-		public function log_direct_access_attempts(){
+		//Log direct access to templates and prevent certain query strings
+		public function bad_access_prevention(){
+			//Log template direct access attempts
 			if ( array_key_exists('ndaat', $_GET) ){
 				$this->ga_send_exception('(Security) Direct Template Access Prevention on ' . $_GET['ndaat'], 0, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Direct Template Access Attempt'));
 				header('Location: ' . home_url('/'));
 				exit;
 			}
-		}
 
-		//Prevent known bot/brute-force query strings.
-		public function prevent_bad_query_strings(){
+			//Prevent known bot/brute-force query strings.
 			if ( array_key_exists('modTest', $_GET) ){
 				header("HTTP/1.1 403 Unauthorized");
 				exit;

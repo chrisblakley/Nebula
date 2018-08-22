@@ -42,7 +42,7 @@
 						<div class="col">
 							<?php if ( has_nav_menu('footer') ): ?>
 								<nav id="powerfooter" role="navigation">
-									<?php wp_nav_menu(array('theme_location' => 'footer', 'depth' => '2')); ?>
+									<?php wp_nav_menu(array('theme_location' => 'footer', 'depth' => 2)); ?>
 								</nav>
 							<?php endif; ?>
 						</div><!--/col-->

@@ -263,7 +263,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Include server timings for developers
 		public function output_console_debug_timings(){
-			//if ( $this->is_dev() ){ //Only output server timings for developers?
+			if ( $this->is_dev() || isset($_GET['timings']) ){ //Only output server timings for developers or if timings query string present
 				$this->finalize_timings();
 
 				foreach ( $this->server_timings as $label => $data ){
@@ -294,7 +294,7 @@ if ( !trait_exists('Optimization') ){
 				});
 
 				echo '<script type="text/javascript">nebula.site.timings = ' . json_encode($testTimes) . ';</script>'; //Output the data to <head>
-			//}
+			}
 		}
 
 		//Determing if a page should be prepped using prefetch, preconnect, or prerender.
