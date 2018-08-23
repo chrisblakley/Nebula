@@ -20,11 +20,15 @@
 									<nav id="mobilenav" role="navigation">
 										<?php
 											if ( has_nav_menu('mobile') ){
-												wp_nav_menu(array('theme_location' => 'mobile'));
+												wp_nav_menu(array('theme_location' => 'mobile', 'menu_id' => 'main-panel')); //Do not change menu_id
 											} elseif ( has_nav_menu('primary') ){
-												wp_nav_menu(array('theme_location' => 'header'));
+												wp_nav_menu(array('theme_location' => 'header', 'menu_id' => 'main-panel')); //Do not change menu_id
 											}
 										?>
+
+										<?php if ( has_nav_menu('utility') ): ?>
+											<?php wp_nav_menu(array('theme_location' => 'utility', 'menu_id' => 'utility-panel')); //Do not change menu_id ?>
+										<?php endif; ?>
 									</nav>
 								<?php endif; ?>
 

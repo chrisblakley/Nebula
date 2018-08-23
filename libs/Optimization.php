@@ -233,32 +233,34 @@ if ( !trait_exists('Optimization') ){
 
 		//Set Server Timing header
 		public function server_timing_header(){
-			$this->finalize_timings();
-			$server_timing_header_string = 'Server-Timing: ';
+			if ( $this->is_dev() || isset($_GET['timings']) ){ //Only output server timings for developers or if timings query string present
+				$this->finalize_timings();
+				$server_timing_header_string = 'Server-Timing: ';
 
-			//Loop through all times
-			foreach ( $this->server_timings as $label => $data ){
-				if ( !empty($data['time']) ){
-					$time = $data['time'];
-				} elseif ( intval($data) ){
-					$time = intval($data);
-				} else {
-					continue;
+				//Loop through all times
+				foreach ( $this->server_timings as $label => $data ){
+					if ( !empty($data['time']) ){
+						$time = $data['time'];
+					} elseif ( intval($data) ){
+						$time = intval($data);
+					} else {
+						continue;
+					}
+
+					//Ignore unfinished, 0 timings, or non-logging entries
+					if ( $label === 'categories' || !empty($data['active']) || round($time*1000) <= 0 || (!empty($data['log']) && $data['log'] === false) ){
+						continue;
+					}
+
+					$name = str_replace(array(' ', '(', ')', '[', ']'), '', strtolower($label));
+					if ( $label === 'PHP [Total]' ){
+						$name = 'total';
+					}
+					$server_timing_header_string .= $name . ';dur=' . round($time*1000) . ';desc="' . $label . '",';
 				}
 
-				//Ignore unfinished, 0 timings, or non-logging entries
-				if ( $label === 'categories' || !empty($data['active']) || round($time*1000) <= 0 || (!empty($data['log']) && $data['log'] === false) ){
-					continue;
-				}
-
-				$name = str_replace(array(' ', '(', ')', '[', ']'), '', strtolower($label));
-				if ( $label === 'PHP [Total]' ){
-					$name = 'total';
-				}
-				$server_timing_header_string .= $name . ';dur=' . round($time*1000) . ';desc="' . $label . '",';
+				header($server_timing_header_string);
 			}
-
-			header($server_timing_header_string);
 		}
 
 		//Include server timings for developers

@@ -304,24 +304,25 @@ function performanceMetrics(){
 				'Total Load': {start: 0, duration: Math.round(performance.timing.loadEventEnd - performance.timing.navigationStart)}
 			}
 
-			clientTimings = {};
-			jQuery.each(timingCalcuations, function(name, timings){
-				if ( !isNaN(timings.duration) && timings.duration > 0 && timings.duration < 6000000 ){ //Ignore empty values
-					clientTimings[name] = {
-						start: timings.start,
-						duration: timings.duration,
-						elapsed: timings.start + timings.duration
+			//If ?timings exists or if developer
+			if ( typeof console.table === 'function' && (get('timings') || (has(nebula, 'user.staff') && nebula.user.staff === 'developer')) ){
+				clientTimings = {};
+				jQuery.each(timingCalcuations, function(name, timings){
+					if ( !isNaN(timings.duration) && timings.duration > 0 && timings.duration < 6000000 ){ //Ignore empty values
+						clientTimings[name] = {
+							start: timings.start,
+							duration: timings.duration,
+							elapsed: timings.start + timings.duration
+						}
 					}
-				}
-			});
+				});
 
-			if ( typeof console.table === 'function' ){
 				console.groupCollapsed('Performance');
 				console.table(jQuery.extend(nebula.site.timings, clientTimings));
 				console.groupEnd();
 			}
 
-			if ( clientTimings['Processing'] && clientTimings['DOM Ready'] && clientTimings['Total Load'] ){
+			if ( timingCalcuations['Processing'] && timingCalcuations['DOM Ready'] && timingCalcuations['Total Load'] ){
 				ga('set', nebula.analytics.metrics.serverResponseTime, timingCalcuations['Processing'].start);
 				ga('set', nebula.analytics.metrics.domReadyTime, timingCalcuations['DOM Ready'].duration);
 				ga('set', nebula.analytics.metrics.windowLoadedTime, timingCalcuations['Total Load'].duration);
@@ -4333,6 +4334,60 @@ function mmenus(){
 		var mobileNavTriggerIcon = jQuery('a.mobilenavtrigger i');
 
 		if ( mobileNav.length ){
+			//Navigation Panels
+			var navPanels = {}
+			if ( jQuery('#utility-panel').length ){
+				navPanels = {
+					position: "top",
+					type: "tabs",
+					content: [
+						"<a href='#main-panel'>Main Menu</a>",
+						"<a href='#utility-panel'>Other Links</a>"
+					]
+				}
+			}
+
+			//Add social links to footer of Mmenu
+			var footerIconLinks = {};
+			if ( has(nebula, 'site.options') ){
+				footerIconLinks = {
+					position: "bottom",
+					content: []
+				};
+				if ( nebula.site.options.facebook_url ){
+					footerIconLinks.content.push('<a href="' + nebula.site.options.facebook_url + '" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a>');
+				}
+
+				if ( nebula.site.options.twitter_url ){
+					footerIconLinks.content.push('<a href="' + nebula.site.options.twitter_url + '" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a>');
+				}
+
+				if ( nebula.site.options.instagram ){
+					footerIconLinks.content.push('<a href="' + nebula.site.options.instagram + '" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>');
+				}
+
+				if ( nebula.site.options.google_plus_url ){
+					footerIconLinks.content.push('<a href="' + nebula.site.options.google_plus_url + '" target="_blank" rel="noopener"><i class="fab fa-google-plus"></i></a>');
+				}
+
+				if ( nebula.site.options.linkedin_url ){
+					footerIconLinks.content.push('<a href="' + nebula.site.options.linkedin_url + '" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>');
+				}
+
+				if ( nebula.site.options.youtube_url ){
+					footerIconLinks.content.push('<a href="' + nebula.site.options.youtube_url + '" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>');
+				}
+
+				if ( nebula.site.options.pinterest_url ){
+					footerIconLinks.content.push('<a href="' + nebula.site.options.pinterest_url + '" target="_blank" rel="noopener"><i class="fab fa-pinterest"></i></a>');
+				}
+
+				if ( footerIconLinks.content.length > 0 ){
+					footerIconLinks.content.splice(0, 0, '<a href="' + nebula.site.home_url + '"><i class="fas fa-home"></i></a>'); //Insert into beginning of array
+				}
+			}
+
+			//Initialize Mmenu options and configuration
 			mobileNav.mmenu({
 				//Options
 				offCanvas: {
@@ -4341,11 +4396,11 @@ function mmenus(){
 				},
 				navbars: [{
 					position: "top",
-					content: ["searchfield"]
-				}, {
-					position: "bottom",
-					content: ["<span>" + nebula.site.name + "</span>"]
-				}],
+					content: ["searchfield"],
+				},
+				navPanels,
+				footerIconLinks
+				],
 				searchfield: {
 					add: true,
 					search: true,
@@ -4356,12 +4411,10 @@ function mmenus(){
 					resultsPanel: true,
 				},
 				counters: true, //Display count of sub-menus
-				//iconPanels: false, //Layer panels on top of each other
-/*
+				iconPanels: true, //Layer panels on top of each other
 				backButton: {
-					close: true //This option currently needs the user to push back twice after closing the mmenu without the back button
+					close: true //Close the Mmenu on back button click
 				},
-*/
 				extensions: [
 					"theme-light", //Light background
 					"border-full", //Extend list borders full width
@@ -4370,7 +4423,7 @@ function mmenus(){
 					"shadow-panels", //Add shadow to menu panels
 					"listview-huge", //Larger list items
 					"multiline" //Wrap long titles
-				]
+				],
 			}, {
 				//Configuration
 				offCanvas: {
@@ -4389,50 +4442,24 @@ function mmenus(){
 						name: "s",
 					}
 				}
-			});
+			}); //Initialize Mmenu
 
 			if ( mobileNav.length ){
-				mobileNav.data('mmenu').bind('open:start', function(){
+				mobileNav.data('mmenu').bind('open:start', function($panel){
 					//When mmenu has started opening
 					mobileNavTriggerIcon.removeClass('fa-bars').addClass('fa-times');
 					jQuery('[data-toggle="tooltip"]').tooltip('hide');
 					nebulaTimer('mmenu', 'start');
-				}).bind('open:finish', function(){
-					//After mmenu has finished opening
-					history.replaceState(null, document.title, location);
-					history.pushState(null, document.title, location);
-					window.offcanvasBack = true;
-				}).bind('close:start', function(){
+				}).bind('close:start', function($panel){
 					//When mmenu has started closing
 					mobileNavTriggerIcon.removeClass('fa-times').addClass('fa-bars');
 					ga('send', 'timing', 'Mmenu', 'Closed', Math.round(nebulaTimer('mmenu', 'lap')), 'From opening mmenu until closing mmenu');
-				}).bind('close:finish', function(){
-					debounce(function(){ //Debounce to prevent long touches from going back multiple times
-						if ( window.offcanvasBack ){
-							window.history.back(); //Go back to the pushed state so the next back button will function normally (if Mmenu is closed manually without back button)
-						}
-					}, 250, 'mmenu close finish');
-				});
-
-				//Prevent going back twice on back button push
-				jQuery(window).on('popstate', function(e){
-					window.offcanvasBack = false;
 				});
 			}
 
 			nebula.dom.document.on('click', '.mm-menu li a:not(.mm-next)', function(){
 				ga('send', 'timing', 'Mmenu', 'Navigated', Math.round(nebulaTimer('mmenu', 'lap')), 'From opening mmenu until navigation');
 			});
-
-			//Close mmenu on back button click
-			if ( window.history && window.history.pushState ){
-				window.addEventListener("popstate", function(e){
-					if ( jQuery('html.mm-opened').length ){
-						mobileNav.data('mmenu').close();
-						e.stopPropagation();
-					}
-				}, false);
-			}
 		}
 	}
 }
