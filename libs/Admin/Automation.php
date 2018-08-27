@@ -192,9 +192,9 @@ if ( !trait_exists('Automation') ){
 		public function activation(){
 			$this->usage('Theme Activation');
 
-			//Run express initialization (Nebula Options only)
+			//If not initialized before, set default options if they haven't been already
 			if ( !$this->is_initialized_before() ){
-				$this->express_automation();
+				$this->initialization_nebula_defaults(false);
 				$this->set_dates();
 			}
 			?>
@@ -271,13 +271,9 @@ if ( !trait_exists('Automation') ){
 			}
 		}
 
-		//Automatically set default Nebula options on first Nebula activation
-		public function express_automation(){
-			$this->initialization_nebula_defaults();
-		}
-
 		//Manually update all preferred Nebula and WP Core settings
 		public function full_automation(){
+			$this->initialization_nebula_defaults(true);
 			$this->initialization_wp_core_preferred_settings();
 			$this->initialization_create_homepage();
 			$this->initialization_delete_plugins();
@@ -363,14 +359,19 @@ if ( !trait_exists('Automation') ){
 		}
 
 		//Nebula preferred default Wordpress settings
-		public function initialization_nebula_defaults(){
-			//Update Nebula default data
-			$nebula_data_defaults = $this->default_data();
-			update_option('nebula_data', $nebula_data_defaults);
+		public function initialization_nebula_defaults($force=false){
+			$nebula_defaults_created_option = $this->get_data('defaults_created');
 
-			//Update Nebula default options
-			$nebula_options_defaults = $this->default_options();
-			update_option('nebula_options', $nebula_options_defaults);
+			//If defaults have not been created or if forcing defaults
+			if ( empty($nebula_defaults_created_option) || !empty($force) ){
+				//Update Nebula default data
+				$nebula_data_defaults = $this->default_data();
+				update_option('nebula_data', $nebula_data_defaults);
+
+				//Update Nebula default options
+				$nebula_options_defaults = $this->default_options();
+				update_option('nebula_options', $nebula_options_defaults);
+			}
 		}
 
 		public function initialization_wp_core_preferred_settings(){

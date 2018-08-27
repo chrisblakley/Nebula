@@ -185,6 +185,7 @@ if ( !trait_exists('Options') ){
 			$nebula_data_defaults = array(
 				'first_activation' => '',
 				'initialized' => '',
+				'defaults_created' => time(),
 				'first_version' => '',
 				'scss_last_processed' => 0,
 				'next_version' => '',

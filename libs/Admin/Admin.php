@@ -1046,8 +1046,8 @@ if ( !trait_exists('Admin') ){
 				wp_die('No post to duplicate has been supplied!');
 			}
 
-			$post_id = ( isset($_GET['post'] )? $_GET['post'] : $_POST['post']); //Get the original post id
-			$post = get_post( $post_id ); //Get all the original post data
+			$post_id = ( isset($_GET['post'] )? intval($_GET['post']) : intval($_POST['post'])); //Get the original post id
+			$post = get_post($post_id); //Get all the original post data
 
 			$current_user = wp_get_current_user();
 			$new_post_author = $current_user->ID; //Set post author (default by current user). For original author change to: $new_post_author = $post->post_author;
