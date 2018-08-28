@@ -3759,7 +3759,7 @@ function addHTML5VideoPlayer(id, element){
 //Prepare Youtube Iframe API
 function nebulaYoutubeTracking(){
 	once(function(){
-		if ( jQuery('iframe[src*="youtube"]').length ){
+		if ( jQuery('iframe[src*="youtube"], .lazy-youtube').length ){
 			var tag = document.createElement('script');
 			tag.src = "https://www.youtube.com/iframe_api";
 			var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -3820,6 +3820,9 @@ function nebulaYoutubeReady(e){
 	}
 
 	var id = nebulaGetYoutubeID(e.target);
+	if ( id && !nebula.videos[id] ){ //If the video object doesn't use the Youtube video ID, make a new one by duplicating from the Iframe ID
+		nebula.videos[id] = nebula.videos[jQuery(e.target.getIframe()).attr('id')];
+	}
 
 	nebula.videos[id].platform = 'youtube'; //The platform the video is hosted using.
 	nebula.videos[id].element = e.target.getIframe(); //The player iframe. Selectable with jQuery(thisVideo.element)...
@@ -3972,7 +3975,7 @@ function nebulaGetYoutubeTitle(target){
 //Prepare Vimeo API
 function nebulaVimeoTracking(){
 	//Load the Vimeo API script (player.js) remotely (with local backup)
-	if ( jQuery('iframe[src*="vimeo"]').length ){
+	if ( jQuery('iframe[src*="vimeo"], .lazy-vimeo').length ){
 		nebulaLoadJS(nebula.site.resources.scripts.nebula_vimeo, function(){
 			createVimeoPlayers();
 		});

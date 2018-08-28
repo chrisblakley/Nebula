@@ -327,9 +327,9 @@ if ( !trait_exists('Shortcodes') ){
 			$vimeo_data = $this->video_meta('vimeo', $id);
 			$vimeo = '<div class="nebula-vimeo embed-responsive embed-responsive-16by9">';
 			if ( !empty($vimeo_data) && empty($vimeo_data['error']) ){
-				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy"><iframe id="' . $vimeo_data['safetitle'] . '" class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . $id . '?api=1&player_id=' . $vimeo_data['safetitle'] . '" width="' . $width . '" height="' . $height . '" autoplay="' . $autoplay . '" badge="' . $badge . '" byline="' . $byline . '" color="' . $color . '" loop="' . $loop . '" portrait="' . $portrait . '" title="' . $title . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></noscript>';
+				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-vimeo"><iframe id="' . $vimeo_data['safetitle'] . '" class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . $id . '?api=1&player_id=' . $vimeo_data['safetitle'] . '" width="' . $width . '" height="' . $height . '" autoplay="' . $autoplay . '" badge="' . $badge . '" byline="' . $byline . '" color="' . $color . '" loop="' . $loop . '" portrait="' . $portrait . '" title="' . $title . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></noscript>';
 			} else {
-				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy"><iframe class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . $id . '" width="' . $width . ' height="' . $height . '" autoplay="' . $autoplay . '" badge="' . $badge . '" byline="' . $byline . '" color="' . $color . '" loop="' . $loop . '" portrait="' . $portrait . '" title="' . $title . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></noscript>';
+				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-vimeo"><iframe class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . $id . '" width="' . $width . ' height="' . $height . '" autoplay="' . $autoplay . '" badge="' . $badge . '" byline="' . $byline . '" color="' . $color . '" loop="' . $loop . '" portrait="' . $portrait . '" title="' . $title . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></noscript>';
 
 				if ( $this->is_dev() ){
 					$vimeo .= '<script>console.warn("' . $vimeo_data['error'] . ' (via Vimeo shortcode)");</script>';
@@ -352,9 +352,9 @@ if ( !trait_exists('Shortcodes') ){
 			$youtube = '<div class="nebula-youtube embed-responsive embed-responsive-16by9">';
 			if ( !empty($youtube_data) && empty($youtube_data['error']) ){
 				//Note: removed &origin=' . youtube_meta($id, 'origin') . ' right before &rel= due to console warnings. Doesn't seem to be an issue.
-				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy"><iframe id="' . $youtube_data['safetitle'] . '" class="youtube embed-responsive-item ' . $class . ' ' . $ignore_visibility . '" width="' . $width . '" height="' . $height . '" src="//www.youtube.com/embed/' . $youtube_data['id'] . '?wmode=transparent&enablejsapi=1&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe></noscript>';
+				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-youtube"><iframe id="' . $youtube_data['safetitle'] . '" class="youtube embed-responsive-item ' . $class . ' ' . $ignore_visibility . '" width="' . $width . '" height="' . $height . '" src="//www.youtube.com/embed/' . $youtube_data['id'] . '?wmode=transparent&enablejsapi=1&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe></noscript>';
 			} else {
-				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy"><iframe class="no-api embed-responsive-item ' . $class . ' ' . $ignore_visibility . '" width="' . $width . '" height="' . $height . '" src="//www.youtube.com/embed/' . $id . '?wmode=transparent&enablejsapi=1&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe></noscript>';
+				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-youtube"><iframe class="no-api embed-responsive-item ' . $class . ' ' . $ignore_visibility . '" width="' . $width . '" height="' . $height . '" src="//www.youtube.com/embed/' . $id . '?wmode=transparent&enablejsapi=1&rel=' . $rel . '" frameborder="0" allowfullscreen=""></iframe></noscript>';
 
 				if ( $this->is_dev() ){
 					$youtube .= '<script>console.warn("(' . $youtube_data['error'] . ' (via Youtube shortcode)");</script>';
