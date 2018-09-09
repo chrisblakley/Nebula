@@ -127,6 +127,11 @@ th#id {width: 50px;}
 	}
 }
 
+.timingwarning {opacity: 0; color: $danger_color;
+	&.warn {color: orange;}
+	&.active {opacity: 1;}
+}
+
 //TODO Manager
 #todo_manager {
 	.todoresults_title {margin-bottom: 0;

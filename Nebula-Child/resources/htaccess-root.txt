@@ -11,6 +11,14 @@
 	</FilesMatch>
 </IfModule>
 
+#Forbid HTTP access to certain WordPress core PHP files
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteRule wp-admin/install(-helper)?\.php - [R=403,NC,L]
+	RewriteRule wp-admin/upgrade\.php - [R=403,NC,L]
+	RewriteRule wp-includes/rss-functions.php - [R=403,NC,L]
+</IfModule>
+
 #BEGIN WordPress
 <IfModule mod_rewrite.c>
 	RewriteEngine On

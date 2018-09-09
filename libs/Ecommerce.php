@@ -57,7 +57,7 @@ if ( !trait_exists('Ecommerce') ){
 					'level' => 'warn',
 					'description' => 'WooCommerce is active, but the recommended plugin Enhanced Ecommerce Google Analytics Plugin for WooCommerce is not installed. <a href="themes.php?page=tgmpa-install-plugins">Install Recommended Plugins &raquo;</a>'
 				);
-			} elseif ( !is_plugin_active('enhanced-e-commerce-for-woocommerce-store/woocommerce-enhanced-ecommerce-google-analytics-integration.php') ){
+			} elseif ( !is_plugin_active('enhanced-e-commerce-for-woocommerce-store/enhanced-ecommerce-google-analytics.php') ){
 				$nebula_warnings[] = array(
 					'level' => 'warn',
 					'description' => 'WooCommerce is active, but while the recommended plugin Enhanced Ecommerce Google Analytics Plugin for WooCommerce is installed, it is not activated. <a href="plugins.php">Manage Plugins &raquo;</a>'

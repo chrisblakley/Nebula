@@ -361,6 +361,7 @@ if ( !trait_exists('Options') ){
 				'google_server_api_key' => '',
 				'google_browser_api_key' => '',
 				'cse_id' => '',
+				'webpagetest_api' => '',
 				'hubspot_api' => '',
 				'hubspot_portal' => '',
 				'disqus_shortname' => '',

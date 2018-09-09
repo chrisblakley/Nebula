@@ -477,13 +477,14 @@ if ( !trait_exists('Shortcodes') ){
 			$unique_id = uniqid();
 
 			return '<div class="card">
-				<div class="card-header" rol="tab">
-					<a data-toggle="collapse" data-parent="#accordion" data-target="#collapse' . $unique_id . '" href="#">
-						<h5 class="m-0"><i class="fas fa-plus"></i> ' . $title . '</h5>
-					</a>
+				<div class="card-header" id="heading' . $unique_id . '">
+					<h5 class="mb-0">
+						<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse' . $unique_id . '" aria-expanded="true" aria-controls="collapse' . $unique_id . '"><i class="fas fa-plus"></i> ' . $title . '</button>
+					</h5>
 				</div>
-				<div id="collapse' . $unique_id . '" class="collapse ' . $default . ' ' . $class . '" role="tabpanel">
-					<div class="card-block">' . $content . '</div>
+
+				<div id="collapse' . $unique_id . '" class="collapse ' . $default . ' ' . $class . '" aria-labelledby="heading' . $unique_id . '">
+					<p class="card-body">' . $content . '</p>
 				</div>
 			</div>';
 		}

@@ -663,11 +663,10 @@ if ( !trait_exists('Dashboard') ){
 				$php_version_info = 'This version no longer receives security updates! End of life occurred on ' . date('F j, Y', $php_version_lifecycle['end']) . '.';
 				$php_version_cursor = 'help';
 			}
-			$safe_mode = ( ini_get('safe_mode') )? '<small><strong><em>Safe Mode</em></strong></small>' : '';
-			echo '<li><i class="fas fa-fw fa-wrench"></i> PHP Version: <strong style="color: ' . $php_version_color . '; cursor: ' . $php_version_cursor . ';" title="' . $php_version_info . '">' . PHP_VERSION . '</strong> ' . $safe_mode . '</li>';
+			echo '<li><i class="fas fa-fw fa-wrench"></i> PHP Version: <strong style="color: ' . $php_version_color . '; cursor: ' . $php_version_cursor . ';" title="' . $php_version_info . '">' . PHP_VERSION . '</strong></li>';
 
 			//PHP memory limit
-			echo '<li><i class="fas fa-fw fa-cogs"></i> PHP Memory Limit: <strong>' . WP_MEMORY_LIMIT . '</strong> ' . $safe_mode . '</li>';
+			echo '<li><i class="fas fa-fw fa-cogs"></i> PHP Memory Limit: <strong>' . WP_MEMORY_LIMIT . '</strong></li>';
 
 			//Theme directory size(s)
 			if ( is_child_theme() ){
@@ -725,37 +724,44 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//Load Times
-			echo '<div id="testloadcon" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>';
-			echo '<script id="testloadscript">
-				jQuery(window).on("load", function(){
-					jQuery(".windowloadtime").css("visibility", "visible");
-					var iframe = document.createElement("iframe");
-					iframe.style.width = "1200px";
-					iframe.style.height = "0px";
-					jQuery("#testloadcon").append(iframe);
-					iframe.src = "' . home_url('/') . '?noga";
-					jQuery("#testloadcon iframe").on("load", function(){
-						var iframeResponseEnd = Math.round(iframe.contentWindow.performance.timing.responseEnd-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until server response finishes
-						var iframeDomReady = Math.round(iframe.contentWindow.performance.timing.domContentLoadedEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until DOM ready
-						var iframeWindowLoaded = Math.round(iframe.contentWindow.performance.timing.loadEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until window load
+			//New WebPageTest API Method:
+			//Documentation: https://sites.google.com/a/webpagetest.org/docs/advanced-features/webpagetest-restful-apis
+			if ( $this->get_option('webpagetest_api') ){
+				$webpagetest_response = get_transient('nebula_webpagetest_response');
+				if ( empty($webpagetest_response) || $this->is_debug() || isset($_GET['sass']) ){
+					$webpagetest_response = $this->remote_get('https://www.webpagetest.org/runtest.php?url=' . home_url('/') . '%3Fnoga&runs=1&fvonly=1&f=json&noopt=1&noimages=1&k=' . $this->get_option('webpagetest_api'));
+					if ( !is_wp_error($webpagetest_response) ){
+		                $webpagetest_response = json_decode($webpagetest_response['body']);
+						set_transient('nebula_webpagetest_response', $webpagetest_response, MINUTE_IN_SECONDS*10);
+		            }
+				}
 
-						jQuery(".serverloadtime").html(iframeResponseEnd/1000 + " seconds").attr("title", "Calculated via JS performance timing"); //Server Response Time
+				if ( !empty($webpagetest_response) && !is_wp_error($webpagetest_response) ){
+					$wpt_test_json_url = $webpagetest_response->data->jsonUrl;
+					if ( !empty($wpt_test_json_url) ){
+						echo '<script>var wptTestJSONURL = "' . $wpt_test_json_url . '";</script>'; //Pass this URL to JS for polling
+					}
+				}
+			}
 
-						jQuery(".windowloadtime").html(iframeWindowLoaded/1000 + " seconds"); //Window Load Time
-						if ( iframeWindowLoaded > 3000 ){
-							jQuery(".windowslowicon").show();
-						}
+			echo '<div id="testloadcon" data-src="' . home_url('/') . '" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>'; //For iframe timing
 
-						jQuery(".serverdetections .fa-spin, #testloadcon, #testloadscript").remove();
-					});
-				});
-			</script>';
+			//Server Load Time (TTFB)
+			echo '<li id="performance-ttfb"><i class="far fa-fw fa-clock"></i> Server response time: <strong class="datapoint" title="Calculated via PHP render time">' . timer_stop(0, 3) . ' seconds</strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
 
-			//Server Load Time
-			echo '<li><i class="fas fa-fw fa-clock"></i> Server response time: <strong class="serverloadtime" title="Calculated via PHP render time">' . timer_stop(0, 3) . ' seconds</strong></li>';
+			//DOM Load
+			echo '<li id="performance-domload"><i class="fas fa-fw fa-clock"></i> DOM Load: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
 
-			//Window Load Time
-			echo '<li><i class="far fa-fw fa-clock"></i> Window load time: <a href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" rel="noopener" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="windowloadtime" style="visibility: hidden;"><i class="fas fa-spinner fa-spin fa-fw"></i></strong></a> <i class="windowslowicon fas fa-exclamation-triangle" style="color: maroon; display: none;"></i></li>';
+			//Fully Load Time
+			echo '<li id="performance-fullyloaded"><i class="fas fa-fw fa-clock"></i> Fully Loaded: <a class="speedinsight" href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" rel="noopener" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong></a> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
+
+			if ( $this->get_option('webpagetest_api') ){
+				//File Size Footprint
+				echo '<li id="performance-footprint"><i class="fas fa-fw fa-shoe-prints"></i> Footprint: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <small class="wptstatus"></small> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
+
+				//Total Requests
+				echo '<li id="performance-requests"><i class="fas fa-fw fa-list-ol"></i> Total Requests: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
+			}
 
 			//Initial installation date
 			function initial_install_date(){

@@ -4,7 +4,6 @@ jQuery.noConflict();
 jQuery(function(){
 	userHeadshotFields();
 	initializationStuff();
-	developerMetaboxes();
 	wysiwygMods();
 
 	if ( jQuery('#edit-slug-box').length ){
@@ -97,6 +96,7 @@ jQuery(function(){
 
 jQuery(window).on('load', function(){
 	performanceMetrics();
+	developerMetaboxes();
 
 	//Option filter
 	jQuery('#nebula-option-filter').on('keydown keyup change focus blur', function(e){
@@ -189,63 +189,144 @@ jQuery(window).resize(function() {
 
 //Developer Metaboxe functions
 function developerMetaboxes(){
-	//Developer Info Metabox
-	jQuery(document).on('keyup', 'input.findterm', function(){
-		jQuery('input.findterm').attr('placeholder', 'Search files');
-	});
+	if ( jQuery('#phg_developer_info').length ){
+		//Developer Info Metabox
+		jQuery(document).on('keyup', 'input.findterm', function(){
+			jQuery('input.findterm').attr('placeholder', 'Search files');
+		});
 
-	jQuery(document).on('submit', '.searchfiles', function(e){
-		if ( jQuery('input.findterm').val().trim().length >= 3 ){
-			jQuery('#searchprogress').removeClass('fa-search').addClass('fas fa-spinner fa-spin fa-fw');
+		jQuery(document).on('submit', '.searchfiles', function(e){
+			if ( jQuery('input.findterm').val().trim().length >= 3 ){
+				jQuery('#searchprogress').removeClass('fa-search').addClass('fas fa-spinner fa-spin fa-fw');
 
-			jQuery.ajax({
-				type: 'POST',
-				url: nebula.site.ajax.url,
-				data: {
-					nonce: nebula.site.ajax.nonce,
-					action: 'search_theme_files',
-					data: [{
-						directory: jQuery('select.searchdirectory').val(),
-						searchData: jQuery('input.findterm').val()
-					}]
-				},
-				success: function(response){
-					jQuery('#searchprogress').removeClass('fa-spinner fa-spin').addClass('fas fa-search fa-fw');
-					jQuery('div.search_results').html(response).addClass('done');
-				},
-				error: function(XMLHttpRequest, textStatus, errorThrown){
-					jQuery("div.search_results").html(errorThrown).addClass('done');
-				},
-				timeout: 60000
-			});
-		} else {
-			jQuery('input.findterm').val('').attr('placeholder', 'Minimum 3 characters.');
-		}
-		e.preventDefault();
-		return false;
-	});
-
-
-
-	//Dynamic height for TODO results
-	if ( jQuery('.todo_results').length ){
-		jQuery(document).on('click', '.linenumber', function(){
-			jQuery(this).parents('.linewrap').find('.precon').slideToggle();
+				jQuery.ajax({
+					type: 'POST',
+					url: nebula.site.ajax.url,
+					data: {
+						nonce: nebula.site.ajax.nonce,
+						action: 'search_theme_files',
+						data: [{
+							directory: jQuery('select.searchdirectory').val(),
+							searchData: jQuery('input.findterm').val()
+						}]
+					},
+					success: function(response){
+						jQuery('#searchprogress').removeClass('fa-spinner fa-spin').addClass('fas fa-search fa-fw');
+						jQuery('div.search_results').html(response).addClass('done');
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown){
+						jQuery("div.search_results").html(errorThrown).addClass('done');
+					},
+					timeout: 60000
+				});
+			} else {
+				jQuery('input.findterm').val('').attr('placeholder', 'Minimum 3 characters.');
+			}
+			e.preventDefault();
 			return false;
 		});
 
-		jQuery('.todo_results').addClass('height-check');
-		if ( jQuery('.todo_results')[0].scrollHeight <= 300 ){
-			jQuery('.todo_results').css('height', jQuery('.todo_results')[0].scrollHeight + 'px');
-		}
-		jQuery('.todo_results').removeClass('height-check');
+		//Performance Timing
+		iframePerformanceTimer();
+		checkWPTresults();
 
-		//Hide TODO files with only hidden items
-		jQuery('.todofilewrap').each(function(){
-			if ( jQuery(this).find('.linewrap').length === jQuery(this).find('.todo-priority-0').length ){
-				jQuery(this).addClass('hidden');
+		//Dynamic height for TODO results
+		if ( jQuery('.todo_results').length ){
+			jQuery(document).on('click', '.linenumber', function(){
+				jQuery(this).parents('.linewrap').find('.precon').slideToggle();
+				return false;
+			});
+
+			jQuery('.todo_results').addClass('height-check');
+			if ( jQuery('.todo_results')[0].scrollHeight <= 300 ){
+				jQuery('.todo_results').css('height', jQuery('.todo_results')[0].scrollHeight + 'px');
+			}
+			jQuery('.todo_results').removeClass('height-check');
+
+			//Hide TODO files with only hidden items
+			jQuery('.todofilewrap').each(function(){
+				if ( jQuery(this).find('.linewrap').length === jQuery(this).find('.todo-priority-0').length ){
+					jQuery(this).addClass('hidden');
+				}
+			});
+		}
+	}
+}
+
+//Load the home page in an iframe and time the DOM and Window load times
+function iframePerformanceTimer(){
+	var iframe = document.createElement("iframe");
+	iframe.style.width = "1200px";
+	iframe.style.height = "0px";
+	iframe.src = jQuery('#testloadcon').attr('data-src') + "?noga"; //Cannot use nebula.site.home_url here for some reason even though it obeys https
+	jQuery("#testloadcon").append(iframe);
+
+	jQuery("#testloadcon iframe").on("load", function(){
+		var iframeResponseEnd = Math.round(iframe.contentWindow.performance.timing.responseEnd-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until server response finishes
+		var iframeDomReady = Math.round(iframe.contentWindow.performance.timing.domContentLoadedEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until DOM ready
+		var iframeWindowLoaded = Math.round(iframe.contentWindow.performance.timing.loadEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until window load
+
+		jQuery("#performance-ttfb .datapoint").html(iframeResponseEnd/1000 + " seconds").attr("title", "Calculated via JS performance timing"); //Server Response Time
+		performanceTimingWarning(jQuery("#performance-ttfb"), iframeResponseEnd, 500, 1000);
+
+		jQuery("#performance-domload .datapoint").html(iframeDomReady/1000 + " seconds").attr("title", "Calculated via JS performance timing"); //DOM Load Time
+		performanceTimingWarning(jQuery("#performance-domload"), iframeDomReady, 3000, 5000);
+
+		jQuery("#performance-fullyloaded .datapoint").html(iframeWindowLoaded/1000 + " seconds").attr("title", "Calculated via JS performance timing"); //Window Load Time
+		performanceTimingWarning(jQuery("#performance-fullyloaded"), iframeWindowLoaded, 5000, 7000);
+
+		jQuery("#testloadcon, #testloadscript").remove();
+	});
+}
+
+//Check on the WebPageTest API results (initiated on the server-side)
+function checkWPTresults(){
+	if ( wptTestJSONURL ){
+		jQuery.ajax({
+			type: "GET",
+			url: wptTestJSONURL,
+		}).success(function(response){
+			if ( response ){
+				if ( response.statusCode === 200 ){
+					var wptCompletedDate = new Date(response.data.completed*1000).toLocaleDateString(false, {year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "2-digit"});
+					var ttfb = response.data.median.firstView.TTFB/1000;
+					var domLoadTime = response.data.median.firstView.domComplete/1000;
+					var fullyLoadedTime = response.data.median.firstView.fullyLoaded/1000;
+					var footprint = (response.data.median.firstView.bytesIn/1000000).toFixed(2);
+					var totalRequests = response.data.median.firstView.requestsFull;
+
+					jQuery("#performance-ttfb .datapoint").html(ttfb + " seconds").attr("title", "via WebPageTest.org on " + wptCompletedDate).removeClass("datapoint");
+					performanceTimingWarning(jQuery("#performance-ttfb"), ttfb, 0.5, 1);
+
+					jQuery("#performance-domload .datapoint").html(domLoadTime + " seconds").attr("title", "via WebPageTest.org on " + wptCompletedDate).removeClass("datapoint");
+					performanceTimingWarning(jQuery("#performance-domload"), domLoadTime, 3, 5);
+
+					jQuery("#performance-fullyloaded .datapoint").html(fullyLoadedTime + " seconds").attr("title", "via WebPageTest.org on " + wptCompletedDate).removeClass("datapoint");
+					jQuery(".speedinsight").attr("href", response.data.summary); //User-Friendly report URL
+					performanceTimingWarning(jQuery("#performance-fullyloaded"), fullyLoadedTime, 5, 7);
+
+					jQuery("#performance-footprint .datapoint").html(footprint + "mb").attr("title", "via WebPageTest.org on " + wptCompletedDate);
+					performanceTimingWarning(jQuery("#performance-footprint"), footprint, 1, 2);
+
+					jQuery("#performance-requests .datapoint").html(totalRequests).attr("title", "via WebPageTest.org on " + wptCompletedDate);
+					performanceTimingWarning(jQuery("#performance-requests"), totalRequests, 80, 120);
+
+					jQuery(".wptstatus").remove();
+				} else if ( response.statusCode < 200 ){
+					jQuery(".wptstatus").text("(" + response.statusText + ")");
+					setTimeout(checkWPTresults, 8000); //Poll again in a few seconds
+				}
 			}
 		});
+	}
+}
+
+//Compare metrics for warning and error icons
+function performanceTimingWarning(performanceItem, actualTime, warningTime, errorTime){
+	if ( actualTime > errorTime ){
+		performanceItem.find(".timingwarning").addClass("active");
+	} else if ( actualTime > warningTime ){
+		performanceItem.find(".timingwarning").addClass("warn active");
 	}
 }
 
