@@ -266,14 +266,20 @@ function iframePerformanceTimer(){
 		var iframeDomReady = Math.round(iframe.contentWindow.performance.timing.domContentLoadedEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until DOM ready
 		var iframeWindowLoaded = Math.round(iframe.contentWindow.performance.timing.loadEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until window load
 
-		jQuery("#performance-ttfb .datapoint").html(iframeResponseEnd/1000 + " seconds").attr("title", "Calculated via JS performance timing"); //Server Response Time
-		performanceTimingWarning(jQuery("#performance-ttfb"), iframeResponseEnd, 500, 1000);
+		if ( jQuery("#performance-ttfb .datapoint").length ){
+			jQuery("#performance-ttfb .datapoint").html(iframeResponseEnd/1000 + " seconds").attr("title", "via iframe timing"); //Server Response Time
+			performanceTimingWarning(jQuery("#performance-ttfb"), iframeResponseEnd, 500, 1000);
+		}
 
-		jQuery("#performance-domload .datapoint").html(iframeDomReady/1000 + " seconds").attr("title", "Calculated via JS performance timing"); //DOM Load Time
-		performanceTimingWarning(jQuery("#performance-domload"), iframeDomReady, 3000, 5000);
+		if ( jQuery("#performance-domload .datapoint").length ){
+			jQuery("#performance-domload .datapoint").html(iframeDomReady/1000 + " seconds").attr("title", "via iframe timing"); //DOM Load Time
+			performanceTimingWarning(jQuery("#performance-domload"), iframeDomReady, 3000, 5000);
+		}
 
-		jQuery("#performance-fullyloaded .datapoint").html(iframeWindowLoaded/1000 + " seconds").attr("title", "Calculated via JS performance timing"); //Window Load Time
-		performanceTimingWarning(jQuery("#performance-fullyloaded"), iframeWindowLoaded, 5000, 7000);
+		if ( jQuery("#performance-fullyloaded .datapoint").length ){
+			jQuery("#performance-fullyloaded .datapoint").html(iframeWindowLoaded/1000 + " seconds").attr("title", "via iframe timing"); //Window Load Time
+			performanceTimingWarning(jQuery("#performance-fullyloaded"), iframeWindowLoaded, 5000, 7000);
+		}
 
 		jQuery("#testloadcon, #testloadscript").remove();
 	});
@@ -287,7 +293,7 @@ function checkWPTresults(){
 			url: wptTestJSONURL,
 		}).success(function(response){
 			if ( response ){
-				if ( response.statusCode === 200 ){
+				if ( response.statusCode === 200 ){ //Test results are ready
 					var wptCompletedDate = new Date(response.data.completed*1000).toLocaleDateString(false, {year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "2-digit"});
 					var ttfb = response.data.median.firstView.TTFB/1000;
 					var domLoadTime = response.data.median.firstView.domComplete/1000;
@@ -312,9 +318,13 @@ function checkWPTresults(){
 					performanceTimingWarning(jQuery("#performance-requests"), totalRequests, 80, 120);
 
 					jQuery(".wptstatus").remove();
-				} else if ( response.statusCode < 200 ){
+				} else if ( response.statusCode < 200 ){ //Testing still in progress
 					jQuery(".wptstatus").text("(" + response.statusText + ")");
-					setTimeout(checkWPTresults, 8000); //Poll again in a few seconds
+					var pollTime = ( response.statusCode === 100 )? 3000 : 8000; //Poll slowly when behind other tests and quickly once the test has started
+					setTimeout(checkWPTresults, pollTime);
+				} else if ( response.statusCode > 400 ){ //An API error has occurred
+					jQuery("#performance-footprint .datapoint").hide();
+					jQuery("#performance-requests").hide();
 				}
 			}
 		});
@@ -323,6 +333,8 @@ function checkWPTresults(){
 
 //Compare metrics for warning and error icons
 function performanceTimingWarning(performanceItem, actualTime, warningTime, errorTime){
+	performanceItem.find(".timingwarning").removeClass("warn active"); //Remove any warnings from previous tests
+
 	if ( actualTime > errorTime ){
 		performanceItem.find(".timingwarning").addClass("active");
 	} else if ( actualTime > warningTime ){

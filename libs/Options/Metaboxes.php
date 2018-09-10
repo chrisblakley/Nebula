@@ -1501,9 +1501,9 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<label for="gcm_sender_id">WebPageTest API Key</label>
-					<input type="text" name="nebula_options[webpagetest_api]" id="webpagetest_api" class="form-control nebula-validate-text" value="<?php echo $nebula_options['webpagetest_api']; ?>" placeholder="000000000000" />
+					<input type="text" name="nebula_options[webpagetest_api]" id="webpagetest_api" class="form-control nebula-validate-text" value="<?php echo $nebula_options['webpagetest_api']; ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">The API key for programmatic testing from <a href="http://www.webpagetest.org/getkey.php" target="_blank" rel="noopener">WebPageTest.org</a>.</p>
-					<p class="nebula-help-text more-help form-text text-muted">If this key is used, the Nebula Developer dashboard will obtain timing information from WebPageTest.org rather than a more anecdotal iframe JavaScript timer.</strong></p>
+					<p class="nebula-help-text more-help form-text text-muted">If this key is used, the Nebula Developer dashboard will obtain timing information from WebPageTest.org rather than a more anecdotal iframe JavaScript timer. Note: The WPT API key registration does not allow + signs in email addresses.</strong></p>
 					<p class="option-keywords">wpt</p>
 				</div>
 

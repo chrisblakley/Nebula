@@ -678,7 +678,7 @@ if ( !trait_exists('Dashboard') ){
 
 				$nebula_child_size = get_transient('nebula_directory_size_child_theme');
 				if ( empty($nebula_child_size) || $this->is_debug() ){
-					$nebula_child_size = $this->foldersize(get_template_directory());
+					$nebula_child_size = $this->foldersize(get_stylesheet_directory());
 					set_transient('nebula_directory_size_child_theme', $nebula_child_size, DAY_IN_SECONDS); //12 hour cache
 				}
 
@@ -729,7 +729,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( $this->get_option('webpagetest_api') ){
 				$webpagetest_response = get_transient('nebula_webpagetest_response');
 				if ( empty($webpagetest_response) || $this->is_debug() || isset($_GET['sass']) ){
-					$webpagetest_response = $this->remote_get('https://www.webpagetest.org/runtest.php?url=' . home_url('/') . '%3Fnoga&runs=1&fvonly=1&f=json&noopt=1&noimages=1&k=' . $this->get_option('webpagetest_api'));
+					$webpagetest_response = $this->remote_get('https://www.webpagetest.org/runtest.php?url=' . home_url('/') . '%3Fnoga&runs=3&fvonly=1&f=json&noopt=1&noimages=1&k=' . $this->get_option('webpagetest_api'));
 					if ( !is_wp_error($webpagetest_response) ){
 		                $webpagetest_response = json_decode($webpagetest_response['body']);
 						set_transient('nebula_webpagetest_response', $webpagetest_response, MINUTE_IN_SECONDS*10);

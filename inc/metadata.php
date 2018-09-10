@@ -100,17 +100,12 @@
 <link rel="shortcut icon" type="image/png" sizes="16x16" href="<?php echo get_site_icon_url(16, $image_meta_directory . '/favicon-16x16.png') . $cache_query; ?>" />
 <link rel="shortcut icon" type="image/png" sizes="32x32" href="<?php echo get_site_icon_url(32, $image_meta_directory . '/favicon-16x16.png') . $cache_query; ?>" />
 
-<?php if ( nebula()->get_browser('name') == 'Safari' && !has_site_icon() ): //Safari ?>
+<?php if ( !has_site_icon() ): ?>
 	<link rel="mask-icon" href="<?php echo $image_meta_directory . '/safari-pinned-tab.svg' . $cache_query; ?>" color="<?php echo nebula()->sass_color('primary'); ?>" />
 <?php endif; ?>
 
-<?php if ( nebula()->get_os('name') == 'iOS' ): //Apple iOS ?>
-	<link rel="apple-touch-icon" sizes="180x180" href="<?php echo get_site_icon_url(180, $image_meta_directory . '/apple-touch-icon.png') . $cache_query; ?>" />
-<?php endif; ?>
-
-<?php if ( nebula()->get_os('name') == 'Android' ): //Android/Chrome ?>
-	<link rel="icon" type="image/png" sizes="192x192" href="<?php echo get_site_icon_url(192, $image_meta_directory . '/android-chrome-192x192.png') . $cache_query; ?>" />
-<?php endif; ?>
+<link rel="apple-touch-icon" sizes="180x180" href="<?php echo get_site_icon_url(180, $image_meta_directory . '/apple-touch-icon.png') . $cache_query; ?>" />
+<link rel="icon" type="image/png" sizes="192x192" href="<?php echo get_site_icon_url(192, $image_meta_directory . '/android-chrome-192x192.png') . $cache_query; ?>" />
 
 <?php //Facebook Metadata ?>
 <?php if ( nebula()->get_option('facebook_app_id') ): ?>

@@ -2186,14 +2186,18 @@ function lazyLoadAssets(){
 	//Lazy load CSS assets
 	jQuery.each(nebula.site.resources.lazy.styles, function(handle, condition){
 		if ( condition === 'all' || jQuery(condition).length ){
-			nebulaLoadCSS(nebula.site.resources.styles[handle.replace('-', '_')]);
+			if ( nebula.site.resources.styles[handle.replace('-', '_')] ){ //If that handle exists in the registered styles
+				nebulaLoadCSS(nebula.site.resources.styles[handle.replace('-', '_')]);
+			}
 		}
 	});
 
 	//Lazy load JS assets
 	jQuery.each(nebula.site.resources.lazy.scripts, function(handle, condition){
 		if ( condition === 'all' || jQuery(condition).length ){
-			nebulaLoadJS(nebula.site.resources.scripts[handle.replace('-', '_')]);
+			if ( nebula.site.resources.scripts[handle.replace('-', '_')] ){ //If that handle exists in the registered scripts
+				nebulaLoadJS(nebula.site.resources.scripts[handle.replace('-', '_')]);
+			}
 		}
 	});
 
@@ -2274,7 +2278,7 @@ function nebulaLoadCSS(url){
 	if ( typeof url === 'string' ){
 		jQuery('head').append('<link rel="stylesheet" href="' + url + '" type="text/css" media="screen">');
 	} else {
-		console.error('nebulaLoadCSS requires a valid URL.');
+		console.error('nebulaLoadCSS requires a valid URL. The requested URL is invalid:', url);
 	}
 }
 
