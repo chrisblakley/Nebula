@@ -287,7 +287,7 @@ function iframePerformanceTimer(){
 
 //Check on the WebPageTest API results (initiated on the server-side)
 function checkWPTresults(){
-	if ( wptTestJSONURL ){
+	if ( typeof wptTestJSONURL !== 'undefined' ){
 		jQuery.ajax({
 			type: "GET",
 			url: wptTestJSONURL,
