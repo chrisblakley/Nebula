@@ -1131,7 +1131,12 @@ if ( !trait_exists('Utilities') ){
 			if ( isset($override) ){return;}
 
 			$return = str_replace(array(' ', '_', '-'), '', strtolower($return));
-			$nebula_theme_info = ( is_child_theme() )? wp_get_theme(str_replace('-child', '', get_template())) : wp_get_theme();
+
+			if ( $return === 'child' && is_child_theme() ){
+				return $this->child_version();
+			}
+
+			$nebula_theme_info = ( is_child_theme() )? wp_get_theme(str_replace('-child', '', get_template())) : wp_get_theme(); //Get the parent theme (regardless of if child theme is active)
 
 			if ( $return === 'raw' ){ //Check this first to prevent needing to RegEx altogether
 				return $nebula_theme_info->get('Version');
@@ -1182,6 +1187,22 @@ if ( !trait_exists('Utilities') ){
 					return $nebula_version_info;
 					break;
 			}
+		}
+
+		//Get the child theme version information
+		public function child_version(){
+			if ( !is_child_theme() ){
+				return $this->version('full'); //Return the parent theme version if child theme is not active
+			}
+
+			//Return a version format based on the last Sass process date if available
+			if ( nebula()->get_option('scss') ){
+				return date('y.n.j', nebula()->get_data('scss_last_processed'));
+			}
+
+			//Otherwise rely on the version number in the child theme stylesheet
+			$child_theme_info = wp_get_theme();
+			return $child_theme_info->get('Version');
 		}
 
 		//Create Custom Properties

@@ -110,7 +110,6 @@ trait Functions {
 			add_filter('wpcf7_verify_nonce', '__return_true'); //Always verify CF7 nonce for logged-in users (this allows for it to detect user data)
 		}
 		add_filter('wpcf7_special_mail_tags', array($this, 'cf7_custom_special_mail_tags'), 10, 3);
-		add_filter('cfdb7_before_save_data', array($this, 'more_contact_form_db_info'));
 	}
 
 	//Check if the Nebula Companion plugin is installed and active
@@ -3228,12 +3227,6 @@ trait Functions {
 		}
 
 		return $output;
-	}
-
-	//Add more columns to contact form DB storage
-	public function more_contact_form_db_info($form_data){
-		$form_data['ip'] = $this->get_ip_address();
-		return $form_data;
 	}
 
 	//Add Google API key to Advanced Custom Fields Google Map field type

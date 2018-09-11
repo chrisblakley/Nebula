@@ -50,8 +50,8 @@ if ( !trait_exists('Automation') ){
 					'required' => true,
 				),
 				array(
-					'name' => 'Contact Form 7 Database Addon – CFDB7',
-					'slug' => 'contact-form-cfdb7',
+					'name' => 'Advanced Contact form 7 DB',
+					'slug' => 'advanced-cf7-db',
 					'required' => true,
 				),
 				array(

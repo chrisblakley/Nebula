@@ -728,10 +728,12 @@ if ( !trait_exists('Dashboard') ){
 			//Documentation: https://sites.google.com/a/webpagetest.org/docs/advanced-features/webpagetest-restful-apis
 			if ( $this->get_option('webpagetest_api') ){
 				$webpagetest_response = get_transient('nebula_webpagetest_response');
+				$wpt_status = '(Getting stored test results)';
 				if ( empty($webpagetest_response) || $this->is_debug() || isset($_GET['sass']) ){
 					$webpagetest_response = $this->remote_get('https://www.webpagetest.org/runtest.php?url=' . home_url('/') . '%3Fnoga&runs=3&fvonly=1&f=json&noopt=1&noimages=1&k=' . $this->get_option('webpagetest_api'));
 					if ( !is_wp_error($webpagetest_response) ){
 		                $webpagetest_response = json_decode($webpagetest_response['body']);
+						$wpt_status = '(Running new test)';
 						set_transient('nebula_webpagetest_response', $webpagetest_response, MINUTE_IN_SECONDS*10);
 		            }
 				}
@@ -757,7 +759,7 @@ if ( !trait_exists('Dashboard') ){
 
 			if ( $this->get_option('webpagetest_api') ){
 				//File Size Footprint
-				echo '<li id="performance-footprint"><i class="fas fa-fw fa-shoe-prints"></i> Footprint: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <small class="wptstatus"></small> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
+				echo '<li id="performance-footprint"><i class="fas fa-fw fa-shoe-prints"></i> Footprint: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <small class="wptstatus">' . $wpt_status . '</small> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
 
 				//Total Requests
 				echo '<li id="performance-requests"><i class="fas fa-fw fa-list-ol"></i> Total Requests: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
