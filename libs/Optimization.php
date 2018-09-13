@@ -5,12 +5,14 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Optimization') ){
 	trait Optimization {
 		public function hooks(){
+			add_action('send_headers', array($this, 'nebula_http2_ob_start'));
+			add_filter('style_loader_src', array($this, 'http2_server_push_header'), 99, 1);
+			add_filter('script_loader_src', array($this, 'http2_server_push_header'), 99, 1);
+
 			add_filter('clean_url', array($this, 'defer_async_scripts'), 11, 1);
 			add_filter('script_loader_tag', array($this, 'defer_async_additional_scripts'), 10);
 			add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
 			add_action('wp_footer', array($this, 'dequeue_lazy_load_scripts'));
-			add_filter('style_loader_src', array($this, 'http2_server_push_header'), 99, 1);
-			add_filter('script_loader_src', array($this, 'http2_server_push_header'), 99, 1);
 			add_filter('script_loader_src', array($this, 'remove_script_version'), 15, 1);
 			add_filter('style_loader_src', array($this, 'remove_script_version'), 15, 1);
 			add_action('wp_enqueue_scripts', array($this, 'dequeues'), 9999);
@@ -215,6 +217,13 @@ if ( !trait_exists('Optimization') ){
 			if ( $this->get_option('service_worker') ){
 				header('Service-Worker-Allowed: /');
 			}
+		}
+
+		//Start output buffering so headers can be sent later for HTTP2 Server Push
+		public function nebula_http2_ob_start(){
+		    if ( !$this->is_admin_page() ){
+				ob_start();
+		    }
 		}
 
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once

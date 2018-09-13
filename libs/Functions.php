@@ -16,7 +16,6 @@ trait Functions {
 		$this->linkedin_widget_loaded = false;
 		$this->pinterest_widget_loaded = false;
 
-		add_action('init', array($this, 'nebula_http2_ob_start'));
 		add_action('after_setup_theme', array($this, 'theme_setup'));
 		add_filter('site_icon_image_sizes', array($this, 'site_icon_sizes'));
 		add_filter('image_size_names_choose', array($this, 'image_size_human_names'));
@@ -120,17 +119,6 @@ trait Functions {
 		}
 
 		return false;
-	}
-
-	//Start output buffering so headers can be sent later for HTTP2 Server Push
-	public function nebula_http2_ob_start(){
-	    if ( !$this->is_admin_page() ){
-			if ( isset($_SERVER['HTTP_ACCEPT_ENCODING']) && substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ){
-				ob_start('ob_gzhandler'); //Use gzip compression for PHP output (not a replacement for htaccess)
-			} else {
-				ob_start();
-	    	}
-	    }
 	}
 
 	//Prep custom theme support
