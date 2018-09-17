@@ -253,7 +253,6 @@ if ( !trait_exists('Automation') ){
 		public function initialization(){
 			if ( current_user_can('manage_options') ){
 				$this->usage('Initialization');
-				$this->express_automation();
 				$this->full_automation();
 				$this->initialization_email_prev_settings();
 

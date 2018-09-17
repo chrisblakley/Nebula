@@ -1197,7 +1197,9 @@ if ( !trait_exists('Utilities') ){
 
 			//Return a version format based on the last Sass process date if available
 			if ( nebula()->get_option('scss') ){
-				return date('y.n.j', nebula()->get_data('scss_last_processed'));
+				$build_number = (round((nebula()->get_data('scss_last_processed')-strtotime(date('Y-m-d', nebula()->get_data('scss_last_processed'))))/86400, 4)*10000)+1; //Add 1 to try to prevent trimming of trailing zeros
+				$build_number = str_pad($build_number, '4', '1'); //Force a 4 digit number (by adding 1s to the right side)
+				return date('y.n.j.' . $build_number, nebula()->get_data('scss_last_processed'));
 			}
 
 			//Otherwise rely on the version number in the child theme stylesheet
