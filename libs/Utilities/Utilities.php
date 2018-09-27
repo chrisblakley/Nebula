@@ -389,6 +389,15 @@ if ( !trait_exists('Utilities') ){
 			return true;
 		}
 
+		//Check if the site is an ecommerce website
+		public function is_ecommerce(){
+			if ( is_plugin_active('woocommerce/woocommerce.php') ){
+				return true;
+			}
+
+			return false;
+		}
+
 		//If the request was made via AJAX
 		public function is_ajax_request(){
 			if ( !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' ){

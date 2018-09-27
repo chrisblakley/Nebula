@@ -294,6 +294,14 @@ if ( !trait_exists('Admin') ){
 				'url' => 'https://www.google.com/business/'
 			);
 
+			if ( $this->is_ecommerce() ){
+				$third_party_tools['administrative'][] = array(
+					'name' => 'Google Merchant Center',
+					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-store"></i>',
+					'url' => 'https://www.google.com/retail/solutions/merchant-center/'
+				);
+			}
+
 			if ( $this->get_option('facebook_app_id') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Facebook For Developers',
