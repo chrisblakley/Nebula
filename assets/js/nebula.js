@@ -639,17 +639,21 @@ function eventTracking(){
 
 	//Bootstrap "Collapse" Accordions
 	nebula.dom.document.on('shown.bs.collapse', function(e){
-		ga('send', 'event', 'Accordion', 'Shown', e.target.id);
+		var accordionHeaderLabel = jQuery.trim(jQuery('[data-target="#' + e.target.id + '"]').text()) || e.target.id;
+		ga('send', 'event', 'Accordion', 'Shown', accordionHeaderLabel);
 	});
 	nebula.dom.document.on('hidden.bs.collapse', function(e){
-		ga('send', 'event', 'Accordion', 'Hidden', e.target.id);
+		var accordionHeaderLabel = jQuery.trim(jQuery('[data-target="#' + e.target.id + '"]').text()) || e.target.id;
+		ga('send', 'event', 'Accordion', 'Hidden', accordionHeaderLabel);
 	});
 
 	//Bootstrap Modals
 	nebula.dom.document.on('shown.bs.modal', function(e){
-		ga('send', 'event', 'Modal', 'Shown', e.target.id);
+		var modalHeaderLabel = jQuery.trim(jQuery('#' + e.target.id + ' .modal-title').text()) || e.target.id;
+		ga('send', 'event', 'Modal', 'Shown', modalHeaderLabel);
 	});
 	nebula.dom.document.on('hidden.bs.modal', function(e){
+		var modalHeaderLabel = jQuery.trim(jQuery('#' + e.target.id + ' .modal-title').text()) || e.target.id;
 		ga('send', 'event', 'Modal', 'Hidden', e.target.id);
 	});
 

@@ -1932,13 +1932,11 @@ trait Functions {
 								history.replaceState(null, document.title, nebula.post.permalink + 'page/' + pageNumber + newQueryStrings);
 								nebula.dom.document.trigger('nebula_infinite_finish');
 								ga('send', 'event', 'Infinite Query', 'Load More', 'Loaded page ' + pageNumber);
-								nv('increment', 'infinite_query_loads');
 								pageNumber++;
 							},
 							error: function(XMLHttpRequest, textStatus, errorThrown){
 								jQuery(document).trigger('nebula_infinite_finish');
 								ga('send', 'event', 'Error', 'AJAX Error', 'Infinite Query Load More AJAX');
-								nv('increment', 'ajax_error');
 							},
 							timeout: 60000
 						});
@@ -3104,7 +3102,7 @@ trait Functions {
 	}
 
 	//Fix responsive oEmbeds
-	//Uses Bootstrap classes: http://v4-alpha.getbootstrap.com/components/utilities/#responsive-embeds
+	//Uses Bootstrap classes: https://getbootstrap.com/docs/4.1/utilities/embed/
 	public function oembed_modifiers($html, $url, $attr, $post_id){
 		//Enable the JS API for Youtube videos
 		if ( strstr($html, 'youtube.com/embed/') ){
