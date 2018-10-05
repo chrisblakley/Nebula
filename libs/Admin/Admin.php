@@ -415,7 +415,7 @@ if ( !trait_exists('Admin') ){
 		public function remove_admin_bar_logo() {
 			if ( is_admin_bar_showing() ){
 				global $wp_admin_bar;
-                /** @var WP_Admin_Bar $wp_admin_bar */
+				/** @var WP_Admin_Bar $wp_admin_bar */
 				$wp_admin_bar->remove_menu('wp-logo');
 				$wp_admin_bar->remove_menu('wpseo-menu'); //Remove Yoast SEO from admin bar
 			}
@@ -612,12 +612,12 @@ if ( !trait_exists('Admin') ){
 				}
 
 				if ( !empty($nebula_warning_icon) ){
-                    if (!isset($nebula_warning_href)) {
-                        $nebula_warning_href = '';
-                    }
-                    if (!isset($nebula_warning_description)) {
-                        $nebula_warning_description = '';
-                    }
+					if (!isset($nebula_warning_href)) {
+						$nebula_warning_href = '';
+					}
+					if (!isset($nebula_warning_description)) {
+						$nebula_warning_description = '';
+					}
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula',
 						'id' => 'nebula-warning',

@@ -221,9 +221,9 @@ if ( !trait_exists('Optimization') ){
 
 		//Start output buffering so headers can be sent later for HTTP2 Server Push
 		public function nebula_http2_ob_start(){
-		    if ( !$this->is_admin_page() ){
+			if ( !$this->is_admin_page() ){
 				ob_start();
-		    }
+			}
 		}
 
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
@@ -237,7 +237,7 @@ if ( !trait_exists('Optimization') ){
 				}
 			}
 
-		    return $src;
+			return $src;
 		}
 
 		//Set Server Timing header

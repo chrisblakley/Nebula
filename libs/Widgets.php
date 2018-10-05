@@ -218,18 +218,18 @@ if ( !trait_exists('Widgets') ){
 				</p>
 
 				<p>
-				    <input class="checkbox" type="checkbox" <?php checked($instance['show_job_info'], 'on'); ?> id="<?php echo $this->get_field_id('show_job_info'); ?>" name="<?php echo $this->get_field_name('show_job_info'); ?>" />
-				    <label for="<?php echo $this->get_field_id('show_job_info'); ?>"> Show Job Title and Company</label>
+					<input class="checkbox" type="checkbox" <?php checked($instance['show_job_info'], 'on'); ?> id="<?php echo $this->get_field_id('show_job_info'); ?>" name="<?php echo $this->get_field_name('show_job_info'); ?>" />
+					<label for="<?php echo $this->get_field_id('show_job_info'); ?>"> Show Job Title and Company</label>
 				</p>
 
 				<p>
-				    <input class="checkbox" type="checkbox" <?php checked($instance['show_location'], 'on'); ?> id="<?php echo $this->get_field_id('show_location'); ?>" name="<?php echo $this->get_field_name('show_location'); ?>" />
-				    <label for="<?php echo $this->get_field_id('show_location'); ?>"> Show Location</label>
+					<input class="checkbox" type="checkbox" <?php checked($instance['show_location'], 'on'); ?> id="<?php echo $this->get_field_id('show_location'); ?>" name="<?php echo $this->get_field_name('show_location'); ?>" />
+					<label for="<?php echo $this->get_field_id('show_location'); ?>"> Show Location</label>
 				</p>
 
 				<p>
-				    <input class="checkbox" type="checkbox" <?php checked($instance['show_social_links'], 'on'); ?> id="<?php echo $this->get_field_id('show_social_links'); ?>" name="<?php echo $this->get_field_name('show_social_links'); ?>" />
-				    <label for="<?php echo $this->get_field_id('show_social_links'); ?>"> Show Social Media Links</label>
+					<input class="checkbox" type="checkbox" <?php checked($instance['show_social_links'], 'on'); ?> id="<?php echo $this->get_field_id('show_social_links'); ?>" name="<?php echo $this->get_field_name('show_social_links'); ?>" />
+					<label for="<?php echo $this->get_field_id('show_social_links'); ?>"> Show Social Media Links</label>
 				</p>
 
 				<p>To avoid needing to use Gravatar for user images, this widget listens for a custom field of "headshot" first.</p>
@@ -272,14 +272,14 @@ if ( !trait_exists('Widgets') ){
 					<?php if ( get_previous_post_link() ): ?>
 						<div class="col prev-link-con">
 							<p class="prevnext-post-heading prev-post-heading">Previous <?php echo ucwords(get_post_type()); ?></p>
-                        	<div class="prevnext-post-link prev-post-link"><?php previous_post_link(); ?></div>
+							<div class="prevnext-post-link prev-post-link"><?php previous_post_link(); ?></div>
 						</div><!--/col-->
 					<?php endif; ?>
 
 					<?php if ( get_next_post_link() ): ?>
 						<div class="col next-link-con">
 							<p class="prevnext-post-heading next-post-heading">Next <?php echo ucwords(get_post_type()); ?></p>
-                        	<div class="prevnext-post-link next-post-link"><?php next_post_link(); ?></div>
+							<div class="prevnext-post-link next-post-link"><?php next_post_link(); ?></div>
 						</div><!--/col-->
 					<?php endif; ?>
 				</div><!--/row-->
@@ -763,40 +763,40 @@ if ( !trait_exists('Widgets') ){
 				</p>
 
 				<p>
-				    <input class="checkbox" type="checkbox" <?php checked($instance['share_api'], 'on'); ?> id="<?php echo $this->get_field_id('share_api'); ?>" name="<?php echo $this->get_field_name('share_api'); ?>" />
-				    <label for="<?php echo $this->get_field_id('share_api'); ?>"> Share API</label>
-				    <span class="nebula-help-text">Only appears when supported. If selected (and supported) it will replace any third-party buttons (even if checked below) for optimization!</span>
+					<input class="checkbox" type="checkbox" <?php checked($instance['share_api'], 'on'); ?> id="<?php echo $this->get_field_id('share_api'); ?>" name="<?php echo $this->get_field_name('share_api'); ?>" />
+					<label for="<?php echo $this->get_field_id('share_api'); ?>"> Share API</label>
+					<span class="nebula-help-text">Only appears when supported. If selected (and supported) it will replace any third-party buttons (even if checked below) for optimization!</span>
 				</p>
 
 				<p>
-				    <input class="checkbox" type="checkbox" <?php checked($instance['facebook'], 'on'); ?> id="<?php echo $this->get_field_id('facebook'); ?>" name="<?php echo $this->get_field_name('facebook'); ?>" />
-				    <label for="<?php echo $this->get_field_id('facebook'); ?>"> Facebook</label>
+					<input class="checkbox" type="checkbox" <?php checked($instance['facebook'], 'on'); ?> id="<?php echo $this->get_field_id('facebook'); ?>" name="<?php echo $this->get_field_name('facebook'); ?>" />
+					<label for="<?php echo $this->get_field_id('facebook'); ?>"> Facebook</label>
 				</p>
 
 				<p>
-				    <input class="checkbox" type="checkbox" <?php checked($instance['twitter'], 'on'); ?> id="<?php echo $this->get_field_id('twitter'); ?>" name="<?php echo $this->get_field_name('twitter'); ?>" />
-				    <label for="<?php echo $this->get_field_id('twitter'); ?>"> Twitter</label>
+					<input class="checkbox" type="checkbox" <?php checked($instance['twitter'], 'on'); ?> id="<?php echo $this->get_field_id('twitter'); ?>" name="<?php echo $this->get_field_name('twitter'); ?>" />
+					<label for="<?php echo $this->get_field_id('twitter'); ?>"> Twitter</label>
 				</p>
 
 				<p>
-				    <input class="checkbox" type="checkbox" <?php checked($instance['googleplus'], 'on'); ?> id="<?php echo $this->get_field_id('googleplus'); ?>" name="<?php echo $this->get_field_name('googleplus'); ?>" />
-				    <label for="<?php echo $this->get_field_id('googleplus'); ?>"> Google+</label>
+					<input class="checkbox" type="checkbox" <?php checked($instance['googleplus'], 'on'); ?> id="<?php echo $this->get_field_id('googleplus'); ?>" name="<?php echo $this->get_field_name('googleplus'); ?>" />
+					<label for="<?php echo $this->get_field_id('googleplus'); ?>"> Google+</label>
 				</p>
 
 				<p>
-				    <input class="checkbox" type="checkbox" <?php checked($instance['linkedin'], 'on'); ?> id="<?php echo $this->get_field_id('linkedin'); ?>" name="<?php echo $this->get_field_name('linkedin'); ?>" />
-				    <label for="<?php echo $this->get_field_id('linkedin'); ?>"> LinkedIn</label>
+					<input class="checkbox" type="checkbox" <?php checked($instance['linkedin'], 'on'); ?> id="<?php echo $this->get_field_id('linkedin'); ?>" name="<?php echo $this->get_field_name('linkedin'); ?>" />
+					<label for="<?php echo $this->get_field_id('linkedin'); ?>"> LinkedIn</label>
 				</p>
 
 				<p>
-				    <input class="checkbox" type="checkbox" <?php checked($instance['pinterest'], 'on'); ?> id="<?php echo $this->get_field_id('pinterest'); ?>" name="<?php echo $this->get_field_name('pinterest'); ?>" />
-				    <label for="<?php echo $this->get_field_id('pinterest'); ?>"> Pinterest</label>
+					<input class="checkbox" type="checkbox" <?php checked($instance['pinterest'], 'on'); ?> id="<?php echo $this->get_field_id('pinterest'); ?>" name="<?php echo $this->get_field_name('pinterest'); ?>" />
+					<label for="<?php echo $this->get_field_id('pinterest'); ?>"> Pinterest</label>
 				</p>
 
 				<p>
-				    <input class="checkbox" type="checkbox" <?php checked($instance['native_buttons'], 'on'); ?> id="<?php echo $this->get_field_id('native_buttons'); ?>" name="<?php echo $this->get_field_name('native_buttons'); ?>" />
-				    <label for="<?php echo $this->get_field_id('native_buttons'); ?>"> Native Buttons</label>
-				    <span class="nebula-help-text">Native social buttons take longer to load and some require additional configuration. Non-native buttons have more consistent styling.</span>
+					<input class="checkbox" type="checkbox" <?php checked($instance['native_buttons'], 'on'); ?> id="<?php echo $this->get_field_id('native_buttons'); ?>" name="<?php echo $this->get_field_name('native_buttons'); ?>" />
+					<label for="<?php echo $this->get_field_id('native_buttons'); ?>"> Native Buttons</label>
+					<span class="nebula-help-text">Native social buttons take longer to load and some require additional configuration. Non-native buttons have more consistent styling.</span>
 				</p>
 			<?php
 		}
@@ -907,8 +907,8 @@ if ( !trait_exists('Widgets') ){
 					<input class="widefat" id="<?php echo $this->get_field_id('number_tweets'); ?>" name="<?php echo $this->get_field_name('number_tweets'); ?>" type="number" value="<?php echo ( isset($instance['number_tweets']) )? $instance['number_tweets'] : ''; ?>" />
 				</p>
 				<p>
-				    <input class="checkbox" type="checkbox" <?php checked($instance['include_retweets'], 'on'); ?> id="<?php echo $this->get_field_id('include_retweets'); ?>" name="<?php echo $this->get_field_name('include_retweets'); ?>" />
-				    <label for="<?php echo $this->get_field_id('include_retweets'); ?>"> Include Retweets</label>
+					<input class="checkbox" type="checkbox" <?php checked($instance['include_retweets'], 'on'); ?> id="<?php echo $this->get_field_id('include_retweets'); ?>" name="<?php echo $this->get_field_name('include_retweets'); ?>" />
+					<label for="<?php echo $this->get_field_id('include_retweets'); ?>"> Include Retweets</label>
 				</p>
 			<?php
 		}
@@ -946,14 +946,14 @@ if ( !trait_exists('Widgets') ){
 					$youtube_data = nebula()->video_meta('youtube', $instance['video_id']);
 					?>
 					<div class="embed-responsive embed-responsive-16by9">
-					    <iframe class="youtube embed-responsive-item" src="//www.youtube.com/embed/<?php echo $instance['video_id']; ?>?wmode=transparent&enablejsapi=1&rel=0" width="560" height="315"></iframe>
+						<iframe class="youtube embed-responsive-item" src="//www.youtube.com/embed/<?php echo $instance['video_id']; ?>?wmode=transparent&enablejsapi=1&rel=0" width="560" height="315"></iframe>
 					</div>
 					<?php
 				} else {
 					$vimeo_data = nebula()->video_meta('vimeo', '208432684');
 					?>
 					<div class="embed-responsive embed-responsive-16by9">
-					    <iframe id="<?php echo $instance['video_id']; ?>" class="vimeo embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $instance['video_id']; ?>" width="560" height="315"></iframe>
+						<iframe id="<?php echo $instance['video_id']; ?>" class="vimeo embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $instance['video_id']; ?>" width="560" height="315"></iframe>
 					</div>
 					<?php
 				}

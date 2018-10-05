@@ -22,7 +22,7 @@
 
 	<?php
 		if ( !current_user_can('manage_options') && !$this->is_dev() ){
-		    wp_die('You do not have sufficient permissions to access this page.');
+			wp_die('You do not have sufficient permissions to access this page.');
 		}
 
 		if ( isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true' ){
@@ -36,9 +36,9 @@
 						$options_saved_message .= ' All Sass files have been re-processed.';
 					}
 				?>
-		        <p><?php echo $options_saved_message; ?></p>
-		        <button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
-		    </div>
+				<p><?php echo $options_saved_message; ?></p>
+				<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
+			</div>
 			<?php
 		}
 

@@ -163,12 +163,12 @@ if ( !trait_exists('Shortcodes') ){
 
 		public function div_shortcode($atts, $content=''){
 			extract(shortcode_atts(array("class" => '', "style" => '', "open" => '', "close" => ''), $atts));
-            /**
-             * @var string $class
-             * @var string $style
-             * @var string $open
-             * @var string $close
-             */
+			/**
+			 * @var string $class
+			 * @var string $style
+			 * @var string $open
+			 * @var string $close
+			 */
 
 			if ( $content ){
 				$div = '<div class="nebula-div ' . Nebula_Output::attr($class) . '" style="' . Nebula_Output::attr($style) . '">' . do_shortcode($content) . '</div>';
@@ -183,32 +183,32 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function container_shortcode($atts, $content=''){
-            /**
-             * @var string $class
-             * @var string $style
-             */
+			/**
+			 * @var string $class
+			 * @var string $style
+			 */
 			extract(shortcode_atts( array('class' => '', 'style' => ''), $atts));
 			return '<div class="nebula-container container ' . Nebula_Output::attr($class) . '" style="' . Nebula_Output::attr($style) . '">' . do_shortcode($content) . '</div>';
 		}
 
 		public function row_shortcode($atts, $content=''){
-            /**
-             * @var string $class
-             * @var string $style
-             */
+			/**
+			 * @var string $class
+			 * @var string $style
+			 */
 			extract(shortcode_atts( array('class' => '', 'style' => ''), $atts));
 			return '<div class="nebula-row row ' . Nebula_Output::attr($class) . '" style="' . Nebula_Output::attr($style) . '">' . do_shortcode($content) . '</div>';
 		}
 
 		public function column_shortcode($atts, $content=''){
-            /**
-             * @var string $scale
-             * @var string $columns
-             * @var string $offset
-             * @var string $centered
-             * @var string $class
-             * @var string $style
-             */
+			/**
+			 * @var string $scale
+			 * @var string $columns
+			 * @var string $offset
+			 * @var string $centered
+			 * @var string $class
+			 * @var string $style
+			 */
 			extract(shortcode_atts(array('scale' => 'md', 'columns' => '', 'offset' => '', 'centered' => '', 'class' => '', 'style' => ''), $atts));
 
 			$flags = $this->get_flags($atts);
@@ -230,28 +230,28 @@ if ( !trait_exists('Shortcodes') ){
 
 		//Note: It is semantically incorrect for an <hr> to appear within a <p> tag, so be careful of WordPress wrapping this shortcode in a <p> tag.
 		public function divider_shortcode($atts){
-            /** @var string $space */
+			/** @var string $space */
 			extract(shortcode_atts(array("space" => '0', "above" => '0', "below" => '0'), $atts));
 
 			if ( $space ) {
-                $above = $space;
-                $below = $space;
-                $divider = '<hr class="nebula-divider" style="' . Nebula_Output::attr('margin-top: ' . $above . 'px; margin-bottom: ' . $below . 'px;') . '"/>';
-            } else {
-                $divider = '<hr class="nebula-divider" />';
-            }
+				$above = $space;
+				$below = $space;
+				$divider = '<hr class="nebula-divider" style="' . Nebula_Output::attr('margin-top: ' . $above . 'px; margin-bottom: ' . $below . 'px;') . '"/>';
+			} else {
+				$divider = '<hr class="nebula-divider" />';
+			}
 			return $divider;
 		}
 
 		public function icon_shortcode($atts){
 			extract(shortcode_atts(array('type' => '', 'mode' => 'solid', 'color' => 'inherit', 'size' => 'inherit', 'class' => ''), $atts));
-            /**
-             * @var string $type
-             * @var string $mode
-             * @var string $color
-             * @var string $size
-             * @var string $class
-             */
+			/**
+			 * @var string $type
+			 * @var string $mode
+			 * @var string $color
+			 * @var string $size
+			 * @var string $class
+			 */
 
 			//Prepend the fa- prefix to the icon name if not provided
 			if ( strpos($type, 'fa-') === false ){
@@ -277,15 +277,15 @@ if ( !trait_exists('Shortcodes') ){
 
 		public function button_shortcode($atts, $content=''){
 			extract(shortcode_atts(array('size' => 'md', 'type' => 'brand', 'icon' => false, 'href' => '#', 'target' => false, 'class' => '', 'style' => ''), $atts));
-            /**
-             * @var string $size
-             * @var string $type
-             * @var string|bool $icon
-             * @var string $href
-             * @var string $target
-             * @var string $class
-             * @var string $style
-             */
+			/**
+			 * @var string $size
+			 * @var string $type
+			 * @var string|bool $icon
+			 * @var string $href
+			 * @var string $target
+			 * @var string $class
+			 * @var string $style
+			 */
 
 			if ( $target ){
 				$target = ' target="' . Nebula_Output::attr($target) . '"';
@@ -319,24 +319,24 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function map_shortcode($atts){
-            /**
-             * @var string $key
-             * @var string $mode
-             * @var string $q
-             * @var string $center
-             * @var string $origin
-             * @var string $destination
-             * @var string $waypoints
-             * @var string $avoid
-             * @var string $zoom
-             * @var string $maptype
-             * @var string $language
-             * @var string $region
-             * @var string $width
-             * @var string $height
-             * @var string $class
-             * @var string $style
-             */
+			/**
+			 * @var string $key
+			 * @var string $mode
+			 * @var string $q
+			 * @var string $center
+			 * @var string $origin
+			 * @var string $destination
+			 * @var string $waypoints
+			 * @var string $avoid
+			 * @var string $zoom
+			 * @var string $maptype
+			 * @var string $language
+			 * @var string $region
+			 * @var string $width
+			 * @var string $height
+			 * @var string $class
+			 * @var string $style
+			 */
 			extract(shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '',  "region" => '', "width" => '100%', "height" => '350', "class" => '', "style" => ''), $atts));
 
 			/** @todo $flags is unused */
@@ -383,18 +383,18 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function vimeo_shortcode($atts){
-            /**
-             * @var string $id
-             * @var string $height
-             * @var string $width
-             * @var string $autoplay
-             * @var string $badge
-             * @var string $byline
-             * @var string $color
-             * @var string $loop
-             * @var string $portrait
-             * @var string $title
-             */
+			/**
+			 * @var string $id
+			 * @var string $height
+			 * @var string $width
+			 * @var string $autoplay
+			 * @var string $badge
+			 * @var string $byline
+			 * @var string $color
+			 * @var string $loop
+			 * @var string $portrait
+			 * @var string $title
+			 */
 			extract(shortcode_atts(array("id" => null, "height" => '', "width" => '', "autoplay" => '0', "badge" => '1', "byline" => '1', "color" => '00adef', "loop" => '0', "portrait" => '1', "title" => '1'), $atts));
 
 			$vimeo_data = $this->video_meta('vimeo', $id);
@@ -414,14 +414,14 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function youtube_shortcode($atts){
-            /**
-             * @var string $id
-             * @var string $height
-             * @var string $width
-             * @var int $rel
-             * @var string $ignore_visibility
-             * @var string $class
-             */
+			/**
+			 * @var string $id
+			 * @var string $height
+			 * @var string $width
+			 * @var int $rel
+			 * @var string $ignore_visibility
+			 * @var string $class
+			 */
 			extract(shortcode_atts(array("id" => null, "height" => '', "width" => '', "rel" => 0, "ignore_visibility" => '', "class" => ''), $atts));
 
 			$flags = $this->get_flags($atts);
@@ -447,25 +447,25 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function code_shortcode($atts, $content=''){
-            /**
-             * @var string $class
-             * @var string $style
-             */
+			/**
+			 * @var string $class
+			 * @var string $style
+			 */
 			extract(shortcode_atts(array('class' => '', 'style' => ''), $atts));
 			$content = htmlspecialchars_decode($content);
 			return '<code class="nebula-code ' . Nebula_Output::attr($class) . '" style="' . Nebula_Output::attr($style) . '" >' . htmlentities($content) . '</code>';
 		}
 
 		public function pre_shortcode($atts, $content=''){
-            /**
-             * @var string $lang
-             * @var string $language
-             * @var string $color
-             * @var bool $force
-             * @var bool $br
-             * @var string $class
-             * @var string $style
-             */
+			/**
+			 * @var string $lang
+			 * @var string $language
+			 * @var string $color
+			 * @var bool $force
+			 * @var bool $br
+			 * @var string $class
+			 * @var string $style
+			 */
 			extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'force' => false, 'br' => false, 'class' => '', 'style' => ''), $atts));
 
 			if ( empty($this->shortcode_flags['pre']) ){
@@ -498,14 +498,14 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function gist_shortcode($atts, $content=''){
-            /**
-             * @var string $lang
-             * @var string $language
-             * @var string $color
-             * @var string $file
-             * @var string $class
-             * @var string $style
-             */
+			/**
+			 * @var string $lang
+			 * @var string $language
+			 * @var string $color
+			 * @var string $file
+			 * @var string $class
+			 * @var string $style
+			 */
 			extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => '', 'class' => '', 'style' => ''), $atts));
 
 			if ( empty($this->shortcode_flags['pre']) ){
@@ -531,21 +531,21 @@ if ( !trait_exists('Shortcodes') ){
 			return $return;
 		}
 
-        /** @todo  Is $content unnecessary? */
+		/** @todo  Is $content unnecessary? */
 		public function github_shortcode($atts, $content=''){
-            /**
-             * @var string $lang
-             * @var string $language
-             * @var string $color
-             * @var string $file
-             * @var string $class
-             * @var string $style
-             */
-            extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => '', 'class' => '', 'style' => ''), $atts));
+			/**
+			 * @var string $lang
+			 * @var string $language
+			 * @var string $color
+			 * @var string $file
+			 * @var string $class
+			 * @var string $style
+			 */
+			extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => '', 'class' => '', 'style' => ''), $atts));
 
 			if ( !empty($file) ){
 				WP_Filesystem();
-                /** @var WP_Filesystem_Base $wp_filesystem */
+				/** @var WP_Filesystem_Base $wp_filesystem */
 				global $wp_filesystem;
 				$file_contents = $wp_filesystem->get_contents($file);
 
@@ -579,22 +579,22 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function accordion_shortcode($attributes, $content=''){
-            /**
-             * @var string $class
-             * @var string $style
-             */
+			/**
+			 * @var string $class
+			 * @var string $style
+			 */
 			extract(shortcode_atts(array('class' => '', 'style' => ''), $attributes));
 			$return = '<div class="accordion ' . Nebula_Output::attr($class) . ' style="' . Nebula_Output::attr($style) . '" role="tablist">' . do_shortcode($content) . '</div>';
 			return $return;
 		}
 
 		public function accordion_item_shortcode($attributes, $content=''){
-            /**
-             * @var string $class
-             * @var string $style
-             * @var string $title
-             * @var string $default
-             */
+			/**
+			 * @var string $class
+			 * @var string $style
+			 * @var string $title
+			 * @var string $default
+			 */
 			extract(shortcode_atts(array('class' => '', 'style' => '', 'title' => '', 'default' => 'show'), $attributes));
 			$unique_id = bin2hex(random_bytes(16));
 
@@ -612,21 +612,21 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function tooltip_shortcode($atts, $content=''){
-            /**
-             * @var string $tip
-             * @var string $placement
-             * @var string $class
-             * @var string $style
-             */
+			/**
+			 * @var string $tip
+			 * @var string $placement
+			 * @var string $class
+			 * @var string $style
+			 */
 			extract(shortcode_atts(array('tip' => '', 'placement' => 'top', 'class' => '', 'style' => ''), $atts));
 			return '<span class="nebula-tooltip ttip ' . Nebula_Output::attr($class) . '" data-toggle="tooltip" data-placement="' . Nebula_Output::attr($placement) . '" title="' . Nebula_Output::attr($tip) . '" style="' . Nebula_Output::attr($style) . '">' . Nebula_Output::attr($content) . '</span>';
 		}
 
 		public function slider_shortcode($atts, $content=''){
-            /**
-             * @var string $id
-             * @var string $indicators
-             */
+			/**
+			 * @var string $id
+			 * @var string $indicators
+			 */
 			extract(shortcode_atts(array('id' => false, 'indicators' => true), $atts));
 
 			/** @todo $flags is unused */
@@ -652,10 +652,10 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function slide_shortcode($atts, $content=''){
-            /**
-             * @var string $link
-             * @var string $content
-             */
+			/**
+			 * @var string $link
+			 * @var string $content
+			 */
 			extract(shortcode_atts(array('link' => '', 'target' => ''), $atts));
 
 			if ( empty($link) ){
@@ -676,9 +676,9 @@ if ( !trait_exists('Shortcodes') ){
 		//Query Post Shortcode
 		//[query args="post_type=post&category_name=home-garden&monthnum=10"]
 		public function query_shortcode($attributes){
-            /**
-             * @var string $args
-             */
+			/**
+			 * @var string $args
+			 */
 			extract(shortcode_atts(array('args' => ''), $attributes));
 
 			//Convert to an array so that 'paged' can be replaced if it is already present (or added if it is not) then convert back to a query string

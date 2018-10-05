@@ -732,10 +732,10 @@ if ( !trait_exists('Dashboard') ){
 				if ( empty($webpagetest_response) || $this->is_debug() || isset($_GET['sass']) ){
 					$webpagetest_response = $this->remote_get('https://www.webpagetest.org/runtest.php?url=' . home_url('/') . '%3Fnoga&runs=3&fvonly=1&f=json&noopt=1&noimages=1&k=' . $this->get_option('webpagetest_api'));
 					if ( !is_wp_error($webpagetest_response) ){
-		                $webpagetest_response = json_decode($webpagetest_response['body']);
+						$webpagetest_response = json_decode($webpagetest_response['body']);
 						$wpt_status = '(Running new test)';
 						set_transient('nebula_webpagetest_response', $webpagetest_response, MINUTE_IN_SECONDS*10);
-		            }
+					}
 				}
 
 				if ( !empty($webpagetest_response) && !is_wp_error($webpagetest_response) ){
@@ -800,11 +800,11 @@ if ( !trait_exists('Dashboard') ){
 			$all_plugins = get_plugins();
 			$active_plugins = get_option('active_plugins');
 			foreach ( $active_plugins as $active_plugin ){
-			    if ( isset($all_plugins[$active_plugin]) ){
+				if ( isset($all_plugins[$active_plugin]) ){
 					$plugin_name = $all_plugins[$active_plugin]['Name'];
 					$safe_plugin_name = str_replace(array(' ', '-', '/'), '_', strtolower($plugin_name));
 					$directory_search_options[$safe_plugin_name] = '<option value="' . $safe_plugin_name . '">' . $plugin_name . '</option>';
-			    }
+				}
 			}
 
 			$all_directory_search_options = apply_filters('nebula_directory_search_options', $directory_search_options); //Allow other functions to hook in to add directories to search
@@ -892,12 +892,12 @@ if ( !trait_exists('Dashboard') ){
 			$all_plugins = get_plugins();
 			$active_plugins = get_option('active_plugins');
 			foreach ( $active_plugins as $active_plugin ){
-			    if ( isset($all_plugins[$active_plugin]) ){
+				if ( isset($all_plugins[$active_plugin]) ){
 					$plugin_name = $all_plugins[$active_plugin]['Name'];
 					$safe_plugin_name = str_replace(array(' ', '-', '/'), '_', strtolower($plugin_name));
 					$plugin_folder = explode('/', $active_plugin);
 					$search_directories[$safe_plugin_name] = WP_PLUGIN_DIR . '/' . $plugin_folder[0];
-			    }
+				}
 			}
 
 			$all_search_directories = apply_filters('nebula_search_directories', $search_directories); //Allow other functions to hook in to add directories
@@ -967,8 +967,8 @@ if ( !trait_exists('Dashboard') ){
 				$requested_properties = '&property=' . implode('&property=', apply_filters('nebula_hubspot_metabox_properties', array('firstname', 'lastname', 'full_name', 'email', 'createdate')));
 				$response = $this->remote_get('https://api.hubapi.com/contacts/v1/lists/all/contacts/recent?hapikey=' . $this->get_option('hubspot_api') . '&count=4' . $requested_properties);
 				if ( is_wp_error($response) ){
-	                return false;
-	            }
+					return false;
+				}
 
 				$hubspot_contacts_json = $response['body'];
 				set_transient('nebula_hubspot_contacts', $hubspot_contacts_json, MINUTE_IN_SECONDS*30); //30 minute expiration
