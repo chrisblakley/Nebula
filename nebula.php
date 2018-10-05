@@ -124,6 +124,7 @@ if ( !class_exists('Nebula') ){
 
 //The main function responsible for returning Nebula instance
 add_action('init', 'nebula', 1);
+/** @return Nebula */
 function nebula(){
 	return Nebula::instance();
 }

@@ -180,7 +180,7 @@ trait Functions {
 	public function site_icon_sizes($core_sizes){
 		$nebula_sizes = array(16, 32, 70, 150, 180, 192, 310);
 		$all_sizes = array_unique(array_merge($core_sizes, $nebula_sizes));
-		return $sizes;
+		return $all_sizes;
 	}
 
 	//Add the Posts RSS Feed back in
@@ -1128,7 +1128,7 @@ trait Functions {
 					}
 					$output .= $short_url;
 				} else {
-					$output .= $url;
+					$output .= $matches[2];
 				}
 				$output .= $matches[3];
 				return $output;
