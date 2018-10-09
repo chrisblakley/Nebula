@@ -80,7 +80,7 @@ class Nebula_Cache_Filesystem implements Nebula_Cache
 			// Directory doesn't exist? Automatic cache miss!
 			return null;
 		}
-		$filename = $directory . '/' . substr($index, 4);
+		$filename = $directory . '/' . substr($index, 4) . '.cache';
 		if (!is_readable($filename)) {
 			// Cache miss
 			return null;
@@ -108,7 +108,7 @@ class Nebula_Cache_Filesystem implements Nebula_Cache
 			// Directory doesn't exist? Automatic cache miss!
 			return false;
 		}
-		$filename = $directory . '/' . substr($index, 4);
+		$filename = $directory . '/' . substr($index, 4) . '.cache';
 		return file_exists($filename) && is_readable($filename);
 	}
 
@@ -130,7 +130,7 @@ class Nebula_Cache_Filesystem implements Nebula_Cache
 			// Directory doesn't exist? Create it.
 			mkdir($subA, 0775, true);
 		}
-		$filename = $directory . '/' . substr($index, 4);
+		$filename = $directory . '/' . substr($index, 4) . '.cache';
 		file_put_contents($filename, $value);
 	}
 }
