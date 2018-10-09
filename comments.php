@@ -6,7 +6,7 @@
 				<?php //Note this is a manual implementation of Disqus; we are NOT using the WordPress plugin for implementation. ?>
 				var disqus_shortname = '<?php echo nebula()->get_option('disqus_shortname'); ?>';
 				var disqus_identifier = '<?php echo 'the-id-' . get_the_id(); ?>';
-				var disqus_title = '<?php the_title(); ?>';
+				var disqus_title = '<?php echo Nebula_Output::attr(the_title('', '', false)); ?>';
 				var disqus_url = '<?php the_permalink(); ?>';
 
 				(function(){
