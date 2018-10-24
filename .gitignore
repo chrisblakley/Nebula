@@ -79,3 +79,5 @@ $RECYCLE.BIN/
 
 ### My Additional Rules ###
 *.bak
+*.cache
+*.secret.php
