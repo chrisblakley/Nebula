@@ -7,6 +7,7 @@ if ( !class_exists('Nebula') ){
 	require_once(ABSPATH . 'wp-admin/includes/file.php');
 
 	//Require Nebula libraries
+    require_once get_template_directory() . '/libs/Output.php';
 	require_once get_template_directory() . '/libs/Scripts.php';
 	require_once get_template_directory() . '/libs/Options/Options.php';
 	require_once get_template_directory() . '/libs/Options/Customizer.php';
@@ -124,6 +125,7 @@ if ( !class_exists('Nebula') ){
 
 //The main function responsible for returning Nebula instance
 add_action('init', 'nebula', 1);
+/** @return Nebula */
 function nebula(){
 	return Nebula::instance();
 }

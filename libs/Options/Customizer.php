@@ -103,15 +103,15 @@ trait Customizer {
 		//Menu Position
 		$wp_customize->add_setting('menu_position', array('default' => 'over'));
 		$wp_customize->add_control('menu_position', array(
-		    'label' => 'Menu Position',
-		    'section' => 'site_features',
-		    'priority' => 10,
-		    'type' => 'select',
-		    'choices' => array(
-		        'over' => 'Over Header',
-		        'above' => 'Above (own row)',
-		        'off' => 'Off',
-		    )
+			'label' => 'Menu Position',
+			'section' => 'site_features',
+			'priority' => 10,
+			'type' => 'select',
+			'choices' => array(
+				'over' => 'Over Header',
+				'above' => 'Above (own row)',
+				'off' => 'Off',
+			)
 		));
 
 		//Sticky Nav //@TODO "Nebula" 0: Not sure how best to implement this
@@ -206,15 +206,15 @@ trait Customizer {
 		//Hero Navigation Scheme
 		$wp_customize->add_setting('hero_nav_scheme', array('default' => 'light'));
 		$wp_customize->add_control('hero_nav_scheme', array(
-		    'label' => 'Hero Navigation Scheme',
-		    'section' => 'hero',
-		    'priority' => 20,
-		    'type' => 'select',
-		    'choices' => array(
-		        'light' => 'Light',
-		        'brand' => 'Brand',
-		        'dark' => 'Dark',
-		    )
+			'label' => 'Hero Navigation Scheme',
+			'section' => 'hero',
+			'priority' => 20,
+			'type' => 'select',
+			'choices' => array(
+				'light' => 'Light',
+				'brand' => 'Brand',
+				'dark' => 'Dark',
+			)
 		));
 
 		//Hero BG Image
@@ -245,11 +245,11 @@ trait Customizer {
 		$wp_customize->add_control('nebula_hero_overlay_opacity', array(
 			'type' => 'number',
 			'input_attrs' => array(
-		        'min' => 0,
-		        'max' => 1,
-		        'step' => 0.1,
-		    ),
-		    'label' => 'Hero BG Overlay Opacity',
+				'min' => 0,
+				'max' => 1,
+				'step' => 0.1,
+			),
+			'label' => 'Hero BG Overlay Opacity',
 			'description' => 'Enter a value between 0 (transparent) and 1 (opaque). Default: 0.6',
 			'section' => 'hero',
 			'priority' => 29,
@@ -425,16 +425,16 @@ trait Customizer {
 		//Featured Image Location
 		$wp_customize->add_setting('featured_image_location', array('default' => 'content'));
 		$wp_customize->add_control('featured_image_location', array(
-		    'label' => 'Featured Image Location',
-		    'section' => 'posts_header',
-		    'priority' => 20,
-		    'type' => 'select',
-		    'choices' => array(
-		        'hero' => 'Hero',
-		        'content' => 'In Content',
-		        'disabled' => 'Disabled',
-		    ),
-		    //'active_callback' => 'is_singular',
+			'label' => 'Featured Image Location',
+			'section' => 'posts_header',
+			'priority' => 20,
+			'type' => 'select',
+			'choices' => array(
+				'hero' => 'Hero',
+				'content' => 'In Content',
+				'disabled' => 'Disabled',
+			),
+			//'active_callback' => 'is_singular',
 		));
 
 		//Use One-Color Logo
@@ -449,16 +449,16 @@ trait Customizer {
 		//Header Navigation Color Scheme (Same as under Brand panel)
 		$wp_customize->add_setting('header_nav_scheme', array('default' => 'light'));
 		$wp_customize->add_control('header_nav_scheme', array(
-		    'label' => 'Navigation Color Scheme',
-		    'section' => 'posts_header',
-		    'priority' => 25,
-		    'type' => 'select',
-		    'choices' => array(
-		        'light' => 'Light',
-		        'brand' => 'Brand',
-		        'dark' => 'Dark',
-		    ),
-		    //'active_callback' => 'is_singular',
+			'label' => 'Navigation Color Scheme',
+			'section' => 'posts_header',
+			'priority' => 25,
+			'type' => 'select',
+			'choices' => array(
+				'light' => 'Light',
+				'brand' => 'Brand',
+				'dark' => 'Dark',
+			),
+			//'active_callback' => 'is_singular',
 		));
 
 		//Header Overlay Color
@@ -475,11 +475,11 @@ trait Customizer {
 		$wp_customize->add_control('nebula_header_overlay_opacity', array(
 			'type' => 'number',
 			'input_attrs' => array(
-		        'min' => 0,
-		        'max' => 1,
-		        'step' => 0.1,
-		    ),
-		    'label' => 'Header BG Overlay Opacity',
+				'min' => 0,
+				'max' => 1,
+				'step' => 0.1,
+			),
+			'label' => 'Header BG Overlay Opacity',
 			'description' => 'Enter a value between 0 (transparent) and 1 (opaque). Default: 0.6',
 			'section' => 'posts_header',
 			'priority' => 33,
@@ -489,15 +489,15 @@ trait Customizer {
 		//Title Location
 		$wp_customize->add_setting('title_location', array('default' => 'hero'));
 		$wp_customize->add_control('title_location', array(
-		    'label' => 'Title Location',
-		    'section' => 'posts_header',
-		    'priority' => 40,
-		    'type' => 'select',
-		    'choices' => array(
-		        'hero' => 'Hero',
-		        'content' => 'In Content',
-		    ),
-		    //'active_callback' => 'is_singular',
+			'label' => 'Title Location',
+			'section' => 'posts_header',
+			'priority' => 40,
+			'type' => 'select',
+			'choices' => array(
+				'hero' => 'Hero',
+				'content' => 'In Content',
+			),
+			//'active_callback' => 'is_singular',
 		));
 
 		/*==========================
@@ -512,25 +512,25 @@ trait Customizer {
 
 		//Featured Image Location (Same as in Posts Header section)
 		$wp_customize->add_control('featured_image_location', array(
-		    'label' => 'Featured Image Location',
-		    'section' => 'posts_meta',
-		    'priority' => 10,
-		    'type' => 'select',
-		    'choices' => array(
-		        'hero' => 'Hero',
-		        'content' => 'In Content',
-		        'disabled' => 'Disabled',
-		    ),
-		    //'active_callback' => 'is_singular',
+			'label' => 'Featured Image Location',
+			'section' => 'posts_meta',
+			'priority' => 10,
+			'type' => 'select',
+			'choices' => array(
+				'hero' => 'Hero',
+				'content' => 'In Content',
+				'disabled' => 'Disabled',
+			),
+			//'active_callback' => 'is_singular',
 		));
 
 		//Post Date Format
 		$wp_customize->add_setting('post_date_format', array('default' => 'relative'));
 		$wp_customize->add_control('post_date_format', array(
-		    'label' => 'Post Date Format',
-		    'section' => 'posts_meta',
-		    'priority' => 20,
-		    'type' => 'select',
+			'label' => 'Post Date Format',
+			'section' => 'posts_meta',
+			'priority' => 20,
+			'type' => 'select',
 			'choices' => array(
 				'absolute' => 'Absolute',
 				'relative' => 'Relative',
@@ -590,10 +590,10 @@ trait Customizer {
 		$wp_customize->add_control('nebula_excerpt_length', array(
 			'type' => 'number',
 			'input_attrs' => array(
-		        'min' => 0,
-		        'step' => 1,
-		    ),
-		    'label' => 'Nebula Excerpt Length',
+				'min' => 0,
+				'step' => 1,
+			),
+			'label' => 'Nebula Excerpt Length',
 			'section' => 'posts_meta',
 			'priority' => 50,
 		));
@@ -602,8 +602,8 @@ trait Customizer {
 		$wp_customize->add_setting('nebula_excerpt_more_text', array('default' => null));
 		$wp_customize->add_control('nebula_excerpt_more_text', array(
 			'input_attrs' => array(
-		        'placeholder' => 'Read More &raquo;',
-		    ),
+				'placeholder' => 'Read More &raquo;',
+			),
 			'label' => 'Nebula Excerpt "More" Text',
 			'section' => 'posts_meta',
 			'priority' => 51,
@@ -622,15 +622,15 @@ trait Customizer {
 		//Sidebar Position
 		$wp_customize->add_setting('sidebar_position', array('default' => 'right'));
 		$wp_customize->add_control('sidebar_position', array(
-		    'label' => 'Sidebar Position',
-		    'section' => 'sidebar',
-		    'priority' => 10,
-		    'type' => 'select',
-		    'choices' => array(
-		        'left' => 'Left',
-		        'right' => 'Right',
-		        'off' => 'Off',
-		    )
+			'label' => 'Sidebar Position',
+			'section' => 'sidebar',
+			'priority' => 10,
+			'type' => 'select',
+			'choices' => array(
+				'left' => 'Left',
+				'right' => 'Right',
+				'off' => 'Off',
+			)
 		));
 
 		//Accordion Expanders
@@ -657,15 +657,15 @@ trait Customizer {
 		//Footer Widget Area Navigation Color Scheme (Same as under Brand panel)
 		$wp_customize->add_setting('fwa_nav_scheme', array('default' => 'light'));
 		$wp_customize->add_control('fwa_nav_scheme', array(
-		    'label' => 'Navigation Color Scheme',
-		    'section' => 'footer_widget_area',
-		    'priority' => 25,
-		    'type' => 'select',
-		    'choices' => array(
-		        'light' => 'Light',
-		        'brand' => 'Brand',
-		        'dark' => 'Dark',
-		    ),
+			'label' => 'Navigation Color Scheme',
+			'section' => 'footer_widget_area',
+			'priority' => 25,
+			'type' => 'select',
+			'choices' => array(
+				'light' => 'Light',
+				'brand' => 'Brand',
+				'dark' => 'Dark',
+			),
 		));
 
 		//Footer Widget Area BG Image
@@ -696,11 +696,11 @@ trait Customizer {
 		$wp_customize->add_control('nebula_fwa_overlay_opacity', array(
 			'type' => 'number',
 			'input_attrs' => array(
-		        'min' => 0,
-		        'max' => 1,
-		        'step' => 0.1,
-		    ),
-		    'label' => 'Footer Widget Area BG Overlay Opacity',
+				'min' => 0,
+				'max' => 1,
+				'step' => 0.1,
+			),
+			'label' => 'Footer Widget Area BG Overlay Opacity',
 			'description' => 'Enter a value between 0 (transparent) and 1 (opaque). Default: 0.6',
 			'section' => 'footer_widget_area',
 			'priority' => 33,
@@ -728,15 +728,15 @@ trait Customizer {
 		//Footer Navigation Color Scheme (Same as under Brand panel)
 		$wp_customize->add_setting('footer_nav_scheme', array('default' => 'light'));
 		$wp_customize->add_control('footer_nav_scheme', array(
-		    'label' => 'Navigation Color Scheme',
-		    'section' => 'footer',
-		    'priority' => 10,
-		    'type' => 'select',
-		    'choices' => array(
-		        'light' => 'Light',
-		        'brand' => 'Brand',
-		        'dark' => 'Dark',
-		    ),
+			'label' => 'Navigation Color Scheme',
+			'section' => 'footer',
+			'priority' => 10,
+			'type' => 'select',
+			'choices' => array(
+				'light' => 'Light',
+				'brand' => 'Brand',
+				'dark' => 'Dark',
+			),
 		));
 
 		//Footer BG Image
@@ -767,10 +767,10 @@ trait Customizer {
 		$wp_customize->add_control('nebula_footer_overlay_opacity', array(
 			'type' => 'number',
 			'input_attrs' => array(
-		        'min' => 0,
-		        'max' => 1,
-		        'step' => 0.1,
-		    ),
+				'min' => 0,
+				'max' => 1,
+				'step' => 0.1,
+			),
 			'label' => 'Footer BG Overlay Opacity',
 			'description' => 'Enter a value between 0 (transparent) and 1 (opaque). Default: 0.85',
 			'section' => 'footer',

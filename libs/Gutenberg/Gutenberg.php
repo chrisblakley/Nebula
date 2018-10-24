@@ -23,18 +23,18 @@ if ( !trait_exists('Gutenberg') ){
 		public function gutenberg_hello_world_block(){
 			//Editor Script
 			wp_register_script(
-		        'nebula-hello-world-editor',
-		        get_template_directory_uri() . '/libs/Gutenberg/blocks/hello-world/hello-world.js',
-		        array( 'wp-blocks', 'wp-element' )
-		    );
+				'nebula-hello-world-editor',
+				get_template_directory_uri() . '/libs/Gutenberg/blocks/hello-world/hello-world.js',
+				array( 'wp-blocks', 'wp-element' )
+			);
 
 			//Editor Style
-		    wp_register_style(
-		        'nebula-hello-world-editor',
-		        get_template_directory_uri() . '/libs/Gutenberg/blocks/hello-world/hello-world-editor.css',
-		        array( 'wp-edit-blocks' ),
-		        null
-		    );
+			wp_register_style(
+				'nebula-hello-world-editor',
+				get_template_directory_uri() . '/libs/Gutenberg/blocks/hello-world/hello-world-editor.css',
+				array( 'wp-edit-blocks' ),
+				null
+			);
 
 			//Front-End Style
 			wp_register_style(
@@ -44,11 +44,11 @@ if ( !trait_exists('Gutenberg') ){
 				null
 			);
 
-		    register_block_type( 'nebula/hello-world', array(
-		        'editor_script' => 'nebula-hello-world-editor',
-		        'editor_style'  => 'nebula-hello-world-editor',
-		        'style' => 'nebula-hello-world',
-		    ) );
+			register_block_type( 'nebula/hello-world', array(
+				'editor_script' => 'nebula-hello-world-editor',
+				'editor_style'  => 'nebula-hello-world-editor',
+				'style' => 'nebula-hello-world',
+			) );
 		}
 
 
@@ -58,24 +58,24 @@ if ( !trait_exists('Gutenberg') ){
 		public function gutenberg_style_test_block(){
 			//Editor Script
 			wp_register_script(
-		        'nebula-style-test',
-		        get_template_directory_uri() . '/libs/Gutenberg/blocks/style-test/style-test.js',
-		        array( 'wp-blocks', 'wp-element' )
-		    );
+				'nebula-style-test',
+				get_template_directory_uri() . '/libs/Gutenberg/blocks/style-test/style-test.js',
+				array( 'wp-blocks', 'wp-element' )
+			);
 
 			//Editor Style
-		    wp_register_style(
-		        'nebula-style-test',
-		        get_template_directory_uri() . '/libs/Gutenberg/blocks/style-test/style-test.css',
-		        array( 'wp-edit-blocks' ),
-		        null
-		    );
+			wp_register_style(
+				'nebula-style-test',
+				get_template_directory_uri() . '/libs/Gutenberg/blocks/style-test/style-test.css',
+				array( 'wp-edit-blocks' ),
+				null
+			);
 
-		    register_block_type( 'nebula/style-test', array(
-		        'editor_script' => 'nebula-style-test',
-		        'editor_style'  => 'nebula-style-test',
-		        'style' => 'nebula-style-test',
-		    ) );
+			register_block_type( 'nebula/style-test', array(
+				'editor_script' => 'nebula-style-test',
+				'editor_style'  => 'nebula-style-test',
+				'style' => 'nebula-style-test',
+			) );
 		}
 
 
@@ -85,25 +85,25 @@ if ( !trait_exists('Gutenberg') ){
 		public function gutenberg_latest_posts_block(){
 			//Editor Script
 			wp_register_script(
-		        'nebula-latest-posts-block',
-		        get_template_directory_uri() . '/libs/Gutenberg/blocks/latest/latest.js',
-		        array('wp-blocks', 'wp-element')
-		    );
+				'nebula-latest-posts-block',
+				get_template_directory_uri() . '/libs/Gutenberg/blocks/latest/latest.js',
+				array('wp-blocks', 'wp-element')
+			);
 
 			//Editor Style
-		    wp_register_style(
-		        'nebula-latest-posts-block',
-		        get_template_directory_uri() . '/libs/Gutenberg/blocks/latest/latest.css',
-		        array('wp-edit-blocks'),
-		        null
-		    );
+			wp_register_style(
+				'nebula-latest-posts-block',
+				get_template_directory_uri() . '/libs/Gutenberg/blocks/latest/latest.css',
+				array('wp-edit-blocks'),
+				null
+			);
 
-		    register_block_type('nebula/latest-posts', array(
-		        'editor_script' => 'nebula-latest-posts-block',
-		        'editor_style'  => 'nebula-latest-posts-block',
-		        'style' => 'nebula-latest-posts-block',
-		        'render_callback' => 'nebula_get_latest_post',
-		    ));
+			register_block_type('nebula/latest-posts', array(
+				'editor_script' => 'nebula-latest-posts-block',
+				'editor_style'  => 'nebula-latest-posts-block',
+				'style' => 'nebula-latest-posts-block',
+				'render_callback' => 'nebula_get_latest_post',
+			));
 		}
 
 		//function for the front-end
@@ -112,22 +112,22 @@ if ( !trait_exists('Gutenberg') ){
 			return 'this would be posts! yay!'; //this never appears
 
 			$recent_posts = wp_get_recent_posts( array(
-		        'numberposts' => 3,
-		        'post_status' => 'publish',
-		    ) );
+				'numberposts' => 3,
+				'post_status' => 'publish',
+			) );
 
-		    if ( count( $recent_posts ) === 0 ) {
-		        return 'No posts';
-		    }
+			if ( count( $recent_posts ) === 0 ) {
+				return 'No posts';
+			}
 
-		    $post = $recent_posts[0];
-		    $post_id = $post['ID'];
+			$post = $recent_posts[0];
+			$post_id = $post['ID'];
 
-		    return sprintf(
-		        '<a class="wp-block-nebula-latest-post" href="%1$s">%2$s</a>',
-		        esc_url( get_permalink( $post_id ) ),
-		        esc_html( get_the_title( $post_id ) )
-		    );
+			return sprintf(
+				'<a class="wp-block-nebula-latest-post" href="%1$s">%2$s</a>',
+				esc_url( get_permalink( $post_id ) ),
+				esc_html( get_the_title( $post_id ) )
+			);
 		}
 
 
@@ -142,10 +142,10 @@ if ( !trait_exists('Gutenberg') ){
 			if ( function_exists('register_block_type') ){
 				//Editor Script
 				wp_register_script(
-			        'nebula-youtube-block',
-			        get_template_directory_uri() . '/libs/Gutenberg/blocks/youtube/youtube.js',
-			        array('wp-blocks', 'wp-i18n', 'wp-element') //I dont think wp-i18n is needed for my simple trials
-			    );
+					'nebula-youtube-block',
+					get_template_directory_uri() . '/libs/Gutenberg/blocks/youtube/youtube.js',
+					array('wp-blocks', 'wp-i18n', 'wp-element') //I dont think wp-i18n is needed for my simple trials
+				);
 
 				register_block_type('nebula/youtube', array(
 					'editor_script' => 'nebula-youtube-block',

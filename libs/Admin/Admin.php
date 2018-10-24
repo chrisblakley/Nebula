@@ -415,13 +415,14 @@ if ( !trait_exists('Admin') ){
 		public function remove_admin_bar_logo() {
 			if ( is_admin_bar_showing() ){
 				global $wp_admin_bar;
+				/** @var WP_Admin_Bar $wp_admin_bar */
 				$wp_admin_bar->remove_menu('wp-logo');
 				$wp_admin_bar->remove_menu('wpseo-menu'); //Remove Yoast SEO from admin bar
 			}
 		}
 
 		//Create custom menus within the WordPress Admin Bar
-		public function admin_bar_menus($wp_admin_bar){
+		public function admin_bar_menus(WP_Admin_Bar $wp_admin_bar){
 			if ( is_admin_bar_showing() ){
 				wp_reset_query(); //Make sure the query is always reset in case the current page has a custom query that isn't reset.
 				global $post;
@@ -611,6 +612,12 @@ if ( !trait_exists('Admin') ){
 				}
 
 				if ( !empty($nebula_warning_icon) ){
+					if (!isset($nebula_warning_href)) {
+						$nebula_warning_href = '';
+					}
+					if (!isset($nebula_warning_description)) {
+						$nebula_warning_description = '';
+					}
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula',
 						'id' => 'nebula-warning',
