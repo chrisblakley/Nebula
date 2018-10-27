@@ -56,10 +56,6 @@
 					<a class="twitter" href="<?php echo nebula()->twitter_url(get_the_author_meta('twitter')); ?>" target="_blank" rel="noopener" title="@<?php echo get_the_author_meta('twitter'); ?>"><i class="fa fa-twitter-square"></i></a>
 				<?php endif; ?>
 
-				<?php if ( get_the_author_meta('googleplus') ): ?>
-					<a class="googleplus" href="https://plus.google.com/+<?php echo get_the_author_meta('googleplus'); ?>" target="_blank" rel="noopener" title="<?php echo get_the_author_meta('googleplus'); ?>"><i class="fa fa-google-plus-square"></i></a>
-				<?php endif; ?>
-
 				<?php if ( get_the_author_meta('linkedin') ): ?>
 					<a class="linkedin" href="https://www.linkedin.com/profile/view?id=<?php echo get_the_author_meta('linkedin'); ?>" target="_blank" rel="noopener" title="<?php echo get_the_author_meta('linkedin'); ?>"><i class="fa fa-linkedin-square"></i></a>
 				<?php endif; ?>

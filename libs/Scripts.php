@@ -158,7 +158,6 @@ if ( !trait_exists('Scripts') ){
 						'facebook_app_id' => $this->get_option('facebook_app_id'),
 						'twitter_username' => $this->get_option('twitter_username'),
 						'twitter_url' => $this->twitter_url(),
-						'google_plus_url' => $this->get_option('google_plus_url'),
 						'linkedin_url' => $this->get_option('linkedin_url'),
 						'youtube_url' => $this->get_option('youtube_url'),
 						'instagram_url' => $this->get_option('instagram_url'),

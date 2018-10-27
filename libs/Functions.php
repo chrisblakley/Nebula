@@ -4,7 +4,6 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 trait Functions {
 	public $twitter_widget_loaded;
-	public $google_plus_widget_loaded;
 	public $linkedin_widget_loaded;
 	public $pinterest_widget_loaded;
 
@@ -12,7 +11,6 @@ trait Functions {
 		global $pagenow;
 
 		$this->twitter_widget_loaded = false;
-		$this->google_plus_widget_loaded = false;
 		$this->linkedin_widget_loaded = false;
 		$this->pinterest_widget_loaded = false;
 
@@ -728,7 +726,7 @@ trait Functions {
 		} elseif ( $meta === 'comments' || $meta === 'comment' ){
 			echo  $this->post_comments();
 		} elseif ( $meta === 'social' || $meta === 'sharing' || $meta === 'share' ){
-			 $this->social(array('facebook', 'twitter', 'google+', 'linkedin', 'pinterest'), 0);
+			 $this->social(array('facebook', 'twitter', 'linkedin', 'pinterest'), 0);
 		}
 	}
 
@@ -767,15 +765,15 @@ trait Functions {
 		$relative_date = human_time_diff($the_date) . ' ago';
 
 		if ( $data['relative'] ){
-			return '<span class="posted-on meta-item relative-date" title="' . date('F j, Y', $the_date) . '">' . $icon . $relative_date . $modified_date_html . '</span>';
+			return '<span class="posted-on meta-item post-date relative-date" title="' . date('F j, Y', $the_date) . '">' . $icon . $relative_date . $modified_date_html . '</span>';
 		}
 
 		$day = ( $data['day'] )? date('d', $the_date) . '/' : ''; //If the day should be shown (otherwise, just month and year).
 
 		if ( $data['linked'] && !isset($options['format']) ){
-			return '<span class="posted-on meta-item">' . $icon . '<span class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . '<a href="' . home_url('/') . date('Y/m', $the_date) . '/' . '">' . date('F', $the_date) . '</a>' . ' ' . '<a href="' . home_url('/') . date('Y/m', $the_date) . '/' . $day . '">' . date('j', $the_date) . '</a>' . ', ' . '<a href="' . home_url('/') . date('Y', $the_date) . '/' . '">' . date('Y', $the_date) . '</a>' . '</span>' . $modified_date_html . '</span>';
+			return '<span class="posted-on meta-item post-date">' . $icon . '<span class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . '<a href="' . home_url('/') . date('Y/m', $the_date) . '/' . '">' . date('F', $the_date) . '</a>' . ' ' . '<a href="' . home_url('/') . date('Y/m', $the_date) . '/' . $day . '">' . date('j', $the_date) . '</a>' . ', ' . '<a href="' . home_url('/') . date('Y', $the_date) . '/' . '">' . date('Y', $the_date) . '</a>' . '</span>' . $modified_date_html . '</span>';
 		} else {
-			return '<span class="posted-on meta-item">' . $icon . '<span class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . date($data['format'], $the_date) . '</span>' . $modified_date_html . '</span>';
+			return '<span class="posted-on meta-item post-date">' . $icon . '<span class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . date($data['format'], $the_date) . '</span>' . $modified_date_html . '</span>';
 		}
 	}
 
@@ -1217,9 +1215,37 @@ trait Functions {
 		}
 	}
 
+	//A consistent way to link to social network profiles
+	public function social_link($network){return $this->social_url($network);}
+	public function social_url($network){
+		switch ( strtolower($network) ){
+			case 'facebook':
+			case 'fb':
+				return $this->get_option('facebook_url');
+
+			case 'twitter':
+				return $this->twitter_url(); //Use the provided function from Nebula Options
+
+			case 'linkedin':
+				return $this->get_option('linkedin_url');
+
+			case 'instagram':
+			case 'ig':
+				return $this->get_option('instagram_url');
+
+			case 'pinterest':
+				return $this->get_option('pinterest_url');
+
+			case 'youtube':
+				return $this->get_option('youtube_url');
+		}
+
+		return false;
+	}
+
 	//Display non-native social buttons
 	//This is a more optimized solution that does not require SDKs and does not load third-party resources, so these will also be a consistent size.
-	public function share($networks=array('shareapi', 'facebook', 'twitter', 'google+'), $id=false){
+	public function share($networks=array('shareapi', 'facebook', 'twitter'), $id=false){
 		$override = apply_filters('pre_nebula_share', null, $networks, $id);
 		if ( isset($override) ){return;}
 
@@ -1259,11 +1285,6 @@ trait Functions {
 				echo '<a class="nebula-share-btn twitter" href="https://twitter.com/intent/tweet?text=' . $encoded_title .  '&url=' . $encoded_url . '" target="_blank" rel="noopener">Tweet</a>';
 			}
 
-			//Google+
-			if ( in_array($network, array('google', 'googleplus', 'google+', 'g+', 'gplus')) ){
-				echo '<a class="nebula-share-btn google-plus" href="https://plus.google.com/share?url=' . $encoded_url . '" target="_blank" rel="noopener">Share</a>';
-			}
-
 			//LinkedIn
 			if ( in_array($network, array('linkedin', 'li')) ){
 				echo '<a class="nebula-share-btn linkedin" href="http://www.linkedin.com/shareArticle?mini=true&url=' . $encoded_url . '&title=' . $encoded_title . '" target="_blank" rel="noopener">Share</a>';
@@ -1284,7 +1305,7 @@ trait Functions {
 	}
 
 	//Display Native Social Buttons
-	public function social($networks=array('shareapi', 'facebook', 'twitter', 'google+'), $counts=0){
+	public function social($networks=array('shareapi', 'facebook', 'twitter'), $counts=0){
 		$override = apply_filters('pre_nebula_social', null, $networks, $counts);
 		if ( isset($override) ){return;}
 
@@ -1292,9 +1313,9 @@ trait Functions {
 			$networks = array($networks);
 		} elseif ( is_int($networks) && ($networks === 1 || $networks === 0) ){ //If it is an integer of 1 or 0, then set it to $counts
 			$counts = $networks;
-			$networks = array('shareapi', 'facebook', 'twitter', 'google+');
+			$networks = array('shareapi', 'facebook', 'twitter');
 		} elseif ( !is_array($networks) ){
-			$networks = array('shareapi', 'facebook', 'twitter', 'google+');
+			$networks = array('shareapi', 'facebook', 'twitter');
 		}
 
 		//Convert $networks to lower case without dashes/spaces for more flexible string matching later.
@@ -1324,11 +1345,6 @@ trait Functions {
 			//Twitter
 			if ( in_array($network, array('twitter')) ){
 				$this->twitter_tweet($counts);
-			}
-
-			//Google+
-			if ( in_array($network, array('google', 'googleplus', 'google+', 'g+', 'gplus')) ){
-				$this->google_plus($counts);
 			}
 
 			//LinkedIn
@@ -1423,20 +1439,6 @@ trait Functions {
 			<?php
 			$this->twitter_widget_loaded = true;
 		}
-	}
-
-	public function google_plus($counts=0){
-		$override = apply_filters('pre_nebula_google_plus', null, $counts);
-		if ( isset($override) ){return;}
-		?>
-		<div class="nebula-social-button google-plus-plus-one">
-			<div class="g-plusone" data-size="medium" <?php echo ( $counts !== 0 )? '' : 'data-annotation="none"'; ?>></div>
-			<?php if ( empty($this->google_plus_widget_loaded) ) : ?>
-				<script src="https://apis.google.com/js/platform.js" async defer></script>
-				<?php $this->google_plus_widget_loaded = true; ?>
-			<?php endif; ?>
-		</div>
-		<?php
 	}
 
 	public function linkedin_share($counts=0){
@@ -2955,8 +2957,16 @@ trait Functions {
 
 				foreach ( get_the_category($post->ID) as $category ){
 					$classes[] = 'cat-id-' . $category->cat_ID;
+					$classes[] = 'cat-' . $category->slug;
 				}
 			}
+		}
+
+		//Singular
+		if ( is_singular() ){
+			$classes[] = 'singular';
+		} else {
+			$classes[] = 'hfeed'; //Adds `hfeed` to non singular pages.
 		}
 
 		//Customizer

@@ -338,18 +338,6 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Pinterest profile.</p>
 					<p class="option-keywords">social seo</p>
 				</div>
-
-				<div class="form-group">
-					<label for="google_plus_url">Google+</label>
-					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-google-plus-g"></i> URL</span></div>
-						</div>
-						<input type="text" name="nebula_options[google_plus_url]" id="google_plus_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['google_plus_url']; ?>" placeholder="https://plus.google.com/106644717328415684498/about" />
-					</div>
-					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Google+ page.</p>
-					<p class="option-keywords">social seo</p>
-				</div>
 			<?php
 
 			do_action('nebula_options_social_metadata_metabox', $nebula_options);

@@ -469,18 +469,6 @@ function socialSharing(){
 		}
 	});
 
-	//Google+
-	jQuery('.gshare, a.nebula-share.googleplus').attr('href', 'https://plus.google.com/share?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
-		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
-		ga('send', 'event', 'Social', 'Share', 'Google+');
-		nv('event', 'Google+ Share');
-
-		if ( nebula.dom.body.hasClass('desktop') ){
-			window.open(jQuery(this).attr('href'), 'googlePlusShareWindow', 'width=515, height=490, ' + popupAttrs);
-			return false;
-		}
-	});
-
 	//LinkedIn
 	jQuery('.lishare, a.nebula-share.linkedin').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
 		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
@@ -634,7 +622,7 @@ function eventTracking(){
 			btnText = '(Unknown)';
 		}
 
-		ga('send', 'event', 'Button Click', btnText, jQuery(this).attr('href'));
+		ga('send', 'event', 'Button Click', jQuery.trim(btnText), jQuery(this).attr('href'));
 	});
 
 	//Bootstrap "Collapse" Accordions
@@ -678,7 +666,7 @@ function eventTracking(){
 	});
 
 	//Notable File Downloads
-	jQuery.each(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'zipx', 'rar', 'gz', 'tar', 'txt', 'rtf'], function(index, extension){
+	jQuery.each(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'zipx', 'rar', 'gz', 'tar', 'txt', 'rtf', 'ics', 'vcard'], function(index, extension){
 		nebula.dom.document.on('mousedown', "a[href$='." + extension + "'], a[href$='." + extension.toUpperCase() + "']", function(e){
 			eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 			ga('set', nebula.analytics.dimensions.eventIntent, eventIntent);
@@ -2173,7 +2161,7 @@ function applyValidationClasses(element, validation, showFeedback){
 			feedbackElement.removeClass('hidden').show();
 		} else {
 			feedbackElement.addClass('hidden').hide();
-			element.removeClass('wpcf7-not-valid is-invalid is-valid').parent().find('.wpcf7-not-valid-tip').remove();
+			//element.removeClass('wpcf7-not-valid is-invalid is-valid').parent().find('.wpcf7-not-valid-tip').remove(); //What was this doing?
 		}
 	}
 }
@@ -2787,6 +2775,16 @@ function initBootstrapFunctions(){
 				jQuery(this).carousel();
 			});
 		}
+
+		//Allow Bootstrap modals to use Nebula animation transitions
+		jQuery(document).on('show.bs.modal', function(e){
+			var anim = jQuery(e.target).attr('data-animation-in') || jQuery(e.target).attr('data-animation');
+			jQuery('#' + e.target.id + ' .modal-dialog').attr('class', 'modal-dialog ' + anim + ' animate'); //Replace classes each time for re-animation.
+		});
+		jQuery(document).on('hide.bs.modal', function(e){
+			var anim = jQuery(e.target).attr('data-animation-out') || '';
+			jQuery('#' + e.target.id + ' .modal-dialog').attr('class', 'modal-dialog ' + anim + ' animate'); //Replace classes each time for re-animation.
+		});
 	}
 }
 
@@ -4375,10 +4373,6 @@ function mmenus(){
 
 				if ( nebula.site.options.instagram ){
 					footerIconLinks.content.push('<a href="' + nebula.site.options.instagram + '" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>');
-				}
-
-				if ( nebula.site.options.google_plus_url ){
-					footerIconLinks.content.push('<a href="' + nebula.site.options.google_plus_url + '" target="_blank" rel="noopener"><i class="fab fa-google-plus"></i></a>');
 				}
 
 				if ( nebula.site.options.linkedin_url ){

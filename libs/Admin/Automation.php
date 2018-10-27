@@ -110,6 +110,11 @@ if ( !trait_exists('Automation') ){
 					'required' => true,
 				),
 				array(
+					'name' => 'ACF Content Analysis for Yoast SEO',
+					'slug' => 'acf-content-analysis-for-yoast-seo',
+					'required' => false,
+				),
+				array(
 					'name' => 'Relevanssi',
 					'slug' => 'relevanssi',
 					'required' => true,

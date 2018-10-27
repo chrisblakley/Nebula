@@ -383,14 +383,6 @@ if ( !trait_exists('Admin') ){
 				);
 			}
 
-			if ( $this->get_option('google_plus_url') ){
-				$third_party_tools['social'][] = array(
-					'name' => 'Google+',
-					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-google-plus-square"></i>',
-					'url' => $this->get_option('google_plus_url')
-				);
-			}
-
 			if ( $this->get_option('disqus_shortname') ){
 				$third_party_tools['social'][] = array(
 					'name' => 'Disqus',

@@ -3,8 +3,7 @@
 /**
  * Class Nebula_Cache
  */
-interface Nebula_Cache
-{
+interface Nebula_Cache {
 	/**
 	 * @param string $index
 	 * @return string|null

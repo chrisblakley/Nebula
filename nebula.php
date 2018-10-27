@@ -7,9 +7,10 @@ if ( !class_exists('Nebula') ){
 	require_once(ABSPATH . 'wp-admin/includes/file.php');
 
 	//Require Nebula libraries
-    require_once get_template_directory() . '/libs/Cache.php';
-    require_once get_template_directory() . '/libs/Cache/Filesystem.php';
-    require_once get_template_directory() . '/libs/Output.php';
+	require_once get_template_directory() . '/libs/Cache.php';
+	require_once get_template_directory() . '/libs/Cache/Filesystem.php';
+	//require_once get_template_directory() . '/libs/Output.php';
+
 	require_once get_template_directory() . '/libs/Scripts.php';
 	require_once get_template_directory() . '/libs/Options/Options.php';
 	require_once get_template_directory() . '/libs/Options/Customizer.php';
@@ -104,7 +105,7 @@ if ( !class_exists('Nebula') ){
 		}
 
 		public function session_start(){
-			if ( !isset($_SESSION) ){
+			if ( !isset($_SESSION) || !isset($_SESSION['pagecount']) ){
 				session_start();
 				$_SESSION['pagecount'] = 0;
 			}

@@ -172,7 +172,6 @@ if ( !trait_exists('Users') ){
 			$contact_methods['youtube'] = 'YouTube Channel ID';
 			$contact_methods['instagram'] = 'Instagram Username';
 			$contact_methods['pinterest'] = 'Pinterest Username';
-			$contact_methods['googleplus'] = 'Google+ Username <small>(Without +)</small>';
 
 			return $contact_methods;
 		}

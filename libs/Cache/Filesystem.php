@@ -3,8 +3,7 @@
 /**
  * Class Nebula_Cache_Filesystem
  */
-class Nebula_Cache_Filesystem implements Nebula_Cache
-{
+class Nebula_Cache_Filesystem implements Nebula_Cache {
 	/** @var string $basePath */
 	private $basePath = '';
 
@@ -23,12 +22,11 @@ class Nebula_Cache_Filesystem implements Nebula_Cache
 	 * @param string $basePath  The root cache directory.
 	 * @param bool $forceSha256 Don't use BLAKE2b if it's available?
 	 */
-	public function __construct($key, $basePath = '', $forceSha256 = false)
-	{
-		if (!$basePath) {
+	public function __construct($key, $basePath = '', $forceSha256 = false){
+		if ( !$basePath ){
 			// Safe default
 			$basePath = get_template_directory() . '/assets/cache';
-			if (!is_dir($basePath)) {
+			if ( !is_dir($basePath) ){
 				mkdir($basePath, 0775);
 			}
 		}
@@ -40,21 +38,18 @@ class Nebula_Cache_Filesystem implements Nebula_Cache
 	/**
 	 * Get the real index.
 	 *
-	 * On modern systems, this will use the newer (faster, more secure) BLAKE2b
-	 * hash function.
+	 * On modern systems, this will use the newer (faster, more secure) BLAKE2b hash function.
 	 *
-	 * On legacy systems, this will use HMAC-SHA512 truncated to 256 bits
-	 * instead. SHA512 is faster on 64-bit hardware (most servers) than SHA256.
+	 * On legacy systems, this will use HMAC-SHA512 truncated to 256 bits instead. SHA512 is faster on 64-bit hardware (most servers) than SHA256.
 	 *
 	 * @ref https://blake2.net
 	 *
 	 * @param string $index
 	 * @return false|string
 	 */
-	public function getRealIndex($index)
-	{
+	public function getRealIndex($index){
 		if (!$this->forceSha256) {
-			if (is_callable('sodium_crypto_generichash') && is_callable('sodium_bin2hex')) {
+			if ( is_callable('sodium_crypto_generichash') && is_callable('sodium_bin2hex') ){
 				return sodium_bin2hex(
 					sodium_crypto_generichash($index, $this->key)
 				);
@@ -69,24 +64,23 @@ class Nebula_Cache_Filesystem implements Nebula_Cache
 	 * @param string $index
 	 * @return string|null
 	 */
-	public function get($index)
-	{
+	public function get($index){
 		$index = $this->getRealIndex($index);
 		$subA = substr($index, 0, 2);
 		$subB = substr($index, 2, 2);
 
 		$directory = $this->basePath . '/' . $subA  . '/' . $subB;
-		if (!is_dir($directory)) {
+		if ( !is_dir($directory) ){
 			// Directory doesn't exist? Automatic cache miss!
 			return null;
 		}
 		$filename = $directory . '/' . substr($index, 4) . '.cache';
-		if (!is_readable($filename)) {
+		if ( !is_readable($filename) ){
 			// Cache miss
 			return null;
 		}
 		$contents = file_get_contents($filename);
-		if (!is_string($contents)) {
+		if ( !is_string($contents) ){
 			// Treat errors as cache misses
 			return null;
 		}
@@ -97,16 +91,14 @@ class Nebula_Cache_Filesystem implements Nebula_Cache
 	 * @param string $index
 	 * @return bool
 	 */
-	public function is_cached($index)
-	{
+	public function is_cached($index){
 		$index = $this->getRealIndex($index);
 		$subA = substr($index, 0, 2);
 		$subB = substr($index, 2, 2);
 
 		$directory = $this->basePath . '/' . $subA  . '/' . $subB;
-		if (!is_dir($directory)) {
-			// Directory doesn't exist? Automatic cache miss!
-			return false;
+		if ( !is_dir($directory) ){
+			return false; //Directory doesn't exist? Automatic cache miss!
 		}
 		$filename = $directory . '/' . substr($index, 4) . '.cache';
 		return file_exists($filename) && is_readable($filename);
@@ -119,14 +111,13 @@ class Nebula_Cache_Filesystem implements Nebula_Cache
 	 * @param string $value
 	 * @return void
 	 */
-	public function set($index, $value)
-	{
+	public function set($index, $value){
 		$index = $this->getRealIndex($index);
 
 		$subA = substr($index, 0, 2);
 		$subB = substr($index, 2, 2);
 		$directory = $this->basePath . '/' . $subA  . '/' . $subB;
-		if (!is_dir($directory)) {
+		if ( !is_dir($directory) ){
 			// Directory doesn't exist? Create it.
 			mkdir($subA, 0775, true);
 		}

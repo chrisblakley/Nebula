@@ -251,7 +251,6 @@ if ( !trait_exists('Options') ){
 				'youtube_url' => '',
 				'instagram_url' => '',
 				'pinterest_url' => '',
-				'google_plus_url' => '',
 
 				//Functions Tab
 				'jquery_version' => 'wordpress',

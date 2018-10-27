@@ -32,11 +32,11 @@
 
 						<?php if ( is_search() && is_plugin_active('relevanssi/relevanssi.php') && $post->relevance_score ): ?>
 							<div class="entry-summary score-<?php echo str_replace('.', '_', $post->relevance_score); ?>">
-								<?php echo the_excerpt(); //Relevanssi creates a custom excerpt for search results to highlight the hit area. This requires using the_excerpt(). ?>
+								<p><?php echo the_excerpt(); //Relevanssi creates a custom excerpt for search results to highlight the hit area. This requires using the_excerpt(). ?></p>
 							</div>
 						<?php else: ?>
 							<div class="entry-summary">
-								<?php echo nebula()->excerpt(); ?>
+								<p><?php echo nebula()->excerpt(); ?></p>
 							</div>
 						<?php endif; ?>
 					</div><!--/col-->

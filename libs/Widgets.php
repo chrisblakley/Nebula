@@ -175,7 +175,6 @@ if ( !trait_exists('Widgets') ){
 								'twitter' => ( get_user_meta($user_id, 'twitter', true) )? nebula()->twitter_url(get_user_meta($user_id, 'twitter', true)) : false,
 								'instagram' => ( get_user_meta($user_id, 'instagram', true) )? 'https://www.instagram.com/' . get_user_meta($user_id, 'instagram', true) : false,
 								'linkedin' => ( get_user_meta($user_id, 'instagram', true) )? 'https://www.linkedin.com/' . get_user_meta($user_id, 'instagram', true) : false,
-								'google-plus' => ( get_user_meta($user_id, 'googleplus', true) )? 'https://plus.google.com/' . get_user_meta($user_id, 'googleplus', true) : false,
 								'pinterest' => ( get_user_meta($user_id, 'pinterest', true) )? 'https://www.pinterest.com/' . get_user_meta($user_id, 'pinterest', true) : false,
 								'youtube' => ( get_user_meta($user_id, 'youtube', true) )? 'https://www.youtube.com/user/' . get_user_meta($user_id, 'youtube', true) : false,
 								'envelope-o' => 'mailto:' . $author_info->user_email
@@ -666,7 +665,6 @@ if ( !trait_exists('Widgets') ){
 				'twitter' => ( nebula()->get_option('twitter_username') )? nebula()->twitter_url() : false,
 				'instagram' => ( nebula()->get_option('instagram_url') )? nebula()->get_option('instagram_url') : false,
 				'linkedin-square' => ( nebula()->get_option('linkedin_url') )? nebula()->get_option('linkedin_url') : false,
-				'google-plus' => ( nebula()->get_option('google_plus_url') )? nebula()->get_option('google_plus_url') : false,
 				'pinterest' => ( nebula()->get_option('pinterest_url') )? nebula()->get_option('pinterest_url') : false,
 				'youtube-play' => ( nebula()->get_option('youtube_url') )? nebula()->get_option('youtube_url') : false,
 				'envelope-o' => ( nebula()->get_option('contact_email') )? nebula()->get_option('contact_email') : false,
@@ -731,7 +729,6 @@ if ( !trait_exists('Widgets') ){
 			$social_networks = array();
 			$social_networks[] = ( !empty($instance['facebook']) )? 'facebook' : false;
 			$social_networks[] = ( !empty($instance['twitter']) )? 'twitter' : false;
-			$social_networks[] = ( !empty($instance['googleplus']) )? 'googleplus' : false;
 			$social_networks[] = ( !empty($instance['linkedin']) )? 'linkedin' : false;
 			$social_networks[] = ( !empty($instance['pinterest']) )? 'pinterest' : false;
 			$social_networks = array_filter($social_networks);
@@ -779,11 +776,6 @@ if ( !trait_exists('Widgets') ){
 				</p>
 
 				<p>
-					<input class="checkbox" type="checkbox" <?php checked($instance['googleplus'], 'on'); ?> id="<?php echo $this->get_field_id('googleplus'); ?>" name="<?php echo $this->get_field_name('googleplus'); ?>" />
-					<label for="<?php echo $this->get_field_id('googleplus'); ?>"> Google+</label>
-				</p>
-
-				<p>
 					<input class="checkbox" type="checkbox" <?php checked($instance['linkedin'], 'on'); ?> id="<?php echo $this->get_field_id('linkedin'); ?>" name="<?php echo $this->get_field_name('linkedin'); ?>" />
 					<label for="<?php echo $this->get_field_id('linkedin'); ?>"> LinkedIn</label>
 				</p>
@@ -808,7 +800,6 @@ if ( !trait_exists('Widgets') ){
 			$instance['share_api'] = ( !empty($new_instance['share_api']) )? strip_tags($new_instance['share_api']) : '';
 			$instance['facebook'] = ( !empty($new_instance['facebook']) )? strip_tags($new_instance['facebook']) : '';
 			$instance['twitter'] = ( !empty($new_instance['twitter']) )? strip_tags($new_instance['twitter']) : '';
-			$instance['googleplus'] = ( !empty($new_instance['googleplus']) )? strip_tags($new_instance['googleplus']) : '';
 			$instance['linkedin'] = ( !empty($new_instance['linkedin']) )? strip_tags($new_instance['linkedin']) : '';
 			$instance['pinterest'] = ( !empty($new_instance['pinterest']) )? strip_tags($new_instance['pinterest']) : '';
 			$instance['native_buttons'] = ( !empty($new_instance['native_buttons']) )? strip_tags($new_instance['native_buttons']) : '';

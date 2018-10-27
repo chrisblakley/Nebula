@@ -243,7 +243,7 @@
 		<?php
 			$company_same_as = '';
 			if ( nebula()->get_option('facebook_url') ){
-				$company_same_as .= '"' . nebula()->get_option('facebook_url') . '",';
+				$company_same_as .= '"' . nebula()->social_url('facebook') . '",';
 			}
 
 			if ( nebula()->get_option('twitter_username') ){
@@ -251,23 +251,19 @@
 			}
 
 			if ( nebula()->get_option('linkedin_url') ){
-				$company_same_as .= '"' . nebula()->get_option('linkedin_url') . '",';
+				$company_same_as .= '"' . nebula()->social_url('linkedin') . '",';
 			}
 
 			if ( nebula()->get_option('youtube_url') ){
-				$company_same_as .= '"' . nebula()->get_option('youtube_url') . '",';
+				$company_same_as .= '"' . nebula()->social_url('youtube') . '",';
 			}
 
 			if ( nebula()->get_option('instagram_url') ){
-				$company_same_as .= '"' . nebula()->get_option('instagram_url') . '",';
+				$company_same_as .= '"' . nebula()->social_url('instagram') . '",';
 			}
 
 			if ( nebula()->get_option('pinterest_url') ){
-				$company_same_as .= '"' . nebula()->get_option('pinterest_url') . '",';
-			}
-
-			if ( nebula()->get_option('google_plus_url') ){
-				$company_same_as .= '"' . nebula()->get_option('google_plus_url') . '",';
+				$company_same_as .= '"' . nebula()->social_url('pinterest') . '",';
 			}
 		?>
 		<?php if ( !empty($company_same_as) ): ?>
@@ -326,10 +322,6 @@
 
 				if ( get_the_author_meta('pinterest', $user->ID) ){
 					$person_same_as .= '"https://pinterest.com/' . get_the_author_meta('pinterest', $user->ID) . '",';
-				}
-
-				if ( get_the_author_meta('googleplus', $user->ID) ){
-					$person_same_as .= '"https://plus.google.com/+' . get_the_author_meta('googleplus', $user->ID) . '",';
 				}
 			?>
 			<?php if ( !empty($person_same_as) ): ?>
