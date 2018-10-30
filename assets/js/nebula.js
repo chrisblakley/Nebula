@@ -767,6 +767,16 @@ function eventTracking(){
 		ga('send', 'event', 'Accessibility Links', 'Click', jQuery(this).text());
 	});
 
+	//Video Enter Picture-in-Picture
+	nebula.dom.document.on('enterpictureinpicture', 'video', function(e){
+		ga('send', 'event', 'Videos', 'Enter Picture-in-Picture', e.target.id, {'nonInteraction': true}); //Non-interaction because this may not be triggered by the user.
+	});
+
+	//Video Leave Picture-in-Picture
+	nebula.dom.document.on('leavepictureinpicture', 'video', function(e){
+		ga('send', 'event', 'Videos', 'Leave Picture-in-Picture', e.target.id, {'nonInteraction': true}); //Non-interaction because this may not be triggered by the user.
+	});
+
 	//Word copy tracking
 	var copyCount = 0;
 	nebula.dom.document.on('cut copy', function(){

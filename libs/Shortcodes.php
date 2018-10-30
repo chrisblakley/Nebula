@@ -346,35 +346,35 @@ if ( !trait_exists('Shortcodes') ){
 				$key = $this->get_option('google_browser_api_key');
 			}
 			if ( !empty($q) ){
-				$q = '&q=' . nebula()->url($q);
+				$q = '&q=' . nebula()->escape($q, 'url');
 			}
 
 			/** These are unused: $origin, $destination, $waypoints, $avoid */
 			if ( $mode === 'directions' ){
 				if ( $origin != '' ){
-					$origin = '&origin=' . nebula()->url($origin);
+					$origin = '&origin=' . nebula()->escape($origin, 'url');
 				}
 				if ( $destination != '' ){
-					$destination = '&destination=' . nebula()->url($destination);
+					$destination = '&destination=' . nebula()->escape($destination, 'url');
 				}
 				if ( $waypoints != '' ){
-					$waypoints = '&waypoints=' . nebula()->url($waypoints);
+					$waypoints = '&waypoints=' . nebula()->escape($waypoints, 'url');
 				}
 				if ( $avoid != '' ){
-					$avoid = '&avoid=' . nebula()->url($avoid);
+					$avoid = '&avoid=' . nebula()->escape($avoid, 'url');
 				}
 			}
 			if ( !empty($center) ){
-				$center = '&center=' . nebula()->url($center);
+				$center = '&center=' . nebula()->escape($center, 'url');
 			}
 			if ( !empty($language) ){
-				$language = '&language=' . nebula()->url($language);
+				$language = '&language=' . nebula()->escape($language, 'url');
 			}
 			if ( !empty($region) ){
-				$region = '&region=' . nebula()->url($region);
+				$region = '&region=' . nebula()->escape($region, 'url');
 			}
 			if ( !empty($zoom) ){
-				$zoom = '&zoom=' . nebula()->url($zoom);
+				$zoom = '&zoom=' . nebula()->escape($zoom, 'url');
 			}
 
 			$return = '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy"><iframe class="nebula-googlemap-shortcode googlemap ' . nebula()->escape($class) . '" width="' . nebula()->escape($width) . '" height="' . nebula()->escape($height) . '" frameborder="0" src="https://www.google.com/maps/embed/v1/' . $mode . '?key=' . $key . $q . $zoom . $center . '&maptype=' . $maptype . $language . $region . '" style="border: 0; ' . nebula()->escape($style) . '" allowfullscreen></iframe></noscript>';
@@ -400,7 +400,7 @@ if ( !trait_exists('Shortcodes') ){
 			$vimeo_data = $this->video_meta('vimeo', $id);
 			$vimeo = '<div class="nebula-vimeo embed-responsive embed-responsive-16by9">';
 			if ( !empty($vimeo_data) && empty($vimeo_data['error']) ){
-				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-vimeo"><iframe id="' . nebula()->escape($vimeo_data['safetitle']) . '" class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . nebula()->escape($id) . '?api=1&player_id=' . nebula()->url($vimeo_data['safetitle']) . '" width="' . nebula()->escape($width) . '" height="' . nebula()->escape($height) . '" autoplay="' . nebula()->escape($autoplay) . '" badge="' . nebula()->escape($badge) . '" byline="' . nebula()->escape($byline) . '" color="' . nebula()->escape($color) . '" loop="' . nebula()->escape($loop) . '" portrait="' . nebula()->escape($portrait) . '" title="' . nebula()->escape($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></noscript>';
+				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-vimeo"><iframe id="' . nebula()->escape($vimeo_data['safetitle']) . '" class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . nebula()->escape($id) . '?api=1&player_id=' . nebula()->escape($vimeo_data['safetitle'], 'url') . '" width="' . nebula()->escape($width) . '" height="' . nebula()->escape($height) . '" autoplay="' . nebula()->escape($autoplay) . '" badge="' . nebula()->escape($badge) . '" byline="' . nebula()->escape($byline) . '" color="' . nebula()->escape($color) . '" loop="' . nebula()->escape($loop) . '" portrait="' . nebula()->escape($portrait) . '" title="' . nebula()->escape($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></noscript>';
 			} else {
 				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-vimeo"><iframe class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . nebula()->escape($id) . '" width="' . nebula()->escape($width) . ' height="' . nebula()->escape($height) . '" autoplay="' . nebula()->escape($autoplay) . '" badge="' . nebula()->escape($badge) . '" byline="' . nebula()->escape($byline) . '" color="' . nebula()->escape($color) . '" loop="' . nebula()->escape($loop) . '" portrait="' . nebula()->escape($portrait) . '" title="' . nebula()->escape($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></noscript>';
 
@@ -433,9 +433,9 @@ if ( !trait_exists('Shortcodes') ){
 			$youtube = '<div class="nebula-youtube embed-responsive embed-responsive-16by9">';
 			if ( !empty($youtube_data) && empty($youtube_data['error']) ){
 				//Note: removed &origin=' . youtube_meta($id, 'origin') . ' right before &rel= due to console warnings. Doesn't seem to be an issue.
-				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-youtube"><iframe id="' . nebula()->escape($youtube_data['safetitle']) . '" class="' . nebula()->escape('youtube embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . nebula()->escape($width) . '" height="' . nebula()->escape($height) . '" src="//www.youtube.com/embed/' . nebula()->url($youtube_data['id']) . '?wmode=transparent&enablejsapi=1&rel=' . nebula()->url($rel) . '" frameborder="0" allowfullscreen=""></iframe></noscript>';
+				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-youtube"><iframe id="' . nebula()->escape($youtube_data['safetitle']) . '" class="' . nebula()->escape('youtube embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . nebula()->escape($width) . '" height="' . nebula()->escape($height) . '" src="//www.youtube.com/embed/' . nebula()->escape($youtube_data['id'], 'url') . '?wmode=transparent&enablejsapi=1&rel=' . nebula()->escape($rel, 'url') . '" frameborder="0" allowfullscreen=""></iframe></noscript>';
 			} else {
-				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-youtube"><iframe class="' . nebula()->escape('no-api embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . nebula()->escape($width) . '" height="' . nebula()->escape($height) . '" src="//www.youtube.com/embed/' . nebula()->url($id) . '?wmode=transparent&enablejsapi=1&rel=' . nebula()->url($rel) . '" frameborder="0" allowfullscreen=""></iframe></noscript>';
+				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-youtube"><iframe class="' . nebula()->escape('no-api embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . nebula()->escape($width) . '" height="' . nebula()->escape($height) . '" src="//www.youtube.com/embed/' . nebula()->escape($id, 'url') . '?wmode=transparent&enablejsapi=1&rel=' . nebula()->escape($rel, 'url') . '" frameborder="0" allowfullscreen=""></iframe></noscript>';
 
 				if ( $this->is_dev() ){
 					$youtube .= '<script>console.warn("(' . nebula()->escape($youtube_data['error']) . ' (via Youtube shortcode)");</script>';

@@ -258,6 +258,15 @@ trait Functions {
 				}
 			}
 
+			//If the site is served via HTTPS but the Site URL is still set to HTTP
+			if ( (is_ssl() || isset($_SERVER['HTTPS'])) && (strpos(get_option('home'), 'http://') !== false || strpos(get_option('siteurl'), 'http://') !== false) ){
+				$nebula_warnings[] = array(
+					'level' => 'error',
+					'description' => '<a href="options-general.php">Website Address</a> settings are http but the site is served from https.',
+					'url' => get_admin_url() . 'options-general.php'
+				);
+			}
+
 			//If search indexing is disabled
 			if ( get_option('blog_public') == 0 ){ //Stored as a string
 				$nebula_warnings[] = array(

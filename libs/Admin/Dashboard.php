@@ -746,7 +746,8 @@ if ( !trait_exists('Dashboard') ){
 				}
 			}
 
-			echo '<div id="testloadcon" data-src="' . home_url('/') . '" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>'; //For iframe timing
+			$home_url = ( is_ssl() )? str_replace('http://', 'https://', home_url('/')) : home_url('/'); //Sometimes the home_url() still has http even when is_ssl() true
+			echo '<div id="testloadcon" data-src="' . $home_url . '" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>'; //For iframe timing
 
 			//Server Load Time (TTFB)
 			echo '<li id="performance-ttfb"><i class="far fa-fw fa-clock"></i> Server response time: <strong class="datapoint" title="Calculated via PHP render time">' . timer_stop(0, 3) . ' seconds</strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
@@ -833,7 +834,7 @@ if ( !trait_exists('Dashboard') ){
 				$directory = get_template_directory();
 			}
 			$dir = $this->glob_r($directory . '/*');
-			$skip_files = array('dev.css', 'dev.scss', '/cache/', '/includes/data/', 'manifest.json', '.bak'); //Files or directories to skip. Be specific!
+			$skip_files = array('/cache/', '/includes/data/', 'manifest.json', '.bak'); //Files or directories to skip. Be specific!
 
 			foreach ( $dir as $file ){
 				if ( is_file($file) ){

@@ -170,9 +170,8 @@ if ( !trait_exists('Sass') ){
 					//Skip file conditions (only if not forcing all)
 					if ( empty($force_all) ){
 						//@todo "Nebula" 0: Add hook here so other functions/plugins can add stipulations of when to skip files. Maybe an array instead?
-						$is_dev_file = $scss_file_path_info['filename'] === 'dev' && !$this->get_option('dev_stylesheets'); //If file is dev.scss but dev stylesheets functionality is disabled, skip file.
 						$is_admin_file = (!$this->is_admin_page() && !$this->is_login_page()) && in_array($scss_file_path_info['filename'], array('login', 'admin', 'tinymce')); //If viewing front-end, skip WP admin files.
-						if ( $is_dev_file || $is_admin_file ){
+						if ( $is_admin_file ){
 							continue;
 						}
 					}
