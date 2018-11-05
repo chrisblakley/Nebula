@@ -464,16 +464,18 @@ trait Functions {
 
 	//Log warnings in the console
 	public function console_warnings($console_warnings=array()){
-		$warnings = $this->check_warnings();
+		if ( (current_user_can('manage_options') || $this->is_dev()) && $this->get_option('admin_notices') && !is_customize_preview() ){
+			$warnings = $this->check_warnings();
 
-		//If there are warnings, send them to the console.
-		if ( !empty($warnings) ){
-			echo '<script>';
-			foreach( $warnings as $warning ){
-				$category = ( !empty($warning['category']) )? $warning['category'] : 'Nebula';
-				echo 'console.' . $warning['level'] . '("[' . $category . '] ' . addslashes(strip_tags($warning['description'])) . '");';
+			//If there are warnings, send them to the console.
+			if ( !empty($warnings) ){
+				echo '<script>';
+				foreach( $warnings as $warning ){
+					$category = ( !empty($warning['category']) )? $warning['category'] : 'Nebula';
+					echo 'console.' . $warning['level'] . '("[' . $category . '] ' . addslashes(strip_tags($warning['description'])) . '");';
+				}
+				echo '</script>';
 			}
-			echo '</script>';
 		}
 	}
 
@@ -1168,19 +1170,24 @@ trait Functions {
 		return $data['text'];
 	}
 
+	//Get the word count of a post
 	public function word_count($options=array()){
 		$override = apply_filters('pre_nebula_word_count', null, $options);
 		if ( isset($override) ){return;}
 
-		global $post;
 		$defaults = array(
-			'content' => $post->post_content,
-			'range' => false,
+			'id' => get_the_id(),
+			'content' => false,
+			'range' => false, //Show a range instead of exact count
 		);
 
 		$data = array_merge($defaults, $options);
 
-		$word_count = str_word_count(strip_tags($data['content']));
+		$content = ( !empty($data['content']) )? $data['content'] : get_post_field('post_content', $data['id']);
+		$content = apply_filters('nebula_word_count', $content); //Allow additional content to be added to the word count (such as ACF fields)
+
+		$word_count = intval(round(str_word_count(strip_tags($content))));
+
 		if ( is_int($word_count) ){
 			if ( !$data['range'] ){
 				return $word_count;
@@ -1204,6 +1211,19 @@ trait Functions {
 		}
 
 		return false;
+	}
+
+	//Determines the estimated time to read a post (in minutes).
+	//Note: Does not account for ACF fields unless hooked into 'nebula_word_count' above
+	public function estimated_reading_time($id=false){
+		if ( empty($id) ){
+			$id = get_the_ID();
+		}
+
+		$wpm = 250; //Words per minute reading speed
+		$content = $this->word_count(array('id' => $id));
+
+		return intval(round($content/$wpm));
 	}
 
 	//Use WP Pagenavi if active, or manually paginate.
