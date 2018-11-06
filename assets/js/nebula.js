@@ -4432,7 +4432,6 @@ function mmenus(){
 				},
 				extensions: [
 					"theme-light", //Light background
-					"border-full", //Extend list borders full width
 					//"fx-listitems-slide", //Animated list items //@todo "Nebula" 0: Test if this is is laggy on mobile devices
 					"shadow-page", //Add shadow to the page
 					"shadow-panels", //Add shadow to menu panels

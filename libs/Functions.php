@@ -888,6 +888,7 @@ trait Functions {
 		$defaults = apply_filters('nebula_post_tags_defaults', array(
 			'id' => get_the_ID(),
 			'icon' => true, //Show icon
+			'linked' => true, //Link to tag archive
 			'force' => false,
 			'string' => false, //Return a string with no markup
 		));
@@ -901,6 +902,10 @@ trait Functions {
 				if ( $data['icon'] ){
 					$tag_plural = ( count(get_the_tags()) > 1 )? 'tags' : 'tag';
 					$the_icon = '<i class="fas fa-fw fa-' . $tag_plural . '"></i> ';
+				}
+
+				if ( !$data['linked'] ){
+					$tag_list = strip_tags($tag_list);
 				}
 
 				if ( $data['string'] ){

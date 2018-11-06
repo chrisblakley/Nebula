@@ -4,7 +4,7 @@
 
 //.example {font-size: rem(14px);}
 @function rem($size){
-	$remSize: $size/16px;
+	$remSize: $size/16px; //This relies on the html font-size to be set to 16px
 	@return #{$remSize}rem;
 }
 
