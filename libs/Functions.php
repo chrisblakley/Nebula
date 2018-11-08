@@ -3275,6 +3275,8 @@ trait Functions {
 
 			return esc_attr(stripslashes($nebula_metadesc));
 		}
+
+		return $metadesc;
 	}
 
 	//Allow using large Twitter cards with Yoast (without upgrading)
