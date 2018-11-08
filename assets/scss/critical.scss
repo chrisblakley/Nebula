@@ -42,7 +42,9 @@
 }
 
 //Homepage Hero
-#hero-section {position: relative; padding: 0; margin: 0; overflow: hidden; background: url($template_directory + "/assets/img/phg/phg-nebula.jpg") no-repeat fixed center center /cover; text-align: center; @include prefix((transition: all 0.5s));
+#hero-section {position: relative; padding: 0; margin: 0; overflow: hidden; background: url($template_directory + "/assets/img/phg/phg-nebula.jpg") no-repeat center center /cover; text-align: center; @include prefix((transition: all 0.5s));
+	@include media("xl"){background-attachment: fixed;}; //Most mobile browsers do not support fixed BG attachment (and will stretch/zoom affixed background images)
+
 	#hero-content {margin-top: 80px; margin-bottom: 80px;
 		@include media("md"){margin-top: 100px; margin-bottom: 100px;};
 

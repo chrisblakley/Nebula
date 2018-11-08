@@ -1189,7 +1189,7 @@ trait Functions {
 		$data = array_merge($defaults, $options);
 
 		$content = ( !empty($data['content']) )? $data['content'] : get_post_field('post_content', $data['id']);
-		$content = apply_filters('nebula_word_count', $content); //Allow additional content to be added to the word count (such as ACF fields)
+		$content = apply_filters('nebula_word_count', $content, $data['id']); //Allow additional content to be added to the word count (such as ACF fields)
 
 		$word_count = intval(round(str_word_count(strip_tags($content))));
 
