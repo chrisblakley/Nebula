@@ -261,6 +261,7 @@ if ( !trait_exists('Options') ){
 				'admin_notices' => 1,
 				'dev_info_metabox' => 1,
 				'todo_manager_metabox' => 1,
+				'performance_metabox' => 1,
 				'author_bios' => 0,
 				'comments' => 0,
 				'device_detection' => 0,

@@ -499,6 +499,13 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text short-help form-text text-muted">Aggregate todo comments in code. (Default: <?php echo $this->user_friendly_default('todo_manager_metabox'); ?>)</p>
 					<p class="option-keywords"></p>
 				</div>
+
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[performance_metabox]" id="performance_metabox" value="1" <?php checked('1', !empty($nebula_options['performance_metabox'])); ?> /><label for="performance_metabox">Performance Metabox</label>
+					<p class="nebula-help-text short-help form-text text-muted">Test load times from the WordPress Dashboard. (Default: <?php echo $this->user_friendly_default('performance_metabox'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">Tests are prioritized from WebPageTest.org (using an <a href="themes.php?page=nebula_options&tab=apis&option=webpagetest_api" target="_blank">API key</a>), then Google PageSpeed Insights, and finally a simple iframe timer.</p>
+					<p class="option-keywords"></p>
+				</div>
 			<?php
 
 			do_action('nebula_options_admin_references_metabox', $nebula_options);

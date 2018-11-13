@@ -226,9 +226,9 @@ function developerMetaboxes(){
 			return false;
 		});
 
-		//Performance Timing
-		iframePerformanceTimer();
-		checkWPTresults();
+		if ( jQuery('#performance_metabox').length ){
+			checkPageSpeed(); //Performance Timing
+		}
 
 		//Dynamic height for TODO results
 		if ( jQuery('.todo_results').length ){
@@ -253,36 +253,59 @@ function developerMetaboxes(){
 	}
 }
 
-//Load the home page in an iframe and time the DOM and Window load times
-function iframePerformanceTimer(){
-	var iframe = document.createElement("iframe");
-	iframe.style.width = "1200px";
-	iframe.style.height = "0px";
-	iframe.src = jQuery('#testloadcon').attr('data-src') + "?noga"; //Cannot use nebula.site.home_url here for some reason even though it obeys https
-	jQuery("#testloadcon").append(iframe);
+//Check the page speed using (in this priority) WebPageTest.org, Google PageSpeed Insights, or a rudimentary iframe timing
+function checkPageSpeed(){
+	//If WebPageTest JSON URL exists, use it!
+	if ( typeof wptTestJSONURL !== 'undefined' ){
+		checkWPTresults();
+	} else {
+		jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("Testing via Google PageSpeed Insights");
 
-	jQuery("#testloadcon iframe").on("load", function(){
-		var iframeResponseEnd = Math.round(iframe.contentWindow.performance.timing.responseEnd-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until server response finishes
-		var iframeDomReady = Math.round(iframe.contentWindow.performance.timing.domContentLoadedEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until DOM ready
-		var iframeWindowLoaded = Math.round(iframe.contentWindow.performance.timing.loadEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until window load
+		var sourceURL = jQuery('#testloadcon').attr('data-src') + "?noga";
+		fetch('https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' + encodeURIComponent(sourceURL)).then(response => response.json()).then(json => {
+			if ( json && json.captchaResult === 'CAPTCHA_NOT_NEEDED' ){
+				var pagespeedCompletedDate = new Date(json.analysisUTCTimestamp).toLocaleDateString(false, {year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "2-digit"});
+				var ttfb = json.lighthouseResult.audits['time-to-first-byte'].displayValue.match(/[\d,]+/)[0].replace(',', '')/1000;
+				var domLoadTime = json.lighthouseResult.audits['metrics'].details.items[0].observedDomContentLoaded/1000;
+				var fullyLoadedTime = json.lighthouseResult.audits['metrics'].details.items[0].observedLoad/1000;
+				var footprint = (json.lighthouseResult.audits['total-byte-weight'].displayValue.match(/[\d,]+/)[0].replace(',', '')/1000).toFixed(2);
+				var totalRequests = json.lighthouseResult.audits['network-requests'].details.items.length;
+				var rating = json.loadingExperience.overall_category;
 
-		if ( jQuery("#performance-ttfb .datapoint").length ){
-			jQuery("#performance-ttfb .datapoint").html(iframeResponseEnd/1000 + " seconds").attr("title", "via iframe timing"); //Server Response Time
-			performanceTimingWarning(jQuery("#performance-ttfb"), iframeResponseEnd, 500, 1000);
-		}
+				jQuery("#performance-ttfb .datapoint").html(ttfb + " seconds").attr("title", "via Google PageSpeed Insights on " + pagespeedCompletedDate).removeClass("datapoint");
+				performanceTimingWarning(jQuery("#performance-ttfb"), ttfb, 0.5, 1);
 
-		if ( jQuery("#performance-domload .datapoint").length ){
-			jQuery("#performance-domload .datapoint").html(iframeDomReady/1000 + " seconds").attr("title", "via iframe timing"); //DOM Load Time
-			performanceTimingWarning(jQuery("#performance-domload"), iframeDomReady, 3000, 5000);
-		}
+				jQuery("#performance-domload .datapoint").html(domLoadTime + " seconds").attr("title", "via Google PageSpeed Insights on " + pagespeedCompletedDate).removeClass("datapoint");
+				performanceTimingWarning(jQuery("#performance-domload"), domLoadTime, 3, 5);
 
-		if ( jQuery("#performance-fullyloaded .datapoint").length ){
-			jQuery("#performance-fullyloaded .datapoint").html(iframeWindowLoaded/1000 + " seconds").attr("title", "via iframe timing"); //Window Load Time
-			performanceTimingWarning(jQuery("#performance-fullyloaded"), iframeWindowLoaded, 5000, 7000);
-		}
+				jQuery("#performance-fullyloaded .datapoint").html(fullyLoadedTime + " seconds").attr("title", "via Google PageSpeed Insights on " + pagespeedCompletedDate).removeClass("datapoint");
+				jQuery(".speedinsight").attr("href", 'https://developers.google.com/speed/pagespeed/insights/?url=' + encodeURIComponent(sourceURL)); //User-Friendly report URL
+				performanceTimingWarning(jQuery("#performance-fullyloaded"), fullyLoadedTime, 5, 7);
 
-		jQuery("#testloadcon, #testloadscript").remove();
-	});
+				jQuery("#performance-footprint .datapoint").html(footprint + "mb").attr("title", "via Google PageSpeed Insights on " + pagespeedCompletedDate);
+				performanceTimingWarning(jQuery("#performance-footprint"), footprint, 1, 2);
+
+				jQuery("#performance-requests .datapoint").html(totalRequests).attr("title", "via Google PageSpeed Insights on " + pagespeedCompletedDate);
+				performanceTimingWarning(jQuery("#performance-requests"), totalRequests, 80, 120);
+
+				if ( rating !== 'NONE' ){
+					jQuery('#performance-rating').removeClass('hidden');
+					jQuery("#performance-rating .datapoint").html(rating).attr("title", "via Google PageSpeed Insights on " + pagespeedCompletedDate);
+					if ( rating === 'SLOW' ){
+						jQuery("#performance-rating").find(".timingwarning").addClass("active");
+					} else if ( rating === 'AVERAGE' ){
+						jQuery("#performance-rating").find(".timingwarning").addClass("warn active");
+					}
+				}
+
+				jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("via Google PageSpeed Insights on " + pagespeedCompletedDate).siblings('.label').addClass('hidden').siblings('.status-icon').removeClass('fa-comment-alt').addClass('fa-calendar-check');
+			} else { //If the fetch data is not expected, run iframe test instead...
+				runIframeSpeedTest();
+			}
+		}).catch(error => {
+			runIframeSpeedTest(); //If Google PageSpeed Insight check fails, time with an iframe instead...
+		});
+	}
 }
 
 //Check on the WebPageTest API results (initiated on the server-side)
@@ -317,9 +340,9 @@ function checkWPTresults(){
 					jQuery("#performance-requests .datapoint").html(totalRequests).attr("title", "via WebPageTest.org on " + wptCompletedDate);
 					performanceTimingWarning(jQuery("#performance-requests"), totalRequests, 80, 120);
 
-					jQuery(".wptstatus").remove();
+					jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("via WebPageTest.org on " + wptCompletedDate).siblings('.label').addClass('hidden').siblings('.status-icon').removeClass('fa-comment-alt').addClass('fa-calendar-check');
 				} else if ( response.statusCode < 200 ){ //Testing still in progress
-					jQuery(".wptstatus").text("(" + response.statusText + ")");
+					jQuery("#performance-testing-status .datapoint").text("(" + response.statusText + ")");
 					var pollTime = ( response.statusCode === 100 )? 3000 : 8000; //Poll slowly when behind other tests and quickly once the test has started
 					setTimeout(checkWPTresults, pollTime);
 				} else if ( response.statusCode > 400 ){ //An API error has occurred
@@ -329,6 +352,39 @@ function checkWPTresults(){
 			}
 		});
 	}
+}
+
+//Load the home page in an iframe and time the DOM and Window load times
+function runIframeSpeedTest(){
+	var iframe = document.createElement("iframe");
+	iframe.style.width = "1200px";
+	iframe.style.height = "0px";
+	iframe.src = jQuery('#testloadcon').attr('data-src') + "?noga"; //Cannot use nebula.site.home_url here for some reason even though it obeys https
+	jQuery("#testloadcon").append(iframe);
+
+	jQuery("#testloadcon iframe").on("load", function(){
+		var iframeResponseEnd = Math.round(iframe.contentWindow.performance.timing.responseEnd-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until server response finishes
+		var iframeDomReady = Math.round(iframe.contentWindow.performance.timing.domContentLoadedEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until DOM ready
+		var iframeWindowLoaded = Math.round(iframe.contentWindow.performance.timing.loadEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until window load
+
+		if ( jQuery("#performance-ttfb .datapoint").length ){
+			jQuery("#performance-ttfb .datapoint").html(iframeResponseEnd/1000 + " seconds").attr("title", "via iframe timing"); //Server Response Time
+			performanceTimingWarning(jQuery("#performance-ttfb"), iframeResponseEnd, 500, 1000);
+		}
+
+		if ( jQuery("#performance-domload .datapoint").length ){
+			jQuery("#performance-domload .datapoint").html(iframeDomReady/1000 + " seconds").attr("title", "via iframe timing"); //DOM Load Time
+			performanceTimingWarning(jQuery("#performance-domload"), iframeDomReady, 3000, 5000);
+		}
+
+		if ( jQuery("#performance-fullyloaded .datapoint").length ){
+			jQuery("#performance-fullyloaded .datapoint").html(iframeWindowLoaded/1000 + " seconds").attr("title", "via iframe timing"); //Window Load Time
+			performanceTimingWarning(jQuery("#performance-fullyloaded"), iframeWindowLoaded, 5000, 7000);
+		}
+
+		jQuery("#testloadcon, #testloadscript").remove();
+		jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("via iframe test").siblings('.label').addClass('hidden').siblings('.status-icon').removeClass('fa-comment-alt').addClass('fa-calendar-check');
+	});
 }
 
 //Compare metrics for warning and error icons

@@ -27,6 +27,10 @@ if ( !trait_exists('Dashboard') ){
 				add_action('wp_dashboard_setup', array($this, 'dev_info_metabox'));
 			}
 
+			if ( $this->get_option('performance_metabox') || $this->is_dev() ){ //Devs always see the performance metabox
+				add_action('wp_dashboard_setup', array($this, 'performance_metabox'));
+			}
+
 			if ( current_user_can('publish_pages') && $this->get_option('hubspot_portal') && $this->get_option('hubspot_api') ){ //Editor or above (and Hubspot API/Portal)
 				add_action('wp_dashboard_setup', array($this, 'hubspot_metabox'));
 			}
@@ -723,49 +727,6 @@ if ( !trait_exists('Dashboard') ){
 				}
 			}
 
-			//Load Times
-			//New WebPageTest API Method:
-			//Documentation: https://sites.google.com/a/webpagetest.org/docs/advanced-features/webpagetest-restful-apis
-			if ( $this->get_option('webpagetest_api') ){
-				$webpagetest_response = get_transient('nebula_webpagetest_response');
-				$wpt_status = '(Getting stored test results)';
-				if ( empty($webpagetest_response) || $this->is_debug() || isset($_GET['sass']) ){
-					$webpagetest_response = $this->remote_get('https://www.webpagetest.org/runtest.php?url=' . home_url('/') . '%3Fnoga&runs=3&fvonly=1&f=json&noopt=1&noimages=1&k=' . $this->get_option('webpagetest_api'));
-					if ( !is_wp_error($webpagetest_response) ){
-						$webpagetest_response = json_decode($webpagetest_response['body']);
-						$wpt_status = '(Running new test)';
-						set_transient('nebula_webpagetest_response', $webpagetest_response, MINUTE_IN_SECONDS*10);
-					}
-				}
-
-				if ( !empty($webpagetest_response) && !is_wp_error($webpagetest_response) ){
-					$wpt_test_json_url = $webpagetest_response->data->jsonUrl;
-					if ( !empty($wpt_test_json_url) ){
-						echo '<script>var wptTestJSONURL = "' . $wpt_test_json_url . '";</script>'; //Pass this URL to JS for polling
-					}
-				}
-			}
-
-			$home_url = ( is_ssl() )? str_replace('http://', 'https://', home_url('/')) : home_url('/'); //Sometimes the home_url() still has http even when is_ssl() true
-			echo '<div id="testloadcon" data-src="' . $home_url . '" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>'; //For iframe timing
-
-			//Server Load Time (TTFB)
-			echo '<li id="performance-ttfb"><i class="far fa-fw fa-clock"></i> Server response time: <strong class="datapoint" title="Calculated via PHP render time">' . timer_stop(0, 3) . ' seconds</strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
-
-			//DOM Load
-			echo '<li id="performance-domload"><i class="fas fa-fw fa-clock"></i> DOM Load: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
-
-			//Fully Load Time
-			echo '<li id="performance-fullyloaded"><i class="fas fa-fw fa-clock"></i> Fully Loaded: <a class="speedinsight" href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" rel="noopener" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong></a> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
-
-			if ( $this->get_option('webpagetest_api') ){
-				//File Size Footprint
-				echo '<li id="performance-footprint"><i class="fas fa-fw fa-shoe-prints"></i> Footprint: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <small class="wptstatus">' . $wpt_status . '</small> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
-
-				//Total Requests
-				echo '<li id="performance-requests"><i class="fas fa-fw fa-list-ol"></i> Total Requests: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
-			}
-
 			//Initial installation date
 			function initial_install_date(){
 				$nebula_initialized = nebula()->get_option('initialized'); //Keep this as nebula() because it is a nested function, so $this is scoped differently here.
@@ -951,6 +912,63 @@ if ( !trait_exists('Dashboard') ){
 			echo '<strong>' . $file_counter . '</strong> file';
 			echo ( $file_counter === 1 )? '.</p>': 's.</p>';
 			wp_die();
+		}
+
+		//Performance Timing
+		public function performance_metabox(){
+			wp_add_dashboard_widget('performance_metabox', 'Performance', array($this, 'performance_timing'));
+		}
+
+		public function performance_timing(){
+			echo '<ul class="nebula-fa-ul">';
+
+			//New WebPageTest API Method:
+			//Documentation: https://sites.google.com/a/webpagetest.org/docs/advanced-features/webpagetest-restful-apis
+			if ( $this->get_option('webpagetest_api') ){
+				$webpagetest_response = get_transient('nebula_webpagetest_response');
+				$wpt_status = 'Getting stored test results from WebPageTest.org';
+				if ( empty($webpagetest_response) || $this->is_debug() || isset($_GET['sass']) ){
+					$webpagetest_response = $this->remote_get('https://www.webpagetest.org/runtest.php?url=' . home_url('/') . '%3Fnoga&runs=3&fvonly=1&f=json&noopt=1&noimages=1&k=' . $this->get_option('webpagetest_api'));
+					if ( !is_wp_error($webpagetest_response) ){
+						$webpagetest_response = json_decode($webpagetest_response['body']);
+						$wpt_status = 'Testing via WebPageTest.org';
+						set_transient('nebula_webpagetest_response', $webpagetest_response, MINUTE_IN_SECONDS*10);
+					}
+				}
+
+				echo '<li id="performance-testing-status"><i class="status-icon far fa-fw fa-comment-alt"></i> <span class="label">Status:</span> <span class="datapoint">' . $wpt_status . '</span></li>';
+
+				if ( !empty($webpagetest_response) && !is_wp_error($webpagetest_response) ){
+					$wpt_test_json_url = $webpagetest_response->data->jsonUrl;
+					if ( !empty($wpt_test_json_url) ){
+						echo '<script>var wptTestJSONURL = "' . $wpt_test_json_url . '";</script>'; //Pass this URL to JS for polling
+					}
+				}
+			}
+
+			//Prep for an iframe timer if needed
+			$home_url = ( is_ssl() )? str_replace('http://', 'https://', home_url('/')) : home_url('/'); //Sometimes the home_url() still has http even when is_ssl() true
+			echo '<div id="testloadcon" data-src="' . $home_url . '" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>'; //For iframe timing
+
+			//Server Load Time (TTFB)
+			echo '<li id="performance-ttfb"><i class="far fa-fw fa-clock"></i> Server response time: <strong class="datapoint" title="Calculated via PHP render time">' . timer_stop(0, 3) . ' seconds</strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
+
+			//DOM Load
+			echo '<li id="performance-domload"><i class="fas fa-fw fa-clock"></i> DOM Load: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
+
+			//Fully Load Time
+			echo '<li id="performance-fullyloaded"><i class="fas fa-fw fa-clock"></i> Fully Loaded: <a class="speedinsight" href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" rel="noopener" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong></a> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
+
+			if ( $this->get_option('webpagetest_api') ){
+				//File Size Footprint
+				echo '<li id="performance-footprint"><i class="fas fa-fw fa-shoe-prints"></i> Footprint: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
+
+				//Total Requests
+				echo '<li id="performance-requests"><i class="fas fa-fw fa-list-ol"></i> Total Requests: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
+			}
+
+			echo '<li id="performance-rating" class="hidden"><i class="fas fa-fw fa-award"></i> Rating: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
+			echo '</ul>';
 		}
 
 		//Hubspot Contacts
