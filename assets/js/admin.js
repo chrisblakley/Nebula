@@ -258,8 +258,8 @@ function checkPageSpeed(){
 	//If WebPageTest JSON URL exists, use it!
 	if ( typeof wptTestJSONURL !== 'undefined' ){
 		checkWPTresults();
-	} else {
-		jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("Testing via Google PageSpeed Insights");
+	} else if ( typeof fetch === 'function' ){ //MS Edge+ (No IE11)
+		jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("Testing via Google PageSpeed");
 
 		var sourceURL = jQuery('#testloadcon').attr('data-src') + "?noga";
 		fetch('https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' + encodeURIComponent(sourceURL)).then(response => response.json()).then(json => {
@@ -272,25 +272,25 @@ function checkPageSpeed(){
 				var totalRequests = json.lighthouseResult.audits['network-requests'].details.items.length;
 				var rating = json.loadingExperience.overall_category;
 
-				jQuery("#performance-ttfb .datapoint").html(ttfb + " seconds").attr("title", "via Google PageSpeed Insights on " + pagespeedCompletedDate).removeClass("datapoint");
+				jQuery("#performance-ttfb .datapoint").html(ttfb + " seconds").attr("title", "via Google PageSpeed on " + pagespeedCompletedDate).removeClass("datapoint");
 				performanceTimingWarning(jQuery("#performance-ttfb"), ttfb, 0.5, 1);
 
-				jQuery("#performance-domload .datapoint").html(domLoadTime + " seconds").attr("title", "via Google PageSpeed Insights on " + pagespeedCompletedDate).removeClass("datapoint");
+				jQuery("#performance-domload .datapoint").html(domLoadTime + " seconds").attr("title", "via Google PageSpeed on " + pagespeedCompletedDate).removeClass("datapoint");
 				performanceTimingWarning(jQuery("#performance-domload"), domLoadTime, 3, 5);
 
-				jQuery("#performance-fullyloaded .datapoint").html(fullyLoadedTime + " seconds").attr("title", "via Google PageSpeed Insights on " + pagespeedCompletedDate).removeClass("datapoint");
+				jQuery("#performance-fullyloaded .datapoint").html(fullyLoadedTime + " seconds").attr("title", "via Google PageSpeed on " + pagespeedCompletedDate).removeClass("datapoint");
 				jQuery(".speedinsight").attr("href", 'https://developers.google.com/speed/pagespeed/insights/?url=' + encodeURIComponent(sourceURL)); //User-Friendly report URL
 				performanceTimingWarning(jQuery("#performance-fullyloaded"), fullyLoadedTime, 5, 7);
 
-				jQuery("#performance-footprint .datapoint").html(footprint + "mb").attr("title", "via Google PageSpeed Insights on " + pagespeedCompletedDate);
+				jQuery("#performance-footprint .datapoint").html(footprint + "mb").attr("title", "via Google PageSpeed on " + pagespeedCompletedDate);
 				performanceTimingWarning(jQuery("#performance-footprint"), footprint, 1, 2);
 
-				jQuery("#performance-requests .datapoint").html(totalRequests).attr("title", "via Google PageSpeed Insights on " + pagespeedCompletedDate);
+				jQuery("#performance-requests .datapoint").html(totalRequests).attr("title", "via Google PageSpeed on " + pagespeedCompletedDate);
 				performanceTimingWarning(jQuery("#performance-requests"), totalRequests, 80, 120);
 
-				if ( rating !== 'NONE' ){
+				if ( jQuery('#performance-rating').length && rating !== 'NONE' ){
 					jQuery('#performance-rating').removeClass('hidden');
-					jQuery("#performance-rating .datapoint").html(rating).attr("title", "via Google PageSpeed Insights on " + pagespeedCompletedDate);
+					jQuery("#performance-rating .datapoint").html(rating).attr("title", "via Google PageSpeed on " + pagespeedCompletedDate);
 					if ( rating === 'SLOW' ){
 						jQuery("#performance-rating").find(".timingwarning").addClass("active");
 					} else if ( rating === 'AVERAGE' ){
@@ -298,13 +298,15 @@ function checkPageSpeed(){
 					}
 				}
 
-				jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("via Google PageSpeed Insights on " + pagespeedCompletedDate).siblings('.label').addClass('hidden').siblings('.status-icon').removeClass('fa-comment-alt').addClass('fa-calendar-check');
+				jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("via Google PageSpeed on " + pagespeedCompletedDate).siblings('.label').addClass('hidden').siblings('.status-icon').removeClass('fa-comment-alt').addClass('fa-calendar-check');
 			} else { //If the fetch data is not expected, run iframe test instead...
 				runIframeSpeedTest();
 			}
 		}).catch(error => {
 			runIframeSpeedTest(); //If Google PageSpeed Insight check fails, time with an iframe instead...
 		});
+	} else {
+		runIframeSpeedTest(); //If fetch() is not available (IE11)
 	}
 }
 

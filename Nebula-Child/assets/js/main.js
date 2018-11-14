@@ -1,3 +1,4 @@
+window.performance.mark('child_inside_mainjs');
 jQuery.noConflict();
 
 //Prevent child theme events from sending before the pageview. Do not add custom event tracking here- add it where noted below!
@@ -10,7 +11,12 @@ jQuery(document).on('nebula_event_tracking', function(){
  ===========================*/
 
 jQuery(function(){
+	window.performance.mark('child_dom_ready_start');
+
 	cacheSelectors();
+
+	window.performance.mark('child_dom_ready_end');
+	window.performance.measure('child_dom_ready_functions', 'child_dom_ready_start', 'child_dom_ready_end');
 }); //End Document Ready
 
 
@@ -19,7 +25,12 @@ jQuery(function(){
  ===========================*/
 
 jQuery(window).on('load', function(){
+	window.performance.mark('child_window_load_start');
 
+	//Window load functions here
+
+	window.performance.mark('child_window_load_end');
+	window.performance.measure('child_window_load_functions', 'child_window_load_start', 'child_window_load_end');
 }); //End Window Load
 
 

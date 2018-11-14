@@ -924,6 +924,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//New WebPageTest API Method:
 			//Documentation: https://sites.google.com/a/webpagetest.org/docs/advanced-features/webpagetest-restful-apis
+			$wpt_status = 'Preparing test...';
 			if ( $this->get_option('webpagetest_api') ){
 				$webpagetest_response = get_transient('nebula_webpagetest_response');
 				$wpt_status = 'Getting stored test results from WebPageTest.org';
@@ -936,8 +937,6 @@ if ( !trait_exists('Dashboard') ){
 					}
 				}
 
-				echo '<li id="performance-testing-status"><i class="status-icon far fa-fw fa-comment-alt"></i> <span class="label">Status:</span> <span class="datapoint">' . $wpt_status . '</span></li>';
-
 				if ( !empty($webpagetest_response) && !is_wp_error($webpagetest_response) ){
 					$wpt_test_json_url = $webpagetest_response->data->jsonUrl;
 					if ( !empty($wpt_test_json_url) ){
@@ -945,6 +944,8 @@ if ( !trait_exists('Dashboard') ){
 					}
 				}
 			}
+
+			echo '<li id="performance-testing-status"><i class="status-icon far fa-fw fa-comment-alt"></i> <span class="label">Status:</span> <span class="datapoint">' . $wpt_status . '</span></li>';
 
 			//Prep for an iframe timer if needed
 			$home_url = ( is_ssl() )? str_replace('http://', 'https://', home_url('/')) : home_url('/'); //Sometimes the home_url() still has http even when is_ssl() true
@@ -967,7 +968,11 @@ if ( !trait_exists('Dashboard') ){
 				echo '<li id="performance-requests"><i class="fas fa-fw fa-list-ol"></i> Total Requests: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
 			}
 
-			echo '<li id="performance-rating" class="hidden"><i class="fas fa-fw fa-award"></i> Rating: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
+			//Rating (SLOW, AVERAGE, FAST)
+			if ( $this->is_dev() ){
+				echo '<li id="performance-rating" class="hidden"><i class="fas fa-fw fa-award"></i> Rating: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
+			}
+
 			echo '</ul>';
 		}
 

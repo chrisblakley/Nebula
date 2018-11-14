@@ -502,7 +502,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[performance_metabox]" id="performance_metabox" value="1" <?php checked('1', !empty($nebula_options['performance_metabox'])); ?> /><label for="performance_metabox">Performance Metabox</label>
-					<p class="nebula-help-text short-help form-text text-muted">Test load times from the WordPress Dashboard. (Default: <?php echo $this->user_friendly_default('performance_metabox'); ?>)</p>
+					<p class="nebula-help-text short-help form-text text-muted">Test load times from the WordPress Dashboard <?php echo ( $this->is_dev() )? '(Note: This always appears for developers even if disabled!)' : ''; ?>. (Default: <?php echo $this->user_friendly_default('performance_metabox'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Tests are prioritized from WebPageTest.org (using an <a href="themes.php?page=nebula_options&tab=apis&option=webpagetest_api" target="_blank">API key</a>), then Google PageSpeed Insights, and finally a simple iframe timer.</p>
 					<p class="option-keywords"></p>
 				</div>

@@ -1,3 +1,4 @@
+window.performance.mark('nebula_inside_nebulajs');
 jQuery.noConflict();
 
 /*==========================
@@ -5,6 +6,8 @@ jQuery.noConflict();
  ===========================*/
 
 jQuery(function(){
+	window.performance.mark('nebula_dom_ready_start');
+
 	//Utilities
 	cacheSelectors();
 	nebulaHelpers();
@@ -39,6 +42,9 @@ jQuery(function(){
 	if ( isGoogleAnalyticsReady() ){
 		initEventTracking();
 	}
+
+	window.performance.mark('nebula_dom_ready_end');
+	window.performance.measure('nebula_dom_ready_functions', 'nebula_dom_ready_start', 'nebula_dom_ready_end');
 }); //End Document Ready
 
 
@@ -47,6 +53,8 @@ jQuery(function(){
  ===========================*/
 
 jQuery(window).on('load', function(){
+	window.performance.mark('nebula_window_load_start');
+
 	cacheSelectors();
 
 	if ( typeof nebula.snapchatPageShown === 'undefined' || nebula.snapchatPageShown === true ){ //Don't automatically begin event tracking for Snapchat preloading
@@ -87,6 +95,10 @@ jQuery(window).on('load', function(){
 	jQuery(window).on('offline online', function(){
 		networkAvailable();
 	});
+
+	window.performance.mark('nebula_window_load_end');
+	window.performance.measure('nebula_window_load_functions', 'nebula_window_load_start', 'nebula_window_load_end');
+	window.performance.measure('nebula_fully_loaded', 'navigationStart', 'nebula_window_load_end');
 }); //End Window Load
 
 
@@ -141,10 +153,14 @@ function cacheSelectors(){
 //Nebula Service Worker
 function registerServiceWorker(){
 	if ( nebula.site.options.sw && 'serviceWorker' in navigator ){ //Firefox 44+, Chrome 45+, Edge 17+, Safari 12+
+		window.performance.mark('nebula_sw_registration_start');
 		//navigator.serviceWorker.register(nebula.site.sw_url, {cache: 'max-age=0'}).then(function(registration){
 		navigator.serviceWorker.register(nebula.site.sw_url).then(function(registration){
 			//console.log('ServiceWorker registration successful with scope: ', registration.scope);
 			//console.debug(registration);
+
+			window.performance.mark('nebula_sw_registration_end');
+			window.performance.measure('nebula_sw_registration', 'nebula_sw_registration_start', 'nebula_sw_registration_end');
 
 			//Unregister the ServiceWorker on ?debug
 			if ( nebula.dom.html.hasClass('debug') ){
@@ -893,6 +909,7 @@ function eventTracking(){
 
 	//Detect Adblock
 	if ( nebula.user.client.bot === false && nebula.site.options.adblock_detect ){
+		window.performance.mark('nebula_detect_adblock_start');
 		jQuery.ajax({
 			type: 'GET',
 			url: nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js',
@@ -909,6 +926,9 @@ function eventTracking(){
 				ga('send', 'event', 'Ad Blocker', 'Blocked', 'This user is using ad blocking software.', {'nonInteraction': true}); //Uses an event because it is asynchronous!
 				nebula.session.flags.adblock = true;
 			}
+		}).always(function(){
+			window.performance.mark('nebula_detect_adblock_end');
+			window.performance.measure('nebula_detect_adblock', 'nebula_detect_adblock_start', 'nebula_detect_adblock_end');
 		});
 	}
 
@@ -3785,6 +3805,7 @@ function nebulaYoutubeTracking(){
 }
 
 function onYouTubeIframeAPIReady(e){
+	window.performance.mark('nebula_loading_youtube_videos_start');
 	jQuery('iframe[src*="youtube"]').each(function(i, element){
 		id = jQuery(this).attr('id');
 		if ( !id ){
@@ -3806,6 +3827,8 @@ function onYouTubeIframeAPIReady(e){
 			});
 		}
 	});
+	window.performance.mark('nebula_loading_youtube_videos_end');
+	window.performance.measure('nebula_loading_youtube_videos', 'nebula_loading_youtube_videos_start', 'nebula_loading_youtube_videos_end');
 
 	pauseFlag = false;
 }

@@ -242,7 +242,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Set Server Timing header
 		public function server_timing_header(){
-			if ( $this->is_dev() || isset($_GET['timings']) ){ //Only output server timings for developers or if timings query string present
+			if ( $this->is_dev() || isset($_GET['timings']) ){ //Only output server timings for developers, or if timings query string is present
 				$this->finalize_timings();
 				$server_timing_header_string = 'Server-Timing: ';
 
