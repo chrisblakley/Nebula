@@ -945,7 +945,7 @@ if ( !trait_exists('Dashboard') ){
 				}
 			}
 
-			echo '<li id="performance-testing-status"><i class="status-icon far fa-fw fa-comment-alt"></i> <span class="label">Status:</span> <span class="datapoint">' . $wpt_status . '</span></li>';
+			echo '<li id="performance-testing-status"><i class="status-icon far fa-fw fa-comment-alt"></i> <span class="label">Status:</span> <small><span class="datapoint">' . $wpt_status . '</span></small></li>';
 
 			//Prep for an iframe timer if needed
 			$home_url = ( is_ssl() )? str_replace('http://', 'https://', home_url('/')) : home_url('/'); //Sometimes the home_url() still has http even when is_ssl() true
@@ -960,13 +960,11 @@ if ( !trait_exists('Dashboard') ){
 			//Fully Load Time
 			echo '<li id="performance-fullyloaded"><i class="fas fa-fw fa-clock"></i> Fully Loaded: <a class="speedinsight" href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" rel="noopener" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong></a> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
 
-			if ( $this->get_option('webpagetest_api') ){
-				//File Size Footprint
-				echo '<li id="performance-footprint"><i class="fas fa-fw fa-shoe-prints"></i> Footprint: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
+			//File Size Footprint
+			echo '<li id="performance-footprint" class="hidden"><i class="fas fa-fw fa-shoe-prints"></i> Footprint: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
 
-				//Total Requests
-				echo '<li id="performance-requests"><i class="fas fa-fw fa-list-ol"></i> Total Requests: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
-			}
+			//Total Requests
+			echo '<li id="performance-requests" class="hidden"><i class="fas fa-fw fa-list-ol"></i> Total Requests: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
 
 			//Rating (SLOW, AVERAGE, FAST)
 			if ( $this->is_dev() ){
