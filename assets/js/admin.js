@@ -369,10 +369,6 @@ function runIframeSpeedTest(){
 		var iframeDomReady = Math.round(iframe.contentWindow.performance.timing.domContentLoadedEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until DOM ready
 		var iframeWindowLoaded = Math.round(iframe.contentWindow.performance.timing.loadEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until window load
 
-
-		performanceDatapoint(jQuery("#performance-ttfb"), iframeResponseEnd/1000 + " seconds");
-
-
 		if ( jQuery("#performance-ttfb .datapoint").length ){
 			jQuery("#performance-ttfb .datapoint").html(iframeResponseEnd/1000 + " seconds").attr("title", "via iframe timing"); //Server Response Time
 			performanceTimingWarning(jQuery("#performance-ttfb"), iframeResponseEnd, 500, 1000);
