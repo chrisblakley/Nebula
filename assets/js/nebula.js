@@ -767,6 +767,31 @@ function eventTracking(){
 		nv('identify', {phone_contacted: phoneNumber});
 	});
 
+	//Utility Navigation Menu
+	nebula.dom.document.on('mousedown', '#utility-nav ul.menu a', function(e){
+		ga('send', 'event', 'Navigation Menu', 'Utility Menu', jQuery.trim(jQuery(this).text()));
+	});
+
+	//Primary Navigation Menu
+	nebula.dom.document.on('mousedown', '#primary-nav ul.menu a', function(e){
+		ga('send', 'event', 'Navigation Menu', 'Primary Menu', jQuery.trim(jQuery(this).text()));
+	});
+
+	//Mobile Navigation Menu
+	nebula.dom.document.on('mousedown', '#mobilenav ul.menu a.mm-listitem__text', function(e){
+		ga('send', 'event', 'Navigation Menu', 'Mobile Menu', jQuery.trim(jQuery(this).text()));
+	});
+
+	//Sidebar Navigation Menu
+	nebula.dom.document.on('mousedown', '#sidebar-section ul.menu a', function(e){
+		ga('send', 'event', 'Navigation Menu', 'Sidebar Menu', jQuery.trim(jQuery(this).text()));
+	});
+
+	//Footer Navigation Menu
+	nebula.dom.document.on('mousedown', '#powerfooter ul.menu a', function(e){
+		ga('send', 'event', 'Navigation Menu', 'Footer Menu', jQuery.trim(jQuery(this).text()));
+	});
+
 	//Non-Linked Click Attempts
 	jQuery('img').on('click', function(){
 		if ( !jQuery(this).parents('a').length ){

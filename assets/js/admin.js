@@ -313,6 +313,8 @@ function checkPageSpeed(){
 //Check on the WebPageTest API results (initiated on the server-side)
 function checkWPTresults(){
 	if ( typeof wptTestJSONURL !== 'undefined' ){
+		jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("Testing via WebPageTest.org");
+
 		jQuery.ajax({
 			type: "GET",
 			url: wptTestJSONURL,
@@ -358,6 +360,8 @@ function checkWPTresults(){
 
 //Load the home page in an iframe and time the DOM and Window load times
 function runIframeSpeedTest(){
+	jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("Testing via iframe timing");
+
 	var iframe = document.createElement("iframe");
 	iframe.style.width = "1200px";
 	iframe.style.height = "0px";
