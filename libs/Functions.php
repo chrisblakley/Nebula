@@ -106,6 +106,7 @@ trait Functions {
 		if ( is_user_logged_in() ){
 			add_filter('wpcf7_verify_nonce', '__return_true'); //Always verify CF7 nonce for logged-in users (this allows for it to detect user data)
 		}
+		add_filter('wpcf7_form_elements', array($this, 'cf7_autocomplete_attribute'));
 		add_filter('wpcf7_special_mail_tags', array($this, 'cf7_custom_special_mail_tags'), 10, 3);
 	}
 
@@ -3161,6 +3162,40 @@ trait Functions {
 		}
 
 		return $html;
+	}
+
+	//Add autocomplete attributes to CF7 form fields
+	public function cf7_autocomplete_attribute($content){
+		$content = $this->autocomplete_find_replace($content, array('name', 'full-name', 'your-name'), 'name');
+		$content = $this->autocomplete_find_replace($content, 'first-name', 'given-name');
+		$content = $this->autocomplete_find_replace($content, 'last-name', 'family-name');
+		$content = $this->autocomplete_find_replace($content, array('email', 'your-email'), 'email');
+		$content = $this->autocomplete_find_replace($content, 'phone', 'tel');
+		$content = $this->autocomplete_find_replace($content, 'company', 'organization');
+		$content = $this->autocomplete_find_replace($content, array('address', 'street'), 'address-line1');
+		$content = $this->autocomplete_find_replace($content, 'city', 'address-level2');
+		$content = $this->autocomplete_find_replace($content, 'state', 'address-level1');
+		$content = $this->autocomplete_find_replace($content, array('zip', 'zipcode', 'postalcode'), 'postal-code');
+
+		return $content;
+	}
+
+	//Find field names and add the autocomplete attribute when found
+	public function autocomplete_find_replace($content, $finds=array(), $autocomplete_value){
+		if ( !empty($content) && !empty($finds) && !empty($autocomplete_value) ){
+			if ( is_string($finds) ){
+				$finds = array($finds); //Convert the string to an array
+			}
+
+			foreach ( $finds as $find ){
+				$field_name = strpos($content, 'name="' . $find . '"');
+				if ( !empty($field_name) ){
+					$content = substr_replace($content, ' autocomplete="' . $autocomplete_value . '" ', $field_name, 0);
+				}
+			}
+		}
+
+		return $content;
 	}
 
 	//Add custom special mail tags to Contact Form 7

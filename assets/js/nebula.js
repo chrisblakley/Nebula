@@ -782,6 +782,11 @@ function eventTracking(){
 		ga('send', 'event', 'Navigation Menu', 'Mobile Menu', jQuery.trim(jQuery(this).text()));
 	});
 
+	//Breadcrumb Navigation
+	nebula.dom.document.on('mousedown', 'ol.nebula-breadcrumbs a', function(e){
+		ga('send', 'event', 'Navigation Menu', 'Breadcrumbs', jQuery.trim(jQuery(this).text()));
+	});
+
 	//Sidebar Navigation Menu
 	nebula.dom.document.on('mousedown', '#sidebar-section ul.menu a', function(e){
 		ga('send', 'event', 'Navigation Menu', 'Sidebar Menu', jQuery.trim(jQuery(this).text()));

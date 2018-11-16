@@ -257,6 +257,7 @@ function developerMetaboxes(){
 function checkPageSpeed(){
 	//If WebPageTest JSON URL exists, use it!
 	if ( typeof wptTestJSONURL !== 'undefined' ){
+		jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("Testing via WebPageTest.org");
 		checkWPTresults();
 	} else if ( typeof fetch === 'function' ){ //MS Edge+ (No IE11)
 		jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("Testing via Google PageSpeed Insights");
@@ -310,11 +311,9 @@ function checkPageSpeed(){
 	}
 }
 
-//Check on the WebPageTest API results (initiated on the server-side)
+//Check on the WebPageTest API results (initiated on the server-side then called repetatively by JS)
 function checkWPTresults(){
 	if ( typeof wptTestJSONURL !== 'undefined' ){
-		jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("Testing via WebPageTest.org");
-
 		jQuery.ajax({
 			type: "GET",
 			url: wptTestJSONURL,
