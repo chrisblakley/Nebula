@@ -133,6 +133,14 @@ if ( !trait_exists('Security') ){
 			}
 		}
 
+		//Disable author archives to prevent ?author=1 from showing usernames.
+		public function redirect_author_template(){
+			if ( basename($this->current_theme_template) == 'author.php' && !nebula()->get_option('author_bios') ){
+				wp_redirect(apply_filters('nebula_no_author_redirect', home_url('/') . '?s=about'));
+				exit;
+			}
+		}
+
 		//Track Notable Bots
 		function track_notable_bots(){
 			$override = apply_filters('pre_track_notable_bots', null);

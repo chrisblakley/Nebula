@@ -1,5 +1,5 @@
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-29184'; //Friday, November 16, 2018 9:48:45 AM
+var CACHE_NAME = 'nebula-nebula-child-17529'; //Monday, November 19, 2018 3:18:10 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
@@ -116,7 +116,7 @@ self.addEventListener('activate', function(event){
 
 //Fetch
 self.addEventListener('fetch', function(event){
-	//console.log('fetch event!');
+	console.log('********** fetch event!');
 
 	var thisRequest = event.request; //Do not alter the event. //Breaks Font Awesome fonts (sometimes)
 	//var thisRequest = new Request(event.request.url, {mode: 'cors'}); //Allow cross-origin requests //Breaks Google Analytics and Font Awesome fonts
@@ -130,7 +130,7 @@ self.addEventListener('fetch', function(event){
 		// Force network retrieval for certain requests
 		// ******************
 
-		//console.log('[SW] Forcing network retrieval by JUST IGNORING IT for', thisRequest.url);
+		console.log('[SW] Forcing network retrieval by JUST IGNORING IT for', thisRequest.url);
 		return false; //This isn't really by the book... I'm not in love with this.
 
     	//console.log('[SW] Forcing network retrieval (' + thisRequest.mode + ') for', thisRequest.url);
@@ -161,7 +161,7 @@ self.addEventListener('fetch', function(event){
 		event.respondWith(
 			caches.open(CACHE_NAME).then(function(cache){
 
-				//console.log('[SW] Cache match:', thisRequest, cache.match(thisRequest));
+				console.log('[SW] Cache match:', thisRequest, cache.match(thisRequest));
 
 				return cache.match(thisRequest).then(function(response){
 					if ( response ){
@@ -169,7 +169,7 @@ self.addEventListener('fetch', function(event){
 						// The resource exists in the cache
 						// ******************
 
-						//console.log('[SW] Responding from the cache for', thisRequest.url);
+						console.log('[SW] Responding from the cache for', thisRequest.url);
 
 						//Stale-while-revalidate (respond from cache then update cache from the network afterwords)
 						var fetchPromise = fetch(thisRequest).then(function(networkResponse){
@@ -188,12 +188,16 @@ self.addEventListener('fetch', function(event){
 						// The resource does not exist in the cache, need to request it from the network
 						// ******************
 
-						//console.log('[SW] This resource does not exist in the cache', thisRequest, cache, thisRequest.url);
+						console.log('[SW] This resource does not exist in the cache', thisRequest, cache, thisRequest.url);
 						//console.log('**************** [SW] So we are requesting it now to try to place it in the cache...', thisRequest);
 
 						return fetch(thisRequest).then(function(networkResponse){
-							//console.log('[SW] Got it from the network. Now putting it in the cache.', thisRequest.url);
+							console.log('[SW] Got it from the network. Now putting it in the cache.', thisRequest.url);
 							cache.put(thisRequest, networkResponse.clone()); //Respond from the network and then update the cache for next time.
+
+							console.log('cache after put:', cache);
+							console.log('***********************');
+
 							return networkResponse;
 						}).catch(function(){
 							// ******************
@@ -240,7 +244,7 @@ function needNetworkRetrieval(request){
 		return true; //Yes, need network retrieval
 	}
 
-	//Force network retrieval for HTML files older than 20 hours (this is to maintain fresh nonces) yolo
+	//Force network retrieval for HTML files older than 20 hours (this is to maintain fresh nonces)
 		//if file does not have an extension (or ends in HTML or PHP) and is older than 20 hours return true
 
 	//console.log('[SW] This request is allowed to serve from the cache: ' + request.url);

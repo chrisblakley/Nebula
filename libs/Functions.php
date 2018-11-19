@@ -689,6 +689,12 @@ trait Functions {
 		}
 
 		$id = intval($img); //Can now use the ID
+
+		//If and ID was not passed, immediately return it (in case it is already an image URL)
+		if ( $id === 0 || ($id === 1 && $img != 1) ){
+			return $img;
+		}
+
 		$size = apply_filters('nebula_thumbnail_src_size', $size, $id);
 
 		//If an attachment ID (or thumbnail ID) was passed
@@ -1986,14 +1992,6 @@ trait Functions {
 		$this->timer($timer_name, 'end');
 	}
 
-	//Disable author archives to prevent ?author=1 from showing usernames.
-	public function redirect_author_template(){
-		if ( basename($this->current_theme_template) == 'author.php' && !nebula()->get_option('author_bios') ){
-			wp_redirect(apply_filters('nebula_no_author_redirect', home_url('/') . '?s=about'));
-			exit;
-		}
-	}
-
 	//Check for single category templates with the filename single-cat-slug.php or single-cat-id.php
 	public function single_category_template($single_template){
 		global $wp_query, $post;
@@ -3166,12 +3164,12 @@ trait Functions {
 
 	//Add autocomplete attributes to CF7 form fields
 	public function cf7_autocomplete_attribute($content){
-		$content = $this->autocomplete_find_replace($content, array('name', 'full-name', 'your-name'), 'name');
-		$content = $this->autocomplete_find_replace($content, 'first-name', 'given-name');
-		$content = $this->autocomplete_find_replace($content, 'last-name', 'family-name');
+		$content = $this->autocomplete_find_replace($content, array('name', 'full-name', 'fullname', 'your-name'), 'name');
+		$content = $this->autocomplete_find_replace($content, array('first-name', 'firstname'), 'given-name');
+		$content = $this->autocomplete_find_replace($content, array('last-name', 'lastname'), 'family-name');
 		$content = $this->autocomplete_find_replace($content, array('email', 'your-email'), 'email');
 		$content = $this->autocomplete_find_replace($content, 'phone', 'tel');
-		$content = $this->autocomplete_find_replace($content, 'company', 'organization');
+		$content = $this->autocomplete_find_replace($content, array('company', 'company-name', 'companyname'), 'organization');
 		$content = $this->autocomplete_find_replace($content, array('address', 'street'), 'address-line1');
 		$content = $this->autocomplete_find_replace($content, 'city', 'address-level2');
 		$content = $this->autocomplete_find_replace($content, 'state', 'address-level1');
@@ -3188,9 +3186,9 @@ trait Functions {
 			}
 
 			foreach ( $finds as $find ){
-				$field_name = strpos($content, 'name="' . $find . '"');
-				if ( !empty($field_name) ){
-					$content = substr_replace($content, ' autocomplete="' . $autocomplete_value . '" ', $field_name, 0);
+				$field_name_pos = strpos(strtolower($content), 'name="' . strtolower($find) . '"');
+				if ( !empty($field_name_pos) ){
+					$content = substr_replace($content, ' autocomplete="' . $autocomplete_value . '" ', $field_name_pos, 0);
 				}
 			}
 		}

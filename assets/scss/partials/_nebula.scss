@@ -2,6 +2,14 @@
 // Nebula-specific Feature Styles
 // ===========================
 
+//Service Worker Install Button
+.nebula-sw-install-button {
+	&.inactive {display: none; visibility: hidden;} //SW not supported or not yet available for install
+	&.ready {} //Awaiting user click
+	&.prompted {opacity: 0.4;} //Awaiting accept/dismiss of Chrome install prompt
+	&.success {display: none; visibility: hidden;} //Successfully installed
+}
+
 //Infinite Load
 .infinite-start-note {margin: 30px 0;
 	a {font-size: rem(18px);}
