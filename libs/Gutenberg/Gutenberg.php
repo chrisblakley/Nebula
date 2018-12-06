@@ -6,14 +6,12 @@ if ( !trait_exists('Gutenberg') ){
 	trait Gutenberg {
 		public function hooks(){
 			if ( function_exists('register_block_type') ){ //There may be a better way to check Gutenberg support
-				add_action('init', array($this, 'gutenberg_hello_world_block'));
-				add_action('init', array($this, 'gutenberg_style_test_block'));
-				add_action('init', array($this, 'gutenberg_latest_posts_block'));
+				//add_action('init', array($this, 'gutenberg_hello_world_block'));
+				//add_action('init', array($this, 'gutenberg_style_test_block'));
+				//add_action('init', array($this, 'gutenberg_latest_posts_block'));
 
 
 				add_action('init', array($this, 'youtube_gutenberg_block'));
-
-
 			}
 		}
 

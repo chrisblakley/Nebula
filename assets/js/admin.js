@@ -299,7 +299,7 @@ function checkPageSpeed(){
 					}
 				}
 
-				jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("via Google PageSpeed Insights on " + pagespeedCompletedDate).parent().find('.label').addClass('hidden').siblings('.status-icon').removeClass('fa-comment-alt').addClass('fa-calendar-check');
+				jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("via Google PageSpeed Insights on " + pagespeedCompletedDate).closest('li').find('.label').addClass('hidden').siblings('.status-icon').removeClass('fa-comment-alt').addClass('fa-calendar-check');
 			} else { //If the fetch data is not expected, run iframe test instead...
 				runIframeSpeedTest();
 			}
@@ -343,7 +343,7 @@ function checkWPTresults(){
 					jQuery("#performance-requests").removeClass('hidden').find(".datapoint").html(totalRequests).attr("title", "via WebPageTest.org on " + wptCompletedDate);
 					performanceTimingWarning(jQuery("#performance-requests"), totalRequests, 80, 120);
 
-					jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("via WebPageTest.org on " + wptCompletedDate).parent().find('.label').addClass('hidden').siblings('.status-icon').removeClass('fa-comment-alt').addClass('fa-calendar-check');
+					jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("via WebPageTest.org on " + wptCompletedDate).closest('li').find('.label').addClass('hidden').siblings('.status-icon').removeClass('fa-comment-alt').addClass('fa-calendar-check');
 				} else if ( response.statusCode < 200 ){ //Testing still in progress
 					jQuery("#performance-testing-status .datapoint").text("(" + response.statusText + ")");
 					var pollTime = ( response.statusCode === 100 )? 3000 : 8000; //Poll slowly when behind other tests and quickly once the test has started

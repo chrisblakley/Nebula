@@ -20,6 +20,8 @@ if ( !trait_exists('Scripts') ){
 				add_filter('script_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
 			}
 
+			add_action('login_head', array($this, 'nebula_login_logo'));
+
 			add_action('wp_head', array($this, 'output_nebula_data'));
 			add_action('admin_head', array($this, 'output_nebula_data'));
 		}
@@ -162,6 +164,7 @@ if ( !trait_exists('Scripts') ){
 						'youtube_url' => $this->get_option('youtube_url'),
 						'instagram_url' => $this->get_option('instagram_url'),
 						'pinterest_url' => $this->get_option('pinterest_url'),
+						'ga_server_side_fallback' => $this->get_option('ga_server_side_fallback'),
 						'adblock_detect' => $this->get_option('adblock_detect'),
 						'manage_options' => current_user_can('manage_options'),
 						'debug' => $this->is_debug(),
@@ -307,19 +310,6 @@ if ( !trait_exists('Scripts') ){
 			//Stylesheets
 			wp_enqueue_style('nebula-login');
 
-			//Login logo replacement
-			if ( get_theme_mod('custom_logo') ){ //If the Customizer logo exists
-				$logo = nebula()->get_thumbnail_src(get_theme_mod('custom_logo'));
-			} elseif ( file_exists(get_stylesheet_directory() . '/assets/img/logo.svg') ){ //If SVG logo exists in child theme
-				$logo = get_stylesheet_directory_uri() . '/assets/img/logo.svg';
-			} elseif ( file_exists(get_stylesheet_directory() . '/assets/img/logo.png') ){ //If PNG logo exists in child theme
-				$logo = get_stylesheet_directory_uri() . '/assets/img/logo.png';
-			} else {
-				$logo = get_theme_file_uri('/assets/img/logo.svg'); //Otherwise use parent directory logo
-			}
-
-			echo '<style>div#login h1 a {background: url(' . $logo . ') center center no-repeat; width: auto; background-size: contain;}</style>';
-
 			//Scripts
 			wp_enqueue_script('jquery-core');
 			wp_enqueue_script('nebula-login');
@@ -351,6 +341,21 @@ if ( !trait_exists('Scripts') ){
 				wp_enqueue_script('thickbox');
 				wp_enqueue_script('media-upload');
 			}
+		}
+
+		public function nebula_login_logo(){
+			//Login logo replacement
+			if ( get_theme_mod('custom_logo') ){ //If the Customizer logo exists
+				$logo = nebula()->get_thumbnail_src(get_theme_mod('custom_logo'));
+			} elseif ( file_exists(get_stylesheet_directory() . '/assets/img/logo.svg') ){ //If SVG logo exists in child theme
+				$logo = get_stylesheet_directory_uri() . '/assets/img/logo.svg';
+			} elseif ( file_exists(get_stylesheet_directory() . '/assets/img/logo.png') ){ //If PNG logo exists in child theme
+				$logo = get_stylesheet_directory_uri() . '/assets/img/logo.png';
+			} else {
+				$logo = get_theme_file_uri('/assets/img/logo.svg'); //Otherwise use parent directory logo
+			}
+
+			echo '<style>div#login h1 a {background: url(' . $logo . ') center center no-repeat; width: auto; background-size: contain;}</style>';
 		}
 
 		//Add $dep (script handle) to the array of dependencies for $handle

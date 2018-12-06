@@ -210,7 +210,7 @@ function registerServiceWorker(){
 		});
 
 		//Trigger the SW install prompt and handle user choice
-		jQuery('.nebula-sw-install-button').on('click', function(){
+		nebula.dom.document.on('click', '.nebula-sw-install-button', function(){
 			if ( typeof installPromptEvent !== 'undefined' ){
 				jQuery('.nebula-sw-install-button').removeClass('ready').addClass('prompted');
 
@@ -602,54 +602,56 @@ function initEventTracking(){
 			});
 		}
 
-		if ( has(nebula, 'analytics.isReady') && !nebula.analytics.isReady ){
-			nebula.dom.document.trigger('nebula_ga_blocked');
+		if ( (has(nebula, 'site.options.adblock_detect') && nebula.site.options.adblock_detect) && has(nebula, 'site.options.ga_server_side_fallback') && nebula.site.options.ga_server_side_fallback ){ //If tracking adblock detection
+			if ( has(nebula, 'analytics.isReady') && !nebula.analytics.isReady ){ //if isReady object key exists and is not set to true then GA is blocked
+				nebula.dom.document.trigger('nebula_ga_blocked');
 
-			//Send Pageview
-			jQuery.ajax({
-				type: "POST",
-				url: nebula.site.ajax.url,
-				data: {
-					nonce: nebula.site.ajax.nonce,
-					action: 'nebula_ga_ajax',
-					fields: {
-						hitType: 'pageview',
-						location: window.location.href,
-						title: document.title,
-						ua: navigator.userAgent
-					},
-				},
-				timeout: 60000
-			});
-
-			//Handle event tracking
-			function ga(command, hitType, category, action, label, value, fieldsObject){
-				if ( command === 'send' && hitType === 'event' ){
-					var ni = 0;
-					if ( fieldsObject && fieldsObject.nonInteraction === 1 ){
-						ni = 1;
-					}
-
-					jQuery.ajax({
-						type: "POST",
-						url: nebula.site.ajax.url,
-						data: {
-							nonce: nebula.site.ajax.nonce,
-							action: 'nebula_ga_ajax',
-							fields: {
-								hitType: 'event',
-								category: category,
-								action: action,
-								label: label,
-								value: value,
-								ni: ni,
-								location: window.location.href,
-								title: document.title,
-								ua: navigator.userAgent
-							},
+				//Send Pageview
+				jQuery.ajax({
+					type: "POST",
+					url: nebula.site.ajax.url + '?prps=gapv',
+					data: {
+						nonce: nebula.site.ajax.nonce,
+						action: 'nebula_ga_ajax',
+						fields: {
+							hitType: 'pageview',
+							location: window.location.href,
+							title: document.title,
+							ua: navigator.userAgent
 						},
-						timeout: 60000
-					});
+					},
+					timeout: 60000
+				});
+
+				//Handle event tracking
+				function ga(command, hitType, category, action, label, value, fieldsObject){
+					if ( command === 'send' && hitType === 'event' ){
+						var ni = 0;
+						if ( fieldsObject && fieldsObject.nonInteraction === 1 ){
+							ni = 1;
+						}
+
+						jQuery.ajax({
+							type: "POST",
+							url: nebula.site.ajax.url + '?prps=gahit',
+							data: {
+								nonce: nebula.site.ajax.nonce,
+								action: 'nebula_ga_ajax',
+								fields: {
+									hitType: 'event',
+									category: category,
+									action: action,
+									label: label,
+									value: value,
+									ni: ni,
+									location: window.location.href,
+									title: document.title,
+									ua: navigator.userAgent
+								},
+							},
+							timeout: 60000
+						});
+					}
 				}
 			}
 		}
@@ -1280,7 +1282,7 @@ function autocompleteSearch(element, types){
 				jQuery.ajax({
 					dataType: 'json',
 					type: "POST",
-					url: nebula.site.ajax.url,
+					url: nebula.site.ajax.url + '?prps=acs',
 					data: {
 						nonce: nebula.site.ajax.nonce,
 						action: 'nebula_autocomplete_search',
@@ -1490,7 +1492,7 @@ function advancedSearchPrep(startingAt, waitingText){
 			advancedSearchIndicator.html('<i class="fas fa-fw fa-spin fa-spinner"></i> Loading posts...');
 			jQuery.ajax({
 				type: "POST",
-				url: nebula.site.ajax.url,
+				url: nebula.site.ajax.url + '?prps=ads',
 				data: {
 					nonce: nebula.site.ajax.nonce,
 					action: 'nebula_advanced_search',

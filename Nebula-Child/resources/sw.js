@@ -1,5 +1,5 @@
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-17529'; //Monday, November 19, 2018 3:18:10 PM
+var CACHE_NAME = 'nebula-nebula-child-92228'; //Wednesday, December 5, 2018 9:50:54 AM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
@@ -16,34 +16,6 @@ var CACHE_FILES = [
 	HOME_URL,
 	START_URL,
 ];
-
-
-
-
-
-/*
-console.log('(A) about to fetch via sw');
-fetch('https://gearside.com/nebula/get-started/checklists/').then(function(response) {
-	console.log('(A) we got it!', response);
-}).then(function(returnedValue) {
-	console.log('(A) returning the value!', returnedValue);
-}).catch(function(err) {
-	console.log('(A) fetch error:', err);
-});
-
-console.log('(B) about to fetch via sw');
-fetch('https://gearside.com/nebula/').then(function(response) {
-	console.log('(B) we got it!', response);
-}).then(function(returnedValue) {
-	console.log('(B) returning the value!', returnedValue);
-}).catch(function(err) {
-	console.log('(B) fetch error:', err);
-});
-*/
-
-
-
-
 
 //Install
 self.addEventListener('install', function(event){
@@ -84,31 +56,6 @@ self.addEventListener('activate', function(event){
 		}).then(function(){
 			//console.log('[SW] Claiming clients (should be available to all pages now)');
 			self.clients.claim(); //Become available to all pages.
-
-
-
-
-
-			//console.log('######### About to manually fetch!');
-
-			//https://hey //errors
-			//https://www.google.com //works with mode: no-cors
-			//https://gearside.com/nebula/ //errors event with mode: no-cors
-/*
-			fetch('https://gearside.com/nebula/', {
-				//'mode': 'no-cors'
-				//'Access-Control-Allow-Origin': '*',
-				//'Content-Security-Policy': 'upgrade-insecure-requests'
-			}).then(function(response){
-				//console.log('Fetch was successful!', response);
-			}).catch(function(event){
-				//console.log('Fetch failed as if we were offline... ', event, event.response);
-			});
-*/
-
-
-
-
 		})
 	);
 });
@@ -116,7 +63,7 @@ self.addEventListener('activate', function(event){
 
 //Fetch
 self.addEventListener('fetch', function(event){
-	console.log('********** fetch event!');
+	//console.log('********** fetch event!');
 
 	var thisRequest = event.request; //Do not alter the event. //Breaks Font Awesome fonts (sometimes)
 	//var thisRequest = new Request(event.request.url, {mode: 'cors'}); //Allow cross-origin requests //Breaks Google Analytics and Font Awesome fonts
@@ -130,8 +77,8 @@ self.addEventListener('fetch', function(event){
 		// Force network retrieval for certain requests
 		// ******************
 
-		console.log('[SW] Forcing network retrieval by JUST IGNORING IT for', thisRequest.url);
-		return false; //This isn't really by the book... I'm not in love with this.
+		//console.log('[SW] Forcing network retrieval by JUST IGNORING IT for', thisRequest.url);
+		return false; //This isn't really by the book... I'm not in love with this. Maybe a reject() here intead?
 
     	//console.log('[SW] Forcing network retrieval (' + thisRequest.mode + ') for', thisRequest.url);
     	//console.debug(thisRequest);
@@ -160,20 +107,20 @@ self.addEventListener('fetch', function(event){
 
 		event.respondWith(
 			caches.open(CACHE_NAME).then(function(cache){
+				//console.log('[SW] Looking for this resource in the cache:', thisRequest, cache.match(thisRequest));
 
-				console.log('[SW] Cache match:', thisRequest, cache.match(thisRequest));
-
-				return cache.match(thisRequest).then(function(response){
+				//https://developer.mozilla.org/en-US/docs/Web/API/Cache/match
+				return cache.match(thisRequest, {ignoreVary: true}).then(function(response){
 					if ( response ){
 						// ******************
 						// The resource exists in the cache
 						// ******************
 
-						console.log('[SW] Responding from the cache for', thisRequest.url);
+						//console.log('[SW] Responding from the cache for', thisRequest.url);
 
 						//Stale-while-revalidate (respond from cache then update cache from the network afterwords)
 						var fetchPromise = fetch(thisRequest).then(function(networkResponse){
-							//console.log('[SW] Fetch complete for updating the cache for', thisRequest.url);
+							//console.log('[SW] Fetch complete and updating the cache for', thisRequest.url);
 							cache.put(thisRequest, networkResponse.clone());
 							return networkResponse;
 						}).catch(function(){
@@ -188,16 +135,12 @@ self.addEventListener('fetch', function(event){
 						// The resource does not exist in the cache, need to request it from the network
 						// ******************
 
-						console.log('[SW] This resource does not exist in the cache', thisRequest, cache, thisRequest.url);
+						//console.log('[SW] This resource does not exist in the cache', thisRequest, cache, thisRequest.url);
 						//console.log('**************** [SW] So we are requesting it now to try to place it in the cache...', thisRequest);
 
 						return fetch(thisRequest).then(function(networkResponse){
-							console.log('[SW] Got it from the network. Now putting it in the cache.', thisRequest.url);
+							//console.log('[SW] Got it from the network. Now putting it in the cache.', thisRequest.url);
 							cache.put(thisRequest, networkResponse.clone()); //Respond from the network and then update the cache for next time.
-
-							console.log('cache after put:', cache);
-							console.log('***********************');
-
 							return networkResponse;
 						}).catch(function(){
 							// ******************
@@ -288,6 +231,7 @@ function offlineRequest(request, cache){
 			return cache.match(OFFLINE_IMG);
 		}
 
+		//console.log('[SW] Simply returning...');
 		return;
 	}
 }
