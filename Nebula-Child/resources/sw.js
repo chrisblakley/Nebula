@@ -1,5 +1,5 @@
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-92228'; //Wednesday, December 5, 2018 9:50:54 AM
+var CACHE_NAME = 'nebula-nebula-child-10139'; //Tuesday, December 11, 2018 10:00:14 AM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
@@ -29,7 +29,9 @@ self.addEventListener('install', function(event){
 			//Map the files and cache them each individually. If any file fails, it doesn't affect the rest.
 			Promise.all(CACHE_FILES.map(function(url){
 				//console.log('adding url to the cache:', url);
-				cache.add(url);
+				cache.add(url).catch(function(event){
+					//console.error('[SW] Caught cache.add error', event);
+				}); //This triggers a fetch for the URL which is handled below. Note: Sometimes this fails!
 			}));
 		}).then(function(){
 			//console.log('[SW] Skip waiting on install (activate immediately)');
@@ -63,7 +65,7 @@ self.addEventListener('activate', function(event){
 
 //Fetch
 self.addEventListener('fetch', function(event){
-	//console.log('********** fetch event!');
+	//console.log('[SW] ********** fetch event!', event);
 
 	var thisRequest = event.request; //Do not alter the event. //Breaks Font Awesome fonts (sometimes)
 	//var thisRequest = new Request(event.request.url, {mode: 'cors'}); //Allow cross-origin requests //Breaks Google Analytics and Font Awesome fonts
@@ -85,11 +87,13 @@ self.addEventListener('fetch', function(event){
 
 		//Note: this code is unreachable after the above return statement.
     	event.respondWith(
-    		fetch(thisRequest).catch(function(){
+    		fetch(thisRequest).then(function(response){
+	    		return response;
+    		}).catch(function(){
 	    		//console.log('[SW] Offline for the forced network retrieval', thisRequest.url);
 
 	    		// ******************
-				// The fetch failed. Indicates the network being offline.
+				// The fetch failed. Indicates the network being offline or the resource was unavailable.
 				// ******************
 
 				//console.log('offline 1');
@@ -98,8 +102,6 @@ self.addEventListener('fetch', function(event){
 				});
     		})
     	);
-
-    	return; //How do we "return false" inside of respondWith() when it expects a response object? Should I just fake an empty response object?
 	} else {
 		// ******************
 		// Allow response from the cache (if available)
@@ -123,9 +125,9 @@ self.addEventListener('fetch', function(event){
 							//console.log('[SW] Fetch complete and updating the cache for', thisRequest.url);
 							cache.put(thisRequest, networkResponse.clone());
 							return networkResponse;
-						}).catch(function(){
+						}).catch(function(event){
 							//The fetch failed (maybe we're offline). NBD since we responded with the cached resource anyway. We'll get 'em next time.
-							//console.log('[SW] The fetch failed for stale-while-revalidate. Maybe we are offline or something. whatever.', thisRequest.url);
+							console.log('[SW] The fetch failed for stale-while-revalidate. Maybe we are offline or something. whatever.', thisRequest.url, event);
 							return response;
 						});
 
@@ -142,12 +144,12 @@ self.addEventListener('fetch', function(event){
 							//console.log('[SW] Got it from the network. Now putting it in the cache.', thisRequest.url);
 							cache.put(thisRequest, networkResponse.clone()); //Respond from the network and then update the cache for next time.
 							return networkResponse;
-						}).catch(function(){
+						}).catch(function(event){
 							// ******************
 							// The fetch failed. Indicates the network being offline.
 							// ******************
 
-							//console.log('*********************** Could not retrieve it in the background. We must be offline.');
+							//console.log('*********************** Could not retrieve it in the background. We must be offline.', event);
 							return offlineRequest(thisRequest, cache);
 						});
 					}
@@ -171,7 +173,7 @@ function needNetworkRetrieval(request){
 	//Force network retrieval for any resource that contains the above strings
 	while ( length-- ){
 		if ( request.url.indexOf(substrings[length]) !== -1 ){
-			//console.log('[SW] Need network retreival because matches a string: ' + request.url);
+			console.log('[SW] Need network retreival because matches a string: ' + request.url);
 			return true; //Yes, need network retrieval
 		}
 	}
