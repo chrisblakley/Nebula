@@ -4074,12 +4074,21 @@ function nebulaVimeoTracking(){
 	}
 }
 
-//To trigger events on these videos, use the syntax: nebula.videos['PHG-Overview-Video'].play();
+//To trigger events on these videos, use the syntax: nebula.videos['208432684'].player.play();
 function createVimeoPlayers(){
 	jQuery('iframe[src*="vimeo"]').each(function(i){
-		var id = jQuery(this).attr('id');
+		var id = jQuery(this).attr('data-video-id') || jQuery(this).attr('data-vimeo-id') || jQuery(this).attr('id') || false;
 		if ( !id ){
-			id = jQuery(this).attr('src').split('player_id=').pop().split('&')[0];
+			if ( jQuery(this).attr('src').indexOf('player_id') > -1 ){
+				id = jQuery(this).attr('src').split('player_id=').pop().split('&')[0]; //Use the player_id parameter. Note: This is no longer used by the Vimeo API!
+			} else {
+				id = jQuery(this).attr('src').split('/').pop().split('?')[0];; //Grab the ID off the end of the URL (ignoring query parameters)
+			}
+
+			if ( id && !parseInt(id) ){ //If the ID is a not number try to find a number in the iframe src
+				id = /\d{6,}/g.exec(jQuery(this).attr('src'))[0];
+			}
+
 			jQuery(this).attr('id', id);
 		}
 
@@ -4097,10 +4106,6 @@ function createVimeoPlayers(){
 }
 
 function vimeoReady(data){
-	if ( typeof nebula.videos[data.id] === 'object' ){ //If this video is already being tracked ignore it
-		return false;
-	}
-
 	nebula.videos[data.id].platform = 'vimeo'; //The platform the video is hosted using.
 	nebula.videos[data.id].autoplay = jQuery(nebula.videos[data.id].element).attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the iframe src.
 	nebula.videos[data.id].id = data.id;
@@ -4114,12 +4119,12 @@ function vimeoReady(data){
 	nebula.videos[data.id].pausedYet = false; //If this video has been paused yet by the user.
 
 	//Duration
-	nebula.videos[data.id].getDuration().then(function(duration){
+	nebula.videos[data.id].player.getDuration().then(function(duration){
 		nebula.videos[data.id].duration = duration; //The total duration of the video. Units: Seconds
 	});
 
 	//Title
-	nebula.videos[data.id].getVideoTitle().then(function(title){
+	nebula.videos[data.id].player.getVideoTitle().then(function(title){
 		nebula.videos[data.id].title = title; //The title of the video
 	});
 }
