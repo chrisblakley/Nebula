@@ -9,7 +9,7 @@ var withAPIData = wp.components.withAPIData;
 registerBlockType( 'nebula/latest-post', {
     title: 'Nebula Latest Post',
     icon: 'megaphone',
-    category: 'widgets',
+    category: 'nebula',
 
     edit: withAPIData( function() {
 	    console.log('using api data');

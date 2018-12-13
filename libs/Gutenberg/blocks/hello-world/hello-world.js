@@ -5,7 +5,7 @@ var el = wp.element.createElement,
 registerBlockType( 'nebula/hello-world', {
     title: 'Nebula Hello World',
     icon: 'universal-access-alt',
-    category: 'layout',
+    category: 'nebula',
     attributes: {
         content: {
             type: 'array',

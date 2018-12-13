@@ -6,7 +6,7 @@ const el = wp.element.createElement;
 registerBlockType( 'hiRoy/serverSide', {
     title: __( 'Nebula Server Side Block', 'text-domain' ),
     icon: 'networking',
-    category: 'common',
+    category: 'nebula',
     attributes: {
         images : {
             default: [],

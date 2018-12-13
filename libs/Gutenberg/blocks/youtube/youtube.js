@@ -1,7 +1,7 @@
 wp.blocks.registerBlockType('nebula/youtube', {
 	title: 'Nebula Youtube',
 	icon: 'video-alt3', //https://developer.wordpress.org/resource/dashicons/
-	category: 'widgets',
+	category: 'nebula',
 	description: 'Add a Youtube video with Nebula styles and built-in tracking with the Youtube API.',
 	keywords: ['youtube', 'video', 'nebula'],
 	supportHTML: false, //Remove to allow block to be edited in HTML mode
@@ -44,7 +44,7 @@ wp.blocks.registerBlockType('nebula/youtube', {
 				className: 'youtube embed-responsive-item',
 				width: 400,
 				height: 300,
-				src: '//www.youtube.com/embed/' + props.attributes.videoID + '?wmode=transparent&enablejsapi=1&rel=0', //M77qiSNdnNA
+				src: '//www.youtube.com/embed/' + props.attributes.videoID + '?wmode=transparent&enablejsapi=1&rel=0', //WCtWWgtzC-c
 				frameBorder: 0,
 				allowfullscreen: ""
 			}))
@@ -62,7 +62,7 @@ wp.blocks.registerBlockType('nebula/youtube', {
 			className: 'youtube embed-responsive-item',
 			width: 400,
 			height: 300,
-			src: '//www.youtube.com/embed/' + props.attributes.videoID + '?wmode=transparent&enablejsapi=1&rel=0', //M77qiSNdnNA
+			src: '//www.youtube.com/embed/' + props.attributes.videoID + '?wmode=transparent&enablejsapi=1&rel=0', //WCtWWgtzC-c
 			frameBorder: 0,
 			allowfullscreen: ""
 		}));

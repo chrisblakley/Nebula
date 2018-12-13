@@ -5,7 +5,7 @@ var el = wp.element.createElement,
 registerBlockType( 'nebula/style-test', {
     title: 'Nebula Style Test',
     icon: 'universal-access-alt',
-    category: 'layout',
+    category: 'nebula',
     attributes: {
         content: {
             type: 'array',
