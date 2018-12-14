@@ -92,7 +92,7 @@ jQuery(window).on('load', function(){
 	registerServiceWorker();
 
 	networkAvailable(); //Call it once on load, then listen for changes
-	jQuery(window).on('offline online', function(){
+	nebula.dom.window.on('offline online', function(){
 		networkAvailable();
 	});
 
@@ -317,7 +317,7 @@ function networkAvailable(){
 		localStorage.setItem('network_connection', 'offline');
 	}
 
-	jQuery(document).trigger('nebula_network_change');
+	nebula.dom.document.trigger('nebula_network_change');
 }
 
 //Page Visibility
@@ -493,8 +493,8 @@ function facebookSDK(){
 function socialSharing(){
 	var encloc = encodeURIComponent(window.location.href);
 	var enctitle = encodeURIComponent(document.title);
-	var popupTop = jQuery(window).height()/2-275;
-	var popupLeft = jQuery(window).width()/2-225;
+	var popupTop = nebula.dom.window.height()/2-275;
+	var popupLeft = nebula.dom.window.width()/2-225;
 	var popupAttrs = 'top=' + popupTop + ', left=' + popupLeft + ', toolbar=0, location=0, menubar=0, directories=0, scrollbars=0, chrome=yes, personalbar=0';
 
 	//Facebook
@@ -851,7 +851,7 @@ function eventTracking(){
 		ga('send', 'event', 'Accessibility Links', 'Click', jQuery(this).text());
 	});
 
-	//Video Enter Picture-in-Picture
+	//Video Enter Picture-in-Picture //https://caniuse.com/#feat=picture-in-picture
 	nebula.dom.document.on('enterpictureinpicture', 'video', function(e){
 		ga('send', 'event', 'Videos', 'Enter Picture-in-Picture', e.target.id, {'nonInteraction': true}); //Non-interaction because this may not be triggered by the user.
 	});
@@ -972,7 +972,7 @@ function eventTracking(){
 		}).done(function(){
 			nebula.session.flags.adblock = false;
 		}).fail(function(){
-			jQuery('html').addClass('ad-blocker');
+			nebula.dom.html.addClass('ad-blocker');
 			ga('set', nebula.analytics.dimensions.blocker, 'Ad Blocker');
 
 			if ( nebula.session.flags.adblock != true ){
@@ -1076,7 +1076,7 @@ function scrollDepth(){
 					once(function(){
 						scrollEnd = performance.now()-(scrollBegin+scrollReady);
 						ga('send', 'event', 'Scroll Depth', 'Entire Page', '', Math.round(scrollEnd), {'nonInteraction': true}); //Event value is time to reach end
-						jQuery(window).off('scroll', scrollDepthHandler);
+						nebula.dom.window.off('scroll', scrollDepthHandler);
 					}, 'end scrolling');
 				}
 			}, 100, 'scroll depth');
@@ -2194,7 +2194,7 @@ function nebulaLiveValidator(){
 	});
 
 	//Highlight empty required fields when focusing/hovering on submit button
-	jQuery(document).on('mouseover focus', 'form [type="submit"], form #submit', function(){ //Must be deferred because Nebula replaces CF7 submit inputs with buttons
+	nebula.dom.document.on('mouseover focus', 'form [type="submit"], form #submit', function(){ //Must be deferred because Nebula replaces CF7 submit inputs with buttons
 		var invalidCount = 0;
 
 		jQuery(this).closest('form').find('[required], .wpcf7-validates-as-required').each(function(){
@@ -2209,7 +2209,7 @@ function nebulaLiveValidator(){
 			jQuery('form [type="submit"], form #submit').attr('title', invalidCount + invalidCountText);
 		}
 	});
-	jQuery(document).on('mouseout blur', 'form [type="submit"], form #submit', function(){ //Must be deferred because Nebula replaces CF7 submit inputs with buttons
+	nebula.dom.document.on('mouseout blur', 'form [type="submit"], form #submit', function(){ //Must be deferred because Nebula replaces CF7 submit inputs with buttons
 		jQuery(this).closest('form').find('.nebula-empty-required').removeClass('nebula-empty-required');
 		jQuery('form [type="submit"], form #submit').removeAttr('title');
 	});
@@ -2401,13 +2401,13 @@ function lazyLoadHTML(){
 		jQuery('.lazy-load').removeClass('lazy-load').addClass('lazy-loaded'); //Load background images
 
 		//Stop listening for load triggers
-		jQuery(window).off('scroll', loadLazyElements);
+		nebula.dom.window.off('scroll', loadLazyElements);
 	};
 
 	//Load the rest of the files on scroll (or if the page loads pre-scrolled)
 	nebula.dom.window.on('scroll', loadLazyElements);
 	nebula.dom.window.on('nebula_load', loadLazyElements); //This listener does not get turned off.
-	if ( jQuery(window).scrollTop() > 200 ){
+	if ( nebula.dom.window.scrollTop() > 200 ){
 		loadLazyElements();
 	}
 
@@ -2860,11 +2860,11 @@ function initBootstrapFunctions(){
 		}
 
 		//Allow Bootstrap modals to use Nebula animation transitions
-		jQuery(document).on('show.bs.modal', function(e){
+		nebula.dom.document.on('show.bs.modal', function(e){
 			var anim = jQuery(e.target).attr('data-animation-in') || jQuery(e.target).attr('data-animation');
 			jQuery('#' + e.target.id + ' .modal-dialog').attr('class', 'modal-dialog ' + anim + ' animate'); //Replace classes each time for re-animation.
 		});
-		jQuery(document).on('hide.bs.modal', function(e){
+		nebula.dom.document.on('hide.bs.modal', function(e){
 			var anim = jQuery(e.target).attr('data-animation-out') || '';
 			jQuery('#' + e.target.id + ' .modal-dialog').attr('class', 'modal-dialog ' + anim + ' animate'); //Replace classes each time for re-animation.
 		});

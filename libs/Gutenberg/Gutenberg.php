@@ -5,7 +5,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Gutenberg') ){
 	trait Gutenberg {
 		public function hooks(){
-			if ( function_exists('register_block_type') ){ //There may be a better way to check Gutenberg support
+			if ( function_exists('register_block_type') ){ //There may be a better way to check Gutenberg support. Other frameworks use: defined('GUTENBERG_VERSION')
 				add_filter('block_categories', array($this, 'nebula_block_categories'), 3, 2);
 
 				add_action('init', array($this, 'youtube_gutenberg_block'));
