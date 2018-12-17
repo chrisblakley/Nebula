@@ -2161,6 +2161,53 @@ trait Functions {
 		}
 	}
 
+	//Get the appropriate logo from the themes, plugin, or Customizer
+	public function logo(){
+		//Allow a theme or plugin to handle the logo itself. This assumes it does its own priorities or overrides for everything!
+		$hooked_logo = apply_filters('nebula_logo', false);
+		if ( !empty($hooked_logo) ){
+			return $hooked_logo;
+		}
+
+		$logo = false;
+		$logo_filename = apply_filters('nebula_logo_filename', 'logo'); //Allow themes and plugins to set the logo filename to use. No extension here!
+
+		//Search the parent theme for the logo file (SVG or PNG)
+		if ( file_exists(get_template_directory() . '/assets/img/' . $logo_filename . '.svg') ){
+			$logo = get_template_directory_uri() . '/assets/img/' . $logo_filename . '.svg';
+		} elseif ( file_exists(get_template_directory() . '/assets/img/' . $logo_filename . '.png') ){
+			$logo = get_template_directory_uri() . '/assets/img/' . $logo_filename . '.png';
+		}
+
+		//Search the child theme for the logo file (SVG or PNG)
+		if ( file_exists(get_stylesheet_directory() . '/assets/img/' . $logo_filename . '.svg') ){
+			$logo = get_stylesheet_directory_uri() . '/assets/img/' . $logo_filename . '.svg';
+		} elseif ( file_exists(get_stylesheet_directory() . '/assets/img/' . $logo_filename . '.png') ){
+			$logo = get_stylesheet_directory_uri() . '/assets/img/' . $logo_filename . '.png';
+		}
+
+		//If full color Customizer logo exists
+		if ( get_theme_mod('custom_logo') ){
+			$logo = $this->get_thumbnail_src(get_theme_mod('custom_logo'));
+		}
+
+		//If it is the home page and the one-color logo (home) is requested (checkbox)
+		if ( is_front_page() && get_theme_mod('nebula_hero_single_color_logo') ){
+			if ( get_theme_mod('one_color_logo') ){ //If one-color Customizer logo exists
+				$logo = $this->get_thumbnail_src(get_theme_mod('one_color_logo'));
+			}
+		}
+
+		//If it a sub page and the one-color (sub) logo is requested (checkbox)
+		if ( !is_front_page() && get_theme_mod('nebula_header_single_color_logo') ){
+			if ( get_theme_mod('one_color_logo') ){ //If one-color Customizer logo exists
+				$logo = $this->get_thumbnail_src(get_theme_mod('one_color_logo'));
+			}
+		}
+
+		return $logo;
+	}
+
 	//Print the PHG logo as text with or without hover animation.
 	public function pinckney_hugo_group($options){ $this->pinckneyhugogroup($options); }
 	public function phg($options){ $this->pinckneyhugogroup($options); }

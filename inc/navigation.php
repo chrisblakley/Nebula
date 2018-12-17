@@ -18,18 +18,9 @@
 			<div class="row align-items-center">
 				<div class="col-lg-4 logocon">
 					<a href="<?php echo home_url('/'); ?>" title="<?php bloginfo('name'); ?>">
-						<?php if ( get_theme_mod('custom_logo') || get_theme_mod('nebula_hero_single_color_logo') ): //If the Customizer logo exists ?>
-							<?php
-								$logo = nebula()->get_thumbnail_src(get_theme_mod('custom_logo'));
-								if ( get_theme_mod('one_color_logo') ){ //If the one-color logo exists
-									if ( (is_front_page() && get_theme_mod('nebula_hero_single_color_logo')) || (!is_front_page() && get_theme_mod('nebula_header_single_color_logo')) ){ //If it is the frontpage and the home one-color logo is requested -OR- if it is a subpage and the header one-color logo is requested
-										$logo = get_theme_mod('one_color_logo');
-									}
-								}
-							?>
+						<?php $logo = nebula()->logo(); ?>
+						<?php if ( !empty($logo) ): ?>
 							<img class="svg" src="<?php echo $logo; ?>" alt="<?php bloginfo('name'); ?>"/>
-						<?php elseif ( file_exists(get_stylesheet_directory() . '/assets/img/logo.svg') ): //Use the child theme logo.svg image if it exists ?>
-							<img class="svg" src="<?php echo get_stylesheet_directory_uri() . '/assets/img/logo.svg'; ?>" alt="<?php bloginfo('name'); ?>"/>
 						<?php else: //Otherwise fallback to the Site Title text ?>
 							<?php bloginfo('name'); ?>
 						<?php endif; ?>

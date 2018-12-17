@@ -1,5 +1,5 @@
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-99355'; //Friday, December 14, 2018 3:23:06 PM
+var CACHE_NAME = 'nebula-nebula-child-46418'; //Monday, December 17, 2018 11:00:33 AM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
@@ -127,7 +127,7 @@ self.addEventListener('fetch', function(event){
 							return networkResponse;
 						}).catch(function(event){
 							//The fetch failed (maybe we're offline). NBD since we responded with the cached resource anyway. We'll get 'em next time.
-							console.log('[SW] The fetch failed for stale-while-revalidate. Maybe we are offline or something. whatever.', thisRequest.url, event);
+							//console.log('[SW] The fetch failed for stale-while-revalidate. Maybe we are offline or something. whatever.', thisRequest.url, event);
 							return response;
 						});
 
@@ -173,7 +173,7 @@ function needNetworkRetrieval(request){
 	//Force network retrieval for any resource that contains the above strings
 	while ( length-- ){
 		if ( request.url.indexOf(substrings[length]) !== -1 ){
-			console.log('[SW] Need network retreival because matches a string: ' + request.url);
+			//console.log('[SW] Need network retreival because matches a string: ' + request.url);
 			return true; //Yes, need network retrieval
 		}
 	}

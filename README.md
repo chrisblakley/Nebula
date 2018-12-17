@@ -7,7 +7,7 @@ Nebula is a WordPress theme framework that focuses on enhancing development. The
 Nebula follows [WordPress recommendations](https://wordpress.org/about/requirements/) and does not require any additional installations. To take full advantage of Nebula's features, the following are recommended:
 
 - WordPress Latest
-- PHP 7.0+
+- PHP 7.1+
 - MySQL 5.6+
 - SSL
 
