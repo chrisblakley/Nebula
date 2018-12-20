@@ -221,14 +221,14 @@ if ( !trait_exists('Optimization') ){
 
 		//Start output buffering so headers can be sent later for HTTP2 Server Push
 		public function nebula_http2_ob_start(){
-			if ( !$this->is_admin_page() ){
+			if ( !$this->is_admin_page(true, true) ){ //Exclude admin, login, and Customizer pages
 				ob_start();
 			}
 		}
 
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
 		public function http2_server_push_header($src){
-			if ( !$this->is_admin_page(true) && $this->get_option('service_worker') && file_exists($this->sw_location(false)) ){ //If not in the admin section and if Service Worker is enabled (and file exists)
+			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') && file_exists($this->sw_location(false)) ){ //If not in the admin section (including Customizer and login) and if Service Worker is enabled (and file exists)
 				$filetype = ( strpos($src, '.css') )? 'style' : 'script'; //Determine the resource type
 				if ( strpos($src, $this->url_components('sld')) > 0 ){ //If local file
 					header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel=preload; as=' . $filetype, false); //Send the header for the HTTP2 Server Push (strtok to remove everything after and including "#")

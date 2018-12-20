@@ -204,47 +204,49 @@ if ( !trait_exists('Automation') ){
 			}
 			?>
 			<?php if ( is_child_theme() ): ?>
-				<div id='nebula-activate-success' class='updated'>
+				<div id="nebula-activate-success" class="updated">
 					<p>
 						<strong class="nebula-activated-title">Nebula child theme has been activated.</strong><br />
-						<span class="nebula-activated-description">
-							If menus were created in the parent theme (before initialization), they may need to be <a href="nav-menus.php">re-assigned to their corresponding locations</a>.<br />
-							<strong>Next step:</strong> Configure <a href="themes.php?page=nebula_options">Nebula Options</a>
-						</span>
+						<span class="nebula-activated-description">If menus were created in the parent theme (before initialization), they may need to be <a href="nav-menus.php">re-assigned to their corresponding locations</a>. Next step:</span>
 					</p>
+					<p><a class="button button-primary" href="themes.php?page=nebula_options">Configure Nebula Options</a></p>
 				</div>
 			<?php elseif ( (isset($_GET['nebula-initialization']) || isset($_GET['initialization-success'])) && current_user_can('manage_options') ): ?>
-				<div id='nebula-activate-success' class='updated'>
+				<div id="nebula-activate-success" class="updated">
 					<p>
 						<strong class="nebula-activated-title">Nebula has been initialized!</strong><br />
-						<span class="nebula-activated-description">
-							Options have been updated. The home page has been updated and has been set as the static front page in <a href='options-reading.php'>Settings > Reading</a>.<br />
-							<strong>Next step:</strong> Configure <a href='themes.php?page=nebula_options'>Nebula Options</a>
-						</span>
+						<span class="nebula-activated-description">Options have been updated. The home page has been updated and has been set as the static front page in <a href='options-reading.php'>Settings > Reading</a>. Next step:</span>
 					</p>
+					<p><a class="button button-primary" href="themes.php?page=nebula_options">Configure Nebula Options</a></p>
 				</div>
 			<?php else: ?>
 				<?php $this->render_scss('all'); //Re-render all SCSS files. ?>
 
 				<?php if ( $this->is_initialized_before() ): ?>
-					<div id='nebula-activate-success' class='updated'>
+					<div id="nebula-activate-success" class="updated">
 						<p>
 							<strong class="nebula-activated-title">Nebula has been re-activated!</strong><br />
+							<span class="nebula-activated-description">Re-run the automated Nebula initialization process if needed.</span>
+						</p>
+						<p>
 							<?php if ( current_user_can('manage_options') ): ?>
-								<span class="nebula-activated-description">To re-run the automated Nebula initialization process, <a id='run-nebula-initialization' href='themes.php?nebula-initialization=true' style='color: #dd3d36;' title='This will reset some Wordpress core settings and all Nebula options!'>click here</a>.</span>
+								<a id="run-nebula-initialization" class="button button-primary" href="themes.php?nebula-initialization=true" title="This will reset some Wordpress core settings and all Nebula options!">Initialize Nebula</a>
 							<?php else: ?>
-								You have re-activated Nebula. Contact the site administrator if the automated Nebula initialization processes need to be re-run.
+								Contact the site administrator if the automated Nebula initialization processes need to be re-run.
 							<?php endif; ?>
 						</p>
 					</div>
 				<?php else: ?>
-					<div id='nebula-activate-success' class='updated'>
+					<div id="nebula-activate-success" class="updated">
 						<p>
 							<strong class="nebula-activated-title">Nebula has been activated!</strong><br />
+							<span class="nebula-activated-description">Next step: Run the automated Nebula initialization process. This initialization process will move and activate the Nebula child theme automatically (if it does not already exist).</span>
+						</p>
+						<p>
 							<?php if ( current_user_can('manage_options') ): ?>
-								<span class="nebula-activated-description">To run the automated Nebula initialization process, <a id='run-nebula-initialization' href='themes.php?nebula-initialization=true' style='color: #dd3d36;' title='This will reset some Wordpress core settings and all Nebula options!'>click here</a>. This initialization process will move and activate the Nebula child theme automatically (if it does not already exist).</span>
+								<a id="run-nebula-initialization" class="button button-primary" href="themes.php?nebula-initialization=true" title="This will reset some Wordpress core settings and all Nebula options!">Initialize Nebula</a>
 							<?php else: ?>
-								You have activated Nebula. Contact the site administrator to run the automated Nebula initialization processes.
+								Contact the site administrator to run the automated Nebula initialization processes.
 							<?php endif; ?>
 						</p>
 					</div>
@@ -456,16 +458,18 @@ if ( !trait_exists('Automation') ){
 
 		//Check if automated Nebula theme updates are allowed
 		public function allow_theme_update(){
+			//Check if automated updates have been disabled in Nebula Options
 			if ( !nebula()->get_option('theme_update_notification') ){
 				return false;
 			}
 
+			//Check if this is a legacy version that prevents theme updates
 			$nebula_data = get_option('nebula_data');
 			if ( $nebula_data['version_legacy'] === 'true' ){
 				return false;
 			}
 
-			return true;
+			return true; //Automated Nebula updates are allowed
 		}
 
 		//Force an initialization date.

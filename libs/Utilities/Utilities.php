@@ -193,12 +193,16 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Check if currently viewing an admin page (or the Customizer)
-		public function is_admin_page($include_customizer=false){
+		public function is_admin_page($include_customizer=false, $include_login=false){
 			if ( is_admin() ){
 				return true;
 			}
 
 			if ( $include_customizer && is_customize_preview() ){
+				return true;
+			}
+
+			if ( $include_login && $this->is_login_page() ){
 				return true;
 			}
 
@@ -1040,7 +1044,7 @@ if ( !trait_exists('Utilities') ){
 				return false;
 			}
 
-			if ( $action === 'start' ){
+			if ( $action === 'start' || $action === 'mark' || $action === 'once' ){
 				//Prevent duplicates by appending a random number to the ID (only when duplicate)
 				if ( !empty($this->server_timings[$unique_id]) ){
 					$unique_id .= '_d' . rand(10000, 99999);
@@ -1051,6 +1055,18 @@ if ( !trait_exists('Utilities') ){
 					'active' => true,
 					'category' => $category
 				);
+
+				//Immediately stop one-off timing marks
+				if ( $action === 'mark' || $action === 'once' ){
+					$this->server_timings[$unique_id]['end'] = $this->server_timings[$unique_id]['start']+0.001;
+					$this->server_timings[$unique_id]['time'] = 0.001; //Force non-empty time of 1 millisecond
+					$this->server_timings[$unique_id]['active'] = false;
+
+					//Add to array of this category (if categorization is used)
+					if ( !empty($category) ){
+						$this->server_timings['categories'][$category][] = 0.001; //Force non-empty time of 1 millisecond
+					}
+				}
 
 				return $unique_id; //Return the unique ID in case it was changed so that the 'end' call can know what to use
 			} elseif ( in_array(strtolower($action), array('stop', 'end')) ){

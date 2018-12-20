@@ -1840,7 +1840,17 @@ if ( !trait_exists('Metaboxes') ){
 
 			?>
 				<div class="form-group">
-					<label for="example_option">First Nebula activation date</label>
+					<p class="form-text">
+						<?php if ( is_child_theme() ): ?>
+							<strong>Nebula Child</strong> theme is active<?php echo ( $this->allow_theme_update() )? '. Automated updates <strong>are</strong> allowed.' : ', but automated updates are <strong>not</strong> allowed.'; //yolo ?>
+						<?php else: ?>
+							Child theme is <strong>not</strong> being used. Automated updates will <strong>not</strong> be available.
+						<?php endif; ?>
+					</p>
+				</div>
+
+				<div class="form-group">
+					<label for="first_activation">First Nebula activation date</label>
 					<input type="text" id="first_activation" class="form-control" value="<?php echo $nebula_data['first_activation']; ?>" readonly />
 					<p class="nebula-help-text short-help form-text text-muted">
 						First activated on: <strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['first_activation']); ?></strong> (<?php echo human_time_diff($nebula_data['first_activation']); ?> ago)

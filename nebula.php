@@ -7,10 +7,6 @@ if ( !class_exists('Nebula') ){
 	require_once(ABSPATH . 'wp-admin/includes/file.php');
 
 	//Require Nebula libraries
-	require_once get_template_directory() . '/libs/Cache.php';
-	require_once get_template_directory() . '/libs/Cache/Filesystem.php';
-	//require_once get_template_directory() . '/libs/Output.php';
-
 	require_once get_template_directory() . '/libs/Scripts.php';
 	require_once get_template_directory() . '/libs/Options/Options.php';
 	require_once get_template_directory() . '/libs/Options/Customizer.php';

@@ -410,9 +410,33 @@ function overflowDetector(){
 	});
 }
 
+//Check if the user has enabled DNT (if supported in their browser)
+function isDoNotTrack(){
+	//Use server-side header detection first
+	if ( has(nebula, 'user.dnt') ){
+		if ( nebula.user.dnt == 1 ){
+			return true; //This user prefers not to be tracked
+		} else {
+			return false; //This user is allowing tracking.
+		}
+	}
+
+	//Otherwise, check if the browser supports DNT
+	if ( window.doNotTrack || navigator.doNotTrack || navigator.msDoNotTrack || 'msTrackingProtectionEnabled' in window.external ){
+		//Check if DNT is enabled
+		if ( window.doNotTrack == "1" || navigator.doNotTrack == "yes" || navigator.doNotTrack == "1" || navigator.msDoNotTrack == "1" || window.external.msTrackingProtectionEnabled() ){
+			return true; //This user prefers not to be tracked
+		} else {
+			return false; //This user is allowing tracking.
+		}
+	} else {
+		return false; //The browser does not support DNT
+	}
+}
+
 //Check if Google Analytics is ready
 function isGoogleAnalyticsReady(){
-	if ( navigator.doNotTrack || window.doNotTrack ){
+	if ( isDoNotTrack() ){
 		return false;
 	}
 
@@ -1106,7 +1130,7 @@ function isInView(element){
 
 //Send data to the CRM
 function nv(action, data, sendNow){
-	if ( navigator.doNotTrack || window.doNotTrack ){
+	if ( isDoNotTrack() ){
 		return false;
 	}
 
@@ -1114,7 +1138,7 @@ function nv(action, data, sendNow){
 		return false;
 	}
 
-	if ( !sendNow ){
+	if ( !sendNow ){ //Set the default value for sendNow if not included
 		var sendNow = true;
 	}
 

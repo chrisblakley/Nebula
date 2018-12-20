@@ -128,6 +128,21 @@ trait Functions {
 		add_theme_support('title-tag'); //Title tag support allows WordPress core to create the <title> tag.
 		//add_theme_support('html5', array('comment-list', 'comment-form', 'search-form', 'gallery', 'caption'));
 		add_theme_support('automatic-feed-links'); //Add default posts and comments RSS feed links to head
+		add_theme_support('align-wide'); //Wide image alignment
+
+		//Custom color palette to Gutenberg editor
+		add_theme_support('editor-color-palette', array(
+			array(
+				'name' => 'Primary',
+				'slug' => 'primary',
+				'color' => get_theme_mod('nebula_primary_color', $this->sass_color('primary')),
+			),
+			array(
+				'name' => 'Secondary',
+				'slug' => 'secondary',
+				'color' => get_theme_mod('nebula_secondary_color', $this->sass_color('secondary')),
+			)
+		));
 
 		add_post_type_support('page', 'excerpt'); //Allow pages to have excerpts too
 

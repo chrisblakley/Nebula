@@ -295,10 +295,6 @@ if ( !trait_exists('Scripts') ){
 			wp_enqueue_script('nebula-nebula');
 
 			//Conditionals
-			if ( $this->is_debug() ){ //When ?debug query string is used
-				wp_enqueue_script('nebula-performance_timing');
-			}
-
 			if ( is_page_template('tpl-search.php') ){ //Form pages (that use selects) or Advanced Search Template. The Chosen library is also dynamically loaded in nebula.js.
 				wp_enqueue_style('nebula-chosen');
 				wp_enqueue_script('nebula-chosen');

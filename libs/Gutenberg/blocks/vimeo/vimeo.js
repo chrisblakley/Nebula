@@ -1,9 +1,9 @@
-wp.blocks.registerBlockType('nebula/youtube', {
-	title: 'Nebula Youtube',
+wp.blocks.registerBlockType('nebula/vimeo', {
+	title: 'Nebula Vimeo',
 	icon: 'video-alt3', //https://developer.wordpress.org/resource/dashicons/
 	category: 'nebula',
-	description: 'Add a Youtube video with Nebula styles and built-in tracking with the Youtube API.',
-	keywords: ['youtube', 'video', 'nebula'],
+	description: 'Add a Vimeo video with Nebula styles and built-in tracking with the Vimeo API.',
+	keywords: ['vimeo', 'video', 'nebula'],
 	supportHTML: false, //Remove to allow block to be edited in HTML mode
 	attributes: {
 		videoID: {
@@ -17,15 +17,15 @@ wp.blocks.registerBlockType('nebula/youtube', {
 		return [
 			wp.element.createElement(wp.editor.InspectorControls, null,
 				wp.element.createElement(wp.components.PanelBody, {
-					title: "Nebula Youtube Settings"
+					title: "Nebula Vimeo Settings"
 				},
 				wp.element.createElement(wp.components.BaseControl, {
 					label: "Video ID",
-					id: 'nebula-youtube-id-' + props.instanceId,
+					id: 'nebula-vimeo-id-' + props.instanceId,
 				},
 				wp.element.createElement("input", {
 					type: "text",
-					id: 'nebula-youtube-id-' + props.instanceId,
+					id: 'nebula-vimeo-id-' + props.instanceId,
 					value: props.attributes.videoID,
 					onChange: function(e){
 						props.setAttributes({
@@ -36,14 +36,14 @@ wp.blocks.registerBlockType('nebula/youtube', {
 				))
 			),
 			wp.element.createElement('div', {
-				id: 'nebula-youtube-block-' + props.instanceId,
-				className: 'nebula-youtube embed-responsive embed-responsive-16by9 ' + props.className,
+				id: 'nebula-vimeo-block-' + props.instanceId,
+				className: 'nebula-vimeo embed-responsive embed-responsive-16by9 ' + props.className,
 			}, wp.element.createElement('iframe', {
 				id: 'phg-overview-video', //Does this need to be an option? I'd prefer not
-				className: 'youtube embed-responsive-item',
+				className: 'vimeo embed-responsive-item',
 				width: 400,
 				height: 300,
-				src: '//www.youtube.com/embed/' + props.attributes.videoID + '?wmode=transparent&enablejsapi=1&rel=0', //WCtWWgtzC-c
+				src: 'https://player.vimeo.com/video/' + props.attributes.videoID + '',
 				frameBorder: 0,
 				allowfullscreen: ""
 			}))
