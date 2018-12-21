@@ -90,11 +90,6 @@ if ( !trait_exists('Automation') ){
 					'required'  => false,
 				),
 				array(
-					'name' => 'TinyMCE Advanced',
-					'slug' => 'tinymce-advanced',
-					'required'  => false,
-				),
-				array(
 					'name' => 'WP Mail SMTP',
 					'slug' => 'wp-mail-smtp',
 					'required' => false,

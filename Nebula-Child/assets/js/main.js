@@ -55,7 +55,7 @@ jQuery(window).on('resize', function(){
 function supplementalEventTracking(){
 	cacheSelectors();
 
-	if ( nebula.user.dnt ){
+	if ( isDoNotTrack() ){
 		return false;
 	}
 

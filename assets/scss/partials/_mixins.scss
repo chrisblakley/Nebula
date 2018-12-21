@@ -43,15 +43,31 @@
 
 //.element {background: #123456; color: readable-color(#123456);}
 @function readable-color($bg, $light: #fff, $dark: #000){
-	$r: red($bg);
-	$g: green($bg);
-	$b: blue($bg);
+	$lightContrast: contrast($bg, $light);
+	$darkContrast: contrast($bg, $dark);
 
-	@if ($r*$r*0.299 + $g*$g*0.587 + $b*$b*0.114) > 22500 { //If the bg is light
-		@return $dark;
+	@if ( $lightContrast > $darkContrast ){
+		@return $light;
 	}
 
-	@return $light; //Else the bg is dark
+	@return $dark;
+}
+
+//Calculate the luminance for a color.
+@function luminance($color) {
+	$red: nth($linear-channel-values, red($color) + 1); //Lookup the linear channel value
+	$green: nth($linear-channel-values, green($color) + 1); //Lookup the linear channel value
+	$blue: nth($linear-channel-values, blue($color) + 1); //Lookup the linear channel value
+
+	@return 0.2126 * $red + 0.7152 * $green + 0.0722 * $blue;
+}
+
+//Calculate the contrast ratio between two colors.
+@function contrast($back, $front) {
+	$backLum: luminance($back) + 0.05;
+	$foreLum: luminance($front) + 0.05;
+
+	@return max($backLum, $foreLum) / min($backLum, $foreLum);
 }
 
 //.example {@include prefix((transition: right 0.5s easing(easeOutBack)));}

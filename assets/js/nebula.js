@@ -429,9 +429,9 @@ function isDoNotTrack(){
 		} else {
 			return false; //This user is allowing tracking.
 		}
-	} else {
-		return false; //The browser does not support DNT
 	}
+
+	return false; //The browser does not support DNT
 }
 
 //Check if Google Analytics is ready
