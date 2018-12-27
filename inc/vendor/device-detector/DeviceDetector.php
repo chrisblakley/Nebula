@@ -12,7 +12,7 @@
 	BEGIN Nebula fix for required files.
 ***********/
 
-namespace DeviceDetector;
+namespace DeviceDetector; //Namespace must be declared first here (remove the one below if it exists)
 
 require_once(dirname(__FILE__) . '/Cache/Cache.php');
 require_once(dirname(__FILE__) . '/Cache/StaticCache.php');
@@ -76,7 +76,7 @@ class DeviceDetector
     /**
      * Current version number of DeviceDetector
      */
-    const VERSION = '3.10.1';
+    const VERSION = '3.11.4';
 
     /**
      * Holds all registered client types
@@ -263,7 +263,7 @@ class DeviceDetector
      */
     public function addClientParser($parser)
     {
-        //BEGIN Nebula fix for required files.
+	    //BEGIN Nebula fix for required files.
 		require_once(dirname(__FILE__) . '/Parser/Client/' . $parser . '.php');
 		//End Nebula fix for required files.
 
@@ -292,7 +292,7 @@ class DeviceDetector
      */
     public function addDeviceParser($parser)
     {
-        //BEGIN Nebula fix for required files.
+	    //BEGIN Nebula fix for required files.
         require_once(dirname(__FILE__) . '/Parser/Device/' . $parser . '.php');
 		//End Nebula fix for required files.
 
@@ -711,6 +711,13 @@ class DeviceDetector
         $clientName = $this->getClient('name');
 
         /**
+         * Assume all devices running iOS / Mac OS are from Apple
+         */
+        if (empty($this->brand) && in_array($osShortName, array('ATV', 'IOS', 'MAC'))) {
+            $this->brand = 'AP';
+        }
+
+        /**
          * Chrome on Android passes the device type based on the keyword 'Mobile'
          * If it is present the device should be a smartphone, otherwise it's a tablet
          * See https://developer.chrome.com/multidevice/user-agent#chrome_for_android_user_agent
@@ -770,7 +777,7 @@ class DeviceDetector
          * all Windows 8 touch devices are tablets.
          */
 
-        if (is_null($this->device) && ($osShortName == 'WRT' || ($osShortName == 'WIN' && version_compare($osVersion, '8.0'))) && $this->isTouchEnabled()) {
+        if (is_null($this->device) && ($osShortName == 'WRT' || ($osShortName == 'WIN' && version_compare($osVersion, '8') >= 0)) && $this->isTouchEnabled()) {
             $this->device = DeviceParserAbstract::DEVICE_TYPE_TABLET;
         }
 

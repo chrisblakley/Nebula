@@ -18,7 +18,7 @@
 			<div class="row align-items-center">
 				<div class="col-lg-4 logocon">
 					<a href="<?php echo home_url('/'); ?>" title="<?php bloginfo('name'); ?>">
-						<?php $logo = nebula()->logo(); ?>
+						<?php $logo = nebula()->logo('header'); ?>
 						<?php if ( !empty($logo) ): ?>
 							<img class="svg" src="<?php echo $logo; ?>" alt="<?php bloginfo('name'); ?>"/>
 						<?php else: //Otherwise fallback to the Site Title text ?>

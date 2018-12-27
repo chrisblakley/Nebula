@@ -24,16 +24,12 @@
 						<div class="row justify-content-center footerlogocon">
 							<div class="col-3">
 								<a class="footerlogo" href="<?php echo home_url('/'); ?>">
-									<?php
-										$logo = get_theme_file_uri('/assets/img/logo.svg');
-										if ( get_theme_mod('custom_logo') || get_theme_mod('nebula_hero_single_color_logo') ){ //If the Customizer logo exists
-											$logo = ( get_theme_mod('custom_logo') )? nebula()->get_thumbnail_src(get_theme_mod('custom_logo')) : $logo;
-											if ( get_theme_mod('one_color_logo') && get_theme_mod('nebula_footer_single_color_logo') ){ //If the one-color logo exists and is requested
-												$logo = get_theme_mod('one_color_logo');
-											}
-										}
-									?>
-									<img class="svg" src="<?php echo $logo; ?>" alt="<?php bloginfo('name'); ?>"/>
+									<?php $logo = nebula()->logo('footer'); ?>
+									<?php if ( !empty($logo) ): ?>
+										<img class="svg" src="<?php echo $logo; ?>" alt="<?php bloginfo('name'); ?>"/>
+									<?php else: //Otherwise fallback to the Site Title text ?>
+										<?php bloginfo('name'); ?>
+									<?php endif; ?>
 								</a>
 							</div><!--/col-->
 						</div><!--/row-->

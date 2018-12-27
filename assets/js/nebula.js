@@ -3487,141 +3487,43 @@ function has(obj, prop){
 
 //Functionality for selecting and copying text using Nebula Pre tags.
 function nebulaPre(){
-	try {
-		if ( document.queryCommandEnabled("SelectAll") ){ //@TODO "Nebula" 0: If using document.queryCommandSupported("copy") it always returns false (even though it does actually work when execCommand('copy') is called.
-			var selectCopyText = 'Copy to clipboard';
-		} else if ( document.body.createTextRange || window.getSelection ){
-			var selectCopyText = 'Select All';
-		} else {
-			return false;
-		}
-	} catch(err){
-		if ( document.body.createTextRange || window.getSelection ){
-			var selectCopyText = 'Select All';
-		} else {
-			return false;
-		}
-	}
-
 	//Format non-shortcode pre tags to be styled properly
 	jQuery('pre.nebula-code').each(function(){
 		if ( !jQuery(this).parent('.nebula-code-con').length ){
-			lang = jQuery.trim(jQuery(this).attr('class').replace('nebula-code', ''));
+			var lang = jQuery.trim(jQuery(this).attr('class').replace('nebula-code', ''));
 			jQuery(this).addClass(lang.toLowerCase()).wrap('<div class="nebula-code-con clearfix ' + lang.toLowerCase() + '"></div>');
 			jQuery(this).closest('.nebula-code-con').prepend('<span class="nebula-code codetitle ' + lang.toLowerCase() + '">' + lang + '</span>');
 		}
 	});
 
-	jQuery('.nebula-code-con').each(function(){
-		jQuery(this).append('<a href="#" class="nebula-selectcopy-code">' + selectCopyText + '</a>');
-		jQuery(this).find('p:empty').remove();
-	});
+	//Manage copying snippets to clipboard
+	if ( 'clipboard' in navigator ){
+		jQuery('.nebula-code-con').each(function(){
+			jQuery(this).append('<a href="#" class="nebula-selectcopy-code">Copy to Clipboard</a>');
+			jQuery(this).find('p:empty').remove(); //Sometimes WordPress adds extra/empty <p> tags. These mess with spacing, so we remove them.
+		});
 
-	nebula.dom.document.on('click', '.nebula-selectcopy-code', function(){
-		oThis = jQuery(this);
-
-		if ( jQuery(this).text() === 'Copy to clipboard' ){
-			 selectText(jQuery(this).closest('.nebula-code-con').find('pre'), 'copy', function(success){
-				  if ( success ){
-					oThis.text('Copied!').removeClass('error').addClass('success');
-					setTimeout(function(){
-						oThis.text('Copy to clipboard').removeClass('success');
-					}, 1500);
-				  } else {
-					jQuery('.nebula-selectcopy-code').each(function(){
-						jQuery(this).text('Select All');
-					});
-					oThis.text('Unable to copy.').addClass('error');
-					setTimeout(function(){
-						oThis.text('Select All').removeClass('error');
-					}, 3500);
-				  }
-			 });
-		} else {
-			 selectText(jQuery(this).closest('.nebula-code-con').find('pre'), function(success){
-				  if ( success ){
-					oThis.text('Selected!').removeClass('error').addClass('success');
-					setTimeout(function(){
-						oThis.text('Select All').removeClass('success');
-					}, 1500);
-				  } else {
-					jQuery('.nebula-selectcopy-code').each(function(){
-						jQuery(this).hide();
-					});
-					oThis.text('Unable to select.').addClass('error');
-				  }
-			 });
-		}
-		return false;
-	});
-}
-
-//Select (and optionally copy) text
-function selectText(element, copy, callback){
-	if ( typeof element === 'string' ){
-		element = jQuery(element)[0];
-	} else if ( typeof element === 'object' && element.nodeType !== 1 ){
-		element = element[0];
-	}
-
-	if ( typeof copy === 'function' ){
-		callback = copy;
-		copy = null;
-	}
-
-	try {
-		if ( document.body.createTextRange ){
-			var range = document.body.createTextRange();
-			range.moveToElementText(element);
-			range.select();
-			if ( !copy && callback ){
-				callback(true);
+		nebula.dom.document.on('click', '.nebula-selectcopy-code', function(){
+			oThis = jQuery(this);
+			if ( oThis.hasClass('error') ){ //If we already errored, stop trying
 				return false;
 			}
-		} else if ( window.getSelection ){
-			var selection = window.getSelection();
-			var range = document.createRange();
-			range.selectNodeContents(element);
-			selection.removeAllRanges();
-			selection.addRange(range);
-			if ( !copy && callback ){
-				callback(true);
-				return false;
-			}
-		}
-	} catch(err){
-		if ( callback ){
-			callback(false);
+
+			var text = jQuery(this).closest('.nebula-code-con').find('pre').text();
+
+			navigator.clipboard.writeText(text).then(function(){
+				oThis.text('Copied!').removeClass('error').addClass('success');
+				setTimeout(function(){
+					oThis.text('Copy to clipboard').removeClass('success');
+				}, 1500);
+			}).catch(function(e){ //This can happen if the user denies clipboard permissions
+				ga('send', 'exception', {'exDescription': '(JS) Clipboard API error: ' + e.data, 'exFatal': false});
+				oThis.text('Unable to copy.').addClass('error');
+			});
+
 			return false;
-		}
+		});
 	}
-
-	if ( copy ){
-		try {
-			var success = document.execCommand('copy');
-			if ( callback ){
-				callback(success);
-				return false;
-			}
-		} catch(err){
-			if ( callback ){
-				callback(false);
-				return false;
-			}
-		}
-	}
-
-	if ( callback ){
-		callback(false);
-	}
-	return false;
-}
-
-function copyText(string, callback){
-	jQuery('<div>').attr('id', 'copydiv').text(string).css({'position': 'absolute', 'top': '0', 'left': '-9999px', 'width': '0', 'height': '0', 'opacity': '0', 'color': 'transparent'}).appendTo(nebula.dom.body);
-	selectText(jQuery('#copydiv'), true, callback);
-	jQuery('#copydiv').remove();
-	return false;
 }
 
 //Sanitize text

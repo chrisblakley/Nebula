@@ -46,6 +46,7 @@ class OperatingSystem extends ParserAbstract
         'DFB' => 'DragonFly',
         'FED' => 'Fedora',
         'FOS' => 'Firefox OS',
+        'FIR' => 'Fire OS',
         'BSD' => 'FreeBSD',
         'GNT' => 'Gentoo',
         'GTV' => 'Google TV',
@@ -53,6 +54,7 @@ class OperatingSystem extends ParserAbstract
         'HAI' => 'Haiku OS',
         'IRI' => 'IRIX',
         'INF' => 'Inferno',
+        'KOS' => 'KaiOS',
         'KNO' => 'Knoppix',
         'KBT' => 'Kubuntu',
         'LIN' => 'GNU/Linux',
@@ -114,14 +116,14 @@ class OperatingSystem extends ParserAbstract
      * @var array
      */
     protected static $osFamilies = array(
-        'Android'               => array('AND', 'CYN', 'REM', 'RZD', 'MLD', 'MCD', 'YNS'),
+        'Android'               => array('AND', 'CYN', 'FIR', 'REM', 'RZD', 'MLD', 'MCD', 'YNS'),
         'AmigaOS'               => array('AMG', 'MOR'),
         'Apple TV'              => array('ATV'),
         'BlackBerry'            => array('BLB', 'QNX'),
         'Brew'                  => array('BMP'),
         'BeOS'                  => array('BEO', 'HAI'),
         'Chrome OS'             => array('COS'),
-        'Firefox OS'            => array('FOS'),
+        'Firefox OS'            => array('FOS', 'KOS'),
         'Gaming Console'        => array('WII', 'PS3'),
         'Google TV'             => array('GTV'),
         'IBM'                   => array('OS2'),

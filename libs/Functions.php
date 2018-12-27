@@ -2177,7 +2177,7 @@ trait Functions {
 	}
 
 	//Get the appropriate logo from the themes, plugin, or Customizer
-	public function logo(){
+	public function logo($location='header'){
 		//Allow a theme or plugin to handle the logo itself. This assumes it does its own priorities or overrides for everything!
 		$hooked_logo = apply_filters('nebula_logo', false);
 		if ( !empty($hooked_logo) ){
@@ -2206,17 +2206,24 @@ trait Functions {
 			$logo = $this->get_thumbnail_src(get_theme_mod('custom_logo'));
 		}
 
+		//If it is the footer and the one-color logo (footer) is requested (checkbox)
+		if ( $location === 'footer' && get_theme_mod('nebula_footer_single_color_logo') ){
+			if ( get_theme_mod('one_color_logo') ){ //If one-color Customizer logo exists
+				return $this->get_thumbnail_src(get_theme_mod('one_color_logo'));
+			}
+		}
+
 		//If it is the home page and the one-color logo (home) is requested (checkbox)
 		if ( is_front_page() && get_theme_mod('nebula_hero_single_color_logo') ){
 			if ( get_theme_mod('one_color_logo') ){ //If one-color Customizer logo exists
-				$logo = $this->get_thumbnail_src(get_theme_mod('one_color_logo'));
+				return $this->get_thumbnail_src(get_theme_mod('one_color_logo'));
 			}
 		}
 
 		//If it a sub page and the one-color (sub) logo is requested (checkbox)
 		if ( !is_front_page() && get_theme_mod('nebula_header_single_color_logo') ){
 			if ( get_theme_mod('one_color_logo') ){ //If one-color Customizer logo exists
-				$logo = $this->get_thumbnail_src(get_theme_mod('one_color_logo'));
+				return $this->get_thumbnail_src(get_theme_mod('one_color_logo'));
 			}
 		}
 
