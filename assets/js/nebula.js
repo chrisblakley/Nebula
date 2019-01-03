@@ -4412,10 +4412,6 @@ function mmenus(){
 			//Initialize Mmenu options and configuration
 			mobileNav.mmenu({
 				//Options
-				offCanvas: {
-					position: "left", //"left" (default), "right", "top", "bottom"
-					zposition: "back", //"back" (default), "front", "next"
-				},
 				navbars: [{
 					position: "top",
 					content: ["searchfield"],
@@ -4438,6 +4434,8 @@ function mmenus(){
 					close: true //Close the Mmenu on back button click
 				},
 				extensions: [
+					"position-back", //Push the page content
+					"position-left", //Left side of page
 					"theme-light", //Light background
 					//"fx-listitems-slide", //Animated list items //@todo "Nebula" 0: Test if this is is laggy on mobile devices
 					"shadow-page", //Add shadow to the page

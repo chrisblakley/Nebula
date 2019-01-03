@@ -21,4 +21,21 @@
 	//return get_permalink(99999); //Use ID for the About Us page here
 //});
 
+//Create custom block category for this website
+add_filter('block_categories', function($categories, $post){
+	return array_merge(
+		$categories,
+		array(
+			array(
+				'slug' => 'nebula-child', //Change this
+				'title' => 'Nebula Child', //Change this
+				//'icon' => 'wordpress', //Places a Dashicon next to the category name
+			)
+		)
+	);
+}, 3, 2);
+
+
+
+
 ?>

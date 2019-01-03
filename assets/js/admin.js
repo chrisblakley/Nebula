@@ -6,10 +6,6 @@ jQuery(function(){
 	initializationStuff();
 	wysiwygMods();
 
-	if ( jQuery('#edit-slug-box').length ){
-		nebulaUniqueSlugChecker();
-	}
-
 	jQuery(function(){
 		jQuery('#post textarea').allowTabChar();
 	});
@@ -95,6 +91,7 @@ jQuery(function(){
 }); //End Document Ready
 
 jQuery(window).on('load', function(){
+	nebulaUniqueSlugChecker();
 	performanceMetrics();
 	developerMetaboxes();
 
@@ -289,7 +286,7 @@ function checkPageSpeed(){
 				jQuery("#performance-requests").removeClass('hidden').find(".datapoint").html(totalRequests).attr("title", "via Google PageSpeed Insights on " + pagespeedCompletedDate);
 				performanceTimingWarning(jQuery("#performance-requests"), totalRequests, 80, 120);
 
-				if ( jQuery('#performance-rating').length && rating !== 'NONE' ){
+				if ( jQuery('#performance-rating').length && typeof rating !== 'undefined' && rating !== 'NONE' ){
 					jQuery('#performance-rating').removeClass('hidden');
 					jQuery("#performance-rating .datapoint").html(rating).attr("title", "via Google PageSpeed Insights on " + pagespeedCompletedDate);
 					if ( rating === 'SLOW' ){
@@ -492,14 +489,12 @@ function userHeadshotFields(){
 }
 
 //Notify for possible duplicate post slug
-function nebulaUniqueSlugChecker(postType){
-	if ( !postType ){
-		var postType = 'post/page';
-	}
-
-	if ( jQuery("#sample-permalink a").text().match(/(-\d+)\/?$/) ){
-    	jQuery('#edit-slug-box strong').html('<span title="This likely indicates a duplicate ' + postType + ', but will not prevent saving or publishing." style="cursor: help;">Possible duplicate ' + postType + '! Updated permalink:</span>');
-		jQuery('#sample-permalink a').css('color', 'red');
+function nebulaUniqueSlugChecker(){
+	if ( jQuery('.edit-post-post-link__link-post-name').length ){
+		if ( jQuery(".edit-post-post-link__link-post-name").text().match(/(-\d+)\/?$/) ){
+			jQuery('a.edit-post-post-link__link').css('color', 'red');
+			jQuery('.edit-post-post-link__preview-label').html('<span title="This likely indicates a duplicate post, but will not prevent saving or publishing." style="cursor: help;">Possible duplicate:</span>');
+		}
 	}
 }
 
