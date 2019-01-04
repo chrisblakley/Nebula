@@ -2884,13 +2884,30 @@ function initBootstrapFunctions(){
 		}
 
 		//Allow Bootstrap modals to use Nebula animation transitions
+		//Place the data-animation attribue on the .modal div (which is what e.target is)
 		nebula.dom.document.on('show.bs.modal', function(e){
-			var anim = jQuery(e.target).attr('data-animation-in') || jQuery(e.target).attr('data-animation');
-			jQuery('#' + e.target.id + ' .modal-dialog').attr('class', 'modal-dialog ' + anim + ' animate'); //Replace classes each time for re-animation.
+			if ( jQuery(e.target).attr('data-animation-in') || jQuery(e.target).attr('data-animation') || jQuery(e.target).attr('data-animation-out') ){ //If there is any Nebula animation attribute
+				var anim = jQuery(e.target).attr('data-animation-in') || jQuery(e.target).attr('data-animation') || '';
+
+				if ( !jQuery('#' + e.target.id + ' .modal-dialog').attr('data-original-classes') ){
+					jQuery('#' + e.target.id + ' .modal-dialog').attr('data-original-classes', jQuery('#' + e.target.id + ' .modal-dialog').attr('class')); //Store the original classes in a data-attribute to use later
+				}
+
+				if ( anim ){
+					var originalClasses = jQuery('#' + e.target.id + ' .modal-dialog').attr('data-original-classes');
+					jQuery('#' + e.target.id + ' .modal-dialog').attr('class', originalClasses + ' ' + anim + ' animate'); //Replace classes each time for re-animation.
+				}
+			}
 		});
 		nebula.dom.document.on('hide.bs.modal', function(e){
-			var anim = jQuery(e.target).attr('data-animation-out') || '';
-			jQuery('#' + e.target.id + ' .modal-dialog').attr('class', 'modal-dialog ' + anim + ' animate'); //Replace classes each time for re-animation.
+			if ( jQuery(e.target).attr('data-animation-in') || jQuery(e.target).attr('data-animation') || jQuery(e.target).attr('data-animation-out') ){ //If there is any Nebula animation attribute
+				var anim = jQuery(e.target).attr('data-animation-out') || '';
+
+				if ( anim ){
+					var originalClasses = jQuery('#' + e.target.id + ' .modal-dialog').attr('data-original-classes');
+					jQuery('#' + e.target.id + ' .modal-dialog').attr('class', originalClasses + ' ' + anim + ' animate'); //Replace classes each time for re-animation.
+				}
+			}
 		});
 	}
 }
@@ -3786,24 +3803,26 @@ function nebulaYoutubeTracking(){
 function onYouTubeIframeAPIReady(e){
 	window.performance.mark('nebula_loading_youtube_videos_start');
 	jQuery('iframe[src*="youtube"]').each(function(i, element){
-		id = jQuery(this).attr('id');
-		if ( !id ){
-			id = jQuery(this).attr('src').split('?')[0].split('/').pop();
-			jQuery(this).attr('id', id);
-		}
+		if ( !jQuery(this).hasClass('ignore') ){ //Use this class to ignore certain videos from tracking
+			id = jQuery(this).attr('id');
+			if ( !id ){
+				id = jQuery(this).attr('src').split('?')[0].split('/').pop();
+				jQuery(this).attr('id', id);
+			}
 
-		if ( jQuery(this).attr('src').indexOf('enablejsapi=1') > 0 ){ //If the iframe src already has the API enabled
-			addYoutubePlayer(id);
-			nebula.dom.document.trigger('nebula_youtube_players_created', nebula.videos[id]);
-		} else {
-			console.warn('The enablejsapi parameter was not found for this Youtube iframe. It has been reloaded to enable it. For better optimization, and more accurate analytics, add it to the iframe.');
-
-			//JS API not enabled for this video. Reload the iframe with the correct parameter.
-			var delimiter = ( jQuery(this).attr('src').indexOf('?') > 0 )? '&' : '?';
-			jQuery(this).attr('src', jQuery(this).attr('src') + delimiter + 'enablejsapi=1').on('load', function(){
-				addYoutubePlayer(id, jQuery(this));
+			if ( jQuery(this).attr('src').indexOf('enablejsapi=1') > 0 ){ //If the iframe src already has the API enabled
+				addYoutubePlayer(id);
 				nebula.dom.document.trigger('nebula_youtube_players_created', nebula.videos[id]);
-			});
+			} else {
+				console.warn('The enablejsapi parameter was not found for this Youtube iframe. It has been reloaded to enable it. For better optimization, and more accurate analytics, add it to the iframe.');
+
+				//JS API not enabled for this video. Reload the iframe with the correct parameter.
+				var delimiter = ( jQuery(this).attr('src').indexOf('?') > 0 )? '&' : '?';
+				jQuery(this).attr('src', jQuery(this).attr('src') + delimiter + 'enablejsapi=1').on('load', function(){
+					addYoutubePlayer(id, jQuery(this));
+					nebula.dom.document.trigger('nebula_youtube_players_created', nebula.videos[id]);
+				});
+			}
 		}
 	});
 	window.performance.mark('nebula_loading_youtube_videos_end');
@@ -4003,27 +4022,29 @@ function nebulaVimeoTracking(){
 //To trigger events on these videos, use the syntax: nebula.videos['208432684'].player.play();
 function createVimeoPlayers(){
 	jQuery('iframe[src*="vimeo"]').each(function(i){
-		var id = jQuery(this).attr('data-video-id') || jQuery(this).attr('data-vimeo-id') || jQuery(this).attr('id') || false;
-		if ( !id ){
-			if ( jQuery(this).attr('src').indexOf('player_id') > -1 ){
-				id = jQuery(this).attr('src').split('player_id=').pop().split('&')[0]; //Use the player_id parameter. Note: This is no longer used by the Vimeo API!
-			} else {
-				id = jQuery(this).attr('src').split('/').pop().split('?')[0];; //Grab the ID off the end of the URL (ignoring query parameters)
+		if ( !jQuery(this).hasClass('ignore') ){ //Use this class to ignore certain videos from tracking
+			var id = jQuery(this).attr('data-video-id') || jQuery(this).attr('data-vimeo-id') || jQuery(this).attr('id') || false;
+			if ( !id ){
+				if ( jQuery(this).attr('src').indexOf('player_id') > -1 ){
+					id = jQuery(this).attr('src').split('player_id=').pop().split('&')[0]; //Use the player_id parameter. Note: This is no longer used by the Vimeo API!
+				} else {
+					id = jQuery(this).attr('src').split('/').pop().split('?')[0];; //Grab the ID off the end of the URL (ignoring query parameters)
+				}
+
+				if ( id && !parseInt(id) ){ //If the ID is a not number try to find a number in the iframe src
+					id = /\d{6,}/g.exec(jQuery(this).attr('src'))[0];
+				}
+
+				jQuery(this).attr('id', id);
 			}
 
-			if ( id && !parseInt(id) ){ //If the ID is a not number try to find a number in the iframe src
-				id = /\d{6,}/g.exec(jQuery(this).attr('src'))[0];
+			if ( typeof nebula.videos[id] === 'object' ){ //If this video is already being tracked ignore it
+				return false;
 			}
 
-			jQuery(this).attr('id', id);
+			addVimeoPlayer(id, jQuery(this));
+			nebula.dom.document.trigger('nebula_vimeo_players_created', nebula.videos[id]);
 		}
-
-		if ( typeof nebula.videos[id] === 'object' ){ //If this video is already being tracked ignore it
-			return false;
-		}
-
-		addVimeoPlayer(id, jQuery(this));
-		nebula.dom.document.trigger('nebula_vimeo_players_created', nebula.videos[id]);
 	});
 
 	if ( typeof videoProgress === 'undefined' ){

@@ -1672,7 +1672,7 @@ trait Functions {
 			'delimiter' => '/', //Delimiter between crumbs
 			'home' => get_bloginfo('title'), //Text for the 'Home' link
 			'home_link' => home_url('/'),
-			'prefix' => 'text',
+			'prefix' => 'off', //Prefix categories and tags with "text", "icon", or none with "off" (default)
 			'current' => true, //Show/Hide the current title in the breadcrumb
 			'before' => '<li class="current" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">', //Tag before the current crumb
 			'after' => '</li>', //Tag after the current crumb
@@ -1728,14 +1728,14 @@ trait Functions {
 					echo get_category_parents($thisCat->parent, true, ' ' . $delimiter_html . ' ');
 				}
 
-				$prefix = 'Category: ';
+				$prefix = '';
 				if ( $data['prefix'] === 'icon' ){
 					$prefix = '<i class="fas fa-bookmark"></i>';
-				} elseif ( !$data['prefix'] || $data['prefix'] === 'off' ){
-					$prefix = '';
+				} elseif ( $data['prefix'] === 'text' ){
+					$prefix = 'Category: ';
 				}
 
-				echo $data['before'] . $prefix . single_cat_title('', false) . $data['after'];
+				echo $data['before'] . '<a class="current-breadcrumb-link" href="' . get_category_link($thisCat->term_id) . '">'. $prefix . single_cat_title('', false) . '</a>' . $data['after'];
 			} elseif ( is_search() ){
 				echo $data['before'] . 'Search results' . $data['after'];
 			} elseif ( is_day() ){
@@ -1813,15 +1813,15 @@ trait Functions {
 					echo ' ' . $delimiter_html . ' ' . $current;
 				}
 			} elseif ( is_tag() ){
-
-				$prefix = 'Tag: ';
+				$prefix = '';
 				if ( $data['prefix'] === 'icon' ){
 					$prefix = '<i class="fas fa-tag"></i>';
-				} elseif ( !$data['prefix'] || $data['prefix'] === 'off' ){
-					$prefix = '';
+				} elseif ( $data['prefix'] === 'text' ){
+					$prefix = 'Tag: ';
 				}
 
 				echo $data['before'] . $prefix . single_tag_title('', false) . $data['after'];
+				//echo $data['before'] . '<a class="current-breadcrumb-link" href="' . get_tag_link($thisTag->term_id) . '">'. $prefix . single_tag_title('', false) . '</a>' . $data['after']; //@todo "Nebula": Need to get $thisTag like $thisCat above
 			} elseif ( is_author() ){
 				//@TODO "Nebula" 0: Support for multi author? is_multi_author()
 
