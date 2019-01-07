@@ -235,44 +235,57 @@ function registerServiceWorker(){
 			jQuery('.nebula-sw-install-button').removeClass('ready').addClass('success');
 			ga('send', 'event', 'Progressive Web App', 'App Installed', 'The app has been installed');
 		});
+	} else {
+		nebulaPredictiveCacheListeners(); //Initialize predictive cache (prefetch) without Service Worker
 	}
 }
 
 //Detections for events specific to predicting the next pageview.
 function nebulaPredictiveCacheListeners(){
-	if ( 'caches' in window && !nebula.dom.body.hasClass('offline') ){
-		//Any post listing page
-		if ( jQuery('.first-post .entry-title a').length ){
-			nebulaAddToCache(jQuery('.first-post .entry-title a').attr('href'));
-		}
-
-		//Internal link hovers
-		var predictiveHoverTimeout;
-		jQuery('a').hover(function(){
-			oThis = jQuery(this);
-
-			if ( !predictiveHoverTimeout ){
-				predictiveHoverTimeout = window.setTimeout(function(){
-					predictiveHoverTimeout = null; //Reset the timer
-					if ( oThis.attr('target') !== '_blank' ){
-						nebulaAddToCache(oThis.attr('href'));
-					}
-				}, 250);
-			}
-		}, function(){
-			if ( predictiveHoverTimeout ){
-				window.clearTimeout(predictiveHoverTimeout);
-				predictiveHoverTimeout = null;
-			}
-		});
+	//Any post listing page
+	if ( jQuery('.first-post .entry-title a').length ){
+		nebulaAddToCache(jQuery('.first-post .entry-title a').attr('href'));
 	}
+
+	//Internal link hovers
+	var predictiveHoverTimeout;
+	jQuery('a').hover(function(){
+		oThis = jQuery(this);
+
+		if ( !predictiveHoverTimeout ){
+			predictiveHoverTimeout = window.setTimeout(function(){
+				predictiveHoverTimeout = null; //Reset the timer
+				if ( oThis.attr('target') !== '_blank' ){
+					nebulaAddToCache(oThis.attr('href')); //Fetch and add internal links to cache
+				} else {
+					nebulaPrefetch(oThis.attr('href')); //Attempt to prefetch outbound URLs
+				}
+			}, 250);
+		}
+	}, function(){
+		if ( predictiveHoverTimeout ){
+			window.clearTimeout(predictiveHoverTimeout);
+			predictiveHoverTimeout = null;
+		}
+	});
+
+	//Prefetch certain elements on window idle
+	window.requestIdleCallback(function(){
+		//Top-level primary nav links
+		jQuery('ul#menu-primary > li.menu-item > a').each(function(){
+			nebulaPrefetch(jQuery(this).attr('href'));
+		});
+
+		//First 5 buttons
+		jQuery('a.btn').slice(0, 4).each(function(){
+			nebulaPrefetch(jQuery(this).attr('href'));
+		});
+	});
 }
 
 //Add items to the cache
 function nebulaAddToCache(url){
-	if ( 'caches' in window && !nebula.dom.body.hasClass('offline') ){
-		//Since there can be multiple caches, the cache name must match what is in sw.js!
-
+	if ( !nebula.dom.body.hasClass('offline') ){ //If online
 		//Prevent caching of URLs containing certain strings
 		var substrings = ['chrome-extension://', '/wp-login.php', '/wp-admin', 'analytics', 'collect', 'no-cache', '//#'];
 		var length = substrings.length;
@@ -282,17 +295,28 @@ function nebulaAddToCache(url){
 			}
 		}
 
-		if ( url.length > 1 && url.indexOf('#') !== 0 && url.indexOf('?') === -1 ){
-			caches.open(nebula.site.cache).then(function(cache){
-				cache.add(url);
-			});
-
-			return true;
-		} else {
-			return false; //Do not cache (additional criteria)
+		if ( 'caches' in window ){ //If using Service Worker
+			if ( url.length > 1 && url.indexOf('#') !== 0 && url.indexOf('?') === -1 ){
+				caches.open(nebula.site.cache).then(function(cache){
+					cache.add(url);
+				});
+			}
+		} else { //If not using Service Worker, prefetch the resource with a resource hint
+			nebulaPrefetch(url);
 		}
-	} else {
+	}
+}
+
+//Prefetch a resource
+function nebulaPrefetch(url, callback){
+	if ( navigator.connection.effectiveType.toString().indexOf('2g') >= 0 || navigator.connection.saveData ){ //If network connection is 2G or Save Data is enabled don't prefetch
 		return false;
+	}
+
+	if ( url.length > 1 && url.indexOf('#') !== 0 ){
+		window.requestIdleCallback(function(){ //Wait until the browser is idle before prefetching
+			jQuery('<link rel="prefetch" href="' + url + '">').on('load', callback).appendTo('head');
+		});
 	}
 }
 

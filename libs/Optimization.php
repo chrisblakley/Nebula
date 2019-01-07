@@ -306,24 +306,23 @@ if ( !trait_exists('Optimization') ){
 			}
 		}
 
-		//Determing if a page should be prepped using prefetch, preconnect, or prerender.
+		//Determing if a page should be prepped using prefetch, or preconnect.
 			//DNS-Prefetch = Resolve the DNS only to a domain.
 			//Preconnect = Resolve both DNS and TCP to a domain.
 			//Prefetch = Fully request a single resource and store it in cache until needed. Do not combine with preload!
 			//Preload = Fully request a single resource before it is needed. Do not combine with prefetch!
-			//Prerender = Render an entire page (useful for comment next page navigation). Use Audience > User Flow report in Google Analytics for better predictions.
 
 			//Note: WordPress automatically uses dns-prefetch on enqueued resource domains.
 			//Note: Additional preloading for lazy-loaded CSS happens in /libs/Scripts.php
 
 			//To hook into the arrays use:
-			/*
-				add_filter('nebula_preconnect', 'my_preconnects');
-				function my_preconnects($array){
-					$array[] = '//example.com';
-					return $array;
-				}
-			*/
+/*
+			add_filter('nebula_preconnect', function($array){
+				$array[] = '//example.com';
+				return $array;
+			});
+*/
+
 		public function prebrowsing(){
 			$override = apply_filters('pre_nebula_prebrowsing', null);
 			if ( isset($override) ){return;}
@@ -349,20 +348,25 @@ if ( !trait_exists('Optimization') ){
 
 			//Prefetch
 			$default_prefetches = array();
-			$prefetches = apply_filters('nebula_prefetches', $default_prefetches);
+			if ( !is_front_page() ){
+				$default_prefetches[] = home_url('/'); //Prefetch the home page on subpages
+			}
+
+			if ( is_search() ){
+				global $wp_query;
+				$default_prefetches[] = get_permalink($wp_query->posts['0']->ID); //Prefetch the first search result
+			}
+
+			if ( is_404() ){
+				//If Nebula finds a match based on context clues, prefetch that too
+				if ( !empty($this->error_404_exact_match) ){
+					$default_prefetches[] = get_permalink($this->error_404_exact_match->ID);
+				}
+			}
+
+			$prefetches = apply_filters('nebula_prefetches', $default_prefetches); //Allow child themes and plugins to prefetch resources via Nebula too
 			foreach ( $prefetches as $prefetch ){
 				echo '<link rel="prefetch" href="' . $prefetch . '" />';
-			}
-
-			//Prerender
-			//If an eligible page is determined after load, use the JavaScript nebulaPrerender(url) function.
-			$prerender = false;
-			if ( is_404() ){
-				$prerender = ( !empty($this->error_404_exact_match) )? get_permalink($this->error_404_exact_match->ID) : home_url('/');
-			}
-
-			if ( !empty($prerender) ){
-				echo '<link id="prerender" rel="prerender" href="' . $prerender . '" />';
 			}
 		}
 
