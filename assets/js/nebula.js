@@ -287,7 +287,7 @@ function nebulaPredictiveCacheListeners(){
 function nebulaAddToCache(url){
 	if ( !nebula.dom.body.hasClass('offline') ){ //If online
 		//Prevent caching of URLs containing certain strings
-		var substrings = ['chrome-extension://', '/wp-login.php', '/wp-admin', 'analytics', 'collect', 'no-cache', '//#'];
+		var substrings = ['chrome-extension://', '/wp-login.php', '/wp-admin', 'analytics', 'collect', 'no-cache', '//#', '.pdf', '.doc', '.xls', '.ppt', '.zip', '.rar', '.tar'];
 		var length = substrings.length;
 		while ( length-- ){
 			if ( url.indexOf(substrings[length]) !== -1 ){
@@ -315,7 +315,9 @@ function nebulaPrefetch(url, callback){
 
 	if ( url.length > 1 && url.indexOf('#') !== 0 ){
 		window.requestIdleCallback(function(){ //Wait until the browser is idle before prefetching
-			jQuery('<link rel="prefetch" href="' + url + '">').on('load', callback).appendTo('head');
+			if ( !jQuery('link[rel="prefetch"][href="' + url + '"]').length ){ //If prefetch link for this URL has not yet been added to the DOM
+				jQuery('<link rel="prefetch" href="' + url + '">').on('load', callback).appendTo('head'); //Append a prefetch link element for this URL to the DOM
+			}
 		});
 	}
 }

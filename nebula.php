@@ -101,12 +101,14 @@ if ( !class_exists('Nebula') ){
 		}
 
 		public function session_start(){
-			if ( !isset($_SESSION) || !isset($_SESSION['pagecount']) ){
-				session_start();
-				$_SESSION['pagecount'] = 0;
-			}
+			if ( is_writable(session_save_path()) ){ //If the session directory is writable
+				if ( !isset($_SESSION) || !isset($_SESSION['pagecount']) ){
+					session_start();
+					$_SESSION['pagecount'] = 0;
+				}
 
-			$_SESSION['pagecount']++;
+				$_SESSION['pagecount']++;
+			}
 		}
 
 		public function set_content_width(){

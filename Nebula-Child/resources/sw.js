@@ -1,5 +1,5 @@
 //BEGIN Automated edits. These will be automatically overwritten.
-var CACHE_NAME = 'nebula-nebula-child-52814'; //Sunday, January 6, 2019 10:54:13 PM
+var CACHE_NAME = 'nebula-nebula-child-38181'; //Monday, January 7, 2019 11:17:17 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
@@ -167,7 +167,7 @@ function needNetworkRetrieval(request){
 	}
 
 	//Uncacheable requests:
-	var substrings = ['chrome-extension://', '/wp-login.php', '/wp-admin', 'analytics', 'hubspot', 'hs-scripts', 'customize.php', 'customize_', 'no-cache', 'admin-ajax', 'gutenberg', 'Gutenberg']; //Remove gutenberg eventually
+	var substrings = ['chrome-extension://', '/wp-login.php', '/wp-admin', 'analytics', 'hubspot', 'hs-scripts', 'customize.php', 'customize_', 'no-cache', 'admin-ajax', 'gutenberg', 'Gutenberg', '.pdf', '.doc', '.xls', '.ppt', '.zip', '.rar', '.tar']; //Remove gutenberg eventually
 	var length = substrings.length;
 
 	//Force network retrieval for any resource that contains the above strings

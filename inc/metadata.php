@@ -277,7 +277,7 @@
 		<?php endif; ?>
 
 		"image": "<?php echo $image_meta_directory; ?>/og-thumb.png",
-		"logo": "<?php echo ( get_theme_mod('custom_logo') )? nebula()->get_thumbnail_src(get_theme_mod('custom_logo')) : get_theme_file_uri('/assets/img/logo.png'); ?>"
+		"logo": "<?php echo nebula()->logo('meta'); ?>"
 	}
 </script>
 
@@ -379,7 +379,7 @@
 				"name": "<?php echo ( nebula()->get_option('site_owner') )? nebula()->get_option('site_owner') : get_bloginfo('name'); ?>",
 				"logo": {
 					"@type": "ImageObject",
-					"url": "<?php echo ( get_theme_mod('custom_logo') )? nebula()->get_thumbnail_src(get_theme_mod('custom_logo')) : get_theme_file_uri('/assets/img/logo.png'); ?>"
+					"url": "<?php echo nebula()->logo('meta'); ?>"
 				}
 			},
 			"description": "<?php echo nebula()->meta_description(); ?>"

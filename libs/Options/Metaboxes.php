@@ -1761,7 +1761,7 @@ if ( !trait_exists('Metaboxes') ){
 			}
 			?>
 				<div class="form-group">
-					<label for="cpanel_url">Server Control Panel</label>
+					<label for="cpanel_url">Server Control Panel URL</label>
 					<input type="text" name="nebula_options[cpanel_url]" id="cpanel_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['cpanel_url']; ?>" placeholder="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" />
 					<p class="nebula-help-text short-help form-text text-muted">Link to the control panel of the hosting account.</p>
 					<p class="nebula-help-text more-help form-text text-muted">cPanel on this domain would be: <a href="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" target="_blank" rel="noopener"><?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082</a></p>
@@ -1769,7 +1769,7 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
-					<label for="hosting_url">Hosting</label>
+					<label for="hosting_url">Hosting URL</label>
 					<input type="text" name="nebula_options[hosting_url]" id="hosting_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['hosting_url']; ?>" placeholder="http://<?php echo $host_domain; ?>/" />
 					<p class="nebula-help-text short-help form-text text-muted">Link to the server host for easy access to support and other information.</p>
 					<?php if ( !empty($host_domain) ): ?>
@@ -1779,35 +1779,35 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
-					<label for="registrar_url">Domain Registrar</label>
+					<label for="registrar_url">Domain Registrar URL</label>
 					<input type="text" name="nebula_options[registrar_url]" id="registrar_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['registrar_url']; ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">Link to the domain registrar used for access to pointers, forwarding, and other information.</p>
 					<p class="option-keywords"></p>
 				</div>
 
 				<div class="form-group">
-					<label for="registrar_url">Github Repository</label>
+					<label for="registrar_url">Github Repository URL</label>
 					<input type="text" name="nebula_options[github_url]" id="github_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['github_url']; ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">Link to the Github repo for this website.</p>
 					<p class="option-keywords"></p>
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[google_adsense_url]" id="google_adsense_url" value="1" <?php checked('1', !empty($nebula_options['google_adsense_url'])); ?> /><label for="google_adsense_url">Google AdSense</label>
+					<input type="checkbox" name="nebula_options[google_adsense_url]" id="google_adsense_url" value="1" <?php checked('1', !empty($nebula_options['google_adsense_url'])); ?> /><label for="google_adsense_url">Google AdSense URL</label>
 					<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://www.google.com/adsense/" target="_blank" rel="noopener">Google AdSense</a> account. (Default: <?php echo $this->user_friendly_default('google_adsense_url'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted"><strong>This is only a dashboard link!</strong> It does nothing beyond add a convenient link on the dashboard.</p>
 					<p class="option-keywords">discretionary</p>
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[amazon_associates_url]" id="amazon_associates_url" value="1" <?php checked('1', !empty($nebula_options['amazon_associates_url'])); ?> /><label for="amazon_associates_url">Amazon Associates</label>
+					<input type="checkbox" name="nebula_options[amazon_associates_url]" id="amazon_associates_url" value="1" <?php checked('1', !empty($nebula_options['amazon_associates_url'])); ?> /><label for="amazon_associates_url">Amazon Associates URL</label>
 					<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://affiliate-program.amazon.com/home" target="_blank" rel="noopener">Amazon Associates</a> account. (Default: <?php echo $this->user_friendly_default('amazon_associates_url'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted"><strong>This is only a dashboard link!</strong> It does nothing beyond add a convenient link on the dashboard.</p>
 					<p class="option-keywords">discretionary</p>
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[mention_url]" id="mention_url" value="1" <?php checked('1', !empty($nebula_options['mention_url'])); ?> /><label for="mention_url">Mention</label>
+					<input type="checkbox" name="nebula_options[mention_url]" id="mention_url" value="1" <?php checked('1', !empty($nebula_options['mention_url'])); ?> /><label for="mention_url">Mention URL</label>
 					<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://mention.com/" target="_blank" rel="noopener">Mention</a> account. (Default: <?php echo $this->user_friendly_default('mention_url'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted"><strong>This is only a dashboard link!</strong> It does nothing beyond add a convenient link on the dashboard.</p>
 					<p class="option-keywords">discretionary</p>

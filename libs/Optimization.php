@@ -327,6 +327,8 @@ if ( !trait_exists('Optimization') ){
 			$override = apply_filters('pre_nebula_prebrowsing', null);
 			if ( isset($override) ){return;}
 
+			$debug_comment = ( $this->is_dev() )? '<!-- Server-side -->' : '';
+
 			//DNS-Prefetch & Preconnect
 			$default_preconnects = array();
 
@@ -343,7 +345,7 @@ if ( !trait_exists('Optimization') ){
 			//Preconnect
 			$preconnects = apply_filters('nebula_preconnect', $default_preconnects);
 			foreach ( $preconnects as $preconnect ){
-				echo '<link rel="preconnect" href="' . $preconnect . '" />';
+				echo '<link rel="preconnect" href="' . $preconnect . '" />' . $debug_comment;
 			}
 
 			//Prefetch
@@ -354,7 +356,9 @@ if ( !trait_exists('Optimization') ){
 
 			if ( is_search() ){
 				global $wp_query;
-				$default_prefetches[] = get_permalink($wp_query->posts['0']->ID); //Prefetch the first search result
+				if ( !empty($wp_query->posts) && !empty($wp_query->posts['0']) ){ //If has search results
+					$default_prefetches[] = get_permalink($wp_query->posts['0']->ID); //Prefetch the first search result
+				}
 			}
 
 			if ( is_404() ){
@@ -362,11 +366,16 @@ if ( !trait_exists('Optimization') ){
 				if ( !empty($this->error_404_exact_match) ){
 					$default_prefetches[] = get_permalink($this->error_404_exact_match->ID);
 				}
+
+				//If has page suggestions prefetch the first one
+				if ( !empty(nebula()->error_query) && nebula()->error_query->have_posts() ){
+					$default_prefetches[] = get_permalink(nebula()->error_query->posts[0]->ID);
+				}
 			}
 
 			$prefetches = apply_filters('nebula_prefetches', $default_prefetches); //Allow child themes and plugins to prefetch resources via Nebula too
 			foreach ( $prefetches as $prefetch ){
-				echo '<link rel="prefetch" href="' . $prefetch . '" />';
+				echo '<link rel="prefetch" href="' . $prefetch . '" />' . $debug_comment;
 			}
 		}
 

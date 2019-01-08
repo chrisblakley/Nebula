@@ -2188,14 +2188,14 @@ trait Functions {
 		$logo_filename = apply_filters('nebula_logo_filename', 'logo'); //Allow themes and plugins to set the logo filename to use. No extension here!
 
 		//Search the parent theme for the logo file (SVG or PNG)
-		if ( file_exists(get_template_directory() . '/assets/img/' . $logo_filename . '.svg') ){
+		if ( file_exists(get_template_directory() . '/assets/img/' . $logo_filename . '.svg') && $location !== 'meta' ){
 			$logo = get_template_directory_uri() . '/assets/img/' . $logo_filename . '.svg';
 		} elseif ( file_exists(get_template_directory() . '/assets/img/' . $logo_filename . '.png') ){
 			$logo = get_template_directory_uri() . '/assets/img/' . $logo_filename . '.png';
 		}
 
 		//Search the child theme for the logo file (SVG or PNG)
-		if ( file_exists(get_stylesheet_directory() . '/assets/img/' . $logo_filename . '.svg') ){
+		if ( file_exists(get_stylesheet_directory() . '/assets/img/' . $logo_filename . '.svg') && $location !== 'meta' ){
 			$logo = get_stylesheet_directory_uri() . '/assets/img/' . $logo_filename . '.svg';
 		} elseif ( file_exists(get_stylesheet_directory() . '/assets/img/' . $logo_filename . '.png') ){
 			$logo = get_stylesheet_directory_uri() . '/assets/img/' . $logo_filename . '.png';
@@ -2214,14 +2214,14 @@ trait Functions {
 		}
 
 		//If it is the home page and the one-color logo (home) is requested (checkbox)
-		if ( is_front_page() && get_theme_mod('nebula_hero_single_color_logo') ){
+		if ( is_front_page() && get_theme_mod('nebula_hero_single_color_logo') && $location !== 'meta' ){
 			if ( get_theme_mod('one_color_logo') ){ //If one-color Customizer logo exists
 				return $this->get_thumbnail_src(get_theme_mod('one_color_logo'));
 			}
 		}
 
 		//If it a sub page and the one-color (sub) logo is requested (checkbox)
-		if ( !is_front_page() && get_theme_mod('nebula_header_single_color_logo') ){
+		if ( !is_front_page() && get_theme_mod('nebula_header_single_color_logo') && $location !== 'meta' ){
 			if ( get_theme_mod('one_color_logo') ){ //If one-color Customizer logo exists
 				return $this->get_thumbnail_src(get_theme_mod('one_color_logo'));
 			}
