@@ -40,11 +40,6 @@ if ( !trait_exists('Automation') ){
 					'required' => false,
 				),
 				array(
-					'name' => 'Custom Post Type UI',
-					'slug' => 'custom-post-type-ui',
-					'required' => false,
-				),
-				array(
 					'name' => 'Contact Form 7',
 					'slug' => 'contact-form-7',
 					'required' => true,

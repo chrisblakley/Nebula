@@ -277,7 +277,7 @@ function nebulaPredictiveCacheListeners(){
 		});
 
 		//First 5 buttons
-		jQuery('a.btn').slice(0, 4).each(function(){
+		jQuery('a.btn, a.wp-block-button__link').slice(0, 4).each(function(){
 			nebulaPrefetch(jQuery(this).attr('href'));
 		});
 	});
@@ -309,8 +309,16 @@ function nebulaAddToCache(url){
 
 //Prefetch a resource
 function nebulaPrefetch(url, callback){
-	if ( navigator.connection.effectiveType.toString().indexOf('2g') >= 0 || navigator.connection.saveData ){ //If network connection is 2G or Save Data is enabled don't prefetch
+	//If network connection is 2G don't prefetch
+	if ( has(navigator, 'connection.effectiveType') && navigator.connection.effectiveType.toString().indexOf('2g') >= 0 ){ //'slow-2g', '2g', '3g', or '4g'
 		return false;
+	}
+
+	//If Save Data is supported and Save Data is requested don't prefetch
+	if ( has(navigator, 'connection.saveData') ){
+		if ( navigator.connection.saveData ){
+			return false;
+		}
 	}
 
 	if ( url.length > 1 && url.indexOf('#') !== 0 ){
@@ -717,7 +725,7 @@ function initEventTracking(){
 //Google Analytics Universal Analytics Event Trackers
 function eventTracking(){
 	//Btn Clicks
-	nebula.dom.document.on('mousedown', "button, .btn", function(e){
+	nebula.dom.document.on('mousedown', "button, .btn, a.wp-block-button__link", function(e){
 		eventIntent = ( e.which >= 2 )? 'Intent' : 'Explicit';
 		ga('set', nebula.analytics.dimensions.eventIntent, eventIntent);
 

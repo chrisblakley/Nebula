@@ -21,6 +21,26 @@
 	//return get_permalink(99999); //Use ID for the About Us page here
 //});
 
+
+/*
+//Register custom post types
+add_action('init', function(){
+	register_post_type('events', array(
+		'labels' => array(
+			'name' => 'Events', //Plural
+			'singular_name' => 'Event',
+		),
+		'description' => 'Upcoming webinars and conferences.',
+		'public' => true,
+		'menu_icon' => 'dashicons-calendar', //https://developer.wordpress.org/resource/dashicons/
+		'has_archive' => true,
+		'supports' => array('title', 'editor', 'revisions', 'excerpt', 'thumbnail'),
+	));
+
+	//If you get a 404 on a custom post type try flush_rewrite_rules() but only use it temporarily (it is an expensive operation)
+});
+*/
+
 //Create custom block category for this website
 add_filter('block_categories', function($categories, $post){
 	return array_merge(

@@ -45,6 +45,28 @@
 	}
 }
 
+//Gutenberg buttons
+.wp-block-button {
+	a.wp-block-button__link {@include link-colors(#fff, #ccc); @include prefix((transition: all 0.25s));
+		&.has-primary-background-color {@include link-bg-colors($primary_color, darken($primary_color, 15%)); @include link-colors(readable-color($primary_color));}
+		&.has-secondary-background-color {@include link-bg-colors($secondary_color, darken($secondary_color, 15%)); @include link-colors(readable-color($secondary_color));}
+
+		&.has-primary-color {@include link-colors($primary_color, darken($primary_color, 15%));}
+		&.has-secondary-color {@include link-colors($secondary_color, darken($secondary_color, 15%));}
+
+		&:hover {text-decoration: none; outline: none;}
+	}
+
+	&.is-style-outline {
+		a.wp-block-button__link {background: none !important;
+			&.has-primary-background-color,
+			&.has-primary-color {border: 2px solid $primary_color;}
+			&.has-secondary-background-color,
+			&.has-secondary-color {border: 2px solid $secondary_color;}
+		}
+	}
+}
+
 //Single Post Widget Area
 #single-post-widget-area {margin-top: 50px;
 	.widget-container {margin-bottom: 50px;}

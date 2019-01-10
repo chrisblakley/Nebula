@@ -746,12 +746,14 @@ if ( !trait_exists('Utilities') ){
 
 			$limited['text'] = $string;
 			$limited['is_limited'] = false;
-			$words = explode(' ', $string, ($word_limit+1));
-			if ( count($words) > $word_limit ){
-				array_pop($words);
+
+			$words = array_slice(array_filter(explode(' ', trim($string))), 0, $word_limit); //Create an array of words after trimming whitespace and removing empty array items. Then keep only the first words up to the requested limit.
+
+			if ( count($words) >= $word_limit ){
 				$limited['text'] = implode(' ', $words);
 				$limited['is_limited'] = true;
 			}
+
 			return $limited;
 		}
 
@@ -760,7 +762,7 @@ if ( !trait_exists('Utilities') ){
 			$override = apply_filters('pre_string_limit_chars', null, $string, $char_limit);
 			if ( isset($override) ){return;}
 
-			$limited['text'] = strip_tags($string);
+			$limited['text'] = trim(strip_tags($string));
 			$limited['is_limited'] = false;
 
 			if ( strlen($limited['text']) <= $char_limit ){
