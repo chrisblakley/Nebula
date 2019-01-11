@@ -114,7 +114,7 @@ if ( !trait_exists('Admin') ){
 			}
 
 			add_action('admin_init', array($this, 'theme_json'));
-			add_filter('puc_request_update_result_theme-Nebula', array($this, 'theme_update_version_store'), 10, 2); //Action handle must match unique name
+			add_filter('puc_request_update_result_theme-Nebula', array($this, 'theme_update_version_store'), 10, 2); //This hook is found in UpdateChecker.php in the filterUpdateResult() function.
 		}
 
 		//Add info to the brain variable for admin pages
@@ -819,7 +819,7 @@ if ( !trait_exists('Admin') ){
 					$this->update_data('current_version_date', $this->version('date'));
 					$this->update_data('next_version', 'INCOMPATIBLE');
 				}
-			} elseif ( current_user_can('manage_options') && is_child_theme() ){
+			} elseif ( current_user_can('update_themes') && is_child_theme() ){
 				require_once(get_template_directory() . '/inc/vendor/plugin-update-checker/plugin-update-checker.php');
 				$theme_update_checker = Puc_v4_Factory::buildUpdateChecker(
 					'https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/nebula_theme.json',
