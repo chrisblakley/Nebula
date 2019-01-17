@@ -474,7 +474,7 @@ function isGoogleAnalyticsReady(){
 		return false;
 	}
 
-	if ( has(nebula, 'analytics.isReady') ){
+	if ( has(nebula, 'analytics.isReady') && nebula.analytics.isReady ){
 		nebula.dom.html.removeClass('no-gajs');
 		return true;
 	}
@@ -1220,6 +1220,35 @@ function nv(action, data, sendNow){
 	}
 
 	nebula.dom.document.trigger('nv_data', data);
+}
+
+//Easily send form data to nv() with nv-* classes
+//Add a class to the input field with the category to use. Ex: nv-firstname or nv-email or nv-fullname
+//Call this function before sending a ga() event because it sets dimensions too
+function nvForm(formID){
+	nvFormObj = {};
+
+	if ( formID ){
+		nvFormObj['form_contacted'] = 'CF7 (' + formID + ') Submit Attempt'; //This is triggered on submission attempt, so it may capture abandoned forms due to validation errors.
+	}
+
+	jQuery('form [class*="nv-"]').each(function(){
+		if ( jQuery.trim(jQuery(this).val()).length ){
+			if ( jQuery(this).attr('class').indexOf('nv-notable_poi') >= 0 ){
+				ga('set', nebula.analytics.dimensions.poi, jQuery('.notable-poi').val());
+			}
+
+			var cat = /nv-([a-z\_]+)/g.exec(jQuery(this).attr('class'));
+			if ( cat ){
+				var thisCat = cat[1];
+				nvFormObj[thisCat] = jQuery(this).val();
+			}
+		}
+	});
+
+	if ( Object.keys(nvFormObj).length ){
+		nv('identify', nvFormObj);
+	}
 }
 
 /*==========================
@@ -2090,11 +2119,12 @@ function cf7Functions(){
 		var formID = e.detail.contactFormId || e.detail.id;
 		var formTime = nebulaTimer(e.detail.id, 'lap', 'wpcf7-submit-attempt');
 
+		nvForm(formID); //nvForm() here because it triggers after all others. No nv() here so it doesn't overwrite the other (more valuable) data.
+
 		ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Attempt)');
 		ga('set', nebula.analytics.dimensions.formTiming, millisecondsToString(formTime) + 'ms (' + nebula.timings[e.detail.id].laps + ' inputs)');
 		ga('send', 'event', 'CF7 Form', 'Submit (Attempt)', 'Submission attempt for form ID: ' + formID); //This event is required for the notable form metric!
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)'});}
-		nv('identify', {'form_contacted': 'CF7 (' + formID + ') Submit Attempt'}, false);
 
 		jQuery('#' + e.detail.id).find('button#submit').removeClass('active');
 		jQuery('.invalid-feedback').addClass('hidden');

@@ -182,6 +182,7 @@ if ( !trait_exists('Automation') ){
 		public function activation_notice(){
 			$this->set_dates();
 			add_action('admin_notices', array($this, 'activation'));
+			flush_rewrite_rules(); //Note: this is an expensive operation
 		}
 
 		public function activation(){

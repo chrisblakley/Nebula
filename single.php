@@ -39,7 +39,7 @@
 							<h1 class="entry-title"><?php the_title(); ?></h1>
 
 							<div class="entry-meta">
-								<?php nebula()->post_meta('on'); ?> <?php nebula()->post_meta('by', 0); ?> <?php nebula()->post_meta('cat'); ?> <?php nebula()->post_meta('tags'); ?>
+								<?php echo nebula()->post_date(); ?> <?php echo nebula()->post_author(); ?> <?php echo nebula()->post_categories(); ?> <?php echo nebula()->post_tags(); ?>
 							</div>
 						<?php endif; ?>
 

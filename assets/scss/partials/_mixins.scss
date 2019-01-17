@@ -41,6 +41,7 @@
 	}
 }
 
+//Simply return the color with the higher contrast ratio against the background.
 //.element {background: #123456; color: readable-color(#123456);}
 @function readable-color($bg, $light: #fff, $dark: #000){
 	$lightContrast: contrast($bg, $light);
@@ -51,6 +52,66 @@
 	}
 
 	@return $dark;
+}
+
+//Pass the background color and desired foreground color as well as level of WCAG and text size
+//.element {background: #123456; color: wcag-color(#123456, #032786, 18px, "aaa");}
+@function wcag-color($bg, $fg, $size: 16px, $level: "aa"){
+	@if ( $level == "aa" ){
+		$wcag_contrast_ratio: 4.5; //For text smaller than 18px
+		@if ( $size >= 19  ){
+			$wcag_contrast_ratio: 3; //For text larger than 19px
+		}
+	}
+
+	@if ( $level == "aaa" ){
+		$wcag_contrast_ratio: 7; //For text smaller than 18px
+		@if ( $size >= 19  ){
+			$wcag_contrast_ratio: 4.5; //For text larger than 19px
+		}
+	}
+
+	$actual_contrast_ratio: contrast($bg, $fg);
+
+	@if ( $actual_contrast_ratio > $wcag_contrast_ratio ){
+		@return $fg; //Foreground color is acceptable
+	}
+
+	//Scale the lightness of the foreground to meet requested WCAG contrast ratio
+	$difference: 100 - $actual_contrast_ratio / $wcag_contrast_ratio * 100; //I think this is incorrect
+
+
+	/* Test values:
+		.contrast-test {color: wcag-color(#0098d7, #fff);}
+
+		https://contrast-ratio.com/
+		https://www.sassmeister.com/
+
+		color: wcag-color(#0098d7, #333); CR of 3.89 should return #282828 which is a darken of 4.5%
+		color: wcag-color(#0098d7, #ddd); CR of 2.38 should return #282828 which is a darken of 71%
+		color: wcag-color(#0098d7, #fff); CR of 3.24 should return #282828 which is a darken of 84.5%
+
+		color: wcag-color(#444, #777); CR of 2.17 should return #b1b1b1 which is a lighten of 22.7%
+		color: wcag-color(#444, #999); CR of 3.41 should return #b1b1b1 which is a lighten of 9.5%
+
+		color: wcag-color(#000, #000); CR of 1 should return #757575 which is a lighten of 46%
+		color: wcag-color(#000, #111); CR of 1.11 should return #757575 which is a lighten of 39.3%
+		color: wcag-color(#000, #444); CR of 2.15 should return #757575 which is a lighten of 19.3%
+		color: wcag-color(#000, #666); CR of 3.65 should return #757575 which is a lighten of 6%
+
+		color: wcag-color(#fff, #fff); CR of 1 should return #767676 which is a darken of 53.6%
+		color: wcag-color(#fff, #ccc); CR of 1.60 should return #767676 which is a darken of 33.6%
+		color: wcag-color(#fff, #aaa); CR of 2.32 should return #767676 which is a darken of 20.5%
+		color: wcag-color(#fff, #888); CR of 3.54 should return #767676 which is a darken of 7%
+	*/
+
+	@return darken($fg, 80%); //TESTING
+
+	@if ( luminance($bg) > luminance($fg) ){ //If the fg is darker than bg, darken further by inverting $difference
+		$difference: 0 - $difference; //Is there a better way to do this?
+	}
+
+	@return scale-color($fg, $lightness: $difference);
 }
 
 //Calculate the luminance for a color.

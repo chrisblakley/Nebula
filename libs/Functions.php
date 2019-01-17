@@ -108,6 +108,8 @@ trait Functions {
 		}
 		add_filter('wpcf7_form_elements', array($this, 'cf7_autocomplete_attribute'));
 		add_filter('wpcf7_special_mail_tags', array($this, 'cf7_custom_special_mail_tags'), 10, 3);
+
+		add_action('shutdown', array($this, 'flush_rewrite_on_debug'));
 	}
 
 	//Check if the Nebula Companion plugin is installed and active
@@ -766,8 +768,8 @@ trait Functions {
 	//Date post meta
 	public function post_date($options=array()){
 		$defaults = apply_filters('nebula_post_date_defaults', array(
-			'icon' => true,
-			'type' => 'published', //"published", "modified", or "both"
+			'label' => 'icon', //"icon" or "text"
+			'type' => 'published', //"published", or "modified"
 			'relative' => get_theme_mod('post_date_format'),
 			'linked' => true,
 			'day' => true,
@@ -780,40 +782,40 @@ trait Functions {
 			return false;
 		}
 
-		$icon = ( $data['icon'] )? '<i class="far fa-fw fa-calendar"></i> ' : '';
+		//Apply the requested label
+		$label = '';
+		if ( $data['label'] == 'icon' ){
+			$label = '<i class="nebula-post-date-label far fa-fw fa-calendar"></i> ';
+		} elseif ( $data['label'] == 'text' ){
+			$label = '<span class="nebula-post-date-label">' . ucwords($data['type']) . ' </span>';
+		}
 
 		//Use the publish or modified date per options
 		$the_date = get_the_date('U');
 		$modified_date_html = '';
 		if ( $data['type'] === 'modified' ){
 			$the_date = get_the_modified_date('U');
-		} elseif ( $data['type'] === 'both' || $data['type'] === 'all' ){
-			$modified_date_format = ( $data['day'] )? get_the_modified_date($data['format']) : get_the_modified_date('F Y');
-			if ( $data['relative'] === 'relative' ){
-				$modified_date_format = human_time_diff(get_the_modified_date('U')) . ' ago';
-			}
-			$modified_date_html = ' <span class="modified-on meta-item" datetime="' . get_the_modified_date('c') . '">(Updated ' . $modified_date_format . ')</span>';
 		}
 
 		$relative_date = human_time_diff($the_date) . ' ago';
 
 		if ( $data['relative'] ){
-			return '<span class="posted-on meta-item post-date relative-date" title="' . date('F j, Y', $the_date) . '">' . $icon . $relative_date . $modified_date_html . '</span>';
+			return '<span class="posted-on meta-item post-date relative-date" title="' . date('F j, Y', $the_date) . '">' . $label . $relative_date . $modified_date_html . '</span>';
 		}
 
 		$day = ( $data['day'] )? date('d', $the_date) . '/' : ''; //If the day should be shown (otherwise, just month and year).
 
 		if ( $data['linked'] && !isset($options['format']) ){
-			return '<span class="posted-on meta-item post-date">' . $icon . '<span class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . '<a href="' . home_url('/') . date('Y/m', $the_date) . '/' . '">' . date('F', $the_date) . '</a>' . ' ' . '<a href="' . home_url('/') . date('Y/m', $the_date) . '/' . $day . '">' . date('j', $the_date) . '</a>' . ', ' . '<a href="' . home_url('/') . date('Y', $the_date) . '/' . '">' . date('Y', $the_date) . '</a>' . '</span>' . $modified_date_html . '</span>';
+			return '<span class="posted-on meta-item post-date">' . $label . '<span class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . '<a href="' . home_url('/') . date('Y/m', $the_date) . '/' . '">' . date('F', $the_date) . '</a>' . ' ' . '<a href="' . home_url('/') . date('Y/m', $the_date) . '/' . $day . '">' . date('j', $the_date) . '</a>' . ', ' . '<a href="' . home_url('/') . date('Y', $the_date) . '/' . '">' . date('Y', $the_date) . '</a>' . '</span>' . $modified_date_html . '</span>';
 		} else {
-			return '<span class="posted-on meta-item post-date">' . $icon . '<span class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . date($data['format'], $the_date) . '</span>' . $modified_date_html . '</span>';
+			return '<span class="posted-on meta-item post-date">' . $label . '<span class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . date($data['format'], $the_date) . '</span>' . $modified_date_html . '</span>';
 		}
 	}
 
 	//Author post meta
 	public function post_author($options=array()){
 		$defaults = apply_filters('nebula_post_author_defaults', array(
-			'icon' => true, //Show icon
+			'label' => 'icon', //"icon" or "text"
 			'linked' => true, //Link to author page
 			'force' => true, //Override author_bios Nebula option
 		));
@@ -823,15 +825,17 @@ trait Functions {
 		//@todo "Nebula" 0: Include support for multi-authors: is_multi_author
 
 		if ( ($this->get_option('author_bios') || $data['force']) && get_theme_mod('post_author', true) ){
-			$icon_html = '';
-			if ( $data['icon'] ){
-				$icon_html = '<i class="fas fa-fw fa-user"></i> ';
+			$label = '';
+			if ( $data['label'] === 'icon' ){
+				$label = '<i class="nebula-post-author-label fas fa-fw fa-user"></i> ';
+			} elseif ( $data['label'] === 'text' ){
+				$label = '<span class="nebula-post-author-label">Author </span>';
 			}
 
 			if ( $data['linked'] && !$data['force'] ){
-				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $icon_html . '<span class="meta-item entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '" itemprop="name">' . get_the_author() . '</a></span></span>';
+				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $label . '<span class="meta-item entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '" itemprop="name">' . get_the_author() . '</a></span></span>';
 			} else {
-				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $icon_html . '<span class="meta-item entry-author" itemprop="name">' . get_the_author() . '</span></span>';
+				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $label . '<span class="meta-item entry-author" itemprop="name">' . get_the_author() . '</span></span>';
 			}
 		}
 	}
@@ -867,10 +871,11 @@ trait Functions {
 	}
 
 	//Categories post meta
+	public function post_cats($options=array()){return $this->post_categories($options);}
 	public function post_categories($options=array()){
 		$defaults = apply_filters('nebula_post_categories_defaults', array(
 			'id' => get_the_ID(),
-			'icon' => true, //Show icon
+			'label' => 'icon', //"icon" or "text"
 			'linked' => true, //Link to category archive
 			'show_uncategorized' => true, //Show "Uncategorized" category
 			'force' => false,
@@ -880,9 +885,11 @@ trait Functions {
 		$data = array_merge($defaults, $options);
 
 		if ( get_theme_mod('post_categories', true) || $data['force'] ){
-			$the_icon = '';
-			if ( $data['icon'] ){
-				$the_icon = '<i class="fas fa-fw fa-bookmark"></i> ';
+			$label = '';
+			if ( $data['label'] === 'icon' ){
+				$label = '<i class="nebula-post-categories-label fas fa-fw fa-bookmark"></i> ';
+			} elseif ( $data['label'] === 'text' ){
+				$label = '<span class="nebula-post-categories-label">Category </span>';
 			}
 
 			if ( is_object_in_taxonomy(get_post_type(), 'category') ){
@@ -900,7 +907,7 @@ trait Functions {
 					return strip_tags($category_list);
 				}
 
-				return '<span class="posted-in meta-item post-categories">' . $the_icon . $category_list . '</span>';
+				return '<span class="posted-in meta-item post-categories">' . $label . $category_list . '</span>';
 			}
 		}
 	}
@@ -909,7 +916,7 @@ trait Functions {
 	public function post_tags($options=array()){
 		$defaults = apply_filters('nebula_post_tags_defaults', array(
 			'id' => get_the_ID(),
-			'icon' => true, //Show icon
+			'label' => 'icon', //"icon" or "text"
 			'linked' => true, //Link to tag archive
 			'force' => false,
 			'string' => false, //Return a string with no markup
@@ -920,10 +927,12 @@ trait Functions {
 		if ( get_theme_mod('post_tags', true) || $data['force'] ){
 			$tag_list = get_the_tag_list('', ', ', '', $data['id']);
 			if ( $tag_list ){
-				$the_icon = '';
-				if ( $data['icon'] ){
+				$label = '';
+				if ( $data['label'] === 'icon' ){
 					$tag_plural = ( count(get_the_tags()) > 1 )? 'tags' : 'tag';
-					$the_icon = '<i class="fas fa-fw fa-' . $tag_plural . '"></i> ';
+					$label = '<i class="nebula-post-tags-label fas fa-fw fa-' . $tag_plural . '"></i> ';
+				} elseif ( $data['label'] === 'text' ){
+					$label = '<span class="nebula-post-tags-label">' . ucwords($tag_plural) . ' </span>';
 				}
 
 				if ( !$data['linked'] ){
@@ -3399,5 +3408,12 @@ trait Functions {
 	}
 	public function arbitrary_code_footer(){
 		echo $this->get_option('arbitrary_code_footer');
+	}
+
+	//Flush rewrite rules when using ?debug at shutdown
+	public function flush_rewrite_on_debug(){
+		if ( $this->is_debug() ){
+			flush_rewrite_rules(); //Note: this is an expensive operation
+		}
 	}
 }
