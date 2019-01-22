@@ -39,6 +39,9 @@ if ( !trait_exists('Optimization') ){
 			add_filter('post_thumbnail_size', array($this, 'limit_thumbnail_size'), 10, 2);
 			add_filter('nebula_thumbnail_src_size', array($this, 'limit_image_size'), 10, 2);
 			add_filter('max_srcset_image_width', array($this, 'smaller_max_srcset_image_width'), 10, 2);
+
+			add_action('wp_head', array($this, 'prebrowsing'));
+			add_action('admin_head', array($this, 'prebrowsing'));
 		}
 
 		//Create max image size for each uploaded image while maintaining aspect ratio
@@ -306,7 +309,7 @@ if ( !trait_exists('Optimization') ){
 			}
 		}
 
-		//Determing if a page should be prepped using prefetch, or preconnect.
+		//Determing if a page should be prepped using prefetch, or preconnect. This is called on the front end and on Admin pages
 			//DNS-Prefetch = Resolve the DNS only to a domain.
 			//Preconnect = Resolve both DNS and TCP to a domain.
 			//Prefetch = Fully request a single resource and store it in cache until needed. Do not combine with preload!

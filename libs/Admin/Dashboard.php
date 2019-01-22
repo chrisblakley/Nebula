@@ -122,6 +122,9 @@ if ( !trait_exists('Dashboard') ){
 					case ('page'):
 						$post_icon_img = '<i class="fas fa-fw fa-file-alt"></i>';
 						break;
+					case ('wp_block'):
+						$post_icon_img = '<i class="far fa-fw fa-clone"></i>';
+						break;
 					case ('wpcf7_contact_form'):
 						$post_icon_img = '<i class="fas fa-fw fa-envelope"></i>';
 						break;

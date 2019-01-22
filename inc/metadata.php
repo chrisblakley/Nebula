@@ -171,8 +171,6 @@
 <link rel="manifest" href="<?php echo nebula()->manifest_json_location(); ?>" />
 <link rel="profile" href="https://gmpg.org/xfn/11" />
 
-<?php nebula()->prebrowsing(); //Prefetch, preconnect, and prerender tags ?>
-
 <?php
 	//JSON-LD Structured Data
 	//Google Structured Data Documentation: https://developers.google.com/search/docs/data-types/data-type-selector

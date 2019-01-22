@@ -1,0 +1,290 @@
+//.example {font-size: rem(14px);}
+@function rem($size){
+	$remSize: $size/16px; //This relies on the html font-size to be set to 16px
+	@return #{$remSize}rem;
+}
+
+//.example {color: brand(facebook);}
+//.example {color: brand(flickr, secondary);}
+//.example {color: brand(flickr, 2);}
+@function brands($name, $index: 1){@return brand($name, $index);}
+@function brand($name, $index: 1){
+	@if $index == 0 {
+		$index: 1;
+	}
+
+	$index_names: (primary: 1, secondary: 2, tertiary: 3, quaternary: 4, quinary: 5, senary: 6, septenary: 7, octonary: 8, nonary: 9, denary: 10);
+	@if map-has-key($index_names, $index) {
+		$index: map_get($index_names, $index);
+	}
+
+	$brand_colors: map-get($brands, $name);
+	@if $index > length($brand_colors) {
+		//@warn '#{$name} does not have a color in the index of #{$index}';
+		$index: 1;
+	}
+
+	@if length($brand_colors) == 1 {
+		@return $brand_colors;
+	}
+
+	@each $current_color in $brand_colors {
+		$i: index($brand_colors, $current_color);
+		//@warn '#{$current_color} is in the index of #{$i}';
+		@if $i == $index {
+			@return $current_color;
+		}
+	}
+}
+
+//Simply return the color with the higher contrast ratio against the background.
+//.element {background: #123456; color: readable-color(#123456);}
+@function readable-color($bg, $light: #fff, $dark: #000){
+	$lightContrast: contrast($bg, $light);
+	$darkContrast: contrast($bg, $dark);
+
+	@if ( $lightContrast > $darkContrast ){
+		@return $light;
+	}
+
+	@return $dark;
+}
+
+//Pass the background color and desired foreground color as well as level of WCAG and text size
+//.element {background: #123456; color: wcag-color(#123456, #032786, 18px, "aaa");}
+@function wcag-color($bg, $fg, $size: 16px, $level: "aa"){
+	@if ( $level == "aa" ){
+		$target_contrast_ratio: 4.5; //For text smaller than 18px
+		@if ( $size >= 19  ){
+			$target_contrast_ratio: 3; //For text larger than 19px
+		}
+	}
+
+	@if ( $level == "aaa" ){
+		$target_contrast_ratio: 7; //For text smaller than 18px
+		@if ( $size >= 19  ){
+			$target_contrast_ratio: 4.5; //For text larger than 19px
+		}
+	}
+
+	$actual_contrast_ratio: contrast($bg, $fg);
+
+	@if ( $actual_contrast_ratio > $target_contrast_ratio ){
+		@return $fg; //Foreground color is acceptable
+	}
+
+	/*
+		L1 is lighter regardless of fg/bg!
+		L2 is darker regardless of fg/bg!
+
+		L1/L2 = C //contrast ratio formula
+		L2 = L1/C //determining what the luminance of the FG needs to be if it is darker than the BG
+		L1 = L2*C //determining what the luminance of the FG needs to be if it is lighter than the BG
+
+		...then what?
+
+		https://stackoverflow.com/questions/54241873/scaling-a-color-based-on-a-target-contrast-ratio
+
+
+		********** Here we go:
+
+		#ee0add Background (magenta-ish)
+		#445566 Foreground (dark grey) //We will be altering this color
+		Contrast ratio is 2.09
+
+		Luminance of FG is 0.0868
+		Luminance of BG is 0.236
+
+		$needed_luminance: (luminance($fg) - (0.05 * $target_contrast_ratio) + 0.05) / $target_contrast_ratio; //0.0136
+		$percent_difference: ($acceptable_luminance/luminance($bg)); //0.156 (15.6%)
+
+		$r1: red($bg) / 255; //(68) .267
+		$g1: green($bg) / 255; //(85) .333
+		$b1: blue($bg) / 255; //(102) .400
+
+		//The real fomula for reference is: ((red($bg) + .055) / 1.055)^2.4
+		$r2: nth($linear-channel-values, red($bg) + 1); //0.05780543019106721120703816752337
+		$g2: nth($linear-channel-values, green($bg) + 1); //0.09084171118340767766490119106965
+		$b2: nth($linear-channel-values, blue($bg) + 1); //0.13286832155381791428570549818868
+
+		//Modify each channel by the percent difference:
+		$r3: $r2 * $percent_difference; //0.00904373187934550551617004082875
+		$g3: $g2 * $percent_difference; //0.01421229937547695322310904970549
+		$b3: $b2 * $percent_difference; //0.02078741515147623990363062978804
+
+		//Now need to undo all the ^2.4 stuff that happens using the nth($linear-channel-values) stuff we need to use ^0.4167 (which is 1/2.4) (which we can't do without another huge linear channel value variable......... or until Sass supports decimal exponents), Then multiply by 1.055, Then subtract 0.055, Then multiply by 255
+		$r4: reverse_linear_channel_value($r3); //24
+		$g4: reverse_linear_channel_value($g3); //32
+		$b4: reverse_linear_channel_value($b3); //40
+
+		//Then combine the resulting channels into a new color and return it!
+		$new_color: rgb($r4, $g4, $b4); //#182028
+
+
+
+
+
+		//SO HERE IS THE WHOLE THING:
+		$needed_luminance: (luminance($fg) - (0.05 * $target_contrast_ratio) + 0.05) / $target_contrast_ratio; //0.0136
+		$percent_difference: ($needed_luminance/luminance($bg)); //0.156 (15.6%)
+
+		$new_r: reverse_linear_channel_value(linear_channel_value(red($bg)) * $percent_difference);
+		$new_g: reverse_linear_channel_value(linear_channel_value(green($bg)) * $percent_difference);
+		$new_b: reverse_linear_channel_value(linear_channel_value(blue($bg)) * $percent_difference);
+
+		@return #{ rgb($new_r, $new_g, $new_b) };
+
+		//NOW, need to throw this in a conditional to determine between the foreground and background color how to approach this. We always only want to adjust the foreground color.
+
+
+	*/
+
+	//Luminance of BG (#ee0add) MAGENTA is 0.2361468278
+	//Luminance of FG (#445566) GREY is 0.0868525191
+
+	$original_contrast: contrast($bg, $fg);
+	//@return #{ $original_contrast };
+
+	@if ( luminance($bg) < luminance($fg) ){
+		@return #{ "BG is lighter" };
+	} @else {
+		//@return #{ "FG is lighter" };
+		$needed_luminance: (luminance($bg) - (0.05 * $target_contrast_ratio) + 0.05) / $target_contrast_ratio; //0.0136
+		$percent_difference: ($needed_luminance/luminance($fg)); //0.156 (15.6%)
+
+		$new_r: reverse_linear_channel_value(linear_channel_value(red($fg)) * $percent_difference);
+		$new_g: reverse_linear_channel_value(linear_channel_value(green($fg)) * $percent_difference);
+		$new_b: reverse_linear_channel_value(linear_channel_value(blue($fg)) * $percent_difference);
+
+		//#182028
+
+		@return #{ rgb($new_r, $new_g, $new_b) };
+	}
+}
+
+//Calculate the luminance for a color.
+@function luminance($color) {
+	$red: linear_channel_value(red($color));
+	$green: linear_channel_value(green($color));
+	$blue: linear_channel_value(blue($color));
+
+	@return 0.2126 * $red + 0.7152 * $green + 0.0722 * $blue;
+}
+
+//This determines the linear channel value for luminance calculation.
+@function linear_channel_value($value){
+	@return nth($linear-channel-values, $value + 1); //This is how we would do it without math functions (requires the lookup variable)
+
+	$value: $value / 255;
+
+	@if ( $value < 0.03928 ){
+		@return $value / 12.92;
+	}
+
+	@return pow(($value + 0.055) / 1.055, 2.4); //This is a custom math function until Sass natively supports decimal exponents (it is slow)
+}
+
+//This takes a luminance and converts it back to a channel...
+@function reverse_linear_channel_value($value){
+	$value: pow($value, 1/2.4); //This won't work until Sass supports decimal exponents (it is slow).
+	$value: $value * 1.055;
+	$value: $value - 0.055;
+	$value: $value * 255;
+
+	@return round($value);
+}
+
+//Calculate the contrast ratio between two colors.
+@function contrast($back, $front) {
+	$backLum: luminance($back) + 0.05;
+	$foreLum: luminance($front) + 0.05;
+
+	@return max($backLum, $foreLum) / min($backLum, $foreLum); //Contrast ratio is lighter luminance (L1) divided by darker luminance (L2)
+}
+
+//.example {@include prefix((transition: right 0.5s easing(easeOutBack)));}
+//.example {@include prefix((transition: right 0.5s easing(custom, "0.190, 1.000, 0.220, 1.000")));}
+@function easing($ease: linear, $custom: ""){
+	@each $name, $values in $easings {
+		@if $ease == $name {
+			@return cubic-bezier(unquote(#{$values}) unquote(#{$custom}));
+		} @else {
+			//@warn '#{$ease} not found in the easings map.';
+		}
+	}
+}
+
+//Math functionality
+@function -math-exp-taylor-0($x, $steps){
+	$item: 1;
+	$result: 1;
+
+	@for $i from 1 to $steps {
+		$item: $item * $x / $i;
+		$result: $result + $item;
+	}
+
+	@return $result;
+}
+
+@function -math-ln-taylor-1($x, $steps){
+	$z: ($x - 1) / ($x + 1);
+
+	$power: $z;
+	$result: $z;
+
+	@for $i from 1 to $steps {
+		$power: $power * $z *$z;
+		$result: $result + $power / (2 * $i + 1);
+	}
+
+	@return 2 * $result;
+}
+
+@function -math-pow-int($base, $exponent){
+	@if $exponent < 0 {
+		@return 1 / -math-pow-int($base, -$exponent);
+	} @else if $exponent == 0 {
+		@return 1;
+	} @else if $exponent == 1 {
+		@return $base;
+	} @else {
+		$exp: floor($exponent / 2);
+		$pow: -math-pow-int($base, $exp);
+		@if $exp * 2 == $exponent {
+			@return $pow * $pow;
+		} @else {
+			@return $pow * $pow * $base;
+		}
+	}
+}
+
+@function -math-log-approx($x) {
+	@if $x <= 0 {
+		@error "cannot calculate log of #{$x}";
+	} @else if $x >= 1 {
+		@return str-length(inspect(round($x))) - 1; //Choose the smaller option (-1) because it yield better results in ln().
+	} @else {
+		@return -1 * str-length(inspect(round(1 / $x)));
+	}
+}
+
+@function ln($x, $steps: 32){
+	$ln10: 2.302585092994046;
+	$approx: -math-log-approx($x);
+	$y: $x / -math-pow-int(10, $approx); //$y is in range [1, 10]
+	@return $approx * $ln10 + -math-ln-taylor-1($y, $steps);
+}
+
+@function pow($x, $exponent, $steps: 32){
+	$exp1: round($exponent);
+	$exp2: $exponent - $exp1;
+	$pow1: -math-pow-int($x, $exp1);
+	@if $exp2 == 0 {
+		@return $pow1;
+	} @else {
+		$y: ln($x, $steps) * $exp2;
+		$pow2: -math-exp-taylor-0($y, $steps);
+		@return $pow1 * $pow2;
+	}
+}

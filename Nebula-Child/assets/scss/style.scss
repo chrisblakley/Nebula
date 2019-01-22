@@ -15,6 +15,7 @@
 //Import Nebula partials
 @import $parent_partials_directory + '/variables';
 @import 'variables'; //Child theme variables
+@import $parent_partials_directory + '/functions';
 @import $parent_partials_directory + '/mixins';
 @import $parent_partials_directory + '/helpers';
 @import $parent_partials_directory + '/animations';
