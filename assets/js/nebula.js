@@ -4552,7 +4552,11 @@ function mmenus(){
 				mobileNav.data('mmenu').bind('open:start', function($panel){
 					//When mmenu has started opening
 					mobileNavTriggerIcon.removeClass('fa-bars').addClass('fa-times');
-					jQuery('[data-toggle="tooltip"]').tooltip('hide');
+
+					if ( typeof jQuery.tooltip !== 'undefined' ){
+						jQuery('[data-toggle="tooltip"]').tooltip('hide');
+					}
+
 					nebulaTimer('mmenu', 'start');
 				}).bind('close:start', function($panel){
 					//When mmenu has started closing

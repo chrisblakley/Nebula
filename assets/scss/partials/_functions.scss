@@ -263,7 +263,7 @@
 	@if $x <= 0 {
 		@error "cannot calculate log of #{$x}";
 	} @else if $x >= 1 {
-		@return str-length(inspect(round($x))) - 1; //Choose the smaller option (-1) because it yield better results in ln().
+		@return str-length(inspect(round($x))) - 1; //Choose the smaller option (-1) because it yields better results in ln().
 	} @else {
 		@return -1 * str-length(inspect(round(1 / $x)));
 	}
@@ -276,6 +276,7 @@
 	@return $approx * $ln10 + -math-ln-taylor-1($y, $steps);
 }
 
+//Note: This function is slow
 @function pow($x, $exponent, $steps: 32){
 	$exp1: round($exponent);
 	$exp2: $exponent - $exp1;

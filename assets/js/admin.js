@@ -223,10 +223,6 @@ function developerMetaboxes(){
 			return false;
 		});
 
-		if ( jQuery('#performance_metabox').length ){
-			checkPageSpeed(); //Performance Timing
-		}
-
 		//Dynamic height for TODO results
 		if ( jQuery('.todo_results').length ){
 			jQuery(document).on('click', '.linenumber', function(){
@@ -247,6 +243,10 @@ function developerMetaboxes(){
 				}
 			});
 		}
+	}
+
+	if ( jQuery('#performance_metabox').length ){
+		checkPageSpeed(); //Performance Timing
 	}
 }
 

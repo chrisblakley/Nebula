@@ -125,13 +125,6 @@
 
 //Front-end only helpers
 body:not(.wp-admin) {
-	hr {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; @include background-color(#fff); margin: 3px 0; padding: 0;
-		//@TODO "Nebula" 0: Until Firefox Mobile does not trigger errors (by way of big gap at the top of the page), mix-blend-mode has been commented out. If Modernizr can detect this, it should be prepended.
-		.rgba & {display: block; height: 1px; border: 0; margin: 3px 0; padding: 0; /* mix-blend-mode: screen; */}
-		.rgba &:before {content: ''; position: relative; top: -1px; height: 1px; display: block; @include background-color(#000, 0.2); /* mix-blend-mode: multiply; */}
-		&.zero {margin: 0;}
-	}
-
 	.ir {background-color: transparent; border: 0; overflow: hidden; *text-indent: -9999px; //Image replacement
 		&:before {content: ""; display: block; width: 0; height: 100%;}
 	}
@@ -146,6 +139,12 @@ body:not(.wp-admin) {
 	.avoid-clicks {pointer-events: none;} //Only supported in IE11+
 	.allow-clicks {pointer-events: all;} //Only supported in IE11+
 	.filtered {display: none;}
+}
+
+hr.nebula-line {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; @include background-color(#fff); margin: 3px 0; padding: 0;
+	.rgba & {display: block; height: 1px; border: 0; margin: 3px 0; padding: 0; mix-blend-mode: screen;}
+	.rgba &:before {content: ''; position: relative; top: -1px; height: 1px; display: block; @include background-color(#000, 0.2); mix-blend-mode: multiply;}
+	&.zero {margin: 0;}
 }
 
 ul.list-unstyled {list-style: none; padding-left: 0;}

@@ -12,9 +12,9 @@ if ( !trait_exists('Security') ){
 
 			remove_action('wp_head', 'wlwmanifest_link');
 			add_filter('login_errors', array($this, 'login_errors'));
-			add_filter('the_generator', array($this, 'complete_version_removal'));
-			add_filter('style_loader_src', array($this, 'at_remove_wp_ver_css_js' ), 9999);
-			add_filter('script_loader_src', array($this, 'at_remove_wp_ver_css_js' ), 9999);
+			add_filter('the_generator', '__return_empty_string'); //Remove Wordpress version info from head and feeds
+			add_filter('style_loader_src', array($this, 'at_remove_wp_ver_css_js'), 9999);
+			add_filter('script_loader_src', array($this, 'at_remove_wp_ver_css_js'), 9999);
 			add_action('check_comment_flood', array($this, 'check_referrer'));
 			//add_action('wp_footer', array($this, 'track_notable_bots')); //Disabled for now. Not super useful.
 			add_action('wp_loaded', array($this, 'domain_prevention'));
@@ -105,11 +105,6 @@ if ( !trait_exists('Security') ){
 			}
 
 			return $error;
-		}
-
-		//Remove Wordpress version info from head and feeds
-		public function complete_version_removal(){
-			return '';
 		}
 
 		//Remove WordPress version from any enqueued scripts
