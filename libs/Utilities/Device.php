@@ -382,5 +382,18 @@ if ( !trait_exists('Device') ){
 
 			return false;
 		}
+
+		//Check if the current visitor is Googlebot (search indexing)
+		function is_googlebot(){
+			if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') ){
+				$hostname = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+				if ( preg_match('/\.googlebot|google\.com$/i', $hostname) ){
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 	}
 }

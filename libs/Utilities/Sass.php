@@ -39,7 +39,7 @@ if ( !trait_exists('Sass') ){
 
 				//Child theme SCSS locations
 				if ( is_child_theme() ){
-					$scss_locations['parent']['imports'][] = get_stylesheet_directory() . '/assets/scss/partials/'; //@todo "Nebula" 0: Clarify here why parent theme needs to know child imports directory
+					$scss_locations['parent']['imports'][] = get_stylesheet_directory() . '/assets/scss/partials/'; //@todo "Nebula" 0: Clarify here why parent theme needs to know child imports directory. This line is making an array of 2 import paths by appending the child partials directory to it.
 
 					$scss_locations['child'] = array(
 						'directory' => get_stylesheet_directory(),
@@ -74,7 +74,7 @@ if ( !trait_exists('Sass') ){
 						foreach ( $scss_location['imports'] as $imports_directory ){
 							foreach ( glob($imports_directory . '*') as $import_file ){
 								if ( $this->get_data('scss_last_processed') != '0' && $this->get_data('scss_last_processed')-filemtime($import_file) < -30 ){
-									$force_all = true;
+									$force_all = true; //If any partial file has been edited, reprocess everything.
 									break 3; //Break out of all 3 foreach loops
 								}
 							}
@@ -204,7 +204,7 @@ if ( !trait_exists('Sass') ){
 								$this_scss_contents = $wp_filesystem->get_contents($scss_file); //Copy SCSS file contents
 
 								//Catch fatal compilation errors when PHP v7.0+ to provide additional information without crashing
-								if ( version_compare(phpversion(), '7.0.0', '>=') ){
+								if ( version_compare(phpversion(), '7.0.0', '>=') ){ //@todo: remove this conditional once PHP7 is widely enough used.
 									try {
 										$compiled_css = $this->scss->compile($this_scss_contents, $scss_file); //Compile the SCSS
 									} catch (\Throwable $error){
