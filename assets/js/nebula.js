@@ -2286,6 +2286,12 @@ function nebulaLiveValidator(){
 		var invalidCount = 0;
 
 		jQuery(this).closest('form').find('[required], .wpcf7-validates-as-required').each(function(){
+			//Look for checked checkboxes or radio buttons
+			if ( jQuery(this).find('input:checked').length ){
+				return; //Continue
+			}
+
+			//Look for empty fields
 			if ( jQuery.trim(jQuery(this).val()).length == 0 ){
 				jQuery(this).addClass('nebula-empty-required');
 				invalidCount++;
