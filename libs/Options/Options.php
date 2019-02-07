@@ -257,6 +257,7 @@ if ( !trait_exists('Options') ){
 				'bootstrap_version' => 'latest',
 				'allow_bootstrap_js' => 1,
 				'limit_image_dimensions' => 0,
+				'jpeg_quality' => 82, //WordPress default is 90
 				'admin_bar' => 1,
 				'admin_notices' => 1,
 				'dev_info_metabox' => 1,

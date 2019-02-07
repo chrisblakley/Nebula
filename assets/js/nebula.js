@@ -3166,6 +3166,7 @@ function get(parameter, url){
 }
 
 //Remove an array of parameters from the query string.
+//@todo "Nebula" 0: In the future (once IE is dead), consider using the URL API instead. https://caniuse.com/#feat=url
 function removeQueryParameter(keys, sourceURL){
 	if ( typeof keys === 'string' ){
 		keys = [keys];

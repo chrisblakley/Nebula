@@ -358,7 +358,7 @@ if ( !trait_exists('Metaboxes') ){
 					</select>
 					<p class="nebula-help-text short-help form-text text-muted">Which jQuery version to use and where to load it (head is blocking, footer is more performant). (Default: <?php echo $this->user_friendly_default('jquery_version'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Be careful changing this option as some plugins may rely on older versions of jQuery, however some speed improvements may be realized by using alternate versions and locations.<br /><strong>Note:</strong> some plugins may override this and bring jQuery back to the head.<br /><strong>Remember:</strong> if loading in the footer, embedded script tags cannot use jQuery in template files.</p>
-					<p class="option-keywords">internet explorer old support plugins minor page speed impact</p>
+					<p class="option-keywords">internet explorer old support plugins minor page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group">
@@ -371,14 +371,14 @@ if ( !trait_exists('Metaboxes') ){
 					</select>
 					<p class="nebula-help-text short-help form-text text-muted">Which Bootstrap version to use. (Default: <?php echo $this->user_friendly_default('bootstrap_version'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Bootstrap 3 will support IE8+. Bootstrap 4 alpha 5 will support IE9+. Bootstrap latest supports IE10+. Grid loads only framework (and reboot) CSS. WordPress admin pages will still load Bootstrap latest regardless of this selection.</p>
-					<p class="option-keywords">internet explorer old support optimization moderate page speed impact</p>
+					<p class="option-keywords">internet explorer old support optimization moderate page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[allow_bootstrap_js]" id="allow_bootstrap_js" value="1" <?php checked('1', !empty($nebula_options['allow_bootstrap_js'])); ?> /><label for="allow_bootstrap_js">Allow Bootstrap JS</label>
 					<p class="nebula-help-text short-help form-text text-muted">Allow Bootstrap JavaScript. (Default: <?php echo $this->user_friendly_default('allow_bootstrap_js'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Disabling this saves a resource request, but JS functionality of Bootstrap will not work (accordions, sliders, toggles, etc).</p>
-					<p class="option-keywords">moderate page speed impact</p>
+					<p class="option-keywords">moderate page speed impact optimization optimize</p>
 				</div>
 			<?php
 
@@ -388,10 +388,18 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_front_end_metabox($nebula_options){
 			?>
 				<div class="form-group">
+					<label for="jpeg_quality">JPG Quality</label>
+					<input type="text" name="nebula_options[jpeg_quality]" id="jpeg_quality" class="form-control nebula-validate-text" value="<?php echo $this->option('jpeg_quality'); ?>" placeholder="<?php echo $this->user_friendly_default('jpeg_quality'); ?>" />
+					<p class="nebula-help-text short-help form-text text-muted">Set the JPG compression level on resized images. (Default: <?php echo $this->user_friendly_default('jpeg_quality'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">This changes the quality of JPG images when WordPress creates scaled sizes. Smaller number is more optimized, but larger number is better quality.</p>
+					<p class="option-keywords">moderate page speed impact optimization optimize</p>
+				</div>
+
+				<div class="form-group">
 					<input type="checkbox" name="nebula_options[limit_image_dimensions]" id="limit_image_dimensions" value="1" <?php checked('1', !empty($nebula_options['limit_image_dimensions'])); ?> /><label for="limit_image_dimensions">Limit Image Dimensions</label>
 					<p class="nebula-help-text short-help form-text text-muted">Limit image sizes to 1200px on the front-end. (Default: <?php echo $this->user_friendly_default('limit_image_dimensions'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">This attempts to prevent content managers from accidentally loading large filesize images on the front-end.</p>
-					<p class="option-keywords">major page speed impact</p>
+					<p class="option-keywords">major page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group">
@@ -412,20 +420,20 @@ if ( !trait_exists('Metaboxes') ){
 					<input type="checkbox" name="nebula_options[service_worker]" id="service_worker" value="1" <?php checked('1', !empty($nebula_options['service_worker'])); ?> /><label for="service_worker">Service Worker</label>
 					<p class="nebula-help-text short-help form-text text-muted">Utilize a service worker to improve speed, provide content when offline, and other benefits of being a progressive web app. (Default: <?php echo $this->user_friendly_default('service_worker'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">This also enabled HTTP2 Server Push when available. Enabling this feature requires a service worker JavaScript file. Move the provided sw.js into the root directory (or write your own). Service Worker location: <code><?php echo $this->sw_location(); ?></code></p>
-					<p class="option-keywords">moderate page speed impact</p>
+					<p class="option-keywords">moderate page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[device_detection]" id="device_detection" value="1" <?php checked('1', !empty($nebula_options['device_detection'])); ?> /><label for="device_detection">Browser/Device Detection</label>
 					<p class="nebula-help-text short-help form-text text-muted">Detect information about the user's device and browser. (Default: <?php echo $this->user_friendly_default('device_detection'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Useful for cross-browser support. This also controls the modernizr.js library.</p>
-					<p class="option-keywords">remote resource moderate page speed impact</p>
+					<p class="option-keywords">remote resource moderate page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[domain_blacklisting]" id="domain_blacklisting" value="1" <?php checked('1', !empty($nebula_options['domain_blacklisting'])); ?> /><label for="domain_blacklisting">Domain Blacklisting</label>
 					<p class="nebula-help-text short-help form-text text-muted">Block traffic from known spambots and other illegitimate domains. (Default: <?php echo $this->user_friendly_default('domain_blacklisting'); ?>)</p>
-					<p class="option-keywords">security remote resource recommended minor page speed impact</p>
+					<p class="option-keywords">security remote resource recommended minor page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group">
@@ -456,7 +464,7 @@ if ( !trait_exists('Metaboxes') ){
 						Save Nebula Options to manually process all SCSS files. This option will automatically be disabled after 30 days without processing. CSS files will automatically be minified, but source maps are available for debugging.<br /><br />
 						Last processed: <?php echo $last_processed_text; ?>
 					</p>
-					<p class="option-keywords">sass scss sccs scass css moderate page speed impact</p>
+					<p class="option-keywords">sass scss sccs scass css moderate page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group" dependent-or="scss">
@@ -464,7 +472,7 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text short-help form-text text-muted">Output critical CSS for above-the-fold content in the <code>&lt;head&gt;</code> of the document. (Default: <?php echo $this->user_friendly_default('critical_css'); ?>)</p>
 					<p class="dependent-note hidden">This option is dependent on the SCSS compiler.</p>
 					<p class="nebula-help-text more-help form-text text-muted">Styles in critical.css will be embedded in the HTML while also imported into style.css. This improves perceived page load time for users without overcomplicating stylesheets.</p>
-					<p class="option-keywords">sass scss sccs scass css minor page speed impact</p>
+					<p class="option-keywords">sass scss sccs scass css minor page speed impact optimization optimize</p>
 				</div>
 			<?php
 
@@ -554,14 +562,14 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="ga_tracking_id">Google Analytics Tracking ID</label>
 					<input type="text" name="nebula_options[ga_tracking_id]" id="ga_tracking_id" class="form-control nebula-validate-regex" data-valid-regex="^UA-\d+-\d+$" value="<?php echo $nebula_options['ga_tracking_id']; ?>" placeholder="UA-00000000-1" />
 					<p class="nebula-help-text short-help form-text text-muted">This will add the tracking number to the appropriate locations.</p>
-					<p class="option-keywords">remote resource recommended minor page speed impact</p>
+					<p class="option-keywords">remote resource recommended minor page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group important-option" important-or="ga_tracking_id">
 					<label for="gtm_id">Google Tag Manager ID</label>
 					<input type="text" name="nebula_options[gtm_id]" id="gtm_id" class="form-control nebula-validate-regex" data-valid-regex="^GTM-\S+$" value="<?php echo $nebula_options['gtm_id']; ?>" placeholder="GTM-0000000" />
 					<p class="nebula-help-text short-help form-text text-muted">This will add the Google Tag Manager scripts to the appropriate locations.</p>
-					<p class="option-keywords">remote resource recommended minor page speed impact</p>
+					<p class="option-keywords">remote resource recommended minor page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group" dependent-or="ga_tracking_id gtm_id">
@@ -584,7 +592,7 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-link-attribution" target="_blank" rel="noopener">Enhanced Link Attribution</a> in the Property Settings of the Google Analytics Admin. Be sure to enable it in Google Analytics too! (Default: <?php echo $this->user_friendly_default('ga_linkid'); ?>)</p>
 					<p class="dependent-note hidden">This option is dependent on a Google Analytics Tracking ID.</p>
 					<p class="nebula-help-text more-help form-text text-muted">This improves the accuracy of your In-Page Analytics report by automatically differentiating between multiple links to the same URL on a single page by using link element IDs. Use the <a href="https://chrome.google.com/webstore/detail/page-analytics-by-google/fnbdnhhicmebfgdgglcdacdapkcihcoh" target="_blank" rel="noopener">Page Analytics by Google</a> Chrome extension to view the page overlay.</p>
-					<p class="option-keywords">minor page speed impact</p>
+					<p class="option-keywords">minor page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group" dependent-or="ga_tracking_id gtm_id">
@@ -613,7 +621,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="adwords_remarketing_conversion_id">AdWords Remarketing Conversion ID</label>
 					<input type="text" name="nebula_options[adwords_remarketing_conversion_id]" id="adwords_remarketing_conversion_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['adwords_remarketing_conversion_id']; ?>" placeholder="000000000" />
 					<p class="nebula-help-text short-help form-text text-muted">This conversion ID is used to enable the Google AdWords remarketing tag.</p>
-					<p class="option-keywords">remote resource minor page speed impact</p>
+					<p class="option-keywords">remote resource minor page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group">
@@ -621,7 +629,7 @@ if ( !trait_exists('Metaboxes') ){
 					<input type="text" name="nebula_options[google_optimize_id]" id="google_optimize_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_optimize_id']; ?>" placeholder="GTM-0000000" />
 					<p class="nebula-help-text short-help form-text text-muted">The ID used by <a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener">Google Optimize</a> to enable tests.</p>
 					<p class="nebula-help-text more-help form-text text-muted">Entering the ID here will enable both the Google Analytics require tag and the style tag hiding snippet in the head.</p>
-					<p class="option-keywords">remote resource minor page speed impact</p>
+					<p class="option-keywords">remote resource minor page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group">
@@ -644,7 +652,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="facebook_custom_audience_pixel_id">Facebook Custom Audience Pixel ID</label>
 					<input type="text" name="nebula_options[facebook_custom_audience_pixel_id]" id="facebook_custom_audience_pixel_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_custom_audience_pixel_id']; ?>" placeholder="000000000000000" />
 					<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.facebook.com/docs/facebook-pixel" target="_blank" rel="noopener">Facebook Custom Audience Pixel</a> tracking.</p>
-					<p class="option-keywords">remote resource minor page speed impact</p>
+					<p class="option-keywords">remote resource minor page speed impact optimization optimize</p>
 				</div>
 			<?php
 
@@ -1447,7 +1455,7 @@ if ( !trait_exists('Metaboxes') ){
 					<input type="text" name="nebula_options[google_font_url]" id="google_font_url" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_font_url']; ?>" placeholder="http://fonts.googleapis.com/css?family=Open+Sans:400,800" />
 					<p class="nebula-help-text short-help form-text text-muted">Choose which <a href="https://www.google.com/fonts" target="_blank" rel="noopener">Google Font</a> is used by default for this site by pasting the entire font URL.</p>
 					<p class="nebula-help-text more-help form-text text-muted">The default font uses the native system font of the user's device.</p>
-					<p class="option-keywords">remote resource minor page speed impact</p>
+					<p class="option-keywords">remote resource minor page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group mb-2">
@@ -1483,7 +1491,7 @@ if ( !trait_exists('Metaboxes') ){
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">For <a href="https://gearside.com/nebula/functions/pagesuggestion/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=gcse+help<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener">page suggestions</a> on 404 and No Search Results pages.</p>
 					<p class="nebula-help-text more-help form-text text-muted"><a href="https://www.google.com/cse/manage/all">Register here</a>, then select "Add", input your website's URL in "Sites to Search". Then click the one you just made and click the "Search Engine ID" button.</p>
-					<p class="option-keywords">remote resource minor page speed impact</p>
+					<p class="option-keywords">remote resource minor page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group hidden">
@@ -1523,7 +1531,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<p class="nebula-help-text short-help form-text text-muted">Enter your Hubspot API key and Hubspot Portal ID here.</p>
 					<p class="nebula-help-text more-help form-text text-muted">It can be obtained from your <a href="https://app.hubspot.com/hapikeys">API Keys page under Integrations in your account</a>. Your Hubspot Portal ID (or Hub ID) is located in the upper right of your <a href="https://app.hubspot.com/" target="_blank">account screen</a> (or within the URL itself). The Portal ID is needed to send data to your Hubspot CRM and the API key will allow for Nebula custom contact properties to be automatically created. Note: You'll still be required to <a href="https://app.hubspot.com/property-settings/<?php echo nebula()->get_option('hubspot_portal'); ?>/contact" target="_blank">create any of your own custom properties</a> (non-Nebula) manually. It is recommended to create your own property group for these separate from the Nebula group.</p>
-					<p class="option-keywords">remote resource minor page speed impact crm</p>
+					<p class="option-keywords">remote resource minor page speed impact optimization optimize crm</p>
 				</div>
 			<?php
 
@@ -1537,7 +1545,7 @@ if ( !trait_exists('Metaboxes') ){
 					<input type="text" name="nebula_options[disqus_shortname]" id="disqus_shortname" class="form-control nebula-validate-text" value="<?php echo $nebula_options['disqus_shortname']; ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">Enter your Disqus shortname here.</p>
 					<p class="nebula-help-text more-help form-text text-muted"><a href="https://disqus.com/admin/create/" target="_blank" rel="noopener">Sign-up for an account here</a>. In your Disqus account settings (where you will find your shortname), please uncheck the "Discovery" box.</p>
-					<p class="option-keywords">social remote resource moderate page speed impact comments</p>
+					<p class="option-keywords">social remote resource moderate page speed impact optimization optimize comments</p>
 				</div>
 
 				<div class="form-group">

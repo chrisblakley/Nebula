@@ -782,10 +782,20 @@ if ( !trait_exists('Admin') ){
 				</style>
 
 				<script>
-					//Admin Bar Toggle
+					//Nebula keyboard shortcuts for frontend Admin
 					jQuery(document).on('keydown', function(e){
+						//Admin Bar Toggle
 						if ( e.altKey && e.which === 65 ){ //Alt+A
 							jQuery('html').toggleClass('admin-bar-inactive');
+						}
+
+						//Reprocess all Sass files
+						if ( e.altKey && e.which === 82 ){ //Alt+R
+							if ( typeof URL === "function" ){ //No IE support for URL API. Eventually remove this check.
+								var url = new URL(window.location.href);
+								url.searchParams.set('sass', 'true');
+								location = url; //Reload with the new URL
+							}
 						}
 					});
 				</script>

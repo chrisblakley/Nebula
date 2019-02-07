@@ -35,6 +35,7 @@ if ( !trait_exists('Optimization') ){
 			add_action('wp_footer', array($this, 'output_console_debug_timings'));
 			add_action('admin_footer', array($this, 'output_console_debug_timings'));
 
+			add_filter('jpeg_quality', array($this, 'jpeg_quality'));
 			add_filter('intermediate_image_sizes_advanced', array($this, 'create_max_width_size_proportionally'), 10, 2);
 			add_filter('post_thumbnail_size', array($this, 'limit_thumbnail_size'), 10, 2);
 			add_filter('nebula_thumbnail_src_size', array($this, 'limit_image_size'), 10, 2);
@@ -42,6 +43,16 @@ if ( !trait_exists('Optimization') ){
 
 			add_action('wp_head', array($this, 'prebrowsing'));
 			add_action('admin_head', array($this, 'prebrowsing'));
+		}
+
+		//Set the JPG compression for more optimized images (Note: Full Size images are not changed)
+		public function jpeg_quality($arg){
+			$new_quality = $this->get_option('jpeg_quality'); //Get the quality setting from Nebula Options
+			if ( empty($new_quality) ){
+				return 82; //Fallback to 82
+			}
+
+			return intval($new_quality);
 		}
 
 		//Create max image size for each uploaded image while maintaining aspect ratio
