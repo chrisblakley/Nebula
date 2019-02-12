@@ -6,33 +6,7 @@
  * @license http://www.gnu.org/licenses/lgpl.html LGPL v3 or later
  */
 
-/***********
-	Important! This file has been edited to work without Composer. If updating this file, require_once functions must be added!
-	There are 3 groups of Nebula updates (including this one and two in functions below).
-	BEGIN Nebula fix for required files.
-***********/
-
-namespace DeviceDetector; //Namespace must be declared first here (remove the one below if it exists)
-
-require_once(dirname(__FILE__) . '/Cache/Cache.php');
-require_once(dirname(__FILE__) . '/Cache/StaticCache.php');
-require_once(dirname(__FILE__) . '/Parser/ParserAbstract.php');
-require_once(dirname(__FILE__) . '/Parser/BotParserAbstract.php');
-require_once(dirname(__FILE__) . '/Parser/Bot.php');
-require_once(dirname(__FILE__) . '/Parser/OperatingSystem.php');
-require_once(dirname(__FILE__) . '/Parser/VendorFragment.php');
-require_once(dirname(__FILE__) . '/Parser/Client/ClientParserAbstract.php');
-require_once(dirname(__FILE__) . '/Parser/Device/DeviceParserAbstract.php');
-require_once(dirname(__FILE__) . '/Parser/Client/Browser/Engine.php');
-require_once(dirname(__FILE__) . '/Parser/Client/Browser/Engine/Version.php');
-require_once(dirname(__FILE__) . '/Parser/Client/Browser.php');
-require_once(dirname(__FILE__) . '/Yaml/Parser.php');
-require_once(dirname(__FILE__) . '/Yaml/Spyc.php');
-require_once(realpath(dirname(__FILE__) . '/..') . '/spyc.php');
-
-/***********
-	END Nebula fix for required files.
-***********/
+namespace DeviceDetector;
 
 use DeviceDetector\Cache\StaticCache;
 use DeviceDetector\Cache\Cache;
@@ -76,7 +50,7 @@ class DeviceDetector
     /**
      * Current version number of DeviceDetector
      */
-    const VERSION = '3.11.4';
+    const VERSION = '3.11.5';
 
     /**
      * Holds all registered client types
@@ -263,10 +237,6 @@ class DeviceDetector
      */
     public function addClientParser($parser)
     {
-	    //BEGIN Nebula fix for required files.
-		require_once(dirname(__FILE__) . '/Parser/Client/' . $parser . '.php');
-		//End Nebula fix for required files.
-
         if (is_string($parser) && class_exists('DeviceDetector\\Parser\\Client\\' . $parser)) {
             $className = 'DeviceDetector\\Parser\\Client\\' . $parser;
             $parser = new $className();
@@ -292,10 +262,6 @@ class DeviceDetector
      */
     public function addDeviceParser($parser)
     {
-	    //BEGIN Nebula fix for required files.
-        require_once(dirname(__FILE__) . '/Parser/Device/' . $parser . '.php');
-		//End Nebula fix for required files.
-
         if (is_string($parser) && class_exists('DeviceDetector\\Parser\\Device\\' . $parser)) {
             $className = 'DeviceDetector\\Parser\\Device\\' . $parser;
             $parser = new $className();

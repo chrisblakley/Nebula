@@ -1134,12 +1134,13 @@ function scrollDepth(){
 					once(function(){
 						scrollEnd = performance.now()-(scrollBegin+scrollReady);
 						ga('send', 'event', 'Scroll Depth', 'Entire Page', '', Math.round(scrollEnd), {'nonInteraction': true}); //Event value is time to reach end
-						nebula.dom.window.off('scroll', scrollDepthHandler);
+						window.removeEventListener('scroll', scrollDepthHandler);
+
 					}, 'end scrolling');
 				}
 			}, 100, 'scroll depth');
 		}
-		nebula.dom.window.on('scroll', scrollDepthHandler);
+		window.addEventListener('scroll', scrollDepthHandler); //"scroll" is passive by default
 	}
 }
 
@@ -2495,11 +2496,12 @@ function lazyLoadHTML(){
 		jQuery('.lazy-load').removeClass('lazy-load').addClass('lazy-loaded'); //Load background images
 
 		//Stop listening for load triggers
-		nebula.dom.window.off('scroll', loadLazyElements);
+		window.removeEventListener('scroll', loadLazyElements);
 	};
 
 	//Load the rest of the files on scroll (or if the page loads pre-scrolled)
-	nebula.dom.window.on('scroll', loadLazyElements);
+
+	window.addEventListener('scroll', loadLazyElements); //"scroll" is passive by default
 	nebula.dom.window.on('nebula_load', loadLazyElements); //This listener does not get turned off.
 	if ( nebula.dom.window.scrollTop() > 200 ){
 		loadLazyElements();

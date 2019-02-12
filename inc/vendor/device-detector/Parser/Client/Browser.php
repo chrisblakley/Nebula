@@ -42,6 +42,7 @@ class Browser extends ClientParserAbstract
         'AW' => 'Amiga Aweb',
         'AT' => 'Atomic Web Browser',
         'AS' => 'Avast Secure Browser',
+        'BA' => 'Beaker Browser',
         'BB' => 'BlackBerry Browser',
         'BD' => 'Baidu Browser',
         'BS' => 'Baidu Spark',
@@ -178,6 +179,7 @@ class Browser extends ClientParserAbstract
         'SP' => 'SuperBird',
         'ST' => 'Streamy',
         'SX' => 'Swiftfox',
+        'TB' => 'Tenta Browser',
         'TZ' => 'Tizen Browser',
         'TS' => 'TweakStyle',
         'UC' => 'UC Browser',
@@ -201,7 +203,7 @@ class Browser extends ClientParserAbstract
         'BlackBerry Browser' => array('BB'),
         'Baidu'              => array('BD', 'BS'),
         'Amiga'              => array('AV', 'AW'),
-        'Chrome'             => array('CH', 'BR', 'CC', 'CD', 'CM', 'CI', 'CF', 'CN', 'CR', 'CP', 'IR', 'RM', 'AO', 'TS', 'VI', 'PT', 'AS'),
+        'Chrome'             => array('CH', 'BA', 'BR', 'CC', 'CD', 'CM', 'CI', 'CF', 'CN', 'CR', 'CP', 'IR', 'RM', 'AO', 'TS', 'VI', 'PT', 'AS', 'TB'),
         'Firefox'            => array('FF', 'FE', 'FM', 'SX', 'FB', 'PX', 'MB', 'EI', 'WF', 'CU'),
         'Internet Explorer'  => array('IE', 'IM', 'PS'),
         'Konqueror'          => array('KO'),
@@ -210,7 +212,7 @@ class Browser extends ClientParserAbstract
         'Nokia Browser'      => array('NB', 'NO', 'NV', 'DO'),
         'Opera'              => array('OP', 'OM', 'OI', 'ON', 'OO'),
         'Safari'             => array('SF', 'MF'),
-        'Sailfish Browser'   => array('SA'),
+        'Sailfish Browser'   => array('SA')
     );
 
     /**

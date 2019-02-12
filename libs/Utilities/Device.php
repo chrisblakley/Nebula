@@ -17,7 +17,9 @@ if ( !trait_exists('Device') ){
 			if ( $this->get_option('device_detection') ){
 				$this->timer('Device Detection');
 
-				require_once(get_template_directory() . '/inc/vendor/device-detector/DeviceDetector.php'); //Be careful when updating this library. DeviceDetector.php requires modification to work without Composer!
+				include_once get_template_directory() . '/inc/vendor/Spyc.php';
+				include_once get_template_directory() . '/inc/vendor/device-detector/autoload.php'; //Note: Until the autoload.php conflict pull request is merged the autoload.php file will need the following line added: if (strpos($class, 'DeviceDetector\\') !== false) {
+
 				$this->device = new DeviceDetector\DeviceDetector($_SERVER['HTTP_USER_AGENT']);
 				$this->device->discardBotInformation(); //If called, getBot() will only return true if a bot was detected (speeds up detection a bit)
 				$this->device->parse();

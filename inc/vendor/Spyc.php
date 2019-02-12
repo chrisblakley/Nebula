@@ -43,6 +43,8 @@ if (!function_exists('spyc_dump')) {
   }
 }
 
+if (!class_exists('Spyc')) {
+
 /**
    * The Simple PHP YAML Class.
    *
@@ -265,6 +267,7 @@ class Spyc {
      * @param $indent The indent of the current node
      */
   private function _yamlize($key,$value,$indent, $previous_key = -1, $first_key = 0, $source_array = null) {
+    if(is_object($value)) $value = (array)$value;
     if (is_array($value)) {
       if (empty ($value))
         return $this->_dumpNode($key, array(), $indent, $previous_key, $first_key, $source_array);
@@ -315,7 +318,7 @@ class Spyc {
   private function _dumpNode($key, $value, $indent, $previous_key = -1, $first_key = 0, $source_array = null) {
     // do some folding here, for blocks
     if (is_string ($value) && ((strpos($value,"\n") !== false || strpos($value,": ") !== false || strpos($value,"- ") !== false ||
-      strpos($value,"*") !== false || strpos($value,"#") !== false || strpos($value,"<") !== false || strpos($value,">") !== false || strpos ($value, '  ') !== false ||
+      strpos($value,"*") !== false || strpos($value,"#") !== false || strpos($value,"<") !== false || strpos($value,">") !== false || strpos ($value, '%') !== false || strpos ($value, '  ') !== false ||
       strpos($value,"[") !== false || strpos($value,"]") !== false || strpos($value,"{") !== false || strpos($value,"}") !== false) || strpos($value,"&") !== false || strpos($value, "'") !== false || strpos($value, "!") === 0 ||
       substr ($value, -1, 1) == ':')
     ) {
@@ -371,9 +374,17 @@ class Spyc {
     }
     $exploded = explode("\n",$value);
     $newValue = '|';
-    $indent  += $this->_dumpIndent;
+    if (isset($exploded[0]) && ($exploded[0] == "|" || $exploded[0] == "|-" || $exploded[0] == ">")) {
+        $newValue = $exploded[0];
+        unset($exploded[0]);
+    }
+    $indent += $this->_dumpIndent;
     $spaces   = str_repeat(' ',$indent);
     foreach ($exploded as $line) {
+      $line = trim($line);
+      if (strpos($line, '"') === 0 && strrpos($line, '"') == (strlen($line)-1) || strpos($line, "'") === 0 && strrpos($line, "'") == (strlen($line)-1)) {
+        $line = substr($line, 1, -1);
+      }
       $newValue .= "\n" . $spaces . ($line);
     }
     return $newValue;
@@ -601,7 +612,9 @@ class Spyc {
 
     if ($is_quoted) {
       $value = str_replace('\n', "\n", $value);
-      return strtr(substr ($value, 1, -1), array ('\\"' => '"', '\'\'' => '\'', '\\\'' => '\''));
+      if ($first_character == "'")
+        return strtr(substr ($value, 1, -1), array ('\'\'' => '\'', '\\\''=> '\''));
+      return strtr(substr ($value, 1, -1), array ('\\"' => '"', '\\\''=> '\''));
     }
 
     if (strpos($value, ' #') !== false && !$is_quoted)
@@ -654,7 +667,7 @@ class Spyc {
 
     if ( is_numeric($value) && preg_match ('/^(-|)[1-9]+[0-9]*$/', $value) ){
       $intvalue = (int)$value;
-      if ($intvalue != PHP_INT_MAX)
+      if ($intvalue != PHP_INT_MAX && $intvalue != ~PHP_INT_MAX)
         $value = $intvalue;
       return $value;
     }
@@ -1133,6 +1146,7 @@ class Spyc {
     $line = trim(str_replace($group, '', $line));
     return $line;
   }
+}
 }
 
 // Enable use of Spyc from command line
