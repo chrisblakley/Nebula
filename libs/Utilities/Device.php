@@ -275,36 +275,36 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_is_browser', null, $browser, $version, $comparison);
 			if ( isset($override) ){return;}
 
+			switch ( strtolower($browser) ){
+				case 'ie':
+					$browser = 'internet explorer';
+					break;
+				case 'ie7':
+					$browser = 'internet explorer';
+					$version = '7';
+					break;
+				case 'ie8':
+					$browser = 'internet explorer';
+					$version = '8';
+					break;
+				case 'ie9':
+					$browser = 'internet explorer';
+					$version = '9';
+					break;
+				case 'ie10':
+					$browser = 'internet explorer';
+					$version = '10';
+					break;
+				case 'ie11':
+					$browser = 'internet explorer';
+					$version = '11';
+					break;
+			}
+
 			if ( $this->get_option('device_detection') ){
 				if ( empty($browser) ){
 					trigger_error('nebula_is_browser requires a parameter of requested browser.');
 					return false;
-				}
-
-				switch ( strtolower($browser) ){
-					case 'ie':
-						$browser = 'internet explorer';
-						break;
-					case 'ie7':
-						$browser = 'internet explorer';
-						$version = '7';
-						break;
-					case 'ie8':
-						$browser = 'internet explorer';
-						$version = '8';
-						break;
-					case 'ie9':
-						$browser = 'internet explorer';
-						$version = '9';
-						break;
-					case 'ie10':
-						$browser = 'internet explorer';
-						$version = '10';
-						break;
-					case 'ie11':
-						$browser = 'internet explorer';
-						$version = '11';
-						break;
 				}
 
 				$actual_browser = $this->device->getClient();
@@ -327,6 +327,11 @@ if ( !trait_exists('Device') ){
 						return true;
 					}
 				}
+			}
+
+			//Use basic detection (WordPress core) if Device Detect is not enabled. This only checks browser name (not name and version like above)
+			if ( empty($version) && $this->get_browser() == strtolower($browser) ){
+				return true;
 			}
 
 			return false;

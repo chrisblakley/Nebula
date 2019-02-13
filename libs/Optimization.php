@@ -325,6 +325,7 @@ if ( !trait_exists('Optimization') ){
 			//Preconnect = Resolve both DNS and TCP to a domain.
 			//Prefetch = Fully request a single resource and store it in cache until needed. Do not combine with preload!
 			//Preload = Fully request a single resource before it is needed. Do not combine with prefetch!
+			//Note: Prerender is deprecated
 
 			//Note: WordPress automatically uses dns-prefetch on enqueued resource domains.
 			//Note: Additional preloading for lazy-loaded CSS happens in /libs/Scripts.php
@@ -346,6 +347,11 @@ if ( !trait_exists('Optimization') ){
 			//DNS-Prefetch & Preconnect
 			$default_preconnects = array();
 
+			//Google fonts if used
+			if ( $this->get_option('google_font_url') ){
+				$default_preconnects[] = '//fonts.gstatic.com';
+			}
+
 			//GCSE on 404 pages
 			if ( is_404() && $this->get_option('cse_id') ){
 				$default_preconnects[] = '//www.googleapis.com';
@@ -359,7 +365,7 @@ if ( !trait_exists('Optimization') ){
 			//Preconnect
 			$preconnects = apply_filters('nebula_preconnect', $default_preconnects);
 			foreach ( $preconnects as $preconnect ){
-				echo '<link rel="preconnect" href="' . $preconnect . '" />' . $debug_comment;
+				echo '<link rel="preconnect" href="' . $preconnect . '" crossorigin />' . $debug_comment;
 			}
 
 			//Prefetch
@@ -389,7 +395,7 @@ if ( !trait_exists('Optimization') ){
 
 			$prefetches = apply_filters('nebula_prefetches', $default_prefetches); //Allow child themes and plugins to prefetch resources via Nebula too
 			foreach ( $prefetches as $prefetch ){
-				echo '<link rel="prefetch" href="' . $prefetch . '" />' . $debug_comment;
+				echo '<link rel="prefetch" href="' . $prefetch . '" crossorigin />' . $debug_comment;
 			}
 		}
 

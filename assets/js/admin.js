@@ -256,11 +256,13 @@ function checkPageSpeed(){
 	if ( typeof wptTestJSONURL !== 'undefined' ){
 		jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("Testing via WebPageTest.org");
 		checkWPTresults();
-	} else if ( typeof fetch === 'function' ){ //MS Edge+ (No IE11)
+	} else if ( typeof fetch === 'function' && !window.MSInputMethodContext && !document.documentMode ){ //MS Edge+ (No IE11)
 		jQuery("#performance-testing-status").removeClass('hidden').find('.datapoint').text("Testing via Google PageSpeed Insights");
 
 		var sourceURL = jQuery('#testloadcon').attr('data-src') + "?noga";
-		fetch('https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' + encodeURIComponent(sourceURL)).then(response => response.json()).then(json => {
+		fetch('https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' + encodeURIComponent(sourceURL)).then(function(response){
+			return response.json(); //This returns a promise
+		}).then(function(json){
 			if ( json && json.captchaResult === 'CAPTCHA_NOT_NEEDED' ){
 				var pagespeedCompletedDate = new Date(json.analysisUTCTimestamp).toLocaleDateString(false, {year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "2-digit"});
 				var ttfb = json.lighthouseResult.audits['time-to-first-byte'].displayValue.match(/[\d,]+/)[0].replace(',', '')/1000;
@@ -300,7 +302,7 @@ function checkPageSpeed(){
 			} else { //If the fetch data is not expected, run iframe test instead...
 				runIframeSpeedTest();
 			}
-		}).catch(error => {
+		}).catch(function(error){
 			runIframeSpeedTest(); //If Google PageSpeed Insights check fails, time with an iframe instead...
 		});
 	} else {
@@ -957,7 +959,7 @@ function applyValidationClasses(element, validation, showFeedback){
 
 //Record performance timing
 function performanceMetrics(){
-	if ( window.performance && window.performance.timing ){ //Safari 11+
+	if ( window.performance && window.performance.timing && !window.MSInputMethodContext && !document.documentMode ){ //Safari 11+ and no IE
 		setTimeout(function(){
 			var responseEnd = Math.round(performance.timing.responseEnd-performance.timing.navigationStart); //Navigation start until server response finishes
 			var domReady = Math.round(performance.timing.domContentLoadedEventStart-performance.timing.navigationStart); //Navigation start until DOM ready

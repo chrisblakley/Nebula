@@ -170,7 +170,7 @@ if ( !trait_exists('Options') ){
 
 			//Latest (IE10+)
 			if ( $file === 'css' ){
-				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/css/bootstrap.min.css', null, '4.2.1', 'all');
+				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/css/bootstrap.min.css', null, '4.2.1', 'all'); //Do 4.3.1 or greater next (not 4.3.0)
 			} elseif ( $file === 'js' ){
 				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.bundle.min.js', 'defer', array('jquery-core'), '4.2.1', true);
 			} elseif ( $file === 'reboot' ){

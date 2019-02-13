@@ -9,7 +9,6 @@ if ( !trait_exists('Security') ){
 			add_filter('wp_headers', array($this, 'remove_x_pingback'), 11, 2);
 			add_filter('bloginfo_url', array($this, 'hijack_pingback_url'), 11, 2);
 			add_action('wp_head', array($this, 'security_headers')); //@todo "Nebula" 0: try using 'send_headers' hook instead?
-
 			remove_action('wp_head', 'wlwmanifest_link');
 			add_filter('login_errors', array($this, 'login_errors'));
 			add_filter('the_generator', '__return_empty_string'); //Remove Wordpress version info from head and feeds
@@ -18,6 +17,7 @@ if ( !trait_exists('Security') ){
 			add_action('check_comment_flood', array($this, 'check_referrer'));
 			//add_action('wp_footer', array($this, 'track_notable_bots')); //Disabled for now. Not super useful.
 			add_action('wp_loaded', array($this, 'domain_prevention'));
+			add_filter('rest_endpoints', array($this, 'rest_endpoints_security'));
 
 			//Disable the file editor for non-developers
 			if ( !$this->is_dev() ){
@@ -134,6 +134,22 @@ if ( !trait_exists('Security') ){
 				wp_redirect(apply_filters('nebula_no_author_redirect', home_url('/') . '?s=about'));
 				exit;
 			}
+		}
+
+		//Manage what is exposed in the REST API
+		public function rest_endpoints_security($endpoints){
+			//Disable the /users endpoint if author bios is disabled
+			if ( !$this->get_option('author_bios') ){
+				if ( isset($endpoints['/wp/v2/users']) ){
+					unset($endpoints['/wp/v2/users']);
+				}
+
+				if ( isset($endpoints['/wp/v2/users/(?P<id>[\d]+)']) ){
+					unset($endpoints['/wp/v2/users/(?P<id>[\d]+)']);
+				}
+			}
+
+			return $endpoints;
 		}
 
 		//Track Notable Bots
