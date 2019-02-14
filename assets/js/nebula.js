@@ -568,7 +568,7 @@ function socialSharing(){
 	});
 
 	//Twitter
-	jQuery('.twshare, a.nebula-share.twitter').attr('href', 'https://twitter.com/intent/tweet?text=' + enctitle + '&url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
+	jQuery('.twshare, a.nebula-share-btn.twitter').attr('href', 'https://twitter.com/intent/tweet?url=' + encloc + '&text=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
 		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Twitter');
 		nv('event', 'Twitter Share');
@@ -580,7 +580,7 @@ function socialSharing(){
 	});
 
 	//LinkedIn
-	jQuery('.lishare, a.nebula-share.linkedin').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
+	jQuery('.lishare, a.nebula-share-btn.linkedin').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
 		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'LinkedIn');
 		nv('event', 'LinkedIn Share');
@@ -592,7 +592,7 @@ function socialSharing(){
 	});
 
 	//Pinterest
-	jQuery('.pinshare, a.nebula-share.pinterest').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
+	jQuery('.pinshare, a.nebula-share-btn.pinterest').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
 		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Pinterest');
 		nv('event', 'Pinterest Share');
@@ -604,7 +604,7 @@ function socialSharing(){
 	});
 
 	//Email
-	jQuery('.emshare, a.nebula-share.email').attr('href', 'mailto:?subject=' + enctitle + '&body=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
+	jQuery('.emshare, a.nebula-share-btn.email').attr('href', 'mailto:?subject=' + enctitle + '&body=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(){
 		ga('set', nebula.analytics.dimensions.eventIntent, 'Intent');
 		ga('send', 'event', 'Social', 'Share', 'Email');
 		nv('event', 'Email Share');

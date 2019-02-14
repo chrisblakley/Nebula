@@ -130,6 +130,9 @@ trait Functions {
 		add_theme_support('title-tag'); //Title tag support allows WordPress core to create the <title> tag.
 		//add_theme_support('html5', array('comment-list', 'comment-form', 'search-form', 'gallery', 'caption'));
 		add_theme_support('automatic-feed-links'); //Add default posts and comments RSS feed links to head
+
+		add_theme_support('responsive-embeds');
+		add_theme_support('wp-block-styles');
 		add_theme_support('align-wide'); //Wide image alignment
 
 		//Custom color palette to Gutenberg editor
