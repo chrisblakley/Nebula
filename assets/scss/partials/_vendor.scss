@@ -43,6 +43,7 @@ svg.svg-inline--fa {max-width: none;} //Remove max-width: 100% for Font Awesome 
 	}
 }
 .mm-slideout {z-index: auto;}
+#mobilenav:not(.mm-menu) {display: none;} //Hide the Mmenu until the library has loaded
 
 .wpcf7-form,
 .nebula-login-form {

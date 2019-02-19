@@ -1367,6 +1367,7 @@ function autocompleteSearch(element, types){
 				collision: "flip",
 			},
 			source: function(request, response){
+				//Could this use the WP REST API?
 				jQuery.ajax({
 					dataType: 'json',
 					type: "POST",
@@ -2421,6 +2422,7 @@ function lazyLoadAssets(){
 //Load a JavaScript resource (and cache it)
 function nebulaLoadJS(url, callback){
 	if ( typeof url === 'string' ){
+		//Use fetch() when IE11 is no longer supported
 		jQuery.ajax({
 			type: 'GET',
 			url: url,

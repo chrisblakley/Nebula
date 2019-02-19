@@ -342,6 +342,7 @@ if ( !trait_exists('Shortcodes') ){
 			/** @todo $flags is unused */
 			$flags = $this->get_flags($atts);
 
+			//@todo "Nebula" 0: Use null coalescing operator here if possible
 			if ( empty($key) ){
 				$key = $this->get_option('google_browser_api_key');
 			}
@@ -632,6 +633,7 @@ if ( !trait_exists('Shortcodes') ){
 			/** @todo $flags is unused */
 			$flags = $this->get_flags($atts);
 
+			//@todo "Nebula" 0: Use null coalescing operator here if possible. Probably not possible but think about it.
 			if ( !$id ){
 				$id = 'nebula-slider-' . random_int(1, 10000);
 			} elseif ( strlen($id) > 0 && ctype_digit(substr($id, 0, 1)) ){
@@ -670,7 +672,7 @@ if ( !trait_exists('Shortcodes') ){
 				$linkclose = '</a>';
 			}
 
-			return '<div class="carousel-item">' . $linkopen . '<img src="' . nebula()->escape($content) . '">' . $linkclose . '</div>'; //need <div class="carousel-inner">
+			return '<div class="carousel-item">' . $linkopen . '<img src="' . nebula()->escape($content) . '" importance="low">' . $linkclose . '</div>'; //need <div class="carousel-inner">
 		}
 
 		//Query Post Shortcode

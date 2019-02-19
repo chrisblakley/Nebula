@@ -574,12 +574,12 @@ if ( !trait_exists('Optimization') ){
 
 		//Lazy-load images
 		public function lazy_img($src=false, $attributes=''){
-			$this->lazy_load('<img src="' . $src . '" ' . $attributes . ' />');
+			$this->lazy_load('<img src="' . $src . '" ' . $attributes . ' importance="low" />');
 		}
 
 		//Lazy-load iframes
 		public function lazy_iframe($src=false, $attributes=''){
-			$this->lazy_load('<iframe src="' . $src . '" ' . $attributes . ' ></iframe>');
+			$this->lazy_load('<iframe src="' . $src . '" ' . $attributes . ' importance="low"></iframe>');
 		}
 	}
 }

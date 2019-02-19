@@ -552,6 +552,7 @@ if ( !trait_exists('Dashboard') ){
 		}
 
 		public function todo_search_files($directory=null){
+			//@todo "Nebula" 0: Use null coalescing operator here
 			if ( empty($directory) ){
 				$directory = get_template_directory();
 			}
@@ -597,6 +598,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<ul class="nebula-fa-ul serverdetections">';
 
 			//Domain
+			//@todo "Nebula" 0: Use null coalescing operator here if possible
 			$domain = $this->url_components('domain');
 			if ( empty($domain) ){
 				$domain = '<small>(None)</small>';
@@ -794,6 +796,7 @@ if ( !trait_exists('Dashboard') ){
 				);
 			}
 
+			//@todo "Nebula" 0: Use null coalescing operator here
 			if ( empty($directory) ){
 				$directory = get_template_directory();
 			}

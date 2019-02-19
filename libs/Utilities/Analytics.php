@@ -351,10 +351,12 @@ if ( !trait_exists('Analytics') ){
 			$override = apply_filters('pre_ga_send_pageview', null, $location, $title, $array);
 			if ( isset($override) ){return;}
 
+			//@todo "Nebula" 0: Use null coalescing operator here
 			if ( empty($location) ){
 				$location = $this->requested_url(); //Likely "admin-ajax.php"
 			}
 
+			//@todo "Nebula" 0: Use null coalescing operator here if possible
 			if ( empty($title) ){
 				$title = ( get_the_title() )? get_the_title() : '';
 			}
@@ -379,6 +381,7 @@ if ( !trait_exists('Analytics') ){
 				return false; //Prevent server-side events to be sent before the first pageview
 			}
 
+			//@todo "Nebula" 0: Use null coalescing operator here if possible
 			if ( empty($value) ){
 				$value = 0;
 			}

@@ -20,7 +20,7 @@
 					<a href="<?php echo home_url('/'); ?>" title="<?php bloginfo('name'); ?>">
 						<?php $logo = nebula()->logo('header'); ?>
 						<?php if ( !empty($logo) ): ?>
-							<img class="svg" src="<?php echo $logo; ?>" alt="<?php bloginfo('name'); ?>"/>
+							<img class="svg" src="<?php echo $logo; ?>" alt="<?php bloginfo('name'); ?>" importance="high" />
 						<?php else: //Otherwise fallback to the Site Title text ?>
 							<?php bloginfo('name'); ?>
 						<?php endif; ?>

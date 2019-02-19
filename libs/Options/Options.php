@@ -111,6 +111,7 @@ if ( !trait_exists('Options') ){
 
 		//Get the full Twitter URL for a user
 		public function twitter_url($username=false){
+			//@todo "Nebula" 0: Use null coalescing operator here if possible
 			if ( empty($username) ){
 				$username = $this->get_option('twitter_username');
 			}

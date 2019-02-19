@@ -209,6 +209,7 @@ trait Functions {
 
 	//Set server timezone to match Wordpress
 	public function set_default_timezone(){
+		//@todo "Nebula" 0: Use null coalescing operator here if possible
 		$timezone_option = get_option('timezone_string');
 		if ( empty($timezone_option) ){
 			$timezone_option = 'America/New_York';
@@ -946,7 +947,7 @@ trait Functions {
 					return strip_tags($tag_list);
 				}
 
-				return '<span class="posted-in meta-item post-tags">' . $the_icon . $tag_list . '</span>';
+				return '<span class="posted-in meta-item post-tags">' . $label . $tag_list . '</span>';
 			}
 		}
 	}
@@ -1255,6 +1256,7 @@ trait Functions {
 	//Determines the estimated time to read a post (in minutes).
 	//Note: Does not account for ACF fields unless hooked into 'nebula_word_count' above
 	public function estimated_reading_time($id=false){
+		//@todo "Nebula" 0: Use null coalescing operator here if possible
 		if ( empty($id) ){
 			$id = get_the_ID();
 		}
@@ -1317,6 +1319,7 @@ trait Functions {
 		$override = apply_filters('pre_nebula_share', null, $networks, $id);
 		if ( isset($override) ){return;}
 
+		//@todo "Nebula" 0: Use null coalescing operator here if possible
 		if ( empty($id) ){
 			$id = get_the_id();
 		}
@@ -1777,13 +1780,13 @@ trait Functions {
 					$cat = get_the_category();
 					if ( !empty($cat) ){
 						$cat = $cat[0];
-						$cats = get_category_parents($cat, true, ' ' . $delimiter_html . ' ');
+						$cats = get_category_parents($cat, true, ' ' . $delimiter_html . ' '); //@todo "Nebula" 0: Do these get wrapper properly in <li> and <a> tags?
 
 						if ( empty($data['current']) ){
 							$cats = preg_replace("#^(.+)\s" . $delimiter_html . "\s$#", "$1", $cats);
 						}
 
-						echo $cats;
+						echo '<li>' . $cats . '</li>';
 
 						if ( !empty($data['current']) ){
 							echo $current;
@@ -2107,6 +2110,7 @@ trait Functions {
 
 	//If the business is open, return the time that the business closes today
 	public function business_open_until($day){
+		//@todo "Nebula" 0: Use null coalescing operator here if possible
 		if ( empty($day) ){
 			$day = strtolower(date('l'));
 		}
@@ -3382,6 +3386,7 @@ trait Functions {
 	//Hooked as a filter called from Yoast (which passes $metadesc), and also called directly
 	public function meta_description($metadesc=null, $chars=160){
 		if ( empty($metadesc) ){
+			//@todo "Nebula" 0: Use null coalescing operator here if possible
 			$nebula_metadesc = $this->excerpt(array('length' => 'dynamic', 'characters' => $chars, 'more' => '', 'ellipsis' => false, 'strip_tags' => true));
 			if ( empty($nebula_metadesc) ){
 				$nebula_metadesc = get_bloginfo('description');

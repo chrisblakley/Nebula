@@ -26,7 +26,7 @@
 								<a class="footerlogo" href="<?php echo home_url('/'); ?>">
 									<?php $logo = nebula()->logo('footer'); ?>
 									<?php if ( !empty($logo) ): ?>
-										<img class="svg" src="<?php echo $logo; ?>" alt="<?php bloginfo('name'); ?>"/>
+										<img class="svg" src="<?php echo $logo; ?>" alt="<?php bloginfo('name'); ?>" importance="low" />
 									<?php else: //Otherwise fallback to the Site Title text ?>
 										<?php bloginfo('name'); ?>
 									<?php endif; ?>
