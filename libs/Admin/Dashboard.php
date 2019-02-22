@@ -148,7 +148,7 @@ if ( !trait_exists('Dashboard') ){
 			$earliest_post = get_transient('nebula_earliest_post');
 			if ( empty($earliest_post) || $this->is_debug() ){
 				$earliest_post = new WP_Query(array('post_type' => 'any', 'post_status' => 'publish', 'showposts' => 1, 'orderby' => 'publish_date', 'order' => 'ASC'));
-				set_transient('nebula_earliest_post', $earliest_post, HOUR_IN_SECONDS*12); //This transient is deleted when posts are added/updated, so this could be infinitely long.
+				set_transient('nebula_earliest_post', $earliest_post, WEEK_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long.
 			}
 			while ( $earliest_post->have_posts() ){ $earliest_post->the_post();
 				echo '<li><i class="far fa-fw fa-calendar"></i> Earliest: <span title="' . human_time_diff(strtotime(get_the_date() . ' ' . get_the_time())) . ' ago" style="cursor: help;"><strong>' . get_the_date() . '</strong> @ <strong>' . get_the_time() . '</strong></span></li>';
@@ -188,7 +188,7 @@ if ( !trait_exists('Dashboard') ){
 			$user_count = get_transient('nebula_count_users');
 			if ( empty($user_count) || $this->is_debug() ){
 				$user_count = count_users();
-				set_transient('nebula_count_users', $user_count, HOUR_IN_SECONDS*36); //24 hour cache
+				set_transient('nebula_count_users', $user_count, HOUR_IN_SECONDS*36);
 			}
 			$users_icon = 'users';
 			$users_plural = 'Users';
@@ -682,13 +682,13 @@ if ( !trait_exists('Dashboard') ){
 				$nebula_parent_size = get_transient('nebula_directory_size_parent_theme');
 				if ( empty($nebula_parent_size) || $this->is_debug() ){
 					$nebula_parent_size = $this->foldersize(get_template_directory());
-					set_transient('nebula_directory_size_parent_theme', $nebula_parent_size, DAY_IN_SECONDS); //12 hour cache
+					set_transient('nebula_directory_size_parent_theme', $nebula_parent_size, DAY_IN_SECONDS);
 				}
 
 				$nebula_child_size = get_transient('nebula_directory_size_child_theme');
 				if ( empty($nebula_child_size) || $this->is_debug() ){
 					$nebula_child_size = $this->foldersize(get_stylesheet_directory());
-					set_transient('nebula_directory_size_child_theme', $nebula_child_size, DAY_IN_SECONDS); //12 hour cache
+					set_transient('nebula_directory_size_child_theme', $nebula_child_size, DAY_IN_SECONDS);
 				}
 
 				echo '<li><i class="fas fa-code"></i> Parent theme directory size: <strong>' . round($nebula_parent_size/1048576, 2) . 'mb</strong> </li>';
@@ -697,7 +697,7 @@ if ( !trait_exists('Dashboard') ){
 				$nebula_size = get_transient('nebula_directory_size_theme');
 				if ( empty($nebula_size) || $this->is_debug() ){
 					$nebula_size = $this->foldersize(get_stylesheet_directory());
-					set_transient('nebula_directory_size_theme', $nebula_size, DAY_IN_SECONDS); //12 hour cache
+					set_transient('nebula_directory_size_theme', $nebula_size, DAY_IN_SECONDS);
 				}
 				echo '<li><i class="fas fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
 			}
@@ -709,7 +709,7 @@ if ( !trait_exists('Dashboard') ){
 			$uploads_size = get_transient('nebula_directory_size_uploads');
 			if ( empty($uploads_size) || $this->is_debug() ){
 				$uploads_size = $this->foldersize($upload_dir['basedir']);
-				set_transient('nebula_directory_size_uploads', $uploads_size, HOUR_IN_SECONDS*36); //24 hour cache
+				set_transient('nebula_directory_size_uploads', $uploads_size, HOUR_IN_SECONDS*36);
 			}
 
 			if ( function_exists('wp_max_upload_size') ){
@@ -999,7 +999,7 @@ if ( !trait_exists('Dashboard') ){
 				}
 
 				$hubspot_contacts_json = $response['body'];
-				set_transient('nebula_hubspot_contacts', $hubspot_contacts_json, MINUTE_IN_SECONDS*30); //30 minute expiration
+				set_transient('nebula_hubspot_contacts', $hubspot_contacts_json, MINUTE_IN_SECONDS*30);
 			}
 
 			$hubspot_contacts_json = json_decode($hubspot_contacts_json);

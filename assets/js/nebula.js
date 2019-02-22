@@ -4542,7 +4542,9 @@ function mmenus(){
 			}, {
 				//Configuration
 				offCanvas: {
-					pageSelector: "#body-wrapper"
+					page: {
+						selector: "#body-wrapper"
+					}
 				},
 				classNames: {
 					selected: "current-menu-item"
