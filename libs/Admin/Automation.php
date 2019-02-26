@@ -153,6 +153,7 @@ if ( !trait_exists('Automation') ){
 
 			$config = array(
 				'id' => 'nebula',
+				'parent_slug'  => 'plugins.php', //Where the "Install Plugins" submenu appears. Note: WordPress.org theme distribution requires this to be under "themes.php"
 				'strings' => array(
 					'notice_can_install_recommended' => _n_noop(
 						'The following optional plugin may be needed for the theme: %1$s.',

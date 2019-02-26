@@ -38,6 +38,7 @@ if ( !trait_exists('Metaboxes') ){
 				add_meta_box('nebula_notes_metabox', 'Notes', array($this, 'nebula_notes_metabox'), 'nebula_options', 'administration_side');
 
 				//Diagnostic
+				add_meta_box('nebula_troubleshooting_metabox', 'Troubleshooting', array($this, 'nebula_troubleshooting_metabox'), 'nebula_options', 'diagnostic');
 				add_meta_box('nebula_installation_metabox', 'Installation', array($this, 'nebula_installation_metabox'), 'nebula_options', 'diagnostic');
 				add_meta_box('nebula_version_metabox', 'Nebula Version', array($this, 'nebula_version_metabox'), 'nebula_options', 'diagnostic_side');
 				add_meta_box('nebula_users_metabox', 'Users', array($this, 'nebula_users_metabox'), 'nebula_options', 'diagnostic');
@@ -1843,20 +1844,52 @@ if ( !trait_exists('Metaboxes') ){
 		 Diagnostic
 		 ===========================*/
 
+
+		public function nebula_troubleshooting_metabox($nebula_data){
+			$nebula_options = get_option('nebula_options');
+
+			?>
+				<p>This is a list of possible Nebula configurations that may allow or prevent certain functionality from happening. For more references, be sure to check Nebula warnings in the Admin Dashboard, try running a Nebula Audit (from the admin bar), or check the At-A-Glance metabox on the Dashboard. The other metaboxes in this Diagnostic tab may be helpful as well.</p>
+				<ul>
+					<li>
+						<?php if ( is_child_theme() ): ?>
+							<strong>Nebula Child</strong> theme is active<?php echo ( $this->allow_theme_update() )? '. Automated updates <strong>are</strong> allowed.' : ', but automated updates are <strong>not</strong> allowed.'; ?>
+						<?php else: ?>
+							Child theme is <strong>not</strong> being used. Automated updates will <strong>not</strong> be available.
+						<?php endif; ?>
+					</li>
+					<li><strong>WordPress Core update notifications</strong> are <strong><?php echo ( empty($nebula_options['wp_core_updates_notify']) )? 'hidden' : 'allowed'; ?></strong> by Nebula.</li>
+					<li>Nebula <strong>Sass processing</strong> is <strong><?php echo ( empty($nebula_options['scss']) )? 'disabled' : 'enabled'; ?></strong></li>
+					<li>The <strong>WordPress Admin Bar</strong> is <strong><?php echo ( empty($nebula_options['admin_bar']) )? 'hidden' : 'allowed'; ?></strong> by Nebula</li>
+					<li><strong>Nebula admin notices</strong> (warnings/errors) are <strong><?php echo ( empty($nebula_options['admin_notices']) )? 'disabled' : 'enabled'; ?></strong></li>
+					<li>Nebula is <strong><?php echo ( empty($nebula_options['unnecessary_metaboxes']) )? 'allowing' : 'removing'; ?> "unnecessary" Dashboard metaboxes</strong>.</li>
+					<li>
+						<?php if ( $nebula_options['jquery_version'] === 'wordpress' ): ?>
+							Nebula is using the <strong>WordPress Core version of jQuery</strong> without modification.
+						<?php else: ?>
+							Nebula is using the <strong>latest version of jQuery</strong> and calling it from the <strong><?php echo ( $nebula_options['jquery_version'] === 'latest' )? '&lt;head&gt;' : 'footer'; ?></strong>.
+						<?php endif; ?>
+					</li>
+					<li>
+						<?php if ( $nebula_options['bootstrap_version'] === 'latest' ): ?>
+							Nebula is using the <strong>latest version of Bootstrap</strong> with all features.
+						<?php elseif ( $nebula_options['bootstrap_version'] === 'grid' ): ?>
+							Nebula is using the <strong>latest version of Bootstrap, but only the grid</strong>.
+						<?php elseif ( $nebula_options['bootstrap_version'] === 'bootstrap4a5' ): ?>
+							Nebula is using <strong>Bootstrap version 4 alpha 5</strong> for support of IE9.
+						<?php else: ?>
+							Nebula is using <strong>Bootstrap version 3</strong> for support of IE8.
+						<?php endif; ?>
+					</li>
+					<li>Nebula <strong><?php echo ( empty($nebula_options['allow_bootstrap_js']) )? 'has disabled' : 'is allowing'; ?> Bootstrap JavaScript</strong>.</li>
+				</ul>
+			<?php
+		}
+
 		public function nebula_installation_metabox($nebula_data){
 			$nebula_options = get_option('nebula_options');
 
 			?>
-				<div class="form-group">
-					<p class="form-text">
-						<?php if ( is_child_theme() ): ?>
-							<strong>Nebula Child</strong> theme is active<?php echo ( $this->allow_theme_update() )? '. Automated updates <strong>are</strong> allowed.' : ', but automated updates are <strong>not</strong> allowed.'; //yolo ?>
-						<?php else: ?>
-							Child theme is <strong>not</strong> being used. Automated updates will <strong>not</strong> be available.
-						<?php endif; ?>
-					</p>
-				</div>
-
 				<div class="form-group">
 					<label for="first_activation">First Nebula activation date</label>
 					<input type="text" id="first_activation" class="form-control" value="<?php echo $nebula_data['first_activation']; ?>" readonly />

@@ -82,7 +82,7 @@ if ( !trait_exists('Security') ){
 			$override = apply_filters('pre_nebula_login_errors', null, $error);
 			if ( isset($override) ){return;}
 
-			if ( isset($_GET['action']) && $_GET['action'] !== 'register' ){
+			if ( !empty($error) ){
 				$dimensions = array('dl'=> wp_login_url(), 'dt' => 'Log In');
 
 				if ( $this->contains($error, array('The password you entered for the username')) ){

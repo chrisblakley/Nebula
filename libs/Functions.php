@@ -395,8 +395,8 @@ trait Functions {
 			if ( is_plugin_active('relevanssi/relevanssi.php') && !get_option('relevanssi_indexed') ){
 				$nebula_warnings[] = array(
 					'level' => 'error',
-					'description' => '<a href="options-general.php?page=relevanssi%2Frelevanssi.php">Relevanssi</a> must build an index to search the site. This must be triggered manually.',
-					'url' => get_admin_url() . 'options-general.php?page=relevanssi%2Frelevanssi.php'
+					'description' => '<a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> must build an index to search the site. This must be triggered manually.',
+					'url' => get_admin_url() . 'options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing'
 				);
 			}
 

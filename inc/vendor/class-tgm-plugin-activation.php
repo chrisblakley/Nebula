@@ -2363,10 +2363,10 @@ if ( ! class_exists( 'TGMPA_List_Table' ) ) {
 		 */
 		protected function get_plugin_advise_type_text( $required ) {
 			if ( true === $required ) {
-				return __( 'Recommended', 'tgmpa' ); //Changed by Chris Blakley for Nebula
+				return __( 'Recommended', 'tgmpa' ); //Note: Changed for Nebula
 			}
 
-			return __( 'Optional', 'tgmpa' ); //Changed by Chris Blakley for Nebula
+			return __( 'Optional', 'tgmpa' );  //Note: Changed for Nebula
 		}
 
 		/**
