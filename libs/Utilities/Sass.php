@@ -139,10 +139,12 @@ if ( !trait_exists('Sass') ){
 					'this_directory' => '"' . $location_paths['uri'] . '"',
 				);
 
-				$primary_color = rtrim(get_theme_mod('nebula_primary_color', $this->sass_color('primary')), ';'); //From Customizer or child theme Sass variable
+				$theme_mod_primary_color = get_theme_mod('nebula_primary_color');
+				$primary_color = ( !empty($theme_mod_primary_color) )? $theme_mod_primary_color : rtrim(nebula()->sass_color('primary'), ';'); //From Customizer or child theme Sass variable
 				$nebula_scss_variables['primary_color'] = ( !empty($primary_color) )? $primary_color : 'rgba(0, 0, 0, 0)';
 
-				$secondary_color = rtrim(get_theme_mod('nebula_secondary_color', $this->sass_color('secondary')), ';'); //From Customizer or child theme Sass variable
+				$theme_mod_secondary_color = get_theme_mod('nebula_secondary_color');
+				$secondary_color = ( !empty($theme_mod_secondary_color) )? $theme_mod_secondary_color : rtrim(nebula()->sass_color('secondary'), ';'); //From Customizer or child theme Sass variable
 				$nebula_scss_variables['secondary_color'] = ( !empty($secondary_color) )? $secondary_color : 'rgba(0, 0, 0, 0)';
 
 				$background_color = rtrim(get_theme_mod('nebula_background_color', $this->sass_color('background')), ';'); //From Customizer or child theme Sass variable

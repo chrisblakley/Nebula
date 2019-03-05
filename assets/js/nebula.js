@@ -151,6 +151,7 @@ function cacheSelectors(){
 }
 
 //Nebula Service Worker
+//@TODO "Nebula" 0: Consider using workbox-window here to tie into the Workbox sw.js file: https://developers.google.com/web/tools/workbox/modules/workbox-window
 function registerServiceWorker(){
 	jQuery('.nebula-sw-install-button').addClass('inactive');
 
@@ -244,7 +245,7 @@ function registerServiceWorker(){
 function nebulaPredictiveCacheListeners(){
 	//Any post listing page
 	if ( jQuery('.first-post .entry-title a').length ){
-		nebulaAddToCache(jQuery('.first-post .entry-title a').attr('href'));
+		nebulaPrefetch(jQuery('.first-post .entry-title a').attr('href'));
 	}
 
 	//Internal link hovers
@@ -255,11 +256,7 @@ function nebulaPredictiveCacheListeners(){
 		if ( !predictiveHoverTimeout ){
 			predictiveHoverTimeout = window.setTimeout(function(){
 				predictiveHoverTimeout = null; //Reset the timer
-				if ( oThis.attr('target') !== '_blank' ){
-					nebulaAddToCache(oThis.attr('href')); //Fetch and add internal links to cache
-				} else {
-					nebulaPrefetch(oThis.attr('href')); //Attempt to prefetch outbound URLs
-				}
+				nebulaPrefetch(oThis.attr('href')); //Attempt to prefetch
 			}, 250);
 		}
 	}, function(){
@@ -283,30 +280,6 @@ function nebulaPredictiveCacheListeners(){
 	});
 }
 
-//Add items to the cache
-function nebulaAddToCache(url){
-	if ( !nebula.dom.body.hasClass('offline') ){ //If online
-		//Prevent caching of URLs containing certain strings
-		var substrings = ['chrome-extension://', '/wp-login.php', '/wp-admin', 'analytics', 'collect', 'no-cache', '//#', '.pdf', '.doc', '.xls', '.ppt', '.zip', '.rar', '.tar'];
-		var length = substrings.length;
-		while ( length-- ){
-			if ( url.indexOf(substrings[length]) !== -1 ){
-				return false; //Do not cache (disallowed string)
-			}
-		}
-
-		if ( 'caches' in window ){ //If using Service Worker
-			if ( url.length > 1 && url.indexOf('#') !== 0 && url.indexOf('?') === -1 ){
-				caches.open(nebula.site.cache).then(function(cache){
-					cache.add(url);
-				});
-			}
-		} else { //If not using Service Worker, prefetch the resource with a resource hint
-			nebulaPrefetch(url);
-		}
-	}
-}
-
 //Prefetch a resource
 function nebulaPrefetch(url, callback){
 	//If network connection is 2G don't prefetch
@@ -321,7 +294,7 @@ function nebulaPrefetch(url, callback){
 		}
 	}
 
-	if ( url.length > 1 && url.indexOf('#') !== 0 ){
+	if ( url.length > 1 && url.indexOf('#') !== 0 ){ //If the URL exists and does not begin with #
 		window.requestIdleCallback(function(){ //Wait until the browser is idle before prefetching
 			if ( !jQuery('link[rel="prefetch"][href="' + url + '"]').length ){ //If prefetch link for this URL has not yet been added to the DOM
 				jQuery('<link rel="prefetch" href="' + url + '">').on('load', callback).appendTo('head'); //Append a prefetch link element for this URL to the DOM
@@ -1383,7 +1356,7 @@ function autocompleteSearch(element, types){
 						ga('set', nebula.analytics.metrics.autocompleteSearches, 1);
 						if ( data ){
 							nebula.dom.document.trigger('nebula_autocomplete_search_results', data);
-							nebulaAddToCache(data[0].link);
+							nebulaPrefetch(data[0].link);
 							jQuery.each(data, function(index, value){
 								value.label = value.label.replace(/&#038;/g, "\&");
 							});
@@ -1944,7 +1917,7 @@ function showSuggestedGCSEPage(title, url){
 	if ( hostname.test(url) ){
 		jQuery('.gcse-suggestion').attr('href', url).text(title);
 		jQuery('#nebula-drawer.suggestedpage').slideDown();
-		nebulaAddToCache(url);
+		nebulaPrefetch(url);
 	}
 }
 

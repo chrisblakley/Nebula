@@ -300,6 +300,7 @@ if ( !trait_exists('Options') ){
 				'cd_hitmethod' => '',
 				'cd_experimentvariation' => '',
 				'cd_savedata' => '',
+				'cd_offline' => '',
 				'cd_devicememory' => '',
 				'cd_batterymode' => '',
 				'cd_batterypercent' => '',

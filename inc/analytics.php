@@ -154,6 +154,10 @@
 			ga('set', nebula.analytics.dimensions.saveData, '<?php echo ( nebula()->is_save_data() )? 'Save Data' : 'Normal'; ?>');
 		<?php endif; ?>
 
+		<?php if ( nebula()->get_option('cd_offline') ): ?>
+			ga('set', nebula.analytics.dimensions.offline, 'online');
+		<?php endif; ?>
+
 		//Experiment Variation
 		if ( typeof cxApi !== 'undefined' && typeof cxApi.chooseVariation === 'function' ){
 			var variationInfo = 'Variation ' + cxApi.chooseVariation();

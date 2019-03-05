@@ -507,56 +507,11 @@ trait Functions {
 		$override = apply_filters('pre_sw_location', null);
 		if ( isset($override) ){return;}
 
-		//Check stylesheet directory, then template directory
-		//This allows the SW to be registered, but it cannot intercept fetch requests from this location. Therefore, it must be moved to the root directory.
-/*
-		if ( file_exists(get_stylesheet_directory() . '/assets/js/sw.js') ){
-			if ( !empty($uri) ){
-				return get_stylesheet_directory_uri() . '/assets/js/sw.js';
-			}
-
-			return get_stylesheet_directory() . '/assets/js/sw.js';
-		} elseif ( file_exists(get_template_directory() . '/assets/js/sw.js') ){
-			if ( !empty($uri) ){
-				return get_template_directory_uri() . '/assets/js/sw.js';
-			}
-
-			return get_template_directory() . '/assets/js/sw.js';
-		}
-*/
-
-		//Otherwise return root level directory
 		if ( !empty($uri) ){
 			return get_site_url() . '/sw.js';
 		}
 
 		return get_home_path() . 'sw.js';
-	}
-
-	//Get the name of the current service worker cache
-	public function get_sw_cache_name(){
-		$this->timer('SW Cache Name');
-		$override = apply_filters('pre_nebula_get_sw_cache_name', null);
-		if ( isset($override) ){return;}
-
-		$sw_cache_name = get_transient('nebula_sw_cache_name');
-		if ( empty($sw_cache_name) || $this->is_debug() ){
-			if ( $this->get_option('service_worker') && file_exists($this->sw_location(false)) ){
-				WP_Filesystem();
-				global $wp_filesystem;
-				$sw_js = $wp_filesystem->get_contents($this->sw_location(false));
-
-				if ( !empty($sw_js) ){
-					preg_match("/var CACHE_NAME = '(.+)';/", $sw_js, $cache_name);
-					$sw_cache_name = $cache_name[1];
-
-					set_transient('nebula_sw_cache_name', $sw_cache_name, YEAR_IN_SECONDS); //1 year cache (This doesn't really need to expire)
-				}
-			}
-		}
-
-		$this->timer('SW Cache Name', 'end');
-		return $sw_cache_name;
 	}
 
 	//Update variables within the service worker JavaScript file for install caching
@@ -572,21 +527,25 @@ trait Functions {
 
 		if ( !empty($sw_js) ){
 			$find = array(
-				"/(var CACHE_NAME = ')(.+)(';)(.+$)?/m",
+				"/(var THEME_NAME = ')(.+)(';)/m",
+				"/(var NEBULA_VERSION = ')(.+)(';)(.+$)?/m",
 				"/(var OFFLINE_URL = ')(.+)(';)/m",
 				"/(var OFFLINE_IMG = ')(.+)(';)/m",
+				"/(var OFFLINE_GA_DIMENSION = ')(.+)(';)/m",
 				"/(var META_ICON = ')(.+)(';)/m",
 				"/(var MANIFEST = ')(.+)(';)/m",
 				"/(var HOME_URL = ')(.+)(';)/m",
 				"/(var START_URL = ')(.+)(';)/m",
 			);
 
-			$new_cache_name = "nebula-" . strtolower(get_option('stylesheet')) . "-" . mt_rand(10000, 99999);
+			//$new_cache_name = "nebula-" . strtolower(get_option('stylesheet')) . "-" . mt_rand(10000, 99999);
 
 			$replace = array(
-				"$1" . $new_cache_name . "$3" . " //" . date('l, F j, Y g:i:s A'),
+				"$1" . strtolower(get_option('stylesheet')) . "$3",
+				"$1" . 'v' . $this->version('full') . "$3" . " //" . date('l, F j, Y g:i:s A'),
 				"$1" . home_url('/') . "offline/" . "$3",
 				"$1" . get_theme_file_uri('/assets/img') . "/offline.svg" . "$3",
+				"$1" . "cd" . $this->ga_definition_index($this->get_option('cd_offline')) . "$3",
 				"$1" . get_theme_file_uri('/assets/img/meta') . "/android-chrome-512x512.png" . "$3",
 				"$1" . $this->manifest_json_location() . "$3",
 				"$1" . home_url('/') . "$3",
@@ -595,13 +554,6 @@ trait Functions {
 
 			$sw_js = preg_replace($find, $replace, $sw_js);
 			$update_sw_js = $wp_filesystem->put_contents($this->sw_location(false), $sw_js);
-
-			if ( !empty($update_sw_js) ){
-				do_action('nebula_wrote_sw_js');
-				set_transient('nebula_sw_cache_name', $new_cache_name, YEAR_IN_SECONDS); //1 year cache (This doesn't really need to expire since it is updated everytime a new one is generated)
-				$this->timer('Update SW', 'end');
-				return true;
-			}
 		}
 
 		$this->timer('Update SW', 'end');
@@ -2020,6 +1972,109 @@ trait Functions {
 		</script>
 		<?php
 		$this->timer($timer_name, 'end');
+	}
+
+	//Related Posts by term frequency
+	public function related_posts($post_id=null, $args=array()){
+		global $post, $wpdb;
+
+		$post_id = intval($post_id);
+		if ( !$post_id && $post->ID ){
+			$post_id = $post->ID;
+		}
+
+		if ( !$post_id ){
+			return false; //Post ID is required for this function
+		}
+
+		$defaults = array(
+			'taxonomy' => 'post_tag',
+			'post_type' => array('post'),
+			'max' => 5
+		);
+		$options = wp_parse_args($args, $defaults);
+
+		$related_post_ids = get_transient('nebula-related-' . $options['taxonomy'] . '-' . $post_id);
+		if ( empty($related_post_ids) || nebula()->is_debug() ){
+			$term_args = array(
+				'fields' => 'ids',
+				'orderby' => 'count', //Sort by frequency
+				'order' => 'ASC' //Least popular to most popular
+			);
+
+			$orig_terms_set = wp_get_object_terms($post_id, $options['taxonomy'], $term_args);
+			$orig_terms_set = array_map('intval', $orig_terms_set); //Make sure each returned term id to be an integer.
+			$terms_to_iterate = $orig_terms_set; //Store a copy that we'll be reducing by one item for each iteration.
+
+			$post_args = array(
+				'fields' => 'ids',
+				'post_type' => $options['post_type'],
+				'post__not_in' => array($post_id),
+				'posts_per_page' => 50 //Start with more than enough posts
+			);
+
+			$related_post_ids = array();
+
+			//Loop through the terms to find posts that contain multiple terms (term1 AND term2 AND term3)
+			while ( count($terms_to_iterate) > 1 ){
+				$post_args['tax_query'] = array(
+					array(
+						'taxonomy' => $options['taxonomy'],
+						'field' => 'id',
+						'terms' => $terms_to_iterate,
+						'operator' => 'AND'
+					)
+				);
+
+				$posts = get_posts($post_args);
+				foreach( $posts as $id ){
+					$id = intval($id);
+					if ( !in_array($id, $related_post_ids) ){
+						$related_post_ids[] = $id;
+					}
+				}
+
+				array_pop($terms_to_iterate); //Remove the least related post ID
+			}
+
+			$post_args['posts_per_page'] = $options['max']; //Reduce the number to our desired max
+			$post_args['tax_query'] = array(
+				array(
+					'taxonomy' => $options['taxonomy'],
+					'field' => 'id',
+					'terms' => $orig_terms_set
+				)
+			);
+
+			//Check for posts that contain any of the terms (to fill out the desired max)
+			$posts = get_posts($post_args);
+			foreach ( $posts as $count => $id ){
+				$id = intval($id);
+				if ( !in_array($id, $related_post_ids) ){
+					$related_post_ids[] = $id;
+				}
+
+				if ( count($related_post_ids) > $options['max'] ){
+					break; //We have enough related post IDs now, stop the loop.
+				}
+			}
+
+			set_transient('nebula-related-' . $options['taxonomy'] . '-' . $post_id, $related_post_ids, DAY_IN_SECONDS);
+		}
+
+		if ( !$related_post_ids ){
+			return false;
+		}
+
+		//Query for the related post IDs
+		$query_options = array(
+			'post__in' => $related_post_ids,
+			'orderby' => 'post__in',
+			'post_type' => $options['post_type'],
+			'posts_per_page' => min(array(count($related_post_ids), $options['max'])),
+		);
+
+		return new WP_Query($query_options);
 	}
 
 	//Check for single category templates with the filename single-cat-slug.php or single-cat-id.php

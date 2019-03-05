@@ -764,6 +764,18 @@ if ( !trait_exists('Metaboxes') ){
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-prepend">
+								<div class="input-group-text">Offline</div>
+							</div>
+							<input type="text" name="nebula_options[cd_offline]" id="cd_offline" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_offline']; ?>" />
+						</div>
+						<p class="nebula-help-text short-help form-text text-muted">Note what data was sent while the user was offline. Scope: Hit</p>
+						<p class="nebula-help-text more-help form-text text-muted"></p>
+						<p class="option-keywords">service worker sw.js workbox</p>
+					</div>
+
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-prepend">
 								<div class="input-group-text">Device Memory</div>
 							</div>
 							<input type="text" name="nebula_options[cd_devicememory]" id="cd_devicememory" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_devicememory']; ?>" />
