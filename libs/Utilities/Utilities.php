@@ -49,6 +49,15 @@ if ( !trait_exists('Utilities') ){
 			return false;
 		}
 
+		//Check if Nebula is the active (parent) theme
+		public function is_nebula(){
+			if ( wp_get_theme()->parent()->get('Name') === 'Nebula' && class_exists('Nebula') ){
+				return true;
+			}
+
+			return false;
+		}
+
 		//Generate Nebula Session ID
 		public function nebula_session_id(){
 			$timer_name = $this->timer('Session ID');

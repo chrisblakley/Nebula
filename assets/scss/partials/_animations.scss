@@ -7,9 +7,10 @@
 // Otherwise, add class "animate" manually to create your own triggers (not all animations require "animate" class).
 // ===========================
 
-
-
-
+//Accomodate users who prefer less motion (Note: this may not affect JavaScript animations)
+@media ( prefers-reduced-motion: reduce ){
+	* {animation-duration: 0.001s !important; transition-duration: 0.001s !important;} //Override all CSS animations
+}
 
 // ===========================
 // Modifiers

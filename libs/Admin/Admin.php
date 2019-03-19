@@ -15,25 +15,36 @@ if ( !trait_exists('Admin') ){
 		public function hooks(){
 			global $pagenow;
 
+			$this->AutomationHooks(); //Register Automation hooks
+			$this->DashboardHooks(); //Register Dashboard hooks
+			$this->UsersHooks(); //Register Users hooks
+
+			//All admin pages (including AJAX requests)
 			if ( $this->is_admin_page() ){
-				$this->AutomationHooks(); //Register Automation hooks
-				$this->DashboardHooks(); //Register Dashboard hooks
-				$this->UsersHooks(); //Register Users hooks
-
 				add_filter('nebula_brain', array($this, 'admin_brain'));
+				add_action('save_post', array($this, 'clear_transients'));
+				add_action('profile_update', array($this, 'clear_transients'));
+				add_action('upgrader_process_complete', array($this, 'theme_update_automation'), 10, 2); //Action 'upgrader_post_install' also exists.
+				add_filter('auth_cookie_expiration', array($this, 'session_expire'));
+				add_filter('upload_mimes', array($this, 'additional_upload_mime_types'));
+				add_action('after_setup_theme', array($this, 'custom_media_display_settings'));
+				add_action('admin_action_duplicate_post_as_draft', array($this, 'duplicate_post_as_draft'));
+				add_filter('post_row_actions', array($this, 'rd_duplicate_post_link'), 10, 2);
+				add_filter('page_row_actions', array($this, 'rd_duplicate_post_link'), 10, 2);
+				add_action('admin_init', array($this, 'clear_all_w3_caches'));
+				add_action('admin_init', array($this, 'theme_json'));
+				add_filter('puc_request_update_result_theme-Nebula', array($this, 'theme_update_version_store'), 10, 2); //This hook is found in UpdateChecker.php in the filterUpdateResult() function.
+			}
 
+			//Non-AJAX admin pages
+			if ( $this->is_admin_page() && !defined('DOING_AJAX') ){
 				//Enable editor style for the TinyMCE WYSIWYG editor.
 				add_editor_style($this->bootstrap('reboot'));
 				add_editor_style('assets/css/tinymce.css');
-
-				add_action('save_post', array($this, 'clear_transients'));
-				add_action('profile_update', array($this, 'clear_transients'));
 				add_action('admin_head', array($this, 'admin_favicon'));
 				add_filter('admin_body_class', array($this, 'admin_body_classes'));
-				add_action('upgrader_process_complete', array($this, 'theme_update_automation'), 10, 2); //Action 'upgrader_post_install' also exists.
-				add_filter('auth_cookie_expiration', array($this, 'session_expire'));
+
 				remove_action('admin_enqueue_scripts', 'wp_auth_check_load'); //Disable the logged-in monitoring modal
-				add_filter('upload_mimes', array($this, 'additional_upload_mime_types'));
 
 				if ( $this->get_option('admin_notices') ){
 					add_action('admin_notices',  array($this, 'admin_notices'));
@@ -41,7 +52,6 @@ if ( !trait_exists('Admin') ){
 
 				//add_filter('wp_unique_post_slug', array($this, 'unique_slug_warning_ajax' ), 10, 4); //@TODO "Nebula" 0: This echos when submitting posts from the front end! nebula()->is_admin_page() does not prevent that...
 
-				add_action('after_setup_theme', array($this, 'custom_media_display_settings'));
 				add_filter('manage_posts_columns', array($this, 'id_columns_head'));
 				add_filter('manage_pages_columns', array($this, 'id_columns_head'));
 				add_action('manage_posts_custom_column', array($this, 'id_columns_content') , 15, 3);
@@ -55,9 +65,6 @@ if ( !trait_exists('Admin') ){
 					}
 				}
 
-				add_action('admin_action_duplicate_post_as_draft', array($this, 'duplicate_post_as_draft'));
-				add_filter('post_row_actions', array($this, 'rd_duplicate_post_link'), 10, 2);
-				add_filter('page_row_actions', array($this, 'rd_duplicate_post_link'), 10, 2);
 				add_filter('manage_media_columns', array($this, 'muc_column'));
 				add_action('manage_media_custom_column', array($this, 'muc_value'), 10, 2);
 
@@ -65,13 +72,13 @@ if ( !trait_exists('Admin') ){
 					add_action('admin_menu', array($this, 'all_settings_link'));
 				}
 
-				add_action('admin_init', array($this, 'clear_all_w3_caches'));
 				add_filter('admin_footer_text', array($this, 'change_admin_footer_left'));
 				add_filter('update_footer', array($this, 'change_admin_footer_right'), 11);
 				add_action('load-post.php', array($this, 'post_meta_boxes_setup'));
 				add_action('load-post-new.php', array($this, 'post_meta_boxes_setup'));
 			}
 
+			//Login Page
 			if ( $this->is_login_page() ){
 				add_action('login_head', array($this, 'login_ga'));
 				add_filter('login_headerurl', array($this, 'custom_login_header_url'));
@@ -112,9 +119,6 @@ if ( !trait_exists('Admin') ){
 					add_action('admin_notices', array($this, 'update_warning'));
 				}
 			}
-
-			add_action('admin_init', array($this, 'theme_json'));
-			add_filter('puc_request_update_result_theme-Nebula', array($this, 'theme_update_version_store'), 10, 2); //This hook is found in UpdateChecker.php in the filterUpdateResult() function.
 		}
 
 		//Add info to the brain variable for admin pages

@@ -86,9 +86,6 @@ trait Functions {
 		add_action('wp_ajax_nebula_autocomplete_search', array($this, 'autocomplete_search'));
 		add_action('wp_ajax_nopriv_nebula_autocomplete_search', array($this, 'autocomplete_search'));
 
-		add_action('wp_ajax_nebula_advanced_search', array($this, 'advanced_search'));
-		add_action('wp_ajax_nopriv_nebula_advanced_search', array($this, 'advanced_search'));
-
 		add_action('wp_ajax_nebula_infinite_load', array($this, 'infinite_load'));
 		add_action('wp_ajax_nopriv_nebula_infinite_load', array($this, 'infinite_load'));
 
@@ -1647,8 +1644,8 @@ trait Functions {
 		));
 
 		$data = array_merge($defaults, $options);
-		$delimiter_html = '<li class="delimiter">' . $data['delimiter'] . '</li>';
-		$current = $data['before'] . '<a class="current-breadcrumb-link" href="' . get_the_permalink() . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title()) . '</span></a>' . $data['after'];
+		$data['delimiter_html'] = '<li class="delimiter">' . $data['delimiter'] . '</li>';
+		$data['current_node'] = $data['before'] . '<a class="current-breadcrumb-link" href="' . get_the_permalink() . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title()) . '</span></a>' . $data['after'];
 
 		if ( !empty($data['force']) ){ //If using forced override
 			echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">';
@@ -1675,12 +1672,12 @@ trait Functions {
 						echo '</a></li>';
 					}
 
-					echo ' ' . $delimiter_html . ' ';
+					echo ' ' . $data['delimiter_html'] . ' ';
 				}
 			}
 
 			if ( !empty($data['current']) ){
-				echo $current;
+				echo $data['current_node'];
 			}
 
 			echo '</ol>';
@@ -1688,11 +1685,11 @@ trait Functions {
 			echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . '</span></a></li></ol>';
 			return false;
 		} else {
-			echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . '</span></a></li> ' . $delimiter_html . ' ';
+			echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . '</span></a></li> ' . $data['delimiter_html'] . ' ';
 			if ( is_category() ){
 				$thisCat = get_category(get_query_var('cat'), false);
 				if ( $thisCat->parent !== 0 ){
-					echo get_category_parents($thisCat->parent, true, ' ' . $delimiter_html . ' ');
+					echo get_category_parents($thisCat->parent, true, ' ' . $data['delimiter_html'] . ' ');
 				}
 
 				$prefix = '';
@@ -1702,15 +1699,15 @@ trait Functions {
 					$prefix = 'Category: ';
 				}
 
-				echo $data['before'] . '<a class="current-breadcrumb-link" href="' . get_category_link($thisCat->term_id) . '">'. $prefix . single_cat_title('', false) . '</a>' . $data['after'];
+				echo apply_filters('nebula_breadcrumbs_category', $data['before'] . '<a class="current-breadcrumb-link" href="' . get_category_link($thisCat->term_id) . '">'. $prefix . single_cat_title('', false) . '</a>' . $data['after'], $data);
 			} elseif ( is_search() ){
 				echo $data['before'] . 'Search results' . $data['after'];
 			} elseif ( is_day() ){
-				echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_year_link(get_the_time('Y')) . '" itemprop="item"><span itemprop="name">' . get_the_time('Y') . '</span></a></li> ' . $delimiter_html . ' ';
-				echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '" itemprop="item"><span itemprop="name">' . get_the_time('F') . '</span></a></li> ' . $delimiter_html . ' ';
+				echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_year_link(get_the_time('Y')) . '" itemprop="item"><span itemprop="name">' . get_the_time('Y') . '</span></a></li> ' . $data['delimiter_html'] . ' ';
+				echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '" itemprop="item"><span itemprop="name">' . get_the_time('F') . '</span></a></li> ' . $data['delimiter_html'] . ' ';
 				echo $data['before'] . get_the_time('d') . $data['after'];
 			} elseif ( is_month() ){
-				echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_year_link(get_the_time('Y')) . '" itemprop="item"><span itemprop="name">' . get_the_time('Y') . '</span></a></li> ' . $delimiter_html . ' ';
+				echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_year_link(get_the_time('Y')) . '" itemprop="item"><span itemprop="name">' . get_the_time('Y') . '</span></a></li> ' . $data['delimiter_html'] . ' ';
 				echo $data['before'] . get_the_time('F') . $data['after'];
 			} elseif ( is_year() ){
 				echo $data['before'] . get_the_time('Y') . $data['after'];
@@ -1726,22 +1723,22 @@ trait Functions {
 					echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . $slug['slug'] . '/" itemprop="item"><span itemprop="name">' . $post_type->labels->singular_name . '</span></a></li>';
 
 					if ( !empty($data['current']) ){
-						echo ' ' . $delimiter_html . ' ' . $current;
+						echo ' ' . $data['delimiter_html'] . ' ' . $data['current_node'];
 					}
 				} else {
 					$cat = get_the_category();
 					if ( !empty($cat) ){
 						$cat = $cat[0];
-						$cats = get_category_parents($cat, true, ' ' . $delimiter_html . ' '); //@todo "Nebula" 0: Do these get wrapper properly in <li> and <a> tags?
+						$cats = get_category_parents($cat, true, ' ' . $data['delimiter_html'] . ' '); //@todo "Nebula" 0: Do these get wrapper properly in <li> and <a> tags?
 
 						if ( empty($data['current']) ){
-							$cats = preg_replace("#^(.+)\s" . $delimiter_html . "\s$#", "$1", $cats);
+							$cats = preg_replace("#^(.+)\s" . $data['delimiter_html'] . "\s$#", "$1", $cats);
 						}
 
-						echo '<li>' . $cats . '</li>';
+						echo apply_filters('nebula_breadcrumbs_categories', '<li>' . $cats . '</li>', $data);
 
 						if ( !empty($data['current']) ){
-							echo $current;
+							echo $data['current_node'];
 						}
 					}
 				}
@@ -1750,13 +1747,13 @@ trait Functions {
 				echo $data['before'] . $post_type->labels->singular_name . $data['after'];
 			} elseif ( is_attachment() ){ //@TODO "Nebula" 0: Check for gallery pages? If so, it should be Home > Parent(s) > Gallery > Attachment
 				if ( !empty($post->post_parent) ){ //@TODO "Nebula" 0: What happens if the page parent is a child of another page?
-					echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_permalink($post->post_parent) . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title($post->post_parent)) . '</span></a></li>' . ' ' . $delimiter_html . ' ' . strip_tags(get_the_title());
+					echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_permalink($post->post_parent) . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title($post->post_parent)) . '</span></a></li>' . ' ' . $data['delimiter_html'] . ' ' . strip_tags(get_the_title());
 				} else {
 					echo strip_tags(get_the_title());
 				}
 			} elseif ( is_page() && !$post->post_parent ){
 				if ( !empty($data['current']) ){
-					echo $current;
+					echo $data['current_node'];
 				}
 			} elseif ( is_page() && $post->post_parent ){
 				$parent_id = $post->post_parent;
@@ -1772,12 +1769,12 @@ trait Functions {
 				for ( $i = 0; $i < count($breadcrumbs); $i++ ){
 					echo $breadcrumbs[$i];
 					if ( $i !== count($breadcrumbs)-1 ){
-						echo ' ' . $delimiter_html . ' ';
+						echo ' ' . $data['delimiter_html'] . ' ';
 					}
 				}
 
 				if ( !empty($data['current']) ){
-					echo ' ' . $delimiter_html . ' ' . $current;
+					echo ' ' . $data['delimiter_html'] . ' ' . $data['current_node'];
 				}
 			} elseif ( is_tag() ){
 				$prefix = '';
@@ -1787,20 +1784,20 @@ trait Functions {
 					$prefix = 'Tag: ';
 				}
 
-				echo $data['before'] . $prefix . single_tag_title('', false) . $data['after'];
+				echo apply_filters('nebula_breadcrumbs_tag', $data['before'] . $prefix . single_tag_title('', false) . $data['after'], $data);
 				//echo $data['before'] . '<a class="current-breadcrumb-link" href="' . get_tag_link($thisTag->term_id) . '">'. $prefix . single_tag_title('', false) . '</a>' . $data['after']; //@todo "Nebula": Need to get $thisTag like $thisCat above
 			} elseif ( is_author() ){
 				//@TODO "Nebula" 0: Support for multi author? is_multi_author()
 
 				global $author;
 				$userdata = get_userdata($author);
-				echo $data['before'] . $userdata->display_name . $data['after'];
+				echo apply_filters('nebula_breadcrumbs_author', $data['before'] . $userdata->display_name . $data['after'], $data);
 			} elseif ( is_404() ){
-				echo $data['before'] . 'Error 404' . $data['after'];
+				echo apply_filters('nebula_breadcrumbs_error', $data['before'] . 'Error 404' . $data['after'], $data);
 			}
 
 			if ( get_query_var('paged') ){
-				echo ' (Page ' . get_query_var('paged') . ')';
+				echo apply_filters('nebula_breadcrumbs_paged', ' (Page ' . get_query_var('paged') . ')', $data);
 			}
 			echo '</ol>';
 		}
@@ -2906,101 +2903,8 @@ trait Functions {
 		} elseif ( $rating > $close_threshold ){
 			return ' close-match';
 		}
-			return '';
-		}
 
-	//Advanced Search
-	public function advanced_search(){
-		if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-		$timer_name = $this->timer('Advanced Search');
-
-		ini_set('memory_limit', '512M'); //Increase memory limit for this script.
-
-		$everything_query = get_transient('nebula_everything_query');
-		if ( empty($everything_query) ){
-			$everything_query = new WP_Query(array(
-				'post_type' => array('any'),
-				'post_status' => 'publish',
-				'posts_per_page' => -1,
-				'nopaging' => true
-			));
-			set_transient('nebula_everything_query', $everything_query, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
-		}
-		$posts = $everything_query->get_posts();
-
-		foreach ( $posts as $post ){
-			$author = null;
-			if ( $this->get_option('author_bios') ){ //&& $post->post_type !== 'page' ?
-				$author = array(
-					'id' => $post->post_author,
-					'name' => array(
-						'first' => get_the_author_meta('first_name', $post->post_author),
-						'last' => get_the_author_meta('last_name', $post->post_author),
-						'display' => get_the_author_meta('display_name', $post->post_author),
-					),
-					'url' => get_author_posts_url($post->post_author),
-				);
-			}
-
-			$these_categories = array();
-			$event_categories = get_the_category($post->ID);
-			foreach ( $event_categories as $event_category ){
-				$these_categories[] = $event_category->name;
-			}
-
-			$these_tags = array();
-			$event_tags = wp_get_post_tags($post->ID);
-			foreach ( $event_tags as $event_tag ){
-				$these_tags[] = $event_tag->name;
-			}
-
-			$custom_fields = array();
-			foreach ( $post->custom_fields as $custom_field => $custom_value ){
-				if ( substr($custom_field, 0, 1) === '_' ){
-					continue;
-				}
-				$custom_fields[$custom_field] = $custom_value[0];
-			}
-
-			$full_size = wp_get_attachment_image_src($post->_thumbnail_id, 'full');
-			$thumbnail = wp_get_attachment_image_src($post->_thumbnail_id, 'thumbnail');
-
-			$output[] = array(
-				'type' => $post->post_type,
-				'id' => $post->ID,
-				'posted' => strtotime($post->post_date),
-				'modified' => strtotime($post->post_modified),
-				'author' => $author,
-				'title' => $post->post_title,
-				'description' => strip_tags($post->post_content), //@TODO "Nebula" 0: not correct!
-				'url' => get_the_permalink($post->ID),
-				'categories' => $these_categories,
-				'tags' => $these_tags,
-				'image' => array(
-					'full' => $thumbnail[0], //@TODO "Nebula" 0: Update to shorthand array after PHP v5.4 is common
-					'thumbnail' => $full_size[0], //@TODO "Nebula" 0: Update to shorthand array after PHP v5.4 is common
-				),
-				'custom' => $custom_fields,
-			);
-		} //END $posts foreach
-
-		//@TODO "Nebula" 0: if going to sort by text:
-		/*
-			usort($output, function($a, $b){
-				return strcmp($a['title'], $b['title']);
-			});
-		*/
-
-		//@TODO "Nebula" 0: If going to sort by number:
-		/*
-			usort($output, function($a, $b){
-				return $a['posted'] - $b['posted'];
-			});
-		*/
-
-		echo json_encode($output, JSON_PRETTY_PRINT);
-		$this->timer($timer_name, 'end');
-		wp_die();
+		return '';
 	}
 
 	//Infinite Load AJAX Call

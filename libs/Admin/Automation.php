@@ -5,30 +5,30 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Automation') ){
 	trait Automation {
 		public function hooks(){
-			//@TODO "Nebula" 0: May want to only trigger this if Nebula is the active theme...
+			if ( $this->is_nebula() ){ //Only if Nebula is the active parent theme
+				global $pagenow;
 
-			global $pagenow;
+				//Detect and prompt install of Recommended and Optional plugins using TGMPA
+				//Configuration Documentation: http://tgmpluginactivation.com/configuration/
+				if ( is_admin() && $this->is_dev(true) || current_user_can('manage_options') ){
+					require_once(get_template_directory() . '/inc/vendor/class-tgm-plugin-activation.php');
+					add_action('tgmpa_register', array($this, 'register_required_plugins'));
+				}
 
-			//Detect and prompt install of Recommended and Optional plugins using TGMPA
-			//Configuration Documentation: http://tgmpluginactivation.com/configuration/
-			if ( is_admin() && $this->is_dev(true) || current_user_can('manage_options') ){
-				require_once(get_template_directory() . '/inc/vendor/class-tgm-plugin-activation.php');
-				add_action('tgmpa_register', array($this, 'register_required_plugins'));
+				add_action('after_switch_theme', array($this, 'activation_notice'));
+
+				if ( isset($_GET['nebula-initialization']) && $pagenow === 'themes.php' ){
+					add_action('admin_init', array($this, 'initialization'));
+				}
+
+				if ( (isset($_GET['nebula-initialization']) || isset($_GET['initialization-success'])) && $pagenow === 'themes.php' ){
+					add_action('admin_notices', array($this, 'activation'));
+				}
+
+				add_action('admin_init', array($this, 'set_dates'));
+
+				//add_action('admin_init', array($this, 'force_settings' ), 9); //Uncomment this line to force an initialization date.
 			}
-
-			add_action('after_switch_theme', array($this, 'activation_notice'));
-
-			if ( isset($_GET['nebula-initialization']) && $pagenow === 'themes.php' ){
-				add_action('admin_init', array($this, 'initialization'));
-			}
-
-			if ( (isset($_GET['nebula-initialization']) || isset($_GET['initialization-success'])) && $pagenow === 'themes.php' ){
-				add_action('admin_notices', array($this, 'activation'));
-			}
-
-			add_action('admin_init', array($this, 'set_dates'));
-
-			//add_action('admin_init', array($this, 'force_settings' ), 9); //Uncomment this line to force an initialization date.
 		}
 
 		public function register_required_plugins(){
@@ -155,6 +155,8 @@ if ( !trait_exists('Automation') ){
 				'id' => 'nebula',
 				'parent_slug'  => 'plugins.php', //Where the "Install Plugins" submenu appears. Note: WordPress.org theme distribution requires this to be under "themes.php"
 				'strings' => array(
+					'menu_title' => 'Recommended Plugins',
+					'page_title' => 'Recommended Plugins',
 					'notice_can_install_recommended' => _n_noop(
 						'The following optional plugin may be needed for the theme: %1$s.',
 						'The following optional plugins may be needed for the theme: %1$s.',

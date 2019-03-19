@@ -344,7 +344,11 @@ if ( !trait_exists('Optimization') ){
 
 			$debug_comment = ( $this->is_dev() )? '<!-- Server-side -->' : '';
 
-			//DNS-Prefetch & Preconnect
+			/*==========================
+			 DNS-Prefetch & Preconnect
+			 Resolve DNS and TCP to a domain.
+			 ===========================*/
+
 			$default_preconnects = array();
 
 			//Google fonts if used
@@ -362,18 +366,25 @@ if ( !trait_exists('Optimization') ){
 				$default_preconnects[] = '//' . $this->get_option('disqus_shortname') . '.disqus.com';
 			}
 
-			//Preconnect
+			//Loop through all of the preconnects
 			$preconnects = apply_filters('nebula_preconnect', $default_preconnects);
 			foreach ( $preconnects as $preconnect ){
-				echo '<link rel="preconnect" href="' . $preconnect . '" crossorigin />' . $debug_comment;
+				echo '<link rel="preconnect" href="' . $preconnect . '" crossorigin="anonymous" />' . $debug_comment;
 			}
 
-			//Prefetch
+			/*==========================
+			 Prefetch
+			 Fully request a single resource and store it in cache until needed. Do not combine with preload!
+			 ===========================*/
+
 			$default_prefetches = array();
+
+			//Subpages
 			if ( !is_front_page() ){
 				$default_prefetches[] = home_url('/'); //Prefetch the home page on subpages
 			}
 
+			//Search Results
 			if ( is_search() ){
 				global $wp_query;
 				if ( !empty($wp_query->posts) && !empty($wp_query->posts['0']) ){ //If has search results
@@ -381,6 +392,7 @@ if ( !trait_exists('Optimization') ){
 				}
 			}
 
+			//404 Pages
 			if ( is_404() ){
 				//If Nebula finds a match based on context clues, prefetch that too
 				if ( !empty($this->error_404_exact_match) ){
@@ -393,9 +405,28 @@ if ( !trait_exists('Optimization') ){
 				}
 			}
 
+			//Loop through all of the prefetches
 			$prefetches = apply_filters('nebula_prefetches', $default_prefetches); //Allow child themes and plugins to prefetch resources via Nebula too
 			foreach ( $prefetches as $prefetch ){
 				echo '<link rel="prefetch" href="' . $prefetch . '" crossorigin />' . $debug_comment;
+			}
+
+			/*==========================
+			 Preload
+			 Fully request a single resource before it is needed. Do not combine with prefetch!
+			 ===========================*/
+
+			$default_preloads = array();
+
+			//Google fonts if used
+			if ( $this->get_option('google_font_url') ){
+				$default_preloads[] = $this->get_option('google_font_url');
+			}
+
+			//Loop through all of the prefetches
+			$preloads = apply_filters('nebula_preloads', $default_preloads); //Allow child themes and plugins to preload resources via Nebula too
+			foreach ( $preloads as $preload ){
+				echo '<link rel="preload" href="' . $preload . '" as="fetch" crossorigin="anonymous">';
 			}
 		}
 

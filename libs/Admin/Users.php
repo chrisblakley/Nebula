@@ -7,17 +7,21 @@ if ( !trait_exists('Users') ){
 		public function hooks(){
 			add_action('init', array($this, 'users_status_init'));
 			add_action('admin_init', array($this, 'users_status_init'));
-			add_filter('manage_users_columns', array($this, 'user_columns_head'));
-			add_action('manage_users_custom_column', array($this, 'user_columns_content' ), 15, 3);
-			add_filter('user_contactmethods', array($this, 'user_contact_methods'));
 
-			if ( !current_user_can( 'subscriber' ) && !current_user_can( 'contributor' ) ){
-				add_action('show_user_profile', array($this, 'extra_profile_fields'));
-				add_action('edit_user_profile', array($this, 'extra_profile_fields'));
+			//Exclude AJAX requests
+			if ( !defined('DOING_AJAX') ){
+				add_filter('manage_users_columns', array($this, 'user_columns_head'));
+				add_action('manage_users_custom_column', array($this, 'user_columns_content' ), 15, 3);
+				add_filter('user_contactmethods', array($this, 'user_contact_methods'));
+
+				if ( !current_user_can( 'subscriber' ) && !current_user_can( 'contributor' ) ){
+					add_action('show_user_profile', array($this, 'extra_profile_fields'));
+					add_action('edit_user_profile', array($this, 'extra_profile_fields'));
+				}
+
+				add_action('personal_options_update', array($this, 'save_extra_profile_fields'));
+				add_action('edit_user_profile_update', array($this, 'save_extra_profile_fields'));
 			}
-
-			add_action('personal_options_update', array($this, 'save_extra_profile_fields'));
-			add_action('edit_user_profile_update', array($this, 'save_extra_profile_fields'));
 		}
 
 		//Update user online status

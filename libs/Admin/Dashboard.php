@@ -5,38 +5,41 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Dashboard') ){
 	trait Dashboard {
 		public function hooks(){
-			//Remove unnecessary Dashboard metaboxes
-			if ( $this->get_option('unnecessary_metaboxes') ){
-				add_action('wp_dashboard_setup', array($this, 'remove_dashboard_metaboxes'));
+			//Exclude AJAX requests
+			if ( !defined('DOING_AJAX') ){
+				//Remove unnecessary Dashboard metaboxes
+				if ( $this->get_option('unnecessary_metaboxes') ){
+					add_action('wp_dashboard_setup', array($this, 'remove_dashboard_metaboxes'));
+				}
+
+				add_action('wp_dashboard_setup', array($this, 'ataglance_metabox'));
+				add_action('wp_dashboard_setup', array($this, 'current_user_metabox'));
+
+				if ( current_user_can('manage_options') ){
+					add_action('wp_dashboard_setup', array($this, 'administrative_metabox'));
+				}
+
+				add_action('wp_dashboard_setup', array($this, 'phg_metabox'));
+
+				if ( $this->get_option('todo_manager_metabox') && $this->is_dev() ){
+					add_action('wp_dashboard_setup', array($this, 'todo_metabox'));
+				}
+
+				if ( $this->get_option('dev_info_metabox') && $this->is_dev() ){
+					add_action('wp_dashboard_setup', array($this, 'dev_info_metabox'));
+				}
+
+				if ( $this->get_option('performance_metabox') || $this->is_dev() ){ //Devs always see the performance metabox
+					add_action('wp_dashboard_setup', array($this, 'performance_metabox'));
+				}
+
+				if ( current_user_can('publish_pages') && $this->get_option('hubspot_portal') && $this->get_option('hubspot_api') ){ //Editor or above (and Hubspot API/Portal)
+					add_action('wp_dashboard_setup', array($this, 'hubspot_metabox'));
+				}
+
+				add_action('wp_ajax_search_theme_files', array($this, 'search_theme_files'));
+				add_action('wp_ajax_nopriv_search_theme_files', array($this, 'search_theme_files'));
 			}
-
-			add_action('wp_dashboard_setup', array($this, 'ataglance_metabox'));
-			add_action('wp_dashboard_setup', array($this, 'current_user_metabox'));
-
-			if ( current_user_can('manage_options') ){
-				add_action('wp_dashboard_setup', array($this, 'administrative_metabox'));
-			}
-
-			add_action('wp_dashboard_setup', array($this, 'phg_metabox'));
-
-			if ( $this->get_option('todo_manager_metabox') && $this->is_dev() ){
-				add_action('wp_dashboard_setup', array($this, 'todo_metabox'));
-			}
-
-			if ( $this->get_option('dev_info_metabox') && $this->is_dev() ){
-				add_action('wp_dashboard_setup', array($this, 'dev_info_metabox'));
-			}
-
-			if ( $this->get_option('performance_metabox') || $this->is_dev() ){ //Devs always see the performance metabox
-				add_action('wp_dashboard_setup', array($this, 'performance_metabox'));
-			}
-
-			if ( current_user_can('publish_pages') && $this->get_option('hubspot_portal') && $this->get_option('hubspot_api') ){ //Editor or above (and Hubspot API/Portal)
-				add_action('wp_dashboard_setup', array($this, 'hubspot_metabox'));
-			}
-
-			add_action('wp_ajax_search_theme_files', array($this, 'search_theme_files'));
-			add_action('wp_ajax_nopriv_search_theme_files', array($this, 'search_theme_files'));
 		}
 
 		//Remove unnecessary Dashboard metaboxes

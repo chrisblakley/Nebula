@@ -314,27 +314,30 @@ if ( !trait_exists('Scripts') ){
 		public function admin_enqueue_scripts($hook){
 			$current_screen = get_current_screen();
 
-			//Stylesheets
-			wp_enqueue_style('nebula-admin');
-			wp_enqueue_style('nebula-font_awesome'); //Font Awesome 5 CSS method
+			//Exclude AJAX requests
+			if ( !defined('DOING_AJAX') ){
+				//Stylesheets
+				wp_enqueue_style('nebula-admin');
+				wp_enqueue_style('nebula-font_awesome'); //Font Awesome 5 CSS method
 
-			//Scripts
-			wp_enqueue_script('nebula-admin');
+				//Scripts
+				wp_enqueue_script('nebula-admin');
 
-			//Nebula Options page
-			$current_screen = get_current_screen();
-			if ( $current_screen->base === 'appearance_page_nebula_options' || $current_screen->base === 'options' ){
-				//$this->append_dependency('nebula-admin', 'nebula-bootstrap');
-				wp_enqueue_style('nebula-bootstrap');
-				wp_enqueue_script('nebula-bootstrap');
-				wp_enqueue_script('postbox'); //Enables metabox collapse toggling
-			}
+				//Nebula Options page
+				$current_screen = get_current_screen();
+				if ( $current_screen->base === 'appearance_page_nebula_options' || $current_screen->base === 'options' ){
+					//$this->append_dependency('nebula-admin', 'nebula-bootstrap');
+					wp_enqueue_style('nebula-bootstrap');
+					wp_enqueue_script('nebula-bootstrap');
+					wp_enqueue_script('postbox'); //Enables metabox collapse toggling
+				}
 
-			//User Profile edit page
-			if ( $current_screen->base === 'profile' ){
-				wp_enqueue_style('thickbox');
-				wp_enqueue_script('thickbox');
-				wp_enqueue_script('media-upload');
+				//User Profile edit page
+				if ( $current_screen->base === 'profile' ){
+					wp_enqueue_style('thickbox');
+					wp_enqueue_script('thickbox');
+					wp_enqueue_script('media-upload');
+				}
 			}
 		}
 
