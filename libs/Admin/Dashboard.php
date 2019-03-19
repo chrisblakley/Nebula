@@ -36,10 +36,10 @@ if ( !trait_exists('Dashboard') ){
 				if ( current_user_can('publish_pages') && $this->get_option('hubspot_portal') && $this->get_option('hubspot_api') ){ //Editor or above (and Hubspot API/Portal)
 					add_action('wp_dashboard_setup', array($this, 'hubspot_metabox'));
 				}
-
-				add_action('wp_ajax_search_theme_files', array($this, 'search_theme_files'));
-				add_action('wp_ajax_nopriv_search_theme_files', array($this, 'search_theme_files'));
 			}
+
+			add_action('wp_ajax_search_theme_files', array($this, 'search_theme_files'));
+			add_action('wp_ajax_nopriv_search_theme_files', array($this, 'search_theme_files'));
 		}
 
 		//Remove unnecessary Dashboard metaboxes

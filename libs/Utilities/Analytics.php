@@ -12,6 +12,7 @@ if ( !trait_exists('Analytics') ){
 			add_action('wp_ajax_nebula_ga_ajax', array($this, 'ga_ajax'));
 			add_action('wp_ajax_nopriv_nebula_ga_ajax', array($this, 'ga_ajax'));
 			add_filter('nebula_brain', array($this, 'ga_definitions'));
+			add_action('wp_head', array($this, 'track_404_errors'));
 
 			add_filter('the_permalink_rss', array($this, 'add_utm_to_feeds'), 100);
 			add_filter('the_excerpt_rss', array($this, 'add_utm_to_feeds_content_links'), 200);
@@ -44,6 +45,13 @@ if ( !trait_exists('Analytics') ){
 			}
 
 			return false;
+		}
+
+		//Track 404 error pages as exceptions in Google Analytics
+		public function track_404_errors(){
+			if ( is_404() ){
+				$this->ga_send_exception('(PHP) 404 Error for requested URL: ' . nebula()->url_components());
+			}
 		}
 
 		//Handle the parsing of the _ga cookie or setting it to a unique identifier
@@ -430,7 +438,7 @@ if ( !trait_exists('Analytics') ){
 		}
 
 		//Send Pageview Function for Server-Side Google Analytics
-		//Note this ignores the "Server-Side Fallback" analyitcs Nebula option
+		//Note this ignores the "Server-Side Fallback" analytics Nebula option
 		public function ga_send_exception($message=null, $fatal=1, $array=array()){
 			$override = apply_filters('pre_ga_send_exception', null, $message, $fatal, $array);
 			if ( isset($override) ){return;}

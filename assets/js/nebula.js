@@ -291,40 +291,44 @@ function nebulaPredictiveCacheListeners(){
 		}
 	});
 
-	//Prefetch certain elements on window idle
-	window.requestIdleCallback(function(){
-		//Top-level primary nav links
-		jQuery('ul#menu-primary > li.menu-item > a').each(function(){
-			nebulaPrefetch(jQuery(this).attr('href'));
-		});
+	if ( typeof window.requestIdleCallback === 'function' ){
+		//Prefetch certain elements on window idle
+		window.requestIdleCallback(function(){
+			//Top-level primary nav links
+			jQuery('ul#menu-primary > li.menu-item > a').each(function(){
+				nebulaPrefetch(jQuery(this).attr('href'));
+			});
 
-		//First 5 buttons
-		jQuery('a.btn, a.wp-block-button__link').slice(0, 4).each(function(){
-			nebulaPrefetch(jQuery(this).attr('href'));
+			//First 5 buttons
+			jQuery('a.btn, a.wp-block-button__link').slice(0, 4).each(function(){
+				nebulaPrefetch(jQuery(this).attr('href'));
+			});
 		});
-	});
+	}
 }
 
 //Prefetch a resource
 function nebulaPrefetch(url, callback){
-	//If network connection is 2G don't prefetch
-	if ( has(navigator, 'connection.effectiveType') && navigator.connection.effectiveType.toString().indexOf('2g') >= 0 ){ //'slow-2g', '2g', '3g', or '4g'
-		return false;
-	}
-
-	//If Save Data is supported and Save Data is requested don't prefetch
-	if ( has(navigator, 'connection.saveData') ){
-		if ( navigator.connection.saveData ){
+	if ( typeof window.requestIdleCallback === 'function' ){
+		//If network connection is 2G don't prefetch
+		if ( has(navigator, 'connection.effectiveType') && navigator.connection.effectiveType.toString().indexOf('2g') >= 0 ){ //'slow-2g', '2g', '3g', or '4g'
 			return false;
 		}
-	}
 
-	if ( url.length > 1 && url.indexOf('#') !== 0 ){ //If the URL exists and does not begin with #
-		window.requestIdleCallback(function(){ //Wait until the browser is idle before prefetching
-			if ( !jQuery('link[rel="prefetch"][href="' + url + '"]').length ){ //If prefetch link for this URL has not yet been added to the DOM
-				jQuery('<link rel="prefetch" href="' + url + '">').on('load', callback).appendTo('head'); //Append a prefetch link element for this URL to the DOM
+		//If Save Data is supported and Save Data is requested don't prefetch
+		if ( has(navigator, 'connection.saveData') ){
+			if ( navigator.connection.saveData ){
+				return false;
 			}
-		});
+		}
+
+		if ( url.length > 1 && url.indexOf('#') !== 0 ){ //If the URL exists and does not begin with #
+			window.requestIdleCallback(function(){ //Wait until the browser is idle before prefetching
+				if ( !jQuery('link[rel="prefetch"][href="' + url + '"]').length ){ //If prefetch link for this URL has not yet been added to the DOM
+					jQuery('<link rel="prefetch" href="' + url + '">').on('load', callback).appendTo('head'); //Append a prefetch link element for this URL to the DOM
+				}
+			});
+		}
 	}
 }
 
