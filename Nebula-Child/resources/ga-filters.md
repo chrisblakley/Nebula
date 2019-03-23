@@ -20,15 +20,15 @@ Include, Hostname
 
 Ex: `\.*gearside.com|\.*gearsidecreative.com|\.*googleusercontent\.com|\.*googleweblight\.com`
 
-## Spambot Language
+## Invalid Language
 
-Exclude spambots that modify their language attributes.
+Exclude bots that modify their language attributes. The following RegEx pattern matches the following (which are invalid language codes): over 15 characters, spaces, periods, commas, exclamation points, slashes, or 0.
 
 Filter Type: Custom
 
 Exclude, Language Settings
 
-`.{15,}|\s[^\s]*\s|\.|,|\!|\/`
+`.{15,}|\s[^\s]*\s|\.|,|\!|\/|0`
 
 # Other Filters
 

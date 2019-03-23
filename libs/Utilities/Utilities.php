@@ -51,7 +51,12 @@ if ( !trait_exists('Utilities') ){
 
 		//Check if Nebula is the active (parent) theme
 		public function is_nebula(){
-			if ( wp_get_theme()->parent()->get('Name') === 'Nebula' && class_exists('Nebula') ){
+			if ( (wp_get_theme()->get('Name') === 'Nebula' || wp_get_theme()->get('Name') === 'Nebula Child') && class_exists('Nebula') ){
+				return true;
+			}
+
+			$parent_theme = wp_get_theme()->parent();
+			if ( !empty($parent_theme) && $parent_theme->get('Name') === 'Nebula' && class_exists('Nebula') ){
 				return true;
 			}
 

@@ -207,12 +207,12 @@ function registerServiceWorker(){
 		window.addEventListener('beforeinstallprompt', function(event){
 			event.preventDefault(); //Prevent Chrome <= 67 from automatically showing the prompt
 			installPromptEvent = event; //Stash the event so it can be triggered later.
-			jQuery('.nebula-sw-install-button').removeClass('inactive').addClass('ready');
+			jQuery('.nebula-sw-install-button').removeClass('inactive').addClass('ready'); //Show the Nebula install button if it is present.
 		});
 
 		//Trigger the SW install prompt and handle user choice
 		nebula.dom.document.on('click', '.nebula-sw-install-button', function(){
-			if ( typeof installPromptEvent !== 'undefined' ){
+			if ( typeof installPromptEvent !== 'undefined' ){ //If the install event has been stashed for manual trigger
 				jQuery('.nebula-sw-install-button').removeClass('ready').addClass('prompted');
 
 				installPromptEvent.prompt(); //Show the modal add to home screen dialog

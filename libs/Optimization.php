@@ -423,7 +423,7 @@ if ( !trait_exists('Optimization') ){
 				$default_preloads[] = $this->get_option('google_font_url');
 			}
 
-			//Loop through all of the prefetches
+			//Loop through all of the preloads
 			$preloads = apply_filters('nebula_preloads', $default_preloads); //Allow child themes and plugins to preload resources via Nebula too
 			foreach ( $preloads as $preload ){
 				echo '<link rel="preload" href="' . $preload . '" as="fetch" crossorigin="anonymous">';
