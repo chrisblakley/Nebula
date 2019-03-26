@@ -217,7 +217,7 @@ trait Functions {
 
 	//Add the Nebula note to the browser console (if enabled)
 	public function calling_card(){
-		if ( !$this->get_option('device_detection') || ($this->is_desktop() && !$this->is_browser('ie') && !$this->is_browser('edge')) && !is_customize_preview() ){
+		if ( (!$this->get_option('device_detection') || ($this->is_desktop() && !$this->is_browser('ie') && !$this->is_browser('edge'))) && !is_customize_preview() ){
 			echo "<script>console.log('%c Created using Nebula " . $this->version('primary') . "', 'padding: 2px 10px; background: #0098d7; color: #fff;');</script>";
 		}
 	}
@@ -639,7 +639,7 @@ trait Functions {
 	//Google Optimize Style Tag
 	public function google_optimize_style(){
 		if ( $this->get_option('google_optimize_id') ){ ?>
-			<style>.async-hide { opacity: 0 !important} </style>
+			<style>.async-hide {opacity: 0 !important} </style>
 			<script>(function(a,s,y,n,c,h,i,d,e){s.className+=' '+y;h.end=i=function(){
 			s.className=s.className.replace(RegExp(' ?'+y),'')};(a[n]=a[n]||[]).hide=h;
 			setTimeout(function(){i();h.end=null},c);})(window,document.documentElement,
@@ -842,7 +842,7 @@ trait Functions {
 			if ( $data['label'] === 'icon' ){
 				$label = '<i class="nebula-post-categories-label fas fa-fw fa-bookmark"></i> ';
 			} elseif ( $data['label'] === 'text' ){
-				$label = '<span class="nebula-post-categories-label">Category </span>';
+				$label = '<span class="nebula-post-categories-label">' . __('Category', 'nebula') . '</span>';
 			}
 
 			if ( is_object_in_taxonomy(get_post_type(), 'category') ){
@@ -882,7 +882,7 @@ trait Functions {
 			if ( $tag_list ){
 				$label = '';
 				if ( $data['label'] === 'icon' ){
-					$tag_plural = ( count(get_the_tags()) > 1 )? 'tags' : 'tag';
+					$tag_plural = ( count(get_the_tags()) > 1 )? __('tags', 'nebula') : __('tag', 'nebula');
 					$label = '<i class="nebula-post-tags-label fas fa-fw fa-' . $tag_plural . '"></i> ';
 				} elseif ( $data['label'] === 'text' ){
 					$label = '<span class="nebula-post-tags-label">' . ucwords($tag_plural) . ' </span>';
@@ -935,16 +935,16 @@ trait Functions {
 		$imgmeta = wp_get_attachment_metadata();
 		if ( $imgmeta ){ //Check for Bad Data
 			if ( $imgmeta['image_meta']['focal_length'] === 0 || $imgmeta['image_meta']['aperture'] === 0 || $imgmeta['image_meta']['shutter_speed'] === 0 || $imgmeta['image_meta']['iso'] === 0 ){
-				$output = 'No valid EXIF data found';
+				$output = __('No valid EXIF data found', 'nebula');
 			} else { //Convert the shutter speed retrieve from database to fraction
 				if ( $imgmeta['image_meta']['shutter_speed'] > 0 && (1/$imgmeta['image_meta']['shutter_speed']) > 1 ){
 					if ( (number_format((1/$imgmeta['image_meta']['shutter_speed']), 1)) == 1.3 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 1.5 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 1.6 || number_format((1/$imgmeta['image_meta']['shutter_speed']), 1) == 2.5 ){
-						$pshutter = '1/' . number_format((1/$imgmeta['image_meta']['shutter_speed']), 1, '.', '') . ' second';
+						$pshutter = '1/' . number_format((1/$imgmeta['image_meta']['shutter_speed']), 1, '.', '') . ' ' . __('second', 'nebula');
 					} else {
-						$pshutter = '1/' . number_format((1/$imgmeta['image_meta']['shutter_speed']), 0, '.', '') . ' second';
+						$pshutter = '1/' . number_format((1/$imgmeta['image_meta']['shutter_speed']), 0, '.', '') . ' ' . __('second', 'nebula');
 					}
 				} else {
-					$pshutter = $imgmeta['image_meta']['shutter_speed'] . " seconds";
+					$pshutter = $imgmeta['image_meta']['shutter_speed'] . ' ' . __('seconds', 'nebula');
 				}
 
 				$output = '<time datetime="' . date('c', $imgmeta['image_meta']['created_timestamp']) . '"><span class="month">' . date('F', $imgmeta['image_meta']['created_timestamp']) . '</span> <span class="day">' . date('j', $imgmeta['image_meta']['created_timestamp']) . '</span><span class="suffix">' . date('S', $imgmeta['image_meta']['created_timestamp']) . '</span> <span class="year">' . date('Y', $imgmeta['image_meta']['created_timestamp']) . '</span></time>' . ', ';
@@ -955,7 +955,7 @@ trait Functions {
 				$output .= $imgmeta['image_meta']['iso'] .' ISO';
 			}
 		} else {
-			$output = 'No EXIF data found';
+			$output = __('No EXIF data found', 'nebula');
 		}
 
 		return '<span class="meta-item meta-exif">' . $the_icon . $output . '</span>';
@@ -1182,18 +1182,20 @@ trait Functions {
 				return $word_count;
 			}
 
+			$words_label = __('words', 'nebula');
+
 			if ( $word_count < 10 ){
-				$word_count_range = '<10 words';
+				$word_count_range = '<10 ' . $words_label;
 			} elseif ( $word_count < 500 ){
-				$word_count_range = '10 - 499 words';
+				$word_count_range = '10 - 499 ' . $words_label;
 			} elseif ( $word_count < 1000 ){
-				$word_count_range = '500 - 999 words';
+				$word_count_range = '500 - 999 ' . $words_label;
 			} elseif ( $word_count < 1500 ){
-				$word_count_range = '1,000 - 1,499 words';
+				$word_count_range = '1,000 - 1,499 ' . $words_label;
 			} elseif ( $word_count < 2000 ){
-				$word_count_range = '1,500 - 1,999 words';
+				$word_count_range = '1,500 - 1,999 ' . $words_label;
 			} else {
-				$word_count_range = '2,000+ words';
+				$word_count_range = '2,000+ ' . $words_label;
 			}
 
 			return $word_count_range;
@@ -1292,32 +1294,32 @@ trait Functions {
 		foreach ( $networks as $network ){
 			//Share API
 			if ( in_array($network, array('shareapi')) ){
-				echo '<a class="nebula-share-btn nebula-share webshare" href="#">Share</a>';
+				echo '<a class="nebula-share-btn nebula-share webshare" href="#">' . __('Share', 'nebula') . '</a>';
 			}
 
 			//Facebook
 			if ( in_array($network, array('facebook', 'fb')) ){
-				echo '<a class="nebula-share-btn facebook" href="http://www.facebook.com/sharer.php?u=' . $encoded_url . '&t=' . $encoded_title . '" target="_blank" rel="noopener">Share</a>';
+				echo '<a class="nebula-share-btn facebook" href="http://www.facebook.com/sharer.php?u=' . $encoded_url . '&t=' . $encoded_title . '" target="_blank" rel="noopener">' . __('Share', 'nebula') . '</a>';
 			}
 
 			//Twitter
 			if ( in_array($network, array('twitter')) ){
-				echo '<a class="nebula-share-btn twitter" href="https://twitter.com/intent/tweet?text=' . $encoded_title .  '&url=' . $encoded_url . '" target="_blank" rel="noopener">Tweet</a>';
+				echo '<a class="nebula-share-btn twitter" href="https://twitter.com/intent/tweet?text=' . $encoded_title .  '&url=' . $encoded_url . '" target="_blank" rel="noopener">' . __('Tweet', 'nebula') . '</a>';
 			}
 
 			//LinkedIn
 			if ( in_array($network, array('linkedin', 'li')) ){
-				echo '<a class="nebula-share-btn linkedin" href="http://www.linkedin.com/shareArticle?mini=true&url=' . $encoded_url . '&title=' . $encoded_title . '" target="_blank" rel="noopener">Share</a>';
+				echo '<a class="nebula-share-btn linkedin" href="http://www.linkedin.com/shareArticle?mini=true&url=' . $encoded_url . '&title=' . $encoded_title . '" target="_blank" rel="noopener">' . __('Share', 'nebula') . '</a>';
 			}
 
 			//Pinterest
 			if ( in_array($network, array('pinterest', 'pin')) ){
-				echo '<a class="nebula-share-btn pinterest" href="http://pinterest.com/pin/create/button/?url=' . $encoded_url . '" target="_blank" rel="noopener">Share</a>';
+				echo '<a class="nebula-share-btn pinterest" href="http://pinterest.com/pin/create/button/?url=' . $encoded_url . '" target="_blank" rel="noopener">' . __('Share', 'nebula') . '</a>';
 			}
 
 			//Email
 			if ( in_array($network, array('email')) ){
-				echo '<a class="nebula-share-btn email" href="mailto:?subject=' . $encoded_title . '&body=' . $encoded_url . '" target="_blank" rel="noopener">Email</a>';
+				echo '<a class="nebula-share-btn email" href="mailto:?subject=' . $encoded_title . '&body=' . $encoded_url . '" target="_blank" rel="noopener">' . __('Email', 'nebula') . '</a>';
 			}
 		}
 
@@ -1388,7 +1390,7 @@ trait Functions {
 		if ( isset($override) ){return;}
 		?>
 			<div class="nebula-social-button webshare">
-				<a class="btn btn-secondary btn-sm" href="#" target="_blank"><i class="fas fa-fw fa-share"></i> Share</a>
+				<a class="btn btn-secondary btn-sm" href="#" target="_blank"><i class="fas fa-fw fa-share"></i> <?php _e('Share', 'nebula'); ?></a>
 			</div>
 		<?php
 	}
@@ -1427,7 +1429,7 @@ trait Functions {
 		if ( isset($override) ){return;}
 		?>
 		<div class="nebula-social-button twitter-tweet">
-			<a href="https://twitter.com/share" class="twitter-share-button" <?php echo ( $counts !== 0 )? '': 'data-count="none"'; ?>>Tweet</a>
+			<a href="https://twitter.com/share" class="twitter-share-button" <?php echo ( $counts !== 0 )? '': 'data-count="none"'; ?>><?php _e('Tweet', 'nebula'); ?></a>
 			<?php $this->twitter_widget_script(); ?>
 		</div>
 		<?php
@@ -1446,7 +1448,7 @@ trait Functions {
 		}
 		?>
 		<div class="nebula-social-button twitter-follow">
-			<a href="https://twitter.com/<?php echo str_replace('@', '', $username); ?>" class="twitter-follow-button" <?php echo ( $counts !== 0 )? '': 'data-show-count="false"'; ?> <?php echo ( !empty($username) )? '': 'data-show-screen-name="false"'; ?>>Follow <?php echo $username; ?></a>
+			<a href="https://twitter.com/<?php echo str_replace('@', '', $username); ?>" class="twitter-follow-button" <?php echo ( $counts !== 0 )? '': 'data-show-count="false"'; ?> <?php echo ( !empty($username) )? '': 'data-show-screen-name="false"'; ?>><?php echo __('Follow', 'nebula') . ' ' . $username; ?></a>
 			<?php $this->twitter_widget_script(); ?>
 		</div>
 		<?php
@@ -1808,7 +1810,7 @@ trait Functions {
 		$override = apply_filters('pre_nebula_search_form', null);
 		if ( isset($override) ){return;}
 
-		$placeholder = ( get_search_query() )? get_search_query() : 'Search';
+		$placeholder = ( get_search_query() )? get_search_query() : __('Search', 'nebula');
 
 		$form = '<form id="searchform" class="form-group form-inline ignore-form" role="search" method="get" action="' . home_url('/') . '">
 					<div class="input-group mb-2 mr-sm-2 mb-sm-0">
@@ -1819,14 +1821,18 @@ trait Functions {
 						<input id="s" class="form-control ignore-form mb-2" type="text" name="s" value="' . get_search_query() . '" placeholder="' . $placeholder . '" role="search" />
 					</div>
 
-					<button id="searchsubmit" class="btn btn-brand wp_search_submit mb-2" type="submit">Submit</button>
+					<button id="searchsubmit" class="btn btn-brand wp_search_submit mb-2" type="submit">' . __('Submit', 'nebula') . '</button>
 				</form>';
 
 		return $form;
 	}
 
 	//Easily create markup for a Hero area search input
-	public function hero_search($placeholder='What are you looking for?'){
+	public function hero_search($placeholder=false){
+		if ( empty($placeholder) ){
+			$placeholder = __('What are you looking for?', 'nebula');
+		}
+
 		$override = apply_filters('pre_nebula_hero_search', null, $placeholder);
 		if ( isset($override) ){return;}
 
@@ -1857,14 +1863,14 @@ trait Functions {
 				$args['paged'] = get_query_var('paged');
 				?>
 				<div class="infinite-start-note">
-					<a href="<?php echo get_the_permalink(); ?>">&laquo; Back to page 1</a>
+					<a href="<?php echo get_the_permalink(); ?>">&laquo; <?php _e('Back to page 1', 'nebula'); ?></a>
 				</div>
 				<?php
 			} elseif ( !empty($wp_query->query['paged']) ){
 				$args['paged'] = $wp_query->query['paged'];
 				?>
 				<div class="infinite-start-note">
-					<a href="<?php echo get_the_permalink(); ?>">&laquo; Back to page 1</a>
+					<a href="<?php echo get_the_permalink(); ?>">&laquo; <?php _e('Back to page 1', 'nebula'); ?></a>
 				</div>
 				<?php
 			}
@@ -1943,7 +1949,7 @@ trait Functions {
 								});
 
 								if ( pageNumber >= maxPages ){
-									jQuery('.loadmorecon').addClass('disabled').find('a').text('No more <?php echo $post_type_label; ?>.');
+									jQuery('.loadmorecon').addClass('disabled').find('a').text('<?php __('No more', 'nebula'); ?> <?php echo $post_type_label; ?>.');
 								}
 
 								var newQueryStrings = '';
@@ -2320,7 +2326,7 @@ trait Functions {
 			$html .= ' href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+link+function' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener"';
 		}
 
-		$html .= '><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">Group</span>';
+		$html .= '><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">' . __('Group', 'nebula') . '</span>';
 
 		if ( $data['linked'] ){
 			$html .= '</a>';
@@ -2575,9 +2581,9 @@ trait Functions {
 	//Replace text on password protected posts to be more minimal
 	public function password_form_simplify(){
 		$output  = '<form class="ignore-form" action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" method="post">
-						<span>Password: </span>
+						<span>' . __('Password', 'nebula') . ': </span>
 						<input type="password" class="ignore-form" name="post_password" size="20" autocomplete="current-password" />
-						<input type="submit" name="Submit" value="Go" />
+						<input type="submit" name="Submit" value="' . __('Go', 'nebula') . '" />
 					</form>';
 		return $output;
 	}
@@ -2886,7 +2892,7 @@ trait Functions {
 		//Link to search at the end of the list
 		//@TODO "Nebula" 0: The empty result is not working for some reason... (Press Enter... is never appearing)
 		$suggestion = array();
-		$suggestion['label'] = ( sizeof($suggestions) >= 1 )? '...more results for "' . $term . '"' : 'Press enter to search for "' . $term . '"';
+		$suggestion['label'] = ( sizeof($suggestions) >= 1 )? __('...more results for', 'nebula') . ' "' . $term . '"' : __('Press enter to search for', 'nebula') . ' "' . $term . '"';
 		$suggestion['link'] = home_url('/') . '?s=' . str_replace(' ', '%20', $term);
 		$suggestion['classes'] = ( sizeof($suggestions) >= 1 )? 'more-results search-link' : 'no-results search-link';
 		$outputArray[] = $suggestion;
@@ -3303,6 +3309,11 @@ trait Functions {
 			//Bot detection
 			if ( $this->is_bot() ){
 				$debug_data .= '<strong>Bot detected!</strong>' . PHP_EOL;
+			}
+
+			//WPML Language
+			if ( defined(ICL_LANGUAGE_NAME) ){
+				$debug_data .= 'WPML Language: ' . ICL_LANGUAGE_NAME . ' (' . ICL_LANGUAGE_CODE . ')' . PHP_EOL;
 			}
 
 			//Device information

@@ -315,6 +315,7 @@ if ( !trait_exists('Options') ){
 				'cd_formflow' => '',
 				'cd_geolocation' => '',
 				'cd_geoname' => '',
+				'cd_wpmllang' => '',
 				'cd_geoaccuracy' => '',
 				'cd_notablepoi' => '',
 				'cd_securitynote' => '',

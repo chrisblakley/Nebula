@@ -49,7 +49,7 @@
 								<?php if ( get_theme_mod('nebula_footer_text') ): ?>
 									<?php echo get_theme_mod('nebula_footer_text'); ?>
 								<?php else:?>
-									&copy; <?php echo date('Y'); ?> <a href="<?php echo home_url('/'); ?>"><strong><?php echo ( nebula()->get_option('site_owner') )? nebula()->get_option('site_owner') : get_bloginfo('name'); ?></strong></a>, <em>all rights reserved</em>.
+									&copy; <?php echo date('Y'); ?> <a href="<?php echo home_url('/'); ?>"><strong><?php echo ( nebula()->get_option('site_owner') )? nebula()->get_option('site_owner') : get_bloginfo('name'); ?></strong></a>, <em><?php _e('all rights reserved', 'nebula'); ?></em>.
 								<?php endif; ?>
 							</p>
 
@@ -57,7 +57,7 @@
 								<form class="nebula-search search footer-search" method="get" action="<?php echo home_url('/'); ?>">
 									<div class="input-group">
 										<i class="fas fa-search"></i>
-										<label class="sr-only" for="nebula-footer-search">Search</label>
+										<label class="sr-only" for="nebula-footer-search"><?php _e('Search', 'nebula'); ?></label>
 										<input id="nebula-footer-search" class="open input search" type="search" name="s" placeholder="Search" autocomplete="off" role="search" x-webkit-speech />
 									</div>
 								</form>

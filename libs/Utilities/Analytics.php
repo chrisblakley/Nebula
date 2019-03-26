@@ -143,6 +143,7 @@ if ( !trait_exists('Analytics') ){
 					'geolocation' => $this->get_option('cd_geolocation'),
 					'geoAccuracy' => $this->get_option('cd_geoaccuracy'),
 					'geoName' => $this->get_option('cd_geoname'),
+					'wpmlLang' => $this->get_option('cd_wpmllang'),
 					'relativeTime' => $this->get_option('cd_relativetime'),
 					'sessionID' => $this->get_option('cd_sessionid'),
 					'securityNote' => $this->get_option('cd_securitynote'),

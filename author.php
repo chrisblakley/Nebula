@@ -49,7 +49,7 @@
 
 			<span class="author-social">
 				<?php if ( get_the_author_meta('facebook') ): ?>
-					<a class="facebook" href="http://www.facebook.com/<?php echo get_the_author_meta('facebook'); ?>" target="_blank" rel="noopener" title="<?php echo get_the_author_meta('facebook'); ?>"><i class="fa fa-facebook-square"></i></a> <!-- add tooltips or titles -->
+					<a class="facebook" href="https://www.facebook.com/<?php echo get_the_author_meta('facebook'); ?>" target="_blank" rel="noopener" title="<?php echo get_the_author_meta('facebook'); ?>"><i class="fa fa-facebook-square"></i></a> <!-- add tooltips or titles -->
 				<?php endif; ?>
 
 				<?php if ( get_the_author_meta('twitter') ): ?>

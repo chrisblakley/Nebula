@@ -5,7 +5,7 @@
 				<div class="col">
 					<a class="close" href="<?php echo get_the_permalink(); ?>">&times;</a>
 
-					<h6>Your search returned only one result. You have been automatically redirected.</h6>
+					<h6><?php _e('Your search returned only one result. You have been automatically redirected.', 'nebula'); ?></h6>
 					<?php echo nebula()->search_form(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
@@ -17,7 +17,7 @@
 			<div class="row">
 				<a class="close" href="<?php echo get_the_permalink(); ?>">&times;</a>
 				<div class="col">
-					<h6>Your search was invalid. Please try again.</h6>
+					<h6><?php _e('Your search was invalid. Please try again.', 'nebula'); ?></h6>
 					<?php echo nebula()->search_form(); ?>
 				</div><!--/col-->
 			</div><!--/row-->
@@ -30,7 +30,7 @@
 				<div class="col">
 					<a class="close" href="<?php echo get_the_permalink(); ?>">&times;</a>
 
-					<h3>Did you mean?</h3>
+					<h3><?php _e('Did you mean?', 'nebula'); ?></h3>
 
 					<?php if ( !empty(nebula()->error_404_exact_match) ): ?>
 						<p><a class="internal-suggestion" href="<?php echo get_permalink(nebula()->error_404_exact_match->ID); ?>"><?php echo get_the_title(nebula()->error_404_exact_match->ID); ?></a></p>

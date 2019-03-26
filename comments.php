@@ -49,10 +49,10 @@
 						<nav>
 							<ul class="pager">
 								<?php if ( get_previous_comments_link() ): ?>
-									<li class="previous"><?php previous_comments_link('&larr; Older comments'); ?></li>
+									<li class="previous"><?php previous_comments_link('&larr; ' . __('Older comments', 'nebula')); ?></li>
 								<?php endif; ?>
 								<?php if ( get_next_comments_link() ): ?>
-									<li class="next"><?php next_comments_link('Newer comments &rarr;'); ?></li>
+									<li class="next"><?php next_comments_link(__('Newer comments', 'nebula') . ' &rarr;'); ?></li>
 								<?php endif; ?>
 							</ul>
 						</nav>
@@ -61,7 +61,7 @@
 
 				<?php if ( !comments_open() && get_comments_number() != '0' && post_type_supports(get_post_type(), 'comments') ): ?>
 					<div class="alert alert-warning">
-						Comments are closed.
+						<?php _e('Comments are closed.', 'nebula'); ?>
 					</div>
 				<?php endif; ?>
 

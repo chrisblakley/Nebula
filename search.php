@@ -29,7 +29,7 @@
 						<?php get_template_part('loop', 'search'); ?>
 					</div><!--/#searchresults-->
 				<?php else: ?>
-					<p>No search results.</p>
+					<p><?php _e('No search results.', 'nebula'); ?></p>
 				<?php endif; ?>
 			</main><!--/col-->
 

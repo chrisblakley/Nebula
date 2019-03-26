@@ -1068,6 +1068,18 @@ if ( !trait_exists('Metaboxes') ){
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-prepend">
+								<div class="input-group-text">WPML Language</div>
+							</div>
+							<input type="text" name="nebula_options[cd_wpmllang]" id="cd_wpmllang" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_wpmllang']; ?>" />
+						</div>
+						<p class="nebula-help-text short-help form-text text-muted">Store the language displayed to the user via the WPML plugin. Scope: User</p>
+						<p class="nebula-help-text more-help form-text text-muted">This requires the WPML plugin!</p>
+						<p class="option-keywords">wpml multi-language translation localization internationalization</p>
+					</div>
+
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-prepend">
 								<div class="input-group-text">Blocker Detection</div>
 							</div>
 							<input type="text" name="nebula_options[cd_blocker]" id="cd_blocker" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_blocker']; ?>" />

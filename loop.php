@@ -1,9 +1,9 @@
 <div class="loop-section">
 	<?php if ( !have_posts() ): //If there are no posts to display (such as an empty archive page). ?>
 		<article id="post-0" class="post error404 not-found">
-			<h2 class="entry-title">Not Found</h2>
+			<h2 class="entry-title"><?php _e('Not Found', 'nebula'); ?></h2>
 			<div class="entry-summary">
-				<p>No results were found for the requested archive.</p>
+				<p><?php _e('No results were found for the requested archive.', 'nebula'); ?></p>
 				<?php echo nebula()->search_form(); ?>
 			</div>
 		</article>

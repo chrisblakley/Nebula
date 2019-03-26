@@ -13,9 +13,7 @@ Nebula follows [WordPress recommendations](https://wordpress.org/about/requireme
 
 ## Installation
 - [Download the .zip file of the Nebula theme.](https://github.com/chrisblakley/Nebula/archive/master.zip) Extract and upload to the WordPress /themes directory.
-- Activate the Nebula theme and run the automated initialization.
-- *(Optional)* To use the prepared child theme, move the bundled /Nebula-Child directory to the /themes directory.
-- *(Optional)* Activate the Nebula Child theme.
+- Activate the Nebula theme and run the automated initialization (this will automatically activate the Nebula Child theme).
 - Follow the [Setup Guide](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=setup+guide) for additional customization and options.
 
 ## Documentation

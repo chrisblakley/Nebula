@@ -10,8 +10,8 @@
 			<div class="row">
 				<div class="col">
 					<?php if ( is_404() ): //404 ?>
-						<h1 class="page-title">Not Found</h1>
-						<p class="page-meta">The page you requested could not be found.</p>
+						<h1 class="page-title"><?php _e('Not Found', 'nebula'); ?></h1>
+						<p class="page-meta"><?php _e('The page you requested could not be found.', 'nebula'); ?></p>
 					<?php elseif ( is_category() ): //Category ?>
 						<h1 class="page-title"><i class="fas fa-fw fa-bookmark"></i> <?php echo single_cat_title('', false); ?></h1>
 						<div class="page-meta"><?php echo category_description(); ?></div>
@@ -32,7 +32,7 @@
 								<?php elseif ( is_year() ): ?>
 									<i class="far fa-fw fa-calendar"></i> <?php echo get_the_date('Y'); ?>
 								<?php else: ?>
-									Archives
+									<?php _e('Archives', 'nebula'); ?>
 								<?php endif; ?>
 							</h1>
 						<?php rewind_posts(); //Reset the queue before running the loop. ?>
@@ -44,10 +44,10 @@
 							<?php the_title(); ?>
 						</h1>
 					<?php elseif ( is_author() ): //Author archive ?>
-						<h1 class="page-title articles-by">Articles by <strong><?php echo ( get_the_author_meta('first_name') !== '' )? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h1>
+						<h1 class="page-title articles-by"><?php _e('Articles by', 'nebula'); ?> <strong><?php echo ( get_the_author_meta('first_name') !== '' )? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h1>
 					<?php elseif ( is_search() ): //Search results ?>
 						<?php if ( have_posts() ): ?>
-							<h1 class="page-title">Search Results</h1>
+							<h1 class="page-title"><?php _e('Search Results', 'nebula'); ?></h1>
 							<p class="page-meta">
 								Your search for <span class="search-term">"<?php echo get_search_query(); ?>"</span> returned
 								<?php
@@ -62,7 +62,7 @@
 								results.
 							</p>
 						<?php else: ?>
-							<h1 class="page title">No Results Found</h1>
+							<h1 class="page title"><?php _e('No Results Found', 'nebula'); ?></h1>
 							<p>Your search for <span class="search-term">"<?php echo get_search_query(); ?>"</span> returned 0 results.</p>
 							<script>
 								ga('send', 'event', 'Internal Search', 'No Results', jQuery('#s').val(), {'nonInteraction': true});

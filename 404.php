@@ -26,8 +26,8 @@
 			<main id="top" class="col-md" role="main">
 				<article id="post-0" class="post error404 not-found">
 					<?php if ( get_theme_mod('title_location') === 'content' ): ?>
-						<h1 class="page-title">Not Found</h1>
-						<p>The page you requested could not be found.</p>
+						<h1 class="page-title"><?php _e('Not Found', 'nebula'); ?></h1>
+						<p><?php _e('The page you requested could not be found.', 'nebula'); ?></p>
 					<?php endif; ?>
 
 					<?php echo nebula()->search_form(); ?>
@@ -40,13 +40,13 @@
 
 								<h3 class="suggestion-title entry-title">
 									<?php if ( strpos(get_permalink(), nebula()->slug_keywords) ): ?>
-										<i class="fa fa-fw fa-star" title="Exact match"></i>
+										<i class="fa fa-fw fa-star" title="<?php _e('Exact match', 'nebula'); ?>"></i>
 									<?php endif; ?>
 
 									<a class="internal-suggestion" href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a>
 								</h3>
 						    <?php endwhile; ?>
-							<p><a href="<?php echo home_url('/'); ?>?s=<?php echo str_replace('-', '+', nebula()->slug_keywords); ?>">View all results &raquo;</a></p>
+							<p><a href="<?php echo home_url('/'); ?>?s=<?php echo str_replace('-', '+', nebula()->slug_keywords); ?>"><?php _e('View all results', 'nebula'); ?> &raquo;</a></p>
 						</div>
 					<?php endif; ?>
 					<?php wp_reset_query(); ?>

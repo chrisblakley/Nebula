@@ -151,6 +151,8 @@ ul.list-unstyled {list-style: none; padding-left: 0;}
 
 .sticky {position: sticky; top: 0;} //Sticky requires a top value. Default is set to 0 here.
 
+.pretty-underline {text-decoration-skip-ink: auto;} //Underline does not interfere with character descenders
+
 .aligncenter, .align-center {display: block; margin: 0 auto;}
 .alignleft, .align-left {float: left;}
 .alignright, .align-right {float: right;}

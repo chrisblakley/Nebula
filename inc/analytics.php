@@ -129,6 +129,11 @@
 				echo 'ga("set", nebula.analytics.dimensions.temperature, "' . $temp_range . '");';
 			}
 
+			//WPML Language
+			if ( defined(ICL_LANGUAGE_NAME) ){
+				echo 'ga("set", nebula.analytics.dimensions.wpmlLang, "' . ICL_LANGUAGE_NAME . ' (' . ICL_LANGUAGE_CODE . ')");';
+			}
+
 			//Notable POI (IP Addresses)
 			$poi = nebula()->poi();
 			if ( nebula()->get_option('cd_notablepoi') && !empty($poi) ){
