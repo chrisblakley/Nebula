@@ -549,8 +549,10 @@ trait Functions {
 				"$1" . home_url('/') . "?utm_source=homescreen" . "$3",
 			);
 
+
 			$sw_js = preg_replace($find, $replace, $sw_js);
 			$update_sw_js = $wp_filesystem->put_contents($this->sw_location(false), $sw_js);
+			do_action('nebula_wrote_sw_js');
 		}
 
 		$this->timer('Update SW', 'end');

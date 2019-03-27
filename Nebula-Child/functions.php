@@ -13,7 +13,7 @@ if ( !class_exists('Nebula') ){
  Child Theme Functions
  • Files with the same name will override the parent (except for this functions.php file).
  • This functions.php file is loaded BEFORE the parent theme functions.php file.
- • Child style.css and child.js are loaded AFTER the parent style.css and main.js respectively.
+ • Child style.css and main.js are loaded AFTER the parent style.css and nebula.js respectively.
  • Parent Directory: get_template_directory_uri()
  • Child Directory: get_stylesheet_directory_uri()
  • get_template_part() will determine the appropriate template file automatically.

@@ -89,6 +89,7 @@ jQuery(window).on('load', function(){
 	nebula.dom.html.addClass('loaded');
 
 	registerServiceWorker();
+	nebulaPredictiveCacheListeners();
 
 	networkAvailable(); //Call it once on load, then listen for changes
 	nebula.dom.window.on('offline online', function(){
@@ -191,8 +192,6 @@ function registerServiceWorker(){
 				};
 			};
 
-			nebulaPredictiveCacheListeners();
-
 			//Listen for messages from the Service Worker
 			navigator.serviceWorker.addEventListener('message', function(event){
 				nebula.dom.document.trigger('nebula_sw_message', event.data);
@@ -261,8 +260,6 @@ function registerServiceWorker(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
 		});
-	} else {
-		nebulaPredictiveCacheListeners(); //Initialize predictive cache (prefetch) without Service Worker
 	}
 }
 
@@ -865,12 +862,12 @@ function eventTracking(){
 				action: e.target.id || e.target.title || e.target.className.replace(' ', '.'),
 				from: e.from,
 				to: e.to,
-				activeSlide: jQuery(e.target).find('.carousel-item').eq(e.to),
-				activeSlideName: activeSlide.attr('id') || activeSlide.attr('title') || 'Unnamed',
-				prevSlide: jQuery(e.target).find('.carousel-item').eq(e.from),
-				prevSlideName: prevSlide.attr('id') || prevSlide.attr('title') || 'Unnamed',
 			}
 
+			thisEvent.activeSlide = jQuery(e.target).find('.carousel-item').eq(e.to);
+			thisEvent.activeSlideName = thisEvent.activeSlide.attr('id') || thisEvent.activeSlide.attr('title') || 'Unnamed';
+			thisEvent.prevSlide = jQuery(e.target).find('.carousel-item').eq(e.from);
+			thisEvent.prevSlideName = thisEvent.prevSlide.attr('id') || thisEvent.prevSlide.attr('title') || 'Unnamed';
 			thisEvent.label = 'Slide to ' + thisEvent.to + ' (' + thisEvent.activeSlideName + ') from ' + thisEvent.from + ' (' + thisEvent.prevSlideName + ')';
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1330,25 +1327,31 @@ function eventTracking(){
 */
 
 	//Capture Print Intent
+	//Note: This sends 2 events per print (beforeprint and afterprint). If one occurs more than the other we can remove one.
 	if ( 'matchMedia' in window ){ //IE10+
-		window.matchMedia('print').addListener(function(media){
-			if ( media.matches ){
-				sendPrintEvent();
+		var mediaQueryList = window.matchMedia('print');
+		mediaQueryList.addListener(function(mql){
+			if ( mql.matches ){
+				sendPrintEvent('Before Print', 'mql.matches');
+			} else {
+				sendPrintEvent('After Print', '!mql.matches');
 			}
-		});
+		}
 	} else {
-		window.onafterprint = sendPrintEvent();
+		window.onbeforeprint = sendPrintEvent('Before Print', 'onbeforeprint');
+		window.onafterprint = sendPrintEvent('After Print', 'onafterprint');
 	}
-	function sendPrintEvent(){
+	function sendPrintEvent(action, trigger){
 		var thisEvent = {
 			category: 'Print',
-			action: 'Print',
+			action: action,
+			label: 'User triggered print via ' + trigger,
 			intent: 'Intent'
 		}
 
 		ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action);
+		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
 		nv('event', thisEvent.category);
 	}
 
