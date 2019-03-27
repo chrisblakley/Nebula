@@ -1336,7 +1336,7 @@ function eventTracking(){
 			} else {
 				sendPrintEvent('After Print', '!mql.matches');
 			}
-		}
+		});
 	} else {
 		window.onbeforeprint = sendPrintEvent('Before Print', 'onbeforeprint');
 		window.onafterprint = sendPrintEvent('After Print', 'onafterprint');
