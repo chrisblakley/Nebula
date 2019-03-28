@@ -1882,6 +1882,7 @@ if ( !trait_exists('Metaboxes') ){
 							Child theme is <strong>not</strong> being used. Automated updates will <strong>not</strong> be available.
 						<?php endif; ?>
 					</li>
+					<li>The local Nebula version is <strong><?php echo nebula()->version('full'); ?></strong> and the remote (Github) version is <strong><?php echo $nebula_data['next_version']; ?></strong>.</li>
 					<li><strong>WordPress Core update notifications</strong> are <strong><?php echo ( empty($nebula_options['wp_core_updates_notify']) )? 'hidden' : 'allowed'; ?></strong> by Nebula.</li>
 					<li>Nebula <strong>Sass processing</strong> is <strong><?php echo ( empty($nebula_options['scss']) )? 'disabled' : 'enabled'; ?></strong></li>
 					<li>The <strong>WordPress Admin Bar</strong> is <strong><?php echo ( empty($nebula_options['admin_bar']) )? 'hidden' : 'allowed'; ?></strong> by Nebula</li>
@@ -1907,6 +1908,8 @@ if ( !trait_exists('Metaboxes') ){
 					</li>
 					<li>Nebula <strong><?php echo ( empty($nebula_options['allow_bootstrap_js']) )? 'has disabled' : 'is allowing'; ?> Bootstrap JavaScript</strong>.</li>
 				</ul>
+
+				<a class="button button-primary" href="<?php echo get_admin_url(); ?>update-core.php?force-check=1&force-nebula-theme-update">Re-Install Nebula from Github</a>
 			<?php
 		}
 

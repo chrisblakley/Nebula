@@ -32,8 +32,10 @@ if ( !trait_exists('Admin') ){
 				add_filter('post_row_actions', array($this, 'rd_duplicate_post_link'), 10, 2);
 				add_filter('page_row_actions', array($this, 'rd_duplicate_post_link'), 10, 2);
 				add_action('admin_init', array($this, 'clear_all_w3_caches'));
+
 				add_action('admin_init', array($this, 'theme_json'));
 				add_filter('puc_request_update_result_theme-Nebula', array($this, 'theme_update_version_store'), 10, 2); //This hook is found in UpdateChecker.php in the filterUpdateResult() function.
+				add_filter('site_transient_update_themes', array($this, 'force_nebula_theme_update'), 99, 1);
 			}
 
 			//Non-AJAX admin pages
@@ -841,6 +843,22 @@ if ( !trait_exists('Admin') ){
 					'Nebula' //The filter hook above must match this
 				);
 			}
+		}
+
+		//Force a re-install of the Nebula theme
+		public function force_nebula_theme_update($updates){
+			if ( current_user_can('update_themes') && is_child_theme() && $this->is_nebula() && isset($_GET['force-nebula-theme-update']) ){
+				$parent_theme = wp_get_theme()->get('Template');
+
+				$updates->response[$parent_theme] = array(
+					'theme' => $parent_theme,
+					'new_version' => $this->version('full'), //Does not need to be larger than current version
+					'url' => 'https://github.com/chrisblakley/Nebula/commits/master',
+					'package' => 'https://github.com/chrisblakley/Nebula/archive/master.zip'
+				);
+			}
+
+			return $updates;
 		}
 
 		//When checking for theme updates, store the next and current Nebula versions from the response. Hook is inside the theme-update-checker.php library.
