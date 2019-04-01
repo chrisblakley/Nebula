@@ -130,7 +130,7 @@
 			}
 
 			//WPML Language
-			if ( defined(ICL_LANGUAGE_NAME) ){
+			if ( defined('ICL_LANGUAGE_NAME') ){
 				echo 'ga("set", nebula.analytics.dimensions.wpmlLang, "' . ICL_LANGUAGE_NAME . ' (' . ICL_LANGUAGE_CODE . ')");';
 			}
 

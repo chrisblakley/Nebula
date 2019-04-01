@@ -3314,7 +3314,7 @@ trait Functions {
 			}
 
 			//WPML Language
-			if ( defined(ICL_LANGUAGE_NAME) ){
+			if ( defined('ICL_LANGUAGE_NAME') ){
 				$debug_data .= 'WPML Language: ' . ICL_LANGUAGE_NAME . ' (' . ICL_LANGUAGE_CODE . ')' . PHP_EOL;
 			}
 

@@ -174,7 +174,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<div class="col-sm-3">
 							<div class="form-group">
-								<label for="postal_code">Zip</label>
+								<label for="postal_code">Postal Code</label>
 								<input type="text" name="nebula_options[postal_code]" id="postal_code" class="form-control nebula-validate-regex mb-2 mr-sm-2 mb-sm-0" data-valid-regex="\d{5,}" value="<?php echo $nebula_options['postal_code']; ?>" placeholder="13204" autocomplete="postal-code" />
 							</div>
 						</div>
