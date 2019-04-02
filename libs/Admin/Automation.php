@@ -157,9 +157,19 @@ if ( !trait_exists('Automation') ){
 				'strings' => array(
 					'menu_title' => 'Recommended Plugins',
 					'page_title' => 'Recommended Plugins',
+					'notice_can_install_required'     => _n_noop(
+						'This theme recommends the following plugin: %1$s.',
+						'This theme recommends the following plugins: %1$s.',
+						'tgmpa'
+					),
 					'notice_can_install_recommended' => _n_noop(
 						'The following optional plugin may be needed for the theme: %1$s.',
 						'The following optional plugins may be needed for the theme: %1$s.',
+						'tgmpa'
+					),
+					'notice_can_activate_required'    => _n_noop(
+						'The following recommended plugin is currently inactive: %1$s.',
+						'The following recommended plugins are currently inactive: %1$s.',
 						'tgmpa'
 					),
 					'notice_can_activate_recommended' => _n_noop(

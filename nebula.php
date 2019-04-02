@@ -101,13 +101,16 @@ if ( !class_exists('Nebula') ){
 		}
 
 		public function session_start(){
-			if ( is_writable(session_save_path()) ){ //If the session directory is writable
-				if ( !isset($_SESSION) || !isset($_SESSION['pagecount']) ){
-					session_start();
-					$_SESSION['pagecount'] = 0;
+			if ( !defined('DOING_AJAX') && is_writable(session_save_path()) ){ //If not an AJAX request and the session directory is writable
+				if ( !session_id() ){
+					session_start(); //This breaks the Theme Editor for some reason, so we don't do it on AJAX requests
 				}
 
-				$_SESSION['pagecount']++;
+				if ( !isset($_SESSION['pagecount']) ){
+					$_SESSION['pagecount'] = 1;
+				} else {
+					$_SESSION['pagecount']++;
+				}
 			}
 		}
 

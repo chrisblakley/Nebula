@@ -912,6 +912,7 @@ if ( !trait_exists('Admin') ){
 				global $wpdb;
 				$current_user = wp_get_current_user();
 				$to = $current_user->user_email;
+				$headers = array(); //Prep a headers array if needed
 
 				//Carbon copy the admin if update was done by another user.
 				$admin_user_email = $this->get_option('notification_email', $this->get_option('admin_email'));

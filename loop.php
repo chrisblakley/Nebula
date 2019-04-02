@@ -15,16 +15,16 @@
 						<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
 
 						<div class="entry-meta">
-							<?php if ( is_search() ): ?>
+							<?php if ( is_search() ): //If this is a search results listing ?>
 								<?php nebula()->post_meta('type') . ' '; ?>
 							<?php endif; ?>
 
-							<?php if ( !in_array("page", get_post_class()) ): ?>
+							<?php if ( !in_array("page", get_post_class()) ): //If the post is not a page ?>
 								<?php nebula()->post_meta('on'); ?> <?php if ( !is_author() ){ nebula()->post_meta('by'); } ?> <?php nebula()->post_meta('cat'); ?> <?php nebula()->post_meta('tags'); ?>
 							<?php endif; ?>
 						</div>
 
-						<?php if ( has_post_thumbnail() && get_theme_mod('featured_image_location') !== 'disabled' ): ?>
+						<?php if ( has_post_thumbnail() && get_theme_mod('featured_image_location') !== 'disabled' ): //If the featured image exists (and is not disabled in the Customizer) ?>
 							<a class="featured-image" href="<?php the_permalink(); ?>">
 								<?php the_post_thumbnail(); ?>
 							</a>

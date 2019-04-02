@@ -772,7 +772,7 @@ trait Functions {
 		$defaults = apply_filters('nebula_post_author_defaults', array(
 			'label' => 'icon', //"icon" or "text"
 			'linked' => true, //Link to author page
-			'force' => true, //Override author_bios Nebula option
+			'force' => false, //Override author_bios Nebula option
 		));
 
 		$data = array_merge($defaults, $options);
@@ -787,10 +787,20 @@ trait Functions {
 				$label = '<span class="nebula-post-author-label">Author </span>';
 			}
 
-			if ( $data['linked'] && !$data['force'] ){
-				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $label . '<span class="meta-item entry-author">' . '<a href="' . get_author_posts_url(get_the_author_meta('ID')) . '" itemprop="name">' . get_the_author() . '</a></span></span>';
+			//Get the author metadata
+			$author_id = get_the_author_meta('ID');
+			if ( empty($author_id) ){ //Author ID can be empty outside of the loop
+				global $post;
+				$author_id = $post->post_author;
+				$author_name = get_the_author_meta('display_name', $author_id);
 			} else {
-				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $label . '<span class="meta-item entry-author" itemprop="name">' . get_the_author() . '</span></span>';
+				$author_name = get_the_author();
+			}
+
+			if ( $data['linked'] && !$data['force'] ){
+				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $label . '<span class="meta-item entry-author">' . '<a href="' . get_author_posts_url($author_id) . '" itemprop="name">' . $author_name . '</a></span></span>';
+			} else {
+				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $label . '<span class="meta-item entry-author" itemprop="name">' . $author_name . '</span></span>';
 			}
 		}
 	}
