@@ -238,6 +238,9 @@ if ( !trait_exists('Analytics') ){
 
 		//Handle the AJAX data to build the measurement parameters and send to Google Analytics
 		public function ga_ajax(){
+			$override = apply_filters('pre_ga_ajax', null);
+			if ( isset($override) ){return;}
+
 			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){
 				wp_die('Permission Denied.');
 			}

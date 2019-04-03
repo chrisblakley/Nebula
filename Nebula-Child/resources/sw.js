@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 var THEME_NAME = 'nebula-child';
-var NEBULA_VERSION = 'v6.11.2.9671'; //Wednesday, April 3, 2019 8:48:39 AM
+var NEBULA_VERSION = 'v6.11.3.5985'; //Wednesday, April 3, 2019 4:13:11 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var OFFLINE_GA_DIMENSION = 'cd2';
@@ -10,7 +10,7 @@ var HOME_URL = 'https://gearside.com/nebula/';
 var START_URL = 'https://gearside.com/nebula/?utm_source=homescreen';
 //END automated edits
 
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.1.1/workbox-sw.js'); //https://developers.google.com/web/tools/workbox/guides/get-started
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.2.0/workbox-sw.js'); //https://developers.google.com/web/tools/workbox/guides/get-started
 workbox.setConfig({debug: false}); //https://developers.google.com/web/tools/workbox/guides/troubleshoot-and-debug
 
 //@todo "Nebula" 0: If ?debug is present in the URL on load, dump the entire cache and unregister (or update) the SW completely

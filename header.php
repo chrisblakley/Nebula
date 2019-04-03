@@ -38,7 +38,7 @@
 											if ( !empty($_GET['s']) || !empty($_GET['rs']) ) {
 												$current_search = ( !empty($_GET['s']) )? $_GET['s'] : $_GET['rs'];
 											}
-											$header_search_placeholder = ( isset($current_search) )? $current_search : 'What are you looking for?' ;
+											$header_search_placeholder = ( isset($current_search) )? $current_search : __('What are you looking for?', 'nebula') ;
 										?>
 										<label class="sr-only" for="nebula-mobile-search"><?php _e('Search', 'nebula'); ?></label>
 										<input id="nebula-mobile-search" class="open input search" type="search" name="s" placeholder="<?php echo $header_search_placeholder; ?>" autocomplete="off" role="search" x-webkit-speech />

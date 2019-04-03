@@ -48,22 +48,10 @@
 					<?php elseif ( is_search() ): //Search results ?>
 						<?php if ( have_posts() ): ?>
 							<h1 class="page-title"><?php _e('Search Results', 'nebula'); ?></h1>
-							<p class="page-meta">
-								Your search for <span class="search-term">"<?php echo get_search_query(); ?>"</span> returned
-								<?php
-									if ( file_exists(WP_PLUGIN_DIR . '/relevanssi') && $wp_query->found_posts ){ //If Relevanssi is enabled
-										echo $wp_query->found_posts;
-									} else {
-										$search_results = new WP_Query("s=$s&showposts=-1");
-										echo $search_results->post_count;
-										wp_reset_query();
-									}
-								?>
-								results.
-							</p>
+							<p class="page-meta"><?php _e('Your search for', 'nebula'); ?> <span class="search-term">"<?php echo get_search_query(); ?>"</span> <?php printf(_n('returned %s result.', 'returned %s results.', $wp_query->found_posts, 'nebula'), number_format_i18n($wp_query->found_posts)); ?></p>
 						<?php else: ?>
 							<h1 class="page title"><?php _e('No Results Found', 'nebula'); ?></h1>
-							<p>Your search for <span class="search-term">"<?php echo get_search_query(); ?>"</span> returned 0 results.</p>
+							<p><?php _e('Your search for', 'nebula'); ?> <span class="search-term">"<?php echo get_search_query(); ?>"</span> <?php printf(_n('returned %s result.', 'returned %s results.', $wp_query->found_posts, 'nebula'), number_format_i18n($wp_query->found_posts)); ?></p>
 							<script>
 								ga('send', 'event', 'Internal Search', 'No Results', jQuery('#s').val(), {'nonInteraction': true});
 							</script>

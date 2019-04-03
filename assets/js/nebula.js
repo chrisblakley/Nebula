@@ -4288,35 +4288,39 @@ function nebulaYoutubeStateChange(e){
 		nebula.dom.document.trigger('nebula_ended_video', thisVideo);
 
 	//Paused
-	} else if ( e.data === YT.PlayerState.PAUSED && pauseFlag ){
-		jQuery(thisVideo.element).removeClass('playing');
-		clearInterval(youtubePlayProgress);
+	} else {
+		setTimeout(function(){ //Wait 1 second because seeking will always pause and automatically resume, so check if it is still playing a second from now
+			if ( e.target.getPlayerState() == 2 && pauseFlag ){ //This must use getPlayerState() since e.data is not actually "current" inside of this setTimeout(). Paused = 2
+				jQuery(thisVideo.element).removeClass('playing');
+				clearInterval(youtubePlayProgress);
 
-		var thisEvent = {
-			category: 'Videos',
-			action: 'Paused',
-			playTime: Math.round(thisVideo.watched),
-			percent: Math.round(thisVideo.percent*100),
-			progress:  thisVideo.current*1000,
-			title: thisVideo.title,
-			autoplay: thisVideo.autoplay
-		}
+				var thisEvent = {
+					category: 'Videos',
+					action: 'Paused',
+					playTime: Math.round(thisVideo.watched),
+					percent: Math.round(thisVideo.percent*100),
+					progress:  thisVideo.current*1000,
+					title: thisVideo.title,
+					autoplay: thisVideo.autoplay
+				}
 
-		ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
-		ga('set', nebula.analytics.dimensions.videoPercentage, Math.round(thisVideo.percent*100));
-		ga('set', nebula.analytics.dimensions.videoWatcher, thisEvent.action);
+				ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
+				ga('set', nebula.analytics.dimensions.videoPercentage, Math.round(thisVideo.percent*100));
+				ga('set', nebula.analytics.dimensions.videoWatcher, thisEvent.action);
 
-		if ( !thisVideo.pausedYet ){
-			ga('send', 'event', thisEvent.category, 'First Pause', thisEvent.title);
-			thisVideo.pausedYet = true;
-		}
+				if ( !thisVideo.pausedYet ){
+					ga('send', 'event', thisEvent.category, 'First Pause', thisEvent.title);
+					thisVideo.pausedYet = true;
+				}
 
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.title);
-		ga('send', 'timing', thisEvent.category, thisEvent.action, thisEvent.progress, thisEvent.title);
-		nv('event', 'Video Paused: ' + thisEvent.title);
-		nebula.dom.document.trigger('nebula_paused_video', thisVideo);
-		pauseFlag = false;
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.title);
+				ga('send', 'timing', thisEvent.category, thisEvent.action, thisEvent.progress, thisEvent.title);
+				nv('event', 'Video Paused: ' + thisEvent.title);
+				nebula.dom.document.trigger('nebula_paused_video', thisVideo);
+				pauseFlag = false;
+			}
+		}, 1000);
 	}
 }
 

@@ -1857,6 +1857,7 @@ trait Functions {
 					</div>
 				</form>
 			</div>';
+
 		return $form;
 	}
 
@@ -2873,7 +2874,7 @@ trait Functions {
 				if ( strtolower($author_name) === strtolower($term) ){ //todo: if similarity of author name and query term is higher than X. Return only 1 or 2.
 					$suggestion = array();
 					$suggestion['label'] = $author_name;
-					$suggestion['link'] = 'http://google.com/';
+					$suggestion['link'] = get_author_posts_url($author->ID);
 					$suggestion['classes'] = 'type-user';
 					$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
 					$suggestion['similarity'] = ''; //todo: save similarity to array too
@@ -3206,19 +3207,11 @@ trait Functions {
 		}
 	}
 
-	//Fix responsive oEmbeds
-	//Uses Bootstrap classes: https://getbootstrap.com/docs/4.1/utilities/embed/
+	//Modify oembeds when necessary
 	public function oembed_modifiers($html, $url, $attr, $post_id){
 		//Enable the JS API for Youtube videos
 		if ( strstr($html, 'youtube.com/embed/') ){
 			$html = str_replace('feature=oembed', 'feature=oembed&enablejsapi=1&rel=0', $html);
-		}
-
-		//Force an aspect ratio on certain oEmbeds
-		if ( strpos($html, 'youtube') !== false || strpos($html, 'vimeo') !== false ){
-			$html = '<div class="nebula-oembed-wrapper embed-responsive embed-responsive-16by9">' . $html . '</div>';
-		} elseif ( strpos($html, 'vine') !== false ){
-			$html = '<div class="nebula-oembed-wrapper embed-responsive embed-responsive-1by1" style="max-width: 710px; max-height: 710px;">' . $html . '</div>';
 		}
 
 		return $html;
