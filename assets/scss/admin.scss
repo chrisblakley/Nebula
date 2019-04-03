@@ -21,7 +21,7 @@ $admin_media_queries: (
 
 //Lighten the primary color if too dark for WordPress menu backgrounds
 $admin_hover_color: lighten($primary_color, 22%);
-@if readable-color($primary_color) == '#000' {
+@if high-contrast-color($primary_color) == '#000' {
 	$admin_hover_color: $primary_color;
 }
 

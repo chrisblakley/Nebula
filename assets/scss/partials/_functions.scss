@@ -37,9 +37,22 @@
 	}
 }
 
-//Simply return the color with the higher contrast ratio against the background.
+//Simply return white or black based on the provided background color.
 //.element {background: #123456; color: readable-color(#123456);}
-@function readable-color($bg, $light: #fff, $dark: #000){
+@function readable-color($bg){
+	$calculated-value: ((red($bg) * 299) + (green($bg) * 587) + (blue($bg) * 114) - 128000) * -1000; //Creates a number either greater than 255 or less than 0
+
+	//While rgb() automatically limits output values to 0-255 in most (all?) browsers, it's safer to check it manually here.
+	@if ( $calculated-value >= 255 ){
+		@return #fff;
+	}
+
+	@return #000;
+}
+
+//Return the color with the higher contrast ratio against the background.
+//.element {background: #123456; color: readable-color(#123456, #e2e2e2, #444);}
+@function high-contrast-color($bg, $light: #fff, $dark: #000){
 	$lightContrast: contrast($bg, $light);
 	$darkContrast: contrast($bg, $dark);
 

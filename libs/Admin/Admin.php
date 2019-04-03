@@ -40,9 +40,6 @@ if ( !trait_exists('Admin') ){
 
 			//Non-AJAX admin pages
 			if ( $this->is_admin_page() && !defined('DOING_AJAX') ){
-				//Enable editor style for the TinyMCE WYSIWYG editor.
-				add_editor_style($this->bootstrap('reboot'));
-				add_editor_style('assets/css/tinymce.css');
 				add_action('admin_head', array($this, 'admin_favicon'));
 				add_filter('admin_body_class', array($this, 'admin_body_classes'));
 

@@ -4,7 +4,6 @@ jQuery.noConflict();
 jQuery(function(){
 	userHeadshotFields();
 	initializationStuff();
-	wysiwygMods();
 
 	jQuery(function(){
 		jQuery('#post textarea').allowTabChar();
@@ -400,39 +399,6 @@ function performanceTimingWarning(performanceItem, actualTime, warningTime, erro
 	} else if ( actualTime > warningTime ){
 		performanceItem.find(".timingwarning").addClass("warn active");
 	}
-}
-
-//Modifications to TinyMCE
-function wysiwygMods(){
-	//Detect external links in the TinyMCE link modal (to check the "new window" box).
-	linkTargetUsered = 0;
-	jQuery(document).on('click keydown', '#wp-link-target', function(){
-		linkTargetUsered = 1;
-	});
-	jQuery(document).on('click', '#wp-link-submit, #wp-link-close, #wp-link-backdrop, #wp-link-cancel a', function(){ //If clicking the submit button, the close "x", the modal background, or the cancel link.
-		linkTargetUsered = 0;
-	});
-	jQuery(document).on('keydown change focus blur paste', '#wp-link-url', function(){ //@TODO "Nebula" 0: This does not trigger when user does NOT type a protocol and pushes tab (WP adds the protocol automatically). Blur is not triggering...
-		currentVal = jQuery(this).val();
-		if ( linkTargetUsered === 0 ){
-			if ( /(h|ht+|https?)(:|:\/+)?$/.test(currentVal) ){
-				jQuery('#wp-link-target').prop('checked', false);
-			} else if ( (currentVal.indexOf('http') >= 0 || currentVal.indexOf('www') >= 0) && currentVal.indexOf(location.host) < 0 ){ //If (has "http" or www) && NOT our domain
-				jQuery('#wp-link-target').prop('checked', true);
-			} else if ( /\.(zip|rar|pdf|doc|xls|txt)(x)?$/.test(currentVal) ){ //If the link is a specific filetype
-				jQuery('#wp-link-target').prop('checked', true);
-			} else if ( currentVal.indexOf('mailto:') >= 0 || currentVal.indexOf('tel:') >= 0 ){ //If the link is a mailto.
-				jQuery('#wp-link-target').prop('checked', true);
-			} else {
-				jQuery('#wp-link-target').prop('checked', false);
-			}
-		}
-	});
-	jQuery(document).on('click', '#most-recent-results *, #search-results *', function(){
-		if ( linkTargetUsered === 0 ){
-			jQuery('#wp-link-target').prop('checked', false);
-		}
-	});
 }
 
 //Initialization alerts
