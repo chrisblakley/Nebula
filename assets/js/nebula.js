@@ -991,7 +991,7 @@ function eventTracking(){
 
 		ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 		ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
-		nebula.dom.document.trigger('nebula_event', {thisEvent});
+		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.emailAddress);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: thisEvent.action});}}
 		nv('event', thisEvent.action);
@@ -1010,7 +1010,7 @@ function eventTracking(){
 
 		ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 		ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
-		nebula.dom.document.trigger('nebula_event', {thisEvent});
+		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: thisEvent.action});}}
 		nv('event', thisEvent.action);
@@ -1029,7 +1029,7 @@ function eventTracking(){
 
 		ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 		ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
-		nebula.dom.document.trigger('nebula_event', {thisEvent});
+		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
 		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: thisEvent.action});}}
 		nv('event', thisEvent.action);
@@ -1048,7 +1048,7 @@ function eventTracking(){
 			linkText: jQuery.trim(jQuery(this).text())
 		}
 
-		nebula.dom.document.trigger('nebula_event', {thisEvent});
+		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 	});
 
@@ -1062,7 +1062,7 @@ function eventTracking(){
 			linkText: jQuery.trim(jQuery(this).text())
 		}
 
-		nebula.dom.document.trigger('nebula_event', {thisEvent});
+		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 	});
 
@@ -1076,7 +1076,7 @@ function eventTracking(){
 			linkText: jQuery.trim(jQuery(this).text())
 		}
 
-		nebula.dom.document.trigger('nebula_event', {thisEvent});
+		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 	});
 
@@ -1090,7 +1090,7 @@ function eventTracking(){
 			linkText: jQuery.trim(jQuery(this).text())
 		}
 
-		nebula.dom.document.trigger('nebula_event', {thisEvent});
+		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 	});
 
@@ -1104,7 +1104,7 @@ function eventTracking(){
 			linkText: jQuery.trim(jQuery(this).text())
 		}
 
-		nebula.dom.document.trigger('nebula_event', {thisEvent});
+		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 	});
 
@@ -1118,7 +1118,7 @@ function eventTracking(){
 			linkText: jQuery.trim(jQuery(this).text())
 		}
 
-		nebula.dom.document.trigger('nebula_event', {thisEvent});
+		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 	});
 
@@ -1148,7 +1148,7 @@ function eventTracking(){
 			linkText: jQuery.trim(jQuery(this).text())
 		}
 
-		nebula.dom.document.trigger('nebula_event', {thisEvent});
+		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 	});
 
@@ -1161,7 +1161,7 @@ function eventTracking(){
 			linkText: jQuery.trim(jQuery(this).text())
 		}
 
-		nebula.dom.document.trigger('nebula_event', {thisEvent});
+		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 	});
 
@@ -1174,7 +1174,7 @@ function eventTracking(){
 			videoID: e.target.id
 		}
 
-		nebula.dom.document.trigger('nebula_event', {thisEvent});
+		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.videoID, {'nonInteraction': true}); //Non-interaction because this may not be triggered by the user.
 	});
 
@@ -1187,7 +1187,7 @@ function eventTracking(){
 			videoID: e.target.id
 		}
 
-		nebula.dom.document.trigger('nebula_event', {thisEvent});
+		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.videoID, {'nonInteraction': true}); //Non-interaction because this may not be triggered by the user.
 	});
 

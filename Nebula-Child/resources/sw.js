@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 var THEME_NAME = 'nebula-child';
-var NEBULA_VERSION = 'v6.11.3.5985'; //Wednesday, April 3, 2019 4:13:11 PM
+var NEBULA_VERSION = 'v6.11.4.4000'; //Thursday, April 4, 2019 9:36:42 AM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var OFFLINE_GA_DIMENSION = 'cd2';
@@ -34,11 +34,12 @@ workbox.precaching.precacheAndRoute([
 	OFFLINE_IMG,
 	META_ICON,
 	MANIFEST,
-	//HOME_URL, //This is breaking the service worker AGAIN. Why does this problem keep happening after I think its fixed?????? //https://github.com/chrisblakley/Nebula/issues/1709
+	//HOME_URL, //This is breaking the service worker again. //https://github.com/chrisblakley/Nebula/issues/1709
 	START_URL
 ]);
 
 //Do not cache certain requests
+//https://github.com/GoogleChrome/workbox/issues/2006#issuecomment-479664093
 workbox.routing.registerRoute(
 	needNetworkRetrieval, //Workbox RegExp() does not allow partial matches on cross-domain requests, so we'll use our own function instead.
 	new workbox.strategies.NetworkOnly()
@@ -60,6 +61,8 @@ function needNetworkRetrieval(event){
 
 	return false;
 }
+
+
 
 //Data Feeds
 workbox.routing.registerRoute(
