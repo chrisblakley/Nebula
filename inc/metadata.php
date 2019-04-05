@@ -21,8 +21,8 @@
 ?>
 
 <?php //These must be the first three tags! ?>
-<meta charset="<?php bloginfo('charset'); ?>" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta charset="<?php bloginfo('charset'); ?>" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
 <?php do_action('nebula_head_open'); ?>

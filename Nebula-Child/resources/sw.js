@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 var THEME_NAME = 'nebula-child';
-var NEBULA_VERSION = 'v6.11.4.4000'; //Thursday, April 4, 2019 9:36:42 AM
+var NEBULA_VERSION = 'v6.11.5.3588'; //Friday, April 5, 2019 12:18:21 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var OFFLINE_GA_DIMENSION = 'cd2';
@@ -11,7 +11,7 @@ var START_URL = 'https://gearside.com/nebula/?utm_source=homescreen';
 //END automated edits
 
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.2.0/workbox-sw.js'); //https://developers.google.com/web/tools/workbox/guides/get-started
-workbox.setConfig({debug: false}); //https://developers.google.com/web/tools/workbox/guides/troubleshoot-and-debug
+workbox.setConfig({debug: true}); //https://developers.google.com/web/tools/workbox/guides/troubleshoot-and-debug
 
 //@todo "Nebula" 0: If ?debug is present in the URL on load, dump the entire cache and unregister (or update) the SW completely
 
@@ -34,10 +34,11 @@ workbox.precaching.precacheAndRoute([
 	OFFLINE_IMG,
 	META_ICON,
 	MANIFEST,
-	//HOME_URL, //This is breaking the service worker again. //https://github.com/chrisblakley/Nebula/issues/1709
+	HOME_URL, //This is breaking the service worker again. //https://github.com/chrisblakley/Nebula/issues/1709
 	START_URL
 ]);
 
+/*
 //Do not cache certain requests
 //https://github.com/GoogleChrome/workbox/issues/2006#issuecomment-479664093
 workbox.routing.registerRoute(
@@ -82,6 +83,7 @@ workbox.routing.registerRoute(
 		]
 	})
 );
+*/
 
 //Everything Else
 workbox.routing.setDefaultHandler(

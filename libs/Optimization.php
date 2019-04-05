@@ -241,10 +241,11 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
+		//This uses a link preload header, so these resources must be used within a few seconds of window load.
 		public function http2_server_push_header($src){
 			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') && file_exists($this->sw_location(false)) ){ //If not in the admin section (including Customizer and login) and if Service Worker is enabled (and file exists)
 				$filetype = ( strpos($src, '.css') )? 'style' : 'script'; //Determine the resource type
-				if ( strpos($src, $this->url_components('sld')) > 0 ){ //If local file
+				if ( strpos($src, $this->url_components('sld')) > 0 ){ //Only push local files
 					header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel=preload; as=' . $filetype, false); //Send the header for the HTTP2 Server Push (strtok to remove everything after and including "#")
 				}
 			}
@@ -324,7 +325,7 @@ if ( !trait_exists('Optimization') ){
 			//DNS-Prefetch = Resolve the DNS only to a domain.
 			//Preconnect = Resolve both DNS and TCP to a domain.
 			//Prefetch = Fully request a single resource and store it in cache until needed. Do not combine with preload!
-			//Preload = Fully request a single resource before it is needed. Do not combine with prefetch!
+			//Preload = Fully request a single resource before it is needed. Do not combine with prefetch! These must be used within a few seconds of window load.
 			//Note: Prerender is deprecated
 
 			//Note: WordPress automatically uses dns-prefetch on enqueued resource domains.
@@ -408,12 +409,12 @@ if ( !trait_exists('Optimization') ){
 			//Loop through all of the prefetches
 			$prefetches = apply_filters('nebula_prefetches', $default_prefetches); //Allow child themes and plugins to prefetch resources via Nebula too
 			foreach ( $prefetches as $prefetch ){
-				echo '<link rel="prefetch" href="' . $prefetch . '" crossorigin />' . $debug_comment;
+				echo '<link rel="prefetch" href="' . $prefetch . '" crossorigin="anonymous" />' . $debug_comment;
 			}
 
 			/*==========================
 			 Preload
-			 Fully request a single resource before it is needed. Do not combine with prefetch!
+			 Fully request a single resource before it is needed. Do not combine with prefetch! These must be used within a few seconds of window load.
 			 ===========================*/
 
 			$default_preloads = array();
@@ -426,7 +427,7 @@ if ( !trait_exists('Optimization') ){
 			//Loop through all of the preloads
 			$preloads = apply_filters('nebula_preloads', $default_preloads); //Allow child themes and plugins to preload resources via Nebula too
 			foreach ( $preloads as $preload ){
-				echo '<link rel="preload" href="' . $preload . '" as="fetch" crossorigin="anonymous">';
+				echo '<link rel="preload" href="' . $preload . '" as="fetch" crossorigin="anonymous" />';
 			}
 		}
 
