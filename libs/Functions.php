@@ -1030,7 +1030,7 @@ trait Functions {
 			'min' => 0, //Minimum length of dynamic sentence
 			'ellipsis' => false,
 			'url' => false,
-			'more' => get_theme_mod('nebula_excerpt_length', 'Read More &raquo;'),
+			'more' => get_theme_mod('nebula_excerpt_more_text', 'Read More &raquo;'),
 			'wp_more' => true, //Listen for the WP more tag
 			'btn' => false, //Alias of "button"
 			'button' => false,
