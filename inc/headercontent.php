@@ -57,7 +57,7 @@
 							</script>
 						<?php endif; ?>
 						<?php echo nebula()->search_form(); ?>
-					<?php elseif ( is_singular() ): //Single posts (and custom post types) ?>
+					<?php elseif ( is_singular() && !is_page() ): //Single posts (and custom post types) but not pages. Attachments are singular, but are handled above. ?>
 						<h1 class="entry-title"><?php the_title(); ?></h1>
 
 						<div class="entry-meta">

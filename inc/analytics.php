@@ -321,7 +321,7 @@
 				if ( model.get('nonInteraction') ){
 					interactivity = 'Non-Interaction';
 				}
-				model.set(nebula.analytics.dimensions.interactivity, interactivity, true);
+				model.set(nebula.analytics.dimensions.hitInteractivity, interactivity, true);
 
 				var transportMethod = model.get('transport') || 'JavaScript';
 				model.set(nebula.analytics.dimensions.hitMethod, model.get('transport'), true);

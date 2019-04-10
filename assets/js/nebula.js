@@ -1926,39 +1926,43 @@ function mobileSearchPlaceholder(){
 
 //Search Validator
 function searchValidator(){
-	jQuery('.input.search').each(function(){
-		if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
-			jQuery(this).parent().children('.btn.submit').addClass('disallowed');
-		} else {
-			jQuery(this).parent().children('.btn.submit').removeClass('disallowed').val('Search');
-			jQuery(this).parent().find('.input.search').removeClass('focusError');
-		}
-	});
-	jQuery('.input.search').on('focus blur change keyup paste cut',function(e){
-		thisPlaceholder = ( jQuery(this).attr('data-prev-placeholder') !== 'undefined' )? jQuery(this).attr('data-prev-placeholder') : 'Search';
-		if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
-			jQuery(this).parent().children('.btn.submit').addClass('disallowed');
-			jQuery(this).parent().find('.btn.submit').val('Go');
-		} else {
-			jQuery(this).parent().children('.btn.submit').removeClass('disallowed');
-			jQuery(this).parent().find('.input.search').removeClass('focusError').prop('title', '').attr('placeholder', thisPlaceholder);
-			jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
-		}
-		if ( e.type === 'paste' ){
-			jQuery(this).parent().children('.btn.submit').removeClass('disallowed');
-			jQuery(this).parent().find('.input.search').prop('title', '').attr('placeholder', 'Search').removeClass('focusError');
-			jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
-		}
-	})
-	jQuery('form.search').submit(function(){
-		if ( jQuery(this).find('.input.search').val() === '' || jQuery.trim(jQuery(this).find('.input.search').val()).length === 0 ){
-			jQuery(this).parent().find('.input.search').prop('title', 'Enter a valid search term.').attr('data-prev-placeholder', jQuery(this).attr('placeholder')).attr('placeholder', 'Enter a valid search term').addClass('focusError').focus().attr('value', '');
-			jQuery(this).parent().find('.btn.submit').prop('title', 'Enter a valid search term.').addClass('notallowed');
-			return false;
-		} else {
-			return true;
-		}
-	});
+	if ( jQuery('.input.search').length ){
+		jQuery('.input.search').each(function(){
+			if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
+				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
+			} else {
+				jQuery(this).parent().children('.btn.submit').removeClass('disallowed').val('Search');
+				jQuery(this).parent().find('.input.search').removeClass('focusError');
+			}
+		});
+
+		jQuery('.input.search').on('focus blur change keyup paste cut',function(e){
+			thisPlaceholder = ( jQuery(this).attr('data-prev-placeholder') !== 'undefined' )? jQuery(this).attr('data-prev-placeholder') : 'Search';
+			if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
+				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
+				jQuery(this).parent().find('.btn.submit').val('Go');
+			} else {
+				jQuery(this).parent().children('.btn.submit').removeClass('disallowed');
+				jQuery(this).parent().find('.input.search').removeClass('focusError').prop('title', '').attr('placeholder', thisPlaceholder);
+				jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
+			}
+			if ( e.type === 'paste' ){
+				jQuery(this).parent().children('.btn.submit').removeClass('disallowed');
+				jQuery(this).parent().find('.input.search').prop('title', '').attr('placeholder', 'Search').removeClass('focusError');
+				jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
+			}
+		})
+
+		jQuery('form.search').submit(function(){
+			if ( jQuery(this).find('.input.search').val() === '' || jQuery.trim(jQuery(this).find('.input.search').val()).length === 0 ){
+				jQuery(this).parent().find('.input.search').prop('title', 'Enter a valid search term.').attr('data-prev-placeholder', jQuery(this).attr('placeholder')).attr('placeholder', 'Enter a valid search term').addClass('focusError').focus().attr('value', '');
+				jQuery(this).parent().find('.btn.submit').prop('title', 'Enter a valid search term.').addClass('notallowed');
+				return false;
+			} else {
+				return true;
+			}
+		});
+	}
 }
 
 //Highlight search terms
@@ -2662,6 +2666,7 @@ function nebulaLoadCSS(url){
 }
 
 //Load the lazy loaded HTML
+//@todo "Nebula" 0: This is handled by Chrome 75+ natively. Will eventually deprecate this functionality.
 function lazyLoadHTML(){
 	//Load any images/iframe inside the viewport
 	jQuery('noscript.nebula-lazy').each(function(){
@@ -3893,7 +3898,6 @@ function nebulaLazyVideoTracking(element){
 	if ( element.is('iframe[src*="youtube"]') ){
 		addYoutubePlayer(element.attr('id'), element);
 	} else if ( element.is('iframe[src*="vimeo"]') ){
-		console.log('lazy loaded a vimeo video', element);
 		createVimeoPlayers();
 	} else if ( element.is('video') ){
 		addHTML5VideoPlayer(element.attr('id'), element);

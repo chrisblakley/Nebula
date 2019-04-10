@@ -39,7 +39,7 @@ if ( !trait_exists('Optimization') ){
 			add_filter('intermediate_image_sizes_advanced', array($this, 'create_max_width_size_proportionally'), 10, 2);
 			add_filter('post_thumbnail_size', array($this, 'limit_thumbnail_size'), 10, 2);
 			add_filter('nebula_thumbnail_src_size', array($this, 'limit_image_size'), 10, 2);
-			add_filter('max_srcset_image_width', array($this, 'smaller_max_srcset_image_width'), 10, 2);
+			add_filter('max_srcset_image_width', array($this, 'smaller_max_srcset_image_width'), 10, 2); //Limit width of content images
 
 			add_action('wp_head', array($this, 'prebrowsing'));
 			add_action('admin_head', array($this, 'prebrowsing'));
@@ -589,6 +589,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Lazy-load anything
 		//This markup can be, and is used hard-coded in other places.
+		//@todo "Nebula" 0: This is handled by Chrome 75+ natively. Will eventually deprecate this functionality.
 		public function lazy_load($html=''){
 			//Ignore lazy loading wrappers on AJAX requests
 			if ( wp_doing_ajax() ){
@@ -605,11 +606,13 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		//Lazy-load images
+		//@todo "Nebula" 0: This is handled by Chrome 75+ natively. Will eventually deprecate this functionality.
 		public function lazy_img($src=false, $attributes=''){
 			$this->lazy_load('<img src="' . $src . '" ' . $attributes . ' importance="low" />');
 		}
 
 		//Lazy-load iframes
+		//@todo "Nebula" 0: This is handled by Chrome 75+ natively. Will eventually deprecate this functionality.
 		public function lazy_iframe($src=false, $attributes=''){
 			$this->lazy_load('<iframe src="' . $src . '" ' . $attributes . ' importance="low"></iframe>');
 		}
