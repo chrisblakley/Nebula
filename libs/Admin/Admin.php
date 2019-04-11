@@ -547,13 +547,13 @@ if ( !trait_exists('Admin') ){
 				$warnings = $this->check_warnings();
 
 				//Remove "log" level warnings
-				foreach ( $warnings as $key => $warning ){
-					if ( $warning['level'] === 'log' ){
-						unset($warnings[$key]);
-					}
-				}
-
 				if ( !empty($warnings) ){
+					foreach ( $warnings as $key => $warning ){
+						if ( $warning['level'] === 'log' ){
+							unset($warnings[$key]);
+						}
+					}
+
 					$nebula_adminbar_icon = 'fa-exclamation-triangle';
 				}
 

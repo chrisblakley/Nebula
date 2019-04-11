@@ -478,7 +478,7 @@ trait Functions {
 			return $all_nebula_warnings;
 		}
 
-		return false;
+		return array(); //Return empty array instead of false
 	}
 
 	//Log warnings in the console

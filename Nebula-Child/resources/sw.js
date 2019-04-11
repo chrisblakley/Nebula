@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 var THEME_NAME = 'nebula-child';
-var NEBULA_VERSION = 'v6.11.10.7611'; //Wednesday, April 10, 2019 12:12:10 AM
+var NEBULA_VERSION = 'v6.11.10.8549'; //Thursday, April 11, 2019 8:29:20 AM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var OFFLINE_GA_DIMENSION = 'cd2';
@@ -39,15 +39,19 @@ workbox.precaching.precacheAndRoute([
 ]);
 
 //Do not cache certain requests
-//https://github.com/GoogleChrome/workbox/issues/2006#issuecomment-479664093
-workbox.routing.registerRoute(
-	needNetworkRetrieval, //Workbox RegExp() does not allow partial matches on cross-domain requests, so we'll use our own function instead.
-	new workbox.strategies.NetworkOnly()
-);
+self.addEventListener('fetch', function(event){
+	if ( needNetworkRetrieval(event) ){
+		return false;
+	}
+});
 
-//Check if we need to force network retrieval for specific resources (true = network, false = allow caching)
+//Check if we need to force network retrieval for specific resources (true = network only, false = allow caching)
 function needNetworkRetrieval(event){
-	if ( event.request.method !== 'GET' ){ //Prevent cache for POST and AJAX requests (Workbox may already handle this, but just to be safe)
+	if ( event.request ){ //Use event.request for non-Workbox requests
+		event = event.request;
+	}
+
+	if ( event.method !== 'GET' ){ //Prevent cache for POST and AJAX requests (Workbox may already handle this, but just to be safe)
 		return true;
 	}
 
