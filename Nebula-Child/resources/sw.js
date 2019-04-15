@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 var THEME_NAME = 'nebula-child';
-var NEBULA_VERSION = 'v6.11.10.8549'; //Thursday, April 11, 2019 8:29:20 AM
+var NEBULA_VERSION = 'v6.11.15.3525'; //Monday, April 15, 2019 9:10:34 AM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var OFFLINE_GA_DIMENSION = 'cd2';
@@ -38,35 +38,28 @@ workbox.precaching.precacheAndRoute([
 	START_URL
 ]);
 
-//Do not cache certain requests
-self.addEventListener('fetch', function(event){
-	if ( needNetworkRetrieval(event) ){
-		return false;
-	}
-});
-
-//Check if we need to force network retrieval for specific resources (true = network only, false = allow caching)
-function needNetworkRetrieval(event){
-	if ( event.request ){ //Use event.request for non-Workbox requests
+//Check if we need to force network retrieval for specific resources (false = network only, true = allow caching)
+function isCacheAllowed(event){
+	if ( event.request ){ //Use event.request for non-Workbox requests (just in case)
 		event = event.request;
 	}
 
 	if ( event.method !== 'GET' ){ //Prevent cache for POST and AJAX requests (Workbox may already handle this, but just to be safe)
-		return true;
+		return false;
 	}
 
 	if ( /\/chrome-extension:\/\/|\/wp-login.php|\/wp-admin|analytics|hubspot|hs-scripts|customize.php|customize_|no-cache|admin-ajax|gutenberg\//.test(event.url.href) ){
-		return true;
+		return false;
 	}
 
 	if ( /\.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/.test(event.url.href) ){
-		return true;
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
-//Data Feeds
+//Data feeds
 workbox.routing.registerRoute(
 	new RegExp('/\.(?:json|xml|yaml|csv)/'),
 	new workbox.strategies.NetworkFirst()
@@ -85,8 +78,9 @@ workbox.routing.registerRoute(
 	})
 );
 
-//Everything Else
-workbox.routing.setDefaultHandler(
+//Everything else (not using setDefaultHandler() to avoid caching certain requests)
+workbox.routing.registerRoute(
+	isCacheAllowed, //Avoid caching certain requests
 	new workbox.strategies.StaleWhileRevalidate({
 		cacheName: 'default', //Cache name is required for expiration plugin
 		plugins: [

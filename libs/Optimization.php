@@ -242,9 +242,10 @@ if ( !trait_exists('Optimization') ){
 
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
 		//This uses a link preload header, so these resources must be used within a few seconds of window load.
+		//@todo "Nebula" 0: This is occassionally triggering console warnings that the resources are not used within a few seconds of window load...
 		public function http2_server_push_header($src){
 			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') && file_exists($this->sw_location(false)) ){ //If not in the admin section (including Customizer and login) and if Service Worker is enabled (and file exists)
-				$filetype = ( strpos($src, '.css') )? 'style' : 'script'; //Determine the resource type
+				$filetype = ( strpos($src, '.css') )? 'style' : 'script'; //Determine the resource type (this is only used with CSS and JS)
 				if ( strpos($src, $this->url_components('sld')) > 0 ){ //Only push local files
 					header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel=preload; as=' . $filetype, false); //Send the header for the HTTP2 Server Push (strtok to remove everything after and including "#")
 				}
@@ -427,6 +428,31 @@ if ( !trait_exists('Optimization') ){
 			//Loop through all of the preloads
 			$preloads = apply_filters('nebula_preloads', $default_preloads); //Allow child themes and plugins to preload resources via Nebula too
 			foreach ( $preloads as $preload ){
+				$filetype = 'fetch';
+				switch ( $preload ){
+					case strpos($src, '.css'):
+						$filetype = 'style';
+						break;
+					case strpos($src, '.js'):
+						$filetype = 'script';
+						break;
+					case strpos($src, 'fonts.googleapis'):
+					case strpos($src, '.woff'):
+						$filetype = 'font';
+						break;
+					case strpos($src, '.jpg'):
+					case strpos($src, '.jpeg'):
+					case strpos($src, '.png'):
+					case strpos($src, '.gif'):
+						$filetype = 'image';
+						break;
+					case strpos($src, '.mp4'):
+					case strpos($src, '.ogv'):
+					case strpos($src, '.mov'):
+						$filetype = 'video';
+						break;
+				}
+
 				echo '<link rel="preload" href="' . $preload . '" as="fetch" crossorigin="anonymous" />';
 			}
 		}

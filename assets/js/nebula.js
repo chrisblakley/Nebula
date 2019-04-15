@@ -274,11 +274,12 @@ function nebulaPredictiveCacheListeners(){
 	var predictiveHoverTimeout;
 	jQuery('a').hover(function(){
 		oThis = jQuery(this);
+		url = oThis.attr('href');
 
-		if ( !predictiveHoverTimeout ){
+		if ( url && !predictiveHoverTimeout ){
 			predictiveHoverTimeout = window.setTimeout(function(){
 				predictiveHoverTimeout = null; //Reset the timer
-				nebulaPrefetch(oThis.attr('href')); //Attempt to prefetch
+				nebulaPrefetch(url); //Attempt to prefetch
 			}, 250);
 		}
 	}, function(){
@@ -306,7 +307,7 @@ function nebulaPredictiveCacheListeners(){
 
 //Prefetch a resource
 function nebulaPrefetch(url, callback){
-	if ( typeof window.requestIdleCallback === 'function' ){
+	if ( url && typeof window.requestIdleCallback === 'function' ){
 		//If network connection is 2G don't prefetch
 		if ( has(navigator, 'connection.effectiveType') && navigator.connection.effectiveType.toString().indexOf('2g') >= 0 ){ //'slow-2g', '2g', '3g', or '4g'
 			return false;
