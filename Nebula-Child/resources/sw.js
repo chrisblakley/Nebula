@@ -1,16 +1,16 @@
 //BEGIN automated edits. These will be automatically overwritten.
 var THEME_NAME = 'nebula-child';
-var NEBULA_VERSION = 'v6.11.15.3525'; //Monday, April 15, 2019 9:10:34 AM
+var NEBULA_VERSION = 'v6.11.15.7590'; //Monday, April 15, 2019 9:04:38 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var OFFLINE_GA_DIMENSION = 'cd2';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
 var MANIFEST = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/inc/manifest.json';
 var HOME_URL = 'https://gearside.com/nebula/';
-var START_URL = 'https://gearside.com/nebula/?utm_source=homescreen';
+var START_URL = 'https://gearside.com/nebula/?utm_source=pwa';
 //END automated edits
 
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.2.0/workbox-sw.js'); //https://developers.google.com/web/tools/workbox/guides/get-started
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.3.0/workbox-sw.js'); //https://developers.google.com/web/tools/workbox/guides/get-started
 workbox.setConfig({debug: false}); //https://developers.google.com/web/tools/workbox/guides/troubleshoot-and-debug
 
 //@todo "Nebula" 0: If ?debug is present in the URL on load, dump the entire cache and unregister (or update) the SW completely
@@ -105,8 +105,11 @@ workbox.routing.setCatchHandler(function(params){
 });
 
 //Offline Google Analytics: https://developers.google.com/web/tools/workbox/modules/workbox-google-analytics
+//Noticing some strange (not set) Language traffic in GA... currently testing this before bringing it back.
+/*
 workbox.googleAnalytics.initialize({
 	parameterOverrides: {
 		[OFFLINE_GA_DIMENSION]: 'offline', //Set a custom dimension to note offline hits (if set in Nebula Options)
 	},
 });
+*/

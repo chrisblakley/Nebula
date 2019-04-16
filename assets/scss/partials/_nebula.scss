@@ -113,9 +113,12 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 //Highlight and emphasize search term in results
 .searchresultword {@include background-color($primary_color, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important; @include prefix((transition: none 0.25s));
 	&.transitionable {@include prefix((transition: background 0.25s));}
-	article:hover,
+}
+.searchresultword {
+	article:hover &,
 	article:focus & {@include background-color(#ff0 !important, 0.5);}
 }
+
 .filterresultword {@include background-color(#ff0, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important;}
 
 .search .highlight {@include background-color($primary_color, 0.2);}

@@ -443,6 +443,7 @@ if ( !trait_exists('Analytics') ){
 
 		//Send Pageview Function for Server-Side Google Analytics
 		//Note this ignores the "Server-Side Fallback" analytics Nebula option
+		//Also note that this does create a session in GA, so when initial requests 404, there will be (not set) Landing Pages and more users/sessions than pageviews. This can compound for things like metadata images where devices request many in batches and don't actually render anything beyond the response code (so a 404 will still cause this server-side GA payload, but will not have a JavaScript pageview).
 		public function ga_send_exception($message=null, $fatal=1, $array=array()){
 			$override = apply_filters('pre_ga_send_exception', null, $message, $fatal, $array);
 			if ( isset($override) ){return;}

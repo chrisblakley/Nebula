@@ -430,25 +430,25 @@ if ( !trait_exists('Optimization') ){
 			foreach ( $preloads as $preload ){
 				$filetype = 'fetch';
 				switch ( $preload ){
-					case strpos($src, '.css'):
+					case strpos($preload, '.css'):
 						$filetype = 'style';
 						break;
-					case strpos($src, '.js'):
+					case strpos($preload, '.js'):
 						$filetype = 'script';
 						break;
-					case strpos($src, 'fonts.googleapis'):
-					case strpos($src, '.woff'):
+					case strpos($preload, 'fonts.googleapis'):
+					case strpos($preload, '.woff'):
 						$filetype = 'font';
 						break;
-					case strpos($src, '.jpg'):
-					case strpos($src, '.jpeg'):
-					case strpos($src, '.png'):
-					case strpos($src, '.gif'):
+					case strpos($preload, '.jpg'):
+					case strpos($preload, '.jpeg'):
+					case strpos($preload, '.png'):
+					case strpos($preload, '.gif'):
 						$filetype = 'image';
 						break;
-					case strpos($src, '.mp4'):
-					case strpos($src, '.ogv'):
-					case strpos($src, '.mov'):
+					case strpos($preload, '.mp4'):
+					case strpos($preload, '.ogv'):
+					case strpos($preload, '.mov'):
 						$filetype = 'video';
 						break;
 				}

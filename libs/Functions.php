@@ -546,7 +546,7 @@ trait Functions {
 				"$1" . get_theme_file_uri('/assets/img/meta') . "/android-chrome-512x512.png" . "$3",
 				"$1" . $this->manifest_json_location() . "$3",
 				"$1" . home_url('/') . "$3",
-				"$1" . home_url('/') . "?utm_source=homescreen" . "$3",
+				"$1" . home_url('/') . "?utm_source=pwa" . "$3",
 			);
 
 

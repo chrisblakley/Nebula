@@ -74,7 +74,6 @@ jQuery(window).on('load', function(){
 	autocompleteSearchListeners();
 	searchValidator();
 	searchTermHighlighter();
-	emphasizeSearchTerms();
 
 	//Forms
 	nebulaAddressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete');
@@ -1968,46 +1967,47 @@ function searchValidator(){
 
 //Highlight search terms
 function searchTermHighlighter(){
-	var theSearchTerm = document.URL.split('?s=')[1];
-	if ( typeof theSearchTerm !== 'undefined' ){
-		var reg = new RegExp("(?![^<]+>)(" + preg_quote(theSearchTerm.replace(/(\+|%22|%20)/g, ' ')) + ")", "ig");
-		jQuery('article .entry-title a, article .entry-summary').each(function(i){
-			jQuery(this).html(function(i, html){
-				return html.replace(reg, '<mark class="searchresultword">$1</mark>');
+	window.requestAnimationFrame(function(){
+		var searchTerm = document.URL.split('?s=')[1];
+		if ( typeof searchTerm !== 'undefined' ){
+			var reg = new RegExp("(?![^<]+>)(" + preg_quote(searchTerm.replace(/(\+|%22|%20)/g, ' ')) + ")", "ig");
+			jQuery('article .entry-title a, article .entry-summary').each(function(i){
+				jQuery(this).html(function(i, html){
+					return html.replace(reg, '<mark class="searchresultword">$1</mark>');
+				});
 			});
-		});
-	}
+
+			emphasizeSearchTerms();
+		}
+	});
 }
 
 //Emphasize the search Terms
 function emphasizeSearchTerms(){
-	var theSearchTerm = get('s');
-	if ( theSearchTerm ){
-		setTimeout(function(){
-			var origBGColor = jQuery('.searchresultword').css('background-color');
-			jQuery('.searchresultword').each(function(i){
-			 	var stallFor = 150 * parseInt(i);
-				jQuery(this).delay(stallFor).animate({
-					backgroundColor: 'rgba(255, 255, 0, 0.5)',
-					borderColor: 'rgba(255, 255, 0, 1)',
-				}, 500, 'swing', function(){
-					jQuery(this).delay(1000).animate({
-						backgroundColor: origBGColor,
-					}, 1000, 'swing', function(){
-						jQuery(this).addClass('transitionable');
-					});
+	window.requestAnimationFrame(function(){
+		var origBGColor = jQuery('.searchresultword').css('background-color');
+		jQuery('.searchresultword').each(function(i){
+		 	var stallFor = 150 * parseInt(i);
+			jQuery(this).delay(stallFor).animate({
+				backgroundColor: 'rgba(255, 255, 0, 0.5)',
+				borderColor: 'rgba(255, 255, 0, 1)',
+			}, 500, 'swing', function(){
+				jQuery(this).delay(1000).animate({
+					backgroundColor: origBGColor,
+				}, 1000, 'swing', function(){
+					jQuery(this).addClass('transitionable');
 				});
 			});
-		}, 1000);
-	}
+		});
+	});
 }
 
 //Single search result redirection drawer
 function singleResultDrawer(){
-	var theSearchTerm = get('rs');
-	if ( theSearchTerm ){
-		theSearchTerm = theSearchTerm.replace(/\%20|\+/g, ' ').replace(/\%22|"|'/g, '');
-		jQuery('#searchform input#s').val(theSearchTerm);
+	var searchTerm = get('rs');
+	if ( searchTerm ){
+		searchTerm = searchTerm.replace(/\%20|\+/g, ' ').replace(/\%22|"|'/g, '');
+		jQuery('#searchform input#s').val(searchTerm);
 
 		nebula.dom.document.on('click', '#nebula-drawer .close', function(){
 			var permalink = jQuery(this).attr('href');
@@ -3865,11 +3865,11 @@ function dataTablesActions(){
 	//DataTables search term highlighter. @TODO "Nebula" 0: Not quite ready... When highlighting, all other styling is removed.
 /*
 	nebula.dom.document.on('keyup', '.dataTables_wrapper .dataTables_filter input', function(){
-		theSearchTerm = jQuery(this).val().replace(/(\s+)/,"(<[^>]+>)*$1(<[^>]+>)*");
-		var pattern = new RegExp("(" + theSearchTerm + ")", "gi");
-		if ( theSearchTerm.length ){
+		searchTerm = jQuery(this).val().replace(/(\s+)/,"(<[^>]+>)*$1(<[^>]+>)*");
+		var pattern = new RegExp("(" + searchTerm + ")", "gi");
+		if ( searchTerm.length ){
 			jQuery('.dataTables_wrapper td').each(function(i){
-				var searchFinder = jQuery(this).text().replace(new RegExp('(' + preg_quote(theSearchTerm) + ')', 'gi'), '<mark class="filterresultword">$1</mark>');
+				var searchFinder = jQuery(this).text().replace(new RegExp('(' + preg_quote(searchTerm) + ')', 'gi'), '<mark class="filterresultword">$1</mark>');
 				jQuery(this).html(searchFinder);
 			});
 		} else {
