@@ -1358,7 +1358,7 @@ function eventTracking(){
 	//Detect Adblock
 	if ( nebula.user.client.bot === false && nebula.site.options.adblock_detect ){
 		window.performance.mark('nebula_detect_adblock_start');
-		jQuery.ajax({
+		jQuery.ajax({ //Eventually update this to fetch with ES6
 			type: 'GET',
 			url: nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js',
 			dataType: 'script',
@@ -2634,8 +2634,7 @@ function lazyLoadAssets(){
 //Load a JavaScript resource (and cache it)
 function nebulaLoadJS(url, callback){
 	if ( typeof url === 'string' ){
-		//Use fetch() when IE11 is no longer supported
-		jQuery.ajax({
+		jQuery.ajax({ //Eventually update this to fetch with ES6
 			type: 'GET',
 			url: url,
 			success: function(response){

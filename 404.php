@@ -49,7 +49,7 @@
 							<p><a href="<?php echo home_url('/'); ?>?s=<?php echo str_replace('-', '+', nebula()->slug_keywords); ?>"><?php _e('View all results', 'nebula'); ?> &raquo;</a></p>
 						</div>
 					<?php endif; ?>
-					<?php wp_reset_query(); ?>
+					<?php wp_reset_postdata(); ?>
 				</article>
 			</main><!--/col-->
 

@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 var THEME_NAME = 'nebula-child';
-var NEBULA_VERSION = 'v6.11.15.7590'; //Monday, April 15, 2019 9:04:38 PM
+var NEBULA_VERSION = 'v6.11.16.6444'; //Tuesday, April 16, 2019 3:30:39 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var OFFLINE_GA_DIMENSION = 'cd2';
@@ -48,11 +48,18 @@ function isCacheAllowed(event){
 		return false;
 	}
 
-	if ( /\/chrome-extension:\/\/|\/wp-login.php|\/wp-admin|analytics|hubspot|hs-scripts|customize.php|customize_|no-cache|admin-ajax|gutenberg\//.test(event.url.href) ){
+	var eventReferrer = event.referrer; //The page making the request
+	var eventURL = event.url.href || event.url; //The file being requested
+
+	//Check domains, directories, and pages
+	var pageRegex = /\/chrome-extension:\/\/|\/wp-login.php|\/wp-admin|analytics|hubspot|hs-scripts|customize.php|customize_|no-cache|admin-ajax|gutenberg\//;
+	if ( pageRegex.test(eventReferrer) || pageRegex.test(eventURL) ){
 		return false;
 	}
 
-	if ( /\.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/.test(event.url.href) ){
+	//Check file extensions
+	var fileRegex = /\.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/;
+	if ( fileRegex.test(eventReferrer) || fileRegex.test(eventURL) ){
 		return false;
 	}
 

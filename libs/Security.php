@@ -17,6 +17,7 @@ if ( !trait_exists('Security') ){
 			add_action('check_comment_flood', array($this, 'check_referrer'));
 			//add_action('wp_footer', array($this, 'track_notable_bots')); //Disabled for now. Not super useful.
 			add_action('wp_loaded', array($this, 'domain_prevention'));
+			add_action('get_header', array($this, 'redirect_author_template'));
 			add_filter('rest_endpoints', array($this, 'rest_endpoints_security'));
 
 			//Disable the file editor for non-developers
@@ -130,7 +131,7 @@ if ( !trait_exists('Security') ){
 
 		//Disable author archives to prevent ?author=1 from showing usernames.
 		public function redirect_author_template(){
-			if ( basename($this->current_theme_template) == 'author.php' && !nebula()->get_option('author_bios') ){
+			if ( (isset($_GET['author']) || basename($this->current_theme_template) == 'author.php') && !nebula()->get_option('author_bios') ){
 				wp_redirect(apply_filters('nebula_no_author_redirect', home_url('/') . '?s=about'));
 				exit;
 			}

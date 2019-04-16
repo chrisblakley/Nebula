@@ -80,7 +80,6 @@ trait Functions {
 		add_action('nebula_body_open', array($this, 'arbitrary_code_body'), 1000);
 		add_action('wp_footer', array($this, 'arbitrary_code_footer'), 1000);
 
-		add_action('get_header', array($this, 'redirect_author_template'));
 		add_filter('single_template', array($this, 'single_category_template'));
 
 		add_action('wp_ajax_nebula_autocomplete_search', array($this, 'autocomplete_search'));
@@ -89,7 +88,7 @@ trait Functions {
 		add_action('wp_ajax_nebula_infinite_load', array($this, 'infinite_load'));
 		add_action('wp_ajax_nopriv_nebula_infinite_load', array($this, 'infinite_load'));
 
-		add_action('wp', array($this, 'internal_suggestions'));
+		add_action('wp_head', array($this, 'internal_suggestions'));
 		add_filter('body_class', array($this, 'body_classes'));
 		add_filter('post_class', array($this, 'post_classes'));
 		add_action('nebula_body_open', array($this, 'skip_to_content_link'));
@@ -2950,6 +2949,8 @@ trait Functions {
 	//404 page suggestions
 	public function internal_suggestions(){
 		if ( is_404() ){
+			$this->ga_send_exception('(PHP) 404 Error for requested URL: ' . nebula()->url_components()); //Track 404 error pages as exceptions in Google Analytics
+
 			$this->slug_keywords = array_filter(explode('/', $this->url_components('filepath')));
 			$this->slug_keywords = end($this->slug_keywords);
 
