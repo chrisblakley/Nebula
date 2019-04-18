@@ -319,6 +319,11 @@ function nebulaPrefetch(url, callback){
 			}
 		}
 
+		//Ignore certain files
+		if ( /\.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/.test(url) ){
+			return false;
+		}
+
 		if ( url.length > 1 && url.indexOf('#') !== 0 ){ //If the URL exists and does not begin with #
 			window.requestIdleCallback(function(){ //Wait until the browser is idle before prefetching
 				if ( !jQuery('link[rel="prefetch"][href="' + url + '"]').length ){ //If prefetch link for this URL has not yet been added to the DOM

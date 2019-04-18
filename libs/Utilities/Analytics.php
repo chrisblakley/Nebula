@@ -400,7 +400,7 @@ if ( !trait_exists('Analytics') ){
 				'ni' => $ni, //Non-Interaction
 			);
 
-			$data = array_merge($data, $this->ga_common_parameters()); //Add custom definition parameters
+			$data = array_merge($this->ga_common_parameters(), $data); //Add custom definition parameters
 			$data = array_merge($data, $array); //Add passed parameters
 			$this->ga_send_data($data);
 		}
@@ -422,7 +422,7 @@ if ( !trait_exists('Analytics') ){
 			);
 
 			/** Previously, $data was undefined  */
-			$array = array_merge($array, $this->ga_common_parameters()); //Add custom definition parameters
+			$array = array_merge($this->ga_common_parameters(), $array); //Add custom definition parameters
 			$data = array_merge($defaults, $array); //Add passed parameters
 
 			if ( !empty($data['t']) ){
@@ -444,9 +444,10 @@ if ( !trait_exists('Analytics') ){
 				't' => 'exception',
 				'exd' => $message,
 				'exf' => $fatal,
+				'dt' => 'Page Not Found'
 			);
 
-			$data = array_merge($data, $this->ga_common_parameters()); //Add custom definition parameters
+			$data = array_merge($this->ga_common_parameters(), $data); //Add custom definition parameters
 			$data = array_merge($data, $array); //Add passed parameters
 			$this->ga_send_data($data, true);
 		}

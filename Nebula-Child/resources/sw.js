@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 var THEME_NAME = 'nebula-child';
-var NEBULA_VERSION = 'v6.11.16.6444'; //Tuesday, April 16, 2019 3:30:39 PM
+var NEBULA_VERSION = 'v6.11.17.4111'; //Thursday, April 18, 2019 12:03:56 AM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var OFFLINE_GA_DIMENSION = 'cd2';
@@ -113,10 +113,8 @@ workbox.routing.setCatchHandler(function(params){
 
 //Offline Google Analytics: https://developers.google.com/web/tools/workbox/modules/workbox-google-analytics
 //Noticing some strange (not set) Language traffic in GA... currently testing this before bringing it back.
-/*
 workbox.googleAnalytics.initialize({
 	parameterOverrides: {
 		[OFFLINE_GA_DIMENSION]: 'offline', //Set a custom dimension to note offline hits (if set in Nebula Options)
 	},
 });
-*/
