@@ -51,10 +51,22 @@ if ( !trait_exists('Admin') ){
 
 				//add_filter('wp_unique_post_slug', array($this, 'unique_slug_warning_ajax' ), 10, 4); //@TODO "Nebula" 0: This echos when submitting posts from the front end! nebula()->is_admin_page() does not prevent that...
 
-				add_filter('manage_posts_columns', array($this, 'id_columns_head'));
-				add_filter('manage_pages_columns', array($this, 'id_columns_head'));
-				add_action('manage_posts_custom_column', array($this, 'id_columns_content') , 15, 3);
-				add_action('manage_pages_custom_column', array($this, 'id_columns_content') , 15, 3);
+				//Add ID column to posts and pages
+				add_filter('manage_posts_columns', array($this, 'id_column_head')); //Includes custom post types
+				add_filter('manage_pages_columns', array($this, 'id_column_head'));
+
+				//Loop through all post types to make ID column sortable
+				add_action('init', function(){
+					foreach ( get_post_types(array(), 'names') as $post_type ){
+						add_filter('manage_edit-' . $post_type . '_sortable_columns', array($this, 'id_sortable_column'));
+					}
+				});
+
+				//Output post IDs
+				add_action('manage_posts_custom_column', array($this, 'id_column_content'), 10, 2);
+				add_action('manage_pages_custom_column', array($this, 'id_column_content'), 10, 2);
+
+				add_action('pre_get_posts', array($this, 'id_column_orderby')); //Handles the order when the ID column is sorted
 
 				//Remove most Yoast SEO columns
 				$post_types = get_post_types(array('public' => true), 'names');
@@ -440,25 +452,34 @@ if ( !trait_exists('Admin') ){
 				$new_content_node = $wp_admin_bar->get_node($node_id);
 				if ( $new_content_node ){
 					$post_type_object = get_post_type_object(get_post_type());
+					$post_type_name = $post_type_object->labels->singular_name;
 
 					$current_id = get_the_id();
 					if ( is_home() ){
 						$current_id = get_option('page_for_posts');
+					} elseif ( is_archive() ){
+						$term_object = get_queried_object();
+						$current_id = $term_object->term_id;
+						$post_type_name = $term_object->taxonomy;
+						$original_date = false;
+						$status = false;
 					}
 
-					$new_content_node->title = ucfirst($node_id) . ' ' . ucwords($post_type_object->labels->singular_name) . ' <span class="nebula-admin-light">(ID: ' . $current_id . ')</span>';
+					$new_content_node->title = ucfirst($node_id) . ' ' . ucwords($post_type_name) . ' <span class="nebula-admin-light">(ID: ' . $current_id . ')</span>';
 					$wp_admin_bar->add_node($new_content_node);
 				}
 
 				//Add created date under View/Edit node
 				//@TODO "Nebula" 0: get_the_author() is not working when in Admin
-				$wp_admin_bar->add_node(array(
-					'parent' => $node_id,
-					'id' => 'nebula-created',
-					'title' => '<i class="nebula-admin-fa far fa-fw fa-calendar"></i> <span title="' . human_time_diff($original_date) . ' ago">Created: ' . date('F j, Y', $original_date) . '</span> <span class="nebula-admin-light">(' . $original_author . ')</span>',
-					'href' => get_edit_post_link(),
-					'meta' => array('target' => '_blank', 'rel' => 'noopener')
-				));
+				if ( !empty($original_date) ){
+					$wp_admin_bar->add_node(array(
+						'parent' => $node_id,
+						'id' => 'nebula-created',
+						'title' => '<i class="nebula-admin-fa far fa-fw fa-calendar"></i> <span title="' . human_time_diff($original_date) . ' ago">Created: ' . date('F j, Y', $original_date) . '</span> <span class="nebula-admin-light">(' . $original_author . ')</span>',
+						'href' => get_edit_post_link(),
+						'meta' => array('target' => '_blank', 'rel' => 'noopener')
+					));
+				}
 
 				//Add modified date under View/Edit node
 				if ( get_post_meta($current_id, '_edit_last', true) ){ //If the post has been modified
@@ -472,13 +493,15 @@ if ( !trait_exists('Admin') ){
 				}
 
 				//Post status (Publish, Draft, Private, etc)
-				$wp_admin_bar->add_node(array(
-					'parent' => $node_id,
-					'id' => 'nebula-status',
-					'title' => '<i class="nebula-admin-fa fas fa-fw fa-map-marker"></i> Status: ' . ucwords($status),
-					'href' => get_edit_post_link(),
-					'meta' => array('target' => '_blank', 'rel' => 'noopener')
-				));
+				if ( !empty($status) ){
+					$wp_admin_bar->add_node(array(
+						'parent' => $node_id,
+						'id' => 'nebula-status',
+						'title' => '<i class="nebula-admin-fa fas fa-fw fa-map-marker"></i> Status: ' . ucwords($status),
+						'href' => get_edit_post_link(),
+						'meta' => array('target' => '_blank', 'rel' => 'noopener')
+					));
+				}
 
 				//Theme template file
 				if ( !empty($this->current_theme_template) ){
@@ -1054,16 +1077,29 @@ if ( !trait_exists('Admin') ){
 			//update_option('image_default_size', 'large');
 		}
 
-		//Add ID column on post/page listings
-		public function id_columns_head($defaults){
-			$defaults['id'] = 'ID';
-			return $defaults;
+		public function id_column_head($columns){
+			$columns['id'] = 'ID';
+			return $columns;
 		}
 
-		//ID column content on post/page listings
-		public function id_columns_content($column_name, $id){
+		public function id_sortable_column($columns){
+			$columns['id'] = 'id';
+			return $columns;
+		}
+
+		public function id_column_content($column_name, $id){
 			if ( $column_name === 'id' ){
-				echo $id;
+				echo intval($id);
+			}
+		}
+
+		public function id_column_orderby($query){
+			if ( $this->is_admin_page() ){
+				$orderby = $query->get('orderby');
+
+				if ( $orderby === 'id' ){
+					$query->set('orderby', 'id');
+				}
 			}
 		}
 

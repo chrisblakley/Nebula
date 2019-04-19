@@ -3313,14 +3313,14 @@ function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow, callback){
 			return false;
 		}
 
-		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
-		if ( location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname ){
-			var target = jQuery(this.hash) || jQuery('[name=' + this.hash.slice(1) +']');
+		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0; //Determine the offset
+		if ( location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname ){ //Ensure the link does not have a protocol and is internal
+			var target = jQuery(this.hash) || jQuery('[name=' + this.hash.slice(1) +']'); //Determine the target
 			if ( target.length ){ //If target exists
 				var nOffset = Math.floor(target.offset().top-offset+pOffset);
 				jQuery('html, body').animate({
 					scrollTop: nOffset
-				}, 500);
+				}, 500); //Speed is hard-coded, but could look for an HTML attribute if desired
 				return false;
 			}
 		}

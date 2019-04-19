@@ -135,8 +135,8 @@ if ( !trait_exists('Automation') ){
 					'required' => false,
 				),
 				array(
-					'name' => '404 to 301',
-					'slug' => '404-to-301',
+					'name' => 'Redirection',
+					'slug' => 'redirection',
 					'required' => false,
 				),
 			);

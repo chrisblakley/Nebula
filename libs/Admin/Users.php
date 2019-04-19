@@ -11,7 +11,10 @@ if ( !trait_exists('Users') ){
 			//Exclude AJAX requests
 			if ( !defined('DOING_AJAX') ){
 				add_filter('manage_users_columns', array($this, 'user_columns_head'));
+				add_filter('manage_users_sortable_columns', array($this, 'user_columns_sortable'));
 				add_action('manage_users_custom_column', array($this, 'user_columns_content' ), 15, 3);
+				add_action('pre_get_users', array($this, 'user_columns_orderby')); //Handles the order when a user column is sorted
+
 				add_filter('user_contactmethods', array($this, 'user_contact_methods'));
 
 				if ( !current_user_can( 'subscriber' ) && !current_user_can( 'contributor' ) ){
@@ -53,13 +56,21 @@ if ( !trait_exists('Users') ){
 		}
 
 		//Add columns to user listings
-		public function user_columns_head($defaults){
-			$defaults['company'] = 'Company';
-			$defaults['registered'] = 'Registered';
-			$defaults['status'] = 'Last Seen';
-			$defaults['ip'] = 'Last IP';
-			$defaults['id'] = 'ID';
-			return $defaults;
+		public function user_columns_head($columns){
+			$columns['company'] = 'Company';
+			$columns['registered'] = 'Registered';
+			$columns['status'] = 'Last Seen';
+			$columns['ip'] = 'Last IP';
+			$columns['id'] = 'ID';
+			return $columns;
+		}
+
+		public function user_columns_sortable($columns){
+			$columns['company'] = 'Company';
+			$columns['registered'] = 'Registered';
+			//$columns['status'] = 'Last Seen';
+			$columns['id'] = 'ID';
+			return $columns;
 		}
 
 		//Custom columns content to user listings
@@ -110,6 +121,29 @@ if ( !trait_exists('Users') ){
 			}
 		}
 
+		public function user_columns_orderby($query){
+			if ( $this->is_admin_page() ){
+				$orderby = strtolower($query->get('orderby'));
+
+				if ( $orderby === 'company' ){
+					$query->set('orderby', 'company');
+				}
+
+				if ( $orderby === 'registered' ){
+					$query->set('orderby', 'registered');
+				}
+
+				if ( $orderby === 'last seen' ){
+					//@todo "Nebula" 0: This will require a quite complex custom query (because this data is not stored on the user)
+					//$this->user_last_online($id) which uses $this->get_data('users_status') which returns an array of IDs
+				}
+
+				if ( $orderby === 'id' ){
+					$query->set('orderby', 'id');
+				}
+			}
+		}
+
 		//Check if a user has been online in the last 10 minutes
 		public function is_user_online($id){
 			$override = apply_filters('pre_nebula_is_user_online', null, $id);
@@ -128,6 +162,7 @@ if ( !trait_exists('Users') ){
 			if ( isset($logged_in_users[$id]['last']) ){
 				return $logged_in_users[$id]['last'];
 			}
+
 			return false;
 		}
 
