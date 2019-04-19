@@ -1583,16 +1583,21 @@ function scrollDepth(){
 }
 
 //Check if an element is within the viewport
-function isInView(element){
+function isInViewport(element, offset){return isInView(element, offset);}
+function isInView(element, offset){
 	if ( typeof element === 'string' ){
 		element = jQuery(element);
+	}
+
+	if ( !offset ){
+		offset = 1;
 	}
 
 	var elementTop = element.offset().top;
 	var elementBottom = element.offset().top+element.innerHeight();
 
 	var windowTop = nebula.dom.document.scrollTop();
-	var windowBottom = nebula.dom.document.scrollTop()+nebula.dom.window.height();
+	var windowBottom = nebula.dom.document.scrollTop()+nebula.dom.window.height()*offset;
 
 	if ( !nebula.dom.body.hasClass('page-visibility-hidden') && ((elementTop >= windowTop && elementTop < windowBottom) || (elementBottom >= windowTop && elementBottom < windowBottom) || (elementTop < windowTop && elementBottom > windowBottom)) ){
 		return true;
@@ -2144,17 +2149,17 @@ function cf7Functions(){
 		}
 
 		if ( !jQuery(this).hasClass('.ignore-form') && !jQuery(this).find('.ignore-form').length && !jQuery(this).parents('.ignore-form').length ){
+			var thisEvent = {
+				event: e,
+				category: 'CF7 Form',
+				action: 'Started Form (Focus)',
+				formID: formID,
+				field: thisField,
+				fieldInfo: fieldInfo
+			}
+
 			//Form starts
 			if ( typeof formStarted[formID] === 'undefined' || !formStarted[formID] ){
-				var thisEvent = {
-					event: e,
-					category: 'CF7 Form',
-					action: 'Started Form (Focus)',
-					formID: formID,
-					field: thisField,
-					fieldInfo: fieldInfo
-				}
-
 				thisEvent.label = 'Began filling out form ID: ' + thisEvent.formID + ' (' + thisEvent.Field + ')';
 
 				ga('set', nebula.analytics.metrics.formStarts, 1);
@@ -2221,7 +2226,7 @@ function cf7Functions(){
 		ga('set', nebula.analytics.dimensions.formTiming, millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')');
 		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-		ga('send', 'exception', {'exDescription': '(JS) Invalid form submission for form ID ' + formID, 'exFatal': false});
+		ga('send', 'exception', {'exDescription': '(JS) Invalid form submission for form ID ' + thisEvent.formID, 'exFatal': false});
 		nebulaScrollTo(jQuery(".wpcf7-not-valid").first()); //Scroll to the first invalid input
 		nv('identify', {'form_contacted': 'CF7 (' + thisEvent.formID + ') Invalid'}, false);
 		nv('event', 'Contact Form (' + thisEvent.formID + ') Invalid');
@@ -2310,7 +2315,7 @@ function cf7Functions(){
 		}
 		ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Success)');
 		ga('set', nebula.analytics.dimensions.formTiming, millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')');
-		ga('send', 'timing', thisEvent.category, 'Form Completion (ID: ' + formID + ')', Math.round(thisEvent.formTime), 'Initial form focus until valid submit');
+		ga('send', 'timing', thisEvent.category, 'Form Completion (ID: ' + thisEvent.formID + ')', Math.round(thisEvent.formTime), 'Initial form focus until valid submit');
 		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)'});}
