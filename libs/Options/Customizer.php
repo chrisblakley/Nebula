@@ -873,15 +873,42 @@ trait Customizer {
 					#bigheadingcon {background: <?php echo get_theme_mod('nebula_header_overlay_color', get_theme_mod('nebula_primary_color')); ?>;}
 				<?php endif; ?>
 
-				<?php if ( get_theme_mod('nebula_header_overlay_color') || get_theme_mod('nebula_header_overlay_opacity') ): ?>
-					#bigheadingcon .custom-color-overlay {background: <?php echo get_theme_mod('nebula_header_overlay_color', get_theme_mod('nebula_primary_color')); ?>; opacity: <?php echo get_theme_mod('nebula_header_overlay_opacity'); ?>;}
+				<?php
+					$custom_header_overlay_color = get_theme_mod('nebula_header_overlay_color', get_theme_mod('nebula_primary_color'));
+					$custom_header_overlay_opacity = get_theme_mod('nebula_header_overlay_opacity');
+				?>
+
+				<?php if ( !empty($custom_header_overlay_color) || !empty($custom_header_overlay_opacity) ): ?>
+					#bigheadingcon .custom-color-overlay {
+						<?php if ( !empty($custom_header_overlay_color) ): ?>
+							background: <?php echo $custom_header_overlay_color; ?>;
+						<?php endif; ?>
+
+						<?php if ( !empty($custom_header_overlay_opacity) ): ?>
+							opacity: <?php echo $custom_header_overlay_opacity; ?>;
+						<?php endif; ?>
+					}
 				<?php endif; ?>
 
 				<?php if ( !get_theme_mod('nebula_hero_spacing', true) ): ?>
 					#hero-section #hero-content {margin-top: 0; margin-bottom: 0;}
 				<?php endif; ?>
 
-				#hero-section .custom-color-overlay {background: <?php echo get_theme_mod('nebula_hero_overlay_color'); ?>; opacity: <?php echo get_theme_mod('nebula_hero_overlay_opacity'); ?>; animation: none;}
+				<?php if ( !empty($custom_header_overlay_color) || !empty($custom_header_overlay_opacity) ): ?>
+					#hero-section .custom-color-overlay {
+						<?php if ( !empty($custom_header_overlay_color) ): ?>
+							background: <?php echo $custom_header_overlay_color; ?>;
+						<?php endif; ?>
+
+
+						<?php if ( !empty($custom_header_overlay_opacity) ): ?>
+							opacity: <?php echo $custom_header_overlay_opacity; ?>;
+						<?php endif; ?>
+
+
+						animation: none;
+					}
+				<?php endif; ?>
 
 				<?php if ( get_theme_mod('nebula_hero_text_color') ): ?>
 					#hero-section #hero-content h1,

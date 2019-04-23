@@ -1,4 +1,7 @@
 # Nebula
+
+![GitHub release](https://img.shields.io/github/release/chrisblakley/nebula.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/chrisblakley/nebula.svg)
+
 Nebula is a WordPress theme framework that focuses on enhancing development. The core features of Nebula make it a powerful tool for designing, developing, and analyzing WordPress websites consistently, but its deliberately uncomplicated code syntax also serves as a learning resource for programmers themselves.
 
 ![Nebula](https://github.com/chrisblakley/Nebula/blob/master/assets/img/meta/og-thumb.png?raw=true)

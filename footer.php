@@ -12,7 +12,7 @@
 				</section>
 			<?php endif; ?>
 
-			<footer id="footer-section" class="lazy-load" role="contentinfo">
+			<footer id="footer-section" class="lazy-load">
 				<?php if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ): ?>
 					<div class="custom-color-overlay"></div>
 				<?php else: ?>
@@ -37,7 +37,7 @@
 					<div class="row powerfootercon">
 						<div class="col">
 							<?php if ( has_nav_menu('footer') ): ?>
-								<nav id="powerfooter" role="navigation">
+								<nav id="powerfooter">
 									<?php wp_nav_menu(array('theme_location' => 'footer', 'depth' => 2)); ?>
 								</nav>
 							<?php endif; ?>
@@ -54,11 +54,11 @@
 							</p>
 
 							<?php if ( get_theme_mod('nebula_footer_search', true) ): ?>
-								<form class="nebula-search search footer-search" method="get" action="<?php echo home_url('/'); ?>">
+								<form class="nebula-search search footer-search" method="get" action="<?php echo home_url('/'); ?>" role="search">
 									<div class="input-group">
 										<i class="fas fa-search"></i>
 										<label class="sr-only" for="nebula-footer-search"><?php _e('Search', 'nebula'); ?></label>
-										<input id="nebula-footer-search" class="open input search" type="search" name="s" placeholder="Search" autocomplete="off" role="search" x-webkit-speech />
+										<input id="nebula-footer-search" class="open input search" type="search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech />
 									</div>
 								</form>
 							<?php endif; ?>

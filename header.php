@@ -10,14 +10,14 @@
 			<div id="fb-root"></div>
 			<?php do_action('nebula_body_open'); ?>
 
-			<header id="header-section" role="banner">
+			<header id="header-section">
 				<?php if ( (get_theme_mod('nebula_offcanvas_menu', true) && (has_nav_menu('mobile') || has_nav_menu('primary'))) || get_theme_mod('nebula_mobile_search', true) ): ?>
 					<div id="mobilebarcon">
 						<div class="row mobilenavcon">
 							<div class="col">
 								<?php if ( get_theme_mod('nebula_offcanvas_menu', true) && (has_nav_menu('mobile') || has_nav_menu('primary')) ): ?>
 									<a class="mobilenavtrigger alignleft" href="#mobilenav" title="Navigation"><i class="fas fa-bars"></i></a>
-									<nav id="mobilenav" role="navigation">
+									<nav id="mobilenav">
 										<?php
 											if ( has_nav_menu('mobile') ){
 												wp_nav_menu(array('theme_location' => 'mobile', 'menu_id' => 'main-panel')); //Do not change menu_id
@@ -33,7 +33,7 @@
 								<?php endif; ?>
 
 								<?php if ( get_theme_mod('nebula_mobile_search', true) ): ?>
-									<form id="mobileheadersearch" class="nebula-search search" method="get" action="<?php echo home_url('/'); ?>">
+									<form id="mobileheadersearch" class="nebula-search search" method="get" action="<?php echo home_url('/'); ?>" role="search">
 										<?php
 											if ( !empty($_GET['s']) || !empty($_GET['rs']) ) {
 												$current_search = ( !empty($_GET['s']) )? $_GET['s'] : $_GET['rs'];
@@ -41,7 +41,7 @@
 											$header_search_placeholder = ( isset($current_search) )? $current_search : __('What are you looking for?', 'nebula') ;
 										?>
 										<label class="sr-only" for="nebula-mobile-search"><?php _e('Search', 'nebula'); ?></label>
-										<input id="nebula-mobile-search" class="open input search" type="search" name="s" placeholder="<?php echo $header_search_placeholder; ?>" autocomplete="off" role="search" x-webkit-speech />
+										<input id="nebula-mobile-search" class="open input search" type="search" name="s" placeholder="<?php echo $header_search_placeholder; ?>" autocomplete="off" x-webkit-speech />
 									</form>
 								<?php endif; ?>
 							</div><!--/col-->
