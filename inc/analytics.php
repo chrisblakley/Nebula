@@ -159,6 +159,11 @@
 			ga('set', nebula.analytics.dimensions.saveData, '<?php echo ( nebula()->is_save_data() )? 'Save Data' : 'Normal'; ?>');
 		<?php endif; ?>
 
+		//Prefers reduced motion
+		if ( window.matchMedia('(prefers-reduced-motion: reduce)').matches ){
+			ga('set', nebula.analytics.dimensions.reducedMotion, 'Prefers Reduced Motion');
+		}
+
 		<?php if ( nebula()->get_option('cd_offline') ): ?>
 			ga('set', nebula.analytics.dimensions.offline, 'online');
 		<?php endif; ?>

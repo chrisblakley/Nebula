@@ -764,6 +764,18 @@ if ( !trait_exists('Metaboxes') ){
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-prepend">
+								<div class="input-group-text">Reduced Motion Preference</div>
+							</div>
+							<input type="text" name="nebula_options[cd_reducedmotion]" id="cd_reducedmotion" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_reducedmotion']; ?>" />
+						</div>
+						<p class="nebula-help-text short-help form-text text-muted">Track the users motion preference. Scope: Session</p>
+						<p class="nebula-help-text more-help form-text text-muted">This listens for the "Reduce motion" preference from the user's operating system.</p>
+						<p class="option-keywords"></p>
+					</div>
+
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-prepend">
 								<div class="input-group-text">Offline</div>
 							</div>
 							<input type="text" name="nebula_options[cd_offline]" id="cd_offline" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_offline']; ?>" />

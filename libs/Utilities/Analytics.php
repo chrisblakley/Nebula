@@ -118,6 +118,7 @@ if ( !trait_exists('Analytics') ){
 					'hitMethod' => $this->get_option('cd_hitmethod'),
 					'experimentVariation' => $this->get_option('cd_experimentvariation'),
 					'saveData' => $this->get_option('cd_savedata'),
+					'reducedMotion' => $this->get_option('cd_reducedmotion'),
 					'offline' => $this->get_option('cd_offline'),
 					'deviceMemory' => $this->get_option('cd_devicememory'),
 					'batteryMode' => $this->get_option('cd_batterymode'),
@@ -449,7 +450,7 @@ if ( !trait_exists('Analytics') ){
 
 			$data = array_merge($this->ga_common_parameters(), $data); //Add custom definition parameters
 			$data = array_merge($data, $array); //Add passed parameters
-			$this->ga_send_data($data, true);
+			$this->ga_send_data($data, false); //Disabling force parameter here in an attempt to reduce or eliminate "(not set)" landing page data in Google Analytics.
 		}
 
 		//Send Data to Google Analytics
@@ -474,7 +475,7 @@ if ( !trait_exists('Analytics') ){
 				$file = str_replace(WP_CONTENT_DIR, '', strstr($error['file'], 'wp-content')); //Remove high-level directories to reduce clutter and prevent PII
 				$this->ga_send_exception('(PHP) ' . $message . ' on line ' . $error['line'] . ' in .../' . $file, 1);
 
-				if ( preg_match('/themes\/Nebula-?(master|parent|\d+\.\d+)?\//i', $file) && !strpos(strtolower($file), 'scssphp') ){ //If the error is in Nebula parent and not a Sass compile error
+				if ( preg_match('/themes\/Nebula-?(master|parent|\d+\.\d+)?\//i', $file) && !strpos(strtolower($file), 'scssphp') ){ //If the error is in Nebula parent and not a Sass compile error send error to Nebula Usage GA too
 					$this->usage('PHP Fatal Error', array(
 						't' => 'exception',
 						'exd' => $message . ' on line ' . $error['line'] . ' in ' . $file,

@@ -729,7 +729,15 @@ if ( !trait_exists('Utilities') ){
 			if ( in_array('cookie', $types) ){
 				$_COOKIE[$name] = $string_value;
 				if ( !headers_sent() ){
-					setcookie($name, $string_value, strtotime('January 1, 2035'), COOKIEPATH, COOKIE_DOMAIN); //Note: Do not let this cookie expire past 2038 or it instantly expires. http://en.wikipedia.org/wiki/Year_2038_problem
+					setcookie(
+						$name,
+						$string_value,
+						strtotime('January 1, 2035'), //Note: Do not let this cookie expire past 2038 or it instantly expires. http://en.wikipedia.org/wiki/Year_2038_problem
+						COOKIEPATH,
+						COOKIE_DOMAIN,
+						is_ssl(), //Secure (HTTPS)
+						true //HTTP only (not available in JS)
+					);
 				}
 			}
 		}
