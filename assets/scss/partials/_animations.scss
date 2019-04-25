@@ -298,7 +298,7 @@
     50% {transform: scale3d(0.90, 0.90, 0.90);}
 }
 
-//Depress and return (Large)
+//Depress and return (Mid)
 //Built-in animation trigger on click by adding class "click".
 [nebula-hover*="nebula-push"]:hover,
 .nebula-push.animate {@include prefix((animation: nebula-push .4s easing(easeOutBack)), webkit moz);}
@@ -314,6 +314,33 @@
 @include keyframes(nebula-shove){
     0% {transform: scale3d(1, 1, 1);}
     50% {transform: scale3d(0.60, 0.60, 0.60);}
+}
+
+//Enlarge and return (Small)
+//Built-in animation trigger on click by adding class "click".
+[nebula-hover*="nebula-tug"]:hover,
+.nebula-tug.animate {@include prefix((animation: nebula-tug .4s easing(easeOutBack)), webkit moz);}
+@include keyframes(nebula-tug){
+    0% {transform: scale3d(1, 1, 1);}
+    50% {transform: scale3d(1.10, 1.10, 1.10);}
+}
+
+//Enlarge and return (Mid)
+//Built-in animation trigger on click by adding class "click".
+[nebula-hover*="nebula-pull"]:hover,
+.nebula-pull.animate {@include prefix((animation: nebula-pull .4s easing(easeOutBack)), webkit moz);}
+@include keyframes(nebula-pull){
+    0% {transform: scale3d(1, 1, 1);}
+    50% {transform: scale3d(1.20, 1.20, 1.20);}
+}
+
+//Enlarge and return (Large)
+//Built-in animation trigger on click by adding class "click".
+[nebula-hover*="nebula-thrust"]:hover,
+.nebula-thrust.animate {@include prefix((animation: nebula-thrust .4s easing(easeOutBack)), webkit moz);}
+@include keyframes(nebula-thrust){
+    0% {transform: scale3d(1, 1, 1);}
+    50% {transform: scale3d(1.40, 1.40, 1.40);}
 }
 
 //Shake left and right

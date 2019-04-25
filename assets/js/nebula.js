@@ -2138,7 +2138,7 @@ function cf7Functions(){
 		}
 	});
 
-	//For starts and field focuses
+	//Form starts and field focuses
 	nebula.dom.document.on('focus', '.wpcf7-form input, .wpcf7-form button, .wpcf7-form textarea', function(e){
 		var formID = jQuery(this).closest('div.wpcf7').attr('id');
 
@@ -2327,6 +2327,8 @@ function cf7Functions(){
 			jQuery(this).trigger('keyup'); //Clear validation
 			localStorage.removeItem('cf7_' + jQuery(this).attr('name'));
 		});
+
+		jQuery('#' + e.detail.id).find('.is-valid, .is-invalid').removeClass('is-valid is-invalid'); //Clear all validation classes
 	});
 
 	//CF7 Submit (CF7 AJAX response after any submit attempt). This triggers after the other submit triggers.
