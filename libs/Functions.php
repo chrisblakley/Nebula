@@ -612,12 +612,14 @@ trait Functions {
 			$files = glob(get_theme_file_path('/assets/img/meta') . '/*.png');
 			foreach ( $files as $file ){
 				$filename = $this->url_components('filename', $file);
-				$dimensions = getimagesize($file);
-				$manifest_json .= '{
-					"src": "' . get_theme_file_uri('/assets/img/meta') . '/' . $filename . '",
-					"sizes": "' . $dimensions[0] . 'x' . $dimensions[1] . '",
-					"type": "image/png"
-				}, ';
+				$dimensions = getimagesize($file); //Considering adding an @ to ignore notices when getimagesize fails
+				if ( !empty($dimensions) ){
+					$manifest_json .= '{
+						"src": "' . get_theme_file_uri('/assets/img/meta') . '/' . $filename . '",
+						"sizes": "' . $dimensions[0] . 'x' . $dimensions[1] . '",
+						"type": "image/png"
+					}, ';
+				}
 			}
 		}
 
