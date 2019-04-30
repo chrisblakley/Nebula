@@ -284,12 +284,11 @@ if ( !trait_exists('Sass') ){
 
 			$this->timer('Sass Colors', 'start', 'Sass');
 
+			$assets_directory = get_template_directory() . '/assets';
+			$transient_name = 'nebula_scss_variables';
 			if ( is_child_theme() && $theme === 'child' ){
 				$assets_directory = get_stylesheet_directory() . '/assets';
 				$transient_name = 'nebula_scss_child_variables';
-			} else {
-				$assets_directory = get_template_directory() . '/assets';
-				$transient_name = 'nebula_scss_variables';
 			}
 
 			$scss_variables = get_transient($transient_name);

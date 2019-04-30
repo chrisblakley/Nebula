@@ -298,7 +298,7 @@ trait Functions {
 				if ( empty($ping_sites) || $ping_sites === 'http://rpc.pingomatic.com/' ){ //If it is empty or only has the default value
 					$nebula_warnings[] = array(
 						'level' => 'warn',
-						'description' => 'Additional <a href="options-writing.php">Update Services</a> should be pinged. <a href="https://codex.wordpress.org/Update_Services" target="_blank" rel="noopener">Recommended update services &raquo;</a>',
+						'description' => 'Additional <a href="options-writing.php">Update Services</a> should be pinged. <a href="https://codex.wordpress.org/Update_Services#XML-RPC_Ping_Services" target="_blank" rel="noopener">Recommended update services &raquo;</a>',
 						'url' => get_admin_url() . 'options-writing.php'
 					);
 				}

@@ -37,7 +37,7 @@
 	}
 }
 
-//Simply return white or black based on the provided background color.
+//Simply return white or black based on the provided background color. This is much faster than the high-contrast-color() function, but may not be as accurate to appropriate contrast ratios.
 //.element {background: #123456; color: readable-color(#123456);}
 @function readable-color($bg){
 	$calculated-value: ((red($bg) * 299) + (green($bg) * 587) + (blue($bg) * 114) - 128000) * -1000; //Creates a number either greater than 255 or less than 0
@@ -50,7 +50,7 @@
 	@return #000;
 }
 
-//Return the color with the higher contrast ratio against the background.
+//Return the color with the higher contrast ratio against the background. This takes slightly longer to compute, but is a little more accurate to appropriate contrast ratios.
 //.element {background: #123456; color: readable-color(#123456, #e2e2e2, #444);}
 @function high-contrast-color($bg, $light: #fff, $dark: #000){
 	$lightContrast: contrast($bg, $light);

@@ -233,13 +233,13 @@ if ( !trait_exists('Shortcodes') ){
 			/** @var string $space */
 			extract(shortcode_atts(array("space" => '0', "above" => '0', "below" => '0'), $atts));
 
+			$divider = '<hr class="nebula-divider" />';
 			if ( $space ) {
 				$above = $space;
 				$below = $space;
 				$divider = '<hr class="nebula-divider" style="' . nebula()->escape('margin-top: ' . $above . 'px; margin-bottom: ' . $below . 'px;') . '"/>';
-			} else {
-				$divider = '<hr class="nebula-divider" />';
 			}
+
 			return $divider;
 		}
 
@@ -259,14 +259,13 @@ if ( !trait_exists('Shortcodes') ){
 			}
 
 			//Choose the appropriate FA weight
+			$mode = 'fas';
 			if ( $mode === 'regular' || $mode === 'r' || $mode === 'far' ){
 				$mode = 'far';
 			} elseif ( $mode === 'light' || $mode === 'l' || $mode === 'fal' ){
 				$mode = 'fal';
 			} elseif ( $mode === 'brand' || $mode === 'b' || $mode === 'fab' ){
 				$mode = 'fab';
-			} else {
-				$mode = 'fas';
 			}
 
 			$extra_style = ( !empty($color) )? 'color:' . $color . ';' :'';
@@ -640,10 +639,9 @@ if ( !trait_exists('Shortcodes') ){
 				$id = 'nebula-slider-' . $id;
 			}
 
+			$indicators = '';
 			if ( !empty($indicators) ){
 				$indicators = 'auto-indicators';
-			} else {
-				$indicators = '';
 			}
 
 			$return = '<div id="' . nebula()->escape($id) . '" class="carousel slide ' . nebula()->escape($indicators) . '" data-ride="carousel">';

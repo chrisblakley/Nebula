@@ -2752,7 +2752,7 @@ function nebulaAddressAutocomplete(autocompleteInput, uniqueID){
 			uniqueID = 'unnamed';
 		}
 
-		if ( typeof google != "undefined" && has(google, 'maps') ){
+		if ( typeof google !== "undefined" && has(google, 'maps') ){
 			googleAddressAutocompleteCallback(autocompleteInput, uniqueID);
 		} else {
 			//Log all instances to be called after the maps JS library is loaded. This prevents the library from being loaded multiple times.

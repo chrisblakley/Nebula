@@ -1006,11 +1006,10 @@ if ( !trait_exists('Utilities') ){
 			if ( strpos($hex, '#') !== false ){
 				preg_match("/#(?:[0-9a-fA-F]{3,6})/i", $hex, $hex_colors);
 
+				$full_hex = $hex_colors[0];
 				if ( strlen($hex_colors[0]) === 4 ){
 					$values = str_split($hex_colors[0]);
 					$full_hex = '#' . $values[1] . $values[1] . $values[2] . $values[2] . $values[3] . $values[3];
-				} else {
-					$full_hex = $hex_colors[0];
 				}
 
 				$hex = str_replace('#', '', $full_hex);

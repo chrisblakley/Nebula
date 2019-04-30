@@ -45,7 +45,7 @@ if ( !trait_exists('Automation') ){
 					'required' => true,
 				),
 				array(
-					'name' => 'Advanced Contact form 7 DB',
+					'name' => 'Advanced Contact Form 7 DB',
 					'slug' => 'advanced-cf7-db',
 					'required' => true,
 				),

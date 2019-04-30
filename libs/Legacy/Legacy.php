@@ -21,11 +21,9 @@ if ( !trait_exists('Legacy') ){
  Procedural Functions
  ===========================*/
 
-
 //Renamed function (5/10/2016)
 function nebula_breadcrumbs(){ nebula()->breadcrumbs(); }
 function the_breadcrumb(){ nebula()->breadcrumbs(); }
-
 
 //Update old options to new options
 add_action('admin_init', 'nebula_legacy_options');
@@ -40,7 +38,6 @@ function nebula_legacy_options(){
 		update_nebula_option('google_search_console_url', get_option('google_webmaster_tools_url'));
 	}
 }
-
 
 //Prefer a child theme directory or file. Not declaring a directory will return the theme directory.
 //nebula_prefer_child_directory('/assets/img/logo.png');
@@ -63,7 +60,6 @@ function nebula_prefer_child_directory($directory='', $uri=true){
 	return get_template_directory() . $directory;
 }
 
-
 global $wp_version;
 if ( $wp_version < 4.7 ){
 	function get_theme_file_uri(){
@@ -75,9 +71,6 @@ if ( $wp_version < 4.7 ){
 	}
 }
 
-
-
-
 //Old Nebula Excerpt that does not use the options array.
 function nebula_the_excerpt($postID=0, $more=0, $length=55, $hellip=0){
 	$override = apply_filters('pre_nebula_the_excerpt', null, $postID, $more, $length, $hellip);
@@ -87,10 +80,9 @@ function nebula_the_excerpt($postID=0, $more=0, $length=55, $hellip=0){
 		$the_post = get_post($postID);
 	} else {
 		if ( $postID != 0 || is_string($postID) ){
+			$hellip = false;
 			if ( $length == 0 || $length == 1 ){
 				$hellip = $length;
-			} else {
-				$hellip = false;
 			}
 
 			$length = 55;
@@ -124,8 +116,6 @@ function nebula_custom_excerpt($text=false, $length=55, $hellip=false, $link=fal
 		'ellipsis' => $hellip
 	));
 };
-
-
 
 function nebula_google_font_option(){
 	$nebula_options = get_option('nebula_options');

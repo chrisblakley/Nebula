@@ -555,10 +555,9 @@ if ( !trait_exists('Analytics') ){
 
 			//Merge query parameters
 			$utm_query_str = implode('&amp;', $utm_query);
+			$url_query = $utm_query_str;
 			if ( count($url) > 1 ){
 				$url_query = "${url[1]}&amp;{$utm_query_str}";
-			} else {
-				$url_query = $utm_query_str;
 			}
 
 			$tracking_link = "${url[0]}?{$url_query}";

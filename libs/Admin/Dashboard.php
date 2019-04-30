@@ -133,14 +133,12 @@ if ( !trait_exists('Dashboard') ){
 						break;
 					default:
 						$post_icon = $wp_post_types[$post_type]->menu_icon;
+						$post_icon_img = '<i class="fas fa-fw fa-thumbtack"></i>';
 						if ( !empty($post_icon) ){
+							$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" />';
 							if ( strpos('dashicons-', $post_icon) >= 0 ){
 								$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
-							} else {
-								$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" />';
 							}
-						} else {
-							$post_icon_img = '<i class="fas fa-fw fa-thumbtack"></i>';
 						}
 						break;
 				}
@@ -1008,8 +1006,6 @@ if ( !trait_exists('Dashboard') ){
 			$hubspot_contacts_json = json_decode($hubspot_contacts_json);
 			if ( !empty($hubspot_contacts_json) ){
 				if ( !empty($hubspot_contacts_json->contacts) ){
-
-
 					foreach ( $hubspot_contacts_json->contacts as $contact ){
 						//Get contact's email address
 						$identities = $contact->{'identity-profiles'}[0]->identities;

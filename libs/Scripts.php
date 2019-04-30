@@ -408,14 +408,13 @@ if ( !trait_exists('Scripts') ){
 
 		public function nebula_login_logo(){
 			//Login logo replacement
+			$logo = get_theme_file_uri('/assets/img/logo.svg'); //Use parent directory logo by default
 			if ( get_theme_mod('custom_logo') ){ //If the Customizer logo exists
 				$logo = nebula()->get_thumbnail_src(get_theme_mod('custom_logo'));
 			} elseif ( file_exists(get_stylesheet_directory() . '/assets/img/logo.svg') ){ //If SVG logo exists in child theme
 				$logo = get_stylesheet_directory_uri() . '/assets/img/logo.svg';
 			} elseif ( file_exists(get_stylesheet_directory() . '/assets/img/logo.png') ){ //If PNG logo exists in child theme
 				$logo = get_stylesheet_directory_uri() . '/assets/img/logo.png';
-			} else {
-				$logo = get_theme_file_uri('/assets/img/logo.svg'); //Otherwise use parent directory logo
 			}
 
 			echo '<style>div#login h1 a {background: url(' . $logo . ') center center no-repeat; width: auto; background-size: contain;}</style>';
