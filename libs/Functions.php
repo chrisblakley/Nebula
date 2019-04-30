@@ -696,26 +696,26 @@ trait Functions {
 
 	//Show different meta data information about the post. Typically used inside the loop.
 	//Example: post_meta('by');
-	public function post_meta($meta){
+	public function post_meta($meta, $options=array()){
 		$override = apply_filters('pre_post_meta', null, $meta);
 		if ( isset($override) ){return;}
 
 		if ( $meta === 'date' || $meta === 'time' || $meta === 'on' || $meta === 'day' || $meta === 'when' ){
-			echo $this->post_date();
+			echo $this->post_date($options);
 		} elseif ( $meta === 'author' || $meta === 'by' ){
-			echo  $this->post_author();
+			echo  $this->post_author($options);
 		} elseif ( $meta === 'type' || $meta === 'cpt' || $meta === 'post_type' ){
-			echo  $this->post_type();
+			echo  $this->post_type($options);
 		} elseif ( $meta === 'categories' || $meta === 'category' || $meta === 'cat' || $meta === 'cats' || $meta === 'in' ){
-			echo  $this->post_categories();
+			echo  $this->post_categories($options);
 		} elseif ( $meta === 'tags' || $meta === 'tag' ){
-			echo  $this->post_tags();
+			echo  $this->post_tags($options);
 		} elseif ( $meta === 'dimensions' || $meta === 'size' ){
-			echo  $this->post_dimensions();
+			echo  $this->post_dimensions($options);
 		} elseif ( $meta === 'exif' || $meta === 'camera' ){
-			echo  $this->post_exif();
+			echo  $this->post_exif($options);
 		} elseif ( $meta === 'comments' || $meta === 'comment' ){
-			echo  $this->post_comments();
+			echo  $this->post_comments($options);
 		} elseif ( $meta === 'social' || $meta === 'sharing' || $meta === 'share' ){
 			 $this->social(array('facebook', 'twitter', 'linkedin', 'pinterest'), 0);
 		}
