@@ -17,14 +17,14 @@ wp.blocks.registerBlockType('nebula/youtube', {
 		return [
 			wp.element.createElement(wp.editor.InspectorControls, null,
 				wp.element.createElement(wp.components.PanelBody, {
-					title: "Nebula Youtube Settings"
+					title: 'Nebula Youtube Settings'
 				},
 				wp.element.createElement(wp.components.BaseControl, {
-					label: "Video ID",
+					label: 'Video ID',
 					id: 'nebula-youtube-id-' + props.instanceId,
 				},
-				wp.element.createElement("input", {
-					type: "text",
+				wp.element.createElement('input', {
+					type: 'text',
 					id: 'nebula-youtube-id-' + props.instanceId,
 					value: props.attributes.videoID,
 					onChange: function(e){
@@ -45,7 +45,7 @@ wp.blocks.registerBlockType('nebula/youtube', {
 				height: 300,
 				src: '//www.youtube.com/embed/' + props.attributes.videoID + '?wmode=transparent&enablejsapi=1&rel=0', //WCtWWgtzC-c
 				frameBorder: 0,
-				allowfullscreen: ""
+				allowfullscreen: ''
 			}))
 		];
 	},

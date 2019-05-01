@@ -508,7 +508,7 @@ function nebulaUniqueSlugChecker(){
                         allowTabChar(this);
                     }
                 }
-            })
+            });
         }
         return this;
     }
@@ -519,8 +519,8 @@ function keywordSearch(container, parent, value, filteredClass){
 	if ( !filteredClass ){
 		var filteredClass = 'filtereditem';
 	}
-	jQuery(container).find("*:not(:Contains(" + value + "))").closest(parent).addClass(filteredClass);
-	jQuery(container).find("*:Contains(" + value + ")").closest(parent).removeClass(filteredClass);
+	jQuery(container).find('*:not(:Contains(' + value + '))').closest(parent).addClass(filteredClass);
+	jQuery(container).find('*:Contains(' + value + ')').closest(parent).removeClass(filteredClass);
 }
 
 /*==========================
@@ -603,8 +603,8 @@ function removeQueryParameter(keys, sourceURL){
 }
 
 //Custom CSS expression for a case-insensitive contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
-//Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: keywordSearch(container, parent, value);
-jQuery.expr[":"].Contains=function(e,n,t){return(e.textContent||e.innerText||"").toUpperCase().indexOf(t[3].toUpperCase())>=0};
+//Call it with :Contains() - Ex: ...find('*:Contains(' + jQuery('.something').val() + ')')... -or- use the nebula function: keywordSearch(container, parent, value);
+jQuery.expr[':'].Contains=function(e,n,t){return(e.textContent||e.innerText||'').toUpperCase().indexOf(t[3].toUpperCase())>=0};
 
 
 //Nebula Options Functions
@@ -952,7 +952,7 @@ function performanceMetrics(){
 					'duration': windowLoaded,
 					'elapsed': windowLoaded
 				}
-			}
+			};
 
 			console.groupCollapsed('Performance');
 			console.table(jQuery.extend(nebula.site.timings, clientTimings));

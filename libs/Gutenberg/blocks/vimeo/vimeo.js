@@ -17,14 +17,14 @@ wp.blocks.registerBlockType('nebula/vimeo', {
 		return [
 			wp.element.createElement(wp.editor.InspectorControls, null,
 				wp.element.createElement(wp.components.PanelBody, {
-					title: "Nebula Vimeo Settings"
+					title: 'Nebula Vimeo Settings'
 				},
 				wp.element.createElement(wp.components.BaseControl, {
-					label: "Video ID",
+					label: 'Video ID',
 					id: 'nebula-vimeo-id-' + props.instanceId,
 				},
-				wp.element.createElement("input", {
-					type: "text",
+				wp.element.createElement('input', {
+					type: 'text',
 					id: 'nebula-vimeo-id-' + props.instanceId,
 					value: props.attributes.videoID,
 					onChange: function(e){
@@ -45,7 +45,7 @@ wp.blocks.registerBlockType('nebula/vimeo', {
 				height: 300,
 				src: 'https://player.vimeo.com/video/' + props.attributes.videoID + '',
 				frameBorder: 0,
-				allowfullscreen: ""
+				allowfullscreen: ''
 			}))
 		];
 	},

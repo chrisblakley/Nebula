@@ -90,7 +90,6 @@ trait Customizer {
 			'container_inclusive' => false,
 		));
 
-
 		/*==========================
 			Site Features Section
 		 ===========================*/
@@ -152,7 +151,6 @@ trait Customizer {
 			'selector' => '#mobileheadersearch',
 			'container_inclusive' => false,
 		));
-
 
 		/*==========================
 			Home Panel
@@ -401,7 +399,6 @@ trait Customizer {
 			'priority' => 53,
 		));
 
-
 		/*==========================
 			Posts Panel
 		 ===========================*/
@@ -609,7 +606,6 @@ trait Customizer {
 			'priority' => 51,
 		));
 
-
 		/*==========================
 			Sidebar Section
 		 ===========================*/
@@ -643,7 +639,6 @@ trait Customizer {
 		));
 
 		//@TODO "Nebula" 0: Add options for sidebar background color?
-
 
 		/*==========================
 			Footer Widget Area Section
@@ -705,7 +700,6 @@ trait Customizer {
 			'section' => 'footer_widget_area',
 			'priority' => 33,
 		));
-
 
 		/*==========================
 			Footer Section

@@ -114,8 +114,6 @@ if ( !trait_exists('Ecommerce') ){
 					$products['ecommerce_product_ids'] = $item['product_id'];
 				}
 				$products['ecommerce_order_id'] = $order_id;
-
-
 				?>
 
 

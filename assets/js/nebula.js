@@ -2160,17 +2160,17 @@ function cf7Functions(){
 
 			//Form starts
 			if ( typeof formStarted[formID] === 'undefined' || !formStarted[formID] ){
-				thisEvent.label = 'Began filling out form ID: ' + thisEvent.formID + ' (' + thisEvent.Field + ')';
+				thisEvent.label = 'Began filling out form ID: ' + thisEvent.formID + ' (' + thisEvent.field + ')';
 
 				ga('set', nebula.analytics.metrics.formStarts, 1);
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
 				nv('identify', {'form_contacted': 'CF7 (' + thisEvent.formID + ') Started'}, false);
-				nv('event', 'Contact Form (' + thisEvent.formID + ') Started (' + thisEvent.Field + ')');
+				nv('event', 'Contact Form (' + thisEvent.formID + ') Started (' + thisEvent.field + ')');
 				formStarted[formID] = true;
 			}
 
-			updateFormFlow(thisEvent.formID, thisEvent.Field, thisEvent.fieldInfo);
+			updateFormFlow(thisEvent.formID, thisEvent.field, thisEvent.fieldInfo);
 
 			//Track each individual field focuses
 			if ( !jQuery(this).is('button') ){
@@ -2365,11 +2365,15 @@ function updateFormFlow(formID, field, info){
 	if ( !info ){
 		info = '';
 	} else {
+		if ( info.length > 25 ){
+			info = info.substring(0, 25) + '...'; //Truncate long info text
+		}
+
 		info = ' (' + info + ')';
 	}
 
 	if ( !formFlow[formID] ){
-		formFlow[formID] = field + info;
+		formFlow[formID] = formID + ': ' + field + info; //Start a new form flow string beginning with the form ID
 	} else {
 		formFlow[formID] += ' > ' + field + info;
 	}
