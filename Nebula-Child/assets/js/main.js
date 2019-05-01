@@ -19,7 +19,6 @@ jQuery(function(){
 	window.performance.measure('child_dom_ready_functions', 'child_dom_ready_start', 'child_dom_ready_end');
 }); //End Document Ready
 
-
 /*==========================
  Window Load
  ===========================*/
@@ -33,7 +32,6 @@ jQuery(window).on('load', function(){
 	window.performance.measure('child_window_load_functions', 'child_window_load_start', 'child_window_load_end');
 }); //End Window Load
 
-
 /*==========================
  Window Resize
  ===========================*/
@@ -43,8 +41,6 @@ jQuery(window).on('resize', function(){
 
 	}, 500);
 }); //End Window Resize
-
-
 
 /*==========================
  Child Functions

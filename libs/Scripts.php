@@ -166,7 +166,7 @@ if ( !trait_exists('Scripts') ){
 				}
 
 				//Add <noscript> so lazy CSS files can be loaded for users without JavaScript
-				echo  '<noscript>' . PHP_EOL;
+				echo '<noscript>' . PHP_EOL;
 				foreach ( $lazy_assets['styles'] as $handle => $condition ){
 					if ( !empty($handle) && !empty($wp_styles->registered[$handle]) ){ //Lazy loaded assets must have a handle!
 						echo '<link rel="stylesheet" id="' . $handle . '-css"  href="' . $wp_styles->registered[$handle]->src . '" type="text/css" media="' . $wp_styles->registered[$handle]->args . '" />' . PHP_EOL;

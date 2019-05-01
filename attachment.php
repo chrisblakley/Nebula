@@ -33,8 +33,8 @@
 
 						<div class="entry-social">
 							<span class="nebulasocialcon">
-				        		<?php nebula()->post_meta('social', nebula()->is_dev()); ?>
-				        	</span>
+								<?php nebula()->post_meta('social', nebula()->is_dev()); ?>
+							</span>
 						</div>
 
 						<div class="entry-content">

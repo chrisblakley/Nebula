@@ -5,7 +5,7 @@
 				<div class="row">
 					<div class="col">
 						<nav id="utility-nav" role="navigation">
-		        			<?php wp_nav_menu(array('theme_location' => 'utility')); ?>
+							<?php wp_nav_menu(array('theme_location' => 'utility')); ?>
 		        		</nav>
 					</div><!--/col-->
 				</div><!--/row-->
@@ -30,9 +30,9 @@
 					<?php if ( has_nav_menu('primary') ): ?>
 						<nav id="primary-nav">
 							<?php wp_nav_menu(array('theme_location' => 'primary')); ?>
-		        		</nav>
-	        		<?php endif; ?>
-	        	</div><!--/col-->
+						</nav>
+					<?php endif; ?>
+				</div><!--/col-->
 			</div><!--/row-->
 		</div><!--/container-->
 	</div>

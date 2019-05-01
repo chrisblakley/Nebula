@@ -511,7 +511,7 @@ function nebulaUniqueSlugChecker(){
             });
         }
         return this;
-    }
+    };
 })(jQuery);
 
 //container is the parent container, parent is the individual item, value is usually the input val.

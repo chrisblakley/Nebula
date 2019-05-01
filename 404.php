@@ -45,7 +45,7 @@
 
 									<a class="internal-suggestion" href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a>
 								</h3>
-						    <?php endwhile; ?>
+							<?php endwhile; ?>
 							<p><a href="<?php echo home_url('/'); ?>?s=<?php echo str_replace('-', '+', nebula()->slug_keywords); ?>"><?php _e('View all results', 'nebula'); ?> &raquo;</a></p>
 						</div>
 					<?php endif; ?>
