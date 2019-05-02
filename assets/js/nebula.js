@@ -2209,7 +2209,7 @@ function cf7Functions(){
 			event: e,
 			category: 'CF7 Form',
 			action: 'Submit (Invalid)',
-			formID: e.detail.contactFormId || e.detail.id,
+			formID: e.detail.id,
 			formTime: nebulaTimer(e.detail.id, 'lap', 'wpcf7-submit-invalid'),
 			inputs: nebula.timings[e.detail.id].laps + ' inputs'
 		}
@@ -2254,7 +2254,7 @@ function cf7Functions(){
 			event: e,
 			category: 'CF7 Form',
 			action: 'Submit (Invalid)',
-			formID: e.detail.contactFormId || e.detail.id,
+			formID: e.detail.id,
 			formTime: nebulaTimer(e.detail.id, 'end'),
 			inputs: nebula.timings[e.detail.id].laps + ' inputs'
 		}
@@ -2277,7 +2277,7 @@ function cf7Functions(){
 			event: e,
 			category: 'CF7 Form',
 			action: 'Submit (Failed)',
-			formID: e.detail.contactFormId || e.detail.id,
+			formID: e.detail.id,
 			formTime: nebulaTimer(e.detail.id, 'end'),
 			inputs: nebula.timings[e.detail.id].laps + ' inputs'
 		}
@@ -2302,7 +2302,7 @@ function cf7Functions(){
 			event: e,
 			category: 'CF7 Form',
 			action: 'Submit (Success)',
-			formID: e.detail.contactFormId || e.detail.id,
+			formID: e.detail.id,
 			formTime: nebulaTimer(e.detail.id, 'end'),
 			inputs: nebula.timings[e.detail.id].laps + ' inputs'
 		}
@@ -2337,7 +2337,7 @@ function cf7Functions(){
 			event: e,
 			category: 'CF7 Form',
 			action: 'Submit (Attempt)',
-			formID: e.detail.contactFormId || e.detail.id,
+			formID: e.detail.id,
 			formTime: nebulaTimer(e.detail.id, 'lap', 'wpcf7-submit-attempt'),
 			inputs: nebula.timings[e.detail.id].laps + ' inputs'
 		}
@@ -3270,10 +3270,13 @@ function svgImgs(){
 				var theSVG = jQuery(data).find('svg'); //Get the SVG tag, ignore the rest
 				theSVG = theSVG.attr('id', oThis.attr('id')); //Add replaced image's ID to the new SVG
 				theSVG = theSVG.attr('class', oThis.attr('class') + ' replaced-svg'); //Add replaced image's classes to the new SVG
+				theSVG = theSVG.attr('role', 'img');
 				theSVG = theSVG.attr('data-original-src', oThis.attr('src')); //Add an attribute of the original SVG location
 				theSVG = theSVG.removeAttr('xmlns:a'); //Remove invalid XML tags
 				oThis.replaceWith(theSVG); //Replace image with new SVG
 			}, 'xml');
+
+			//@todo "Nebula" 0: Grab the alt attribute from oThis and add it as a <title> tag within the newly created <svg> element (as the first child)
 		}
 	});
 }

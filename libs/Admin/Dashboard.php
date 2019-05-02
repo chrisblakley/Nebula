@@ -484,7 +484,7 @@ if ( !trait_exists('Dashboard') ){
 				<div class="todo_results">
 			<?php
 
-			//Loop through todo array and echo markup
+			//Loop through array of to-do items and echo markup
 			foreach ( $todo_items as $location => $todos ){
 				if ( $location === 'parent' && !is_child_theme() ){
 					$location = '';

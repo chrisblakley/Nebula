@@ -76,14 +76,14 @@
 				classes: 'widget btn nebula-icon',
 				menu: [{
 					text: 'Container',
-					onclick: function() {
+					onclick: function(){
 						ed.focus();
 						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() !== '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
 						ed.selection.setContent('[container class="CLASSES" style="STYLES"]' + shortcodeContent + '[/container]');
 					}
 				}, {
 					text: 'Row',
-					onclick: function() {
+					onclick: function(){
 						ed.focus();
 						var shortcodeContent = ( tinyMCE.activeEditor.selection.getContent() !== '' )? tinyMCE.activeEditor.selection.getContent() : 'CONTENT_HERE';
 						ed.selection.setContent('[row class="CLASSES" style="STYLES"]' + shortcodeContent + '[/row]');
