@@ -46,7 +46,7 @@ if ( !trait_exists('Admin') ){
 				remove_action('admin_enqueue_scripts', 'wp_auth_check_load'); //Disable the logged-in monitoring modal
 
 				if ( $this->get_option('admin_notices') ){
-					add_action('admin_notices',  array($this, 'admin_notices'));
+					add_action('admin_notices', array($this, 'admin_notices'));
 				}
 
 				//add_filter('wp_unique_post_slug', array($this, 'unique_slug_warning_ajax' ), 10, 4); //@TODO "Nebula" 0: This echos when submitting posts from the front end! nebula()->is_admin_page() does not prevent that...
@@ -112,8 +112,8 @@ if ( !trait_exists('Admin') ){
 				add_filter('wp_head', array($this, 'remove_admin_bar_style_frontend'), 99);
 			} else { //Else the admin bar is enabled
 				add_action('wp_before_admin_bar_render', array($this, 'remove_admin_bar_logo'), 0);
-				add_action('admin_bar_menu',  array($this, 'admin_bar_menus'), 800); //Add Nebula menus to Admin Bar
-				add_action('get_header',  array($this, 'remove_admin_bar_bump')); //TODO "Nebula" 0: Possible to remove and add directly remove action here
+				add_action('admin_bar_menu', array($this, 'admin_bar_menus'), 800); //Add Nebula menus to Admin Bar
+				add_action('get_header', array($this, 'remove_admin_bar_bump')); //TODO "Nebula" 0: Possible to remove and add directly remove action here
 				add_action('wp_after_admin_bar_render', array($this, 'admin_bar_style_script_overrides'), 11);
 				add_action('wp_head', array($this, 'admin_bar_warning_styles'), 11);
 				add_action('admin_print_styles', array($this, 'admin_bar_warning_styles'), 11);
@@ -441,7 +441,7 @@ if ( !trait_exists('Admin') ){
 
 				$status = get_post_field('post_status', $current_id);
 				$original_date = strtotime(get_post_field('post_date', $current_id));
-				$original_author = get_the_author_meta('display_name' , get_post_field('post_author', $current_id));
+				$original_author = get_the_author_meta('display_name', get_post_field('post_author', $current_id));
 				$modified_date = strtotime(get_post_field('post_modified', $current_id));
 				if ( get_post_meta($current_id, '_edit_last', true) ){
 					$last_user = get_userdata(get_post_meta( $current_id, '_edit_last', true));

@@ -6,7 +6,7 @@
 					<div class="col">
 						<nav id="utility-nav" role="navigation">
 							<?php wp_nav_menu(array('theme_location' => 'utility')); ?>
-		        		</nav>
+						</nav>
 					</div><!--/col-->
 				</div><!--/row-->
 			</div><!--/container-->

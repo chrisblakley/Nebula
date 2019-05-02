@@ -117,7 +117,7 @@ if ( !trait_exists('Gutenberg') ){
 
 			register_block_type( 'nebula/hello-world', array(
 				'editor_script' => 'nebula-hello-world-editor',
-				'editor_style'  => 'nebula-hello-world-editor',
+				'editor_style' => 'nebula-hello-world-editor',
 				'style' => 'nebula-hello-world',
 			) );
 		}
@@ -144,7 +144,7 @@ if ( !trait_exists('Gutenberg') ){
 
 			register_block_type( 'nebula/style-test', array(
 				'editor_script' => 'nebula-style-test',
-				'editor_style'  => 'nebula-style-test',
+				'editor_style' => 'nebula-style-test',
 				'style' => 'nebula-style-test',
 			) );
 		}
@@ -171,7 +171,7 @@ if ( !trait_exists('Gutenberg') ){
 
 			register_block_type('nebula/latest-posts', array(
 				'editor_script' => 'nebula-latest-posts-block',
-				'editor_style'  => 'nebula-latest-posts-block',
+				'editor_style' => 'nebula-latest-posts-block',
 				'style' => 'nebula-latest-posts-block',
 				'render_callback' => 'nebula_get_latest_post',
 			));

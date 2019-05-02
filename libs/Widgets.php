@@ -99,7 +99,7 @@ if ( !trait_exists('Widgets') ){
 		//Creating widget front-end
 		public function widget($args, $instance){
 			$timer_name = nebula()->timer('About the Author Widget', 'start', 'Nebula Widgets');
-			$user_id = ( !empty($instance['user_id']) )? $instance['user_id'] : get_the_author_id();
+			$user_id = ( !empty($instance['user_id']) )? $instance['user_id'] : get_the_author_meta('ID');
 			$author_info = get_userdata($user_id);
 
 			if ( empty($author_info) ){
@@ -472,7 +472,7 @@ if ( !trait_exists('Widgets') ){
 				</p>
 				<p class="mode_required" data-for="mode-place|mode-directions|mode-search|mode-view">
 					<label for="<?php echo $this->get_field_id('zoom'); ?>">Zoom (0:Far - 21:Close)</label>
-					<input class="widefat" id="<?php echo $this->get_field_id('zoom'); ?>" name="<?php echo $this->get_field_name('zoom'); ?>" type="number" value="<?php echo ( isset($instance['zoom']) )? $instance['zoom'] : ''; ?>" min="0"  max="21" placeholder="18" />
+					<input class="widefat" id="<?php echo $this->get_field_id('zoom'); ?>" name="<?php echo $this->get_field_name('zoom'); ?>" type="number" value="<?php echo ( isset($instance['zoom']) )? $instance['zoom'] : ''; ?>" min="0" max="21" placeholder="18" />
 				</p>
 
 			<?php

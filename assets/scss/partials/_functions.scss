@@ -20,7 +20,7 @@
 
 	$brand_colors: map-get($brands, $name);
 	@if $index > length($brand_colors) {
-		//@warn '#{$name} does not have a color in the index of #{$index}';
+		//@warn "#{$name} does not have a color in the index of #{$index}";
 		$index: 1;
 	}
 
@@ -30,7 +30,7 @@
 
 	@each $current_color in $brand_colors {
 		$i: index($brand_colors, $current_color);
-		//@warn '#{$current_color} is in the index of #{$i}';
+		//@warn "#{$current_color} is in the index of #{$i}";
 		@if $i == $index {
 			@return $current_color;
 		}
@@ -42,7 +42,7 @@
 @function readable-color($bg){
 	$calculated-value: ((red($bg) * 299) + (green($bg) * 587) + (blue($bg) * 114) - 128000) * -1000; //Creates a number either greater than 255 or less than 0
 
-	//While rgb() automatically limits output values to 0-255 in most (all?) browsers, it's safer to check it manually here.
+	//While rgb() automatically limits output values to 0-255 in most (all?) browsers, it is safer to check it manually here.
 	@if ( $calculated-value >= 255 ){
 		@return #fff;
 	}
@@ -125,7 +125,7 @@
 		$g3: $g2 * $percent_difference; //0.01421229937547695322310904970549
 		$b3: $b2 * $percent_difference; //0.02078741515147623990363062978804
 
-		//Now need to undo all the ^2.4 stuff that happens using the nth($linear-channel-values) stuff we need to use ^0.4167 (which is 1/2.4) (which we can't do without another huge linear channel value variable......... or until Sass supports decimal exponents), Then multiply by 1.055, Then subtract 0.055, Then multiply by 255
+		//Now need to undo all the ^2.4 stuff that happens using the nth($linear-channel-values) stuff we need to use ^0.4167 (which is 1/2.4) (which we can not do without another huge linear channel value variable......... or until Sass supports decimal exponents), Then multiply by 1.055, Then subtract 0.055, Then multiply by 255
 		$r4: reverse_linear_channel_value($r3); //24
 		$g4: reverse_linear_channel_value($g3); //32
 		$b4: reverse_linear_channel_value($b3); //40
@@ -199,7 +199,7 @@
 
 //This takes a luminance and converts it back to a channel...
 @function reverse_linear_channel_value($value){
-	$value: pow($value, 1/2.4); //This won't work until Sass supports decimal exponents (it is slow).
+	$value: pow($value, 1/2.4); //This will not work until Sass supports decimal exponents (it is slow).
 	$value: $value * 1.055;
 	$value: $value - 0.055;
 	$value: $value * 255;
@@ -222,7 +222,7 @@
 		@if $ease == $name {
 			@return cubic-bezier(unquote(#{$values}) unquote(#{$custom}));
 		} @else {
-			//@warn '#{$ease} not found in the easings map.';
+			//@warn "#{$ease} not found in the easings map.";
 		}
 	}
 }

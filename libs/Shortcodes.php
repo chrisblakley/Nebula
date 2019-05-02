@@ -7,7 +7,7 @@ if ( !trait_exists('Shortcodes') ){
 		public function hooks(){
 			$this->shortcode_flags = array();
 
-			add_shortcode('widget',array($this, 'widget'));
+			add_shortcode('widget', array($this, 'widget'));
 
 			//Div
 			add_shortcode('div', array($this, 'div_shortcode'));
@@ -128,7 +128,7 @@ if ( !trait_exists('Shortcodes') ){
 			ob_start();
 
 			//Call the widget directly via PHP: https://codex.wordpress.org/Template_Tags/the_widget
-			the_widget(wp_specialchars($widget_name), $instance, array(
+			the_widget(esc_html($widget_name), $instance, array(
 				'widget_id' => 'arbitrary-instance-' . rand(10000, 99999),
 				'before_widget' => '',
 				'after_widget' => '',
@@ -336,7 +336,7 @@ if ( !trait_exists('Shortcodes') ){
 			 * @var string $class
 			 * @var string $style
 			 */
-			extract(shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '',  "region" => '', "width" => '100%', "height" => '350', "class" => '', "style" => ''), $atts));
+			extract(shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '', "region" => '', "width" => '100%', "height" => '350', "class" => '', "style" => ''), $atts));
 
 			/** @todo $flags is unused */
 			$flags = $this->get_flags($atts);
@@ -531,7 +531,7 @@ if ( !trait_exists('Shortcodes') ){
 			return $return;
 		}
 
-		/** @todo  Is $content unnecessary? */
+		//Is content unnecessary?
 		public function github_shortcode($atts, $content=''){
 			/**
 			 * @var string $lang
@@ -714,13 +714,13 @@ if ( !trait_exists('Shortcodes') ){
 
 			//Remove any instances of ''.
 			$content = str_replace(array('<p></p>'), '', $content);
-			$content = str_replace(array('<p>  </p>'), '', $content);
+			$content = str_replace(array('<p> </p>'), '', $content);
 
 			return $content;
 		}
 
 		public function add_shortcode_button(){
-			if ( current_user_can('edit_posts') ||  current_user_can('edit_pages') ){
+			if ( current_user_can('edit_posts') || current_user_can('edit_pages') ){
 				add_filter('mce_external_plugins', array($this, 'add_shortcode_plugin'));
 				add_filter('mce_buttons_3', array($this, 'register_shortcode_button'));
 			}

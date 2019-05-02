@@ -34,7 +34,7 @@ if ( !trait_exists('Automation') ){
 		public function register_required_plugins(){
 			$bundled_plugins = array(
 				array(
-					'name'  => 'Nebula Companion',
+					'name' => 'Nebula Companion',
 					'slug' => 'nebula-companion',
 					'source' => 'https://github.com/chrisblakley/Nebula-Companion/archive/master.zip',
 					'required' => false,
@@ -82,7 +82,7 @@ if ( !trait_exists('Automation') ){
 				array(
 					'name' => 'Responsive Lightbox',
 					'slug' => 'responsive-lightbox',
-					'required'  => false,
+					'required' => false,
 				),
 				array(
 					'name' => 'WP Mail SMTP',
@@ -153,11 +153,11 @@ if ( !trait_exists('Automation') ){
 
 			$config = array(
 				'id' => 'nebula',
-				'parent_slug'  => 'plugins.php', //Where the "Install Plugins" submenu appears. Note: WordPress.org theme distribution requires this to be under "themes.php"
+				'parent_slug' => 'plugins.php', //Where the "Install Plugins" submenu appears. Note: WordPress.org theme distribution requires this to be under "themes.php"
 				'strings' => array(
 					'menu_title' => 'Recommended Plugins',
 					'page_title' => 'Recommended Plugins',
-					'notice_can_install_required'     => _n_noop(
+					'notice_can_install_required' => _n_noop(
 						'This theme recommends the following plugin: %1$s.',
 						'This theme recommends the following plugins: %1$s.',
 						'tgmpa'
@@ -167,7 +167,7 @@ if ( !trait_exists('Automation') ){
 						'The following optional plugins may be needed for the theme: %1$s.',
 						'tgmpa'
 					),
-					'notice_can_activate_required'    => _n_noop(
+					'notice_can_activate_required' => _n_noop(
 						'The following recommended plugin is currently inactive: %1$s.',
 						'The following recommended plugins are currently inactive: %1$s.',
 						'tgmpa'

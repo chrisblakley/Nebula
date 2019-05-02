@@ -11,7 +11,7 @@ $dark_primary_color: darken(desaturate($primary_color, 95%), 20%);
 $dark_secondary_color: darken(desaturate($secondary_color, 95%), 20%);
 
 //CSS variables defined in Bootstrap
-$danger_color: #dc3545 !default; //Generally #dc3545 //Why can't var(--danger-color) be used here?
+$danger_color: #dc3545 !default; //Generally #dc3545 //Why can var(--danger-color) not be used here?
 $warning_color: #ffc107 !default; //Generally #ffc107
 $info_color: #17a2b8 !default; //Generally #17a2b8
 $success_color: #28a745 !default; //Generally #28a745
@@ -23,7 +23,7 @@ $lg: 992; //Generally 992
 $xl: 1200; //Generally 1200
 
 $system_font: var(--font-family-sans-serif); //CSS variable defined in Bootstrap
-$font_awesome: 'Font Awesome 5 Pro', 'Font Awesome 5 Free', 'Font Awesome 5 Brands'; //Convenient stack for Font Awesome icons //DEPRECATED: Eventually delete this
+$font_awesome: "Font Awesome 5 Pro", "Font Awesome 5 Free", "Font Awesome 5 Brands"; //Convenient stack for Font Awesome icons //DEPRECATED: Eventually delete this
 
 //Easings
 $easings: (

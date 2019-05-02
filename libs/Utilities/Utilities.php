@@ -15,7 +15,7 @@ if ( !trait_exists('Utilities') ){
 		public function hooks(){
 			$this->server_timings = array();
 
-			add_filter('posts_where' , array($this, 'fuzzy_posts_where'));
+			add_filter('posts_where', array($this, 'fuzzy_posts_where'));
 			$this->AnalyticsHooks(); //Register Analytics hooks
 			$this->DeviceHooks(); //Register Device hooks
 			$this->SassHooks(); //Register Sass hooks
@@ -887,17 +887,17 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			//Loop through the folder
-			$dir = dir($source);
-			while ( false !== $entry = $dir->read() ){
-				// Skip pointers
+			$directory = dir($source);
+			while ( false !== $entry = $directory->read() ){ //@TODO "Nebula" 0: I don't like the assignment operator inside of this condition here. Re-write it.
+				//Skip pointers
 				if ( $entry == '.' || $entry == '..' ){
 					continue;
 				}
 
-				$this->xcopy("$source/$entry", "$destination/$entry", $permissions); //Deep copy directories
+				$this->xcopy($source . '/' . $entry, $destination . '/' . $entry, $permissions); //Deep copy directories
 			}
 
-			$dir->close();
+			$directory->close();
 			return true;
 		}
 
@@ -1528,7 +1528,7 @@ if ( !trait_exists('Utilities') ){
 				*/
 
 				$response = wp_remote_post($get_url, array(
-					'headers'  => array('Content-Type' => 'application/json'),
+					'headers' => array('Content-Type' => 'application/json'),
 					'body' => $content,
 				));
 			} else {

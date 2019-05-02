@@ -12,7 +12,7 @@
 	}
 }
 
-//.element:before {content: "\f001"; @include font-awesome('solid');}
+//.element:before {content: "\f001"; @include font-awesome("solid");}
 /* Notes:
 	FA Solid (Pro) needs font weight of 900
 	FA Regular (Pro) needs font weight of 400
@@ -22,16 +22,16 @@
 	FA Pro (which works without pro) uses font weight 300 for solid... This is a weird one...
 	Therefore, some instances may need additional overrides (like when calling FA Light, but not having FA Pro) https://github.com/chrisblakley/Nebula/issues/1665
 */
-@mixin font-awesome($type: 'solid'){
-	@if $type == 'solid' {
+@mixin font-awesome($type: "solid"){
+	@if $type == "solid" {
 		font-family: "Font Awesome 5 Solid", "Font Awesome 5 Free", "Font Awesome 5 Pro", "Font Awesome 5 Brands"; font-weight: 900;
-	} @else if $type == 'regular' {
+	} @else if $type == "regular" {
 		font-family: "Font Awesome 5 Regular", "Font Awesome 5 Free", "Font Awesome 5 Pro", "Font Awesome 5 Brands"; font-weight: 400; //If this falls back to free, the font weight may not be compatible...
-	} @else if $type == 'light' {
+	} @else if $type == "light" {
 		font-family: "Font Awesome 5 Light", "Font Awesome 5 Free", "Font Awesome 5 Pro", "Font Awesome 5 Brands"; font-weight: 300; //If this falls back to free, the font weight may not be compatible...
-	} @else if $type == 'free' {
+	} @else if $type == "free" {
 		font-family: "Font Awesome 5 Free", "Font Awesome 5 Pro", "Font Awesome 5 Brands"; font-weight: 900;
-	} @else if $type == 'brand' {
+	} @else if $type == "brand" {
 		font-family: "Font Awesome 5 Brands"; font-weight: 400;
 	}
 }
@@ -239,9 +239,9 @@
 //Maintain a responsive aspect ratio
 //.element {@include ratio(16, 9);}
 @mixin ratio($x, $y, $pseudo: false){
-	$padding: unquote(($y/$x)*100 + '%');
+	$padding: unquote(($y/$x)*100 + "%");
 	@if $pseudo {
-		&:before {content: ''; display: block; position: relative; width: 100%; padding-top: $padding;}
+		&:before {content: ""; display: block; position: relative; width: 100%; padding-top: $padding;}
 	} @else {
 		padding-top: $padding;
 	}
@@ -273,8 +273,8 @@
     }
 }
 
-//.element-solid {@include arrow('top','left', 10px, #4fade3);}
-//.element-border {@include arrow('top','left', 10px, #eee, #4fade3, 6px);}
+//.element-solid {@include arrow("top", "left", 10px, #4fade3);}
+//.element-border {@include arrow("top", "left", 10px, #eee, #4fade3, 6px);}
 @mixin arrow($side: "right", $align: "center", $size: 20px, $color: #f6f6f6, $borderColor: "none", $borderSize: 3px) {
 	$selector: "&:after, &:before";
 	@if $borderColor == "none" {
@@ -328,16 +328,16 @@
 */
 @mixin modernizr($features, $supports){
 	$everything-okay: true;
-	$prefix: if($supports, '', 'no-'); //Use the 'no-' prefix if checking for unsuported features (e.g. `.no-translate3d`)
-	$selector: if($supports, '', (unquote('.no-js'))); //Features selector: create a string if checking for supported features -or- create a list if checking for unsuported features
-	$placeholder: if($supports, '%yep', '%nope'); //The placeholder (e.g. `%yep-translate3d` or `%nope-opacity`)
+	$prefix: if($supports, "", "no-"); //Use the "no-" prefix if checking for unsuported features (e.g. `.no-translate3d`)
+	$selector: if($supports, "", (unquote(".no-js"))); //Features selector: create a string if checking for supported features -or- create a list if checking for unsuported features
+	$placeholder: if($supports, "%yep", "%nope"); //The placeholder (e.g. `%yep-translate3d` or `%nope-opacity`)
 	@each $feature in $features { //Generate placeholder and selectors
 		@if ( type-of($feature) != string ){ //Making sure $feature is a string
 			$everything-okay: false;
-			@warn '`#{$feature} is not a string for `modernizr`';
+			@warn "`#{$feature} is not a string for `modernizr`";
 		} @else {
-			$placeholder: $placeholder + '-' + $feature; //Add feature name to the placeholder string (e.g. '%yep' + '-' + 'translate3d' or '%nope' + '-' + 'translate3d')
-			$new-selector: #{'.' + $prefix + $feature}; //Define the new selector string (e.g. `.translate3d` or `.no-translate3d`)
+			$placeholder: $placeholder + "-" + $feature; //Add feature name to the placeholder string (e.g. "%yep" + "-" + "translate3d" or "%nope" + "-" + "translate3d")
+			$new-selector: #{"." + $prefix + $feature}; //Define the new selector string (e.g. `.translate3d` or `.no-translate3d`)
 			$selector: if($supports, $selector + $new-selector, append($selector, $new-selector, comma)); //Append the new selector (to the string if yep, to the list if nope)
 		}
 	}

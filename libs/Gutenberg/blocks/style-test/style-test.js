@@ -2,7 +2,7 @@ var el = wp.element.createElement,
 	registerBlockType = wp.blocks.registerBlockType,
 	RichText = wp.editor.RichText;
 
-registerBlockType( 'nebula/style-test', {
+registerBlockType('nebula/style-test', {
 	title: 'Nebula Style Test',
 	icon: 'universal-access-alt',
 	category: 'nebula',

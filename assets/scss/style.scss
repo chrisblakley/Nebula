@@ -4,27 +4,27 @@
 	Description: Nebula is a springboard WordPress theme framework for developers. Like other WordPress startup themes, it has custom functionality built-in (like shortcodes, styles, and JS/PHP functions), but unlike other themes Nebula is not meant for the end-user.
 	Author: Pinckney Hugo Group
 	Author URI: http://www.pinckneyhugo.com
-	Version: 6.12.1.4724
+	Version: 6.12.1.9568
 	License: GNU General Public License v2.0 or later
 	License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	Tags: one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, threaded-comments, theme-options, sticky-post, post-formats, microformats, full-width-template, front-page-post-form, flexible-header, featured-images, featured-image-header, editor-style, custom-menu, custom-colors, accessibility-ready
 	Text Domain: nebula
 */
 
-@import 'variables';
-@import 'functions';
-@import 'mixins';
-@import 'animations';
-@import 'helpers';
-@import 'shortcodes';
+@import "variables";
+@import "functions";
+@import "mixins";
+@import "animations";
+@import "helpers";
+@import "shortcodes";
 //@todo "Nebula" 0: Include Gutenberg files
-@import 'nebula';
-@import 'vendor';
-@import 'baseline';
-@import 'typography';
-@import 'forms';
-@import '../critical'; //Header and other critical above-the-fold styles
-@import 'content';
-@import 'sidebar';
-@import 'footer';
-@import 'print';
+@import "nebula";
+@import "vendor";
+@import "baseline";
+@import "typography";
+@import "forms";
+@import "../critical"; //Header and other critical above-the-fold styles
+@import "content";
+@import "sidebar";
+@import "footer";
+@import "print";

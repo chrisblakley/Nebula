@@ -7,7 +7,7 @@
 	a {font-size: rem(32px); @include link-colors(#fff, #aaa); text-decoration: underline;}
 	.mobilenavcon {display: block;
 		#mobileheadersearch {display: flex; align-items: center;
-			input {width: 100%; color: #fff; font-size: rem(18px); padding-left: 10px; line-height: 42px; background: none; border: none; outline: none; box-shadow: none; border-radius: 0;}
+			input {width: 100%; color: #fff; font-size: rem(18px); padding-left: 10px; line-height: 42px; min-height: 42px; background: none; border: none; outline: none; box-shadow: none; border-radius: 0;}
 			input::-webkit-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
 			input:-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
 			input::-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
@@ -47,7 +47,7 @@
 
 			&.menu-item-has-children {position: relative;
 				> a {padding-right: 35px;}
-				&:after {content: "\f054"; position: absolute; top: 0; right: 18px; height: 100%; display: flex; align-items: center; @include font-awesome('solid'); font-size: 8px; color: #aaa; @include prefix((transition: right 0.25s easing(easeOutBack))); pointer-events: none;}
+				&:after {content: "\f054"; position: absolute; top: 0; right: 18px; height: 100%; display: flex; align-items: center; @include font-awesome("solid"); font-size: 8px; color: #aaa; @include prefix((transition: right 0.25s easing(easeOutBack))); pointer-events: none;}
 			}
 
 			ul.sub-menu {display: none;} //Hide all sub-menus at first

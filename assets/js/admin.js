@@ -107,7 +107,7 @@ jQuery(window).on('load', function(){
 		}, 1000, 'nebula options filter history api');
 
 		//Prevent the form from submitting if pressing enter after searching
-		if ( e.type == 'keydown' && e.keyCode == 13 ){
+		if ( e.type === 'keydown' && e.keyCode === 13 ){
 			e.preventDefault();
 			return false;
 		}
@@ -674,7 +674,7 @@ function checkDependents(inputObject){
 					}
 				});
 
-				if ( dependentsChecked == totalDependents ){
+				if ( dependentsChecked === totalDependents ){
 					oThis.removeClass('inactive').find('.dependent-note').addClass('hidden');
 				}
 			});
@@ -694,7 +694,7 @@ function checkDependents(inputObject){
 					}
 				});
 
-				if ( dependentsUnchecked == totalDependents ){
+				if ( dependentsUnchecked === totalDependents ){
 					oThis.addClass('inactive').find('.dependent-note').removeClass('hidden');
 				}
 			});
@@ -969,7 +969,7 @@ function debounce(callback, wait, uniqueID, immediate){
 	}
 
 	if ( !uniqueID ){
-		uniqueID = "Don't call this twice without a uniqueID";
+		uniqueID = 'Do not call this twice without a uniqueID';
 	}
 
 	var context = this, args = arguments;

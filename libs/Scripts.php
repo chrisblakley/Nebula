@@ -169,7 +169,7 @@ if ( !trait_exists('Scripts') ){
 				echo '<noscript>' . PHP_EOL;
 				foreach ( $lazy_assets['styles'] as $handle => $condition ){
 					if ( !empty($handle) && !empty($wp_styles->registered[$handle]) ){ //Lazy loaded assets must have a handle!
-						echo '<link rel="stylesheet" id="' . $handle . '-css"  href="' . $wp_styles->registered[$handle]->src . '" type="text/css" media="' . $wp_styles->registered[$handle]->args . '" />' . PHP_EOL;
+						echo '<link rel="stylesheet" id="' . $handle . '-css" href="' . $wp_styles->registered[$handle]->src . '" type="text/css" media="' . $wp_styles->registered[$handle]->args . '" />' . PHP_EOL;
 					}
 				}
 				echo '</noscript>' . PHP_EOL;

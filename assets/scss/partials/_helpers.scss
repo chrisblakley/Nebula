@@ -143,7 +143,7 @@ body:not(.wp-admin) {
 
 hr.nebula-line {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; @include background-color(#fff); margin: 3px 0; padding: 0;
 	.rgba & {display: block; height: 1px; border: 0; margin: 3px 0; padding: 0; mix-blend-mode: screen;}
-	.rgba &:before {content: ''; position: relative; top: -1px; height: 1px; display: block; @include background-color(#000, 0.2); mix-blend-mode: multiply;}
+	.rgba &:before {content: ""; position: relative; top: -1px; height: 1px; display: block; @include background-color(#000, 0.2); mix-blend-mode: multiply;}
 	&.zero {margin: 0;}
 }
 
@@ -207,11 +207,11 @@ a.nebula-share-btn {display: inline-block; padding: 5px 7px; border-radius: 3px;
 		&:hover {background: darken(brand(pinterest), 15%);}
 	}
 	&.email {background: grey;
-		&:before {content: "\f0e0"; @include font-awesome('solid');}
+		&:before {content: "\f0e0"; @include font-awesome("solid");}
 		&:hover {background: darken(grey, 15%);}
 	}
 	&.webshare, &.shareapi {background: orange;
-		&:before {content: "\f1e0"; @include font-awesome('solid');}
+		&:before {content: "\f1e0"; @include font-awesome("solid");}
 		&:hover {background: darken(orange, 15%);}
 	}
 }
@@ -225,12 +225,12 @@ a.nebula-share-btn {display: inline-block; padding: 5px 7px; border-radius: 3px;
 	@each $filetype in $filetypes {
 		@if $specific {
 			a.icon[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
-				&:before {content: "\#{$unicode}"; @include font-awesome('solid'); color: $color; margin-right: 7px; font-weight: 300;}
+				&:before {content: "\#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
 			}
 		} @else {
 			a[href$=".#{$filetype}"]:not(.no-icon):not(.btn):not(.wp-block-button__link),
 			li.icon a[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
-				&:before {content: "\#{$unicode}"; @include font-awesome('solid'); color: $color; margin-right: 7px; font-weight: 300;}
+				&:before {content: "\#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
 			}
 		}
 	}

@@ -2,7 +2,7 @@ const {__} = wp.i18n;
 const {registerBlockType} = wp.blocks;
 const el = wp.element.createElement;
 
-registerBlockType( 'hiRoy/serverSide', {
+registerBlockType('hiRoy/serverSide', {
 	title: __('Nebula Server Side Block', 'text-domain'),
 	icon: 'networking',
 	category: 'nebula',
@@ -17,6 +17,6 @@ registerBlockType( 'hiRoy/serverSide', {
 	},
 	save({attributes, className}){
 		//gutenberg will save attributes we can use in server-side callback
-	   return null;
+		return null;
 	},
 } );

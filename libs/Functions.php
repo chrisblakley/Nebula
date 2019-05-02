@@ -538,14 +538,14 @@ trait Functions {
 
 			$replace = array(
 				"$1" . strtolower(get_option('stylesheet')) . "$3",
-				"$1" . 'v' . $this->version('full') . "$3" . " //" . date('l, F j, Y g:i:s A'),
-				"$1" . home_url('/') . "offline/" . "$3",
-				"$1" . get_theme_file_uri('/assets/img') . "/offline.svg" . "$3",
-				"$1" . "cd" . $this->ga_definition_index($this->get_option('cd_offline')) . "$3",
-				"$1" . get_theme_file_uri('/assets/img/meta') . "/android-chrome-512x512.png" . "$3",
+				"$1" . 'v' . $this->version('full') . "$3 //" . date('l, F j, Y g:i:s A'),
+				"$1" . home_url('/') . "offline/$3",
+				"$1" . get_theme_file_uri('/assets/img') . "/offline.svg$3",
+				"$1cd" . $this->ga_definition_index($this->get_option('cd_offline')) . "$3",
+				"$1" . get_theme_file_uri('/assets/img/meta') . "/android-chrome-512x512.png$3",
 				"$1" . $this->manifest_json_location() . "$3",
 				"$1" . home_url('/') . "$3",
-				"$1" . home_url('/') . "?utm_source=pwa" . "$3",
+				"$1" . home_url('/') . "?utm_source=pwa$3",
 			);
 
 			$sw_js = preg_replace($find, $replace, $sw_js);
@@ -622,7 +622,7 @@ trait Functions {
 			}
 		}
 
-		$manifest_json = rtrim($manifest_json,', ') . ']}';
+		$manifest_json = rtrim($manifest_json, ', ') . ']}';
 
 		WP_Filesystem();
 		global $wp_filesystem;
@@ -702,21 +702,21 @@ trait Functions {
 		if ( $meta === 'date' || $meta === 'time' || $meta === 'on' || $meta === 'day' || $meta === 'when' ){
 			echo $this->post_date($options);
 		} elseif ( $meta === 'author' || $meta === 'by' ){
-			echo  $this->post_author($options);
+			echo $this->post_author($options);
 		} elseif ( $meta === 'type' || $meta === 'cpt' || $meta === 'post_type' ){
-			echo  $this->post_type($options);
+			echo $this->post_type($options);
 		} elseif ( $meta === 'categories' || $meta === 'category' || $meta === 'cat' || $meta === 'cats' || $meta === 'in' ){
-			echo  $this->post_categories($options);
+			echo $this->post_categories($options);
 		} elseif ( $meta === 'tags' || $meta === 'tag' ){
-			echo  $this->post_tags($options);
+			echo $this->post_tags($options);
 		} elseif ( $meta === 'dimensions' || $meta === 'size' ){
-			echo  $this->post_dimensions($options);
+			echo $this->post_dimensions($options);
 		} elseif ( $meta === 'exif' || $meta === 'camera' ){
-			echo  $this->post_exif($options);
+			echo $this->post_exif($options);
 		} elseif ( $meta === 'comments' || $meta === 'comment' ){
-			echo  $this->post_comments($options);
+			echo $this->post_comments($options);
 		} elseif ( $meta === 'social' || $meta === 'sharing' || $meta === 'share' ){
-			 $this->social(array('facebook', 'twitter', 'linkedin', 'pinterest'), 0);
+			$this->social(array('facebook', 'twitter', 'linkedin', 'pinterest'), 0);
 		}
 	}
 
@@ -761,7 +761,7 @@ trait Functions {
 		$day = ( $data['day'] )? date('d', $the_date) . '/' : ''; //If the day should be shown (otherwise, just month and year).
 
 		if ( $data['linked'] && !isset($options['format']) ){
-			return '<span class="posted-on meta-item post-date">' . $label . '<span class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . '<a href="' . home_url('/') . date('Y/m', $the_date) . '/' . '">' . date('F', $the_date) . '</a>' . ' ' . '<a href="' . home_url('/') . date('Y/m', $the_date) . '/' . $day . '">' . date('j', $the_date) . '</a>' . ', ' . '<a href="' . home_url('/') . date('Y', $the_date) . '/' . '">' . date('Y', $the_date) . '</a>' . '</span>' . $modified_date_html . '</span>';
+			return '<span class="posted-on meta-item post-date">' . $label . '<span class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '"><a href="' . home_url('/') . date('Y/m', $the_date) . '/">' . date('F', $the_date) . '</a> <a href="' . home_url('/') . date('Y/m', $the_date) . '/' . $day . '">' . date('j', $the_date) . '</a>, <a href="' . home_url('/') . date('Y', $the_date) . '/">' . date('Y', $the_date) . '</a></span>' . $modified_date_html . '</span>';
 		} else {
 			return '<span class="posted-on meta-item post-date">' . $label . '<span class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . date($data['format'], $the_date) . '</span>' . $modified_date_html . '</span>';
 		}
@@ -798,7 +798,7 @@ trait Functions {
 			}
 
 			if ( $data['linked'] && !$data['force'] ){
-				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $label . '<span class="meta-item entry-author">' . '<a href="' . get_author_posts_url($author_id) . '" itemprop="name">' . $author_name . '</a></span></span>';
+				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $label . '<span class="meta-item entry-author"><a href="' . get_author_posts_url($author_id) . '" itemprop="name">' . $author_name . '</a></span></span>';
 			} else {
 				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $label . '<span class="meta-item entry-author" itemprop="name">' . $author_name . '</span></span>';
 			}
@@ -959,12 +959,12 @@ trait Functions {
 					$pshutter = $imgmeta['image_meta']['shutter_speed'] . ' ' . __('seconds', 'nebula');
 				}
 
-				$output = '<time datetime="' . date('c', $imgmeta['image_meta']['created_timestamp']) . '"><span class="month">' . date('F', $imgmeta['image_meta']['created_timestamp']) . '</span> <span class="day">' . date('j', $imgmeta['image_meta']['created_timestamp']) . '</span><span class="suffix">' . date('S', $imgmeta['image_meta']['created_timestamp']) . '</span> <span class="year">' . date('Y', $imgmeta['image_meta']['created_timestamp']) . '</span></time>' . ', ';
+				$output = '<time datetime="' . date('c', $imgmeta['image_meta']['created_timestamp']) . '"><span class="month">' . date('F', $imgmeta['image_meta']['created_timestamp']) . '</span> <span class="day">' . date('j', $imgmeta['image_meta']['created_timestamp']) . '</span><span class="suffix">' . date('S', $imgmeta['image_meta']['created_timestamp']) . '</span> <span class="year">' . date('Y', $imgmeta['image_meta']['created_timestamp']) . '</span></time>, ';
 				$output .= $imgmeta['image_meta']['camera'] . ', ';
-				$output .= $imgmeta['image_meta']['focal_length'] . 'mm' . ', ';
-				$output .= '<span style="font-style: italic; font-family: Trebuchet MS, Candara, Georgia; text-transform: lowercase;">f</span>/' . $imgmeta['image_meta']['aperture'] . ', ';
+				$output .= $imgmeta['image_meta']['focal_length'] . 'mm, ';
+				$output .= '<span style="font-style: italic; font-family: "Trebuchet MS", "Candara", "Georgia", serif; text-transform: lowercase;">f</span>/' . $imgmeta['image_meta']['aperture'] . ', ';
 				$output .= $pshutter . ', ';
-				$output .= $imgmeta['image_meta']['iso'] .' ISO';
+				$output .= $imgmeta['image_meta']['iso'] . ' ISO';
 			}
 		} else {
 			$output = __('No EXIF data found', 'nebula');
@@ -1316,7 +1316,7 @@ trait Functions {
 
 			//Twitter
 			if ( in_array($network, array('twitter')) ){
-				echo '<a class="nebula-share-btn twitter" href="https://twitter.com/intent/tweet?text=' . $encoded_title .  '&url=' . $encoded_url . '" target="_blank" rel="noopener">' . __('Tweet', 'nebula') . '</a>';
+				echo '<a class="nebula-share-btn twitter" href="https://twitter.com/intent/tweet?text=' . $encoded_title . '&url=' . $encoded_url . '" target="_blank" rel="noopener">' . __('Tweet', 'nebula') . '</a>';
 			}
 
 			//LinkedIn
@@ -1713,7 +1713,7 @@ trait Functions {
 					$prefix = 'Category: ';
 				}
 
-				echo apply_filters('nebula_breadcrumbs_category', $data['before'] . '<a class="current-breadcrumb-link" href="' . get_category_link($thisCat->term_id) . '">'. $prefix . single_cat_title('', false) . '</a>' . $data['after'], $data);
+				echo apply_filters('nebula_breadcrumbs_category', $data['before'] . '<a class="current-breadcrumb-link" href="' . get_category_link($thisCat->term_id) . '">' . $prefix . single_cat_title('', false) . '</a>' . $data['after'], $data);
 			} elseif ( is_search() ){
 				echo $data['before'] . 'Search results' . $data['after'];
 			} elseif ( is_day() ){
@@ -1761,7 +1761,7 @@ trait Functions {
 				echo $data['before'] . $post_type->labels->singular_name . $data['after'];
 			} elseif ( is_attachment() ){ //@TODO "Nebula" 0: Check for gallery pages? If so, it should be Home > Parent(s) > Gallery > Attachment
 				if ( !empty($post->post_parent) ){ //@TODO "Nebula" 0: What happens if the page parent is a child of another page?
-					echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_permalink($post->post_parent) . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title($post->post_parent)) . '</span></a></li>' . ' ' . $data['delimiter_html'] . ' ' . strip_tags(get_the_title());
+					echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_permalink($post->post_parent) . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title($post->post_parent)) . '</span></a></li> ' . $data['delimiter_html'] . ' ' . strip_tags(get_the_title());
 				} else {
 					echo strip_tags(get_the_title());
 				}
@@ -1776,7 +1776,7 @@ trait Functions {
 				while ( $parent_id ){
 					$page = get_page($parent_id);
 					$breadcrumbs[] = '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_permalink($page->ID) . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title($page->ID)) . '</span></a></li>';
-					$parent_id  = $page->post_parent;
+					$parent_id = $page->post_parent;
 				}
 
 				$breadcrumbs = array_reverse($breadcrumbs);
@@ -2593,7 +2593,7 @@ trait Functions {
 
 	//Replace text on password protected posts to be more minimal
 	public function password_form_simplify(){
-		$output  = '<form class="ignore-form" action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" method="post">
+		$output = '<form class="ignore-form" action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" method="post">
 						<span>' . __('Password', 'nebula') . ': </span>
 						<input type="password" class="ignore-form" name="post_password" size="20" autocomplete="current-password" />
 						<input type="submit" name="Submit" value="' . __('Go', 'nebula') . '" />
@@ -2776,7 +2776,7 @@ trait Functions {
 				set_transient('nebula_autocomplete_menus', $menus, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 			}
 
-			foreach($menus as $menu){
+			foreach ( $menus as $menu ){
 				$menu_items = wp_get_nav_menu_items($menu->term_id);
 				foreach ( $menu_items as $key => $menu_item ){
 					$suggestion = array();

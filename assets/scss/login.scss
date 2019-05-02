@@ -1,6 +1,6 @@
-@import 'variables';
-@import 'functions';
-@import 'mixins';
+@import "variables";
+@import "functions";
+@import "mixins";
 
 .wp-core-ui .button-primary {box-shadow: 0 1px 0 $primary_color; text-shadow: 0 -1px 1px $primary_color, 1px 0 1px $primary_color, 0 1px 1px $primary_color, -1px 0 1px $primary_color;}
 

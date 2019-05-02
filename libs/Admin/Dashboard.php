@@ -226,7 +226,7 @@ if ( !trait_exists('Dashboard') ){
 		//Current User metabox
 		public function current_user_metabox(){
 			$headshotURL = esc_attr(get_the_author_meta('headshot_url', get_current_user_id()));
-			$headshot_thumbnail = str_replace('.jpg', '-150x150.jpg' , $headshotURL);
+			$headshot_thumbnail = str_replace('.jpg', '-150x150.jpg', $headshotURL);
 
 			if ( $headshot_thumbnail ){
 				$headshot_html = '<img src="' . esc_attr($headshot_thumbnail) . '" style="float: left; max-width: 20px; border-radius: 100px;" />&nbsp;';
@@ -313,7 +313,7 @@ if ( !trait_exists('Dashboard') ){
 				} elseif ( $this->is_tablet() ){
 					echo '<li><i class="fas fa-fw fa-tablet-alt"></i> Device: <strong>' . $this->get_device('full') . '</strong> <small>(Tablet)</small></li>';
 				} else {
-					echo '<li><i class="fas fa-fw fa-mobile-alt"></i> Device: <strong>' . $this->get_device('full') . '</strong>  <small>(Mobile)</small></li>';
+					echo '<li><i class="fas fa-fw fa-mobile-alt"></i> Device: <strong>' . $this->get_device('full') . '</strong> <small>(Mobile)</small></li>';
 				}
 
 				//Operating System
@@ -447,7 +447,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Extension skip list for both To Do Manager and Developer Metabox
 		public function skip_extensions(){
-			return array('.jpg', '.jpeg', '.png', '.gif', '.ico', '.tiff', '.psd', '.ai',  '.apng', '.bmp', '.otf', '.ttf', '.ogv', '.flv', '.fla', '.mpg', '.mpeg', '.avi', '.mov', '.woff', '.eot', '.mp3', '.mp4', '.wmv', '.wma', '.aiff', '.zip', '.zipx', '.rar', '.exe', '.dmg', '.csv', '.swf', '.pdf', '.pdfx', '.pem', '.ppt', '.pptx', '.pps', '.ppsx', '.bak'); //Would it be faster to list allowed filetypes instead?
+			return array('.jpg', '.jpeg', '.png', '.gif', '.ico', '.tiff', '.psd', '.ai', '.apng', '.bmp', '.otf', '.ttf', '.ogv', '.flv', '.fla', '.mpg', '.mpeg', '.avi', '.mov', '.woff', '.eot', '.mp3', '.mp4', '.wmv', '.wma', '.aiff', '.zip', '.zipx', '.rar', '.exe', '.dmg', '.csv', '.swf', '.pdf', '.pdfx', '.pem', '.ppt', '.pptx', '.pps', '.ppsx', '.bak'); //Would it be faster to list allowed filetypes instead?
 		}
 
 		//TODO Metabox
@@ -639,7 +639,7 @@ if ( !trait_exists('Dashboard') ){
 			//Server operating system
 			if ( strpos(strtolower(PHP_OS), 'linux') !== false ){
 				$php_os_icon = 'fa-linux';
-			} else if ( strpos(strtolower(PHP_OS), 'windows') !== false ){
+			} elseif ( strpos(strtolower(PHP_OS), 'windows') !== false ){
 				$php_os_icon = 'fa-windows';
 			} else {
 				$php_os_icon = 'fa-upload';
@@ -649,7 +649,7 @@ if ( !trait_exists('Dashboard') ){
 			//Server software
 			$server_software = $_SERVER['SERVER_SOFTWARE'];
 			if ( strlen($server_software) > 10 ){
-				$server_software = strtok($_SERVER['SERVER_SOFTWARE'],  ' '); //Shorten to until the first space
+				$server_software = strtok($_SERVER['SERVER_SOFTWARE'], ' '); //Shorten to until the first space
 			}
 			echo '<li><i class="fas fa-fw fa-server"></i> Server Software: <strong title="' . $_SERVER['SERVER_SOFTWARE'] . '">' . $server_software . '</strong></li>';
 

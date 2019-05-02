@@ -28,7 +28,7 @@
 
 	li.widget_archive label {display: none;}
 	li.widget_categories ul li {
-		&:before {content: '\f02e'; @include font-awesome('solid'); margin-right: 5px;}
+		&:before {content: "\f02e"; @include font-awesome("solid"); margin-right: 5px;}
 	}
 
 	//Overrides the default Tag Cloud widget. @TODO "Nebula" 0: Come up with a custom widget for tag list.

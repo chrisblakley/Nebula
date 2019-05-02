@@ -422,7 +422,7 @@ if ( !trait_exists('Analytics') ){
 				'ni' => 1,
 			);
 
-			/** Previously, $data was undefined  */
+			//Previously, $data was undefined
 			$array = array_merge($this->ga_common_parameters(), $array); //Add custom definition parameters
 			$data = array_merge($defaults, $array); //Add passed parameters
 

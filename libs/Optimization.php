@@ -68,9 +68,9 @@ if ( !trait_exists('Optimization') ){
 				}
 
 				$sizes['max_size'] = array(
-					'width'  => $lg_width,
+					'width' => $lg_width,
 					'height' => $lg_height,
-					'crop'   => true
+					'crop' => true
 				);
 
 				//Create a max size of 800px wide for use with the Save Data header
@@ -82,9 +82,9 @@ if ( !trait_exists('Optimization') ){
 				}
 
 				$sizes['max_size_less'] = array(
-					'width'  => $sm_width,
+					'width' => $sm_width,
 					'height' => $sm_height,
-					'crop'   => true
+					'crop' => true
 				);
 			}
 

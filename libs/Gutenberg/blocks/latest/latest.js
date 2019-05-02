@@ -6,7 +6,7 @@ var withAPIData = wp.components.withAPIData;
 
 //@todo: how to add attributes/parameters to the block? (like Video ID when developing the Youtube block)
 
-registerBlockType( 'nebula/latest-post', {
+registerBlockType('nebula/latest-post', {
 	title: 'Nebula Latest Post',
 	icon: 'megaphone',
 	category: 'nebula',
@@ -24,7 +24,7 @@ registerBlockType( 'nebula/latest-post', {
 			return 'loading!';
 		}
 
-		if ( props.posts.data.length === 0 ) {
+		if ( props.posts.data.length === 0 ){
 			return 'No posts';
 		}
 

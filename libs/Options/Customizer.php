@@ -58,7 +58,7 @@ trait Customizer {
 		$wp_customize->add_section('colors', array(
 			'title' => 'Colors',
 			'priority' => 50,
-			'panel'  => 'brand',
+			'panel' => 'brand',
 		));
 
 		//Primary color
@@ -932,7 +932,7 @@ trait Customizer {
 					<?php endif; ?>
 				<?php endif; ?>
 
-				<?php if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ):  //This condition isn't entirely necessary as the selector is unique to the Customizer ?>
+				<?php if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ): //This condition isn't entirely necessary as the selector is unique to the Customizer ?>
 					#footer-section .custom-color-overlay {background: <?php echo get_theme_mod('nebula_footer_overlay_color'); ?>; opacity: <?php echo get_theme_mod('nebula_footer_overlay_opacity'); ?>; animation: none;}
 				<?php endif; ?>
 
@@ -941,7 +941,7 @@ trait Customizer {
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('nebula_fwa_overlay_color') || get_theme_mod('nebula_fwa_overlay_opacity') ):?>
-					#footer-widget-section .custom-color-overlay {background: <?php echo get_theme_mod('nebula_fwa_overlay_color'); ?>;  opacity: <?php echo get_theme_mod('nebula_footer_overlay_opacity'); ?>; animation: none;}
+					#footer-widget-section .custom-color-overlay {background: <?php echo get_theme_mod('nebula_fwa_overlay_color'); ?>; opacity: <?php echo get_theme_mod('nebula_footer_overlay_opacity'); ?>; animation: none;}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('fwa_nav_scheme') ): //Footer Widget Area Nav Scheme ?>
