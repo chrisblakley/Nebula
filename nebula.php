@@ -3,8 +3,8 @@
 if ( !defined('ABSPATH') ){ exit; } //Exit if accessed directly
 
 if ( !class_exists('Nebula') ){
-	require_once(ABSPATH . 'wp-admin/includes/plugin.php');
-	require_once(ABSPATH . 'wp-admin/includes/file.php');
+	require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	require_once ABSPATH . 'wp-admin/includes/file.php';
 
 	//Require Nebula libraries
 	require_once get_template_directory() . '/libs/Scripts.php';

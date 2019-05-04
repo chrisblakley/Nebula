@@ -658,15 +658,15 @@ if ( !trait_exists('Shortcodes') ){
 			 */
 			extract(shortcode_atts(array('link' => '', 'target' => ''), $atts));
 
-			if ( empty($link) ){
-				$linkopen = '';
-				$linkclose = '';
-			} else {
-				if ( empty($target) ){
-					$linkopen = '<a href="' . nebula()->escape($link) . '">';
-				} else {
+			$linkopen = '';
+			$linkclose = '';
+
+			if ( !empty($link) ){
+				$linkopen = '<a href="' . nebula()->escape($link) . '">';
+				if ( !empty($target) ){
 					$linkopen = '<a href="' . nebula()->escape($link) . '" target="' . nebula()->escape($target) . '">';
 				}
+
 				$linkclose = '</a>';
 			}
 

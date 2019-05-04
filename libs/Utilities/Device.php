@@ -140,16 +140,13 @@ if ( !trait_exists('Device') ){
 							if ( $version_parts[1] && $version_parts[1] !== 0 ){ //If minor version exists and is not 0
 								if ( $this->compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //If minor version matches
 									return true;
-								} else {
-									return false;
 								}
-							} else {
-								return true;
+								return false;
 							}
+							return true;
 						}
-					} else {
-						return true;
 					}
+					return true;
 				}
 			}
 

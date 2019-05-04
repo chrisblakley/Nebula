@@ -856,7 +856,7 @@ if ( !trait_exists('Admin') ){
 					$this->update_data('next_version', 'INCOMPATIBLE');
 				}
 			} elseif ( current_user_can('update_themes') && is_child_theme() ){
-				require_once(get_template_directory() . '/inc/vendor/plugin-update-checker/plugin-update-checker.php');
+				require_once get_template_directory() . '/inc/vendor/plugin-update-checker/plugin-update-checker.php';
 				$theme_update_checker = Puc_v4_Factory::buildUpdateChecker(
 					'https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/nebula_theme.json',
 					get_template_directory() . '/functions.php',
@@ -1199,7 +1199,7 @@ if ( !trait_exists('Admin') ){
 
 		//Clear caches when plugins are activated if W3 Total Cache is active
 		public function clear_all_w3_caches(){
-			include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 			if ( is_plugin_active('w3-total-cache/w3-total-cache.php') && isset($_SERVER['activate']) && $_SERVER['activate'] == 'true'){
 				if ( function_exists('w3tc_pgcache_flush') ){
 					w3tc_pgcache_flush();

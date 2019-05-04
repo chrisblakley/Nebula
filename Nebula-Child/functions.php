@@ -5,7 +5,7 @@
  */
 
 if ( !class_exists('Nebula') ){
-	require_once(get_template_directory() . '/nebula.php');
+	require_once get_template_directory() . '/nebula.php';
 	nebula();
 }
 
@@ -27,7 +27,7 @@ if ( !class_exists('Nebula') ){
  add_action('pre_nebula_whatever', '__return_empty_string');
  ===========================*/
 
-require_once(get_stylesheet_directory() . '/libs/nebula_child.php'); //Nebula Child
+require_once get_stylesheet_directory() . '/libs/nebula_child.php'; //Nebula Child
 
 
 /*==========================

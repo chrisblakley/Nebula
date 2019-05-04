@@ -316,12 +316,12 @@ if ( !trait_exists('Scripts') ){
 			//Staff (This is not meant for security checks!)
 			$this->brain['user']['staff'] = false;
 			if ( $this->is_staff() ){
+				$this->brain['user']['staff'] = 'staff';
+
 				if ( $this->is_dev() ){
 					$this->brain['user']['staff'] = 'developer';
 				} elseif ( $this->is_client() ){
 					$this->brain['user']['staff'] = 'client';
-				} else {
-					$this->brain['user']['staff'] = 'staff';
 				}
 			}
 

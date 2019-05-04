@@ -539,7 +539,7 @@ if ( !trait_exists('Optimization') ){
 					echo '<style class="critical">';
 						foreach ( $critical_css_files as $critical_css_file ){
 							if ( file_exists($critical_css_file) ){
-								include_once($critical_css_file);
+								include_once $critical_css_file;
 								echo PHP_EOL;
 							}
 						}
@@ -605,9 +605,9 @@ if ( !trait_exists('Optimization') ){
 		public function disable_emojicons_tinymce($plugins){
 			if ( is_array($plugins) ){
 				return array_diff($plugins, array('wpemoji'));
-			} else {
-				return array();
 			}
+
+			return array();
 		}
 
 		//Lazy-load anything

@@ -109,7 +109,7 @@ if ( !trait_exists('Sass') ){
 				$this->timer('Sass (' . $location_name . ')', 'start', 'Sass');
 
 				//Require SCSSPHP
-				require_once(get_template_directory() . '/inc/vendor/scssphp/scss.inc.php'); //SCSSPHP is a compiler for SCSS 3.x
+				require_once get_template_directory() . '/inc/vendor/scssphp/scss.inc.php'; //SCSSPHP is a compiler for SCSS 3.x
 				$this->scss = new \Leafo\ScssPhp\Compiler();
 
 				//Register import directories

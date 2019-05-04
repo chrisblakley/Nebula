@@ -401,7 +401,7 @@ if ( !trait_exists('Options') ){
 
 		//Output the options page interface
 		public function options_page(){
-			require_once(get_template_directory() . '/libs/Options/Interface.php');
+			require_once get_template_directory() . '/libs/Options/Interface.php';
 		}
 	}
 }
