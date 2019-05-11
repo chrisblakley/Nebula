@@ -85,7 +85,7 @@ class SourceMapGenerator
      * @var array
      */
     protected $sources = [];
-    protected $source_keys = [];
+    protected $sourceKeys = [];
 
     /**
      * @var array
@@ -110,11 +110,11 @@ class SourceMapGenerator
     public function addMapping($generatedLine, $generatedColumn, $originalLine, $originalColumn, $sourceFile)
     {
         $this->mappings[] = [
-            'generated_line' => $generatedLine,
+            'generated_line'   => $generatedLine,
             'generated_column' => $generatedColumn,
-            'original_line' => $originalLine,
-            'original_column' => $originalColumn,
-            'source_file' => $sourceFile
+            'original_line'    => $originalLine,
+            'original_column'  => $originalColumn,
+            'source_file'      => $sourceFile
         ];
 
         $this->sources[$sourceFile] = $sourceFile;
@@ -123,8 +123,9 @@ class SourceMapGenerator
     /**
      * Saves the source map to a file
      *
-     * @param string $file    The absolute path to a file
      * @param string $content The content to write
+     *
+     * @return string
      *
      * @throws \Leafo\ScssPhp\Exception\CompilerException If the file could not be saved
      */
@@ -180,8 +181,8 @@ class SourceMapGenerator
         // A list of original sources used by the 'mappings' entry.
         $sourceMap['sources'] = [];
 
-        foreach ($this->sources as $source_uri => $source_filename) {
-            $sourceMap['sources'][] = $this->normalizeFilename($source_filename);
+        foreach ($this->sources as $sourceUri => $sourceFilename) {
+            $sourceMap['sources'][] = $this->normalizeFilename($sourceFilename);
         }
 
         // A list of symbol names used by the 'mappings' entry.
@@ -236,7 +237,7 @@ class SourceMapGenerator
             return '';
         }
 
-        $this->source_keys = array_flip(array_keys($this->sources));
+        $this->sourceKeys = array_flip(array_keys($this->sources));
 
         // group mappings by generated line number.
         $groupedMap = $groupedMapEncoded = [];
@@ -248,7 +249,7 @@ class SourceMapGenerator
         ksort($groupedMap);
         $lastGeneratedLine = $lastOriginalIndex = $lastOriginalLine = $lastOriginalColumn = 0;
 
-        foreach ($groupedMap as $lineNumber => $line_map) {
+        foreach ($groupedMap as $lineNumber => $lineMap) {
             while (++$lastGeneratedLine < $lineNumber) {
                 $groupedMapEncoded[] = ';';
             }
@@ -256,7 +257,7 @@ class SourceMapGenerator
             $lineMapEncoded = [];
             $lastGeneratedColumn = 0;
 
-            foreach ($line_map as $m) {
+            foreach ($lineMap as $m) {
                 $mapEncoded = $this->encoder->encode($m['generated_column'] - $lastGeneratedColumn);
                 $lastGeneratedColumn = $m['generated_column'];
 
@@ -293,9 +294,16 @@ class SourceMapGenerator
      */
     protected function findFileIndex($filename)
     {
-        return $this->source_keys[$filename];
+        return $this->sourceKeys[$filename];
     }
 
+    /**
+     * Normalize filename
+     *
+     * @param string $filename
+     *
+     * @return string
+     */
     protected function normalizeFilename($filename)
     {
         $filename = $this->fixWindowsPath($filename);

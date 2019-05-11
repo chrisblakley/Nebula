@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 var THEME_NAME = 'nebula-child';
-var NEBULA_VERSION = 'v6.12.2.7153'; //Friday, May 3, 2019 3:57:47 PM
+var NEBULA_VERSION = 'v6.12.9.9104'; //Friday, May 10, 2019 11:58:33 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var OFFLINE_GA_DIMENSION = 'cd2';
@@ -34,7 +34,7 @@ workbox.precaching.precacheAndRoute([
 	OFFLINE_IMG,
 	META_ICON,
 	MANIFEST,
-	//HOME_URL, //This is breaking the service worker again. //https://github.com/chrisblakley/Nebula/issues/1709
+	HOME_URL,
 	START_URL
 ]);
 

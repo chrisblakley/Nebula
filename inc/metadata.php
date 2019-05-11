@@ -176,6 +176,7 @@
 	//Google Structured Data Documentation: https://developers.google.com/search/docs/data-types/data-type-selector
 	//JSON-LD Examples: https://jsonld.com/
 	//Google Structured Data Testing Tool: https://search.google.com/structured-data/testing-tool
+	//Rich Text Test: https://search.google.com/test/rich-results
 
 	$company_type = ( nebula()->get_option('business_type') )? nebula()->get_option('business_type') : 'LocalBusiness';
 ?>
@@ -381,6 +382,21 @@
 				}
 			},
 			"description": "<?php echo nebula()->meta_description(); ?>"
+		}
+	</script>
+<?php endif; ?>
+
+<?php if ( is_front_page() && get_search_form(array('echo' => false)) ): //On home page if search is not disabled ?>
+	<script type="application/ld+json">
+		{
+			"@context": "http://schema.org",
+			"@type": "WebSite",
+			"url": "<?php echo home_url('/'); ?>",
+			"potentialAction": {
+				"@type": "SearchAction",
+				"target": "<?php echo home_url('/'); ?>?q={search_term_string}",
+				"query-input": "required name=search_term_string"
+			}
 		}
 	</script>
 <?php endif; ?>

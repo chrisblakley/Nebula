@@ -156,21 +156,16 @@
 
 #Cache files for certain lengths of time
 #1 YEAR
-<FilesMatch "\.(ico|pdf|flv|png|gif|swf|jpg|jpeg|svg|woff|mp3|css|php|html|js)$">
-	Header set Cache-Control "max-age=29030400, public"
+<FilesMatch "\.(ico|pdf|flv|png|gif|swf|jpg|jpeg|svg|woff|woff2|mp3|css|js)$">
+	Header set Cache-Control "max-age=31536000, public"
 </FilesMatch>
 
-# 30 Days
-<FilesMatch "\.(png|gif|swf|jpg|jpeg|svg|woff|woff2|mp3|css|js)$">
-	Header set Cache-Control "max-age=2592000, public"
-</FilesMatch>
-
-# 2 DAYS
+#2 DAYS
 <FilesMatch "\.(xml|txt)$">
 	Header set Cache-Control "max-age=172800, proxy-revalidate"
 </FilesMatch>
 
-# 10 HOURS
+#10 HOURS
 <FilesMatch "\.(php|html)$">
 	Header set Cache-Control "max-age=36000, public"
 </FilesMatch>

@@ -1,0 +1,21 @@
+[{
+	"path": "/",
+	"resourceSizes": [
+		{
+			"resourceType": "document",
+			"budget": 20
+		},{
+			"resourceType": "stylesheet",
+			"budget": 160
+		},{
+			"resourceType": "font",
+			"budget": 30
+		},{
+			"resourceType": "image",
+			"budget": 300
+		},{
+			"resourceType": "script",
+			"budget": 200
+		}
+	]
+}]

@@ -65,6 +65,7 @@ class Parser
     private $utf8;
     private $encoding;
     private $patternModifiers;
+    private $commentsSeen;
 
     /**
      * Constructor
@@ -82,6 +83,7 @@ class Parser
         $this->charset          = null;
         $this->utf8             = ! $encoding || strtolower($encoding) === 'utf-8';
         $this->patternModifiers = $this->utf8 ? 'Aisu' : 'Ais';
+        $this->commentsSeen   = [];
 
         if (empty(static::$operatorPattern)) {
             static::$operatorPattern = '([*\/%+-]|[!=]\=|\>\=?|\<\=\>|\<\=?|and|or)';
@@ -806,8 +808,6 @@ class Parser
      * Seek to position in input stream (or return current position in input stream)
      *
      * @param integer $where
-     *
-     * @return integer
      */
     protected function seek($where)
     {
@@ -1164,7 +1164,7 @@ class Parser
     /**
      * Parse comma separated value list
      *
-     * @param string $out
+     * @param array $out
      *
      * @return boolean
      */
@@ -1238,19 +1238,15 @@ class Parser
         $s = $this->count;
 
         if ($this->matchChar('(')) {
-            if ($this->matchChar(')')) {
-                $out = [Type::T_LIST, '', []];
-
-                return true;
-            }
-
-            if ($this->valueList($out) && $this->matchChar(')') && $out[0] === Type::T_LIST) {
+            if ($this->parenExpression($out, $s, ")")) {
                 return true;
             }
 
             $this->seek($s);
+        }
 
-            if ($this->map($out)) {
+        if ($this->matchChar('[')) {
+            if ($this->parenExpression($out, $s, "]")) {
                 return true;
             }
 
@@ -1260,6 +1256,36 @@ class Parser
         if ($this->value($lhs)) {
             $out = $this->expHelper($lhs, 0);
 
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Parse expression specifically checking for lists in parenthesis or brackets
+     *
+     * @param array   $out
+     * @param integer $s
+     * @param string  $closingParen
+     *
+     * @return boolean
+     */
+    protected function parenExpression(&$out, $s, $closingParen = ")")
+    {
+        if ($this->matchChar($closingParen)) {
+            $out = [Type::T_LIST, '', []];
+
+            return true;
+        }
+
+        if ($this->valueList($out) && $this->matchChar($closingParen) && $out[0] === Type::T_LIST) {
+            return true;
+        }
+
+        $this->seek($s);
+
+        if ($this->map($out)) {
             return true;
         }
 
@@ -1514,7 +1540,7 @@ class Parser
      * Parse function call
      *
      * @param string $name
-     * @param array $out
+     * @param array  $func
      *
      * @return boolean
      */
@@ -1765,7 +1791,7 @@ class Parser
     /**
      * Parse number with unit
      *
-     * @param array $out
+     * @param array $unit
      *
      * @return boolean
      */
@@ -2579,7 +2605,7 @@ class Parser
      *
      * @param integer $pos
      *
-     * @return integer
+     * @return array
      */
     private function getSourcePosition($pos)
     {

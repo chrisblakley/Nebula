@@ -36,7 +36,7 @@ if ( !trait_exists('Scripts') ){
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, $this->version('full'), 'all');
 			wp_register_style('nebula-admin', get_template_directory_uri() . '/assets/css/admin.css', null, $this->version('full'), 'all');
 			if ( $this->get_option('google_font_url') ){
-				wp_register_style('nebula-google_font', $this->get_option('google_font_url'), array(), null, 'all');
+				wp_register_style('nebula-google_font', $this->get_option('google_font_url') . '&font-display=swap', array(), null, 'all');
 			}
 			$this->bootstrap('css');
 			wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/jquery.dataTables.min.css', null, '1.10.19', 'all');
