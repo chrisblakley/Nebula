@@ -73,7 +73,7 @@ if ( !trait_exists('Scripts') ){
 
 				//Decide whether to use jQuery version 2 or 3.
 				//jQuery version 3 is asynchronous so beware of the `ready` and `load` not always triggering in that order.
-				if ( 1==1 ){
+				if ( 1==2 ){
 					return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js', null, null, '2.2.4', $footer);
 				} else {
 					return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js', null, null, '3.4.0', $footer);

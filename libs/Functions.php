@@ -228,7 +228,8 @@ trait Functions {
 		if ( (current_user_can('manage_options') || $this->is_dev()) && $this->get_option('admin_notices') && !is_customize_preview() ){
 			//Check object cache first
 			$nebula_warnings = wp_cache_get('nebula_warnings');
-			if ( !empty($nebula_warnings) ){
+
+			if ( is_array($nebula_warnings) || !empty($nebula_warnings) ){ //If it is an array (meaning it has run before but did not find anything) or if it is false
 				return $nebula_warnings;
 			}
 
@@ -459,20 +460,31 @@ trait Functions {
 
 			$all_nebula_warnings = apply_filters('nebula_warnings', $nebula_warnings); //Allow other functions to hook in to add warnings (like Ecommerce)
 
+			//Check for improper hooks
+			if ( is_null($all_nebula_warnings) ){
+				$all_nebula_warnings = array(array(
+					'level' => 'error',
+					'description' => '<code>$nebula_warnings</code> array is null. When hooking into the <code>nebula_warnings</code> filter be sure that it is returned too!'
+				));
+			}
+
 			//Sort by warning level
-			usort($all_nebula_warnings, function($itemA, $itemB){
-				$priorities = array('error', 'warn', 'log');
-				$a = array_search($itemA['level'], $priorities);
-				$b = array_search($itemB['level'], $priorities);
+			if ( !empty($all_nebula_warnings) ){
+				usort($all_nebula_warnings, function($itemA, $itemB){
+					$priorities = array('error', 'warn', 'log');
+					$a = array_search($itemA['level'], $priorities);
+					$b = array_search($itemB['level'], $priorities);
 
-				if ( $a === $b ){
-					return 0;
-				}
+					if ( $a === $b ){
+						return 0;
+					}
 
-				return ( $a < $b )? -1 : 1;
-			});
+					return ( $a < $b )? -1 : 1;
+				});
+			}
 
 			wp_cache_set('nebula_warnings', $all_nebula_warnings); //Store in object cache
+
 			$this->timer('Check Warnings', 'end');
 			return $all_nebula_warnings;
 		}

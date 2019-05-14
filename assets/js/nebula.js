@@ -378,52 +378,54 @@ function visibilityChangeActions(){
 
 //Record performance timing
 function performanceMetrics(){
-	if ( window.performance && window.performance.timing ){ //Safari 11+
-		setTimeout(function(){
-			var timingCalcuations = {
-				'Redirect': {start: Math.round(performance.timing.redirectStart - performance.timing.navigationStart), duration: Math.round(performance.timing.redirectEnd - performance.timing.redirectStart)},
-				'Unload': {start: Math.round(performance.timing.unloadStart - performance.timing.navigationStart), duration: Math.round(performance.timing.unloadEnd - performance.timing.unloadStart)},
-				'App Cache': {start: Math.round(performance.timing.fetchStart - performance.timing.navigationStart), duration: Math.round(performance.timing.domainLookupStart - performance.timing.fetchStart)},
-				'DNS': {start: Math.round(performance.timing.domainLookupStart - performance.timing.navigationStart), duration: Math.round(performance.timing.domainLookupEnd - performance.timing.domainLookupStart)},
-				'TCP': {start: Math.round(performance.timing.connectStart - performance.timing.navigationStart), duration: Math.round(performance.timing.connectEnd - performance.timing.connectStart)},
-				'Request': {start: Math.round(performance.timing.requestStart - performance.timing.navigationStart), duration: Math.round(performance.timing.responseStart - performance.timing.requestStart)},
-				'Response': {start: Math.round(performance.timing.responseStart - performance.timing.navigationStart), duration: Math.round(performance.timing.responseEnd - performance.timing.responseStart)},
-				'Processing': {start: Math.round(performance.timing.domLoading - performance.timing.navigationStart), duration: Math.round(performance.timing.loadEventStart - performance.timing.domLoading)},
-				'onLoad': {start: Math.round(performance.timing.loadEventStart - performance.timing.navigationStart), duration: Math.round(performance.timing.loadEventEnd - performance.timing.loadEventStart)},
-				'DOM Ready': {start: 0, duration: Math.round(performance.timing.domComplete - performance.timing.navigationStart)},
-				'Total Load': {start: 0, duration: Math.round(performance.timing.loadEventEnd - performance.timing.navigationStart)}
-			}
+	if ( (get('timings') || (has(nebula, 'user.staff') && nebula.user.staff === 'developer')) ){ //Only available to Developers or with ?timings
+		if ( window.performance && window.performance.timing ){ //Safari 11+
+			setTimeout(function(){
+				var timingCalcuations = {
+					'Redirect': {start: Math.round(performance.timing.redirectStart - performance.timing.navigationStart), duration: Math.round(performance.timing.redirectEnd - performance.timing.redirectStart)},
+					'Unload': {start: Math.round(performance.timing.unloadStart - performance.timing.navigationStart), duration: Math.round(performance.timing.unloadEnd - performance.timing.unloadStart)},
+					'App Cache': {start: Math.round(performance.timing.fetchStart - performance.timing.navigationStart), duration: Math.round(performance.timing.domainLookupStart - performance.timing.fetchStart)},
+					'DNS': {start: Math.round(performance.timing.domainLookupStart - performance.timing.navigationStart), duration: Math.round(performance.timing.domainLookupEnd - performance.timing.domainLookupStart)},
+					'TCP': {start: Math.round(performance.timing.connectStart - performance.timing.navigationStart), duration: Math.round(performance.timing.connectEnd - performance.timing.connectStart)},
+					'Request': {start: Math.round(performance.timing.requestStart - performance.timing.navigationStart), duration: Math.round(performance.timing.responseStart - performance.timing.requestStart)},
+					'Response': {start: Math.round(performance.timing.responseStart - performance.timing.navigationStart), duration: Math.round(performance.timing.responseEnd - performance.timing.responseStart)},
+					'Processing': {start: Math.round(performance.timing.domLoading - performance.timing.navigationStart), duration: Math.round(performance.timing.loadEventStart - performance.timing.domLoading)},
+					'onLoad': {start: Math.round(performance.timing.loadEventStart - performance.timing.navigationStart), duration: Math.round(performance.timing.loadEventEnd - performance.timing.loadEventStart)},
+					'DOM Ready': {start: 0, duration: Math.round(performance.timing.domComplete - performance.timing.navigationStart)},
+					'Total Load': {start: 0, duration: Math.round(performance.timing.loadEventEnd - performance.timing.navigationStart)}
+				}
 
-			//If ?timings exists or if developer
-			if ( typeof console.table === 'function' && (get('timings') || (has(nebula, 'user.staff') && nebula.user.staff === 'developer')) ){
-				clientTimings = {};
-				jQuery.each(timingCalcuations, function(name, timings){
-					if ( !isNaN(timings.duration) && timings.duration > 0 && timings.duration < 6000000 ){ //Ignore empty values
-						clientTimings[name] = {
-							start: timings.start,
-							duration: timings.duration,
-							elapsed: timings.start + timings.duration
+				//If ?timings exists or if developer
+				if ( typeof console.table === 'function' ){
+					clientTimings = {};
+					jQuery.each(timingCalcuations, function(name, timings){
+						if ( !isNaN(timings.duration) && timings.duration > 0 && timings.duration < 6000000 ){ //Ignore empty values
+							clientTimings[name] = {
+								start: timings.start,
+								duration: timings.duration,
+								elapsed: timings.start + timings.duration
+							}
 						}
-					}
-				});
+					});
 
-				console.groupCollapsed('Performance');
-				console.table(jQuery.extend(nebula.site.timings, clientTimings));
-				console.groupEnd();
-			}
+					console.groupCollapsed('Performance');
+					console.table(jQuery.extend(nebula.site.timings, clientTimings));
+					console.groupEnd();
+				}
 
-			if ( timingCalcuations['Processing'] && timingCalcuations['DOM Ready'] && timingCalcuations['Total Load'] ){
-				ga('set', nebula.analytics.metrics.serverResponseTime, timingCalcuations['Processing'].start);
-				ga('set', nebula.analytics.metrics.domReadyTime, timingCalcuations['DOM Ready'].duration);
-				ga('set', nebula.analytics.metrics.windowLoadedTime, timingCalcuations['Total Load'].duration);
-				ga('send', 'event', 'Performance Timing', 'track', 'Used to deliver performance metrics to Google Analytics', {'nonInteraction': true});
+				if ( timingCalcuations['Processing'] && timingCalcuations['DOM Ready'] && timingCalcuations['Total Load'] ){
+					ga('set', nebula.analytics.metrics.serverResponseTime, timingCalcuations['Processing'].start);
+					ga('set', nebula.analytics.metrics.domReadyTime, timingCalcuations['DOM Ready'].duration);
+					ga('set', nebula.analytics.metrics.windowLoadedTime, timingCalcuations['Total Load'].duration);
+					ga('send', 'event', 'Performance Timing', 'track', 'Used to deliver performance metrics to Google Analytics', {'nonInteraction': true});
 
-				//Send as User Timings as well
-				ga('send', 'timing', 'Performance Timing', 'Server Response', timingCalcuations['Processing'].start, 'Navigation start until server response finishes (includes PHP execution time)');
-				ga('send', 'timing', 'Performance Timing', 'DOM Ready', timingCalcuations['DOM Ready'].duration, 'Navigation start until DOM ready');
-				ga('send', 'timing', 'Performance Timing', 'Window Load', timingCalcuations['Total Load'].duration, 'Navigation start until window load');
-			}
-		}, 0);
+					//Send as User Timings as well
+					ga('send', 'timing', 'Performance Timing', 'Server Response', timingCalcuations['Processing'].start, 'Navigation start until server response finishes (includes PHP execution time)');
+					ga('send', 'timing', 'Performance Timing', 'DOM Ready', timingCalcuations['DOM Ready'].duration, 'Navigation start until DOM ready');
+					ga('send', 'timing', 'Performance Timing', 'Window Load', timingCalcuations['Total Load'].duration, 'Navigation start until window load');
+				}
+			}, 0);
+		}
 	}
 }
 
@@ -553,159 +555,161 @@ function facebookSDK(){
 
 //Social sharing buttons
 function socialSharing(){
-	var encloc = encodeURIComponent(window.location.href);
-	var enctitle = encodeURIComponent(document.title);
-	var popupTop = nebula.dom.window.height()/2-275;
-	var popupLeft = nebula.dom.window.width()/2-225;
-	var popupAttrs = 'top=' + popupTop + ', left=' + popupLeft + ', toolbar=0, location=0, menubar=0, directories=0, scrollbars=0, chrome=yes, personalbar=0';
+	if ( jQuery('.fbshare, a.nebula-share.facebook, .twshare, a.nebula-share-btn.twitter, .lishare, a.nebula-share-btn.linkedin, .pinshare, a.nebula-share-btn.pinterest, .emshare, a.nebula-share-btn.email, a.nebula-share.webshare, a.nebula-share.shareapi').length ){ //If any of the Nebula sharing classes are used
+		var encloc = encodeURIComponent(window.location.href);
+		var enctitle = encodeURIComponent(document.title);
+		var popupTop = nebula.dom.window.height()/2-275;
+		var popupLeft = nebula.dom.window.width()/2-225;
+		var popupAttrs = 'top=' + popupTop + ', left=' + popupLeft + ', toolbar=0, location=0, menubar=0, directories=0, scrollbars=0, chrome=yes, personalbar=0';
 
-	//Facebook
-	jQuery('.fbshare, a.nebula-share.facebook').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Social',
-			action: 'Share',
-			intent: 'Intent',
-			network: 'Facebook',
-			url: window.location.href,
-			title: document.title
-		}
+		//Facebook
+		jQuery('.fbshare, a.nebula-share.facebook').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Social',
+				action: 'Share',
+				intent: 'Intent',
+				network: 'Facebook',
+				url: window.location.href,
+				title: document.title
+			}
 
-		ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
-		nv('event', thisEvent.network + ' ' + thisEvent.action);
+			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
+			nv('event', thisEvent.network + ' ' + thisEvent.action);
 
-		if ( nebula.dom.body.hasClass('desktop') ){
-			window.open(jQuery(this).attr('href'), 'facebookShareWindow', 'width=550, height=450, ' + popupAttrs);
-			return false;
-		}
-	});
-
-	//Twitter
-	jQuery('.twshare, a.nebula-share-btn.twitter').attr('href', 'https://twitter.com/intent/tweet?url=' + encloc + '&text=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Social',
-			action: 'Share',
-			intent: 'Intent',
-			network: 'Twitter',
-			url: window.location.href,
-			title: document.title
-		}
-
-		ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
-		nv('event', thisEvent.network + ' ' + thisEvent.action);
-
-		if ( nebula.dom.body.hasClass('desktop') ){
-			window.open(jQuery(this).attr('href'), 'twitterShareWindow', 'width=600, height=254, ' + popupAttrs);
-			return false;
-		}
-	});
-
-	//LinkedIn
-	jQuery('.lishare, a.nebula-share-btn.linkedin').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Social',
-			action: 'Share',
-			intent: 'Intent',
-			network: 'LinkedIn',
-			url: window.location.href,
-			title: document.title
-		}
-
-		ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
-		nv('event', thisEvent.network + ' ' + thisEvent.action);
-
-		if ( nebula.dom.body.hasClass('desktop') ){
-			window.open(jQuery(this).attr('href'), 'linkedinShareWindow', 'width=600, height=473, ' + popupAttrs);
-			return false;
-		}
-	});
-
-	//Pinterest
-	jQuery('.pinshare, a.nebula-share-btn.pinterest').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Social',
-			action: 'Share',
-			intent: 'Intent',
-			network: 'Pinterest',
-			url: window.location.href,
-			title: document.title
-		}
-
-		ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
-		nv('event', thisEvent.network + ' ' + thisEvent.action);
-
-		if ( nebula.dom.body.hasClass('desktop') ){
-			window.open(jQuery(this).attr('href'), 'pinterestShareWindow', 'width=600, height=450, ' + popupAttrs);
-			return false;
-		}
-	});
-
-	//Email
-	jQuery('.emshare, a.nebula-share-btn.email').attr('href', 'mailto:?subject=' + enctitle + '&body=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Social',
-			action: 'Share',
-			intent: 'Intent',
-			network: 'Email',
-			url: window.location.href,
-			title: document.title
-		}
-
-		ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
-		nv('event', thisEvent.network + ' ' + thisEvent.action);
-	});
-
-	//Web Share API
-	if ( 'share' in navigator && !nebula.dom.body.hasClass('desktop') ){ //Chrome 61+
-		nebula.dom.document.on('click', 'a.nebula-share.webshare, a.nebula-share.shareapi', function(){
-			oThis = jQuery(this);
-
-			navigator.share({
-				title: document.title,
-				text: nebula.post.excerpt,
-				url: window.location.href
-			}).then(function(){
-				var thisEvent = {
-					event: e,
-					category: 'Social',
-					action: 'Share',
-					intent: 'Intent',
-					network: 'Web Share API',
-					url: window.location.href,
-					title: document.title,
-				}
-
-				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
-				nv('event', thisEvent.network);
-				oThis.addClass('success');
-				createCookie('shareapi', true);
-			}).catch(function(error){
-				ga('send', 'exception', {'exDescription': '(JS) Share API Error: ' + error, 'exFatal': false});
-				oThis.addClass('error').text('Sharing Error');
-				createCookie('shareapi', false);
-			});
-
-			return false;
+			if ( nebula.dom.body.hasClass('desktop') ){
+				window.open(jQuery(this).attr('href'), 'facebookShareWindow', 'width=550, height=450, ' + popupAttrs);
+				return false;
+			}
 		});
 
-		createCookie('shareapi', true); //Set a cookie to speed up future page loads by not loading third-party share buttons.
-	} else {
-		jQuery('a.nebula-share.webshare, a.nebula-share.shareapi').addClass('hidden');
+		//Twitter
+		jQuery('.twshare, a.nebula-share-btn.twitter').attr('href', 'https://twitter.com/intent/tweet?url=' + encloc + '&text=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Social',
+				action: 'Share',
+				intent: 'Intent',
+				network: 'Twitter',
+				url: window.location.href,
+				title: document.title
+			}
+
+			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
+			nv('event', thisEvent.network + ' ' + thisEvent.action);
+
+			if ( nebula.dom.body.hasClass('desktop') ){
+				window.open(jQuery(this).attr('href'), 'twitterShareWindow', 'width=600, height=254, ' + popupAttrs);
+				return false;
+			}
+		});
+
+		//LinkedIn
+		jQuery('.lishare, a.nebula-share-btn.linkedin').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Social',
+				action: 'Share',
+				intent: 'Intent',
+				network: 'LinkedIn',
+				url: window.location.href,
+				title: document.title
+			}
+
+			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
+			nv('event', thisEvent.network + ' ' + thisEvent.action);
+
+			if ( nebula.dom.body.hasClass('desktop') ){
+				window.open(jQuery(this).attr('href'), 'linkedinShareWindow', 'width=600, height=473, ' + popupAttrs);
+				return false;
+			}
+		});
+
+		//Pinterest
+		jQuery('.pinshare, a.nebula-share-btn.pinterest').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Social',
+				action: 'Share',
+				intent: 'Intent',
+				network: 'Pinterest',
+				url: window.location.href,
+				title: document.title
+			}
+
+			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
+			nv('event', thisEvent.network + ' ' + thisEvent.action);
+
+			if ( nebula.dom.body.hasClass('desktop') ){
+				window.open(jQuery(this).attr('href'), 'pinterestShareWindow', 'width=600, height=450, ' + popupAttrs);
+				return false;
+			}
+		});
+
+		//Email
+		jQuery('.emshare, a.nebula-share-btn.email').attr('href', 'mailto:?subject=' + enctitle + '&body=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Social',
+				action: 'Share',
+				intent: 'Intent',
+				network: 'Email',
+				url: window.location.href,
+				title: document.title
+			}
+
+			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
+			nv('event', thisEvent.network + ' ' + thisEvent.action);
+		});
+
+		//Web Share API
+		if ( 'share' in navigator && !nebula.dom.body.hasClass('desktop') ){ //Chrome 61+
+			nebula.dom.document.on('click', 'a.nebula-share.webshare, a.nebula-share.shareapi', function(){
+				oThis = jQuery(this);
+
+				navigator.share({
+					title: document.title,
+					text: nebula.post.excerpt,
+					url: window.location.href
+				}).then(function(){
+					var thisEvent = {
+						event: e,
+						category: 'Social',
+						action: 'Share',
+						intent: 'Intent',
+						network: 'Web Share API',
+						url: window.location.href,
+						title: document.title,
+					}
+
+					nebula.dom.document.trigger('nebula_event', thisEvent);
+					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
+					nv('event', thisEvent.network);
+					oThis.addClass('success');
+					createCookie('shareapi', true);
+				}).catch(function(error){
+					ga('send', 'exception', {'exDescription': '(JS) Share API Error: ' + error, 'exFatal': false});
+					oThis.addClass('error').text('Sharing Error');
+					createCookie('shareapi', false);
+				});
+
+				return false;
+			});
+
+			createCookie('shareapi', true); //Set a cookie to speed up future page loads by not loading third-party share buttons.
+		} else {
+			jQuery('a.nebula-share.webshare, a.nebula-share.shareapi').addClass('hidden');
+		}
 	}
 }
 
@@ -2580,7 +2584,28 @@ function applyValidationClasses(element, validation, showFeedback){
 
 //Lazy load images, styles, and JavaScript assets
 function lazyLoadAssets(){
-	lazyLoadHTML();
+	//Lazy load elements as they scroll into viewport
+	if ( 'IntersectionObserver' in window ){ //Only if Intersection Observer API is available. https://caniuse.com/#feat=intersectionobserver
+		var lazyObserver = new IntersectionObserver(function(entries){
+			entries.forEach(function(entry){
+				if ( entry.intersectionRatio > 0 ){
+					loadElement(jQuery(entry.target));
+					lazyObserver.unobserve(entry.target); //Stop observing the element
+				}
+			});
+		}, {
+			rootMargin: '100%', //Extend the area of the observer by the size of the viewport (essentially doubling the height of the detection area). This prevents visible loading of elements by triggering the load much earlier than actually needed.
+			threshold: 0.1
+		});
+
+		jQuery('.nebula-lazy-position, .lazy-load').each(function(){
+			lazyObserver.observe(jQuery(this)[0]); //Observe the element
+		});
+	} else {
+		jQuery('.nebula-lazy-position, .lazy-load').each(function(){
+			loadElement(jQuery(this)); //Load the element immediately
+		});
+	}
 
 	//Lazy load CSS assets
 	jQuery.each(nebula.site.resources.lazy.styles, function(handle, condition){
@@ -2647,6 +2672,28 @@ function lazyLoadAssets(){
 	}
 }
 
+//Load the Nebula lazy load element
+function loadElement(element){
+	//Lazy elements using <samp> positioning
+	if ( element.is('samp') ){
+		lazyElement = element.next('noscript.nebula-lazy');
+		element.remove(); //Remove the positioning element
+
+		//The actual lazy loaded element as a jQuery object
+		var thisContent = jQuery(lazyElement.text()).on('load loadeddata', function(){
+			nebulaLazyVideoTracking(lazyElement);
+		});
+
+		lazyElement.replaceWith(thisContent); //Remove the <noscript> tag to reveal the img/iframe tag
+		svgImgs(); //Convert certain <img> elements that use SVG into SVG elements
+	}
+
+	//Background images
+	if ( element.hasClass('lazy-load') ){
+		element.removeClass('lazy-load').addClass('lazy-loaded');
+	}
+}
+
 //Load a JavaScript resource (and cache it)
 function nebulaLoadJS(url, callback){
 	if ( typeof url === 'string' ){
@@ -2679,68 +2726,6 @@ function nebulaLoadCSS(url){
 	} else {
 		console.error('nebulaLoadCSS requires a valid URL. The requested URL is invalid:', url);
 	}
-}
-
-//Load the lazy loaded HTML
-//@todo "Nebula" 0: This is handled by Chrome 75+ natively. Will eventually deprecate this functionality.
-function lazyLoadHTML(){
-	//Load any images/iframe inside the viewport
-	jQuery('noscript.nebula-lazy').each(function(){
-		//If the element is above the fold load it immediately
-		if ( jQuery(this).prev('.nebula-lazy-position').offset().top < nebula.dom.window.height() ){
-			jQuery(this).prev('.nebula-lazy-position').remove();
-
-			//The actual lazy loaded element as a jQuery object
-			var thisContent = jQuery(jQuery(this).text()).on('load loadeddata', function(){
-				nebulaLazyVideoTracking(jQuery(this));
-			});
-
-			jQuery(this).replaceWith(thisContent); //Remove the <noscript> tag to reveal the img/iframe tag
-		}
-	});
-
-	jQuery('.nebula-lazy-position').remove(); //These are no longer needed after initial load
-
-	svgImgs();
-
-	//Background Images
-	jQuery('.lazy-load').each(function(){
-		if ( jQuery(this).offset().top < nebula.dom.window.height() ){
-			jQuery(this).removeClass('lazy-load').addClass('lazy-loaded');
-		}
-	});
-
-	//Wait for a scroll event to load the rest (use var so it can be turned off)
-	var loadLazyElements = function(){
-		jQuery('noscript.nebula-lazy').each(function(){
-			//The actual lazy loaded element as a jQuery object
-			var thisContent = jQuery(jQuery(this).text()).on('load loadeddata', function(){
-				nebulaLazyVideoTracking(jQuery(this));
-			});
-
-			jQuery(this).replaceWith(thisContent); //Remove the <noscript> tag to reveal the img/iframe tag
-		});
-
-		svgImgs();
-
-		jQuery('.lazy-load').removeClass('lazy-load').addClass('lazy-loaded'); //Load background images
-
-		//Stop listening for load triggers
-		window.removeEventListener('scroll', loadLazyElements);
-	};
-
-	//Load the rest of the files on scroll (or if the page loads pre-scrolled)
-
-	window.addEventListener('scroll', loadLazyElements); //"scroll" is passive by default
-	nebula.dom.window.on('nebula_load', loadLazyElements); //This listener does not get turned off.
-	if ( nebula.dom.window.scrollTop() > 200 ){
-		loadLazyElements();
-	}
-
-	//Also trigger lazy load after any AJAX success. No "off" here because lazy load items could be inside of the AJAX response.
-	nebula.dom.document.ajaxSuccess(function(){
-		loadLazyElements();
-	});
 }
 
 /* ==========================================================================
@@ -3273,10 +3258,19 @@ function svgImgs(){
 				theSVG = theSVG.attr('role', 'img');
 				theSVG = theSVG.attr('data-original-src', oThis.attr('src')); //Add an attribute of the original SVG location
 				theSVG = theSVG.removeAttr('xmlns:a'); //Remove invalid XML tags
-				oThis.replaceWith(theSVG); //Replace image with new SVG
-			}, 'xml');
 
-			//@todo "Nebula" 0: Grab the alt attribute from oThis and add it as a <title> tag within the newly created <svg> element (as the first child)
+				oThis.replaceWith(theSVG); //Replace image with new SVG
+
+				//Move alt attribute to title element within the SVG
+				if ( oThis.attr('alt') ){
+					theSVG.prepend('<title>' + oThis.attr('alt') + '</title>');
+				}
+
+				//Move the title attribute to the description element within the SVG
+				if ( oThis.attr('title') ){
+					theSVG.prepend('<description>' + oThis.attr('title') + '</description>');
+				}
+			}, 'xml');
 		}
 	});
 }

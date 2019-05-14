@@ -567,6 +567,7 @@ if ( !trait_exists('Admin') ){
 
 				$nebula_warning_icon = '';
 				$nebula_adminbar_icon = 'fa-star';
+
 				$warnings = $this->check_warnings();
 
 				//Remove "log" level warnings
@@ -1031,23 +1032,26 @@ if ( !trait_exists('Admin') ){
 
 			$php_timeline = json_decode($php_timeline);
 			if ( !empty($php_timeline) ){
-				foreach ( $php_timeline[0] as $php_timeline_version => $php_timeline_dates ){
-					if ( version_compare(PHP_VERSION, $php_timeline_version) >= 0 ){
-						$output = array();
-						if ( !empty($php_timeline_dates->security) && time() < strtotime($php_timeline_dates->security) ){
-							$output['lifecycle'] = 'active';
-						} elseif ( !empty($php_timeline_dates->security) && (time() >= strtotime($php_timeline_dates->security) && time() < strtotime($php_timeline_dates->end)) ){
-							$output['lifecycle'] = 'security';
-						} elseif ( time() >= strtotime($php_timeline_dates->end) ) {
-							$output['lifecycle'] = 'end';
-						} else {
-							$output['lifecycle'] = 'unknown'; //An error of some kind has occurred.
-						}
-						$output['security'] = strtotime($php_timeline_dates->security);
-						$output['end'] = strtotime($php_timeline_dates->end);
-						return $output;
-						break;
+				preg_match('/^(?<family>\d\.\d)\.?/i', PHP_VERSION, $current_php_version); //Grab the major/minor version of this PHP
+				$php_version_info = $php_timeline[0]->{$current_php_version['family']}; //Find this major/minor version "family" of PHP in the JSON
+
+				if ( !empty($php_version_info) ){ //If a match for this PHP version "family" was found in the JSON data
+					$output = array();
+
+					if ( !empty($php_version_info->security) && time() < strtotime($php_version_info->security) ){
+						$output['lifecycle'] = 'active';
+					} elseif ( !empty($php_version_info->security) && (time() >= strtotime($php_version_info->security) && time() < strtotime($php_version_info->end)) ){
+						$output['lifecycle'] = 'security';
+					} elseif ( time() >= strtotime($php_version_info->end) ){
+						$output['lifecycle'] = 'end';
+					} else {
+						$output['lifecycle'] = 'unknown'; //An error of some kind has occurred.
 					}
+
+					$output['security'] = strtotime($php_version_info->security);
+					$output['end'] = strtotime($php_version_info->end);
+
+					return $output;
 				}
 			}
 		}
