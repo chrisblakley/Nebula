@@ -282,23 +282,5 @@ if ( !trait_exists('Security') ){
 			$all_blacklisted_domains = apply_filters('nebula_blacklisted_domains', $manual_nebula_blacklisted_domains);
 			return array_merge($blacklisted_domains, $all_blacklisted_domains);
 		}
-
-		//Escape HTML for safe output
-		public static function escape($string, $context = 'attr'){
-			switch ( $context ){
-				//Escape arbitrary data so that it's safe to output inside of an HTML attribute.
-				case 'html':
-				case 'attr':
-				case 'attribute':
-					return htmlentities($string, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-
-				//Escape arbitrary data so that it's safe to output inside of a URL.
-				case 'url':
-					return urlencode($string);
-
-				default:
-					return '';
-			}
-		}
 	}
 }

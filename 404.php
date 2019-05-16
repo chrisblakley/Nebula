@@ -34,7 +34,7 @@
 
 					<?php if ( !empty(nebula()->error_query) && nebula()->error_query->have_posts() ): //Check if the error query (from /libs/Functions.php) found any matches ?>
 						<div id="error-page-suggestions">
-							<h2>Suggestions</h2>
+							<h2><?php _e('Suggestions', 'nebula'); ?></h2>
 							<?php while ( nebula()->error_query->have_posts() ): ?>
 								<?php nebula()->error_query->the_post(); ?>
 

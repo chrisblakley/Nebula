@@ -49,7 +49,7 @@
 								<?php if ( get_theme_mod('nebula_footer_text') ): ?>
 									<?php echo get_theme_mod('nebula_footer_text'); ?>
 								<?php else:?>
-									&copy; <?php echo date('Y'); ?> <a href="<?php echo home_url('/'); ?>"><strong><?php echo ( nebula()->get_option('site_owner') )? nebula()->get_option('site_owner') : get_bloginfo('name'); ?></strong></a>, <em><?php _e('all rights reserved', 'nebula'); ?></em>.
+									&copy; <?php echo date('Y'); ?> <a href="<?php echo home_url('/'); ?>"><strong><?php echo ( nebula()->get_option('site_owner') )? esc_html(nebula()->get_option('site_owner')) : get_bloginfo('name'); ?></strong></a>, <em><?php _e('all rights reserved', 'nebula'); ?></em>.
 								<?php endif; ?>
 							</p>
 

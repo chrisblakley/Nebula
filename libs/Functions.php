@@ -217,7 +217,7 @@ trait Functions {
 	//Add the Nebula note to the browser console (if enabled)
 	public function calling_card(){
 		if ( (!$this->get_option('device_detection') || ($this->is_desktop() && !$this->is_browser('ie') && !$this->is_browser('edge'))) && !is_customize_preview() ){
-			echo "<script>console.log('%c Created using Nebula " . $this->version('primary') . "', 'padding: 2px 10px; background: #0098d7; color: #fff;');</script>";
+			echo "<script>console.log('%c Created using Nebula " . esc_html($this->version('primary')) . "', 'padding: 2px 10px; background: #0098d7; color: #fff;');</script>";
 		}
 	}
 
@@ -502,7 +502,7 @@ trait Functions {
 				echo '<script>';
 				foreach( $warnings as $warning ){
 					$category = ( !empty($warning['category']) )? $warning['category'] : 'Nebula';
-					echo 'console.' . $warning['level'] . '("[' . $category . '] ' . addslashes(strip_tags($warning['description'])) . '");';
+					echo 'console.' . esc_html($warning['level']) . '("[' . esc_html($category) . '] ' . esc_html(addslashes(strip_tags($warning['description']))) . '");';
 				}
 				echo '</script>';
 			}
@@ -754,7 +754,7 @@ trait Functions {
 		if ( $data['label'] == 'icon' ){
 			$label = '<i class="nebula-post-date-label far fa-fw fa-calendar"></i> ';
 		} elseif ( $data['label'] == 'text' ){
-			$label = '<span class="nebula-post-date-label">' . ucwords($data['type']) . ' </span>';
+			$label = '<span class="nebula-post-date-label">' . esc_html(ucwords($data['type'])) . ' </span>';
 		}
 
 		//Use the publish or modified date per options
@@ -812,7 +812,7 @@ trait Functions {
 			if ( $data['linked'] && !$data['force'] ){
 				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $label . '<span class="meta-item entry-author"><a href="' . get_author_posts_url($author_id) . '" itemprop="name">' . $author_name . '</a></span></span>';
 			} else {
-				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $label . '<span class="meta-item entry-author" itemprop="name">' . $author_name . '</span></span>';
+				return '<span class="posted-by" itemprop="author" itemscope itemtype="https://schema.org/Person">' . $label . '<span class="meta-item entry-author" itemprop="name">' . esc_html($author_name) . '</span></span>';
 			}
 		}
 	}
@@ -1266,23 +1266,23 @@ trait Functions {
 		switch ( strtolower($network) ){
 			case 'facebook':
 			case 'fb':
-				return $this->get_option('facebook_url');
+				return esc_url($this->get_option('facebook_url'));
 
 			case 'twitter':
 				return $this->twitter_url(); //Use the provided function from Nebula Options
 
 			case 'linkedin':
-				return $this->get_option('linkedin_url');
+				return esc_url($this->get_option('linkedin_url'));
 
 			case 'instagram':
 			case 'ig':
-				return $this->get_option('instagram_url');
+				return esc_url($this->get_option('instagram_url'));
 
 			case 'pinterest':
-				return $this->get_option('pinterest_url');
+				return esc_url($this->get_option('pinterest_url'));
 
 			case 'youtube':
-				return $this->get_option('youtube_url');
+				return esc_url($this->get_option('youtube_url'));
 		}
 
 		return false;
@@ -2199,7 +2199,7 @@ trait Functions {
 		}
 
 		if ( $this->is_business_open() ){
-			return $this->get_option('business_hours_' . $day . '_close');
+			return esc_html($this->get_option('business_hours_' . $day . '_close'));
 		}
 
 		return false;
@@ -2326,7 +2326,7 @@ trait Functions {
 			}
 		}
 
-		return $logo;
+		return esc_url($logo);
 	}
 
 	//Print the PHG logo as text with or without hover animation.

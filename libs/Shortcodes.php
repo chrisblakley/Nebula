@@ -171,12 +171,12 @@ if ( !trait_exists('Shortcodes') ){
 			 */
 
 			if ( $content ){
-				$div = '<div class="nebula-div ' . nebula()->escape($class) . '" style="' . nebula()->escape($style) . '">' . do_shortcode($content) . '</div>';
+				$div = '<div class="nebula-div ' . esc_attr($class) . '" style="' . esc_attr($style) . '">' . do_shortcode($content) . '</div>';
 			} else {
 				if ( $close ){
 					$div = '</div>';
 				} else {
-					$div = '<div class="nebula-div nebula-div-open' . nebula()->escape($class) . '" style="' . nebula()->escape($style) . '">';
+					$div = '<div class="nebula-div nebula-div-open' . esc_attr($class) . '" style="' . esc_attr($style) . '">';
 				}
 			}
 			return $div;
@@ -188,7 +188,7 @@ if ( !trait_exists('Shortcodes') ){
 			 * @var string $style
 			 */
 			extract(shortcode_atts( array('class' => '', 'style' => ''), $atts));
-			return '<div class="nebula-container container ' . nebula()->escape($class) . '" style="' . nebula()->escape($style) . '">' . do_shortcode($content) . '</div>';
+			return '<div class="nebula-container container ' . esc_attr($class) . '" style="' . esc_attr($style) . '">' . do_shortcode($content) . '</div>';
 		}
 
 		public function row_shortcode($atts, $content=''){
@@ -197,7 +197,7 @@ if ( !trait_exists('Shortcodes') ){
 			 * @var string $style
 			 */
 			extract(shortcode_atts( array('class' => '', 'style' => ''), $atts));
-			return '<div class="nebula-row row ' . nebula()->escape($class) . '" style="' . nebula()->escape($style) . '">' . do_shortcode($content) . '</div>';
+			return '<div class="nebula-row row ' . esc_attr($class) . '" style="' . esc_attr($style) . '">' . do_shortcode($content) . '</div>';
 		}
 
 		public function column_shortcode($atts, $content=''){
@@ -225,7 +225,7 @@ if ( !trait_exists('Shortcodes') ){
 				$push = 'offset_' . $scale . '_' . $push;
 			}
 
-			return '<div class="' . nebula()->escape('nebula-columns col-' . $scale . '-' . $columns . ' ' . $offset . ' ' . $centered . ' ' . $class) . '" style="' . nebula()->escape($style) . '">' . do_shortcode($content) . '</div>';
+			return '<div class="' . esc_attr('nebula-columns col-' . $scale . '-' . $columns . ' ' . $offset . ' ' . $centered . ' ' . $class) . '" style="' . esc_attr($style) . '">' . do_shortcode($content) . '</div>';
 		}
 
 		//Note: It is semantically incorrect for an <hr> to appear within a <p> tag, so be careful of WordPress wrapping this shortcode in a <p> tag.
@@ -237,7 +237,7 @@ if ( !trait_exists('Shortcodes') ){
 			if ( $space ) {
 				$above = $space;
 				$below = $space;
-				$divider = '<hr class="nebula-divider" style="' . nebula()->escape('margin-top: ' . $above . 'px; margin-bottom: ' . $below . 'px;') . '"/>';
+				$divider = '<hr class="nebula-divider" style="' . esc_attr('margin-top: ' . $above . 'px; margin-bottom: ' . $below . 'px;') . '"/>';
 			}
 
 			return $divider;
@@ -271,7 +271,7 @@ if ( !trait_exists('Shortcodes') ){
 			$extra_style = ( !empty($color) )? 'color:' . $color . ';' :'';
 			$extra_style .= ( !empty($size) )? 'font-size:' . $size . ';' :'';
 
-			return '<i class="' . nebula()->escape($class . ' nebula-icon-shortcode ' . $mode . ' fa-fw ' . $type) . '" style="' . nebula()->escape($extra_style) . '"></i>';
+			return '<i class="' . esc_attr($class . ' nebula-icon-shortcode ' . $mode . ' fa-fw ' . $type) . '" style="' . esc_attr($extra_style) . '"></i>';
 		}
 
 		public function button_shortcode($atts, $content=''){
@@ -287,14 +287,14 @@ if ( !trait_exists('Shortcodes') ){
 			 */
 
 			if ( $target ){
-				$target = ' target="' . nebula()->escape($target) . '"';
+				$target = ' target="' . esc_attr($target) . '"';
 			}
 
 			if ( $icon ){
 				if ( strpos($icon, 'fa-') === false){
 					$icon = 'fa-' . $icon;
 				}
-				$icon = '<i class="fas fa-fw ' . nebula()->escape($icon) . '"></i> ';
+				$icon = '<i class="fas fa-fw ' . esc_attr($icon) . '"></i> ';
 			}
 
 			if ( $size ){
@@ -304,13 +304,13 @@ if ( !trait_exists('Shortcodes') ){
 				}
 			}
 
-			return '<div class="nebula-button"><a class="' . nebula()->escape('btn btn-' . $type . ' ' . $size . ' ' . $class) . '" href="' . nebula()->escape($href) . '"' . nebula()->escape($target) . '>' . $icon . $content . '</a></div>';
+			return '<div class="nebula-button"><a class="' . esc_attr('btn btn-' . $type . ' ' . $size . ' ' . $class) . '" href="' . esc_attr($href) . '"' . esc_attr($target) . '>' . $icon . $content . '</a></div>';
 		}
 
 		public function space_shortcode($atts){
 			extract(shortcode_atts(array("height" => '20'), $atts));
 			/** @var string $height */
-			return '<div class="space" style="' . nebula()->escape('height:' . $height . 'px;') . '" ></div>';
+			return '<div class="space" style="' . esc_attr('height:' . $height . 'px;') . '" ></div>';
 		}
 
 		public function clear_shortcode(){
@@ -346,38 +346,38 @@ if ( !trait_exists('Shortcodes') ){
 				$key = $this->get_option('google_browser_api_key');
 			}
 			if ( !empty($q) ){
-				$q = '&q=' . nebula()->escape($q, 'url');
+				$q = '&q=' . esc_url($q);
 			}
 
 			/** These are unused: $origin, $destination, $waypoints, $avoid */
 			if ( $mode === 'directions' ){
 				if ( $origin != '' ){
-					$origin = '&origin=' . nebula()->escape($origin, 'url');
+					$origin = '&origin=' . esc_url($origin);
 				}
 				if ( $destination != '' ){
-					$destination = '&destination=' . nebula()->escape($destination, 'url');
+					$destination = '&destination=' . esc_url($destination);
 				}
 				if ( $waypoints != '' ){
-					$waypoints = '&waypoints=' . nebula()->escape($waypoints, 'url');
+					$waypoints = '&waypoints=' . esc_url($waypoints);
 				}
 				if ( $avoid != '' ){
-					$avoid = '&avoid=' . nebula()->escape($avoid, 'url');
+					$avoid = '&avoid=' . esc_url($avoid);
 				}
 			}
 			if ( !empty($center) ){
-				$center = '&center=' . nebula()->escape($center, 'url');
+				$center = '&center=' . esc_url($center);
 			}
 			if ( !empty($language) ){
-				$language = '&language=' . nebula()->escape($language, 'url');
+				$language = '&language=' . esc_url($language);
 			}
 			if ( !empty($region) ){
-				$region = '&region=' . nebula()->escape($region, 'url');
+				$region = '&region=' . esc_url($region);
 			}
 			if ( !empty($zoom) ){
-				$zoom = '&zoom=' . nebula()->escape($zoom, 'url');
+				$zoom = '&zoom=' . esc_url($zoom);
 			}
 
-			$return = '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy"><iframe class="nebula-googlemap-shortcode googlemap ' . nebula()->escape($class) . '" width="' . nebula()->escape($width) . '" height="' . nebula()->escape($height) . '" frameborder="0" src="https://www.google.com/maps/embed/v1/' . $mode . '?key=' . $key . $q . $zoom . $center . '&maptype=' . $maptype . $language . $region . '" style="border: 0; ' . nebula()->escape($style) . '" allowfullscreen></iframe></noscript>';
+			$return = '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy"><iframe class="nebula-googlemap-shortcode googlemap ' . esc_attr($class) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" frameborder="0" src="https://www.google.com/maps/embed/v1/' . $mode . '?key=' . $key . $q . $zoom . $center . '&maptype=' . $maptype . $language . $region . '" style="border: 0; ' . esc_attr($style) . '" allowfullscreen></iframe></noscript>';
 
 			return $return;
 		}
@@ -400,12 +400,12 @@ if ( !trait_exists('Shortcodes') ){
 			$vimeo_data = $this->video_meta('vimeo', $id);
 			$vimeo = '<div class="nebula-vimeo embed-responsive embed-responsive-16by9">';
 			if ( !empty($vimeo_data) && empty($vimeo_data['error']) ){
-				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-vimeo"><iframe id="' . nebula()->escape($vimeo_data['safetitle']) . '" class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . nebula()->escape($id) . '?api=1&player_id=' . nebula()->escape($vimeo_data['safetitle'], 'url') . '" width="' . nebula()->escape($width) . '" height="' . nebula()->escape($height) . '" autoplay="' . nebula()->escape($autoplay) . '" badge="' . nebula()->escape($badge) . '" byline="' . nebula()->escape($byline) . '" color="' . nebula()->escape($color) . '" loop="' . nebula()->escape($loop) . '" portrait="' . nebula()->escape($portrait) . '" title="' . nebula()->escape($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></noscript>';
+				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-vimeo"><iframe id="' . esc_attr($vimeo_data['safetitle']) . '" class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . esc_attr($id) . '?api=1&player_id=' . esc_attr($vimeo_data['safetitle'], 'url') . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" autoplay="' . esc_attr($autoplay) . '" badge="' . esc_attr($badge) . '" byline="' . esc_attr($byline) . '" color="' . esc_attr($color) . '" loop="' . esc_attr($loop) . '" portrait="' . esc_attr($portrait) . '" title="' . esc_attr($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></noscript>';
 			} else {
-				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-vimeo"><iframe class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . nebula()->escape($id) . '" width="' . nebula()->escape($width) . ' height="' . nebula()->escape($height) . '" autoplay="' . nebula()->escape($autoplay) . '" badge="' . nebula()->escape($badge) . '" byline="' . nebula()->escape($byline) . '" color="' . nebula()->escape($color) . '" loop="' . nebula()->escape($loop) . '" portrait="' . nebula()->escape($portrait) . '" title="' . nebula()->escape($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></noscript>';
+				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-vimeo"><iframe class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . esc_attr($id) . '" width="' . esc_attr($width) . ' height="' . esc_attr($height) . '" autoplay="' . esc_attr($autoplay) . '" badge="' . esc_attr($badge) . '" byline="' . esc_attr($byline) . '" color="' . esc_attr($color) . '" loop="' . esc_attr($loop) . '" portrait="' . esc_attr($portrait) . '" title="' . esc_attr($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></noscript>';
 
 				if ( $this->is_dev() ){
-					$vimeo .= '<script>console.warn("' . nebula()->escape($vimeo_data['error']) . ' (via Vimeo shortcode)");</script>';
+					$vimeo .= '<script>console.warn("' . esc_html($vimeo_data['error']) . ' (via Vimeo shortcode)");</script>';
 				}
 			}
 			$vimeo .= '</div>';
@@ -433,12 +433,12 @@ if ( !trait_exists('Shortcodes') ){
 			$youtube = '<div class="nebula-youtube embed-responsive embed-responsive-16by9">';
 			if ( !empty($youtube_data) && empty($youtube_data['error']) ){
 				//Note: removed &origin=' . youtube_meta($id, 'origin') . ' right before &rel= due to console warnings. Doesn't seem to be an issue.
-				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-youtube"><iframe id="' . nebula()->escape($youtube_data['safetitle']) . '" class="' . nebula()->escape('youtube embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . nebula()->escape($width) . '" height="' . nebula()->escape($height) . '" src="//www.youtube.com/embed/' . nebula()->escape($youtube_data['id'], 'url') . '?wmode=transparent&enablejsapi=1&rel=' . nebula()->escape($rel, 'url') . '" frameborder="0" allowfullscreen=""></iframe></noscript>';
+				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-youtube"><iframe id="' . esc_attr($youtube_data['safetitle']) . '" class="' . esc_attr('youtube embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($youtube_data['id'], 'url') . '?wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen=""></iframe></noscript>';
 			} else {
-				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-youtube"><iframe class="' . nebula()->escape('no-api embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . nebula()->escape($width) . '" height="' . nebula()->escape($height) . '" src="//www.youtube.com/embed/' . nebula()->escape($id, 'url') . '?wmode=transparent&enablejsapi=1&rel=' . nebula()->escape($rel, 'url') . '" frameborder="0" allowfullscreen=""></iframe></noscript>';
+				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-youtube"><iframe class="' . esc_attr('no-api embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($id, 'url') . '?wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen=""></iframe></noscript>';
 
 				if ( $this->is_dev() ){
-					$youtube .= '<script>console.warn("(' . nebula()->escape($youtube_data['error']) . ' (via Youtube shortcode)");</script>';
+					$youtube .= '<script>console.warn("(' . esc_attr($youtube_data['error']) . ' (via Youtube shortcode)");</script>';
 				}
 			}
 			$youtube .= '</div>';
@@ -453,7 +453,7 @@ if ( !trait_exists('Shortcodes') ){
 			 */
 			extract(shortcode_atts(array('class' => '', 'style' => ''), $atts));
 			$content = htmlspecialchars_decode($content);
-			return '<code class="nebula-code ' . nebula()->escape($class) . '" style="' . nebula()->escape($style) . '" >' . htmlentities($content) . '</code>';
+			return '<code class="nebula-code ' . esc_attr($class) . '" style="' . esc_attr($style) . '" >' . htmlentities($content) . '</code>';
 		}
 
 		public function pre_shortcode($atts, $content=''){
@@ -483,7 +483,7 @@ if ( !trait_exists('Shortcodes') ){
 			if ( strpos($content, '<pre') === false && $force === false ){
 				$content = htmlspecialchars_decode($content);
 				$content = htmlspecialchars($content);
-				$pre_tag_open = '<pre class="nebula-code ' . nebula()->escape($lang) . '">';
+				$pre_tag_open = '<pre class="nebula-code ' . esc_attr($lang) . '">';
 				$pre_tag_close = '</pre>';
 			}
 
@@ -492,7 +492,7 @@ if ( !trait_exists('Shortcodes') ){
 			}
 			$vislang = $this->visible_language($lang);
 
-			$return = '<div class="nebula-code-con clearfix ' . nebula()->escape(strtolower($lang)) . '"><span class="nebula-code codetitle ' . nebula()->escape(strtolower($lang)) . '">' . $vislang . '</span>' . $pre_tag_open . $content . $pre_tag_close . '</div>';
+			$return = '<div class="nebula-code-con clearfix ' . esc_attr(strtolower($lang)) . '"><span class="nebula-code codetitle ' . esc_attr(strtolower($lang)) . '">' . $vislang . '</span>' . $pre_tag_open . $content . $pre_tag_close . '</div>';
 
 			return $return;
 		}
@@ -522,11 +522,11 @@ if ( !trait_exists('Shortcodes') ){
 				$file = '?file=' . $file;
 			}
 
-			$return = '<span class="nebula-gist nebula-code codetitle ' . nebula()->escape(strtolower($lang)) . '" style="color: ' . nebula()->escape($color) . ';">' . $vislang . '</span><div class="' . nebula()->escape('nebula-code ' . strtolower($lang) . ' ' . $class) . '" style="';
+			$return = '<span class="nebula-gist nebula-code codetitle ' . esc_attr(strtolower($lang)) . '" style="color: ' . esc_attr($color) . ';">' . $vislang . '</span><div class="' . esc_attr('nebula-code ' . strtolower($lang) . ' ' . $class) . '" style="';
 			if ( $color != '' ){
-				$return .= 'border: 1px solid ' . nebula()->escape($color) . '; border-left: 5px solid ' . nebula()->escape($color) . ';';
+				$return .= 'border: 1px solid ' . esc_attr($color) . '; border-left: 5px solid ' . esc_attr($color) . ';';
 			}
-			$return .= nebula()->escape($style) . '" ><script type="text/javascript" src="'. $content . $file . '"></script></div>';
+			$return .= esc_attr($style) . '" ><script type="text/javascript" src="'. $content . $file . '"></script></div>';
 
 			return $return;
 		}
@@ -559,11 +559,11 @@ if ( !trait_exists('Shortcodes') ){
 				}
 				$vislang = $this->visible_language($lang);
 
-				$return = '<div class="nebula-code-con clearfix ' . nebula()->escape(strtolower($lang)) . '"><span class="nebula-code codetitle ' . strtolower($lang) . '" style="color: ' . $color . ';">' . $vislang . '</span><pre class="nebula-code ' . $lang . ' ' . $class . '" style="';
+				$return = '<div class="nebula-code-con clearfix ' . esc_attr(strtolower($lang)) . '"><span class="nebula-code codetitle ' . strtolower($lang) . '" style="color: ' . $color . ';">' . $vislang . '</span><pre class="nebula-code ' . $lang . ' ' . $class . '" style="';
 				if ( $color != '' ){
-					$return .= 'border: 1px solid ' . nebula()->escape($color) . '; border-left: 5px solid ' . nebula()->escape($color) . ';';
+					$return .= 'border: 1px solid ' . esc_attr($color) . '; border-left: 5px solid ' . esc_attr($color) . ';';
 				}
-				$return .= nebula()->escape($style) . '" >' . $file_contents . '</pre></div>';
+				$return .= esc_attr($style) . '" >' . $file_contents . '</pre></div>';
 
 				return $return;
 			}
@@ -584,7 +584,7 @@ if ( !trait_exists('Shortcodes') ){
 			 * @var string $style
 			 */
 			extract(shortcode_atts(array('class' => '', 'style' => ''), $attributes));
-			$return = '<div class="accordion ' . nebula()->escape($class) . ' style="' . nebula()->escape($style) . '" role="tablist">' . do_shortcode($content) . '</div>';
+			$return = '<div class="accordion ' . esc_attr($class) . ' style="' . esc_attr($style) . '" role="tablist">' . do_shortcode($content) . '</div>';
 			return $return;
 		}
 
@@ -605,7 +605,7 @@ if ( !trait_exists('Shortcodes') ){
 					</h5>
 				</div>
 
-				<div id="collapse' . $unique_id . '" class="collapse ' . nebula()->escape($default . ' ' . $class) . '" aria-labelledby="heading' . $unique_id . '">
+				<div id="collapse' . $unique_id . '" class="collapse ' . esc_attr($default . ' ' . $class) . '" aria-labelledby="heading' . $unique_id . '">
 					<p class="card-body">' . $content . '</p>
 				</div>
 			</div>';
@@ -619,7 +619,7 @@ if ( !trait_exists('Shortcodes') ){
 			 * @var string $style
 			 */
 			extract(shortcode_atts(array('tip' => '', 'placement' => 'top', 'class' => '', 'style' => ''), $atts));
-			return '<span class="nebula-tooltip ttip ' . nebula()->escape($class) . '" data-toggle="tooltip" data-placement="' . nebula()->escape($placement) . '" title="' . nebula()->escape($tip) . '" style="' . nebula()->escape($style) . '">' . nebula()->escape($content) . '</span>';
+			return '<span class="nebula-tooltip ttip ' . esc_attr($class) . '" data-toggle="tooltip" data-placement="' . esc_attr($placement) . '" title="' . esc_attr($tip) . '" style="' . esc_attr($style) . '">' . esc_attr($content) . '</span>';
 		}
 
 		public function slider_shortcode($atts, $content=''){
@@ -644,9 +644,9 @@ if ( !trait_exists('Shortcodes') ){
 				$indicators = 'auto-indicators';
 			}
 
-			$return = '<div id="' . nebula()->escape($id) . '" class="carousel slide ' . nebula()->escape($indicators) . '" data-ride="carousel">';
+			$return = '<div id="' . esc_attr($id) . '" class="carousel slide ' . esc_attr($indicators) . '" data-ride="carousel">';
 			$return .= $this->parse_shortcode_content(do_shortcode($content));
-			$return .= '<a class="left carousel-control" href="#' . nebula()->escape($id) . '" data-slide="prev"><span class="icon-prev"></span><span class="sr-only">Previous</span></a><a class="right carousel-control" href="#' . nebula()->escape($id) . '" data-slide="next"><span class="icon-next"></span><span class="sr-only">Next</span></a></div>';
+			$return .= '<a class="left carousel-control" href="#' . esc_attr($id) . '" data-slide="prev"><span class="icon-prev"></span><span class="sr-only">Previous</span></a><a class="right carousel-control" href="#' . esc_attr($id) . '" data-slide="next"><span class="icon-next"></span><span class="sr-only">Next</span></a></div>';
 
 			return $return;
 		}
@@ -662,15 +662,15 @@ if ( !trait_exists('Shortcodes') ){
 			$linkclose = '';
 
 			if ( !empty($link) ){
-				$linkopen = '<a href="' . nebula()->escape($link) . '">';
+				$linkopen = '<a href="' . esc_attr($link) . '">';
 				if ( !empty($target) ){
-					$linkopen = '<a href="' . nebula()->escape($link) . '" target="' . nebula()->escape($target) . '">';
+					$linkopen = '<a href="' . esc_attr($link) . '" target="' . esc_attr($target) . '">';
 				}
 
 				$linkclose = '</a>';
 			}
 
-			return '<div class="carousel-item">' . $linkopen . '<img src="' . nebula()->escape($content) . '" importance="low">' . $linkclose . '</div>'; //need <div class="carousel-inner">
+			return '<div class="carousel-item">' . $linkopen . '<img src="' . esc_attr($content) . '" importance="low">' . $linkclose . '</div>'; //need <div class="carousel-inner">
 		}
 
 		//Query Post Shortcode

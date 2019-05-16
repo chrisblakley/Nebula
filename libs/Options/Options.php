@@ -117,7 +117,7 @@ if ( !trait_exists('Options') ){
 			}
 
 			if ( !empty($username) ){
-				return 'https://twitter.com/' . str_replace('@', '', $username);
+				return esc_url('https://twitter.com/' . str_replace('@', '', $username));
 			}
 
 			return false;

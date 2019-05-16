@@ -160,7 +160,7 @@ if ( !trait_exists('Utilities') ){
 
 				//Loop through Notable POIs saved in Nebula Options
 				$notable_pois = array();
-				$notable_ip_lines = explode("\n", $this->get_option('notableiplist'));
+				$notable_ip_lines = explode("\n", esc_html($this->get_option('notableiplist')));
 
 				if ( !empty($notable_ip_lines) ){
 					foreach ( $notable_ip_lines as $line ){
@@ -432,7 +432,7 @@ if ( !trait_exists('Utilities') ){
 
 			//Add hostnames from Nebula Options
 			if ( $this->get_option('hostnames') ){
-				$domains = array_merge($domains, explode(',', str_replace(' ', '', $this->get_option('hostnames'))));
+				$domains = array_merge($domains, explode(',', str_replace(' ', '', esc_html($this->get_option('hostnames')))));
 			}
 
 			$domains = array_merge($domains, array('googleusercontent.com', 'googleweblight.com')); //Add default safe valid domains to the list
@@ -452,7 +452,8 @@ if ( !trait_exists('Utilities') ){
 
 			$protocol = ( is_ssl() )? 'https' : 'http';
 			$full_url = $protocol . '://' . $_SERVER["$host"] . $_SERVER["REQUEST_URI"];
-			return $full_url;
+
+			return esc_url($full_url);
 		}
 
 		//Separate a URL into it's components.
@@ -854,7 +855,7 @@ if ( !trait_exists('Utilities') ){
 			$files = scandir($path);
 			$cleanPath = rtrim($path, '/') . '/';
 			foreach ( $files as $file ){
-				if ( $file <> "." && $file <> ".."){
+				if ( $file <> '.' && $file <> '..'){
 					$currentFile = $cleanPath . $file;
 					if ( is_dir($currentFile) ){
 						$size = $this->foldersize($currentFile);
@@ -1019,6 +1020,7 @@ if ( !trait_exists('Utilities') ){
 
 				return (($hex_r*299)+($hex_g*587)+($hex_b*114))/1000;
 			}
+
 			return 256;
 		}
 

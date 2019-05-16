@@ -319,6 +319,11 @@ function nebulaPrefetch(url, callback){
 			}
 		}
 
+		//Only https protocol (ignore "mailto", "tel", etc.)
+		if ( !/^https/.test(url) ){ //Change this to .startsWith() when we use ES6
+			return false;
+		}
+
 		//Ignore certain files
 		if ( /\.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/.test(url) ){
 			return false;
@@ -3920,7 +3925,7 @@ function nebulaLazyVideoTracking(element){
 //Native HTML5 Videos
 function nebulaHTML5VideoTracking(){
 	jQuery('video').each(function(){
-		var id = jQuery(this).attr('id');
+		var id = jQuery(this).attr('id'); //An ID is required so HTML5 videos can be properly identified by Nebula and child themes
 
 		if ( typeof nebula.videos[id] === 'object' ){ //If this video is already being tracked ignore it
 			return false;

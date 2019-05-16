@@ -332,9 +332,15 @@ if ( !trait_exists('Sass') ){
 					break;
 			}
 
-			preg_match('/\$' . $color_search . ': (\S*)(;| !default;)/', $scss_variables, $matches);
+			preg_match('/(?<comment>\/\/|\/\*\s?)?\$' . $color_search . ':\s?(?<color>\S*)(;|\s?!default;)/', $scss_variables, $matches);
 			$this->timer('Sass Colors', 'end');
-			return $matches[1];
+
+			//If the color is exists but is commented out ignore it
+			if ( !empty($matches['comment']) ){
+				return false;
+			}
+
+			return $matches['color'];
 		}
 	}
 }

@@ -30,13 +30,13 @@ if ( !trait_exists('Scripts') ){
 		public function register_scripts(){
 			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
-			wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css', null, '5.8.1', 'all');
+			wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css', null, '5.8.2', 'all');
 			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.3.2/jquery.mmenu.all.css', null, '7.3.2', 'all');
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap'), $this->version('full'), 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, $this->version('full'), 'all');
 			wp_register_style('nebula-admin', get_template_directory_uri() . '/assets/css/admin.css', null, $this->version('full'), 'all');
 			if ( $this->get_option('google_font_url') ){
-				wp_register_style('nebula-google_font', $this->get_option('google_font_url') . '&font-display=swap', array(), null, 'all');
+				wp_register_style('nebula-google_font', esc_url($this->get_option('google_font_url')) . '&font-display=swap', array(), null, 'all');
 			}
 			$this->bootstrap('css');
 			wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/jquery.dataTables.min.css', null, '1.10.19', 'all');
@@ -76,7 +76,7 @@ if ( !trait_exists('Scripts') ){
 				if ( 1==2 ){
 					return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js', null, null, '2.2.4', $footer);
 				} else {
-					return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js', null, null, '3.4.0', $footer);
+					return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js', null, null, '3.4.1', $footer);
 				}
 			}
 		}
@@ -205,7 +205,7 @@ if ( !trait_exists('Scripts') ){
 						),
 					),
 					'home_url' => home_url(),
-					'sw_url' => $this->sw_location(),
+					'sw_url' => esc_url($this->sw_location()),
 					'domain' => $this->url_components('domain'),
 					'protocol' => $this->url_components('protocol'),
 					'language' => get_bloginfo('language'),
@@ -217,17 +217,17 @@ if ( !trait_exists('Scripts') ){
 					'ecommerce' => false,
 					'options' => array(
 						'sw' => $this->get_option('service_worker'),
-						'gaid' => $this->get_option('ga_tracking_id'),
-						'nebula_cse_id' => $this->get_option('cse_id'),
-						'nebula_google_browser_api_key' => $this->get_option('google_browser_api_key'),
-						'facebook_url' => $this->get_option('facebook_url'),
-						'facebook_app_id' => $this->get_option('facebook_app_id'),
-						'twitter_username' => $this->get_option('twitter_username'),
-						'twitter_url' => $this->twitter_url(),
-						'linkedin_url' => $this->get_option('linkedin_url'),
-						'youtube_url' => $this->get_option('youtube_url'),
-						'instagram_url' => $this->get_option('instagram_url'),
-						'pinterest_url' => $this->get_option('pinterest_url'),
+						'gaid' => esc_html($this->get_option('ga_tracking_id')),
+						'nebula_cse_id' => esc_html($this->get_option('cse_id')),
+						'nebula_google_browser_api_key' => esc_html($this->get_option('google_browser_api_key')),
+						'facebook_url' => esc_url($this->get_option('facebook_url')),
+						'facebook_app_id' => esc_html($this->get_option('facebook_app_id')),
+						'twitter_username' => esc_html($this->get_option('twitter_username')),
+						'twitter_url' => esc_url($this->twitter_url()),
+						'linkedin_url' => esc_url($this->get_option('linkedin_url')),
+						'youtube_url' => esc_url($this->get_option('youtube_url')),
+						'instagram_url' => esc_url($this->get_option('instagram_url')),
+						'pinterest_url' => esc_url($this->get_option('pinterest_url')),
 						'ga_server_side_fallback' => $this->get_option('ga_server_side_fallback'),
 						'adblock_detect' => $this->get_option('adblock_detect'),
 						'manage_options' => current_user_can('manage_options'),
@@ -246,7 +246,7 @@ if ( !trait_exists('Scripts') ){
 					'id' => get_the_id(),
 					'permalink' => get_the_permalink(),
 					'title' => urlencode(get_the_title()),
-					'excerpt' => $this->excerpt(array('words' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true)),
+					'excerpt' => esc_html($this->excerpt(array('words' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true))),
 					'author' => urlencode(get_the_author()),
 					'year' => get_the_date('Y'),
 					'categories' => $this->post_categories(array('string' => true)),
@@ -275,14 +275,14 @@ if ( !trait_exists('Scripts') ){
 			$this->brain['user'] = array(
 				'id' => get_current_user_id(),
 				'name' => array(
-					'first' => $this->get_user_info('first_name'),
-					'last' => $this->get_user_info('last_name'),
-					'full' => $this->get_user_info('display_name'),
+					'first' => esc_html($this->get_user_info('first_name')),
+					'last' => esc_html($this->get_user_info('last_name')),
+					'full' => esc_html($this->get_user_info('display_name')),
 				),
 				'email' => $this->get_user_info('user_email'),
 				'ip' => $this->get_ip_address(),
 				'dnt' => !$this->is_analytics_allowed(),
-				'cid' => $this->ga_parse_cookie(),
+				'cid' => esc_html($this->ga_parse_cookie()),
 				'client' => array( //Client data is here inside user because the cookie is not transferred between clients.
 					'bot' => $this->is_bot(),
 					'remote_addr' => $this->get_ip_address(),

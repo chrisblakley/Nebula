@@ -11,7 +11,7 @@
 
 		//Load the alternative async tracking snippet: https://developers.google.com/analytics/devguides/collection/analyticsjs/#alternative_async_tracking_snippet
 		window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-		ga('create', '<?php echo nebula()->get_option('ga_tracking_id'); ?>', 'auto'<?php echo ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>);
+		ga('create', '<?php echo esc_html(nebula()->get_option('ga_tracking_id')); ?>', 'auto'<?php echo ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>);
 
 		//Use Beacon if supported. Eventually we can completely remove this when GA uses Beacon by default.
 		if ( 'sendBeacon' in navigator ){
@@ -137,7 +137,7 @@
 			//Notable POI (IP Addresses)
 			$poi = nebula()->poi();
 			if ( nebula()->get_option('cd_notablepoi') && !empty($poi) ){
-				echo 'ga("set", nebula.analytics.dimensions.poi, "' . $poi . '");';
+				echo 'ga("set", nebula.analytics.dimensions.poi, "' . esc_html($poi) . '");';
 			}
 		?>
 
@@ -393,7 +393,7 @@
 
 		<?php if ( is_404() ): //Track 404 Errors ?>
 			var lastReferrer = "<?php echo ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : 'false'; ?>" || document.referrer || '(Unknown Referrer)';
-			ga('send', 'event', '404 Not Found', '<?php echo nebula()->requested_url(); ?>', 'Referrer: ' + lastReferrer, {'nonInteraction': true});
+			ga('send', 'event', '404 Not Found', '<?php echo esc_url(nebula()->requested_url()); ?>', 'Referrer: ' + lastReferrer, {'nonInteraction': true});
 		<?php endif; ?>
 
 		//Generate a unique ID for hits and windows
@@ -428,7 +428,7 @@
 	</script>
 <?php endif; ?>
 
-<?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('gtm_id') ): //Google Tag Manager ?>
+<?php if ( nebula()->get_option('gtm_id') ): //Google Tag Manager (can be used for more than just tracking) ?>
 	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -441,7 +441,7 @@
 
 	<script type="text/javascript">
 		/* <![CDATA[ */
-		var google_conversion_id = <?php echo nebula()->get_option('adwords_remarketing_conversion_id'); ?>;
+		var google_conversion_id = <?php echo esc_html(nebula()->get_option('adwords_remarketing_conversion_id')); ?>;
 		var google_custom_params = window.google_tag_params;
 		var google_remarketing_only = true;
 		/* ]]> */
@@ -459,7 +459,7 @@
 		t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
 		document,'script','//connect.facebook.net/en_US/fbevents.js');
 
-		fbq('init', '<?php echo nebula()->get_option('facebook_custom_audience_pixel_id'); ?>'); //@todo "Nebula" 0: Can we *get* data from Hubspot to send email and other info here?
+		fbq('init', '<?php echo esc_html(nebula()->get_option('facebook_custom_audience_pixel_id')); ?>'); //@todo "Nebula" 0: Can we *get* data from Hubspot to send email and other info here?
 		fbq('track', 'PageView');
 
 		<?php do_action('nebula_fbq_after_track_pageview'); //Hook into for adding more Facebook custom audience tracking. ?>
@@ -467,7 +467,7 @@
 <?php endif; ?>
 
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('hubspot_portal') ): //Hubspot CRM ?>
-	<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/<?php echo nebula()->get_option('hubspot_portal'); ?>.js"></script>
+	<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/<?php echo esc_html(nebula()->get_option('hubspot_portal')); ?>.js"></script>
 	<script>
 		var _hsq = window._hsq = window._hsq || [];
 		_hsq.push(['setPath', '<?php echo str_replace(get_site_url(), '', get_permalink()); ?>']); //Is this even needed?
