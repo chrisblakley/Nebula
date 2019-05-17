@@ -354,10 +354,16 @@ function nebulaPostMessage(data){
 function networkAvailable(){
 	if ( navigator.onLine ){
 		nebula.dom.body.removeClass('offline');
-		localStorage.setItem('network_connection', 'online');
+
+		if ( 'localStorage' in window ){
+			localStorage.setItem('network_connection', 'online');
+		}
 	} else {
 		nebula.dom.body.addClass('offline');
-		localStorage.setItem('network_connection', 'offline');
+
+		if ( 'localStorage' in window ){
+			localStorage.setItem('network_connection', 'offline');
+		}
 	}
 
 	nebula.dom.document.trigger('nebula_network_change');
@@ -4189,22 +4195,24 @@ function addYoutubePlayer(id, element){
 		return false; //A Youtube ID is required to add player
 	}
 
-	nebula.videos[id] = {
-		player: new YT.Player(id, { //YT.Player parameter must match the iframe ID!
-			events: { //If these events are only showing up as "true", try removing the &origin= parameter from the Youtube iframe src.
-				'onReady': nebulaYoutubeReady,
-				'onStateChange': nebulaYoutubeStateChange,
-				'onError': nebulaYoutubeError
-			}
-		}),
-		platform: 'youtube', //The platform the video is hosted using.
-		element: element, //The player iframe.
-		autoplay: element.attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the ifrom src.
-		id: id,
-		engaged: false, //Whether the viewer has watched enough of the video to be considered engaged.
-		watched: 0, //Amount of time watching the video (regardless of seeking). Accurate to half a second. Units: Seconds
-		watchedPercent: 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
-		pausedYet: 0, //If this video has been paused yet by the user.
+	if ( typeof YT !== 'undefined' ){
+		nebula.videos[id] = {
+			player: new YT.Player(id, { //YT.Player parameter must match the iframe ID!
+				events: { //If these events are only showing up as "true", try removing the &origin= parameter from the Youtube iframe src.
+					'onReady': nebulaYoutubeReady,
+					'onStateChange': nebulaYoutubeStateChange,
+					'onError': nebulaYoutubeError
+				}
+			}),
+			platform: 'youtube', //The platform the video is hosted using.
+			element: element, //The player iframe.
+			autoplay: element.attr('src').indexOf('autoplay=1') > 0, //Look for the autoplay parameter in the ifrom src.
+			id: id,
+			engaged: false, //Whether the viewer has watched enough of the video to be considered engaged.
+			watched: 0, //Amount of time watching the video (regardless of seeking). Accurate to half a second. Units: Seconds
+			watchedPercent: 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
+			pausedYet: 0, //If this video has been paused yet by the user.
+		}
 	}
 }
 

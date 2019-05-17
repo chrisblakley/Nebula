@@ -6,6 +6,8 @@ if ( !trait_exists('Sass') ){
 	trait Sass {
 		public function hooks(){
 			add_action('init', array($this, 'scss_controller'));
+			add_action('nebula_body_open', array($this, 'output_sass_errors')); //Front-end
+			add_action('admin_notices', array($this, 'output_sass_errors')); //Admin
 		}
 
 		/*==========================
@@ -84,6 +86,9 @@ if ( !trait_exists('Sass') ){
 
 				$this->update_data('need_sass_compile', 'true'); //Set this to true as we are compiling so we can use it as a flag to run some thing only once.
 
+				global $sass_errors;
+				$sass_errors = array();
+
 				//Find and render .scss files at each location
 				foreach ( $all_scss_locations as $scss_location_name => $scss_location_paths ){
 					$this->render_scss($scss_location_name, $scss_location_paths, $force_all);
@@ -104,6 +109,8 @@ if ( !trait_exists('Sass') ){
 		public function render_scss($location_name=false, $location_paths=false, $force_all=false){
 			$override = apply_filters('pre_nebula_render_scss', null, $location_name, $location_paths, $force_all);
 			if ( isset($override) ){return;}
+
+			global $sass_errors;
 
 			if ( $this->get_option('scss') && !empty($location_name) && !empty($location_paths) ){
 				$this->timer('Sass (' . $location_name . ')', 'start', 'Sass');
@@ -213,11 +220,10 @@ if ( !trait_exists('Sass') ){
 										$unprotected_array = (array) $error;
 										$prefix = chr(0) . '*' . chr(0);
 
-										if ( $this->is_staff() || current_user_can('publish_pages') ){ //Staff or Editors
-											echo '<br><b>Sass compilation error</b>: ' . $unprotected_array[$prefix . 'message'] . ' in <b>' . $scss_file . '</b> (also check partial files on that line). This file has been skipped and was not processed.<br>';
-										} else {
-											echo '<script>console.error("Sass compilation error. Log in for more information.");</script>'; //Log in JS console to avoid disturbing regular visitors
-										}
+										$sass_errors[] = array(
+											'file' => $scss_file,
+											'message' => $unprotected_array[$prefix . 'message']
+										);
 
 										continue; //Skip the file that contains errors
 									}
@@ -235,6 +241,21 @@ if ( !trait_exists('Sass') ){
 				}
 
 				$this->timer('Sass (' . $location_name . ')', 'end');
+			}
+		}
+
+		//Display any Sass compilation errors that occurred
+		public function output_sass_errors(){
+			global $sass_errors;
+
+			if ( $this->is_staff() || current_user_can('publish_pages') ){ //Staff or Editors
+				foreach ( $sass_errors as $sass_error ){
+					echo '<div class="nebula-admin-notice notice notice-error"><p><strong>[Sass Compilation Error]</strong> ' . $sass_error['message'] . ' in <strong>' . $sass_error['file'] . '</strong>. This file has been skipped and was not processed.</p></div>';
+				}
+			}
+
+			if ( !empty($sass_errors) ){
+				echo '<script>console.error("A sass compilation error occurred.");</script>'; //Log in JS console to avoid disturbing regular visitors
 			}
 		}
 

@@ -2671,6 +2671,7 @@ trait Functions {
 	}
 
 	//Autocomplete Search AJAX.
+	//@todo "Nebula" 0: Sometimes I see this in GA exceptions: SyntaxError: Unexpected token P in JSON at position 0
 	public function autocomplete_search(){
 		if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 		$timer_name = $this->timer('Autocomplete Search');
