@@ -166,6 +166,7 @@
 </FilesMatch>
 
 #10 HOURS
+#PHP/HTML files here to try to prevent nonces from expiring in cache
 <FilesMatch "\.(php|html)$">
 	Header set Cache-Control "max-age=36000, public"
 </FilesMatch>

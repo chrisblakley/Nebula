@@ -147,14 +147,14 @@ if ( !trait_exists('Sass') ){
 				);
 
 				$theme_mod_primary_color = get_theme_mod('nebula_primary_color');
-				$primary_color = ( !empty($theme_mod_primary_color) )? $theme_mod_primary_color : rtrim(nebula()->sass_color('primary'), ';'); //From Customizer or child theme Sass variable
+				$primary_color = ( !empty($theme_mod_primary_color) )? $theme_mod_primary_color : rtrim(nebula()->sass_color('$primary_color'), ';'); //From Customizer or child theme Sass variable
 				$nebula_scss_variables['primary_color'] = ( !empty($primary_color) )? $primary_color : 'rgba(0, 0, 0, 0)';
 
 				$theme_mod_secondary_color = get_theme_mod('nebula_secondary_color');
-				$secondary_color = ( !empty($theme_mod_secondary_color) )? $theme_mod_secondary_color : rtrim(nebula()->sass_color('secondary'), ';'); //From Customizer or child theme Sass variable
+				$secondary_color = ( !empty($theme_mod_secondary_color) )? $theme_mod_secondary_color : rtrim(nebula()->sass_color('$secondary_color'), ';'); //From Customizer or child theme Sass variable
 				$nebula_scss_variables['secondary_color'] = ( !empty($secondary_color) )? $secondary_color : 'rgba(0, 0, 0, 0)';
 
-				$background_color = rtrim(get_theme_mod('nebula_background_color', $this->sass_color('background')), ';'); //From Customizer or child theme Sass variable
+				$background_color = rtrim(get_theme_mod('nebula_background_color', $this->sass_color('$background_color')), ';'); //From Customizer or child theme Sass variable
 				$nebula_scss_variables['background_color'] = ( !empty($background_color) )? $background_color : '#f6f6f6';
 
 				$all_scss_variables = apply_filters('nebula_scss_variables', $nebula_scss_variables);
@@ -299,8 +299,8 @@ if ( !trait_exists('Sass') ){
 		}
 
 		//Pull certain colors from .../mixins/_variables.scss
-		public function sass_color($color='primary', $theme='child'){
-			$override = apply_filters('pre_sass_color', null, $color, $theme);
+		public function sass_color($variable='$primary_color', $theme='child'){
+			$override = apply_filters('pre_sass_color', null, $variable, $theme);
 			if ( isset($override) ){return;}
 
 			$this->timer('Sass Colors', 'start', 'Sass');
@@ -325,7 +325,7 @@ if ( !trait_exists('Sass') ){
 				set_transient($transient_name, $scss_variables, HOUR_IN_SECONDS*12); //1 hour cache
 			}
 
-			switch ( str_replace(array('$', ' ', '_', '-'), '', $color) ){
+			switch ( str_replace(array('$', ' ', '_', '-'), '', $variable) ){
 				case 'primary':
 				case 'primarycolor':
 				case 'first':
@@ -338,19 +338,9 @@ if ( !trait_exists('Sass') ){
 				case 'second':
 					$color_search = 'secondary_color';
 					break;
-				case 'tertiary':
-				case 'tertiarycolor':
-				case 'third':
-					$color_search = 'tertiary_color';
-					break;
-				case 'background':
-				case 'backgroundcolor':
-				case 'bg':
-					$color_search = 'background_color';
-					break;
 				default:
-					return false;
-					break;
+					$color_search = str_replace('$', '', $variable); //Use the passed parameter by default. Remove the "$" because it needs to be escaped in the RegEx below.
+					break; //Do not modify the string in any way
 			}
 
 			preg_match('/(?<comment>\/\/|\/\*\s?)?\$' . $color_search . ':\s?(?<color>\S*)(;|\s?!default;)/', $scss_variables, $matches);

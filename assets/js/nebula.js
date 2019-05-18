@@ -750,7 +750,7 @@ function initEventTracking(){
 				nebula.dom.document.trigger('nebula_ga_blocked');
 
 				//Send Pageview
-				jQuery.ajax({
+				jQuery.ajax({ //Eventually update this to fetch with ES6
 					type: "POST",
 					url: nebula.site.ajax.url + '?prps=gapv',
 					data: {
@@ -774,7 +774,7 @@ function initEventTracking(){
 							ni = 1;
 						}
 
-						jQuery.ajax({
+						jQuery.ajax({ //Eventually update this to fetch with ES6
 							type: "POST",
 							url: nebula.site.ajax.url + '?prps=gahit',
 							data: {
@@ -1820,6 +1820,11 @@ function autocompleteSearch(element, types){
 			element.closest('.input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
 		}
 
+		var postTypes = '';
+		if ( types ){
+			postTypes = '&types=' + JSON.stringify(types);
+		}
+
 		element.autocomplete({ //jQuery UI dependent
 			position: {
 				my: "left top-2px",
@@ -1827,26 +1832,20 @@ function autocompleteSearch(element, types){
 				collision: "flip",
 			},
 			source: function(request, response){
-				//Could this use the WP REST API?
-				jQuery.ajax({
-					dataType: 'json',
-					type: "POST",
-					url: nebula.site.ajax.url + '?prps=acs',
-					data: {
-						nonce: nebula.site.ajax.nonce,
-						action: 'nebula_autocomplete_search',
-						data: request,
-						types: JSON.stringify(types)
-					},
+				jQuery.get({ //Eventually update this to fetch with ES6
+					url: nebula.site.home_url + '/wp-json/nebula/v2/autocomplete_search?term=' + request.term + postTypes,
 					success: function(data){
 						nebula.dom.document.trigger('nebula_autocomplete_search_success', data);
 						ga('set', nebula.analytics.metrics.autocompleteSearches, 1);
+
 						if ( data ){
 							nebula.dom.document.trigger('nebula_autocomplete_search_results', data);
 							nebulaPrefetch(data[0].link);
+
 							jQuery.each(data, function(index, value){
 								value.label = value.label.replace(/&#038;/g, "\&");
 							});
+
 							noSearchResults = '';
 						} else {
 							nebula.dom.document.trigger('nebula_autocomplete_search_no_results');
@@ -2709,6 +2708,7 @@ function loadElement(element){
 function nebulaLoadJS(url, callback){
 	if ( typeof url === 'string' ){
 		jQuery.ajax({ //Eventually update this to fetch with ES6
+			dataType: 'script',
 			type: 'GET',
 			url: url,
 			success: function(response){
@@ -2720,7 +2720,6 @@ function nebulaLoadJS(url, callback){
 				ga('send', 'exception', {'exDescription': '(JS) ' + url + ' could not be loaded', 'exFatal': false});
 				nv('event', 'JavaScript resource could not be dynamically loaded');
 			},
-			dataType: 'script',
 			cache: true,
 			timeout: 60000
 		});
