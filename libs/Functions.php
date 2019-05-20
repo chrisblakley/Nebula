@@ -83,9 +83,6 @@ trait Functions {
 
 		add_filter('single_template', array($this, 'single_category_template'));
 
-		add_action('wp_ajax_nebula_autocomplete_search', array($this, 'autocomplete_search'));
-		add_action('wp_ajax_nopriv_nebula_autocomplete_search', array($this, 'autocomplete_search'));
-
 		add_action('wp_ajax_nebula_infinite_load', array($this, 'infinite_load'));
 		add_action('wp_ajax_nopriv_nebula_infinite_load', array($this, 'infinite_load'));
 
@@ -1677,7 +1674,8 @@ trait Functions {
 
 		$data = array_merge($defaults, $options);
 		$data['delimiter_html'] = '<li class="delimiter">' . $data['delimiter'] . '</li>';
-		$data['current_node'] = $data['before'] . '<a class="current-breadcrumb-link" href="' . get_the_permalink() . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title()) . '</span></a>' . $data['after'];
+		$data['current_node'] = $data['before'] . '<a class="current-breadcrumb-link" href="' . get_the_permalink() . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title()) . '</span></a>';
+		$position = 1; //Incrementer for each node (for schema tags)
 
 		if ( !empty($data['force']) ){ //If using forced override
 			echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList">';
@@ -1701,23 +1699,28 @@ trait Functions {
 					echo '<span itemprop="name">' . $node_text . '</span>';
 
 					if ( !empty($node_url) ){
-						echo '</a></li>';
+						echo '</a><meta itemprop="position" content="' . $position . '" /></li>';
 					}
 
 					echo ' ' . $data['delimiter_html'] . ' ';
 				}
+
+				$position++;
 			}
 
 			if ( !empty($data['current']) ){
-				echo $data['current_node'];
+				echo $data['current_node'] . '<meta itemprop="position" content="' . $position . '" />' . $data['after'];
 			}
 
 			echo '</ol>';
 		} elseif ( is_home() || is_front_page() ){
-			echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . '</span></a></li></ol>';
+			echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . '</span></a><meta itemprop="position" content="' . $position . '" /></li></ol>';
+			$position++;
 			return false;
 		} else {
-			echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . '</span></a></li> ' . $data['delimiter_html'] . ' ';
+			echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . '</span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ';
+			$position++;
+
 			if ( is_category() ){
 				$thisCat = get_category(get_query_var('cat'), false);
 				if ( $thisCat->parent !== 0 ){
@@ -1735,11 +1738,17 @@ trait Functions {
 			} elseif ( is_search() ){
 				echo $data['before'] . 'Search results' . $data['after'];
 			} elseif ( is_day() ){
-				echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_year_link(get_the_time('Y')) . '" itemprop="item"><span itemprop="name">' . get_the_time('Y') . '</span></a></li> ' . $data['delimiter_html'] . ' ';
-				echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '" itemprop="item"><span itemprop="name">' . get_the_time('F') . '</span></a></li> ' . $data['delimiter_html'] . ' ';
+				echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_year_link(get_the_time('Y')) . '" itemprop="item"><span itemprop="name">' . get_the_time('Y') . '</span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ';
+				$position++;
+
+				echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_month_link(get_the_time('Y'),get_the_time('m')) . '" itemprop="item"><span itemprop="name">' . get_the_time('F') . '</span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ';
+				$position++;
+
 				echo $data['before'] . get_the_time('d') . $data['after'];
 			} elseif ( is_month() ){
-				echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_year_link(get_the_time('Y')) . '" itemprop="item"><span itemprop="name">' . get_the_time('Y') . '</span></a></li> ' . $data['delimiter_html'] . ' ';
+				echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_year_link(get_the_time('Y')) . '" itemprop="item"><span itemprop="name">' . get_the_time('Y') . '</span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ';
+				$position++;
+
 				echo $data['before'] . get_the_time('F') . $data['after'];
 			} elseif ( is_year() ){
 				echo $data['before'] . get_the_time('Y') . $data['after'];
@@ -1752,10 +1761,11 @@ trait Functions {
 						$slug['slug'] = $post_type->has_archive; //Replace slug with the custom archive slug string
 					}
 
-					echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . $slug['slug'] . '/" itemprop="item"><span itemprop="name">' . $post_type->labels->singular_name . '</span></a></li>';
+					echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . $slug['slug'] . '/" itemprop="item"><span itemprop="name">' . $post_type->labels->singular_name . '</span></a><meta itemprop="position" content="' . $position . '" /></li>';
+					$position++;
 
 					if ( !empty($data['current']) ){
-						echo ' ' . $data['delimiter_html'] . ' ' . $data['current_node'];
+						echo ' ' . $data['delimiter_html'] . ' ' . $data['current_node'] . '<meta itemprop="position" content="' . $position . '" />' . $data['after'];
 					}
 				} else {
 					$cat = get_the_category();
@@ -1767,10 +1777,11 @@ trait Functions {
 							$cats = preg_replace("#^(.+)\s" . $data['delimiter_html'] . "\s$#", "$1", $cats);
 						}
 
-						echo apply_filters('nebula_breadcrumbs_categories', '<li>' . $cats . '</li>', $data);
+						echo apply_filters('nebula_breadcrumbs_categories', '<li>' . $cats . '<meta itemprop="position" content="' . $position . '" /></li>', $data);
+						$position++;
 
 						if ( !empty($data['current']) ){
-							echo $data['current_node'];
+							echo $data['current_node'] . '<meta itemprop="position" content="' . $position . '" />' . $data['after'];
 						}
 					}
 				}
@@ -1779,13 +1790,14 @@ trait Functions {
 				echo $data['before'] . $post_type->labels->singular_name . $data['after'];
 			} elseif ( is_attachment() ){ //@TODO "Nebula" 0: Check for gallery pages? If so, it should be Home > Parent(s) > Gallery > Attachment
 				if ( !empty($post->post_parent) ){ //@TODO "Nebula" 0: What happens if the page parent is a child of another page?
-					echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_permalink($post->post_parent) . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title($post->post_parent)) . '</span></a></li> ' . $data['delimiter_html'] . ' ' . strip_tags(get_the_title());
+					echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_permalink($post->post_parent) . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title($post->post_parent)) . '</span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ' . strip_tags(get_the_title());
+					$position++;
 				} else {
 					echo strip_tags(get_the_title());
 				}
 			} elseif ( is_page() && !$post->post_parent ){
 				if ( !empty($data['current']) ){
-					echo $data['current_node'];
+					echo $data['current_node'] . '<meta itemprop="position" content="' . $position . '" />' . $data['after'];
 				}
 			} elseif ( is_page() && $post->post_parent ){
 				$parent_id = $post->post_parent;
@@ -1793,7 +1805,8 @@ trait Functions {
 
 				while ( $parent_id ){
 					$page = get_page($parent_id);
-					$breadcrumbs[] = '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_permalink($page->ID) . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title($page->ID)) . '</span></a></li>';
+					$breadcrumbs[] = '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_permalink($page->ID) . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title($page->ID)) . '</span></a><meta itemprop="position" content="' . $position . '" /></li>';
+					$position++;
 					$parent_id = $page->post_parent;
 				}
 
@@ -1806,7 +1819,7 @@ trait Functions {
 				}
 
 				if ( !empty($data['current']) ){
-					echo ' ' . $data['delimiter_html'] . ' ' . $data['current_node'];
+					echo ' ' . $data['delimiter_html'] . ' ' . $data['current_node'] . '<meta itemprop="position" content="' . $position . '" />' . $data['after'];
 				}
 			} elseif ( is_tag() ){
 				$prefix = '';
@@ -1948,7 +1961,7 @@ trait Functions {
 		</div>
 
 		<script><?php //Must be in PHP so $args can be encoded. @todo "Nebula" 0: This must have to load in the footer if jQuery is set to the footer...? ?>
-			jQuery(function(){
+			jQuery(window).on('load', function(){
 				var pageNumber = <?php echo $args['paged']; ?>+1;
 
 				jQuery('.infinite-load-more').on('click', function(){
@@ -2678,6 +2691,8 @@ trait Functions {
 
 	//Autocomplete Search (REST endpoint)
 	public function rest_autocomplete_search(){
+		$timer_name = $this->timer('Autocomplete Search');
+
 		if ( isset($_GET['term']) ){
 			ini_set('memory_limit', '256M'); //@TODO "Nebula" 0: Ideally this would not be here.
 

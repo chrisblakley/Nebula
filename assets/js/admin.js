@@ -312,8 +312,7 @@ function checkPageSpeed(){
 //Check on the WebPageTest API results (initiated on the server-side then called repetatively by JS)
 function checkWPTresults(){
 	if ( typeof wptTestJSONURL !== 'undefined' ){
-		jQuery.ajax({
-			type: 'GET',
+		jQuery.get({
 			url: wptTestJSONURL,
 		}).success(function(response){
 			if ( response ){
