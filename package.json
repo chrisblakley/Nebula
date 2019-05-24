@@ -18,7 +18,7 @@
 		"Autotrack": "googleanalytics/autotrack",
 		"mmenu-js": "FrDH/mmenu-js",
 		"DataTables": "DataTables/DataTables",
-		"Chosen": "harvesthq/chosen",
+		"Chosen": "harvesthq/chosen"
 	},
 	"browserslist": [
 		"> 1%",
