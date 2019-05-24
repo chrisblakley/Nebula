@@ -9,12 +9,11 @@ if ( !trait_exists('Optimization') ){
 			add_filter('style_loader_src', array($this, 'http2_server_push_header'), 2, 1);
 			add_filter('script_loader_src', array($this, 'http2_server_push_header'), 2, 1);
 
-			add_filter('clean_url', array($this, 'defer_async_scripts'), 11, 1);
-			add_filter('script_loader_tag', array($this, 'defer_async_additional_scripts'), 10);
+			add_filter('wp_enqueue_scripts', array($this, 'defer_async_additional_scripts'));
+			add_filter('script_loader_tag', array($this, 'defer_async_scripts'), 10, 2);
+
 			add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
 			add_action('wp_footer', array($this, 'dequeue_lazy_load_scripts'));
-			add_filter('script_loader_src', array($this, 'remove_script_version'), 15, 1);
-			add_filter('style_loader_src', array($this, 'remove_script_version'), 15, 1);
 			add_action('wp_enqueue_scripts', array($this, 'dequeues'), 9999);
 			add_action('wp_enqueue_scripts', array($this, 'remove_actions'), 9999);
 
@@ -122,69 +121,74 @@ if ( !trait_exists('Optimization') ){
 		public function use_less_data(){return $this->is_save_data();}
 		public function is_lite(){return $this->is_save_data();}
 		public function is_save_data(){
-			if ( isset($_SERVER["HTTP_SAVE_DATA"]) && stristr($_SERVER["HTTP_SAVE_DATA"], 'on') !== false ){
+			if ( isset($_SERVER['HTTP_SAVE_DATA']) && stristr($_SERVER['HTTP_SAVE_DATA'], 'on') !== false ){
 				return true;
 			}
 
 			return false;
 		}
 
-		public function register_script($handle=null, $src=null, $exec=null, $deps=array(), $ver=false, $in_footer=false){
-			$path = ( !empty($exec) )? $src . '#' . $exec : $src;
-			wp_register_script($handle, $path, $deps, $ver, $in_footer);
-		}
+		//Allow scripts to be registered with additional attributes
+		public function register_script($handle=null, $src=null, $attributes=array(), $deps=array(), $ver=false, $in_footer=false){
+			wp_register_script($handle, $src, $deps, $ver, $in_footer);
 
-		//Remove version query strings from registered/enqueued styles/scripts (to allow caching). Note when troubleshooting: Other plugins may be doing this too.
-		//For debugging (see the "add_debug_query_arg" function in /libs/Scripts.php)
-		public function remove_script_version($src){
-			if ( $this->is_debug() ){
-				return $src;
-			}
-
-			//$src = rtrim(remove_query_arg('ver', $src), '?'); //Remove "?" if it is the last character after removing ?ver parameter //Commenting this out to see if it works better with Service Workers resource caching...
-			$src = str_replace('?#', '#', $src); //Remove "?" if it is followed by "#" (when using #defer or #async with Nebula)
-
-			return $src;
-		}
-
-		//Control which scripts use defer/async using a hash.
-		public function defer_async_scripts($url){
-			if ( strpos($url, '#defer') === false && strpos($url, '#async') === false ){
-				return $url;
-			}
-
-			if ( strpos($url, '#defer') ){
-				return str_replace('#defer', '', $url) . "' defer='defer"; //Add the defer attribute while removing the hash
-			} elseif ( strpos($url, '#async') ){
-				return str_replace('#async', '', $url) . "' async='async"; //Add the async attribute while removing the hash
+			if ( !empty($attributes) ){
+				$attributes = ( is_array($attributes) )? $attributes : array($attributes); //Make sure it is an array
+				foreach ( $attributes as $attribute ){
+					wp_script_add_data($handle, $attribute, true);
+				}
 			}
 		}
 
 		//Defer and Async specific scripts. This only works with registered/enqueued scripts!
-		public function defer_async_additional_scripts($tag){
-			if ( $this->is_admin_page() ){ //Do not modify scripts on admin pages (Gutenberg compatibility)
-				return $tag;
-			}
-
-			$to_defer = array('jquery-migrate', 'jquery.form', 'contact-form-7', 'wp-embed'); //Scripts to defer. Strings can be anywhere in the filepath.
-			$to_async = array(); //Scripts to async. Strings can be anywhere in the filepath.
+		public function defer_async_additional_scripts(){
+			$to_defer = apply_filters('nebula_defer_scripts', array('jquery-migrate', 'jquery.form', 'contact-form-7', 'wp-embed')); //Allow other functions to hook in to add defer to existing scripts
+			$to_async = apply_filters('nebula_async_scripts', array()); //Allow other functions to hook in to add async to existing scripts
 
 			//Defer scripts
-			if ( !empty($to_defer) ){
-				foreach ( $to_defer as $script ){
-					if ( strpos($tag, $script) ){
-						return str_replace(' src', ' defer="defer" src', $tag);
-					}
-				}
+			foreach ( $to_defer as $handle ){
+				wp_script_add_data($handle, 'defer', true);
 			}
 
 			//Async scripts
-			if ( !empty($to_async) ){
-				foreach ( $to_async as $script ){
-					if ( strpos($tag, $script) ){
-						return str_replace(' src', ' async="async" src', $tag);
+			foreach ( $to_async as $handle ){
+				wp_script_add_data($handle, 'async', true);
+			}
+		}
+
+		//Add defer, async, and/or crossorigin attributes to scripts
+		public function defer_async_scripts($tag, $handle){
+			$crossorigin_exececution = wp_scripts()->get_data($handle, 'crossorigin');
+			$defer_exececution = wp_scripts()->get_data($handle, 'defer');
+			$async_exececution = wp_scripts()->get_data($handle, 'async');
+
+			//Add crossorigin attribute if it is requested and does not already exist
+			if ( !empty($crossorigin_exececution) && strpos($tag, 'crossorigin=') === false ){
+				$tag = str_replace(' src', ' crossorigin="anonymous" src', $tag); //Add the crossorigin attribute
+			}
+
+			//Ignore if neither defer nor async attribute is found
+			if ( empty($defer_exececution) && empty($async_exececution) ){
+				return $tag;
+			}
+
+			//Abort adding async/defer for scripts that have this script as a dependency...? Maybe not?
+			/*
+				foreach ( wp_scripts()->registered as $script ){
+					if ( in_array($handle, $script->deps, true) ){
+						return $tag;
 					}
 				}
+			*/
+
+			//Add defer attribute if it is requested and does not already exist
+			if ( !empty($defer_exececution) && strpos($tag, 'defer=') === false ){
+				$tag = str_replace(' src', ' defer="defer" src', $tag); //Add the defer attribute
+			}
+
+			//Add async attribute if it is requested and does not already exist
+			if ( !empty($async_exececution) && strpos($tag, 'async=') === false ){
+				$tag = str_replace(' src', ' async="async" src', $tag); //Add the async attribute
 			}
 
 			return $tag;

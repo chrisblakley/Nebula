@@ -17,7 +17,8 @@
 							<div class="col">
 								<?php if ( get_theme_mod('nebula_offcanvas_menu', true) && (has_nav_menu('mobile') || has_nav_menu('primary')) ): ?>
 									<a class="mobilenavtrigger alignleft" href="#mobilenav" title="Navigation"><i class="fas fa-bars"></i></a>
-									<nav id="mobilenav">
+									<nav id="mobilenav" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement">
+										<meta itemprop="name" content="Mobile Menu">
 										<?php
 											if ( has_nav_menu('mobile') ){
 												wp_nav_menu(array('theme_location' => 'mobile', 'menu_id' => 'main-panel')); //Do not change menu_id

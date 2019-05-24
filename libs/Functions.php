@@ -42,6 +42,7 @@ trait Functions {
 		add_action('wp_loaded', array($this, 'favicon_cache'));
 		add_action('nebula_head_open', array($this, 'google_optimize_style'));
 		add_action('after_setup_theme', array($this, 'nav_menu_locations'));
+		add_filter('nav_menu_link_attributes', array($this, 'add_menu_attributes'), 10, 3);
 
 		if ( !$this->get_option('comments') || $this->get_option('disqus_shortname') ){ //If WP core comments are disabled -or- if Disqus is enabled
 			add_action('wp_dashboard_setup', array($this, 'remove_activity_metabox'));
@@ -2448,6 +2449,12 @@ trait Functions {
 			'mobile' => 'Mobile Menu',
 			'footer' => 'Footer Menu'
 		));
+	}
+
+	//Add navigation menu item attributes (and metadata)
+	public function add_menu_attributes($atts, $item, $args){
+		$atts['itemprop'] = 'url';
+		return $atts;
 	}
 
 	//Remove the Activity metabox
