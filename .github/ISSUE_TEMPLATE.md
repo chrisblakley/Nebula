@@ -1,1 +1,0 @@
-Please provide as much detail as possible including screenshots and links. For bug reporting, be sure to include your environment details (device, operating system, browser, and versions of each), Nebula version, and steps to reproduce the problem.
