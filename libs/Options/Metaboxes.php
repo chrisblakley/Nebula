@@ -1491,7 +1491,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="google_font_url">Google Font</label>
 					<input type="text" name="nebula_options[google_font_url]" id="google_font_url" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_font_url']; ?>" placeholder="http://fonts.googleapis.com/css?family=Open+Sans:400,800" />
 					<p class="nebula-help-text short-help form-text text-muted">Choose which <a href="https://www.google.com/fonts" target="_blank" rel="noopener">Google Font</a> is used by default for this site by pasting the entire font URL.</p>
-					<p class="nebula-help-text more-help form-text text-muted">The default font uses the native system font of the user's device.</p>
+					<p class="nebula-help-text more-help form-text text-muted">The default font uses the native system font of the user's device. Be sure to include (or exclude) the provided <code>&display=swap</code> parameter in this URL!</p>
 					<p class="option-keywords">remote resource minor page speed impact optimization optimize</p>
 				</div>
 

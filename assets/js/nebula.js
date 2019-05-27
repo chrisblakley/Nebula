@@ -1159,6 +1159,66 @@ function eventTracking(){
 		}
 	});
 
+	//Detect "Rage Clicks"
+	var clickEvents = [];
+	nebula.dom.document.on('click', 'body', function(e){
+		clickEvents.push({
+			event: e,
+			time: new Date()
+		});
+
+		//remain only required number of click events and remove left of them.
+		if ( clickEvents.length > 5 ){
+			clickEvents.splice(0, clickEvents.length - 5);
+		}
+
+		//detect 3 click in 5 sec
+		if ( clickEvents.length >= 5 ){
+			var numberOfClicks = 5; //Number of clicks to detect within the period
+			var period = 3; //The period to listen for the number of clicks
+
+			var last = clickEvents.length - 1;
+			var timeDiff = (clickEvents[last].time.getTime() - clickEvents[last - numberOfClicks + 1].time.getTime()) / 1000;
+
+			//Ignore event periods longer than desired
+			if ( timeDiff > period ){
+				return false;
+			}
+
+			//Loop through the last number of click events to check the distance between them
+			var max_distance = 0;
+			for ( i = last - numberOfClicks+1; i < last; i++ ){
+				for ( j = i+1; j <= last; j++ ){
+					var distance = Math.round(Math.sqrt(Math.pow(clickEvents[i].event.clientX - clickEvents[j].event.clientX, 2) + Math.pow(clickEvents[i].event.clientY - clickEvents[j].event.clientY, 2)));
+					if ( distance > max_distance ){
+						max_distance = distance;
+					}
+
+					//Ignore if distance is outside 100px radius
+					if ( distance > 100 ){
+						return false;
+					}
+				}
+			}
+
+			var thisEvent = {
+				event: e,
+				category: 'Rage Clicks',
+				action: 'Detected',
+				clicks: numberOfClicks,
+				period: timeDiff,
+				selector: domTreeToString(e.target),
+			}
+
+			thisEvent.description = numberOfClicks + ' clicks in ' + timeDiff + ' seconds detected within ' + max_distance + 'px of ' + thisEvent.selector;
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.description);
+
+			clickEvents.splice(clickEvents.length-5, 5); //Remove unused click points
+		}
+	});
+
 	//Skip to Content Link Focus/Clicks
 	nebula.dom.document.on('focus', '.sr-only', function(e){
 		var thisEvent = {
@@ -4880,16 +4940,58 @@ function subnavExpanders(){
 	}
 }
 
+//Convert DOM elements into a tree string
+function domTreeToString(element){
+	//If the element is a selector, convert to a jQuery object
+	if ( typeof element === 'string' ){
+		element = jQuery(element);
+	}
+
+	//If the element is a native JS object, convert to jQuery
+	if ( element.nodeType ){
+		element = jQuery(element);
+	}
+
+	//Map the parent elements into an array and concatenate together
+	var selector = element.parents().map(function(){
+		var parentTag = this.tagName.toLowerCase();
+
+		//Append the ID if a parent element has one
+		var parentID = jQuery(this).attr('id');
+		if ( parentID ){
+			parentTag += '#' + parentID;
+		}
+
+		return parentTag;
+	}).get().reverse().concat([this.nodeName]).join(' > ');
+
+	selector += element.get(0).tagName.toLowerCase();
+
+	//Append the ID to the last element
+	var id = element.attr('id');
+	if ( id ){
+		selector += '#' + id;
+	}
+
+	//Add the classnames to the last element
+	var classNames = element.attr('class');
+	if ( classNames ){
+		selector += '.' + jQuery.trim(classNames).replace(/\s/gi, '.');
+	}
+
+	return selector;
+}
+
 /*==========================
  Extension Functions
  ===========================*/
 
 //Custom CSS expression for a case-insensitive contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
 //Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: keywordSearch(container, parent, value);
-jQuery.expr[":"].Contains=function(e,n,t){return(e.textContent||e.innerText||"").toUpperCase().indexOf(t[3].toUpperCase())>=0};
+jQuery.expr[':'].Contains=function(e,n,t){return(e.textContent||e.innerText||'').toUpperCase().indexOf(t[3].toUpperCase())>=0};
 
 //Escape required characters from a provided string. https://github.com/kvz/locutus
 function preg_quote(str, delimiter){return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');}
 
-//Parse dates (equivalent of PHP function). https://github.com/kvz/locutus
+//Parse dates (equivalent of PHP strtotime function). https://github.com/kvz/locutus
 function strtotime(e,t){var a,n,r,s,u,i,o,w,c,d,D,g=!1;if(!e)return g;e=e.replace(/^\s+|\s+$/g,"").replace(/\s{2,}/g," ").replace(/[\t\r\n]/g,"").toLowerCase();var l=new RegExp(["^(\\d{1,4})","([\\-\\.\\/:])","(\\d{1,2})","([\\-\\.\\/:])","(\\d{1,4})","(?:\\s(\\d{1,2}):(\\d{2})?:?(\\d{2})?)?","(?:\\s([A-Z]+)?)?$"].join(""));if((n=e.match(l))&&n[2]===n[4])if(n[1]>1901)switch(n[2]){case"-":return n[3]>12||n[5]>31?g:new Date(n[1],parseInt(n[3],10)-1,n[5],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3;case".":return g;case"/":return n[3]>12||n[5]>31?g:new Date(n[1],parseInt(n[3],10)-1,n[5],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3}else if(n[5]>1901)switch(n[2]){case"-":case".":return n[3]>12||n[1]>31?g:new Date(n[5],parseInt(n[3],10)-1,n[1],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3;case"/":return n[1]>12||n[3]>31?g:new Date(n[5],parseInt(n[1],10)-1,n[3],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3}else switch(n[2]){case"-":return n[3]>12||n[5]>31||n[1]<70&&n[1]>38?g:(s=n[1]>=0&&n[1]<=38?+n[1]+2e3:n[1],new Date(s,parseInt(n[3],10)-1,n[5],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3);case".":return n[5]>=70?n[3]>12||n[1]>31?g:new Date(n[5],parseInt(n[3],10)-1,n[1],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3:n[5]<60&&!n[6]?n[1]>23||n[3]>59?g:(r=new Date,new Date(r.getFullYear(),r.getMonth(),r.getDate(),n[1]||0,n[3]||0,n[5]||0,n[9]||0)/1e3):g;case"/":return n[1]>12||n[3]>31||n[5]<70&&n[5]>38?g:(s=n[5]>=0&&n[5]<=38?+n[5]+2e3:n[5],new Date(s,parseInt(n[1],10)-1,n[3],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3);case":":return n[1]>23||n[3]>59||n[5]>59?g:(r=new Date,new Date(r.getFullYear(),r.getMonth(),r.getDate(),n[1]||0,n[3]||0,n[5]||0)/1e3)}if("now"===e)return null===t||isNaN(t)?(new Date).getTime()/1e3|0:0|t;if(!isNaN(a=Date.parse(e)))return a/1e3|0;if(l=new RegExp(["^([0-9]{4}-[0-9]{2}-[0-9]{2})","[ t]","([0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?)","([\\+-][0-9]{2}(:[0-9]{2})?|z)"].join("")),(n=e.match(l))&&("z"===n[4]?n[4]="Z":n[4].match(/^([+-][0-9]{2})$/)&&(n[4]=n[4]+":00"),!isNaN(a=Date.parse(n[1]+"T"+n[2]+n[4]))))return a/1e3|0;function f(e){var t,a,n,r,s=e.split(" "),w=s[0],c=s[1].substring(0,3),d=/\d+/.test(w),D="ago"===s[2],g=("last"===w?-1:1)*(D?-1:1);if(d&&(g*=parseInt(w,10)),o.hasOwnProperty(c)&&!s[1].match(/^mon(day|\.)?$/i))return u["set"+o[c]](u["get"+o[c]]()+g);if("wee"===c)return u.setDate(u.getDate()+7*g);if("next"===w||"last"===w)t=w,a=g,void 0!==(r=i[c])&&(0==(n=r-u.getDay())?n=7*a:n>0&&"last"===t?n-=7:n<0&&"next"===t&&(n+=7),u.setDate(u.getDate()+n));else if(!d)return!1;return!0}if(u=t?new Date(1e3*t):new Date,i={sun:0,mon:1,tue:2,wed:3,thu:4,fri:5,sat:6},o={yea:"FullYear",mon:"Month",day:"Date",hou:"Hours",min:"Minutes",sec:"Seconds"},d="([+-]?\\d+\\s"+(c="(years?|months?|weeks?|days?|hours?|minutes?|min|seconds?|sec|sunday|sun\\.?|monday|mon\\.?|tuesday|tue\\.?|wednesday|wed\\.?|thursday|thu\\.?|friday|fri\\.?|saturday|sat\\.?)")+"|(last|next)\\s"+c+")(\\sago)?",!(n=e.match(new RegExp(d,"gi"))))return g;for(D=0,w=n.length;D<w;D++)if(!f(n[D]))return g;return u.getTime()/1e3}

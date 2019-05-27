@@ -12,8 +12,28 @@
   engine:
     default: 'Blink'
 
+# Qwant Mobile
+- regex: 'QwantMobile(?:/(\d+[\.\d]+))?'
+  name: 'Qwant Mobile'
+  version: '$1'
+  engine:
+    default: 'Gecko'
 
-# Microsoft Edge (newer versions of IE)
+# TenFourFox
+- regex: 'TenFourFox(?:/(\d+[\.\d]+))?'
+  name: 'TenFourFox'
+  version: '$1'
+  engine:
+    default: 'Gecko'
+
+# AOL Shield
+- regex: 'AOLShield(?:/(\d+[\.\d]+))?'
+  name: 'AOL Shield'
+  version: '$1'
+  engine:
+    default: 'Gecko'
+
+# Microsoft Edge (Spartan Edge)
 - regex: 'Edge[ /](\d+[\.\d]+)'
   name: 'Microsoft Edge'
   version: '$1'
@@ -29,6 +49,13 @@
 
 # Microsoft Edge for Android
 - regex: 'EdgA[ /](\d+[\.\d]+)'
+  name: 'Microsoft Edge'
+  version: '$1'
+  engine:
+    default: 'Blink'
+
+# Microsoft Edge (Anaheim Edge)
+- regex: 'Edg[ /](\d+[\.\d]+)'
   name: 'Microsoft Edge'
   version: '$1'
   engine:
