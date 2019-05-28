@@ -59,7 +59,7 @@ if ( !trait_exists('Dashboard') ){
 		//WordPress Information metabox ("At a Glance" replacement)
 		public function ataglance_metabox(){
 			global $wp_meta_boxes;
-			wp_add_dashboard_widget('nebula_ataglance', '<img src="' . get_site_icon_url(32, get_theme_file_uri('/assets/img/meta') . '/favicon-32x32.png') . '" style="float: left; width: 20px; margin-right: 3px;" />&nbsp;' . get_bloginfo('name'), array($this, 'dashboard_nebula_ataglance'));
+			wp_add_dashboard_widget('nebula_ataglance', '<img src="' . get_site_icon_url(32, get_theme_file_uri('/assets/img/meta') . '/favicon-32x32.png') . '" style="float: left; width: 20px; margin-right: 3px;" loading="lazy" />&nbsp;' . get_bloginfo('name'), array($this, 'dashboard_nebula_ataglance'));
 		}
 
 		public function dashboard_nebula_ataglance(){
@@ -135,7 +135,7 @@ if ( !trait_exists('Dashboard') ){
 						$post_icon = $wp_post_types[$post_type]->menu_icon;
 						$post_icon_img = '<i class="fas fa-fw fa-thumbtack"></i>';
 						if ( !empty($post_icon) ){
-							$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" />';
+							$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" loading="lazy" />';
 							if ( strpos('dashicons-', $post_icon) >= 0 ){
 								$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
 							}
@@ -229,7 +229,7 @@ if ( !trait_exists('Dashboard') ){
 			$headshot_thumbnail = str_replace('.jpg', '-150x150.jpg', $headshotURL);
 
 			if ( $headshot_thumbnail ){
-				$headshot_html = '<img src="' . esc_attr($headshot_thumbnail) . '" style="float: left; max-width: 20px; border-radius: 100px;" />&nbsp;';
+				$headshot_html = '<img src="' . esc_attr($headshot_thumbnail) . '" style="float: left; max-width: 20px; border-radius: 100px;" loading="lazy" />&nbsp;';
 			} else {
 				$headshot_html = '<i class="fas fa-fw fa-user"></i>&nbsp;';
 			}
@@ -368,7 +368,7 @@ if ( !trait_exists('Dashboard') ){
 			//IP Address
 			echo '<li>';
 			if ( $this->get_ip_address() === '72.43.235.106' ){
-				echo '<img src="' . get_template_directory_uri() . '/assets/img/phg/phg-symbol.png" style="max-width: 14px;" />';
+				echo '<img src="' . get_template_directory_uri() . '/assets/img/phg/phg-symbol.png" style="max-width: 14px;" loading="lazy" />';
 			} else {
 				echo '<i class="fas fa-fw fa-globe"></i>';
 			}
@@ -437,7 +437,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Pinckney Hugo Group metabox content
 		public function dashboard_phg(){
-			echo '<a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+photo' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" /></a>';
+			echo '<a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+photo' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" loading="lazy" /></a>';
 			echo '<ul class="nebula-fa-ul">';
 			echo '<li><i class="fas fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener">760 West Genesee Street, Syracuse, NY 13204</a></li>';
 			echo '<li><i class="fas fa-fw fa-link"></i> <a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+textlink' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank">PinckneyHugo.com</a></li>';

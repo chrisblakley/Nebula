@@ -1,4 +1,4 @@
-## Types of change(s)**
+## Types of change(s)
 Bug fix, feature, docs update, etc.
 
 

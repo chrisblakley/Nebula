@@ -135,12 +135,12 @@ trait Functions {
 			array(
 				'name' => 'Primary',
 				'slug' => 'primary',
-				'color' => get_theme_mod('nebula_primary_color', $this->sass_color('primary')),
+				'color' => get_theme_mod('nebula_primary_color', $this->sass_color('$primary_color')),
 			),
 			array(
 				'name' => 'Secondary',
 				'slug' => 'secondary',
-				'color' => get_theme_mod('nebula_secondary_color', $this->sass_color('secondary')),
+				'color' => get_theme_mod('nebula_secondary_color', $this->sass_color('$secondary_color')),
 			)
 		));
 
@@ -596,8 +596,8 @@ trait Functions {
 			"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
 			"short_name": "' . get_bloginfo('name') . '",
 			"description": "' . get_bloginfo('description') . '",
-			"theme_color": "' . get_theme_mod('nebula_primary_color', $this->sass_color('primary')) . '",
-			"background_color": "' . get_theme_mod('nebula_background_color', $this->sass_color('background')) . '",
+			"theme_color": "' . get_theme_mod('nebula_primary_color', $this->sass_color('$primary_color')) . '",
+			"background_color": "' . get_theme_mod('nebula_background_color', $this->sass_color('$background_color')) . '",
 			"gcm_sender_id": "' . $this->get_option('gcm_sender_id') . '",
 			"scope": "/",
 			"start_url": "' . home_url('/') . '?utm_source=homescreen",
@@ -839,7 +839,7 @@ trait Functions {
 						if ( strpos('dashicons-', $post_icon) >= 0 ){
 							$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
 						} else {
-							$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" />';
+							$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" loading="lazy" />';
 						}
 					} else {
 						$post_icon_img = '<i class="fas fa-thumbtack"></i>';
@@ -1534,7 +1534,7 @@ trait Functions {
 		?>
 		<div class="nebula-social-button pinterest-pin">
 			<a href="//www.pinterest.com/pin/create/button/?url=<?php echo get_page_link(); ?>&media=<?php echo $featured_image; ?>&description=<?php echo urlencode(get_the_title()); ?>" data-pin-do="buttonPin" data-pin-config="<?php echo ( $counts !== 0 )? 'beside' : 'none'; ?>" data-pin-color="red">
-				<img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_red_20.png" />
+				<img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_red_20.png" loading="lazy" />
 			</a>
 			<?php if ( empty($this->pinterest_pin_widget_loaded) ): ?>
 				<script type="text/javascript" async defer src="//assets.pinterest.com/js/pinit.js"></script>

@@ -123,7 +123,6 @@ if ( !trait_exists('Shortcodes') ){
 			extract(shortcode_atts(array(
 				'widget_name' => false,
 			), $atts));
-			/** @var string $widget_name */
 
 			ob_start();
 
@@ -163,12 +162,6 @@ if ( !trait_exists('Shortcodes') ){
 
 		public function div_shortcode($atts, $content=''){
 			extract(shortcode_atts(array("class" => '', "style" => '', "open" => '', "close" => ''), $atts));
-			/**
-			 * @var string $class
-			 * @var string $style
-			 * @var string $open
-			 * @var string $close
-			 */
 
 			if ( $content ){
 				$div = '<div class="nebula-div ' . esc_attr($class) . '" style="' . esc_attr($style) . '">' . do_shortcode($content) . '</div>';
@@ -183,32 +176,16 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function container_shortcode($atts, $content=''){
-			/**
-			 * @var string $class
-			 * @var string $style
-			 */
 			extract(shortcode_atts( array('class' => '', 'style' => ''), $atts));
 			return '<div class="nebula-container container ' . esc_attr($class) . '" style="' . esc_attr($style) . '">' . do_shortcode($content) . '</div>';
 		}
 
 		public function row_shortcode($atts, $content=''){
-			/**
-			 * @var string $class
-			 * @var string $style
-			 */
 			extract(shortcode_atts( array('class' => '', 'style' => ''), $atts));
 			return '<div class="nebula-row row ' . esc_attr($class) . '" style="' . esc_attr($style) . '">' . do_shortcode($content) . '</div>';
 		}
 
 		public function column_shortcode($atts, $content=''){
-			/**
-			 * @var string $scale
-			 * @var string $columns
-			 * @var string $offset
-			 * @var string $centered
-			 * @var string $class
-			 * @var string $style
-			 */
 			extract(shortcode_atts(array('scale' => 'md', 'columns' => '', 'offset' => '', 'centered' => '', 'class' => '', 'style' => ''), $atts));
 
 			$flags = $this->get_flags($atts);
@@ -230,7 +207,6 @@ if ( !trait_exists('Shortcodes') ){
 
 		//Note: It is semantically incorrect for an <hr> to appear within a <p> tag, so be careful of WordPress wrapping this shortcode in a <p> tag.
 		public function divider_shortcode($atts){
-			/** @var string $space */
 			extract(shortcode_atts(array("space" => '0', "above" => '0', "below" => '0'), $atts));
 
 			$divider = '<hr class="nebula-divider" />';
@@ -245,13 +221,6 @@ if ( !trait_exists('Shortcodes') ){
 
 		public function icon_shortcode($atts){
 			extract(shortcode_atts(array('type' => '', 'mode' => 'solid', 'color' => 'inherit', 'size' => 'inherit', 'class' => ''), $atts));
-			/**
-			 * @var string $type
-			 * @var string $mode
-			 * @var string $color
-			 * @var string $size
-			 * @var string $class
-			 */
 
 			//Prepend the fa- prefix to the icon name if not provided
 			if ( strpos($type, 'fa-') === false ){
@@ -276,15 +245,6 @@ if ( !trait_exists('Shortcodes') ){
 
 		public function button_shortcode($atts, $content=''){
 			extract(shortcode_atts(array('size' => 'md', 'type' => 'brand', 'icon' => false, 'href' => '#', 'target' => false, 'class' => '', 'style' => ''), $atts));
-			/**
-			 * @var string $size
-			 * @var string $type
-			 * @var string|bool $icon
-			 * @var string $href
-			 * @var string $target
-			 * @var string $class
-			 * @var string $style
-			 */
 
 			if ( $target ){
 				$target = ' target="' . esc_attr($target) . '"';
@@ -309,7 +269,6 @@ if ( !trait_exists('Shortcodes') ){
 
 		public function space_shortcode($atts){
 			extract(shortcode_atts(array("height" => '20'), $atts));
-			/** @var string $height */
 			return '<div class="space" style="' . esc_attr('height:' . $height . 'px;') . '" ></div>';
 		}
 
@@ -318,27 +277,7 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function map_shortcode($atts){
-			/**
-			 * @var string $key
-			 * @var string $mode
-			 * @var string $q
-			 * @var string $center
-			 * @var string $origin
-			 * @var string $destination
-			 * @var string $waypoints
-			 * @var string $avoid
-			 * @var string $zoom
-			 * @var string $maptype
-			 * @var string $language
-			 * @var string $region
-			 * @var string $width
-			 * @var string $height
-			 * @var string $class
-			 * @var string $style
-			 */
 			extract(shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '', "region" => '', "width" => '100%', "height" => '350', "class" => '', "style" => ''), $atts));
-
-			/** @todo $flags is unused */
 			$flags = $this->get_flags($atts);
 
 			//@todo "Nebula" 0: Use null coalescing operator here if possible
@@ -377,32 +316,20 @@ if ( !trait_exists('Shortcodes') ){
 				$zoom = '&zoom=' . esc_url($zoom);
 			}
 
-			$return = '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy"><iframe class="nebula-googlemap-shortcode googlemap ' . esc_attr($class) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" frameborder="0" src="https://www.google.com/maps/embed/v1/' . $mode . '?key=' . $key . $q . $zoom . $center . '&maptype=' . $maptype . $language . $region . '" style="border: 0; ' . esc_attr($style) . '" allowfullscreen></iframe></noscript>';
+			$return = '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy"><iframe class="nebula-googlemap-shortcode googlemap ' . esc_attr($class) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" frameborder="0" src="https://www.google.com/maps/embed/v1/' . $mode . '?key=' . $key . $q . $zoom . $center . '&maptype=' . $maptype . $language . $region . '" style="border: 0; ' . esc_attr($style) . '" allowfullscreen loading="lazy"></iframe></noscript>';
 
 			return $return;
 		}
 
 		public function vimeo_shortcode($atts){
-			/**
-			 * @var string $id
-			 * @var string $height
-			 * @var string $width
-			 * @var string $autoplay
-			 * @var string $badge
-			 * @var string $byline
-			 * @var string $color
-			 * @var string $loop
-			 * @var string $portrait
-			 * @var string $title
-			 */
 			extract(shortcode_atts(array("id" => null, "height" => '', "width" => '', "autoplay" => '0', "badge" => '1', "byline" => '1', "color" => '00adef', "loop" => '0', "portrait" => '1', "title" => '1'), $atts));
 
 			$vimeo_data = $this->video_meta('vimeo', $id);
 			$vimeo = '<div class="nebula-vimeo embed-responsive embed-responsive-16by9">';
 			if ( !empty($vimeo_data) && empty($vimeo_data['error']) ){
-				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-vimeo"><iframe id="' . esc_attr($vimeo_data['safetitle']) . '" class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . esc_attr($id) . '?api=1&player_id=' . esc_attr($vimeo_data['safetitle'], 'url') . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" autoplay="' . esc_attr($autoplay) . '" badge="' . esc_attr($badge) . '" byline="' . esc_attr($byline) . '" color="' . esc_attr($color) . '" loop="' . esc_attr($loop) . '" portrait="' . esc_attr($portrait) . '" title="' . esc_attr($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></noscript>';
+				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-vimeo"><iframe id="' . esc_attr($vimeo_data['safetitle']) . '" class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . esc_attr($id) . '?api=1&player_id=' . esc_attr($vimeo_data['safetitle'], 'url') . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" autoplay="' . esc_attr($autoplay) . '" badge="' . esc_attr($badge) . '" byline="' . esc_attr($byline) . '" color="' . esc_attr($color) . '" loop="' . esc_attr($loop) . '" portrait="' . esc_attr($portrait) . '" title="' . esc_attr($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen loading="lazy"></iframe></noscript>';
 			} else {
-				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-vimeo"><iframe class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . esc_attr($id) . '" width="' . esc_attr($width) . ' height="' . esc_attr($height) . '" autoplay="' . esc_attr($autoplay) . '" badge="' . esc_attr($badge) . '" byline="' . esc_attr($byline) . '" color="' . esc_attr($color) . '" loop="' . esc_attr($loop) . '" portrait="' . esc_attr($portrait) . '" title="' . esc_attr($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></noscript>';
+				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-vimeo"><iframe class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . esc_attr($id) . '" width="' . esc_attr($width) . ' height="' . esc_attr($height) . '" autoplay="' . esc_attr($autoplay) . '" badge="' . esc_attr($badge) . '" byline="' . esc_attr($byline) . '" color="' . esc_attr($color) . '" loop="' . esc_attr($loop) . '" portrait="' . esc_attr($portrait) . '" title="' . esc_attr($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen loading="lazy"></iframe></noscript>';
 
 				if ( $this->is_dev() ){
 					$vimeo .= '<script>console.warn("' . esc_html($vimeo_data['error']) . ' (via Vimeo shortcode)");</script>';
@@ -414,14 +341,6 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function youtube_shortcode($atts){
-			/**
-			 * @var string $id
-			 * @var string $height
-			 * @var string $width
-			 * @var int $rel
-			 * @var string $ignore_visibility
-			 * @var string $class
-			 */
 			extract(shortcode_atts(array("id" => null, "height" => '', "width" => '', "rel" => 0, "ignore_visibility" => '', "class" => ''), $atts));
 
 			$flags = $this->get_flags($atts);
@@ -433,9 +352,9 @@ if ( !trait_exists('Shortcodes') ){
 			$youtube = '<div class="nebula-youtube embed-responsive embed-responsive-16by9">';
 			if ( !empty($youtube_data) && empty($youtube_data['error']) ){
 				//Note: removed &origin=' . youtube_meta($id, 'origin') . ' right before &rel= due to console warnings. Doesn't seem to be an issue.
-				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-youtube"><iframe id="' . esc_attr($youtube_data['safetitle']) . '" class="' . esc_attr('youtube embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($youtube_data['id'], 'url') . '?wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen=""></iframe></noscript>';
+				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-youtube"><iframe id="' . esc_attr($youtube_data['safetitle']) . '" class="' . esc_attr('youtube embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($youtube_data['id'], 'url') . '?wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen="" loading="lazy"></iframe></noscript>';
 			} else {
-				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-youtube"><iframe class="' . esc_attr('no-api embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($id, 'url') . '?wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen=""></iframe></noscript>';
+				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-youtube"><iframe class="' . esc_attr('no-api embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($id, 'url') . '?wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen loading="lazy"></iframe></noscript>';
 
 				if ( $this->is_dev() ){
 					$youtube .= '<script>console.warn("(' . esc_attr($youtube_data['error']) . ' (via Youtube shortcode)");</script>';
@@ -447,25 +366,12 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function code_shortcode($atts, $content=''){
-			/**
-			 * @var string $class
-			 * @var string $style
-			 */
 			extract(shortcode_atts(array('class' => '', 'style' => ''), $atts));
 			$content = htmlspecialchars_decode($content);
 			return '<code class="nebula-code ' . esc_attr($class) . '" style="' . esc_attr($style) . '" >' . htmlentities($content) . '</code>';
 		}
 
 		public function pre_shortcode($atts, $content=''){
-			/**
-			 * @var string $lang
-			 * @var string $language
-			 * @var string $color
-			 * @var bool $force
-			 * @var bool $br
-			 * @var string $class
-			 * @var string $style
-			 */
 			extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'force' => false, 'br' => false, 'class' => '', 'style' => ''), $atts));
 
 			if ( empty($this->shortcode_flags['pre']) ){
@@ -498,14 +404,6 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function gist_shortcode($atts, $content=''){
-			/**
-			 * @var string $lang
-			 * @var string $language
-			 * @var string $color
-			 * @var string $file
-			 * @var string $class
-			 * @var string $style
-			 */
 			extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => '', 'class' => '', 'style' => ''), $atts));
 
 			if ( empty($this->shortcode_flags['pre']) ){
@@ -533,19 +431,10 @@ if ( !trait_exists('Shortcodes') ){
 
 		//Is content unnecessary?
 		public function github_shortcode($atts, $content=''){
-			/**
-			 * @var string $lang
-			 * @var string $language
-			 * @var string $color
-			 * @var string $file
-			 * @var string $class
-			 * @var string $style
-			 */
 			extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => '', 'class' => '', 'style' => ''), $atts));
 
 			if ( !empty($file) ){
 				WP_Filesystem();
-				/** @var WP_Filesystem_Base $wp_filesystem */
 				global $wp_filesystem;
 				$file_contents = $wp_filesystem->get_contents($file);
 
@@ -579,22 +468,12 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function accordion_shortcode($attributes, $content=''){
-			/**
-			 * @var string $class
-			 * @var string $style
-			 */
 			extract(shortcode_atts(array('class' => '', 'style' => ''), $attributes));
 			$return = '<div class="accordion ' . esc_attr($class) . ' style="' . esc_attr($style) . '" role="tablist">' . do_shortcode($content) . '</div>';
 			return $return;
 		}
 
 		public function accordion_item_shortcode($attributes, $content=''){
-			/**
-			 * @var string $class
-			 * @var string $style
-			 * @var string $title
-			 * @var string $default
-			 */
 			extract(shortcode_atts(array('class' => '', 'style' => '', 'title' => '', 'default' => 'show'), $attributes));
 			$unique_id = bin2hex(random_bytes(16));
 
@@ -612,24 +491,12 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function tooltip_shortcode($atts, $content=''){
-			/**
-			 * @var string $tip
-			 * @var string $placement
-			 * @var string $class
-			 * @var string $style
-			 */
 			extract(shortcode_atts(array('tip' => '', 'placement' => 'top', 'class' => '', 'style' => ''), $atts));
 			return '<span class="nebula-tooltip ttip ' . esc_attr($class) . '" data-toggle="tooltip" data-placement="' . esc_attr($placement) . '" title="' . esc_attr($tip) . '" style="' . esc_attr($style) . '">' . esc_attr($content) . '</span>';
 		}
 
 		public function slider_shortcode($atts, $content=''){
-			/**
-			 * @var string $id
-			 * @var string $indicators
-			 */
 			extract(shortcode_atts(array('id' => false, 'indicators' => true), $atts));
-
-			/** @todo $flags is unused */
 			$flags = $this->get_flags($atts);
 
 			//@todo "Nebula" 0: Use null coalescing operator here if possible. Probably not possible but think about it.
@@ -652,10 +519,6 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function slide_shortcode($atts, $content=''){
-			/**
-			 * @var string $link
-			 * @var string $content
-			 */
 			extract(shortcode_atts(array('link' => '', 'target' => ''), $atts));
 
 			$linkopen = '';
@@ -670,15 +533,12 @@ if ( !trait_exists('Shortcodes') ){
 				$linkclose = '</a>';
 			}
 
-			return '<div class="carousel-item">' . $linkopen . '<img src="' . esc_attr($content) . '" importance="low">' . $linkclose . '</div>'; //need <div class="carousel-inner">
+			return '<div class="carousel-item">' . $linkopen . '<img src="' . esc_attr($content) . '" importance="low" loading="lazy">' . $linkclose . '</div>'; //need <div class="carousel-inner">
 		}
 
 		//Query Post Shortcode
 		//[query args="post_type=post&category_name=home-garden&monthnum=10"]
 		public function query_shortcode($attributes){
-			/**
-			 * @var string $args
-			 */
 			extract(shortcode_atts(array('args' => ''), $attributes));
 
 			//Convert to an array so that 'paged' can be replaced if it is already present (or added if it is not) then convert back to a query string

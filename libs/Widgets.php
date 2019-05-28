@@ -329,7 +329,7 @@ if ( !trait_exists('Widgets') ){
 
 				<div class="row">
 					<div class="col">
-						<iframe class="googlemap" width="100%" height="<?php echo ( !empty($instance['height']) )? $instance['height'] : '350'; ?>" frameborder="0"
+						<iframe class="googlemap" width="100%" height="<?php echo ( !empty($instance['height']) )? $instance['height'] : '350'; ?>" loading="lazy" frameborder="0"
 							src="https://www.google.com/maps/embed/v1/<?php echo $instance['map_mode']; ?>?key=<?php echo nebula()->option('google_browser_api_key'); ?>
 							<?php echo ( in_array($instance['map_mode'], array('place', 'search')) && !empty($instance['query']) )? '&q=' . $instance['query'] : ''; //Place, Search ?>
 
@@ -840,7 +840,7 @@ if ( !trait_exists('Widgets') ){
 						$user_html = '<div class="row">
 									<div class="col">
 										<div class="user-profile-con">
-											<img src="' . $tweets[0]->user->profile_image_url_https . '" />
+											<img src="' . $tweets[0]->user->profile_image_url_https . '" loading="lazy" />
 
 											<div>
 												<h3>' . $tweets[0]->user->name . '</h3>
@@ -937,14 +937,14 @@ if ( !trait_exists('Widgets') ){
 					$youtube_data = nebula()->video_meta('youtube', $instance['video_id']);
 					?>
 					<div class="embed-responsive embed-responsive-16by9">
-						<iframe class="youtube embed-responsive-item" src="//www.youtube.com/embed/<?php echo $instance['video_id']; ?>?wmode=transparent&enablejsapi=1&rel=0" width="560" height="315"></iframe>
+						<iframe class="youtube embed-responsive-item" src="//www.youtube.com/embed/<?php echo $instance['video_id']; ?>?wmode=transparent&enablejsapi=1&rel=0" width="560" height="315" loading="lazy"></iframe>
 					</div>
 					<?php
 				} else {
 					$vimeo_data = nebula()->video_meta('vimeo', '208432684');
 					?>
 					<div class="embed-responsive embed-responsive-16by9">
-						<iframe id="<?php echo $instance['video_id']; ?>" class="vimeo embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $instance['video_id']; ?>" width="560" height="315"></iframe>
+						<iframe id="<?php echo $instance['video_id']; ?>" class="vimeo embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $instance['video_id']; ?>" width="560" height="315" loading="lazy"></iframe>
 					</div>
 					<?php
 				}

@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest an idea for this project
+about: Suggest an idea for Nebula
 title: ''
 labels: "\U0001F4A1 Feature Request"
 assignees: ''
