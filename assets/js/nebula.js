@@ -2668,14 +2668,21 @@ function lazyLoadAssets(){
 			threshold: 0.1
 		});
 
-		jQuery('.nebula-lazy-position, .lazy-load').each(function(){
+		jQuery('.nebula-lazy-position, .lazy-load, .nebula-lazy').each(function(){
 			lazyObserver.observe(jQuery(this)[0]); //Observe the element
 		});
 	} else {
-		jQuery('.nebula-lazy-position, .lazy-load').each(function(){
+		jQuery('.nebula-lazy-position, .lazy-load, .nebula-lazy').each(function(){
 			loadElement(jQuery(this)); //Load the element immediately
 		});
 	}
+
+	//Load all lazy elements at once if requested
+	nebula.dom.window.on('nebula_load', function(){
+		jQuery('.nebula-lazy-position, .lazy-load, .nebula-lazy').each(function(){
+			loadElement(jQuery(this)); //Load the element immediately
+		});
+	});
 
 	//Lazy load CSS assets
 	jQuery.each(nebula.site.resources.lazy.styles, function(handle, condition){
