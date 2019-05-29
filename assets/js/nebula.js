@@ -1182,7 +1182,7 @@ function eventTracking(){
 
 			//Ignore event periods longer than desired
 			if ( timeDiff > period ){
-				return false;
+				return null; //Return null because false will prevent regular clicks!
 			}
 
 			//Loop through the last number of click events to check the distance between them
@@ -1196,7 +1196,7 @@ function eventTracking(){
 
 					//Ignore if distance is outside 100px radius
 					if ( distance > 100 ){
-						return false;
+						return null; //Return null because false will prevent regular clicks!
 					}
 				}
 			}
