@@ -297,11 +297,10 @@ if ( !trait_exists('Automation') ){
 				return;
 			}
 
-			global $wpdb;
 			$current_user = wp_get_current_user();
 			$to = $current_user->user_email;
 
-			//Carbon copy the admin if reset was done by another user.
+			//CC the admin if reset was done by another user.
 			$admin_user_email = $this->get_option('notification_email', $this->get_option('admin_email'));
 			if ( $admin_user_email !== $current_user->user_email ){
 				$headers[] = 'Cc: ' . $admin_user_email;
@@ -310,32 +309,14 @@ if ( !trait_exists('Automation') ){
 			$subject = 'Wordpress theme settings reset for ' . get_bloginfo('name');
 			$message = '<p>Wordpress settings have been re-initialized for <strong>' . get_bloginfo('name') . '</strong> by <strong>' . $current_user->display_name . ' <' . $current_user->user_email . '></strong> on <strong>' . date('F j, Y') . '</strong> at <strong> ' . date('g:ia') . '</strong>.</p>';
 
-
-
-
-
-
-
-
-			//@todo "Nebula" 0: Use WPDB here!
-			$connection = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-			$sql = "SELECT * FROM $wpdb->options";
-			$result = mysqli_query($connection, $sql);
-
+			global $wpdb;
+			$query_result = $wpdb->query('SELECT * FROM ' . $wpdb->options, ARRAY_A); //Query all WP Options and return as an associative array
 			$options_backup_file = get_template_directory() . '/inc/data/options_backup_' . date('Y-m-d\TH:i:s') . '.csv';
 			$fp = fopen($options_backup_file, 'w');
-			while ( $row = mysqli_fetch_assoc($result) ){
+			foreach ( $query_result as $row ){ //Loop through the array and write each row to the CSV file
 				fputcsv($fp, $row);
 			}
 			fclose($fp);
-			mysqli_close($connection);
-
-
-
-
-
-
-
 
 			$attachments = array($options_backup_file);
 

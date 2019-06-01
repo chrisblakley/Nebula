@@ -1,0 +1,7 @@
+{
+	"name": "nebula-child",
+	"version": "0.0.1",
+	"dependencies": {
+		"@chrisblakley/nebula": "latest"
+	}
+}

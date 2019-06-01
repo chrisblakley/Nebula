@@ -1353,7 +1353,7 @@ function eventTracking(){
 		if ( copyCount < 5 ){
 			if ( words.length > 8 ){
 				words = words.slice(0, 8).join(' ');
-				ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]', words.length);
+				ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]');
 			} else {
 				if ( jQuery.trim(selection) === '' ){
 					ga('send', 'event', thisEvent.category, '[0 words]');
@@ -1362,7 +1362,7 @@ function eventTracking(){
 				}
 			}
 
-			ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]', words.length);
+			ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]');
 			nv('event', 'Text Copied');
 		}
 
