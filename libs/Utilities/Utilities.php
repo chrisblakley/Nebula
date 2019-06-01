@@ -1190,25 +1190,27 @@ if ( !trait_exists('Utilities') ){
 			$nebula_theme_info = ( is_child_theme() )? wp_get_theme(str_replace('-child', '', get_template())) : wp_get_theme(); //Get the parent theme (regardless of if child theme is active)
 
 			if ( $return === 'raw' ){ //Check this first to prevent needing to RegEx altogether
-				return $nebula_theme_info->get('Version');
+				return $nebula_theme_info->get('Version'); //Ex: 7.2.23.8475u
 			}
 
-			preg_match('/(?<primary>(?<large>\d+)\.(?<medium>\d+)\.(?<small>\d+[a-z]?))\.?(?<tiny>\d+)?/i', $nebula_theme_info->get('Version'), $nebula_version);
-			$nebula_version['small'] = preg_replace('/\D/', '', $nebula_version['small']); //Remove letters from small number
+			//yolo
 
-			$nebula_version_year = ( $nebula_version['medium'] >= 8 )? 2012+$nebula_version['large']+1 : 2012+$nebula_version['large'];
+			preg_match('/(?<primary>(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+[a-z]?))\.?(?<build>\d+)?/i', $nebula_theme_info->get('Version'), $nebula_version);
+			$nebula_version['patch'] = preg_replace('/\D/', '', $nebula_version['patch']); //Remove letters from patch number
+
+			$nebula_version_year = ( $nebula_version['minor'] >= 8 )? 2012+$nebula_version['major']+1 : 2012+$nebula_version['major'];
 			$nebula_months = array('May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April');
-			$nebula_version_month = $nebula_months[$nebula_version['medium']%12]; //Modulo 12 so the version can go beyond 11 (and still match the appropriate month)
-			$nebula_version_day = ( empty($nebula_version['small']) )? '' : $nebula_version['small'];
-			$nebula_version_day_formated = ( empty($nebula_version['small']) )? ' ' : ' ' . $nebula_version['small'] . ', ';
+			$nebula_version_month = $nebula_months[$nebula_version['minor']%12]; //Modulo 12 so the version can go beyond 11 (and still match the appropriate month)
+			$nebula_version_day = ( empty($nebula_version['patch']) )? '' : $nebula_version['patch'];
+			$nebula_version_day_formated = ( empty($nebula_version['patch']) )? ' ' : ' ' . $nebula_version['patch'] . ', ';
 
 			$nebula_version_info = array(
 				'full' => $nebula_version[0],
 				'primary' => $nebula_version['primary'],
-				'large' => $nebula_version['large'],
-				'medium' => $nebula_version['medium'],
-				'small' => $nebula_version['small'],
-				'tiny' => ( isset($nebula_version['tiny']) )? $nebula_version['tiny'] : false,
+				'major' => $nebula_version['major'],
+				'minor' => $nebula_version['minor'],
+				'patch' => $nebula_version['patch'],
+				'build' => ( isset($nebula_version['build']) )? $nebula_version['build'] : false,
 				'utc' => strtotime($nebula_version_month . $nebula_version_day_formated . $nebula_version_year),
 				'date' => $nebula_version_month . $nebula_version_day_formated . $nebula_version_year,
 				'year' => $nebula_version_year,
@@ -1217,22 +1219,22 @@ if ( !trait_exists('Utilities') ){
 			);
 
 			switch ( $return ){
-				case ('raw'): //Shouldn't ever be
-					return $nebula_theme_info->get('Version');
+				case ('raw'): //Shouldn't ever reach this. See early return above.
+					return $nebula_theme_info->get('Version'); //Ex: 7.2.19.8475u
 					break;
 				case ('version'):
 				case ('full'):
-					return $nebula_version_info['full'];
+					return $nebula_version_info['full']; //Ex: 7.2.23.8475
 					break;
 				case ('primary'):
-					return $nebula_version_info['primary'];
+					return $nebula_version_info['primary']; //Ex: 7.2.23
 					break;
 				case ('date'):
-					return $nebula_version_info['date'];
+					return $nebula_version_info['date']; //Ex: July 23, 2019
 					break;
 				case ('time'):
 				case ('utc'):
-					return $nebula_version_info['utc'];
+					return $nebula_version_info['utc']; //Ex: 1559275200
 					break;
 				default:
 					return $nebula_version_info;

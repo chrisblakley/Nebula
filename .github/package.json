@@ -1,7 +1,8 @@
 {
-	"name": "Nebula",
+	"name": "nebula-wp",
+	"title": "Nebula",
 	"description": "Advanced Starter WordPress Theme for Developers",
-	"version": "7.0.29",
+	"version": "7.1.1",
 	"homepage": "https://gearside.com/nebula/",
 	"repository": {
 		"type": "git",
@@ -18,10 +19,10 @@
 		"mmenu-js": "~7.3.2",
 		"datatables": "latest",
 		"chosen": "latest",
-		"@mustangostang/spyc": "latest",
-		"@TGMPA/TGM-Plugin-Activation": "latest",
-		"@YahnisElsts/plugin-update-checker": "latest",
-		"@matomo-org/device-detector": "latest"
+		"mustangostang/spyc": "latest",
+		"TGMPA/TGM-Plugin-Activation": "latest",
+		"YahnisElsts/plugin-update-checker": "latest",
+		"matomo-org/device-detector": "latest"
 	},
 	"devDependencies": {
 		"@leafo/scssphp": "latest"
