@@ -125,6 +125,8 @@ if ( !trait_exists('Analytics') ){
 					'batteryPercent' => esc_html($this->get_option('cd_batterypercent')),
 					'network' => esc_html($this->get_option('cd_network')),
 					'referrer' => esc_html($this->get_option('cd_referrer')),
+					'navigationtype' => esc_html($this->get_option('cd_navigationtype')),
+					'redirectcount' => esc_html($this->get_option('cd_redirectcount')),
 					'author' => esc_html($this->get_option('cd_author')),
 					'businessHours' => esc_html($this->get_option('cd_businesshours')),
 					'categories' => esc_html($this->get_option('cd_categories')),

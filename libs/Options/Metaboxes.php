@@ -854,6 +854,28 @@ if ( !trait_exists('Metaboxes') ){
 						<p class="nebula-help-text short-help form-text text-muted">Logs the referrer as detected by the server. This populates regardless of UTM acquisition tags. Scope: Session</p>
 						<p class="option-keywords"></p>
 					</div>
+
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<div class="input-group-text">Navigation Type</div>
+							</div>
+							<input type="text" name="nebula_options[cd_navigationtype]" id="cd_navigationtype" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_navigationtype']; ?>" />
+						</div>
+						<p class="nebula-help-text short-help form-text text-muted">Logs the type of navigation used to load the page (navigation, reload, back/forward). Scope: Hit</p>
+						<p class="option-keywords"></p>
+					</div>
+
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<div class="input-group-text">Redirect Count</div>
+							</div>
+							<input type="text" name="nebula_options[cd_redirectcount]" id="cd_redirectcount" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_redirectcount']; ?>" />
+						</div>
+						<p class="nebula-help-text short-help form-text text-muted">Logs the number of redirects made before loading the requested page. Scope: Hit</p>
+						<p class="option-keywords"></p>
+					</div>
 				</div><!-- /sub-group -->
 
 				<div class="option-sub-group">

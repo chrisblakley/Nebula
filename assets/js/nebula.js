@@ -1142,6 +1142,19 @@ function eventTracking(){
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 	});
 
+	//History Popstate (dynamic URL changes from the History API)
+	nebula.dom.window.on('popstate', function(e){
+		var thisEvent = {
+			event: e,
+			category: 'History Popstate',
+			action: document.title,
+			location: document.location,
+			state: JSON.stringify(e.state))
+		}
+
+		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.location);
+	});
+
 	//Non-Linked Click Attempts
 	jQuery('img').on('click', function(e){
 		if ( !jQuery(this).parents('a').length ){

@@ -249,6 +249,8 @@ if ( !trait_exists('Options') ){
 				'cd_batterypercent' => '',
 				'cd_network' => '',
 				'cd_referrer' => '',
+				'cd_navigationtype' => '',
+				'cd_redirectcount' => '',
 				'cd_author' => '',
 				'cd_businesshours' => '',
 				'cd_categories' => '',
