@@ -1149,7 +1149,7 @@ function eventTracking(){
 			category: 'History Popstate',
 			action: document.title,
 			location: document.location,
-			state: JSON.stringify(e.state))
+			state: JSON.stringify(e.state)
 		}
 
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.location);
