@@ -1850,7 +1850,7 @@ trait Functions {
 	}
 
 	//Modified WordPress search form using Bootstrap components
-	public function search_form($form){
+	public function search_form($form=null){
 		$override = apply_filters('pre_nebula_search_form', null, $form);
 		if ( isset($override) ){return $override;}
 
