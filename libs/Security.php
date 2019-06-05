@@ -61,7 +61,7 @@ if ( !trait_exists('Security') ){
 		//Disable Pingbacks to prevent security issues
 		public function remove_x_pingback($headers){
 			$override = apply_filters('pre_nebula_remove_x_pingback', null, $headers);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( isset($headers['X-Pingback']) ){
 				unset($headers['X-Pingback']);
@@ -73,7 +73,7 @@ if ( !trait_exists('Security') ){
 		//Hijack pingback_url for get_bloginfo (<link rel="pingback" />).
 		public function hijack_pingback_url($output, $property){
 			$override = apply_filters('pre_nebula_hijack_pingback_url', null, $output, $property);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			return ( $property === 'pingback_url' )? null : $output;
 		}
@@ -81,7 +81,7 @@ if ( !trait_exists('Security') ){
 		//Prevent login error messages from giving too much information
 		public function login_errors($error){
 			$override = apply_filters('pre_nebula_login_errors', null, $error);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( !empty($error) ){
 				$dimensions = array('dl'=> wp_login_url(), 'dt' => 'Log In');
@@ -111,7 +111,7 @@ if ( !trait_exists('Security') ){
 		//Remove WordPress version from any enqueued scripts
 		public function at_remove_wp_ver_css_js($src){
 			$override = apply_filters('pre_at_remove_wp_ver_css_js', null, $src);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 /*
 			if ( strpos($src, 'ver=') ){

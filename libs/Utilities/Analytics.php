@@ -49,7 +49,7 @@ if ( !trait_exists('Analytics') ){
 		//Handle the parsing of the _ga cookie or setting it to a unique identifier
 		public function ga_parse_cookie(){
 			$override = apply_filters('pre_ga_parse_cookie', null);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( isset($_COOKIE['_ga']) ){
 				list($version, $domainDepth, $cid1, $cid2) = explode('.', $_COOKIE["_ga"], 4);
@@ -68,7 +68,7 @@ if ( !trait_exists('Analytics') ){
 		//Generate UUID v4 function (needed to generate a CID when one isn't available)
 		public function ga_generate_UUID(){
 			$override = apply_filters('pre_ga_generate_UUID', null);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			return sprintf(
 				'%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
@@ -83,7 +83,7 @@ if ( !trait_exists('Analytics') ){
 		//Generate Domain Hash
 		public function ga_generate_domain_hash($domain){
 			$override = apply_filters('pre_ga_generate_domain_hash', null, $domain);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( empty($domain) ){
 				$domain = $this->url_components('domain');
@@ -189,7 +189,7 @@ if ( !trait_exists('Analytics') ){
 		//https://developers.google.com/analytics/resources/articles/gaTrackingTroubleshooting?csw=1#gifParameters
 		public function ga_UTM_gif($user_cookies=array(), $user_parameters=array()){
 			$override = apply_filters('pre_ga_UTM_gif', null, $user_cookies, $user_parameters);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			//@TODO "Nebula" 0: Make an AJAX function in Nebula (plugin) to accept a form for each parameter then renders the __utm.gif pixel.
 

@@ -260,7 +260,7 @@ if ( !trait_exists('Utilities') ){
 		//Note: This should not be used for security purposes since IP addresses can be spoofed.
 		public function is_dev($strict=false){
 			$override = apply_filters('pre_is_dev', null, $strict);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( empty($strict) ){
 				$devIPs = explode(',', $this->get_option('dev_ip'));
@@ -302,7 +302,7 @@ if ( !trait_exists('Utilities') ){
 		//Note: This should not be used for security purposes since IP addresses can be spoofed.
 		public function is_client($strict=false){
 			$override = apply_filters('pre_is_client', null, $strict);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( empty($strict) ){
 				$clientIPs = explode(',', $this->get_option('client_ip'));
@@ -376,7 +376,7 @@ if ( !trait_exists('Utilities') ){
 		//$strict requires the user to be a developer or client. Passing 2 to $strict requires the dev or client to be logged in too.
 		public function is_debug($strict=false){
 			$override = apply_filters('pre_is_debug', null, $strict);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			$very_strict = ( $strict > 1 )? $strict : false;
 			if ( array_key_exists('debug', $_GET) ){
@@ -396,7 +396,7 @@ if ( !trait_exists('Utilities') ){
 		//If the Valid Hostnames option is empty, this will return true as it is unknown.
 		public function is_site_live(){
 			$override = apply_filters('pre_is_site_live', null);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( $this->get_option('hostnames') ){
 				if ( strpos($this->get_option('hostnames'), $this->url_components('hostname', home_url())) >= 0 ){
@@ -448,7 +448,7 @@ if ( !trait_exists('Utilities') ){
 		//Get the full URL. Not intended for secure use ($_SERVER var can be manipulated by client/server).
 		public function requested_url($host="HTTP_HOST"){ //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
 			$override = apply_filters('pre_nebula_requested_url', null, $host);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			$protocol = ( is_ssl() )? 'https' : 'http';
 			$full_url = $protocol . '://' . $_SERVER["$host"] . $_SERVER["REQUEST_URI"];
@@ -459,7 +459,7 @@ if ( !trait_exists('Utilities') ){
 		//Separate a URL into it's components.
 		public function url_components($segment="all", $url=null){
 			$override = apply_filters('pre_nebula_url_components', null, $segment, $url);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			//If URL is not passed, get the current page URL.
 			//@todo "Nebula" 0: Use null coalescing operator here
@@ -748,7 +748,7 @@ if ( !trait_exists('Utilities') ){
 		//Example: 'key' => 'dish_%_ingredients_%_ingredient' (repeater > repeater > field) Only the first repeater needs the _%_ but others won't hurt
 		public function fuzzy_posts_where($where){
 			$override = apply_filters('pre_nebula_fuzzy_posts_where', null, $where);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			global $wpdb;
 
@@ -766,7 +766,7 @@ if ( !trait_exists('Utilities') ){
 		//Text limiter by words
 		public function string_limit_words($string, $word_limit){
 			$override = apply_filters('pre_string_limit_words', null, $string, $word_limit);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			$limited['text'] = $string;
 			$limited['is_limited'] = false;
@@ -784,7 +784,7 @@ if ( !trait_exists('Utilities') ){
 		//String limiter by characters
 		public function string_limit_chars($string, $char_limit){
 			$override = apply_filters('pre_string_limit_chars', null, $string, $char_limit);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			$limited['text'] = trim(strip_tags($string));
 			$limited['is_limited'] = false;
@@ -803,7 +803,7 @@ if ( !trait_exists('Utilities') ){
 		public function contains($haystack, $needles){return $this->in_array_r($haystack, $needles, 'contains');}
 		public function in_array_r($haystack, $needles, $strict=true){
 			$override = apply_filters('pre_in_array_r', null, $haystack, $needles, $strict);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			foreach ( $needles as $needle ){
 				if ( $strict === true ){ //If strict, match the type and the value
@@ -836,7 +836,7 @@ if ( !trait_exists('Utilities') ){
 		//Recursive Glob
 		public function glob_r($pattern, $flags=0){
 			$override = apply_filters('pre_glob_r', null, $pattern, $flags);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			$files = glob($pattern, $flags);
 			foreach ( glob(dirname($pattern) . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir ){
@@ -849,7 +849,7 @@ if ( !trait_exists('Utilities') ){
 		//Add up the filesizes of files in a directory (and it's sub-directories)
 		public function foldersize($path){
 			$override = apply_filters('pre_foldersize', null, $path);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			$total_size = 0;
 			$files = scandir($path);
@@ -929,7 +929,7 @@ if ( !trait_exists('Utilities') ){
 		//Check if a website or resource is available
 		public function is_available($url=null, $allow_cache=true, $allow_remote_request=true){
 			$override = apply_filters('pre_nebula_is_available', null, $url, $allow_cache, $allow_remote_request);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			//Make sure the URL is valid
 			if ( empty($url) || strpos($url, 'http') !== 0 ){
@@ -1002,7 +1002,7 @@ if ( !trait_exists('Utilities') ){
 		//Check the brightness of a color. 0=darkest, 255=lightest, 256=false
 		public function color_brightness($hex){
 			$override = apply_filters('pre_nebula_color_brightness', null, $hex);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( strpos($hex, '#') !== false ){
 				preg_match("/#(?:[0-9a-fA-F]{3,6})/i", $hex, $hex_colors);
@@ -1027,7 +1027,7 @@ if ( !trait_exists('Utilities') ){
 		//Compare values using passed parameters
 		public function compare_operator($a=null, $b=null, $c='=='){
 			$override = apply_filters('pre_nebula_compare_operator', null, $a, $b, $c);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( empty($a) || empty($b) ){
 				trigger_error('nebula_compare_operator requires values to compare.');
@@ -1179,7 +1179,7 @@ if ( !trait_exists('Utilities') ){
 		//Get Nebula version information
 		public function version($return=false){
 			$override = apply_filters('pre_nebula_version', null, $return);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			$return = str_replace(array(' ', '_', '-'), '', strtolower($return));
 

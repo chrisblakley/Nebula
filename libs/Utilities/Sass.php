@@ -268,7 +268,7 @@ if ( !trait_exists('Sass') ){
 		//Compile server-side variables into SCSS
 		public function scss_post_compile($scss){
 			$override = apply_filters('pre_nebula_scss_post_compile', null, $scss);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( empty($scss) ){
 				return $scss;
@@ -301,7 +301,7 @@ if ( !trait_exists('Sass') ){
 		//Pull certain colors from .../mixins/_variables.scss
 		public function sass_color($variable='$primary_color', $theme='child'){
 			$override = apply_filters('pre_sass_color', null, $variable, $theme);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			$this->timer('Sass Colors', 'start', 'Sass');
 

@@ -31,7 +31,7 @@ if ( !trait_exists('Device') ){
 		//Boolean return if the user's device is mobile.
 		public function is_mobile(){
 			$override = apply_filters('pre_nebula_is_mobile', null);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( $this->get_option('device_detection') ){
 				if ( isset($this->device) && $this->device->isMobile() ){
@@ -50,7 +50,7 @@ if ( !trait_exists('Device') ){
 		//Boolean return if the user's device is a tablet.
 		public function is_tablet(){
 			$override = apply_filters('pre_nebula_is_tablet', null);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( $this->get_option('device_detection') ){
 				if ( isset($this->device) && $this->device->isTablet() ){
@@ -64,7 +64,7 @@ if ( !trait_exists('Device') ){
 		//Boolean return if the user's device is a desktop.
 		public function is_desktop(){
 			$override = apply_filters('pre_nebula_is_desktop', null);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( $this->get_option('device_detection') ){
 				if ( isset($this->device) && $this->device->isDesktop() ){
@@ -82,7 +82,7 @@ if ( !trait_exists('Device') ){
 		//Returns the requested information of the operating system of the user's device.
 		public function get_os($info='full'){
 			$override = apply_filters('pre_nebula_get_os', null, $info);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( $this->get_option('device_detection') ){
 				$os = $this->device->getOs();
@@ -114,7 +114,7 @@ if ( !trait_exists('Device') ){
 		//Check to see how the operating system version of the user's device compares to a passed version number.
 		public function is_os($os=null, $version=null, $comparison='=='){
 			$override = apply_filters('pre_nebula_is_os', null, $os, $version, $comparison);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( $this->get_option('device_detection') ){
 				if ( empty($os) ){
@@ -156,7 +156,7 @@ if ( !trait_exists('Device') ){
 		//Returns the requested information of the model of the user's device.
 		public function get_device($info='model'){
 			$override = apply_filters('pre_nebula_get_device', null, $info);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( $this->get_option('device_detection') ){
 				$info = str_replace(' ', '', $info);
@@ -218,7 +218,7 @@ if ( !trait_exists('Device') ){
 		public function get_client($info){ return get_browser($info); }
 		public function get_browser($info='name'){
 			$override = apply_filters('pre_nebula_get_browser', null, $info);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			//Hook in here to add custom checks to get_browser() calls
 			$additional_checks = apply_filters('nebula_get_browser', false, $info);
@@ -270,7 +270,7 @@ if ( !trait_exists('Device') ){
 		//Check to see how the browser version compares to a passed version number.
 		public function is_browser($browser=null, $version=null, $comparison='=='){
 			$override = apply_filters('pre_nebula_is_browser', null, $browser, $version, $comparison);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			switch ( strtolower($browser) ){
 				case 'ie':
@@ -337,7 +337,7 @@ if ( !trait_exists('Device') ){
 		//Check to see if the rendering engine matches a passed parameter.
 		public function is_engine($engine=null){
 			$override = apply_filters('pre_nebula_is_engine', null, $engine);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( $this->get_option('device_detection') ){
 				if ( empty($engine) ){
@@ -368,7 +368,7 @@ if ( !trait_exists('Device') ){
 		//UA lookup: http://www.useragentstring.com/pages/Crawlerlist/
 		public function is_bot(){
 			$override = apply_filters('pre_nebula_is_bot', null);
-			if ( isset($override) ){return;}
+			if ( isset($override) ){return $override;}
 
 			if ( $this->get_option('device_detection') ){
 				if ( isset($this->device) && $this->device->isBot() ){

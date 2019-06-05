@@ -72,7 +72,7 @@ trait Functions {
 		add_action('template_include', array($this, 'define_current_template'), 1000);
 		add_action('wp_ajax_nebula_twitter_cache', array($this, 'twitter_cache'));
 		add_action('wp_ajax_nopriv_nebula_twitter_cache', array($this, 'twitter_cache'));
-		add_filter('get_search_form', array($this, 'search_form'), 100);
+		add_filter('get_search_form', array($this, 'search_form'), 100, 1);
 		add_filter('the_password_form', array($this, 'password_form_simplify'));
 		add_filter('the_posts', array($this, 'always_get_post_custom'));
 		add_action('pre_get_posts', array($this, 'redirect_empty_search'));
@@ -516,8 +516,8 @@ trait Functions {
 	//Get the location URI of the Service Worker JavaScript file.
 	//Override this in your child theme if changing the location or filename of the service worker.
 	public function sw_location($uri=true){
-		$override = apply_filters('pre_sw_location', null);
-		if ( isset($override) ){return;}
+		$override = apply_filters('pre_sw_location', null, $uri);
+		if ( isset($override) ){return $override;}
 
 		if ( !empty($uri) ){
 			return get_site_url() . '/sw.js';
@@ -575,8 +575,8 @@ trait Functions {
 
 	//Manifest JSON file location
 	public function manifest_json_location($uri=true){
-		$override = apply_filters('pre_manifest_json_location', null);
-		if ( isset($override) ){return;}
+		$override = apply_filters('pre_manifest_json_location', null, $uri);
+		if ( isset($override) ){return $override;}
 
 		if ( !empty($uri) ){
 			return get_theme_file_uri('/inc/manifest.json');
@@ -712,7 +712,7 @@ trait Functions {
 	//Show different meta data information about the post. Typically used inside the loop.
 	//Example: post_meta('by');
 	public function post_meta($meta, $options=array()){
-		$override = apply_filters('pre_post_meta', null, $meta);
+		$override = apply_filters('pre_post_meta', null, $meta, $options);
 		if ( isset($override) ){return;}
 
 		if ( $meta === 'date' || $meta === 'time' || $meta === 'on' || $meta === 'day' || $meta === 'when' ){
@@ -1034,7 +1034,7 @@ trait Functions {
 	//Custom text: nebula()->excerpt(array('text' => 'Lorem ipsum <strong>dolor</strong> sit amet.', 'more' => 'Continue &raquo;', 'words' => 3, 'ellipsis' => true, 'strip_tags' => true));
 	public function excerpt($options=array()){
 		$override = apply_filters('pre_nebula_excerpt', null, $options);
-		if ( isset($override) ){return;}
+		if ( isset($override) ){return $override;}
 
 		$defaults = apply_filters('nebula_excerpt_defaults', array(
 			'id' => false,
@@ -1190,7 +1190,7 @@ trait Functions {
 	//Get the word count of a post
 	public function word_count($options=array()){
 		$override = apply_filters('pre_nebula_word_count', null, $options);
-		if ( isset($override) ){return;}
+		if ( isset($override) ){return $override;}
 
 		$defaults = array(
 			'id' => get_the_id(),
@@ -1549,7 +1549,7 @@ trait Functions {
 	public function youtube_meta($id, $meta=''){return $this->video_meta('youtube', $id);}
 	public function video_meta($provider, $id){
 		$override = apply_filters('pre_video_meta', null, $provider, $id);
-		if ( isset($override) ){return;}
+		if ( isset($override) ){return $override;}
 
 		$timer_name = $this->timer('Video Meta (' . $id . ')', 'start', 'Video Meta');
 
@@ -1850,9 +1850,9 @@ trait Functions {
 	}
 
 	//Modified WordPress search form using Bootstrap components
-	public function search_form(){
-		$override = apply_filters('pre_nebula_search_form', null);
-		if ( isset($override) ){return;}
+	public function search_form($form){
+		$override = apply_filters('pre_nebula_search_form', null, $form);
+		if ( isset($override) ){return $override;}
 
 		$placeholder = ( get_search_query() )? get_search_query() : __('Search', 'nebula');
 
@@ -1878,7 +1878,7 @@ trait Functions {
 		}
 
 		$override = apply_filters('pre_nebula_hero_search', null, $placeholder);
-		if ( isset($override) ){return;}
+		if ( isset($override) ){return $override;}
 
 		$form = '<div id="nebula-hero-formcon">
 				<form id="nebula-hero-search" class="form-group search ignore-form" method="get" action="' . home_url('/') . '">
@@ -2161,7 +2161,7 @@ trait Functions {
 	public function is_business_closed($date=null, $general=false){ return !$this->business_open($date, $general); }
 	public function business_open($date=null, $general=false){
 		$override = apply_filters('pre_business_open', null, $date, $general);
-		if ( isset($override) ){return;}
+		if ( isset($override) ){return $override;}
 
 		if ( empty($date) || $date === 'now' ){
 			$date = time();
@@ -2228,7 +2228,7 @@ trait Functions {
 	//Get the relative time of day
 	public function relative_time($format=null){
 		$override = apply_filters('pre_nebula_relative_time', null, $format);
-		if ( isset($override) ){return;}
+		if ( isset($override) ){return $override;}
 
 		if ( $this->contains(date('H'), array('00', '01', '02')) ){
 			$relative_time = array(
@@ -2428,7 +2428,7 @@ trait Functions {
 	//Determine if the author should be the Company Name or the specific author's name.
 	public function the_author($show_authors=1){
 		$override = apply_filters('pre_nebula_the_author', null, $show_authors);
-		if ( isset($override) ){return;}
+		if ( isset($override) ){return $override;}
 
 		if ( !is_single() || $show_authors === 0 || !$this->get_option('author_bios') ){
 			return $this->get_option('site_owner', get_bloginfo('name'));
