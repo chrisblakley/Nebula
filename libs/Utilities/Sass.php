@@ -374,9 +374,11 @@ if ( !trait_exists('Sass') ){
 			}
 
 			//If the color is exists but is commented out ignore it
+			/*
 			if ( !empty($matches['comment']) ){
 				return false;
 			}
+			*/
 
 			return $matches['color'];
 		}
