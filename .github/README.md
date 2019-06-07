@@ -4,10 +4,6 @@
 	</a>
 </p>
 
-<h3 align="center">Nebula</h3>
-
----
-
 ![GitHub release](https://img.shields.io/github/release/chrisblakley/nebula.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/chrisblakley/nebula.svg)
 
