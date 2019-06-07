@@ -1,19 +1,21 @@
 <p align="center">
 	<a href="https://gearside.com/nebula/" rel="noopener">
-		<img src="https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-orb.png" width=200 height=200 alt="Nebula Icon" />
+		<img src="https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-orb.png" width=250 height=250 alt="Nebula Icon" />
 	</a>
 </p>
 
 <h3 align="center">Nebula</h3>
 
 <div align="center">
-	![GitHub release](https://img.shields.io/github/release/chrisblakley/nebula.svg)
-	![GitHub last commit](https://img.shields.io/github/last-commit/chrisblakley/nebula.svg)
+
+	[![GitHub release](https://img.shields.io/github/release/chrisblakley/nebula.svg)]()
+	[![GitHub last commit](https://img.shields.io/github/last-commit/chrisblakley/nebula.svg)]()
+
 </div>
 
 ---
 
-<p align="center">**Nebula is a WordPress theme framework that focuses on enhancing development.**<br />The core features of Nebula make it a powerful tool for designing, developing, and analyzing WordPress websites consistently, but its deliberately uncomplicated code syntax also serves as a learning resource for programmers themselves.<br /></p>
+<p align="center"><strong>Nebula is a WordPress theme framework that focuses on enhancing development.</strong><br />The core features of Nebula make it a powerful tool for designing, developing, and analyzing WordPress websites consistently, but its deliberately uncomplicated code syntax also serves as a learning resource for programmers themselves.<br /></p>
 
 ## Table of Contents
 + [Getting Started](#getting_started)
