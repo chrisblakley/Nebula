@@ -146,14 +146,37 @@ if ( !trait_exists('Sass') ){
 					'this_directory' => '"' . $location_paths['uri'] . '"',
 				);
 
+				//@todo "Nebula" 0: If this works, make it a function to determine which color source to use (Customizer, child, parent)
+
+				//Determine appropriate primary color
 				$theme_mod_primary_color = get_theme_mod('nebula_primary_color');
-				$primary_color = ( !empty($theme_mod_primary_color) )? $theme_mod_primary_color : rtrim(nebula()->sass_color('$primary_color'), ';'); //From Customizer or child theme Sass variable
-				$nebula_scss_variables['primary_color'] = ( !empty($primary_color) )? $primary_color : 'rgba(0, 0, 0, 0)';
+				$primary_color = nebula()->sass_color('$primary_color', 'parent');
+				if ( !empty($theme_mod_primary_color) ){
+					$primary_color = $theme_mod_primary_color;
+				} elseif ( is_child_theme() ){
+					$child_theme_primary_color = nebula()->sass_color('$primary_color', 'child');
+					if ( !empty($child_theme_primary_color) ){
+						$primary_color = nebula()->sass_color('$primary_color', 'child');
+					}
+				}
 
+				$nebula_scss_variables['primary_color'] = $primary_color;
+
+				//Determine appropriate secondary color
 				$theme_mod_secondary_color = get_theme_mod('nebula_secondary_color');
-				$secondary_color = ( !empty($theme_mod_secondary_color) )? $theme_mod_secondary_color : rtrim(nebula()->sass_color('$secondary_color'), ';'); //From Customizer or child theme Sass variable
-				$nebula_scss_variables['secondary_color'] = ( !empty($secondary_color) )? $secondary_color : 'rgba(0, 0, 0, 0)';
+				$secondary_color = nebula()->sass_color('$secondary_color', 'parent');
+				if ( !empty($theme_mod_secondary_color) ){
+					$secondary_color = $theme_mod_secondary_color;
+				} elseif ( is_child_theme() ){
+					$child_theme_secondary_color = nebula()->sass_color('$secondary_color', 'child');
+					if ( !empty($child_theme_secondary_color) ){
+						$secondary_color = nebula()->sass_color('$secondary_color', 'child');
+					}
+				}
 
+				$nebula_scss_variables['secondary_color'] = $secondary_color;
+
+				//Other colors
 				$background_color = rtrim(get_theme_mod('nebula_background_color', $this->sass_color('$background_color')), ';'); //From Customizer or child theme Sass variable
 				$nebula_scss_variables['background_color'] = ( !empty($background_color) )? $background_color : '#f6f6f6';
 

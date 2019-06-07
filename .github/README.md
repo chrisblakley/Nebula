@@ -33,25 +33,15 @@ To take full advantage of Nebula's features, the following are recommended:
 [Download and install WordPress.](https://wordpress.org/)
 
 ### Installation & Setup <a name="installation"></a>
-[Download the .zip file of the Nebula theme.](https://github.com/chrisblakley/Nebula/archive/master.zip) Upload to the WordPress `/wp-content/themes/` directory.
 
-Activate the Nebula theme and run the automated initialization.
+![Nebula installation](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-installation.gif "Nebula installation")
 
-![Nebula theme activated](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-activated.png "Nebula theme activated")
-
-This will automatically install and activate the Nebula Child theme.
-
-![Nebula Child theme activated](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-child.png "Nebula Child theme activated")
-
-It is recommended to rename the child theme (in `/assets/scss/style.scss` and the directory name itself)
-
-Install and activate recommended plugins including the [Nebula Companion plugin](https://github.com/chrisblakley/Nebula-Companion).
-
-![Bundled Nebula plugins prompt](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-plugins.png "Bundled Nebula plugins prompt")
-
-Customize Nebula Options (including enabling Sass if desired)
-
-![Nebula Options interface](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-options.png "Nebula Options interface")
+1. [Download the .zip file of the Nebula theme.](https://github.com/chrisblakley/Nebula/archive/master.zip) Upload to the WordPress `/wp-content/themes/` directory.
+2. Activate the Nebula theme and run the automated initialization.
+3. This will automatically install and activate the Nebula Child theme.
+4. It is recommended to rename the child theme (in `/assets/scss/style.scss` and the directory name itself)
+5. Install and activate recommended plugins including the [Nebula Companion plugin](https://github.com/chrisblakley/Nebula-Companion).
+6. Customize Nebula Options (including enabling Sass if desired)
 
 ## Documentation <a name="documentation"></a>
 Comprehensive documentation is available at [https://gearside.com/nebula](https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=full+documentation) along with a [testing checklist]((https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=testing+checklist)) and [launch guide](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=launch+checklist).
