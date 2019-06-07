@@ -1,6 +1,6 @@
 <p align="center">
 	<a href="https://gearside.com/nebula/" rel="noopener">
-		<img src="https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-orb.png" width=250 height=209 alt="Nebula Icon" />
+		<img src="https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-orb.png" alt="Nebula Icon" />
 	</a>
 </p>
 
