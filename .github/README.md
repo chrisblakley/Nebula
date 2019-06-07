@@ -1,15 +1,13 @@
-<p align="center">
-	<a href="https://gearside.com/nebula/" rel="noopener">
-		<img src="https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-orb.png" alt="Nebula Icon" />
-	</a>
-</p>
+![Nebula readme icon](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-orb.png "Nebula readme icon")
 
-![GitHub release](https://img.shields.io/github/release/chrisblakley/nebula.svg)
-![GitHub last commit](https://img.shields.io/github/last-commit/chrisblakley/nebula.svg)
+---
 
 **Nebula is a WordPress theme framework that focuses on enhancing development.**
 
 The core features of Nebula make it a powerful tool for designing, developing, and analyzing WordPress websites consistently, but its deliberately uncomplicated code syntax also serves as a learning resource for programmers themselves.
+
+![GitHub release](https://img.shields.io/github/release/chrisblakley/nebula.svg)
+![GitHub last commit](https://img.shields.io/github/last-commit/chrisblakley/nebula.svg)
 
 ## Table of Contents
 + [Getting Started](#getting_started)
@@ -39,21 +37,21 @@ To take full advantage of Nebula's features, the following are recommended:
 
 Activate the Nebula theme and run the automated initialization.
 
-<img src="https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-activated.png" alt="Nebula theme activated" />
+![Nebula theme activated](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-activated.png "Nebula theme activated")
 
 This will automatically install and activate the Nebula Child theme.
 
-<img src="https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-child.png" alt="Nebula Child theme activated" />
+![Nebula Child theme activated](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-child.png "Nebula Child theme activated")
 
 It is recommended to rename the child theme (in `/assets/scss/style.scss` and the directory name itself)
 
 Install and activate recommended plugins including the [Nebula Companion plugin](https://github.com/chrisblakley/Nebula-Companion).
 
-<img src="https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-plugins.png" alt="Bundled Nebula plugins prompt" />
+![Bundled Nebula plugins prompt](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-plugins.png "Bundled Nebula plugins prompt")
 
 Customize Nebula Options (including enabling Sass if desired)
 
-<img src="https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-options.png" alt="Nebula Options interface" />
+![Nebula Options interface](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-options.png "Nebula Options interface")
 
 ## Documentation <a name="documentation"></a>
 Comprehensive documentation is available at [https://gearside.com/nebula](https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=full+documentation) along with a [testing checklist]((https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=testing+checklist)) and [launch guide](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=launch+checklist).
