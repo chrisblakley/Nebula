@@ -34,7 +34,7 @@ To take full advantage of Nebula's features, the following are recommended:
 
 ### Installation & Setup <a name="installation"></a>
 
-![Nebula installation](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-installation.gif "Nebula installation")
+![Nebula installation](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-install.gif "Nebula installation")
 
 1. [Download the .zip file of the Nebula theme.](https://github.com/chrisblakley/Nebula/archive/master.zip) Upload to the WordPress `/wp-content/themes/` directory.
 2. Activate the Nebula theme and run the automated initialization.
