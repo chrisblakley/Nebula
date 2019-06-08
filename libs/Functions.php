@@ -135,12 +135,12 @@ trait Functions {
 			array(
 				'name' => 'Primary',
 				'slug' => 'primary',
-				'color' => get_theme_mod('nebula_primary_color', $this->sass_color('$primary_color')),
+				'color' => get_theme_mod('nebula_primary_color', $this->get_color('$primary_color')),
 			),
 			array(
 				'name' => 'Secondary',
 				'slug' => 'secondary',
-				'color' => get_theme_mod('nebula_secondary_color', $this->sass_color('$secondary_color')),
+				'color' => get_theme_mod('nebula_secondary_color', $this->get_color('$secondary_color')),
 			)
 		));
 
@@ -596,8 +596,8 @@ trait Functions {
 			"name": "' . get_bloginfo('name') . ': ' . get_bloginfo('description') . '",
 			"short_name": "' . get_bloginfo('name') . '",
 			"description": "' . get_bloginfo('description') . '",
-			"theme_color": "' . get_theme_mod('nebula_primary_color', $this->sass_color('$primary_color')) . '",
-			"background_color": "' . get_theme_mod('nebula_background_color', $this->sass_color('$background_color')) . '",
+			"theme_color": "' . get_theme_mod('nebula_primary_color', $this->get_color('$primary_color')) . '",
+			"background_color": "' . get_theme_mod('nebula_background_color', $this->get_color('$background_color')) . '",
 			"gcm_sender_id": "' . $this->get_option('gcm_sender_id') . '",
 			"scope": "/",
 			"start_url": "' . home_url('/') . '?utm_source=homescreen",

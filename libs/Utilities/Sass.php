@@ -144,41 +144,10 @@ if ( !trait_exists('Sass') ){
 					'template_directory' => '"' . get_template_directory_uri() . '"',
 					'stylesheet_directory' => '"' . get_stylesheet_directory_uri() . '"',
 					'this_directory' => '"' . $location_paths['uri'] . '"',
+					'primary_color' => $this->get_color('primary_color', false, '#0098d7'),
+					'secondary_color' => $this->get_color('secondary_color', false, '#95d600'),
+					'background_color' => $this->get_color('background_color', false, '#f6f6f6'),
 				);
-
-				//@todo "Nebula" 0: If this works, make it a function to determine which color source to use (Customizer, child, parent)
-
-				//Determine appropriate primary color
-				$theme_mod_primary_color = get_theme_mod('nebula_primary_color');
-				$primary_color = nebula()->sass_color('$primary_color', 'parent');
-				if ( !empty($theme_mod_primary_color) ){
-					$primary_color = $theme_mod_primary_color;
-				} elseif ( is_child_theme() ){
-					$child_theme_primary_color = nebula()->sass_color('$primary_color', 'child');
-					if ( !empty($child_theme_primary_color) ){
-						$primary_color = nebula()->sass_color('$primary_color', 'child');
-					}
-				}
-
-				$nebula_scss_variables['primary_color'] = $primary_color;
-
-				//Determine appropriate secondary color
-				$theme_mod_secondary_color = get_theme_mod('nebula_secondary_color');
-				$secondary_color = nebula()->sass_color('$secondary_color', 'parent');
-				if ( !empty($theme_mod_secondary_color) ){
-					$secondary_color = $theme_mod_secondary_color;
-				} elseif ( is_child_theme() ){
-					$child_theme_secondary_color = nebula()->sass_color('$secondary_color', 'child');
-					if ( !empty($child_theme_secondary_color) ){
-						$secondary_color = nebula()->sass_color('$secondary_color', 'child');
-					}
-				}
-
-				$nebula_scss_variables['secondary_color'] = $secondary_color;
-
-				//Other colors
-				$background_color = rtrim(get_theme_mod('nebula_background_color', $this->sass_color('$background_color')), ';'); //From Customizer or child theme Sass variable
-				$nebula_scss_variables['background_color'] = ( !empty($background_color) )? $background_color : '#f6f6f6';
 
 				$all_scss_variables = apply_filters('nebula_scss_variables', $nebula_scss_variables);
 				$this->scss->setVariables($nebula_scss_variables);
@@ -321,66 +290,102 @@ if ( !trait_exists('Sass') ){
 			return $scss;
 		}
 
-		//Pull certain colors from .../mixins/_variables.scss
-		public function sass_color($variable='$primary_color', $theme='child'){
-			$override = apply_filters('pre_sass_color', null, $variable, $theme);
+		//Get a Sass variable from a theme
+		public function get_sass_variable($variable='$primary_color', $filepath='child', $return='value'){
+			$override = apply_filters('pre_get_sass_variable', null, $variable, $filepath, $return);
 			if ( isset($override) ){return $override;}
 
-			$this->timer('Sass Colors', 'start', 'Sass');
+			$this->timer('Sass Variable', 'start', 'Sass');
 
-			$assets_directory = get_template_directory() . '/assets';
-			$transient_name = 'nebula_scss_variables';
-			if ( is_child_theme() && $theme === 'child' ){
-				$assets_directory = get_stylesheet_directory() . '/assets';
-				$transient_name = 'nebula_scss_child_variables';
+			//Use the passed variables file location, or choose from the passed theme
+			if ( $filepath === 'parent' ){
+				$filepath = get_template_directory() . '/assets/scss/partials/_variables.scss';
+			} elseif ( $filepath === 'child' && is_child_theme() ){
+				$filepath = get_stylesheet_directory() . '/assets/scss/partials/_variables.scss';
 			}
+
+			$variable_name = $this->normalize_color_name($variable);
+			$transient_name = 'nebula_sass_variable_' . $variable_name; //Does this need to be more unique (to include the location too)? Cannot just append $filepath...
 
 			$scss_variables = get_transient($transient_name);
 			if ( empty($scss_variables) || $this->is_debug() ){
-				$variables_file = $assets_directory . '/scss/partials/_variables.scss';
-				if ( !file_exists($variables_file) ){
+				if ( !file_exists($filepath) ){
 					return false;
 				}
 
 				WP_Filesystem();
 				global $wp_filesystem;
-				$scss_variables = $wp_filesystem->get_contents($variables_file);
+				$scss_variables = $wp_filesystem->get_contents($filepath);
 				set_transient($transient_name, $scss_variables, HOUR_IN_SECONDS*12); //1 hour cache
 			}
 
-			switch ( str_replace(array('$', ' ', '_', '-'), '', $variable) ){
+			preg_match('/(?<comment>\/\/|\/\*\s?)?\$' . $variable_name . ':\s?(?<value>.*)(;|\s?!default;)(.*$)?/m', $scss_variables, $matches);
+			$this->timer('Sass Variable', 'end');
+
+			if ( $return !== 'value' ){
+				return $matches;
+			}
+
+			if ( empty($matches['value']) ){
+				return false; //Color was not found
+			}
+
+			//If the color is exists but is commented out ignore it
+			if ( !empty($matches['comment']) ){
+				return false; //This is breaking lots of things
+			}
+
+			return $matches['value'];
+		}
+
+		//Pull the appropriate color or obtain it from a specific location ('customizer', 'child' or 'parent')
+		public function sass_color($color='primary', $specific_location=false, $default=false){return $this->get_color($color, $specific_location, $default);}
+		public function get_color($color='primary', $specific_location=false, $default='black'){
+			$override = apply_filters('pre_get_color', null, $color, $specific_location);
+			if ( isset($override) ){return $override;}
+
+			$color = $this->normalize_color_name($color);
+
+			if ( empty($specific_location) || $specific_location === 'customizer' ){
+				$theme_mod_color = get_theme_mod('nebula_' . $color);
+				if ( !empty($theme_mod_color) ){
+					return $theme_mod_color;
+				}
+			} elseif ( empty($specific_location) || $specific_location === 'child' ){
+				if ( is_child_theme() ){
+					$child_theme_color = $this->get_sass_variable($color, 'child');
+
+					if ( !empty($child_theme_color) ){
+						return $child_theme_color;
+					}
+				}
+			} elseif ( empty($specific_location) || $specific_location === 'parent' ){
+				$parent_theme_color = $this->get_sass_variable($color, 'parent');
+
+				if ( !empty($parent_theme_color) ){
+					return $parent_theme_color;
+				}
+			}
+
+			return $default; //Return the default color if provided, otherwise return black
+		}
+
+		//Normalize certain color names
+		public function normalize_color_name($color){
+			switch ( str_replace(array('$', ' ', '_', '-'), '', $color) ){
 				case 'primary':
 				case 'primarycolor':
 				case 'first':
 				case 'main':
 				case 'brand':
-					$color_search = 'primary_color';
-					break;
+					return 'primary_color';
 				case 'secondary':
 				case 'secondarycolor':
 				case 'second':
-					$color_search = 'secondary_color';
-					break;
+					return 'secondary_color';
 				default:
-					$color_search = str_replace('$', '', $variable); //Use the passed parameter by default. Remove the "$" because it needs to be escaped in the RegEx below.
-					break; //Do not modify the string in any way
+					return str_replace('$', '', $color);
 			}
-
-			preg_match('/(?<comment>\/\/|\/\*\s?)?\$' . $color_search . ':\s?(?<color>\S*)(;|\s?!default;)/', $scss_variables, $matches);
-			$this->timer('Sass Colors', 'end');
-
-			if ( empty($matches['color']) ){
-				return false; //Color was not found
-			}
-
-			//If the color is exists but is commented out ignore it
-			/*
-			if ( !empty($matches['comment']) ){
-				return false;
-			}
-			*/
-
-			return $matches['color'];
 		}
 	}
 }

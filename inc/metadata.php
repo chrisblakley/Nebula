@@ -32,9 +32,9 @@
 <meta name="MobileOptimized" content="320" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta class="theme-color" name="theme-color" content="<?php echo get_theme_mod('nebula_primary_color', nebula()->sass_color('primary')); ?>">
-<meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo get_theme_mod('nebula_primary_color', nebula()->sass_color('primary')); ?>">
-<meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo get_theme_mod('nebula_primary_color', nebula()->sass_color('primary')); ?>">
+<meta class="theme-color" name="theme-color" content="<?php echo get_theme_mod('nebula_primary_color', nebula()->get_color('primary')); ?>">
+<meta class="theme-color" name="msapplication-navbutton-color" content="<?php echo get_theme_mod('nebula_primary_color', nebula()->get_color('primary')); ?>">
+<meta class="theme-color" name="apple-mobile-web-app-status-bar-style" content="<?php echo get_theme_mod('nebula_primary_color', nebula()->get_color('primary')); ?>">
 <meta http-equiv="Accept-CH" content="Device-Memory">
 
 <?php if ( is_ssl() ): //Upgrade http requests to https (cascades into iframes) ?>
@@ -101,7 +101,7 @@
 <link rel="shortcut icon" type="image/png" sizes="32x32" href="<?php echo get_site_icon_url(32, $image_meta_directory . '/favicon-16x16.png') . $cache_query; ?>" />
 
 <?php if ( !has_site_icon() ): ?>
-	<link rel="mask-icon" href="<?php echo $image_meta_directory . '/safari-pinned-tab.svg' . $cache_query; ?>" color="<?php echo nebula()->sass_color('primary'); ?>" />
+	<link rel="mask-icon" href="<?php echo $image_meta_directory . '/safari-pinned-tab.svg' . $cache_query; ?>" color="<?php echo nebula()->get_color('primary'); ?>" />
 <?php endif; ?>
 
 <link rel="apple-touch-icon" sizes="180x180" href="<?php echo get_site_icon_url(180, $image_meta_directory . '/apple-touch-icon.png') . $cache_query; ?>" />

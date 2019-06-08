@@ -9,6 +9,8 @@ The core features of Nebula make it a powerful tool for designing, developing, a
 ![GitHub release](https://img.shields.io/github/release/chrisblakley/nebula.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/chrisblakley/nebula.svg)
 
+![Nebula screenshot](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-pwa.jpg "Nebula screenshot")
+
 ## Table of Contents
 + [Getting Started](#getting_started)
 + [Requirements & Recommendations](#requirements)

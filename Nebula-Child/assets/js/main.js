@@ -36,11 +36,13 @@ jQuery(window).on('load', function(){
  Window Resize
  ===========================*/
 
+/*
 jQuery(window).on('resize', function(){
 	debounce(function(){
 
 	}, 500);
 }); //End Window Resize
+*/
 
 /*==========================
  Child Functions

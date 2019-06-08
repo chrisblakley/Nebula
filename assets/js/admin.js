@@ -251,6 +251,11 @@ function developerMetaboxes(){
 
 //Check the page speed using (in this priority) WebPageTest.org, Google PageSpeed Insights, or a rudimentary iframe timing
 function checkPageSpeed(){
+	if ( location.hostname === 'localhost' || location.hostname === '127.0.0.1' ){ //If localhost or other "invalid" URL. This doesn't catch local TLDs, but the logic below will figure it out eventually.
+		runIframeSpeedTest();
+		return;
+	}
+
 	//If WebPageTest JSON URL exists, use it!
 	if ( typeof wptTestJSONURL !== 'undefined' ){
 		jQuery('#performance-testing-status').removeClass('hidden').find('.datapoint').text('Testing via WebPageTest.org');
