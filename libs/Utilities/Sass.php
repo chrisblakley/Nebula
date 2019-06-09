@@ -29,36 +29,27 @@ if ( !trait_exists('Sass') ){
 				return false;
 			}
 
-			if ( $this->get_option('scss') && !wp_doing_ajax() ){
+			if ( $this->get_option('scss') && !$this->is_ajax_or_rest_request() ){
 				//Nebula SCSS locations
 				$scss_locations = array(
 					'parent' => array(
 						'directory' => get_template_directory(),
 						'uri' => get_template_directory_uri(),
+						'core' => get_template_directory() . '/assets/scss/',
 						'imports' => array(get_template_directory() . '/assets/scss/partials/')
 					)
 				);
 
 				//Child theme SCSS locations
 				if ( is_child_theme() ){
-					$scss_locations['parent']['imports'][] = get_stylesheet_directory() . '/assets/scss/partials/'; //@todo "Nebula" 0: Clarify here why parent theme needs to know child imports directory. This line is making an array of 2 import paths by appending the child partials directory to it.
+					$scss_locations['parent']['imports'][] = get_stylesheet_directory() . '/assets/scss/partials/'; //@todo "Nebula" 0: Clarify here why parent theme needs to know child imports directory. This line is making an array of 2 import paths by appending the child partials directory to it... This may have been done before other themes/plugins could hook in and declare their own directories to Nebula
 
 					$scss_locations['child'] = array(
 						'directory' => get_stylesheet_directory(),
 						'uri' => get_stylesheet_directory_uri(),
+						'core' => get_template_directory() . '/assets/scss/',
 						'imports' => array(get_stylesheet_directory() . '/assets/scss/partials/')
 					);
-				}
-
-				//Registered plugins SCSS locations
-				foreach ( $this->plugins as $plugin_name => $plugin_features ){
-					if ( isset($plugin_features['scss']) && is_array($plugin_features['scss']) ){
-						$scss_locations[$plugin_name] = array(
-							'directory' => $plugin_features['scss']['directory'],
-							'uri' => $plugin_features['scss']['uri'],
-							'imports' => $plugin_features['scss']['imports']
-						);
-					}
 				}
 
 				//Allow for additional Sass locations to be included. Imports can be an array of directories.
@@ -72,12 +63,24 @@ if ( !trait_exists('Sass') ){
 
 				//Check if partial files have been modified since last Sass process
 				if ( empty($force_all) ){ //If already processing everything, don't need to check individual partial files
-					foreach ( $all_scss_locations as $scss_location ){
-						foreach ( $scss_location['imports'] as $imports_directory ){
-							foreach ( glob($imports_directory . '*') as $import_file ){
-								if ( $this->get_data('scss_last_processed') != '0' && $this->get_data('scss_last_processed')-filemtime($import_file) < -30 ){
-									$force_all = true; //If any partial file has been edited, reprocess everything.
-									break 3; //Break out of all 3 foreach loops
+					$scss_last_processed = $this->get_data('scss_last_processed');
+					if ( $this->get_data('scss_last_processed') != 0 ){
+						foreach ( $all_scss_locations as $scss_location ){
+							//Check core directory for "special" files
+							if ( !empty($scss_location['core']) ){
+								$critical_file = $scss_location['core'] . 'critical.scss';
+								if ( file_exists($critical_file) && $scss_last_processed-filemtime($critical_file) < -30 ){
+									$force_all = true; //If critical.scss file has been edited, reprocess everything.
+									break;
+								}
+							}
+
+							foreach ( $scss_location['imports'] as $imports_directory ){
+								foreach ( glob($imports_directory . '*') as $import_file ){
+									if ( $scss_last_processed-filemtime($import_file) < -30 ){
+										$force_all = true; //If any partial file has been edited, reprocess everything.
+										break 3; //Break out of all 3 foreach loops
+									}
 								}
 							}
 						}

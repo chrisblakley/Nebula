@@ -619,7 +619,7 @@ if ( !trait_exists('Optimization') ){
 		//@todo "Nebula" 0: This is handled by Chrome 75+ natively. Will eventually deprecate this functionality.
 		public function lazy_load($html=''){
 			//Ignore lazy loading wrappers on AJAX requests
-			if ( wp_doing_ajax() ){
+			if ( $this->is_ajax_or_rest_request() ){
 				echo $html;
 				return false;
 			}

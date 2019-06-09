@@ -379,8 +379,8 @@ if ( !trait_exists('Scripts') ){
 		public function admin_enqueue_scripts($hook){
 			$current_screen = get_current_screen();
 
-			//Exclude AJAX requests
-			if ( !defined('DOING_AJAX') ){
+			//Exclude AJAX and REST requests
+			if ( !$this->is_ajax_or_rest_request() ){
 				//Stylesheets
 				wp_enqueue_style('nebula-admin');
 				wp_enqueue_style('nebula-font_awesome'); //Font Awesome 5 CSS method

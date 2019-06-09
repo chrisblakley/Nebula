@@ -999,6 +999,21 @@ if ( !trait_exists('Utilities') ){
 			return $response;
 		}
 
+		//If this request is using AJAX or REST API. This is used to ignore non-essential functionality to speed up those requests.
+		public function is_ajax_or_rest_request(){
+			//Check for AJAX
+			if ( wp_doing_ajax() ){
+				return true;
+			}
+
+			//Check for the REST API
+			if ( (defined('REST_REQUEST') && REST_REQUEST) || isset($_GET['rest_route']) ){
+				return true;
+			}
+
+			return false;
+		}
+
 		//Check the brightness of a color. 0=darkest, 255=lightest, 256=false
 		public function color_brightness($hex){
 			$override = apply_filters('pre_nebula_color_brightness', null, $hex);

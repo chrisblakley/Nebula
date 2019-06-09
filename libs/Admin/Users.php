@@ -8,8 +8,8 @@ if ( !trait_exists('Users') ){
 			add_action('init', array($this, 'users_status_init'));
 			add_action('admin_init', array($this, 'users_status_init'));
 
-			//Exclude AJAX requests
-			if ( !defined('DOING_AJAX') ){
+			//Exclude AJAX and REST requests
+			if ( !$this->is_ajax_or_rest_request() ){
 				add_filter('manage_users_columns', array($this, 'user_columns_head'));
 				add_filter('manage_users_sortable_columns', array($this, 'user_columns_sortable'));
 				add_action('manage_users_custom_column', array($this, 'user_columns_content' ), 15, 3);

@@ -39,7 +39,7 @@ if ( !trait_exists('Admin') ){
 			}
 
 			//Non-AJAX admin pages
-			if ( $this->is_admin_page() && !defined('DOING_AJAX') ){
+			if ( $this->is_admin_page() && !$this->is_ajax_or_rest_request() ){
 				add_action('admin_head', array($this, 'admin_favicon'));
 				add_filter('admin_body_class', array($this, 'admin_body_classes'));
 
