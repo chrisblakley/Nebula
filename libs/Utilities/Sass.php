@@ -120,7 +120,7 @@ if ( !trait_exists('Sass') ){
 
 				//Require SCSSPHP
 				require_once get_template_directory() . '/inc/vendor/scssphp/scss.inc.php'; //SCSSPHP is a compiler for SCSS 3.x
-				$this->scss = new \Leafo\ScssPhp\Compiler();
+				$this->scss = new \ScssPhp\ScssPhp\Compiler();
 
 				//Register import directories
 				if ( !is_array($location_paths['imports']) ){
@@ -131,7 +131,7 @@ if ( !trait_exists('Sass') ){
 				}
 
 				//Set compiling options
-				$this->scss->setFormatter('Leafo\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving "/*!" comments for WordPress).
+				$this->scss->setFormatter('ScssPhp\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving "/*!" comments for WordPress).
 
 				//Source Maps
 				$this->scss->setSourceMap(1); //0 = No .map, 1 = Inline .map, 2 = Output .map file

@@ -25,7 +25,7 @@
 		"matomo-org/device-detector": "latest"
 	},
 	"devDependencies": {
-		"@leafo/scssphp": "latest"
+		"scssphp/scssphp": "latest"
 	},
 	"browserslist": [
 		"> 1%",

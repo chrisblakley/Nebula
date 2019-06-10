@@ -52,7 +52,7 @@ Comprehensive documentation is available at [https://gearside.com/nebula](https:
 + [Bootstrap](https://github.com/twbs/bootstrap)
 + [Plugin Update Checker](https://github.com/YahnisElsts/plugin-update-checker)
 + [TGM Plugin Activation](https://github.com/TGMPA/TGM-Plugin-Activation)
-+ [SCSSPHP](https://github.com/leafo/scssphp)
++ [SCSSPHP](https://github.com/scssphp/scssphp)
 + [Device Detector](https://github.com/matomo-org/device-detector)
 + [Mmenu](https://github.com/FrDH/mmenu-js)
 + [Workbox](https://github.com/GoogleChrome/workbox)
