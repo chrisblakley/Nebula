@@ -354,7 +354,9 @@ if ( !trait_exists('Sass') ){
 				if ( !empty($theme_mod_color) ){
 					return $theme_mod_color;
 				}
-			} elseif ( empty($specific_location) || $specific_location === 'child' ){
+			}
+			
+			if ( empty($specific_location) || $specific_location === 'child' ){
 				if ( is_child_theme() ){
 					$child_theme_color = $this->get_sass_variable($color, 'child');
 
@@ -362,7 +364,9 @@ if ( !trait_exists('Sass') ){
 						return $child_theme_color;
 					}
 				}
-			} elseif ( empty($specific_location) || $specific_location === 'parent' ){
+			}
+			
+			if ( empty($specific_location) || $specific_location === 'parent' ){
 				$parent_theme_color = $this->get_sass_variable($color, 'parent');
 
 				if ( !empty($parent_theme_color) ){
