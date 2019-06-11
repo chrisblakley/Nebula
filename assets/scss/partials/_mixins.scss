@@ -319,36 +319,3 @@
 		}
 	}
 }
-
-/*
-	.element {
-		@include yep(opacity, csstransforms){opacity: 0; transform: translateX(10px);}
-		@include nope(opacity, csstransforms){visibility: hidden; left: 10px;}
-	}
-*/
-@mixin modernizr($features, $supports){
-	$everything-okay: true;
-	$prefix: if($supports, "", "no-"); //Use the "no-" prefix if checking for unsuported features (e.g. `.no-translate3d`)
-	$selector: if($supports, "", (unquote(".no-js"))); //Features selector: create a string if checking for supported features -or- create a list if checking for unsuported features
-	$placeholder: if($supports, "%yep", "%nope"); //The placeholder (e.g. `%yep-translate3d` or `%nope-opacity`)
-	@each $feature in $features { //Generate placeholder and selectors
-		@if ( type-of($feature) != string ){ //Making sure $feature is a string
-			$everything-okay: false;
-			@warn "`#{$feature} is not a string for `modernizr`";
-		} @else {
-			$placeholder: $placeholder + "-" + $feature; //Add feature name to the placeholder string (e.g. "%yep" + "-" + "translate3d" or "%nope" + "-" + "translate3d")
-			$new-selector: #{"." + $prefix + $feature}; //Define the new selector string (e.g. `.translate3d` or `.no-translate3d`)
-			$selector: if($supports, $selector + $new-selector, append($selector, $new-selector, comma)); //Append the new selector (to the string if yep, to the list if nope)
-		}
-	}
-	@if ( $everything-okay == true ){
-		#{$placeholder} & {@content;}
-		@at-root #{$selector} {@extend #{$placeholder};}
-	}
-}
-@mixin yep($features...) { //modernizr alias
-	@include modernizr($features, $supports: true){@content;}
-}
-@mixin nope($features...) { //modernizr alias
-	@include modernizr($features, $supports: false){@content;}
-}

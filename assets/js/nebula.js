@@ -1175,12 +1175,17 @@ function eventTracking(){
 	//Detect "Rage Clicks"
 	var clickEvents = [];
 	nebula.dom.document.on('click', 'body', function(e){
+		//Ignore clicks on certain elements that typically incur many clicks
+		if ( jQuery(this).is('input[type="number"]') ){
+			return null;
+		}
+
 		clickEvents.push({
 			event: e,
 			time: new Date()
 		});
 
-		//remain only required number of click events and remove left of them.
+		//Keep only required number of click events and remove left of them.
 		if ( clickEvents.length > 5 ){
 			clickEvents.splice(0, clickEvents.length - 5);
 		}

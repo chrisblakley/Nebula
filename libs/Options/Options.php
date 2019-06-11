@@ -133,8 +133,10 @@ if ( !trait_exists('Options') ){
 				'scss_last_processed' => 0,
 				'next_version' => '',
 				'current_version' => $this->version('raw'),
-				'current_version_date' => $this->version('date'), //Last theme update date
+				'current_version_date' => $this->version('date'),
 				'num_theme_updates' => 0,
+				'last_automated_update_date' => '',
+				'last_automated_update_user' => '',
 				'version_legacy' => 'false',
 				'users_status' => '',
 				'check_new_options' => 'false',

@@ -552,7 +552,6 @@ if ( !trait_exists('Metaboxes') ){
 			do_action('nebula_options_admin_notifications_metabox', $nebula_options);
 		}
 
-
 		/*==========================
 		 Analytics
 		 ===========================*/
@@ -1502,7 +1501,6 @@ if ( !trait_exists('Metaboxes') ){
 			do_action('nebula_options_custom_metrics_metabox', $nebula_options);
 		}
 
-
 		/*==========================
 		 APIs
 		 ===========================*/
@@ -1754,12 +1752,6 @@ if ( !trait_exists('Metaboxes') ){
 			<?php
 		}
 
-
-
-
-
-
-
 		/*==========================
 		 Administrative
 		 ===========================*/
@@ -1897,11 +1889,9 @@ if ( !trait_exists('Metaboxes') ){
 			do_action('nebula_options_notes_metabox', $nebula_options);
 		}
 
-
 		/*==========================
 		 Diagnostic
 		 ===========================*/
-
 
 		public function nebula_troubleshooting_metabox($nebula_data){
 			$nebula_options = get_option('nebula_options');
@@ -1917,6 +1907,11 @@ if ( !trait_exists('Metaboxes') ){
 						<?php endif; ?>
 					</li>
 					<li>The local Nebula version is <strong><?php echo nebula()->version('full'); ?></strong> and the remote (Github) version is <strong><?php echo $nebula_data['next_version']; ?></strong>.</li>
+
+					<?php if ( !empty($nebula_data['last_automated_update_date']) ): ?>
+						<li>Nebula was last updated via the WordPress updater on <strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['last_automated_update_date']); ?></strong> by <strong><?php echo $nebula_data['last_automated_update_user']; ?></strong>.</li>
+					<?php endif; ?>
+
 					<li><strong>WordPress Core update notifications</strong> are <strong><?php echo ( empty($nebula_options['wp_core_updates_notify']) )? 'hidden' : 'allowed'; ?></strong> by Nebula.</li>
 					<li>Nebula <strong>Sass processing</strong> is <strong><?php echo ( empty($nebula_options['scss']) )? 'disabled' : 'enabled'; ?></strong></li>
 					<li>The <strong>WordPress Admin Bar</strong> is <strong><?php echo ( empty($nebula_options['admin_bar']) )? 'hidden' : 'allowed'; ?></strong> by Nebula</li>

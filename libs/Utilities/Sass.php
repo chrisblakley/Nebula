@@ -163,6 +163,8 @@ if ( !trait_exists('Sass') ){
 					}
 				}
 
+				$this->add_custom_scssphp_functions($this->scss); //Add custom PHP functions that can be used in Sass
+
 				do_action('nebula_before_sass_compile', $location_paths); //Allow modification of files before looping through to compile Sass
 
 				//Compile each SCSS file
@@ -349,13 +351,15 @@ if ( !trait_exists('Sass') ){
 
 			$color = $this->normalize_color_name($color);
 
+			//Check the Customizer
 			if ( empty($specific_location) || $specific_location === 'customizer' ){
 				$theme_mod_color = get_theme_mod('nebula_' . $color);
 				if ( !empty($theme_mod_color) ){
 					return $theme_mod_color;
 				}
 			}
-			
+
+			//Check the child theme
 			if ( empty($specific_location) || $specific_location === 'child' ){
 				if ( is_child_theme() ){
 					$child_theme_color = $this->get_sass_variable($color, 'child');
@@ -365,7 +369,8 @@ if ( !trait_exists('Sass') ){
 					}
 				}
 			}
-			
+
+			//Check the parent theme
 			if ( empty($specific_location) || $specific_location === 'parent' ){
 				$parent_theme_color = $this->get_sass_variable($color, 'parent');
 
@@ -393,6 +398,36 @@ if ( !trait_exists('Sass') ){
 				default:
 					return str_replace('$', '', $color);
 			}
+		}
+
+		//Add custom PHP functions that Sass can access
+		public function add_custom_scssphp_functions($scss){
+			//Calculate the linear channel of a color
+			$scss->registerFunction(
+				'php_linear_channel',
+				function($args, $kwargs){
+					return $this->linear_channel($kwargs['php_color_value'][1]);
+				},
+				array('php_color_value')
+			);
+
+			//Calculate the luminance for a color.
+			$scss->registerFunction(
+				'php_luminance',
+				function($args, $kwargs) {
+					return $this->luminance($kwargs['php_color'][1]);
+				},
+				array('php_color')
+			);
+
+			//Calculate the contrast ratio between two colors.
+			$scss->registerFunction(
+				'php_contrast',
+				function($args, $kwargs) {
+					return $this->contrast($kwargs['php_back'][1], $kwargs['php_front'][1]);
+				},
+				array('php_back', 'php_front')
+			);
 		}
 	}
 }

@@ -913,12 +913,15 @@ if ( !trait_exists('Admin') ){
 					$prev_version_commit_date = $this->get_data('current_version_date');
 					$new_version = $this->get_data('next_version');
 					$num_theme_updates = $this->get_data('num_theme_updates')+1;
+					$current_user = wp_get_current_user();
 					$this->usage('Automated Theme Update', array('d11' => 'From ' . $prev_version . ' to ' . $new_version, 'cm1' => $num_theme_updates));
 
 					$this->theme_update_email($prev_version, $prev_version_commit_date, $new_version); //Send email with update information
 					$this->update_data('version_legacy', 'false');
 					$this->update_data('need_sass_compile', 'true'); //Compile all SCSS files on next pageview
 					$this->update_data('num_theme_updates', $num_theme_updates);
+					$this->update_data('last_automated_update_date', date('U'));
+					$this->update_data('last_automated_update_user', $current_user->display_name);
 					$this->update_data('check_new_options', 'true'); //Check for new Nebula Options on next pageview
 				}
 			} else {

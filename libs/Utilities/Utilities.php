@@ -1014,29 +1014,59 @@ if ( !trait_exists('Utilities') ){
 			return false;
 		}
 
-		//Check the brightness of a color. 0=darkest, 255=lightest, 256=false
-		public function color_brightness($hex){
-			$override = apply_filters('pre_nebula_color_brightness', null, $hex);
-			if ( isset($override) ){return $override;}
+		//Calculate the contrast ratio between two colors.
+		public function contrast($front, $back){
+			$backLum = $this->luminance($back) + 0.05;
+			$foreLum = $this->luminance($front) + 0.05;
 
-			if ( strpos($hex, '#') !== false ){
-				preg_match("/#(?:[0-9a-fA-F]{3,6})/i", $hex, $hex_colors);
+			return max(array($backLum, $foreLum)) / min(array($backLum, $foreLum));
+		}
 
-				$full_hex = $hex_colors[0];
-				if ( strlen($hex_colors[0]) === 4 ){
-					$values = str_split($hex_colors[0]);
-					$full_hex = '#' . $values[1] . $values[1] . $values[2] . $values[2] . $values[3] . $values[3];
-				}
+		//Calculate the luminance for a color  (0-255).
+		public function color_brightness($color){return $this->luminance($color);}
+		public function luminance($color){
+			$rgb = $this->hex2rgb($color);
 
-				$hex = str_replace('#', '', $full_hex);
-				$hex_r = hexdec(substr($hex, 0, 2));
-				$hex_g = hexdec(substr($hex, 2, 2));
-				$hex_b = hexdec(substr($hex, 4, 2));
+			$red = $this->linear_channel($rgb['r'] + 1);
+			$green = $this->linear_channel($rgb['g'] + 1);
+			$blue = $this->linear_channel($rgb['b'] + 1);
 
-				return (($hex_r*299)+($hex_g*587)+($hex_b*114))/1000;
+			return 0.2126 * $red + 0.7152 * $green + 0.0722 * $blue;
+		}
+
+		//Calculate the linear channel of a color
+		public function linear_channel($color){
+			$color = $color/255;
+
+			if ( $color < 0.03928 ){
+				return $color/12.92;
 			}
 
-			return 256;
+			return pow(($color + 0.055)/1.055, 2.4);
+		}
+
+		//Automatically convert HEX colors to RGB.
+		public function hex2rgb($color){
+			$override = apply_filters('pre_hex2rgb', false, $color);
+			if ( $override !== false ){return $override;}
+
+			if ( $color[0] == '#' ){
+				$color = substr($color, 1);
+			}
+
+			if ( strlen($color) == 6 ){
+				list($r, $g, $b) = array($color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5]);
+			} elseif ( strlen($color) == 3 ){
+				list($r, $g, $b) = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
+			} else {
+				return false;
+			}
+
+			$r = hexdec($r);
+			$g = hexdec($g);
+			$b = hexdec($b);
+
+			return array('r' => $r, 'g' => $g, 'b' => $b);
 		}
 
 		//Compare values using passed parameters
