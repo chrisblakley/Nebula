@@ -327,7 +327,8 @@ if ( !trait_exists('Sass') ){
 			preg_match('/(?<comment>\/\/|\/\*\s?)?\$' . $variable_name . ':\s?(?<value>.*)(;|\s?!default;)(.*$)?/m', $scss_variables, $matches);
 			$this->timer('Sass Variable', 'end');
 
-			if ( $return !== 'value' ){
+			//Return the entire line if requested
+			if ( $return === 'all' ){
 				return $matches;
 			}
 
@@ -340,7 +341,12 @@ if ( !trait_exists('Sass') ){
 				return false; //This is breaking lots of things
 			}
 
-			return $matches['value'];
+			//Remove "!default" from colors if it exists
+			if ( $return === 'color' ){
+				return trim(preg_replace('/(!default)/i', '', $matches['value']));
+			}
+
+			return trim($matches['value']);
 		}
 
 		//Pull the appropriate color or obtain it from a specific location ('customizer', 'child' or 'parent')
@@ -362,7 +368,7 @@ if ( !trait_exists('Sass') ){
 			//Check the child theme
 			if ( empty($specific_location) || $specific_location === 'child' ){
 				if ( is_child_theme() ){
-					$child_theme_color = $this->get_sass_variable($color, 'child');
+					$child_theme_color = $this->get_sass_variable($color, 'child', 'color');
 
 					if ( !empty($child_theme_color) ){
 						return $child_theme_color;
@@ -372,7 +378,7 @@ if ( !trait_exists('Sass') ){
 
 			//Check the parent theme
 			if ( empty($specific_location) || $specific_location === 'parent' ){
-				$parent_theme_color = $this->get_sass_variable($color, 'parent');
+				$parent_theme_color = $this->get_sass_variable($color, 'parent', 'color');
 
 				if ( !empty($parent_theme_color) ){
 					return $parent_theme_color;
