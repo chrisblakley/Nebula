@@ -625,7 +625,7 @@ if ( !trait_exists('Optimization') ){
 			}
 
 			?>
-			<samp class="nebula-lazy-position"></samp>
+			<samp class="nebula-lazy-position" style="display: block;"></samp>
 			<noscript class="nebula-lazy">
 				<?php echo $html; ?>
 			</noscript>

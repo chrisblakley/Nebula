@@ -2686,7 +2686,7 @@ function lazyLoadAssets(){
 			threshold: 0.1
 		});
 
-		jQuery('.nebula-lazy-position, .lazy-load, .nebula-lazy').each(function(){
+		jQuery('.nebula-lazy-position, .lazy-load').each(function(){
 			lazyObserver.observe(jQuery(this)[0]); //Observe the element
 		});
 	} else {

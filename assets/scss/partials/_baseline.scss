@@ -26,3 +26,5 @@ a:not(.btn):not(.wp-block-button__link) {@include link-colors($primary_color, $s
 }
 
 .screen-reader-text {clip: rect(1px, 1px, 1px, 1px); position: absolute !important; height: 1px; width: 1px; overflow: hidden;}
+
+.nebula-lazy-position {display: block;} //IntersectionObserver only works with Nebula lazy loading when the <samp> positioning element is displayed block
