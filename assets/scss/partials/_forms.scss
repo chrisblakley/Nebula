@@ -19,7 +19,7 @@ button {cursor: pointer;}
 	&:hover,
 	&:focus {color: #000 !important;}
 }
-#searchsubmit {/* padding: 2px 5px !important; */ background: $primary_color; border: 0; @include prefix((transition: all 0.25s));
+#searchsubmit {/* padding: 2px 5px !important; */ background: $primary_color; border: 0; transition: all 0.25s;
 	#bigheadingcon & {background: $secondary_color;}
 	&:hover,
 	&:focus {background: $secondary_color;}
@@ -38,10 +38,10 @@ $placeholder_color: rgba(153, 153, 153, 0.9);
 $placeholder_color_focus: rgba(153, 153, 153, 0) !important;
 input,
 textarea {
-	&::-webkit-input-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), webkit);}
-	&:-moz-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), moz);} //Eventually remove this line.
-	&::-moz-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), moz);}
-	&:-ms-input-placeholder {font-weight: 300; color: $placeholder_color; @include prefix((transition: all 0.25s), ms);}
+	&::-webkit-input-placeholder {font-weight: 300; color: $placeholder_color; transition: all 0.25s;}
+	&:-moz-placeholder {font-weight: 300; color: $placeholder_color; transition: all 0.25s;} //Eventually remove this line.
+	&::-moz-placeholder {font-weight: 300; color: $placeholder_color; transition: all 0.25s;}
+	&:-ms-input-placeholder {font-weight: 300; color: $placeholder_color; transition: all 0.25s;}
 
 	&:not(.nofade):focus {
 		&::-webkit-input-placeholder {color: $placeholder_color_focus;}
@@ -58,7 +58,7 @@ textarea {
 form.nebula-search {position: relative; display: inline-block; margin: 0;
 	.input-group {align-items: center;} //Modify Bootstrap to center align Nebula search input content
 
-	input {max-width: 30px; padding: 0 6px; color: transparent; font-size: rem(12px); line-height: 1.15rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; outline: none; cursor: pointer; @include prefix((transition: all 0.25s));
+	input {max-width: 30px; padding: 0 6px; color: transparent; font-size: rem(12px); line-height: 1.15rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; outline: none; cursor: pointer; transition: all 0.25s;
 		&:hover {background-color: rgba(255, 255, 255, 0.3);}
 		&:focus,
 		&.focus {max-width: 210px; padding-left: 25px; cursor: auto; color: #fff; background-color: rgba(255, 255, 255, 0.3);}

@@ -40,11 +40,11 @@
 
 //Nebula expandable sidebar subnav style defaults
 a.toplevelvert_expander {position: absolute; top: 5px; right: 0; padding: 2px 10px !important;
-	i, svg {font-size: rem(18px); display: block; width: 100%; @include prefix((transform: rotate(-90deg))); @include prefix((transition: transform 0.25s));}
-		&.closed i, &.closed svg {@include prefix((transform: rotate(0deg)));}
+	i, svg {font-size: rem(18px); display: block; width: 100%; transform: rotate(-90deg); transition: transform 0.25s;}
+		&.closed i, &.closed svg {transform: rotate(0deg);}
 
 	.flex-first & {right: auto; left: -30px;
-		i, svg {@include prefix((transform: rotate(270deg)));}
-			&.closed i, &.closed svg {@include prefix((transform: rotate(180deg)));}
+		i, svg {transform: rotate(270deg);}
+			&.closed i, &.closed svg {transform: rotate(180deg);}
 	}
 }

@@ -3,7 +3,7 @@
 // ===========================
 
 //Top row that appears at mobile sizes.
-#mobilebarcon {visibility: visible; position: relative; background: $primary_color; width: 100%; height: 42px; overflow: hidden; z-index: 1; @include prefix((transition: all 0.5s));
+#mobilebarcon {visibility: visible; position: relative; background: $primary_color; width: 100%; height: 42px; overflow: hidden; z-index: 1; transition: all 0.5s;
 	a {font-size: rem(32px); @include link-colors(#fff, #aaa); text-decoration: underline;}
 	.mobilenavcon {display: block;
 		#mobileheadersearch {display: flex; align-items: center;
@@ -36,7 +36,7 @@
 
 //Extend animated sub menu dropdowns for WordPress menus (Used with the utility nav and primary nav)
 @mixin nebula-dropdown($font-size: 14px, $line-height: 21px){
-	ul.sub-menu {position: absolute; display: block; top: 120%; left: -9999px; right: auto; height: auto; margin: 0; padding: 5px 0; opacity: 0; text-align: left; @include prefix((transition: top 0.35s easing(easeOutBack), opacity 0.25s)); @include background-color(#fff, 0.95); box-shadow: 0px 15px 50px 0 rgba(0, 0, 0, 0.25); z-index: 1001;
+	ul.sub-menu {position: absolute; display: block; top: 120%; left: -9999px; right: auto; height: auto; margin: 0; padding: 5px 0; opacity: 0; text-align: left; transition: top 0.35s easing(easeOutBack), opacity 0.25s; @include background-color(#fff, 0.95); box-shadow: 0px 15px 50px 0 rgba(0, 0, 0, 0.25); z-index: 1001;
 		.no-js & {width: 400px;}
 
 		li.menu-item {display: block; margin: 0; padding: 0 5px;
@@ -47,7 +47,7 @@
 
 			&.menu-item-has-children {position: relative;
 				> a {padding-right: 35px;}
-				&:after {content: "\f054"; position: absolute; top: 0; right: 18px; height: 100%; display: flex; align-items: center; @include font-awesome("solid"); font-size: 8px; color: #aaa; @include prefix((transition: right 0.25s easing(easeOutBack))); pointer-events: none;}
+				&:after {content: "\f054"; position: absolute; top: 0; right: 18px; height: 100%; display: flex; align-items: center; @include font-awesome("solid"); font-size: 8px; color: #aaa; transition: right 0.25s easing(easeOutBack); pointer-events: none;}
 			}
 
 			ul.sub-menu {display: none;} //Hide all sub-menus at first
@@ -106,7 +106,7 @@
 
 
 
-#utilitynavcon {max-height: 0; opacity: 0; background: rgba(0, 0, 0, 0.5); @include prefix((transition: all 0.5s));
+#utilitynavcon {max-height: 0; opacity: 0; background: rgba(0, 0, 0, 0.5); transition: all 0.5s;
 	@include media("lg"){height: auto; max-height: 200px; opacity: 1;};
 
 	#utility-nav {position: relative;

@@ -18,12 +18,12 @@
 .nebula-vimeo {margin-bottom: 15px;}
 
 .accordion {position: relative; margin-top: 10px; margin-bottom: 10px;}
-.accordion-item {margin: 4px 0; border: 2px solid #e5e5e5; @include prefix((transition: border-color 0.3s ease));
+.accordion-item {margin: 4px 0; border: 2px solid #e5e5e5; transition: border-color 0.3s ease;
 	.accordion-toggle .accordion-heading {display: block; padding: 10px 15px; font-size: rem(20px); color: #2c3e50; background-color: #fafafa; cursor: pointer;
-		&:before {content: "\f067"; @include font-awesome("solid"); position: relative; display: inline-block; bottom: 0.1em; margin-right: 10px; color: #000; font-size: rem(12px); @include prefix((transform: rotate(45deg))); @include prefix((transition: all 0.3s ease));}
+		&:before {content: "\f067"; @include font-awesome("solid"); position: relative; display: inline-block; bottom: 0.1em; margin-right: 10px; color: #000; font-size: rem(12px); transform: rotate(45deg); transition: all 0.3s ease;}
 	}
 
-	&.accordion-collapsed .accordion-toggle .accordion-heading:before {color: #d3d3d3; @include prefix((transform: rotate(0)));}
+	&.accordion-collapsed .accordion-toggle .accordion-heading:before {color: #d3d3d3; transform: rotate(0);}
 	.accordion-content-con {display: none;
 		.accordion-content {padding: 15px; border-top: 2px solid #e5e5e5;}
 	}

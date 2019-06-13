@@ -386,26 +386,6 @@
 				'hitCallback': function(){
 					window.performance.mark('nebula_analytics_pageview');
 					window.performance.measure('nebula_time_to_analytics_pageview', 'navigationStart', 'nebula_analytics_pageview');
-					nebula.analytics.isReady = true; //Set a global boolean variable
-
-					//Trigger an event when GA is ready (without jQuery)
-					if ( typeof(Event) === 'function' ){ //Modern browsers
-						var gaReadyEvent = new Event('gaready');
-					} else { //IE
-						var gaReadyEvent = document.createEvent('Event');
-						gaReadyEvent.initEvent('gaready', true, true);
-					}
-					document.dispatchEvent(gaReadyEvent); //Eventually just use this: document.dispatchEvent(new Event('gaready'));
-
-					if ( typeof initEventTracking === 'function' ){
-						initEventTracking();
-					}
-
-					<?php if ( is_child_theme() ): ?>
-						if ( typeof supplementalEventTracking === 'function' ){
-							supplementalEventTracking();
-						}
-					<?php endif; ?>
 				}
 			});
 		}
@@ -438,8 +418,6 @@
 	<script src='https://www.google-analytics.com/analytics.js' async></script>
 <?php else: //If Tracking ID is empty: ?>
 	<script>
-		nebula.analytics.isReady = true; <?php //Set to true to prevent AJAX Google Analytics data ?>
-
 		<?php if ( !nebula()->get_option('gtm_id') ): ?>
 			function ga(){}
 		<?php endif; ?>

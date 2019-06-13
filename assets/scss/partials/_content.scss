@@ -47,7 +47,7 @@
 
 //Gutenberg buttons
 .wp-block-button {
-	a.wp-block-button__link {@include link-colors(#fff, #ccc); @include prefix((transition: all 0.25s));
+	a.wp-block-button__link {@include link-colors(#fff, #ccc); transition: all 0.25s;
 		&.has-primary-background-color {@include link-bg-colors($primary_color, darken($primary_color, 15%)); @include link-colors(readable-color($primary_color));}
 		&.has-secondary-background-color {@include link-bg-colors($secondary_color, darken($secondary_color, 15%)); @include link-colors(readable-color($secondary_color));}
 

@@ -250,9 +250,8 @@
 //.element {@include zoom(1.5);}
 //.element {@include zoom(0.75, center top);}
 @mixin zoom($scale: 1, $origin: 0 0){
-	@include prefix((transform: scale($zoom)));
-	@include prefix((transform-origin: $origin));
-	.ie8 & {zoom: $zoom;}
+	transform: scale($zoom);
+	transform-origin: $origin;
 }
 
 //@include keyframes(slide-down){0% {opacity: 1;} 90% {opacity: 0;}}

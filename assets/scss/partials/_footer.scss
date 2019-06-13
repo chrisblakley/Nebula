@@ -3,7 +3,7 @@
 // ===========================
 
 
-#footer-section {position: relative; padding: 50px 0 150px 0; background: url($template_directory + "/assets/img/phg/phg-nebula-mountain.jpg") no-repeat bottom center / cover; @include prefix((transition: all 0.5s));
+#footer-section {position: relative; padding: 50px 0 150px 0; background: url($template_directory + "/assets/img/phg/phg-nebula-mountain.jpg") no-repeat bottom center / cover; transition: all 0.5s;
 	@include media("lg"){padding: 50px 0 200px 0;};
 	a:not(.btn) {@include link-colors(#fff, #aaa);}
 }

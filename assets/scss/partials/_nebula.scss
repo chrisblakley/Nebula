@@ -19,7 +19,7 @@
 	&:before {content: "\f141"; @include font-awesome("solid"); position: absolute; top: 10px; left: 0; width: 100%; display: block; text-align: center; opacity: 0; pointer-events: none;}
 
 	.infinite-loading {display: none; position: absolute; top: 0; left: 0; width: 100%;
-		div {display: inline-block; width: 6px; height: 6px; border-radius: 12px; background: #444; @include prefix((animation: nebula-zoom 1s infinite easing(easeInOutQuad)), webkit moz);
+		div {display: inline-block; width: 6px; height: 6px; border-radius: 12px; background: #444; animation: nebula-zoom 1s infinite easing(easeInOutQuad);
 			&.b {animation-delay: .2s;}
 			&.c {animation-delay: .4s;}
 		}
@@ -48,7 +48,7 @@ div#nebula-hero-formcon {text-align: center; display: none;
 	@include media("lg"){display: block;}
 }
 
-form#nebula-hero-search {display: inline-block; position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; @include prefix((transition: all 0.5s));
+form#nebula-hero-search {display: inline-block; position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; transition: all 0.5s;
 	i, svg {position: absolute; top: rem(12px); left: 13px; font-size: rem(16px); color: #292b2c; pointer-events: none; z-index: 100;}
 
 	input {display: block; width: 100%; font-size: rem(18px); line-height: rem(18px); padding: 8px 0 8px 35px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 24px rgba(0, 0, 0, 0.2);
@@ -100,7 +100,7 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 	.ui-state-hover a,
 	li.ui-state-focus a,
 	a.ui-state-active {color: #fff;}
-	li a {display: inline-block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width: 100%; @include prefix((transition: none 0.25s));}
+	li a {display: inline-block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width: 100%; transition: none 0.25s;}
 
 	.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover, .ui-button.ui-state-active:focus {margin: 0; border: none; background: $primary_color;}
 
@@ -108,11 +108,11 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 }
 
 //Anchor tags that should not have transitions
-.search-choice-close {@include prefix((transition: none 0.25s));}
+.search-choice-close {transition: none 0.25s;}
 
 //Highlight and emphasize search term in results
-.searchresultword {@include background-color($primary_color, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important; @include prefix((transition: none 0.25s));
-	&.transitionable {@include prefix((transition: background 0.25s));}
+.searchresultword {@include background-color($primary_color, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important; transition: none 0.25s;
+	&.transitionable {transition: background 0.25s;}
 }
 .searchresultword {
 	article:hover &,
@@ -138,7 +138,7 @@ ol.nebula-breadcrumbs {display: flex; list-style: none; position: relative; marg
 }
 
 //Advanced Search
-#advanced-search-form {margin-bottom: 0; opacity: 1; @include prefix((transition: opacity 0.5s));
+#advanced-search-form {margin-bottom: 0; opacity: 1; transition: opacity 0.5s;
 	&.inactive {opacity: 0.3; pointer-events: none;}
 }
 
@@ -146,7 +146,7 @@ ol.nebula-breadcrumbs {display: flex; list-style: none; position: relative; marg
 		&:hover,
 		&:focus {background: darken($primary_color, 15%);}
 	}
-	#advanced-search-meta {max-height: 0; margin-bottom: 15px; @include prefix((transition: all 0.5s)); overflow: hidden;
+	#advanced-search-meta {max-height: 0; margin-bottom: 15px; transition: all 0.5s; overflow: hidden;
 		&.active {max-height: 250px;}
 		&.finished {overflow: visible;}
 	}
@@ -179,7 +179,7 @@ a.resetfilters {font-size: rem(12px); color: $danger_color; opacity: 0;
 
 #about-the-author {position: relative; background: #eee; padding-top: 30px; padding-bottom: 10px; margin-top: 20px; margin-bottom: 15px;
 	.author-headshot {min-height: 100px; margin-bottom: 20px; text-align: center;
-		img {width: 100%; max-width: 200px; /* border-radius: 500px; */ @include prefix((transition: all 0.75s));}
+		img {width: 100%; max-width: 200px; /* border-radius: 500px; */ transition: all 0.75s;}
 		@include media("md"){text-align: left;};
 	}
 	.author-name {display: block; padding-bottom: 15px; text-align: center;

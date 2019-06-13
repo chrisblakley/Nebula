@@ -1,11 +1,6 @@
 window.performance.mark('child_inside_mainjs');
 jQuery.noConflict();
 
-//Prevent child theme events from sending before the pageview. Do not add custom event tracking here- add it where noted below!
-jQuery(document).on('nebula_event_tracking', function(){
-	supplementalEventTracking();
-});
-
 /*==========================
  DOM Ready (After nebula.js is loaded)
  ===========================*/
@@ -14,6 +9,7 @@ jQuery(function(){
 	window.performance.mark('child_dom_ready_start');
 
 	cacheSelectors();
+	supplementalEventTracking();
 
 	window.performance.mark('child_dom_ready_end');
 	window.performance.measure('child_dom_ready_functions', 'child_dom_ready_start', 'child_dom_ready_end');

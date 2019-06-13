@@ -63,8 +63,8 @@
 	@return $dark;
 }
 
-//.example {@include prefix((transition: right 0.5s easing(easeOutBack)));}
-//.example {@include prefix((transition: right 0.5s easing(custom, "0.190, 1.000, 0.220, 1.000")));}
+//.example {transition: right 0.5s easing(easeOutBack);}
+//.example {transition: right 0.5s easing(custom, "0.190, 1.000, 0.220, 1.000");}
 @function easing($ease: linear, $custom: ""){
 	@each $name, $values in $easings {
 		@if $ease == $name {

@@ -8,42 +8,42 @@
 
 .nebulashadow {position: relative;
 	&.floating {
-		&:after {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; @include prefix((box-shadow: 0 17px 25px -15px rgba(0, 0, 0, 0.4))); z-index: -1; pointer-events: none;}
+		&:after {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-shadow: 0 17px 25px -15px rgba(0, 0, 0, 0.4); z-index: -1; pointer-events: none;}
 		&.above {
-			&:before {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; @include prefix((box-shadow: 0 -17px 25px -15px rgba(0, 0, 0, 0.4))); z-index: -1; pointer-events: none;}
+			&:before {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-shadow: 0 -17px 25px -15px rgba(0, 0, 0, 0.4); z-index: -1; pointer-events: none;}
 		}
 	}
 
 	&.bulging {
-		&:after {content: ""; position: absolute; left: 0; right: 0; bottom: -13px; width: 96%; height: 30px; margin: 0 auto; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(25px))); @include prefix((border-radius: 50%)); @include prefix((transform: scaleY(.3))); z-index: -1; pointer-events: none;}
+		&:after {content: ""; position: absolute; left: 0; right: 0; bottom: -13px; width: 96%; height: 30px; margin: 0 auto; background: rgba(0, 0, 0, 0.4); filter: blur(25px); border-radius: 50%; transform: scaleY(.3); z-index: -1; pointer-events: none;}
 		&.above {
-			&:before {content: ""; position: absolute; left: 0; right: 0; top: -13px; width: 96%; height: 30px; margin: 0 auto; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(25px))); @include prefix((border-radius: 50%)); @include prefix((transform:scaleY(.3))); z-index: -1; pointer-events: none;}
+			&:before {content: ""; position: absolute; left: 0; right: 0; top: -13px; width: 96%; height: 30px; margin: 0 auto; background: rgba(0, 0, 0, 0.4); filter: blur(25px); border-radius: 50%; transform:scaleY(.3); z-index: -1; pointer-events: none;}
 		}
 	}
 
 	&.curling {//This can not appear above.
-		&:before {content: ""; position: absolute; bottom: 4px; left: 10px; height: 20px; width: 70%; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(6px))); @include prefix((transform: rotate(-3deg))); z-index: -1; pointer-events: none;}
-		&:after {content: ""; position: absolute; bottom: 4px; right: 10px; height: 20px; width: 70%; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(6px))); @include prefix((transform: rotate(3deg))); z-index: -1; pointer-events: none;}
+		&:before {content: ""; position: absolute; bottom: 4px; left: 10px; height: 20px; width: 70%; background: rgba(0, 0, 0, 0.4); filter: blur(6px); transform: rotate(-3deg); z-index: -1; pointer-events: none;}
+		&:after {content: ""; position: absolute; bottom: 4px; right: 10px; height: 20px; width: 70%; background: rgba(0, 0, 0, 0.4); filter: blur(6px); transform: rotate(3deg); z-index: -1; pointer-events: none;}
 	}
 
 	&.hovering {
-		&:after {content: ""; position: absolute; left: 0; right: 0; bottom: -30px; width: 98%; height: 30px; margin: 0 auto; background: rgba(0, 0, 0, 0.15); @include prefix((filter: blur(15px))); @include prefix((border-radius: 50%)); @include prefix((transform:scaleY(.2))); z-index: -1; pointer-events: none;}
+		&:after {content: ""; position: absolute; left: 0; right: 0; bottom: -30px; width: 98%; height: 30px; margin: 0 auto; background: rgba(0, 0, 0, 0.15); filter: blur(15px); border-radius: 50%; transform:scaleY(.2); z-index: -1; pointer-events: none;}
 		&.above {
-			&:before {content: ""; position: absolute; left: 0; right: 0; top: -30px; width: 98%; height: 30px; margin: 0 auto; background: rgba(0, 0, 0, 0.15); @include prefix((filter: blur(15px))); @include prefix((border-radius: 50%)); @include prefix((transform:scaleY(.2))); z-index: -1; pointer-events: none;}
+			&:before {content: ""; position: absolute; left: 0; right: 0; top: -30px; width: 98%; height: 30px; margin: 0 auto; background: rgba(0, 0, 0, 0.15); filter: blur(15px); border-radius: 50%; transform:scaleY(.2); z-index: -1; pointer-events: none;}
 		}
 	}
 
 	&.anchored-right {
-		&:after {content: ""; position: absolute; bottom: 0; left: 10px; height: 20px; width: 92%; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(6px))); @include prefix((transform: rotate(-2deg))); z-index: -1; pointer-events: none;}
+		&:after {content: ""; position: absolute; bottom: 0; left: 10px; height: 20px; width: 92%; background: rgba(0, 0, 0, 0.4); filter: blur(6px); transform: rotate(-2deg); z-index: -1; pointer-events: none;}
 		&.above {
-			&:before {content: ""; position: absolute; top: 0; left: 10px; height: 20px; width: 92%; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(6px))); @include prefix((transform: rotate(2deg))); z-index: -1; pointer-events: none;}
+			&:before {content: ""; position: absolute; top: 0; left: 10px; height: 20px; width: 92%; background: rgba(0, 0, 0, 0.4); filter: blur(6px); transform: rotate(2deg); z-index: -1; pointer-events: none;}
 		}
 	}
 
 	&.anchored-left {
-		&:after {content: ""; position: absolute; bottom: 0; right: 10px; height: 20px; width: 92%; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(6px))); @include prefix((transform: rotate(2deg))); z-index: -1; pointer-events: none;}
+		&:after {content: ""; position: absolute; bottom: 0; right: 10px; height: 20px; width: 92%; background: rgba(0, 0, 0, 0.4); filter: blur(6px); transform: rotate(2deg); z-index: -1; pointer-events: none;}
 		&.above {
-			&:before {content: ""; position: absolute; top: 0; right: 10px; height: 20px; width: 92%; background: rgba(0, 0, 0, 0.4); @include prefix((filter: blur(6px))); @include prefix((transform: rotate(-2deg))); z-index: -1; pointer-events: none;}
+			&:before {content: ""; position: absolute; top: 0; right: 10px; height: 20px; width: 92%; background: rgba(0, 0, 0, 0.4); filter: blur(6px); transform: rotate(-2deg); z-index: -1; pointer-events: none;}
 		}
 	}
 
@@ -82,9 +82,9 @@
 }
 
 //Note: To use nebula-vmiddle, the parent element must have a set height (not a min-height)!
-//!.nebula-vmiddle, .nebula-vmiddle-con {@include prefix((transform-style: preserve-3d));} //Prevent blurry half-pixel centering on parent element
+//!.nebula-vmiddle, .nebula-vmiddle-con {transform-style: preserve-3d;} //Prevent blurry half-pixel centering on parent element
 	.nebula-vmiddle,
-	.valign > div {position: relative; top: 50%; @include prefix((transform: translateY(-50%)));}
+	.valign > div {position: relative; top: 50%; transform: translateY(-50%);}
 
 .filtereditem {display: none;}
 
@@ -125,9 +125,6 @@
 
 //Front-end only helpers
 body:not(.wp-admin) {
-	.ir {background-color: transparent; border: 0; overflow: hidden; *text-indent: -9999px; //Image replacement
-		&:before {content: ""; display: block; width: 0; height: 100%;}
-	}
 	.hidden {display: none !important; visibility: hidden;} //Hide from both screenreaders and browsers
 	.visuallyhidden {border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px; //Hide only visually, but have it available for screenreaders
 		&.focusable:active,
@@ -168,7 +165,7 @@ ul.list-unstyled {list-style: none; padding-left: 0;}
 .disallowed {background: #bbb !important; border: 1px solid #999 !important; cursor: default !important;
 	&.notallowed {cursor: not-allowed !important;}
 }
-.focusError {background-color: #fcc !important; border: 1px solid #f88 !important; @include prefix((transition: all 0.25s));}
+.focusError {background-color: #fcc !important; border: 1px solid #f88 !important; transition: all 0.25s;}
 
 // ===========================
 // Social Media Badges
@@ -264,7 +261,7 @@ a.white, li.icon.white a {@include link-colors(#fff, #ccc);
 		span {color: #fff;}
 		&:hover span {color: #aaa;}
 	}
-	span {@include prefix((transition: all 0.25s));
+	span {transition: all 0.25s;
 		&.pinckney {color: brand(phg);}
 		&.hugo {color: brand(phg, 2);}
 		&.group {color: brand(phg, 3);}
@@ -275,8 +272,8 @@ a.white, li.icon.white a {@include link-colors(#fff, #ccc);
 		span.group {color: brand(phg, 3);}
 	}
 
-	&.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url($template_directory + "/assets/img/phg/phg-symbol.svg") -15px 6px no-repeat; background-size: 13px 8px; @include prefix((transition: all 0.25s));
-		span {margin-right: 3px; @include prefix((transition: all 0.25s));
+	&.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url($template_directory + "/assets/img/phg/phg-symbol.svg") -15px 6px no-repeat; background-size: 13px 8px; transition: all 0.25s;
+		span {margin-right: 3px; transition: all 0.25s;
 			&:last-child {margin-right: 0;}
 			&.pinckney {color: inherit;}
 			&.hugo {color: inherit;}

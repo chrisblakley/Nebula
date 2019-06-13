@@ -38,15 +38,11 @@ jQuery(function(){
 		visibilityChangeActions();
 	});
 
-	//Prevent events from sending before the pageview
-	if ( isGoogleAnalyticsReady() ){
-		initEventTracking();
-	}
+	initEventTracking();
 
 	window.performance.mark('nebula_dom_ready_end');
 	window.performance.measure('nebula_dom_ready_functions', 'nebula_dom_ready_start', 'nebula_dom_ready_end');
-}); //End Document Ready
-
+});
 
 /*==========================
  Window Load
@@ -56,11 +52,6 @@ jQuery(window).on('load', function(){
 	window.performance.mark('nebula_window_load_start');
 
 	cacheSelectors();
-
-	if ( typeof nebula.snapchatPageShown === 'undefined' || nebula.snapchatPageShown === true ){ //Don't automatically begin event tracking for Snapchat preloading
-		initEventTracking();
-	}
-
 	initBootstrapFunctions();
 	performanceMetrics();
 	lazyLoadAssets();
@@ -98,8 +89,7 @@ jQuery(window).on('load', function(){
 	window.performance.mark('nebula_window_load_end');
 	window.performance.measure('nebula_window_load_functions', 'nebula_window_load_start', 'nebula_window_load_end');
 	window.performance.measure('nebula_fully_loaded', 'navigationStart', 'nebula_window_load_end');
-}); //End Window Load
-
+});
 
 /*==========================
  Window Resize
@@ -113,7 +103,6 @@ jQuery(window).on('resize', function(){
 		}
 	}, 500, 'window resize');
 }); //End Window Resize
-
 
 /*==========================
  Additional References
@@ -134,7 +123,6 @@ nebula.regex = {
 
 nebula.timings = [];
 nebula.videos = {};
-
 
 /*==========================
  Optimization Functions
@@ -485,21 +473,6 @@ function isDoNotTrack(){
 	return false; //The browser does not support DNT
 }
 
-//Check if Google Analytics is ready
-function isGoogleAnalyticsReady(){
-	if ( isDoNotTrack() ){
-		return false;
-	}
-
-	if ( has(nebula, 'analytics.isReady') && nebula.analytics.isReady ){
-		nebula.dom.html.removeClass('no-gajs');
-		return true;
-	}
-
-	nebula.dom.html.addClass('no-gajs');
-	return false;
-}
-
 //Detect Battery Level
 function nebulaBattery(){
 	nebula.user.client.device.battery = false;
@@ -544,7 +517,6 @@ function nebulaNetworkConnection(){
 		}
 	}
 }
-
 
 /*==========================
  Social Functions
@@ -724,14 +696,13 @@ function socialSharing(){
 	}
 }
 
-
 /*==========================
  Analytics Functions
  ===========================*/
 
-//Call the event tracking functions (since it needs to happen twice).
+//Call the event tracking functions.
 function initEventTracking(){
-	if ( nebula.user.dnt ){
+	if ( isDoNotTrack() ){
 		return false;
 	}
 
@@ -740,63 +711,9 @@ function initEventTracking(){
 
 		if ( typeof window.ga === 'function' ){
 			window.ga(function(tracker){
-				nebula.dom.document.trigger('nebula_ga_available', tracker);
+				nebula.dom.document.trigger('nebula_ga_tracker', tracker);
 				nebula.user.cid = tracker.get('clientId');
 			});
-		}
-
-		if ( (has(nebula, 'site.options.adblock_detect') && nebula.site.options.adblock_detect) && has(nebula, 'site.options.ga_server_side_fallback') && nebula.site.options.ga_server_side_fallback ){ //If tracking adblock detection
-			if ( has(nebula, 'analytics.isReady') && !nebula.analytics.isReady ){ //if isReady object key exists and is not set to true then GA is blocked
-				nebula.dom.document.trigger('nebula_ga_blocked');
-
-				//Send Pageview
-				jQuery.ajax({ //Eventually update this to fetch with ES6
-					type: "POST",
-					url: nebula.site.ajax.url + '?prps=gapv',
-					data: {
-						nonce: nebula.site.ajax.nonce,
-						action: 'nebula_ga_ajax',
-						fields: {
-							hitType: 'pageview',
-							location: window.location.href,
-							title: document.title,
-							ua: navigator.userAgent
-						},
-					},
-					timeout: 60000
-				});
-
-				//Handle event tracking
-				function ga(command, hitType, category, action, label, value, fieldsObject){
-					if ( command === 'send' && hitType === 'event' ){
-						var ni = 0;
-						if ( fieldsObject && fieldsObject.nonInteraction === 1 ){
-							ni = 1;
-						}
-
-						jQuery.ajax({ //Eventually update this to fetch with ES6
-							type: "POST",
-							url: nebula.site.ajax.url + '?prps=gahit',
-							data: {
-								nonce: nebula.site.ajax.nonce,
-								action: 'nebula_ga_ajax',
-								fields: {
-									hitType: 'event',
-									category: category,
-									action: action,
-									label: label,
-									value: value,
-									ni: ni,
-									location: window.location.href,
-									title: document.title,
-									ua: navigator.userAgent
-								},
-							},
-							timeout: 60000
-						});
-					}
-				}
-			}
 		}
 
 		nebula.dom.document.trigger('nebula_event_tracking');
@@ -2184,7 +2101,6 @@ function showSuggestedGCSEPage(title, url){
 	}
 }
 
-
 /*==========================
  Contact Form Functions
  ===========================*/
@@ -2664,7 +2580,6 @@ function applyValidationClasses(element, validation, showFeedback){
 		}
 	}
 }
-
 
 /*==========================
  Optimization Functions
@@ -3442,7 +3357,6 @@ function nebulaScrollTo(element, milliseconds, offset, onlyWhenBelow, callback){
 		return false;
 	});
 }
-
 
 /*==========================
  Utility Functions

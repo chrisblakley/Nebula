@@ -609,14 +609,6 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="option-keywords">gdpr</p>
 				</div>
 
-				<div class="form-group" dependent-or="ga_tracking_id">
-					<input type="checkbox" name="nebula_options[ga_server_side_fallback]" id="ga_server_side_fallback" value="1" <?php checked('1', !empty($nebula_options['ga_server_side_fallback'])); ?> /><label for="ga_server_side_fallback">Server-Side Fallback</label>
-					<p class="nebula-help-text short-help form-text text-muted">If Google Analytics is blocked, or if JavaScript is disabled, capture GA data using a server-side payload. (Default: <?php echo $this->user_friendly_default('ga_server_side_fallback'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">Note: This can cause extraneous data for things like prerenderers that the server can not delineate.</p>
-					<p class="dependent-note hidden">This option is dependent on a Google Analytics Tracking ID.</p>
-					<p class="option-keywords"></p>
-				</div>
-
 				<div class="form-group">
 					<label for="adwords_remarketing_conversion_id">AdWords Remarketing Conversion ID</label>
 					<input type="text" name="nebula_options[adwords_remarketing_conversion_id]" id="adwords_remarketing_conversion_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['adwords_remarketing_conversion_id']; ?>" placeholder="000000000" />

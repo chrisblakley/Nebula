@@ -228,7 +228,6 @@ if ( !trait_exists('Scripts') ){
 						'youtube_url' => esc_url($this->get_option('youtube_url')),
 						'instagram_url' => esc_url($this->get_option('instagram_url')),
 						'pinterest_url' => esc_url($this->get_option('pinterest_url')),
-						'ga_server_side_fallback' => $this->get_option('ga_server_side_fallback'),
 						'adblock_detect' => $this->get_option('adblock_detect'),
 						'manage_options' => current_user_can('manage_options'),
 						'debug' => $this->is_debug(),

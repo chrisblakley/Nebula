@@ -9,7 +9,7 @@ body {overflow-x: hidden; background: $background_color; -webkit-font-smoothing:
 
 img,
 svg {vertical-align: middle; max-width: 100%; height: auto;
-	path {@include prefix((transition: fill 0.25s));}
+	path {transition: fill 0.25s;}
 }
 
 ul {list-style-position: inside;
@@ -19,7 +19,7 @@ ul {list-style-position: inside;
 
 .chromeframe {margin: 0.2em 0; background: #ccc; color: #000; padding: 0.2em 0;}
 
-a:not(.btn):not(.wp-block-button__link) {@include link-colors($primary_color, $secondary_color, darken($primary_color, 15%)); @include prefix((transition: all 0.25s));
+a:not(.btn):not(.wp-block-button__link) {@include link-colors($primary_color, $secondary_color, darken($primary_color, 15%)); transition: all 0.25s;
 	&:hover,
 	&:focus,
 	&:active {text-decoration: none; outline: none;}

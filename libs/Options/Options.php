@@ -235,7 +235,6 @@ if ( !trait_exists('Options') ){
 				'google_search_console_verification' => '',
 				'facebook_custom_audience_pixel_id' => '',
 				'observe_dnt' => 0,
-				'ga_server_side_fallback' => 0,
 				'cd_gacid' => '',
 				'cd_hitid' => '',
 				'cd_hittime' => '',
