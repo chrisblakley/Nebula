@@ -4922,6 +4922,16 @@ function domTreeToString(element){
 }
 
 /*==========================
+ Legacy Functions
+ These will live for short periods after a major change to prevent Nebula auto-update from breaking child themes.
+ ===========================*/
+
+//This is an old function that checked if GA was ready.
+function isGoogleAnalyticsReady(){
+	return true;
+}
+
+/*==========================
  Extension Functions
  ===========================*/
 
