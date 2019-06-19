@@ -33,6 +33,10 @@ if ( !trait_exists('Dashboard') ){
 					add_action('wp_dashboard_setup', array($this, 'performance_metabox'));
 				}
 
+				if ( nebula()->get_option('design_reference_metabox') ){
+					add_action('wp_dashboard_setup', array($this, 'design_metabox'));
+				}
+
 				if ( current_user_can('publish_pages') && $this->get_option('hubspot_portal') && $this->get_option('hubspot_api') ){ //Editor or above (and Hubspot API/Portal)
 					add_action('wp_dashboard_setup', array($this, 'hubspot_metabox'));
 				}
@@ -979,6 +983,72 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			echo '</ul>';
+		}
+
+		//Add a dashboard metabox for design reference
+		public function design_metabox(){
+			global $wp_meta_boxes;
+			wp_add_dashboard_widget('nebula_design', 'Design Reference', array($this, 'dashboard_nebula_design'));
+		}
+
+		public function dashboard_nebula_design(){
+			$this->timer('Nebula Design Dashboard');
+			if ( $this->get_option('design_reference_link') ){
+				echo '<p><i class="fas fa-fw fa-file-image"></i> <a href="' . $this->get_option('design_reference_link') . '" target="_blank">Design File(s) &raquo;</a></p>';
+			}
+
+			$notable_colors = apply_filters('nebula_notable_colors', array('$primary_color', '$secondary_color')); //Allow other themes and plugins to designate notable colors
+
+			$notable_colors_data = array();
+			foreach ( $notable_colors as $notable_color ){
+				$sass_color = $this->sass_color($notable_color);
+				$customizer_color = get_theme_mod(str_replace('$', 'nebula_', $notable_color));
+				$hex_color = ( !empty($sass_color) )? rtrim($sass_color, ';') : $customizer_color;
+
+				$notable_colors_data[$notable_color] = array(
+					'name' => ucwords(str_replace(array('$', '_'), array('', ' '), $notable_color)),
+					'sass' => $sass_color,
+					'customizer' => $customizer_color,
+					'hex' => $hex_color,
+					'rgb' => $this->hex2rgb($hex_color),
+					'ratios' => array(
+						'white' => number_format($this->contrast($hex_color, '#ffffff'), 2, '.', ''),
+						'black' => number_format($this->contrast($hex_color, '#000000'), 2, '.', ''),
+					),
+				);
+
+				//Determine readable color
+				if ( $notable_colors_data[$notable_color]['ratios']['white'] > $notable_colors_data[$notable_color]['ratios']['black'] ){
+					$notable_colors_data[$notable_color]['readable'] = '#fff';
+				} else {
+					$notable_colors_data[$notable_color]['readable'] = '#000';
+				}
+			}
+
+			?>
+				<div class="nebula-metabox-row">
+					<?php foreach ( $notable_colors_data as $notable_color_data ): ?>
+						<div class="design-reference-col">
+							<a class="color-block" href="https://www.colorhexa.com/<?php echo ltrim($notable_color_data['hex'], '#'); ?>" target="_blank" style="background-color: <?php echo $notable_color_data['hex']; ?>;">
+								<span class="tee" style="color: <?php echo $notable_color_data['readable']; ?>;">T</span>
+								<span class="color-contrast-ratio light"><?php echo $notable_color_data['ratios']['white']; ?> <i class="fa fa-<?php echo ( $notable_color_data['ratios']['white'] >= 4.5 )? 'check' : 'times'; ?>"></i></span>
+								<span class="color-contrast-ratio dark"><?php echo $notable_color_data['ratios']['black']; ?> <i class="fa fa-<?php echo ( $notable_color_data['ratios']['black'] >= 4.5 )? 'check' : 'times'; ?>"></i></span>
+							</a>
+							<div>
+								<strong><?php echo $notable_color_data['name']; ?></strong><br />
+								Hex <?php echo $notable_color_data['hex']; ?><br />
+								RGB <?php echo $notable_color_data['rgb']['r'] . ', ' . $notable_color_data['rgb']['g'] . ', ' . $notable_color_data['rgb']['b']; ?><br />
+							</div>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			<?php
+
+			if ( $this->get_option('additional_design_references') ){
+				echo '<p><strong>Additional Notes:</strong><br />' . $this->get_option('additional_design_references') . '</p>';
+			}
+
+			$this->timer('Nebula Design Dashboard', 'end');
 		}
 
 		//Hubspot Contacts

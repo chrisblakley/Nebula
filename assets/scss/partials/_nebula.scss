@@ -51,7 +51,7 @@ div#nebula-hero-formcon {text-align: center; display: none;
 form#nebula-hero-search {display: inline-block; position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; transition: all 0.5s;
 	i, svg {position: absolute; top: rem(12px); left: 13px; font-size: rem(16px); color: #292b2c; pointer-events: none; z-index: 100;}
 
-	input {display: block; width: 100%; font-size: rem(18px); line-height: rem(18px); padding: 8px 0 8px 35px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0px 3px 24px rgba(0, 0, 0, 0.2);
+	input {display: block; width: 100%; font-size: rem(18px); line-height: rem(18px); padding: 8px 0 8px 35px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0 3px 24px rgba(0, 0, 0, 0.2);
 		&:focus {@include background-color(#fff, 0.95); box-shadow: 0 0 32px rgba(red($primary_color), green($primary_color), blue($primary_color), 0.6);}
 	}
 
@@ -189,7 +189,7 @@ a.resetfilters {font-size: rem(12px); color: $danger_color; opacity: 0;
 		@include media("md"){text-align: left; display: inline-block;}
 	}
 	.author-social {display: block; margin-top: 17px; margin-bottom: 20px; font-size: rem(24px); text-align: center;
-		@include media("md"){display: inline-block; margin-bottom: 0; float: right; font-size: rem(12px);};
+		@include media("md"){display: inline; margin-bottom: 0; float: right; font-size: rem(12px);};
 	}
 	.author-meta {margin-top: 5px; margin-bottom: 12px; font-size: rem(12px);
 		i {margin-right: 2px;}
@@ -202,7 +202,7 @@ a.resetfilters {font-size: rem(12px); color: $danger_color; opacity: 0;
 		.author-phonenumber {white-space: nowrap; display: block; text-align: center;
 			@include media("md"){display: inline-block; margin-right: 5px; text-align: left;}
 		}
-		@include media("lg"){float: right; display: inline-block;};
+		@include media("lg"){float: right; display: inline;};
 	}
 }
 

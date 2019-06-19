@@ -2,7 +2,7 @@
 	"name": "nebula-wp",
 	"title": "Nebula",
 	"description": "Advanced Starter WordPress Theme for Developers",
-	"version": "7.1.12",
+	"version": "7.1.18",
 	"homepage": "https://gearside.com/nebula/",
 	"repository": {
 		"type": "git",
@@ -17,6 +17,7 @@
 		"jquery-ui": ">=1.12.1",
 		"autotrack": "latest",
 		"mmenu-js": "~7.3.2",
+		"@vimeo/player": "latest",
 		"datatables": "latest",
 		"chosen": "latest",
 		"mustangostang/spyc": "latest",

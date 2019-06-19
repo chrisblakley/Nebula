@@ -1,0 +1,83 @@
+### WordPress ###
+*.log
+wp-config.php
+wp-content/advanced-cache.php
+wp-content/backup-db/
+wp-content/backups/
+wp-content/blogs.dir/
+wp-content/cache/
+wp-content/upgrade/
+wp-content/uploads/
+wp-content/mu-plugins/
+wp-content/wp-cache-config.php
+wp-content/plugins/hello.php
+
+/.htaccess
+/license.txt
+/readme.html
+/sitemap.xml
+/sitemap.xml.gz
+
+### Mac OS ###
+#Mac OS General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+#Mac OS Icon must end with two \r
+Icon
+
+#Mac OS Thumbnails
+._*
+
+#Mac OS Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+#Mac OS Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+### Windows ###
+#Windows thumbnail cache files
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+
+#Windows Dump file
+*.stackdump
+
+#Windows Folder config file
+[Dd]esktop.ini
+
+#Windows Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+#Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+#Windows shortcuts
+*.lnk
+
+### Dropbox ###
+#Dropbox settings and caches
+.dropbox
+.dropbox.attr
+.dropbox.cache
+
+### My Additional Rules ###
+*.bak
+*.cache
+*.secret.php

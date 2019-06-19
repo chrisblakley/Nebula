@@ -38,7 +38,7 @@ jQuery(function(){
 		visibilityChangeActions();
 	});
 
-	initEventTracking();
+	nebulaEventTracking();
 
 	window.performance.mark('nebula_dom_ready_end');
 	window.performance.measure('nebula_dom_ready_functions', 'nebula_dom_ready_start', 'nebula_dom_ready_end');
@@ -700,754 +700,750 @@ function socialSharing(){
  Analytics Functions
  ===========================*/
 
-//Call the event tracking functions.
-function initEventTracking(){
+//Google Analytics Universal Analytics Event Trackers
+function nebulaEventTracking(){
 	if ( isDoNotTrack() ){
 		return false;
 	}
 
+	cacheSelectors(); //If event tracking is initialized by the async GA callback, selectors won't be cached yet
+
+	if ( typeof window.ga === 'function' ){
+		window.ga(function(tracker){
+			nebula.dom.document.trigger('nebula_ga_tracker', tracker);
+			nebula.user.cid = tracker.get('clientId');
+		});
+	}
+
+	nebula.dom.document.trigger('nebula_event_tracking');
+
 	once(function(){
-		cacheSelectors(); //If event tracking is initialized by the async GA callback, selectors won't be cached yet
-
-		if ( typeof window.ga === 'function' ){
-			window.ga(function(tracker){
-				nebula.dom.document.trigger('nebula_ga_tracker', tracker);
-				nebula.user.cid = tracker.get('clientId');
-			});
-		}
-
-		nebula.dom.document.trigger('nebula_event_tracking');
-
-		eventTracking();
-		scrollDepth();
-		ecommerceTracking();
-	}, 'nebula event tracking');
-}
-
-//Google Analytics Universal Analytics Event Trackers
-function eventTracking(){
-	//Btn Clicks
-	nebula.dom.document.on('mousedown', "button, .btn, a.wp-block-button__link", function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Button',
-			action: 'Click',
-			intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-			text: jQuery(this).val() || jQuery(this).text() || '(Unknown)',
-			link: jQuery(this).attr('href')
-		}
-
-		ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', 'Button Click', jQuery.trim(thisEvent.text), thisEvent.link);
-	});
-
-	//Bootstrap "Collapse" Accordions
-	nebula.dom.document.on('shown.bs.collapse', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Accordion',
-			action: 'Shown',
-			label: jQuery.trim(jQuery('[data-target="#' + e.target.id + '"]').text()) || e.target.id,
-		}
-
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-	});
-	nebula.dom.document.on('hidden.bs.collapse', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Accordion',
-			action: 'Hidden',
-			label: jQuery.trim(jQuery('[data-target="#' + e.target.id + '"]').text()) || e.target.id,
-		}
-
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-	});
-
-	//Bootstrap Modals
-	nebula.dom.document.on('shown.bs.modal', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Modal',
-			action: 'Shown',
-			label: jQuery.trim(jQuery('#' + e.target.id + ' .modal-title').text()) || e.target.id,
-		}
-
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-	});
-	nebula.dom.document.on('hidden.bs.modal', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Modal',
-			action: 'Hidden',
-			label: jQuery.trim(jQuery('#' + e.target.id + ' .modal-title').text()) || e.target.id,
-		}
-
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-	});
-
-	//Bootstrap Carousels (Sliders)
-	nebula.dom.document.on('slide.bs.carousel', function(e){
-		if ( window.event ){ //Only if sliding manually
+		//Btn Clicks
+		nebula.dom.document.on('mousedown', "button, .btn, a.wp-block-button__link", function(e){
 			var thisEvent = {
 				event: e,
-				category: 'Carousel',
-				action: e.target.id || e.target.title || e.target.className.replace(' ', '.'),
-				from: e.from,
-				to: e.to,
+				category: 'Button',
+				action: 'Click',
+				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+				text: jQuery(this).val() || jQuery(this).text() || '(Unknown)',
+				link: jQuery(this).attr('href')
 			}
 
-			thisEvent.activeSlide = jQuery(e.target).find('.carousel-item').eq(e.to);
-			thisEvent.activeSlideName = thisEvent.activeSlide.attr('id') || thisEvent.activeSlide.attr('title') || 'Unnamed';
-			thisEvent.prevSlide = jQuery(e.target).find('.carousel-item').eq(e.from);
-			thisEvent.prevSlideName = thisEvent.prevSlide.attr('id') || thisEvent.prevSlide.attr('title') || 'Unnamed';
-			thisEvent.label = 'Slide to ' + thisEvent.to + ' (' + thisEvent.activeSlideName + ') from ' + thisEvent.from + ' (' + thisEvent.prevSlideName + ')';
+			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', 'Button Click', jQuery.trim(thisEvent.text), thisEvent.link);
+		});
+
+		//Bootstrap "Collapse" Accordions
+		nebula.dom.document.on('shown.bs.collapse', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Accordion',
+				action: 'Shown',
+				label: jQuery.trim(jQuery('[data-target="#' + e.target.id + '"]').text()) || e.target.id,
+			}
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-		}
-	});
+		});
+		nebula.dom.document.on('hidden.bs.collapse', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Accordion',
+				action: 'Hidden',
+				label: jQuery.trim(jQuery('[data-target="#' + e.target.id + '"]').text()) || e.target.id,
+			}
 
-	//Generic Form Submissions
-	//This event will be a duplicate if proper event tracking is setup on each form, but serves as a safety net.
-	//It is not recommended to use this event for goal tracking unless absolutely necessary (this event does not check for submission success)!
-	nebula.dom.document.on('submit', 'form', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Generic Form',
-			action: 'Submit',
-			formID: e.target.id || 'form.' + e.target.className.replace(' ', '.'),
-		}
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+		});
 
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.formID);
-	});
+		//Bootstrap Modals
+		nebula.dom.document.on('shown.bs.modal', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Modal',
+				action: 'Shown',
+				label: jQuery.trim(jQuery('#' + e.target.id + ' .modal-title').text()) || e.target.id,
+			}
 
-	//Notable File Downloads
-	jQuery.each(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'zipx', 'rar', 'gz', 'tar', 'txt', 'rtf', 'ics', 'vcard'], function(index, extension){
-		nebula.dom.document.on('mousedown', "a[href$='." + extension + "'], a[href$='." + extension.toUpperCase() + "']", function(e){
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+		});
+		nebula.dom.document.on('hidden.bs.modal', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Modal',
+				action: 'Hidden',
+				label: jQuery.trim(jQuery('#' + e.target.id + ' .modal-title').text()) || e.target.id,
+			}
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+		});
+
+		//Bootstrap Carousels (Sliders)
+		nebula.dom.document.on('slide.bs.carousel', function(e){
+			if ( window.event ){ //Only if sliding manually
+				var thisEvent = {
+					event: e,
+					category: 'Carousel',
+					action: e.target.id || e.target.title || e.target.className.replace(' ', '.'),
+					from: e.from,
+					to: e.to,
+				}
+
+				thisEvent.activeSlide = jQuery(e.target).find('.carousel-item').eq(e.to);
+				thisEvent.activeSlideName = thisEvent.activeSlide.attr('id') || thisEvent.activeSlide.attr('title') || 'Unnamed';
+				thisEvent.prevSlide = jQuery(e.target).find('.carousel-item').eq(e.from);
+				thisEvent.prevSlideName = thisEvent.prevSlide.attr('id') || thisEvent.prevSlide.attr('title') || 'Unnamed';
+				thisEvent.label = 'Slide to ' + thisEvent.to + ' (' + thisEvent.activeSlideName + ') from ' + thisEvent.from + ' (' + thisEvent.prevSlideName + ')';
+
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			}
+		});
+
+		//Generic Form Submissions
+		//This event will be a duplicate if proper event tracking is setup on each form, but serves as a safety net.
+		//It is not recommended to use this event for goal tracking unless absolutely necessary (this event does not check for submission success)!
+		nebula.dom.document.on('submit', 'form', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Generic Form',
+				action: 'Submit',
+				formID: e.target.id || 'form.' + e.target.className.replace(' ', '.'),
+			}
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.formID);
+		});
+
+		//Notable File Downloads
+		jQuery.each(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'zipx', 'rar', 'gz', 'tar', 'txt', 'rtf', 'ics', 'vcard'], function(index, extension){
+			nebula.dom.document.on('mousedown', "a[href$='." + extension + "'], a[href$='." + extension.toUpperCase() + "']", function(e){
+				var thisEvent = {
+					event: e,
+					category: 'Download',
+					action: extension,
+					intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+					extension: extension,
+					fileName: jQuery(this).attr('href').substr(jQuery(this).attr('href').lastIndexOf("/")+1),
+				}
+
+				ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileName);
+				if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: thisEvent.fileName});}
+				nv('event', 'File Download');
+			});
+		});
+
+		//Notable Downloads
+		nebula.dom.document.on('mousedown', ".notable a, a.notable", function(e){
 			var thisEvent = {
 				event: e,
 				category: 'Download',
-				action: extension,
+				action: 'Notable',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				extension: extension,
-				fileName: jQuery(this).attr('href').substr(jQuery(this).attr('href').lastIndexOf("/")+1),
+				filePath: jQuery.trim(jQuery(this).attr('href')),
+				linkText: jQuery(this).text()
 			}
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileName);
-			if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: thisEvent.fileName});}
-			nv('event', 'File Download');
-		});
-	});
+			if ( thisEvent.filePath.length && thisEvent.filePath !== '#' ){
+				thisEvent.fileName = filePath.substr(filePath.lastIndexOf("/")+1);
+				ga('set', nebula.analytics.metrics.notableDownloads, 1);
+				nebula.dom.document.trigger('nebula_event', thisEvent);
 
-	//Notable Downloads
-	nebula.dom.document.on('mousedown', ".notable a, a.notable", function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Download',
-			action: 'Notable',
-			intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-			filePath: jQuery.trim(jQuery(this).attr('href')),
-			linkText: jQuery(this).text()
-		}
-
-		if ( thisEvent.filePath.length && thisEvent.filePath !== '#' ){
-			thisEvent.fileName = filePath.substr(filePath.lastIndexOf("/")+1);
-			ga('set', nebula.analytics.metrics.notableDownloads, 1);
-			nebula.dom.document.trigger('nebula_event', thisEvent);
-
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileName);
-			if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: thisEvent.fileName});}
-			nv('event', 'Notable File Download');
-		}
-	});
-
-	//Generic Interal Search Tracking
-	nebula.dom.document.on('submit', '#s, input.search', function(){
-		var thisEvent = {
-			event: e,
-			category: 'Internal Search',
-			action: 'Submit',
-			intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-			query: jQuery.trim(jQuery(this).find('input[name="s"]').val())
-		}
-
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.query);
-		if ( typeof fbq === 'function' ){fbq('track', 'Search', {search_string: thisEvent.query});}
-		nv('identify', {internal_search: thisEvent.query});
-	});
-
-	//Keyboard Shortcut (Non-interaction because they are not taking explicit action with the webpage)
-	nebula.dom.document.on('keydown', function(e){
-		//Ctrl+F or Cmd+F (Find)
-		if ( (e.ctrlKey || e.metaKey) && e.which === 70 ){
-			var thisEvent = {
-				event: e,
-				category: 'Find on Page',
-				action: 'Ctrl+F',
-				highlightedText: jQuery.trim(window.getSelection().toString()) || '(No highlighted text when initiating find)'
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileName);
+				if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: thisEvent.fileName});}
+				nv('event', 'Notable File Download');
 			}
-
-			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.highlightedText, {'nonInteraction': true});
-		}
-
-		//Ctrl+D or Cmd+D (Bookmark)
-		if ( (e.ctrlKey || e.metaKey) && e.which === 68 ){ //Ctrl+D
-			var thisEvent = {
-				event: e,
-				category: 'Bookmark',
-				action: 'Ctrl+D',
-				label: 'User bookmarked the page (with keyboard shortcut)'
-			}
-
-			removeQueryParameter(['utm_campaign', 'utm_medium', 'utm_source', 'utm_content', 'utm_term'], window.location.href); //Remove existing UTM parameters
-			history.replaceState(null, document.title, window.location.href + '?utm_source=bookmark');
-			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label, {'nonInteraction': true});
-		}
-	});
-
-	//Mailto link tracking
-	nebula.dom.document.on('mousedown', 'a[href^="mailto"]', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Contact',
-			action: 'Mailto',
-			intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-			emailAddress: jQuery(this).attr('href').replace('mailto:', '')
-		}
-
-		ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-		ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.emailAddress);
-		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: thisEvent.action});}}
-		nv('event', thisEvent.action);
-		nv('identify', {mailto_contacted: thisEvent.emailAddress});
-	});
-
-	//Telephone link tracking
-	nebula.dom.document.on('mousedown', 'a[href^="tel"]', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Contact',
-			action: 'Click-to-Call',
-			intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-			phoneNumber: jQuery(this).attr('href').replace('tel:', '')
-		}
-
-		ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-		ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
-		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: thisEvent.action});}}
-		nv('event', thisEvent.action);
-		nv('identify', {phone_contacted: thisEvent.phoneNumber});
-	});
-
-	//SMS link tracking
-	nebula.dom.document.on('mousedown', 'a[href^="sms"]', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Contact',
-			action: 'SMS',
-			intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-			phoneNumber: jQuery(this).attr('href').replace('tel:', '')
-		}
-
-		ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-		ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
-		if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: thisEvent.action});}}
-		nv('event', thisEvent.action);
-		nv('identify', {phone_contacted: thisEvent.phoneNumber});
-	});
-
-	//Street Address click //@todo "Nebula" 0: How to detect when a user clicks an address that is not linked, but mobile opens the map anyway? What about when it *is* linked?
-
-	//Utility Navigation Menu
-	nebula.dom.document.on('mousedown', '#utility-nav ul.menu a', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Navigation Menu',
-			action: 'Utility Menu',
-			intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-			linkText: jQuery.trim(jQuery(this).text())
-		}
-
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
-	});
-
-	//Primary Navigation Menu
-	nebula.dom.document.on('mousedown', '#primary-nav ul.menu a', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Navigation Menu',
-			action: 'Primary Menu',
-			intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-			linkText: jQuery.trim(jQuery(this).text())
-		}
-
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
-	});
-
-	//Mobile Navigation Menu
-	nebula.dom.document.on('mousedown', '#mobilenav ul.menu a.mm-listitem__text', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Navigation Menu',
-			action: 'Mobile Menu',
-			intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-			linkText: jQuery.trim(jQuery(this).text())
-		}
-
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
-	});
-
-	//Breadcrumb Navigation
-	nebula.dom.document.on('mousedown', 'ol.nebula-breadcrumbs a', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Navigation Menu',
-			action: 'Breadcrumbs',
-			intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-			linkText: jQuery.trim(jQuery(this).text())
-		}
-
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
-	});
-
-	//Sidebar Navigation Menu
-	nebula.dom.document.on('mousedown', '#sidebar-section ul.menu a', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Navigation Menu',
-			action: 'Sidebar Menu',
-			intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-			linkText: jQuery.trim(jQuery(this).text())
-		}
-
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
-	});
-
-	//Footer Navigation Menu
-	nebula.dom.document.on('mousedown', '#powerfooter ul.menu a', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Navigation Menu',
-			action: 'Footer Menu',
-			intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-			linkText: jQuery.trim(jQuery(this).text())
-		}
-
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
-	});
-
-	//History Popstate (dynamic URL changes from the History API)
-	nebula.dom.window.on('popstate', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'History Popstate',
-			action: document.title,
-			location: document.location,
-			state: JSON.stringify(e.state)
-		}
-
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.location);
-	});
-
-	//Non-Linked Click Attempts
-	jQuery('img').on('click', function(e){
-		if ( !jQuery(this).parents('a').length ){
-			var thisEvent = {
-				event: e,
-				category: 'Non-Linked Click Attempt',
-				action: 'Image',
-				element: 'Image',
-				src: jQuery(this).attr('src')
-			}
-
-			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.src, {'nonInteraction': true});
-			nv('event', thisEvent.category);
-		}
-	});
-
-	//Detect "Rage Clicks"
-	var clickEvents = [];
-	nebula.dom.document.on('click', 'body', function(e){
-		//Ignore clicks on certain elements that typically incur many clicks
-		if ( jQuery(this).is('input[type="number"]') ){
-			return null;
-		}
-
-		clickEvents.push({
-			event: e,
-			time: new Date()
 		});
 
-		//Keep only required number of click events and remove left of them.
-		if ( clickEvents.length > 5 ){
-			clickEvents.splice(0, clickEvents.length - 5);
-		}
-
-		//detect 3 click in 5 sec
-		if ( clickEvents.length >= 5 ){
-			var numberOfClicks = 5; //Number of clicks to detect within the period
-			var period = 3; //The period to listen for the number of clicks
-
-			var last = clickEvents.length - 1;
-			var timeDiff = (clickEvents[last].time.getTime() - clickEvents[last - numberOfClicks + 1].time.getTime()) / 1000;
-
-			//Ignore event periods longer than desired
-			if ( timeDiff > period ){
-				return null; //Return null because false will prevent regular clicks!
+		//Generic Interal Search Tracking
+		nebula.dom.document.on('submit', '#s, input.search', function(){
+			var thisEvent = {
+				event: e,
+				category: 'Internal Search',
+				action: 'Submit',
+				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+				query: jQuery.trim(jQuery(this).find('input[name="s"]').val())
 			}
 
-			//Loop through the last number of click events to check the distance between them
-			var max_distance = 0;
-			for ( i = last - numberOfClicks+1; i < last; i++ ){
-				for ( j = i+1; j <= last; j++ ){
-					var distance = Math.round(Math.sqrt(Math.pow(clickEvents[i].event.clientX - clickEvents[j].event.clientX, 2) + Math.pow(clickEvents[i].event.clientY - clickEvents[j].event.clientY, 2)));
-					if ( distance > max_distance ){
-						max_distance = distance;
-					}
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.query);
+			if ( typeof fbq === 'function' ){fbq('track', 'Search', {search_string: thisEvent.query});}
+			nv('identify', {internal_search: thisEvent.query});
+		});
 
-					//Ignore if distance is outside 100px radius
-					if ( distance > 100 ){
-						return null; //Return null because false will prevent regular clicks!
-					}
+		//Keyboard Shortcut (Non-interaction because they are not taking explicit action with the webpage)
+		nebula.dom.document.on('keydown', function(e){
+			//Ctrl+F or Cmd+F (Find)
+			if ( (e.ctrlKey || e.metaKey) && e.which === 70 ){
+				var thisEvent = {
+					event: e,
+					category: 'Find on Page',
+					action: 'Ctrl+F',
+					highlightedText: jQuery.trim(window.getSelection().toString()) || '(No highlighted text when initiating find)'
 				}
+
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.highlightedText, {'nonInteraction': true});
 			}
 
+			//Ctrl+D or Cmd+D (Bookmark)
+			if ( (e.ctrlKey || e.metaKey) && e.which === 68 ){ //Ctrl+D
+				var thisEvent = {
+					event: e,
+					category: 'Bookmark',
+					action: 'Ctrl+D',
+					label: 'User bookmarked the page (with keyboard shortcut)'
+				}
+
+				removeQueryParameter(['utm_campaign', 'utm_medium', 'utm_source', 'utm_content', 'utm_term'], window.location.href); //Remove existing UTM parameters
+				history.replaceState(null, document.title, window.location.href + '?utm_source=bookmark');
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label, {'nonInteraction': true});
+			}
+		});
+
+		//Mailto link tracking
+		nebula.dom.document.on('mousedown', 'a[href^="mailto"]', function(e){
 			var thisEvent = {
 				event: e,
-				category: 'Rage Clicks',
-				action: 'Detected',
-				clicks: numberOfClicks,
-				period: timeDiff,
-				selector: domTreeToString(e.target),
-			}
-
-			thisEvent.description = numberOfClicks + ' clicks in ' + timeDiff + ' seconds detected within ' + max_distance + 'px of ' + thisEvent.selector;
-
-			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.description);
-
-			clickEvents.splice(clickEvents.length-5, 5); //Remove unused click points
-		}
-	});
-
-	//Skip to Content Link Focus/Clicks
-	nebula.dom.document.on('focus', '.sr-only', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Accessibility Links',
-			action: 'Focus',
-			linkText: jQuery.trim(jQuery(this).text())
-		}
-
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
-	});
-
-	nebula.dom.document.on('click', '.sr-only', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Accessibility Links',
-			action: 'Click',
-			intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-			linkText: jQuery.trim(jQuery(this).text())
-		}
-
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
-	});
-
-	//Video Enter Picture-in-Picture //https://caniuse.com/#feat=picture-in-picture
-	nebula.dom.document.on('enterpictureinpicture', 'video', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Videos',
-			action: 'Enter Picture-in-Picture',
-			videoID: e.target.id
-		}
-
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.videoID, {'nonInteraction': true}); //Non-interaction because this may not be triggered by the user.
-	});
-
-	//Video Leave Picture-in-Picture
-	nebula.dom.document.on('leavepictureinpicture', 'video', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'Videos',
-			action: 'Leave Picture-in-Picture',
-			videoID: e.target.id
-		}
-
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.videoID, {'nonInteraction': true}); //Non-interaction because this may not be triggered by the user.
-	});
-
-	//Word copy tracking
-	var copyCount = 0;
-	nebula.dom.document.on('cut copy', function(){
-		var selection = window.getSelection().toString();
-		var words = selection.split(' ');
-		wordsLength = words.length;
-
-		//Track Email or Phone copies as contact intent.
-		var emailPhoneAddress = jQuery.trim(words.join(' '));
-		if ( nebula.regex.email.test(emailPhoneAddress) ){
-			var thisEvent = {
 				category: 'Contact',
-				action: 'Email (Copy)',
-				intent: 'Intent',
-				emailAddress: emailPhoneAddress,
-				selection: selection,
-				words: words,
-				wordcount: wordsLength
+				action: 'Mailto',
+				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+				emailAddress: jQuery(this).attr('href').replace('mailto:', '')
 			}
 
-			ga('set', nebula.analytics.dimensions.contactMethod, 'Mailto');
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+			ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.emailAddress);
-			nv('event', 'Email Address Copied');
+			if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: thisEvent.action});}}
+			nv('event', thisEvent.action);
 			nv('identify', {mailto_contacted: thisEvent.emailAddress});
-		} else if ( nebula.regex.address.test(emailPhoneAddress) ){
+		});
+
+		//Telephone link tracking
+		nebula.dom.document.on('mousedown', 'a[href^="tel"]', function(e){
 			var thisEvent = {
+				event: e,
 				category: 'Contact',
-				action: 'Street Address (Copy)',
-				intent: 'Intent',
-				address: emailPhoneAddress,
-				selection: selection,
-				words: words,
-				wordcount: wordsLength
+				action: 'Click-to-Call',
+				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+				phoneNumber: jQuery(this).attr('href').replace('tel:', '')
 			}
 
-			ga('set', nebula.analytics.dimensions.contactMethod, 'Street Address');
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+			ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.address);
-			nv('event', 'Street Address Copied');
-		} else {
-			var alphanumPhone = emailPhoneAddress.replace(/\W/g, ''); //Keep only alphanumeric characters
-			var firstFourNumbers = parseInt(alphanumPhone.substring(0, 4)); //Store the first four numbers as an integer
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
+			if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: thisEvent.action});}}
+			nv('event', thisEvent.action);
+			nv('identify', {phone_contacted: thisEvent.phoneNumber});
+		});
 
-			//If the first three/four chars are numbers and the full string is either 10 or 11 characters (to capture numbers with words) -or- if it matches the phone RegEx pattern
-			if ( (!isNaN(firstFourNumbers) && firstFourNumbers.toString().length >= 3 && (alphanumPhone.length === 10 || alphanumPhone.length === 11)) || nebula.regex.phone.test(emailPhoneAddress) ){
+		//SMS link tracking
+		nebula.dom.document.on('mousedown', 'a[href^="sms"]', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Contact',
+				action: 'SMS',
+				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+				phoneNumber: jQuery(this).attr('href').replace('tel:', '')
+			}
+
+			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+			ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
+			if ( typeof fbq === 'function' ){if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: thisEvent.action});}}
+			nv('event', thisEvent.action);
+			nv('identify', {phone_contacted: thisEvent.phoneNumber});
+		});
+
+		//Street Address click //@todo "Nebula" 0: How to detect when a user clicks an address that is not linked, but mobile opens the map anyway? What about when it *is* linked?
+
+		//Utility Navigation Menu
+		nebula.dom.document.on('mousedown', '#utility-nav ul.menu a', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Navigation Menu',
+				action: 'Utility Menu',
+				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+				linkText: jQuery.trim(jQuery(this).text())
+			}
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+		});
+
+		//Primary Navigation Menu
+		nebula.dom.document.on('mousedown', '#primary-nav ul.menu a', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Navigation Menu',
+				action: 'Primary Menu',
+				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+				linkText: jQuery.trim(jQuery(this).text())
+			}
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+		});
+
+		//Mobile Navigation Menu
+		nebula.dom.document.on('mousedown', '#mobilenav ul.menu a.mm-listitem__text', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Navigation Menu',
+				action: 'Mobile Menu',
+				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+				linkText: jQuery.trim(jQuery(this).text())
+			}
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+		});
+
+		//Breadcrumb Navigation
+		nebula.dom.document.on('mousedown', 'ol.nebula-breadcrumbs a', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Navigation Menu',
+				action: 'Breadcrumbs',
+				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+				linkText: jQuery.trim(jQuery(this).text())
+			}
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+		});
+
+		//Sidebar Navigation Menu
+		nebula.dom.document.on('mousedown', '#sidebar-section ul.menu a', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Navigation Menu',
+				action: 'Sidebar Menu',
+				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+				linkText: jQuery.trim(jQuery(this).text())
+			}
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+		});
+
+		//Footer Navigation Menu
+		nebula.dom.document.on('mousedown', '#powerfooter ul.menu a', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Navigation Menu',
+				action: 'Footer Menu',
+				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+				linkText: jQuery.trim(jQuery(this).text())
+			}
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+		});
+
+		//History Popstate (dynamic URL changes from the History API)
+		nebula.dom.window.on('popstate', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'History Popstate',
+				action: document.title,
+				location: document.location,
+				state: JSON.stringify(e.state)
+			}
+
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.location);
+		});
+
+		//Non-Linked Click Attempts
+		jQuery('img').on('click', function(e){
+			if ( !jQuery(this).parents('a').length ){
+				var thisEvent = {
+					event: e,
+					category: 'Non-Linked Click Attempt',
+					action: 'Image',
+					element: 'Image',
+					src: jQuery(this).attr('src')
+				}
+
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.src, {'nonInteraction': true});
+				nv('event', thisEvent.category);
+			}
+		});
+
+		//Detect "Rage Clicks"
+		var clickEvents = [];
+		nebula.dom.document.on('click', 'body', function(e){
+			//Ignore clicks on certain elements that typically incur many clicks
+			if ( jQuery(this).is('input[type="number"]') ){
+				return null;
+			}
+
+			clickEvents.push({
+				event: e,
+				time: new Date()
+			});
+
+			//Keep only required number of click events and remove left of them.
+			if ( clickEvents.length > 5 ){
+				clickEvents.splice(0, clickEvents.length - 5);
+			}
+
+			//detect 3 click in 5 sec
+			if ( clickEvents.length >= 5 ){
+				var numberOfClicks = 5; //Number of clicks to detect within the period
+				var period = 3; //The period to listen for the number of clicks
+
+				var last = clickEvents.length - 1;
+				var timeDiff = (clickEvents[last].time.getTime() - clickEvents[last - numberOfClicks + 1].time.getTime()) / 1000;
+
+				//Ignore event periods longer than desired
+				if ( timeDiff > period ){
+					return null; //Return null because false will prevent regular clicks!
+				}
+
+				//Loop through the last number of click events to check the distance between them
+				var max_distance = 0;
+				for ( i = last - numberOfClicks+1; i < last; i++ ){
+					for ( j = i+1; j <= last; j++ ){
+						var distance = Math.round(Math.sqrt(Math.pow(clickEvents[i].event.clientX - clickEvents[j].event.clientX, 2) + Math.pow(clickEvents[i].event.clientY - clickEvents[j].event.clientY, 2)));
+						if ( distance > max_distance ){
+							max_distance = distance;
+						}
+
+						//Ignore if distance is outside 100px radius
+						if ( distance > 100 ){
+							return null; //Return null because false will prevent regular clicks!
+						}
+					}
+				}
+
+				var thisEvent = {
+					event: e,
+					category: 'Rage Clicks',
+					action: 'Detected',
+					clicks: numberOfClicks,
+					period: timeDiff,
+					selector: domTreeToString(e.target),
+				}
+
+				thisEvent.description = numberOfClicks + ' clicks in ' + timeDiff + ' seconds detected within ' + max_distance + 'px of ' + thisEvent.selector;
+
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.description);
+
+				clickEvents.splice(clickEvents.length-5, 5); //Remove unused click points
+			}
+		});
+
+		//Skip to Content Link Focus/Clicks
+		nebula.dom.document.on('focus', '.sr-only', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Accessibility Links',
+				action: 'Focus',
+				linkText: jQuery.trim(jQuery(this).text())
+			}
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+		});
+
+		nebula.dom.document.on('click', '.sr-only', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Accessibility Links',
+				action: 'Click',
+				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+				linkText: jQuery.trim(jQuery(this).text())
+			}
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+		});
+
+		//Video Enter Picture-in-Picture //https://caniuse.com/#feat=picture-in-picture
+		nebula.dom.document.on('enterpictureinpicture', 'video', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Videos',
+				action: 'Enter Picture-in-Picture',
+				videoID: e.target.id
+			}
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.videoID, {'nonInteraction': true}); //Non-interaction because this may not be triggered by the user.
+		});
+
+		//Video Leave Picture-in-Picture
+		nebula.dom.document.on('leavepictureinpicture', 'video', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Videos',
+				action: 'Leave Picture-in-Picture',
+				videoID: e.target.id
+			}
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.videoID, {'nonInteraction': true}); //Non-interaction because this may not be triggered by the user.
+		});
+
+		//Word copy tracking
+		var copyCount = 0;
+		nebula.dom.document.on('cut copy', function(){
+			var selection = window.getSelection().toString();
+			var words = selection.split(' ');
+			wordsLength = words.length;
+
+			//Track Email or Phone copies as contact intent.
+			var emailPhoneAddress = jQuery.trim(words.join(' '));
+			if ( nebula.regex.email.test(emailPhoneAddress) ){
 				var thisEvent = {
 					category: 'Contact',
-					action: 'Phone (Copy)',
+					action: 'Email (Copy)',
 					intent: 'Intent',
-					phoneNumber: emailPhoneAddress,
+					emailAddress: emailPhoneAddress,
 					selection: selection,
 					words: words,
 					wordcount: wordsLength
 				}
 
-				ga('set', nebula.analytics.dimensions.contactMethod, 'Click-to-Call');
+				ga('set', nebula.analytics.dimensions.contactMethod, 'Mailto');
 				ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
-				nv('event', 'Phone Number Copied');
-				nv('identify', {phone_contacted: thisEvent.phoneNumber});
-			}
-		}
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.emailAddress);
+				nv('event', 'Email Address Copied');
+				nv('identify', {mailto_contacted: thisEvent.emailAddress});
+			} else if ( nebula.regex.address.test(emailPhoneAddress) ){
+				var thisEvent = {
+					category: 'Contact',
+					action: 'Street Address (Copy)',
+					intent: 'Intent',
+					address: emailPhoneAddress,
+					selection: selection,
+					words: words,
+					wordcount: wordsLength
+				}
 
-		var thisEvent = {
-			category: 'Copied Text',
-			action: 'Copy', //This is not used for the below events
-			intent: 'Intent',
-			phoneNumber: emailPhoneAddress,
-			selection: selection,
-			words: words,
-			wordcount: wordsLength
-		}
-
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-
-		if ( copyCount < 5 ){
-			if ( words.length > 8 ){
-				words = words.slice(0, 8).join(' ');
-				ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]');
+				ga('set', nebula.analytics.dimensions.contactMethod, 'Street Address');
+				ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.address);
+				nv('event', 'Street Address Copied');
 			} else {
-				if ( jQuery.trim(selection) === '' ){
-					ga('send', 'event', thisEvent.category, '[0 words]');
-				} else {
-					ga('send', 'event', thisEvent.category, words.length + ' words', selection, words.length);
+				var alphanumPhone = emailPhoneAddress.replace(/\W/g, ''); //Keep only alphanumeric characters
+				var firstFourNumbers = parseInt(alphanumPhone.substring(0, 4)); //Store the first four numbers as an integer
+
+				//If the first three/four chars are numbers and the full string is either 10 or 11 characters (to capture numbers with words) -or- if it matches the phone RegEx pattern
+				if ( (!isNaN(firstFourNumbers) && firstFourNumbers.toString().length >= 3 && (alphanumPhone.length === 10 || alphanumPhone.length === 11)) || nebula.regex.phone.test(emailPhoneAddress) ){
+					var thisEvent = {
+						category: 'Contact',
+						action: 'Phone (Copy)',
+						intent: 'Intent',
+						phoneNumber: emailPhoneAddress,
+						selection: selection,
+						words: words,
+						wordcount: wordsLength
+					}
+
+					ga('set', nebula.analytics.dimensions.contactMethod, 'Click-to-Call');
+					ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+					nebula.dom.document.trigger('nebula_event', thisEvent);
+					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
+					nv('event', 'Phone Number Copied');
+					nv('identify', {phone_contacted: thisEvent.phoneNumber});
 				}
 			}
 
-			ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]');
-			nv('event', 'Text Copied');
-		}
-
-		copyCount++;
-	});
-
-	//AJAX Errors
-	nebula.dom.document.ajaxError(function(e, jqXHR, settings, thrownError){
-		var errorMessage = thrownError;
-		if ( jqXHR.status === 0 ){ //A status of 0 means the error is unknown. Possible network connection issue (like a blocked request).
-			errorMessage = 'Unknown error';
-		}
-
-		ga('send', 'exception', {'exDescription': '(JS) AJAX Error (' + jqXHR.status + '): ' + errorMessage + ' on ' + settings.url, 'exFatal': true});
-		nv('event', 'AJAX Error');
-	});
-
-	//Window Errors
-	window.onerror = function(message, file, line){
-		var errorMessage = message + ' at ' + line + ' of ' + file;
-		if ( message.toLowerCase().indexOf('script error') > -1 ){ //If it is a script error
-			errorMessage = 'Script error (An error occurred in a script hosted on a different domain)'; //No additional information is available because of the browser's same-origin policy. Use CORS when possible to get additional information.
-		}
-
-		ga('send', 'exception', {'exDescription': '(JS) ' + errorMessage, 'exFatal': false}); //Is there a better way to detect fatal vs non-fatal errors?
-		nv('event', 'JavaScript Error');
-	}
-
-	//Reporting Observer deprecations and interventions
-	//@todo Nebula 0: This may be causing "aw snap" errors in Chrome. Disabling for now until the feature is more stable.
-/*
-	if ( typeof window.ReportingObserver !== 'undefined' ){ //Chrome 68+
-		var nebulaReportingObserver = new ReportingObserver(function(reports, observer){
-			for ( report of reports ){
-				if ( report.body.sourceFile.indexOf('extension') < 0 ){ //Ignore browser extensions
-					ga('send', 'exception', {'exDescription': '(JS) Reporting Observer [' + report.type + ']: ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber, 'exFatal': false});
-				}
+			var thisEvent = {
+				category: 'Copied Text',
+				action: 'Copy', //This is not used for the below events
+				intent: 'Intent',
+				phoneNumber: emailPhoneAddress,
+				selection: selection,
+				words: words,
+				wordcount: wordsLength
 			}
-		}, {buffered: true});
-		nebulaReportingObserver.observe();
-	}
-*/
 
-	//Capture Print Intent
-	//Note: This sends 2 events per print (beforeprint and afterprint). If one occurs more than the other we can remove one.
-	if ( 'matchMedia' in window ){ //IE10+
-		var mediaQueryList = window.matchMedia('print');
-		mediaQueryList.addListener(function(mql){
-			if ( mql.matches ){
-				sendPrintEvent('Before Print', 'mql.matches');
-			} else {
-				sendPrintEvent('After Print', '!mql.matches');
-			}
-		});
-	} else {
-		window.onbeforeprint = sendPrintEvent('Before Print', 'onbeforeprint');
-		window.onafterprint = sendPrintEvent('After Print', 'onafterprint');
-	}
-	function sendPrintEvent(action, trigger){
-		var thisEvent = {
-			category: 'Print',
-			action: action,
-			label: 'User triggered print via ' + trigger,
-			intent: 'Intent'
-		}
-
-		ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-		nv('event', thisEvent.category);
-	}
-
-	//Detect Adblock
-	if ( nebula.user.client.bot === false && nebula.site.options.adblock_detect ){
-		window.performance.mark('nebula_detect_adblock_start');
-		jQuery.ajax({ //Eventually update this to fetch with ES6
-			type: 'GET',
-			url: nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js',
-			dataType: 'script',
-			cache: true,
-			timeout: 5000
-		}).done(function(){
-			nebula.session.flags.adblock = false;
-		}).fail(function(){
-			nebula.dom.html.addClass('ad-blocker');
-			ga('set', nebula.analytics.dimensions.blocker, 'Ad Blocker');
-			if ( nebula.session.flags.adblock != true ){
-				ga('send', 'event', 'Ad Blocker', 'Blocked', 'This user is using ad blocking software.', {'nonInteraction': true}); //Uses an event because it is asynchronous!
-				nebula.session.flags.adblock = true;
-			}
-		}).always(function(){
-			window.performance.mark('nebula_detect_adblock_end');
-			window.performance.measure('nebula_detect_adblock', 'nebula_detect_adblock_start', 'nebula_detect_adblock_end');
-		});
-	}
-
-	//DataTables Filter
-	nebula.dom.document.on('keyup', '.dataTables_filter input', function(e){
-		oThis = jQuery(this);
-		var thisEvent = {
-			event: e,
-			category: 'DataTables',
-			action: 'Search Filter',
-			query: jQuery.trim(oThis.val())
-		}
-
-		debounce(function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.query);
-		}, 1000, 'datatables_search_filter');
-	});
 
-	//DataTables Sorting
-	nebula.dom.document.on('click', 'th.sorting', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'DataTables',
-			action: 'Sort',
-			heading: jQuery(this).text()
+			if ( copyCount < 5 ){
+				if ( words.length > 8 ){
+					words = words.slice(0, 8).join(' ');
+					ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]');
+				} else {
+					if ( jQuery.trim(selection) === '' ){
+						ga('send', 'event', thisEvent.category, '[0 words]');
+					} else {
+						ga('send', 'event', thisEvent.category, words.length + ' words', selection, words.length);
+					}
+				}
+
+				ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]');
+				nv('event', 'Text Copied');
+			}
+
+			copyCount++;
+		});
+
+		//AJAX Errors
+		nebula.dom.document.ajaxError(function(e, jqXHR, settings, thrownError){
+			var errorMessage = thrownError;
+			if ( jqXHR.status === 0 ){ //A status of 0 means the error is unknown. Possible network connection issue (like a blocked request).
+				errorMessage = 'Unknown error';
+			}
+
+			ga('send', 'exception', {'exDescription': '(JS) AJAX Error (' + jqXHR.status + '): ' + errorMessage + ' on ' + settings.url, 'exFatal': true});
+			nv('event', 'AJAX Error');
+		});
+
+		//Window Errors
+		window.onerror = function(message, file, line){
+			var errorMessage = message + ' at ' + line + ' of ' + file;
+			if ( message.toLowerCase().indexOf('script error') > -1 ){ //If it is a script error
+				errorMessage = 'Script error (An error occurred in a script hosted on a different domain)'; //No additional information is available because of the browser's same-origin policy. Use CORS when possible to get additional information.
+			}
+
+			ga('send', 'exception', {'exDescription': '(JS) ' + errorMessage, 'exFatal': false}); //Is there a better way to detect fatal vs non-fatal errors?
+			nv('event', 'JavaScript Error');
 		}
 
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.heading);
-	});
+		//Reporting Observer deprecations and interventions
+		//@todo Nebula 0: This may be causing "aw snap" errors in Chrome. Disabling for now until the feature is more stable.
+	/*
+		if ( typeof window.ReportingObserver !== 'undefined' ){ //Chrome 68+
+			var nebulaReportingObserver = new ReportingObserver(function(reports, observer){
+				for ( report of reports ){
+					if ( report.body.sourceFile.indexOf('extension') < 0 ){ //Ignore browser extensions
+						ga('send', 'exception', {'exDescription': '(JS) Reporting Observer [' + report.type + ']: ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber, 'exFatal': false});
+					}
+				}
+			}, {buffered: true});
+			nebulaReportingObserver.observe();
+		}
+	*/
 
-	//DataTables Pagination
-	nebula.dom.document.on('click', 'a.paginate_button ', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'DataTables',
-			action: 'Paginate',
-			page: jQuery(this).text()
+		//Capture Print Intent
+		//Note: This sends 2 events per print (beforeprint and afterprint). If one occurs more than the other we can remove one.
+		if ( 'matchMedia' in window ){ //IE10+
+			var mediaQueryList = window.matchMedia('print');
+			mediaQueryList.addListener(function(mql){
+				if ( mql.matches ){
+					sendPrintEvent('Before Print', 'mql.matches');
+				} else {
+					sendPrintEvent('After Print', '!mql.matches');
+				}
+			});
+		} else {
+			window.onbeforeprint = sendPrintEvent('Before Print', 'onbeforeprint');
+			window.onafterprint = sendPrintEvent('After Print', 'onafterprint');
+		}
+		function sendPrintEvent(action, trigger){
+			var thisEvent = {
+				category: 'Print',
+				action: action,
+				label: 'User triggered print via ' + trigger,
+				intent: 'Intent'
+			}
+
+			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			nv('event', thisEvent.category);
 		}
 
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.page);
-	});
-
-	//DataTables Show Entries
-	nebula.dom.document.on('change', '.dataTables_length select', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'DataTables',
-			action: 'Shown Entries Change', //Number of visible rows select dropdown
-			selected: jQuery(this).val()
+		//Detect Adblock
+		if ( nebula.user.client.bot === false && nebula.site.options.adblock_detect ){
+			window.performance.mark('nebula_detect_adblock_start');
+			jQuery.ajax({ //Eventually update this to fetch with ES6
+				type: 'GET',
+				url: nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js',
+				dataType: 'script',
+				cache: true,
+				timeout: 5000
+			}).done(function(){
+				nebula.session.flags.adblock = false;
+			}).fail(function(){
+				nebula.dom.html.addClass('ad-blocker');
+				ga('set', nebula.analytics.dimensions.blocker, 'Ad Blocker');
+				if ( nebula.session.flags.adblock != true ){
+					ga('send', 'event', 'Ad Blocker', 'Blocked', 'This user is using ad blocking software.', {'nonInteraction': true}); //Uses an event because it is asynchronous!
+					nebula.session.flags.adblock = true;
+				}
+			}).always(function(){
+				window.performance.mark('nebula_detect_adblock_end');
+				window.performance.measure('nebula_detect_adblock', 'nebula_detect_adblock_start', 'nebula_detect_adblock_end');
+			});
 		}
 
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.selected);
-	});
+		//DataTables Filter
+		nebula.dom.document.on('keyup', '.dataTables_filter input', function(e){
+			oThis = jQuery(this);
+			var thisEvent = {
+				event: e,
+				category: 'DataTables',
+				action: 'Search Filter',
+				query: jQuery.trim(oThis.val())
+			}
+
+			debounce(function(){
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.query);
+			}, 1000, 'datatables_search_filter');
+		});
+
+		//DataTables Sorting
+		nebula.dom.document.on('click', 'th.sorting', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'DataTables',
+				action: 'Sort',
+				heading: jQuery(this).text()
+			}
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.heading);
+		});
+
+		//DataTables Pagination
+		nebula.dom.document.on('click', 'a.paginate_button ', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'DataTables',
+				action: 'Paginate',
+				page: jQuery(this).text()
+			}
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.page);
+		});
+
+		//DataTables Show Entries
+		nebula.dom.document.on('change', '.dataTables_length select', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'DataTables',
+				action: 'Shown Entries Change', //Number of visible rows select dropdown
+				selected: jQuery(this).val()
+			}
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.selected);
+		});
+
+		scrollDepth();
+		ecommerceTracking();
+	}, 'nebula event tracking');
 }
 
 //Ecommerce event tracking
@@ -2065,9 +2061,7 @@ function pageSuggestion(){
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.suggestion);
 			nv('event', 'Page Suggestion Click');
 		});
-
 	}
-
 }
 
 function tryGCSESearch(phrase){
@@ -3130,7 +3124,7 @@ function nebulaHelpers(){
 		window.history.replaceState({}, document.title, removeQueryParameter('sass', window.location.href));
 	}
 
-	nebula.dom.html.removeClass('no-js').addClass('js'); //In case Modernizr is not being used
+	nebula.dom.html.removeClass('no-js').addClass('js');
 	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'nofollow external noopener'); //Add rel attributes to external links. Although search crawlers do use JavaScript, don't rely on this line to instruct them. Use standard HTML attributes whenever possible.
 
 	if ( 'deviceMemory' in navigator ){ //Device Memory - Chrome 64+

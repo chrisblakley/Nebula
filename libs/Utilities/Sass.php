@@ -245,13 +245,13 @@ if ( !trait_exists('Sass') ){
 		public function output_sass_errors(){
 			global $sass_errors;
 
-			if ( $this->is_staff() || current_user_can('publish_pages') ){ //Staff or Editors
-				foreach ( $sass_errors as $sass_error ){
-					echo '<div class="nebula-admin-notice notice notice-error"><p><strong>[Sass Compilation Error]</strong> ' . $sass_error['message'] . ' in <strong>' . $sass_error['file'] . '</strong>. This file has been skipped and was not processed.</p></div>';
-				}
-			}
-
 			if ( !empty($sass_errors) ){
+				if ( $this->is_staff() || current_user_can('publish_pages') ){ //Staff or Editors
+					foreach ( $sass_errors as $sass_error ){
+						echo '<div class="nebula-admin-notice notice notice-error"><p><strong>[Sass Compilation Error]</strong> ' . $sass_error['message'] . ' in <strong>' . $sass_error['file'] . '</strong>. This file has been skipped and was not processed.</p></div>';
+					}
+				}
+
 				echo '<script>console.error("A sass compilation error occurred.");</script>'; //Log in JS console to avoid disturbing regular visitors
 			}
 		}

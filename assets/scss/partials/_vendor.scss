@@ -26,7 +26,7 @@ svg.svg-inline--fa {max-width: none;} //Remove max-width: 100% for Font Awesome 
 .mm-menu .mm-listview > li a:not(.mm-btn_next) {color: #292b2c;}
 .mm-list > li > a:hover {@include background-color(#000, 0.1);}
 .mm-menu.mm-light .mm-list > li > a.mm-subclose:hover {text-decoration: none; @include background-color(#000, 0.05);}
-.mm-menu.mm-hassearch > .mm-panel > .mm-list:first-child {margin-top: 0px;}
+.mm-menu.mm-hassearch > .mm-panel > .mm-list:first-child {margin-top: 0;}
 .mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-search):not(.mm-noresults):after {margin-left: 0;}
 .mm-menu li.current_page_item {@include background-color(#fff); font-weight: 800; color: #000;
 	.mm-counter {font-weight: 400;}
@@ -68,7 +68,7 @@ span.wpcf7-list-item-label {font-size: rem(14px);
 	&::before,
 	&::after {content: " ";}
 }
-.debuginfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; font-size: 0px; line-height: 0px; @include background-color(#fff); color: rgba(255, 255, 255, 0); pointer-events: none;}
+.debuginfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; font-size: 0; line-height: 0; @include background-color(#fff); color: rgba(255, 255, 255, 0); pointer-events: none;} //Is this still needed?
 
 //Nice animated spinner when submit is active
 .wpcf7-form button#submit {display: inline-block; position: relative; overflow: hidden; transition: all 0.25s ease, padding 0.4s easing(easeOutBack);

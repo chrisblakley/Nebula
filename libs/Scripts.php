@@ -51,12 +51,9 @@ if ( !trait_exists('Scripts') ){
 			if ( $this->is_admin_page() || $this->get_option('allow_bootstrap_js') ){
 				$this->bootstrap('js');
 			}
-			$this->register_script('nebula-modernizr_dev', get_template_directory_uri() . '/assets/js/vendor/modernizr.dev.js', array('defer'), null, '3.5.0', false);
-			$this->register_script('nebula-modernizr_local', get_template_directory_uri() . '/assets/js/vendor/modernizr.min.js', array('defer'), null, '3.3.1', false);
-			$this->register_script('nebula-modernizr', 'https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js', array('defer', 'crossorigin'), null, '2.8.3', false); //https://github.com/cdnjs/cdnjs/issues/6100
 			$this->register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', array('defer', 'crossorigin'), null, '1.12.1', true);
 			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.3.2/jquery.mmenu.all.js', array('defer', 'crossorigin'), null, '7.3.2', true);
-			$this->register_script('nebula-vimeo', 'https://player.vimeo.com/api/player.js', null, null, null, true);
+			$this->register_script('nebula-vimeo', 'https://player.vimeo.com/api/player.js', null, null, null, true); //https://github.com/cdnjs/cdnjs/issues/13383
 			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.10.19', true);
 			$this->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js', array('defer', 'crossorigin'), null, '1.8.7', true);
 			$this->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js', array('async', 'crossorigin'), null, '2.4.1', true);
@@ -343,12 +340,6 @@ if ( !trait_exists('Scripts') ){
 
 			//Scripts
 			wp_enqueue_script('jquery-core');
-
-			if ( $this->get_option('device_detection') ){
-				//wp_enqueue_script('nebula-modernizr_dev');
-				//wp_enqueue_script('nebula-modernizr_local'); //@todo "Nebula" 0: Switch this back to CDN when version 3 is on CDNJS
-			}
-
 			wp_enqueue_script('nebula-bootstrap');
 
 			if ( $this->is_analytics_allowed() && $this->get_option('ga_tracking_id') ){

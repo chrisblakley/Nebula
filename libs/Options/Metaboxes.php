@@ -17,10 +17,8 @@ if ( !trait_exists('Metaboxes') ){
 				add_meta_box('nebula_social_networks', 'Social Networks', array($this, 'nebula_social_networks'), 'nebula_options', 'metadata_side');
 
 				//Functions
-				add_meta_box('nebula_assets_metabox', 'Assets', array($this, 'nebula_assets_metabox'), 'nebula_options', 'functions');
+				add_meta_box('nebula_assets_metabox', 'Assets', array($this, 'nebula_assets_metabox'), 'nebula_options', 'functions_side');
 				add_meta_box('nebula_front_end_metabox', 'Front-End', array($this, 'nebula_front_end_metabox'), 'nebula_options', 'functions');
-				add_meta_box('nebula_admin_references_metabox', 'Admin References', array($this, 'nebula_admin_references_metabox'), 'nebula_options', 'functions_side');
-				add_meta_box('nebula_admin_notifications_metabox', 'Admin Notifications', array($this, 'nebula_admin_notifications_metabox'), 'nebula_options', 'functions_side');
 
 				//Analytics
 				add_meta_box('nebula_main_analytics_metabox', 'Main', array($this, 'nebula_main_analytics_metabox'), 'nebula_options', 'analytics');
@@ -33,8 +31,10 @@ if ( !trait_exists('Metaboxes') ){
 				add_meta_box('nebula_arbitrary_code_metabox', 'Arbitrary Code', array($this, 'nebula_arbitrary_code_metabox'), 'nebula_options', 'apis');
 
 				//Administration
+				add_meta_box('nebula_admin_references_metabox', 'Admin References', array($this, 'nebula_admin_references_metabox'), 'nebula_options', 'administration_side');
+				add_meta_box('nebula_admin_notifications_metabox', 'Admin Notifications', array($this, 'nebula_admin_notifications_metabox'), 'nebula_options', 'administration_side');
 				add_meta_box('nebula_staff_users_metabox', 'Staff & Notable Users', array($this, 'nebula_staff_users_metabox'), 'nebula_options', 'administration');
-				add_meta_box('nebula_dashboard_references_metabox', 'Dashboard References', array($this, 'nebula_dashboard_references_metabox'), 'nebula_options', 'administration_side');
+				add_meta_box('nebula_dashboard_references_metabox', 'Dashboard References', array($this, 'nebula_dashboard_references_metabox'), 'nebula_options', 'administration');
 				add_meta_box('nebula_notes_metabox', 'Notes', array($this, 'nebula_notes_metabox'), 'nebula_options', 'administration_side');
 
 				//Diagnostic
@@ -353,9 +353,9 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="jquery_version">jQuery Version (and Load Location)</label>
 					<select name="nebula_options[jquery_version]" id="jquery_version" class="form-control nebula-validate-select">
-						<option value="wordpress" <?php selected('wordpress', $nebula_options['jquery_version']); ?>>WordPress (Head)</option>
-						<option value="latest" <?php selected('latest', $nebula_options['jquery_version']); ?>>Latest (Head)</option>
-						<option value="footer" <?php selected('footer', $nebula_options['jquery_version']); ?>>Latest (Footer)</option>
+						<option value="wordpress" <?php selected('wordpress', $nebula_options['jquery_version']); ?>>WordPress &lt;head&gt; (Default)</option>
+						<option value="latest" <?php selected('latest', $nebula_options['jquery_version']); ?>>Latest &lt;head&gt;</option>
+						<option value="footer" <?php selected('footer', $nebula_options['jquery_version']); ?>>Latest &lt;footer&gt; (Performant)</option>
 					</select>
 					<p class="nebula-help-text short-help form-text text-muted">Which jQuery version to use and where to load it (head is blocking, footer is more performant). (Default: <?php echo $this->user_friendly_default('jquery_version'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Be careful changing this option as some plugins may rely on older versions of jQuery, however some speed improvements may be realized by using alternate versions and locations.<br /><strong>Note:</strong> some plugins may override this and bring jQuery back to the head.<br /><strong>Remember:</strong> if loading in the footer, embedded script tags cannot use jQuery in template files.</p>
@@ -389,11 +389,29 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_front_end_metabox($nebula_options){
 			?>
 				<div class="form-group">
-					<label for="jpeg_quality">JPG Quality</label>
-					<input type="text" name="nebula_options[jpeg_quality]" id="jpeg_quality" class="form-control nebula-validate-text" value="<?php echo $this->option('jpeg_quality'); ?>" placeholder="<?php echo $this->user_friendly_default('jpeg_quality'); ?>" />
-					<p class="nebula-help-text short-help form-text text-muted">Set the JPG compression level on resized images. (Default: <?php echo $this->user_friendly_default('jpeg_quality'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">This changes the quality of JPG images when WordPress creates scaled sizes. Smaller number is more optimized, but larger number is better quality.</p>
-					<p class="option-keywords">moderate page speed impact optimization optimize</p>
+					<?php
+						$nebula_data = get_option('nebula_data');
+						$last_processed_text = 'Never';
+						if ( !empty($nebula_data['scss_last_processed']) ){
+							$last_processed_text = '<strong>' . date('l, F j, Y \a\t g:ia', $nebula_data['scss_last_processed']) . '</strong> (' . human_time_diff($nebula_data['scss_last_processed']) . ' ago). Will automatically disable if not re-procesed in <strong>' . human_time_diff($nebula_data['scss_last_processed']+(DAY_IN_SECONDS*30)) . '</strong>.';
+						}
+					?>
+
+					<input type="checkbox" name="nebula_options[scss]" id="scss" value="1" <?php checked('1', !empty($nebula_options['scss'])); ?> /><label for="scss">Sass</label>
+					<p class="nebula-help-text short-help form-text text-muted">Enable the bundled SCSS compiler. (Default: <?php echo $this->user_friendly_default('scss'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">
+						Save Nebula Options to manually process all SCSS files. This option will automatically be disabled after 30 days without processing. CSS files will automatically be minified, but source maps are available for debugging.<br /><br />
+						Last processed: <?php echo $last_processed_text; ?>
+					</p>
+					<p class="option-keywords">sass scss sccs scass css moderate page speed impact optimization optimize</p>
+				</div>
+
+				<div class="form-group" dependent-or="scss">
+					<input type="checkbox" name="nebula_options[critical_css]" id="critical_css" value="1" <?php checked('1', !empty($nebula_options['critical_css'])); ?> /><label for="critical_css">Critical CSS</label>
+					<p class="nebula-help-text short-help form-text text-muted">Output critical CSS for above-the-fold content in the <code>&lt;head&gt;</code> of the document. (Default: <?php echo $this->user_friendly_default('critical_css'); ?>)</p>
+					<p class="dependent-note hidden">This option is dependent on the SCSS compiler.</p>
+					<p class="nebula-help-text more-help form-text text-muted">Styles in critical.css will be embedded in the HTML while also imported into style.css. This improves perceived page load time for users without overcomplicating stylesheets.</p>
+					<p class="option-keywords">sass scss sccs scass css minor page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group">
@@ -401,6 +419,14 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text short-help form-text text-muted">Limit image sizes to 1200px on the front-end. (Default: <?php echo $this->user_friendly_default('limit_image_dimensions'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">This attempts to prevent content managers from accidentally loading large filesize images on the front-end.</p>
 					<p class="option-keywords">major page speed impact optimization optimize</p>
+				</div>
+
+				<div class="form-group">
+					<label for="jpeg_quality">JPG Quality</label>
+					<input type="text" name="nebula_options[jpeg_quality]" id="jpeg_quality" class="form-control nebula-validate-text" value="<?php echo $this->option('jpeg_quality'); ?>" placeholder="<?php echo $this->user_friendly_default('jpeg_quality'); ?>" />
+					<p class="nebula-help-text short-help form-text text-muted">Set the JPG compression level on resized images. (Default: <?php echo $this->user_friendly_default('jpeg_quality'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">This changes the quality of JPG images when WordPress creates scaled sizes. Smaller number is more optimized, but larger number is better quality.</p>
+					<p class="option-keywords">moderate page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group">
@@ -427,7 +453,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[device_detection]" id="device_detection" value="1" <?php checked('1', !empty($nebula_options['device_detection'])); ?> /><label for="device_detection">Browser/Device Detection</label>
 					<p class="nebula-help-text short-help form-text text-muted">Detect information about the user's device and browser. (Default: <?php echo $this->user_friendly_default('device_detection'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">Useful for cross-browser support. This also controls the modernizr.js library.</p>
+					<p class="nebula-help-text more-help form-text text-muted">Useful for cross-browser support.</p>
 					<p class="option-keywords">remote resource moderate page speed impact optimization optimize</p>
 				</div>
 
@@ -448,32 +474,6 @@ if ( !trait_exists('Metaboxes') ){
 					<input type="checkbox" name="nebula_options[console_css]" id="console_css" value="1" <?php checked('1', !empty($nebula_options['console_css'])); ?> /><label for="console_css">Console CSS</label>
 					<p class="nebula-help-text short-help form-text text-muted">Adds CSS to the browser console. (Default: <?php echo $this->user_friendly_default('console_css'); ?>)</p>
 					<p class="option-keywords">discretionary</p>
-				</div>
-
-				<div class="form-group">
-					<?php
-						$nebula_data = get_option('nebula_data');
-						$last_processed_text = 'Never';
-						if ( !empty($nebula_data['scss_last_processed']) ){
-							$last_processed_text = '<strong>' . date('l, F j, Y \a\t g:ia', $nebula_data['scss_last_processed']) . '</strong> (' . human_time_diff($nebula_data['scss_last_processed']) . ' ago). Will automatically disable if not re-procesed in <strong>' . human_time_diff($nebula_data['scss_last_processed']+(DAY_IN_SECONDS*30)) . '</strong>.';
-						}
-					?>
-
-					<input type="checkbox" name="nebula_options[scss]" id="scss" value="1" <?php checked('1', !empty($nebula_options['scss'])); ?> /><label for="scss">Sass</label>
-					<p class="nebula-help-text short-help form-text text-muted">Enable the bundled SCSS compiler. (Default: <?php echo $this->user_friendly_default('scss'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">
-						Save Nebula Options to manually process all SCSS files. This option will automatically be disabled after 30 days without processing. CSS files will automatically be minified, but source maps are available for debugging.<br /><br />
-						Last processed: <?php echo $last_processed_text; ?>
-					</p>
-					<p class="option-keywords">sass scss sccs scass css moderate page speed impact optimization optimize</p>
-				</div>
-
-				<div class="form-group" dependent-or="scss">
-					<input type="checkbox" name="nebula_options[critical_css]" id="critical_css" value="1" <?php checked('1', !empty($nebula_options['critical_css'])); ?> /><label for="critical_css">Critical CSS</label>
-					<p class="nebula-help-text short-help form-text text-muted">Output critical CSS for above-the-fold content in the <code>&lt;head&gt;</code> of the document. (Default: <?php echo $this->user_friendly_default('critical_css'); ?>)</p>
-					<p class="dependent-note hidden">This option is dependent on the SCSS compiler.</p>
-					<p class="nebula-help-text more-help form-text text-muted">Styles in critical.css will be embedded in the HTML while also imported into style.css. This improves perceived page load time for users without overcomplicating stylesheets.</p>
-					<p class="option-keywords">sass scss sccs scass css minor page speed impact optimization optimize</p>
 				</div>
 			<?php
 
@@ -513,6 +513,26 @@ if ( !trait_exists('Metaboxes') ){
 					<input type="checkbox" name="nebula_options[performance_metabox]" id="performance_metabox" value="1" <?php checked('1', !empty($nebula_options['performance_metabox'])); ?> /><label for="performance_metabox">Performance Metabox</label>
 					<p class="nebula-help-text short-help form-text text-muted">Test load times from the WordPress Dashboard <?php echo ( $this->is_dev() )? '(Note: This always appears for developers even if disabled!)' : ''; ?>. (Default: <?php echo $this->user_friendly_default('performance_metabox'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Tests are prioritized from WebPageTest.org (using an <a href="themes.php?page=nebula_options&tab=apis&option=webpagetest_api" target="_blank">API key</a>), then Google PageSpeed Insights, and finally a simple iframe timer.</p>
+					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[design_reference_metabox]" id="design_reference_metabox" value="1" <?php checked('1', !empty($nebula_options['design_reference_metabox'])); ?> /><label for="design_reference_metabox">Design Reference Metabox</label>
+					<p class="nebula-help-text short-help form-text text-muted">Show the Design Reference dashboard metabox. (Default: <?php echo nebula()->user_friendly_default('design_reference_metabox'); ?>)</p>
+					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group">
+					<label for="design_reference_link">Design File(s) URL</label>
+					<input type="text" name="nebula_options[design_reference_link]" id="design_reference_link" class="form-control nebula-validate-url" value="<?php echo $nebula_options['design_reference_link']; ?>" placeholder="http://" />
+					<p class="nebula-help-text short-help form-text text-muted">Link to the design file(s).</p>
+					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group">
+					<label for="additional_design_references">Additional Design Notes</label>
+					<textarea name="nebula_options[additional_design_references]" id="additional_design_references" class="form-control nebula-validate-textarea" rows="2"><?php echo $nebula_options['additional_design_references']; ?></textarea>
+					<p class="nebula-help-text short-help form-text text-muted">Add design references (such as links to brand guides) to the admin dashboard</p>
 					<p class="option-keywords"></p>
 				</div>
 			<?php
@@ -1893,9 +1913,9 @@ if ( !trait_exists('Metaboxes') ){
 				<ul>
 					<li>
 						<?php if ( is_child_theme() ): ?>
-							<strong>Nebula Child</strong> theme is active<?php echo ( $this->allow_theme_update() )? '. Automated updates <strong>are</strong> allowed.' : ', but automated updates are <strong>not</strong> allowed.'; ?>
+							<strong>Nebula Child</strong> theme is active<?php echo ( $this->allow_theme_update() )? '. Automated updates <strong class="nebula-enabled">are</strong> allowed.' : ', but automated updates are <strong class="nebula-disabled">not</strong> allowed.'; ?>
 						<?php else: ?>
-							Child theme is <strong>not</strong> being used. Automated updates will <strong>not</strong> be available.
+							Child theme is <strong class="nebula-disabled">not</strong> being used. Automated updates will <strong class="nebula-disabled">not</strong> be available.
 						<?php endif; ?>
 					</li>
 					<li>The local Nebula version is <strong><?php echo nebula()->version('full'); ?></strong> and the remote (Github) version is <strong><?php echo $nebula_data['next_version']; ?></strong>.</li>
@@ -1904,30 +1924,30 @@ if ( !trait_exists('Metaboxes') ){
 						<li>Nebula was last updated via the WordPress updater on <strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['last_automated_update_date']); ?></strong> by <strong><?php echo $nebula_data['last_automated_update_user']; ?></strong>.</li>
 					<?php endif; ?>
 
-					<li><strong>WordPress Core update notifications</strong> are <strong><?php echo ( empty($nebula_options['wp_core_updates_notify']) )? 'hidden' : 'allowed'; ?></strong> by Nebula.</li>
-					<li>Nebula <strong>Sass processing</strong> is <strong><?php echo ( empty($nebula_options['scss']) )? 'disabled' : 'enabled'; ?></strong></li>
-					<li>The <strong>WordPress Admin Bar</strong> is <strong><?php echo ( empty($nebula_options['admin_bar']) )? 'hidden' : 'allowed'; ?></strong> by Nebula</li>
-					<li><strong>Nebula admin notices</strong> (warnings/errors) are <strong><?php echo ( empty($nebula_options['admin_notices']) )? 'disabled' : 'enabled'; ?></strong></li>
-					<li>Nebula is <strong><?php echo ( empty($nebula_options['unnecessary_metaboxes']) )? 'allowing' : 'removing'; ?> "unnecessary" Dashboard metaboxes</strong>.</li>
+					<li><strong>WordPress Core update notifications</strong> are <?php echo ( empty($nebula_options['wp_core_updates_notify']) )? '<strong class="nebula-disabled">hidden' : '<strong class="nebula-enabled">allowed'; ?></strong> by Nebula.</li>
+					<li>Nebula <strong>Sass processing</strong> is <?php echo ( empty($nebula_options['scss']) )? '<strong class="nebula-disabled">disabled' : '<strong class="nebula-enabled">enabled'; ?></strong>.</li>
+					<li>The <strong>WordPress Admin Bar</strong> is <?php echo ( empty($nebula_options['admin_bar']) )? '<strong class="nebula-disabled">hidden' : '<strong class="nebula-enabled">allowed'; ?></strong> by Nebula.</li>
+					<li><strong>Nebula admin notices</strong> (warnings/errors) are <?php echo ( empty($nebula_options['admin_notices']) )? '<strong class="nebula-disabled">disabled' : '<strong class="nebula-enabled">enabled'; ?></strong>.</li>
+					<li>Nebula is <?php echo ( empty($nebula_options['unnecessary_metaboxes']) )? '<strong class="nebula-enabled">allowing' : '<strong class="nebula-disabled">removing'; ?> "unnecessary" Dashboard metaboxes</strong>.</li>
 					<li>
 						<?php if ( $nebula_options['jquery_version'] === 'wordpress' ): ?>
-							Nebula is using the <strong>WordPress Core version of jQuery</strong> without modification.
+							Nebula is using the <strong class="nebula-enabled">WordPress Core version of jQuery</strong> without modification.
 						<?php else: ?>
-							Nebula is using the <strong>latest version of jQuery</strong> and calling it from the <strong><?php echo ( $nebula_options['jquery_version'] === 'latest' )? '&lt;head&gt;' : 'footer'; ?></strong>.
+							Nebula is using the <strong class="nebula-disabled">latest version of jQuery</strong> and calling it from the <strong><?php echo ( $nebula_options['jquery_version'] === 'latest' )? '&lt;head&gt;' : '&lt;footer&gt;'; ?></strong>.
 						<?php endif; ?>
 					</li>
 					<li>
 						<?php if ( $nebula_options['bootstrap_version'] === 'latest' ): ?>
-							Nebula is using the <strong>latest version of Bootstrap</strong> with all features.
+							Nebula is using the <strong class="nebula-enabled">latest version of Bootstrap</strong> with all features.
 						<?php elseif ( $nebula_options['bootstrap_version'] === 'grid' ): ?>
-							Nebula is using the <strong>latest version of Bootstrap, but only the grid</strong>.
+							Nebula is using the <strong class="nebula-disabled">latest version of Bootstrap, but only the grid</strong>.
 						<?php elseif ( $nebula_options['bootstrap_version'] === 'bootstrap4a5' ): ?>
-							Nebula is using <strong>Bootstrap version 4 alpha 5</strong> for support of IE9.
+							Nebula is using <strong class="nebula-disabled">Bootstrap version 4 alpha 5</strong> for support of IE9.
 						<?php else: ?>
-							Nebula is using <strong>Bootstrap version 3</strong> for support of IE8.
+							Nebula is using <strong class="nebula-disabled">Bootstrap version 3</strong> for support of IE8.
 						<?php endif; ?>
 					</li>
-					<li>Nebula <strong><?php echo ( empty($nebula_options['allow_bootstrap_js']) )? 'has disabled' : 'is allowing'; ?> Bootstrap JavaScript</strong>.</li>
+					<li>Nebula <?php echo ( empty($nebula_options['allow_bootstrap_js']) )? '<strong class="nebula-disabled">has disabled' : '<strong class="nebula-enabled">is allowing'; ?> Bootstrap JavaScript</strong>.</li>
 				</ul>
 
 				<a class="button button-primary" href="<?php echo get_admin_url(); ?>update-core.php?force-check=1&force-nebula-theme-update">Re-Install Nebula from Github</a>

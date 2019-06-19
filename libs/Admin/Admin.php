@@ -413,8 +413,8 @@ if ( !trait_exists('Admin') ){
 		public function remove_admin_bar_style_frontend(){
 			if ( is_admin_bar_showing() ){ ?>
 				<style type="text/css" media="screen">
-					html {margin-top: 0px !important;}
-					* html body {margin-top: 0px !important;}
+					html {margin-top: 0 !important;}
+					* html body {margin-top: 0 !important;}
 				</style>
 			<?php }
 		}

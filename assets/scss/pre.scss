@@ -1,17 +1,10 @@
 @import "variables";
 @import "functions";
-@import "mixins";
+//@import "mixins";
 
 .nebula-code-con {margin: 0 0 20px 0;}
 	pre.nebula-code,
- 	.nebula-code-con pre {position: relative; display: block; height: auto; font: normal 12px/22px "Monaco", Monospace !important; color: #222; margin: 0; padding: 0 1em; overflow-x: auto; white-space: pre; word-wrap: normal; border: 1px solid #444; border-left: 5px solid #444;
-		background: -webkit-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px);
-		background: -moz-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px);
-		background: -ms-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px);
-		background: -o-repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px);
-		background: repeating-linear-gradient(top, #f2f2f2 0px, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px);
-	}
-
+ 	.nebula-code-con pre {position: relative; display: block; height: auto; font: normal 12px/22px "Monaco", Monospace !important; color: #222; margin: 0; padding: 0 1em; overflow-x: auto; white-space: pre; word-wrap: normal; border: 1px solid #444; border-left: 5px solid #444; background: repeating-linear-gradient(top, #f2f2f2 0, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px);}
 	.nebula-code.codetitle {display: block; text-align: right; color: #f1672c; font-weight: normal; font-size: rem(12px); line-height: rem(12px); margin: 0 0 2px 0; padding: 0; cursor: default;}
 
 .nebula-selectcopy-code {font-size: rem(12px); float: right; margin-top: 0; font-weight: normal; opacity: 0.7;
