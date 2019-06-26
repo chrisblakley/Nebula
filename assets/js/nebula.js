@@ -294,7 +294,7 @@ function nebulaPredictiveCacheListeners(){
 
 //Prefetch a resource
 function nebulaPrefetch(url, callback){
-	if ( url && typeof window.requestIdleCallback === 'function' ){
+	if ( url && url.length > 1 && url.indexOf('#') !== 0 && typeof window.requestIdleCallback === 'function' ){ //If the URL exists, is longer than 1 character and does not begin with #
 		//If network connection is 2G don't prefetch
 		if ( has(navigator, 'connection.effectiveType') && navigator.connection.effectiveType.toString().indexOf('2g') >= 0 ){ //'slow-2g', '2g', '3g', or '4g'
 			return false;
@@ -317,13 +317,22 @@ function nebulaPrefetch(url, callback){
 			return false;
 		}
 
-		if ( url.length > 1 && url.indexOf('#') !== 0 ){ //If the URL exists and does not begin with #
-			window.requestIdleCallback(function(){ //Wait until the browser is idle before prefetching
-				if ( !jQuery('link[rel="prefetch"][href="' + url + '"]').length ){ //If prefetch link for this URL has not yet been added to the DOM
-					jQuery('<link rel="prefetch" href="' + url + '">').on('load', callback).appendTo('head'); //Append a prefetch link element for this URL to the DOM
-				}
-			});
-		}
+		//Ignore blacklisted terms (logout, 1-click purchase buttons, etc.)
+		var prefetchBlacklist = ['logout'];
+
+		//@todo "Nebula" 0: Allow other JS to add to the blacklist here... https://core.trac.wordpress.org/changeset/41375
+
+		jQuery.each(prefetchBlacklist, function(index, value){
+			if ( url.indexOf(value) != -1 ){
+				return false;
+			}
+		});
+
+		window.requestIdleCallback(function(){ //Wait until the browser is idle before prefetching
+			if ( !jQuery('link[rel="prefetch"][href="' + url + '"]').length ){ //If prefetch link for this URL has not yet been added to the DOM
+				jQuery('<link rel="prefetch" href="' + url + '">').on('load', callback).appendTo('head'); //Append a prefetch link element for this URL to the DOM
+			}
+		});
 	}
 }
 
@@ -1159,6 +1168,7 @@ function nebulaEventTracking(){
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 		});
 
+		//Screenreader Links
 		nebula.dom.document.on('click', '.sr-only', function(e){
 			var thisEvent = {
 				event: e,

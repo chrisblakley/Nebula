@@ -2,8 +2,8 @@
 
 if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-if ( !trait_exists('Scripts') ){
-	trait Scripts {
+if ( !trait_exists('Assets') ){
+	trait Assets {
 		public function hooks(){
 			//Register styles/scripts
 			add_action('wp_enqueue_scripts', array($this, 'register_scripts'));

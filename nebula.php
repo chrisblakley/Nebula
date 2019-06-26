@@ -7,7 +7,7 @@ if ( !class_exists('Nebula') ){
 	require_once ABSPATH . 'wp-admin/includes/file.php';
 
 	//Require Nebula libraries
-	require_once get_template_directory() . '/libs/Scripts.php';
+	require_once get_template_directory() . '/libs/Assets.php';
 	require_once get_template_directory() . '/libs/Options/Options.php';
 	require_once get_template_directory() . '/libs/Options/Customizer.php';
 	require_once get_template_directory() . '/libs/Utilities/Utilities.php';
@@ -24,7 +24,7 @@ if ( !class_exists('Nebula') ){
 
 	//Main Nebula class
 	class Nebula {
-		use Scripts { Scripts::hooks as ScriptHooks; }
+		use Assets { Assets::hooks as AssetsHooks; }
 		use Options { Options::hooks as OptionsHooks; }
 		use Customizer { Customizer::hooks as CustomizerHooks; }
 		use Utilities { Utilities::hooks as UtilitiesHooks; }
@@ -80,7 +80,7 @@ if ( !class_exists('Nebula') ){
 			//Adjust the content width when the full width page template is being used
 			add_action('template_redirect', array($this, 'set_content_width'));
 
-			$this->ScriptHooks(); //Register Script hooks
+			$this->AssetsHooks(); //Register Assets hooks
 			$this->OptionsHooks(); //Register Options hooks
 			$this->UtilitiesHooks(); //Register Utilities hooks
 			$this->SecurityHooks(); //Register Security hooks

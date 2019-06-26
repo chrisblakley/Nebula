@@ -192,9 +192,9 @@
 		//Experiment Variation
 		if ( typeof cxApi !== 'undefined' && typeof cxApi.chooseVariation === 'function' ){
 			var variationInfo = 'Variation ' + cxApi.chooseVariation();
-			if ( cxApi.NO_CHOSEN_VARIATION ){
+			if ( cxApi.NO_CHOSEN_VARIATION && cxApi.NO_CHOSEN_VARIATION > -1 ){
 				variationInfo = 'No Chosen Variation';
-			} else if ( cxApi.NOT_PARTICIPATING ){
+			} else if ( cxApi.NOT_PARTICIPATING > -2 ){
 				variationInfo = 'Not Participating';
 			}
 
