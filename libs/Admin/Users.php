@@ -52,6 +52,8 @@ if ( !trait_exists('Users') ){
 						$this->update_data('users_status', $logged_in_users);
 					}
 				}
+
+				update_user_meta($current_user->ID, 'gacid', sanitize_text_field($this->ga_parse_cookie())); //Add last known GA Client ID to user
 			}
 		}
 
@@ -62,14 +64,19 @@ if ( !trait_exists('Users') ){
 			$columns['status'] = 'Last Seen';
 			$columns['ip'] = 'Last IP';
 			$columns['id'] = 'ID';
+
+			if ( $this->get_option('ga_tracking_id') || $this->get_option('gtm_id') ){
+				$columns['gacid'] = 'GA Client ID'; //This is the last GA CID. It could be different if the user logs in on different computers/browsers.
+			}
+
 			return $columns;
 		}
 
 		public function user_columns_sortable($columns){
-			$columns['company'] = 'Company';
-			$columns['registered'] = 'Registered';
-			//$columns['status'] = 'Last Seen';
-			$columns['id'] = 'ID';
+			$columns['company'] = 'company';
+			$columns['registered'] = 'registered';
+			//$columns['status'] = 'last seen';
+			$columns['id'] = 'id';
 			return $columns;
 		}
 
@@ -106,7 +113,7 @@ if ( !trait_exists('Users') ){
 					if ( !empty($last_ip) ){
 						$notable_poi = $this->poi($last_ip);
 						if ( !empty($notable_poi) ){
-							$last_ip .= '<br><small>(' . $notable_poi . ')</small>';
+							$last_ip .= '<br><small>(' . esc_html($notable_poi) . ')</small>';
 						}
 
 						return $last_ip;
@@ -118,6 +125,10 @@ if ( !trait_exists('Users') ){
 
 			if ( $column_name === 'id' ){
 				return $id;
+			}
+
+			if ( $column_name === 'gacid' ){
+				return '<small>' . esc_html(get_user_meta($id, 'gacid', true)) . '</small>';
 			}
 		}
 

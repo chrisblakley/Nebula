@@ -10,8 +10,12 @@
 		window.performance.mark('nebula_analytics_start');
 
 		//Load the alternative async tracking snippet: https://developers.google.com/analytics/devguides/collection/analyticsjs/#alternative_async_tracking_snippet
+		//Allow Linker for cross-domain tracking. Linker plugin and configuration must be done in the child theme.
 		window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-		ga('create', '<?php echo esc_html(nebula()->get_option('ga_tracking_id')); ?>', 'auto'<?php echo ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>);
+		ga('create', '<?php echo esc_html(nebula()->get_option('ga_tracking_id')); ?>', 'auto', {
+			<?php echo ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() )? '"userId": "' . get_current_user_id() . '",' : ''; ?>
+			"allowLinker": true
+		});
 
 		//Use Beacon if supported. Eventually we can completely remove this when GA uses Beacon by default.
 		if ( 'sendBeacon' in navigator ){
@@ -188,18 +192,6 @@
 		<?php if ( nebula()->get_option('cd_offline') ): ?>
 			ga('set', nebula.analytics.dimensions.offline, 'online');
 		<?php endif; ?>
-
-		//Experiment Variation
-		if ( typeof cxApi !== 'undefined' && typeof cxApi.chooseVariation === 'function' ){
-			var variationInfo = 'Variation ' + cxApi.chooseVariation();
-			if ( cxApi.NO_CHOSEN_VARIATION && cxApi.NO_CHOSEN_VARIATION > -1 ){
-				variationInfo = 'No Chosen Variation';
-			} else if ( cxApi.NOT_PARTICIPATING > -2 ){
-				variationInfo = 'Not Participating';
-			}
-
-			ga('set', nebula.analytics.dimensions.experimentVariation, variationInfo);
-		}
 
 		<?php if ( 1==1 ): //Autotrack ?>
 			<?php if ( nebula()->get_option('cm_pagevisible') && nebula()->get_option('cm_pagehidden') ): //Autotrack Page Visibility ?>
@@ -396,6 +388,8 @@
 			var lastReferrer = "<?php echo ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : 'false'; ?>" || document.referrer || '(Unknown Referrer)';
 			ga('send', 'event', '404 Not Found', '<?php echo esc_url(nebula()->requested_url()); ?>', 'Referrer: ' + lastReferrer, {'nonInteraction': true});
 		<?php endif; ?>
+
+		<?php //@todo "Nebula" 0: Import JS modules here for uuid() and localTimestamp() instead of writing out the functions here https://github.com/chrisblakley/Nebula/issues/1493 ?>
 
 		//Generate a unique ID for hits and windows
 		function uuid(a){

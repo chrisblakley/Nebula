@@ -745,6 +745,7 @@ function isCheckedOrHasValue(inputObject){
 
 
 //Functions pulled from nebula.js for various admin usages (mostly Nebula Options)
+//Use modules and import them here in the future to reduce tech debt
 
 //Regex Patterns
 //Test with: if ( regexPattern.email.test(jQuery('input').val()) ){ ... }

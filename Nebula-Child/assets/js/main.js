@@ -8,7 +8,7 @@ jQuery.noConflict();
 jQuery(function(){
 	window.performance.mark('child_dom_ready_start');
 
-	cacheSelectors();
+	nebula.cacheSelectors();
 	supplementalEventTracking();
 
 	window.performance.mark('child_dom_ready_end');
@@ -34,7 +34,7 @@ jQuery(window).on('load', function(){
 
 /*
 jQuery(window).on('resize', function(){
-	debounce(function(){
+	nebula.debounce(function(){
 
 	}, 500);
 }); //End Window Resize
@@ -47,9 +47,9 @@ jQuery(window).on('resize', function(){
 
 //Child theme event tracking. Do not rename this function!
 function supplementalEventTracking(){
-	cacheSelectors();
+	nebula.cacheSelectors();
 
-	if ( isDoNotTrack() ){
+	if ( nebula.isDoNotTrack() ){
 		return false;
 	}
 

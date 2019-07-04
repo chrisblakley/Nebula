@@ -116,7 +116,6 @@ if ( !trait_exists('Analytics') ){
 					'hitType' => esc_html($this->get_option('cd_hittype')),
 					'hitInteractivity' => esc_html($this->get_option('cd_hitinteractivity')),
 					'hitMethod' => esc_html($this->get_option('cd_hitmethod')),
-					'experimentVariation' => esc_html($this->get_option('cd_experimentvariation')),
 					'saveData' => esc_html($this->get_option('cd_savedata')),
 					'reducedMotion' => esc_html($this->get_option('cd_reducedmotion')),
 					'offline' => esc_html($this->get_option('cd_offline')),

@@ -41,6 +41,7 @@ if ( !trait_exists('Admin') ){
 			//Non-AJAX admin pages
 			if ( $this->is_admin_page() && !$this->is_ajax_or_rest_request() ){
 				add_action('admin_head', array($this, 'admin_favicon'));
+				add_action('admin_head', array($this, 'admin_ga_pageview'));
 				add_filter('admin_body_class', array($this, 'admin_body_classes'));
 
 				remove_action('admin_enqueue_scripts', 'wp_auth_check_load'); //Disable the logged-in monitoring modal
@@ -91,7 +92,7 @@ if ( !trait_exists('Admin') ){
 
 			//Login Page
 			if ( $this->is_login_page() ){
-				add_action('login_head', array($this, 'login_ga'));
+				add_action('login_head', array($this, 'admin_ga_pageview'));
 				add_filter('login_headerurl', array($this, 'custom_login_header_url'));
 				add_filter('login_headertitle', array($this, 'new_wp_login_title'));
 			}
@@ -964,13 +965,13 @@ if ( !trait_exists('Admin') ){
 			return 2592000; //30 days (Default is 1209600 (14 days)
 		}
 
-		//Custom login screen
-		public function login_ga(){
-			if ( empty($_POST['signed_request']) ){
+		//Send Google Analytics pageviews on the WP Admin and Login pages too
+		public function admin_ga_pageview(){
+			if ( empty($_POST['signed_request']) && $this->get_option('ga_tracking_id') ){
 				?>
 					<script>
 						window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-						ga('create', '<?php echo nebula()->get_option('ga_tracking_id'); ?>', 'auto'<?php echo ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>);
+						ga('create', '<?php echo $this->get_option('ga_tracking_id'); ?>', 'auto'<?php echo ( $this->get_option('ga_wpuserid') && is_user_logged_in() )? ', {"userId": "' . get_current_user_id() . '"}': ''; ?>);
 						ga('send', 'pageview');
 					</script>
 					<script async src='https://www.google-analytics.com/analytics.js'></script>

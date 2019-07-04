@@ -7,6 +7,6 @@ jQuery(function(){
 	}
 
 	jQuery('#lostpasswordform').submit(function(){
-		ga('send', 'exception', {'exDescription': '(Security) Password reset for ' + jQuery('#user_login').val(), 'exFatal': false});
+		ga('send', 'event', 'Login', 'Password Reset', 'Password reset for ' + jQuery('#user_login').val());
 	});
 });

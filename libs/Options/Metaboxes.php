@@ -688,7 +688,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_gacid]" id="cd_gacid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_gacid']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Store the Google Analytics CID in an accessible dimension for reporting. Scope: User</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -700,7 +700,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Gives each individual hit an ID. Scope: Hit</p>
 						<p class="nebula-help-text more-help form-text text-muted">This will allow for finding median values! All you have to do is add the Hit ID dimension to your report, sort the metric values in ascending order, and then read the middle value.</p>
-						<p class="option-keywords">recommended</p>
+						<p class="option-keywords">recommended custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -712,7 +712,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track the time of each individual hit. Scope: Hit</p>
 						<p class="nebula-help-text more-help form-text text-muted">Useful for reporting on specific users.</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -723,7 +723,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_hittype]" id="cd_hittype" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hittype']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track the type of each hit (such as pageview, event, exception, etc). Scope: Hit</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -735,7 +735,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track whether the hit is interactive or non-interactive. Scope: Hit</p>
 						<p class="nebula-help-text more-help form-text text-muted">Useful for determining which events are affecting the bounce rate.</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -746,18 +746,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_hitmethod]" id="cd_hitmethod" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hitmethod']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track the transport method of the hit (such as JavaScript, Beacon, or Server-Side). Scope: Hit</p>
-						<p class="option-keywords"></p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Experiment Variation</div>
-							</div>
-							<input type="text" name="nebula_options[cd_experimentvariation]" id="cd_experimentvariation" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_experimentvariation']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Track which variation of an experiment this user was shown. Scope: User</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -769,7 +758,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track when the user has requested less data usage. Scope: Session</p>
 						<p class="nebula-help-text more-help form-text text-muted">This listens for the <code>HTTP_SAVE_DATA</code> header on the server-side.</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -781,7 +770,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track the users motion preference. Scope: Session</p>
 						<p class="nebula-help-text more-help form-text text-muted">This listens for the "Reduce motion" preference from the user's operating system.</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -793,7 +782,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Note what data was sent while the user was offline. Scope: Hit</p>
 						<p class="nebula-help-text more-help form-text text-muted"></p>
-						<p class="option-keywords">service worker sw.js workbox</p>
+						<p class="option-keywords">service worker sw.js workbox custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -805,7 +794,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track the available memory of the device as "Lite" or "Full". Scope: Hit</p>
 						<p class="nebula-help-text more-help form-text text-muted">If alternate components are used on the site for "lite" devices, this dimension will show which version was seen by users.</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -817,7 +806,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track whether the device battery is charging ("Adaptor") or discharging ("Battery"). Scope: Session</p>
 						<p class="nebula-help-text more-help form-text text-muted">This is useful for discerning if users spend more time on the website if their device is plugged in.</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -828,7 +817,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_batterypercent]" id="cd_batterypercent" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_batterypercent']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track what percentage the device battery level is at currently (rounded to the nearest integer). Scope: Session</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -839,7 +828,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_visibilitystate]" id="cd_visibilitystate" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_visibilitystate']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Logs the visibilty state of the window with each hit. Scope: Hit</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -863,7 +852,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_referrer]" id="cd_referrer" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_network']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Logs the referrer as detected by the server. This populates regardless of UTM acquisition tags. Scope: Session</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -874,7 +863,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_navigationtype]" id="cd_navigationtype" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_navigationtype']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Logs the type of navigation used to load the page (navigation, reload, back/forward). Scope: Hit</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -885,7 +874,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_redirectcount]" id="cd_redirectcount" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_redirectcount']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Logs the number of redirects made before loading the requested page. Scope: Hit</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 				</div><!-- /sub-group -->
 
@@ -900,7 +889,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_author]" id="cd_author" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_author']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks the article author's name on single posts. Scope: Hit</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -911,7 +900,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_categories]" id="cd_categories" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_categories']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks the article author's name on single posts. Scope: Hit</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -922,7 +911,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_tags]" id="cd_tags" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_tags']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sends a string of all the post's tags to the pageview hit. Scope: Hit</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -933,7 +922,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_wordcount]" id="cd_wordcount" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_wordcount']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sends word count range for single posts. Scope: Hit</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -944,7 +933,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_publishdate]" id="cd_publishdate" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_publishdate']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sends the date the post was published in the format <code>YYYY-MM-DD</code>. Scope: Hit</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 				</div><!-- /sub-group -->
 
@@ -960,7 +949,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="dependent-note hidden">This option is dependent on Business Hours (Metadata tab).</p>
 						<p class="nebula-help-text short-help form-text text-muted">Passes "During Business Hours", or "Non-Business Hours". Scope: Hit</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -971,7 +960,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_relativetime]" id="cd_relativetime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_relativetime']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sends the relative time (Ex: "Late Morning", "Early Evening", etc.) based on the business timezone (via WordPress settings). Scope: Hit</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group" dependent-of="weather">
@@ -983,7 +972,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="dependent-note hidden">This option is dependent on Weather Detection (Functions tab) being enabled.</p>
 						<p class="nebula-help-text short-help form-text text-muted">Sends the current weather conditions (at the business location) as a dimension. Scope: Hit</p>
-						<p class="option-keywords">location</p>
+						<p class="option-keywords">location custom dimension</p>
 					</div>
 
 					<div class="form-group" dependent-of="weather">
@@ -995,7 +984,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="dependent-note hidden">This option is dependent on Weather Detection (Functions tab) being enabled.</p>
 						<p class="nebula-help-text short-help form-text text-muted">Sends temperature ranges (at the business location) in 5&deg;F intervals. Scope: Hit</p>
-						<p class="option-keywords">location</p>
+						<p class="option-keywords">location custom dimension</p>
 					</div>
 				</div><!-- /sub-group -->
 
@@ -1011,7 +1000,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sends the current user's role (as well as staff affiliation if available) for associated users. Scope: User</p>
 						<p class="nebula-help-text more-help form-text text-muted">Session ID does contain this information, but this is explicitly more human readable (and scoped to the user).</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1023,7 +1012,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">ID system so that you can group hits into specific user sessions. Scope: Session</p>
 						<p class="nebula-help-text more-help form-text text-muted">This ID is not personally identifiable and therefore fits within the <a href="https://support.google.com/analytics/answer/2795983" target="_blank" rel="noopener">Google Analytics ToS</a> for PII. <a href="https://gearside.com/nebula/functions/nebula_session_id/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=session+id+help<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener">Session ID Documentation &raquo;</a></p>
-						<p class="option-keywords">recommended</p>
+						<p class="option-keywords">recommended custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1035,7 +1024,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">If allowing visitors to sign up to create WordPress accounts, this will send user IDs to Google Analytics. Scope: User</p>
 						<p class="nebula-help-text more-help form-text text-muted">User IDs are also passed in the Session ID, but this scope is tied more specifically to the user (it can often capture data even when they are not currently logged in).</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1047,7 +1036,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Send Facebook ID to Google Analytics when using Facebook Connect API. Scope: User</p>
 						<p class="nebula-help-text more-help form-text text-muted">Add the ID to this URL to view it: <code>https://www.facebook.com/app_scoped_user_id/</code></p>
-						<p class="option-keywords">social</p>
+						<p class="option-keywords">social custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1059,7 +1048,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Adds a timestamp (in the user's local time) with timezone offset. Scope: Hit</p>
 						<p class="nebula-help-text more-help form-text text-muted">Ex: "1449332547 (2015/12/05 11:22:26.886 UTC-05:00)". Can be compared to the server time stored in the Session ID.</p>
-						<p class="option-keywords">location recommended</p>
+						<p class="option-keywords">location recommended custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1071,7 +1060,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Stores the type of window the site is being accessed from (Ex: Iframe or Standalone App). Scope: Hit</p>
 						<p class="nebula-help-text more-help form-text text-muted">This only records alternate window types (non-standard browser windows).</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1083,7 +1072,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Allows latitude and longitude coordinates to be sent after being detected. Scope: Session</p>
 						<p class="nebula-help-text more-help form-text text-muted">Additional code is required for this to work! </p>
-						<p class="option-keywords">location</p>
+						<p class="option-keywords">location custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1095,7 +1084,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Allows geolocation accuracy to be sent after being detected. Scope: Session</p>
 						<p class="nebula-help-text more-help form-text text-muted">Additional code is required for this to work!</p>
-						<p class="option-keywords">location</p>
+						<p class="option-keywords">location custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1107,7 +1096,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Allows named location information to be sent after being detected using map polygons. Scope: Session</p>
 						<p class="nebula-help-text more-help form-text text-muted">Additional code is required for this to work!</p>
-						<p class="option-keywords">location</p>
+						<p class="option-keywords">location custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1119,7 +1108,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Store the language displayed to the user via the WPML plugin. Scope: User</p>
 						<p class="nebula-help-text more-help form-text text-muted">This requires the WPML plugin!</p>
-						<p class="option-keywords">wpml multi-language translation localization internationalization</p>
+						<p class="option-keywords">wpml multi-language translation localization internationalization custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1131,7 +1120,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Detects if the user is blocking resources such as ads or Google Analytics. Scope: Session</p>
 						<p class="nebula-help-text more-help form-text text-muted">Ad Blocker detection must be enabled for that resource detection to work! This can be used even if not intending to serve ads on this site. It is important that this dimension is not set to the "hit" scope.</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1143,7 +1132,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Moves the query string from the "page" dimension for cleaner URLs. Scope: Hit</p>
 						<p class="nebula-help-text more-help form-text text-muted">This cleans up page reports by consolidating page paths. Query strings can be shown by using a custom dimension.</p>
-						<p class="option-keywords">autotrack recommended</p>
+						<p class="option-keywords">autotrack recommended custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1154,7 +1143,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_mqbreakpoint]" id="cd_mqbreakpoint" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_mqbreakpoint']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Detect which media query breakpoint is associated with this hit. Scope: Hit</p>
-						<p class="option-keywords">autotrack</p>
+						<p class="option-keywords">autotrack custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1165,7 +1154,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_mqresolution]" id="cd_mqresolution" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_mqresolution']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Detect the resolution factor associated with this hit. Scope: Hit</p>
-						<p class="option-keywords">autotrack</p>
+						<p class="option-keywords">autotrack custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1176,7 +1165,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_mqorientation]" id="cd_mqorientation" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_mqorientation']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Detect the device orientation associated with this hit. Scope: Hit</p>
-						<p class="option-keywords">autotrack</p>
+						<p class="option-keywords">autotrack custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1187,7 +1176,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_securitynote]" id="cd_securitynote" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_securitynote']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Adds a note to the user for potential security issues and on possible bots. Scope: User</p>
-						<p class="option-keywords">recommended</p>
+						<p class="option-keywords">recommended custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1199,7 +1188,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Stores named locations when detected. Scope: User</p>
 						<p class="nebula-help-text more-help form-text text-muted">Stores named IP addresses (from the Administration tab). Also passes data using the ?poi query string (useful for email marketing using personalization within links). Also sends value of input fields with class "nebula-poi" on form submits (when applicable).</p>
-						<p class="option-keywords">recommended</p>
+						<p class="option-keywords">recommended custom dimension</p>
 					</div>
 				</div><!-- /sub-group -->
 
@@ -1214,7 +1203,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_eventintent]" id="cd_eventintent" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_eventintent']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Log whether the event was true, or just a possible intention. Scope: Hit</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1225,7 +1214,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_contactmethod]" id="cd_contactmethod" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_contactmethod']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">If the user triggers a contact event, the method of contact is stored here. Scope: Session</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1237,7 +1226,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sends form timings along with the each submission. Scope: Hit</p>
 						<p class="nebula-help-text more-help form-text text-muted">Timings are automatically sent to Google Analytics in Nebula, but are sampled in the User Timings report. Data will be in milliseconds.</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1249,7 +1238,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track the field path the user takes through forms. Scope: Session</p>
 						<p class="nebula-help-text more-help form-text text-muted">Because this data is scoped to the session, it will only track the last form of the session. This data can be useful in detecting form abandonment (as submit actions are stored in this dimension too).</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1260,7 +1249,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_videowatcher]" id="cd_videowatcher" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_videowatcher']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sets a dimension when videos are started and finished. Scope: Session</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom dimension</p>
 					</div>
 
 					<div class="form-group">
@@ -1283,7 +1272,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sets a dimension when a user completes the checkout process in WooCommerce. Scope: User</p>
 						<p class="nebula-help-text more-help form-text text-muted">Appears in Google Analytics as "Order Received".</p>
-						<p class="option-keywords">ecommerce woocommerce</p>
+						<p class="option-keywords">ecommerce woocommerce custom dimension</p>
 					</div>
 				</div><!-- /sub-group -->
 			<?php
@@ -1309,7 +1298,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Navigation start until server response finishes (includes PHP rendering time). Scope: Hit, Format: Integer</p>
 						<p class="nebula-help-text more-help form-text text-muted">Use these timing metrics to segment reports based on load times.</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom metric</p>
 					</div>
 
 					<div class="form-group">
@@ -1321,7 +1310,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Navigation start until DOM ready. Scope: Hit, Format: Integer</p>
 						<p class="nebula-help-text more-help form-text text-muted">Use these timing metrics to segment reports based on load times.</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom metric</p>
 					</div>
 
 					<div class="form-group">
@@ -1333,7 +1322,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Navigation start until window loaded. Scope: Hit, Format: Integer</p>
 						<p class="nebula-help-text more-help form-text text-muted">Use these timing metrics to segment reports based on load times.</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom metric</p>
 					</div>
 				</div><!-- /sub-group -->
 
@@ -1349,7 +1338,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user downloads a notable file. Scope: Hit, Format: Integer</p>
 						<p class="nebula-help-text more-help form-text text-muted">To use, add the class "notable" to either the or its parent.</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom metric</p>
 					</div>
 
 					<div class="form-group">
@@ -1361,7 +1350,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a form is in view as the user scrolls. Scope: Hit, Format: Integer</p>
 						<p class="nebula-help-text more-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form, somewhere inside it, or to a parent element.</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom metric</p>
 					</div>
 
 					<div class="form-group">
@@ -1373,7 +1362,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user begins entering a form. Scope: Hit, Format: Integer</p>
 						<p class="nebula-help-text more-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form, somewhere inside it, or to a parent element.</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom metric</p>
 					</div>
 
 					<div class="form-group">
@@ -1385,7 +1374,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user submits a form. Scope: Hit, Format: Integer</p>
 						<p class="nebula-help-text more-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form, somewhere inside it, or to a parent element.</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom metric</p>
 					</div>
 
 					<div class="form-group">
@@ -1397,7 +1386,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Calculates the maximum scroll percentage the user reached per page. Scope: Hit, Format: Integer</p>
 						<p class="nebula-help-text more-help form-text text-muted">Useful as a calculated metric in Google Analytics called "Avg. Max Scroll Percentage" of <code>{{Max Scroll Percentage}}/(100*{{Unique Pageviews}})</code>. Create a custom report with the metrics "Avg. Max Scroll Percentage" and "Unique Pageviews" and dimensions "Page", "Source / Medium", etc.</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom metric</p>
 					</div>
 				</div><!-- /sub-group -->
 
@@ -1412,7 +1401,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cm_videostarts]" id="cm_videostarts" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_videostarts']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user begins playing a video. Scope: Hit, Format: Integer</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom metric</p>
 					</div>
 
 					<div class="form-group">
@@ -1423,7 +1412,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cm_videoplaytime]" id="cm_videoplaytime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_videoplaytime']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks playing duration when a user pauses or completes a video. Scope: Hit, Format: Time</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom metric</p>
 					</div>
 
 					<div class="form-group">
@@ -1434,7 +1423,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cm_videocompletions]" id="cm_videocompletions" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_videocompletions']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user completes playing a video. Scope: Hit, Format: Integer</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom metric</p>
 					</div>
 				</div><!-- /sub-group -->
 
@@ -1449,7 +1438,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cm_batterylevel]" id="cm_batterylevel" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_batterylevel']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Record the individual battery level for each hit. Scope: Hit, Format: Integer</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom metric</p>
 					</div>
 
 					<div class="form-group">
@@ -1460,7 +1449,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cm_wordcount]" id="cm_wordcount" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_wordcount']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sends word count for single posts. Scope: Hit, Format: Integer</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom metric</p>
 					</div>
 
 					<div class="form-group">
@@ -1471,7 +1460,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cm_autocompletesearches]" id="cm_autocompletesearches" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_autocompletesearches']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a set of autocomplete search results is returned to the user (count is the search, not the result quantity). Scope: Hit, Format: Integer</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom metric</p>
 					</div>
 
 					<div class="form-group">
@@ -1482,7 +1471,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cm_autocompletesearchclicks]" id="cm_autocompletesearchclicks" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_autocompletesearchclicks']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user clicks an autocomplete search result. Scope: Hit, Format: Integer</p>
-						<p class="option-keywords"></p>
+						<p class="option-keywords">custom metric</p>
 					</div>
 
 					<div class="form-group">
@@ -1494,7 +1483,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">The amount of time (in seconds) the page was in the visible state (tab/window visible) Scope: Hit, Format: Time</p>
 						<p class="nebula-help-text more-help form-text text-muted">Useful with calculated metrics in Google Analytics of "Avg. Page Visible Time / Page" <code>{{Page Visible Time}} / {{Unique Pageviews}}</code> or "Avg. Page Visible Time / Session" <code>{{Page Visible Time}} / {{Sessions}}</code>. Create a custom report with the metrics "Avg. Page Visible Time / Page" and "Unique Pageviews" and dimension "Page", and another with the metrics "Avg. Page Visible Time / Session" and "Unique Pageviews" and dimension "Source / Medium"</p>
-						<p class="option-keywords">autotrack</p>
+						<p class="option-keywords">autotrack custom metric</p>
 					</div>
 
 					<div class="form-group">
@@ -1505,7 +1494,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cm_pagehidden]" id="cm_pagehidden" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_pagehidden']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">The amount of time (in seconds) the page was in the hidden state (tab/window not visible) Scope: Hit, Format: Time</p>
-						<p class="option-keywords">autotrack</p>
+						<p class="option-keywords">autotrack custom metric</p>
 					</div>
 				</div><!-- /sub-group -->
 			<?php
