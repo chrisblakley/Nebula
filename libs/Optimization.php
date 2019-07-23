@@ -161,6 +161,12 @@ if ( !trait_exists('Optimization') ){
 			$crossorigin_exececution = wp_scripts()->get_data($handle, 'crossorigin');
 			$defer_exececution = wp_scripts()->get_data($handle, 'defer');
 			$async_exececution = wp_scripts()->get_data($handle, 'async');
+			$module_execution = wp_scripts()->get_data($handle, 'module');
+
+			//Add module type attribute if it is requested
+			if ( !empty($module_execution) && strpos($tag, "type='module'") === false ){
+				$tag = str_replace("type='text/javascript'", "type='module'", $tag); //Change the type='text/javascript' attribute to type='module'
+			}
 
 			//Add crossorigin attribute if it is requested and does not already exist
 			if ( !empty($crossorigin_exececution) && strpos($tag, 'crossorigin=') === false ){

@@ -99,9 +99,15 @@ if ( !trait_exists('Sass') ){
 
 				$this->update_data('need_sass_compile', 'false'); //Set it to false after Sass is finished
 
-				//If SCSS has not been rendered in 1 month, disable the option.
-				if ( time()-$this->get_data('scss_last_processed') >= MONTH_IN_SECONDS ){
-					$this->update_option('scss', 'disabled');
+				//If Sass has not been rendered in 1 month, disable the option.
+				$last_style_mtime = filemtime($scss_locations['parent']['directory'] . '/assets/scss/style.scss');
+				if ( is_child_theme() ){
+					$child_styles_mtime = filemtime($scss_locations['child']['directory'] . '/assets/scss/style.scss');
+					$last_style_mtime = ( $last_style_mtime > $child_styles_mtime )? $last_style_mtime : $child_styles_mtime; //Determine if the parent or child theme style.scss file has been modified latest
+				}
+
+				if ( time()-$last_style_mtime >= MONTH_IN_SECONDS ){ //If the last style.scss modification hasn't happened within a month disable Sass.
+					$this->update_option('scss', 0); //Once Sass is disabled this way, a developer would need to re-enable it in Nebula Options.
 				}
 			} elseif ( $this->is_dev() && !$this->is_admin_page() && (isset($_GET['sass']) || isset($_GET['scss'])) ){
 				trigger_error('Sass can not compile because it is disabled in Nebula Functions.', E_USER_NOTICE);

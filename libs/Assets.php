@@ -46,7 +46,7 @@ if ( !trait_exists('Assets') ){
 
 			//Scripts
 			//Use CDNJS to pull common libraries: http://cdnjs.com/
-			//nebula_register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
+			//nebula()->register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
 			$this->jquery();
 			if ( $this->is_admin_page() || $this->get_option('allow_bootstrap_js') ){
 				$this->bootstrap('js');
@@ -56,8 +56,12 @@ if ( !trait_exists('Assets') ){
 			$this->register_script('nebula-vimeo', 'https://player.vimeo.com/api/player.js', null, null, null, true); //https://github.com/cdnjs/cdnjs/issues/13383
 			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.10.19', true);
 			$this->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js', array('defer', 'crossorigin'), null, '1.8.7', true);
+			$this->register_script('nebula-moment', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js', array('defer', 'crossorigin'), null, '2.24.0', true);
 			$this->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js', array('async', 'crossorigin'), null, '2.4.1', true);
 			$this->register_script('nebula-nebula', get_template_directory_uri() . '/assets/js/nebula.js', array('defer'), array('jquery-core'), $this->version('full'), true);
+
+			$this->register_script('nebula-nebula-module', get_template_directory_uri() . '/assets/js/nebula-module.js', array('defer', 'module'), array('jquery-core'), $this->version('full'), true); //This is for testing only! Not supported in IE11
+
 			$this->register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', null, array('jquery-core'), $this->version('full'), true);
 			$this->register_script('nebula-admin', get_template_directory_uri() . '/assets/js/admin.js', array('defer'), array('jquery-core'), $this->version('full'), true);
 		}
@@ -158,7 +162,7 @@ if ( !trait_exists('Assets') ){
 				//Preload imminent CSS assets
 				foreach ( $lazy_assets['styles'] as $handle => $condition ){
 					if ( !empty($handle) && !empty($wp_styles->registered[$handle]) && $condition === 'all' ){ //Lazy loaded assets must have a handle!
-						echo '<link rel="preload" id="' . $handle . '-css-preload" href="' . $wp_styles->registered[$handle]->src . '" as="style">' . PHP_EOL;
+						echo '<link rel="preload" id="' . $handle . '-css-preload" href="' . $wp_styles->registered[$handle]->src . '" as="style" />' . PHP_EOL;
 					}
 				}
 
@@ -200,6 +204,8 @@ if ( !trait_exists('Assets') ){
 							'path' => get_stylesheet_directory(),
 							'uri' => get_stylesheet_directory_uri(),
 						),
+						'modules' => get_template_directory_uri() . '/assets/js/modules/',
+						'uploads' => $upload_dir['baseurl'],
 					),
 					'home_url' => home_url(),
 					'sw_url' => esc_url($this->sw_location()),
@@ -210,7 +216,6 @@ if ( !trait_exists('Assets') ){
 						'url' => admin_url('admin-ajax.php'),
 						'nonce' => wp_create_nonce('nebula_ajax_nonce'),
 					),
-					'upload_dir' => $upload_dir['baseurl'],
 					'ecommerce' => false,
 					'options' => array(
 						'sw' => $this->get_option('service_worker'),
@@ -347,6 +352,11 @@ if ( !trait_exists('Assets') ){
 			}
 
 			wp_enqueue_script('nebula-nebula');
+
+			//Preparing to switch over to modules. Not supported in IE11!
+			if ( 1==2 ){
+				wp_enqueue_script('nebula-nebula-module');
+			}
 
 			//Conditionals
 			if ( is_page_template('tpl-search.php') ){ //Form pages (that use selects) or Advanced Search Template. The Chosen library is also dynamically loaded in nebula.js.

@@ -31,6 +31,7 @@
 
 ###################
 #@TODO: Pick one of the following: Force no-www -or- Force www
+#Ensure the WordPress Address and Site Address settings match this choice! (WordPress Admin > Settings > General)
 
 #Force no-www
 #RewriteEngine On
