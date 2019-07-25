@@ -1,3 +1,3 @@
 nebula.example = function(){
-	console.log('This is an example.');
-}
+	//console.log('This is an example.');
+};

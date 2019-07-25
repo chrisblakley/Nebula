@@ -5,6 +5,8 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Sass') ){
 	trait Sass {
 		public function hooks(){
+			$this->latest_scss_mtime = 0; //Prep a flag to determine the last modified SCSS file
+
 			add_action('init', array($this, 'scss_controller'));
 			add_action('nebula_body_open', array($this, 'output_sass_errors')); //Front-end
 			add_action('admin_notices', array($this, 'output_sass_errors')); //Admin
@@ -99,14 +101,7 @@ if ( !trait_exists('Sass') ){
 
 				$this->update_data('need_sass_compile', 'false'); //Set it to false after Sass is finished
 
-				//If Sass has not been rendered in 1 month, disable the option.
-				$last_style_mtime = filemtime($scss_locations['parent']['directory'] . '/assets/scss/style.scss');
-				if ( is_child_theme() ){
-					$child_styles_mtime = filemtime($scss_locations['child']['directory'] . '/assets/scss/style.scss');
-					$last_style_mtime = ( $last_style_mtime > $child_styles_mtime )? $last_style_mtime : $child_styles_mtime; //Determine if the parent or child theme style.scss file has been modified latest
-				}
-
-				if ( time()-$last_style_mtime >= MONTH_IN_SECONDS ){ //If the last style.scss modification hasn't happened within a month disable Sass.
+				if ( time()-$this->latest_scss_mtime >= MONTH_IN_SECONDS ){ //If the last style.scss modification hasn't happened within a month disable Sass.
 					$this->update_option('scss', 0); //Once Sass is disabled this way, a developer would need to re-enable it in Nebula Options.
 				}
 			} elseif ( $this->is_dev() && !$this->is_admin_page() && (isset($_GET['sass']) || isset($_GET['scss'])) ){
@@ -166,6 +161,7 @@ if ( !trait_exists('Sass') ){
 				foreach ( glob($imports_directory . '*') as $import_file ){
 					if ( filemtime($import_file) > $latest_import ){
 						$latest_import = filemtime($import_file);
+						$this->latest_scss_mtime = $latest_import;
 					}
 				}
 
@@ -192,6 +188,11 @@ if ( !trait_exists('Sass') ){
 					if ( is_file($scss_file) && $scss_file_path_info['extension'] === 'scss' && $scss_file_path_info['filename'][0] !== '_' ){
 						$css_filepath = ( $scss_file_path_info['filename'] === 'style' )? $location_paths['directory'] . '/style.css': $location_paths['directory'] . '/assets/css/' . $scss_file_path_info['filename'] . '.css'; //style.css to the root directory. All others to the /css directory in the /assets/scss directory.
 						wp_mkdir_p($location_paths['directory'] . '/assets/css'); //Create the /css directory (in case it doesn't exist already).
+
+						//Update the last SCSS file modification time (if later than the latest yet)
+						if ( filemtime($scss_file) > $this->latest_scss_mtime ){
+							$this->latest_scss_mtime = filemtime($scss_file);
+						}
 
 						//If style.css has been edited after style.scss, save backup but continue compiling SCSS
 						if ( (is_child_theme() && $location_name !== 'parent' ) && ($scss_file_path_info['filename'] === 'style' && file_exists($css_filepath) && $this->get_data('scss_last_processed') != '0' && $this->get_data('scss_last_processed')-filemtime($css_filepath) < -30) ){

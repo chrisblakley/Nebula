@@ -105,7 +105,7 @@ jQuery(window).on('resize', function(){
 }); //End Window Resize
 
 /*==========================
- Additional References
+ Additional Settings
  ===========================*/
 
 nebula.regex = {
@@ -123,6 +123,11 @@ nebula.regex = {
 
 nebula.timings = [];
 nebula.videos = {};
+nebula.scroll = {
+	offset: 0, //Used for global scroll offsets (when not able to modify certain links or to save redundant parameters)
+	speed: 500
+};
+
 
 /*==========================
  Optimization Functions
@@ -3294,9 +3299,9 @@ nebula.svgImgs = function(){
 }
 
 //Offset must be an integer
-nebula.scrollTo = function(element, milliseconds, offset, onlyWhenBelow, callback){
+nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback){
 	if ( !offset ){
-		var offset = 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
+		var offset = nebula.scroll.offset || 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
 	}
 
 	//Call this function with a jQuery object to trigger scroll to an element (not just a selector string).
@@ -3316,13 +3321,13 @@ nebula.scrollTo = function(element, milliseconds, offset, onlyWhenBelow, callbac
 			}
 
 			if ( willScroll ){
-				if ( !milliseconds ){
-					var milliseconds = 500;
+				if ( !scrollSpeed ){
+					var scrollSpeed = nebula.scroll.speed || 500;
 				}
 
 				jQuery('html, body').animate({
 					scrollTop: element.offset().top-offset
-				}, milliseconds, function(){
+				}, scrollSpeed, function(){
 					if ( callback ){
 						callback();
 					}
@@ -3339,27 +3344,32 @@ nebula.scrollTo = function(element, milliseconds, offset, onlyWhenBelow, callbac
 			return false;
 		}
 
-		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0; //Determine the offset
 		if ( location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname ){ //Ensure the link does not have a protocol and is internal
 			var target = jQuery(this.hash) || jQuery('[name=' + this.hash.slice(1) +']'); //Determine the target
 			if ( target.length ){ //If target exists
-				var nOffset = Math.floor(target.offset().top-offset+pOffset);
+				pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : nebula.scroll.offset; //Determine the offset
+				var nOffset = Math.floor(target.offset().top-offset+pOffset) + jQuery('body').scrollTop();
+				scrollSpeed = nebula.scroll.speed || 500;
+
 				jQuery('html, body').animate({
 					scrollTop: nOffset
-				}, 500); //Speed is hard-coded, but could look for an HTML attribute if desired
+				}, scrollSpeed); //Speed is hard-coded, but could look for an HTML attribute if desired
 				return false;
 			}
 		}
 	});
 
 	nebula.dom.document.on('click', '.nebula-scrollto', function(){ //Using the nebula-scrollto class with scrollto attribute.
-		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : 0;
+		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : nebula.scroll.offset;
+
 		if ( jQuery(this).attr('scrollto') ){
 			var scrollElement = jQuery(this).attr('scroll-to');
 			if ( scrollElement !== '' ){
+				scrollSpeed = nebula.scroll.speed || 500;
+
 				jQuery('html, body').animate({
 					scrollTop: Math.floor(jQuery(scrollElement).offset().top-offset+pOffset)
-				}, 500);
+				}, scrollSpeed);
 			}
 		}
 		return false;
