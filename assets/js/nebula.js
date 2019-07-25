@@ -3338,7 +3338,7 @@ nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback
 		return false;
 	}
 
-	nebula.dom.document.on('click', 'a[href^="#"]:not([href="#"])', function(){ //Using an ID as the href.
+	nebula.dom.document.on('click', 'a[href*="#"]:not([href="#"])', function(){ //An href contains a hash ID but is not only a hash
 		var avoid = '.no-scroll, .mm-menu, .carousel, .tab-content, .modal, [data-toggle], #wpadminbar, #query-monitor';
 		if ( jQuery(this).is(avoid) || jQuery(this).parents(avoid).length ){
 			return false;
