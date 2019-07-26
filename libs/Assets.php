@@ -252,7 +252,8 @@ if ( !trait_exists('Assets') ){
 					'year' => get_the_date('Y'),
 					'categories' => $this->post_categories(array('string' => true)),
 					'tags' => $this->post_tags(array('string' => true)),
-					'page' => ( get_query_var('paged') )? get_query_var('paged') : 1
+					'page' => ( get_query_var('paged') )? get_query_var('paged') : 1,
+					'isFrontPage' => is_front_page(),
 				),
 				'dom' => null,
 			);
