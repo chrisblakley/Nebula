@@ -2,7 +2,7 @@
 	"name": "nebula-wp",
 	"title": "Nebula",
 	"description": "Advanced Starter WordPress Theme for Developers",
-	"version": "7.2.25",
+	"version": "7.3.1",
 	"homepage": "https://gearside.com/nebula/",
 	"repository": {
 		"type": "git",
@@ -12,7 +12,7 @@
 	"dependencies": {
 		"workbox": ">=4.3.1",
 		"jquery": ">=3.0.0",
-		"font-awesome": ">=5.0.0",
+		"@fortawesome/fontawesome-free": ">=5.0.0",
 		"bootstrap": "^4.3.1",
 		"jquery-ui": ">=1.12.1",
 		"autotrack": "latest",

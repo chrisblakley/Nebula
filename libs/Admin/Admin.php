@@ -1079,11 +1079,11 @@ if ( !trait_exists('Admin') ){
 		public function allow_svg_uploads($data, $file, $filename, $mimes){
 			$filetype = wp_check_filetype($filename, $mimes);
 
-			return [
+			return array(
 				'ext' => $filetype['ext'],
 				'type' => $filetype['type'],
 				'proper_filename' => $data['proper_filename']
-			];
+			);
 		}
 		public function additional_upload_mime_types($mime_types){
 			$mime_types['svg'] = 'image/svg+xml';

@@ -18,6 +18,7 @@
 	FA Regular (Pro) needs font weight of 400
 	FA Light (Pro) needs font weight of 300
 	FA Brands needs font weight of 400
+	FA Duotone (Pro) needs font weight of 900
 	FA Free needs font weight of 900
 	FA Pro (which works without pro) uses font weight 300 for solid... This is a weird one...
 	Therefore, some instances may need additional overrides (like when calling FA Light, but not having FA Pro) https://github.com/chrisblakley/Nebula/issues/1665
@@ -29,6 +30,8 @@
 		font-family: "Font Awesome 5 Regular", "Font Awesome 5 Free", "Font Awesome 5 Pro", "Font Awesome 5 Brands"; font-weight: 400; //If this falls back to free, the font weight may not be compatible...
 	} @else if $type == "light" {
 		font-family: "Font Awesome 5 Light", "Font Awesome 5 Free", "Font Awesome 5 Pro", "Font Awesome 5 Brands"; font-weight: 300; //If this falls back to free, the font weight may not be compatible...
+	} @else if $type == "duotone" {
+		font-family: "Font Awesome 5 Duotone", "Font Awesome 5 Solid", "Font Awesome 5 Free", "Font Awesome 5 Pro", "Font Awesome 5 Brands"; font-weight: 900; //If this falls back to free, the font weight may not be compatible...
 	} @else if $type == "free" {
 		font-family: "Font Awesome 5 Free", "Font Awesome 5 Pro", "Font Awesome 5 Brands"; font-weight: 900;
 	} @else if $type == "brand" {
