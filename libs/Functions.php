@@ -2780,27 +2780,31 @@ trait Functions {
 						}
 						$suggestion = array();
 						$attachment_meta = wp_get_attachment_metadata($attachment->ID);
-						$path_parts = pathinfo($attachment_meta['file']);
-						$attachment_search_meta = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['filename'];
-						similar_text(strtolower($term), strtolower($attachment_search_meta), $suggestion['similarity']);
-						if ( $suggestion['similarity'] >= 50 ){
-							$suggestion['label'] = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['basename'];
-							$suggestion['classes'] = 'type-attachment file-' . $path_parts['extension'];
-							$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
-							if ( in_array(strtolower($path_parts['extension']), array('jpg', 'jpeg', 'png', 'gif', 'bmp')) ){
-								$suggestion['link'] = get_attachment_link($attachment->ID);
-							} else {
-								$suggestion['link'] = wp_get_attachment_url($attachment->ID);
-								$suggestion['external'] = true;
-								$suggestion['classes'] .= ' external-link';
+
+						if ( isset($attachment_meta['file']) ){
+							$path_parts = pathinfo($attachment_meta['file']);
+							$attachment_search_meta = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['filename'];
+							similar_text(strtolower($term), strtolower($attachment_search_meta), $suggestion['similarity']);
+							if ( $suggestion['similarity'] >= 50 ){
+								$suggestion['label'] = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['basename'];
+								$suggestion['classes'] = 'type-attachment file-' . $path_parts['extension'];
+								$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
+								if ( in_array(strtolower($path_parts['extension']), array('jpg', 'jpeg', 'png', 'gif', 'bmp')) ){
+									$suggestion['link'] = get_attachment_link($attachment->ID);
+								} else {
+									$suggestion['link'] = wp_get_attachment_url($attachment->ID);
+									$suggestion['external'] = true;
+									$suggestion['classes'] .= ' external-link';
+								}
+								$suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
+								$suggestions[] = $suggestion;
+								$attachment_count++;
 							}
-							$suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
-							$suggestions[] = $suggestion;
-							$attachment_count++;
+							if ( $attachment_count >= 2 ){
+								break;
+							}
 						}
-						if ( $attachment_count >= 2 ){
-							break;
-						}
+
 					}
 				}
 			}
@@ -2827,20 +2831,23 @@ trait Functions {
 								$suggestion['similarity'] = $menu_attr_similarity;
 								$suggestion['label'] = $menu_item->attr_title;
 							}
-							$suggestion['link'] = $menu_item->url;
-							$path_parts = pathinfo($menu_item->url);
-							$suggestion['classes'] = 'type-menu-item';
-							if ( $path_parts['extension'] ){
-								$suggestion['classes'] .= ' file-' . $path_parts['extension'];
-								$suggestion['external'] = true;
-							} elseif ( !strpos($suggestion['link'], $this->url_components('domain')) ){
-								$suggestion['classes'] .= ' external-link';
-								$suggestion['external'] = true;
+
+							if ( !empty($menu_item->url) ){
+								$suggestion['link'] = $menu_item->url;
+								$path_parts = pathinfo($menu_item->url);
+								$suggestion['classes'] = 'type-menu-item';
+								if ( $path_parts['extension'] ){
+									$suggestion['classes'] .= ' file-' . $path_parts['extension'];
+									$suggestion['external'] = true;
+								} elseif ( !strpos($suggestion['link'], $this->url_components('domain')) ){
+									$suggestion['classes'] .= ' external-link';
+									$suggestion['external'] = true;
+								}
+								$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
+								$suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
+								$suggestions[] = $suggestion;
+								break;
 							}
-							$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
-							$suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
-							$suggestions[] = $suggestion;
-							break;
 						}
 					}
 				}

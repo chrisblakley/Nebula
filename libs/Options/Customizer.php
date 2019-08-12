@@ -869,7 +869,7 @@ trait Customizer {
 
 				<?php
 					$custom_header_overlay_color = get_theme_mod('nebula_header_overlay_color', get_theme_mod('nebula_primary_color'));
-					$custom_header_overlay_opacity = get_theme_mod('nebula_header_overlay_opacity');
+					$custom_header_overlay_opacity = get_theme_mod('nebula_hero_overlay_opacity');
 				?>
 
 				<?php if ( !empty($custom_header_overlay_color) || !empty($custom_header_overlay_opacity) ): ?>

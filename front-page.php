@@ -70,7 +70,7 @@
 				<div class="row hero-cta">
 					<div class="col">
 						<?php if ( get_theme_mod('nebula_hero_cta_btn_1_text') && get_theme_mod('nebula_hero_cta_btn_1_url') ): ?>
-							<a class="btn btn-lg btn-primary" href="<?php echo get_theme_mod('nebula_hero_cta_btn_1_url'); ?>"><?php echo get_theme_mod('nebula_hero_cta_btn_1_text'); ?></a>
+							<a class="btn btn-lg btn-brand" href="<?php echo get_theme_mod('nebula_hero_cta_btn_1_url'); ?>"><?php echo get_theme_mod('nebula_hero_cta_btn_1_text'); ?></a>
 						<?php endif; ?>
 
 						<?php if ( get_theme_mod('nebula_hero_cta_btn_2_text') && get_theme_mod('nebula_hero_cta_btn_2_url') ): ?>
@@ -88,7 +88,7 @@
 <section id="content-section">
 	<div class="container">
 		<div class="row">
-			<main id="top" class="col-md-8" role="main">
+			<main id="top" class="col" role="main">
 				<?php if ( get_option('show_on_front') === 'posts' ): //"Your latest posts" ?>
 					<?php get_template_part('loop', 'index'); ?>
 				<?php else: //"A static page" ?>

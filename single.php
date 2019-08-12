@@ -28,7 +28,7 @@
 			</div><!--/col-->
 		</div><!--/row-->
 		<div class="row">
-			<main id="top" class="col-md" role="main">
+			<main id="top" class="col" role="main">
 				<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 						<?php if ( has_post_thumbnail() && get_theme_mod('featured_image_location') === 'content' ): ?>

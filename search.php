@@ -23,7 +23,7 @@
 			</div><!--/col-->
 		</div><!--/row-->
 		<div class="row">
-			<main id="top" class="col-md" role="main">
+			<main id="top" class="col" role="main">
 				<?php if ( have_posts() ): ?>
 					<div id="searchresults">
 						<?php get_template_part('loop', 'search'); ?>

@@ -23,7 +23,7 @@
 			</div><!--/col-->
 		</div><!--/row-->
 		<div class="row">
-			<main id="top" class="col-md" role="main">
+			<main id="top" class="col" role="main">
 				<article id="post-0" class="post error404 not-found">
 					<?php if ( get_theme_mod('title_location') === 'content' ): ?>
 						<h1 class="page-title"><?php _e('Not Found', 'nebula'); ?></h1>

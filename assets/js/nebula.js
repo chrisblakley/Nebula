@@ -735,7 +735,7 @@ nebula.eventTracking = function(){
 
 	nebula.once(function(){
 		//Btn Clicks
-		nebula.dom.document.on('mousedown', "button, .btn, a.wp-block-button__link", function(e){
+		nebula.dom.document.on('mousedown', "button, .btn, [role='button'], a.wp-block-button__link", function(e){
 			var thisEvent = {
 				event: e,
 				category: 'Button',
