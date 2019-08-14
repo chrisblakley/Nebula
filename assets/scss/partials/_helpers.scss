@@ -123,7 +123,7 @@
 //Remember to add this class to the row and then contain the col class div itself (something like col-md-8 works well).
 .alignwide-row {justify-content: center;
 	.alignwide {
-		@include media('lg'){margin-left: -200px; margin-right: -200px;}
+		@include media("lg"){margin-left: -200px; margin-right: -200px;}
 	}
 }
 

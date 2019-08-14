@@ -10,6 +10,7 @@ if ( !trait_exists('Sass') ){
 			add_action('init', array($this, 'scss_controller'));
 			add_action('nebula_body_open', array($this, 'output_sass_errors')); //Front-end
 			add_action('admin_notices', array($this, 'output_sass_errors')); //Admin
+			add_action('nebula_options_saved', array($this, 'touch_sass_stylesheet'));
 		}
 
 		/*==========================
@@ -245,6 +246,14 @@ if ( !trait_exists('Sass') ){
 				}
 
 				$this->timer('Sass (' . $location_name . ')', 'end');
+			}
+		}
+
+		//Touch the main parent Nebula stylesheet to extended the last Sass modification time date (when Nebula Options are saved)
+		public function touch_sass_stylesheet(){
+			$main_sass_file = get_template_directory() . '/assets/scss/style.scss'; //This is the parent stylesheet (which should always exist)
+			if ( file_exists($main_sass_file) ){
+				touch($main_sass_file);
 			}
 		}
 

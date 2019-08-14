@@ -15,38 +15,73 @@ wp.blocks.registerBlockType('nebula/youtube', {
 		var attributes = props.attributes;
 
 		return [
-			wp.element.createElement(wp.editor.InspectorControls, null,
-				wp.element.createElement(wp.components.PanelBody, {
-					title: 'Nebula Youtube Settings'
-				},
-				wp.element.createElement(wp.components.BaseControl, {
-					label: 'Video ID',
-					id: 'nebula-youtube-id-' + props.instanceId,
-				},
-				wp.element.createElement('input', {
-					type: 'text',
-					id: 'nebula-youtube-id-' + props.instanceId,
-					value: props.attributes.videoID,
-					onChange: function(e){
-						props.setAttributes({
-							videoID: e.target.value
-						});
-					}
-				})
-				))
+			wp.element.createElement(
+				wp.editor.InspectorControls,
+				null,
+				wp.element.createElement(
+					wp.components.PanelBody,
+					{
+						title: 'Nebula Youtube Settings'
+					},
+					wp.element.createElement(
+						wp.components.BaseControl,
+						{
+							label: 'Video ID',
+							id: 'nebula-youtube-id-' + props.instanceId
+						},
+						wp.element.createElement(
+							'input', {
+								type: 'text',
+								id: 'nebula-youtube-id-' + props.instanceId,
+								value: props.attributes.videoID,
+								onChange: function(e){
+									props.setAttributes({
+										videoID: e.target.value
+									});
+								}
+							}
+						)
+					),
+					wp.element.createElement(
+						wp.components.BaseControl,
+						{
+							label: 'Video Timestamp',
+							id: 'nebula-youtube-id-' + props.instanceId
+						},
+						wp.element.createElement(
+							'input', {
+								type: 'text',
+								id: 'nebula-youtube-id-' + props.instanceId,
+								value: props.attributes.videoTimestamp,
+								onChange: function(e){
+									props.setAttributes({
+										videoTimestamp: e.target.value
+									});
+								}
+							}
+						)
+					)
+				)
 			),
-			wp.element.createElement('div', {
-				id: 'nebula-youtube-block-' + props.instanceId,
-				className: 'nebula-youtube embed-responsive embed-responsive-16by9 ' + props.className,
-			}, wp.element.createElement('iframe', {
-				id: 'phg-overview-video', //Does this need to be an option? I'd prefer not
-				className: 'youtube embed-responsive-item',
-				width: 400,
-				height: 300,
-				src: '//www.youtube.com/embed/' + props.attributes.videoID + '?wmode=transparent&enablejsapi=1&rel=0', //WCtWWgtzC-c
-				frameBorder: 0,
-				allowfullscreen: ''
-			}))
+			wp.element.createElement(
+				'div',
+				{
+					id: 'nebula-youtube-block-' + props.instanceId,
+					className: 'nebula-youtube embed-responsive embed-responsive-16by9 ' + props.className,
+				},
+				wp.element.createElement(
+					'iframe',
+					{
+						id: 'phg-overview-video', //Does this need to be an option? I'd prefer not
+						className: 'youtube embed-responsive-item',
+						width: 400,
+						height: 300,
+						src: '//www.youtube.com/embed/' + props.attributes.videoID + '?wmode=transparent&enablejsapi=1&rel=0&t=' + props.attributes.videoTimestamp, //WCtWWgtzC-c
+						frameBorder: 0,
+						allowfullscreen: ''
+					}
+				)
+			)
 		];
 	},
 	save: function(props){

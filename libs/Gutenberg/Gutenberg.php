@@ -55,7 +55,7 @@ if ( !trait_exists('Gutenberg') ){
 		public function nebula_youtube_block_frontend_output($attribites){
 			$youtube_data = nebula()->video_meta('youtube', $attribites['videoID']);
 
-			return '<div class="nebula-youtube embed-responsive embed-responsive-16by9"><iframe id="' . $youtube_data['safetitle'] . '" class="youtube embed-responsive-item" width="1024" height="768" src="//www.youtube.com/embed/' . $youtube_data['id'] . '?wmode=transparent&enablejsapi=1&rel=0" frameborder="0" allowfullscreen loading="lazy"></iframe></div>';
+			return '<div class="nebula-youtube embed-responsive embed-responsive-16by9"><iframe id="' . $youtube_data['safetitle'] . '" class="youtube embed-responsive-item" width="1024" height="768" src="//www.youtube.com/embed/' . $youtube_data['id'] . '?wmode=transparent&enablejsapi=1&rel=0&t=' . $attribites['videoTimestamp'] . '" frameborder="0" allowfullscreen loading="lazy"></iframe></div>';
 		}
 
 		//Nebula Vimeo Block
