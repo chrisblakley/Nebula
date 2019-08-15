@@ -2602,6 +2602,7 @@ nebula.applyValidationClasses = function(element, validation, showFeedback){
 nebula.lazyLoadAssets = function(){
 	//Lazy load elements as they scroll into viewport
 	if ( 'IntersectionObserver' in window ){ //Only if Intersection Observer API is available. https://caniuse.com/#feat=intersectionobserver
+		//Observe the entries that are identified and added later (below)
 		var lazyObserver = new IntersectionObserver(function(entries){
 			entries.forEach(function(entry){
 				if ( entry.intersectionRatio > 0 ){
@@ -2614,20 +2615,27 @@ nebula.lazyLoadAssets = function(){
 			threshold: 0.1
 		});
 
+		//Create the entries and add them to the observer
 		jQuery('.nebula-lazy-position, .lazy-load').each(function(){
 			lazyObserver.observe(jQuery(this)[0]); //Observe the element
 		});
+
+		//When scroll reaches the bottom, ensure everything has loaded at this point
+		//Only when IntersectionObserver exists because otherwise everything is immediately loaded anyway
+		var lazyLoadScrollBottom = function(){
+			if( nebula.dom.window.scrollTop()+nebula.dom.window.height() > nebula.dom.document.height()-100 ){
+				nebula.loadEverything();
+				window.removeEventListener('scroll', lazyLoadScrollBottom); //Stop listening for this scroll event
+			}
+		}
+		window.addEventListener('scroll', lazyLoadScrollBottom);
 	} else {
-		jQuery('.nebula-lazy-position, .lazy-load, .nebula-lazy').each(function(){
-			nebula.loadElement(jQuery(this)); //Load the element immediately
-		});
+		nebula.loadEverything(); //If IntersectionObserver is not available, load everything immediately
 	}
 
 	//Load all lazy elements at once if requested
 	nebula.dom.window.on('nebula_load', function(){
-		jQuery('.nebula-lazy-position, .lazy-load, .nebula-lazy').each(function(){
-			nebula.loadElement(jQuery(this)); //Load the element immediately
-		});
+		nebula.loadEverything();
 	});
 
 	//Lazy load CSS assets
@@ -2693,6 +2701,15 @@ nebula.lazyLoadAssets = function(){
 		nebula.loadCSS(nebula.site.resources.styles.nebula_pre);
 		nebula.pre();
 	}
+}
+
+//When necessary, load any element that is meant to be lazy loaded immediately
+//Either call this directly, or trigger 'nebula_load' on the window
+nebula.loadEverything = function(){
+	//@todo "Nebula" 0: listen for idle callback here once it is fully supported: https://caniuse.com/#feat=requestidlecallback
+	jQuery('.nebula-lazy-position, .lazy-load, .nebula-lazy').each(function(){
+		nebula.loadElement(jQuery(this)); //Load the element immediately
+	});
 }
 
 //Load the Nebula lazy load element
