@@ -29,7 +29,6 @@ jQuery(function(){
 
 	//Interaction
 	nebula.socialSharing();
-	nebula.initVideoTracking();
 	nebula.animationTriggers();
 	nebula.scrollTo();
 
@@ -55,6 +54,7 @@ jQuery(window).on('load', function(){
 	nebula.initBootstrapFunctions();
 	nebula.performanceMetrics();
 	nebula.lazyLoadAssets();
+	nebula.initVideoTracking();
 
 	//Navigation
 	nebula.overflowDetector();
@@ -1726,23 +1726,64 @@ nebula.nvForm = function(formID){
  Search Functions
  ===========================*/
 
-//Search Keywords
-//container is the parent container, parent is the individual item, value is usually the input val.
-nebula.keywordSearch = function(container, parent, value, filteredClass){
+//Keyword Filter
+nebula.keywordSearch = function(container, parent, values, filteredClass, operator){ //Alias for old function name
+	nebula.keywordFilter(container, parent, values, filteredClass, operator);
+}
+nebula.keywordFilter = function(container, parent, values, filteredClass, operator){
+	if ( typeof values === 'string' ){
+		values = [values];
+	}
+	values = values.filter(String); //Remove any empty values from the array
+
 	if ( !filteredClass ){
 		var filteredClass = 'filtereditem';
 	}
 
-	if ( value.length > 2 && value.charAt(0) === '/' && value.slice(-1) === '/' ){
-		var regex = new RegExp(value.substring(1).slice(0, -1), 'i'); //Convert the string to RegEx after removing the first and last /
+	jQuery(container).find(parent + '.' + filteredClass).removeClass(filteredClass); //Reset everything for a new search filter
 
-		jQuery(parent).addClass(filteredClass);
-		jQuery(container).find('*').filter(function(){
-			return regex.test(jQuery(this).text());
-		}).closest(parent).removeClass(filteredClass);
-	} else {
-		jQuery(container).find("*:not(:Contains(" + value + "))").closest(parent).addClass(filteredClass);
-		jQuery(container).find("*:Contains(" + value + ")").closest(parent).removeClass(filteredClass);
+	if ( values.length ){
+		//If a regex pattern is specified
+		if ( values.length === 1 && values[0].length > 2 && values[0].charAt(0) === '/' && values[0].slice(-1) === '/' ){
+			var regex = new RegExp(values[0].substring(1).slice(0, -1), 'i'); //Convert the string to RegEx after removing the first and last /
+			jQuery(container).find(parent).each(function(){ //Loop through each element to check against the regex pattern
+				var elementText = jQuery.trim(jQuery(this).text()).replace(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
+				jQuery(this).addClass(filteredClass);
+				if ( regex.test(elementText) ){
+					jQuery(this).removeClass(filteredClass);
+				}
+			});
+		} else {
+			if ( !operator || operator === 'and' || operator === 'all' ){ //Match only elements that contain all keywords (Default operator is And if not provided)
+				jQuery.each(values, function(index, value){ //Loop through the values to search for
+					if ( jQuery.trim(value).length ){ //If the value is not empty
+						jQuery(container).find(parent).not('.' + filteredClass).each(function(){ //Now check elements that have not yet been filtered for this value
+							var regex = new RegExp(value, 'i');
+							var elementText = jQuery.trim(jQuery(this).text()).replace(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
+							if ( !regex.test(elementText) ){
+								jQuery(this).addClass(filteredClass);
+							}
+						});
+					}
+				});
+			} else { //Match elements that contains any keyword
+				var pattern = '';
+				jQuery.each(values, function(index, value){
+					if ( jQuery.trim(value).length ){ //If the value is not empty, add it to the pattern
+						pattern += value + '|';
+					}
+				});
+				pattern = pattern.slice(0, -1); //Remove the last | character
+				var regex = new RegExp(pattern, 'i');
+				jQuery(container).find(parent).each(function(){ //Loop through each element to check against the regex pattern
+					var elementText = jQuery.trim(jQuery(this).text()).replace(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
+					jQuery(this).addClass(filteredClass);
+					if ( regex.test(elementText) ){
+						jQuery(this).removeClass(filteredClass);
+					}
+				});
+			}
+		}
 	}
 }
 
@@ -2623,7 +2664,7 @@ nebula.lazyLoadAssets = function(){
 		//When scroll reaches the bottom, ensure everything has loaded at this point
 		//Only when IntersectionObserver exists because otherwise everything is immediately loaded anyway
 		var lazyLoadScrollBottom = function(){
-			if( nebula.dom.window.scrollTop()+nebula.dom.window.height() > nebula.dom.document.height()-100 ){
+			if( nebula.dom.window.scrollTop()+nebula.dom.window.height() > nebula.dom.document.height()-500 ){ //When the scroll position reaches 500px above the bottom
 				nebula.loadEverything();
 				window.removeEventListener('scroll', lazyLoadScrollBottom); //Stop listening for this scroll event
 			}
