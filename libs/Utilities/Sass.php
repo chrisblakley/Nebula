@@ -162,7 +162,10 @@ if ( !trait_exists('Sass') ){
 				foreach ( glob($imports_directory . '*') as $import_file ){
 					if ( filemtime($import_file) > $latest_import ){
 						$latest_import = filemtime($import_file);
-						$this->latest_scss_mtime = $latest_import;
+
+						if ( $latest_import > $this->latest_scss_mtime ){
+							$this->latest_scss_mtime = $latest_import;
+						}
 					}
 				}
 
@@ -252,6 +255,7 @@ if ( !trait_exists('Sass') ){
 		//Touch the main parent Nebula stylesheet to extended the last Sass modification time date (when Nebula Options are saved)
 		public function touch_sass_stylesheet(){
 			$main_sass_file = get_template_directory() . '/assets/scss/style.scss'; //This is the parent stylesheet (which should always exist)
+
 			if ( file_exists($main_sass_file) ){
 				touch($main_sass_file);
 			}
