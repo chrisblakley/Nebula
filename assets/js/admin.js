@@ -185,7 +185,7 @@ jQuery(window).resize(function() {
 
 //Developer Metaboxe functions
 function developerMetaboxes(){
-	if ( jQuery('#phg_developer_info').length ){
+	if ( jQuery('div#phg_developer_info').length ){
 		//Developer Info Metabox
 		jQuery(document).on('keyup', 'input.findterm', function(){
 			jQuery('input.findterm').attr('placeholder', 'Search files');
@@ -244,7 +244,7 @@ function developerMetaboxes(){
 		}
 	}
 
-	if ( jQuery('#performance_metabox').length ){
+	if ( jQuery('div#performance_metabox').length ){
 		checkPageSpeed(); //Performance Timing
 	}
 }
@@ -292,7 +292,7 @@ function checkPageSpeed(){
 				jQuery('#performance-requests').removeClass('hidden').find('.datapoint').html(totalRequests).attr('title', 'via Google PageSpeed Insights on ' + pagespeedCompletedDate);
 				performanceTimingWarning(jQuery('#performance-requests'), totalRequests, 80, 120);
 
-				if ( jQuery('#performance-rating').length && typeof rating !== 'undefined' && rating !== 'NONE' ){
+				if ( jQuery('div#performance-rating').length && typeof rating !== 'undefined' && rating !== 'NONE' ){
 					jQuery('#performance-rating').removeClass('hidden');
 					jQuery('#performance-rating .datapoint').html(rating).attr('title', 'via Google PageSpeed Insights on ' + pagespeedCompletedDate);
 					if ( rating === 'SLOW' ){

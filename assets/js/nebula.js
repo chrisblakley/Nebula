@@ -2721,23 +2721,6 @@ nebula.lazyLoadAssets = function(){
 		}
 	}
 
-	//Only load Chosen library if 'chosen-select' class exists.
-	if ( jQuery('.chosen-select').length ){
-		nebula.loadJS(nebula.site.resources.scripts.nebula_chosen, function(){
-			nebula.chosenSelectOptions();
-		});
-		nebula.loadCSS(nebula.site.resources.styles.nebula_chosen);
-	}
-
-	//Only load dataTables library if dataTables table exists.
-	if ( jQuery('.dataTables_wrapper').length ){
-		nebula.loadJS(nebula.site.resources.scripts.nebula_datatables, function(){
-			nebula.loadCSS(nebula.site.resources.styles.nebula_datatables);
-			nebula.dataTablesActions(); //Once loaded, call the DataTables actions. This can be called or overwritten in main.js (or elsewhere)
-			nebula.dom.document.trigger('nebula_datatables_loaded'); //This event can be listened for in main.js (or elsewhere) for when DataTables has finished loading.
-		});
-	}
-
 	if ( jQuery('pre.nebula-code, pre.nebula-code').length ){
 		nebula.loadCSS(nebula.site.resources.styles.nebula_pre);
 		nebula.pre();
@@ -3948,35 +3931,14 @@ nebula.sanitize = function(text){
 	return document.createElement('div').appendChild(document.createTextNode(text)).parentNode.innerHTML;
 }
 
-nebula.chosenSelectOptions = function(){
-	jQuery('.chosen-select').chosen({
-		disable_search_threshold: 5,
-		search_contains: true,
-		no_results_text: "No results found.",
-		allow_single_deselect: true,
-		width: "100%"
-	});
-}
-
-nebula.dataTablesActions = function(){
-	//DataTables search term highlighter. @TODO "Nebula" 0: Not quite ready... When highlighting, all other styling is removed.
-/*
-	nebula.dom.document.on('keyup', '.dataTables_wrapper .dataTables_filter input', function(){
-		searchTerm = jQuery(this).val().replace(/(\s+)/,"(<[^>]+>)*$1(<[^>]+>)*");
-		var pattern = new RegExp("(" + searchTerm + ")", "gi");
-		if ( searchTerm.length ){
-			jQuery('.dataTables_wrapper td').each(function(i){
-				var searchFinder = jQuery(this).text().replace(new RegExp('(' + preg_quote(searchTerm) + ')', 'gi'), '<mark class="filterresultword">$1</mark>');
-				jQuery(this).html(searchFinder);
-			});
-		} else {
-			jQuery('.dataTables_wrapper td mark').each(function(){
-				jQuery(this).contents().unwrap();
-			});
-		}
-	});
-*/
-}
+//Nebula preferred default Chosen.js options
+nebula.defaultChosenOptions = {
+	disable_search_threshold: 5,
+	search_contains: true,
+	no_results_text: "No results found.",
+	allow_single_deselect: true,
+	width: "100%"
+};
 
 //Initialize Video Functionality and Tracking
 nebula.initVideoTracking = function(){
