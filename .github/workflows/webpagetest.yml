@@ -4,7 +4,7 @@ jobs:
   webPageTestActions:
     name: WebPageTestActions
     runs-on: ubuntu-latest
-      steps:
+    steps:
       - uses: JCofman/webPagetestAction@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
