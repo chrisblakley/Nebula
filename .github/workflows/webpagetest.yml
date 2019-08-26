@@ -1,5 +1,5 @@
 on: push
-name: Run Webpagetest
+name: Run WebPageTest
 jobs:
   webPageTestActions:
     name: WebPageTestActions
