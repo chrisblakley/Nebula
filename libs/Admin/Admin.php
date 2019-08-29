@@ -72,11 +72,18 @@ if ( !trait_exists('Admin') ){
 
 				add_action('pre_get_posts', array($this, 'id_column_orderby')); //Handles the order when the ID column is sorted
 
-				//Remove most Yoast SEO columns
-				$post_types = get_post_types(array('public' => true), 'names');
-				if ( is_array($post_types) && $post_types !== array() ){
-					foreach ( $post_types as $post_type ){
-						add_filter('manage_edit-' . $post_type . '_columns', array($this, 'remove_yoast_columns')); //@TODO "Nebula" 0: This does not always work.
+				//Override some Yoast settings
+				if ( is_plugin_active('wordpress-seo/wp-seo.php') ){
+					if ( !$this->get_option('author_bios') ){
+						add_action('admin_init', array($this, 'disable_yoast_author_indexing'));
+					}
+
+					//Remove most Yoast SEO columns
+					$post_types = get_post_types(array('public' => true), 'names');
+					if ( is_array($post_types) && $post_types !== array() ){
+						foreach ( $post_types as $post_type ){
+							add_filter('manage_edit-' . $post_type . '_columns', array($this, 'remove_yoast_columns')); //@TODO "Nebula" 0: This does not always work.
+						}
 					}
 				}
 
@@ -1130,6 +1137,13 @@ if ( !trait_exists('Admin') ){
 			unset($columns['wpseo-metadesc']);
 			unset($columns['wpseo-focuskw']);
 			return $columns;
+		}
+
+		//Prevent Yoast from publishing author sitemaps when Nebula author bios are disabled
+		public function disable_yoast_author_indexing(){
+			if ( is_plugin_active('wordpress-seo/wp-seo.php') ){
+				WPSEO_Options::set('disable-author', true);
+			}
 		}
 
 		//Duplicate post
