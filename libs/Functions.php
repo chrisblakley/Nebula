@@ -94,9 +94,9 @@ trait Functions {
 		add_filter('wp_get_attachment_url', array($this, 'wp_get_attachment_url_force_protocol'));
 		add_filter('embed_oembed_html', array($this, 'oembed_modifiers'), 9999, 4);
 
-		add_filter('acf/settings/google_api_key', array($this, 'acf_google_api_key'));
-		add_filter('wpseo_metadesc', array($this, 'meta_description'));
-		add_filter('wpseo_twitter_card_type', array($this, 'allow_large_twitter_summary'), 10, 2);
+		add_filter('acf/settings/google_api_key', array($this, 'acf_google_api_key')); //ACF hook
+		add_filter('wpseo_metadesc', array($this, 'meta_description')); //Yoast hook
+		add_filter('wpseo_twitter_card_type', array($this, 'allow_large_twitter_summary'), 10, 2); //Yoast hook
 
 		if ( is_user_logged_in() ){
 			add_filter('wpcf7_verify_nonce', '__return_true'); //Always verify CF7 nonce for logged-in users (this allows for it to detect user data)
@@ -1046,7 +1046,7 @@ trait Functions {
 			'min' => 0, //Minimum length of dynamic sentence
 			'ellipsis' => false,
 			'url' => false,
-			'more' => get_theme_mod('nebula_excerpt_more_text', 'Read More &raquo;'),
+			'more' => get_theme_mod('nebula_excerpt_more_text', __('Read More', 'nebula') . ' &raquo;'),
 			'wp_more' => true, //Listen for the WP more tag
 			'btn' => false, //Alias of "button"
 			'button' => false,

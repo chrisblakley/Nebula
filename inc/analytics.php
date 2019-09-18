@@ -30,6 +30,10 @@
 			ga('require', 'linkid');
 		<?php endif; ?>
 
+		<?php if ( nebula()->get_option('google_optimize_id') ): //Google Optimize ?>
+			ga('require', '<?php echo nebula()->get_option('google_optimize_id'); ?>');
+		<?php endif; ?>
+
 		<?php if ( nebula()->get_option('ga_anonymize_ip') ): ?>
 			ga('set', 'anonymizeIp', true);
 		<?php endif; ?>
@@ -299,10 +303,6 @@
 			ga('require', 'outboundLinkTracker', {
 				events: ['click', 'auxclick', 'contextmenu']
 			});
-		<?php endif; ?>
-
-		<?php if ( nebula()->get_option('google_optimize_id') ): //Google Optimize ?>
-			ga('require', '<?php echo nebula()->get_option('google_optimize_id'); ?>');
 		<?php endif; ?>
 
 		<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>

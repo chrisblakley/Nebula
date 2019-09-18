@@ -45,13 +45,13 @@
 	<meta name="google-site-verification" content="<?php echo esc_attr(nebula()->get_option('google_search_console_verification')); ?>" />
 <?php endif; ?>
 
-<?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): //If Yoast SEO is not active ?>
+<?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') && !is_plugin_active('autodescription/autodescription.php') ): //If Yoast SEO and SEO Framework is not active ?>
 	<meta name="description" content="<?php echo esc_attr(nebula()->meta_description()); ?>" />
 	<link rel="canonical" href="<?php the_permalink(); ?>" />
 <?php endif; ?>
 
 <?php $wpseo_social = get_option('wpseo_social'); ?>
-<?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') || (!empty($wpseo_social) && !$wpseo_social['opengraph']) ): //If Yoast SEO is not active, or if it is and the Open Graph settings are disabled ?>
+<?php if ( (!is_plugin_active('wordpress-seo/wp-seo.php') && !is_plugin_active('autodescription/autodescription.php')) || (!empty($wpseo_social) && !$wpseo_social['opengraph']) ): //If Yoast SEO is not active, or if it is and the Open Graph settings are disabled ?>
 	<meta property="og:type" content="business.business" />
 	<meta property="og:locale" content="<?php echo str_replace('-', '_', get_bloginfo('language')); ?>" />
 	<meta property="og:title" content="<?php echo get_the_title(); ?>" />

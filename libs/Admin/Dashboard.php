@@ -927,7 +927,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Performance Timing
 		public function performance_metabox(){
-			wp_add_dashboard_widget('performance_metabox', 'Performance', array($this, 'performance_timing'));
+			wp_add_dashboard_widget('performance_metabox', '<i class="fas fa-fw fa-stopwatch"></i> Performance', array($this, 'performance_timing'));
 		}
 
 		public function performance_timing(){
@@ -988,7 +988,7 @@ if ( !trait_exists('Dashboard') ){
 		//Add a dashboard metabox for design reference
 		public function design_metabox(){
 			global $wp_meta_boxes;
-			wp_add_dashboard_widget('nebula_design', 'Design Reference', array($this, 'dashboard_nebula_design'));
+			wp_add_dashboard_widget('nebula_design', '<i class="fas fa-fw fa-palette"></i> Design Reference', array($this, 'dashboard_nebula_design'));
 		}
 
 		public function dashboard_nebula_design(){
