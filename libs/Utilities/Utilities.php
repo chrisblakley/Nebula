@@ -1238,8 +1238,6 @@ if ( !trait_exists('Utilities') ){
 				return $nebula_theme_info->get('Version'); //Ex: 7.2.23.8475u
 			}
 
-			//yolo
-
 			preg_match('/(?<primary>(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+[a-z]?))\.?(?<build>\d+)?/i', $nebula_theme_info->get('Version'), $nebula_version);
 			$nebula_version['patch'] = preg_replace('/\D/', '', $nebula_version['patch']); //Remove letters from patch number
 

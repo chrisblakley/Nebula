@@ -315,7 +315,7 @@ trait Functions {
 				if ( $php_version_lifecycle['end']-time() < MONTH_IN_SECONDS ){ //If end of life is within 1 month
 					$nebula_warnings[] = array(
 						'level' => 'warn',
-						'description' => 'PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end in ' . human_time_diff($php_version_lifecycle['end']) . ' on ' . date('F j, Y', $php_version_lifecycle['end']) . '.',
+						'description' => 'PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end in ' . human_time_diff($php_version_lifecycle['end']) . ' on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.',
 						'url' => 'http://php.net/supported-versions.php',
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					);
@@ -323,7 +323,7 @@ trait Functions {
 			} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
 				$nebula_warnings[] = array(
 					'level' => 'error',
-					'description' => 'PHP ' . PHP_VERSION . ' <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">no longer receives security updates</a>! End of life occurred ' . human_time_diff($php_version_lifecycle['end']) . ' ago on ' . date('F j, Y', $php_version_lifecycle['end']) . '.',
+					'description' => 'PHP ' . PHP_VERSION . ' <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">no longer receives security updates</a>! End of life occurred ' . human_time_diff($php_version_lifecycle['end']) . ' ago on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.',
 					'url' => 'http://php.net/supported-versions.php',
 					'meta' => array('target' => '_blank', 'rel' => 'noopener')
 				);
@@ -771,7 +771,7 @@ trait Functions {
 		$relative_date = human_time_diff($the_date) . ' ago';
 
 		if ( $data['relative'] ){
-			return '<span class="posted-on meta-item post-date relative-date" title="' . date('F j, Y', $the_date) . '">' . $label . $relative_date . $modified_date_html . '</span>';
+			return '<span class="posted-on meta-item post-date relative-date" title="' . date_i18n('F j, Y', $the_date) . '">' . $label . $relative_date . $modified_date_html . '</span>';
 		}
 
 		$day = ( $data['day'] )? date('d', $the_date) . '/' : ''; //If the day should be shown (otherwise, just month and year).
@@ -2599,7 +2599,7 @@ trait Functions {
 
 				//Convert times
 				$tweet->time_ago = human_time_diff(strtotime($tweet->created_at)); //Relative time
-				$tweet->time_formatted = date('l, F j, Y \a\t g:ia', strtotime($tweet->created_at)); //Human readable time
+				$tweet->time_formatted = date_i18n('l, F j, Y \a\t g:ia', strtotime($tweet->created_at)); //Human readable time
 				$tweet->time_ago_raw = date('U')-strtotime($tweet->created_at);
 
 				//Convert usernames, hashtags, and URLs into clickable links and add other markup
