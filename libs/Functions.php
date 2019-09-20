@@ -1726,15 +1726,12 @@ trait Functions {
 				$thisCat = get_category(get_query_var('cat'), false);
 				if ( $thisCat->parent !== 0 ){
 					$parents = get_ancestors($thisCat->parent, 'category', 'taxonomy');
-				    array_unshift($parents, $thisCat->parent);
-
-				    foreach ( array_reverse($parents) as $term_id ) {
-				        $parent = get_term( $term_id, $taxonomy );
-				        $name   = ( 'slug' === $args['format'] ) ? $parent->slug : $parent->name;
-
-				        echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . esc_url( get_term_link( $parent->term_id, $taxonomy ) ) . '" itemprop="item"><span itemprop="name">' . $name . '</span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ';
-				        $position++;
-				    }
+					array_unshift($parents, $thisCat->parent);
+					foreach ( array_reverse($parents) as $term_id ){
+						$parent = get_term($term_id, 'category');
+						echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . esc_url(get_term_link($parent->term_id, 'category')) . '" itemprop="item"><span itemprop="name">' . $parent->name . '</span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ';
+						$position++;
+					}
 				}
 
 				$prefix = '';
