@@ -1715,17 +1715,26 @@ trait Functions {
 
 			echo '</ol>';
 		} elseif ( is_home() || is_front_page() ){
-			echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . '</span></a><meta itemprop="position" content="' . $position . '" /></li></ol>';
+			echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . ' <span class="sr-only">' . get_bloginfo('title') . '</span></span></a><meta itemprop="position" content="' . $position . '" /></li></ol>';
 			$position++;
 			return false;
 		} else {
-			echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . '</span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ';
+			echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . ' <span class="sr-only">' . get_bloginfo('title') . '</span></span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ';
 			$position++;
 
 			if ( is_category() ){
 				$thisCat = get_category(get_query_var('cat'), false);
 				if ( $thisCat->parent !== 0 ){
-					echo get_category_parents($thisCat->parent, true, ' ' . $data['delimiter_html'] . ' ');
+					$parents = get_ancestors($thisCat->parent, 'category', 'taxonomy');
+				    array_unshift($parents, $thisCat->parent);
+
+				    foreach ( array_reverse($parents) as $term_id ) {
+				        $parent = get_term( $term_id, $taxonomy );
+				        $name   = ( 'slug' === $args['format'] ) ? $parent->slug : $parent->name;
+
+				        echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . esc_url( get_term_link( $parent->term_id, $taxonomy ) ) . '" itemprop="item"><span itemprop="name">' . $name . '</span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ';
+				        $position++;
+				    }
 				}
 
 				$prefix = '';
@@ -1735,7 +1744,8 @@ trait Functions {
 					$prefix = 'Category: ';
 				}
 
-				echo apply_filters('nebula_breadcrumbs_category', $data['before'] . '<a class="current-breadcrumb-link" href="' . get_category_link($thisCat->term_id) . '">' . $prefix . single_cat_title('', false) . '</a>' . $data['after'], $data);
+				echo apply_filters('nebula_breadcrumbs_category', $data['before'] . '<a class="current-breadcrumb-link" href="' . get_category_link($thisCat->term_id) . '" itemprop="item"><span itemprop="name">' . $prefix . single_cat_title('', false) . '</span></a><meta itemprop="position" content="' . $position . '" />' . $data['after'], $data);
+				$position++;
 			} elseif ( is_search() ){
 				echo $data['before'] . 'Search results' . $data['after'];
 			} elseif ( is_day() ){
