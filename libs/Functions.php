@@ -1779,13 +1779,8 @@ trait Functions {
 					$cat = get_the_category();
 					if ( !empty($cat) ){
 						$cat = $cat[0];
-						$cats = get_category_parents($cat, true, ' ' . $data['delimiter_html'] . ' '); //@todo "Nebula" 0: Do these get wrapper properly in <li> and <a> tags?
 
-						if ( empty($data['current']) ){
-							$cats = preg_replace("#^(.+)\s" . $data['delimiter_html'] . "\s$#", "$1", $cats);
-						}
-
-						echo apply_filters('nebula_breadcrumbs_categories', '<li>' . $cats . '<meta itemprop="position" content="' . $position . '" /></li>', $data);
+						echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . esc_url(get_term_link($cat->term_id, 'category')) . '" itemprop="item"><span itemprop="name">' . $cat->name . '</span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ';
 						$position++;
 
 						if ( !empty($data['current']) ){
