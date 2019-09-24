@@ -364,8 +364,12 @@ if ( !trait_exists('Optimization') ){
 			$default_preconnects = array();
 
 			//Google fonts if used
-			if ( $this->get_option('google_font_url') ){
-				$default_preconnects[] = '//fonts.gstatic.com';
+			if ( $this->get_option('remote_font_url') ){
+				if ( strpos($this->get_option('remote_font_url'), 'google') || strpos($this->get_option('remote_font_url'), 'gstatic') ){
+					$default_preconnects[] = '//fonts.gstatic.com';
+				} elseif ( strpos($this->get_option('remote_font_url'), 'typekit') ){
+					$default_preconnects[] = '//use.typekit.net';
+				}
 			}
 
 			//GCSE on 404 pages
@@ -431,8 +435,8 @@ if ( !trait_exists('Optimization') ){
 			$default_preloads = array();
 
 			//Google fonts if used
-			if ( $this->get_option('google_font_url') ){
-				$default_preloads[] = $this->get_option('google_font_url');
+			if ( $this->get_option('remote_font_url') ){
+				$default_preloads[] = $this->get_option('remote_font_url');
 			}
 
 			//Loop through all of the preloads

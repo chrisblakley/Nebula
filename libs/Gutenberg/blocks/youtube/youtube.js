@@ -4,7 +4,9 @@ wp.blocks.registerBlockType('nebula/youtube', {
 	category: 'nebula',
 	description: 'Add a Youtube video with Nebula styles and built-in tracking with the Youtube API.',
 	keywords: ['youtube', 'video', 'nebula'],
-	supportHTML: false, //Remove to allow block to be edited in HTML mode
+	supports: {
+		html: false //Remove to allow block to be edited in HTML mode
+	},
 	attributes: {
 		videoID: {
 			type: 'text',
@@ -67,12 +69,12 @@ wp.blocks.registerBlockType('nebula/youtube', {
 				'div',
 				{
 					id: 'nebula-youtube-block-' + props.instanceId,
-					className: 'nebula-youtube embed-responsive embed-responsive-16by9 ' + props.className,
+					className: 'nebula-youtube embed-responsive embed-responsive-16by9 ' + props.className, //This className var is confirmed working, but this is the Block Editor element– not the front-end!
 				},
 				wp.element.createElement(
 					'iframe',
 					{
-						id: 'phg-overview-video', //Does this need to be an option? I'd prefer not
+						id: 'nebula-youtube-block', //Does this need to be an option? I would prefer not
 						className: 'youtube embed-responsive-item',
 						width: 400,
 						height: 300,
@@ -85,6 +87,9 @@ wp.blocks.registerBlockType('nebula/youtube', {
 		];
 	},
 	save: function(props){
+
+		//console.log('props:', props);
+
 		return null; //Rendering in PHP (by calling whatever function is set to render_callback key of the register_block_type() function)
 	},
 });

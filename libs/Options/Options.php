@@ -308,7 +308,7 @@ if ( !trait_exists('Options') ){
 				'cm_maxscroll' => '',
 
 				//APIs Tab
-				'google_font_url' => '',
+				'remote_font_url' => '',
 				'gcm_sender_id' => '',
 				'google_server_api_key' => '',
 				'google_browser_api_key' => '',

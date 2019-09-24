@@ -417,6 +417,7 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//If the request was made via AJAX
+		public function is_ajax(){return $this->is_ajax_request();} //Alias
 		public function is_ajax_request(){
 			if ( !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' ){
 				return true;

@@ -469,8 +469,8 @@ if ( !trait_exists('Shortcodes') ){
 
 		public function accordion_shortcode($attributes, $content=''){
 			extract(shortcode_atts(array('class' => '', 'style' => ''), $attributes));
-			$return = '<div class="accordion ' . esc_attr($class) . ' style="' . esc_attr($style) . '" role="tablist">' . do_shortcode($content) . '</div>';
-			return $return;
+			$html = '<div class="accordion ' . esc_attr($class) . '" style="' . esc_attr($style) . '" role="tablist">' . do_shortcode($content) . '</div>';
+			return $html;
 		}
 
 		public function accordion_item_shortcode($attributes, $content=''){
@@ -478,13 +478,13 @@ if ( !trait_exists('Shortcodes') ){
 			$unique_id = bin2hex(random_bytes(16));
 
 			return '<div class="card">
-				<div class="card-header" id="heading' . $unique_id . '">
-					<h5 class="mb-0">
-						<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse' . $unique_id . '" aria-expanded="true" aria-controls="collapse' . $unique_id . '"><i class="fas fa-plus"></i> ' . $title . '</button>
+				<div class="card-header">
+					<h5 class="mb-0" id="heading' . $unique_id . '">
+						<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse' . $unique_id . '" aria-expanded="false" aria-controls="collapse' . $unique_id . '"><i class="fas fa-plus"></i> ' . $title . '</button>
 					</h5>
 				</div>
 
-				<div id="collapse' . $unique_id . '" class="collapse ' . esc_attr($default . ' ' . $class) . '" aria-labelledby="heading' . $unique_id . '">
+				<div id="collapse' . $unique_id . '" aria-labelledby="heading' . $unique_id . '" class="collapse ' . esc_attr($default) . ' ' . esc_attr($class) . '">
 					<p class="card-body">' . $content . '</p>
 				</div>
 			</div>';

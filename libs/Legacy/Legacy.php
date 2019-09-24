@@ -119,8 +119,8 @@ function nebula_custom_excerpt($text=false, $length=55, $hellip=false, $link=fal
 
 function nebula_google_font_option(){
 	$nebula_options = get_option('nebula_options');
-	if ( $nebula_options['google_font_url'] ){
-		return preg_replace("/(<link href=')|(' rel='stylesheet' type='text\/css'>)|(@import url\()|(\);)/", '', $nebula_options['google_font_url']);
+	if ( $nebula_options['remote_font_url'] ){
+		return preg_replace("/(<link href=')|(' rel='stylesheet' type='text\/css'>)|(@import url\()|(\);)/", '', $nebula_options['remote_font_url']);
 	} elseif ( $nebula_options['google_font_family'] ) {
 		$google_font_family = preg_replace('/ /', '+', $nebula_options['google_font_family']);
 		$google_font_weights = preg_replace('/ /', '', $nebula_options['google_font_weights']);

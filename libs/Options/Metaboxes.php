@@ -1509,10 +1509,10 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_main_apis_metabox($nebula_options){
 			?>
 				<div class="form-group">
-					<label for="google_font_url">Google Font</label>
-					<input type="text" name="nebula_options[google_font_url]" id="google_font_url" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_font_url']; ?>" placeholder="http://fonts.googleapis.com/css?family=Open+Sans:400,800" />
-					<p class="nebula-help-text short-help form-text text-muted">Choose which <a href="https://www.google.com/fonts" target="_blank" rel="noopener">Google Font</a> is used by default for this site by pasting the entire font URL.</p>
-					<p class="nebula-help-text more-help form-text text-muted">The default font uses the native system font of the user's device. Be sure to include (or exclude) the provided <code>&display=swap</code> parameter in this URL!</p>
+					<label for="remote_font_url">Remote Font</label>
+					<input type="text" name="nebula_options[remote_font_url]" id="remote_font_url" class="form-control nebula-validate-text" value="<?php echo $nebula_options['remote_font_url']; ?>" placeholder="http://fonts.googleapis.com/css?family=Open+Sans:400,800" />
+					<p class="nebula-help-text short-help form-text text-muted">Paste the entire URL of your remote font(s). Popular font services include <a href="https://www.google.com/fonts" target="_blank" rel="noopener">Google Fonts</a> and <a href="https://fonts.adobe.com/fonts" target="_blank" rel="noopener">Adobe Fonts</a>. Include all URL parameters here!</p>
+					<p class="nebula-help-text more-help form-text text-muted">The default font uses the native system font of the user's device. Be sure to include all desired parameters such as <code>&display=swap</code> or <code>:ital,wght@0,200..900;1,700</code> (for variable Google fonts) in this URL.</p>
 					<p class="option-keywords">remote resource minor page speed impact optimization optimize</p>
 				</div>
 
