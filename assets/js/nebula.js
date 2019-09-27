@@ -3197,6 +3197,16 @@ nebula.helpers = function(){
 	jQuery('.no-icon:not(a)').find('a').addClass('no-icon');
 
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
+
+	//Maintain tab navigability on hashchange (and when loaded with a hash). This also helps accessibility for things like skip to content links
+	if ( document.location.hash ){
+		nebula.focusOnElement(jQuery(document.location.hash));
+	}
+
+	//If the hash has been changed (activation of an in-page link)
+	nebula.dom.window.on('hashchange', function(){
+		nebula.focusOnElement(jQuery('#' + window.location.hash.replace(/^#/, '')));
+	});
 }
 
 nebula.initBootstrapFunctions = function(){
@@ -3369,6 +3379,7 @@ nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback
 				jQuery('html, body').animate({
 					scrollTop: element.offset().top-offset
 				}, scrollSpeed, function(){
+					nebula.focusOnElement(element);
 					if ( callback ){
 						callback();
 					}
@@ -3379,23 +3390,25 @@ nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback
 		return false;
 	}
 
-	nebula.dom.document.on('click', 'a[href*="#"]:not([href="#"])', function(){ //An href contains a hash ID but is not only a hash
+	nebula.dom.document.on('click', 'a[href*="#"]:not([href="#"])', function(){ //An href contains a hash ID but is not only a hash ("#content" but not "#")
 		var avoid = '.no-scroll, .mm-menu, .carousel, .tab-content, .modal, [data-toggle], #wpadminbar, #query-monitor';
-		if ( jQuery(this).is(avoid) || jQuery(this).parents(avoid).length ){
-			return false;
-		}
+		if ( !jQuery(this).is(avoid) && !jQuery(this).parents(avoid).length ){
+			if ( location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname ){ //Ensure the link does not have a protocol and is internal
+				var thisHash = this.hash;
+				var target = jQuery(thisHash) || jQuery('[name=' + thisHash.slice(1) +']'); //Determine the target
+				if ( target.length ){ //If target exists
+					pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : nebula.scroll.offset; //Determine the offset
+					var nOffset = Math.floor(target.offset().top-offset+pOffset) + jQuery('body').scrollTop();
+					scrollSpeed = nebula.scroll.speed || 500;
 
-		if ( location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname ){ //Ensure the link does not have a protocol and is internal
-			var target = jQuery(this.hash) || jQuery('[name=' + this.hash.slice(1) +']'); //Determine the target
-			if ( target.length ){ //If target exists
-				pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : nebula.scroll.offset; //Determine the offset
-				var nOffset = Math.floor(target.offset().top-offset+pOffset) + jQuery('body').scrollTop();
-				scrollSpeed = nebula.scroll.speed || 500;
-
-				jQuery('html, body').animate({
-					scrollTop: nOffset
-				}, scrollSpeed); //Speed is hard-coded, but could look for an HTML attribute if desired
-				return false;
+					jQuery('html, body').animate({
+						scrollTop: nOffset
+					}, scrollSpeed, function(){
+						nebula.focusOnElement(target);
+						window.location.hash = thisHash; //Add the hash to the URL so it can be refreshed, copied, links, etc.
+					}); //Speed is hard-coded, but could look for an HTML attribute if desired
+					return false;
+				}
 			}
 		}
 	});
@@ -3410,7 +3423,9 @@ nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback
 
 				jQuery('html, body').animate({
 					scrollTop: Math.floor(jQuery(scrollElement).offset().top-offset+pOffset)
-				}, scrollSpeed);
+				}, scrollSpeed, function(){
+					nebula.focusOnElement(scrollElement);
+				});
 			}
 		}
 		return false;
@@ -3421,6 +3436,22 @@ nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback
  Utility Functions
  These functions simplify and enhance other JavaScript functions
  ===========================*/
+
+//Focus on an element
+nebula.focusOnElement = function(element){
+	if ( !element.length ){
+		return;
+	}
+
+	//If the element is not focusable itself, add tabindex to make focusable and remove again
+	if ( !element.is(':focusable') ){ //Uses custom expression defined at the bottom of this file
+		element.attr('tabindex', -1).on('blur focusout', function(){
+			jQuery(this).removeAttr('tabindex');
+		});
+	}
+
+	element.focus(); //Focus on the element
+}
 
 //Get query string parameters
 nebula.getQueryStrings = function(url, format){
@@ -4975,7 +5006,15 @@ function isGoogleAnalyticsReady(){
 
 //Custom CSS expression for a case-insensitive contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
 //Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: nebula.keywordSearch(container, parent, value);
-jQuery.expr[':'].Contains=function(e,n,t){return(e.textContent||e.innerText||'').toUpperCase().indexOf(t[3].toUpperCase())>=0};
+jQuery.expr[':'].Contains = function(element, index, match){
+	return (element.textContent || element.innerText || '').toUpperCase().indexOf(match[3].toUpperCase()) >= 0
+};
+
+//Custom expression for any element that can be focused. Source: https://github.com/selfthinker/dokuwiki_template_writr/blob/master/js/skip-link-focus-fix.js
+//Call it with :focusable() or .is(':focusable')
+jQuery.expr[':'].focusable = function(element, index, match){
+	return jQuery(element).is(':input:enabled, a[href], area[href], object, [tabindex]') && !jQuery(element).is(':hidden');
+}
 
 //Escape required characters from a provided string. https://github.com/kvz/locutus
 function preg_quote(str, delimiter){return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');}

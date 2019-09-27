@@ -3240,7 +3240,7 @@ trait Functions {
 
 	//G1 Screen Reader Skip to Content Link https://www.w3.org/TR/WCAG20-TECHS/G1
 	public function skip_to_content_link(){
-		echo '<a class="skip-to-content-link sr-only" href="#content-section" tabindex="0">Skip to Content</a>';
+		echo '<a class="skip-to-content-link sr-only" href="#content-section">Skip to Content</a>';
 	}
 
 	//Make sure attachment URLs match the protocol (to prevent mixed content warnings).
