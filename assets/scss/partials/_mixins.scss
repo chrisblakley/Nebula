@@ -232,6 +232,21 @@
 	}
 }
 
+//.element {@include diffuse-shadow(8, rgba(0, 0, 0, 0.25), true);}
+@mixin diffuse-shadow($size, $color: rgba(0, 0, 0, 0.125), $multiply: false){
+	$val: 0 1px 1px $color;
+	@for ( $i from 1 through $size ){
+		@if ( $i % 2 == 0 ){
+			@if ( $multiply == true ){
+				$i: $i * 2;
+			}
+			$val: #{$val}, 0 #{$i}px #{$i}px #{$color};
+		}
+	}
+
+	box-shadow: $val;
+}
+
 //.element {@include clearfix();}
 @mixin clearfix(){
 	&:before,

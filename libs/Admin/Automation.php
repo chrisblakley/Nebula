@@ -64,11 +64,13 @@ if ( !trait_exists('Automation') ){
 					'slug' => 'regenerate-thumbnails',
 					'required' => false,
 				),
+/*
 				array(
 					'name' => 'W3 Total Cache',
 					'slug' => 'w3-total-cache',
 					'required' => false,
 				),
+*/
 				array(
 					'name' => 'WP-PageNavi',
 					'slug' => 'wp-pagenavi',

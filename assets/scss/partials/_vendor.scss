@@ -100,7 +100,8 @@ span.wpcf7-list-item-label {font-size: rem(14px);
 	}
 }
 
-.nebula-empty-required {border: 1px solid $danger_color;}
+.nebula-empty-required {border: 1px solid $danger_color !important;}
+.wpcf7-checkbox {display: inline-block; padding: 4px; border: 1px solid transparent; border-radius: 3px; transition: all 0.25s ease;}
 
 .wpcf7 ul {padding: 0; max-height: 2000px; list-style: none; overflow: hidden; transition: all 0.75s;}
 	.wpcf7-form.sent ul {max-height: 0;}

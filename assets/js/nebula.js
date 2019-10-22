@@ -2272,8 +2272,12 @@ nebula.cf7Functions = function(){
 			category: 'CF7 Form',
 			action: 'Submit (Invalid)',
 			formID: e.detail.id,
-			formTime: nebula.timer(e.detail.id, 'lap', 'wpcf7-submit-invalid'),
-			inputs: nebula.timings[e.detail.id].laps + ' inputs'
+		}
+
+		//If timing data exists
+		if ( typeof nebula.timings[e.detail.id] !== 'undefined' ){
+			thisEvent.formTime = nebula.timer(e.detail.id, 'lap', 'wpcf7-submit-invalid');
+			thisEvent.inputs = nebula.timings[e.detail.id].laps + ' inputs';
 		}
 
 		thisEvent.label = 'Form validation errors occurred on form ID: ' + thisEvent.formID;
@@ -2400,8 +2404,12 @@ nebula.cf7Functions = function(){
 			category: 'CF7 Form',
 			action: 'Submit (Attempt)',
 			formID: e.detail.id,
-			formTime: nebula.timer(e.detail.id, 'lap', 'wpcf7-submit-attempt'),
-			inputs: nebula.timings[e.detail.id].laps + ' inputs'
+		}
+
+		//If timing data exists
+		if ( typeof nebula.timings[e.detail.id] !== 'undefined' ){
+			thisEvent.formTime = nebula.timer(e.detail.id, 'lap', 'wpcf7-submit-attempt');
+			thisEvent.inputs = nebula.timings[e.detail.id].laps + ' inputs';
 		}
 
 		thisEvent.label = 'Submission attempt for form ID: ' + thisEvent.formID;

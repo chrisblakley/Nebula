@@ -74,7 +74,8 @@ $admin_hover_color: lighten($primary_color, 22%);
 
 //Ensure SVG images are sized appropriately
 table.media .column-title .media-icon img,
-.thumbnail img {width: 100%;}
+img.thumbnail,
+.thumbnail img {width: auto;} //Formerly 100%
 
 //Dashboard Font Awesome Lists
 ul.nebula-fa-ul {margin-left: 1.5em; padding-left: 0;
