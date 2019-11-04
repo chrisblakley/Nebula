@@ -436,7 +436,7 @@ if ( !trait_exists('Optimization') ){
 
 			//Google fonts if used
 			if ( $this->get_option('remote_font_url') ){
-				$default_preloads[] = $this->get_option('remote_font_url');
+				//$default_preloads[] = $this->get_option('remote_font_url'); //Oct 2019: disabling this for now as it delays render in Chrome
 			}
 
 			//Loop through all of the preloads

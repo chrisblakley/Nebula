@@ -2237,7 +2237,7 @@ nebula.cf7Functions = function(){
 			//Track each individual field focuses
 			if ( !jQuery(this).is('button') ){
 				thisEvent.action = 'Individual Field Focused';
-				thisEvent.label = 'Focus into ' + thisEvent.thisField + ' (Form ID: ' + thisEvent.formID + ')';
+				thisEvent.label = 'Focus into ' + thisEvent.field + ' (Form ID: ' + thisEvent.formID + ')';
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
@@ -2609,7 +2609,7 @@ nebula.liveValidator = function(){
 	});
 }
 
-//Apply Bootstrap appropriate validation classes to appropriate elements
+//Apply Bootstrap and CF7 appropriate validation classes to appropriate elements
 nebula.applyValidationClasses = function(element, validation, showFeedback){
 	if ( typeof element === 'string' ){
 		element = jQuery(element);
@@ -4840,7 +4840,7 @@ nebula.mmenus = function(){
 					footerIconLinks.content.push('<a href="' + nebula.site.options.twitter_url + '" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a>');
 				}
 
-				if ( nebula.site.options.instagram ){
+				if ( nebula.site.options.instagram_url ){
 					footerIconLinks.content.push('<a href="' + nebula.site.options.instagram + '" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>');
 				}
 

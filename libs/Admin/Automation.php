@@ -141,6 +141,11 @@ if ( !trait_exists('Automation') ){
 					'slug' => 'redirection',
 					'required' => false,
 				),
+				array(
+					'name' => 'Site Kit by Google',
+					'slug' => 'google-site-kit',
+					'required' => false,
+				),
 			);
 
 			if ( file_exists(WP_PLUGIN_DIR . '/woocommerce') ){
