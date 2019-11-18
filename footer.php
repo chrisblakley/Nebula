@@ -37,7 +37,7 @@
 					<div class="row powerfootercon">
 						<div class="col">
 							<?php if ( has_nav_menu('footer') ): ?>
-								<nav id="powerfooter" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement">
+								<nav id="powerfooter" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement" aria-label="Footer navigation">
 									<meta itemprop="name" content="Footer Menu">
 									<?php wp_nav_menu(array('theme_location' => 'footer', 'depth' => 2)); ?>
 								</nav>

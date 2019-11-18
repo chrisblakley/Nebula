@@ -4,7 +4,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col">
-						<nav id="utility-nav" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement">
+						<nav id="utility-nav" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement" aria-label="Utility navigation">
 							<meta itemprop="name" content="Utility Menu">
 							<?php wp_nav_menu(array('theme_location' => 'utility')); ?>
 						</nav>
@@ -29,7 +29,7 @@
 				</div><!--/col-->
 				<div class="col-lg-8">
 					<?php if ( has_nav_menu('primary') ): ?>
-						<nav id="primary-nav" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement">
+						<nav id="primary-nav" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement" aria-label="Primary navigation">
 							<meta itemprop="name" content="Primary Menu">
 							<?php wp_nav_menu(array('theme_location' => 'primary')); ?>
 						</nav>

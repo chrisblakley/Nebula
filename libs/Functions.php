@@ -1852,7 +1852,7 @@ trait Functions {
 	}
 
 	//Modified WordPress search form using Bootstrap components
-	public function search_form($form=null){
+	public function search_form($form=null, $button=true){
 		$override = apply_filters('pre_nebula_search_form', null, $form);
 		if ( isset($override) ){return $override;}
 
@@ -1865,10 +1865,13 @@ trait Functions {
 						</div>
 						<label class="sr-only" for="s">Search</label>
 						<input id="s" class="form-control ignore-form mb-2" type="text" name="s" value="' . get_search_query() . '" placeholder="' . $placeholder . '" role="search" />
-					</div>
+					</div>';
 
-					<button id="searchsubmit" class="btn btn-brand wp_search_submit mb-2" type="submit">' . __('Submit', 'nebula') . '</button>
-				</form>';
+		if ( !empty($button) ){
+			$form .= '<button id="searchsubmit" class="btn btn-brand wp_search_submit mb-2" type="submit">' . __('Submit', 'nebula') . '</button>';
+		}
+
+		$form .= '</form>';
 
 		return $form;
 	}
@@ -1883,11 +1886,11 @@ trait Functions {
 		if ( isset($override) ){return $override;}
 
 		$form = '<div id="nebula-hero-formcon">
-				<form id="nebula-hero-search" class="form-group search ignore-form" method="get" action="' . home_url('/') . '">
+				<form id="nebula-hero-search" class="form-group search ignore-form" method="get" action="' . home_url('/') . '" role="search">
 					<div class="input-group">
 						<i class="fas fa-search"></i>
 						<label class="sr-only" for="nebula-hero-search-input">Autocomplete Search</label>
-						<input id="nebula-hero-search-input" type="search" class="form-control open input search nofade ignore-form" name="s" placeholder="' . $placeholder . '" autocomplete="off" role="search" tabindex="0" x-webkit-speech />
+						<input id="nebula-hero-search-input" type="search" class="form-control open input search nofade ignore-form" name="s" placeholder="' . $placeholder . '" autocomplete="off" tabindex="0" x-webkit-speech />
 					</div>
 				</form>
 			</div>';

@@ -113,8 +113,8 @@ nebula.regex = {
 	phone: /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/, //To allow letters, you'll need to convert them to their corresponding number before matching this RegEx.
 	address: /^\d{1,6}\s+.{2,25}\b(avenue|ave|court|ct|street|st|drive|dr|lane|ln|road|rd|blvd|plaza|parkway|pkwy)[.,]?[^a-z]/i, //Street address
 	date: {
-		mdy: /^((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))[.\/-](\d{4}|\d{2})$/,
-		ymd: /^(\d{4}|\d{2})[.\/-]((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))$/,
+		mdy: /^((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))[.\/-]((1|2)\d{3}|\d{2})$/,
+		ymd: /^((1|2)\d{3}|\d{2})[.\/-]((((0[13578])|([13578])|(1[02]))[.\/-](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[.\/-](([1-9])|([0-2][0-9])|(30)))|((2|02)[.\/-](([1-9])|([0-2][0-9]))))$/,
 	},
 	hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/,
 	ip: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
@@ -735,7 +735,7 @@ nebula.eventTracking = function(){
 
 	nebula.once(function(){
 		//Btn Clicks
-		nebula.dom.document.on('mousedown', "button, .btn, [role='button'], a.wp-block-button__link", function(e){
+		nebula.dom.document.on('mousedown', "button, .btn, [role='button'], a.wp-block-button__link, .hs-button", function(e){
 			var thisEvent = {
 				event: e,
 				category: 'Button',
@@ -1568,7 +1568,7 @@ nebula.scrollDepth = function(){
 		var scrollDepthHandler = function(){
 			nebula.once(function(){
 				scrollBegin = performance.now()-scrollReady;
-				if ( scrollBegin < 250 ){ //Try to avoid autoscrolls
+				if ( scrollBegin > 250 ){ //Try to avoid autoscrolls
 					var thisEvent = {
 						category: 'Scroll Depth',
 						action: 'Began Scrolling',
@@ -2558,14 +2558,13 @@ nebula.liveValidator = function(){
 	});
 
 	//Date inputs
+	if ( jQuery('.nebula-validate-date').length ){
+		nebula.loadJS(nebula.site.resources.scripts.nebula_moment);
+	}
 	nebula.dom.document.on('keyup change blur', '.nebula-validate-date', function(e){
 		if ( jQuery(this).val() === '' ){
 			nebula.applyValidationClasses(jQuery(this), 'reset', false);
-		} else if ( nebula.regex.date.mdy.test(jQuery(this).val()) ){ //Check for MM/DD/YYYY (and flexible variations)
-			nebula.applyValidationClasses(jQuery(this), 'valid', false);
-		} else if ( nebula.regex.date.ymd.test(jQuery(this).val()) ){ //Check for YYYY/MM/DD (and flexible variations)
-			nebula.applyValidationClasses(jQuery(this), 'valid', false);
-		} else if ( strtotime(jQuery(this).val()) && strtotime(jQuery(this).val()) > -2208988800 ){ //Check for textual dates (after 1900)
+		} else if ( moment(jQuery(this).val()).isValid() && moment(jQuery(this).val()).year() > 1800 && moment(jQuery(this).val()).year() < 2999 ){
 			nebula.applyValidationClasses(jQuery(this), 'valid', false);
 		} else {
 			nebula.applyValidationClasses(jQuery(this), 'invalid', ( e.type !== 'keyup' ));
