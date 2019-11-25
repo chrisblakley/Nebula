@@ -316,7 +316,7 @@ if ( !trait_exists('Shortcodes') ){
 				$zoom = '&zoom=' . esc_url($zoom);
 			}
 
-			$return = '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy"><iframe class="nebula-googlemap-shortcode googlemap ' . esc_attr($class) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" frameborder="0" src="https://www.google.com/maps/embed/v1/' . $mode . '?key=' . $key . $q . $zoom . $center . '&maptype=' . $maptype . $language . $region . '" style="border: 0; ' . esc_attr($style) . '" allowfullscreen loading="lazy"></iframe></noscript>';
+			$return = '<iframe class="nebula-googlemap-shortcode googlemap ' . esc_attr($class) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" frameborder="0" src="https://www.google.com/maps/embed/v1/' . $mode . '?key=' . $key . $q . $zoom . $center . '&maptype=' . $maptype . $language . $region . '" style="border: 0; ' . esc_attr($style) . '" allowfullscreen loading="lazy">';
 
 			return $return;
 		}
@@ -327,9 +327,9 @@ if ( !trait_exists('Shortcodes') ){
 			$vimeo_data = $this->video_meta('vimeo', $id);
 			$vimeo = '<div class="nebula-vimeo embed-responsive embed-responsive-16by9">';
 			if ( !empty($vimeo_data) && empty($vimeo_data['error']) ){
-				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-vimeo"><iframe id="' . esc_attr($vimeo_data['safetitle']) . '" class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . esc_attr($id) . '?api=1&player_id=' . esc_attr($vimeo_data['safetitle'], 'url') . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" autoplay="' . esc_attr($autoplay) . '" badge="' . esc_attr($badge) . '" byline="' . esc_attr($byline) . '" color="' . esc_attr($color) . '" loop="' . esc_attr($loop) . '" portrait="' . esc_attr($portrait) . '" title="' . esc_attr($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen loading="lazy"></iframe></noscript>';
+				$vimeo .= '<iframe id="' . esc_attr($vimeo_data['safetitle']) . '" class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . esc_attr($id) . '?api=1&player_id=' . esc_attr($vimeo_data['safetitle'], 'url') . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" autoplay="' . esc_attr($autoplay) . '" badge="' . esc_attr($badge) . '" byline="' . esc_attr($byline) . '" color="' . esc_attr($color) . '" loop="' . esc_attr($loop) . '" portrait="' . esc_attr($portrait) . '" title="' . esc_attr($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen loading="lazy"></iframe>';
 			} else {
-				$vimeo .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-vimeo"><iframe class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . esc_attr($id) . '" width="' . esc_attr($width) . ' height="' . esc_attr($height) . '" autoplay="' . esc_attr($autoplay) . '" badge="' . esc_attr($badge) . '" byline="' . esc_attr($byline) . '" color="' . esc_attr($color) . '" loop="' . esc_attr($loop) . '" portrait="' . esc_attr($portrait) . '" title="' . esc_attr($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen loading="lazy"></iframe></noscript>';
+				$vimeo .= '<iframe class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . esc_attr($id) . '" width="' . esc_attr($width) . ' height="' . esc_attr($height) . '" autoplay="' . esc_attr($autoplay) . '" badge="' . esc_attr($badge) . '" byline="' . esc_attr($byline) . '" color="' . esc_attr($color) . '" loop="' . esc_attr($loop) . '" portrait="' . esc_attr($portrait) . '" title="' . esc_attr($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen loading="lazy"></iframe>';
 
 				if ( $this->is_dev() ){
 					$vimeo .= '<script>console.warn("' . esc_html($vimeo_data['error']) . ' (via Vimeo shortcode)");</script>';
@@ -352,10 +352,9 @@ if ( !trait_exists('Shortcodes') ){
 			$youtube = '<div class="nebula-youtube embed-responsive embed-responsive-16by9">';
 			if ( !empty($youtube_data) && empty($youtube_data['error']) ){
 				//Note: removed &origin=' . youtube_meta($id, 'origin') . ' right before &rel= due to console warnings. Doesn't seem to be an issue.
-				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-youtube"><iframe id="' . esc_attr($youtube_data['safetitle']) . '" class="' . esc_attr('youtube embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($youtube_data['id'], 'url') . '?wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen="" loading="lazy"></iframe></noscript>';
+				$youtube .= '<iframe id="' . esc_attr($youtube_data['safetitle']) . '" class="' . esc_attr('youtube embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($youtube_data['id'], 'url') . '?wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen="" loading="lazy"></iframe>';
 			} else {
-				$youtube .= '<samp class="nebula-lazy-position"></samp><noscript class="nebula-lazy lazy-youtube"><iframe class="' . esc_attr('no-api embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($id, 'url') . '?wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen loading="lazy"></iframe></noscript>';
-
+				$youtube .= '<iframe class="' . esc_attr('no-api embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($id, 'url') . '?wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen loading="lazy"></iframe>';
 				if ( $this->is_dev() ){
 					$youtube .= '<script>console.warn("(' . esc_attr($youtube_data['error']) . ' (via Youtube shortcode)");</script>';
 				}
