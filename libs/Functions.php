@@ -387,7 +387,7 @@ trait Functions {
 				if ( !is_dir(get_stylesheet_directory() . '/assets/img/meta') || !file_exists(get_stylesheet_directory() . '/assets/img/meta/favicon.ico') ){
 					$nebula_warnings['child_meta_graphics'] = array(
 						'level' => 'error',
-						'description' => 'A child theme is active, but missing meta graphics!</em>'
+						'description' => 'A child theme is active, but missing meta graphics. Create a <code>/assets/img/meta/</code> directory in the child theme (or copy it over from the Nebula parent theme).</em>'
 					);
 				}
 			}

@@ -42,9 +42,10 @@ To take full advantage of Nebula's features, the following are recommended:
 1. [Download the .zip file of the Nebula theme.](https://github.com/chrisblakley/Nebula/archive/master.zip) Upload to the WordPress `/wp-content/themes/` directory.
 2. Activate the Nebula theme and run the automated initialization.
 3. This will automatically install and activate the Nebula Child theme.
-4. It is recommended to rename the child theme (in `/assets/scss/style.scss` and the directory name itself)
-5. Install and activate recommended plugins including the [Nebula Companion plugin](https://github.com/chrisblakley/Nebula-Companion).
-6. Customize Nebula Options (including enabling Sass if desired)
+4. It is recommended to rename the child theme (in `/assets/scss/style.scss` and the directory name itself).
+5. Create a `/assets/img/meta/` directory in the child theme (or copy it from the Nebula parent).
+6. Install and activate recommended plugins including the [Nebula Companion plugin](https://github.com/chrisblakley/Nebula-Companion).
+7. Customize Nebula Options (including enabling Sass if desired)
 
 ## Documentation <a name="documentation"></a>
 Comprehensive documentation is available at [https://gearside.com/nebula](https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=full+documentation) along with a [testing checklist]((https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=testing+checklist)) and [launch guide](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=launch+checklist).

@@ -2247,7 +2247,7 @@ nebula.cf7Functions = function(){
 		nebula.timer(formID, 'start', thisField);
 
 		//Individual form field timings
-		if ( typeof nebula.timings[formID] !== 'undefined' && typeof nebula.timings[formID].lap[nebula.timings[formID].laps-1] !== 'undefined' ){
+		if ( nebula && nebula.timings && typeof nebula.timings[formID] !== 'undefined' && typeof nebula.timings[formID].lap[nebula.timings[formID].laps-1] !== 'undefined' ){
 			var labelText = '';
 			if ( jQuery(this).parent('.label') ){
 				labelText = jQuery(this).parent('.label').text();
@@ -2275,7 +2275,7 @@ nebula.cf7Functions = function(){
 		}
 
 		//If timing data exists
-		if ( typeof nebula.timings[e.detail.id] !== 'undefined' ){
+		if ( nebula && nebula.timings && typeof nebula.timings[e.detail.id] !== 'undefined' ){
 			thisEvent.formTime = nebula.timer(e.detail.id, 'lap', 'wpcf7-submit-invalid');
 			thisEvent.inputs = nebula.timings[e.detail.id].laps + ' inputs';
 		}
@@ -2407,7 +2407,7 @@ nebula.cf7Functions = function(){
 		}
 
 		//If timing data exists
-		if ( typeof nebula.timings[e.detail.id] !== 'undefined' ){
+		if ( nebula && nebula.timings && typeof nebula.timings[e.detail.id] !== 'undefined' ){
 			thisEvent.formTime = nebula.timer(e.detail.id, 'lap', 'wpcf7-submit-attempt');
 			thisEvent.inputs = nebula.timings[e.detail.id].laps + ' inputs';
 		}
