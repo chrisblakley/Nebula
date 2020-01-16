@@ -475,6 +475,14 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text short-help form-text text-muted">Adds CSS to the browser console. (Default: <?php echo $this->user_friendly_default('console_css'); ?>)</p>
 					<p class="option-keywords">discretionary</p>
 				</div>
+
+				<div class="form-group">
+					<label for="cookie_notification">Cookie Notification</label>
+					<textarea name="nebula_options[cookie_notification]" id="cookie_notification" class="form-control textarea" rows="3"><?php echo $nebula_options['cookie_notification']; ?></textarea>
+					<p class="nebula-help-text short-help form-text text-muted">The text that will appear in the cookie notification (leave empty to disable).</p>
+					<p class="nebula-help-text more-help form-text text-muted">If a <a href="options-privacy.php">Privacy Policy</a> page is set with WordPress core, a link will appear to that page. This field accepts HTML for cross-linking to additional legal pages.</p>
+					<p class="option-keywords">privacy policy data security legal gdpr ccpa notice usage tracking cookies</p>
+				</div>
 			<?php
 
 			do_action('nebula_options_frontend_metabox', $nebula_options);

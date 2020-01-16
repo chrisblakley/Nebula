@@ -224,6 +224,7 @@ if ( !trait_exists('Options') ){
 				'scss' => 0,
 				'critical_css' => 0,
 				'console_css' => 1,
+				'cookie_notification' => '',
 
 				//Analytics Tab
 				'ga_tracking_id' => '',

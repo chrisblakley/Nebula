@@ -447,6 +447,15 @@ trait Functions {
 				);
 			}
 
+			//Ensure a privacy policy is set with WordPress core
+			if ( empty(get_privacy_policy_url()) ){
+				$nebula_warnings[] = array(
+					'level' => 'warn',
+					'description' => '<a href="options-privacy.php">Privacy policy</a> is not setup with WordPress.',
+					'url' => get_admin_url() . 'options-privacy.php'
+				);
+			}
+
 			//Check if all SCSS files were processed manually.
 			if ( $this->get_option('scss') && (isset($_GET['sass']) || isset($_GET['scss'])) ){
 				if ( $this->is_dev() || $this->is_client() ){

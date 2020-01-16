@@ -20,6 +20,8 @@ if ( !trait_exists('Security') ){
 			add_action('get_header', array($this, 'redirect_author_template'));
 			add_filter('rest_endpoints', array($this, 'rest_endpoints_security'));
 
+			add_action('wp_footer', array($this, 'cookie_notification'));
+
 			//Disable the file editor for non-developers
 			if ( !$this->is_dev() ){
 				define('DISALLOW_FILE_EDIT', true);
@@ -281,6 +283,24 @@ if ( !trait_exists('Security') ){
 			);
 			$all_blacklisted_domains = apply_filters('nebula_blacklisted_domains', $manual_nebula_blacklisted_domains);
 			return array_merge($blacklisted_domains, $all_blacklisted_domains);
+		}
+
+		//Cookie Notification HTML that appears in the footer
+		function cookie_notification(){
+			if ( nebula()->option('cookie_notification') && empty($_COOKIE['acceptcookies']) ){
+				?>
+				<div id="nebula-cookie-notification">
+					<p><?php echo nebula()->option('cookie_notification'); ?></p>
+					<div class="links">
+						<?php if ( get_privacy_policy_url() ): ?>
+							<a href="<?php echo get_privacy_policy_url(); ?>" target="_blank"><?php _e('Privacy Policy', 'nebula'); ?></a>
+						<?php endif; ?>
+
+						<a id="nebula-cookie-accept" href="#"><?php _e('Accept', 'nebula'); ?></a>
+					</div>
+				</div>
+				<?php
+			}
 		}
 	}
 }

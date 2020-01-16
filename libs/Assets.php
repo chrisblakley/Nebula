@@ -62,7 +62,7 @@ if ( !trait_exists('Assets') ){
 			$this->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js', array('async', 'crossorigin'), null, '2.4.1', true);
 			$this->register_script('nebula-nebula', get_template_directory_uri() . '/assets/js/nebula.js', array('defer'), array('jquery-core'), $this->version('full'), true);
 
-			$this->register_script('nebula-nebula-module', get_template_directory_uri() . '/assets/js/nebula-module.js', array('defer', 'module'), array('jquery-core'), $this->version('full'), true); //This is for testing only! Not supported in IE11
+			$this->register_script('nebula-nebula-module', get_template_directory_uri() . '/assets/js/nebula-module.js', array('defer', 'module'), array('jquery-core'), $this->version('full'), true); //This is for upcoming implementation only! Not supported in IE11
 
 			$this->register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', null, array('jquery-core'), $this->version('full'), true);
 			$this->register_script('nebula-admin', get_template_directory_uri() . '/assets/js/admin.js', array('defer'), array('jquery-core'), $this->version('full'), true);

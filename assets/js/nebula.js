@@ -86,6 +86,8 @@ jQuery(window).on('load', function(){
 		nebula.networkAvailable();
 	});
 
+	nebula.cookieNotification();
+
 	window.performance.mark('nebula_window_load_end');
 	window.performance.measure('nebula_window_load_functions', 'nebula_window_load_start', 'nebula_window_load_end');
 	window.performance.measure('nebula_fully_loaded', 'navigationStart', 'nebula_window_load_end');
@@ -96,12 +98,12 @@ jQuery(window).on('load', function(){
  ===========================*/
 
 jQuery(window).on('resize', function(){
-	nebula.debounce(function(){
+	nebula.throttle(function(){
 		if ( typeof nebula.lastWindowWidth !== 'undefined' && nebula.dom.window.width() != nebula.lastWindowWidth ){ //If the width actually changed
 			nebula.lastWindowWidth = nebula.dom.window.width();
 			nebula.mobileSearchPlaceholder();
 		}
-	}, 500, 'window resize');
+	}, 1000, 'window resize');
 }); //End Window Resize
 
 /*==========================
@@ -351,6 +353,35 @@ nebula.postMessage = function(data){
 /*==========================
  Detection Functions
  ===========================*/
+
+//Cookie notification
+nebula.cookieNotification = function(){
+	if ( jQuery('#nebula-cookie-notification').length && !nebula.readCookie('acceptcookies') ){
+		//Show the notice as soon as it will not interfere with loading nor become laggy
+		window.requestAnimationFrame(function(){ //Change to requestIdleCallback when we stop supporting IE11
+			if ( jQuery('body').hasClass('desktop') ){ //If already detected as a desktop via DeviceDetector or WordPress itself use fixed posision via CSS
+				jQuery('#nebula-cookie-notification').addClass('active');
+			} else { //Mobile browsers cannot use position fixed, so a hack is needed.
+				jQuery('#nebula-cookie-notification').addClass('active').css({
+					position: 'absolute', //Must use absolute on mobile instead of fixed
+					bottom: 'auto',
+					top: window.innerHeight-jQuery('#nebula-cookie-notification').outerHeight()-40, //Window height - height of prompt - 40px spacing
+				});
+			}
+		});
+
+		//Hide the interface upon acceptance
+		jQuery(document).on('click', '#nebula-cookie-accept', function(){
+			nebula.createCookie('acceptcookies', true);
+
+			window.requestAnimationFrame(function(){
+				jQuery('#nebula-cookie-notification').removeClass('active');
+			});
+
+			return false;
+		});
+	}
+}
 
 //Check (or set) network availability (online/offline)
 nebula.networkAvailable = function(){
@@ -804,7 +835,7 @@ nebula.eventTracking = function(){
 				var thisEvent = {
 					event: e,
 					category: 'Carousel',
-					action: e.target.id || e.target.title || e.target.className.replace(' ', '.'),
+					action: e.target.id || e.target.title || e.target.className.replace(/\s/g, '.'),
 					from: e.from,
 					to: e.to,
 				}
@@ -828,7 +859,7 @@ nebula.eventTracking = function(){
 				event: e,
 				category: 'Generic Form',
 				action: 'Submit',
-				formID: e.target.id || 'form.' + e.target.className.replace(' ', '.'),
+				formID: e.target.id || 'form.' + e.target.className.replace(/\s/g, '.'),
 			}
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -884,7 +915,7 @@ nebula.eventTracking = function(){
 				category: 'Internal Search',
 				action: 'Submit',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				query: jQuery.trim(jQuery(this).find('input[name="s"]').val())
+				query: jQuery.trim(jQuery(this).find('input[name="s"]').val().toLowerCase())
 			}
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1410,7 +1441,7 @@ nebula.eventTracking = function(){
 				event: e,
 				category: 'DataTables',
 				action: 'Search Filter',
-				query: jQuery.trim(oThis.val())
+				query: jQuery.trim(oThis.val().toLowerCase())
 			}
 
 			nebula.debounce(function(){
@@ -1908,7 +1939,7 @@ nebula.autocompleteSearch = function(element, types){
 								category: 'Internal Search',
 								action: 'Autocomplete Search' + noSearchResults,
 								request: request,
-								term: request.term,
+								term: request.term.toLowerCase(),
 								noResults: ( noSearchResults )? true : false,
 							}
 
@@ -2689,8 +2720,8 @@ nebula.lazyLoadAssets = function(){
 	//Lazy load CSS assets
 	jQuery.each(nebula.site.resources.lazy.styles, function(handle, condition){
 		if ( condition === 'all' || jQuery(condition).length ){
-			if ( nebula.site.resources.styles[handle.replace('-', '_')] ){ //If that handle exists in the registered styles
-				nebula.loadCSS(nebula.site.resources.styles[handle.replace('-', '_')]);
+			if ( nebula.site.resources.styles[handle.replace(/-/g, '_')] ){ //If that handle exists in the registered styles
+				nebula.loadCSS(nebula.site.resources.styles[handle.replace(/-/g, '_')]);
 			}
 		}
 	});
@@ -2698,8 +2729,8 @@ nebula.lazyLoadAssets = function(){
 	//Lazy load JS assets
 	jQuery.each(nebula.site.resources.lazy.scripts, function(handle, condition){
 		if ( condition === 'all' || jQuery(condition).length ){
-			if ( nebula.site.resources.scripts[handle.replace('-', '_')] ){ //If that handle exists in the registered scripts
-				nebula.loadJS(nebula.site.resources.scripts[handle.replace('-', '_')]);
+			if ( nebula.site.resources.scripts[handle.replace(/-/g, '_')] ){ //If that handle exists in the registered scripts
+				nebula.loadJS(nebula.site.resources.scripts[handle.replace(/-/g, '_')]);
 			}
 		}
 	});
@@ -3667,7 +3698,8 @@ nebula.debounce = function(callback, wait, uniqueID, immediate){
 		uniqueID = "Don't call this twice without a uniqueID";
 	}
 
-	var context = this, args = arguments;
+	var context = this;
+	var args = arguments;
 	var later = function(){
 		debounceTimers[uniqueID] = null;
 		if ( !immediate ){
@@ -3676,17 +3708,39 @@ nebula.debounce = function(callback, wait, uniqueID, immediate){
 	};
 	var callNow = immediate && !debounceTimers[uniqueID];
 
-	clearTimeout(debounceTimers[uniqueID]);
+	clearTimeout(debounceTimers[uniqueID]); //Clear the timeout on every event. Once events stop the timeout is allowed to complete.
 	debounceTimers[uniqueID] = setTimeout(later, wait);
 	if ( callNow ){
 		callback.apply(context, args);
 	}
 };
 
-//Allow the first of many events
-//This is just an alias of the debounce function that runs on the leading edge.
+//Limit functionality to only run once per specified time period
 nebula.throttle = function(callback, cooldown, uniqueID){
-	nebula.debounce(callback, cooldown, uniqueID, true);
+	if ( typeof throttleTimers === "undefined" ){
+		throttleTimers = {};
+	}
+
+	if ( !uniqueID ){
+		uniqueID = "Don't call this twice without a uniqueID";
+	}
+
+	var context = this;
+	var args = arguments;
+	var later = function(){
+        if ( typeof throttleTimers[uniqueID] === 'undefined' ){ //If we're not waiting
+            callback.apply(context, args); //Execute callback function
+
+			throttleTimers[uniqueID] = 'waiting'; //Prevent future invocations
+
+			//After the cooldown period, allow future invocations
+            setTimeout(function(){
+                throttleTimers[uniqueID] = undefined; //Allow future invocations (undefined means it is not waiting)
+            }, cooldown);
+        }
+    }
+
+    return later();
 }
 
 //Cookie Management

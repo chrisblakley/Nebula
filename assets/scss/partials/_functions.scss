@@ -9,32 +9,35 @@
 //.example {color: brand(flickr, 2);}
 @function brands($name, $index: 1){@return brand($name, $index);}
 @function brand($name, $index: 1){
-	@if $index == 0 {
+	@if ( $index == 0 ){
 		$index: 1;
 	}
 
 	$index_names: (primary: 1, secondary: 2, tertiary: 3, quaternary: 4, quinary: 5, senary: 6, septenary: 7, octonary: 8, nonary: 9, denary: 10);
-	@if map-has-key($index_names, $index) {
+	@if ( map-has-key($index_names, $index) ){
 		$index: map_get($index_names, $index);
 	}
 
-	$brand_colors: map-get($brands, $name);
-	@if $index > length($brand_colors) {
+	$brand_colors: map-get($brands, $name); //Retrieve the colors from this specific brand
+	@if ( $index > length($brand_colors) ){
 		//@warn "#{$name} does not have a color in the index of #{$index}";
 		$index: 1;
 	}
 
-	@if length($brand_colors) == 1 {
-		@return $brand_colors;
+	//If this brand only has 1 color, return it.
+	@if ( length($brand_colors) == 1 ){
+		@return nth($brand_colors, 1); //Return the first (only) color in the list
 	}
 
 	@each $current_color in $brand_colors {
 		$i: index($brand_colors, $current_color);
 		//@warn "#{$current_color} is in the index of #{$i}";
-		@if $i == $index {
+		@if ( $i == $index ){
 			@return $current_color;
 		}
 	}
+
+	@return #000;
 }
 
 //Simply return white or black based on the provided background color. This is much faster than the high-contrast-color() function, but may not be as accurate to appropriate contrast ratios.
@@ -51,7 +54,7 @@
 }
 
 //Return the color with the higher contrast ratio against the background.
-//.element {background: #123456; color: readable-color(#123456, #e2e2e2, #444);}
+//.element {background: #123456; color: high-contrast-color(#123456, #e2e2e2, #444);}
 @function high-contrast-color($bg, $light: #fff, $dark: #000){
 	$lightContrast: contrast($bg, $light);
 	$darkContrast: contrast($bg, $dark);

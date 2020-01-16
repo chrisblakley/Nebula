@@ -171,14 +171,14 @@ th#id {width: 50px;}
 }
 
 //For both Dev Search and TODO Manager
-.linenumber {font-weight: 800;}
+.linenumber {font-weight: 800; text-decoration: none;}
 .precon {display: none; resize: none;
 	pre.actualline {display: table; font-family: monospace; font-size: 10px; margin: 0; color: #666; background: #fff; padding: 2px 5px; border-radius: 5px; resize: none; transition: all 0.25s;}
 }
 
 //Design Reference metabox
 .design-reference-col {display: flex; margin-bottom: 15px; margin-right: 20px;
-	.color-block {display: flex; flex-direction: column; width: 50px; padding-top: 10px; padding-bottom: 4px; text-align: center; margin-right: 6px;
+	.color-block {display: flex; flex-direction: column; width: 50px; padding-top: 10px; padding-bottom: 4px; text-align: center; margin-right: 6px; text-decoration: none;
 		&.primary {background: $primary_color; color: high-contrast-color($primary_color);}
 		&.secondary {background: $secondary_color; color: high-contrast-color($secondary_color);}
 

@@ -49,3 +49,24 @@
 .copyright-con {position: relative; padding-top: 20px; text-align: center; color: #fff; z-index: 10;
 	p {display: inline-block; font-size: rem(14px); color: #fff;}
 }
+
+//Cookie Notification
+#nebula-cookie-notification {position: fixed; bottom: 40px; left: 0; background: rgba(0, 0, 0, 0.95); color: #bbb; font-size: 14px; padding: 25px; max-width: 300px; box-shadow: 0 6px 24px 0 rgba(0, 0, 0, 0.3); z-index: 1000; opacity: 0; transition: all 0.75s easing(easeOutBack);
+	@include media("lg"){max-width: 400px;};
+
+	&.active {opacity: 1; left: 40px;}
+
+	//In case the user-editable cookie text includes HTML links
+	a {color: #fff;
+		&:hover,
+		&:focus {color: #bbb;}
+	}
+
+	//Acceptance links
+	div.links {display: flex; justify-content: flex-end;
+		a {margin-left: 15px; padding: 5px 10px; border-radius: 5px; color: high-contrast-color(#000, $primary_color, #fff);
+			&:hover,
+			&:focus {background: $primary_color; color: readable-color($primary_color); color: readable-color($primary_color);}
+		}
+	}
+}
