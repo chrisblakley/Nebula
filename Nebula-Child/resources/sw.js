@@ -1,13 +1,13 @@
 //BEGIN automated edits. These will be automatically overwritten.
 var THEME_NAME = 'nebula-child';
-var NEBULA_VERSION = 'v7.8.15.5374'; //Wednesday, January 15, 2020 3:01:07 PM
+var NEBULA_VERSION = 'v7.9.4.3546'; //Tuesday, February 4, 2020 8:30:41 AM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var OFFLINE_GA_DIMENSION = 'cd2';
 var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
 var MANIFEST = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/inc/manifest.json';
 var HOME_URL = 'https://gearside.com/nebula/';
-var START_URL = 'https://gearside.com/nebula/?utm_source=pwa';
+var START_URL = 'https://gearside.com/nebula/?utm_source=pwa'; //@todo "Nebula" 0: How do we append ?utm_source=pwa to this without causing an additional resource request to cache it?
 //END automated edits
 
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js'); //https://developers.google.com/web/tools/workbox/guides/get-started

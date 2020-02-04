@@ -267,8 +267,8 @@ nebula.predictiveCacheListeners = function(){
 	//Internal link hovers
 	var predictiveHoverTimeout;
 	jQuery('a').hover(function(){
-		oThis = jQuery(this);
-		url = oThis.attr('href');
+		var oThis = jQuery(this);
+		var url = oThis.attr('href');
 
 		if ( url && !predictiveHoverTimeout ){
 			predictiveHoverTimeout = window.setTimeout(function(){
@@ -359,11 +359,11 @@ nebula.cookieNotification = function(){
 	if ( jQuery('#nebula-cookie-notification').length && !nebula.readCookie('acceptcookies') ){
 		//Show the notice as soon as it will not interfere with loading nor become laggy
 		window.requestAnimationFrame(function(){ //Change to requestIdleCallback when we stop supporting IE11
-			if ( jQuery('body').hasClass('desktop') ){ //If already detected as a desktop via DeviceDetector or WordPress itself use fixed posision via CSS
-				jQuery('#nebula-cookie-notification').addClass('active');
-			} else { //Mobile browsers cannot use position fixed, so a hack is needed.
-				jQuery('#nebula-cookie-notification').addClass('active').css({
-					position: 'absolute', //Must use absolute on mobile instead of fixed
+			jQuery('#nebula-cookie-notification').addClass('active');
+
+			if ( !nebula.dom.body.hasClass('desktop') ){ //Desktop users (as detected by DeviceDetector or WordPress core) can use fixed positioning, but mobile must use absolute positioning
+				jQuery('#nebula-cookie-notification').css({
+					position: 'absolute',
 					bottom: 'auto',
 					top: window.innerHeight-jQuery('#nebula-cookie-notification').outerHeight()-40, //Window height - height of prompt - 40px spacing
 				});
@@ -1024,6 +1024,7 @@ nebula.eventTracking = function(){
 				linkText: jQuery.trim(jQuery(this).text())
 			}
 
+			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 		});
@@ -1038,6 +1039,7 @@ nebula.eventTracking = function(){
 				linkText: jQuery.trim(jQuery(this).text())
 			}
 
+			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 		});
@@ -1052,6 +1054,7 @@ nebula.eventTracking = function(){
 				linkText: jQuery.trim(jQuery(this).text())
 			}
 
+			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 		});
@@ -1066,6 +1069,7 @@ nebula.eventTracking = function(){
 				linkText: jQuery.trim(jQuery(this).text())
 			}
 
+			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 		});
@@ -1080,6 +1084,7 @@ nebula.eventTracking = function(){
 				linkText: jQuery.trim(jQuery(this).text())
 			}
 
+			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 		});
@@ -1094,8 +1099,25 @@ nebula.eventTracking = function(){
 				linkText: jQuery.trim(jQuery(this).text())
 			}
 
+			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+		});
+
+		//Nebula Cookie Notification link clicks
+		nebula.dom.document.on('mousedown', '#nebula-cookie-notification a', function(e){
+			var thisEvent = {
+				event: e,
+				category: 'Cookie Notification',
+				action: 'Click',
+				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+				text: jQuery(this).text(),
+				link: jQuery(this).attr('href')
+			}
+
+			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, jQuery.trim(thisEvent.text), thisEvent.link);
 		});
 
 		//History Popstate (dynamic URL changes from the History API)
@@ -1594,17 +1616,17 @@ nebula.ecommerceTracking = function(){
 //Detect scroll depth
 nebula.scrollDepth = function(){
 	if ( window.performance ){ //Safari 11+
-		scrollReady = performance.now();
+		var scrollReady = performance.now();
 
 		var scrollDepthHandler = function(){
 			nebula.once(function(){
-				scrollBegin = performance.now()-scrollReady;
-				if ( scrollBegin > 250 ){ //Try to avoid autoscrolls
+				nebula.scrollBegin = performance.now()-scrollReady;
+				if ( nebula.scrollBegin > 250 ){ //Try to avoid autoscrolls
 					var thisEvent = {
 						category: 'Scroll Depth',
 						action: 'Began Scrolling',
 						scrollStart: nebula.dom.body.scrollTop() + 'px',
-						timeBeforeScrollStart: Math.round(scrollBegin)
+						timeBeforeScrollStart: Math.round(nebula.scrollBegin)
 					}
 					thisEvent.label = 'Initial scroll started at ' + thisEvent.scrollStart;
 					nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1620,7 +1642,7 @@ nebula.scrollDepth = function(){
 							category: 'Scroll Depth',
 							action: 'Entire Page',
 							distance: nebula.dom.document.height(),
-							scrollEnd: performance.now()-(scrollBegin+scrollReady),
+							scrollEnd: performance.now()-(nebula.scrollBegin+scrollReady),
 						}
 
 						thisEvent.timetoScrollEnd = Math.round(thisEvent.scrollEnd);
@@ -2043,7 +2065,7 @@ nebula.searchValidator = function(){
 		});
 
 		jQuery('.input.search').on('focus blur change keyup paste cut',function(e){
-			thisPlaceholder = ( jQuery(this).attr('data-prev-placeholder') !== 'undefined' )? jQuery(this).attr('data-prev-placeholder') : 'Search';
+			var thisPlaceholder = ( jQuery(this).attr('data-prev-placeholder') !== 'undefined' )? jQuery(this).attr('data-prev-placeholder') : 'Search';
 			if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
 				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
 				jQuery(this).parent().find('.btn.submit').val('Go');
@@ -3243,7 +3265,10 @@ nebula.helpers = function(){
 
 	//If the hash has been changed (activation of an in-page link)
 	nebula.dom.window.on('hashchange', function(){
-		nebula.focusOnElement(jQuery('#' + window.location.hash.replace(/^#/, '')));
+		var hash = window.location.hash.replace(/^#/, '');
+		if ( hash ){ //If the hash is not empty (like when clicking on an href="#" link)
+			nebula.focusOnElement(jQuery('#' + hash));
+		}
 	});
 }
 
@@ -3435,7 +3460,7 @@ nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback
 				var thisHash = this.hash;
 				var target = jQuery(thisHash) || jQuery('[name=' + thisHash.slice(1) +']'); //Determine the target
 				if ( target.length ){ //If target exists
-					pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : nebula.scroll.offset; //Determine the offset
+					var pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : nebula.scroll.offset; //Determine the offset
 					var nOffset = Math.floor(target.offset().top-offset+pOffset) + jQuery('body').scrollTop();
 					scrollSpeed = nebula.scroll.speed || 500;
 
@@ -3452,7 +3477,7 @@ nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback
 	});
 
 	nebula.dom.document.on('click', '.nebula-scrollto', function(){ //Using the nebula-scrollto class with scrollto attribute.
-		pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : nebula.scroll.offset;
+		var pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : nebula.scroll.offset;
 
 		if ( jQuery(this).attr('scrollto') ){
 			var scrollElement = jQuery(this).attr('scroll-to');
@@ -3652,8 +3677,8 @@ nebula.loadAnimate = function(oThis){
 //To add parameters, use an array as the 2nd parameter. Ex: nebula.once(customFunction, ['parameter1', 'parameter2'], 'test example');
 //Can be used for boolean. Ex: nebula.once('boolean test');
 nebula.once = function(fn, args, unique){
-	if ( typeof onces === 'undefined' ){
-		onces = {};
+	if ( typeof nebula.onces === 'undefined' ){
+		nebula.onces = {};
 	}
 
 	if ( typeof args === 'string' ){ //If no parameters
@@ -3663,23 +3688,23 @@ nebula.once = function(fn, args, unique){
 
 	//Reset all
 	if ( fn === 'clear' || fn === 'reset' ){
-		onces = {};
+		nebula.onces = {};
 	}
 
 	//Remove a single entry
 	if ( fn === 'remove' ){
-		delete onces[unique];
+		delete nebula.onces[unique];
 	}
 
 	if ( typeof fn === 'function' ){ //If the first parameter is a function
-		if ( typeof onces[unique] === 'undefined' || !onces[unique] ){
-			onces[unique] = true;
+		if ( typeof nebula.onces[unique] === 'undefined' || !nebula.onces[unique] ){
+			nebula.onces[unique] = true;
 			return fn.apply(this, args);
 		}
 	} else { //Else return boolean
 		unique = fn; //If only one parameter is passed
-		if ( typeof onces[unique] === 'undefined' || !onces[unique] ){
-			onces[unique] = true;
+		if ( typeof nebula.onces[unique] === 'undefined' || !nebula.onces[unique] ){
+			nebula.onces[unique] = true;
 			return true;
 		} else {
 			return false;
@@ -3690,8 +3715,8 @@ nebula.once = function(fn, args, unique){
 //Waits for events to finish before triggering
 //Passing immediate triggers the function on the leading edge (instead of the trailing edge).
 nebula.debounce = function(callback, wait, uniqueID, immediate){
-	if ( typeof debounceTimers === "undefined" ){
-		debounceTimers = {};
+	if ( typeof nebula.debounceTimers === "undefined" ){
+		nebula.debounceTimers = {};
 	}
 
 	if ( !uniqueID ){
@@ -3701,15 +3726,15 @@ nebula.debounce = function(callback, wait, uniqueID, immediate){
 	var context = this;
 	var args = arguments;
 	var later = function(){
-		debounceTimers[uniqueID] = null;
+		nebula.debounceTimers[uniqueID] = null;
 		if ( !immediate ){
 			callback.apply(context, args);
 		}
 	};
-	var callNow = immediate && !debounceTimers[uniqueID];
+	var callNow = immediate && !nebula.debounceTimers[uniqueID];
 
-	clearTimeout(debounceTimers[uniqueID]); //Clear the timeout on every event. Once events stop the timeout is allowed to complete.
-	debounceTimers[uniqueID] = setTimeout(later, wait);
+	clearTimeout(nebula.debounceTimers[uniqueID]); //Clear the timeout on every event. Once events stop the timeout is allowed to complete.
+	nebula.debounceTimers[uniqueID] = setTimeout(later, wait);
 	if ( callNow ){
 		callback.apply(context, args);
 	}
@@ -3717,8 +3742,8 @@ nebula.debounce = function(callback, wait, uniqueID, immediate){
 
 //Limit functionality to only run once per specified time period
 nebula.throttle = function(callback, cooldown, uniqueID){
-	if ( typeof throttleTimers === "undefined" ){
-		throttleTimers = {};
+	if ( typeof nebula.throttleTimers === "undefined" ){
+		nebula.throttleTimers = {};
 	}
 
 	if ( !uniqueID ){
@@ -3728,14 +3753,14 @@ nebula.throttle = function(callback, cooldown, uniqueID){
 	var context = this;
 	var args = arguments;
 	var later = function(){
-        if ( typeof throttleTimers[uniqueID] === 'undefined' ){ //If we're not waiting
+        if ( typeof nebula.throttleTimers[uniqueID] === 'undefined' ){ //If we're not waiting
             callback.apply(context, args); //Execute callback function
 
-			throttleTimers[uniqueID] = 'waiting'; //Prevent future invocations
+			nebula.throttleTimers[uniqueID] = 'waiting'; //Prevent future invocations
 
 			//After the cooldown period, allow future invocations
             setTimeout(function(){
-                throttleTimers[uniqueID] = undefined; //Allow future invocations (undefined means it is not waiting)
+                nebula.throttleTimers[uniqueID] = undefined; //Allow future invocations (undefined means it is not waiting)
             }, cooldown);
         }
     }
@@ -3811,7 +3836,7 @@ nebula.timer = function(uniqueID, action, name){
 	}
 
 	//Update the timing data!
-	currentTime = performance.now();
+	var currentTime = performance.now();
 
 	if ( action === 'start' && typeof nebula.timings[uniqueID] === 'undefined' ){
 		nebula.timings[uniqueID] = {};
@@ -3821,7 +3846,7 @@ nebula.timer = function(uniqueID, action, name){
 		nebula.timings[uniqueID].lap = [];
 		nebula.timings[uniqueID].laps = 0;
 
-		thisLap = {
+		var thisLap = {
 			name: false,
 			started: currentTime,
 			stopped: 0,
@@ -3839,7 +3864,7 @@ nebula.timer = function(uniqueID, action, name){
 			performance.mark(uniqueID + '_start');
 		}
 	} else {
-		lapNumber = nebula.timings[uniqueID].lap.length;
+		var lapNumber = nebula.timings[uniqueID].lap.length;
 
 		//Finalize the times for the previous lap
 		nebula.timings[uniqueID].lap[lapNumber-1].stopped = currentTime;
