@@ -150,7 +150,7 @@ nebula.cacheSelectors = function(){
 nebula.registerServiceWorker = function(){
 	jQuery('.nebula-sw-install-button').addClass('inactive');
 
-	if ( nebula.site.options.sw && 'serviceWorker' in navigator ){ //Firefox 44+, Chrome 45+, Edge 17+, Safari 12+
+	if ( nebula.site.options.sw && 'serviceWorker' in navigator ){ //Firefox 44+, Chrome 45+, Edge 17+, Safari 12+ //@todo "Nebula" 0: Use optional chaining
 		window.performance.mark('nebula_sw_registration_start');
 		//navigator.serviceWorker.register(nebula.site.sw_url, {cache: 'max-age=0'}).then(function(registration){
 		navigator.serviceWorker.register(nebula.site.sw_url).then(function(registration){
@@ -303,13 +303,13 @@ nebula.predictiveCacheListeners = function(){
 nebula.prefetch = function(url, callback){
 	if ( url && url.length > 1 && url.indexOf('#') !== 0 && typeof window.requestIdleCallback === 'function' ){ //If the URL exists, is longer than 1 character and does not begin with #
 		//If network connection is 2G don't prefetch
-		if ( nebula.has(navigator, 'connection.effectiveType') && navigator.connection.effectiveType.toString().indexOf('2g') >= 0 ){ //'slow-2g', '2g', '3g', or '4g'
+		if ( nebula.has(navigator, 'connection.effectiveType') && navigator.connection.effectiveType.toString().indexOf('2g') >= 0 ){ //'slow-2g', '2g', '3g', or '4g' //@todo "Nebula" 0: Replace with optional chaining
 			return false;
 		}
 
 		//If Save Data is supported and Save Data is requested don't prefetch
-		if ( nebula.has(navigator, 'connection.saveData') ){
-			if ( navigator.connection.saveData ){
+		if ( nebula.has(navigator, 'connection.saveData') ){ //@todo "Nebula" 0: Replace with optional chaining
+			if ( navigator.connection.saveData ){ //@todo "Nebula" 0: Use optional chaining
 				return false;
 			}
 		}
@@ -345,7 +345,7 @@ nebula.prefetch = function(url, callback){
 
 //Send data to other tabs/windows using the Service Worker
 nebula.postMessage = function(data){
-	if ( navigator.serviceWorker && navigator.serviceWorker.controller ){
+	if ( navigator.serviceWorker && navigator.serviceWorker.controller ){ //@todo "Nebula" 0: Replace with optional chaining
 		navigator.serviceWorker.controller.postMessage(data);
 	}
 }
@@ -422,8 +422,8 @@ nebula.visibilityChangeActions = function(){
 
 //Record performance timing
 nebula.performanceMetrics = function(){
-	if ( (nebula.get('timings') || (nebula.has(nebula, 'user.staff') && nebula.user.staff === 'developer')) ){ //Only available to Developers or with ?timings
-		if ( window.performance && window.performance.timing ){ //Safari 11+
+	if ( (nebula.get('timings') || (nebula.has(nebula, 'user.staff') && nebula.user.staff === 'developer')) ){ //Only available to Developers or with ?timings //@todo "Nebula" 0: Replace with optional chaining
+		if ( window.performance && window.performance.timing ){ //Safari 11+ //@todo "Nebula" 0: Use optional chaining
 			setTimeout(function(){
 				var timingCalcuations = {
 					'Redirect': {start: Math.round(performance.timing.redirectStart - performance.timing.navigationStart), duration: Math.round(performance.timing.redirectEnd - performance.timing.redirectStart)},
@@ -497,8 +497,8 @@ nebula.overflowDetector = function(){
 //Check if the user has enabled DNT (if supported in their browser)
 nebula.isDoNotTrack = function(){
 	//Use server-side header detection first
-	if ( nebula.has(nebula, 'user.dnt') ){
-		if ( nebula.user.dnt == 1 ){
+	if ( nebula.has(nebula, 'user.dnt') ){ //@todo "Nebula" 0: Replace with optional chaining
+		if ( nebula.user.dnt == 1 ){ //@todo "Nebula" 0: Use optional chaining and combine with above
 			return true; //This user prefers not to be tracked
 		} else {
 			return false; //This user is allowing tracking.
@@ -1519,7 +1519,7 @@ nebula.eventTracking = function(){
 //Ecommerce event tracking
 //Note: These supplement the plugin Enhanced Ecommerce for WooCommerce
 nebula.ecommerceTracking = function(){
-	if ( nebula.has(nebula, 'site.ecommerce') && nebula.site.ecommerce ){
+	if ( nebula.has(nebula, 'site.ecommerce') && nebula.site.ecommerce ){ //@todo "Nebula" 0: Replace with optional chaining
 		//Add to Cart clicks
 		nebula.dom.document.on('click', 'a.add_to_cart, .single_add_to_cart_button', function(e){ //@todo "Nebula" 0: is there a trigger from WooCommerce this can listen for?
 			var thisEvent = {
@@ -1619,9 +1619,10 @@ nebula.scrollDepth = function(){
 		var scrollReady = performance.now();
 
 		var scrollDepthHandler = function(){
+			//Only check for initial scroll once
 			nebula.once(function(){
-				nebula.scrollBegin = performance.now()-scrollReady;
-				if ( nebula.scrollBegin > 250 ){ //Try to avoid autoscrolls
+				nebula.scrollBegin = performance.now()-scrollReady; //Calculate when the first scroll happens
+				if ( nebula.scrollBegin > 250 ){ //Try to avoid autoscrolls on pageload
 					var thisEvent = {
 						category: 'Scroll Depth',
 						action: 'Began Scrolling',
@@ -1634,9 +1635,9 @@ nebula.scrollDepth = function(){
 				}
 			}, 'begin scrolling');
 
-			nebula.debounce(function(){
-				//If user has reached the bottom of the page
-				if ( (nebula.dom.window.height()+nebula.dom.window.scrollTop()) >= nebula.dom.document.height() ){
+			//Check periodically if the user has reached the bottom of the page
+			nebula.throttle(function(){
+				if ( (nebula.dom.window.height()+nebula.dom.window.scrollTop()) >= nebula.dom.document.height() ){ //If user has reached the bottom of the page
 					nebula.once(function(){
 						var thisEvent = {
 							category: 'Scroll Depth',
@@ -1652,7 +1653,7 @@ nebula.scrollDepth = function(){
 						window.removeEventListener('scroll', scrollDepthHandler);
 					}, 'end scrolling');
 				}
-			}, 100, 'scroll depth');
+			}, 1000, 'scroll depth');
 		}
 		window.addEventListener('scroll', scrollDepthHandler); //"scroll" is passive by default
 	}
@@ -2045,7 +2046,7 @@ nebula.wpSearchInput = function(){
 nebula.mobileSearchPlaceholder = function(){
 	var mobileHeaderSearchInput = jQuery('#mobileheadersearch input');
 	var searchPlaceholder = 'What are you looking for?';
-	if ( window.matchMedia && window.matchMedia("(max-width: 410px)").matches ){
+	if ( window.matchMedia && window.matchMedia("(max-width: 410px)").matches ){ //@todo "Nebula" 0: Use optional chaining?
 		searchPlaceholder = 'Search';
 	}
 	mobileHeaderSearchInput.attr('placeholder', searchPlaceholder);
@@ -2149,7 +2150,7 @@ nebula.singleResultDrawer = function(){
 //Page Suggestions for 404 or no search results pages using Google Custom Search Engine
 nebula.pageSuggestion = function(){
 	if ( nebula.dom.body.hasClass('search-no-results') || nebula.dom.body.hasClass('error404') ){
-		if ( nebula.has(nebula, 'site.options') && nebula.site.options.nebula_cse_id !== '' && nebula.site.options.nebula_google_browser_api_key !== '' ){
+		if ( nebula.has(nebula, 'site.options') && nebula.site.options.nebula_cse_id !== '' && nebula.site.options.nebula_google_browser_api_key !== '' ){ //@todo "Nebula" 0: Replace with optional chaining
 			if ( nebula.get().length ){
 				var queryStrings = nebula.get();
 			} else {
@@ -2190,7 +2191,7 @@ nebula.tryGCSESearch = function(phrase){
 
 		// Send the request to the custom search API
 		jQuery.getJSON(API_URL, queryParams, function(response){
-			if ( response.items && response.items.length ){
+			if ( response.items && response.items.length ){ //@todo "Nebula" 0: Use optional chaining
 				if ( response.items[0].link !== window.location.href ){
 					nebula.showSuggestedGCSEPage(response.items[0].title, response.items[0].link);
 				}
@@ -2300,7 +2301,7 @@ nebula.cf7Functions = function(){
 		nebula.timer(formID, 'start', thisField);
 
 		//Individual form field timings
-		if ( nebula && nebula.timings && typeof nebula.timings[formID] !== 'undefined' && typeof nebula.timings[formID].lap[nebula.timings[formID].laps-1] !== 'undefined' ){
+		if ( nebula && nebula.timings && typeof nebula.timings[formID] !== 'undefined' && typeof nebula.timings[formID].lap[nebula.timings[formID].laps-1] !== 'undefined' ){ //@todo "Nebula" 0: Use optional chaining
 			var labelText = '';
 			if ( jQuery(this).parent('.label') ){
 				labelText = jQuery(this).parent('.label').text();
@@ -2328,7 +2329,7 @@ nebula.cf7Functions = function(){
 		}
 
 		//If timing data exists
-		if ( nebula && nebula.timings && typeof nebula.timings[e.detail.id] !== 'undefined' ){
+		if ( nebula && nebula.timings && typeof nebula.timings[e.detail.id] !== 'undefined' ){ //@todo "Nebula" 0: Use optional chaining
 			thisEvent.formTime = nebula.timer(e.detail.id, 'lap', 'wpcf7-submit-invalid');
 			thisEvent.inputs = nebula.timings[e.detail.id].laps + ' inputs';
 		}
@@ -2460,7 +2461,7 @@ nebula.cf7Functions = function(){
 		}
 
 		//If timing data exists
-		if ( nebula && nebula.timings && typeof nebula.timings[e.detail.id] !== 'undefined' ){
+		if ( nebula && nebula.timings && typeof nebula.timings[e.detail.id] !== 'undefined' ){ //@todo "Nebula" 0: Use optional chaining
 			thisEvent.formTime = nebula.timer(e.detail.id, 'lap', 'wpcf7-submit-attempt');
 			thisEvent.inputs = nebula.timings[e.detail.id].laps + ' inputs';
 		}
@@ -2767,7 +2768,7 @@ nebula.lazyLoadAssets = function(){
 
 	//Load the Google Maps API if 'googlemap' class exists
 	if ( jQuery('.googlemap').length ){
-		if ( typeof google == "undefined" || !nebula.has(google, 'maps') ){ //If the API has not already been called
+		if ( typeof google == "undefined" || !nebula.has(google, 'maps') ){ //If the API has not already been called //@todo "Nebula" 0: Replace with optional chaining
 			nebula.loadJS('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){ //May not need key here, but just to be safe.
 				google.load('maps', '3', {
 					other_params: 'libraries=places&key=' + nebula.site.options.nebula_google_browser_api_key,
@@ -2865,7 +2866,7 @@ nebula.addressAutocomplete = function(autocompleteInput, uniqueID){
 			uniqueID = 'unnamed';
 		}
 
-		if ( typeof google !== "undefined" && nebula.has(google, 'maps') ){
+		if ( typeof google !== "undefined" && nebula.has(google, 'maps') ){ //@todo "Nebula" 0: Replace with optional chaining
 			nebula.googleAddressAutocompleteCallback(autocompleteInput, uniqueID);
 		} else {
 			//Log all instances to be called after the maps JS library is loaded. This prevents the library from being loaded multiple times.
@@ -3042,7 +3043,7 @@ nebula.sanitizeGooglePlaceData = function(place, uniqueID){
 
 //Request Geolocation
 function requestPosition(){
-	if ( typeof google !== 'undefined' && nebula.has(google, 'maps') ){
+	if ( typeof google !== 'undefined' && nebula.has(google, 'maps') ){ //@todo "Nebula" 0: Replace with optional chaining
 		nebula.loadJS('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, function(){ //May not need key here, but just to be safe.
 			google.load('maps', '3', {
 				other_params: 'libraries=placeskey=' + nebula.site.options.nebula_google_browser_api_key,
@@ -3203,7 +3204,7 @@ nebula.extractFromAddress = function(components, type){
 
 //Lookup place information
 nebula.placeLookup = function(placeID){
-	if ( nebula.has(google, 'maps.places') ){
+	if ( nebula.has(google, 'maps.places') ){ //@todo "Nebula" 0: Replace with optional chaining
 		var service = new google.maps.places.PlacesService(jQuery('<div></div>').get(0));
 		service.getDetails({
 			placeId: placeID
@@ -3697,13 +3698,13 @@ nebula.once = function(fn, args, unique){
 	}
 
 	if ( typeof fn === 'function' ){ //If the first parameter is a function
-		if ( typeof nebula.onces[unique] === 'undefined' || !nebula.onces[unique] ){
+		if ( typeof nebula.onces[unique] === 'undefined' || !nebula.onces[unique] ){ //@todo "Nebula" 0: Use optional chaining?
 			nebula.onces[unique] = true;
 			return fn.apply(this, args);
 		}
 	} else { //Else return boolean
 		unique = fn; //If only one parameter is passed
-		if ( typeof nebula.onces[unique] === 'undefined' || !nebula.onces[unique] ){
+		if ( typeof nebula.onces[unique] === 'undefined' || !nebula.onces[unique] ){ //@todo "Nebula" 0: Use optional chaining?
 			nebula.onces[unique] = true;
 			return true;
 		} else {
@@ -3831,7 +3832,7 @@ nebula.timer = function(uniqueID, action, name){
 	}
 
 	//Can not modify a timer once it has ended.
-	if ( typeof nebula.timings[uniqueID] !== 'undefined' && nebula.timings[uniqueID].total > 0 ){
+	if ( typeof nebula.timings[uniqueID] !== 'undefined' && nebula.timings[uniqueID].total > 0 ){ //@todo "Nebula" 0: Use optional chaining
 		return nebula.timings[uniqueID].total;
 	}
 
@@ -3984,6 +3985,7 @@ nebula.timeAgo = function(timestamp, raw){ //http://af-design.com/blog/2009/02/1
 
 //Check nested objects (boolean). Note: This function can not check if the object itself exists.
 //nebula.has(nebula, 'user.client.remote_addr'); //Ex: object nebula must exist first (check for it separately)
+//Note: May not need after optional chaining becomes standard
 nebula.has = function(obj, prop){
 	var parts = prop.split('.');
 	for ( var i = 0, l = parts.length; i < l; i++ ){
@@ -4905,32 +4907,32 @@ nebula.mmenus = function(){
 
 			//Add social links to footer of Mmenu
 			var footerIconLinks = {};
-			if ( nebula.has(nebula, 'site.options') ){
+			if ( nebula.has(nebula, 'site.options') ){ //@todo "Nebula" 0: Replace with optional chaining (may not need this conditional)
 				footerIconLinks = {
 					position: "bottom",
 					content: []
 				};
-				if ( nebula.site.options.facebook_url ){
+				if ( nebula.site.options.facebook_url ){ //@todo "Nebula" 0: Use optional chaining
 					footerIconLinks.content.push('<a href="' + nebula.site.options.facebook_url + '" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a>');
 				}
 
-				if ( nebula.site.options.twitter_url ){
+				if ( nebula.site.options.twitter_url ){ //@todo "Nebula" 0: Use optional chaining
 					footerIconLinks.content.push('<a href="' + nebula.site.options.twitter_url + '" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a>');
 				}
 
-				if ( nebula.site.options.instagram_url ){
+				if ( nebula.site.options.instagram_url ){ //@todo "Nebula" 0: Use optional chaining
 					footerIconLinks.content.push('<a href="' + nebula.site.options.instagram + '" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>');
 				}
 
-				if ( nebula.site.options.linkedin_url ){
+				if ( nebula.site.options.linkedin_url ){ //@todo "Nebula" 0: Use optional chaining
 					footerIconLinks.content.push('<a href="' + nebula.site.options.linkedin_url + '" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>');
 				}
 
-				if ( nebula.site.options.youtube_url ){
+				if ( nebula.site.options.youtube_url ){ //@todo "Nebula" 0: Use optional chaining
 					footerIconLinks.content.push('<a href="' + nebula.site.options.youtube_url + '" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>');
 				}
 
-				if ( nebula.site.options.pinterest_url ){
+				if ( nebula.site.options.pinterest_url ){ //@todo "Nebula" 0: Use optional chaining
 					footerIconLinks.content.push('<a href="' + nebula.site.options.pinterest_url + '" target="_blank" rel="noopener"><i class="fab fa-pinterest"></i></a>');
 				}
 
@@ -5021,7 +5023,7 @@ nebula.mmenus = function(){
 
 //Vertical subnav expanders
 nebula.subnavExpanders = function(){
-	if ( nebula.site.options.sidebar_expanders && jQuery('#sidebar-section .menu').length ){
+	if ( nebula.site.options.sidebar_expanders && jQuery('#sidebar-section .menu').length ){ //@todo "Nebula" 0: Use optional chaining
 		jQuery('#sidebar-section .menu li.menu-item:has(ul)').addClass('has-expander').append('<a class="toplevelvert_expander closed" href="#"><i class="fas fa-caret-left"></i> <span class="sr-only">Expand</span></a>');
 		jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
 		nebula.dom.document.on('click', '.toplevelvert_expander', function(){

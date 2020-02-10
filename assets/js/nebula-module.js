@@ -53,7 +53,7 @@ jQuery(window).on('load', function(){
  ===========================*/
 
 jQuery(window).on('resize', function(){
-	nebula.debounce(function(){
+	nebula.throttle(function(){
 		//Do Stuff
 	}, 500, 'window resize');
 });
