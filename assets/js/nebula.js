@@ -283,6 +283,7 @@ nebula.predictiveCacheListeners = function(){
 		}
 	});
 
+	//Once idle, prefetch the top-level nav items and buttons
 	if ( typeof window.requestIdleCallback === 'function' ){
 		//Prefetch certain elements on window idle
 		window.requestIdleCallback(function(){
@@ -867,8 +868,8 @@ nebula.eventTracking = function(){
 		});
 
 		//Notable File Downloads
-		jQuery.each(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'zipx', 'rar', 'gz', 'tar', 'txt', 'rtf', 'ics', 'vcard'], function(index, extension){
-			nebula.dom.document.on('mousedown', "a[href$='." + extension + "'], a[href$='." + extension.toUpperCase() + "']", function(e){
+		jQuery.each(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv', 'zip', 'zipx', 'rar', 'gz', 'tar', 'txt', 'rtf', 'ics', 'vcard'], function(index, extension){
+			nebula.dom.document.on('mousedown', "a[href$='." + extension + "'], a[href$='." + extension.toUpperCase() + "']", function(e){ //Make this a case insensitive attribute selector after IE11 support ends: a[href$='.pdf' i]
 				var thisEvent = {
 					event: e,
 					category: 'Download',
@@ -930,8 +931,8 @@ nebula.eventTracking = function(){
 			if ( (e.ctrlKey || e.metaKey) && e.which === 70 ){
 				var thisEvent = {
 					event: e,
-					category: 'Find on Page',
-					action: 'Ctrl+F',
+					category: 'Keyboard Shortcut',
+					action: 'Find on Page (Ctrl+F)',
 					highlightedText: jQuery.trim(window.getSelection().toString()) || '(No highlighted text when initiating find)'
 				}
 
@@ -943,8 +944,8 @@ nebula.eventTracking = function(){
 			if ( (e.ctrlKey || e.metaKey) && e.which === 68 ){ //Ctrl+D
 				var thisEvent = {
 					event: e,
-					category: 'Bookmark',
-					action: 'Ctrl+D',
+					category: 'Keyboard Shortcut',
+					action: 'Bookmark (Ctrl+D)',
 					label: 'User bookmarked the page (with keyboard shortcut)'
 				}
 
@@ -1145,7 +1146,7 @@ nebula.eventTracking = function(){
 				}
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.src, {'nonInteraction': true});
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.src, {'nonInteraction': true}); //Non-interaction because if the user leaves due to this it should be considered a bounce
 				nebula.nv('event', thisEvent.category);
 			}
 		});
@@ -1209,13 +1210,13 @@ nebula.eventTracking = function(){
 				thisEvent.description = numberOfClicks + ' clicks in ' + timeDiff + ' seconds detected within ' + max_distance + 'px of ' + thisEvent.selector;
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.description);
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.description, {'nonInteraction': true}); //Non-interaction because if the user exits due to this it should be considered a bounce
 
 				clickEvents.splice(clickEvents.length-5, 5); //Remove unused click points
 			}
 		});
 
-		//Skip to Content Link Focus/Clicks
+		//Skip to Content and other screen reader links Focus/Clicks
 		nebula.dom.document.on('focus', '.sr-only', function(e){
 			var thisEvent = {
 				event: e,
@@ -2373,7 +2374,7 @@ nebula.cf7Functions = function(){
 		var thisEvent = {
 			event: e,
 			category: 'CF7 Form',
-			action: 'Submit (Invalid)',
+			action: 'Submit (Spam)',
 			formID: e.detail.id,
 			formTime: nebula.timer(e.detail.id, 'end'),
 			inputs: nebula.timings[e.detail.id].laps + ' inputs'
@@ -2396,7 +2397,7 @@ nebula.cf7Functions = function(){
 		var thisEvent = {
 			event: e,
 			category: 'CF7 Form',
-			action: 'Submit (Failed)',
+			action: 'Submit (Mail Failed)',
 			formID: e.detail.id,
 			formTime: nebula.timer(e.detail.id, 'end'),
 			inputs: nebula.timings[e.detail.id].laps + ' inputs'

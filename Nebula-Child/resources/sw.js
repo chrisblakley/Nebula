@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 var THEME_NAME = 'nebula-child';
-var NEBULA_VERSION = 'v7.9.4.4805'; //Wednesday, February 5, 2020 8:28:36 AM
+var NEBULA_VERSION = 'v7.10.1.4853'; //Sunday, March 1, 2020 11:38:48 AM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var OFFLINE_GA_DIMENSION = 'cd2';
@@ -10,10 +10,11 @@ var HOME_URL = 'https://gearside.com/nebula/';
 var START_URL = 'https://gearside.com/nebula/?utm_source=pwa'; //@todo "Nebula" 0: How do we append ?utm_source=pwa to this without causing an additional resource request to cache it?
 //END automated edits
 
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js'); //https://developers.google.com/web/tools/workbox/guides/get-started
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.0.0/workbox-sw.js'); //https://developers.google.com/web/tools/workbox/guides/get-started
 workbox.setConfig({debug: false}); //https://developers.google.com/web/tools/workbox/guides/troubleshoot-and-debug
 
 //@todo "Nebula" 0: If ?debug is present in the URL on load, dump the entire cache and unregister (or update) the SW completely
+//deleteCacheAndMetadata();
 
 workbox.core.skipWaiting();
 workbox.core.clientsClaim();
@@ -74,12 +75,14 @@ workbox.routing.registerRoute(
 
 //Images
 workbox.routing.registerRoute(
-	new RegExp('/\.(?:png|jpg|jpeg|svg|gif)/'),
+	new RegExp('/\.(?:png|gif|jpg|jpeg|webp|svg)$/'),
 	new workbox.strategies.StaleWhileRevalidate({
 		cacheName: 'images', //This cache name is used for the offline fallback and expiration plugin
 		plugins: [
-			new workbox.expiration.Plugin({
+			new workbox.expiration.ExpirationPlugin({
+				maxEntries: 100, //Cache a maximum number of resources (Figure out a reasonable amount here...)
 				maxAgeSeconds: 7 * 24 * 60 * 60, //Cache for a maximum of a week
+				purgeOnQuotaError: true //Purge if an error occurs
 			})
 		]
 	})
@@ -91,8 +94,10 @@ workbox.routing.registerRoute(
 	new workbox.strategies.StaleWhileRevalidate({
 		cacheName: 'default', //Cache name is required for expiration plugin
 		plugins: [
-			new workbox.expiration.Plugin({
-				maxAgeSeconds: 7 * 24 * 60 * 60, //Cache for a maximum of a week
+			new workbox.expiration.ExpirationPlugin({
+				maxEntries: 250, //Cache a maximum of 250 resources (Figure out a reasonable amount here...)
+				maxAgeSeconds: 30 * 24 * 60 * 60, //Cache for a maximum of a month
+				purgeOnQuotaError: true //Purge if an error occurs
 			})
 		]
 	})
