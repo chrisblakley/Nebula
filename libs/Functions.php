@@ -1854,7 +1854,7 @@ trait Functions {
 			}
 
 			if ( get_query_var('paged') ){
-				echo apply_filters('nebula_breadcrumbs_paged', ' (Page ' . get_query_var('paged') . ')', $data);
+				echo apply_filters('nebula_breadcrumbs_paged', '&nbsp;(Page ' . get_query_var('paged') . ')', $data); //nbsp is needed here because something is stripping out the first space
 			}
 			echo '</ol>';
 		}
