@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 var THEME_NAME = 'nebula-child';
-var NEBULA_VERSION = 'v7.10.25.3552'; //Wednesday, March 25, 2020 8:32:23 AM
+var NEBULA_VERSION = 'v7.10.27.5286'; //Friday, March 27, 2020 12:42:16 PM
 var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 var OFFLINE_GA_DIMENSION = 'cd2';
@@ -10,7 +10,7 @@ var HOME_URL = 'https://gearside.com/nebula/';
 var START_URL = 'https://gearside.com/nebula/?utm_source=pwa'; //@todo "Nebula" 0: How do we append ?utm_source=pwa to this without causing an additional resource request to cache it?
 //END automated edits
 
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.1/workbox-sw.js'); //https://developers.google.com/web/tools/workbox/guides/get-started
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js'); //https://developers.google.com/web/tools/workbox/guides/get-started
 workbox.setConfig({debug: false}); //https://developers.google.com/web/tools/workbox/guides/troubleshoot-and-debug
 
 //@todo "Nebula" 0: If ?debug is present in the URL on load, dump the entire cache and unregister (or update) the SW completely
