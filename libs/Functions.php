@@ -2715,7 +2715,7 @@ trait Functions {
 		$timer_name = $this->timer('Autocomplete Search');
 
 		if ( isset($_GET['term']) ){
-			ini_set('memory_limit', '256M'); //@TODO "Nebula" 0: Ideally this would not be here.
+			ini_set('memory_limit', '256M'); //@todo Nebula 0: Remove these when possible...
 
 			$term = sanitize_text_field(trim($_GET['term']));
 			if ( empty($term) ){

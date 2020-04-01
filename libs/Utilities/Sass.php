@@ -211,7 +211,7 @@ if ( !trait_exists('Sass') ){
 
 						//If .css file doesn't exist, or is older than .scss file (or any partial), or is debug mode, or forced
 						if ( !file_exists($css_filepath) || filemtime($scss_file) > filemtime($css_filepath) || $latest_import > filemtime($css_filepath) || $this->is_debug() || $force_all ){
-							ini_set('memory_limit', '512M'); //Increase memory limit for this script. //@TODO "Nebula" 0: Is this the best thing to do here? Other options?
+							ini_set('memory_limit', '512M'); //Increase memory limit for this script. //@todo Nebula 0: Remove this when possible...
 							WP_Filesystem();
 							global $wp_filesystem;
 							$existing_css_contents = ( file_exists($css_filepath) )? $wp_filesystem->get_contents($css_filepath) : '';

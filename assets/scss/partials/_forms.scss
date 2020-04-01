@@ -25,8 +25,6 @@ button {cursor: pointer;}
 	&:focus {background: $secondary_color;}
 }
 
-code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; padding: .2rem .4rem; border-radius: .25rem; color: #222;}
-
 div.nebula-button {margin-bottom: 10px;}
 
 //Form Styles
@@ -53,6 +51,12 @@ textarea {
 
 ::-ms-clear {display: none;} //Hide the IE clear "X"
 ::-ms-reveal {display: none;} //Hide the IE password reveal button
+
+//Hack to "fix" autocomplete in Chrome from applying an unchangable background color ("yellow" forms)
+.ignore-autocomplete-style:-webkit-autofill,
+.ignore-autocomplete-style:-webkit-autofill:hover,
+.ignore-autocomplete-style:-webkit-autofill:focus,
+.ignore-autocomplete-style:-webkit-autofill:active {-webkit-transition-delay: 99999s !important; -webkit-transition-property: background-color !important;}
 
 //Nebula Search Forms
 form.nebula-search {position: relative; display: inline-block; margin: 0;

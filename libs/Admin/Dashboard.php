@@ -562,14 +562,15 @@ if ( !trait_exists('Dashboard') ){
 				$directory = get_template_directory();
 			}
 
-			$these_todos = array();
+			ini_set('memory_limit', '512M'); //@todo Nebula 0: Remove these when possible...
 
+			$these_todos = array();
 			foreach ( $this->glob_r($directory . '/*') as $todo_file ){
 				if ( is_file($todo_file) ){
-					$todo_skipFilenames = array('README.md', 'debug_log', 'error_log', '/vendor', 'resources/');
+					$todo_skipFilenames = array('README.md', 'debug_log', 'error_log', '/vendor', 'resources/'); //Skip certain filepaths and file names (more file extensions are skipped separately)
 
-					if ( !$this->contains($todo_file, $this->skip_extensions()) && !$this->contains($todo_file, $todo_skipFilenames) ){
-						foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){
+					if ( !$this->contains($todo_file, $this->skip_extensions()) && !$this->contains($todo_file, $todo_skipFilenames) ){ //Skip certain extensions and filenames
+						foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){ //@todo "Nebula" 0: How can we reduce the memory usage of this?
 							preg_match("/(@todo)\s?(?'category'[\"\'\`].+?[\"\'\`])?\s?(?'priority'\d)?:\s(?'description'.+)/i", $todo_line, $todo_details); //Separate the todo comment into useable groups
 
 							if ( !empty($todo_details) ){
@@ -841,8 +842,10 @@ if ( !trait_exists('Dashboard') ){
 		public function search_theme_files(){
 			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied. Refresh and try again.'); }
 
+			//@todo Nebula 0: Remove these when possible...
 			ini_set('max_execution_time', 120);
 			ini_set('memory_limit', '512M');
+
 			$searchTerm = htmlentities(stripslashes($_POST['data'][0]['searchData']));
 			$requestedDirectory = strtolower(sanitize_text_field($_POST['data'][0]['directory']));
 
