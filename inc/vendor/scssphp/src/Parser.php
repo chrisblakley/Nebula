@@ -72,6 +72,8 @@ class Parser
     private $patternModifiers;
     private $commentsSeen;
 
+    private $cssOnly;
+
     /**
      * Constructor
      *
@@ -82,7 +84,7 @@ class Parser
      * @param string                 $encoding
      * @param \ScssPhp\ScssPhp\Cache $cache
      */
-    public function __construct($sourceName, $sourceIndex = 0, $encoding = 'utf-8', $cache = null)
+    public function __construct($sourceName, $sourceIndex = 0, $encoding = 'utf-8', $cache = null, $cssOnly = false)
     {
         $this->sourceName       = $sourceName ?: '(stdin)';
         $this->sourceIndex      = $sourceIndex;
@@ -92,6 +94,7 @@ class Parser
         $this->commentsSeen     = [];
         $this->commentsSeen     = [];
         $this->allowVars        = true;
+        $this->cssOnly          = $cssOnly;
 
         if (empty(static::$operatorPattern)) {
             static::$operatorPattern = '([*\/%+-]|[!=]\=|\>\=?|\<\=\>|\<\=?|and|or)';
@@ -141,8 +144,12 @@ class Parser
              : "$this->sourceName on line $line, at column $column";
 
         if ($this->peek("(.*?)(\n|$)", $m, $this->count)) {
+            $this->restoreEncoding();
+
             throw new ParserException("$msg: failed at `$m[1]` $loc");
         }
+
+        $this->restoreEncoding();
 
         throw new ParserException("$msg: $loc");
     }
@@ -349,6 +356,9 @@ class Parser
                     && $this->matchChar(')')) || true) &&
                 $this->matchChar('{', false)
             ) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $atRoot = $this->pushSpecialBlock(Type::T_AT_ROOT, $s);
                 $atRoot->selector = $selector;
                 $atRoot->with     = $with;
@@ -372,6 +382,9 @@ class Parser
                 ($this->argumentDef($args) || true) &&
                 $this->matchChar('{', false)
             ) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $mixin = $this->pushSpecialBlock(Type::T_MIXIN, $s);
                 $mixin->name = $mixinName;
                 $mixin->args = $args;
@@ -392,6 +405,9 @@ class Parser
                         ($this->end() || $this->matchChar('{') && $hasBlock = true)) ||
                     $this->matchChar('{') && $hasBlock = true)
             ) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $child = [
                     Type::T_INCLUDE,
                     $mixinName,
@@ -416,6 +432,9 @@ class Parser
                 $this->valueList($importPath) &&
                 $this->end()
             ) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $this->append([Type::T_SCSSPHP_IMPORT_ONCE, $importPath], $s);
 
                 return true;
@@ -438,6 +457,9 @@ class Parser
                 $this->url($importPath) &&
                 $this->end()
             ) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $this->append([Type::T_IMPORT, $importPath], $s);
 
                 return true;
@@ -449,6 +471,9 @@ class Parser
                 $this->selectors($selectors) &&
                 $this->end()
             ) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 // check for '!flag'
                 $optional = $this->stripOptionalFlag($selectors);
                 $this->append([Type::T_EXTEND, $selectors, $optional], $s);
@@ -463,6 +488,9 @@ class Parser
                 $this->argumentDef($args) &&
                 $this->matchChar('{', false)
             ) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $func = $this->pushSpecialBlock(Type::T_FUNCTION, $s);
                 $func->name = $fnName;
                 $func->args = $args;
@@ -473,6 +501,9 @@ class Parser
             $this->seek($s);
 
             if ($this->literal('@break', 6) && $this->end()) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $this->append([Type::T_BREAK], $s);
 
                 return true;
@@ -481,6 +512,9 @@ class Parser
             $this->seek($s);
 
             if ($this->literal('@continue', 9) && $this->end()) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $this->append([Type::T_CONTINUE], $s);
 
                 return true;
@@ -489,6 +523,9 @@ class Parser
             $this->seek($s);
 
             if ($this->literal('@return', 7) && ($this->valueList($retVal) || true) && $this->end()) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $this->append([Type::T_RETURN, isset($retVal) ? $retVal : [Type::T_NULL]], $s);
 
                 return true;
@@ -502,6 +539,9 @@ class Parser
                 $this->valueList($list) &&
                 $this->matchChar('{', false)
             ) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $each = $this->pushSpecialBlock(Type::T_EACH, $s);
 
                 foreach ($varNames[2] as $varName) {
@@ -519,6 +559,9 @@ class Parser
                 $this->expression($cond) &&
                 $this->matchChar('{', false)
             ) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $while = $this->pushSpecialBlock(Type::T_WHILE, $s);
                 $while->cond = $cond;
 
@@ -536,6 +579,9 @@ class Parser
                 $this->expression($end) &&
                 $this->matchChar('{', false)
             ) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $for = $this->pushSpecialBlock(Type::T_FOR, $s);
                 $for->var   = $varName[1];
                 $for->start = $start;
@@ -548,6 +594,9 @@ class Parser
             $this->seek($s);
 
             if ($this->literal('@if', 3) && $this->valueList($cond) && $this->matchChar('{', false)) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $if = $this->pushSpecialBlock(Type::T_IF, $s);
                 while ($cond[0] === Type::T_LIST
                     && !empty($cond['enclosing'])
@@ -567,6 +616,9 @@ class Parser
                 $this->valueList($value) &&
                 $this->end()
             ) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $this->append([Type::T_DEBUG, $value], $s);
 
                 return true;
@@ -578,6 +630,9 @@ class Parser
                 $this->valueList($value) &&
                 $this->end()
             ) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $this->append([Type::T_WARN, $value], $s);
 
                 return true;
@@ -589,6 +644,9 @@ class Parser
                 $this->valueList($value) &&
                 $this->end()
             ) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $this->append([Type::T_ERROR, $value], $s);
 
                 return true;
@@ -604,6 +662,9 @@ class Parser
                         $this->argValues($argContent) &&
                         $this->matchChar(')') &&
                     $this->end())) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $this->append([Type::T_MIXIN_CONTENT, isset($argContent) ? $argContent : null], $s);
 
                 return true;
@@ -708,29 +769,32 @@ class Parser
         }
 
         // custom properties : right part is static
-        if ($this->literal('--', 2) &&
-            $this->propertyName($name) &&
+        if (($this->customProperty($name) || ($this->cssOnly && $this->propertyName($name))) &&
             $this->matchChar(':', false)) {
             $start = $this->count;
-            $end = $start;
-            $foundValue = null;
             // but can be complex and finish with ; or }
             foreach ([';','}'] as $ending) {
-                $nestingPairs = [ ['(', ')'], ['[', ']'], ['{', '}']];
-                foreach ($nestingPairs as $nestingPair) {
-                    $this->seek($start);
-                    if ($this->openString($ending, $value, $nestingPair[0], $nestingPair[1], false)
-                        && $this->end()) {
-                        if (is_null($foundValue) || $this->count > $end) {
-                            $end = $this->count;
-                            $foundValue = $value;
+                if ($this->openString($ending, $stringValue, '(', ')', false)
+                    && $this->end()) {
+                    $end = $this->count;
+                    $value = $stringValue;
+                    // check if we have only a partial value due to nested [] or { } to take in account
+                    $nestingPairs = [['[', ']'], ['{', '}']];
+                    foreach ($nestingPairs as $nestingPair) {
+                        $p = strpos($this->buffer, $nestingPair[0], $start);
+                        if ($p && $p < $end) {
+                            $this->seek($start);
+                            if ($this->openString($ending, $stringValue, $nestingPair[0], $nestingPair[1], false)
+                                && $this->end()) {
+                                if ($this->count > $end) {
+                                    $end = $this->count;
+                                    $value = $stringValue;
+                                }
+                            }
                         }
                     }
-                }
-                if (!is_null($foundValue)) {
-                    $name = [Type::T_STRING, '', ['--', $name]];
                     $this->seek($end);
-                    $this->append([Type::T_CUSTOM_PROPERTY, $name, $foundValue], $s);
+                    $this->append([Type::T_CUSTOM_PROPERTY, $name, $value], $s);
                     return true;
                 }
             }
@@ -760,6 +824,9 @@ class Parser
             $this->valueList($value) &&
             $this->end()
         ) {
+            if ($this->cssOnly) {
+                $this->throwParseError("SCSS syntax not allowed in CSS file");
+            }
             // check for '!flag'
             $assignmentFlags = $this->stripAssignmentFlags($value);
             $this->append([Type::T_ASSIGN, $name, $value, $assignmentFlags], $s);
@@ -776,6 +843,11 @@ class Parser
 
         // opening css block
         if ($this->selectors($selectors) && $this->matchChar('{', false)) {
+            if ($this->cssOnly) {
+                if (!empty($this->env->parent)) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
+            }
             $this->pushBlock($selectors, $s);
 
             if ($this->eatWhiteDefault) {
@@ -802,6 +874,9 @@ class Parser
             }
 
             if ($this->matchChar('{', false)) {
+                if ($this->cssOnly) {
+                    $this->throwParseError("SCSS syntax not allowed in CSS file");
+                }
                 $propBlock = $this->pushSpecialBlock(Type::T_NESTED_PROPERTY, $s);
                 $propBlock->prefix = $name;
                 $propBlock->hasValue = $foundSomething;
@@ -1889,20 +1964,33 @@ class Parser
         if ($char === '+') {
             $this->count++;
 
+            $follow_white = $this->whitespace();
+
             if ($this->value($inner)) {
                 $out = [Type::T_UNARY, '+', $inner, $this->inParens];
 
                 return true;
             }
 
-            $this->count--;
+            if ($follow_white) {
+                $out = [Type::T_KEYWORD, $char];
+                return  true;
+            }
+
+            $this->seek($s);
 
             return false;
         }
 
         // negation
         if ($char === '-') {
+            if ($this->customProperty($out)) {
+                return true;
+            }
+
             $this->count++;
+
+            $follow_white = $this->whitespace();
 
             if ($this->variable($inner) || $this->unit($inner) || $this->parenValue($inner)) {
                 $out = [Type::T_UNARY, '-', $inner, $this->inParens];
@@ -1910,7 +1998,18 @@ class Parser
                 return true;
             }
 
-            $this->count--;
+            if ($this->keyword($inner) && ! $this->func($inner, $out)) {
+                $out = [Type::T_UNARY, '-', $inner, $this->inParens];
+
+                return true;
+            }
+
+            if ($follow_white) {
+                $out = [Type::T_KEYWORD, $char];
+                return  true;
+            }
+
+            $this->seek($s);
         }
 
         // paren
@@ -1922,6 +2021,12 @@ class Parser
             if ($this->interpolation($out) || $this->color($out)) {
                 return true;
             }
+            $this->count++;
+            if ($this->keyword($keyword)) {
+                $out = [Type::T_KEYWORD, "#" . $keyword];
+                return true;
+            }
+            $this->count--;
         }
 
         if ($this->matchChar('&', true)) {
@@ -2603,6 +2708,60 @@ class Parser
     }
 
     /**
+     * Parse custom property name (as an array of parts or a string)
+     *
+     * @param array $out
+     *
+     * @return boolean
+     */
+    protected function customProperty(&$out)
+    {
+        $s = $this->count;
+
+        if (! $this->literal('--', 2, false)) {
+            return false;
+        }
+
+        $parts = ['--'];
+
+        $oldWhite = $this->eatWhiteDefault;
+        $this->eatWhiteDefault = false;
+
+        for (;;) {
+            if ($this->interpolation($inter)) {
+                $parts[] = $inter;
+                continue;
+            }
+
+            if ($this->variable($var)) {
+                $parts[] = $var;
+                continue;
+            }
+
+            if ($this->keyword($text)) {
+                $parts[] = $text;
+                continue;
+            }
+
+            break;
+        }
+
+        $this->eatWhiteDefault = $oldWhite;
+
+        if (count($parts) == 1) {
+            $this->seek($s);
+
+            return false;
+        }
+
+        $this->whitespace(); // get any extra whitespace
+
+        $out = [Type::T_STRING, '', $parts];
+
+        return true;
+    }
+
+    /**
      * Parse comma separated selector list
      *
      * @param array   $out
@@ -3217,14 +3376,7 @@ class Parser
      */
     private function saveEncoding()
     {
-        if (version_compare(PHP_VERSION, '7.2.0') >= 0) {
-            return;
-        }
-
-        // deprecated in PHP 7.2
-        $iniDirective = 'mbstring.func_overload';
-
-        if (extension_loaded('mbstring') && ini_get($iniDirective) & 2) {
+        if (extension_loaded('mbstring')) {
             $this->encoding = mb_internal_encoding();
 
             mb_internal_encoding('iso-8859-1');

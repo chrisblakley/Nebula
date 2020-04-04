@@ -109,6 +109,21 @@ if ( !trait_exists('Options') ){
 			return $full_address;
 		}
 
+		//Get a direct link to write a Google Review for this business
+		public function google_review_url($place_id=''){
+			if ( empty($place_id) ){
+				$nebula_options = get_option('nebula_options');
+				$place_id = $nebula_options['google_place_id']; //Note: This may still be empty
+			}
+
+			//Return a Google Review link if we have a Place ID
+			if ( !empty($place_id) ){
+				return 'https://search.google.com/local/writereview?placeid=' . $place_id; //come up with a default
+			}
+
+			return false; //Otherwise we do not have a URL
+		}
+
 		//Get the full Twitter URL for a user
 		public function twitter_url($username=false){
 			//@todo "Nebula" 0: Use null coalescing operator here if possible
@@ -186,6 +201,7 @@ if ( !trait_exists('Options') ){
 				'business_hours_saturday_open' => '',
 				'business_hours_saturday_close' => '',
 				'business_hours_closed' => '',
+				'google_place_id' => '',
 				'facebook_url' => '',
 				'facebook_page_id' => '',
 				'facebook_admin_ids' => '',

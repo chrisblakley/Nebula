@@ -417,6 +417,14 @@ if ( !trait_exists('Admin') ){
 				);
 			}
 
+			if ( $this->google_review_url() ){
+				$third_party_tools['social'][] = array(
+					'name' => 'Google Review Link',
+					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-google"></i>',
+					'url' => $this->google_review_url()
+				);
+			}
+
 			return $third_party_tools;
 		}
 

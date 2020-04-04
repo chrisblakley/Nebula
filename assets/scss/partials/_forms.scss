@@ -53,10 +53,13 @@ textarea {
 ::-ms-reveal {display: none;} //Hide the IE password reveal button
 
 //Hack to "fix" autocomplete in Chrome from applying an unchangable background color ("yellow" forms)
-.ignore-autocomplete-style:-webkit-autofill,
-.ignore-autocomplete-style:-webkit-autofill:hover,
-.ignore-autocomplete-style:-webkit-autofill:focus,
-.ignore-autocomplete-style:-webkit-autofill:active {-webkit-transition-delay: 99999s !important; -webkit-transition-property: background-color !important;}
+//If you need to change the text color as well, use: -webkit-text-fill-color: green !important;
+.ignore-autocomplete-style {
+	&:-webkit-autofill,
+	&:-webkit-autofill:hover,
+	&:-webkit-autofill:focus,
+	&:-webkit-autofill:active {-webkit-transition-delay: 99999s !important; -webkit-transition-property: background-color !important;}
+}
 
 //Nebula Search Forms
 form.nebula-search {position: relative; display: inline-block; margin: 0;

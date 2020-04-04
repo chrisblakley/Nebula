@@ -239,6 +239,13 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text more-help form-text text-muted">These can be date formatted, or day of the month (Ex: "7/4" for Independence Day, or "Last Monday of May" for Memorial Day, or "Fourth Thursday of November" for Thanksgiving). <a href="http://mistupid.com/holidays/" target="_blank" rel="noopener">Here is a good reference for holiday occurrences.</a>.<br /><strong>Note:</strong> This function assumes days off that fall on weekends are observed the Friday before or the Monday after.</p>
 					<p class="option-keywords">seo</p>
 				</div>
+
+				<div class="form-group">
+					<label for="business_type">Google Place ID</label>
+					<input type="text" name="nebula_options[google_place_id]" id="google_place_id" class="form-control nebula-validate-text" value="<?php echo $this->option('google_place_id'); ?>" />
+					<p class="nebula-help-text short-help form-text text-muted"><a href="https://developers.google.com/places/place-id" target="_blank" rel="noopener">Obtain the Google Place ID</a> for your business and enter it here.</p>
+					<p class="option-keywords">google maps reviews location business address</p>
+				</div>
 			<?php
 
 			do_action('nebula_options_business_information_metabox', $nebula_options);
