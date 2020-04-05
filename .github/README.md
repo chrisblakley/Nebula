@@ -6,8 +6,9 @@
 
 The core features of Nebula make it a powerful tool for designing, developing, and analyzing WordPress websites consistently, but its deliberately uncomplicated code syntax also serves as a learning resource for programmers themselves.
 
-![GitHub release](https://img.shields.io/github/release/chrisblakley/nebula.svg)
-![GitHub last commit](https://img.shields.io/github/last-commit/chrisblakley/nebula.svg)
+![GitHub release](https://img.shields.io/github/commits-since/chrisblakley/Nebula/latest)
+![GitHub commits since latest release (by SemVer)](https://img.shields.io/github/commits-since/chrisblakley/Nebula/latest)
+![GitHub last commit](https://img.shields.io/github/last-commit/chrisblakley/Nebula)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1eb4554216644f5c9227df34343a9ae9)](https://www.codacy.com/app/greatblakes/Nebula?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=chrisblakley/Nebula&amp;utm_campaign=Badge_Grade)
 
 ![Nebula screenshot](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-pwa.jpg "Nebula screenshot")
