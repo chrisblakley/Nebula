@@ -307,11 +307,8 @@ if ( !trait_exists('Automation') ){
 			$current_user = wp_get_current_user();
 			$to = $current_user->user_email;
 
-			//CC the admin if reset was done by another user.
-			$admin_user_email = $this->get_option('notification_email', $this->get_option('admin_email'));
-			if ( $admin_user_email !== $current_user->user_email ){
-				$headers[] = 'Cc: ' . $admin_user_email;
-			}
+			$carbon_copies = $this->get_notification_emails(false);
+			$headers[] = 'Cc: ' . implode(',', $carbon_copies);
 
 			$subject = 'Wordpress theme settings reset for ' . get_bloginfo('name');
 			$message = '<p>Wordpress settings have been re-initialized for <strong>' . get_bloginfo('name') . '</strong> by <strong>' . $current_user->display_name . ' <' . $current_user->user_email . '></strong> on <strong>' . date('F j, Y') . '</strong> at <strong> ' . date('g:ia') . '</strong>.</p>';

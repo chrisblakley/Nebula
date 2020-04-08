@@ -957,11 +957,8 @@ if ( !trait_exists('Admin') ){
 				$to = $current_user->user_email;
 				$headers = array(); //Prep a headers array if needed
 
-				//Carbon copy the admin if update was done by another user.
-				$admin_user_email = $this->get_option('notification_email', $this->get_option('admin_email'));
-				if ( !empty($admin_user_email) && $admin_user_email !== $current_user->user_email ){
-					$headers[] = 'Cc: ' . $admin_user_email;
-				}
+				$carbon_copies = $this->get_notification_emails(false);
+				$headers[] = 'Cc: ' . implode(',', $carbon_copies);
 
 				$subject = 'Nebula updated to ' . $new_version . ' for ' . html_entity_decode(get_bloginfo('name')) . '.';
 				$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . '</strong> (Committed: ' . $prev_version_commit_date . ') to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url('/') . ') by ' . $current_user->display_name . ' on ' . date_i18n('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank" rel="noopener">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
@@ -976,6 +973,43 @@ if ( !trait_exists('Admin') ){
 					set_transient('nebula_update_email_sent', true, MINUTE_IN_SECONDS*15);
 				}
 			}
+		}
+
+		//Get the notification email address and all developer administrators
+		public function get_notification_emails($include_current_user=true){
+			$notification_emails = array();
+
+			//Get the notification email address
+			$admin_user_email = $this->get_option('notification_email', $this->get_option('admin_email'));
+			if ( !empty($admin_user_email) ){
+				$notification_emails[] = $admin_user_email;
+			}
+
+			//CC all developer administrators as well.
+			$developer_domains = explode(',', preg_replace('/\s+/', '', $this->get_option('dev_email_domain')));
+			$administrators = get_users(array('role' => 'administrator'));
+			foreach ( $administrators as $administrator ){
+				foreach ( $developer_domains as $developer_domain ){
+					if ( strpos($administrator->user_email, $developer_domain) !== false ){
+						$notification_emails[] = $administrator->user_email;
+					}
+				}
+			}
+
+			$notification_emails = array_unique($notification_emails); //Remove duplicate values
+
+			//Remove current user from the array if desired
+			if ( empty($include_current_user) ){
+				$current_user = wp_get_current_user();
+				$notification_emails = array_values(array_diff($notification_emails, array($current_user->user_email))); //Remove current user from array and re-index
+			}
+
+			//Filter out any non-strings and non-email addresses and return the array
+			return array_filter($notification_emails, function($value){
+				if ( is_string($value) && strpos($value, '@') !== false ){
+					return true;
+				}
+			});
 		}
 
 		//Control session time (for the "Remember Me" checkbox)

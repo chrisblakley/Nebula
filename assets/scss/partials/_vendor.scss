@@ -86,15 +86,17 @@ span.wpcf7-list-item-label {font-size: rem(14px);
 .wpcf7-response-output {position: relative; width: 100%; margin: 0; border-radius: 4px; font-size: rem(14px); text-align: center; padding: 0;
 	&:before {content: ""; @include font-awesome("solid"); font-size: rem(36px); display: block; width: 100%; margin-bottom: 15px; text-align: center;}
 
-	&.wpcf7-validation-errors {color: $danger_color; background: rgba(mix($danger_color, #fff, 25%), 0.8); border: 1px solid $danger_color; padding: 25px 10px 15px 10px;
+	&.wpcf7-validation-errors {color: readable-color($danger_color); background: $danger_color; border: 1px solid $danger_color; padding: 25px 10px 15px 10px;
 		&:before {content: "\f057";}
 		svg {display: block;}
 	}
-	&.wpcf7-spam-blocked {color: $danger_color; background: rgba(mix($danger_color, #fff, 25%), 0.8); border: 1px solid $danger_color; padding: 25px 10px 15px 10px;
+
+	&.wpcf7-spam-blocked {color: readable-color($danger_color); background: $danger_color; border: 1px solid $danger_color; padding: 25px 10px 15px 10px;
 		&:before {content: "\f05e";}
 		svg {display: block;}
 	}
-	&.wpcf7-mail-sent-ok {color: $success_color; background: rgba(mix($success_color, #fff, 25%), 0.8); border: 1px solid $success_color; padding: 25px 10px 15px 10px;
+
+	&.wpcf7-mail-sent-ok {color: readable-color($success_color); background: $success_color; border: 1px solid $success_color; padding: 25px 10px 15px 10px;
 		&:before {content: "\f00c";}
 		svg {display: block;}
 	}

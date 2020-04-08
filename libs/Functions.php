@@ -215,7 +215,7 @@ trait Functions {
 			$timezone_option = 'America/New_York';
 		}
 
-		date_default_timezone_set($timezone_option);
+		date_default_timezone_set($timezone_option); //@todo "Nebula" 0: WordPress Health Check does not like this...
 	}
 
 	//Add the Nebula note to the browser console (if enabled)
