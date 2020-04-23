@@ -41,7 +41,7 @@ if ( !trait_exists('Assets') ){
 			}
 
 			$this->bootstrap('css');
-			wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/jquery.dataTables.min.css', null, '1.10.19', 'all');
+			wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/css/jquery.dataTables.min.css', null, '1.10.20', 'all');
 			wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css', null, '1.8.7', 'all');
 			wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.structure.min.css', null, '1.12.1', 'all');
 			wp_register_style('nebula-pre', get_template_directory_uri() . '/assets/css/pre.css', null, $this->version('full'), 'all');
@@ -56,7 +56,7 @@ if ( !trait_exists('Assets') ){
 			$this->register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', array('defer', 'crossorigin'), null, '1.12.1', true);
 			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.3.3/jquery.mmenu.all.js', array('defer', 'crossorigin'), null, '7.3.3', true);
 			$this->register_script('nebula-vimeo', 'https://player.vimeo.com/api/player.js', null, null, null, true); //https://github.com/cdnjs/cdnjs/issues/13383
-			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.10.19', true);
+			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.10.19', true);
 			$this->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js', array('defer', 'crossorigin'), null, '1.8.7', true);
 			$this->register_script('nebula-moment', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js', array('defer', 'crossorigin'), null, '2.24.0', true);
 			$this->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js', array('async', 'crossorigin'), null, '2.4.1', true);
@@ -79,7 +79,7 @@ if ( !trait_exists('Assets') ){
 				if ( 1==2 ){
 					return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js', array('crossorigin'), null, '2.2.4', $footer);
 				} else {
-					return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js', array('crossorigin'), null, '3.4.1', $footer);
+					return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js', array('crossorigin'), null, '3.5.0', $footer);
 				}
 			}
 		}

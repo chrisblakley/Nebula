@@ -142,15 +142,6 @@
 	background: nth(nth($colors, 1), 1); background: linear-gradient($direction, $colors);
 }
 
-//.element {@include widescreen(){background: red;};}
-@mixin ultrawidescreen(){
-	@media only screen and (min-width: 2048px){& {@content}} //This size and larger
-}
-
-//.element {@include widescreen(){background: red;};}
-@mixin widescreen(){
-	@media only screen and (min-width: 1600px){& {@content}} //This size and larger
-}
 //.element {@include tablet(){background: red;};}
 //.element {@include tablet(landscape){background: purple;};}
 @mixin tablet($orientation: "portrait"){
@@ -169,59 +160,57 @@
 		@media only screen and (max-width: 376px){& {@content}} //This size and smaller
 	}
 }
-//.element {@include print(){background: red;};}
-@mixin print(){
-	@media only print {& {@content}}
-}
 //.element {@include media(mobile) {background: red;};}
 //.element {@include media(custom, "only screen and (max-width: 550px)") {background: red;};}
 @mixin media($group, $custom: ""){
-	@if $group == "ultrawidescreen" {
-		@include ultrawidescreen(){& {@content}} //This size and larger
+	//Device Types
+	@if ( $group == 'desktop' or $group == 'laptop' ){
+		@media (hover: hover){& {@content}} //Devices that can hover
 	}
-	@if $group == "widescreen" {
-		@include widescreen(){& {@content}} //This size and larger
+	@if ( $group == 'smartphone' or $group == 'touchscreen' ){
+		@media (hover: none) and (pointer: coarse){& {@content}} //Devices that cannot hover and have a coarse pointer
 	}
-	@if $group == "tablet_landscape" {
+	@if ( $group == "print" ){
+		@media only print {& {@content}}
+	}
+
+	//Screen Sizes
+	@if ( $group == "ultrawidescreen" or $group == "uw" ){
+		@media only screen and (min-width: 2048px){& {@content}} //This size and larger
+	}
+	@if ( $group == "widescreen" or $group == "xxl" ){
+		@media only screen and (min-width: 1600px){& {@content}} //This size and larger
+	}
+	@if ( $group == "tablet_landscape" ){
 		@include tablet(landscape){& {@content}} //This size and smaller
 	}
-	@if $group == "tablet" {
+	@if ( $group == "tablet" ){
 		@include tablet(){& {@content}} //This size and smaller
 	}
-	@if $group == "mobile_landscape" {
+	@if ( $group == "mobile_landscape" ){
 		@include mobile(landscape){& {@content}} //This size and smaller
 	}
-	@if $group == "mobile" {
+	@if ( $group == "mobile" ){
 		@include mobile(){& {@content}} //This size and smaller
-	}
-	@if $group == "print" {
-		@include print(){& {@content}}
-	}
-	@if $group == "custom" {
-		@media #{$custom} {& {@content}}
 	}
 
 	//Bootstrap
-	@if $group == "sm" {
+	@if ( $group == "sm" ){
 		@media (min-width: #{$sm}px){& {@content}} //This size and larger
 	}
-	@if $group == "md" {
+	@if ( $group == "md" ){
 		@media (min-width: #{$md}px){& {@content}} //This size and larger
 	}
-	@if $group == "lg" {
+	@if ( $group == "lg" ){
 		@media (min-width: #{$lg}px){& {@content}} //This size and larger
 	}
-	@if $group == "xl" {
+	@if ( $group == "xl" ){
 		@media (min-width: #{$xl}px){& {@content}} //This size and larger
 	}
 
-	//Nebula Extended Viewports
-	@if $group == "xxl" {
-		@include widescreen(){& {@content}} //This size and larger
-	}
-
-	@if $group == "uw" {
-		@include ultrawidescreen(){& {@content}} //This size and larger
+	//Custom media query
+	@if ( $group == "custom" ){
+		@media #{$custom} {& {@content}}
 	}
 }
 

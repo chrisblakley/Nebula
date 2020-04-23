@@ -146,13 +146,17 @@ if ( !trait_exists('Optimization') ){
 			$to_async = apply_filters('nebula_async_scripts', array()); //Allow other functions to hook in to add async to existing scripts
 
 			//Defer scripts
-			foreach ( $to_defer as $handle ){
-				wp_script_add_data($handle, 'defer', true);
+			if ( !empty($to_defer) && is_array($to_defer) ){
+				foreach ( $to_defer as $handle ){
+					wp_script_add_data($handle, 'defer', true);
+				}
 			}
 
 			//Async scripts
-			foreach ( $to_async as $handle ){
-				wp_script_add_data($handle, 'async', true);
+			if ( !empty($to_async) && is_array($to_async) ){
+				foreach ( $to_async as $handle ){
+					wp_script_add_data($handle, 'async', true);
+				}
 			}
 		}
 
@@ -219,8 +223,10 @@ if ( !trait_exists('Optimization') ){
 		public function dequeue_lazy_load_styles(){
 			$lazy_load_assets = $this->lazy_load_assets();
 
-			foreach ( $lazy_load_assets['styles'] as $handle => $condition ){
-				wp_dequeue_style($handle);
+			if ( !empty($lazy_load_assets) && is_array($lazy_load_assets) ){
+				foreach ( $lazy_load_assets['styles'] as $handle => $condition ){
+					wp_dequeue_style($handle);
+				}
 			}
 		}
 
@@ -231,8 +237,10 @@ if ( !trait_exists('Optimization') ){
 			}
 
 			$lazy_load_assets = $this->lazy_load_assets();
-			foreach ( $lazy_load_assets['scripts'] as $handle => $condition ){
-				wp_dequeue_script($handle);
+			if ( !empty($lazy_load_assets) && is_array($lazy_load_assets) ){
+				foreach ( $lazy_load_assets['scripts'] as $handle => $condition ){
+					wp_dequeue_script($handle);
+				}
 			}
 		}
 
@@ -271,25 +279,27 @@ if ( !trait_exists('Optimization') ){
 				$server_timing_header_string = 'Server-Timing: ';
 
 				//Loop through all times
-				foreach ( $this->server_timings as $label => $data ){
-					if ( !empty($data['time']) ){
-						$time = $data['time'];
-					} elseif ( intval($data) ){
-						$time = intval($data);
-					} else {
-						continue;
-					}
+				if ( !empty($this->server_timings) && is_array($this->server_timings) ){
+					foreach ( $this->server_timings as $label => $data ){
+						if ( !empty($data['time']) ){
+							$time = $data['time'];
+						} elseif ( intval($data) ){
+							$time = intval($data);
+						} else {
+							continue;
+						}
 
-					//Ignore unfinished, 0 timings, or non-logging entries
-					if ( $label === 'categories' || !empty($data['active']) || round($time*1000) <= 0 || (!empty($data['log']) && $data['log'] === false) ){
-						continue;
-					}
+						//Ignore unfinished, 0 timings, or non-logging entries
+						if ( $label === 'categories' || !empty($data['active']) || round($time*1000) <= 0 || (!empty($data['log']) && $data['log'] === false) ){
+							continue;
+						}
 
-					$name = str_replace(array(' ', '(', ')', '[', ']'), '', strtolower($label));
-					if ( $label === 'PHP [Total]' ){
-						$name = 'total';
+						$name = str_replace(array(' ', '(', ')', '[', ']'), '', strtolower($label));
+						if ( $label === 'PHP [Total]' ){
+							$name = 'total';
+						}
+						$server_timing_header_string .= $name . ';dur=' . round($time*1000) . ';desc="' . $label . '",';
 					}
-					$server_timing_header_string .= $name . ';dur=' . round($time*1000) . ';desc="' . $label . '",';
 				}
 
 				header($server_timing_header_string);
@@ -301,34 +311,38 @@ if ( !trait_exists('Optimization') ){
 			if ( $this->is_dev() || isset($_GET['timings']) ){ //Only output server timings for developers or if timings query string present
 				$this->finalize_timings();
 
-				foreach ( $this->server_timings as $label => $data ){
-					if ( !empty($data['time']) ){
-						$time = $data['time'];
-					} elseif ( intval($data) ){
-						$time = intval($data);
-					} else {
-						continue;
+				if ( !empty($this->server_timings) && is_array($this->server_timings) ){
+					foreach ( $this->server_timings as $label => $data ){
+						if ( !empty($data['time']) ){
+							$time = $data['time'];
+						} elseif ( intval($data) ){
+							$time = intval($data);
+						} else {
+							continue;
+						}
+
+						if ( $label === 'categories' || !empty($data['active']) || round($time*1000) <= 0 || (!empty($data['log']) && $data['log'] === false) ){
+							continue;
+						}
+
+						$start_time = ( !empty($data['start']) )? round(($data['start']-$_SERVER['REQUEST_TIME_FLOAT'])*1000) : -1;
+
+						$testTimes['[PHP] ' . $label] = array(
+							'start' => $start_time, //Convert seconds to milliseconds
+							'duration' => round($time*1000), //Convert seconds to milliseconds
+							'elapsed' => ( is_float($start_time) )? $start_time+round($time*1000) : -1,
+						);
 					}
-
-					if ( $label === 'categories' || !empty($data['active']) || round($time*1000) <= 0 || (!empty($data['log']) && $data['log'] === false) ){
-						continue;
-					}
-
-					$start_time = ( !empty($data['start']) )? round(($data['start']-$_SERVER['REQUEST_TIME_FLOAT'])*1000) : -1;
-
-					$testTimes['[PHP] ' . $label] = array(
-						'start' => $start_time, //Convert seconds to milliseconds
-						'duration' => round($time*1000), //Convert seconds to milliseconds
-						'elapsed' => ( is_float($start_time) )? $start_time+round($time*1000) : -1,
-					);
 				}
 
-				//Sort by elapsed time
-				uasort($testTimes, function($a, $b){
-					return $a['elapsed'] - $b['elapsed'];
-				});
+				if ( !empty($testTimes) ){
+					//Sort by elapsed time
+					uasort($testTimes, function($a, $b){
+						return $a['elapsed'] - $b['elapsed'];
+					});
 
-				echo '<script type="text/javascript">nebula.site.timings = ' . json_encode($testTimes) . ';</script>'; //Output the data to <head>
+					echo '<script type="text/javascript">nebula.site.timings = ' . json_encode($testTimes) . ';</script>'; //Output the data to <head>
+				}
 			}
 		}
 
@@ -384,8 +398,10 @@ if ( !trait_exists('Optimization') ){
 
 			//Loop through all of the preconnects
 			$preconnects = apply_filters('nebula_preconnect', $default_preconnects);
-			foreach ( $preconnects as $preconnect ){
-				echo '<link rel="preconnect" href="' . $preconnect . '" crossorigin="anonymous" />' . $debug_comment;
+			if ( !empty($preconnects) && is_array($preconnects) ){
+				foreach ( $preconnects as $preconnect ){
+					echo '<link rel="preconnect" href="' . $preconnect . '" crossorigin="anonymous" />' . $debug_comment;
+				}
 			}
 
 			/*==========================
@@ -423,8 +439,10 @@ if ( !trait_exists('Optimization') ){
 
 			//Loop through all of the prefetches
 			$prefetches = apply_filters('nebula_prefetches', $default_prefetches); //Allow child themes and plugins to prefetch resources via Nebula too
-			foreach ( $prefetches as $prefetch ){
-				echo '<link rel="prefetch" href="' . $prefetch . '" crossorigin="anonymous" />' . $debug_comment;
+			if ( !empty($prefetches) && is_array($prefetches) ){
+				foreach ( $prefetches as $prefetch ){
+					echo '<link rel="prefetch" href="' . $prefetch . '" crossorigin="anonymous" />' . $debug_comment;
+				}
 			}
 
 			/*==========================
@@ -441,33 +459,35 @@ if ( !trait_exists('Optimization') ){
 
 			//Loop through all of the preloads
 			$preloads = apply_filters('nebula_preloads', $default_preloads); //Allow child themes and plugins to preload resources via Nebula too
-			foreach ( $preloads as $preload ){
-				$filetype = 'fetch';
-				switch ( $preload ){
-					case strpos($preload, '.css'):
-						$filetype = 'style';
-						break;
-					case strpos($preload, '.js'):
-						$filetype = 'script';
-						break;
-					case strpos($preload, 'fonts.googleapis'):
-					case strpos($preload, '.woff'):
-						$filetype = 'font';
-						break;
-					case strpos($preload, '.jpg'):
-					case strpos($preload, '.jpeg'):
-					case strpos($preload, '.png'):
-					case strpos($preload, '.gif'):
-						$filetype = 'image';
-						break;
-					case strpos($preload, '.mp4'):
-					case strpos($preload, '.ogv'):
-					case strpos($preload, '.mov'):
-						$filetype = 'video';
-						break;
-				}
+			if ( !empty($preloads) && is_array($preloads) ){
+				foreach ( $preloads as $preload ){
+					$filetype = 'fetch';
+					switch ( $preload ){
+						case strpos($preload, '.css'):
+							$filetype = 'style';
+							break;
+						case strpos($preload, '.js'):
+							$filetype = 'script';
+							break;
+						case strpos($preload, 'fonts.googleapis'):
+						case strpos($preload, '.woff'):
+							$filetype = 'font';
+							break;
+						case strpos($preload, '.jpg'):
+						case strpos($preload, '.jpeg'):
+						case strpos($preload, '.png'):
+						case strpos($preload, '.gif'):
+							$filetype = 'image';
+							break;
+						case strpos($preload, '.mp4'):
+						case strpos($preload, '.ogv'):
+						case strpos($preload, '.mov'):
+							$filetype = 'video';
+							break;
+					}
 
-				echo '<link rel="preload" href="' . $preload . '" as="fetch" crossorigin="anonymous" />';
+					echo '<link rel="preload" href="' . $preload . '" as="fetch" crossorigin="anonymous" />';
+				}
 			}
 		}
 
