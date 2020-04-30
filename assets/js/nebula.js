@@ -1404,7 +1404,7 @@ nebula.eventTracking = function(){
 			}
 
 			ga('send', 'exception', {'exDescription': '(JS) AJAX Error (' + jqXHR.status + '): ' + errorMessage + ' on ' + settings.url, 'exFatal': true});
-			window.dataLayer.push({'event': 'nebula-ajax-error', 'nebula-event': thisEvent});
+			window.dataLayer.push({'event': 'nebula-ajax-error', 'nebula-event': errorMessage});
 			nebula.nv('event', 'AJAX Error');
 		});
 
@@ -1416,7 +1416,7 @@ nebula.eventTracking = function(){
 			}
 
 			ga('send', 'exception', {'exDescription': '(JS) ' + errorMessage, 'exFatal': false}); //Is there a better way to detect fatal vs non-fatal errors?
-			window.dataLayer.push({'event': 'nebula-window-error', 'nebula-event': thisEvent});
+			window.dataLayer.push({'event': 'nebula-window-error', 'nebula-event': errorMessage});
 			nebula.nv('event', 'JavaScript Error');
 		}
 
