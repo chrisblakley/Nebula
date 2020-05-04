@@ -23,7 +23,6 @@ if ( !trait_exists('Utilities') ){
 			$this->DeviceHooks(); //Register Device hooks
 			$this->SassHooks(); //Register Sass hooks
 
-
 			register_shutdown_function(array($this, 'ga_log_fatal_errors'));
 		}
 

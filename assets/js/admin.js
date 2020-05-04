@@ -1044,7 +1044,7 @@ function nebulaLogs(){
 
 		oThis.addClass('prompted');
 
-		if ( logID && confirm('Are you sure you want to delete this message from the log? There is no undo.') == true ){
+		if ( logID && confirm('Are you sure you want to delete this message from the log? There is no undo.') ){
 			oThis.find('.remove').removeClass('fa-ban').addClass('fa-spinner fa-spin');
 
 			var logCount = parseInt(jQuery('#log-count').text()); //Number of log rows before removal
@@ -1078,7 +1078,7 @@ function nebulaLogs(){
 
 	//Clean low importance logs
 	jQuery(document).on('click', '#clean-log-messages', function(){
-		if ( confirm('Are you sure you want to delete low importance log messages? There is no undo.') == true ){
+		if ( confirm('Are you sure you want to delete low importance log messages? There is no undo.') ){
 			jQuery('#clean-log-progress').removeClass('fa-trash-alt').addClass('fa-spinner fa-spin');
 
 			jQuery.ajax({

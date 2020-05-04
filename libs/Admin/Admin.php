@@ -39,7 +39,7 @@ if ( !trait_exists('Admin') ){
 				add_action('admin_init', array($this, 'theme_json'));
 				add_filter('puc_request_update_result_theme-Nebula', array($this, 'theme_update_version_store'), 10, 2); //This hook is found in UpdateChecker.php in the filterUpdateResult() function.
 				add_filter('site_transient_update_themes', array($this, 'force_nebula_theme_update'), 99, 1);
-				add_action('upgrader_process_complete', array($this, 'log_core_wp_updates'));
+				add_action('upgrader_process_complete', array($this, 'log_core_wp_updates'), 10, 2);
 			}
 
 			//Non-AJAX admin pages
