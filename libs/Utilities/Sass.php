@@ -60,7 +60,12 @@ if ( !trait_exists('Sass') ){
 
 				//Check if all Sass files should be rendered
 				$force_all = false;
-				if ( (isset($_GET['sass']) || isset($_GET['scss']) || isset($_GET['settings-updated']) || $this->get_data('need_sass_compile') === 'true') && $this->is_staff() ){
+				if ( (isset($_GET['sass']) || isset($_GET['scss'])) && $this->is_staff() ){
+					$force_all = true;
+					$this->add_log('Sass force re-process requested', 1); //Logging this one because it was specifically requested. The other conditions below are otherwise detected.
+				}
+
+				if ( !$force_all && (isset($_GET['settings-updated']) || $this->get_data('need_sass_compile') === 'true') && $this->is_staff() ){
 					$force_all = true;
 				}
 
@@ -104,6 +109,7 @@ if ( !trait_exists('Sass') ){
 
 				if ( time()-$this->latest_scss_mtime >= MONTH_IN_SECONDS ){ //If the last style.scss modification hasn't happened within a month disable Sass.
 					$this->update_option('scss', 0); //Once Sass is disabled this way, a developer would need to re-enable it in Nebula Options.
+					$this->add_log('Sass processing has been disabled due to inactivity to improve performance.', 4);
 				}
 			} elseif ( $this->is_dev() && !$this->is_admin_page() && (isset($_GET['sass']) || isset($_GET['scss'])) ){
 				trigger_error('Sass can not compile because it is disabled in Nebula Functions.', E_USER_NOTICE);

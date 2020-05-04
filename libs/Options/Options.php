@@ -359,6 +359,7 @@ if ( !trait_exists('Options') ){
 				'google_adsense_url' => '',
 				'amazon_associates_url' => '',
 				'mention_url' => '',
+				'logs' => 0,
 				'notes' => '',
 				'auto_update_test' => 1,
 			);

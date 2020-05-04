@@ -3,11 +3,13 @@
 if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Utilities') ){
+	require_once get_template_directory() . '/libs/Utilities/Logs.php';
 	require_once get_template_directory() . '/libs/Utilities/Analytics.php';
 	require_once get_template_directory() . '/libs/Utilities/Device.php';
 	require_once get_template_directory() . '/libs/Utilities/Sass.php';
 
 	trait Utilities {
+		use Logs { Logs::hooks as LogsHooks;}
 		use Analytics { Analytics::hooks as AnalyticsHooks;}
 		use Device { Device::hooks as DeviceHooks;}
 		use Sass { Sass::hooks as SassHooks;}
@@ -16,9 +18,12 @@ if ( !trait_exists('Utilities') ){
 			$this->server_timings = array();
 
 			add_filter('posts_where', array($this, 'fuzzy_posts_where'));
+			$this->LogsHooks(); //Register Logs hooks
 			$this->AnalyticsHooks(); //Register Analytics hooks
 			$this->DeviceHooks(); //Register Device hooks
 			$this->SassHooks(); //Register Sass hooks
+
+
 			register_shutdown_function(array($this, 'ga_log_fatal_errors'));
 		}
 

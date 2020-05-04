@@ -39,6 +39,7 @@ if ( !trait_exists('Admin') ){
 				add_action('admin_init', array($this, 'theme_json'));
 				add_filter('puc_request_update_result_theme-Nebula', array($this, 'theme_update_version_store'), 10, 2); //This hook is found in UpdateChecker.php in the filterUpdateResult() function.
 				add_filter('site_transient_update_themes', array($this, 'force_nebula_theme_update'), 99, 1);
+				add_action('upgrader_process_complete', array($this, 'log_core_wp_updates'));
 			}
 
 			//Non-AJAX admin pages
@@ -934,6 +935,7 @@ if ( !trait_exists('Admin') ){
 					$num_theme_updates = $this->get_data('num_theme_updates')+1;
 					$current_user = wp_get_current_user();
 					$this->usage('Automated Theme Update', array('d11' => 'From ' . $prev_version . ' to ' . $new_version, 'cm1' => $num_theme_updates));
+					$this->add_log('Nebula theme update (via WP) from ' . $prev_version . ' to ' . $new_version, 5);
 
 					$this->theme_update_email($prev_version, $prev_version_commit_date, $new_version); //Send email with update information
 					$this->update_data('version_legacy', 'false');
@@ -1010,6 +1012,13 @@ if ( !trait_exists('Admin') ){
 					return true;
 				}
 			});
+		}
+
+		//Log when WordPress core is updated
+		public function log_core_wp_updates($wp_upgrader, $extra){
+			if ( $extra['core'] ){
+				$this->add_log('WordPress core was updated.', 5);
+			}
 		}
 
 		//Control session time (for the "Remember Me" checkbox)

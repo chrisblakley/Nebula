@@ -207,6 +207,7 @@ if ( !trait_exists('Automation') ){
 
 		public function activation(){
 			$this->usage('Theme Activation');
+			$this->add_log('Theme activation', 5);
 
 			//If not initialized before, set default options if they haven't been already
 			if ( !$this->is_initialized_before() ){
@@ -271,6 +272,7 @@ if ( !trait_exists('Automation') ){
 		public function initialization(){
 			if ( current_user_can('manage_options') ){
 				$this->usage('Initialization');
+				$this->add_log('Theme settings have been re-initialized.', 7);
 				$this->full_automation();
 				$this->initialization_email_prev_settings();
 
@@ -485,6 +487,7 @@ if ( !trait_exists('Automation') ){
 				$this->update_data('current_version_date', $this->version('date'));
 				$this->update_data('theme_update_notification', 'enabled');
 				update_option('external_theme_updates-Nebula-master', '');
+				$this->add_log('Forced initialization occurred.', 6);
 			}
 		}
 	}

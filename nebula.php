@@ -9,8 +9,8 @@ if ( !class_exists('Nebula') ){
 	//Require Nebula libraries
 	require_once get_template_directory() . '/libs/Assets.php';
 	require_once get_template_directory() . '/libs/Options/Options.php';
-	require_once get_template_directory() . '/libs/Options/Customizer.php';
 	require_once get_template_directory() . '/libs/Utilities/Utilities.php';
+	require_once get_template_directory() . '/libs/Options/Customizer.php';
 	require_once get_template_directory() . '/libs/Security.php';
 	require_once get_template_directory() . '/libs/Optimization.php';
 	require_once get_template_directory() . '/libs/Functions.php';
@@ -26,8 +26,8 @@ if ( !class_exists('Nebula') ){
 	class Nebula {
 		use Assets { Assets::hooks as AssetsHooks; }
 		use Options { Options::hooks as OptionsHooks; }
-		use Customizer { Customizer::hooks as CustomizerHooks; }
 		use Utilities { Utilities::hooks as UtilitiesHooks; }
+		use Customizer { Customizer::hooks as CustomizerHooks; }
 		use Security { Security::hooks as SecurityHooks; }
 		use Optimization { Optimization::hooks as OptimizationHooks; }
 		use Functions { Functions::hooks as FunctionsHooks; }

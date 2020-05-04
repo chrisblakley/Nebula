@@ -17,6 +17,7 @@ jQuery(function(){
 	if ( window.location.href.indexOf('themes.php?page=nebula_options') > 0 ){
 		checkWindowHeightForStickyNav();
 		nebulaLiveValidator();
+		nebulaLogs();
 
 		//If there are no active tabs on load (like if wrong ?tab= parameter was used)
 		if ( !jQuery('#options-navigation li a.active').length ){
@@ -991,4 +992,118 @@ function debounce(callback, wait, uniqueID, immediate){
 	if ( callNow ){
 		callback.apply(context, args);
 	}
-};
+}
+
+
+function nebulaLogs(){
+	//Add a message to logs
+	jQuery(document).on('click', '#submit-log-message', function(){
+		var logMessage = jQuery.trim(jQuery('#log-message').val());
+		var logImportance = jQuery.trim(jQuery('#log-importance').val()) || 4;
+
+		if ( logMessage ){
+			jQuery('#add-log-progress').removeClass('fa-calendar-plus').addClass('fa-spinner fa-spin');
+
+			jQuery.ajax({
+				type: 'POST',
+				url: nebula.site.ajax.url,
+				data: {
+					nonce: nebula.site.ajax.nonce,
+					action: 'add_log',
+					data: [{
+						message: logMessage,
+						importance: logImportance,
+					}]
+				},
+				success: function(response){
+					jQuery('#add-log-progress').removeClass('fa-spinner fa-spin').addClass('fa-calendar-plus');
+
+					//Reload just the table
+					jQuery('#nebula-log-reload-container').load(window.location.href +  ' #nebula-logs', function(){
+						jQuery('#log-count').text(jQuery('#nebula-logs tr').not('.removed').length); //Re-count rows
+
+						//Empty the inputs
+						jQuery('#log-message').val('');
+						jQuery('#log-importance').val('5');
+					});
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown){
+					jQuery('#add-log-progress').removeClass('fa-spinner fa-spin').addClass('fa-calendar-plus');
+				},
+				timeout: 60000
+			});
+		}
+
+		return false;
+	});
+
+	//Remove a message from logs
+	jQuery(document).on('click', 'table#nebula-logs tbody tr', function(){
+		var oThis = jQuery(this);
+		var logID = oThis.attr('data-id');
+
+		oThis.addClass('prompted');
+
+		if ( logID && confirm('Are you sure you want to delete this message from the log? There is no undo.') == true ){
+			oThis.find('.remove').removeClass('fa-ban').addClass('fa-spinner fa-spin');
+
+			var logCount = parseInt(jQuery('#log-count').text()); //Number of log rows before removal
+
+			jQuery.ajax({
+				type: 'POST',
+				url: nebula.site.ajax.url,
+				data: {
+					nonce: nebula.site.ajax.nonce,
+					action: 'remove_log',
+					data: [{
+						id: logID,
+					}]
+				},
+				success: function(response){
+					//Artificially update the table without doing a reload of the whole page in case there are unsaved changes!
+					oThis.fadeOut(250).addClass('removed'); //Artificially hide the removed row
+					jQuery('#log-count').text(logCount-1); //Artificially update the log count
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown){
+					oThis.find('.remove').removeClass('fa-spinner fa-spin').addClass('fa-ban');
+				},
+				timeout: 60000
+			});
+		} else {
+			jQuery(this).removeClass('prompted');
+		}
+
+		return false;
+	});
+
+	//Clean low importance logs
+	jQuery(document).on('click', '#clean-log-messages', function(){
+		if ( confirm('Are you sure you want to delete low importance log messages? There is no undo.') == true ){
+			jQuery('#clean-log-progress').removeClass('fa-trash-alt').addClass('fa-spinner fa-spin');
+
+			jQuery.ajax({
+				type: 'POST',
+				url: nebula.site.ajax.url,
+				data: {
+					nonce: nebula.site.ajax.nonce,
+					action: 'clean_logs',
+					data: [{
+						importance: 4,
+					}]
+				},
+				success: function(response){
+					jQuery('#nebula-log-reload-container').load(window.location.href +  ' #nebula-logs', function(){
+						jQuery('#log-count').text(jQuery('#nebula-logs tr').not('.removed').length); //Re-count rows
+						jQuery('#clean-log-progress').removeClass('fa-spinner fa-spin').addClass('fa-trash-alt');
+					}); //Reload just the table
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown){
+					jQuery('#clean-log-progress').removeClass('fa-spinner fa-spin').addClass('fa-trash-alt');
+				},
+				timeout: 60000
+			});
+		}
+
+		return false;
+	});
+}

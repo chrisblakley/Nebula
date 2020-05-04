@@ -387,6 +387,59 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 	}
 }
 
+//Nebula Logs Table
+#nebula_logs_metabox {
+	.inside {max-height: 500px; overflow: auto;}
+
+	#nebula-add-log {margin-bottom: 10px; text-align: center;
+		input[type="text"] {min-width: 250px;}
+		input[type="number"] {min-width: 50px;}
+	}
+
+	table#nebula-logs {border: 1px solid #ccd0d4;
+		thead {font-weight: bold; background: $primary_color; color: readable-color($primary_color);
+			td.timestamp:after {content: "\f140"; font: normal 20px/1 dashicons; vertical-align: bottom;}
+		}
+
+		i.remove {display: inline-block; color: $danger_color; max-width: 0; vertical-align: middle; overflow: hidden; transition: max-width 0.25s ease;}
+
+		tbody {
+			tr {transition: background 0.25s ease;
+				&:nth-child(even) {background: #f2f2f2;}
+
+				//Eventually when CSS can do > and < re-write this
+				&[data-importance="0"],
+				&[data-importance="1"],
+				&[data-importance="2"] {color: #666;}
+				&[data-importance="3"],
+				&[data-importance="4"],
+				&[data-importance="5"],
+				&[data-importance="6"] {}
+				&[data-importance="7"],
+				&[data-importance="8"],
+				&[data-importance="9"] {font-weight: bold;}
+				&[data-importance="10"] {color: $danger_color; font-weight: bold;}
+
+				&:hover,
+				&.prompted {cursor: pointer; background: rgba($danger_color, 0.2);
+					i.remove {max-width: 15px;}
+				}
+			}
+		}
+
+		td {vertical-align: baseline; padding: 6px 10px; font-size: 12px;
+			&.id,
+			&.importance {display: none;}
+		}
+	}
+
+	#nebula-clean-logs {margin-top: 10px; text-align: center;
+		a#clean-log-messages {color: $danger_color; transition: all 0.25s ease;
+			&:hover {color: darken($danger_color, 20%);}
+		}
+	}
+}
+
 .nebula-enabled {color: $success_color;}
 .nebula-disabled {color: $danger_color;}
 

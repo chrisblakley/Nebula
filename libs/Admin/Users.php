@@ -10,6 +10,8 @@ if ( !trait_exists('Users') ){
 
 			//Exclude AJAX and REST requests
 			if ( !$this->is_ajax_or_rest_request() ){
+				add_action('user_register', array($this, 'detect_new_admin_users'));
+
 				add_filter('manage_users_columns', array($this, 'user_columns_head'));
 				add_filter('manage_users_sortable_columns', array($this, 'user_columns_sortable'));
 				add_action('manage_users_custom_column', array($this, 'user_columns_content' ), 15, 3);
@@ -24,6 +26,13 @@ if ( !trait_exists('Users') ){
 
 				add_action('personal_options_update', array($this, 'save_extra_profile_fields'));
 				add_action('edit_user_profile_update', array($this, 'save_extra_profile_fields'));
+			}
+		}
+
+		//Log when administrators are created
+		public function detect_new_admin_users($user_id){
+			if ( user_can($user_id, 'manage_options') ){
+				$this->add_log('New admin user registered (User ID: ' . $user_id . ')', 6);
 			}
 		}
 

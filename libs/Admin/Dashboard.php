@@ -43,7 +43,6 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			add_action('wp_ajax_search_theme_files', array($this, 'search_theme_files'));
-			add_action('wp_ajax_nopriv_search_theme_files', array($this, 'search_theme_files'));
 		}
 
 		//Remove unnecessary Dashboard metaboxes

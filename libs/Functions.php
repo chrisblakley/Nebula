@@ -208,6 +208,7 @@ trait Functions {
 	}
 
 	//Set server timezone to match Wordpress
+	//@todo "Nebula" 0: WordPress Health Check does not like this function, but often has incorrect timestamps...
 	public function set_default_timezone(){
 		//@todo "Nebula" 0: Use null coalescing operator here if possible
 		$timezone_option = get_option('timezone_string');

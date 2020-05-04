@@ -41,6 +41,7 @@ if ( !trait_exists('Metaboxes') ){
 				add_meta_box('nebula_troubleshooting_metabox', 'Troubleshooting', array($this, 'nebula_troubleshooting_metabox'), 'nebula_options', 'diagnostic');
 				add_meta_box('nebula_installation_metabox', 'Installation', array($this, 'nebula_installation_metabox'), 'nebula_options', 'diagnostic');
 				add_meta_box('nebula_version_metabox', 'Nebula Version', array($this, 'nebula_version_metabox'), 'nebula_options', 'diagnostic_side');
+				add_meta_box('nebula_logs_metabox', 'Automated Logs', array($this, 'nebula_logs_metabox'), 'nebula_options', 'diagnostic_side');
 				add_meta_box('nebula_users_metabox', 'Users', array($this, 'nebula_users_metabox'), 'nebula_options', 'diagnostic');
 			}
 		}
@@ -1895,7 +1896,14 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_notes_metabox($nebula_options){
 			?>
 				<div class="form-group">
-					<label for="notes">Notes</label>
+					<input type="checkbox" name="nebula_options[logs]" id="logs" value="1" <?php checked('1', !empty($nebula_options['logs'])); ?> /><label for="logs">Automatic Logs</label>
+					<p class="nebula-help-text short-help form-text text-muted">Automatically log notable administrative events such as when the Nebula theme is updated (Default: <?php echo $this->user_friendly_default('logs'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">This does not log any user data.</p>
+					<p class="option-keywords">annotations logging database</p>
+				</div>
+
+				<div class="form-group">
+					<label for="notes">Manual Notes</label>
 					<textarea name="nebula_options[notes]" id="notes" class="form-control textarea" rows="4"><?php echo $nebula_options['notes']; ?></textarea>
 					<p class="nebula-help-text short-help form-text text-muted">This area can be used to keep notes. It is not used anywhere on the front-end.</p>
 					<p class="option-keywords"></p>
@@ -2040,12 +2048,69 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="next_version">Next Nebula version</label>
 					<input type="text" name="nebula_options[next_version]" id="next_version" class="form-control" value="<?php echo $nebula_data['next_version']; ?>" readonly />
 					<p class="nebula-help-text short-help form-text text-muted">The latest version available on <a href="https://github.com/chrisblakley/Nebula" target="_blank">Github</a>.</p>
-					<p class="nebula-help-text more-help form-text text-muted">Re-checks with <a href="/update-core.php">theme update check</a> only when Nebula Child is activated.</p>
+					<p class="nebula-help-text more-help form-text text-muted">Re-checks with <a href="update-core.php">theme update check</a> only when Nebula Child is activated.</p>
 					<p class="option-keywords">readonly</p>
 				</div>
 			<?php
 
 			do_action('nebula_options_version_metabox', $nebula_data);
+		}
+
+		public function nebula_logs_metabox($nebula_data){
+			$nebula_options = get_option('nebula_options');
+
+			if ( !empty($nebula_options['logs']) && $this->is_staff() ):
+				$columns = $this->get_logs(false);
+				$rows = $this->get_logs(true);
+			?>
+				<div id="nebula-add-log">
+					<input id="log-message" type="text" placeholder="Log message" /> <input id="log-importance" type="number" min="0" max="10" value="5" /> <a id="submit-log-message" class="button button-primary" href="#"><i id="add-log-progress" class="fas fa-fw fa-calendar-plus"></i> Add Log Message</a>
+				</div>
+
+				<div id="nebula-log-reload-container">
+					<table id="nebula-logs" cellspacing="0" width="100%">
+						<thead>
+							<tr>
+								<?php foreach ( $columns as $column ): ?>
+									<td class="<?php echo $column->Field; ?>"><?php echo ucwords(str_replace('_id', '', $column->Field)); ?></td>
+								<?php endforeach; ?>
+							</tr>
+						</thead>
+						<tbody>
+							<?php foreach ( $rows as $row ): ?>
+								<tr data-id="<?php echo intval($row->id); ?>" data-importance="<?php echo intval($row->importance); ?>">
+									<?php foreach ( $row as $column => $value ): ?>
+										<td class="<?php echo $column; ?>">
+											<div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis;">
+												<?php
+													$sanitized_value = sanitize_text_field(mb_strimwidth($value, 0, 153, '...'));
+
+													if ( $column === 'user_id' ){
+														$sanitized_value = get_userdata($sanitized_value)->display_name;
+													}
+
+													if ( $column === 'timestamp' ){
+														$sanitized_value = '<i class="remove fas fa-fw fa-ban"></i> ' . date('l, F j, Y - g:i:s a', strtotime($sanitized_value));
+													}
+
+													echo $sanitized_value;
+												?>
+											</div>
+										</td>
+									<?php endforeach; ?>
+								</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
+				</div>
+
+				<p id="nebula-clean-logs">
+					<strong id="log-count"><?php echo count($rows); ?></strong> total logs. <a id="clean-log-messages" href="#"><i id="clean-log-progress" class="fas fa-fw fa-trash-alt"></i> Remove Low Importance Logs?</a>
+				</p>
+			<?php else: ?>
+				<p><strong class="nebula-disabled">The Nebula Logs option is not enabled.</strong></p>
+				<p><a href="themes.php?page=nebula_options&tab=administration&option=logs">Enable it here</a> to begin automatically logging notable events.</p>
+			<?php endif;
 		}
 
 		public function nebula_users_metabox($nebula_data){
