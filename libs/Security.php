@@ -141,8 +141,8 @@ if ( !trait_exists('Security') ){
 
 		//Manage what is exposed in the REST API
 		public function rest_endpoints_security($endpoints){
-			//Disable the /users endpoint if author bios is disabled
-			if ( !$this->get_option('author_bios') ){
+			//Disable the /users endpoint if author bios is disabled and the user is not logged in
+			if ( !is_user_logged_in() && !$this->get_option('author_bios') ){
 				if ( isset($endpoints['/wp/v2/users']) ){
 					unset($endpoints['/wp/v2/users']);
 				}
