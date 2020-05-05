@@ -2416,11 +2416,11 @@ trait Functions {
 
 		//Get from object cache unless specifically requested fresh data
 		if ( !$data['fresh'] ){
-			$userdata = wp_cache_get('nebula_user_info');
+			$userdata = wp_cache_get('nebula_user_info', 'user-id-' . $data['id']);
 		}
 		if ( empty($userdata) ){
 			$userdata = get_userdata($data['id']);
-			wp_cache_set('nebula_user_info', $userdata); //Store in object cache
+			wp_cache_set('nebula_user_info', $userdata, 'user-id-' . $data['id']); //Store in object cache
 		}
 
 		if ( !empty($data['datapoint']) ){

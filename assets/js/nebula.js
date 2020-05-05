@@ -97,7 +97,7 @@ jQuery(window).on('load', function(){
  Window Resize
  ===========================*/
 
-jQuery(window).on('resize', function(){
+window.addEventListener('resize', function(){
 	nebula.throttle(function(){
 		if ( typeof nebula.lastWindowWidth !== 'undefined' && nebula.dom.window.width() != nebula.lastWindowWidth ){ //If the width actually changed
 			nebula.lastWindowWidth = nebula.dom.window.width();
@@ -266,7 +266,7 @@ nebula.predictiveCacheListeners = function(){
 
 	//Internal link hovers
 	var predictiveHoverTimeout;
-	jQuery('a').hover(function(){
+	jQuery('a').on('mouseenter', function(){
 		var oThis = jQuery(this);
 		var url = oThis.attr('href');
 
@@ -781,7 +781,7 @@ nebula.eventTracking = function(){
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', 'Button Click', jQuery.trim(thisEvent.text), thisEvent.link);
+			ga('send', 'event', 'Button Click', thisEvent.text.trim(), thisEvent.link);
 			window.dataLayer.push({'event': 'nebula-button-click', 'nebula-event': thisEvent});
 		});
 
@@ -791,7 +791,7 @@ nebula.eventTracking = function(){
 				event: e,
 				category: 'Accordion',
 				action: 'Shown',
-				label: jQuery.trim(jQuery('[data-target="#' + e.target.id + '"]').text()) || e.target.id,
+				label: jQuery('[data-target="#' + e.target.id + '"]').text().trim() || e.target.id,
 			}
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -803,7 +803,7 @@ nebula.eventTracking = function(){
 				event: e,
 				category: 'Accordion',
 				action: 'Hidden',
-				label: jQuery.trim(jQuery('[data-target="#' + e.target.id + '"]').text()) || e.target.id,
+				label: jQuery('[data-target="#' + e.target.id + '"]').text().trim() || e.target.id,
 			}
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -817,7 +817,7 @@ nebula.eventTracking = function(){
 				event: e,
 				category: 'Modal',
 				action: 'Shown',
-				label: jQuery.trim(jQuery('#' + e.target.id + ' .modal-title').text()) || e.target.id,
+				label: jQuery('#' + e.target.id + ' .modal-title').text().trim() || e.target.id,
 			}
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -829,7 +829,7 @@ nebula.eventTracking = function(){
 				event: e,
 				category: 'Modal',
 				action: 'Hidden',
-				label: jQuery.trim(jQuery('#' + e.target.id + ' .modal-title').text()) || e.target.id,
+				label: jQuery('#' + e.target.id + ' .modal-title').text().trim() || e.target.id,
 			}
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -904,7 +904,7 @@ nebula.eventTracking = function(){
 				category: 'Download',
 				action: 'Notable',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				filePath: jQuery.trim(jQuery(this).attr('href')),
+				filePath: jQuery(this).attr('href').trim(),
 				linkText: jQuery(this).text()
 			}
 
@@ -927,7 +927,7 @@ nebula.eventTracking = function(){
 				category: 'Internal Search',
 				action: 'Submit',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				query: jQuery.trim(jQuery(this).find('input[name="s"]').val().toLowerCase())
+				query: jQuery(this).find('input[name="s"]').val().toLowerCase().trim()
 			}
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -945,7 +945,7 @@ nebula.eventTracking = function(){
 					event: e,
 					category: 'Keyboard Shortcut',
 					action: 'Find on Page (Ctrl+F)',
-					highlightedText: jQuery.trim(window.getSelection().toString()) || '(No highlighted text when initiating find)'
+					highlightedText: window.getSelection().toString().trim() || '(No highlighted text when initiating find)'
 				}
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1039,7 +1039,7 @@ nebula.eventTracking = function(){
 				category: 'Navigation Menu',
 				action: 'Utility Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				linkText: jQuery.trim(jQuery(this).text())
+				linkText: jQuery(this).text().trim()
 			}
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
@@ -1055,7 +1055,7 @@ nebula.eventTracking = function(){
 				category: 'Navigation Menu',
 				action: 'Primary Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				linkText: jQuery.trim(jQuery(this).text())
+				linkText: jQuery(this).text().trim()
 			}
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
@@ -1071,7 +1071,7 @@ nebula.eventTracking = function(){
 				category: 'Navigation Menu',
 				action: 'Mobile Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				linkText: jQuery.trim(jQuery(this).text())
+				linkText: jQuery(this).text().trim()
 			}
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
@@ -1087,7 +1087,7 @@ nebula.eventTracking = function(){
 				category: 'Navigation Menu',
 				action: 'Breadcrumbs',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				linkText: jQuery.trim(jQuery(this).text())
+				linkText: jQuery(this).text().trim()
 			}
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
@@ -1103,7 +1103,7 @@ nebula.eventTracking = function(){
 				category: 'Navigation Menu',
 				action: 'Sidebar Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				linkText: jQuery.trim(jQuery(this).text())
+				linkText: jQuery(this).text().trim()
 			}
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
@@ -1119,7 +1119,7 @@ nebula.eventTracking = function(){
 				category: 'Navigation Menu',
 				action: 'Footer Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				linkText: jQuery.trim(jQuery(this).text())
+				linkText: jQuery(this).text().trim()
 			}
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
@@ -1141,7 +1141,7 @@ nebula.eventTracking = function(){
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, jQuery.trim(thisEvent.text), thisEvent.link);
+			ga('send', 'event', thisEvent.category, thisEvent.text.trim(), thisEvent.link);
 			window.dataLayer.push({'event': 'nebula-cookie-notification-click', 'nebula-event': thisEvent});
 		});
 
@@ -1248,7 +1248,7 @@ nebula.eventTracking = function(){
 				event: e,
 				category: 'Accessibility Links',
 				action: 'Focus',
-				linkText: jQuery.trim(jQuery(this).text())
+				linkText: jQuery(this).text().trim()
 			}
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1263,7 +1263,7 @@ nebula.eventTracking = function(){
 				category: 'Accessibility Links',
 				action: 'Click',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				linkText: jQuery.trim(jQuery(this).text())
+				linkText: jQuery(this).text().trim()
 			}
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1305,7 +1305,7 @@ nebula.eventTracking = function(){
 			wordsLength = words.length;
 
 			//Track Email or Phone copies as contact intent.
-			var emailPhoneAddress = jQuery.trim(words.join(' '));
+			var emailPhoneAddress = words.join(' ').trim();
 			if ( nebula.regex.email.test(emailPhoneAddress) ){
 				var thisEvent = {
 					category: 'Contact',
@@ -1381,7 +1381,7 @@ nebula.eventTracking = function(){
 					words = words.slice(0, 8).join(' ');
 					ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]');
 				} else {
-					if ( jQuery.trim(selection) === '' ){
+					if ( selection.trim() === '' ){
 						ga('send', 'event', thisEvent.category, '[0 words]');
 					} else {
 						ga('send', 'event', thisEvent.category, words.length + ' words', selection, words.length);
@@ -1497,7 +1497,7 @@ nebula.eventTracking = function(){
 				event: e,
 				category: 'DataTables',
 				action: 'Search Filter',
-				query: jQuery.trim(oThis.val().toLowerCase())
+				query: oThis.val().toLowerCase().trim()
 			}
 
 			nebula.debounce(function(){
@@ -1802,7 +1802,7 @@ nebula.nvForm = function(formID){
 	}
 
 	jQuery('form [class*="nv-"]').each(function(){
-		if ( jQuery.trim(jQuery(this).val()).length ){
+		if ( jQuery(this).val().trim().length ){
 			if ( jQuery(this).attr('class').indexOf('nv-notable_poi') >= 0 ){
 				ga('set', nebula.analytics.dimensions.poi, jQuery('.notable-poi').val());
 			}
@@ -1845,7 +1845,7 @@ nebula.keywordFilter = function(container, parent, values, filteredClass, operat
 		if ( values.length === 1 && values[0].length > 2 && values[0].charAt(0) === '/' && values[0].slice(-1) === '/' ){
 			var regex = new RegExp(values[0].substring(1).slice(0, -1), 'i'); //Convert the string to RegEx after removing the first and last /
 			jQuery(container).find(parent).each(function(){ //Loop through each element to check against the regex pattern
-				var elementText = jQuery.trim(jQuery(this).text()).replace(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
+				var elementText = jQuery(this).text().trim().replace(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
 				jQuery(this).addClass(filteredClass);
 				if ( regex.test(elementText) ){
 					jQuery(this).removeClass(filteredClass);
@@ -1854,10 +1854,10 @@ nebula.keywordFilter = function(container, parent, values, filteredClass, operat
 		} else {
 			if ( !operator || operator === 'and' || operator === 'all' ){ //Match only elements that contain all keywords (Default operator is And if not provided)
 				jQuery.each(values, function(index, value){ //Loop through the values to search for
-					if ( jQuery.trim(value).length ){ //If the value is not empty
+					if ( value.trim().length ){ //If the value is not empty
 						jQuery(container).find(parent).not('.' + filteredClass).each(function(){ //Now check elements that have not yet been filtered for this value
 							var regex = new RegExp(value, 'i');
-							var elementText = jQuery.trim(jQuery(this).text()).replace(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
+							var elementText = jQuery(this).text().trim().replace(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
 							if ( !regex.test(elementText) ){
 								jQuery(this).addClass(filteredClass);
 							}
@@ -1867,14 +1867,14 @@ nebula.keywordFilter = function(container, parent, values, filteredClass, operat
 			} else { //Match elements that contains any keyword
 				var pattern = '';
 				jQuery.each(values, function(index, value){
-					if ( jQuery.trim(value).length ){ //If the value is not empty, add it to the pattern
+					if ( value.trim().length ){ //If the value is not empty, add it to the pattern
 						pattern += value + '|';
 					}
 				});
 				pattern = pattern.slice(0, -1); //Remove the last | character
 				var regex = new RegExp(pattern, 'i');
 				jQuery(container).find(parent).each(function(){ //Loop through each element to check against the regex pattern
-					var elementText = jQuery.trim(jQuery(this).text()).replace(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
+					var elementText = jQuery(this).text().trim().replace(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
 					jQuery(this).addClass(filteredClass);
 					if ( regex.test(elementText) ){
 						jQuery(this).removeClass(filteredClass);
@@ -1896,7 +1896,7 @@ nebula.menuSearchReplacement = function(){
 		});
 
 		jQuery('.nebula-search input').on('blur', function(){
-			if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
+			if ( jQuery(this).val() === '' || jQuery(this).val().trim().length === 0 ){
 				jQuery(this).removeClass('focus active focusError').attr('placeholder', jQuery(this).attr('placeholder'));
 			} else {
 				jQuery(this).removeClass('active');
@@ -1929,7 +1929,7 @@ nebula.autocompleteSearchListeners = function(){
 			});
 
 			jQuery('input#s, input.search').on('keyup paste change', function(e){
-				if ( !jQuery(this).hasClass('no-autocomplete') && jQuery.trim(jQuery(this).val()).length && nebula.searchTriggerOnlyChars(e) ){
+				if ( !jQuery(this).hasClass('no-autocomplete') && jQuery(this).val().trim().length && nebula.searchTriggerOnlyChars(e) ){
 					nebula.autocompleteSearch(jQuery(this));
 				}
 			});
@@ -1944,7 +1944,7 @@ nebula.autocompleteSearch = function(element, types){
 		element = jQuery(element);
 	}
 
-	if ( types && !jQuery.isArray(types) ){
+	if ( types && !Array.isArray(types) ){
 		console.error('nebula.autocompleteSearch requires 2nd parameter to be an array.');
 		ga('send', 'exception', {'exDescription': '(JS) nebula.autocompleteSearch requires 2nd parameter to be an array', 'exFatal': false});
 		return false;
@@ -1954,8 +1954,8 @@ nebula.autocompleteSearch = function(element, types){
 	nebula.timer('autocompleteSearch', 'start');
 	nebula.timer('autocompleteResponse', 'start');
 
-	if ( jQuery.trim(element.val()).length ){
-		if ( jQuery.trim(element.val()).length >= 2 ){
+	if ( element.val().trim().length ){
+		if ( element.val().trim().length >= 2 ){
 			//Add "searching" class for custom Nebula styled forms
 			element.closest('form').addClass('searching');
 			setTimeout(function(){
@@ -2076,7 +2076,7 @@ nebula.autocompleteSearch = function(element, types){
 }
 
 nebula.wpSearchInput = function(){
-	jQuery('#post-0 #s, #nebula-drawer #s, .search-results #s').focus(); //Automatically focus on specific search inputs
+	jQuery('#post-0 #s, #nebula-drawer #s, .search-results #s').trigger('focus'); //Automatically focus on specific search inputs
 
 	//Set search value as placeholder
 	var searchVal = nebula.get('s') || jQuery('#s').val();
@@ -2101,7 +2101,7 @@ nebula.mobileSearchPlaceholder = function(){
 nebula.searchValidator = function(){
 	if ( jQuery('.input.search').length ){
 		jQuery('.input.search').each(function(){
-			if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
+			if ( jQuery(this).val() === '' || jQuery(this).val().trim().length === 0 ){
 				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
 			} else {
 				jQuery(this).parent().children('.btn.submit').removeClass('disallowed').val('Search');
@@ -2111,7 +2111,7 @@ nebula.searchValidator = function(){
 
 		jQuery('.input.search').on('focus blur change keyup paste cut',function(e){
 			var thisPlaceholder = ( jQuery(this).attr('data-prev-placeholder') !== 'undefined' )? jQuery(this).attr('data-prev-placeholder') : 'Search';
-			if ( jQuery(this).val() === '' || jQuery.trim(jQuery(this).val()).length === 0 ){
+			if ( jQuery(this).val() === '' || jQuery(this).val().trim().length === 0 ){
 				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
 				jQuery(this).parent().find('.btn.submit').val('Go');
 			} else {
@@ -2126,9 +2126,9 @@ nebula.searchValidator = function(){
 			}
 		})
 
-		jQuery('form.search').submit(function(){
-			if ( jQuery(this).find('.input.search').val() === '' || jQuery.trim(jQuery(this).find('.input.search').val()).length === 0 ){
-				jQuery(this).parent().find('.input.search').prop('title', 'Enter a valid search term.').attr('data-prev-placeholder', jQuery(this).attr('placeholder')).attr('placeholder', 'Enter a valid search term').addClass('focusError').focus().attr('value', '');
+		jQuery('form.search').on('submit', function(){
+			if ( jQuery(this).find('.input.search').val() === '' || jQuery(this).find('.input.search').val().trim().length === 0 ){
+				jQuery(this).parent().find('.input.search').prop('title', 'Enter a valid search term.').attr('data-prev-placeholder', jQuery(this).attr('placeholder')).attr('placeholder', 'Enter a valid search term').addClass('focusError').trigger('focus').attr('value', '');
 				jQuery(this).parent().find('.btn.submit').prop('title', 'Enter a valid search term.').addClass('notallowed');
 				return false;
 			} else {
@@ -2201,7 +2201,7 @@ nebula.pageSuggestion = function(){
 				var queryStrings = [''];
 			}
 			var path = window.location.pathname;
-			var phrase = decodeURIComponent(jQuery.trim(path.replace(/\/+/g, ' '))) + ' ' + decodeURIComponent(jQuery.trim(queryStrings[0].replace(/\+/g, ' ')));
+			var phrase = decodeURIComponent(path.replace(/\/+/g, ' ')).trim() + ' ' + decodeURIComponent(queryStrings[0].replace(/\+/g, ' ')).trim();
 			nebula.tryGCSESearch(phrase);
 		}
 
@@ -2609,7 +2609,7 @@ nebula.liveValidator = function(){
 	nebula.dom.document.on('keyup change blur', '.nebula-validate-text, .nebula-validate-textarea, .nebula-validate-select', function(e){
 		if ( jQuery(this).val() === '' ){
 			nebula.applyValidationClasses(jQuery(this), 'reset', false);
-		} else if ( jQuery.trim(jQuery(this).val()).length ){
+		} else if ( jQuery(this).val().trim().length ){
 			nebula.applyValidationClasses(jQuery(this), 'valid', false);
 		} else {
 			nebula.applyValidationClasses(jQuery(this), 'invalid', ( e.type !== 'keyup' ));
@@ -2696,7 +2696,7 @@ nebula.liveValidator = function(){
 			}
 
 			//Look for empty fields
-			if ( jQuery.trim(jQuery(this).val()).length == 0 ){
+			if ( jQuery(this).val().trim().length == 0 ){
 				jQuery(this).addClass('nebula-empty-required');
 				invalidCount++;
 			}
@@ -3571,7 +3571,7 @@ nebula.focusOnElement = function(element){
 		});
 	}
 
-	element.focus(); //Focus on the element
+	element.trigger('focus'); //Focus on the element
 }
 
 //Get query string parameters
@@ -4066,7 +4066,7 @@ nebula.pre = function(){
 	//Format non-shortcode pre tags to be styled properly
 	jQuery('pre.nebula-code').each(function(){
 		if ( !jQuery(this).parent('.nebula-code-con').length ){
-			var lang = jQuery.trim(jQuery(this).attr('class').replace('nebula-code', ''));
+			var lang = jQuery(this).attr('class').replace('nebula-code', '').trim();
 			jQuery(this).addClass(lang.toLowerCase()).wrap('<div class="nebula-code-con clearfix ' + lang.toLowerCase() + '"></div>');
 			jQuery(this).closest('.nebula-code-con').prepend('<span class="nebula-code codetitle ' + lang.toLowerCase() + '">' + lang + '</span>');
 		}
@@ -5129,7 +5129,7 @@ nebula.domTreeToString = function(element){
 	//Add the classnames to the last element
 	var classNames = element.attr('class');
 	if ( classNames ){
-		selector += '.' + jQuery.trim(classNames).replace(/\s/gi, '.');
+		selector += '.' + classNames.trim().replace(/\s/gi, '.');
 	}
 
 	return selector;
@@ -5151,13 +5151,13 @@ function isGoogleAnalyticsReady(){
 
 //Custom CSS expression for a case-insensitive contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
 //Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: nebula.keywordSearch(container, parent, value);
-jQuery.expr[':'].Contains = function(element, index, match){
+jQuery.expr.pseudos.Contains = function(element, index, match){
 	return (element.textContent || element.innerText || '').toUpperCase().indexOf(match[3].toUpperCase()) >= 0
-};
+}
 
 //Custom expression for any element that can be focused. Source: https://github.com/selfthinker/dokuwiki_template_writr/blob/master/js/skip-link-focus-fix.js
 //Call it with :focusable() or .is(':focusable')
-jQuery.expr[':'].focusable = function(element, index, match){
+jQuery.expr.pseudos.focusable = function(element, index, match){
 	return jQuery(element).is(':input:enabled, a[href], area[href], object, [tabindex]') && !jQuery(element).is(':hidden');
 }
 

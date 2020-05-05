@@ -28,14 +28,6 @@ if ( !trait_exists('Utilities') ){
 
 		//Attempt to get the most accurate IP address from the visitor
 		public function get_ip_address($force=false){
-			//If this has already been ran once, return from object cache
-			if ( !$force ){
-				$ip = wp_cache_get('nebula_ip_address');
-				if ( !empty($ip) ){
-					return $ip;
-				}
-			}
-
 			$ip_keys = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR');
 			foreach ( $ip_keys as $key ){
 				if ( array_key_exists($key, $_SERVER) === true ){
@@ -43,7 +35,6 @@ if ( !trait_exists('Utilities') ){
 						$ip = trim($ip);
 
 						if ( filter_var($ip, FILTER_VALIDATE_IP) ){ //Validate IP
-							wp_cache_set('nebula_ip_address', $ip); //Store in object cache
 							return $ip;
 						}
 					}
@@ -70,9 +61,10 @@ if ( !trait_exists('Utilities') ){
 		//Generate Nebula Session ID
 		public function nebula_session_id(){
 			$timer_name = $this->timer('Session ID');
+			$server_generated_session_id = ( session_id() )? session_id() : '!' . uniqid();
 
 			//Check object cache first
-			$session_id = wp_cache_get('nebula_session_id');
+			$session_id = wp_cache_get('nebula_session_id', $server_generated_session_id); //If session_id() is not available, it will re-generate the Nebula session ID
 			if ( !empty($session_id) ){
 				return $session_id;
 			}
@@ -118,7 +110,7 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			//Session ID
-			$session_data['s'] = ( session_id() )? session_id() : '!' . uniqid();
+			$session_data['s'] = $server_generated_session_id;
 
 			//Google Analytics CID
 			$session_data['cid'] = $this->ga_parse_cookie();
@@ -132,7 +124,7 @@ if ( !trait_exists('Utilities') ){
 				$session_id .= $key . ':' . $value . ';';
 			}
 
-			wp_cache_set('nebula_session_id', $session_id); //Store in object cache
+			wp_cache_set('nebula_session_id', $session_id, $server_generated_session_id); //Store in object cache grouped by the server-generated session ID
 			$this->timer($timer_name, 'end');
 			return $session_id;
 		}
@@ -146,7 +138,7 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			//Check object cache first
-			$poi_match = wp_cache_get('nebula_poi_' . str_replace('.', '_', $ip));
+			$poi_match = wp_cache_get('nebula_poi', str_replace('.', '_', $ip));
 			if ( !empty($poi_match) ){
 				return $poi_match;
 			}
@@ -188,7 +180,7 @@ if ( !trait_exists('Utilities') ){
 						//Check for RegEx
 						if ( $notable_poi['ip'][0] === '/' && preg_match($notable_poi['ip'], $ip) ){ //If first character of IP is "/" and the requested IP matches the pattern
 							$poi_match = str_replace(array("\r\n", "\r", "\n"), '', $notable_poi['name']);
-							wp_cache_set('nebula_poi_' . str_replace('.', '_', $ip), $poi_match); //Store in object cache
+							wp_cache_set('nebula_poi', $poi_match, str_replace('.', '_', $ip)); //Store in object cache grouped by the IP address
 							$this->timer($timer_name, 'end');
 							return $poi_match;
 						}
@@ -196,13 +188,13 @@ if ( !trait_exists('Utilities') ){
 						//Check direct match
 						if ( $notable_poi['ip'] === $ip ){
 							$poi_match = str_replace(array("\r\n", "\r", "\n"), '', $notable_poi['name']);
-							wp_cache_set('nebula_poi_' . str_replace('.', '_', $ip), $poi_match); //Store in object cache
+							wp_cache_set('nebula_poi', $poi_match, str_replace('.', '_', $ip)); //Store in object cache grouped by the IP address
 							$this->timer($timer_name, 'end');
 							return $poi_match;
 						}
 					}
 
-					wp_cache_set('nebula_poi_' . str_replace('.', '_', $ip), false); //Store in object cache
+					wp_cache_set('nebula_poi', false, str_replace('.', '_', $ip)); //Store in object cache grouped by the IP address
 				}
 			}
 

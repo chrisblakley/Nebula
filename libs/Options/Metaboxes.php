@@ -2090,7 +2090,7 @@ if ( !trait_exists('Metaboxes') ){
 													}
 
 													if ( $column === 'timestamp' ){
-														$sanitized_value = '<i class="remove fas fa-fw fa-ban"></i> ' . date('l, F j, Y - g:i:s a', strtotime($sanitized_value));
+														$sanitized_value = '<i class="remove fas fa-fw fa-ban"></i> ' . date('l, F j, Y - g:i:sa', strtotime($sanitized_value));
 													}
 
 													echo $sanitized_value;
