@@ -253,7 +253,7 @@ trait Functions {
 								if ( $term->slug === $post->post_name ){
 									$nebula_warnings[] = array(
 										'level' => 'error',
-										'description' => 'Slug conflict with ' . ucwords(str_replace('_', ' ', $taxonomy)) . ': <strong>' . $term->slug . '</strong> - Consider changing this page slug.'
+										'description' => '<i class="fas fa-link"></i> Slug conflict with ' . ucwords(str_replace('_', ' ', $taxonomy)) . ': <strong>' . $term->slug . '</strong> - Consider changing this page slug.'
 									);
 									return false;
 								}
@@ -273,7 +273,7 @@ trait Functions {
 						if ( empty($test_file) ){
 							$nebula_warnings[] = array(
 								'level' => 'error',
-								'description' => 'File system permissions error. Consider changing the FS_METHOD in wp-config.php.',
+								'description' => '<i class="fas fa-server"></i> File system permissions error. Consider changing the FS_METHOD in wp-config.php.',
 							);
 						} else {
 							set_transient('nebula_fs_method', true, YEAR_IN_SECONDS); //On success, set a transient. This transient never needs to expire (but it's fine if it does).
@@ -286,7 +286,7 @@ trait Functions {
 			if ( (is_ssl() || isset($_SERVER['HTTPS'])) && (strpos(get_option('home'), 'http://') !== false || strpos(get_option('siteurl'), 'http://') !== false) ){
 				$nebula_warnings[] = array(
 					'level' => 'error',
-					'description' => '<a href="options-general.php">Website Address</a> settings are http but the site is served from https.',
+					'description' => '<i class="fas fa-lock-open"></i> <a href="options-general.php">Website Address</a> settings are http but the site is served from https.',
 					'url' => get_admin_url() . 'options-general.php'
 				);
 			}
@@ -295,7 +295,7 @@ trait Functions {
 			if ( get_option('blog_public') == 0 ){ //Stored as a string
 				$nebula_warnings[] = array(
 					'level' => 'error',
-					'description' => '<a href="options-reading.php">Search Engine Visibility</a> is currently disabled!',
+					'description' => '<i class="fab fa-searchengin"></i> <a href="options-reading.php">Search Engine Visibility</a> is currently disabled!',
 					'url' => get_admin_url() . 'options-reading.php'
 				);
 			} else {
@@ -304,7 +304,7 @@ trait Functions {
 				if ( empty($ping_sites) || $ping_sites === 'http://rpc.pingomatic.com/' ){ //If it is empty or only has the default value
 					$nebula_warnings[] = array(
 						'level' => 'warn',
-						'description' => 'Additional <a href="options-writing.php">Update Services</a> should be pinged. <a href="https://codex.wordpress.org/Update_Services#XML-RPC_Ping_Services" target="_blank" rel="noopener">Recommended update services &raquo;</a>',
+						'description' => '<i class="fas fa-rss"></i> Additional <a href="options-writing.php">Update Services</a> should be pinged. <a href="https://codex.wordpress.org/Update_Services#XML-RPC_Ping_Services" target="_blank" rel="noopener">Recommended update services &raquo;</a>',
 						'url' => get_admin_url() . 'options-writing.php'
 					);
 				}
@@ -316,7 +316,7 @@ trait Functions {
 				if ( $php_version_lifecycle['end']-time() < MONTH_IN_SECONDS ){ //If end of life is within 1 month
 					$nebula_warnings[] = array(
 						'level' => 'warn',
-						'description' => 'PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end in ' . human_time_diff($php_version_lifecycle['end']) . ' on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.',
+						'description' => '<i class="fab fa-php"></i> PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end in ' . human_time_diff($php_version_lifecycle['end']) . ' on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.',
 						'url' => 'http://php.net/supported-versions.php',
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					);
@@ -324,7 +324,7 @@ trait Functions {
 			} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
 				$nebula_warnings[] = array(
 					'level' => 'error',
-					'description' => 'PHP ' . PHP_VERSION . ' <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">no longer receives security updates</a>! End of life occurred ' . human_time_diff($php_version_lifecycle['end']) . ' ago on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.',
+					'description' => '<i class="fab fa-php"></i> PHP ' . PHP_VERSION . ' <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">no longer receives security updates</a>! End of life occurred ' . human_time_diff($php_version_lifecycle['end']) . ' ago on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.',
 					'url' => 'http://php.net/supported-versions.php',
 					'meta' => array('target' => '_blank', 'rel' => 'noopener')
 				);
@@ -334,20 +334,20 @@ trait Functions {
 			if ( WP_DEBUG ){
 				$nebula_warnings[] = array(
 					'level' => 'warn',
-					'description' => '<strong>WP_DEBUG</strong> is enabled <small>(Generally defined in wp-config.php)</small>'
+					'description' => '<i class="fas fa-bug"></i> <strong>WP_DEBUG</strong> is enabled <small>(Generally defined in wp-config.php)</small>'
 				);
 
 				if ( WP_DEBUG_LOG ){
 					$nebula_warnings[] = array(
 						'level' => 'warn',
-						'description' => 'Debug logging (<strong>WP_DEBUG_LOG</strong>) to /wp-content/debug.log is enabled <small>(Generally defined in wp-config.php)</small>'
+						'description' => '<i class="fas fa-bug"></i> Debug logging (<strong>WP_DEBUG_LOG</strong>) to /wp-content/debug.log is enabled <small>(Generally defined in wp-config.php)</small>'
 					);
 				}
 
 				if ( WP_DEBUG_DISPLAY ){
 					$nebula_warnings[] = array(
 						'level' => 'error',
-						'description' => 'Debug errors and warnings are being displayed on the front-end (<Strong>WP_DEBUG_DISPLAY</strong>) <small>(Generally defined in wp-config.php)</small>'
+						'description' => '<i class="fas fa-bug"></i> Debug errors and warnings are being displayed on the front-end (<Strong>WP_DEBUG_DISPLAY</strong>) <small>(Generally defined in wp-config.php)</small>'
 					);
 				}
 			}
@@ -356,7 +356,7 @@ trait Functions {
 			if ( !$this->get_option('ga_tracking_id') && !$this->get_option('gtm_id') ){
 				$nebula_warnings[] = array(
 					'level' => 'error',
-					'description' => 'A <a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">Google Tag Manager ID</a> is strongly recommended!',
+					'description' => '<i class="fas fa-chart-area"></i> A <a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">Google Tag Manager ID</a> is strongly recommended!',
 					'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=analytics'
 				);
 			}
@@ -367,7 +367,7 @@ trait Functions {
 				if ( empty($ee_ga_settings['ga_id']) ){
 					$nebula_warnings[] = array(
 						'level' => 'error',
-						'description' => '<a href="admin.php?page=wc-settings&tab=integration">WooCommerce Enhanced Ecommerce</a> is missing a Google Analytics ID!',
+						'description' => '<i class="fas fa-chart-area"></i> <a href="admin.php?page=wc-settings&tab=integration">WooCommerce Enhanced Ecommerce</a> is missing a Google Analytics ID!',
 						'url' => get_admin_url() . 'admin.php?page=wc-settings&tab=integration'
 					);
 				}
@@ -380,7 +380,7 @@ trait Functions {
 				if ( !file_exists(dirname(get_stylesheet_directory()) . '/' . $active_theme->get('Template')) ){
 					$nebula_warnings[] = array(
 						'level' => 'error',
-						'description' => 'A child theme is active, but its parent theme directory <strong>' . $active_theme->get('Template') . '</strong> does not exist!<br/><em>The "Template:" setting in the <a href="' . get_stylesheet_uri() . '" target="_blank" rel="noopener">style.css</a> file of the child theme must match the directory name (above) of the parent theme.</em>'
+						'description' => '<i class="fas fa-baby-carriage"></i> A child theme is active, but its parent theme directory <strong>' . $active_theme->get('Template') . '</strong> does not exist!<br/><em>The "Template:" setting in the <a href="' . get_stylesheet_uri() . '" target="_blank" rel="noopener">style.css</a> file of the child theme must match the directory name (above) of the parent theme.</em>'
 					);
 				}
 
@@ -388,7 +388,7 @@ trait Functions {
 				if ( !is_dir(get_stylesheet_directory() . '/assets/img/meta') || !file_exists(get_stylesheet_directory() . '/assets/img/meta/favicon.ico') ){
 					$nebula_warnings['child_meta_graphics'] = array(
 						'level' => 'error',
-						'description' => 'A child theme is active, but missing meta graphics. Create a <code>/assets/img/meta/</code> directory in the child theme (or copy it over from the Nebula parent theme).</em>'
+						'description' => '<i class="fas fa-images"></i> A child theme is active, but missing meta graphics. Create a <code>/assets/img/meta/</code> directory in the child theme (or copy it over from the Nebula parent theme).</em>'
 					);
 				}
 			}
@@ -397,7 +397,7 @@ trait Functions {
 			if ( is_plugin_active('relevanssi/relevanssi.php') && !get_option('relevanssi_indexed') ){
 				$nebula_warnings[] = array(
 					'level' => 'error',
-					'description' => '<a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> must build an index to search the site. This must be triggered manually.',
+					'description' => '<i class="fas fa-search-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> must build an index to search the site. This must be triggered manually.',
 					'url' => get_admin_url() . 'options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing'
 				);
 			}
@@ -406,7 +406,7 @@ trait Functions {
 			if ( $this->get_option('google_optimize_id') ){
 				$nebula_warnings[] = array(
 					'level' => 'error',
-					'description' => '<a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!',
+					'description' => '<i class="far fa-window-restore"></i> <a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!',
 					'url' => 'https://optimize.google.com/optimize/home/'
 				);
 			}
@@ -417,7 +417,7 @@ trait Functions {
 				if ( !file_exists($this->sw_location(false)) ){
 					$nebula_warnings[] = array(
 						'level' => 'error',
-						'description' => 'Service Worker is enabled in <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">Nebula Options</a>, but no Service Worker JavaScript file was found. Either use the <a href="https://github.com/chrisblakley/Nebula/blob/master/Nebula-Child/resources/sw.js" target="_blank">provided sw.js file</a> (by moving it to the root directory), or override the function <a href="https://gearside.com/nebula/functions/sw_location/?utm_campaign=documentation&utm_medium=admin+notice&utm_source=service+worker#override" target="_blank">sw_location()</a> to locate the actual JavaScript file you are using.'
+						'description' => '<i class="far fa-file"></i> Service Worker is enabled in <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">Nebula Options</a>, but no Service Worker JavaScript file was found. Either use the <a href="https://github.com/chrisblakley/Nebula/blob/master/Nebula-Child/resources/sw.js" target="_blank">provided sw.js file</a> (by moving it to the root directory), or override the function <a href="https://gearside.com/nebula/functions/sw_location/?utm_campaign=documentation&utm_medium=admin+notice&utm_source=service+worker#override" target="_blank">sw_location()</a> to locate the actual JavaScript file you are using.'
 					);
 				}
 
@@ -426,7 +426,7 @@ trait Functions {
 				if ( is_null($offline_page) ){
 					$nebula_warnings[] = array(
 						'level' => 'warn',
-						'description' => 'It is recommended to make an Offline page when using Service Worker. <a href="post-new.php?post_type=page">Manually add one</a>'
+						'description' => '<i class="fas fa-ethernet"></i> It is recommended to make an Offline page when using Service Worker. <a href="post-new.php?post_type=page">Manually add one</a>'
 					);
 				}
 
@@ -434,7 +434,7 @@ trait Functions {
 				if ( !is_ssl() ){
 					$nebula_warnings[] = array(
 						'level' => 'warn',
-						'description' => 'Service Worker requires an SSL. Either update the site to https or <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">disable Service Worker</a>.'
+						'description' => '<i class="fas fa-lock-open"></i> Service Worker requires an SSL. Either update the site to https or <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">disable Service Worker</a>.'
 					);
 				}
 			}
@@ -452,7 +452,7 @@ trait Functions {
 			if ( empty(get_privacy_policy_url()) ){
 				$nebula_warnings[] = array(
 					'level' => 'warn',
-					'description' => '<a href="options-privacy.php">Privacy policy</a> is not setup with WordPress.',
+					'description' => '<i class="fas fa-file-alt"></i> <a href="options-privacy.php">Privacy policy</a> is not setup with WordPress.',
 					'url' => get_admin_url() . 'options-privacy.php'
 				);
 			}
@@ -462,12 +462,12 @@ trait Functions {
 				if ( $this->is_dev() || $this->is_client() ){
 					$nebula_warnings[] = array(
 						'level' => 'log',
-						'description' => 'All Sass files have been manually processed.'
+						'description' => '<i class="fab fa-sass"></i> All Sass files have been manually processed.'
 					);
 				} else {
 					$nebula_warnings[] = array(
 						'level' => 'error',
-						'description' => 'You do not have permissions to manually process all Sass files.'
+						'description' => '<i class="fab fa-sass"></i> You do not have permissions to manually process all Sass files.'
 					);
 				}
 			}
@@ -478,7 +478,7 @@ trait Functions {
 			if ( is_null($all_nebula_warnings) ){
 				$all_nebula_warnings = array(array(
 					'level' => 'error',
-					'description' => '<code>$nebula_warnings</code> array is null. When hooking into the <code>nebula_warnings</code> filter be sure that it is returned too!'
+					'description' => '<i class="fas fa-skull"></i> <code>$nebula_warnings</code> array is null. When hooking into the <code>nebula_warnings</code> filter be sure that it is returned too!'
 				));
 			}
 
@@ -3401,10 +3401,6 @@ trait Functions {
 
 			//IP address
 			$debug_data .= 'IP: ' . $this->get_ip_address();
-			$notable_poi = $this->poi();
-			if ( !empty($notable_poi) ){
-				$debug_data .= ' [' . $notable_poi . ']';
-			}
 			$debug_data .= PHP_EOL;
 
 			return apply_filters('nebula_cf7_debug_data', $debug_data);

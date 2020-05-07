@@ -162,12 +162,6 @@
 			if ( defined('ICL_LANGUAGE_NAME') ){
 				echo 'ga("set", nebula.analytics.dimensions.wpmlLang, "' . ICL_LANGUAGE_NAME . ' (' . ICL_LANGUAGE_CODE . ')");';
 			}
-
-			//Notable POI (IP Addresses)
-			$poi = nebula()->poi();
-			if ( nebula()->get_option('cd_notablepoi') && !empty($poi) ){
-				echo 'ga("set", nebula.analytics.dimensions.poi, "' . esc_html($poi) . '");';
-			}
 		?>
 
 		<?php if ( nebula()->get_option('cd_windowtype') ): //Window Type ?>
@@ -487,7 +481,6 @@
 				$hubspot_identify['city'] = get_user_meta(get_current_user_id(), 'usercity', true);
 				$hubspot_identify['state'] = get_user_meta(get_current_user_id(), 'userstate', true);
 				$hubspot_identify['phone'] = get_user_meta(get_current_user_id(), 'phonenumber', true);
-				$hubspot_identify['notable_poi'] = nebula()->poi();
 			}
 
 			if ( nebula()->get_option('device_detection') ){

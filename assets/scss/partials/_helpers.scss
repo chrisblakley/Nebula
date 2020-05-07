@@ -177,6 +177,8 @@ ul.list-unstyled {list-style: none; padding-left: 0;}
 
 img.fa.nebula-fa {text-align: center; width: 1.25em; vertical-align: text-bottom;} //Make an img tag behave similar to a Font Awesome icon (remember to also use the fa class too)
 
+body.admin-bar {scroll-padding-top: 32px;} //Account for the admin bar height when auto scrolling
+
 // ===========================
 // Social Media Badges
 // ===========================

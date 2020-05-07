@@ -163,7 +163,7 @@ if ( !trait_exists('Dashboard') ){
 			$latest_post = get_transient('nebula_latest_post');
 			if ( empty($latest_post) || $this->is_debug() ){
 				$latest_post = new WP_Query(array('post_type' => 'any', 'showposts' => 1, 'orderby' => 'modified', 'order' => 'DESC'));
-				set_transient('nebula_latest_post', $latest_post, HOUR_IN_SECONDS*12); //This transient is deleted when posts are added/updated, so this could be infinitely long.
+				set_transient('nebula_latest_post', $latest_post, WEEK_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long.
 			}
 			while ( $latest_post->have_posts() ){ $latest_post->the_post();
 				echo '<li><i class="far fa-fw fa-calendar"></i> Updated: <span title="' . human_time_diff(strtotime(get_the_modified_date())) . ' ago" style="cursor: help;"><strong>' . get_the_modified_date() . '</strong> @ <strong>' . get_the_modified_time() . '</strong></span>
@@ -182,7 +182,7 @@ if ( !trait_exists('Dashboard') ){
 			$all_plugins = get_transient('nebula_count_plugins');
 			if ( empty($all_plugins) || $this->is_debug() ){
 				$all_plugins = get_plugins();
-				set_transient('nebula_count_plugins', $all_plugins, HOUR_IN_SECONDS*36);
+				set_transient('nebula_count_plugins', $all_plugins, WEEK_IN_SECONDS);
 			}
 			$all_plugins_plural = ( count($all_plugins) === 1 )? 'Plugin' : 'Plugins';
 			$active_plugins = get_option('active_plugins', array());
@@ -192,7 +192,7 @@ if ( !trait_exists('Dashboard') ){
 			$user_count = get_transient('nebula_count_users');
 			if ( empty($user_count) || $this->is_debug() ){
 				$user_count = count_users();
-				set_transient('nebula_count_users', $user_count, HOUR_IN_SECONDS*36);
+				set_transient('nebula_count_users', $user_count, WEEK_IN_SECONDS);
 			}
 			$users_icon = 'users';
 			$users_plural = 'Users';

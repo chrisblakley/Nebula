@@ -120,12 +120,7 @@ if ( !trait_exists('Users') ){
 					$last_ip = $logged_in_users[$id]['ip'];
 
 					if ( !empty($last_ip) ){
-						$notable_poi = $this->poi($last_ip);
-						if ( !empty($notable_poi) ){
-							$last_ip .= '<br><small>(' . esc_html($notable_poi) . ')</small>';
-						}
-
-						return $last_ip;
+						return apply_filters('nebula_user_column_ip', $last_ip);
 					}
 				}
 

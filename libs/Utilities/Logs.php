@@ -58,7 +58,7 @@ if ( !trait_exists('Logs') ){
 				global $wpdb;
 
 				$wpdb->insert($wpdb->nebula_logs, array(
-					'timestamp' => sanitize_text_field(date('Y-m-d G:i:s')),
+					'timestamp' => sanitize_text_field(date('U')),
 					'message' => sanitize_text_field($message),
 					'user_id' => intval(get_current_user_id()),
 					'importance' => intval($importance)

@@ -79,7 +79,7 @@ if ( !trait_exists('Assets') ){
 				if ( 1==2 ){
 					return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js', array('crossorigin'), null, '2.2.4', $footer);
 				} else {
-					return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js', array('crossorigin'), null, '3.5.0', $footer);
+					return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js', array('crossorigin'), null, '3.5.1', $footer);
 				}
 			}
 		}

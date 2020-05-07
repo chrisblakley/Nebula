@@ -333,11 +333,6 @@ if ( !trait_exists('Analytics') ){
 				$default_common_parameters['cd' . $this->ga_definition_index($this->get_option('cd_sessionid'))] = nebula()->nebula_session_id();
 			}
 
-			//POI
-			if ( $this->get_option('cd_notablepoi') ){
-				$default_common_parameters['cd' . $this->ga_definition_index($this->get_option('cd_notablepoi'))] = nebula()->poi();
-			}
-
 			//Transport method
 			if ( $this->get_option('cd_hitmethod') ){
 				$default_common_parameters['cd' . $this->ga_definition_index($this->get_option('cd_hitmethod'))] = 'Server-Side';
@@ -349,6 +344,7 @@ if ( !trait_exists('Analytics') ){
 			}
 
 			$common_parameters = array_merge($default_common_parameters, $parameters); //Add passed parameters
+			$common_parameters = apply_filters('nebula_measurement_protocol_custom_definitions', $common_parameters);
 
 			return $common_parameters;
 		}

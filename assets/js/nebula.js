@@ -1855,8 +1855,9 @@ nebula.keywordFilter = function(container, parent, values, filteredClass, operat
 			if ( !operator || operator === 'and' || operator === 'all' ){ //Match only elements that contain all keywords (Default operator is And if not provided)
 				jQuery.each(values, function(index, value){ //Loop through the values to search for
 					if ( value.trim().length ){ //If the value is not empty
+						var regex = new RegExp(value, 'i');
+
 						jQuery(container).find(parent).not('.' + filteredClass).each(function(){ //Now check elements that have not yet been filtered for this value
-							var regex = new RegExp(value, 'i');
 							var elementText = jQuery(this).text().trim().replace(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
 							if ( !regex.test(elementText) ){
 								jQuery(this).addClass(filteredClass);
@@ -3468,6 +3469,12 @@ nebula.svgImgs = function(){
 nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback){
 	if ( !offset ){
 		var offset = nebula.scroll.offset || 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
+	}
+
+	//Account for the scroll-padding-top CSS property on the body element
+	var scrollPaddingTop = parseInt(nebula.dom.body.css('scroll-padding-top'), 10); //Parse the CSS value as a base-10 integer
+	if ( !isNaN(scrollPaddingTop) ){
+		offset = offset + scrollPaddingTop;
 	}
 
 	//Call this function with a jQuery object to trigger scroll to an element (not just a selector string).
