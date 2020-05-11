@@ -52,7 +52,7 @@ jQuery(window).on('load', function(){
  Window Resize
  ===========================*/
 
-jQuery(window).on('resize', function(){
+window.addEventListener('resize', function(){
 	nebula.throttle(function(){
 		//Do Stuff
 	}, 500, 'window resize');

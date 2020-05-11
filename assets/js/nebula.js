@@ -130,7 +130,6 @@ nebula.scroll = {
 	speed: 500
 };
 
-
 /*==========================
  Optimization Functions
  ===========================*/
@@ -3558,6 +3557,30 @@ nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback
 			return false;
 		}
 	});
+}
+
+//Temporarily change a Font Awesome icon and then change back after a period of time
+nebula.temporaryClass = function(element, activeClass, inactiveClass, period){
+	if ( element && activeClass ){
+		if ( typeof element === 'string' ){
+			element = jQuery(element);
+		}
+
+		inactiveClass = inactiveClass || /fa-(?!fw)\S+/i.test(element.attr('class')); //Match the first Font Awesome icon class that is the actual icon
+
+		if ( inactiveClass ){
+			if ( !period ){
+				period = 1500;
+			}
+
+			element.removeClass(inactiveClass).addClass(activeClass + ' temporary-status-active'); //Remove the inactive class and add the active class
+			setTimeout(function(){
+				element.removeClass(activeClass + ' temporary-status-active').addClass(inactiveClass); //After the period of time, revert back to the inactive class
+			}, period);
+		}
+	}
+
+	return false;
 }
 
 /*==========================

@@ -1067,7 +1067,7 @@ if ( !trait_exists('Admin') ){
 						$warning['level'] = 'info';
 					}
 
-					echo '<div class="nebula-admin-notice notice notice-' . $warning['level'] . '"><p>' . $category . ' ' . $warning['description'] . '</p></div>'; //@TODO "Nebula" 0: Make these dismissable
+					echo '<div class="nebula-admin-notice notice notice-' . $warning['level'] . '"><p><span class="nebula-warning-category">' . $category . '</span> ' . $warning['description'] . '</p></div>'; //@TODO "Nebula" 0: Make these dismissable
 				}
 			}
 		}

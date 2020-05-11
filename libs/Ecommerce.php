@@ -42,12 +42,12 @@ if ( !trait_exists('Ecommerce') ){
 			if ( is_plugin_active('woocommerce-google-analytics-integration/woocommerce-google-analytics-integration.php') ){
 				$nebula_warnings[] = array(
 					'level' => 'error',
-					'description' => 'It is recommended to deactivate and remove the plugin WooCommerce Google Analytics Integration in favor of the plugin Enhanced Ecommerce Google Analytics Plugin for WooCommerce. <a href="plugins.php">Manage Plugins &raquo;</a>'
+					'description' => '<i class="far fa-fw fa-credit-card"></i> It is recommended to deactivate and remove the plugin WooCommerce Google Analytics Integration in favor of the plugin Enhanced Ecommerce Google Analytics Plugin for WooCommerce. <a href="plugins.php">Manage Plugins &raquo;</a>'
 				);
 			} elseif ( file_exists(WP_PLUGIN_DIR . '/woocommerce-google-analytics-integration') ){
 				$nebula_warnings[] = array(
 					'level' => 'warn',
-					'description' => 'The plugin WooCommerce Google Analytics Integration is deactivated but should be removed entirely! <a href="plugins.php">Manage Plugins &raquo;</a>'
+					'description' => '<i class="far fa-fw fa-credit-card"></i> The plugin WooCommerce Google Analytics Integration is deactivated but should be removed entirely! <a href="plugins.php">Manage Plugins &raquo;</a>'
 				);
 			}
 
@@ -55,12 +55,12 @@ if ( !trait_exists('Ecommerce') ){
 			if ( !file_exists(WP_PLUGIN_DIR . '/enhanced-e-commerce-for-woocommerce-store') ){
 				$nebula_warnings[] = array(
 					'level' => 'warn',
-					'description' => 'WooCommerce is active, but the recommended plugin Enhanced Ecommerce Google Analytics Plugin for WooCommerce is not installed. <a href="themes.php?page=tgmpa-install-plugins">Install Recommended Plugins &raquo;</a>'
+					'description' => '<i class="far fa-fw fa-credit-card"></i> WooCommerce is active, but the recommended plugin Enhanced Ecommerce Google Analytics Plugin for WooCommerce is not installed. <a href="themes.php?page=tgmpa-install-plugins">Install Recommended Plugins &raquo;</a>'
 				);
 			} elseif ( !is_plugin_active('enhanced-e-commerce-for-woocommerce-store/enhanced-ecommerce-google-analytics.php') ){
 				$nebula_warnings[] = array(
 					'level' => 'warn',
-					'description' => 'WooCommerce is active, but while the recommended plugin Enhanced Ecommerce Google Analytics Plugin for WooCommerce is installed, it is not activated. <a href="plugins.php">Manage Plugins &raquo;</a>'
+					'description' => '<i class="far fa-fw fa-credit-card"></i> WooCommerce is active, but while the recommended plugin Enhanced Ecommerce Google Analytics Plugin for WooCommerce is installed, it is not activated. <a href="plugins.php">Manage Plugins &raquo;</a>'
 				);
 			}
 
