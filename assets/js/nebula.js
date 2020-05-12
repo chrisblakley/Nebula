@@ -2873,22 +2873,21 @@ nebula.loadElement = function(element){
 //Load a JavaScript resource (and cache it)
 nebula.loadJS = function(url, callback){
 	if ( typeof url === 'string' ){
-		jQuery.ajax({ //Eventually update this to fetch with ES6
-			dataType: 'script',
-			type: 'GET',
-			url: url,
-			success: function(response){
-				if ( callback ){
-					callback(response);
-				}
-			},
-			error: function(XMLHttpRequest, textStatus, errorThrown){
-				ga('send', 'exception', {'exDescription': '(JS) ' + url + ' could not be loaded', 'exFatal': false});
-				nebula.nv('event', 'JavaScript resource could not be dynamically loaded');
-			},
-			cache: true,
-			timeout: 60000
-		});
+		var lazyScriptElement = document.createElement('script'); //Create a script element
+		lazyScriptElement.src = url; //Set the script src to the URL
+
+		//Callback when element has loaded
+		if ( callback ){
+			lazyScriptElement.onload = callback;
+		}
+
+		//Track exceptions
+		lazyScriptElement.onerror = function(){
+			ga('send', 'exception', {'exDescription': '(JS) ' + url + ' could not be loaded', 'exFatal': false});
+			nebula.nv('event', 'JavaScript resource could not be dynamically loaded');
+		};
+
+		document.body.appendChild(lazyScriptElement); //Add the new script to the DOM
 	} else {
 		console.error('nebula.loadJS() requires a valid URL.');
 	}

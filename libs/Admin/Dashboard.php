@@ -92,7 +92,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//Child Theme
 			if ( is_child_theme() ){
-				echo '<li><i class="fas fa-fw fa-child"></i><a href="themes.php">Child theme</a> active <small>(' . get_option('stylesheet') . ')</small></li>';
+				echo '<li><i class="fas fa-fw fa-child"></i><a href="themes.php">Child theme</a> active <small>(' . get_option('stylesheet') . ' v' . $this->child_version() . ')</small></li>';
 			}
 
 			//Multisite (and Super Admin detection)
