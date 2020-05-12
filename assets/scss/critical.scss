@@ -17,7 +17,7 @@
 		&:focus {left: -80px; color: #fff; background: $primary_color; width: auto; height: auto; overflow: visible; margin: 0; padding: 5px 15px 5px 100px; clip: unset; clip-path: unset; z-index: 999999;}
 	}
 
-	@include media("lg"){will-change: auto;};
+	@include media("lg"){will-change: auto;}
 }
 
 .ie10 #body-wrapper:before {display: none;}
@@ -25,7 +25,7 @@
 
 //Logo and primary navigation row
 #logonavcon {display: block; position: relative; width: 100%; text-align: center; box-shadow: none; z-index: 5; transition: all .5s easing(easeInOutCubic);
-	@include media("lg"){top: 0;};
+	@include media("lg"){top: 0;}
 
 	img,
 	svg:not(.svg-inline--fa) {width: 100%; height: auto; transition: all 0.5s;}
@@ -44,19 +44,19 @@
 
 //Homepage Hero
 #hero-section {position: relative; padding: 0; margin: 0; overflow: hidden; background: url($template_directory + "/assets/img/phg/phg-nebula.jpg") no-repeat center center /cover; text-align: center; transition: all 0.5s;
-	@include media("xl"){background-attachment: fixed;}; //Most mobile browsers do not support fixed BG attachment (and will stretch/zoom affixed background images)
+	@include media("xl"){background-attachment: fixed;} //Most mobile browsers do not support fixed BG attachment (and will stretch/zoom affixed background images)
 
 	#hero-content {margin-top: 80px; margin-bottom: 80px;
-		@include media("md"){margin-top: 100px; margin-bottom: 100px;};
+		@include media("md"){margin-top: 100px; margin-bottom: 100px;}
 
 		h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: rem(48px); line-height: 1; font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.1); transition: all 0.5s;
-			@include media("md"){font-size: rem(60px);};
-			@include media("lg"){font-size: rem(90px);};
+			@include media("md"){font-size: rem(60px);}
+			@include media("lg"){font-size: rem(90px);}
 		}
 
 		h2 {position: relative; text-align: center; color: #fff; margin: 0 0 18px 0; padding: 0; font-size: rem(18px); font-weight: 300; z-index: 1; transition: all 0.5s;
-			@include media("md"){font-size: rem(24px);};
-			@include media("lg"){font-size: rem(32px);};
+			@include media("md"){font-size: rem(24px);}
+			@include media("lg"){font-size: rem(32px);}
 		}
 
 		h3 {position: relative; text-align: center; color: #fff; margin: 0 0 18px 0; padding: 0; font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); transition: all 0.5s;}
@@ -103,7 +103,7 @@
 
 		.page-title,
 		.entry-title {font-size: rem(24px); font-weight: normal; margin: 0;
-			@include media("md"){font-size: rem(48px);};
+			@include media("md"){font-size: rem(48px);}
 		}
 
 		p,

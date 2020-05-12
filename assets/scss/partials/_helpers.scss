@@ -72,13 +72,13 @@
 
 //Equalize column heights within a row (Not to be confused with .equalize class that uses nebula.js)
 .row-table {display: block;
-    [class*="col-sm"] {display: block; @include media("sm"){display: table-cell; float: none;};}
-    [class*="col-md"] {display: block; @include media("md"){display: table-cell; float: none;};}
-    [class*="col-lg"] {display: block; @include media("lg"){display: table-cell; float: none;};}
+    [class*="col-sm"] {display: block; @include media("sm"){display: table-cell; float: none;}}
+    [class*="col-md"] {display: block; @include media("md"){display: table-cell; float: none;}}
+    [class*="col-lg"] {display: block; @include media("lg"){display: table-cell; float: none;}}
 
-    &.sm-cols {@include media("sm"){display: table; table-layout: fixed;}; }
-    &.md-cols {@include media("md"){display: table; table-layout: fixed;}; }
-    &.lg-cols {@include media("lg"){display: table; table-layout: fixed;}; }
+    &.sm-cols {@include media("sm"){display: table; table-layout: fixed;} }
+    &.md-cols {@include media("md"){display: table; table-layout: fixed;} }
+    &.lg-cols {@include media("lg"){display: table; table-layout: fixed;} }
 }
 
 //Note: To use nebula-vmiddle, the parent element must have a set height (not a min-height)!

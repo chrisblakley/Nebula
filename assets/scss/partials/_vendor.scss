@@ -9,7 +9,7 @@ abbr, acronym {cursor: pointer; border-bottom: none; color: inherit;}
 #___plusone_0 {width: 60px !important;}
 
 html .btn {max-width: 100%; white-space: normal;}
-.modal-xl {@include media("xl"){width: 90%; max-width: 1200px;};} //Allows for bigger modal
+.modal-xl {@include media("xl"){width: 90%; max-width: 1200px;}} //Allows for bigger modal
 .modal-backdrop.show {opacity: 0.8;} //Darker modal backdrop
 .form-check-input {margin-top: 0.35rem;}
 

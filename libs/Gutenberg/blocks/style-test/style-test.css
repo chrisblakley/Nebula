@@ -3,8 +3,8 @@
 	Note: The admin styles' rules are visible to users with this method.
 */
 
-/* Editor: */
-.wp-admin .wp-block-nebula-style-test {color: red; background: maroon; border: 2px solid red; padding: 20px;}
-
 /* Front-end: */
 .wp-block-nebula-style-test {color: green; background: skyblue; border: 2px solid blue; padding: 20px;}
+
+/* Editor: */
+.wp-admin .wp-block-nebula-style-test {color: red; background: maroon; border: 2px solid red; padding: 20px;}

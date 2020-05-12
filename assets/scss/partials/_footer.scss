@@ -2,9 +2,8 @@
 // Footer
 // ===========================
 
-
 #footer-section {position: relative; padding: 50px 0 150px 0; background: url($template_directory + "/assets/img/phg/phg-nebula-mountain.jpg") no-repeat bottom center / cover; transition: all 0.5s;
-	@include media("lg"){padding: 50px 0 200px 0;};
+	@include media("lg"){padding: 50px 0 200px 0;}
 	a:not(.btn) {@include link-colors(#fff, #aaa);}
 }
 
@@ -24,13 +23,13 @@
 
 //Power Footer
 .row.powerfootercon {display: none; padding-top: 20px; margin-bottom: 30px;
-	@include media("lg"){display: block;};
+	@include media("lg"){display: block;}
 
 	#powerfooter {position: relative; z-index: 1000;
 		ul {display: -ms-flexbox; display: flex; list-style: none; margin-bottom: 25px; z-index: 10;
 			li.menu-item {-ms-flex-item-align: stretch; align-self: stretch; -ms-flex: 1; flex: 1;
-				&:first-child {}
-				&:last-child {}
+				//&:first-child {}
+				//&:last-child {}
 
 				a {display: block; font-size: rem(18px); font-weight: 800; margin-bottom: 10px;}
 
@@ -52,7 +51,7 @@
 
 //Cookie Notification
 #nebula-cookie-notification {position: fixed; bottom: 40px; left: 0; background: rgba(0, 0, 0, 0.95); color: #bbb; font-size: 14px; padding: 25px; max-width: 300px; box-shadow: 0 6px 24px 0 rgba(0, 0, 0, 0.3); z-index: 5000; opacity: 0; transition: all 0.75s easing(easeOutBack);
-	@include media("lg"){max-width: 400px;};
+	@include media("lg"){max-width: 400px;}
 
 	&.active {opacity: 1; left: 40px;}
 

@@ -142,8 +142,8 @@
 	background: nth(nth($colors, 1), 1); background: linear-gradient($direction, $colors);
 }
 
-//.element {@include tablet(){background: red;};}
-//.element {@include tablet(landscape){background: purple;};}
+//.element {@include tablet(){background: red;}}
+//.element {@include tablet(landscape){background: purple;}}
 @mixin tablet($orientation: "portrait"){
 	@if $orientation == "landscape" {
 		@media only screen and (max-width: 1023px){& {@content}} //This size and smaller
@@ -151,8 +151,8 @@
 		@media only screen and (max-width: #{$md - 1}px){& {@content}} //This size and smaller
 	}
 }
-//.element {@include mobile(){background: red;};}
-//.element {@include mobile(landscape){background: purple;};}
+//.element {@include mobile(){background: red;}}
+//.element {@include mobile(landscape){background: purple;}}
 @mixin mobile($orientation: "portrait"){
 	@if $orientation == "landscape" {
 		@media only screen and (max-width: 668px){& {@content}} //This size and smaller
@@ -160,14 +160,14 @@
 		@media only screen and (max-width: 376px){& {@content}} //This size and smaller
 	}
 }
-//.element {@include media(mobile) {background: red;};}
-//.element {@include media(custom, "only screen and (max-width: 550px)") {background: red;};}
+//.element {@include media(mobile) {background: red;}}
+//.element {@include media(custom, "only screen and (max-width: 550px)") {background: red;}}
 @mixin media($group, $custom: ""){
 	//Device Types
-	@if ( $group == 'desktop' or $group == 'laptop' ){
+	@if ( $group == "desktop" or $group == "laptop" ){
 		@media (hover: hover){& {@content}} //Devices that can hover
 	}
-	@if ( $group == 'smartphone' or $group == 'touchscreen' ){
+	@if ( $group == "smartphone" or $group == "touchscreen" ){
 		@media (hover: none) and (pointer: coarse){& {@content}} //Devices that cannot hover and have a coarse pointer
 	}
 	@if ( $group == "print" ){

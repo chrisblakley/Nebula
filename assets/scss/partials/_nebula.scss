@@ -180,29 +180,29 @@ a.resetfilters {font-size: rem(12px); color: $danger_color; opacity: 0;
 #about-the-author {position: relative; background: #eee; padding-top: 30px; padding-bottom: 10px; margin-top: 20px; margin-bottom: 15px;
 	.author-headshot {min-height: 100px; margin-bottom: 20px; text-align: center;
 		img {width: 100%; max-width: 200px; /* border-radius: 500px; */ transition: all 0.75s;}
-		@include media("md"){text-align: left;};
+		@include media("md"){text-align: left;}
 	}
 	.author-name {display: block; padding-bottom: 15px; text-align: center;
-		@include media("md"){display: inline-block; padding: 0; text-align: left;};
+		@include media("md"){display: inline-block; padding: 0; text-align: left;}
 	}
 	.author-location {display: block; white-space: nowrap; text-align: center;
 		@include media("md"){text-align: left; display: inline-block;}
 	}
 	.author-social {display: block; margin-top: 17px; margin-bottom: 20px; font-size: rem(24px); text-align: center;
-		@include media("md"){display: inline; margin-bottom: 0; float: right; font-size: rem(12px);};
+		@include media("md"){display: inline; margin-bottom: 0; float: right; font-size: rem(12px);}
 	}
 	.author-meta {margin-top: 5px; margin-bottom: 12px; font-size: rem(12px);
 		i {margin-right: 2px;}
 	}
 	.author-jobtitle {display: block; text-align: center; margin-bottom: 15px;
-		@include media("md"){display: inline-block; text-align: left; margin-bottom: 0;};
+		@include media("md"){display: inline-block; text-align: left; margin-bottom: 0;}
 	}
 	.author-contact {float: none; display: block;
 		.author-email,
 		.author-phonenumber {white-space: nowrap; display: block; text-align: center;
 			@include media("md"){display: inline-block; margin-right: 5px; text-align: left;}
 		}
-		@include media("lg"){float: right; display: inline;};
+		@include media("lg"){float: right; display: inline;}
 	}
 }
 
