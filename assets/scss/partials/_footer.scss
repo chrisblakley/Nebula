@@ -65,7 +65,7 @@
 	div.links {display: flex; justify-content: flex-end;
 		a {margin-left: 15px; padding: 5px 10px; border-radius: 5px; color: high-contrast-color(#000, $primary_color, #fff);
 			&:hover,
-			&:focus {background: $primary_color; color: readable-color($primary_color); color: readable-color($primary_color);}
+			&:focus {background: $primary_color; color: readable-color($primary_color);}
 		}
 	}
 }

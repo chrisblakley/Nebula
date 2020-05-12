@@ -56,7 +56,7 @@ wp.blocks.registerBlockType('nebula/vimeo', {
 						className: 'vimeo embed-responsive-item',
 						width: 400,
 						height: 300,
-						src: 'https://player.vimeo.com/video/' + props.attributes.videoID + '',
+						src: String('https://player.vimeo.com/video/' + props.attributes.videoID + ''),
 						frameBorder: 0,
 						allowfullscreen: ''
 					}

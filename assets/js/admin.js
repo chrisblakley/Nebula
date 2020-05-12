@@ -491,7 +491,7 @@ function nebulaUniqueSlugChecker(){
     function allowTabChar(el){
         jQuery(el).keydown(function(e){
             if ( e.which === 9 ){
-                pasteIntoInput(this, "\t");
+                pasteIntoInput(this, '\t');
                 return false;
             }
         });

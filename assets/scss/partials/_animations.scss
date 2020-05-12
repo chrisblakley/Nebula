@@ -10,8 +10,8 @@
 //Accomodate users who prefer less motion (Note: this may not affect JavaScript animations)
 @media ( prefers-reduced-motion: reduce ){
 	*,
-	::before,
-	::after {animation-duration: 0.001s !important; transition-duration: 0.001s !important; animation-iteration-count: 1 !important;} //Override all CSS animations
+	:before,
+	:after {animation-duration: 0.001s !important; transition-duration: 0.001s !important; animation-iteration-count: 1 !important;} //Override all CSS animations
 }
 
 // ===========================
@@ -297,7 +297,7 @@
 .nebula-tap.animate {animation: nebula-tap 0.4s easing(easeOutBack);}
 @include keyframes(nebula-tap){
     0% {transform: scale3d(1, 1, 1);}
-    50% {transform: scale3d(0.90, 0.90, 0.90);}
+    50% {transform: scale3d(0.9, 0.9, 0.9);}
 }
 
 //Depress and return (Mid)
@@ -306,7 +306,7 @@
 .nebula-push.animate {animation: nebula-push 0.4s easing(easeOutBack);}
 @include keyframes(nebula-push){
     0% {transform: scale3d(1, 1, 1);}
-    50% {transform: scale3d(0.80, 0.80, 0.80);}
+    50% {transform: scale3d(0.8, 0.8, 0.8);}
 }
 
 //Depress and return (Large)
@@ -315,7 +315,7 @@
 .nebula-shove.animate {animation: nebula-shove 0.4s easing(easeOutBack);}
 @include keyframes(nebula-shove){
     0% {transform: scale3d(1, 1, 1);}
-    50% {transform: scale3d(0.60, 0.60, 0.60);}
+    50% {transform: scale3d(0.6, 0.6, 0.6);}
 }
 
 //Enlarge and return (Small)
@@ -324,7 +324,7 @@
 .nebula-tug.animate {animation: nebula-tug 0.4s easing(easeOutBack);}
 @include keyframes(nebula-tug){
     0% {transform: scale3d(1, 1, 1);}
-    50% {transform: scale3d(1.10, 1.10, 1.10);}
+    50% {transform: scale3d(1.1, 1.1, 1.1);}
 }
 
 //Enlarge and return (Mid)
@@ -333,7 +333,7 @@
 .nebula-pull.animate {animation: nebula-pull 0.4s easing(easeOutBack);}
 @include keyframes(nebula-pull){
     0% {transform: scale3d(1, 1, 1);}
-    50% {transform: scale3d(1.20, 1.20, 1.20);}
+    50% {transform: scale3d(1.2, 1.2, 1.2);}
 }
 
 //Enlarge and return (Large)
@@ -342,7 +342,7 @@
 .nebula-thrust.animate {animation: nebula-thrust 0.4s easing(easeOutBack);}
 @include keyframes(nebula-thrust){
     0% {transform: scale3d(1, 1, 1);}
-    50% {transform: scale3d(1.40, 1.40, 1.40);}
+    50% {transform: scale3d(1.4, 1.4, 1.4);}
 }
 
 //Shake left and right

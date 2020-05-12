@@ -69,7 +69,7 @@ wp.blocks.registerBlockType('nebula/youtube', {
 				'div',
 				{
 					id: 'nebula-youtube-block-' + props.instanceId,
-					className: 'nebula-youtube embed-responsive embed-responsive-16by9 ' + props.className, //This className var is confirmed working, but this is the Block Editor element– not the front-end!
+					className: 'nebula-youtube embed-responsive embed-responsive-16by9 ' + props.className, //This className var is confirmed working, but this is the Block Editor element– not the front-end!
 				},
 				wp.element.createElement(
 					'iframe',

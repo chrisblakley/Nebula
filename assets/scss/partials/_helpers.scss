@@ -72,19 +72,19 @@
 
 //Equalize column heights within a row (Not to be confused with .equalize class that uses nebula.js)
 .row-table {display: block;
-    [class*="col-sm"] {display: block; @include media("sm"){display: table-cell; float: none;}}
-    [class*="col-md"] {display: block; @include media("md"){display: table-cell; float: none;}}
-    [class*="col-lg"] {display: block; @include media("lg"){display: table-cell; float: none;}}
+	[class*="col-sm"] {display: block; @include media("sm"){display: table-cell; float: none;}}
+	[class*="col-md"] {display: block; @include media("md"){display: table-cell; float: none;}}
+	[class*="col-lg"] {display: block; @include media("lg"){display: table-cell; float: none;}}
 
-    &.sm-cols {@include media("sm"){display: table; table-layout: fixed;} }
-    &.md-cols {@include media("md"){display: table; table-layout: fixed;} }
-    &.lg-cols {@include media("lg"){display: table; table-layout: fixed;} }
+	&.sm-cols {@include media("sm"){display: table; table-layout: fixed;} }
+	&.md-cols {@include media("md"){display: table; table-layout: fixed;} }
+	&.lg-cols {@include media("lg"){display: table; table-layout: fixed;} }
 }
 
 //Note: To use nebula-vmiddle, the parent element must have a set height (not a min-height)!
 //!.nebula-vmiddle, .nebula-vmiddle-con {transform-style: preserve-3d;} //Prevent blurry half-pixel centering on parent element
-	.nebula-vmiddle,
-	.valign > div {position: relative; top: 50%; transform: translateY(-50%);}
+.nebula-vmiddle,
+.valign > div {position: relative; top: 50%; transform: translateY(-50%);}
 
 .filtereditem {display: none;}
 
@@ -92,12 +92,13 @@
 // Bootstrap Helpers and Overrides
 // ===========================
 
-.btn {cursor: pointer; white-space: normal; word-wrap: break-word;} //Allow word wrapping on Bootstrap buttons
-	.btn-primary:focus,
-	.btn-success:focus,
-	.btn-info:focus,
-	.btn-warning:focus,
-	.btn-danger:focus {color: #fff;}
+.btn {cursor: pointer; white-space: normal; word-wrap: break-word; //Allow word wrapping on Bootstrap buttons
+	&.btn-primary:focus,
+	&.btn-success:focus,
+	&.btn-info:focus,
+	&.btn-warning:focus,
+	&.btn-danger:focus {color: #fff;}
+}
 
 .nebula-flex-first {order: -1;} //Default flex order is 0. This class forces a column before that.
 
@@ -165,7 +166,7 @@ ul.list-unstyled {list-style: none; padding-left: 0;}
 .text-center {text-align: center;}
 .text-right {text-align: right;}
 .wp-caption {border: 1px solid #666; text-align: center; background: #ccc; padding: 10px; margin: 10px;}
-.wp-caption-text {}
+//.wp-caption-text {}
 
 .nowrap, .no-wrap {white-space: nowrap;}
 
@@ -301,8 +302,6 @@ a.white, li.icon.white a {@include link-colors(#fff, #ccc);
 	}
 }
 
-
-
 //@include brand_link(facebook);
 @mixin brand_link($brand){
 	@if brand($brand) == brand($brand, 2){
@@ -318,9 +317,6 @@ a.white, li.icon.white a {@include link-colors(#fff, #ccc);
 @include brand_link(youtube);
 @include brand_link(instagram);
 @include brand_link(soundcloud);
-
-
-
 
 // ===========================
 // Nebula Debug

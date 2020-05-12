@@ -31,7 +31,7 @@
 //Includes Utility and Primary navigation rows (which also includes the logo)
 #navigation-section {position: relative; z-index: 500;
 	&.mp-above {padding-bottom: 20px;}
-	&.mp-over {} //Default
+	//&.mp-over {} //Default
 }
 
 //Extend animated sub menu dropdowns for WordPress menus (Used with the utility nav and primary nav)
@@ -103,9 +103,6 @@
 	}
 }
 
-
-
-
 #utilitynavcon {max-height: 0; opacity: 0; background: rgba(0, 0, 0, 0.5); transition: all 0.5s;
 	@include media("lg"){height: auto; max-height: 200px; opacity: 1;}
 
@@ -118,7 +115,6 @@
 		}
 	}
 }
-
 
 #primary-nav {position: relative; display: none; z-index: 1000;
 	@include media("lg"){display: block;}

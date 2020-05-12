@@ -423,7 +423,7 @@ if ( !trait_exists('Shortcodes') ){
 			if ( $color != '' ){
 				$return .= 'border: 1px solid ' . esc_attr($color) . '; border-left: 5px solid ' . esc_attr($color) . ';';
 			}
-			$return .= esc_attr($style) . '" ><script type="text/javascript" src="'. $content . $file . '"></script></div>';
+			$return .= esc_attr($style) . '" ><script type="text/javascript" src="' . $content . $file . '"></script></div>';
 
 			return $return;
 		}

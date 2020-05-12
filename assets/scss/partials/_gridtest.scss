@@ -1,11 +1,6 @@
 .page-template-grid-test {
 	h1 {border: 1px solid red;}
 
-
-
-
-
-
 	.grid-container {
 		display: grid;
 		//grid-template-columns: 1fr auto;
@@ -33,9 +28,5 @@
 
 	.Footer { grid-area: Footer; background: url($template_directory + "/assets/img/phg/phg-nebula-mountain.jpg") no-repeat bottom center / cover; outline: 1px solid cyan;}
 
-
-
-
 	#footer-section {display: none;}
-
 }

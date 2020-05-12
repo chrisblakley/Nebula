@@ -113,8 +113,7 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 //Highlight and emphasize search term in results
 .searchresultword {@include background-color($primary_color, 0.2); padding: 0 2px; border-radius: 6px; font-size: inherit !important; transition: none 0.25s;
 	&.transitionable {transition: background 0.25s;}
-}
-.searchresultword {
+
 	article:hover &,
 	article:focus & {@include background-color(#ff0 !important, 0.5);}
 }
@@ -142,25 +141,25 @@ ol.nebula-breadcrumbs {display: flex; list-style: none; position: relative; marg
 	&.inactive {opacity: 0.3; pointer-events: none;}
 }
 
-	a#metatoggle {display: block; background: $primary_color; color: #fff; text-align: center; width: 100%; padding: 5px 10px;
-		&:hover,
-		&:focus {background: darken($primary_color, 15%);}
-	}
-	#advanced-search-meta {max-height: 0; margin-bottom: 15px; transition: all 0.5s; overflow: hidden;
-		&.active {max-height: 250px;}
-		&.finished {overflow: visible;}
-	}
+a#metatoggle {display: block; background: $primary_color; color: #fff; text-align: center; width: 100%; padding: 5px 10px;
+	&:hover,
+	&:focus {background: darken($primary_color, 15%);}
+}
+#advanced-search-meta {max-height: 0; margin-bottom: 15px; transition: all 0.5s; overflow: hidden;
+	&.active {max-height: 250px;}
+	&.finished {overflow: visible;}
+}
 
-	.advanced-search-group.left-side {}
-		#advanced-search-form .advanced-search-date {width: 47%; height: 28px; line-height: 28px;}
-	.right-side .advanced-search-group {margin-bottom: 10px;}
+//.advanced-search-group.left-side {}
+	#advanced-search-form .advanced-search-date {width: 47%; height: 28px; line-height: 28px;}
+.right-side .advanced-search-group {margin-bottom: 10px;}
 
-	#advanced-search-form .advanced-search-keyword {width: 100%; font-size: rem(24px); line-height: 1.625em; font-weight: 300; padding: 0 10px; height: 48px; outline: none;}
+#advanced-search-form .advanced-search-keyword {width: 100%; font-size: rem(24px); line-height: 1.625em; font-weight: 300; padding: 0 10px; height: 48px; outline: none;}
 
 .advanced-search-result {border-bottom: 1px dotted #ccc; padding-bottom: 10px; margin-top: 5px;}
 	.post-date-time {margin-bottom: 5px;}
 	.post-meta-tags {margin: 0;}
-		.post-cats {margin-right: 10px;}
+	.post-cats {margin-right: 10px;}
 
 .more-or-prev-events {display: block; width: 100%; height: 50px; line-height: 50px; color: #fff; margin: 25px 0;
 	&:hover,

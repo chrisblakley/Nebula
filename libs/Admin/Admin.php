@@ -1238,7 +1238,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				//Duplicate all post meta
-				$post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id");
+				$post_meta_infos = $wpdb->get_results("SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id"); //DB Query
 				if ( count($post_meta_infos) !== 0 ){
 					$sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
 					foreach ( $post_meta_infos as $meta_info ){
@@ -1247,7 +1247,7 @@ if ( !trait_exists('Admin') ){
 						$sql_query_sel[] = "SELECT $new_post_id, '$meta_key', '$meta_value'";
 					}
 					$sql_query .= implode(" UNION ALL ", $sql_query_sel);
-					$wpdb->query($sql_query);
+					$wpdb->query($sql_query); //DB Query
 				}
 
 				wp_redirect(admin_url('post.php?action=edit&post=' . $new_post_id)); //Redirect to the edit post screen for the new draft

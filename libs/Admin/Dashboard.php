@@ -719,7 +719,7 @@ if ( !trait_exists('Dashboard') ){
 
 			if ( function_exists('wp_max_upload_size') ){
 				$upload_max = '<small>(Max upload: <strong>' . strval(round((int) wp_max_upload_size()/(1024*1024))) . 'mb</strong>)</small>';
-			} else if ( ini_get('upload_max_filesize') ){
+			} elseif ( ini_get('upload_max_filesize') ){
 				$upload_max = '<small>(Max upload: <strong>' . ini_get('upload_max_filesize') . '</strong>)</small>';
 			} else {
 				$upload_max = '';

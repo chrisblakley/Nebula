@@ -51,7 +51,6 @@
 	}
 }
 
-
 .nebula-twitter-widget {
 	&:before {content: ""; display: block; border-top: 5px solid $primary_color; width: 150px; margin-bottom: 25px;}
 
@@ -66,7 +65,6 @@
 	}
 	.tweet-date {font-size: rem(14px); font-style: italic; @include link-colors(#777, #777);}
 }
-
 
 //Cross-links Next/Previous
 .prev-link-con {text-align: left;}

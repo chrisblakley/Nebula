@@ -316,7 +316,7 @@ if ( !trait_exists('Automation') ){
 			$message = '<p>Wordpress settings have been re-initialized for <strong>' . get_bloginfo('name') . '</strong> by <strong>' . $current_user->display_name . ' <' . $current_user->user_email . '></strong> on <strong>' . date('F j, Y') . '</strong> at <strong> ' . date('g:ia') . '</strong>.</p>';
 
 			global $wpdb;
-			$query_result = $wpdb->query('SELECT * FROM ' . $wpdb->options, ARRAY_A); //Query all WP Options and return as an associative array
+			$query_result = $wpdb->query('SELECT * FROM ' . $wpdb->options, ARRAY_A); //DB Query - Query all WP Options and return as an associative array
 			$options_backup_file = get_template_directory() . '/inc/data/options_backup_' . date('Y-m-d\TH:i:s') . '.csv';
 			$fp = fopen($options_backup_file, 'w');
 			foreach ( $query_result as $row ){ //Loop through the array and write each row to the CSV file

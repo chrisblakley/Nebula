@@ -29,7 +29,7 @@
 
 //WordPress WYSIWYG Content
 .entry-content {margin-top: 10px; font-size: rem(16px); line-height: rem(24px);
-	ul {list-style-position: inside; overflow: hidden; padding-left: 20px; list-style: disc;}
+	ul {list-style-type: disc; list-style-position: inside; overflow: hidden; padding-left: 20px;}
 	ol {margin: 0; padding-left: 20px;}
 	img {
 		&.alignnone {margin-left: 0; margin-right: 0;}
@@ -77,9 +77,8 @@
 #searchresults article,
 .archive .content-section article {margin-bottom: 50px;}
 
-
 h2.articles-by {padding-top: 0;}
-.bypostauthor {}
+//.bypostauthor {}
 
 .loop-section article {margin: 60px 0;
 	&:first-of-type {margin-top: 0;}
