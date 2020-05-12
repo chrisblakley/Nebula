@@ -1839,9 +1839,10 @@ trait Functions {
 				}
 
 				$breadcrumbs = array_reverse($breadcrumbs);
-				for ( $i = 0; $i < count($breadcrumbs); $i++ ){
+				$breadcrumbs_nodes = count($breadcrumbs);
+				for ( $i = 0; $i < $breadcrumbs_nodes; $i++ ){
 					echo $breadcrumbs[$i];
-					if ( $i !== count($breadcrumbs)-1 ){
+					if ( $i !== $breadcrumbs_nodes-1 ){
 						echo ' ' . $data['delimiter_html'] . ' ';
 					}
 				}
@@ -2671,7 +2672,8 @@ trait Functions {
 
 	//Always get custom fields with post queries
 	public function always_get_post_custom($posts){
-		for ( $i = 0; $i < count($posts); $i++ ){
+		$posts_count = count($posts);
+		for ( $i = 0; $i < $posts_count; $i++ ){
 			$custom_fields = get_post_custom($posts[$i]->ID);
 			$posts[$i]->custom_fields = $custom_fields;
 		}
