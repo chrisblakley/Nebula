@@ -58,11 +58,11 @@ if ( !trait_exists('Assets') ){
 			$this->register_script('nebula-vimeo', 'https://player.vimeo.com/api/player.js', null, null, null, true); //https://github.com/cdnjs/cdnjs/issues/13383
 			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.10.19', true);
 			$this->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js', array('defer', 'crossorigin'), null, '1.8.7', true);
-			$this->register_script('nebula-moment', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js', array('defer', 'crossorigin'), null, '2.24.0', true);
+			$this->register_script('nebula-moment', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.25.3/moment.min.js', array('defer', 'crossorigin'), null, '2.25.3', true);
 			$this->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js', array('async', 'crossorigin'), null, '2.4.1', true);
 			$this->register_script('nebula-nebula', get_template_directory_uri() . '/assets/js/nebula.js', array('defer'), array('jquery-core'), $this->version('full'), true);
 
-			$this->register_script('nebula-nebula-module', get_template_directory_uri() . '/assets/js/nebula-module.js', array('defer', 'module'), array('jquery-core'), $this->version('full'), true); //This is for upcoming implementation only! Not supported in IE11
+			//$this->register_script('nebula-nebula-module', get_template_directory_uri() . '/assets/js/nebula-module.js', array('defer', 'module'), array('jquery-core'), $this->version('full'), true); //This is for upcoming implementation only! Not supported in IE11
 
 			$this->register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', null, array('jquery-core'), $this->version('full'), true);
 			$this->register_script('nebula-admin', get_template_directory_uri() . '/assets/js/admin.js', array('defer'), array('jquery-core'), $this->version('full'), true);
@@ -74,13 +74,8 @@ if ( !trait_exists('Assets') ){
 				$footer = ( !apply_filters('nebula_prevent_jquery_footer', false) && $this->get_option('jquery_version') === 'footer' )? true : false; //Whether to load jQuery in the head or footer
 				wp_deregister_script('jquery-core');
 
-				//Decide whether to use jQuery version 2 or 3.
 				//jQuery version 3 is asynchronous so beware of the `ready` and `load` not always triggering in that order.
-				if ( 1==2 ){
-					return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js', array('crossorigin'), null, '2.2.4', $footer);
-				} else {
-					return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js', array('crossorigin'), null, '3.5.1', $footer);
-				}
+				return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js', array('crossorigin'), null, '3.5.1', $footer);
 			}
 		}
 
@@ -112,7 +107,7 @@ if ( !trait_exists('Assets') ){
 				} elseif ( $this->get_option('bootstrap_version') === 'grid' ){
 					//Bootstrap Reboot and Grid only
 					if ( $file === 'css' ){
-						return wp_register_style('nebula-bootstrap', get_template_directory_uri() . '/assets/css/vendor/bootstrap-reboot-grid.css', null, '4.4.1', 'all'); //Served locally to combine multiple resources (Reboot and Grid)
+						return wp_register_style('nebula-bootstrap', get_template_directory_uri() . '/assets/css/vendor/bootstrap-reboot-grid.css', null, '4.5.0', 'all'); //Served locally to combine multiple resources (Reboot and Grid)
 					} elseif ( $file === 'js' ){
 						return false;
 					} else {
@@ -123,9 +118,9 @@ if ( !trait_exists('Assets') ){
 
 			//Latest (IE10+)
 			if ( $file === 'css' ){
-				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css', null, '4.4.1', 'all');
+				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css', null, '4.5.0', 'all');
 			} elseif ( $file === 'js' ){
-				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '4.4.1', true);
+				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '4.5.0', true);
 			} elseif ( $file === 'reboot' ){
 				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap-reboot.min.css';
 			} else {

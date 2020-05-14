@@ -49,6 +49,45 @@ textarea {
 	}
 }
 
+input[type="file"].custom-file-input {cursor: pointer;}
+
+//Drag and Drop File Uploads
+.nebula-drop-area {position: relative;
+	&:not(.no-ui) {padding: 15px 25px; border: 1px dotted grey; border-radius: 5px; margin-bottom: 10px;}
+
+	* {transition: opacity 0.25s ease;}
+
+	&:after {position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; color: #000; font-weight: bold; pointer-events: none; transition: background-color 0.25s ease;}
+
+	&.dragover {border: none;
+		* {opacity: 0.05;}
+
+		&:after {
+			content: "Release to upload...";
+			color: $success_color;
+			background-color: rgba($success_color, 0.2);
+			background-image: linear-gradient(90deg, $success_color 50%, transparent 50%), linear-gradient(90deg, $success_color 50%, transparent 50%), linear-gradient(0deg, $success_color 50%, transparent 50%), linear-gradient(0deg, $success_color 50%, transparent 50%);
+			background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+			background-size: 15px 2px, 15px 2px, 2px 15px, 2px 15px;
+			background-position: left top, right bottom, left bottom, right   top;
+			animation: border-motion 2s infinite linear;
+
+			@keyframes border-motion {
+				0% {background-position: left top, right bottom, left bottom, right top;}
+				100% {background-position: left 15px top, right 15px bottom, left bottom 15px, right top 15px;}
+			}
+		}
+	}
+
+	&.dropped:not(.no-ui) {border: 1px solid $success_color;}
+
+	&.rejected {border: 1px solid $danger_color;
+		* {opacity: 0.05;}
+
+		&:after {content: "Invalid upload."; background-color: rgba($danger_color, 0.2); color: $danger_color;}
+	}
+}
+
 ::-ms-clear {display: none;} //Hide the IE clear "X"
 ::-ms-reveal {display: none;} //Hide the IE password reveal button
 

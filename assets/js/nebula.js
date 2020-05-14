@@ -3321,6 +3321,78 @@ nebula.helpers = function(){
 			nebula.focusOnElement(jQuery('#' + hash));
 		}
 	});
+
+	nebula.dragDropUpload();
+}
+
+//Enable drag and drop uploading for Contact Form 7 file inputs
+nebula.dragDropUpload = function(){
+	if ( jQuery('.nebula-drop-area').length ){
+		//Activate drag and drop listeners for each drop area class on the page
+		document.querySelectorAll('.nebula-drop-area').forEach(function(dropArea){
+			var thisEvent = {
+				category: 'Drag and Drop File Upload',
+				formID: jQuery(dropArea).closest('form').attr('id') || 'form.' + jQuery(dropArea).closest('form').attr('class').replace(/\s/g, '.'),
+				fileInputID: jQuery(dropArea).find('input[type="file"]').attr('id'),
+			}
+
+			//Drag over
+			dropArea.addEventListener('dragover', function(e){ //This gets called every frame of the hover... Can we throttle it without causing a problem?
+				e.stopPropagation();
+				e.preventDefault();
+
+				jQuery(dropArea).addClass('dragover');
+				e.dataTransfer.dropEffect = 'copy'; //Visualize to the user the "copy" cursor
+
+				nebula.debounce(function(){
+					thisEvent.action = 'Drag Over';
+					nebula.dom.document.trigger('nebula_event', thisEvent);
+					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileInputID);
+				}, 500, 'file drag over');
+			});
+
+			//Drag out
+			dropArea.addEventListener('dragleave', function(e){
+				jQuery(dropArea).addClass('dragover');
+
+				thisEvent.action = 'Drag Leave';
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileInputID);
+			});
+
+			//Drop
+			dropArea.addEventListener('drop', function(e){
+				e.stopPropagation();
+				e.preventDefault();
+
+				dropArea.classList.remove('dragover');
+
+				var fileInput = dropArea.querySelectorAll('input[type="file"]')[0]; //Find the file input field within this drop area
+				var acceptedFiles = jQuery(fileInput).attr('accept').replace(/\s?\./g, '').split(',');
+				var thisFileType = e.dataTransfer.files[0].type.replace(/\S+\//, '');
+
+				thisEvent.fileType = thisFileType;
+				thisEvent.file = e.dataTransfer.files[0];
+
+				if ( !jQuery(fileInput).attr('accept').length || (e.dataTransfer.files.length === 1 && acceptedFiles.indexOf(thisFileType) != -1) ){ //If the uploader does not restrict file types, or if only one file was uploaded and that filetype is accepted
+					jQuery(dropArea).addClass('dropped is-valid');
+					fileInput.files = e.dataTransfer.files; //Fill the file upload input with the uploaded file
+
+					thisEvent.action = 'Dropped (Accepted)';
+					nebula.dom.document.trigger('nebula_event', thisEvent);
+					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileType);
+
+				} else {
+					nebula.temporaryClass(jQuery(dropArea), 'rejected', '', 1500);
+					nebula.applyValidationClasses(jQuery(fileInput), 'invalid', true); //Show the invalid message
+
+					thisEvent.action = 'Dropped (Rejected)';
+					nebula.dom.document.trigger('nebula_event', thisEvent);
+					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileType);
+				}
+			});
+		});
+	}
 }
 
 nebula.initBootstrapFunctions = function(){
@@ -3565,18 +3637,22 @@ nebula.temporaryClass = function(element, activeClass, inactiveClass, period){
 			element = jQuery(element);
 		}
 
-		inactiveClass = inactiveClass || /fa-(?!fw)\S+/i.test(element.attr('class')); //Match the first Font Awesome icon class that is the actual icon
-
-		if ( inactiveClass ){
-			if ( !period ){
-				period = 1500;
+		if ( !inactiveClass ){
+			if ( element.is('fa, fas, far, fab, fad') ){
+				inactiveClass = /fa-(?!fw)\S+/i.test(element.attr('class')); //Match the first Font Awesome icon class that is the actual icon
+			} else {
+				inactiveClass = ''; //Set to an empty string to only use a temporary active class
 			}
-
-			element.removeClass(inactiveClass).addClass(activeClass + ' temporary-status-active'); //Remove the inactive class and add the active class
-			setTimeout(function(){
-				element.removeClass(activeClass + ' temporary-status-active').addClass(inactiveClass); //After the period of time, revert back to the inactive class
-			}, period);
 		}
+
+		if ( !period ){
+			period = 1500;
+		}
+
+		element.removeClass(inactiveClass).addClass(activeClass + ' temporary-status-active'); //Remove the inactive class and add the active class
+		setTimeout(function(){
+			element.removeClass(activeClass + ' temporary-status-active').addClass(inactiveClass); //After the period of time, revert back to the inactive class
+		}, period);
 	}
 
 	return false;
