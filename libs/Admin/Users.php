@@ -71,7 +71,6 @@ if ( !trait_exists('Users') ){
 			$columns['company'] = 'Company';
 			$columns['registered'] = 'Registered';
 			$columns['status'] = 'Last Seen';
-			$columns['ip'] = 'Last IP';
 			$columns['id'] = 'ID';
 
 			if ( $this->get_option('ga_tracking_id') || $this->get_option('gtm_id') ){
@@ -111,20 +110,6 @@ if ( !trait_exists('Users') ){
 					$today_icon = ( date('Y-m-d', $this->user_last_online($id)) == date('Y-m-d') )? '<i class="far fa-clock" title="Online today"></i> ' : '<i class="far fa-calendar"></i> ';
 					return ( $this->user_last_online($id) )? '<small>' . $today_icon . human_time_diff($this->user_last_online($id)) . ' ago<br /><em>' . date('M j, Y @ g:ia', $this->user_last_online($id)) . '</em></small>' : '';
 				}
-			}
-
-			if ( $column_name === 'ip' ){
-				$logged_in_users = $this->get_data('users_status');
-
-				if ( isset($logged_in_users[$id]) ){
-					$last_ip = $logged_in_users[$id]['ip'];
-
-					if ( !empty($last_ip) ){
-						return apply_filters('nebula_user_column_ip', $last_ip);
-					}
-				}
-
-				return '';
 			}
 
 			if ( $column_name === 'id' ){

@@ -372,8 +372,8 @@ if ( !trait_exists('Options') ){
 				$nebula_default_options = $this->default_options();
 				$different_keys = array_diff_key($nebula_default_options, $nebula_options);
 				foreach ( $different_keys as $different_key => $different_value ){
-					if ( is_null($nebula_options[$different_key]) ){
-						$this->update_option($different_key, $nebula_default_options[$different_key]);
+					if ( !isset($nebula_options[$different_key]) || is_null($nebula_options[$different_key]) ){ //If this key is not in the array (a new option was added to Nebula)
+						$this->update_option($different_key, $nebula_default_options[$different_key]); //Create it with its default value
 					}
 				}
 

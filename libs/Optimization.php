@@ -663,15 +663,13 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		//Lazy-load images
-		//@todo "Nebula" 0: This is handled by Chrome 75+ natively. Will eventually deprecate this functionality.
 		public function lazy_img($src=false, $attributes=''){
-			$this->lazy_load('<img src="' . $src . '" ' . $attributes . ' importance="low" />');
+			$this->lazy_load('<img src="' . $src . '" ' . $attributes . ' loading="lazy" />');
 		}
 
 		//Lazy-load iframes
-		//@todo "Nebula" 0: This is handled by Chrome 75+ natively. Will eventually deprecate this functionality.
 		public function lazy_iframe($src=false, $attributes=''){
-			$this->lazy_load('<iframe src="' . $src . '" ' . $attributes . ' importance="low"></iframe>');
+			$this->lazy_load('<iframe src="' . $src . '" ' . $attributes . ' loading="lazy"></iframe>');
 		}
 	}
 }
