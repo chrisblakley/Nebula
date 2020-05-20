@@ -38,7 +38,7 @@ trait Customizer {
 		 ===========================*/
 
 		//One-Color Logo
-		$wp_customize->add_setting('one_color_logo', array('default' => null));
+		$wp_customize->add_setting('one_color_logo', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'one_color_logo', array(
 			'label' => 'One-Color Logo',
 			'description' => 'A single color logo (typically white) for use on colored backgrounds.',
@@ -63,7 +63,7 @@ trait Customizer {
 		));
 
 		//Primary color
-		$wp_customize->add_setting('nebula_primary_color', array('default' => null));
+		$wp_customize->add_setting('nebula_primary_color', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_primary_color', array(
 			'label' => 'Primary Color',
 			'section' => 'colors',
@@ -71,7 +71,7 @@ trait Customizer {
 		)));
 
 		//Secondary color
-		$wp_customize->add_setting('nebula_secondary_color', array('default' => null));
+		$wp_customize->add_setting('nebula_secondary_color', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_secondary_color', array(
 			'label' => 'Secondary Color',
 			'section' => 'colors',
@@ -79,7 +79,7 @@ trait Customizer {
 		)));
 
 		//Background color
-		$wp_customize->add_setting('nebula_background_color', array('default' => null));
+		$wp_customize->add_setting('nebula_background_color', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_background_color', array(
 			'label' => 'Background Color',
 			'section' => 'colors',
@@ -101,7 +101,7 @@ trait Customizer {
 		));
 
 		//Menu Position
-		$wp_customize->add_setting('menu_position', array('default' => 'over'));
+		$wp_customize->add_setting('menu_position', array('default' => 'over', 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('menu_position', array(
 			'label' => 'Menu Position',
 			'section' => 'site_features',
@@ -116,7 +116,7 @@ trait Customizer {
 
 		//Sticky Nav //@TODO "Nebula" 0: Not sure how best to implement this
 /*
-		$wp_customize->add_setting('sticky_nav', array('default' => 0));
+		$wp_customize->add_setting('sticky_nav', array('default' => 0, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('sticky_nav', array(
 			'label' => 'Use Sticky Nav',
 			'section' => 'site_features',
@@ -126,7 +126,7 @@ trait Customizer {
 */
 
 		//Offcanvas Menu
-		$wp_customize->add_setting('nebula_offcanvas_menu', array('default' => 1));
+		$wp_customize->add_setting('nebula_offcanvas_menu', array('default' => 1, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('nebula_offcanvas_menu', array(
 			'label' => 'Show Offcanvas Menu (Mobile)',
 			'section' => 'site_features',
@@ -140,7 +140,7 @@ trait Customizer {
 		));
 
 		//Mobile Search
-		$wp_customize->add_setting('nebula_mobile_search', array('default' => 1));
+		$wp_customize->add_setting('nebula_mobile_search', array('default' => 1, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('nebula_mobile_search', array(
 			'label' => 'Show Mobile Search',
 			'section' => 'site_features',
@@ -176,7 +176,7 @@ trait Customizer {
 		));
 
 		//Hero header in front page
-		$wp_customize->add_setting('nebula_hero', array('default' => 1));
+		$wp_customize->add_setting('nebula_hero', array('default' => 1, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('nebula_hero', array(
 			'label' => 'Show Hero Section',
 			'section' => 'hero',
@@ -185,7 +185,7 @@ trait Customizer {
 		));
 
 		//Hero Spacing
-		$wp_customize->add_setting('nebula_hero_spacing', array('default' => 1));
+		$wp_customize->add_setting('nebula_hero_spacing', array('default' => 1, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('nebula_hero_spacing', array(
 			'label' => 'Add spacing above/below the hero',
 			'section' => 'hero',
@@ -194,7 +194,7 @@ trait Customizer {
 		));
 
 		//Use One-Color Logo
-		$wp_customize->add_setting('nebula_hero_single_color_logo', array('default' => 0));
+		$wp_customize->add_setting('nebula_hero_single_color_logo', array('default' => 0, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('nebula_hero_single_color_logo', array(
 			'label' => 'Use One-Color Logo',
 			'section' => 'hero',
@@ -203,7 +203,7 @@ trait Customizer {
 		));
 
 		//Hero Navigation Scheme
-		$wp_customize->add_setting('hero_nav_scheme', array('default' => 'light'));
+		$wp_customize->add_setting('hero_nav_scheme', array('default' => 'light', 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('hero_nav_scheme', array(
 			'label' => 'Hero Navigation Scheme',
 			'section' => 'hero',
@@ -217,7 +217,7 @@ trait Customizer {
 		));
 
 		//Hero BG Image
-		$wp_customize->add_setting('nebula_hero_bg_image', array('default' => null));
+		$wp_customize->add_setting('nebula_hero_bg_image', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'nebula_hero_bg_image', array(
 			'label' => 'Hero Background Image',
 			'description' => 'Using an optimized .jpg is strongly recommended! Use the BG Overlay option with "1" opacity to hide the background image.',
@@ -232,7 +232,7 @@ trait Customizer {
 		));
 
 		//Hero Overlay Color
-		$wp_customize->add_setting('nebula_hero_overlay_color', array('default' => null));
+		$wp_customize->add_setting('nebula_hero_overlay_color', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_hero_overlay_color', array(
 			'label' => 'Hero BG Overlay Color',
 			'section' => 'hero',
@@ -240,7 +240,7 @@ trait Customizer {
 		)));
 
 		//Hero Overlay Opacity
-		$wp_customize->add_setting('nebula_hero_overlay_opacity', array('default' => '0.6'));
+		$wp_customize->add_setting('nebula_hero_overlay_opacity', array('default' => '0.6', 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('nebula_hero_overlay_opacity', array(
 			'type' => 'number',
 			'input_attrs' => array(
@@ -255,7 +255,7 @@ trait Customizer {
 		));
 
 		//Hero Site Title
-		$wp_customize->add_setting('nebula_show_hero_title', array('default' => 1));
+		$wp_customize->add_setting('nebula_show_hero_title', array('default' => 1, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('nebula_show_hero_title', array(
 			'label' => 'Show Hero Title',
 			'section' => 'hero',
@@ -264,7 +264,7 @@ trait Customizer {
 		));
 
 		//Custom Hero Title
-		$wp_customize->add_setting('nebula_hero_custom_title', array('default' => null));
+		$wp_customize->add_setting('nebula_hero_custom_title', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('nebula_hero_custom_title', array(
 			'label' => 'Custom Hero Title',
 			'description' => 'Customize the H1 text instead of using the site title',
@@ -273,7 +273,7 @@ trait Customizer {
 		));
 
 		//Hero Site Description
-		$wp_customize->add_setting('nebula_show_hero_description', array('default' => 1));
+		$wp_customize->add_setting('nebula_show_hero_description', array('default' => 1, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('nebula_show_hero_description', array(
 			'label' => 'Show Hero Description',
 			'section' => 'hero',
@@ -282,7 +282,7 @@ trait Customizer {
 		));
 
 		//Hero Description Text
-		$wp_customize->add_setting('nebula_hero_custom_description', array('default' => null));
+		$wp_customize->add_setting('nebula_hero_custom_description', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('nebula_hero_custom_description', array(
 			'label' => 'Custom Hero Description',
 			'description' => 'Customize the description text instead of using the site tagline',
@@ -296,7 +296,7 @@ trait Customizer {
 		));
 
 		//Hero Text Color
-		$wp_customize->add_setting('nebula_hero_text_color', array('default' => null));
+		$wp_customize->add_setting('nebula_hero_text_color', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_hero_text_color', array(
 			'label' => 'Hero Text Color',
 			'section' => 'hero',
@@ -304,7 +304,7 @@ trait Customizer {
 		)));
 
 		//Hero Search
-		$wp_customize->add_setting('nebula_hero_search', array('default' => 1));
+		$wp_customize->add_setting('nebula_hero_search', array('default' => 1, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('nebula_hero_search', array(
 			'label' => 'Show Hero Search',
 			'description' => 'Add an autocomplete search field to your hero section',
@@ -319,7 +319,7 @@ trait Customizer {
 		));
 
 		//Hero FG Image
-		$wp_customize->add_setting('nebula_hero_fg_image', array('default' => null));
+		$wp_customize->add_setting('nebula_hero_fg_image', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'nebula_hero_fg_image', array(
 			'label' => 'Hero Foreground Image',
 			'section' => 'hero',
@@ -333,7 +333,7 @@ trait Customizer {
 		));
 
 		//Hero FG Image Link
-		$wp_customize->add_setting('nebula_hero_fg_image_link', array('default' => null));
+		$wp_customize->add_setting('nebula_hero_fg_image_link', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('nebula_hero_fg_image_link', array(
 			'label' => 'Hero Foreground Image Link',
 			'section' => 'hero',
@@ -341,7 +341,7 @@ trait Customizer {
 		));
 
 		//Hero Youtube
-		$wp_customize->add_setting('nebula_hero_youtube_id', array('default' => null));
+		$wp_customize->add_setting('nebula_hero_youtube_id', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('nebula_hero_youtube_id', array(
 			'label' => 'Hero Youtube Video ID',
 			'description' => 'The ID of a Youtube video to embed in the hero section',
@@ -356,7 +356,7 @@ trait Customizer {
 
 		//CTA Button 1 Text
 		//@todo "Nebula" 0: How to allow for Font Awesome icons here?
-		$wp_customize->add_setting('nebula_hero_cta_btn_1_text', array('default' => null));
+		$wp_customize->add_setting('nebula_hero_cta_btn_1_text', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('nebula_hero_cta_btn_1_text', array(
 			'label' => 'Hero CTA Button 1 Text',
 			'section' => 'hero',
@@ -369,7 +369,7 @@ trait Customizer {
 		));
 
 		//CTA Button 1 URL
-		$wp_customize->add_setting('nebula_hero_cta_btn_1_url', array('default' => null));
+		$wp_customize->add_setting('nebula_hero_cta_btn_1_url', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('nebula_hero_cta_btn_1_url', array(
 			'type' => 'url',
 			'label' => 'Hero CTA Button 1 URL',
@@ -379,7 +379,7 @@ trait Customizer {
 
 		//CTA Button 2 Text
 		//@todo "Nebula" 0: How to allow for Font Awesome icons here?
-		$wp_customize->add_setting('nebula_hero_cta_btn_2_text', array('default' => null));
+		$wp_customize->add_setting('nebula_hero_cta_btn_2_text', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('nebula_hero_cta_btn_2_text', array(
 			'label' => 'Hero CTA Button 2 Text',
 			'section' => 'hero',
@@ -392,7 +392,7 @@ trait Customizer {
 		));
 
 		//CTA Button 2 URL
-		$wp_customize->add_setting('nebula_hero_cta_btn_2_url', array('default' => null));
+		$wp_customize->add_setting('nebula_hero_cta_btn_2_url', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('nebula_hero_cta_btn_2_url', array(
 			'type' => 'url',
 			'label' => 'Hero CTA Button 2 URL',
@@ -421,7 +421,7 @@ trait Customizer {
 		));
 
 		//Featured Image Location
-		$wp_customize->add_setting('featured_image_location', array('default' => 'content'));
+		$wp_customize->add_setting('featured_image_location', array('default' => 'content', 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('featured_image_location', array(
 			'label' => 'Featured Image Location',
 			'section' => 'posts_header',
@@ -436,7 +436,7 @@ trait Customizer {
 		));
 
 		//Use One-Color Logo
-		$wp_customize->add_setting('nebula_header_single_color_logo', array('default' => 0));
+		$wp_customize->add_setting('nebula_header_single_color_logo', array('default' => 0, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('nebula_header_single_color_logo', array(
 			'label' => 'Use One-Color Logo',
 			'section' => 'posts_header',
@@ -445,7 +445,7 @@ trait Customizer {
 		));
 
 		//Header Navigation Color Scheme (Same as under Brand panel)
-		$wp_customize->add_setting('header_nav_scheme', array('default' => 'light'));
+		$wp_customize->add_setting('header_nav_scheme', array('default' => 'light', 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('header_nav_scheme', array(
 			'label' => 'Navigation Color Scheme',
 			'section' => 'posts_header',
@@ -460,7 +460,7 @@ trait Customizer {
 		));
 
 		//Header Overlay Color
-		$wp_customize->add_setting('nebula_header_overlay_color', array('default' => null));
+		$wp_customize->add_setting('nebula_header_overlay_color', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_header_overlay_color', array(
 			'label' => 'Header BG Overlay Color',
 			'section' => 'posts_header',
@@ -469,7 +469,7 @@ trait Customizer {
 		)));
 
 		//Header Overlay Opacity
-		$wp_customize->add_setting('nebula_header_overlay_opacity', array('default' => '0.6'));
+		$wp_customize->add_setting('nebula_header_overlay_opacity', array('default' => '0.6', 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('nebula_header_overlay_opacity', array(
 			'type' => 'number',
 			'input_attrs' => array(
@@ -485,7 +485,7 @@ trait Customizer {
 		));
 
 		//Title Location
-		$wp_customize->add_setting('title_location', array('default' => 'hero'));
+		$wp_customize->add_setting('title_location', array('default' => 'hero', 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('title_location', array(
 			'label' => 'Title Location',
 			'section' => 'posts_header',
@@ -523,7 +523,7 @@ trait Customizer {
 		));
 
 		//Post Date Format
-		$wp_customize->add_setting('post_date_format', array('default' => 'relative'));
+		$wp_customize->add_setting('post_date_format', array('default' => 'relative', 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('post_date_format', array(
 			'label' => 'Post Date Format',
 			'section' => 'posts_meta',
@@ -537,7 +537,7 @@ trait Customizer {
 		));
 
 		//Show Post Author
-		$wp_customize->add_setting('post_author', array('default' => 0));
+		$wp_customize->add_setting('post_author', array('default' => 0, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('post_author', array(
 			'label' => 'Show Post Author',
 			'description' => 'Author Bios must also be enabled in Nebula Options',
@@ -547,7 +547,7 @@ trait Customizer {
 		));
 
 		//Show Post Categories
-		$wp_customize->add_setting('post_categories', array('default' => 1));
+		$wp_customize->add_setting('post_categories', array('default' => 1, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('post_categories', array(
 			'label' => 'Show Post Categories',
 			'section' => 'posts_meta',
@@ -556,7 +556,7 @@ trait Customizer {
 		));
 
 		//Show Post Tags
-		$wp_customize->add_setting('post_tags', array('default' => 1));
+		$wp_customize->add_setting('post_tags', array('default' => 1, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('post_tags', array(
 			'label' => 'Show Post Tags',
 			'section' => 'posts_meta',
@@ -565,7 +565,7 @@ trait Customizer {
 		));
 
 		//Show Post Types in Search Results
-		$wp_customize->add_setting('search_result_post_types', array('default' => 0));
+		$wp_customize->add_setting('search_result_post_types', array('default' => 0, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('search_result_post_types', array(
 			'label' => 'Show Post Types in Search Results',
 			'section' => 'posts_meta',
@@ -574,7 +574,7 @@ trait Customizer {
 		));
 
 		//Show Post Comment Count
-		$wp_customize->add_setting('post_comment_count', array('default' => 0));
+		$wp_customize->add_setting('post_comment_count', array('default' => 0, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('post_comment_count', array(
 			'label' => 'Show Post Comment Count',
 			'description' => 'Comments must also be enabled in Nebula Options',
@@ -584,7 +584,7 @@ trait Customizer {
 		));
 
 		//Excerpt Length
-		$wp_customize->add_setting('nebula_excerpt_length', array('default' => null));
+		$wp_customize->add_setting('nebula_excerpt_length', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('nebula_excerpt_length', array(
 			'type' => 'number',
 			'input_attrs' => array(
@@ -597,7 +597,7 @@ trait Customizer {
 		));
 
 		//Excerpt "More" Text
-		$wp_customize->add_setting('nebula_excerpt_more_text', array('default' => null));
+		$wp_customize->add_setting('nebula_excerpt_more_text', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('nebula_excerpt_more_text', array(
 			'input_attrs' => array(
 				'placeholder' => 'Read More &raquo;',
@@ -617,7 +617,7 @@ trait Customizer {
 		));
 
 		//Sidebar Position
-		$wp_customize->add_setting('sidebar_position', array('default' => 'right'));
+		$wp_customize->add_setting('sidebar_position', array('default' => 'right', 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('sidebar_position', array(
 			'label' => 'Sidebar Position',
 			'section' => 'sidebar',
@@ -631,7 +631,7 @@ trait Customizer {
 		));
 
 		//Accordion Expanders
-		$wp_customize->add_setting('sidebar_accordion_expanders', array('default' => 1));
+		$wp_customize->add_setting('sidebar_accordion_expanders', array('default' => 1, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('sidebar_accordion_expanders', array(
 			'label' => 'Enable Menu Expander Accordions',
 			'section' => 'sidebar',
@@ -651,7 +651,7 @@ trait Customizer {
 		));
 
 		//Footer Widget Area Navigation Color Scheme (Same as under Brand panel)
-		$wp_customize->add_setting('fwa_nav_scheme', array('default' => 'light'));
+		$wp_customize->add_setting('fwa_nav_scheme', array('default' => 'light', 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('fwa_nav_scheme', array(
 			'label' => 'Navigation Color Scheme',
 			'section' => 'footer_widget_area',
@@ -665,7 +665,7 @@ trait Customizer {
 		));
 
 		//Footer Widget Area BG Image
-		$wp_customize->add_setting('nebula_fwa_bg_image', array('default' => null));
+		$wp_customize->add_setting('nebula_fwa_bg_image', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'nebula_fwa_bg_image', array(
 			'label' => 'Footer Widget Area Background Image',
 			'description' => 'Using an optimized .jpg is strongly recommended! Use the BG Overlay option with "1" opacity to hide the background image.',
@@ -680,7 +680,7 @@ trait Customizer {
 		));
 
 		//Footer Widget Area Overlay Color
-		$wp_customize->add_setting('nebula_fwa_overlay_color', array('default' => null));
+		$wp_customize->add_setting('nebula_fwa_overlay_color', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_fwa_overlay_color', array(
 			'label' => 'Footer Widget Area BG Overlay Color',
 			'section' => 'footer_widget_area',
@@ -688,7 +688,7 @@ trait Customizer {
 		)));
 
 		//Footer Widget Area Overlay Opacity
-		$wp_customize->add_setting('nebula_fwa_overlay_opacity', array('default' => '0.6'));
+		$wp_customize->add_setting('nebula_fwa_overlay_opacity', array('default' => '0.6', 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('nebula_fwa_overlay_opacity', array(
 			'type' => 'number',
 			'input_attrs' => array(
@@ -712,7 +712,7 @@ trait Customizer {
 		));
 
 		//Footer Spacing
-		$wp_customize->add_setting('nebula_footer_spacing', array('default' => 1));
+		$wp_customize->add_setting('nebula_footer_spacing', array('default' => 1, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('nebula_footer_spacing', array(
 			'label' => 'Add spacing above/below the footer',
 			'section' => 'footer',
@@ -721,7 +721,7 @@ trait Customizer {
 		));
 
 		//Footer Navigation Color Scheme (Same as under Brand panel)
-		$wp_customize->add_setting('footer_nav_scheme', array('default' => 'light'));
+		$wp_customize->add_setting('footer_nav_scheme', array('default' => 'light', 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('footer_nav_scheme', array(
 			'label' => 'Navigation Color Scheme',
 			'section' => 'footer',
@@ -735,7 +735,7 @@ trait Customizer {
 		));
 
 		//Footer BG Image
-		$wp_customize->add_setting('nebula_footer_bg_image', array('default' => null));
+		$wp_customize->add_setting('nebula_footer_bg_image', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'nebula_footer_bg_image', array(
 			'label' => 'Footer Background Image',
 			'description' => 'Using an optimized .jpg is strongly recommended! Use the BG Overlay option with "1" opacity to hide the background image.',
@@ -750,7 +750,7 @@ trait Customizer {
 		));
 
 		//Footer Overlay Color
-		$wp_customize->add_setting('nebula_footer_overlay_color', array('default' => null));
+		$wp_customize->add_setting('nebula_footer_overlay_color', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'nebula_footer_overlay_color', array(
 			'label' => 'Footer BG Overlay Color',
 			'section' => 'footer',
@@ -758,7 +758,7 @@ trait Customizer {
 		)));
 
 		//Footer Overlay Opacity
-		$wp_customize->add_setting('nebula_footer_overlay_opacity', array('default' => '0.85'));
+		$wp_customize->add_setting('nebula_footer_overlay_opacity', array('default' => '0.85', 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('nebula_footer_overlay_opacity', array(
 			'type' => 'number',
 			'input_attrs' => array(
@@ -773,7 +773,7 @@ trait Customizer {
 		));
 
 		//Show Footer Logo
-		$wp_customize->add_setting('nebula_footer_logo', array('default' => 0));
+		$wp_customize->add_setting('nebula_footer_logo', array('default' => 0, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('nebula_footer_logo', array(
 			'label' => 'Show Footer Logo',
 			'section' => 'footer',
@@ -787,7 +787,7 @@ trait Customizer {
 		));
 
 		//Use One-Color Logo
-		$wp_customize->add_setting('nebula_footer_single_color_logo', array('default' => 0));
+		$wp_customize->add_setting('nebula_footer_single_color_logo', array('default' => 0, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('nebula_footer_single_color_logo', array(
 			'label' => 'Use One-Color Logo',
 			'section' => 'footer',
@@ -796,7 +796,7 @@ trait Customizer {
 		));
 
 		//Footer text
-		$wp_customize->add_setting('nebula_footer_text', array('default' => null));
+		$wp_customize->add_setting('nebula_footer_text', array('default' => null, 'sanitize_callback' => 'esc_attr'));
 		$wp_customize->add_control('nebula_footer_text', array(
 			'label' => 'Footer Text',
 			'section' => 'footer',
@@ -809,7 +809,7 @@ trait Customizer {
 		));
 
 		//Search in footer
-		$wp_customize->add_setting('nebula_footer_search', array('default' => 1));
+		$wp_customize->add_setting('nebula_footer_search', array('default' => 1, 'sanitize_callback' => 'absint'));
 		$wp_customize->add_control('nebula_footer_search', array(
 			'label' => 'Show Footer Search',
 			'section' => 'footer',

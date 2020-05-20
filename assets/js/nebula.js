@@ -288,19 +288,19 @@ nebula.predictiveCacheListeners = function(){
 		window.requestIdleCallback(function(){
 			//Top-level primary nav links
 			jQuery('ul#menu-primary > li.menu-item > a').each(function(){
-				nebula.prefetch(jQuery(this).attr('href'));
+				nebula.prefetch(jQuery(this).attr('href'), false, jQuery(this));
 			});
 
 			//First 5 buttons
 			jQuery('a.btn, a.wp-block-button__link').slice(0, 4).each(function(){
-				nebula.prefetch(jQuery(this).attr('href'));
+				nebula.prefetch(jQuery(this).attr('href'), false, jQuery(this));
 			});
 		});
 	}
 }
 
 //Prefetch a resource
-nebula.prefetch = function(url, callback){
+nebula.prefetch = function(url, callback, element){
 	if ( url && url.length > 1 && url.indexOf('#') !== 0 && typeof window.requestIdleCallback === 'function' ){ //If the URL exists, is longer than 1 character and does not begin with #
 		//If network connection is 2G don't prefetch
 		if ( nebula.has(navigator, 'connection.effectiveType') && navigator.connection.effectiveType.toString().indexOf('2g') >= 0 ){ //'slow-2g', '2g', '3g', or '4g' //@todo "Nebula" 0: Replace with optional chaining
@@ -314,6 +314,11 @@ nebula.prefetch = function(url, callback){
 			}
 		}
 
+		//Ignore links with certain attributes (if the element itself was passed by reference)
+		if ( element && jQuery(element).is('[download]') ){
+			return false;
+		}
+
 		//Only https protocol (ignore "mailto", "tel", etc.)
 		if ( !/^https/.test(url) ){ //Change this to .startsWith() when we use ES6
 			return false;
@@ -323,6 +328,9 @@ nebula.prefetch = function(url, callback){
 		if ( /\.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/.test(url) ){
 			return false;
 		}
+
+		//Strip out unnecessary parts of the URL
+		url = url.split('#')[0]; //Remove hashes
 
 		//Ignore blacklisted terms (logout, 1-click purchase buttons, etc.)
 		var prefetchBlacklist = ['logout'];
@@ -1158,7 +1166,7 @@ nebula.eventTracking = function(){
 		});
 
 		//Non-Linked Click Attempts
-		jQuery('img').on('click', function(e){
+		jQuery(document).on('click', 'img', function(e){
 			if ( !jQuery(this).parents('a').length ){
 				var thisEvent = {
 					event: e,

@@ -502,7 +502,7 @@ if ( !trait_exists('Analytics') ){
 				'cd3' => get_bloginfo('version'),
 				'cd6' => $this->version('raw'),
 				'cd4' => get_bloginfo('description'),
-				'cd5' => get_bloginfo('wpurl'),
+				'cd5' => site_url(),
 				'cd7' => $this->ga_parse_cookie(),
 				'cd9' => ( is_child_theme() )? 'Child' : 'Parent',
 				'cd13' => get_current_user_id(),

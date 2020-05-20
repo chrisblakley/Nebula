@@ -283,7 +283,7 @@ trait Functions {
 			}
 
 			//If the site is served via HTTPS but the Site URL is still set to HTTP
-			if ( (is_ssl() || isset($_SERVER['HTTPS'])) && (strpos(get_option('home'), 'http://') !== false || strpos(get_option('siteurl'), 'http://') !== false) ){
+			if ( (is_ssl() || isset($_SERVER['HTTPS'])) && (strpos(home_url(), 'http://') !== false || strpos(get_option('siteurl'), 'http://') !== false) ){
 				$nebula_warnings[] = array(
 					'level' => 'error',
 					'description' => '<i class="fas fa-fw fa-lock-open"></i> <a href="options-general.php">Website Address</a> settings are http but the site is served from https.',
@@ -577,9 +577,14 @@ trait Functions {
 
 			//$new_cache_name = "nebula-" . strtolower(get_option('stylesheet')) . "-" . mt_rand(10000, 99999);
 
+			$nebula_version = $this->version('full');
+			if ( is_child_theme() ){
+				$nebula_version = $this->child_version();
+			}
+
 			$replace = array(
 				"$1" . strtolower(get_option('stylesheet')) . "$3",
-				"$1" . 'v' . $this->version('full') . "$3 //" . date('l, F j, Y g:i:s A'),
+				"$1" . 'v' . apply_filters('nebula_sw_cache_version', $nebula_version) . "$3 //" . date('l, F j, Y g:i:s A'),
 				"$1" . home_url('/') . "offline/$3",
 				"$1" . get_theme_file_uri('/assets/img') . "/offline.svg$3",
 				"$1cd" . $this->ga_definition_index($this->get_option('cd_offline')) . "$3",
@@ -641,11 +646,13 @@ trait Functions {
 			}, {
 				"src": "' . get_site_icon_url(192, get_theme_file_uri('/assets/img/meta') . '/android-chrome-192x192.png') . '",
 				"sizes": "192x192",
-				"type": "image/png"
+				"type": "image/png",
+				"purpose": "any maskable"
 			}, {
 				"src": "' . get_site_icon_url(512, get_theme_file_uri('/assets/img/meta') . '/android-chrome-512x512.png') . '",
 				"sizes": "512x512",
-				"type": "image/png"
+				"type": "image/png",
+				"purpose": "any maskable"
 			}';
 		} else {
 			//Loop through all meta images

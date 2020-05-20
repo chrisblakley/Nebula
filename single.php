@@ -46,6 +46,15 @@
 						<div class="entry-content">
 							<?php the_content(); ?>
 						</div>
+
+						<?php //Paginate multi-page posts
+							wp_link_pages(array(
+								'before' => '<div class="page-links"><span class="page-links-title">' . __('Pages:', 'nebula') . '</span>',
+								'after' => '</div>',
+								'link_before' => '<span>',
+								'link_after' => '</span>',
+							));
+						?>
 					</article>
 
 					<?php if ( is_active_sidebar('single-post-widget-area') ): ?>

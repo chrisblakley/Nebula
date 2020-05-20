@@ -1236,17 +1236,7 @@ if ( !trait_exists('Utilities') ){
 				return $this->version('full'); //Return the parent theme version if child theme is not active
 			}
 
-			//Return a version format based on the last Sass process date if available
-/*
-			if ( nebula()->get_option('scss') ){
-				//$new_build_number = str_replace('0.', '', strval(round((time()-strtotime('today'))/86400, 4))); //New way to do this, but may not need if re-writing completely
-				$build_number = (round((nebula()->get_data('scss_last_processed')-strtotime(date('Y-m-d', nebula()->get_data('scss_last_processed'))))/86400, 4)*10000)+1; //Add 1 to try to prevent trimming of trailing zeros
-				$build_number = str_pad($build_number, '4', '1'); //Force a 4 digit number (by adding 1s to the right side)
-				return date('y.n.j.' . $build_number, nebula()->get_data('scss_last_processed'));
-			}
-*/
-
-			//Otherwise rely on the version number in the child theme stylesheet
+			//Get the version number from the child theme stylesheet
 			$child_theme_info = wp_get_theme();
 			return $child_theme_info->get('Version');
 		}

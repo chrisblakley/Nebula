@@ -45,6 +45,9 @@
 	}
 }
 
+.wp-caption-text {font-style: italic;}
+.bypostauthor {font-weight: bold;} //Comments made by the post author
+
 //Gutenberg buttons
 .wp-block-button {
 	a.wp-block-button__link {@include link-colors(#fff, #ccc); transition: all 0.25s;
