@@ -19,7 +19,7 @@ if ( !trait_exists('Users') ){
 
 				add_filter('user_contactmethods', array($this, 'user_contact_methods'));
 
-				if ( !current_user_can( 'subscriber' ) && !current_user_can( 'contributor' ) ){
+				if ( current_user_can('edit_posts') ){ //If the user is not a subscriber or contributor role (Ex: only authors and above)
 					add_action('show_user_profile', array($this, 'extra_profile_fields'));
 					add_action('edit_user_profile', array($this, 'extra_profile_fields'));
 				}

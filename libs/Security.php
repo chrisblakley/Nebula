@@ -18,6 +18,7 @@ if ( !trait_exists('Security') ){
 			//add_action('wp_footer', array($this, 'track_notable_bots')); //Disabled for now. Not super useful.
 			add_action('wp_loaded', array($this, 'domain_prevention'));
 			add_action('get_header', array($this, 'redirect_author_template'));
+
 			add_filter('rest_endpoints', array($this, 'rest_endpoints_security'));
 
 			add_action('wp_footer', array($this, 'cookie_notification'));

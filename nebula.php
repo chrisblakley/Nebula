@@ -74,8 +74,9 @@ if ( !class_exists('Nebula') ){
 
 		//Run action and filter hooks
 		private function hooks(){
-			//Start a session
+			//Control the PHP session
 			add_action('init', array($this, 'session_start'), 1);
+			add_action('wp_loaded', array($this, 'session_close'), 30);
 
 			//Adjust the content width when the full width page template is being used
 			add_action('template_redirect', array($this, 'set_content_width'));
@@ -102,8 +103,8 @@ if ( !class_exists('Nebula') ){
 
 		public function session_start(){
 			if ( !$this->is_ajax_or_rest_request() && is_writable(session_save_path()) ){ //If not an AJAX/REST request and the session directory is writable
-				if ( !session_id() ){
-					session_start(); //This breaks the Theme Editor for some reason, so we don't do it on AJAX requests
+				if ( session_status() === PHP_SESSION_NONE ){
+					session_start(); //This breaks the Theme Editor for some reason, so we try not to do it on special requests like AJAX or the REST API
 				}
 
 				if ( !isset($_SESSION['pagecount']) ){
@@ -111,6 +112,13 @@ if ( !class_exists('Nebula') ){
 				} else {
 					$_SESSION['pagecount']++;
 				}
+			}
+		}
+
+		//Close the session after server-side rendering has finished to prevent issues with additional HTTP requests (like the REST API)
+		public function session_close(){
+			if ( session_status() === PHP_SESSION_ACTIVE ){
+				session_write_close();;
 			}
 		}
 

@@ -941,7 +941,7 @@ if ( !trait_exists('Utilities') ){
 			return $response;
 		}
 
-		//If this request is using AJAX or REST API. This is used to ignore non-essential functionality to speed up those requests.
+		//If this request is using AJAX, REST API, or some other type of special request. This can be used to ignore non-essential functionality to speed up those requests.
 		public function is_ajax_or_rest_request(){
 			//Check for AJAX
 			if ( wp_doing_ajax() ){
@@ -950,6 +950,21 @@ if ( !trait_exists('Utilities') ){
 
 			//Check for the REST API
 			if ( (defined('REST_REQUEST') && REST_REQUEST) || isset($_GET['rest_route']) ){
+				return true;
+			}
+
+			//Check if a CRON is running
+			if ( defined('DOING_CRON') ){
+				return true;
+			}
+
+			//Check if it is an XMLRPC request
+			if ( defined('XMLRPC_REQUEST') ){
+				return true;
+			}
+
+			//Check if WP is installing
+			if ( defined('WP_INSTALLING') && WP_INSTALLING ){
 				return true;
 			}
 

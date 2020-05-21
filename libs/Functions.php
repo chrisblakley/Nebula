@@ -19,7 +19,7 @@ trait Functions {
 		add_filter('image_size_names_choose', array($this, 'image_size_human_names'));
 		add_action('rest_api_init', array($this, 'rest_api_routes'));
 		add_action('wp_head', array($this, 'add_back_post_feed'));
-		add_action('init', array($this, 'set_default_timezone'), 1);
+		//add_action('init', array($this, 'set_default_timezone'), 1); //Disabling and monitoring
 
 		if ( $this->get_option('console_css') ){
 			add_action('wp_head', array($this, 'calling_card'));
@@ -208,7 +208,7 @@ trait Functions {
 	}
 
 	//Set server timezone to match Wordpress
-	//@todo "Nebula" 0: WordPress Health Check does not like this function, but often has incorrect timestamps...
+	//@todo "Nebula" 0: WordPress Health Check does not like this function, but often has incorrect timestamps... Disabling for now and will monitor.
 	public function set_default_timezone(){
 		//@todo "Nebula" 0: Use null coalescing operator here if possible
 		$timezone_option = get_option('timezone_string');
@@ -216,7 +216,8 @@ trait Functions {
 			$timezone_option = 'America/New_York';
 		}
 
-		date_default_timezone_set($timezone_option); //@todo "Nebula" 0: WordPress Health Check does not like this...
+		//Note: this is disabled here but also at the hook above too!
+		//date_default_timezone_set($timezone_option); //@todo "Nebula" 0: WordPress Health Check does not like this...
 	}
 
 	//Add the Nebula note to the browser console (if enabled)
