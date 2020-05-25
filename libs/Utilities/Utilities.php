@@ -23,6 +23,10 @@ if ( !trait_exists('Utilities') ){
 			$this->DeviceHooks(); //Register Device hooks
 			$this->SassHooks(); //Register Sass hooks
 
+			//Update the child theme version number at various points
+			add_action('save_post', array($this, 'update_child_version_number')); //When a post is created or updated
+			add_action('nebula_options_saved', array($this, 'update_child_version_number')); //Nebula ptions save
+			add_action('upgrader_process_complete', array($this, 'update_child_version_number')); //WordPress Core, theme, or plugin updates
 			add_action('nebula_scss_post_compile_once', array($this, 'update_child_version_number'));
 
 			register_shutdown_function(array($this, 'ga_log_fatal_errors'));
@@ -1261,18 +1265,23 @@ if ( !trait_exists('Utilities') ){
 			$override = apply_filters('pre_nebula_update_child_version', null);
 			if ( isset($override) ){return $override;}
 
-			if ( is_child_theme() && nebula()->is_dev() ){
+			if ( is_child_theme() ){
 				WP_Filesystem();
 				global $wp_filesystem;
 
-				$child_style_scss_location = get_stylesheet_directory() . '/assets/scss/style.scss';
-				$child_style_scss = $wp_filesystem->get_contents($child_style_scss_location);
-				if ( !empty($child_style_scss) ){
-					$new_child_style_scss = preg_replace_callback("/(Version: \d+?\.\d+?\.)(\d+)$/m", function($matches){
-						return $matches[1] . (intval($matches[2])+1); //Add one to the security digit
-					}, $child_style_scss);
+				//Use the Sass file if enabled, otherwise edit the style.css directly
+				$child_stylesheet_location = get_stylesheet_directory() . '/style.css';
+				if ( $this->get_option('scss') ){
+					$child_stylesheet_location = get_stylesheet_directory() . '/assets/scss/style.scss';
+				}
 
-					$update_child_style_scss = $wp_filesystem->put_contents($child_style_scss_location, $new_child_style_scss);
+				$child_stylesheet = $wp_filesystem->get_contents($child_stylesheet_location);
+				if ( !empty($child_stylesheet) ){
+					$child_stylesheet = preg_replace_callback("/(Version: \d+?\.\d+?\.)(\d+)$/m", function($matches){
+						return $matches[1] . (intval($matches[2])+1); //Add one to the security digit
+					}, $child_stylesheet);
+
+					$update_child_stylesheet = $wp_filesystem->put_contents($child_stylesheet_location, $child_stylesheet);
 				}
 			}
 		}

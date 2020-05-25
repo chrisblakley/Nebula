@@ -217,7 +217,7 @@ trait Functions {
 		}
 
 		//Note: this is disabled here but also at the hook above too!
-		//date_default_timezone_set($timezone_option); //@todo "Nebula" 0: WordPress Health Check does not like this...
+		date_default_timezone_set($timezone_option); //@todo "Nebula" 0: WordPress Health Check does not like this... but date() is wrong (uses UTC) without it...
 	}
 
 	//Add the Nebula note to the browser console (if enabled)
@@ -488,6 +488,33 @@ trait Functions {
 				}
 			}
 
+			//Check for low disk space available in key directories
+			$disk_paths = array(
+				array('directory' => ABSPATH, 'low' => 10, 'critical' => 5), //WordPress root directory
+				array('directory' => session_save_path(), 'low' => 1, 'critical' => 0.5), //May or may not be the same as /tmp
+				array('directory' => '/tmp', 'low' => 1, 'critical' => 0.5)
+			);
+
+			$disk_paths = array_unique($disk_paths, SORT_REGULAR); //De-duplicate directories in the array
+
+			foreach ( $disk_paths as $path ){
+				if ( is_dir($path['directory']) ){
+					$disk_space_free = disk_free_space($path['directory'])/1073741824; //In GB
+
+					if ( $disk_space_free < $path['critical'] ){
+						$nebula_warnings[] = array(
+							'level' => 'error',
+							'description' => '<i class="fas fa-fw fa-hdd"></i> Available disk space in <strong>' . $path['directory'] . '</strong> critically low! Only <strong>' . round($disk_space_free, 2) . 'gb</strong> remaining.'
+						);
+					} elseif ( $disk_space_free < $path['low'] ){
+						$nebula_warnings[] = array(
+							'level' => 'warn',
+							'description' => '<i class="far fa-fw fa-hdd"></i> Low disk space available in <strong>' . $path['directory'] . '</strong>. Only <strong>' . round($disk_space_free, 2) . 'gb</strong> remaining.'
+						);
+					}
+				}
+			}
+
 			$all_nebula_warnings = apply_filters('nebula_warnings', $nebula_warnings); //Allow other functions to hook in to add warnings (like Ecommerce)
 
 			//Check for improper hooks
@@ -565,15 +592,15 @@ trait Functions {
 
 		if ( !empty($sw_js) ){
 			$find = array(
-				"/(var THEME_NAME = ')(.+)(';)/m",
-				"/(var NEBULA_VERSION = ')(.+)(';)(.+$)?/m",
-				"/(var OFFLINE_URL = ')(.+)(';)/m",
-				"/(var OFFLINE_IMG = ')(.+)(';)/m",
-				"/(var OFFLINE_GA_DIMENSION = ')(.+)(';)/m",
-				"/(var META_ICON = ')(.+)(';)/m",
-				"/(var MANIFEST = ')(.+)(';)/m",
-				"/(var HOME_URL = ')(.+)(';)/m",
-				"/(var START_URL = ')(.+)(';)/m",
+				"/(const THEME_NAME = ')(.+)(';)/m",
+				"/(const NEBULA_VERSION = ')(.+)(';)(.+$)?/m",
+				"/(const OFFLINE_URL = ')(.+)(';)/m",
+				"/(const OFFLINE_IMG = ')(.+)(';)/m",
+				"/(const OFFLINE_GA_DIMENSION = ')(.+)(';)/m",
+				"/(const META_ICON = ')(.+)(';)/m",
+				"/(const MANIFEST = ')(.+)(';)/m",
+				"/(const HOME_URL = ')(.+)(';)/m",
+				"/(const START_URL = ')(.+)(';)/m",
 			);
 
 			//$new_cache_name = "nebula-" . strtolower(get_option('stylesheet')) . "-" . mt_rand(10000, 99999);
@@ -2082,7 +2109,7 @@ trait Functions {
 		$options = wp_parse_args($args, $defaults);
 
 		$related_post_ids = get_transient('nebula-related-' . $options['taxonomy'] . '-' . $post_id);
-		if ( empty($related_post_ids) || nebula()->is_debug() ){
+		if ( empty($related_post_ids) || $this->is_debug() ){
 			$term_args = array(
 				'fields' => 'ids',
 				'orderby' => 'count', //Sort by frequency
@@ -3479,6 +3506,7 @@ trait Functions {
 	public function flush_rewrite_on_debug(){
 		if ( $this->is_debug() ){
 			flush_rewrite_rules(); //Note: this is an expensive operation
+			$this->update_child_version_number();
 		}
 	}
 }

@@ -669,11 +669,11 @@ if ( !trait_exists('Dashboard') ){
 			$php_version_cursor = 'normal';
 			$php_version_lifecycle = $this->php_version_support();
 			if ( $php_version_lifecycle['lifecycle'] === 'security' ){
-				$php_version_color = '#ca8038';
+				$php_version_color = '#ca8038'; //Warning
 				$php_version_info = 'This version is nearing end of life. Security updates end on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.';
 				$php_version_cursor = 'help';
 			} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
-				$php_version_color = '#ca3838';
+				$php_version_color = '#ca3838'; //Danger
 				$php_version_info = 'This version no longer receives security updates! End of life occurred on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.';
 				$php_version_cursor = 'help';
 			}
@@ -725,6 +725,20 @@ if ( !trait_exists('Dashboard') ){
 				$upload_max = '';
 			}
 			echo '<li><i class="fas fa-fw fa-images"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> ' . $upload_max . '</li>';
+
+			//PHP Disk Space
+			//Note: This does not check the /tmp or the session_save_path() but Nebula warnings do monitor those directories
+			$disk_total_space = disk_total_space(ABSPATH)/1073741824; //In GB
+			$disk_free_space = disk_free_space(ABSPATH)/1073741824; //In GB
+
+			$disk_usage_color = 'inherit';
+			if ( $disk_free_space < 5 ){
+				$disk_usage_color = '#ca3838'; //Danger
+			} elseif ( $disk_free_space < 10 ){
+				$disk_usage_color = '#ca8038'; //Warning
+			}
+
+			echo '<li><i class="fas fa-fw fa-hdd"></i> Disk Space Available: <strong style="color: ' . $disk_usage_color . ';">' . round($disk_free_space, 2) . 'gb</strong> <small>(Total space: <strong>' . round($disk_total_space, 0) . 'gb</strong>)</small></li>';
 
 			//Service Worker
 			if ( $this->get_option('service_worker') ){

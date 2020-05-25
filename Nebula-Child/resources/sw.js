@@ -1,13 +1,13 @@
 //BEGIN automated edits. These will be automatically overwritten.
-var THEME_NAME = 'nebula-child';
-var NEBULA_VERSION = 'v8.0.21.07'; //Thursday, May 21, 2020 1:40:57 AM
-var OFFLINE_URL = 'https://gearside.com/nebula/offline/';
-var OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
-var OFFLINE_GA_DIMENSION = 'cd2';
-var META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
-var MANIFEST = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/inc/manifest.json';
-var HOME_URL = 'https://gearside.com/nebula/';
-var START_URL = 'https://gearside.com/nebula/?utm_source=pwa'; //@todo "Nebula" 0: How do we append ?utm_source=pwa to this without causing an additional resource request to cache it?
+const THEME_NAME = 'nebula-child';
+const NEBULA_VERSION = 'v8.0.25.1576'; //Monday, May 25, 2020 3:47:02 AM
+const OFFLINE_URL = 'https://gearside.com/nebula/offline/';
+const OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
+const OFFLINE_GA_DIMENSION = 'cd2';
+const META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
+const MANIFEST = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/inc/manifest.json';
+const HOME_URL = 'https://gearside.com/nebula/';
+const START_URL = 'https://gearside.com/nebula/?utm_source=pwa'; //@todo "Nebula" 0: How do we append ?utm_source=pwa to this without causing an additional resource request to cache it?
 //END automated edits
 
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.3/workbox-sw.js'); //https://developers.google.com/web/tools/workbox/guides/get-started
@@ -30,13 +30,14 @@ workbox.core.setCacheNameDetails({
 });
 
 //Precache files on SW install
+const revisionNumber = NEBULA_VERSION.replace(/v|\./g, ''); //Remove "v" and periods in version number
 workbox.precaching.precacheAndRoute([
-	OFFLINE_URL,
-	OFFLINE_IMG,
-	META_ICON,
-	MANIFEST,
-	HOME_URL,
-	START_URL
+	{url: OFFLINE_URL, revision: revisionNumber},
+	{url: OFFLINE_IMG, revision: revisionNumber},
+	{url: META_ICON, revision: revisionNumber},
+	{url: MANIFEST, revision: revisionNumber},
+	{url: HOME_URL, revision: revisionNumber},
+	{url: START_URL, revision: revisionNumber},
 ]);
 
 //Check if we need to force network retrieval for specific resources (false = network only, true = allow caching)
@@ -49,17 +50,17 @@ function isCacheAllowed(event){
 		return false;
 	}
 
-	var eventReferrer = event.referrer; //The page making the request
-	var eventURL = event.url.href || event.url; //The file being requested
+	let eventReferrer = event.referrer; //The page making the request
+	let eventURL = event.url.href || event.url; //The file being requested
 
 	//Check domains, directories, and pages
-	var pageRegex = /\/chrome-extension:\/\/|\/wp-login.php|\/wp-admin|analytics|hubspot|hs-scripts|customize.php|customize_|no-cache|admin-ajax|gutenberg\//;
+	let pageRegex = /\/chrome-extension:\/\/|\/wp-login.php|\/wp-admin|analytics|hubspot|hs-scripts|customize.php|customize_|no-cache|admin-ajax|gutenberg\//;
 	if ( pageRegex.test(eventReferrer) || pageRegex.test(eventURL) ){
 		return false;
 	}
 
 	//Check file extensions
-	var fileRegex = /\.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/;
+	let fileRegex = /\.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/;
 	if ( fileRegex.test(eventReferrer) || fileRegex.test(eventURL) ){
 		return false;
 	}
