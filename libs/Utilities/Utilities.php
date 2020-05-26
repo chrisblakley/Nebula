@@ -1281,7 +1281,7 @@ if ( !trait_exists('Utilities') ){
 						return $matches[1] . (intval($matches[2])+1); //Add one to the security digit
 					}, $child_stylesheet);
 
-					$update_child_stylesheet = $wp_filesystem->put_contents($child_stylesheet_location, $child_stylesheet);
+					$wp_filesystem->put_contents($child_stylesheet_location, $child_stylesheet); //Update the file
 				}
 			}
 		}

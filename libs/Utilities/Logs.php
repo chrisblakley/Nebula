@@ -64,7 +64,7 @@ if ( !trait_exists('Logs') ){
 					'importance' => intval($importance)
 				)); //DB Query
 
-				//@todo "Nebula" 0: delete the nebula_logs transient here
+				delete_transient('nebula_logs');
 
 				if ( !empty($optimize) ){
 					//$this->optimize_logs(); //@todo "nebula" 0: Need to test this before enabling!
@@ -92,7 +92,7 @@ if ( !trait_exists('Logs') ){
 
 				$wpdb->delete($wpdb->nebula_logs, array('id' => intval($id))); //DB Query
 
-				//@todo "Nebula" 0: delete the nebula_logs transient here
+				delete_transient('nebula_logs');
 			}
 
 			return false;
@@ -114,7 +114,7 @@ if ( !trait_exists('Logs') ){
 
 				$wpdb->query($wpdb->prepare("DELETE FROM " . $wpdb->nebula_logs . " WHERE importance <= %d", $importance)); //DB Query
 
-				//@todo "Nebula" 0: delete the nebula_logs transient here
+				delete_transient('nebula_logs');
 			}
 
 			return false;
@@ -148,6 +148,8 @@ if ( !trait_exists('Logs') ){
 						}
 					}
 				}
+
+				delete_transient('nebula_logs');
 			}
 		}
 
@@ -156,8 +158,6 @@ if ( !trait_exists('Logs') ){
 			if ( $this->get_option('logs') && $this->is_staff() ){
 				global $wpdb;
 
-				//@todo "Nebula" 0: Add transient here
-
 				//Only return column names if requested
 				if ( empty($rows) ){
 					$nebula_logs_data_head = $wpdb->get_results("SHOW columns FROM $wpdb->nebula_logs"); //Get the column names from the primary table
@@ -165,7 +165,11 @@ if ( !trait_exists('Logs') ){
 				}
 
 				//Otherwise get the actual logs data (rows)
-				$nebula_logs_data = $wpdb->get_results("SELECT * FROM $wpdb->nebula_logs ORDER BY timestamp DESC LIMIT 100"); //Get all data (last 100 logs) from the DB table in descending order (latest first)
+				$nebula_logs_data = get_transient('nebula_logs');
+				if ( (empty($nebula_logs_data) || $this->is_debug()) ){
+					$nebula_logs_data = $wpdb->get_results("SELECT * FROM $wpdb->nebula_logs ORDER BY timestamp DESC LIMIT 100"); //Get all data (last 100 logs) from the DB table in descending order (latest first)
+					set_transient('nebula_logs', $nebula_logs_data, HOUR_IN_SECONDS);
+				}
 				return (array) $nebula_logs_data; //Convert to an array and return
 			}
 

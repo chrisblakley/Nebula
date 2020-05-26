@@ -272,11 +272,12 @@
 			<?php endif; ?>
 
 			//Autotrack Impressions (Scroll into view)
-			//Elements themselves are detected in nebula.js (or main.js)
-			ga('require', 'impressionTracker', { //@todo "Nebula" 0: jQuery may not be available yet... change these to vanilla JS if possible
+			//Elements themselves are detected in nebula.js (or main.js). Note: jQuery may not be available yet, so do not use it here.
+			ga('require', 'impressionTracker', {
 				hitFilter: function(model, element){
-					if ( jQuery(element).is('form') && !jQuery(element).find('input[name=s]').length ){
-						if ( !jQuery(element).hasClass('.ignore-form') && !jQuery(element).find('.ignore-form').length && !jQuery(element).parents('.ignore-form').length ){
+					var element = document.getElementById('testform');
+					if ( element.matches('form') && !element.querySelectorAll('input[name=s]').length ){
+						if ( !element.matches('.ignore-form') && !element.querySelectorAll('.ignore-form').length ){ //Check parents for '.ignore-form' eventually
 							ga('set', nebula.analytics.metrics.formImpressions, 1);
 						}
 					}

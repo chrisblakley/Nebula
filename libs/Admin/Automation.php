@@ -297,6 +297,7 @@ if ( !trait_exists('Automation') ){
 			$this->initialization_create_homepage();
 			$this->initialization_delete_plugins();
 			$this->initialization_deactivate_widgets();
+			$this->set_default_admin_color(get_current_user_id());
 		}
 
 		//Send a list of existing settings to the user's email (to test, trigger the function on admin_init)

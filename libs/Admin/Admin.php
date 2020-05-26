@@ -54,6 +54,9 @@ if ( !trait_exists('Admin') ){
 					add_action('admin_notices', array($this, 'admin_notices'));
 				}
 
+				add_action('admin_init', array($this, 'additional_admin_color_schemes'));
+				add_action('user_register', array($this, 'set_default_admin_color')); //New users will default to Brand admin color scheme
+
 				//add_filter('wp_unique_post_slug', array($this, 'unique_slug_warning_ajax' ), 10, 4); //@TODO "Nebula" 0: This echos when submitting posts from the front end! nebula()->is_admin_page() does not prevent that...
 
 				//Add ID column to posts and pages
@@ -187,6 +190,34 @@ if ( !trait_exists('Admin') ){
 			$classes .= array_shift($user_roles);
 
 			return $classes;
+		}
+
+		//Add the Brand color scheme to the admin User options
+		public function additional_admin_color_schemes(){
+			$color_scheme_name = get_bloginfo('name');
+			if ( $this->get_option('site_owner') ){
+				$color_scheme_name = $this->get_option('site_owner');
+			}
+
+			//Brand (Child Theme)
+			if ( is_child_theme() && file_exists(get_stylesheet_directory() . '/assets/css/admin.css') ){
+				wp_admin_css_color('nebula-brand', $color_scheme_name, get_stylesheet_directory_uri() . '/assets/css/admin.css', [
+					'#222',
+					'#333',
+					$this->get_color('primary_color', false, '#0098d7'),
+					$this->get_color('secondary_color', false, '#95d600')
+				]);
+			}
+		}
+
+		//Set the default admin color scheme to Brand for a specified user
+		public function set_default_admin_color($user_id){
+			if ( is_child_theme() && file_exists(get_stylesheet_directory() . '/assets/css/admin.css') ){
+				wp_update_user(array(
+					'ID' => $user_id,
+					'admin_color' => 'nebula-brand'
+				));
+			}
 		}
 
 		//Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
@@ -764,12 +795,20 @@ if ( !trait_exists('Admin') ){
 					$scss_last_processed = ( $this->get_data('scss_last_processed') )? date_i18n('l, F j, Y - g:i:sa', $this->get_data('scss_last_processed')) : 'Never';
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula',
-						'id' => 'nebula-options-scss',
+						'id' => 'nebula-scss-reprocess',
 						'title' => '<i class="nebula-admin-fa fab fa-fw fa-sass"></i> Re-process All Sass Files',
 						'href' => esc_url(add_query_arg('sass', 'true')),
 						'meta' => array('title' => 'Last: ' . $scss_last_processed)
 					));
 				}
+
+				$wp_admin_bar->add_node(array(
+					'parent' => 'nebula',
+					'id' => 'nebula-add-debug',
+					'title' => '<i class="nebula-admin-fa fas fa-fw fa-sync"></i> Reload &amp; Clear Caches',
+					'href' => esc_url(add_query_arg('debug', 'true')),
+					'meta' => array('title' => 'Append ?debug to force clear certain caches')
+				));
 			}
 		}
 

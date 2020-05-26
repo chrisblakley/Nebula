@@ -889,7 +889,7 @@ function nebulaLiveValidator(){
 			applyValidationClasses(jQuery(this), 'valid', false);
 		} else if ( regexPattern.date.ymd.test(jQuery(this).val()) ){ //Check for YYYY/MM/DD (and flexible variations)
 			applyValidationClasses(jQuery(this), 'valid', false);
-		} else if ( strtotime(jQuery(this).val()) && strtotime(jQuery(this).val()) > -2208988800 ){ //Check for textual dates (after 1900) //@TODO "Nebula" 0: The JS version of strtotime() isn't the most accurate function...
+		} else if ( strtotime(jQuery(this).val()) && strtotime(jQuery(this).val()) > -2208988800 ){ //Check for textual dates (after 1900) //The JS version of strtotime() isn't the most accurate function...
 			applyValidationClasses(jQuery(this), 'valid', false);
 		} else {
 			applyValidationClasses(jQuery(this), 'invalid', ( e.type !== 'keyup' ));

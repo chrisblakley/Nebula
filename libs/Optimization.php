@@ -645,8 +645,7 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		//Lazy-load anything
-		//This markup can be, and is used hard-coded in other places.
-		//@todo "Nebula" 0: This is handled by Chrome 75+ natively. Will eventually deprecate this functionality.
+		//This markup can be, and is used hard-coded in other places. This is handled by Chrome 75+ natively.
 		public function lazy_load($html=''){
 			//Ignore lazy loading wrappers on AJAX requests
 			if ( $this->is_ajax_or_rest_request() ){

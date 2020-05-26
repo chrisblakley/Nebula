@@ -145,7 +145,7 @@ nebula.cacheSelectors = function(){
 }
 
 //Nebula Service Worker
-//@TODO "Nebula" 0: Consider using workbox-window here to tie into the Workbox sw.js file: https://developers.google.com/web/tools/workbox/modules/workbox-window
+//@TODO "Nebula" 0: Consider using workbox-window here to tie into the Workbox sw.js file (after IE11): https://developers.google.com/web/tools/workbox/modules/workbox-window
 nebula.registerServiceWorker = function(){
 	jQuery('.nebula-sw-install-button').addClass('inactive');
 
@@ -253,6 +253,17 @@ nebula.registerServiceWorker = function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
 		});
+
+		//Clear the caches with ?debug query string
+		if ( nebula.get('debug') ){
+			if ( 'caches' in window ){
+				caches.keys().then(function(names){
+					for ( let name of names ){
+						caches.delete(name);
+					}
+				});
+			}
+		}
 	}
 }
 

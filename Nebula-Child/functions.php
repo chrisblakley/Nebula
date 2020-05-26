@@ -61,7 +61,6 @@ function register_nebula_child_styles(){
 	//wp_register_style($handle, $src, $dependencies, $version, $media);
 	wp_register_style('nebula-child', get_stylesheet_directory_uri() . '/style.css', array('nebula-main'), nebula()->child_version(), 'all'); //Need a different version number here. Use the last time Sass was processed (if sass enabled) or... what otherwise?
 	wp_register_style('nebula-login-child', get_stylesheet_directory_uri() . '/assets/css/login.css', array('nebula-login'), nebula()->child_version(), 'all');
-	wp_register_style('nebula-admin-child', get_stylesheet_directory_uri() . '/assets/css/admin.css', array('nebula-admin'), nebula()->child_version(), 'all');
 }
 
 
@@ -109,10 +108,7 @@ function enqueue_nebula_child_login(){
 
 add_action('admin_enqueue_scripts', 'enqueue_nebula_child_admin', 327);
 function enqueue_nebula_child_admin(){
-	//Stylesheets
-	if ( file_exists(get_stylesheet_directory() . '/assets/css/admin.css') ){
-		wp_enqueue_style('nebula-admin-child');
-	}
+	//Note: child theme admin.css is enqueued by WordPress core when that color scheme is selected per user
 }
 
 

@@ -308,11 +308,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( $this->get_option('device_detection') ){
 				//Device
 				if ( $this->is_desktop() ){
-					if ( 1==2 ){//@todo "Nebula" 0: Check battery percentage (somehow... maybe cookie?) for laptop/desktop
-						echo '<li><i class="fas fa-fw fa-laptop"></i> Device: <strong>Laptop</strong></li>';
-					} else {
-						echo '<li><i class="fas fa-fw fa-desktop"></i> Device: <strong>Desktop</strong></li>';
-					}
+					echo '<li><i class="fas fa-fw fa-desktop"></i> Device: <strong>Desktop/Laptop</strong></li>';
 				} elseif ( $this->is_tablet() ){
 					echo '<li><i class="fas fa-fw fa-tablet-alt"></i> Device: <strong>' . $this->get_device('full') . '</strong> <small>(Tablet)</small></li>';
 				} else {
