@@ -1137,27 +1137,32 @@ if ( !trait_exists('Admin') ){
 			$php_timeline = json_decode($php_timeline);
 			if ( !empty($php_timeline) ){
 				preg_match('/^(?<family>\d\.\d)\.?/i', PHP_VERSION, $current_php_version); //Grab the major/minor version of this PHP
-				$php_version_info = $php_timeline[0]->{$current_php_version['family']}; //Find this major/minor version "family" of PHP in the JSON
 
-				if ( !empty($php_version_info) ){ //If a match for this PHP version "family" was found in the JSON data
-					$output = array();
+				if ( isset($php_timeline[0]->{$current_php_version['family']}) ){ //If this version of PHP is in the local JSON file
+					$php_version_info = $php_timeline[0]->{$current_php_version['family']}; //Find this major/minor version "family" of PHP in the JSON
 
-					if ( !empty($php_version_info->security) && time() < strtotime($php_version_info->security) ){
-						$output['lifecycle'] = 'active';
-					} elseif ( !empty($php_version_info->security) && (time() >= strtotime($php_version_info->security) && time() < strtotime($php_version_info->end)) ){
-						$output['lifecycle'] = 'security';
-					} elseif ( time() >= strtotime($php_version_info->end) ){
-						$output['lifecycle'] = 'end';
-					} else {
-						$output['lifecycle'] = 'unknown'; //An error of some kind has occurred.
+					if ( !empty($php_version_info) ){ //If a match for this PHP version "family" was found in the JSON data
+						$output = array();
+
+						if ( !empty($php_version_info->security) && time() < strtotime($php_version_info->security) ){
+							$output['lifecycle'] = 'active';
+						} elseif ( !empty($php_version_info->security) && (time() >= strtotime($php_version_info->security) && time() < strtotime($php_version_info->end)) ){
+							$output['lifecycle'] = 'security';
+						} elseif ( time() >= strtotime($php_version_info->end) ){
+							$output['lifecycle'] = 'end';
+						} else {
+							$output['lifecycle'] = 'unknown'; //An error of some kind has occurred.
+						}
+
+						$output['security'] = strtotime($php_version_info->security);
+						$output['end'] = strtotime($php_version_info->end);
+
+						return $output;
 					}
-
-					$output['security'] = strtotime($php_version_info->security);
-					$output['end'] = strtotime($php_version_info->end);
-
-					return $output;
 				}
 			}
+
+			return false;
 		}
 
 		//Check if a post slug has a number appended to it (indicating a duplicate post).

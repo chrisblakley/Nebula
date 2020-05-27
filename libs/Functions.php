@@ -19,7 +19,7 @@ trait Functions {
 		add_filter('image_size_names_choose', array($this, 'image_size_human_names'));
 		add_action('rest_api_init', array($this, 'rest_api_routes'));
 		add_action('wp_head', array($this, 'add_back_post_feed'));
-		//add_action('init', array($this, 'set_default_timezone'), 1); //Disabling and monitoring
+		add_action('init', array($this, 'set_default_timezone'), 1); //WP Health Check does not like this, but date() times break without this
 
 		if ( $this->get_option('console_css') ){
 			add_action('wp_head', array($this, 'calling_card'));
@@ -313,22 +313,24 @@ trait Functions {
 
 			//Check PHP version
 			$php_version_lifecycle = $this->php_version_support();
-			if ( $php_version_lifecycle['lifecycle'] === 'security' ){
-				if ( $php_version_lifecycle['end']-time() < MONTH_IN_SECONDS ){ //If end of life is within 1 month
+			if ( !empty($php_version_lifecycle) ){
+				if ( $php_version_lifecycle['lifecycle'] === 'security' ){
+					if ( $php_version_lifecycle['end']-time() < MONTH_IN_SECONDS ){ //If end of life is within 1 month
+						$nebula_warnings[] = array(
+							'level' => 'warn',
+							'description' => '<i class="fab fa-fw fa-php"></i> PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end in ' . human_time_diff($php_version_lifecycle['end']) . ' on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.',
+							'url' => 'http://php.net/supported-versions.php',
+							'meta' => array('target' => '_blank', 'rel' => 'noopener')
+						);
+					}
+				} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
 					$nebula_warnings[] = array(
-						'level' => 'warn',
-						'description' => '<i class="fab fa-fw fa-php"></i> PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end in ' . human_time_diff($php_version_lifecycle['end']) . ' on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.',
+						'level' => 'error',
+						'description' => '<i class="fab fa-fw fa-php"></i> PHP ' . PHP_VERSION . ' <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">no longer receives security updates</a>! End of life occurred ' . human_time_diff($php_version_lifecycle['end']) . ' ago on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.',
 						'url' => 'http://php.net/supported-versions.php',
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					);
 				}
-			} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
-				$nebula_warnings[] = array(
-					'level' => 'error',
-					'description' => '<i class="fab fa-fw fa-php"></i> PHP ' . PHP_VERSION . ' <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">no longer receives security updates</a>! End of life occurred ' . human_time_diff($php_version_lifecycle['end']) . ' ago on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.',
-					'url' => 'http://php.net/supported-versions.php',
-					'meta' => array('target' => '_blank', 'rel' => 'noopener')
-				);
 			}
 
 			//Check for hard Debug Mode

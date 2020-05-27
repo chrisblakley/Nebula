@@ -1159,7 +1159,7 @@ nebula.eventTracking = function(){
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.text.trim(), thisEvent.link);
+			ga('send', 'event', thisEvent.category, thisEvent.text.trim(), thisEvent.link, {'nonInteraction': true}); //Non-interaction because the user is not interacting with any content yet so this should not influence the bounce rate
 			window.dataLayer.push({'event': 'nebula-cookie-notification-click', 'nebula-event': thisEvent});
 		});
 

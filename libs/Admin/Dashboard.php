@@ -664,14 +664,16 @@ if ( !trait_exists('Dashboard') ){
 			$php_version_info = '';
 			$php_version_cursor = 'normal';
 			$php_version_lifecycle = $this->php_version_support();
-			if ( $php_version_lifecycle['lifecycle'] === 'security' ){
-				$php_version_color = '#ca8038'; //Warning
-				$php_version_info = 'This version is nearing end of life. Security updates end on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.';
-				$php_version_cursor = 'help';
-			} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
-				$php_version_color = '#ca3838'; //Danger
-				$php_version_info = 'This version no longer receives security updates! End of life occurred on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.';
-				$php_version_cursor = 'help';
+			if ( !empty($php_version_lifecycle) ){
+				if ( $php_version_lifecycle['lifecycle'] === 'security' ){
+					$php_version_color = '#ca8038'; //Warning
+					$php_version_info = 'This version is nearing end of life. Security updates end on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.';
+					$php_version_cursor = 'help';
+				} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
+					$php_version_color = '#ca3838'; //Danger
+					$php_version_info = 'This version no longer receives security updates! End of life occurred on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.';
+					$php_version_cursor = 'help';
+				}
 			}
 			echo '<li><i class="fas fa-fw fa-wrench"></i> PHP Version: <strong style="color: ' . $php_version_color . '; cursor: ' . $php_version_cursor . ';" title="' . $php_version_info . '">' . PHP_VERSION . '</strong></li>';
 
