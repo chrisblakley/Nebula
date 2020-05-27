@@ -201,12 +201,12 @@ if ( !trait_exists('Admin') ){
 
 			//Brand (Child Theme)
 			if ( is_child_theme() && file_exists(get_stylesheet_directory() . '/assets/css/admin.css') ){
-				wp_admin_css_color('nebula-brand', $color_scheme_name, get_stylesheet_directory_uri() . '/assets/css/admin.css', [
+				wp_admin_css_color('nebula-brand', $color_scheme_name, get_stylesheet_directory_uri() . '/assets/css/admin.css', array(
 					'#222',
 					'#333',
 					$this->get_color('primary_color', false, '#0098d7'),
 					$this->get_color('secondary_color', false, '#95d600')
-				]);
+				));
 			}
 		}
 

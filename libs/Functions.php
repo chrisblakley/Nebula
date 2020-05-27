@@ -498,7 +498,7 @@ trait Functions {
 			$disk_paths = array_unique($disk_paths, SORT_REGULAR); //De-duplicate directories in the array
 
 			foreach ( $disk_paths as $path ){
-				if ( is_dir($path['directory']) ){
+				if ( file_exists($path['directory']) ){
 					$disk_space_free = disk_free_space($path['directory'])/1073741824; //In GB
 
 					if ( $disk_space_free < $path['critical'] ){
@@ -513,6 +513,19 @@ trait Functions {
 						);
 					}
 				}
+			}
+
+			//Check if the session directory exists and is readable/writable
+			if ( !file_exists(session_save_path()) ){
+				$nebula_warnings[] = array(
+					'level' => 'error',
+					'description' => '<i class="far fa-fw fa-folder"></i> The <strong>session directory</strong> (' . session_save_path() . ') <strong>does not exist</strong>.'
+				);
+			} elseif ( !is_readable(session_save_path()) || !is_writable(session_save_path()) ){
+				$nebula_warnings[] = array(
+					'level' => 'error',
+					'description' => '<i class="fas fa-fw fa-folder-open"></i> The <strong>session directory</strong> (' . session_save_path() . ') exists, but <strong>is not readable/writable</strong>.' //If you see this error, check readable and writable separately
+				);
 			}
 
 			$all_nebula_warnings = apply_filters('nebula_warnings', $nebula_warnings); //Allow other functions to hook in to add warnings (like Ecommerce)

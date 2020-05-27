@@ -102,7 +102,7 @@ if ( !class_exists('Nebula') ){
 		}
 
 		public function session_start(){
-			if ( !$this->is_ajax_or_rest_request() && is_writable(session_save_path()) ){ //If not an AJAX/REST request and the session directory is writable
+			if ( !$this->is_ajax_or_rest_request() && file_exists(session_save_path()) && is_readable(session_save_path()) && is_writable(session_save_path()) ){ //If not an AJAX/REST request and the session directory is writable
 				if ( session_status() === PHP_SESSION_NONE ){
 					session_start(); //This breaks the Theme Editor for some reason, so we try not to do it on special requests like AJAX or the REST API
 				}
