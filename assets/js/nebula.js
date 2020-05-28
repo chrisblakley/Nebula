@@ -1178,7 +1178,7 @@ nebula.eventTracking = function(){
 
 		//Non-Linked Click Attempts
 		jQuery(document).on('click', 'img', function(e){
-			if ( !jQuery(this).parents('a').length ){
+			if ( !jQuery(this).parents('a, button').length ){
 				var thisEvent = {
 					event: e,
 					category: 'Non-Linked Click Attempt',
