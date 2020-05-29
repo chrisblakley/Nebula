@@ -109,7 +109,7 @@
 	#utility-nav {position: relative;
 		ul {list-style: none; margin: 0; padding: 0; display: -ms-flexbox; display: flex; -ms-flex-direction: row; flex-direction: row; -ms-flex-pack: center; justify-content: flex-end;
 			li.menu-item {position: relative;
-				a {display: block; padding: 0 15px; color: #fff; font-size: rem(12px); line-height: rem(18px); color: #fff;}
+				a {display: block; padding: 0 15px; font-size: rem(12px); line-height: rem(18px); color: #fff;}
 				@include nebula-dropdown(12px, 14px);
 			}
 		}

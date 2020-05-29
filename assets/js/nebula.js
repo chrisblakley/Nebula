@@ -3040,7 +3040,7 @@ nebula.sanitizeGooglePlaceData = function(place, uniqueID){
 		nebula.user.address = {};
 	}
 
-	if ( typeof nebula.user.address !== 'array' ){
+	if ( !Array.isArray(nebula.user.address) ){
 		nebula.user.address = [];
 	}
 
@@ -4750,7 +4750,7 @@ nebula.createVimeoPlayers = function(){
 				if ( jQuery(this).attr('src').indexOf('player_id') > -1 ){
 					id = jQuery(this).attr('src').split('player_id=').pop().split('&')[0]; //Use the player_id parameter. Note: This is no longer used by the Vimeo API!
 				} else {
-					id = jQuery(this).attr('src').split('/').pop().split('?')[0];; //Grab the ID off the end of the URL (ignoring query parameters)
+					id = jQuery(this).attr('src').split('/').pop().split('?')[0]; //Grab the ID off the end of the URL (ignoring query parameters)
 				}
 
 				if ( id && !parseInt(id) ){ //If the ID is a not number try to find a number in the iframe src
@@ -4940,7 +4940,7 @@ nebula.pauseAllVideos = function(force){
 		return false; //If videos don't exist, then no need to pause
 	}
 
-	if ( typeof force === 'null' ){
+	if ( force === 'null' ){
 		force = false;
 	}
 

@@ -72,7 +72,7 @@ th#id {width: 50px;}
 		#searchprogress {margin-right: 4px;}
 		input.findterm {padding: 2px 5px; font-size: 12px; border-radius: 4px; flex-grow: 2;}
 		.searchdirectory {font-size: 12px; height: 23px; vertical-align: top; max-width: 130px;}
-		input.searchterm {font-size: 12px; line-height: 11px; height: 22px; margin: 1px 1px; outline: none !important;}
+		input.searchterm {font-size: 12px; line-height: 11px; height: 22px; margin: 1px; outline: none !important;}
 	}
 	.search_results {max-height: 0; opacity: 0; font-size: 10px; background: #f6f6f6; padding: 5px; border: 1px solid #ddd; border-radius: 4px; overflow: auto; white-space: nowrap; transition: all 1s;
 		&.done {max-height: 500px; opacity: 1;}
@@ -161,8 +161,7 @@ th#id {width: 50px;}
 .fixed .column-author, .fixed .column-date, .fixed .column-format, .fixed .column-links, .fixed .column-parent, .fixed .column-posts {width: 10%;}
 .fixed .column-comments {width: 3%;}
 .widefat .column-id {padding-left: 0 !important; padding-right: 0 !important; font-size: 10px !important;}
-.row-title, td.plugin-title strong, td.post-title strong, .row-actions, .plugin-version-author-uri,
-td.column-title strong, td.plugin-title strong {font-size: 12px !important;}
+.row-title, td.plugin-title strong, td.post-title strong, .row-actions, .plugin-version-author-uri, td.column-title strong, {font-size: 12px !important;}
 
 //Wordpress SEO (Yoast)
 #wpseo-score .yst-traffic-light {height: 20px; padding-top: 4px;}
@@ -236,7 +235,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 
 .filtering .postbox-container {margin: 0;}
 
-#all-nebula-options {padding: 10px 0 0 0;
+#all-nebula-options {padding: 10px 0 0;
 	.pane-title {font-size: 21px; margin-bottom: 25px;}
 	h3 {font-size: 18px; margin-bottom: 25px;}
 	h4 {font-size: 14px; margin-top: 35px; margin-bottom: 10px;}
@@ -264,7 +263,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 	.option-group {margin-bottom: 40px;} //delete this line
 
 	.form-group,
-	.multi-form-group {margin-bottom: 15px; transition: opacity 0.25s; padding: 0; border: none; transition: all 0.25s ease;
+	.multi-form-group {margin-bottom: 15px; padding: 0; border: none; transition: all 0.25s ease;
 		.form-group {margin-bottom: 0;}
 		.form-text {font-size: 12px;}
 	}
@@ -288,7 +287,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 		&:hover {color: #0098d7;}
 	}
 
-	.nebula-help-text {margin: .25rem 0 0 0;
+	.nebula-help-text {margin: .25rem 0 0;
 		&.more-help {display: none; padding-top: 4px;
 			.dev-handle {padding-top: 3px;}
 		}
@@ -299,11 +298,11 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 	}
 
 	.important-empty label {color: #d9534f; font-weight: 800;}
-		.important-warning {font-weight: normal; margin: .25rem 0 0 0;}
+		.important-warning {font-weight: normal; margin: .25rem 0 0;}
 
 	.nebula-warning-category {color: #777; margin-right: 5px;}
 
-	.dependent-note {color: #d9534f; margin: .25rem 0 0 0; padding: 0; font-size: 12px;}
+	.dependent-note {color: #d9534f; margin: .25rem 0 0; padding: 0; font-size: 12px;}
 
 	input[type=checkbox] {height: 0; width: 0; visibility: hidden; display: none;
 		+ label {display: flex; position: relative; align-items: center; cursor: pointer; text-indent: 50px; width: 38px; white-space: nowrap; padding: 0.5rem 0; font-size: 1rem; line-height: 1; background: #ddd; border-radius: 1.25rem; margin: 0 15px 0 0; overflow: visible;

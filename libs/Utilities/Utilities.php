@@ -422,7 +422,6 @@ if ( !trait_exists('Utilities') ){
 				case ('all'):
 				case ('href'):
 					return str_replace('http://example.com', '', $url);
-					break;
 
 				case ('protocol'): //Protocol and Scheme are aliases and return the same value.
 				case ('scheme'): //Protocol and Scheme are aliases and return the same value.
@@ -433,10 +432,9 @@ if ( !trait_exists('Utilities') ){
 
 					if ( isset($url_components['scheme']) ){
 						return $url_components['scheme'];
-					} else {
-						return false;
 					}
-					break;
+
+					return false;
 
 				case ('port'):
 					if ( $relative ){
@@ -445,26 +443,20 @@ if ( !trait_exists('Utilities') ){
 
 					if ( isset($url_components['port']) ){
 						return $url_components['port'];
-					} else {
-						switch( $url_components['scheme'] ){
-							case ('http'):
-								return 80; //Default for http
-								break;
-							case ('https'):
-								return 443; //Default for https
-								break;
-							case ('ftp'):
-								return 21; //Default for ftp
-								break;
-							case ('ftps'):
-								return 990; //Default for ftps
-								break;
-							default:
-								return false;
-								break;
-						}
 					}
-					break;
+
+					switch( $url_components['scheme'] ){
+						case ('http'):
+							return 80; //Default for http
+						case ('https'):
+							return 443; //Default for https
+						case ('ftp'):
+							return 21; //Default for ftp
+						case ('ftps'):
+							return 990; //Default for ftps
+						default:
+							return false;
+					}
 
 				case ('user'): //Returns the username from this type of syntax: https://username:password@gearside.com/
 				case ('username'):
@@ -474,10 +466,9 @@ if ( !trait_exists('Utilities') ){
 
 					if ( isset($url_components['user']) ){
 						return $url_components['user'];
-					} else {
-						return false;
 					}
-					break;
+
+					return false;
 
 				case ('pass'): //Returns the password from this type of syntax: https://username:password@gearside.com/
 				case ('password'):
@@ -487,10 +478,9 @@ if ( !trait_exists('Utilities') ){
 
 					if ( isset($url_components['pass']) ){
 						return $url_components['pass'];
-					} else {
-						return false;
 					}
-					break;
+
+					return false;
 
 				case ('authority'):
 					if ( $relative ){
@@ -499,10 +489,9 @@ if ( !trait_exists('Utilities') ){
 
 					if ( isset($url_components['user'], $url_components['pass']) ){
 						return $url_components['user'] . ':' . $url_components['pass'] . '@' . $url_components['host'] . ':' . $this->url_components('port', $url);
-					} else {
-						return false;
 					}
-					break;
+
+					return false;
 
 				case ('host'): //In http://something.example.com the host is "something.example.com"
 				case ('hostname'):
@@ -513,7 +502,8 @@ if ( !trait_exists('Utilities') ){
 					if ( isset($url_components['host']) ){
 						return $url_components['host'];
 					}
-					break;
+
+					return false;
 
 				case ('www') :
 					if ( $relative ){
@@ -522,10 +512,9 @@ if ( !trait_exists('Utilities') ){
 
 					if ( $host[0] === 'www' ){
 						return 'www';
-					} else {
-						return false;
 					}
-					break;
+
+					return false;
 
 				case ('subdomain'):
 				case ('sub_domain'):
@@ -535,10 +524,9 @@ if ( !trait_exists('Utilities') ){
 
 					if ( $host[0] !== 'www' && $host[0] !== $sld ){
 						return $host[0];
-					} else {
-						return false;
 					}
-					break;
+
+					return false;
 
 				case ('domain') : //In http://example.com the domain is "example.com"
 					if ( $relative ){
@@ -548,7 +536,8 @@ if ( !trait_exists('Utilities') ){
 					if ( isset($domain[0]) ){
 						return $domain[0];
 					}
-					break;
+
+					return false;
 
 				case ('basedomain'): //In http://example.com/something the basedomain is "http://example.com"
 				case ('base_domain'):
@@ -560,7 +549,8 @@ if ( !trait_exists('Utilities') ){
 					if ( isset($url_components['scheme']) ){
 						return $url_components['scheme'] . '://' . $domain[0];
 					}
-					break;
+
+					return false;
 
 				case ('sld') : //In example.com the sld is "example"
 				case ('second_level_domain'):
@@ -570,7 +560,6 @@ if ( !trait_exists('Utilities') ){
 					}
 
 					return $sld;
-					break;
 
 				case ('tld') : //In example.com the tld is ".com"
 				case ('top_level_domain'):
@@ -580,23 +569,22 @@ if ( !trait_exists('Utilities') ){
 					}
 
 					return $tld;
-					break;
 
 				case ('filepath'): //Filepath will be both path and file/extension
 				case ('pathname'):
 					if ( isset($url_components['path']) ){
 						return $url_components['path'];
 					}
-					break;
+
+					return false;
 
 				case ('file'): //Filename will be just the filename/extension.
 				case ('filename'):
 					if ( strpos(basename($url_components['path']), '.') !== false ){
 						return basename($url_components['path']);
-					} else {
-						return false;
 					}
-					break;
+
+					return false;
 
 				case ('type'):
 				case ('filetype'):
@@ -604,18 +592,16 @@ if ( !trait_exists('Utilities') ){
 					if ( strpos(basename($url_components['path']), '.') !== false ){
 						$file_parts = explode('.', $url_components['path']);
 						return $file_parts[count($file_parts)-1];
-					} else {
-						return false;
 					}
-					break;
+
+					return false;
 
 				case ('path'): //Path should be just the path without the filename/extension.
 					if ( strpos(basename($url_components['path']), '.') !== false ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
 						return str_replace(basename($url_components['path']), '', $url_components['path']);
-					} else {
-						return $url_components['path'];
 					}
-					break;
+
+					return $url_components['path'];
 
 				case ('query'):
 				case ('queries'):
@@ -623,7 +609,8 @@ if ( !trait_exists('Utilities') ){
 					if ( isset($url_components['query']) ){
 						return $url_components['query'];
 					}
-					break;
+
+					return false;
 
 				case ('fragment'):
 				case ('fragments'):
@@ -634,11 +621,11 @@ if ( !trait_exists('Utilities') ){
 					if ( isset($url_components['fragment']) ){
 						return $url_components['fragment'];
 					}
-					break;
+
+					return false;
 
 				default :
 					return $url;
-					break;
 			}
 		}
 
@@ -1225,24 +1212,18 @@ if ( !trait_exists('Utilities') ){
 			switch ( $return ){
 				case ('raw'): //Shouldn't ever reach this. See early return above.
 					return $nebula_theme_info->get('Version'); //Ex: 7.2.19.8475u
-					break;
 				case ('version'):
 				case ('full'):
 					return $nebula_version_info['full']; //Ex: 7.2.23.8475
-					break;
 				case ('primary'):
 					return $nebula_version_info['primary']; //Ex: 7.2.23
-					break;
 				case ('date'):
 					return $nebula_version_info['date']; //Ex: July 23, 2019
-					break;
 				case ('time'):
 				case ('utc'):
 					return $nebula_version_info['utc']; //Ex: 1559275200
-					break;
 				default:
 					return $nebula_version_info;
-					break;
 			}
 		}
 

@@ -178,7 +178,6 @@ if ( !trait_exists('Device') ){
 						return $this->device->getModel();
 					case 'type':
 						return $this->device->getDeviceName();
-						break;
 					case 'formfactor':
 						if ( $this->is_mobile() ){
 							return 'mobile';

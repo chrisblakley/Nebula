@@ -523,8 +523,6 @@ if ( !trait_exists('Optimization') ){
 				wp_script_add_data('jquery-migrate', 'group', 1);
 
 			}
-
-			return;
 		}
 
 		//Listen for "jQuery is not defined" errors to provide help

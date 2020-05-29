@@ -14,7 +14,7 @@
 .entry-title {padding-top: 0; margin-top: 0;}
 
 .page-meta,
-.entry-meta {font-size: rem(14px); line-height: rem(21px); margin: 0 0 10px 0;
+.entry-meta {font-size: rem(14px); line-height: rem(21px); margin: 0 0 10px;
 	i, svg {margin-right: 2px; color: #bbb;}
 	.meta-item {display: inline-block; margin-right: 10px;
 		a {@include link-colors($primary_color, $secondary_color);}
@@ -87,7 +87,7 @@ h2.articles-by {padding-top: 0;}
 	&:first-of-type {margin-top: 0;}
 	&:last-of-type {margin-bottom: 0;}
 
-	.entry-title {font-size: rem(28px); line-height: rem(32px); margin: 0 0 10px 0; font-weight: 300;}
+	.entry-title {font-size: rem(28px); line-height: rem(32px); margin: 0 0 10px; font-weight: 300;}
 	.featured-image {display: -ms-flexbox; display: flex; -ms-flex-align: center; align-items: center; max-height: 400px; overflow: hidden;
 		img {transition: all 0.5s ease;}
 
@@ -96,5 +96,5 @@ h2.articles-by {padding-top: 0;}
 			img {transform: scale(1.05);}
 		}
 	}
-	.entry-summary {font-size: rem(16px); line-height: rem(24px); margin: 0 0 10px 0; color: #444;}
+	.entry-summary {font-size: rem(16px); line-height: rem(24px); margin: 0 0 10px; color: #444;}
 }

@@ -263,9 +263,7 @@ if ( !trait_exists('Automation') ){
 						</p>
 					</div>
 				<?php endif; ?>
-			<?php endif; ?>
-			<?php
-			return;
+			<?php endif;
 		}
 
 		//Nebula Full Initialization
