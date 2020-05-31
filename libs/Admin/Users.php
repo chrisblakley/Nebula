@@ -133,10 +133,12 @@ if ( !trait_exists('Users') ){
 					$query->set('orderby', 'registered');
 				}
 
+/*
 				if ( $orderby === 'last seen' ){
 					//@todo "Nebula" 0: This will require a quite complex custom query (because this data is not stored on the user)
-					//$this->user_last_online($id) which uses $this->get_data('users_status') which returns an array of IDs
+					$this->user_last_online($id) which uses $this->get_data('users_status') which returns an array of IDs
 				}
+*/
 
 				if ( $orderby === 'id' ){
 					$query->set('orderby', 'id');

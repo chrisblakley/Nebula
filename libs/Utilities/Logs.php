@@ -66,9 +66,11 @@ if ( !trait_exists('Logs') ){
 
 				delete_transient('nebula_logs');
 
+/*
 				if ( !empty($optimize) ){
 					//$this->optimize_logs(); //@todo "nebula" 0: Need to test this before enabling!
 				}
+*/
 			}
 
 			return false;

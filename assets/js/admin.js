@@ -252,157 +252,374 @@ function developerMetaboxes(){
 
 //Check the page speed using (in this priority) WebPageTest.org, Google PageSpeed Insights, or a rudimentary iframe timing
 function checkPageSpeed(){
+	jQuery('#performance_metabox h2 i').removeClass('fa-stopwatch').addClass('fa-spinner fa-spin');
+
 	if ( location.hostname === 'localhost' || location.hostname === '127.0.0.1' ){ //If localhost or other "invalid" URL. This doesn't catch local TLDs, but the logic below will figure it out eventually.
+		jQuery('#performance-sub-status strong').text('Using iframe test due to local development.');
 		runIframeSpeedTest();
 		return;
 	}
 
 	//If WebPageTest JSON URL exists, use it!
 	if ( typeof wptTestJSONURL !== 'undefined' ){
-		jQuery('#performance-testing-status').removeClass('hidden').find('.datapoint').text('Testing via WebPageTest.org');
 		checkWPTresults();
+		return;
 	} else if ( typeof fetch === 'function' && !window.MSInputMethodContext && !document.documentMode ){ //MS Edge+ (No IE11)
-		jQuery('#performance-testing-status').removeClass('hidden').find('.datapoint').text('Testing via Google PageSpeed Insights');
-
-		var sourceURL = jQuery('#testloadcon').attr('data-src') + '?noga';
-		fetch('https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' + encodeURIComponent(sourceURL)).then(function(response){
-			return response.json(); //This returns a promise
-		}).then(function(json){
-			if ( json && json.captchaResult === 'CAPTCHA_NOT_NEEDED' ){
-				var pagespeedCompletedDate = new Date(json.analysisUTCTimestamp).toLocaleDateString(false, {year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit'});
-				var ttfb = json.lighthouseResult.audits['time-to-first-byte'].displayValue.match(/[\d,]+/)[0].replace(',', '')/1000;
-				var domLoadTime = json.lighthouseResult.audits['metrics'].details.items[0].observedDomContentLoaded/1000;
-				var fullyLoadedTime = json.lighthouseResult.audits['metrics'].details.items[0].observedLoad/1000;
-				var footprint = (json.lighthouseResult.audits['total-byte-weight'].displayValue.match(/[\d,]+/)[0].replace(',', '')/1000).toFixed(2);
-				var totalRequests = json.lighthouseResult.audits['network-requests'].details.items.length;
-				var rating = json.loadingExperience.overall_category;
-
-				jQuery('#performance-ttfb .datapoint').html(ttfb + ' seconds').attr('title', 'via Google PageSpeed Insights on ' + pagespeedCompletedDate).removeClass('datapoint');
-				performanceTimingWarning(jQuery('#performance-ttfb'), ttfb, 0.5, 1);
-
-				jQuery('#performance-domload .datapoint').html(domLoadTime + ' seconds').attr('title', 'via Google PageSpeed Insights on ' + pagespeedCompletedDate).removeClass('datapoint');
-				performanceTimingWarning(jQuery('#performance-domload'), domLoadTime, 3, 5);
-
-				jQuery('#performance-fullyloaded .datapoint').html(fullyLoadedTime + ' seconds').attr('title', 'via Google PageSpeed Insights on ' + pagespeedCompletedDate).removeClass('datapoint');
-				jQuery('.speedinsight').attr('href', 'https://developers.google.com/speed/pagespeed/insights/?url=' + encodeURIComponent(sourceURL)); //User-Friendly report URL
-				performanceTimingWarning(jQuery('#performance-fullyloaded'), fullyLoadedTime, 5, 7);
-
-				jQuery('#performance-footprint').removeClass('hidden').find('.datapoint').html(footprint + 'mb').attr('title', 'via Google PageSpeed Insights on ' + pagespeedCompletedDate);
-				performanceTimingWarning(jQuery('#performance-footprint'), footprint, 1, 2);
-
-				jQuery('#performance-requests').removeClass('hidden').find('.datapoint').html(totalRequests).attr('title', 'via Google PageSpeed Insights on ' + pagespeedCompletedDate);
-				performanceTimingWarning(jQuery('#performance-requests'), totalRequests, 80, 120);
-
-				if ( jQuery('div#performance-rating').length && typeof rating !== 'undefined' && rating !== 'NONE' ){
-					jQuery('#performance-rating').removeClass('hidden');
-					jQuery('#performance-rating .datapoint').html(rating).attr('title', 'via Google PageSpeed Insights on ' + pagespeedCompletedDate);
-					if ( rating === 'SLOW' ){
-						jQuery('#performance-rating').find('.timingwarning').addClass('active');
-					} else if ( rating === 'AVERAGE' ){
-						jQuery('#performance-rating').find('.timingwarning').addClass('warn active');
-					}
-				}
-
-				jQuery('#performance-testing-status').removeClass('hidden').find('.datapoint').text('via Google PageSpeed Insights on ' + pagespeedCompletedDate).closest('li').find('.label').addClass('hidden').siblings('.status-icon').removeClass('fa-comment-alt').addClass('fa-calendar-check');
-			} else { //If the fetch data is not expected, run iframe test instead...
-				runIframeSpeedTest();
-			}
-		}).catch(function(error){
-			runIframeSpeedTest(); //If Google PageSpeed Insights check fails, time with an iframe instead...
-		});
-	} else {
-		runIframeSpeedTest(); //If fetch() is not available (IE11)
+		getLighthouseResults();
+		return;
 	}
+
+	jQuery('#performance-sub-status strong').text('Using iframe test because nothing else is available.');
+	runIframeSpeedTest(); //If fetch() is not available (IE11)
 }
 
 //Check on the WebPageTest API results (initiated on the server-side then called repetatively by JS)
 function checkWPTresults(){
-	if ( typeof wptTestJSONURL !== 'undefined' ){
-		jQuery.get({
-			url: wptTestJSONURL,
-		}).success(function(response){
-			if ( response ){
-				if ( response.statusCode === 200 ){ //Test results are ready
+	jQuery('#performance_metabox h2 span span').html('Measuring Performance <small>(via WebPageTest.org)</small>');
+
+	jQuery.get({
+		url: wptTestJSONURL,
+	}).success(function(response){
+		if ( response ){
+			if ( response.statusCode === 200 ){ //Test results are ready
+				if ( response.data.successfulFVRuns > 0 ){
+					//Screenshot
+					jQuery('#performance-screenshot').attr('src', response.data.median.firstView.images.screenShot).removeClass('hidden');
+
+					//Sub-status Completed Date/Time
 					var wptCompletedDate = new Date(response.data.completed*1000).toLocaleDateString(false, {year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit'});
-					var ttfb = response.data.median.firstView.TTFB/1000;
-					var domLoadTime = response.data.median.firstView.domComplete/1000;
-					var fullyLoadedTime = response.data.median.firstView.fullyLoaded/1000;
-					var footprint = (response.data.median.firstView.bytesIn/1000000).toFixed(2);
+					jQuery('#performance-sub-status i').removeClass('fa-comment').addClass('fa-calendar-check');
+					jQuery('#performance-sub-status span.label').text('Completed');
+					jQuery('#performance-sub-status strong').html('<a href="' + response.data.summary + '" target="_blank" rel="noopener">' + wptCompletedDate + '</a>');
+
+					//Time to First Byte
+					var ttfb = response.data.median.firstView.TTFB;
+					jQuery('#performance-ttfb').remove(); //Remove the PHP-timed data
+					appendPerformanceMetric({
+						'icon': 'fas fa-hdd',
+						'label': 'Time to First Byte',
+						'text': ttfb/1000 + ' seconds',
+						'value': ttfb,
+						'warning': 500,
+						'error': 1000,
+					});
+
+					//DOM Ready
+					var domLoadTime = response.data.median.firstView.domComplete;
+					appendPerformanceMetric({
+						'icon': 'fas fa-clock',
+						'label': 'DOM Ready',
+						'text': domLoadTime/1000 + ' seconds',
+						'value': domLoadTime,
+						'warning': 3000,
+						'error': 5000,
+					});
+
+					//Window Load
+					var fullyLoadedTime = response.data.median.firstView.fullyLoaded;
+					appendPerformanceMetric({
+						'icon': 'fas fa-clock',
+						'label': 'Window Load',
+						'text': fullyLoadedTime/1000 + ' seconds',
+						'value': fullyLoadedTime,
+						'warning': 5000,
+						'error': 7000,
+					});
+
+					//Bytes Downloaded
+					var bytesIn = (response.data.median.firstView.bytesIn/1024/1024).toFixed(2);
+					appendPerformanceMetric({
+						'icon': 'fas fa-shoe-prints',
+						'label': 'Bytes Downloaded',
+						'text': bytesIn + 'mb',
+						'value': bytesIn,
+						'warning': 1,
+						'error': 2,
+					});
+
+					//Total Requests
 					var totalRequests = response.data.median.firstView.requestsFull;
+					appendPerformanceMetric({
+						'icon': 'fas fa-list-ol',
+						'label': 'Total Requests',
+						'text': totalRequests,
+						'value': totalRequests,
+						'warning': 80,
+						'error': 120,
+					});
 
-					jQuery('#performance-ttfb .datapoint').html(ttfb + ' seconds').attr('title', 'via WebPageTest.org on ' + wptCompletedDate).removeClass('datapoint');
-					performanceTimingWarning(jQuery('#performance-ttfb'), ttfb, 0.5, 1);
+					//First Meaningful Paint
+					var firstMeaningfulPaint = response.data.median.firstView['chromeUserTiming.firstMeaningfulPaint'];
+					appendPerformanceMetric({
+						'icon': 'fas fa-paint-brush',
+						'label': 'First Meaningful Paint',
+						'text': firstMeaningfulPaint/1000 + ' seconds',
+					});
 
-					jQuery('#performance-domload .datapoint').html(domLoadTime + ' seconds').attr('title', 'via WebPageTest.org on ' + wptCompletedDate).removeClass('datapoint');
-					performanceTimingWarning(jQuery('#performance-domload'), domLoadTime, 3, 5);
+					//First CPU Idle
+					var firstCPUIdle = response.data.median.firstView['cpu.Idle'];
+					appendPerformanceMetric({
+						'icon': 'fas fa-hdd',
+						'label': 'First CPU Idle',
+						'text': firstCPUIdle/1000 + ' seconds',
+					});
 
-					jQuery('#performance-fullyloaded .datapoint').html(fullyLoadedTime + ' seconds').attr('title', 'via WebPageTest.org on ' + wptCompletedDate).removeClass('datapoint');
-					jQuery('.speedinsight').attr('href', response.data.summary); //User-Friendly report URL
-					performanceTimingWarning(jQuery('#performance-fullyloaded'), fullyLoadedTime, 5, 7);
+					//Largest Contentful Paint
+					var largestContentfulPaint = response.data.median.firstView['chromeUserTiming.LargestContentfulPaint'];
+					appendPerformanceMetric({
+						'icon': 'fas fa-paint-roller',
+						'label': 'Largest Contentful Paint',
+						'text': largestContentfulPaint/1000 + ' seconds',
+						'value': largestContentfulPaint,
+						'warning': 2500,
+						'error': 4000,
+					});
 
-					jQuery('#performance-footprint').removeClass('hidden').find('.datapoint').html(footprint + 'mb').attr('title', 'via WebPageTest.org on ' + wptCompletedDate);
-					performanceTimingWarning(jQuery('#performance-footprint'), footprint, 1, 2);
+					//Cumulative Layout Shift
+					var cumulativeLayoutShift = response.data.median.firstView['chromeUserTiming.CumulativeLayoutShift'];
+					appendPerformanceMetric({
+						'icon': 'fas fa-arrows-alt-v',
+						'label': 'Cumulative Layout Shift',
+						'text': cumulativeLayoutShift.toFixed(3),
+						'value': cumulativeLayoutShift,
+						'warning': 100,
+						'error': 250,
+					});
 
-					jQuery('#performance-requests').removeClass('hidden').find('.datapoint').html(totalRequests).attr('title', 'via WebPageTest.org on ' + wptCompletedDate);
-					performanceTimingWarning(jQuery('#performance-requests'), totalRequests, 80, 120);
-
-					jQuery('#performance-testing-status').removeClass('hidden').find('.datapoint').text('via WebPageTest.org on ' + wptCompletedDate).closest('li').find('.label').addClass('hidden').siblings('.status-icon').removeClass('fa-comment-alt').addClass('fa-calendar-check');
-				} else if ( response.statusCode < 200 ){ //Testing still in progress
-					jQuery('#performance-testing-status .datapoint').text('(' + response.statusText + ')');
-					var pollTime = ( response.statusCode === 100 )? 3000 : 8000; //Poll slowly when behind other tests and quickly once the test has started
-					setTimeout(checkWPTresults, pollTime);
-				} else if ( response.statusCode > 400 ){ //An API error has occurred
-					jQuery('#performance-footprint .datapoint').hide();
-					jQuery('#performance-requests').hide();
+					//Status
+					jQuery('#performance_metabox h2 i').removeClass('fa-spinner fa-spin').addClass('fa-stopwatch');
+					jQuery('#performance_metabox h2 span span').html('Performance <small>(via WebPageTest.org)</small>');
+				} else {
+					jQuery('#performance-sub-status strong').text('WebPageTest.org did not have a successful run.');
+					getLighthouseResults();
 				}
+			} else if ( response.statusCode < 200 ){ //Testing still in progress
+				jQuery('#performance-sub-status strong').text(response.statusText);
+				var pollTime = ( response.statusCode === 100 )? 3000 : 8000; //Poll slowly when behind other tests and quickly once the test has started
+				setTimeout(checkWPTresults, pollTime);
+			} else if ( response.statusCode >= 400 ){ //An API error has occurred
+				jQuery('#performance-sub-status strong').text('An API error has occurred.');
 			}
-		});
-	}
+		}
+	});
+}
+
+function getLighthouseResults(){
+	jQuery('#performance_metabox h2 span span').html('Measuring Performance <small>(via Google Lighthouse)</small>');
+	jQuery('#performance-sub-status strong').text('Google Lighthouse report in-progress.');
+
+	var sourceURL = jQuery('#testloadcon').attr('data-src') + '?noga'; //No GA so it does not get flooded with bot traffic
+	fetch('https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' + encodeURIComponent(sourceURL)).then(function(response){
+		return response.json(); //This returns a promise
+	}).then(function(json){
+		if ( json && json.captchaResult === 'CAPTCHA_NOT_NEEDED' ){
+			var pagespeedCompletedDate = new Date(json.analysisUTCTimestamp).toLocaleDateString(false, {year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit'});
+
+			//Screenshot
+			jQuery('#performance-screenshot').attr('src', json.lighthouseResult.audits['final-screenshot'].details.data).removeClass('hidden');
+
+			//Sub-status Completed Date/Time
+			jQuery('#performance-sub-status i').removeClass('fa-comment').addClass('fa-calendar-check');
+			jQuery('#performance-sub-status span.label').text('Completed');
+			jQuery('#performance-sub-status strong').text(pagespeedCompletedDate);
+			jQuery('#performance-sub-status strong').html('<a href="https://developers.google.com/speed/pagespeed/insights/?url=' + encodeURIComponent(sourceURL) + '" target="_blank" rel="noopener">' + pagespeedCompletedDate + '</a>');
+
+			//Server Response Time
+			var serverResponseTime = json.lighthouseResult.audits['server-response-time'];
+			jQuery('#performance-ttfb').remove(); //Remove the PHP-timed data
+			appendPerformanceMetric({
+				'icon': 'fas fa-hdd',
+				'label': 'Server Response Time',
+				'text': (serverResponseTime.numericValue/1000).toFixed(2) + ' seconds',
+				'description': serverResponseTime.description,
+				'value': serverResponseTime.numericValue,
+				'warning': 500,
+				'error': 1000,
+			});
+
+			//DOM Ready
+			var domReady = json.lighthouseResult.audits['metrics'].details.items[0].observedDomContentLoaded;
+			appendPerformanceMetric({
+				'icon': 'fas fa-clock',
+				'label': 'DOM Ready',
+				'text': (domReady/1000).toFixed(3) + ' seconds',
+				'value': domReady,
+				'warning': 3000,
+				'error': 5000,
+			});
+
+			//Window Load
+			var windowLoad = json.lighthouseResult.audits['metrics'].details.items[0].observedLoad;
+			appendPerformanceMetric({
+				'icon': 'fas fa-clock',
+				'label': 'Window Load',
+				'text': (windowLoad/1000).toFixed(3) + ' seconds',
+				'value': windowLoad,
+				'warning': 5000,
+				'error': 7000,
+			});
+
+			//Total Byte Weight
+			var totalByteWeight = json.lighthouseResult.audits['total-byte-weight'];
+			appendPerformanceMetric({
+				'icon': 'fas fa-shoe-prints',
+				'label': 'Total Byte Weight',
+				'text': (totalByteWeight.numericValue/1024/1024).toFixed(2) + 'mb',
+				'description': totalByteWeight.description,
+				'value': totalByteWeight.numericValue/1024/1024,
+				'warning': 1,
+				'error': 2,
+			});
+
+			//Network Requests
+			var networkRequests = json.lighthouseResult.audits['network-requests'].details.items.length;
+			appendPerformanceMetric({
+				'icon': 'fas fa-list-ol',
+				'label': 'Network Requests',
+				'text': networkRequests,
+				'value': networkRequests,
+				'warning': 80,
+				'error': 120,
+			});
+
+			//First Meaningful Paint
+			var firstMeaningfulPaint = json.lighthouseResult.audits['first-meaningful-paint'];
+			appendPerformanceMetric({
+				'icon': 'fas fa-paint-brush',
+				'label': 'First Meaningful Paint',
+				'text': (firstMeaningfulPaint.numericValue/1000).toFixed(3) + ' seconds',
+				'description': firstMeaningfulPaint.description
+			});
+
+			//First CPU Idle
+			var firstCPUIdle = json.lighthouseResult.audits['first-cpu-idle'];
+			appendPerformanceMetric({
+				'icon': 'fas fa-hdd',
+				'label': 'First CPU Idle',
+				'text': (firstCPUIdle.numericValue/1000).toFixed(3) + ' seconds',
+				'description': firstCPUIdle.description
+			});
+
+			//Largest Contentful Paint
+			var largestContentfulPaint = json.lighthouseResult.audits['largest-contentful-paint'];
+			appendPerformanceMetric({
+				'icon': 'fas fa-paint-roller',
+				'label': 'Largest Contentful Paint',
+				'text': (largestContentfulPaint.numericValue/1000).toFixed(3) + ' seconds',
+				'description': largestContentfulPaint.description,
+				'value': largestContentfulPaint.numericValue,
+				'warning': 2500,
+				'error': 4000,
+			});
+
+			//Total Blocking Time
+			var totalBlockingTime = json.lighthouseResult.audits['total-blocking-time'];
+			appendPerformanceMetric({
+				'icon': 'fas fa-hand-paper',
+				'label': 'Total Blocking Time',
+				'text': (totalBlockingTime.numericValue/1000).toFixed(3) + ' seconds',
+				'description': totalBlockingTime.description,
+				'value': totalBlockingTime.numericValue,
+				'warning': 300,
+				'error': 600,
+			});
+
+			//Cumulative Layout Shift
+			var cumulativeLayoutShift = json.lighthouseResult.audits['cumulative-layout-shift'];
+			appendPerformanceMetric({
+				'icon': 'fas fa-arrows-alt-v',
+				'label': 'Cumulative Layout Shift',
+				'text': cumulativeLayoutShift.displayValue,
+				'description': cumulativeLayoutShift.description,
+				'value': cumulativeLayoutShift.numericValue,
+				'warning': 100,
+				'error': 250,
+			});
+
+			jQuery('#performance_metabox h2 i').removeClass('fa-spinner fa-spin').addClass('fa-stopwatch');
+			jQuery('#performance_metabox h2 span span').html('Performance <small>(via Google Lighthouse)</small>');
+		} else { //If the fetch data is not expected, run iframe test instead...
+			runIframeSpeedTest();
+		}
+	}).catch(function(error){
+		jQuery('#performance-sub-status strong').text('Google Lighthouse failed. Reverting to iframe test.');
+		runIframeSpeedTest(); //If Google PageSpeed Insights check fails, time with an iframe instead...
+	});
 }
 
 //Load the home page in an iframe and time the DOM and Window load times
 function runIframeSpeedTest(){
-	jQuery('#performance-testing-status').removeClass('hidden').find('.datapoint').text('Testing via iframe timing');
+	jQuery('#performance_metabox h2 span span').html('Measuring Performance <small>(via Iframe)</small>');
 
 	var iframe = document.createElement('iframe');
 	iframe.style.width = '1200px';
 	iframe.style.height = '0px';
-	iframe.src = jQuery('#testloadcon').attr('data-src') + '?noga'; //Cannot use nebula.site.home_url here for some reason even though it obeys https
+	iframe.src = jQuery('#testloadcon').attr('data-src') + '?noga'; //Cannot use nebula.site.home_url here for some reason even though it obeys https. No GA so it does not get flooded with bot traffic
 	jQuery('#testloadcon').append(iframe);
 
 	jQuery('#testloadcon iframe').on('load', function(){
+		//Server Response Time
 		var iframeResponseEnd = Math.round(iframe.contentWindow.performance.timing.responseEnd-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until server response finishes
+		jQuery('#performance-ttfb').remove(); //Remove the PHP-timed data
+		appendPerformanceMetric({
+			'icon': 'fas fa-hdd',
+			'label': 'Server Response Time',
+			'text': iframeResponseEnd/1000 + ' seconds',
+			'value': iframeResponseEnd,
+			'warning': 500,
+			'error': 1000,
+		});
+
+		//DOM Ready
 		var iframeDomReady = Math.round(iframe.contentWindow.performance.timing.domContentLoadedEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until DOM ready
+		appendPerformanceMetric({
+			'icon': 'fas fa-clock',
+			'label': 'DOM Ready',
+			'text': iframeDomReady/1000 + ' seconds',
+			'value': iframeDomReady,
+			'warning': 3000,
+			'error': 5000,
+		});
+
+		//Window Load
 		var iframeWindowLoaded = Math.round(iframe.contentWindow.performance.timing.loadEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until window load
+		appendPerformanceMetric({
+			'icon': 'fas fa-clock',
+			'label': 'Window Load',
+			'text': iframeWindowLoaded/1000 + ' seconds',
+			'value': iframeWindowLoaded,
+			'warning': 5000,
+			'error': 7000,
+		});
 
-		if ( jQuery('#performance-ttfb .datapoint').length ){
-			jQuery('#performance-ttfb .datapoint').html(iframeResponseEnd/1000 + ' seconds').attr('title', 'via iframe timing'); //Server Response Time
-			performanceTimingWarning(jQuery('#performance-ttfb'), iframeResponseEnd, 500, 1000);
-		}
+		jQuery('#testloadcon, #testloadscript').remove(); //Remove the iframe
 
-		if ( jQuery('#performance-domload .datapoint').length ){
-			jQuery('#performance-domload .datapoint').html(iframeDomReady/1000 + ' seconds').attr('title', 'via iframe timing'); //DOM Load Time
-			performanceTimingWarning(jQuery('#performance-domload'), iframeDomReady, 3000, 5000);
-		}
-
-		if ( jQuery('#performance-fullyloaded .datapoint').length ){
-			jQuery('#performance-fullyloaded .datapoint').html(iframeWindowLoaded/1000 + ' seconds').attr('title', 'via iframe timing'); //Window Load Time
-			performanceTimingWarning(jQuery('#performance-fullyloaded'), iframeWindowLoaded, 5000, 7000);
-		}
-
-		jQuery('#testloadcon, #testloadscript').remove();
-		jQuery('#performance-testing-status').removeClass('hidden').find('.datapoint').text('via iframe test').siblings('.label').addClass('hidden').siblings('.status-icon').removeClass('fa-comment-alt').addClass('fa-calendar-check');
+		jQuery('#performance_metabox h2 i').removeClass('fa-spinner fa-spin').addClass('fa-stopwatch');
+		jQuery('#performance_metabox h2 span span').html('Performance <small>(via Iframe)</small>');
+		jQuery('#performance-sub-status strong').text('Iframe test completed.');
 	});
 }
 
-//Compare metrics for warning and error icons
-function performanceTimingWarning(performanceItem, actualTime, warningTime, errorTime){
-	performanceItem.find('.timingwarning').removeClass('warn active'); //Remove any warnings from previous tests
+//Append a performance metric to the list
+function appendPerformanceMetric(data){
+	if ( data ){
+		var description = '';
+		if ( data.description ){
+			description = data.description.replace(/( \[.*\]\(.*\))/ig, '');
+		}
 
-	if ( actualTime > errorTime ){
-		performanceItem.find('.timingwarning').addClass('active');
-	} else if ( actualTime > warningTime ){
-		performanceItem.find('.timingwarning').addClass('warn active');
+		var icon = '<i class="fa-fw ' + data.icon + '"></i>';
+
+		//Check to show warning indicators
+		if ( data.value ){
+			if ( data.value > data.error ){
+				icon = '<i class="fa-fw fas fa-exclamation-triangle error"></i>';
+			} else if ( data.value > data.warning ){
+				icon = '<i class="fa-fw fas fa-exclamation-triangle warn"></i>';
+			}
+		}
+
+		jQuery('ul#nebula-performance-metrics').append('<li title="' + description + '">' + icon + ' ' + data.label + ': <strong>' + data.text + '</strong></li>');
 	}
 }
 

@@ -10,6 +10,7 @@ The core features of Nebula make it a powerful tool for designing, developing, a
 ![GitHub commits since latest release (by SemVer)](https://img.shields.io/github/commits-since/chrisblakley/Nebula/latest)
 ![GitHub last commit](https://img.shields.io/github/last-commit/chrisblakley/Nebula)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1eb4554216644f5c9227df34343a9ae9)](https://www.codacy.com/app/greatblakes/Nebula?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=chrisblakley/Nebula&amp;utm_campaign=Badge_Grade)
+[![CodeFactor](https://www.codefactor.io/repository/github/chrisblakley/nebula/badge)](https://www.codefactor.io/repository/github/chrisblakley/nebula)
 
 ![Nebula screenshot](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-pwa.jpg "Nebula screenshot")
 

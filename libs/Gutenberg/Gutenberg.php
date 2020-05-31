@@ -200,6 +200,7 @@ if ( !trait_exists('Gutenberg') ){
 			echo '<h1>testing</h1>';
 			return 'this would be posts! yay!'; //this never appears
 
+/*
 			$recent_posts = wp_get_recent_posts( array(
 				'numberposts' => 3,
 				'post_status' => 'publish',
@@ -214,9 +215,10 @@ if ( !trait_exists('Gutenberg') ){
 
 			return sprintf(
 				'<a class="wp-block-nebula-latest-post" href="%1$s">%2$s</a>',
-				esc_url( get_permalink( $post_id ) ),
-				esc_html( get_the_title( $post_id ) )
+				esc_url(get_permalink($post_id)),
+				esc_html(get_the_title($post_id))
 			);
+*/
 		}
 
 

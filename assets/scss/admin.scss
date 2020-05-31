@@ -80,9 +80,11 @@ th#id {width: 50px;}
 	}
 }
 
-.timingwarning {opacity: 0; color: $danger_color;
+img#performance-screenshot {max-width: 100%;}
+
+ul#nebula-performance-metrics li i {
 	&.warn {color: orange;}
-	&.active {opacity: 1;}
+	&.error {color: $danger_color;}
 }
 
 //TODO Manager
@@ -298,7 +300,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 	}
 
 	.important-empty label {color: #d9534f; font-weight: 800;}
-		.important-warning {font-weight: normal; margin: .25rem 0 0;}
+	.important-warning {font-weight: normal; margin: .25rem 0 0;}
 
 	.nebula-warning-category {color: #777; margin-right: 5px;}
 

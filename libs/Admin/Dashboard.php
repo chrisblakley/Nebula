@@ -152,7 +152,7 @@ if ( !trait_exists('Dashboard') ){
 			$earliest_post = get_transient('nebula_earliest_post');
 			if ( empty($earliest_post) || $this->is_debug() ){
 				$earliest_post = new WP_Query(array('post_type' => 'any', 'post_status' => 'publish', 'showposts' => 1, 'orderby' => 'publish_date', 'order' => 'ASC'));
-				set_transient('nebula_earliest_post', $earliest_post, WEEK_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long.
+				set_transient('nebula_earliest_post', $earliest_post, YEAR_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long.
 			}
 			while ( $earliest_post->have_posts() ){ $earliest_post->the_post();
 				echo '<li><i class="far fa-fw fa-calendar"></i> Earliest: <span title="' . human_time_diff(strtotime(get_the_date() . ' ' . get_the_time())) . ' ago" style="cursor: help;"><strong>' . get_the_date() . '</strong> @ <strong>' . get_the_time() . '</strong></span></li>';
@@ -941,23 +941,20 @@ if ( !trait_exists('Dashboard') ){
 
 		//Performance Timing
 		public function performance_metabox(){
-			wp_add_dashboard_widget('performance_metabox', '<i class="fas fa-fw fa-stopwatch"></i> Performance', array($this, 'performance_timing'));
+			wp_add_dashboard_widget('performance_metabox', '<i id="performance-status-icon" class="fas fa-fw fa-stopwatch"></i> <span id="performance-title">Performance</span>', array($this, 'performance_timing'));
 		}
 
 		public function performance_timing(){
-			echo '<ul class="nebula-fa-ul">';
-
-			//New WebPageTest API Method:
-			//Documentation: https://sites.google.com/a/webpagetest.org/docs/advanced-features/webpagetest-restful-apis
-			$wpt_status = 'Preparing test...';
+			//Initialize the WebPageTest API - Documentation: https://sites.google.com/a/webpagetest.org/docs/advanced-features/webpagetest-restful-apis
+			$initial_sub_status = 'Preparing test...';
 			if ( $this->get_option('webpagetest_api') ){
 				$webpagetest_response = get_transient('nebula_webpagetest_response');
-				$wpt_status = 'Getting stored test results from WebPageTest.org';
+				$initial_sub_status = 'Retrieving cached WebPageTest.org results...';
 				if ( empty($webpagetest_response) || $this->is_debug() || isset($_GET['sass']) ){
-					$webpagetest_response = $this->remote_get('https://www.webpagetest.org/runtest.php?url=' . home_url('/') . '%3Fnoga&runs=3&fvonly=1&f=json&noopt=1&noimages=1&k=' . $this->get_option('webpagetest_api'));
+					$webpagetest_response = $this->remote_get('https://www.webpagetest.org/runtest.php?url=' . home_url('/') . '%3Fnoga&runs=3&fvonly=1&f=json&noopt=1&noimages=1&k=' . $this->get_option('webpagetest_api')); //No GA so it does not get flooded with bot traffic
 					if ( !is_wp_error($webpagetest_response) ){
 						$webpagetest_response = json_decode($webpagetest_response['body']);
-						$wpt_status = 'Testing via WebPageTest.org';
+						$initial_sub_status = 'Test requested via WebPageTest.org...';
 						set_transient('nebula_webpagetest_response', $webpagetest_response, MINUTE_IN_SECONDS*10);
 					}
 				}
@@ -970,32 +967,18 @@ if ( !trait_exists('Dashboard') ){
 				}
 			}
 
-			echo '<li id="performance-testing-status"><i class="status-icon far fa-fw fa-comment-alt"></i> <span class="label">Status:</span> <small><span class="datapoint">' . $wpt_status . '</span></small></li>';
-
 			//Prep for an iframe timer if needed
 			$home_url = ( is_ssl() )? str_replace('http://', 'https://', home_url('/')) : home_url('/'); //Sometimes the home_url() still has http even when is_ssl() true
 			echo '<div id="testloadcon" data-src="' . $home_url . '" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>'; //For iframe timing
 
-			//Server Load Time (TTFB)
-			echo '<li id="performance-ttfb"><i class="far fa-fw fa-clock"></i> Server response time: <strong class="datapoint" title="Calculated via PHP render time">' . timer_stop(0, 3) . ' seconds</strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
+			echo '<img id="performance-screenshot" class="hidden" src="#" />';
+			echo '<ul id="nebula-performance-metrics" class="nebula-fa-ul">';
 
-			//DOM Load
-			echo '<li id="performance-domload"><i class="fas fa-fw fa-clock"></i> DOM Load: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
+			//Sub-status
+			echo '<li id="performance-sub-status"><i class="far fa-fw fa-comment"></i> <span class="label">Status</span>: <strong>' . $initial_sub_status . '</strong></li>';
 
-			//Fully Load Time
-			echo '<li id="performance-fullyloaded"><i class="fas fa-fw fa-clock"></i> Fully Loaded: <a class="speedinsight" href="http://developers.google.com/speed/pagespeed/insights/?url=' . home_url('/') . '" target="_blank" rel="noopener" title="Time is specific to your current environment and therefore may be faster or slower than average."><strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong></a> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
-
-			//File Size Footprint
-			echo '<li id="performance-footprint" class="hidden"><i class="fas fa-fw fa-shoe-prints"></i> Footprint: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
-
-			//Total Requests
-			echo '<li id="performance-requests" class="hidden"><i class="fas fa-fw fa-list-ol"></i> Total Requests: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
-
-			//Rating (SLOW, AVERAGE, FAST)
-			if ( $this->is_dev() ){
-				echo '<li id="performance-rating" class="hidden"><i class="fas fa-fw fa-award"></i> Rating: <strong class="datapoint"><i class="fas fa-spinner fa-spin fa-fw"></i></strong> <i class="timingwarning fas fa-exclamation-triangle"></i></li>';
-			}
-
+			//PHP-Measured Server Load Time (TTFB)
+			echo '<li id="performance-ttfb"><i class="far fa-fw fa-clock"></i> <span class="label">PHP Response Time</span>: <strong class="datapoint" title="Calculated via PHP render time">' . timer_stop(0, 3) . ' seconds</strong></li>';
 			echo '</ul>';
 		}
 

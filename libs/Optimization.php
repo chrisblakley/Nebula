@@ -453,9 +453,11 @@ if ( !trait_exists('Optimization') ){
 			$default_preloads = array();
 
 			//Google fonts if used
+/*
 			if ( $this->get_option('remote_font_url') ){
-				//$default_preloads[] = $this->get_option('remote_font_url'); //Oct 2019: disabling this for now as it delays render in Chrome
+				$default_preloads[] = $this->get_option('remote_font_url'); //Oct 2019: disabling this for now as it delays render in Chrome
 			}
+*/
 
 			//Loop through all of the preloads
 			$preloads = apply_filters('nebula_preloads', $default_preloads); //Allow child themes and plugins to preload resources via Nebula too
