@@ -301,7 +301,7 @@ function checkWPTresults(){
 						'text': ttfb/1000 + ' seconds',
 						'value': ttfb,
 						'warning': 500,
-						'error': 1000,
+						'error': 1000
 					});
 
 					//DOM Ready
@@ -313,6 +313,7 @@ function checkWPTresults(){
 						'value': domLoadTime,
 						'warning': 3000,
 						'error': 5000,
+						'diff': ((domLoadTime - ttfb)/1000).toFixed(3) + 's'
 					});
 
 					//Window Load
@@ -324,6 +325,91 @@ function checkWPTresults(){
 						'value': fullyLoadedTime,
 						'warning': 5000,
 						'error': 7000,
+						'diff': ((fullyLoadedTime - domLoadTime)/1000).toFixed(3) + 's'
+					});
+
+					//First Contentful Paint (15%)
+					var firstContentfulPaint = response.data.lighthouse.audits['first-contentful-paint'];
+					appendPerformanceMetric({
+						'icon': 'fas fa-paint-brush',
+						'label': 'First Contentful Paint (FCP)',
+						'text': (firstContentfulPaint.numericValue/1000).toFixed(3) + ' seconds',
+						'description': firstContentfulPaint.description,
+						'value': firstContentfulPaint.numericValue,
+						'warning': 2000,
+						'error': 4000
+					});
+
+					//Largest Contentful Paint (25%)
+					var largestContentfulPaint = response.data.lighthouse.audits['largest-contentful-paint'];
+					appendPerformanceMetric({
+						'icon': 'fas fa-paint-roller',
+						'label': 'Largest Contentful Paint (LCP)',
+						'text': (largestContentfulPaint.numericValue/1000).toFixed(3) + ' seconds',
+						'description': largestContentfulPaint.description,
+						'value': largestContentfulPaint.numericValue,
+						'warning': 2500,
+						'error': 4000
+					});
+
+					//First Input Delay
+					var firstInputDelay = response.data.lighthouse.audits['max-potential-fid'];
+					appendPerformanceMetric({
+						'icon': 'fas fa-mouse-pointer',
+						'label': 'First Input Delay (FID)',
+						'text': (firstInputDelay.numericValue/1000).toFixed(3) + ' seconds',
+						'description': firstInputDelay.description,
+						'value': firstInputDelay.numericValue,
+						'warning': 100,
+						'error': 300
+					});
+
+					//Time to Interactive (15%)
+					var timeToInteractive = response.data.lighthouse.audits['interactive'];
+					appendPerformanceMetric({
+						'icon': 'far fa-hand-pointer',
+						'label': 'Time to Interactive (TTI)',
+						'text': (timeToInteractive.numericValue/1000).toFixed(3) + ' seconds',
+						'description': timeToInteractive.description,
+						'value': timeToInteractive.numericValue,
+						'warning': 5300,
+						'error': 7300
+					});
+
+					//Speed Index (15%)
+					var speedIndex = response.data.lighthouse.audits['speed-index'];
+					appendPerformanceMetric({
+						'icon': 'fas fa-tachometer-alt',
+						'label': 'Speed Index',
+						'text': (speedIndex.numericValue/1000).toFixed(3) + ' seconds',
+						'description': speedIndex.description,
+						'value': speedIndex.numericValue,
+						'warning': 4400,
+						'error': 5800
+					});
+
+					//Total Blocking Time (25%)
+					var totalBlockingTime = response.data.lighthouse.audits['total-blocking-time'];
+					appendPerformanceMetric({
+						'icon': 'fas fa-hand-paper',
+						'label': 'Total Blocking Time (TBT)',
+						'text': (totalBlockingTime.numericValue/1000).toFixed(3) + ' seconds',
+						'description': totalBlockingTime.description,
+						'value': totalBlockingTime.numericValue,
+						'warning': 300,
+						'error': 600
+					});
+
+					//Cumulative Layout Shift (5%)
+					var cumulativeLayoutShift = response.data.lighthouse.audits['cumulative-layout-shift'];
+					appendPerformanceMetric({
+						'icon': 'fas fa-arrows-alt-v',
+						'label': 'Cumulative Layout Shift (CLS)',
+						'text': cumulativeLayoutShift.displayValue,
+						'description': cumulativeLayoutShift.description,
+						'value': cumulativeLayoutShift.numericValue,
+						'warning': 0.1,
+						'error': 0.25
 					});
 
 					//Bytes Downloaded
@@ -334,7 +420,7 @@ function checkWPTresults(){
 						'text': bytesIn + 'mb',
 						'value': bytesIn,
 						'warning': 1,
-						'error': 2,
+						'error': 2
 					});
 
 					//Total Requests
@@ -345,45 +431,7 @@ function checkWPTresults(){
 						'text': totalRequests,
 						'value': totalRequests,
 						'warning': 80,
-						'error': 120,
-					});
-
-					//First Meaningful Paint
-					var firstMeaningfulPaint = response.data.median.firstView['chromeUserTiming.firstMeaningfulPaint'];
-					appendPerformanceMetric({
-						'icon': 'fas fa-paint-brush',
-						'label': 'First Meaningful Paint',
-						'text': firstMeaningfulPaint/1000 + ' seconds',
-					});
-
-					//First CPU Idle
-					var firstCPUIdle = response.data.median.firstView['cpu.Idle'];
-					appendPerformanceMetric({
-						'icon': 'fas fa-hdd',
-						'label': 'First CPU Idle',
-						'text': firstCPUIdle/1000 + ' seconds',
-					});
-
-					//Largest Contentful Paint
-					var largestContentfulPaint = response.data.median.firstView['chromeUserTiming.LargestContentfulPaint'];
-					appendPerformanceMetric({
-						'icon': 'fas fa-paint-roller',
-						'label': 'Largest Contentful Paint',
-						'text': largestContentfulPaint/1000 + ' seconds',
-						'value': largestContentfulPaint,
-						'warning': 2500,
-						'error': 4000,
-					});
-
-					//Cumulative Layout Shift
-					var cumulativeLayoutShift = response.data.median.firstView['chromeUserTiming.CumulativeLayoutShift'];
-					appendPerformanceMetric({
-						'icon': 'fas fa-arrows-alt-v',
-						'label': 'Cumulative Layout Shift',
-						'text': cumulativeLayoutShift.toFixed(3),
-						'value': cumulativeLayoutShift,
-						'warning': 100,
-						'error': 250,
+						'error': 120
 					});
 
 					//Status
@@ -430,11 +478,11 @@ function getLighthouseResults(){
 			appendPerformanceMetric({
 				'icon': 'fas fa-hdd',
 				'label': 'Server Response Time',
-				'text': (serverResponseTime.numericValue/1000).toFixed(2) + ' seconds',
+				'text': (serverResponseTime.numericValue/1000).toFixed(3) + ' seconds',
 				'description': serverResponseTime.description,
 				'value': serverResponseTime.numericValue,
 				'warning': 500,
-				'error': 1000,
+				'error': 1000
 			});
 
 			//DOM Ready
@@ -446,6 +494,7 @@ function getLighthouseResults(){
 				'value': domReady,
 				'warning': 3000,
 				'error': 5000,
+				'diff': ((domReady - serverResponseTime.numericValue)/1000).toFixed(3) + 's'
 			});
 
 			//Window Load
@@ -457,6 +506,91 @@ function getLighthouseResults(){
 				'value': windowLoad,
 				'warning': 5000,
 				'error': 7000,
+				'diff': ((windowLoad - domReady)/1000).toFixed(3) + 's'
+			});
+
+			//First Contentful Paint (15%)
+			var firstContentfulPaint = json.lighthouseResult.audits['first-contentful-paint'];
+			appendPerformanceMetric({
+				'icon': 'fas fa-paint-brush',
+				'label': 'First Contentful Paint (FCP)',
+				'text': (firstContentfulPaint.numericValue/1000).toFixed(3) + ' seconds',
+				'description': firstContentfulPaint.description,
+				'value': firstContentfulPaint.numericValue,
+				'warning': 2000,
+				'error': 4000
+			});
+
+			//Largest Contentful Paint (25%)
+			var largestContentfulPaint = json.lighthouseResult.audits['largest-contentful-paint'];
+			appendPerformanceMetric({
+				'icon': 'fas fa-paint-roller',
+				'label': 'Largest Contentful Paint (LCP)',
+				'text': (largestContentfulPaint.numericValue/1000).toFixed(3) + ' seconds',
+				'description': largestContentfulPaint.description,
+				'value': largestContentfulPaint.numericValue,
+				'warning': 2500,
+				'error': 4000
+			});
+
+			//First Input Delay
+			var firstInputDelay = json.lighthouseResult.audits['max-potential-fid'];
+			appendPerformanceMetric({
+				'icon': 'fas fa-mouse-pointer',
+				'label': 'First Input Delay (FID)',
+				'text': (firstInputDelay.numericValue/1000).toFixed(3) + ' seconds',
+				'description': firstInputDelay.description,
+				'value': firstInputDelay.numericValue,
+				'warning': 100,
+				'error': 300
+			});
+
+			//Time to Interactive (15%)
+			var timeToInteractive = json.lighthouseResult.audits['interactive'];
+			appendPerformanceMetric({
+				'icon': 'far fa-hand-pointer',
+				'label': 'Time to Interactive (TTI)',
+				'text': (timeToInteractive.numericValue/1000).toFixed(3) + ' seconds',
+				'description': timeToInteractive.description,
+				'value': timeToInteractive.numericValue,
+				'warning': 5300,
+				'error': 7300
+			});
+
+			//Speed Index (15%)
+			var speedIndex = json.lighthouseResult.audits['speed-index'];
+			appendPerformanceMetric({
+				'icon': 'fas fa-tachometer-alt',
+				'label': 'Speed Index',
+				'text': (speedIndex.numericValue/1000).toFixed(3) + ' seconds',
+				'description': speedIndex.description,
+				'value': speedIndex.numericValue,
+				'warning': 4400,
+				'error': 5800
+			});
+
+			//Total Blocking Time (25%)
+			var totalBlockingTime = json.lighthouseResult.audits['total-blocking-time'];
+			appendPerformanceMetric({
+				'icon': 'fas fa-hand-paper',
+				'label': 'Total Blocking Time (TBT)',
+				'text': (totalBlockingTime.numericValue/1000).toFixed(3) + ' seconds',
+				'description': totalBlockingTime.description,
+				'value': totalBlockingTime.numericValue,
+				'warning': 300,
+				'error': 600
+			});
+
+			//Cumulative Layout Shift (5%)
+			var cumulativeLayoutShift = json.lighthouseResult.audits['cumulative-layout-shift'];
+			appendPerformanceMetric({
+				'icon': 'fas fa-arrows-alt-v',
+				'label': 'Cumulative Layout Shift (CLS)',
+				'text': cumulativeLayoutShift.displayValue,
+				'description': cumulativeLayoutShift.description,
+				'value': cumulativeLayoutShift.numericValue,
+				'warning': 0.1,
+				'error': 0.25
 			});
 
 			//Total Byte Weight
@@ -468,7 +602,7 @@ function getLighthouseResults(){
 				'description': totalByteWeight.description,
 				'value': totalByteWeight.numericValue/1024/1024,
 				'warning': 1,
-				'error': 2,
+				'error': 2
 			});
 
 			//Network Requests
@@ -479,61 +613,7 @@ function getLighthouseResults(){
 				'text': networkRequests,
 				'value': networkRequests,
 				'warning': 80,
-				'error': 120,
-			});
-
-			//First Meaningful Paint
-			var firstMeaningfulPaint = json.lighthouseResult.audits['first-meaningful-paint'];
-			appendPerformanceMetric({
-				'icon': 'fas fa-paint-brush',
-				'label': 'First Meaningful Paint',
-				'text': (firstMeaningfulPaint.numericValue/1000).toFixed(3) + ' seconds',
-				'description': firstMeaningfulPaint.description
-			});
-
-			//First CPU Idle
-			var firstCPUIdle = json.lighthouseResult.audits['first-cpu-idle'];
-			appendPerformanceMetric({
-				'icon': 'fas fa-hdd',
-				'label': 'First CPU Idle',
-				'text': (firstCPUIdle.numericValue/1000).toFixed(3) + ' seconds',
-				'description': firstCPUIdle.description
-			});
-
-			//Largest Contentful Paint
-			var largestContentfulPaint = json.lighthouseResult.audits['largest-contentful-paint'];
-			appendPerformanceMetric({
-				'icon': 'fas fa-paint-roller',
-				'label': 'Largest Contentful Paint',
-				'text': (largestContentfulPaint.numericValue/1000).toFixed(3) + ' seconds',
-				'description': largestContentfulPaint.description,
-				'value': largestContentfulPaint.numericValue,
-				'warning': 2500,
-				'error': 4000,
-			});
-
-			//Total Blocking Time
-			var totalBlockingTime = json.lighthouseResult.audits['total-blocking-time'];
-			appendPerformanceMetric({
-				'icon': 'fas fa-hand-paper',
-				'label': 'Total Blocking Time',
-				'text': (totalBlockingTime.numericValue/1000).toFixed(3) + ' seconds',
-				'description': totalBlockingTime.description,
-				'value': totalBlockingTime.numericValue,
-				'warning': 300,
-				'error': 600,
-			});
-
-			//Cumulative Layout Shift
-			var cumulativeLayoutShift = json.lighthouseResult.audits['cumulative-layout-shift'];
-			appendPerformanceMetric({
-				'icon': 'fas fa-arrows-alt-v',
-				'label': 'Cumulative Layout Shift',
-				'text': cumulativeLayoutShift.displayValue,
-				'description': cumulativeLayoutShift.description,
-				'value': cumulativeLayoutShift.numericValue,
-				'warning': 100,
-				'error': 250,
+				'error': 120
 			});
 
 			jQuery('#performance_metabox h2 i').removeClass('fa-spinner fa-spin').addClass('fa-stopwatch');
@@ -605,21 +685,29 @@ function appendPerformanceMetric(data){
 	if ( data ){
 		var description = '';
 		if ( data.description ){
-			description = data.description.replace(/( \[.*\]\(.*\))/ig, '');
+			description = data.description.replace(/( \[.*\]\(.*\)\.?)/ig, '');
 		}
 
 		var icon = '<i class="fa-fw ' + data.icon + '"></i>';
+		var warningLevel = '';
 
 		//Check to show warning indicators
 		if ( data.value ){
 			if ( data.value > data.error ){
-				icon = '<i class="fa-fw fas fa-exclamation-triangle error"></i>';
+				warningLevel = 'error';
+				icon = '<i class="fa-fw fas fa-exclamation-triangle"></i>';
 			} else if ( data.value > data.warning ){
-				icon = '<i class="fa-fw fas fa-exclamation-triangle warn"></i>';
+				warningLevel = 'warn';
+				icon = '<i class="fa-fw fas fa-exclamation-circle"></i>';
 			}
 		}
 
-		jQuery('ul#nebula-performance-metrics').append('<li title="' + description + '">' + icon + ' ' + data.label + ': <strong>' + data.text + '</strong></li>');
+		diff = '';
+		if ( data.diff ){
+			diff = ' <small>(' + data.diff + ' from previous)</small>';
+		}
+
+		jQuery('ul#nebula-performance-metrics').append('<li class="' + warningLevel + '" title="' + description + '">' + icon + ' ' + data.label + ': <strong>' + data.text + '</strong>' + diff + '</li>');
 	}
 }
 

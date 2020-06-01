@@ -62,6 +62,8 @@ li.comment-count {display: none;}
 
 th#id {width: 50px;}
 
+.this-user-company-name {white-space: nowrap;}
+
 //Dev Metabox
 #phg_developer_info {
 	.secured-connection {
@@ -82,9 +84,9 @@ th#id {width: 50px;}
 
 img#performance-screenshot {max-width: 100%;}
 
-ul#nebula-performance-metrics li i {
-	&.warn {color: orange;}
-	&.error {color: $danger_color;}
+ul#nebula-performance-metrics li {
+	&.warn i {color: orange;} //Only color the icon for warnings
+	&.error {color: $danger_color;} //Color the entire line for errors
 }
 
 //TODO Manager

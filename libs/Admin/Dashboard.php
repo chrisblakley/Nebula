@@ -250,7 +250,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( get_the_author_meta('jobcompany', $user_info->ID) ){
 				$company = get_the_author_meta('jobcompany', $user_info->ID);
 				if ( get_the_author_meta('jobcompanywebsite', $user_info->ID) ){
-					$company = '<a href="' . get_the_author_meta('jobcompanywebsite', $user_info->ID) . '?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=user+metabox+job+title" target="_blank" rel="noopener">' . $company . '</a>';
+					$company = '<a class="this-user-company-name" href="' . get_the_author_meta('jobcompanywebsite', $user_info->ID) . '?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=user+metabox+job+title" target="_blank" rel="noopener">' . $company . '</a>';
 				}
 			}
 
@@ -951,10 +951,10 @@ if ( !trait_exists('Dashboard') ){
 				$webpagetest_response = get_transient('nebula_webpagetest_response');
 				$initial_sub_status = 'Retrieving cached WebPageTest.org results...';
 				if ( empty($webpagetest_response) || $this->is_debug() || isset($_GET['sass']) ){
-					$webpagetest_response = $this->remote_get('https://www.webpagetest.org/runtest.php?url=' . home_url('/') . '%3Fnoga&runs=3&fvonly=1&f=json&noopt=1&noimages=1&k=' . $this->get_option('webpagetest_api')); //No GA so it does not get flooded with bot traffic
+					$webpagetest_response = $this->remote_get('https://www.webpagetest.org/runtest.php?url=' . home_url('/') . '%3Fnoga&runs=3&fvonly=1&f=json&noopt=1&noimages=1&lighthouse=1&k=' . $this->get_option('webpagetest_api')); //No GA so it does not get flooded with bot traffic
 					if ( !is_wp_error($webpagetest_response) ){
 						$webpagetest_response = json_decode($webpagetest_response['body']);
-						$initial_sub_status = 'Test requested via WebPageTest.org...';
+						$initial_sub_status = 'New test requested from WebPageTest.org...';
 						set_transient('nebula_webpagetest_response', $webpagetest_response, MINUTE_IN_SECONDS*10);
 					}
 				}
@@ -980,6 +980,8 @@ if ( !trait_exists('Dashboard') ){
 			//PHP-Measured Server Load Time (TTFB)
 			echo '<li id="performance-ttfb"><i class="far fa-fw fa-clock"></i> <span class="label">PHP Response Time</span>: <strong class="datapoint" title="Calculated via PHP render time">' . timer_stop(0, 3) . ' seconds</strong></li>';
 			echo '</ul>';
+
+			echo '<p><small><a href="https://web.dev/lighthouse-performance/" target="_blank" rel="noopener">Learn about user-centric performance metrics &raquo;</a></small></p>';
 		}
 
 		//Add a dashboard metabox for design reference

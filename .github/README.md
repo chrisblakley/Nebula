@@ -26,7 +26,7 @@ The core features of Nebula make it a powerful tool for designing, developing, a
 These instructions will get Nebula setup to its recommended baseline.
 
 ### Requirements & Recommendations <a name="requirements"></a>
-Nebula follows [WordPress recommended requirements](https://wordpress.org/about/requirements/), and **does not require any additional server software**. The latest two versions of browsers with >1% market share are officially supported.
+Nebula follows [WordPress recommended requirements](https://wordpress.org/about/requirements/), and **does not require any additional server software**. Browsers with >1% market share are officially supported.
 
 To take full advantage of Nebula's features, the following are recommended:
 + WordPress Latest
