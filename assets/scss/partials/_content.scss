@@ -70,6 +70,30 @@
 	}
 }
 
+//Block Editor Template Content
+.page-template-block-editor {
+	h1 {font-size: 44px; text-align: center;}
+
+	.entry-content,
+	.entry-widgets,
+	.entry-comments {padding-left: 40px; padding-right: 40px;
+		> * {max-width: 640px; margin: 0 auto;} //Better selector for this?
+
+		h2 {font-size: 32px; margin-top: 32px;}
+		h3 {margin-top: 32px;}
+
+		p {font-size: 18px; line-height: 32px; margin-top: 32px;}
+
+		figure {margin-top: 32px;}
+		img {max-width: 100%;}
+
+		.alignwide {max-width: 900px;}
+		.alignfull {max-width: none;
+			&.wp-block-image {margin-left: -40px; margin-right: -40px;}
+		}
+	}
+}
+
 //Single Post Widget Area
 #single-post-widget-area {margin-top: 50px;
 	.widget-container {margin-bottom: 50px;}

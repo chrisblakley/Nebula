@@ -12,37 +12,40 @@ if ( !trait_exists('Dashboard') ){
 					add_action('wp_dashboard_setup', array($this, 'remove_dashboard_metaboxes'));
 				}
 
-				add_action('wp_dashboard_setup', array($this, 'ataglance_metabox'));
-				add_action('wp_dashboard_setup', array($this, 'current_user_metabox'));
+				if ( current_user_can('publish_posts') ){
+					add_action('wp_dashboard_setup', array($this, 'ataglance_metabox'));
+					add_action('wp_dashboard_setup', array($this, 'current_user_metabox'));
+				}
 
-				if ( current_user_can('manage_options') ){
+				if ( current_user_can('edit_others_posts') ){
 					add_action('wp_dashboard_setup', array($this, 'administrative_metabox'));
-				}
+					add_action('wp_dashboard_setup', array($this, 'phg_metabox'));
 
-				add_action('wp_dashboard_setup', array($this, 'phg_metabox'));
+					if ( $this->get_option('todo_manager_metabox') && $this->is_dev() ){
+						add_action('wp_dashboard_setup', array($this, 'todo_metabox'));
+					}
 
-				if ( $this->get_option('todo_manager_metabox') && $this->is_dev() ){
-					add_action('wp_dashboard_setup', array($this, 'todo_metabox'));
-				}
+					if ( $this->get_option('dev_info_metabox') && $this->is_dev() ){
+						add_action('wp_dashboard_setup', array($this, 'dev_info_metabox'));
+					}
 
-				if ( $this->get_option('dev_info_metabox') && $this->is_dev() ){
-					add_action('wp_dashboard_setup', array($this, 'dev_info_metabox'));
-				}
+					if ( $this->get_option('performance_metabox') || $this->is_dev() ){ //Devs always see the performance metabox
+						add_action('wp_dashboard_setup', array($this, 'performance_metabox'));
+					}
 
-				if ( $this->get_option('performance_metabox') || $this->is_dev() ){ //Devs always see the performance metabox
-					add_action('wp_dashboard_setup', array($this, 'performance_metabox'));
-				}
+					if ( nebula()->get_option('design_reference_metabox') ){
+						add_action('wp_dashboard_setup', array($this, 'design_metabox'));
+					}
 
-				if ( nebula()->get_option('design_reference_metabox') ){
-					add_action('wp_dashboard_setup', array($this, 'design_metabox'));
-				}
-
-				if ( current_user_can('publish_pages') && $this->get_option('hubspot_portal') && $this->get_option('hubspot_api') ){ //Editor or above (and Hubspot API/Portal)
-					add_action('wp_dashboard_setup', array($this, 'hubspot_metabox'));
+					if ( $this->get_option('hubspot_portal') && $this->get_option('hubspot_api') ){ //Editor or above (and Hubspot API/Portal)
+						add_action('wp_dashboard_setup', array($this, 'hubspot_metabox'));
+					}
 				}
 			}
 
-			add_action('wp_ajax_search_theme_files', array($this, 'search_theme_files'));
+			if ( current_user_can('edit_others_posts') ){
+				add_action('wp_ajax_search_theme_files', array($this, 'search_theme_files'));
+			}
 		}
 
 		//Remove unnecessary Dashboard metaboxes

@@ -144,7 +144,7 @@ if ( !trait_exists('Sass') ){
 				//Source Maps
 				$this->scss->setSourceMap(1); //0 = No .map, 1 = Inline .map, 2 = Output .map file
 				$this->scss->setSourceMapOptions(array(
-					'sourceMapBasepath' => $_SERVER['DOCUMENT_ROOT'], //Difference between file & URL locations, removed from all source paths in .map
+					'sourceMapBasepath' => ABSPATH, //Difference between file & URL locations, removed from all source paths in .map
 					'sourceRoot' => '/', //Added to source path locations if needed
 				));
 

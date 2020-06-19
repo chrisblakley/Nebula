@@ -175,12 +175,6 @@
 	}
 
 	//Screen Sizes
-	@if ( $group == "ultrawidescreen" or $group == "uw" ){
-		@media only screen and (min-width: 2048px){& {@content}} //This size and larger
-	}
-	@if ( $group == "widescreen" or $group == "xxl" ){
-		@media only screen and (min-width: 1600px){& {@content}} //This size and larger
-	}
 	@if ( $group == "tablet_landscape" ){
 		@include tablet(landscape){& {@content}} //This size and smaller
 	}
@@ -206,6 +200,13 @@
 	}
 	@if ( $group == "xl" ){
 		@media (min-width: #{$xl}px){& {@content}} //This size and larger
+	}
+	@if ( $group == "xxl" or $group == "widescreen" ){
+		@media (min-width: #{$xxl}px){& {@content}} //This size and larger
+	}
+
+	@if ( $group == "ultrawidescreen" or $group == "uw" ){
+		@media only screen and (min-width: 2048px){& {@content}} //This size and larger
 	}
 
 	//Custom media query

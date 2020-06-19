@@ -494,7 +494,8 @@ trait Functions {
 			$disk_paths = array(
 				array('directory' => ABSPATH, 'low' => 10, 'critical' => 5), //WordPress root directory
 				array('directory' => session_save_path(), 'low' => 1, 'critical' => 0.5), //May or may not be the same as /tmp
-				array('directory' => '/tmp', 'low' => 1, 'critical' => 0.5)
+				array('directory' => '/tmp', 'low' => 1, 'critical' => 0.5),
+				array('directory' => get_temp_dir(), 'low' => 1, 'critical' => 0.5) //May or may not be the same as /tmp
 			);
 
 			$disk_paths = array_unique($disk_paths, SORT_REGULAR); //De-duplicate directories in the array
@@ -2562,7 +2563,7 @@ trait Functions {
 	public function disable_comments_admin(){
 		remove_meta_box('dashboard_recent_comments', 'dashboard', 'normal');
 		remove_menu_page( 'edit-comments.php' );
-		//Note: Do not remove the Discussion settings page. The comment blacklist is still used for other things like CF7 forms.
+		//Note: Do not remove the Discussion settings page. The comment blocklist is still used for other things like CF7 forms.
 	}
 
 	public function hide_ataglance_comment_counts(){

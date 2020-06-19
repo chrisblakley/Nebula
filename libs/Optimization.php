@@ -472,7 +472,7 @@ if ( !trait_exists('Optimization') ){
 							$filetype = 'script';
 							break;
 						case strpos($preload, 'fonts.googleapis'):
-						case strpos($preload, '.woff'):
+						case strpos($preload, '.woff'): //Captures both .woff and .woff2
 							$filetype = 'font';
 							break;
 						case strpos($preload, '.jpg'):

@@ -17,10 +17,11 @@ $info_color: #17a2b8 !default; //Generally #17a2b8
 $success_color: #28a745 !default; //Generally #28a745
 
 //CSS variables defined in Bootstrap
-$sm: 576; //Generally 576 //Why cant var(--breakpoint-sm) be used here?
-$md: 768; //Generally 768
-$lg: 992; //Generally 992
-$xl: 1200; //Generally 1200
+$sm: 576; //Why cant var(--breakpoint-sm) be used here?
+$md: 768;
+$lg: 992;
+$xl: 1200;
+$xxl: 1400;
 
 $system_font: var(--font-family-sans-serif); //CSS variable defined in Bootstrap
 $font_awesome: "Font Awesome 5 Pro", "Font Awesome 5 Free", "Font Awesome 5 Brands"; //Convenient stack for Font Awesome icons //DEPRECATED: Eventually delete this

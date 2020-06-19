@@ -396,7 +396,7 @@
 			"url": "<?php echo home_url('/'); ?>",
 			"potentialAction": {
 				"@type": "SearchAction",
-				"target": "<?php echo home_url('/'); ?>?q={search_term_string}",
+				"target": "<?php echo home_url('/'); ?>?s={search_term_string}",
 				"query-input": "required name=search_term_string"
 			}
 		}

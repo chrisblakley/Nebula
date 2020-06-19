@@ -2,7 +2,7 @@
 /**
  * Device Detector - The Universal Device Detection library for parsing User Agents
  *
- * @link http://piwik.org
+ * @link https://matomo.org
  * @license http://www.gnu.org/licenses/lgpl.html LGPL v3 or later
  */
 namespace DeviceDetector\Parser\Device;
@@ -112,6 +112,7 @@ abstract class DeviceParserAbstract extends ParserAbstract
         'B5' => 'Beeline',
         'BI' => 'Bird',
         'BT' => 'Bitel',
+        'B7' => 'Bitmore',
         'BG' => 'BGH',
         'BL' => 'Beetel',
         'BP' => 'Blaupunkt',
@@ -170,6 +171,7 @@ abstract class DeviceParserAbstract extends ParserAbstract
         'D5' => 'Daewoo',
         'DA' => 'Danew',
         'DT' => 'Datang',
+        'D7' => 'Datawind',
         'D1' => 'Datsun',
         'DE' => 'Denver',
         'DW' => 'DeWalt',
@@ -191,6 +193,7 @@ abstract class DeviceParserAbstract extends ParserAbstract
         'DV' => 'Doov',
         'DP' => 'Dopod',
         'DR' => 'Doro',
+        'D8' => 'Droxio',
         'DU' => 'Dune HD',
         'EB' => 'E-Boda',
         'EA' => 'EBEST',
@@ -256,6 +259,7 @@ abstract class DeviceParserAbstract extends ParserAbstract
         'G1' => 'GoMobile',
         'GR' => 'Gradiente',
         'GP' => 'Grape',
+        'G0' => 'Goophone',
         'GU' => 'Grundig',
         'HF' => 'Hafury',
         'HA' => 'Haier',
@@ -338,6 +342,7 @@ abstract class DeviceParserAbstract extends ParserAbstract
         'K2' => 'KRONO',
         'KS' => 'Kempler & Strauss',
         'K3' => 'Keneksi',
+        'K8' => 'Kuliao',
         'KU' => 'Kumai',
         'KY' => 'Kyocera',
         'KZ' => 'Kazam',
@@ -437,6 +442,7 @@ abstract class DeviceParserAbstract extends ParserAbstract
         'NW' => 'Newgen',
         'NS' => 'NewsMy',
         'NX' => 'Nexian',
+        'N8' => 'NEXON',
         'NT' => 'NextBook',
         'O3' => 'O+',
         'OB' => 'Obi',
@@ -444,6 +450,7 @@ abstract class DeviceParserAbstract extends ParserAbstract
         'OD' => 'Onda',
         'ON' => 'OnePlus',
         'OP' => 'OPPO',
+        'O4' => 'ONN',
         'OR' => 'Orange',
         'OS' => 'Ordissimo',
         'OT' => 'O2',
@@ -474,6 +481,7 @@ abstract class DeviceParserAbstract extends ParserAbstract
         'PT' => 'Pantech',
         'PY' => 'Ployer',
         'P4' => 'Plum',
+        'P8' => 'PocketBook',
         'PV' => 'Point of View',
         'PP' => 'PolyPad',
         'P2' => 'Pomp',
@@ -483,6 +491,7 @@ abstract class DeviceParserAbstract extends ParserAbstract
         'P7' => 'Protruly',
         'P1' => 'ProScan',
         'PU' => 'PULID',
+        'QB' => 'Q.Bell',
         'QI' => 'Qilive',
         'QT' => 'Qtek',
         'QH' => 'Q-Touch',
@@ -491,6 +500,7 @@ abstract class DeviceParserAbstract extends ParserAbstract
         'QU' => 'Quechua',
         'QO' => 'Qumo',
         'RA' => 'Ramos',
+        'RE' => 'Realme',
         'RZ' => 'Razer',
         'RC' => 'RCA Tablets',
         'RB' => 'Readboy',
@@ -539,6 +549,7 @@ abstract class DeviceParserAbstract extends ParserAbstract
         '8S' => 'Soyes',
         'SP' => 'Spice',
         '6S' => 'Spectrum',
+        '9S' => 'Sugar',
         '5S' => 'Sunvell',
         'SU' => 'SuperSonic',
         'S5' => 'Supra',
@@ -679,6 +690,7 @@ abstract class DeviceParserAbstract extends ParserAbstract
         'ZN' => 'Zen',
         'ZY' => 'Zync',
         'ZQ' => 'ZYQ',
+        'XS' => 'Xshitou',
         'XT' => 'X-TIGI',
         'XB' => 'NEXBOX',
 

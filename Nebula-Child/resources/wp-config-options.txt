@@ -29,7 +29,7 @@ define('FORCE_SSL_LOGIN', true); //Force SSL for WordPress Login Page
 define('FORCE_SSL_ADMIN', true); //Force SSL for WordPress Admin
 
 define('WP_HTTP_BLOCK_EXTERNAL', true); //Block External Connections
-define('WP_ACCESSIBLE_HOSTS', 'api.wordpress.org, akismet.com, etc'); //Whitelist for External Connections
+define('WP_ACCESSIBLE_HOSTS', 'api.wordpress.org, akismet.com, etc'); //Allowlist for External Connections
 
 define('ALLOW_UNFILTERED_UPLOADS', true);
 

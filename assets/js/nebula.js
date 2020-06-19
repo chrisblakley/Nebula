@@ -90,7 +90,7 @@ jQuery(window).on('load', function(){
 
 	window.performance.mark('nebula_window_load_end');
 	window.performance.measure('nebula_window_load_functions', 'nebula_window_load_start', 'nebula_window_load_end');
-	window.performance.measure('nebula_fully_loaded', 'navigationStart', 'nebula_window_load_end');
+	window.performance.measure('nebula_window_loaded', 'navigationStart', 'nebula_window_load_end');
 });
 
 /*==========================
@@ -343,12 +343,12 @@ nebula.prefetch = function(url, callback, element){
 		//Strip out unnecessary parts of the URL
 		url = url.split('#')[0]; //Remove hashes
 
-		//Ignore blacklisted terms (logout, 1-click purchase buttons, etc.)
-		var prefetchBlacklist = ['logout'];
+		//Ignore blocklisted terms (logout, 1-click purchase buttons, etc.)
+		var prefetchBlocklist = ['logout'];
 
-		//@todo "Nebula" 0: Allow other JS to add to the blacklist here... https://core.trac.wordpress.org/changeset/41375
+		//@todo "Nebula" 0: Allow other JS to add to the blocklist here... https://core.trac.wordpress.org/changeset/41375
 
-		jQuery.each(prefetchBlacklist, function(index, value){
+		jQuery.each(prefetchBlocklist, function(index, value){
 			if ( url.indexOf(value) != -1 ){
 				return false;
 			}
@@ -442,8 +442,12 @@ nebula.visibilityChangeActions = function(){
 //Record performance timing
 nebula.performanceMetrics = function(){
 	if ( (nebula.get('timings') || (nebula.has(nebula, 'user.staff') && nebula.user.staff === 'developer')) ){ //Only available to Developers or with ?timings //@todo "Nebula" 0: Replace with optional chaining
-		if ( window.performance && window.performance.timing ){ //Safari 11+ //@todo "Nebula" 0: Use optional chaining
-			setTimeout(function(){
+		if ( window.performance && window.performance.timing && typeof window.requestIdleCallback === 'function' ){ //Safari 11+ and no IE11 //@todo "Nebula" 0: Use optional chaining (and remove the idlecallback condition after IE11)
+
+			window.requestIdleCallback(function(){
+				window.performance.mark('nebula_cpu_idle');
+				window.performance.measure('nebula_until_cpu_idle', 'navigationStart', 'nebula_cpu_idle');
+
 				var timingCalcuations = {
 					'Redirect': {start: Math.round(performance.timing.redirectStart - performance.timing.navigationStart), duration: Math.round(performance.timing.redirectEnd - performance.timing.redirectStart)},
 					'Unload': {start: Math.round(performance.timing.unloadStart - performance.timing.navigationStart), duration: Math.round(performance.timing.unloadEnd - performance.timing.unloadStart)},
@@ -455,11 +459,11 @@ nebula.performanceMetrics = function(){
 					'Processing': {start: Math.round(performance.timing.domLoading - performance.timing.navigationStart), duration: Math.round(performance.timing.loadEventStart - performance.timing.domLoading)},
 					'onLoad': {start: Math.round(performance.timing.loadEventStart - performance.timing.navigationStart), duration: Math.round(performance.timing.loadEventEnd - performance.timing.loadEventStart)},
 					'DOM Ready': {start: 0, duration: Math.round(performance.timing.domComplete - performance.timing.navigationStart)},
-					'Total Load': {start: 0, duration: Math.round(performance.timing.loadEventEnd - performance.timing.navigationStart)}
+					'Total Load': {start: 0, duration: Math.round(performance.timing.loadEventEnd - performance.timing.navigationStart)},
+					'CPU Idle': {start: 0, duration: Math.round(Date.now() - performance.timing.navigationStart)}
 				}
 
-				//If ?timings exists or if developer
-				if ( typeof console.table === 'function' ){
+				if ( typeof console.table === 'function' ){ //Remove condition after IE11 support
 					clientTimings = {};
 					jQuery.each(timingCalcuations, function(name, timings){
 						if ( !isNaN(timings.duration) && timings.duration > 0 && timings.duration < 6000000 ){ //Ignore empty values
@@ -486,8 +490,9 @@ nebula.performanceMetrics = function(){
 					ga('send', 'timing', 'Performance Timing', 'Server Response', timingCalcuations['Processing'].start, 'Navigation start until server response finishes (includes PHP execution time)');
 					ga('send', 'timing', 'Performance Timing', 'DOM Ready', timingCalcuations['DOM Ready'].duration, 'Navigation start until DOM ready');
 					ga('send', 'timing', 'Performance Timing', 'Window Load', timingCalcuations['Total Load'].duration, 'Navigation start until window load');
+					ga('send', 'timing', 'Performance Timing', 'CPU Idle', timingCalcuations['CPU Idle'].duration, 'Navigation start until CPU idle');
 				}
-			}, 0);
+			});
 		}
 	}
 }
@@ -501,9 +506,11 @@ nebula.overflowDetector = function(){
 				var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width(); //Right side of the sub-menu
 
 				if ( submenuRight > nebula.dom.window.width() ){ //If the right side is greater than the width of the viewport
-					jQuery(this).children('.sub-menu').addClass('overflowing');
+					jQuery(this).children('.sub-menu').addClass('overflowing overflowing-left');
+				} else if (submenuLeft > nebula.dom.window.width() ) {
+					jQuery(this).children('.sub-menu').addClass('overflowing overflowing-right');
 				} else {
-					jQuery(this).children('.sub-menu').removeClass('overflowing');
+					jQuery(this).children('.sub-menu').removeClass('overflowing overflowing-left overflowing-right');
 				}
 			}
 		},
@@ -1440,6 +1447,7 @@ nebula.eventTracking = function(){
 
 		//Reporting Observer deprecations and interventions
 		//@todo Nebula 0: This may be causing "aw snap" errors in Chrome. Disabling for now until the feature is more stable.
+		//https://caniuse.com/#feat=mdn-api_reportingobserver
 	/*
 		if ( typeof window.ReportingObserver !== 'undefined' ){ //Chrome 68+
 			var nebulaReportingObserver = new ReportingObserver(function(reports, observer){
@@ -2288,7 +2296,7 @@ nebula.cf7Functions = function(){
 	//Replace submit input with a button so a spinner icon can be used instead of the CF7 spin gif (unless it has the class "no-button")
 	jQuery('.wpcf7-form input[type=submit]').each(function(){
 		if ( !jQuery(this).hasClass('no-button') ){
-			jQuery('.wpcf7-form input[type=submit]').replaceWith('<button id="submit" type="submit" class="' + jQuery('.wpcf7-form input[type=submit]').attr('class') + '">' + jQuery('.wpcf7-form input[type=submit]').val() + '</button>');
+			jQuery(this).replaceWith('<button id="submit" type="submit" class="' + jQuery(this).attr('class') + '">' + jQuery(this).val() + '</button>');
 		}
 	});
 
@@ -2861,7 +2869,7 @@ nebula.lazyLoadAssets = function(){
 //When necessary, load any element that is meant to be lazy loaded immediately
 //Either call this directly, or trigger 'nebula_load' on the window
 nebula.loadEverything = function(){
-	//@todo "Nebula" 0: listen for idle callback here once it is fully supported: https://caniuse.com/#feat=requestidlecallback
+	//@todo "Nebula" 0: listen for idle callback here after IE11 no longer supported: https://caniuse.com/#feat=requestidlecallback
 	jQuery('.nebula-lazy-position, .lazy-load, .nebula-lazy').each(function(){
 		nebula.loadElement(jQuery(this)); //Load the element immediately
 	});

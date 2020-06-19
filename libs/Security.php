@@ -181,43 +181,43 @@ if ( !trait_exists('Security') ){
 			}
 		}
 
-		//Check referrer for known spambots and blacklisted domains
+		//Check referrer for known spambots and blocklisted domains
 		public function domain_prevention(){
-			$this->timer('Domain Blacklist');
+			$this->timer('Domain Blocklist');
 
 			//Skip lookups if user has already been checked or for logged in users.
-			if ( (isset($_SESSION['blacklisted']) && $_SESSION['blacklisted'] === false) || is_user_logged_in() ){
+			if ( (isset($_SESSION['blocklisted']) && $_SESSION['blocklisted'] === false) || is_user_logged_in() ){
 				return false;
 			}
 
-			if ( $this->get_option('domain_blacklisting') ){
-				$blacklisted_domains = $this->get_domain_blacklist();
+			if ( $this->get_option('domain_blocklisting') ){
+				$blocklisted_domains = $this->get_domain_blocklist();
 				$ip_address = $this->get_ip_address();
 
-				if ( count($blacklisted_domains) > 1 ){
-					if ( isset($_SERVER['HTTP_REFERER']) && $this->contains(strtolower($_SERVER['HTTP_REFERER']), $blacklisted_domains) ){
-						$this->ga_send_exception('(Security) Blacklisted domain prevented. Referrer: ' . $_SERVER['HTTP_REFERER'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Blacklisted Referrer'));
+				if ( count($blocklisted_domains) > 1 ){
+					if ( isset($_SERVER['HTTP_REFERER']) && $this->contains(strtolower($_SERVER['HTTP_REFERER']), $blocklisted_domains) ){
+						$this->ga_send_exception('(Security) Blocklisted domain prevented. Referrer: ' . $_SERVER['HTTP_REFERER'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Blocklisted Referrer'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
 
-					if ( isset($_SERVER['REMOTE_HOST']) && $this->contains(strtolower($_SERVER['REMOTE_HOST']), $blacklisted_domains) ){
-						$this->ga_send_exception('(Security) Blacklisted domain prevented. Hostname: ' . $_SERVER['REMOTE_HOST'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Blacklisted Hostname'));
+					if ( isset($_SERVER['REMOTE_HOST']) && $this->contains(strtolower($_SERVER['REMOTE_HOST']), $blocklisted_domains) ){
+						$this->ga_send_exception('(Security) Blocklisted domain prevented. Hostname: ' . $_SERVER['REMOTE_HOST'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Blocklisted Hostname'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
 
-					if ( isset($_SERVER['SERVER_NAME']) && $this->contains(strtolower($_SERVER['SERVER_NAME']), $blacklisted_domains) ){
-						$this->ga_send_exception('(Security) Blacklisted domain prevented. Server Name: ' . $_SERVER['SERVER_NAME'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Blacklisted Server Name'));
+					if ( isset($_SERVER['SERVER_NAME']) && $this->contains(strtolower($_SERVER['SERVER_NAME']), $blocklisted_domains) ){
+						$this->ga_send_exception('(Security) Blocklisted domain prevented. Server Name: ' . $_SERVER['SERVER_NAME'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Blocklisted Server Name'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
 
-					if ( isset($ip_address) && $this->contains(strtolower(gethostbyaddr($ip_address)), $blacklisted_domains) ){
-						$this->ga_send_exception('(Security) Blacklisted domain prevented. Network Hostname: ' . $ip_address, 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Blacklisted Network Hostname'));
+					if ( isset($ip_address) && $this->contains(strtolower(gethostbyaddr($ip_address)), $blocklisted_domains) ){
+						$this->ga_send_exception('(Security) Blocklisted domain prevented. Network Hostname: ' . $ip_address, 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Blocklisted Network Hostname'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
@@ -226,64 +226,64 @@ if ( !trait_exists('Security') ){
 					$this->ga_send_exception('(Security) spammers.txt has no entries!', 0);
 				}
 
-				$this->set_global_session_cookie('blacklist', false, array('session'));
+				$this->set_global_session_cookie('blocklist', false, array('session'));
 			}
 
-			$this->timer('Domain Blacklist', 'end');
+			$this->timer('Domain Blocklist', 'end');
 		}
 
-		//Return an array of blacklisted domains from Matomo (or the latest Nebula on Github)
-		public function get_domain_blacklist(){
-			$domain_blacklist_json_file = get_template_directory() . '/inc/data/domain_blacklist.txt';
-			$domain_blacklist = get_transient('nebula_domain_blacklist');
-			if ( empty($domain_blacklist) || $this->is_debug() ){ //If transient expired or is debug
+		//Return an array of blocklisted domains from Matomo (or the latest Nebula on Github)
+		public function get_domain_blocklist(){
+			$domain_blocklist_json_file = get_template_directory() . '/inc/data/domain_blocklist.txt';
+			$domain_blocklist = get_transient('nebula_domain_blocklist');
+			if ( empty($domain_blocklist) || $this->is_debug() ){ //If transient expired or is debug
 				$response = $this->remote_get('https://raw.githubusercontent.com/matomo-org/referrer-spam-blacklist/master/spammers.txt');
 				if ( !is_wp_error($response) ){
-					$domain_blacklist = $response['body'];
+					$domain_blocklist = $response['body'];
 				}
 
 				//If there was an error or empty response, try my Github repo
-				if ( is_wp_error($response) || empty($domain_blacklist) ){ //This does not check availability because it is the same hostname as above.
-					$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/domain_blacklist.txt');
+				if ( is_wp_error($response) || empty($domain_blocklist) ){ //This does not check availability because it is the same hostname as above.
+					$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/domain_blocklist.txt');
 					if ( !is_wp_error($response) ){
-						$domain_blacklist = $response['body'];
+						$domain_blocklist = $response['body'];
 					}
 				}
 
 				//If either of the above remote requests received data, update the local file and store the data in a transient for 24 hours
-				if ( !is_wp_error($response) && !empty($domain_blacklist) ){
+				if ( !is_wp_error($response) && !empty($domain_blocklist) ){
 					WP_Filesystem();
 					global $wp_filesystem;
-					$wp_filesystem->put_contents($domain_blacklist_json_file, $domain_blacklist);
-					set_transient('nebula_domain_blacklist', $domain_blacklist, HOUR_IN_SECONDS*36);
+					$wp_filesystem->put_contents($domain_blocklist_json_file, $domain_blocklist);
+					set_transient('nebula_domain_blocklist', $domain_blocklist, HOUR_IN_SECONDS*36);
 				}
 			}
 
 			//If neither remote resource worked, get the local file
-			if ( empty($domain_blacklist) ){
+			if ( empty($domain_blocklist) ){
 				WP_Filesystem();
 				global $wp_filesystem;
-				$domain_blacklist = $wp_filesystem->get_contents($domain_blacklist_json_file);
+				$domain_blocklist = $wp_filesystem->get_contents($domain_blocklist_json_file);
 			}
 
 			//If one of the above methods worked, parse the data.
-			if ( !empty($domain_blacklist) ){
-				$blacklisted_domains = array();
-				foreach( explode("\n", $domain_blacklist) as $line ){
+			if ( !empty($domain_blocklist) ){
+				$blocklisted_domains = array();
+				foreach( explode("\n", $domain_blocklist) as $line ){
 					if ( !empty($line) ){
-						$blacklisted_domains[] = $line;
+						$blocklisted_domains[] = $line;
 					}
 				}
 			} else {
 				$this->ga_send_exception('(Security) spammers.txt was not available!', 0);
 			}
 
-			//Add manual and user-added blacklisted domains
-			$manual_nebula_blacklisted_domains = array(
+			//Add manual and user-added blocklisted domains
+			$manual_nebula_blocklisted_domains = array(
 				'bitcoinpile.com',
 			);
-			$all_blacklisted_domains = apply_filters('nebula_blacklisted_domains', $manual_nebula_blacklisted_domains);
-			return array_merge($blacklisted_domains, $all_blacklisted_domains);
+			$all_blocklisted_domains = apply_filters('nebula_blocklisted_domains', $manual_nebula_blocklisted_domains);
+			return array_merge($blocklisted_domains, $all_blocklisted_domains);
 		}
 
 		//Cookie Notification HTML that appears in the footer
