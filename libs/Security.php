@@ -35,6 +35,7 @@ if ( !trait_exists('Security') ){
 			header('x-frame-options: SAMEORIGIN');
 			header('X-XSS-Protection: 1; mode=block');
 			header('X-Content-Type-Options: nosniff');
+			header('Access-Control-Allow-Headers: X-WP-Nonce'); //Allow this header for WP Block Editor compatibility with CSP
 
 			if ( is_ssl() ){
 				header('Strict-Transport-Security: max-age=' . YEAR_IN_SECONDS . '; includeSubDomains; preload'); //https://scotthelme.co.uk/hsts-the-missing-link-in-tls/
@@ -42,6 +43,10 @@ if ( !trait_exists('Security') ){
 
 				//https://scotthelme.co.uk/hardening-your-http-response-headers/
 				//header(''); //@TODO "Nebula" 0: Upcoming spec - https://scotthelme.co.uk/a-new-security-header-expect-ct/
+
+				//Content Security Policy (CSP) and Feature Policy should be set by the child theme. Nebula cannot predict what endpoints or what features will be used, so setting these security policies in the parent theme (outside the control of developers) would be far too restrictive.
+					//Content Security Policy: https://scotthelme.co.uk/content-security-policy-an-introduction/
+					//Feature Policy: https://scotthelme.co.uk/a-new-security-header-feature-policy/ and https://caniuse.com/#feat=feature-policy
 			}
 		}
 

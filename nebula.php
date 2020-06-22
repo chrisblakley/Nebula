@@ -103,6 +103,24 @@ if ( !class_exists('Nebula') ){
 
 		public function session_start(){
 			if ( !$this->is_ajax_or_rest_request() && file_exists(session_save_path()) && is_readable(session_save_path()) && is_writable(session_save_path()) ){ //If not an AJAX/REST request and the session directory is writable
+				//Increased security on the session cookie
+				if ( version_compare(phpversion(), '7.3.0', '>=') ){
+					session_set_cookie_params(array(
+						'secure' => true, //Make this secure
+						'httponly' => true, //Enable httponly for session cookie to prevent JavaScruot XSS attacks
+						'samesite' => 'Strict' //Lax will sent the cookie for cross-domain GET requests, while Strict will not.
+					));
+				} else {
+					$current_session_cookie_params = session_get_cookie_params();
+					session_set_cookie_params(
+						$current_session_cookie_params['lifetime'],
+						$current_session_cookie_params['path'],
+						$current_session_cookie_params['domain'],
+						true, //Make this secure
+						true //Enable httponly for session cookie to prevent JavaScruot XSS attacks
+					);
+				}
+
 				if ( session_status() === PHP_SESSION_NONE ){
 					session_start(); //This breaks the Theme Editor for some reason, so we try not to do it on special requests like AJAX or the REST API
 				}
