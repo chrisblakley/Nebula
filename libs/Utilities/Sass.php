@@ -27,12 +27,17 @@ if ( !trait_exists('Sass') ){
 			}
 		 ===========================*/
 		public function scss_controller(){
-			if ( !is_writable(get_template_directory()) || !is_writable(get_template_directory() . '/style.css') ){
-				trigger_error('The template directory or files are not writable. Can not compile Sass files!', E_USER_NOTICE);
-				return false;
-			}
+			if ( $this->get_option('scss') && !$this->is_ajax_or_rest_request() && !$this->is_bot() ){
+				//Check when Sass processing is allowed to happen
+				if ( $this->get_option('scss_processing_only_when_logged_in') && !current_user_can('publish_posts') ){ //If this option is enabled but the role is lower than necessary
+					return false;
+				}
 
-			if ( $this->get_option('scss') && !$this->is_ajax_or_rest_request() ){
+				if ( !is_writable(get_template_directory()) || !is_writable(get_template_directory() . '/style.css') ){
+					trigger_error('The template directory or files are not writable. Can not compile Sass files!', E_USER_NOTICE);
+					return false;
+				}
+
 				//Nebula SCSS locations
 				$scss_locations = array(
 					'parent' => array(

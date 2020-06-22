@@ -238,6 +238,7 @@ if ( !trait_exists('Options') ){
 				'plugin_update_warning' => 0,
 				'unnecessary_metaboxes' => 1,
 				'scss' => 0,
+				'scss_processing_only_when_logged_in' => 0,
 				'critical_css' => 0,
 				'console_css' => 1,
 				'cookie_notification' => '',

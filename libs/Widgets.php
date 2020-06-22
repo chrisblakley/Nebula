@@ -329,7 +329,7 @@ if ( !trait_exists('Widgets') ){
 
 				<div class="row">
 					<div class="col">
-						<iframe class="googlemap" width="100%" height="<?php echo ( !empty($instance['height']) )? $instance['height'] : '350'; ?>" loading="lazy" frameborder="0"
+						<iframe class="googlemap" title="Google Map" width="100%" height="<?php echo ( !empty($instance['height']) )? $instance['height'] : '350'; ?>" loading="lazy"
 							src="https://www.google.com/maps/embed/v1/<?php echo $instance['map_mode']; ?>?key=<?php echo nebula()->option('google_browser_api_key'); ?>
 							<?php echo ( in_array($instance['map_mode'], array('place', 'search')) && !empty($instance['query']) )? '&q=' . $instance['query'] : ''; //Place, Search ?>
 
@@ -937,14 +937,14 @@ if ( !trait_exists('Widgets') ){
 					$youtube_data = nebula()->video_meta('youtube', $instance['video_id']);
 					?>
 					<div class="embed-responsive embed-responsive-16by9">
-						<iframe class="youtube embed-responsive-item" src="//www.youtube.com/embed/<?php echo $instance['video_id']; ?>?wmode=transparent&enablejsapi=1&rel=0" width="560" height="315" loading="lazy"></iframe>
+						<iframe class="youtube embed-responsive-item" src="//www.youtube.com/embed/<?php echo $instance['video_id']; ?>?wmode=transparent&enablejsapi=1&rel=0" width="560" height="315" title="<?php echo $instance['title']; ?>" loading="lazy"></iframe>
 					</div>
 					<?php
 				} else {
 					$vimeo_data = nebula()->video_meta('vimeo', '208432684');
 					?>
 					<div class="embed-responsive embed-responsive-16by9">
-						<iframe id="<?php echo $instance['video_id']; ?>" class="vimeo embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $instance['video_id']; ?>" width="560" height="315" loading="lazy"></iframe>
+						<iframe id="<?php echo $instance['video_id']; ?>" class="vimeo embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $instance['video_id']; ?>" width="560" height="315" title="<?php echo $instance['title']; ?>" loading="lazy"></iframe>
 					</div>
 					<?php
 				}

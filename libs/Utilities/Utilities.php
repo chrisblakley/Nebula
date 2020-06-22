@@ -1487,7 +1487,7 @@ if ( !trait_exists('Utilities') ){
 						}
 					}
 
-					if ( count($properties_created) > 0 ){
+					if ( !empty($properties_created) ){
 						?>
 						<div class="updated notice notice-warning">
 							<p><strong>Nebula Hubspot properties created!</strong> <?php echo count($properties_created); ?> contact properties were created in Hubspot. Be sure to <a href="https://app.hubspot.com/property-settings/<?php echo nebula()->get_option('hubspot_portal'); ?>/contact" target="_blank">manually create any needed properties</a> specific to this website.</p>

@@ -702,7 +702,7 @@ function appendPerformanceMetric(data){
 			}
 		}
 
-		diff = '';
+		var diff = '';
 		if ( data.diff ){
 			diff = ' <small>(' + data.diff + ' from previous)</small>';
 		}
@@ -722,7 +722,7 @@ function initializationStuff(){
 
 	//Remove query string once initialized.
 	if ( window.location.href.indexOf('?nebula-initialization=true') >= 0 ){
-		cleanURL = window.location.href.split('?');
+		var cleanURL = window.location.href.split('?');
 		history.replaceState(null, document.title, cleanURL[0]);
 	}
 }
@@ -848,9 +848,9 @@ function getQueryStrings(url){
 	var queryString = url.split('?')[1];
 
 	if ( queryString ){
-		queryStrings = queryString.split('&');
+		var queryStrings = queryString.split('&');
 		for ( var i = 0; i < queryStrings.length; i++ ){
-			hash = queryStrings[i].split('=');
+			var hash = queryStrings[i].split('=');
 			if ( hash[1] ){
 				queries[hash[0]] = hash[1];
 			} else {
@@ -893,14 +893,14 @@ function removeQueryParameter(keys, sourceURL){
 		if ( queryString !== '' ){
 			params_arr = queryString.split('&');
 
-			for ( i = params_arr.length-1; i >= 0; i -= 1 ){
+			for ( var i = params_arr.length-1; i >= 0; i -= 1 ){
 				param = params_arr[i].split('=')[0];
 				if ( param === item ){
 					params_arr.splice(i, 1);
 				}
 			}
 
-			newURL = baseURL + '?' + params_arr.join('&');
+			var newURL = baseURL + '?' + params_arr.join('&');
 		}
 	});
 
@@ -913,9 +913,10 @@ function removeQueryParameter(keys, sourceURL){
 }
 
 //Custom CSS expression for a case-insensitive contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
-//Call it with :Contains() - Ex: ...find('*:Contains(' + jQuery('.something').val() + ')')... -or- use the nebula function: keywordSearch(container, parent, value);
-jQuery.expr[':'].Contains=function(e,n,t){return(e.textContent||e.innerText||'').toUpperCase().indexOf(t[3].toUpperCase())>=0};
-
+//Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: nebula.keywordSearch(container, parent, value);
+jQuery.expr.pseudos.Contains = function(element, index, match){
+	return (element.textContent || element.innerText || '').toUpperCase().indexOf(match[3].toUpperCase()) >= 0;
+};
 
 //Nebula Options Functions
 
@@ -1242,7 +1243,7 @@ function performanceMetrics(){
 			var domReady = Math.round(performance.timing.domContentLoadedEventStart-performance.timing.navigationStart); //Navigation start until DOM ready
 			var windowLoaded = Math.round(performance.timing.loadEventStart-performance.timing.navigationStart); //Navigation start until window load
 
-			clientTimings = {
+			var clientTimings = {
 				'[JS] Server Response': {
 					'start': 0,
 					'duration': responseEnd,
@@ -1276,7 +1277,7 @@ function performanceMetrics(){
 //Passing immediate triggers the function on the leading edge (instead of the trailing edge).
 function debounce(callback, wait, uniqueID, immediate){
 	if ( typeof debounceTimers === 'undefined' ){
-		debounceTimers = {};
+		var debounceTimers = {};
 	}
 
 	if ( !uniqueID ){

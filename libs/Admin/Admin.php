@@ -629,7 +629,7 @@ if ( !trait_exists('Admin') ){
 				$nebula_warning_icon = '';
 				$nebula_adminbar_icon = 'fa-star';
 
-				if ( current_user_can('edit_others_posts') ){
+				if ( current_user_can('manage_options') ){
 					$warnings = $this->check_warnings();
 
 					//Remove "log" level warnings
@@ -1134,7 +1134,7 @@ if ( !trait_exists('Admin') ){
 
 			$php_timeline_json_file = get_template_directory() . '/inc/data/php_timeline.json';
 			$php_timeline = get_transient('nebula_php_timeline');
-			if ( (empty($php_timeline) || $this->is_debug()) ){
+			if ( empty($php_timeline) || $this->is_debug() ){
 				$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/php_timeline.json');
 				if ( !is_wp_error($response) ){
 					$php_timeline = $response['body'];

@@ -142,7 +142,7 @@ nebula.cacheSelectors = function(){
 		html: jQuery('html'),
 		body: jQuery('body'),
 	};
-}
+};
 
 //Nebula Service Worker
 //@TODO "Nebula" 0: Consider using workbox-window here to tie into the Workbox sw.js file (after IE11): https://developers.google.com/web/tools/workbox/modules/workbox-window
@@ -198,7 +198,7 @@ nebula.registerServiceWorker = function(){
 		//Listen for ability to show SW install prompt
 		window.addEventListener('beforeinstallprompt', function(event){
 			event.preventDefault(); //Prevent Chrome <= 67 from automatically showing the prompt
-			installPromptEvent = event; //Stash the event so it can be triggered later.
+			var installPromptEvent = event; //Stash the event so it can be triggered later.
 			jQuery('.nebula-sw-install-button').removeClass('inactive').addClass('ready'); //Show the Nebula install button if it is present.
 		});
 
@@ -213,7 +213,7 @@ nebula.registerServiceWorker = function(){
 					category: 'Progressive Web App',
 					action: 'Install Prompt Shown',
 					label: event.platforms.join(', '),
-				}
+				};
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
@@ -227,7 +227,7 @@ nebula.registerServiceWorker = function(){
 						action: 'Install Prompt User Choice',
 						result: result,
 						outcome: result.outcome,
-					}
+					};
 
 					nebula.dom.document.trigger('nebula_event', thisEvent);
 					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.outcome);
@@ -248,7 +248,7 @@ nebula.registerServiceWorker = function(){
 				category: 'Progressive Web App',
 				action: 'App Installed',
 				label: 'The app has been installed',
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
@@ -265,7 +265,7 @@ nebula.registerServiceWorker = function(){
 			}
 		}
 	}
-}
+};
 
 //Detections for events specific to predicting the next pageview.
 nebula.predictiveCacheListeners = function(){
@@ -308,7 +308,7 @@ nebula.predictiveCacheListeners = function(){
 			});
 		});
 	}
-}
+};
 
 //Prefetch a resource
 nebula.prefetch = function(url, callback, element){
@@ -360,14 +360,14 @@ nebula.prefetch = function(url, callback, element){
 			}
 		});
 	}
-}
+};
 
 //Send data to other tabs/windows using the Service Worker
 nebula.postMessage = function(data){
 	if ( navigator.serviceWorker && navigator.serviceWorker.controller ){ //@todo "Nebula" 0: Replace with optional chaining
 		navigator.serviceWorker.controller.postMessage(data);
 	}
-}
+};
 
 /*==========================
  Detection Functions
@@ -400,7 +400,7 @@ nebula.cookieNotification = function(){
 			return false;
 		});
 	}
-}
+};
 
 //Check (or set) network availability (online/offline)
 nebula.networkAvailable = function(){
@@ -419,7 +419,7 @@ nebula.networkAvailable = function(){
 	}
 
 	nebula.dom.document.trigger('nebula_network_change');
-}
+};
 
 //Page Visibility
 nebula.visibilityChangeActions = function(){
@@ -437,7 +437,7 @@ nebula.visibilityChangeActions = function(){
 		nebula.dom.document.trigger('nebula_page_visible');
 		nebula.dom.body.removeClass('page-visibility-hidden');
 	}
-}
+};
 
 //Record performance timing
 nebula.performanceMetrics = function(){
@@ -461,17 +461,17 @@ nebula.performanceMetrics = function(){
 					'DOM Ready': {start: 0, duration: Math.round(performance.timing.domComplete - performance.timing.navigationStart)},
 					'Total Load': {start: 0, duration: Math.round(performance.timing.loadEventEnd - performance.timing.navigationStart)},
 					'CPU Idle': {start: 0, duration: Math.round(Date.now() - performance.timing.navigationStart)}
-				}
+				};
 
 				if ( typeof console.table === 'function' ){ //Remove condition after IE11 support
-					clientTimings = {};
+					var clientTimings = {};
 					jQuery.each(timingCalcuations, function(name, timings){
 						if ( !isNaN(timings.duration) && timings.duration > 0 && timings.duration < 6000000 ){ //Ignore empty values
 							clientTimings[name] = {
 								start: timings.start,
 								duration: timings.duration,
 								elapsed: timings.start + timings.duration
-							}
+							};
 						}
 					});
 
@@ -495,7 +495,7 @@ nebula.performanceMetrics = function(){
 			});
 		}
 	}
-}
+};
 
 //Sub-menu viewport overflow detector
 nebula.overflowDetector = function(){
@@ -518,7 +518,7 @@ nebula.overflowDetector = function(){
 			jQuery(this).children('.sub-menu').removeClass('overflowing');
 		}
 	});
-}
+};
 
 //Check if the user has enabled DNT (if supported in their browser)
 nebula.isDoNotTrack = function(){
@@ -542,7 +542,7 @@ nebula.isDoNotTrack = function(){
 	}
 
 	return false; //The browser does not support DNT
-}
+};
 
 //Detect Battery Level
 nebula.battery = function(){
@@ -556,7 +556,7 @@ nebula.battery = function(){
 			});
 		});
 	}
-}
+};
 
 //Prep battery info for lookup
 nebula.batteryData = function(battery){
@@ -577,7 +577,7 @@ nebula.batteryData = function(battery){
 
 		nebula.dom.document.trigger('batteryChange');
 	}
-}
+};
 
 //Detect Network Connection
 nebula.networkConnection = function(){
@@ -587,9 +587,9 @@ nebula.networkConnection = function(){
 			type: connection.type,
 			metered: connection.metered,
 			bandwidth: connection.bandwidth,
-		}
+		};
 	}
-}
+};
 
 /*==========================
  Social Functions
@@ -606,7 +606,7 @@ nebula.facebookSDK = function(){
 			fjs.parentNode.insertBefore(js, fjs);
 		}(document, 'script', 'facebook-jssdk'));
 	}
-}
+};
 
 
 //Social sharing buttons
@@ -628,7 +628,7 @@ nebula.socialSharing = function(){
 				network: 'Facebook',
 				url: window.location.href,
 				title: document.title
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -651,7 +651,7 @@ nebula.socialSharing = function(){
 				network: 'Twitter',
 				url: window.location.href,
 				title: document.title
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -674,7 +674,7 @@ nebula.socialSharing = function(){
 				network: 'LinkedIn',
 				url: window.location.href,
 				title: document.title
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -697,7 +697,7 @@ nebula.socialSharing = function(){
 				network: 'Pinterest',
 				url: window.location.href,
 				title: document.title
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -720,7 +720,7 @@ nebula.socialSharing = function(){
 				network: 'Email',
 				url: window.location.href,
 				title: document.title
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -731,7 +731,7 @@ nebula.socialSharing = function(){
 		//Web Share API
 		if ( 'share' in navigator && !nebula.dom.body.hasClass('desktop') ){ //Chrome 61+
 			nebula.dom.document.on('click', 'a.nebula-share.webshare, a.nebula-share.shareapi', function(){
-				oThis = jQuery(this);
+				var oThis = jQuery(this);
 
 				navigator.share({
 					title: document.title,
@@ -746,7 +746,7 @@ nebula.socialSharing = function(){
 						network: 'Web Share API',
 						url: window.location.href,
 						title: document.title,
-					}
+					};
 
 					nebula.dom.document.trigger('nebula_event', thisEvent);
 					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
@@ -767,7 +767,7 @@ nebula.socialSharing = function(){
 			jQuery('a.nebula-share.webshare, a.nebula-share.shareapi').addClass('hidden');
 		}
 	}
-}
+};
 
 /*==========================
  Analytics Functions
@@ -802,7 +802,7 @@ nebula.eventTracking = function(){
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				text: jQuery(this).val() || jQuery(this).text() || '(Unknown)',
 				link: jQuery(this).attr('href')
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -817,7 +817,7 @@ nebula.eventTracking = function(){
 				category: 'Accordion',
 				action: 'Shown',
 				label: jQuery('[data-target="#' + e.target.id + '"]').text().trim() || e.target.id,
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
@@ -829,7 +829,7 @@ nebula.eventTracking = function(){
 				category: 'Accordion',
 				action: 'Hidden',
 				label: jQuery('[data-target="#' + e.target.id + '"]').text().trim() || e.target.id,
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
@@ -843,7 +843,7 @@ nebula.eventTracking = function(){
 				category: 'Modal',
 				action: 'Shown',
 				label: jQuery('#' + e.target.id + ' .modal-title').text().trim() || e.target.id,
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
@@ -855,7 +855,7 @@ nebula.eventTracking = function(){
 				category: 'Modal',
 				action: 'Hidden',
 				label: jQuery('#' + e.target.id + ' .modal-title').text().trim() || e.target.id,
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
@@ -871,7 +871,7 @@ nebula.eventTracking = function(){
 					action: e.target.id || e.target.title || e.target.className.replace(/\s/g, '.'),
 					from: e.from,
 					to: e.to,
-				}
+				};
 
 				thisEvent.activeSlide = jQuery(e.target).find('.carousel-item').eq(e.to);
 				thisEvent.activeSlideName = thisEvent.activeSlide.attr('id') || thisEvent.activeSlide.attr('title') || 'Unnamed';
@@ -894,7 +894,7 @@ nebula.eventTracking = function(){
 				category: 'Generic Form',
 				action: 'Submit',
 				formID: e.target.id || 'form.' + e.target.className.replace(/\s/g, '.'),
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.formID);
@@ -911,7 +911,7 @@ nebula.eventTracking = function(){
 					intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 					extension: extension,
 					fileName: jQuery(this).attr('href').substr(jQuery(this).attr('href').lastIndexOf("/")+1),
-				}
+				};
 
 				ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 				nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -931,7 +931,7 @@ nebula.eventTracking = function(){
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				filePath: jQuery(this).attr('href').trim(),
 				linkText: jQuery(this).text()
-			}
+			};
 
 			if ( thisEvent.filePath.length && thisEvent.filePath !== '#' ){
 				thisEvent.fileName = filePath.substr(filePath.lastIndexOf("/")+1);
@@ -953,7 +953,7 @@ nebula.eventTracking = function(){
 				action: 'Submit',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				query: jQuery(this).find('input[name="s"]').val().toLowerCase().trim()
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.query);
@@ -971,7 +971,7 @@ nebula.eventTracking = function(){
 					category: 'Keyboard Shortcut',
 					action: 'Find on Page (Ctrl+F)',
 					highlightedText: window.getSelection().toString().trim() || '(No highlighted text when initiating find)'
-				}
+				};
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.highlightedText, {'nonInteraction': true});
@@ -985,7 +985,7 @@ nebula.eventTracking = function(){
 					category: 'Keyboard Shortcut',
 					action: 'Bookmark (Ctrl+D)',
 					label: 'User bookmarked the page (with keyboard shortcut)'
-				}
+				};
 
 				nebula.removeQueryParameter(['utm_campaign', 'utm_medium', 'utm_source', 'utm_content', 'utm_term'], window.location.href); //Remove existing UTM parameters
 				history.replaceState(null, document.title, window.location.href + '?utm_source=bookmark');
@@ -1003,7 +1003,7 @@ nebula.eventTracking = function(){
 				action: 'Mailto',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				emailAddress: jQuery(this).attr('href').replace('mailto:', '')
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
@@ -1023,7 +1023,7 @@ nebula.eventTracking = function(){
 				action: 'Click-to-Call',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				phoneNumber: jQuery(this).attr('href').replace('tel:', '')
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
@@ -1043,7 +1043,7 @@ nebula.eventTracking = function(){
 				action: 'SMS',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				phoneNumber: jQuery(this).attr('href').replace('tel:', '')
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
@@ -1065,7 +1065,7 @@ nebula.eventTracking = function(){
 				action: 'Utility Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				linkText: jQuery(this).text().trim()
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1081,7 +1081,7 @@ nebula.eventTracking = function(){
 				action: 'Primary Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				linkText: jQuery(this).text().trim()
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1097,7 +1097,7 @@ nebula.eventTracking = function(){
 				action: 'Mobile Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				linkText: jQuery(this).text().trim()
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1113,7 +1113,7 @@ nebula.eventTracking = function(){
 				action: 'Breadcrumbs',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				linkText: jQuery(this).text().trim()
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1129,7 +1129,7 @@ nebula.eventTracking = function(){
 				action: 'Sidebar Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				linkText: jQuery(this).text().trim()
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1145,7 +1145,7 @@ nebula.eventTracking = function(){
 				action: 'Footer Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				linkText: jQuery(this).text().trim()
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1162,7 +1162,7 @@ nebula.eventTracking = function(){
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				text: jQuery(this).text(),
 				link: jQuery(this).attr('href')
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1178,7 +1178,7 @@ nebula.eventTracking = function(){
 				action: document.title,
 				location: document.location,
 				state: JSON.stringify(e.state)
-			}
+			};
 
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.location);
 		});
@@ -1192,7 +1192,7 @@ nebula.eventTracking = function(){
 					action: 'Image',
 					element: 'Image',
 					src: jQuery(this).attr('src')
-				}
+				};
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.src, {'nonInteraction': true}); //Non-interaction because if the user leaves due to this it should be considered a bounce
@@ -1219,7 +1219,7 @@ nebula.eventTracking = function(){
 				clickEvents.splice(0, clickEvents.length - 5);
 			}
 
-			//detect 3 click in 5 sec
+			//Detect 3 clicks in 5 seconds
 			if ( clickEvents.length >= 5 ){
 				var numberOfClicks = 5; //Number of clicks to detect within the period
 				var period = 3; //The period to listen for the number of clicks
@@ -1234,8 +1234,8 @@ nebula.eventTracking = function(){
 
 				//Loop through the last number of click events to check the distance between them
 				var max_distance = 0;
-				for ( i = last - numberOfClicks+1; i < last; i++ ){
-					for ( j = i+1; j <= last; j++ ){
+				for ( var i = last - numberOfClicks+1; i < last; i++ ){
+					for ( var j = i+1; j <= last; j++ ){
 						var distance = Math.round(Math.sqrt(Math.pow(clickEvents[i].event.clientX - clickEvents[j].event.clientX, 2) + Math.pow(clickEvents[i].event.clientY - clickEvents[j].event.clientY, 2)));
 						if ( distance > max_distance ){
 							max_distance = distance;
@@ -1255,7 +1255,7 @@ nebula.eventTracking = function(){
 					clicks: numberOfClicks,
 					period: timeDiff,
 					selector: nebula.domTreeToString(e.target),
-				}
+				};
 
 				thisEvent.description = numberOfClicks + ' clicks in ' + timeDiff + ' seconds detected within ' + max_distance + 'px of ' + thisEvent.selector;
 
@@ -1274,7 +1274,7 @@ nebula.eventTracking = function(){
 				category: 'Accessibility Links',
 				action: 'Focus',
 				linkText: jQuery(this).text().trim()
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
@@ -1289,7 +1289,7 @@ nebula.eventTracking = function(){
 				action: 'Click',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				linkText: jQuery(this).text().trim()
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
@@ -1303,7 +1303,7 @@ nebula.eventTracking = function(){
 				category: 'Videos',
 				action: 'Enter Picture-in-Picture',
 				videoID: e.target.id
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.videoID, {'nonInteraction': true}); //Non-interaction because this may not be triggered by the user.
@@ -1316,7 +1316,7 @@ nebula.eventTracking = function(){
 				category: 'Videos',
 				action: 'Leave Picture-in-Picture',
 				videoID: e.target.id
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.videoID, {'nonInteraction': true}); //Non-interaction because this may not be triggered by the user.
@@ -1327,7 +1327,7 @@ nebula.eventTracking = function(){
 		nebula.dom.document.on('cut copy', function(){
 			var selection = window.getSelection().toString();
 			var words = selection.split(' ');
-			wordsLength = words.length;
+			var wordsLength = words.length;
 
 			//Track Email or Phone copies as contact intent.
 			var emailPhoneAddress = words.join(' ').trim();
@@ -1340,7 +1340,7 @@ nebula.eventTracking = function(){
 					selection: selection,
 					words: words,
 					wordcount: wordsLength
-				}
+				};
 
 				ga('set', nebula.analytics.dimensions.contactMethod, 'Mailto');
 				ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
@@ -1357,7 +1357,7 @@ nebula.eventTracking = function(){
 					selection: selection,
 					words: words,
 					wordcount: wordsLength
-				}
+				};
 
 				ga('set', nebula.analytics.dimensions.contactMethod, 'Street Address');
 				ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
@@ -1378,7 +1378,7 @@ nebula.eventTracking = function(){
 						selection: selection,
 						words: words,
 						wordcount: wordsLength
-					}
+					};
 
 					ga('set', nebula.analytics.dimensions.contactMethod, 'Click-to-Call');
 					ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
@@ -1397,7 +1397,7 @@ nebula.eventTracking = function(){
 				selection: selection,
 				words: words,
 				wordcount: wordsLength
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 
@@ -1443,7 +1443,7 @@ nebula.eventTracking = function(){
 			ga('send', 'exception', {'exDescription': '(JS) ' + errorMessage, 'exFatal': false}); //Is there a better way to detect fatal vs non-fatal errors?
 			window.dataLayer.push({'event': 'nebula-window-error', 'nebula-event': errorMessage});
 			nebula.nv('event', 'JavaScript Error');
-		}
+		};
 
 		//Reporting Observer deprecations and interventions
 		//@todo Nebula 0: This may be causing "aw snap" errors in Chrome. Disabling for now until the feature is more stable.
@@ -1482,7 +1482,7 @@ nebula.eventTracking = function(){
 				action: action,
 				label: 'User triggered print via ' + trigger,
 				intent: 'Intent'
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1524,7 +1524,7 @@ nebula.eventTracking = function(){
 				category: 'DataTables',
 				action: 'Search Filter',
 				query: oThis.val().toLowerCase().trim()
-			}
+			};
 
 			nebula.debounce(function(){
 				nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1540,7 +1540,7 @@ nebula.eventTracking = function(){
 				category: 'DataTables',
 				action: 'Sort',
 				heading: jQuery(this).text()
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.heading);
@@ -1554,7 +1554,7 @@ nebula.eventTracking = function(){
 				category: 'DataTables',
 				action: 'Paginate',
 				page: jQuery(this).text()
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.page);
@@ -1568,7 +1568,7 @@ nebula.eventTracking = function(){
 				category: 'DataTables',
 				action: 'Shown Entries Change', //Number of visible rows select dropdown
 				selected: jQuery(this).val()
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.selected);
@@ -1578,7 +1578,7 @@ nebula.eventTracking = function(){
 		nebula.scrollDepth();
 		nebula.ecommerceTracking();
 	}, 'nebula event tracking');
-}
+};
 
 //Ecommerce event tracking
 //Note: These supplement the plugin Enhanced Ecommerce for WooCommerce
@@ -1591,7 +1591,7 @@ nebula.ecommerceTracking = function(){
 				category: 'Ecommerce',
 				action: 'Add to Cart',
 				product: jQuery(this).attr('data-product_id')
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.product);
@@ -1607,7 +1607,7 @@ nebula.ecommerceTracking = function(){
 				category: 'Ecommerce',
 				action: 'Update Cart Button',
 				label: 'Update Cart button click'
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
@@ -1622,7 +1622,7 @@ nebula.ecommerceTracking = function(){
 				category: 'Ecommerce',
 				action: 'Remove This Item',
 				product: jQuery(this).attr('data-product_id')
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.product);
@@ -1637,7 +1637,7 @@ nebula.ecommerceTracking = function(){
 				category: 'Ecommerce',
 				action: 'Proceed to Checkout Button',
 				label: 'Proceed to Checkout button click'
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
@@ -1655,7 +1655,7 @@ nebula.ecommerceTracking = function(){
 				category: 'Ecommerce',
 				action: 'Started Checkout Form',
 				label: 'Began filling out the checkout form (Billing First Name)'
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
@@ -1670,7 +1670,7 @@ nebula.ecommerceTracking = function(){
 				category: 'Ecommerce',
 				action: 'Place Order Button',
 				label: 'Place Order button click'
-			}
+			};
 
 			ga('send', 'timing', 'Ecommerce', 'Checkout Form', Math.round(nebula.timer('ecommerce_checkout', 'end')), 'Billing details start to Place Order button click');
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1681,7 +1681,7 @@ nebula.ecommerceTracking = function(){
 			nebula.nv('identify', {hs_lifecyclestage_customer_date: 1}); //@todo "Nebula" 0: What kind of date format does Hubspot expect here?
 		});
 	}
-}
+};
 
 //Detect scroll depth
 nebula.scrollDepth = function(){
@@ -1698,7 +1698,7 @@ nebula.scrollDepth = function(){
 						action: 'Began Scrolling',
 						scrollStart: nebula.dom.body.scrollTop() + 'px',
 						timeBeforeScrollStart: Math.round(nebula.scrollBegin)
-					}
+					};
 					thisEvent.label = 'Initial scroll started at ' + thisEvent.scrollStart;
 					nebula.dom.document.trigger('nebula_event', thisEvent);
 					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.scrollStart, thisEvent.scrollStartTime, {'nonInteraction': true}); //Event value is time until scrolling.
@@ -1714,7 +1714,7 @@ nebula.scrollDepth = function(){
 							action: 'Entire Page',
 							distance: nebula.dom.document.height(),
 							scrollEnd: performance.now()-(nebula.scrollBegin+scrollReady),
-						}
+						};
 
 						thisEvent.timetoScrollEnd = Math.round(thisEvent.scrollEnd);
 
@@ -1724,13 +1724,13 @@ nebula.scrollDepth = function(){
 					}, 'end scrolling');
 				}
 			}, 1000, 'scroll depth');
-		}
+		};
 		window.addEventListener('scroll', scrollDepthHandler); //"scroll" is passive by default
 	}
-}
+};
 
 //Check if an element is within the viewport
-nebula.isInViewport = function(element, offset){return nebula.isInView(element, offset);}
+nebula.isInViewport = function(element, offset){return nebula.isInView(element, offset);};
 nebula.isInView = function(element, offset){
 	if ( element ){
 		if ( typeof element === 'string' ){
@@ -1753,7 +1753,7 @@ nebula.isInView = function(element, offset){
 	}
 
 	return false;
-}
+};
 
 //Send data to the CRM
 nebula.nv = function(action, data, sendNow){
@@ -1815,13 +1815,13 @@ nebula.nv = function(action, data, sendNow){
 	}
 
 	nebula.dom.document.trigger('nv_data', data);
-}
+};
 
 //Easily send form data to nebula.nv() with nv-* classes
 //Add a class to the input field with the category to use. Ex: nv-firstname or nv-email or nv-fullname
 //Call this function before sending a ga() event because it sets dimensions too
 nebula.nvForm = function(formID){
-	nvFormObj = {};
+	var nvFormObj = {};
 
 	if ( formID ){
 		nvFormObj['form_contacted'] = 'CF7 (' + formID + ') Submit Attempt'; //This is triggered on submission attempt, so it may capture abandoned forms due to validation errors.
@@ -1844,7 +1844,7 @@ nebula.nvForm = function(formID){
 	if ( Object.keys(nvFormObj).length ){
 		nebula.nv('identify', nvFormObj);
 	}
-}
+};
 
 /*==========================
  Search Functions
@@ -1853,7 +1853,7 @@ nebula.nvForm = function(formID){
 //Keyword Filter
 nebula.keywordSearch = function(container, parent, values, filteredClass, operator){ //Alias for old function name
 	nebula.keywordFilter(container, parent, values, filteredClass, operator);
-}
+};
 nebula.keywordFilter = function(container, parent, values, filteredClass, operator){
 	if ( typeof values === 'string' ){
 		values = [values];
@@ -1910,7 +1910,7 @@ nebula.keywordFilter = function(container, parent, values, filteredClass, operat
 			}
 		}
 	}
-}
+};
 
 //Menu Search Replacement
 nebula.menuSearchReplacement = function(){
@@ -1930,7 +1930,7 @@ nebula.menuSearchReplacement = function(){
 			}
 		});
 	}
-}
+};
 
 //Only allow alphanumeric (and some special keys) to return true
 //Use inside of a keydown function, and pass the event data.
@@ -1945,7 +1945,7 @@ nebula.searchTriggerOnlyChars = function(e){
 	} else {
 		return false;
 	}
-}
+};
 
 //Enable autocomplete search on WordPress core selectors
 nebula.autocompleteSearchListeners = function(){
@@ -1963,7 +1963,7 @@ nebula.autocompleteSearchListeners = function(){
 		});
 		nebula.loadCSS(nebula.site.resources.styles.nebula_jquery_ui);
 	}
-}
+};
 
 //Run an autocomplete search on a passes element.
 nebula.autocompleteSearch = function(element, types){
@@ -2022,10 +2022,10 @@ nebula.autocompleteSearch = function(element, types){
 								value.label = value.label.replace(/&#038;/g, "\&");
 							});
 
-							noSearchResults = '';
+							var noSearchResults = '';
 						} else {
 							nebula.dom.document.trigger('nebula_autocomplete_search_no_results');
-							noSearchResults = ' (No Results)';
+							var noSearchResults = ' (No Results)';
 						}
 
 						nebula.debounce(function(){
@@ -2035,7 +2035,7 @@ nebula.autocompleteSearch = function(element, types){
 								request: request,
 								term: request.term.toLowerCase(),
 								noResults: ( noSearchResults )? true : false,
-							}
+							};
 
 							nebula.dom.document.trigger('nebula_event', thisEvent);
 							ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.term);
@@ -2070,7 +2070,7 @@ nebula.autocompleteSearch = function(element, types){
 					ui: ui,
 					label: ui.item.label,
 					external: ( typeof ui.item.external !== 'undefined' )? true : false,
-				}
+				};
 
 				ga('set', nebula.analytics.metrics.autocompleteSearchClicks, 1);
 				nebula.dom.document.trigger('nebula_autocomplete_search_selected', thisEvent.ui);
@@ -2084,8 +2084,8 @@ nebula.autocompleteSearch = function(element, types){
 				}
 			},
 			open: function(){
-				 element.closest('form').addClass('autocompleted');
-				 var heroAutoCompleteDropdown = jQuery('.form-identifier-nebula-hero-search');
+				element.closest('form').addClass('autocompleted');
+				var heroAutoCompleteDropdown = jQuery('.form-identifier-nebula-hero-search');
 				heroAutoCompleteDropdown.css('max-width', element.outerWidth());
 			},
 			close: function(){
@@ -2093,14 +2093,14 @@ nebula.autocompleteSearch = function(element, types){
 			},
 			minLength: 3,
 		}).data("ui-autocomplete")._renderItem = function(ul, item){
-			 thisSimilarity = ( typeof item.similarity !== 'undefined' )? item.similarity.toFixed(1) + '% Match' : '';
-			 var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a> " + item.label.replace(/\\/g, '') + "</a>").appendTo(ul);
-			 return listItem;
+			var thisSimilarity = ( typeof item.similarity !== 'undefined' )? item.similarity.toFixed(1) + '% Match' : '';
+			var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a> " + item.label.replace(/\\/g, '') + "</a>").appendTo(ul);
+			return listItem;
 		};
 		var thisFormIdentifier = element.closest('form').attr('id') || element.closest('form').attr('name') || element.closest('form').attr('class');
 		element.autocomplete("widget").addClass("form-identifier-" + thisFormIdentifier);
 	}
-}
+};
 
 nebula.wpSearchInput = function(){
 	jQuery('#post-0 #s, #nebula-drawer #s, .search-results #s').trigger('focus'); //Automatically focus on specific search inputs
@@ -2110,7 +2110,7 @@ nebula.wpSearchInput = function(){
 	if ( searchVal ){
 		jQuery('#s, .nebula-search input').attr('placeholder', searchVal.replace(/\+/g, ' '));
 	}
-}
+};
 
 
 //Mobile search placeholder toggle
@@ -2121,7 +2121,7 @@ nebula.mobileSearchPlaceholder = function(){
 		searchPlaceholder = 'Search';
 	}
 	mobileHeaderSearchInput.attr('placeholder', searchPlaceholder);
-}
+};
 
 
 //Search Validator
@@ -2151,7 +2151,7 @@ nebula.searchValidator = function(){
 				jQuery(this).parent().find('.input.search').prop('title', '').attr('placeholder', 'Search').removeClass('focusError');
 				jQuery(this).parent().find('.btn.submit').prop('title', '').removeClass('notallowed').val('Search');
 			}
-		})
+		});
 
 		jQuery('form.search').on('submit', function(){
 			if ( jQuery(this).find('.input.search').val() === '' || jQuery(this).find('.input.search').val().trim().length === 0 ){
@@ -2163,7 +2163,7 @@ nebula.searchValidator = function(){
 			}
 		});
 	}
-}
+};
 
 //Highlight search terms
 nebula.searchTermHighlighter = function(){
@@ -2180,7 +2180,7 @@ nebula.searchTermHighlighter = function(){
 			nebula.emphasizeSearchTerms();
 		}
 	});
-}
+};
 
 //Emphasize the search Terms
 nebula.emphasizeSearchTerms = function(){
@@ -2200,7 +2200,7 @@ nebula.emphasizeSearchTerms = function(){
 			});
 		});
 	});
-}
+};
 
 //Single search result redirection drawer
 nebula.singleResultDrawer = function(){
@@ -2216,7 +2216,7 @@ nebula.singleResultDrawer = function(){
 			return false;
 		});
 	}
-}
+};
 
 //Page Suggestions for 404 or no search results pages using Google Custom Search Engine
 nebula.pageSuggestion = function(){
@@ -2239,7 +2239,7 @@ nebula.pageSuggestion = function(){
 				action: ( jQuery(this).hasClass('internal-suggestion') )? 'Internal' : 'GCSE',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				suggestion: jQuery(this).text(),
-			}
+			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -2247,7 +2247,7 @@ nebula.pageSuggestion = function(){
 			nebula.nv('event', 'Page Suggestion Click');
 		});
 	}
-}
+};
 
 nebula.tryGCSESearch = function(phrase){
 	if ( nebula.site.options.nebula_cse_id.length && nebula.site.options.nebula_google_browser_api_key.length ){
@@ -2257,7 +2257,7 @@ nebula.tryGCSESearch = function(phrase){
 			num: 10,
 			q: phrase,
 			alt: 'JSON'
-		}
+		};
 		var API_URL = 'https://www.googleapis.com/customsearch/v1?';
 
 		// Send the request to the custom search API
@@ -2269,7 +2269,7 @@ nebula.tryGCSESearch = function(phrase){
 			}
 		});
 	}
-}
+};
 
 nebula.showSuggestedGCSEPage = function(title, url){
 	var hostname = new RegExp(location.host);
@@ -2278,7 +2278,7 @@ nebula.showSuggestedGCSEPage = function(title, url){
 		jQuery('#nebula-drawer.suggestedpage').slideDown();
 		nebula.prefetch(url);
 	}
-}
+};
 
 /*==========================
  Contact Form Functions
@@ -2291,7 +2291,7 @@ nebula.cf7Functions = function(){
 
 	jQuery('.wpcf7-form p:empty').remove(); //Remove empty <p> tags within CF7 forms
 
-	formStarted = {};
+	var formStarted = {};
 
 	//Replace submit input with a button so a spinner icon can be used instead of the CF7 spin gif (unless it has the class "no-button")
 	jQuery('.wpcf7-form input[type=submit]').each(function(){
@@ -2306,7 +2306,7 @@ nebula.cf7Functions = function(){
 			category: 'CF7 Form',
 			action: 'Impression',
 			formID: jQuery(this).closest('.wpcf7').attr('id') || jQuery(this).attr('id'),
-		}
+		};
 
 		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('impressionTracker:observeElements', [{
@@ -2329,7 +2329,7 @@ nebula.cf7Functions = function(){
 	nebula.dom.document.on('focus', '.wpcf7-form input, .wpcf7-form button, .wpcf7-form textarea', function(e){
 		var formID = jQuery(this).closest('div.wpcf7').attr('id');
 
-		thisField = e.target.name || jQuery(this).closest('.form-group').find('label').text() || e.target.id || 'Unknown';
+		var thisField = e.target.name || jQuery(this).closest('.form-group').find('label').text() || e.target.id || 'Unknown';
 		var fieldInfo = '';
 		if ( jQuery(this).attr('type') === 'checkbox' || jQuery(this).attr('type') === 'radio' ){
 			fieldInfo = jQuery(this).attr('value');
@@ -2343,7 +2343,7 @@ nebula.cf7Functions = function(){
 				formID: formID,
 				field: thisField,
 				fieldInfo: fieldInfo
-			}
+			};
 
 			//Form starts
 			if ( typeof formStarted[formID] === 'undefined' || !formStarted[formID] ){
@@ -2398,7 +2398,7 @@ nebula.cf7Functions = function(){
 			category: 'CF7 Form',
 			action: 'Submit (Invalid)',
 			formID: e.detail.id,
-		}
+		};
 
 		//If timing data exists
 		if ( nebula && nebula.timings && typeof nebula.timings[e.detail.id] !== 'undefined' ){ //@todo "Nebula" 0: Use optional chaining
@@ -2433,7 +2433,7 @@ nebula.cf7Functions = function(){
 				category: 'CF7 Form',
 				action: 'Submit (Invalid)',
 				label: 'General HTML5 validation error',
-			}
+			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
@@ -2451,7 +2451,7 @@ nebula.cf7Functions = function(){
 			formID: e.detail.id,
 			formTime: nebula.timer(e.detail.id, 'end'),
 			inputs: nebula.timings[e.detail.id].laps + ' inputs'
-		}
+		};
 
 		thisEvent.label = 'Form submission failed spam tests on form ID: ' + thisEvent.formID;
 
@@ -2475,7 +2475,7 @@ nebula.cf7Functions = function(){
 			formID: e.detail.id,
 			formTime: nebula.timer(e.detail.id, 'end'),
 			inputs: nebula.timings[e.detail.id].laps + ' inputs'
-		}
+		};
 
 		thisEvent.label = 'Form submission email send failed for form ID: ' + thisEvent.formID;
 
@@ -2501,7 +2501,7 @@ nebula.cf7Functions = function(){
 			formID: e.detail.id,
 			formTime: nebula.timer(e.detail.id, 'end'),
 			inputs: nebula.timings[e.detail.id].laps + ' inputs'
-		}
+		};
 
 		thisEvent.label = 'Form ID: ' + thisEvent.formID;
 
@@ -2535,7 +2535,7 @@ nebula.cf7Functions = function(){
 			category: 'CF7 Form',
 			action: 'Submit (Attempt)',
 			formID: e.detail.id,
-		}
+		};
 
 		//If timing data exists
 		if ( nebula && nebula.timings && typeof nebula.timings[e.detail.id] !== 'undefined' ){ //@todo "Nebula" 0: Use optional chaining
@@ -2557,11 +2557,11 @@ nebula.cf7Functions = function(){
 		jQuery('#' + e.detail.id).find('button#submit').removeClass('active');
 		jQuery('.invalid-feedback').addClass('hidden');
 	});
-}
+};
 
 nebula.updateFormFlow = function(formID, field, info){
 	if ( typeof formFlow === 'undefined' ){
-		formFlow = {};
+		var formFlow = {};
 	}
 
 	if ( !info ){
@@ -2581,7 +2581,7 @@ nebula.updateFormFlow = function(formID, field, info){
 	}
 
 	ga('set', nebula.analytics.dimensions.formFlow, formFlow[formID]); //Update form field history. scope: session
-}
+};
 
 //Enable localstorage on CF7 text inputs and textareas
 nebula.cf7LocalStorage = function(){
@@ -2628,7 +2628,7 @@ nebula.cf7LocalStorage = function(){
 			});
 		}
 	}
-}
+};
 
 //Form live (soft) validator
 nebula.liveValidator = function(){
@@ -2738,7 +2738,7 @@ nebula.liveValidator = function(){
 		jQuery(this).closest('form').find('.nebula-empty-required').removeClass('nebula-empty-required');
 		jQuery('form [type="submit"], form #submit').removeAttr('title');
 	});
-}
+};
 
 //Apply Bootstrap and CF7 appropriate validation classes to appropriate elements
 nebula.applyValidationClasses = function(element, validation, showFeedback){
@@ -2772,7 +2772,7 @@ nebula.applyValidationClasses = function(element, validation, showFeedback){
 			//element.removeClass('wpcf7-not-valid is-invalid is-valid').parent().find('.wpcf7-not-valid-tip').remove(); //What was this doing?
 		}
 	}
-}
+};
 
 /*==========================
  Optimization Functions
@@ -2807,7 +2807,7 @@ nebula.lazyLoadAssets = function(){
 				nebula.loadEverything();
 				window.removeEventListener('scroll', lazyLoadScrollBottom); //Stop listening for this scroll event
 			}
-		}
+		};
 		window.addEventListener('scroll', lazyLoadScrollBottom);
 	} else {
 		nebula.loadEverything(); //If IntersectionObserver is not available, load everything immediately
@@ -2864,7 +2864,7 @@ nebula.lazyLoadAssets = function(){
 		nebula.loadCSS(nebula.site.resources.styles.nebula_pre);
 		nebula.pre();
 	}
-}
+};
 
 //When necessary, load any element that is meant to be lazy loaded immediately
 //Either call this directly, or trigger 'nebula_load' on the window
@@ -2873,13 +2873,13 @@ nebula.loadEverything = function(){
 	jQuery('.nebula-lazy-position, .lazy-load, .nebula-lazy').each(function(){
 		nebula.loadElement(jQuery(this)); //Load the element immediately
 	});
-}
+};
 
 //Load the Nebula lazy load element
 nebula.loadElement = function(element){
 	//Lazy elements using <samp> positioning
 	if ( element.is('samp') ){
-		lazyElement = element.next('noscript.nebula-lazy');
+		var lazyElement = element.next('noscript.nebula-lazy');
 		element.remove(); //Remove the positioning element
 
 		//The actual lazy loaded element as a jQuery object
@@ -2895,7 +2895,7 @@ nebula.loadElement = function(element){
 	if ( element.hasClass('lazy-load') ){
 		element.removeClass('lazy-load').addClass('lazy-loaded');
 	}
-}
+};
 
 //Load a JavaScript resource (and cache it)
 nebula.loadJS = function(url, callback){
@@ -2918,7 +2918,7 @@ nebula.loadJS = function(url, callback){
 	} else {
 		console.error('nebula.loadJS() requires a valid URL.');
 	}
-}
+};
 
 //Dynamically load CSS files using JS
 //If JavaScript is disabled, these are loaded via <noscript> tags
@@ -2928,7 +2928,7 @@ nebula.loadCSS = function(url){
 	} else {
 		console.error('nebula.loadCSS() requires a valid URL. The requested URL is invalid:', url);
 	}
-}
+};
 
 /* ==========================================================================
    Google Maps Functions
@@ -2948,7 +2948,7 @@ nebula.addressAutocomplete = function(autocompleteInput, uniqueID){
 		} else {
 			//Log all instances to be called after the maps JS library is loaded. This prevents the library from being loaded multiple times.
 			if ( typeof autocompleteInputs === 'undefined' ){
-				autocompleteInputs = {};
+				var autocompleteInputs = {};
 			}
 			autocompleteInputs[uniqueID] = autocompleteInput;
 
@@ -2966,7 +2966,7 @@ nebula.addressAutocomplete = function(autocompleteInput, uniqueID){
 			}, 100, 'google maps script load');
 		}
 	}
-}
+};
 
 nebula.googleAddressAutocompleteCallback = function(autocompleteInput, uniqueID){
 	if ( typeof uniqueID === 'undefined' || uniqueID === 'undefined' ){
@@ -2979,8 +2979,8 @@ nebula.googleAddressAutocompleteCallback = function(autocompleteInput, uniqueID)
 	);
 
 	google.maps.event.addListener(window[uniqueID], 'place_changed', function(){ //When the user selects an address from the dropdown, populate the address fields in the form.
-		place = window[uniqueID].getPlace(); //Get the place details from the window[uniqueID] object.
-		simplePlace = nebula.sanitizeGooglePlaceData(place, uniqueID);
+		var place = window[uniqueID].getPlace(); //Get the place details from the window[uniqueID] object.
+		var simplePlace = nebula.sanitizeGooglePlaceData(place, uniqueID);
 
 		var thisEvent = {
 			category: 'Contact',
@@ -2988,7 +2988,7 @@ nebula.googleAddressAutocompleteCallback = function(autocompleteInput, uniqueID)
 			intent: 'Intent',
 			place: place,
 			simplePlace: simplePlace
-		}
+		};
 
 		nebula.dom.document.trigger('nebula_address_selected', [place, simplePlace, jQuery(autocompleteInput)]);
 		nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -3030,7 +3030,7 @@ nebula.googleAddressAutocompleteCallback = function(autocompleteInput, uniqueID)
 			//do any default stuff here.
 		});
 	}
-}
+};
 
 //Organize the Google Place data into an organized (and named) object
 //Use uniqueID to name places like "home", "mailing", "billing", etc.
@@ -3116,7 +3116,7 @@ nebula.sanitizeGooglePlaceData = function(place, uniqueID){
 	}
 
 	return nebula.user.address[uniqueID];
-}
+};
 
 //Request Geolocation
 function requestPosition(){
@@ -3144,7 +3144,7 @@ nebula.getCurrentPosition = function(){
 		geolocation.getCurrentPosition(geoSuccessCallback, geoErrorCallback, {enableHighAccuracy: true}); //One-time location poll
 		//geoloc.watchPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //Continuous location poll (This will update the nebula.session.geolocation object regularly, but be careful sending events to GA- may result in TONS of events)
 	}
-}
+};
 
 //Geolocation Success
 function geoSuccessCallback(position){
@@ -3170,7 +3170,7 @@ function geoSuccessCallback(position){
 		},
 		heading: position.coords.heading, //Degrees clockwise from North
 		address: false
-	}
+	};
 
 	if ( nebula.session.geolocation.accuracy.meters < 50 ){
 		nebula.session.geolocation.accuracy.color = '#00bb00';
@@ -3200,19 +3200,19 @@ function geoSuccessCallback(position){
 function geoErrorCallback(error){
 	switch (error.code){
 		case error.PERMISSION_DENIED:
-			geolocationErrorMessage = 'Access to your location is turned off. Change your settings to report location data.';
+			var geolocationErrorMessage = 'Access to your location is turned off. Change your settings to report location data.';
 			var geoErrorNote = 'Denied';
 			break;
 		case error.POSITION_UNAVAILABLE:
-			geolocationErrorMessage = "Data from location services is currently unavailable.";
+			var geolocationErrorMessage = "Data from location services is currently unavailable.";
 			var geoErrorNote = 'Unavailable';
 			break;
 		case error.TIMEOUT:
-			geolocationErrorMessage = "Location could not be determined within a specified timeout period.";
+			var geolocationErrorMessage = "Location could not be determined within a specified timeout period.";
 			var geoErrorNote = 'Timeout';
 			break;
 		default:
-			geolocationErrorMessage = "An unknown error has occurred.";
+			var geolocationErrorMessage = "An unknown error has occurred.";
 			var geoErrorNote = 'Error';
 			break;
 	}
@@ -3222,7 +3222,7 @@ function geoErrorCallback(error){
 			code: error.code,
 			description: geolocationErrorMessage
 		}
-	}
+	};
 
 	nebula.dom.document.trigger('geolocationError');
 	nebula.dom.body.addClass('geo-error');
@@ -3235,8 +3235,8 @@ function geoErrorCallback(error){
 //Rough address Lookup
 //If needing to look up an address that isn't the user's geolocation based on lat/long, consider a different function. This one stores user data.
 nebula.addressLookup = function(lat, lng){
-	geocoder = new google.maps.Geocoder();
-	latlng = new google.maps.LatLng(lat, lng); //lat, lng
+	var geocoder = new google.maps.Geocoder();
+	var latlng = new google.maps.LatLng(lat, lng); //lat, lng
 	geocoder.geocode({'latLng': latlng}, function(results, status){
 		if ( status === google.maps.GeocoderStatus.OK ){
 			if ( results ){
@@ -3264,7 +3264,7 @@ nebula.addressLookup = function(lat, lng){
 			}
 		}
 	});
-}
+};
 
 //Extract address components from Google Maps Geocoder
 nebula.extractFromAddress = function(components, type){
@@ -3277,7 +3277,7 @@ nebula.extractFromAddress = function(components, type){
 	}
 
 	return '';
-}
+};
 
 //Lookup place information
 nebula.placeLookup = function(placeID){
@@ -3300,7 +3300,7 @@ nebula.placeLookup = function(placeID){
 							reviews: ( typeof place.reviews !== 'undefined' )? place.reviews.length : 0,
 						},
 						utc_offset: place.utc_offset,
-					}
+					};
 
 					sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
 					nebula.dom.document.trigger('placeSuccess');
@@ -3308,7 +3308,7 @@ nebula.placeLookup = function(placeID){
 			}
 		});
 	}
-}
+};
 
 /*==========================
  Helper Functions
@@ -3350,7 +3350,7 @@ nebula.helpers = function(){
 	});
 
 	nebula.dragDropUpload();
-}
+};
 
 //Enable drag and drop uploading for Contact Form 7 file inputs
 nebula.dragDropUpload = function(){
@@ -3361,7 +3361,7 @@ nebula.dragDropUpload = function(){
 				category: 'Drag and Drop File Upload',
 				formID: jQuery(dropArea).closest('form').attr('id') || 'form.' + jQuery(dropArea).closest('form').attr('class').replace(/\s/g, '.'),
 				fileInputID: jQuery(dropArea).find('input[type="file"]').attr('id'),
-			}
+			};
 
 			//Drag over
 			dropArea.addEventListener('dragover', function(e){ //This gets called every frame of the hover... Can we throttle it without causing a problem?
@@ -3420,7 +3420,7 @@ nebula.dragDropUpload = function(){
 			});
 		});
 	}
-}
+};
 
 nebula.initBootstrapFunctions = function(){
 	if ( typeof bootstrap !== 'undefined' ){
@@ -3493,7 +3493,7 @@ nebula.initBootstrapFunctions = function(){
 			}
 		});
 	}
-}
+};
 
 //Add an "inactive" class to toggle buttons when one is checked to allow for additional styling options
 nebula.checkBootstrapToggleButtons = function(){
@@ -3508,16 +3508,16 @@ nebula.checkBootstrapToggleButtons = function(){
 			});
 		}
 	});
-}
+};
 
 //Try to fix some errors automatically
 nebula.errorMitigation = function(){
 	//Try to fall back to .png on .svg errors. Else log the broken image.
 	jQuery('img').on('error', function(){
-		thisImage = jQuery(this);
-		imagePath = thisImage.attr('src');
+		var thisImage = jQuery(this);
+		var imagePath = thisImage.attr('src');
 		if ( imagePath.split('.').pop() === 'svg' ){
-			fallbackPNG = imagePath.replace('.svg', '.png');
+			var fallbackPNG = imagePath.replace('.svg', '.png');
 			jQuery.get(fallbackPNG).done(function(){
 				thisImage.prop('src', fallbackPNG);
 				thisImage.removeClass('svg');
@@ -3530,7 +3530,7 @@ nebula.errorMitigation = function(){
 			nebula.nv('event', 'Broken Image');
 		}
 	});
-}
+};
 
 //Convert img tags with class .svg to raw SVG elements
 nebula.svgImgs = function(){
@@ -3560,7 +3560,7 @@ nebula.svgImgs = function(){
 			}, 'xml');
 		}
 	});
-}
+};
 
 //Offset must be an integer
 nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback){
@@ -3655,7 +3655,7 @@ nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback
 			return false;
 		}
 	});
-}
+};
 
 //Temporarily change a Font Awesome icon and then change back after a period of time
 nebula.temporaryClass = function(element, activeClass, inactiveClass, period){
@@ -3683,7 +3683,7 @@ nebula.temporaryClass = function(element, activeClass, inactiveClass, period){
 	}
 
 	return false;
-}
+};
 
 /*==========================
  Utility Functions
@@ -3704,7 +3704,7 @@ nebula.focusOnElement = function(element){
 	}
 
 	element.trigger('focus'); //Focus on the element
-}
+};
 
 //Get query string parameters
 nebula.getQueryStrings = function(url, format){
@@ -3724,9 +3724,9 @@ nebula.getQueryStrings = function(url, format){
 		}
 
 		var queries = {};
-		queryStrings = queryString.split('&');
+		var queryStrings = queryString.split('&');
 		for ( var i = 0; i < queryStrings.length; i++ ){
-			hash = queryStrings[i].split('=');
+			var hash = queryStrings[i].split('=');
 			if ( hash[1] ){
 				queries[hash[0]] = hash[1];
 			} else {
@@ -3742,7 +3742,7 @@ nebula.getQueryStrings = function(url, format){
 	}
 
 	return false;
-}
+};
 
 //Search query strings for the passed parameter
 nebula.get = function(parameter, url){
@@ -3753,7 +3753,7 @@ nebula.get = function(parameter, url){
 	}
 
 	return queries[parameter] || false;
-}
+};
 
 //Remove an array of parameters from the query string.
 //@todo "Nebula" 0: In the future (once IE is dead), consider using the URL API instead. https://caniuse.com/#feat=url
@@ -3783,7 +3783,7 @@ nebula.removeQueryParameter = function(keys, sourceURL){
 				}
 			}
 
-			newURL = baseURL + '?' + params_arr.join('&');
+			var newURL = baseURL + '?' + params_arr.join('&');
 		}
 	});
 
@@ -3793,7 +3793,7 @@ nebula.removeQueryParameter = function(keys, sourceURL){
 	}
 
 	return newURL;
-}
+};
 
 //Trigger a reflow on an element.
 //This is useful for repeating animations.
@@ -3807,7 +3807,7 @@ nebula.reflow = function(selector){
 	}
 
 	element.width();
-}
+};
 
 //Handle repeated animations in a single function.
 nebula.animate = function(selector, newAnimationClasses, oldAnimationClasses){
@@ -3828,7 +3828,7 @@ nebula.animate = function(selector, newAnimationClasses, oldAnimationClasses){
 
 	nebula.reflow(element); //Refresh the element so it can be animated again.
 	element.addClass(newAnimationClasses); //Animate the element.
-}
+};
 
 //Helpful animation event listeners
 nebula.animationTriggers = function(){
@@ -3849,10 +3849,10 @@ nebula.animationTriggers = function(){
 		var animationClass = jQuery(this).attr('nebula-click') || '';
 		nebula.animate(jQuery(this), animationClass);
 	});
-}
+};
 
 nebula.loadAnimate = function(oThis){
-	animationDelay = oThis.attr('nebula-delay');
+	var animationDelay = oThis.attr('nebula-delay');
 	if ( typeof animationDelay === 'undefined' || animationDelay === 0 ){
 		nebula.animate(oThis, 'load-animate');
 	} else {
@@ -3860,7 +3860,7 @@ nebula.loadAnimate = function(oThis){
 			nebula.animate(oThis, 'load-animate');
 		}, animationDelay);
 	}
-}
+};
 
 //Allows something to be called once per pageload.
 //Call without self-executing parenthesis in the parameter! Ex: nebula.once(customFunction, 'test example');
@@ -3900,7 +3900,7 @@ nebula.once = function(fn, args, unique){
 			return false;
 		}
 	}
-}
+};
 
 //Waits for events to finish before triggering
 //Passing immediate triggers the function on the leading edge (instead of the trailing edge).
@@ -3953,10 +3953,10 @@ nebula.throttle = function(callback, cooldown, uniqueID){
                 nebula.throttleTimers[uniqueID] = undefined; //Allow future invocations (undefined means it is not waiting)
             }, cooldown);
         }
-    }
+    };
 
     return later();
-}
+};
 
 //Cookie Management
 nebula.createCookie = function(name, value, days){
@@ -3972,7 +3972,8 @@ nebula.createCookie = function(name, value, days){
 		var expires = "";
 	}
 	document.cookie = name + "=" + value + expires + "; path=/";
-}
+};
+
 nebula.readCookie = function(name){
 	var nameEQ = name + "=";
 	var ca = document.cookie.split(';');
@@ -3986,10 +3987,11 @@ nebula.readCookie = function(name){
 		}
 	}
 	return null;
-}
+};
+
 nebula.eraseCookie = function(name){
 	nebula.createCookie(name, "", -1);
-}
+};
 
 //Time specific events. Unique ID is required. Returns time in milliseconds.
 //Data can be accessed outside of this function via nebula.timings array.
@@ -4109,7 +4111,7 @@ nebula.timer = function(uniqueID, action, name){
 			}
 		}
 	}
-}
+};
 
 //Convert milliseconds into separate hours, minutes, and seconds string (Ex: "3h 14m 35.2s").
 nebula.millisecondsToString = function(ms){
@@ -4135,7 +4137,7 @@ nebula.millisecondsToString = function(ms){
 		timeString += 's';
 	}
 	return timeString;
-}
+};
 
 //Convert time to relative.
 //For cross-browser support, timestamp must be passed as a string (not a Date object) in the format: Fri Mar 27 21:40:02 +0000 2016
@@ -4170,7 +4172,7 @@ nebula.timeAgo = function(timestamp, raw){ //http://af-design.com/blog/2009/02/1
 	if ( diff <= 777600 ){ return "1 week ago"; }
 
 	return "on " + timestamp;
-}
+};
 
 //Check nested objects (boolean). Note: This function can not check if the object itself exists.
 //nebula.has(nebula, 'user.client.remote_addr'); //Ex: object nebula must exist first (check for it separately)
@@ -4187,7 +4189,7 @@ nebula.has = function(obj, prop){
 	}
 
 	return true;
-}
+};
 
 /*==========================
  Miscellaneous Functions
@@ -4232,12 +4234,12 @@ nebula.pre = function(){
 			return false;
 		});
 	}
-}
+};
 
 //Sanitize text
 nebula.sanitize = function(text){
 	return document.createElement('div').appendChild(document.createTextNode(text)).parentNode.innerHTML;
-}
+};
 
 //Nebula preferred default Chosen.js options
 nebula.defaultChosenOptions = {
@@ -4251,13 +4253,13 @@ nebula.defaultChosenOptions = {
 //Initialize Video Functionality and Tracking
 nebula.initVideoTracking = function(){
 	if ( typeof nebula.videos === 'undefined' ){
-		nebula.videos = {}
+		nebula.videos = {};
 	}
 
 	nebula.HTML5VideoTracking();
 	nebula.youtubeTracking();
 	nebula.vimeoTracking();
-}
+};
 
 //Track lazy-loaded videos
 //Note: element can be anything! Don't assume it is a video.
@@ -4270,7 +4272,7 @@ nebula.lazyVideoTracking = function(element){
 	} else if ( element.is('video') ){
 		nebula.addHTML5VideoPlayer(element.attr('id'), element);
 	}
-}
+};
 
 //Native HTML5 Videos
 nebula.HTML5VideoTracking = function(){
@@ -4283,7 +4285,7 @@ nebula.HTML5VideoTracking = function(){
 
 		nebula.addHTML5VideoPlayer(id, jQuery(this));
 	});
-}
+};
 
 nebula.addHTML5VideoPlayer = function(id, element){
 	var videoTitle = element.attr('title') || id || false;
@@ -4338,7 +4340,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 				action: ( nebula.isInView(element) )? 'Play' : 'Play (Not In View)',
 				title: thisVideo.title,
 				autoplay: thisVideo.autoplay
-			}
+			};
 
 			ga('set', nebula.analytics.metrics.videoStarts, 1);
 			ga('set', nebula.analytics.dimensions.videoWatcher, 'Started');
@@ -4357,7 +4359,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 
 		thisVideo.current = this.currentTime; //@todo "Nebula" 0: Still getting NaN on HTML5 autoplay videos sometimes. I think the video begins playing before the metadata is ready...
 		thisVideo.percent = thisVideo.current*100/thisVideo.duration; //Determine watched percent by adding current percents to an array, then count the array!
-		nowSeen = Math.ceil(thisVideo.percent);
+		var nowSeen = Math.ceil(thisVideo.percent);
 		if ( thisVideo.seen.indexOf(nowSeen) < 0 ){
 			thisVideo.seen.push(nowSeen);
 		}
@@ -4372,7 +4374,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 					action: ( thisVideo.autoplay )? 'Engaged' : 'Engaged (Autoplay)',
 					title: thisVideo.title,
 					autoplay: thisVideo.autoplay
-				}
+				};
 
 				ga('set', nebula.analytics.dimensions.videoWatcher, thisEvent.action);
 				nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -4396,7 +4398,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 			progress:  Math.round(thisVideo.current*1000),
 			title: thisVideo.title,
 			autoplay: thisVideo.autoplay
-		}
+		};
 
 		ga('set', nebula.analytics.dimensions.videoWatcher, thisEvent.action);
 		ga('set', nebula.analytics.metrics.videoPlaytime, thisEvent.playTime);
@@ -4428,7 +4430,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 				action: ( nebula.isInView(element) )? 'Ended (Looped)' : 'Ended (Looped) (Not In View)',
 				title: thisVideo.title,
 				autoplay: thisVideo.autoplay
-			}
+			};
 
 			if ( thisVideo.autoplay ){
 				thisEvent.action += ' (Autoplay)';
@@ -4444,7 +4446,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 					position: thisVideo.current.toFixed(0),
 					title: thisVideo.title,
 					autoplay: thisVideo.autoplay
-				}
+				};
 
 				ga('set', nebula.analytics.dimensions.videoWatcher, thisEvent.action);
 				nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -4452,7 +4454,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 				nebula.nv('event', 'Video Seek: ' + thisEvent.title);
 				thisVideo.seeker = true;
 				nebula.dom.document.trigger('nebula_seeked_video', thisVideo);
-			}, 250, 'video seeking')
+			}, 250, 'video seeking');
 		}
 	});
 
@@ -4472,10 +4474,10 @@ nebula.addHTML5VideoPlayer = function(id, element){
 			playTime: Math.round(thisVideo.watched),
 			progress: Math.round(thisVideo.current*1000),
 			autoplay: thisVideo.autoplay
-		}
+		};
 
 		if ( thisVideo.autoplay ){
-			endedAction += ' (Autoplay)';
+			thisEvent.action += ' (Autoplay)';
 		}
 
 		ga('set', nebula.analytics.metrics.videoCompletions, 1);
@@ -4488,7 +4490,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 		nebula.nv('event', 'Video Ended: ' + thisEvent.title);
 		nebula.dom.document.trigger('nebula_ended_video', thisVideo);
 	});
-}
+};
 
 
 //Prepare Youtube Iframe API
@@ -4501,13 +4503,13 @@ nebula.youtubeTracking = function(){
 			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 		}
 	}, 'nebula youtube api');
-}
+};
 
 function onYouTubeIframeAPIReady(e){
 	window.performance.mark('nebula_loading_youtube_videos_start');
 	jQuery('iframe[src*="youtube"]').each(function(i){
 		if ( !jQuery(this).hasClass('ignore') ){ //Use this class to ignore certain videos from tracking
-			id = jQuery(this).attr('id');
+			var id = jQuery(this).attr('id');
 			if ( !id ){
 				id = jQuery(this).attr('src').split('?')[0].split('/').pop();
 				jQuery(this).attr('id', id);
@@ -4531,7 +4533,7 @@ function onYouTubeIframeAPIReady(e){
 	window.performance.mark('nebula_loading_youtube_videos_end');
 	window.performance.measure('nebula_loading_youtube_videos', 'nebula_loading_youtube_videos_start', 'nebula_loading_youtube_videos_end');
 
-	pauseFlag = false;
+	var pauseFlag = false;
 }
 
 nebula.addYoutubePlayer = function(id, element){
@@ -4556,13 +4558,13 @@ nebula.addYoutubePlayer = function(id, element){
 			watched: 0, //Amount of time watching the video (regardless of seeking). Accurate to half a second. Units: Seconds
 			watchedPercent: 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
 			pausedYet: 0, //If this video has been paused yet by the user.
-		}
+		};
 	}
-}
+};
 
 function nebulaYoutubeReady(e){
 	if ( typeof videoProgress === 'undefined' ){
-		videoProgress = {};
+		var videoProgress = {};
 	}
 
 	var id = nebula.getYoutubeID(e.target);
@@ -4589,7 +4591,7 @@ function nebulaYoutubeStateChange(e){
 			action: ( nebula.isInView(jQuery(thisVideo.element)) )? 'Play' : 'Play (Not In View)',
 			title: thisVideo.title,
 			autoplay: thisVideo.autoplay
-		}
+		};
 
 		ga('set', nebula.analytics.metrics.videoStarts, 1);
 		ga('set', nebula.analytics.dimensions.videoWatcher, 'Started');
@@ -4604,10 +4606,10 @@ function nebulaYoutubeStateChange(e){
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.title);
 		nebula.nv('event', 'Video Play Began: ' + thisEvent.title);
 		nebula.dom.document.trigger('nebula_playing_video', thisVideo);
-		pauseFlag = true;
-		updateInterval = 500;
+		var pauseFlag = true;
+		var updateInterval = 500;
 
-		youtubePlayProgress = setInterval(function(){
+		var youtubePlayProgress = setInterval(function(){
 			thisVideo.current = e.target.getCurrentTime();
 			thisVideo.percent = thisVideo.current/thisVideo.duration;
 			thisVideo.watched = thisVideo.watched+(updateInterval/1000);
@@ -4620,7 +4622,7 @@ function nebulaYoutubeStateChange(e){
 						action: ( thisVideo.autoplay )? 'Engaged' : 'Engaged (Autoplay)',
 						title: thisVideo.title,
 						autoplay: thisVideo.autoplay
-					}
+					};
 
 					ga('set', nebula.analytics.dimensions.videoWatcher, thisEvent.action);
 					nebula.dom.document.trigger('nebula_event', thisEvent); //@todo "Nebula" 0: This needs the new nebula_event trigger with thisEvent object
@@ -4645,10 +4647,10 @@ function nebulaYoutubeStateChange(e){
 			playTime: Math.round(thisVideo.watched/1000),
 			progress: thisVideo.current*1000,
 			autoplay: thisVideo.autoplay
-		}
+		};
 
 		if ( thisVideo.autoplay ){
-			endedAction += ' (Autoplay)';
+			thisEvent.action += ' (Autoplay)';
 		}
 
 		ga('set', nebula.analytics.metrics.videoCompletions, 1);
@@ -4676,7 +4678,7 @@ function nebulaYoutubeStateChange(e){
 					progress:  thisVideo.current*1000,
 					title: thisVideo.title,
 					autoplay: thisVideo.autoplay
-				}
+				};
 
 				ga('set', nebula.analytics.metrics.videoPlaytime, Math.round(thisVideo.watched));
 				ga('set', nebula.analytics.dimensions.videoPercentage, Math.round(thisVideo.percent*100));
@@ -4725,7 +4727,7 @@ nebula.getYoutubeID = function(target){
 	}
 
 	return id;
-}
+};
 
 //Get the title of a Youtube video (or use best fallback possible)
 nebula.getYoutubeTitle = function(target){
@@ -4737,7 +4739,7 @@ nebula.getYoutubeTitle = function(target){
 	}
 
 	return videoTitle || jQuery(target.getIframe()).attr('title') || nebula.getYoutubeID(target) || false;
-}
+};
 
 //Prepare Vimeo API
 nebula.vimeoTracking = function(){
@@ -4747,7 +4749,7 @@ nebula.vimeoTracking = function(){
 			nebula.createVimeoPlayers();
 		});
 	}
-}
+};
 
 //To trigger events on these videos, use the syntax: nebula.videos['208432684'].player.play();
 nebula.createVimeoPlayers = function(){
@@ -4787,7 +4789,7 @@ nebula.createVimeoPlayers = function(){
 				watched: 0, //Amount of time watching the video (regardless of seeking). Accurate to 1% of video duration. Units: Seconds
 				watchedPercent: 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
 				pausedYet: false, //If this video has been paused yet by the user.
-			}
+			};
 
 			//Title
 			nebula.videos[id].player.getVideoTitle().then(function(title){
@@ -4806,7 +4808,7 @@ nebula.createVimeoPlayers = function(){
 					action: ( nebula.isInView(jQuery(nebula.videos[id].element)) )? 'Play' : 'Play (Not In View)',
 					title: nebula.videos[id].title,
 					autoplay: nebula.videos[id].autoplay
-				}
+				};
 
 				ga('set', nebula.analytics.metrics.videoStarts, 1);
 				ga('set', nebula.analytics.dimensions.videoWatcher, 'Started');
@@ -4844,7 +4846,7 @@ nebula.createVimeoPlayers = function(){
 							action: ( nebula.videos[id].autoplay )? 'Engaged' : 'Engaged (Autoplay)',
 							title: nebula.videos[id].title,
 							autoplay: nebula.videos[id].autoplay
-						}
+						};
 
 						ga('set', nebula.analytics.dimensions.videoWatcher, thisEvent.action);
 						nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -4867,7 +4869,7 @@ nebula.createVimeoPlayers = function(){
 					percent: Math.round(e.percent*100),
 					title: nebula.videos[id].title,
 					autoplay: nebula.videos[id].autoplay
-				}
+				};
 
 				ga('set', nebula.analytics.dimensions.videoWatcher, thisEvent.action);
 				ga('set', nebula.analytics.metrics.videoPlaytime, thisEvent.playTime);
@@ -4893,7 +4895,7 @@ nebula.createVimeoPlayers = function(){
 					position: e.seconds,
 					title: nebula.videos[id].title,
 					autoplay: nebula.videos[id].autoplay
-				}
+				};
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('set', nebula.analytics.dimensions.videoWatcher, thisEvent.action);
@@ -4914,7 +4916,7 @@ nebula.createVimeoPlayers = function(){
 					playTime: Math.round(nebula.videos[id].watched),
 					progress: Math.round(nebula.videos[id].watched*1000),
 					autoplay: nebula.videos[id].autoplay
-				}
+				};
 
 				ga('set', nebula.analytics.metrics.videoCompletions, 1);
 				ga('set', nebula.analytics.metrics.videoPlaytime, thisEvent.playTime);
@@ -4938,7 +4940,7 @@ nebula.createVimeoPlayers = function(){
 	if ( typeof videoProgress === 'undefined' ){
 		videoProgress = {};
 	}
-}
+};
 
 //Pause all videos
 //Use class "ignore-visibility" on iframes to allow specific videos to continue playing regardless of page visibility
@@ -4971,7 +4973,7 @@ nebula.pauseAllVideos = function(force){
 			}
 		}
 	});
-}
+};
 
 //Create desktop notifications
 nebula.desktopNotification = function(title, message, clickCallback, showCallback, closeCallback, errorCallback){
@@ -4983,12 +4985,12 @@ nebula.desktopNotification = function(title, message, clickCallback, showCallbac
 			body: "", //Body message (optional)
 			tag: Math.floor(Math.random()*10000)+1, //Unique tag for notification. Prevents repeat notifications of the same tag. (optional)
 			icon: nebula.site.directory.template.uri + "/assets/img/meta/android-chrome-192x192.png" //Thumbnail Icon (optional)
-		}
+		};
 
 		if ( typeof message === "undefined" ){
-			message = defaults;
+			var message = defaults;
 		} else if ( typeof message === "string" ){
-			body = message;
+			var body = message;
 			message = defaults;
 			message.body = body;
 		} else {
@@ -5009,7 +5011,7 @@ nebula.desktopNotification = function(title, message, clickCallback, showCallbac
 			}
 		}
 
-		instance = new Notification(title, message); //Trigger the notification
+		var instance = new Notification(title, message); //Trigger the notification
 
 		if ( clickCallback ){
 			instance.onclick = function(){
@@ -5025,7 +5027,7 @@ nebula.desktopNotification = function(title, message, clickCallback, showCallbac
 				setTimeout(function(){
 					instance.close();
 				}, 20000);
-			}
+			};
 		}
 		if ( closeCallback ){
 			instance.onclose = function(){
@@ -5041,7 +5043,7 @@ nebula.desktopNotification = function(title, message, clickCallback, showCallbac
 	}
 
 	return false;
-}
+};
 
 nebula.checkNotificationPermission = function(){
 	Notification = window.Notification || window.mozNotification || window.webkitNotification;
@@ -5060,7 +5062,7 @@ nebula.checkNotificationPermission = function(){
 		});
 	}
 	return false;
-}
+};
 
 nebula.vibrate = function(pattern){
 	if ( typeof pattern !== 'object' ){
@@ -5070,7 +5072,7 @@ nebula.vibrate = function(pattern){
 		navigator.vibrate(pattern);
 	}
 	return false;
-}
+};
 
 nebula.mmenus = function(){
 	//@todo "Nebula" 0: Between Mmenu and jQuery, 2 console violations are being triggered: "Added non-passive event listener to a scroll-blocking 'touchmove' event."
@@ -5082,7 +5084,7 @@ nebula.mmenus = function(){
 
 		if ( mobileNav.length ){
 			//Navigation Panels
-			var navPanels = {}
+			var navPanels = {};
 			if ( jQuery('#utility-panel').length ){
 				navPanels = {
 					position: "top",
@@ -5091,7 +5093,7 @@ nebula.mmenus = function(){
 						"<a href='#main-panel'>Main Menu</a>",
 						"<a href='#utility-panel'>Other Links</a>"
 					]
-				}
+				};
 			}
 
 			//Add social links to footer of Mmenu
@@ -5208,7 +5210,7 @@ nebula.mmenus = function(){
 			});
 		}
 	}
-}
+};
 
 //Vertical subnav expanders
 nebula.subnavExpanders = function(){
@@ -5223,7 +5225,7 @@ nebula.subnavExpanders = function(){
 		jQuery('.current-menu-ancestor').children('.toplevelvert_expander').click();
 		jQuery('.current-menu-item').children('.toplevelvert_expander').click();
 	}
-}
+};
 
 //Convert DOM elements into a tree string
 nebula.domTreeToString = function(element){
@@ -5265,7 +5267,7 @@ nebula.domTreeToString = function(element){
 	}
 
 	return selector;
-}
+};
 
 /*==========================
  Legacy Functions
@@ -5284,17 +5286,17 @@ function isGoogleAnalyticsReady(){
 //Custom CSS expression for a case-insensitive contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
 //Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: nebula.keywordSearch(container, parent, value);
 jQuery.expr.pseudos.Contains = function(element, index, match){
-	return (element.textContent || element.innerText || '').toUpperCase().indexOf(match[3].toUpperCase()) >= 0
-}
+	return (element.textContent || element.innerText || '').toUpperCase().indexOf(match[3].toUpperCase()) >= 0;
+};
 
 //Custom expression for any element that can be focused. Source: https://github.com/selfthinker/dokuwiki_template_writr/blob/master/js/skip-link-focus-fix.js
 //Call it with :focusable() or .is(':focusable')
 jQuery.expr.pseudos.focusable = function(element, index, match){
 	return jQuery(element).is(':input:enabled, a[href], area[href], object, [tabindex]') && !jQuery(element).is(':hidden');
-}
+};
 
 //Escape required characters from a provided string. https://github.com/kvz/locutus
 function preg_quote(str, delimiter){return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');}
 
 //Parse dates (equivalent of PHP strtotime function). https://github.com/kvz/locutus
-function strtotime(e,t){var a,n,r,s,u,i,o,w,c,d,D,g=!1;if(!e)return g;e=e.replace(/^\s+|\s+$/g,"").replace(/\s{2,}/g," ").replace(/[\t\r\n]/g,"").toLowerCase();var l=new RegExp(["^(\\d{1,4})","([\\-\\.\\/:])","(\\d{1,2})","([\\-\\.\\/:])","(\\d{1,4})","(?:\\s(\\d{1,2}):(\\d{2})?:?(\\d{2})?)?","(?:\\s([A-Z]+)?)?$"].join(""));if((n=e.match(l))&&n[2]===n[4])if(n[1]>1901)switch(n[2]){case"-":return n[3]>12||n[5]>31?g:new Date(n[1],parseInt(n[3],10)-1,n[5],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3;case".":return g;case"/":return n[3]>12||n[5]>31?g:new Date(n[1],parseInt(n[3],10)-1,n[5],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3}else if(n[5]>1901)switch(n[2]){case"-":case".":return n[3]>12||n[1]>31?g:new Date(n[5],parseInt(n[3],10)-1,n[1],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3;case"/":return n[1]>12||n[3]>31?g:new Date(n[5],parseInt(n[1],10)-1,n[3],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3}else switch(n[2]){case"-":return n[3]>12||n[5]>31||n[1]<70&&n[1]>38?g:(s=n[1]>=0&&n[1]<=38?+n[1]+2e3:n[1],new Date(s,parseInt(n[3],10)-1,n[5],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3);case".":return n[5]>=70?n[3]>12||n[1]>31?g:new Date(n[5],parseInt(n[3],10)-1,n[1],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3:n[5]<60&&!n[6]?n[1]>23||n[3]>59?g:(r=new Date,new Date(r.getFullYear(),r.getMonth(),r.getDate(),n[1]||0,n[3]||0,n[5]||0,n[9]||0)/1e3):g;case"/":return n[1]>12||n[3]>31||n[5]<70&&n[5]>38?g:(s=n[5]>=0&&n[5]<=38?+n[5]+2e3:n[5],new Date(s,parseInt(n[1],10)-1,n[3],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3);case":":return n[1]>23||n[3]>59||n[5]>59?g:(r=new Date,new Date(r.getFullYear(),r.getMonth(),r.getDate(),n[1]||0,n[3]||0,n[5]||0)/1e3)}if("now"===e)return null===t||isNaN(t)?(new Date).getTime()/1e3|0:0|t;if(!isNaN(a=Date.parse(e)))return a/1e3|0;if(l=new RegExp(["^([0-9]{4}-[0-9]{2}-[0-9]{2})","[ t]","([0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?)","([\\+-][0-9]{2}(:[0-9]{2})?|z)"].join("")),(n=e.match(l))&&("z"===n[4]?n[4]="Z":n[4].match(/^([+-][0-9]{2})$/)&&(n[4]=n[4]+":00"),!isNaN(a=Date.parse(n[1]+"T"+n[2]+n[4]))))return a/1e3|0;function f(e){var t,a,n,r,s=e.split(" "),w=s[0],c=s[1].substring(0,3),d=/\d+/.test(w),D="ago"===s[2],g=("last"===w?-1:1)*(D?-1:1);if(d&&(g*=parseInt(w,10)),o.hasOwnProperty(c)&&!s[1].match(/^mon(day|\.)?$/i))return u["set"+o[c]](u["get"+o[c]]()+g);if("wee"===c)return u.setDate(u.getDate()+7*g);if("next"===w||"last"===w)t=w,a=g,void 0!==(r=i[c])&&(0==(n=r-u.getDay())?n=7*a:n>0&&"last"===t?n-=7:n<0&&"next"===t&&(n+=7),u.setDate(u.getDate()+n));else if(!d)return!1;return!0}if(u=t?new Date(1e3*t):new Date,i={sun:0,mon:1,tue:2,wed:3,thu:4,fri:5,sat:6},o={yea:"FullYear",mon:"Month",day:"Date",hou:"Hours",min:"Minutes",sec:"Seconds"},d="([+-]?\\d+\\s"+(c="(years?|months?|weeks?|days?|hours?|minutes?|min|seconds?|sec|sunday|sun\\.?|monday|mon\\.?|tuesday|tue\\.?|wednesday|wed\\.?|thursday|thu\\.?|friday|fri\\.?|saturday|sat\\.?)")+"|(last|next)\\s"+c+")(\\sago)?",!(n=e.match(new RegExp(d,"gi"))))return g;for(D=0,w=n.length;D<w;D++)if(!f(n[D]))return g;return u.getTime()/1e3}
+function strtotime(e,t){var a,n,r,s,u,i,o,w,c,d,D,g=!1;if(!e)return g;e=e.replace(/^\s+|\s+$/g,"").replace(/\s{2,}/g," ").replace(/[\t\r\n]/g,"").toLowerCase();var l=new RegExp(["^(\\d{1,4})","([\\-\\.\\/:])","(\\d{1,2})","([\\-\\.\\/:])","(\\d{1,4})","(?:\\s(\\d{1,2}):(\\d{2})?:?(\\d{2})?)?","(?:\\s([A-Z]+)?)?$"].join(""));if((n=e.match(l))&&n[2]===n[4])if(n[1]>1901)switch(n[2]){case"-":return n[3]>12||n[5]>31?g:new Date(n[1],parseInt(n[3],10)-1,n[5],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3;case".":return g;case"/":return n[3]>12||n[5]>31?g:new Date(n[1],parseInt(n[3],10)-1,n[5],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3}else if(n[5]>1901)switch(n[2]){case"-":case".":return n[3]>12||n[1]>31?g:new Date(n[5],parseInt(n[3],10)-1,n[1],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3;case"/":return n[1]>12||n[3]>31?g:new Date(n[5],parseInt(n[1],10)-1,n[3],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3}else switch(n[2]){case"-":return n[3]>12||n[5]>31||n[1]<70&&n[1]>38?g:(s=n[1]>=0&&n[1]<=38?+n[1]+2e3:n[1],new Date(s,parseInt(n[3],10)-1,n[5],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3);case".":return n[5]>=70?n[3]>12||n[1]>31?g:new Date(n[5],parseInt(n[3],10)-1,n[1],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3:n[5]<60&&!n[6]?n[1]>23||n[3]>59?g:(r=new Date,new Date(r.getFullYear(),r.getMonth(),r.getDate(),n[1]||0,n[3]||0,n[5]||0,n[9]||0)/1e3):g;case"/":return n[1]>12||n[3]>31||n[5]<70&&n[5]>38?g:(s=n[5]>=0&&n[5]<=38?+n[5]+2e3:n[5],new Date(s,parseInt(n[1],10)-1,n[3],n[6]||0,n[7]||0,n[8]||0,n[9]||0)/1e3);case":":return n[1]>23||n[3]>59||n[5]>59?g:(r=new Date,new Date(r.getFullYear(),r.getMonth(),r.getDate(),n[1]||0,n[3]||0,n[5]||0)/1e3)}if("now"===e)return null===t||isNaN(t)?(new Date).getTime()/1e3|0:0|t;if(!isNaN(a=Date.parse(e)))return a/1e3|0;if(l=new RegExp(["^([0-9]{4}-[0-9]{2}-[0-9]{2})","[ t]","([0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?)","([\\+-][0-9]{2}(:[0-9]{2})?|z)"].join("")),(n=e.match(l))&&("z"===n[4]?n[4]="Z":n[4].match(/^([+-][0-9]{2})$/)&&(n[4]=n[4]+":00"),!isNaN(a=Date.parse(n[1]+"T"+n[2]+n[4]))))return a/1e3|0;function f(e){var t,a,n,r,s=e.split(" "),w=s[0],c=s[1].substring(0,3),d=/\d+/.test(w),D="ago"===s[2],g=("last"===w?-1:1)*(D?-1:1);if(d&&(g*=parseInt(w,10)),o.hasOwnProperty(c)&&!s[1].match(/^mon(day|\.)?$/i))return u["set"+o[c]](u["get"+o[c]]()+g);if("wee"===c)return u.setDate(u.getDate()+7*g);if("next"===w||"last"===w)t=w,a=g,void 0!==(r=i[c])&&(0==(n=r-u.getDay())?n=7*a:n>0&&"last"===t?n-=7:n<0&&"next"===t&&(n+=7),u.setDate(u.getDate()+n));else if(!d)return!1;return!0}if(u=t?new Date(1e3*t):new Date,i={sun:0,mon:1,tue:2,wed:3,thu:4,fri:5,sat:6},o={yea:"FullYear",mon:"Month",day:"Date",hou:"Hours",min:"Minutes",sec:"Seconds"},d="([+-]?\\d+\\s"+(c="(years?|months?|weeks?|days?|hours?|minutes?|min|seconds?|sec|sunday|sun\\.?|monday|mon\\.?|tuesday|tue\\.?|wednesday|wed\\.?|thursday|thu\\.?|friday|fri\\.?|saturday|sat\\.?)")+"|(last|next)\\s"+c+")(\\sago)?",!(n=e.match(new RegExp(d,"gi"))))return g;for(D=0,w=n.length;D<w;D++)if(!f(n[D]))return g;return u.getTime()/1e3};

@@ -129,6 +129,9 @@ if ( !trait_exists('Device') ){
 					case 'win':
 						$os = 'windows';
 						break;
+					default:
+						$os = 'unknown';
+						break;
 				}
 
 				$actual_os = $this->device->getOs();
@@ -295,6 +298,8 @@ if ( !trait_exists('Device') ){
 					$browser = 'internet explorer';
 					$version = '11';
 					break;
+				default:
+					break;
 			}
 
 			if ( $this->get_option('device_detection') ){
@@ -352,6 +357,8 @@ if ( !trait_exists('Device') ){
 					case 'web kit':
 						$engine = 'webkit';
 						break;
+					default:
+						break;
 				}
 
 				$actual_engine = $this->get_browser('engine');
@@ -368,6 +375,10 @@ if ( !trait_exists('Device') ){
 		public function is_bot(){
 			$override = apply_filters('pre_nebula_is_bot', null);
 			if ( isset($override) ){return $override;}
+
+			if ( $this->is_googlebot() ){
+				return true;
+			}
 
 			if ( $this->get_option('device_detection') ){
 				if ( isset($this->device) && $this->device->isBot() ){

@@ -26,7 +26,7 @@
 	<?php if ( get_the_author_meta('headshot_url') ): ?>
 		<div class="col-md-2">
 			<div class="author-headshot">
-				<img src="<?php echo esc_attr(get_the_author_meta('headshot_url')); ?>" />
+				<img src="<?php echo esc_attr(get_the_author_meta('headshot_url')); ?>" alt="Headshot" />
 			</div>
 		</div><!--/col-->
 		<div class="col-md-10">
@@ -35,7 +35,7 @@
 	<?php endif; ?>
 			<h2 class="author-name">
 				<?php if ( get_the_author_meta('user_url') ): ?>
-					<a href="<?php echo esc_url(get_the_author_meta('user_url')); ?>" target="_blank" rel="noopener">
+					<a href="<?php echo esc_url(get_the_author_meta('user_url')); ?>" target="_blank" rel="noopener noreferrer">
 				<?php endif; ?>
 						<?php echo get_the_author(); ?>
 				<?php if ( get_the_author_meta('user_url') ): ?>
@@ -43,29 +43,29 @@
 				<?php endif; ?>
 			</h2>
 			<?php if ( get_the_author_meta('usercity') && get_the_author_meta('userstate') ): ?>
-				<span class="author-location"><i class="fa fa-map-marker"></i> <a href="https://www.google.com/maps?q=<?php echo urlencode(get_the_author_meta('usercity') . '+' . get_the_author_meta('userstate')); ?>" target="_blank" rel="noopener"><?php echo get_the_author_meta('usercity') . ', ' . get_the_author_meta('userstate'); ?></a></span>
+				<span class="author-location"><i class="fa fa-map-marker"></i> <a href="https://www.google.com/maps?q=<?php echo urlencode(get_the_author_meta('usercity') . '+' . get_the_author_meta('userstate')); ?>" target="_blank" rel="noopener noreferrer"><?php echo get_the_author_meta('usercity') . ', ' . get_the_author_meta('userstate'); ?></a></span>
 			<?php endif; ?>
 
 
 			<span class="author-social">
 				<?php if ( get_the_author_meta('facebook') ): ?>
-					<a class="facebook" href="https://www.facebook.com/<?php echo get_the_author_meta('facebook'); ?>" target="_blank" rel="noopener" title="<?php echo get_the_author_meta('facebook'); ?>"><i class="fa fa-facebook-square"></i></a> <!-- add tooltips or titles -->
+					<a class="facebook" href="https://www.facebook.com/<?php echo get_the_author_meta('facebook'); ?>" target="_blank" rel="noopener noreferrer" title="<?php echo get_the_author_meta('facebook'); ?>"><i class="fa fa-facebook-square"></i></a> <!-- add tooltips or titles -->
 				<?php endif; ?>
 
 				<?php if ( get_the_author_meta('twitter') ): ?>
-					<a class="twitter" href="<?php echo nebula()->twitter_url(get_the_author_meta('twitter')); ?>" target="_blank" rel="noopener" title="@<?php echo get_the_author_meta('twitter'); ?>"><i class="fa fa-twitter-square"></i></a>
+					<a class="twitter" href="<?php echo nebula()->twitter_url(get_the_author_meta('twitter')); ?>" target="_blank" rel="noopener noreferrer" title="@<?php echo get_the_author_meta('twitter'); ?>"><i class="fa fa-twitter-square"></i></a>
 				<?php endif; ?>
 
 				<?php if ( get_the_author_meta('linkedin') ): ?>
-					<a class="linkedin" href="https://www.linkedin.com/profile/view?id=<?php echo get_the_author_meta('linkedin'); ?>" target="_blank" rel="noopener" title="<?php echo get_the_author_meta('linkedin'); ?>"><i class="fa fa-linkedin-square"></i></a>
+					<a class="linkedin" href="https://www.linkedin.com/profile/view?id=<?php echo get_the_author_meta('linkedin'); ?>" target="_blank" rel="noopener noreferrer" title="<?php echo get_the_author_meta('linkedin'); ?>"><i class="fa fa-linkedin-square"></i></a>
 				<?php endif; ?>
 
 				<?php if ( get_the_author_meta('youtube') ): ?>
-					<a class="youtube" href="https://www.youtube.com/channel/<?php echo get_the_author_meta('youtube'); ?>" target="_blank" rel="noopener" title="<?php echo get_the_author_meta('youtube'); ?>"><i class="fa fa-youtube"></i></a>
+					<a class="youtube" href="https://www.youtube.com/channel/<?php echo get_the_author_meta('youtube'); ?>" target="_blank" rel="noopener noreferrer" title="<?php echo get_the_author_meta('youtube'); ?>"><i class="fa fa-youtube"></i></a>
 				<?php endif; ?>
 
 				<?php if ( get_the_author_meta('instagram') ): ?>
-					<a class="instagram" href="http://instagram.com/<?php echo get_the_author_meta('instagram'); ?>" target="_blank" rel="noopener" title="<?php echo get_the_author_meta('instagram'); ?>"><i class="fa fa-instagram"></i></a>
+					<a class="instagram" href="http://instagram.com/<?php echo get_the_author_meta('instagram'); ?>" target="_blank" rel="noopener noreferrer" title="<?php echo get_the_author_meta('instagram'); ?>"><i class="fa fa-instagram"></i></a>
 				<?php endif; ?>
 			</span>
 
@@ -85,7 +85,7 @@
 					<?php if ( get_the_author_meta('jobcompany') ): ?>
 						<span style="white-space: nowrap;">
 							<?php if ( get_the_author_meta('jobcompanywebsite') ): ?>
-								<a href="<?php echo esc_url(get_the_author_meta('jobcompanywebsite')); ?>" target="_blank" rel="noopener">
+								<a href="<?php echo esc_url(get_the_author_meta('jobcompanywebsite')); ?>" target="_blank" rel="noopener noreferrer">
 							<?php endif; ?>
 									<?php echo get_the_author_meta('jobcompany'); ?>
 							<?php if ( get_the_author_meta('jobcompanywebsite') ): ?>
@@ -96,7 +96,7 @@
 				</span>
 				<span class="author-contact">
 					<?php if ( get_the_author_meta('user_email') ): ?>
-						<span class="author-email"><i class="fa fa-envelope"></i> <a href="mailto:<?php echo get_the_author_meta('user_email'); ?>" target="_blank" rel="noopener"><?php echo get_the_author_meta('user_email'); ?></a></span>&nbsp;
+						<span class="author-email"><i class="fa fa-envelope"></i> <a href="mailto:<?php echo get_the_author_meta('user_email'); ?>" target="_blank" rel="noopener noreferrer"><?php echo get_the_author_meta('user_email'); ?></a></span>&nbsp;
 					<?php endif; ?>
 					<?php if ( get_the_author_meta('phonenumber') ): ?>
 						<span class="author-phonenumber"><i class="fa fa-phone"></i> <?php echo get_the_author_meta('phonenumber'); ?></span>

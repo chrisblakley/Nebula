@@ -463,7 +463,6 @@ if ( !trait_exists('Optimization') ){
 			$preloads = apply_filters('nebula_preloads', $default_preloads); //Allow child themes and plugins to preload resources via Nebula too
 			if ( !empty($preloads) && is_array($preloads) ){
 				foreach ( $preloads as $preload ){
-					$filetype = 'fetch';
 					switch ( $preload ){
 						case strpos($preload, '.css'):
 							$filetype = 'style';
@@ -486,9 +485,12 @@ if ( !trait_exists('Optimization') ){
 						case strpos($preload, '.mov'):
 							$filetype = 'video';
 							break;
+						default:
+							$filetype = 'fetch';
+							break;
 					}
 
-					echo '<link rel="preload" href="' . $preload . '" as="fetch" crossorigin="anonymous" />';
+					echo '<link rel="preload" href="' . $preload . '" as="' . $filetype . '" crossorigin="anonymous" />';
 				}
 			}
 		}

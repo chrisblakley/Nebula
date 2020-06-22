@@ -74,11 +74,11 @@ if ( !trait_exists('Dashboard') ){
 			global $wp_post_types;
 
 			echo '<ul class="nebula-fa-ul">';
-			echo '<li><i class="fas fa-fw fa-globe"></i> <a href="' . home_url('/') . '" target="_blank" rel="noopener">' . home_url('/') . '</a></li>';
+			echo '<li><i class="fas fa-fw fa-globe"></i> <a href="' . home_url('/') . '" target="_blank" rel="noopener noreferrer">' . home_url('/') . '</a></li>';
 
 			//Address
 			if ( $this->get_option('street_address') ){
-				echo '<li><i class="fas fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/' . $this->full_address(1) . '" target="_blank" rel="noopener">' . $this->full_address() . '</a></li>';
+				echo '<li><i class="fas fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/' . $this->full_address(1) . '" target="_blank" rel="noopener noreferrer">' . $this->full_address() . '</a></li>';
 			}
 
 			//Open/Closed
@@ -88,10 +88,10 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//WordPress Version
-			echo '<li><i class="fab fa-fw fa-wordpress"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener">WordPress</a> <strong>' . $wp_version . '</strong></li>';
+			echo '<li><i class="fab fa-fw fa-wordpress"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener noreferrer">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
 			//Nebula Version
-			echo '<li><i class="far fa-fw fa-star"></i> <a href="https://gearside.com/nebula?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master" target="_blank">' . $this->version('raw') . '</a></strong> <small title="' . human_time_diff($this->version('utc')) . ' ago" style="cursor: help;">(Committed: ' . $this->version('date') . ')</small></li>';
+			echo '<li><i class="far fa-fw fa-star"></i> <a href="https://gearside.com/nebula?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master" target="_blank">' . $this->version('raw') . '</a></strong> <small title="' . human_time_diff($this->version('utc')) . ' ago" style="cursor: help;">(Committed: ' . $this->version('date') . ')</small></li>';
 
 			//Child Theme
 			if ( is_child_theme() ){
@@ -214,7 +214,7 @@ if ( !trait_exists('Dashboard') ){
 				if ( !$this->get_option('comments') ){
 					echo '<li><i class="far fa-fw fa-comment"></i> Comments disabled <small>(via <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a>)</small></li>';
 				} else {
-					echo '<li><i class="far fa-fw fa-comments"></i> Using <a href="https://' . $this->get_option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank" rel="noopener">Disqus comment system</a>.</li>';
+					echo '<li><i class="far fa-fw fa-comments"></i> Using <a href="https://' . $this->get_option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank" rel="noopener noreferrer">Disqus comment system</a>.</li>';
 				}
 			}
 
@@ -253,7 +253,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( get_the_author_meta('jobcompany', $user_info->ID) ){
 				$company = get_the_author_meta('jobcompany', $user_info->ID);
 				if ( get_the_author_meta('jobcompanywebsite', $user_info->ID) ){
-					$company = '<a class="this-user-company-name" href="' . get_the_author_meta('jobcompanywebsite', $user_info->ID) . '?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=user+metabox+job+title" target="_blank" rel="noopener">' . $company . '</a>';
+					$company = '<a class="this-user-company-name" href="' . get_the_author_meta('jobcompanywebsite', $user_info->ID) . '?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=user+metabox+job+title" target="_blank" rel="noopener noreferrer">' . $company . '</a>';
 				}
 			}
 
@@ -374,7 +374,7 @@ if ( !trait_exists('Dashboard') ){
 			} else {
 				echo '<i class="fas fa-fw fa-globe"></i>';
 			}
-			echo ' IP Address: <a href="http://whatismyipaddress.com/ip/' . $this->get_ip_address() . '" target="_blank" rel="noopener"><strong class="admin-user-info admin-user-ip">' . $this->get_ip_address() . '</strong></a>';
+			echo ' IP Address: <a href="http://whatismyipaddress.com/ip/' . $this->get_ip_address() . '" target="_blank" rel="noopener noreferrer"><strong class="admin-user-info admin-user-ip">' . $this->get_ip_address() . '</strong></a>';
 			echo '</li>';
 
 			//Multiple locations
@@ -407,7 +407,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<div class="nebula-metabox-row"><div class="nebula-metabox-col">';
 			echo '<ul class="nebula-fa-ul" style="margin-top: 0;">';
 			foreach ( $third_party_tools['administrative'] as $tool ){
-				echo '<li>' . $tool['icon'] . ' <a href="' . $tool['url'] . '" target="_blank" rel="noopener">' . $tool['name'] . '</a></li>';
+				echo '<li>' . $tool['icon'] . ' <a href="' . $tool['url'] . '" target="_blank" rel="noopener noreferrer">' . $tool['name'] . '</a></li>';
 			}
 
 			do_action('nebula_administrative_metabox');
@@ -420,7 +420,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<h3>Social</h3>';
 			echo '<ul class="nebula-fa-ul">';
 			foreach ( $third_party_tools['social'] as $tool ){
-				echo '<li>' . $tool['icon'] . ' <a href="' . $tool['url'] . '" target="_blank" rel="noopener">' . $tool['name'] . '</a></li>';
+				echo '<li>' . $tool['icon'] . ' <a href="' . $tool['url'] . '" target="_blank" rel="noopener noreferrer">' . $tool['name'] . '</a></li>';
 			}
 
 			do_action('nebula_social_metabox');
@@ -439,9 +439,9 @@ if ( !trait_exists('Dashboard') ){
 
 		//Pinckney Hugo Group metabox content
 		public function dashboard_phg(){
-			echo '<a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+photo' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" loading="lazy" /></a>';
+			echo '<a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+photo' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener noreferrer"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" loading="lazy" /></a>';
 			echo '<ul class="nebula-fa-ul">';
-			echo '<li><i class="fas fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener">760 West Genesee Street, Syracuse, NY 13204</a></li>';
+			echo '<li><i class="fas fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener noreferrer">760 West Genesee Street, Syracuse, NY 13204</a></li>';
 			echo '<li><i class="fas fa-fw fa-link"></i> <a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+textlink' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank">PinckneyHugo.com</a></li>';
 			echo '<li><i class="fas fa-fw fa-phone"></i> (315) 478-6700</li>';
 			echo '</ul>';
@@ -480,7 +480,7 @@ if ( !trait_exists('Dashboard') ){
 			$instance_count = 0;
 			?>
 				<p class="todoresults_title">
-					<strong>Active @todo Comments</strong> <a class="todo_help_icon" href="https://gearside.com/wordpress-dashboard-todo-manager/?utm_campaign=nebula&utm_medium=nebula&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=todo+metabox<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener"><i class="far fw fa-question-circle"></i> Documentation &raquo;</a>
+					<strong>Active @todo Comments</strong> <a class="todo_help_icon" href="https://gearside.com/wordpress-dashboard-todo-manager/?utm_campaign=nebula&utm_medium=nebula&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=todo+metabox<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener noreferrer"><i class="far fw fa-question-circle"></i> Documentation &raquo;</a>
 				</p>
 
 				<div class="todo_results">
@@ -521,7 +521,7 @@ if ( !trait_exists('Dashboard') ){
 						<?php
 
 						//Count files and instances
-						if ( ($todo['priority'] === 'empty' || $todo['priority'] > 0) ){ //Only count todos with a non-hidden priority
+						if ( $todo['priority'] === 'empty' || $todo['priority'] > 0 ){ //Only count todos with a non-hidden priority
 							if ( !is_child_theme() || (is_child_theme() && $location === 'child') ){ //Only count child todo comments if child theme is active
 								if ( $last_file !== $todo['filepath'] ){
 									$file_count++;
@@ -607,7 +607,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( empty($domain) ){
 				$domain = '<small>(None)</small>';
 			}
-			echo '<li><i class="fas fa-fw fa-info-circle"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" rel="noopener" title="WHOIS Lookup">Domain</a>: <strong>' . $domain . '</strong></li>';
+			echo '<li><i class="fas fa-fw fa-info-circle"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" rel="noopener noreferrer" title="WHOIS Lookup">Domain</a>: <strong>' . $domain . '</strong></li>';
 
 			//Host
 			function top_domain_name($url){
@@ -637,7 +637,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443 ){
 				$secureServer = '<small class="secured-connection"><i class="fas fa-fw fa-lock"></i>Secured Connection</small>';
 			}
-			echo '<li><i class="fas fa-fw fa-upload"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank" rel="noopener">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . '</li>';
+			echo '<li><i class="fas fa-fw fa-upload"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank" rel="noopener noreferrer">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . '</li>';
 
 			//Server operating system
 			if ( strpos(strtolower(PHP_OS), 'linux') !== false ){
@@ -984,7 +984,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li id="performance-ttfb"><i class="far fa-fw fa-clock"></i> <span class="label">PHP Response Time</span>: <strong class="datapoint" title="Calculated via PHP render time">' . timer_stop(0, 3) . ' seconds</strong></li>';
 			echo '</ul>';
 
-			echo '<p><small><a href="https://web.dev/lighthouse-performance/" target="_blank" rel="noopener">Learn about user-centric performance metrics &raquo;</a></small></p>';
+			echo '<p><small><a href="https://web.dev/lighthouse-performance/" target="_blank" rel="noopener noreferrer">Learn about user-centric performance metrics &raquo;</a></small></p>';
 		}
 
 		//Add a dashboard metabox for design reference

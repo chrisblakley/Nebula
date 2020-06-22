@@ -5,8 +5,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Users') ){
 	trait Users {
 		public function hooks(){
-			add_action('init', array($this, 'users_status_init'));
-			add_action('admin_init', array($this, 'users_status_init'));
+			add_action('init', array($this, 'users_status_init')); //This happens on all pages (front-end and admin)
 
 			//Exclude AJAX and REST requests
 			if ( !$this->is_ajax_or_rest_request() ){
@@ -19,7 +18,7 @@ if ( !trait_exists('Users') ){
 
 				add_filter('user_contactmethods', array($this, 'user_contact_methods'));
 
-				if ( current_user_can('edit_posts') ){ //If the user is not a subscriber or contributor role (Ex: only authors and above)
+				if ( current_user_can('publish_posts') ){ //If the user is not a subscriber or contributor role (Ex: only authors and above)
 					add_action('show_user_profile', array($this, 'extra_profile_fields'));
 					add_action('edit_user_profile', array($this, 'extra_profile_fields'));
 				}

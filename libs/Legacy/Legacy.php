@@ -9,7 +9,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Legacy') ){
 	trait Legacy {
 		public function hooks(){
-
+			//Empty until legacy functions use a WP action or filter
 		}
 
 		//Renamed function

@@ -1367,6 +1367,9 @@ trait Functions {
 
 			case 'youtube':
 				return esc_url($this->get_option('youtube_url'));
+
+			default:
+				return false;
 		}
 
 		return false;
@@ -1614,7 +1617,7 @@ trait Functions {
 		?>
 		<div class="nebula-social-button pinterest-pin">
 			<a href="//www.pinterest.com/pin/create/button/?url=<?php echo get_page_link(); ?>&media=<?php echo $featured_image; ?>&description=<?php echo urlencode(get_the_title()); ?>" data-pin-do="buttonPin" data-pin-config="<?php echo ( $counts !== 0 )? 'beside' : 'none'; ?>" data-pin-color="red">
-				<img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_red_20.png" loading="lazy" />
+				<img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_red_20.png" alt="Pinterest Pin Button" loading="lazy" />
 			</a>
 			<?php if ( empty($this->pinterest_pin_widget_loaded) ): ?>
 				<script type="text/javascript" async defer src="//assets.pinterest.com/js/pinit.js"></script>
@@ -3021,7 +3024,7 @@ trait Functions {
 				}
 			}
 
-			if ( sizeof($suggestions) >= 1 ){
+			if ( !empty($suggestions) ){
 				//Order by match similarity to page title (DESC).
 				function autocomplete_similarity_compare($a, $b){
 					return $b['similarity'] - $a['similarity'];
@@ -3042,9 +3045,9 @@ trait Functions {
 			//Link to search at the end of the list
 			//@TODO "Nebula" 0: The empty result is not working for some reason... (Press Enter... is never appearing)
 			$suggestion = array();
-			$suggestion['label'] = ( sizeof($suggestions) >= 1 )? __('...more results for', 'nebula') . ' "' . $term . '"' : __('Press enter to search for', 'nebula') . ' "' . $term . '"';
+			$suggestion['label'] = ( !empty($suggestions) )? __('...more results for', 'nebula') . ' "' . $term . '"' : __('Press enter to search for', 'nebula') . ' "' . $term . '"';
 			$suggestion['link'] = home_url('/') . '?s=' . str_replace(' ', '%20', $term);
-			$suggestion['classes'] = ( sizeof($suggestions) >= 1 )? 'more-results search-link' : 'no-results search-link';
+			$suggestion['classes'] = ( !empty($suggestions) )? 'more-results search-link' : 'no-results search-link';
 			$outputArray[] = $suggestion;
 
 			$this->timer($timer_name, 'end');

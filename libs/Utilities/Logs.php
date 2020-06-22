@@ -168,7 +168,7 @@ if ( !trait_exists('Logs') ){
 
 				//Otherwise get the actual logs data (rows)
 				$nebula_logs_data = get_transient('nebula_logs');
-				if ( (empty($nebula_logs_data) || $this->is_debug()) ){
+				if ( empty($nebula_logs_data) || $this->is_debug() ){
 					$nebula_logs_data = $wpdb->get_results("SELECT * FROM $wpdb->nebula_logs ORDER BY timestamp DESC LIMIT 100"); //Get all data (last 100 logs) from the DB table in descending order (latest first)
 					set_transient('nebula_logs', $nebula_logs_data, HOUR_IN_SECONDS);
 				}
