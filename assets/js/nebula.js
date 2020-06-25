@@ -3762,8 +3762,11 @@ nebula.removeQueryParameter = function(keys, sourceURL){
 		keys = [keys];
 	}
 
+	var newURL; //Establish the scope
+
 	jQuery.each(keys, function(index, item){
 		var url = sourceURL;
+
 		if ( typeof newURL !== 'undefined' ){
 			url = newURL;
 		}
@@ -3783,7 +3786,7 @@ nebula.removeQueryParameter = function(keys, sourceURL){
 				}
 			}
 
-			var newURL = baseURL + '?' + params_arr.join('&');
+			newURL = baseURL + '?' + params_arr.join('&');
 		}
 	});
 

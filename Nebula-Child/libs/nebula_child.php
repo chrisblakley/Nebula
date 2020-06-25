@@ -31,10 +31,12 @@ add_action('init', function(){
 			'singular_name' => 'Event',
 		),
 		'description' => 'Upcoming webinars and conferences.',
-		'public' => true,
 		'menu_icon' => 'dashicons-calendar', //https://developer.wordpress.org/resource/dashicons/
 		'has_archive' => true,
+		'taxonomies' => array('category', 'post_tag'),
 		'supports' => array('title', 'editor', 'revisions', 'excerpt', 'thumbnail'),
+		'public' => true,
+		'publicly_queryable' => true, //Keep this to prevent 404s on the front-end (unless it should not be available to visitors)
 	));
 
 	//If you get a 404 on a custom post type try flush_rewrite_rules() but only use it temporarily (it is an expensive operation)

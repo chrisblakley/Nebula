@@ -442,9 +442,20 @@ function checkWPTresults(){
 					getLighthouseResults();
 				}
 			} else if ( response.statusCode < 200 ){ //Testing still in progress
-				jQuery('#performance-sub-status strong').text(response.statusText);
-				var pollTime = ( response.statusCode === 100 )? 3000 : 8000; //Poll slowly when behind other tests and quickly once the test has started
-				setTimeout(checkWPTresults, pollTime);
+				var waitingBehind = response.statusText.match(/behind (\d+) other/) || 0;
+
+				if ( waitingBehind ){
+					waitingBehind = parseInt(waitingBehind[1]);
+				}
+
+				if ( waitingBehind < 25 ){ //Wait in line if fewer than 25 tests ahead
+					jQuery('#performance-sub-status strong').text(response.statusText);
+					var pollTime = ( response.statusCode === 100 )? 3000 : 8000; //Poll slowly when behind other tests and quickly once the test has started
+					setTimeout(checkWPTresults, pollTime);
+				} else {
+					jQuery('#performance-sub-status strong').text('Behind too many other WebPageTest.org tests. Check back later for results.');
+					getLighthouseResults();
+				}
 			} else if ( response.statusCode >= 400 ){ //An API error has occurred
 				jQuery('#performance-sub-status strong').text('An API error has occurred.');
 			}
