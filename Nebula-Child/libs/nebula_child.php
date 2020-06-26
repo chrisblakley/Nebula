@@ -25,7 +25,7 @@
 /*
 //Register custom post types
 add_action('init', function(){
-	register_post_type('events', array(
+	register_post_type('events', array( //This is the text that appears in the URL
 		'labels' => array(
 			'name' => 'Events', //Plural
 			'singular_name' => 'Event',

@@ -1,13 +1,12 @@
 //BEGIN automated edits. These will be automatically overwritten.
 const THEME_NAME = 'nebula-child';
-const NEBULA_VERSION = 'v8.1.24.9207'; //Wednesday, June 24, 2020 10:05:54 PM
+const NEBULA_VERSION = 'v8.1.25.9968'; //Thursday, June 25, 2020 11:55:29 PM
 const OFFLINE_URL = 'https://gearside.com/nebula/offline/';
 const OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
 const OFFLINE_GA_DIMENSION = 'cd2';
 const META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
 const MANIFEST = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/inc/manifest.json';
 const HOME_URL = 'https://gearside.com/nebula/';
-const START_URL = 'https://gearside.com/nebula/?utm_source=pwa'; //@todo "Nebula" 0: How do we append ?utm_source=pwa to this without causing an additional resource request to cache it?
 //END automated edits
 
 importScripts('https://cdnjs.cloudflare.com/ajax/libs/workbox-sw/5.1.3/workbox-sw.min.js'); //https://developers.google.com/web/tools/workbox/guides/get-started
@@ -37,7 +36,6 @@ workbox.precaching.precacheAndRoute([
 	{url: META_ICON, revision: revisionNumber},
 	{url: MANIFEST, revision: revisionNumber},
 	{url: HOME_URL, revision: revisionNumber},
-	{url: START_URL, revision: revisionNumber},
 ]);
 
 //Check if we need to force network retrieval for specific resources (false = network only, true = allow caching)

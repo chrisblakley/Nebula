@@ -678,7 +678,7 @@ trait Functions {
 			"background_color": "' . get_theme_mod('nebula_background_color', $this->get_color('$background_color')) . '",
 			"gcm_sender_id": "' . $this->get_option('gcm_sender_id') . '",
 			"scope": "/",
-			"start_url": "' . home_url('/') . '?utm_source=homescreen",
+			"start_url": "' . home_url('/') . '?utm_source=pwa",
 			"display": "standalone",
 			"orientation": "portrait",
 			"icons": [';

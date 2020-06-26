@@ -6,7 +6,7 @@
 			"background_color": "#f6f6f6",
 			"gcm_sender_id": "",
 			"scope": "/",
-			"start_url": "https://gearside.com/nebula/?utm_source=homescreen",
+			"start_url": "https://gearside.com/nebula/?utm_source=pwa",
 			"display": "standalone",
 			"orientation": "portrait",
 			"icons": [{
