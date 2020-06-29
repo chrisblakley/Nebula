@@ -154,6 +154,7 @@ if ( !trait_exists('Analytics') ){
 					'publishDate' => esc_html($this->get_option('cd_publishdate')),
 					'blocker' => esc_html($this->get_option('cd_blocker')),
 					'queryString' => esc_html($this->get_option('cd_querystring')),
+					'textFragment' => esc_html($this->get_option('cd_textfragment')),
 					'mqBreakpoint' => esc_html($this->get_option('cd_mqbreakpoint')),
 					'mqResolution' => esc_html($this->get_option('cd_mqresolution')),
 					'mqOrientation' => esc_html($this->get_option('cd_mqorientation')),

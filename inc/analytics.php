@@ -38,7 +38,7 @@
 			ga('set', 'anonymizeIp', true);
 		<?php endif; ?>
 
-		if ( 'PerformanceNavigation' in window ){
+		if ( window.performance ){
 			ga('set', nebula.analytics.dimensions.redirectcount, performance.navigation.redirectCount); //Redirect Count
 
 			//Navigation Type
@@ -58,6 +58,12 @@
 					break;
 			}
 			ga('set', nebula.analytics.dimensions.navigationtype, navigationTypeLabel);
+
+			//Text Fragment (Ex: #:~:text=This%20is%20an%20example.
+			var textFragment = decodeURIComponent(performance.getEntriesByType('navigation')[0].name.match('#:~:text=(.*)')[1]);
+			if ( textFragment ){
+				ga('set', nebula.analytics.dimensions.textFragment, textFragment);
+			}
 		}
 
 		<?php
@@ -190,6 +196,8 @@
 		<?php if ( nebula()->get_option('cd_offline') ): ?>
 			ga('set', nebula.analytics.dimensions.offline, 'online');
 		<?php endif; ?>
+
+
 
 		<?php if ( 1==1 ): //Autotrack ?>
 			<?php if ( nebula()->get_option('cm_pagevisible') && nebula()->get_option('cm_pagehidden') ): //Autotrack Page Visibility ?>

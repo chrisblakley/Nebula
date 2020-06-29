@@ -301,6 +301,7 @@ if ( !trait_exists('Options') ){
 				'cd_wordcount' => '',
 				'cd_blocker' => '',
 				'cd_querystring' => '',
+				'cd_textfragment' => '',
 				'cd_mqbreakpoint' => '',
 				'cd_mqresolution' => '',
 				'cd_mqorientation' => '',

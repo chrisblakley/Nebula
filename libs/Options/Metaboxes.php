@@ -1162,6 +1162,17 @@ if ( !trait_exists('Metaboxes') ){
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-prepend">
+								<div class="input-group-text">Text Fragment</div>
+							</div>
+							<input type="text" name="nebula_options[cd_textfragment]" id="cd_textfragment" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_textfragment']; ?>" />
+						</div>
+						<p class="nebula-help-text short-help form-text text-muted">Logs the text fragment from the URL. Useful for detecting Google SERP Feature links. Scope: Hit</p>
+						<p class="option-keywords">custom dimension</p>
+					</div>
+
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-prepend">
 								<div class="input-group-text">Media Query: Breakpoint</div>
 							</div>
 							<input type="text" name="nebula_options[cd_mqbreakpoint]" id="cd_mqbreakpoint" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_mqbreakpoint']; ?>" />
