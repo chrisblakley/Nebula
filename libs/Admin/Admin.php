@@ -8,9 +8,9 @@ if ( !trait_exists('Admin') ){
 	require_once get_template_directory() . '/libs/Admin/Users.php';
 
 	trait Admin {
-		use Automation { Automation::hooks as AutomationHooks;}
-		use Dashboard { Dashboard::hooks as DashboardHooks;}
-		use Users { Users::hooks as UsersHooks;}
+		use Automation {Automation::hooks as AutomationHooks;}
+		use Dashboard {Dashboard::hooks as DashboardHooks;}
+		use Users {Users::hooks as UsersHooks;}
 
 		public function hooks(){
 			global $pagenow;

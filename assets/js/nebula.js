@@ -10,6 +10,7 @@ jQuery(function(){
 
 	//Utilities
 	nebula.cacheSelectors();
+	nebula.initBootstrapFunctions(); //Must be in DOM ready
 	nebula.helpers();
 	nebula.svgImgs();
 	nebula.errorMitigation();
@@ -51,7 +52,6 @@ jQuery(window).on('load', function(){
 	window.performance.mark('nebula_window_load_start');
 
 	nebula.cacheSelectors();
-	nebula.initBootstrapFunctions();
 	nebula.performanceMetrics();
 	nebula.lazyLoadAssets();
 	nebula.initVideoTracking();

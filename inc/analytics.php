@@ -62,8 +62,7 @@
 			//Text Fragment (Ex: #:~:text=This%20is%20an%20example.
 			var textFragment = performance.getEntriesByType('navigation')[0].name.match('#:~:text=(.*)');
 			if ( textFragment ){
-				textFragment = decodeURIComponent(textFragment[1]);
-				ga('set', nebula.analytics.dimensions.textFragment, textFragment);
+				ga('set', nebula.analytics.dimensions.textFragment, decodeURIComponent(textFragment[1]));
 			}
 		}
 

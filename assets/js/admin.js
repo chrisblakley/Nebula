@@ -415,7 +415,7 @@ function checkWPTresults(){
 					//Bytes Downloaded
 					var bytesIn = (response.data.median.firstView.bytesIn/1024/1024).toFixed(2);
 					appendPerformanceMetric({
-						'icon': 'fas fa-shoe-prints',
+						'icon': 'fas fa-weight-hanging',
 						'label': 'Bytes Downloaded',
 						'text': bytesIn + 'mb',
 						'value': bytesIn,
@@ -607,7 +607,7 @@ function getLighthouseResults(){
 			//Total Byte Weight
 			var totalByteWeight = json.lighthouseResult.audits['total-byte-weight'];
 			appendPerformanceMetric({
-				'icon': 'fas fa-shoe-prints',
+				'icon': 'fas fa-weight-hanging',
 				'label': 'Total Byte Weight',
 				'text': (totalByteWeight.numericValue/1024/1024).toFixed(2) + 'mb',
 				'description': totalByteWeight.description,
