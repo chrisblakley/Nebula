@@ -156,35 +156,37 @@
 </IfModule>
 
 #Cache files for certain lengths of time
-#1 YEAR
-<FilesMatch "\.(ico|pdf|flv|png|gif|swf|jpg|jpeg|svg|woff|woff2|mp3|css|js)$">
-	Header set Cache-Control "max-age=31536000, public"
-</FilesMatch>
+<IfModule mod_expires.c>
+	#1 YEAR
+	<FilesMatch "\.(ico|pdf|flv|png|gif|swf|jpg|jpeg|svg|woff|woff2|mp3|css|js)$">
+		Header set Cache-Control "max-age=31536000, public"
+	</FilesMatch>
 
-#2 DAYS
-<FilesMatch "\.(xml|txt)$">
-	Header set Cache-Control "max-age=172800, proxy-revalidate"
-</FilesMatch>
+	#2 DAYS
+	<FilesMatch "\.(xml|txt)$">
+		Header set Cache-Control "max-age=172800, proxy-revalidate"
+	</FilesMatch>
 
-#10 HOURS
-#PHP/HTML files here to try to prevent nonces from expiring in cache
-<FilesMatch "\.(php|html)$">
-	Header set Cache-Control "max-age=36000, public"
-</FilesMatch>
+	#10 HOURS
+	#PHP/HTML files here to try to prevent nonces from expiring in cache
+	<FilesMatch "\.(php|html)$">
+		Header set Cache-Control "max-age=36000, public"
+	</FilesMatch>
 
-#Disable Cache for filetypes
-<FilesMatch ".(pl|cgi|spl|scgi|fcgi)$">
-	Header unset Cache-Control
-</FilesMatch>
+	#Disable Cache for filetypes
+	<FilesMatch ".(pl|cgi|spl|scgi|fcgi)$">
+		Header unset Cache-Control
+	</FilesMatch>
 
-#Disable cache for service worker file
-<FilesMatch "(sw|service-worker|serviceworker).js$">
-	FileETag None
-	Header unset ETag
-	Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
-	Header set Pragma "no-cache"
-	Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
-</FilesMatch>
+	#Disable cache for service worker file
+	<FilesMatch "(sw|service-worker|serviceworker).js$">
+		FileETag None
+		Header unset ETag
+		Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+		Header set Pragma "no-cache"
+		Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+	</FilesMatch>
+</IfModule>
 
 #RewriteEngine On
 #RewriteCond %{REQUEST_METHOD} POST

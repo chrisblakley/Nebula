@@ -1,12 +1,12 @@
 //BEGIN automated edits. These will be automatically overwritten.
 const THEME_NAME = 'nebula-child';
-const NEBULA_VERSION = 'v8.1.30.9228'; //Tuesday, June 30, 2020 10:08:56 PM
-const OFFLINE_URL = 'https://gearside.com/nebula/offline/';
-const OFFLINE_IMG = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/offline.svg';
+const NEBULA_VERSION = 'v8.2.6.663'; //Monday, July 6, 2020 3:54:48 PM
+const OFFLINE_URL = 'https://nebula.gearside.com/offline/';
+const OFFLINE_IMG = 'https://nebula.gearside.com/wp-content/themes/Nebula-master/assets/img/offline.svg';
 const OFFLINE_GA_DIMENSION = 'cd2';
-const META_ICON = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
-const MANIFEST = 'https://gearside.com/nebula/wp-content/themes/Nebula-master/inc/manifest.json';
-const HOME_URL = 'https://gearside.com/nebula/';
+const META_ICON = 'https://nebula.gearside.com/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
+const MANIFEST = 'https://nebula.gearside.com/wp-content/themes/Nebula-master/inc/manifest.json';
+const HOME_URL = 'https://nebula.gearside.com/';
 //END automated edits
 
 importScripts('https://cdnjs.cloudflare.com/ajax/libs/workbox-sw/5.1.3/workbox-sw.min.js'); //https://developers.google.com/web/tools/workbox/guides/get-started

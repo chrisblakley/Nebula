@@ -255,7 +255,7 @@ nebula.registerServiceWorker = function(){
 		});
 
 		//Clear the caches with ?debug query string
-		if ( nebula.get('debug') ){
+		if ( nebula.get('debug') && typeof window.requestIdleCallback === 'function' ){ //requestIdleCallback to prevent IE11
 			if ( 'caches' in window ){
 				caches.keys().then(function(names){
 					for ( let name of names ){

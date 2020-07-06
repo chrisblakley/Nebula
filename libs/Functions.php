@@ -147,7 +147,7 @@ trait Functions {
 		add_post_type_support('page', 'excerpt'); //Allow pages to have excerpts too
 
 		header("X-UA-Compatible: IE=edge"); //Add IE compatibility header
-		header('Developed-with-Nebula: https://gearside.com/nebula'); //Nebula header
+		header('Developed-with-Nebula: https://nebula.gearside.com'); //Nebula header
 
 		//Removals
 		remove_theme_support('custom-background');
@@ -435,7 +435,7 @@ trait Functions {
 				if ( !file_exists($this->sw_location(false)) ){
 					$nebula_warnings[] = array(
 						'level' => 'error',
-						'description' => '<i class="far fa-fw fa-file"></i> Service Worker is enabled in <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">Nebula Options</a>, but no Service Worker JavaScript file was found. Either use the <a href="https://github.com/chrisblakley/Nebula/blob/master/Nebula-Child/resources/sw.js" target="_blank">provided sw.js file</a> (by moving it to the root directory), or override the function <a href="https://gearside.com/nebula/functions/sw_location/?utm_campaign=documentation&utm_medium=admin+notice&utm_source=service+worker#override" target="_blank">sw_location()</a> to locate the actual JavaScript file you are using.'
+						'description' => '<i class="far fa-fw fa-file"></i> Service Worker is enabled in <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">Nebula Options</a>, but no Service Worker JavaScript file was found. Either use the <a href="https://github.com/chrisblakley/Nebula/blob/master/Nebula-Child/resources/sw.js" target="_blank">provided sw.js file</a> (by moving it to the root directory), or override the function <a href="https://nebula.gearside.com/functions/sw_location/?utm_campaign=documentation&utm_medium=admin+notice&utm_source=service+worker#override" target="_blank">sw_location()</a> to locate the actual JavaScript file you are using.'
 					);
 				}
 

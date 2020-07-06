@@ -12,7 +12,7 @@ Exclude, traffic from the IP addresses
 
 ## Valid Hostnames
 
-Only allow traffic to valid hostnames. [Generate a valid hostname filter pattern here](https://gearside.com/nebula/utilities/domain-regex-generator/?utm_campaign=documentation&utm_medium=readme&utm_source=ga+filters#customhostnames)
+Only allow traffic to valid hostnames. [Generate a valid hostname filter pattern here](https://nebula.gearside.com/utilities/domain-regex-generator/?utm_campaign=documentation&utm_medium=readme&utm_source=ga+filters#customhostnames)
 
 Filter Type: Custom
 

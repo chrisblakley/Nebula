@@ -6,16 +6,16 @@ if ( !trait_exists('Optimization') ){
 	trait Optimization {
 		public function hooks(){
 			add_action('send_headers', array($this, 'nebula_http2_ob_start'));
-			add_filter('style_loader_src', array($this, 'http2_server_push_header'), 2, 1);
-			add_filter('script_loader_src', array($this, 'http2_server_push_header'), 2, 1);
+			add_action('wp_enqueue_scripts', array($this, 'styles_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
+			add_action('wp_enqueue_scripts', array($this, 'scripts_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
 
 			add_filter('wp_enqueue_scripts', array($this, 'defer_async_additional_scripts'));
 			add_filter('script_loader_tag', array($this, 'defer_async_scripts'), 10, 2);
 
 			add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
 			add_action('wp_footer', array($this, 'dequeue_lazy_load_scripts'));
-			add_action('wp_enqueue_scripts', array($this, 'dequeues'), 9999);
-			add_action('wp_enqueue_scripts', array($this, 'remove_actions'), 9999);
+			add_action('wp_enqueue_scripts', array($this, 'dequeues'), 9001);
+			add_action('wp_enqueue_scripts', array($this, 'remove_actions'), 9001);
 
 			add_action('send_headers', array($this, 'service_worker_scope'));
 			add_action('admin_init', array($this, 'plugin_force_settings'));
@@ -260,16 +260,30 @@ if ( !trait_exists('Optimization') ){
 
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
 		//This uses a link preload header, so these resources must be used within a few seconds of window load.
-		//@todo "Nebula" 0: This is occassionally triggering console warnings that the resources are not used within a few seconds of window load...
-		public function http2_server_push_header($src){
-			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') && file_exists($this->sw_location(false)) ){ //If not in the admin section (including Customizer and login) and if Service Worker is enabled (and file exists)
-				$filetype = ( strpos($src, '.css') )? 'style' : 'script'; //Determine the resource type (this is only used with CSS and JS)
-				if ( strpos($src, $this->url_components('sld')) > 0 ){ //Only push local files
-					header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel=preload; as=' . $filetype, false); //Send the header for the HTTP2 Server Push (strtok to remove everything after and including "#")
+		public function styles_http2_server_push_header(){
+			if ( !$this->is_admin_page(true, true) ){ //Exclude admin, login, and Customizer pages
+				global $wp_styles;
+
+				foreach ( $wp_styles->queue as $handle ){
+					$this->http2_server_push_file($wp_styles->registered[$handle]->src, 'style');
 				}
 			}
+		}
 
-			return $src;
+		public function scripts_http2_server_push_header(){
+			if ( !$this->is_admin_page(true, true) ){ //Exclude admin, login, and Customizer pages
+				global $wp_scripts;
+
+				foreach ( $wp_scripts->queue as $handle ){
+					$this->http2_server_push_file($wp_scripts->registered[$handle]->src, 'script');
+				}
+			}
+		}
+
+		public function http2_server_push_file($src, $filetype){
+			if ( !$this->is_admin_page(true, true) ){ //Exclude admin, login, and Customizer pages
+				header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel=preload; as=' . $filetype, false); //Send the header for the HTTP2 Server Push (strtok to remove everything after and including "#")
+			}
 		}
 
 		//Set Server Timing header

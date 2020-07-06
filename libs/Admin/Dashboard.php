@@ -91,7 +91,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fab fa-fw fa-wordpress"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener noreferrer">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
 			//Nebula Version
-			echo '<li><i class="far fa-fw fa-star"></i> <a href="https://gearside.com/nebula?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master" target="_blank">' . $this->version('raw') . '</a></strong> <small title="' . human_time_diff($this->version('utc')) . ' ago" style="cursor: help;">(Committed: ' . $this->version('date') . ')</small></li>';
+			echo '<li><i class="far fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master" target="_blank">' . $this->version('raw') . '</a></strong> <small title="' . human_time_diff($this->version('utc')) . ' ago" style="cursor: help;">(Committed: ' . $this->version('date') . ')</small></li>';
 
 			//Child Theme
 			if ( is_child_theme() ){
@@ -655,6 +655,8 @@ if ( !trait_exists('Dashboard') ){
 				$server_software = strtok($_SERVER['SERVER_SOFTWARE'], ' '); //Shorten to until the first space
 			}
 			echo '<li><i class="fas fa-fw fa-server"></i> Server Software: <strong title="' . $_SERVER['SERVER_SOFTWARE'] . '">' . $server_software . '</strong></li>';
+
+			echo '<li><i class="fas fa-fw fa-ethernet"></i> Server Protocol: <strong>' . $_SERVER['SERVER_PROTOCOL'] . '</strong></li>';
 
 			//MySQL version
 			if ( function_exists('mysqli_get_client_version') ){
