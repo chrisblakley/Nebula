@@ -255,11 +255,11 @@ nebula.registerServiceWorker = function(){
 		});
 
 		//Clear the caches with ?debug query string
-		if ( nebula.get('debug') && typeof window.requestIdleCallback === 'function' ){ //requestIdleCallback to prevent IE11
+		if ( nebula.get('debug') ){
 			if ( 'caches' in window ){
 				caches.keys().then(function(names){
-					for ( let name of names ){
-						caches.delete(name);
+					for( i = 0; i < names.length; i++ ){ //Change this back to: for ( let name of names ){ when we stop supporting IE11
+						caches.delete(names[i]);
 					}
 				});
 			}
