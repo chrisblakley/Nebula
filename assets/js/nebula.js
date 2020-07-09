@@ -1,4 +1,4 @@
-window.performance.mark('nebula_inside_nebulajs');
+window.performance.mark('(Nebula) Inside nebula.js');
 jQuery.noConflict();
 
 /*==========================
@@ -6,7 +6,7 @@ jQuery.noConflict();
  ===========================*/
 
 jQuery(function(){
-	window.performance.mark('nebula_dom_ready_start');
+	window.performance.mark('(Nebula) DOM Ready [Start]');
 
 	//Utilities
 	nebula.cacheSelectors();
@@ -40,8 +40,8 @@ jQuery(function(){
 
 	nebula.eventTracking();
 
-	window.performance.mark('nebula_dom_ready_end');
-	window.performance.measure('nebula_dom_ready_functions', 'nebula_dom_ready_start', 'nebula_dom_ready_end');
+	window.performance.mark('(Nebula) DOM Ready [End]');
+	window.performance.measure('(Nebula) DOM Ready Functions', '(Nebula) DOM Ready [Start]', '(Nebula) DOM Ready [End]');
 });
 
 /*==========================
@@ -49,7 +49,7 @@ jQuery(function(){
  ===========================*/
 
 jQuery(window).on('load', function(){
-	window.performance.mark('nebula_window_load_start');
+	window.performance.mark('(Nebula) Window Load [Start]');
 
 	nebula.cacheSelectors();
 	nebula.performanceMetrics();
@@ -88,9 +88,9 @@ jQuery(window).on('load', function(){
 
 	nebula.cookieNotification();
 
-	window.performance.mark('nebula_window_load_end');
-	window.performance.measure('nebula_window_load_functions', 'nebula_window_load_start', 'nebula_window_load_end');
-	window.performance.measure('nebula_window_loaded', 'navigationStart', 'nebula_window_load_end');
+	window.performance.mark('(Nebula) Window Load [End]');
+	window.performance.measure('(Nebula) Window Load Functions', '(Nebula) Window Load [Start]', '(Nebula) Window Load [End]');
+	window.performance.measure('(Nebula) Window Loaded', 'navigationStart', '(Nebula) Window Load [End]');
 });
 
 /*==========================
@@ -150,14 +150,14 @@ nebula.registerServiceWorker = function(){
 	jQuery('.nebula-sw-install-button').addClass('inactive');
 
 	if ( nebula.site.options.sw && 'serviceWorker' in navigator ){ //Firefox 44+, Chrome 45+, Edge 17+, Safari 12+ //@todo "Nebula" 0: Use optional chaining
-		window.performance.mark('nebula_sw_registration_start');
+		window.performance.mark('(Nebula) SW Registration [Start]');
 		//navigator.serviceWorker.register(nebula.site.sw_url, {cache: 'max-age=0'}).then(function(registration){
 		navigator.serviceWorker.register(nebula.site.sw_url).then(function(registration){
 			//console.log('ServiceWorker registration successful with scope: ', registration.scope);
 			//console.debug(registration);
 
-			window.performance.mark('nebula_sw_registration_end');
-			window.performance.measure('nebula_sw_registration', 'nebula_sw_registration_start', 'nebula_sw_registration_end');
+			window.performance.mark('(Nebula) SW Registration [End]');
+			window.performance.measure('(Nebula) SW Registration', '(Nebula) SW Registration [Start]', '(Nebula) SW Registration [End]');
 
 			//Unregister the ServiceWorker on ?debug
 			if ( nebula.dom.html.hasClass('debug') ){
@@ -445,8 +445,8 @@ nebula.performanceMetrics = function(){
 		if ( window.performance && window.performance.timing && typeof window.requestIdleCallback === 'function' ){ //Safari 11+ and no IE11 //@todo "Nebula" 0: Use optional chaining (and remove the idlecallback condition after IE11)
 
 			window.requestIdleCallback(function(){
-				window.performance.mark('nebula_cpu_idle');
-				window.performance.measure('nebula_until_cpu_idle', 'navigationStart', 'nebula_cpu_idle');
+				window.performance.mark('(Nebula) CPU Idle');
+				window.performance.measure('(Nebula) Until CPU Idle', 'navigationStart', '(Nebula) CPU Idle');
 
 				var timingCalcuations = {
 					'Redirect': {start: Math.round(performance.timing.redirectStart - performance.timing.navigationStart), duration: Math.round(performance.timing.redirectEnd - performance.timing.redirectStart)},
@@ -1493,7 +1493,7 @@ nebula.eventTracking = function(){
 
 		//Detect Adblock
 		if ( nebula.user.client.bot === false && nebula.site.options.adblock_detect ){
-			window.performance.mark('nebula_detect_adblock_start');
+			window.performance.mark('(Nebula) Detect AdBlock [Start]');
 			jQuery.ajax({ //Eventually update this to fetch with ES6
 				type: 'GET',
 				url: nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js',
@@ -1511,8 +1511,8 @@ nebula.eventTracking = function(){
 					nebula.session.flags.adblock = true;
 				}
 			}).always(function(){
-				window.performance.mark('nebula_detect_adblock_end');
-				window.performance.measure('nebula_detect_adblock', 'nebula_detect_adblock_start', 'nebula_detect_adblock_end');
+				window.performance.mark('(Nebula) Detect AdBlock [End]');
+				window.performance.measure('(Nebula) Detect AdBlock', '(Nebula) Detect AdBlock [Start]', 'Detect AdBlock [End]');
 			});
 		}
 
@@ -3431,7 +3431,7 @@ nebula.initBootstrapFunctions = function(){
 
 		//Popovers
 		if ( jQuery('[data-toggle="popover"]').length ){
-			jQuery('[data-toggle="popover"]').popover();
+			jQuery('[data-toggle="popover"]').popover({'trigger': 'hover'});
 		}
 
 		nebula.checkBootstrapToggleButtons();
@@ -4089,7 +4089,7 @@ nebula.timer = function(uniqueID, action, name){
 			//Add the time to User Timing API (if supported)
 			if ( typeof performance.measure !== 'undefined' ){
 				var lapID = name || lapNumber;
-				performance.mark(uniqueID + '_lap-' + lapID);
+				performance.mark(uniqueID + ' [Lap ' + lapID + ']');
 			}
 		}
 
@@ -4097,10 +4097,10 @@ nebula.timer = function(uniqueID, action, name){
 		if ( action === 'end' ){
 			//Add the time to User Timing API (if supported)
 			if ( typeof performance.measure !== 'undefined' ){
-				performance.mark(uniqueID + '_end');
+				performance.mark(uniqueID + ' [End]');
 
-				if ( performance.getEntriesByName(uniqueID + '_start', 'mark') ){ //Make sure the start mark exists
-					performance.measure(uniqueID, uniqueID + '_start', uniqueID + '_end');
+				if ( performance.getEntriesByName(uniqueID + ' [Start]', 'mark') ){ //Make sure the start mark exists
+					performance.measure(uniqueID, uniqueID + ' [Start]', uniqueID + ' [End]');
 				}
 			}
 
@@ -4509,7 +4509,7 @@ nebula.youtubeTracking = function(){
 };
 
 function onYouTubeIframeAPIReady(e){
-	window.performance.mark('nebula_loading_youtube_videos_start');
+	window.performance.mark('(Nebula) Loading Youtube Videos [Start]');
 	jQuery('iframe[src*="youtube"]').each(function(i){
 		if ( !jQuery(this).hasClass('ignore') ){ //Use this class to ignore certain videos from tracking
 			var id = jQuery(this).attr('id');
@@ -4533,8 +4533,8 @@ function onYouTubeIframeAPIReady(e){
 			}
 		}
 	});
-	window.performance.mark('nebula_loading_youtube_videos_end');
-	window.performance.measure('nebula_loading_youtube_videos', 'nebula_loading_youtube_videos_start', 'nebula_loading_youtube_videos_end');
+	window.performance.mark('(Nebula) Loading Youtube Videos [End]');
+	window.performance.measure('(Nebula) Loading Youtube Videos', '(Nebula) Loading Youtube Videos [Start]', '(Nebula) Loading Youtube Videos [End]');
 
 	var pauseFlag = false;
 }

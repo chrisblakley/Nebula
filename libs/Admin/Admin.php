@@ -1071,7 +1071,7 @@ if ( !trait_exists('Admin') ){
 
 		//Log when WordPress core is updated
 		public function log_core_wp_updates($wp_upgrader, $extra){
-			if ( $extra['core'] ){
+			if ( isset($extra['core']) ){
 				$this->add_log('WordPress core was updated.', 5);
 			}
 		}

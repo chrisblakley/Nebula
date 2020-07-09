@@ -7,7 +7,7 @@
 
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('ga_tracking_id') ): //Universal Google Analytics ?>
 	<script>
-		window.performance.mark('nebula_analytics_start');
+		window.performance.mark('(Nebula) Analytics [Start]');
 
 		//Load the alternative async tracking snippet: https://developers.google.com/analytics/devguides/collection/analyticsjs/#alternative_async_tracking_snippet
 		//Allow Linker for cross-domain tracking. Linker plugin and configuration must be done in the child theme.
@@ -379,8 +379,8 @@
 		function nebulaSendGAPageview(){
 			ga('send', 'pageview', {
 				'hitCallback': function(){
-					window.performance.mark('nebula_analytics_pageview');
-					window.performance.measure('nebula_time_to_analytics_pageview', 'navigationStart', 'nebula_analytics_pageview');
+					window.performance.mark('(Nebula) Analytics Pageview');
+					window.performance.measure('(Nebula) Time to Analytics Pageview', 'navigationStart', '(Nebula) Analytics Pageview');
 				}
 			});
 		}

@@ -107,7 +107,7 @@ if ( !class_exists('Nebula') ){
 				if ( version_compare(phpversion(), '7.3.0', '>=') ){
 					session_set_cookie_params(array(
 						'secure' => true, //Make this secure
-						'httponly' => true, //Enable httponly for session cookie to prevent JavaScruot XSS attacks
+						'httponly' => true, //Enable httponly for session cookie to prevent JavaScript XSS attacks
 						'samesite' => 'Strict' //Lax will sent the cookie for cross-domain GET requests, while Strict will not.
 					));
 				} else {

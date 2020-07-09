@@ -1,4 +1,4 @@
-window.performance.mark('child_inside_mainjs');
+window.performance.mark('(Child) Inside main.js');
 jQuery.noConflict();
 
 /*==========================
@@ -6,13 +6,13 @@ jQuery.noConflict();
  ===========================*/
 
 jQuery(function(){
-	window.performance.mark('child_dom_ready_start');
+	window.performance.mark('(Child) DOM Ready [Start]');
 
 	nebula.cacheSelectors();
 	supplementalEventTracking();
 
-	window.performance.mark('child_dom_ready_end');
-	window.performance.measure('child_dom_ready_functions', 'child_dom_ready_start', 'child_dom_ready_end');
+	window.performance.mark('(Child) DOM Ready [End]');
+	window.performance.measure('(Child) DOM Ready Functions', '(Child) DOM Ready [Start]', '(Child) DOM Ready [End]');
 }); //End Document Ready
 
 /*==========================
@@ -20,12 +20,12 @@ jQuery(function(){
  ===========================*/
 
 jQuery(window).on('load', function(){
-	window.performance.mark('child_window_load_start');
+	window.performance.mark('(Child) Window Load [Start]');
 
 	//Window load functions here
 
-	window.performance.mark('child_window_load_end');
-	window.performance.measure('child_window_load_functions', 'child_window_load_start', 'child_window_load_end');
+	window.performance.mark('(Child) Window Load [End]');
+	window.performance.measure('(Child) Window Load Functions', '(Child) Window Load [Start]', '(Child) Window Load [End]');
 }); //End Window Load
 
 /*==========================
