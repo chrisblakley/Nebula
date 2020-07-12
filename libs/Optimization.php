@@ -555,7 +555,7 @@ if ( !trait_exists('Optimization') ){
 					//If dequeueing everywhere on front-end
 					if ( $rules === '*' ){
 						$this->deregister($handle, $type);
-						continue;
+						continue; //No need to check anything further since this handle is dequeued on all pages. Go to the next handle.
 					}
 
 					//Loop through each of the rules for this handle
@@ -563,7 +563,7 @@ if ( !trait_exists('Optimization') ){
 						//If an ID is used check it
 						if ( intval($rule) && get_the_id() === intval($rule) ){
 							$this->deregister($handle, $type);
-							continue;
+							break; //No need to check at additional rules for this handle. Go to the next handle.
 						}
 
 						//Check if rule is an inverted function. Ex: "!is_front_page"
@@ -581,7 +581,7 @@ if ( !trait_exists('Optimization') ){
 
 							if ( $conditional_function ){
 								$this->deregister($handle, $type);
-								continue;
+								break; //No need to check at additional rules for this handle. Go to the next handle.
 							}
 						}
 					}
