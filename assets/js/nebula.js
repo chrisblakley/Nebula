@@ -3618,7 +3618,7 @@ nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback
 					var thisHash = this.hash;
 					var target = jQuery(thisHash) || jQuery('[name=' + thisHash.slice(1) +']'); //Determine the target
 					if ( target.length ){ //If target exists
-						var pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : nebula.scroll.offset; //Determine the offset
+						var pOffset = ( jQuery(this).attr('data-offset') )? parseFloat(jQuery(this).attr('data-offset')) : nebula.scroll.offset; //Determine the offset
 						var nOffset = Math.floor(target.offset().top-offset+pOffset) + jQuery('body').scrollTop();
 						scrollSpeed = nebula.scroll.speed || 500;
 

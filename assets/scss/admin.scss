@@ -279,6 +279,8 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 		label {pointer-events: none;}
 	}
 
+	.form-group.active .input-group-text {background-color: $danger_color; color: readable-color($danger_color); font-weight: bold; cursor: help;}
+
 	//Lighten input placeholder text
 	input:-moz-placeholder,
 	textarea:-moz-placeholder {color: #ddd;}

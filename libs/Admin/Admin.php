@@ -575,6 +575,43 @@ if ( !trait_exists('Admin') ){
 					));
 				}
 
+				//Note any assets that Nebula is deregistering on this post/page
+				if ( !empty($this->deregistered_assets['styles']) || !empty($this->deregistered_assets['scripts']) ){
+					$wp_admin_bar->add_node(array(
+						'parent' => $node_id,
+						'id' => 'nebula-deregisters',
+						'title' => '<i class="nebula-admin-fa fas fa-fw fa-ban"></i> Nebula is deregistering assets on this page!',
+						'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=Advanced',
+						'meta' => array('target' => '_blank', 'rel' => 'noopener')
+					));
+
+					//Styles
+					if ( !empty($this->deregistered_assets['styles']) ){
+						foreach ( $this->deregistered_assets['styles'] as $handle ){
+							$wp_admin_bar->add_node(array(
+								'parent' => 'nebula-deregisters',
+								'id' => 'nebula-deregisters-styles-' . $handle,
+								'title' => '<span class="nebula-admin-light"><i class="nebula-admin-fa fab fa-fw fa-css3-alt"></i> CSS:</span> ' . $handle,
+								'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=Advanced',
+								'meta' => array('target' => '_blank', 'rel' => 'noopener')
+							));
+						}
+					}
+
+					//Scripts
+					if ( !empty($this->deregistered_assets['scripts']) ){
+						foreach ( $this->deregistered_assets['scripts'] as $handle ){
+							$wp_admin_bar->add_node(array(
+								'parent' => 'nebula-deregisters',
+								'id' => 'nebula-deregisters-scripts-' . $handle,
+								'title' => '<span class="nebula-admin-light"><i class="nebula-admin-fa fab fa-fw fa-js"></i> JS:</span> ' . $handle,
+								'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=Advanced',
+								'meta' => array('target' => '_blank', 'rel' => 'noopener')
+							));
+						}
+					}
+				}
+
 				if ( !empty($post_type_object) ){
 					//Ancestor pages
 					$ancestors = get_post_ancestors($current_id);
@@ -846,6 +883,10 @@ if ( !trait_exists('Admin') ){
 						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings > svg {color: #fff;}
 						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings .level-error svg {color: #ca3838;}
 						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings .level-warn svg {color: #f6b83f;}
+
+					#wpadminbar:not(.mobile) #wp-admin-bar-nebula-deregisters > .ab-item {background: #ca3838; color: #fff; transition: all 0.25s ease;}
+						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-deregisters.hover > .ab-item,
+						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-deregisters:hover > .ab-item {background: maroon;}
 				</style>
 			<?php }
 		}

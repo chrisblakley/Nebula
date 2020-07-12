@@ -46,23 +46,25 @@ jQuery(function(){
 		});
 
 		jQuery('.short-help').each(function(){
-			if ( nebula.user.staff === 'developer' ){
-				//Dev handle names
-				var optionHandle = jQuery(this).closest('.form-group').find('[name^=nebula_options]').attr('id');
-				if ( typeof optionHandle !== 'undefined' ){
-					var devUsage = '<span class="dev-handle form-text text-muted">Dev usage: <code>nebula()->get_option(\'' + optionHandle + '\');</code></span>';
-					if ( jQuery(this).parent().find('.more-help').length ){
-						jQuery(this).closest('.form-group').find('.more-help').append(devUsage);
-					} else {
-						jQuery(this).after('<p class="nebula-help-text more-help form-text text-muted">' + devUsage + '</p>');
+			if ( !jQuery(this).parents('.no-help').length ){
+				if ( nebula.user.staff === 'developer' ){
+					//Dev handle names
+					var optionHandle = jQuery(this).closest('.form-group').find('[name^=nebula_options]').attr('id');
+					if ( typeof optionHandle !== 'undefined' ){
+						var devUsage = '<span class="dev-handle form-text text-muted">Dev usage: <code>nebula()->get_option(\'' + optionHandle + '\');</code></span>';
+						if ( jQuery(this).parent().find('.more-help').length ){
+							jQuery(this).closest('.form-group').find('.more-help').append(devUsage);
+						} else {
+							jQuery(this).after('<p class="nebula-help-text more-help form-text text-muted">' + devUsage + '</p>');
+						}
 					}
 				}
-			}
 
-			//More Help expander icons
-			//if ( jQuery(this).parent().find('.more-help').length ){
-				jQuery(this).append('<a class="toggle-more-help" href="#" title="Toggle more information" tabindex="-1"><i class="fas fa-fw fa-question-circle"></i></a>');
-			//}
+				//More Help expander icons
+				//if ( jQuery(this).parent().find('.more-help').length ){
+					jQuery(this).append('<a class="toggle-more-help" href="#" title="Toggle more information" tabindex="-1"><i class="fas fa-fw fa-question-circle"></i></a>');
+				//}
+			}
 		});
 
 		//Show/hide more information

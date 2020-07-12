@@ -4,7 +4,11 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Optimization') ){
 	trait Optimization {
+		public $deregistered_assets;
+
 		public function hooks(){
+			$this->deregistered_assets = array('styles' => array(), 'scripts' => array());
+
 			add_action('send_headers', array($this, 'nebula_http2_ob_start'));
 			add_action('wp_enqueue_scripts', array($this, 'styles_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
 			add_action('wp_enqueue_scripts', array($this, 'scripts_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
@@ -265,7 +269,9 @@ if ( !trait_exists('Optimization') ){
 				global $wp_styles;
 
 				foreach ( $wp_styles->queue as $handle ){
-					$this->http2_server_push_file($wp_styles->registered[$handle]->src, 'style');
+					if ( !empty($wp_styles->registered[$handle]) ){ //If this style is still registered
+						$this->http2_server_push_file($wp_styles->registered[$handle]->src, 'style');
+					}
 				}
 			}
 		}
@@ -275,7 +281,9 @@ if ( !trait_exists('Optimization') ){
 				global $wp_scripts;
 
 				foreach ( $wp_scripts->queue as $handle ){
-					$this->http2_server_push_file($wp_scripts->registered[$handle]->src, 'script');
+					if ( !empty($wp_scripts->registered[$handle]) ){ //If this script is still registered
+						$this->http2_server_push_file($wp_scripts->registered[$handle]->src, 'script');
+					}
 				}
 			}
 		}
@@ -515,15 +523,102 @@ if ( !trait_exists('Optimization') ){
 			if ( isset($override) ){return;}
 
 			if ( !is_admin() ){
-				//Removing CF7 styles in favor of Bootstrap + Nebula
-				wp_dequeue_style('contact-form-7');
-				wp_deregister_script('wp-embed'); //WP Core WP-Embed - Override this only if embedding external WordPress posts into this WordPress site. Other oEmbeds are NOT AFFECTED by this!
+				$this->deregister('contact-form-7', 'style'); //Removing CF7 styles in favor of Bootstrap + Nebula
+				$this->deregister('wp-embed', 'script'); //WP Core WP-Embed - Override this only if embedding external WordPress posts into this WordPress site. Other oEmbeds are NOT AFFECTED by this!
 
 				//Page specific dequeues
 				if ( is_front_page() ){
-					wp_deregister_style('thickbox'); //WP Core Thickbox - Override this if thickbox type gallery IS used on the homepage.
-					wp_deregister_script('thickbox'); //WP Thickbox - Override this if thickbox type gallery IS used on the homepage.
+					$this->deregister('thickbox', 'style'); //WP Core Thickbox - Override this if thickbox type gallery IS used on the homepage.
+					$this->deregister('thickbox', 'script'); //WP Thickbox - Override this if thickbox type gallery IS used on the homepage.
 				}
+
+				//Dequeue styles based on selected Nebula options
+				$styles_to_dequeue = $this->get_option('dequeue_styles');
+				if ( !empty($styles_to_dequeue) ){
+					$this->check_dequeue_rules($styles_to_dequeue, 'styles');
+				}
+
+				//Dequeue scripts based on selected Nebula options
+				$scripts_to_dequeue = $this->get_option('dequeue_scripts');
+				if ( !empty($scripts_to_dequeue) ){
+					$this->check_dequeue_rules($scripts_to_dequeue, 'scripts');
+				}
+			}
+		}
+
+		//Loop through the dequeue rules and deregister assets when matching
+		public function check_dequeue_rules($assets = array(), $type){
+			foreach ( array_filter($assets) as $handle => $rules ){
+				$rules = str_replace(' ', '', $rules); //Sanitize the text input
+
+				if ( !empty($rules) ){
+					//If dequeueing everywhere on front-end
+					if ( $rules === '*' ){
+						$this->deregister($handle, $type);
+						continue;
+					}
+
+					//Loop through each of the rules for this handle
+					foreach ( array_filter(explode(',', $rules)) as $rule ){
+						//If an ID is used check it
+						if ( intval($rule) && get_the_id() === intval($rule) ){
+							$this->deregister($handle, $type);
+							continue;
+						}
+
+						//Check if rule is an inverted function. Ex: "!is_front_page"
+						$invert = false;
+						if ( strpos($rule, '!') === 0 ){
+							$invert = true;
+							$rule = ltrim($rule, '!');
+						}
+
+						$rule = str_replace('()', '', $rule); //If called as an executable function, remove the "()". Ex: is_front_page()
+
+						//If the rule is a function name. Ex: "is_front_page"
+						if ( function_exists($rule) ){
+							$conditional_function = ( empty($invert) )? call_user_func($rule) : !call_user_func($rule);
+
+							if ( $conditional_function ){
+								$this->deregister($handle, $type);
+								continue;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		//Deregister assets. Using this function will note it in the Nebula Admin Bar to make it easier to troubleshoot
+		public function deregister($handle, $type){
+			if ( !empty($handle) ){
+				//Styles
+				if ( strpos($type, 'style') !== false ){
+					global $wp_styles;
+
+					//Check if this style was enqueued (and show note if so)
+					if ( in_array($handle, $wp_styles->queue) ){
+						$this->deregistered_assets['styles'][] = $handle;
+					}
+
+					//Deregister the style either way
+					wp_dequeue_style($handle);
+					wp_deregister_style($handle);
+					return true;
+				}
+
+				//Scripts
+				global $wp_scripts;
+
+				//Check if this script was enqueued (and show note if so)
+				if ( in_array($handle, $wp_scripts->queue) ){
+					$this->deregistered_assets['scripts'][] = $handle;
+				}
+
+				//Deregister the script either way
+				wp_dequeue_script($handle);
+				wp_deregister_script($handle);
+				return true;
 			}
 		}
 

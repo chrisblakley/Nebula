@@ -37,6 +37,10 @@ if ( !trait_exists('Metaboxes') ){
 				add_meta_box('nebula_dashboard_references_metabox', 'Dashboard References', array($this, 'nebula_dashboard_references_metabox'), 'nebula_options', 'administration');
 				add_meta_box('nebula_notes_metabox', 'Notes', array($this, 'nebula_notes_metabox'), 'nebula_options', 'administration_side');
 
+				//Advanced
+				add_meta_box('nebula_dequeue_styles_metabox', 'Dequeue Styles', array($this, 'dequeue_styles_metabox'), 'nebula_options', 'advanced');
+				add_meta_box('nebula_dequeue_scripts_metabox', 'Dequeue Scripts', array($this, 'dequeue_scripts_metabox'), 'nebula_options', 'advanced_side');
+
 				//Diagnostic
 				add_meta_box('nebula_troubleshooting_metabox', 'Troubleshooting', array($this, 'nebula_troubleshooting_metabox'), 'nebula_options', 'diagnostic');
 				add_meta_box('nebula_installation_metabox', 'Installation', array($this, 'nebula_installation_metabox'), 'nebula_options', 'diagnostic');
@@ -1913,6 +1917,96 @@ if ( !trait_exists('Metaboxes') ){
 		}
 
 		/*==========================
+		 Advanced
+		 ===========================*/
+
+		public function dequeue_styles_metabox($nebula_options){
+			$all_registered_styles = array();
+			global $wp_styles;
+			foreach ( $wp_styles->registered as $style ){
+				if ( strpos($style->src, 'wp-content') ){
+					$all_registered_styles[] = array(
+						'handle' => $style->handle,
+						'src' => $style->src
+					);
+				}
+			}
+
+			//Alphabetize $all_registered_styles by handle
+			usort($all_registered_styles, function($a, $b){
+				return strcasecmp($a['handle'], $b['handle']);
+			});
+			?>
+				<div class="option-sub-group">
+					<p>
+						Enter a comma-separated list of rules where these styles should be dequeued on the front-end (WP Admin is unaffected by these settings).<br>
+						Rules can be IDs and simple boolean function names (including inverted and custom functions) without parameters. Ex: <code>123, is_front_page, !is_singular</code><br>
+						Use <code>*</code> for <strong>everywhere</strong> on the front-end.<br>
+						Remember: Dependent styles will also be dequeued!
+					</p>
+
+					<?php foreach ( $all_registered_styles as $style ): ?>
+						<div class="form-group no-help <?php echo ( !empty($nebula_options['dequeue_styles'][$style['handle']]) )? 'active' : ''; ?>">
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<div class="input-group-text" title="<?php echo ( !empty($nebula_options['dequeue_styles'][$style['handle']]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fab fa-fw fa-css3-alt"></i> <?php echo $style['handle']; ?></div>
+								</div>
+								<input type="text" name="nebula_options[dequeue_styles][<?php echo $style['handle']; ?>]" id="<?php echo $style['handle']; ?>" class="form-control nebula-validate-regex" data-valid-regex="^(\*)$|^(([0-9a-z!_()]+)(,\s?)*)+$" value="<?php echo $nebula_options['dequeue_styles'][$style['handle']]; ?>" />
+							</div>
+							<p class="nebula-help-text short-help form-text text-muted">Source: <?php echo str_replace(content_url(), '', $style['src']); ?></p>
+							<p class="option-keywords">dequeue plugins css styles assets optimization</p>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			<?php
+
+			do_action('nebula_options_dequeue_styles_metabox', $nebula_options);
+		}
+
+		public function dequeue_scripts_metabox($nebula_options){
+			$all_registered_scripts = array();
+			global $wp_scripts;
+			foreach ( $wp_scripts->registered as $script ){
+				if ( strpos($script->src, 'wp-content') ){
+					$all_registered_scripts[] = array(
+						'handle' => $script->handle,
+						'src' => $script->src
+					);
+				}
+			}
+
+			//Alphabetize $all_registered_scripts by handle
+			usort($all_registered_scripts, function($a, $b){
+				return strcasecmp($a['handle'], $b['handle']);
+			});
+			?>
+				<div class="option-sub-group">
+					<p>
+						Enter a comma-separated list of rules where these scripts should be dequeued on the front-end (WP Admin is unaffected by these settings).<br>
+						Rules can be IDs and simple boolean function names (including inverted and custom functions) without parameters. Ex: <code>123, is_front_page, !is_singular</code><br>
+						Use <code>*</code> for <strong>everywhere</strong> on the front-end.<br>
+						Remember: Dependent scripts will also be dequeued!
+					</p>
+
+					<?php foreach ( $all_registered_scripts as $script ): ?>
+						<div class="form-group no-help <?php echo ( !empty($nebula_options['dequeue_scripts'][$script['handle']]) )? 'active' : ''; ?>">
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<div class="input-group-text" title="<?php echo ( !empty($nebula_options['dequeue_scripts'][$script['handle']]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fab fa-fw fa-js"></i> <?php echo $script['handle']; ?></div>
+								</div>
+								<input type="text" name="nebula_options[dequeue_scripts][<?php echo $script['handle']; ?>]" id="<?php echo $script['handle']; ?>" class="form-control nebula-validate-regex" data-valid-regex="^(\*)$|^(([0-9a-z!_()]+)(,\s?)*)+$" value="<?php echo $nebula_options['dequeue_scripts'][$script['handle']]; ?>" />
+							</div>
+							<p class="nebula-help-text short-help form-text text-muted">Source: <?php echo str_replace(content_url(), '', $script['src']); ?></p>
+							<p class="option-keywords">dequeue plugins js scripts assets optimization</p>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			<?php
+
+			do_action('nebula_options_dequeue_scripts_metabox', $nebula_options);
+		}
+
+		/*==========================
 		 Diagnostic
 		 ===========================*/
 
@@ -1940,6 +2034,13 @@ if ( !trait_exists('Metaboxes') ){
 					<li>The <strong>WordPress Admin Bar</strong> is <?php echo ( empty($nebula_options['admin_bar']) )? '<strong class="nebula-disabled">hidden' : '<strong class="nebula-enabled">allowed'; ?></strong> by Nebula.</li>
 					<li><strong>Nebula admin notices</strong> (warnings/errors) are <?php echo ( empty($nebula_options['admin_notices']) )? '<strong class="nebula-disabled">disabled' : '<strong class="nebula-enabled">enabled'; ?></strong>.</li>
 					<li>Nebula is <?php echo ( empty($nebula_options['unnecessary_metaboxes']) )? '<strong class="nebula-enabled">allowing' : '<strong class="nebula-disabled">removing'; ?> "unnecessary" Dashboard metaboxes</strong>.</li>
+					<li>
+						<?php
+							$dequeue_styles = $nebula_options['dequeue_styles'] ?? array(); //Fallback to empty array so it can be filtered without PHP warnings. Change this to nullish coalescing when supported.
+							$dequeue_scripts = $nebula_options['dequeue_scripts'] ?? array(); //Fallback to empty array so it can be filtered without PHP warnings. Change this to nullish coalescing when supported.
+						?>
+						Nebula is <?php echo ( !empty(array_filter($dequeue_styles)) || !empty(array_filter($dequeue_scripts)) )? '<strong class="nebula-enabled">dequeuing styles and scripts' : '<strong class="nebula-disabled">not dequeuing assets'; ?></strong> on the front-end.
+					</li>
 					<li>
 						<?php if ( $nebula_options['jquery_version'] === 'wordpress' ): ?>
 							Nebula is using the <strong class="nebula-enabled">WordPress Core version of jQuery</strong> without modification.

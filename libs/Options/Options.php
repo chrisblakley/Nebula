@@ -31,6 +31,7 @@ if ( !trait_exists('Options') ){
 				array('name' => 'Analytics', 'icon' => 'fa-chart-area'),
 				array('name' => 'APIs', 'icon' => 'fa-key'),
 				array('name' => 'Administration', 'icon' => 'fa-briefcase'),
+				array('name' => 'Advanced', 'icon' => 'fa-puzzle-piece'),
 			);
 
 			return apply_filters('nebula_option_categories', $categories); //Allow other functions to hook in to add categories
@@ -362,6 +363,10 @@ if ( !trait_exists('Options') ){
 				'logs' => 0,
 				'notes' => '',
 				'auto_update_test' => 1,
+
+				//Advanced Tab
+				'dequeue_styles' => array(),
+				'dequeue_scripts' => array(),
 			);
 
 			return apply_filters('nebula_default_options', $nebula_options_defaults);
@@ -369,7 +374,7 @@ if ( !trait_exists('Options') ){
 
 		//Check for new options after the theme update. If any are found use their default value.
 		public function check_for_new_options(){
-			if ( $this->get_data('check_new_options') === 'true' && current_user_can('manage_options') ){
+			if ( ($this->get_data('check_new_options') === 'true' || $this->is_debug()) && current_user_can('manage_options') ){
 				$nebula_options = get_option('nebula_options');
 				$nebula_default_options = $this->default_options();
 				$different_keys = array_diff_key($nebula_default_options, $nebula_options);
