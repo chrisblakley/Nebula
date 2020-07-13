@@ -252,7 +252,7 @@ function developerMetaboxes(){
 	}
 }
 
-//Check the page speed using (in this priority) WebPageTest.org, Google PageSpeed Insights, or a rudimentary iframe timing
+//Check the page speed using (in this priority) WebPageTest.org, Google Lighthouse, or a rudimentary iframe timing
 function checkPageSpeed(){
 	jQuery('#performance_metabox h2 i').removeClass('fa-stopwatch').addClass('fa-spinner fa-spin');
 
@@ -640,7 +640,7 @@ function getLighthouseResults(){
 		}
 	}).catch(function(error){
 		jQuery('#performance-sub-status strong').text('Google Lighthouse failed. Reverting to iframe test.');
-		runIframeSpeedTest(); //If Google PageSpeed Insights check fails, time with an iframe instead...
+		runIframeSpeedTest(); //If Google Lighthouse check fails, time with an iframe instead...
 	});
 }
 

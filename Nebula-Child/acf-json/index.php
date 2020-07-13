@@ -1,0 +1,1 @@
+<?php //This file prevents public visibility on ACF field settings in the JSON cache. ?>

@@ -41,7 +41,7 @@ if ( !trait_exists('Assets') ){
 			}
 
 			$this->bootstrap('css');
-			wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/css/jquery.dataTables.min.css', null, '1.10.20', 'all');
+			wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/jquery.dataTables.min.css', null, '1.10.21', 'all');
 			wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css', null, '1.8.7', 'all');
 			wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.structure.min.css', null, '1.12.1', 'all');
 			wp_register_style('nebula-pre', get_template_directory_uri() . '/assets/css/pre.css', null, $this->version('full'), 'all');
@@ -55,10 +55,10 @@ if ( !trait_exists('Assets') ){
 			}
 			$this->register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', array('defer', 'crossorigin'), null, '1.12.1', true);
 			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.3.3/jquery.mmenu.all.js', array('defer', 'crossorigin'), null, '7.3.3', true);
-			$this->register_script('nebula-vimeo', 'https://player.vimeo.com/api/player.js', null, null, null, true); //https://github.com/cdnjs/cdnjs/issues/13383
-			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.10.19', true);
+			$this->register_script('nebula-vimeo', 'https://cdnjs.cloudflare.com/ajax/libs/vimeo-player/2.12.2/player.min.js', null, null, '2.12.2', true);
+			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.10.21', true);
 			$this->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js', array('defer', 'crossorigin'), null, '1.8.7', true);
-			$this->register_script('nebula-moment', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.25.3/moment.min.js', array('defer', 'crossorigin'), null, '2.25.3', true);
+			$this->register_script('nebula-moment', 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js', array('defer', 'crossorigin'), null, '2.27.0', true);
 			$this->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js', array('async', 'crossorigin'), null, '2.4.1', true);
 			$this->register_script('nebula-nebula', get_template_directory_uri() . '/assets/js/nebula.js', array('defer'), array('jquery-core'), $this->version('full'), true);
 

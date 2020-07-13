@@ -355,6 +355,7 @@ if ( !trait_exists('Options') ){
 				'client_email_domain' => '',
 				'cpanel_url' => '',
 				'hosting_url' => '',
+				'dns_url' => '',
 				'registrar_url' => '',
 				'github_url' => '',
 				'google_adsense_url' => '',

@@ -3626,7 +3626,7 @@ nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback
 							scrollTop: nOffset
 						}, scrollSpeed, function(){
 							nebula.focusOnElement(target);
-							window.location.hash = thisHash; //Add the hash to the URL so it can be refreshed, copied, links, etc.
+							history.replaceState({}, '', thisHash); //Add the hash to the URL so it can be refreshed, copied, links, etc. ReplaceState does this without affecting the back button.
 						}); //Speed is hard-coded, but could look for an HTML attribute if desired
 						return false;
 					}

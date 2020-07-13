@@ -248,6 +248,14 @@ if ( !trait_exists('Admin') ){
 			);
 
 			//Administrative
+			if ( $this->get_option('cpanel_url') ){
+				$third_party_tools['administrative'][] = array(
+					'name' => 'Server Control Panel',
+					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-cogs"></i>',
+					'url' => $this->get_option('cpanel_url')
+				);
+			}
+
 			if ( $this->get_option('hosting_url') ){
 				$third_party_tools['administrative'][] = array(
 					'name' => 'Hosting',
@@ -256,11 +264,11 @@ if ( !trait_exists('Admin') ){
 				);
 			}
 
-			if ( $this->get_option('cpanel_url') ){
+			if ( $this->get_option('dns_url') ){
 				$third_party_tools['administrative'][] = array(
-					'name' => 'Server Control Panel',
-					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-cogs"></i>',
-					'url' => $this->get_option('cpanel_url')
+					'name' => 'DNS',
+					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-map-signs"></i>',
+					'url' => $this->get_option('dns_url')
 				);
 			}
 

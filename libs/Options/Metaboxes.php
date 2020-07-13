@@ -540,7 +540,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[performance_metabox]" id="performance_metabox" value="1" <?php checked('1', !empty($nebula_options['performance_metabox'])); ?> /><label for="performance_metabox">Performance Metabox</label>
 					<p class="nebula-help-text short-help form-text text-muted">Test load times from the WordPress Dashboard <?php echo ( $this->is_dev() )? '(Note: This always appears for developers even if disabled!)' : ''; ?>. (Default: <?php echo $this->user_friendly_default('performance_metabox'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">Tests are prioritized from WebPageTest.org (using an <a href="themes.php?page=nebula_options&tab=apis&option=webpagetest_api" target="_blank">API key</a>), then Google PageSpeed Insights, and finally a simple iframe timer.</p>
+					<p class="nebula-help-text more-help form-text text-muted">Tests are prioritized from WebPageTest.org (using an <a href="themes.php?page=nebula_options&tab=apis&option=webpagetest_api" target="_blank">API key</a>), then Google Lighthouse, and finally a simple iframe timer.</p>
 					<p class="option-keywords"></p>
 				</div>
 
@@ -1858,6 +1858,13 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
+					<label for="registrar_url">DNS URL</label>
+					<input type="text" name="nebula_options[dns_url]" id="dns_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['dns_url']; ?>" />
+					<p class="nebula-help-text short-help form-text text-muted">Link to the DNS service where DNS records are located.</p>
+					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group">
 					<label for="registrar_url">Domain Registrar URL</label>
 					<input type="text" name="nebula_options[registrar_url]" id="registrar_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['registrar_url']; ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">Link to the domain registrar used for access to pointers, forwarding, and other information.</p>
@@ -1924,7 +1931,7 @@ if ( !trait_exists('Metaboxes') ){
 			$all_registered_styles = array();
 			global $wp_styles;
 			foreach ( $wp_styles->registered as $style ){
-				if ( strpos($style->src, 'wp-content') ){
+				if ( strpos($style->src, 'wp-content') ){ //Limit the options to non-core scripts
 					$all_registered_styles[] = array(
 						'handle' => $style->handle,
 						'src' => $style->src
@@ -1967,7 +1974,7 @@ if ( !trait_exists('Metaboxes') ){
 			$all_registered_scripts = array();
 			global $wp_scripts;
 			foreach ( $wp_scripts->registered as $script ){
-				if ( strpos($script->src, 'wp-content') ){
+				if ( strpos($script->src, 'wp-content') ){ //Limit the options to non-core scripts
 					$all_registered_scripts[] = array(
 						'handle' => $script->handle,
 						'src' => $script->src
@@ -2039,7 +2046,7 @@ if ( !trait_exists('Metaboxes') ){
 							$dequeue_styles = $nebula_options['dequeue_styles'] ?? array(); //Fallback to empty array so it can be filtered without PHP warnings. Change this to nullish coalescing when supported.
 							$dequeue_scripts = $nebula_options['dequeue_scripts'] ?? array(); //Fallback to empty array so it can be filtered without PHP warnings. Change this to nullish coalescing when supported.
 						?>
-						Nebula is <?php echo ( !empty(array_filter($dequeue_styles)) || !empty(array_filter($dequeue_scripts)) )? '<strong class="nebula-enabled">dequeuing styles and scripts' : '<strong class="nebula-disabled">not dequeuing assets'; ?></strong> on the front-end.
+						Nebula is <?php echo ( !empty(array_filter($dequeue_styles)) || !empty(array_filter($dequeue_scripts)) )? '<strong class="nebula-disabled">dequeuing styles and scripts' : '<strong class="nebula-enabled">not dequeuing assets'; ?></strong> on the front-end.
 					</li>
 					<li>
 						<?php if ( $nebula_options['jquery_version'] === 'wordpress' ): ?>
