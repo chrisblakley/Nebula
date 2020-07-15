@@ -9,15 +9,18 @@ if ( !trait_exists('Optimization') ){
 		public function hooks(){
 			$this->deregistered_assets = array('styles' => array(), 'scripts' => array());
 
-			add_action('send_headers', array($this, 'nebula_http2_ob_start'));
-			add_action('wp_enqueue_scripts', array($this, 'styles_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
-			add_action('wp_enqueue_scripts', array($this, 'scripts_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
+			if ( $this->get_option('service_worker') ){
+				add_action('send_headers', array($this, 'nebula_http2_ob_start'));
+				add_action('wp_enqueue_scripts', array($this, 'styles_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
+				add_action('wp_enqueue_scripts', array($this, 'scripts_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
+			}
 
 			add_filter('wp_enqueue_scripts', array($this, 'defer_async_additional_scripts'));
 			add_filter('script_loader_tag', array($this, 'defer_async_scripts'), 10, 2);
 
 			add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
 			add_action('wp_footer', array($this, 'dequeue_lazy_load_scripts'));
+
 			add_action('wp_enqueue_scripts', array($this, 'dequeues'), 9001);
 			add_action('wp_enqueue_scripts', array($this, 'remove_actions'), 9001);
 
@@ -220,14 +223,13 @@ if ( !trait_exists('Optimization') ){
 				'scripts' => array(),
 			);
 
-			return apply_filters('nebula_lazy_load_assets', $assets); //Allow other plugins/themes to lazy-load assets
+			return apply_filters('nebula_lazy_load_assets', $assets); //Allow other plugins/themes to lazy-load assets;
 		}
 
 		//Dequeue styles prepped for lazy-loading
 		public function dequeue_lazy_load_styles(){
 			$lazy_load_assets = $this->lazy_load_assets();
-
-			if ( !empty($lazy_load_assets) && is_array($lazy_load_assets) ){
+			if ( !empty($lazy_load_assets['styles']) && is_array($lazy_load_assets['styles']) ){
 				foreach ( $lazy_load_assets['styles'] as $handle => $condition ){
 					wp_dequeue_style($handle);
 				}
@@ -241,7 +243,7 @@ if ( !trait_exists('Optimization') ){
 			}
 
 			$lazy_load_assets = $this->lazy_load_assets();
-			if ( !empty($lazy_load_assets) && is_array($lazy_load_assets) ){
+			if ( !empty($lazy_load_assets['scripts']) && is_array($lazy_load_assets['scripts']) ){
 				foreach ( $lazy_load_assets['scripts'] as $handle => $condition ){
 					wp_dequeue_script($handle);
 				}
@@ -257,7 +259,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Start output buffering so headers can be sent later for HTTP2 Server Push
 		public function nebula_http2_ob_start(){
-			if ( !$this->is_admin_page(true, true) ){ //Exclude admin, login, and Customizer pages
+			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
 				ob_start();
 			}
 		}
@@ -265,7 +267,7 @@ if ( !trait_exists('Optimization') ){
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
 		//This uses a link preload header, so these resources must be used within a few seconds of window load.
 		public function styles_http2_server_push_header(){
-			if ( !$this->is_admin_page(true, true) ){ //Exclude admin, login, and Customizer pages
+			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
 				global $wp_styles;
 
 				foreach ( $wp_styles->queue as $handle ){
@@ -277,7 +279,7 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		public function scripts_http2_server_push_header(){
-			if ( !$this->is_admin_page(true, true) ){ //Exclude admin, login, and Customizer pages
+			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
 				global $wp_scripts;
 
 				foreach ( $wp_scripts->queue as $handle ){
@@ -289,7 +291,7 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		public function http2_server_push_file($src, $filetype){
-			if ( !$this->is_admin_page(true, true) ){ //Exclude admin, login, and Customizer pages
+			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
 				header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel=preload; as=' . $filetype, false); //Send the header for the HTTP2 Server Push (strtok to remove everything after and including "#")
 			}
 		}

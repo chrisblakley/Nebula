@@ -8,7 +8,7 @@ if ( !trait_exists('Security') ){
 			add_action('wp_loaded', array($this, 'bad_access_prevention'));
 			add_filter('wp_headers', array($this, 'remove_x_pingback'), 11, 2);
 			add_filter('bloginfo_url', array($this, 'hijack_pingback_url'), 11, 2);
-			add_action('wp_head', array($this, 'security_headers')); //@todo "Nebula" 0: try using 'send_headers' hook instead?
+			add_action('send_headers', array($this, 'security_headers'));
 			remove_action('wp_head', 'wlwmanifest_link');
 			add_filter('login_errors', array($this, 'login_errors'));
 			add_filter('the_generator', '__return_empty_string'); //Remove Wordpress version info from head and feeds

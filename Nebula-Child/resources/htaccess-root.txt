@@ -2,6 +2,17 @@
 #@TODO: Rename this file to be: .htaccess
 #@TODO: Find/Replace "yourdomain" with the actual domain name!
 
+#BEGIN WordPress
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase /
+	RewriteRule ^index\.php$ - [L]
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule . /index.php [L]
+</IfModule>
+#END WordPress
+
 <IfModule mod_headers.c>
 	Header set Connection keep-alive
 
@@ -17,17 +28,6 @@
 	RewriteRule wp-admin/install(-helper)?\.php - [R=403,NC,L]
 	RewriteRule wp-includes/rss-functions.php - [R=403,NC,L]
 </IfModule>
-
-#BEGIN WordPress
-<IfModule mod_rewrite.c>
-	RewriteEngine On
-	RewriteBase /
-	RewriteRule ^index\.php$ - [L]
-	RewriteCond %{REQUEST_FILENAME} !-f
-	RewriteCond %{REQUEST_FILENAME} !-d
-	RewriteRule . /index.php [L]
-</IfModule>
-#END WordPress
 
 ###################
 #@TODO: Pick one of the following: Force no-www -or- Force www
