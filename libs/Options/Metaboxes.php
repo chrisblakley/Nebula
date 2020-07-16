@@ -1958,7 +1958,7 @@ if ( !trait_exists('Metaboxes') ){
 								<div class="input-group-prepend">
 									<div class="input-group-text" title="<?php echo ( !empty($nebula_options['dequeue_styles'][$style['handle']]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fab fa-fw fa-css3-alt"></i> <?php echo $style['handle']; ?></div>
 								</div>
-								<input type="text" name="nebula_options[dequeue_styles][<?php echo $style['handle']; ?>]" id="<?php echo $style['handle']; ?>" class="form-control nebula-validate-regex" data-valid-regex="^(\*)$|^(([0-9a-z!_()]+)(,\s?)*)+$" value="<?php echo $nebula_options['dequeue_styles'][$style['handle']]; ?>" />
+								<input type="text" name="nebula_options[dequeue_styles][<?php echo $style['handle']; ?>]" id="<?php echo $style['handle']; ?>" class="form-control nebula-validate-regex" data-valid-regex="^(\*)$|^(([0-9a-z!_()]+)(,\s?)*)+$" value="<?php echo ( !empty($nebula_options['dequeue_styles'][$style['handle']]) )? $nebula_options['dequeue_styles'][$style['handle']] : ''; ?>" />
 							</div>
 							<p class="nebula-help-text short-help form-text text-muted">Source: <?php echo str_replace(content_url(), '', $style['src']); ?></p>
 							<p class="option-keywords">dequeue plugins css styles assets optimization</p>
@@ -2001,7 +2001,7 @@ if ( !trait_exists('Metaboxes') ){
 								<div class="input-group-prepend">
 									<div class="input-group-text" title="<?php echo ( !empty($nebula_options['dequeue_scripts'][$script['handle']]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fab fa-fw fa-js"></i> <?php echo $script['handle']; ?></div>
 								</div>
-								<input type="text" name="nebula_options[dequeue_scripts][<?php echo $script['handle']; ?>]" id="<?php echo $script['handle']; ?>" class="form-control nebula-validate-regex" data-valid-regex="^(\*)$|^(([0-9a-z!_()]+)(,\s?)*)+$" value="<?php echo $nebula_options['dequeue_scripts'][$script['handle']]; ?>" />
+								<input type="text" name="nebula_options[dequeue_scripts][<?php echo $script['handle']; ?>]" id="<?php echo $script['handle']; ?>" class="form-control nebula-validate-regex" data-valid-regex="^(\*)$|^(([0-9a-z!_()]+)(,\s?)*)+$" value="<?php echo ( !empty($nebula_options['dequeue_scripts'][$script['handle']]) )? $nebula_options['dequeue_scripts'][$script['handle']] : ''; ?>" />
 							</div>
 							<p class="nebula-help-text short-help form-text text-muted">Source: <?php echo str_replace(content_url(), '', $script['src']); ?></p>
 							<p class="option-keywords">dequeue plugins js scripts assets optimization</p>

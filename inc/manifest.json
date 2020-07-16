@@ -8,8 +8,32 @@
 			"scope": "/",
 			"start_url": "https://nebula.gearside.com/?utm_source=pwa",
 			"display": "standalone",
-			"orientation": "portrait",
-			"icons": [{
+			"orientation": "portrait","shortcuts": [
+    {
+        "name": "Functions and Variables",
+        "short_name": "Functions",
+        "description": "View the functions and variables documentation",
+        "url": "\/documentation\/functions\/?utm_source=pwa",
+        "icons": [
+            {
+                "src": "\/home\/gearside\/public_html\/nebula.gearside.com\/wp-content\/plugins\/nebula-docs\/\/images\/pwa-functions.png",
+                "sizes": "192x192"
+            }
+        ]
+    },
+    {
+        "name": "Frequently Asked Questions",
+        "short_name": "FAQ",
+        "description": "Get answers to commonly asked questions",
+        "url": "\/faq\/?utm_source=pwa",
+        "icons": [
+            {
+                "src": "\/home\/gearside\/public_html\/nebula.gearside.com\/wp-content\/plugins\/nebula-docs\/\/images\/pwa-faq.png",
+                "sizes": "192x192"
+            }
+        ]
+    }
+],"icons": [{
 						"src": "https://nebula.gearside.com/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-192x192.png",
 						"sizes": "192x192",
 						"type": "image/png"

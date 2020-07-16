@@ -271,7 +271,7 @@ if ( !trait_exists('Optimization') ){
 				global $wp_styles;
 
 				foreach ( $wp_styles->queue as $handle ){
-					if ( !empty($wp_styles->registered[$handle]) ){ //If this style is still registered
+					if ( wp_style_is($handle, 'registered') ){ //If this style is still registered
 						$this->http2_server_push_file($wp_styles->registered[$handle]->src, 'style');
 					}
 				}
@@ -283,7 +283,7 @@ if ( !trait_exists('Optimization') ){
 				global $wp_scripts;
 
 				foreach ( $wp_scripts->queue as $handle ){
-					if ( !empty($wp_scripts->registered[$handle]) ){ //If this script is still registered
+					if ( wp_script_is($handle, 'registered') ){ //If this script is still registered
 						$this->http2_server_push_file($wp_scripts->registered[$handle]->src, 'script');
 					}
 				}
@@ -596,11 +596,9 @@ if ( !trait_exists('Optimization') ){
 			if ( !empty($handle) ){
 				//Styles
 				if ( strpos($type, 'style') !== false ){
-					global $wp_styles;
-
-					//Check if this style was enqueued (and show note if so)
-					if ( in_array($handle, $wp_styles->queue) ){
-						$this->deregistered_assets['styles'][] = $handle;
+					//Check if this style was enqueued
+					if ( wp_style_is($handle, 'enqueued') ){
+						$this->deregistered_assets['styles'][] = $handle; //Add it to the array to log in the admin bar
 					}
 
 					//Deregister the style either way
@@ -610,10 +608,8 @@ if ( !trait_exists('Optimization') ){
 				}
 
 				//Scripts
-				global $wp_scripts;
-
 				//Check if this script was enqueued (and show note if so)
-				if ( in_array($handle, $wp_scripts->queue) ){
+				if ( wp_script_is($handle, 'enqueued') ){
 					$this->deregistered_assets['scripts'][] = $handle;
 				}
 

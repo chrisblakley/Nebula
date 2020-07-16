@@ -680,8 +680,14 @@ trait Functions {
 			"scope": "/",
 			"start_url": "' . home_url('/') . '?utm_source=pwa",
 			"display": "standalone",
-			"orientation": "portrait",
-			"icons": [';
+			"orientation": "portrait",';
+
+		$shortcuts = apply_filters('nebula_manifest_shortcuts', array()); //Allow the child theme (or plugins) to add shortcuts to the PWA
+		if ( !empty($shortcuts) ){
+			$manifest_json .= '"shortcuts": ' . json_encode($shortcuts, JSON_PRETTY_PRINT) . ',';
+		}
+
+			$manifest_json .= '"icons": [';
 		if ( has_site_icon() ){
 			$manifest_json .= '{
 				"src": "' . get_site_icon_url(16, get_theme_file_uri('/assets/img/meta') . '/favicon-16x16.png') . '",

@@ -1648,7 +1648,7 @@ nebula.ecommerceTracking = function(){
 
 		//Checkout form timing
 		nebula.dom.document.on('click focus', '#billing_first_name', function(e){
-			nebula.timer('ecommerce_checkout', 'start');
+			nebula.timer('(Nebula) Ecommerce Checkout', 'start');
 
 			var thisEvent = {
 				event: e,
@@ -1672,7 +1672,7 @@ nebula.ecommerceTracking = function(){
 				label: 'Place Order button click'
 			};
 
-			ga('send', 'timing', 'Ecommerce', 'Checkout Form', Math.round(nebula.timer('ecommerce_checkout', 'end')), 'Billing details start to Place Order button click');
+			ga('send', 'timing', 'Ecommerce', 'Checkout Form', Math.round(nebula.timer('(Nebula) Ecommerce Checkout', 'end')), 'Billing details start to Place Order button click');
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
 			window.dataLayer.push({'event': 'nebula-place-order-button', 'nebula-event': thisEvent});
@@ -1965,7 +1965,7 @@ nebula.autocompleteSearchListeners = function(){
 	}
 };
 
-//Run an autocomplete search on a passes element.
+//Run an autocomplete search on a passed element.
 nebula.autocompleteSearch = function(element, types){
 	if ( typeof element === 'string' ){
 		element = jQuery(element);
@@ -1978,8 +1978,8 @@ nebula.autocompleteSearch = function(element, types){
 	}
 
 	nebula.dom.document.trigger('nebula_autocomplete_search_start', element);
-	nebula.timer('autocompleteSearch', 'start');
-	nebula.timer('autocompleteResponse', 'start');
+	nebula.timer('(Nebula) Autocomplete Search [Start]', 'start');
+	nebula.timer('(Nebula) Autocomplete Response [Start]', 'start');
 
 	if ( element.val().trim().length ){
 		if ( element.val().trim().length >= 2 ){
@@ -2043,7 +2043,7 @@ nebula.autocompleteSearch = function(element, types){
 							nebula.nv('identify', {internal_search: thisEvent.term});
 						}, 1500, 'autocomplete success buffer');
 
-						ga('send', 'timing', 'Autocomplete Search', 'Server Response', Math.round(nebula.timer('autocompleteSearch', 'lap')), 'Each search until server results');
+						ga('send', 'timing', 'Autocomplete Search', 'Server Response', Math.round(nebula.timer('(Nebula) Autocomplete Search', 'lap')), 'Each search until server results');
 						response(data);
 						element.closest('form').removeClass('searching').addClass('autocompleted');
 						element.closest('.input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
@@ -2076,7 +2076,8 @@ nebula.autocompleteSearch = function(element, types){
 				nebula.dom.document.trigger('nebula_autocomplete_search_selected', thisEvent.ui);
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-				ga('send', 'timing', 'Autocomplete Search', 'Until Navigation', Math.round(nebula.timer('autocompleteSearch', 'end')), 'From first initial search until navigation');
+				ga('send', 'timing', 'Autocomplete Search', 'Until Navigation', Math.round(nebula.timer('(Nebula) Autocomplete Search', 'end')), 'From first initial search until navigation');
+
 				if ( thisEvent.external ){
 					window.open(ui.item.link, '_blank');
 				} else {
@@ -2092,9 +2093,9 @@ nebula.autocompleteSearch = function(element, types){
 				element.closest('form').removeClass('autocompleted');
 			},
 			minLength: 3,
-		}).data("ui-autocomplete")._renderItem = function(ul, item){
+		}).data('ui-autocomplete')._renderItem = function(ul, item){
 			var thisSimilarity = ( typeof item.similarity !== 'undefined' )? item.similarity.toFixed(1) + '% Match' : '';
-			var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a> " + item.label.replace(/\\/g, '') + "</a>").appendTo(ul);
+			var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a href='" + item.link + "'> " + item.label.replace(/\\/g, '') + "</a>").appendTo(ul);
 			return listItem;
 		};
 		var thisFormIdentifier = element.closest('form').attr('id') || element.closest('form').attr('name') || element.closest('form').attr('class');
@@ -2112,7 +2113,6 @@ nebula.wpSearchInput = function(){
 	}
 };
 
-
 //Mobile search placeholder toggle
 nebula.mobileSearchPlaceholder = function(){
 	var mobileHeaderSearchInput = jQuery('#mobileheadersearch input');
@@ -2122,7 +2122,6 @@ nebula.mobileSearchPlaceholder = function(){
 	}
 	mobileHeaderSearchInput.attr('placeholder', searchPlaceholder);
 };
-
 
 //Search Validator
 nebula.searchValidator = function(){
@@ -4056,7 +4055,7 @@ nebula.timer = function(uniqueID, action, name){
 
 		//Add the time to User Timing API (if supported)
 		if ( typeof performance.measure !== 'undefined' ){
-			performance.mark(uniqueID + '_start');
+			performance.mark(uniqueID + ' [Start]');
 		}
 	} else {
 		var lapNumber = nebula.timings[uniqueID].lap.length;
@@ -5200,16 +5199,16 @@ nebula.mmenus = function(){
 						jQuery('[data-toggle="tooltip"]').tooltip('hide');
 					}
 
-					nebula.timer('mmenu', 'start');
+					nebula.timer('(Nebula) Mmenu', 'start');
 				}).bind('close:start', function($panel){
 					//When mmenu has started closing
 					mobileNavTriggerIcon.removeClass('fa-times').addClass('fa-bars');
-					ga('send', 'timing', 'Mmenu', 'Closed', Math.round(nebula.timer('mmenu', 'lap')), 'From opening mmenu until closing mmenu');
+					ga('send', 'timing', 'Mmenu', 'Closed', Math.round(nebula.timer('(Nebula) Mmenu', 'lap')), 'From opening mmenu until closing mmenu');
 				});
 			}
 
 			nebula.dom.document.on('click', '.mm-menu li a:not(.mm-next)', function(){
-				ga('send', 'timing', 'Mmenu', 'Navigated', Math.round(nebula.timer('mmenu', 'lap')), 'From opening mmenu until navigation');
+				ga('send', 'timing', 'Mmenu', 'Navigated', Math.round(nebula.timer('(Nebula) Mmenu', 'lap')), 'From opening mmenu until navigation');
 			});
 		}
 	}

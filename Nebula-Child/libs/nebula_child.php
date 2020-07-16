@@ -57,7 +57,4 @@ add_filter('block_categories', function($categories, $post){
 	);
 }, 3, 2);
 
-
-
-
 ?>
