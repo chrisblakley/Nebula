@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 const THEME_NAME = 'nebula-child';
-const NEBULA_VERSION = 'v8.2.16.6515'; //Thursday, July 16, 2020 3:38:17 PM
+const NEBULA_VERSION = 'v8.2.17.4143'; //Friday, July 17, 2020 9:56:43 AM
 const OFFLINE_URL = 'https://nebula.gearside.com/offline/';
 const OFFLINE_IMG = 'https://nebula.gearside.com/wp-content/themes/Nebula-master/assets/img/offline.svg';
 const OFFLINE_GA_DIMENSION = 'cd2';
@@ -11,6 +11,7 @@ const HOME_URL = 'https://nebula.gearside.com/';
 
 importScripts('https://cdnjs.cloudflare.com/ajax/libs/workbox-sw/5.1.3/workbox-sw.min.js'); //https://developers.google.com/web/tools/workbox/guides/get-started
 workbox.setConfig({debug: false}); //https://developers.google.com/web/tools/workbox/guides/troubleshoot-and-debug
+//The Service Worker console can be inspected by visiting chrome://inspect/#service-workers
 
 //@todo "Nebula" 0: If ?debug is present in the URL on load, dump the entire cache and unregister (or update) the SW completely
 //deleteCacheAndMetadata();
@@ -58,7 +59,7 @@ function isCacheAllowed(event){
 	}
 
 	//Check file extensions
-	let fileRegex = /\.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/;
+	let fileRegex = /.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/;
 	if ( fileRegex.test(eventReferrer) || fileRegex.test(eventURL) ){
 		return false;
 	}
@@ -68,13 +69,21 @@ function isCacheAllowed(event){
 
 //Data feeds
 workbox.routing.registerRoute(
-	new RegExp('/\.(?:json|xml|yaml|csv)/'),
+	new RegExp('/.(?:json|xml|yaml|csv)/'),
 	new workbox.strategies.NetworkFirst()
+);
+
+//Search Results
+workbox.routing.registerRoute(
+	function(event){
+		return event.url.href.includes('?s=')
+	},
+	new workbox.strategies.NetworkOnly()
 );
 
 //Images
 workbox.routing.registerRoute(
-	new RegExp('/\.(?:png|gif|jpg|jpeg|webp|svg)$/'),
+	new RegExp('/.(?:png|gif|jpg|jpeg|webp|svg)$/'),
 	new workbox.strategies.StaleWhileRevalidate({
 		cacheName: 'images', //This cache name is used for the offline fallback and expiration plugin
 		plugins: [

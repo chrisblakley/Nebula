@@ -325,8 +325,8 @@ nebula.prefetch = function(url, callback, element){
 			}
 		}
 
-		//Ignore links with certain attributes (if the element itself was passed by reference)
-		if ( element && jQuery(element).is('[download]') ){
+		//Ignore links with certain attributes and classes (if the element itself was passed by reference)
+		if ( element && (jQuery(element).is('[download]') || jQuery(element).hasClass('no-prefetch') || jQuery(element).parents('.no-prefetch').length) ){
 			return false;
 		}
 
@@ -336,7 +336,7 @@ nebula.prefetch = function(url, callback, element){
 		}
 
 		//Ignore certain files
-		if ( /\.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/.test(url) ){
+		if ( /.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/.test(url) ){
 			return false;
 		}
 
@@ -353,7 +353,6 @@ nebula.prefetch = function(url, callback, element){
 				return false;
 			}
 		});
-
 		window.requestIdleCallback(function(){ //Wait until the browser is idle before prefetching
 			if ( !jQuery('link[rel="prefetch"][href="' + url + '"]').length ){ //If prefetch link for this URL has not yet been added to the DOM
 				jQuery('<link rel="prefetch" href="' + url + '">').on('load', callback).appendTo('head'); //Append a prefetch link element for this URL to the DOM
@@ -2295,7 +2294,7 @@ nebula.cf7Functions = function(){
 	//Replace submit input with a button so a spinner icon can be used instead of the CF7 spin gif (unless it has the class "no-button")
 	jQuery('.wpcf7-form input[type=submit]').each(function(){
 		if ( !jQuery(this).hasClass('no-button') ){
-			jQuery(this).replaceWith('<button id="submit" type="submit" class="' + jQuery(this).attr('class') + '">' + jQuery(this).val() + '</button>');
+			jQuery(this).replaceWith('<button id="submit" type="submit" class="' + nebula.sanitize(jQuery(this).attr('class')) + '">' + nebula.sanitize(jQuery(this).val()) + '</button>'); //Sanitized to prevent XSS
 		}
 	});
 
@@ -2882,7 +2881,7 @@ nebula.loadElement = function(element){
 		element.remove(); //Remove the positioning element
 
 		//The actual lazy loaded element as a jQuery object
-		var thisContent = jQuery(lazyElement.text()).on('load loadeddata', function(){
+		var thisContent = jQuery(lazyElement.text()).on('load loadeddata', function(){ //Warning: DOM text is reinterpreted as HTML without escaping meta-characters. Not sure how to sanitize this?
 			nebula.lazyVideoTracking(lazyElement);
 		});
 
@@ -3549,12 +3548,12 @@ nebula.svgImgs = function(){
 
 				//Move alt attribute to title element within the SVG
 				if ( oThis.attr('alt') ){
-					theSVG.prepend('<title>' + oThis.attr('alt') + '</title>');
+					theSVG.prepend('<title>' + nebula.sanitize(oThis.attr('alt')) + '</title>'); //Sanitized to prevent XSS
 				}
 
 				//Move the title attribute to the description element within the SVG
 				if ( oThis.attr('title') ){
-					theSVG.prepend('<description>' + oThis.attr('title') + '</description>');
+					theSVG.prepend('<description>' + nebula.sanitize(oThis.attr('title')) + '</description>'); //Sanitized to prevent XSS
 				}
 			}, 'xml');
 		}

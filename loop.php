@@ -8,11 +8,12 @@
 			</div>
 		</article>
 	<?php else: //Begin the loop. ?>
+		<?php $text_fragment = ( is_search() )? '#:~:text=' . rawurlencode(get_search_query()) : ''; //Add a scroll-to-text-fragment on search listings ?>
 		<?php while ( have_posts() ): the_post(); ?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 				<div class="row">
 					<div class="col">
-						<h2 class="entry-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+						<h2 class="entry-title"><a href="<?php echo get_the_permalink() . $text_fragment; ?>"><?php the_title(); ?></a></h2>
 
 						<div class="entry-meta">
 							<?php if ( is_search() ): //If this is a search results listing ?>
@@ -25,7 +26,7 @@
 						</div>
 
 						<?php if ( has_post_thumbnail() && get_theme_mod('featured_image_location') !== 'disabled' ): //If the featured image exists (and is not disabled in the Customizer) ?>
-							<a class="featured-image" href="<?php the_permalink(); ?>">
+							<a class="featured-image" href="<?php echo get_the_permalink() . $text_fragment; ?>">
 								<?php the_post_thumbnail(); ?>
 							</a>
 						<?php endif; ?>
