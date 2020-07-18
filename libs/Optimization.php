@@ -272,7 +272,8 @@ if ( !trait_exists('Optimization') ){
 
 				foreach ( $wp_styles->queue as $handle ){
 					if ( wp_style_is($handle, 'registered') ){ //If this style is still registered
-						$this->http2_server_push_file($wp_styles->registered[$handle]->src, 'style');
+						$ver = ( !empty($wp_styles->registered[$handle]->ver) )? '?ver=' . $wp_styles->registered[$handle]->ver : '';
+						$this->http2_server_push_file($wp_styles->registered[$handle]->src . $ver, 'style');
 					}
 				}
 			}
@@ -284,7 +285,8 @@ if ( !trait_exists('Optimization') ){
 
 				foreach ( $wp_scripts->queue as $handle ){
 					if ( wp_script_is($handle, 'registered') ){ //If this script is still registered
-						$this->http2_server_push_file($wp_scripts->registered[$handle]->src, 'script');
+						$ver = ( !empty($wp_scripts->registered[$handle]->ver) )? '?ver=' . $wp_scripts->registered[$handle]->ver : '';
+						$this->http2_server_push_file($wp_scripts->registered[$handle]->src . $ver, 'script');
 					}
 				}
 			}
@@ -292,7 +294,8 @@ if ( !trait_exists('Optimization') ){
 
 		public function http2_server_push_file($src, $filetype){
 			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
-				header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel=preload; as=' . $filetype, false); //Send the header for the HTTP2 Server Push (strtok to remove everything after and including "#")
+				$crossorigin = ( strpos($src, get_site_url()) === false || $filetype === 'font' )? ' crossorigin=anonymous' : ''; //Add crossorigin attribute for remote assets and all fonts
+				header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel=preload; as=' . $filetype . ';' . $crossorigin, false); //Send the header for the HTTP2 Server Push (strtok to remove everything after and including "#")
 			}
 		}
 

@@ -23,7 +23,7 @@
 					<?php if ( get_theme_mod('nebula_footer_logo') ): ?>
 						<div class="row justify-content-center footerlogocon">
 							<div class="col-3">
-								<a class="footerlogo" href="<?php echo home_url('/'); ?>">
+								<a class="footerlogo" href="<?php echo home_url('/'); ?>" aria-label="<?php bloginfo('name'); ?>">
 									<?php $logo = nebula()->logo('footer'); ?>
 									<?php if ( !empty($logo) ): ?>
 										<img class="svg" src="<?php echo $logo; ?>" alt="<?php bloginfo('name'); ?>" importance="low" />

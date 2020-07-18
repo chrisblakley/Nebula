@@ -102,6 +102,8 @@ window.addEventListener('resize', function(){
 		if ( typeof nebula.lastWindowWidth !== 'undefined' && nebula.dom.window.width() != nebula.lastWindowWidth ){ //If the width actually changed
 			nebula.lastWindowWidth = nebula.dom.window.width();
 			nebula.mobileSearchPlaceholder();
+
+			nebula.initMmenu(); //If Mmenu has not been initialized, it may need to be if the screen size has reduced
 		}
 	}, 1000, 'window resize');
 }); //End Window Resize
@@ -376,7 +378,7 @@ nebula.postMessage = function(data){
 nebula.cookieNotification = function(){
 	if ( jQuery('#nebula-cookie-notification').length && !nebula.readCookie('acceptcookies') ){
 		//Show the notice as soon as it will not interfere with loading nor become laggy
-		window.requestAnimationFrame(function(){ //Change to requestIdleCallback when we stop supporting IE11
+		window.requestAnimationFrame(function(){ //Change to requestIdleCallback when we stop supporting IE11 (still not supported in Safari either)
 			jQuery('#nebula-cookie-notification').addClass('active');
 
 			if ( !nebula.dom.body.hasClass('desktop') ){ //Desktop users (as detected by DeviceDetector or WordPress core) can use fixed positioning, but mobile must use absolute positioning
@@ -498,25 +500,27 @@ nebula.performanceMetrics = function(){
 
 //Sub-menu viewport overflow detector
 nebula.overflowDetector = function(){
-	jQuery('.menu li.menu-item').on({
-		'mouseenter focus focusin': function(){
-			if ( jQuery(this).children('.sub-menu').length ){
-				var submenuLeft = jQuery(this).children('.sub-menu').offset().left; //Left side of the sub-menu
-				var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width(); //Right side of the sub-menu
+	if ( jQuery('.sub-menu').length ){ //Only add the event listener if sub-menus actually exist
+		jQuery('.menu li.menu-item').on({
+			'mouseenter focus focusin': function(){
+				if ( jQuery(this).children('.sub-menu').length ){ //Check if this menu has sub-menus
+					var submenuLeft = jQuery(this).children('.sub-menu').offset().left; //Left side of the sub-menu
+					var submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width(); //Right side of the sub-menu
 
-				if ( submenuRight > nebula.dom.window.width() ){ //If the right side is greater than the width of the viewport
-					jQuery(this).children('.sub-menu').addClass('overflowing overflowing-left');
-				} else if (submenuLeft > nebula.dom.window.width() ) {
-					jQuery(this).children('.sub-menu').addClass('overflowing overflowing-right');
-				} else {
-					jQuery(this).children('.sub-menu').removeClass('overflowing overflowing-left overflowing-right');
+					if ( submenuRight > nebula.dom.window.width() ){ //If the right side is greater than the width of the viewport
+						jQuery(this).children('.sub-menu').addClass('overflowing overflowing-left');
+					} else if (submenuLeft > nebula.dom.window.width() ) {
+						jQuery(this).children('.sub-menu').addClass('overflowing overflowing-right');
+					} else {
+						jQuery(this).children('.sub-menu').removeClass('overflowing overflowing-left overflowing-right');
+					}
 				}
+			},
+			'mouseleave': function(){
+				jQuery(this).children('.sub-menu').removeClass('overflowing');
 			}
-		},
-		'mouseleave': function(){
-			jQuery(this).children('.sub-menu').removeClass('overflowing');
-		}
-	});
+		});
+	}
 };
 
 //Check if the user has enabled DNT (if supported in their browser)
@@ -1948,6 +1952,7 @@ nebula.searchTriggerOnlyChars = function(e){
 
 //Enable autocomplete search on WordPress core selectors
 nebula.autocompleteSearchListeners = function(){
+	//Wrap this in requestIdleCallback once it is supported (IE11 and Safari)
 	if ( jQuery('.nebula-search input, input#s, input.search').length ){
 		nebula.loadJS(nebula.site.resources.scripts.nebula_jquery_ui, function(){
 			nebula.dom.document.on('blur', '.nebula-search input', function(){
@@ -2124,6 +2129,7 @@ nebula.mobileSearchPlaceholder = function(){
 
 //Search Validator
 nebula.searchValidator = function(){
+	//Wrap in requestIdleCallback once fully supported (IE11 and Safari)
 	if ( jQuery('.input.search').length ){
 		jQuery('.input.search').each(function(){
 			if ( jQuery(this).val() === '' || jQuery(this).val().trim().length === 0 ){
@@ -2777,6 +2783,7 @@ nebula.applyValidationClasses = function(element, validation, showFeedback){
  ===========================*/
 
 //Lazy load images, styles, and JavaScript assets
+//Can this be made asynchronous as a whole?
 nebula.lazyLoadAssets = function(){
 	//Lazy load elements as they scroll into viewport
 	if ( 'IntersectionObserver' in window ){ //Only if Intersection Observer API is available. https://caniuse.com/#feat=intersectionobserver
@@ -2813,10 +2820,17 @@ nebula.lazyLoadAssets = function(){
 
 	//Load all lazy elements at once if requested
 	nebula.dom.window.on('nebula_load', function(){
-		nebula.loadEverything();
+		if ( typeof window.requestIdleCallback === 'function' ){ //If requestIdleCallback exists, use it
+				window.requestIdleCallback(function(){
+					nebula.loadEverything();
+				});
+		} else { //Otherwise, just run immediately
+			nebula.loadEverything();
+		}
 	});
 
 	//Lazy load CSS assets
+	//@todo "Nebula" 0: listen for requestIdleCallback here after IE11 no longer supported (still need conditional per Safari): https://caniuse.com/#feat=requestidlecallback
 	jQuery.each(nebula.site.resources.lazy.styles, function(handle, condition){
 		if ( condition === 'all' || jQuery(condition).length ){
 			if ( nebula.site.resources.styles[handle.replace(/-/g, '_')] ){ //If that handle exists in the registered styles
@@ -2826,6 +2840,7 @@ nebula.lazyLoadAssets = function(){
 	});
 
 	//Lazy load JS assets
+	//@todo "Nebula" 0: listen for requestIdleCallback here after IE11 no longer supported (still need conditional per Safari): https://caniuse.com/#feat=requestidlecallback
 	jQuery.each(nebula.site.resources.lazy.scripts, function(handle, condition){
 		if ( condition === 'all' || jQuery(condition).length ){
 			if ( nebula.site.resources.scripts[handle.replace(/-/g, '_')] ){ //If that handle exists in the registered scripts
@@ -2834,13 +2849,7 @@ nebula.lazyLoadAssets = function(){
 		}
 	});
 
-	//Load Mmenu if trigger exists
-	if ( jQuery('.mobilenavtrigger').length ){
-		nebula.loadJS(nebula.site.resources.scripts.nebula_mmenu, function(){
-			nebula.mmenus();
-		});
-		nebula.loadCSS(nebula.site.resources.styles.nebula_mmenu);
-	}
+	nebula.initMmenu(); //Mmenu lazy load happens in its own function
 
 	//Load the Google Maps API if 'googlemap' class exists
 	if ( jQuery('.googlemap').length ){
@@ -2867,7 +2876,7 @@ nebula.lazyLoadAssets = function(){
 //When necessary, load any element that is meant to be lazy loaded immediately
 //Either call this directly, or trigger 'nebula_load' on the window
 nebula.loadEverything = function(){
-	//@todo "Nebula" 0: listen for idle callback here after IE11 no longer supported: https://caniuse.com/#feat=requestidlecallback
+	//@todo "Nebula" 0: listen for requestIdleCallback here after IE11 no longer supported (still need conditional per Safari): https://caniuse.com/#feat=requestidlecallback
 	jQuery('.nebula-lazy-position, .lazy-load, .nebula-lazy').each(function(){
 		nebula.loadElement(jQuery(this)); //Load the element immediately
 	});
@@ -2897,6 +2906,7 @@ nebula.loadElement = function(element){
 
 //Load a JavaScript resource (and cache it)
 nebula.loadJS = function(url, callback){
+	//@todo "Nebula" 0: listen for requestIdleCallback after IE11 no longer supported (still need conditional per Safari): https://caniuse.com/#feat=requestidlecallback
 	if ( typeof url === 'string' ){
 		var lazyScriptElement = document.createElement('script'); //Create a script element
 		lazyScriptElement.src = url; //Set the script src to the URL
@@ -5075,13 +5085,28 @@ nebula.vibrate = function(pattern){
 	return false;
 };
 
+//Lazy load and initialize Mmenu separately because it has additional conditions
+nebula.initMmenu = function(){
+	if ( jQuery('#mobilenav').length ){
+		var isMobileBarVisible = ( jQuery('#mobilebarcon').css('border-color') === 'rgba(255, 255, 255, 0)' )? true : false; //This is used to determine if the element is actually visible (because even though its visibility is hidden, JS cannot detect that.
+
+		if ( isMobileBarVisible ){
+			nebula.once(function(){
+				nebula.loadJS(nebula.site.resources.scripts.nebula_mmenu, function(){ //Detected as a long task per Chrome DevTools
+					nebula.mmenus();
+				});
+				nebula.loadCSS(nebula.site.resources.styles.nebula_mmenu);
+			}, 'Mmenu init');
+		}
+	}
+}
+
 nebula.mmenus = function(){
 	//@todo "Nebula" 0: Between Mmenu and jQuery, 2 console violations are being triggered: "Added non-passive event listener to a scroll-blocking 'touchmove' event."
 		//This happens whether this function is triggered on DOM ready or Window load
 
-	if ( 'mmenu' in jQuery ){
-		var mobileNav = jQuery('#mobilenav');
-		var mobileNavTriggerIcon = jQuery('a.mobilenavtrigger i');
+	if ( 'mmenu' in jQuery ){ //Ensure Mmenu library has loaded
+		var mobileNav = jQuery('#mobilenav'); //This is essential, so check it here in case this function is called manually
 
 		if ( mobileNav.length ){
 			//Navigation Panels
@@ -5190,6 +5215,8 @@ nebula.mmenus = function(){
 			}); //Initialize Mmenu
 
 			if ( mobileNav.length ){
+				var mobileNavTriggerIcon = jQuery('a.mobilenavtrigger i');
+
 				mobileNav.data('mmenu').bind('open:start', function($panel){
 					//When mmenu has started opening
 					mobileNavTriggerIcon.removeClass('fa-bars').addClass('fa-times');
@@ -5212,6 +5239,23 @@ nebula.mmenus = function(){
 		}
 	}
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //Vertical subnav expanders
 nebula.subnavExpanders = function(){

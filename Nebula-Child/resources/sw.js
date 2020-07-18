@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 const THEME_NAME = 'nebula-child';
-const NEBULA_VERSION = 'v8.2.17.4143'; //Friday, July 17, 2020 9:56:43 AM
+const NEBULA_VERSION = 'v8.2.18.757'; //Saturday, July 18, 2020 6:10:06 PM
 const OFFLINE_URL = 'https://nebula.gearside.com/offline/';
 const OFFLINE_IMG = 'https://nebula.gearside.com/wp-content/themes/Nebula-master/assets/img/offline.svg';
 const OFFLINE_GA_DIMENSION = 'cd2';
@@ -76,7 +76,7 @@ workbox.routing.registerRoute(
 //Search Results
 workbox.routing.registerRoute(
 	function(event){
-		return event.url.href.includes('?s=')
+		return event.url.href.includes('?s=');
 	},
 	new workbox.strategies.NetworkOnly()
 );
