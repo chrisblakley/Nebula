@@ -3,7 +3,7 @@
 // ===========================
 
 //Top row that appears at mobile sizes.
-#mobilebarcon {visibility: visible; position: relative; background: $primary_color; width: 100%; height: 42px; overflow: hidden; z-index: 1; transition: all 0.5s; border: 0px solid rgba(255, 255, 255, 0); //Border color hack for actual visibility detection
+#mobilebarcon {visibility: visible; position: relative; background: $primary_color; width: 100%; height: 42px; overflow: hidden; z-index: 1; transition: all 0.5s; border: 0 solid rgba(255, 255, 255, 0); //Border color hack for actual visibility detection
 	a {font-size: rem(32px); @include link-colors(#fff, #aaa); text-decoration: underline;}
 	.mobilenavcon {display: block;
 		#mobileheadersearch {display: flex; align-items: center;
