@@ -327,6 +327,11 @@ nebula.prefetch = function(url, callback, element){
 			}
 		}
 
+		//Ignore request to prefetch the current page
+		if ( url === window.location.href ){ //Add || url === nebula?.post?.permalink when optional chaining can be used
+			return false;
+		}
+
 		//Ignore links with certain attributes and classes (if the element itself was passed by reference)
 		if ( element && (jQuery(element).is('[download]') || jQuery(element).hasClass('no-prefetch') || jQuery(element).parents('.no-prefetch').length) ){
 			return false;
@@ -3357,6 +3362,14 @@ nebula.helpers = function(){
 		}
 	});
 
+	//Change the Bootstrap label for custom file upload inputs on upload
+	jQuery('input[type="file"].custom-file-input').on('change', function(){
+		if ( jQuery(this).parents('.custom-file').find('.custom-file-label').length ){
+			var fileName = jQuery(this).val().split('\\').pop(); //Get the filename without the full path
+			jQuery(this).parents('.custom-file').find('.custom-file-label').text(fileName);
+		}
+	});
+
 	nebula.dragDropUpload();
 };
 
@@ -3400,7 +3413,7 @@ nebula.dragDropUpload = function(){
 				e.stopPropagation();
 				e.preventDefault();
 
-				dropArea.classList.remove('dragover');
+				jQuery(dropArea).removeClass('dragover');
 
 				var fileInput = dropArea.querySelectorAll('input[type="file"]')[0]; //Find the file input field within this drop area
 				var acceptedFiles = jQuery(fileInput).attr('accept').replace(/\s?\./g, '').split(',');
@@ -3411,7 +3424,9 @@ nebula.dragDropUpload = function(){
 
 				if ( !jQuery(fileInput).attr('accept').length || (e.dataTransfer.files.length === 1 && acceptedFiles.indexOf(thisFileType) != -1) ){ //If the uploader does not restrict file types, or if only one file was uploaded and that filetype is accepted
 					jQuery(dropArea).addClass('dropped is-valid');
+
 					fileInput.files = e.dataTransfer.files; //Fill the file upload input with the uploaded file
+					jQuery(fileInput).parents('.custom-file').find('.custom-file-label').text(e.dataTransfer.files[0].name); //Update the Bootstrap label to show the filename
 
 					thisEvent.action = 'Dropped (Accepted)';
 					nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -3954,17 +3969,19 @@ nebula.throttle = function(callback, cooldown, uniqueID){
 	var context = this;
 	var args = arguments;
 	var later = function(){
-        if ( typeof nebula.throttleTimers[uniqueID] === 'undefined' ){ //If we're not waiting
-            callback.apply(context, args); //Execute callback function
+		if ( typeof nebula.throttleTimers[uniqueID] === 'undefined' ){ //If we're not waiting
+			window.requestAnimationFrame(function(){
+				callback.apply(context, args); //Execute callback function
 
-			nebula.throttleTimers[uniqueID] = 'waiting'; //Prevent future invocations
+				nebula.throttleTimers[uniqueID] = 'waiting'; //Prevent future invocations
 
-			//After the cooldown period, allow future invocations
-            setTimeout(function(){
-                nebula.throttleTimers[uniqueID] = undefined; //Allow future invocations (undefined means it is not waiting)
-            }, cooldown);
-        }
-    };
+				//After the cooldown period, allow future invocations
+				setTimeout(function(){
+					nebula.throttleTimers[uniqueID] = undefined; //Allow future invocations (undefined means it is not waiting)
+				}, cooldown);
+			});
+		}
+	};
 
     return later();
 };

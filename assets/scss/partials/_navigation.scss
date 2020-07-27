@@ -21,7 +21,7 @@
 		&.active {color: #fff; @include background-color(#fff, 0);}
 	}
 
-	@include media("lg"){visibility: hidden; height: 0; border: 0px solid rgba(0, 0, 0, 0);} //Border color hack for actual visibility detection
+	@include media("lg"){visibility: hidden; height: 0; border: 0 solid rgba(0, 0, 0, 0);} //Border color hack for actual visibility detection
 }
 
 #mobilenav {visibility: hidden; height: 0;

@@ -3218,9 +3218,14 @@ trait Functions {
 			$classes[] = 'customizer-preview';
 		}
 
-		//Homepage Hero (Customizer)
-		if ( is_front_page() && !get_theme_mod('nebula_hero', true) ){
-			$classes[] = 'no-hero';
+		//Front Page
+		if ( is_front_page() ){
+			$classes[] = 'front-page';
+
+			//Homepage Hero (Customizer)
+			if ( !get_theme_mod('nebula_hero', true) ){
+				$classes[] = 'no-hero';
+			}
 		}
 
 		$nebula_theme_info = wp_get_theme();

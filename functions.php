@@ -1,7 +1,4 @@
 <?php
-/**
- * Functions
- */
 
 require_once 'nebula.php';
 nebula();

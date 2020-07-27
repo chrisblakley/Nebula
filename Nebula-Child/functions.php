@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Child Functions
- */
-
 if ( !class_exists('Nebula') ){
 	require_once get_template_directory() . '/nebula.php';
 	nebula();
@@ -29,17 +25,16 @@ if ( !class_exists('Nebula') ){
 
 require_once get_stylesheet_directory() . '/libs/nebula_child.php'; //Nebula Child
 
+add_action('wp_enqueue_scripts', 'register_nebula_child_assets', 327);
+add_action('login_enqueue_scripts', 'register_nebula_child_assets', 327);
+add_action('admin_enqueue_scripts', 'register_nebula_child_assets', 327);
+function register_nebula_child_assets(){
+	/*==========================
+	 Deregister Parent Styles/Scripts
+	 Use the handle registerred in /Nebula-master/functions.php for the styles/scripts that should be removed.
+	 Use both deregister and dequeue to completely remove the parent style/script
+	 ===========================*/
 
-/*==========================
- Deregister Parent Styles/Scripts
- Use the handle registerred in /Nebula-master/functions.php for the styles/scripts that should be removed.
- Use both deregister and dequeue to completely remove the parent style/script
- ===========================*/
-
-add_action('wp_enqueue_scripts', 'deregister_nebula_parent_scripts', 327);
-add_action('login_enqueue_scripts', 'deregister_nebula_parent_scripts', 327);
-add_action('admin_enqueue_scripts', 'deregister_nebula_parent_scripts', 327);
-function deregister_nebula_parent_scripts(){
 	//Uncomment below to disable parent style.css
 	//wp_deregister_style('nebula-main');
 	//wp_dequeue_style('nebula-main');
@@ -47,69 +42,41 @@ function deregister_nebula_parent_scripts(){
 	//Uncomment below to disable parent nebula.js (Be sure to copy over to main.js first)
 	//wp_deregister_script('nebula-nebula');
 	//wp_dequeue_script('nebula-nebula');
-}
 
+	/*==========================
+	 Register Child Stylesheets
+	 ===========================*/
 
-/*==========================
- Register Child Stylesheets
- ===========================*/
-
-add_action('wp_enqueue_scripts', 'register_nebula_child_styles');
-add_action('login_enqueue_scripts', 'register_nebula_child_styles');
-add_action('admin_enqueue_scripts', 'register_nebula_child_styles');
-function register_nebula_child_styles(){
 	//wp_register_style($handle, $src, $dependencies, $version, $media);
 	wp_register_style('nebula-child', get_stylesheet_directory_uri() . '/style.css', array('nebula-main'), nebula()->child_version(), 'all'); //Need a different version number here. Use the last time Sass was processed (if sass enabled) or... what otherwise?
 	wp_register_style('nebula-login-child', get_stylesheet_directory_uri() . '/assets/css/login.css', array('nebula-login'), nebula()->child_version(), 'all');
-}
 
+	/*==========================
+	 Register Child Scripts
+	 ===========================*/
 
-/*==========================
- Register Child Scripts
- ===========================*/
-
-add_action('wp_enqueue_scripts', 'register_nebula_child_scripts');
-add_action('login_enqueue_scripts', 'register_nebula_child_scripts');
-add_action('admin_enqueue_scripts', 'register_nebula_child_scripts');
-function register_nebula_child_scripts(){
 	//Use CDNJS to pull common libraries: http://cdnjs.com/
 	//nebula()->register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
 	nebula()->register_script('nebula-main', get_stylesheet_directory_uri() . '/assets/js/main.js', array('defer'), array('jquery-core', 'nebula-nebula'), nebula()->child_version(), true); //nebula.js (in the parent Nebula theme) is defined as a dependant here.
 }
 
-
-/*==========================
- Enqueue Child Styles & Scripts on the Front-End
- ===========================*/
-
-add_action('wp_enqueue_scripts', 'enqueue_nebula_child_frontend', 327);
-function enqueue_nebula_child_frontend(){
+//Enqueue Child Styles & Scripts on the Front-End
+add_action('wp_enqueue_scripts', function(){
 	wp_enqueue_style('nebula-child'); //Stylesheets
 	wp_enqueue_script('nebula-main'); //Scripts
-}
+}, 327);
 
-
-/*==========================
- Enqueue Child Styles & Scripts on the Login
- ===========================*/
-
-add_action('login_enqueue_scripts', 'enqueue_nebula_child_login', 327);
-function enqueue_nebula_child_login(){
-	//Stylesheets
+//Enqueue Child Styles & Scripts on the Login page
+add_action('login_enqueue_scripts', function(){
 	if ( file_exists(get_stylesheet_directory() . '/assets/css/login.css') ){
 		wp_enqueue_style('nebula-login-child');
 	}
-}
+}, 327);
 
-
-/*==========================
- Enqueue Child Styles & Scripts on the Admin
- ===========================*/
-
-add_action('admin_enqueue_scripts', 'enqueue_nebula_child_admin', 327);
-function enqueue_nebula_child_admin(){
+//Enqueue Child Styles & Scripts on Admin pages
+add_action('admin_enqueue_scripts', function(){
 	//Note: child theme admin.css is enqueued by WordPress core when that color scheme is selected per user
-}
+}, 327);
 
 
 

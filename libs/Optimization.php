@@ -15,6 +15,8 @@ if ( !trait_exists('Optimization') ){
 				add_action('wp_enqueue_scripts', array($this, 'scripts_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
 			}
 
+			add_action('wp_head', array($this, 'prebrowsing'));
+
 			add_filter('wp_enqueue_scripts', array($this, 'defer_async_additional_scripts'));
 			add_filter('script_loader_tag', array($this, 'defer_async_scripts'), 10, 2);
 
@@ -47,8 +49,7 @@ if ( !trait_exists('Optimization') ){
 			add_filter('nebula_thumbnail_src_size', array($this, 'limit_image_size'), 10, 2);
 			add_filter('max_srcset_image_width', array($this, 'smaller_max_srcset_image_width'), 10, 2); //Limit width of content images
 
-			add_action('wp_head', array($this, 'prebrowsing'));
-			add_action('admin_head', array($this, 'prebrowsing'));
+
 		}
 
 		//Set the JPG compression for more optimized images (Note: Full Size images are not changed)

@@ -980,11 +980,15 @@ if ( !trait_exists('Utilities') ){
 		public function luminance($color){
 			$rgb = $this->hex2rgb($color);
 
-			$red = $this->linear_channel($rgb['r'] + 1);
-			$green = $this->linear_channel($rgb['g'] + 1);
-			$blue = $this->linear_channel($rgb['b'] + 1);
+			if ( is_array($rgb) ){
+				$red = $this->linear_channel($rgb['r'] + 1);
+				$green = $this->linear_channel($rgb['g'] + 1);
+				$blue = $this->linear_channel($rgb['b'] + 1);
 
-			return 0.2126 * $red + 0.7152 * $green + 0.0722 * $blue;
+				return 0.2126 * $red + 0.7152 * $green + 0.0722 * $blue;
+			}
+
+			return 0;
 		}
 
 		//Calculate the linear channel of a color
