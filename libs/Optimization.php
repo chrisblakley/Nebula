@@ -540,19 +540,23 @@ if ( !trait_exists('Optimization') ){
 					$this->deregister('thickbox', 'script'); //WP Thickbox - Override this if thickbox type gallery IS used on the homepage.
 				}
 
-				//Dequeue styles based on selected Nebula options
-				if ( array_key_last($GLOBALS['wp_actions']) !== 'wp_print_scripts' ){ //Check the last hook to run and skip dequeuing styles on the print scripts hook
-					$styles_to_dequeue = $this->get_option('dequeue_styles');
-					if ( !empty($styles_to_dequeue) ){
-						$this->check_dequeue_rules($styles_to_dequeue, 'styles');
+				//Get the last WordPress action handle that was called (so we know which one we are likely "inside")
+				$last_action = end(array_keys($GLOBALS['wp_actions'])); //Change to array_key_last($GLOBALS['wp_actions']) when PHP 7.3 is minimum version
+				if ( !empty($last_action) ){
+					//Dequeue styles based on selected Nebula options
+					if ( $last_action !== 'wp_print_scripts' ){ //Check the last hook to run and skip dequeuing styles on the print scripts hook
+						$styles_to_dequeue = $this->get_option('dequeue_styles');
+						if ( !empty($styles_to_dequeue) ){
+							$this->check_dequeue_rules($styles_to_dequeue, 'styles');
+						}
 					}
-				}
 
-				//Dequeue scripts based on selected Nebula options
-				if ( array_key_last($GLOBALS['wp_actions']) !== 'wp_print_styles' ){ //Check the last hook to run and skip dequeuing scripts on the print styles hook
-					$scripts_to_dequeue = $this->get_option('dequeue_scripts');
-					if ( !empty($scripts_to_dequeue) ){
-						$this->check_dequeue_rules($scripts_to_dequeue, 'scripts');
+					//Dequeue scripts based on selected Nebula options
+					if ( $last_action !== 'wp_print_styles' ){ //Check the last hook to run and skip dequeuing scripts on the print styles hook
+						$scripts_to_dequeue = $this->get_option('dequeue_scripts');
+						if ( !empty($scripts_to_dequeue) ){
+							$this->check_dequeue_rules($scripts_to_dequeue, 'scripts');
+						}
 					}
 				}
 			}

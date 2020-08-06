@@ -2,7 +2,7 @@
 // Custom Baseline Styles
 // ===========================
 
-html {height: auto; font-size: 16px; overflow-x: hidden;} //Declare font-size in px here only. Use rem or rem() Sass function everywhere else.
+html {height: auto; font-size: 16px; overflow-x: hidden; scroll-behavior: smooth;} //Declare font-size in px here only. Use rem or rem() Sass function everywhere else.
 body {overflow-x: hidden; background: $background_color; -webkit-font-smoothing: antialiased;} //@todo "Nebula" 0: Overflow hidden breaks position sticky... Without it, horizontal scroll happens...
 ::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 15%), 0.3);}
 ::-moz-selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 15%), 0.3);}

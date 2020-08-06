@@ -493,7 +493,7 @@ trait Functions {
 			//Check for low disk space available in key directories
 			$disk_paths = array(
 				array('directory' => ABSPATH, 'low' => 10, 'critical' => 5), //WordPress root directory
-				array('directory' => session_save_path(), 'low' => 1, 'critical' => 0.5), //May or may not be the same as /tmp
+				//array('directory' => session_save_path(), 'low' => 1, 'critical' => 0.5), //May or may not be the same as /tmp
 				array('directory' => '/tmp', 'low' => 1, 'critical' => 0.5),
 				array('directory' => get_temp_dir(), 'low' => 1, 'critical' => 0.5) //May or may not be the same as /tmp
 			);
