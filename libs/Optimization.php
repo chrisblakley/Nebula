@@ -23,7 +23,11 @@ if ( !trait_exists('Optimization') ){
 			add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
 			add_action('wp_footer', array($this, 'dequeue_lazy_load_scripts'));
 
-			add_action('wp_enqueue_scripts', array($this, 'dequeues'), 9001);
+			//Dequeue assets depending on when they are hooked for output
+			add_action('wp_enqueue_scripts', array($this, 'dequeues'), 9001); //Dequeue styles and scripts that are hooked into the wp_enqueue_scripts action
+			add_action('wp_print_styles', array($this, 'dequeues'), 9001); //Dequeue styles that are hooked into the wp_print_styles action
+			add_action('wp_print_scripts', array($this, 'dequeues'), 9001); //Dequeue scripts that are hooked into the wp_print_styles action
+
 			add_action('wp_enqueue_scripts', array($this, 'remove_actions'), 9001);
 
 			add_action('send_headers', array($this, 'service_worker_scope'));
@@ -48,8 +52,6 @@ if ( !trait_exists('Optimization') ){
 			add_filter('post_thumbnail_size', array($this, 'limit_thumbnail_size'), 10, 2);
 			add_filter('nebula_thumbnail_src_size', array($this, 'limit_image_size'), 10, 2);
 			add_filter('max_srcset_image_width', array($this, 'smaller_max_srcset_image_width'), 10, 2); //Limit width of content images
-
-
 		}
 
 		//Set the JPG compression for more optimized images (Note: Full Size images are not changed)
@@ -539,15 +541,19 @@ if ( !trait_exists('Optimization') ){
 				}
 
 				//Dequeue styles based on selected Nebula options
-				$styles_to_dequeue = $this->get_option('dequeue_styles');
-				if ( !empty($styles_to_dequeue) ){
-					$this->check_dequeue_rules($styles_to_dequeue, 'styles');
+				if ( array_key_last($GLOBALS['wp_actions']) !== 'wp_print_scripts' ){ //Check the last hook to run and skip dequeuing styles on the print scripts hook
+					$styles_to_dequeue = $this->get_option('dequeue_styles');
+					if ( !empty($styles_to_dequeue) ){
+						$this->check_dequeue_rules($styles_to_dequeue, 'styles');
+					}
 				}
 
 				//Dequeue scripts based on selected Nebula options
-				$scripts_to_dequeue = $this->get_option('dequeue_scripts');
-				if ( !empty($scripts_to_dequeue) ){
-					$this->check_dequeue_rules($scripts_to_dequeue, 'scripts');
+				if ( array_key_last($GLOBALS['wp_actions']) !== 'wp_print_styles' ){ //Check the last hook to run and skip dequeuing scripts on the print styles hook
+					$scripts_to_dequeue = $this->get_option('dequeue_scripts');
+					if ( !empty($scripts_to_dequeue) ){
+						$this->check_dequeue_rules($scripts_to_dequeue, 'scripts');
+					}
 				}
 			}
 		}
@@ -599,7 +605,7 @@ if ( !trait_exists('Optimization') ){
 		public function deregister($handle, $type){
 			if ( !empty($handle) ){
 				//Styles
-				if ( strpos($type, 'style') !== false ){
+				if ( strpos(strtolower($type), 'style') !== false || strpos(strtolower($type), 'css') !== false ){
 					//Check if this style was enqueued
 					if ( wp_style_is($handle, 'enqueued') ){
 						$this->deregistered_assets['styles'][] = $handle; //Add it to the array to log in the admin bar

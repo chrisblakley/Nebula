@@ -396,7 +396,7 @@ nebula.cookieNotification = function(){
 		});
 
 		//Hide the interface upon acceptance
-		jQuery(document).on('click', '#nebula-cookie-accept', function(){
+		nebula.dom.document.on('click', '#nebula-cookie-accept', function(){
 			nebula.createCookie('acceptcookies', true);
 
 			window.requestAnimationFrame(function(){

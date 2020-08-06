@@ -835,7 +835,7 @@ if ( !trait_exists('Widgets') ){
 					<h3><?php echo $instance['title']; ?></h3>
 				<?php endif; ?>
 
-				<?php if ( !empty($tweets) ): ?>
+				<?php if ( !empty($tweets) && empty($tweets->error) ): ?>
 					<?php
 						$user_html = '<div class="row">
 									<div class="col">

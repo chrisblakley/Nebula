@@ -28,8 +28,6 @@ if ( !trait_exists('Utilities') ){
 			add_action('nebula_options_saved', array($this, 'update_child_version_number')); //Nebula ptions save
 			add_action('upgrader_process_complete', array($this, 'update_child_version_number')); //WordPress Core, theme, or plugin updates
 			add_action('nebula_scss_post_compile_once', array($this, 'update_child_version_number'));
-
-			register_shutdown_function(array($this, 'ga_log_fatal_errors'));
 		}
 
 		//Attempt to get the most accurate IP address from the visitor
@@ -67,7 +65,7 @@ if ( !trait_exists('Utilities') ){
 		//Generate Nebula Session ID
 		public function nebula_session_id(){
 			$timer_name = $this->timer('Session ID');
-			$server_generated_session_id = ( session_id() )? session_id() : '!' . uniqid();
+			$server_generated_session_id = ( session_id() )? session_id() : '!' . uniqid(); //@todo "nebula" 0: decommission for session
 
 			//Check object cache first
 			$session_id = wp_cache_get('nebula_session_id', $server_generated_session_id); //If session_id() is not available, it will re-generate the Nebula session ID
@@ -161,15 +159,6 @@ if ( !trait_exists('Utilities') ){
 			$abspath = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, ABSPATH);
 			$included_files = get_included_files();
 			if ( in_array($abspath . 'wp-login.php', $included_files) || in_array($abspath . 'wp-register.php', $included_files) ){
-				return true;
-			}
-
-			return false;
-		}
-
-		//Check if the current page is not the first. (pagecount is incremented in nebula.php)
-		public function is_after_first_pageview(){
-			if ( isset($_SESSION['pagecount']) && $_SESSION['pagecount'] >= 2 ){
 				return true;
 			}
 
@@ -630,33 +619,23 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Create a session and cookie
-		public function set_global_session_cookie($name, $value, $types=array('global', 'session', 'cookie')){
+		public function set_cookie($name, $value){
 			$string_value = (string) $value;
 			if ( empty($string_value) ){
 				$string_value = 'false';
 			}
 
-			if ( in_array('global', $types) ){
-				$GLOBALS[$name] = $value;
-			}
-
-			if ( in_array('session', $types) ){
-				$_SESSION[$name] = $value;
-			}
-
-			if ( in_array('cookie', $types) ){
-				$_COOKIE[$name] = $string_value;
-				if ( !headers_sent() ){
-					setcookie(
-						$name,
-						$string_value,
-						strtotime('January 1, 2035'), //Note: Do not let this cookie expire past 2038 or it instantly expires. http://en.wikipedia.org/wiki/Year_2038_problem
-						COOKIEPATH,
-						COOKIE_DOMAIN,
-						is_ssl(), //Secure (HTTPS)
-						true //HTTP only (not available in JS)
-					);
-				}
+			$_COOKIE[$name] = $string_value;
+			if ( !headers_sent() ){
+				setcookie(
+					$name,
+					$string_value,
+					strtotime('January 1, 2035'), //Note: Do not let this cookie expire past 2038 or it instantly expires. http://en.wikipedia.org/wiki/Year_2038_problem
+					COOKIEPATH,
+					COOKIE_DOMAIN,
+					is_ssl(), //Secure (HTTPS)
+					true //HTTP only (not available in JS)
+				);
 			}
 		}
 

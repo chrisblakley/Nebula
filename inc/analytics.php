@@ -67,13 +67,6 @@
 		}
 
 		<?php
-			//Original Referrer
-			if ( empty($_SESSION['original_referrer']) ){ //Only capture the referrer on the first page of the session (so it doesn't get replaced with an on-site referrer)
-				$original_referrer = ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '(none)';
-				echo 'ga("set", nebula.analytics.dimensions.referrer, "' . $original_referrer . '");';
-				$_SESSION['original_referrer'] = $original_referrer;
-			}
-
 			if ( is_singular() || is_page() ){
 				global $post;
 

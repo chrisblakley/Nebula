@@ -730,7 +730,6 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fas fa-fw fa-images"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> ' . $upload_max . '</li>';
 
 			//PHP Disk Space
-			//Note: This does not check the /tmp or the session_save_path() but Nebula warnings do monitor those directories
 			$disk_total_space = disk_total_space(ABSPATH)/1073741824; //In GB
 			$disk_free_space = disk_free_space(ABSPATH)/1073741824; //In GB
 

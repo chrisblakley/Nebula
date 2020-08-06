@@ -51,7 +51,7 @@ To take full advantage of Nebula's features, the following are recommended:
 7. Customize Nebula Options (including enabling Sass if desired)
 
 ## Documentation <a name="documentation"></a>
-Comprehensive documentation is available at [https://gearside.com/nebula](https://gearside.com/nebula/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=full+documentation) along with a [testing checklist]((https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=testing+checklist)) and [launch guide](https://gearside.com/nebula/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=launch+checklist).
+Comprehensive documentation is available at [https://nebula.gearside.com/](https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=full+documentation) along with a [testing checklist]((https://nebula.gearside.com/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=testing+checklist)) and [launch guide](https://nebula.gearside.com/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=launch+checklist).
 
 ## Built Using <a name="built_using"></a>
 + [Bootstrap](https://github.com/twbs/bootstrap)

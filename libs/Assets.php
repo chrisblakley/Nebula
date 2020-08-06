@@ -107,7 +107,7 @@ if ( !trait_exists('Assets') ){
 				} elseif ( $this->get_option('bootstrap_version') === 'grid' ){
 					//Bootstrap Reboot and Grid only
 					if ( $file === 'css' ){
-						return wp_register_style('nebula-bootstrap', get_template_directory_uri() . '/assets/css/vendor/bootstrap-reboot-grid.css', null, '4.5.0', 'all'); //Served locally to combine multiple resources (Reboot and Grid)
+						return wp_register_style('nebula-bootstrap', get_template_directory_uri() . '/assets/css/vendor/bootstrap-reboot-grid.css', null, '4.5.1', 'all'); //Served locally to combine multiple resources (Reboot and Grid)
 					} elseif ( $file === 'js' ){
 						return false;
 					} else {
@@ -118,11 +118,11 @@ if ( !trait_exists('Assets') ){
 
 			//Latest (IE10+)
 			if ( $file === 'css' ){
-				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css', null, '4.5.0', 'all');
+				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.1/css/bootstrap.min.css', null, '4.5.1', 'all');
 			} elseif ( $file === 'js' ){
-				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '4.5.0', true);
+				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.1/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '4.5.1', true);
 			} elseif ( $file === 'reboot' ){
-				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap-reboot.min.css';
+				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.1/css/bootstrap-reboot.min.css';
 			} else {
 				return 'latest';
 			}
@@ -262,19 +262,14 @@ if ( !trait_exists('Assets') ){
 			);
 
 			//Check for session data
-			if ( isset($_SESSION['nebulaSession']) && json_decode($_SESSION['nebulaSession'], true) ){ //If session exists and is valid JSON
-				$this->brain['session'] = json_decode($_SESSION['nebulaSession'], true); //Replace nebula.session with session data
-			} else {
-				$this->brain['session'] = array(
-					'ip' => $this->get_ip_address(),
-					'id' => $this->nebula_session_id(),
-					'flags' => array(
-						'adblock' => false,
-						'gablock' => false,
-					),
-					'geolocation' => false
-				);
-			}
+			$this->brain['session'] = array(
+				'ip' => $this->get_ip_address(),
+				'id' => $this->nebula_session_id(),
+				'flags' => array(
+					'adblock' => false,
+				),
+				'geolocation' => false
+			);
 
 			//User Data
 			$this->brain['user'] = array(

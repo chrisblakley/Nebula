@@ -12,8 +12,6 @@ if ( !trait_exists('Security') ){
 			remove_action('wp_head', 'wlwmanifest_link');
 			add_filter('login_errors', array($this, 'login_errors'));
 			add_filter('the_generator', '__return_empty_string'); //Remove Wordpress version info from head and feeds
-			add_filter('style_loader_src', array($this, 'at_remove_wp_ver_css_js'), 9999);
-			add_filter('script_loader_src', array($this, 'at_remove_wp_ver_css_js'), 9999);
 			add_action('check_comment_flood', array($this, 'check_referrer'));
 			//add_action('wp_footer', array($this, 'track_notable_bots')); //Disabled for now. Not super useful.
 			add_action('wp_loaded', array($this, 'domain_prevention'));
@@ -116,20 +114,6 @@ if ( !trait_exists('Security') ){
 			return $error;
 		}
 
-		//Remove WordPress version from any enqueued scripts
-		public function at_remove_wp_ver_css_js($src){
-			$override = apply_filters('pre_at_remove_wp_ver_css_js', null, $src);
-			if ( isset($override) ){return $override;}
-
-/*
-			if ( strpos($src, 'ver=') ){
-				$src = remove_query_arg('ver', $src);
-			}
-*/
-
-			return $src;
-		}
-
 		//Check referrer in order to comment
 		public function check_referrer(){
 			if ( !isset($_SERVER['HTTP_REFERER']) || empty($_SERVER['HTTP_REFERER']) ){
@@ -175,14 +159,12 @@ if ( !trait_exists('Security') ){
 			if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Google Page Speed') !== false ){
 				if ( $this->url_components('extension') !== 'js' ){
 					global $post;
-					//$this->ga_send_event('Notable Bot Visit', 'Google Page Speed', get_the_title($post->ID), null, 0);
 				}
 			}
 
 			//Internet Archive Wayback Machine
 			if ( strpos($_SERVER['HTTP_USER_AGENT'], 'archive.org_bot') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Wayback Save Page') !== false ){
 				global $post;
-				//$this->ga_send_event('Notable Bot Visit', 'Internet Archive Wayback Machine', get_the_title($post->ID), null, 0);
 			}
 		}
 
@@ -191,7 +173,7 @@ if ( !trait_exists('Security') ){
 			$this->timer('Domain Blocklist');
 
 			//Skip lookups if user has already been checked or for logged in users.
-			if ( (isset($_SESSION['blocklisted']) && $_SESSION['blocklisted'] === false) || is_user_logged_in() ){
+			if ( (isset($_COOKIE['blocklisted']) && $_COOKIE['blocklisted'] === false) || is_user_logged_in() ){
 				return false;
 			}
 
@@ -231,7 +213,7 @@ if ( !trait_exists('Security') ){
 					$this->ga_send_exception('(Security) spammers.txt has no entries!', 0);
 				}
 
-				$this->set_global_session_cookie('blocklist', false, array('session'));
+				$this->set_cookie('blocklist', false);
 			}
 
 			$this->timer('Domain Blocklist', 'end');
@@ -292,7 +274,7 @@ if ( !trait_exists('Security') ){
 		}
 
 		//Cookie Notification HTML that appears in the footer
-		function cookie_notification(){
+		public function cookie_notification(){
 			if ( nebula()->option('cookie_notification') && empty($_COOKIE['acceptcookies']) ){
 				?>
 				<div id="nebula-cookie-notification">

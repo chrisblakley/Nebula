@@ -270,7 +270,6 @@ if ( !trait_exists('Options') ){
 				'cd_batterymode' => '',
 				'cd_batterypercent' => '',
 				'cd_network' => '',
-				'cd_referrer' => '',
 				'cd_navigationtype' => '',
 				'cd_redirectcount' => '',
 				'cd_author' => '',
@@ -363,7 +362,6 @@ if ( !trait_exists('Options') ){
 				'mention_url' => '',
 				'logs' => 0,
 				'notes' => '',
-				'auto_update_test' => 1,
 
 				//Advanced Tab
 				'dequeue_styles' => array(),

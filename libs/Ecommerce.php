@@ -78,7 +78,7 @@ if ( !trait_exists('Ecommerce') ){
 		//Set custom dimensions before the Google Analytics pageview is sent. DO NOT send any events in this function!
 		public function woo_custom_ga_dimensions(){
 			//Set custom dimension for if the cart is empty or full
-			if ( $this->get_option('cd_woocart') ){
+			if ( $this->get_option('cd_woocart') && !empty(WC()->cart) ){
 				$cart_text = ( WC()->cart->get_cart_contents_count() >= 1 )? 'Full Cart (' . WC()->cart->get_cart_contents_count() . ')' : 'Empty Cart';
 				echo 'ga("set", nebula.analytics.dimensions.wooCart, "' . $cart_text . '");';
 			}
@@ -173,7 +173,7 @@ if ( !trait_exists('Ecommerce') ){
 							"height": "<?php echo $post_thumbnail_meta[2]; ?>"
 						},
 
-						"description": "<?php echo $this->excerpt(array('words' => 100, 'more' => '', 'ellipsis' => false, 'structured' => false)); ?>",
+						"description": <?php echo json_encode($this->excerpt(array('words' => 100, 'more' => '', 'ellipsis' => false, 'structured' => false))); ?>,
 
 						"offers": {
 							"@type": "Offer",

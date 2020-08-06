@@ -871,18 +871,6 @@ if ( !trait_exists('Metaboxes') ){
 						<p class="option-keywords"></p>
 					</div>
 
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Server Referrer</div>
-							</div>
-							<input type="text" name="nebula_options[cd_referrer]" id="cd_referrer" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_network']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Logs the referrer as detected by the server. This populates regardless of UTM acquisition tags. Scope: Session</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-prepend">

@@ -98,7 +98,7 @@ function nebula_the_excerpt($postID=0, $more=0, $length=55, $hellip=0){
 
 	$post_text = ( !empty($the_post->post_excerpt) )? $the_post->post_excerpt : $the_post->post_content;
 
-	return nebula_excerpt(array(
+	return nebula()->excerpt(array(
 		'length' => $length,
 		'ellipsis' => $hellip,
 		'url' => get_permalink($postID),
@@ -108,7 +108,7 @@ function nebula_the_excerpt($postID=0, $more=0, $length=55, $hellip=0){
 }
 
 function nebula_custom_excerpt($text=false, $length=55, $hellip=false, $link=false, $more=false){
-	return nebula_excerpt(array(
+	return nebula()->excerpt(array(
 		'text' => $text,
 		'url' => $link,
 		'more' => $more,
