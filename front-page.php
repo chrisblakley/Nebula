@@ -13,7 +13,7 @@
 ?>
 
 <?php if ( get_theme_mod('nebula_hero', true) ): ?>
-	<section id="hero-section" class="nebulashadow inner-top inner-bottom">
+	<section id="hero-section" class="nebulashadow inner-top inner-bottom" aria-label="hero">
 		<?php if ( get_theme_mod('nebula_hero_overlay_color') || get_theme_mod('nebula_hero_overlay_opacity') ): ?>
 			<div class="custom-color-overlay"></div>
 		<?php else: ?>

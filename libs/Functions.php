@@ -3095,6 +3095,12 @@ trait Functions {
 		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, $this->get_browser('name'))); //Browser name
 		$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, $this->get_browser('engine'))); //Rendering engine
 
+		//Browser language
+		$classes[] = 'lang-' . strtolower(get_bloginfo('language'));
+		if ( is_rtl() ){
+			$classes[] = 'lang-dir-rtl';
+		}
+
 		//When installed to the homescreen, Chrome is detected as "Chrome Mobile". Supplement it with a "chrome" class.
 		if ( $this->get_browser('name') === 'Chrome Mobile' ){
 			$classes[] = 'chrome';
@@ -3193,11 +3199,6 @@ trait Functions {
 		$nebula_theme_info = wp_get_theme();
 		$classes[] = 'nebula';
 		$classes[] = 'nebula_' . str_replace('.', '-', $this->version('primary'));
-
-		$classes[] = 'lang-' . strtolower(get_bloginfo('language'));
-		if ( is_rtl() ){
-			$classes[] = 'lang-dir-rtl';
-		}
 
 		//Time of Day
 		if ( $this->has_business_hours() ){

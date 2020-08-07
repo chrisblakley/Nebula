@@ -541,7 +541,9 @@ if ( !trait_exists('Optimization') ){
 				}
 
 				//Get the last WordPress action handle that was called (so we know which one we are likely "inside")
-				$last_action = end(array_keys($GLOBALS['wp_actions'])); //Change to array_key_last($GLOBALS['wp_actions']) when PHP 7.3 is minimum version
+				$action_keys = array_keys($GLOBALS['wp_actions']); //Store in a variable first so only the variable is passed to end() as a reference
+				$last_action = end($action_keys); //Change to array_key_last($GLOBALS['wp_actions']) when PHP 7.3 is minimum version
+
 				if ( !empty($last_action) ){
 					//Dequeue styles based on selected Nebula options
 					if ( $last_action !== 'wp_print_scripts' ){ //Check the last hook to run and skip dequeuing styles on the print scripts hook
