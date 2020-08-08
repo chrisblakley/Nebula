@@ -643,14 +643,6 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="option-keywords">minor page speed impact optimization optimize</p>
 				</div>
 
-				<div class="form-group" dependent-or="ga_tracking_id gtm_id">
-					<input type="checkbox" name="nebula_options[ga_anonymize_ip]" id="ga_anonymize_ip" value="1" <?php checked('1', !empty($nebula_options['ga_anonymize_ip'])); ?> /><label for="ga_anonymize_ip">Anonymize All IPs</label>
-					<p class="nebula-help-text short-help form-text text-muted">Anonymize the IP address in Google Analytics for all visitors. <a href="https://support.google.com/analytics/answer/2763052" target="_blank">How it works &raquo;</a> (Default: <?php echo $this->user_friendly_default('ga_anonymize_ip'); ?>)</p>
-					<p class="dependent-note hidden">This option is dependent on a Google Analytics Tracking ID.</p>
-					<p class="nebula-help-text more-help form-text text-muted"></p>
-					<p class="option-keywords"></p>
-				</div>
-
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[observe_dnt]" id="observe_dnt" value="1" <?php checked('1', !empty($nebula_options['observe_dnt'])); ?> /><label for="observe_dnt">Observe "Do Not Track" Requests</label>
 					<p class="nebula-help-text short-help form-text text-muted">Comply with user requests of "Do Not Track" (DNT). Analytics data will not be collected for these users. (Default: <?php echo $this->user_friendly_default('observe_dnt'); ?>)</p>
@@ -1782,8 +1774,8 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="dev_ip">Developer IPs</label>
 					<input type="text" name="nebula_options[dev_ip]" id="dev_ip" class="form-control nebula-validate-text" value="<?php echo $nebula_options['dev_ip']; ?>" placeholder="<?php echo $this->get_ip_address(); ?>" />
-					<p class="nebula-help-text short-help form-text text-muted">Comma-separated IP addresses of the developer to enable specific console logs and other dev info.<br/>Your current IP address is <code><?php echo $this->get_ip_address(); ?></code></p>
-					<p class="nebula-help-text more-help form-text text-muted">RegEx may also be used here. Ex: <code>/192\.168\./i</code></p>
+					<p class="nebula-help-text short-help form-text text-muted">Comma-separated IP addresses of the developer to enable specific console logs and other dev info.<br/>Your current anonymized IP address is <code><?php echo $this->get_ip_address(); ?></code></p>
+					<p class="nebula-help-text more-help form-text text-muted">Matching anonymizes both sides, so you can enter an pre-anonymized IPs here. RegEx may also be used here. Ex: <code>/192\.168\./i</code></p>
 					<p class="option-keywords">recommended</p>
 				</div>
 
@@ -1798,8 +1790,8 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="client_ip">Client IPs</label>
 					<input type="text" name="nebula_options[client_ip]" id="client_ip" class="form-control nebula-validate-text" value="<?php echo $nebula_options['client_ip']; ?>" placeholder="<?php echo $this->get_ip_address(); ?>" />
-					<p class="nebula-help-text short-help form-text text-muted">Comma-separated IP addresses of the client to enable certain features.<br/>Your current IP address is <code><?php echo $this->get_ip_address(); ?></code></p>
-					<p class="nebula-help-text more-help form-text text-muted">RegEx may also be used here. Ex: <code>/192\.168\./i</code></p>
+					<p class="nebula-help-text short-help form-text text-muted">Comma-separated IP addresses of the client to enable certain features.<br/>Your current anonymized IP address is <code><?php echo $this->get_ip_address(); ?></code></p>
+					<p class="nebula-help-text more-help form-text text-muted">Matching anonymizes both sides, so you can enter an pre-anonymized IPs here. RegEx may also be used here. Ex: <code>/192\.168\./i</code></p>
 					<p class="option-keywords">recommended</p>
 				</div>
 

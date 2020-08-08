@@ -31,7 +31,7 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Attempt to get the most accurate IP address from the visitor
-		public function get_ip_address($force=false){
+		public function get_ip_address($anonymize=true){
 			$ip_keys = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR');
 			foreach ( $ip_keys as $key ){
 				if ( array_key_exists($key, $_SERVER) === true ){
@@ -39,7 +39,7 @@ if ( !trait_exists('Utilities') ){
 						$ip = trim($ip);
 
 						if ( filter_var($ip, FILTER_VALIDATE_IP) ){ //Validate IP
-							return $ip;
+							return ( !empty($anonymize) )? wp_privacy_anonymize_ip($ip) : $ip; //Return the exact or anonymized IP address
 						}
 					}
 				}
@@ -184,7 +184,7 @@ if ( !trait_exists('Utilities') ){
 				$devIPs = explode(',', $this->get_option('dev_ip'));
 				if ( !empty($devIPs) ){
 					foreach ( $devIPs as $devIP ){
-						$devIP = trim($devIP);
+						$devIP = wp_privacy_anonymize_ip(trim($devIP));
 
 						if ( !empty($devIP) && $devIP[0] !== '/' && $devIP === $this->get_ip_address() ){
 							return true;
@@ -226,7 +226,7 @@ if ( !trait_exists('Utilities') ){
 				$clientIPs = explode(',', $this->get_option('client_ip'));
 				if ( !empty($clientIPs) ){
 					foreach ( $clientIPs as $clientIP ){
-						$clientIP = trim($clientIP);
+						$clientIP = wp_privacy_anonymize_ip(trim($clientIP));
 
 						if ( !empty($clientIP) && $clientIP[0] !== '/' && $clientIP === $this->get_ip_address() ){
 							return true;

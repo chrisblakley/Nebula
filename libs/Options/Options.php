@@ -250,7 +250,6 @@ if ( !trait_exists('Options') ){
 				'ga_wpuserid' => 0,
 				'ga_displayfeatures' => 0,
 				'ga_linkid' => 0,
-				'ga_anonymize_ip' => 0,
 				'adwords_remarketing_conversion_id' => '',
 				'google_optimize_id' => '',
 				'hostnames' => '',

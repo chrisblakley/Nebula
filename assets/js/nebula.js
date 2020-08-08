@@ -5128,7 +5128,7 @@ nebula.mmenus = function(){
 		if ( mobileNav.length ){
 			//Navigation Panels
 			var navPanels = {};
-			if ( jQuery('#utility-panel').length ){
+			if ( jQuery('#utility-panel').length && (!jQuery('#utility-panel').hasClass('no-mobile') && !jQuery('#utility-panel').parents('.no-mobile').length) ){ //If the utility menu exists and is not manually disabled from the mobile menu via a class
 				navPanels = {
 					position: "top",
 					type: "tabs",

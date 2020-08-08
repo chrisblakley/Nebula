@@ -17,6 +17,8 @@
 			"allowLinker": true
 		});
 
+		ga('set', 'anonymizeIp', true); //Anonymize the IP address
+
 		//Use Beacon if supported. Eventually we can completely remove this when GA uses Beacon by default.
 		if ( 'sendBeacon' in navigator ){
 			ga('set', 'transport', 'beacon');
@@ -32,10 +34,6 @@
 
 		<?php if ( nebula()->get_option('google_optimize_id') ): //Google Optimize ?>
 			ga('require', '<?php echo nebula()->get_option('google_optimize_id'); ?>');
-		<?php endif; ?>
-
-		<?php if ( nebula()->get_option('ga_anonymize_ip') ): ?>
-			ga('set', 'anonymizeIp', true);
 		<?php endif; ?>
 
 		if ( window.performance ){

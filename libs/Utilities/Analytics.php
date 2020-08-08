@@ -29,7 +29,7 @@ if ( !trait_exists('Analytics') ){
 				return false;
 			}
 
-			if ( $this->get_ip_address() === $_SERVER['SERVER_ADDR'] ){ //Disable analytics for self-requests by the server
+			if ( $this->get_ip_address() === wp_privacy_anonymize_ip($_SERVER['SERVER_ADDR']) ){ //Disable analytics for self-requests by the server
 				return false;
 			}
 
@@ -162,7 +162,7 @@ if ( !trait_exists('Analytics') ){
 			return $brain;
 		}
 
-		//Usage data
+		//Nebula usage data
 		public function usage($action, $data=array()){
 			$date = new DateTime("now", new DateTimeZone('America/New_York'));
 			$defaults = array(
@@ -185,6 +185,7 @@ if ( !trait_exists('Analytics') ){
 				'cd7' => $this->ga_parse_cookie(),
 				'cd9' => ( is_child_theme() )? 'Child' : 'Parent',
 				'cd13' => get_current_user_id(),
+				'cd14' => PHP_VERSION,
 				'cn' => 'Nebula Usage',
 				'cs' => home_url('/'),
 				'cm' => 'WordPress'
@@ -257,7 +258,7 @@ if ( !trait_exists('Analytics') ){
 				'tid' => $this->get_option('ga_tracking_id'), //Tracking ID
 				'cid' => $this->ga_parse_cookie(), //Client ID
 				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']), //User Agent
-				'uip' => $this->get_ip_address(), //IP Address
+				'uip' => $this->get_ip_address(), //Anonymized IP Address
 				'ul' => ( class_exists('Locale') )? locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']) : '', //User Language
 				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '', //Referrer
 				'dl' => $this->requested_url(), //Likely "admin-ajax.php" until overwritten

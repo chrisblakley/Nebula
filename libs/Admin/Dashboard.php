@@ -368,14 +368,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//IP Address
-			echo '<li>';
-			if ( $this->get_ip_address() === '72.43.235.106' ){
-				echo '<img src="' . get_template_directory_uri() . '/assets/img/phg/phg-symbol.png" style="max-width: 14px;" loading="lazy" />';
-			} else {
-				echo '<i class="fas fa-fw fa-globe"></i>';
-			}
-			echo ' IP Address: <a href="http://whatismyipaddress.com/ip/' . $this->get_ip_address() . '" target="_blank" rel="noopener noreferrer"><strong class="admin-user-info admin-user-ip">' . $this->get_ip_address() . '</strong></a>';
-			echo '</li>';
+			echo '<li><i class="fas fa-fw fa-globe"></i> IP Address: <a href="http://whatismyipaddress.com/ip/' . $this->get_ip_address() . '" target="_blank" rel="noopener noreferrer"><strong class="admin-user-info admin-user-ip" title="Anonymized IP Address">' . $this->get_ip_address() . '</strong></a></li>';
 
 			//Multiple locations
 			if ( $this->user_single_concurrent($user_info->ID) > 1 ){

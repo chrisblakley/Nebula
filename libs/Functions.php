@@ -3454,7 +3454,7 @@ trait Functions {
 				$debug_data .= PHP_EOL;
 			}
 
-			//IP address
+			//Anonymized IP address
 			$debug_data .= 'IP: ' . $this->get_ip_address();
 			$debug_data .= PHP_EOL;
 
