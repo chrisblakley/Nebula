@@ -53,7 +53,9 @@ To take full advantage of Nebula's features, the following are recommended:
 ## Documentation <a name="documentation"></a>
 Comprehensive documentation is available at [https://nebula.gearside.com/](https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=full+documentation) along with a [testing checklist]((https://nebula.gearside.com/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=testing+checklist)) and [launch guide](https://nebula.gearside.com/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=launch+checklist).
 
-![Lighthouse Speed Report](https://nebula.gearside.com/speedtest.svg)
+## Performance
+Performance data is updated automatically every four hours. Your performance may vary depending on your hosting, plugins, and many other variables. This graphic is to simply illustrate Nebula's performance capabilities.
+<img src="https://nebula.gearside.com/speedtest.svg" width="600px">
 
 ## Built Using <a name="built_using"></a>
 + [Bootstrap](https://github.com/twbs/bootstrap)
