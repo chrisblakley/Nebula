@@ -202,7 +202,7 @@ if ( !trait_exists('Analytics') ){
 		//Log fatal errors in Google Analytics as crashes
 		public function ga_log_fatal_errors(){
 			$error = error_get_last();
-			if ( $error['type'] === E_ERROR ){
+			if ( isset($error) && $error['type'] === E_ERROR ){
 				$message = str_replace(WP_CONTENT_DIR, '', strstr($error['message'], ' in /', true)); //Remove high-level directories to reduce clutter and prevent PII
 				$file = str_replace(WP_CONTENT_DIR, '', strstr($error['file'], 'wp-content')); //Remove high-level directories to reduce clutter and prevent PII
 				$this->ga_send_exception('(PHP) ' . $message . ' on line ' . $error['line'] . ' in .../' . $file, 1);
@@ -275,7 +275,7 @@ if ( !trait_exists('Analytics') ){
 
 			//Session ID
 			if ( $this->get_option('cd_sessionid') ){
-				$default_common_parameters['cd' . $this->ga_definition_index($this->get_option('cd_sessionid'))] = nebula()->nebula_session_id();
+				$default_common_parameters['cd' . $this->ga_definition_index($this->get_option('cd_sessionid'))] = $this->nebula_session_id();
 			}
 
 			//Transport method

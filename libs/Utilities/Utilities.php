@@ -7,12 +7,14 @@ if ( !trait_exists('Utilities') ){
 	require_once get_template_directory() . '/libs/Utilities/Analytics.php';
 	require_once get_template_directory() . '/libs/Utilities/Device.php';
 	require_once get_template_directory() . '/libs/Utilities/Sass.php';
+	require_once get_template_directory() . '/libs/Utilities/Warnings.php';
 
 	trait Utilities {
 		use Logs { Logs::hooks as LogsHooks;}
 		use Analytics { Analytics::hooks as AnalyticsHooks;}
 		use Device { Device::hooks as DeviceHooks;}
 		use Sass { Sass::hooks as SassHooks;}
+		use Warnings { Warnings::hooks as WarningsHooks;}
 
 		public function hooks(){
 			$this->server_timings = array();
@@ -22,6 +24,7 @@ if ( !trait_exists('Utilities') ){
 			$this->AnalyticsHooks(); //Register Analytics hooks
 			$this->DeviceHooks(); //Register Device hooks
 			$this->SassHooks(); //Register Sass hooks
+			$this->WarningsHooks(); //Register Warnings hooks
 
 			//Update the child theme version number at various points
 			add_action('save_post', array($this, 'update_child_version_number')); //When a post is created or updated
@@ -270,9 +273,9 @@ if ( !trait_exists('Utilities') ){
 
 			$staff = '';
 			if ( $staff_info ){
-				if ( nebula()->is_dev() ){
+				if ( $this->is_dev() ){
 					$staff = ' (Developer)';
-				} elseif ( nebula()->is_client() ){
+				} elseif ( $this->is_client() ){
 					$staff = ' (Client)';
 				}
 			}
@@ -306,6 +309,15 @@ if ( !trait_exists('Utilities') ){
 				}
 				return true;
 			}
+			return false;
+		}
+
+		//If the current pageload is requested with more advanced detections
+		public function is_auditing(){
+			if ( ($this->get_option('audit_mode') || isset($_GET['audit'])) && $this->is_dev() ){
+				return true;
+			}
+
 			return false;
 		}
 
@@ -905,7 +917,7 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			//Get the remote resource
-			$response = wp_remote_get($url, $args);
+			$response = wp_safe_remote_get($url, $args);
 			if ( is_wp_error($response) ){
 				set_transient('nebula_site_available_' . $hostname, 'Unavailable', MINUTE_IN_SECONDS*10); //10 minute expiration
 			}
@@ -1257,8 +1269,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Create Custom Properties
 		public function create_hubspot_properties(){
-			if ( nebula()->get_option('hubspot_portal') ){
-				if ( nebula()->get_option('hubspot_api') ){
+			if ( $this->get_option('hubspot_portal') ){
+				if ( $this->get_option('hubspot_api') ){
 					//Get an array of all existing Hubspot CRM contact properties
 					$existing_nebula_properties = $this->get_nebula_hubspot_properties();
 
@@ -1270,7 +1282,7 @@ if ( !trait_exists('Utilities') ){
 							"displayOrder": 5
 						}';
 
-						$this->hubspot_curl('http://api.hubapi.com/contacts/v2/groups?portalId=' . nebula()->get_option('hubspot_portal'), $content);
+						$this->hubspot_curl('http://api.hubapi.com/contacts/v2/groups?portalId=' . $this->get_option('hubspot_portal'), $content);
 					}
 
 					$custom_nebula_properties = array();
@@ -1478,7 +1490,7 @@ if ( !trait_exists('Utilities') ){
 					if ( !empty($properties_created) ){
 						?>
 						<div class="updated notice notice-warning">
-							<p><strong>Nebula Hubspot properties created!</strong> <?php echo count($properties_created); ?> contact properties were created in Hubspot. Be sure to <a href="https://app.hubspot.com/property-settings/<?php echo nebula()->get_option('hubspot_portal'); ?>/contact" target="_blank">manually create any needed properties</a> specific to this website.</p>
+							<p><strong>Nebula Hubspot properties created!</strong> <?php echo count($properties_created); ?> contact properties were created in Hubspot. Be sure to <a href="https://app.hubspot.com/property-settings/<?php echo $this->get_option('hubspot_portal'); ?>/contact" target="_blank">manually create any needed properties</a> specific to this website.</p>
 							<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
 						</div>
 						<?php
@@ -1486,7 +1498,7 @@ if ( !trait_exists('Utilities') ){
 				} else {
 					?>
 					<div class="updated notice notice-warning">
-						<p><strong>Hubspot API Key Missing!</strong> <a href="https://app.hubspot.com/hapikeys">Get your API Key</a> then <a href="themes.php?page=nebula_options&tab=apis&option=hubspot_api">enter it here</a> and re-save Nebula Options, or <a href="https://app.hubspot.com/property-settings/<?php echo nebula()->get_option('hubspot_portal'); ?>/contact" target="_blank">manually create contact properties</a>.</p>
+						<p><strong>Hubspot API Key Missing!</strong> <a href="https://app.hubspot.com/hapikeys">Get your API Key</a> then <a href="themes.php?page=nebula_options&tab=apis&option=hubspot_api">enter it here</a> and re-save Nebula Options, or <a href="https://app.hubspot.com/property-settings/<?php echo $this->get_option('hubspot_portal'); ?>/contact" target="_blank">manually create contact properties</a>.</p>
 						<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
 					</div>
 
@@ -1514,7 +1526,7 @@ if ( !trait_exists('Utilities') ){
 		//Send data to Hubspot CRM via PHP curl
 		public function hubspot_curl($url, $content=null){
 			$sep = ( strpos($url, '?') === false )? '?' : '&';
-			$get_url = $url . $sep . 'hapikey=' . nebula()->get_option('hubspot_api');
+			$get_url = $url . $sep . 'hapikey=' . $this->get_option('hubspot_api');
 
 			if ( !empty($content) ){
 				/*

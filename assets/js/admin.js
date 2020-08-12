@@ -442,6 +442,7 @@ function checkWPTresults(){
 					jQuery('#performance_metabox h2 i').removeClass('fa-spinner fa-spin').addClass('fa-stopwatch');
 					jQuery('#performance_metabox h2 span span').html('Performance <small>(via WebPageTest.org)</small>');
 				} else {
+					console.warn('WebPageTest.org did not have a successful run.', response);
 					jQuery('#performance-sub-status strong').text('WebPageTest.org did not have a successful run.');
 					getLighthouseResults();
 				}
@@ -457,11 +458,14 @@ function checkWPTresults(){
 					var pollTime = ( response.statusCode === 100 )? 3000 : 8000; //Poll slowly when behind other tests and quickly once the test has started
 					setTimeout(checkWPTresults, pollTime);
 				} else {
+					console.warn('Behind too many other WebPageTest.org tests. Check back later for results.', waitingBehind);
 					jQuery('#performance-sub-status strong').text('Behind too many other WebPageTest.org tests. Check back later for results.');
 					getLighthouseResults();
 				}
 			} else if ( response.statusCode >= 400 ){ //An API error has occurred
+				console.warn('A WebPageTest API error has occurred.', response);
 				jQuery('#performance-sub-status strong').text('An API error has occurred.');
+				getLighthouseResults();
 			}
 		}
 	});
@@ -636,9 +640,11 @@ function getLighthouseResults(){
 			jQuery('#performance_metabox h2 i').removeClass('fa-spinner fa-spin').addClass('fa-stopwatch');
 			jQuery('#performance_metabox h2 span span').html('Performance <small>(via Google Lighthouse)</small>');
 		} else { //If the fetch data is not expected, run iframe test instead...
+			console.warn('Fetch data is not expected from Lighthouse.', json);
 			runIframeSpeedTest();
 		}
 	}).catch(function(error){
+		console.warn('Google Lighthouse failed. Reverting to iframe test.', error);
 		jQuery('#performance-sub-status strong').text('Google Lighthouse failed. Reverting to iframe test.');
 		runIframeSpeedTest(); //If Google Lighthouse check fails, time with an iframe instead...
 	});

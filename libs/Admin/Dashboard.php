@@ -33,7 +33,7 @@ if ( !trait_exists('Dashboard') ){
 						add_action('wp_dashboard_setup', array($this, 'performance_metabox'));
 					}
 
-					if ( nebula()->get_option('design_reference_metabox') ){
+					if ( $this->get_option('design_reference_metabox') ){
 						add_action('wp_dashboard_setup', array($this, 'design_metabox'));
 					}
 
@@ -938,7 +938,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Performance Timing
 		public function performance_metabox(){
-			wp_add_dashboard_widget('performance_metabox', '<i id="performance-status-icon" class="fas fa-fw fa-stopwatch"></i> <span id="performance-title">Performance</span>', array($this, 'performance_timing'));
+			wp_add_dashboard_widget('performance_metabox', '<i id="performance-status-icon" class="fas fa-fw fa-stopwatch"></i> <span id="performance-title">&nbsp;Performance</span>', array($this, 'performance_timing'));
 		}
 
 		public function performance_timing(){
@@ -984,7 +984,7 @@ if ( !trait_exists('Dashboard') ){
 		//Add a dashboard metabox for design reference
 		public function design_metabox(){
 			global $wp_meta_boxes;
-			wp_add_dashboard_widget('nebula_design', '<i class="fas fa-fw fa-palette"></i> Design Reference', array($this, 'dashboard_nebula_design'));
+			wp_add_dashboard_widget('nebula_design', '<i class="fas fa-fw fa-palette"></i> &nbsp;Design Reference', array($this, 'dashboard_nebula_design'));
 		}
 
 		public function dashboard_nebula_design(){

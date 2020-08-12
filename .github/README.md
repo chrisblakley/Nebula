@@ -55,7 +55,7 @@ Comprehensive documentation is available at [https://nebula.gearside.com/](https
 
 ## Performance
 Performance data is updated automatically every four hours. Your performance may vary depending on your hosting, plugins, and many other variables. This graphic is to simply illustrate Nebula's performance capabilities.
-<img src="https://nebula.gearside.com/speedtest.svg" width="600px">
+<br/><br/>><img src="https://nebula.gearside.com/speedtest.svg" width="600px">
 
 ## Built Using <a name="built_using"></a>
 + [Bootstrap](https://github.com/twbs/bootstrap)

@@ -449,7 +449,7 @@ if ( !trait_exists('Automation') ){
 		//Check if automated Nebula theme updates are allowed
 		public function allow_theme_update(){
 			//Check if automated updates have been disabled in Nebula Options
-			if ( !nebula()->get_option('theme_update_notification') ){
+			if ( !$this->get_option('theme_update_notification') ){
 				return false;
 			}
 

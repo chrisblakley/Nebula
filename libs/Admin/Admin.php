@@ -859,6 +859,15 @@ if ( !trait_exists('Admin') ){
 							'meta' => array('title' => 'Last: ' . $scss_last_processed)
 						));
 					}
+
+					if ( !$this->is_admin_page() ){
+						$wp_admin_bar->add_node(array(
+							'parent' => 'nebula',
+							'id' => 'nebula-audit',
+							'title' => '<i class="nebula-admin-fa fas fa-fw fa-list-alt"></i> Audit This Page',
+							'href' => esc_url(add_query_arg('audit', 'true')),
+						));
+					}
 				}
 
 				if ( current_user_can('edit_others_posts') ){

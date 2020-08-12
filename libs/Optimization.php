@@ -462,8 +462,8 @@ if ( !trait_exists('Optimization') ){
 				}
 
 				//If has page suggestions prefetch the first one
-				if ( !empty(nebula()->error_query) && nebula()->error_query->have_posts() ){
-					$default_prefetches[] = get_permalink(nebula()->error_query->posts[0]->ID);
+				if ( !empty($this->error_query) && $this->error_query->have_posts() ){
+					$default_prefetches[] = get_permalink($this->error_query->posts[0]->ID);
 				}
 			}
 

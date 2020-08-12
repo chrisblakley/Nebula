@@ -123,7 +123,7 @@ if ( !trait_exists('Security') ){
 
 		//Disable author archives to prevent ?author=1 from showing usernames.
 		public function redirect_author_template(){
-			if ( (isset($_GET['author']) || basename($this->current_theme_template) == 'author.php') && !nebula()->get_option('author_bios') ){
+			if ( (isset($_GET['author']) || basename($this->current_theme_template) == 'author.php') && !$this->get_option('author_bios') ){
 				wp_redirect(apply_filters('nebula_no_author_redirect', home_url('/') . '?s=about'));
 				exit;
 			}
@@ -275,10 +275,10 @@ if ( !trait_exists('Security') ){
 
 		//Cookie Notification HTML that appears in the footer
 		public function cookie_notification(){
-			if ( nebula()->option('cookie_notification') && empty($_COOKIE['acceptcookies']) ){
+			if ( $this->option('cookie_notification') && empty($_COOKIE['acceptcookies']) ){
 				?>
 				<div id="nebula-cookie-notification">
-					<p><?php echo nebula()->option('cookie_notification'); ?></p>
+					<p><?php echo $this->option('cookie_notification'); ?></p>
 					<div class="links">
 						<?php if ( get_privacy_policy_url() ): ?>
 							<a href="<?php echo get_privacy_policy_url(); ?>" target="_blank"><?php _e('Privacy Policy', 'nebula'); ?></a>

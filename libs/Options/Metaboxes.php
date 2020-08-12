@@ -70,7 +70,7 @@ if ( !trait_exists('Metaboxes') ){
 						<div class="input-group-prepend">
 							<div class="input-group-text"><i class="far fa-fw fa-envelope"></i></div>
 						</div>
-						<input type="email" name="nebula_options[contact_email]" id="contact_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['contact_email']; ?>" placeholder="<?php echo get_option('admin_email', nebula()->get_user_info('user_email', array('id' => 1))); ?>" autocomplete="email" />
+						<input type="email" name="nebula_options[contact_email]" id="contact_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['contact_email']; ?>" placeholder="<?php echo get_option('admin_email', $this->get_user_info('user_email', array('id' => 1))); ?>" autocomplete="email" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The main contact email address <strong>(visible in the frontend and in metadata!)</strong>.</p>
 					<p class="nebula-help-text more-help form-text text-muted">If left empty, the admin email address will be used (shown by placeholder).</p>
@@ -83,7 +83,7 @@ if ( !trait_exists('Metaboxes') ){
 						<div class="input-group-prepend">
 							<div class="input-group-text"><i class="far fa-fw fa-envelope"></i></div>
 						</div>
-						<input type="email" name="nebula_options[notification_email]" id="notification_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['notification_email']; ?>" placeholder="<?php echo get_option('admin_email', nebula()->get_user_info('user_email', array('id' => 1))); ?>" autocomplete="email" />
+						<input type="email" name="nebula_options[notification_email]" id="notification_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['notification_email']; ?>" placeholder="<?php echo get_option('admin_email', $this->get_user_info('user_email', array('id' => 1))); ?>" autocomplete="email" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The email address for Nebula notifications.</p>
 					<p class="nebula-help-text more-help form-text text-muted">If left empty, the admin email address will be used (shown by placeholder).</p>
@@ -546,7 +546,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[design_reference_metabox]" id="design_reference_metabox" value="1" <?php checked('1', !empty($nebula_options['design_reference_metabox'])); ?> /><label for="design_reference_metabox">Design Reference Metabox</label>
-					<p class="nebula-help-text short-help form-text text-muted">Show the Design Reference dashboard metabox. (Default: <?php echo nebula()->user_friendly_default('design_reference_metabox'); ?>)</p>
+					<p class="nebula-help-text short-help form-text text-muted">Show the Design Reference dashboard metabox. (Default: <?php echo $this->user_friendly_default('design_reference_metabox'); ?>)</p>
 					<p class="option-keywords"></p>
 				</div>
 
@@ -1595,7 +1595,7 @@ if ( !trait_exists('Metaboxes') ){
 					</div>
 
 					<p class="nebula-help-text short-help form-text text-muted">Enter your Hubspot API key and Hubspot Portal ID here.</p>
-					<p class="nebula-help-text more-help form-text text-muted">It can be obtained from your <a href="https://app.hubspot.com/hapikeys">API Keys page under Integrations in your account</a>. Your Hubspot Portal ID (or Hub ID) is located in the upper right of your <a href="https://app.hubspot.com/" target="_blank">account screen</a> (or within the URL itself). The Portal ID is needed to send data to your Hubspot CRM and the API key will allow for Nebula custom contact properties to be automatically created. Note: You'll still be required to <a href="https://app.hubspot.com/property-settings/<?php echo nebula()->get_option('hubspot_portal'); ?>/contact" target="_blank">create any of your own custom properties</a> (non-Nebula) manually. It is recommended to create your own property group for these separate from the Nebula group.</p>
+					<p class="nebula-help-text more-help form-text text-muted">It can be obtained from your <a href="https://app.hubspot.com/hapikeys">API Keys page under Integrations in your account</a>. Your Hubspot Portal ID (or Hub ID) is located in the upper right of your <a href="https://app.hubspot.com/" target="_blank">account screen</a> (or within the URL itself). The Portal ID is needed to send data to your Hubspot CRM and the API key will allow for Nebula custom contact properties to be automatically created. Note: You'll still be required to <a href="https://app.hubspot.com/property-settings/<?php echo $this->get_option('hubspot_portal'); ?>/contact" target="_blank">create any of your own custom properties</a> (non-Nebula) manually. It is recommended to create your own property group for these separate from the Nebula group.</p>
 					<p class="option-keywords">remote resource minor page speed impact optimization optimize crm</p>
 				</div>
 			<?php
@@ -2010,7 +2010,7 @@ if ( !trait_exists('Metaboxes') ){
 							Child theme is <strong class="nebula-disabled">not</strong> being used. Automated updates will <strong class="nebula-disabled">not</strong> be available.
 						<?php endif; ?>
 					</li>
-					<li>The local Nebula version is <strong><?php echo nebula()->version('full'); ?></strong> and the remote (Github) version is <strong><?php echo $nebula_data['next_version']; ?></strong>.</li>
+					<li>The local Nebula version is <strong><?php echo $this->version('full'); ?></strong> and the remote (Github) version is <strong><?php echo $nebula_data['next_version']; ?></strong>.</li>
 
 					<?php if ( !empty($nebula_data['last_automated_update_date']) ): ?>
 						<li>Nebula was last updated via the WordPress updater on <strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['last_automated_update_date']); ?></strong> by <strong><?php echo $nebula_data['last_automated_update_user']; ?></strong>.</li>
