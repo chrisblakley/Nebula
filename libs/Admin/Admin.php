@@ -1057,6 +1057,11 @@ if ( !trait_exists('Admin') ){
 					$this->update_data('last_automated_update_date', date('U'));
 					$this->update_data('last_automated_update_user', $current_user->display_name);
 					$this->update_data('check_new_options', 'true'); //Check for new Nebula Options on next pageview
+
+					//Reprocess Sass if enabled
+					if ( $this->get_option('scss') ){
+						$this->render_scss('all'); //Re-render all SCSS files.
+					}
 				}
 			} else {
 				$this->update_data('version_legacy', 'true');

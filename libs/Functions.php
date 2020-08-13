@@ -197,7 +197,7 @@ trait Functions {
 
 	//Register REST API routes/endpoints
 	public function rest_api_routes(){
-		register_rest_route('nebula/v2', '/autocomplete_search/', array('methods' => 'GET', 'callback' => array($this, 'rest_autocomplete_search'))); //.../wp-json/nebula/v2/autocomplete_search?term=whatever&types=post|page
+		register_rest_route('nebula/v2', '/autocomplete_search/', array('methods' => 'GET', 'callback' => array($this, 'rest_autocomplete_search'), 'permission_callback' => '__return_true')); //.../wp-json/nebula/v2/autocomplete_search?term=whatever&types=post|page
 	}
 
 	//Add the Posts RSS Feed back in
@@ -1495,7 +1495,7 @@ trait Functions {
 						$slug['slug'] = $post_type->has_archive; //Replace slug with the custom archive slug string
 					}
 
-					echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . $slug['slug'] . '/" itemprop="item"><span itemprop="name">' . $post_type->labels->singular_name . '</span></a><meta itemprop="position" content="' . $position . '" /></li>';
+					echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . $slug['slug'] . '/" itemprop="item"><span itemprop="name">' . $post_type->labels->name . '</span></a><meta itemprop="position" content="' . $position . '" /></li>'; //Changed from singular_name so plurals would appear in breadcrumb nodes
 					$position++;
 
 					if ( !empty($data['current']) ){

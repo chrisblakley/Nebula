@@ -33,7 +33,7 @@ if ( !trait_exists('Warnings') ){
 		public function check_warnings(){
 			$this->timer('Check Warnings');
 
-			if ( (current_user_can('manage_options') || $this->is_dev()) && ($this->get_option('admin_notices') || $this->is_auditing()) && !is_customize_preview() ){
+			if ( $this->is_auditing() || $this->get_option('admin_notices') ){
 				//Check object cache first
 				$nebula_warnings = wp_cache_get('nebula_warnings');
 
@@ -98,10 +98,38 @@ if ( !trait_exists('Warnings') ){
 				if ( get_option('blog_public') == 0 ){ //Stored as a string
 					$nebula_warnings[] = array(
 						'level' => 'error',
-						'description' => '<i class="fab fa-fw fa-searchengin"></i> <a href="options-reading.php">Search Engine Visibility</a> is currently disabled!',
+						'description' => '<i class="fab fa-fw fa-searchengin"></i> <a href="options-reading.php">Search Engine Visibility</a> is currently disabled! Some additional SEO checks were not performed.',
 						'url' => get_admin_url() . 'options-reading.php'
 					);
 				} else {
+					//Check for sitemap
+					if ( is_plugin_active('wordpress-seo/wp-seo.php') && !$this->is_available(home_url('/') . 'sitemap_index.xml', false, true) ){ //Yoast
+						$nebula_warnings[] = array(
+							'level' => 'warn',
+							'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. Yoast is enabled, but <a href="' . home_url('/') . 'sitemap_index.xml' . '" target="_blank">sitemap_index.xml</a> is unavailable.'
+						);
+					} elseif ( is_plugin_active('autodescription/autodescription.php') && @!$this->is_available(home_url('/') . 'sitemap.xml', false, true) ){ //The SEO Framework
+						$nebula_warnings[] = array(
+							'level' => 'warn',
+							'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. The SEO Framework is enabled, but <a href="' . home_url('/') . 'sitemap.xml' . '" target="_blank">sitemap.xml</a> is unavailable.'
+						);
+					} else {
+						if ( !$this->is_available(home_url('/') . 'wp-sitemap.xml', false, true)  ){ //WordPress Core
+							$nebula_warnings[] = array(
+								'level' => 'warn',
+								'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. WordPress core <a href="' . home_url('/') . 'wp-sitemap.xml' . '" target="_blank">sitemap_index.xml</a> is unavailable.'
+							);
+
+							//Check if the SimpleXML PHP module is installed on the server (required for WP core sitemap generation)
+							if ( !function_exists('simplexml_load_string') ){
+								$nebula_warnings[] = array(
+									'level' => 'warn',
+									'description' => '<i class="fas fa-fw fa-sitemap"></i> SimpleXML PHP module is not available. This is required for WordPress core sitemap generation.'
+								);
+							}
+						}
+					}
+
 					//If not pinging additional update services (blog must be public for this to be available)
 					$ping_sites = get_option('ping_sites');
 					if ( empty($ping_sites) || $ping_sites === 'http://rpc.pingomatic.com/' ){ //If it is empty or only has the default value
@@ -359,7 +387,7 @@ if ( !trait_exists('Warnings') ){
 			$this->timer('Nebula Advanced Warnings');
 
 			//Only check these when auditing (not on all pageviews) to prevent undesired server load
-			if ( $this->is_auditing() && (current_user_can('manage_options') || $this->is_dev()) && !is_customize_preview() ){
+			if ( $this->is_auditing() ){
 				//Check contact email address
 				if ( !$this->get_option('contact_email') ){
 					$default_contact_email = get_option('admin_email', $this->get_user_info('user_email', array('id' => 1)));
@@ -463,15 +491,6 @@ if ( !trait_exists('Warnings') ){
 					}
 				}
 
-				//Check for sitemap
-				//@todo "Nebula" 0: May not be needed now that WordPress handles this itself in core. Does not hurt to keep this though...
-				if ( !$this->is_available(home_url('/') . 'sitemap_index.xml', false, true) ){
-					$nebula_warnings[] = array(
-						'category' => 'Advanced',
-						'level' => 'warn',
-						'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML'
-					);
-				}
 
 				//Check word count for SEO
 				$word_count = $this->word_count();
@@ -504,7 +523,7 @@ if ( !trait_exists('Warnings') ){
 
 		//Audit Output
 		public function advanced_warning_output(){
-			if ( $this->is_auditing() && (current_user_can('manage_options') || $this->is_dev()) && !is_customize_preview() && !$this->is_admin_page() ){
+			if ( $this->is_auditing() ){
 				//Log when manually auditing pages individually
 				if ( isset($_GET['audit']) ){
 					$this->add_log('Nebula audit performed on ' . $this->requested_url(), 1);

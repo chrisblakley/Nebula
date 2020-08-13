@@ -314,7 +314,7 @@ if ( !trait_exists('Utilities') ){
 
 		//If the current pageload is requested with more advanced detections
 		public function is_auditing(){
-			if ( ($this->get_option('audit_mode') || isset($_GET['audit'])) && $this->is_dev() ){
+			if ( ($this->get_option('audit_mode') || isset($_GET['audit'])) && (current_user_can('manage_options') || $this->is_dev()) && !is_customize_preview() && !$this->is_admin_page() ){
 				return true;
 			}
 

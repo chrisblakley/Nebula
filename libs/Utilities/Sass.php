@@ -131,6 +131,11 @@ if ( !trait_exists('Sass') ){
 			if ( $this->get_option('scss') && !empty($location_name) && !empty($location_paths) ){
 				$this->timer('Sass (' . $location_name . ')', 'start', 'Sass');
 
+				//Force reprocessing all files if "all" string is the only parameter
+				if ( strtolower($location_name) === 'all' ){
+					$force_all = true;
+				}
+
 				//Require SCSSPHP
 				require_once get_template_directory() . '/inc/vendor/scssphp/scss.inc.php'; //SCSSPHP is a compiler for SCSS 3.x
 				$this->scss = new \ScssPhp\ScssPhp\Compiler();
