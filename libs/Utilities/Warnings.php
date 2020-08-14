@@ -103,16 +103,20 @@ if ( !trait_exists('Warnings') ){
 					);
 				} else {
 					//Check for sitemap
-					if ( is_plugin_active('wordpress-seo/wp-seo.php') && !$this->is_available(home_url('/') . 'sitemap_index.xml', false, true) ){ //Yoast
-						$nebula_warnings[] = array(
-							'level' => 'warn',
-							'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. Yoast is enabled, but <a href="' . home_url('/') . 'sitemap_index.xml' . '" target="_blank">sitemap_index.xml</a> is unavailable.'
-						);
-					} elseif ( is_plugin_active('autodescription/autodescription.php') && @!$this->is_available(home_url('/') . 'sitemap.xml', false, true) ){ //The SEO Framework
-						$nebula_warnings[] = array(
-							'level' => 'warn',
-							'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. The SEO Framework is enabled, but <a href="' . home_url('/') . 'sitemap.xml' . '" target="_blank">sitemap.xml</a> is unavailable.'
-						);
+					if ( is_plugin_active('wordpress-seo/wp-seo.php') ){ //Yoast
+						if ( !$this->is_available(home_url('/') . 'sitemap_index.xml', false, true) ){
+							$nebula_warnings[] = array(
+								'level' => 'warn',
+								'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. Yoast is enabled, but <a href="' . home_url('/') . 'sitemap_index.xml' . '" target="_blank">sitemap_index.xml</a> is unavailable.'
+							);
+						}
+					} elseif ( is_plugin_active('autodescription/autodescription.php') ){ //The SEO Framework
+						if ( !$this->is_available(home_url('/') . 'sitemap.xml', false, true) ){
+							$nebula_warnings[] = array(
+								'level' => 'warn',
+								'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. The SEO Framework is enabled, but <a href="' . home_url('/') . 'sitemap.xml' . '" target="_blank">sitemap.xml</a> is unavailable.'
+							);
+						}
 					} else {
 						if ( !$this->is_available(home_url('/') . 'wp-sitemap.xml', false, true)  ){ //WordPress Core
 							$nebula_warnings[] = array(
@@ -320,34 +324,6 @@ if ( !trait_exists('Warnings') ){
 					}
 				}
 
-				//Check for low disk space available in key directories
-				$disk_paths = array(
-					array('directory' => ABSPATH, 'low' => 10, 'critical' => 5), //WordPress root directory
-					//array('directory' => session_save_path(), 'low' => 1, 'critical' => 0.5), //May or may not be the same as /tmp
-					array('directory' => '/tmp', 'low' => 1, 'critical' => 0.5),
-					array('directory' => get_temp_dir(), 'low' => 1, 'critical' => 0.5) //May or may not be the same as /tmp
-				);
-
-				$disk_paths = array_unique($disk_paths, SORT_REGULAR); //De-duplicate directories in the array
-
-				foreach ( $disk_paths as $path ){
-					if ( file_exists($path['directory']) ){
-						$disk_space_free = disk_free_space($path['directory'])/1073741824; //In GB
-
-						if ( $disk_space_free < $path['critical'] ){
-							$nebula_warnings[] = array(
-								'level' => 'error',
-								'description' => '<i class="fas fa-fw fa-hdd"></i> Available disk space in <strong>' . $path['directory'] . '</strong> critically low! Only <strong>' . round($disk_space_free, 2) . 'gb</strong> remaining.'
-							);
-						} elseif ( $disk_space_free < $path['low'] ){
-							$nebula_warnings[] = array(
-								'level' => 'warn',
-								'description' => '<i class="far fa-fw fa-hdd"></i> Low disk space available in <strong>' . $path['directory'] . '</strong>. Only <strong>' . round($disk_space_free, 2) . 'gb</strong> remaining.'
-							);
-						}
-					}
-				}
-
 				$all_nebula_warnings = apply_filters('nebula_warnings', $nebula_warnings); //Allow other functions to hook in to add warnings (like Ecommerce)
 
 				//Check for improper hooks
@@ -387,16 +363,15 @@ if ( !trait_exists('Warnings') ){
 			$this->timer('Nebula Advanced Warnings');
 
 			//Only check these when auditing (not on all pageviews) to prevent undesired server load
-			if ( $this->is_auditing() ){
+			if ( $this->is_auditing() || $this->get_option('advanced_warnings') ){
 				//Check contact email address
 				if ( !$this->get_option('contact_email') ){
 					$default_contact_email = get_option('admin_email', $this->get_user_info('user_email', array('id' => 1)));
 					$email_domain = substr($default_contact_email, strpos($default_contact_email, "@")+1);
-					if ( $email_domain != $this->url_components('domain') ){
+					if ( $email_domain !== $this->url_components('domain') ){
 						$nebula_warnings[] = array(
-							'category' => 'Advanced',
 							'level' => 'warn',
-							'description' => '<i class="fas fa-fw fa-address-card"></i> Default contact email domain does not match website. This email address will appear in metadata, so please verify this is acceptable.',
+							'description' => '<i class="fas fa-fw fa-address-card"></i> <a href="themes.php?page=nebula_options&tab=metadata&option=contact_email">Default contact email domain</a> (<code>' . $email_domain . '</code>) does not match website (<code>' . $this->url_components('domain') . '</code>). This email address will appear in metadata, so please verify this is acceptable.',
 							'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=metadata&option=contact_email'
 						);
 					}
@@ -405,36 +380,70 @@ if ( !trait_exists('Warnings') ){
 				//Check if readme.html exists. If so, recommend deleting it.
 				if ( file_exists(get_home_path() . '/readme.html') ){
 					$nebula_warnings[] = array(
-						'category' => 'Advanced',
 						'level' => 'warn',
-						'description' => '<i class="far fa-fw fa-file-alt"></i> The WordPress core readme.html file exists (which exposes version information) and should be deleted.',
+						'description' => '<i class="far fa-fw fa-file-alt"></i> The WordPress core <a href="' . home_url('/') . 'readme.html">readme.html</a> file exists (which exposes version information) and should be deleted.',
+						'url' => home_url('/') . 'readme.html'
 					);
 				}
 
-				//Check each image within the_content()
-					//If CMYK: https://stackoverflow.com/questions/8646924/how-can-i-check-if-a-given-image-is-cmyk-in-php
-					//If not Progressive JPEG
-					//If Quality setting is over 80%: https://stackoverflow.com/questions/2024947/is-it-possible-to-tell-the-quality-level-of-a-jpeg
+				//Check if max upload size is different from max post size
+				if ( ini_get('upload_max_filesize') !== ini_get('post_max_size') ){
+					$nebula_warnings[] = array(
+						'level' => 'warn',
+						'description' => '<i class="far fa-fw fa-file-alt"></i> The <code>post_max_size</code> (' . ini_get('post_max_size') . ') is different from the <code>upload_max_filesize</code> (' . ini_get('upload_max_filesize') . ').',
+					);
+				}
 
-				if ( 1==2 ){ //if post or page or custom post type? maybe not- just catch everything
-					$post = get_post(get_the_ID());
-					preg_match_all('/src="([^"]*)"/', $post->post_content, $matches); //Find images in the content... This wont work: I need the image path not url
+				//Check for low disk space available in key directories
+				$disk_paths = array(
+					array('directory' => ABSPATH, 'low' => 10, 'critical' => 5), //WordPress root directory
+					//array('directory' => session_save_path(), 'low' => 1, 'critical' => 0.5), //May or may not be the same as /tmp
+					array('directory' => '/tmp', 'low' => 1, 'critical' => 0.5),
+					array('directory' => get_temp_dir(), 'low' => 1, 'critical' => 0.5) //May or may not be the same as /tmp
+				);
 
-					foreach ( $matches as $image_url ){
-						//Check CMYK
-						$image_info = getimagesize($image_url);
-						//var_dump($image_info); echo '<br>';
-						if ( $image_info['channels'] == 4 ){
-							echo 'it is cmyk<br><br>'; //ADD WARNING HERE
-						} else {
-							echo 'it is rgb<br><br>';
+				$disk_paths = array_unique($disk_paths, SORT_REGULAR); //De-duplicate directories in the array
+
+				foreach ( $disk_paths as $path ){
+					if ( file_exists($path['directory']) ){
+						$disk_space_free = disk_free_space($path['directory'])/1073741824; //In GB
+
+						if ( $disk_space_free < $path['critical'] ){
+							$nebula_warnings[] = array(
+								'level' => 'error',
+								'description' => '<i class="fas fa-fw fa-hdd"></i> Available disk space in <strong>' . $path['directory'] . '</strong> critically low! Only <strong>' . round($disk_space_free, 2) . 'gb</strong> remaining.'
+							);
+						} elseif ( $disk_space_free < $path['low'] ){
+							$nebula_warnings[] = array(
+								'level' => 'warn',
+								'description' => '<i class="far fa-fw fa-hdd"></i> Low disk space available in <strong>' . $path['directory'] . '</strong>. Only <strong>' . round($disk_space_free, 2) . 'gb</strong> remaining.'
+							);
 						}
 					}
-
 				}
 
 				//Front-end (non-admin) page warnings only
 				if ( !$this->is_admin_page() ){
+					//Check each image within the_content()
+					//If CMYK: https://stackoverflow.com/questions/8646924/how-can-i-check-if-a-given-image-is-cmyk-in-php
+					//If not Progressive JPEG
+					//If Quality setting is over 80%: https://stackoverflow.com/questions/2024947/is-it-possible-to-tell-the-quality-level-of-a-jpeg
+					if ( 1==2 ){ //if post or page or custom post type? maybe not- just catch everything
+						$post = get_post(get_the_ID());
+						preg_match_all('/src="([^"]*)"/', $post->post_content, $matches); //Find images in the content... This wont work: I need the image path not url
+
+						foreach ( $matches as $image_url ){
+							//Check CMYK
+							$image_info = getimagesize($image_url);
+							//var_dump($image_info); echo '<br>';
+							if ( $image_info['channels'] == 4 ){
+								echo 'it is cmyk<br><br>'; //ADD WARNING HERE
+							} else {
+								echo 'it is rgb<br><br>';
+							}
+						}
+					}
+
 					//Check within all child theme files for various issues
 					foreach ( $this->glob_r(get_stylesheet_directory() . '/*') as $filepath ){
 						if ( is_file($filepath) ){
@@ -470,15 +479,13 @@ if ( !trait_exists('Warnings') ){
 											if ( !empty($details) ){
 												if ( $category === 'debug_output' ){
 													$nebula_warnings[] = array(
-														'category' => 'Advanced',
 														'level' => 'warn',
 														'description' => '<i class="fas fa-fw fa-bug"></i> Possible debug output in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . ($line_number+1) . '</strong>.'
 													);
 												} elseif ( $category === 'bootstrap_js' ){
 													$nebula_warnings[] = array(
-														'category' => 'Advanced',
 														'level' => 'warn',
-														'description' => '<i class="fab fa-fw fa-bootstrap"></i> Bootstrap JS is disabled, but is possibly needed in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . $line_number . '</strong>.',
+														'description' => '<i class="fab fa-fw fa-bootstrap"></i> <a href="themes.php?page=nebula_options&tab=functions&option=allow_bootstrap_js">Bootstrap JS is disabled</a>, but is possibly needed in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . $line_number . '</strong>.',
 														'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=functions&option=allow_bootstrap_js'
 													);
 												}
@@ -489,27 +496,28 @@ if ( !trait_exists('Warnings') ){
 							}
 						}
 					}
+
+					//Only check these when actually auditing (not when only advanced warnings are enabled)
+					if ( $this->is_auditing() ){
+						//Check word count for SEO
+						$word_count = $this->word_count();
+						if ( $word_count < 1900 ){
+							$word_count_warning = ( $word_count === 0 )? 'Word count audit is not looking for custom fields outside of the main content editor. <a href="https://nebula.gearside.com/functions/word_count/?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=word+count+audit+warning" target="_blank">Hook custom fields into the Nebula word count functionality</a> to properly audit.' : 'Word count (' . $word_count . ') is low for SEO purposes (Over 1,000 is good, but 1,900+ is ideal). <small>Note: Detected word count may not include custom fields!</small>';
+							$nebula_warnings[] = array(
+								'level' => 'warn',
+								'description' => '<i class="far fa-fw fa-file"></i> ' . $word_count_warning,
+								'url' => get_edit_post_link(get_the_id()),
+								'meta' => array('target' => '_blank', 'rel' => 'noopener')
+							);
+						}
+					}
 				}
 
-
-				//Check word count for SEO
-				$word_count = $this->word_count();
-				if ( $word_count < 1900 ){
-					$word_count_warning = ( $word_count === 0 )? 'Word count audit is not looking for custom fields outside of the main content editor. <a href="https://nebula.gearside.com/functions/word_count/?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=word+count+audit+warning" target="_blank">Hook custom fields into the Nebula word count functionality</a> to properly audit.' : 'Word count (' . $word_count . ') is low for SEO purposes (Over 1,000 is good, but 1,900+ is ideal). <small>Note: Detected word count may not include custom fields!</small>';
+				//Check for Yoast or The SEO Framework plugins
+				if ( !is_plugin_active('wordpress-seo/wp-seo.php') && !is_plugin_active('autodescription/autodescription.php') ){
 					$nebula_warnings[] = array(
-						'category' => 'Advanced',
 						'level' => 'warn',
-						'description' => '<i class="far fa-fw fa-file"></i> ' . $word_count_warning,
-						'url' => get_edit_post_link(get_the_id())
-					);
-				}
-
-				//Check for Yoast active
-				if ( !is_plugin_active('wordpress-seo/wp-seo.php') ){
-					$nebula_warnings[] = array(
-						'category' => 'Advanced',
-						'level' => 'warn',
-						'description' => '<i class="fas fa-fw fa-search-plus"></i> Yoast SEO plugin is not active',
+						'description' => '<i class="fas fa-fw fa-search-plus"></i> A recommended SEO plugin is not active.',
 						'url' => get_admin_url() . 'themes.php?page=tgmpa-install-plugins'
 					);
 				}

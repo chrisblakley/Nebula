@@ -54,7 +54,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( isset($override) ){return false;}
 
 			//If necessary, dashboard metaboxes can be unset. To best future-proof, use remove_meta_box().
-			remove_meta_box('dashboard_primary', 'dashboard', 'side'); //Wordpress News
+			//remove_meta_box('dashboard_primary', 'dashboard', 'side'); //Wordpress News
 			remove_meta_box('dashboard_secondary', 'dashboard', 'side');
 			remove_meta_box('dashboard_plugins', 'dashboard', 'normal');
 			remove_meta_box('dashboard_incoming_links', 'dashboard', 'normal');

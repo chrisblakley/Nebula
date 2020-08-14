@@ -222,6 +222,7 @@ if ( !trait_exists('Options') ){
 				'jpeg_quality' => 82, //WordPress default is 90
 				'admin_bar' => 1,
 				'admin_notices' => 1,
+				'advanced_warnings' => 0,
 				'dev_info_metabox' => 1,
 				'todo_manager_metabox' => 1,
 				'performance_metabox' => 1,

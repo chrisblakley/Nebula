@@ -578,6 +578,13 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
+					<input type="checkbox" name="nebula_options[advanced_warnings]" id="advanced_warnings" value="1" <?php checked('1', !empty($nebula_options['advanced_warnings'])); ?> /><label for="advanced_warnings">Advanced Warnings</label>
+					<p class="nebula-help-text short-help form-text text-muted">Check for more strict Nebula warnings. (Default: <?php echo nebula()->user_friendly_default('advanced_warnings'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">This will cause slightly longer page load times for admins and developers.</p>
+					<p class="option-keywords">minor page speed impact companion</p>
+				</div>
+
+				<div class="form-group">
 					<input type="checkbox" name="nebula_options[theme_update_notification]" id="theme_update_notification" value="1" <?php checked('1', !empty($nebula_options['theme_update_notification'])); ?> /><label for="theme_update_notification">Nebula Theme Update Notification</label><!-- @todo: this needs a conditional around it (from the old options) -->
 					<p class="nebula-help-text short-help form-text text-muted">Enable easy updates to the Nebula theme. (Default: <?php echo $this->user_friendly_default('theme_update_notification'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted"><strong>Child theme must be activated to work!</strong></p>

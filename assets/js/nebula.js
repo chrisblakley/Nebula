@@ -3585,99 +3585,107 @@ nebula.svgImgs = function(){
 	});
 };
 
-//Offset must be an integer
+//Scroll an element into view
+//This can eventually be replaced with scrollIntoView() native JS function, but until it has a timing feature it is not as robust. Also smooth scroll-behavior in CSS interferes with this.
+//Note: Offset must be an integer
 nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback){
-	if ( !offset ){
-		var offset = nebula.scroll.offset || 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
-	}
-
-	//Account for the scroll-padding-top CSS property on the body element
-	var scrollPaddingTop = parseInt(nebula.dom.body.css('scroll-padding-top'), 10); //Parse the CSS value as a base-10 integer
-	if ( !isNaN(scrollPaddingTop) ){
-		offset = offset + scrollPaddingTop;
-	}
-
-	//Call this function with a jQuery object to trigger scroll to an element (not just a selector string).
-	if ( element ){
-		if ( typeof element === 'string' ){
-			element = jQuery(element);
+	if ( nebula.dom.html.css('scroll-behavior') !== 'smooth' ){ //If the html has smooth scroll-behavior, use that instead of this.
+		if ( !offset ){
+			var offset = nebula.scroll.offset || 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
 		}
 
-		if ( element.length ){
-			var willScroll = true;
-			if ( onlyWhenBelow ){
-				var elementTop = element.offset().top-offset;
-				var viewportTop = nebula.dom.document.scrollTop();
-				if ( viewportTop-elementTop <= 0 ){
-					willScroll = false;
-				}
-			}
-
-			if ( willScroll ){
-				if ( !scrollSpeed ){
-					var scrollSpeed = nebula.scroll.speed || 500;
-				}
-
-				jQuery('html, body').animate({
-					scrollTop: element.offset().top-offset
-				}, scrollSpeed, function(){
-					nebula.focusOnElement(element);
-
-					if ( callback ){
-						callback();
-					}
-				});
-			}
+		//Account for the scroll-padding-top CSS property on the body element
+		var scrollPaddingTop = parseInt(nebula.dom.body.css('scroll-padding-top'), 10); //Parse the CSS value as a base-10 integer
+		if ( !isNaN(scrollPaddingTop) ){
+			offset = offset + scrollPaddingTop;
 		}
 
-		return false;
-	}
+		//Call this function with a jQuery object to trigger scroll to an element (not just a selector string).
+		if ( element ){
+			if ( typeof element === 'string' ){
+				element = jQuery(element);
+			}
 
-	nebula.dom.document.on('click keyup', 'a[href*="#"]:not([href="#"])', function(e){ //An href contains a hash ID but is not only a hash ("#content" but not "#")
-		if ( e.type === 'click' || (e.type === 'keyup' && (e.keyCode === 32 || e.keyCode === 13)) ){ //Spacebar or Enter
-			var avoid = '.no-scroll, .mm-menu, .carousel, .tab-content, .modal, [data-toggle], #wpadminbar, #query-monitor';
-			if ( !jQuery(this).is(avoid) && !jQuery(this).parents(avoid).length ){
-				if ( location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname ){ //Ensure the link does not have a protocol and is internal
-					var thisHash = this.hash;
-					var target = jQuery(thisHash) || jQuery('[name=' + thisHash.slice(1) +']'); //Determine the target
-					if ( target.length ){ //If target exists
-						var pOffset = ( jQuery(this).attr('data-offset') )? parseFloat(jQuery(this).attr('data-offset')) : nebula.scroll.offset; //Determine the offset
-						var nOffset = Math.floor(target.offset().top-offset+pOffset) + jQuery('body').scrollTop();
-						scrollSpeed = nebula.scroll.speed || 500;
-
-						jQuery('html, body').animate({
-							scrollTop: nOffset
-						}, scrollSpeed, function(){
-							nebula.focusOnElement(target);
-							history.replaceState({}, '', thisHash); //Add the hash to the URL so it can be refreshed, copied, links, etc. ReplaceState does this without affecting the back button.
-						}); //Speed is hard-coded, but could look for an HTML attribute if desired
-						return false;
+			if ( element.length ){
+				var willScroll = true;
+				if ( onlyWhenBelow ){
+					var elementTop = element.offset().top-offset;
+					var viewportTop = nebula.dom.document.scrollTop();
+					if ( viewportTop-elementTop <= 0 ){
+						willScroll = false;
 					}
 				}
-			}
-		}
-	});
 
-	nebula.dom.document.on('click keyup', '.nebula-scrollto', function(e){ //Using the nebula-scrollto class with scrollto attribute.
-		if ( e.type === 'click' || (e.type === 'keyup' && (e.keyCode === 32 || e.keyCode === 13)) ){ //Spacebar or Enter
-			var pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : nebula.scroll.offset;
-
-			if ( jQuery(this).attr('scrollto') ){
-				var scrollElement = jQuery(this).attr('scroll-to');
-				if ( scrollElement !== '' ){
-					scrollSpeed = nebula.scroll.speed || 500;
+				if ( willScroll ){
+					if ( !scrollSpeed ){
+						var scrollSpeed = nebula.scroll.speed || 500;
+					}
 
 					jQuery('html, body').animate({
-						scrollTop: Math.floor(jQuery(scrollElement).offset().top-offset+pOffset)
+						scrollTop: element.offset().top-offset
 					}, scrollSpeed, function(){
-						nebula.focusOnElement(scrollElement);
+						nebula.focusOnElement(element);
+
+						if ( callback ){
+							callback();
+						}
 					});
 				}
 			}
 
 			return false;
 		}
-	});
+
+		nebula.dom.document.on('click keyup', 'a[href*="#"]:not([href="#"])', function(e){ //An href contains a hash ID but is not only a hash ("#content" but not "#")
+			if ( e.type === 'click' || (e.type === 'keyup' && (e.keyCode === 32 || e.keyCode === 13)) ){ //Spacebar or Enter
+				var avoid = '.no-scroll, .mm-menu, .carousel, .tab-content, .modal, [data-toggle], #wpadminbar, #query-monitor';
+				if ( !jQuery(this).is(avoid) && !jQuery(this).parents(avoid).length ){
+					if ( location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname ){ //Ensure the link does not have a protocol and is internal
+						var thisHash = this.hash;
+						var target = jQuery(thisHash) || jQuery('[name=' + thisHash.slice(1) +']'); //Determine the target
+						if ( target.length ){ //If target exists
+							var pOffset = ( jQuery(this).attr('data-offset') )? parseFloat(jQuery(this).attr('data-offset')) : nebula.scroll.offset; //Determine the offset
+							var nOffset = Math.floor(target.offset().top-offset+pOffset) + jQuery('body').scrollTop();
+							scrollSpeed = nebula.scroll.speed || 500;
+
+							//Eventually replace with target.scrollIntoView({behavior: 'smooth'});
+
+							jQuery('html, body').animate({
+								scrollTop: nOffset
+							}, scrollSpeed, function(){
+								nebula.focusOnElement(target);
+								history.replaceState({}, '', thisHash); //Add the hash to the URL so it can be refreshed, copied, links, etc. ReplaceState does this without affecting the back button.
+							}); //Speed is hard-coded, but could look for an HTML attribute if desired
+							return false;
+						}
+					}
+				}
+			}
+		});
+
+		nebula.dom.document.on('click keyup', '.nebula-scrollto', function(e){ //Using the nebula-scrollto class with scrollto attribute.
+			if ( e.type === 'click' || (e.type === 'keyup' && (e.keyCode === 32 || e.keyCode === 13)) ){ //Spacebar or Enter
+				var pOffset = ( jQuery(this).attr('offset') )? parseFloat(jQuery(this).attr('offset')) : nebula.scroll.offset;
+
+				if ( jQuery(this).attr('scrollto') ){
+					var scrollElement = jQuery(this).attr('scroll-to');
+					if ( scrollElement !== '' ){
+						scrollSpeed = nebula.scroll.speed || 500;
+
+						//Eventually replace with scrollElement.scrollIntoView({behavior: 'smooth'});
+
+						jQuery('html, body').animate({
+							scrollTop: Math.floor(jQuery(scrollElement).offset().top-offset+pOffset)
+						}, scrollSpeed, function(){
+							nebula.focusOnElement(scrollElement);
+						});
+					}
+				}
+
+				return false;
+			}
+		});
+	}
 };
 
 //Temporarily change a Font Awesome icon and then change back after a period of time

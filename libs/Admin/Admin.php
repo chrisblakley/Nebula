@@ -326,9 +326,21 @@ if ( !trait_exists('Admin') ){
 
 			if ( is_plugin_active('wordpress-seo/wp-seo.php') ){ //If Yoast SEO is active link to its sitemap
 				$third_party_tools['administrative'][] = array(
-					'name' => 'Yoast SEO Sitemap XML',
+					'name' => 'Yoast SEO Sitemap',
 					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-sitemap"></i>',
 					'url' => home_url('/') . 'sitemap_index.xml'
+				);
+			} elseif ( is_plugin_active('autodescription/autodescription.php') ){ //If The SEO Framework is active link to its sitemap
+				$third_party_tools['administrative'][] = array(
+					'name' => 'The SEO Framework Sitemap',
+					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-sitemap"></i>',
+					'url' => home_url('/') . 'sitemap.xml'
+				);
+			} else { //Otherwise link to the core WordPress sitemap
+				$third_party_tools['administrative'][] = array(
+					'name' => 'WordPress Sitemap',
+					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-sitemap"></i>',
+					'url' => home_url('/') . 'wp-sitemap.xml'
 				);
 			}
 
