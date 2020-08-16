@@ -9,7 +9,7 @@ if ( !trait_exists('Sass') ){
 
 			add_action('init', array($this, 'scss_controller'));
 			add_action('nebula_body_open', array($this, 'output_sass_errors')); //Front-end
-			add_action('admin_notices', array($this, 'output_sass_errors')); //Admin
+			add_action('admin_notices', array($this, 'output_sass_errors')); //Admin (Do not use Nebula Warnings utility for these errors)
 			add_action('nebula_options_saved', array($this, 'touch_sass_stylesheet'));
 		}
 
@@ -278,7 +278,7 @@ if ( !trait_exists('Sass') ){
 		}
 
 		//Display any Sass compilation errors that occurred
-		public function output_sass_errors(){
+		public function output_sass_errors($nebula_warnings){
 			global $sass_errors;
 
 			if ( !empty($sass_errors) ){

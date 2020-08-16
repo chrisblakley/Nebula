@@ -26,11 +26,12 @@ if ( !trait_exists('Admin') ){
 				add_action('profile_update', array($this, 'clear_transients'));
 				add_action('upgrader_process_complete', array($this, 'theme_update_automation'), 10, 2); //Action 'upgrader_post_install' also exists.
 				add_filter('auth_cookie_expiration', array($this, 'session_expire'));
+				add_action('after_setup_theme', array($this, 'custom_media_display_settings'));
 
 				add_filter('wp_check_filetype_and_ext', array($this, 'allow_svg_uploads'), 10, 4);
 				add_filter('upload_mimes', array($this, 'additional_upload_mime_types'));
 
-				add_action('after_setup_theme', array($this, 'custom_media_display_settings'));
+				add_action('upgrader_process_complete', array($this, 'log_core_wp_updates'), 10, 2);
 
 				if ( current_user_can('publish_posts') ){
 					add_action('admin_action_duplicate_post_as_draft', array($this, 'duplicate_post_as_draft'));
@@ -44,7 +45,6 @@ if ( !trait_exists('Admin') ){
 					add_action('admin_init', array($this, 'theme_json'));
 					add_filter('puc_request_update_result_theme-Nebula', array($this, 'theme_update_version_store'), 10, 2); //This hook is found in UpdateChecker.php in the filterUpdateResult() function.
 					add_filter('site_transient_update_themes', array($this, 'force_nebula_theme_update'), 99, 1);
-					add_action('upgrader_process_complete', array($this, 'log_core_wp_updates'), 10, 2);
 				}
 			}
 
@@ -56,8 +56,8 @@ if ( !trait_exists('Admin') ){
 
 				remove_action('admin_enqueue_scripts', 'wp_auth_check_load'); //Disable the logged-in monitoring modal
 
-				if ( current_user_can('edit_others_posts') && $this->get_option('admin_notices') ){
-					add_action('admin_notices', array($this, 'admin_notices'));
+				if ( current_user_can('edit_others_posts') && $this->is_warning_level('on') ){
+					add_action('admin_notices', array($this, 'show_admin_notices'));
 				}
 
 				add_action('admin_init', array($this, 'additional_admin_color_schemes'));
@@ -1080,11 +1080,38 @@ if ( !trait_exists('Admin') ){
 			}
 		}
 
+		//Log when WordPress core is updated and notify administrators. This happens for manual and automatic updates.
+		public function log_core_wp_updates($wp_upgrader, $hook_extra){
+			if ( $hook_extra['type'] === 'core' ){
+				$new_wp_version = get_bloginfo('version');
+
+				$this->add_log('WordPress core was updated to ' . $new_wp_version . '.', 7);
+				$this->usage('WP CoreuUpdate to ' . $new_wp_version);
+
+				$current_user = wp_get_current_user();
+				$subject = 'WordPress core updated to ' . $new_wp_version . ' for ' . html_entity_decode(get_bloginfo('name')) . '.';
+				$message = '<p>WordPress core has been updated to <strong>' . $new_wp_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url('/') . ') by ' . $current_user->display_name . ' on ' . date_i18n('F j, Y') . ' at ' . date('g:ia') . '.</p>';
+
+				$this->send_email_to_admins($subject, $message);
+			}
+		}
+
 		//Send an email to the current user and site admin that Nebula has been updated.
 		public function theme_update_email($prev_version, $prev_version_commit_date, $new_version){
-			$nebula_update_email_sent = get_transient('nebula_update_email_sent');
-			if ( (empty($nebula_update_email_sent) || $this->is_debug()) && $prev_version !== $new_version ){
-				global $wpdb;
+			if ( $prev_version !== $new_version ){
+				$current_user = wp_get_current_user();
+
+				$subject = 'Nebula updated to ' . $new_version . ' for ' . html_entity_decode(get_bloginfo('name')) . '.';
+				$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . '</strong> (Committed: ' . $prev_version_commit_date . ') to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url('/') . ') by ' . $current_user->display_name . ' on ' . date_i18n('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank" rel="noopener">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
+
+				$this->send_email_to_admins($subject, $message);
+			}
+		}
+
+		//Send an email to the current user and site admin(s)
+		public function send_email_to_admins($subject, $message, $attachments){
+			$nebula_admin_email_sent = get_transient('nebula_admin_email_sent');
+			if ( (empty($nebula_admin_email_sent) || $this->is_debug()) ){
 				$current_user = wp_get_current_user();
 				$to = $current_user->user_email;
 				$headers = array(); //Prep a headers array if needed
@@ -1092,17 +1119,14 @@ if ( !trait_exists('Admin') ){
 				$carbon_copies = $this->get_notification_emails(false);
 				$headers[] = 'Cc: ' . implode(',', $carbon_copies);
 
-				$subject = 'Nebula updated to ' . $new_version . ' for ' . html_entity_decode(get_bloginfo('name')) . '.';
-				$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . '</strong> (Committed: ' . $prev_version_commit_date . ') to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url('/') . ') by ' . $current_user->display_name . ' on ' . date_i18n('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank" rel="noopener">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
-
 				//Set the content type to text/html for the email.
 				add_filter('wp_mail_content_type', function($content_type){
 					return 'text/html';
 				});
 
 				//Send the email, and on success set a transient to prevent multiple emails
-				if ( wp_mail($to, $subject, $message, $headers) ){
-					set_transient('nebula_update_email_sent', true, MINUTE_IN_SECONDS*15);
+				if ( wp_mail($to, $subject, $message, $headers, $attachments) ){
+					set_transient('nebula_admin_email_sent', true, MINUTE_IN_SECONDS);
 				}
 			}
 		}
@@ -1144,13 +1168,6 @@ if ( !trait_exists('Admin') ){
 			});
 		}
 
-		//Log when WordPress core is updated
-		public function log_core_wp_updates($wp_upgrader, $extra){
-			if ( isset($extra['core']) ){
-				$this->add_log('WordPress core was updated.', 5);
-			}
-		}
-
 		//Control session time (for the "Remember Me" checkbox)
 		public function session_expire($expirein){
 			return 2592000; //30 days (Default is 1209600 (14 days)
@@ -1181,7 +1198,7 @@ if ( !trait_exists('Admin') ){
 		}
 
 		//Nebula Admin Notices/Warnings/Notifications
-		public function admin_notices(){
+		public function show_admin_notices(){
 			$warnings = $this->check_warnings();
 
 			//If there are warnings display them

@@ -421,11 +421,6 @@ if ( !trait_exists('Optimization') ){
 				$default_preconnects[] = '//www.googleapis.com';
 			}
 
-			//Disqus commenting
-			if ( is_single() && $this->get_option('comments') && $this->get_option('disqus_shortname') ){
-				$default_preconnects[] = '//' . $this->get_option('disqus_shortname') . '.disqus.com';
-			}
-
 			//Loop through all of the preconnects
 			$preconnects = apply_filters('nebula_preconnect', $default_preconnects);
 			if ( !empty($preconnects) && is_array($preconnects) ){

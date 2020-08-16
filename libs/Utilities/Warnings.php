@@ -12,9 +12,28 @@ if ( !trait_exists('Warnings') ){
 			add_action('wp_footer', array($this, 'advanced_warning_output'), 9999); //Late execution as possible
 		}
 
+		//Determine the desired warning level
+		public function is_warning_level($needed, $actual=false){
+			$actual = ( !empty($actual) )? $actual : $this->get_option('warnings');
+
+			if ( $actual === 'off' ){
+				return false;
+			} elseif ( $actual === 'on' ){
+				return true;
+			}
+
+			$warning_level_order = array('critical', 'verbose', 'strict');
+
+			if ( array_search(strtolower($needed), $warning_level_order) <= array_search(strtolower($actual), $warning_level_order) ){
+				return true;
+			}
+
+			return false;
+		}
+
 		//Log warnings in the console
 		public function console_warnings($console_warnings=array()){
-			if ( (current_user_can('manage_options') || $this->is_dev()) && $this->get_option('admin_notices') && !is_customize_preview() ){
+			if ( (current_user_can('manage_options') || $this->is_dev()) && $this->is_warning_level('on') && !is_customize_preview() ){
 				$this->warnings = $this->check_warnings();
 
 				//If there are warnings, send them to the console.
@@ -33,7 +52,7 @@ if ( !trait_exists('Warnings') ){
 		public function check_warnings(){
 			$this->timer('Check Warnings');
 
-			if ( $this->is_auditing() || $this->get_option('admin_notices') ){
+			if ( $this->is_auditing() || $this->is_warning_level('on') ){
 				//Check object cache first
 				$nebula_warnings = wp_cache_get('nebula_warnings');
 
@@ -135,13 +154,15 @@ if ( !trait_exists('Warnings') ){
 					}
 
 					//If not pinging additional update services (blog must be public for this to be available)
-					$ping_sites = get_option('ping_sites');
-					if ( empty($ping_sites) || $ping_sites === 'http://rpc.pingomatic.com/' ){ //If it is empty or only has the default value
-						$nebula_warnings[] = array(
-							'level' => 'warn',
-							'description' => '<i class="fas fa-fw fa-rss"></i> Additional <a href="options-writing.php">Update Services</a> should be pinged. <a href="https://codex.wordpress.org/Update_Services#XML-RPC_Ping_Services" target="_blank" rel="noopener">Recommended update services &raquo;</a>',
-							'url' => get_admin_url() . 'options-writing.php'
-						);
+					if ( $this->is_warning_level('verbose') ){
+						$ping_sites = get_option('ping_sites');
+						if ( empty($ping_sites) || $ping_sites === 'http://rpc.pingomatic.com/' ){ //If it is empty or only has the default value
+							$nebula_warnings[] = array(
+								'level' => 'warn',
+								'description' => '<i class="fas fa-fw fa-rss"></i> Additional <a href="options-writing.php">Update Services</a> should be pinged. <a href="https://codex.wordpress.org/Update_Services#XML-RPC_Ping_Services" target="_blank" rel="noopener">Recommended update services &raquo;</a>',
+								'url' => get_admin_url() . 'options-writing.php'
+							);
+						}
 					}
 				}
 
@@ -168,24 +189,26 @@ if ( !trait_exists('Warnings') ){
 				}
 
 				//Check for hard Debug Mode
-				if ( WP_DEBUG ){
-					$nebula_warnings[] = array(
-						'level' => 'warn',
-						'description' => '<i class="fas fa-fw fa-bug"></i> <strong>WP_DEBUG</strong> is enabled <small>(Generally defined in wp-config.php)</small>'
-					);
-
-					if ( WP_DEBUG_LOG ){
+				if ( $this->is_warning_level('verbose') ){
+					if ( WP_DEBUG ){
 						$nebula_warnings[] = array(
 							'level' => 'warn',
-							'description' => '<i class="fas fa-fw fa-bug"></i> Debug logging (<strong>WP_DEBUG_LOG</strong>) to /wp-content/debug.log is enabled <small>(Generally defined in wp-config.php)</small>'
+							'description' => '<i class="fas fa-fw fa-bug"></i> <strong>WP_DEBUG</strong> is enabled <small>(Generally defined in wp-config.php)</small>'
 						);
-					}
 
-					if ( WP_DEBUG_DISPLAY ){
-						$nebula_warnings[] = array(
-							'level' => 'error',
-							'description' => '<i class="fas fa-fw fa-bug"></i> Debug errors and warnings are being displayed on the front-end (<Strong>WP_DEBUG_DISPLAY</strong>) <small>(Generally defined in wp-config.php)</small>'
-						);
+						if ( WP_DEBUG_LOG ){
+							$nebula_warnings[] = array(
+								'level' => 'warn',
+								'description' => '<i class="fas fa-fw fa-bug"></i> Debug logging (<strong>WP_DEBUG_LOG</strong>) to /wp-content/debug.log is enabled <small>(Generally defined in wp-config.php)</small>'
+							);
+						}
+
+						if ( WP_DEBUG_DISPLAY ){
+							$nebula_warnings[] = array(
+								'level' => 'error',
+								'description' => '<i class="fas fa-fw fa-bug"></i> Debug errors and warnings are being displayed on the front-end (<Strong>WP_DEBUG_DISPLAY</strong>) <small>(Generally defined in wp-config.php)</small>'
+							);
+						}
 					}
 				}
 
@@ -274,12 +297,14 @@ if ( !trait_exists('Warnings') ){
 					}
 
 					//Check for /offline page when using Service Worker
-					$offline_page = get_page_by_path('offline');
-					if ( is_null($offline_page) ){
-						$nebula_warnings[] = array(
-							'level' => 'warn',
-							'description' => '<i class="fas fa-fw fa-ethernet"></i> It is recommended to make an Offline page when using Service Worker. <a href="post-new.php?post_type=page">Manually add one</a>'
-						);
+					if ( $this->is_warning_level('verbose') ){
+						$offline_page = get_page_by_path('offline');
+						if ( is_null($offline_page) ){
+							$nebula_warnings[] = array(
+								'level' => 'warn',
+								'description' => '<i class="fas fa-fw fa-ethernet"></i> It is recommended to make an Offline page when using Service Worker. <a href="post-new.php?post_type=page">Manually add one</a>'
+							);
+						}
 					}
 
 					//Check for SSL when using Service Worker
@@ -363,7 +388,7 @@ if ( !trait_exists('Warnings') ){
 			$this->timer('Nebula Advanced Warnings');
 
 			//Only check these when auditing (not on all pageviews) to prevent undesired server load
-			if ( $this->is_auditing() || $this->get_option('advanced_warnings') ){
+			if ( $this->is_auditing() || $this->is_warning_level('strict') ){
 				//Check contact email address
 				if ( !$this->get_option('contact_email') ){
 					$default_contact_email = get_option('admin_email', $this->get_user_info('user_email', array('id' => 1)));

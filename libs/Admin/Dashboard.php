@@ -91,7 +91,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fab fa-fw fa-wordpress"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener noreferrer">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
 			//Nebula Version
-			echo '<li><i class="far fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master" target="_blank">' . $this->version('raw') . '</a></strong> <small title="' . human_time_diff($this->version('utc')) . ' ago" style="cursor: help;">(Committed: ' . $this->version('date') . ')</small></li>';
+			echo '<li><i class="far fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master" target="_blank">' . $this->version('raw') . '</a></strong> <small title="' . $this->version('date') . '" style="cursor: help;">(Committed ' . human_time_diff($this->version('utc')) . ' ago)</small></li>';
 
 			//Child Theme
 			if ( is_child_theme() ){
@@ -158,7 +158,7 @@ if ( !trait_exists('Dashboard') ){
 				set_transient('nebula_earliest_post', $earliest_post, YEAR_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long.
 			}
 			while ( $earliest_post->have_posts() ){ $earliest_post->the_post();
-				echo '<li><i class="far fa-fw fa-calendar"></i> Earliest: <span title="' . human_time_diff(strtotime(get_the_date() . ' ' . get_the_time())) . ' ago" style="cursor: help;"><strong>' . get_the_date() . '</strong> @ <strong>' . get_the_time() . '</strong></span></li>';
+				echo '<li><i class="far fa-fw fa-calendar"></i> Earliest: <span title="' . get_the_date() . ' @ ' . get_the_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_date() . ' ' . get_the_time())) . ' ago</strong></span></li>';
 			}
 			wp_reset_postdata();
 
@@ -169,7 +169,7 @@ if ( !trait_exists('Dashboard') ){
 				set_transient('nebula_latest_post', $latest_post, WEEK_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long.
 			}
 			while ( $latest_post->have_posts() ){ $latest_post->the_post();
-				echo '<li><i class="far fa-fw fa-calendar"></i> Updated: <span title="' . human_time_diff(strtotime(get_the_modified_date())) . ' ago" style="cursor: help;"><strong>' . get_the_modified_date() . '</strong> @ <strong>' . get_the_modified_time() . '</strong></span>
+				echo '<li><i class="far fa-fw fa-calendar"></i> Updated: <span title="' . get_the_modified_date() . ' @ ' . get_the_modified_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_modified_date())) . ' ago</strong></span>
 					<small style="display: block;"><i class="far fa-fw fa-file-alt"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => get_the_title(), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small>
 				</li>';
 			}
@@ -750,20 +750,21 @@ if ( !trait_exists('Dashboard') ){
 			function initial_install_date(){
 				$nebula_initialized = nebula()->get_option('initialized'); //Keep this as nebula() because it is a nested function, so $this is scoped differently here.
 				if ( !empty($nebula_initialized) && $nebula_initialized < getlastmod() ){
-					$install_date = '<span title="' . human_time_diff($nebula_initialized) . ' ago" style="cursor: help;"><strong>' . date_i18n('F j, Y', $nebula_initialized) . '</strong> <small>@</small> <strong>' . date('g:ia', $nebula_initialized) . '</strong></span>';
+					$install_date = '<span title="' . date_i18n('F j, Y', $nebula_initialized) . ' @ ' . date('g:ia', $nebula_initialized) . '" style="cursor: help;"><strong>' . human_time_diff($nebula_initialized) . ' ago</strong></span>';
 				} else { //Use the last modified time of the admin page itself
-					$install_date = '<span title="' . human_time_diff(getlastmod()) . ' ago" style="cursor: help;"><strong>' . date_i18n("F j, Y", getlastmod()) . '</strong> <small>@</small> <strong>' . date("g:ia", getlastmod()) . '</strong></span>';
+					$install_date = '<span title="' . date_i18n("F j, Y", getlastmod()) . ' @ ' . date("g:ia", getlastmod()) . '" style="cursor: help;"><strong>' . human_time_diff(getlastmod()) . ' ago</strong></span>';
 				}
 				return $install_date;
 			}
 			echo '<li><i class="far fa-fw fa-calendar"></i> Installed: ' . initial_install_date() . '</li>';
 
 			$latest_file = $this->last_modified();
-			echo '<li><i class="far fa-fw fa-calendar"></i> <span title="' . $latest_file['path'] . '" style="cursor: help;">Modified:</span> <span title="' . human_time_diff($latest_file['date']) . ' ago" style="cursor: help;"><strong>' . date_i18n("F j, Y", $latest_file['date']) . '</strong> <small>@</small> <strong>' . date("g:ia", $latest_file['date']) . '</strong></span></li>';
+			echo '<li><i class="far fa-fw fa-calendar"></i> <span title="' . $latest_file['path'] . '" style="cursor: help;">Modified:</span> <span title="' . date_i18n("F j, Y", $latest_file['date']) . ' @ ' . date("g:ia", $latest_file['date']) . '" style="cursor: help;"><strong>' . human_time_diff($latest_file['date']) . ' ago</strong></span></li>';
 
 			//SCSS last processed date
 			if ( $this->get_data('scss_last_processed') ){
-				echo '<li><i class="fab fa-fw fa-sass"></i> Sass Processed: <span title="' . human_time_diff($this->get_data('scss_last_processed')) . ' ago" style="cursor: help;"><strong>' . date_i18n("F j, Y", $this->get_data('scss_last_processed')) . '</strong> <small>@</small> <strong>' . date("g:i:sa", $this->get_data('scss_last_processed')) . '</strong></span></li>';
+				$sass_option = ( nebula()->get_option('scss') )? '' : ' <small><em><a href="themes.php?page=nebula_options&tab=functions&option=scss">Sass is currently <strong>disabled</strong> &raquo;</a></em></small>';
+				echo '<li><i class="fab fa-fw fa-sass"></i> Sass Processed: <span title="' . date_i18n("F j, Y", $this->get_data('scss_last_processed')) . ' @ ' . date("g:i:sa", $this->get_data('scss_last_processed')) . '" style="cursor: help;"><strong>' . human_time_diff($this->get_data('scss_last_processed')) . ' ago</strong></span> ' . $sass_option . '</li>';
 			}
 			echo '</ul>';
 

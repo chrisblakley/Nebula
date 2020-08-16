@@ -14,6 +14,7 @@ if ( !class_exists('Nebula') ){
 	require_once get_template_directory() . '/libs/Security.php';
 	require_once get_template_directory() . '/libs/Optimization.php';
 	require_once get_template_directory() . '/libs/Functions.php';
+	require_once get_template_directory() . '/libs/Comments.php';
 	require_once get_template_directory() . '/libs/Shortcodes.php';
 	require_once get_template_directory() . '/libs/Gutenberg/Gutenberg.php';
 	require_once get_template_directory() . '/libs/Widgets.php';
@@ -31,6 +32,7 @@ if ( !class_exists('Nebula') ){
 		use Security { Security::hooks as SecurityHooks; }
 		use Optimization { Optimization::hooks as OptimizationHooks; }
 		use Functions { Functions::hooks as FunctionsHooks; }
+		use Comments { Comments::hooks as CommentsHooks; }
 		use Shortcodes { Shortcodes::hooks as ShortcodesHooks; }
 		use Gutenberg { Gutenberg::hooks as GutenbergHooks; }
 		use Widgets { Widgets::hooks as WidgetsHooks; }
@@ -84,6 +86,7 @@ if ( !class_exists('Nebula') ){
 			$this->OptimizationHooks(); //Register Optimization hooks
 			$this->CustomizerHooks(); //Register Customizer hooks
 			$this->FunctionsHooks(); //Register Functions hooks
+			$this->CommentsHooks(); //Register Comments hooks
 			$this->ShortcodesHooks(); //Register Shortcodes hooks
 			$this->GutenbergHooks(); //Register Gutenberg hooks
 			$this->WidgetsHooks(); //Register Widgets hooks

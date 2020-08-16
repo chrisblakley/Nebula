@@ -39,11 +39,17 @@
 								<?php nebula()->error_query->the_post(); ?>
 
 								<h3 class="suggestion-title entry-title">
+									<i class="fa fa-fw fa-chevron-right"></i>
+
 									<?php if ( strpos(get_permalink(), nebula()->slug_keywords) ): ?>
-										<i class="fa fa-fw fa-star" title="<?php _e('Exact match', 'nebula'); ?>"></i>
+										<strong>
 									<?php endif; ?>
 
 									<a class="internal-suggestion" href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a>
+
+									<?php if ( strpos(get_permalink(), nebula()->slug_keywords) ): ?>
+										</strong>
+									<?php endif; ?>
 								</h3>
 							<?php endwhile; ?>
 							<p><a href="<?php echo home_url('/'); ?>?s=<?php echo str_replace('-', '+', nebula()->slug_keywords); ?>"><?php _e('View all results', 'nebula'); ?> &raquo;</a></p>

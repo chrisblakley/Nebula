@@ -207,7 +207,7 @@ if ( !trait_exists('Automation') ){
 
 		public function activation(){
 			$this->usage('Theme Activation');
-			$this->add_log('Theme activation', 5);
+			$this->add_log('Theme activation', 6);
 
 			//If not initialized before, set default options if they haven't been already
 			if ( !$this->is_initialized_before() ){
@@ -300,16 +300,11 @@ if ( !trait_exists('Automation') ){
 
 		//Send a list of existing settings to the user's email (to test, trigger the function on admin_init)
 		public function initialization_email_prev_settings(){
-			$email_admin_timeout = get_transient('nebula_email_admin_timeout');
-			if ( !empty($email_admin_timeout) || !$this->is_initialized_before() ){
+			if ( !$this->is_initialized_before() ){
 				return;
 			}
 
 			$current_user = wp_get_current_user();
-			$to = $current_user->user_email;
-
-			$carbon_copies = $this->get_notification_emails(false);
-			$headers[] = 'Cc: ' . implode(',', $carbon_copies);
 
 			$subject = 'Wordpress theme settings reset for ' . get_bloginfo('name');
 			$message = '<p>Wordpress settings have been re-initialized for <strong>' . get_bloginfo('name') . '</strong> by <strong>' . $current_user->display_name . ' <' . $current_user->user_email . '></strong> on <strong>' . date('F j, Y') . '</strong> at <strong> ' . date('g:ia') . '</strong>.</p>';
@@ -325,13 +320,8 @@ if ( !trait_exists('Automation') ){
 
 			$attachments = array($options_backup_file);
 
-			add_filter('wp_mail_content_type', function($content_type){
-				return 'text/html';
-			});
-			wp_mail($to, $subject, $message, $headers, $attachments);
+			send_email_to_admins($subject, $message, $attachments);
 			unlink($options_backup_file);
-
-			set_transient('nebula_email_admin_timeout', 'true', MINUTE_IN_SECONDS*15); //15 minute expiration
 		}
 
 		//Create Homepage

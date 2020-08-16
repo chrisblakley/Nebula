@@ -571,17 +571,16 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_admin_notifications_metabox($nebula_options){
 			?>
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[admin_notices]" id="admin_notices" value="1" <?php checked('1', !empty($nebula_options['admin_notices'])); ?> /><label for="admin_notices">Nebula Admin Notifications</label>
-					<p class="nebula-help-text short-help form-text text-muted">Show Nebula-specific admin notices (Default: <?php echo $this->user_friendly_default('admin_notices'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">Note: This does not toggle WordPress core or plugin notices.</p>
-					<p class="option-keywords">discretionary</p>
-				</div>
-
-				<div class="form-group">
-					<input type="checkbox" name="nebula_options[advanced_warnings]" id="advanced_warnings" value="1" <?php checked('1', !empty($nebula_options['advanced_warnings'])); ?> /><label for="advanced_warnings">Advanced Warnings</label>
-					<p class="nebula-help-text short-help form-text text-muted">Check for more strict Nebula warnings. (Default: <?php echo nebula()->user_friendly_default('advanced_warnings'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">This will cause slightly longer page load times for admins and developers.</p>
-					<p class="option-keywords">minor page speed impact companion</p>
+					<label for="warnings">Nebula Warnings</label>
+					<select name="nebula_options[warnings]" id="warnings" class="form-control nebula-validate-select">
+						<option value="off" <?php selected('off', $nebula_options['warnings']); ?>>Off</option>
+						<option value="critical" <?php selected('critical', $nebula_options['warnings']); ?>>Critical (Essential Checks Only)</option>
+						<option value="verbose" <?php selected('verbose', $nebula_options['warnings']); ?>>Verbose (Include Significant Checks)</option>
+						<option value="strict" <?php selected('strict', $nebula_options['warnings']); ?>>Strict (All Checks)</option>
+					</select>
+					<p class="nebula-help-text short-help form-text text-muted">Allow Nebula to check for common implementation errors and warnings and report them in the WP Admin and console for logged-in users. (Default: <?php echo $this->user_friendly_default('warnings'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted"></p>
+					<p class="option-keywords">discretionary minor page speed impact companion admin notices admin_notices advanced warnings advanced_warnings audit mode audit_mode</p>
 				</div>
 
 				<div class="form-group">

@@ -86,15 +86,17 @@ if ( !trait_exists('Device') ){
 
 			if ( $this->get_option('device_detection') ){
 				$os = $this->device->getOs();
-				switch ( strtolower($info) ){
-					case 'full':
-						return $os['name'] . ' ' . $os['version'];
-					case 'name':
-						return $os['name'];
-					case 'version':
-						return $os['version'];
-					default:
-						return false;
+				if ( !empty($os) ){
+					switch ( strtolower($info) ){
+						case 'full':
+							return $os['name'] . ' ' . $os['version'];
+						case 'name':
+							return $os['name'];
+						case 'version':
+							return $os['version'];
+						default:
+							return false;
+					}
 				}
 			}
 
@@ -135,21 +137,23 @@ if ( !trait_exists('Device') ){
 				}
 
 				$actual_os = $this->device->getOs();
-				$actual_version = explode('.', $actual_os['version']);
-				$version_parts = explode('.', $version);
-				if ( strpos(strtolower($actual_os['name']), strtolower($os)) !== false ){
-					if ( !empty($version) ){
-						if ( $this->compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //If major version matches
-							if ( $version_parts[1] && $version_parts[1] !== 0 ){ //If minor version exists and is not 0
-								if ( $this->compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //If minor version matches
-									return true;
+				if ( !empty($actual_os) ){
+					$actual_version = explode('.', $actual_os['version']);
+					$version_parts = explode('.', $version);
+					if ( strpos(strtolower($actual_os['name']), strtolower($os)) !== false ){
+						if ( !empty($version) ){
+							if ( $this->compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //If major version matches
+								if ( $version_parts[1] && $version_parts[1] !== 0 ){ //If minor version exists and is not 0
+									if ( $this->compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //If minor version matches
+										return true;
+									}
+									return false;
 								}
-								return false;
+								return true;
 							}
-							return true;
 						}
+						return true;
 					}
-					return true;
 				}
 			}
 
@@ -230,21 +234,23 @@ if ( !trait_exists('Device') ){
 
 			if ( $this->get_option('device_detection') ){
 				$client = $this->device->getClient();
-				switch ( strtolower($info) ){
-					case 'full':
-						return $client['name'] . ' ' . $client['version'];
-					case 'name':
-					case 'browser':
-					case 'client':
-						return $client['name'];
-					case 'version':
-						return $client['version'];
-					case 'engine':
-						return $client['engine'];
-					case 'type':
-						return $client['type'];
-					default:
-						return false;
+				if ( !empty($client) ){
+					switch ( strtolower($info) ){
+						case 'full':
+							return $client['name'] . ' ' . $client['version'];
+						case 'name':
+						case 'browser':
+						case 'client':
+							return $client['name'];
+						case 'version':
+							return $client['version'];
+						case 'engine':
+							return $client['engine'];
+						case 'type':
+							return $client['type'];
+						default:
+							return false;
+					}
 				}
 			}
 
@@ -309,23 +315,25 @@ if ( !trait_exists('Device') ){
 				}
 
 				$actual_browser = $this->device->getClient();
-				$actual_version = explode('.', $actual_browser['version']);
-				$version_parts = explode('.', $version);
-				if ( strpos(strtolower($actual_browser['name']), strtolower($browser)) !== false ){
-					if ( !empty($version) ){
-						if ( $this->compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //Major version comparison
-							if ( !empty($version_parts[1]) ){ //If minor version exists and is not 0
-								if ( $this->compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //Minor version comparison
-									return true;
+				if ( !empty($actual_browser) ){
+					$actual_version = explode('.', $actual_browser['version']);
+					$version_parts = explode('.', $version);
+					if ( strpos(strtolower($actual_browser['name']), strtolower($browser)) !== false ){
+						if ( !empty($version) ){
+							if ( $this->compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //Major version comparison
+								if ( !empty($version_parts[1]) ){ //If minor version exists and is not 0
+									if ( $this->compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //Minor version comparison
+										return true;
+									} else {
+										return false;
+									}
 								} else {
-									return false;
+									return true;
 								}
-							} else {
-								return true;
 							}
+						} else {
+							return true;
 						}
-					} else {
-						return true;
 					}
 				}
 			}
