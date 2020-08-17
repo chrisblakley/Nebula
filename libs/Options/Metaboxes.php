@@ -2179,7 +2179,7 @@ if ( !trait_exists('Metaboxes') ){
 													$sanitized_value = sanitize_text_field(mb_strimwidth($value, 0, 153, '...'));
 
 													if ( $column === 'user_id' ){
-														$sanitized_value = get_userdata($sanitized_value)->display_name;
+														$sanitized_value = ( $sanitized_value === 0 )? '(Cron)' : get_userdata($sanitized_value)->display_name;
 													}
 
 													if ( $column === 'timestamp' ){

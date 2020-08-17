@@ -15,13 +15,20 @@ if ( !trait_exists('Optimization') ){
 				add_action('wp_enqueue_scripts', array($this, 'scripts_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
 			}
 
+			//Non-WordPress Admin optimizations
+			if ( !$this->is_admin_page(true) ){
+				add_filter('wp_enqueue_scripts', array($this, 'defer_async_additional_scripts'));
+				add_filter('script_loader_tag', array($this, 'defer_async_scripts'), 10, 2);
+
+				add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
+				add_action('wp_footer', array($this, 'dequeue_lazy_load_scripts'));
+
+				add_filter('wp_default_scripts', array($this, 'remove_jquery_migrate'));
+				add_action('wp_enqueue_scripts', array($this, 'move_jquery_to_footer'));
+				add_action('wp_head', array($this, 'listen_for_jquery_footer_errors'));
+			}
+
 			add_action('wp_head', array($this, 'prebrowsing'));
-
-			add_filter('wp_enqueue_scripts', array($this, 'defer_async_additional_scripts'));
-			add_filter('script_loader_tag', array($this, 'defer_async_scripts'), 10, 2);
-
-			add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
-			add_action('wp_footer', array($this, 'dequeue_lazy_load_scripts'));
 
 			//Dequeue assets depending on when they are hooked for output
 			add_action('wp_enqueue_scripts', array($this, 'dequeues'), 9001); //Dequeue styles and scripts that are hooked into the wp_enqueue_scripts action
@@ -38,9 +45,7 @@ if ( !trait_exists('Optimization') ){
 			add_filter('tiny_mce_plugins', array($this, 'disable_emojicons_tinymce')); //Remove TinyMCE Emojis too
 			add_filter('wpcf7_load_css', '__return_false'); //Disable CF7 CSS resources (in favor of Bootstrap and Nebula overrides)
 
-			add_filter('wp_default_scripts', array($this, 'remove_jquery_migrate'));
-			add_action('wp_enqueue_scripts', array($this, 'move_jquery_to_footer'));
-			add_action('wp_head', array($this, 'listen_for_jquery_footer_errors'));
+
 			add_action('wp_head', array($this, 'embed_critical_styles'));
 
 			add_action('send_headers', array($this, 'server_timing_header'));
@@ -152,63 +157,67 @@ if ( !trait_exists('Optimization') ){
 
 		//Defer and Async specific scripts. This only works with registered/enqueued scripts!
 		public function defer_async_additional_scripts(){
-			$to_defer = apply_filters('nebula_defer_scripts', array('jquery-migrate', 'jquery.form', 'contact-form-7', 'wp-embed')); //Allow other functions to hook in to add defer to existing scripts
-			$to_async = apply_filters('nebula_async_scripts', array()); //Allow other functions to hook in to add async to existing scripts
+			if ( !$this->is_admin_page(true) ){
+				$to_defer = apply_filters('nebula_defer_scripts', array('jquery-migrate', 'jquery.form', 'contact-form-7', 'wp-embed')); //Allow other functions to hook in to add defer to existing scripts
+				$to_async = apply_filters('nebula_async_scripts', array()); //Allow other functions to hook in to add async to existing scripts
 
-			//Defer scripts
-			if ( !empty($to_defer) && is_array($to_defer) ){
-				foreach ( $to_defer as $handle ){
-					wp_script_add_data($handle, 'defer', true);
+				//Defer scripts
+				if ( !empty($to_defer) && is_array($to_defer) ){
+					foreach ( $to_defer as $handle ){
+						wp_script_add_data($handle, 'defer', true);
+					}
 				}
-			}
 
-			//Async scripts
-			if ( !empty($to_async) && is_array($to_async) ){
-				foreach ( $to_async as $handle ){
-					wp_script_add_data($handle, 'async', true);
+				//Async scripts
+				if ( !empty($to_async) && is_array($to_async) ){
+					foreach ( $to_async as $handle ){
+						wp_script_add_data($handle, 'async', true);
+					}
 				}
 			}
 		}
 
 		//Add defer, async, and/or crossorigin attributes to scripts
 		public function defer_async_scripts($tag, $handle){
-			$crossorigin_exececution = wp_scripts()->get_data($handle, 'crossorigin');
-			$defer_exececution = wp_scripts()->get_data($handle, 'defer');
-			$async_exececution = wp_scripts()->get_data($handle, 'async');
-			$module_execution = wp_scripts()->get_data($handle, 'module');
+			if ( !$this->is_admin_page(true) ){
+				$crossorigin_exececution = wp_scripts()->get_data($handle, 'crossorigin');
+				$defer_exececution = wp_scripts()->get_data($handle, 'defer');
+				$async_exececution = wp_scripts()->get_data($handle, 'async');
+				$module_execution = wp_scripts()->get_data($handle, 'module');
 
-			//Add module type attribute if it is requested
-			if ( !empty($module_execution) && strpos($tag, "type='module'") === false ){
-				$tag = str_replace("type='text/javascript'", "type='module'", $tag); //Change the type='text/javascript' attribute to type='module'
-			}
-
-			//Add crossorigin attribute if it is requested and does not already exist
-			if ( !empty($crossorigin_exececution) && strpos($tag, 'crossorigin=') === false ){
-				$tag = str_replace(' src', ' crossorigin="anonymous" src', $tag); //Add the crossorigin attribute
-			}
-
-			//Ignore if neither defer nor async attribute is found
-			if ( empty($defer_exececution) && empty($async_exececution) ){
-				return $tag;
-			}
-
-			//Abort adding async/defer for scripts that have this script as a dependency...? Maybe not?
-			/*
-				foreach ( wp_scripts()->registered as $script ){
-					if ( in_array($handle, $script->deps, true) ){
-						return $tag;
-					}
+				//Add module type attribute if it is requested
+				if ( !empty($module_execution) && strpos($tag, "type='module'") === false ){
+					$tag = str_replace("type='text/javascript'", "type='module'", $tag); //Change the type='text/javascript' attribute to type='module'
 				}
-			*/
 
-			//Add defer attribute if it is requested and does not already exist
-			if ( !empty($defer_exececution) && strpos($tag, 'defer=') === false ){
-				$tag = str_replace(' src', ' defer="defer" src', $tag); //Add the defer attribute
-			}
+				//Add crossorigin attribute if it is requested and does not already exist
+				if ( !empty($crossorigin_exececution) && strpos($tag, 'crossorigin=') === false ){
+					$tag = str_replace(' src', ' crossorigin="anonymous" src', $tag); //Add the crossorigin attribute
+				}
 
-			//Add async attribute if it is requested and does not already exist
-			if ( !empty($async_exececution) && strpos($tag, 'async=') === false ){
-				$tag = str_replace(' src', ' async="async" src', $tag); //Add the async attribute
+				//Ignore if neither defer nor async attribute is found
+				if ( empty($defer_exececution) && empty($async_exececution) ){
+					return $tag;
+				}
+
+				//Abort adding async/defer for scripts that have this script as a dependency...? Maybe not?
+				/*
+					foreach ( wp_scripts()->registered as $script ){
+						if ( in_array($handle, $script->deps, true) ){
+							return $tag;
+						}
+					}
+				*/
+
+				//Add defer attribute if it is requested and does not already exist
+				if ( !empty($defer_exececution) && strpos($tag, 'defer=') === false ){
+					$tag = str_replace(' src', ' defer="defer" src', $tag); //Add the defer attribute
+				}
+
+				//Add async attribute if it is requested and does not already exist
+				if ( !empty($async_exececution) && strpos($tag, 'async=') === false ){
+					$tag = str_replace(' src', ' async="async" src', $tag); //Add the async attribute
+				}
 			}
 
 			return $tag;
@@ -675,7 +684,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Remove jQuery Migrate, but keep jQuery
 		public function remove_jquery_migrate($scripts){
-			if ( $this->get_option('jquery_version') !== 'wordpress' ){
+			if ( !$this->is_admin_page(true) && $this->get_option('jquery_version') !== 'wordpress' ){
 				$scripts->remove('jquery');
 				$scripts->add('jquery', false, array('jquery-core'), null);
 			}

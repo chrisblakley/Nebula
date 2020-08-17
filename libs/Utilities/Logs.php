@@ -60,7 +60,7 @@ if ( !trait_exists('Logs') ){
 				$wpdb->insert($wpdb->nebula_logs, array(
 					'timestamp' => sanitize_text_field(date('U')),
 					'message' => sanitize_text_field($message),
-					'user_id' => intval(get_current_user_id()),
+					'user_id' => intval(get_current_user_id()), //Note: returns 0 in cron jobs
 					'importance' => intval($importance)
 				)); //DB Query
 

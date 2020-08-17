@@ -278,7 +278,7 @@ if ( !trait_exists('Sass') ){
 		}
 
 		//Display any Sass compilation errors that occurred
-		public function output_sass_errors($nebula_warnings){
+		public function output_sass_errors(){
 			global $sass_errors;
 
 			if ( !empty($sass_errors) ){

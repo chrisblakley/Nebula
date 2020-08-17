@@ -1111,7 +1111,7 @@ if ( !trait_exists('Admin') ){
 		//Send an email to the current user and site admin(s)
 		public function send_email_to_admins($subject, $message, $attachments){
 			$nebula_admin_email_sent = get_transient('nebula_admin_email_sent');
-			if ( (empty($nebula_admin_email_sent) || $this->is_debug()) ){
+			if ( empty($nebula_admin_email_sent) || $this->is_debug() ){
 				$current_user = wp_get_current_user();
 				$to = $current_user->user_email;
 				$headers = array(); //Prep a headers array if needed
