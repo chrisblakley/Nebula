@@ -1086,7 +1086,7 @@ if ( !trait_exists('Admin') ){
 				$new_wp_version = get_bloginfo('version');
 
 				$this->add_log('WordPress core was updated to ' . $new_wp_version . '.', 7);
-				$this->usage('WP CoreuUpdate to ' . $new_wp_version);
+				$this->usage('WP Core Update to ' . $new_wp_version);
 
 				$current_user = wp_get_current_user();
 				$subject = 'WordPress core updated to ' . $new_wp_version . ' for ' . html_entity_decode(get_bloginfo('name')) . '.';
@@ -1344,7 +1344,7 @@ if ( !trait_exists('Admin') ){
 
 		//Prevent Yoast from publishing author sitemaps when Nebula author bios are disabled
 		public function disable_yoast_author_indexing(){
-			if ( is_plugin_active('wordpress-seo/wp-seo.php') ){
+			if ( is_plugin_active('wordpress-seo/wp-seo.php') && class_exists('WPSEO_Options') ){
 				WPSEO_Options::set('disable-author', true);
 			}
 		}
@@ -1419,12 +1419,12 @@ if ( !trait_exists('Admin') ){
 
 		//Show File URL column on Media Library listings
 		public function muc_column($cols){
-			$cols["media_url"] = "File URL";
+			$cols['media_url'] = 'File URL';
 			return $cols;
 		}
 
 		public function muc_value($column_name, $id){
-			if ( $column_name === "media_url" ){
+			if ( $column_name === 'media_url' ){
 				echo '<input type="text" width="100%" value="' . wp_get_attachment_url($id) . '" readonly />';
 			}
 		}
