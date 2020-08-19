@@ -2029,8 +2029,8 @@ if ( !trait_exists('Metaboxes') ){
 					<li>Nebula is <?php echo ( empty($nebula_options['unnecessary_metaboxes']) )? '<strong class="nebula-enabled">allowing' : '<strong class="nebula-disabled">removing'; ?> "unnecessary" Dashboard metaboxes</strong>.</li>
 					<li>
 						<?php
-							$dequeue_styles = $nebula_options['dequeue_styles'] ?? array(); //Fallback to empty array so it can be filtered without PHP warnings. Change this to nullish coalescing when supported.
-							$dequeue_scripts = $nebula_options['dequeue_scripts'] ?? array(); //Fallback to empty array so it can be filtered without PHP warnings. Change this to nullish coalescing when supported.
+							$dequeue_styles = ( !empty($nebula_options['dequeue_styles']) )? $nebula_options['dequeue_styles'] : array(); //Fallback to empty array so it can be filtered without PHP warnings. Change this to nullish coalescing when supported.
+							$dequeue_scripts = ( !empty($nebula_options['dequeue_scripts']) )? $nebula_options['dequeue_scripts'] : array(); //Fallback to empty array so it can be filtered without PHP warnings. Change this to nullish coalescing when supported.
 						?>
 						Nebula is <?php echo ( !empty(array_filter($dequeue_styles)) || !empty(array_filter($dequeue_scripts)) )? '<strong class="nebula-disabled">dequeuing styles and scripts' : '<strong class="nebula-enabled">not dequeuing assets'; ?></strong> on the front-end.
 					</li>

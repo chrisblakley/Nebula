@@ -1,5 +1,7 @@
 <?php
 
+//Note: Widgets are all in their own class, so Nebula functions must use nebula() and not $this
+
 if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Widgets') ){
