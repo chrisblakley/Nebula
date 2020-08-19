@@ -1062,7 +1062,9 @@ if ( !trait_exists('Admin') ){
 					$this->usage('Automated Theme Update', array('d11' => 'From ' . $prev_version . ' to ' . $new_version, 'cm1' => $num_theme_updates));
 					$this->add_log('Nebula theme update (via WP) from ' . $prev_version . ' to ' . $new_version, 5);
 
+					apply_filters('update_feedback', __('Sending admin notification email(s)...')); //Need to test this further
 					$this->theme_update_email($prev_version, $prev_version_commit_date, $new_version); //Send email with update information
+
 					$this->update_data('version_legacy', 'false');
 					$this->update_data('need_sass_compile', 'true'); //Compile all SCSS files on next pageview
 					$this->update_data('num_theme_updates', $num_theme_updates);
@@ -1072,6 +1074,7 @@ if ( !trait_exists('Admin') ){
 
 					//Reprocess Sass if enabled
 					if ( $this->get_option('scss') ){
+						apply_filters('update_feedback', __('Re-Processing Sass files...')); //Need to test this further
 						$this->render_scss('all'); //Re-render all SCSS files.
 					}
 				}
