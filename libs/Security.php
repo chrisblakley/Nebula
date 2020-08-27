@@ -19,7 +19,7 @@ if ( !trait_exists('Security') ){
 
 			add_filter('rest_endpoints', array($this, 'rest_endpoints_security'));
 
-			add_action('nebula_footer', array($this, 'cookie_notification'));
+			add_action('wp_footer', array($this, 'cookie_notification'));
 
 			//Disable the file editor for non-developers
 			if ( !$this->is_dev() ){

@@ -1192,7 +1192,7 @@ nebula.eventTracking = function(){
 		});
 
 		//Non-Linked Click Attempts
-		jQuery(document).on('click', 'img', function(e){
+		nebula.dom.document.on('click', 'img', function(e){
 			if ( !jQuery(this).parents('a, button').length ){
 				var thisEvent = {
 					event: e,

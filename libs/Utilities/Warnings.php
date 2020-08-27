@@ -603,59 +603,59 @@ if ( !trait_exists('Warnings') ){
 
 								//Check protocol
 								if ( window.location.href.indexOf('http://') === 0 ){
-									jQuery("#audit-results ul").append('<li>Non-secure http protocol</li>');
+									jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-unlock-alt"></i> Non-secure http protocol</li>');
 								} else if ( window.location.href.indexOf('https://') === 0 ){
 									//check for non-secure resource requests here?
 								}
 
 								//Empty meta description
 								if ( !entireDOM.find('meta[name="description"]').length ){
-									jQuery("#audit-results ul").append('<li>Missing meta description</li>');
+									jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-align-left"></i> Missing meta description</li>');
 								} else {
 									if ( !entireDOM.find('meta[name="description"]').attr('content').length ){
-										jQuery("#audit-results ul").append('<li>Meta description tag exists but is empty</li>');
+										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-align-left"></i> Meta description tag exists but is empty</li>');
 									} else {
 										if ( entireDOM.find('meta[name="description"]').attr('content').length < 60 ){
-											jQuery("#audit-results ul").append('<li>Short meta description</li>');
+											jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-align-left"></i> Short meta description</li>');
 										}
 									}
 								}
 
 								//Check title
 								if ( !document.title.length ){
-									jQuery("#audit-results ul").append('<li>Missing page title</li>');
+									jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Missing page title</li>');
 								} else {
 									if ( document.title.length < 25 ){
-										jQuery("#audit-results ul").append('<li>Short page title</li>');
+										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Short page title</li>');
 									}
 
 									if ( document.title.indexOf('Home') > -1 ){
-										jQuery("#audit-results ul").append('<li>Improve page title keywords (remove "Home")</li>');
+										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Improve page title keywords (remove "Home")</li>');
 									}
 								}
 
 								//Check H1
 								if ( !entireDOM.find('h1').length ){
-									jQuery("#audit-results ul").append('<li>Missing H1 tag</li>');
+									jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Missing H1 tag</li>');
 
 									if ( entireDOM.find('h1').length > 1 ){
-										jQuery("#audit-results ul").append('<li>Too many H1 tags</li>');
+										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Too many H1 tags</li>');
 									}
 								}
 
 								//Check H2
 								if ( !entireDOM.find('h2').length ){
-									jQuery("#audit-results ul").append('<li>Missing H2 tags</li>');
+									jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Missing H2 tags</li>');
 								} else if ( entireDOM.find('h2') <= 2 ){
-									jQuery("#audit-results ul").append('<li>Very few H2 tags</li>');
+									jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Very few H2 tags</li>');
 								}
 
 								//Check that each <article> and <section> has a heading tag
 								//https://www.w3.org/wiki/HTML/Usage/Headings/Missing
 								entireDOM.find('article, section').each(function(){
 									if ( !jQuery(this).find('h1, h2, h3, h4, h5, h6').length ){
-										jQuery(this).addClass('nebula-audit audit-warn').append(jQuery('<div class="audit-desc">Missing heading tag in this ' + jQuery(this).prop("tagName").toLowerCase() + '</div>'));
-										jQuery("#audit-results ul").append('<li>Missing heading tag within a &lt;' + jQuery(this).prop("tagName").toLowerCase() + '&gt; tag.</li>');
+										jQuery(this).addClass('nebula-audit audit-warn').append(jQuery('<div class="audit-desc"><i class="fas fa-fw fa-heading"></i> Missing heading tag in this ' + jQuery(this).prop("tagName").toLowerCase() + '</div>'));
+										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Missing heading tag within a &lt;' + jQuery(this).prop("tagName").toLowerCase() + '&gt; tag.</li>');
 									}
 								});
 
@@ -664,7 +664,7 @@ if ( !trait_exists('Warnings') ){
 									var skipToContentTarget = jQuery('.skip-to-content-link').attr('href');
 
 									if ( skipToContentTarget && !jQuery(skipToContentTarget).length ){
-										jQuery("#audit-results ul").append('<li>Skip to Content link target (' + skipToContentTarget + ') does not exist.</li>');
+										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-link"></i> Skip to Content link target (' + skipToContentTarget + ') does not exist.</li>');
 									}
 								}
 
@@ -672,7 +672,7 @@ if ( !trait_exists('Warnings') ){
 								var commonPlaceholderWords = ['lorem', 'ipsum', 'dolor', 'sit amet', 'consectetur', 'adipiscing', 'malesuada', 'vestibulum']; //Be careful of false positives due to parts of real words (Ex: "amet" in "parameter")
 								jQuery.each(commonPlaceholderWords, function(i, word){
 									if ( entireDOM.html().indexOf(word) > -1 ){
-										jQuery("#audit-results ul").append('<li>Placeholder text found ("' + word + '").</li>');
+										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-remove-format"></i> Placeholder text found ("' + word + '").</li>');
 										return false;
 									}
 								});
@@ -683,8 +683,8 @@ if ( !trait_exists('Warnings') ){
 										return false;
 									}
 
-									jQuery(this).addClass('nebula-audit audit-error').append(jQuery('<div class="audit-desc">Broken image</div>'));
-									jQuery("#audit-results ul").append('<li>Broken image</li>');
+									jQuery(this).addClass('nebula-audit audit-error').append(jQuery('<div class="audit-desc"><i class="far fa-fw fa-image"></i> Broken image</div>'));
+									jQuery("#audit-results ul").append('<li><i class="far fa-fw fa-image"></i> Broken image</li>');
 								});
 
 								//Images
@@ -695,16 +695,16 @@ if ( !trait_exists('Warnings') ){
 
 									//Check img alt
 									if ( !jQuery(this).is('[alt]') ){
-										jQuery(this).wrap('<div class="nebula-audit audit-error"></div>').after('<div class="audit-desc">Missing ALT attribute</div>');
-										jQuery("#audit-results ul").append('<li>Missing ALT attribute</li>');
+										jQuery(this).wrap('<div class="nebula-audit audit-error"></div>').after('<div class="audit-desc"><i class="far fa-fw fa-image"></i> Missing ALT attribute</div>');
+										jQuery("#audit-results ul").append('<li><i class="far fa-fw fa-image"></i> Missing ALT attribute</li>');
 									}
 
 									//Check image filesize. Note: cached files are 0
 									if ( window.performance ){ //IE10+
 										var iTime = performance.getEntriesByName(jQuery(this).attr('src'))[0];
 										if ( iTime && iTime.transferSize >= 500000 ){
-											jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc">Image filesize over 500kb</div>');
-											jQuery("#audit-results ul").append('<li>Image filesize over 500kb</li>');
+											jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-image"></i> Image filesize over 500kb</div>');
+											jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-image"></i> Image filesize over 500kb</li>');
 										}
 									}
 
@@ -713,14 +713,14 @@ if ( !trait_exists('Warnings') ){
 
 									//Check image width
 									if ( jQuery(this)[0].naturalWidth > 1200 ){
-										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc">Image wider than 1200px</div>');
-										jQuery("#audit-results ul").append('<li>Image wider than 1200px</li>');
+										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-image"></i> Image wider than 1200px</div>');
+										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-image"></i> Image wider than 1200px</li>');
 									}
 
 									//Check image link
 									if ( !jQuery(this).parents('a').length ){
-										jQuery(this).wrap('<div class="nebula-audit audit-notice"></div>').after('<div class="audit-desc">Unlinked Image</div>');
-										jQuery("#audit-results ul").append('<li>Unlinked image</li>');
+										jQuery(this).wrap('<div class="nebula-audit audit-notice"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-unlink"></i> Unlinked Image</div>');
+										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-image"></i> Unlinked image</li>');
 									}
 								});
 
@@ -731,8 +731,8 @@ if ( !trait_exists('Warnings') ){
 										var vTime = performance.getEntriesByName(jQuery(this).find('source').attr('src'))[0];
 
 										if ( vTime && vTime.transferSize >= 5000000 ){ //5mb+
-											jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc">Video filesize over 5mb</div>');
-											jQuery("#audit-results ul").append('<li>Video filesize over 5mb</li>');
+											jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-file-video"></i> Video filesize over 5mb</div>');
+											jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-file-video"></i> Video filesize over 5mb</li>');
 										}
 									}
 
@@ -741,8 +741,8 @@ if ( !trait_exists('Warnings') ){
 
 									//Check unmuted autoplay
 									if ( jQuery(this).is('[autoplay]') && !jQuery(this).is('[muted]') ){
-										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc">Autoplay without muted attribute</div>');
-										jQuery("#audit-results ul").append('<li>Videos set to autoplay without being muted will not autoplay in Chrome.</li>');
+										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-video"></i> Autoplay without muted attribute</div>');
+										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-video"></i> Videos set to autoplay without being muted will not autoplay in Chrome.</li>');
 									}
 								});
 
@@ -762,14 +762,14 @@ if ( !trait_exists('Warnings') ){
 									});
 
 									if ( formFieldCount > 6 ){
-										jQuery(this).wrap('<div class="nebula-audit audit-notice"></div>').after('<div class="audit-desc">Many form fields</div>');
-										jQuery("#audit-results ul").append('<li>Many form fields</li>');
+										jQuery(this).wrap('<div class="nebula-audit audit-notice"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-pencil-alt"></i> Many form fields</div>');
+										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-pencil-alt"></i> Many form fields</li>');
 									}
 								});
 
 								//Check for modals inside of #body-wrapper
 								if ( entireDOM.find('#body-wrapper .modal').length ){
-									jQuery("#audit-results ul").append('<li>Modal found inside of #body-wrapper. Move modals to the footer outside of the #body-wrapper div.</li>');
+									jQuery("#audit-results ul").append('<li><i class="far fa-fw fa-window-restore"></i> Modal found inside of #body-wrapper. Move modals to the footer outside of the #body-wrapper div.</li>');
 								}
 
 								<?php do_action('nebula_audits_js'); ?>
@@ -785,7 +785,7 @@ if ( !trait_exists('Warnings') ){
 								<?php if ( !(is_home() || is_front_page()) ): ?>
 									//Check breadcrumb schema tag
 									if ( !jQuery('[itemtype*=BreadcrumbList]').length ){
-										jQuery("#audit-results ul").append('<li>Missing breadcrumb schema tag</li>');
+										jQuery("#audit-results ul").append('<li><i class="fas fa-bread-slice"></i> Missing breadcrumb schema tag</li>');
 									}
 								<?php endif; ?>
 

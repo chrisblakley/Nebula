@@ -594,6 +594,21 @@ if ( !trait_exists('Dashboard') ){
 			do_action('nebula_developer_info');
 			echo '<ul class="nebula-fa-ul serverdetections">';
 
+			//Environment Type
+			if ( function_exists('wp_get_environment_type') ){ //New as of WP 5.5 (August 2020). Remove this conditional eventually.
+				$environment_type = ucwords(wp_get_environment_type());
+				$environment_type_icon = 'fa-industry'; //Assume production by default
+				if ( $environment_type === 'Staging' ){
+					$environment_type_icon = 'fa-pencil-ruler';
+				} elseif ( $environment_type === 'Development' ){
+					$environment_type_icon = 'fa-hard-hat';
+				} elseif ( $environment_type === 'Test' ){
+					$environment_type_icon = 'fa-flask';
+				}
+
+				echo '<li><i class="fas fa-fw ' . $environment_type_icon . '"></i> Environment Type: <strong>' . $environment_type . '</strong></li>';
+			}
+
 			//Domain
 			//@todo "Nebula" 0: Use null coalescing operator here if possible
 			$domain = $this->url_components('domain');

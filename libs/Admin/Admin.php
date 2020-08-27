@@ -1048,12 +1048,12 @@ if ( !trait_exists('Admin') ){
 		}
 
 		//After theme update has been completed
-		public function theme_update_automation($upgrader_object, $options){
+		public function theme_update_automation($wp_upgrader, $hook_extra){
 			$override = apply_filters('pre_nebula_theme_update_automation', null);
 			if ( isset($override) ){return;}
 
 			if ( $this->allow_theme_update() ){
-				if ( $options['type'] === 'theme' && $this->in_array_r('Nebula-master', $options['themes']) ){
+				if ( $hook_extra['type'] === 'theme' && $this->in_array_r('Nebula-master', $hook_extra['themes']) ){
 					$prev_version = $this->get_data('current_version');
 					$prev_version_commit_date = $this->get_data('current_version_date');
 					$new_version = $this->get_data('next_version');
@@ -1062,7 +1062,7 @@ if ( !trait_exists('Admin') ){
 					$this->usage('Automated Theme Update', array('d11' => 'From ' . $prev_version . ' to ' . $new_version, 'cm1' => $num_theme_updates));
 					$this->add_log('Nebula theme update (via WP) from ' . $prev_version . ' to ' . $new_version, 5);
 
-					apply_filters('update_feedback', __('Sending admin notification email(s)...')); //Need to test this further
+					add_filter('update_feedback', __('Sending admin notification email(s)...')); //Need to test this further
 					$this->theme_update_email($prev_version, $prev_version_commit_date, $new_version); //Send email with update information
 
 					$this->update_data('version_legacy', 'false');
@@ -1074,7 +1074,7 @@ if ( !trait_exists('Admin') ){
 
 					//Reprocess Sass if enabled
 					if ( $this->get_option('scss') ){
-						apply_filters('update_feedback', __('Re-Processing Sass files...')); //Need to test this further
+						add_filter('update_feedback', __('Re-Processing Sass files...')); //Need to test this further
 						$this->render_scss('all'); //Re-render all SCSS files.
 					}
 				}
@@ -1086,14 +1086,14 @@ if ( !trait_exists('Admin') ){
 		//Log when WordPress core is updated and notify administrators. This happens for manual and automatic updates.
 		public function log_core_wp_updates($wp_upgrader, $hook_extra){
 			if ( $hook_extra['type'] === 'core' ){
-				$new_wp_version = get_bloginfo('version');
+				$new_wp_version = get_bloginfo('version'); //@todo "Nebula" 0: This is the old version! $wp_grader and $hook_extra do not provide a way to get the new version number...
 
-				$this->add_log('WordPress core was updated to ' . $new_wp_version . '.', 7);
+				$this->add_log('WordPress core was updated from ' . get_bloginfo('version') . '.', 7); //I guess store the old version for now...
 				$this->usage('WP Core Update to ' . $new_wp_version);
 
 				$current_user = wp_get_current_user();
 				$subject = 'WordPress core updated to ' . $new_wp_version . ' for ' . html_entity_decode(get_bloginfo('name')) . '.';
-				$message = '<p>WordPress core has been updated to <strong>' . $new_wp_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url('/') . ') by ' . $current_user->display_name . ' on ' . date_i18n('F j, Y') . ' at ' . date('g:ia') . '.</p>';
+				$message = '<p>WordPress core has been updated for ' . get_bloginfo('name') . ' (' . home_url('/') . ') by ' . $current_user->display_name . ' on ' . date_i18n('F j, Y') . ' at ' . date('g:ia') . '.</p>';
 
 				$this->send_email_to_admins($subject, $message);
 			}
