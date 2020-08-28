@@ -277,7 +277,7 @@ if ( !trait_exists('Security') ){
 		public function cookie_notification(){
 			if ( $this->option('cookie_notification') && empty($_COOKIE['acceptcookies']) ){
 				?>
-				<div id="nebula-cookie-notification">
+				<div id="nebula-cookie-notification" role="region" aria-label="Accept Cookies">
 					<p><?php echo $this->option('cookie_notification'); ?></p>
 					<div class="links">
 						<?php if ( get_privacy_policy_url() ): ?>

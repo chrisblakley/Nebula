@@ -2019,7 +2019,7 @@ if ( !trait_exists('Metaboxes') ){
 					<li>The local Nebula version is <strong><?php echo $this->version('full'); ?></strong> and the remote (Github) version is <strong><?php echo $nebula_data['next_version']; ?></strong>.</li>
 
 					<?php if ( !empty($nebula_data['last_automated_update_date']) ): ?>
-						<li>Nebula was last updated via the WordPress updater on <strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['last_automated_update_date']); ?></strong> by <strong><?php echo $nebula_data['last_automated_update_user']; ?></strong>.</li>
+						<li>Nebula was last updated via the WordPress updater <strong><?php echo human_time_diff($nebula_data['last_automated_update_date']); ?> ago</strong> (<strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['last_automated_update_date']); ?></strong>) by <strong><?php echo $nebula_data['last_automated_update_user']; ?></strong>.</li>
 					<?php endif; ?>
 
 					<li><strong>WordPress Core update notifications</strong> are <?php echo ( empty($nebula_options['wp_core_updates_notify']) )? '<strong class="nebula-disabled">hidden' : '<strong class="nebula-enabled">allowed'; ?></strong> by Nebula.</li>
