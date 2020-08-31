@@ -972,6 +972,56 @@ nebula.eventTracking = function(){
 
 		//Keyboard Shortcut (Non-interaction because they are not taking explicit action with the webpage)
 		nebula.dom.document.on('keydown', function(e){
+			window.modifiedZoomLevel = window.modifiedZoomLevel || 0; //Scope to window so it is not reset every event. Note: This is just how it was modified and not the actual zoom level! Zoom level is saved between pageloads so it may have started at non-zero!
+
+			//Ctrl+ (Zoom In)
+			if ( (e.ctrlKey || e.metaKey) && (e.which === 187 || e.which === 107) ){ //187 is plus (and equal), 107 is plus on the numpad
+				modifiedZoomLevel++; //Increment the zoom level iterator
+
+				var thisEvent = {
+					event: e,
+					category: 'Keyboard Shortcut',
+					action: 'Zoom In (Ctrl+)',
+					modifiedZoomLevel: modifiedZoomLevel
+				};
+
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				ga('send', 'event', thisEvent.category, thisEvent.action, 'Modified Zoom Level: ' + thisEvent.modifiedZoomLevel, {'nonInteraction': true});
+				window.dataLayer.push({'event': 'nebula-keyboard-shortcut', 'nebula-event': thisEvent});
+			}
+
+			//Ctrl- (Zoom Out)
+			if ( (e.ctrlKey || e.metaKey) && (e.which === 189 || e.which === 109) ){ //189 is minus, 109 is minus on the numpad
+				modifiedZoomLevel--; //Decrement the zoom level iterator
+
+				var thisEvent = {
+					event: e,
+					category: 'Keyboard Shortcut',
+					action: 'Zoom Out (Ctrl-)',
+					modifiedZoomLevel: modifiedZoomLevel
+				};
+
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				ga('send', 'event', thisEvent.category, thisEvent.action, 'Modified Zoom Level: ' + thisEvent.modifiedZoomLevel, {'nonInteraction': true});
+				window.dataLayer.push({'event': 'nebula-keyboard-shortcut', 'nebula-event': thisEvent});
+			}
+
+			//Ctrl+0 (Reset Zoom)
+			if ( (e.ctrlKey || e.metaKey) && (e.which === 48 || e.which === 0 || e.which === 96) ){ //48 is 0 (Mac), 0 is Windows 0, and 96 is Windows numpad
+				modifiedZoomLevel = 0; //Reset the zoom level iterator
+
+				var thisEvent = {
+					event: e,
+					category: 'Keyboard Shortcut',
+					action: 'Reset Zoom (Ctrl+0)',
+					modifiedZoomLevel: modifiedZoomLevel
+				};
+
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				ga('send', 'event', thisEvent.category, thisEvent.action, 'Modified Zoom Level: ' + thisEvent.modifiedZoomLevel, {'nonInteraction': true});
+				window.dataLayer.push({'event': 'nebula-keyboard-shortcut', 'nebula-event': thisEvent});
+			}
+
 			//Ctrl+F or Cmd+F (Find)
 			if ( (e.ctrlKey || e.metaKey) && e.which === 70 ){
 				var thisEvent = {
