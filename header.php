@@ -11,6 +11,8 @@
 			<?php do_action('nebula_body_open'); ?>
 
 			<header id="header-section">
+				<a class="skip-to-content-link sr-only" href="#content-section">Skip to Content</a>
+
 				<?php if ( (get_theme_mod('nebula_offcanvas_menu', true) && (has_nav_menu('mobile') || has_nav_menu('primary'))) || get_theme_mod('nebula_mobile_search', true) ): ?>
 					<div id="mobilebarcon">
 						<div class="row mobilenavcon">

@@ -645,7 +645,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443 ){
 				$secureServer = '<small class="secured-connection"><i class="fas fa-fw fa-lock"></i>Secured Connection</small>';
 			}
-			echo '<li><i class="fas fa-fw fa-upload"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank" rel="noopener noreferrer">' . $_SERVER['SERVER_ADDR'] . '</a></strong> ' . $secureServer . '</li>';
+			echo '<li><i class="fas fa-fw fa-upload"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank" rel="noopener noreferrer">' . apply_filters('nebula_dashboard_server_ip', $_SERVER['SERVER_ADDR']) . '</a></strong> ' . $secureServer . '</li>';
 
 			//Server operating system
 			if ( strpos(strtolower(PHP_OS), 'linux') !== false ){

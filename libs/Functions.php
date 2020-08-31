@@ -64,7 +64,6 @@ trait Functions {
 		add_action('wp_head', array($this, 'internal_suggestions'));
 		add_filter('body_class', array($this, 'body_classes'));
 		add_filter('post_class', array($this, 'post_classes'));
-		add_action('nebula_body_open', array($this, 'skip_to_content_link'));
 		add_filter('wp_get_attachment_url', array($this, 'wp_get_attachment_url_force_protocol'));
 		add_filter('embed_oembed_html', array($this, 'oembed_modifiers'), 9999, 4);
 
@@ -2832,11 +2831,6 @@ trait Functions {
 
 		$this->timer('Nebula Post Classes', 'end');
 		return $classes;
-	}
-
-	//G1 Screen Reader Skip to Content Link https://www.w3.org/TR/WCAG20-TECHS/G1
-	public function skip_to_content_link(){
-		echo '<a class="skip-to-content-link sr-only" href="#content-section">Skip to Content</a>';
 	}
 
 	//Make sure attachment URLs match the protocol (to prevent mixed content warnings).

@@ -231,32 +231,32 @@ a.nebula-share-btn {display: inline-block; padding: 5px 7px; border-radius: 3px;
 // ===========================
 
 //@include file_icon(doc docx, f1c2, #2b5797);
-@mixin file_icon($filetypes, $unicode: f016, $color: #292b2c, $specific: false){
+@mixin file_icon($filetypes, $unicode: "\f016", $color: #292b2c, $specific: false){
 	@each $filetype in $filetypes {
 		@if $specific {
 			a.icon[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
-				&:before {content: "\#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
+				&:before {content: "#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
 			}
 		} @else {
 			a[href$=".#{$filetype}"]:not(.no-icon):not(.btn):not(.wp-block-button__link),
 			li.icon a[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
-				&:before {content: "\#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
+				&:before {content: "#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
 			}
 		}
 	}
 }
 
-@include file_icon(doc docx, f1c2, #2b5797);
-@include file_icon(xls xlsx, f1c3, #1e7145);
-@include file_icon(ppt pptx, f1c4, #d04525);
-@include file_icon(pdf pdfx, f1c1, #eb3b00);
-@include file_icon(zip zipx rar gz tar, f1c6, #777);
-@include file_icon(txt rtf, f15c, #777);
-@include file_icon(html, f1c9, #f1672c, true);
-@include file_icon(php, f1c9, #5a68a5, true);
-@include file_icon(js, f1c9, #f1bf26, true);
-@include file_icon(css scss, f1c9, #30a9dc, true);
-@include file_icon(swf, f1c9, #c31e24, true);
+@include file_icon(doc docx, "\f1c2", #2b5797);
+@include file_icon(xls xlsx, "\f1c3", #1e7145);
+@include file_icon(ppt pptx, "\f1c4", #d04525);
+@include file_icon(pdf pdfx, "\f1c1", #eb3b00);
+@include file_icon(zip zipx rar gz tar, "\f1c6", #777);
+@include file_icon(txt rtf, "\f15c", #777);
+@include file_icon(html, "\f1c9", #f1672c, true);
+@include file_icon(php, "\f1c9", #5a68a5, true);
+@include file_icon(js, "\f1c9", #f1bf26, true);
+@include file_icon(css scss, "\f1c9", #30a9dc, true);
+@include file_icon(swf, "\f1c9", #c31e24, true);
 
 a.white, li.icon.white a {@include link-colors(#fff, #ccc);
 	&:before {color: #fff !important;}
