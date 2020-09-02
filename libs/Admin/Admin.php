@@ -165,7 +165,7 @@ if ( !trait_exists('Admin') ){
 
 		//Force expire query transients when posts/pages are saved.
 		public function clear_transients(){
-			if ( is_plugin_active('transients-manager/transients-manager.php') ){
+			if ( class_exists('PW_Transients_Manager') ){
 				$transient_manager = new PW_Transients_Manager();
 				$transient_manager->delete_transients_with_expirations();
 			} else {
@@ -1347,7 +1347,7 @@ if ( !trait_exists('Admin') ){
 
 		//Prevent Yoast from publishing author sitemaps when Nebula author bios are disabled
 		public function disable_yoast_author_indexing(){
-			if ( is_plugin_active('wordpress-seo/wp-seo.php') && class_exists('WPSEO_Options') ){
+			if ( class_exists('WPSEO_Options') ){
 				WPSEO_Options::set('disable-author', true);
 			}
 		}
@@ -1440,10 +1440,8 @@ if ( !trait_exists('Admin') ){
 		//Clear caches when plugins are activated if W3 Total Cache is active
 		public function clear_all_w3_caches(){
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
-			if ( is_plugin_active('w3-total-cache/w3-total-cache.php') && isset($_SERVER['activate']) && $_SERVER['activate'] == 'true'){
-				if ( function_exists('w3tc_pgcache_flush') ){
-					w3tc_pgcache_flush();
-				}
+			if ( function_exists('w3tc_pgcache_flush') && isset($_SERVER['activate']) && $_SERVER['activate'] == 'true'){
+				w3tc_pgcache_flush();
 			}
 		}
 

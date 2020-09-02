@@ -909,7 +909,7 @@ trait Functions {
 
 	//Use WP Pagenavi if active, or manually paginate.
 	public function paginate(){
-		if ( is_plugin_active('wp-pagenavi/wp-pagenavi.php') ){
+		if ( function_exists('wp_pagenavi') ){
 			wp_pagenavi();
 		} else {
 			global $wp_query;
@@ -2592,7 +2592,7 @@ trait Functions {
 
 			//Query the DB with clues from the requested URL
 			$this->error_query = new WP_Query(array('post_status' => 'publish', 'posts_per_page' => 4, 's' => str_replace('-', ' ', $this->slug_keywords)));
-			if ( is_plugin_active('relevanssi/relevanssi.php') ){
+			if ( function_exists('relevanssi_do_query') ){
 				relevanssi_do_query($this->error_query);
 			}
 
