@@ -275,13 +275,22 @@ if ( !trait_exists('Warnings') ){
 					);
 				}
 
-				//Check if Google Optimize is enabled. This alert is because the Google Optimize style snippet will add a whitescreen effect during loading and should be disabled when not actively experimenting.
+				//Check if Google Optimize is enabled
 				if ( $this->get_option('google_optimize_id') ){
 					$nebula_warnings[] = array(
 						'level' => 'error',
 						'description' => '<i class="far fa-fw fa-window-restore"></i> <a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!',
 						'url' => 'https://optimize.google.com/optimize/home/'
 					);
+
+					//Google Optimize requires Google Analytics
+					if ( !$this->get_option('ga_tracking_id') && !$this->get_option('gtm_id') ){
+						$nebula_warnings[] = array(
+							'level' => 'error',
+							'description' => '<i class="far fa-fw fa-window-restore"></i> <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Google Optimize ID</a> exists without a <a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics Tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">GTM ID</a>.',
+							'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id'
+						);
+					}
 				}
 
 				//Service Worker checks

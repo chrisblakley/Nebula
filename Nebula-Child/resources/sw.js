@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 const THEME_NAME = 'nebula-child';
-const NEBULA_VERSION = 'v8.4.2.0032'; //Wednesday, September 2, 2020 12:04:36 AM
+const NEBULA_VERSION = 'v8.4.7.4983'; //Monday, September 7, 2020 11:57:38 AM
 const OFFLINE_URL = 'https://nebula.gearside.com/offline/';
 const OFFLINE_IMG = 'https://nebula.gearside.com/wp-content/themes/Nebula-master/assets/img/offline.svg';
 const OFFLINE_GA_DIMENSION = 'cd2';
@@ -39,7 +39,19 @@ workbox.precaching.precacheAndRoute([
 	{url: HOME_URL, revision: revisionNumber},
 ]);
 
+//Ignore query strings
+const ignoreQueryStringPlugin = {
+    cachedResponseWillBeUsed: async({cacheName, request, matchOptions, cachedResponse, event}) => {
+        if ( cachedResponse ){
+            return cachedResponse; //Return the cached repsonse if an exact match is found
+        }
+
+        return caches.match(request.url, {ignoreSearch: true}); //Try finding a match without query strings this time
+    }
+};
+
 //Check if we need to force network retrieval for specific resources (false = network only, true = allow caching)
+//Note: When this returns false, no catch handler will be used (so no offline file replacement)
 function isCacheAllowed(event){
 	if ( event.request ){ //Use event.request for non-Workbox requests (just in case)
 		event = event.request;
@@ -59,7 +71,7 @@ function isCacheAllowed(event){
 	}
 
 	//Check file extensions
-	let fileRegex = /.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/;
+	let fileRegex = /\.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/;
 	if ( fileRegex.test(eventReferrer) || fileRegex.test(eventURL) ){
 		return false;
 	}
@@ -91,7 +103,8 @@ workbox.routing.registerRoute(
 				maxEntries: 100, //Cache a maximum number of resources (Figure out a reasonable amount here...)
 				maxAgeSeconds: 7 * 24 * 60 * 60, //Cache for a maximum of a week
 				purgeOnQuotaError: true //Purge if an error occurs
-			})
+			}),
+			ignoreQueryStringPlugin
 		]
 	})
 );
@@ -106,7 +119,8 @@ workbox.routing.registerRoute(
 				maxEntries: 250, //Cache a maximum of 250 resources (Figure out a reasonable amount here...)
 				maxAgeSeconds: 30 * 24 * 60 * 60, //Cache for a maximum of a month
 				purgeOnQuotaError: true //Purge if an error occurs
-			})
+			}),
+			ignoreQueryStringPlugin
 		]
 	})
 );

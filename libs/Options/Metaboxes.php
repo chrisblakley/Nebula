@@ -665,8 +665,8 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="google_optimize_id">Google Optimize ID</label>
 					<input type="text" name="nebula_options[google_optimize_id]" id="google_optimize_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_optimize_id']; ?>" placeholder="GTM-0000000" />
-					<p class="nebula-help-text short-help form-text text-muted">The ID used by <a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener noreferrer">Google Optimize</a> to enable tests.</p>
-					<p class="nebula-help-text more-help form-text text-muted">Entering the ID here will enable both the Google Analytics require tag and the style tag hiding snippet in the head.</p>
+					<p class="nebula-help-text short-help form-text text-muted">The ID used by <a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener noreferrer">Google Optimize</a> to enable experiences/tests.</p>
+					<p class="nebula-help-text more-help form-text text-muted">Entering the ID here will load the Google Optimize script in the <code>&lt;head&gt;</code> of all pages.</p>
 					<p class="option-keywords">remote resource minor page speed impact optimization optimize</p>
 				</div>
 

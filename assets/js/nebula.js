@@ -343,7 +343,7 @@ nebula.prefetch = function(url, callback, element){
 		}
 
 		//Ignore certain files
-		if ( /.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/.test(url) ){
+		if ( /\.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/.test(url) ){
 			return false;
 		}
 
@@ -360,6 +360,7 @@ nebula.prefetch = function(url, callback, element){
 				return false;
 			}
 		});
+
 		window.requestIdleCallback(function(){ //Wait until the browser is idle before prefetching
 			if ( !jQuery('link[rel="prefetch"][href="' + url + '"]').length ){ //If prefetch link for this URL has not yet been added to the DOM
 				jQuery('<link rel="prefetch" href="' + url + '">').on('load', callback).appendTo('head'); //Append a prefetch link element for this URL to the DOM

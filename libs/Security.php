@@ -32,7 +32,7 @@ if ( !trait_exists('Security') ){
 		public function security_headers(){
 			header('x-frame-options: SAMEORIGIN');
 			header('X-XSS-Protection: 1; mode=block');
-			header('X-Content-Type-Options: nosniff');
+			header('X-Content-Type-Options: nosniff'); //Ensure MIME types match expected
 			header('Access-Control-Allow-Headers: X-WP-Nonce'); //Allow this header for WP Block Editor compatibility with CSP
 
 			if ( is_ssl() ){

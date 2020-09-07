@@ -283,7 +283,7 @@ if ( !trait_exists('Optimization') ){
 				global $wp_styles;
 
 				foreach ( $wp_styles->queue as $handle ){
-					if ( wp_style_is($handle, 'registered') ){ //If this style is still registered
+					if ( wp_style_is($handle, 'registered') && !empty($wp_styles->registered[$handle]->src) ){ //If this style is still registered (and src exists)
 						$ver = ( !empty($wp_styles->registered[$handle]->ver) )? '?ver=' . $wp_styles->registered[$handle]->ver : '';
 						$this->http2_server_push_file($wp_styles->registered[$handle]->src . $ver, 'style');
 					}
@@ -296,7 +296,7 @@ if ( !trait_exists('Optimization') ){
 				global $wp_scripts;
 
 				foreach ( $wp_scripts->queue as $handle ){
-					if ( wp_script_is($handle, 'registered') ){ //If this script is still registered
+					if ( wp_script_is($handle, 'registered') && !empty($wp_scripts->registered[$handle]->src) ){ //If this script is still registered (and src exists)
 						$ver = ( !empty($wp_scripts->registered[$handle]->ver) )? '?ver=' . $wp_scripts->registered[$handle]->ver : '';
 						$this->http2_server_push_file($wp_scripts->registered[$handle]->src . $ver, 'script');
 					}

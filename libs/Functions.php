@@ -38,7 +38,6 @@ trait Functions {
 		}
 
 		add_action('wp_loaded', array($this, 'favicon_cache'));
-		add_action('nebula_head_open', array($this, 'google_optimize_style'));
 		add_action('after_setup_theme', array($this, 'nav_menu_locations'));
 		add_filter('nav_menu_link_attributes', array($this, 'add_menu_attributes'), 10, 3);
 
@@ -352,17 +351,6 @@ trait Functions {
 			header('Location: ' . get_theme_file_uri('/assets/img/meta') . '/favicon.ico');
 			exit;
 		}
-	}
-
-	//Google Optimize Style Tag
-	public function google_optimize_style(){
-		if ( $this->get_option('google_optimize_id') ){ ?>
-			<style>.async-hide {opacity: 0 !important} </style>
-			<script>(function(a,s,y,n,c,h,i,d,e){s.className+=' '+y;h.end=i=function(){
-			s.className=s.className.replace(RegExp(' ?'+y),'')};(a[n]=a[n]||[]).hide=h;
-			setTimeout(function(){i();h.end=null},c);})(window,document.documentElement,
-			'async-hide','dataLayer',2000,{'<?php echo $this->get_option('google_optimize_id'); ?>':true,});</script>
-		<?php }
 	}
 
 	//Convenience function to return only the URL for specific thumbnail sizes of an ID.
