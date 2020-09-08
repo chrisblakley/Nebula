@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 const THEME_NAME = 'nebula-child';
-const NEBULA_VERSION = 'v8.4.7.4983'; //Monday, September 7, 2020 11:57:38 AM
+const NEBULA_VERSION = 'v8.4.7.9318'; //Monday, September 7, 2020 10:21:47 PM
 const OFFLINE_URL = 'https://nebula.gearside.com/offline/';
 const OFFLINE_IMG = 'https://nebula.gearside.com/wp-content/themes/Nebula-master/assets/img/offline.svg';
 const OFFLINE_GA_DIMENSION = 'cd2';
@@ -41,13 +41,13 @@ workbox.precaching.precacheAndRoute([
 
 //Ignore query strings
 const ignoreQueryStringPlugin = {
-    cachedResponseWillBeUsed: async({cacheName, request, matchOptions, cachedResponse, event}) => {
-        if ( cachedResponse ){
-            return cachedResponse; //Return the cached repsonse if an exact match is found
-        }
+	cachedResponseWillBeUsed: async({cacheName, request, matchOptions, cachedResponse, event}) => {
+		if ( cachedResponse ){
+			return cachedResponse; //Return the cached repsonse if an exact match is found
+		}
 
-        return caches.match(request.url, {ignoreSearch: true}); //Try finding a match without query strings this time
-    }
+		return caches.match(request.url, {ignoreSearch: true}); //Try finding a match without query strings this time
+	}
 };
 
 //Check if we need to force network retrieval for specific resources (false = network only, true = allow caching)

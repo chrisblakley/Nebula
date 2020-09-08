@@ -252,7 +252,7 @@ trait Functions {
 				"$1" . get_theme_file_uri('/assets/img/meta') . "/android-chrome-512x512.png$3",
 				"$1" . $this->manifest_json_location() . "$3",
 				"$1" . home_url('/') . "$3",
-				"$1" . home_url('/') . "?utm_source=pwa$3",
+				"$1" . home_url('/') . "?utm_source=pwa$3", //If getting "start_url does not respond" when offline in Lighthouse, make sure you are not disabling the cache in DevTools!
 			);
 
 			$sw_js = preg_replace($find, $replace, $sw_js);
@@ -331,7 +331,8 @@ trait Functions {
 					$manifest_json .= '{
 						"src": "' . get_theme_file_uri('/assets/img/meta') . '/' . $filename . '",
 						"sizes": "' . $dimensions[0] . 'x' . $dimensions[1] . '",
-						"type": "image/png"
+						"type": "image/png",
+						"purpose": "any maskable"
 					}, ';
 				}
 			}

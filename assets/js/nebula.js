@@ -1,3 +1,5 @@
+'use strict';
+
 window.performance.mark('(Nebula) Inside nebula.js');
 jQuery.noConflict();
 
