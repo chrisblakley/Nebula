@@ -1579,7 +1579,7 @@ nebula.eventTracking = function(){
 
 		//DataTables Filter
 		nebula.dom.document.on('keyup', '.dataTables_filter input', function(e){
-			oThis = jQuery(this);
+			var oThis = jQuery(this);
 			var thisEvent = {
 				event: e,
 				category: 'DataTables',
@@ -4303,7 +4303,7 @@ nebula.pre = function(){
 		});
 
 		nebula.dom.document.on('click', '.nebula-selectcopy-code', function(){
-			oThis = jQuery(this);
+			var oThis = jQuery(this);
 			if ( oThis.hasClass('error') ){ //If we already errored, stop trying
 				return false;
 			}
