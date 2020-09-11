@@ -1914,14 +1914,11 @@ if ( !trait_exists('Metaboxes') ){
 		 ===========================*/
 
 		public function dequeue_styles_metabox($nebula_options){
-			$all_registered_styles = array();
-			global $wp_styles;
-			foreach ( $wp_styles->registered as $style ){
-				if ( strpos($style->src, 'wp-content') ){ //Limit the options to non-core scripts
-					$all_registered_styles[] = array(
-						'handle' => $style->handle,
-						'src' => $style->src
-					);
+			$all_registered_styles = get_option('optimizable_registered_styles');
+			$existing_dequeued_styles = array_filter($nebula_options['dequeue_styles']); //This gets any non-empty rules that already exist
+			foreach ( $existing_dequeued_styles as $handle => $rule ){
+				if ( array_search($handle, array_column($all_registered_styles, 'handle')) ){
+					unset($existing_dequeued_styles[$handle]);
 				}
 			}
 
@@ -1929,6 +1926,7 @@ if ( !trait_exists('Metaboxes') ){
 			usort($all_registered_styles, function($a, $b){
 				return strcasecmp($a['handle'], $b['handle']);
 			});
+
 			?>
 				<div class="option-sub-group">
 					<p>
@@ -1950,6 +1948,28 @@ if ( !trait_exists('Metaboxes') ){
 							<p class="option-keywords">dequeue plugins css styles assets optimization</p>
 						</div>
 					<?php endforeach; ?>
+
+					<?php if ( !empty($existing_dequeued_styles) ): ?>
+						<p>Additionally, the following handles had existing rules, but may not actually be used on the front-end:</p>
+
+						<?php foreach ( $existing_dequeued_styles as $handle => $rule ): ?>
+							<div class="form-group no-help <?php echo ( !empty($nebula_options['dequeue_styles'][$handle]) )? 'active' : ''; ?>">
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<div class="input-group-text" title="<?php echo ( !empty($nebula_options['dequeue_styles'][$handle]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fab fa-fw fa-css3-alt"></i> <?php echo $handle; ?></div>
+									</div>
+									<input type="text" name="nebula_options[dequeue_styles][<?php echo $handle; ?>]" id="<?php echo $handle; ?>" class="form-control nebula-validate-regex" data-valid-regex="^(\*)$|^(([0-9a-z!_()]+)(,\s?)*)+$" value="<?php echo ( !empty($nebula_options['dequeue_styles'][$handle]) )? $nebula_options['dequeue_styles'][$handle] : ''; ?>" />
+								</div>
+								<p class="nebula-help-text short-help form-text text-muted"></p>
+								<p class="option-keywords">dequeue plugins css styles assets optimization</p>
+							</div>
+						<?php endforeach; ?>
+					<?php endif; ?>
+
+					<p>
+						Assets only appear in this list when a front-end scan is performed.<br />
+						<a class="button button-secondary" href="<?php echo get_home_url('/'); ?>?nebula-scan=reset" target="_blank">Re-Scan Front-End <i class="fas fa-fw fa-external-link-alt"></i></a>
+					</p>
 				</div>
 			<?php
 
@@ -1957,14 +1977,11 @@ if ( !trait_exists('Metaboxes') ){
 		}
 
 		public function dequeue_scripts_metabox($nebula_options){
-			$all_registered_scripts = array();
-			global $wp_scripts;
-			foreach ( $wp_scripts->registered as $script ){
-				if ( strpos($script->src, 'wp-content') ){ //Limit the options to non-core scripts
-					$all_registered_scripts[] = array(
-						'handle' => $script->handle,
-						'src' => $script->src
-					);
+			$all_registered_scripts = get_option('optimizable_registered_scripts');
+			$existing_dequeued_scripts = array_filter($nebula_options['dequeue_scripts']); //This gets any non-empty rules that already exist
+			foreach ( $existing_dequeued_scripts as $handle => $rule ){
+				if ( array_search($handle, array_column($all_registered_scripts, 'handle')) ){
+					unset($existing_dequeued_scripts[$handle]);
 				}
 			}
 
@@ -1972,6 +1989,7 @@ if ( !trait_exists('Metaboxes') ){
 			usort($all_registered_scripts, function($a, $b){
 				return strcasecmp($a['handle'], $b['handle']);
 			});
+
 			?>
 				<div class="option-sub-group">
 					<p>
@@ -1985,7 +2003,7 @@ if ( !trait_exists('Metaboxes') ){
 						<div class="form-group no-help <?php echo ( !empty($nebula_options['dequeue_scripts'][$script['handle']]) )? 'active' : ''; ?>">
 							<div class="input-group">
 								<div class="input-group-prepend">
-									<div class="input-group-text" title="<?php echo ( !empty($nebula_options['dequeue_scripts'][$script['handle']]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fab fa-fw fa-js"></i> <?php echo $script['handle']; ?></div>
+									<div class="input-group-text" title="<?php echo ( !empty($nebula_options['dequeue_scripts'][$script['handle']]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fab fa-fw fa-css3-alt"></i> <?php echo $script['handle']; ?></div>
 								</div>
 								<input type="text" name="nebula_options[dequeue_scripts][<?php echo $script['handle']; ?>]" id="<?php echo $script['handle']; ?>" class="form-control nebula-validate-regex" data-valid-regex="^(\*)$|^(([0-9a-z!_()]+)(,\s?)*)+$" value="<?php echo ( !empty($nebula_options['dequeue_scripts'][$script['handle']]) )? $nebula_options['dequeue_scripts'][$script['handle']] : ''; ?>" />
 							</div>
@@ -1993,6 +2011,28 @@ if ( !trait_exists('Metaboxes') ){
 							<p class="option-keywords">dequeue plugins js scripts assets optimization</p>
 						</div>
 					<?php endforeach; ?>
+
+					<?php if ( !empty($existing_dequeued_scripts) ): ?>
+						<p>Additionally, the following handles had existing rules, but may not actually be used on the front-end:</p>
+
+						<?php foreach ( $existing_dequeued_scripts as $handle => $rule ): ?>
+							<div class="form-group no-help <?php echo ( !empty($nebula_options['dequeue_scripts'][$handle]) )? 'active' : ''; ?>">
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<div class="input-group-text" title="<?php echo ( !empty($nebula_options['dequeue_scripts'][$handle]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fab fa-fw fa-css3-alt"></i> <?php echo $handle; ?></div>
+									</div>
+									<input type="text" name="nebula_options[dequeue_scripts][<?php echo $handle; ?>]" id="<?php echo $handle; ?>" class="form-control nebula-validate-regex" data-valid-regex="^(\*)$|^(([0-9a-z!_()]+)(,\s?)*)+$" value="<?php echo ( !empty($nebula_options['dequeue_scripts'][$handle]) )? $nebula_options['dequeue_scripts'][$handle] : ''; ?>" />
+								</div>
+								<p class="nebula-help-text short-help form-text text-muted"></p>
+								<p class="option-keywords">dequeue plugins js scripts assets optimization</p>
+							</div>
+						<?php endforeach; ?>
+					<?php endif; ?>
+
+					<p>
+						Assets only appear in this list when a front-end scan is performed.<br />
+						<a class="button button-secondary" href="<?php echo get_home_url('/'); ?>?nebula-scan=reset" target="_blank">Re-Scan Front-End <i class="fas fa-fw fa-external-link-alt"></i></a>
+					</p>
 				</div>
 			<?php
 

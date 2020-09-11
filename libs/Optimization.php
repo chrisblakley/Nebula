@@ -31,10 +31,10 @@ if ( !trait_exists('Optimization') ){
 			add_action('wp_head', array($this, 'prebrowsing'));
 
 			//Dequeue assets depending on when they are hooked for output
+			add_action('wp_enqueue_scripts', array($this, 'scan_assets'), 9000);
 			add_action('wp_enqueue_scripts', array($this, 'dequeues'), 9001); //Dequeue styles and scripts that are hooked into the wp_enqueue_scripts action
 			add_action('wp_print_styles', array($this, 'dequeues'), 9001); //Dequeue styles that are hooked into the wp_print_styles action
 			add_action('wp_print_scripts', array($this, 'dequeues'), 9001); //Dequeue scripts that are hooked into the wp_print_styles action
-
 			add_action('wp_enqueue_scripts', array($this, 'remove_actions'), 9001);
 
 			add_action('send_headers', array($this, 'service_worker_scope'));
@@ -447,7 +447,7 @@ if ( !trait_exists('Optimization') ){
 
 			//Subpages
 			if ( !is_front_page() ){
-				$default_prefetches[] = home_url('/'); //Prefetch the home page on subpages
+				//$default_prefetches[] = home_url('/'); //Prefetch the home page on subpages. Disabled because this may be loading more than we want on initial pageload
 			}
 
 			//Search Results
@@ -526,6 +526,59 @@ if ( !trait_exists('Optimization') ){
 
 					echo '<link rel="preload" href="' . $preload . '" as="' . $filetype . '" crossorigin="anonymous" />';
 				}
+			}
+		}
+
+		//Scan the front-end styles and scripts to be able to deregister them from Nebula Options
+		public function scan_assets(){
+			if ( !is_admin() && current_user_can('manage_options') && (isset($_GET['nebula-scan']) || isset($_GET['sass']) || isset($_GET['debug']) || $this->get_option('audit_mode')) ){ //Only run on front-end for admin users. Also add a query string so this doesn't run every single pageload
+
+				if ( isset($_GET['nebula-scan']) && $_GET['nebula-scan'] === 'reset' ){ //Use this to reset and re-scan from scratch
+					update_option('optimizable_registered_styles', array());
+					update_option('optimizable_registered_scripts', array());
+				}
+
+				//Styles
+				$already_known_styles = get_option('optimizable_registered_styles'); //This preserves the list between pages
+
+				$all_registered_styles = array();
+				global $wp_styles;
+				foreach ( $wp_styles->registered as $style ){
+					if ( strpos($style->src, 'wp-content') ){ //Limit the options to non-core styles
+						$all_registered_styles[] = array(
+							'handle' => $style->handle,
+							'src' => $style->src
+						);
+					}
+				}
+
+				if ( is_array($already_known_styles) ){
+					$all_registered_styles = array_merge($already_known_styles, $all_registered_styles); //De-dupe and combine arrays
+				}
+
+				$all_registered_styles = array_intersect_key($all_registered_styles, array_unique(array_map('serialize', $all_registered_styles))); //De-dupe the array
+				update_option('optimizable_registered_styles', $all_registered_styles);
+
+				//Scripts
+				$already_known_scripts = get_option('optimizable_registered_scripts'); //This preserves the list between pages
+
+				$all_registered_scripts = array();
+				global $wp_scripts;
+				foreach ( $wp_scripts->registered as $script ){
+					if ( strpos($script->src, 'wp-content') ){ //Limit the options to non-core scripts
+						$all_registered_scripts[] = array(
+							'handle' => $script->handle,
+							'src' => $script->src
+						);
+					}
+				}
+
+				if ( is_array($already_known_scripts) ){
+					$all_registered_scripts = array_merge($already_known_scripts, $all_registered_scripts); //De-dupe and combine arrays
+				}
+
+				$all_registered_scripts = array_intersect_key($all_registered_scripts, array_unique(array_map('serialize', $all_registered_scripts))); //De-dupe the array
+				update_option('optimizable_registered_scripts', $all_registered_scripts);
 			}
 		}
 
