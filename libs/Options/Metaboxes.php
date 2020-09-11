@@ -1915,6 +1915,10 @@ if ( !trait_exists('Metaboxes') ){
 
 		public function dequeue_styles_metabox($nebula_options){
 			$all_registered_styles = get_option('optimizable_registered_styles');
+			if ( empty($all_registered_styles) ){
+				$all_registered_styles = array();
+			}
+
 			$existing_dequeued_styles = array_filter($nebula_options['dequeue_styles']); //This gets any non-empty rules that already exist
 			foreach ( $existing_dequeued_styles as $handle => $rule ){
 				if ( array_search($handle, array_column($all_registered_styles, 'handle')) ){
@@ -1978,6 +1982,10 @@ if ( !trait_exists('Metaboxes') ){
 
 		public function dequeue_scripts_metabox($nebula_options){
 			$all_registered_scripts = get_option('optimizable_registered_scripts');
+			if ( empty($all_registered_scripts) ){
+				$all_registered_scripts = array();
+			}
+
 			$existing_dequeued_scripts = array_filter($nebula_options['dequeue_scripts']); //This gets any non-empty rules that already exist
 			foreach ( $existing_dequeued_scripts as $handle => $rule ){
 				if ( array_search($handle, array_column($all_registered_scripts, 'handle')) ){
