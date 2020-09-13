@@ -460,15 +460,15 @@ trait Functions {
 		$relative_date = human_time_diff($the_date) . ' ago';
 
 		if ( $data['relative'] ){
-			return '<time class="posted-on meta-item post-date relative-date" title="' . date_i18n('F j, Y', $the_date) . '">' . $label . $relative_date . $modified_date_html . '</time>';
+			return '<time class="posted-on meta-item post-date relative-date" title="' . date('F j, Y', $the_date) . '">' . $label . $relative_date . $modified_date_html . '</time>';
 		}
 
 		$day = ( $data['day'] )? date('d', $the_date) . '/' : ''; //If the day should be shown (otherwise, just month and year).
 
 		if ( $data['linked'] && !isset($options['format']) ){
-			return '<span class="posted-on meta-item post-date">' . $label . '<time class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '"><a href="' . home_url('/') . date('Y/m', $the_date) . '/">' . date_i18n('F', $the_date) . '</a> <a href="' . home_url('/') . date('Y/m', $the_date) . '/' . $day . '">' . date('j', $the_date) . '</a>, <a href="' . home_url('/') . date('Y', $the_date) . '/">' . date('Y', $the_date) . '</a></time>' . $modified_date_html . '</span>';
+			return '<span class="posted-on meta-item post-date">' . $label . '<time class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '"><a href="' . home_url('/') . date('Y/m', $the_date) . '/">' . date('F', $the_date) . '</a> <a href="' . home_url('/') . date('Y/m', $the_date) . '/' . $day . '">' . date('j', $the_date) . '</a>, <a href="' . home_url('/') . date('Y', $the_date) . '/">' . date('Y', $the_date) . '</a></time>' . $modified_date_html . '</span>';
 		} else {
-			return '<span class="posted-on meta-item post-date">' . $label . '<time class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . date_i18n($data['format'], $the_date) . '</time>' . $modified_date_html . '</span>';
+			return '<span class="posted-on meta-item post-date">' . $label . '<time class="entry-date" datetime="' . date('c', $the_date) . '" itemprop="datePublished" content="' . date('c', $the_date) . '">' . date($data['format'], $the_date) . '</time>' . $modified_date_html . '</span>';
 		}
 	}
 
@@ -2192,7 +2192,7 @@ trait Functions {
 
 				//Convert times
 				$tweet->time_ago = human_time_diff(strtotime($tweet->created_at)); //Relative time
-				$tweet->time_formatted = date_i18n('l, F j, Y \a\t g:ia', strtotime($tweet->created_at)); //Human readable time
+				$tweet->time_formatted = date('l, F j, Y \a\t g:ia', strtotime($tweet->created_at)); //Human readable time
 				$tweet->time_ago_raw = date('U')-strtotime($tweet->created_at);
 
 				//Convert usernames, hashtags, and URLs into clickable links and add other markup

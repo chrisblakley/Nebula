@@ -395,12 +395,12 @@ if ( !trait_exists('Dashboard') ){
 		//Administrative metabox content
 		public function dashboard_administrative(){
 			$this->timer('Nebula Administrative Dashboard');
-			$third_party_tools = $this->third_party_tools();
+			$third_party_resources = $this->third_party_resources();
 
 			echo '<div class="nebula-metabox-row"><div class="nebula-metabox-col">';
 			echo '<ul class="nebula-fa-ul" style="margin-top: 0;">';
-			foreach ( $third_party_tools['administrative'] as $tool ){
-				echo '<li>' . $tool['icon'] . ' <a href="' . $tool['url'] . '" target="_blank" rel="noopener noreferrer">' . $tool['name'] . '</a></li>';
+			foreach ( $third_party_resources['administrative'] as $resource ){
+				echo '<li>' . $resource['icon'] . ' <a href="' . $resource['url'] . '" target="_blank" rel="noopener noreferrer">' . $resource['name'] . '</a></li>';
 			}
 
 			do_action('nebula_administrative_metabox');
@@ -412,8 +412,8 @@ if ( !trait_exists('Dashboard') ){
 			echo '<div style="max-width: 50%;">';
 			echo '<h3>Social</h3>';
 			echo '<ul class="nebula-fa-ul">';
-			foreach ( $third_party_tools['social'] as $tool ){
-				echo '<li>' . $tool['icon'] . ' <a href="' . $tool['url'] . '" target="_blank" rel="noopener noreferrer">' . $tool['name'] . '</a></li>';
+			foreach ( $third_party_resources['social'] as $resource ){
+				echo '<li>' . $resource['icon'] . ' <a href="' . $resource['url'] . '" target="_blank" rel="noopener noreferrer">' . $resource['name'] . '</a></li>';
 			}
 
 			do_action('nebula_social_metabox');
@@ -680,11 +680,11 @@ if ( !trait_exists('Dashboard') ){
 			if ( !empty($php_version_lifecycle) ){
 				if ( $php_version_lifecycle['lifecycle'] === 'security' ){
 					$php_version_color = '#ca8038'; //Warning
-					$php_version_info = 'This version is nearing end of life. Security updates end on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.';
+					$php_version_info = 'This version is nearing end of life. Security updates end on ' . date('F j, Y', $php_version_lifecycle['end']) . '.';
 					$php_version_cursor = 'help';
 				} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
 					$php_version_color = '#ca3838'; //Danger
-					$php_version_info = 'This version no longer receives security updates! End of life occurred on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.';
+					$php_version_info = 'This version no longer receives security updates! End of life occurred on ' . date('F j, Y', $php_version_lifecycle['end']) . '.';
 					$php_version_cursor = 'help';
 				}
 			}
@@ -765,21 +765,21 @@ if ( !trait_exists('Dashboard') ){
 			function initial_install_date(){
 				$nebula_initialized = nebula()->get_option('initialized'); //Keep this as nebula() because it is a nested function, so $this is scoped differently here.
 				if ( !empty($nebula_initialized) && $nebula_initialized < getlastmod() ){
-					$install_date = '<span title="' . date_i18n('F j, Y', $nebula_initialized) . ' @ ' . date('g:ia', $nebula_initialized) . '" style="cursor: help;"><strong>' . human_time_diff($nebula_initialized) . ' ago</strong></span>';
+					$install_date = '<span title="' . date('F j, Y', $nebula_initialized) . ' @ ' . date('g:ia', $nebula_initialized) . '" style="cursor: help;"><strong>' . human_time_diff($nebula_initialized) . ' ago</strong></span>';
 				} else { //Use the last modified time of the admin page itself
-					$install_date = '<span title="' . date_i18n("F j, Y", getlastmod()) . ' @ ' . date("g:ia", getlastmod()) . '" style="cursor: help;"><strong>' . human_time_diff(getlastmod()) . ' ago</strong></span>';
+					$install_date = '<span title="' . date("F j, Y", getlastmod()) . ' @ ' . date("g:ia", getlastmod()) . '" style="cursor: help;"><strong>' . human_time_diff(getlastmod()) . ' ago</strong></span>';
 				}
 				return $install_date;
 			}
 			echo '<li><i class="far fa-fw fa-calendar"></i> Installed: ' . initial_install_date() . '</li>';
 
 			$latest_file = $this->last_modified();
-			echo '<li><i class="far fa-fw fa-calendar"></i> <span title="' . $latest_file['path'] . '" style="cursor: help;">Modified:</span> <span title="' . date_i18n("F j, Y", $latest_file['date']) . ' @ ' . date("g:ia", $latest_file['date']) . '" style="cursor: help;"><strong>' . human_time_diff($latest_file['date']) . ' ago</strong></span></li>';
+			echo '<li><i class="far fa-fw fa-calendar"></i> <span title="' . $latest_file['path'] . '" style="cursor: help;">Modified:</span> <span title="' . date("F j, Y", $latest_file['date']) . ' @ ' . date("g:ia", $latest_file['date']) . '" style="cursor: help;"><strong>' . human_time_diff($latest_file['date']) . ' ago</strong></span></li>';
 
 			//SCSS last processed date
 			if ( $this->get_data('scss_last_processed') ){
 				$sass_option = ( nebula()->get_option('scss') )? '' : ' <small><em><a href="themes.php?page=nebula_options&tab=functions&option=scss">Sass is currently <strong>disabled</strong> &raquo;</a></em></small>';
-				echo '<li><i class="fab fa-fw fa-sass"></i> Sass Processed: <span title="' . date_i18n("F j, Y", $this->get_data('scss_last_processed')) . ' @ ' . date("g:i:sa", $this->get_data('scss_last_processed')) . '" style="cursor: help;"><strong>' . human_time_diff($this->get_data('scss_last_processed')) . ' ago</strong></span> ' . $sass_option . '</li>';
+				echo '<li><i class="fab fa-fw fa-sass"></i> Sass Processed: <span title="' . date("F j, Y", $this->get_data('scss_last_processed')) . ' @ ' . date("g:i:sa", $this->get_data('scss_last_processed')) . '" style="cursor: help;"><strong>' . human_time_diff($this->get_data('scss_last_processed')) . ' ago</strong></span> ' . $sass_option . '</li>';
 			}
 			echo '</ul>';
 
@@ -1122,7 +1122,7 @@ if ( !trait_exists('Dashboard') ){
 							<li><i class="far fa-fw fa-envelope"></i> <?php echo $contact_email; ?><br /></li>
 						<?php endif; ?>
 
-						<li><i class="far fa-fw fa-<?php echo ( date('Y-m-d', $contact->addedAt/1000) === date('Y-m-d') )? 'clock' : 'calendar'; ?>"></i> <span title="<?php echo date_i18n('F j, Y @ g:ia', $contact->addedAt/1000); ?>" style="cursor: help;"><?php echo human_time_diff($contact->addedAt/1000) . ' ago'; ?></span></li>
+						<li><i class="far fa-fw fa-<?php echo ( date('Y-m-d', $contact->addedAt/1000) === date('Y-m-d') )? 'clock' : 'calendar'; ?>"></i> <span title="<?php echo date('F j, Y @ g:ia', $contact->addedAt/1000); ?>" style="cursor: help;"><?php echo human_time_diff($contact->addedAt/1000) . ' ago'; ?></span></li>
 
 						<?php
 						$after_contact = apply_filters('nebula_hubspot_metabox_after_contact', '', $contact);

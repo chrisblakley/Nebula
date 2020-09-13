@@ -173,7 +173,7 @@ if ( !trait_exists('Warnings') ){
 						if ( $php_version_lifecycle['end']-time() < MONTH_IN_SECONDS ){ //If end of life is within 1 month
 							$nebula_warnings[] = array(
 								'level' => 'warn',
-								'description' => '<i class="fab fa-fw fa-php"></i> PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end in ' . human_time_diff($php_version_lifecycle['end']) . ' on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.',
+								'description' => '<i class="fab fa-fw fa-php"></i> PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end in ' . human_time_diff($php_version_lifecycle['end']) . ' on ' . date('F j, Y', $php_version_lifecycle['end']) . '.',
 								'url' => 'http://php.net/supported-versions.php',
 								'meta' => array('target' => '_blank', 'rel' => 'noopener')
 							);
@@ -181,7 +181,7 @@ if ( !trait_exists('Warnings') ){
 					} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
 						$nebula_warnings[] = array(
 							'level' => 'error',
-							'description' => '<i class="fab fa-fw fa-php"></i> PHP ' . PHP_VERSION . ' <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">no longer receives security updates</a>! End of life occurred ' . human_time_diff($php_version_lifecycle['end']) . ' ago on ' . date_i18n('F j, Y', $php_version_lifecycle['end']) . '.',
+							'description' => '<i class="fab fa-fw fa-php"></i> PHP ' . PHP_VERSION . ' <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">no longer receives security updates</a>! End of life occurred ' . human_time_diff($php_version_lifecycle['end']) . ' ago on ' . date('F j, Y', $php_version_lifecycle['end']) . '.',
 							'url' => 'http://php.net/supported-versions.php',
 							'meta' => array('target' => '_blank', 'rel' => 'noopener')
 						);
