@@ -2752,14 +2752,11 @@ nebula.liveValidator = function(){
 	});
 
 	//Date inputs
-	if ( jQuery('.nebula-validate-date').length ){
-		nebula.loadJS(nebula.site.resources.scripts.nebula_moment);
-	}
 	nebula.dom.document.on('keyup change blur', '.nebula-validate-date', function(e){
+		//Used to use moment.js to validate the date and check that it was between 1800-2999. Now just check that it is not empty.
+
 		if ( jQuery(this).val() === '' ){
 			nebula.applyValidationClasses(jQuery(this), 'reset', false);
-		} else if ( moment(jQuery(this).val()).isValid() && moment(jQuery(this).val()).year() > 1800 && moment(jQuery(this).val()).year() < 2999 ){
-			nebula.applyValidationClasses(jQuery(this), 'valid', false);
 		} else {
 			nebula.applyValidationClasses(jQuery(this), 'invalid', ( e.type !== 'keyup' ));
 		}
@@ -5189,7 +5186,9 @@ nebula.mmenus = function(){
 		if ( mobileNav.length ){
 			//Navigation Panels
 			var navPanels = {};
-			if ( jQuery('#utility-panel').length && (!jQuery('#utility-panel').hasClass('no-mobile') && !jQuery('#utility-panel').parents('.no-mobile').length) ){ //If the utility menu exists and is not manually disabled from the mobile menu via a class
+			var currentPageClass = 'current-menu-item'; //This is a temporary fix until we upgrade to Mmenu 8!
+
+			if ( jQuery('#utility-panel').length && (!jQuery('#utility-nav').hasClass('no-mobile') && !jQuery('#utility-panel').parents('.no-mobile').length) ){ //If the utility menu exists and is not manually disabled from the mobile menu via a class
 				navPanels = {
 					position: "top",
 					type: "tabs",
@@ -5198,6 +5197,8 @@ nebula.mmenus = function(){
 						"<a href='#utility-panel'>Other Links</a>"
 					]
 				};
+
+				currentPageClass = 'this-intentionally-left-blank'; //This is a temporary fix until we upgrade to Mmenu 8! This prevents utility nav pages from using the current page class. (This must be a non-empty string in order to not error)
 			}
 
 			//Add social links to footer of Mmenu
@@ -5278,7 +5279,7 @@ nebula.mmenus = function(){
 					}
 				},
 				classNames: {
-					selected: "current-menu-item"
+					selected: currentPageClass //This breaks when viewing a utility nav subpage– the panel gets stuck open. So we only use it when no utility nav is not being used.
 				},
 				searchfield: {
 					clear: true,
