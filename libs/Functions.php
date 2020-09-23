@@ -1412,7 +1412,7 @@ trait Functions {
 			} elseif ( is_year() ){
 				echo $data['before'] . get_the_time('Y') . $data['after'];
 			} elseif ( is_single() && !is_attachment() ){
-				if ( get_post_type() !== 'post' ){
+				if ( get_post_type() !== 'post' ){ //Custom Post Type
 					$post_type = get_post_type_object(get_post_type());
 
 					$slug = $post_type->rewrite;
@@ -1423,10 +1423,33 @@ trait Functions {
 					echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . $slug['slug'] . '/" itemprop="item"><span itemprop="name">' . $post_type->labels->name . '</span></a><meta itemprop="position" content="' . $position . '" /></li>'; //Changed from singular_name so plurals would appear in breadcrumb nodes
 					$position++;
 
+					//Check for parent "pages" on the custom post type and output them if they exist
+					$parent_id = $post->post_parent;
+					if ( !empty($parent_id) ){
+						echo $data['delimiter_html'];
+						$breadcrumbs = array();
+
+						while ( $parent_id ){
+							$page = get_page($parent_id);
+							$breadcrumbs[] = '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_permalink($page->ID) . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title($page->ID)) . '</span></a><meta itemprop="position" content="' . $position . '" /></li>';
+							$position++;
+							$parent_id = $page->post_parent;
+						}
+
+						$breadcrumbs = array_reverse($breadcrumbs);
+						$breadcrumbs_nodes = count($breadcrumbs);
+						for ( $i = 0; $i < $breadcrumbs_nodes; $i++ ){
+							echo $breadcrumbs[$i];
+							if ( $i !== $breadcrumbs_nodes-1 ){
+								echo ' ' . $data['delimiter_html'] . ' ';
+							}
+						}
+					}
+
 					if ( !empty($data['current']) ){
 						echo ' ' . $data['delimiter_html'] . ' ' . $data['current_node'] . '<meta itemprop="position" content="' . $position . '" />' . $data['after'];
 					}
-				} else {
+				} else { //Post Category
 					$cat = get_the_category();
 					if ( !empty($cat) ){
 						$cat = $cat[0];
@@ -1449,11 +1472,11 @@ trait Functions {
 				} else {
 					echo strip_tags(get_the_title());
 				}
-			} elseif ( is_page() && !$post->post_parent ){
+			} elseif ( is_page() && !$post->post_parent ){ //Page without ancestors/parents
 				if ( !empty($data['current']) ){
 					echo $data['current_node'] . '<meta itemprop="position" content="' . $position . '" />' . $data['after'];
 				}
-			} elseif ( is_page() && $post->post_parent ){
+			} elseif ( is_page() && $post->post_parent ){ //Page with ancestors/parents
 				$parent_id = $post->post_parent;
 				$breadcrumbs = array();
 

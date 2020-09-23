@@ -532,7 +532,6 @@ if ( !trait_exists('Optimization') ){
 		//Scan the front-end styles and scripts to be able to deregister them from Nebula Options
 		public function scan_assets(){
 			if ( !is_admin() && current_user_can('manage_options') && (isset($_GET['nebula-scan']) || isset($_GET['sass']) || isset($_GET['debug']) || $this->get_option('audit_mode')) ){ //Only run on front-end for admin users. Also add a query string so this doesn't run every single pageload
-
 				if ( isset($_GET['nebula-scan']) && $_GET['nebula-scan'] === 'reset' ){ //Use this to reset and re-scan from scratch
 					update_option('optimizable_registered_styles', array());
 					update_option('optimizable_registered_scripts', array());
@@ -579,7 +578,7 @@ if ( !trait_exists('Optimization') ){
 
 				$all_registered_scripts = array_intersect_key($all_registered_scripts, array_unique(array_map('serialize', $all_registered_scripts))); //De-dupe the array
 				update_option('optimizable_registered_scripts', $all_registered_scripts);
-			}
+			}			
 		}
 
 		//Dequeue certain scripts

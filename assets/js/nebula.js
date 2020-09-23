@@ -739,11 +739,11 @@ nebula.socialSharing = function(){
 			nebula.nv('event', thisEvent.network + ' ' + thisEvent.action);
 		});
 
-		//Web Share API
+		//Web Share API: https://caniuse.com/mdn-api_navigator_share
 		if ( 'share' in navigator && !nebula.dom.body.hasClass('desktop') ){ //Chrome 61+
 			nebula.dom.document.on('click', 'a.nebula-share.webshare, a.nebula-share.shareapi', function(){
 				var oThis = jQuery(this);
-
+				
 				navigator.share({
 					title: document.title,
 					text: nebula.post.excerpt,
@@ -956,7 +956,7 @@ nebula.eventTracking = function(){
 			}
 		});
 
-		//Generic Interal Search Tracking
+		//Generic Internal Search Tracking
 		nebula.dom.document.on('submit', '#s, input.search', function(){
 			var thisEvent = {
 				event: e,
@@ -1495,9 +1495,9 @@ nebula.eventTracking = function(){
 		});
 
 		//Window Errors
-		window.onerror = function(message, file, line){
-			var errorMessage = message + ' at ' + line + ' of ' + file;
-			if ( message.toLowerCase().indexOf('script error') > -1 ){ //If it is a script error
+		window.addEventListener('error', function(e){
+			var errorMessage = e.message + ' at ' + e.lineno + ' of ' + e.filename;
+			if ( e.message.toLowerCase().indexOf('script error') > -1 ){ //If it is a script error
 				errorMessage = 'Script error (An error occurred in a script hosted on a different domain)'; //No additional information is available because of the browser's same-origin policy. Use CORS when possible to get additional information.
 			}
 
@@ -2044,7 +2044,7 @@ nebula.autocompleteSearch = function(element, types){
 	nebula.timer('(Nebula) Autocomplete Response [Start]', 'start');
 
 	if ( element.val().trim().length ){
-		if ( element.val().trim().length >= 2 ){
+		if ( element.val().trim().length >= 2 ){ //This checks the length for animation but the minlength (below) handles it for autocomplete
 			//Add "searching" class for custom Nebula styled forms
 			element.closest('form').addClass('searching');
 			setTimeout(function(){
@@ -2154,7 +2154,7 @@ nebula.autocompleteSearch = function(element, types){
 			close: function(){
 				element.closest('form').removeClass('autocompleted');
 			},
-			minLength: 3,
+			minLength: 3, //Require at least 3 characters
 		}).data('ui-autocomplete')._renderItem = function(ul, item){
 			var thisSimilarity = ( typeof item.similarity !== 'undefined' )? item.similarity.toFixed(1) + '% Match' : '';
 			var listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a href='" + item.link + "'> " + item.label.replace(/\\/g, '') + "</a>").appendTo(ul);
@@ -5318,23 +5318,6 @@ nebula.mmenus = function(){
 		}
 	}
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //Vertical subnav expanders
 nebula.subnavExpanders = function(){
