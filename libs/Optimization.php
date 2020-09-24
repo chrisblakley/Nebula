@@ -578,7 +578,7 @@ if ( !trait_exists('Optimization') ){
 
 				$all_registered_scripts = array_intersect_key($all_registered_scripts, array_unique(array_map('serialize', $all_registered_scripts))); //De-dupe the array
 				update_option('optimizable_registered_scripts', $all_registered_scripts);
-			}			
+			}
 		}
 
 		//Dequeue certain scripts

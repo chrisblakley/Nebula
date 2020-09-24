@@ -743,7 +743,7 @@ nebula.socialSharing = function(){
 		if ( 'share' in navigator && !nebula.dom.body.hasClass('desktop') ){ //Chrome 61+
 			nebula.dom.document.on('click', 'a.nebula-share.webshare, a.nebula-share.shareapi', function(){
 				var oThis = jQuery(this);
-				
+
 				navigator.share({
 					title: document.title,
 					text: nebula.post.excerpt,
@@ -1504,7 +1504,7 @@ nebula.eventTracking = function(){
 			ga('send', 'exception', {'exDescription': '(JS) ' + errorMessage, 'exFatal': false}); //Is there a better way to detect fatal vs non-fatal errors?
 			window.dataLayer.push({'event': 'nebula-window-error', 'nebula-event': errorMessage});
 			nebula.nv('event', 'JavaScript Error');
-		};
+		});
 
 		//Reporting Observer deprecations and interventions
 		//@todo Nebula 0: This may be causing "aw snap" errors in Chrome. Disabling for now until the feature is more stable.

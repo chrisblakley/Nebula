@@ -1926,9 +1926,11 @@ if ( !trait_exists('Metaboxes') ){
 		}
 
 		public function output_dequeue_fields($all_registered_assets=array(), $dequeue_assets=array(), $type=''){
-			$option_handle = 'nebula_options[dequeue_styles]';
-			if ( $type === 'js' || strpos($type, 'script') !== false ){
-				$option_handle = 'nebula_options[dequeue_scripts]';
+			$option_handle = 'nebula_options[dequeue_scripts]';
+			$icon = 'js';
+			if ( $type === 'css' || strpos($type, 'style') !== false ){
+				$option_handle = 'nebula_options[dequeue_styles]';
+				$icon = 'css3-alt';
 			}
 
 			if ( empty($all_registered_assets) ){ //If the option has not yet been filled, set an empty array
@@ -1961,7 +1963,7 @@ if ( !trait_exists('Metaboxes') ){
 						<div class="form-group no-help <?php echo ( !empty($dequeue_assets[$asset['handle']]) )? 'active' : ''; ?>">
 							<div class="input-group">
 								<div class="input-group-prepend">
-									<div class="input-group-text" title="<?php echo ( !empty($dequeue_assets[$asset['handle']]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fab fa-fw fa-js"></i> <?php echo $asset['handle']; ?></div>
+									<div class="input-group-text" title="<?php echo ( !empty($dequeue_assets[$asset['handle']]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fab fa-fw fa-<?php echo $icon; ?>"></i> <?php echo $asset['handle']; ?></div>
 								</div>
 								<input type="text" name="<?php echo $option_handle; ?>[<?php echo $asset['handle']; ?>]" id="<?php echo $asset['handle'] . '-' . $type; ?>" class="form-control nebula-validate-regex" data-valid-regex="^(\*)$|^(([0-9a-z!_()]+)(,\s?)*)+$" value="<?php echo ( !empty($dequeue_assets[$asset['handle']]) )? $dequeue_assets[$asset['handle']] : ''; ?>" />
 							</div>
