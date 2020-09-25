@@ -532,6 +532,46 @@ if ( !trait_exists('Admin') ){
 				$node_id = ( $this->is_admin_page() )? 'view' : 'edit';
 				$new_content_node = $wp_admin_bar->get_node($node_id);
 				if ( $new_content_node ){
+					//Note any assets that Nebula is deregistering on this post/page
+					$info_icon = '';
+					if ( !empty($this->deregistered_assets['styles']) || !empty($this->deregistered_assets['scripts']) ){
+						$info_icon = ' <i class="nebula-admin-fa fas fa-fw fa-info-circle deregistered-asset-info"></i>';
+
+						$wp_admin_bar->add_node(array(
+							'parent' => $node_id,
+							'id' => 'nebula-deregisters',
+							'title' => '<i class="nebula-admin-fa fas fa-fw fa-ban"></i> Nebula is deregistering assets on this page!',
+							'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=Advanced',
+							'meta' => array('target' => '_blank', 'rel' => 'noopener')
+						));
+
+						//Styles
+						if ( !empty($this->deregistered_assets['styles']) ){
+							foreach ( $this->deregistered_assets['styles'] as $handle ){
+								$wp_admin_bar->add_node(array(
+									'parent' => 'nebula-deregisters',
+									'id' => 'nebula-deregisters-styles-' . $handle,
+									'title' => '<span class="nebula-admin-light"><i class="nebula-admin-fa fab fa-fw fa-css3-alt"></i> CSS:</span> ' . $handle,
+									'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=Advanced',
+									'meta' => array('target' => '_blank', 'rel' => 'noopener')
+								));
+							}
+						}
+
+						//Scripts
+						if ( !empty($this->deregistered_assets['scripts']) ){
+							foreach ( $this->deregistered_assets['scripts'] as $handle ){
+								$wp_admin_bar->add_node(array(
+									'parent' => 'nebula-deregisters',
+									'id' => 'nebula-deregisters-scripts-' . $handle,
+									'title' => '<span class="nebula-admin-light"><i class="nebula-admin-fa fab fa-fw fa-js"></i> JS:</span> ' . $handle,
+									'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=Advanced',
+									'meta' => array('target' => '_blank', 'rel' => 'noopener')
+								));
+							}
+						}
+					}
+
 					$post_type_object = get_post_type_object(get_post_type());
 					$post_type_name = $post_type_object->labels->singular_name;
 
@@ -546,7 +586,7 @@ if ( !trait_exists('Admin') ){
 						$status = false;
 					}
 
-					$new_content_node->title = ucfirst($node_id) . ' ' . ucwords($post_type_name) . ' <span class="nebula-admin-light">(ID: ' . $current_id . ')</span>';
+					$new_content_node->title = ucfirst($node_id) . ' ' . ucwords($post_type_name) . ' <span class="nebula-admin-light">(ID: ' . $current_id . ')' . $info_icon . '</span>';
 					$wp_admin_bar->add_node($new_content_node);
 				}
 
@@ -595,42 +635,34 @@ if ( !trait_exists('Admin') ){
 					));
 				}
 
-				//Note any assets that Nebula is deregistering on this post/page
-				if ( !empty($this->deregistered_assets['styles']) || !empty($this->deregistered_assets['scripts']) ){
-					$wp_admin_bar->add_node(array(
-						'parent' => $node_id,
-						'id' => 'nebula-deregisters',
-						'title' => '<i class="nebula-admin-fa fas fa-fw fa-ban"></i> Nebula is deregistering assets on this page!',
-						'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=Advanced',
-						'meta' => array('target' => '_blank', 'rel' => 'noopener')
-					));
 
-					//Styles
-					if ( !empty($this->deregistered_assets['styles']) ){
-						foreach ( $this->deregistered_assets['styles'] as $handle ){
-							$wp_admin_bar->add_node(array(
-								'parent' => 'nebula-deregisters',
-								'id' => 'nebula-deregisters-styles-' . $handle,
-								'title' => '<span class="nebula-admin-light"><i class="nebula-admin-fa fab fa-fw fa-css3-alt"></i> CSS:</span> ' . $handle,
-								'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=Advanced',
-								'meta' => array('target' => '_blank', 'rel' => 'noopener')
-							));
-						}
-					}
 
-					//Scripts
-					if ( !empty($this->deregistered_assets['scripts']) ){
-						foreach ( $this->deregistered_assets['scripts'] as $handle ){
-							$wp_admin_bar->add_node(array(
-								'parent' => 'nebula-deregisters',
-								'id' => 'nebula-deregisters-scripts-' . $handle,
-								'title' => '<span class="nebula-admin-light"><i class="nebula-admin-fa fab fa-fw fa-js"></i> JS:</span> ' . $handle,
-								'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=Advanced',
-								'meta' => array('target' => '_blank', 'rel' => 'noopener')
-							));
-						}
-					}
-				}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 				if ( !empty($post_type_object) ){
 					//Ancestor pages
@@ -981,9 +1013,10 @@ if ( !trait_exists('Admin') ){
 						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings .level-error svg {color: #ca3838;}
 						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings .level-warn svg {color: #f6b83f;}
 
-					#wpadminbar:not(.mobile) #wp-admin-bar-nebula-deregisters > .ab-item {background: #ca3838; color: #fff; transition: all 0.25s ease;}
+					#wpadminbar:not(.mobile) .deregistered-asset-info {color: #f6b83f;}
+					#wpadminbar:not(.mobile) #wp-admin-bar-nebula-deregisters > .ab-item {background: #f6b83f; color: #000; transition: all 0.25s ease;}
 						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-deregisters.hover > .ab-item,
-						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-deregisters:hover > .ab-item {background: maroon;}
+						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-deregisters:hover > .ab-item {background: #f5a326;}
 				</style>
 			<?php }
 		}

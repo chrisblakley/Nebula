@@ -100,14 +100,13 @@ jQuery(window).on('load', function(){
  ===========================*/
 
 window.addEventListener('resize', function(){
-	nebula.throttle(function(){
+	nebula.debounce(function(){ //Must use debounce here (not throttle) so it always runs after the resize finishes (throttle does not always run at the end)
 		if ( typeof nebula.lastWindowWidth !== 'undefined' && nebula.dom.window.width() != nebula.lastWindowWidth ){ //If the width actually changed
 			nebula.lastWindowWidth = nebula.dom.window.width();
 			nebula.mobileSearchPlaceholder();
-
 			nebula.initMmenu(); //If Mmenu has not been initialized, it may need to be if the screen size has reduced
 		}
-	}, 1000, 'window resize');
+	}, 250, 'window resize');
 }); //End Window Resize
 
 /*==========================
@@ -5164,7 +5163,6 @@ nebula.vibrate = function(pattern){
 nebula.initMmenu = function(){
 	if ( jQuery('#mobilenav').length ){
 		var isMobileBarVisible = ( jQuery('#mobilebarcon').css('border-color') === 'rgba(255, 255, 255, 0)' )? true : false; //This is used to determine if the element is actually visible (because even though its visibility is hidden, JS cannot detect that.
-
 		if ( isMobileBarVisible ){
 			nebula.once(function(){
 				nebula.loadJS(nebula.site.resources.scripts.nebula_mmenu, function(){ //Detected as a long task per Chrome DevTools
