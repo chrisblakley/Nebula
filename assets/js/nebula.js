@@ -55,18 +55,18 @@ jQuery(window).on('load', function(){
 
 	nebula.cacheSelectors();
 	nebula.performanceMetrics();
-	nebula.lazyLoadAssets();
-	nebula.initVideoTracking();
+	nebula.lazyLoadAssets(); //Move to (or use) requestIdleCallback after end of IE11 support
+	nebula.initVideoTracking(); //Move to (or use) requestIdleCallback after end of IE11 support?
 
 	//Navigation
-	nebula.overflowDetector();
+	nebula.overflowDetector(); //Move to (or use) requestIdleCallback after end of IE11 support?
 
-	//Search
+	//Search (several of these could use requestIdleCallback)
 	nebula.wpSearchInput();
 	nebula.mobileSearchPlaceholder();
 	nebula.autocompleteSearchListeners();
 	nebula.searchValidator();
-	nebula.searchTermHighlighter();
+	nebula.searchTermHighlighter(); //Move to (or use) requestIdleCallback after end of IE11 support? Already is requesting animation frame
 
 	//Forms
 	nebula.addressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete');
@@ -81,7 +81,7 @@ jQuery(window).on('load', function(){
 	nebula.dom.html.addClass('loaded');
 
 	nebula.registerServiceWorker();
-	nebula.predictiveCacheListeners();
+	nebula.predictiveCacheListeners(); //Move to (or use) requestIdleCallback after end of IE11 support
 
 	nebula.networkAvailable(); //Call it once on load, then listen for changes
 	nebula.dom.window.on('offline online', function(){

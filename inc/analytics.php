@@ -58,9 +58,14 @@
 			ga('set', nebula.analytics.dimensions.navigationtype, navigationTypeLabel);
 
 			//Text Fragment (Ex: #:~:text=This%20is%20an%20example.
-			var textFragment = performance.getEntriesByType('navigation')[0].name.match('#:~:text=(.*)');
-			if ( textFragment ){
-				ga('set', nebula.analytics.dimensions.textFragment, decodeURIComponent(textFragment[1]));
+			if ( window.performance ){
+				var firstNavigationEntry = window.performance.getEntriesByType('navigation')[0];
+				if ( typeof firstNavigationEntry === 'object' ){ //This object sometimes does not exist in Safari
+					var textFragment = firstnavEntry.name.match('#:~:text=(.*)');
+					if ( textFragment ){ //If the text fragment exists, set the GA dimension
+						ga('set', nebula.analytics.dimensions.textFragment, decodeURIComponent(textFragment[1]));
+					}
+				}
 			}
 		}
 
