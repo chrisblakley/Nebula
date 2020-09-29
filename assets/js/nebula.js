@@ -3858,8 +3858,7 @@ nebula.removeQueryParameter = function(keys, sourceURL){
 
 		if ( queryString !== '' ){
 			params_arr = queryString.split('&');
-
-			for ( i = params_arr.length-1; i >= 0; i -= 1 ){
+			for ( var i = params_arr.length-1; i >= 0; i -= 1 ){
 				param = params_arr[i].split('=')[0];
 				if ( param === item ){
 					params_arr.splice(i, 1);

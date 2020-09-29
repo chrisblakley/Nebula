@@ -61,7 +61,7 @@
 			if ( window.performance ){
 				var firstNavigationEntry = window.performance.getEntriesByType('navigation')[0];
 				if ( typeof firstNavigationEntry === 'object' ){ //This object sometimes does not exist in Safari
-					var textFragment = firstnavEntry.name.match('#:~:text=(.*)');
+					var textFragment = firstNavigationEntry.name.match('#:~:text=(.*)');
 					if ( textFragment ){ //If the text fragment exists, set the GA dimension
 						ga('set', nebula.analytics.dimensions.textFragment, decodeURIComponent(textFragment[1]));
 					}

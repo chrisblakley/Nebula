@@ -1,0 +1,14 @@
+// ===========================
+// Dark Mode Styles
+// ===========================
+
+@media (prefers-color-scheme: dark){
+	body {background: #090909 !important;}
+	p {color: #dedad6;}
+
+	//Nebula docs styles only:
+	.doc-pullup-content {background: #000 !important;
+		.tinytitle {color: #999;}
+		.doc-pullup-content .entry-content p {color: #dedad6;}
+	}
+}
