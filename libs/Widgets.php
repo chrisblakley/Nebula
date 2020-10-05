@@ -663,13 +663,13 @@ if ( !trait_exists('Widgets') ){
 			echo $args['before_widget'];
 
 			$social_pages = array(
-				'facebook-official' => ( nebula()->get_option('facebook_url') )? nebula()->get_option('facebook_url') : false,
+				'facebook-square' => ( nebula()->get_option('facebook_url') )? nebula()->get_option('facebook_url') : false,
 				'twitter' => ( nebula()->get_option('twitter_username') )? nebula()->twitter_url() : false,
 				'instagram' => ( nebula()->get_option('instagram_url') )? nebula()->get_option('instagram_url') : false,
 				'linkedin-square' => ( nebula()->get_option('linkedin_url') )? nebula()->get_option('linkedin_url') : false,
 				'pinterest' => ( nebula()->get_option('pinterest_url') )? nebula()->get_option('pinterest_url') : false,
-				'youtube-play' => ( nebula()->get_option('youtube_url') )? nebula()->get_option('youtube_url') : false,
-				'envelope-o' => ( nebula()->get_option('contact_email') )? nebula()->get_option('contact_email') : false,
+				'youtube' => ( nebula()->get_option('youtube_url') )? nebula()->get_option('youtube_url') : false,
+				'envelope' => ( nebula()->get_option('contact_email') )? nebula()->get_option('contact_email') : false,
 			);
 			$social_pages = array_filter($social_pages);
 			?>
@@ -682,7 +682,7 @@ if ( !trait_exists('Widgets') ){
 
 							<ul class="about-social">
 								<?php foreach ( $social_pages as $icon => $url ): ?>
-									<li><a href="<?php echo $url; ?>" target="_blank"><i class="fas fa-fw fa-<?php echo $icon; ?>"></i></a></li>
+									<li><a href="<?php echo $url; ?>" target="_blank"><i class="fab fa-fw fa-<?php echo $icon; ?>"></i></a></li><?php //fab works for everything except email... ?>
 								<?php endforeach; ?>
 							</ul>
 						</div><!--/col-->

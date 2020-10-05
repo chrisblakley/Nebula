@@ -30,7 +30,7 @@ if ( !trait_exists('Assets') ){
 		public function register_scripts(){
 			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
-			wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css', null, '5.14.0', 'all');
+			wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css', null, '5.15.0', 'all');
 			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.3.3/jquery.mmenu.all.css', null, '7.3.3', 'all');
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap'), $this->version('full'), 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, $this->version('full'), 'all');
@@ -55,7 +55,7 @@ if ( !trait_exists('Assets') ){
 			}
 			$this->register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', array('defer', 'crossorigin'), null, '1.12.1', true);
 			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.3.3/jquery.mmenu.all.js', array('defer', 'crossorigin'), null, '7.3.3', true);
-			$this->register_script('nebula-vimeo', 'https://cdnjs.cloudflare.com/ajax/libs/vimeo-player/2.13.0/player.min.js', null, null, '2.13.0', true);
+			$this->register_script('nebula-vimeo', 'https://cdnjs.cloudflare.com/ajax/libs/vimeo-player/2.14.0/player.min.js', null, null, '2.14.0', true);
 			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.10.21', true);
 			$this->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js', array('defer', 'crossorigin'), null, '1.8.7', true);
 			$this->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js', array('async', 'crossorigin'), null, '2.4.1', true);

@@ -105,6 +105,7 @@ if ( !trait_exists('Analytics') ){
 					'hitMethod' => esc_html($this->get_option('cd_hitmethod')),
 					'saveData' => esc_html($this->get_option('cd_savedata')),
 					'reducedMotion' => esc_html($this->get_option('cd_reducedmotion')),
+					'colorScheme' => esc_html($this->get_option('cd_colorscheme')),
 					'offline' => esc_html($this->get_option('cd_offline')),
 					'deviceMemory' => esc_html($this->get_option('cd_devicememory')),
 					'batteryMode' => esc_html($this->get_option('cd_batterymode')),

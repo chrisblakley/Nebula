@@ -272,6 +272,13 @@ nebula.registerServiceWorker = function(){
 
 //Detections for events specific to predicting the next pageview.
 nebula.predictiveCacheListeners = function(){
+	//If Save Data is supported and Save Data is requested do not bother with predictive listeners
+	if ( nebula.has(navigator, 'connection.saveData') ){ //@todo "Nebula" 0: Replace with optional chaining
+		if ( navigator.connection.saveData ){ //@todo "Nebula" 0: Use optional chaining
+			return false;
+		}
+	}
+
 	//Any post listing page
 	if ( jQuery('.first-post .entry-title a').length ){
 		nebula.prefetch(jQuery('.first-post .entry-title a').attr('href'));
@@ -3685,7 +3692,7 @@ nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback
 			return false;
 		}
 
-		nebula.dom.document.on('click keyup', 'a[href*="#"]:not([href="#"])', function(e){ //An href contains a hash ID but is not only a hash ("#content" but not "#")
+		nebula.dom.document.on('click keyup', 'a[href^="#"]:not([href="#"])', function(e){ //An href starts with a hash ID but is not only a hash ("#content" but not "#"). Do not use *="#" to prevent conflicts with other libraries who are linking to separate pages with an anchor on the destination.
 			if ( e.type === 'click' || (e.type === 'keyup' && (e.keyCode === 32 || e.keyCode === 13)) ){ //Spacebar or Enter
 				var avoid = '.no-scroll, .mm-menu, .carousel, .tab-content, .modal, [data-toggle], #wpadminbar, #query-monitor';
 				if ( !jQuery(this).is(avoid) && !jQuery(this).parents(avoid).length ){

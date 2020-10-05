@@ -802,6 +802,18 @@ if ( !trait_exists('Metaboxes') ){
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-prepend">
+								<div class="input-group-text">Color Scheme Preference</div>
+							</div>
+							<input type="text" name="nebula_options[cd_colorscheme]" id="cd_colorscheme" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_colorscheme']; ?>" />
+						</div>
+						<p class="nebula-help-text short-help form-text text-muted">Track the users color scheme preference. Scope: Session</p>
+						<p class="nebula-help-text more-help form-text text-muted">This listens for the "Color Scheme" preference from the user's operating system.</p>
+						<p class="option-keywords">custom dimension</p>
+					</div>
+
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-prepend">
 								<div class="input-group-text">Offline</div>
 							</div>
 							<input type="text" name="nebula_options[cd_offline]" id="cd_offline" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_offline']; ?>" />

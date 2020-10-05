@@ -264,6 +264,7 @@ if ( !trait_exists('Options') ){
 				'cd_hitmethod' => '',
 				'cd_savedata' => '',
 				'cd_reducedmotion' => '',
+				'cd_colorscheme' => '',
 				'cd_offline' => '',
 				'cd_devicememory' => '',
 				'cd_batterymode' => '',

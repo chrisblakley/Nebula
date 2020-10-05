@@ -185,8 +185,15 @@
 		<?php endif; ?>
 
 		//Prefers reduced motion
+		ga('set', nebula.analytics.dimensions.reducedMotion, 'No Preference');
 		if ( window.matchMedia('(prefers-reduced-motion: reduce)').matches ){
 			ga('set', nebula.analytics.dimensions.reducedMotion, 'Prefers Reduced Motion');
+		}
+
+		//Prefers color scheme
+		ga('set', nebula.analytics.dimensions.colorScheme, 'Light (or No Preference)');
+		if ( window.matchMedia('(prefers-color-scheme: dark)').matches ){
+			ga('set', nebula.analytics.dimensions.colorScheme, 'Dark');
 		}
 
 		<?php if ( nebula()->get_option('cd_offline') ): ?>
