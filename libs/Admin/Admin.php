@@ -315,7 +315,7 @@ if ( !trait_exists('Admin') ){
 			$third_party_resources['administrative'][] = array(
 				'name' => 'Google Search Console',
 				'icon' => '<i class="nebula-admin-fa fab fa-fw fa-google"></i>',
-				'url' => 'https://www.google.com/webmasters/tools/home'
+				'url' => 'https://search.google.com/search-console'
 			);
 
 			$third_party_resources['administrative'][] = array(
@@ -749,7 +749,7 @@ if ( !trait_exists('Admin') ){
 					'parent' => 'nebula',
 					'id' => 'nebula-version',
 					'title' => 'v<strong>' . $this->version('raw') . '</strong> <span class="nebula-admin-light">(' . $this->version('date') . ')</span>',
-					'href' => 'https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master',
+					'href' => 'https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main',
 				));
 
 				//If there are warnings display them
@@ -935,7 +935,7 @@ if ( !trait_exists('Admin') ){
 						'parent' => 'nebula-github',
 						'id' => 'nebula-github-changelog',
 						'title' => 'Changelog',
-						'href' => 'https://github.com/chrisblakley/Nebula/commits/master',
+						'href' => 'https://github.com/chrisblakley/Nebula/commits/main',
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					));
 
@@ -1095,7 +1095,7 @@ if ( !trait_exists('Admin') ){
 
 			if ( !$this->allow_theme_update() ){
 				//Check for unsupported version: if newer version of Nebula has a "u" at the end of the version number, disable automated updates.
-				$remote_version_info = get_option('external_theme_updates-Nebula-master');
+				$remote_version_info = get_option('external_theme_updates-Nebula-main');
 				if ( !empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) !== str_replace('u', '', $this->version('raw')) ){
 					$this->update_data('version_legacy', 'true');
 					$this->update_data('current_version', $this->version('raw'));
@@ -1105,7 +1105,7 @@ if ( !trait_exists('Admin') ){
 			} elseif ( current_user_can('update_themes') && is_child_theme() ){
 				require_once get_template_directory() . '/inc/vendor/plugin-update-checker/plugin-update-checker.php';
 				$theme_update_checker = Puc_v4_Factory::buildUpdateChecker(
-					'https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/nebula_theme.json',
+					'https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/nebula_theme.json',
 					get_template_directory() . '/functions.php',
 					'Nebula' //The filter hook above must match this
 				);
@@ -1120,8 +1120,8 @@ if ( !trait_exists('Admin') ){
 				$updates->response[$parent_theme] = array(
 					'theme' => $parent_theme,
 					'new_version' => $this->version('full'), //Does not need to be larger than current version
-					'url' => 'https://github.com/chrisblakley/Nebula/commits/master',
-					'package' => 'https://github.com/chrisblakley/Nebula/archive/master.zip'
+					'url' => 'https://github.com/chrisblakley/Nebula/commits/main',
+					'package' => 'https://github.com/chrisblakley/Nebula/archive/main.zip'
 				);
 			}
 
@@ -1154,7 +1154,7 @@ if ( !trait_exists('Admin') ){
 			if ( isset($override) ){return;}
 
 			if ( $this->allow_theme_update() ){
-				if ( $hook_extra['type'] === 'theme' && $this->in_array_r('Nebula-master', $hook_extra['themes']) ){
+				if ( $hook_extra['type'] === 'theme' && $this->in_array_r('Nebula-main', $hook_extra['themes']) ){
 					$prev_version = $this->get_data('current_version');
 					$prev_version_commit_date = $this->get_data('current_version_date');
 					$new_version = $this->get_data('next_version');
@@ -1206,7 +1206,7 @@ if ( !trait_exists('Admin') ){
 				$current_user = wp_get_current_user();
 
 				$subject = 'Nebula updated to ' . $new_version . ' for ' . html_entity_decode(get_bloginfo('name')) . '.';
-				$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . '</strong> (Committed: ' . $prev_version_commit_date . ') to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url('/') . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/master" target="_blank" rel="noopener">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-master/.</p>';
+				$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . '</strong> (Committed: ' . $prev_version_commit_date . ') to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url('/') . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/main" target="_blank" rel="noopener">Nebula Github repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-main/.</p>';
 
 				$this->send_email_to_admins($subject, $message);
 			}
@@ -1331,7 +1331,7 @@ if ( !trait_exists('Admin') ){
 			$php_timeline_json_file = get_template_directory() . '/inc/data/php_timeline.json';
 			$php_timeline = get_transient('nebula_php_timeline');
 			if ( empty($php_timeline) || $this->is_debug() ){
-				$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/php_timeline.json');
+				$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/php_timeline.json');
 				if ( !is_wp_error($response) ){
 					$php_timeline = $response['body'];
 				}
@@ -1560,7 +1560,7 @@ if ( !trait_exists('Admin') ){
 			$nebula_version_output = 'Thank you for using Nebula!';
 			if ( current_user_can('publish_posts') ){
 				$wordpress_version_output = '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener">WordPress</a> <strong>' . $wp_version . '</strong></span>, ';
-				$nebula_version_output = '<span title="Committed: ' . $this->version('date') . '"><a href="https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=footer+version' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener">Nebula</a> <strong class="nebula"><a href="https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master" target="_blank">' . $this->version('version') . '</a></strong>' . $child . '</span>';
+				$nebula_version_output = '<span title="Committed: ' . $this->version('date') . '"><a href="https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=footer+version' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener">Nebula</a> <strong class="nebula"><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('version') . '</a></strong>' . $child . '</span>';
 			}
 
 			return $wordpress_version_output . $nebula_version_output;

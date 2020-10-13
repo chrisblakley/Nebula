@@ -82,7 +82,7 @@ trait Functions {
 	//Check if the Nebula Companion plugin is installed and active
 	public function is_companion_active(){
 		include_once ABSPATH . 'wp-admin/includes/plugin.php'; //Needed to use is_plugin_active() outside of WP admin
-		if ( is_plugin_active('nebula-companion/nebula-companion.php') || is_plugin_active('Nebula-Companion-master/nebula-companion.php') ){
+		if ( is_plugin_active('nebula-companion/nebula-companion.php') || is_plugin_active('Nebula-Companion-main/nebula-companion.php') || is_plugin_active('Nebula-Companion-master/nebula-companion.php') ){ //Remove "master" after a period of time (Maybe January 2021)
 			return true;
 		}
 

@@ -36,7 +36,7 @@ if ( !trait_exists('Automation') ){
 				array(
 					'name' => 'Nebula Companion',
 					'slug' => 'nebula-companion',
-					'source' => 'https://github.com/chrisblakley/Nebula-Companion/archive/master.zip',
+					'source' => 'https://github.com/chrisblakley/Nebula-Companion/archive/main.zip',
 					'required' => false,
 				),
 				array(
@@ -475,7 +475,7 @@ if ( !trait_exists('Automation') ){
 				$this->update_data('current_version', $this->version('raw'));
 				$this->update_data('current_version_date', $this->version('date'));
 				$this->update_data('theme_update_notification', 'enabled');
-				update_option('external_theme_updates-Nebula-master', '');
+				update_option('external_theme_updates-Nebula-main', '');
 				$this->add_log('Forced initialization occurred.', 6);
 			}
 		}

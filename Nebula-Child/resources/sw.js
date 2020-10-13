@@ -1,11 +1,11 @@
 //BEGIN automated edits. These will be automatically overwritten.
 const THEME_NAME = 'nebula-child';
-const NEBULA_VERSION = 'v8.5.4.9555'; //Sunday, October 4, 2020 10:55:57 PM
+const NEBULA_VERSION = 'v8.5.7.8463'; //Monday, October 12, 2020 8:54:10 PM
 const OFFLINE_URL = 'https://nebula.gearside.com/offline/';
-const OFFLINE_IMG = 'https://nebula.gearside.com/wp-content/themes/Nebula-master/assets/img/offline.svg';
+const OFFLINE_IMG = 'https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/offline.svg';
 const OFFLINE_GA_DIMENSION = 'cd2';
-const META_ICON = 'https://nebula.gearside.com/wp-content/themes/Nebula-master/assets/img/meta/android-chrome-512x512.png';
-const MANIFEST = 'https://nebula.gearside.com/wp-content/themes/Nebula-master/inc/manifest.json';
+const META_ICON = 'https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/meta/android-chrome-512x512.png';
+const MANIFEST = 'https://nebula.gearside.com/wp-content/themes/Nebula-main/inc/manifest.json';
 const HOME_URL = 'https://nebula.gearside.com/';
 //END automated edits
 

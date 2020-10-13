@@ -224,14 +224,14 @@ if ( !trait_exists('Security') ){
 			$domain_blocklist_json_file = get_template_directory() . '/inc/data/domain_blocklist.txt';
 			$domain_blocklist = get_transient('nebula_domain_blocklist');
 			if ( empty($domain_blocklist) || $this->is_debug() ){ //If transient expired or is debug
-				$response = $this->remote_get('https://raw.githubusercontent.com/matomo-org/referrer-spam-blacklist/master/spammers.txt');
+				$response = $this->remote_get('https://raw.githubusercontent.com/matomo-org/referrer-spam-blacklist/master/spammers.txt'); //Watch for this to change from "master" to "main" (if ever)
 				if ( !is_wp_error($response) ){
 					$domain_blocklist = $response['body'];
 				}
 
 				//If there was an error or empty response, try my Github repo
 				if ( is_wp_error($response) || empty($domain_blocklist) ){ //This does not check availability because it is the same hostname as above.
-					$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/master/inc/data/domain_blocklist.txt');
+					$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/domain_blocklist.txt');
 					if ( !is_wp_error($response) ){
 						$domain_blocklist = $response['body'];
 					}

@@ -31,7 +31,7 @@ add_action('admin_enqueue_scripts', 'register_nebula_child_assets', 327);
 function register_nebula_child_assets(){
 	/*==========================
 	 Deregister Parent Styles/Scripts
-	 Use the handle registerred in /Nebula-master/functions.php for the styles/scripts that should be removed.
+	 Use the handle registered in /Nebula-main/functions.php for the styles/scripts that should be removed.
 	 Use both deregister and dequeue to completely remove the parent style/script
 	 ===========================*/
 
@@ -57,7 +57,7 @@ function register_nebula_child_assets(){
 
 	//Use CDNJS to pull common libraries: http://cdnjs.com/
 	//nebula()->register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
-	nebula()->register_script('nebula-main', get_stylesheet_directory_uri() . '/assets/js/main.js', array('defer'), array('jquery-core', 'nebula-nebula'), nebula()->child_version(), true); //nebula.js (in the parent Nebula theme) is defined as a dependant here.
+	nebula()->register_script('nebula-main', get_stylesheet_directory_uri() . '/assets/js/main.js', array('defer'), array('jquery-core', 'nebula-nebula'), nebula()->child_version(), true); //nebula.js (in the parent Nebula theme) is defined as a dependent here.
 }
 
 //Enqueue Child Styles & Scripts on the Front-End

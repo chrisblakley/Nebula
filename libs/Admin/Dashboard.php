@@ -91,7 +91,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fab fa-fw fa-wordpress"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener noreferrer">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
 			//Nebula Version
-			echo '<li><i class="far fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/master@{' . date('Y-m-d', $this->version('utc')) . '}...master" target="_blank">' . $this->version('raw') . '</a></strong> <small title="' . $this->version('date') . '" style="cursor: help;">(Committed ' . human_time_diff($this->version('utc')) . ' ago)</small></li>';
+			echo '<li><i class="far fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('raw') . '</a></strong> <small title="' . $this->version('date') . '" style="cursor: help;">(Committed ' . human_time_diff($this->version('utc')) . ' ago)</small></li>';
 
 			//Child Theme
 			if ( is_child_theme() ){
