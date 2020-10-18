@@ -96,7 +96,7 @@ if ( !trait_exists('Analytics') ){
 			$brain['analytics'] = array( //Set this even if analytics is not enabled
 				'isReady' => false,
 				'trackingID' => esc_html($this->get_option('ga_tracking_id')),
-				'dimensions' => array(
+				'dimensions' => array( //This may need to be heavily modified for GA4 (since parameter names can be used directly)
 					'gaCID' => esc_html($this->get_option('cd_gacid')),
 					'hitID' => esc_html($this->get_option('cd_hitid')),
 					'hitTime' => esc_html($this->get_option('cd_hittime')),
@@ -148,7 +148,7 @@ if ( !trait_exists('Analytics') ){
 					'mqOrientation' => esc_html($this->get_option('cd_mqorientation')),
 					'visibilityState' => esc_html($this->get_option('cd_visibilitystate')),
 				),
-				'metrics' => array(
+				'metrics' => array( //This may need to be heavily modified for GA4 (since parameter names can be used directly)
 					'serverResponseTime' => esc_html($this->get_option('cm_serverresponsetime')),
 					'domReadyTime' => esc_html($this->get_option('cm_domreadytime')),
 					'windowLoadedTime' => esc_html($this->get_option('cm_windowloadedtime')),
@@ -174,6 +174,7 @@ if ( !trait_exists('Analytics') ){
 		}
 
 		//Nebula usage data
+		//This will need to be updated for GA4 if/when the usage property is updated
 		public function usage($action, $data=array()){
 			$date = new DateTime("now", new DateTimeZone('America/New_York'));
 			$defaults = array(
@@ -221,7 +222,7 @@ if ( !trait_exists('Analytics') ){
 				if ( preg_match('/themes\/Nebula-?(main|master|parent|\d+\.\d+)?\//i', $file) && !strpos(strtolower($file), 'scssphp') ){ //If the error is in Nebula parent (and not a Sass compile error) log it for continued improvement of Nebula itself //Remove "master" after a period of time (Maybe January 2021)
 					$this->usage('PHP Fatal Error', array(
 						't' => 'exception',
-						'exd' => $message . ' on line ' . $error['line'] . ' in ' . $file,
+						'exd' => '(PHP) ' . $message . ' on line ' . $error['line'] . ' in ' . $file,
 						'exf' => true,
 						'cd12' => (( isset($_SERVER['HTTPS']) )? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
 					));

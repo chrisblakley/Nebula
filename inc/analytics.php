@@ -17,7 +17,7 @@
 			"allowLinker": true
 		});
 
-		ga('set', 'anonymizeIp', true); //Anonymize the IP address
+		ga('set', 'anonymizeIp', true); //Anonymize the IP address //This happens by default in GA4 so can be removed here.
 
 		//Use Beacon if supported. Eventually we can completely remove this when GA uses Beacon by default.
 		if ( 'sendBeacon' in navigator ){
@@ -200,9 +200,7 @@
 			ga('set', nebula.analytics.dimensions.offline, 'online');
 		<?php endif; ?>
 
-
-
-		<?php if ( 1==1 ): //Autotrack ?>
+		<?php if ( 1==1 ): //Autotrack. Note: In GA4 Autotrack will no longer be necessary and can be removed ?>
 			<?php if ( nebula()->get_option('cm_pagevisible') && nebula()->get_option('cm_pagehidden') ): //Autotrack Page Visibility ?>
 				ga('require', 'pageVisibilityTracker', {
 					hiddenMetricIndex: parseInt(nebula.analytics.metrics.pageHidden.replace('metric', '')),
