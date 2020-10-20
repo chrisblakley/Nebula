@@ -4623,6 +4623,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 nebula.youtubeTracking = function(){
 	nebula.once(function(){
 		if ( jQuery('iframe[src*="youtube"], .lazy-youtube').length ){
+			//Load the Youtube iframe API script
 			var tag = document.createElement('script');
 			tag.src = "https://www.youtube.com/iframe_api";
 			var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -4635,6 +4636,11 @@ function onYouTubeIframeAPIReady(e){
 	window.performance.mark('(Nebula) Loading Youtube Videos [Start]');
 	jQuery('iframe[src*="youtube"]').each(function(i){
 		if ( !jQuery(this).hasClass('ignore') ){ //Use this class to ignore certain videos from tracking
+			//If this iframe is using a data-src, make sure the src matches
+			if ( jQuery(this).attr('src').indexOf('youtube') < 0 ){ //If the src does not contain "youtube"
+				jQuery(this).attr('src', jQuery(this).attr('data-src')); //Update the src to match the data-src attribute. Note: I cannot think of a better way to do this that actually works with the Youtube Iframe API
+			}
+
 			var id = jQuery(this).attr('id');
 			if ( !id ){
 				id = jQuery(this).attr('src').split('?')[0].split('/').pop();
@@ -5064,7 +5070,7 @@ nebula.createVimeoPlayers = function(){
 	});
 
 	if ( typeof videoProgress === 'undefined' ){
-		videoProgress = {};
+		var videoProgress = {};
 	}
 };
 
