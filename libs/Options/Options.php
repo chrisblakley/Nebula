@@ -233,7 +233,7 @@ if ( !trait_exists('Options') ){
 				'device_detection' => 0,
 				'service_worker' => 0,
 				'adblock_detect' => 0,
-				'domain_blocklist' => 0,
+				'spam_domain_prevention' => 0,
 				'theme_update_notification' => 1,
 				'wp_core_updates_notify' => 1,
 				'plugin_update_warning' => 0,

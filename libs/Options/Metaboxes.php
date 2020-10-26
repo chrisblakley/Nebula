@@ -478,8 +478,8 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[domain_blocklist]" id="domain_blocklist" value="1" <?php checked('1', !empty($nebula_options['domain_blocklist'])); ?> /><label for="domain_blocklist">Domain Blocklist</label>
-					<p class="nebula-help-text short-help form-text text-muted">Block traffic from known spambots and other illegitimate domains. (Default: <?php echo $this->user_friendly_default('domain_blocklist'); ?>)</p>
+					<input type="checkbox" name="nebula_options[spam_domain_prevention]" id="spam_domain_prevention" value="1" <?php checked('1', !empty($nebula_options['spam_domain_prevention'])); ?> /><label for="spam_domain_prevention">Spam Domain Prevention</label>
+					<p class="nebula-help-text short-help form-text text-muted">Block traffic from known spambots and other illegitimate domains. (Default: <?php echo $this->user_friendly_default('spam_domain_prevention'); ?>)</p>
 					<p class="option-keywords">security remote resource recommended minor page speed impact optimization optimize</p>
 				</div>
 

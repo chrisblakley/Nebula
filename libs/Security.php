@@ -14,7 +14,7 @@ if ( !trait_exists('Security') ){
 			add_filter('the_generator', '__return_empty_string'); //Remove Wordpress version info from head and feeds
 			add_action('check_comment_flood', array($this, 'check_referrer'));
 			//add_action('wp_footer', array($this, 'track_notable_bots')); //Disabled for now. Not super useful.
-			add_action('wp_loaded', array($this, 'domain_prevention'));
+			add_action('wp_loaded', array($this, 'spam_domain_prevention'));
 			add_action('get_header', array($this, 'redirect_author_template'));
 
 			add_filter('rest_endpoints', array($this, 'rest_endpoints_security'));
@@ -168,43 +168,43 @@ if ( !trait_exists('Security') ){
 			}
 		}
 
-		//Check referrer for known spambots and blocklisted domains
-		public function domain_prevention(){
-			$this->timer('Domain Blocklist');
+		//Check referrer for known spam domains
+		public function spam_domain_prevention(){
+			$this->timer('Spam Domain Prevention');
 
 			//Skip lookups if user has already been checked or for logged in users.
-			if ( (isset($_COOKIE['blocklisted']) && $_COOKIE['blocklisted'] === false) || is_user_logged_in() ){
+			if ( (isset($_COOKIE['spam_domain']) && $_COOKIE['spam_domain'] === false) || is_user_logged_in() ){
 				return false;
 			}
 
-			if ( $this->get_option('domain_blocklisting') ){
-				$blocklisted_domains = $this->get_domain_blocklist();
+			if ( $this->get_option('spam_domain_prevention') ){
+				$spam_domain_list = $this->get_spam_domain_list();
 				$ip_address = $this->get_ip_address();
 
-				if ( count($blocklisted_domains) > 1 ){
-					if ( isset($_SERVER['HTTP_REFERER']) && $this->contains(strtolower($_SERVER['HTTP_REFERER']), $blocklisted_domains) ){
-						$this->ga_send_exception('(Security) Blocklisted domain prevented. Referrer: ' . $_SERVER['HTTP_REFERER'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Blocklisted Referrer'));
+				if ( count($spam_domain_list) > 1 ){
+					if ( isset($_SERVER['HTTP_REFERER']) && $this->contains(strtolower($_SERVER['HTTP_REFERER']), $spam_domain_list) ){
+						$this->ga_send_exception('(Security) Spam domain prevented. Referrer: ' . $_SERVER['HTTP_REFERER'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Referrer'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
 
-					if ( isset($_SERVER['REMOTE_HOST']) && $this->contains(strtolower($_SERVER['REMOTE_HOST']), $blocklisted_domains) ){
-						$this->ga_send_exception('(Security) Blocklisted domain prevented. Hostname: ' . $_SERVER['REMOTE_HOST'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Blocklisted Hostname'));
+					if ( isset($_SERVER['REMOTE_HOST']) && $this->contains(strtolower($_SERVER['REMOTE_HOST']), $spam_domain_list) ){
+						$this->ga_send_exception('(Security) Spam domain prevented. Hostname: ' . $_SERVER['REMOTE_HOST'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Hostname'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
 
-					if ( isset($_SERVER['SERVER_NAME']) && $this->contains(strtolower($_SERVER['SERVER_NAME']), $blocklisted_domains) ){
-						$this->ga_send_exception('(Security) Blocklisted domain prevented. Server Name: ' . $_SERVER['SERVER_NAME'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Blocklisted Server Name'));
+					if ( isset($_SERVER['SERVER_NAME']) && $this->contains(strtolower($_SERVER['SERVER_NAME']), $spam_domain_list) ){
+						$this->ga_send_exception('(Security) Spam domain prevented. Server Name: ' . $_SERVER['SERVER_NAME'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Server Name'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
 
-					if ( isset($ip_address) && $this->contains(strtolower(gethostbyaddr($ip_address)), $blocklisted_domains) ){
-						$this->ga_send_exception('(Security) Blocklisted domain prevented. Network Hostname: ' . $ip_address, 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Blocklisted Network Hostname'));
+					if ( isset($ip_address) && $this->contains(strtolower(gethostbyaddr($ip_address)), $spam_domain_list) ){
+						$this->ga_send_exception('(Security) Spam domain prevented. Network Hostname: ' . $ip_address, 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Network Hostname'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
@@ -213,64 +213,64 @@ if ( !trait_exists('Security') ){
 					$this->ga_send_exception('(Security) spammers.txt has no entries!', 0);
 				}
 
-				$this->set_cookie('blocklist', false);
+				$this->set_cookie('spam_domain', false);
 			}
 
-			$this->timer('Domain Blocklist', 'end');
+			$this->timer('Spam Domain Prevention', 'end');
 		}
 
-		//Return an array of blocklisted domains from Matomo (or the latest Nebula on Github)
-		public function get_domain_blocklist(){
-			$domain_blocklist_json_file = get_template_directory() . '/inc/data/domain_blocklist.txt';
-			$domain_blocklist = get_transient('nebula_domain_blocklist');
-			if ( empty($domain_blocklist) || $this->is_debug() ){ //If transient expired or is debug
-				$response = $this->remote_get('https://raw.githubusercontent.com/matomo-org/referrer-spam-blacklist/master/spammers.txt'); //Watch for this to change from "master" to "main" (if ever)
+		//Return an array of spam domains from Matomo (or the latest Nebula on Github)
+		public function get_spam_domain_list(){
+			$spam_domain_json_file = get_template_directory() . '/inc/data/spam_domain_list.txt';
+			$spam_domain_list = get_transient('$nebula_spam_domain_list');
+			if ( empty($spam_domain_list) || $this->is_debug() ){ //If transient expired or is debug
+				$response = $this->remote_get('https://raw.githubusercontent.com/matomo-org/referrer-spam-list/master/spammers.txt'); //Watch for this to change from "master" to "main" (if ever)
 				if ( !is_wp_error($response) ){
-					$domain_blocklist = $response['body'];
+					$spam_domain_list = $response['body'];
 				}
 
 				//If there was an error or empty response, try my Github repo
-				if ( is_wp_error($response) || empty($domain_blocklist) ){ //This does not check availability because it is the same hostname as above.
-					$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/domain_blocklist.txt');
+				if ( is_wp_error($response) || empty($spam_domain_list) ){ //This does not check availability because it is the same hostname as above.
+					$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/spam_domain_list.txt');
 					if ( !is_wp_error($response) ){
-						$domain_blocklist = $response['body'];
+						$spam_domain_list = $response['body'];
 					}
 				}
 
 				//If either of the above remote requests received data, update the local file and store the data in a transient for 24 hours
-				if ( !is_wp_error($response) && !empty($domain_blocklist) ){
+				if ( !is_wp_error($response) && !empty($spam_domain_list) ){
 					WP_Filesystem();
 					global $wp_filesystem;
-					$wp_filesystem->put_contents($domain_blocklist_json_file, $domain_blocklist);
-					set_transient('nebula_domain_blocklist', $domain_blocklist, HOUR_IN_SECONDS*36);
+					$wp_filesystem->put_contents($spam_domain_json_file, $spam_domain_list);
+					set_transient('$nebula_spam_domain_list', $spam_domain_list, HOUR_IN_SECONDS*36);
 				}
 			}
 
 			//If neither remote resource worked, get the local file
-			if ( empty($domain_blocklist) ){
+			if ( empty($spam_domain_list) ){
 				WP_Filesystem();
 				global $wp_filesystem;
-				$domain_blocklist = $wp_filesystem->get_contents($domain_blocklist_json_file);
+				$spam_domain_list = $wp_filesystem->get_contents($spam_domain_json_file);
 			}
 
 			//If one of the above methods worked, parse the data.
-			if ( !empty($domain_blocklist) ){
-				$blocklisted_domains = array();
-				foreach( explode("\n", $domain_blocklist) as $line ){
+			if ( !empty($spam_domain_list) ){
+				$spam_domain_list = array();
+				foreach( explode("\n", $spam_domain_list) as $line ){
 					if ( !empty($line) ){
-						$blocklisted_domains[] = $line;
+						$spam_domain_list[] = $line;
 					}
 				}
 			} else {
 				$this->ga_send_exception('(Security) spammers.txt was not available!', 0);
 			}
 
-			//Add manual and user-added blocklisted domains
-			$manual_nebula_blocklisted_domains = array(
+			//Add manual and user-added spam domains
+			$manual_nebula_spam_domains = array(
 				'bitcoinpile.com',
 			);
-			$all_blocklisted_domains = apply_filters('nebula_blocklisted_domains', $manual_nebula_blocklisted_domains);
-			return array_merge($blocklisted_domains, $all_blocklisted_domains);
+			$all_spam_domains = apply_filters('nebula_spam_domains', $manual_nebula_spam_domains);
+			return array_merge($spam_domain_list, $all_spam_domains);
 		}
 
 		//Cookie Notification HTML that appears in the footer
