@@ -4704,7 +4704,7 @@ function nebulaYoutubeReady(e){
 		nebula.videos[id] = nebula.videos[jQuery(e.target.getIframe()).attr('id')];
 	}
 
-	nebula.videos[id].title = nebula.getYoutubeTitle(e.target);
+	nebula.videos[id].title = nebula.getYoutubeTitle(e.target); //Use Nullish coalescing here (after ie11?)
 	nebula.videos[id].duration = e.target.getDuration(); //The total duration of the video. Unit: Seconds
 	nebula.videos[id].current = e.target.getCurrentTime(); //The current position of the video. Units: Seconds
 	nebula.videos[id].percent = e.target.getCurrentTime()/e.target.getDuration(); //The percent of the current position. Multiply by 100 for actual percent.
@@ -4712,7 +4712,7 @@ function nebulaYoutubeReady(e){
 
 function nebulaYoutubeStateChange(e){
 	var thisVideo = nebula.videos[nebula.getYoutubeID(e.target)];
-	thisVideo.title = nebula.getYoutubeTitle(e.target);
+	thisVideo.title = nebula.getYoutubeTitle(e.target); //Use Nullish coalescing here (after ie11?)
 	thisVideo.current = e.target.getCurrentTime();
 	thisVideo.percent = thisVideo.current/thisVideo.duration;
 
@@ -4834,7 +4834,7 @@ function nebulaYoutubeStateChange(e){
 
 function nebulaYoutubeError(e){
 	var thisVideo = nebula.videos[nebula.getYoutubeID(e.target)];
-	thisVideo.title = nebula.getYoutubeTitle(e.target);
+	thisVideo.title = nebula.getYoutubeTitle(e.target); //Use Nullish coalescing here (after ie11?)
 
 	ga('send', 'exception', {'exDescription': '(JS) Youtube API error for ' + thisVideo.title + ': ' + e.data, 'exFatal': false});
 	nebula.crm('event', 'Youtube API Error');

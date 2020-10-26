@@ -124,6 +124,7 @@ class Browser extends ClientParserAbstract
         'GA' => 'Galeon',
         'GB' => 'Glass Browser',
         'GE' => 'Google Earth',
+        'GO' => 'GOG Galaxy',
         'HA' => 'Hawk Turbo Browser',
         'HO' => 'hola! Browser',
         'HJ' => 'HotJava',
@@ -307,7 +308,7 @@ class Browser extends ClientParserAbstract
         'Baidu'              => array('BD', 'BS'),
         'Amiga'              => array('AV', 'AW'),
         'Chrome'             => array('CH', 'BA', 'BR', 'CC', 'CD', 'CM', 'CI', 'CF', 'CN', 'CR', 'CP', 'DD', 'IR', 'RM', 'AO', 'TS', 'VI', 'PT', 'AS', 'TB', 'AD', 'SB', 'WP', 'I3', 'CV', 'WH', 'SZ', 'QW', 'LF', 'KW', '2B', 'CE', 'EC', 'MT', 'MS', 'HA', 'OC', 'MZ', 'BM', 'KN', 'SW', 'M1', 'FA', 'TA', 'AH', 'CL', 'SU', 'EU', 'UB', 'LO', 'VG', 'TV', 'A0', '1B', 'S4', 'EE', 'AE', 'VM', 'O0', 'TG', 'GB', 'SY', 'HH', 'YJ', 'LL', 'TU', 'XV', 'C2', 'QU', 'YN'),
-        'Firefox'            => array('FF', 'FE', 'FM', 'SX', 'FB', 'PX', 'MB', 'EI', 'WF', 'CU', 'TF', 'QM', 'FR', 'I4', 'GZ', 'MO', 'F1', 'BI', 'MN', 'BH', 'TO', 'OS', 'MY', 'FY', 'AX', 'C0', 'LH', 'S5', 'ZV'),
+        'Firefox'            => array('FF', 'FE', 'FM', 'SX', 'FB', 'PX', 'MB', 'EI', 'WF', 'CU', 'TF', 'QM', 'FR', 'I4', 'GZ', 'MO', 'F1', 'BI', 'MN', 'BH', 'TO', 'OS', 'MY', 'FY', 'AX', 'C0', 'LH', 'S5', 'ZV', 'IW'),
         'Internet Explorer'  => array('IE', 'IM', 'PS'),
         'Konqueror'          => array('KO'),
         'NetFront'           => array('NF'),
@@ -436,7 +437,6 @@ class Browser extends ClientParserAbstract
     protected function buildEngineVersion($engine)
     {
         $engineVersionParser = new Engine\Version($this->userAgent, $engine);
-
         return $engineVersionParser->parse();
     }
 }
