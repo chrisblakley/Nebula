@@ -192,7 +192,7 @@ if ( !trait_exists('Metaboxes') ){
 					</div>
 
 					<p class="nebula-help-text short-help form-text text-muted">The address of the location (or headquarters if multiple locations).</p>
-					<p class="nebula-help-text more-help form-text text-muted">Use <a href="https://nebula.gearside.com/functions/full_address/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=address+help<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener noreferrer"><code>nebula()->full_address()</code></a> to get the formatted address in one function.</p>
+					<p class="nebula-help-text more-help form-text text-muted">Use <a href="https://nebula.gearside.com/functions/full_address/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=address+help<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank" rel="noopener noreferrer"><code>nebula()->full_address()</code></a> to get the formatted address in one function.</p>
 					<p class="option-keywords">location recommended seo</p>
 				</div>
 
@@ -674,7 +674,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="hostnames">Valid Hostnames</label>
 					<input type="text" name="nebula_options[hostnames]" id="hostnames" class="form-control nebula-validate-text" value="<?php echo $nebula_options['hostnames']; ?>" placeholder="<?php echo $this->url_components('domain'); ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">These help generate regex patterns for Google Analytics filters.</p>
-					<p class="nebula-help-text more-help form-text text-muted">It is also used for the is_site_live() function! Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)! Include this RegEx pattern for a filter/segment <a href="https://nebula.gearside.com/utilities/domain-regex-generator/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=valid+hostnames+help<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener noreferrer">(Learn how to use this)</a>: <input type="text" value="<?php echo $this->valid_hostname_regex(); ?>" readonly style="width: 50%;" /></p>
+					<p class="nebula-help-text more-help form-text text-muted">It is also used for the is_site_live() function! Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)! Include this RegEx pattern for a filter/segment <a href="https://nebula.gearside.com/utilities/domain-regex-generator/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=valid+hostnames+help<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank" rel="noopener noreferrer">(Learn how to use this)</a>: <input type="text" value="<?php echo $this->valid_hostname_regex(); ?>" readonly style="width: 50%;" /></p>
 					<p class="option-keywords"></p>
 				</div>
 
@@ -832,29 +832,6 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track the available memory of the device as "Lite" or "Full". Scope: Hit</p>
 						<p class="nebula-help-text more-help form-text text-muted">If alternate components are used on the site for "lite" devices, this dimension will show which version was seen by users.</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Battery Mode</div>
-							</div>
-							<input type="text" name="nebula_options[cd_batterymode]" id="cd_batterymode" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_batterymode']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Track whether the device battery is charging ("Adaptor") or discharging ("Battery"). Scope: Session</p>
-						<p class="nebula-help-text more-help form-text text-muted">This is useful for discerning if users spend more time on the website if their device is plugged in.</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Battery Percent</div>
-							</div>
-							<input type="text" name="nebula_options[cd_batterypercent]" id="cd_batterypercent" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_batterypercent']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Track what percentage the device battery level is at currently (rounded to the nearest integer). Scope: Session</p>
 						<p class="option-keywords">custom dimension</p>
 					</div>
 
@@ -1037,7 +1014,7 @@ if ( !trait_exists('Metaboxes') ){
 							<input type="text" name="nebula_options[cd_sessionid]" id="cd_sessionid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_sessionid']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">ID system so that you can group hits into specific user sessions. Scope: Session</p>
-						<p class="nebula-help-text more-help form-text text-muted">This ID is not personally identifiable and therefore fits within the <a href="https://support.google.com/analytics/answer/2795983" target="_blank" rel="noopener noreferrer">Google Analytics ToS</a> for PII. <a href="https://nebula.gearside.com/functions/nebula_session_id/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=session+id+help<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener noreferrer">Session ID Documentation &raquo;</a></p>
+						<p class="nebula-help-text more-help form-text text-muted">This ID is not personally identifiable and therefore fits within the <a href="https://support.google.com/analytics/answer/2795983" target="_blank" rel="noopener noreferrer">Google Analytics ToS</a> for PII. <a href="https://nebula.gearside.com/functions/nebula_session_id/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=session+id+help<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank" rel="noopener noreferrer">Session ID Documentation &raquo;</a></p>
 						<p class="option-keywords">recommended custom dimension</p>
 					</div>
 
@@ -1307,7 +1284,7 @@ if ( !trait_exists('Metaboxes') ){
 
 		public function nebula_custom_metrics_metabox($nebula_options){
 			?>
-				<p class="text-muted">These are optional metrics that can be passed into Google Analytics which allows for 20 custom metrics (or 200 for Google Analytics Premium). To set these up, define the Custom Metric in the Google Analytics property, then paste the metric index string ("metric1", "metric12", etc.) into the appropriate input field below. The scope and format for each metric is noted in their respective help sections. Metrics that require additional code are marked with a *. These are useful for manual interpretation of data, or to be included in <a href="https://nebula.gearside.com/get-started/recommendations/google-analytics-calculated-metrics/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=custom+metrics<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank">Calculated Metrics formulas</a>.</p>
+				<p class="text-muted">These are optional metrics that can be passed into Google Analytics which allows for 20 custom metrics (or 200 for Google Analytics Premium). To set these up, define the Custom Metric in the Google Analytics property, then paste the metric index string ("metric1", "metric12", etc.) into the appropriate input field below. The scope and format for each metric is noted in their respective help sections. Metrics that require additional code are marked with a *. These are useful for manual interpretation of data, or to be included in <a href="https://nebula.gearside.com/get-started/recommendations/google-analytics-calculated-metrics/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=custom+metrics<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank">Calculated Metrics formulas</a>.</p>
 
 				<?php $metric_regex = '^metric([0-9]{1,3})$'; ?>
 
@@ -1458,17 +1435,6 @@ if ( !trait_exists('Metaboxes') ){
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-prepend">
-								<div class="input-group-text">Battery Level</div>
-							</div>
-							<input type="text" name="nebula_options[cm_batterylevel]" id="cm_batterylevel" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_batterylevel']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Record the individual battery level for each hit. Scope: Hit, Format: Integer</p>
-						<p class="option-keywords">custom metric</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-prepend">
 								<div class="input-group-text">Word Count</div>
 							</div>
 							<input type="text" name="nebula_options[cm_wordcount]" id="cm_wordcount" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_wordcount']; ?>" />
@@ -1572,7 +1538,7 @@ if ( !trait_exists('Metaboxes') ){
 								</div>
 						<input type="text" name="nebula_options[cse_id]" id="cse_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['cse_id']; ?>" placeholder="000000000000000000000:aaaaaaaa_aa" />
 					</div>
-					<p class="nebula-help-text short-help form-text text-muted">For <a href="https://nebula.gearside.com/functions/pagesuggestion/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=gcse+help<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener noreferrer">page suggestions</a> on 404 and No Search Results pages.</p>
+					<p class="nebula-help-text short-help form-text text-muted">For <a href="https://nebula.gearside.com/functions/pagesuggestion/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=gcse+help<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank" rel="noopener noreferrer">page suggestions</a> on 404 and No Search Results pages.</p>
 					<p class="nebula-help-text more-help form-text text-muted"><a href="https://www.google.com/cse/manage/all">Register here</a>, then select "Add", input your website's URL in "Sites to Search". Then click the one you just made and click the "Search Engine ID" button.</p>
 					<p class="option-keywords">remote resource minor page speed impact optimization optimize</p>
 				</div>
@@ -1698,7 +1664,7 @@ if ( !trait_exists('Metaboxes') ){
 						</div>
 						<input type="text" name="nebula_options[twitter_bearer_token]" id="twitter_bearer_token" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_bearer_token']; ?>" placeholder="000000000000000000000000000000" />
 					</div>
-					<p class="nebula-help-text short-help form-text text-muted">The bearer token is for creating custom Twitter feeds: <a href="https://nebula.gearside.com/utilities/twitter-bearer-token-generator/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=twitter+help<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener noreferrer">Generate a bearer token here</a></p>
+					<p class="nebula-help-text short-help form-text text-muted">The bearer token is for creating custom Twitter feeds: <a href="https://nebula.gearside.com/utilities/twitter-bearer-token-generator/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=twitter+help<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank" rel="noopener noreferrer">Generate a bearer token here</a></p>
 					<p class="option-keywords">social remote resource</p>
 				</div>
 

@@ -178,32 +178,32 @@ if ( !trait_exists('Security') ){
 			}
 
 			if ( $this->get_option('spam_domain_prevention') ){
-				$spam_domain_list = $this->get_spam_domain_list();
+				$spam_domain_array = $this->get_spam_domain_list();
 				$ip_address = $this->get_ip_address();
 
-				if ( count($spam_domain_list) > 1 ){
-					if ( isset($_SERVER['HTTP_REFERER']) && $this->contains(strtolower($_SERVER['HTTP_REFERER']), $spam_domain_list) ){
+				if ( count($spam_domain_array) > 1 ){
+					if ( isset($_SERVER['HTTP_REFERER']) && $this->contains(strtolower($_SERVER['HTTP_REFERER']), $spam_domain_array) ){
 						$this->ga_send_exception('(Security) Spam domain prevented. Referrer: ' . $_SERVER['HTTP_REFERER'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Referrer'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
 
-					if ( isset($_SERVER['REMOTE_HOST']) && $this->contains(strtolower($_SERVER['REMOTE_HOST']), $spam_domain_list) ){
+					if ( isset($_SERVER['REMOTE_HOST']) && $this->contains(strtolower($_SERVER['REMOTE_HOST']), $spam_domain_array) ){
 						$this->ga_send_exception('(Security) Spam domain prevented. Hostname: ' . $_SERVER['REMOTE_HOST'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Hostname'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
 
-					if ( isset($_SERVER['SERVER_NAME']) && $this->contains(strtolower($_SERVER['SERVER_NAME']), $spam_domain_list) ){
+					if ( isset($_SERVER['SERVER_NAME']) && $this->contains(strtolower($_SERVER['SERVER_NAME']), $spam_domain_array) ){
 						$this->ga_send_exception('(Security) Spam domain prevented. Server Name: ' . $_SERVER['SERVER_NAME'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Server Name'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
 
-					if ( isset($ip_address) && $this->contains(strtolower(gethostbyaddr($ip_address)), $spam_domain_list) ){
+					if ( isset($ip_address) && $this->contains(strtolower(gethostbyaddr($ip_address)), $spam_domain_array) ){
 						$this->ga_send_exception('(Security) Spam domain prevented. Network Hostname: ' . $ip_address, 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Network Hostname'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
@@ -255,10 +255,10 @@ if ( !trait_exists('Security') ){
 
 			//If one of the above methods worked, parse the data.
 			if ( !empty($spam_domain_list) ){
-				$spam_domain_list = array();
+				$spam_domain_array = array();
 				foreach( explode("\n", $spam_domain_list) as $line ){
 					if ( !empty($line) ){
-						$spam_domain_list[] = $line;
+						$spam_domain_array[] = $line;
 					}
 				}
 			} else {
@@ -270,7 +270,7 @@ if ( !trait_exists('Security') ){
 				'bitcoinpile.com',
 			);
 			$all_spam_domains = apply_filters('nebula_spam_domains', $manual_nebula_spam_domains);
-			return array_merge($spam_domain_list, $all_spam_domains);
+			return array_merge($spam_domain_array, $all_spam_domains);
 		}
 
 		//Cookie Notification HTML that appears in the footer

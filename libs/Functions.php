@@ -2048,7 +2048,7 @@ trait Functions {
 		$html .= 'class="phg ' . $anim . ' ' . $white . '"';
 
 		if ( $data['linked'] ){
-			$html .= ' href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+link+function' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener"';
+			$html .= ' href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+link+function' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . '" target="_blank" rel="noopener"';
 		}
 
 		$html .= '><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">' . __('Group', 'nebula') . '</span>';

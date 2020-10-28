@@ -91,7 +91,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fab fa-fw fa-wordpress"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener noreferrer">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
 			//Nebula Version
-			echo '<li><i class="far fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('raw') . '</a></strong> <small title="' . $this->version('date') . '" style="cursor: help;">(Committed ' . human_time_diff($this->version('utc')) . ' ago)</small></li>';
+			echo '<li><i class="far fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . '" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('raw') . '</a></strong> <small title="' . $this->version('date') . '" style="cursor: help;">(Committed ' . human_time_diff($this->version('utc')) . ' ago)</small></li>';
 
 			//Child Theme
 			if ( is_child_theme() ){
@@ -158,7 +158,7 @@ if ( !trait_exists('Dashboard') ){
 				set_transient('nebula_earliest_post', $earliest_post, YEAR_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long.
 			}
 			while ( $earliest_post->have_posts() ){ $earliest_post->the_post();
-				echo '<li><i class="far fa-fw fa-calendar"></i> Earliest: <span title="' . get_the_date() . ' @ ' . get_the_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_date() . ' ' . get_the_time())) . ' ago</strong></span></li>';
+				echo '<li><i class="far fa-fw fa-calendar"></i> Earliest: <span title="' . get_the_date() . ' @ ' . get_the_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_date() . ' ' . get_the_time())) . ' ago</strong></span><small style="display: block;"><i class="far fa-fw fa-file-alt"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => get_the_title(), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small></li>';
 			}
 			wp_reset_postdata();
 
@@ -432,10 +432,10 @@ if ( !trait_exists('Dashboard') ){
 
 		//Pinckney Hugo Group metabox content
 		public function dashboard_phg(){
-			echo '<a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+photo' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener noreferrer"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" loading="lazy" /></a>';
+			echo '<a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+photo' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . '" target="_blank" rel="noopener noreferrer"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" loading="lazy" /></a>';
 			echo '<ul class="nebula-fa-ul">';
 			echo '<li><i class="fas fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener noreferrer">760 West Genesee Street, Syracuse, NY 13204</a></li>';
-			echo '<li><i class="fas fa-fw fa-link"></i> <a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+textlink' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank">PinckneyHugo.com</a></li>';
+			echo '<li><i class="fas fa-fw fa-link"></i> <a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+textlink' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . '" target="_blank">PinckneyHugo.com</a></li>';
 			echo '<li><i class="fas fa-fw fa-phone"></i> (315) 478-6700</li>';
 			echo '</ul>';
 		}
@@ -473,7 +473,7 @@ if ( !trait_exists('Dashboard') ){
 			$instance_count = 0;
 			?>
 				<p class="todoresults_title">
-					<strong>Active @todo Comments</strong> <a class="todo_help_icon" href="https://gearside.com/wordpress-dashboard-todo-manager/?utm_campaign=nebula&utm_medium=nebula&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=todo+metabox<?php echo $this->get_user_info('user_email', array('prepend' => '&nv-email=')); ?>" target="_blank" rel="noopener noreferrer"><i class="far fw fa-question-circle"></i> Documentation &raquo;</a>
+					<strong>Active @todo Comments</strong> <a class="todo_help_icon" href="https://gearside.com/wordpress-dashboard-todo-manager/?utm_campaign=nebula&utm_medium=nebula&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=todo+metabox<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank" rel="noopener noreferrer"><i class="far fw fa-question-circle"></i> Documentation &raquo;</a>
 				</p>
 
 				<div class="todo_results">
@@ -1017,42 +1017,48 @@ if ( !trait_exists('Dashboard') ){
 				$customizer_color = get_theme_mod(str_replace('$', 'nebula_', $notable_color));
 				$hex_color = ( !empty($sass_color) )? rtrim($sass_color, ';') : $customizer_color;
 
-				$notable_colors_data[$notable_color] = array(
-					'name' => ucwords(str_replace(array('$', '_'), array('', ' '), $notable_color)),
-					'sass' => $sass_color,
-					'customizer' => $customizer_color,
-					'hex' => $hex_color,
-					'rgb' => $this->hex2rgb($hex_color),
-					'ratios' => array(
-						'white' => number_format($this->contrast($hex_color, '#ffffff'), 2, '.', ''),
-						'black' => number_format($this->contrast($hex_color, '#000000'), 2, '.', ''),
-					),
-				);
+				if ( !empty($hex_color) ){
+					$notable_colors_data[$notable_color] = array(
+						'name' => ucwords(str_replace(array('$', '_'), array('', ' '), $notable_color)),
+						'sass' => $sass_color,
+						'customizer' => $customizer_color,
+						'hex' => $hex_color,
+						'rgb' => $this->hex2rgb($hex_color),
+						'ratios' => array(
+							'white' => number_format($this->contrast($hex_color, '#ffffff'), 2, '.', ''),
+							'black' => number_format($this->contrast($hex_color, '#000000'), 2, '.', ''),
+						),
+					);
 
-				//Determine readable color
-				if ( $notable_colors_data[$notable_color]['ratios']['white'] > $notable_colors_data[$notable_color]['ratios']['black'] ){
-					$notable_colors_data[$notable_color]['readable'] = '#fff';
-				} else {
-					$notable_colors_data[$notable_color]['readable'] = '#000';
+					//Determine readable color
+					if ( $notable_colors_data[$notable_color]['ratios']['white'] > $notable_colors_data[$notable_color]['ratios']['black'] ){
+						$notable_colors_data[$notable_color]['readable'] = '#fff';
+					} else {
+						$notable_colors_data[$notable_color]['readable'] = '#000';
+					}
 				}
 			}
 
 			?>
 				<div class="nebula-metabox-row">
-					<?php foreach ( $notable_colors_data as $notable_color_data ): ?>
-						<div class="design-reference-col">
-							<a class="color-block" href="https://www.colorhexa.com/<?php echo ltrim($notable_color_data['hex'], '#'); ?>" target="_blank" style="background-color: <?php echo $notable_color_data['hex']; ?>;">
-								<span class="tee" style="color: <?php echo $notable_color_data['readable']; ?>;">T</span>
-								<span class="color-contrast-ratio light"><?php echo $notable_color_data['ratios']['white']; ?> <i class="fa fa-<?php echo ( $notable_color_data['ratios']['white'] >= 4.5 )? 'check' : 'times'; ?>"></i></span>
-								<span class="color-contrast-ratio dark"><?php echo $notable_color_data['ratios']['black']; ?> <i class="fa fa-<?php echo ( $notable_color_data['ratios']['black'] >= 4.5 )? 'check' : 'times'; ?>"></i></span>
-							</a>
-							<div>
-								<strong><?php echo $notable_color_data['name']; ?></strong><br />
-								Hex <?php echo $notable_color_data['hex']; ?><br />
-								RGB <?php echo $notable_color_data['rgb']['r'] . ', ' . $notable_color_data['rgb']['g'] . ', ' . $notable_color_data['rgb']['b']; ?><br />
+					<?php if ( !empty($notable_colors_data) ): ?>
+						<?php foreach ( $notable_colors_data as $notable_color_data ): ?>
+							<div class="design-reference-col">
+								<a class="color-block" href="https://www.colorhexa.com/<?php echo ltrim($notable_color_data['hex'], '#'); ?>" target="_blank" style="background-color: <?php echo $notable_color_data['hex']; ?>;">
+									<span class="tee" style="color: <?php echo $notable_color_data['readable']; ?>;">T</span>
+									<span class="color-contrast-ratio light"><?php echo $notable_color_data['ratios']['white']; ?> <i class="fa fa-<?php echo ( $notable_color_data['ratios']['white'] >= 4.5 )? 'check' : 'times'; ?>"></i></span>
+									<span class="color-contrast-ratio dark"><?php echo $notable_color_data['ratios']['black']; ?> <i class="fa fa-<?php echo ( $notable_color_data['ratios']['black'] >= 4.5 )? 'check' : 'times'; ?>"></i></span>
+								</a>
+								<div>
+									<strong><?php echo $notable_color_data['name']; ?></strong><br />
+									Hex <?php echo $notable_color_data['hex']; ?><br />
+									RGB <?php echo $notable_color_data['rgb']['r'] . ', ' . $notable_color_data['rgb']['g'] . ', ' . $notable_color_data['rgb']['b']; ?><br />
+								</div>
 							</div>
-						</div>
-					<?php endforeach; ?>
+						<?php endforeach; ?>
+					<?php else: ?>
+						<p>Define a brand color (in the Customizer or Sass) to see contrast ratio information here.</p>
+					<?php endif; ?>
 				</div>
 			<?php
 

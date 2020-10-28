@@ -736,7 +736,7 @@ if ( !trait_exists('Admin') ){
 				$wp_admin_bar->add_node(array(
 					'id' => 'nebula',
 					'title' => '<i class="nebula-admin-fa fas fa-fw ' . $nebula_adminbar_icon . '"></i> Nebula',
-					'href' => 'https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')),
+					'href' => 'https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')),
 					'meta' => array(
 						'target' => '_blank',
 						'rel' => 'noopener',
@@ -803,7 +803,7 @@ if ( !trait_exists('Admin') ){
 					'parent' => 'nebula',
 					'id' => 'nebula-documentation',
 					'title' => '<i class="nebula-admin-fa fas fa-fw fa-file-alt"></i> Nebula Documentation',
-					'href' => 'https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')),
+					'href' => 'https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')),
 					'meta' => array(
 						'target' => '_blank',
 						'rel' => 'noopener',
@@ -814,7 +814,7 @@ if ( !trait_exists('Admin') ){
 					'parent' => 'nebula-documentation',
 					'id' => 'nebula-documentation-functions',
 					'title' => '<i class="nebula-admin-fa fas fa-fw fa-file-alt"></i> Functions & Variables',
-					'href' => 'https://nebula.gearside.com/documentation/functions/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')),
+					'href' => 'https://nebula.gearside.com/documentation/functions/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')),
 					'meta' => array(
 						'target' => '_blank',
 						'rel' => 'noopener',
@@ -825,7 +825,7 @@ if ( !trait_exists('Admin') ){
 					'parent' => 'nebula-documentation',
 					'id' => 'nebula-documentation-examples',
 					'title' => '<i class="nebula-admin-fa fas fa-fw fa-file-alt"></i> Examples & Tips',
-					'href' => 'https://nebula.gearside.com/documentation/examples-tips/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')),
+					'href' => 'https://nebula.gearside.com/documentation/examples-tips/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')),
 					'meta' => array(
 						'target' => '_blank',
 						'rel' => 'noopener',
@@ -836,7 +836,7 @@ if ( !trait_exists('Admin') ){
 					'parent' => 'nebula-documentation',
 					'id' => 'nebula-documentation-faq',
 					'title' => '<i class="nebula-admin-fa fas fa-fw fa-question"></i> FAQs',
-					'href' => 'https://nebula.gearside.com/faq/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')),
+					'href' => 'https://nebula.gearside.com/faq/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')),
 					'meta' => array(
 						'target' => '_blank',
 						'rel' => 'noopener',
@@ -1077,7 +1077,7 @@ if ( !trait_exists('Admin') ){
 
 		//Show update warning on Wordpress Core/Plugin update admin pages
 		public function update_warning(){
-			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=" . urlencode(get_bloginfo('name')) . "&utm_content=update+warning" . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . "'>Pinckney Hugo Group</a> if there are questions about updates: (315) 478-6700</p></div>";
+			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=" . urlencode(get_bloginfo('name')) . "&utm_content=update+warning" . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . "'>Pinckney Hugo Group</a> if there are questions about updates: (315) 478-6700</p></div>";
 		}
 
 		//Nebula Theme Update Checker
@@ -1560,7 +1560,7 @@ if ( !trait_exists('Admin') ){
 			$nebula_version_output = 'Thank you for using Nebula!';
 			if ( current_user_can('publish_posts') ){
 				$wordpress_version_output = '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener">WordPress</a> <strong>' . $wp_version . '</strong></span>, ';
-				$nebula_version_output = '<span title="Committed: ' . $this->version('date') . '"><a href="https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=footer+version' . $this->get_user_info('user_email', array('prepend' => '&nv-email=')) . '" target="_blank" rel="noopener">Nebula</a> <strong class="nebula"><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('version') . '</a></strong>' . $child . '</span>';
+				$nebula_version_output = '<span title="Committed: ' . $this->version('date') . '"><a href="https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=footer+version' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . '" target="_blank" rel="noopener">Nebula</a> <strong class="nebula"><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('version') . '</a></strong>' . $child . '</span>';
 			}
 
 			return $wordpress_version_output . $nebula_version_output;

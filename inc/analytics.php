@@ -324,8 +324,8 @@
 				var qt = model.get('queueTime') || 0;
 
 				//Remove PII if present
-				if ( model.get('location').indexOf('nv-') ){
-					model.set('location', model.get('location').replace(/(nv-.*?)&|(nv-.*?)$/gi, ''), true);
+				if ( model.get('location').indexOf('crm-') ){
+					model.set('location', model.get('location').replace(/(crm-.*?)&|(crm-.*?)$/gi, ''), true);
 				}
 
 				//Move impression tracking for CF7 forms to the "CF7 Form" event category //@todo "Nebula" 0: If the fieldsObj is ever updated in Autotrack, do this programmatically in nebula.js

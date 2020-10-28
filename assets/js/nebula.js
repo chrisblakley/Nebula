@@ -73,7 +73,6 @@ jQuery(window).on('load', function(){
 
 	nebula.facebookSDK();
 
-	nebula.battery();
 	nebula.networkConnection();
 
 	nebula.lastWindowWidth = nebula.dom.window.width(); //Prep resize detection (Is this causing a forced reflow?)
@@ -559,41 +558,6 @@ nebula.isDoNotTrack = function(){
 	}
 
 	return false; //The browser does not support DNT
-};
-
-//Detect Battery Level
-nebula.battery = function(){
-	nebula.user.client.device.battery = false;
-
-	if ( 'getBattery' in navigator ){ //Chrome only
-		navigator.getBattery().then(function(battery){
-			nebula.batteryData(battery);
-			jQuery(battery).on('chargingchange levelchange', function(){
-				nebula.batteryData(battery);
-			});
-		});
-	}
-};
-
-//Prep battery info for lookup
-nebula.batteryData = function(battery){
-	if ( battery ){
-		nebula.user.client.device.battery = {
-			mode: ( battery.charging )? 'Adapter' : 'Battery',
-			charging: ( battery.charging )? true : false,
-			chargingTime: battery.chargingTime,
-			dischargingTime: battery.dischargingTime,
-			level: battery.level,
-			percentage: parseFloat((battery.level*100).toFixed(0)) + '%',
-		};
-
-		//These definitions will be transported with the Performance Metric event payload
-		ga('set', nebula.analytics.dimensions.batteryMode, nebula.user.client.device.battery.mode);
-		ga('set', nebula.analytics.dimensions.batteryPercent, nebula.user.client.device.battery.percentage);
-		ga('set', nebula.analytics.metrics.batteryLevel, nebula.user.client.device.battery.level);
-
-		nebula.dom.document.trigger('batteryChange');
-	}
 };
 
 //Detect Network Connection
