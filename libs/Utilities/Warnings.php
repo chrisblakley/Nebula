@@ -498,6 +498,8 @@ if ( !trait_exists('Warnings') ){
 									$looking_for['bootstrap_js'] = "/\.modal\(|\.bs\.|data-toggle=|data-target=|\.dropdown\(|\.tab\(|\.tooltip\(|\.carousel\(/i";
 								}
 
+								$looking_for = apply_filters('nebula_warnings_bad_file_content_patterns', $looking_for); //Allow the child theme (or plugins) to add patterns to look for
+
 								//Search the file and output if found anything
 								if ( !empty($looking_for) ){
 									foreach ( file($filepath) as $line_number => $full_line ){ //Loop through each line of the file
@@ -519,6 +521,11 @@ if ( !trait_exists('Warnings') ){
 														'level' => 'warn',
 														'description' => '<i class="fab fa-fw fa-bootstrap"></i> <a href="themes.php?page=nebula_options&tab=functions&option=allow_bootstrap_js">Bootstrap JS is disabled</a>, but is possibly needed in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . $line_number . '</strong>.',
 														'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=functions&option=allow_bootstrap_js'
+													);
+												} elseif ( $category === 'custom' ){
+													$nebula_warnings[] = array(
+														'level' => 'warn',
+														'description' => '<i class="fas fa-fw fa-bug"></i> Possible unintentional output detected in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . ($line_number+1) . '</strong>.'
 													);
 												}
 											}

@@ -837,7 +837,7 @@ trait Customizer {
 			'brand_alt' => get_theme_mod('nebula_secondary_color'),
 		);
 		?>
-			<style>
+			<style id="nebula-customizer-styles">
 				<?php if ( get_theme_mod('nebula_background_color') ): //Background Color ?>
 					body {background: <?php echo get_theme_mod('nebula_background_color'); ?>;}
 				<?php endif; ?>

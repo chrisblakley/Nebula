@@ -252,6 +252,7 @@ if ( !trait_exists('Options') ){
 				'ga_linkid' => 0,
 				'adwords_remarketing_conversion_id' => '',
 				'google_optimize_id' => '',
+				'microsoft_clarity_id' => '',
 				'hostnames' => '',
 				'google_search_console_verification' => '',
 				'facebook_custom_audience_pixel_id' => '',

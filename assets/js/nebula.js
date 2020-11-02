@@ -1204,33 +1204,35 @@ nebula.eventTracking = function(){
 			window.dataLayer.push({'event': 'nebula-cookie-notification-click', 'nebula-event': thisEvent});
 		});
 
-		//History Popstate (dynamic URL changes from the History API)
-		nebula.dom.window.on('popstate', function(e){
-			var thisEvent = {
-				event: e,
-				category: 'History Popstate',
-				action: document.title,
-				location: document.location,
-				state: JSON.stringify(e.state)
-			};
+		//History Popstate (dynamic URL changes via the History API when "states" are pushed into the browser history)
+		if ( typeof history.pushState === 'function' ){
+			nebula.dom.window.on('popstate', function(e){ //When a state that was previously pushed is used, or "popped". This *only* triggers when a pushed state is popped!
+				var thisEvent = {
+					event: e,
+					category: 'History Popstate',
+					action: document.title,
+					location: document.location,
+					state: JSON.stringify(e.state)
+				};
 
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.location);
-		});
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.location);
+			});
+		}
 
-		//Non-Linked Click Attempts
+		//Dead Clicks (Non-Linked Click Attempts)
 		nebula.dom.document.on('click', 'img', function(e){
 			if ( !jQuery(this).parents('a, button').length ){
 				var thisEvent = {
 					event: e,
-					category: 'Non-Linked Click Attempt',
-					action: 'Image', //GA4 Name: "non_linked_click_attempt"?
+					category: 'Dead Click',
+					action: 'Image', //GA4 Name: "dead_click"?
 					element: 'Image',
 					src: jQuery(this).attr('src')
 				};
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.src, {'nonInteraction': true}); //Non-interaction because if the user leaves due to this it should be considered a bounce
-				window.dataLayer.push({'event': 'nebula-non-linked-click-attempt', 'nebula-event': thisEvent});
+				window.dataLayer.push({'event': 'nebula-dead-click', 'nebula-event': thisEvent});
 				nebula.crm('event', thisEvent.category);
 			}
 		});
@@ -1751,6 +1753,11 @@ nebula.usage = function(error){
 nebula.scrollDepth = function(){
 	if ( window.performance ){ //Safari 11+
 		var scrollReady = performance.now();
+		var reachedBottom = false; //Flag for optimization after detection is finished
+		var excessiveScrolling = false; //Flag for optimization after detection is finished
+		var lastScrollCheckpoint = nebula.dom.window.scrollTop(); //Set a checkpoint of the current scroll distance to subtract against later
+		var totalScrollDistance = 0;
+		var excessiveScrollThreshold = nebula.dom.document.height()*2; //Set the threshold for an excessive scroll distance
 
 		var scrollDepthHandler = function(){
 			//Only check for initial scroll once
@@ -1769,27 +1776,57 @@ nebula.scrollDepth = function(){
 				}
 			}, 'begin scrolling');
 
-			//Check periodically if the user has reached the bottom of the page
+			//Check scroll distance periodically
 			nebula.throttle(function(){
-				if ( (nebula.dom.window.height()+nebula.dom.window.scrollTop()) >= nebula.dom.document.height() ){ //If user has reached the bottom of the page
-					nebula.once(function(){
-						var thisEvent = {
-							category: 'Scroll Depth',
-							action: 'Entire Page',
-							distance: nebula.dom.document.height(),
-							scrollEnd: performance.now()-(nebula.scrollBegin+scrollReady),
-						};
+				//Total Scroll Distance
+				if ( !excessiveScrolling ){
+					totalScrollDistance += Math.abs(nebula.dom.window.scrollTop() - lastScrollCheckpoint); //Increase the total scroll distance (always positive regardless of scroll direction)
+					lastScrollCheckpoint = nebula.dom.window.scrollTop(); //Update the checkpoint
+					if ( totalScrollDistance >= excessiveScrollThreshold ){
+						excessiveScrolling = true; //Set to true to disable excessive scroll tracking after it is detected
 
-						thisEvent.timetoScrollEnd = Math.round(thisEvent.scrollEnd);
+						nebula.once(function(){
+							var thisEvent = {
+								category: 'Scroll Depth',
+								action: 'Excessive Scrolling',
+								label: 'User scrolled ' + excessiveScrollThreshold + 'px (or more) on this page.',
+							};
+							nebula.dom.document.trigger('nebula_event', thisEvent);
+							ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label, {'nonInteraction': true});
+						}, 'excessive scrolling');
+					}
+				}
 
-						nebula.dom.document.trigger('nebula_event', thisEvent);
-						ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.distance, thisEvent.timetoScrollEnd, {'nonInteraction': true}); //Event value is time to reach end
-						window.removeEventListener('scroll', scrollDepthHandler);
-					}, 'end scrolling');
+				//When user reaches the bottom of the page
+				if ( !reachedBottom ){
+					if ( (nebula.dom.window.height()+nebula.dom.window.scrollTop()) >= nebula.dom.document.height() ){ //If user has reached the bottom of the page
+						reachedBottom = true;
+
+						nebula.once(function(){
+							var thisEvent = {
+								category: 'Scroll Depth',
+								action: 'Entire Page',
+								distance: nebula.dom.document.height(),
+								scrollEnd: performance.now()-(nebula.scrollBegin+scrollReady),
+							};
+
+							thisEvent.timetoScrollEnd = Math.round(thisEvent.scrollEnd);
+
+							nebula.dom.document.trigger('nebula_event', thisEvent);
+							ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.distance, thisEvent.timetoScrollEnd, {'nonInteraction': true}); //Event value is time to reach end
+							window.removeEventListener('scroll', scrollDepthHandler);
+						}, 'end scrolling');
+					}
+				}
+
+				//Stop listening to scroll after no longer necessary
+				if ( reachedBottom && excessiveScrolling ){
+					window.removeEventListener('scroll', scrollDepthHandler); //Stop watching scrolling– no longer needed if all detections are true
 				}
 			}, 1000, 'scroll depth');
 		};
-		window.addEventListener('scroll', scrollDepthHandler); //"scroll" is passive by default
+
+		window.addEventListener('scroll', scrollDepthHandler); //Watch for scrolling ("scroll" is passive by default)
 	}
 };
 
@@ -4677,8 +4714,6 @@ function nebulaYoutubeReady(e){
 function nebulaYoutubeStateChange(e){
 	var thisVideo = nebula.videos[nebula.getYoutubeID(e.target)];
 	thisVideo.title = nebula.getYoutubeTitle(e.target); //Use Nullish coalescing here (after ie11?)
-	thisVideo.current = e.target.getCurrentTime();
-	thisVideo.percent = thisVideo.current/thisVideo.duration;
 
 	//Playing
 	if ( e.data === YT.PlayerState.PLAYING ){
@@ -4705,30 +4740,37 @@ function nebulaYoutubeStateChange(e){
 		var pauseFlag = true;
 		var updateInterval = 500;
 
-		var youtubePlayProgress = setInterval(function(){
+		try {
 			thisVideo.current = e.target.getCurrentTime();
 			thisVideo.percent = thisVideo.current/thisVideo.duration;
-			thisVideo.watched = thisVideo.watched+(updateInterval/1000);
-			thisVideo.watchedPercent = (thisVideo.watched)/thisVideo.duration;
 
-			if ( thisVideo.watchedPercent > 0.25 && !thisVideo.engaged ){
-				if ( nebula.isInView(jQuery(thisVideo.element)) ){
-					var thisEvent = {
-						category: 'Videos',
-						action: ( thisVideo.autoplay )? 'Engaged' : 'Engaged (Autoplay)',
-						title: thisVideo.title,
-						autoplay: thisVideo.autoplay
-					};
+			var youtubePlayProgress = setInterval(function(){
+				thisVideo.current = e.target.getCurrentTime();
+				thisVideo.percent = thisVideo.current/thisVideo.duration;
+				thisVideo.watched = thisVideo.watched+(updateInterval/1000);
+				thisVideo.watchedPercent = (thisVideo.watched)/thisVideo.duration;
 
-					ga('set', nebula.analytics.dimensions.videoWatcher, thisEvent.action);
-					nebula.dom.document.trigger('nebula_event', thisEvent); //@todo "Nebula" 0: This needs the new nebula_event trigger with thisEvent object
-					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.title, {'nonInteraction': true});
-					nebula.crm('event', 'Video Engaged: ' + thisEvent.title);
-					thisVideo.engaged = true;
-					nebula.dom.document.trigger('nebula_engaged_video', thisVideo);
+				if ( thisVideo.watchedPercent > 0.25 && !thisVideo.engaged ){
+					if ( nebula.isInView(jQuery(thisVideo.element)) ){
+						var thisEvent = {
+							category: 'Videos',
+							action: ( thisVideo.autoplay )? 'Engaged' : 'Engaged (Autoplay)',
+							title: thisVideo.title,
+							autoplay: thisVideo.autoplay
+						};
+
+						ga('set', nebula.analytics.dimensions.videoWatcher, thisEvent.action);
+						nebula.dom.document.trigger('nebula_event', thisEvent); //@todo "Nebula" 0: This needs the new nebula_event trigger with thisEvent object
+						ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.title, {'nonInteraction': true});
+						nebula.crm('event', 'Video Engaged: ' + thisEvent.title);
+						thisVideo.engaged = true;
+						nebula.dom.document.trigger('nebula_engaged_video', thisVideo);
+					}
 				}
-			}
-		}, updateInterval);
+			}, updateInterval);
+		} catch(e){
+			//Video progress tracking was unsuccessful. Failing gracefully.
+		}
 	}
 
 	//Ended
@@ -4818,7 +4860,12 @@ nebula.getYoutubeID = function(target){
 		if ( target.getDebugText ){
 			id = JSON.parse(target.getDebugText()).debug_videoId;
 		} else {
-			id = nebula.get('v', target.getVideoUrl()) || jQuery(target.getIframe()).attr('src').split('?')[0].split('/').pop() || jQuery(target.getIframe()).attr('id'); //Parse the video URL for the ID or use the iframe ID
+			if ( typeof target.getVideoUrl === 'function' ){
+				id = nebula.get('v', target.getVideoUrl()); //Parse the video URL for the ID or use the iframe ID
+			} else {
+				id = jQuery(target.getIframe()).attr('src').split('?')[0].split('/').pop() || jQuery(target.getIframe()).attr('id'); //Parse the video URL for the ID or use the iframe ID
+			}
+
 		}
 	}
 

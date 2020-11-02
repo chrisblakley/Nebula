@@ -463,6 +463,16 @@
 	</script>
 <?php endif; ?>
 
+<?php if ( nebula()->get_option('microsoft_clarity_id') ): //Microsoft Clarity ?>
+	<script type="text/javascript">
+		(function(c,l,a,r,i,t,y){
+			c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+			t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;
+			y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+		})(window, document, 'clarity', 'script', '<?php echo esc_html(nebula()->get_option('microsoft_clarity_id')); ?>');
+	</script>
+<?php endif; ?>
+
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('hubspot_portal') ): //Hubspot CRM ?>
 	<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/<?php echo esc_html(nebula()->get_option('hubspot_portal')); ?>.js"></script>
 	<script>
