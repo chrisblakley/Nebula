@@ -1,4 +1,4 @@
-![Nebula readme icon](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-orb.png "Nebula readme icon")
+![Nebula readme icon](https://raw.githubusercontent.com/chrisblakley/Nebula/main/.github/assets/nebula-orb.png "Nebula readme icon")
 
 ---
 
@@ -9,11 +9,11 @@ The core features of Nebula make it a powerful tool for designing, developing, a
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/chrisblakley/Nebula)
 ![GitHub commits since latest release (by SemVer)](https://img.shields.io/github/commits-since/chrisblakley/Nebula/latest)
 ![GitHub last commit](https://img.shields.io/github/last-commit/chrisblakley/Nebula)
-![CodeQL](https://github.com/chrisblakley/Nebula/workflows/CodeQL/badge.svg?branch=master)
+![CodeQL](https://github.com/chrisblakley/Nebula/workflows/CodeQL/badge.svg?branch=main)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1eb4554216644f5c9227df34343a9ae9)](https://www.codacy.com/app/greatblakes/Nebula?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=chrisblakley/Nebula&amp;utm_campaign=Badge_Grade)
 [![CodeFactor](https://www.codefactor.io/repository/github/chrisblakley/nebula/badge)](https://www.codefactor.io/repository/github/chrisblakley/nebula)
 
-![Nebula screenshot](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-pwa.jpg "Nebula screenshot")
+![Nebula screenshot](https://raw.githubusercontent.com/chrisblakley/Nebula/main/.github/assets/nebula-pwa.jpg "Nebula screenshot")
 
 ## Table of Contents
 + [Getting Started](#getting_started)
@@ -40,9 +40,9 @@ To take full advantage of Nebula's features, the following are recommended:
 
 ### Installation & Setup <a name="installation"></a>
 
-![Nebula installation](https://raw.githubusercontent.com/chrisblakley/Nebula/master/.github/assets/nebula-install.gif "Nebula installation")
+![Nebula installation](https://raw.githubusercontent.com/chrisblakley/Nebula/main/.github/assets/nebula-install.gif "Nebula installation")
 
-1. [Download the .zip file of the Nebula theme.](https://github.com/chrisblakley/Nebula/archive/master.zip) Upload to the WordPress `/wp-content/themes/` directory.
+1. [Download the .zip file of the Nebula theme.](https://github.com/chrisblakley/Nebula/archive/main.zip) Upload to the WordPress `/wp-content/themes/` directory.
 2. Activate the Nebula theme and run the automated initialization.
 3. This will automatically install and activate the Nebula Child theme.
 4. It is recommended to rename the child theme (in `/assets/scss/style.scss` and the directory name itself).
