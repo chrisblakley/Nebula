@@ -2410,7 +2410,6 @@ nebula.cf7Functions = function(){
 			formID: jQuery(this).closest('.wpcf7').attr('id') || jQuery(this).attr('id'),
 		};
 
-		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('impressionTracker:observeElements', [{
 			'id': thisEvent.formID,
 			'threshold': 0.25,
