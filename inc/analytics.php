@@ -5,21 +5,21 @@
 	}
 ?>
 
-<?php if ( nebula()->is_analytics_allowed() ): ?>
-	<script>
-		function setDimension(name, value, index){
-			//Google Analytics
-			if ( typeof ga === 'function' && index ){
-				ga('set', index, value);
-			}
-
-			//Microsoft Clarity
-			if ( typeof clarity === 'function' ){
-				clarity('set', name, value);
-			}
+<script>
+	function setDimension(name, value, index){
+		//Google Analytics
+		if ( typeof ga === 'function' && index ){
+			ga('set', index, value);
 		}
-	</script>
 
+		//Microsoft Clarity
+		if ( typeof clarity === 'function' ){
+			clarity('set', name, value);
+		}
+	}
+</script>
+
+<?php if ( nebula()->is_analytics_allowed() ): ?>
 	<?php if ( nebula()->get_option('microsoft_clarity_id') ): //Microsoft Clarity ?>
 		<script type="text/javascript">
 			(function(c,l,a,r,i,t,y){
@@ -27,6 +27,11 @@
 				t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;
 				y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
 			})(window, document, 'clarity', 'script', '<?php echo esc_html(nebula()->get_option('microsoft_clarity_id')); ?>');
+
+			<?php echo ( isset($_GET['utm_campaign']) )? 'clarity("set", "UTM Campaign", "' . $_GET['utm_campaign'] . '");' : ''; ?>
+			<?php echo ( isset($_GET['utm_medium']) )? 'clarity("set", "UTM Medium", "' . $_GET['utm_medium'] . '");' : ''; ?>
+			<?php echo ( isset($_GET['utm_source']) )? 'clarity("set", "UTM Source", "' . $_GET['utm_source'] . '");' : ''; ?>
+			<?php echo ( isset($_GET['utm_content']) )? 'clarity("set", "UTM Content", "' . $_GET['utm_content'] . '");' : ''; ?>
 		</script>
 	<?php endif; ?>
 
