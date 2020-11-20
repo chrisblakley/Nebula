@@ -36,7 +36,7 @@
 
 //Extend animated sub menu dropdowns for WordPress menus (Used with the utility nav and primary nav)
 @mixin nebula-dropdown($font-size: 14px, $line-height: 21px){
-	ul.sub-menu {position: absolute; display: block; top: 120%; left: -9999px; right: auto; height: auto; margin: 0; padding: 5px 0; opacity: 0; text-align: left; transition: top 0.35s easing(easeOutBack), opacity 0.25s; @include background-color(#fff, 0.95); box-shadow: 0 15px 50px 0 rgba(0, 0, 0, 0.25); z-index: 1001;
+	ul.sub-menu {position: absolute; display: block; top: 120%; left: -9999px; right: auto; height: auto; margin: 0; padding: 5px 0; opacity: 0; text-align: left; transition: top 0.35s easing(easeOutBack), opacity 0.25s; @include background-color(#fff, 0.95); backdrop-filter: blur(12px); box-shadow: 0 15px 50px 0 rgba(0, 0, 0, 0.25); z-index: 1001;
 		.no-js & {width: 400px;}
 
 		li.menu-item {display: block; margin: 0; padding: 0 5px;

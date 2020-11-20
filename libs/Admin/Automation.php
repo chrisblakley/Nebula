@@ -127,6 +127,11 @@ if ( !trait_exists('Automation') ){
 					'required' => false,
 				),
 				array(
+					'name' => 'Sucuri Security',
+					'slug' => 'sucuri-scanner',
+					'required' => false,
+				),
+				array(
 					'name' => 'Query Monitor',
 					'slug' => 'query-monitor',
 					'required' => false,

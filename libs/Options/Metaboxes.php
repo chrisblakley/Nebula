@@ -470,9 +470,12 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="option-keywords">moderate page speed impact optimization optimize</p>
 				</div>
 
-				<div class="form-group">
+				<div class="form-group <?php echo ( version_compare(PHP_VERSION, '7.2.0') >= 0 )? '' : 'inactive'; //PHP 7.2+ ?>">
 					<input type="checkbox" name="nebula_options[device_detection]" id="device_detection" value="1" <?php checked('1', !empty($nebula_options['device_detection'])); ?> /><label for="device_detection">Browser/Device Detection</label>
 					<p class="nebula-help-text short-help form-text text-muted">Detect information about the user's device and browser. (Default: <?php echo $this->user_friendly_default('device_detection'); ?>)</p>
+					<?php if ( version_compare(PHP_VERSION, '7.2.0') < 0 ): ?>
+						<p class="dependent-note">This feature requires PHP 7.2+</p>
+					<?php endif; ?>
 					<p class="nebula-help-text more-help form-text text-muted">Useful for cross-browser support.</p>
 					<p class="option-keywords">remote resource moderate page speed impact optimization optimize</p>
 				</div>

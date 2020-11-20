@@ -88,7 +88,7 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 }
 
 //jQuery UI Autocomplete
-.ui-autocomplete.ui-widget-content {margin-top: -10px; @include background-color(#fff, 0.95); border: none; border-top: 1px dotted #ddd; box-shadow: 1px 6px 9px 0 rgba(0, 0, 0, 0.2); z-index: 9999 !important; overflow: hidden;
+.ui-autocomplete.ui-widget-content {margin-top: -10px; @include background-color(#fff, 0.95); backdrop-filter: blur(6px); border: none; border-top: 1px dotted #ddd; box-shadow: 1px 6px 9px 0 rgba(0, 0, 0, 0.2); z-index: 9999 !important; overflow: hidden;
 	.ui-menu .ui-menu-item {font-size: rem(12px); padding: 3px 5px;}
 	.ui-state-hover,
 	.ui-widget-content .ui-state-hover,
