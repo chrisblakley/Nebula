@@ -50,6 +50,10 @@ if ( !trait_exists('Warnings') ){
 
 		//Check for Nebula warnings
 		public function check_warnings(){
+			if ( $this->is_ajax_request() ){
+				return false;
+			}
+
 			$this->timer('Check Warnings');
 
 			if ( $this->is_auditing() || $this->is_warning_level('on') ){
@@ -122,34 +126,47 @@ if ( !trait_exists('Warnings') ){
 					);
 				} else {
 					//Check for sitemap
-					if ( is_plugin_active('wordpress-seo/wp-seo.php') ){ //Yoast
-						if ( !$this->is_available(home_url('/') . 'sitemap_index.xml', false, true) ){
-							$nebula_warnings[] = array(
-								'level' => 'warn',
-								'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. Yoast is enabled, but <a href="' . home_url('/') . 'sitemap_index.xml' . '" target="_blank">sitemap_index.xml</a> is unavailable.'
-							);
-						}
-					} elseif ( is_plugin_active('autodescription/autodescription.php') ){ //The SEO Framework
-						if ( !$this->is_available(home_url('/') . 'sitemap.xml', false, true) ){
-							$nebula_warnings[] = array(
-								'level' => 'warn',
-								'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. The SEO Framework is enabled, but <a href="' . home_url('/') . 'sitemap.xml' . '" target="_blank">sitemap.xml</a> is unavailable.'
-							);
-						}
-					} else {
-						if ( !$this->is_available(home_url('/') . 'wp-sitemap.xml', false, true)  ){ //WordPress Core
-							$nebula_warnings[] = array(
-								'level' => 'warn',
-								'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. WordPress core <a href="' . home_url('/') . 'wp-sitemap.xml' . '" target="_blank">sitemap_index.xml</a> is unavailable.'
-							);
-
-							//Check if the SimpleXML PHP module is installed on the server (required for WP core sitemap generation)
-							if ( !function_exists('simplexml_load_string') ){
+					$sitemap_transient = get_transient('nebula_check_sitemap');
+					if ( empty($sitemap_transient) || $this->is_debug() ){
+						$sitemap_warning = false;
+						if ( is_plugin_active('wordpress-seo/wp-seo.php') ){ //Yoast
+							if ( !$this->is_available(home_url('/') . 'sitemap_index.xml', false, true) ){
+								$sitemap_warning = true;
 								$nebula_warnings[] = array(
 									'level' => 'warn',
-									'description' => '<i class="fas fa-fw fa-sitemap"></i> SimpleXML PHP module is not available. This is required for WordPress core sitemap generation.'
+									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. Yoast is enabled, but <a href="' . home_url('/') . 'sitemap_index.xml' . '" target="_blank">sitemap_index.xml</a> is unavailable.'
 								);
 							}
+						} elseif ( is_plugin_active('autodescription/autodescription.php') ){ //The SEO Framework
+							if ( !$this->is_available(home_url('/') . 'sitemap.xml', false, true) ){
+								$sitemap_warning = true;
+								$nebula_warnings[] = array(
+									'level' => 'warn',
+									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. The SEO Framework is enabled, but <a href="' . home_url('/') . 'sitemap.xml' . '" target="_blank">sitemap.xml</a> is unavailable.'
+								);
+							}
+						} else {
+							if ( !$this->is_available(home_url('/') . 'wp-sitemap.xml', false, true)  ){ //WordPress Core
+								$sitemap_warning = true;
+								$nebula_warnings[] = array(
+									'level' => 'warn',
+									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. WordPress core <a href="' . home_url('/') . 'wp-sitemap.xml' . '" target="_blank">sitemap_index.xml</a> is unavailable.'
+								);
+
+								//Check if the SimpleXML PHP module is installed on the server (required for WP core sitemap generation)
+								if ( !function_exists('simplexml_load_string') ){
+									$sitemap_warning = true;
+									$nebula_warnings[] = array(
+										'level' => 'warn',
+										'description' => '<i class="fas fa-fw fa-sitemap"></i> SimpleXML PHP module is not available. This is required for WordPress core sitemap generation.'
+									);
+								}
+							}
+						}
+
+						//If there is no warning, only check periodically
+						if ( !$sitemap_warning ){
+							set_transient('nebula_check_sitemap', 'Sitemap Found', WEEK_IN_SECONDS);
 						}
 					}
 
@@ -185,6 +202,57 @@ if ( !trait_exists('Warnings') ){
 							'url' => 'http://php.net/supported-versions.php',
 							'meta' => array('target' => '_blank', 'rel' => 'noopener')
 						);
+					}
+				}
+
+				//Check specific directories for indexing (Apache directory listings)
+				$directory_indexing = get_transient('nebula_directory_indexing');
+				if ( empty($directory_indexing) || nebula()->is_debug() || nebula()->is_auditing() ){ //Use the transient unless ?debug or explicitly auditing
+					$directories = array(get_home_url(), includes_url(), content_url()); //Directories to test
+					foreach ( $directories as $directory ){
+						$directory_request = wp_remote_get($directory); //Get the contents of the directory
+						if ( !is_wp_error($directory_request) && !empty($directory_request) ){ //If not an error and response exists
+							if ( $directory_request['response']['code'] !== 403 && $directory_request['response']['code'] !== 404 ){ //Check if the response code is 403 Forbidden or 404 Not Found (both good in this case)
+								if ( strpos(strtolower($directory_request['body']), 'index of') ){ //Check if the "Index of" text appears in the body content (bad)
+									$nebula_warnings[] = array(
+										'level' => 'error',
+										'description' => '<i class="far fa-fw fa-list-alt"></i> Directory indexing is not disabled. Visitors can see file listings of directories!',
+									);
+
+									break; //Exit loop since we found an issue
+								}
+							}
+						}
+					}
+
+					set_transient('nebula_directory_indexing', true, WEEK_IN_SECONDS); //Check periodically
+				}
+
+				//Check individual files for anything unusual
+				if ( nebula()->is_auditing() ){
+					$directories_to_scan = array(ABSPATH . '/wp-admin', ABSPATH . '/wp-includes', get_template_directory(), get_stylesheet_directory()); //Change this to simply ABSPATH to scan the entire WordPress directory
+					foreach ( $directories_to_scan as $directory ){
+						foreach ( $this->glob_r($directory . '/*') as $file ){
+							if ( !$this->contains($file, array('/cache')) ){ //Skip certain directories
+								if ( is_file($file) ){
+									//If file was last modified before the year 2000
+									if ( filemtime($file) < 946702800 ){
+										$nebula_warnings[] = array(
+											'level' => 'warn',
+											'description' => '<i class="fas fa-fw fa-hourglass-start"></i> <strong>' . $file . '</strong> was last modified on ' . date('F j, Y', filemtime($file)) . '. This is somewhat unusual and should be looked into.'
+										);
+									}
+
+									//If the file size is larger than 10mb
+									if ( filesize($file) > 10485760 ){
+										$nebula_warnings[] = array(
+											'level' => 'warn',
+											'description' => '<i class="fas fa-fw fa-file"></i> <strong>' . $file . '</strong> has a large filesize of ' . bcdiv(filesize($file), 1048576, 0) . 'mb.'
+										);
+									}
+								}
+							}
+						}
 					}
 				}
 
@@ -409,11 +477,16 @@ if ( !trait_exists('Warnings') ){
 					}
 				}
 
-				//Check if readme.html exists. If so, recommend deleting it.
-				if ( file_exists(get_home_path() . '/readme.html') ){
+				//Check if readme.html exists and attempt to delete it if so
+				if ( file_exists(ABSPATH . '/readme.html') ){
+					$description = 'should be deleted.';
+					if ( @unlink(ABSPATH . '/readme.html') ){ //Try to delete the file (ignoring errors)
+						$description = 'has been successfully deleted.';
+					}
+
 					$nebula_warnings[] = array(
 						'level' => 'warn',
-						'description' => '<i class="far fa-fw fa-file-alt"></i> The WordPress core <a href="' . home_url('/') . 'readme.html">readme.html</a> file exists (which exposes version information) and should be deleted.',
+						'description' => '<i class="far fa-fw fa-file-alt"></i> The WordPress core <a href="' . home_url('/') . 'readme.html">readme.html</a> file exists (which exposes version information) and ' . $description,
 						'url' => home_url('/') . 'readme.html'
 					);
 				}

@@ -122,12 +122,12 @@ if ( !trait_exists('Automation') ){
 					'required' => false,
 				),
 				array(
-					'name' => 'Wordfence Security',
+					'name' => 'Wordfence Security', //Used for general security and limiting login attempts
 					'slug' => 'wordfence',
 					'required' => false,
 				),
 				array(
-					'name' => 'Sucuri Security',
+					'name' => 'Sucuri Security', //Used to monitor filesystem and log login attempts, other hardening tools
 					'slug' => 'sucuri-scanner',
 					'required' => false,
 				),

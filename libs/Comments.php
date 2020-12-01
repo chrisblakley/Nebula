@@ -11,7 +11,7 @@ trait Comments {
 			add_filter('manage_posts_columns', array($this, 'remove_pages_count_columns'));
 			add_filter('manage_pages_columns', array($this, 'remove_pages_count_columns'));
 			add_filter('manage_media_columns', array($this, 'remove_pages_count_columns'));
-			add_filter('comments_open', '__return_false', 20, 2);
+			add_filter('comments_open', '__return_false', 20, 2); //Entirely disable comments (including via REST API)
 			add_filter('pings_open', '__return_false', 20, 2);
 
 			if ( $this->get_option('admin_bar') ){
