@@ -153,6 +153,7 @@ nebula.registerServiceWorker = function(){
 
 	if ( nebula.site.options.sw && 'serviceWorker' in navigator ){ //Firefox 44+, Chrome 45+, Edge 17+, Safari 12+ //@todo "Nebula" 0: Use optional chaining
 		window.performance.mark('(Nebula) SW Registration [Start]');
+
 		//navigator.serviceWorker.register(nebula.site.sw_url, {cache: 'max-age=0'}).then(function(registration){
 		navigator.serviceWorker.register(nebula.site.sw_url).then(function(registration){
 			//console.log('ServiceWorker registration successful with scope: ', registration.scope);
@@ -167,25 +168,36 @@ nebula.registerServiceWorker = function(){
 				return false;
 			}
 
-			registration.onupdatefound = function(){ //Triggered if sw.js changes
-				//The updatefound event implies that registration.installing is set; see https://w3c.github.io/ServiceWorker/#service-worker-registration-updatefound-event
-				registration.installing.onstatechange = function(){
-					if ( registration.installing ){ //...but that isn't the case sometimes...
+			//Listen for an updated SW
+			registration.addEventListener('updatefound', function(){ //Triggered if sw.js changes. This event implies that registration.installing is set; see https://w3c.github.io/ServiceWorker/#service-worker-registration-updatefound-event
+				registration.installing.addEventListener('statechange', function(){
+					if ( registration.installing ){
 						switch ( registration.installing.state ){
-							case 'installed':
-								if ( navigator.serviceWorker.controller ){
-									//At this point, the old content will have been purged and the fresh content will have been added to the cache. It's the perfect time to display a "New content is available; please refresh." message.
-								} else {
-									//At this point, everything has been precached for offline use.
-								}
+							case 'installing':
+								break;
+							case 'installed': //A new service worker is available, inform the user
+								//Create an update button to reload the page
+								// jQuery('<button id="nebula-sw-update">Update available. Click to reload.</button>').appendTo('body').on('click', function(){
+								// 	window.location.reload();
+								// 	nebula.animate('#nebula-sw-update', 'nebula-zoom-out');
+								// 	return false;
+								// });
+
+								//Show the button
+								// window.requestIdleCallback(function(){
+								// 	window.requestAnimationFrame(function(){
+								// 		jQuery('#nebula-sw-update').addClass('active');
+								// 	});
+								// });
+
 								break;
 							case 'redundant':
 								ga('send', 'exception', {'exDescription': '(JS) The installing service worker became redundant.', 'exFatal': false});
 								break;
 						}
 					}
-				};
-			};
+				});
+			});
 
 			//Listen for messages from the Service Worker
 			navigator.serviceWorker.addEventListener('message', function(event){
@@ -409,6 +421,11 @@ nebula.cookieNotification = function(){
 
 			window.requestAnimationFrame(function(){
 				jQuery('#nebula-cookie-notification').removeClass('active');
+
+				//Remove the entire element after the animation completes
+				setTimeout(function(){
+					jQuery('#nebula-cookie-notification').remove();
+				}, 1000); //The animation is set to 750ms
 			});
 
 			return false;
@@ -715,6 +732,7 @@ nebula.socialSharing = function(){
 		if ( 'share' in navigator && !nebula.dom.body.hasClass('desktop') ){ //Chrome 61+
 			nebula.dom.document.on('click', 'a.nebula-share.webshare, a.nebula-share.shareapi', function(){
 				var oThis = jQuery(this);
+				var originalText = oThis.html();
 
 				navigator.share({
 					title: document.title,
@@ -736,9 +754,9 @@ nebula.socialSharing = function(){
 					nebula.crm('event', thisEvent.network);
 					oThis.addClass('success');
 					nebula.createCookie('shareapi', true);
-				}).catch(function(error){
+				}).catch(function(error){ //This can happen on iOS when the user closes the drawer without sharing
 					ga('send', 'exception', {'exDescription': '(JS) Share API Error: ' + error, 'exFatal': false});
-					oThis.addClass('error').text('Sharing Error');
+					oThis.addClass('error').html(originalText);
 					nebula.createCookie('shareapi', false);
 				});
 
@@ -1994,7 +2012,7 @@ nebula.keywordFilter = function(container, parent, values, filteredClass, operat
 		} else {
 			if ( !operator || operator === 'and' || operator === 'all' ){ //Match only elements that contain all keywords (Default operator is And if not provided)
 				jQuery.each(values, function(index, value){ //Loop through the values to search for
-					if ( value.trim().length ){ //If the value is not empty
+					if ( value && value.trim().length ){ //If the value exists and is not empty
 						var regex = new RegExp(value, 'i');
 
 						jQuery(container).find(parent).not('.' + filteredClass).each(function(){ //Now check elements that have not yet been filtered for this value

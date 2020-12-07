@@ -215,3 +215,8 @@ a.resetfilters {font-size: rem(12px); color: $danger_color; opacity: 0;
 	h2 {font-size: rem(21px);}
 	.suggestion-title {font-size: rem(16px); line-height: 28px;}
 }
+
+//Service Worker update prompt
+#nebula-sw-update {position: fixed; bottom: 10px; margin: 0 auto; left: 0; right: 0; background: $primary_color; color: readable-color($primary_color); font-size: rem(16px); border: none; border-radius: 50px; box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.3); padding: 10px 20px; outline: none; z-index: 9000; opacity: 0; transition: all 1s easing(easeOutBack);
+	&.active {bottom: 50px; opacity: 1;}
+}

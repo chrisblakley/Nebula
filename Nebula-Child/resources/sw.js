@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 const THEME_NAME = 'nebula-child';
-const NEBULA_VERSION = 'v8.7.1.6724'; //Tuesday, December 1, 2020 4:08:19 PM
+const NEBULA_VERSION = 'v8.7.7.5968'; //Monday, December 7, 2020 2:19:28 PM
 const OFFLINE_URL = 'https://nebula.gearside.com/offline/';
 const OFFLINE_IMG = 'https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/offline.svg';
 const OFFLINE_GA_DIMENSION = 'cd2';
@@ -9,14 +9,14 @@ const MANIFEST = 'https://nebula.gearside.com/wp-content/themes/Nebula-main/inc/
 const HOME_URL = 'https://nebula.gearside.com/';
 //END automated edits
 
-importScripts('https://cdnjs.cloudflare.com/ajax/libs/workbox-sw/5.1.4/workbox-sw.min.js'); //https://developers.google.com/web/tools/workbox/guides/get-started
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.0.2/workbox-sw.js'); //https://developers.google.com/web/tools/workbox/guides/get-started
 workbox.setConfig({debug: false}); //https://developers.google.com/web/tools/workbox/guides/troubleshoot-and-debug
 //The Service Worker console can be inspected by visiting chrome://inspect/#service-workers
 
 //@todo "Nebula" 0: If ?debug is present in the URL on load, dump the entire cache and unregister (or update) the SW completely
 //deleteCacheAndMetadata();
 
-workbox.core.skipWaiting();
+self.skipWaiting();
 workbox.core.clientsClaim();
 workbox.precaching.cleanupOutdatedCaches(); //This listens for "-precache-" in the cache name
 
@@ -120,6 +120,7 @@ workbox.routing.registerRoute(
 				maxAgeSeconds: 30 * 24 * 60 * 60, //Cache for a maximum of a month
 				purgeOnQuotaError: true //Purge if an error occurs
 			}),
+			new workbox.broadcastUpdate.BroadcastUpdatePlugin(), //yolo May only want to do this for significant resources
 			ignoreQueryStringPlugin
 		]
 	})
