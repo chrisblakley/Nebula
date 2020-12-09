@@ -478,7 +478,7 @@ if ( !trait_exists('Warnings') ){
 				}
 
 				//Check if readme.html exists and attempt to delete it if so
-				if ( file_exists(ABSPATH . '/readme.html') ){
+				if ( file_exists(ABSPATH . '/readme.html') ){ //WP 5.6+ adds a random string to the readme filename, so this will eventually no longer be needed
 					$description = 'should be deleted.';
 					if ( @unlink(ABSPATH . '/readme.html') ){ //Try to delete the file (ignoring errors)
 						$description = 'has been successfully deleted.';
