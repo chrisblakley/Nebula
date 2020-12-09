@@ -520,32 +520,32 @@ trait Functions {
 		$post_icon_img = false;
 
 		if ( get_theme_mod('search_result_post_types', true) ){
-			if( $data['icon'] ){
-				global $wp_post_types;
-				$post_type = get_post_type();
-				$post_type_labels = get_post_type_object( $post_type )->labels;
+			global $wp_post_types;
+			$post_type = get_post_type();
+			$post_type_labels = get_post_type_object( $post_type )->labels;
 
-				if( gettype( $data['icon'] ) === 'string' && $data['icon'] !== '' ){
+			if ( $data['icon'] ){
+				$post_icon = $wp_post_types[$post_type]->menu_icon;
+				$post_icon_img = '<i class="fas fa-thumbtack"></i>';
+
+				if ( !empty($post_icon) ){
+					$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" loading="lazy" />';
+
+					if ( strpos('dashicons-', $post_icon) >= 0 ){
+						$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
+					}
+				} 
+
+				if ( gettype( $data['icon'] ) === 'string' && $data['icon'] !== '' ){
 					$post_icon_img = '<i class="' . esc_html( $data['icon'] ) . '"></i>';
 				}elseif ( $post_type === 'post' ){
 					$post_icon_img = '<i class="fas fa-fw fa-thumbtack"></i>';
-				} elseif ( $post_type === 'page' ){		
+				} elseif ( $post_type === 'page' ){
 					$post_icon_img = '<i class="fas fa-fw fa-file-alt"></i>';
-				} else {
-					$post_icon = $wp_post_types[$post_type]->menu_icon;
-					if ( !empty($post_icon) ){
-						if ( strpos('dashicons-', $post_icon) >= 0 ){
-							$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
-						} else {
-							$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" loading="lazy" />';
-						}
-					} else {
-						$post_icon_img = '<i class="fas fa-thumbtack"></i>';
-					}
 				}
 			}
 
-			if( $data['linked'] ){
+			if ( $data['linked'] ) {
 				return '<span class="meta-item post-type"><a href="'.esc_url( get_post_type_archive_link( $post_type ) ) . '" title="See all ' . $post_type_labels->name . '">' . $post_icon_img . esc_html($post_type_labels->singular_name) . '</a></span>';
 			}
 
