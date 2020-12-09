@@ -2759,7 +2759,7 @@ nebula.cf7LocalStorage = function(){
 	//Clear localstorage when AJAX submit fails (but submit still succeeds)
 	if ( window.location.hash.indexOf('wpcf7') > 0 ){
 		if ( jQuery(escape(window.location.hash) + ' .wpcf7-mail-sent-ok').length ){
-			 jQuery(escape(window.location.hash) + ' .wpcf7-textarea, ' + window.location.hash + ' .wpcf7-text').each(function(){
+			jQuery(escape(window.location.hash) + ' .wpcf7-textarea, ' + escape(window.location.hash) + ' .wpcf7-text').each(function(){
 				localStorage.removeItem('cf7_' + jQuery(this).attr('name'));
 				jQuery(this).val('').trigger('keyup');
 			});
