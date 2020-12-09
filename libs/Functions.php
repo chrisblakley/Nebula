@@ -513,10 +513,11 @@ trait Functions {
 	//Post type meta
 	public function post_type($options=array() ){
 		$defaults = apply_filters('nebula_post_type_defaults', array(
-			'icon' 		=> true, // boolean true for generic defaults, boolean false to disable icon, or string of class name(s) for icon.
-			'linked'	=> false // boolean true links output to the post type archive page
+			'icon' => true, // boolean true for generic defaults, boolean false to disable icon, or string of class name(s) for icon.
+			'linked' => false // boolean true links output to the post type archive page
 		));
 		$data = array_merge($defaults, $options);
+		$post_icon_img = false;
 
 		if ( get_theme_mod('search_result_post_types', true) ){
 			if( $data['icon'] ){
@@ -524,11 +525,11 @@ trait Functions {
 				$post_type = get_post_type();
 				$post_type_labels = get_post_type_object( $post_type )->labels;
 
-				if( gettype( $data['icon'] ) == 'string' && $data['icon'] != '' ){
-					$post_icon_img = '<i class="'.esc_html( $data['icon'] ).'"></i>';
+				if( gettype( $data['icon'] ) === 'string' && $data['icon'] !== '' ){
+					$post_icon_img = '<i class="' . esc_html( $data['icon'] ) . '"></i>';
 				}elseif ( $post_type === 'post' ){
 					$post_icon_img = '<i class="fas fa-fw fa-thumbtack"></i>';
-				} elseif ( $post_type === 'page' ){
+				} elseif ( $post_type === 'page' ){		
 					$post_icon_img = '<i class="fas fa-fw fa-file-alt"></i>';
 				} else {
 					$post_icon = $wp_post_types[$post_type]->menu_icon;
@@ -542,15 +543,13 @@ trait Functions {
 						$post_icon_img = '<i class="fas fa-thumbtack"></i>';
 					}
 				}
-			}else{
-				$post_icon_img = false;
 			}
 
 			if( $data['linked'] ){
-				return '<span class="meta-item post-type"><a href="'.esc_url( get_post_type_archive_link( $post_type ) ).'" title="See all '.$post_type_labels->name.'">'.$post_icon_img.esc_html($post_type_labels->singular_name).'</a></span>';
-			}else{
-				return '<span class="meta-item post-type">'.$post_icon_img.esc_html($post_type_labels->singular_name).'</span>';
+				return '<span class="meta-item post-type"><a href="'.esc_url( get_post_type_archive_link( $post_type ) ) . '" title="See all ' . $post_type_labels->name . '">' . $post_icon_img . esc_html($post_type_labels->singular_name) . '</a></span>';
 			}
+
+			return '<span class="meta-item post-type">' . $post_icon_img . esc_html($post_type_labels->singular_name) . '</span>';
 		}			
 	}
 
