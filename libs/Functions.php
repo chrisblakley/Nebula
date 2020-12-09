@@ -511,10 +511,10 @@ trait Functions {
 	}
 
 	//Post type meta
-	public function post_type($options=array() ){
+	public function post_type($options=array()){
 		$defaults = apply_filters('nebula_post_type_defaults', array(
-			'icon' => true, // boolean true for generic defaults, boolean false to disable icon, or string of class name(s) for icon.
-			'linked' => false // boolean true links output to the post type archive page
+			'icon' => true, //True for generic defaults, false to disable icon, or string of class name(s) for icon.
+			'linked' => false //True links output to the post type archive page
 		));
 		$data = array_merge($defaults, $options);
 		$post_icon_img = false;
@@ -534,10 +534,10 @@ trait Functions {
 					if ( strpos('dashicons-', $post_icon) >= 0 ){
 						$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
 					}
-				} 
+				}
 
-				if ( gettype( $data['icon'] ) === 'string' && $data['icon'] !== '' ){
-					$post_icon_img = '<i class="' . esc_html( $data['icon'] ) . '"></i>';
+				if ( gettype($data['icon']) === 'string' && $data['icon'] !== '' ){
+					$post_icon_img = '<i class="' . esc_html($data['icon']) . '"></i>';
 				}elseif ( $post_type === 'post' ){
 					$post_icon_img = '<i class="fas fa-fw fa-thumbtack"></i>';
 				} elseif ( $post_type === 'page' ){
@@ -545,12 +545,12 @@ trait Functions {
 				}
 			}
 
-			if ( $data['linked'] ) {
-				return '<span class="meta-item post-type"><a href="'.esc_url( get_post_type_archive_link( $post_type ) ) . '" title="See all ' . $post_type_labels->name . '">' . $post_icon_img . esc_html($post_type_labels->singular_name) . '</a></span>';
+			if ( $data['linked'] ){
+				return '<span class="meta-item post-type"><a href="' . esc_url(get_post_type_archive_link($post_type)) . '" title="See all ' . $post_type_labels->name . '">' . $post_icon_img . esc_html($post_type_labels->singular_name) . '</a></span>';
 			}
 
 			return '<span class="meta-item post-type">' . $post_icon_img . esc_html($post_type_labels->singular_name) . '</span>';
-		}			
+		}
 	}
 
 	//Categories post meta
