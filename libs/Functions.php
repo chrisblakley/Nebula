@@ -528,7 +528,7 @@ trait Functions {
 					$post_icon_img = '<i class="'.esc_html( $data['icon'] ).'"></i>';
 				}elseif ( $post_type === 'post' ){
 					$post_icon_img = '<i class="fas fa-fw fa-thumbtack"></i>';
-				} elseif ( $post_type === 'page' ){		
+				} elseif ( $post_type === 'page' ){
 					$post_icon_img = '<i class="fas fa-fw fa-file-alt"></i>';
 				} else {
 					$post_icon = $wp_post_types[$post_type]->menu_icon;
