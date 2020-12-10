@@ -540,7 +540,7 @@ if ( !trait_exists('Dashboard') ){
 					<i class="far fa-fw fa-file-code"></i> Found <strong><?php echo $file_count; ?> files</strong> with <strong><?php echo $instance_count; ?> @todo comments</strong>.
 
 					<?php if ( $this->get_option('github_url') ): ?>
-						<br /><i class="fab fa-fw fa-github"></i> <a href="<?php echo $this->get_option('github_url'); ?>/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">Check the Github repository</a> for additional issues.
+						<br /><i class="fab fa-fw fa-github"></i> <a href="<?php echo $this->get_option('github_url'); ?>/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">Check the GitHub repository</a> for additional issues.
 					<?php endif; ?>
 				</p>
 			<?php

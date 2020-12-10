@@ -1847,9 +1847,9 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
-					<label for="registrar_url">Github Repository URL</label>
+					<label for="registrar_url">GitHub Repository URL</label>
 					<input type="text" name="nebula_options[github_url]" id="github_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['github_url']; ?>" />
-					<p class="nebula-help-text short-help form-text text-muted">Link to the Github repo for this website.</p>
+					<p class="nebula-help-text short-help form-text text-muted">Link to the GitHub repo for this website.</p>
 					<p class="option-keywords"></p>
 				</div>
 
@@ -2001,7 +2001,7 @@ if ( !trait_exists('Metaboxes') ){
 							Child theme is <strong class="nebula-disabled">not</strong> being used. Automated updates will <strong class="nebula-disabled">not</strong> be available.
 						<?php endif; ?>
 					</li>
-					<li>The local Nebula version is <strong><?php echo $this->version('full'); ?></strong> and the remote (Github) version is <strong><?php echo $nebula_data['next_version']; ?></strong>.</li>
+					<li>The local Nebula version is <strong><?php echo $this->version('full'); ?></strong> and the remote (GitHub) version is <strong><?php echo $nebula_data['next_version']; ?></strong>.</li>
 
 					<?php if ( !empty($nebula_data['last_automated_update_date']) ): ?>
 						<li>Nebula was last updated via the WordPress updater <strong><?php echo human_time_diff($nebula_data['last_automated_update_date']); ?> ago</strong> (<strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['last_automated_update_date']); ?></strong>) by <strong><?php echo $nebula_data['last_automated_update_user']; ?></strong>.</li>
@@ -2040,7 +2040,7 @@ if ( !trait_exists('Metaboxes') ){
 					<li>Nebula <?php echo ( empty($nebula_options['allow_bootstrap_js']) )? '<strong class="nebula-disabled">has disabled' : '<strong class="nebula-enabled">is allowing'; ?> Bootstrap JavaScript</strong>.</li>
 				</ul>
 
-				<a class="button button-primary" href="<?php echo get_admin_url(); ?>update-core.php?force-check=1&force-nebula-theme-update">Re-Install Nebula from Github</a>
+				<a class="button button-primary" href="<?php echo get_admin_url(); ?>update-core.php?force-check=1&force-nebula-theme-update">Re-Install Nebula from GitHub</a>
 			<?php
 		}
 
@@ -2125,7 +2125,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="next_version">Next Nebula version</label>
 					<input type="text" name="nebula_options[next_version]" id="next_version" class="form-control" value="<?php echo $nebula_data['next_version']; ?>" readonly />
-					<p class="nebula-help-text short-help form-text text-muted">The latest version available on <a href="https://github.com/chrisblakley/Nebula" target="_blank">Github</a>.</p>
+					<p class="nebula-help-text short-help form-text text-muted">The latest version available on <a href="https://github.com/chrisblakley/Nebula" target="_blank">GitHub</a>.</p>
 					<p class="nebula-help-text more-help form-text text-muted">Re-checks with <a href="update-core.php">theme update check</a> only when Nebula Child is activated.</p>
 					<p class="option-keywords">readonly</p>
 				</div>

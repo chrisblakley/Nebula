@@ -74,7 +74,7 @@ if ( !trait_exists('Shortcodes') ){
 			//Gist embedding
 			add_shortcode('gist', array($this, 'gist_shortcode'));
 
-			//Github embedding
+			//GitHub embedding
 			add_shortcode('github', array($this, 'github_shortcode'));
 
 			//Accordion

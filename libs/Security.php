@@ -221,7 +221,7 @@ if ( !trait_exists('Security') ){
 			$this->timer('Spam Domain Prevention', 'end');
 		}
 
-		//Return an array of spam domains from Matomo (or the latest Nebula on Github)
+		//Return an array of spam domains from Matomo (or the latest Nebula on GitHub)
 		public function get_spam_domain_list(){
 			$spam_domain_json_file = get_template_directory() . '/inc/data/spam_domain_list.txt';
 			$spam_domain_list = get_transient('$nebula_spam_domain_list');
@@ -231,7 +231,7 @@ if ( !trait_exists('Security') ){
 					$spam_domain_list = $response['body'];
 				}
 
-				//If there was an error or empty response, try my Github repo
+				//If there was an error or empty response, try my GitHub repo
 				if ( is_wp_error($response) || empty($spam_domain_list) ){ //This does not check availability because it is the same hostname as above.
 					$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/spam_domain_list.txt');
 					if ( !is_wp_error($response) ){
