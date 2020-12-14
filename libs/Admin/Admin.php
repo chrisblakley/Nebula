@@ -8,16 +8,12 @@ if ( !trait_exists('Admin') ){
 	require_once get_template_directory() . '/libs/Admin/Users.php';
 
 	trait Admin {
-		//public $old_wp_version; //Only bring this back if global $wp_version does not work
-
 		use Automation {Automation::hooks as AutomationHooks;}
 		use Dashboard {Dashboard::hooks as DashboardHooks;}
 		use Users {Users::hooks as UsersHooks;}
 
 		public function hooks(){
 			global $pagenow;
-
-			//$this->old_wp_version = get_bloginfo('version'); //Store the current version of WP //Only bring this back if global $wp_version does not work
 
 			$this->AutomationHooks(); //Register Automation hooks
 			$this->DashboardHooks(); //Register Dashboard hooks
@@ -35,7 +31,6 @@ if ( !trait_exists('Admin') ){
 				add_filter('wp_check_filetype_and_ext', array($this, 'allow_svg_uploads'), 10, 4);
 				add_filter('upload_mimes', array($this, 'additional_upload_mime_types'));
 
-				//add_action('upgrader_process_complete', array($this, 'set_old_wp_version'), 10, 2); //Only bring this back if global $wp_version does not work
 				add_action('_core_updated_successfully', array($this, 'log_core_wp_updates'), 10, 2); //This happens after successful WP core update
 
 				if ( current_user_can('publish_posts') ){
@@ -1189,24 +1184,16 @@ if ( !trait_exists('Admin') ){
 			}
 		}
 
-		//Set the old WP core version during an update
-		// public function set_old_wp_version($wp_upgrader, $hook_extra){ //Only bring this back if global $wp_version does not work
-		// 	if ( $hook_extra['type'] === 'core' ){
-		// 		$this->old_wp_version = get_bloginfo('version');
-		// 	}
-		// }
-
 		//Log when WordPress core is updated and notify administrators. This happens for manual and automatic updates.
 		public function log_core_wp_updates($new_wp_version){
-			global $wp_version; //Hopefully this is still the old version number at this point
-			//$old_wp_version = ( !empty($this->old_wp_version) )? $this->old_wp_version : $wp_version; //Only bring this back if global $wp_version does not work
+			global $wp_version; //This is still the old version number at this point
 			$old_wp_version = $wp_version; //Rename the variable to reduce confusion (old vs. new)
 
-			$this->add_log('WordPress core was updated from ' . $old_wp_version . ' to ' . $new_wp_version . '.', 7); //I guess store the old version for now...
+			$this->add_log('WordPress core was updated from ' . $old_wp_version . ' to ' . $new_wp_version . '.', 7);
 			$this->usage('WP Core Update from ' . $old_wp_version . ' to ' . $new_wp_version);
 
 			$current_user = wp_get_current_user();
-			$subject = 'WordPress core updated to ' . $new_wp_version . ' for ' . html_entity_decode(get_bloginfo('name')) . '.';
+			$subject = 'WordPress core updated from ' . $old_wp_version . ' to ' . $new_wp_version . ' for ' . html_entity_decode(get_bloginfo('name')) . '.';
 			$message = '<p>WordPress core has been updated to ' . $new_wp_version . ' for ' . get_bloginfo('name') . ' (' . home_url('/') . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '. The previous version was ' . $old_wp_version . '.</p>';
 
 			$this->send_email_to_admins($subject, $message);

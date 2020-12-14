@@ -19,7 +19,7 @@ if ( !trait_exists('Security') ){
 
 			add_filter('rest_endpoints', array($this, 'rest_endpoints_security'));
 			add_filter('xmlrpc_enabled', '__return_false'); //Disable XML-RPC that require authentication
-			add_filter('xmlrpc_methods', function(){return [];}, PHP_INT_MAX); //Disable all XML-RPC requests with the highest priority
+			add_filter('xmlrpc_methods', function(){return array();}, PHP_INT_MAX); //Disable all XML-RPC requests with the highest priority
 
 			add_action('wp_footer', array($this, 'cookie_notification'));
 
