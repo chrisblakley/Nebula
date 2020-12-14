@@ -2046,9 +2046,11 @@ nebula.keywordFilter = function(container, parent, values, filteredClass, operat
 
 //Menu Search Replacement
 nebula.menuSearchReplacement = function(){
-	if ( jQuery('.nebula-search').length ){
-		var randomMenuSearchID = Math.floor((Math.random()*100)+1);
-		jQuery('.menu .nebula-search').html('<form class="wp-menu-nebula-search nebula-search search footer-search" method="get" action="' + nebula.site.home_url + '/"><div class="input-group"><i class="fas fa-search"></i><label class="sr-only" for="nebula-menu-search-' + randomMenuSearchID + '">Search</label><input type="search" id="nebula-menu-search-' + randomMenuSearchID + '" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></div></form>');
+	if ( jQuery('.nebula-search').length ){		
+		jQuery('.menu .nebula-search').each(function(){
+			var randomMenuSearchID = Math.floor((Math.random()*100)+1);
+			jQuery(this).html('<form class="wp-menu-nebula-search nebula-search search footer-search" method="get" action="' + nebula.site.home_url + '/"><div class="input-group"><i class="fas fa-search"></i><label class="sr-only" for="nebula-menu-search-' + randomMenuSearchID + '">Search</label><input type="search" id="nebula-menu-search-' + randomMenuSearchID + '" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></div></form>');
+		});		
 
 		jQuery('.nebula-search input').on('focus', function(){
 			jQuery(this).addClass('focus active');
