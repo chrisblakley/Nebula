@@ -2728,23 +2728,34 @@ nebula.cf7LocalStorage = function(){
 		return false;
 	}
 
-	jQuery('.wpcf7-textarea, .wpcf7-text').each(function(){
+	jQuery('.wpcf7-textarea, .wpcf7-text, .wpcf7-select, .wpcf7-checkbox input').each(function(){
 		var thisLocalStorageVal = localStorage.getItem('cf7_' + jQuery(this).attr('name'));
 
-		//Fill textareas with localstorage data on load
+		//Complete inputs with localstorage data on load
 		if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') && thisLocalStorageVal && thisLocalStorageVal !== 'undefined' && thisLocalStorageVal !== '' ){
-			if ( jQuery(this).val() === '' ){ //Don't overwrite a field that already has text in it!
+			if( jQuery(this).attr('type') == 'checkbox' ){
+				// local storange vals are stored as strings but the .prop method requires a bool
+				if( thisLocalStorageVal == 'true' ){
+					jQuery(this).prop('checked', true);
+				}else{
+					jQuery(this).prop('checked', false);
+				}
+			}else if( jQuery(this).val() === '' ){ //Don't overwrite a field that already has text in it!
 				jQuery(this).val(thisLocalStorageVal).trigger('keyup');
-			}
-			jQuery(this).blur();
+				jQuery(this).blur();
+			}			
 		} else {
 			localStorage.removeItem('cf7_' + jQuery(this).attr('name')); //Remove localstorage if it is undefined or inelligible
 		}
 
 		//Update localstorage data
 		jQuery(this).on('keyup blur', function(){
-			if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') ){
-				localStorage.setItem('cf7_' + jQuery(this).attr('name'), jQuery(this).val());
+			if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') ){				
+				if( jQuery(this).attr('type') == 'checkbox' ){
+					localStorage.setItem('cf7_' + jQuery(this).attr('name'), jQuery(this).prop('checked'));
+				}else{
+					localStorage.setItem('cf7_' + jQuery(this).attr('name'), jQuery(this).val());				
+				}
 			}
 		});
 	});
