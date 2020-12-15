@@ -12,4 +12,4 @@ jobs:
       - name: Run codacy-analysis-cli
         uses: codacy/codacy-analysis-cli-action@master
         with:
-    		project-token: ${{ secrets.CODACY_API }}
+          project-token: ${{ secrets.CODACY_API }}
