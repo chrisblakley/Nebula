@@ -2732,11 +2732,10 @@ nebula.cf7LocalStorage = function(){
 		var thisLocalStorageVal = localStorage.getItem('cf7_' + jQuery(this).attr('name'));
 		//Complete inputs with localstorage data on load
 		if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') && thisLocalStorageVal && thisLocalStorageVal !== 'undefined' && thisLocalStorageVal !== '' ){
-			if( thisLocalStorageVal !== null ){
-				if ( jQuery(this).attr('type') === 'checkbox' || jQuery(this).attr('type') === 'radio' ) {
+			if ( thisLocalStorageVal !== null ){
+				if ( jQuery(this).attr('type') === 'checkbox' || jQuery(this).attr('type') === 'radio' ){
 					jQuery(this).prop('checked', (jQuery(this).val() === thisLocalStorageVal));
 				} else {
-					// This must be a text or textarea input
 					jQuery(this).val( thisLocalStorageVal );
 				}
 				jQuery(this).addClass('nebula-autofilled');
@@ -2747,11 +2746,11 @@ nebula.cf7LocalStorage = function(){
 
 		//Update localstorage data
 		jQuery(this).on('keyup blur click', function(){
-			if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') ) {
+			if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') ){
 				var thisVal = jQuery(this).val();				
-				if ( jQuery(this).attr('type') === 'checkbox' ) {
+				if ( jQuery(this).attr('type') === 'checkbox' ){
 					thisVal = null;
-					if ( jQuery(this).prop('checked') ) {
+					if ( jQuery(this).prop('checked') ){
 						thisVal = jQuery(this).val();
 					}
 				}
@@ -2765,8 +2764,8 @@ nebula.cf7LocalStorage = function(){
 		jQuery('.wpcf7-textarea, .wpcf7-text, .wpcf7-select, .wpcf7-checkbox input, .wpcf7-radio input').each(function(){
 			if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') ){
 				var thisLocalStorageVal = localStorage.getItem('cf7_' + jQuery(this).attr('name'));				
-				if( thisLocalStorageVal !== null ){					
-					if( jQuery(this).attr('type') === 'checkbox' || jQuery(this).attr('type') === 'radio' ){
+				if ( thisLocalStorageVal !== null ){					
+					if ( jQuery(this).attr('type') === 'checkbox' || jQuery(this).attr('type') === 'radio' ){
 						jQuery(this).prop('checked', (jQuery(this).val() === thisLocalStorageVal));
 					} else {
 						jQuery(this).val( thisLocalStorageVal );
