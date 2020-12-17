@@ -1,4 +1,4 @@
-name: codacy-analysis-cli
+name: "Codacy"
 
 on: ["push", "pull_request"]
 

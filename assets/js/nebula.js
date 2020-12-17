@@ -4065,8 +4065,17 @@ nebula.once = function(fn, args, unique){
 //Waits for events to finish before triggering
 //Passing immediate triggers the function on the leading edge (instead of the trailing edge).
 nebula.debounce = function(callback, wait, uniqueID, immediate){
+	if ( !callback ){
+		console.error('nebula.debounce() requires a callback function.');
+		return false;
+	}
+
 	if ( typeof nebula.debounceTimers === "undefined" ){
 		nebula.debounceTimers = {};
+	}
+
+	if ( !wait ){
+		wait = 1000; //If no wait time is supplied, use 1 second
 	}
 
 	if ( !uniqueID ){

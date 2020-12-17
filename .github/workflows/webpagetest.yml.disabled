@@ -1,11 +1,13 @@
+name: "Run WebPageTest"
+
 on: push
-name: Run WebPageTest
+
 jobs:
   webPageTestActions:
     name: WebPageTestActions
     runs-on: ubuntu-latest
     steps:
-      - uses: JCofman/webPagetestAction@main
+      - uses: JCofman/webPagetestAction
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TEST_URL: https://nebula.gearside.com/

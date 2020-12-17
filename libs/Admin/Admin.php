@@ -572,22 +572,25 @@ if ( !trait_exists('Admin') ){
 						}
 					}
 
+					//Add a node for the current post information
 					$post_type_object = get_post_type_object(get_post_type());
-					$post_type_name = $post_type_object->labels->singular_name;
+					if ( !empty($post_type_object) ){ //Ignore non-posts like user profiles
+						$post_type_name = $post_type_object->labels->singular_name;
 
-					$current_id = get_the_id();
-					if ( is_home() ){
-						$current_id = get_option('page_for_posts');
-					} elseif ( is_archive() ){
-						$term_object = get_queried_object();
-						$current_id = $term_object->term_id;
-						$post_type_name = $term_object->taxonomy;
-						$original_date = false;
-						$status = false;
+						$current_id = get_the_id();
+						if ( is_home() ){
+							$current_id = get_option('page_for_posts');
+						} elseif ( is_archive() ){
+							$term_object = get_queried_object();
+							$current_id = $term_object->term_id;
+							$post_type_name = $term_object->taxonomy;
+							$original_date = false;
+							$status = false;
+						}
+
+						$new_content_node->title = ucfirst($node_id) . ' ' . ucwords($post_type_name) . ' <span class="nebula-admin-light">(ID: ' . $current_id . ')' . $info_icon . '</span>';
+						$wp_admin_bar->add_node($new_content_node);
 					}
-
-					$new_content_node->title = ucfirst($node_id) . ' ' . ucwords($post_type_name) . ' <span class="nebula-admin-light">(ID: ' . $current_id . ')' . $info_icon . '</span>';
-					$wp_admin_bar->add_node($new_content_node);
 				}
 
 				//Add created date under View/Edit node
