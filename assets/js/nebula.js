@@ -5268,7 +5268,7 @@ nebula.vibrate = function(pattern){
 //Lazy load and initialize Mmenu separately because it has additional conditions
 nebula.initMmenu = function(){
 	if ( jQuery('#mobilenav').length ){
-		var isMobileBarVisible = ( jQuery('#mobilebarcon').css('border-color') === 'rgba(255, 255, 255, 0)' )? true : false; //This is used to determine if the element is actually visible (because even though its visibility is hidden, JS cannot detect that.
+		var isMobileBarVisible = ( jQuery('#mobilebarcon').css('border-left-color') === 'rgba(255, 255, 255, 0)' )? true : false; //This is used to determine if the element is actually visible (because even though its visibility is hidden, JS cannot detect that.
 		if ( isMobileBarVisible ){
 			nebula.once(function(){
 				nebula.loadJS(nebula.site.resources.scripts.nebula_mmenu, function(){ //Detected as a long task per Chrome DevTools

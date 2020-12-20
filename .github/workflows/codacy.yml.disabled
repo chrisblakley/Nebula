@@ -1,3 +1,5 @@
+# Disabled until it can only scan for "new" issues (rather than counting the tens of thousands of existing "errors")
+
 name: "Codacy"
 
 on: ["push", "pull_request"]
