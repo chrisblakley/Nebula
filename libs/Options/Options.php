@@ -171,6 +171,7 @@ if ( !trait_exists('Options') ){
 				'site_owner' => '',
 				'contact_email' => '',
 				'notification_email' => '',
+				'force_wp_timezone' => 1,
 				'phone_number' => '',
 				'fax_number' => '',
 				'latitude' => '',

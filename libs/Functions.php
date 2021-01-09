@@ -182,14 +182,15 @@ trait Functions {
 	//Set server timezone to match Wordpress
 	//@todo "Nebula" 0: WordPress Health Check does not like this function, but often has incorrect timestamps... Disabling for now and will monitor.
 	public function set_default_timezone(){
-		//@todo "Nebula" 0: Use null coalescing operator here if possible
-		$timezone_option = get_option('timezone_string');
-		if ( empty($timezone_option) ){
-			$timezone_option = 'America/New_York';
-		}
+		if ( $this->get_option('force_wp_timezone') ){
+			//@todo "Nebula" 0: Use null coalescing operator here if possible
+			$timezone_option = get_option('timezone_string');
+			if ( empty($timezone_option) ){
+				$timezone_option = 'America/New_York';
+			}
 
-		//Note: this is disabled here but also at the hook above too!
-		date_default_timezone_set($timezone_option); //@todo "Nebula" 0: WordPress Health Check does not like this... but date() is wrong (uses UTC) without it...
+			date_default_timezone_set($timezone_option); //@todo "Nebula" 0: WordPress Health Check does not like this... but date() is wrong (uses UTC) without it...
+		}
 	}
 
 	//Add the Nebula note to the browser console (if enabled)

@@ -89,6 +89,13 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text more-help form-text text-muted">If left empty, the admin email address will be used (shown by placeholder).</p>
 					<p class="option-keywords"></p>
 				</div>
+
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[force_wp_timezone]" id="force_wp_timezone" value="1" <?php checked('1', !empty($nebula_options['force_wp_timezone'])); ?> /><label for="force_wp_timezone">Force WP Timezone</label>
+					<p class="nebula-help-text short-help form-text text-muted">Force the timezone to use the WordPress setting (<code><?php echo get_option('timezone_string'); ?></code>). Disabling this will use whatever the server is set to. (Default: <?php echo $this->user_friendly_default('force_wp_timezone'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">With the current setting, the time is <strong><?php echo date('F j, Y - g:ia'); ?></strong>. </p>
+					<p class="option-keywords">time zone dst</p>
+				</div>
 			<?php
 
 			do_action('nebula_options_site_information_metabox', $nebula_options);
