@@ -2579,13 +2579,18 @@ nebula.cf7Functions = function(){
 
 	//CF7 Spam (CF7 AJAX response after spam detection)
 	nebula.dom.document.on('wpcf7spam', function(e){
+		var formInputs = 'Unknown';
+		if ( nebula.timings && nebula.timings[e.detail.id] && nebula.timings[e.detail.id].laps ){ //Use optional chaining here
+			formInputs = nebula.timings[e.detail.id].laps + ' inputs';
+		}
+
 		var thisEvent = {
 			event: e,
 			category: 'CF7 Form',
 			action: 'Submit (Spam)', //GA4 Name: "form_spam"?
 			formID: e.detail.id,
 			formTime: nebula.timer(e.detail.id, 'end'),
-			inputs: nebula.timings[e.detail.id].laps + ' inputs'
+			inputs: formInputs
 		};
 
 		thisEvent.label = 'Form submission failed spam tests on form ID: ' + thisEvent.formID;
@@ -2629,6 +2634,11 @@ nebula.cf7Functions = function(){
 	nebula.dom.document.on('wpcf7mailsent', function(e){
 		formStarted[e.detail.id] = false; //Reset abandonment tracker for this form.
 
+		var formInputs = 'Unknown';
+		if ( nebula.timings && nebula.timings[e.detail.id] && nebula.timings[e.detail.id].laps ){ //Use optional chaining here
+			formInputs = nebula.timings[e.detail.id].laps + ' inputs';
+		}
+
 		//These event may want to correspond to the GA4 event name "generate_lead" and use "value" and "currency" as parameters: https://support.google.com/analytics/answer/9267735 (or consider multiple events?)
 
 		var thisEvent = {
@@ -2637,7 +2647,7 @@ nebula.cf7Functions = function(){
 			action: 'Submit (Success)', //GA4 Name: "form_submit" (and also somehow "generate_lead"?)
 			formID: e.detail.id,
 			formTime: nebula.timer(e.detail.id, 'end'),
-			inputs: nebula.timings[e.detail.id].laps + ' inputs'
+			inputs: formInputs
 		};
 
 		thisEvent.label = 'Form ID: ' + thisEvent.formID;
