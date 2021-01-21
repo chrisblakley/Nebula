@@ -5,32 +5,34 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Assets') ){
 	trait Assets {
 		public function hooks(){
-			//Register styles/scripts
-			add_action('wp_enqueue_scripts', array($this, 'register_scripts'));
-			add_action('login_enqueue_scripts', array($this, 'register_scripts'));
-			add_action('admin_enqueue_scripts', array($this, 'register_scripts'));
+			if ( !$this->is_ajax_or_rest_request() ){
+				//Register styles/scripts
+				add_action('wp_enqueue_scripts', array($this, 'register_scripts'));
+				add_action('login_enqueue_scripts', array($this, 'register_scripts'));
+				add_action('admin_enqueue_scripts', array($this, 'register_scripts'));
 
-			//Enqueue styles/scripts
-			add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-			add_action('login_enqueue_scripts', array($this, 'login_enqueue_scripts'));
-			add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
+				//Enqueue styles/scripts
+				add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+				add_action('login_enqueue_scripts', array($this, 'login_enqueue_scripts'));
+				add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 
-			if ( $this->is_debug() || !empty($GLOBALS['wp_customize']) ){
-				add_filter('style_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
-				add_filter('script_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
+				if ( $this->is_debug() || !empty($GLOBALS['wp_customize']) ){
+					add_filter('style_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
+					add_filter('script_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
+				}
+
+				add_action('login_head', array($this, 'nebula_login_logo'));
+
+				add_action('wp_head', array($this, 'output_nebula_data'));
+				add_action('admin_head', array($this, 'output_nebula_data'));
 			}
-
-			add_action('login_head', array($this, 'nebula_login_logo'));
-
-			add_action('wp_head', array($this, 'output_nebula_data'));
-			add_action('admin_head', array($this, 'output_nebula_data'));
 		}
 
 		//Register scripts
 		public function register_scripts(){
 			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
-			wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css', null, '5.15.1', 'all');
+			wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css', null, '5.15.2', 'all');
 			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.3.3/jquery.mmenu.all.css', null, '7.3.3', 'all');
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap'), $this->version('full'), 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, $this->version('full'), 'all');
@@ -55,7 +57,7 @@ if ( !trait_exists('Assets') ){
 			}
 			$this->register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', array('defer', 'crossorigin'), null, '1.12.1', true);
 			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.3.3/jquery.mmenu.all.js', array('defer', 'crossorigin'), null, '7.3.3', true);
-			$this->register_script('nebula-vimeo', 'https://cdnjs.cloudflare.com/ajax/libs/vimeo-player/2.14.1/player.min.js', null, null, '2.14.1', true);
+			$this->register_script('nebula-vimeo', 'https://cdnjs.cloudflare.com/ajax/libs/vimeo-player/2.15.0/player.min.js', null, null, '2.15.0', true);
 			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.10.21', true);
 			$this->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js', array('defer', 'crossorigin'), null, '1.8.7', true);
 			$this->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js', array('async', 'crossorigin'), null, '2.4.1', true);
@@ -106,7 +108,7 @@ if ( !trait_exists('Assets') ){
 				} elseif ( $this->get_option('bootstrap_version') === 'grid' ){
 					//Bootstrap Reboot and Grid only
 					if ( $file === 'css' ){
-						return wp_register_style('nebula-bootstrap', get_template_directory_uri() . '/assets/css/vendor/bootstrap-reboot-grid.css', null, '4.5.2', 'all'); //Served locally to combine multiple resources (Reboot and Grid)
+						return wp_register_style('nebula-bootstrap', get_template_directory_uri() . '/assets/css/vendor/bootstrap-reboot-grid.css', null, '4.6.0', 'all'); //Served locally to combine multiple resources (Reboot and Grid)
 					} elseif ( $file === 'js' ){
 						return false;
 					} else {
@@ -117,11 +119,11 @@ if ( !trait_exists('Assets') ){
 
 			//Latest (IE10+)
 			if ( $file === 'css' ){
-				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css', null, '4.5.3', 'all');
+				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css', null, '4.6.0', 'all');
 			} elseif ( $file === 'js' ){
-				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '4.5.3', true);
+				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '4.5.3', true);
 			} elseif ( $file === 'reboot' ){
-				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap-reboot.min.css';
+				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap-reboot.min.css';
 			} else {
 				return 'latest';
 			}

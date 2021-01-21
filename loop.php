@@ -13,7 +13,7 @@
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 				<div class="row">
 					<div class="col">
-						<h2 class="entry-title"><a href="<?php echo get_the_permalink() . $text_fragment; ?>"><?php the_title(); ?></a></h2>
+						<h2 class="entry-title"><a href="<?php echo get_the_permalink() . $text_fragment; ?>"><?php echo esc_html(get_the_title()); ?></a></h2>
 
 						<div class="entry-meta">
 							<?php if ( is_search() ): //If this is a search results listing ?>

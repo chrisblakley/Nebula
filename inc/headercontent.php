@@ -41,7 +41,7 @@
 							<?php if ( wp_attachment_is_image() ): ?>
 								<i class="archiveicon fa fa-photo"></i>
 							<?php endif; ?>
-							<?php the_title(); ?>
+							<?php echo esc_html(get_the_title()); ?>
 						</h1>
 					<?php elseif ( is_author() ): //Author archive ?>
 						<h1 class="page-title articles-by"><?php _e('Articles by', 'nebula'); ?> <strong><?php echo ( get_the_author_meta('first_name') !== '' )? get_the_author_meta('first_name') : get_the_author_meta('display_name'); ?></strong></h1>
@@ -58,13 +58,13 @@
 						<?php endif; ?>
 						<?php echo nebula()->search_form(); ?>
 					<?php elseif ( is_singular() && !is_page() ): //Single posts (and custom post types) but not pages. Attachments are singular, but are handled above. ?>
-						<h1 class="entry-title"><?php the_title(); ?></h1>
+						<h1 class="entry-title"><?php echo esc_html(get_the_title()); ?></h1>
 
 						<div class="entry-meta">
 							<?php echo nebula()->post_date(); ?> <?php echo nebula()->post_author(); ?> <?php echo nebula()->post_categories(); ?> <?php echo nebula()->post_tags(); ?>
 						</div>
 					<?php else: //Page and any other templates ?>
-						<h1 class="entry-title"><?php the_title(); ?></h1>
+						<h1 class="entry-title"><?php echo esc_html(get_the_title()); ?></h1>
 					<?php endif; ?>
 				</div><!--/col-->
 			</div><!--/row-->

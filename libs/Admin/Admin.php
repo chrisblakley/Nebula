@@ -681,7 +681,7 @@ if ( !trait_exists('Admin') ){
 							$wp_admin_bar->add_node(array(
 								'parent' => 'nebula-ancestors',
 								'id' => 'nebula-parent-' . $parent,
-								'title' => '<i class="nebula-admin-fa far fa-fw fa-file"></i> ' . get_the_title($parent),
+								'title' => '<i class="nebula-admin-fa far fa-fw fa-file"></i> ' . esc_html(get_the_title($parent)),
 								'href' => ( $this->is_admin_page() )? get_edit_post_link($parent) : get_permalink($parent),
 							));
 						}
@@ -708,7 +708,7 @@ if ( !trait_exists('Admin') ){
 								$wp_admin_bar->add_node(array(
 									'parent' => 'nebula-children',
 									'id' => 'nebula-child-' . get_the_id(),
-									'title' => '<i class="nebula-admin-fa fas fa-fw fa-file"></i> ' . get_the_title(),
+									'title' => '<i class="nebula-admin-fa fas fa-fw fa-file"></i> ' . esc_html(get_the_title()),
 									'href' => ( $this->is_admin_page() )? get_edit_post_link() : get_permalink(),
 								));
 							}

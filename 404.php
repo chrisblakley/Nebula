@@ -45,7 +45,7 @@
 										<strong>
 									<?php endif; ?>
 
-									<a class="internal-suggestion" href="<?php echo get_permalink(); ?>"><?php the_title(); ?></a>
+									<a class="internal-suggestion" href="<?php echo get_permalink(); ?>"><?php echo esc_html(get_the_title()); ?></a>
 
 									<?php if ( strpos(get_permalink(), nebula()->slug_keywords) ): ?>
 										</strong>

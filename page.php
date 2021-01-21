@@ -31,7 +31,7 @@
 						<?php endif; ?>
 
 						<?php if ( get_theme_mod('title_location') === 'content' ): ?>
-							<h1 class="entry-title"><?php the_title(); ?></h1>
+							<h1 class="entry-title"><?php echo esc_html(get_the_title()); ?></h1>
 						<?php endif; ?>
 
 						<div class="entry-content">

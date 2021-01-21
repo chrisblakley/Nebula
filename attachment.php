@@ -61,7 +61,7 @@
 									?>
 
 									<div class="mediacon">
-										<a href="<?php echo $next_attachment_url; ?>" title="<?php echo get_the_title(); ?>"><?php echo wp_get_attachment_image($post->ID, array($content_width, 9999)); ?></a>
+										<a href="<?php echo $next_attachment_url; ?>" title="<?php echo esc_html(get_the_title()); ?>"><?php echo wp_get_attachment_image($post->ID, array($content_width, 9999)); ?></a>
 									</div>
 
 									<?php if ( 1 === 2 ): //Might be needed for a gallery page. ?>
@@ -71,7 +71,7 @@
 										</nav><!-- #nav-below -->
 									<?php endif; ?>
 								<?php else : ?>
-									<a href="<?php echo wp_get_attachment_url(); ?>" title="<?php echo get_the_title(); ?>" ><?php echo basename(get_permalink()); ?></a>
+									<a href="<?php echo wp_get_attachment_url(); ?>" title="<?php echo esc_html(get_the_title()); ?>" ><?php echo basename(get_permalink()); ?></a>
 								<?php endif; ?>
 							</div><!-- .entry-attachment -->
 

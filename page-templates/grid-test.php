@@ -60,7 +60,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					<h1 class="entry-title"><?php the_title(); ?></h1>
+					<h1 class="entry-title"><?php echo esc_html(get_the_title()); ?></h1>
 				</div>
 			</div>
 		</div>

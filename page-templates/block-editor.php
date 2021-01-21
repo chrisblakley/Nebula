@@ -23,7 +23,7 @@
 		<div class="container title-desc-con">
 			<div class="row justify-content-md-center">
 				<div class="col-9">
-					<h1 class="entry-title"><?php the_title(); ?></h1>
+					<h1 class="entry-title"><?php echo esc_html(get_the_title()); ?></h1>
 				</div><!--/cols-->
 			</div><!--/row-->
 		</div><!--/container-->

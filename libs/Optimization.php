@@ -9,14 +9,14 @@ if ( !trait_exists('Optimization') ){
 		public function hooks(){
 			$this->deregistered_assets = array('styles' => array(), 'scripts' => array());
 
-			if ( $this->get_option('service_worker') ){
+			if ( $this->get_option('service_worker') && !$this->is_ajax_or_rest_request() ){
 				add_action('send_headers', array($this, 'nebula_http2_ob_start'));
 				add_action('wp_enqueue_scripts', array($this, 'styles_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
 				add_action('wp_enqueue_scripts', array($this, 'scripts_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
 			}
 
 			//Non-WordPress Admin optimizations
-			if ( !$this->is_admin_page(true) ){
+			if ( !$this->is_admin_page(true) && !$this->is_ajax_or_rest_request() ){
 				add_filter('wp_enqueue_scripts', array($this, 'defer_async_additional_scripts'));
 				add_filter('script_loader_tag', array($this, 'defer_async_scripts'), 10, 2);
 
@@ -31,11 +31,13 @@ if ( !trait_exists('Optimization') ){
 			add_action('wp_head', array($this, 'prebrowsing'));
 
 			//Dequeue assets depending on when they are hooked for output
-			add_action('wp_enqueue_scripts', array($this, 'scan_assets'), 9000);
-			add_action('wp_enqueue_scripts', array($this, 'dequeues'), 9001); //Dequeue styles and scripts that are hooked into the wp_enqueue_scripts action
-			add_action('wp_print_styles', array($this, 'dequeues'), 9001); //Dequeue styles that are hooked into the wp_print_styles action
-			add_action('wp_print_scripts', array($this, 'dequeues'), 9001); //Dequeue scripts that are hooked into the wp_print_styles action
-			add_action('wp_enqueue_scripts', array($this, 'remove_actions'), 9001);
+			if ( !$this->is_ajax_or_rest_request() ){
+				add_action('wp_enqueue_scripts', array($this, 'scan_assets'), 9000);
+				add_action('wp_enqueue_scripts', array($this, 'dequeues'), 9001); //Dequeue styles and scripts that are hooked into the wp_enqueue_scripts action
+				add_action('wp_print_styles', array($this, 'dequeues'), 9001); //Dequeue styles that are hooked into the wp_print_styles action
+				add_action('wp_print_scripts', array($this, 'dequeues'), 9001); //Dequeue scripts that are hooked into the wp_print_styles action
+				add_action('wp_enqueue_scripts', array($this, 'remove_actions'), 9001);
+			}
 
 			add_action('send_headers', array($this, 'service_worker_scope'));
 			add_action('admin_init', array($this, 'plugin_force_settings'));
@@ -44,7 +46,6 @@ if ( !trait_exists('Optimization') ){
 			add_filter('wp_resource_hints', array($this, 'remove_emoji_prefetch'), 10, 2); //Remove dns-prefetch for emojis
 			add_filter('tiny_mce_plugins', array($this, 'disable_emojicons_tinymce')); //Remove TinyMCE Emojis too
 			add_filter('wpcf7_load_css', '__return_false'); //Disable CF7 CSS resources (in favor of Bootstrap and Nebula overrides)
-
 
 			add_action('wp_head', array($this, 'embed_critical_styles'));
 

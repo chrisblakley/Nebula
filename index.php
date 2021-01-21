@@ -22,7 +22,7 @@
 	<div class="container title-desc-con">
 		<div class="row">
 			<div class="col">
-				<h1 class="page-title"><?php echo get_the_title(); ?></h1>
+				<h1 class="page-title"><?php echo esc_html(get_the_title()); ?></h1>
 			</div><!--/cols-->
 		</div><!--/row-->
 	</div><!--/container-->

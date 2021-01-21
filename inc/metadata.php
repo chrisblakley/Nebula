@@ -54,7 +54,7 @@
 <?php if ( (!is_plugin_active('wordpress-seo/wp-seo.php') && !is_plugin_active('autodescription/autodescription.php')) || (!empty($wpseo_social) && !$wpseo_social['opengraph']) ): //If Yoast SEO is not active, or if it is and the Open Graph settings are disabled ?>
 	<meta property="og:type" content="business.business" />
 	<meta property="og:locale" content="<?php echo str_replace('-', '_', get_bloginfo('language')); ?>" />
-	<meta property="og:title" content="<?php echo get_the_title(); ?>" />
+	<meta property="og:title" content="<?php echo esc_html(get_the_title()); ?>" />
 	<meta property="og:description" content="<?php echo esc_attr(nebula()->meta_description()); ?>" />
 
 	<meta property="og:url" content="<?php the_permalink(); ?>" />
@@ -137,7 +137,7 @@
 	<?php endif; ?>
 <?php endif; ?>
 <?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): ?>
-	<meta name="twitter:title" content="<?php the_title(); ?>" />
+	<meta name="twitter:title" content="<?php echo esc_html(get_the_title()); ?>" />
 	<meta name="twitter:description" content="<?php echo esc_attr(nebula()->meta_description(false, 200)); ?>" />
 <?php endif; ?>
 
@@ -342,9 +342,9 @@
 				"@type": "Article",
 				"mainEntityofPage": {
 					"@type": "WebPage",
-					"@id": "<?php echo get_permalink(); ?>"
+					"@id": "<?php echo esc_url(get_permalink()); ?>"
 				},
-				"headline": "<?php echo get_the_title(); ?>",
+				"headline": "<?php echo esc_html(get_the_title()); ?>",
 
 				<?php $post_thumbnail_meta = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'full'); ?>
 				<?php if ( !empty($post_thumbnail_meta) ): ?>

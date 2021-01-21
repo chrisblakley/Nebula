@@ -2334,7 +2334,7 @@ trait Functions {
 			$query1 = new WP_Query(array(
 				'post_type' => $types,
 				'post_status' => 'publish',
-				'posts_per_page' => 4,
+				'numberposts' => 10,
 				's' => $term,
 			));
 
@@ -2342,7 +2342,7 @@ trait Functions {
 			$query2 = new WP_Query(array(
 				'post_type' => $types,
 				'post_status' => 'publish',
-				'posts_per_page' => 4,
+				'numberposts' => 10,
 				'meta_query' => array(
 					array(
 						'value' => $term,
@@ -2361,196 +2361,224 @@ trait Functions {
 
 			$suggestions = array();
 
-			//Loop through the posts
-			if ( $autocomplete_query->have_posts() ){
-				while ( $autocomplete_query->have_posts() ){
-					$autocomplete_query->the_post();
-					if ( in_array(get_the_id(), $ignore_post_ids) || !get_the_title() ){ //Ignore results without titles
+			if ( function_exists('relevanssi_do_query') ){ //If the Relevanssi plugin is active use its engine
+				$should_be_sorted = false; //Let Relevanssi determine result order
+				$relevanssi_autocomplete = relevanssi_do_query($autocomplete_query);
+				foreach ( $relevanssi_autocomplete as $post ){
+					if ( in_array($post->ID, $ignore_post_ids) || !get_the_title($post->ID) ){ //Ignore results without titles
 						continue;
 					}
-					$post = get_post();
 
 					$suggestion = array();
-					similar_text(strtolower($term), strtolower(get_the_title()), $suggestion['similarity']); //Determine how similar the query is to this post title
-					$suggestion['label'] = get_the_title();
-					$suggestion['link'] = get_permalink();
+					similar_text(strtolower($term), strtolower(esc_html(get_the_title($post->ID))), $suggestion['similarity']); //Determine how similar the query is to this post title
+					$suggestion['label'] = esc_html(get_the_title($post->ID));
+					$suggestion['link'] = get_permalink($post->ID);
 
-					$suggestion['classes'] = 'type-' . get_post_type() . ' id-' . get_the_id() . ' slug-' . $post->post_name . ' similarity-' . str_replace('.', '_', number_format($suggestion['similarity'], 2));
-					if ( get_the_id() == get_option('page_on_front') ){
+					$suggestion['classes'] = 'type-' . get_post_type($post->ID) . ' id-' . $post->ID . ' slug-' . $post->post_name . ' similarity-' . str_replace('.', '_', number_format($suggestion['similarity'], 2));
+					if ( $post->ID == get_option('page_on_front') ){
 						$suggestion['classes'] .= ' page-home';
-					} elseif ( is_sticky() ){ //@TODO "Nebula" 0: If sticky post. is_sticky() does not work here?
+					} elseif ( is_sticky($post->ID) ){ //@TODO "Nebula" 0: If sticky post. is_sticky() does not work here?
 						$suggestion['classes'] .= ' sticky-post';
 					}
 					$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
 					$suggestions[] = $suggestion;
 				}
-			}
+			} else { //Manually find relevant posts
+				$should_be_sorted = true; //Re-sort results by our similarity score
 
-			//Find media library items
-			if ( !$this->in_array_any(array('attachment'), $ignore_post_types) && $this->in_array_any(array('any', 'attachment'), $types) ){
-				$attachments = get_posts(array('post_type' => 'attachment', 's' => $term, 'numberposts' => 10, 'post_status' => null));
-				if ( $attachments ){
-					$attachment_count = 0;
-					foreach ( $attachments as $attachment ){
-						if ( in_array($attachment->ID, $ignore_post_ids) || strpos(get_attachment_link($attachment->ID), '?attachment_id=') ){ //Skip if media item is not associated with a post.
+				//Loop through the posts
+				if ( $autocomplete_query->have_posts() ){
+					while ( $autocomplete_query->have_posts() ){
+						$autocomplete_query->the_post();
+						if ( in_array(get_the_id(), $ignore_post_ids) || !get_the_title() ){ //Ignore results without titles
 							continue;
 						}
-						$suggestion = array();
-						$attachment_meta = wp_get_attachment_metadata($attachment->ID);
+						$post = get_post();
 
-						if ( isset($attachment_meta['file']) ){
-							$path_parts = pathinfo($attachment_meta['file']);
-							$attachment_search_meta = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['filename'];
-							similar_text(strtolower($term), strtolower($attachment_search_meta), $suggestion['similarity']);
-							if ( $suggestion['similarity'] >= 50 ){
-								$suggestion['label'] = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['basename'];
-								$suggestion['classes'] = 'type-attachment file-' . $path_parts['extension'];
-								$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
-								if ( in_array(strtolower($path_parts['extension']), array('jpg', 'jpeg', 'png', 'gif', 'bmp')) ){
-									$suggestion['link'] = get_attachment_link($attachment->ID);
+						$suggestion = array();
+						similar_text(strtolower($term), strtolower(esc_html(get_the_title())), $suggestion['similarity']); //Determine how similar the query is to this post title
+						$suggestion['label'] = esc_html(get_the_title());
+						$suggestion['link'] = get_permalink();
+
+						$suggestion['classes'] = 'type-' . get_post_type() . ' id-' . get_the_id() . ' slug-' . $post->post_name . ' similarity-' . str_replace('.', '_', number_format($suggestion['similarity'], 2));
+						if ( get_the_id() == get_option('page_on_front') ){
+							$suggestion['classes'] .= ' page-home';
+						} elseif ( is_sticky() ){ //@TODO "Nebula" 0: If sticky post. is_sticky() does not work here?
+							$suggestion['classes'] .= ' sticky-post';
+						}
+						$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
+						$suggestions[] = $suggestion;
+					}
+				}
+
+				//Find media library items
+				if ( !$this->in_array_any(array('attachment'), $ignore_post_types) && $this->in_array_any(array('any', 'attachment'), $types) ){
+					$attachments = get_posts(array('post_type' => 'attachment', 's' => $term, 'numberposts' => 10, 'post_status' => null));
+					if ( $attachments ){
+						$attachment_count = 0;
+						foreach ( $attachments as $attachment ){
+							if ( in_array($attachment->ID, $ignore_post_ids) || strpos(get_attachment_link($attachment->ID), '?attachment_id=') ){ //Skip if media item is not associated with a post.
+								continue;
+							}
+							$suggestion = array();
+							$attachment_meta = wp_get_attachment_metadata($attachment->ID);
+
+							if ( isset($attachment_meta['file']) ){
+								$path_parts = pathinfo($attachment_meta['file']);
+								$attachment_search_meta = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['filename'];
+								similar_text(strtolower($term), strtolower($attachment_search_meta), $suggestion['similarity']);
+								if ( $suggestion['similarity'] >= 50 ){
+									$suggestion['label'] = ( get_the_title($attachment->ID) != '' )? get_the_title($attachment->ID) : $path_parts['basename'];
+									$suggestion['classes'] = 'type-attachment file-' . $path_parts['extension'];
+									$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
+									if ( in_array(strtolower($path_parts['extension']), array('jpg', 'jpeg', 'png', 'gif', 'bmp')) ){
+										$suggestion['link'] = get_attachment_link($attachment->ID);
+									} else {
+										$suggestion['link'] = wp_get_attachment_url($attachment->ID);
+										$suggestion['external'] = true;
+										$suggestion['classes'] .= ' external-link';
+									}
+									$suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
+									$suggestions[] = $suggestion;
+									$attachment_count++;
+								}
+								if ( $attachment_count >= 2 ){
+									break;
+								}
+							}
+						}
+					}
+				}
+
+				//Find menu items
+				if ( !$this->in_array_any(array('menu'), $ignore_post_types) && $this->in_array_any(array('any', 'menu'), $types) ){
+					$menus = get_transient('nebula_autocomplete_menus');
+					if ( empty($menus) || $this->is_debug() ){
+						$menus = get_terms('nav_menu');
+						set_transient('nebula_autocomplete_menus', $menus, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
+					}
+
+					foreach ( $menus as $menu ){
+						$menu_items = wp_get_nav_menu_items($menu->term_id);
+						foreach ( $menu_items as $key => $menu_item ){
+							$suggestion = array();
+							similar_text(strtolower($term), strtolower($menu_item->title), $menu_title_similarity);
+							similar_text(strtolower($term), strtolower($menu_item->attr_title), $menu_attr_similarity);
+							if ( $menu_title_similarity >= 65 || $menu_attr_similarity >= 65 ){
+								if ( $menu_title_similarity >= $menu_attr_similarity ){
+									$suggestion['similarity'] = $menu_title_similarity;
+									$suggestion['label'] = $menu_item->title;
 								} else {
-									$suggestion['link'] = wp_get_attachment_url($attachment->ID);
-									$suggestion['external'] = true;
-									$suggestion['classes'] .= ' external-link';
+									$suggestion['similarity'] = $menu_attr_similarity;
+									$suggestion['label'] = $menu_item->attr_title;
 								}
-								$suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
-								$suggestions[] = $suggestion;
-								$attachment_count++;
-							}
-							if ( $attachment_count >= 2 ){
-								break;
-							}
-						}
 
-					}
-				}
-			}
-
-			//Find menu items
-			if ( !$this->in_array_any(array('menu'), $ignore_post_types) && $this->in_array_any(array('any', 'menu'), $types) ){
-				$menus = get_transient('nebula_autocomplete_menus');
-				if ( empty($menus) || $this->is_debug() ){
-					$menus = get_terms('nav_menu');
-					set_transient('nebula_autocomplete_menus', $menus, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
-				}
-
-				foreach ( $menus as $menu ){
-					$menu_items = wp_get_nav_menu_items($menu->term_id);
-					foreach ( $menu_items as $key => $menu_item ){
-						$suggestion = array();
-						similar_text(strtolower($term), strtolower($menu_item->title), $menu_title_similarity);
-						similar_text(strtolower($term), strtolower($menu_item->attr_title), $menu_attr_similarity);
-						if ( $menu_title_similarity >= 65 || $menu_attr_similarity >= 65 ){
-							if ( $menu_title_similarity >= $menu_attr_similarity ){
-								$suggestion['similarity'] = $menu_title_similarity;
-								$suggestion['label'] = $menu_item->title;
-							} else {
-								$suggestion['similarity'] = $menu_attr_similarity;
-								$suggestion['label'] = $menu_item->attr_title;
-							}
-
-							if ( !empty($menu_item->url) ){
-								$suggestion['link'] = $menu_item->url;
-								$path_parts = pathinfo($menu_item->url);
-								$suggestion['classes'] = 'type-menu-item';
-								if ( $path_parts['extension'] ){
-									$suggestion['classes'] .= ' file-' . $path_parts['extension'];
-									$suggestion['external'] = true;
-								} elseif ( !strpos($suggestion['link'], $this->url_components('domain')) ){
-									$suggestion['classes'] .= ' external-link';
-									$suggestion['external'] = true;
+								if ( !empty($menu_item->url) ){
+									$suggestion['link'] = $menu_item->url;
+									$path_parts = pathinfo($menu_item->url);
+									$suggestion['classes'] = 'type-menu-item';
+									if ( $path_parts['extension'] ){
+										$suggestion['classes'] .= ' file-' . $path_parts['extension'];
+										$suggestion['external'] = true;
+									} elseif ( !strpos($suggestion['link'], $this->url_components('domain')) ){
+										$suggestion['classes'] .= ' external-link';
+										$suggestion['external'] = true;
+									}
+									$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
+									$suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
+									$suggestions[] = $suggestion;
+									break;
 								}
-								$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
-								$suggestion['similarity'] = $suggestion['similarity']-0.001; //Force lower priority than posts/pages.
-								$suggestions[] = $suggestion;
-								break;
 							}
 						}
 					}
 				}
-			}
 
-			//Find categories
-			if ( !$this->in_array_any(array('category', 'cat'), $ignore_post_types) && $this->in_array_any(array('any', 'category', 'cat'), $types) ){
-				$categories = get_transient('nebula_autocomplete_categories');
-				if ( empty($categories) || $this->is_debug() ){
-					$categories = get_categories();
-					set_transient('nebula_autocomplete_categories', $categories, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
-				}
-
-				foreach ( $categories as $category ){
-					$suggestion = array();
-					$cat_count = 0;
-					similar_text(strtolower($term), strtolower($category->name), $suggestion['similarity']);
-					if ( $suggestion['similarity'] >= 65 ){
-						$suggestion['label'] = $category->name;
-						$suggestion['link'] = get_category_link($category->term_id);
-						$suggestion['classes'] = 'type-category';
-						$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
-						$suggestions[] = $suggestion;
-						$cat_count++;
+				//Find categories
+				if ( !$this->in_array_any(array('category', 'cat'), $ignore_post_types) && $this->in_array_any(array('any', 'category', 'cat'), $types) ){
+					$categories = get_transient('nebula_autocomplete_categories');
+					if ( empty($categories) || $this->is_debug() ){
+						$categories = get_categories();
+						set_transient('nebula_autocomplete_categories', $categories, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 					}
-					if ( $cat_count >= 2 ){
-						break;
-					}
-				}
-			}
 
-			//Find tags
-			if ( !$this->in_array_any(array('tag'), $ignore_post_types) && $this->in_array_any(array('any', 'tag'), $types) ){
-				$tags = get_transient('nebula_autocomplete_tags');
-				if ( empty($tags) || $this->is_debug() ){
-					$tags = get_tags();
-					set_transient('nebula_autocomplete_tags', $tags, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
-				}
-
-				foreach ( $tags as $tag ){
-					$suggestion = array();
-					$tag_count = 0;
-					similar_text(strtolower($term), strtolower($tag->name), $suggestion['similarity']);
-					if ( $suggestion['similarity'] >= 65 ){
-						$suggestion['label'] = $tag->name;
-						$suggestion['link'] = get_tag_link($tag->term_id);
-						$suggestion['classes'] = 'type-tag';
-						$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
-						$suggestions[] = $suggestion;
-						$tag_count++;
-					}
-					if ( $tag_count >= 2 ){
-						break;
-					}
-				}
-			}
-
-			//Find authors (if author bios are enabled)
-			if ( $this->get_option('author_bios') && !$this->in_array_any(array('author'), $ignore_post_types) && $this->in_array_any(array('any', 'author'), $types) ){
-				$authors = get_transient('nebula_autocomplete_authors');
-				if ( empty($authors) || $this->is_debug() ){
-					$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
-					set_transient('nebula_autocomplete_authors', $authors, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
-				}
-
-				foreach ( $authors as $author ){
-					$author_name = ( $author->first_name != '' )? $author->first_name . ' ' . $author->last_name : $author->display_name; //might need adjusting here
-					if ( strtolower($author_name) === strtolower($term) ){ //todo: if similarity of author name and query term is higher than X. Return only 1 or 2.
+					foreach ( $categories as $category ){
 						$suggestion = array();
-						$suggestion['label'] = $author_name;
-						$suggestion['link'] = get_author_posts_url($author->ID);
-						$suggestion['classes'] = 'type-user';
-						$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
-						$suggestion['similarity'] = ''; //todo: save similarity to array too
-						$suggestions[] = $suggestion;
-						break;
+						$cat_count = 0;
+						similar_text(strtolower($term), strtolower($category->name), $suggestion['similarity']);
+						if ( $suggestion['similarity'] >= 65 ){
+							$suggestion['label'] = $category->name;
+							$suggestion['link'] = get_category_link($category->term_id);
+							$suggestion['classes'] = 'type-category';
+							$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
+							$suggestions[] = $suggestion;
+							$cat_count++;
+						}
+						if ( $cat_count >= 2 ){
+							break;
+						}
+					}
+				}
+
+				//Find tags
+				if ( !$this->in_array_any(array('tag'), $ignore_post_types) && $this->in_array_any(array('any', 'tag'), $types) ){
+					$tags = get_transient('nebula_autocomplete_tags');
+					if ( empty($tags) || $this->is_debug() ){
+						$tags = get_tags();
+						set_transient('nebula_autocomplete_tags', $tags, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
+					}
+
+					foreach ( $tags as $tag ){
+						$suggestion = array();
+						$tag_count = 0;
+						similar_text(strtolower($term), strtolower($tag->name), $suggestion['similarity']);
+						if ( $suggestion['similarity'] >= 65 ){
+							$suggestion['label'] = $tag->name;
+							$suggestion['link'] = get_tag_link($tag->term_id);
+							$suggestion['classes'] = 'type-tag';
+							$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
+							$suggestions[] = $suggestion;
+							$tag_count++;
+						}
+						if ( $tag_count >= 2 ){
+							break;
+						}
+					}
+				}
+
+				//Find authors (if author bios are enabled)
+				if ( $this->get_option('author_bios') && !$this->in_array_any(array('author'), $ignore_post_types) && $this->in_array_any(array('any', 'author'), $types) ){
+					$authors = get_transient('nebula_autocomplete_authors');
+					if ( empty($authors) || $this->is_debug() ){
+						$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
+						set_transient('nebula_autocomplete_authors', $authors, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
+					}
+
+					foreach ( $authors as $author ){
+						$author_name = ( $author->first_name != '' )? $author->first_name . ' ' . $author->last_name : $author->display_name; //might need adjusting here
+						if ( strtolower($author_name) === strtolower($term) ){ //todo: if similarity of author name and query term is higher than X. Return only 1 or 2.
+							$suggestion = array();
+							$suggestion['label'] = $author_name;
+							$suggestion['link'] = get_author_posts_url($author->ID);
+							$suggestion['classes'] = 'type-user';
+							$suggestion['classes'] .= $this->close_or_exact($suggestion['similarity']);
+							$suggestion['similarity'] = ''; //todo: save similarity to array too
+							$suggestions[] = $suggestion;
+							break;
+						}
 					}
 				}
 			}
 
+			//Now do stuff to the resulting suggestions array
 			if ( !empty($suggestions) ){
-				//Order by match similarity to page title (DESC).
-				function autocomplete_similarity_compare($a, $b){
-					return $b['similarity'] - $a['similarity'];
+				if ( $should_be_sorted ){
+					//Order by match similarity to page title (DESC).
+					function autocomplete_similarity_compare($a, $b){
+						return $b['similarity'] - $a['similarity'];
+					}
+					usort($suggestions, "autocomplete_similarity_compare");
 				}
-				usort($suggestions, "autocomplete_similarity_compare");
 
 				//Remove any duplicate links (higher similarity = higher priority)
 				$outputArray = array(); //This array is where unique results will be stored
@@ -2561,9 +2589,11 @@ trait Functions {
 						$outputArray[] = $suggestion;
 					}
 				}
+
+				$outputArray = array_slice($outputArray, 0, 9); //Limit to a maximum amount of results (they are already ordered by similarity)
 			}
 
-			//Link to search at the end of the list
+			//Add a link to search at the end of the list
 			//@TODO "Nebula" 0: The empty result is not working for some reason... (Press Enter... is never appearing)
 			$suggestion = array();
 			$suggestion['label'] = ( !empty($suggestions) )? __('...more results for', 'nebula') . ' "' . $term . '"' : __('Press enter to search for', 'nebula') . ' "' . $term . '"';
