@@ -808,7 +808,7 @@ nebula.eventTracking = function(){
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', 'Button Click', thisEvent.text.trim(), thisEvent.link);
-			window.dataLayer.push({'event': 'nebula-button-click', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-button-click'}));
 		});
 
 		//Bootstrap "Collapse" Accordions
@@ -822,7 +822,7 @@ nebula.eventTracking = function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-			window.dataLayer.push({'event': 'nebula-accordion-shown', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-accordion-shown'}));
 		});
 		nebula.dom.document.on('hidden.bs.collapse', function(e){
 			var thisEvent = {
@@ -834,7 +834,7 @@ nebula.eventTracking = function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-			window.dataLayer.push({'event': 'nebula-accordion-hidden', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-accordion-hidden'}));
 		});
 
 		//Bootstrap Modals
@@ -848,7 +848,7 @@ nebula.eventTracking = function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-			window.dataLayer.push({'event': 'nebula-modal-shown', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-modal-shown'}));
 		});
 		nebula.dom.document.on('hidden.bs.modal', function(e){
 			var thisEvent = {
@@ -860,7 +860,7 @@ nebula.eventTracking = function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-			window.dataLayer.push({'event': 'nebula-modal-hidden', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-modal-hidden'}));
 		});
 
 		//Bootstrap Carousels (Sliders)
@@ -882,7 +882,7 @@ nebula.eventTracking = function(){
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-				window.dataLayer.push({'event': 'nebula-carousel-slide', 'nebula-event': thisEvent});
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-carousel-slide'}));
 			}
 		});
 
@@ -900,7 +900,7 @@ nebula.eventTracking = function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.formID);
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
-			window.dataLayer.push({'event': 'nebula-generic-form', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-generic-form'}));
 		});
 
 		//Notable File Downloads
@@ -918,7 +918,7 @@ nebula.eventTracking = function(){
 				ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileName);
-				window.dataLayer.push({'event': 'nebula-download', 'nebula-event': thisEvent});
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-download'}));
 				if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: thisEvent.fileName});}
 				if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.fileName);}
 				nebula.crm('event', 'File Download');
@@ -942,7 +942,7 @@ nebula.eventTracking = function(){
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileName);
-				window.dataLayer.push({'event': 'nebula-download', 'nebula-event': thisEvent});
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-download'}));
 				if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: thisEvent.fileName});}
 				if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.fileName);}
 				nebula.crm('event', 'Notable File Download');
@@ -962,7 +962,7 @@ nebula.eventTracking = function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.query);
-			window.dataLayer.push({'event': 'nebula-internal-search', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-internal-search'}));
 			if ( typeof fbq === 'function' ){fbq('track', 'Search', {search_string: thisEvent.query});}
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.query);}
 			nebula.crm('identify', {internal_search: thisEvent.query});
@@ -985,7 +985,7 @@ nebula.eventTracking = function(){
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, 'Modified Zoom Level: ' + thisEvent.modifiedZoomLevel, {'nonInteraction': true});
-				window.dataLayer.push({'event': 'nebula-keyboard-shortcut', 'nebula-event': thisEvent});
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-keyboard-shortcut'}));
 			}
 
 			//Ctrl- (Zoom Out)
@@ -1001,7 +1001,7 @@ nebula.eventTracking = function(){
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, 'Modified Zoom Level: ' + thisEvent.modifiedZoomLevel, {'nonInteraction': true});
-				window.dataLayer.push({'event': 'nebula-keyboard-shortcut', 'nebula-event': thisEvent});
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-keyboard-shortcut'}));
 			}
 
 			//Ctrl+0 (Reset Zoom)
@@ -1017,7 +1017,7 @@ nebula.eventTracking = function(){
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, 'Modified Zoom Level: ' + thisEvent.modifiedZoomLevel, {'nonInteraction': true});
-				window.dataLayer.push({'event': 'nebula-keyboard-shortcut', 'nebula-event': thisEvent});
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-keyboard-shortcut'}));
 			}
 
 			//Ctrl+F or Cmd+F (Find)
@@ -1031,7 +1031,7 @@ nebula.eventTracking = function(){
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.highlightedText, {'nonInteraction': true});
-				window.dataLayer.push({'event': 'nebula-keyboard-shortcut', 'nebula-event': thisEvent});
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-keyboard-shortcut'}));
 			}
 
 			//Ctrl+D or Cmd+D (Bookmark)
@@ -1047,7 +1047,7 @@ nebula.eventTracking = function(){
 				history.replaceState(null, document.title, window.location.href + '?utm_source=bookmark');
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label, {'nonInteraction': true});
-				window.dataLayer.push({'event': 'nebula-keyboard-shortcut', 'nebula-event': thisEvent});
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-keyboard-shortcut'}));
 			}
 		});
 
@@ -1065,7 +1065,7 @@ nebula.eventTracking = function(){
 			ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.emailAddress);
-			window.dataLayer.push({'event': 'nebula-mailto', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-mailto'}));
 			if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: thisEvent.action});}
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
 			nebula.crm('event', thisEvent.action);
@@ -1086,7 +1086,7 @@ nebula.eventTracking = function(){
 			ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
-			window.dataLayer.push({'event': 'nebula-click-to-call', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-click-to-call'}));
 			if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: thisEvent.action});}
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
 			nebula.crm('event', thisEvent.action);
@@ -1107,7 +1107,7 @@ nebula.eventTracking = function(){
 			ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
-			window.dataLayer.push({'event': 'nebula-sms', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-sms'}));
 			if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: thisEvent.action});}
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
 			nebula.crm('event', thisEvent.action);
@@ -1129,7 +1129,7 @@ nebula.eventTracking = function(){
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
-			window.dataLayer.push({'event': 'nebula-navigation-menu-click', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-navigation-menu-click'}));
 		});
 
 		//Primary Navigation Menu
@@ -1145,7 +1145,7 @@ nebula.eventTracking = function(){
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
-			window.dataLayer.push({'event': 'nebula-navigation-menu-click', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-navigation-menu-click'}));
 		});
 
 		//Mobile Navigation Menu
@@ -1161,7 +1161,7 @@ nebula.eventTracking = function(){
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
-			window.dataLayer.push({'event': 'nebula-navigation-menu-click', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-navigation-menu-click'}));
 		});
 
 		//Breadcrumb Navigation
@@ -1177,7 +1177,7 @@ nebula.eventTracking = function(){
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
-			window.dataLayer.push({'event': 'nebula-navigation-menu-click', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-navigation-menu-click'}));
 		});
 
 		//Sidebar Navigation Menu
@@ -1193,7 +1193,7 @@ nebula.eventTracking = function(){
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
-			window.dataLayer.push({'event': 'nebula-navigation-menu-click', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-navigation-menu-click'}));
 		});
 
 		//Footer Navigation Menu
@@ -1209,7 +1209,7 @@ nebula.eventTracking = function(){
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
-			window.dataLayer.push({'event': 'nebula-navigation-menu-click', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-navigation-menu-click'}));
 		});
 
 		//Nebula Cookie Notification link clicks
@@ -1226,7 +1226,7 @@ nebula.eventTracking = function(){
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.text.trim(), thisEvent.link, {'nonInteraction': true}); //Non-interaction because the user is not interacting with any content yet so this should not influence the bounce rate
-			window.dataLayer.push({'event': 'nebula-cookie-notification-click', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-cookie-notification-click'}));
 		});
 
 		//History Popstate (dynamic URL changes via the History API when "states" are pushed into the browser history)
@@ -1257,7 +1257,7 @@ nebula.eventTracking = function(){
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.src, {'nonInteraction': true}); //Non-interaction because if the user leaves due to this it should be considered a bounce
-				window.dataLayer.push({'event': 'nebula-dead-click', 'nebula-event': thisEvent});
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-dead-click'}));
 				nebula.crm('event', thisEvent.category);
 			}
 		});
@@ -1322,7 +1322,7 @@ nebula.eventTracking = function(){
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.description, {'nonInteraction': true}); //Non-interaction because if the user exits due to this it should be considered a bounce
-				window.dataLayer.push({'event': 'nebula-rage-click', 'nebula-event': thisEvent});
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-rage-click'}));
 
 				clickEvents.splice(clickEvents.length-5, 5); //Remove unused click points
 			}
@@ -1340,7 +1340,7 @@ nebula.eventTracking = function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
-			window.dataLayer.push({'event': 'nebula-accessibility-link', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-accessibility-link'}));
 		});
 
 		//Screenreader Links
@@ -1356,7 +1356,7 @@ nebula.eventTracking = function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
-			window.dataLayer.push({'event': 'nebula-accessibility-link', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-accessibility-link'}));
 		});
 
 		//Video Enter Picture-in-Picture //https://caniuse.com/#feat=picture-in-picture
@@ -1477,7 +1477,7 @@ nebula.eventTracking = function(){
 				}
 
 				ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]'); //GA4: This will need to change significantly. Event Name: "copy_text"?
-				window.dataLayer.push({'event': 'nebula-copied-text', 'nebula-event': thisEvent});
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-copied-text'}));
 				nebula.crm('event', 'Text Copied');
 			}
 
@@ -1492,7 +1492,7 @@ nebula.eventTracking = function(){
 			}
 
 			ga('send', 'exception', {'exDescription': '(JS) AJAX Error (' + jqXHR.status + '): ' + errorMessage + ' on ' + settings.url, 'exFatal': true});
-			window.dataLayer.push({'event': 'nebula-ajax-error', 'nebula-event': errorMessage});
+			window.dataLayer.push({'event': 'nebula-ajax-error', 'error': errorMessage});
 			nebula.crm('event', 'AJAX Error');
 		});
 
@@ -1504,7 +1504,7 @@ nebula.eventTracking = function(){
 			}
 
 			ga('send', 'exception', {'exDescription': '(JS) ' + errorMessage, 'exFatal': false}); //Is there a better way to detect fatal vs non-fatal errors?
-			window.dataLayer.push({'event': 'nebula-window-error', 'nebula-event': errorMessage});
+			window.dataLayer.push({'event': 'nebula-window-error', 'error': errorMessage});
 			nebula.crm('event', 'JavaScript Error');
 			nebula.usage(error);
 		});
@@ -1552,7 +1552,7 @@ nebula.eventTracking = function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
-			window.dataLayer.push({'event': 'nebula-print', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-print'}));
 			nebula.crm('event', thisEvent.category);
 		}
 
@@ -1572,7 +1572,7 @@ nebula.eventTracking = function(){
 				ga('set', nebula.analytics.dimensions.blocker, 'Ad Blocker');
 				if ( nebula.session.flags.adblock != true ){
 					ga('send', 'event', 'Ad Blocker', 'Blocked', 'This user is using ad blocking software.', {'nonInteraction': true}); //Uses an event because it is asynchronous!
-					window.dataLayer.push({'event': 'nebula-adblock-detected', 'nebula-event': thisEvent});
+					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-adblock-detected'}));
 					nebula.session.flags.adblock = true;
 				}
 			}).always(function(){
@@ -1594,7 +1594,7 @@ nebula.eventTracking = function(){
 			nebula.debounce(function(){
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.query);
-				window.dataLayer.push({'event': 'nebula-datatables', 'nebula-event': thisEvent});
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-datatables'}));
 			}, 1000, 'datatables_search_filter');
 		});
 
@@ -1609,7 +1609,7 @@ nebula.eventTracking = function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.heading);
-			window.dataLayer.push({'event': 'nebula-datables', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-datatables'}));
 		});
 
 		//DataTables Pagination
@@ -1623,7 +1623,7 @@ nebula.eventTracking = function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.page);
-			window.dataLayer.push({'event': 'nebula-datatables', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-datatables'}));
 		});
 
 		//DataTables Show Entries
@@ -1637,7 +1637,7 @@ nebula.eventTracking = function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.selected);
-			window.dataLayer.push({'event': 'nebula-datatables', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-datatables'}));
 		});
 
 		nebula.scrollDepth();
@@ -1660,7 +1660,7 @@ nebula.ecommerceTracking = function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.product);
-			window.dataLayer.push({'event': 'nebula-add-to-cart', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-add-to-cart'}));
 			if ( typeof fbq === 'function' ){fbq('track', 'AddToCart');}
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
 			nebula.crm('event', 'Ecommerce Add to Cart');
@@ -1677,7 +1677,7 @@ nebula.ecommerceTracking = function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-			window.dataLayer.push({'event': 'nebula-update-cart', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-update-cart'}));
 			nebula.crm('event', 'Ecommerce Update Cart');
 		});
 
@@ -1692,7 +1692,7 @@ nebula.ecommerceTracking = function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.product);
-			window.dataLayer.push({'event': 'nebula-remove-item', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-remove-item'}));
 			nebula.crm('event', 'Ecommerce Remove From Cart');
 		});
 
@@ -1707,7 +1707,7 @@ nebula.ecommerceTracking = function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-			window.dataLayer.push({'event': 'nebula-proceed-to-checkout', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-proceed-to-checkout'}));
 			if ( typeof fbq === 'function' ){fbq('track', 'InitiateCheckout');}
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
 			nebula.crm('event', 'Ecommerce Proceed to Checkout');
@@ -1726,7 +1726,7 @@ nebula.ecommerceTracking = function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-			window.dataLayer.push({'event': 'nebula-started-checkout-form', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-started-checkout-form'}));
 			nebula.crm('event', 'Ecommerce Started Checkout Form');
 		});
 
@@ -1742,7 +1742,7 @@ nebula.ecommerceTracking = function(){
 			ga('send', 'timing', 'Ecommerce', 'Checkout Form', Math.round(nebula.timer('(Nebula) Ecommerce Checkout', 'end')), 'Billing details start to Place Order button click');
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-			window.dataLayer.push({'event': 'nebula-place-order-button', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-place-order-button'}));
 			if ( typeof fbq === 'function' ){fbq('track', 'Purchase');}
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
 			nebula.crm('event', 'Ecommerce Placed Order');
@@ -2501,7 +2501,7 @@ nebula.cf7Functions = function(){
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-				window.dataLayer.push({'event': 'nebula-form-started', 'nebula-event': thisEvent});
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-started'}));
 			}
 		}
 
@@ -2553,7 +2553,7 @@ nebula.cf7Functions = function(){
 		ga('set', nebula.analytics.dimensions.formTiming, nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')');
 		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-		window.dataLayer.push({'event': 'nebula-form-invalid', 'nebula-event': thisEvent});
+		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-invalid'}));
 		ga('send', 'exception', {'exDescription': '(JS) Invalid form submission for form ID ' + thisEvent.formID, 'exFatal': false});
 		nebula.scrollTo(jQuery(".wpcf7-not-valid").first()); //Scroll to the first invalid input
 		nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.formID + ') Invalid'}, false);
@@ -2572,7 +2572,7 @@ nebula.cf7Functions = function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-			window.dataLayer.push({'event': 'nebula-form-invalid', 'nebula-event': thisEvent});
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-invalid'}));
 			nebula.crm('identify', {'form_contacted': 'CF7 HTML5 Validation Error'});
 		}, 50, 'invalid form');
 	});
@@ -2600,7 +2600,7 @@ nebula.cf7Functions = function(){
 		ga('set', nebula.analytics.dimensions.formTiming, nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')');
 		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-		window.dataLayer.push({'event': 'nebula-form-spam', 'nebula-event': thisEvent});
+		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-spam'}));
 		ga('send', 'exception', {'exDescription': '(JS) Spam form submission for form ID ' + thisEvent.formID, 'exFatal': false});
 		nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.formID + ') Submit Spam'}, false);
 		nebula.crm('event', 'Contact Form (' + thisEvent.formID + ') Spam');
@@ -2624,7 +2624,7 @@ nebula.cf7Functions = function(){
 		ga('set', nebula.analytics.dimensions.formTiming, nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')');
 		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-		window.dataLayer.push({'event': 'nebula-form-failed', 'nebula-event': thisEvent});
+		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-failed'}));
 		ga('send', 'exception', {'exDescription': '(JS) Mail failed to send for form ID ' + thisEvent.formID, 'exFatal': true});
 		nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.formID + ') Submit Failed'}, false);
 		nebula.crm('event', 'Contact Form (' + thisEvent.formID + ') Failed');
@@ -2661,7 +2661,7 @@ nebula.cf7Functions = function(){
 		ga('send', 'timing', thisEvent.category, 'Form Completion (ID: ' + thisEvent.formID + ')', Math.round(thisEvent.formTime), 'Initial form focus until valid submit');
 		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-		window.dataLayer.push({'event': 'nebula-form-submit-success', 'nebula-event': thisEvent});
+		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-submit-success'}));
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)'});}
 		if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
 		nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.formID + ') Submit Success'}, false);
@@ -2699,7 +2699,7 @@ nebula.cf7Functions = function(){
 		ga('set', nebula.analytics.dimensions.formTiming, nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')');
 		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label); //This event is required for the notable form metric!
-		window.dataLayer.push({'event': 'nebula-form-submit-attempt', 'nebula-event': thisEvent});
+		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-submit-attempt'}));
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)'});}
 		if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
 
