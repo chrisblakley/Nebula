@@ -138,12 +138,14 @@ nebula.scroll = {
 
 //Cache DOM selectors
 nebula.cacheSelectors = function(){
-	nebula.dom = {
-		document: jQuery(document),
-		window: jQuery(window),
-		html: jQuery('html'),
-		body: jQuery('body'),
-	};
+	if ( !nebula.dom ){
+		nebula.dom = {
+			document: jQuery(document),
+			window: jQuery(window),
+			html: jQuery('html'),
+			body: jQuery('body'),
+		};
+	}
 };
 
 //Nebula Service Worker
@@ -357,7 +359,7 @@ nebula.prefetch = function(url, callback, element){
 		}
 
 		//Only https protocol (ignore "mailto", "tel", etc.)
-		if ( !/^https/.test(url) ){ //Change this to .startsWith() when we use ES6
+		if ( !/^https/.test(url) ){ //Change this to .startsWith() when we stop supporting IE11
 			return false;
 		}
 
@@ -497,7 +499,7 @@ nebula.performanceMetrics = function(){
 				if ( typeof console.table === 'function' ){ //Remove condition after IE11 support
 					var clientTimings = {};
 					jQuery.each(timingCalcuations, function(name, timings){
-						if ( !isNaN(timings.duration) && timings.duration > 0 && timings.duration < 6000000 ){ //Ignore empty values
+						if ( !isNaN(timings.duration) && timings.duration > 0 && timings.duration < 6000000 ){ //Ignore empty values. //Use Numeric Separators here (ES2021)
 							clientTimings[name] = {
 								start: timings.start,
 								duration: timings.duration,
@@ -3825,7 +3827,7 @@ nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback
 	}
 };
 
-//Temporarily change a Font Awesome icon and then change back after a period of time
+//Temporarily change an element class (like Font Awesome or Bootstrap icon) and then change back after a period of time
 nebula.temporaryClass = function(element, activeClass, inactiveClass, period){
 	if ( element && activeClass ){
 		if ( typeof element === 'string' ){
@@ -3833,8 +3835,10 @@ nebula.temporaryClass = function(element, activeClass, inactiveClass, period){
 		}
 
 		if ( !inactiveClass ){
-			if ( element.is('fa, fas, far, fab, fad') ){
+			if ( element.is('fa, fas, far, fab, fad') ){ //Font Awesome icon element
 				inactiveClass = /fa-(?!fw)\S+/i.test(element.attr('class')); //Match the first Font Awesome icon class that is the actual icon
+			} else if ( element.is('bi') ){ //Bootstrap icon element
+				inactiveClass = /bi-(?!fw)\S+/i.test(element.attr('class')); //Match the first Bootstrap icon class that is the actual icon
 			} else {
 				inactiveClass = ''; //Set to an empty string to only use a temporary active class
 			}
@@ -4347,10 +4351,10 @@ nebula.timeAgo = function(timestamp, raw){ //http://af-design.com/blog/2009/02/1
 	if ( diff <= 90 ){ return "one minute ago"; }
 	if ( diff <= 3540 ){ return Math.round(diff/60) + " minutes ago"; }
 	if ( diff <= 5400 ){ return "1 hour ago"; }
-	if ( diff <= 86400 ){ return Math.round(diff/3600) + " hours ago"; }
-	if ( diff <= 129600 ){ return "1 day ago"; }
-	if ( diff < 604800 ){ return Math.round(diff/86400) + " days ago"; }
-	if ( diff <= 777600 ){ return "1 week ago"; }
+	if ( diff <= 86400 ){ return Math.round(diff/3600) + " hours ago"; } //Use Numeric Separators here? (ES2021)
+	if ( diff <= 129600 ){ return "1 day ago"; } //Use Numeric Separators here (ES2021)
+	if ( diff < 604800 ){ return Math.round(diff/86400) + " days ago"; } //Use Numeric Separators here x2 (ES2021)
+	if ( diff <= 777600 ){ return "1 week ago"; } //Use Numeric Separators here (ES2021)
 
 	return "on " + timestamp;
 };

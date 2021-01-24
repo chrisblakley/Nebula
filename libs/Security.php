@@ -224,7 +224,7 @@ if ( !trait_exists('Security') ){
 		//Return an array of spam domains from Matomo (or the latest Nebula on GitHub)
 		public function get_spam_domain_list(){
 			$spam_domain_json_file = get_template_directory() . '/inc/data/spam_domain_list.txt';
-			$spam_domain_list = get_transient('$nebula_spam_domain_list');
+			$spam_domain_list = get_transient('nebula_spam_domain_list');
 			if ( empty($spam_domain_list) || $this->is_debug() ){ //If transient expired or is debug
 				$response = $this->remote_get('https://raw.githubusercontent.com/matomo-org/referrer-spam-list/master/spammers.txt'); //Watch for this to change from "master" to "main" (if ever)
 				if ( !is_wp_error($response) ){
@@ -244,7 +244,7 @@ if ( !trait_exists('Security') ){
 					WP_Filesystem();
 					global $wp_filesystem;
 					$wp_filesystem->put_contents($spam_domain_json_file, $spam_domain_list);
-					set_transient('$nebula_spam_domain_list', $spam_domain_list, HOUR_IN_SECONDS*36);
+					set_transient('nebula_spam_domain_list', $spam_domain_list, HOUR_IN_SECONDS*36);
 				}
 			}
 

@@ -1934,10 +1934,12 @@ if ( !trait_exists('Metaboxes') ){
 			}
 
 			//Check for existing handles that have rules that may not be present in the above scan
-			$existing_dequeued_assets = array_filter($dequeue_assets); //This gets any non-empty rules that already exist
-			foreach ( $existing_dequeued_assets as $handle => $rule ){
-				if ( array_search($handle, array_column($all_registered_assets, 'handle')) ){ //If this handle exists in the scanned assets, then ignore this occurance as it is a duplicate here
-					unset($existing_dequeued_assets[$handle]);
+			if ( is_array($dequeue_assets) ){
+				$existing_dequeued_assets = array_filter($dequeue_assets); //This gets any non-empty rules that already exist
+				foreach ( $existing_dequeued_assets as $handle => $rule ){
+					if ( array_search($handle, array_column($all_registered_assets, 'handle')) ){ //If this handle exists in the scanned assets, then ignore this occurance as it is a duplicate here
+						unset($existing_dequeued_assets[$handle]);
+					}
 				}
 			}
 

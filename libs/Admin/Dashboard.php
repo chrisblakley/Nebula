@@ -738,17 +738,19 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fas fa-fw fa-images"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> ' . $upload_max . '</li>';
 
 			//PHP Disk Space
-			$disk_total_space = disk_total_space(ABSPATH)/1073741824; //In GB
-			$disk_free_space = disk_free_space(ABSPATH)/1073741824; //In GB
+			if ( function_exists('disk_total_space') && function_exists('disk_free_space') ){
+				$disk_total_space = disk_total_space(ABSPATH)/1073741824; //In GB
+				$disk_free_space = disk_free_space(ABSPATH)/1073741824; //In GB
 
-			$disk_usage_color = 'inherit';
-			if ( $disk_free_space < 5 ){
-				$disk_usage_color = '#ca3838'; //Danger
-			} elseif ( $disk_free_space < 10 ){
-				$disk_usage_color = '#ca8038'; //Warning
+				$disk_usage_color = 'inherit';
+				if ( $disk_free_space < 5 ){
+					$disk_usage_color = '#ca3838'; //Danger
+				} elseif ( $disk_free_space < 10 ){
+					$disk_usage_color = '#ca8038'; //Warning
+				}
+
+				echo '<li><i class="fas fa-fw fa-hdd"></i> Disk Space Available: <strong style="color: ' . $disk_usage_color . ';">' . round($disk_free_space, 2) . 'gb</strong> <small>(Total space: <strong>' . round($disk_total_space, 0) . 'gb</strong>)</small></li>';
 			}
-
-			echo '<li><i class="fas fa-fw fa-hdd"></i> Disk Space Available: <strong style="color: ' . $disk_usage_color . ';">' . round($disk_free_space, 2) . 'gb</strong> <small>(Total space: <strong>' . round($disk_total_space, 0) . 'gb</strong>)</small></li>';
 
 			//Service Worker
 			if ( $this->get_option('service_worker') ){

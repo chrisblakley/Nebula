@@ -26,7 +26,7 @@ trait Functions {
 		}
 
 		if ( is_writable(get_template_directory()) ){
-			if ( !file_exists($this->manifest_json_location(false)) || filemtime($this->manifest_json_location(false)) > (time()-DAY_IN_SECONDS) || $this->is_debug() ){
+			if ( !file_exists($this->manifest_json_location(false)) || filemtime($this->manifest_json_location(false)) < (time()-DAY_IN_SECONDS) || $this->is_debug() ){ //If the manifest file does not exist, or last modified time is older than 24 hours re-write it
 				add_action('init', array($this, 'manifest_json'));
 			}
 		}
@@ -301,7 +301,7 @@ trait Functions {
 			$manifest_json .= '"shortcuts": ' . json_encode($shortcuts, JSON_PRETTY_PRINT) . ',';
 		}
 
-			$manifest_json .= '"icons": [';
+		$manifest_json .= '"icons": [';
 		if ( has_site_icon() ){
 			$manifest_json .= '{
 				"src": "' . get_site_icon_url(16, get_theme_file_uri('/assets/img/meta') . '/favicon-16x16.png') . '",

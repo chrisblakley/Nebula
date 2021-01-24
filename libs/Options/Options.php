@@ -114,7 +114,7 @@ if ( !trait_exists('Options') ){
 		public function google_review_url($place_id=''){
 			if ( empty($place_id) ){
 				$nebula_options = get_option('nebula_options');
-				$place_id = $nebula_options['google_place_id']; //Note: This may still be empty
+				$place_id = ( is_array($nebula_options) )? $nebula_options['google_place_id'] : false; //Note: This may still be empty
 			}
 
 			//Return a Google Review link if we have a Place ID
