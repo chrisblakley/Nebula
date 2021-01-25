@@ -101,6 +101,8 @@ if ( !trait_exists('Admin') ){
 					}
 				}
 
+				add_filter('relevanssi_index_custom_fields', array($this, 'add_nebula_to_relevanssi'), 10, 2);
+
 				add_filter('manage_media_columns', array($this, 'muc_column'));
 				add_action('manage_media_custom_column', array($this, 'muc_value'), 10, 2);
 
@@ -1538,6 +1540,13 @@ if ( !trait_exists('Admin') ){
 		//All Settings page link
 		public function all_settings_link(){
 			add_theme_page('All Settings', 'All Settings', 'administrator', 'options.php');
+		}
+
+		//Ensure Relevanssi indexes Nebula custom fields
+		//Note: The custom field setting in Relevanssi Settings > Indexing (tab) must not be "none" for this to work (Nebula does check for this and warns as needed)
+		public function add_nebula_to_relevanssi($custom_fields, $post_id){
+			$custom_fields[] = 'nebula_internal_search_keywords'; //Add the Nebula internal search custom field to Relevanssi
+			return $custom_fields;
 		}
 
 		//Clear caches when plugins are activated if W3 Total Cache is active

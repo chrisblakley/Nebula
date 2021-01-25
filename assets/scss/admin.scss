@@ -316,7 +316,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 
 	input[type=checkbox] {height: 0; width: 0; visibility: hidden; display: none;
 		+ label {display: flex; position: relative; align-items: center; cursor: pointer; text-indent: 50px; width: 38px; white-space: nowrap; padding: 4px 0; font-size: 1rem; line-height: 1; background: #ddd; border-radius: 1.25rem; margin: 0 15px 0 0; overflow: visible;
-			&:after {content: ""; position: absolute; /* top: 6px; */ left: 5px; width: 12px; height: 12px; background: #fff; border-radius: 50%; transition: 0.25s;
+			&:after {content: ""; position: absolute; left: 5px; width: 12px; height: 12px; background: #fff; border-radius: 50%; transition: 0.25s;
 				&:after {width: 1rem;}
 			}
 		}

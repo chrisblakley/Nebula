@@ -97,6 +97,15 @@ jQuery(window).on('load', function(){
 	performanceMetrics();
 	developerMetaboxes();
 
+	//Force disable the WordPress core fullscreen editor for all users.
+	try {
+		if ( wp.data.select('core/edit-post').isFeatureActive('fullscreenMode') ){
+			wp.data.dispatch('core/edit-post').toggleFeature('fullscreenMode');
+		}
+	} catch(e){
+		//Ignore errors
+	}
+
 	//Option filter
 	jQuery('#nebula-option-filter').on('keydown keyup change focus blur', function(e){
 		debounce(function(){

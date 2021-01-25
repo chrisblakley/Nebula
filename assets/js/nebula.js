@@ -2610,13 +2610,18 @@ nebula.cf7Functions = function(){
 
 	//CF7 Mail Send Failure (CF7 AJAX response after mail failure)
 	nebula.dom.document.on('wpcf7mailfailed', function(e){
+		var formInputs = 'Unknown';
+		if ( nebula.timings && nebula.timings[e.detail.id] && nebula.timings[e.detail.id].laps ){ //Use optional chaining here
+			formInputs = nebula.timings[e.detail.id].laps + ' inputs';
+		}
+
 		var thisEvent = {
 			event: e,
 			category: 'CF7 Form',
 			action: 'Submit (Mail Failed)', //GA4 Name: "form_failed"?
 			formID: e.detail.id,
 			formTime: nebula.timer(e.detail.id, 'end'),
-			inputs: nebula.timings[e.detail.id].laps + ' inputs'
+			inputs: formInputs
 		};
 
 		thisEvent.label = 'Form submission email send failed for form ID: ' + thisEvent.formID;
@@ -3836,9 +3841,9 @@ nebula.temporaryClass = function(element, activeClass, inactiveClass, period){
 
 		if ( !inactiveClass ){
 			if ( element.is('fa, fas, far, fab, fad') ){ //Font Awesome icon element
-				inactiveClass = /fa-(?!fw)\S+/i.test(element.attr('class')); //Match the first Font Awesome icon class that is the actual icon
+				inactiveClass = /fa-(?!fw)\S+/i.test(element.attr('class')); //Match the first Font Awesome icon class that is the actual icon (exclude fa-fw for example)
 			} else if ( element.is('bi') ){ //Bootstrap icon element
-				inactiveClass = /bi-(?!fw)\S+/i.test(element.attr('class')); //Match the first Bootstrap icon class that is the actual icon
+				inactiveClass = /bi-\S+/i.test(element.attr('class')); //Match the first Bootstrap icon class
 			} else {
 				inactiveClass = ''; //Set to an empty string to only use a temporary active class
 			}
@@ -4901,10 +4906,7 @@ function nebulaYoutubeStateChange(e){
 }
 
 function nebulaYoutubeError(e){
-	var thisVideo = nebula.videos[nebula.getYoutubeID(e.target)];
-	thisVideo.title = nebula.getYoutubeTitle(e.target); //Use Nullish coalescing here (after ie11?)
-
-	ga('send', 'exception', {'exDescription': '(JS) Youtube API error for ' + thisVideo.title + ': ' + e.data, 'exFatal': false});
+	ga('send', 'exception', {'exDescription': '(JS) Youtube API error: ' + e.data, 'exFatal': false});
 	nebula.crm('event', 'Youtube API Error');
 }
 
@@ -4936,14 +4938,22 @@ nebula.getYoutubeID = function(target){
 
 //Get the title of a Youtube video (or use best fallback possible)
 nebula.getYoutubeTitle = function(target){
-	var videoTitle;
-
 	//If getVideoData is available in the API
 	if ( target.getVideoData ){
-		videoTitle = target.getVideoData().title;
+		return target.getVideoData().title;
 	}
 
-	return videoTitle || jQuery(target.getIframe()).attr('title') || nebula.getYoutubeID(target) || false;
+	var iframeTitle = jQuery(target.getIframe()).attr('title').trim();
+	if ( iframeTitle ){
+		return iframeTitle;
+	}
+
+	var youtubeID = nebula.getYoutubeID(target);
+	if ( youtubeID ){
+		return youtubeID;
+	}
+
+	return false;
 };
 
 //Prepare Vimeo API

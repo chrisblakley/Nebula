@@ -335,12 +335,22 @@ if ( !trait_exists('Warnings') ){
 				}
 
 				//Check if Relevanssi has built an index for search
-				if ( is_plugin_active('relevanssi/relevanssi.php') && !get_option('relevanssi_indexed') ){
-					$nebula_warnings[] = array(
-						'level' => 'error',
-						'description' => '<i class="fas fa-fw fa-search-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> must build an index to search the site. This must be triggered manually.',
-						'url' => get_admin_url() . 'options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing'
-					);
+				if ( is_plugin_active('relevanssi/relevanssi.php') ){
+					if ( !get_option('relevanssi_indexed') ){
+						$nebula_warnings[] = array(
+							'level' => 'error',
+							'description' => '<i class="fas fa-fw fa-search-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> must build an index to search the site. This must be triggered manually.',
+							'url' => get_admin_url() . 'options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing'
+						);
+					}
+
+					if ( get_option('relevanssi_index_fields') === 'none' ){
+						$nebula_warnings[] = array(
+							'level' => 'warn',
+							'description' => '<i class="fas fa-fw fa-search-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> is not set to search custom fields.',
+							'url' => get_admin_url() . 'options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing'
+						);
+					}
 				}
 
 				//Check if Google Optimize is enabled
