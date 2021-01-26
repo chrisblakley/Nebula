@@ -2325,45 +2325,27 @@ trait Functions {
 				return false;
 			}
 
-			$types = array('any');
+			$types = 'any';
 			if ( isset($_GET['types']) ){
 				$types = json_decode(sanitize_text_field(trim($_GET['types'])));
 			}
 
-			//Standard WP search (does not include custom fields)
-			$query1 = new WP_Query(array(
+			//Prepare the standard WP search query parameters (do not include custom fields here).
+			//This is used by both Relevanssi -or- the combined query later
+			$initial_query_args = array(
 				'post_type' => $types,
 				'post_status' => 'publish',
-				'numberposts' => 10,
+				'posts_per_page' => 10, //Do not use numberposts or any other parameter instead here
 				's' => $term,
-			));
-
-			//Search custom fields
-			$query2 = new WP_Query(array(
-				'post_type' => $types,
-				'post_status' => 'publish',
-				'numberposts' => 10,
-				'meta_query' => array(
-					array(
-						'value' => $term,
-						'compare' => 'LIKE'
-					)
-				)
-			));
-
-			//Combine the above queries
-			$autocomplete_query = new WP_Query();
-			$autocomplete_query->posts = array_unique(array_merge($query1->posts, $query2->posts), SORT_REGULAR);
-			$autocomplete_query->post_count = count($autocomplete_query->posts);
-
-			$ignore_post_types = apply_filters('nebula_autocomplete_ignore_types', array()); //Allow post types to be globally ignored from autocomplete search
-			$ignore_post_ids = apply_filters('nebula_autocomplete_ignore_ids', array()); //Allow individual posts to be globally ignored from autocomplete search
-
-			$suggestions = array();
+			);
 
 			if ( function_exists('relevanssi_do_query') ){ //If the Relevanssi plugin is active use its engine
 				$should_be_sorted = false; //Let Relevanssi determine result order
-				$relevanssi_autocomplete = relevanssi_do_query($autocomplete_query);
+
+				$relevanssi_query_prep = new WP_Query();
+				$relevanssi_query_prep->parse_query($initial_query_args); //Must be performed this way to retrieve Relevanssi results
+				$relevanssi_autocomplete = relevanssi_do_query($relevanssi_query_prep); //Run the query
+
 				foreach ( $relevanssi_autocomplete as $post ){
 					if ( in_array($post->ID, $ignore_post_ids) || !get_the_title($post->ID) ){ //Ignore results without titles
 						continue;
@@ -2384,6 +2366,31 @@ trait Functions {
 					$suggestions[] = $suggestion;
 				}
 			} else { //Manually find relevant posts
+				$query1 = new WP_Query($initial_query_args); //Run the first query with the initial arguments now
+
+				//Search custom fields now too
+				$query2 = new WP_Query(array(
+					'post_type' => $types,
+					'post_status' => 'publish',
+					'posts_per_page' => 10, //Do not use numberposts or any other parameter instead here
+					'meta_query' => array(
+						array(
+							'value' => $term,
+							'compare' => 'LIKE'
+						)
+					)
+				));
+
+				//Combine the above queries
+				$autocomplete_query = new WP_Query();
+				$autocomplete_query->posts = array_unique(array_merge($query1->posts, $query2->posts), SORT_REGULAR); //Is this the right way to do it? Or should we use parse_query here?
+				$autocomplete_query->post_count = count($autocomplete_query->posts);
+
+				$ignore_post_types = apply_filters('nebula_autocomplete_ignore_types', array()); //Allow post types to be globally ignored from autocomplete search
+				$ignore_post_ids = apply_filters('nebula_autocomplete_ignore_ids', array()); //Allow individual posts to be globally ignored from autocomplete search
+
+				$suggestions = array();
+
 				$should_be_sorted = true; //Re-sort results by our similarity score
 
 				//Loop through the posts

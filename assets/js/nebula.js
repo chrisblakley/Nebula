@@ -4451,9 +4451,7 @@ nebula.defaultChosenOptions = {
 
 //Initialize Video Functionality and Tracking
 nebula.initVideoTracking = function(){
-	if ( typeof nebula.videos === 'undefined' ){
-		nebula.videos = {};
-	}
+	nebula.videos = nebula.videos || {}; //This is likely the first time this gets defined
 
 	nebula.HTML5VideoTracking();
 	nebula.youtubeTracking();
@@ -4491,6 +4489,8 @@ nebula.addHTML5VideoPlayer = function(id, element){
 	if ( !videoTitle ){ //An ID or title is required to track HTML5 videos
 		return false;
 	}
+
+	nebula.videos = nebula.videos || {}; //Always make sure this is defined
 
 	nebula.videos[id] = {};
 	nebula.videos[id].platform = 'html5'; //The platform the video is hosted using.
@@ -4746,6 +4746,8 @@ nebula.addYoutubePlayer = function(id, element){
 		return false; //A Youtube ID is required to add player
 	}
 
+	nebula.videos = nebula.videos || {}; //Always make sure this is defined
+
 	if ( typeof YT !== 'undefined' ){
 		nebula.videos[id] = {
 			player: new YT.Player(id, { //YT.Player parameter must match the iframe ID!
@@ -4772,8 +4774,10 @@ function nebulaYoutubeReady(e){
 		var videoProgress = {};
 	}
 
+	nebula.videos = nebula.videos || {}; //Always make sure this is defined
+
 	var id = nebula.getYoutubeID(e.target);
-	if ( id && !nebula.videos[id] ){ //If the video object doesn't use the Youtube video ID, make a new one by duplicating from the Iframe ID
+	if ( id && !nebula.videos.hasOwnProperty(id) ){ //If the video object doesn't use the Youtube video ID, make a new one by duplicating from the Iframe ID
 		nebula.videos[id] = nebula.videos[jQuery(e.target.getIframe()).attr('id')];
 	}
 
@@ -4952,11 +4956,12 @@ nebula.getYoutubeTitle = function(target){
 		return target.getVideoData().title;
 	}
 
-	var iframeTitle = jQuery(target.getIframe()).attr('title').trim();
-	if ( iframeTitle ){
-		return iframeTitle;
+	//Otherwise use the iframe title attribute (if it exists)
+	if ( jQuery(target.getIframe()).attr('title').length ){
+		return jQuery(target.getIframe()).attr('title').trim();
 	}
 
+	//Otherwise use the Youtube ID instead
 	var youtubeID = nebula.getYoutubeID(target);
 	if ( youtubeID ){
 		return youtubeID;
@@ -4993,6 +4998,8 @@ nebula.createVimeoPlayers = function(){
 
 				jQuery(this).attr('id', id);
 			}
+
+			nebula.videos = nebula.videos || {}; //Always make sure this is defined
 
 			if ( typeof nebula.videos[id] === 'object' ){ //If this video is already being tracked ignore it
 				return; //Continue the loop
