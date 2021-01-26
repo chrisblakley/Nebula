@@ -93,7 +93,7 @@
 					</main>
 				</div>
 
-				<?php if ( 1==1 ): //Toggle the sidebar on and off to ensure the grid compensates ?>
+				<?php if ( 1==2 ): //Toggle the sidebar on and off to ensure the grid compensates ?>
 					<div class="col-4">
 						<div class="Sidebar">
 							<p>Sidebar</p>

@@ -153,132 +153,141 @@ nebula.cacheSelectors = function(){
 nebula.registerServiceWorker = function(){
 	jQuery('.nebula-sw-install-button').addClass('inactive');
 
-	if ( nebula.site.options.sw && 'serviceWorker' in navigator ){ //Firefox 44+, Chrome 45+, Edge 17+, Safari 12+ //@todo "Nebula" 0: Use optional chaining
-		window.performance.mark('(Nebula) SW Registration [Start]');
+	if ( 'serviceWorker' in navigator ){ //If Service Worker is supported (Firefox 44+, Chrome 45+, Edge 17+, Safari 12+)
+		if ( nebula.site.options.sw ){ //If Service Worker is enabled in Nebula Options //@todo "Nebula" 0: Use optional chaining
+			window.performance.mark('(Nebula) SW Registration [Start]');
 
-		//navigator.serviceWorker.register(nebula.site.sw_url, {cache: 'max-age=0'}).then(function(registration){
-		navigator.serviceWorker.register(nebula.site.sw_url).then(function(registration){
-			//console.log('ServiceWorker registration successful with scope: ', registration.scope);
-			//console.debug(registration);
+			//navigator.serviceWorker.register(nebula.site.sw_url, {cache: 'max-age=0'}).then(function(registration){
+			navigator.serviceWorker.register(nebula.site.sw_url).then(function(registration){
+				//console.log('ServiceWorker registration successful with scope: ', registration.scope);
+				//console.debug(registration);
 
-			window.performance.mark('(Nebula) SW Registration [End]');
-			window.performance.measure('(Nebula) SW Registration', '(Nebula) SW Registration [Start]', '(Nebula) SW Registration [End]');
+				window.performance.mark('(Nebula) SW Registration [End]');
+				window.performance.measure('(Nebula) SW Registration', '(Nebula) SW Registration [Start]', '(Nebula) SW Registration [End]');
 
-			//Unregister the ServiceWorker on ?debug
-			if ( nebula.dom.html.hasClass('debug') ){
-				registration.unregister();
-				return false;
-			}
+				//Unregister the ServiceWorker on ?debug
+				if ( nebula.dom.html.hasClass('debug') ){
+					registration.unregister();
+					return false;
+				}
 
-			//Listen for an updated SW
-			registration.addEventListener('updatefound', function(){ //Triggered if sw.js changes. This event implies that registration.installing is set; see https://w3c.github.io/ServiceWorker/#service-worker-registration-updatefound-event
-				registration.installing.addEventListener('statechange', function(){
-					if ( registration.installing ){
-						switch ( registration.installing.state ){
-							case 'installing':
-								break;
-							case 'installed': //A new service worker is available, inform the user
-								//Create an update button to reload the page
-								// jQuery('<button id="nebula-sw-update">Update available. Click to reload.</button>').appendTo('body').on('click', function(){
-								// 	window.location.reload();
-								// 	nebula.animate('#nebula-sw-update', 'nebula-zoom-out');
-								// 	return false;
-								// });
+				//Listen for an updated SW
+				registration.addEventListener('updatefound', function(){ //Triggered if sw.js changes. This event implies that registration.installing is set; see https://w3c.github.io/ServiceWorker/#service-worker-registration-updatefound-event
+					registration.installing.addEventListener('statechange', function(){
+						if ( registration.installing ){
+							switch ( registration.installing.state ){
+								case 'installing':
+									break;
+								case 'installed': //A new service worker is available, inform the user
+									//Create an update button to reload the page
+									// jQuery('<button id="nebula-sw-update">Update available. Click to reload.</button>').appendTo('body').on('click', function(){
+									// 	window.location.reload();
+									// 	nebula.animate('#nebula-sw-update', 'nebula-zoom-out');
+									// 	return false;
+									// });
 
-								//Show the button
-								// window.requestIdleCallback(function(){
-								// 	window.requestAnimationFrame(function(){
-								// 		jQuery('#nebula-sw-update').addClass('active');
-								// 	});
-								// });
+									//Show the button
+									// window.requestIdleCallback(function(){
+									// 	window.requestAnimationFrame(function(){
+									// 		jQuery('#nebula-sw-update').addClass('active');
+									// 	});
+									// });
 
-								break;
-							case 'redundant':
-								ga('send', 'exception', {'exDescription': '(JS) The installing service worker became redundant.', 'exFatal': false});
-								break;
+									break;
+								case 'redundant':
+									ga('send', 'exception', {'exDescription': '(JS) The installing service worker became redundant.', 'exFatal': false});
+									break;
+							}
 						}
-					}
+					});
 				});
+
+				//Listen for messages from the Service Worker
+				navigator.serviceWorker.addEventListener('message', function(event){
+					nebula.dom.document.trigger('nebula_sw_message', event.data);
+				});
+
+				return navigator.serviceWorker.ready; //This can be listened for elsewhere with navigator.serviceWorker.ready.then(function(){ ... });
+			}).catch(function(error){
+				ga('send', 'exception', {'exDescription': '(JS) ServiceWorker registration failed: ' + error, 'exFatal': false});
 			});
 
-			//Listen for messages from the Service Worker
-			navigator.serviceWorker.addEventListener('message', function(event){
-				nebula.dom.document.trigger('nebula_sw_message', event.data);
+			//Listen for ability to show SW install prompt
+			window.addEventListener('beforeinstallprompt', function(event){
+				event.preventDefault(); //Prevent Chrome <= 67 from automatically showing the prompt
+				var installPromptEvent = event; //Stash the event so it can be triggered later.
+				jQuery('.nebula-sw-install-button').removeClass('inactive').addClass('ready'); //Show the Nebula install button if it is present.
 			});
 
-			return navigator.serviceWorker.ready; //This can be listened for elsewhere with navigator.serviceWorker.ready.then(function(){ ... });
-		}).catch(function(error){
-			ga('send', 'exception', {'exDescription': '(JS) ServiceWorker registration failed: ' + error, 'exFatal': false});
-		});
+			//Trigger the SW install prompt and handle user choice
+			nebula.dom.document.on('click', '.nebula-sw-install-button', function(){
+				if ( typeof installPromptEvent !== 'undefined' ){ //If the install event has been stashed for manual trigger
+					jQuery('.nebula-sw-install-button').removeClass('ready').addClass('prompted');
 
-		//Listen for ability to show SW install prompt
-		window.addEventListener('beforeinstallprompt', function(event){
-			event.preventDefault(); //Prevent Chrome <= 67 from automatically showing the prompt
-			var installPromptEvent = event; //Stash the event so it can be triggered later.
-			jQuery('.nebula-sw-install-button').removeClass('inactive').addClass('ready'); //Show the Nebula install button if it is present.
-		});
+					installPromptEvent.prompt(); //Show the modal add to home screen dialog
 
-		//Trigger the SW install prompt and handle user choice
-		nebula.dom.document.on('click', '.nebula-sw-install-button', function(){
-			if ( typeof installPromptEvent !== 'undefined' ){ //If the install event has been stashed for manual trigger
-				jQuery('.nebula-sw-install-button').removeClass('ready').addClass('prompted');
+					var thisEvent = {
+						category: 'Progressive Web App',
+						action: 'Install Prompt Shown',
+						label: event.platforms.join(', '),
+					};
 
-				installPromptEvent.prompt(); //Show the modal add to home screen dialog
+					nebula.dom.document.trigger('nebula_event', thisEvent);
+					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+
+					//Wait for the user to respond to the prompt
+					installPromptEvent.userChoice.then(function(result){
+						jQuery('.nebula-sw-install-button').removeClass('prompted').addClass('ready');
+
+						var thisEvent = {
+							category: 'Progressive Web App',
+							action: 'Install Prompt User Choice',
+							result: result,
+							outcome: result.outcome,
+						};
+
+						nebula.dom.document.trigger('nebula_event', thisEvent);
+						ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.outcome);
+						nebula.crm('event', 'Install Prompt ' + thisEvent.outcome);
+					});
+				} else {
+					jQuery('.nebula-sw-install-button').removeClass('ready').addClass('inactive');
+				}
+
+				return false;
+			});
+
+			//PWA Installed
+			window.addEventListener('appinstalled', function(){
+				jQuery('.nebula-sw-install-button').removeClass('ready').addClass('success');
 
 				var thisEvent = {
 					category: 'Progressive Web App',
-					action: 'Install Prompt Shown',
-					label: event.platforms.join(', '),
+					action: 'App Installed',
+					label: 'The app has been installed',
 				};
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			});
 
-				//Wait for the user to respond to the prompt
-				installPromptEvent.userChoice.then(function(result){
-					jQuery('.nebula-sw-install-button').removeClass('prompted').addClass('ready');
-
-					var thisEvent = {
-						category: 'Progressive Web App',
-						action: 'Install Prompt User Choice',
-						result: result,
-						outcome: result.outcome,
-					};
-
-					nebula.dom.document.trigger('nebula_event', thisEvent);
-					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.outcome);
-					nebula.crm('event', 'Install Prompt ' + thisEvent.outcome);
-				});
-			} else {
-				jQuery('.nebula-sw-install-button').removeClass('ready').addClass('inactive');
+			//Clear the caches with ?debug query string
+			if ( nebula.get('debug') ){
+				if ( 'caches' in window ){
+					caches.keys().then(function(names){
+						for ( var i = 0; i < names.length; i++ ){ //Change this back to: for ( let name of names ){ when we stop supporting IE11
+							caches.delete(names[i]);
+						}
+					});
+				}
 			}
-
-			return false;
-		});
-
-		//PWA Installed
-		window.addEventListener('appinstalled', function(){
-			jQuery('.nebula-sw-install-button').removeClass('ready').addClass('success');
-
-			var thisEvent = {
-				category: 'Progressive Web App',
-				action: 'App Installed',
-				label: 'The app has been installed',
-			};
-
-			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-		});
-
-		//Clear the caches with ?debug query string
-		if ( nebula.get('debug') ){
-			if ( 'caches' in window ){
-				caches.keys().then(function(names){
-					for ( var i = 0; i < names.length; i++ ){ //Change this back to: for ( let name of names ){ when we stop supporting IE11
-						caches.delete(names[i]);
-					}
-				});
-			}
+		} else { //If the Service Worker option is disabled
+			//Force unregister any existing SWs
+			navigator.serviceWorker.getRegistrations().then(function(registrations){
+				for ( let registration of registrations ){
+					registration.unregister();
+				}
+			});
 		}
 	}
 };
