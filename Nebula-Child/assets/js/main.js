@@ -53,6 +53,10 @@ function supplementalEventTracking(){
 		return false;
 	}
 
+	if ( typeof window.ga !== 'function' ){
+		window.ga = function(){}; //Prevent ga() calls from erroring if GA is off or blocked.
+	}
+
 	//Simple example:
 	//nebula.dom.document.on('click touch tap', '.selector', function(){
 	//	ga('send', 'event', 'Category', 'Action', 'Label');

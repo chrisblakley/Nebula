@@ -148,7 +148,6 @@ nebula.cacheSelectors = function(){
 	}
 };
 
-//Nebula Service Worker
 //@TODO "Nebula" 0: Consider using workbox-window here to tie into the Workbox sw.js file (after IE11): https://developers.google.com/web/tools/workbox/modules/workbox-window
 nebula.registerServiceWorker = function(){
 	jQuery('.nebula-sw-install-button').addClass('inactive');
@@ -617,7 +616,6 @@ nebula.facebookSDK = function(){
 	}
 };
 
-
 //Social sharing buttons
 nebula.socialSharing = function(){
 	if ( jQuery('.fbshare, a.nebula-share.facebook, .twshare, a.nebula-share-btn.twitter, .lishare, a.nebula-share-btn.linkedin, .pinshare, a.nebula-share-btn.pinterest, .emshare, a.nebula-share-btn.email, a.nebula-share.webshare, a.nebula-share.shareapi').length ){ //If any of the Nebula sharing classes are used
@@ -627,7 +625,7 @@ nebula.socialSharing = function(){
 		var popupLeft = nebula.dom.window.width()/2-225;
 		var popupAttrs = 'top=' + popupTop + ', left=' + popupLeft + ', toolbar=0, location=0, menubar=0, directories=0, scrollbars=0, chrome=yes, personalbar=0';
 
-		//These event will need to correspond to the GA4 event name "share" and use "content_type" and "item_id" as parameters: https://support.google.com/analytics/answer/9267735
+		//These events will need to correspond to the GA4 event name "share" and use "content_type" and "item_id" as parameters: https://support.google.com/analytics/answer/9267735
 
 		//Facebook
 		jQuery('.fbshare, a.nebula-share.facebook').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
@@ -782,7 +780,7 @@ nebula.socialSharing = function(){
 };
 
 /*==========================
- Analytics Functions
+ Usage Tracking
  ===========================*/
 
 //Google Analytics Universal Analytics Event Trackers
@@ -793,17 +791,18 @@ nebula.eventTracking = function(){
 
 	nebula.cacheSelectors(); //If event tracking is initialized by the async GA callback, selectors won't be cached yet
 
-	if ( typeof window.ga === 'function' ){
-		window.ga(function(tracker){
-			nebula.dom.document.trigger('nebula_ga_tracker', tracker);
-			nebula.user.cid = tracker.get('clientId');
-		});
-	}
-
-	nebula.dom.document.trigger('nebula_event_tracking');
-
 	nebula.once(function(){
 		window.dataLayer = window.dataLayer || []; //Prevent overwriting an existing GTM Data Layer array
+
+		nebula.dom.document.trigger('nebula_event_tracking');
+
+		if ( typeof window.ga === 'function' ){
+			window.ga(function(tracker){
+				nebula.dom.document.trigger('nebula_ga_tracker', tracker);
+				nebula.user.cid = tracker.get('clientId');
+				window.dataLayer.push(Object.assign({'event': 'nebula-ga-tracker', 'client-id': nebula.user.cid}));
+			});
+		}
 
 		//Btn Clicks
 		nebula.dom.document.on('mousedown', "button, .btn, [role='button'], a.wp-block-button__link, .hs-button", function(e){
@@ -1286,9 +1285,9 @@ nebula.eventTracking = function(){
 				time: new Date()
 			});
 
-			//Keep only required number of click events and remove left of them.
-			if ( clickEvents.length > 5 ){
-				clickEvents.splice(0, clickEvents.length - 5);
+			//Keep only required number of click events
+			if ( clickEvents.length > 5 ){ //If there are more than 5 click events
+				clickEvents.splice(0, clickEvents.length - 5); //Remove everything except the latest 5
 			}
 
 			//Detect 3 clicks in 5 seconds
@@ -1296,8 +1295,8 @@ nebula.eventTracking = function(){
 				var numberOfClicks = 5; //Number of clicks to detect within the period
 				var period = 3; //The period to listen for the number of clicks
 
-				var last = clickEvents.length - 1;
-				var timeDiff = (clickEvents[last].time.getTime() - clickEvents[last - numberOfClicks + 1].time.getTime()) / 1000;
+				var last = clickEvents.length - 1; //The latest click event
+				var timeDiff = (clickEvents[last].time.getTime() - clickEvents[last - numberOfClicks + 1].time.getTime()) / 1000; //Time between the last click and previous click
 
 				//Ignore event periods longer than desired
 				if ( timeDiff > period ){
@@ -1320,6 +1319,7 @@ nebula.eventTracking = function(){
 					}
 				}
 
+				//If we have not returned null by now, we have a set of rage clicks
 				var thisEvent = {
 					event: e,
 					category: 'Rage Clicks',
@@ -1333,13 +1333,13 @@ nebula.eventTracking = function(){
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.description, {'nonInteraction': true}); //Non-interaction because if the user exits due to this it should be considered a bounce
-				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-rage-click'}));
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-rage-clicks'}));
 
 				clickEvents.splice(clickEvents.length-5, 5); //Remove unused click points
 			}
 		});
 
-		//Skip to Content and other screen reader links Focus/Clicks
+		//Skip to Content and other screen reader link focuses (which indicate screenreader software is being used in this session)
 		nebula.dom.document.on('focus', '.sr-only', function(e){
 			var thisEvent = {
 				event: e,
@@ -1349,12 +1349,12 @@ nebula.eventTracking = function(){
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText, {'nonInteraction': true}); //Non-interaction because they are not actually taking action and these links do not indicate engagement
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-accessibility-link'}));
 		});
 
-		//Screenreader Links
+		//Skip to Content and other screen reader link clicks (which indicate screenreader software is being used in this session)
 		nebula.dom.document.on('click', '.sr-only', function(e){
 			var thisEvent = {
 				event: e,
@@ -1365,7 +1365,7 @@ nebula.eventTracking = function(){
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText, {'nonInteraction': true}); //Non-interaction because these links do not indicate engagement
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-accessibility-link'}));
 		});
@@ -1420,6 +1420,7 @@ nebula.eventTracking = function(){
 				ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.emailAddress);
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-copied-email'}));
 				nebula.crm('event', 'Email Address Copied');
 				nebula.crm('identify', {mailto_contacted: thisEvent.emailAddress});
 			} else if ( nebula.regex.address.test(emailPhoneAddress) ){
@@ -1437,6 +1438,7 @@ nebula.eventTracking = function(){
 				ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.address);
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-copied-address'}));
 				nebula.crm('event', 'Street Address Copied');
 			} else {
 				var alphanumPhone = emailPhoneAddress.replace(/\W/g, ''); //Keep only alphanumeric characters
@@ -1458,6 +1460,7 @@ nebula.eventTracking = function(){
 					ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 					nebula.dom.document.trigger('nebula_event', thisEvent);
 					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
+					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-copied-phone'}));
 					nebula.crm('event', 'Phone Number Copied');
 					nebula.crm('identify', {phone_contacted: thisEvent.phoneNumber});
 				}
@@ -1562,26 +1565,26 @@ nebula.eventTracking = function(){
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-print'}));
+			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
 			nebula.crm('event', thisEvent.category);
 		}
 
 		//Detect Adblock
-		if ( nebula.user.client.bot === false && nebula.site.options.adblock_detect ){
+		if ( nebula.user.client.bot === false && nebula.site.options.adblock_detect ){ //If not a bot and adblock detection is active
 			window.performance.mark('(Nebula) Detect AdBlock [Start]');
 			jQuery.ajax({ //Eventually update this to fetch with ES6
 				type: 'GET',
-				url: nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js',
+				url: nebula.site.directory.template.uri + '/assets/js/vendor/show_ads.js', //Attempt to retrieve a fake ad file
 				dataType: 'script',
 				cache: true,
 				timeout: 5000
-			}).done(function(){
+			}).done(function(){ //The file was retrieved successfully
 				nebula.session.flags.adblock = false;
-			}).fail(function(){
+			}).fail(function(){ //The file was blocked
 				nebula.dom.html.addClass('ad-blocker');
 				ga('set', nebula.analytics.dimensions.blocker, 'Ad Blocker');
-				if ( nebula.session.flags.adblock != true ){
+				if ( nebula.session.flags.adblock !== true ){ //If this is the first time blocking it, log it
 					ga('send', 'event', 'Ad Blocker', 'Blocked', 'This user is using ad blocking software.', {'nonInteraction': true}); //Uses an event because it is asynchronous!
 					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-adblock-detected'}));
 					nebula.session.flags.adblock = true;
@@ -1788,7 +1791,7 @@ nebula.usage = function(error){
 			'cm=WordPress', //Medium
 		].join('&'));
 	}
-}
+};
 
 //Detect scroll depth
 //Note: This is a default GA4 event and is not needed to be tracked in Nebula. Consider deleting entirely.
@@ -2486,7 +2489,7 @@ nebula.cf7Functions = function(){
 				event: e,
 				category: 'CF7 Form',
 				action: 'Started Form (Focus)',  //GA4 Name: "form_start"?
-				formID: formID,
+				formID: formID, //Actual ID (not Unit Tag)
 				field: thisField,
 				fieldInfo: fieldInfo
 			};
@@ -2537,13 +2540,44 @@ nebula.cf7Functions = function(){
 		jQuery(e.target).find('button#submit').addClass('active');
 	});
 
+	//CF7 Submit "Attempts" (CF7 AJAX response after any submit attempt). This triggers after the other submit triggers.
+	nebula.dom.document.on('wpcf7submit', function(e){
+		var thisEvent = {
+			event: e,
+			category: 'CF7 Form',
+			action: 'Submit (Attempt)', //GA4 Name: "form_attempt"?
+			formID: e.detail.id, //CF7 Unit Tag
+		};
+
+		//If timing data exists
+		if ( nebula && nebula.timings && typeof nebula.timings[e.detail.id] !== 'undefined' ){ //@todo "Nebula" 0: Use optional chaining
+			thisEvent.formTime = nebula.timer(e.detail.id, 'lap', 'wpcf7-submit-attempt');
+			thisEvent.inputs = nebula.timings[e.detail.id].laps + ' inputs';
+		}
+
+		thisEvent.label = 'Submission attempt for form ID: ' + thisEvent.formID;
+
+		nebula.crmForm(thisEvent.formID); //nebula.crmForm() here because it triggers after all others. No nebula.crm() here so it doesn't overwrite the other (more valuable) data.
+
+		ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Attempt)');
+		ga('set', nebula.analytics.dimensions.formTiming, nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')');
+		nebula.dom.document.trigger('nebula_event', thisEvent);
+		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label); //This event is required for the notable form metric!
+		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-submit-attempt'}));
+		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)'});}
+		if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
+
+		jQuery('#' + e.detail.id).find('button#submit').removeClass('active');
+		jQuery('.invalid-feedback').addClass('hidden');
+	});
+
 	//CF7 Invalid (CF7 AJAX response after invalid form)
 	nebula.dom.document.on('wpcf7invalid', function(e){
 		var thisEvent = {
 			event: e,
 			category: 'CF7 Form',
 			action: 'Submit (Invalid)', //GA4 Name: "form_invalid"?
-			formID: e.detail.id,
+			formID: e.detail.id, //CF7 Unit Tag
 		};
 
 		//If timing data exists
@@ -2599,7 +2633,7 @@ nebula.cf7Functions = function(){
 			event: e,
 			category: 'CF7 Form',
 			action: 'Submit (Spam)', //GA4 Name: "form_spam"?
-			formID: e.detail.id,
+			formID: e.detail.id, //CF7 Unit Tag
 			formTime: nebula.timer(e.detail.id, 'end'),
 			inputs: formInputs
 		};
@@ -2628,7 +2662,7 @@ nebula.cf7Functions = function(){
 			event: e,
 			category: 'CF7 Form',
 			action: 'Submit (Mail Failed)', //GA4 Name: "form_failed"?
-			formID: e.detail.id,
+			formID: e.detail.id, //CF7 Unit Tag
 			formTime: nebula.timer(e.detail.id, 'end'),
 			inputs: formInputs
 		};
@@ -2661,7 +2695,7 @@ nebula.cf7Functions = function(){
 			event: e,
 			category: 'CF7 Form',
 			action: 'Submit (Success)', //GA4 Name: "form_submit" (and also somehow "generate_lead"?)
-			formID: e.detail.id,
+			formID: e.detail.id, //CF7 Unit Tag ("f" is CF7 form ID, "p" is WP post ID, and "o" is the count if there are multiple per page)
 			formTime: nebula.timer(e.detail.id, 'end'),
 			inputs: formInputs
 		};
@@ -2683,44 +2717,15 @@ nebula.cf7Functions = function(){
 		nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.formID + ') Submit Success'}, false);
 		nebula.crm('event', 'Contact Form (' + thisEvent.formID + ') Submit Success');
 
-		//Clear localstorage on submit success
-		jQuery('#' + e.detail.id + ' .wpcf7-textarea, #' + e.detail.id + ' .wpcf7-text').each(function(){
-			jQuery(this).trigger('keyup'); //Clear validation
-			localStorage.removeItem('cf7_' + jQuery(this).attr('name'));
-		});
-
-		jQuery('#' + e.detail.id).find('.is-valid, .is-invalid').removeClass('is-valid is-invalid'); //Clear all validation classes
-	});
-
-	//CF7 Submit (CF7 AJAX response after any submit attempt). This triggers after the other submit triggers.
-	nebula.dom.document.on('wpcf7submit', function(e){
-		var thisEvent = {
-			event: e,
-			category: 'CF7 Form',
-			action: 'Submit (Attempt)', //GA4 Name: "form_attempt"?
-			formID: e.detail.id,
-		};
-
-		//If timing data exists
-		if ( nebula && nebula.timings && typeof nebula.timings[e.detail.id] !== 'undefined' ){ //@todo "Nebula" 0: Use optional chaining
-			thisEvent.formTime = nebula.timer(e.detail.id, 'lap', 'wpcf7-submit-attempt');
-			thisEvent.inputs = nebula.timings[e.detail.id].laps + ' inputs';
+		//Clear localstorage on submit success on non-persistent forms
+		if ( !jQuery('#' + e.detail.id).hasClass('nebula-persistent') && !jQuery('#' + e.detail.id).parents('.nebula-persistent').length ){
+			jQuery('#' + e.detail.id + ' .wpcf7-textarea, #' + e.detail.id + ' .wpcf7-text').each(function(){
+				jQuery(this).trigger('keyup'); //Clear validation
+				localStorage.removeItem('cf7_' + jQuery(this).attr('name'));
+			});
 		}
 
-		thisEvent.label = 'Submission attempt for form ID: ' + thisEvent.formID;
-
-		nebula.crmForm(thisEvent.formID); //nebula.crmForm() here because it triggers after all others. No nebula.crm() here so it doesn't overwrite the other (more valuable) data.
-
-		ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Attempt)');
-		ga('set', nebula.analytics.dimensions.formTiming, nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')');
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label); //This event is required for the notable form metric!
-		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-submit-attempt'}));
-		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)'});}
-		if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
-
-		jQuery('#' + e.detail.id).find('button#submit').removeClass('active');
-		jQuery('.invalid-feedback').addClass('hidden');
+		jQuery('#' + e.detail.id).find('.is-valid, .is-invalid').removeClass('is-valid is-invalid'); //Clear all validation classes
 	});
 };
 
@@ -2885,7 +2890,7 @@ nebula.liveValidator = function(){
 			}
 
 			//Look for empty fields
-			if ( jQuery(this).val().trim().length == 0 ){
+			if ( jQuery(this).val().trim().length === 0 ){
 				jQuery(this).addClass('nebula-empty-required');
 				invalidCount++;
 			}
@@ -3306,7 +3311,7 @@ nebula.getCurrentPosition = function(){
 		nav = window.navigator;
 	}
 	var geolocation = nav.geolocation;
-	if ( geolocation != null ){
+	if ( geolocation !== null ){
 		geolocation.getCurrentPosition(geoSuccessCallback, geoErrorCallback, {enableHighAccuracy: true}); //One-time location poll
 		//geoloc.watchPosition(successCallback, errorCallback, {enableHighAccuracy: true}); //Continuous location poll (This will update the nebula.session.geolocation object regularly, but be careful sending events to GA- may result in TONS of events)
 	}
@@ -3483,6 +3488,10 @@ nebula.placeLookup = function(placeID){
 
 //Miscellaneous helper classes and functions
 nebula.helpers = function(){
+	if ( typeof window.ga !== 'function' ){
+		window.ga = function(){}; //Prevent ga() calls from erroring if GA is off or blocked. This is supplemental to a similar check in analytics.php
+	}
+
 	//Remove Sass render trigger query
 	if ( nebula.get('sass') && !nebula.get('persistent') && window.history.replaceState ){ //IE10+
 		window.history.replaceState({}, document.title, nebula.removeQueryParameter('sass', window.location.href));
@@ -3809,6 +3818,7 @@ nebula.scrollTo = function(element, scrollSpeed, offset, onlyWhenBelow, callback
 								nebula.focusOnElement(target);
 								history.replaceState({}, '', thisHash); //Add the hash to the URL so it can be refreshed, copied, links, etc. ReplaceState does this without affecting the back button.
 							}); //Speed is hard-coded, but could look for an HTML attribute if desired
+
 							return false;
 						}
 					}
@@ -4957,7 +4967,7 @@ nebula.getYoutubeTitle = function(target){
 	}
 
 	//Otherwise use the iframe title attribute (if it exists)
-	if ( jQuery(target.getIframe()).attr('title').length ){
+	if ( jQuery(target.getIframe()).attr('title') ){
 		return jQuery(target.getIframe()).attr('title').trim();
 	}
 
@@ -5318,7 +5328,7 @@ nebula.initMmenu = function(){
 			}, 'Mmenu init');
 		}
 	}
-}
+};
 
 nebula.mmenus = function(){
 	//@todo "Nebula" 0: Between Mmenu and jQuery, 2 console violations are being triggered: "Added non-passive event listener to a scroll-blocking 'touchmove' event."
@@ -5440,7 +5450,7 @@ nebula.mmenus = function(){
 			if ( mobileNav.length ){
 				var mobileNavTriggerIcon = jQuery('a.mobilenavtrigger i');
 
-				mobileNav.data('mmenu').bind('open:start', function($panel){
+				mobileNav.data('mmenu').bind('open:start', function(panel){
 					//When mmenu has started opening
 					mobileNavTriggerIcon.removeClass('fa-bars').addClass('fa-times');
 
@@ -5449,7 +5459,7 @@ nebula.mmenus = function(){
 					}
 
 					nebula.timer('(Nebula) Mmenu', 'start');
-				}).bind('close:start', function($panel){
+				}).bind('close:start', function(panel){
 					//When mmenu has started closing
 					mobileNavTriggerIcon.removeClass('fa-times').addClass('fa-bars');
 					ga('send', 'timing', 'Mmenu', 'Closed', Math.round(nebula.timer('(Nebula) Mmenu', 'lap')), 'From opening mmenu until closing mmenu');

@@ -251,6 +251,7 @@
 				});
 			<?php endif; ?>
 
+			<?php if ( false ): //Tag Assistant was throwing some errors: "Unknown method name eventCategory" (etc.)  ?>
 			//Autotrack Social Widgets
 			ga('require', 'socialWidgetTracker', {
 				hitFilter: function(model){
@@ -267,6 +268,7 @@
 					model.set('socialTarget', null);
 				}
 			});
+			<?php endif; ?>
 
 			<?php if ( nebula()->get_option('cd_mqbreakpoint') || nebula()->get_option('cd_mqresolution') || nebula()->get_option('cd_mqorientation') ): //Autotrack Media Queries ?>
 				ga('require', 'mediaQueryTracker', {

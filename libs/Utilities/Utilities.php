@@ -759,6 +759,10 @@ if ( !trait_exists('Utilities') ){
 
 		//Check if an array contains anything from another array
 		public function in_array_any($needles, $haystack){
+			if ( is_string($haystack) ){
+				$haystack = array($haystack); //Convert to an array if a string is provided
+			}
+
 			return (bool) array_intersect($needles, $haystack);
 		}
 

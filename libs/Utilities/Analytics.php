@@ -173,7 +173,7 @@ if ( !trait_exists('Analytics') ){
 		//Nebula usage data
 		//This will need to be updated for GA4 if/when the usage property is updated
 		public function usage($action, $data=array()){
-			$date = new DateTime("now", new DateTimeZone('America/New_York'));
+			$date = new DateTime('now', new DateTimeZone('America/New_York'));
 			$defaults = array(
 				'v' => 1,
 				't' => 'pageview',

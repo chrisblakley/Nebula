@@ -375,10 +375,13 @@ if ( !trait_exists('Options') ){
 			if ( ($this->get_data('check_new_options') === 'true' || $this->is_debug()) && current_user_can('manage_options') ){
 				$nebula_options = get_option('nebula_options');
 				$nebula_default_options = $this->default_options();
-				$different_keys = array_diff_key($nebula_default_options, $nebula_options);
-				foreach ( $different_keys as $different_key => $different_value ){
-					if ( !isset($nebula_options[$different_key]) || is_null($nebula_options[$different_key]) ){ //If this key is not in the array (a new option was added to Nebula)
-						$this->update_option($different_key, $nebula_default_options[$different_key]); //Create it with its default value
+
+				if ( is_array($nebula_default_options) && is_array($nebula_options) ){ //Ensure both are arrays to continue
+					$different_keys = array_diff_key($nebula_default_options, $nebula_options);
+					foreach ( $different_keys as $different_key => $different_value ){
+						if ( !isset($nebula_options[$different_key]) || is_null($nebula_options[$different_key]) ){ //If this key is not in the array (a new option was added to Nebula)
+							$this->update_option($different_key, $nebula_default_options[$different_key]); //Create it with its default value
+						}
 					}
 				}
 

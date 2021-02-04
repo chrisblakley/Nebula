@@ -97,7 +97,7 @@ if ( !trait_exists('Automation') ){
 					'required' => false,
 				),
 				array(
-					'name' => 'Wordpress SEO by Yoast',
+					'name' => 'WordPress SEO by Yoast',
 					'slug' => 'wordpress-seo',
 					'required' => true,
 				),
