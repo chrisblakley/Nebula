@@ -10,3 +10,5 @@ p, li, dt, dl, div {line-height: 1.625em;}
 span {font-size: inherit;}
 
 blockquote {hanging-punctuation: first last;} //Only available in Safari
+
+::target-text {background: rgba(0, 120, 171, 0.2);} //Style text fragment highlights

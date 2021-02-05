@@ -805,7 +805,7 @@ nebula.eventTracking = function(){
 		}
 
 		//Btn Clicks
-		nebula.dom.document.on('mousedown', "button, .btn, [role='button'], a.wp-block-button__link, .hs-button", function(e){
+		nebula.dom.document.on('mousedown', "button, .button, .btn, [role='button'], a.wp-block-button__link, .hs-button", function(e){
 			var thisEvent = {
 				event: e,
 				category: 'Button',
@@ -2883,24 +2883,30 @@ nebula.liveValidator = function(){
 	nebula.dom.document.on('mouseover focus', 'form [type="submit"], form #submit', function(){ //Must be deferred because Nebula replaces CF7 submit inputs with buttons
 		var invalidCount = 0;
 
-		jQuery(this).closest('form').find('[required], .wpcf7-validates-as-required').each(function(){
-			//Look for checked checkboxes or radio buttons
-			if ( jQuery(this).find('input:checked').length ){
-				return; //Continue
-			}
+		//This is a non-essential, cosmetic helper, so escape if any errors occur
+		try {
+			jQuery(this).closest('form').find('[required], .wpcf7-validates-as-required').each(function(){
+				//Look for checked checkboxes or radio buttons
+				if ( jQuery(this).find('input:checked').length ){
+					return; //Continue
+				}
 
-			//Look for empty fields
-			if ( jQuery(this).val().trim().length === 0 ){
-				jQuery(this).addClass('nebula-empty-required');
-				invalidCount++;
-			}
-		});
+				//Look for empty fields
+				if ( jQuery(this).val().trim().length === 0 ){ //Sometimes jQuery(this) is null and errors on .trim(), so wrapped the whole thing in a try
+					jQuery(this).addClass('nebula-empty-required');
+					invalidCount++;
+				}
+			});
+		} catch(e){
+			//Ignore errors. //@todo "Nebula" 0: Eventually have a naked try when IE11 is not supported
+		}
 
 		if ( invalidCount > 0 ){
 			var invalidCountText = ( invalidCount === 1 )? ' invalid field remains' : ' invalid fields remain';
 			jQuery('form [type="submit"], form #submit').attr('title', invalidCount + invalidCountText);
 		}
 	});
+
 	nebula.dom.document.on('mouseout blur', 'form [type="submit"], form #submit', function(){ //Must be deferred because Nebula replaces CF7 submit inputs with buttons
 		jQuery(this).closest('form').find('.nebula-empty-required').removeClass('nebula-empty-required');
 		jQuery('form [type="submit"], form #submit').removeAttr('title');
