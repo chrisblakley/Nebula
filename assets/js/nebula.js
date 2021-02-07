@@ -2759,32 +2759,49 @@ nebula.cf7LocalStorage = function(){
 		return false;
 	}
 
-	jQuery('.wpcf7-textarea, .wpcf7-text').each(function(){
+	jQuery('.wpcf7-textarea, .wpcf7-text, .wpcf7-select, .wpcf7-checkbox input, .wpcf7-radio input').each(function(){
 		var thisLocalStorageVal = localStorage.getItem('cf7_' + jQuery(this).attr('name'));
-
-		//Fill textareas with localstorage data on load
+		//Complete inputs with localstorage data on load
 		if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') && thisLocalStorageVal && thisLocalStorageVal !== 'undefined' && thisLocalStorageVal !== '' ){
-			if ( jQuery(this).val() === '' ){ //Don't overwrite a field that already has text in it!
-				jQuery(this).val(thisLocalStorageVal).trigger('keyup');
+			if ( thisLocalStorageVal !== null ){
+				if ( jQuery(this).attr('type') === 'checkbox' || jQuery(this).attr('type') === 'radio' ){
+					jQuery(this).prop('checked', (jQuery(this).val() === thisLocalStorageVal));
+				} else {
+					jQuery(this).val( thisLocalStorageVal );
+				}
+				jQuery(this).addClass('nebula-autofilled');
 			}
-			jQuery(this).blur();
 		} else {
 			localStorage.removeItem('cf7_' + jQuery(this).attr('name')); //Remove localstorage if it is undefined or inelligible
 		}
 
 		//Update localstorage data
-		jQuery(this).on('keyup blur', function(){
+		jQuery(this).on('keyup blur click', function(){
 			if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') ){
-				localStorage.setItem('cf7_' + jQuery(this).attr('name'), jQuery(this).val());
+				var thisVal = jQuery(this).val();				
+				if ( jQuery(this).attr('type') === 'checkbox' ){
+					thisVal = null;
+					if ( jQuery(this).prop('checked') ){
+						thisVal = jQuery(this).val();
+					}
+				}
+				localStorage.setItem('cf7_' + jQuery(this).attr('name'), thisVal);
 			}
 		});
 	});
 
 	//Update matching form fields on other windows/tabs
 	nebula.dom.window.on('storage', function(e){ //This causes an infinite loop in IE11
-		jQuery('.wpcf7-textarea, .wpcf7-text').each(function(){
+		jQuery('.wpcf7-textarea, .wpcf7-text, .wpcf7-select, .wpcf7-checkbox input, .wpcf7-radio input').each(function(){
 			if ( !jQuery(this).hasClass('do-not-store') && !jQuery(this).hasClass('.wpcf7-captchar') ){
-				jQuery(this).val(localStorage.getItem('cf7_' + jQuery(this).attr('name'))).trigger('keyup');
+				var thisLocalStorageVal = localStorage.getItem('cf7_' + jQuery(this).attr('name'));				
+				if ( thisLocalStorageVal !== null ){					
+					if ( jQuery(this).attr('type') === 'checkbox' || jQuery(this).attr('type') === 'radio' ){
+						jQuery(this).prop('checked', (jQuery(this).val() === thisLocalStorageVal));
+					} else {
+						jQuery(this).val( thisLocalStorageVal );
+					}
+				}
 			}
 		});
 	});
@@ -2792,7 +2809,7 @@ nebula.cf7LocalStorage = function(){
 	//Clear localstorage when AJAX submit fails (but submit still succeeds)
 	if ( window.location.hash.indexOf('wpcf7') > 0 ){
 		if ( jQuery(escape(window.location.hash) + ' .wpcf7-mail-sent-ok').length ){
-			jQuery(escape(window.location.hash) + ' .wpcf7-textarea, ' + escape(window.location.hash) + ' .wpcf7-text').each(function(){
+			jQuery(escape(window.location.hash) + ' .wpcf7-textarea, ' + escape(window.location.hash) + ' .wpcf7-text, ' + escape(window.location.hash) + ' .wpcf7-checkbox input, ' + escape(window.location.hash) + ' .wpcf7-radio input, ' + escape(window.location.hash) + ' .wpcf7-select, ').each(function(){
 				localStorage.removeItem('cf7_' + jQuery(this).attr('name'));
 				jQuery(this).val('').trigger('keyup');
 			});
