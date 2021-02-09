@@ -12,7 +12,7 @@ nebula.optionsInit = function(){
 	//Scroll to the top when changing tabs
 	jQuery('a.nav-link').on('shown.bs.tab', function(){
 		//Update the URL to reflect the active tab
-		var url = nebula.site.admin_url + 'themes.php?page=nebula_options' + '&tab=' + jQuery('#options-navigation a.active').attr('href').replace('#', '');
+		var url = nebula.site.admin_url + 'themes.php?page=nebula_options&tab=' + jQuery('#options-navigation a.active').attr('href').replace('#', '');
 		history.replaceState(null, document.title, url);
 
 		jQuery('html, body').animate({
@@ -74,10 +74,9 @@ nebula.optionsFilters = function(){
 	//Option filter
 	jQuery('#nebula-option-filter').on('keydown keyup change focus blur', function(e){
 		nebula.debounce(function(){
+			var url = nebula.site.admin_url + 'themes.php?page=nebula_options';
 			if ( jQuery('#nebula-option-filter').val() !== '' ){
-				var url = nebula.site.admin_url + 'themes.php?page=nebula_options' + '&filter=' + jQuery('#nebula-option-filter').val();
-			} else {
-				var url = nebula.site.admin_url + 'themes.php?page=nebula_options';
+				url = nebula.site.admin_url + 'themes.php?page=nebula_options&filter=' + jQuery('#nebula-option-filter').val();
 			}
 
 			history.replaceState(null, document.title, url);
@@ -313,7 +312,7 @@ nebula.logs = function(){
 					jQuery('#add-log-progress').removeClass('fa-spinner fa-spin').addClass('fa-calendar-plus');
 
 					//Reload just the table
-					jQuery('#nebula-log-reload-container').load(window.location.href +  ' #nebula-logs', function(){
+					jQuery('#nebula-log-reload-container').load(window.location.href + ' #nebula-logs', function(){
 						jQuery('#log-count').text(jQuery('#nebula-logs tr').not('.removed').length); //Re-count rows
 
 						//Empty the inputs

@@ -259,7 +259,7 @@ nebula.youtubeTracking = function(){
 
 window.onYouTubeIframeAPIReady = function(e){ //Not scoped to the nebula object because the Youtube API calls this itself
 	window.performance.mark('(Nebula) Loading Youtube Videos [Start]');
-	jQuery('iframe[src*="youtube"]').each(function(i){
+	jQuery('iframe[src*="youtube"]').each(function(){
 		if ( !jQuery(this).hasClass('ignore') ){ //Use this class to ignore certain videos from tracking
 			//If this iframe is using a data-src, make sure the src matches
 			if ( !jQuery(this).attr('src').includes('youtube') ){ //If the src does not contain "youtube"
@@ -291,7 +291,7 @@ window.onYouTubeIframeAPIReady = function(e){ //Not scoped to the nebula object 
 	window.performance.measure('(Nebula) Loading Youtube Videos', '(Nebula) Loading Youtube Videos [Start]', '(Nebula) Loading Youtube Videos [End]');
 
 	let pauseFlag = false;
-}
+};
 
 nebula.addYoutubePlayer = function(id = false, element){
 	if ( !id ){
@@ -534,7 +534,7 @@ nebula.vimeoTracking = function(){
 
 //To trigger events on these videos, use the syntax: nebula.videos['208432684'].player.play();
 nebula.createVimeoPlayers = function(){
-	jQuery('iframe[src*="vimeo"]').each(function(i){ //This is not finding lazy loaded videos
+	jQuery('iframe[src*="vimeo"]').each(function(){ //This is not finding lazy loaded videos
 		if ( !jQuery(this).hasClass('ignore') ){ //Use this class to ignore certain videos from tracking
 			let id = jQuery(this).attr('data-video-id') || jQuery(this).attr('data-vimeo-id') || jQuery(this).attr('id') || false;
 			if ( !id ){
@@ -545,7 +545,7 @@ nebula.createVimeoPlayers = function(){
 				}
 
 				if ( id && !parseInt(id) ){ //If the ID is a not number try to find a number in the iframe src
-					id = /\d{6,}/g.exec(jQuery(this).attr('src'))[0];
+					id = (/\d{6,}/g).exec(jQuery(this).attr('src'))[0];
 				}
 
 				jQuery(this).attr('id', id);

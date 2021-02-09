@@ -10,7 +10,7 @@ nebula.addressAutocomplete = function(autocompleteInput, uniqueID = 'unnamed'){
 			if ( typeof autocompleteInputs !== 'object' ){
 				var autocompleteInputs = {}; //Cannot use let here (scope?)
 			}
-			
+
 			autocompleteInputs[uniqueID] = autocompleteInput;
 
 			nebula.debounce(function(){

@@ -115,7 +115,7 @@ nebula.errorMitigation = function(){
 			jQuery.get(fallbackPNG).done(function(){
 				thisImage.prop('src', fallbackPNG);
 				thisImage.removeClass('svg');
-			}).fail(function() {
+			}).fail(function(){
 				ga('send', 'exception', {'exDescription': '(JS) Broken Image: ' + imagePath, 'exFatal': false});
 				nebula.crm('event', 'Broken Image');
 			});
@@ -138,11 +138,11 @@ nebula.focusOnElement = function(element = false){
 	if ( !element ){
 		return;
 	}
-	
+
 	if ( typeof element !== 'object' ){
 		element = jQuery(element);
 	}
-	
+
 	//If the element is not focusable itself, add tabindex to make focusable and remove again
 	if ( !element.is(':focusable') ){ //Uses custom expression defined at the bottom of this file
 		element.attr('tabindex', -1).on('blur focusout', function(){
@@ -167,7 +167,7 @@ nebula.get = function(parameter = false, url = location.search){
 	}
 
 	return queries[parameter] || false;
-}
+};
 
 //Remove an array of parameters from the query string.
 nebula.removeQueryParameter = function(keys, url = location.search){
@@ -191,7 +191,7 @@ nebula.reflow = function(selector){
 	let element;
 	if ( typeof selector === 'string' ){
 		element = jQuery(selector);
-	} else if ( typeof selector === 'object' ) {
+	} else if ( typeof selector === 'object' ){
 		element = selector;
 	} else {
 		return false;
@@ -302,7 +302,7 @@ nebula.debounce = function(callback = false, wait = 1000, uniqueID = 'No Unique 
 		return false;
 	}
 
-	if ( typeof nebula.debounceTimers === "undefined" ){
+	if ( typeof nebula.debounceTimers === 'undefined' ){
 		nebula.debounceTimers = {};
 	}
 
@@ -325,7 +325,7 @@ nebula.debounce = function(callback = false, wait = 1000, uniqueID = 'No Unique 
 
 //Limit functionality to only run once per specified time period
 nebula.throttle = function(callback, cooldown = 1000, uniqueID = 'No Unique ID'){
-	if ( typeof nebula.throttleTimers === "undefined" ){
+	if ( typeof nebula.throttleTimers === 'undefined' ){
 		nebula.throttleTimers = {};
 	}
 
@@ -346,7 +346,7 @@ nebula.throttle = function(callback, cooldown = 1000, uniqueID = 'No Unique ID')
 		}
 	};
 
-    return later();
+	return later();
 };
 
 //Cookie Management
@@ -542,18 +542,18 @@ nebula.timeAgo = function(timestamp, raw){ //http://af-design.com/blog/2009/02/1
 		return diff;
 	}
 
-	if ( diff <= 1 ){ return "just now"; }
-	if ( diff < 20 ){ return diff + " seconds ago"; }
-	if ( diff < 60 ){ return "less than a minute ago"; }
-	if ( diff <= 90 ){ return "one minute ago"; }
-	if ( diff <= 3540 ){ return Math.round(diff/60) + " minutes ago"; }
-	if ( diff <= 5400 ){ return "1 hour ago"; }
-	if ( diff <= 86_400 ){ return Math.round(diff/3600) + " hours ago"; }
-	if ( diff <= 129_600 ){ return "1 day ago"; }
-	if ( diff < 604_800 ){ return Math.round(diff/86_400) + " days ago"; }
-	if ( diff <= 777_600 ){ return "1 week ago"; }
+	if ( diff <= 1 ){ return 'just now'; }
+	if ( diff < 20 ){ return diff + ' seconds ago'; }
+	if ( diff < 60 ){ return 'less than a minute ago'; }
+	if ( diff <= 90 ){ return 'one minute ago'; }
+	if ( diff <= 3540 ){ return Math.round(diff/60) + ' minutes ago'; }
+	if ( diff <= 5400 ){ return '1 hour ago'; }
+	if ( diff <= 86_400 ){ return Math.round(diff/3600) + ' hours ago'; }
+	if ( diff <= 129_600 ){ return '1 day ago'; }
+	if ( diff < 604_800 ){ return Math.round(diff/86_400) + ' days ago'; }
+	if ( diff <= 777_600 ){ return '1 week ago'; }
 
-	return "on " + timestamp;
+	return 'on ' + timestamp;
 };
 
 //Convert DOM elements into a tree string

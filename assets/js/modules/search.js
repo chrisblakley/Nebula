@@ -101,14 +101,14 @@ nebula.autocompleteSearchListeners = async function(){
 				nebula.dom.document.on('blur', '.nebula-search input', function(){
 					jQuery('.nebula-search').removeClass('searching').removeClass('autocompleted');
 				});
-	
+
 				jQuery('input#s, input.search').on('keyup paste change', function(e){
 					if ( jQuery(this).val().trim().length && nebula.searchTriggerOnlyChars(e) ){
 						nebula.autocompleteSearch(jQuery(this));
 					}
 				});
 			});
-	
+
 			nebula.loadCSS(nebula.site.resources.styles.nebula_jquery_ui);
 		}
 	});
@@ -247,7 +247,7 @@ nebula.autocompleteSearch = function(element, types){
 			return listItem;
 		};
 		let thisFormIdentifier = element.closest('form').attr('id') || element.closest('form').attr('name') || element.closest('form').attr('class');
-		element.autocomplete("widget").addClass("form-identifier-" + thisFormIdentifier);
+		element.autocomplete('widget').addClass('form-identifier-' + thisFormIdentifier);
 	}
 };
 
@@ -265,7 +265,7 @@ nebula.wpSearchInput = function(){
 nebula.mobileSearchPlaceholder = async function(){
 	let mobileHeaderSearchInput = jQuery('#mobileheadersearch input');
 	let searchPlaceholder = 'What are you looking for?';
-	if ( window.matchMedia && window.matchMedia("(max-width: 410px)").matches ){ //@todo "Nebula" 0: Use optional chaining?
+	if ( window.matchMedia && window.matchMedia('(max-width: 410px)').matches ){ //@todo "Nebula" 0: Use optional chaining?
 		searchPlaceholder = 'Search';
 	}
 	mobileHeaderSearchInput.attr('placeholder', searchPlaceholder);
@@ -284,7 +284,7 @@ nebula.searchValidator = function(){
 			}
 		});
 
-		jQuery('.input.search').on('focus blur change keyup paste cut',function(e){
+		jQuery('.input.search').on('focus blur change keyup paste cut', function(e){
 			let thisPlaceholder = ( jQuery(this).attr('data-prev-placeholder') !== 'undefined' )? jQuery(this).attr('data-prev-placeholder') : 'Search';
 			if ( jQuery(this).val() === '' || jQuery(this).val().trim().length === 0 ){
 				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
@@ -319,7 +319,7 @@ nebula.searchTermHighlighter = async function(){
 		let searchTerm = document.URL.split('?s=')[1];
 		if ( typeof searchTerm !== 'undefined' ){
 			let reg = new RegExp("(?![^<]+>)(" + nebula.preg_quote(searchTerm.replaceAll(/(\+|%22|%20)/g, ' ')) + ")", "ig");
-			jQuery('article .entry-title a, article .entry-summary').each(function(i){
+			jQuery('article .entry-title a, article .entry-summary').each(function(){
 				jQuery(this).html(function(i, html){
 					return html.replace(reg, '<mark class="searchresultword">$1</mark>');
 				});
@@ -335,7 +335,7 @@ nebula.emphasizeSearchTerms = async function(){
 	window.requestAnimationFrame(function(){
 		let origBGColor = jQuery('.searchresultword').css('background-color');
 		jQuery('.searchresultword').each(function(i){
-		 	let stallFor = 150 * parseInt(i);
+			let stallFor = 150 * parseInt(i);
 			jQuery(this).delay(stallFor).animate({
 				backgroundColor: 'rgba(255, 255, 0, 0.5)',
 				borderColor: 'rgba(255, 255, 0, 1)',
@@ -370,14 +370,14 @@ nebula.singleResultDrawer = async function(){
 nebula.pageSuggestion = async function(){
 	if ( nebula.dom.body.hasClass('search-no-results') || nebula.dom.body.hasClass('error404') ){
 		if ( nebula?.site?.options?.nebula_cse_id !== '' && nebula?.site?.options?.nebula_google_browser_api_key !== '' ){
-			
+
 			let queryStrings;
 			if ( nebula.get().length ){
 				queryStrings = nebula.get();
 			} else {
 				queryStrings = [''];
 			}
-			
+
 			let path = window.location.pathname;
 			let phrase = decodeURIComponent(path.replaceAll(/\/+/g, ' ')).trim() + ' ' + decodeURIComponent(queryStrings[0].replaceAll(/\+/g, ' ')).trim();
 			nebula.tryGCSESearch(phrase);

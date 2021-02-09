@@ -73,20 +73,19 @@ nebula.workbox = async function(){
 	jQuery('.nebula-sw-install-button').addClass('inactive'); //If manually placing this button, start with this inactive class to prevent CLS
 
 	if ( nebula?.site?.options?.sw ){ //If Service Worker is enabled in Nebula Options
-		//When debugging unregister SW and clear caches
-		if ( nebula.get('debug') || nebula.dom.html.hasClass('debug') ){
-			nebula.unregisterServiceWorker(); //Unregister the ServiceWorker
-			nebula.emptyCaches(); //Clear the caches
-			return false;
-		}
+		if ( 'serviceWorker' in navigator ){ //If Service Worker is supported (Firefox 44+, Chrome 45+, Edge 17+, Safari 12+)
+			//When debugging unregister SW and clear caches
+			if ( nebula.get('debug') || nebula.dom.html.hasClass('debug') ){
+				nebula.unregisterServiceWorker(); //Unregister the ServiceWorker
+				nebula.emptyCaches(); //Clear the caches
+				return false;
+			}
 
-		window.performance.mark('(Nebula) SW Registration [Start]');
+			window.performance.mark('(Nebula) SW Registration [Start]');
 
-		//Dynamically import Workbox-Window
-		import('https://storage.googleapis.com/workbox-cdn/releases/6.1.0/workbox-window.prod.mjs').then(async function(module){
-			const Workbox = module.Workbox;
-
-			if ( 'serviceWorker' in navigator ){ //If Service Worker is supported (Firefox 44+, Chrome 45+, Edge 17+, Safari 12+)
+			//Dynamically import Workbox-Window
+			import('https://storage.googleapis.com/workbox-cdn/releases/6.1.0/workbox-window.prod.mjs').then(async function(module){
+				const Workbox = module.Workbox;
 				const workbox = new Workbox(nebula.site.sw_url);
 
 				//Listen for Service Worker installation (this is different than PWA installation)
@@ -170,10 +169,10 @@ nebula.workbox = async function(){
 				}).catch(function(error){
 					ga('send', 'exception', {'exDescription': '(JS) ServiceWorker registration failed: ' + error, 'exFatal': false});
 				});
-			}
-		});
+			});
 
-		nebula.pwa();
+			nebula.pwa();
+		}
 	} else {
 		nebula.unregisterServiceWorker();
 	}
@@ -181,11 +180,13 @@ nebula.workbox = async function(){
 
 //Force unregister all existing service workers
 nebula.unregisterServiceWorker = function(){
-	navigator.serviceWorker.getRegistrations().then(function(registrations){
-		for ( let registration of registrations ){
-			registration.unregister();
-		}
-	});
+	if ( 'serviceWorker' in navigator ){
+		navigator.serviceWorker.getRegistrations().then(function(registrations){
+			for ( let registration of registrations ){
+				registration.unregister();
+			}
+		});
+	}
 }
 
 //Clear the caches

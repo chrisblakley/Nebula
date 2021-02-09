@@ -1,7 +1,7 @@
 //Check if the user has enabled DNT (if supported in their browser)
 nebula.isDoNotTrack = function(){
 	//Use server-side header detection first
-	if ( nebula?.user?.dnt == 1 ){
+	if ( nebula.user?.dnt == 1 ){
 		return true; //This user prefers not to be tracked
 	} else {
 		return false; //This user is allowing tracking.
@@ -48,8 +48,8 @@ nebula.eventTracking = async function(){
 				category: 'Button',
 				action: 'Click', //GA4 Name: "button_click"?
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				text: jQuery(this).val() || jQuery(this).text() || '(Unknown)',
-				link: jQuery(this).attr('href')
+				text: jQuery(this).val() || jQuery(this).attr('value') || jQuery(this).text() || '(Unknown)',
+				link: jQuery(this).attr('href') || jQuery(this).attr('title') || '(Unknown)'
 			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
@@ -612,7 +612,7 @@ nebula.eventTracking = async function(){
 			let thisEvent = {
 				event: e,
 				category: 'Videos',
-				action: 'Enter Picture-in-Picture',  //GA4 Name: "video_pip"?
+				action: 'Enter Picture-in-Picture', //GA4 Name: "video_pip"?
 				videoID: e.target.id
 			};
 

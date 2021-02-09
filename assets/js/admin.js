@@ -93,7 +93,7 @@ window.addEventListener('resize', function(){
 nebula.initializationStuff = function(){
 	//Initialize confirm dialog.
 	jQuery('#run-nebula-initialization').on('click', function(){
-		if ( !confirm('This will reset some WordPress settings, all Nebula options, and reset the homepage content! Are you sure you want to initialize?') ) {
+		if ( !confirm('This will reset some WordPress settings, all Nebula options, and reset the homepage content! Are you sure you want to initialize?') ){
 			return false;
 		}
 	});

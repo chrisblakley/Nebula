@@ -33,13 +33,13 @@ nebula.cf7Functions = async function(){
 
 	//Re-init forms inside Bootstrap modals (to enable AJAX submission) when needed
 	nebula.dom.document.on('shown.bs.modal', function(e){
-		if ( typeof wpcf7.initForm === 'function' && jQuery(e.target).find('.wpcf7-form').length && !jQuery(e.target).find('.ajax-loader').length  ){ //If initForm function exists, and a form is inside the modal, and if it has not yet been initialized (The initForm function adds the ".ajax-loader" span)
+		if ( typeof wpcf7.initForm === 'function' && jQuery(e.target).find('.wpcf7-form').length && !jQuery(e.target).find('.ajax-loader').length ){ //If initForm function exists, and a form is inside the modal, and if it has not yet been initialized (The initForm function adds the ".ajax-loader" span)
 			wpcf7.initForm(jQuery(e.target).find('.wpcf7-form'));
 		}
 	});
 
 	//Form starts and field focuses
-	nebula.dom.document.on('focus', '.wpcf7-form input, .wpcf7-form button, .wpcf7-form textarea', function(e){
+	nebula.dom.document.on('focus', '.wpcf7-form input, .wpcf7-form select, .wpcf7-form button, .wpcf7-form textarea', function(e){
 		let formID = jQuery(this).closest('div.wpcf7').attr('id');
 
 		let thisField = e.target.name || jQuery(this).closest('.form-group').find('label').text() || e.target.id || 'Unknown';

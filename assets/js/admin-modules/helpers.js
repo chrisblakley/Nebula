@@ -10,46 +10,47 @@ nebula.uniqueSlugChecker = function(){
 
 //Allow tab character in textareas
 nebula.pasteIntoInput = function(el, text){
-    el.focus();
-    var val = el.value;
-    if ( typeof el.selectionStart === 'number' ){
-        var selStart = el.selectionStart;
-        el.value = val.slice(0, selStart) + text + val.slice(el.selectionEnd);
-        el.selectionEnd = el.selectionStart = selStart + text.length;
-    } else if ( typeof document.selection !== 'undefined' ){
-        var textRange = document.selection.createRange();
-        textRange.text = text;
-        textRange.collapse(false);
-        textRange.select();
-    }
+	el.focus();
+	var val = el.value;
+	if ( typeof el.selectionStart === 'number' ){
+		var selStart = el.selectionStart;
+		el.value = val.slice(0, selStart) + text + val.slice(el.selectionEnd);
+		el.selectionEnd = el.selectionStart = selStart + text.length;
+	} else if ( typeof document.selection !== 'undefined' ){
+		var textRange = document.selection.createRange();
+		textRange.text = text;
+		textRange.collapse(false);
+		textRange.select();
+	}
 };
 
 nebula.allowTabChar = function(el){
-    jQuery(el).keydown(function(e){
-        if ( e.which === 9 ){
-            nebula.pasteIntoInput(this, '\t');
-            return false;
-        }
-    });
+	jQuery(el).keydown(function(e){
+		if ( e.which === 9 ){
+			nebula.pasteIntoInput(this, '\t');
+			return false;
+		}
+	});
 
-    // For Opera, which only allows suppression of keypress events, not keydown
-    jQuery(el).keypress(function(e){
-        if ( e.which === 9 ){
-            return false;
-        }
-    });
+	//For Opera, which only allows suppression of keypress events, not keydown
+	jQuery(el).keypress(function(e){
+		if ( e.which === 9 ){
+			return false;
+		}
+	});
 };
 
 jQuery.fn.allowTabChar = function(){
-    if (this.jquery){
-        this.each(function(){
-            if ( this.nodeType === 1 ){
-                var nodeName = this.nodeName.toLowerCase();
-                if ( nodeName === 'textarea' || (nodeName === 'input' && this.type === 'text') ){
-                    nebula.allowTabChar(this);
-                }
-            }
-        });
-    }
-    return this;
+	if ( this.jquery ){
+		this.each(function(){
+			if ( this.nodeType === 1 ){
+				var nodeName = this.nodeName.toLowerCase();
+				if ( nodeName === 'textarea' || (nodeName === 'input' && this.type === 'text') ){
+					nebula.allowTabChar(this);
+				}
+			}
+		});
+	}
+
+	return this;
 };

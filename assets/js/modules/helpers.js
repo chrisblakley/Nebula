@@ -192,35 +192,35 @@ nebula.scrollToListeners = function(){
 					if ( scrollElement.length ){ //If target exists
 						let pOffset = ( jQuery(this).attr('data-offset') )? parseFloat(jQuery(this).attr('data-offset')) : nebula.scroll.offset; //Determine the offset
 						let speed = nebula.scroll.speed || 500;
-						
+
 						nebula.scrollTo(scrollElement, pOffset, speed, false, function(){
 							nebula.focusOnElement(scrollElement);
 							history.replaceState({}, '', thisHash); //Add the hash to the URL so it can be refreshed, copied, links, etc. ReplaceState does this without affecting the back button.
 						});
-							
+
 						return false;
 					}
 				}
 			}
 		}
 	});
-	
+
 	//Using the nebula-scrollto class with data-scrollto attribute
 	nebula.dom.document.on('click keyup', '.nebula-scrollto', function(e){
 		if ( e.type === 'click' || (e.type === 'keyup' && (e.keyCode === 32 || e.keyCode === 13)) ){ //Spacebar or Enter
 			let pOffset = ( jQuery(this).attr('data-offset') )? parseFloat(jQuery(this).attr('data-offset')) : nebula.scroll.offset;
-	
+
 			if ( jQuery(this).attr('data-scrollto') ){
 				let scrollElement = jQuery(this).attr('data-scrollto');
-				if ( scrollElement !== '' ){					
+				if ( scrollElement !== '' ){
 					let scrollSpeed = nebula.scroll.speed || 500;
-					
+
 					nebula.scrollTo(jQuery(scrollElement), pOffset, scrollSpeed, false, function(){
 						nebula.focusOnElement(scrollElement);
 					});
 				}
 			}
-	
+
 			return false;
 		}
 	});
@@ -234,13 +234,13 @@ nebula.scrollTo = function(element, offset = 0, speed = 500, onlyWhenBelow = fal
 		if ( !offset ){
 			offset = nebula.scroll.offset || 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
 		}
-		
+
 		//Account for the scroll-padding-top CSS property on the body element
 		let scrollPaddingTop = parseInt(nebula.dom.body.css('scroll-padding-top'), 10); //Parse the CSS value as a base-10 integer
 		if ( !isNaN(scrollPaddingTop) ){
 			offset = offset + scrollPaddingTop;
 		}
-		
+
 		//Call this function with a jQuery object to trigger scroll to an element (not just a selector string).
 		if ( element ){
 			if ( typeof element === 'string' ){
@@ -268,12 +268,12 @@ nebula.scrollTo = function(element, offset = 0, speed = 500, onlyWhenBelow = fal
 						nebula.focusOnElement(element);
 
 						if ( callback ){
-							callback();
+							return callback();
 						}
 					});
 				}
 			}
-			
+
 			return false;
 		}
 	}
@@ -288,9 +288,9 @@ nebula.temporaryClass = function(element, activeClass, inactiveClass, period = 1
 
 		if ( !inactiveClass ){
 			if ( element.is('fa, fas, far, fab, fad') ){ //Font Awesome icon element
-				inactiveClass = /fa-(?!fw)\S+/i.test(element.attr('class')); //Match the first Font Awesome icon class that is the actual icon (exclude fa-fw for example)
+				inactiveClass = (/fa-(?!fw)\S+/i).test(element.attr('class')); //Match the first Font Awesome icon class that is the actual icon (exclude fa-fw for example)
 			} else if ( element.is('bi') ){ //Bootstrap icon element
-				inactiveClass = /bi-\S+/i.test(element.attr('class')); //Match the first Bootstrap icon class
+				inactiveClass = (/bi-\S+/i).test(element.attr('class')); //Match the first Bootstrap icon class
 			} else {
 				inactiveClass = ''; //Set to an empty string to only use a temporary active class
 			}
@@ -399,9 +399,9 @@ nebula.cookieNotification = async function(){
 nebula.defaultChosenOptions = {
 	disable_search_threshold: 5,
 	search_contains: true,
-	no_results_text: "No results found.",
+	no_results_text: 'No results found.',
 	allow_single_deselect: true,
-	width: "100%"
+	width: '100%'
 };
 
 //Lazy load and initialize Mmenu separately because it has additional conditions
@@ -427,7 +427,7 @@ nebula.mmenus = async function(){
 	if ( offcanvasNav.length ){
 		let offcanvasNavTriggerIcon = jQuery('a.offcanvasnavtrigger i');
 
-		let navbars = [];  //Think of these as "rows" in the Mmenu panel
+		let navbars = []; //Think of these as "rows" in the Mmenu panel
 
 		//Add the search navbar
 		navbars.push({
@@ -468,7 +468,7 @@ nebula.mmenus = async function(){
 				update: true
 			},
 			backButton: {
-	            close: true //Close the offcanvas menu when the browser's back button is used
+	    		close: true //Close the offcanvas menu when the browser's back button is used
 	        },
 			lazySubmenus: {
 				load: true //Lazy load the sub-nav panels

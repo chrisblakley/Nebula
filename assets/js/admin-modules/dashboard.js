@@ -79,13 +79,9 @@ nebula.checkPageSpeed = function(){
 	if ( typeof wptTestJSONURL !== 'undefined' ){
 		nebula.checkWPTresults();
 		return;
-	} else {
-		nebula.getLighthouseResults();
-		return;
 	}
 
-	jQuery('#performance-sub-status strong').text('Using iframe test because nothing else is available.');
-	nebula.runIframeSpeedTest(); //Fallback
+	nebula.getLighthouseResults();
 };
 
 //Check on the WebPageTest API results (initiated on the server-side then called repetatively by JS)
