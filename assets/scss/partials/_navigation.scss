@@ -3,9 +3,9 @@
 // ===========================
 
 //Top row that appears at mobile sizes.
-#mobilebarcon {visibility: visible; position: relative; background: $primary_color; width: 100%; height: 42px; overflow: hidden; z-index: 1; transition: all 0.5s; border: 0 solid rgba(255, 255, 255, 0); //Border color hack for actual visibility detection
+#mobilebarcon {visibility: visible; position: relative; background: $primary_color; width: 100%; height: 42px; overflow: hidden; z-index: 1; transition: all 0.5s; border: 0 solid rgba(255, 255, 255, 0); //Border color hack for actual visibility detection. No will-change here because it is not often expected for this transition to happen.
 	a {font-size: rem(32px); @include link-colors(#fff, #aaa); text-decoration: underline;}
-	.mobilenavcon {display: block;
+	.mobilerow {display: block;
 		#mobileheadersearch {display: flex; align-items: center;
 			input {width: 100%; color: #fff; font-size: rem(18px); padding-left: 10px; line-height: 42px; min-height: 42px; background: none; border: none; outline: none; box-shadow: none; border-radius: 0;}
 			input::-webkit-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
@@ -15,7 +15,7 @@
 			&:before {content: "\f002"; @include font-awesome(); color: #fff; font-size: rem(18px); padding-left: 15px;}
 		}
 	}
-	a.mobilenavtrigger {position: relative; font-size: rem(24px); padding: 0 14px; height: 42px; line-height: 42px; text-align: center; text-decoration: none; color: #fff; @include background-color(#fff, 0.25); z-index: 99999;
+	a.offcanvasnavtrigger {position: relative; font-size: rem(24px); padding: 0 14px; height: 42px; line-height: 42px; text-align: center; text-decoration: none; color: #fff; @include background-color(#fff, 0.25); z-index: 99999;
 		&:hover,
 		&:focus {color: #fff; @include background-color(#fff, 0.4);}
 		&.active {color: #fff; @include background-color(#fff, 0);}
@@ -24,7 +24,7 @@
 	@include media("lg"){visibility: hidden; height: 0; border: 0 solid rgba(0, 0, 0, 0);} //Border color hack for actual visibility detection
 }
 
-#mobilenav {visibility: hidden; height: 0;
+#offcanvasnav {visibility: hidden; height: 0;
 	&.mm-menu {visibility: visible; height: 100%;}
 }
 
@@ -36,7 +36,7 @@
 
 //Extend animated sub menu dropdowns for WordPress menus (Used with the utility nav and primary nav)
 @mixin nebula-dropdown($font-size: 14px, $line-height: 21px){
-	ul.sub-menu {position: absolute; display: block; top: 120%; left: -9999px; right: auto; height: auto; margin: 0; padding: 5px 0; opacity: 0; text-align: left; transition: top 0.35s easing(easeOutBack), opacity 0.25s; @include background-color(#fff, 0.95); backdrop-filter: blur(12px); box-shadow: 0 15px 50px 0 rgba(0, 0, 0, 0.25); z-index: 1001;
+	ul.sub-menu {position: absolute; display: block; top: 100%; transform: translate3d(0, 20%, 0); left: -9999px; right: auto; height: auto; margin: 0; padding: 5px 0; opacity: 0; text-align: left; transition: transform 0.35s easing(easeOutBack), opacity 0.25s; will-change: opacity, transform, left; @include background-color(#fff, 0.95); backdrop-filter: blur(12px); box-shadow: 0 15px 50px 0 rgba(0, 0, 0, 0.25); z-index: 1001;
 		.no-js & {width: 400px;}
 
 		li.menu-item {display: block; margin: 0; padding: 0 5px;
@@ -47,7 +47,7 @@
 
 			&.menu-item-has-children {position: relative;
 				> a {padding-right: 35px;}
-				&:after {content: "\f054"; position: absolute; top: 0; right: 18px; height: 100%; display: flex; align-items: center; @include font-awesome("solid"); font-size: 8px; color: #aaa; transition: right 0.25s easing(easeOutBack); pointer-events: none;}
+				&:after {content: "\f054"; position: absolute; top: 0; right: 12px; transform: translate3d(6px, 0, 0); height: 100%; display: flex; align-items: center; @include font-awesome("solid"); font-size: 8px; color: #aaa; transition: transform 0.25s easing(easeOutBack); will-change: transform; pointer-events: none;} //This is the "has children" arrow icon
 			}
 
 			ul.sub-menu {display: none;} //Hide all sub-menus at first
@@ -69,11 +69,12 @@
 	.no-js &:last-child:focus ul.sub-menu {left: auto; right: 0;}
 }
 
+//First dropdown menu (secondary-level navigation)
 @mixin nebula-submenus(){
 	> a {background: $primary_color; color: readable-color($primary_color) !important;}
 
 	//First dropdown
-	ul.sub-menu {left: 0; right: auto; top: 100%; opacity: 1;
+	ul.sub-menu {left: 0; right: auto; transform: translate3d(0, 0, 0); opacity: 1;
 		&.overflowing {left: auto; right: 0;}
 		li.menu-item {background: none;
 			ul.sub-menu {display: none;}
@@ -83,7 +84,6 @@
 				@include nebula-subsubmenus();
 			}
 
-			//No IE or Edge Support: https://caniuse.com/#feat=css-focus-within
 			//Once all browsers support this, add to the comma separation above and remove nebula-subsubmenus() mixin
 			&:focus-within {
 				@include nebula-subsubmenus();
@@ -92,8 +92,9 @@
 	}
 }
 
+//Second dropdown menu (third-level navigation)
 @mixin nebula-subsubmenus(){
-	&:after {right: 12px; color: readable-color($primary_color);} //Has-children arrow
+	&:after {transform: translate3d(0, 0, 0); color: readable-color($primary_color);} //The active "has children" arrow icon
 
 	//Second "dropdown"
 	> ul.sub-menu {display: block; left: 100%; right: auto; top: 0; opacity: 1;
@@ -117,7 +118,7 @@
 }
 
 #primary-nav {position: relative; display: none; z-index: 1000;
-	@include media("lg"){display: block;}
+	@include media("lg"){display: block;} //This is causing a tiny, tiny amount of CLS...
 
 	ul {list-style: none; margin: 0; padding: 0; display: -ms-flexbox; display: flex; -ms-flex-direction: row; flex-direction: row; -ms-flex-pack: end; justify-content: flex-end; -ms-flex-align: center; align-items: center;
 		li.menu-item {position: relative;

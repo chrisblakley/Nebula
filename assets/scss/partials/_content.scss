@@ -113,7 +113,7 @@ h2.articles-by {padding-top: 0;}
 
 	.entry-title {font-size: rem(28px); line-height: rem(32px); margin: 0 0 10px; font-weight: 300;}
 	.featured-image {display: -ms-flexbox; display: flex; -ms-flex-align: center; align-items: center; max-height: 400px; overflow: hidden;
-		img {transition: all 0.5s ease;}
+		img {transition: all 0.5s ease;  will-change: transform;}
 
 		&:hover,
 		&:focus {

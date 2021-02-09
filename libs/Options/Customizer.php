@@ -135,7 +135,7 @@ trait Customizer {
 		));
 		$wp_customize->selective_refresh->add_partial('nebula_offcanvas_menu', array(
 			'settings' => array('nebula_offcanvas_menu'),
-			'selector' => '#mobilenavtrigger',
+			'selector' => '#offcanvasnavtrigger',
 			'container_inclusive' => false,
 		));
 

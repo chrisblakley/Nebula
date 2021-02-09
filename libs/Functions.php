@@ -253,7 +253,7 @@ trait Functions {
 				"$1" . get_theme_file_uri('/assets/img/meta') . "/android-chrome-512x512.png$3",
 				"$1" . $this->manifest_json_location() . "$3",
 				"$1" . home_url('/') . "$3",
-				"$1" . home_url('/') . "?utm_source=pwa$3", //If getting "start_url does not respond" when offline in Lighthouse, make sure you are not disabling the cache in DevTools!
+				"$1" . home_url('/') . "?utm_source=pwa$3", //If getting "start_url does not respond" when offline in Lighthouse, make sure you are not disabling the cache in DevTools Network tab!
 			);
 
 			$sw_js = preg_replace($find, $replace, $sw_js);
@@ -2140,7 +2140,7 @@ trait Functions {
 		register_nav_menus(array(
 			'utility' => 'Utility Menu',
 			'primary' => 'Primary Menu',
-			'mobile' => 'Mobile Menu',
+			'offcanvas' => 'Offcanvas Menu',
 			'footer' => 'Footer Menu'
 		));
 	}
@@ -2694,20 +2694,6 @@ trait Functions {
 		//When installed to the homescreen, Chrome is detected as "Chrome Mobile". Supplement it with a "chrome" class.
 		if ( $this->get_browser('name') === 'Chrome Mobile' ){
 			$classes[] = 'chrome';
-		}
-
-		//IE versions outside conditional comments
-		if ( $this->is_browser('ie') ){
-			if ( $this->is_browser('ie', '10') ){
-				$classes[] = 'ie';
-				$classes[] = 'ie10';
-				$classes[] = 'lte-ie10';
-				$classes[] = 'lt-ie11';
-			} elseif ( $this->is_browser('ie', '11') ){
-				$classes[] = 'ie';
-				$classes[] = 'ie11';
-				$classes[] = 'lte-ie11';
-			}
 		}
 
 		//Alternate Bootstrap versions

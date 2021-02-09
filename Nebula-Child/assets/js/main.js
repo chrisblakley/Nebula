@@ -2,6 +2,12 @@ window.performance.mark('(Child) Inside main.js');
 jQuery.noConflict();
 
 /*==========================
+ Import Modules
+ ===========================*/
+
+//import * as usage from './modules/usage.js';
+
+/*==========================
  DOM Ready (After nebula.js is loaded)
  ===========================*/
 
@@ -32,18 +38,11 @@ jQuery(window).on('load', function(){
  Window Resize
  ===========================*/
 
-/*
-jQuery(window).on('resize', function(){
-	nebula.debounce(function(){
-
-	}, 500);
-}); //End Window Resize
-*/
-
-/*==========================
- Child Functions
- To override a parent function, simply redefine it here.
- ===========================*/
+// jQuery(window).on('resize', function(){
+// 	nebula.debounce(function(){
+//
+// 	}, 500);
+// }, {passive: true});
 
 //Child theme event tracking. Do not rename this function!
 function supplementalEventTracking(){

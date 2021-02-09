@@ -254,21 +254,19 @@ if ( !trait_exists('Device') ){
 				}
 			}
 
-			global $is_gecko, $is_IE, $is_opera, $is_safari, $is_chrome;
+			global $is_gecko, $is_opera, $is_safari, $is_chrome;
 			switch ( strtolower($info) ){
 				case 'full':
 				case 'name':
 				case 'browser':
 				case 'client':
-					if ( $is_IE ){return 'internet explorer';}
-					elseif ( $is_opera ){return 'opera';}
+					if ( $is_opera ){return 'opera';}
 					elseif ( $is_safari ){return 'safari';}
 					elseif ( $is_chrome ){return 'chrome';}
 					return false;
 				case 'engine':
 					if ( $is_gecko ){return 'gecko';}
 					elseif ( $is_safari ){return 'webkit';}
-					elseif ( $is_IE ){return 'trident';}
 					return false;
 				default:
 					return false;
@@ -279,34 +277,6 @@ if ( !trait_exists('Device') ){
 		public function is_browser($browser=null, $version=null, $comparison='=='){
 			$override = apply_filters('pre_nebula_is_browser', null, $browser, $version, $comparison);
 			if ( isset($override) ){return $override;}
-
-			switch ( strtolower($browser) ){
-				case 'ie':
-					$browser = 'internet explorer';
-					break;
-				case 'ie7':
-					$browser = 'internet explorer';
-					$version = '7';
-					break;
-				case 'ie8':
-					$browser = 'internet explorer';
-					$version = '8';
-					break;
-				case 'ie9':
-					$browser = 'internet explorer';
-					$version = '9';
-					break;
-				case 'ie10':
-					$browser = 'internet explorer';
-					$version = '10';
-					break;
-				case 'ie11':
-					$browser = 'internet explorer';
-					$version = '11';
-					break;
-				default:
-					break;
-			}
 
 			if ( $this->get_option('device_detection') ){
 				if ( empty($browser) ){
@@ -355,18 +325,6 @@ if ( !trait_exists('Device') ){
 				if ( empty($engine) ){
 					trigger_error('is_engine requires a parameter of requested engine.');
 					return false;
-				}
-
-				switch ( strtolower($engine) ){
-					case 'ie':
-					case 'internet explorer':
-						$engine = 'trident';
-						break;
-					case 'web kit':
-						$engine = 'webkit';
-						break;
-					default:
-						break;
 				}
 
 				$actual_engine = $this->get_browser('engine');

@@ -33,7 +33,7 @@ if ( !trait_exists('Assets') ){
 			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
 			wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css', null, '5.15.2', 'all');
-			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.3.3/jquery.mmenu.all.css', null, '7.3.3', 'all');
+			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/mmenu-js/8.5.21/mmenu.min.css', null, '8.5.21', 'all');
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap'), $this->version('full'), 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, $this->version('full'), 'all');
 			wp_register_style('nebula-admin', get_template_directory_uri() . '/assets/css/admin.css', null, $this->version('full'), 'all');
@@ -56,17 +56,14 @@ if ( !trait_exists('Assets') ){
 				$this->bootstrap('js');
 			}
 			$this->register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', array('defer', 'crossorigin'), null, '1.12.1', true);
-			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/jQuery.mmenu/7.3.3/jquery.mmenu.all.js', array('defer', 'crossorigin'), null, '7.3.3', true);
+			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/mmenu-js/8.5.21/mmenu.min.js', array('defer', 'crossorigin'), null, '8.5.21', true);
 			$this->register_script('nebula-vimeo', 'https://cdnjs.cloudflare.com/ajax/libs/vimeo-player/2.15.0/player.min.js', null, null, '2.15.0', true);
 			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.10.21', true);
 			$this->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js', array('defer', 'crossorigin'), null, '1.8.7', true);
 			$this->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js', array('async', 'crossorigin'), null, '2.4.1', true);
-			$this->register_script('nebula-nebula', get_template_directory_uri() . '/assets/js/nebula.js', array('defer'), array('jquery-core'), $this->version('full'), true);
-
-			//$this->register_script('nebula-nebula-module', get_template_directory_uri() . '/assets/js/nebula-module.js', array('defer', 'module'), array('jquery-core'), $this->version('full'), true); //This is for upcoming implementation only! Not supported in IE11
-
-			$this->register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', null, array('jquery-core'), $this->version('full'), true);
-			$this->register_script('nebula-admin', get_template_directory_uri() . '/assets/js/admin.js', array('defer'), array('jquery'), $this->version('full'), true);
+			$this->register_script('nebula-nebula', get_template_directory_uri() . '/assets/js/nebula.js', array('defer', 'module'), array('jquery-core'), $this->version('full'), true);
+			$this->register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', array('defer', 'module'), array('jquery-core'), $this->version('full'), true);
+			$this->register_script('nebula-admin', get_template_directory_uri() . '/assets/js/admin.js', array('defer', 'module'), array('jquery'), $this->version('full'), true);
 		}
 
 		//Register the requested jQuery file
@@ -82,30 +79,8 @@ if ( !trait_exists('Assets') ){
 
 		//Register or return the requested Bootstrap file.
 		public function bootstrap($file=false){
-			if ( !$this->is_admin_page() ){
-				if ( $this->get_option('bootstrap_version') === 'bootstrap3' ){
-					//Bootstrap 3 (IE8+ Support)
-					if ( $file === 'css' ){
-						return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css', null, '3.3.7', 'all');
-					} elseif ( $file === 'js' ){
-						return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js', array('defer', 'crossorigin'), array('jquery-core'), '3.3.7', true);
-					} elseif ( $file === 'reboot' ){
-						return false;
-					} else {
-						return 'v3';
-					}
-				} elseif ( $this->get_option('bootstrap_version') === 'bootstrap4a5' ){
-					//Bootstrap 4 alpha 5 (IE9+ Support)
-					if ( $file === 'css' ){
-						return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap.min.css', null, '4.0.0a5', 'all');
-					} elseif ( $file === 'js' ){
-						return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/js/bootstrap.min.js', array('defer', 'crossorigin'), array('jquery-core'), '4.0.0a5', true);
-					} elseif ( $file === 'reboot' ){
-						return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap-reboot.min.css';
-					} else {
-						return 'v4a5';
-					}
-				} elseif ( $this->get_option('bootstrap_version') === 'grid' ){
+			if ( !$this->is_admin_page() ){ //Skip checking on admin pages because we always use the full/latest version of Bootstrap on admin pages
+				if ( $this->get_option('bootstrap_version') === 'grid' ){
 					//Bootstrap Reboot and Grid only
 					if ( $file === 'css' ){
 						return wp_register_style('nebula-bootstrap', get_template_directory_uri() . '/assets/css/vendor/bootstrap-reboot-grid.css', null, '4.6.0', 'all'); //Served locally to combine multiple resources (Reboot and Grid)
@@ -117,13 +92,13 @@ if ( !trait_exists('Assets') ){
 				}
 			}
 
-			//Latest (IE10+)
+			//Latest
 			if ( $file === 'css' ){
-				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css', null, '4.6.0', 'all');
+				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css', null, '4.6.0', 'all'); //This will eventually update to Bootstrap 5
 			} elseif ( $file === 'js' ){
-				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '4.5.3', true);
+				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '4.5.3', true); //This will eventually update to Bootstrap 5
 			} elseif ( $file === 'reboot' ){
-				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap-reboot.min.css';
+				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap-reboot.min.css'; //This will eventually update to Bootstrap 5
 			} else {
 				return 'latest';
 			}
@@ -188,6 +163,8 @@ if ( !trait_exists('Assets') ){
 					}
 				}
 			}
+
+			global $pagenow;
 
 			//Be careful changing the following array as many JS functions use this data!
 			$this->brain = array(
@@ -260,8 +237,23 @@ if ( !trait_exists('Assets') ){
 					'page' => ( get_query_var('paged') )? get_query_var('paged') : 1,
 					'isFrontPage' => is_front_page(),
 				),
+				'screen' => array(
+					'pagenow' => $pagenow
+				),
 				'dom' => null,
 			);
+
+			//Add admin screens when available
+			if ( function_exists('get_current_screen') ){ //This function only exists sometimes
+				$current_screen = get_current_screen();
+				$this->brain['screen']['base'] = $current_screen->base;
+				$this->brain['screen']['id'] = $current_screen->id;
+				$this->brain['screen']['post_type'] = $current_screen->post_type;
+				$this->brain['screen']['parent'] = array(
+					'base' => $current_screen->parent_base,
+					'file' => $current_screen->parent_file
+				);
+			}
 
 			//Check for session data
 			$this->brain['session'] = array(
@@ -355,11 +347,6 @@ if ( !trait_exists('Assets') ){
 
 			wp_enqueue_script('nebula-nebula');
 
-			//Preparing to switch over to modules. Not supported in IE11!
-			if ( 1==2 ){
-				wp_enqueue_script('nebula-nebula-module');
-			}
-
 			//Conditionals
 			if ( is_page_template('tpl-search.php') ){ //Form pages (that use selects) or Advanced Search Template. The Chosen library is also dynamically loaded in nebula.js.
 				wp_enqueue_style('nebula-chosen');
@@ -385,7 +372,7 @@ if ( !trait_exists('Assets') ){
 			if ( !$this->is_ajax_or_rest_request() ){
 				//Stylesheets
 				wp_enqueue_style('nebula-admin');
-				wp_enqueue_style('nebula-font_awesome'); //Font Awesome 5 CSS method
+				wp_enqueue_style('nebula-font_awesome');
 
 				//Scripts
 				wp_enqueue_script('nebula-admin');

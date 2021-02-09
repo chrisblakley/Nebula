@@ -2,7 +2,7 @@
 // Footer
 // ===========================
 
-#footer-section {content-visibility: auto; position: relative; padding: 50px 0 150px; background: url($template_directory + "/assets/img/phg/phg-nebula-mountain.jpg") no-repeat bottom center / cover; transition: all 0.5s;
+#footer-section {content-visibility: auto; position: relative; padding: 50px 0 150px; background: url($template_directory + "/assets/img/phg/phg-nebula-mountain.jpg") no-repeat bottom center / cover; transition: all 0.5s; will-change: auto;
 	@include media("lg"){padding: 50px 0 200px;}
 	a:not(.btn) {@include link-colors(#fff, #aaa);}
 }
@@ -50,10 +50,10 @@
 }
 
 //Cookie Notification
-#nebula-cookie-notification {position: fixed; bottom: 40px; left: 0; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(3px); color: #bbb; font-size: 14px; padding: 25px; max-width: 300px; box-shadow: 0 6px 24px 0 rgba(0, 0, 0, 0.3); z-index: 5000; opacity: 0; pointer-events: none; transition: all 0.75s easing(easeOutBack);
+#nebula-cookie-notification {position: fixed; bottom: 40px; left: 0; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(3px); color: #bbb; font-size: 14px; padding: 25px; max-width: 300px; box-shadow: 0 6px 24px 0 rgba(0, 0, 0, 0.3); z-index: 5000; opacity: 0; pointer-events: none; will-change: opacity, transform; transition: all 0.75s easing(easeOutBack);
 	@include media("lg"){max-width: 400px;}
 
-	&.active {opacity: 1; left: 40px; pointer-events: all;}
+	&.active {opacity: 1; transform: translate3d(40px, 0, 0); pointer-events: all;}
 
 	//In case the user-editable cookie text includes HTML links
 	a {color: #fff;

@@ -31,9 +31,9 @@
 	}
 
 	.infinite-load-more {position: relative; font-size: rem(18px); padding: 10px;
-		&:after {content: "\f107"; @include font-awesome("solid"); position: absolute; bottom: -10px; left: 0; width: 100%; display: block; text-align: center; transition: bottom 0.25s ease;}
+		&:after {content: "\f107"; @include font-awesome("solid"); position: absolute; bottom: -10px; transform: translate3d(0, 0, 0); left: 0; width: 100%; display: block; text-align: center; transition: transform 0.25s ease; will-change: transform;}
 		&:hover:after,
-		&:focus:after {bottom: -13px;}
+		&:focus:after {transform: translate3d(0, -3px, 0);}
 	}
 
 	&.loading .infinite-load-more {opacity: 0; pointer-events: none;}
@@ -136,31 +136,6 @@ ol.nebula-breadcrumbs {display: flex; list-style: none; position: relative; marg
 	}
 }
 
-//Advanced Search
-#advanced-search-form {margin-bottom: 0; opacity: 1; transition: opacity 0.5s;
-	&.inactive {opacity: 0.3; pointer-events: none;}
-}
-
-a#metatoggle {display: block; background: $primary_color; color: #fff; text-align: center; width: 100%; padding: 5px 10px;
-	&:hover,
-	&:focus {background: darken($primary_color, 15%);}
-}
-#advanced-search-meta {max-height: 0; margin-bottom: 15px; transition: all 0.5s; overflow: hidden;
-	&.active {max-height: 250px;}
-	&.finished {overflow: visible;}
-}
-
-//.advanced-search-group.left-side {}
-	#advanced-search-form .advanced-search-date {width: 47%; height: 28px; line-height: 28px;}
-.right-side .advanced-search-group {margin-bottom: 10px;}
-
-#advanced-search-form .advanced-search-keyword {width: 100%; font-size: rem(24px); line-height: 1.625em; font-weight: 300; padding: 0 10px; height: 48px; outline: none;}
-
-.advanced-search-result {border-bottom: 1px dotted #ccc; padding-bottom: 10px; margin-top: 5px;}
-	.post-date-time {margin-bottom: 5px;}
-	.post-meta-tags {margin: 0;}
-	.post-cats {margin-right: 10px;}
-
 .more-or-prev-events {display: block; width: 100%; height: 50px; line-height: 50px; color: #fff; margin: 25px 0;
 	&:hover,
 	&:focus {color: #fff;}
@@ -173,8 +148,6 @@ a.resetfilters {font-size: rem(12px); color: $danger_color; opacity: 0;
 	&:focus {color: darken($danger_color, 15%);}
 	&.active {opacity: 1;}
 }
-
-#advanced-search-indicator {margin-bottom: 15px;}
 
 #about-the-author {position: relative; background: #eee; padding-top: 30px; padding-bottom: 10px; margin-top: 20px; margin-bottom: 15px;
 	.author-headshot {min-height: 100px; margin-bottom: 20px; text-align: center;
@@ -217,6 +190,6 @@ a.resetfilters {font-size: rem(12px); color: $danger_color; opacity: 0;
 }
 
 //Service Worker update prompt
-#nebula-sw-update {position: fixed; bottom: 10px; margin: 0 auto; left: 0; right: 0; background: $primary_color; color: readable-color($primary_color); font-size: rem(16px); border: none; border-radius: 50px; box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.3); padding: 10px 20px; outline: none; z-index: 9000; opacity: 0; transition: all 1s easing(easeOutBack);
-	&.active {bottom: 50px; opacity: 1;}
+#nebula-sw-update {position: fixed; bottom: 10px; transform: translate3d(0, 0, 0); margin: 0 auto; left: 0; right: 0; background: $primary_color; color: readable-color($primary_color); font-size: rem(16px); border: none; border-radius: 50px; box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.3); padding: 10px 20px; outline: none; z-index: 9000; opacity: 0; transition: all 1s easing(easeOutBack); will-change: opacity, transform;
+	&.active {transform: translate3d(0, -10px, 0); opacity: 1;}
 }

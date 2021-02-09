@@ -37,15 +37,11 @@ $placeholder_color_focus: rgba(153, 153, 153, 0) !important;
 input,
 textarea {
 	&::-webkit-input-placeholder {font-weight: 300; color: $placeholder_color; transition: all 0.25s;}
-	&:-moz-placeholder {font-weight: 300; color: $placeholder_color; transition: all 0.25s;} //Eventually remove this line.
 	&::-moz-placeholder {font-weight: 300; color: $placeholder_color; transition: all 0.25s;}
-	&:-ms-input-placeholder {font-weight: 300; color: $placeholder_color; transition: all 0.25s;}
 
 	&:not(.nofade):focus {
 		&::-webkit-input-placeholder {color: $placeholder_color_focus;}
-		&:-moz-placeholder {color: $placeholder_color_focus;} //Eventually remove this line.
 		&::-moz-placeholder {color: $placeholder_color_focus;}
-		&:-ms-input-placeholder {color: $placeholder_color_focus;}
 	}
 }
 
@@ -104,7 +100,7 @@ input[type="file"].custom-file-input {cursor: pointer;}
 form.nebula-search {position: relative; display: inline-block; margin: 0;
 	.input-group {align-items: center;} //Modify Bootstrap to center align Nebula search input content
 
-	input {max-width: 30px; padding: 0 6px; color: transparent; font-size: rem(12px); line-height: 1.15rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; outline: none; cursor: pointer; transition: all 0.25s;
+	input {max-width: 30px; padding: 0 6px; color: transparent; font-size: rem(12px); line-height: 1.15rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; outline: none; cursor: pointer; transition: all 0.25s;  will-change: width;
 		&:hover {background-color: rgba(255, 255, 255, 0.3);}
 		&:focus,
 		&.focus {max-width: 210px; padding-left: 25px; cursor: auto; color: #fff; background-color: rgba(255, 255, 255, 0.3);}

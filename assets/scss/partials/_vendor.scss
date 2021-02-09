@@ -38,12 +38,12 @@ svg.svg-inline--fa {max-width: none;} //Remove max-width: 100% for Font Awesome 
 	a:hover {@include background-color(#000, 0.05);}
 
 	.mm-btn_next {width: 90px;
-		&:after {transition: right 0.5s easing(custom, "0.175, 0.885, 0.320, 1.275");}
+		&:after {transition: right 0.5s easing(custom, "0.175, 0.885, 0.320, 1.275"); will-change: right;} //Figure out if this is still used/needed
 		&:hover:after {right: 15px;}
 	}
 }
 .mm-slideout {z-index: auto;}
-#mobilenav:not(.mm-menu) {display: none;} //Hide the Mmenu until the library has loaded
+#offcanvasnav:not(.mm-menu) {display: none;} //Hide the Mmenu until the library has loaded
 
 .wpcf7-form,
 .nebula-login-form {
@@ -167,5 +167,3 @@ li.comment div.comment-meta {display: block;}
 	i,
 	a {@include link-colors(brand(facebook), darken(brand(facebook), 15%)); color: brand(facebook);}
 }
-
-@-ms-viewport {width: device-width;} //Delete this when no longer supporting IE11 (or change to @viewport)

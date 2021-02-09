@@ -16,16 +16,19 @@ if ( !trait_exists('Optimization') ){
 			}
 
 			//Non-WordPress Admin optimizations
-			if ( !$this->is_admin_page(true) && !$this->is_ajax_or_rest_request() ){
-				add_filter('wp_enqueue_scripts', array($this, 'defer_async_additional_scripts'));
-				add_filter('script_loader_tag', array($this, 'defer_async_scripts'), 10, 2);
+			if ( !$this->is_ajax_or_rest_request() ){
+				if ( !$this->is_admin_page(true) ){
+					add_filter('wp_enqueue_scripts', array($this, 'defer_async_additional_scripts'));
 
-				add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
-				add_action('wp_footer', array($this, 'dequeue_lazy_load_scripts'));
+					add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
+					add_action('wp_footer', array($this, 'dequeue_lazy_load_scripts'));
 
-				add_filter('wp_default_scripts', array($this, 'remove_jquery_migrate'));
-				add_action('wp_enqueue_scripts', array($this, 'move_jquery_to_footer'));
-				add_action('wp_head', array($this, 'listen_for_jquery_footer_errors'));
+					add_filter('wp_default_scripts', array($this, 'remove_jquery_migrate'));
+					add_action('wp_enqueue_scripts', array($this, 'move_jquery_to_footer'));
+					add_action('wp_head', array($this, 'listen_for_jquery_footer_errors'));
+				}
+
+				add_filter('script_loader_tag', array($this, 'modify_script_attributes'), 10, 2);
 			}
 
 			add_action('wp_head', array($this, 'prebrowsing'));
@@ -178,51 +181,55 @@ if ( !trait_exists('Optimization') ){
 			}
 		}
 
-		//Add defer, async, and/or crossorigin attributes to scripts
-		public function defer_async_scripts($tag, $handle){
-			if ( !$this->is_admin_page(true) ){
-				$crossorigin_exececution = wp_scripts()->get_data($handle, 'crossorigin');
-				$defer_exececution = wp_scripts()->get_data($handle, 'defer');
-				$async_exececution = wp_scripts()->get_data($handle, 'async');
-				$module_execution = wp_scripts()->get_data($handle, 'module');
+		//Add/modify defer, async, module, and/or crossorigin attributes to scripts
+		public function modify_script_attributes($tag, $handle){
+			$crossorigin_exececution = wp_scripts()->get_data($handle, 'crossorigin');
+			$defer_exececution = wp_scripts()->get_data($handle, 'defer');
+			$async_exececution = wp_scripts()->get_data($handle, 'async');
+			$module_execution = wp_scripts()->get_data($handle, 'module');
 
-				//Add module type attribute if it is requested
-				if ( !empty($module_execution) && strpos($tag, "type='module'") === false ){
+			//Add module type attribute if it is requested
+			if ( !empty($module_execution) && strpos($tag, "type='module'") === false ){
+				if ( strpos($tag, 'type=') ){ //If the type attribute already exists //Use str_contains() in PHP 8
 					$tag = str_replace("type='text/javascript'", "type='module'", $tag); //Change the type='text/javascript' attribute to type='module'
+				} else {
+					$tag = str_replace('script src', 'script type="module" src', $tag);
 				}
+			}
 
-				//Add crossorigin attribute if it is requested and does not already exist
-				if ( !empty($crossorigin_exececution) && strpos($tag, 'crossorigin=') === false ){
-					$tag = str_replace(' src', ' crossorigin="anonymous" src', $tag); //Add the crossorigin attribute
-				}
+			//Add crossorigin attribute if it is requested and does not already exist
+			if ( !empty($crossorigin_exececution) && strpos($tag, 'crossorigin=') === false ){
+				$tag = str_replace(' src', ' crossorigin="anonymous" src', $tag); //Add the crossorigin attribute
+			}
 
-				//Ignore if neither defer nor async attribute is found
-				if ( empty($defer_exececution) && empty($async_exececution) ){
-					return $tag;
-				}
+			//Ignore if neither defer nor async attribute is found
+			if ( empty($defer_exececution) && empty($async_exececution) ){
+				return $tag;
+			}
 
-				//Abort adding async/defer for scripts that have this script as a dependency...? Maybe not?
-				/*
-					foreach ( wp_scripts()->registered as $script ){
-						if ( in_array($handle, $script->deps, true) ){
-							return $tag;
-						}
+			//Abort adding async/defer for scripts that have this script as a dependency...? Maybe not?
+			/*
+				foreach ( wp_scripts()->registered as $script ){
+					if ( in_array($handle, $script->deps, true) ){
+						return $tag;
 					}
-				*/
-
-				//Add defer attribute if it is requested and does not already exist
-				if ( !empty($defer_exececution) && strpos($tag, 'defer=') === false ){
-					$tag = str_replace(' src', ' defer="defer" src', $tag); //Add the defer attribute
 				}
+			*/
 
-				//Add async attribute if it is requested and does not already exist
-				if ( !empty($async_exececution) && strpos($tag, 'async=') === false ){
-					$tag = str_replace(' src', ' async="async" src', $tag); //Add the async attribute
-				}
+			//Add defer attribute if it is requested and does not already exist
+			if ( !empty($defer_exececution) && strpos($tag, 'defer=') === false ){
+				$tag = str_replace(' src', ' defer="defer" src', $tag); //Add the defer attribute
+			}
+
+			//Add async attribute if it is requested and does not already exist
+			if ( !empty($async_exececution) && strpos($tag, 'async=') === false ){
+				$tag = str_replace(' src', ' async="async" src', $tag); //Add the async attribute
 			}
 
 			return $tag;
 		}
+
+
 
 		//Prep assets for lazy loading. Be careful of dependencies!
 		//When lazy loading JS files, the window load listener may not trigger! Be careful!
@@ -722,13 +729,13 @@ if ( !trait_exists('Optimization') ){
 					?>
 					<script>
 						window.addEventListener('error', function(e){
-							var errorMessages = ['jQuery is not defined', "Can't find variable: jQuery"];
+							var errorMessages = ['jQuery is not defined', 'Cannot find variable: jQuery'];
 							errorMessages.forEach(function(element, index){
 								if ( e.message.indexOf(element) !== -1 || e.message.indexOf(element.replace('jQuery', '$')) !== -1 ){
 									console.error('[Nebula] jquery.min.js has been moved to the footer so it may not be available at this time. Try moving it back to the head in Nebula Options or move this script tag to the footer.');
 								}
 							});
-						});
+						}, {passive: true});
 					</script>
 					<?php
 				}

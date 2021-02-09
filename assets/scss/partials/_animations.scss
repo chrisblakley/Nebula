@@ -35,7 +35,7 @@
 
 //Rotate 360 degrees
 [nebula-hover*="nebula-spin"]:hover,
-.nebula-spin {animation: nebula-spin 2s infinite linear;}
+.nebula-spin {animation: nebula-spin 2s infinite linear; will-change: transform;}
 @include keyframes(nebula-spin){
 	0% {transform: rotate(0deg);}
 	100% {transform: rotate(360deg);}
@@ -43,7 +43,7 @@
 
 //Fade out and in
 [nebula-hover*="nebula-fade"]:hover,
-.nebula-fade {animation: nebula-fade 4s infinite linear;}
+.nebula-fade {animation: nebula-fade 4s infinite linear; will-change: opacity;}
 @include keyframes(nebula-fade){
 	0% {opacity: 1;}
 	50% {opacity: 0;}
@@ -51,7 +51,7 @@
 
 //Zoom out and in
 [nebula-hover*="nebula-zoom"]:hover,
-.nebula-zoom {animation: nebula-zoom 3s infinite easing(easeInOutQuad);}
+.nebula-zoom {animation: nebula-zoom 3s infinite easing(easeInOutQuad); will-change: opacity, transform;}
 @include keyframes(nebula-zoom){
 	0% {transform: scale3d(1, 1, 1); opacity: 1;}
 	50% {transform: scale3d(0, 0, 0); opacity: 0;}
@@ -60,7 +60,7 @@
 
 //Wave X
 [nebula-hover*="nebula-wave-x"]:hover,
-.nebula-wave-x {animation: nebula-wave-x 3s infinite easing(easeInOutQuad);}
+.nebula-wave-x {animation: nebula-wave-x 3s infinite easing(easeInOutQuad); will-change: transform;}
 @include keyframes(nebula-wave-x){
 	0% {transform: translate3d(0, 0, 0); animation-timing-function: easing(easeOutQuad);}
 	25% {transform: translate3d(20px, 0, 0); animation-timing-function: easing(easeOutQuad);}
@@ -70,7 +70,7 @@
 
 //Wave Y
 [nebula-hover*="nebula-wave-y"]:hover,
-.nebula-wave-y {animation: nebula-wave-y 3s infinite linear;}
+.nebula-wave-y {animation: nebula-wave-y 3s infinite linear; will-change: transform;}
 @include keyframes(nebula-wave-y){
 	0% {transform: translate3d(0, 0, 0); animation-timing-function: easing(easeOutQuad);}
 	25% {transform: translate3d(0, 50%, 0); animation-timing-function: easing(easeOutQuad);}
@@ -87,7 +87,7 @@
 
 //Fade out
 [nebula-hover*="nebula-fade-out"]:hover,
-.nebula-fade-out.animate {animation: nebula-fade-out 1s easing(easeInOutQuad) forwards;}
+.nebula-fade-out.animate {animation: nebula-fade-out 1s easing(easeInOutQuad) forwards; will-change: opacity;}
 @include keyframes(nebula-fade-out){
 	0% {opacity: 1;}
 	100% {opacity: 0; pointer-events: none;}
@@ -95,7 +95,7 @@
 
 //Fade Out Up
 [nebula-hover*="nebula-fade-out-up"]:hover,
-.nebula-fade-out-up.animate {animation: nebula-fade-out-up 1s easing(easeInOutQuad) forwards;}
+.nebula-fade-out-up.animate {animation: nebula-fade-out-up 1s easing(easeInOutQuad) forwards; will-change: opacity, transform;}
 @include keyframes(nebula-fade-out-up){
 	0% {opacity: 1; transform: translate3d(0, 0, 0);}
 	100% {opacity: 0; transform: translate3d(0, -40px, 0); pointer-events: none;}
@@ -103,7 +103,7 @@
 
 //Fade Out Down
 [nebula-hover*="nebula-fade-out-down"]:hover,
-.nebula-fade-out-down.animate {animation: nebula-fade-out-down 1s easing(easeInOutQuad) forwards;}
+.nebula-fade-out-down.animate {animation: nebula-fade-out-down 1s easing(easeInOutQuad) forwards; will-change: opacity, transform;}
 @include keyframes(nebula-fade-out-down){
 	0% {opacity: 1; transform: translate3d(0, 0, 0);}
 	100% {opacity: 0; transform: translate3d(0, 40px, 0); pointer-events: none;}
@@ -111,7 +111,7 @@
 
 //Fade Out Left
 [nebula-hover*="nebula-fade-out-left"]:hover,
-.nebula-fade-out-left.animate {animation: nebula-fade-out-left 1s easing(easeInOutQuad) forwards;}
+.nebula-fade-out-left.animate {animation: nebula-fade-out-left 1s easing(easeInOutQuad) forwards; will-change: opacity, transform;}
 @include keyframes(nebula-fade-out-left){
 	0% {opacity: 1; transform: translate3d(0, 0, 0);}
 	100% {opacity: 0; transform: translate3d(-40px, 0, 0); pointer-events: none;}
@@ -119,7 +119,7 @@
 
 //Fade Out Right
 [nebula-hover*="nebula-fade-out-right"]:hover,
-.nebula-fade-out-right.animate {animation: nebula-fade-out-right 1s easing(easeInOutQuad) forwards;}
+.nebula-fade-out-right.animate {animation: nebula-fade-out-right 1s easing(easeInOutQuad) forwards; will-change: opacity, transform;}
 @include keyframes(nebula-fade-out-right){
 	0% {opacity: 1; transform: translate3d(0, 0, 0);}
 	100% {opacity: 0; transform: translate3d(40px, 0, 0); pointer-events: none;}
@@ -129,7 +129,7 @@
 
 //Fade in
 [nebula-hover*="nebula-fade-in"]:hover,
-.nebula-fade-in {opacity: 0; pointer-events: none;
+.nebula-fade-in {opacity: 0; pointer-events: none; will-change: opacity;
 	&.animate,
 	&.load-animate {animation: nebula-fade-in 1s easing(easeInOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
@@ -140,7 +140,7 @@
 
 //Fade In Up
 [nebula-hover*="nebula-fade-in-up"]:hover,
-.nebula-fade-in-up {opacity: 0; pointer-events: none;
+.nebula-fade-in-up {opacity: 0; pointer-events: none; will-change: opacity, transform;
 	&.animate,
 	&.load-animate {animation: nebula-fade-in-up 1.5s easing(easeOutBack) forwards; opacity: 1; pointer-events: all;}
 }
@@ -151,7 +151,7 @@
 
 //Fade In Down
 [nebula-hover*="nebula-fade-in-down"]:hover,
-.nebula-fade-in-down {opacity: 0; pointer-events: none;
+.nebula-fade-in-down {opacity: 0; pointer-events: none; will-change: opacity, transform;
 	&.animate,
 	&.load-animate {animation: nebula-fade-in-down 1s easing(easeOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
@@ -162,7 +162,7 @@
 
 //Fade In Left
 [nebula-hover*="nebula-fade-in-left"]:hover,
-.nebula-fade-in-left {opacity: 0; pointer-events: none;
+.nebula-fade-in-left {opacity: 0; pointer-events: none; will-change: opacity, transform;
 	&.animate,
 	&.load-animate {animation: nebula-fade-in-left 1s easing(easeOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
@@ -173,7 +173,7 @@
 
 //Fade In Right
 [nebula-hover*="nebula-fade-in-right"]:hover,
-.nebula-fade-in-right {opacity: 0; pointer-events: none;
+.nebula-fade-in-right {opacity: 0; pointer-events: none; will-change: opacity, transform;
 	&.animate,
 	&.load-animate {animation: nebula-fade-in-right 1s easing(easeOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
@@ -185,7 +185,7 @@
 
 //Shrink and fade out
 [nebula-hover*="nebula-zoom-out"]:hover,
-.nebula-zoom-out.animate {animation: nebula-zoom-out 0.5s easing(easeInOutQuad) forwards;}
+.nebula-zoom-out.animate {animation: nebula-zoom-out 0.5s easing(easeInOutQuad) forwards; will-change: opacity, transform;}
 @include keyframes(nebula-zoom-out){
     0% {transform: scale3d(1, 1, 1); opacity: 1;}
     50% {opacity: 1;}
@@ -194,7 +194,7 @@
 
 //Grow and fade in
 [nebula-hover*="nebula-zoom-in"]:hover,
-.nebula-zoom-in {opacity: 0; pointer-events: none;
+.nebula-zoom-in {opacity: 0; pointer-events: none; will-change: opacity, transform;
 	&.animate,
 	&.load-animate {animation: nebula-zoom-in 1s easing(easeInOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
@@ -207,26 +207,26 @@
 
 //Increase width from the center (reveal contents)
 [nebula-hover*="nebula-reveal-in"]:hover,
-.nebula-reveal-in {width: 0; pointer-events: none; overflow: hidden;
+.nebula-reveal-in {width: 100%; transform: scale3d(0, 1, 1); pointer-events: none; overflow: hidden; will-change: transform;
 	&.animate,
 	&.load-animate {animation: nebula-reveal-in 0.5s easing(easeInOutQuad) forwards; pointer-events: all;}
 }
 @include keyframes(nebula-reveal-in){
-    0% {display: block; width: 0;}
-    100% {width: 100%;}
+    0% {display: block; transform: scale3d(0, 1, 1);}
+    100% {transform: scale3d(1, 1, 1);}
 }
 
 //Decrease width from the center (hide contents)
 [nebula-hover*="nebula-reveal-out"]:hover,
-.nebula-reveal-out {width: 100%; pointer-events: none; overflow: hidden;}
+.nebula-reveal-out {width: 100%; transform: scaleX(1); pointer-events: none; overflow: hidden; will-change: transform;}
 @include keyframes(nebula-reveal-out){
-    0% {display: block; width: 100%;}
-    100% {width: 0;}
+    0% {display: block; transform: scaleX(1);}
+    100% {transform: scaleX(0);}
 }
 
 //Increase width from the center (stretch contents)
 [nebula-hover*="nebula-stretch-in"]:hover,
-.nebula-stretch-in {opacity: 0; pointer-events: none;
+.nebula-stretch-in {opacity: 0; pointer-events: none; will-change: opacity, transform;
 	&.animate,
 	&.load-animate {animation: nebula-stretch-in 0.5s easing(easeInOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
@@ -238,7 +238,7 @@
 
 //Decrease width from the center (stretch contents)
 [nebula-hover*="nebula-stretch-out"]:hover,
-.nebula-stretch-out.animate {animation: nebula-stretch-out 0.5s easing(easeInOutQuad) forwards;}
+.nebula-stretch-out.animate {animation: nebula-stretch-out 0.5s easing(easeInOutQuad) forwards; will-change: opacity, transform;}
 @include keyframes(nebula-stretch-out){
     0% {transform: scale3d(1, 1, 1);}
     66% {opacity: 1;}
@@ -247,7 +247,7 @@
 
 //Rotate in along the x-axis (vertical flip)
 [nebula-hover*="nebula-flip-in-x"]:hover,
-.nebula-flip-in-x {opacity: 0; pointer-events: none;
+.nebula-flip-in-x {opacity: 0; pointer-events: none; will-change: opacity, transform;
 	&.animate,
 	&.load-animate {animation: nebula-flip-in-x 1s easing(easeInOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
@@ -261,7 +261,7 @@
 
 //Rotate in along the y-axis (horizontal flip)
 [nebula-hover*="nebula-flip-in-y"]:hover,
-.nebula-flip-in-y {opacity: 0; pointer-events: none;
+.nebula-flip-in-y {opacity: 0; pointer-events: none; will-change: opacity, transform;
 	&.animate,
 	&.load-animate {animation: nebula-flip-in-y 1s easing(easeInOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
@@ -275,7 +275,7 @@
 
 //Rotate out along the x-axis (vertical flip)
 [nebula-hover*="nebula-flip-out-x"]:hover,
-.nebula-flip-out-x.animate {animation: nebula-flip-out-x 0.8s easing(easeInOutQuad) forwards;}
+.nebula-flip-out-x.animate {animation: nebula-flip-out-x 0.8s easing(easeInOutQuad) forwards; will-change: opacity, transform;}
 @keyframes nebula-flip-out-x {
 	0% {transform: perspective(400px);}
 	30% {transform: perspective(400px) rotate3d(1, 0, 0, -2deg); opacity: 1;}
@@ -284,7 +284,7 @@
 
 //Rotate out along the y-axis (vertical flip)
 [nebula-hover*="nebula-flip-out-y"]:hover,
-.nebula-flip-out-y.animate {animation: nebula-flip-out-y 0.8s easing(easeInOutQuad) forwards;}
+.nebula-flip-out-y.animate {animation: nebula-flip-out-y 0.8s easing(easeInOutQuad) forwards; will-change: opacity, transform;}
 @keyframes nebula-flip-out-y {
 	0% {transform: perspective(400px);}
 	30% {transform: perspective(400px) rotate3d(0, 1, 0, -2deg); opacity: 1;}
@@ -294,7 +294,7 @@
 //Depress and return (Small)
 //Built-in animation trigger on click by adding class "click".
 [nebula-hover*="nebula-tap"]:hover,
-.nebula-tap.animate {animation: nebula-tap 0.4s easing(easeOutBack);}
+.nebula-tap.animate {animation: nebula-tap 0.4s easing(easeOutBack); will-change: transform;}
 @include keyframes(nebula-tap){
     0% {transform: scale3d(1, 1, 1);}
     50% {transform: scale3d(0.9, 0.9, 0.9);}
@@ -303,7 +303,7 @@
 //Depress and return (Mid)
 //Built-in animation trigger on click by adding class "click".
 [nebula-hover*="nebula-push"]:hover,
-.nebula-push.animate {animation: nebula-push 0.4s easing(easeOutBack);}
+.nebula-push.animate {animation: nebula-push 0.4s easing(easeOutBack); will-change: transform;}
 @include keyframes(nebula-push){
     0% {transform: scale3d(1, 1, 1);}
     50% {transform: scale3d(0.8, 0.8, 0.8);}
@@ -312,7 +312,7 @@
 //Depress and return (Large)
 //Built-in animation trigger on click by adding class "click".
 [nebula-hover*="nebula-shove"]:hover,
-.nebula-shove.animate {animation: nebula-shove 0.4s easing(easeOutBack);}
+.nebula-shove.animate {animation: nebula-shove 0.4s easing(easeOutBack); will-change: transform;}
 @include keyframes(nebula-shove){
     0% {transform: scale3d(1, 1, 1);}
     50% {transform: scale3d(0.6, 0.6, 0.6);}
@@ -321,7 +321,7 @@
 //Enlarge and return (Small)
 //Built-in animation trigger on click by adding class "click".
 [nebula-hover*="nebula-tug"]:hover,
-.nebula-tug.animate {animation: nebula-tug 0.4s easing(easeOutBack);}
+.nebula-tug.animate {animation: nebula-tug 0.4s easing(easeOutBack); will-change: transform;}
 @include keyframes(nebula-tug){
     0% {transform: scale3d(1, 1, 1);}
     50% {transform: scale3d(1.1, 1.1, 1.1);}
@@ -330,7 +330,7 @@
 //Enlarge and return (Mid)
 //Built-in animation trigger on click by adding class "click".
 [nebula-hover*="nebula-pull"]:hover,
-.nebula-pull.animate {animation: nebula-pull 0.4s easing(easeOutBack);}
+.nebula-pull.animate {animation: nebula-pull 0.4s easing(easeOutBack); will-change: transform;}
 @include keyframes(nebula-pull){
     0% {transform: scale3d(1, 1, 1);}
     50% {transform: scale3d(1.2, 1.2, 1.2);}
@@ -339,7 +339,7 @@
 //Enlarge and return (Large)
 //Built-in animation trigger on click by adding class "click".
 [nebula-hover*="nebula-thrust"]:hover,
-.nebula-thrust.animate {animation: nebula-thrust 0.4s easing(easeOutBack);}
+.nebula-thrust.animate {animation: nebula-thrust 0.4s easing(easeOutBack); will-change: transform;}
 @include keyframes(nebula-thrust){
     0% {transform: scale3d(1, 1, 1);}
     50% {transform: scale3d(1.4, 1.4, 1.4);}
@@ -347,7 +347,7 @@
 
 //Shake left and right
 [nebula-hover*="nebula-shake"]:hover,
-.nebula-shake.animate {animation: nebula-shake 0.5s linear;}
+.nebula-shake.animate {animation: nebula-shake 0.5s linear; will-change: transform;}
 @include keyframes(nebula-shake){
 	0% {transform: translate3d(0, 0, 0);}
 	20%, 60% {transform: translate3d(-10px, 0, 0);}
@@ -356,7 +356,7 @@
 
 //Shake left and right.
 [nebula-hover*="nebula-nod"]:hover,
-.nebula-nod.animate {animation: nebula-nod 0.5s linear;}
+.nebula-nod.animate {animation: nebula-nod 0.5s linear; will-change: transform;}
 @include keyframes(nebula-nod){
 	0% {transform: translate3d(0, 0, 0);}
 	20%, 60% {transform: translate3d(0, -10px, 0);}
@@ -371,12 +371,12 @@
 
 //Swell
 [nebula-hover*="nebula-swell"]:hover,
-.nebula-swell {transition: transform 0.4s easing(easeOutBack);
+.nebula-swell {transition: transform 0.4s easing(easeOutBack); will-change: transform;
 	&:hover {transform: scale3d(1.05, 1.05, 1.05);}
 }
 
 //Grow
 [nebula-hover*="nebula-grow"]:hover,
-.nebula-grow {transition: transform 0.4s easing(easeOutBack);
+.nebula-grow {transition: transform 0.4s easing(easeOutBack); will-change: transform;
 	&:hover {transform: scale3d(1.2, 1.2, 1.2);}
 }

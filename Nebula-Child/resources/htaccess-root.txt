@@ -188,6 +188,14 @@
 	</FilesMatch>
 </IfModule>
 
+#Use ETag to ease caching of static imported JS modules
+<IfModule headers_module>
+	<FilesMatch "\.(js|mjs)$">
+		Header set Cache-Control "public, must-revalidate, max-age=3600"
+		Header unset ETag
+	</FilesMatch>
+</IfModule>
+
 #RewriteEngine On
 #RewriteCond %{REQUEST_METHOD} POST
 #RewriteCond %{REQUEST_URI} .wp-comments-post.php

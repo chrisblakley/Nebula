@@ -21,7 +21,6 @@
 ?>
 
 <?php //These must be the first three tags! ?>
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 <meta charset="<?php bloginfo('charset'); ?>" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, shrink-to-fit=no" />
 
@@ -146,18 +145,6 @@
 <?php endif; ?>
 <?php if ( nebula()->get_option('author_bios') && !empty($post) && get_the_author_meta('twitter', $post->post_author) ): ?>
 	<meta name="twitter:creator" content="@<?php echo get_the_author_meta('twitter', $post->post_author); ?>" />
-<?php endif; ?>
-
-<?php if ( nebula()->get_os('name') == 'Windows' ): //Windows Tiles ?>
-	<meta name="application-name" content="<?php echo get_bloginfo('name') ?>" />
-	<meta name="msapplication-TileColor" content="#0098d7" />
-	<meta name="msapplication-square70x70logo" content="<?php echo get_site_icon_url(70, $image_meta_directory . '/mstile-70x70.png') . $cache_query; ?>" />
-	<meta name="msapplication-square150x150logo" content="<?php echo get_site_icon_url(150, $image_meta_directory . '/mstile-150x150.png') . $cache_query; ?>" />
-	<?php if ( !has_site_icon() ): ?>
-		<meta name="msapplication-wide310x150logo" content="<?php echo get_theme_file_uri('/assets/img/meta/mstile-310x150.png') . $cache_query; ?>" />
-	<?php endif; ?>
-	<meta name="msapplication-square310x310logo" content="<?php echo get_site_icon_url(310, $image_meta_directory . '/mstile-310x310.png') . $cache_query; ?>" />
-	<meta name="msapplication-notification" content="frequency=30;polling-uri=http://notifications.buildmypinnedsite.com/?feed=<?php echo get_bloginfo('rss_url'); ?>&amp;id=1;polling-uri2=http://notifications.buildmypinnedsite.com/?feed=<?php echo get_bloginfo('rss_url'); ?>&amp;id=2;polling-uri3=http://notifications.buildmypinnedsite.com/?feed=<?php echo get_bloginfo('rss_url'); ?>&amp;id=3;polling-uri4=http://notifications.buildmypinnedsite.com/?feed=<?php echo get_bloginfo('rss_url'); ?>&amp;id=4;polling-uri5=http://notifications.buildmypinnedsite.com/?feed=<?php echo get_bloginfo('rss_url'); ?>&amp;id=5; cycle=1" />
 <?php endif; ?>
 
 <?php //Local/Geolocation Metadata ?>

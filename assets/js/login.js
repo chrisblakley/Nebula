@@ -1,4 +1,10 @@
+'use strict';
+
 jQuery.noConflict();
+
+/*==========================
+ DOM Ready
+ ===========================*/
 
 jQuery(function(){
 	//Check for SVG support

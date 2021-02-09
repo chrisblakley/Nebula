@@ -13,24 +13,29 @@
 			<header id="header-section">
 				<a class="skip-to-content-link sr-only" href="#content-section">Skip to Content</a>
 
-				<?php if ( (get_theme_mod('nebula_offcanvas_menu', true) && (has_nav_menu('mobile') || has_nav_menu('primary'))) || get_theme_mod('nebula_mobile_search', true) ): ?>
+				<?php if ( (get_theme_mod('nebula_offcanvas_menu', true) && (has_nav_menu('offcanvas') || has_nav_menu('primary'))) || get_theme_mod('nebula_mobile_search', true) ): ?>
 					<div id="mobilebarcon">
-						<div class="row mobilenavcon">
+						<div class="row mobilerow">
 							<div class="col">
-								<?php if ( get_theme_mod('nebula_offcanvas_menu', true) && (has_nav_menu('mobile') || has_nav_menu('primary')) ): ?>
-									<a class="mobilenavtrigger alignleft" href="#mobilenav" title="Navigation"><i class="fas fa-bars"></i></a>
-									<nav id="mobilenav" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement" aria-label="Mobile navigation">
-										<meta itemprop="name" content="Mobile Menu">
+								<?php if ( get_theme_mod('nebula_offcanvas_menu', true) && (has_nav_menu('offcanvas') || has_nav_menu('primary')) ): ?>
+									<a class="offcanvasnavtrigger alignleft" href="#offcanvasnav" title="Navigation"><i class="fas fa-bars"></i></a>
+									<nav id="offcanvasnav" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement" aria-label="Offcanvas navigation">
+										<meta itemprop="name" content="Offcanvas Menu">
 										<?php
-											if ( has_nav_menu('mobile') ){
-												wp_nav_menu(array('theme_location' => 'mobile', 'menu_id' => 'main-panel')); //Do not change menu_id
+											$mmenu_menu = false;
+											if ( has_nav_menu('offcanvas') ){
+												$mmenu_menu = 'offcanvas';
 											} elseif ( has_nav_menu('primary') ){
-												wp_nav_menu(array('theme_location' => 'header', 'menu_id' => 'main-panel')); //Do not change menu_id
+												$mmenu_menu = 'primary';
+											}
+
+											if ( !empty($mmenu_menu) ){
+												wp_nav_menu(array('theme_location' => $mmenu_menu, 'menu_id' => 'main-panel')); //Do not change menu_id (for Mmenu tabs)
 											}
 										?>
 
 										<?php if ( has_nav_menu('utility') ): ?>
-											<?php wp_nav_menu(array('theme_location' => 'utility', 'menu_id' => 'utility-panel')); //Do not change menu_id ?>
+											<?php wp_nav_menu(array('theme_location' => 'utility', 'menu_id' => 'utility-panel')); //Do not change menu_id (for Mmenu tabs) ?>
 										<?php endif; ?>
 									</nav>
 								<?php endif; ?>

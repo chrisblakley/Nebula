@@ -11,7 +11,7 @@
 #body-wrapper {will-change: transform;
 	&:before {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; @include background-color(#000, 0); z-index: 99995; pointer-events: none; transition: all 0.5s;}
 	.admin-bar & {will-change: auto;} //Prevent this from affecting the admin-bar
-	.mm-wrapper_opening &:before {@include background-color(#000, 0.7);}
+	.mm-wrapper_opening &:before {@include background-color(#000, 0.7); /* backdrop-filter: blur(2px); */} //Backdrop filter is laggy as of Feb 2021
 
 	.skip-to-content-link.sr-only {top: 15px; left: -150px; transition: left 0.4s easing(easeOutBack);
 		&:focus {left: -80px; color: #fff; background: $primary_color; width: auto; height: auto; overflow: visible; margin: 0; padding: 5px 15px 5px 100px; clip: unset; clip-path: unset; z-index: 999999;}
@@ -19,9 +19,6 @@
 
 	@include media("lg"){will-change: auto;}
 }
-
-.ie10 #body-wrapper:before {display: none;}
-
 
 //Logo and primary navigation row
 #logonavcon {display: block; position: relative; width: 100%; text-align: center; box-shadow: none; z-index: 5; transition: all .5s easing(easeInOutCubic);

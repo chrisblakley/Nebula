@@ -378,20 +378,18 @@ if ( !trait_exists('Metaboxes') ){
 					</select>
 					<p class="nebula-help-text short-help form-text text-muted">Which jQuery version to use and where to load it (head is blocking, footer is more performant). (Default: <?php echo $this->user_friendly_default('jquery_version'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Be careful changing this option as some plugins may rely on older versions of jQuery, however some speed improvements may be realized by using alternate versions and locations.<br /><strong>Note:</strong> some plugins may override this and bring jQuery back to the head.<br /><strong>Remember:</strong> if loading in the footer, embedded script tags cannot use jQuery in template files.</p>
-					<p class="option-keywords">internet explorer old support plugins minor page speed impact optimization optimize</p>
+					<p class="option-keywords">old support plugins minor page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group">
 					<label for="bootstrap_version">Bootstrap Version</label>
 					<select name="nebula_options[bootstrap_version]" id="bootstrap_version" class="form-control nebula-validate-select">
-						<option value="latest" <?php selected('latest', $nebula_options['bootstrap_version']); ?>>Latest (IE10+)</option>
-						<option value="grid" <?php selected('grid', $nebula_options['bootstrap_version']); ?>>Grid Only (IE10+)</option>
-						<option value="bootstrap4a5" <?php selected('bootstrap4a5', $nebula_options['bootstrap_version']); ?>>Bootstrap 4 alpha 5 (IE9+)</option>
-						<option value="bootstrap3" <?php selected('bootstrap3', $nebula_options['bootstrap_version']); ?>>Bootstrap 3 (IE8+)</option>
+						<option value="latest" <?php selected('latest', $nebula_options['bootstrap_version']); ?>>Latest</option>
+						<option value="grid" <?php selected('grid', $nebula_options['bootstrap_version']); ?>>Grid Only</option>
 					</select>
 					<p class="nebula-help-text short-help form-text text-muted">Which Bootstrap version to use. (Default: <?php echo $this->user_friendly_default('bootstrap_version'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Bootstrap 3 will support IE8+. Bootstrap 4 alpha 5 will support IE9+. Bootstrap latest supports IE10+. Grid loads only framework (and reboot) CSS. WordPress admin pages will still load Bootstrap latest regardless of this selection.</p>
-					<p class="option-keywords">internet explorer old support optimization moderate page speed impact optimization optimize</p>
+					<p class="option-keywords">optimization moderate page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group">
@@ -1778,7 +1776,7 @@ if ( !trait_exists('Metaboxes') ){
 					<input type="text" name="nebula_options[dev_ip]" id="dev_ip" class="form-control nebula-validate-text" value="<?php echo $nebula_options['dev_ip']; ?>" placeholder="<?php echo $this->get_ip_address(); ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">Comma-separated IP addresses of the developer to enable specific console logs and other dev info.<br/>Your current anonymized IP address is <code><?php echo $this->get_ip_address(); ?></code></p>
 					<p class="nebula-help-text more-help form-text text-muted">Matching anonymizes both sides, so you can enter an pre-anonymized IPs here. RegEx may also be used here. Ex: <code>/192\.168\./i</code></p>
-					<p class="option-keywords">recommended</p>
+					<p class="option-keywords">staff logs recommended</p>
 				</div>
 
 				<div class="form-group">
@@ -1786,7 +1784,7 @@ if ( !trait_exists('Metaboxes') ){
 					<input type="text" name="nebula_options[dev_email_domain]" id="dev_email_domain" class="form-control nebula-validate-text" value="<?php echo $nebula_options['dev_email_domain']; ?>" placeholder="<?php echo $current_user_domain; ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">Comma separated domains of the developer emails (without the "@") to enable specific console logs and other dev info.<br/>Your email domain is: <code><?php echo $current_user_domain; ?></code></p>
 					<p class="nebula-help-text more-help form-text text-muted">RegEx may also be used here. Ex: <code>/@pinckneyhugo\./i</code></p>
-					<p class="option-keywords">recommended</p>
+					<p class="option-keywords">staff logs recommended</p>
 				</div>
 
 				<div class="form-group">
@@ -1794,7 +1792,7 @@ if ( !trait_exists('Metaboxes') ){
 					<input type="text" name="nebula_options[client_ip]" id="client_ip" class="form-control nebula-validate-text" value="<?php echo $nebula_options['client_ip']; ?>" placeholder="<?php echo $this->get_ip_address(); ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">Comma-separated IP addresses of the client to enable certain features.<br/>Your current anonymized IP address is <code><?php echo $this->get_ip_address(); ?></code></p>
 					<p class="nebula-help-text more-help form-text text-muted">Matching anonymizes both sides, so you can enter an pre-anonymized IPs here. RegEx may also be used here. Ex: <code>/192\.168\./i</code></p>
-					<p class="option-keywords">recommended</p>
+					<p class="option-keywords">staff logs recommended</p>
 				</div>
 
 				<div class="form-group">
@@ -1802,7 +1800,7 @@ if ( !trait_exists('Metaboxes') ){
 					<input type="text" name="nebula_options[client_email_domain]" id="client_email_domain" class="form-control nebula-validate-text" value="<?php echo $nebula_options['client_email_domain']; ?>" placeholder="<?php echo $current_user_domain; ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">Comma separated domains of the developer emails (without the "@") to enable certain features.<br/>Your email domain is: <code><?php echo $current_user_domain; ?></code></p>
 					<p class="nebula-help-text more-help form-text text-muted">RegEx may also be used here. Ex: <code>/@pinckneyhugo\./i</code></p>
-					<p class="option-keywords">recommended</p>
+					<p class="option-keywords">staff logs recommended</p>
 				</div>
 			<?php
 
@@ -2010,7 +2008,7 @@ if ( !trait_exists('Metaboxes') ){
 							Child theme is <strong class="nebula-disabled">not</strong> being used. Automated updates will <strong class="nebula-disabled">not</strong> be available.
 						<?php endif; ?>
 					</li>
-					<li>The local Nebula version is <strong><?php echo $this->version('full'); ?></strong> and the remote (GitHub) version is <strong><?php echo $nebula_data['next_version']; ?></strong>.</li>
+					<li>The local Nebula version is <strong><?php echo $this->version('full'); ?></strong><?php echo ( !empty($nebula_data['next_version']) )? ' and the remote (GitHub) version is <strong>' . $nebula_data['next_version'] . '</strong>.' : '.'; ?></li>
 
 					<?php if ( !empty($nebula_data['last_automated_update_date']) ): ?>
 						<li>Nebula was last updated via the WordPress updater <strong><?php echo human_time_diff($nebula_data['last_automated_update_date']); ?> ago</strong> (<strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['last_automated_update_date']); ?></strong>) by <strong><?php echo $nebula_data['last_automated_update_user']; ?></strong>.</li>
@@ -2146,54 +2144,59 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_logs_metabox($nebula_data){
 			$nebula_options = get_option('nebula_options');
 
-			if ( !empty($nebula_options['logs']) && $this->is_staff() ):
-				$columns = $this->get_logs(false);
-				$rows = $this->get_logs(true);
-			?>
-				<div id="nebula-add-log">
-					<input id="log-message" type="text" placeholder="Log message" /> <input id="log-importance" type="number" min="0" max="10" value="5" /> <a id="submit-log-message" class="button button-primary" href="#"><i id="add-log-progress" class="fas fa-fw fa-calendar-plus"></i> Add Log Message</a>
-				</div>
+			if ( !empty($nebula_options['logs']) ):
+				if ( $this->is_staff() ):
+					$columns = $this->get_logs(false);
+					$rows = $this->get_logs(true);
+				?>
+					<div id="nebula-add-log">
+						<input id="log-message" type="text" placeholder="Log message" /> <input id="log-importance" type="number" min="0" max="10" value="5" /> <a id="submit-log-message" class="button button-primary" href="#"><i id="add-log-progress" class="fas fa-fw fa-calendar-plus"></i> Add Log Message</a>
+					</div>
 
-				<div id="nebula-log-reload-container">
-					<table id="nebula-logs">
-						<thead>
-							<tr>
-								<?php foreach ( $columns as $column ): ?>
-									<td class="<?php echo $column->Field; ?>"><?php echo ucwords(str_replace('_id', '', $column->Field)); ?></td>
-								<?php endforeach; ?>
-							</tr>
-						</thead>
-						<tbody>
-							<?php foreach ( $rows as $row ): ?>
-								<tr data-id="<?php echo intval($row->id); ?>" data-importance="<?php echo intval($row->importance); ?>">
-									<?php foreach ( $row as $column => $value ): ?>
-										<td class="<?php echo $column; ?>">
-											<div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis;">
-												<?php
-													$sanitized_value = sanitize_text_field(mb_strimwidth($value, 0, 153, '...'));
-
-													if ( $column === 'user_id' ){
-														$sanitized_value = ( $sanitized_value === 0 )? '(Cron)' : get_userdata($sanitized_value)->display_name;
-													}
-
-													if ( $column === 'timestamp' ){
-														$sanitized_value = '<i class="remove fas fa-fw fa-ban"></i> ' . date('l, F j, Y - g:i:sa', $sanitized_value);
-													}
-
-													echo $sanitized_value;
-												?>
-											</div>
-										</td>
+					<div id="nebula-log-reload-container">
+						<table id="nebula-logs">
+							<thead>
+								<tr>
+									<?php foreach ( $columns as $column ): ?>
+										<td class="<?php echo $column->Field; ?>"><?php echo ucwords(str_replace('_id', '', $column->Field)); ?></td>
 									<?php endforeach; ?>
 								</tr>
-							<?php endforeach; ?>
-						</tbody>
-					</table>
-				</div>
+							</thead>
+							<tbody>
+								<?php foreach ( $rows as $row ): ?>
+									<tr data-id="<?php echo intval($row->id); ?>" data-importance="<?php echo intval($row->importance); ?>">
+										<?php foreach ( $row as $column => $value ): ?>
+											<td class="<?php echo $column; ?>">
+												<div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis;">
+													<?php
+														$sanitized_value = sanitize_text_field(mb_strimwidth($value, 0, 153, '...'));
 
-				<p id="nebula-clean-logs">
-					<strong id="log-count"><?php echo count($rows); ?></strong> total logs. <a id="clean-log-messages" href="#"><i id="clean-log-progress" class="fas fa-fw fa-trash-alt"></i> Remove Low Importance Logs?</a>
-				</p>
+														if ( $column === 'user_id' ){
+															$sanitized_value = ( $sanitized_value === 0 )? '(Cron)' : get_userdata($sanitized_value)->display_name;
+														}
+
+														if ( $column === 'timestamp' ){
+															$sanitized_value = '<i class="remove fas fa-fw fa-ban"></i> ' . date('l, F j, Y - g:i:sa', $sanitized_value);
+														}
+
+														echo $sanitized_value;
+													?>
+												</div>
+											</td>
+										<?php endforeach; ?>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+
+					<p id="nebula-clean-logs">
+						<strong id="log-count"><?php echo count($rows); ?></strong> total logs. <a id="clean-log-messages" href="#"><i id="clean-log-progress" class="fas fa-fw fa-trash-alt"></i> Remove Low Importance Logs?</a>
+					</p>
+				<?php else: ?>
+					<p><strong class="nebula-disabled">Nebula Logs are enabled, but only available to staff.</strong></p>
+					<p><a href="themes.php?page=nebula_options&tab=administration&option=dev_email_domain">Set up staff rules</a> to view the logs.</p>
+				<?php endif; ?>
 			<?php else: ?>
 				<p><strong class="nebula-disabled">The Nebula Logs option is not enabled.</strong></p>
 				<p><a href="themes.php?page=nebula_options&tab=administration&option=logs">Enable it here</a> to begin automatically logging notable events.</p>

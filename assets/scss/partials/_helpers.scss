@@ -72,9 +72,9 @@
 
 //Equalize column heights within a row (Not to be confused with .equalize class that uses nebula.js)
 .row-table {display: block;
-	[class*="col-sm"] {display: block; @include media("sm"){display: table-cell; float: none;}}
-	[class*="col-md"] {display: block; @include media("md"){display: table-cell; float: none;}}
-	[class*="col-lg"] {display: block; @include media("lg"){display: table-cell; float: none;}}
+	[class*="col-sm" i] {display: block; @include media("sm"){display: table-cell; float: none;}}
+	[class*="col-md" i] {display: block; @include media("md"){display: table-cell; float: none;}}
+	[class*="col-lg" i] {display: block; @include media("lg"){display: table-cell; float: none;}}
 
 	&.sm-cols {@include media("sm"){display: table; table-layout: fixed;} }
 	&.md-cols {@include media("md"){display: table; table-layout: fixed;} }
@@ -152,8 +152,8 @@ body:not(.wp-admin) {
 	.invisible {visibility: hidden;} //Hide visually and from screenreaders, but maintain layout
 	.clearfix {@include clearfix();}
 	div.space {clear: both; display: block; overflow: hidden; visibility: hidden; width: 0; height: 0;}
-	.avoid-clicks {pointer-events: none;} //Only supported in IE11+
-	.allow-clicks {pointer-events: all;} //Only supported in IE11+
+	.avoid-clicks {pointer-events: none;}
+	.allow-clicks {pointer-events: all;}
 	.filtered {display: none;}
 }
 
@@ -243,14 +243,16 @@ a.nebula-share-btn {display: inline-block; padding: 5px 7px; border-radius: 3px;
 //@include file_icon(doc docx, f1c2, #2b5797);
 @mixin file_icon($filetypes, $unicode: "\f016", $color: #292b2c, $specific: false){
 	@each $filetype in $filetypes {
-		@if $specific {
-			a.icon[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
-				&:before {content: "#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
-			}
-		} @else {
-			a[href$=".#{$filetype}"]:not(.no-icon):not(.btn):not(.wp-block-button__link),
-			li.icon a[href$=".#{$filetype}"] {text-decoration: none; border-bottom: 1px dotted $color;
-				&:before {content: "#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
+		.entry-content {
+			@if $specific { //Some file extensions must explicitly request an icon
+				a.icon[href$=".#{$filetype}" i] {text-decoration: none; border-bottom: 1px dotted $color;
+					&:before {content: "#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
+				}
+			} @else {
+				a[href$=".#{$filetype}" i]:not(.no-icon):not(.btn):not(.wp-block-button__link),
+				li.icon a[href$=".#{$filetype}" i] {text-decoration: none; border-bottom: 1px dotted $color;
+					&:before {content: "#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
+				}
 			}
 		}
 	}
@@ -266,7 +268,6 @@ a.nebula-share-btn {display: inline-block; padding: 5px 7px; border-radius: 3px;
 @include file_icon(php, "\f1c9", #5a68a5, true);
 @include file_icon(js, "\f1c9", #f1bf26, true);
 @include file_icon(css scss, "\f1c9", #30a9dc, true);
-@include file_icon(swf, "\f1c9", #c31e24, true);
 
 a.white, li.icon.white a {@include link-colors(#fff, #ccc);
 	&:before {color: #fff !important;}

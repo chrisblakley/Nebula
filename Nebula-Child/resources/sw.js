@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 const THEME_NAME = 'nebula-child';
-const NEBULA_VERSION = 'v8.9.5.7624'; //Friday, February 5, 2021 6:18:06 PM
+const NEBULA_VERSION = 'v8.9.9.0508'; //Tuesday, February 9, 2021 1:13:17 AM
 const OFFLINE_URL = 'https://nebula.gearside.com/offline/';
 const OFFLINE_IMG = 'https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/offline.svg';
 const OFFLINE_GA_DIMENSION = 'cd2';
@@ -12,9 +12,6 @@ const HOME_URL = 'https://nebula.gearside.com/';
 importScripts('https://cdnjs.cloudflare.com/ajax/libs/workbox-sw/6.1.0/workbox-sw.min.js'); //https://developers.google.com/web/tools/workbox/guides/get-started
 workbox.setConfig({debug: false}); //https://developers.google.com/web/tools/workbox/guides/troubleshoot-and-debug
 //The Service Worker console can be inspected by visiting chrome://inspect/#service-workers
-
-//@todo "Nebula" 0: If ?debug is present in the URL on load, dump the entire cache and unregister (or update) the SW completely
-//deleteCacheAndMetadata();
 
 self.skipWaiting();
 workbox.core.clientsClaim();
@@ -30,7 +27,7 @@ workbox.core.setCacheNameDetails({
 });
 
 //Precache files on SW install
-const revisionNumber = NEBULA_VERSION.replace(/v|\./g, ''); //Remove "v" and periods in version number
+const revisionNumber = NEBULA_VERSION.replaceAll(/v|\./g, ''); //Remove "v" and periods in version number
 workbox.precaching.precacheAndRoute([
 	{url: OFFLINE_URL, revision: revisionNumber},
 	{url: OFFLINE_IMG, revision: revisionNumber},
@@ -136,7 +133,7 @@ workbox.routing.setCatchHandler(function(params){
 		return caches.match(workbox.precaching.getCacheKeyForURL(OFFLINE_IMG));
 	}
 
-	return Response.error(); //If we don't have a fallback, just return an error response.
+	return Response.error(); //If we do not have a fallback, just return an error response.
 });
 
 //Offline Google Analytics: https://developers.google.com/web/tools/workbox/modules/workbox-google-analytics
@@ -145,4 +142,12 @@ workbox.googleAnalytics.initialize({
 	parameterOverrides: {
 		[OFFLINE_GA_DIMENSION]: 'offline', //Set a custom dimension to note offline hits (if set in Nebula Options)
 	},
+});
+
+//Handle messages from the window
+addEventListener('message', function(event){
+	//This is an example message
+	if ( event.data.type === 'GET_VERSION' ){ //Check the incoming message for a specific word/phrase/handle
+		return event.ports[0].postMessage(revisionNumber); //Reply to the window
+	}
 });

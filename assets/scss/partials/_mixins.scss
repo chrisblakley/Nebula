@@ -273,10 +273,10 @@
 @mixin iconpeek($icon: "\f061", $style: "Font Awesome 5 Solid"){
     display: inline-block; position: relative; overflow: hidden; transition: padding 0.4s easing(easeOutBack);
     &:before {content: $icon; font-family: $style; display: none;}
-    svg {position: absolute; left: -25px; height: 100%; transition: left 0.4s easing(easeOutBack);}
+    svg {position: absolute; left: 0; transform: translate3d(-25px, 0, 0); height: 100%; transition: transform 0.4s easing(easeOutBack); will-change: transform;}
 
     &:hover {padding-left: 25px;
-        svg {left: 0;}
+        svg {transform: translate3d(0, 0, 0);}
     }
 }
 

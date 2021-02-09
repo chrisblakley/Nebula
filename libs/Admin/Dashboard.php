@@ -348,9 +348,6 @@ if ( !trait_exists('Dashboard') ){
 					case 'safari':
 						$browser_icon = 'fab fa-safari';
 						break;
-					case 'internet explorer':
-						$browser_icon = 'fab fa-internet-explorer';
-						break;
 					case 'firefox':
 						$browser_icon = 'fab fa-firefox';
 						break;
