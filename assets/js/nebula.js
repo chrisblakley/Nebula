@@ -116,7 +116,7 @@ jQuery(window).on('load', function(){
 
 window.addEventListener('resize', function(){
 	nebula.debounce(function(){ //Must use debounce here (not throttle) so it always runs after the resize finishes (throttle does not always run at the end)
-		if ( typeof nebula.lastWindowWidth !== 'undefined' && nebula.dom.window.width() != nebula.lastWindowWidth ){ //If the width actually changed
+		if ( typeof nebula.lastWindowWidth !== 'undefined' && nebula.dom.window.width() !== nebula.lastWindowWidth ){ //If the width actually changed
 			nebula.lastWindowWidth = nebula.dom.window.width();
 			nebula.mobileSearchPlaceholder();
 			nebula.initMmenu(); //If Mmenu has not been initialized, it may need to be if the screen size has reduced

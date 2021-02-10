@@ -640,35 +640,6 @@ if ( !trait_exists('Admin') ){
 					));
 				}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 				if ( !empty($post_type_object) ){
 					//Ancestor pages
 					$ancestors = get_post_ancestors($current_id);

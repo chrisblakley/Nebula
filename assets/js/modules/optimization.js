@@ -116,7 +116,6 @@ nebula.workbox = async function(){
 					//Now we can send messages back and forth
 					nebula.dom.document.trigger('nebula_workbox_active', workbox); //Allow others to interactive with Workbox (Ex: send messages with workbox.messageSW)
 					//const swVersion = await workbox.messageSW({type: 'GET_VERSION'}); //The message type here must match what the SW expects
-					//console.log('Service Worker version:', swVersion);
 
 					//event.isUpdate will be true if another version of the service worker was controlling the page when this version was registered. It will be false on the very first installation
 					if ( !event.isUpdate ){
@@ -176,7 +175,7 @@ nebula.workbox = async function(){
 	} else {
 		nebula.unregisterServiceWorker();
 	}
-}
+};
 
 //Force unregister all existing service workers
 nebula.unregisterServiceWorker = function(){
@@ -187,7 +186,7 @@ nebula.unregisterServiceWorker = function(){
 			}
 		});
 	}
-}
+};
 
 //Clear the caches
 nebula.emptyCaches = function(){
@@ -198,7 +197,7 @@ nebula.emptyCaches = function(){
 			}
 		});
 	}
-}
+};
 
 //Progressive Web App functions (when the user installs the PWA onto their device)
 nebula.pwa = function(){
@@ -262,7 +261,7 @@ nebula.pwa = function(){
 		nebula.dom.document.trigger('nebula_event', thisEvent);
 		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
 	});
-}
+};
 
 //Detections for events specific to predicting the next pageview.
 nebula.predictiveCacheListeners = async function(){

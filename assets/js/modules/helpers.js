@@ -188,13 +188,13 @@ nebula.scrollToListeners = function(){
 			if ( !jQuery(this).is(avoid) && !jQuery(this).parents(avoid).length ){
 				if ( location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname ){ //Ensure the link does not have a protocol and is internal
 					let thisHash = this.hash; //Defined here because scope of "this" changes later
-					let scrollElement = jQuery(thisHash) || jQuery('[name=' + thisHash.slice(1) +']'); //Determine the target
+					let scrollElement = jQuery.find(thisHash) || jQuery('[name=' + thisHash.slice(1) +']'); //Determine the target
+
 					if ( scrollElement.length ){ //If target exists
 						let pOffset = ( jQuery(this).attr('data-offset') )? parseFloat(jQuery(this).attr('data-offset')) : nebula.scroll.offset; //Determine the offset
 						let speed = nebula.scroll.speed || 500;
 
 						nebula.scrollTo(scrollElement, pOffset, speed, false, function(){
-							nebula.focusOnElement(scrollElement);
 							history.replaceState({}, '', thisHash); //Add the hash to the URL so it can be refreshed, copied, links, etc. ReplaceState does this without affecting the back button.
 						});
 
@@ -211,13 +211,11 @@ nebula.scrollToListeners = function(){
 			let pOffset = ( jQuery(this).attr('data-offset') )? parseFloat(jQuery(this).attr('data-offset')) : nebula.scroll.offset;
 
 			if ( jQuery(this).attr('data-scrollto') ){
-				let scrollElement = jQuery(this).attr('data-scrollto');
+				let scrollElement = jQuery.find(jQuery(this).attr('data-scrollto'));
+
 				if ( scrollElement !== '' ){
 					let scrollSpeed = nebula.scroll.speed || 500;
-
-					nebula.scrollTo(jQuery(scrollElement), pOffset, scrollSpeed, false, function(){
-						nebula.focusOnElement(scrollElement);
-					});
+					nebula.scrollTo(scrollElement, pOffset, scrollSpeed);
 				}
 			}
 
@@ -244,6 +242,8 @@ nebula.scrollTo = function(element, offset = 0, speed = 500, onlyWhenBelow = fal
 		//Call this function with a jQuery object to trigger scroll to an element (not just a selector string).
 		if ( element ){
 			if ( typeof element === 'string' ){
+				element = jQuery.find(element); //Use find here to prevent arbitrary JS execution
+			} else if ( !element.jquery ){ //Check if it is already a jQuery object
 				element = jQuery(element);
 			}
 
@@ -261,7 +261,7 @@ nebula.scrollTo = function(element, offset = 0, speed = 500, onlyWhenBelow = fal
 					if ( !speed ){
 						speed = nebula.scroll.speed || 500;
 					}
-
+					
 					jQuery('html, body').animate({
 						scrollTop: element.offset().top-offset
 					}, speed, function(){

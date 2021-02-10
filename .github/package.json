@@ -16,7 +16,7 @@
 		"bootstrap": "^4.3.1",
 		"jquery-ui": ">=1.12.1",
 		"autotrack": "latest",
-		"mmenu-js": "~7.3.2",
+		"mmenu-js": "latest",
 		"@vimeo/player": "latest",
 		"datatables": "latest",
 		"chosen": "latest",
@@ -29,7 +29,6 @@
 		"scssphp/scssphp": "latest"
 	},
 	"browserslist": [
-		"> 1%",
-		"not ie <= 10"
+		"> 1%"
 	]
 }

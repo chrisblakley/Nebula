@@ -82,7 +82,7 @@ nebula.menuSearchReplacement = async function(){
 //Use inside of a keydown function, and pass the event data.
 nebula.searchTriggerOnlyChars = function(e){
 	//@TODO "Nebula" 0: This still allows shortcuts like "cmd+a" to return true.
-	let spinnerRegex = new RegExp("^[a-zA-Z0-9]+$");
+	let spinnerRegex = new RegExp('^[a-zA-Z0-9]+$');
 	let allowedKeys = [8, 46];
 	let searchChar = String.fromCharCode(!e.charCode ? e.which : e.charCode);
 
@@ -152,9 +152,9 @@ nebula.autocompleteSearch = function(element, types){
 
 		element.autocomplete({ //jQuery UI dependent
 			position: {
-				my: "left top-2px",
-				at: "left bottom",
-				collision: "flip",
+				my: 'left top-2px',
+				at: 'left bottom',
+				collision: 'flip',
 			},
 			source: function(request, response){
 				fetch(nebula.site.home_url + '/wp-json/nebula/v2/autocomplete_search?term=' + request.term + postTypes, {importance: 'high'}).then(function(response){
@@ -170,7 +170,7 @@ nebula.autocompleteSearch = function(element, types){
 						nebula.prefetch(data[0].link);
 
 						jQuery.each(data, function(index, value){
-							value.label = value.label.replaceAll(/&#038;/g, "\&");
+							value.label = value.label.replaceAll(/&#038;/g, '\&');
 						});
 
 						noSearchResults = '';
@@ -318,7 +318,7 @@ nebula.searchTermHighlighter = async function(){
 	window.requestAnimationFrame(function(){
 		let searchTerm = document.URL.split('?s=')[1];
 		if ( typeof searchTerm !== 'undefined' ){
-			let reg = new RegExp("(?![^<]+>)(" + nebula.preg_quote(searchTerm.replaceAll(/(\+|%22|%20)/g, ' ')) + ")", "ig");
+			let reg = new RegExp('(?![^<]+>)(' + nebula.preg_quote(searchTerm.replaceAll(/(\+|%22|%20)/g, ' ')) + ')', 'ig');
 			jQuery('article .entry-title a, article .entry-summary').each(function(){
 				jQuery(this).html(function(i, html){
 					return html.replace(reg, '<mark class="searchresultword">$1</mark>');

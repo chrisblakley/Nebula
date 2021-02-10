@@ -690,8 +690,8 @@ if ( !trait_exists('Warnings') ){
 								if ( typeof window.ReportingObserver !== undefined ){ //Chrome 68+
 									var nebulaAuditModeReportingObserver = new ReportingObserver(function(reports, observer){
 										for ( report of reports ){
-											if ( report.body.sourceFile.indexOf('extension') < 0 ){ //Ignore browser extensions
-												jQuery("#audit-results ul").append('<li>Reporting Observer (' + report.type + '): ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber + '</li>');
+											if ( report.body.sourceFile.includes('extension') ){ //Ignore browser extensions
+												jQuery('#audit-results ul').append('<li>Reporting Observer (' + report.type + '): ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber + '</li>');
 											}
 										}
 									}, {buffered: true});
@@ -701,9 +701,9 @@ if ( !trait_exists('Warnings') ){
 								//@todo: consider checking WebPageTest timing if API key is available
 
 								//Check protocol
-								if ( window.location.href.indexOf('http://') === 0 ){
+								if ( window.location.href.includes('http://') ){
 									jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-unlock-alt"></i> Non-secure http protocol</li>');
-								} else if ( window.location.href.indexOf('https://') === 0 ){
+								} else if ( window.location.href.includes('https://') ){
 									//check for non-secure resource requests here?
 								}
 
@@ -728,7 +728,7 @@ if ( !trait_exists('Warnings') ){
 										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Short page title</li>');
 									}
 
-									if ( document.title.indexOf('Home') > -1 ){
+									if ( document.title.includes('Home') ){
 										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Improve page title keywords (remove "Home")</li>');
 									}
 								}
@@ -745,7 +745,7 @@ if ( !trait_exists('Warnings') ){
 								//Check H2
 								if ( !entireDOM.find('h2').length ){
 									jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Missing H2 tags</li>');
-								} else if ( entireDOM.find('h2') <= 2 ){
+								} else if ( entireDOM.find('h2').length <= 2 ){
 									jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Very few H2 tags</li>');
 								}
 
@@ -753,8 +753,8 @@ if ( !trait_exists('Warnings') ){
 								//https://www.w3.org/wiki/HTML/Usage/Headings/Missing
 								entireDOM.find('article, section').each(function(){
 									if ( !jQuery(this).find('h1, h2, h3, h4, h5, h6').length ){
-										jQuery(this).addClass('nebula-audit audit-warn').append(jQuery('<div class="audit-desc"><i class="fas fa-fw fa-heading"></i> Missing heading tag in this ' + jQuery(this).prop("tagName").toLowerCase() + '</div>'));
-										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Missing heading tag within a &lt;' + jQuery(this).prop("tagName").toLowerCase() + '&gt; tag.</li>');
+										jQuery(this).addClass('nebula-audit audit-warn').append(jQuery('<div class="audit-desc"><i class="fas fa-fw fa-heading"></i> Missing heading tag in this ' + jQuery(this).prop('tagName').toLowerCase() + '</div>'));
+										jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-heading"></i> Missing heading tag within a &lt;' + jQuery(this).prop('tagName').toLowerCase() + '&gt; tag.</li>');
 									}
 								});
 
@@ -770,8 +770,8 @@ if ( !trait_exists('Warnings') ){
 								//Check for placeholder text (in the page content and metadata)
 								var commonPlaceholderWords = ['lorem', 'ipsum', 'dolor', 'sit amet', 'consectetur', 'adipiscing', 'malesuada', 'vestibulum']; //Be careful of false positives due to parts of real words (Ex: "amet" in "parameter")
 								jQuery.each(commonPlaceholderWords, function(i, word){
-									if ( entireDOM.html().indexOf(word) > -1 ){
-										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-remove-format"></i> Placeholder text found ("' + word + '").</li>');
+									if ( entireDOM.html().includes(word) ){
+										jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-remove-format"></i> Placeholder text found ("' + word + '").</li>');
 										return false;
 									}
 								});
@@ -783,7 +783,7 @@ if ( !trait_exists('Warnings') ){
 									}
 
 									jQuery(this).addClass('nebula-audit audit-error').append(jQuery('<div class="audit-desc"><i class="far fa-fw fa-image"></i> Broken image</div>'));
-									jQuery("#audit-results ul").append('<li><i class="far fa-fw fa-image"></i> Broken image</li>');
+									jQuery('#audit-results ul').append('<li><i class="far fa-fw fa-image"></i> Broken image</li>');
 								});
 
 								//Images
@@ -795,15 +795,15 @@ if ( !trait_exists('Warnings') ){
 									//Check img alt
 									if ( !jQuery(this).is('[alt]') ){
 										jQuery(this).wrap('<div class="nebula-audit audit-error"></div>').after('<div class="audit-desc"><i class="far fa-fw fa-image"></i> Missing ALT attribute</div>');
-										jQuery("#audit-results ul").append('<li><i class="far fa-fw fa-image"></i> Missing ALT attribute</li>');
+										jQuery('#audit-results ul').append('<li><i class="far fa-fw fa-image"></i> Missing ALT attribute</li>');
 									}
 
 									//Check image filesize. Note: cached files are 0
 									if ( window.performance ){ //IE10+
 										var iTime = performance.getEntriesByName(jQuery(this).attr('src'))[0];
-										if ( iTime && iTime.transferSize >= 500000 ){
+										if ( iTime && iTime.transferSize >= 500_000 ){
 											jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-image"></i> Image filesize over 500kb</div>');
-											jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-image"></i> Image filesize over 500kb</li>');
+											jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-image"></i> Image filesize over 500kb</li>');
 										}
 									}
 
@@ -813,25 +813,25 @@ if ( !trait_exists('Warnings') ){
 									//Check image width
 									if ( jQuery(this)[0].naturalWidth > 1200 ){
 										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-image"></i> Image wider than 1200px</div>');
-										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-image"></i> Image wider than 1200px</li>');
+										jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-image"></i> Image wider than 1200px</li>');
 									}
 
 									//Check image link
 									if ( !jQuery(this).parents('a').length ){
 										jQuery(this).wrap('<div class="nebula-audit audit-notice"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-unlink"></i> Unlinked Image</div>');
-										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-image"></i> Unlinked image</li>');
+										jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-image"></i> Unlinked image</li>');
 									}
 								});
 
 								//Videos
 								entireDOM.find('video').each(function(){
 									//Check video filesize. Note: cached files are 0
-									if ( window.performance ){ //IE10+
+									if ( window.performance ){
 										var vTime = performance.getEntriesByName(jQuery(this).find('source').attr('src'))[0];
 
-										if ( vTime && vTime.transferSize >= 5000000 ){ //5mb+
+										if ( vTime && vTime.transferSize >= 5_000_000 ){ //5mb+
 											jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-file-video"></i> Video filesize over 5mb</div>');
-											jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-file-video"></i> Video filesize over 5mb</li>');
+											jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-file-video"></i> Video filesize over 5mb</li>');
 										}
 									}
 
@@ -841,7 +841,7 @@ if ( !trait_exists('Warnings') ){
 									//Check unmuted autoplay
 									if ( jQuery(this).is('[autoplay]') && !jQuery(this).is('[muted]') ){
 										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-video"></i> Autoplay without muted attribute</div>');
-										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-video"></i> Videos set to autoplay without being muted will not autoplay in Chrome.</li>');
+										jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-video"></i> Videos set to autoplay without being muted will not autoplay in Chrome.</li>');
 									}
 								});
 
@@ -862,13 +862,13 @@ if ( !trait_exists('Warnings') ){
 
 									if ( formFieldCount > 6 ){
 										jQuery(this).wrap('<div class="nebula-audit audit-notice"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-pencil-alt"></i> Many form fields</div>');
-										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-pencil-alt"></i> Many form fields</li>');
+										jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-pencil-alt"></i> Many form fields</li>');
 									}
 								});
 
 								//Check for modals inside of #body-wrapper
 								if ( entireDOM.find('#body-wrapper .modal').length ){
-									jQuery("#audit-results ul").append('<li><i class="far fa-fw fa-window-restore"></i> Modal found inside of #body-wrapper. Move modals to the footer outside of the #body-wrapper div.</li>');
+									jQuery('#audit-results ul').append('<li><i class="far fa-fw fa-window-restore"></i> Modal found inside of #body-wrapper. Move modals to the footer outside of the #body-wrapper div.</li>');
 								}
 
 								<?php do_action('nebula_audits_js'); ?>
@@ -878,23 +878,23 @@ if ( !trait_exists('Warnings') ){
 									if ( warning.description.indexOf('Audit Mode') > 0 ){
 										return true; //Skip
 									}
-									jQuery("#audit-results ul").append('<li>' + warning.description + '</li>');
+									jQuery('#audit-results ul').append('<li>' + warning.description + '</li>');
 								});
 
 								<?php if ( !(is_home() || is_front_page()) ): ?>
 									//Check breadcrumb schema tag
 									if ( !jQuery('[itemtype*=BreadcrumbList]').length ){
-										jQuery("#audit-results ul").append('<li><i class="fas fa-bread-slice"></i> Missing breadcrumb schema tag</li>');
+										jQuery('#audit-results ul').append('<li><i class="fas fa-bread-slice"></i> Missing breadcrumb schema tag</li>');
 									}
 								<?php endif; ?>
 
 								//Check issue count (do this last)
-								if ( jQuery("#audit-results ul li").length <= 0 ){
-									jQuery("#audit-results").append('<p><strong><i class="fas fa-fw fa-check"></i> No issues were found on this page.</strong> Be sure to check other pages (and run <a href="https://nebula.gearside.com/get-started/checklists/testing-checklist/" target="_blank">more authoritative tests</a>)!</p>');
+								if ( jQuery('#audit-results ul li').length <= 0 ){
+									jQuery('#audit-results').append('<p><strong><i class="fas fa-fw fa-check"></i> No issues were found on this page.</strong> Be sure to check other pages (and run <a href="https://nebula.gearside.com/get-started/checklists/testing-checklist/" target="_blank">more authoritative tests</a>)!</p>');
 								} else {
-									jQuery("#audit-results").append('<p><strong><i class="fas fa-fw fa-times"></i> Found issues: ' + jQuery("#audit-results ul li").length + '<strong></p>');
+									jQuery('#audit-results').append('<p><strong><i class="fas fa-fw fa-times"></i> Found issues: ' + jQuery('#audit-results ul li').length + '<strong></p>');
 								}
-								jQuery("#audit-results").append('<p><small>Note: This does not check for @todo comments. Use the Nebula To-Do Manager in the WordPress admin dashboard to view.</small></p>');
+								jQuery('#audit-results').append('<p><small>Note: This does not check for @todo comments. Use the Nebula To-Do Manager in the WordPress admin dashboard to view.</small></p>');
 							}, 1);
 						});
 					</script>

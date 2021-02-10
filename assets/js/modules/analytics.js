@@ -3,8 +3,6 @@ nebula.isDoNotTrack = function(){
 	//Use server-side header detection first
 	if ( nebula.user?.dnt == 1 ){
 		return true; //This user prefers not to be tracked
-	} else {
-		return false; //This user is allowing tracking.
 	}
 
 	//Otherwise, check if the browser supports DNT
@@ -12,9 +10,9 @@ nebula.isDoNotTrack = function(){
 		//Check if DNT is enabled
 		if ( window.doNotTrack == '1' || navigator.doNotTrack == 'yes' || navigator.doNotTrack == '1' || navigator.msDoNotTrack == '1' || window.external.msTrackingProtectionEnabled() ){
 			return true; //This user prefers not to be tracked
-		} else {
-			return false; //This user is allowing tracking.
 		}
+		
+		return false; //This user is allowing tracking.
 	}
 
 	return false; //The browser does not support DNT
@@ -173,7 +171,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Notable Downloads
-		nebula.dom.document.on('mousedown', ".notable a, a.notable", function(e){
+		nebula.dom.document.on('mousedown', '.notable a, a.notable', function(e){
 			let thisEvent = {
 				event: e,
 				category: 'Download',
@@ -541,12 +539,12 @@ nebula.eventTracking = async function(){
 				}
 
 				//Loop through the last number of click events to check the distance between them
-				let max_distance = 0;
+				let maxDistance = 0;
 				for ( let i = last - numberOfClicks+1; i < last; i++ ){ //Consider for... of loop here?
 					for ( let j = i+1; j <= last; j++ ){ //Consider for... of loop here?
 						let distance = Math.round(Math.sqrt(Math.pow(clickEvents[i].event.clientX - clickEvents[j].event.clientX, 2) + Math.pow(clickEvents[i].event.clientY - clickEvents[j].event.clientY, 2)));
-						if ( distance > max_distance ){
-							max_distance = distance;
+						if ( distance > maxDistance ){
+							maxDistance = distance;
 						}
 
 						//Ignore if distance is outside 100px radius
@@ -566,7 +564,7 @@ nebula.eventTracking = async function(){
 					selector: nebula.domTreeToString(e.target),
 				};
 
-				thisEvent.description = numberOfClicks + ' clicks in ' + timeDiff + ' seconds detected within ' + max_distance + 'px of ' + thisEvent.selector;
+				thisEvent.description = numberOfClicks + ' clicks in ' + timeDiff + ' seconds detected within ' + maxDistance + 'px of ' + thisEvent.selector;
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.description, {'nonInteraction': true}); //Non-interaction because if the user exits due to this it should be considered a bounce
@@ -777,20 +775,6 @@ nebula.eventTracking = async function(){
 	*/
 
 		//Capture Print Intent
-		//Note: This sends 2 events per print (beforeprint and afterprint). If one occurs more than the other we can remove one.
-		if ( 'matchMedia' in window ){ //IE10+
-			let mediaQueryList = window.matchMedia('print');
-			mediaQueryList.addListener(function(mql){
-				if ( mql.matches ){
-					sendPrintEvent('Before Print', 'mql.matches');
-				} else {
-					sendPrintEvent('After Print', '!mql.matches');
-				}
-			});
-		} else {
-			window.onbeforeprint = sendPrintEvent('Before Print', 'onbeforeprint');
-			window.onafterprint = sendPrintEvent('After Print', 'onafterprint');
-		}
 		function sendPrintEvent(action, trigger){
 			let thisEvent = {
 				category: 'Print',
@@ -806,6 +790,22 @@ nebula.eventTracking = async function(){
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
 			nebula.crm('event', thisEvent.category);
 		}
+		
+		//Note: This sends 2 events per print (beforeprint and afterprint). If one occurs more than the other we can remove one.
+		if ( 'matchMedia' in window ){ //IE10+
+			let mediaQueryList = window.matchMedia('print');
+			mediaQueryList.addListener(function(mql){
+				if ( mql.matches ){
+					sendPrintEvent('Before Print', 'mql.matches');
+				} else {
+					sendPrintEvent('After Print', '!mql.matches');
+				}
+			});
+		} else {
+			window.onbeforeprint = sendPrintEvent('Before Print', 'onbeforeprint');
+			window.onafterprint = sendPrintEvent('After Print', 'onafterprint');
+		}
+		
 
 		//Detect Adblock
 		if ( nebula.user.client.bot === false && nebula.site.options.adblock_detect ){ //If not a bot and adblock detection is active
@@ -898,7 +898,7 @@ nebula.eventTracking = async function(){
 //Ecommerce event tracking
 //Note: These supplement the plugin Enhanced Ecommerce for WooCommerce
 nebula.ecommerceTracking = async function(){
-	if ( nebula?.site?.ecommerce ){
+	if ( nebula.site?.ecommerce ){
 		//Add to Cart clicks
 		nebula.dom.document.on('click', 'a.add_to_cart, .single_add_to_cart_button', function(e){ //@todo "Nebula" 0: is there a trigger from WooCommerce this can listen for?
 			let thisEvent = {
@@ -1128,7 +1128,7 @@ nebula.crm = async function(action, data, sendNow = true){
 	}
 
 	if ( action === 'identify' ){
-		_hsq.push(["identify", data]);
+		_hsq.push(['identify', data]);
 
 		jQuery.each(data, function(key, value){
 			nebula.user[key] = value;
@@ -1157,7 +1157,7 @@ nebula.crm = async function(action, data, sendNow = true){
 	if ( action === 'event' ){
 		//Hubspot events are only available with an Enterprise Marketing subscription
 		//Refer to this documentation for event names and IDs: https://developers.hubspot.com/docs/methods/tracking_code_api/tracking_code_overview#idsandnames
-		_hsq.push(["trackEvent", data]);
+		_hsq.push(['trackEvent', data]);
 
 		_hsq.push(['setPath', window.location.href.replace(nebula.site.directory.root, '') + '#virtual-pageview/' + data]);
 		let oldTitle = document.title;

@@ -250,7 +250,7 @@ nebula.youtubeTracking = function(){
 		if ( jQuery('iframe[src*="youtube"], .lazy-youtube').length ){
 			//Load the Youtube iframe API script
 			let tag = document.createElement('script');
-			tag.src = "https://www.youtube.com/iframe_api";
+			tag.src = 'https://www.youtube.com/iframe_api';
 			let firstScriptTag = document.getElementsByTagName('script')[0];
 			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 		}
@@ -337,7 +337,7 @@ nebula.youtubeReady = function(e){
 	nebula.videos[id].duration = e.target.getDuration(); //The total duration of the video. Unit: Seconds
 	nebula.videos[id].current = e.target.getCurrentTime(); //The current position of the video. Units: Seconds
 	nebula.videos[id].percent = e.target.getCurrentTime()/e.target.getDuration(); //The percent of the current position. Multiply by 100 for actual percent.
-}
+};
 
 nebula.youtubeStateChange = function(e){
 	let thisVideo = nebula.videos[nebula.getYoutubeID(e.target)];
