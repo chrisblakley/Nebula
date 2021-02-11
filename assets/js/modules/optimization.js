@@ -514,7 +514,7 @@ nebula.loadJS = async function(url, handle){
 
 		return nebula.site.resources.lazy.promises[handle];
 	} else {
-		console.error('nebula.loadJS() requires a valid URL.');
+		nebula.help('nebula.loadJS() requires a valid URL. The requested URL is invalid:', url, '/functions/loadjs/');
 	}
 };
 
@@ -524,6 +524,6 @@ nebula.loadCSS = async function(url){
 	if ( typeof url === 'string' ){
 		jQuery('head').append('<link rel="stylesheet" href="' + url + '" type="text/css" media="screen">');
 	} else {
-		console.error('nebula.loadCSS() requires a valid URL. The requested URL is invalid:', url);
+		nebula.help('nebula.loadCSS() requires a valid URL. The requested URL is invalid:', url, '/functions/loadcss/');
 	}
 };

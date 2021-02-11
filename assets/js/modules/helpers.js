@@ -516,3 +516,26 @@ nebula.mmenus = async function(){
 		});
 	}
 };
+
+//Show help messages in the console to assist developers by informing of common issues and guide them to relevant documentation
+nebula.help = function(message, path, content = ''){
+	let documentationHostname = '';
+
+	if ( !path.includes('http') ){ //If the path is a full URL, use it explicitly
+		documentationHostname = 'https://nebula.gearside.com'; //Otherwise start with this hostname
+
+		if ( path.charAt(0) !== '/' ){ //If the path does not begin with a slash, add one
+			path = '/' + path;
+		}
+	}
+
+	let utm = '';
+	if ( path.includes('nebula') ){ //Only add UTM tags to the Nebula docs website
+		utm = '?utm_campaign=console+help&utm_source=' + encodeURI(nebula.site.name) + '&utm_medium=nebula&utm_content=' + content
+	}
+
+	let url = documentationHostname + path + utm;
+
+	console.error('📎 [Nebula Help]', message, url); //Show the message to the developer in the console
+	ga('send', 'exception', {'exDescription': '(JS) ' + message, 'exFatal': false}); //Report the error to Google Analytics to log it
+};

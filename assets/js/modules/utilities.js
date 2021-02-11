@@ -140,20 +140,20 @@ nebula.focusOnElement = function(element = false){
 	}
 
 	//Debounce this because several things could call this simultaneously that cannot be reduced (like hashchange + scrollTo function call)
-	nebula.debounce(function(){		
-		if ( typeof element === 'string' ){			
+	nebula.debounce(function(){
+		if ( typeof element === 'string' ){
 			element = jQuery.find(element); //Use find here to prevent arbitrary JS execution
-		} else if ( !element.jquery ){ //Check if it is already a jQuery object			
+		} else if ( !element.jquery ){ //Check if it is already a jQuery object
 			element = jQuery(element);
 		}
-	
+
 		//If the element is not focusable itself, add tabindex to make focusable and remove again
 		if ( !element.is(':focusable') ){ //Uses custom expression defined at the bottom of this file
 			element.attr('tabindex', -1).on('blur focusout', function(){
 				jQuery(this).removeAttr('tabindex');
 			});
 		}
-	
+
 		element.trigger('focus'); //Focus on the element
 	}, 500, 'focusing on element', true);
 };
@@ -303,7 +303,7 @@ nebula.once = function(fn, args, unique){
 //Passing immediate triggers the function on the leading edge (instead of the trailing edge).
 nebula.debounce = function(callback = false, wait = 1000, uniqueID = 'No Unique ID', immediate = false){
 	if ( !callback ){
-		console.error('nebula.debounce() requires a callback function.');
+		nebula.help('nebula.debounce() requires a callback function.', '/functions/debounce/');
 		return false;
 	}
 
@@ -319,7 +319,7 @@ nebula.debounce = function(callback = false, wait = 1000, uniqueID = 'No Unique 
 			callback.apply(context, args);
 		}
 	};
-	
+
 	let callNow = immediate && !nebula.debounceTimers[uniqueID];
 
 	clearTimeout(nebula.debounceTimers[uniqueID]); //Clear the timeout on every event. Once events stop the timeout is allowed to complete.

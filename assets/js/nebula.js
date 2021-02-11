@@ -55,7 +55,7 @@ jQuery(function(){
 	nebula.dom.document.on('visibilitychange', function(){
 		nebula.visibilityChangeActions();
 	});
-	
+
 	nebula.eventTracking();
 
 	window.performance.mark('(Nebula) DOM Ready [End]');

@@ -93,7 +93,7 @@ nebula.googleAddressAutocompleteCallback = function(autocompleteInput, uniqueID 
 //Use uniqueID to name places like "home", "mailing", "billing", etc.
 nebula.sanitizeGooglePlaceData = function(place = false, uniqueID = 'unnamed'){
 	if ( !place ){
-		console.error('Place data is required for sanitization.');
+		nebula.help('Place data is required for sanitization.', '/functions/sanitizegoogleplacedata/');
 		return false;
 	}
 

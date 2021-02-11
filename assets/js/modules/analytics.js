@@ -1163,8 +1163,7 @@ nebula.crm = async function(action, data, sendNow = true){
 	}
 
 	if ( !action || !data || typeof data == 'function' ){
-		console.error('Action and Data Object are both required.');
-		ga('send', 'exception', {'exDescription': '(JS) Action and Data Object are both required in nebula.crm()', 'exFatal': false});
+		nebula.help('Action and Data Object are both required in nebula.crm().', '/functions/crm/');
 		return false; //Action and Data are both required.
 	}
 

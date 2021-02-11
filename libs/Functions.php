@@ -2327,7 +2327,7 @@ trait Functions {
 
 			$types = 'any';
 			if ( isset($_GET['types']) ){
-				$types = json_decode(sanitize_text_field(trim($_GET['types'])));
+				$types =  explode(',', sanitize_text_field(trim($_GET['types'])));
 			}
 
 			//Prepare the standard WP search query parameters (do not include custom fields here).

@@ -96,15 +96,21 @@ nebula.searchTriggerOnlyChars = function(e){
 //Enable autocomplete search on WordPress core selectors
 nebula.autocompleteSearchListeners = async function(){
 	jQuery('.nebula-search input, input#s, input.search').on('focus', function(){
-		if ( !jQuery(this).hasClass('no-autocomplete') ){
+		if ( !jQuery(this).hasClass('no-autocomplete') ){ //Use this class to disable or override the default Nebula autocomplete search parameters
 			nebula.loadJS(nebula.site.resources.scripts.nebula_jquery_ui, 'jquery-ui').then(function(){
 				nebula.dom.document.on('blur', '.nebula-search input', function(){
 					jQuery('.nebula-search').removeClass('searching').removeClass('autocompleted');
 				});
 
+				//I do not know why this cannot be debounced
 				jQuery('input#s, input.search').on('keyup paste change', function(e){
 					if ( jQuery(this).val().trim().length && nebula.searchTriggerOnlyChars(e) ){
-						nebula.autocompleteSearch(jQuery(this));
+						let types = false;
+						if ( jQuery(this).is('[data-types]') ){
+							types = jQuery(this).attr('data-types');
+						}
+
+						nebula.autocompleteSearch(jQuery(this), types);
 					}
 				});
 			});
@@ -115,15 +121,13 @@ nebula.autocompleteSearchListeners = async function(){
 };
 
 //Run an autocomplete search on a passed element.
-nebula.autocompleteSearch = function(element, types){
+nebula.autocompleteSearch = function(element, types = ''){
 	if ( typeof element === 'string' ){
 		element = jQuery(element);
 	}
 
-	if ( types && !Array.isArray(types) ){
-		console.error('nebula.autocompleteSearch requires 2nd parameter to be an array.');
-		ga('send', 'exception', {'exDescription': '(JS) nebula.autocompleteSearch requires 2nd parameter to be an array', 'exFatal': false});
-		return false;
+	if ( types && Array.isArray(types) ){
+		types = types.join(','); //Convert an array to to a comma-separated string
 	}
 
 	nebula.dom.document.trigger('nebula_autocomplete_search_start', element);
@@ -145,9 +149,14 @@ nebula.autocompleteSearch = function(element, types){
 			element.closest('.input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
 		}
 
-		let postTypes = '';
+		let typesQuery = '';
 		if ( types ){
-			postTypes = '&types=' + JSON.stringify(types);
+			typesQuery = '&types=' + types;
+		}
+
+		if ( typeof element.autocomplete !== 'function' ){
+			nebula.help('nebula.autocompleteSearch requires jQuery UI. Load that library before calling this function', '/functions/autocompletesearch/');
+			return false;
 		}
 
 		element.autocomplete({ //jQuery UI dependent
@@ -157,7 +166,7 @@ nebula.autocompleteSearch = function(element, types){
 				collision: 'flip',
 			},
 			source: function(request, response){
-				fetch(nebula.site.home_url + '/wp-json/nebula/v2/autocomplete_search?term=' + request.term + postTypes, {importance: 'high'}).then(function(response){
+				fetch(nebula.site.home_url + '/wp-json/nebula/v2/autocomplete_search?term=' + request.term + typesQuery, {importance: 'high'}).then(function(response){
 					return response.json();
 				}).then(function(data){
 					nebula.dom.document.trigger('nebula_autocomplete_search_success', data);
@@ -246,6 +255,7 @@ nebula.autocompleteSearch = function(element, types){
 			let listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a href='" + item.link + "'> " + item.label.replaceAll(/\\/g, '') + "</a>").appendTo(ul);
 			return listItem;
 		};
+
 		let thisFormIdentifier = element.closest('form').attr('id') || element.closest('form').attr('name') || element.closest('form').attr('class');
 		element.autocomplete('widget').addClass('form-identifier-' + thisFormIdentifier);
 	}
