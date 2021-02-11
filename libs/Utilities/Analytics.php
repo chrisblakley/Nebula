@@ -35,7 +35,7 @@ if ( !trait_exists('Analytics') ){
 				return false;
 			}
 
-			return true;
+			return true; //Analytics is allowed
 		}
 
 		//If the "Do Not Track" browser setting is enabled

@@ -138,7 +138,7 @@ nebula.focusOnElement = function(element = false){
 	if ( !element ){
 		return;
 	}
-	
+
 	//Debounce this because several things could call this simultaneously that cannot be reduced (like hashchange + scrollTo function call)
 	nebula.debounce(function(){		
 		if ( typeof element === 'string' ){			
@@ -319,6 +319,7 @@ nebula.debounce = function(callback = false, wait = 1000, uniqueID = 'No Unique 
 			callback.apply(context, args);
 		}
 	};
+	
 	let callNow = immediate && !nebula.debounceTimers[uniqueID];
 
 	clearTimeout(nebula.debounceTimers[uniqueID]); //Clear the timeout on every event. Once events stop the timeout is allowed to complete.

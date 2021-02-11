@@ -1,8 +1,8 @@
 //Check if the user has enabled DNT (if supported in their browser)
 nebula.isDoNotTrack = function(){
 	//Use server-side header detection first
-	if ( nebula.user?.dnt == 1 ){
-		return true; //This user prefers not to be tracked
+	if ( typeof nebula.user?.dnt === 'boolean' ){ //Check if it is defined
+		return nebula.user.dnt;
 	}
 
 	//Otherwise, check if the browser supports DNT
@@ -11,7 +11,7 @@ nebula.isDoNotTrack = function(){
 		if ( window.doNotTrack == '1' || navigator.doNotTrack == 'yes' || navigator.doNotTrack == '1' || navigator.msDoNotTrack == '1' || window.external.msTrackingProtectionEnabled() ){
 			return true; //This user prefers not to be tracked
 		}
-		
+
 		return false; //This user is allowing tracking.
 	}
 
@@ -39,7 +39,48 @@ nebula.eventTracking = async function(){
 			});
 		}
 
-		//Btn Clicks
+		//Back/Forward
+		if ( performance.navigation.type === 2 ){ //If the user arrived at this page via the back/forward button
+			let previousPage = '(Unknown)';
+			let quickBack = false;
+			if ( 'localStorage' in window ){
+				let prev = JSON.parse(localStorage.getItem('prev')); //Get the previous page from localstorage
+				previousPage = prev.path; //Get the previous page from localstorage
+				quickBack = prev.quick || false;
+			}
+
+			ga('send', 'event', 'Browser Navigation', 'Back/Forward', 'From: ' + previousPage, {'nonInteraction': true});
+
+			if ( quickBack ){ //If the previous page was viewed for a very short time
+				ga('send', 'event', 'Quick Back', 'Quickly left from: ' + previousPage, 'Back to: ' + document.location.pathname, {'nonInteraction': true}); //Technically this could be a "quick forward" too, but less likely
+			}
+		}
+
+		//Reloads
+		if ( performance.navigation.type === 1 ){ //If the user reloaded the page
+			ga('send', 'event', 'Browser Navigation', 'Reload', document.location.pathname, {'nonInteraction': true});
+		}
+
+		//Prep page info and detect quick unloads
+		if ( 'localStorage' in window ){
+			let prev = {
+				'path': document.location.pathname, //Prep the "previous page" to this page for future use.
+				'quick': false //Reset the flag
+			};
+
+			localStorage.setItem('prev', JSON.stringify(prev)); //Store them in localstorage
+
+			//This detects quick navigations/refresh/exit that happen in the first 4 seconds after window load
+			window.addEventListener('beforeunload', function(e){
+				let activeTime = Date.now() - performance.timing.loadEventEnd;
+				if ( activeTime < 4000 ){
+					prev.quick = true;
+					localStorage.setItem('prev', JSON.stringify(prev)); //Store the flag to tell the next page it was a quick back
+				}
+			});
+		}
+
+		//Button Clicks
 		nebula.dom.document.on('mousedown', "button, .button, .btn, [role='button'], a.wp-block-button__link, .hs-button", function(e){
 			let thisEvent = {
 				event: e,
@@ -790,7 +831,7 @@ nebula.eventTracking = async function(){
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
 			nebula.crm('event', thisEvent.category);
 		}
-		
+
 		//Note: This sends 2 events per print (beforeprint and afterprint). If one occurs more than the other we can remove one.
 		if ( 'matchMedia' in window ){ //IE10+
 			let mediaQueryList = window.matchMedia('print');
@@ -805,7 +846,7 @@ nebula.eventTracking = async function(){
 			window.onbeforeprint = sendPrintEvent('Before Print', 'onbeforeprint');
 			window.onafterprint = sendPrintEvent('After Print', 'onafterprint');
 		}
-		
+
 
 		//Detect Adblock
 		if ( nebula.user.client.bot === false && nebula.site.options.adblock_detect ){ //If not a bot and adblock detection is active

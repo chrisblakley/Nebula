@@ -261,7 +261,7 @@ nebula.scrollTo = function(element, offset = 0, speed = 500, onlyWhenBelow = fal
 					if ( !speed ){
 						speed = nebula.scroll.speed || 500;
 					}
-					
+
 					jQuery('html, body').animate({
 						scrollTop: element.offset().top-offset
 					}, speed, function(){
