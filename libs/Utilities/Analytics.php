@@ -17,7 +17,7 @@ if ( !trait_exists('Analytics') ){
 
 			add_action('nebula_head_open', array($this, 'google_optimize_tag'));
 
-			register_shutdown_function(array($this, 'ga_log_fatal_errors'));
+			register_shutdown_function(array($this, 'ga_log_fatal_php_errors'));
 		}
 
 		//If analytics should be allowed.
@@ -209,7 +209,7 @@ if ( !trait_exists('Analytics') ){
 		}
 
 		//Log fatal errors in Google Analytics as crashes
-		public function ga_log_fatal_errors(){
+		public function ga_log_fatal_php_errors(){
 			$error = error_get_last();
 			if ( isset($error) && $error['type'] === E_ERROR ){
 				$message = str_replace(WP_CONTENT_DIR, '', strstr($error['message'], ' in /', true)); //Remove high-level directories to reduce clutter and prevent PII

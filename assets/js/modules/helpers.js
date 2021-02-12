@@ -531,7 +531,7 @@ nebula.help = function(message, path, content = ''){
 
 	let utm = '';
 	if ( path.includes('nebula') ){ //Only add UTM tags to the Nebula docs website
-		utm = '?utm_campaign=console+help&utm_source=' + encodeURI(nebula.site.name) + '&utm_medium=nebula&utm_content=' + content
+		utm = '?utm_campaign=console+help&utm_source=' + encodeURI(nebula.site.name) + '&utm_medium=nebula&utm_content=' + content;
 	}
 
 	let url = documentationHostname + path + utm;

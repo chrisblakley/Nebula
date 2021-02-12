@@ -396,6 +396,8 @@
 
 					originalBuildHitTask(model); //Send the payload to Google Analytics
 				});
+
+				<?php do_action('nebula_ga_after_send_pageview'); ?>
 			});
 
 			<?php if ( (isset($_SERVER['HTTP_X_PURPOSE']) && $_SERVER['HTTP_X_PURPOSE'] === 'preview') && (isset($_SERVER['HTTP_USER_AGENT']) && strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'snapchat') > 0) ): //Check if viewing in Snapchat ?>

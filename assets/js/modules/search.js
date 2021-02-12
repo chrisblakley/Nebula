@@ -155,7 +155,7 @@ nebula.autocompleteSearch = function(element, types = ''){
 		}
 
 		if ( typeof element.autocomplete !== 'function' ){
-			nebula.help('nebula.autocompleteSearch requires jQuery UI. Load that library before calling this function', '/functions/autocompletesearch/');
+			nebula.help('nebula.autocompleteSearch requires jQuery UI. Load that library before calling this function', '/functions/autocompletesearch/', 'autocompleteSearch');
 			return false;
 		}
 
@@ -165,20 +165,20 @@ nebula.autocompleteSearch = function(element, types = ''){
 				at: 'left bottom',
 				collision: 'flip',
 			},
-			source: function(request, response){
-				fetch(nebula.site.home_url + '/wp-json/nebula/v2/autocomplete_search?term=' + request.term + typesQuery, {importance: 'high'}).then(function(response){
-					return response.json();
-				}).then(function(data){
-					nebula.dom.document.trigger('nebula_autocomplete_search_success', data);
+			source: function(request, sourceResponse){
+				fetch(nebula.site.home_url + '/wp-json/nebula/v2/autocomplete_search?term=' + request.term + typesQuery, {importance: 'high'}).then(function(fetchResponse){
+					return fetchResponse.json();
+				}).then(function(fetchData){
+					nebula.dom.document.trigger('nebula_autocomplete_search_success', fetchData);
 					ga('set', nebula.analytics.metrics.autocompleteSearches, 1);
 
 					var noSearchResults = ' (No Results)'; //Prep the string
 
-					if ( data ){
-						nebula.dom.document.trigger('nebula_autocomplete_search_results', data);
-						nebula.prefetch(data[0].link);
+					if ( fetchData ){
+						nebula.dom.document.trigger('nebula_autocomplete_search_results', fetchData);
+						nebula.prefetch(fetchData[0].link);
 
-						jQuery.each(data, function(index, value){
+						jQuery.each(fetchData, function(index, value){
 							value.label = value.label.replaceAll(/&#038;/g, '\&');
 						});
 
@@ -204,7 +204,7 @@ nebula.autocompleteSearch = function(element, types = ''){
 					}, 1500, 'autocomplete success buffer');
 
 					ga('send', 'timing', 'Autocomplete Search', 'Server Response', Math.round(nebula.timer('(Nebula) Autocomplete Search', 'lap')), 'Each search until server results');
-					response(data);
+					sourceResponse(fetchData);
 					element.closest('form').removeClass('searching').addClass('autocompleted');
 					element.closest('.input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
 				}).catch(function(XMLHttpRequest, textStatus, errorThrown){

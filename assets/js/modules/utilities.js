@@ -136,6 +136,7 @@ nebula.postMessage = function(data = {}){
 //Focus on an element
 nebula.focusOnElement = function(element = false){
 	if ( !element ){
+		nebula.help('nebula.focusOnElement() requires an element as a string or jQuery object.', '/functions/focusonelement/', 'focusOnElement');
 		return;
 	}
 
@@ -199,6 +200,7 @@ nebula.reflow = function(selector){
 	} else if ( typeof selector === 'object' ){
 		element = selector;
 	} else {
+		nebula.help('nebula.reflow() requires a selector as a string or jQuery object.', '/functions/reflow/', 'reflow');
 		return false;
 	}
 
@@ -213,6 +215,7 @@ nebula.animate = function(selector, newAnimationClasses, oldAnimationClasses){
 	} else if ( typeof selector === 'object' ) {
 		element = selector;
 	} else {
+		nebula.help('nebula.animate() requires a selector as a string or jQuery object.', '/functions/animate/', 'animate');
 		return false;
 	}
 
@@ -303,7 +306,7 @@ nebula.once = function(fn, args, unique){
 //Passing immediate triggers the function on the leading edge (instead of the trailing edge).
 nebula.debounce = function(callback = false, wait = 1000, uniqueID = 'No Unique ID', immediate = false){
 	if ( !callback ){
-		nebula.help('nebula.debounce() requires a callback function.', '/functions/debounce/');
+		nebula.help('nebula.debounce() requires a callback function.', '/functions/debounce/', 'debounce');
 		return false;
 	}
 
@@ -331,6 +334,11 @@ nebula.debounce = function(callback = false, wait = 1000, uniqueID = 'No Unique 
 
 //Limit functionality to only run once per specified time period
 nebula.throttle = function(callback, cooldown = 1000, uniqueID = 'No Unique ID'){
+	if ( !callback ){
+		nebula.help('nebula.throttle() requires a callback function.', '/functions/throttle/', 'throttle');
+		return false;
+	}
+
 	if ( typeof nebula.throttleTimers === 'undefined' ){
 		nebula.throttleTimers = {};
 	}
@@ -398,6 +406,7 @@ nebula.timer = function(uniqueID, action, name){
 
 	//uniqueID is required
 	if ( !uniqueID || uniqueID === 'start' || uniqueID === 'lap' || uniqueID === 'end' ){
+		nebula.help('nebula.timer() requires a uniqueID.', '/functions/timer/', 'timer');
 		return false;
 	}
 
@@ -411,6 +420,7 @@ nebula.timer = function(uniqueID, action, name){
 
 	//Can not lap or end a timing that has not started.
 	if ( action !== 'start' && typeof nebula.timings[uniqueID] === 'undefined' ){
+		nebula.help('nebula.timer() cannot lap or end a timing that has not started.', '/functions/timer/', 'timer');
 		return false;
 	}
 
@@ -512,14 +522,16 @@ nebula.millisecondsToString = function(ms){
 	let seconds = parseInt((ms/1000)%60);
 	let minutes = parseInt((ms/(1000*60))%60);
 	let hours = parseInt((ms/(1000*60*60))%24);
-
 	let timeString = '';
+
 	if ( hours > 0 ){
 		timeString += hours + 'h ';
 	}
+
 	if ( minutes > 0 ){
 		timeString += minutes + 'm ';
 	}
+
 	if ( seconds > 0 || milliseconds > 0 ){
 		timeString += seconds;
 
@@ -529,6 +541,7 @@ nebula.millisecondsToString = function(ms){
 
 		timeString += 's';
 	}
+
 	return timeString;
 };
 
@@ -608,9 +621,11 @@ nebula.vibrate = function(pattern){
 	if ( typeof pattern !== 'object' ){
 		pattern = [100, 200, 100, 100, 75, 25, 100, 200, 100, 500, 100, 200, 100, 500];
 	}
+
 	if ( navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate ){
 		navigator.vibrate(pattern);
 	}
+
 	return false;
 };
 
@@ -697,7 +712,7 @@ nebula.checkNotificationPermission = function(){
 		return true;
 	} else if ( Notification.permission !== 'denied' ){
 		Notification.requestPermission(function(permission){
-			if( !('permission' in Notification) ){ //Firefox and Chrome only
+			if ( !('permission' in Notification) ){ //Firefox and Chrome only
 				Notification.permission = permission;
 			}
 			if ( permission === 'granted' ){
@@ -705,6 +720,7 @@ nebula.checkNotificationPermission = function(){
 			}
 		});
 	}
+
 	return false;
 };
 

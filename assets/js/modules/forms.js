@@ -481,7 +481,8 @@ nebula.liveValidator = function(){
 nebula.applyValidationClasses = function(element, validation, showFeedback){
 	if ( typeof element === 'string' ){
 		element = jQuery(element);
-	} else if ( typeof element !== 'object' ) {
+	} else if ( typeof element !== 'object' ){
+
 		return false;
 	}
 

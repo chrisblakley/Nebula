@@ -786,34 +786,24 @@ nebula.eventTracking = async function(){
 			nebula.crm('event', 'AJAX Error');
 		});
 
-		//Window Errors
-		window.addEventListener('error', function(error){
-			let errorMessage = error.message + ' at ' + error.lineno + ' of ' + error.filename;
-			if ( error.message.toLowerCase().includes('script error') ){ //If it is a script error
-				errorMessage = 'Script error (An error occurred in a script hosted on a different domain)'; //No additional information is available because of the browser's same-origin policy. Use CORS when possible to get additional information.
-			}
-
-			ga('send', 'exception', {'exDescription': '(JS) ' + errorMessage, 'exFatal': false}); //Is there a better way to detect fatal vs non-fatal errors?
-			window.dataLayer.push({'event': 'nebula-window-error', 'error': errorMessage});
-			nebula.crm('event', 'JavaScript Error');
-			nebula.usage(error);
-		}, {passive: true});
+		//Window errors are detected in usage.js for better visibility
 
 		//Reporting Observer deprecations and interventions
-		//@todo Nebula 0: This may be causing "aw snap" errors in Chrome. Disabling for now until the feature is more stable.
-		//https://caniuse.com/#feat=mdn-api_reportingobserver
-	/*
-		if ( typeof window.ReportingObserver !== 'undefined' ){ //Chrome 68+
-			let nebulaReportingObserver = new ReportingObserver(function(reports, observer){
-				for ( report of reports ){
-					if ( !report.body.sourceFile.includes('extension') ){ //Ignore browser extensions
-						ga('send', 'exception', {'exDescription': '(JS) Reporting Observer [' + report.type + ']: ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber, 'exFatal': false});
+		try {
+			if ( 'ReportingObserver' in window ){ //Chrome 68+
+				let nebulaReportingObserver = new ReportingObserver(function(reports, observer){
+					for ( report of reports ){
+						if ( !report.body.sourceFile.includes('extension') ){ //Ignore browser extensions
+							ga('send', 'exception', {'exDescription': '(JS) Reporting Observer [' + report.type + ']: ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber, 'exFatal': false});
+						}
 					}
-				}
-			}, {buffered: true});
-			nebulaReportingObserver.observe();
+				}, {buffered: true});
+
+				nebulaReportingObserver.observe();
+			}
+		} catch {
+			//Ignore errors
 		}
-	*/
 
 		//Capture Print Intent
 		function sendPrintEvent(action, trigger){
@@ -846,7 +836,6 @@ nebula.eventTracking = async function(){
 			window.onbeforeprint = sendPrintEvent('Before Print', 'onbeforeprint');
 			window.onafterprint = sendPrintEvent('After Print', 'onafterprint');
 		}
-
 
 		//Detect Adblock
 		if ( nebula.user.client.bot === false && nebula.site.options.adblock_detect ){ //If not a bot and adblock detection is active
@@ -1039,34 +1028,6 @@ nebula.ecommerceTracking = async function(){
 			nebula.crm('event', 'Ecommerce Placed Order');
 			nebula.crm('identify', {hs_lifecyclestage_customer_date: 1}); //@todo "Nebula" 0: What kind of date format does Hubspot expect here?
 		});
-	}
-};
-
-//Track Nebula framework errors for quality assurance. This will need to be updated for GA4 most likely.
-nebula.usage = async function(error){
-	if ( error.filename.match(/themes\/Nebula-?(main|parent|\d+\.\d+)?\//i) ){ //If the error is in a Nebula parent file
-		let errorMessage = '(JS) ' + error.message + ' at ' + error.lineno + ' of ' + error.filename;
-		navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [
-			'v=1', //Protocol Version
-			'tid=UA-36461517-5', //Tracking ID
-			'cid=' + nebula.user.cid,
-			'ua=' + nebula.user.client.user_agent, //User Agent
-			'dl=' + window.location.href, //Page
-			'dt=' + document.title, //Title
-			't=exception', //Hit Type
-			'exd=' + errorMessage, //Exception Detail
-			'exf=1', //Fatal Exception?
-			'cd1=' + nebula.site.home_url, //Homepage URL
-			'cd2=' + Date.now(), //UNIX Time
-			'cd6=' + nebula.version.number, //Nebula version
-			'cd5=' + nebula.site.directory.root, //Site_URL
-			'cd7=' + nebula.user.client.user_agent, //GA CID
-			'cd9=' + nebula.site.is_child, //Is child theme?
-			'cd12=' + window.location.href, //Permalink
-			'cn=Nebula Usage', //Campaign
-			'cs=' + nebula.site.home_url, //Source
-			'cm=WordPress', //Medium
-		].join('&'));
 	}
 };
 
