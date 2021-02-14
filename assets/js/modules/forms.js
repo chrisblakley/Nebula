@@ -293,14 +293,12 @@ nebula.cf7Functions = async function(){
 	});
 };
 
-nebula.updateFormFlow = function(formID, field, info){
+nebula.updateFormFlow = function(formID, field, info = ''){
 	if ( typeof nebula.formFlow === 'undefined' ){
 		nebula.formFlow = {};
 	}
 
-	if ( !info ){
-		info = '';
-	} else {
+	if ( info !== '' ){
 		if ( info.length > 25 ){
 			info = info.substring(0, 25) + '...'; //Truncate long info text
 		}

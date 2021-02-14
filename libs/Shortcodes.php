@@ -128,7 +128,7 @@ if ( !trait_exists('Shortcodes') ){
 
 			//Call the widget directly via PHP: https://codex.wordpress.org/Template_Tags/the_widget
 			the_widget(esc_html($widget_name), $instance, array(
-				'widget_id' => 'arbitrary-instance-' . rand(10000, 99999),
+				'widget_id' => 'arbitrary-instance-' . rand(10000, 99999), //PHP 7.4 use numeric separators here
 				'before_widget' => '',
 				'after_widget' => '',
 				'before_title' => '',
@@ -500,7 +500,7 @@ if ( !trait_exists('Shortcodes') ){
 
 			//@todo "Nebula" 0: Use null coalescing operator here if possible. Probably not possible but think about it.
 			if ( !$id ){
-				$id = 'nebula-slider-' . random_int(1, 10000);
+				$id = 'nebula-slider-' . random_int(1, 10000); //PHP 7.4 use numeric separators here
 			} elseif ( strlen($id) > 0 && ctype_digit(substr($id, 0, 1)) ){
 				$id = 'nebula-slider-' . $id;
 			}

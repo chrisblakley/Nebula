@@ -220,7 +220,7 @@ nebula.pwa = function(){
 			let thisEvent = {
 				category: 'Progressive Web App',
 				action: 'Install Prompt Shown',
-				label: event.platforms.join(', '),
+				label: 'The PWA install prompt was shown to the user',
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -255,7 +255,7 @@ nebula.pwa = function(){
 		let thisEvent = {
 			category: 'Progressive Web App',
 			action: 'App Installed',
-			label: 'The app has been installed',
+			label: 'The PWA has been installed',
 		};
 
 		nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -350,7 +350,7 @@ nebula.prefetch = async function(url, callback, element){
 		//Ignore blocklisted terms (logout, 1-click purchase buttons, etc.)
 		let prefetchBlocklist = ['logout'];
 
-		//@todo "Nebula" 0: Allow other JS to add to the blocklist here... https://core.trac.wordpress.org/changeset/41375
+		//@todo "Nebula" 0: It would be nice to allow other JS to add to the blocklist here... Would require this be added to WP core: https://core.trac.wordpress.org/changeset/41375
 
 		jQuery.each(prefetchBlocklist, function(index, value){
 			if ( url.includes(value) ){
@@ -402,6 +402,7 @@ nebula.lazyLoadAssets = async function(){
 		window.addEventListener('scroll', lazyLoadScrollBottom); //Scroll is passive by default
 	} catch {
 		nebula.loadEverything(); //If any error, load everything immediately
+		nebula.help('Something prevented proper lazy loading of assets. All assets have been loaded immediately.', '/functions/lazyloadassets/');
 	}
 
 	//Load all lazy elements at once if requested
@@ -514,7 +515,7 @@ nebula.loadJS = async function(url, handle){
 
 		return nebula.site.resources.lazy.promises[handle];
 	} else {
-		nebula.help('nebula.loadJS() requires a valid URL. The requested URL is invalid:', url, '/functions/loadjs/');
+		nebula.help('nebula.loadJS() requires a valid URL. The requested URL is invalid: ' + url, '/functions/loadjs/');
 	}
 };
 
@@ -524,6 +525,6 @@ nebula.loadCSS = async function(url){
 	if ( typeof url === 'string' ){
 		jQuery('head').append('<link rel="stylesheet" href="' + url + '" type="text/css" media="screen">');
 	} else {
-		nebula.help('nebula.loadCSS() requires a valid URL. The requested URL is invalid:', url, '/functions/loadcss/');
+		nebula.help('nebula.loadCSS() requires a valid URL. The requested URL is invalid: ' + url, '/functions/loadcss/');
 	}
 };

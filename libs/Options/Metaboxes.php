@@ -2122,14 +2122,6 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
-					<label for="version_legacy">Legacy Nebula version?</label>
-					<input type="text" id="version_legacy" class="form-control" value="<?php echo $nebula_data['version_legacy']; ?>" readonly />
-					<p class="nebula-help-text short-help form-text text-muted">If a future version is deemed incompatible with previous versions, this will become true, and theme update checks will be disabled.</p>
-					<p class="nebula-help-text more-help form-text text-muted">Incompatible versions are labeled with a "u" at the end of the version number.</p>
-					<p class="option-keywords">readonly</p>
-				</div>
-
-				<div class="form-group">
 					<label for="next_version">Next Nebula version</label>
 					<input type="text" name="nebula_options[next_version]" id="next_version" class="form-control" value="<?php echo $nebula_data['next_version']; ?>" readonly />
 					<p class="nebula-help-text short-help form-text text-muted">The latest version available on <a href="https://github.com/chrisblakley/Nebula" target="_blank">GitHub</a>.</p>

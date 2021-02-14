@@ -1069,16 +1069,7 @@ if ( !trait_exists('Admin') ){
 				$this->update_data('current_version_date', $this->version('date'));
 			}
 
-			if ( !$this->allow_theme_update() ){
-				//Check for unsupported version: if newer version of Nebula has a "u" at the end of the version number, disable automated updates.
-				$remote_version_info = get_option('external_theme_updates-Nebula-main');
-				if ( !empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) !== str_replace('u', '', $this->version('raw')) ){
-					$this->update_data('version_legacy', 'true');
-					$this->update_data('current_version', $this->version('raw'));
-					$this->update_data('current_version_date', $this->version('date'));
-					$this->update_data('next_version', 'INCOMPATIBLE');
-				}
-			} elseif ( current_user_can('update_themes') && is_child_theme() ){
+			if ( current_user_can('update_themes') && is_child_theme() ){
 				require_once get_template_directory() . '/inc/vendor/plugin-update-checker/plugin-update-checker.php';
 				$theme_update_checker = Puc_v4_Factory::buildUpdateChecker(
 					'https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/nebula_theme.json',
@@ -1111,13 +1102,6 @@ if ( !trait_exists('Admin') ){
 				$this->update_data('current_version', $this->version('full'));
 				$this->update_data('current_version_date', $this->version('date'));
 
-				if ( strpos($update->version, 'u') && str_replace('u', '', $update->version) !== str_replace('u', '', $this->version('full')) ){ //If GitHub version has "u", disable automated updates.
-					$this->update_data('version_legacy', 'true');
-				} elseif ( $this->get_data('version_legacy') === 'true' ){ //Else, reset the option to false (this triggers when a legacy version has been manually updated to support automated updates again).
-					$this->update_data('version_legacy', 'false');
-					$this->update_data('theme_update_notification', 'disabled');
-				}
-
 				return $update;
 			}
 
@@ -1142,7 +1126,6 @@ if ( !trait_exists('Admin') ){
 					add_filter('update_feedback', __('Sending admin notification email(s)...')); //Need to test this further
 					$this->theme_update_email($prev_version, $prev_version_commit_date, $new_version); //Send email with update information
 
-					$this->update_data('version_legacy', 'false');
 					$this->update_data('need_sass_compile', 'true'); //Compile all SCSS files on next pageview
 					$this->update_data('num_theme_updates', $num_theme_updates);
 					$this->update_data('last_automated_update_date', date('U'));
@@ -1155,8 +1138,6 @@ if ( !trait_exists('Admin') ){
 						$this->render_scss('all'); //Re-render all SCSS files.
 					}
 				}
-			} else {
-				$this->update_data('version_legacy', 'true');
 			}
 		}
 
@@ -1249,7 +1230,7 @@ if ( !trait_exists('Admin') ){
 
 		//Control session time (for the "Remember Me" checkbox)
 		public function session_expire($expirein){
-			return 2592000; //30 days (Default is 1209600 (14 days)
+			return 2592000; //30 days (Default is 1209600 (14 days) //PHP 7.4 use numeric separators here
 		}
 
 		//Send Google Analytics pageviews on the WP Admin and Login pages too
@@ -1553,7 +1534,7 @@ if ( !trait_exists('Admin') ){
 			add_action('save_post', array($this, 'save_post_class_meta' ), 10, 2);
 		}
 
-		//Internal Search Keywords Metabox and Custom Field
+		//Internal Search Keywords post metabox and Custom Field
 		public function nebula_add_post_metabox(){
 			$builtin_types = array('post', 'page', 'attachment');
 			$custom_types = get_post_types(array('_builtin' => false));
@@ -1570,7 +1551,7 @@ if ( !trait_exists('Admin') ){
 			}
 		}
 
-		//Internal Search Keywords Metabox content
+		//Internal Search Keywords post metabox content
 		function nebula_post_metabox($object, $box){
 			wp_nonce_field(basename(__FILE__), 'nebula_post_nonce');
 			?>

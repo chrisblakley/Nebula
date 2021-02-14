@@ -131,8 +131,8 @@ nebula.autocompleteSearch = function(element, types = ''){
 	}
 
 	nebula.dom.document.trigger('nebula_autocomplete_search_start', element);
-	nebula.timer('(Nebula) Autocomplete Search [Start]', 'start');
-	nebula.timer('(Nebula) Autocomplete Response [Start]', 'start');
+	nebula.timer('(Nebula) Autocomplete Search', 'start');
+	nebula.timer('(Nebula) Autocomplete Response', 'start');
 
 	if ( element.val().trim().length ){
 		if ( element.val().trim().length >= 2 ){ //This checks the length for animation but the minlength (below) handles it for autocomplete
@@ -155,7 +155,7 @@ nebula.autocompleteSearch = function(element, types = ''){
 		}
 
 		if ( typeof element.autocomplete !== 'function' ){
-			nebula.help('nebula.autocompleteSearch requires jQuery UI. Load that library before calling this function', '/functions/autocompletesearch/', 'autocompleteSearch');
+			nebula.help('nebula.autocompleteSearch requires jQuery UI. Load that library before calling this function', '/functions/autocompletesearch/');
 			return false;
 		}
 

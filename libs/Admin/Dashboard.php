@@ -667,7 +667,7 @@ if ( !trait_exists('Dashboard') ){
 			//MySQL version
 			if ( function_exists('mysqli_get_client_version') ){
 				$mysql_version = mysqli_get_client_version();
-				echo '<li><i class="fas fa-fw fa-database"></i> MySQL Version: <strong title="Raw: ' . $mysql_version . '">' . floor($mysql_version/10000) . '.' . floor(($mysql_version%10000)/100) . '.' . ($mysql_version%10000)%100 . '</strong></li>';
+				echo '<li><i class="fas fa-fw fa-database"></i> MySQL Version: <strong title="Raw: ' . $mysql_version . '">' . floor($mysql_version/10000) . '.' . floor(($mysql_version%10000)/100) . '.' . ($mysql_version%10000)%100 . '</strong></li>'; //PHP 7.4 use numeric separators here
 			}
 
 			//PHP version
@@ -705,15 +705,15 @@ if ( !trait_exists('Dashboard') ){
 					set_transient('nebula_directory_size_child_theme', $nebula_child_size, DAY_IN_SECONDS);
 				}
 
-				echo '<li><i class="fas fa-code"></i> Parent theme directory size: <strong>' . round($nebula_parent_size/1048576, 2) . 'mb</strong> </li>';
-				echo '<li><i class="fas fa-code"></i> Child theme directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>';
+				echo '<li><i class="fas fa-code"></i> Parent theme directory size: <strong>' . round($nebula_parent_size/1048576, 2) . 'mb</strong> </li>'; //PHP 7.4 use numeric separators here
+				echo '<li><i class="fas fa-code"></i> Child theme directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>'; //PHP 7.4 use numeric separators here
 			} else {
 				$nebula_size = get_transient('nebula_directory_size_theme');
 				if ( empty($nebula_size) || $this->is_debug() ){
 					$nebula_size = $this->foldersize(get_stylesheet_directory());
 					set_transient('nebula_directory_size_theme', $nebula_size, DAY_IN_SECONDS);
 				}
-				echo '<li><i class="fas fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>';
+				echo '<li><i class="fas fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>'; //PHP 7.4 use numeric separators here
 			}
 
 			do_action('nebula_dev_dashboard_directories');
@@ -733,12 +733,12 @@ if ( !trait_exists('Dashboard') ){
 			} else {
 				$upload_max = '';
 			}
-			echo '<li><i class="fas fa-fw fa-images"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> ' . $upload_max . '</li>';
+			echo '<li><i class="fas fa-fw fa-images"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> ' . $upload_max . '</li>'; //PHP 7.4 use numeric separators here
 
 			//PHP Disk Space
 			if ( function_exists('disk_total_space') && function_exists('disk_free_space') ){
-				$disk_total_space = disk_total_space(ABSPATH)/1073741824; //In GB
-				$disk_free_space = disk_free_space(ABSPATH)/1073741824; //In GB
+				$disk_total_space = disk_total_space(ABSPATH)/1073741824; //In GB //PHP 7.4 use numeric separators here
+				$disk_free_space = disk_free_space(ABSPATH)/1073741824; //In GB //PHP 7.4 use numeric separators here
 
 				$disk_usage_color = 'inherit';
 				if ( $disk_free_space < 5 ){

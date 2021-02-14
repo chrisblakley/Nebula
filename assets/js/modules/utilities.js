@@ -126,17 +126,10 @@ nebula.errorMitigation = function(){
 	});
 };
 
-//Send data to other tabs/windows using the Service Worker
-nebula.postMessage = function(data = {}){
-	if ( navigator?.serviceWorker?.controller && data ){
-		navigator.serviceWorker.controller.postMessage(data);
-	}
-};
-
 //Focus on an element
 nebula.focusOnElement = function(element = false){
 	if ( !element ){
-		nebula.help('nebula.focusOnElement() requires an element as a string or jQuery object.', '/functions/focusonelement/', 'focusOnElement');
+		nebula.help('nebula.focusOnElement() requires an element as a string or jQuery object.', '/functions/focusonelement/');
 		return;
 	}
 
@@ -200,7 +193,7 @@ nebula.reflow = function(selector){
 	} else if ( typeof selector === 'object' ){
 		element = selector;
 	} else {
-		nebula.help('nebula.reflow() requires a selector as a string or jQuery object.', '/functions/reflow/', 'reflow');
+		nebula.help('nebula.reflow() requires a selector as a string or jQuery object.', '/functions/reflow/');
 		return false;
 	}
 
@@ -212,10 +205,10 @@ nebula.animate = function(selector, newAnimationClasses, oldAnimationClasses){
 	let element;
 	if ( typeof selector === 'string' ){
 		element = jQuery(selector);
-	} else if ( typeof selector === 'object' ) {
+	} else if ( typeof selector === 'object' ){
 		element = selector;
 	} else {
-		nebula.help('nebula.animate() requires a selector as a string or jQuery object.', '/functions/animate/', 'animate');
+		nebula.help('nebula.animate() requires a selector as a string or jQuery object.', '/functions/animate/');
 		return false;
 	}
 
@@ -306,7 +299,7 @@ nebula.once = function(fn, args, unique){
 //Passing immediate triggers the function on the leading edge (instead of the trailing edge).
 nebula.debounce = function(callback = false, wait = 1000, uniqueID = 'No Unique ID', immediate = false){
 	if ( !callback ){
-		nebula.help('nebula.debounce() requires a callback function.', '/functions/debounce/', 'debounce');
+		nebula.help('nebula.debounce() requires a callback function.', '/functions/debounce/');
 		return false;
 	}
 
@@ -335,7 +328,7 @@ nebula.debounce = function(callback = false, wait = 1000, uniqueID = 'No Unique 
 //Limit functionality to only run once per specified time period
 nebula.throttle = function(callback, cooldown = 1000, uniqueID = 'No Unique ID'){
 	if ( !callback ){
-		nebula.help('nebula.throttle() requires a callback function.', '/functions/throttle/', 'throttle');
+		nebula.help('nebula.throttle() requires a callback function.', '/functions/throttle/');
 		return false;
 	}
 
@@ -406,7 +399,7 @@ nebula.timer = function(uniqueID, action, name){
 
 	//uniqueID is required
 	if ( !uniqueID || uniqueID === 'start' || uniqueID === 'lap' || uniqueID === 'end' ){
-		nebula.help('nebula.timer() requires a uniqueID.', '/functions/timer/', 'timer');
+		nebula.help('nebula.timer() requires a uniqueID.', '/functions/timer/');
 		return false;
 	}
 
@@ -420,7 +413,7 @@ nebula.timer = function(uniqueID, action, name){
 
 	//Can not lap or end a timing that has not started.
 	if ( action !== 'start' && typeof nebula.timings[uniqueID] === 'undefined' ){
-		nebula.help('nebula.timer() cannot lap or end a timing that has not started.', '/functions/timer/', 'timer');
+		nebula.help('nebula.timer() cannot lap or end a timing that has not started.', '/functions/timer/');
 		return false;
 	}
 
@@ -550,7 +543,7 @@ nebula.millisecondsToString = function(ms){
 //Consider using RelativeTimeFormat native JavaScript functionality
 nebula.timeAgo = function(timestamp, raw){ //http://af-design.com/blog/2009/02/10/twitter-like-timestamps/
 	if ( typeof timestamp === 'object' ){
-		console.warn('Pass date as string in the format: Fri Mar 27 21:40:02 +0000 2016');
+		nebula.help('Pass date as string in the format: Fri Mar 27 21:40:02 +0000 2016', '/functions/timeAgo/');
 	}
 
 	let postDate = new Date(timestamp);

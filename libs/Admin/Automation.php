@@ -448,12 +448,6 @@ if ( !trait_exists('Automation') ){
 				return false;
 			}
 
-			//Check if this is a legacy version that prevents theme updates
-			$nebula_data = get_option('nebula_data');
-			if ( $nebula_data['version_legacy'] === 'true' ){
-				return false;
-			}
-
 			return true; //Automated Nebula updates are allowed
 		}
 
@@ -461,7 +455,7 @@ if ( !trait_exists('Automation') ){
 		public function force_settings(){
 			//Force initialization date
 			if ( 1 === 2 ){
-				$force_date = "May 24, 2014"; //Set the desired initialization date here. Format should be an easily convertable date like: "March 27, 2012"
+				$force_date = 'May 24, 2014'; //Set the desired initialization date here. Format should be an easily convertable date like: "March 27, 2012"
 				if ( strtotime($force_date) !== false ){ //Check if provided date string is valid
 					$this->update_data('initialized', strtotime($force_date));
 					return false;
@@ -474,7 +468,6 @@ if ( !trait_exists('Automation') ){
 
 			//Re-allow remote Nebula version updates. Ideally this would be detected automatically and this condition would not be needed.
 			if ( 1 === 2 ){
-				$this->update_data('version_legacy', 'false');
 				$this->update_data('scss_last_processed', 0);
 				$this->update_data('next_version', '');
 				$this->update_data('current_version', $this->version('raw'));

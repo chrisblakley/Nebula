@@ -153,7 +153,6 @@ if ( !trait_exists('Options') ){
 				'num_theme_updates' => 0,
 				'last_automated_update_date' => '',
 				'last_automated_update_user' => '',
-				'version_legacy' => 'false',
 				'users_status' => '',
 				'check_new_options' => 'false',
 				'need_sass_compile' => 'false',
