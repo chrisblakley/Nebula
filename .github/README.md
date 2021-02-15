@@ -1,4 +1,4 @@
-![Nebula readme icon](https://raw.githubusercontent.com/chrisblakley/Nebula/main/.github/assets/nebula-banner.png "Nebula readme banner")
+![Nebula readme icon](https://raw.githubusercontent.com/chrisblakley/Nebula/main/.github/assets/nebula-banner.jpg "Nebula readme banner")
 
 **Nebula is a WordPress theme framework that focuses on enhancing development.**
 
