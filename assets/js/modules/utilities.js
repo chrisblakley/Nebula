@@ -175,13 +175,31 @@ nebula.removeQueryParameter = function(keys, url = location.search){
 		keys = [keys];
 	}
 
-	let queryParameters = new URLSearchParams(url);
+	let urlQuery = url;
+	let baseURL = url.split('?')[0]; //Get the base URL (NOT including the "?" character)
+
+	if ( url.indexOf('?') >= 1 ){ //If the location of the "?" character exists and is not the first character
+		urlQuery = url.split('?').pop(); //Remove everything before the query string
+	}
+
+	let queryParameters = new URLSearchParams(urlQuery);
 
 	jQuery.each(keys, function(index, item){
 		queryParameters.delete(item);
 	});
 
-	return queryParameters.toString();
+	let updatedQuery = decodeURIComponent(queryParameters.toString()); //Convert to string and decode the string
+
+	//Return a string equivalent to the originally provided URL
+	if ( url.indexOf('?') >= 1 ){ //If the location of the "?" character exists and is not the first character
+		if ( updatedQuery.length > 0 ){ //If the query is not completely removed
+			return baseURL + '?' + updatedQuery; //Append it to the original URL
+		}
+
+		return baseURL; //Otherwise, return the original URL
+	}
+
+	return updatedQuery; //Return just the query string alone
 };
 
 //Trigger a reflow on an element.
