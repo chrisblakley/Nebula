@@ -17,6 +17,8 @@ if ( !trait_exists('Assets') ){
 				add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 
 				if ( $this->is_debug() || !empty($GLOBALS['wp_customize']) ){
+					add_action('send_headers', array($this, 'clear_site_data'));
+
 					add_filter('style_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
 					add_filter('script_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
 				}
@@ -423,6 +425,13 @@ if ( !trait_exists('Assets') ){
 			}
 
 			return true;
+		}
+
+		//Tell the browser to clear caches when the debug query string is present
+		public function clear_site_data(){
+			if ( !$this->is_browser('safari') ){ //This header is not currently supported in Safari or iOS as of February 2021: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Clear-Site-Data#browser_compatibility
+				header('Clear-Site-Data: "cache", "cookies", "storage", "executionContexts"');
+			}
 		}
 
 		//Get fresh resources when debugging
