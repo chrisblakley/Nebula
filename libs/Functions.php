@@ -2792,8 +2792,8 @@ trait Functions {
 		}
 
 		if ( $this->get_option('latitude') && $this->get_option('longitude') ){
-			$lat = $this->get_option('latitude');
-			$lng = $this->get_option('longitude');
+			$lat = floatval($this->get_option('latitude'));
+			$lng = floatval($this->get_option('longitude'));
 			$gmt = intval(get_option('gmt_offset'));
 			$zenith = 90+50/60; //Civil twilight = 96°, Nautical twilight = 102°, Astronomical twilight = 108°
 			global $sunrise, $sunset;

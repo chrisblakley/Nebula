@@ -174,7 +174,7 @@ if ( !trait_exists('Device') ){
 						if ( !empty($brand_name) && !empty($model) ){
 							return $brand_name . ' ' . $model;
 						}
-						return false;
+						return '';
 					case 'brand':
 					case 'brandname':
 					case 'make':
@@ -193,7 +193,7 @@ if ( !trait_exists('Device') ){
 						}
 						return 'desktop';
 					default:
-						return false;
+						return '';
 				}
 			}
 
@@ -216,7 +216,7 @@ if ( !trait_exists('Device') ){
 					}
 					return 'desktop';
 				default:
-					return false;
+					return '';
 			}
 		}
 
@@ -274,7 +274,7 @@ if ( !trait_exists('Device') ){
 		}
 
 		//Check to see how the browser version compares to a passed version number.
-		public function is_browser($browser=null, $version=null, $comparison='=='){
+		public function is_browser($browser=null, $version='', $comparison='=='){
 			$override = apply_filters('pre_nebula_is_browser', null, $browser, $version, $comparison);
 			if ( isset($override) ){return $override;}
 
@@ -288,6 +288,7 @@ if ( !trait_exists('Device') ){
 				if ( !empty($actual_browser) ){
 					$actual_version = explode('.', $actual_browser['version']);
 					$version_parts = explode('.', $version);
+
 					if ( strpos(strtolower($actual_browser['name']), strtolower($browser)) !== false ){
 						if ( !empty($version) ){
 							if ( $this->compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //Major version comparison

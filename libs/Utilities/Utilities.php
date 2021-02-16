@@ -206,9 +206,10 @@ if ( !trait_exists('Utilities') ){
 				if ( !empty($current_user->user_email) ){
 					list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
 
-					$devEmails = explode(',', $this->get_option('dev_email_domain'));
-					foreach ( $devEmails as $devEmail ){
-						if ( trim($devEmail) === $current_user_domain ){
+					$dev_email_domains = ( $this->get_option('dev_email_domain') )? $this->get_option('dev_email_domain') : ''; //Ensure correct type
+					$dev_email_domains = explode(',', $dev_email_domains);
+					foreach ( $dev_email_domains as $dev_email_domain ){
+						if ( trim($dev_email_domain) === $current_user_domain ){
 							return true;
 						}
 					}
@@ -248,9 +249,10 @@ if ( !trait_exists('Utilities') ){
 					list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
 
 					//Check if the current user's email domain matches any of the client email domains from Nebula Options
-					$clientEmails = explode(',', $this->get_option('client_email_domain'));
-					foreach ( $clientEmails as $clientEmail ){
-						if ( trim($clientEmail) === $current_user_domain ){
+					$client_email_domains = ( $this->get_option('client_email_domain') )? $this->get_option('client_email_domain') : ''; //Ensure correct type
+					$client_email_domains = explode(',', $client_email_domains);
+					foreach ( $client_email_domains as $client_email_domain ){
+						if ( trim($client_email_domain) === $current_user_domain ){
 							return true;
 						}
 					}
