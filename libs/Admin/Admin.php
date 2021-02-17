@@ -1040,11 +1040,9 @@ if ( !trait_exists('Admin') ){
 
 						//Reprocess all Sass files
 						if ( e.altKey && e.which === 82 ){ //Alt+R
-							if ( typeof URL === "function" ){ //No IE support for URL API. Eventually remove this check.
-								var url = new URL(window.location.href);
-								url.searchParams.set('sass', 'true');
-								location = url; //Reload with the new URL
-							}
+							var url = new URL(window.location.href);
+							url.searchParams.set('sass', 'true');
+							location = url; //Reload with the new URL
 						}
 					});
 				</script>

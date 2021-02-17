@@ -25,6 +25,10 @@ if ( !trait_exists('Users') ){
 
 				add_action('personal_options_update', array($this, 'save_extra_profile_fields'));
 				add_action('edit_user_profile_update', array($this, 'save_extra_profile_fields'));
+
+				if ( is_plugin_active('wordpress-seo/wp-seo.php') ){ //If Yoast is active
+					add_action('wpseo_register_roles', array($this, 'remove_yoast_roles'), 50); //Yoast hook (run after Yoast does)
+				}
 			}
 		}
 
@@ -275,6 +279,17 @@ if ( !trait_exists('Users') ){
 			update_user_meta($user_id, 'usercity', sanitize_text_field($_POST['usercity']));
 			update_user_meta($user_id, 'userstate', sanitize_text_field($_POST['userstate']));
 			update_user_meta($user_id, 'phonenumber', sanitize_text_field($_POST['phonenumber']));
+		}
+
+		//Remove Yoast SEO user roles
+		public function remove_yoast_roles(){
+			if ( get_role('wpseo_manager') ){
+				remove_role('wpseo_manager'); //Remove Yoast "SEO Manager" role
+			}
+
+			if ( get_role('wpseo_editor') ){
+				remove_role('wpseo_editor'); //Remove Yoast "SEO Editor" role
+			}
 		}
 	}
 }

@@ -246,15 +246,17 @@ if ( !trait_exists('Assets') ){
 			);
 
 			//Add admin screens when available
-			if ( function_exists('get_current_screen') ){ //This function only exists sometimes
+			if ( function_exists('get_current_screen') ){ //This function only exists on admin pages
 				$current_screen = get_current_screen();
-				$this->brain['screen']['base'] = $current_screen->base;
-				$this->brain['screen']['id'] = $current_screen->id;
-				$this->brain['screen']['post_type'] = $current_screen->post_type;
-				$this->brain['screen']['parent'] = array(
-					'base' => $current_screen->parent_base,
-					'file' => $current_screen->parent_file
-				);
+				if ( !empty($current_screen) ){ //This is empty when viewing the front-end with the admin bar visible
+					$this->brain['screen']['base'] = $current_screen->base;
+					$this->brain['screen']['id'] = $current_screen->id;
+					$this->brain['screen']['post_type'] = $current_screen->post_type;
+					$this->brain['screen']['parent'] = array(
+						'base' => $current_screen->parent_base,
+						'file' => $current_screen->parent_file
+					);
+				}
 			}
 
 			//Check for session data

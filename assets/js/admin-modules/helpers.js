@@ -9,13 +9,13 @@ nebula.uniqueSlugChecker = function(){
 };
 
 //Allow tab character in textareas
-nebula.pasteIntoInput = function(el, text){
-	el.focus();
-	var val = el.value;
-	if ( typeof el.selectionStart === 'number' ){
-		var selStart = el.selectionStart;
-		el.value = val.slice(0, selStart) + text + val.slice(el.selectionEnd);
-		el.selectionEnd = el.selectionStart = selStart + text.length;
+nebula.pasteIntoInput = function(element, text){
+	element.focus();
+	var val = element.value;
+	if ( typeof element.selectionStart === 'number' ){
+		var selStart = element.selectionStart;
+		element.value = val.slice(0, selStart) + text + val.slice(element.selectionEnd);
+		element.selectionEnd = element.selectionStart = selStart + text.length;
 	} else if ( typeof document.selection !== 'undefined' ){
 		var textRange = document.selection.createRange();
 		textRange.text = text;
@@ -24,17 +24,10 @@ nebula.pasteIntoInput = function(el, text){
 	}
 };
 
-nebula.allowTabChar = function(el){
-	jQuery(el).keydown(function(e){
-		if ( e.which === 9 ){
+nebula.allowTabChar = function(element){
+	jQuery(element).on('keydown', function(e){
+		if ( e.key === 'Tab' ){
 			nebula.pasteIntoInput(this, '\t');
-			return false;
-		}
-	});
-
-	//For Opera, which only allows suppression of keypress events, not keydown
-	jQuery(el).keypress(function(e){
-		if ( e.which === 9 ){
 			return false;
 		}
 	});

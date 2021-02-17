@@ -67,8 +67,11 @@ trait Functions {
 		add_filter('embed_oembed_html', array($this, 'oembed_modifiers'), 9999, 4);
 
 		add_filter('acf/settings/google_api_key', array($this, 'acf_google_api_key')); //ACF hook
-		add_filter('wpseo_metadesc', array($this, 'meta_description')); //Yoast hook
-		add_filter('wpseo_twitter_card_type', array($this, 'allow_large_twitter_summary'), 10, 2); //Yoast hook
+
+		if ( is_plugin_active('wordpress-seo/wp-seo.php') ){ //If Yoast is active
+			add_filter('wpseo_metadesc', array($this, 'meta_description')); //Yoast hook
+			add_filter('wpseo_twitter_card_type', array($this, 'allow_large_twitter_summary'), 10, 2); //Yoast hook
+		}
 
 		if ( is_user_logged_in() ){
 			add_filter('wpcf7_verify_nonce', '__return_true'); //Always verify CF7 nonce for logged-in users (this allows for it to detect user data)
@@ -82,7 +85,7 @@ trait Functions {
 	//Check if the Nebula Companion plugin is installed and active
 	public function is_companion_active(){
 		include_once ABSPATH . 'wp-admin/includes/plugin.php'; //Needed to use is_plugin_active() outside of WP admin
-		if ( is_plugin_active('nebula-companion/nebula-companion.php') || is_plugin_active('Nebula-Companion-main/nebula-companion.php') || is_plugin_active('Nebula-Companion-master/nebula-companion.php') ){ //Remove "master" after a period of time (Maybe January 2021)
+		if ( is_plugin_active('nebula-companion/nebula-companion.php') || is_plugin_active('Nebula-Companion-main/nebula-companion.php') ){
 			return true;
 		}
 
@@ -1873,7 +1876,8 @@ trait Functions {
 			);
 		}
 
-		$days_off = array_filter(explode(', ', $this->get_option('business_hours_closed')));
+		$days_off = ( !empty($this->get_option('business_hours_closed')) )? $this->get_option('business_hours_closed') : ''; //Ensure correct type
+		$days_off = array_filter(explode(', ', $days_off));
 		if ( !empty($days_off) ){
 			foreach ( $days_off as $key => $day_off ){
 				$days_off[$key] = strtotime($day_off . ' ' . date('Y', $date));
@@ -3040,7 +3044,7 @@ trait Functions {
 		return $this->get_option('google_browser_api_key');
 	}
 
-	//Generage a meta description (either from Yoast, or via Nebula excerpt)
+	//Generate a meta description (either from Yoast, or via Nebula excerpt)
 	//Hooked as a filter called from Yoast (which passes $metadesc), and also called directly
 	public function meta_description($metadesc=null, $chars=160){
 		if ( empty($metadesc) ){

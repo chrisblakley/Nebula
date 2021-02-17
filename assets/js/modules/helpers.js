@@ -183,7 +183,7 @@ nebula.svgImgs = async function(){
 nebula.scrollToListeners = function(){
 	//An href starts with a hash ID but is not only a hash ("#content" but not "#"). Do not use *="#" to prevent conflicts with other libraries who are linking to separate pages with an anchor on the destination.
 	nebula.dom.document.on('click keyup', 'a[href^="#"]:not([href="#"])', function(e){
-		if ( e.type === 'click' || (e.type === 'keyup' && (e.keyCode === 32 || e.keyCode === 13)) ){ //Spacebar or Enter
+		if ( e.type === 'click' || (e.type === 'keyup' && (e.key === ' ' || e.key === 'Enter')) ){ //Spacebar or Enter
 			let avoid = '.no-scroll, .mm-menu, .carousel, .tab-content, .modal, [data-toggle], #wpadminbar, #query-monitor';
 			if ( !jQuery(this).is(avoid) && !jQuery(this).parents(avoid).length ){
 				if ( location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname ){ //Ensure the link does not have a protocol and is internal
@@ -207,7 +207,7 @@ nebula.scrollToListeners = function(){
 
 	//Using the nebula-scrollto class with data-scrollto attribute
 	nebula.dom.document.on('click keyup', '.nebula-scrollto', function(e){
-		if ( e.type === 'click' || (e.type === 'keyup' && (e.keyCode === 32 || e.keyCode === 13)) ){ //Spacebar or Enter
+		if ( e.type === 'click' || (e.type === 'keyup' && (e.key === ' ' || e.key === 'Enter')) ){ //Spacebar or Enter
 			let pOffset = ( jQuery(this).attr('data-offset') )? parseFloat(jQuery(this).attr('data-offset')) : nebula.scroll.offset;
 
 			if ( jQuery(this).attr('data-scrollto') ){

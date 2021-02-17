@@ -83,7 +83,7 @@ nebula.optionsFilters = function(){
 		}, 1000, 'nebula options filter history api');
 
 		//Prevent the form from submitting if pressing enter after searching
-		if ( e.type === 'keydown' && e.keyCode === 13 ){
+		if ( e.type === 'keydown' && e.key === 'Enter' ){
 			e.preventDefault();
 			return false;
 		}

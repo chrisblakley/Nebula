@@ -1,4 +1,4 @@
-//Custom CSS expression for a case-insensitive contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
+//Custom CSS expression for a case-insensitive :contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
 //Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: nebula.keywordSearch(container, parent, value);
 jQuery.expr.pseudos.Contains = function(element, index, match){
 	return (element.textContent || element.innerText || '').toUpperCase().includes(match[3].toUpperCase());

@@ -78,21 +78,6 @@ nebula.menuSearchReplacement = async function(){
 	}
 };
 
-//Only allow alphanumeric (and some special keys) to return true
-//Use inside of a keydown function, and pass the event data.
-nebula.searchTriggerOnlyChars = function(e){
-	//@TODO "Nebula" 0: This still allows shortcuts like "cmd+a" to return true.
-	let spinnerRegex = new RegExp('^[a-zA-Z0-9]+$');
-	let allowedKeys = [8, 46];
-	let searchChar = String.fromCharCode(!e.charCode ? e.which : e.charCode);
-
-	if ( spinnerRegex.test(searchChar) || allowedKeys.includes(e.which) ){
-		return true;
-	} else {
-		return false;
-	}
-};
-
 //Enable autocomplete search on WordPress core selectors
 nebula.autocompleteSearchListeners = async function(){
 	jQuery('.nebula-search input, input#s, input.search').on('focus', function(){
@@ -104,7 +89,9 @@ nebula.autocompleteSearchListeners = async function(){
 
 				//I do not know why this cannot be debounced
 				jQuery('input#s, input.search').on('keyup paste change', function(e){
-					if ( jQuery(this).val().trim().length && nebula.searchTriggerOnlyChars(e) ){
+					let allowedKeys = ['Backspace', 'Delete'];
+
+					if ( jQuery(this).val().trim().length && (nebula.isAlphanumeric(e.key) || allowedKeys.includes(e.key) ) ){
 						let types = false;
 						if ( jQuery(this).is('[data-types]') ){
 							types = jQuery(this).attr('data-types');

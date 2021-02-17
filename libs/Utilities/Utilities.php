@@ -184,16 +184,17 @@ if ( !trait_exists('Utilities') ){
 			if ( isset($override) ){return $override;}
 
 			if ( empty($strict) ){
-				$devIPs = explode(',', $this->get_option('dev_ip'));
-				if ( !empty($devIPs) ){
-					foreach ( $devIPs as $devIP ){
-						$devIP = wp_privacy_anonymize_ip(trim($devIP));
+				$dev_ips = ( !empty($this->get_option('dev_ip')) )? $this->get_option('dev_ip') : '';
+				$dev_ips = explode(',', $dev_ips);
+				if ( !empty($dev_ips) ){
+					foreach ( $dev_ips as $dev_ip ){
+						$dev_ip = wp_privacy_anonymize_ip(trim($dev_ip));
 
-						if ( !empty($devIP) && $devIP[0] !== '/' && $devIP === $this->get_ip_address() ){
+						if ( !empty($dev_ip) && $dev_ip[0] !== '/' && $dev_ip === $this->get_ip_address() ){
 							return true;
 						}
 
-						if ( !empty($devIP) && $devIP[0] === '/' && preg_match($devIP, $this->get_ip_address()) ){
+						if ( !empty($dev_ip) && $dev_ip[0] === '/' && preg_match($dev_ip, $this->get_ip_address()) ){
 							return true;
 						}
 					}
@@ -227,16 +228,17 @@ if ( !trait_exists('Utilities') ){
 			if ( isset($override) ){return $override;}
 
 			if ( empty($strict) ){
-				$clientIPs = explode(',', $this->get_option('client_ip'));
-				if ( !empty($clientIPs) ){
-					foreach ( $clientIPs as $clientIP ){
-						$clientIP = wp_privacy_anonymize_ip(trim($clientIP));
+				$client_ips = ( !empty($this->get_option('client_ip')) )? $this->get_option('client_ip') : '';
+				$client_ips = explode(',', $client_ips);
+				if ( !empty($client_ips) ){
+					foreach ( $client_ips as $client_ip ){
+						$client_ip = wp_privacy_anonymize_ip(trim($client_ip));
 
-						if ( !empty($clientIP) && $clientIP[0] !== '/' && $clientIP === $this->get_ip_address() ){
+						if ( !empty($client_ip) && $client_ip[0] !== '/' && $client_ip === $this->get_ip_address() ){
 							return true;
 						}
 
-						if ( !empty($clientIP) && $clientIP[0] === '/' && preg_match($clientIP, $this->get_ip_address()) ){
+						if ( !empty($client_ip) && $client_ip[0] === '/' && preg_match($client_ip, $this->get_ip_address()) ){
 							return true;
 						}
 					}

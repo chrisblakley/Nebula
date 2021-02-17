@@ -645,6 +645,16 @@ nebula.sanitize = function(text){
 	return document.createElement('div').appendChild(document.createTextNode(text)).parentNode.innerHTML;
 };
 
+//Check if a string is alphanumeric
+nebula.isAlphanumeric = function(character){
+	const alphanumericRegex = new RegExp('^[a-zA-Z0-9]+$');
+	if ( alphanumericRegex.test(character) ){
+		return true;
+	}
+
+	return false;
+};
+
 //Create desktop notifications
 nebula.desktopNotification = function(title, message = false, clickCallback, showCallback, closeCallback, errorCallback){
 	if ( nebula.checkNotificationPermission() ){

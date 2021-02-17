@@ -77,7 +77,7 @@ nebula.googleAddressAutocompleteCallback = function(autocompleteInput, uniqueID 
 			});
 		}
 	}).on('keydown', function(e){
-		if ( e.which === 13 && jQuery('.pac-container:visible').length ){ //Prevent form submission when enter key is pressed while the "Places Autocomplete" container is visbile
+		if ( e.key === 'Enter' && jQuery('.pac-container:visible').length ){ //Prevent form submission when enter key is pressed while the "Places Autocomplete" container is visbile
 			return false;
 		}
 	});
