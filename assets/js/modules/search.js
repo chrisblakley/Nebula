@@ -262,7 +262,7 @@ nebula.wpSearchInput = function(){
 nebula.mobileSearchPlaceholder = async function(){
 	let mobileHeaderSearchInput = jQuery('#mobileheadersearch input');
 	let searchPlaceholder = 'What are you looking for?';
-	if ( window.matchMedia && window.matchMedia('(max-width: 410px)').matches ){ //@todo "Nebula" 0: Use optional chaining?
+	if ( window.matchMedia('(max-width: 410px)').matches ){
 		searchPlaceholder = 'Search';
 	}
 	mobileHeaderSearchInput.attr('placeholder', searchPlaceholder);
@@ -313,12 +313,12 @@ nebula.searchValidator = function(){
 //Highlight search terms
 nebula.searchTermHighlighter = async function(){
 	window.requestAnimationFrame(function(){
-		let searchTerm = document.URL.split('?s=')[1];
-		if ( typeof searchTerm !== 'undefined' ){
-			let reg = new RegExp('(?![^<]+>)(' + nebula.preg_quote(searchTerm.replaceAll(/(\+|%22|%20)/g, ' ')) + ')', 'ig');
+		let searchTerm = nebula.get('s');
+		if ( searchTerm ){
+			let termPattern = new RegExp('(?![^<]+>)(' + nebula.preg_quote(searchTerm.replaceAll(/(\+|%22|%20)/g, ' ')) + ')', 'ig'); //Find the search term within the text
 			jQuery('article .entry-title a, article .entry-summary').each(function(){
 				jQuery(this).html(function(i, html){
-					return html.replace(reg, '<mark class="searchresultword">$1</mark>');
+					return html.replace(termPattern, '<mark class="searchresultword">$1</mark>'); //Wrap each found search term
 				});
 			});
 
@@ -332,7 +332,7 @@ nebula.emphasizeSearchTerms = async function(){
 	window.requestAnimationFrame(function(){
 		let origBGColor = jQuery('.searchresultword').css('background-color');
 		jQuery('.searchresultword').each(function(i){
-			let stallFor = 150 * parseInt(i);
+			let stallFor = 150 * parseInt(i); //This creates the offset "wave" effect
 			jQuery(this).delay(stallFor).animate({
 				backgroundColor: 'rgba(255, 255, 0, 0.5)',
 				borderColor: 'rgba(255, 255, 0, 1)',
@@ -355,8 +355,7 @@ nebula.singleResultDrawer = async function(){
 		jQuery('#searchform input#s').val(searchTerm);
 
 		nebula.dom.document.on('click', '#nebula-drawer .close', function(){
-			let permalink = jQuery(this).attr('href');
-			history.replaceState(null, document.title, permalink);
+			window.history.replaceState({}, document.title, nebula.removeQueryParameter('rs', window.location.href));
 			jQuery('#nebula-drawer').slideUp();
 			return false;
 		});
@@ -366,7 +365,7 @@ nebula.singleResultDrawer = async function(){
 //Page Suggestions for 404 or no search results pages using Google Custom Search Engine
 nebula.pageSuggestion = async function(){
 	if ( nebula.dom.body.hasClass('search-no-results') || nebula.dom.body.hasClass('error404') ){
-		if ( nebula?.site?.options?.nebula_cse_id !== '' && nebula?.site?.options?.nebula_google_browser_api_key !== '' ){
+		if ( nebula.site?.options?.nebula_cse_id !== '' && nebula.site?.options?.nebula_google_browser_api_key !== '' ){
 
 			let queryStrings;
 			if ( nebula.get().length ){
@@ -397,6 +396,7 @@ nebula.pageSuggestion = async function(){
 	}
 };
 
+//Run a Google Custom Search Engine query to find relevant pages
 nebula.tryGCSESearch = function(phrase){
 	if ( nebula.site.options.nebula_cse_id.length && nebula.site.options.nebula_google_browser_api_key.length ){
 		let queryParams = {
@@ -408,11 +408,11 @@ nebula.tryGCSESearch = function(phrase){
 		};
 		const API_URL = 'https://www.googleapis.com/customsearch/v1?';
 
-		// Send the request to the custom search API
+		//Send the request to the custom search API
 		jQuery.getJSON(API_URL, queryParams, function(response){ //Update this to fetch
-			if ( response?.items ){
-				if ( response.items[0].link !== window.location.href ){
-					nebula.showSuggestedGCSEPage(response.items[0].title, response.items[0].link);
+			if ( response.items ){
+				if ( response.items[0].link !== window.location.href ){ //If the top result does not match the current page URL
+					nebula.showSuggestedGCSEPage(response.items[0].title, response.items[0].link); //Show the suggestion
 				}
 			}
 		});
@@ -421,7 +421,7 @@ nebula.tryGCSESearch = function(phrase){
 
 nebula.showSuggestedGCSEPage = function(title, url){
 	const hostname = new RegExp(location.host);
-	if ( hostname.test(url) ){
+	if ( hostname.test(url) ){ //Only show results for this same website
 		jQuery('.gcse-suggestion').attr('href', url).text(title);
 		jQuery('#nebula-drawer.suggestedpage').slideDown();
 		nebula.prefetch(url);

@@ -165,7 +165,7 @@ nebula.svgImgs = async function(){
 
 				oThis.replaceWith(theSVG); //Replace image with new SVG
 
-				//Move alt attribute to title element within the SVG
+				//Move alt attribute to title element within the SVG (title must be the first tag inside the <svg>)
 				if ( oThis.attr('alt') ){
 					theSVG.prepend('<title>' + nebula.sanitize(oThis.attr('alt')) + '</title>'); //Sanitized to prevent XSS
 				}
@@ -307,13 +307,14 @@ nebula.temporaryClass = function(element, activeClass, inactiveClass, period = 1
 
 //Vertical subnav expanders
 nebula.subnavExpanders = function(){
-	if ( nebula?.site?.options?.sidebar_expanders && jQuery('#sidebar-section .menu').length ){
+	if ( nebula.site?.options?.sidebar_expanders && jQuery('#sidebar-section .menu').length ){
 		jQuery('#sidebar-section .menu li.menu-item:has(ul)').addClass('has-expander').append('<a class="toplevelvert_expander closed" href="#"><i class="fas fa-caret-left"></i> <span class="sr-only">Expand</span></a>');
 		jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
 		nebula.dom.document.on('click', '.toplevelvert_expander', function(){
 			jQuery(this).toggleClass('closed open').parent().children('.sub-menu').slideToggle();
 			return false;
 		});
+
 		//Automatically expand subnav to show current page
 		jQuery('.current-menu-ancestor').children('.toplevelvert_expander').click();
 		jQuery('.current-menu-item').children('.toplevelvert_expander').click();

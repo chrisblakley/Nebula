@@ -12,8 +12,8 @@ nebula.cacheSelectors = function(){
 
 //Record performance timing
 nebula.performanceMetrics = async function(){
-	if ( nebula.get('timings') || nebula?.user?.staff === 'developer' ){ //Only available to Developers or with ?timings
-		if ( window?.performance?.timing && typeof window.requestIdleCallback === 'function' ){ //Remove the requestIdleCallback condition when Safari supports it)
+	if ( nebula.get('timings') || nebula.user?.staff === 'developer' ){ //Only available to Developers or with ?timings
+		if ( window.performance?.timing && typeof window.requestIdleCallback === 'function' ){ //Remove the requestIdleCallback condition when Safari supports it)
 
 			window.requestIdleCallback(function(){
 				window.performance.mark('(Nebula) CPU Idle');
@@ -72,7 +72,7 @@ nebula.performanceMetrics = async function(){
 nebula.workbox = async function(){
 	jQuery('.nebula-sw-install-button').addClass('inactive'); //If manually placing this button, start with this inactive class to prevent CLS
 
-	if ( nebula?.site?.options?.sw ){ //If Service Worker is enabled in Nebula Options
+	if ( nebula.site?.options?.sw ){ //If Service Worker is enabled in Nebula Options
 		if ( 'serviceWorker' in navigator ){ //If Service Worker is supported (Firefox 44+, Chrome 45+, Edge 17+, Safari 12+)
 			//When debugging unregister SW and clear caches
 			if ( nebula.get('debug') || nebula.dom.html.hasClass('debug') ){
@@ -312,20 +312,20 @@ nebula.predictiveCacheListeners = async function(){
 };
 
 //Prefetch a resource
-nebula.prefetch = async function(url, callback, element){
+nebula.prefetch = async function(url = '', callback, element){
 	if ( url && url.length > 1 && url.indexOf('#') !== 0 && typeof window.requestIdleCallback === 'function' ){ //If the URL exists, is longer than 1 character and does not begin with # (waiting for Safari to support requestIdleCallback)
 		//If network connection is 2G don't prefetch
-		if ( navigator?.connection?.effectiveType.toString().includes('2g') ){ //'slow-2g', '2g', '3g', or '4g'
+		if ( navigator.connection?.effectiveType.toString().includes('2g') ){ //'slow-2g', '2g', '3g', or '4g'
 			return false;
 		}
 
 		//If Save Data is supported and Save Data is requested don't prefetch
-		if ( navigator?.connection?.saveData ){
+		if ( navigator.connection?.saveData ){
 			return false;
 		}
 
 		//Ignore request to prefetch the current page
-		if ( url === window.location.href || url === nebula?.post?.permalink ){
+		if ( url === window.location.href || url === nebula.post?.permalink ){
 			return false;
 		}
 
@@ -348,18 +348,19 @@ nebula.prefetch = async function(url, callback, element){
 		url = url.split('#')[0]; //Remove hashes
 
 		//Ignore blocklisted terms (logout, 1-click purchase buttons, etc.)
-		let prefetchBlocklist = ['logout'];
+		let prefetchBlocklist = ['logout', 'wp-admin'];
 
 		//@todo "Nebula" 0: It would be nice to allow other JS to add to the blocklist here... Would require this be added to WP core: https://core.trac.wordpress.org/changeset/41375
 
 		jQuery.each(prefetchBlocklist, function(index, value){
 			if ( url.includes(value) ){
-				return false;
+				url = ''; //Empty the URL so it will fail the next condition
+				return false; //This just breaks out of the loop (does not stop the function)
 			}
 		});
 
 		window.requestIdleCallback(function(){ //Wait until the browser is idle before prefetching
-			if ( !jQuery('link[rel="prefetch"][href="' + url + '"]').length ){ //If prefetch link for this URL has not yet been added to the DOM
+			if ( url.length && !jQuery('link[rel="prefetch"][href="' + url + '"]').length ){ //If prefetch link for this URL has not yet been added to the DOM
 				jQuery('<link rel="prefetch" href="' + url + '">').on('load', callback).appendTo('head'); //Append a prefetch link element for this URL to the DOM
 			}
 		});
@@ -367,7 +368,6 @@ nebula.prefetch = async function(url, callback, element){
 };
 
 //Lazy load images, styles, and JavaScript assets
-//Can this be made asynchronous as a whole?
 nebula.lazyLoadAssets = async function(){
 	nebula.site.resources.lazy.promises = {};
 
@@ -525,6 +525,6 @@ nebula.loadCSS = async function(url){
 	if ( typeof url === 'string' ){
 		jQuery('head').append('<link rel="stylesheet" href="' + url + '" type="text/css" media="screen">');
 	} else {
-		nebula.help('nebula.loadCSS() requires a valid URL. The requested URL is invalid: ' + url, '/functions/loadcss/');
+		nebula.help('nebula.loadCSS() requires a valid URL string. The requested URL is invalid: ' + url, '/functions/loadcss/');
 	}
 };

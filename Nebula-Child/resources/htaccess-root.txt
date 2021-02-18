@@ -158,7 +158,8 @@
 #If conditional only available in Apache 2.4+ (released January 2012)
 <IfVersion >= 2.4>
 	#If the debug query parameter exists
-	<If "%{QUERY_STRING} == '(^|&)debug($|=|&)'">
+	<If "%{QUERY_STRING} =~ /(^|&)debug($|=|&)/">
+		#This is not yet working. (Even with <If false> hardcoded above)
 		#Unset all caches
 		<FilesMatch "\.(ico|pdf|flv|png|gif|jpg|jpeg|svg|woff|woff2|mp3|css|js|xml|txt|php|html)$">
 			Header unset Cache-Control
@@ -168,41 +169,43 @@
 		</FilesMatch>
 	</If>
 	<Else>
-		#Cache files for applicable periods
-		<IfModule mod_expires.c>
-			#Cache files for certain lengths of time
-			#1 YEAR
-			<FilesMatch "\.(ico|pdf|flv|png|gif|jpg|jpeg|svg|woff|woff2|mp3|css|js)$">
-				Header set Cache-Control "max-age=31536000, public"
-			</FilesMatch>
-
-			#2 DAYS
-			<FilesMatch "\.(xml|txt)$">
-				Header set Cache-Control "max-age=172800, proxy-revalidate"
-			</FilesMatch>
-
-			#10 HOURS
-			# PHP/HTML here to prevent nonce from expiring in cache
-			<FilesMatch "\.(php|html)$">
-				Header set Cache-Control "max-age=36000, public"
-			</FilesMatch>
-
-			#Disable Cache for filetypes
-			<FilesMatch ".(pl|cgi|spl|scgi|fcgi)$">
-				Header unset Cache-Control
-			</FilesMatch>
-
-			#Disable cache for service worker file itself
-			<FilesMatch "(sw|service-worker|serviceworker).js$">
-				FileETag None
-				Header unset ETag
-				Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
-				Header set Pragma "no-cache"
-				Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
-			</FilesMatch>
-		</IfModule>
+		#This is not yet working. In the future, move the cache rules into this else condition
 	</Else>
 </IfVersion>
+
+#Cache files for applicable periods
+<IfModule mod_expires.c>
+	#Cache files for certain lengths of time
+	#1 YEAR
+	<FilesMatch "\.(ico|pdf|flv|png|gif|jpg|jpeg|svg|woff|woff2|mp3|css|js)$">
+		Header set Cache-Control "max-age=31536000, public"
+	</FilesMatch>
+
+	#2 DAYS
+	<FilesMatch "\.(xml|txt)$">
+		Header set Cache-Control "max-age=172800, proxy-revalidate"
+	</FilesMatch>
+
+	#10 HOURS
+	# PHP/HTML here to prevent nonce from expiring in cache
+	<FilesMatch "\.(php|html)$">
+		Header set Cache-Control "max-age=36000, public"
+	</FilesMatch>
+
+	#Disable Cache for filetypes
+	<FilesMatch ".(pl|cgi|spl|scgi|fcgi)$">
+		Header unset Cache-Control
+	</FilesMatch>
+
+	#Disable cache for service worker file itself
+	<FilesMatch "(sw|service-worker|serviceworker).js$">
+		FileETag None
+		Header unset ETag
+		Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+		Header set Pragma "no-cache"
+		Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+	</FilesMatch>
+</IfModule>
 
 #Use ETag to ease caching of static imported JS modules
 <IfModule headers_module>

@@ -86,7 +86,7 @@ nebula.cf7Functions = async function(){
 		nebula.timer(formID, 'start', thisField);
 
 		//Individual form field timings
-		if ( nebula?.timings && typeof nebula.timings[formID] !== 'undefined' && typeof nebula.timings[formID].lap[nebula.timings[formID].laps-1] !== 'undefined' ){
+		if ( nebula.timings && typeof nebula.timings[formID] !== 'undefined' && typeof nebula.timings[formID].lap[nebula.timings[formID].laps-1] !== 'undefined' ){
 			let labelText = '';
 			if ( jQuery(this).parent('.label') ){
 				labelText = jQuery(this).parent('.label').text();
@@ -114,7 +114,7 @@ nebula.cf7Functions = async function(){
 		};
 
 		//If timing data exists
-		if ( nebula?.timings && typeof nebula.timings[e.detail.id] !== 'undefined' ){
+		if ( nebula.timings && typeof nebula.timings[e.detail.id] !== 'undefined' ){
 			thisEvent.formTime = nebula.timer(e.detail.id, 'lap', 'wpcf7-submit-attempt');
 			thisEvent.inputs = nebula.timings[e.detail.id].laps + ' inputs';
 		}
@@ -145,7 +145,7 @@ nebula.cf7Functions = async function(){
 		};
 
 		//If timing data exists
-		if ( nebula?.timings && typeof nebula.timings[e.detail.id] !== 'undefined' ){
+		if ( nebula.timings && typeof nebula.timings[e.detail.id] !== 'undefined' ){
 			thisEvent.formTime = nebula.timer(e.detail.id, 'lap', 'wpcf7-submit-invalid');
 			thisEvent.inputs = nebula.timings[e.detail.id].laps + ' inputs';
 		}
@@ -189,7 +189,7 @@ nebula.cf7Functions = async function(){
 	//CF7 Spam (CF7 AJAX response after spam detection)
 	nebula.dom.document.on('wpcf7spam', function(e){
 		let formInputs = 'Unknown';
-		if ( nebula?.timings[e.detail.id] && nebula.timings[e.detail.id].laps ){
+		if ( nebula.timings[e.detail.id] && nebula.timings[e.detail.id].laps ){
 			formInputs = nebula.timings[e.detail.id].laps + ' inputs';
 		}
 
@@ -218,7 +218,7 @@ nebula.cf7Functions = async function(){
 	//CF7 Mail Send Failure (CF7 AJAX response after mail failure)
 	nebula.dom.document.on('wpcf7mailfailed', function(e){
 		let formInputs = 'Unknown';
-		if ( nebula?.timings[e.detail.id] && nebula.timings[e.detail.id].laps ){
+		if ( nebula.timings[e.detail.id] && nebula.timings[e.detail.id].laps ){
 			formInputs = nebula.timings[e.detail.id].laps + ' inputs';
 		}
 
@@ -249,7 +249,7 @@ nebula.cf7Functions = async function(){
 		formStarted[e.detail.id] = false; //Reset abandonment tracker for this form.
 
 		let formInputs = 'Unknown';
-		if ( nebula?.timings[e.detail.id] && nebula.timings[e.detail.id].laps ){
+		if ( nebula.timings[e.detail.id] && nebula.timings[e.detail.id].laps ){
 			formInputs = nebula.timings[e.detail.id].laps + ' inputs';
 		}
 

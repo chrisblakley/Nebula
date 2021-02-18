@@ -259,7 +259,7 @@ nebula.eventTracking = async function(){
 			window.modifiedZoomLevel = window.modifiedZoomLevel || 0; //Scope to window so it is not reset every event. Note: This is just how it was modified and not the actual zoom level! Zoom level is saved between pageloads so it may have started at non-zero!
 
 			//Ctrl+ (Zoom In)
-			if ( (e.ctrlKey || e.metaKey) && (e.which === 187 || e.which === 107) ){ //187 is plus (and equal), 107 is plus on the numpad
+			if ( (e.ctrlKey || e.metaKey) && (e.keyCode === 187 || e.keyCode === 107) ){ //187 is plus (and equal), 107 is plus on the numpad
 				modifiedZoomLevel++; //Increment the zoom level iterator
 
 				let thisEvent = {
@@ -275,7 +275,7 @@ nebula.eventTracking = async function(){
 			}
 
 			//Ctrl- (Zoom Out)
-			if ( (e.ctrlKey || e.metaKey) && (e.which === 189 || e.which === 109) ){ //189 is minus, 109 is minus on the numpad
+			if ( (e.ctrlKey || e.metaKey) && (e.keyCode === 189 || e.keyCode === 109) ){ //189 is minus, 109 is minus on the numpad
 				modifiedZoomLevel--; //Decrement the zoom level iterator
 
 				let thisEvent = {
@@ -291,7 +291,7 @@ nebula.eventTracking = async function(){
 			}
 
 			//Ctrl+0 (Reset Zoom)
-			if ( (e.ctrlKey || e.metaKey) && (e.which === 48 || e.which === 0 || e.which === 96) ){ //48 is 0 (Mac), 0 is Windows 0, and 96 is Windows numpad
+			if ( (e.ctrlKey || e.metaKey) && (e.keyCode === 48 || e.keyCode === 0 || e.keyCode === 96) ){ //48 is 0 (Mac), 0 is Windows 0, and 96 is Windows numpad
 				modifiedZoomLevel = 0; //Reset the zoom level iterator
 
 				let thisEvent = {
@@ -307,7 +307,7 @@ nebula.eventTracking = async function(){
 			}
 
 			//Ctrl+F or Cmd+F (Find)
-			if ( (e.ctrlKey || e.metaKey) && e.which === 70 ){
+			if ( (e.ctrlKey || e.metaKey) && e.keyCode === 70 ){
 				let thisEvent = {
 					event: e,
 					category: 'Keyboard Shortcut',
@@ -321,7 +321,7 @@ nebula.eventTracking = async function(){
 			}
 
 			//Ctrl+D or Cmd+D (Bookmark)
-			if ( (e.ctrlKey || e.metaKey) && e.which === 68 ){ //Ctrl+D
+			if ( (e.ctrlKey || e.metaKey) && e.keyCode === 68 ){ //Ctrl+D
 				let thisEvent = {
 					event: e,
 					category: 'Keyboard Shortcut',
@@ -823,19 +823,13 @@ nebula.eventTracking = async function(){
 		}
 
 		//Note: This sends 2 events per print (beforeprint and afterprint). If one occurs more than the other we can remove one.
-		if ( 'matchMedia' in window ){ //IE10+
-			let mediaQueryList = window.matchMedia('print');
-			mediaQueryList.addListener(function(mql){
-				if ( mql.matches ){
-					sendPrintEvent('Before Print', 'mql.matches');
-				} else {
-					sendPrintEvent('After Print', '!mql.matches');
-				}
-			});
-		} else {
-			window.onbeforeprint = sendPrintEvent('Before Print', 'onbeforeprint');
-			window.onafterprint = sendPrintEvent('After Print', 'onafterprint');
-		}
+		window.matchMedia('print').addListener(function(mql){
+			if ( mql.matches ){
+				sendPrintEvent('Before Print', 'mql.matches');
+			} else {
+				sendPrintEvent('After Print', '!mql.matches');
+			}
+		});
 
 		//Detect Adblock
 		if ( nebula.user.client.bot === false && nebula.site.options.adblock_detect ){ //If not a bot and adblock detection is active

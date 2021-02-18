@@ -1034,12 +1034,12 @@ if ( !trait_exists('Admin') ){
 					//Nebula keyboard shortcuts for frontend Admin
 					jQuery(document).on('keydown', function(e){
 						//Admin Bar Toggle
-						if ( e.altKey && e.which === 65 ){ //Alt+A
+						if ( e.altKey && e.keyCode === 65 ){ //Alt+A
 							jQuery('html').toggleClass('admin-bar-inactive');
 						}
 
 						//Reprocess all Sass files
-						if ( e.altKey && e.which === 82 ){ //Alt+R
+						if ( e.altKey && e.keyCode === 82 ){ //Alt+R
 							var url = new URL(window.location.href);
 							url.searchParams.set('sass', 'true');
 							location = url; //Reload with the new URL

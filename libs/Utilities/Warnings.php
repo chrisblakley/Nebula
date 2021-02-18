@@ -799,12 +799,10 @@ if ( !trait_exists('Warnings') ){
 									}
 
 									//Check image filesize. Note: cached files are 0
-									if ( window.performance ){ //IE10+
-										var iTime = performance.getEntriesByName(jQuery(this).attr('src'))[0];
-										if ( iTime && iTime.transferSize >= 500_000 ){
-											jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-image"></i> Image filesize over 500kb</div>');
-											jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-image"></i> Image filesize over 500kb</li>');
-										}
+									var iTime = performance.getEntriesByName(jQuery(this).attr('src'))[0];
+									if ( iTime && iTime.transferSize >= 500_000 ){
+										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-image"></i> Image filesize over 500kb</div>');
+										jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-image"></i> Image filesize over 500kb</li>');
 									}
 
 									//@todo "Nebula" 0: Use Fetch API with method: 'HEAD' as a more simple way of getting filesize.

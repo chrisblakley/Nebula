@@ -47,7 +47,7 @@ jQuery(function(){
 	}
 
 	//Remove Sass render trigger query
-	if ( nebula.get('sass') && !nebula.get('persistent') && window.history.replaceState ){ //IE10+
+	if ( nebula.get('sass') && !nebula.get('persistent') ){
 		window.history.replaceState({}, document.title, nebula.removeQueryParameter('sass', window.location.href));
 	}
 });
