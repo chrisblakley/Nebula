@@ -321,7 +321,7 @@ nebula.addressLookup = function(lat, lng){
 //Extract address components from Google Maps Geocoder
 nebula.extractFromAddress = function(components, desiredType){
 	for ( let component of components ){
-		for ( thisType of components[i].types ){
+		for ( let thisType of components[i].types ){
 			if ( thisType === desiredType ){
 				return component.long_name;
 			}

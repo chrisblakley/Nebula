@@ -665,10 +665,8 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fas fa-fw fa-ethernet"></i> Server Protocol: <strong>' . $_SERVER['SERVER_PROTOCOL'] . '</strong></li>';
 
 			//MySQL version
-			if ( function_exists('mysqli_get_client_version') ){
-				$mysql_version = mysqli_get_client_version();
-				echo '<li><i class="fas fa-fw fa-database"></i> MySQL Version: <strong title="Raw: ' . $mysql_version . '">' . floor($mysql_version/10000) . '.' . floor(($mysql_version%10000)/100) . '.' . ($mysql_version%10000)%100 . '</strong></li>'; //PHP 7.4 use numeric separators here
-			}
+			$mysql_version = mysqli_get_client_version();
+			echo '<li><i class="fas fa-fw fa-database"></i> MySQL Version: <strong title="Raw: ' . $mysql_version . '">' . floor($mysql_version/10000) . '.' . floor(($mysql_version%10000)/100) . '.' . ($mysql_version%10000)%100 . '</strong></li>'; //PHP 7.4 use numeric separators here
 
 			//PHP version
 			$php_version_color = 'inherit';

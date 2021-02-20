@@ -195,6 +195,7 @@ if ( !trait_exists('Analytics') ){
 				'cd9' => ( is_child_theme() )? 'Child' : 'Parent',
 				'cd13' => get_current_user_id(),
 				'cd14' => PHP_VERSION,
+				'cd15' => mysqli_get_client_version(),
 				'cn' => 'Nebula Usage',
 				'cs' => home_url('/'),
 				'cm' => 'WordPress'

@@ -155,38 +155,22 @@
 	</IfModule>
 </IfModule>
 
-#If conditional only available in Apache 2.4+ (released January 2012)
-<IfVersion >= 2.4>
-	#If the debug query parameter exists
-	<If "%{QUERY_STRING} =~ /(^|&)debug($|=|&)/">
-		#This is not yet working. (Even with <If false> hardcoded above)
-		#Unset all caches
-		<FilesMatch "\.(ico|pdf|flv|png|gif|jpg|jpeg|svg|woff|woff2|mp3|css|js|xml|txt|php|html)$">
-			Header unset Cache-Control
-			Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
-			Header set Pragma "no-cache"
-			Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
-		</FilesMatch>
-	</If>
-	<Else>
-		#This is not yet working. In the future, move the cache rules into this else condition
-	</Else>
-</IfVersion>
-
 #Cache files for applicable periods
 <IfModule mod_expires.c>
 	#Cache files for certain lengths of time
-	#1 YEAR
-	<FilesMatch "\.(ico|pdf|flv|png|gif|jpg|jpeg|svg|woff|woff2|mp3|css|js)$">
+	#1 Year
+	<FilesMatch "\.(ico|pdf|flv|png|gif|jpg|jpeg|svg|woff|woff2|mp3|css)$">
 		Header set Cache-Control "max-age=31536000, public"
 	</FilesMatch>
 
-	#2 DAYS
-	<FilesMatch "\.(xml|txt)$">
-		Header set Cache-Control "max-age=172800, proxy-revalidate"
+	#1 Week (This is the minimum recommended by Google)
+	#The ETag helps ease caching of static imported JS modules
+	<FilesMatch "\.(xml|txt|json|js|mjs)$">
+		Header set Cache-Control "max-age=604800, proxy-revalidate"
+		Header unset ETag
 	</FilesMatch>
 
-	#10 HOURS
+	#10 Hours
 	# PHP/HTML here to prevent nonce from expiring in cache
 	<FilesMatch "\.(php|html)$">
 		Header set Cache-Control "max-age=36000, public"
@@ -201,19 +185,26 @@
 	<FilesMatch "(sw|service-worker|serviceworker).js$">
 		FileETag None
 		Header unset ETag
+		Header unset Cache-Control
 		Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
 		Header set Pragma "no-cache"
 		Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
 	</FilesMatch>
 </IfModule>
 
-#Use ETag to ease caching of static imported JS modules
-<IfModule headers_module>
-	<FilesMatch "\.(js|mjs)$">
-		Header set Cache-Control "public, must-revalidate, max-age=3600"
+#Unset the cache on all files when ?debug query string is used
+<IfVersion >= 2.4>
+	#If the debug query parameter exists on the request itself or the referrer
+	<If "%{QUERY_STRING} =~ /(^|&)debug/ || %{HTTP_REFERER} =~ /(\?|&)debug/">
+		#Unset all caches
+		FileETag None
 		Header unset ETag
-	</FilesMatch>
-</IfModule>
+		Header unset Cache-Control
+		Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+		Header set Pragma "no-cache"
+		Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+	</If>
+</IfVersion>
 
 #RewriteEngine On
 #RewriteCond %{REQUEST_METHOD} POST

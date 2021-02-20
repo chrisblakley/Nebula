@@ -786,14 +786,14 @@ nebula.eventTracking = async function(){
 			nebula.crm('event', 'AJAX Error');
 		});
 
-		//Window errors are detected in usage.js for better visibility
+		//Note: Window errors are detected in usage.js for better visibility
 
 		//Reporting Observer deprecations and interventions
 		try {
 			if ( 'ReportingObserver' in window ){ //Chrome 68+
 				let nebulaReportingObserver = new ReportingObserver(function(reports, observer){
-					for ( report of reports ){
-						if ( !report.body.sourceFile.includes('extension') ){ //Ignore browser extensions
+					for ( let report of reports ){
+						if ( !['extension', 'about:blank'].some(item => report.body.sourceFile.includes(item)) ){ //Ignore certain files
 							ga('send', 'exception', {'exDescription': '(JS) Reporting Observer [' + report.type + ']: ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber, 'exFatal': false});
 						}
 					}
