@@ -63,7 +63,7 @@ if ( !trait_exists('Assets') ){
 			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.10.21', true);
 			$this->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js', array('defer', 'crossorigin'), null, '1.8.7', true);
 			$this->register_script('nebula-autotrack', 'https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js', array('async', 'crossorigin'), null, '2.4.1', true);
-			$this->register_script('nebula-nebula', get_template_directory_uri() . '/assets/js/nebula.js', array('defer', 'module'), array('jquery-core'), $this->version('full'), true);
+			$this->register_script('nebula-nebula', get_template_directory_uri() . '/assets/js/nebula.js', array('defer', 'module'), array('jquery-core', 'wp-hooks'), $this->version('full'), true);
 			$this->register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', array('defer', 'module'), array('jquery-core'), $this->version('full'), true);
 			$this->register_script('nebula-admin', get_template_directory_uri() . '/assets/js/admin.js', array('defer', 'module'), array('jquery'), $this->version('full'), true);
 		}
@@ -194,6 +194,7 @@ if ( !trait_exists('Assets') ){
 					'home_url' => home_url(),
 					'sw_url' => esc_url($this->sw_location()),
 					'domain' => $this->url_components('domain'),
+					'hostname' => $this->url_components('hostname'),
 					'protocol' => $this->url_components('protocol'),
 					'language' => get_bloginfo('language'),
 					'ajax' => array(
@@ -266,7 +267,8 @@ if ( !trait_exists('Assets') ){
 				'flags' => array(
 					'adblock' => false,
 				),
-				'geolocation' => false
+				'geolocation' => false,
+				'referrer' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : false //This is updated every page (not just for the initial session)
 			);
 
 			//User Data

@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 const THEME_NAME = 'nebula-child';
-const NEBULA_VERSION = 'v8.9.20.0313'; //Saturday, February 20, 2021 12:45:18 AM
+const NEBULA_VERSION = 'v8.9.21.8782'; //Sunday, February 21, 2021 9:04:48 PM
 const OFFLINE_URL = 'https://nebula.gearside.com/offline/';
 const OFFLINE_IMG = 'https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/offline.svg';
 const OFFLINE_GA_DIMENSION = 'cd2';
@@ -64,7 +64,7 @@ function isCacheAllowed(event){
 	let eventURL = event.url.href || event.url; //The file being requested
 
 	//Check domains, directories, and pages
-	let pageRegex = /\/chrome-extension:\/\/|\/wp-login.php|\/wp-admin|analytics|hubspot|hs-scripts|customize.php|customize_|no-cache|admin-ajax|gutenberg\//;
+	let pageRegex = /\/chrome-extension:\/\/|\/wp-login.php|\/wp-admin|\/wp-json|analytics|hubspot|hs-scripts|customize.php|customize_|no-cache|admin-ajax|gutenberg\//;
 	if ( pageRegex.test(eventReferrer) || pageRegex.test(eventURL) ){
 		return false;
 	}
@@ -80,7 +80,7 @@ function isCacheAllowed(event){
 
 //Data feeds
 workbox.routing.registerRoute(
-	new RegExp('/.(?:json|xml|yaml|csv)/'),
+	new RegExp('/(?:json|xml|yaml|csv)/'), //Not just extensions so endpoints like /wp-json/ are included
 	new workbox.strategies.NetworkFirst()
 );
 

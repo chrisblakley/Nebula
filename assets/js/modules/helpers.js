@@ -397,13 +397,13 @@ nebula.cookieNotification = async function(){
 };
 
 //Nebula preferred default Chosen.js options
-nebula.defaultChosenOptions = {
+nebula.chosenOptions = wp.hooks.applyFilters('nebulaChosenOptions', {
 	disable_search_threshold: 5,
 	search_contains: true,
 	no_results_text: 'No results found.',
 	allow_single_deselect: true,
 	width: '100%'
-};
+});
 
 //Lazy load and initialize Mmenu separately because it has additional conditions
 nebula.initMmenu = async function(){

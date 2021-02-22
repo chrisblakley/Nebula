@@ -14,7 +14,7 @@ if ( !trait_exists('Device') ){
 
 		//Device Detection - https://github.com/matomo-org/device-detector
 		public function detect(){
-			if ( $this->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') && version_compare(phpversion(), '7.2.0', '>=') ){
 				$this->timer('Device Detection');
 
 				include_once get_template_directory() . '/inc/vendor/Spyc.php';

@@ -1,13 +1,16 @@
-//Custom CSS expression for a case-insensitive :contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
-//Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: nebula.keywordSearch(container, parent, value);
-jQuery.expr.pseudos.Contains = function(element, index, match){
-	return (element.textContent || element.innerText || '').toUpperCase().includes(match[3].toUpperCase());
-};
+//These must be inside of this function to assure jQuery is defined
+nebula.addExpressions = function(){
+	//Custom CSS expression for a case-insensitive :contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
+	//Call it with :Contains() - Ex: ...find("*:Contains(" + jQuery('.something').val() + ")")... -or- use the nebula function: nebula.keywordSearch(container, parent, value);
+	jQuery.expr.pseudos.Contains = function(element, index, match){
+		return (element.textContent || element.innerText || '').toUpperCase().includes(match[3].toUpperCase());
+	};
 
-//Custom expression for any element that can be focused. Source: https://github.com/selfthinker/dokuwiki_template_writr/blob/master/js/skip-link-focus-fix.js
-//Call it with :focusable() or .is(':focusable')
-jQuery.expr.pseudos.focusable = function(element, index, match){
-	return jQuery(element).is(':input:enabled, a[href], area[href], object, [tabindex]') && !jQuery(element).is(':hidden');
+	//Custom expression for any element that can be focused. Source: https://github.com/selfthinker/dokuwiki_template_writr/blob/master/js/skip-link-focus-fix.js
+	//Call it with :focusable() or .is(':focusable')
+	jQuery.expr.pseudos.focusable = function(element, index, match){
+		return jQuery(element).is(':input:enabled, a[href], area[href], object, [tabindex]') && !jQuery(element).is(':hidden');
+	};
 };
 
 //Escape required characters from a provided string. https://github.com/kvz/locutus

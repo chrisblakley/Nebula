@@ -29,6 +29,7 @@ jQuery(function(){
 
 	//Utilities
 	nebula.cacheSelectors();
+	nebula.addExpressions();
 	nebula.initBootstrapFunctions(); //Must be in DOM ready
 	nebula.helpers();
 	nebula.svgImgs();

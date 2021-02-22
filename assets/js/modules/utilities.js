@@ -298,13 +298,13 @@ nebula.once = function(fn, args, unique){
 	}
 
 	if ( typeof fn === 'function' ){ //If the first parameter is a function
-		if ( typeof nebula.onces[unique] === 'undefined' || !nebula.onces[unique] ){ //@todo "Nebula" 0: Use optional chaining?
+		if ( typeof nebula.onces[unique] === 'undefined' || !nebula.onces[unique] ){
 			nebula.onces[unique] = true;
 			return fn.apply(this, args);
 		}
 	} else { //Else return boolean
 		unique = fn; //If only one parameter is passed
-		if ( typeof nebula.onces[unique] === 'undefined' || !nebula.onces[unique] ){ //@todo "Nebula" 0: Use optional chaining?
+		if ( typeof nebula.onces[unique] === 'undefined' || !nebula.onces[unique] ){
 			nebula.onces[unique] = true;
 			return true;
 		} else {
@@ -436,7 +436,7 @@ nebula.timer = function(uniqueID, action, name){
 	}
 
 	//Can not modify a timer once it has ended.
-	if ( typeof nebula.timings[uniqueID] !== 'undefined' && nebula.timings[uniqueID].total > 0 ){ //@todo "Nebula" 0: Use optional chaining?
+	if ( typeof nebula.timings[uniqueID] !== 'undefined' && nebula.timings[uniqueID].total > 0 ){
 		return nebula.timings[uniqueID].total;
 	}
 
@@ -747,17 +747,18 @@ nebula.checkNotificationPermission = function(){
 
 //Check (or set) network availability (online/offline)
 nebula.networkAvailable = function(){
-	if ( navigator.onLine ){
-		nebula.dom.body.removeClass('offline');
+	let onlineStatus = ( navigator.onLine )? 'online' : 'offline';
 
-		if ( 'localStorage' in window ){
-			localStorage.setItem('network_connection', 'online');
-		}
-	} else {
+	nebula.dom.body.removeClass('offline');
+	if ( onlineStatus === 'offline' ){
 		nebula.dom.body.addClass('offline');
+	}
 
-		if ( 'localStorage' in window ){
-			localStorage.setItem('network_connection', 'offline');
+	if ( 'localStorage' in window ){
+		try {
+			localStorage.setItem('network_connection', onlineStatus);
+		} catch {
+			//Ignore errors
 		}
 	}
 

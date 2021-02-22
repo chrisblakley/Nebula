@@ -266,7 +266,7 @@ nebula.pwa = function(){
 //Detections for events specific to predicting the next pageview.
 nebula.predictiveCacheListeners = async function(){
 	//If Save Data is supported and Save Data is requested do not bother with predictive listeners
-	if ( navigator?.connection?.saveData ){
+	if ( navigator.connection?.saveData ){
 		return false;
 	}
 
@@ -348,9 +348,7 @@ nebula.prefetch = async function(url = '', callback, element){
 		url = url.split('#')[0]; //Remove hashes
 
 		//Ignore blocklisted terms (logout, 1-click purchase buttons, etc.)
-		let prefetchBlocklist = ['logout', 'wp-admin'];
-
-		//@todo "Nebula" 0: It would be nice to allow other JS to add to the blocklist here... Would require this be added to WP core: https://core.trac.wordpress.org/changeset/41375
+		let prefetchBlocklist = wp.hooks.applyFilters('nebulaPrefetchBlocklist', ['logout', 'wp-admin']);
 
 		jQuery.each(prefetchBlocklist, function(index, value){
 			if ( url.includes(value) ){

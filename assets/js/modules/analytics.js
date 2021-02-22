@@ -81,7 +81,8 @@ nebula.eventTracking = async function(){
 		}
 
 		//Button Clicks
-		nebula.dom.document.on('mousedown', "button, .button, .btn, [role='button'], a.wp-block-button__link, .hs-button", function(e){
+		let nebulaButtonSelector = wp.hooks.applyFilters('nebulaButtonSelectors', "button, .button, .btn, [role='button'], a.wp-block-button__link, .hs-button");
+		nebula.dom.document.on('mousedown', nebulaButtonSelector, function(e){
 			let thisEvent = {
 				event: e,
 				category: 'Button',
@@ -190,7 +191,8 @@ nebula.eventTracking = async function(){
 		});
 
 		//Notable File Downloads
-		jQuery.each(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv', 'zip', 'zipx', 'rar', 'gz', 'tar', 'txt', 'rtf', 'ics', 'vcard'], function(index, extension){
+		let notableFileExtensions = wp.hooks.applyFilters('nebulaNotableFiles', ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv', 'zip', 'zipx', 'rar', 'gz', 'tar', 'txt', 'rtf', 'ics', 'vcard']);
+		jQuery.each(notableFileExtensions, function(index, extension){
 			jQuery("a[href$='." + extension + "' i]").on('mousedown', function(e){ //Cannot defer case insensitive attribute selectors in jQuery (or else you will get an "unrecognized expression" error)
 				let thisEvent = {
 					event: e,
@@ -237,7 +239,8 @@ nebula.eventTracking = async function(){
 
 		//Generic Internal Search Tracking
 		//This event will need to correspond to the GA4 event name "search" and use "search_term" as a parameter: https://support.google.com/analytics/answer/9267735
-		nebula.dom.document.on('submit', '#s, input.search', function(){
+		let internalSearchInputSelector = wp.hooks.applyFilters('nebulaInternalSearchInputs', '#s, input.search');
+		nebula.dom.document.on('submit', internalSearchInputSelector, function(){
 			let thisEvent = {
 				event: e,
 				category: 'Internal Search',
@@ -530,6 +533,23 @@ nebula.eventTracking = async function(){
 			});
 		}
 
+		//High Redirect Counts
+		if ( window.performance && performance.navigation.redirectCount >= 3 ){ //If the browser redirected 3+ times
+			let previousPage = nebula.session.referrer || document.referrer || '(Unknown Previous Page)';
+
+			let thisEvent = {
+				event: e,
+				category: 'High Redirect Count',
+				action: performance.navigation.redirectCount + ' Redirects',
+				label: 'Previous Page: ' + previousPage,
+			};
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', category, action, label, {'nonInteraction': true}); //Non-interaction because this happens on load
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-high-redirect-count'}));
+			nebula.crm('event', thisEvent.category);
+		}
+
 		//Dead Clicks (Non-Linked Click Attempts)
 		nebula.dom.document.on('click', 'img', function(e){
 			if ( !jQuery(this).parents('a, button').length ){
@@ -793,7 +813,7 @@ nebula.eventTracking = async function(){
 			if ( 'ReportingObserver' in window ){ //Chrome 68+
 				let nebulaReportingObserver = new ReportingObserver(function(reports, observer){
 					for ( let report of reports ){
-						if ( !['extension', 'about:blank'].some(item => report.body.sourceFile.includes(item)) ){ //Ignore certain files
+						if ( !['extension', 'about:blank'].some((item) => report.body.sourceFile.includes(item)) ){ //Ignore certain files
 							ga('send', 'exception', {'exDescription': '(JS) Reporting Observer [' + report.type + ']: ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber, 'exFatal': false});
 						}
 					}

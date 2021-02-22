@@ -237,22 +237,18 @@ if ( !trait_exists('Sass') ){
 								$this_scss_contents = $wp_filesystem->get_contents($scss_file); //Copy SCSS file contents
 
 								//Catch fatal compilation errors when PHP v7.0+ to provide additional information without crashing
-								if ( version_compare(phpversion(), '7.0.0', '>=') ){ //@todo: remove this conditional once PHP7 is widely enough used.
-									try {
-										$compiled_css = $this->scss->compile($this_scss_contents, $scss_file); //Compile the SCSS
-									} catch (\Throwable $error){
-										$unprotected_array = (array) $error;
-										$prefix = chr(0) . '*' . chr(0);
-
-										$sass_errors[] = array(
-											'file' => $scss_file,
-											'message' => $unprotected_array[$prefix . 'message']
-										);
-
-										continue; //Skip the file that contains errors
-									}
-								} else {
+								try {
 									$compiled_css = $this->scss->compile($this_scss_contents, $scss_file); //Compile the SCSS
+								} catch (\Throwable $error){
+									$unprotected_array = (array) $error;
+									$prefix = chr(0) . '*' . chr(0);
+
+									$sass_errors[] = array(
+										'file' => $scss_file,
+										'message' => $unprotected_array[$prefix . 'message']
+									);
+
+									continue; //Skip the file that contains errors
 								}
 
 								$enhanced_css = $this->scss_post_compile($compiled_css); //Compile server-side variables into SCSS

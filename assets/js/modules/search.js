@@ -80,7 +80,8 @@ nebula.menuSearchReplacement = async function(){
 
 //Enable autocomplete search on WordPress core selectors
 nebula.autocompleteSearchListeners = async function(){
-	jQuery('.nebula-search input, input#s, input.search').on('focus', function(){
+	let autocompleteSearchSelector = wp.hooks.applyFilters('nebulaAutocompleteSearchSelector', '.nebula-search input, input#s, input.search');
+	jQuery(autocompleteSearchSelector).on('focus', function(){
 		if ( !jQuery(this).hasClass('no-autocomplete') ){ //Use this class to disable or override the default Nebula autocomplete search parameters
 			nebula.loadJS(nebula.site.resources.scripts.nebula_jquery_ui, 'jquery-ui').then(function(){
 				nebula.dom.document.on('blur', '.nebula-search input', function(){
@@ -261,7 +262,8 @@ nebula.wpSearchInput = function(){
 //Mobile search placeholder toggle
 nebula.mobileSearchPlaceholder = async function(){
 	let mobileHeaderSearchInput = jQuery('#mobileheadersearch input');
-	let searchPlaceholder = 'What are you looking for?';
+	let searchPlaceholder = wp.hooks.applyFilters('nebulaMobileSearchPlaceholder',  'What are you looking for?');
+
 	if ( window.matchMedia('(max-width: 410px)').matches ){
 		searchPlaceholder = 'Search';
 	}

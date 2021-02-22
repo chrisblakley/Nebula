@@ -422,7 +422,7 @@
 			<?php do_action('nebula_ga_after_send_pageview'); ?>
 
 			<?php if ( is_404() ): //Track 404 Errors ?>
-				var lastReferrer = "<?php echo ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : 'false'; ?>" || document.referrer || '(Unknown Referrer)';
+				var lastReferrer = nebula.session?.referrer || document.referrer || '(Unknown Referrer)';
 				ga('send', 'event', '404 Not Found', '<?php echo esc_url(nebula()->requested_url()); ?>', 'Referrer: ' + lastReferrer, {'nonInteraction': true});
 			<?php endif; ?>
 
