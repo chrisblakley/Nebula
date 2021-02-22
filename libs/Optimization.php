@@ -327,7 +327,7 @@ if ( !trait_exists('Optimization') ){
 				$crossorigin = ''; //Prep this as empty because it is about to get complicated
 
 				//All fonts, remote files, and script files get the crossorigin attribute
-				if ( $filetype === 'font' || strpos($src, get_site_url()) === false || $filetype = 'script' ){
+				if ( $filetype === 'font' || strpos($src, get_site_url()) === false || $filetype == 'script' ){
 					$crossorigin = ' crossorigin=anonymous';
 				}
 
