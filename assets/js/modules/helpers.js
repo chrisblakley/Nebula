@@ -326,7 +326,15 @@ nebula.pre = async function(){
 	//Format non-shortcode pre tags to be styled properly
 	jQuery('pre.nebula-code').each(function(){
 		if ( !jQuery(this).parent('.nebula-code-con').length ){
-			let lang = jQuery(this).attr('class').replace('nebula-code', '').trim();
+			let lang = jQuery(this).attr('data-lang') || '';
+			if ( lang === '' ){
+				let langMatches = jQuery(this).attr('class').match(/lang-(\S*)/i);
+				lang = ( langMatches )? langMatches[0] : ''; //Use a class that starts with "lang-" Ex: "lang-php"
+			}
+			if ( lang === '' ){
+				lang = jQuery(this).attr('class').replace('nebula-code', '').replaceAll(/(\s*)((wp|m.|p.|nebula)-\S+)(\s*)/gi, '').trim(); //Remove expected classes and use remaining class as language
+			}
+
 			jQuery(this).addClass(lang.toLowerCase()).wrap('<div class="nebula-code-con clearfix ' + lang.toLowerCase() + '"></div>');
 			jQuery(this).closest('.nebula-code-con').prepend('<span class="nebula-code codetitle ' + lang.toLowerCase() + '">' + lang + '</span>');
 		}

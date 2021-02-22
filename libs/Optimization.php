@@ -28,7 +28,6 @@ if ( !trait_exists('Optimization') ){
 					add_action('wp_head', array($this, 'listen_for_jquery_footer_errors'));
 				}
 
-				//add_filter('style_loader_tag', array($this, 'modify_style_attributes'), 10, 4); //Turning this off for now as a hotfix test
 				add_filter('script_loader_tag', array($this, 'modify_script_attributes'), 10, 2);
 			}
 
@@ -182,15 +181,6 @@ if ( !trait_exists('Optimization') ){
 			}
 		}
 
-		//Add/modify crossorigin attributes to styles yolo
-		public function modify_style_attributes($html, $handle, $href, $media){
-			if ( strpos($handle, 'nebula') !== false && strpos($href, $this->url_components('hostname')) === false && strpos($html, 'crossorigin=') === false ){
-				$html = str_replace(' href', 'crossorigin="anonymous" href', $html); //Add the crossorigin attribute to this third-party stylesheet request
-			}
-
-			return $html;
-		}
-
 		//Add/modify defer, async, module, and/or crossorigin attributes to scripts
 		public function modify_script_attributes($tag, $handle){
 			$crossorigin_exececution = wp_scripts()->get_data($handle, 'crossorigin');
@@ -324,18 +314,7 @@ if ( !trait_exists('Optimization') ){
 
 		public function http2_server_push_file($src, $filetype){
 			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
-				$crossorigin = ''; //Prep this as empty because it is about to get complicated
-
-				//All fonts, remote files, and script files get the crossorigin attribute
-				if ( $filetype === 'font' || strpos($src, get_site_url()) === false || $filetype == 'script' ){
-					$crossorigin = ' crossorigin=anonymous';
-				}
-
-				//Local plugins should not get crossorigin, so remove if it was already applied... except for the Nebula Companion plugin for some reason– that one does need crossorigin
-				if ( strpos($src, '/plugins/') && strpos($src, '/plugins/nebula-companion/') === false ){
-					$crossorigin = '';
-				}
-
+				$crossorigin = ( strpos($src, get_site_url()) === false || $filetype === 'font' )? ' crossorigin=anonymous' : ''; //Add crossorigin attribute for remote assets and all fonts
 				header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel=preload; as=' . $filetype . ';' . $crossorigin, false); //Send the header for the HTTP2 Server Push (strtok to remove everything after and including "#")
 			}
 		}

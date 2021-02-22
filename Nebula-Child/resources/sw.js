@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 const THEME_NAME = 'nebula-child';
-const NEBULA_VERSION = 'v8.9.21.8782'; //Sunday, February 21, 2021 9:04:48 PM
+const NEBULA_VERSION = 'v8.9.22.5178'; //Monday, February 22, 2021 12:25:55 PM
 const OFFLINE_URL = 'https://nebula.gearside.com/offline/';
 const OFFLINE_IMG = 'https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/offline.svg';
 const OFFLINE_GA_DIMENSION = 'cd2';
@@ -42,7 +42,7 @@ workbox.precaching.precacheAndRoute([
 const ignoreQueryStringPlugin = {
 	cachedResponseWillBeUsed: async({cacheName, request, matchOptions, cachedResponse, event}) => {
 		if ( cachedResponse ){
-			return cachedResponse; //Return the cached repsonse if an exact match is found
+			return cachedResponse; //Return the cached response if an exact match is found
 		}
 
 		return caches.match(request.url, {ignoreSearch: true}); //Try finding a match without query strings this time

@@ -262,7 +262,7 @@ nebula.wpSearchInput = function(){
 //Mobile search placeholder toggle
 nebula.mobileSearchPlaceholder = async function(){
 	let mobileHeaderSearchInput = jQuery('#mobileheadersearch input');
-	let searchPlaceholder = wp.hooks.applyFilters('nebulaMobileSearchPlaceholder',  'What are you looking for?');
+	let searchPlaceholder = wp.hooks.applyFilters('nebulaMobileSearchPlaceholder', 'What are you looking for?');
 
 	if ( window.matchMedia('(max-width: 410px)').matches ){
 		searchPlaceholder = 'Search';
