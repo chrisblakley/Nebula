@@ -28,7 +28,7 @@ if ( !trait_exists('Optimization') ){
 					add_action('wp_head', array($this, 'listen_for_jquery_footer_errors'));
 				}
 
-				add_filter('style_loader_tag', array($this, 'modify_style_attributes'), 10, 4);
+				//add_filter('style_loader_tag', array($this, 'modify_style_attributes'), 10, 4); //Turning this off for now as a hotfix test
 				add_filter('script_loader_tag', array($this, 'modify_script_attributes'), 10, 2);
 			}
 
