@@ -51,7 +51,7 @@ nebula.eventTracking = async function(){
 
 			ga('send', 'event', 'Browser Navigation', 'Back/Forward', 'From: ' + previousPage, {'nonInteraction': true});
 
-			if ( quickBack ){ //If the previous page was viewed for a very short time
+			if ( quickBack && previousPage !== document.location.pathname ){ //If the previous page was viewed for a very short time and is different than the current page
 				ga('send', 'event', 'Quick Back', 'Quickly left from: ' + previousPage, 'Back to: ' + document.location.pathname, {'nonInteraction': true}); //Technically this could be a "quick forward" too, but less likely
 			}
 		}

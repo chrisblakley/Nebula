@@ -5,18 +5,23 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Logs') ){
 	trait Logs {
 		public function hooks(){
-			if ( $this->is_staff() && $this->get_option('logs') ){
-				add_action('init', array($this, 'register_table_names')); //This must happen on all pages so logs can be added or retreived
-				add_action('admin_init', array($this, 'create_tables') );
-				add_action('wp_ajax_add_log', array($this, 'add_log_via_ajax'));
-				add_action('wp_ajax_remove_log', array($this, 'remove_log_via_ajax'));
-				add_action('wp_ajax_clean_logs', array($this, 'clean_logs_via_ajax'));
+			if ( $this->get_option('logs') ){
+				if ( $this->is_staff() ){
+					add_action('init', array($this, 'register_table_names')); //This must happen on all pages so logs can be added or retrieved
+					add_action('admin_init', array($this, 'create_tables') );
+				}
+
+				if ( is_user_logged_in() ){
+					add_action('wp_ajax_add_log', array($this, 'add_log_via_ajax'));
+					add_action('wp_ajax_remove_log', array($this, 'remove_log_via_ajax'));
+					add_action('wp_ajax_clean_logs', array($this, 'clean_logs_via_ajax'));
+				}
 			}
 		}
 
 		//Register table name in $wpdb global
 		public function register_table_names(){
-			if ( $this->get_option('logs') && $this->is_staff() ){
+			if ( $this->get_option('logs') && $this->is_staff() ){ //User must be staff to register/create the table
 				global $wpdb;
 
 				if ( !isset($wpdb->nebula_logs) ){
@@ -54,7 +59,7 @@ if ( !trait_exists('Logs') ){
 
 		//Insert log into DB
 		public function add_log($message='', $importance=0, $optimize=true){
-			if ( $this->get_option('logs') && $this->is_staff() && !empty($message) ){
+			if ( $this->get_option('logs') && is_user_logged_in() && !empty($message) ){
 				global $wpdb;
 
 				$wpdb->insert($wpdb->nebula_logs, array(

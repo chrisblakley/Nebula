@@ -41,7 +41,7 @@ if ( !trait_exists('Admin') ){
 
 				add_action('admin_init', array($this, 'clear_all_w3_caches'));
 
-				if ( current_user_can('edit_others_posts') ){
+				if ( current_user_can('edit_others_posts') && $this->allow_theme_update() ){
 					add_action('admin_init', array($this, 'theme_json'));
 					add_filter('puc_request_update_result_theme-Nebula', array($this, 'theme_update_version_store'), 10, 2); //This hook is found in UpdateChecker.php in the filterUpdateResult() function.
 					add_filter('site_transient_update_themes', array($this, 'force_nebula_theme_update'), 99, 1);
@@ -1088,6 +1088,8 @@ if ( !trait_exists('Admin') ){
 					'url' => 'https://github.com/chrisblakley/Nebula/commits/main',
 					'package' => 'https://github.com/chrisblakley/Nebula/archive/main.zip'
 				);
+
+				$this->add_log('Nebula theme re-install (forced via WP) from ' . $prev_version . ' to ' . $new_version, 7);
 			}
 
 			return $updates;

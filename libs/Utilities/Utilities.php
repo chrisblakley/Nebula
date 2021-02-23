@@ -1191,7 +1191,7 @@ if ( !trait_exists('Utilities') ){
 			$nebula_theme_info = ( is_child_theme() )? wp_get_theme(str_replace('-child', '', get_template())) : wp_get_theme(); //Get the parent theme (regardless of if child theme is active)
 
 			if ( $return === 'raw' ){ //Check this first to prevent needing to RegEx altogether
-				return $nebula_theme_info->get('Version'); //Ex: 7.2.23.8475u
+				return $nebula_theme_info->get('Version'); //Ex: 7.2.23.8475
 			}
 
 			preg_match('/(?<primary>(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+[a-z]?))\.?(?<build>\d+)?/i', $nebula_theme_info->get('Version'), $nebula_version);
@@ -1219,7 +1219,7 @@ if ( !trait_exists('Utilities') ){
 
 			switch ( $return ){
 				case ('raw'): //Shouldn't ever reach this. See early return above.
-					return $nebula_theme_info->get('Version'); //Ex: 7.2.19.8475u
+					return $nebula_theme_info->get('Version'); //Ex: 7.2.19.8475
 				case ('version'):
 				case ('full'):
 					return $nebula_version_info['full']; //Ex: 7.2.23.8475
