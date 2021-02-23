@@ -1089,7 +1089,7 @@ if ( !trait_exists('Admin') ){
 					'package' => 'https://github.com/chrisblakley/Nebula/archive/main.zip'
 				);
 
-				$this->add_log('Nebula theme re-install (forced via WP) from ' . $prev_version . ' to ' . $new_version, 7);
+				$this->add_log('Nebula theme re-install (forced via WP) of version:' . $this->version('full'), 7);
 			}
 
 			return $updates;
