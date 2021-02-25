@@ -49,6 +49,15 @@ nebula.helpers = async function(){
 		}
 	});
 
+	//Nebula preferred default Chosen.js options
+	nebula.chosenOptions = wp.hooks.applyFilters('nebulaChosenOptions', {
+		disable_search_threshold: 5,
+		search_contains: true,
+		no_results_text: 'No results found.',
+		allow_single_deselect: true,
+		width: '100%'
+	});
+
 	nebula.dragDropUpload();
 };
 
@@ -335,6 +344,8 @@ nebula.pre = async function(){
 				lang = jQuery(this).attr('class').replace('nebula-code', '').replaceAll(/(\s*)((wp|m.|p.|nebula)-\S+)(\s*)/gi, '').trim(); //Remove expected classes and use remaining class as language
 			}
 
+			lang = escape(lang); //Escape for reuse into the DOM
+
 			jQuery(this).addClass(lang.toLowerCase()).wrap('<div class="nebula-code-con clearfix ' + lang.toLowerCase() + '"></div>');
 			jQuery(this).closest('.nebula-code-con').prepend('<span class="nebula-code codetitle ' + lang.toLowerCase() + '">' + lang + '</span>');
 		}
@@ -403,15 +414,6 @@ nebula.cookieNotification = async function(){
 		});
 	}
 };
-
-//Nebula preferred default Chosen.js options
-nebula.chosenOptions = wp.hooks.applyFilters('nebulaChosenOptions', {
-	disable_search_threshold: 5,
-	search_contains: true,
-	no_results_text: 'No results found.',
-	allow_single_deselect: true,
-	width: '100%'
-});
 
 //Lazy load and initialize Mmenu separately because it has additional conditions
 nebula.initMmenu = async function(){

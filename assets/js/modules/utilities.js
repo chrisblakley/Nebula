@@ -609,7 +609,7 @@ nebula.domTreeToString = function(element){
 		}
 
 		return parentTag;
-	}).get().reverse().concat([this.nodeName]).join(' > ');
+	}).get().reverse().concat([this.nodeName]).join(' ');
 
 	selector += element.get(0).tagName.toLowerCase();
 
