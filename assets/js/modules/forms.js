@@ -14,22 +14,37 @@ nebula.cf7Functions = async function(){
 		}
 	});
 
-	//Track CF7 forms when they scroll into view (Autotrack). Currently not possible to change category/action/label for just these impressions.
-	jQuery('.wpcf7-form').each(function(){
-		let thisEvent = {
-			category: 'CF7 Form',
-			action: 'Impression', //GA4 Name: "form_impression"?
-			formID: jQuery(this).closest('.wpcf7').attr('id') || jQuery(this).attr('id'),
-		};
+	//Observe CF7 Forms when they scroll into the viewport
+	try {
+		//Observe the entries that are identified and added later (below)
+		let cf7Observer = new IntersectionObserver(function(entries){
+			entries.forEach(function(entry){
+				if ( entry.intersectionRatio > 0 ){
+					let thisEvent = {
+						category: 'CF7 Form',
+						action: 'Impression', //GA4 Name: "form_impression"?
+						formID: jQuery(entry.target).closest('.wpcf7').attr('id') || jQuery(entry.target).attr('id'),
+					};
 
-		ga('impressionTracker:observeElements', [{
-			'id': thisEvent.formID,
-			'threshold': 0.25,
-			'fieldsObj': { //@todo "Nebula" 0: The fieldsObj doesn't appear to be supported in programmatic impression tracking via Autotrack
-				'eventCategory': thisEvent.category, //This doesn't do anything right now. There is a task that is modifying the category in inc/analytics.php (but I'd prefer it be here instead)
-			},
-		}]);
-	});
+					nebula.dom.document.trigger('nebula_event', thisEvent);
+					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.formID, {'nonInteraction': true});
+					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-cf7-impression'}));
+
+					cf7Observer.unobserve(entry.target); //Stop observing the element
+				}
+			});
+		}, {
+			rootMargin: '0px',
+			threshold: 0.10
+		});
+
+		//Create the entries and add them to the observer
+		jQuery('.wpcf7-form').each(function(){
+			cf7Observer.observe(jQuery(this)[0]); //Observe the element
+		});
+	} catch {
+		nebula.help('Something prevented CF7 impression observing.', '/functions/cf7Functions/');
+	}
 
 	//Re-init forms inside Bootstrap modals (to enable AJAX submission) when needed
 	nebula.dom.document.on('shown.bs.modal', function(e){

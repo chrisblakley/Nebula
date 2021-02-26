@@ -155,8 +155,6 @@ if ( !trait_exists('Analytics') ){
 					'formSubmissions' => esc_html($this->get_option('cm_formsubmissions')),
 					'notableDownloads' => esc_html($this->get_option('cm_notabledownloads')),
 					'engagedReaders' => esc_html($this->get_option('cm_engagedreaders')),
-					'pageVisible' => esc_html($this->get_option('cm_pagevisible')),
-					'pageHidden' => esc_html($this->get_option('cm_pagehidden')),
 					'videoStarts' => esc_html($this->get_option('cm_videostarts')),
 					'videoPlaytime' => esc_html($this->get_option('cm_videoplaytime')),
 					'videoCompletions' => esc_html($this->get_option('cm_videocompletions')),

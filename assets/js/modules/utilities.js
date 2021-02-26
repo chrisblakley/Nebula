@@ -796,6 +796,7 @@ nebula.visibilityChangeActions = function(){
 };
 
 //Check if an element is within the viewport
+//This has been working really well, but could be replaced with IntersectionObserver...
 nebula.isInViewport = function(element, offset){return nebula.isInView(element, offset);};
 nebula.isInView = function(element, offset = 1){
 	if ( element ){

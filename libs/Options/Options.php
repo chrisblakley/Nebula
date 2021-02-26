@@ -318,8 +318,6 @@ if ( !trait_exists('Options') ){
 				'cm_videocompletions' => '',
 				'cm_autocompletesearches' => '',
 				'cm_autocompletesearchclicks' => '',
-				'cm_pagevisible' => '',
-				'cm_pagehidden' => '',
 				'cm_wordcount' => '',
 				'cm_maxscroll' => '',
 

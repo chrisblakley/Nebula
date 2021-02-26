@@ -121,9 +121,6 @@ trait Functions {
 
 		add_post_type_support('page', 'excerpt'); //Allow pages to have excerpts too
 
-		header("X-UA-Compatible: IE=edge"); //Add IE compatibility header
-		header('Developed-with-Nebula: https://nebula.gearside.com'); //Nebula header
-
 		//Removals
 		remove_theme_support('custom-background');
 		remove_theme_support('custom-header');

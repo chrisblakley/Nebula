@@ -1480,29 +1480,6 @@ if ( !trait_exists('Metaboxes') ){
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user clicks an autocomplete search result. Scope: Hit, Format: Integer</p>
 						<p class="option-keywords">custom metric</p>
 					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Page Visible Time</div>
-							</div>
-							<input type="text" name="nebula_options[cm_pagevisible]" id="cm_pagevisible" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_pagevisible']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">The amount of time (in seconds) the page was in the visible state (tab/window visible) Scope: Hit, Format: Time</p>
-						<p class="nebula-help-text more-help form-text text-muted">Useful with calculated metrics in Google Analytics of "Avg. Page Visible Time / Page" <code>{{Page Visible Time}} / {{Unique Pageviews}}</code> or "Avg. Page Visible Time / Session" <code>{{Page Visible Time}} / {{Sessions}}</code>. Create a custom report with the metrics "Avg. Page Visible Time / Page" and "Unique Pageviews" and dimension "Page", and another with the metrics "Avg. Page Visible Time / Session" and "Unique Pageviews" and dimension "Source / Medium"</p>
-						<p class="option-keywords">autotrack custom metric</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Page Hidden Time</div>
-							</div>
-							<input type="text" name="nebula_options[cm_pagehidden]" id="cm_pagehidden" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_pagehidden']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">The amount of time (in seconds) the page was in the hidden state (tab/window not visible) Scope: Hit, Format: Time</p>
-						<p class="option-keywords">autotrack custom metric</p>
-					</div>
 				</div><!-- /sub-group -->
 			<?php
 

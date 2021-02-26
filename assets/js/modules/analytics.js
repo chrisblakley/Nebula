@@ -501,6 +501,34 @@ nebula.eventTracking = async function(){
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-navigation-menu-click'}));
 		});
 
+		//Outbound links
+		nebula.dom.document.on('mousedown', 'a', function(e){
+			let href = jQuery(this).attr('href');
+			if ( href ){ //href may be undefined in special circumstances so we can ignore those
+				let domain = nebula.site.domain;
+
+				if ( href.includes('http') ){ //If the link contains "http"
+					if ( !href.includes(domain) || href.includes('.' + domain) ){ //If the link does not contain "example.com" -or- if the link does contain a subdomain like "something.example.com"
+						if ( !href.includes('//www.' + domain) ){ //Exclude the "www" subdomain
+							let thisEvent = {
+								event: e,
+								category: 'Outbound Link',
+								action: 'Click',
+								linkText: jQuery(this).text().trim(),
+								intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+								href: href
+							};
+
+							ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+							nebula.dom.document.trigger('nebula_event', thisEvent);
+							ga('send', 'event', thisEvent.category, thisEvent.linkText, thisEvent.href);
+							window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-outbound-link-click'}));
+						}
+					}
+				}
+			}
+		});
+
 		//Nebula Cookie Notification link clicks
 		nebula.dom.document.on('mousedown', '#nebula-cookie-notification a', function(e){
 			let thisEvent = {
@@ -690,6 +718,18 @@ nebula.eventTracking = async function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.videoID, {'nonInteraction': true}); //Non-interaction because this may not be triggered by the user.
+		});
+
+		//Page Visibility
+		nebula.dom.document.on('visibilitychange', function(e){
+			let thisEvent = {
+				event: e,
+				category: 'Visibility Change',
+				action: document.visibilityState, //Hidden, Visible, Prerender, or Unloaded
+				label: 'The state of the visibility of this page has changed.'
+			};
+
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label, {'nonInteraction': true}); //Non-interaction because these are not interactions with the website itself
 		});
 
 		//Word copy tracking
@@ -1053,8 +1093,11 @@ nebula.scrollDepth = async function(){
 		let reachedBottom = false; //Flag for optimization after detection is finished
 		let excessiveScrolling = false; //Flag for optimization after detection is finished
 		let lastScrollCheckpoint = nebula.dom.window.scrollTop(); //Set a checkpoint of the current scroll distance to subtract against later
-		let totalScrollDistance = 0;
+		let totalScrollDistance = 0; //Down and up distance
 		let excessiveScrollThreshold = nebula.dom.document.height()*2; //Set the threshold for an excessive scroll distance
+
+		nebula.maxScrollDepth = 0; //This needs to be accessed from multiple other functions later
+		nebula.updateMaxScrollDepth(); //Update it first right away on load (the rest will be throttled)
 
 		let scrollDepthHandler = function(){
 			//Only check for initial scroll once
@@ -1064,7 +1107,7 @@ nebula.scrollDepth = async function(){
 					let thisEvent = {
 						category: 'Scroll Depth',
 						action: 'Began Scrolling',
-						scrollStart: nebula.dom.body.scrollTop() + 'px',
+						scrollStart: nebula.dom.window.scrollTop() + 'px',
 						timeBeforeScrollStart: Math.round(nebula.scrollBegin)
 					};
 					thisEvent.label = 'Initial scroll started at ' + thisEvent.scrollStart;
@@ -1092,6 +1135,10 @@ nebula.scrollDepth = async function(){
 							ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label, {'nonInteraction': true});
 						}, 'excessive scrolling');
 					}
+				}
+
+				if ( nebula.maxScrollDepth < 100 ){
+					nebula.updateMaxScrollDepth();
 				}
 
 				//When user reaches the bottom of the page
@@ -1124,6 +1171,32 @@ nebula.scrollDepth = async function(){
 		};
 
 		window.addEventListener('scroll', scrollDepthHandler); //Watch for scrolling ("scroll" is passive by default)
+
+		//if ( nebula.analytics.metrics.maxScroll ){ //Trying this for all visitors, but may limit to this custom metric if too many events...
+			window.addEventListener('beforeunload', function(e){ //Watch for the unload to send max scroll depth to GA (to avoid tons of events)
+				nebula.updateMaxScrollDepth(); //Check one last time
+
+				let thisEvent = {
+					category: 'Scroll Depth',
+					action: 'Max Scroll Depth',
+					maxScrollPixels: nebula.maxScrollDepth,
+					maxScrollPercent: Math.round(100*(nebula.maxScrollDepth/(nebula.dom.document.height()-window.innerHeight))) //Round to the nearest percent
+				};
+
+				thisEvent.description = 'The user reached a maximum scroll depth of ' + thisEvent.maxScrollPercent + '% (' + thisEvent.maxScrollPixels + 'px) when the page was unloaded.';
+
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				ga('set', nebula.analytics.metrics.maxScroll, thisEvent.maxScrollPercent); //Set the custom metric to the max percent
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.description, {'nonInteraction': true}); //Ideally this would send only once per page per session– and only if that page hadn't reached 100% previously in the session... Consider localstorage
+			});
+		//}
+	}
+};
+
+//Update the max scroll depth
+nebula.updateMaxScrollDepth = function(){
+	if ( nebula.dom.window.scrollTop() > nebula.maxScrollDepth ){
+		nebula.maxScrollDepth = nebula.dom.window.scrollTop();
 	}
 };
 

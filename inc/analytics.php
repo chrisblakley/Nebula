@@ -231,115 +231,6 @@
 				setDimension('Offline', 'online', nebula.analytics.dimensions.offline);
 			<?php endif; ?>
 
-			<?php if ( nebula()->get_option('cm_pagevisible') && nebula()->get_option('cm_pagehidden') ): //Autotrack Page Visibility ?>
-				ga('require', 'pageVisibilityTracker', {
-					hiddenMetricIndex: parseInt(nebula.analytics.metrics.pageHidden.replace('metric', '')),
-					visibleMetricIndex: parseInt(nebula.analytics.metrics.pageVisible.replace('metric', '')),
-					fieldsObj: {nonInteraction: true}
-				});
-			<?php endif; ?>
-
-			//Autotrack Clean URL
-			<?php if ( nebula()->get_option('cd_querystring') ): //Autotrack Query String ?>
-				var queryStringDimension = parseInt(nebula.analytics.dimensions.queryString.replace('dimension', ''));
-				ga('require', 'cleanUrlTracker', {
-					stripQuery: ( queryStringDimension )? true : false,
-					queryDimensionIndex: queryStringDimension,
-					queryParamsWhitelist: ['s', 'rs'],
-					indexFilename: 'index.php',
-					trailingSlash: 'add'
-				});
-			<?php endif; ?>
-
-			<?php if ( false ): //Tag Assistant was throwing some errors: "Unknown method name eventCategory" (etc.)  ?>
-			//Autotrack Social Widgets
-			ga('require', 'socialWidgetTracker', {
-				hitFilter: function(model){
-					model.set('hitType', 'event'); //Change the hit type from `social` to `event`.
-
-					//Map the social values to event values.
-					model.set('eventCategory', model.get('socialNetwork'));
-					model.set('eventAction', model.get('socialAction'));
-					model.set('eventLabel', model.get('socialTarget'));
-
-					//Unset the social values.
-					model.set('socialNetwork', null);
-					model.set('socialAction', null);
-					model.set('socialTarget', null);
-				}
-			});
-			<?php endif; ?>
-
-			<?php if ( nebula()->get_option('cd_mqbreakpoint') || nebula()->get_option('cd_mqresolution') || nebula()->get_option('cd_mqorientation') ): //Autotrack Media Queries ?>
-				ga('require', 'mediaQueryTracker', {
-					definitions: [
-					<?php if ( nebula()->get_option('cd_mqbreakpoint') ): ?>
-						{
-							name: 'Breakpoint',
-							dimensionIndex: parseInt(nebula.analytics.dimensions.mqBreakpoint.replace('dimension', '')),
-							items: [
-								{name: 'xs', media: 'all'},
-								{name: 'sm', media: '(min-width: 544px)'},
-								{name: 'md', media: '(min-width: 768px)'},
-								{name: 'lg', media: '(min-width: 992px)'},
-								{name: 'xl', media: '(min-width: 1200px)'}
-							]
-						},
-					<?php endif; ?>
-					<?php if ( nebula()->get_option('cd_mqresolution') ): ?>
-						{
-							name: 'Resolution',
-							dimensionIndex: parseInt(nebula.analytics.dimensions.mqResolution.replace('dimension', '')),
-							items: [
-								{name: '1x', media: 'all'},
-								{name: '1.5x', media: '(min-resolution: 144dpi)'},
-								{name: '2x', media: '(min-resolution: 192dpi)'}
-							]
-						},
-					<?php endif; ?>
-					<?php if ( nebula()->get_option('cd_mqorientation') ): ?>
-						{
-							name: 'Orientation',
-							dimensionIndex: parseInt(nebula.analytics.dimensions.mqOrientation.replace('dimension', '')),
-							items: [
-								{name: 'landscape', media: '(orientation: landscape)'},
-								{name: 'portrait', media: '(orientation: portrait)'}
-							]
-						}
-					<?php endif; ?>
-					],
-					fieldsObj: {nonInteraction: true}
-				});
-			<?php endif; ?>
-
-			//Autotrack Impressions (Scroll into view)
-			//Elements themselves are detected in nebula.js (or main.js). Note: jQuery may not be available yet, so do not use it here.
-			ga('require', 'impressionTracker', {
-				hitFilter: function(model, element){
-					var element = document.getElementById('testform');
-					if ( element.matches('form') && !element.querySelectorAll('input[name=s]').length ){
-						if ( !element.matches('.ignore-form') && !element.querySelectorAll('.ignore-form').length ){ //Check parents for '.ignore-form' eventually
-							ga('set', nebula.analytics.metrics.formImpressions, 1);
-						}
-					}
-				}
-			});
-
-			//Autotrack Max Scroll
-			<?php if ( nebula()->get_option('cm_maxscroll') ): //Autotrack Max Scroll ?>
-				ga('require', 'maxScrollTracker', {
-					maxScrollMetricIndex: parseInt(nebula.analytics.metrics.maxScroll.replace('metric', '')),
-					hitFilter: function(model){
-						model.set('nonInteraction', true, true); //Set non-interaction to true (prevent scrolling affecting bounce rate)
-					},
-				});
-			<?php endif; ?>
-
-			//Autotrack Outbound Links
-			ga('require', 'outboundLinkTracker', {
-				events: ['click', 'auxclick', 'contextmenu']
-			});
-
 			<?php do_action('nebula_ga_before_send_pageview'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
 
 			//Modify the payload before sending data to Google Analytics
@@ -355,14 +246,68 @@
 					var qt = model.get('queueTime') || 0;
 
 					//Remove PII if present
-					if ( model.get('location').indexOf('crm-') ){
+					if ( model.get('location').includes('crm-') ){
 						model.set('location', model.get('location').replace(/(crm-.*?)&|(crm-.*?)$/gi, ''), true);
 					}
 
-					//Move impression tracking for CF7 forms to the "CF7 Form" event category //@todo "Nebula" 0: If the fieldsObj is ever updated in Autotrack, do this programmatically in nebula.js
-					if ( model.get('hitType') === 'event' && model.get('eventAction') === 'impression' && model.get('eventLabel').indexOf('wpcf7') > -1 ){
-						model.set('eventCategory', 'CF7 Form', true);
+					//Remove index.php filenames for consistency
+					if ( model.get('location').includes('index.php') ){
+						model.set('location', model.get('location').replace(/(index\.php)/i, ''), true);
 					}
+
+					//Store the query string in a custom dimension if desired
+					<?php if ( nebula()->get_option('cd_querystring') ): ?>
+						if ( model.get('location').includes('?') ){ //If a query string exists
+							if ( !model.get('location').includes('?s') && !model.get('location').includes('?rs') ){ //Ignore search queries
+								model.set(nebula.analytics.dimensions.queryString, '?' + model.get('location').split('?').pop(), true); //Store just the query string in the custom dimension
+								model.set('location', model.get('location').split('?').shift(), true); //Only keep the URL before the "?" as the location
+							}
+						}
+					<?php endif; ?>
+
+					//Add a trailing slash if needed (do this after the query string modification)
+					if ( !model.get('location').includes('?') && !model.get('location').endsWith('/') && !/\.\w+$/.test(model.get('location')) ){ //Ignore query strings and filenames (and if there is already a trailing slash)
+						model.set('location', model.get('location') + '/', true);
+					}
+
+					//Bootstrap Breakpoint
+					<?php if ( nebula()->get_option('cd_mqbreakpoint') ): ?>
+						if ( window.matchMedia("(min-width: 2048px)").matches ){
+							model.set(nebula.analytics.dimensions.mqBreakpoint, 'uw', true);
+						} else if ( window.matchMedia("(min-width: 1400px)").matches ){
+							model.set(nebula.analytics.dimensions.mqBreakpoint, 'xxl', true);
+						} else if ( window.matchMedia("(min-width: 1200px)").matches ){
+							model.set(nebula.analytics.dimensions.mqBreakpoint, 'xl', true);
+						} else if ( window.matchMedia("(min-width: 992px)").matches ){
+							model.set(nebula.analytics.dimensions.mqBreakpoint, 'lg', true);
+						} else if ( window.matchMedia("(min-width: 768px)").matches ){
+							model.set(nebula.analytics.dimensions.mqBreakpoint, 'md', true);
+						} else if ( window.matchMedia("(min-width: 544px)").matches ){
+							model.set(nebula.analytics.dimensions.mqBreakpoint, 'sm', true);
+						} else {
+							model.set(nebula.analytics.dimensions.mqBreakpoint, 'xs', true);
+						}
+					<?php endif; ?>
+
+					//Resolution
+					<?php if ( nebula()->get_option('cd_mqresolution') ): ?>
+						if ( window.matchMedia("(min-resolution: 192dpi)").matches ){
+							model.set(nebula.analytics.dimensions.mqResolution, '2x', true);
+						} else if ( window.matchMedia("(min-resolution: 144dpi)").matches ){
+							model.set(nebula.analytics.dimensions.mqResolution, '1.5x', true);
+						} else {
+							model.set(nebula.analytics.dimensions.mqResolution, '1x', true);
+						}
+					<?php endif; ?>
+
+					//Orientation
+					<?php if ( nebula()->get_option('cd_mqorientation') ): ?>
+						if ( window.matchMedia("(orientation: portrait)").matches ){
+							model.set(nebula.analytics.dimensions.mqOrientation, 'Portrait', true);
+						} else if ( window.matchMedia("(orientation: landscape)").matches ){
+							model.set(nebula.analytics.dimensions.mqOrientation, 'Landscape', true);
+						}
+					<?php endif; ?>
 
 					//Always send hit dimensions with all payloads
 					//model.set(nebula.analytics.dimensions.gaCID, tracker.get('clientId'), true);
