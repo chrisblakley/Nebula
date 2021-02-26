@@ -5,20 +5,6 @@
 	}
 ?>
 
-<script>
-	function setDimension(name, value, index){
-		//Google Analytics
-		if ( typeof ga === 'function' && index ){
-			ga('set', index, value);
-		}
-
-		//Microsoft Clarity
-		if ( typeof clarity === 'function' ){
-			clarity('set', name, value);
-		}
-	}
-</script>
-
 <?php if ( nebula()->is_analytics_allowed() ): ?>
 	<?php if ( nebula()->get_option('microsoft_clarity_id') ): //Microsoft Clarity ?>
 		<script type="text/javascript">
@@ -36,7 +22,9 @@
 	<?php endif; ?>
 
 	<?php if ( nebula()->get_option('ga_tracking_id') ): //Universal Google Analytics ?>
-		<script>
+		<script type="module">
+			import {setDimension, uuid, localTimestamp} from '<?php echo get_template_directory_uri(); ?>/assets/js/modules/analytics.js';
+
 			window.performance.mark('(Nebula) Analytics [Start]');
 
 			//Load the alternative async tracking snippet: https://developers.google.com/analytics/devguides/collection/analyticsjs/#alternative_async_tracking_snippet
@@ -255,8 +243,8 @@
 						model.set('location', model.get('location').replace(/(index\.php)/i, ''), true);
 					}
 
-					//Store the query string in a custom dimension if desired
 					<?php if ( nebula()->get_option('cd_querystring') ): ?>
+						//Store the query string in a custom dimension if desired
 						if ( model.get('location').includes('?') ){ //If a query string exists
 							if ( !model.get('location').includes('?s') && !model.get('location').includes('?rs') ){ //Ignore search queries
 								model.set(nebula.analytics.dimensions.queryString, '?' + model.get('location').split('?').pop(), true); //Store just the query string in the custom dimension
@@ -270,8 +258,8 @@
 						model.set('location', model.get('location') + '/', true);
 					}
 
-					//Bootstrap Breakpoint
 					<?php if ( nebula()->get_option('cd_mqbreakpoint') ): ?>
+						//Bootstrap Breakpoint
 						if ( window.matchMedia("(min-width: 2048px)").matches ){
 							model.set(nebula.analytics.dimensions.mqBreakpoint, 'uw', true);
 						} else if ( window.matchMedia("(min-width: 1400px)").matches ){
@@ -289,8 +277,8 @@
 						}
 					<?php endif; ?>
 
-					//Resolution
 					<?php if ( nebula()->get_option('cd_mqresolution') ): ?>
+						//Screen Resolution
 						if ( window.matchMedia("(min-resolution: 192dpi)").matches ){
 							model.set(nebula.analytics.dimensions.mqResolution, '2x', true);
 						} else if ( window.matchMedia("(min-resolution: 144dpi)").matches ){
@@ -300,8 +288,8 @@
 						}
 					<?php endif; ?>
 
-					//Orientation
 					<?php if ( nebula()->get_option('cd_mqorientation') ): ?>
+						//Screen Orientation
 						if ( window.matchMedia("(orientation: portrait)").matches ){
 							model.set(nebula.analytics.dimensions.mqOrientation, 'Portrait', true);
 						} else if ( window.matchMedia("(orientation: landscape)").matches ){
@@ -310,7 +298,6 @@
 					<?php endif; ?>
 
 					//Always send hit dimensions with all payloads
-					//model.set(nebula.analytics.dimensions.gaCID, tracker.get('clientId'), true);
 					model.set(nebula.analytics.dimensions.hitID, uuid(), true);
 					model.set(nebula.analytics.dimensions.hitTime, String(new Date-qt), true);
 					model.set(nebula.analytics.dimensions.hitType, model.get('hitType'), true);
@@ -370,37 +357,15 @@
 				var lastReferrer = nebula.session?.referrer || document.referrer || '(Unknown Referrer)';
 				ga('send', 'event', '404 Not Found', '<?php echo esc_url(nebula()->requested_url()); ?>', 'Referrer: ' + lastReferrer, {'nonInteraction': true});
 			<?php endif; ?>
-
-			<?php //@todo "Nebula" 0: Import JS modules here for uuid() and localTimestamp() instead of writing out the functions here https://github.com/chrisblakley/Nebula/issues/1493 ?>
-
-			//Generate a unique ID for hits and windows
-			function uuid(a){
-				return a ? (a^Math.random()*16 >> a/4).toString(16) : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, uuid);
-			}
-
-			//Get local time string with timezone offset
-			function localTimestamp(){
-				var now = new Date();
-				var tzo = -now.getTimezoneOffset();
-				var dif = ( tzo >= 0 )? '+' : '-';
-				var pad = function(num){
-					var norm = Math.abs(Math.floor(num));
-					return (( norm < 10 )? '0' : '') + norm;
-				};
-				return Math.round(now/1000) + ' (' + now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds()) + '.' + pad(now.getMilliseconds()) + ' UTC' + dif + pad(tzo/60) + ':' + pad(tzo%60) + ')';
-			}
 		</script>
 
 		<script src='https://www.google-analytics.com/analytics.js' async></script>
 	<?php else: //If Tracking ID is empty: ?>
-		<script>
-			<?php if ( !nebula()->get_option('gtm_id') ): ?>
+		<?php if ( !nebula()->get_option('gtm_id') ): //If GTM ID is also empty, set an empty ga() function to prevent JS errors ?>
+			<script>
 				function ga(){}
-			<?php endif; ?>
-
-			function uuid(){}
-			function localTimestamp(){}
-		</script>
+			</script>
+		<?php endif; ?>
 	<?php endif; ?>
 <?php endif; ?>
 

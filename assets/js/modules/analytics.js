@@ -1,3 +1,34 @@
+//Generate a unique ID for hits and windows (used in /inc/analytics.php)
+export function uuid(a){
+	return a ? (a^Math.random()*16 >> a/4).toString(16) : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, uuid);
+}
+
+//Get local time string with timezone offset (used in /inc/analytics.php)
+export function localTimestamp(){
+	var now = new Date();
+	var tzo = -now.getTimezoneOffset();
+	var dif = ( tzo >= 0 )? '+' : '-';
+	var pad = function(num){
+		var norm = Math.abs(Math.floor(num));
+		return (( norm < 10 )? '0' : '') + norm;
+	};
+
+	return Math.round(now/1000) + ' (' + now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds()) + '.' + pad(now.getMilliseconds()) + ' UTC' + dif + pad(tzo/60) + ':' + pad(tzo%60) + ')';
+}
+
+//Set a custom dimension in both GA and MS Clarity (used in /inc/analytics.php)
+export function setDimension(name, value, index){
+	//Google Analytics
+	if ( typeof ga === 'function' && index ){
+		ga('set', index, value);
+	}
+
+	//Microsoft Clarity
+	if ( typeof clarity === 'function' ){
+		clarity('set', name, value);
+	}
+}
+
 //Check if the user has enabled DNT (if supported in their browser)
 nebula.isDoNotTrack = function(){
 	//Use server-side header detection first
@@ -566,7 +597,6 @@ nebula.eventTracking = async function(){
 			let previousPage = nebula.session.referrer || document.referrer || '(Unknown Previous Page)';
 
 			let thisEvent = {
-				event: e,
 				category: 'High Redirect Count',
 				action: performance.navigation.redirectCount + ' Redirects',
 				label: 'Previous Page: ' + previousPage,
@@ -1137,9 +1167,7 @@ nebula.scrollDepth = async function(){
 					}
 				}
 
-				if ( nebula.maxScrollDepth < 100 ){
-					nebula.updateMaxScrollDepth();
-				}
+				nebula.updateMaxScrollDepth();
 
 				//When user reaches the bottom of the page
 				if ( !reachedBottom ){
@@ -1172,6 +1200,33 @@ nebula.scrollDepth = async function(){
 
 		window.addEventListener('scroll', scrollDepthHandler); //Watch for scrolling ("scroll" is passive by default)
 
+		//Track when the user reaches the end of the content
+		if ( jQuery('#footer-section').length ){
+			let footerObserver = new IntersectionObserver(function(entries){
+				entries.forEach(function(entry){
+					if ( entry.intersectionRatio > 0 ){
+						let thisEvent = {
+							category: 'Scroll Depth',
+							action: 'Reached Footer',
+							label: 'The footer of the page scrolled into the viewport'
+						};
+
+						nebula.dom.document.trigger('nebula_event', thisEvent);
+						ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label, {'nonInteraction': true});
+
+						nebula.updateMaxScrollDepth();
+						footerObserver.unobserve(entry.target); //Stop observing the element
+					}
+				});
+			}, {
+				rootMargin: '0px', //0px uses the actual viewport bounds, 100% is double the viewport
+				threshold: 0.1 //How much of the element needs to be in view before this is triggered (this is a percentage between 0 and 1)
+			});
+
+			//Observe the footer section
+			footerObserver.observe(jQuery('#footer-section')[0]); //Observe the element
+		}
+
 		//if ( nebula.analytics.metrics.maxScroll ){ //Trying this for all visitors, but may limit to this custom metric if too many events...
 			window.addEventListener('beforeunload', function(e){ //Watch for the unload to send max scroll depth to GA (to avoid tons of events)
 				nebula.updateMaxScrollDepth(); //Check one last time
@@ -1195,8 +1250,10 @@ nebula.scrollDepth = async function(){
 
 //Update the max scroll depth
 nebula.updateMaxScrollDepth = function(){
-	if ( nebula.dom.window.scrollTop() > nebula.maxScrollDepth ){
-		nebula.maxScrollDepth = nebula.dom.window.scrollTop();
+	if ( nebula.maxScrollDepth < 100 ){
+		if ( nebula.dom.window.scrollTop() > nebula.maxScrollDepth ){
+			nebula.maxScrollDepth = nebula.dom.window.scrollTop();
+		}
 	}
 };
 
