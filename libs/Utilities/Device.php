@@ -84,7 +84,7 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_get_os', null, $info);
 			if ( isset($override) ){return $override;}
 
-			if ( $this->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') && isset($this->device) ){
 				$os = $this->device->getOs();
 				if ( !empty($os) ){
 					switch ( strtolower($info) ){
@@ -118,7 +118,7 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_is_os', null, $os, $version, $comparison);
 			if ( isset($override) ){return $override;}
 
-			if ( $this->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') && isset($this->device) ){
 				if ( empty($os) ){
 					trigger_error('nebula_is_os requires a parameter of requested operating system.');
 					return false;
@@ -165,7 +165,7 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_get_device', null, $info);
 			if ( isset($override) ){return $override;}
 
-			if ( $this->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') && isset($this->device) ){
 				$info = str_replace(' ', '', $info);
 				switch ( strtolower($info) ){
 					case 'full':
@@ -232,7 +232,7 @@ if ( !trait_exists('Device') ){
 				return $additional_checks;
 			}
 
-			if ( $this->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') && isset($this->device) ){
 				$client = $this->device->getClient();
 				if ( !empty($client) ){
 					switch ( strtolower($info) ){
@@ -278,7 +278,7 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_is_browser', null, $browser, $version, $comparison);
 			if ( isset($override) ){return $override;}
 
-			if ( $this->get_option('device_detection') ){
+			if ( $this->get_option('device_detection') && isset($this->device) ){
 				if ( empty($browser) ){
 					trigger_error('nebula_is_browser requires a parameter of requested browser.');
 					return false;

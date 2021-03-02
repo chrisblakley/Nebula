@@ -1223,8 +1223,9 @@ nebula.scrollDepth = async function(){
 				threshold: 0.1 //How much of the element needs to be in view before this is triggered (this is a percentage between 0 and 1)
 			});
 
-			//Observe the footer section
-			footerObserver.observe(jQuery('#footer-section')[0]); //Observe the element
+			//Observe the pre-footer section (or whatever element is after the main content area)
+			let preFooterSelector = wp.hooks.applyFilters('nebulaPreFooterSelector', '#footer-section'); //This should be the first section after the "content"
+			footerObserver.observe(jQuery(preFooterSelector)[0]); //Observe the element
 		}
 
 		//if ( nebula.analytics.metrics.maxScroll ){ //Trying this for all visitors, but may limit to this custom metric if too many events...

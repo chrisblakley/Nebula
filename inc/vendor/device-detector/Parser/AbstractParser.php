@@ -269,20 +269,19 @@ abstract class AbstractParser
      * @param string $item
      * @param array  $matches
      *
-     * @return string type
+     * @return string
      */
     protected function buildByMatch(string $item, array $matches): string
     {
-        for ($nb = 1; $nb <= 3; $nb++) {
-            if (false === \strpos($item, '$' . $nb)) {
-                continue;
-            }
+        $search  = [];
+        $replace = [];
 
-            $replace = $matches[$nb] ?? '';
-            $item    = \trim(\str_replace('$' . $nb, $replace, $item));
+        for ($nb = 1; $nb <= \count($matches); $nb++) {
+            $search[]  = '$' . $nb;
+            $replace[] = $matches[$nb] ?? '';
         }
 
-        return $item;
+        return \trim(\str_replace($search, $replace, $item));
     }
 
     /**
@@ -290,7 +289,7 @@ abstract class AbstractParser
      *
      * Example:
      * $versionString = 'v$2'
-     * $matches = array('version_1_0_1', '1_0_1')
+     * $matches = ['version_1_0_1', '1_0_1']
      * return value would be v1.0.1
      *
      * @param string $versionString
