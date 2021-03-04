@@ -42,8 +42,8 @@ nebula.cf7Functions = async function(){
 		jQuery('.wpcf7-form').each(function(){
 			cf7Observer.observe(jQuery(this)[0]); //Observe the element
 		});
-	} catch {
-		nebula.help('Something prevented CF7 impression observing.', '/functions/cf7Functions/');
+	} catch(error){
+		nebula.help('CF7 Impression Observer: ' + error.data, '/functions/cf7Functions/', true);
 	}
 
 	//Re-init forms inside Bootstrap modals (to enable AJAX submission) when needed

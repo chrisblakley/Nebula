@@ -371,8 +371,8 @@ nebula.pre = async function(){
 				setTimeout(function(){
 					oThis.text('Copy to clipboard').removeClass('success');
 				}, 1500);
-			}).catch(function(e){ //This can happen if the user denies clipboard permissions
-				ga('send', 'exception', {'exDescription': '(JS) Clipboard API error: ' + e.data, 'exFatal': false});
+			}).catch(function(error){ //This can happen if the user denies clipboard permissions
+				ga('send', 'exception', {'exDescription': '(JS) Clipboard API error: ' + error.data, 'exFatal': false});
 				oThis.text('Unable to copy.').addClass('error');
 			});
 
@@ -529,7 +529,7 @@ nebula.mmenus = async function(){
 };
 
 //Show help messages in the console to assist developers by informing of common issues and guide them to relevant documentation
-nebula.help = function(message, path){
+nebula.help = function(message, path, usage=false){
 	let documentationHostname = '';
 
 	if ( !path.includes('http') ){ //If the path is a full URL, use it explicitly
@@ -548,4 +548,8 @@ nebula.help = function(message, path){
 
 	console.error('📎 [Nebula Help]', message, 'Docs: ' + url); //Show the message to the developer in the console
 	ga('send', 'exception', {'exDescription': '(JS) ' + message, 'exFatal': false}); //Report the error to Google Analytics to log it
+
+	if ( usage ){
+		nebula.usage(message);
+	}
 };

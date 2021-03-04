@@ -595,7 +595,7 @@ if ( !trait_exists('Dashboard') ){
 			//Environment Type
 			if ( function_exists('wp_get_environment_type') ){ //New as of WP 5.5 (August 2020). Remove this conditional eventually.
 				$environment_type = ucwords(wp_get_environment_type());
-				$environment_type_icon = 'fa-industry'; //Assume production by default
+				$environment_type_icon = 'fa-industry'; //Assume "Production" by default
 				if ( $environment_type === 'Staging' ){
 					$environment_type_icon = 'fa-pencil-ruler';
 				} elseif ( $environment_type === 'Development' ){

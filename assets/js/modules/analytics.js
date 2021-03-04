@@ -883,11 +883,11 @@ nebula.eventTracking = async function(){
 			if ( 'ReportingObserver' in window ){ //Chrome 68+
 				let nebulaReportingObserver = new ReportingObserver(function(reports, observer){
 					for ( let report of reports ){
-						if ( !['extension', 'about:blank'].some((item) => report.body.sourceFile.includes(item)) ){ //Ignore certain files
+						if ( report.body && !['extension', 'about:blank'].some((item) => report.body.sourceFile.includes(item)) ){ //Ignore certain files
 							ga('send', 'exception', {'exDescription': '(JS) Reporting Observer [' + report.type + ']: ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber, 'exFatal': false});
 						}
 					}
-				}, {buffered: true});
+				}, {buffered: true}); //Buffer to capture reports that happened prior to the observer being created
 
 				nebulaReportingObserver.observe();
 			}

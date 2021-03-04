@@ -74,7 +74,7 @@ if ( !trait_exists('Assets') ){
 				wp_deregister_script('jquery-core');
 
 				//jQuery version 3 is asynchronous so beware of the `ready` and `load` not always triggering in that order.
-				return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js', array('crossorigin'), null, '3.5.1', $footer);
+				return $this->register_script('jquery-core', 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js', array('crossorigin'), null, '3.6.0', $footer);
 			}
 		}
 

@@ -470,8 +470,8 @@ nebula.youtubeStateChange = function(e){
 	}
 }
 
-nebula.youtubeError = function(e){
-	ga('send', 'exception', {'exDescription': '(JS) Youtube API error: ' + e.data, 'exFatal': false});
+nebula.youtubeError = function(error){
+	ga('send', 'exception', {'exDescription': '(JS) Youtube API error: ' + error.data, 'exFatal': false});
 	nebula.crm('event', 'Youtube API Error');
 }
 

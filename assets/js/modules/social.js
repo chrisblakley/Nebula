@@ -133,7 +133,7 @@ nebula.socialSharing = async function(){
 		});
 
 		//Web Share API: https://caniuse.com/mdn-api_navigator_share
-		if ( 'share' in navigator && !nebula.dom.body.hasClass('desktop') ){ //Chrome 61+
+		if ( 'share' in navigator ){ //Chrome 61+
 			nebula.dom.document.on('click', 'a.nebula-share.webshare, a.nebula-share.shareapi', function(){
 				let oThis = jQuery(this);
 				let originalText = oThis.html();

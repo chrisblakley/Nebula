@@ -166,7 +166,7 @@ nebula.workbox = async function(){
 					window.performance.mark('(Nebula) SW Registration [End]');
 					window.performance.measure('(Nebula) SW Registration', '(Nebula) SW Registration [Start]', '(Nebula) SW Registration [End]');
 				}).catch(function(error){
-					ga('send', 'exception', {'exDescription': '(JS) ServiceWorker registration failed: ' + error, 'exFatal': false});
+					ga('send', 'exception', {'exDescription': '(JS) ServiceWorker registration failed: ' + error.data, 'exFatal': false});
 				});
 			});
 
@@ -398,9 +398,9 @@ nebula.lazyLoadAssets = async function(){
 			}
 		};
 		window.addEventListener('scroll', lazyLoadScrollBottom); //Scroll is passive by default
-	} catch {
+	} catch(error){
 		nebula.loadEverything(); //If any error, load everything immediately
-		nebula.help('Something prevented proper lazy loading of assets. All assets have been loaded immediately.', '/functions/lazyloadassets/');
+		nebula.help('Lazy Load Observer: ' + error.data + '. All assets have been loaded immediately.', '/functions/lazyloadassets/', true);
 	}
 
 	//Load all lazy elements at once if requested
