@@ -112,7 +112,7 @@ nebula.eventTracking = async function(){
 		}
 
 		//Button Clicks
-		let nebulaButtonSelector = wp.hooks.applyFilters('nebulaButtonSelectors', "button, .button, .btn, [role='button'], a.wp-block-button__link, .hs-button");
+		let nebulaButtonSelector = wp.hooks.applyFilters('nebulaButtonSelectors', 'button, .button, .btn, [role="button"], a.wp-block-button__link, .hs-button');
 		nebula.dom.document.on('mousedown', nebulaButtonSelector, function(e){
 			let thisEvent = {
 				event: e,
@@ -765,103 +765,102 @@ nebula.eventTracking = async function(){
 		//Word copy tracking
 		let copyCount = 0;
 		nebula.dom.document.on('cut copy', function(){
-			let selection = window.getSelection().toString();
-			let words = selection.split(' ');
-			let wordsLength = words.length;
+			let selection = window.getSelection().toString().trim();
 
-			//Track Email or Phone copies as contact intent.
-			let emailPhoneAddress = words.join(' ').trim();
-			if ( nebula.regex.email.test(emailPhoneAddress) ){
-				let thisEvent = {
-					category: 'Contact',
-					action: 'Email (Copy)', //GA4 Name: "mailto"?
-					intent: 'Intent',
-					emailAddress: emailPhoneAddress,
-					selection: selection,
-					words: words,
-					wordcount: wordsLength
-				};
+			if ( selection ){
+				let words = selection.split(' ');
+				let wordsLength = words.length;
 
-				ga('set', nebula.analytics.dimensions.contactMethod, 'Mailto');
-				ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.emailAddress);
-				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-copied-email'}));
-				nebula.crm('event', 'Email Address Copied');
-				nebula.crm('identify', {mailto_contacted: thisEvent.emailAddress});
-			} else if ( nebula.regex.address.test(emailPhoneAddress) ){
-				let thisEvent = {
-					category: 'Contact',
-					action: 'Street Address (Copy)',
-					intent: 'Intent',
-					address: emailPhoneAddress,
-					selection: selection,
-					words: words,
-					wordcount: wordsLength
-				};
-
-				ga('set', nebula.analytics.dimensions.contactMethod, 'Street Address');
-				ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.address);
-				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-copied-address'}));
-				nebula.crm('event', 'Street Address Copied');
-			} else {
-				let alphanumPhone = emailPhoneAddress.replaceAll(/\W/g, ''); //Keep only alphanumeric characters
-				let firstFourNumbers = parseInt(alphanumPhone.substring(0, 4)); //Store the first four numbers as an integer
-
-				//If the first three/four chars are numbers and the full string is either 10 or 11 characters (to capture numbers with words) -or- if it matches the phone RegEx pattern
-				if ( (!isNaN(firstFourNumbers) && firstFourNumbers.toString().length >= 3 && (alphanumPhone.length === 10 || alphanumPhone.length === 11)) || nebula.regex.phone.test(emailPhoneAddress) ){
+				//Track Email or Phone copies as contact intent.
+				if ( nebula.regex.email.test(selection) ){
 					let thisEvent = {
 						category: 'Contact',
-						action: 'Phone (Copy)', //GA4 Name: "click_to_call"?
+						action: 'Email (Copy)', //GA4 Name: "mailto"?
 						intent: 'Intent',
-						phoneNumber: emailPhoneAddress,
-						selection: selection,
+						emailAddress: selection,
 						words: words,
 						wordcount: wordsLength
 					};
 
-					ga('set', nebula.analytics.dimensions.contactMethod, 'Click-to-Call');
+					ga('set', nebula.analytics.dimensions.contactMethod, 'Mailto');
 					ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 					nebula.dom.document.trigger('nebula_event', thisEvent);
-					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
-					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-copied-phone'}));
-					nebula.crm('event', 'Phone Number Copied');
-					nebula.crm('identify', {phone_contacted: thisEvent.phoneNumber});
-				}
-			}
+					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.emailAddress);
+					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-copied-email'}));
+					nebula.crm('event', 'Email Address Copied');
+					nebula.crm('identify', {mailto_contacted: thisEvent.emailAddress});
+				} else if ( nebula.regex.address.test(selection) ){
+					let thisEvent = {
+						category: 'Contact',
+						action: 'Street Address (Copy)',
+						intent: 'Intent',
+						address: selection,
+						words: words,
+						wordcount: wordsLength
+					};
 
-			let thisEvent = {
-				category: 'Copied Text',
-				action: 'Copy', //This is not used for the below events //GA4 Name: "copy_text"?
-				intent: 'Intent',
-				phoneNumber: emailPhoneAddress,
-				selection: selection,
-				words: words,
-				wordcount: wordsLength
-			};
-
-			nebula.dom.document.trigger('nebula_event', thisEvent);
-
-			if ( copyCount < 5 ){
-				if ( words.length > 8 ){
-					words = words.slice(0, 8).join(' ');
-					ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]'); //GA4: This will need to change significantly. Event Name: "copy_text"?
+					ga('set', nebula.analytics.dimensions.contactMethod, 'Street Address');
+					ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+					nebula.dom.document.trigger('nebula_event', thisEvent);
+					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.address);
+					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-copied-address'}));
+					nebula.crm('event', 'Street Address Copied');
 				} else {
-					if ( selection.trim() === '' ){
-						ga('send', 'event', thisEvent.category, '[0 words]'); //GA4: This will need to change significantly. Event Name: "copy_text"?
-					} else {
-						ga('send', 'event', thisEvent.category, words.length + ' words', selection, words.length); //GA4: This will need to change significantly. Event Name: "copy_text"?
+					let alphanumPhone = selection.replaceAll(/\W/g, ''); //Keep only alphanumeric characters
+					let firstFourNumbers = parseInt(alphanumPhone.substring(0, 4)); //Store the first four numbers as an integer
+
+					//If the first three/four chars are numbers and the full string is either 10 or 11 characters (to capture numbers with words) -or- if it matches the phone RegEx pattern
+					if ( (!isNaN(firstFourNumbers) && firstFourNumbers.toString().length >= 3 && (alphanumPhone.length === 10 || alphanumPhone.length === 11)) || nebula.regex.phone.test(selection) ){
+						let thisEvent = {
+							category: 'Contact',
+							action: 'Phone (Copy)', //GA4 Name: "click_to_call"?
+							intent: 'Intent',
+							phoneNumber: selection,
+							words: words,
+							wordcount: wordsLength
+						};
+
+						ga('set', nebula.analytics.dimensions.contactMethod, 'Click-to-Call');
+						ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+						nebula.dom.document.trigger('nebula_event', thisEvent);
+						ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
+						window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-copied-phone'}));
+						nebula.crm('event', 'Phone Number Copied');
+						nebula.crm('identify', {phone_contacted: thisEvent.phoneNumber});
 					}
 				}
 
-				ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]'); //GA4: This will need to change significantly. Event Name: "copy_text"?
-				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-copied-text'}));
-				nebula.crm('event', 'Text Copied');
-			}
+				//Send the regular copied text event since it does not contain contact information
+				let thisEvent = {
+					category: 'Copied Text',
+					action: 'Copy', //This is not used for the below events //GA4 Name: "copy_text"?
+					intent: 'Intent',
+					selection: selection,
+					words: words,
+					wordcount: wordsLength
+				};
 
-			copyCount++;
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+
+				if ( copyCount < 5 ){
+					if ( words.length > 8 ){
+						words = words.slice(0, 8).join(' ');
+						ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]'); //GA4: This will need to change significantly. Event Name: "copy_text"?
+					} else {
+						if ( selection.trim() === '' ){
+							ga('send', 'event', thisEvent.category, '[0 words]'); //GA4: This will need to change significantly. Event Name: "copy_text"?
+						} else {
+							ga('send', 'event', thisEvent.category, words.length + ' words', selection, words.length); //GA4: This will need to change significantly. Event Name: "copy_text"?
+						}
+					}
+
+					ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]'); //GA4: This will need to change significantly. Event Name: "copy_text"?
+					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-copied-text'}));
+					nebula.crm('event', 'Text Copied');
+				}
+
+				copyCount++;
+			}
 		});
 
 		//AJAX Errors

@@ -43,7 +43,7 @@ nebula.cf7Functions = async function(){
 			cf7Observer.observe(jQuery(this)[0]); //Observe the element
 		});
 	} catch(error){
-		nebula.help('CF7 Impression Observer: ' + error.data, '/functions/cf7Functions/', true);
+		nebula.help('CF7 Impression Observer: ' + error.message, '/functions/cf7Functions/', true);
 	}
 
 	//Re-init forms inside Bootstrap modals (to enable AJAX submission) when needed

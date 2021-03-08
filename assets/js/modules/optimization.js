@@ -400,7 +400,7 @@ nebula.lazyLoadAssets = async function(){
 		window.addEventListener('scroll', lazyLoadScrollBottom); //Scroll is passive by default
 	} catch(error){
 		nebula.loadEverything(); //If any error, load everything immediately
-		nebula.help('Lazy Load Observer: ' + error.data + '. All assets have been loaded immediately.', '/functions/lazyloadassets/', true);
+		nebula.help('Lazy Load Observer: ' + error.message + '. All assets have been loaded immediately.', '/functions/lazyloadassets/', true);
 	}
 
 	//Load all lazy elements at once if requested

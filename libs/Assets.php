@@ -335,7 +335,7 @@ if ( !trait_exists('Assets') ){
 		//Enqueue frontend scripts
 		public function enqueue_scripts($hook){
 			//Stylesheets
-			wp_enqueue_style('nebula-bootstrap');
+			//wp_enqueue_style('nebula-bootstrap'); //This is a dependent of nebula-main so does not need to be enqueued
 			wp_enqueue_style('nebula-main');
 
 			if ( $this->get_option('remote_font_url') ){

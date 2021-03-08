@@ -63,4 +63,3 @@ Performance data is updated automatically every hour. Your performance may vary 
 + [Device Detector](https://github.com/matomo-org/device-detector)
 + [Mmenu](https://github.com/FrDH/mmenu-js)
 + [Workbox](https://github.com/GoogleChrome/workbox)
-+ [Autotrack](https://github.com/googleanalytics/autotrack)

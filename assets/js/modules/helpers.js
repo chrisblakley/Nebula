@@ -17,8 +17,9 @@ nebula.helpers = async function(){
 	nebula.dom.html.removeClass('no-js').addClass('js');
 	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'nofollow external noopener'); //Add rel attributes to external links. Although search crawlers do use JavaScript, don't rely on this line to instruct them. Use standard HTML attributes whenever possible.
 
+	//Note the level of RAM available for a "lite" or "full" experience
 	if ( 'deviceMemory' in navigator ){ //Device Memory - Chrome 64+
-		let deviceMemoryLevel = navigator.deviceMemory < 1 ? 'lite' : 'full';
+		let deviceMemoryLevel = ( navigator.deviceMemory < 1 )? 'lite' : 'full'; //Possible values (GB of RAM): 0.25, 0.5, 1, 2, 4, 8
 		nebula.dom.html.addClass('device-memory-' + deviceMemoryLevel);
 	}
 
@@ -169,12 +170,14 @@ nebula.svgImgs = async function(){
 				theSVG = theSVG.attr('id', oThis.attr('id')); //Add replaced image's ID to the new SVG
 				theSVG = theSVG.attr('class', oThis.attr('class') + ' replaced-svg'); //Add replaced image's classes to the new SVG
 				theSVG = theSVG.attr('role', 'img');
+				theSVG = theSVG.attr('alt', nebula.sanitize(oThis.attr('alt'))); //An SVG with a role of img must include an alt attribute
+				theSVG = theSVG.attr('aria-label', nebula.sanitize(oThis.attr('alt'))); //Add an aria-label attribute as well
 				theSVG = theSVG.attr('data-original-src', oThis.attr('src')); //Add an attribute of the original SVG location
 				theSVG = theSVG.removeAttr('xmlns:a'); //Remove invalid XML tags
 
 				oThis.replaceWith(theSVG); //Replace image with new SVG
 
-				//Move alt attribute to title element within the SVG (title must be the first tag inside the <svg>)
+				//Use the alt attribute as a title tag within the SVG (title must be the first tag inside the <svg>) as well
 				if ( oThis.attr('alt') ){
 					theSVG.prepend('<title>' + nebula.sanitize(oThis.attr('alt')) + '</title>'); //Sanitized to prevent XSS
 				}
