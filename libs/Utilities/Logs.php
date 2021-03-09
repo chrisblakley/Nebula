@@ -62,7 +62,7 @@ if ( !trait_exists('Logs') ){
 			if ( $this->get_option('logs') && is_user_logged_in() && !empty($message) ){
 				global $wpdb;
 
-				$wpdb->insert($wpdb->nebula_logs, array(
+				$log_insertion = $wpdb->insert($wpdb->nebula_logs, array(
 					'timestamp' => sanitize_text_field(date('U')),
 					'message' => sanitize_text_field($message),
 					'user_id' => intval(get_current_user_id()), //Note: returns 0 in cron jobs
@@ -76,6 +76,8 @@ if ( !trait_exists('Logs') ){
 					//$this->optimize_logs(); //@todo "nebula" 0: Need to test this before enabling!
 				}
 */
+
+				return is_int($log_insertion); //Boolean return
 			}
 
 			return false;

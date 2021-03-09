@@ -7,7 +7,7 @@ jQuery.noConflict();
  Import Modules
  ===========================*/
 
-import './modules/usage.js'; //Must happen first
+//import './modules/usage.js'; //Loaded in metadata.php for earlier execution
 import './modules/optimization.js';
 import './modules/utilities.js';
 import './modules/helpers.js';

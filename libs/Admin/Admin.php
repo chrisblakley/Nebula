@@ -1079,17 +1079,20 @@ if ( !trait_exists('Admin') ){
 
 		//Force a re-install of the Nebula theme
 		public function force_nebula_theme_update($updates){
-			if ( current_user_can('update_themes') && is_child_theme() && $this->is_nebula() && isset($_GET['force-nebula-theme-update']) ){
-				$parent_theme = wp_get_theme()->get('Template');
+			if ( isset($_GET['force-nebula-theme-update']) && current_user_can('update_themes') && $this->is_nebula() && is_child_theme() ){
+				if ( empty(wp_cache_get('nebula_force_theme_update_log')) ){ //Only log this once per pageload
+					$parent_theme = wp_get_theme()->get('Template');
 
-				$updates->response[$parent_theme] = array(
-					'theme' => $parent_theme,
-					'new_version' => $this->version('full'), //Does not need to be larger than current version
-					'url' => 'https://github.com/chrisblakley/Nebula/commits/main',
-					'package' => 'https://github.com/chrisblakley/Nebula/archive/main.zip'
-				);
+					$updates->response[$parent_theme] = array(
+						'theme' => $parent_theme,
+						'new_version' => $this->version('full'), //Does not need to be larger than current version
+						'url' => 'https://github.com/chrisblakley/Nebula/commits/main',
+						'package' => 'https://github.com/chrisblakley/Nebula/archive/main.zip'
+					);
 
-				$this->add_log('Nebula theme re-install (forced via WP) of version:' . $this->version('full'), 7);
+					$log_force_theme_update = $this->add_log('Nebula theme re-install (forced via WP) of version: ' . $this->version('full'), 7);
+					wp_cache_set('nebula_force_theme_update_log', $log_force_theme_update); //Store boolean in object cache
+				}
 			}
 
 			return $updates;
@@ -1108,7 +1111,7 @@ if ( !trait_exists('Admin') ){
 			return false;
 		}
 
-		//After theme update has been completed
+		//Update the theme, output progress, and post-update tasks
 		public function theme_update_automation($wp_upgrader, $hook_extra){
 			$override = apply_filters('pre_nebula_theme_update_automation', null);
 			if ( isset($override) ){return;}
@@ -1120,11 +1123,19 @@ if ( !trait_exists('Admin') ){
 					$new_version = $this->get_data('next_version');
 					$num_theme_updates = $this->get_data('num_theme_updates')+1;
 					$current_user = wp_get_current_user();
-					$this->usage('Automated Theme Update', array('d11' => 'From ' . $prev_version . ' to ' . $new_version, 'cm1' => $num_theme_updates));
-					$this->add_log('Nebula theme update (via WP) from ' . $prev_version . ' to ' . $new_version, 5);
 
-					add_filter('update_feedback', __('Sending admin notification email(s)...')); //Need to test this further
-					$this->theme_update_email($prev_version, $prev_version_commit_date, $new_version); //Send email with update information
+					$this->output_nebula_update_progress('Updating Nebula from ' . $prev_version . ' to ' . $new_version . ' (by ' . $current_user->display_name . ').');
+
+					$this->usage('Automated Theme Update', array('cd11' => 'From ' . $prev_version . ' to ' . $new_version, 'cm1' => $num_theme_updates));
+
+					$log_success = $this->add_log('Nebula theme update (via WP) from ' . $prev_version . ' to ' . $new_version, 5);
+					$log_progress_message = ( !empty($log_success) )? 'Annotated in Nebula diagnostic logs!' : 'Skipped annotating in Nebula diagnostic logs.';
+					$this->output_nebula_update_progress($log_progress_message);
+
+					$this->output_nebula_update_progress('Sending admin notification email(s)...');
+					$mail_success = $this->theme_update_email($prev_version, $prev_version_commit_date, $new_version); //Send email with update information
+					$mail_progress_message = ( !empty($mail_success) )? 'Admin emails sent successfully!' : 'Admin email notifications have failed.';
+					$this->output_nebula_update_progress($mail_progress_message);
 
 					$this->update_data('need_sass_compile', 'true'); //Compile all SCSS files on next pageview
 					$this->update_data('num_theme_updates', $num_theme_updates);
@@ -1134,10 +1145,23 @@ if ( !trait_exists('Admin') ){
 
 					//Reprocess Sass if enabled
 					if ( $this->get_option('scss') ){
-						add_filter('update_feedback', __('Re-Processing Sass files...')); //Need to test this further
+						$this->output_nebula_update_progress('Re-Processing Sass files...');
 						$this->render_scss('all'); //Re-render all SCSS files.
 					}
+
+					$this->output_nebula_update_progress('All Nebula update tasks have been completed.');
 				}
+			}
+		}
+
+		//Output progress statuses of the Nebula theme update
+		public function output_nebula_update_progress($message=''){
+			try {
+				if ( get_current_screen()->id === 'update-core' && !empty($message) ){
+					echo '<p>' . $message . '</p>';
+				}
+			} catch(exception $error){
+				//Ignore output errors to prevent interrupting update
 			}
 		}
 
@@ -1164,8 +1188,10 @@ if ( !trait_exists('Admin') ){
 				$subject = 'Nebula updated to ' . $new_version . ' for ' . html_entity_decode(get_bloginfo('name')) . '.';
 				$message = '<p>The parent Nebula theme has been updated from version <strong>' . $prev_version . '</strong> (Committed: ' . $prev_version_commit_date . ') to <strong>' . $new_version . '</strong> for ' . get_bloginfo('name') . ' (' . home_url('/') . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '.<br/><br/>To revert, find the previous version in the <a href="https://github.com/chrisblakley/Nebula/commits/main" target="_blank" rel="noopener">Nebula GitHub repository</a>, download the corresponding .zip file, and upload it replacing /themes/Nebula-main/.</p>';
 
-				$this->send_email_to_admins($subject, $message);
+				return $this->send_email_to_admins($subject, $message);
 			}
+
+			return false;
 		}
 
 		//Send an email to the current user and site admin(s)
@@ -1187,8 +1213,11 @@ if ( !trait_exists('Admin') ){
 				//Send the email, and on success set a transient to prevent multiple emails
 				if ( wp_mail($to, $subject, $message, $headers, $attachments) ){
 					set_transient('nebula_admin_email_sent', true, MINUTE_IN_SECONDS);
+					return true;
 				}
 			}
+
+			return false;
 		}
 
 		//Get the notification email address and all developer administrators
