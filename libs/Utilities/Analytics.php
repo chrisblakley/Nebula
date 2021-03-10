@@ -267,7 +267,7 @@ if ( !trait_exists('Analytics') ){
 				'cid' => $this->ga_parse_cookie(), //Client ID
 				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']), //User Agent
 				'uip' => $this->get_ip_address(), //Anonymized IP Address
-				'ul' => ( class_exists('Locale') )? locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']) : '', //User Language
+				'ul' => ( class_exists('Locale') && !empty($_SERVER['HTTP_ACCEPT_LANGUAGE']) )? locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']) : '', //User Language
 				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '', //Referrer
 				'dl' => $this->requested_url(), //Likely "admin-ajax.php" until overwritten
 				'dt' => ( get_the_title() )? get_the_title() : '', //Likely empty until overwritten

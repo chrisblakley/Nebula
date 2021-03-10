@@ -108,6 +108,22 @@ if ( !trait_exists('Warnings') ){
 					}
 				}
 
+				//Check for large error_log, debug_log, or nebula_log.log files
+				$log_file_locations = array(
+					get_template_directory() . '/nebula_log.log',
+					get_stylesheet_directory() . '/nebula_log.log',
+					ABSPATH . 'wp-content/debug.log', //Within /wp-content/ directory
+					ABSPATH . 'error_log' //Within WP root directory
+				);
+				foreach ( $log_file_locations as $log_file ){
+					if ( file_exists($log_file) && filesize($log_file) > 26214400 ){ //If <25mb //PHP 7.4 use numeric separators here
+						$nebula_warnings[] = array(
+							'level' => 'warn',
+							'description' => '<i class="fas fa-fw fa-weight"></i> Large debug file: <strong>' . $log_file . '</strong>',
+						);
+					}
+				}
+
 				//If the site is served via HTTPS but the Site URL is still set to HTTP
 				if ( (is_ssl() || isset($_SERVER['HTTPS'])) && (strpos(home_url(), 'http://') !== false || strpos(get_option('siteurl'), 'http://') !== false) ){
 					$nebula_warnings[] = array(
@@ -419,19 +435,12 @@ if ( !trait_exists('Warnings') ){
 					);
 				}
 
-				//Check if all SCSS files were processed manually.
-				if ( $this->get_option('scss') && (isset($_GET['sass']) || isset($_GET['scss'])) ){
-					if ( $this->is_dev() || $this->is_client() ){
-						$nebula_warnings[] = array(
-							'level' => 'log',
-							'description' => '<i class="fab fa-fw fa-sass"></i> All Sass files have been manually processed.'
-						);
-					} else {
-						$nebula_warnings[] = array(
-							'level' => 'error',
-							'description' => '<i class="fab fa-fw fa-sass"></i> You do not have permissions to manually process all Sass files.'
-						);
-					}
+				//Check if all Sass files were processed
+				if ( !empty($this->sass_process_status) ){
+					$nebula_warnings[] = array(
+						'level' => 'log',
+						'description' => '<i class="fab fa-fw fa-sass"></i> ' . $this->sass_process_status
+					);
 				}
 
 				$all_nebula_warnings = apply_filters('nebula_warnings', $nebula_warnings); //Allow other functions to hook in to add warnings (like Ecommerce)

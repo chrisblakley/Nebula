@@ -24,7 +24,7 @@ if ( !trait_exists('Security') ){
 			add_action('wp_footer', array($this, 'cookie_notification'));
 
 			//Disable the file editor for non-developers
-			if ( !$this->is_dev() ){
+			if ( !$this->is_dev() && !defined('DISALLOW_FILE_EDIT') ){
 				define('DISALLOW_FILE_EDIT', true);
 			}
 		}

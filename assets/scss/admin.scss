@@ -257,8 +257,11 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 	.sticky {position: sticky; top: 60px;}
 
 	.nav-pills {
-		.nav-link {font-size: 14px; color: $primary_color;
+		.nav-link {font-size: 14px; color: $primary_color; transition: background-color 0.25s ease;
 			i, path {color: #23282d; fill: #23282d;}
+
+			&:focus,
+			&:hover {background-color: rgba($primary_color, 10%);}
 
 			&.active {background-color: $primary_color; color: readable-color($primary_color);
 				i, path {color: readable-color($primary_color); fill: readable-color($primary_color);}

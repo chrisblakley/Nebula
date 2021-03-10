@@ -2132,9 +2132,9 @@ if ( !trait_exists('Metaboxes') ){
 								</tr>
 							</thead>
 							<tbody>
-								<?php foreach ( $rows as $row ): ?>
+								<?php foreach ( $rows as $row ): //Rows ?>
 									<tr data-id="<?php echo intval($row->id); ?>" data-importance="<?php echo intval($row->importance); ?>">
-										<?php foreach ( $row as $column => $value ): ?>
+										<?php foreach ( $row as $column => $value ): //Columns ?>
 											<td class="<?php echo $column; ?>">
 												<div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis;">
 													<?php

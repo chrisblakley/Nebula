@@ -19,6 +19,26 @@ if ( !trait_exists('Logs') ){
 			}
 		}
 
+		//Log a message to a file
+		//Note: This will create a new file if it does not exist, but does not create new directories!
+		public function debug_log($message='', $filepath=false){
+			if ( empty($filepath) ){
+				$filepath = get_template_directory() . '/nebula_log.log';
+				if ( is_child_theme() ){
+					$filepath = get_stylesheet_directory() . '/nebula_log.log'; //Use the child theme directory if using a child theme
+				}
+			}
+
+			//If the message is not a string, encode it as JSON
+			if ( !is_string($message) ){
+				$message = json_encode($message);
+			}
+
+			$message = '[' . date('l, F j, Y - g:i:sa') . '] ' . $message . ' (on ' . $this->requested_url() . ')' . PHP_EOL; //Add timestamp, URL, and newline
+
+			file_put_contents($filepath, $message, FILE_APPEND); //Create the log file if needed and append to it
+		}
+
 		//Register table name in $wpdb global
 		public function register_table_names(){
 			if ( $this->get_option('logs') && $this->is_staff() ){ //User must be staff to register/create the table
@@ -76,6 +96,10 @@ if ( !trait_exists('Logs') ){
 					//$this->optimize_logs(); //@todo "nebula" 0: Need to test this before enabling!
 				}
 */
+
+				if ( $this->is_debug(false) || WP_DEBUG || WP_DEBUG_LOG ){
+					$this->debug_log($message . ' [User: ' . get_userdata(intval(get_current_user_id()))->display_name . ']'); //Log the message to a file too when debug mode is active
+				}
 
 				return is_int($log_insertion); //Boolean return
 			}

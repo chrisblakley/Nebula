@@ -1157,7 +1157,8 @@ if ( !trait_exists('Admin') ){
 		//Output progress statuses of the Nebula theme update
 		public function output_nebula_update_progress($message=''){
 			try {
-				if ( get_current_screen()->id === 'update-core' && !empty($message) ){
+				global $pagenow;
+				if ( $pagenow === 'update-core.php' && !empty($message) ){
 					echo '<p>' . $message . '</p>';
 				}
 			} catch(exception $error){

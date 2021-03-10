@@ -655,27 +655,6 @@ if ( !trait_exists('Utilities') ){
 			}
 		}
 
-		//Log a message to a file
-		//Note: This will create a new file if it does not exist, but does not create new directories!
-		public function debug_log($message='', $filepath=false){
-			if ( empty($filepath) ){
-
-				$filepath = get_template_directory() . '/nebula_log.log';
-				if ( is_child_theme() ){
-					$filepath = get_stylesheet_directory() . '/nebula_log.log'; //Use the child theme directory if using a child theme
-				}
-			}
-
-			//If the message is not a string, encode it as JSON
-			if ( !is_string($message) ){
-				$message = json_encode($message);
-			}
-
-			$message = '[' . date('l, F j, Y - g:i:sa') . '] ' . $message . ' (on ' . $this->requested_url() . ')' . PHP_EOL; //Add timestamp, URL, and newline
-
-			file_put_contents($filepath, $message, FILE_APPEND); //Create the log file if needed and append to it
-		}
-
 		//Fuzzy meta sub key finder (Used to query ACF nested repeater fields).
 		//Example: 'key' => 'dates_%_start_date' (repeater > field)
 		//Example: 'key' => 'dish_%_ingredients_%_ingredient' (repeater > repeater > field) Only the first repeater needs the _%_ but others won't hurt
