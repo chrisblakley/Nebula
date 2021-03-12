@@ -129,6 +129,20 @@ nebula.eventTracking = async function(){
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-button-click'}));
 		});
 
+		//Image Clicks
+		nebula.dom.document.on('click', 'a img', function(e){
+			let thisEvent = {
+				event: e,
+				category: 'Image Click',
+				action: jQuery(this).attr('alt') || jQuery(this).attr('src'),
+				label: jQuery(this).parents('a').attr('href'),
+			};
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-image-click'}));
+		});
+
 		//Bootstrap "Collapse" Accordions
 		nebula.dom.document.on('shown.bs.collapse', function(e){
 			let thisEvent = {

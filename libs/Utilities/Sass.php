@@ -127,10 +127,10 @@ if ( !trait_exists('Sass') ){
 					//Find and render .scss files at each location
 					$this->was_sass_processed = false; //This is changed to true when Sass is actually processed
 					foreach ( $all_scss_locations as $scss_location_name => $scss_location_paths ){
-						$this->render_scss($scss_location_name, $scss_location_paths, $force_all);
+						$this->render_scss($scss_location_name, $scss_location_paths, $force_all); //Remember: this does not mean Sass is being processed– this function checks the files first and then processes only when necessary
 					}
 
-					$this->sass_process_status = ( !isset($_GET['sass']) && $this->was_sass_processed )? 'Sass files have been processed.' : $this->sass_process_status; //Show this status if it was not explicitly requested to process otherwise use the existing status
+					$this->sass_process_status = ( !isset($_GET['sass']) && $this->was_sass_processed )? 'Sass files have been processed.' : $this->sass_process_status; //Show this status if Sass was processed but not explicitly forced. Otherwise use the existing status
 
 					$this->update_data('need_sass_compile', 'false'); //Set it to false after Sass is finished
 					set_transient('nebula_sass_compile', time(), 15); //15 second cache to throttle Sass from being re-processed again immediately

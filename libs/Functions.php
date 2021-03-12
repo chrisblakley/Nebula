@@ -239,14 +239,9 @@ trait Functions {
 
 			//$new_cache_name = "nebula-" . strtolower(get_option('stylesheet')) . "-" . mt_rand(10000, 99999); //PHP 7.4 use numeric separators here
 
-			$nebula_version = $this->version('full');
-			if ( is_child_theme() ){
-				$nebula_version = $this->child_version();
-			}
-
 			$replace = array(
 				"$1" . strtolower(get_option('stylesheet')) . "$3",
-				"$1" . 'v' . apply_filters('nebula_sw_cache_version', $nebula_version) . "$3 //" . date('l, F j, Y g:i:s A'),
+				"$1" . 'v' . apply_filters('nebula_sw_cache_version', $this->child_version()) . "$3 //" . date('l, F j, Y g:i:s A'),
 				"$1" . home_url('/') . "offline/$3",
 				"$1" . get_theme_file_uri('/assets/img') . "/offline.svg$3",
 				"$1cd" . $this->ga_definition_index($this->get_option('cd_offline')) . "$3",

@@ -1214,7 +1214,7 @@ if ( !trait_exists('Utilities') ){
 			}
 		}
 
-		//Get the child theme version information
+		//Get the child theme version information (falls back to "full" Nebula version if not a child theme)
 		public function child_version(){
 			$override = apply_filters('pre_nebula_child_version', null);
 			if ( isset($override) ){return $override;}

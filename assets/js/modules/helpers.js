@@ -50,6 +50,16 @@ nebula.helpers = async function(){
 		}
 	});
 
+	//Deactivate potential active states when the escape key is pressed
+	nebula.dom.document.on('keydown', function(e){
+		if ( e.key === 'Escape' ){
+			nebula.dom.document.trigger('esc'); //Trigger a simpler DOM event. Is this helpful?
+
+			//Close modals
+			jQuery('.modal').modal('hide');
+		}
+	});
+
 	//Nebula preferred default Chosen.js options
 	nebula.chosenOptions = wp.hooks.applyFilters('nebulaChosenOptions', {
 		disable_search_threshold: 5,
@@ -484,6 +494,9 @@ nebula.mmenus = async function(){
 			backButton: {
 	    		close: true //Close the offcanvas menu when the browser's back button is used
 	        },
+			keyboardNavigation: { //This is not yet working...
+				enhance: true //Allow for enhanced keyboard navigation such as the "escape" key closing the menu
+			},
 			lazySubmenus: {
 				load: true //Lazy load the sub-nav panels
 			},
