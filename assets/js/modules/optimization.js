@@ -14,7 +14,6 @@ nebula.cacheSelectors = function(){
 nebula.performanceMetrics = async function(){
 	if ( nebula.get('timings') || nebula.user?.staff === 'developer' ){ //Only available to Developers or with ?timings
 		if ( window.performance?.timing && typeof window.requestIdleCallback === 'function' ){ //Remove the requestIdleCallback condition when Safari supports it)
-
 			window.requestIdleCallback(function(){
 				window.performance.mark('(Nebula) CPU Idle');
 				window.performance.measure('(Nebula) Until CPU Idle', 'navigationStart', '(Nebula) CPU Idle');
@@ -60,6 +59,22 @@ nebula.performanceMetrics = async function(){
 					ga('send', 'timing', 'Performance Timing', 'DOM Ready', timingCalcuations['DOM Ready'].duration, 'Navigation start until DOM ready');
 					ga('send', 'timing', 'Performance Timing', 'Window Load', timingCalcuations['Total Load'].duration, 'Navigation start until window load');
 					ga('send', 'timing', 'Performance Timing', 'CPU Idle', timingCalcuations['CPU Idle'].duration, 'Navigation start until CPU idle');
+				}
+
+				//Monitor Cumulative Layout Shift (CLS) with the Layout Instability API
+				if ( typeof window.PerformanceObserver !== undefined ){
+					let cls = 0;
+					new PerformanceObserver(function(entryList){
+						for ( let entry of entryList.getEntries() ){
+							if ( !entry.hadRecentInput ){
+								cls += entry.value;
+							}
+						}
+
+						if ( cls > 0.1 ){ //Anything over 0.1 needs improvement
+							console.warn('Cumulative Layout Shift (CLS):', cls);
+						}
+					}).observe({type: 'layout-shift', buffered: true});
 				}
 			});
 		}

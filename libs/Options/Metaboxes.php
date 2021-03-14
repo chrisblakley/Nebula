@@ -1918,6 +1918,15 @@ if ( !trait_exists('Metaboxes') ){
 				}
 			}
 
+			//Temporarily reverse sort by src so that filenames with versioning have the latest first (so earlier versions are the ones removed by the upcoming de-dupe)
+			usort($all_registered_assets, function($a, $b) {
+				return $b['src'] <=> $a['src'];
+			});
+
+			//De-duplicate the remaining handles
+			$temp = array_unique(array_column($all_registered_assets, 'handle'));
+			$all_registered_assets = array_intersect_key($all_registered_assets, $temp);
+
 			//Alphabetize $all_registered_assets by handle
 			usort($all_registered_assets, function($a, $b){
 				return strcasecmp($a['handle'], $b['handle']);

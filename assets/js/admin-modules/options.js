@@ -265,22 +265,26 @@ nebula.isCheckedOrHasValue = function(inputObject){
 nebula.assetScan = function(){
 	//Run automatic asset scan when button is clicked
 	jQuery('.scan-frontend-assets').on('click', function(){ //Note there are two of these sections (one for styles, one for scripts). This will handle both simultaneously.
-		oThis = jQuery(this);
-		if ( oThis.attr('data-skip-ajax') !== 'true' ){ //Use AJAX unless it fails
+		let oThis = jQuery(this);
+		if ( oThis.attr('data-skip-fetch') !== 'true' ){ //Use Fetch unless it fails
 			var initialText = oThis.html();
 
 			oThis.html('<i class="fas fa-fw fa-spin fa-spinner"></i> Scanning Front-End...');
 			jQuery('.asset-scan-status').html('Automatic asset scan in progress...');
 
-			jQuery.ajax({ //Eventually update this to fetch with ES6?
-				type: 'GET',
-				url: nebula.site.home_url + '?nebula-scan',
-			}).success(function(response){
-				oThis.html(initialText);
-				jQuery('.asset-scan-status').html('<strong class="nebula-enabled"><i class="fas fa-fw fa-check"></i> Automatic scan successful.</strong> You may refresh this page when ready to see available assets.');
-			}).error(function(MLHttpRequest, textStatus, errorThrown){
+			fetch(nebula.site.home_url + '?nebula-scan', {
+				method: 'GET',
+				headers: {
+					'Cache-Control': 'no-cache',
+				}
+			}).then(function(response){
+				if ( response.ok ){
+					oThis.html(initialText);
+					jQuery('.asset-scan-status').html('<strong class="nebula-enabled"><i class="fas fa-fw fa-check"></i> Automatic scan successful.</strong> You may refresh this page when ready to see available assets.');
+				}
+			}).catch(function(error){
 				oThis.html('Manually Scan Front-End <i class="fas fa-fw fa-external-link-alt"></i>');
-				jQuery('.asset-scan-status').html('<strong class="nebula-disabled">Automatic scan failed.</strong> Click the button again to manually scan the front-end in a new window.').attr('data-skip-ajax', 'true');
+				jQuery('.asset-scan-status').html('<strong class="nebula-disabled">Automatic scan failed.</strong> Click the button again to manually scan the front-end in a new window.').attr('data-skip-fetch', 'true');
 			});
 
 			return false;
@@ -297,18 +301,21 @@ nebula.logs = function(){
 		if ( logMessage ){
 			jQuery('#add-log-progress').removeClass('fa-calendar-plus').addClass('fa-spinner fa-spin');
 
-			jQuery.ajax({ //Eventually use fetch here
-				type: 'POST',
-				url: nebula.site.ajax.url,
-				data: {
+			fetch(nebula.site.ajax.url, {
+				method: 'POST',
+				credentials: 'same-origin',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'Cache-Control': 'no-cache',
+				},
+				body: new URLSearchParams({
 					nonce: nebula.site.ajax.nonce,
 					action: 'add_log',
-					data: [{
-						message: logMessage,
-						importance: logImportance,
-					}]
-				},
-				success: function(response){
+					message: logMessage,
+					importance: logImportance,
+				})
+			}).then(function(response){
+				if ( response.ok ){
 					jQuery('#add-log-progress').removeClass('fa-spinner fa-spin').addClass('fa-calendar-plus');
 
 					//Reload just the table
@@ -319,11 +326,9 @@ nebula.logs = function(){
 						jQuery('#log-message').val('');
 						jQuery('#log-importance').val('5');
 					});
-				},
-				error: function(XMLHttpRequest, textStatus, errorThrown){
-					jQuery('#add-log-progress').removeClass('fa-spinner fa-spin').addClass('fa-calendar-plus');
-				},
-				timeout: 60_000
+				}
+			}).catch(function(error){
+				jQuery('#add-log-progress').removeClass('fa-spinner fa-spin').addClass('fa-calendar-plus');
 			});
 		}
 
@@ -342,25 +347,26 @@ nebula.logs = function(){
 
 			var logCount = parseInt(jQuery('#log-count').text()); //Number of log rows before removal
 
-			jQuery.ajax({ //Eventually use fetch here
-				type: 'POST',
-				url: nebula.site.ajax.url,
-				data: {
+			fetch(nebula.site.ajax.url, {
+				method: 'POST',
+				credentials: 'same-origin',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'Cache-Control': 'no-cache',
+				},
+				body: new URLSearchParams({
 					nonce: nebula.site.ajax.nonce,
 					action: 'remove_log',
-					data: [{
-						id: logID,
-					}]
-				},
-				success: function(response){
+					id: logID,
+				})
+			}).then(function(response){
+				if ( response.ok ){
 					//Artificially update the table without doing a reload of the whole page in case there are unsaved changes!
 					oThis.fadeOut(250).addClass('removed'); //Artificially hide the removed row
 					jQuery('#log-count').text(logCount-1); //Artificially update the log count
-				},
-				error: function(XMLHttpRequest, textStatus, errorThrown){
-					oThis.find('.remove').removeClass('fa-spinner fa-spin').addClass('fa-ban');
-				},
-				timeout: 60_000
+				}
+			}).catch(function(error){
+				oThis.find('.remove').removeClass('fa-spinner fa-spin').addClass('fa-ban');
 			});
 		} else {
 			jQuery(this).removeClass('prompted');
@@ -373,27 +379,27 @@ nebula.logs = function(){
 	jQuery(document).on('click', '#clean-log-messages', function(){
 		if ( confirm('Are you sure you want to delete low importance log messages? There is no undo.') ){
 			jQuery('#clean-log-progress').removeClass('fa-trash-alt').addClass('fa-spinner fa-spin');
-
-			jQuery.ajax({ //Eventually use fetch here
-				type: 'POST',
-				url: nebula.site.ajax.url,
-				data: {
+			fetch(nebula.site.ajax.url, {
+				method: 'POST',
+				credentials: 'same-origin',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'Cache-Control': 'no-cache',
+				},
+				body: new URLSearchParams({
 					nonce: nebula.site.ajax.nonce,
 					action: 'clean_logs',
-					data: [{
-						importance: 4,
-					}]
-				},
-				success: function(response){
+					importance: 4,
+				})
+			}).then(function(response){
+				if ( response.ok ){
 					jQuery('#nebula-log-reload-container').load(window.location.href +  ' #nebula-logs', function(){
 						jQuery('#log-count').text(jQuery('#nebula-logs tr').not('.removed').length); //Re-count rows
 						jQuery('#clean-log-progress').removeClass('fa-spinner fa-spin').addClass('fa-trash-alt');
 					}); //Reload just the table
-				},
-				error: function(XMLHttpRequest, textStatus, errorThrown){
-					jQuery('#clean-log-progress').removeClass('fa-spinner fa-spin').addClass('fa-trash-alt');
-				},
-				timeout: 60_000
+				}
+			}).catch(function(error){
+				jQuery('#clean-log-progress').removeClass('fa-spinner fa-spin').addClass('fa-trash-alt');
 			});
 		}
 

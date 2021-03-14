@@ -23,9 +23,9 @@ if ( !trait_exists('Logs') ){
 		//Note: This will create a new file if it does not exist, but does not create new directories!
 		public function debug_log($message='', $filepath=false){
 			if ( empty($filepath) ){
-				$filepath = get_template_directory() . '/nebula_log.log';
+				$filepath = get_template_directory() . '/nebula.log';
 				if ( is_child_theme() ){
-					$filepath = get_stylesheet_directory() . '/nebula_log.log'; //Use the child theme directory if using a child theme
+					$filepath = get_stylesheet_directory() . '/nebula.log'; //Use the child theme directory if using a child theme
 				}
 			}
 
@@ -109,13 +109,13 @@ if ( !trait_exists('Logs') ){
 
 		//Insert log via admin interface (AJAX)
 		public function add_log_via_ajax(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied. Refresh and try again.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('{response:"Permission Denied. Refresh and try again."}'); }
 
-			$message = sanitize_text_field($_POST['data'][0]['message']); //Sanitize message string
-			$importance = intval($_POST['data'][0]['importance']); //Sanitize importance integer @todo "Nebula" 0: nullish coalescing operator here (set to 4)
+			$message = sanitize_text_field($_POST['message']); //Sanitize message string
+			$importance = intval($_POST['importance']); //Sanitize importance integer @todo "Nebula" 0: nullish coalescing operator here (set to 4)
 
 			$this->add_log($message, $importance);
-			exit;
+			exit('{response:success}');
 		}
 
 		//Remove log from DB
@@ -133,11 +133,11 @@ if ( !trait_exists('Logs') ){
 
 		//Remove log via admin interface (AJAX)
 		public function remove_log_via_ajax(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied. Refresh and try again.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('{response:"Permission Denied. Refresh and try again."}'); }
 
-			$log_id = intval($_POST['data'][0]['id']); //Sanitize ID
+			$log_id = intval($_POST['id']); //Sanitize ID
 			$this->remove_log($log_id);
-			exit;
+			exit('{response:success}');
 		}
 
 		//Remove all low importance logs from DB (by default this removes any log messages with importance of 4 or below)
@@ -155,11 +155,11 @@ if ( !trait_exists('Logs') ){
 
 		//Remove all low importance logs from DB via admin interface (AJAX)
 		public function clean_logs_via_ajax(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied. Refresh and try again.'); }
+			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('{response:"Permission Denied. Refresh and try again."}'); }
 
-			$importance = intval($_POST['data'][0]['importance']); //Sanitize importance
+			$importance = intval($_POST['importance']); //Sanitize importance
 			$this->clean_logs($importance);
-			exit;
+			exit('{response:success}');
 		}
 
 		//Remove low importance logs before a date

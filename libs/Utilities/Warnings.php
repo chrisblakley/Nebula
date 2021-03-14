@@ -14,9 +14,9 @@ if ( !trait_exists('Warnings') ){
 
 		//Determine the desired warning level
 		public function is_warning_level($needed, $actual=false){
-			$actual = ( !empty($actual) )? $actual : $this->get_option('warnings');
+			$actual = ( !empty($actual) )? $actual : $this->get_option('warnings'); //Get the selected warning level from Nebula Options
 
-			if ( $actual === 'off' ){
+			if ( $actual === 'off' ){ //If the site setting is off return false
 				return false;
 			} elseif ( $actual === 'on' ){
 				return true;
@@ -37,9 +37,9 @@ if ( !trait_exists('Warnings') ){
 				$this->warnings = $this->check_warnings();
 
 				//If there are warnings, send them to the console.
-				if ( !empty($warnings) ){
+				if ( !empty($this->warnings) ){
 					echo '<script>';
-					foreach( $warnings as $warning ){
+					foreach( $this->warnings as $warning ){
 						$category = ( !empty($warning['category']) )? $warning['category'] : 'Nebula';
 						echo 'console.' . esc_html($warning['level']) . '("[' . esc_html($category) . '] ' . esc_html(addslashes(strip_tags($warning['description']))) . '");';
 					}
@@ -64,7 +64,7 @@ if ( !trait_exists('Warnings') ){
 					return $nebula_warnings;
 				}
 
-				$nebula_warnings = array();
+				$nebula_warnings = array(); //Prep the warnings array to fill
 
 				//Admin warnings only
 				if ( $this->is_admin_page() ){
@@ -76,7 +76,7 @@ if ( !trait_exists('Warnings') ){
 						if ( !empty($post) ){ //If the listing has results
 							foreach ( get_taxonomies() as $taxonomy ){ //Loop through all taxonomies
 								foreach ( get_terms($taxonomy, array('hide_empty' => false)) as $term ){ //Loop through all terms within each taxonomy
-									if ( $term->slug === $post->post_name ){
+									if ( $term->slug === $post->post_name ){ //If this page slug matches a taxonomy term
 										$nebula_warnings[] = array(
 											'level' => 'error',
 											'description' => '<i class="fas fa-fw fa-link"></i> Slug conflict with ' . ucwords(str_replace('_', ' ', $taxonomy)) . ': <strong>' . $term->slug . '</strong> - Consider changing this page slug.'
@@ -105,22 +105,6 @@ if ( !trait_exists('Warnings') ){
 								set_transient('nebula_fs_method', true, YEAR_IN_SECONDS); //On success, set a transient. This transient never needs to expire (but it's fine if it does).
 							}
 						}
-					}
-				}
-
-				//Check for large error_log, debug_log, or nebula_log.log files
-				$log_file_locations = array(
-					get_template_directory() . '/nebula_log.log',
-					get_stylesheet_directory() . '/nebula_log.log',
-					ABSPATH . 'wp-content/debug.log', //Within /wp-content/ directory
-					ABSPATH . 'error_log' //Within WP root directory
-				);
-				foreach ( $log_file_locations as $log_file ){
-					if ( file_exists($log_file) && filesize($log_file) > 26214400 ){ //If <25mb //PHP 7.4 use numeric separators here
-						$nebula_warnings[] = array(
-							'level' => 'warn',
-							'description' => '<i class="fas fa-fw fa-weight"></i> Large debug file: <strong>' . $log_file . '</strong>',
-						);
 					}
 				}
 
@@ -245,14 +229,14 @@ if ( !trait_exists('Warnings') ){
 				}
 
 				//Check individual files for anything unusual
-				if ( nebula()->is_auditing() ){
+				if ( nebula()->is_auditing() ){ //Only check all files when auditing
 					$directories_to_scan = array(ABSPATH . '/wp-admin', ABSPATH . '/wp-includes', get_template_directory(), get_stylesheet_directory()); //Change this to simply ABSPATH to scan the entire WordPress directory
 					foreach ( $directories_to_scan as $directory ){
 						foreach ( $this->glob_r($directory . '/*') as $file ){
 							if ( !$this->contains($file, array('/cache')) ){ //Skip certain directories
 								if ( is_file($file) ){
 									//If file was last modified before the year 2000
-									if ( filemtime($file) < 946702800 ){
+									if ( filemtime($file) < 946702800 ){ //PHP 7.4 use numeric separators here
 										$nebula_warnings[] = array(
 											'level' => 'warn',
 											'description' => '<i class="fas fa-fw fa-hourglass-start"></i> <strong>' . $file . '</strong> was last modified on ' . date('F j, Y', filemtime($file)) . '. This is somewhat unusual and should be looked into.'
@@ -260,14 +244,30 @@ if ( !trait_exists('Warnings') ){
 									}
 
 									//If the file size is larger than 10mb
-									if ( filesize($file) > 10485760 ){
+									if ( filesize($file) > 10485760 ){ //PHP 7.4 use numeric separators here
 										$nebula_warnings[] = array(
 											'level' => 'warn',
-											'description' => '<i class="fas fa-fw fa-file"></i> <strong>' . $file . '</strong> has a large filesize of ' . bcdiv(filesize($file), 1048576, 0) . 'mb.'
+											'description' => '<i class="fas fa-fw fa-file"></i> <strong>' . $file . '</strong> has a large filesize of ' . bcdiv(filesize($file), 1048576, 0) . 'mb.' //PHP 7.4 use numeric separators here
 										);
 									}
 								}
 							}
+						}
+					}
+				} else { //Otherwise just check a few files
+					//Check for large error_log, debug_log, or nebula.log files
+					$log_file_locations = array(
+						get_template_directory() . '/nebula.log',
+						get_stylesheet_directory() . '/nebula.log',
+						ABSPATH . 'wp-content/debug.log', //Within /wp-content/ directory
+						ABSPATH . 'error_log' //Within WP root directory
+					);
+					foreach ( $log_file_locations as $log_file ){
+						if ( file_exists($log_file) && filesize($log_file) > 26214400 ){ //If <25mb //PHP 7.4 use numeric separators here
+							$nebula_warnings[] = array(
+								'level' => 'warn',
+								'description' => '<i class="fas fa-fw fa-weight"></i> Large debug file: <strong>' . $log_file . '</strong>',
+							);
 						}
 					}
 				}
@@ -469,7 +469,6 @@ if ( !trait_exists('Warnings') ){
 				}
 
 				wp_cache_set('nebula_warnings', $all_nebula_warnings); //Store in object cache
-
 				$this->timer('Check Warnings', 'end');
 				return $all_nebula_warnings;
 			}
@@ -530,7 +529,7 @@ if ( !trait_exists('Warnings') ){
 
 				foreach ( $disk_paths as $path ){
 					if ( file_exists($path['directory']) ){
-						$disk_space_free = disk_free_space($path['directory'])/1073741824; //In GB
+						$disk_space_free = disk_free_space($path['directory'])/1073741824; //In GB //PHP 7.4 use numeric separators here
 
 						if ( $disk_space_free < $path['critical'] ){
 							$nebula_warnings[] = array(

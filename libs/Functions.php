@@ -1651,64 +1651,98 @@ trait Functions {
 		</div>
 
 		<script><?php //Must be in PHP so $args can be encoded. @todo "Nebula" 0: This must have to load in the footer if jQuery is set to the footer...? ?>
-			jQuery(window).on('load', function(){
+			window.addEventListener('load', function(){
 				var pageNumber = <?php echo $args['paged']; ?>+1;
 
-				jQuery('.infinite-load-more').on('click', function(){
-					var maxPages = jQuery('#infinite-posts-list').attr('data-max-pages');
-					var maxPosts = jQuery('#infinite-posts-list').attr('data-max-posts');
+				document.querySelector('.infinite-load-more').addEventListener('click', function(e){
+					var maxPages = document.getElementById('infinite-posts-list').getAttribute('data-max-pages');
+					var maxPosts = document.getElementById('infinite-posts-list').getAttribute('data-max-posts');
 
 					if ( pageNumber <= maxPages ){
-						jQuery('.loadmorecon').addClass('loading');
-						jQuery.ajax({
-							type: "POST",
-							url: nebula.site.ajax.url,
-							data: {
+						document.querySelector('.loadmorecon').classList.add('loading');
+
+						fetch(nebula.site.ajax.url, {
+							method: 'POST',
+							credentials: 'same-origin',
+							headers: {
+						    	'Content-Type': 'application/x-www-form-urlencoded',
+						    	'Cache-Control': 'no-cache',
+						    },
+							body: new URLSearchParams({
 								nonce: nebula.site.ajax.nonce,
 								action: 'nebula_infinite_load',
 								page: pageNumber,
 								args: <?php echo json_encode($args); ?>,
 								loop: <?php echo json_encode($loop); ?>,
-							},
-							success: function(response){
-								jQuery("#infinite-posts-list").append('<div class="clearfix infinite-page infinite-page-' + (pageNumber-1) + ' sliding" style="display: none;">' + response + '</div>');
-								jQuery('.infinite-page-' + (pageNumber-1)).slideDown({
-									duration: 750,
-									easing: 'easeInOutQuad',
-									complete: function(){
-										jQuery('.loadmorecon').removeClass('loading');
-										jQuery('.infinite-page.sliding').removeClass('sliding');
-										nebula.dom.document.trigger('nebula_infinite_slidedown_complete');
-									}
-								});
+							})
+						}).then(function(response){
+							if ( response.ok ){
+								return response.text();
+							}
+						}).then(function(response){
+							let newDiv = document.createElement('div');
+							newDiv.className = 'clearfix infinite-page infinite-page-' + (pageNumber-1) + ' sliding';
+							newDiv.setAttribute('style', 'display: none;');
+							newDiv.innerHTML = response;
+							document.getElementById('infinite-posts-list').appendChild(newDiv);
 
-								if ( pageNumber >= maxPages ){
-									jQuery('.loadmorecon').addClass('disabled').find('a').text('<?php __('No more', 'nebula'); ?> <?php echo $post_type_label; ?>.');
+							jQuery('.infinite-page-' + (pageNumber-1)).slideDown({ //I would like to remove this jQuery so this embedded script tag does not have a potential race condition depending on where jQuery is loaded. Try animating the height some other way
+								duration: 750,
+								//easing: 'easeInOutQuad',
+								complete: function(){
+									document.querySelector('.loadmorecon').classList.remove('loading');
+									document.querySelector('.infinite-page.sliding').classList.remove('sliding');
+									document.dispatchEvent(new Event('nebula_infinite_slidedown_complete'));
 								}
+							});
 
-								var newQueryStrings = '';
-								if ( typeof document.URL.split('?')[1] !== 'undefined' ){
-									newQueryStrings = '?' + document.URL.split('?')[1].replace(/[?&]paged=\d+/, '');
-								}
+							if ( pageNumber >= maxPages ){
+								document.querySelector('.loadmorecon').classList.add('disabled').querySelector('a').innerHTML = '<?php __('No more', 'nebula'); ?> <?php echo $post_type_label; ?>.';
+							}
 
-								history.replaceState(null, document.title, nebula.post.permalink + 'page/' + pageNumber + newQueryStrings);
-								nebula.dom.document.trigger('nebula_infinite_finish');
-								ga('send', 'event', 'Infinite Query', 'Load More', 'Loaded page ' + pageNumber);
-								pageNumber++;
-							},
-							error: function(XMLHttpRequest, textStatus, errorThrown){
-								jQuery(document).trigger('nebula_infinite_finish');
-								ga('send', 'event', 'Error', 'AJAX Error', 'Infinite Query Load More AJAX');
-							},
-							timeout: 60000 //PHP 7.4 use numeric separators here
+							var newQueryStrings = '';
+							if ( typeof document.URL.split('?')[1] !== 'undefined' ){
+								newQueryStrings = '?' + document.URL.split('?')[1].replace(/[?&]paged=\d+/, '');
+							}
+
+							history.replaceState(null, document.title, nebula.post.permalink + 'page/' + pageNumber + newQueryStrings);
+							document.dispatchEvent(new Event('nebula_infinite_finish'));
+
+							ga('send', 'event', 'Infinite Query', 'Load More', 'Loaded page ' + pageNumber);
+							pageNumber++;
+						}).catch(function(error){
+							document.dispatchEvent(new Event('nebula_infinite_finish'));
+							ga('send', 'event', 'Error', 'AJAX Error', 'Infinite Query Load More AJAX');
 						});
 					}
-					return false;
+
+					e.preventDefault();
 				});
 			});
 		</script>
 		<?php
 		$this->timer($timer_name, 'end');
+	}
+
+	//Infinite Load AJAX Call
+	public function infinite_load(){
+		if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+
+		$page_number = sanitize_text_field($_POST['page']);
+		$args = $_POST['args'];
+		$args['paged'] = $page_number;
+		$loop = sanitize_text_field($_POST['loop']);
+
+		$args = array_map('esc_attr', $args); //Sanitize the args array
+		query_posts($args);
+
+		if ( $loop == 'false' ){
+			get_template_part('loop');
+		} else {
+			call_user_func($loop); //Custom loop callback function must be defined in a functions file (not a template file) for this to work.
+		}
+
+		wp_die();
 	}
 
 	//Related Posts by term frequency
@@ -2618,27 +2652,6 @@ trait Functions {
 		}
 
 		return '';
-	}
-
-	//Infinite Load AJAX Call
-	public function infinite_load(){
-		if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-
-		$page_number = sanitize_text_field($_POST['page']);
-		$args = $_POST['args'];
-		$args['paged'] = $page_number;
-		$loop = sanitize_text_field($_POST['loop']);
-
-		$args = array_map('esc_attr', $args); //Sanitize the args array
-		query_posts($args);
-
-		if ( $loop == 'false' ){
-			get_template_part('loop');
-		} else {
-			call_user_func($loop); //Custom loop callback function must be defined in a functions file (not a template file) for this to work.
-		}
-
-		wp_die();
 	}
 
 	//404 page suggestions

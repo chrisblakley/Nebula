@@ -6,6 +6,7 @@ if ( !trait_exists('Sass') ){
 	trait Sass {
 		public function hooks(){
 			$this->sass_process_status = '';
+			$this->sass_files_processed = 0;
 			$this->latest_scss_mtime = 0; //Prep a flag to determine the last modified SCSS file
 
 			add_action('init', array($this, 'scss_controller'));
@@ -35,9 +36,9 @@ if ( !trait_exists('Sass') ){
 				if ( $this->get_option('scss') && !$this->is_ajax_or_rest_request() && !$this->is_bot() ){
 					$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass is enabled, and the request is okay to process.' : $this->sass_process_status;
 
-					//Ignore fetch requests (like via Service Worker) - Only re-process Sass on navigate requests. https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Mode
-					if ( isset($_SERVER['HTTP_SEC_FETCH_MODE']) && strpos($_SERVER['HTTP_SEC_FETCH_MODE'], 'navigate') === false ){ //"navigate" or "nested-navigate" are fine, ignore everything else
-						$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not processed. The HTTP Sec Fetch Mode was not "navigate".' : $this->sass_process_status;
+					//Ignore fetch requests (like via Service Worker) - Only process Sass on certain requests SW will fetch with the sec-fetch-mode header as "cors" or "no-cors".
+					if ( isset($_SERVER['HTTP_SEC_FETCH_MODE']) && !in_array($_SERVER['HTTP_SEC_FETCH_MODE'], array('navigate', 'nested-navigate', 'same-origin')) ){ //Maybe same-site too? Just avoid "cors" and "no-cors"
+						$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not processed. The fetch mode of "' . sanitize_text_field($_SERVER['HTTP_SEC_FETCH_MODE']) . '" was not suitable.' : $this->sass_process_status;
 						return false;
 					}
 
@@ -130,7 +131,7 @@ if ( !trait_exists('Sass') ){
 						$this->render_scss($scss_location_name, $scss_location_paths, $force_all); //Remember: this does not mean Sass is being processed– this function checks the files first and then processes only when necessary
 					}
 
-					$this->sass_process_status = ( !isset($_GET['sass']) && $this->was_sass_processed )? 'Sass files have been processed.' : $this->sass_process_status; //Show this status if Sass was processed but not explicitly forced. Otherwise use the existing status
+					$this->sass_process_status = ( !isset($_GET['sass']) && $this->was_sass_processed )? $this->sass_files_processed . ' Sass file(s) have been processed.' : $this->sass_process_status; //Show this status if Sass was processed but not explicitly forced. Otherwise use the existing status
 
 					$this->update_data('need_sass_compile', 'false'); //Set it to false after Sass is finished
 					set_transient('nebula_sass_compile', time(), 15); //15 second cache to throttle Sass from being re-processed again immediately
@@ -268,6 +269,7 @@ if ( !trait_exists('Sass') ){
 								try {
 									$compiled_css = $this->scss->compile($this_scss_contents, $scss_file); //Compile the SCSS
 									$this->was_sass_processed = true;
+									$this->sass_files_processed++;
 								} catch (\Throwable $error){
 									$unprotected_array = (array) $error;
 									$prefix = chr(0) . '*' . chr(0);

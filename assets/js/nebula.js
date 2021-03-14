@@ -68,11 +68,10 @@ jQuery(function(){
  Window Load
  ===========================*/
 
-jQuery(window).on('load', function(){
+window.addEventListener('load', function(){
 	window.performance.mark('(Nebula) Window Load [Start]');
 
 	nebula.cacheSelectors();
-	nebula.performanceMetrics();
 	nebula.lazyLoadAssets(); //Move to (or use) requestIdleCallback when Safari supports it
 	nebula.initVideoTracking(); //Move to (or use) requestIdleCallback when Safari supports it?
 
@@ -110,6 +109,7 @@ jQuery(window).on('load', function(){
 	window.performance.mark('(Nebula) Window Load [End]');
 	window.performance.measure('(Nebula) Window Load Functions', '(Nebula) Window Load [Start]', '(Nebula) Window Load [End]');
 	window.performance.measure('(Nebula) Window Loaded', 'navigationStart', '(Nebula) Window Load [End]');
+	nebula.performanceMetrics();
 });
 
 /*==========================

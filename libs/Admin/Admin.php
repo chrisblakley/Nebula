@@ -1158,7 +1158,7 @@ if ( !trait_exists('Admin') ){
 		public function output_nebula_update_progress($message=''){
 			try {
 				global $pagenow;
-				if ( $pagenow === 'update-core.php' && !empty($message) ){
+				if ( $pagenow === 'update.php' && !empty($message) ){ //During the actual update $pagenow is "update.php" not "update-core.php"
 					echo '<p>' . $message . '</p>';
 				}
 			} catch(exception $error){

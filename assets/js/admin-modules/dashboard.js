@@ -11,25 +11,28 @@ nebula.developerMetaboxes = function(){
 			if ( jQuery('input.findterm').val().trim().length >= 3 ){
 				jQuery('#searchprogress').removeClass('fa-search').addClass('fas fa-spinner fa-spin fa-fw');
 
-				jQuery.ajax({ //Consider switching to fetch
-					type: 'POST',
-					url: nebula.site.ajax.url,
-					data: {
+				fetch(nebula.site.ajax.url, {
+					method: 'POST',
+					credentials: 'same-origin',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'Cache-Control': 'no-cache',
+					},
+					body: new URLSearchParams({
 						nonce: nebula.site.ajax.nonce,
 						action: 'search_theme_files',
-						data: [{
-							directory: jQuery('select.searchdirectory').val(),
-							searchData: jQuery('input.findterm').val()
-						}]
-					},
-					success: function(response){
-						jQuery('#searchprogress').removeClass('fa-spinner fa-spin').addClass('fas fa-search fa-fw');
-						jQuery('div.search_results').html(response).addClass('done');
-					},
-					error: function(XMLHttpRequest, textStatus, errorThrown){
-						jQuery('div.search_results').html(errorThrown).addClass('done');
-					},
-					timeout: 60_000
+						directory: jQuery('select.searchdirectory').val(),
+						searchData: jQuery('input.findterm').val()
+					})
+				}).then(function(response){
+					if ( response.ok ){
+						return response.text();
+					}
+				}).then(function(response){
+					jQuery('#searchprogress').removeClass('fa-spinner fa-spin').addClass('fas fa-search fa-fw');
+					jQuery('div.search_results').html(response).addClass('done');
+				}).catch(function(error){
+					jQuery('div.search_results').html(error.message).addClass('done');
 				});
 			} else {
 				jQuery('input.findterm').val('').attr('placeholder', 'Minimum 3 characters.');

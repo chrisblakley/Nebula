@@ -860,7 +860,7 @@ if ( !trait_exists('Dashboard') ){
 			return $latest_file;
 		}
 
-		//Search theme or plugin files via Developer Information Metabox
+		//Search theme or plugin files via Developer Information Dashboard Metabox
 		public function search_theme_files(){
 			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied. Refresh and try again.'); }
 
@@ -868,12 +868,11 @@ if ( !trait_exists('Dashboard') ){
 			ini_set('max_execution_time', 120);
 			ini_set('memory_limit', '512M');
 
-			$searchTerm = htmlentities(stripslashes($_POST['data'][0]['searchData']));
-			$requestedDirectory = strtolower(sanitize_text_field($_POST['data'][0]['directory']));
+			$searchTerm = htmlentities(stripslashes($_POST['searchData']));
+			$requestedDirectory = strtolower(sanitize_text_field($_POST['directory']));
 
 			if ( strlen($searchTerm) < 3 ){
-				echo '<p><strong>Error:</strong> Minimum 3 characters needed to search!</p>';
-				wp_die();
+				wp_die('<p><strong>Error:</strong> Minimum 3 characters needed to search!</p>');
 			}
 
 			$uploadDirectory = wp_upload_dir();
@@ -902,8 +901,7 @@ if ( !trait_exists('Dashboard') ){
 
 			$dirpath = $all_search_directories[$requestedDirectory];
 			if ( empty($dirpath) ){
-				echo '<p><strong>Error:</strong> Please specify a directory to search!</p>';
-				wp_die();
+				wp_die('<p><strong>Error:</strong> Please specify a directory to search!</p>');
 			}
 
 			echo '<p class="resulttext">Search results for <strong>"' . $searchTerm . '"</strong> in the <strong>' . basename($dirpath) . '</strong> directory:</p><br />';
