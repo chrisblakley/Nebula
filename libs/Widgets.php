@@ -89,7 +89,6 @@ if ( !trait_exists('Widgets') ){
 		}
 	}
 
-
 	/*==========================
 	 About the Author
 	 ===========================*/
@@ -249,7 +248,6 @@ if ( !trait_exists('Widgets') ){
 		}
 	}
 
-
 	/*==========================
 	 Cross-links (Next/Previous Post)
 	 ===========================*/
@@ -308,7 +306,6 @@ if ( !trait_exists('Widgets') ){
 			return $instance;
 		}
 	}
-
 
 	/*==========================
 	 Google Maps Embed API (Iframe)
@@ -504,7 +501,6 @@ if ( !trait_exists('Widgets') ){
 		}
 	}
 
-
 	/*==========================
 	 Image (with Link)
 	 ===========================*/
@@ -568,7 +564,6 @@ if ( !trait_exists('Widgets') ){
 			return $instance;
 		}
 	}
-
 
 	/*==========================
 	 Login Form
@@ -647,7 +642,6 @@ if ( !trait_exists('Widgets') ){
 		}
 	}
 
-
 	/*==========================
 	 Social Page Links
 	 ===========================*/
@@ -712,7 +706,6 @@ if ( !trait_exists('Widgets') ){
 			return $instance;
 		}
 	}
-
 
 	/*==========================
 	 Social Sharing
@@ -808,7 +801,6 @@ if ( !trait_exists('Widgets') ){
 			return $instance;
 		}
 	}
-
 
 	/*==========================
 	 Twitter
@@ -918,7 +910,6 @@ if ( !trait_exists('Widgets') ){
 		}
 	}
 
-
 	/*==========================
 	 Video
 	 ===========================*/
@@ -983,7 +974,6 @@ if ( !trait_exists('Widgets') ){
 		}
 	}
 
-
 	/*==========================
 	 Advanced Custom Fields
 	 Only available when ACF v5 is active. This echoes each field that is assigned to the widget from the Custom Fields settings.
@@ -1017,5 +1007,4 @@ if ( !trait_exists('Widgets') ){
 			echo '<p>Note: This widget may not properly update in the Customizer preview. Try saving and refreshing to view changes.</p>';
 		}
 	}
-
 }

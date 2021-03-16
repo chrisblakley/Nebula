@@ -1186,10 +1186,9 @@ trait Functions {
 		$override = apply_filters('pre_nebula_pinterest_pin', null, $counts);
 		if ( isset($override) ){return;}
 
+		$featured_image = get_template_directory_uri() . '/assets/img/meta/og-thumb.png';
 		if ( has_post_thumbnail() ){
 			$featured_image = $this->get_thumbnail_src(get_the_post_thumbnail(get_the_id(), 'full'));
-		} else {
-			$featured_image = get_template_directory_uri() . '/assets/img/meta/og-thumb.png'; //@TODO "Nebula" 0: This should probably be a square? Check the recommended dimensions.
 		}
 		?>
 		<div class="nebula-social-button pinterest-pin">
@@ -1665,9 +1664,9 @@ trait Functions {
 							method: 'POST',
 							credentials: 'same-origin',
 							headers: {
-						    	'Content-Type': 'application/x-www-form-urlencoded',
-						    	'Cache-Control': 'no-cache',
-						    },
+								'Content-Type': 'application/x-www-form-urlencoded',
+								'Cache-Control': 'no-cache',
+							},
 							body: new URLSearchParams({
 								nonce: nebula.site.ajax.nonce,
 								action: 'nebula_infinite_load',

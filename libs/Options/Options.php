@@ -236,7 +236,6 @@ if ( !trait_exists('Options') ){
 				'spam_domain_prevention' => 0,
 				'theme_update_notification' => 1,
 				'wp_core_updates_notify' => 1,
-				'plugin_update_warning' => 0,
 				'unnecessary_metaboxes' => 1,
 				'scss' => 0,
 				'scss_processing_only_when_logged_in' => 0,

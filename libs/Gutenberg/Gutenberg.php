@@ -64,10 +64,11 @@ if ( !trait_exists('Gutenberg') ){
 			//var_dump($attribites);
 
 			//How to get "additional css classes" here?
+			if ( !empty($attributes) ){
+				$youtube_data = nebula()->video_meta('youtube', $attribites['videoID']);
 
-			$youtube_data = nebula()->video_meta('youtube', $attribites['videoID']);
-
-			return '<div class="nebula-youtube embed-responsive embed-responsive-16by9 ' . $attributes['className'] . '"><iframe id="' . $youtube_data['safetitle'] . '" class="youtube embed-responsive-item" width="1024" height="768" src="//www.youtube.com/embed/' . $youtube_data['id'] . '?wmode=transparent&enablejsapi=1&rel=0&t=' . $attribites['videoTimestamp'] . '" frameborder="0" allowfullscreen loading="lazy"></iframe></div>';
+				return '<div class="nebula-youtube embed-responsive embed-responsive-16by9 ' . $attributes['className'] . '"><iframe id="' . $youtube_data['safetitle'] . '" class="youtube embed-responsive-item" width="1024" height="768" src="//www.youtube.com/embed/' . $youtube_data['id'] . '?wmode=transparent&enablejsapi=1&rel=0&t=' . $attribites['videoTimestamp'] . '" frameborder="0" allowfullscreen loading="lazy"></iframe></div>';
+			}
 		}
 
 

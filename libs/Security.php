@@ -37,6 +37,9 @@ if ( !trait_exists('Security') ){
 			header('X-Content-Type-Options: nosniff'); //Ensure MIME types match expected
 			header('Access-Control-Allow-Headers: X-WP-Nonce'); //Allow this header for WP Block Editor compatibility with CSP
 			header('Developed-with-Nebula: https://nebula.gearside.com'); //Nebula header
+			header('Cross-Origin-Resource-Policy: cross-origin;'); //Allow resources to be loaded cross-origin
+			header('Cross-Origin-Embedder-Policy: unsafe-none;'); //Eventually consider upgrading this to require-corp
+			header('Cross-Origin-Opener-Policy: same-origin-allow-popups;');
 
 			if ( is_ssl() ){
 				header('Strict-Transport-Security: max-age=' . YEAR_IN_SECONDS . '; includeSubDomains; preload'); //https://scotthelme.co.uk/hsts-the-missing-link-in-tls/

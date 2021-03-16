@@ -159,7 +159,7 @@
 <link rel="profile" href="https://gmpg.org/xfn/11" />
 
 <script type="module">
-	import '<?php echo get_template_directory_uri(); ?>/assets/js/modules/usage.js?ver=<?php echo nebula()->child_version(); ?>';
+	import '<?php echo get_template_directory_uri(); ?>/assets/js/modules/usage.js?ver=<?php echo nebula()->version('full'); ?>';
 </script>
 
 <?php

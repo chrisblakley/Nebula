@@ -150,13 +150,6 @@ if ( !trait_exists('Admin') ){
 			if ( !$this->get_option('wp_core_updates_notify') ){
 				add_filter('pre_site_transient_update_core', '__return_null');
 			}
-
-			//Show update warning on Wordpress Core/Plugin update admin pages
-			if ( $this->get_option('plugin_update_warning') ){
-				if ( $pagenow === 'plugins.php' || $pagenow === 'update-core.php' ){
-					add_action('admin_notices', array($this, 'update_warning'));
-				}
-			}
 		}
 
 		//Add info to the brain variable for admin pages
@@ -543,7 +536,7 @@ if ( !trait_exists('Admin') ){
 							'parent' => $node_id,
 							'id' => 'nebula-deregisters',
 							'title' => '<i class="nebula-admin-fa fas fa-fw fa-ban"></i> Nebula is deregistering assets on this page!',
-							'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=Advanced',
+							'href' => admin_url('themes.php?page=nebula_options&tab=Advanced'),
 							'meta' => array('target' => '_blank', 'rel' => 'noopener')
 						));
 
@@ -554,7 +547,7 @@ if ( !trait_exists('Admin') ){
 									'parent' => 'nebula-deregisters',
 									'id' => 'nebula-deregisters-styles-' . $handle,
 									'title' => '<span class="nebula-admin-light"><i class="nebula-admin-fa fab fa-fw fa-css3-alt"></i> CSS:</span> ' . $handle,
-									'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=Advanced',
+									'href' => admin_url('themes.php?page=nebula_options&tab=Advanced'),
 									'meta' => array('target' => '_blank', 'rel' => 'noopener')
 								));
 							}
@@ -567,7 +560,7 @@ if ( !trait_exists('Admin') ){
 									'parent' => 'nebula-deregisters',
 									'id' => 'nebula-deregisters-scripts-' . $handle,
 									'title' => '<span class="nebula-admin-light"><i class="nebula-admin-fa fab fa-fw fa-js"></i> JS:</span> ' . $handle,
-									'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=Advanced',
+									'href' => admin_url('themes.php?page=nebula_options&tab=Advanced'),
 									'meta' => array('target' => '_blank', 'rel' => 'noopener')
 								));
 							}
@@ -770,7 +763,7 @@ if ( !trait_exists('Admin') ){
 						'parent' => 'nebula',
 						'id' => 'nebula-warning',
 						'title' => '<i class="nebula-admin-fa fas fa-fw fa-exclamation-triangle" style="color: #ca3838; margin-right: 5px;"></i> ' . $nebula_warning_description,
-						'href' => get_admin_url() . $nebula_warning_href,
+						'href' => admin_url($nebula_warning_href),
 					));
 				}
 
@@ -870,7 +863,7 @@ if ( !trait_exists('Admin') ){
 						'parent' => 'nebula',
 						'id' => 'nebula-options',
 						'title' => '<i class="nebula-admin-fa fas fa-fw fa-cog"></i> Options',
-						'href' => get_admin_url() . 'themes.php?page=nebula_options'
+						'href' => admin_url('themes.php?page=nebula_options')
 					));
 
 					foreach ( $this->get_option_categories() as $category ){
@@ -878,7 +871,7 @@ if ( !trait_exists('Admin') ){
 							'parent' => 'nebula-options',
 							'id' => 'nebula-options-' . $category['name'],
 							'title' => '<i class="nebula-admin-fa fas fa-fw ' . $category['icon'] . '"></i> ' . $category['name'],
-							'href' => get_admin_url() . 'themes.php?page=nebula_options&tab=' . $category['name'],
+							'href' => admin_url('themes.php?page=nebula_options&tab=' . $category['name']),
 							'meta' => array('target' => '_blank', 'rel' => 'noopener')
 						));
 					}
@@ -1049,11 +1042,6 @@ if ( !trait_exists('Admin') ){
 			<?php }
 		}
 
-		//Show update warning on Wordpress Core/Plugin update admin pages
-		public function update_warning(){
-			echo "<div class='nebula_admin_notice error'><p><strong>WARNING:</strong> Updating Wordpress plugins may cause irreversible errors to your website!</p><p>Contact <a href='http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=" . urlencode(get_bloginfo('name')) . "&utm_content=update+warning" . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . "'>Pinckney Hugo Group</a> if there are questions about updates: (315) 478-6700</p></div>";
-		}
-
 		//Nebula Theme Update Checker
 		public function theme_json(){
 			$override = apply_filters('pre_nebula_theme_json', null);
@@ -1146,7 +1134,11 @@ if ( !trait_exists('Admin') ){
 					//Reprocess Sass if enabled
 					if ( $this->get_option('scss') ){
 						$this->output_nebula_update_progress('Re-Processing Sass files...');
-						$this->render_scss('all'); //Re-render all SCSS files.
+						if ( $this->render_scss('all') ){ //Re-render all SCSS files (which returns boolean)
+							$this->output_nebula_update_progress('Sass processing was successful.');
+						} else {
+							$this->output_nebula_update_progress('Sass processing was unsuccessful. <strong><a href="' . admin_url('?sass=true') . '">Please manually process Sass after the update.</a></strong>');
+						}
 					}
 
 					$this->output_nebula_update_progress('All Nebula update tasks have been completed.');

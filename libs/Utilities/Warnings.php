@@ -113,7 +113,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings[] = array(
 						'level' => 'error',
 						'description' => '<i class="fas fa-fw fa-lock-open"></i> <a href="options-general.php">Website Address</a> settings are http but the site is served from https.',
-						'url' => get_admin_url() . 'options-general.php'
+						'url' => admin_url('options-general.php')
 					);
 				}
 
@@ -122,7 +122,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings[] = array(
 						'level' => 'error',
 						'description' => '<i class="fab fa-fw fa-searchengin"></i> <a href="options-reading.php">Search Engine Visibility</a> is currently disabled! Some additional SEO checks were not performed.',
-						'url' => get_admin_url() . 'options-reading.php'
+						'url' => admin_url('options-reading.php')
 					);
 				} else {
 					//Check for sitemap
@@ -177,7 +177,7 @@ if ( !trait_exists('Warnings') ){
 							$nebula_warnings[] = array(
 								'level' => 'warn',
 								'description' => '<i class="fas fa-fw fa-rss"></i> Additional <a href="options-writing.php">Update Services</a> should be pinged. <a href="https://codex.wordpress.org/Update_Services#XML-RPC_Ping_Services" target="_blank" rel="noopener">Recommended update services &raquo;</a>',
-								'url' => get_admin_url() . 'options-writing.php'
+								'url' => admin_url('options-writing.php')
 							);
 						}
 					}
@@ -299,7 +299,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings[] = array(
 						'level' => 'error',
 						'description' => '<i class="fas fa-fw fa-chart-area"></i> A <a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">Google Tag Manager ID</a> is strongly recommended!',
-						'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=analytics'
+						'url' => admin_url('themes.php?page=nebula_options&tab=analytics')
 					);
 				}
 
@@ -310,7 +310,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings[] = array(
 							'level' => 'error',
 							'description' => '<i class="fas fa-fw fa-chart-area"></i> <a href="admin.php?page=wc-settings&tab=integration">WooCommerce Enhanced Ecommerce</a> is missing a Google Analytics ID!',
-							'url' => get_admin_url() . 'admin.php?page=wc-settings&tab=integration'
+							'url' => admin_url('admin.php?page=wc-settings&tab=integration')
 						);
 					}
 				}
@@ -356,7 +356,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings[] = array(
 							'level' => 'error',
 							'description' => '<i class="fas fa-fw fa-search-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> must build an index to search the site. This must be triggered manually.',
-							'url' => get_admin_url() . 'options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing'
+							'url' => admin_url('options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing')
 						);
 					}
 
@@ -364,7 +364,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings[] = array(
 							'level' => 'warn',
 							'description' => '<i class="fas fa-fw fa-search-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> is not set to search custom fields.',
-							'url' => get_admin_url() . 'options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing'
+							'url' => admin_url('options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing')
 						);
 					}
 				}
@@ -382,7 +382,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings[] = array(
 							'level' => 'error',
 							'description' => '<i class="far fa-fw fa-window-restore"></i> <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Google Optimize ID</a> exists without a <a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics Tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">GTM ID</a>.',
-							'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id'
+							'url' => admin_url('themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id')
 						);
 					}
 				}
@@ -422,7 +422,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings[] = array(
 						'level' => 'warn',
 						'description' => '<a href="options-general.php">Site Tagline</a> is still "Just Another WordPress Site"!',
-						'url' => get_admin_url() . 'options-general.php'
+						'url' => admin_url('options-general.php')
 					);
 				}
 
@@ -431,7 +431,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings[] = array(
 						'level' => 'warn',
 						'description' => '<i class="fas fa-fw fa-file-alt"></i> <a href="options-privacy.php">Privacy policy</a> is not setup with WordPress.',
-						'url' => get_admin_url() . 'options-privacy.php'
+						'url' => admin_url('options-privacy.php')
 					);
 				}
 
@@ -490,7 +490,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings[] = array(
 							'level' => 'warn',
 							'description' => '<i class="fas fa-fw fa-address-card"></i> <a href="themes.php?page=nebula_options&tab=metadata&option=contact_email">Default contact email domain</a> (<code>' . $email_domain . '</code>) does not match website (<code>' . $this->url_components('domain') . '</code>). This email address will appear in metadata, so please verify this is acceptable.',
-							'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=metadata&option=contact_email'
+							'url' => admin_url('themes.php?page=nebula_options&tab=metadata&option=contact_email')
 						);
 					}
 				}
@@ -611,7 +611,7 @@ if ( !trait_exists('Warnings') ){
 													$nebula_warnings[] = array(
 														'level' => 'warn',
 														'description' => '<i class="fab fa-fw fa-bootstrap"></i> <a href="themes.php?page=nebula_options&tab=functions&option=allow_bootstrap_js">Bootstrap JS is disabled</a>, but is possibly needed in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . $line_number . '</strong>.',
-														'url' => get_admin_url() . 'themes.php?page=nebula_options&tab=functions&option=allow_bootstrap_js'
+														'url' => admin_url('themes.php?page=nebula_options&tab=functions&option=allow_bootstrap_js')
 													);
 												} elseif ( $category === 'custom' ){
 													$nebula_warnings[] = array(
@@ -648,7 +648,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings[] = array(
 						'level' => 'warn',
 						'description' => '<i class="fas fa-fw fa-search-plus"></i> A recommended SEO plugin is not active.',
-						'url' => get_admin_url() . 'themes.php?page=tgmpa-install-plugins'
+						'url' => admin_url('themes.php?page=tgmpa-install-plugins')
 					);
 				}
 			}
@@ -695,9 +695,9 @@ if ( !trait_exists('Warnings') ){
 								entireDOM.find('#query-monitor-main, #qm, #wpadminbar, script, #audit-results').remove(); //Remove elements to ignore (must ignore scripts so this audit doesn't find itself)
 
 								//Reporting Observer deprecations and interventions
-								if ( typeof window.ReportingObserver !== undefined ){ //Chrome 68+
+								if ( 'ReportingObserver' in window ){ //Chrome 68+
 									var nebulaAuditModeReportingObserver = new ReportingObserver(function(reports, observer){
-										for ( report of reports ){
+										for ( let report of reports ){
 											if ( report.body.sourceFile.includes('extension') ){ //Ignore browser extensions
 												jQuery('#audit-results ul').append('<li>Reporting Observer (' + report.type + '): ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber + '</li>');
 											}

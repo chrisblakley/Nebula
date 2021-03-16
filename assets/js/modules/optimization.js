@@ -62,7 +62,7 @@ nebula.performanceMetrics = async function(){
 				}
 
 				//Monitor Cumulative Layout Shift (CLS) with the Layout Instability API
-				if ( typeof window.PerformanceObserver !== undefined ){
+				if ( 'PerformanceObserver' in window ){
 					let cls = 0;
 					new PerformanceObserver(function(entryList){
 						for ( let entry of entryList.getEntries() ){
@@ -99,7 +99,7 @@ nebula.workbox = async function(){
 			window.performance.mark('(Nebula) SW Registration [Start]');
 
 			//Dynamically import Workbox-Window
-			import('https://storage.googleapis.com/workbox-cdn/releases/6.1.1/workbox-window.prod.mjs').then(async function(module){
+			import('https://storage.googleapis.com/workbox-cdn/releases/6.1.2/workbox-window.prod.mjs').then(async function(module){
 				const Workbox = module.Workbox;
 				const workbox = new Workbox(nebula.site.sw_url);
 

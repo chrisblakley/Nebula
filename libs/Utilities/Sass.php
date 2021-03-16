@@ -293,6 +293,8 @@ if ( !trait_exists('Sass') ){
 
 				$this->timer('Sass (' . $location_name . ')', 'end');
 			}
+
+			return $this->was_sass_processed;
 		}
 
 		//Touch the main parent Nebula stylesheet to extended the last Sass modification time date (when Nebula Options are saved)

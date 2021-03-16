@@ -457,7 +457,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[author_bios]" id="author_bios" value="1" <?php checked('1', !empty($nebula_options['author_bios'])); ?> /><label for="author_bios">Author Bios</label>
 					<p class="nebula-help-text short-help form-text text-muted">Allow authors to have bios that show their info (and post archives). (Default: <?php echo $this->user_friendly_default('author_bios'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">This also enables searching by author, and displaying author names on posts.<br />If disabled, the author page attempts to redirect to an <a href="<?php echo home_url('/'); ?>?s=about" target="_blank">About Us page</a> (use the filter hook <code>nebula_no_author_redirect</code> to better control where it redirects- especially if no search results are found when clicking that link).<br />If disabled, remember to also disable the <a href="<?php echo get_admin_url(); ?>/admin.php?page=wpseo_titles#top#archives" target="_blank">Author archives option in Yoast</a> to hide them from the sitemap.</p>
+					<p class="nebula-help-text more-help form-text text-muted">This also enables searching by author, and displaying author names on posts.<br />If disabled, the author page attempts to redirect to an <a href="<?php echo home_url('/'); ?>?s=about" target="_blank">About Us page</a> (use the filter hook <code>nebula_no_author_redirect</code> to better control where it redirects- especially if no search results are found when clicking that link).<br />If disabled, remember to also disable the <a href="<?php echo admin_url('admin.php?page=wpseo_titles#top#archives'); ?>" target="_blank">Author archives option in Yoast</a> to hide them from the sitemap.</p>
 					<p class="option-keywords">seo</p>
 				</div>
 
@@ -601,12 +601,6 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[wp_core_updates_notify]" id="wp_core_updates_notify" value="1" <?php checked('1', !empty($nebula_options['wp_core_updates_notify'])); ?> /><label for="wp_core_updates_notify">WordPress Core Update Notification</label>
 					<p class="nebula-help-text short-help form-text text-muted">Control whether or not the Wordpress Core update notifications show up on the admin pages. (Default: <?php echo $this->user_friendly_default('wp_core_updates_notify'); ?>)</p>
-					<p class="option-keywords">discretionary</p>
-				</div>
-
-				<div class="form-group">
-					<input type="checkbox" name="nebula_options[plugin_update_warning]" id="plugin_update_warning" value="1" <?php checked('1', !empty($nebula_options['plugin_update_warning'])); ?> /><label for="plugin_update_warning">Plugin Warning</label>
-					<p class="nebula-help-text short-help form-text text-muted">Control whether or not the plugin update warning appears on admin pages. (Default: <?php echo $this->user_friendly_default('plugin_update_warning'); ?>)</p>
 					<p class="option-keywords">discretionary</p>
 				</div>
 			<?php
@@ -2033,7 +2027,7 @@ if ( !trait_exists('Metaboxes') ){
 					<li>Nebula <?php echo ( empty($nebula_options['allow_bootstrap_js']) )? '<strong class="nebula-disabled">has disabled' : '<strong class="nebula-enabled">is allowing'; ?> Bootstrap JavaScript</strong>.</li>
 				</ul>
 
-				<a class="button button-primary" href="<?php echo get_admin_url(); ?>update-core.php?force-check=1&force-nebula-theme-update">Re-Install Nebula from GitHub</a>
+				<a class="button button-primary" href="<?php echo admin_url('update-core.php?force-check=1&force-nebula-theme-update'); ?>">Re-Install Nebula from GitHub</a>
 			<?php
 		}
 
