@@ -121,7 +121,7 @@ if ( !trait_exists('Warnings') ){
 				if ( get_option('blog_public') == 0 ){ //Stored as a string
 					$nebula_warnings[] = array(
 						'level' => 'error',
-						'description' => '<i class="fab fa-fw fa-searchengin"></i> <a href="options-reading.php">Search Engine Visibility</a> is currently disabled! Some additional SEO checks were not performed.',
+						'description' => '<i class="fab fa-fw fa-searchengin"></i> <a href="options-reading.php">Search Engine Visibility</a> is currently disabled! Therefore, additional SEO checks were not performed.',
 						'url' => admin_url('options-reading.php')
 					);
 				} else {

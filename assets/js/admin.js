@@ -4,7 +4,7 @@ window.performance.mark('(Nebula) Inside admin.js');
 jQuery.noConflict();
 
 /*==========================
- Import Nebula Modules
+ Import Modules
  ===========================*/
 
 import './modules/utilities.js';
@@ -12,15 +12,7 @@ import './modules/extensions.js';
 import './modules/search.js';
 import './modules/optimization.js';
 import './modules/forms.js';
-
-/*==========================
- Import Admin Modules
- ===========================*/
-
-import './admin-modules/helpers.js';
-import './admin-modules/dashboard.js';
-import './admin-modules/options.js';
-import './admin-modules/users.js';
+import './admin-modules/helpers.js'; //Admin module
 
 /*==========================
  DOM Ready
@@ -30,7 +22,9 @@ jQuery(function(){
 	nebula.cacheSelectors();
 
 	if ( nebula.screen.base === 'profile' ){ //Only needed on Users' profile page
-		nebula.userHeadshotFields();
+		import('./admin-modules/users.js').then(function(module){
+			nebula.userHeadshotFields();
+		});
 	}
 
 	nebula.initializationStuff();
@@ -43,7 +37,9 @@ jQuery(function(){
 
 	//If Nebula Options Page
 	if ( nebula.screen.base === 'appearance_page_nebula_options' ){
-		nebula.optionsInit();
+		import('./admin-modules/options.js').then(function(module){
+			nebula.optionsInit();
+		});
 	}
 
 	//Remove Sass render trigger query
@@ -61,7 +57,9 @@ jQuery(window).on('load', function(){
 	nebula.uniqueSlugChecker();
 
 	if ( nebula.screen.base === 'dashboard' ){ //Only needed on Dashboard page
-		nebula.developerMetaboxes();
+		import('./admin-modules/dashboard.js').then(function(module){
+			nebula.developerMetaboxes();
+		});
 	}
 
 	//Force disable the WordPress core fullscreen editor for all users.
@@ -71,21 +69,6 @@ jQuery(window).on('load', function(){
 		}
 	} catch {
 		//Ignore errors
-	}
-
-	if ( nebula.screen.base === 'appearance_page_nebula_options' ){ //Only needed on Nebula Options page
-		nebula.optionsFilters();
-		nebula.assetScan();
-	}
-});
-
-/*==========================
- Window Resize
- ===========================*/
-
-window.addEventListener('resize', function(){
-	if ( nebula.screen.base === 'appearance_page_nebula_options' ){ //Only needed on Nebula Options page
-		nebula.checkWindowHeightForStickyNav();
 	}
 });
 

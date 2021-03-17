@@ -40,7 +40,7 @@ nebula.developerMetaboxes = function(){
 		});
 	}
 
-	//TODO Metabox
+	//To-Do Metabox
 	if ( jQuery('div#todo_manager').length ){
 		//Dynamic height for TODO results
 		if ( jQuery('.todo_results').length ){

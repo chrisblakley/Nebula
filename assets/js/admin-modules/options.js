@@ -1,7 +1,19 @@
 nebula.optionsInit = function(){
+	//These happen on DOM ready
 	nebula.checkWindowHeightForStickyNav();
 	nebula.liveValidator();
 	nebula.logs();
+
+	//These wait for Window load
+	jQuery(window).on('load', function(){
+		nebula.optionsFilters();
+		nebula.assetScan();
+	});
+
+	//Window Resize
+	window.addEventListener('resize', function(){
+		nebula.checkWindowHeightForStickyNav();
+	});
 
 	//If there are no active tabs on load (like if wrong ?tab= parameter was used)
 	if ( !jQuery('#options-navigation li a.active').length ){

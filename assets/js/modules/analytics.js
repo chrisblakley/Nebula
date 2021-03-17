@@ -546,33 +546,46 @@ nebula.eventTracking = async function(){
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-navigation-menu-click'}));
 		});
 
-		//Outbound links
-		nebula.dom.document.on('mousedown', 'a', function(e){
-			let href = jQuery(this).attr('href');
-			if ( href ){ //href may be undefined in special circumstances so we can ignore those
-				let domain = nebula.site.domain;
+		//Outbound links (do not use jQuery click listener here)
+		document.body.addEventListener('click', function(e){
+			let oThis = jQuery(e.target); //Convert the JS event to a jQuery object
 
-				if ( href.includes('http') ){ //If the link contains "http"
-					if ( !href.includes(domain) || href.includes('.' + domain) ){ //If the link does not contain "example.com" -or- if the link does contain a subdomain like "something.example.com"
-						if ( !href.includes('//www.' + domain) ){ //Exclude the "www" subdomain
-							let thisEvent = {
-								event: e,
-								category: 'Outbound Link',
-								action: 'Click',
-								linkText: jQuery(this).text().trim(),
-								intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-								href: href
-							};
+			let linkElement = false; //Assume the element is not a link first
+			if ( oThis.is('a') ){ //If this element is an <a> tag, use it
+				linkElement = oThis;
+			} else { //If the clicked element is not an <a> tag
+				if ( oThis.parents('a').length ){ //Check parent elements to an <a> tag
+					linkElement = oThis.parents('a'); //Use the parent <a> as the target element
+				}
+			}
 
-							ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-							nebula.dom.document.trigger('nebula_event', thisEvent);
-							ga('send', 'event', thisEvent.category, thisEvent.linkText, thisEvent.href);
-							window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-outbound-link-click'}));
+			if ( linkElement ){ //If we ended up with a link after all
+				let href = linkElement.attr('href');
+				if ( href ){ //href may be undefined in special circumstances so we can ignore those
+					let domain = nebula.site.domain;
+
+					if ( href.includes('http') ){ //If the link contains "http"
+						if ( !href.includes(domain) || href.includes('.' + domain) ){ //If the link does not contain "example.com" -or- if the link does contain a subdomain like "something.example.com"
+							if ( !href.includes('//www.' + domain) ){ //Exclude the "www" subdomain
+								let thisEvent = {
+									event: e,
+									category: 'Outbound Link',
+									action: 'Click',
+									linkText: linkElement.text().trim(),
+									intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+									href: href
+								};
+
+								ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+								nebula.dom.document.trigger('nebula_event', thisEvent);
+								ga('send', 'event', thisEvent.category, thisEvent.linkText, thisEvent.href);
+								window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-outbound-link-click'}));
+							}
 						}
 					}
 				}
 			}
-		});
+		}, false);
 
 		//Nebula Cookie Notification link clicks
 		nebula.dom.document.on('mousedown', '#nebula-cookie-notification a', function(e){

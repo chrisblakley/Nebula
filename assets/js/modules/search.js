@@ -1,3 +1,18 @@
+nebula.initSearchFunctions = function(){
+	//DOM Ready
+	nebula.menuSearchReplacement();
+	nebula.singleResultDrawer();
+	nebula.pageSuggestion();
+
+	//Window Load (several of these could use requestIdleCallback when Safari supports it)
+	window.addEventListener('load', function(){
+		nebula.wpSearchInput();
+		nebula.autocompleteSearchListeners();
+		nebula.searchValidator();
+		nebula.searchTermHighlighter(); //Move to (or use) requestIdleCallback when Safari supports it? Already is requesting animation frame
+	});
+}
+
 //Keyword Filter
 nebula.keywordSearch = function(container, parent, values, filteredClass, operator){ //Alias for old function name
 	nebula.keywordFilter(container, parent, values, filteredClass, operator);
@@ -257,17 +272,6 @@ nebula.wpSearchInput = function(){
 	if ( searchVal ){
 		jQuery('#s, .nebula-search input').attr('placeholder', searchVal.replaceAll('+', ' '));
 	}
-};
-
-//Mobile search placeholder toggle
-nebula.mobileSearchPlaceholder = async function(){
-	let mobileHeaderSearchInput = jQuery('#mobileheadersearch input');
-	let searchPlaceholder = wp.hooks.applyFilters('nebulaMobileSearchPlaceholder', 'What are you looking for?');
-
-	if ( window.matchMedia('(max-width: 410px)').matches ){
-		searchPlaceholder = 'Search';
-	}
-	mobileHeaderSearchInput.attr('placeholder', searchPlaceholder);
 };
 
 //Search Validator

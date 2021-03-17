@@ -146,7 +146,7 @@ if ( !trait_exists('Sass') ){
 					trigger_error('Sass can not compile because it is disabled in Nebula Functions.', E_USER_NOTICE);
 				}
 			} else {
-				$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass is throttled for 15 seconds between processing. Try again soon.' : $this->sass_process_status;
+				$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass is throttled for 15 seconds between processing. <a href="?sass=true">Try again soon.</a>' : $this->sass_process_status;
 			}
 		}
 

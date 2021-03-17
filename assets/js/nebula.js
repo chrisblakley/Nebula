@@ -7,17 +7,10 @@ jQuery.noConflict();
  Import Modules
  ===========================*/
 
-//import './modules/usage.js'; //Loaded in metadata.php for earlier execution
 import './modules/optimization.js';
 import './modules/utilities.js';
 import './modules/helpers.js';
 import './modules/analytics.js';
-import './modules/forms.js';
-import './modules/search.js';
-import './modules/social.js';
-import './modules/video.js';
-import './modules/location.js';
-import './modules/legacy.js';
 import './modules/extensions.js';
 
 /*==========================
@@ -28,7 +21,7 @@ jQuery(function(){
 	window.performance.mark('(Nebula) DOM Ready [Start]');
 
 	//Utilities
-	nebula.cacheSelectors();
+	nebula.cacheSelectors(); //Always do this first
 	nebula.addExpressions();
 	nebula.initBootstrapFunctions(); //Must be in DOM ready
 	nebula.helpers();
@@ -37,19 +30,24 @@ jQuery(function(){
 
 	//Navigation
 	nebula.subnavExpanders();
-	nebula.menuSearchReplacement();
 
 	//Search
-	nebula.singleResultDrawer();
-	nebula.pageSuggestion();
+	if ( jQuery('input, .nebula-search').length || nebula.get('s') ){
+		import('./modules/search.js').then(function(module){
+			nebula.initSearchFunctions();
+		});
+	}
 
 	//Forms
-	nebula.liveValidator();
-	nebula.cf7Functions();
-	nebula.cf7LocalStorage();
+	if ( jQuery('form, input, .wpcf7').length ){ //Consider removing "input" here, but playing it safe for now
+		import('./modules/forms.js').then(function(module){
+			nebula.liveValidator();
+			nebula.cf7Functions();
+			nebula.cf7LocalStorage();
+		});
+	}
 
 	//Interaction
-	nebula.socialSharing();
 	nebula.animationTriggers();
 	nebula.scrollToListeners();
 
@@ -71,24 +69,33 @@ jQuery(function(){
 window.addEventListener('load', function(){
 	window.performance.mark('(Nebula) Window Load [Start]');
 
-	nebula.cacheSelectors();
+	nebula.cacheSelectors(); //Just to make sure
 	nebula.lazyLoadAssets(); //Move to (or use) requestIdleCallback when Safari supports it
-	nebula.initVideoTracking(); //Move to (or use) requestIdleCallback when Safari supports it?
 
 	//Navigation
 	nebula.overflowDetector(); //Move to (or use) requestIdleCallback when Safari supports it?
 
-	//Search (several of these could use requestIdleCallback when Safari supports it)
-	nebula.wpSearchInput();
-	nebula.mobileSearchPlaceholder();
-	nebula.autocompleteSearchListeners();
-	nebula.searchValidator();
-	nebula.searchTermHighlighter(); //Move to (or use) requestIdleCallback when Safari supports it? Already is requesting animation frame
+	//Videos
+	if ( jQuery('video, iframe[src*="vimeo"], iframe[src*="youtube"]').length ){
+		import('./modules/video.js').then(function(module){
+			nebula.initVideoTracking(); //Move to (or use) requestIdleCallback when Safari supports it?
+		});
+	}
 
-	//Forms
-	nebula.addressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete');
+	//Location
+	if ( jQuery('#address-autocomplete').length ){
+		import('./modules/location.js').then(function(module){
+			nebula.addressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete');
+		});
+	}
 
-	nebula.facebookSDK();
+	//Social
+	if ( jQuery('[class*="fb"], [class*="share"]').length ){
+		import('./modules/social.js').then(function(module){
+			nebula.facebookSDK();
+			nebula.socialSharing();
+		});
+	}
 
 	nebula.networkConnection();
 
@@ -120,7 +127,6 @@ window.addEventListener('resize', function(){
 	nebula.debounce(function(){ //Must use debounce here (not throttle) so it always runs after the resize finishes (throttle does not always run at the end)
 		if ( typeof nebula.lastWindowWidth !== 'undefined' && nebula.dom.window.width() !== nebula.lastWindowWidth ){ //If the width actually changed
 			nebula.lastWindowWidth = nebula.dom.window.width();
-			nebula.mobileSearchPlaceholder();
 			nebula.initMmenu(); //If Mmenu has not been initialized, it may need to be if the screen size has reduced
 		}
 	}, 250, 'window resize');
