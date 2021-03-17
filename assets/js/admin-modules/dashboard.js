@@ -1,10 +1,8 @@
 //Developer Metabox functions
 nebula.developerMetaboxes = function(){
+	//Developer Info Metabox
 	if ( jQuery('div#phg_developer_info').length ){
-		//Developer Info Metabox
-		jQuery(document).on('keyup', 'input.findterm', function(){
-			jQuery('input.findterm').attr('placeholder', 'Search files');
-		});
+		jQuery('.searchterm').removeClass('button-disabled').removeAttr('disabled title'); //Enable the button now that JS has loaded
 
 		//Nebula filesystem search
 		jQuery(document).on('submit', '.searchfiles', function(e){
@@ -40,7 +38,10 @@ nebula.developerMetaboxes = function(){
 			e.preventDefault();
 			return false;
 		});
+	}
 
+	//TODO Metabox
+	if ( jQuery('div#todo_manager').length ){
 		//Dynamic height for TODO results
 		if ( jQuery('.todo_results').length ){
 			jQuery(document).on('click', '.linenumber', function(){

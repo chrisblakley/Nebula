@@ -119,7 +119,7 @@ nebula.eventTracking = async function(){
 				category: 'Button',
 				action: 'Click', //GA4 Name: "button_click"?
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				text: jQuery(this).val() || jQuery(this).attr('value') || jQuery(this).text() || '(Unknown)',
+				text: jQuery(this).val() || jQuery(this).attr('value') || jQuery(this).text() || jQuery(this).attr('title') || '(Unknown)',
 				link: jQuery(this).attr('href') || jQuery(this).attr('title') || '(Unknown)'
 			};
 

@@ -34,16 +34,14 @@
 #Ensure the WordPress Address and Site Address settings match this choice! (WordPress Admin > Settings > General)
 
 #Force no-www
-#RewriteEngine On
-#RewriteBase /
-#RewriteCond %{HTTP_HOST} !^yourdomain.com$ [NC] #Domain only (no subdirectories)
-#RewriteRule ^(.*)$ http://yourdomain.com/$1 [L,R=301] #Domain with subdirectories (if applicable)
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 
 #Force www
 #RewriteEngine On
-#RewriteBase /
-#RewriteCond %{HTTP_HOST} !^www.yourdomain.com$ [NC] #Domain only (no subdirectories)
-#RewriteRule ^(.*)$ http://www.yourdomain.com/$1 [L,R=301] #Domain with subdirectories (if applicable)
+RewriteCond %{HTTP_HOST} !^www\.
+RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
 ###################
 
 #Compression (with conditionals for various Apache and enabled modules)
@@ -217,7 +215,11 @@
 #If in a subdirectory, prepend that directory to all redirects.
 RedirectMatch 301 /wp-content/index.php /
 
-
+#Block XML-RPC
+<Files xmlrpc.php>
+	order deny,allow
+	deny from all
+</Files>
 
 #Prevent script injection
 Options +FollowSymLinks
@@ -228,7 +230,7 @@ RewriteCond %{QUERY_STRING} _REQUEST(=|[|%[0-9A-Z]{0,2})
 RewriteRule ^(.*)$ index.php [F,L]
 
 #Deny access to certain files
-<FilesMatch "(.htaccess|wp-config.php|debug.log|user.ini)$">
+<FilesMatch "(\.htaccess|wp-config\.php|(.*)[\._]log|user\.ini)$">
 	order allow,deny
 	deny from all
 </FilesMatch>
@@ -245,8 +247,8 @@ Deny from env=block_bad_bots
 deny from 24.49.97.94
 deny from 24.58.152.89
 
-RewriteEngine On
 #proc/self/environ? no way!
+RewriteEngine On
 RewriteCond %{QUERY_STRING} proc/self/environ [OR]
 
 #Block out any script trying to set a mosConfig value through the URL
@@ -264,5 +266,5 @@ RewriteCond %{QUERY_STRING} GLOBALS(=|[|\%[0-9A-Z]{0,2}) [OR]
 #Block out any script trying to modify a _REQUEST variable via URL
 RewriteCond %{QUERY_STRING} _REQUEST(=|[|\%[0-9A-Z]{0,2})
 
-#Send all blocked request to homepage with 403 Forbidden error!
+#Send all blocked request to homepage with 403 Forbidden error
 RewriteRule ^(.*)$ index.php [F,L]

@@ -2658,11 +2658,11 @@ trait Functions {
 		if ( is_404() ){
 			$this->ga_send_exception('(PHP) 404 Error for requested URL: ' . $this->url_components()); //Track 404 error pages as exceptions in Google Analytics
 
-			$this->slug_keywords = array_filter(explode('/', $this->url_components('filepath')));
-			$this->slug_keywords = end($this->slug_keywords);
+			$this->slug_keywords = array_filter(explode('/', $this->url_components('filepath'))); //Convert the requested filepath into an array (ignore query strings and remove empty items)
+			$this->slug_keywords = end($this->slug_keywords); //Get the last "directory" from the path (this was the requested "term" we will search for)
 
 			//Query the DB with clues from the requested URL
-			$this->error_query = new WP_Query(array('post_status' => 'publish', 'posts_per_page' => 4, 's' => str_replace('-', ' ', $this->slug_keywords)));
+			$this->error_query = new WP_Query(array('post_status' => 'publish', 'posts_per_page' => 4, 's' => str_replace('-', ' ', $this->slug_keywords))); //Query the DB for this term
 			if ( function_exists('relevanssi_do_query') ){
 				relevanssi_do_query($this->error_query);
 			}

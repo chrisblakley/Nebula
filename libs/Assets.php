@@ -34,7 +34,7 @@ if ( !trait_exists('Assets') ){
 		public function register_scripts(){
 			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
-			wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css', null, '5.15.2', 'all');
+			wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css', null, '5.15.3', 'all');
 			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/mmenu-js/8.5.21/mmenu.min.css', null, '8.5.21', 'all');
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap'), $this->version('full'), 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, $this->version('full'), 'all');
