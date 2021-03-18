@@ -237,7 +237,7 @@ if ( !trait_exists('Automation') ){
 					<p><a class="button button-primary" href="themes.php?page=nebula_options">Configure Nebula Options</a></p>
 				</div>
 			<?php else: ?>
-				<?php $this->render_scss('all'); //Re-render all SCSS files. ?>
+				<?php $this->scss_controller(true); //Re-render all SCSS files. ?>
 
 				<?php if ( $this->is_initialized_before() ): ?>
 					<div id="nebula-activate-success" class="updated">
@@ -285,7 +285,7 @@ if ( !trait_exists('Automation') ){
 
 				$activated_child = $this->initialization_activate_child_theme();
 
-				$this->render_scss('all'); //Re-render all SCSS files.
+				$this->scss_controller(true); //Re-render all SCSS files.
 
 				if ( $activated_child ){
 					wp_redirect(admin_url('/themes.php?initialization-success'), 301); //Redirect to show new theme activated

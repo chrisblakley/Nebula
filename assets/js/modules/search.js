@@ -11,7 +11,7 @@ nebula.initSearchFunctions = function(){
 		nebula.searchValidator();
 		nebula.searchTermHighlighter(); //Move to (or use) requestIdleCallback when Safari supports it? Already is requesting animation frame
 	});
-}
+};
 
 //Keyword Filter
 nebula.keywordSearch = function(container, parent, values, filteredClass, operator){ //Alias for old function name

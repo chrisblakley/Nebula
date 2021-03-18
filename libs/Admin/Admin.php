@@ -1134,10 +1134,10 @@ if ( !trait_exists('Admin') ){
 					//Reprocess Sass if enabled
 					if ( $this->get_option('scss') ){
 						$this->output_nebula_update_progress('Re-processing Sass files...');
-						if ( $this->render_scss('all') ){ //Re-render all SCSS files (which returns boolean)
+						if ( $this->scss_controller(true) ){ //Re-render all SCSS files (which returns boolean)
 							$this->output_nebula_update_progress('Sass processing was successful.');
 						} else {
-							$this->output_nebula_update_progress('Sass processing was unsuccessful. <strong><a href="' . admin_url('?sass=true') . '" target="_top">Please manually process Sass after the update.</a></strong>');
+							$this->output_nebula_update_progress('Sass processing was unsuccessful. <strong><a href="' . admin_url('?sass=true') . '" target="_parent">Please manually process Sass after the update.</a></strong>');
 						}
 					}
 

@@ -7,6 +7,7 @@ if ( !trait_exists('Sass') ){
 		public function hooks(){
 			$this->sass_process_status = '';
 			$this->sass_files_processed = 0;
+			$this->was_sass_processed = false;
 			$this->latest_scss_mtime = 0; //Prep a flag to determine the last modified SCSS file
 
 			add_action('init', array($this, 'scss_controller'));
@@ -28,7 +29,7 @@ if ( !trait_exists('Sass') ){
 				return $scss_locations;
 			}
 		 ===========================*/
-		public function scss_controller(){
+		public function scss_controller($force_all = false){
 			$sass_throttle = get_transient('nebula_sass_compile'); //This prevents Sass from compiling multiple times in quick succession
 			if ( empty($sass_throttle) || $this->is_debug() ){
 				$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not throttled (so okay to process).' : $this->sass_process_status;
@@ -80,7 +81,7 @@ if ( !trait_exists('Sass') ){
 					$all_scss_locations = apply_filters('nebula_scss_locations', $scss_locations);
 
 					//Check if all Sass files should be rendered
-					$force_all = false;
+					//$force_all = false;
 					if ( (isset($_GET['sass']) || isset($_GET['scss'])) && $this->is_staff() ){
 						$force_all = true;
 						$this->sass_process_status = ( isset($_GET['sass']) )? 'All Sass files were processed forcefully via query string.' : $this->sass_process_status;
@@ -148,6 +149,8 @@ if ( !trait_exists('Sass') ){
 			} else {
 				$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass is throttled for 15 seconds between processing. <a href="?sass=true">Try again soon.</a>' : $this->sass_process_status;
 			}
+
+			return $this->was_sass_processed;
 		}
 
 		//Render scss files
@@ -159,11 +162,6 @@ if ( !trait_exists('Sass') ){
 
 			if ( $this->get_option('scss') && !empty($location_name) && !empty($location_paths) ){
 				$this->timer('Sass (' . $location_name . ')', 'start', 'Sass');
-
-				//Force reprocessing all files if "all" string is the only parameter
-				if ( strtolower($location_name) === 'all' ){
-					$force_all = true;
-				}
 
 				//Require SCSSPHP
 				require_once get_template_directory() . '/inc/vendor/scssphp/scss.inc.php'; //SCSSPHP is a compiler for SCSS 3.x
