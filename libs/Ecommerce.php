@@ -13,13 +13,21 @@ if ( !trait_exists('Ecommerce') ){
 				add_action('woocommerce_before_main_content', array($this, 'custom_woocommerce_start'), 10);
 				remove_action('woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10);
 				add_action('woocommerce_after_main_content', array($this, 'custom_woocommerce_end'), 10);
-				add_filter('nebula_warnings', array($this, 'woocommerce_admin_notices'));
+
 				add_filter('nebula_brain', array($this, 'ecommerce_nebula_data'));
-				add_action('nebula_ga_before_send_pageview', array($this, 'woo_custom_ga_dimensions'));
-				add_action('nebula_ga_after_send_pageview', array($this, 'woo_custom_ga_events'));
+
 				//add_action('init', array($this, 'remove_woo_breadcrumbs'));
 				add_action('woocommerce_payment_complete', array($this, 'woocommerce_order_data'));
 				add_action('nebula_metadata_end', array($this, 'json_ld_ecommerce'));
+
+				if ( is_user_logged_in() ){
+					add_filter('nebula_warnings', array($this, 'woocommerce_admin_notices'));
+				}
+
+				if ( !$this->is_ajax_or_rest_request() ){
+					add_action('nebula_ga_before_send_pageview', array($this, 'woo_custom_ga_dimensions'));
+					add_action('nebula_ga_after_send_pageview', array($this, 'woo_custom_ga_events'));
+				}
 			}
 		}
 

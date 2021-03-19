@@ -9,13 +9,15 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Analytics') ){
 	trait Analytics {
 		public function hooks(){
-			add_filter('nebula_brain', array($this, 'ga_definitions'));
+			if ( !$this->is_ajax_or_rest_request() && !is_customize_preview() ){
+				add_filter('nebula_brain', array($this, 'ga_definitions'));
 
-			add_filter('the_permalink_rss', array($this, 'add_utm_to_feeds'), 100);
-			add_filter('the_excerpt_rss', array($this, 'add_utm_to_feeds_content_links'), 200);
-			add_filter('the_content_feed', array($this, 'add_utm_to_feeds_content_links'), 200);
+				add_filter('the_permalink_rss', array($this, 'add_utm_to_feeds'), 100);
+				add_filter('the_excerpt_rss', array($this, 'add_utm_to_feeds_content_links'), 200);
+				add_filter('the_content_feed', array($this, 'add_utm_to_feeds_content_links'), 200);
 
-			add_action('nebula_head_open', array($this, 'google_optimize_tag'));
+				add_action('nebula_head_open', array($this, 'google_optimize_tag'));
+			}
 
 			register_shutdown_function(array($this, 'ga_log_fatal_php_errors'));
 		}

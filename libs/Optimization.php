@@ -9,7 +9,7 @@ if ( !trait_exists('Optimization') ){
 		public function hooks(){
 			$this->deregistered_assets = array('styles' => array(), 'scripts' => array());
 
-			if ( $this->get_option('service_worker') && !$this->is_ajax_or_rest_request() ){
+			if ( $this->get_option('service_worker') && !$this->is_ajax_or_rest_request() && !is_customize_preview() ){
 				add_action('send_headers', array($this, 'nebula_http2_ob_start'));
 				add_action('wp_enqueue_scripts', array($this, 'styles_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
 				add_action('wp_enqueue_scripts', array($this, 'scripts_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
@@ -52,9 +52,11 @@ if ( !trait_exists('Optimization') ){
 
 			add_action('wp_head', array($this, 'embed_critical_styles'));
 
-			add_action('send_headers', array($this, 'server_timing_header'));
-			add_action('wp_footer', array($this, 'output_console_debug_timings'));
-			add_action('admin_footer', array($this, 'output_console_debug_timings'));
+			if ( !is_customize_preview() ){
+				add_action('send_headers', array($this, 'server_timing_header'));
+				add_action('wp_footer', array($this, 'output_console_debug_timings'));
+				add_action('admin_footer', array($this, 'output_console_debug_timings'));
+			}
 
 			add_filter('jpeg_quality', array($this, 'jpeg_quality'));
 			add_filter('intermediate_image_sizes_advanced', array($this, 'create_max_width_size_proportionally'), 10, 2);

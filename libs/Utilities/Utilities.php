@@ -27,10 +27,12 @@ if ( !trait_exists('Utilities') ){
 			$this->WarningsHooks(); //Register Warnings hooks
 
 			//Update the child theme version number at various points
-			add_action('save_post', array($this, 'update_child_version_number')); //When a post is created or updated
-			add_action('nebula_options_saved', array($this, 'update_child_version_number')); //Nebula ptions save
-			add_action('upgrader_process_complete', array($this, 'update_child_version_number')); //WordPress Core, theme, or plugin updates
-			add_action('nebula_scss_post_compile_once', array($this, 'update_child_version_number'));
+			if ( is_user_logged_in() ){
+				add_action('save_post', array($this, 'update_child_version_number')); //When a post is created or updated
+				add_action('nebula_options_saved', array($this, 'update_child_version_number')); //Nebula ptions save
+				add_action('upgrader_process_complete', array($this, 'update_child_version_number')); //WordPress Core, theme, or plugin updates
+				add_action('nebula_scss_post_compile_once', array($this, 'update_child_version_number'));
+			}
 		}
 
 		//Attempt to get the most accurate IP address from the visitor

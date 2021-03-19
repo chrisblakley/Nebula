@@ -14,14 +14,15 @@ if ( !trait_exists('Security') ){
 			add_filter('the_generator', '__return_empty_string'); //Remove Wordpress version info from head and feeds
 			add_action('check_comment_flood', array($this, 'check_referrer'));
 			//add_action('wp_footer', array($this, 'track_notable_bots')); //Disabled for now. Not super useful.
-			add_action('wp_loaded', array($this, 'spam_domain_prevention'));
 			add_action('get_header', array($this, 'redirect_author_template'));
-
-			add_filter('rest_endpoints', array($this, 'rest_endpoints_security'));
 			add_filter('xmlrpc_enabled', '__return_false'); //Disable XML-RPC that require authentication
 			add_filter('xmlrpc_methods', function(){return array();}, PHP_INT_MAX); //Disable all XML-RPC requests with the highest priority
-
+			add_filter('rest_endpoints', array($this, 'rest_endpoints_security'));
 			add_action('wp_footer', array($this, 'cookie_notification'));
+
+			if ( !is_user_logged_in() ){
+				add_action('wp_loaded', array($this, 'spam_domain_prevention'));
+			}
 
 			//Disable the file editor for non-developers
 			if ( !$this->is_dev() && !defined('DISALLOW_FILE_EDIT') ){

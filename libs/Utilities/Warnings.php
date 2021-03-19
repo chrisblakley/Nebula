@@ -7,9 +7,11 @@ if ( !trait_exists('Warnings') ){
 		public function hooks(){
 			$this->warnings = false;
 
-			add_action('wp_head', array($this, 'console_warnings'));
-			add_filter('nebula_warnings', array($this, 'advanced_warnings'));
-			add_action('wp_footer', array($this, 'advanced_warning_output'), 9999); //Late execution as possible
+			if ( is_user_logged_in() && !$this->is_ajax_or_rest_request() && !is_customize_preview() ){
+				add_action('wp_head', array($this, 'console_warnings'));
+				add_filter('nebula_warnings', array($this, 'advanced_warnings'));
+				add_action('wp_footer', array($this, 'advanced_warning_output'), 9999); //Late execution as possible
+			}
 		}
 
 		//Determine the desired warning level

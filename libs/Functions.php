@@ -51,20 +51,22 @@ trait Functions {
 		add_action('pre_get_posts', array($this, 'redirect_empty_search'));
 		add_action('template_redirect', array($this, 'redirect_single_search_result'));
 
-		add_action('wp_head', array($this, 'arbitrary_code_head'), 1000);
-		add_action('nebula_body_open', array($this, 'arbitrary_code_body'), 1000);
-		add_action('wp_footer', array($this, 'arbitrary_code_footer'), 1000);
+		if ( !$this->is_ajax_or_rest_request() ){
+			add_action('wp_head', array($this, 'arbitrary_code_head'), 1000);
+			add_action('nebula_body_open', array($this, 'arbitrary_code_body'), 1000);
+			add_action('wp_footer', array($this, 'arbitrary_code_footer'), 1000);
 
-		add_filter('single_template', array($this, 'single_category_template'));
+			add_filter('single_template', array($this, 'single_category_template'));
+
+			add_action('wp_head', array($this, 'internal_suggestions'));
+			add_filter('body_class', array($this, 'body_classes'));
+			add_filter('post_class', array($this, 'post_classes'));
+			add_filter('wp_get_attachment_url', array($this, 'wp_get_attachment_url_force_protocol'));
+			add_filter('embed_oembed_html', array($this, 'oembed_modifiers'), 9999, 4);
+		}
 
 		add_action('wp_ajax_nebula_infinite_load', array($this, 'infinite_load'));
 		add_action('wp_ajax_nopriv_nebula_infinite_load', array($this, 'infinite_load'));
-
-		add_action('wp_head', array($this, 'internal_suggestions'));
-		add_filter('body_class', array($this, 'body_classes'));
-		add_filter('post_class', array($this, 'post_classes'));
-		add_filter('wp_get_attachment_url', array($this, 'wp_get_attachment_url_force_protocol'));
-		add_filter('embed_oembed_html', array($this, 'oembed_modifiers'), 9999, 4);
 
 		add_filter('acf/settings/google_api_key', array($this, 'acf_google_api_key')); //ACF hook
 

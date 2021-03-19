@@ -5,7 +5,9 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Device') ){
 	trait Device {
 		public function hooks(){
-			add_action('init', array($this, 'detect'));
+			if ( !$this->is_ajax_or_rest_request() && !is_customize_preview() ){
+				add_action('init', array($this, 'detect'));
+			}
 		}
 
 		/*==========================

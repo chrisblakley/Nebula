@@ -10,10 +10,12 @@ if ( !trait_exists('Sass') ){
 			$this->was_sass_processed = false;
 			$this->latest_scss_mtime = 0; //Prep a flag to determine the last modified SCSS file
 
-			add_action('init', array($this, 'scss_controller'));
-			add_action('nebula_body_open', array($this, 'output_sass_errors')); //Front-end
-			add_action('admin_notices', array($this, 'output_sass_errors')); //Admin (Do not use Nebula Warnings utility for these errors)
-			add_action('nebula_options_saved', array($this, 'touch_sass_stylesheet'));
+			if ( !$this->is_ajax_or_rest_request() && !is_customize_preview() ){
+				add_action('init', array($this, 'scss_controller'));
+				add_action('nebula_body_open', array($this, 'output_sass_errors')); //Front-end
+				add_action('admin_notices', array($this, 'output_sass_errors')); //Admin (Do not use Nebula Warnings utility for these errors)
+				add_action('nebula_options_saved', array($this, 'touch_sass_stylesheet'));
+			}
 		}
 
 		/*==========================
@@ -30,7 +32,7 @@ if ( !trait_exists('Sass') ){
 			}
 		 ===========================*/
 		public function scss_controller($force_all = false){
-			$sass_throttle = get_transient('nebula_sass_compile'); //This prevents Sass from compiling multiple times in quick succession
+			$sass_throttle = get_transient('nebula_sass_throttle'); //This prevents Sass from compiling multiple times in quick succession
 			if ( empty($sass_throttle) || $this->is_debug() ){
 				$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not throttled (so okay to process).' : $this->sass_process_status;
 
@@ -135,7 +137,7 @@ if ( !trait_exists('Sass') ){
 					$this->sass_process_status = ( !isset($_GET['sass']) && $this->was_sass_processed )? $this->sass_files_processed . ' Sass file(s) have been processed.' : $this->sass_process_status; //Show this status if Sass was processed but not explicitly forced. Otherwise use the existing status
 
 					$this->update_data('need_sass_compile', 'false'); //Set it to false after Sass is finished
-					set_transient('nebula_sass_compile', time(), 15); //15 second cache to throttle Sass from being re-processed again immediately
+					set_transient('nebula_sass_throttle', time(), 15); //15 second cache to throttle Sass from being re-processed again immediately
 
 					if ( time()-$this->latest_scss_mtime >= MONTH_IN_SECONDS ){ //If the last style.scss modification hasn't happened within a month disable Sass.
 						$this->update_option('scss', 0); //Once Sass is disabled this way, a developer would need to re-enable it in Nebula Options.
