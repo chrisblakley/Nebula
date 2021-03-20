@@ -34,8 +34,6 @@
 
 					<?php if ( !empty(nebula()->error_404_exact_match) ): ?>
 						<p><a class="internal-suggestion" href="<?php echo get_permalink(nebula()->error_404_exact_match->ID); ?>"><?php echo esc_html(get_the_title(nebula()->error_404_exact_match->ID)); ?></a></p>
-					<?php else: ?>
-						<p><a class="gcse-suggestion" href="#"></a></p>
 					<?php endif; ?>
 				</div><!--/col-->
 			</div><!--/row-->

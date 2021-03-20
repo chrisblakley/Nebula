@@ -77,6 +77,7 @@ nebula.initBootstrapFunctions = async function(){
 				}
 			}
 		});
+
 		nebula.dom.document.on('hide.bs.modal', function(e){
 			if ( jQuery(e.target).attr('data-animation-in') || jQuery(e.target).attr('data-animation') || jQuery(e.target).attr('data-animation-out') ){ //If there is any Nebula animation attribute
 				let anim = jQuery(e.target).attr('data-animation-out') || '';
@@ -112,10 +113,15 @@ nebula.errorMitigation = function(){
 		let imagePath = thisImage.attr('src');
 		if ( imagePath.split('.').pop() === 'svg' ){
 			let fallbackPNG = imagePath.replace('.svg', '.png');
-			jQuery.get(fallbackPNG).done(function(){
-				thisImage.prop('src', fallbackPNG);
-				thisImage.removeClass('svg');
-			}).fail(function(){
+
+			fetch(fallbackPNG, {
+				method: 'GET',
+			}).then(function(response){
+				if ( response.ok ){
+					thisImage.prop('src', fallbackPNG);
+					thisImage.removeClass('svg');
+				}
+			}).catch(function(error){
 				ga('send', 'exception', {'exDescription': '(JS) Broken Image: ' + imagePath, 'exFatal': false});
 				nebula.crm('event', 'Broken Image');
 			});

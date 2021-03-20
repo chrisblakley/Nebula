@@ -174,9 +174,15 @@ nebula.svgImgs = async function(){
 	jQuery('img.svg').each(function(){
 		let oThis = jQuery(this);
 
-		if ( oThis.attr('src').includes('.svg') ){
-			jQuery.get(oThis.attr('src'), function(data){
-				let theSVG = jQuery(data).find('svg'); //Get the SVG tag, ignore the rest
+		if ( oThis.attr('src').includes('.svg') ){ //If the src has a .svg extension
+			fetch(oThis.attr('src'), {
+				method: 'GET',
+			}).then(function(response){
+				if ( response.ok ){
+					return response.text();
+				}
+			}).then(function(data){
+				let theSVG = jQuery(data); //Get the SVG tag, ignore the rest
 				theSVG = theSVG.attr('id', oThis.attr('id')); //Add replaced image's ID to the new SVG
 				theSVG = theSVG.attr('class', oThis.attr('class') + ' replaced-svg'); //Add replaced image's classes to the new SVG
 				theSVG = theSVG.attr('role', 'img');
@@ -196,7 +202,7 @@ nebula.svgImgs = async function(){
 				if ( oThis.attr('title') ){
 					theSVG.prepend('<description>' + nebula.sanitize(oThis.attr('title')) + '</description>'); //Sanitized to prevent XSS
 				}
-			}, 'xml');
+			});
 		}
 	});
 };

@@ -20,26 +20,23 @@ import './modules/extensions.js';
 jQuery(function(){
 	window.performance.mark('(Nebula) DOM Ready [Start]');
 
-	//Utilities
 	nebula.cacheSelectors(); //Always do this first
 	nebula.addExpressions();
 	nebula.initBootstrapFunctions(); //Must be in DOM ready
 	nebula.helpers();
 	nebula.svgImgs();
 	nebula.errorMitigation();
-
-	//Navigation
 	nebula.subnavExpanders();
 
 	//Search
-	if ( jQuery('input, .nebula-search').length || nebula.get('s') ){
+	if ( jQuery('input[type="search"], input[name="s"], [class*="search"]').length || nebula.get('s') ){
 		import('./modules/search.js').then(function(module){
 			nebula.initSearchFunctions();
 		});
 	}
 
 	//Forms
-	if ( jQuery('form, input, .wpcf7').length ){ //Consider removing "input" here, but playing it safe for now
+	if ( jQuery('form:not([role="search"]):not(#adminbarsearch), input:not([type="search"]):not([name="s"]):not([type="submit"]), .wpcf7').length ){ //If non-search forms/inputs exist
 		import('./modules/forms.js').then(function(module){
 			nebula.liveValidator();
 			nebula.cf7Functions();
@@ -129,5 +126,5 @@ window.addEventListener('resize', function(){
 			nebula.lastWindowWidth = nebula.dom.window.width();
 			nebula.initMmenu(); //If Mmenu has not been initialized, it may need to be if the screen size has reduced
 		}
-	}, 250, 'window resize');
+	}, 250, 'nebula window resize');
 }, {passive: true}); //End Window Resize

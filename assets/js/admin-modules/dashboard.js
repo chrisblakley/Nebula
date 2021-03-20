@@ -81,18 +81,19 @@ nebula.checkPageSpeed = function(){
 
 	//If WebPageTest JSON URL exists, use it!
 	if ( typeof wptTestJSONURL !== 'undefined' ){
-		nebula.checkWPTresults();
+		nebula.checkWPTresults(); //Remove this when WebPageTest.org API becomes a paid subscription
 		return;
 	}
 
 	nebula.getLighthouseResults();
 };
 
-//Check on the WebPageTest API results (initiated on the server-side then called repetatively by JS)
+//Check on the WebPageTest API results (initiated on the server-side then called repetitively by JS)
+//Remove this when WebPageTest.org API becomes a paid subscription
 nebula.checkWPTresults = function(){
 	jQuery('#performance_metabox h2 span span').html('Measuring Performance <small>(via WebPageTest.org)</small>');
 
-	jQuery.get({ //Eventually use fetch here
+	jQuery.get({ //Do not worry about converting this to fetch because it will be removed
 		url: wptTestJSONURL,
 	}).success(function(response){
 		if ( response ){

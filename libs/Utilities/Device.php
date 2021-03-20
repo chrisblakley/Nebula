@@ -247,7 +247,7 @@ if ( !trait_exists('Device') ){
 						case 'version':
 							return $client['version'];
 						case 'engine':
-							return $client['engine'];
+							return ( !empty($client['engine']) )? $client['engine'] : $client['name'];
 						case 'type':
 							return $client['type'];
 						default:

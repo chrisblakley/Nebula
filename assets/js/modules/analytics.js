@@ -302,6 +302,22 @@ nebula.eventTracking = async function(){
 			nebula.crm('identify', {internal_search: thisEvent.query});
 		});
 
+		//Suggested pages on 404 results
+		nebula.dom.document.on('mousedown', 'a.internal-suggestion', function(e){
+			let thisEvent = {
+				event: e,
+				category: 'Page Suggestion',
+				action: 'Internal', //GA4 name: "select_content"
+				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+				suggestion: jQuery(this).text(),
+			};
+
+			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.suggestion);
+			nebula.crm('event', 'Page Suggestion Click');
+		});
+
 		//Keyboard Shortcut (Non-interaction because they are not taking explicit action with the webpage)
 		nebula.dom.document.on('keydown', function(e){
 			window.modifiedZoomLevel = window.modifiedZoomLevel || 0; //Scope to window so it is not reset every event. Note: This is just how it was modified and not the actual zoom level! Zoom level is saved between pageloads so it may have started at non-zero!

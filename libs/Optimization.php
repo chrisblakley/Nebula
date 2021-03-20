@@ -435,11 +435,6 @@ if ( !trait_exists('Optimization') ){
 				}
 			}
 
-			//GCSE on 404 pages
-			if ( is_404() && $this->get_option('cse_id') ){
-				$default_preconnects[] = '//www.googleapis.com';
-			}
-
 			//Loop through all of the preconnects
 			$preconnects = apply_filters('nebula_preconnect', $default_preconnects);
 			if ( !empty($preconnects) && is_array($preconnects) ){

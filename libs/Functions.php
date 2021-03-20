@@ -2663,15 +2663,17 @@ trait Functions {
 			$this->slug_keywords = array_filter(explode('/', $this->url_components('filepath'))); //Convert the requested filepath into an array (ignore query strings and remove empty items)
 			$this->slug_keywords = end($this->slug_keywords); //Get the last "directory" from the path (this was the requested "term" we will search for)
 
-			//Query the DB with clues from the requested URL
-			$this->error_query = new WP_Query(array('post_status' => 'publish', 'posts_per_page' => 4, 's' => str_replace('-', ' ', $this->slug_keywords))); //Query the DB for this term
-			if ( function_exists('relevanssi_do_query') ){
-				relevanssi_do_query($this->error_query);
-			}
+			if ( !empty($this->slug_keywords) ){
+				//Query the DB with clues from the requested URL
+				$this->error_query = new WP_Query(array('post_status' => 'publish', 'posts_per_page' => 4, 's' => str_replace('-', ' ', $this->slug_keywords))); //Query the DB for this term
+				if ( function_exists('relevanssi_do_query') ){
+					relevanssi_do_query($this->error_query);
+				}
 
-			//Check for an exact match
-			if ( !empty($this->error_query->posts) && $this->slug_keywords === $this->error_query->posts[0]->post_name ){
-				$this->error_404_exact_match = $this->error_query->posts[0];
+				//Check for an exact match
+				if ( !empty($this->error_query->posts) && $this->slug_keywords === $this->error_query->posts[0]->post_name ){
+					$this->error_404_exact_match = $this->error_query->posts[0];
+				}
 			}
 		}
 	}

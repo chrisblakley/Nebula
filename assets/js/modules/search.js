@@ -2,7 +2,6 @@ nebula.initSearchFunctions = function(){
 	//DOM Ready
 	nebula.menuSearchReplacement();
 	nebula.singleResultDrawer();
-	nebula.pageSuggestion();
 
 	//Window Load (several of these could use requestIdleCallback when Safari supports it)
 	window.addEventListener('load', function(){
@@ -365,71 +364,5 @@ nebula.singleResultDrawer = async function(){
 			jQuery('#nebula-drawer').slideUp();
 			return false;
 		});
-	}
-};
-
-//Page Suggestions for 404 or no search results pages using Google Custom Search Engine
-nebula.pageSuggestion = async function(){
-	if ( nebula.dom.body.hasClass('search-no-results') || nebula.dom.body.hasClass('error404') ){
-		if ( nebula.site?.options?.nebula_cse_id !== '' && nebula.site?.options?.nebula_google_browser_api_key !== '' ){
-
-			let queryStrings;
-			if ( nebula.get().length ){
-				queryStrings = nebula.get();
-			} else {
-				queryStrings = [''];
-			}
-
-			let path = window.location.pathname;
-			let phrase = decodeURIComponent(path.replaceAll(/\/+/g, ' ')).trim() + ' ' + decodeURIComponent(queryStrings[0].replaceAll(/\+/g, ' ')).trim();
-			nebula.tryGCSESearch(phrase);
-		}
-
-		nebula.dom.document.on('mousedown', 'a.gcse-suggestion, a.internal-suggestion', function(e){
-			let thisEvent = {
-				event: e,
-				category: 'Page Suggestion',
-				action: ( jQuery(this).hasClass('internal-suggestion') )? 'Internal' : 'GCSE', //GA4 name: "select_content"
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				suggestion: jQuery(this).text(),
-			};
-
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.suggestion);
-			nebula.crm('event', 'Page Suggestion Click');
-		});
-	}
-};
-
-//Run a Google Custom Search Engine query to find relevant pages
-nebula.tryGCSESearch = function(phrase){
-	if ( nebula.site.options.nebula_cse_id.length && nebula.site.options.nebula_google_browser_api_key.length ){
-		let queryParams = {
-			cx: nebula.site.options.nebula_cse_id,
-			key: nebula.site.options.nebula_google_browser_api_key,
-			num: 10,
-			q: phrase,
-			alt: 'JSON'
-		};
-		const API_URL = 'https://www.googleapis.com/customsearch/v1?';
-
-		//Send the request to the custom search API
-		jQuery.getJSON(API_URL, queryParams, function(response){ //Update this to fetch
-			if ( response.items ){
-				if ( response.items[0].link !== window.location.href ){ //If the top result does not match the current page URL
-					nebula.showSuggestedGCSEPage(response.items[0].title, response.items[0].link); //Show the suggestion
-				}
-			}
-		});
-	}
-};
-
-nebula.showSuggestedGCSEPage = function(title, url){
-	const hostname = new RegExp(location.host);
-	if ( hostname.test(url) ){ //Only show results for this same website
-		jQuery('.gcse-suggestion').attr('href', url).text(title);
-		jQuery('#nebula-drawer.suggestedpage').slideDown();
-		nebula.prefetch(url);
 	}
 };

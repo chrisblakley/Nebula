@@ -204,7 +204,6 @@ if ( !trait_exists('Assets') ){
 					'options' => array(
 						'sw' => $this->get_option('service_worker'),
 						'gaid' => esc_html($this->get_option('ga_tracking_id')),
-						'nebula_cse_id' => esc_html($this->get_option('cse_id')),
 						'nebula_google_browser_api_key' => esc_html($this->get_option('google_browser_api_key')),
 						'facebook_url' => esc_url($this->get_option('facebook_url')),
 						'facebook_app_id' => esc_html($this->get_option('facebook_app_id')),

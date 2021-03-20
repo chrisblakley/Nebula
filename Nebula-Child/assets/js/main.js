@@ -2,12 +2,6 @@ window.performance.mark('(Child) Inside main.js');
 jQuery.noConflict();
 
 /*==========================
- Import Modules
- ===========================*/
-
-//import * as usage from './modules/usage.js';
-
-/*==========================
  DOM Ready (After nebula.js is loaded)
  ===========================*/
 
@@ -15,7 +9,10 @@ jQuery(function(){
 	window.performance.mark('(Child) DOM Ready [Start]');
 
 	nebula.cacheSelectors();
-	supplementalEventTracking();
+
+	import('./modules/usage.js').then(function(module){
+		module.supplementalEventTracking();
+	});
 
 	window.performance.mark('(Child) DOM Ready [End]');
 	window.performance.measure('(Child) DOM Ready Functions', '(Child) DOM Ready [Start]', '(Child) DOM Ready [End]');
@@ -25,7 +22,7 @@ jQuery(function(){
  Window Load
  ===========================*/
 
-jQuery(window).on('load', function(){
+window.addEventListener('load', function(){
 	window.performance.mark('(Child) Window Load [Start]');
 
 	//Window load functions here
@@ -38,28 +35,8 @@ jQuery(window).on('load', function(){
  Window Resize
  ===========================*/
 
-// jQuery(window).on('resize', function(){
+// window.addEventListener('resize', function(){
 // 	nebula.debounce(function(){
 //
-// 	}, 500);
-// }, {passive: true});
-
-//Child theme event tracking. Do not rename this function!
-function supplementalEventTracking(){
-	nebula.cacheSelectors();
-
-	if ( nebula.isDoNotTrack() ){
-		return false;
-	}
-
-	if ( typeof window.ga !== 'function' ){
-		window.ga = function(){}; //Prevent ga() calls from erroring if GA is off or blocked.
-	}
-
-	//Simple example:
-	//nebula.dom.document.on('click touch tap', '.selector', function(){
-	//	ga('send', 'event', 'Category', 'Action', 'Label');
-	//});
-
-	//Add your custom event tracking here!
-}
+// 	}, 250, 'window resize');
+// }, {passive: true}); //End Window Resize

@@ -1517,19 +1517,6 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="option-keywords"></p>
 				</div>
 
-				<div class="form-group">
-					<label for="cse_id">Google Custom Search Engine</label>
-					<div class="input-group">
-						<div class="input-group-prepend">
-									<div class="input-group-text">Engine ID</div>
-								</div>
-						<input type="text" name="nebula_options[cse_id]" id="cse_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['cse_id']; ?>" placeholder="000000000000000000000:aaaaaaaa_aa" />
-					</div>
-					<p class="nebula-help-text short-help form-text text-muted">For <a href="https://nebula.gearside.com/functions/pagesuggestion/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=gcse+help<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank" rel="noopener noreferrer">page suggestions</a> on 404 and No Search Results pages.</p>
-					<p class="nebula-help-text more-help form-text text-muted"><a href="https://www.google.com/cse/manage/all">Register here</a>, then select "Add", input your website's URL in "Sites to Search". Then click the one you just made and click the "Search Engine ID" button.</p>
-					<p class="option-keywords">remote resource minor page speed impact optimization optimize</p>
-				</div>
-
 				<div class="form-group hidden">
 					<label for="gcm_sender_id">Google Cloud Messaging Sender ID</label>
 					<input type="text" name="nebula_options[gcm_sender_id]" id="gcm_sender_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['gcm_sender_id']; ?>" placeholder="000000000000" />

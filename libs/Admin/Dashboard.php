@@ -955,6 +955,7 @@ if ( !trait_exists('Dashboard') ){
 
 		public function performance_timing(){
 			//Initialize the WebPageTest API - Documentation: https://sites.google.com/a/webpagetest.org/docs/advanced-features/webpagetest-restful-apis
+			//Remove this when WebPageTest.org API becomes a paid subscription
 			$initial_sub_status = 'Preparing test...';
 			if ( $this->get_option('webpagetest_api') ){
 				$webpagetest_response = get_transient('nebula_webpagetest_response');

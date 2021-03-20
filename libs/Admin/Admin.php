@@ -401,14 +401,6 @@ if ( !trait_exists('Admin') ){
 				);
 			}
 
-			if ( $this->get_option('cse_id') ){
-				$third_party_resources['administrative'][] = array(
-					'name' => 'Google Custom Search',
-					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-search"></i>',
-					'url' => 'https://cse.google.com/cse/all'
-				);
-			}
-
 			if ( $this->get_option('hubspot_api') || $this->get_option('hubspot_portal') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Hubspot',

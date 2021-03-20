@@ -13,7 +13,7 @@ nebula.facebookSDK = async function(){
 
 //Social sharing buttons
 nebula.socialSharing = async function(){
-	if ( jQuery('.fbshare, a.nebula-share.facebook, .twshare, a.nebula-share-btn.twitter, .lishare, a.nebula-share-btn.linkedin, .pinshare, a.nebula-share-btn.pinterest, .emshare, a.nebula-share-btn.email, a.nebula-share.webshare, a.nebula-share.shareapi').length ){ //If any of the Nebula sharing classes are used
+	if ( jQuery('[class*="share"]').length ){
 		const encloc = encodeURIComponent(window.location.href);
 		const enctitle = encodeURIComponent(document.title);
 		let popupTop = nebula.dom.window.height()/2-275;
