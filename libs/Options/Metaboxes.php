@@ -370,14 +370,13 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_assets_metabox($nebula_options){
 			?>
 				<div class="form-group">
-					<label for="jquery_version">jQuery Version (and Load Location)</label>
-					<select name="nebula_options[jquery_version]" id="jquery_version" class="form-control nebula-validate-select">
-						<option value="wordpress" <?php selected('wordpress', $nebula_options['jquery_version']); ?>>WordPress &lt;head&gt; (Default)</option>
-						<option value="latest" <?php selected('latest', $nebula_options['jquery_version']); ?>>Latest &lt;head&gt;</option>
-						<option value="footer" <?php selected('footer', $nebula_options['jquery_version']); ?>>Latest &lt;footer&gt; (Performant)</option>
+					<label for="jquery_location">jQuery Location</label>
+					<select name="nebula_options[jquery_location]" id="jquery_location" class="form-control nebula-validate-select">
+						<option value="wordpress" <?php selected('wordpress', $nebula_options['jquery_location']); ?>>&lt;head&gt; (Default)</option>
+						<option value="footer" <?php selected('footer', $nebula_options['jquery_location']); ?>>&lt;footer&gt; (Performant)</option>
 					</select>
-					<p class="nebula-help-text short-help form-text text-muted">Which jQuery version to use and where to load it (head is blocking, footer is more performant). (Default: <?php echo $this->user_friendly_default('jquery_version'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">Be careful changing this option as some plugins may rely on older versions of jQuery, however some speed improvements may be realized by using alternate versions and locations.<br /><strong>Note:</strong> some plugins may override this and bring jQuery back to the head.<br /><strong>Remember:</strong> if loading in the footer, embedded script tags cannot use jQuery in template files.</p>
+					<p class="nebula-help-text short-help form-text text-muted">Where to load jQuery (head is blocking, footer is more performant). (Default: <?php echo $this->user_friendly_default('jquery_location'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">Be careful changing this option as some plugins/page functionality may rely on jQuery loading in the &lt;head&gt;, however some speed improvements may be realized by loading later.<br /><strong>Note:</strong> some plugins may override this and bring jQuery back to the head.<br /><strong>Remember:</strong> if loading in the footer, embedded script tags cannot use jQuery in template files.</p>
 					<p class="option-keywords">old support plugins minor page speed impact optimization optimize</p>
 				</div>
 
@@ -1994,10 +1993,10 @@ if ( !trait_exists('Metaboxes') ){
 						Nebula is <?php echo ( !empty(array_filter($dequeue_styles)) || !empty(array_filter($dequeue_scripts)) )? '<strong class="nebula-disabled">dequeuing styles and scripts' : '<strong class="nebula-enabled">not dequeuing assets'; ?></strong> on the front-end.
 					</li>
 					<li>
-						<?php if ( $nebula_options['jquery_version'] === 'wordpress' ): ?>
+						<?php if ( $nebula_options['jquery_location'] === 'wordpress' ): ?>
 							Nebula is using the <strong class="nebula-enabled">WordPress Core version of jQuery</strong> without modification.
 						<?php else: ?>
-							Nebula is using the <strong class="nebula-disabled">latest version of jQuery</strong> and calling it from the <strong><?php echo ( $nebula_options['jquery_version'] === 'latest' )? '&lt;head&gt;' : '&lt;footer&gt;'; ?></strong>.
+							Nebula is <strong class="nebula-disabled">moving jQuery to the &lt;footer&gt;</strong>.
 						<?php endif; ?>
 					</li>
 					<li>

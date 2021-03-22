@@ -215,7 +215,7 @@ if ( !trait_exists('Options') ){
 				'pinterest_url' => '',
 
 				//Functions Tab
-				'jquery_version' => 'wordpress',
+				'jquery_location' => 'wordpress',
 				'bootstrap_version' => 'latest',
 				'allow_bootstrap_js' => 1,
 				'limit_image_dimensions' => 0,

@@ -12,7 +12,7 @@ jQuery(function(){
 		jQuery('html').addClass('svg');
 	}
 
-	jQuery('#lostpasswordform').submit(function(){
+	jQuery(document).on('submit', '#lostpasswordform', function(){
 		ga('send', 'event', 'Login', 'Password Reset', 'Password reset for ' + jQuery('#user_login').val());
 	});
 });

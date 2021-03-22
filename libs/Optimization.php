@@ -19,11 +19,9 @@ if ( !trait_exists('Optimization') ){
 			if ( !$this->is_ajax_or_rest_request() ){
 				if ( !$this->is_admin_page(true) ){
 					add_filter('wp_enqueue_scripts', array($this, 'defer_async_additional_scripts'));
-
 					add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
 					add_action('wp_footer', array($this, 'dequeue_lazy_load_scripts'));
 
-					add_filter('wp_default_scripts', array($this, 'remove_jquery_migrate'));
 					add_action('wp_enqueue_scripts', array($this, 'move_jquery_to_footer'));
 					add_action('wp_head', array($this, 'listen_for_jquery_footer_errors'));
 				}
@@ -705,11 +703,9 @@ if ( !trait_exists('Optimization') ){
 				return;
 			}
 
-			if ( !$this->is_admin_page(true) && $this->get_option('jquery_version') === 'footer' ){
+			if ( !$this->is_admin_page(true) && $this->get_option('jquery_location') === 'footer' ){
 				wp_script_add_data('jquery', 'group', 1);
 				wp_script_add_data('jquery-core', 'group', 1);
-				wp_script_add_data('jquery-migrate', 'group', 1);
-
 			}
 		}
 
@@ -721,7 +717,7 @@ if ( !trait_exists('Optimization') ){
 				return;
 			}
 
-			if ( !$this->is_admin_page(true) && $this->get_option('jquery_version') === 'footer' ){
+			if ( !$this->is_admin_page(true) && $this->get_option('jquery_location') === 'footer' ){
 				if ( $this->is_dev() ){
 					?>
 					<script>
@@ -736,14 +732,6 @@ if ( !trait_exists('Optimization') ){
 					</script>
 					<?php
 				}
-			}
-		}
-
-		//Remove jQuery Migrate, but keep jQuery
-		public function remove_jquery_migrate($scripts){
-			if ( !$this->is_admin_page(true) && $this->get_option('jquery_version') !== 'wordpress' ){
-				$scripts->remove('jquery');
-				$scripts->add('jquery', false, array('jquery-core'), null);
 			}
 		}
 
