@@ -89,7 +89,7 @@ th#id {width: 50px;}
 img#performance-screenshot {max-width: 100%;}
 
 ul#nebula-performance-metrics li {
-	&.warn i {color: orange;} //Only color the icon for warnings
+	&.warning i {color: orange;} //Only color the icon for warnings
 	&.error {color: $danger_color;} //Color the entire line for errors
 }
 
@@ -267,7 +267,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 				i, path {color: readable-color($primary_color); fill: readable-color($primary_color);}
 			}
 
-			i.empty-important-tab-warn {color: #d9534f !important; line-height: 24px; float: right;}
+			i.empty-important-tab-warning {color: #d9534f !important; line-height: 24px; float: right;}
 		}
 	}
 

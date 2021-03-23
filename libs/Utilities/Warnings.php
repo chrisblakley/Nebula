@@ -7,10 +7,11 @@ if ( !trait_exists('Warnings') ){
 		public function hooks(){
 			$this->warnings = false;
 
-			if ( is_user_logged_in() && !$this->is_ajax_or_rest_request() && !is_customize_preview() ){
+			if ( is_user_logged_in() && !$this->is_background_request() && !is_customize_preview() ){
 				add_action('wp_head', array($this, 'console_warnings'));
 				add_filter('nebula_warnings', array($this, 'advanced_warnings'));
 				add_action('wp_footer', array($this, 'advanced_warning_output'), 9999); //Late execution as possible
+				add_action('admin_bar_menu', array($this, 'qm_warnings'));
 			}
 		}
 
@@ -50,13 +51,23 @@ if ( !trait_exists('Warnings') ){
 			}
 		}
 
+		//Report warnings to Query Monitor
+		public function qm_warnings(){
+			$this->warnings = $this->check_warnings();
+
+			if ( !empty($this->warnings) ){
+				foreach( $this->warnings as $warning ){
+					$category = ( !empty($warning['category']) )? $warning['category'] : 'Nebula';
+					do_action('qm/debug', '[' . $category . ']' . strip_tags($warning['description'])); //Use "debug" to log without coloring the admin bar (which is redundant since the Nebula admin bar menu designates those warnings)
+				}
+			}
+		}
+
 		//Check for Nebula warnings
 		public function check_warnings(){
 			if ( $this->is_ajax_request() ){
 				return false;
 			}
-
-			$this->timer('Check Warnings');
 
 			if ( $this->is_auditing() || $this->is_warning_level('on') ){
 				//Check object cache first
@@ -66,6 +77,7 @@ if ( !trait_exists('Warnings') ){
 					return $nebula_warnings;
 				}
 
+				$this->timer('Check Warnings');
 				$nebula_warnings = array(); //Prep the warnings array to fill
 
 				//Admin warnings only
@@ -135,7 +147,7 @@ if ( !trait_exists('Warnings') ){
 							if ( !$this->is_available(home_url('/') . 'sitemap_index.xml', false, true) ){
 								$sitemap_warning = true;
 								$nebula_warnings[] = array(
-									'level' => 'warn',
+									'level' => 'warning',
 									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. Yoast is enabled, but <a href="' . home_url('/') . 'sitemap_index.xml' . '" target="_blank">sitemap_index.xml</a> is unavailable.'
 								);
 							}
@@ -143,7 +155,7 @@ if ( !trait_exists('Warnings') ){
 							if ( !$this->is_available(home_url('/') . 'sitemap.xml', false, true) ){
 								$sitemap_warning = true;
 								$nebula_warnings[] = array(
-									'level' => 'warn',
+									'level' => 'warning',
 									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. The SEO Framework is enabled, but <a href="' . home_url('/') . 'sitemap.xml' . '" target="_blank">sitemap.xml</a> is unavailable.'
 								);
 							}
@@ -151,7 +163,7 @@ if ( !trait_exists('Warnings') ){
 							if ( !$this->is_available(home_url('/') . 'wp-sitemap.xml', false, true)  ){ //WordPress Core
 								$sitemap_warning = true;
 								$nebula_warnings[] = array(
-									'level' => 'warn',
+									'level' => 'warning',
 									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. WordPress core <a href="' . home_url('/') . 'wp-sitemap.xml' . '" target="_blank">sitemap_index.xml</a> is unavailable.'
 								);
 
@@ -159,7 +171,7 @@ if ( !trait_exists('Warnings') ){
 								if ( !function_exists('simplexml_load_string') ){
 									$sitemap_warning = true;
 									$nebula_warnings[] = array(
-										'level' => 'warn',
+										'level' => 'warning',
 										'description' => '<i class="fas fa-fw fa-sitemap"></i> SimpleXML PHP module is not available. This is required for WordPress core sitemap generation.'
 									);
 								}
@@ -177,7 +189,7 @@ if ( !trait_exists('Warnings') ){
 						$ping_sites = get_option('ping_sites');
 						if ( empty($ping_sites) || $ping_sites === 'http://rpc.pingomatic.com/' ){ //If it is empty or only has the default value
 							$nebula_warnings[] = array(
-								'level' => 'warn',
+								'level' => 'warning',
 								'description' => '<i class="fas fa-fw fa-rss"></i> Additional <a href="options-writing.php">Update Services</a> should be pinged. <a href="https://codex.wordpress.org/Update_Services#XML-RPC_Ping_Services" target="_blank" rel="noopener">Recommended update services &raquo;</a>',
 								'url' => admin_url('options-writing.php')
 							);
@@ -191,7 +203,7 @@ if ( !trait_exists('Warnings') ){
 					if ( $php_version_lifecycle['lifecycle'] === 'security' ){
 						if ( $php_version_lifecycle['end']-time() < MONTH_IN_SECONDS ){ //If end of life is within 1 month
 							$nebula_warnings[] = array(
-								'level' => 'warn',
+								'level' => 'warning',
 								'description' => '<i class="fab fa-fw fa-php"></i> PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end in ' . human_time_diff($php_version_lifecycle['end']) . ' on ' . date('F j, Y', $php_version_lifecycle['end']) . '.',
 								'url' => 'http://php.net/supported-versions.php',
 								'meta' => array('target' => '_blank', 'rel' => 'noopener')
@@ -240,7 +252,7 @@ if ( !trait_exists('Warnings') ){
 									//If file was last modified before the year 2000
 									if ( filemtime($file) < 946702800 ){ //PHP 7.4 use numeric separators here
 										$nebula_warnings[] = array(
-											'level' => 'warn',
+											'level' => 'warning',
 											'description' => '<i class="fas fa-fw fa-hourglass-start"></i> <strong>' . $file . '</strong> was last modified on ' . date('F j, Y', filemtime($file)) . '. This is somewhat unusual and should be looked into.'
 										);
 									}
@@ -248,7 +260,7 @@ if ( !trait_exists('Warnings') ){
 									//If the file size is larger than 10mb
 									if ( filesize($file) > 10485760 ){ //PHP 7.4 use numeric separators here
 										$nebula_warnings[] = array(
-											'level' => 'warn',
+											'level' => 'warning',
 											'description' => '<i class="fas fa-fw fa-file"></i> <strong>' . $file . '</strong> has a large filesize of ' . bcdiv(filesize($file), 1048576, 0) . 'mb.' //PHP 7.4 use numeric separators here
 										);
 									}
@@ -267,7 +279,7 @@ if ( !trait_exists('Warnings') ){
 					foreach ( $log_file_locations as $log_file ){
 						if ( file_exists($log_file) && filesize($log_file) > 26214400 ){ //If <25mb //PHP 7.4 use numeric separators here
 							$nebula_warnings[] = array(
-								'level' => 'warn',
+								'level' => 'warning',
 								'description' => '<i class="fas fa-fw fa-weight"></i> Large debug file: <strong>' . $log_file . '</strong>',
 							);
 						}
@@ -277,13 +289,13 @@ if ( !trait_exists('Warnings') ){
 				//Check for hard Debug Mode
 				if ( $this->is_warning_level('verbose') && WP_DEBUG ){
 					$nebula_warnings[] = array(
-						'level' => 'warn',
+						'level' => 'warning',
 						'description' => '<i class="fas fa-fw fa-bug"></i> <strong>WP_DEBUG</strong> is enabled <small>(Generally defined in wp-config.php)</small>'
 					);
 
 					if ( WP_DEBUG_LOG ){
 						$nebula_warnings[] = array(
-							'level' => 'warn',
+							'level' => 'warning',
 							'description' => '<i class="fas fa-fw fa-bug"></i> Debug logging (<strong>WP_DEBUG_LOG</strong>) to /wp-content/debug.log is enabled <small>(Generally defined in wp-config.php)</small>'
 						);
 					}
@@ -364,7 +376,7 @@ if ( !trait_exists('Warnings') ){
 
 					if ( get_option('relevanssi_index_fields') === 'none' ){
 						$nebula_warnings[] = array(
-							'level' => 'warn',
+							'level' => 'warning',
 							'description' => '<i class="fas fa-fw fa-search-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> is not set to search custom fields.',
 							'url' => admin_url('options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing')
 						);
@@ -404,7 +416,7 @@ if ( !trait_exists('Warnings') ){
 						$offline_page = get_page_by_path('offline');
 						if ( is_null($offline_page) ){
 							$nebula_warnings[] = array(
-								'level' => 'warn',
+								'level' => 'warning',
 								'description' => '<i class="fas fa-fw fa-ethernet"></i> It is recommended to make an Offline page when using Service Worker. <a href="post-new.php?post_type=page">Manually add one</a>'
 							);
 						}
@@ -413,7 +425,7 @@ if ( !trait_exists('Warnings') ){
 					//Check for SSL when using Service Worker
 					if ( !is_ssl() ){
 						$nebula_warnings[] = array(
-							'level' => 'warn',
+							'level' => 'warning',
 							'description' => '<i class="fas fa-fw fa-lock-open"></i> Service Worker requires an SSL. Either update the site to https or <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">disable Service Worker</a>.'
 						);
 					}
@@ -422,7 +434,7 @@ if ( !trait_exists('Warnings') ){
 				//Check for "Just Another WordPress Blog" tagline
 				if ( strtolower(get_bloginfo('description')) === 'just another wordpress site' ){
 					$nebula_warnings[] = array(
-						'level' => 'warn',
+						'level' => 'warning',
 						'description' => '<a href="options-general.php">Site Tagline</a> is still "Just Another WordPress Site"!',
 						'url' => admin_url('options-general.php')
 					);
@@ -431,7 +443,7 @@ if ( !trait_exists('Warnings') ){
 				//Ensure a privacy policy is set with WordPress core
 				if ( empty(get_privacy_policy_url()) ){
 					$nebula_warnings[] = array(
-						'level' => 'warn',
+						'level' => 'warning',
 						'description' => '<i class="fas fa-fw fa-file-alt"></i> <a href="options-privacy.php">Privacy policy</a> is not setup with WordPress.',
 						'url' => admin_url('options-privacy.php')
 					);
@@ -458,7 +470,7 @@ if ( !trait_exists('Warnings') ){
 				//Sort by warning level
 				if ( !empty($all_nebula_warnings) ){
 					usort($all_nebula_warnings, function($itemA, $itemB){
-						$priorities = array('error', 'warn', 'log');
+						$priorities = array('error', 'warning', 'log');
 						$a = array_search($itemA['level'], $priorities);
 						$b = array_search($itemB['level'], $priorities);
 
@@ -490,7 +502,7 @@ if ( !trait_exists('Warnings') ){
 					$email_domain = substr($default_contact_email, strpos($default_contact_email, "@")+1);
 					if ( $email_domain !== $this->url_components('domain') ){
 						$nebula_warnings[] = array(
-							'level' => 'warn',
+							'level' => 'warning',
 							'description' => '<i class="fas fa-fw fa-address-card"></i> <a href="themes.php?page=nebula_options&tab=metadata&option=contact_email">Default contact email domain</a> (<code>' . $email_domain . '</code>) does not match website (<code>' . $this->url_components('domain') . '</code>). This email address will appear in metadata, so please verify this is acceptable.',
 							'url' => admin_url('themes.php?page=nebula_options&tab=metadata&option=contact_email')
 						);
@@ -505,7 +517,7 @@ if ( !trait_exists('Warnings') ){
 					}
 
 					$nebula_warnings[] = array(
-						'level' => 'warn',
+						'level' => 'warning',
 						'description' => '<i class="far fa-fw fa-file-alt"></i> The WordPress core <a href="' . home_url('/') . 'readme.html">readme.html</a> file exists (which exposes version information) and ' . $description,
 						'url' => home_url('/') . 'readme.html'
 					);
@@ -514,7 +526,7 @@ if ( !trait_exists('Warnings') ){
 				//Check if max upload size is different from max post size
 				if ( ini_get('upload_max_filesize') !== ini_get('post_max_size') ){
 					$nebula_warnings[] = array(
-						'level' => 'warn',
+						'level' => 'warning',
 						'description' => '<i class="far fa-fw fa-file-alt"></i> The <code>post_max_size</code> (' . ini_get('post_max_size') . ') is different from the <code>upload_max_filesize</code> (' . ini_get('upload_max_filesize') . ').',
 					);
 				}
@@ -540,7 +552,7 @@ if ( !trait_exists('Warnings') ){
 							);
 						} elseif ( $disk_space_free < $path['low'] ){
 							$nebula_warnings[] = array(
-								'level' => 'warn',
+								'level' => 'warning',
 								'description' => '<i class="far fa-fw fa-hdd"></i> Low disk space available in <strong>' . $path['directory'] . '</strong>. Only <strong>' . round($disk_space_free, 2) . 'gb</strong> remaining.'
 							);
 						}
@@ -606,18 +618,18 @@ if ( !trait_exists('Warnings') ){
 											if ( !empty($details) ){
 												if ( $category === 'debug_output' ){
 													$nebula_warnings[] = array(
-														'level' => 'warn',
+														'level' => 'warning',
 														'description' => '<i class="fas fa-fw fa-bug"></i> Possible debug output in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . ($line_number+1) . '</strong>.'
 													);
 												} elseif ( $category === 'bootstrap_js' ){
 													$nebula_warnings[] = array(
-														'level' => 'warn',
+														'level' => 'warning',
 														'description' => '<i class="fab fa-fw fa-bootstrap"></i> <a href="themes.php?page=nebula_options&tab=functions&option=allow_bootstrap_js">Bootstrap JS is disabled</a>, but is possibly needed in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . $line_number . '</strong>.',
 														'url' => admin_url('themes.php?page=nebula_options&tab=functions&option=allow_bootstrap_js')
 													);
 												} elseif ( $category === 'custom' ){
 													$nebula_warnings[] = array(
-														'level' => 'warn',
+														'level' => 'warning',
 														'description' => '<i class="fas fa-fw fa-bug"></i> Possible unintentional output detected in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . ($line_number+1) . '</strong>.'
 													);
 												}
@@ -636,7 +648,7 @@ if ( !trait_exists('Warnings') ){
 						if ( $word_count < 1900 ){
 							$word_count_warning = ( $word_count === 0 )? 'Word count audit is not looking for custom fields outside of the main content editor. <a href="https://nebula.gearside.com/functions/word_count/?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=word+count+audit+warning" target="_blank">Hook custom fields into the Nebula word count functionality</a> to properly audit.' : 'Word count (' . $word_count . ') is low for SEO purposes (Over 1,000 is good, but 1,900+ is ideal). <small>Note: Detected word count may not include custom fields!</small>';
 							$nebula_warnings[] = array(
-								'level' => 'warn',
+								'level' => 'warning',
 								'description' => '<i class="far fa-fw fa-file"></i> ' . $word_count_warning,
 								'url' => get_edit_post_link(get_the_id()),
 								'meta' => array('target' => '_blank', 'rel' => 'noopener')
@@ -648,7 +660,7 @@ if ( !trait_exists('Warnings') ){
 				//Check for Yoast or The SEO Framework plugins
 				if ( !is_plugin_active('wordpress-seo/wp-seo.php') && !is_plugin_active('autodescription/autodescription.php') ){
 					$nebula_warnings[] = array(
-						'level' => 'warn',
+						'level' => 'warning',
 						'description' => '<i class="fas fa-fw fa-search-plus"></i> A recommended SEO plugin is not active.',
 						'url' => admin_url('themes.php?page=tgmpa-install-plugins')
 					);

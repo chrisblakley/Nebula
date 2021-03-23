@@ -240,11 +240,11 @@ nebula.checkImportants = function(){
 
 	jQuery('.tab-pane').each(function(){
 		if ( jQuery(this).find('.important-empty').length ){
-			if ( !jQuery('.nav-link[href$=' + jQuery(this).attr('id') + '] .empty-important-tab-warn').length ){ //If the warning isn't already showing
-				jQuery('.nav-link[href$=' + jQuery(this).attr('id') + ']').append('<i class="fas fa-fw fa-exclamation-triangle empty-important-tab-warn"></i>');
+			if ( !jQuery('.nav-link[href$=' + jQuery(this).attr('id') + '] .empty-important-tab-warning').length ){ //If the warning isn't already showing
+				jQuery('.nav-link[href$=' + jQuery(this).attr('id') + ']').append('<i class="fas fa-fw fa-exclamation-triangle empty-important-tab-warning"></i>');
 			}
 		} else {
-			jQuery('.nav-link[href$=' + jQuery(this).attr('id') + ']').find('.empty-important-tab-warn').remove();
+			jQuery('.nav-link[href$=' + jQuery(this).attr('id') + ']').find('.empty-important-tab-warnings').remove();
 		}
 	});
 };

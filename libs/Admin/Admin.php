@@ -49,7 +49,7 @@ if ( !trait_exists('Admin') ){
 			}
 
 			//Non-AJAX admin pages
-			if ( $this->is_admin_page() && !$this->is_ajax_or_rest_request() ){
+			if ( $this->is_admin_page() && !$this->is_background_request() ){
 				add_action('admin_head', array($this, 'admin_favicon'));
 				add_action('admin_head', array($this, 'admin_ga_pageview'));
 				add_filter('admin_body_class', array($this, 'admin_body_classes'));
@@ -726,7 +726,7 @@ if ( !trait_exists('Admin') ){
 
 						if ( $warning['level'] === 'error' ){
 							$warning_icon = 'fa-exclamation-triangle';
-						} elseif ( $warning['level'] === 'warn' ){
+						} elseif ( $warning['level'] === 'warning' ){
 							$warning_icon = 'fa-info-circle';
 						}
 
@@ -972,7 +972,7 @@ if ( !trait_exists('Admin') ){
 						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings > .ab-item,
 						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings > svg {color: #fff;}
 						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings .level-error svg {color: #ca3838;}
-						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings .level-warn svg {color: #f6b83f;}
+						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings .level-warning svg {color: #f6b83f;}
 
 					#wpadminbar:not(.mobile) .deregistered-asset-info {color: #f6b83f;}
 					#wpadminbar:not(.mobile) #wp-admin-bar-nebula-deregisters > .ab-item {background: #f6b83f; color: #000; transition: all 0.25s ease;}
@@ -1280,7 +1280,7 @@ if ( !trait_exists('Admin') ){
 				foreach( $warnings as $warning ){
 					$category = ( !empty($warning['category']) )? '[' . $warning['category'] . ']' : '[Nebula]';
 
-					if ( $warning['level'] === 'warn' ){
+					if ( $warning['level'] === 'warning' ){
 						$warning['level'] = 'warning';
 					}
 

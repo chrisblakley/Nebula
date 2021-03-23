@@ -5,7 +5,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Device') ){
 	trait Device {
 		public function hooks(){
-			if ( !$this->is_ajax_or_rest_request() && !is_customize_preview() ){
+			if ( !$this->is_background_request() && !is_customize_preview() ){
 				add_action('init', array($this, 'detect'));
 			}
 		}
@@ -24,7 +24,7 @@ if ( !trait_exists('Device') ){
 
 				$this->device = new DeviceDetector\DeviceDetector($_SERVER['HTTP_USER_AGENT']);
 				$this->device->discardBotInformation(); //If called, getBot() will only return true if a bot was detected (speeds up detection a bit)
-				$this->device->parse();
+				$this->device->parse(); //Note: this is considerably slow (~0.5s)
 
 				$this->timer('Device Detection', 'end');
 			}
@@ -377,6 +377,5 @@ if ( !trait_exists('Device') ){
 
 			return false;
 		}
-
 	}
 }

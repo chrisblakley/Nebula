@@ -4,6 +4,8 @@
 		exit;
 	}
 
+	nebula()->timer('Metadata', 'start');
+
 	global $post;
 	$image_meta_directory = get_theme_file_uri('/assets/img/meta'); //Use this and concatenate the filenames so that it will never revert back to the parent theme if individual meta images are missing.
 	$cache_query = ( nebula()->is_debug() )? '?nocache' . mt_rand(1000, mt_getrandmax()) . '=debug' . mt_rand(1000, mt_getrandmax()) : ''; //Add a random query string when debugging to force-clear the cache.
@@ -394,4 +396,7 @@
 	</script>
 <?php endif; ?>
 
-<?php do_action('nebula_metadata_end'); ?>
+<?php
+	nebula()->timer('Metadata', 'end');
+	do_action('nebula_metadata_end');
+?>

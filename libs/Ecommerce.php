@@ -24,7 +24,7 @@ if ( !trait_exists('Ecommerce') ){
 					add_filter('nebula_warnings', array($this, 'woocommerce_admin_notices'));
 				}
 
-				if ( !$this->is_ajax_or_rest_request() ){
+				if ( !$this->is_background_request() ){
 					add_action('nebula_ga_before_send_pageview', array($this, 'woo_custom_ga_dimensions'));
 					add_action('nebula_ga_after_send_pageview', array($this, 'woo_custom_ga_events'));
 				}

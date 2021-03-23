@@ -8,7 +8,7 @@ if ( !trait_exists('Users') ){
 			add_action('init', array($this, 'users_status_init')); //This happens on all pages (front-end and admin)
 
 			//Exclude AJAX and REST requests
-			if ( !$this->is_ajax_or_rest_request() ){
+			if ( !$this->is_background_request() ){
 				add_action('user_register', array($this, 'detect_new_admin_users'));
 
 				add_filter('manage_users_columns', array($this, 'user_columns_head'));

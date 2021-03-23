@@ -7,6 +7,8 @@
  See instructions for template directories and function overrides in ../functions.php
  ===========================*/
 
+//When adding potentially time consuming functionality, consider using nebula()->timer('Task Name') to monitor performance: https://nebula.gearside.com/functions/timer/
+
 //Add new image sizes
 //Certain sizes (like FB Open Graph sizes) are already added, so only add extra sizes that are needed.
 //add_action('after_setup_theme', function(){

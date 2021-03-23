@@ -889,8 +889,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Get a remote resource and if unavailable, don't re-check the resource for 5 minutes.
 		public function remote_get($url, $args=null){
-			$timer_name = str_replace(array('.', '/'), '_', $this->url_components('filename', $url));
-			$timer_name = $this->timer('Remote Get (' . $timer_name . ')', 'start', 'Remote Get');
+			//$timer_name = str_replace(array('.', '/'), '_', $this->url_components('filename', $url));
+			$timer_name = $this->timer('Remote Get (' . $url . ')', 'start', 'Remote Get');
 
 			//Must be a valid URL
 			if ( empty($url) || strpos($url, 'http') !== 0 ){
@@ -917,8 +917,8 @@ if ( !trait_exists('Utilities') ){
 			return $response;
 		}
 
-		//If this request is using AJAX, REST API, or some other type of special request. This can be used to ignore non-essential functionality to speed up those requests.
-		public function is_ajax_or_rest_request(){
+		//If this request is using AJAX, REST API, CRON, or some other type of background request. This can be used to ignore non-essential/visual functionality to speed up those requests.
+		public function is_background_request(){
 			//Check for AJAX
 			if ( wp_doing_ajax() ){
 				return true;
@@ -1058,6 +1058,8 @@ if ( !trait_exists('Utilities') ){
 					$unique_id .= '_d' . rand(10000, 99999);
 				}
 
+				do_action('qm/start', $unique_id); //Inform Query Monitor as well
+
 				$this->server_timings[$unique_id] = array(
 					'start' => microtime(true),
 					'active' => true,
@@ -1078,6 +1080,8 @@ if ( !trait_exists('Utilities') ){
 
 				return $unique_id; //Return the unique ID in case it was changed so that the 'end' call can know what to use
 			} elseif ( in_array(strtolower($action), array('stop', 'end')) ){
+				do_action('qm/stop', $unique_id); //Inform Query Monitor as well
+
 				if ( !empty($this->server_timings[$unique_id]['start']) ){ //Make sure this timer has started
 					$this->server_timings[$unique_id]['end'] = microtime(true);
 					$this->server_timings[$unique_id]['time'] = $this->server_timings[$unique_id]['end'] - $this->server_timings[$unique_id]['start'];

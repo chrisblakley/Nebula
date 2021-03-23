@@ -9,14 +9,14 @@ if ( !trait_exists('Optimization') ){
 		public function hooks(){
 			$this->deregistered_assets = array('styles' => array(), 'scripts' => array());
 
-			if ( $this->get_option('service_worker') && !$this->is_ajax_or_rest_request() && !is_customize_preview() ){
+			if ( $this->get_option('service_worker') && !$this->is_background_request() && !is_customize_preview() ){
 				add_action('send_headers', array($this, 'nebula_http2_ob_start'));
 				add_action('wp_enqueue_scripts', array($this, 'styles_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
 				add_action('wp_enqueue_scripts', array($this, 'scripts_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
 			}
 
 			//Non-WordPress Admin optimizations
-			if ( !$this->is_ajax_or_rest_request() ){
+			if ( !$this->is_background_request() ){
 				if ( !$this->is_admin_page(true) ){
 					add_filter('wp_enqueue_scripts', array($this, 'defer_async_additional_scripts'));
 					add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
@@ -32,7 +32,7 @@ if ( !trait_exists('Optimization') ){
 			add_action('wp_head', array($this, 'prebrowsing'));
 
 			//Dequeue assets depending on when they are hooked for output
-			if ( !$this->is_ajax_or_rest_request() ){
+			if ( !$this->is_background_request() ){
 				add_action('wp_enqueue_scripts', array($this, 'scan_assets'), 9000);
 				add_action('wp_enqueue_scripts', array($this, 'dequeues'), 9001); //Dequeue styles and scripts that are hooked into the wp_enqueue_scripts action
 				add_action('wp_print_styles', array($this, 'dequeues'), 9001); //Dequeue styles that are hooked into the wp_print_styles action
@@ -590,6 +590,11 @@ if ( !trait_exists('Optimization') ){
 			if ( isset($override) ){return;}
 
 			if ( !is_admin() ){
+				//Get the last WordPress action handle that was called (so we know which one we are likely "inside")
+				$action_keys = array_keys($GLOBALS['wp_actions']); //Store in a variable first so only the variable is passed to end() as a reference
+				$last_action = end($action_keys); //Change to array_key_last($GLOBALS['wp_actions']) when PHP 7.3 is minimum version
+
+				$timer_name = $this->timer('Advanced Dequeues (' . $last_action . ')', 'start');
 				$this->deregister('contact-form-7', 'style'); //Removing CF7 styles in favor of Bootstrap + Nebula
 				$this->deregister('wp-embed', 'script'); //WP Core WP-Embed - Override this only if embedding external WordPress posts into this WordPress site. Other oEmbeds are NOT AFFECTED by this!
 
@@ -598,10 +603,6 @@ if ( !trait_exists('Optimization') ){
 					$this->deregister('thickbox', 'style'); //WP Core Thickbox - Override this if thickbox type gallery IS used on the homepage.
 					$this->deregister('thickbox', 'script'); //WP Thickbox - Override this if thickbox type gallery IS used on the homepage.
 				}
-
-				//Get the last WordPress action handle that was called (so we know which one we are likely "inside")
-				$action_keys = array_keys($GLOBALS['wp_actions']); //Store in a variable first so only the variable is passed to end() as a reference
-				$last_action = end($action_keys); //Change to array_key_last($GLOBALS['wp_actions']) when PHP 7.3 is minimum version
 
 				if ( !empty($last_action) ){
 					//Dequeue styles based on selected Nebula options
@@ -620,6 +621,8 @@ if ( !trait_exists('Optimization') ){
 						}
 					}
 				}
+
+				$this->timer($timer_name, 'end');
 			}
 		}
 
@@ -822,7 +825,7 @@ if ( !trait_exists('Optimization') ){
 		//This markup can be, and is used hard-coded in other places. This is handled by Chrome 75+ natively.
 		public function lazy_load($html=''){
 			//Ignore lazy loading wrappers on AJAX requests
-			if ( $this->is_ajax_or_rest_request() ){
+			if ( $this->is_background_request() ){
 				echo $html;
 				return false;
 			}

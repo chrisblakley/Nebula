@@ -534,7 +534,7 @@ nebula.appendPerformanceMetric = function(data){
 				warningLevel = 'error';
 				icon = '<i class="fa-fw fas fa-exclamation-triangle"></i>';
 			} else if ( data.value > data.warning ){
-				warningLevel = 'warn';
+				warningLevel = 'warning';
 				icon = '<i class="fa-fw fas fa-exclamation-circle"></i>';
 			}
 		}

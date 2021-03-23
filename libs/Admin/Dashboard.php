@@ -6,7 +6,7 @@ if ( !trait_exists('Dashboard') ){
 	trait Dashboard {
 		public function hooks(){
 			//Exclude AJAX requests
-			if ( !$this->is_ajax_or_rest_request() ){
+			if ( !$this->is_background_request() ){
 				//Remove unnecessary Dashboard metaboxes
 				if ( $this->get_option('unnecessary_metaboxes') ){
 					add_action('wp_dashboard_setup', array($this, 'remove_dashboard_metaboxes'));

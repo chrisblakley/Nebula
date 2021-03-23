@@ -51,7 +51,7 @@ trait Functions {
 		add_action('pre_get_posts', array($this, 'redirect_empty_search'));
 		add_action('template_redirect', array($this, 'redirect_single_search_result'));
 
-		if ( !$this->is_ajax_or_rest_request() ){
+		if ( !$this->is_background_request() ){
 			add_action('wp_head', array($this, 'arbitrary_code_head'), 1000);
 			add_action('nebula_body_open', array($this, 'arbitrary_code_body'), 1000);
 			add_action('wp_footer', array($this, 'arbitrary_code_footer'), 1000);
@@ -2658,6 +2658,7 @@ trait Functions {
 	//404 page suggestions
 	public function internal_suggestions(){
 		if ( is_404() ){
+			$this->timer('Internal Suggestions', 'start');
 			$this->ga_send_exception('(PHP) 404 Error for requested URL: ' . $this->url_components()); //Track 404 error pages as exceptions in Google Analytics
 
 			$this->slug_keywords = array_filter(explode('/', $this->url_components('filepath'))); //Convert the requested filepath into an array (ignore query strings and remove empty items)
@@ -2675,6 +2676,8 @@ trait Functions {
 					$this->error_404_exact_match = $this->error_query->posts[0];
 				}
 			}
+
+			$this->timer('Internal Suggestions', 'end');
 		}
 	}
 
@@ -3091,8 +3094,12 @@ trait Functions {
 	//Flush rewrite rules when using ?debug at shutdown
 	public function flush_rewrite_on_debug(){
 		if ( $this->is_debug() ){
+			$this->timer('Flush Rewrite Rules', 'start');
+
 			flush_rewrite_rules(); //Note: this is an expensive operation
 			$this->update_child_version_number();
+
+			$this->timer('Flush Rewrite Rules', 'end');
 		}
 	}
 }

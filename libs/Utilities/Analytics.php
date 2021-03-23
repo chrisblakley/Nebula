@@ -9,7 +9,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Analytics') ){
 	trait Analytics {
 		public function hooks(){
-			if ( !$this->is_ajax_or_rest_request() && !is_customize_preview() ){
+			if ( !$this->is_background_request() && !is_customize_preview() ){
 				add_filter('nebula_brain', array($this, 'ga_definitions'));
 
 				add_filter('the_permalink_rss', array($this, 'add_utm_to_feeds'), 100);

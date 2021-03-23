@@ -37,6 +37,7 @@ if ( !trait_exists('Logs') ){
 			$message = '[' . date('l, F j, Y - g:i:sa') . '] ' . $message . ' (on ' . $this->requested_url() . ')' . PHP_EOL; //Add timestamp, URL, and newline
 
 			file_put_contents($filepath, $message, FILE_APPEND); //Create the log file if needed and append to it
+			do_action('qm/debug', $message); //Log it in Query Monitor as well
 		}
 
 		//Register table name in $wpdb global

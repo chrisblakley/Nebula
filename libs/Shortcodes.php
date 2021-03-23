@@ -373,7 +373,7 @@ if ( !trait_exists('Shortcodes') ){
 		public function pre_shortcode($atts, $content=''){
 			extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'force' => false, 'br' => false, 'class' => '', 'style' => ''), $atts));
 
-			if ( empty($this->shortcode_flags['pre']) && !nebula()->is_ajax_or_rest_request() ){
+			if ( empty($this->shortcode_flags['pre']) && !nebula()->is_background_request() ){
 				echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/assets/css/pre.css" />';
 				$this->shortcode_flags['pre'] = 1;
 			}
@@ -405,7 +405,7 @@ if ( !trait_exists('Shortcodes') ){
 		public function gist_shortcode($atts, $content=''){
 			extract(shortcode_atts(array('lang' => '', 'language' => '', 'color' => '', 'file' => '', 'class' => '', 'style' => ''), $atts));
 
-			if ( empty($this->shortcode_flags['pre']) && !nebula()->is_ajax_or_rest_request() ){
+			if ( empty($this->shortcode_flags['pre']) && !nebula()->is_background_request() ){
 				echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/assets/css/pre.css" />';
 				$this->shortcode_flags['pre'] = 1;
 			}
@@ -437,7 +437,7 @@ if ( !trait_exists('Shortcodes') ){
 				global $wp_filesystem;
 				$file_contents = $wp_filesystem->get_contents($file);
 
-				if ( empty($this->shortcode_flags['pre']) && !nebula()->is_ajax_or_rest_request() ){
+				if ( empty($this->shortcode_flags['pre']) && !nebula()->is_background_request() ){
 					echo '<link rel="stylesheet" type="text/css" href="' . get_template_directory_uri() . '/assets/css/pre.css" />';
 					$this->shortcode_flags['pre'] = 1;
 				}

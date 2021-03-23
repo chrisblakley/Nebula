@@ -5,7 +5,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Assets') ){
 	trait Assets {
 		public function hooks(){
-			if ( !$this->is_ajax_or_rest_request() ){
+			if ( !$this->is_background_request() ){
 				//Register styles/scripts
 				add_action('wp_enqueue_scripts', array($this, 'register_scripts'));
 				add_action('login_enqueue_scripts', array($this, 'register_scripts'));
@@ -356,7 +356,7 @@ if ( !trait_exists('Assets') ){
 			$current_screen = get_current_screen();
 
 			//Exclude AJAX and REST requests
-			if ( !$this->is_ajax_or_rest_request() ){
+			if ( !$this->is_background_request() ){
 				//Stylesheets
 				wp_enqueue_style('nebula-admin');
 				wp_enqueue_style('nebula-font_awesome');

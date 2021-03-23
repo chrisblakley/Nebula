@@ -10,7 +10,7 @@ if ( !trait_exists('Sass') ){
 			$this->was_sass_processed = false;
 			$this->latest_scss_mtime = 0; //Prep a flag to determine the last modified SCSS file
 
-			if ( !$this->is_ajax_or_rest_request() && !is_customize_preview() ){
+			if ( !$this->is_background_request() && !is_customize_preview() ){
 				add_action('init', array($this, 'scss_controller'));
 				add_action('nebula_body_open', array($this, 'output_sass_errors')); //Front-end
 				add_action('admin_notices', array($this, 'output_sass_errors')); //Admin (Do not use Nebula Warnings utility for these errors)
@@ -32,11 +32,13 @@ if ( !trait_exists('Sass') ){
 			}
 		 ===========================*/
 		public function scss_controller($force_all = false){
+			$this->timer('Sass (Total)', 'start', 'Sass');
+
 			$sass_throttle = get_transient('nebula_sass_throttle'); //This prevents Sass from compiling multiple times in quick succession
 			if ( empty($sass_throttle) || $this->is_debug() ){
 				$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not throttled (so okay to process).' : $this->sass_process_status;
 
-				if ( $this->get_option('scss') && !$this->is_ajax_or_rest_request() && !$this->is_bot() ){
+				if ( $this->get_option('scss') && !$this->is_background_request() && !$this->is_bot() ){
 					$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass is enabled, and the request is okay to process.' : $this->sass_process_status;
 
 					//Ignore fetch requests (like via Service Worker) - Only process Sass on certain requests SW will fetch with the sec-fetch-mode header as "cors" or "no-cors".
@@ -152,6 +154,7 @@ if ( !trait_exists('Sass') ){
 				$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass is throttled for 15 seconds between processing. <a href="?sass=true">Try again soon.</a>' : $this->sass_process_status;
 			}
 
+			$this->timer('Sass (Total)', 'stop', 'Sass');
 			return $this->was_sass_processed;
 		}
 
@@ -229,6 +232,7 @@ if ( !trait_exists('Sass') ){
 						//@todo "Nebula" 0: Add hook here so other functions/plugins can add stipulations of when to skip files. Maybe an array instead?
 						$is_admin_file = (!$this->is_admin_page() && !$this->is_login_page()) && in_array($scss_file_path_info['filename'], array('login', 'admin', 'tinymce')); //If viewing front-end, skip WP admin files.
 						if ( $is_admin_file ){
+							$this->timer('Sass File ' . $debug_name, 'end');
 							continue;
 						}
 					}
@@ -285,10 +289,11 @@ if ( !trait_exists('Sass') ){
 								$enhanced_css = $this->scss_post_compile($compiled_css); //Compile server-side variables into SCSS
 								$wp_filesystem->put_contents($css_filepath, $enhanced_css); //Save the rendered CSS.
 								$this->update_data('scss_last_processed', time());
-								$this->timer('Sass File ' . $debug_name, 'end');
 							}
 						}
 					}
+
+					$this->timer('Sass File ' . $debug_name, 'end');
 				}
 
 				$this->timer('Sass (' . $location_name . ')', 'end');
