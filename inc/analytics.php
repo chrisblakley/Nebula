@@ -440,12 +440,10 @@
 				$hubspot_identify['phone'] = get_user_meta(get_current_user_id(), 'phonenumber', true);
 			}
 
-			if ( nebula()->get_option('device_detection') ){
-				$hubspot_identify['device'] = nebula()->get_device();
-				$hubspot_identify['os'] = nebula()->get_os();
-				$hubspot_identify['browser'] = nebula()->get_browser();
-				$hubspot_identify['bot'] = ( nebula()->is_bot() )? 1 : 0;
-			}
+			$hubspot_identify['device'] = nebula()->get_device();
+			$hubspot_identify['os'] = nebula()->get_os();
+			$hubspot_identify['browser'] = nebula()->get_browser();
+			$hubspot_identify['bot'] = ( nebula()->is_bot() )? 1 : 0;
 		?>
 
 		var hubspotIdentify = <?php echo json_encode(apply_filters('nebula_hubspot_identify', $hubspot_identify)); //Allow other functions to hook into Hubspot identifications ?>;

@@ -474,15 +474,6 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="option-keywords">moderate page speed impact optimization optimize</p>
 				</div>
 
-				<div class="form-group <?php echo ( version_compare(PHP_VERSION, '7.2.0') >= 0 )? '' : 'inactive'; //PHP 7.2+ ?>">
-					<input type="checkbox" name="nebula_options[device_detection]" id="device_detection" value="1" <?php checked('1', !empty($nebula_options['device_detection'])); ?> /><label for="device_detection">Browser/Device Detection</label>
-					<p class="nebula-help-text short-help form-text text-muted">Detect information about the user's device and browser. <strong>Note: This is very resource intensive</strong> so only enable if absolutely necessary! Without this enabled, Nebula can still detect broad device types which may be sufficient enough. (Default: <?php echo $this->user_friendly_default('device_detection'); ?>)</p>
-					<?php if ( version_compare(PHP_VERSION, '7.2.0') < 0 ): ?>
-						<p class="dependent-note">This feature requires PHP 7.2+</p>
-					<?php endif; ?>
-					<p class="option-keywords">remote resource high page speed impact optimization optimize</p>
-				</div>
-
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[spam_domain_prevention]" id="spam_domain_prevention" value="1" <?php checked('1', !empty($nebula_options['spam_domain_prevention'])); ?> /><label for="spam_domain_prevention">Spam Domain Prevention</label>
 					<p class="nebula-help-text short-help form-text text-muted">Block traffic from known spambots and other illegitimate domains. (Default: <?php echo $this->user_friendly_default('spam_domain_prevention'); ?>)</p>
@@ -2103,6 +2094,7 @@ if ( !trait_exists('Metaboxes') ){
 
 			if ( !empty($nebula_options['logs']) ):
 				if ( $this->is_staff() ):
+					$this->timer('Nebula Logs Metabox');
 					$columns = $this->get_logs(false);
 					$rows = $this->get_logs(true);
 				?>
@@ -2150,6 +2142,7 @@ if ( !trait_exists('Metaboxes') ){
 					<p id="nebula-clean-logs">
 						<strong id="log-count"><?php echo count($rows); ?></strong> total logs. <a id="clean-log-messages" href="#"><i id="clean-log-progress" class="fas fa-fw fa-trash-alt"></i> Remove Low Importance Logs?</a>
 					</p>
+					<?php $this->timer('Nebula Logs Metabox', 'end'); ?>
 				<?php else: ?>
 					<p><strong class="nebula-disabled">Nebula Logs are enabled, but only available to staff.</strong></p>
 					<p><a href="themes.php?page=nebula_options&tab=administration&option=dev_email_domain">Set up staff rules</a> to view the logs.</p>

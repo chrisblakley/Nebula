@@ -61,6 +61,11 @@ if ( !trait_exists('Optimization') ){
 			add_filter('post_thumbnail_size', array($this, 'limit_thumbnail_size'), 10, 2);
 			add_filter('nebula_thumbnail_src_size', array($this, 'limit_image_size'), 10, 2);
 			add_filter('max_srcset_image_width', array($this, 'smaller_max_srcset_image_width'), 10, 2); //Limit width of content images
+
+			//Stop the QM timer as late as possible to be included in the list
+			add_filter('wp_footer', array($this, 'stop_qm_timer'), 1);
+			add_filter('login_footer', array($this, 'stop_qm_timer'), 1);
+			add_filter('admin_footer', array($this, 'stop_qm_timer'), 1);
 		}
 
 		//Set the JPG compression for more optimized images (Note: Full Size images are not changed)
@@ -741,6 +746,8 @@ if ( !trait_exists('Optimization') ){
 		//Embed critical CSS styles into the document <head> to improve perceived load time
 		public function embed_critical_styles(){
 			if ( $this->get_option('critical_css') ){
+				$this->timer('Embedding Critical CSS');
+
 				$critical_css_files = apply_filters('nebula_critical_css', array(
 					get_template_directory() . '/assets/css/critical.css',
 					get_stylesheet_directory() . '/assets/css/critical.css',
@@ -756,6 +763,8 @@ if ( !trait_exists('Optimization') ){
 						}
 					echo '</style>';
 				}
+
+				$this->timer('Embedding Critical CSS', 'end');
 			}
 		}
 
@@ -819,6 +828,11 @@ if ( !trait_exists('Optimization') ){
 			}
 
 			return array();
+		}
+
+		//End the overall timer for Nebula in Query Monitor
+		public function stop_qm_timer(){
+			do_action('qm/stop', 'Non-WP Core (Total)');
 		}
 
 		//Lazy-load anything

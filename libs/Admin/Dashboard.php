@@ -69,7 +69,7 @@ if ( !trait_exists('Dashboard') ){
 		}
 
 		public function dashboard_nebula_ataglance(){
-			$this->timer('Nebula At-a-Glance Dashboard');
+			$this->timer('Nebula At-a-Glance Dashboard Metabox');
 			global $wp_version;
 			global $wp_post_types;
 
@@ -227,7 +227,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '</ul>';
 
 			do_action('nebula_ataglance');
-			$this->timer('Nebula At-a-Glance Dashboard', 'end');
+			$this->timer('Nebula At-a-Glance Dashboard Metabox', 'end');
 		}
 
 		//Current User metabox
@@ -245,7 +245,7 @@ if ( !trait_exists('Dashboard') ){
 		}
 
 		public function dashboard_current_user(){
-			$this->timer('Nebula Current User Dashboard');
+			$this->timer('Nebula Current User Dashboard Metabox');
 			$user_info = get_userdata(get_current_user_id());
 
 			echo '<ul class="nebula-fa-ul">';
@@ -309,61 +309,36 @@ if ( !trait_exists('Dashboard') ){
 			}
 			echo '<li><i class="fas fa-fw fa-thumbtack"></i> Your posts: <strong>' . $your_posts . '</strong></li>';
 
-			if ( $this->get_option('device_detection') ){
-				//Device
-				if ( $this->is_desktop() ){
-					echo '<li><i class="fas fa-fw fa-desktop"></i> Device: <strong>Desktop/Laptop</strong></li>';
-				} elseif ( $this->is_tablet() ){
-					echo '<li><i class="fas fa-fw fa-tablet-alt"></i> Device: <strong>' . $this->get_device('full') . '</strong> <small>(Tablet)</small></li>';
-				} else {
-					echo '<li><i class="fas fa-fw fa-mobile-alt"></i> Device: <strong>' . $this->get_device('full') . '</strong> <small>(Mobile)</small></li>';
-				}
-
-				//Operating System
-				switch ( strtolower($this->get_os('name')) ){
-					case 'windows':
-						$os_icon = 'fab fa-windows';
-						break;
-					case 'mac':
-					case 'ios':
-						$os_icon = 'fab fa-apple';
-						break;
-					case 'linux':
-						$os_icon = 'fab fa-linux';
-						break;
-					case 'android':
-						$os_icon = 'fab fa-android';
-						break;
-					default:
-						$os_icon = 'fas fa-power-off';
-						break;
-				}
-				echo '<li><i class="fa-fw ' . $os_icon . '"></i> OS: <strong>' . $this->get_os('full') . '</strong></li>';
-
-				//Browser
-				switch ( str_replace(array('mobile', ' '), '', strtolower($this->get_browser('name'))) ){
-					case 'edge':
-						$browser_icon = 'fab fa-edge';
-						break;
-					case 'safari':
-						$browser_icon = 'fab fa-safari';
-						break;
-					case 'firefox':
-						$browser_icon = 'fab fa-firefox';
-						break;
-					case 'chrome':
-					case 'chrome mobile':
-						$browser_icon = 'fab fa-chrome';
-						break;
-					case 'opera':
-						$browser_icon = 'fab fa-opera';
-						break;
-					default:
-						$browser_icon = 'fas fa-globe';
-						break;
-				}
-				echo '<li><i class="fa-fw ' . $browser_icon . '"></i> Browser: <strong>' . $this->get_browser('full') . '</strong></li>';
+			//Device
+			if ( $this->is_desktop() ){
+				echo '<li><i class="fas fa-fw fa-desktop"></i> Device: <strong>Desktop/Laptop</strong></li>';
+			} else {
+				echo '<li><i class="fas fa-fw fa-mobile-alt"></i> Device: <strong>' . ucwords($this->get_device('full')) . '</strong> <small>(Mobile)</small></li>';
 			}
+
+			//Browser
+			switch ( str_replace(array('mobile', ' '), '', strtolower($this->get_browser('name'))) ){
+				case 'edge':
+					$browser_icon = 'fab fa-edge';
+					break;
+				case 'safari':
+					$browser_icon = 'fab fa-safari';
+					break;
+				case 'firefox':
+					$browser_icon = 'fab fa-firefox';
+					break;
+				case 'chrome':
+				case 'chrome mobile':
+					$browser_icon = 'fab fa-chrome';
+					break;
+				case 'opera':
+					$browser_icon = 'fab fa-opera';
+					break;
+				default:
+					$browser_icon = 'fas fa-globe';
+					break;
+			}
+			echo '<li><i class="fa-fw ' . $browser_icon . '"></i> Browser: <strong>' . ucwords($this->get_browser('full')) . '</strong></li>';
 
 			//IP Address
 			echo '<li><i class="fas fa-fw fa-globe"></i> IP Address: <a href="http://whatismyipaddress.com/ip/' . $this->get_ip_address() . '" target="_blank" rel="noopener noreferrer"><strong class="admin-user-info admin-user-ip" title="Anonymized IP Address">' . $this->get_ip_address() . '</strong></a></li>';
@@ -382,7 +357,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '</ul>';
 
 			echo '<p><small><em><a href="profile.php"><i class="fas fa-fw fa-pencil-alt"></i> Manage your user information</a></em></small></p>';
-			$this->timer('Nebula Current User Dashboard', 'end');
+			$this->timer('Nebula Current User Dashboard Metabox', 'end');
 		}
 
 		//Administrative metabox
@@ -392,7 +367,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Administrative metabox content
 		public function dashboard_administrative(){
-			$this->timer('Nebula Administrative Dashboard');
+			$this->timer('Nebula Administrative Dashboard Metabox');
 			$third_party_resources = $this->third_party_resources();
 
 			echo '<div class="nebula-metabox-row"><div class="nebula-metabox-col">';
@@ -420,7 +395,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<p><small><em>Manage social links in <strong><a href="themes.php?page=nebula_options&filter=social">Nebula Options</a></strong>.</em></small></p>';
 			echo '</div></div>';
 
-			$this->timer('Nebula Administrative Dashboard', 'end');
+			$this->timer('Nebula Administrative Dashboard Metabox', 'end');
 		}
 
 		//Pinckney Hugo Group metabox
@@ -430,12 +405,14 @@ if ( !trait_exists('Dashboard') ){
 
 		//Pinckney Hugo Group metabox content
 		public function dashboard_phg(){
+			$this->timer('Nebula PHG Dashboard Metabox');
 			echo '<a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+photo' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . '" target="_blank" rel="noopener noreferrer"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" loading="lazy" /></a>';
 			echo '<ul class="nebula-fa-ul">';
 			echo '<li><i class="fas fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener noreferrer">760 West Genesee Street, Syracuse, NY 13204</a></li>';
 			echo '<li><i class="fas fa-fw fa-link"></i> <a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+textlink' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . '" target="_blank">PinckneyHugo.com</a></li>';
 			echo '<li><i class="fas fa-fw fa-phone"></i> (315) 478-6700</li>';
 			echo '</ul>';
+			$this->timer('Nebula PHG Dashboard Metabox', 'end');
 		}
 
 		//Extension skip list for both To Do Manager and Developer Metabox
@@ -450,7 +427,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//TODO metabox content
 		public function todo_metabox_content(){
-			$this->timer('Nebula Todo Dashboard');
+			$this->timer('Nebula To-Do Dashboard Metabox');
 			do_action('nebula_todo_manager');
 
 			$todo_items = get_transient('nebula_todo_items');
@@ -542,7 +519,7 @@ if ( !trait_exists('Dashboard') ){
 					<?php endif; ?>
 				</p>
 			<?php
-			$this->timer('Nebula Todo Dashboard', 'end');
+			$this->timer('Nebula To-Do Dashboard Metabox', 'end');
 		}
 
 		public function todo_search_files($directory=null){
@@ -588,7 +565,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Developer Info Metabox content
 		public function dashboard_developer_info(){
-			$this->timer('Nebula Developer Dashboard');
+			$this->timer('Nebula Developer Dashboard Metabox');
 			do_action('nebula_developer_info');
 			echo '<ul class="nebula-fa-ul serverdetections">';
 
@@ -810,7 +787,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 			echo '</select><input class="searchterm button button-primary button-disabled" type="submit" value="Search" title="Still loading... Please wait." /></form>';
 			echo '<div class="search_results"></div>';
-			$this->timer('Nebula Developer Dashboard', 'end');
+			$this->timer('Nebula Developer Dashboard Metabox', 'end');
 		}
 
 		//Get last modified filename and date from a directory
@@ -954,6 +931,8 @@ if ( !trait_exists('Dashboard') ){
 		}
 
 		public function performance_timing(){
+			$this->timer('Nebula Performance Dashboard Metabox');
+
 			//Initialize the WebPageTest API - Documentation: https://sites.google.com/a/webpagetest.org/docs/advanced-features/webpagetest-restful-apis
 			//Remove this when WebPageTest.org API becomes a paid subscription
 			$initial_sub_status = 'Preparing test...';
@@ -992,6 +971,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '</ul>';
 
 			echo '<p><small><a href="https://web.dev/lighthouse-performance/" target="_blank" rel="noopener noreferrer">Learn about user-centric performance metrics &raquo;</a></small></p>';
+			$this->timer('Nebula Performance Dashboard Metabox', 'end');
 		}
 
 		//Add a dashboard metabox for design reference
@@ -1001,7 +981,7 @@ if ( !trait_exists('Dashboard') ){
 		}
 
 		public function dashboard_nebula_design(){
-			$this->timer('Nebula Design Dashboard');
+			$this->timer('Nebula Design Dashboard Metabox');
 			if ( $this->get_option('design_reference_link') ){
 				echo '<p><i class="fas fa-fw fa-file-image"></i> <a href="' . $this->get_option('design_reference_link') . '" target="_blank">Design File(s) &raquo;</a></p>';
 			}
@@ -1063,7 +1043,7 @@ if ( !trait_exists('Dashboard') ){
 				echo '<p><strong>Additional Notes:</strong><br />' . $this->get_option('additional_design_references') . '</p>';
 			}
 
-			$this->timer('Nebula Design Dashboard', 'end');
+			$this->timer('Nebula Design Dashboard Metabox', 'end');
 		}
 
 		//Hubspot Contacts
@@ -1073,7 +1053,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Hubspot Contacts metabox content
 		public function hubspot_contacts_content(){
-			$this->timer('Nebula Hubspot Dashboard');
+			$this->timer('Nebula Hubspot Dashboard Metabox');
 			do_action('nebula_hubspot_contacts');
 
 			$hubspot_contacts_json = get_transient('nebula_hubspot_contacts');
@@ -1143,7 +1123,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			echo '<p><small><a href="https://app.hubspot.com/sales/' . $this->get_option('hubspot_portal') . '/contacts/list/view/all/" target="_blank">View on Hubspot &raquo;</a></small></p>';
-			$this->timer('Nebula Hubspot Dashboard', 'end');
+			$this->timer('Nebula Hubspot Dashboard Metabox', 'end');
 		}
 	}
 }

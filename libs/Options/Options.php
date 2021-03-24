@@ -230,7 +230,6 @@ if ( !trait_exists('Options') ){
 				'additional_design_references' => '',
 				'author_bios' => 0,
 				'comments' => 0,
-				'device_detection' => 0,
 				'service_worker' => 0,
 				'adblock_detect' => 0,
 				'spam_domain_prevention' => 0,
@@ -368,6 +367,8 @@ if ( !trait_exists('Options') ){
 		//Check for new options after the theme update. If any are found use their default value.
 		public function check_for_new_options(){
 			if ( ($this->get_data('check_new_options') === 'true' || $this->is_debug()) && current_user_can('manage_options') ){
+				$this->timer('Checking for New Options');
+
 				$nebula_options = get_option('nebula_options');
 				$nebula_default_options = $this->default_options();
 
@@ -381,6 +382,7 @@ if ( !trait_exists('Options') ){
 				}
 
 				$this->update_data('check_new_options', 'false');
+				$this->timer('Checking for New Options', 'end');
 			}
 		}
 
@@ -425,7 +427,9 @@ if ( !trait_exists('Options') ){
 
 		//Output the options page interface
 		public function options_page(){
+			$this->timer('Rendering Options Interface');
 			require_once get_template_directory() . '/libs/Options/Interface.php';
+			$this->timer('Rendering Options Interface', 'end');
 		}
 	}
 }

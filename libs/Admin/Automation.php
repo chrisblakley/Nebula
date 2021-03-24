@@ -10,7 +10,7 @@ if ( !trait_exists('Automation') ){
 
 				//Detect and prompt install of Recommended and Optional plugins using TGMPA
 				//Configuration Documentation: http://tgmpluginactivation.com/configuration/
-				if ( is_admin() && $this->is_dev(true) || current_user_can('manage_options') ){
+				if ( $this->is_admin_page() && $this->is_dev(true) || current_user_can('manage_options') ){
 					require_once get_template_directory() . '/inc/vendor/class-tgm-plugin-activation.php';
 					add_action('tgmpa_register', array($this, 'register_required_plugins'));
 				}
@@ -32,167 +32,175 @@ if ( !trait_exists('Automation') ){
 		}
 
 		public function register_required_plugins(){
-			$bundled_plugins = array(
-				array(
-					'name' => 'Nebula Companion',
-					'slug' => 'nebula-companion',
-					'source' => 'https://github.com/chrisblakley/Nebula-Companion/archive/main.zip',
-					'required' => false,
-				),
-				array(
-					'name' => 'Contact Form 7',
-					'slug' => 'contact-form-7',
-					'required' => true,
-				),
-				array(
-					'name' => 'Advanced Contact Form 7 DB',
-					'slug' => 'advanced-cf7-db',
-					'required' => true,
-				),
-				array(
-					'name' => 'Advanced Custom Fields',
-					'slug' => 'advanced-custom-fields',
-					'required' => false,
-				),
-				array(
-					'name' => 'EWWW Image Optimizer',
-					'slug' => 'ewww-image-optimizer',
-					'required' => false,
-				),
-				array(
-					'name' => 'Regenerate Thumbnails',
-					'slug' => 'regenerate-thumbnails',
-					'required' => false,
-				),
-/*
-				array(
-					'name' => 'W3 Total Cache',
-					'slug' => 'w3-total-cache',
-					'required' => false,
-				),
-*/
-				array(
-					'name' => 'WP-PageNavi',
-					'slug' => 'wp-pagenavi',
-					'required' => true,
-				),
-				array(
-					'name' => 'Multiple Themes',
-					'slug' => 'jonradio-multiple-themes',
-					'required' => false,
-				),
-				array(
-					'name' => 'Responsive Lightbox',
-					'slug' => 'responsive-lightbox',
-					'required' => false,
-				),
-				array(
-					'name' => 'WP Mail SMTP',
-					'slug' => 'wp-mail-smtp',
-					'required' => false,
-				),
-				array(
-					'name' => 'WooCommerce',
-					'slug' => 'woocommerce',
-					'required' => false,
-				),
-				array(
-					'name' => 'WordPress SEO by Yoast',
-					'slug' => 'wordpress-seo',
-					'required' => true,
-				),
-				array(
-					'name' => 'ACF Content Analysis for Yoast SEO',
-					'slug' => 'acf-content-analysis-for-yoast-seo',
-					'required' => false,
-				),
-				array(
-					'name' => 'Relevanssi',
-					'slug' => 'relevanssi',
-					'required' => true,
-				),
-				array(
-					'name' => 'Transients Manager',
-					'slug' => 'transients-manager',
-					'required' => false,
-				),
-				array(
-					'name' => 'UpdraftPlus Backup and Restoration',
-					'slug' => 'updraftplus',
-					'required' => false,
-				),
-				array(
-					'name' => 'Wordfence Security', //Used for general security and limiting login attempts
-					'slug' => 'wordfence',
-					'required' => false,
-				),
-				array(
-					'name' => 'Sucuri Security', //Used to monitor filesystem and log login attempts, other hardening tools
-					'slug' => 'sucuri-scanner',
-					'required' => false,
-				),
-				array(
-					'name' => 'Query Monitor',
-					'slug' => 'query-monitor',
-					'required' => false,
-				),
-				array(
-					'name' => 'All-in-One WP Migration',
-					'slug' => 'all-in-one-wp-migration',
-					'required' => false,
-				),
-				array(
-					'name' => 'Redirection',
-					'slug' => 'redirection',
-					'required' => false,
-				),
-				array(
-					'name' => 'Site Kit by Google',
-					'slug' => 'google-site-kit',
-					'required' => false,
-				),
-			);
+			global $pagenow;
 
-			if ( file_exists(WP_PLUGIN_DIR . '/woocommerce') ){
-				array_push($bundled_plugins, array(
-					'name' => 'Enhanced Ecommerce Google Analytics Plugin for WooCommerce',
-					'slug' => 'enhanced-e-commerce-for-woocommerce-store',
-					'required' => true
-				));
+			//If this user is on the Plugins page or has not yet dismissed the TGMPA admin notice
+			if ( $pagenow === 'plugins.php' || !get_user_meta(get_current_user_id(), 'tgmpa_dismissed_notice_nebula') ){
+				$this->timer('Register Bundled Plugins');
+
+				$bundled_plugins = array(
+					array(
+						'name' => 'Nebula Companion',
+						'slug' => 'nebula-companion',
+						'source' => 'https://github.com/chrisblakley/Nebula-Companion/archive/main.zip',
+						'required' => false,
+					),
+					array(
+						'name' => 'Contact Form 7',
+						'slug' => 'contact-form-7',
+						'required' => true,
+					),
+					array(
+						'name' => 'Advanced Contact Form 7 DB',
+						'slug' => 'advanced-cf7-db',
+						'required' => true,
+					),
+					array(
+						'name' => 'Advanced Custom Fields',
+						'slug' => 'advanced-custom-fields',
+						'required' => false,
+					),
+					array(
+						'name' => 'EWWW Image Optimizer',
+						'slug' => 'ewww-image-optimizer',
+						'required' => false,
+					),
+					array(
+						'name' => 'Regenerate Thumbnails',
+						'slug' => 'regenerate-thumbnails',
+						'required' => false,
+					),
+	/*
+					array(
+						'name' => 'W3 Total Cache',
+						'slug' => 'w3-total-cache',
+						'required' => false,
+					),
+	*/
+					array(
+						'name' => 'WP-PageNavi',
+						'slug' => 'wp-pagenavi',
+						'required' => true,
+					),
+					array(
+						'name' => 'Multiple Themes',
+						'slug' => 'jonradio-multiple-themes',
+						'required' => false,
+					),
+					array(
+						'name' => 'Responsive Lightbox',
+						'slug' => 'responsive-lightbox',
+						'required' => false,
+					),
+					array(
+						'name' => 'WP Mail SMTP',
+						'slug' => 'wp-mail-smtp',
+						'required' => false,
+					),
+					array(
+						'name' => 'WooCommerce',
+						'slug' => 'woocommerce',
+						'required' => false,
+					),
+					array(
+						'name' => 'WordPress SEO by Yoast',
+						'slug' => 'wordpress-seo',
+						'required' => true,
+					),
+					array(
+						'name' => 'ACF Content Analysis for Yoast SEO',
+						'slug' => 'acf-content-analysis-for-yoast-seo',
+						'required' => false,
+					),
+					array(
+						'name' => 'Relevanssi',
+						'slug' => 'relevanssi',
+						'required' => true,
+					),
+					array(
+						'name' => 'Transients Manager',
+						'slug' => 'transients-manager',
+						'required' => false,
+					),
+					array(
+						'name' => 'UpdraftPlus Backup and Restoration',
+						'slug' => 'updraftplus',
+						'required' => false,
+					),
+					array(
+						'name' => 'Wordfence Security', //Used for general security and limiting login attempts
+						'slug' => 'wordfence',
+						'required' => false,
+					),
+					array(
+						'name' => 'Sucuri Security', //Used to monitor filesystem and log login attempts, other hardening tools
+						'slug' => 'sucuri-scanner',
+						'required' => false,
+					),
+					array(
+						'name' => 'Query Monitor',
+						'slug' => 'query-monitor',
+						'required' => false,
+					),
+					array(
+						'name' => 'All-in-One WP Migration',
+						'slug' => 'all-in-one-wp-migration',
+						'required' => false,
+					),
+					array(
+						'name' => 'Redirection',
+						'slug' => 'redirection',
+						'required' => false,
+					),
+					array(
+						'name' => 'Site Kit by Google',
+						'slug' => 'google-site-kit',
+						'required' => false,
+					),
+				);
+
+				if ( file_exists(WP_PLUGIN_DIR . '/woocommerce') ){
+					array_push($bundled_plugins, array(
+						'name' => 'Enhanced Ecommerce Google Analytics Plugin for WooCommerce',
+						'slug' => 'enhanced-e-commerce-for-woocommerce-store',
+						'required' => true
+					));
+				}
+
+				$all_bundled_plugins = apply_filters('nebula_bundled_plugins', $bundled_plugins); //Allow other themes and plugins to bundle additional plugins
+
+				$config = array(
+					'id' => 'nebula',
+					'parent_slug' => 'plugins.php', //Where the "Install Plugins" submenu appears. Note: WordPress.org theme distribution requires this to be under "themes.php"
+					'strings' => array(
+						'menu_title' => 'Recommended Plugins',
+						'page_title' => 'Recommended Plugins',
+						'notice_can_install_required' => _n_noop(
+							'This theme recommends the following plugin: %1$s.',
+							'This theme recommends the following plugins: %1$s.',
+							'tgmpa'
+						),
+						'notice_can_install_recommended' => _n_noop(
+							'The following optional plugin may be needed for the theme: %1$s.',
+							'The following optional plugins may be needed for the theme: %1$s.',
+							'tgmpa'
+						),
+						'notice_can_activate_required' => _n_noop(
+							'The following recommended plugin is currently inactive: %1$s.',
+							'The following recommended plugins are currently inactive: %1$s.',
+							'tgmpa'
+						),
+						'notice_can_activate_recommended' => _n_noop(
+							'The following optional plugin is currently inactive: %1$s.',
+							'The following optional plugins are currently inactive: %1$s.',
+							'tgmpa'
+						),
+					)
+				);
+
+				tgmpa($all_bundled_plugins, $config);
+				$this->timer('Register Bundled Plugins', 'end');
 			}
-
-			$all_bundled_plugins = apply_filters('nebula_bundled_plugins', $bundled_plugins); //Allow other themes and plugins to bundle additional plugins
-
-			$config = array(
-				'id' => 'nebula',
-				'parent_slug' => 'plugins.php', //Where the "Install Plugins" submenu appears. Note: WordPress.org theme distribution requires this to be under "themes.php"
-				'strings' => array(
-					'menu_title' => 'Recommended Plugins',
-					'page_title' => 'Recommended Plugins',
-					'notice_can_install_required' => _n_noop(
-						'This theme recommends the following plugin: %1$s.',
-						'This theme recommends the following plugins: %1$s.',
-						'tgmpa'
-					),
-					'notice_can_install_recommended' => _n_noop(
-						'The following optional plugin may be needed for the theme: %1$s.',
-						'The following optional plugins may be needed for the theme: %1$s.',
-						'tgmpa'
-					),
-					'notice_can_activate_required' => _n_noop(
-						'The following recommended plugin is currently inactive: %1$s.',
-						'The following recommended plugins are currently inactive: %1$s.',
-						'tgmpa'
-					),
-					'notice_can_activate_recommended' => _n_noop(
-						'The following optional plugin is currently inactive: %1$s.',
-						'The following optional plugins are currently inactive: %1$s.',
-						'tgmpa'
-					),
-				)
-			);
-
-			tgmpa($all_bundled_plugins, $config);
 		}
 
 		//Make sure certain data is always set
@@ -274,6 +282,8 @@ if ( !trait_exists('Automation') ){
 		//Nebula Full Initialization
 		public function initialization(){
 			if ( current_user_can('manage_options') ){
+				$this->timer('Full Initialization');
+
 				$this->usage('Initialization');
 				$this->add_log('Theme settings have been re-initialized.', 7);
 				$this->full_automation();
@@ -290,6 +300,8 @@ if ( !trait_exists('Automation') ){
 				if ( $activated_child ){
 					wp_redirect(admin_url('/themes.php?initialization-success'), 301); //Redirect to show new theme activated
 				}
+
+				$this->timer('Full Initialization', 'end');
 			}
 		}
 

@@ -5,41 +5,13 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Device') ){
 	trait Device {
 		public function hooks(){
-			if ( !$this->is_background_request() && !is_customize_preview() ){
-				add_action('init', array($this, 'detect'));
-			}
-		}
-
-		/*==========================
-		 User Agent Parsing Functions/Helpers
-		 ===========================*/
-
-		//Device Detection - https://github.com/matomo-org/device-detector
-		public function detect(){
-			if ( $this->get_option('device_detection') && version_compare(phpversion(), '7.2.0', '>=') && is_string($_SERVER['HTTP_USER_AGENT']) ){
-				$this->timer('Device Detection');
-
-				include_once get_template_directory() . '/inc/vendor/Spyc.php';
-				include_once get_template_directory() . '/inc/vendor/device-detector/autoload.php';
-
-				$this->device = new DeviceDetector\DeviceDetector($_SERVER['HTTP_USER_AGENT']);
-				$this->device->discardBotInformation(); //If called, getBot() will only return true if a bot was detected (speeds up detection a bit)
-				$this->device->parse(); //Note: this is considerably slow (~0.5s)
-
-				$this->timer('Device Detection', 'end');
-			}
+			//Add hooks here
 		}
 
 		//Boolean return if the user's device is mobile.
 		public function is_mobile(){
 			$override = apply_filters('pre_nebula_is_mobile', null);
 			if ( isset($override) ){return $override;}
-
-			if ( $this->get_option('device_detection') ){
-				if ( isset($this->device) && $this->device->isMobile() ){
-					return true;
-				}
-			}
 
 			global $is_iphone;
 			if ( wp_is_mobile() || $is_iphone ){
@@ -49,30 +21,10 @@ if ( !trait_exists('Device') ){
 			return false;
 		}
 
-		//Boolean return if the user's device is a tablet.
-		public function is_tablet(){
-			$override = apply_filters('pre_nebula_is_tablet', null);
-			if ( isset($override) ){return $override;}
-
-			if ( $this->get_option('device_detection') ){
-				if ( isset($this->device) && $this->device->isTablet() ){
-					return true;
-				}
-			}
-
-			return false;
-		}
-
 		//Boolean return if the user's device is a desktop.
 		public function is_desktop(){
 			$override = apply_filters('pre_nebula_is_desktop', null);
 			if ( isset($override) ){return $override;}
-
-			if ( $this->get_option('device_detection') ){
-				if ( isset($this->device) && $this->device->isDesktop() ){
-					return true;
-				}
-			}
 
 			if ( !wp_is_mobile() ){ //This does a basic check for mobile or tablet devices.
 				return true;
@@ -85,22 +37,6 @@ if ( !trait_exists('Device') ){
 		public function get_os($info='full'){
 			$override = apply_filters('pre_nebula_get_os', null, $info);
 			if ( isset($override) ){return $override;}
-
-			if ( $this->get_option('device_detection') && isset($this->device) ){
-				$os = $this->device->getOs();
-				if ( !empty($os) ){
-					switch ( strtolower($info) ){
-						case 'full':
-							return $os['name'] . ' ' . $os['version'];
-						case 'name':
-							return $os['name'];
-						case 'version':
-							return $os['version'];
-						default:
-							return false;
-					}
-				}
-			}
 
 			global $is_iphone;
 			switch ( strtolower($info) ){
@@ -115,89 +51,10 @@ if ( !trait_exists('Device') ){
 			}
 		}
 
-		//Check to see how the operating system version of the user's device compares to a passed version number.
-		public function is_os($os=null, $version=null, $comparison='=='){
-			$override = apply_filters('pre_nebula_is_os', null, $os, $version, $comparison);
-			if ( isset($override) ){return $override;}
-
-			if ( $this->get_option('device_detection') && isset($this->device) ){
-				if ( empty($os) ){
-					trigger_error('nebula_is_os requires a parameter of requested operating system.');
-					return false;
-				}
-
-				switch ( strtolower($os) ){
-					case 'macintosh':
-						$os = 'mac';
-						break;
-					case 'win':
-						$os = 'windows';
-						break;
-					default:
-						$os = 'unknown';
-						break;
-				}
-
-				$actual_os = $this->device->getOs();
-				if ( !empty($actual_os) ){
-					$actual_version = explode('.', $actual_os['version']);
-					$version_parts = explode('.', $version);
-					if ( strpos(strtolower($actual_os['name']), strtolower($os)) !== false ){
-						if ( !empty($version) ){
-							if ( $this->compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //If major version matches
-								if ( $version_parts[1] && $version_parts[1] !== 0 ){ //If minor version exists and is not 0
-									if ( $this->compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //If minor version matches
-										return true;
-									}
-									return false;
-								}
-								return true;
-							}
-						}
-						return true;
-					}
-				}
-			}
-
-			return false;
-		}
-
 		//Returns the requested information of the model of the user's device.
 		public function get_device($info='model'){
 			$override = apply_filters('pre_nebula_get_device', null, $info);
 			if ( isset($override) ){return $override;}
-
-			if ( $this->get_option('device_detection') && isset($this->device) ){
-				$info = str_replace(' ', '', $info);
-				switch ( strtolower($info) ){
-					case 'full':
-						$brand_name = $this->device->getBrandName();
-						$model = $this->device->getModel();
-						if ( !empty($brand_name) && !empty($model) ){
-							return $brand_name . ' ' . $model;
-						}
-						return '';
-					case 'brand':
-					case 'brandname':
-					case 'make':
-						return $this->device->getBrandName();
-					case 'model':
-					case 'version':
-					case 'name':
-						return $this->device->getModel();
-					case 'type':
-						return $this->device->getDeviceName();
-					case 'formfactor':
-						if ( $this->is_mobile() ){
-							return 'mobile';
-						} elseif ( $this->is_tablet() ){
-							return 'tablet';
-						}
-						return 'desktop';
-					default:
-						return '';
-				}
-			}
 
 			global $is_iphone;
 			$info = str_replace(' ', '', $info);
@@ -234,28 +91,6 @@ if ( !trait_exists('Device') ){
 				return $additional_checks;
 			}
 
-			if ( $this->get_option('device_detection') && isset($this->device) ){
-				$client = $this->device->getClient();
-				if ( !empty($client) ){
-					switch ( strtolower($info) ){
-						case 'full':
-							return $client['name'] . ' ' . $client['version'];
-						case 'name':
-						case 'browser':
-						case 'client':
-							return $client['name'];
-						case 'version':
-							return $client['version'];
-						case 'engine':
-							return ( !empty($client['engine']) )? $client['engine'] : $client['name'];
-						case 'type':
-							return $client['type'];
-						default:
-							return false;
-					}
-				}
-			}
-
 			global $is_gecko, $is_opera, $is_safari, $is_chrome;
 			switch ( strtolower($info) ){
 				case 'full':
@@ -280,60 +115,9 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_is_browser', null, $browser, $version, $comparison);
 			if ( isset($override) ){return $override;}
 
-			if ( $this->get_option('device_detection') && isset($this->device) ){
-				if ( empty($browser) ){
-					trigger_error('nebula_is_browser requires a parameter of requested browser.');
-					return false;
-				}
-
-				$actual_browser = $this->device->getClient();
-				if ( !empty($actual_browser) ){
-					$actual_version = explode('.', $actual_browser['version']);
-					$version_parts = explode('.', $version);
-
-					if ( strpos(strtolower($actual_browser['name']), strtolower($browser)) !== false ){
-						if ( !empty($version) ){
-							if ( $this->compare_operator($actual_version[0], $version_parts[0], $comparison) ){ //Major version comparison
-								if ( !empty($version_parts[1]) ){ //If minor version exists and is not 0
-									if ( $this->compare_operator($actual_version[1], $version_parts[1], $comparison) ){ //Minor version comparison
-										return true;
-									} else {
-										return false;
-									}
-								} else {
-									return true;
-								}
-							}
-						} else {
-							return true;
-						}
-					}
-				}
-			}
-
 			//Use basic detection (WordPress core) if Device Detect is not enabled. This only checks browser name (not name and version like above)
 			if ( empty($version) && $this->get_browser() == strtolower($browser) ){
 				return true;
-			}
-
-			return false;
-		}
-
-		//Check to see if the rendering engine matches a passed parameter.
-		public function is_engine($engine=null){
-			$override = apply_filters('pre_nebula_is_engine', null, $engine);
-			if ( isset($override) ){return $override;}
-
-			if ( $this->get_option('device_detection') ){
-				if ( empty($engine) ){
-					trigger_error('is_engine requires a parameter of requested engine.');
-					return false;
-				}
-
-				$actual_engine = $this->get_browser('engine');
-				if ( strpos(strtolower($actual_engine), strtolower($engine)) !== false ){
-					return true;
-				}
 			}
 
 			return false;
@@ -347,12 +131,6 @@ if ( !trait_exists('Device') ){
 
 			if ( $this->is_googlebot() ){
 				return true;
-			}
-
-			if ( $this->get_option('device_detection') ){
-				if ( isset($this->device) && $this->device->isBot() ){
-					return true;
-				}
 			}
 
 			$bot_regex = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http', 'favicon', 'curl', 'coda', 'netcraft');

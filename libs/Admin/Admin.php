@@ -160,6 +160,8 @@ if ( !trait_exists('Admin') ){
 
 		//Force expire query transients when posts/pages are saved.
 		public function clear_transients(){
+			$this->timer('Clear Transients');
+
 			if ( class_exists('PW_Transients_Manager') ){
 				$transient_manager = new PW_Transients_Manager();
 				$transient_manager->delete_transients_with_expirations();
@@ -178,6 +180,8 @@ if ( !trait_exists('Admin') ){
 					delete_transient($transient_to_delete);
 				}
 			}
+
+			$this->timer('Clear Transients', 'end');
 		}
 
 		//Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
@@ -237,6 +241,13 @@ if ( !trait_exists('Admin') ){
 
 		//Aggregate all third-party resources into a single array
 		public function third_party_resources(){
+			$third_party_resources = wp_cache_get('nebula_third_party_resources');
+			if ( is_array($third_party_resources) || !empty($third_party_resources) ){ //If it is an array (meaning it has run before but did not find anything) or if it is false
+				return $third_party_resources;
+			}
+
+			$this->timer('Aggregating Links to Active Third-Party Tools');
+
 			$third_party_resources = array(
 				'administrative' => array(),
 				'social' => array()
@@ -474,6 +485,9 @@ if ( !trait_exists('Admin') ){
 				);
 			}
 
+			$this->timer('Aggregating Links to Active Third-Party Tools', 'end');
+
+			wp_cache_set('nebula_third_party_resources', $third_party_resources); //Store in object cache
 			return $third_party_resources;
 		}
 
@@ -499,6 +513,8 @@ if ( !trait_exists('Admin') ){
 		//Create custom menus within the WordPress Admin Bar
 		public function admin_bar_menus(WP_Admin_Bar $wp_admin_bar){
 			if ( is_admin_bar_showing() ){
+				$this->timer('Nebula Admin Bar Menus');
+
 				wp_reset_query(); //Make sure the query is always reset in case the current page has a custom query that isn't reset.
 				global $post;
 
@@ -952,6 +968,8 @@ if ( !trait_exists('Admin') ){
 						'meta' => array('title' => 'Append ?debug to force clear certain caches')
 					));
 				}
+
+				$this->timer('Nebula Admin Bar Menus', 'end');
 			}
 		}
 
@@ -1039,6 +1057,7 @@ if ( !trait_exists('Admin') ){
 			$override = apply_filters('pre_nebula_theme_json', null);
 			if ( isset($override) ){return;}
 
+			$this->timer('Theme Update Checker');
 			$nebula_data = get_option('nebula_data');
 
 			//Always keep current_version up-to-date.
@@ -1055,6 +1074,8 @@ if ( !trait_exists('Admin') ){
 					'Nebula' //The filter hook above must match this
 				);
 			}
+
+			$this->timer('Theme Update Checker', 'end');
 		}
 
 		//Force a re-install of the Nebula theme
@@ -1273,6 +1294,8 @@ if ( !trait_exists('Admin') ){
 
 		//Nebula Admin Notices/Warnings/Notifications
 		public function show_admin_notices(){
+			$this->timer('Admin Notices');
+
 			$warnings = $this->check_warnings();
 
 			//If there are warnings display them
@@ -1291,6 +1314,8 @@ if ( !trait_exists('Admin') ){
 					echo '<div class="nebula-admin-notice notice notice-' . $warning['level'] . '"><p><span class="nebula-warning-category">' . $category . '</span> ' . $warning['description'] . '</p></div>'; //@TODO "Nebula" 0: Make these dismissable
 				}
 			}
+
+			$this->timer('Admin Notices', 'end');
 		}
 
 		//Check the current (or passed) PHP version against the PHP support timeline.

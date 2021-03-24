@@ -492,7 +492,7 @@ if ( !trait_exists('Warnings') ){
 
 		//Add more advanced and resource-intensive warnings to the Nebula check when requested (either via Audit Mode or enabled in Nebula Options)
 		public function advanced_warnings($nebula_warnings){
-			$this->timer('Nebula Advanced Warnings');
+			$this->timer('Advanced Warnings');
 
 			//Only check these when auditing (not on all pageviews) to prevent undesired server load
 			if ( $this->is_auditing() || $this->is_warning_level('strict') ){
@@ -669,7 +669,7 @@ if ( !trait_exists('Warnings') ){
 
 			$nebula_warnings = apply_filters('nebula_advanced_warnings', $nebula_warnings);
 
-			$this->timer('Nebula Advanced Warnings', 'end');
+			$this->timer('Advanced Warnings', 'end');
 			return $nebula_warnings;
 		}
 

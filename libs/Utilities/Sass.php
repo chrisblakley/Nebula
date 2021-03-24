@@ -10,7 +10,7 @@ if ( !trait_exists('Sass') ){
 			$this->was_sass_processed = false;
 			$this->latest_scss_mtime = 0; //Prep a flag to determine the last modified SCSS file
 
-			if ( !$this->is_background_request() && !is_customize_preview() ){
+			if ( $this->get_option('scss') && !$this->is_background_request() && !is_customize_preview() ){
 				add_action('init', array($this, 'scss_controller'));
 				add_action('nebula_body_open', array($this, 'output_sass_errors')); //Front-end
 				add_action('admin_notices', array($this, 'output_sass_errors')); //Admin (Do not use Nebula Warnings utility for these errors)
@@ -44,18 +44,21 @@ if ( !trait_exists('Sass') ){
 					//Ignore fetch requests (like via Service Worker) - Only process Sass on certain requests SW will fetch with the sec-fetch-mode header as "cors" or "no-cors".
 					if ( isset($_SERVER['HTTP_SEC_FETCH_MODE']) && !in_array($_SERVER['HTTP_SEC_FETCH_MODE'], array('navigate', 'nested-navigate', 'same-origin')) ){ //Maybe same-site too? Just avoid "cors" and "no-cors"
 						$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not processed. The fetch mode of "' . sanitize_text_field($_SERVER['HTTP_SEC_FETCH_MODE']) . '" was not suitable.' : $this->sass_process_status;
+						$this->timer('Sass (Total)', 'end');
 						return false;
 					}
 
 					//Check when Sass processing is allowed to happen
 					if ( $this->get_option('scss_processing_only_when_logged_in') && !current_user_can('publish_posts') ){ //If this option is enabled but the role is lower than necessary
 						$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not processed. It can only be processed by logged in users (per Nebula option).' : $this->sass_process_status;
+						$this->timer('Sass (Total)', 'end');
 						return false;
 					}
 
 					if ( !is_writable(get_template_directory()) || !is_writable(get_template_directory() . '/style.css') ){
 						trigger_error('The template directory or files are not writable. Can not compile Sass files!', E_USER_NOTICE);
 						$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not processed. The template directory or files are not writable.' : $this->sass_process_status;
+						$this->timer('Sass (Total)', 'end');
 						return false;
 					}
 
@@ -225,14 +228,14 @@ if ( !trait_exists('Sass') ){
 				foreach ( glob($location_paths['directory'] . '/assets/scss/*.scss') as $scss_file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
 					$scss_file_path_info = pathinfo($scss_file);
 					$debug_name = str_replace(WP_CONTENT_DIR, '', $scss_file_path_info['dirname']) . '/' . $scss_file_path_info['basename'];
-					$this->timer('Sass File ' . $debug_name);
+					$this->timer('Sass File (' . $debug_name . ')');
 
 					//Skip file conditions (only if not forcing all)
 					if ( empty($force_all) ){
 						//@todo "Nebula" 0: Add hook here so other functions/plugins can add stipulations of when to skip files. Maybe an array instead?
 						$is_admin_file = (!$this->is_admin_page() && !$this->is_login_page()) && in_array($scss_file_path_info['filename'], array('login', 'admin', 'tinymce')); //If viewing front-end, skip WP admin files.
 						if ( $is_admin_file ){
-							$this->timer('Sass File ' . $debug_name, 'end');
+							$this->timer('Sass File (' . $debug_name . ')', 'end');
 							continue;
 						}
 					}
@@ -293,7 +296,7 @@ if ( !trait_exists('Sass') ){
 						}
 					}
 
-					$this->timer('Sass File ' . $debug_name, 'end');
+					$this->timer('Sass File (' . $debug_name . ')', 'end');
 				}
 
 				$this->timer('Sass (' . $location_name . ')', 'end');
@@ -367,11 +370,10 @@ if ( !trait_exists('Sass') ){
 		}
 
 		//Get a Sass variable from a theme
+		//Note: Do not condition this based on the Sass option because it may be automatically deactivated in the future
 		public function get_sass_variable($variable='$primary_color', $filepath='child', $return='value'){
 			$override = apply_filters('pre_get_sass_variable', null, $variable, $filepath, $return);
 			if ( isset($override) ){return $override;}
-
-			$this->timer('Sass Variable', 'start', 'Sass');
 
 			//Use the passed variables file location, or choose from the passed theme
 			if ( $filepath === 'parent' ){
@@ -385,7 +387,10 @@ if ( !trait_exists('Sass') ){
 
 			$scss_variables = get_transient($transient_name);
 			if ( empty($scss_variables) || $this->is_debug() ){
+				$timer_name = $this->timer('Sass Variable (' . $variable . ')', 'start', 'Sass');
+
 				if ( !file_exists($filepath) ){
+					$this->timer($timer_name, 'end');
 					return false;
 				}
 
@@ -393,10 +398,10 @@ if ( !trait_exists('Sass') ){
 				global $wp_filesystem;
 				$scss_variables = $wp_filesystem->get_contents($filepath);
 				set_transient($transient_name, $scss_variables, HOUR_IN_SECONDS*12); //1 hour cache
+				$this->timer($timer_name, 'end');
 			}
 
 			preg_match('/(?<comment>\/\/|\/\*\s?)?\$' . $variable_name . ':\s?(?<value>.*)(;|\s?!default;)(.*$)?/m', $scss_variables, $matches);
-			$this->timer('Sass Variable', 'end');
 
 			//Return the entire line if requested
 			if ( $return === 'all' ){
@@ -421,6 +426,7 @@ if ( !trait_exists('Sass') ){
 		}
 
 		//Pull the appropriate color or obtain it from a specific location ('customizer', 'child' or 'parent')
+		//Note: Do not condition this based on the Sass option because it may be automatically deactivated in the future
 		public function sass_color($color='primary', $specific_location=false, $default=false){return $this->get_color($color, $specific_location, $default);}
 		public function get_color($color='primary', $specific_location=false, $default='black'){
 			$override = apply_filters('pre_get_color', null, $color, $specific_location);
