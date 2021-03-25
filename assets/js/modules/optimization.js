@@ -310,20 +310,21 @@ nebula.predictiveCacheListeners = async function(){
 	});
 
 	//Once idle, prefetch the top-level nav items and buttons
-	if ( typeof window.requestIdleCallback === 'function' ){ //Waiting for Safari to support requestIdleCallback
-		//Prefetch certain elements on window idle
-		window.requestIdleCallback(function(){
-			//Top-level primary nav links
-			jQuery('ul#menu-primary > li.menu-item > a').each(function(){
-				nebula.prefetch(jQuery(this).attr('href'), false, jQuery(this));
-			});
-
-			//First 5 buttons
-			jQuery('a.btn, a.wp-block-button__link').slice(0, 4).each(function(){
-				nebula.prefetch(jQuery(this).attr('href'), false, jQuery(this));
-			});
-		});
-	}
+	//Disabled to reduce the broad background loading. The above hover prefetch is more focused.
+// 	if ( typeof window.requestIdleCallback === 'function' ){ //Waiting for Safari to support requestIdleCallback
+// 		//Prefetch certain elements on window idle
+// 		window.requestIdleCallback(function(){
+// 			//Top-level primary nav links
+// 			jQuery('ul#menu-primary > li.menu-item > a').each(function(){
+// 				nebula.prefetch(jQuery(this).attr('href'), false, jQuery(this));
+// 			});
+//
+// 			//First 5 buttons
+// 			jQuery('a.btn, a.wp-block-button__link').slice(0, 4).each(function(){
+// 				nebula.prefetch(jQuery(this).attr('href'), false, jQuery(this));
+// 			});
+// 		});
+// 	}
 };
 
 //Prefetch a resource

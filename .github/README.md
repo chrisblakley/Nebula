@@ -60,6 +60,5 @@ Performance data is updated automatically every hour. Your performance may vary 
 + [Plugin Update Checker](https://github.com/YahnisElsts/plugin-update-checker)
 + [TGM Plugin Activation](https://github.com/TGMPA/TGM-Plugin-Activation)
 + [SCSSPHP](https://github.com/scssphp/scssphp)
-+ [Device Detector](https://github.com/matomo-org/device-detector)
 + [Mmenu](https://github.com/FrDH/mmenu-js)
 + [Workbox](https://github.com/GoogleChrome/workbox)

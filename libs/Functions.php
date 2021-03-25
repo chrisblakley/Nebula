@@ -2400,6 +2400,7 @@ if ( !trait_exists('Functions') ){
 					$relevanssi_autocomplete = relevanssi_do_query($relevanssi_query_prep); //Run the query
 
 					foreach ( $relevanssi_autocomplete as $post ){
+						$ignore_post_ids = apply_filters('nebula_autocomplete_ignore_ids', array()); //Allow individual posts to be globally ignored from autocomplete search
 						if ( in_array($post->ID, $ignore_post_ids) || !get_the_title($post->ID) ){ //Ignore results without titles
 							continue;
 						}

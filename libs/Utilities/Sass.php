@@ -33,121 +33,126 @@ if ( !trait_exists('Sass') ){
 		 ===========================*/
 		public function scss_controller($force_all = false){
 			$this->timer('Sass (Total)', 'start', 'Sass');
+			global $pagenow;
 
 			$sass_throttle = get_transient('nebula_sass_throttle'); //This prevents Sass from compiling multiple times in quick succession
-			if ( empty($sass_throttle) || $this->is_debug() ){
+			if ( empty($sass_throttle) || $pagenow === 'update.php' || $this->is_debug() ){
 				$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not throttled (so okay to process).' : $this->sass_process_status;
 
-				if ( $this->get_option('scss') && !$this->is_background_request() && !$this->is_bot() ){
-					$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass is enabled, and the request is okay to process.' : $this->sass_process_status;
+				//Ensure Sass option is enabled
+				if ( $this->get_option('scss') ){
+					//Ignore background requests (except for automated theme updates) and bots
+					if ( !$this->is_background_request() && !$this->is_bot() && $pagenow !== 'update-core.php' ){ //Ignore update-core.php (this listing page of updates)– that is different than update.php (which is the actual updater). Note: update.php is not considered a "background" request
+						$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass is enabled, and the request is okay to process.' : $this->sass_process_status;
 
-					//Ignore fetch requests (like via Service Worker) - Only process Sass on certain requests SW will fetch with the sec-fetch-mode header as "cors" or "no-cors".
-					if ( isset($_SERVER['HTTP_SEC_FETCH_MODE']) && !in_array($_SERVER['HTTP_SEC_FETCH_MODE'], array('navigate', 'nested-navigate', 'same-origin')) ){ //Maybe same-site too? Just avoid "cors" and "no-cors"
-						$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not processed. The fetch mode of "' . sanitize_text_field($_SERVER['HTTP_SEC_FETCH_MODE']) . '" was not suitable.' : $this->sass_process_status;
-						$this->timer('Sass (Total)', 'end');
-						return false;
-					}
+						//Ignore fetch requests (like via Service Worker) - Only process Sass on certain requests SW will fetch with the sec-fetch-mode header as "cors" or "no-cors".
+						if ( isset($_SERVER['HTTP_SEC_FETCH_MODE']) && !in_array($_SERVER['HTTP_SEC_FETCH_MODE'], array('navigate', 'nested-navigate', 'same-origin')) ){ //Maybe same-site too? Just avoid "cors" and "no-cors"
+							$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not processed. The fetch mode of "' . sanitize_text_field($_SERVER['HTTP_SEC_FETCH_MODE']) . '" was not suitable.' : $this->sass_process_status;
+							$this->timer('Sass (Total)', 'end');
+							return false;
+						}
 
-					//Check when Sass processing is allowed to happen
-					if ( $this->get_option('scss_processing_only_when_logged_in') && !current_user_can('publish_posts') ){ //If this option is enabled but the role is lower than necessary
-						$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not processed. It can only be processed by logged in users (per Nebula option).' : $this->sass_process_status;
-						$this->timer('Sass (Total)', 'end');
-						return false;
-					}
+						//Check when Sass processing is allowed to happen
+						if ( $this->get_option('scss_processing_only_when_logged_in') && !current_user_can('publish_posts') ){ //If this option is enabled but the role is lower than necessary
+							$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not processed. It can only be processed by logged in users (per Nebula option).' : $this->sass_process_status;
+							$this->timer('Sass (Total)', 'end');
+							return false;
+						}
 
-					if ( !is_writable(get_template_directory()) || !is_writable(get_template_directory() . '/style.css') ){
-						trigger_error('The template directory or files are not writable. Can not compile Sass files!', E_USER_NOTICE);
-						$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not processed. The template directory or files are not writable.' : $this->sass_process_status;
-						$this->timer('Sass (Total)', 'end');
-						return false;
-					}
+						if ( !is_writable(get_template_directory()) || !is_writable(get_template_directory() . '/style.css') ){
+							trigger_error('The template directory or files are not writable. Can not compile Sass files!', E_USER_NOTICE);
+							$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not processed. The template directory or files are not writable.' : $this->sass_process_status;
+							$this->timer('Sass (Total)', 'end');
+							return false;
+						}
 
-					//Nebula SCSS locations
-					$scss_locations = array(
-						'parent' => array(
-							'directory' => get_template_directory(),
-							'uri' => get_template_directory_uri(),
-							'core' => get_template_directory() . '/assets/scss/',
-							'imports' => array(get_template_directory() . '/assets/scss/partials/')
-						)
-					);
-
-					//Child theme SCSS locations
-					if ( is_child_theme() ){
-						$scss_locations['parent']['imports'][] = get_stylesheet_directory() . '/assets/scss/partials/'; //@todo "Nebula" 0: Clarify here why parent theme needs to know child imports directory. This line is making an array of 2 import paths by appending the child partials directory to it... This may have been done before other themes/plugins could hook in and declare their own directories to Nebula
-
-						$scss_locations['child'] = array(
-							'directory' => get_stylesheet_directory(),
-							'uri' => get_stylesheet_directory_uri(),
-							'core' => get_template_directory() . '/assets/scss/',
-							'imports' => array(get_stylesheet_directory() . '/assets/scss/partials/')
+						//Nebula SCSS locations
+						$scss_locations = array(
+							'parent' => array(
+								'directory' => get_template_directory(),
+								'uri' => get_template_directory_uri(),
+								'core' => get_template_directory() . '/assets/scss/',
+								'imports' => array(get_template_directory() . '/assets/scss/partials/')
+							)
 						);
-					}
 
-					//Allow for additional Sass locations to be included. Imports can be an array of directories.
-					$all_scss_locations = apply_filters('nebula_scss_locations', $scss_locations);
+						//Child theme SCSS locations
+						if ( is_child_theme() ){
+							$scss_locations['parent']['imports'][] = get_stylesheet_directory() . '/assets/scss/partials/'; //@todo "Nebula" 0: Clarify here why parent theme needs to know child imports directory. This line is making an array of 2 import paths by appending the child partials directory to it... This may have been done before other themes/plugins could hook in and declare their own directories to Nebula
 
-					//Check if all Sass files should be rendered
-					//$force_all = false;
-					if ( (isset($_GET['sass']) || isset($_GET['scss'])) && $this->is_staff() ){
-						$force_all = true;
-						$this->sass_process_status = ( isset($_GET['sass']) )? 'All Sass files were processed forcefully via query string.' : $this->sass_process_status;
-						$this->add_log('Sass force re-process requested', 1); //Logging this one because it was specifically requested. The other conditions below are otherwise detected.
-					}
+							$scss_locations['child'] = array(
+								'directory' => get_stylesheet_directory(),
+								'uri' => get_stylesheet_directory_uri(),
+								'core' => get_template_directory() . '/assets/scss/',
+								'imports' => array(get_stylesheet_directory() . '/assets/scss/partials/')
+							);
+						}
 
-					if ( !$force_all && (isset($_GET['settings-updated']) || $this->get_data('need_sass_compile') === 'true') && $this->is_staff() ){
-						$force_all = true;
-						$this->sass_process_status = ( isset($_GET['sass']) )? 'All Sass files were processed forcefully after Nebula Options saved.' : $this->sass_process_status;
-					}
+						//Allow for additional Sass locations to be included. Imports can be an array of directories.
+						$all_scss_locations = apply_filters('nebula_scss_locations', $scss_locations);
 
-					//Check if partial files have been modified since last Sass process
-					if ( empty($force_all) ){ //If already processing everything, don't need to check individual partial files
-						$scss_last_processed = $this->get_data('scss_last_processed');
-						if ( $this->get_data('scss_last_processed') != 0 ){
-							foreach ( $all_scss_locations as $scss_location ){
-								//Check core directory for "special" files
-								if ( !empty($scss_location['core']) ){
-									$critical_file = $scss_location['core'] . 'critical.scss';
-									if ( file_exists($critical_file) && $scss_last_processed-filemtime($critical_file) < -30 ){
-										$force_all = true; //If critical.scss file has been edited, reprocess everything.
-										$this->sass_process_status = ( isset($_GET['sass']) )? 'All Sass files were processed forcefully because critical Sass was modified.' : $this->sass_process_status;
-										break;
+						//Check if all Sass files should be rendered
+						//$force_all = false;
+						if ( (isset($_GET['sass']) || isset($_GET['scss'])) && $this->is_staff() ){
+							$force_all = true;
+							$this->sass_process_status = ( isset($_GET['sass']) )? 'All Sass files were processed forcefully via query string.' : $this->sass_process_status;
+							$this->add_log('Sass force re-process requested', 1); //Logging this one because it was specifically requested. The other conditions below are otherwise detected.
+						}
+
+						if ( !$force_all && (isset($_GET['settings-updated']) || $this->get_data('need_sass_compile') === 'true') && $this->is_staff() ){
+							$force_all = true;
+							$this->sass_process_status = ( isset($_GET['sass']) )? 'All Sass files were processed forcefully after Nebula Options saved.' : $this->sass_process_status;
+						}
+
+						//Check if partial files have been modified since last Sass process
+						if ( empty($force_all) ){ //If already processing everything, don't need to check individual partial files
+							$scss_last_processed = $this->get_data('scss_last_processed');
+							if ( $this->get_data('scss_last_processed') != 0 ){
+								foreach ( $all_scss_locations as $scss_location ){
+									//Check core directory for "special" files
+									if ( !empty($scss_location['core']) ){
+										$critical_file = $scss_location['core'] . 'critical.scss';
+										if ( file_exists($critical_file) && $scss_last_processed-filemtime($critical_file) < -30 ){
+											$force_all = true; //If critical.scss file has been edited, reprocess everything.
+											$this->sass_process_status = ( isset($_GET['sass']) )? 'All Sass files were processed forcefully because critical Sass was modified.' : $this->sass_process_status;
+											break;
+										}
 									}
-								}
 
-								foreach ( $scss_location['imports'] as $imports_directory ){
-									foreach ( glob($imports_directory . '*') as $import_file ){
-										if ( $scss_last_processed-filemtime($import_file) < -30 ){
-											$force_all = true; //If any partial file has been edited, reprocess everything.
-											$this->sass_process_status = ( isset($_GET['sass']) )? 'All Sass files were processed forcefully because a partial file was modified (' . $import_file . ').' : $this->sass_process_status;
-											break 3; //Break out of all 3 foreach loops
+									foreach ( $scss_location['imports'] as $imports_directory ){
+										foreach ( glob($imports_directory . '*') as $import_file ){
+											if ( $scss_last_processed-filemtime($import_file) < -30 ){
+												$force_all = true; //If any partial file has been edited, reprocess everything.
+												$this->sass_process_status = ( isset($_GET['sass']) )? 'All Sass files were processed forcefully because a partial file was modified (' . $import_file . ').' : $this->sass_process_status;
+												break 3; //Break out of all 3 foreach loops
+											}
 										}
 									}
 								}
 							}
 						}
-					}
 
-					$this->update_data('need_sass_compile', 'true'); //Set this to true as we are compiling so we can use it as a flag to run some thing only once.
+						$this->update_data('need_sass_compile', 'true'); //Set this to true as we are compiling so we can use it as a flag to run some thing only once.
 
-					global $sass_errors;
-					$sass_errors = array();
+						global $sass_errors;
+						$sass_errors = array();
 
-					//Find and render .scss files at each location
-					$this->was_sass_processed = false; //This is changed to true when Sass is actually processed
-					foreach ( $all_scss_locations as $scss_location_name => $scss_location_paths ){
-						$this->render_scss($scss_location_name, $scss_location_paths, $force_all); //Remember: this does not mean Sass is being processed– this function checks the files first and then processes only when necessary
-					}
+						//Find and render .scss files at each location
+						$this->was_sass_processed = false; //This is changed to true when Sass is actually processed
+						foreach ( $all_scss_locations as $scss_location_name => $scss_location_paths ){
+							$this->render_scss($scss_location_name, $scss_location_paths, $force_all); //Remember: this does not mean Sass is being processed– this function checks the files first and then processes only when necessary
+						}
 
-					$this->sass_process_status = ( !isset($_GET['sass']) && $this->was_sass_processed )? $this->sass_files_processed . ' Sass file(s) have been processed.' : $this->sass_process_status; //Show this status if Sass was processed but not explicitly forced. Otherwise use the existing status
+						$this->sass_process_status = ( !isset($_GET['sass']) && $this->was_sass_processed )? $this->sass_files_processed . ' Sass file(s) have been processed.' : $this->sass_process_status; //Show this status if Sass was processed but not explicitly forced. Otherwise use the existing status
 
-					$this->update_data('need_sass_compile', 'false'); //Set it to false after Sass is finished
-					set_transient('nebula_sass_throttle', time(), 15); //15 second cache to throttle Sass from being re-processed again immediately
+						$this->update_data('need_sass_compile', 'false'); //Set it to false after Sass is finished
+						set_transient('nebula_sass_throttle', time(), 15); //15 second cache to throttle Sass from being re-processed again immediately
 
-					if ( time()-$this->latest_scss_mtime >= MONTH_IN_SECONDS ){ //If the last style.scss modification hasn't happened within a month disable Sass.
-						$this->update_option('scss', 0); //Once Sass is disabled this way, a developer would need to re-enable it in Nebula Options.
-						$this->sass_process_status = 'Sass processing has been disabled to improve performance because style.scss has not been modified in a month.';
-						$this->add_log('Sass processing has been disabled due to inactivity to improve performance.', 4);
+						if ( time()-$this->latest_scss_mtime >= MONTH_IN_SECONDS ){ //If the last style.scss modification hasn't happened within a month disable Sass.
+							$this->update_option('scss', 0); //Once Sass is disabled this way, a developer would need to re-enable it in Nebula Options.
+							$this->sass_process_status = 'Sass processing has been disabled to improve performance because style.scss has not been modified in a month.';
+							$this->add_log('Sass processing has been disabled due to inactivity to improve performance.', 4);
+						}
 					}
 				} elseif ( $this->is_dev() && !$this->is_admin_page() && (isset($_GET['sass']) || isset($_GET['scss'])) ){
 					$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass can not compile because it is disabled in Nebula Functions.' : $this->sass_process_status;

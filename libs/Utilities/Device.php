@@ -34,7 +34,7 @@ if ( !trait_exists('Device') ){
 		}
 
 		//Returns the requested information of the operating system of the user's device.
-		public function get_os($info='full'){
+		public function get_os($info='name'){
 			$override = apply_filters('pre_nebula_get_os', null, $info);
 			if ( isset($override) ){return $override;}
 
@@ -110,13 +110,13 @@ if ( !trait_exists('Device') ){
 			}
 		}
 
-		//Check to see how the browser version compares to a passed version number.
-		public function is_browser($browser=null, $version='', $comparison='=='){
-			$override = apply_filters('pre_nebula_is_browser', null, $browser, $version, $comparison);
+		//Check the browser
+		public function is_browser($browser=null){
+			$override = apply_filters('pre_nebula_is_browser', null, $browser);
 			if ( isset($override) ){return $override;}
 
-			//Use basic detection (WordPress core) if Device Detect is not enabled. This only checks browser name (not name and version like above)
-			if ( empty($version) && $this->get_browser() == strtolower($browser) ){
+			//This only checks browser name
+			if ( $this->get_browser() == strtolower($browser) ){
 				return true;
 			}
 
