@@ -1526,16 +1526,16 @@ if ( !trait_exists('Functions') ){
 						$prefix = 'Tag: ';
 					}
 
-					echo apply_filters('nebula_breadcrumbs_tag', $data['before'] . $prefix . single_tag_title('', false) . $data['after'], $data);
+					echo apply_filters('nebula_breadcrumbs_tag', $data['before'] . $prefix . '<span itemprop="name">' . single_tag_title('', false) . '</span>' . $data['after'], $data);
 					//echo $data['before'] . '<a class="current-breadcrumb-link" href="' . get_tag_link($thisTag->term_id) . '">'. $prefix . single_tag_title('', false) . '</a>' . $data['after']; //@todo "Nebula": Need to get $thisTag like $thisCat above
 				} elseif ( is_author() ){
 					//@TODO "Nebula" 0: Support for multi author? is_multi_author()
 
 					global $author;
 					$userdata = get_userdata($author);
-					echo apply_filters('nebula_breadcrumbs_author', $data['before'] . $userdata->display_name . $data['after'], $data);
+					echo apply_filters('nebula_breadcrumbs_author', $data['before'] . '<span itemprop="name">' . $userdata->display_name . '</span>' . $data['after'], $data);
 				} elseif ( is_404() ){
-					echo apply_filters('nebula_breadcrumbs_error', $data['before'] . 'Error 404' . $data['after'], $data);
+					echo apply_filters('nebula_breadcrumbs_error', $data['before'] . '<span itemprop="name">Error 404</span>' . $data['after'], $data);
 				}
 
 				if ( get_query_var('paged') ){
@@ -1959,7 +1959,7 @@ if ( !trait_exists('Functions') ){
 						}
 
 						if ( date('Ymd', $days_off[$key]) === date('Ymd', $date) ){
-							nebula()->timer('Business Open', 'end');
+							nebula()->timer('Is Business Open', 'end');
 							wp_cache_set('is_business_open', 'false');
 							return false;
 						}
@@ -1968,7 +1968,7 @@ if ( !trait_exists('Functions') ){
 
 				if ( $businessHours[$today]['enabled'] == '1' ){ //If the Nebula Options checkmark is checked for this day of the week.
 					if ( !empty($general) ){
-						nebula()->timer('Business Open', 'end');
+						nebula()->timer('Is Business Open', 'end');
 						wp_cache_set('is_business_open', 'true');
 						return true;
 					}
@@ -1976,7 +1976,7 @@ if ( !trait_exists('Functions') ){
 					$openToday = date('Gi', strtotime($businessHours[$today]['open']));
 					$closeToday = date('Gi', strtotime($businessHours[$today]['close'])-1); //Subtract one second to ensure midnight represents the same day
 					if ( date('Gi', $date) >= $openToday && date('Gi', $date) <= $closeToday ){
-						nebula()->timer('Business Open', 'end');
+						nebula()->timer('Is Business Open', 'end');
 						wp_cache_set('is_business_open', 'true');
 						return true;
 					}

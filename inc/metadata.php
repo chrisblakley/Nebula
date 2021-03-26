@@ -7,6 +7,7 @@
 	nebula()->timer('Metadata');
 
 	global $post;
+	$company_type = ( nebula()->get_option('business_type') )? esc_html(nebula()->get_option('business_type')) : 'LocalBusiness';
 	$image_meta_directory = get_theme_file_uri('/assets/img/meta'); //Use this and concatenate the filenames so that it will never revert back to the parent theme if individual meta images are missing.
 	$cache_query = ( nebula()->is_debug() )? '?nocache' . mt_rand(1000, mt_getrandmax()) . '=debug' . mt_rand(1000, mt_getrandmax()) : ''; //Add a random query string when debugging to force-clear the cache.
 
@@ -173,7 +174,6 @@
 	//Rich Text Test: https://search.google.com/test/rich-results
 
 	nebula()->timer('JSON-LD');
-	$company_type = ( nebula()->get_option('business_type') )? esc_html(nebula()->get_option('business_type')) : 'LocalBusiness';
 ?>
 <script type="application/ld+json">
 	{
