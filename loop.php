@@ -1,3 +1,4 @@
+<?php nebula()->timer('Loop'); ?>
 <div class="loop-section">
 	<?php if ( !have_posts() ): //If there are no posts to display (such as an empty archive page). ?>
 		<article id="post-0" class="post error404 not-found">
@@ -48,3 +49,4 @@
 		<?php nebula()->paginate(); ?>
 	<?php endif; ?>
 </div>
+<?php nebula()->timer('Loop', 'end'); ?>

@@ -32,15 +32,15 @@ if ( !trait_exists('Sass') ){
 			}
 		 ===========================*/
 		public function scss_controller($force_all = false){
-			$this->timer('Sass (Total)', 'start', 'Sass');
-			global $pagenow;
+			//Ensure Sass option is enabled
+			if ( $this->get_option('scss') ){
+				$this->timer('Sass (Total)', 'start', 'Sass');
+				global $pagenow;
 
-			$sass_throttle = get_transient('nebula_sass_throttle'); //This prevents Sass from compiling multiple times in quick succession
-			if ( empty($sass_throttle) || $pagenow === 'update.php' || $this->is_debug() ){
-				$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not throttled (so okay to process).' : $this->sass_process_status;
+				$sass_throttle = get_transient('nebula_sass_throttle'); //This prevents Sass from compiling multiple times in quick succession
+				if ( empty($sass_throttle) || $pagenow === 'update.php' || $this->is_debug() ){
+					$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not throttled (so okay to process).' : $this->sass_process_status;
 
-				//Ensure Sass option is enabled
-				if ( $this->get_option('scss') ){
 					//Ignore background requests (except for automated theme updates) and bots
 					if ( !$this->is_background_request() && !$this->is_bot() && $pagenow !== 'update-core.php' ){ //Ignore update-core.php (this listing page of updates)– that is different than update.php (which is the actual updater). Note: update.php is not considered a "background" request
 						$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass is enabled, and the request is okay to process.' : $this->sass_process_status;
@@ -153,16 +153,17 @@ if ( !trait_exists('Sass') ){
 							$this->sass_process_status = 'Sass processing has been disabled to improve performance because style.scss has not been modified in a month.';
 							$this->add_log('Sass processing has been disabled due to inactivity to improve performance.', 4);
 						}
+					} elseif ( $this->is_dev() && !$this->is_admin_page() && (isset($_GET['sass']) || isset($_GET['scss'])) ){
+						$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass can not compile because it is disabled in Nebula Functions.' : $this->sass_process_status;
+						trigger_error('Sass can not compile because it is disabled in Nebula Functions.', E_USER_NOTICE);
 					}
-				} elseif ( $this->is_dev() && !$this->is_admin_page() && (isset($_GET['sass']) || isset($_GET['scss'])) ){
-					$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass can not compile because it is disabled in Nebula Functions.' : $this->sass_process_status;
-					trigger_error('Sass can not compile because it is disabled in Nebula Functions.', E_USER_NOTICE);
+				} else {
+					$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass is throttled for 15 seconds between processing. <a href="?sass=true">Try again soon.</a>' : $this->sass_process_status;
 				}
-			} else {
-				$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass is throttled for 15 seconds between processing. <a href="?sass=true">Try again soon.</a>' : $this->sass_process_status;
+
+				$this->timer('Sass (Total)', 'stop', 'Sass');
 			}
 
-			$this->timer('Sass (Total)', 'stop', 'Sass');
 			return $this->was_sass_processed;
 		}
 

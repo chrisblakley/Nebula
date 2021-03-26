@@ -188,7 +188,6 @@ if ( !trait_exists('Assets') ){
 						'url' => admin_url('admin-ajax.php'),
 						'nonce' => wp_create_nonce('nebula_ajax_nonce'),
 					),
-					'ecommerce' => false,
 					'options' => array(
 						'sw' => $this->get_option('service_worker'),
 						'gaid' => esc_html($this->get_option('ga_tracking_id')),
@@ -219,7 +218,7 @@ if ( !trait_exists('Assets') ){
 					'permalink' => get_the_permalink(),
 					'title' => urlencode(get_the_title()),
 					'excerpt' => esc_html($this->excerpt(array('words' => 100, 'more' => '', 'ellipsis' => false, 'strip_tags' => true))),
-					'author' => urlencode(get_the_author()),
+					'author' => ( $this->get_option('author_bios') )? urlencode(get_the_author()) : '',
 					'year' => get_the_date('Y'),
 					'categories' => $this->post_categories(array('string' => true)),
 					'tags' => $this->post_tags(array('string' => true)),

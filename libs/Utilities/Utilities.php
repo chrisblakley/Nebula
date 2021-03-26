@@ -69,15 +69,15 @@ if ( !trait_exists('Utilities') ){
 
 		//Generate Nebula Session ID
 		public function nebula_session_id(){
-			$timer_name = $this->timer('Session ID');
-			$server_generated_session_id = ( session_id() )? session_id() : '!' . uniqid(); //@todo "nebula" 0: decommission for session
+			$cache_group = uniqid(); //Each "user" gets its own group so it persists without interfering with each other
 
 			//Check object cache first
-			$session_id = wp_cache_get('nebula_session_id', $server_generated_session_id); //If session_id() is not available, it will re-generate the Nebula session ID
+			$session_id = wp_cache_get('nebula_session_id', $cache_group); //If session_id() is not available, it will re-generate the Nebula session ID
 			if ( !empty($session_id) ){
 				return $session_id;
 			}
 
+			$timer_name = $this->timer('Session ID');
 			$session_data = array();
 
 			//Time
@@ -119,7 +119,7 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			//Session ID
-			$session_data['s'] = $server_generated_session_id;
+			$session_data['s'] = $cache_group; //Use the unique ID that determines the group as the main ID
 
 			//Google Analytics CID
 			$session_data['cid'] = $this->ga_parse_cookie();
@@ -133,7 +133,7 @@ if ( !trait_exists('Utilities') ){
 				$session_id .= $key . ':' . $value . ';';
 			}
 
-			wp_cache_set('nebula_session_id', $session_id, $server_generated_session_id); //Store in object cache grouped by the server-generated session ID
+			wp_cache_set('nebula_session_id', $session_id, $cache_group); //Store in object cache grouped by the unique ID to prevent interference
 			$this->timer($timer_name, 'end');
 			return $session_id;
 		}

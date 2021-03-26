@@ -1,4 +1,5 @@
 			<?php if ( is_active_sidebar('footer-widget-area') ): ?>
+				<?php nebula()->timer('Footer Widgets'); ?>
 				<section id="footer-widget-section">
 					<?php if ( get_theme_mod('nebula_fwa_overlay_color') || get_theme_mod('nebula_fwa_overlay_opacity') ): ?>
 						<div class="custom-color-overlay"></div>
@@ -10,8 +11,10 @@
 						</div><!--/row-->
 					</div><!--/container-->
 				</section>
+				<?php nebula()->timer('Footer Widgets', 'end'); ?>
 			<?php endif; ?>
 
+			<?php nebula()->timer('Footer Section'); ?>
 			<footer id="footer-section" class="lazy-load">
 				<?php if ( get_theme_mod('nebula_footer_overlay_color') || get_theme_mod('nebula_footer_overlay_opacity') ): ?>
 					<div class="custom-color-overlay"></div>
@@ -69,6 +72,7 @@
 
 				<?php do_action('nebula_footer'); ?>
 			</footer>
+			<?php nebula()->timer('Footer Section', 'end'); ?>
 
 			<?php wp_footer(); ?>
 		</div><!--/body-wrapper-->

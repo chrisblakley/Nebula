@@ -12,6 +12,7 @@
 	get_header();
 ?>
 
+<?php nebula()->timer('Index Template'); ?>
 <section id="bigheadingcon">
 	<div class="custom-color-overlay"></div>
 
@@ -44,5 +45,6 @@
 		</div><!--/row-->
 	</div><!--/container-->
 </section>
+<?php nebula()->timer('Index Template', 'end'); ?>
 
 <?php get_footer(); ?>

@@ -6,7 +6,7 @@
 ?>
 
 <?php if ( nebula()->is_analytics_allowed() ): ?>
-	<?php nebula()->timer('Analytics (Include)', 'start'); ?>
+	<?php nebula()->timer('Analytics (Include)'); ?>
 	<?php if ( nebula()->get_option('microsoft_clarity_id') ): //Microsoft Clarity ?>
 		<script type="text/javascript">
 			(function(c,l,a,r,i,t,y){
@@ -128,14 +128,15 @@
 				}
 
 				//Business Open/Closed
-				if ( nebula()->business_open() ){
-					$business_open = 'During Business Hours';
-					echo 'nebula.user.client.businessopen = true;';
-				} else {
-					$business_open = 'Non-Business Hours';
-					echo 'nebula.user.client.businessopen = false;';
-				}
 				if ( nebula()->get_option('cd_businesshours') ){
+					if ( nebula()->business_open() ){
+						$business_open = 'During Business Hours';
+						echo 'nebula.user.client.businessopen = true;';
+					} else {
+						$business_open = 'Non-Business Hours';
+						echo 'nebula.user.client.businessopen = false;';
+					}
+
 					echo 'setDimension("Business Hours", "' . $business_open . '", nebula.analytics.dimensions.businessHours);';
 				}
 

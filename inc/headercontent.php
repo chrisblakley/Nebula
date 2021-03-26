@@ -1,3 +1,4 @@
+<?php nebula()->timer('Header Content (Include)'); ?>
 <section id="bigheadingcon">
 	<div class="custom-color-overlay"></div>
 
@@ -71,3 +72,4 @@
 		</div><!--/container-->
 	<?php endif; ?>
 </section>
+<?php nebula()->timer('Header Content (Include)', 'end'); ?>

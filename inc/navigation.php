@@ -1,3 +1,4 @@
+<?php nebula()->timer('Navigation (Include)'); ?>
 <div id="navigation-section" class="mp-<?php echo get_theme_mod('menu_position', 'over'); ?>">
 	<?php if ( has_nav_menu('utility') ): ?>
 		<div id="utilitynavcon">
@@ -39,3 +40,4 @@
 		</div><!--/container-->
 	</div>
 </div>
+<?php nebula()->timer('Navigation (Include)', 'end'); ?>

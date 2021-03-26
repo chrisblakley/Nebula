@@ -15,6 +15,7 @@
 <?php get_template_part('inc/headercontent'); ?>
 <?php get_template_part('inc/nebula_drawer'); ?>
 
+<?php nebula()->timer('404 Template'); ?>
 <section id="content-section">
 	<div class="container">
 		<div class="row">
@@ -62,5 +63,6 @@
 		</div><!--/row-->
 	</div><!--/container-->
 </section>
+<?php nebula()->timer('404 Template', 'end'); ?>
 
 <?php get_footer(); ?>

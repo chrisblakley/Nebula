@@ -4,7 +4,7 @@
 		exit;
 	}
 
-	nebula()->timer('Metadata', 'start');
+	nebula()->timer('Metadata');
 
 	global $post;
 	$image_meta_directory = get_theme_file_uri('/assets/img/meta'); //Use this and concatenate the filenames so that it will never revert back to the parent theme if individual meta images are missing.
@@ -70,13 +70,17 @@
 	<meta property="business:contact_data:postal_code" content="<?php echo esc_attr(nebula()->get_option('postal_code')); ?>" />
 	<meta property="business:contact_data:country_name" content="<?php echo esc_attr(nebula()->get_option('country_name')); ?>" />
 
-	<?php foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ): //Business hours of operation. ?>
-		<?php if ( nebula()->get_option('business_hours_' . $weekday . '_enabled') && nebula()->get_option('business_hours_' . $weekday . '_open') != '' && nebula()->get_option('business_hours_' . $weekday . '_close') != '' ) : ?>
-			<meta property="business:hours:day" content="<?php echo $weekday; ?>" />
-			<meta property="business:hours:start" content="<?php echo esc_attr(nebula()->get_option('business_hours_' . $weekday . '_open')); ?>" />
-			<meta property="business:hours:end" content="<?php echo esc_attr(nebula()->get_option('business_hours_' . $weekday . '_close')); ?>" />
+	<?php if ( $company_type !== 'Organization' && $company_type !== 'Corporation' ): ?>
+		<?php if ( nebula()->has_business_hours() ): ?>
+			<?php foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ): //Business hours of operation. ?>
+				<?php if ( nebula()->get_option('business_hours_' . $weekday . '_enabled') && nebula()->get_option('business_hours_' . $weekday . '_open') != '' && nebula()->get_option('business_hours_' . $weekday . '_close') != '' ) : ?>
+					<meta property="business:hours:day" content="<?php echo $weekday; ?>" />
+					<meta property="business:hours:start" content="<?php echo esc_attr(nebula()->get_option('business_hours_' . $weekday . '_open')); ?>" />
+					<meta property="business:hours:end" content="<?php echo esc_attr(nebula()->get_option('business_hours_' . $weekday . '_close')); ?>" />
+				<?php endif; ?>
+			<?php endforeach; ?>
 		<?php endif; ?>
-	<?php endforeach; ?>
+	<?php endif; ?>
 <?php endif; ?>
 
 <?php //Open Graph Thumbnails ?>
@@ -96,14 +100,11 @@
 <?php endfor; ?>
 
 <?php if ( !has_site_icon() ): ?>
+	<link rel="mask-icon" href="<?php echo $image_meta_directory . '/safari-pinned-tab.svg' . $cache_query; ?>" color="<?php echo nebula()->get_color('primary'); ?>" />
 	<link rel="shortcut icon" type="image/png" href="<?php echo $image_meta_directory . '/favicon.ico' . $cache_query; ?>" />
 <?php endif; ?>
 <link rel="shortcut icon" type="image/png" sizes="16x16" href="<?php echo get_site_icon_url(16, $image_meta_directory . '/favicon-16x16.png') . $cache_query; ?>" />
 <link rel="shortcut icon" type="image/png" sizes="32x32" href="<?php echo get_site_icon_url(32, $image_meta_directory . '/favicon-16x16.png') . $cache_query; ?>" />
-
-<?php if ( !has_site_icon() ): ?>
-	<link rel="mask-icon" href="<?php echo $image_meta_directory . '/safari-pinned-tab.svg' . $cache_query; ?>" color="<?php echo nebula()->get_color('primary'); ?>" />
-<?php endif; ?>
 
 <link rel="apple-touch-icon" sizes="180x180" href="<?php echo get_site_icon_url(180, $image_meta_directory . '/apple-touch-icon.png') . $cache_query; ?>" />
 <link rel="icon" type="image/png" sizes="192x192" href="<?php echo get_site_icon_url(192, $image_meta_directory . '/android-chrome-192x192.png') . $cache_query; ?>" />
@@ -171,6 +172,7 @@
 	//Google Structured Data Testing Tool: https://search.google.com/structured-data/testing-tool
 	//Rich Text Test: https://search.google.com/test/rich-results
 
+	nebula()->timer('JSON-LD');
 	$company_type = ( nebula()->get_option('business_type') )? esc_html(nebula()->get_option('business_type')) : 'LocalBusiness';
 ?>
 <script type="application/ld+json">
@@ -199,23 +201,25 @@
 		<?php endif; ?>
 
 		<?php if ( $company_type !== 'Organization' && $company_type !== 'Corporation' ): ?>
-			<?php
-				$opening_hours_specification = '';
-				foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
-					if ( nebula()->get_option('business_hours_' . $weekday . '_enabled') && nebula()->get_option('business_hours_' . $weekday . '_open') != '' && nebula()->get_option('business_hours_' . $weekday . '_close') != '' ){
-						$opening_hours_specification .= '{
-							"@type": "OpeningHoursSpecification",
-							"dayOfWeek": "' . $weekday . '",
-							"opens": "' . date('H:i', strtotime(nebula()->get_option('business_hours_' . $weekday . '_open'))) . '",
-							"closes": "' . date('H:i', strtotime(nebula()->get_option('business_hours_' . $weekday . '_close'))) . '"
-						},';
+			<?php if ( nebula()->has_business_hours() ): ?>
+				<?php
+					$opening_hours_specification = '';
+					foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
+						if ( nebula()->get_option('business_hours_' . $weekday . '_enabled') && nebula()->get_option('business_hours_' . $weekday . '_open') != '' && nebula()->get_option('business_hours_' . $weekday . '_close') != '' ){
+							$opening_hours_specification .= '{
+								"@type": "OpeningHoursSpecification",
+								"dayOfWeek": "' . $weekday . '",
+								"opens": "' . date('H:i', strtotime(nebula()->get_option('business_hours_' . $weekday . '_open'))) . '",
+								"closes": "' . date('H:i', strtotime(nebula()->get_option('business_hours_' . $weekday . '_close'))) . '"
+							},';
+						}
 					}
-				}
-			?>
-			<?php if ( !empty($opening_hours_specification) ): ?>
-				"openingHoursSpecification": [
-					<?php echo rtrim($opening_hours_specification, ','); ?>
-				],
+				?>
+				<?php if ( !empty($opening_hours_specification) ): ?>
+					"openingHoursSpecification": [
+						<?php echo rtrim($opening_hours_specification, ','); ?>
+					],
+				<?php endif; ?>
 			<?php endif; ?>
 		<?php endif; ?>
 
@@ -397,6 +401,7 @@
 <?php endif; ?>
 
 <?php
+	nebula()->timer('JSON-LD', 'end');
 	nebula()->timer('Metadata', 'end');
 	do_action('nebula_metadata_end');
 ?>

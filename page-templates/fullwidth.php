@@ -12,6 +12,7 @@
 	get_header();
 ?>
 
+<?php nebula()->timer('Full Width Template'); ?>
 <section id="bigheadingcon">
 	<div class="custom-color-overlay"></div>
 
@@ -72,5 +73,6 @@
 		</div><!--/row-->
 	</div><!--/container-->
 </section>
+<?php nebula()->timer('Full Width Template', 'end'); ?>
 
 <?php get_footer(); ?>

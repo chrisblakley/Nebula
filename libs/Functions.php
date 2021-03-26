@@ -1329,7 +1329,7 @@ if ( !trait_exists('Functions') ){
 			$override = apply_filters('pre_nebula_breadcrumbs', null);
 			if ( isset($override) ){return;}
 
-			$this->timer('Rendering Breadcrumbs');
+			$this->timer('Breadcrumbs');
 
 			global $post;
 			$defaults = apply_filters('nebula_breadcrumb_defaults', array(
@@ -1544,7 +1544,7 @@ if ( !trait_exists('Functions') ){
 				echo '</ol>';
 			}
 
-			$this->timer('Rendering Breadcrumbs', 'end');
+			$this->timer('Breadcrumbs', 'end');
 		}
 
 		//Modified WordPress search form using Bootstrap components
@@ -1866,18 +1866,20 @@ if ( !trait_exists('Functions') ){
 
 		//Check for single category templates with the filename single-cat-slug.php or single-cat-id.php
 		public function single_category_template($single_template){
-			global $wp_query, $post;
+			if ( !empty($single_template) ){
+				global $wp_query, $post;
 
-			//Check for single template by category slug and ID
-			foreach ( get_the_category() as $category ){
-				if ( file_exists(get_stylesheet_directory() . '/single-cat-' . $category->slug . '.php') ){
-					return get_stylesheet_directory() . '/single-cat-' . $category->slug . '.php';
-				} elseif ( file_exists(get_stylesheet_directory() . '/single-cat-' . $category->term_id . '.php') ){
-					return get_stylesheet_directory() . '/single-cat-' . $category->term_id . '.php';
-				} elseif ( file_exists(get_template_directory() . '/single-cat-' . $category->term_id . '.php') ){
-					return get_template_directory() . '/single-cat-' . $category->term_id . '.php';
-				} elseif ( file_exists(get_template_directory() . '/single-cat-' . $category->term_id . '.php') ){
-					return get_template_directory() . '/single-cat-' . $category->term_id . '.php';
+				//Check for single template by category slug and ID
+				foreach ( get_the_category() as $category ){
+					if ( file_exists(get_stylesheet_directory() . '/single-cat-' . $category->slug . '.php') ){
+						return get_stylesheet_directory() . '/single-cat-' . $category->slug . '.php';
+					} elseif ( file_exists(get_stylesheet_directory() . '/single-cat-' . $category->term_id . '.php') ){
+						return get_stylesheet_directory() . '/single-cat-' . $category->term_id . '.php';
+					} elseif ( file_exists(get_template_directory() . '/single-cat-' . $category->term_id . '.php') ){
+						return get_template_directory() . '/single-cat-' . $category->term_id . '.php';
+					} elseif ( file_exists(get_template_directory() . '/single-cat-' . $category->term_id . '.php') ){
+						return get_template_directory() . '/single-cat-' . $category->term_id . '.php';
+					}
 				}
 			}
 
@@ -1886,11 +1888,24 @@ if ( !trait_exists('Functions') ){
 
 		//Check if business hours exist in Nebula Options
 		public function has_business_hours(){
+			//Check object cache first so the loop logic does not need to run more than once
+			$has_business_hours = wp_cache_get('has_business_hours');
+			if ( is_string($has_business_hours) ){
+				if ( strtolower($has_business_hours) === 'true' ){
+					return true;
+				}
+
+				return false;
+			}
+
 			foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
 				if ( $this->get_option('business_hours_' . $weekday . '_enabled') || $this->get_option('business_hours_' . $weekday . '_open') || $this->get_option('business_hours_' . $weekday . '_close') ){
+					wp_cache_set('has_business_hours', 'true');
 					return true;
 				}
 			}
+
+			wp_cache_set('has_business_hours', 'false');
 			return false;
 		}
 
@@ -1902,52 +1917,74 @@ if ( !trait_exists('Functions') ){
 			$override = apply_filters('pre_business_open', null, $date, $general);
 			if ( isset($override) ){return $override;}
 
-			if ( empty($date) || $date === 'now' ){
-				$date = time();
-			} elseif ( strtotime($date) ){
-				$date = strtotime($date . ' ' . date('g:ia', strtotime('now')));
-			}
-			$today = strtolower(date('l', $date));
-
-			$businessHours = array();
-			foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
-				$businessHours[$weekday] = array(
-					'enabled' => $this->get_option('business_hours_' . $weekday . '_enabled'),
-					'open' => $this->get_option('business_hours_' . $weekday . '_open'),
-					'close' => $this->get_option('business_hours_' . $weekday . '_close')
-				);
-			}
-
-			$days_off = ( !empty($this->get_option('business_hours_closed')) )? $this->get_option('business_hours_closed') : ''; //Ensure correct type
-			$days_off = array_filter(explode(', ', $days_off));
-			if ( !empty($days_off) ){
-				foreach ( $days_off as $key => $day_off ){
-					$days_off[$key] = strtotime($day_off . ' ' . date('Y', $date));
-
-					if ( date('N', $days_off[$key]) === 6 ){ //If the date is a Saturday
-						$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' -1 day');
-					} elseif ( date('N', $days_off[$key]) === 7 ){ //If the date is a Sunday
-						$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' +1 day');
-					}
-
-					if ( date('Ymd', $days_off[$key]) === date('Ymd', $date) ){
-						return false;
-					}
-				}
-			}
-
-			if ( $businessHours[$today]['enabled'] == '1' ){ //If the Nebula Options checkmark is checked for this day of the week.
-				if ( !empty($general) ){
+			//Check object cache first so the full loop logic does not need to run more than once
+			$is_business_open = wp_cache_get('is_business_open');
+			if ( is_string($is_business_open) ){
+				if ( strtolower($is_business_open) === 'true' ){
 					return true;
 				}
 
-				$openToday = date('Gi', strtotime($businessHours[$today]['open']));
-				$closeToday = date('Gi', strtotime($businessHours[$today]['close'])-1); //Subtract one second to ensure midnight represents the same day
-				if ( date('Gi', $date) >= $openToday && date('Gi', $date) <= $closeToday ){
-					return true;
+				return false;
+			}
+
+			nebula()->timer('Is Business Open');
+
+			if ( $this->has_business_hours() ){
+				if ( empty($date) || $date === 'now' ){
+					$date = time();
+				} elseif ( strtotime($date) ){
+					$date = strtotime($date . ' ' . date('g:ia', strtotime('now')));
+				}
+				$today = strtolower(date('l', $date));
+
+				$businessHours = array();
+				foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
+					$businessHours[$weekday] = array(
+						'enabled' => $this->get_option('business_hours_' . $weekday . '_enabled'),
+						'open' => $this->get_option('business_hours_' . $weekday . '_open'),
+						'close' => $this->get_option('business_hours_' . $weekday . '_close')
+					);
+				}
+
+				$days_off = ( !empty($this->get_option('business_hours_closed')) )? $this->get_option('business_hours_closed') : ''; //Ensure correct type
+				$days_off = array_filter(explode(', ', $days_off));
+				if ( !empty($days_off) ){
+					foreach ( $days_off as $key => $day_off ){
+						$days_off[$key] = strtotime($day_off . ' ' . date('Y', $date));
+
+						if ( date('N', $days_off[$key]) === 6 ){ //If the date is a Saturday
+							$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' -1 day');
+						} elseif ( date('N', $days_off[$key]) === 7 ){ //If the date is a Sunday
+							$days_off[$key] = strtotime(date('F j, Y', $days_off[$key]) . ' +1 day');
+						}
+
+						if ( date('Ymd', $days_off[$key]) === date('Ymd', $date) ){
+							nebula()->timer('Business Open', 'end');
+							wp_cache_set('is_business_open', 'false');
+							return false;
+						}
+					}
+				}
+
+				if ( $businessHours[$today]['enabled'] == '1' ){ //If the Nebula Options checkmark is checked for this day of the week.
+					if ( !empty($general) ){
+						nebula()->timer('Business Open', 'end');
+						wp_cache_set('is_business_open', 'true');
+						return true;
+					}
+
+					$openToday = date('Gi', strtotime($businessHours[$today]['open']));
+					$closeToday = date('Gi', strtotime($businessHours[$today]['close'])-1); //Subtract one second to ensure midnight represents the same day
+					if ( date('Gi', $date) >= $openToday && date('Gi', $date) <= $closeToday ){
+						nebula()->timer('Business Open', 'end');
+						wp_cache_set('is_business_open', 'true');
+						return true;
+					}
 				}
 			}
 
+			nebula()->timer('Is Business Open', 'end');
+			wp_cache_set('is_business_open', 'false');
 			return false;
 		}
 
