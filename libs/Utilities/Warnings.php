@@ -44,7 +44,8 @@ if ( !trait_exists('Warnings') ){
 					echo '<script>';
 					foreach( $this->warnings as $warning ){
 						$category = ( !empty($warning['category']) )? $warning['category'] : 'Nebula';
-						echo 'console.' . esc_html($warning['level']) . '("[' . esc_html($category) . '] ' . esc_html(addslashes(strip_tags($warning['description']))) . '");';
+						$log_level = ( $warning['level'] == 'warning' )? 'warn' : $warning['level'];
+						echo 'console.' . esc_html($log_level) . '("[' . esc_html($category) . '] ' . esc_html(addslashes(strip_tags($warning['description']))) . '");';
 					}
 					echo '</script>';
 				}

@@ -1,3 +1,29 @@
+//Check if the user has enabled DNT (if supported in their browser)
+//This is in the utilities module so this function can be used without (and to prevent) the need to load the analytics module at all when not necessary
+nebula.isDoNotTrack = function(){
+	//Use server-side header detection first
+	if ( typeof nebula.user?.dnt === 'boolean' ){ //Check if it is defined
+		return nebula.user.dnt;
+	}
+
+	//If the nogo query string exists (to prevent self-reporting)
+	if ( nebula.get('noga') ){
+		return true;
+	}
+
+	//Otherwise, check if the browser supports DNT
+	if ( window.doNotTrack || navigator.doNotTrack || navigator.msDoNotTrack || 'msTrackingProtectionEnabled' in window.external ){
+		//Check if DNT is enabled
+		if ( window.doNotTrack == '1' || navigator.doNotTrack == 'yes' || navigator.doNotTrack == '1' || navigator.msDoNotTrack == '1' || window.external.msTrackingProtectionEnabled() ){
+			return true; //This user prefers not to be tracked
+		}
+
+		return false; //This user is allowing tracking.
+	}
+
+	return false; //The browser does not support DNT
+};
+
 nebula.timings = [];
 nebula.scroll = {
 	offset: 0, //Used for global scroll offsets (when not able to modify certain links or to save redundant parameters)

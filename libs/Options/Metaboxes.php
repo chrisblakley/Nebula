@@ -9,8 +9,7 @@ if ( !trait_exists('Metaboxes') ){
 		}
 
 		public function nebula_options_metaboxes(){
-			$current_screen = get_current_screen();
-			if ( $current_screen->base === 'appearance_page_nebula_options' ){
+			if ( get_current_screen()->base === 'appearance_page_nebula_options' ){
 				//Metadata
 				add_meta_box('nebula_site_information', 'Site Information', array($this, 'site_information_metabox'), 'nebula_options', 'metadata');
 				add_meta_box('nebula_business_information', 'Business Information', array($this, 'nebula_business_information'), 'nebula_options', 'metadata');
@@ -1856,13 +1855,21 @@ if ( !trait_exists('Metaboxes') ){
 
 		public function dequeue_styles_metabox($nebula_options){
 			$all_registered_styles = get_option('optimizable_registered_styles');
-			$this->output_dequeue_fields($all_registered_styles, $nebula_options['dequeue_styles'], 'css');
+
+			if ( !empty($nebula_options['dequeue_styles']) ){
+				$this->output_dequeue_fields($all_registered_styles, $nebula_options['dequeue_styles'], 'css');
+			}
+
 			do_action('nebula_options_dequeue_styles_metabox', $nebula_options);
 		}
 
 		public function dequeue_scripts_metabox($nebula_options){
 			$all_registered_scripts = get_option('optimizable_registered_scripts');
-			$this->output_dequeue_fields($all_registered_scripts, $nebula_options['dequeue_scripts'], 'js'); //nebula_options[dequeue_scripts]
+
+			if ( !empty($nebula_options['dequeue_scripts']) ){
+				$this->output_dequeue_fields($all_registered_scripts, $nebula_options['dequeue_scripts'], 'js'); //nebula_options[dequeue_scripts]
+			}
+
 			do_action('nebula_options_dequeue_scripts_metabox', $nebula_options);
 		}
 

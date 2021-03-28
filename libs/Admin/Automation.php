@@ -34,8 +34,8 @@ if ( !trait_exists('Automation') ){
 		public function register_required_plugins(){
 			global $pagenow;
 
-			//If this user is on the Plugins page or has not yet dismissed the TGMPA admin notice
-			if ( $pagenow === 'plugins.php' || !get_user_meta(get_current_user_id(), 'tgmpa_dismissed_notice_nebula') ){
+			//If this user is on the Plugins or Themes (Apperance) admin pages or has not yet dismissed the TGMPA admin notice
+			if ( $pagenow === 'plugins.php' || $pagenow === 'themes.php' || !get_user_meta(get_current_user_id(), 'tgmpa_dismissed_notice_nebula') ){
 				$this->timer('Register Bundled Plugins');
 
 				$bundled_plugins = array(

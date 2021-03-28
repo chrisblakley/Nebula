@@ -24,7 +24,10 @@ if ( !trait_exists('Utilities') ){
 			$this->AnalyticsHooks(); //Register Analytics hooks
 			$this->DeviceHooks(); //Register Device hooks
 			$this->SassHooks(); //Register Sass hooks
-			$this->WarningsHooks(); //Register Warnings hooks
+
+			if ( is_user_logged_in() && !$this->is_background_request() && !is_customize_preview() ){
+				$this->WarningsHooks(); //Register Warnings hooks
+			}
 
 			//Update the child theme version number at various points
 			if ( is_user_logged_in() ){

@@ -3,10 +3,13 @@
 if ( !defined('ABSPATH') ){ exit; } //Exit if accessed directly
 
 if ( !class_exists('Nebula') ){
+	do_action('qm/start', 'Non-WP Core (Total)'); //This is as close to WP Core finishing as we can measure. This QM measurement includes Nebula, all plugins, and child theme functionality.
+
 	require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	require_once ABSPATH . 'wp-admin/includes/file.php';
 
 	//Require Nebula libraries
+	//Cannot conditionally load these as they define hooks that are used by the class which cannot be conditionally defined
 	require_once get_template_directory() . '/libs/Assets.php';
 	require_once get_template_directory() . '/libs/Options/Options.php';
 	require_once get_template_directory() . '/libs/Utilities/Utilities.php';
@@ -20,8 +23,6 @@ if ( !class_exists('Nebula') ){
 	require_once get_template_directory() . '/libs/Widgets.php';
 	require_once get_template_directory() . '/libs/Admin/Admin.php';
 	require_once get_template_directory() . '/libs/Ecommerce.php';
-	require_once get_template_directory() . '/libs/Aliases.php';
-	require_once get_template_directory() . '/libs/Legacy/Legacy.php'; //Backwards compatibility
 
 	//Main Nebula class
 	class Nebula {
@@ -38,16 +39,12 @@ if ( !class_exists('Nebula') ){
 		use Widgets { Widgets::hooks as WidgetsHooks; }
 		use Admin { Admin::hooks as AdminHooks; }
 		use Ecommerce { Ecommerce::hooks as EcommerceHooks; }
-		use Legacy { Legacy::hooks as LegacyHooks; }
-
-		private static $instance;
-		public $plugins = array();
 
 		//Get active instance
+		private static $instance;
 		public static function instance(){
 			if ( !self::$instance ){
 				self::$instance = new Nebula();
-				self::$instance->constants();
 				self::$instance->variables();
 				self::$instance->hooks();
 			}
@@ -56,29 +53,18 @@ if ( !class_exists('Nebula') ){
 		}
 
 		//Setup plugin constants
-		private function constants(){
+		private function variables(){
+			//Constants
 			define('NEBULA_VER', $this->version('raw')); //Nebula version
 			define('NEBULA_DIR', get_template_directory()); //Nebula path
 			define('NEBULA_URL', get_template_directory_uri()); //Nebula URL
-		}
 
-		//Set variables
-		private function variables(){
+			//Variables
 			$this->time_before_nebula = microtime(true); //Prep the time before Nebula begins
-
-			global $content_width;
-			//$content_width is a global variable used by WordPress for max image upload sizes and media embeds (in pixels).
-			//If the content area is 960px wide, set $content_width = 940; so images and videos will not overflow.
-			if ( !isset($content_width) ){
-				$content_width = 710;
-			}
 		}
 
 		//Run action and filter hooks
 		private function hooks(){
-			//Adjust the content width when the full width page template is being used
-			add_action('template_redirect', array($this, 'set_content_width'));
-
 			$this->AssetsHooks(); //Register Assets hooks
 			$this->OptionsHooks(); //Register Options hooks
 			$this->UtilitiesHooks(); //Register Utilities hooks
@@ -97,17 +83,6 @@ if ( !class_exists('Nebula') ){
 
 			if ( is_plugin_active('woocommerce/woocommerce.php') ){
 				$this->EcommerceHooks(); //Register Ecommerce hooks
-			}
-		}
-
-		public function set_content_width(){
-			$override = apply_filters('pre_nebula_set_content_width', false);
-			if ( $override !== false ){return $override;}
-
-			global $content_width;
-
-			if ( is_page_template('fullwidth.php') ){
-				$content_width = 1040;
 			}
 		}
 	}

@@ -15,6 +15,7 @@ if ( !trait_exists('Functions') ){
 			$this->linkedin_widget_loaded = false;
 			$this->pinterest_widget_loaded = false;
 
+			add_action('template_redirect', array($this, 'set_content_width'));
 			add_action('after_setup_theme', array($this, 'theme_setup'));
 			add_filter('site_icon_image_sizes', array($this, 'site_icon_sizes'));
 			add_filter('image_size_names_choose', array($this, 'image_size_human_names'));
@@ -83,6 +84,24 @@ if ( !trait_exists('Functions') ){
 			add_filter('wpcf7_special_mail_tags', array($this, 'cf7_custom_special_mail_tags'), 10, 3);
 
 			add_action('shutdown', array($this, 'flush_rewrite_on_debug'));
+		}
+
+		//Adjust the content width when the full width page template is being used
+		public function set_content_width(){
+			$override = apply_filters('pre_nebula_set_content_width', false);
+			if ( $override !== false ){return $override;}
+
+			//$content_width is a global variable used by WordPress for max image upload sizes and media embeds (in pixels).
+			global $content_width;
+
+			//If the content area is 960px wide, set $content_width = 940; so images and videos will not overflow.
+			if ( !isset($content_width) ){
+				$content_width = 710;
+			}
+
+			if ( is_page_template('fullwidth.php') ){
+				$content_width = 1040;
+			}
 		}
 
 		//Check if the Nebula Companion plugin is installed and active

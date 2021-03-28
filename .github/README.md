@@ -1,6 +1,6 @@
 ![Nebula readme icon](https://raw.githubusercontent.com/chrisblakley/Nebula/main/.github/assets/nebula-banner.jpg "Nebula readme banner")
 
-**Nebula is a WordPress theme framework that focuses on enhancing development.**
+# Nebula is a WordPress theme framework that focuses on enhancing development
 
 The core features of Nebula make it a powerful tool for designing, developing, and analyzing WordPress websites consistently, but its deliberately uncomplicated code syntax also serves as a learning resource for programmers themselves.
 
@@ -13,18 +13,10 @@ The core features of Nebula make it a powerful tool for designing, developing, a
 
 ![Nebula screenshot](https://raw.githubusercontent.com/chrisblakley/Nebula/main/.github/assets/nebula-pwa.jpg "Nebula screenshot")
 
-## Table of Contents
-+ [Getting Started](#getting_started)
-+ [Requirements & Recommendations](#requirements)
-+ [Prerequisites](#prerequisites)
-+ [Installation & Setup](#installation)
-+ [Documentation](#documentation)
-+ [Built Using](#built_using)
-
-## Getting Started <a name="getting_started"></a>
+## Getting Started
 These instructions will get Nebula setup to its recommended baseline.
 
-### Requirements & Recommendations <a name="requirements"></a>
+### Requirements & Recommendations
 Nebula follows [WordPress recommended requirements](https://wordpress.org/about/requirements/), and **does not require any additional server software**. Browsers with >1% market share are officially supported.
 
 To take full advantage of Nebula's features, the following are recommended:
@@ -33,10 +25,10 @@ To take full advantage of Nebula's features, the following are recommended:
 + MySQL 5.6+
 + SSL
 
-### Prerequisites <a name="prerequisites"></a>
+### Prerequisites
 [Download and install WordPress.](https://wordpress.org/)
 
-### Installation & Setup <a name="installation"></a>
+### Installation & Setup
 
 ![Nebula installation](https://raw.githubusercontent.com/chrisblakley/Nebula/main/.github/assets/nebula-install.gif "Nebula installation")
 
@@ -48,14 +40,14 @@ To take full advantage of Nebula's features, the following are recommended:
 6. Install and activate recommended plugins including the optional [Nebula Companion plugin](https://github.com/chrisblakley/Nebula-Companion).
 7. Customize Nebula Options (including enabling Sass if desired)
 
-## Documentation <a name="documentation"></a>
+## Documentation
 Comprehensive documentation is available at [https://nebula.gearside.com/](https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=full+documentation) along with a [testing checklist]((https://nebula.gearside.com/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=testing+checklist)) and [launch guide](https://nebula.gearside.com/get-started/?utm_campaign=documentation&utm_medium=readme&utm_source=github&utm_content=launch+checklist).
 
 ## Performance
 Performance data is updated automatically every hour. Your performance may vary depending on your hosting, plugins, and many other variables. This graphic is to simply illustrate Nebula's performance capabilities.
 <br/><br/><img src="https://nebula.gearside.com/speedtest.svg" width="600px">
 
-## Built Using <a name="built_using"></a>
+## Built Using
 + [Bootstrap](https://github.com/twbs/bootstrap)
 + [Plugin Update Checker](https://github.com/YahnisElsts/plugin-update-checker)
 + [TGM Plugin Activation](https://github.com/TGMPA/TGM-Plugin-Activation)

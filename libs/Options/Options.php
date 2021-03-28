@@ -9,7 +9,11 @@ if ( !trait_exists('Options') ){
 		use Metaboxes { Metaboxes::hooks as MetaboxesHooks;}
 
 		public function hooks(){
-			$this->MetaboxesHooks(); //Register Options Metaboxes hooks
+			global $pagenow;
+
+			if ( $pagenow === 'themes.php' ){ //Options page
+				$this->MetaboxesHooks(); //Register Options Metaboxes hooks
+			}
 
 			add_action('current_screen', array($this, 'register_options'));
 			add_action('admin_menu', array($this, 'admin_sub_menu'));

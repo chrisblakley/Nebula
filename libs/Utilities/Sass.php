@@ -145,13 +145,15 @@ if ( !trait_exists('Sass') ){
 
 						$this->sass_process_status = ( !isset($_GET['sass']) && $this->was_sass_processed )? $this->sass_files_processed . ' Sass file(s) have been processed.' : $this->sass_process_status; //Show this status if Sass was processed but not explicitly forced. Otherwise use the existing status
 
-						$this->update_data('need_sass_compile', 'false'); //Set it to false after Sass is finished
-						set_transient('nebula_sass_throttle', time(), 15); //15 second cache to throttle Sass from being re-processed again immediately
-
-						if ( time()-$this->latest_scss_mtime >= MONTH_IN_SECONDS ){ //If the last style.scss modification hasn't happened within a month disable Sass.
-							$this->update_option('scss', 0); //Once Sass is disabled this way, a developer would need to re-enable it in Nebula Options.
-							$this->sass_process_status = 'Sass processing has been disabled to improve performance because style.scss has not been modified in a month.';
-							$this->add_log('Sass processing has been disabled due to inactivity to improve performance.', 4);
+						if ( $this->was_sass_processed ){
+							$this->update_data('need_sass_compile', 'false'); //Set it to false after Sass is finished
+							set_transient('nebula_sass_throttle', time(), 15); //15 second cache to throttle Sass from being re-processed again immediately
+						} else {
+							if ( time()-$this->latest_scss_mtime >= MONTH_IN_SECONDS ){ //If the last style.scss modification hasn't happened within a month disable Sass.
+								$this->update_option('scss', 0); //Once Sass is disabled this way, a developer would need to re-enable it in Nebula Options.
+								$this->sass_process_status = 'Sass processing has been disabled to improve performance because style.scss has not been modified in a month.';
+								$this->add_log('Sass processing has been disabled due to inactivity to improve performance.', 4);
+							}
 						}
 					} elseif ( $this->is_dev() && !$this->is_admin_page() && (isset($_GET['sass']) || isset($_GET['scss'])) ){
 						$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass can not compile because it is disabled in Nebula Functions.' : $this->sass_process_status;

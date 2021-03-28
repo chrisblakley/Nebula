@@ -10,9 +10,12 @@ jQuery(function(){
 
 	nebula.cacheSelectors();
 
-	import('./modules/usage.js').then(function(module){
-		module.supplementalEventTracking();
-	});
+	//Analytics
+	if ( !nebula.isDoNotTrack() ){
+		import('./modules/usage.js').then(function(module){
+			module.supplementalEventTracking();
+		});
+	}
 
 	window.performance.mark('(Child) DOM Ready [End]');
 	window.performance.measure('(Child) DOM Ready Functions', '(Child) DOM Ready [Start]', '(Child) DOM Ready [End]');

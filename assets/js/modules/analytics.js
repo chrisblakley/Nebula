@@ -29,26 +29,6 @@ export function setDimension(name, value, index){
 	}
 }
 
-//Check if the user has enabled DNT (if supported in their browser)
-nebula.isDoNotTrack = function(){
-	//Use server-side header detection first
-	if ( typeof nebula.user?.dnt === 'boolean' ){ //Check if it is defined
-		return nebula.user.dnt;
-	}
-
-	//Otherwise, check if the browser supports DNT
-	if ( window.doNotTrack || navigator.doNotTrack || navigator.msDoNotTrack || 'msTrackingProtectionEnabled' in window.external ){
-		//Check if DNT is enabled
-		if ( window.doNotTrack == '1' || navigator.doNotTrack == 'yes' || navigator.doNotTrack == '1' || navigator.msDoNotTrack == '1' || window.external.msTrackingProtectionEnabled() ){
-			return true; //This user prefers not to be tracked
-		}
-
-		return false; //This user is allowing tracking.
-	}
-
-	return false; //The browser does not support DNT
-};
-
 //Google Analytics Universal Analytics Event Trackers
 nebula.eventTracking = async function(){
 	if ( nebula.isDoNotTrack() ){

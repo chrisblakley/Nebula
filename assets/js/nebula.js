@@ -10,7 +10,6 @@ jQuery.noConflict();
 import './modules/optimization.js';
 import './modules/utilities.js';
 import './modules/helpers.js';
-import './modules/analytics.js';
 import './modules/extensions.js';
 
 /*==========================
@@ -53,7 +52,12 @@ jQuery(function(){
 		nebula.visibilityChangeActions();
 	});
 
-	nebula.eventTracking();
+	//Analytics
+	if ( !nebula.isDoNotTrack() ){
+		import('./modules/analytics.js').then(function(module){
+			nebula.eventTracking();
+		});
+	}
 
 	window.performance.mark('(Nebula) DOM Ready [End]');
 	window.performance.measure('(Nebula) DOM Ready Functions', '(Nebula) DOM Ready [Start]', '(Nebula) DOM Ready [End]');

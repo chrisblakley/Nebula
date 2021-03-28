@@ -22,6 +22,9 @@ if ( !trait_exists('Optimization') ){
 					add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
 					add_action('wp_footer', array($this, 'dequeue_lazy_load_scripts'));
 
+					add_action('wp_enqueue_scripts', array($this, 'deregister_jquery_to_footer'));
+					add_filter('wp_default_scripts', array($this, 'remove_jquery_migrate'));
+
 					add_action('wp_enqueue_scripts', array($this, 'move_jquery_to_footer'));
 					add_action('wp_head', array($this, 'listen_for_jquery_footer_errors'));
 				}
@@ -703,7 +706,25 @@ if ( !trait_exists('Optimization') ){
 			}
 		}
 
+		//Deregister jQuery Migrate
+		//Eventually this should be able to be removed, right? Not able to in April 2021 (WP Core v5.7) - If removing this and jQuery is loaded from the <head> because of jQuery Migrate, then this is still needed.
+		public function deregister_jquery_to_footer(){
+			if ( !$this->is_admin_page(true) && $this->get_option('jquery_location') !== 'wordpress' ){
+				wp_deregister_script('jquery'); //Deregister jQuery Migrate
+			}
+		}
+
+		//Remove jQuery Migrate, and re-add jQuery
+		//Eventually this should be able to be removed, right? Not able to in April 2021 (WP Core v5.7) - If removing this and jQuery is loaded from the <head> because of jQuery Migrate, then this is still needed.
+		public function remove_jquery_migrate($scripts){
+			if ( !$this->is_admin_page(true) && $this->get_option('jquery_location') !== 'wordpress' ){
+				$scripts->remove('jquery');
+				$scripts->add('jquery', false, array('jquery-core'), null);
+			}
+		}
+
 		//If Nebula Options are set to load jQuery in the footer, move it there.
+		//Note: If any other registered script that is enqueued in the <head> has jQuery as a dependent, jQuery will be loaded in the head automatically
 		public function move_jquery_to_footer(){
 			//Let other plugins/themes add to list of pages/posts/whatever when to load jQuery in the <head>
 			//Return true to load jQuery from the <head>
@@ -712,6 +733,7 @@ if ( !trait_exists('Optimization') ){
 			}
 
 			if ( !$this->is_admin_page(true) && $this->get_option('jquery_location') === 'footer' ){
+				//Group 1 is how WordPress designates scripts to load from the footer
 				wp_script_add_data('jquery', 'group', 1);
 				wp_script_add_data('jquery-core', 'group', 1);
 			}
@@ -719,8 +741,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Listen for "jQuery is not defined" errors to provide help
 		public function listen_for_jquery_footer_errors(){
-			//Let other plugins/themes add to list of pages/posts/whatever when to load jQuery in the <head>
-			//Return true to load jQuery from the <head>
+			//If jQuery was moved back to the head, do not listen for these errors
 			if ( apply_filters('nebula_prevent_jquery_footer', false) ){
 				return;
 			}

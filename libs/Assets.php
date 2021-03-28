@@ -232,7 +232,7 @@ if ( !trait_exists('Assets') ){
 			);
 
 			//Add admin screens when available
-			if ( function_exists('get_current_screen') ){ //This function only exists on admin pages
+			if ( function_exists('get_current_screen') ){ //This function only exists on admin pages (and only after the admin_init hook triggers)
 				$current_screen = get_current_screen();
 				if ( !empty($current_screen) ){ //This is empty when viewing the front-end with the admin bar visible
 					$this->brain['screen']['base'] = $current_screen->base;
@@ -329,7 +329,6 @@ if ( !trait_exists('Assets') ){
 			}
 
 			//Scripts
-			wp_enqueue_script('jquery-core');
 			wp_enqueue_script('nebula-bootstrap');
 			wp_enqueue_script('nebula-nebula');
 
@@ -346,7 +345,6 @@ if ( !trait_exists('Assets') ){
 			wp_enqueue_style('nebula-login');
 
 			//Scripts
-			wp_enqueue_script('jquery-core');
 			wp_enqueue_script('nebula-login');
 		}
 
