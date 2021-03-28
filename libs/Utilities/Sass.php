@@ -140,20 +140,21 @@ if ( !trait_exists('Sass') ){
 						//Find and render .scss files at each location
 						$this->was_sass_processed = false; //This is changed to true when Sass is actually processed
 						foreach ( $all_scss_locations as $scss_location_name => $scss_location_paths ){
-							$this->render_scss($scss_location_name, $scss_location_paths, $force_all); //Remember: this does not mean Sass is being processed– this function checks the files first and then processes only when necessary
+							$this->render_scss($scss_location_name, $scss_location_paths, $force_all); //Remember: this does not mean Sass is being processed– this function checks the files first and then processes only when necessary. Also remember that this is checking a location (not an individual file), so the return here would be true if any Sass file in this location was processed.
+						}
+
+						$this->update_data('need_sass_compile', 'false'); //Set it to false after Sass is finished. Do not wrap this in a "was_sass_processed" conditional! Or else it will constantly want to force-reprocess all Sass because 'need_sass_compile' will not get set to false (...for some reason? Just leave it alone).
+
+						if ( $this->was_sass_processed ){
+							set_transient('nebula_sass_throttle', time(), 15); //15 second cache to throttle Sass from being re-processed again immediately
 						}
 
 						$this->sass_process_status = ( !isset($_GET['sass']) && $this->was_sass_processed )? $this->sass_files_processed . ' Sass file(s) have been processed.' : $this->sass_process_status; //Show this status if Sass was processed but not explicitly forced. Otherwise use the existing status
 
-						if ( $this->was_sass_processed ){
-							$this->update_data('need_sass_compile', 'false'); //Set it to false after Sass is finished
-							set_transient('nebula_sass_throttle', time(), 15); //15 second cache to throttle Sass from being re-processed again immediately
-						} else {
-							if ( time()-$this->latest_scss_mtime >= MONTH_IN_SECONDS ){ //If the last style.scss modification hasn't happened within a month disable Sass.
-								$this->update_option('scss', 0); //Once Sass is disabled this way, a developer would need to re-enable it in Nebula Options.
-								$this->sass_process_status = 'Sass processing has been disabled to improve performance because style.scss has not been modified in a month.';
-								$this->add_log('Sass processing has been disabled due to inactivity to improve performance.', 4);
-							}
+						if ( time()-$this->latest_scss_mtime >= MONTH_IN_SECONDS ){ //If the last style.scss modification hasn't happened within a month disable Sass.
+							$this->update_option('scss', 0); //Once Sass is disabled this way, a developer would need to re-enable it in Nebula Options.
+							$this->sass_process_status = 'Sass processing has been disabled to improve performance because style.scss has not been modified in a month.';
+							$this->add_log('Sass processing has been disabled due to inactivity to improve performance.', 4);
 						}
 					} elseif ( $this->is_dev() && !$this->is_admin_page() && (isset($_GET['sass']) || isset($_GET['scss'])) ){
 						$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass can not compile because it is disabled in Nebula Functions.' : $this->sass_process_status;

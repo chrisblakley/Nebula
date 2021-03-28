@@ -162,12 +162,6 @@
 <link rel="manifest" href="<?php echo esc_url(nebula()->manifest_json_location()); ?>" />
 <link rel="profile" href="https://gmpg.org/xfn/11" />
 
-<?php if ( nebula()->is_analytics_allowed() ): ?>
-	<script type="module">
-		import '<?php echo get_template_directory_uri(); ?>/assets/js/modules/usage.js';
-	</script>
-<?php endif; ?>
-
 <?php
 	//JSON-LD Structured Data
 	//Google Structured Data Documentation: https://developers.google.com/search/docs/data-types/data-type-selector

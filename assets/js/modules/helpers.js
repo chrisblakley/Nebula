@@ -406,14 +406,6 @@ nebula.cookieNotification = async function(){
 		//Show the notice as soon as it will not interfere with loading nor become laggy
 		window.requestAnimationFrame(function(){ //Change to requestIdleCallback when Safari supports it
 			jQuery('#nebula-cookie-notification').addClass('active');
-
-			if ( !nebula.dom.body.hasClass('desktop') ){ //Desktop users (as detected by DeviceDetector or WordPress core) can use fixed positioning, but mobile must use absolute positioning
-				jQuery('#nebula-cookie-notification').css({
-					position: 'absolute',
-					bottom: 'auto',
-					top: window.innerHeight-jQuery('#nebula-cookie-notification').outerHeight()-40, //Window height - height of prompt - 40px spacing
-				});
-			}
 		});
 
 		//Hide the interface upon acceptance

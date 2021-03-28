@@ -84,7 +84,7 @@ trait Comments {
 
 	//Link to Disqus on comments page (if using Disqus)
 	public function disqus_link($nebula_warnings){
-		$nebula_warnings[] = array(
+		$nebula_warnings['disqus'] = array(
 			'level' => 'info',
 			'description' => '<i class="fab fa-fw fa-php"></i> You are using the Disqus commenting system. <a href="https://' . $this->get_option('disqus_shortname') . '.disqus.com/admin/moderate" target="_blank" rel="noopener">View the comment listings on Disqus &raquo;</a>',
 			'url' => 'https://' . $this->get_option('disqus_shortname') . '.disqus.com/admin/moderate',

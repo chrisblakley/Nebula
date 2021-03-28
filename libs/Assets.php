@@ -25,8 +25,8 @@ if ( !trait_exists('Assets') ){
 
 				add_action('login_head', array($this, 'nebula_login_logo'));
 
-				add_action('wp_head', array($this, 'output_nebula_data'));
-				add_action('admin_head', array($this, 'output_nebula_data'));
+				add_action('wp_enqueue_scripts', array($this, 'output_nebula_data'));
+				add_action('admin_enqueue_scripts', array($this, 'output_nebula_data'));
 			}
 		}
 
@@ -314,7 +314,12 @@ if ( !trait_exists('Assets') ){
 			$this->brain = apply_filters('nebula_brain', $this->brain); //Allow other functions to hook in to add/modify data
 			$this->brain['user']['known'] = ( !empty($this->brain['user']['email']) )? true : false; //Move to companion plugin
 
-			echo '<script type="text/javascript">var nebula = ' . json_encode($this->brain) . '</script>'; //Output the data to <head>
+			echo '<script type="text/javascript">const nebula = ' . json_encode($this->brain) . '</script>'; //Output the data to <head>
+
+			if ( nebula()->is_analytics_allowed() ){
+				echo '<script type="module" src="' . get_template_directory_uri() . '/assets/js/modules/usage.js?ver=' . nebula()->version('full') . '" async="async"></script>'; //I would like to register/enqueue this script, but when I do it triggers a "critical chain" warning in Lighthouse... even though this tag is identical...
+			}
+
 			$this->timer('Output Nebula Data', 'end');
 		}
 

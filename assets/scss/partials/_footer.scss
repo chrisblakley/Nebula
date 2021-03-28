@@ -50,10 +50,13 @@
 }
 
 //Cookie Notification
-#nebula-cookie-notification {position: fixed; bottom: 40px; left: 0; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(3px); color: #bbb; font-size: 14px; padding: 25px; max-width: 300px; box-shadow: 0 6px 24px 0 rgba(0, 0, 0, 0.3); z-index: 5000; opacity: 0; pointer-events: none; will-change: opacity, transform; transition: all 0.75s easing(easeOutBack);
-	@include media("lg"){max-width: 400px;}
+#nebula-cookie-notification {position: fixed; bottom: auto; top: 72vh; left: 0; right: 0; margin: 0 auto; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(3px); color: #bbb; font-size: 14px; padding: 25px; max-width: 300px; box-shadow: 0 6px 24px 0 rgba(0, 0, 0, 0.3); z-index: 5000; opacity: 0; pointer-events: none; will-change: opacity, transform; transition: all 0.75s easing(easeOutBack);
+	@include media("md"){max-width: 400px; right: auto; top: unset; bottom: 40px; margin: unset;} //Desktop
+	@include media("custom", "only screen and (hover: none) and (pointer: coarse)"){position: absolute; top: 72vh; bottom: auto;} //Mobile devices do not support position fixed, so center it at the bottom as best as possible with vh units. Do not change this to JavaScript as it will trigger CLS issues.
 
-	&.active {opacity: 1; transform: translate3d(40px, 0, 0); pointer-events: all;}
+	&.active {opacity: 1; transform: translate3d(0, 0, 0); pointer-events: all;
+		@include media("md"){transform: translate3d(40px, 0, 0);}
+	}
 
 	//In case the user-editable cookie text includes HTML links
 	a {color: #fff;

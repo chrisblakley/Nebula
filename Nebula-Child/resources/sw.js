@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 const THEME_NAME = 'nebula-child';
-const NEBULA_VERSION = 'v8.10.27.588'; //Sunday, March 28, 2021 12:49:36 AM
+const NEBULA_VERSION = 'v8.10.28.587'; //Sunday, March 28, 2021 2:05:24 PM
 const OFFLINE_URL = 'https://nebula.gearside.com/offline/';
 const OFFLINE_IMG = 'https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/offline.svg';
 const OFFLINE_GA_DIMENSION = 'cd2';

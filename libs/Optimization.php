@@ -22,7 +22,7 @@ if ( !trait_exists('Optimization') ){
 					add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
 					add_action('wp_footer', array($this, 'dequeue_lazy_load_scripts'));
 
-					add_action('wp_enqueue_scripts', array($this, 'deregister_jquery_to_footer'));
+					add_action('wp_enqueue_scripts', array($this, 'deregister_jquery_migrate'));
 					add_filter('wp_default_scripts', array($this, 'remove_jquery_migrate'));
 
 					add_action('wp_enqueue_scripts', array($this, 'move_jquery_to_footer'));
@@ -708,8 +708,8 @@ if ( !trait_exists('Optimization') ){
 
 		//Deregister jQuery Migrate
 		//Eventually this should be able to be removed, right? Not able to in April 2021 (WP Core v5.7) - If removing this and jQuery is loaded from the <head> because of jQuery Migrate, then this is still needed.
-		public function deregister_jquery_to_footer(){
-			if ( !$this->is_admin_page(true) && $this->get_option('jquery_location') !== 'wordpress' ){
+		public function deregister_jquery_migrate(){
+			if ( !$this->is_admin_page(true) && !is_admin_bar_showing() && $this->get_option('jquery_location') !== 'wordpress' ){
 				wp_deregister_script('jquery'); //Deregister jQuery Migrate
 			}
 		}
@@ -717,7 +717,7 @@ if ( !trait_exists('Optimization') ){
 		//Remove jQuery Migrate, and re-add jQuery
 		//Eventually this should be able to be removed, right? Not able to in April 2021 (WP Core v5.7) - If removing this and jQuery is loaded from the <head> because of jQuery Migrate, then this is still needed.
 		public function remove_jquery_migrate($scripts){
-			if ( !$this->is_admin_page(true) && $this->get_option('jquery_location') !== 'wordpress' ){
+			if ( !$this->is_admin_page(true) && !is_admin_bar_showing() && $this->get_option('jquery_location') !== 'wordpress' ){
 				$scripts->remove('jquery');
 				$scripts->add('jquery', false, array('jquery-core'), null);
 			}
@@ -732,7 +732,7 @@ if ( !trait_exists('Optimization') ){
 				return;
 			}
 
-			if ( !$this->is_admin_page(true) && $this->get_option('jquery_location') === 'footer' ){
+			if ( !$this->is_admin_page(true) && !is_admin_bar_showing() && $this->get_option('jquery_location') === 'footer' ){
 				//Group 1 is how WordPress designates scripts to load from the footer
 				wp_script_add_data('jquery', 'group', 1);
 				wp_script_add_data('jquery-core', 'group', 1);

@@ -8,7 +8,7 @@
 // ===========================
 
 //Shade body when Mmenu Opens
-#body-wrapper {will-change: transform;
+#body-wrapper {will-change: auto; //transform was here but changes the anchor points for fixed positioning (cookie notification conflict)
 	&:before {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; @include background-color(#000, 0); z-index: 99995; pointer-events: none; transition: all 0.5s;}
 	.admin-bar & {will-change: auto;} //Prevent this from affecting the admin-bar
 	.mm-wrapper_opening &:before {@include background-color(#000, 0.7); /* backdrop-filter: blur(2px); */} //Backdrop filter is laggy as of Feb 2021
