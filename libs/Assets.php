@@ -61,6 +61,7 @@ if ( !trait_exists('Assets') ){
 			$this->register_script('nebula-vimeo', 'https://cdnjs.cloudflare.com/ajax/libs/vimeo-player/2.15.0/player.min.js', null, null, '2.15.0', true);
 			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.10.21', true);
 			$this->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js', array('defer', 'crossorigin'), null, '1.8.7', true);
+			$this->register_script('nebula-usage', get_template_directory_uri() . '/assets/js/modules/usage.js', array('async', 'module'), null, $this->version('full'), false);
 			$this->register_script('nebula-nebula', get_template_directory_uri() . '/assets/js/nebula.js', array('defer', 'module'), array('jquery-core', 'wp-hooks'), $this->version('full'), true);
 			$this->register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', array('defer', 'module'), array('jquery-core'), $this->version('full'), true);
 			$this->register_script('nebula-admin', get_template_directory_uri() . '/assets/js/admin.js', array('defer', 'module'), array('jquery'), $this->version('full'), true);
@@ -315,11 +316,6 @@ if ( !trait_exists('Assets') ){
 			$this->brain['user']['known'] = ( !empty($this->brain['user']['email']) )? true : false; //Move to companion plugin
 
 			echo '<script type="text/javascript">const nebula = ' . json_encode($this->brain) . '</script>'; //Output the data to <head>
-
-			if ( nebula()->is_analytics_allowed() ){
-				echo '<script type="module" src="' . get_template_directory_uri() . '/assets/js/modules/usage.js?ver=' . nebula()->version('full') . '" async="async"></script>'; //I would like to register/enqueue this script, but when I do it triggers a "critical chain" warning in Lighthouse... even though this tag is identical...
-			}
-
 			$this->timer('Output Nebula Data', 'end');
 		}
 
@@ -338,6 +334,10 @@ if ( !trait_exists('Assets') ){
 			wp_enqueue_script('nebula-nebula');
 
 			//Conditionals
+			if ( nebula()->is_analytics_allowed() ){
+				wp_enqueue_script('nebula-usage');
+			}
+
 			if ( is_page_template('tpl-search.php') ){ //Form pages (that use selects) or Advanced Search Template. The Chosen library is also dynamically loaded in nebula.js.
 				wp_enqueue_style('nebula-chosen');
 				wp_enqueue_script('nebula-chosen');

@@ -23,7 +23,7 @@
 	<?php endif; ?>
 
 	<?php if ( nebula()->get_option('ga_tracking_id') ): //Universal Google Analytics ?>
-		<script type="module">
+		<script type="module" async>
 			import {setDimension, uuid, localTimestamp} from '<?php echo get_template_directory_uri(); ?>/assets/js/modules/analytics.js';
 
 			window.performance.mark('(Nebula) Analytics [Start]');

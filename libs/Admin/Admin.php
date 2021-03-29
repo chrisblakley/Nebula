@@ -698,7 +698,7 @@ if ( !trait_exists('Admin') ){
 				if ( current_user_can('manage_options') ){
 					$warnings = $this->check_warnings();
 
-					//Remove "log" level warnings
+					//Remove "log" level warnings so the admni bar menu only turns red for warnings and errors
 					if ( !empty($warnings) ){
 						foreach ( $warnings as $key => $warning ){
 							if ( $warning['level'] === 'log' ){
