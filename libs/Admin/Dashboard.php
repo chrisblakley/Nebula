@@ -948,7 +948,7 @@ if ( !trait_exists('Dashboard') ){
 					}
 				}
 
-				if ( !empty($webpagetest_response) && !is_wp_error($webpagetest_response) ){
+				if ( !is_wp_error($webpagetest_response) && !empty($webpagetest_response) && !empty($webpagetest_response->data) ){
 					$wpt_test_json_url = $webpagetest_response->data->jsonUrl;
 					if ( !empty($wpt_test_json_url) ){
 						echo '<script>var wptTestJSONURL = "' . $wpt_test_json_url . '";</script>'; //Pass this URL to JS for polling

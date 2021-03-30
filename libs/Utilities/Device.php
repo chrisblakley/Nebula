@@ -147,7 +147,7 @@ if ( !trait_exists('Device') ){
 		//Check if the current visitor is Googlebot (search indexing)
 		function is_googlebot(){
 			if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') ){
-				$hostname = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+				$hostname = gethostbyaddr(get_ip_address(false));
 				if ( preg_match('/\.googlebot|google\.com$/i', $hostname) ){
 					return true;
 				}

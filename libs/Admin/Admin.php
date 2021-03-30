@@ -1101,7 +1101,7 @@ if ( !trait_exists('Admin') ){
 
 		//When checking for theme updates, store the next and current Nebula versions from the response. Hook is inside the theme-update-checker.php library.
 		public function theme_update_version_store($update){
-			if ( $this->allow_theme_update() ){
+			if ( !empty($update) && $this->allow_theme_update() ){ //Update is empty if/when the update checker is somehow disabled at the server-level (like if the cron is deactivated)
 				$this->update_data('next_version', $update->version);
 				$this->update_data('current_version', $this->version('full'));
 				$this->update_data('current_version_date', $this->version('date'));
@@ -1327,9 +1327,11 @@ if ( !trait_exists('Admin') ){
 			$php_timeline = get_transient('nebula_php_timeline');
 			if ( empty($php_timeline) || $this->is_debug() ){
 				$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/php_timeline.json');
-				if ( !is_wp_error($response) ){
-					$php_timeline = $response['body'];
+				if ( is_wp_error($response) || !isset($response['body']) ){
+					return false;
 				}
+
+				$php_timeline = $response['body'];
 
 				WP_Filesystem();
 				global $wp_filesystem;

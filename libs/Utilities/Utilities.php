@@ -848,7 +848,7 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Check if a website or resource is available
-		public function is_available($url=null, $allow_cache=true, $allow_remote_request=true){
+		public function is_available($url=null, $allow_cache=true, $allow_remote_request=true, $args=array()){
 			$override = apply_filters('pre_nebula_is_available', null, $url, $allow_cache, $allow_remote_request);
 			if ( isset($override) ){return $override;}
 
@@ -858,52 +858,67 @@ if ( !trait_exists('Utilities') ){
 				return false;
 			}
 
+			$timer_name = $this->timer('Is Available (' . $url . ')', 'start', 'Is Available');
 			$hostname = str_replace('.', '_', $this->url_components('hostname', $url)); //The hostname label for transients
 
 			//Check transient first
 			$site_available_buffer = get_transient('nebula_site_available_' . $hostname);
 			if ( !empty($site_available_buffer) && $allow_cache ){ //If this hostname was found in a transient and specifically allowing a cached response.
 				if ( $site_available_buffer === 'Available' ){
-					set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*20); //Re-up the transient with a 15 minute expiration
-					return true; //This hostname has worked within the last 20 minutes
+					set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*30); //Re-up the transient with a 30 minute expiration
+					$this->timer($timer_name, 'end');
+					return true; //This hostname has worked within the last 30 minutes
 				}
 
-				set_transient('nebula_site_available_' . $hostname, 'Unavailable', MINUTE_IN_SECONDS*10); //10 minute expiration
-				return false; //This hostname has not worked within the last 10 minutes
+				set_transient('nebula_site_available_' . $hostname, 'Unavailable', MINUTE_IN_SECONDS*15); //15 minute expiration
+				$this->timer($timer_name, 'end');
+				return false; //This hostname has not worked within the last 15 minutes
 			}
 
 			//Make an actual request to the URL if: the transient was empty or specifically requested a non-cached response, and specifically allowing a lookup
-			if ( $allow_remote_request ){
-				$response = wp_remote_head($url); //Only get the head data for slight speed improvement
+			//Ex: remote_get() prevents this from running the actual request to avoid multiple requests. It handles the transient itself, so just looking up if a request has failed previously.
+			if ( $allow_remote_request ){ //If we are actively allowed to make the request to check if the endpoint is actually available
+				//Combine default args with passed args. Args docs: https://developer.wordpress.org/reference/classes/WP_Http/request/
+				$all_args = array_merge(array(
+					'redirection' => 5, //Follow 5 redirects before quitting
+				), $args);
 
+				//Only get the head data for slight speed improvement.
+				$response = wp_remote_head($url, $all_args);
 				if ( !is_wp_error($response) && $response['response']['code'] === 200 ){ //If the remote request was successful
 					set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*20); //20 minute expiration
+					$this->timer($timer_name, 'end');
 					return true;
 				}
 			}
 
-			if ( !$allow_remote_request ){
+			if ( !$allow_remote_request ){ //Otherwise, do not actively check and just report that the site was not reportedly down prior
+				$this->timer($timer_name, 'end');
 				return true; //Resource may not actually be available, but was asked specifically not to check.
 			}
 
+			//Finally, if none of the previous checks were true, the site must be unavailable
 			set_transient('nebula_site_available_' . $hostname, 'Unavailable', MINUTE_IN_SECONDS*10); //10 minute expiration
+			$this->timer($timer_name, 'end');
 			return false;
 		}
 
 		//Get a remote resource and if unavailable, don't re-check the resource for 5 minutes.
 		public function remote_get($url, $args=null){
-			//$timer_name = str_replace(array('.', '/'), '_', $this->url_components('filename', $url));
-			$timer_name = $this->timer('Remote Get (' . $url . ')', 'start', 'Remote Get');
+			if ( apply_filters('disable_nebula_remote_get', false, $url) ){ //Consider a Nebula Option here as well?
+				return new WP_Error('disabled', 'Nebula remote_get has been disabled (for this or all requests).');
+			}
 
 			//Must be a valid URL
 			if ( empty($url) || strpos($url, 'http') !== 0 ){
 				return new WP_Error('broke', 'Requested URL is either empty or missing acceptable protocol.');
 			}
 
+			$timer_name = $this->timer('Remote Get (' . $url . ')', 'start', 'Remote Get');
 			$hostname = str_replace('.', '_', $this->url_components('hostname', $url));
 
 			//Check if the resource was unavailable in the last 10 minutes
-			if ( !$this->is_available($url, true, false) ){
+			if ( !$this->is_available($url, true, false) ){ //We do not want to make 2 requests from this, so we tell is_available() to not make its own request (third parameter is "false")– note that this function also updates the "nebula_site_available..." transient if a problem arises– which will then be seen by is_available().
 				$this->timer($timer_name, 'end');
 				return new WP_Error('unavailable', 'This resource was unavailable within the last 10 minutes.');
 			}
@@ -914,8 +929,7 @@ if ( !trait_exists('Utilities') ){
 				set_transient('nebula_site_available_' . $hostname, 'Unavailable', MINUTE_IN_SECONDS*10); //10 minute expiration
 			}
 
-			//Return the response
-			set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*20); //20 minute expiration
+			//Return the response. Do not set a transient here because failed requests still return here.
 			$this->timer($timer_name, 'end');
 			return $response;
 		}
