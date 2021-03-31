@@ -933,29 +933,6 @@ if ( !trait_exists('Dashboard') ){
 		public function performance_timing(){
 			$this->timer('Nebula Performance Dashboard Metabox');
 
-			//Initialize the WebPageTest API - Documentation: https://sites.google.com/a/webpagetest.org/docs/advanced-features/webpagetest-restful-apis
-			//Remove this when WebPageTest.org API becomes a paid subscription
-			$initial_sub_status = 'Preparing test...';
-			if ( $this->get_option('webpagetest_api') ){
-				$webpagetest_response = get_transient('nebula_webpagetest_response');
-				$initial_sub_status = 'Retrieving cached WebPageTest.org results...';
-				if ( empty($webpagetest_response) || $this->is_debug() || isset($_GET['sass']) ){
-					$webpagetest_response = $this->remote_get('https://www.webpagetest.org/runtest.php?url=' . home_url('/') . '%3Fnoga&runs=3&fvonly=1&f=json&noopt=1&noimages=1&lighthouse=1&k=' . $this->get_option('webpagetest_api')); //No GA so it does not get flooded with bot traffic
-					if ( !is_wp_error($webpagetest_response) ){
-						$webpagetest_response = json_decode($webpagetest_response['body']);
-						$initial_sub_status = 'New test requested from WebPageTest.org...';
-						set_transient('nebula_webpagetest_response', $webpagetest_response, MINUTE_IN_SECONDS*10);
-					}
-				}
-
-				if ( !is_wp_error($webpagetest_response) && !empty($webpagetest_response) && !empty($webpagetest_response->data) ){
-					$wpt_test_json_url = $webpagetest_response->data->jsonUrl;
-					if ( !empty($wpt_test_json_url) ){
-						echo '<script>var wptTestJSONURL = "' . $wpt_test_json_url . '";</script>'; //Pass this URL to JS for polling
-					}
-				}
-			}
-
 			//Prep for an iframe timer if needed
 			$home_url = ( is_ssl() )? str_replace('http://', 'https://', home_url('/')) : home_url('/'); //Sometimes the home_url() still has http even when is_ssl() true
 			echo '<div id="testloadcon" data-src="' . $home_url . '" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>'; //For iframe timing
@@ -964,7 +941,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<ul id="nebula-performance-metrics" class="nebula-fa-ul">';
 
 			//Sub-status
-			echo '<li id="performance-sub-status"><i class="far fa-fw fa-comment"></i> <span class="label">Status</span>: <strong>' . $initial_sub_status . '</strong></li>';
+			echo '<li id="performance-sub-status"><i class="far fa-fw fa-comment"></i> <span class="label">Status</span>: <strong>Preparing test...</strong></li>';
 
 			//PHP-Measured Server Load Time (TTFB)
 			echo '<li id="performance-ttfb"><i class="far fa-fw fa-clock"></i> <span class="label">PHP Response Time</span>: <strong class="datapoint" title="Calculated via PHP render time">' . timer_stop(0, 3) . ' seconds</strong></li>';

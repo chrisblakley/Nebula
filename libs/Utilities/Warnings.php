@@ -721,8 +721,6 @@ if ( !trait_exists('Warnings') ){
 									nebulaAuditModeReportingObserver.observe();
 								}
 
-								//@todo: consider checking WebPageTest timing if API key is available
-
 								//Check protocol
 								if ( window.location.href.includes('http://') ){
 									jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-unlock-alt"></i> Non-secure http protocol</li>');

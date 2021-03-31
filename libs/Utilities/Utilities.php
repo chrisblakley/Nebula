@@ -920,7 +920,7 @@ if ( !trait_exists('Utilities') ){
 			//Check if the resource was unavailable in the last 10 minutes
 			if ( !$this->is_available($url, true, false) ){ //We do not want to make 2 requests from this, so we tell is_available() to not make its own request (third parameter is "false")– note that this function also updates the "nebula_site_available..." transient if a problem arises– which will then be seen by is_available().
 				$this->timer($timer_name, 'end');
-				return new WP_Error('unavailable', 'This resource was unavailable within the last 10 minutes.');
+				return new WP_Error('unavailable', 'This resource was unavailable within the last 15 minutes.');
 			}
 
 			//Get the remote resource

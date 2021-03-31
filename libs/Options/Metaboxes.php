@@ -536,7 +536,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[performance_metabox]" id="performance_metabox" value="1" <?php checked('1', !empty($nebula_options['performance_metabox'])); ?> /><label for="performance_metabox">Performance Metabox</label>
 					<p class="nebula-help-text short-help form-text text-muted">Test load times from the WordPress Dashboard <?php echo ( $this->is_dev() )? '(Note: This always appears for developers even if disabled!)' : ''; ?>. (Default: <?php echo $this->user_friendly_default('performance_metabox'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">Tests are prioritized from WebPageTest.org (using an <a href="themes.php?page=nebula_options&tab=apis&option=webpagetest_api" target="_blank">API key</a>), then Google Lighthouse, and finally a simple iframe timer.</p>
+					<p class="nebula-help-text more-help form-text text-muted">Tests are prioritized from Google Lighthouse or a simple iframe timer.</p>
 					<p class="option-keywords"></p>
 				</div>
 
@@ -1511,14 +1511,6 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text short-help form-text text-muted">The Google Cloud Messaging (GCM) Sender ID from the <a href="https://console.developers.google.com/project" target="_blank" rel="noopener noreferrer">Developers Console</a>.</p>
 					<p class="nebula-help-text more-help form-text text-muted">This is the "Project number" within the project box on the Dashboard. Do not include parenthesis or the "#" symbol. This is used for push notifications. <strong>*Note: This feature is still in development and not currently active!</strong></p>
 					<p class="option-keywords"></p>
-				</div>
-
-				<div class="form-group">
-					<label for="gcm_sender_id">WebPageTest API Key</label>
-					<input type="text" name="nebula_options[webpagetest_api]" id="webpagetest_api" class="form-control nebula-validate-text" value="<?php echo $nebula_options['webpagetest_api']; ?>" />
-					<p class="nebula-help-text short-help form-text text-muted">The API key for programmatic testing from <a href="http://www.webpagetest.org/getkey.php" target="_blank" rel="noopener noreferrer">WebPageTest.org</a>.</p>
-					<p class="nebula-help-text more-help form-text text-muted">If this key is used, the Nebula Developer dashboard will obtain timing information from WebPageTest.org rather than a more anecdotal iframe JavaScript timer. Note: The WPT API key registration does not allow + signs in email addresses.</strong></p>
-					<p class="option-keywords">wpt</p>
 				</div>
 
 				<div class="form-group mb-2">

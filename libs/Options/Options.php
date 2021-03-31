@@ -328,7 +328,6 @@ if ( !trait_exists('Options') ){
 				'gcm_sender_id' => '',
 				'google_server_api_key' => '',
 				'google_browser_api_key' => '',
-				'webpagetest_api' => '', //Remove this when WebPageTest.org API becomes a paid subscription
 				'hubspot_api' => '',
 				'hubspot_portal' => '',
 				'disqus_shortname' => '',
