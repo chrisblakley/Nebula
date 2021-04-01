@@ -800,8 +800,8 @@ if ( !trait_exists('Optimization') ){
 				$wpseo = get_option('wpseo');
 				$wpseo['ignore_meta_description_warning'] = true; //Disable the meta description warning.
 				$wpseo['ignore_tour'] = true; //Disable the tour.
-				$wpseo['theme_description_found'] = false; //@TODO "Nebula" 0: Not working because this keeps getting checked/tested at many various times in the plugin.
-				$wpseo['theme_has_description'] = false; //@TODO "Nebula" 0: Not working because this keeps getting checked/tested at many various times in the plugin.
+				$wpseo['theme_description_found'] = false; //Not working because this keeps getting checked/tested at many various times in the plugin.
+				$wpseo['theme_has_description'] = false; //Not working because this keeps getting checked/tested at many various times in the plugin.
 				update_option('wpseo', $wpseo);
 
 				//Disable update notifications

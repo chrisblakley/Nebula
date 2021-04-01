@@ -224,23 +224,41 @@ if ( !trait_exists('Warnings') ){
 				$directory_indexing = get_transient('nebula_directory_indexing');
 				if ( empty($directory_indexing) || nebula()->is_debug() || nebula()->is_auditing() ){ //Use the transient unless ?debug or explicitly auditing
 					$directories = array(get_home_url(), includes_url(), content_url()); //Directories to test
+					$found_problem = false;
 					foreach ( $directories as $directory ){
-						$directory_request = wp_remote_get($directory); //Get the contents of the directory
+						//Get the contents of the directory
+						$directory_request = $this->remote_get($directory, array(
+							'timeout' => 3,
+							'limit_response_size' => 512000 //Limit the response to 512kb //PHP 7.4 use numeric separators here
+						));
+
 						if ( !is_wp_error($directory_request) && !empty($directory_request) ){ //If not an error and response exists
-							if ( $directory_request['response']['code'] !== 403 && $directory_request['response']['code'] !== 404 ){ //Check if the response code is 403 Forbidden or 404 Not Found (both good in this case)
+							if ( $directory_request['response']['code'] <= 400 ){ //Check if the response code is less than 400 (in this case 400+ is good)
 								if ( strpos(strtolower($directory_request['body']), 'index of') ){ //Check if the "Index of" text appears in the body content (bad)
 									$nebula_warnings['directory_indexing'] = array(
 										'level' => 'error',
 										'description' => '<i class="far fa-fw fa-list-alt"></i> Directory indexing is not disabled. Visitors can see file listings of directories!',
 									);
 
+									$found_problem = true;
+									set_transient('nebula_directory_indexing', 'bad', WEEK_IN_SECONDS);
 									break; //Exit loop since we found an issue
 								}
 							}
 						}
 					}
 
-					set_transient('nebula_directory_indexing', true, WEEK_IN_SECONDS); //Check periodically
+					//If we did not find a problem, set a longer transient
+					if ( empty($found_problem) ){
+						set_transient('nebula_directory_indexing', 'good', MONTH_IN_SECONDS); //Check again in a month
+					}
+				} else {
+					if ( $directory_indexing === 'bad' ){
+						$nebula_warnings['directory_indexing'] = array(
+							'level' => 'error',
+							'description' => '<i class="far fa-fw fa-list-alt"></i> At the time last checked, directory indexing was allowed. Visitors may be able to see file listings of directories! <a href="' . home_url('/?audit=true') . '" target="_blank">Run an audit to re-scan &raquo;</a>',
+						);
+					}
 				}
 
 				//Check individual files for anything unusual
@@ -573,7 +591,6 @@ if ( !trait_exists('Warnings') ){
 						foreach ( $matches as $image_url ){
 							//Check CMYK
 							$image_info = getimagesize($image_url);
-							//var_dump($image_info); echo '<br>';
 							if ( $image_info['channels'] == 4 ){
 								echo 'it is cmyk<br><br>'; //ADD WARNING HERE
 							} else {
@@ -826,9 +843,6 @@ if ( !trait_exists('Warnings') ){
 										jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-image"></i> Image filesize over 500kb</li>');
 									}
 
-									//@todo "Nebula" 0: Use Fetch API with method: 'HEAD' as a more simple way of getting filesize.
-									//response.headers.get('content-length')
-
 									//Check image width
 									if ( jQuery(this)[0].naturalWidth > 1200 ){
 										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-image"></i> Image wider than 1200px</div>');
@@ -847,15 +861,11 @@ if ( !trait_exists('Warnings') ){
 									//Check video filesize. Note: cached files are 0
 									if ( window.performance ){
 										var vTime = performance.getEntriesByName(jQuery(this).find('source').attr('src'))[0];
-
 										if ( vTime && vTime.transferSize >= 5_000_000 ){ //5mb+
 											jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-file-video"></i> Video filesize over 5mb</div>');
 											jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-file-video"></i> Video filesize over 5mb</li>');
 										}
 									}
-
-									//@todo "Nebula" 0: Use Fetch API with method: 'HEAD' as a more simple way of getting filesize.
-									//response.headers.get('content-length')
 
 									//Check unmuted autoplay
 									if ( jQuery(this).is('[autoplay]') && !jQuery(this).is('[muted]') ){

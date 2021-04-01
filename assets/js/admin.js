@@ -28,6 +28,7 @@ jQuery(function(){
 	}
 
 	nebula.initializationStuff();
+	nebula.sassCooldown();
 
 	jQuery('#post textarea').allowTabChar();
 

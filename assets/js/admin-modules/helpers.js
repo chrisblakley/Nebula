@@ -47,3 +47,22 @@ jQuery.fn.allowTabChar = function(){
 
 	return this;
 };
+
+//If Sass processing is throttled, countdown the cooldown to know when it is allowed to be processed again.
+nebula.sassCooldown = function(){
+	if ( jQuery('#sass-cooldown').length ){
+		let timeleft = 15;
+		let cooldownTimer = setInterval(function(){
+			timeleft--;
+
+			let units = ( timeleft === 1 )? ' second' : ' seconds';
+			jQuery('#sass-cooldown').text(timeleft + units);
+
+			if ( timeleft <= 0 ){
+				jQuery('#sass-cooldown-again').removeClass('hidden');
+				jQuery('#sass-cooldown-wait').addClass('hidden');
+				clearInterval(cooldownTimer);
+			}
+		}, 1000);
+	}
+}

@@ -47,8 +47,7 @@ if ( !trait_exists('Users') ){
 				$unique_id = $this->get_ip_address() . '.' . preg_replace("/[^a-zA-Z0-9\.]+/", "", $_SERVER['HTTP_USER_AGENT']);
 				$current_user = wp_get_current_user();
 
-				//@TODO "Nebula" 0: Technically, this should be sorted by user ID -then- unique id -then- the rest of the info. Currently, concurrent logins won't reset until they have ALL expired. This could be good enough, though.
-
+				//Technically, this should be sorted by user ID -then- unique id -then- the rest of the info. Currently, concurrent logins won't reset until they have ALL expired.
 				if ( !isset($logged_in_users[$current_user->ID]['last']) || $logged_in_users[$current_user->ID]['last'] < time()-600 ){ //If a last login time does not exist for this user -or- if the time exists but is greater than 10 minutes, update.
 					$logged_in_users[$current_user->ID] = array(
 						'id' => $current_user->ID,
@@ -136,12 +135,7 @@ if ( !trait_exists('Users') ){
 					$query->set('orderby', 'registered');
 				}
 
-/*
-				if ( $orderby === 'last seen' ){
-					//@todo "Nebula" 0: This will require a quite complex custom query (because this data is not stored on the user)
-					$this->user_last_online($id) which uses $this->get_data('users_status') which returns an array of IDs
-				}
-*/
+				//Ordering by Last Seen would require a quite complex custom query (because this data is not stored on the user)
 
 				if ( $orderby === 'id' ){
 					$query->set('orderby', 'id');

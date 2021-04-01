@@ -531,12 +531,12 @@ if ( !trait_exists('Dashboard') ){
 			ini_set('memory_limit', '512M'); //@todo Nebula 0: Remove these when possible...
 
 			$these_todos = array();
-			foreach ( $this->glob_r($directory . '/*') as $todo_file ){
+			foreach ( $this->glob_r($directory . '/*') as $todo_file ){ //Loop through each file
 				if ( is_file($todo_file) ){
 					$todo_skipFilenames = array('README.md', 'debug_log', 'error_log', '/vendor', 'resources/'); //Skip certain filepaths and file names (more file extensions are skipped separately)
 
 					if ( !$this->contains($todo_file, $this->skip_extensions()) && !$this->contains($todo_file, $todo_skipFilenames) ){ //Skip certain extensions and filenames
-						foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){ //@todo "Nebula" 0: How can we reduce the memory usage of this?
+						foreach ( file($todo_file) as $todo_lineNumber => $todo_line ){ //Loop through each line in the file. Can the memory usage of this be reduced?
 							preg_match("/(@todo)\s?(?'category'[\"\'\`].+?[\"\'\`])?\s?(?'priority'\d)?:\s(?'description'.+)/i", $todo_line, $todo_details); //Separate the todo comment into useable groups
 
 							if ( !empty($todo_details) ){

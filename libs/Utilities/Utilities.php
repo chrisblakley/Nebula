@@ -904,6 +904,7 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Get a remote resource and if unavailable, don't re-check the resource for 5 minutes.
+		//Args docs: https://developer.wordpress.org/reference/classes/WP_Http/request/
 		public function remote_get($url, $args=null){
 			if ( apply_filters('disable_nebula_remote_get', false, $url) ){ //Consider a Nebula Option here as well?
 				return new WP_Error('disabled', 'Nebula remote_get has been disabled (for this or all requests).');
@@ -1539,21 +1540,12 @@ if ( !trait_exists('Utilities') ){
 			$get_url = $url . $sep . 'hapikey=' . $this->get_option('hubspot_api');
 
 			if ( !empty($content) ){
-				/*
-					@TODO "Nebula" 0: 409 Conflict response happening. Was probably happening with cURL and just never noticed. -note: this message is from the old nvdb stuff. may not still apply here (and may be less of an issue since this only happens on options save now (instead of every pageload)
-						- Because the fields already exist, Hubspot is responding with "409 Conflict".
-						- This happens ~14 times since each property is sent individually.
-						- I'm pretty sure the data is still transferring just fine.
-						- Query Monitor is going red due to the 400-level response.
-						- This is a Hubspot CRM issue, not WordPress or Nebula (as far as I can tell)
-				*/
-
 				$response = wp_remote_post($get_url, array(
 					'headers' => array('Content-Type' => 'application/json'),
 					'body' => $content,
 				));
 			} else {
-				$response = wp_remote_get($get_url);
+				$response = wp_remote_get($get_url); //Change this to nebula remote_get?
 			}
 
 			if ( !is_wp_error($response) ){

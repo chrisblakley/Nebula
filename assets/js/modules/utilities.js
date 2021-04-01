@@ -149,11 +149,11 @@ nebula.errorMitigation = function(){
 				}
 			}).catch(function(error){
 				ga('send', 'exception', {'exDescription': '(JS) Broken Image: ' + imagePath, 'exFatal': false});
-				nebula.crm('event', 'Broken Image');
+				nebula.crm?.('event', 'Broken Image'); //May not be defined if analytics is not active so using optional chaining on the execution of this function
 			});
 		} else {
 			ga('send', 'exception', {'exDescription': '(JS) Broken Image: ' + imagePath, 'exFatal': false});
-			nebula.crm('event', 'Broken Image');
+			nebula.crm?.('event', 'Broken Image'); //May not be defined if analytics is not active so using optional chaining on the execution of this function
 		}
 	});
 };

@@ -57,24 +57,27 @@ if ( !trait_exists('Logs') ){
 				return;
 			}
 
-			global $wpdb;
+			$logs_table_transient = get_transient('nebula_logs_table_exists');
+			if ( empty($logs_table_transient) ){
+				global $wpdb;
 
-			$logs_table = $wpdb->query("SHOW TABLES LIKE '" . $wpdb->nebula_logs . "'"); //DB Query here
+				$logs_table = $wpdb->query("SHOW TABLES LIKE '" . $wpdb->nebula_logs . "'"); //DB Query here
 
-			//@todo "Nebula" 0: could store this in a "permanent" transient. this only ever needs to happen once
+				if ( empty($logs_table) ){
+					require_once(ABSPATH . 'wp-admin/includes/upgrade.php'); //Why is this needed?
 
-			if ( empty($logs_table) ){
-				require_once(ABSPATH . 'wp-admin/includes/upgrade.php'); //Why is this needed?
+					$create_logs_table_sql = "CREATE TABLE " . $wpdb->nebula_logs . " (
+						id INT(11) NOT NULL AUTO_INCREMENT,
+						timestamp TINYTEXT NOT NULL,
+						message LONGTEXT,
+						user_id INT(11) NOT NULL,
+						importance INT(6),
+						PRIMARY KEY (id)
+						) ENGINE = InnoDB;"; //DB Query here
+					dbDelta($create_logs_table_sql);
+				}
 
-				$create_logs_table_sql = "CREATE TABLE " . $wpdb->nebula_logs . " (
-					id INT(11) NOT NULL AUTO_INCREMENT,
-					timestamp TINYTEXT NOT NULL,
-					message LONGTEXT,
-					user_id INT(11) NOT NULL,
-					importance INT(6),
-					PRIMARY KEY (id)
-					) ENGINE = InnoDB;"; //DB Query here
-				dbDelta($create_logs_table_sql);
+				set_transient('nebula_logs_table_exists', true, YEAR_IN_SECONDS); //This could be permanent since the above only needs to run once
 			}
 		}
 

@@ -63,8 +63,6 @@ if ( !trait_exists('Admin') ){
 				add_action('admin_init', array($this, 'additional_admin_color_schemes'));
 				add_action('user_register', array($this, 'set_default_admin_color')); //New users will default to Brand admin color scheme
 
-				//add_filter('wp_unique_post_slug', array($this, 'unique_slug_warning_ajax' ), 10, 4); //@TODO "Nebula" 0: This echos when submitting posts from the front end! nebula()->is_admin_page() does not prevent that...
-
 				//Add ID column to posts and pages
 				if ( current_user_can('publish_posts') ){
 					add_filter('manage_posts_columns', array($this, 'id_column_head')); //Includes custom post types
@@ -96,7 +94,7 @@ if ( !trait_exists('Admin') ){
 					$post_types = get_post_types(array('public' => true), 'names');
 					if ( is_array($post_types) && $post_types !== array() ){
 						foreach ( $post_types as $post_type ){
-							add_filter('manage_edit-' . $post_type . '_columns', array($this, 'remove_yoast_columns')); //@TODO "Nebula" 0: This does not always work.
+							add_filter('manage_edit-' . $post_type . '_columns', array($this, 'remove_yoast_columns'), 500);
 						}
 					}
 				}
@@ -1372,18 +1370,6 @@ if ( !trait_exists('Admin') ){
 			}
 
 			return false;
-		}
-
-		//Check if a post slug has a number appended to it (indicating a duplicate post).
-		public function unique_slug_warning_ajax($slug, $post_ID, $post_status, $post_type){
-			if ( current_user_can('publish_posts') && $this->is_admin_page() && (headers_sent() || $this->is_ajax_request()) ){ //Should work with AJAX and without (as long as headers have been sent)
-				echo '<script>
-					if ( typeof nebulaUniqueSlugChecker === "function" ){
-						nebulaUniqueSlugChecker("' . $post_type . '");
-					}
-				</script>';
-			}
-			return $slug;
 		}
 
 		//Allow SVG files to be uploaded to the Media Library
