@@ -384,16 +384,15 @@ if ( !trait_exists('Optimization') ){
 
 						$testTimes['[PHP] ' . $label] = array(
 							'start' => $start_time, //Convert seconds to milliseconds
-							'duration' => round($time*1000), //Convert seconds to milliseconds
-							'elapsed' => ( is_float($start_time) )? $start_time+round($time*1000) : -1,
+							'duration' => round($time*1000) //Convert seconds to milliseconds
 						);
 					}
 				}
 
 				if ( !empty($testTimes) ){
-					//Sort by elapsed time
+					//Sort by start time
 					uasort($testTimes, function($a, $b){
-						return $a['elapsed'] - $b['elapsed'];
+						return $a['start'] - $b['start'];
 					});
 
 					echo '<script type="text/javascript">nebula.site.timings = ' . json_encode($testTimes) . ';</script>'; //Output the data to <head>

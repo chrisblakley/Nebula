@@ -661,14 +661,6 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
-					<label for="microsoft_clarity_id">Microsoft Clarity ID</label>
-					<input type="text" name="nebula_options[microsoft_clarity_id]" id="microsoft_clarity_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['microsoft_clarity_id']; ?>" placeholder="000000000" />
-					<p class="nebula-help-text short-help form-text text-muted">The ID used by <a href="https://clarity.microsoft.com/" target="_blank" rel="noopener noreferrer">Microsoft Clarity</a> to enable additional data.</p>
-					<p class="nebula-help-text more-help form-text text-muted">Entering the ID here will load the Microsoft Clarity script in the <code>&lt;head&gt;</code> of all pages.</p>
-					<p class="option-keywords">remote resource minor page speed impact optimization optimize</p>
-				</div>
-
-				<div class="form-group">
 					<label for="hostnames">Valid Hostnames</label>
 					<input type="text" name="nebula_options[hostnames]" id="hostnames" class="form-control nebula-validate-text" value="<?php echo $nebula_options['hostnames']; ?>" placeholder="<?php echo $this->url_components('domain'); ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">These help generate regex patterns for Google Analytics filters.</p>

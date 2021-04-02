@@ -8,6 +8,8 @@ nebula.cacheSelectors = function(){
 			body: jQuery('body'),
 		};
 	}
+
+	window.dataLayer = window.dataLayer || []; //Prevent overwriting an existing GTM Data Layer array
 };
 
 //Record performance timing
@@ -33,20 +35,42 @@ nebula.performanceMetrics = async function(){
 					'CPU Idle': {start: 0, duration: Math.round(Date.now() - performance.timing.navigationStart)}
 				};
 
+				//Add custom JS measurements too
+				performance.getEntriesByType('measure').forEach(function(measurement){
+					timingCalcuations[measurement.name] = {
+						start: Math.round(measurement.startTime),
+						duration: Math.round(measurement.duration)
+					};
+				});
+
 				let clientTimings = {};
 				jQuery.each(timingCalcuations, function(name, timings){
 					if ( !isNaN(timings.duration) && timings.duration > 0 && timings.duration < 6_000_000 ){
 						clientTimings[name] = {
 							start: timings.start,
-							duration: timings.duration,
-							elapsed: timings.start + timings.duration
+							duration: timings.duration
 						};
 					}
 				});
 
 				console.groupCollapsed('Performance');
-				console.table(jQuery.extend(nebula.site.timings, clientTimings));
-				console.groupEnd();
+				console.groupCollapsed('Measurements');
+				console.table(jQuery.extend(nebula.site.timings, clientTimings)); //Performance Timings
+				console.groupEnd(); //End Measurements
+
+				console.groupCollapsed('Resources');
+				let resourceCalcuations = {};
+				performance.getEntriesByType('resource').forEach(function(resource){
+					resourceCalcuations[resource.name] = {
+						type: resource.initiatorType,
+						protocol: resource.nextHopProtocol,
+						start: Math.round(resource.fetchStart),
+						duration: Math.round(resource.duration)
+					};
+				});
+				console.table(resourceCalcuations); //Resource Timings
+				console.groupEnd(); //End Resources
+				console.groupEnd(); //End Performance (Parent Group)
 
 				if ( timingCalcuations['Processing'] && timingCalcuations['DOM Ready'] && timingCalcuations['Total Load'] ){
 					ga('set', nebula.analytics.metrics.serverResponseTime, timingCalcuations['Processing'].start);

@@ -355,16 +355,6 @@ if ( !trait_exists('Utilities') ){
 			return false;
 		}
 
-		//If the request was made via AJAX
-		public function is_ajax(){return $this->is_ajax_request();} //Alias
-		public function is_ajax_request(){
-			if ( !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' ){
-				return true;
-			}
-
-			return false;
-		}
-
 		//Valid Hostname Regex
 		//Enter ONLY the domain and TLD. The wildcard subdomain regex is automatically added.
 		public function valid_hostname_regex($domains=null){
@@ -905,7 +895,7 @@ if ( !trait_exists('Utilities') ){
 
 		//Get a remote resource and if unavailable, don't re-check the resource for 5 minutes.
 		//Args docs: https://developer.wordpress.org/reference/classes/WP_Http/request/
-		public function remote_get($url, $args=null){
+		public function remote_get($url, $args=null, $ignore_cache=false){
 			if ( apply_filters('disable_nebula_remote_get', false, $url) ){ //Consider a Nebula Option here as well?
 				return new WP_Error('disabled', 'Nebula remote_get has been disabled (for this or all requests).');
 			}
@@ -919,9 +909,11 @@ if ( !trait_exists('Utilities') ){
 			$hostname = str_replace('.', '_', $this->url_components('hostname', $url));
 
 			//Check if the resource was unavailable in the last 10 minutes
-			if ( !$this->is_available($url, true, false) ){ //We do not want to make 2 requests from this, so we tell is_available() to not make its own request (third parameter is "false")– note that this function also updates the "nebula_site_available..." transient if a problem arises– which will then be seen by is_available().
-				$this->timer($timer_name, 'end');
-				return new WP_Error('unavailable', 'This resource was unavailable within the last 15 minutes.');
+			if ( !$ignore_cache ){ //This is useful for debugging– it will always make the remote request regardless of availability of the endpoint
+				if ( !$this->is_available($url, true, false) ){ //We do not want to make 2 requests from this, so we tell is_available() to not make its own request (third parameter is "false")– note that this function also updates the "nebula_site_available..." transient if a problem arises– which will then be seen by is_available().
+					$this->timer($timer_name, 'end');
+					return new WP_Error('unavailable', 'This resource was unavailable within the last 15 minutes.');
+				}
 			}
 
 			//Get the remote resource
@@ -935,10 +927,20 @@ if ( !trait_exists('Utilities') ){
 			return $response;
 		}
 
+		//If the request was made via AJAX
+		public function is_ajax(){return $this->is_ajax_request();} //Alias
+		public function is_ajax_request(){
+			if ( wp_doing_ajax() || (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') ){
+				return true;
+			}
+
+			return false;
+		}
+
 		//If this request is using AJAX, REST API, CRON, or some other type of background request. This can be used to ignore non-essential/visual functionality to speed up those requests.
 		public function is_background_request(){
 			//Check for AJAX
-			if ( wp_doing_ajax() ){
+			if ( $this->is_ajax_request() ){
 				return true;
 			}
 

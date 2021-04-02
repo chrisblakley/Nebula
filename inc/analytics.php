@@ -7,21 +7,6 @@
 
 <?php if ( nebula()->is_analytics_allowed() ): ?>
 	<?php nebula()->timer('Analytics (Include)'); ?>
-	<?php if ( nebula()->get_option('microsoft_clarity_id') ): //Microsoft Clarity ?>
-		<script type="text/javascript">
-			(function(c,l,a,r,i,t,y){
-				c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-				t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;
-				y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-			})(window, document, 'clarity', 'script', '<?php echo esc_html(nebula()->get_option('microsoft_clarity_id')); ?>');
-
-			<?php echo ( isset($_GET['utm_campaign']) )? 'clarity("set", "UTM Campaign", "' . $_GET['utm_campaign'] . '");' : ''; ?>
-			<?php echo ( isset($_GET['utm_medium']) )? 'clarity("set", "UTM Medium", "' . $_GET['utm_medium'] . '");' : ''; ?>
-			<?php echo ( isset($_GET['utm_source']) )? 'clarity("set", "UTM Source", "' . $_GET['utm_source'] . '");' : ''; ?>
-			<?php echo ( isset($_GET['utm_content']) )? 'clarity("set", "UTM Content", "' . $_GET['utm_content'] . '");' : ''; ?>
-		</script>
-	<?php endif; ?>
-
 	<?php if ( nebula()->get_option('ga_tracking_id') ): //Universal Google Analytics ?>
 		<script type="module" async>
 			import {setDimension, uuid, localTimestamp} from '<?php echo get_template_directory_uri(); ?>/assets/js/modules/analytics.js';
@@ -54,6 +39,8 @@
 			<?php if ( nebula()->get_option('google_optimize_id') ): //Google Optimize ?>
 				ga('require', '<?php echo nebula()->get_option('google_optimize_id'); ?>');
 			<?php endif; ?>
+
+			<?php do_action('nebula_ga_before_dimensions'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
 
 			if ( window.performance ){
 				setDimension('Redirect Count', performance.navigation.redirectCount, nebula.analytics.dimensions.redirectcount);

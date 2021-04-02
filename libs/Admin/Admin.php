@@ -1321,23 +1321,21 @@ if ( !trait_exists('Admin') ){
 			$override = apply_filters('pre_nebula_php_version_support', null, $php_version);
 			if ( isset($override) ){return;}
 
-			$php_timeline_json_file = get_template_directory() . '/inc/data/php_timeline.json';
 			$php_timeline = get_transient('nebula_php_timeline');
 			if ( empty($php_timeline) || $this->is_debug() ){
-				$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/php_timeline.json');
-				if ( is_wp_error($response) || !isset($response['body']) ){
-					return false;
-				}
-
-				$php_timeline = $response['body'];
-
-				WP_Filesystem();
+				$php_timeline_json_file = get_template_directory() . '/inc/data/php_timeline.json'; //This local JSON file will either be updated or used directly later
 				global $wp_filesystem;
-				if ( !empty($php_timeline) ){
-					$wp_filesystem->put_contents($php_timeline_json_file, $php_timeline); //Store it locally.
-					set_transient('nebula_php_timeline', $php_timeline, YEAR_IN_SECONDS/12); //1 month cache
+				WP_Filesystem();
+
+				$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/php_timeline.json'); //Get the latest JSON file from Nebula GitHub
+				if ( !is_wp_error($response) && isset($response['body']) ){
+					$php_timeline = $response['body'];
+					if ( !empty($php_timeline) ){
+						$wp_filesystem->put_contents($php_timeline_json_file, $php_timeline); //Update the local JSON file with the new remote file
+						set_transient('nebula_php_timeline', $php_timeline, MONTH_IN_SECONDS); //1 month cache
+					}
 				} else {
-					$php_timeline = $wp_filesystem->get_contents($php_timeline_json_file);
+					$php_timeline = $wp_filesystem->get_contents($php_timeline_json_file); //Otherwise use the existing local JSON file
 				}
 			}
 

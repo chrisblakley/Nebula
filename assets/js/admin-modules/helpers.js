@@ -65,4 +65,4 @@ nebula.sassCooldown = function(){
 			}
 		}, 1000);
 	}
-}
+};

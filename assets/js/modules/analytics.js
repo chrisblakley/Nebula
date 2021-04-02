@@ -27,6 +27,9 @@ export function setDimension(name, value, index){
 	if ( typeof clarity === 'function' ){
 		clarity('set', name, value);
 	}
+
+	//Others
+	document.dispatchEvent(new CustomEvent('nebula_dimension', {detail: {'name': name, 'value': value}})); //Allow this dimension to be sent to other platforms from outside Nebula
 }
 
 //Google Analytics Universal Analytics Event Trackers
