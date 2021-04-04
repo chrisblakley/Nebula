@@ -415,7 +415,7 @@ if ( !trait_exists('Dashboard') ){
 			$this->timer('Nebula PHG Dashboard Metabox', 'end');
 		}
 
-		//Extension skip list for both To Do Manager and Developer Metabox
+		//Extension skip list for both To-Do Manager and Developer Metabox
 		public function skip_extensions(){
 			return array('.jpg', '.jpeg', '.png', '.gif', '.ico', '.tiff', '.psd', '.ai', '.apng', '.bmp', '.otf', '.ttf', '.ogv', '.flv', '.fla', '.mpg', '.mpeg', '.avi', '.mov', '.woff', '.eot', '.mp3', '.mp4', '.wmv', '.wma', '.aiff', '.zip', '.zipx', '.rar', '.exe', '.dmg', '.csv', '.swf', '.pdf', '.pdfx', '.pem', '.ppt', '.pptx', '.pps', '.ppsx', '.bak'); //Would it be faster to list allowed filetypes instead?
 		}

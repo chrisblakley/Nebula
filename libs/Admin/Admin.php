@@ -164,16 +164,15 @@ if ( !trait_exists('Admin') ){
 				$transient_manager = new PW_Transients_Manager();
 				$transient_manager->delete_transients_with_expirations();
 			} else {
-				$nebula_transients_to_delete = array(
+				$all_transients_to_delete = apply_filters('nebula_delete_transients_on_save', array(
 					'nebula_autocomplete_menus', //Autocomplete Search
 					'nebula_autocomplete_categories', //Autocomplete Search
 					'nebula_autocomplete_tags', //Autocomplete Search
 					'nebula_autocomplete_authors', //Autocomplete Search
 					'nebula_everything_query', //Advanced Search
 					'nebula_latest_post', //Latest update
-				);
+				)); //Allow other functions to hook in to delete transients on post save
 
-				$all_transients_to_delete = apply_filters('nebula_delete_transients_on_save', $nebula_transients_to_delete); //Allow other functions to hook in to delete transients on post save
 				foreach ( $all_transients_to_delete as $transient_to_delete ){
 					delete_transient($transient_to_delete);
 				}

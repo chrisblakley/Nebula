@@ -24,8 +24,8 @@ nebula.helpers = async function(){
 	}
 
 	//Remove filetype icons from images within <a> tags and buttons. Note: these contribute to CLS because they are not animations
-	//jQuery('a img').closest('a').addClass('no-icon');
-	//jQuery('.no-icon:not(a)').find('a').addClass('no-icon');
+	jQuery('a img').closest('a').addClass('no-icon');
+	jQuery('.no-icon:not(a)').find('a').addClass('no-icon');
 
 	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 

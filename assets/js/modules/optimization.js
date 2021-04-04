@@ -1,13 +1,11 @@
 //Cache DOM selectors
 nebula.cacheSelectors = function(){
-	if ( !nebula.dom ){
-		nebula.dom = {
-			document: jQuery(document),
-			window: jQuery(window),
-			html: jQuery('html'),
-			body: jQuery('body'),
-		};
-	}
+	nebula.dom = nebula?.dom || {
+		document: jQuery(document),
+		window: jQuery(window),
+		html: jQuery('html'),
+		body: jQuery('body'),
+	};
 
 	window.dataLayer = window.dataLayer || []; //Prevent overwriting an existing GTM Data Layer array
 };
@@ -70,8 +68,48 @@ nebula.performanceMetrics = async function(){
 				});
 				console.table(resourceCalcuations); //Resource Timings
 				console.groupEnd(); //End Resources
+
+				//Monitor Cumulative Layout Shift (CLS) with the Layout Instability API
+				//This runs after the initial task has finished– which means it outputs after the Performance console group has closed... This is also an observer, so will log to the console anytime a layout shift happens.
+				if ( 'PerformanceObserver' in window ){
+					let cls = 0;
+					let clsCalculations = {};
+					new PerformanceObserver(function(list){
+						for ( let entry of list.getEntries() ){
+							if ( !entry.hadRecentInput ){
+								cls += entry.value;
+
+								for ( let source of entry.sources ){
+									var node = ( source.node )? nebula.domTreeToString(jQuery(source.node.parentElement)) : 'Unknown (' + Math.floor(Math.random()*99999)+10000 + ')'; //Sometimes the parentElement is null
+
+									clsCalculations[node] = {
+										node: source.node,
+										parent: source.node?.parentElement,
+										entryStart: Math.round(entry.startTime),
+										entryCLS: entry.value,
+										totalCLS: cls,
+									};
+								}
+							}
+						}
+
+						//Only output this once on load to avoid cluttering the console
+						nebula.once(function(){
+							console.groupCollapsed('Cumulative Layout Shift (CLS)');
+							console.table(clsCalculations); //CLS Values
+							console.groupEnd(); //End CLS
+						}, 'cls console table');
+
+						//Log the total if it is less than nominal
+						if ( cls > 0.1 ){ //Anything over 0.1 needs improvement
+							console.warn('Significant Cumulative Layout Shift (CLS):', cls, 'https://web.dev/cls/');
+						}
+					}).observe({type: 'layout-shift', buffered: true});
+				}
+
 				console.groupEnd(); //End Performance (Parent Group)
 
+				//Report certain timings to Google Analytics
 				if ( timingCalcuations['Processing'] && timingCalcuations['DOM Ready'] && timingCalcuations['Total Load'] ){
 					ga('set', nebula.analytics.metrics.serverResponseTime, timingCalcuations['Processing'].start);
 					ga('set', nebula.analytics.metrics.domReadyTime, timingCalcuations['DOM Ready'].duration);
@@ -83,22 +121,6 @@ nebula.performanceMetrics = async function(){
 					ga('send', 'timing', 'Performance Timing', 'DOM Ready', timingCalcuations['DOM Ready'].duration, 'Navigation start until DOM ready');
 					ga('send', 'timing', 'Performance Timing', 'Window Load', timingCalcuations['Total Load'].duration, 'Navigation start until window load');
 					ga('send', 'timing', 'Performance Timing', 'CPU Idle', timingCalcuations['CPU Idle'].duration, 'Navigation start until CPU idle');
-				}
-
-				//Monitor Cumulative Layout Shift (CLS) with the Layout Instability API
-				if ( 'PerformanceObserver' in window ){
-					let cls = 0;
-					new PerformanceObserver(function(entryList){
-						for ( let entry of entryList.getEntries() ){
-							if ( !entry.hadRecentInput ){
-								cls += entry.value;
-							}
-						}
-
-						if ( cls > 0.1 ){ //Anything over 0.1 needs improvement
-							console.warn('Cumulative Layout Shift (CLS):', cls);
-						}
-					}).observe({type: 'layout-shift', buffered: true});
 				}
 			});
 		}

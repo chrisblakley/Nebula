@@ -620,44 +620,50 @@ nebula.timeAgo = function(timestamp, raw){ //http://af-design.com/blog/2009/02/1
 
 //Convert DOM elements into a tree string
 nebula.domTreeToString = function(element){
-	//If the element is a selector, convert to a jQuery object
-	if ( typeof element === 'string' ){
-		element = jQuery(element);
-	}
-
-	//If the element is a native JS object, convert to jQuery
-	if ( element.nodeType ){
-		element = jQuery(element);
-	}
-
-	//Map the parent elements into an array and concatenate together
-	let selector = element.parents().map(function(){
-		let parentTag = this.tagName.toLowerCase();
-
-		//Append the ID if a parent element has one
-		let parentID = jQuery(this).attr('id');
-		if ( parentID ){
-			parentTag += '#' + parentID;
+	try {
+		//If the element is a selector, convert to a jQuery object
+		if ( typeof element === 'string' ){
+			element = jQuery(element);
 		}
 
-		return parentTag;
-	}).get().reverse().concat([this.nodeName]).join(' ');
+		//If the element is a native JS object, convert to jQuery
+		if ( element.nodeType ){
+			element = jQuery(element);
+		} else if ( element[0]?.nodeType ){
+			element = jQuery(element[0]);
+		}
 
-	selector += element.get(0).tagName.toLowerCase();
+		//Map the parent elements into an array and concatenate together
+		let selector = element.parents().map(function(){
+			let parentTag = this.tagName.toLowerCase();
 
-	//Append the ID to the last element
-	let id = element.attr('id');
-	if ( id ){
-		selector += '#' + id;
+			//Append the ID if a parent element has one
+			let parentID = jQuery(this).attr('id');
+			if ( parentID ){
+				parentTag += '#' + parentID;
+			}
+
+			return parentTag;
+		}).get().reverse().concat([this.nodeName]).join(' ');
+
+		selector += element[0]?.tagName.toLowerCase(); //changed from .get(0)
+
+		//Append the ID to the last element
+		let id = element.attr('id');
+		if ( id ){
+			selector += '#' + id;
+		}
+
+		//Add the classnames to the last element
+		let classNames = element.attr('class');
+		if ( classNames ){
+			selector += '.' + classNames.trim().replaceAll(/\s/gi, '.');
+		}
+
+		return selector;
+	} catch {
+		return '(Unknown)';
 	}
-
-	//Add the classnames to the last element
-	let classNames = element.attr('class');
-	if ( classNames ){
-		selector += '.' + classNames.trim().replaceAll(/\s/gi, '.');
-	}
-
-	return selector;
 };
 
 nebula.vibrate = function(pattern){

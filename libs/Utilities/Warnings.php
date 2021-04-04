@@ -706,12 +706,12 @@ if ( !trait_exists('Warnings') ){
 							.nebula-audit .nebula-audit .audit-desc {right: auto; left: 0; top: 0; bottom: auto;}
 								.nebula-audit .nebula-audit .nebula-audit .audit-desc {right: auto; left: 0; bottom: 0; top: auto;}
 									.nebula-audit .nebula-audit .nebula-audit .nebula-audit .audit-desc {right: 0; left: auto; bottom: auto; top: 0;}
-						.audit-error {position: relative; border: 2px solid red;}
-							.audit-error .audit-desc {background: red;}
-						.audit-warn {position: relative; border: 2px solid orange;}
-							.audit-warn .audit-desc {background: orange;}
-						.audit-notice {position: relative; border: 2px solid blue;}
-							.audit-notice .audit-desc {background: blue;}
+						.audit-error {position: relative; border: 2px solid #dc3545;}
+							.audit-error .audit-desc {background: #dc3545;}
+						.audit-warn {position: relative; border: 2px solid #ffc107;}
+							.audit-warn .audit-desc {background: #ffc107;}
+						.audit-notice {position: relative; border: 2px solid #17a2b8;}
+							.audit-notice .audit-desc {background: #17a2b8;}
 						#audit-results {position: relative; background: #444; color: #fff; padding: 50px;}
 							#audit-results p,
 							#audit-results li {color: #fff;}
@@ -736,6 +736,39 @@ if ( !trait_exists('Warnings') ){
 										}
 									}, {buffered: true});
 									nebulaAuditModeReportingObserver.observe();
+								}
+
+								//Monitor Cumulative Layout Shift (CLS) with the Layout Instability API
+								if ( 'PerformanceObserver' in window ){
+									let auditedCls = 0;
+									new PerformanceObserver(function(list){
+										for ( let entry of list.getEntries() ){
+											if ( !entry.hadRecentInput ){
+												auditedCls += entry.value;
+
+												for ( let source of entry.sources ){
+													if ( source.node?.parentElement ){
+														if ( entry.value > 0.001 && !jQuery(source.node.parentElement).parents('#wpadminbar').length && !jQuery(source.node.parentElement).parents('#audit-results').length ){
+															var clsLevel = 'notice';
+															if ( entry.value > 0.01 ){
+																clsLevel = 'warn';
+															}
+															if ( entry.value > 0.1 ){
+																clsLevel = 'error';
+															}
+
+															jQuery(source.node.parentElement).removeClass('audit-notice audit-warn').addClass('nebula-audit audit-' + clsLevel).append(jQuery('<div class="audit-desc">Layout Shift (' + entry.value.toFixed(3) + ')</div>'));
+														}
+													}
+												}
+											}
+										}
+
+										//Log the total if it is less than nominal
+										if ( auditedCls > 0.1 ){ //Anything over 0.1 needs improvement
+											jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-expand-arrows-alt"></i> Significant Cumulative Layout Shift (CLS): ' + auditedCls + '</li>');
+										}
+									}).observe({type: 'layout-shift', buffered: true});
 								}
 
 								//Check protocol

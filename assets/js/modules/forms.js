@@ -125,13 +125,13 @@ nebula.cf7Functions = async function(){
 			event: e,
 			category: 'CF7 Form',
 			action: 'Submit (Attempt)', //GA4 Name: "form_attempt"?
-			formID: e.detail.id, //CF7 Unit Tag
+			formID: e.detail.unitTag, //CF7 Unit Tag
 		};
 
 		//If timing data exists
-		if ( nebula.timings && typeof nebula.timings[e.detail.id] !== 'undefined' ){
-			thisEvent.formTime = nebula.timer(e.detail.id, 'lap', 'wpcf7-submit-attempt');
-			thisEvent.inputs = nebula.timings[e.detail.id].laps + ' inputs';
+		if ( nebula.timings && typeof nebula.timings[e.detail.unitTag] !== 'undefined' ){
+			thisEvent.formTime = nebula.timer(e.detail.unitTag, 'lap', 'wpcf7-submit-attempt');
+			thisEvent.inputs = nebula.timings[e.detail.unitTag].laps + ' inputs';
 		}
 
 		thisEvent.label = 'Submission attempt for form ID: ' + thisEvent.formID;
@@ -146,8 +146,9 @@ nebula.cf7Functions = async function(){
 		if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)'});}
 		if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
 
-		jQuery('#' + e.detail.id).find('button#submit').removeClass('active');
-		jQuery('.invalid-feedback').addClass('hidden');
+		jQuery('#' + e.detail.unitTag).find('button#submit').removeClass('active');
+		jQuery('.invalid-feedback').addClass('hidden'); //Reset all of the "live" feedback to let CF7 handle its feedback
+		jQuery('#cf7-privacy-acceptance').trigger('change'); //Until CF7 has a native invalid indicator for the privacy acceptance checkbox, force the Nebula validator here
 	});
 
 	//CF7 Invalid (CF7 AJAX response after invalid form)
@@ -156,13 +157,13 @@ nebula.cf7Functions = async function(){
 			event: e,
 			category: 'CF7 Form',
 			action: 'Submit (Invalid)', //GA4 Name: "form_invalid"?
-			formID: e.detail.id, //CF7 Unit Tag
+			formID: e.detail.unitTag, //CF7 Unit Tag
 		};
 
 		//If timing data exists
-		if ( nebula.timings && typeof nebula.timings[e.detail.id] !== 'undefined' ){
-			thisEvent.formTime = nebula.timer(e.detail.id, 'lap', 'wpcf7-submit-invalid');
-			thisEvent.inputs = nebula.timings[e.detail.id].laps + ' inputs';
+		if ( nebula.timings && typeof nebula.timings[e.detail.unitTag] !== 'undefined' ){
+			thisEvent.formTime = nebula.timer(e.detail.unitTag, 'lap', 'wpcf7-submit-invalid');
+			thisEvent.inputs = nebula.timings[e.detail.unitTag].laps + ' inputs';
 		}
 
 		thisEvent.label = 'Form validation errors occurred on form ID: ' + thisEvent.formID;
@@ -204,16 +205,16 @@ nebula.cf7Functions = async function(){
 	//CF7 Spam (CF7 AJAX response after spam detection)
 	nebula.dom.document.on('wpcf7spam', function(e){
 		let formInputs = 'Unknown';
-		if ( nebula.timings[e.detail.id] && nebula.timings[e.detail.id].laps ){
-			formInputs = nebula.timings[e.detail.id].laps + ' inputs';
+		if ( nebula.timings[e.detail.unitTag] && nebula.timings[e.detail.unitTag].laps ){
+			formInputs = nebula.timings[e.detail.unitTag].laps + ' inputs';
 		}
 
 		let thisEvent = {
 			event: e,
 			category: 'CF7 Form',
 			action: 'Submit (Spam)', //GA4 Name: "form_spam"?
-			formID: e.detail.id, //CF7 Unit Tag
-			formTime: nebula.timer(e.detail.id, 'end'),
+			formID: e.detail.unitTag, //CF7 Unit Tag
+			formTime: nebula.timer(e.detail.unitTag, 'end'),
 			inputs: formInputs
 		};
 
@@ -233,16 +234,16 @@ nebula.cf7Functions = async function(){
 	//CF7 Mail Send Failure (CF7 AJAX response after mail failure)
 	nebula.dom.document.on('wpcf7mailfailed', function(e){
 		let formInputs = 'Unknown';
-		if ( nebula.timings[e.detail.id] && nebula.timings[e.detail.id].laps ){
-			formInputs = nebula.timings[e.detail.id].laps + ' inputs';
+		if ( nebula.timings[e.detail.unitTag] && nebula.timings[e.detail.unitTag].laps ){
+			formInputs = nebula.timings[e.detail.unitTag].laps + ' inputs';
 		}
 
 		let thisEvent = {
 			event: e,
 			category: 'CF7 Form',
 			action: 'Submit (Mail Failed)', //GA4 Name: "form_failed"?
-			formID: e.detail.id, //CF7 Unit Tag
-			formTime: nebula.timer(e.detail.id, 'end'),
+			formID: e.detail.unitTag, //CF7 Unit Tag
+			formTime: nebula.timer(e.detail.unitTag, 'end'),
 			inputs: formInputs
 		};
 
@@ -261,11 +262,11 @@ nebula.cf7Functions = async function(){
 
 	//CF7 Mail Sent Success (CF7 AJAX response after submit success)
 	nebula.dom.document.on('wpcf7mailsent', function(e){
-		formStarted[e.detail.id] = false; //Reset abandonment tracker for this form.
+		formStarted[e.detail.unitTag] = false; //Reset abandonment tracker for this form.
 
 		let formInputs = 'Unknown';
-		if ( nebula.timings[e.detail.id] && nebula.timings[e.detail.id].laps ){
-			formInputs = nebula.timings[e.detail.id].laps + ' inputs';
+		if ( nebula.timings[e.detail.unitTag] && nebula.timings[e.detail.unitTag].laps ){
+			formInputs = nebula.timings[e.detail.unitTag].laps + ' inputs';
 		}
 
 		//These event may want to correspond to the GA4 event name "generate_lead" and use "value" and "currency" as parameters: https://support.google.com/analytics/answer/9267735 (or consider multiple events?)
@@ -274,15 +275,15 @@ nebula.cf7Functions = async function(){
 			event: e,
 			category: 'CF7 Form',
 			action: 'Submit (Success)', //GA4 Name: "form_submit" (and also somehow "generate_lead"?)
-			formID: e.detail.id, //CF7 Unit Tag ("f" is CF7 form ID, "p" is WP post ID, and "o" is the count if there are multiple per page)
-			formTime: nebula.timer(e.detail.id, 'end'),
+			formID: e.detail.unitTag, //CF7 Unit Tag ("f" is CF7 form ID, "p" is WP post ID, and "o" is the count if there are multiple per page)
+			formTime: nebula.timer(e.detail.unitTag, 'end'),
 			inputs: formInputs
 		};
 
 		thisEvent.label = 'Form ID: ' + thisEvent.formID;
 
 		nebula.updateFormFlow(thisEvent.formID, '[Success]');
-		if ( !jQuery('#' + e.detail.id).hasClass('.ignore-form') && !jQuery('#' + e.detail.id).find('.ignore-form').length && !jQuery('#' + e.detail.id).parents('.ignore-form').length ){
+		if ( !jQuery('#' + e.detail.unitTag).hasClass('.ignore-form') && !jQuery('#' + e.detail.unitTag).find('.ignore-form').length && !jQuery('#' + e.detail.unitTag).parents('.ignore-form').length ){
 			ga('set', nebula.analytics.metrics.formSubmissions, 1);
 		}
 		ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Success)');
@@ -297,14 +298,14 @@ nebula.cf7Functions = async function(){
 		nebula.crm('event', 'Contact Form (' + thisEvent.formID + ') Submit Success');
 
 		//Clear localstorage on submit success on non-persistent forms
-		if ( !jQuery('#' + e.detail.id).hasClass('nebula-persistent') && !jQuery('#' + e.detail.id).parents('.nebula-persistent').length ){
-			jQuery('#' + e.detail.id + ' .wpcf7-textarea, #' + e.detail.id + ' .wpcf7-text').each(function(){
+		if ( !jQuery('#' + e.detail.unitTag).hasClass('nebula-persistent') && !jQuery('#' + e.detail.unitTag).parents('.nebula-persistent').length ){
+			jQuery('#' + e.detail.unitTag + ' .wpcf7-textarea, #' + e.detail.unitTag + ' .wpcf7-text').each(function(){
 				jQuery(this).trigger('keyup'); //Clear validation
 				localStorage.removeItem('cf7_' + jQuery(this).attr('name'));
 			});
 		}
 
-		jQuery('#' + e.detail.id).find('.is-valid, .is-invalid').removeClass('is-valid is-invalid'); //Clear all validation classes
+		jQuery('#' + e.detail.unitTag).find('.is-valid, .is-invalid').removeClass('is-valid is-invalid'); //Clear all validation classes
 	});
 };
 
@@ -448,8 +449,9 @@ nebula.liveValidator = function(){
 	});
 
 	//Checkbox and Radio
-	nebula.dom.document.on('change blur', '.nebula-validate-checkbox, .nebula-validate-radio', function(e){
-		if ( jQuery(this).closest('.form-group').find('input:checked').length ){
+	//Note: The CF7 "Privacy Acceptance" checkbox does not accept custom classes, so we must use its ID directly here
+	nebula.dom.document.on('change blur', '#cf7-privacy-acceptance, .nebula-validate-checkbox, .nebula-validate-radio', function(e){
+		if ( jQuery(this).closest('.form-group, .form-check').find('input:checked').length ){
 			nebula.applyValidationClasses(jQuery(this), 'reset', false);
 		} else {
 			nebula.applyValidationClasses(jQuery(this), 'invalid', true);
@@ -495,7 +497,6 @@ nebula.applyValidationClasses = function(element, validation, showFeedback){
 	if ( typeof element === 'string' ){
 		element = jQuery(element);
 	} else if ( typeof element !== 'object' ){
-
 		return false;
 	}
 
@@ -511,8 +512,8 @@ nebula.applyValidationClasses = function(element, validation, showFeedback){
 	let feedbackElement = false;
 	if ( element.parent().find('.invalid-feedback').length ){
 		feedbackElement = element.parent().find('.invalid-feedback');
-	} else if ( element.closest('.form-group').find('.invalid-feedback').length ){
-		feedbackElement = element.closest('.form-group').find('.invalid-feedback');
+	} else if ( element.closest('.form-group, .form-check').find('.invalid-feedback').length ){
+		feedbackElement = element.closest('.form-group, .form-check').find('.invalid-feedback');
 	}
 
 	if ( feedbackElement ){
@@ -520,7 +521,6 @@ nebula.applyValidationClasses = function(element, validation, showFeedback){
 			feedbackElement.removeClass('hidden').show();
 		} else {
 			feedbackElement.addClass('hidden').hide();
-			//element.removeClass('wpcf7-not-valid is-invalid is-valid').parent().find('.wpcf7-not-valid-tip').remove(); //What was this doing?
 		}
 	}
 };

@@ -83,7 +83,7 @@ span.wpcf7-list-item-label {font-size: rem(14px);
 
 .wpcf7-not-valid-tip {color: $danger_color;}
 
-.wpcf7-response-output {position: relative; width: 100%; margin: 0; border-radius: 4px; font-size: rem(14px); text-align: center; padding: 0;
+.wpcf7-response-output {position: relative; width: 100%; margin: 0; border-radius: 4px; font-size: rem(14px); text-align: center; padding: 0; transition: all 0.5s ease;
 	&:before {content: ""; @include font-awesome("solid"); font-size: rem(36px); display: block; width: 100%; margin-bottom: 15px; text-align: center;}
 
 	.unaccepted &,
