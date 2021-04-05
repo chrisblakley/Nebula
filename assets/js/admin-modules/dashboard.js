@@ -30,7 +30,7 @@ nebula.developerMetaboxes = function(){
 					jQuery('#searchprogress').removeClass('fa-spinner fa-spin').addClass('fas fa-search fa-fw');
 					jQuery('div.search_results').html(response).addClass('done');
 				}).catch(function(error){
-					jQuery('div.search_results').html(error.message).addClass('done');
+					jQuery('div.search_results').html(error).addClass('done');
 				});
 			} else {
 				jQuery('input.findterm').val('').attr('placeholder', 'Minimum 3 characters.');

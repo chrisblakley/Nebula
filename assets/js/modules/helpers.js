@@ -391,7 +391,7 @@ nebula.pre = async function(){
 					oThis.text('Copy to clipboard').removeClass('success');
 				}, 1500);
 			}).catch(function(error){ //This can happen if the user denies clipboard permissions
-				ga('send', 'exception', {'exDescription': '(JS) Clipboard API error: ' + error.data, 'exFatal': false});
+				ga('send', 'exception', {'exDescription': '(JS) Clipboard API error: ' + error, 'exFatal': false});
 				oThis.text('Unable to copy.').addClass('error');
 			});
 

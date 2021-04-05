@@ -178,10 +178,10 @@ nebula.autocompleteSearch = function(element, types = ''){
 						return fetchResponse.json();
 					}).then(function(fetchData){
 						searchResults = nebula.memoize('set', 'autocomplete search (' + request.term.toLowerCase() + ') [' + typesQuery + ']', fetchData); //Add to stored memory
-					}).catch(function(XMLHttpRequest, textStatus, errorThrown){
+					}).catch(function(error){
 						nebula.dom.document.trigger('nebula_autocomplete_search_error', request.term);
 						nebula.debounce(function(){
-							ga('send', 'exception', {'exDescription': '(JS) Autocomplete AJAX error: ' + textStatus, 'exFatal': false});
+							ga('send', 'exception', {'exDescription': '(JS) Autocomplete AJAX error: ' + error, 'exFatal': false});
 							nebula.crm('event', 'Autocomplete Search AJAX Error');
 						}, 1500, 'autocomplete error buffer');
 						element.closest('form').removeClass('searching');

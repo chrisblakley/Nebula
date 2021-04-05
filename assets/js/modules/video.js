@@ -397,7 +397,7 @@ nebula.youtubeStateChange = function(e){
 				}
 			}, updateInterval);
 		} catch {
-			//Ignore
+			//Ignore errors
 		}
 	}
 
@@ -464,7 +464,7 @@ nebula.youtubeStateChange = function(e){
 					pauseFlag = false;
 				}
 			} catch {
-				//Ignore
+				//Ignore errors
 			}
 		}, 1000);
 	}
