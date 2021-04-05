@@ -3,8 +3,8 @@ nebula.initSearchFunctions = function(){
 	nebula.menuSearchReplacement();
 	nebula.singleResultDrawer();
 
-	//Window Load (several of these could use requestIdleCallback when Safari supports it)
-	window.addEventListener('load', function(){
+	//Window Load
+	nebula.bufferedWindowLoad(function(){
 		nebula.wpSearchInput();
 		nebula.autocompleteSearchListeners();
 		nebula.searchValidator();
@@ -95,7 +95,7 @@ nebula.menuSearchReplacement = async function(){
 //Enable autocomplete search on WordPress core selectors
 nebula.autocompleteSearchListeners = async function(){
 	let autocompleteSearchSelector = wp.hooks.applyFilters('nebulaAutocompleteSearchSelector', '.nebula-search input, input#s, input.search');
-	jQuery(autocompleteSearchSelector).on('focus', function(){
+	jQuery(autocompleteSearchSelector).one('focus', function(){ //Only do this once
 		if ( !jQuery(this).hasClass('no-autocomplete') ){ //Use this class to disable or override the default Nebula autocomplete search parameters
 			nebula.loadJS(nebula.site.resources.scripts.nebula_jquery_ui, 'jquery-ui').then(function(){
 				nebula.dom.document.on('blur', '.nebula-search input', function(){
@@ -103,16 +103,19 @@ nebula.autocompleteSearchListeners = async function(){
 				});
 
 				//I do not know why this cannot be debounced
-				jQuery('input#s, input.search').on('keyup paste change', function(e){
-					let allowedKeys = ['Backspace', 'Delete'];
+				jQuery('input#s, input.search').on('keyup paste', function(e){
+					let allowedKeys = ['Backspace', 'Delete']; //Non-alphanumeric keys that are still allowed to trigger a search
 
-					if ( jQuery(this).val().trim().length && (nebula.isAlphanumeric(e.key) || allowedKeys.includes(e.key) ) ){
+					if ( jQuery(this).val().trim().length && (nebula.isAlphanumeric(e.key, false) || allowedKeys.includes(e.key) ) ){
 						let types = false;
 						if ( jQuery(this).is('[data-types]') ){
 							types = jQuery(this).attr('data-types');
 						}
 
 						nebula.autocompleteSearch(jQuery(this), types);
+					} else {
+						jQuery(this).closest('form').removeClass('searching');
+						jQuery(this).closest('.input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
 					}
 				});
 			});
@@ -167,57 +170,65 @@ nebula.autocompleteSearch = function(element, types = ''){
 				at: 'left bottom',
 				collision: 'flip',
 			},
-			source: function(request, sourceResponse){
-				fetch(nebula.site.home_url + '/wp-json/nebula/v2/autocomplete_search?term=' + request.term + typesQuery, {importance: 'high'}).then(function(fetchResponse){
-					return fetchResponse.json();
-				}).then(function(fetchData){
-					nebula.dom.document.trigger('nebula_autocomplete_search_success', fetchData);
-					ga('set', nebula.analytics.metrics.autocompleteSearches, 1);
+			source: async function(request, sourceResponse){
+				let searchResults = nebula.memoize('get', 'autocomplete search (' + request.term.toLowerCase() + ') [' + typesQuery + ']'); //Try from stored memory first
 
-					var noSearchResults = ' (No Results)'; //Prep the string
+				if ( !searchResults ){
+					var fetchResponse = await fetch(nebula.site.home_url + '/wp-json/nebula/v2/autocomplete_search?term=' + request.term + typesQuery, {importance: 'high'}).then(function(fetchResponse){
+						return fetchResponse.json();
+					}).then(function(fetchData){
+						searchResults = nebula.memoize('set', 'autocomplete search (' + request.term.toLowerCase() + ') [' + typesQuery + ']', fetchData); //Add to stored memory
+					}).catch(function(XMLHttpRequest, textStatus, errorThrown){
+						nebula.dom.document.trigger('nebula_autocomplete_search_error', request.term);
+						nebula.debounce(function(){
+							ga('send', 'exception', {'exDescription': '(JS) Autocomplete AJAX error: ' + textStatus, 'exFatal': false});
+							nebula.crm('event', 'Autocomplete Search AJAX Error');
+						}, 1500, 'autocomplete error buffer');
+						element.closest('form').removeClass('searching');
+						element.closest('.input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
+					});
+				}
 
-					if ( fetchData ){
-						nebula.dom.document.trigger('nebula_autocomplete_search_results', fetchData);
-						nebula.prefetch(fetchData[0].link);
+				nebula.dom.document.trigger('nebula_autocomplete_search_success', searchResults);
+				ga('set', nebula.analytics.metrics.autocompleteSearches, 1);
 
-						jQuery.each(fetchData, function(index, value){
-							value.label = value.label.replaceAll(/&#038;/g, '\&');
-						});
+				var noSearchResults = ' (No Results)'; //Prep the string
 
-						noSearchResults = '';
-					} else {
-						nebula.dom.document.trigger('nebula_autocomplete_search_no_results');
-					}
+				if ( searchResults ){
+					nebula.dom.document.trigger('nebula_autocomplete_search_results', searchResults);
+					nebula.prefetch(searchResults[0].link);
 
-					nebula.debounce(function(){
-						let thisEvent = {
-							category: 'Internal Search',
-							action: 'Autocomplete Search' + noSearchResults, //GA4 name: "search"
-							request: request,
-							term: request.term.toLowerCase(),
-							noResults: ( noSearchResults )? true : false,
-						};
+					jQuery.each(searchResults, function(index, value){
+						value.label = value.label.replaceAll(/&#038;/g, '\&');
+					});
 
-						nebula.dom.document.trigger('nebula_event', thisEvent);
-						ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.term);
-						if ( typeof fbq === 'function' ){fbq('track', 'Search', {search_string: thisEvent.term});}
-						if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.term);}
-						nebula.crm('identify', {internal_search: thisEvent.term});
-					}, 1500, 'autocomplete success buffer');
+					noSearchResults = '';
+				} else {
+					nebula.dom.document.trigger('nebula_autocomplete_search_no_results');
+				}
 
-					ga('send', 'timing', 'Autocomplete Search', 'Server Response', Math.round(nebula.timer('(Nebula) Autocomplete Search', 'lap')), 'Each search until server results');
-					sourceResponse(fetchData);
-					element.closest('form').removeClass('searching').addClass('autocompleted');
-					element.closest('.input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
-				}).catch(function(XMLHttpRequest, textStatus, errorThrown){
-					nebula.dom.document.trigger('nebula_autocomplete_search_error', request.term);
-					nebula.debounce(function(){
-						ga('send', 'exception', {'exDescription': '(JS) Autocomplete AJAX error: ' + textStatus, 'exFatal': false});
-						nebula.crm('event', 'Autocomplete Search AJAX Error');
-					}, 1500, 'autocomplete error buffer');
-					element.closest('form').removeClass('searching');
-					element.closest('.input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
-				});
+				nebula.debounce(function(){
+					let thisEvent = {
+						category: 'Internal Search',
+						action: 'Autocomplete Search' + noSearchResults, //GA4 name: "search"
+						request: request,
+						term: request.term.toLowerCase(),
+						noResults: ( noSearchResults )? true : false,
+					};
+
+					nebula.dom.document.trigger('nebula_event', thisEvent);
+					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.term);
+					if ( typeof fbq === 'function' ){fbq('track', 'Search', {search_string: thisEvent.term});}
+					if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.term);}
+					nebula.crm('identify', {internal_search: thisEvent.term});
+				}, 1500, 'autocomplete success buffer');
+
+				ga('send', 'timing', 'Autocomplete Search', 'Server Response', Math.round(nebula.timer('(Nebula) Autocomplete Search', 'lap')), 'Each search until server results');
+
+				sourceResponse(searchResults); //Respond to the jQuery UI Autocomplete now
+
+				element.closest('form').removeClass('searching').addClass('autocompleted');
+				element.closest('.input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
 			},
 			focus: function(event, ui){
 				event.preventDefault(); //Prevent input value from changing.

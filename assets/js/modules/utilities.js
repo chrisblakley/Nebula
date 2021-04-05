@@ -1,3 +1,17 @@
+//Safely wait for the window load event, or if it has already occurred run the callback immediately.
+//Use this function inside of dynamically imported files in case the window load event happens before the imported file has finished loading
+nebula.bufferedWindowLoad = function(callback){
+	//If the window load event has already happened, run the callback immediately
+	if ( document.readyState === 'complete' ){ //Note: "interactive" = DOM Ready, "complete" = Window Load
+		return callback();
+	}
+
+	//If the window has not yet loaded, add an event listener to wait for it
+	window.addEventListener('load', function(){
+		return callback();
+	});
+};
+
 //Check if the user has enabled DNT (if supported in their browser)
 //This is in the utilities module so this function can be used without (and to prevent) the need to load the analytics module at all when not necessary
 nebula.isDoNotTrack = function(){
@@ -406,6 +420,25 @@ nebula.throttle = function(callback, cooldown = 1000, uniqueID = 'No Unique ID')
 	return later();
 };
 
+//Cache "expensive" functions by storing the result (similar to WordPress Transients)
+//Consider enhancing in the future to allow the cache to work beyond a single page view– perhaps add another parameter for that?
+nebula.memoize = function(action, handle = '', value = false){
+	nebula.memoizeCache = nebula.memoizeCache || {};
+
+	if ( action.toLowerCase() === 'set' ){
+		nebula.memoizeCache[handle] = value;
+		return value; //Returning the set value allows for memoize to be set inline with the calculated value if desired
+	}
+
+	if ( action.toLowerCase() === 'get' ){
+		if ( handle in nebula.memoizeCache ){
+			return nebula.memoizeCache[handle];
+		}
+	}
+
+	return false;
+};
+
 //Cookie Management
 nebula.createCookie = function(name, value, days = 3650){ //Reduce the default days in 2027 to lower than 10 years (and each year thereafter)
 	let expires = ''; //Must remain var
@@ -684,9 +717,13 @@ nebula.sanitize = function(text){
 };
 
 //Check if a string is alphanumeric
-nebula.isAlphanumeric = function(character){
+nebula.isAlphanumeric = function(string = '', allowWords = true){
+	if ( !allowWords && string.length > 1 ){ //Ignore meta keys whose "character" is a word (not a letter)
+		return false;
+	}
+
 	const alphanumericRegex = new RegExp('^[a-zA-Z0-9]+$');
-	if ( alphanumericRegex.test(character) ){
+	if ( string && alphanumericRegex.test(string) ){
 		return true;
 	}
 

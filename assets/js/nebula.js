@@ -67,7 +67,7 @@ jQuery(function(){
  Window Load
  ===========================*/
 
-window.addEventListener('load', function(){
+jQuery(window).on('load', function(){
 	window.performance.mark('(Nebula) Window Load [Start]');
 
 	nebula.cacheSelectors(); //Just to make sure
