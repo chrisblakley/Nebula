@@ -657,14 +657,14 @@ if ( !trait_exists('Optimization') ){
 						$invert = false;
 						if ( strpos($rule, '!') === 0 ){
 							$invert = true;
-							$rule = ltrim($rule, '!');
+							$rule = ltrim($rule, '!'); //Remove the "!" character since we have now detected it
 						}
 
 						$rule = str_replace('()', '', $rule); //If called as an executable function, remove the "()". Ex: is_front_page()
 
 						//If the rule is a function name. Ex: "is_front_page"
 						if ( function_exists($rule) ){
-							$conditional_function = ( empty($invert) )? call_user_func($rule) : !call_user_func($rule);
+							$conditional_function = ( !empty($invert) )? !call_user_func($rule) : call_user_func($rule); //Check for not empty here because it is empty be default (above)
 
 							if ( $conditional_function ){
 								$this->deregister($handle, $type);

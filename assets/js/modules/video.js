@@ -404,7 +404,9 @@ nebula.youtubeStateChange = function(e){
 	//Ended
 	if ( e.data === YT.PlayerState.ENDED ){
 		jQuery(thisVideo.element).removeClass('playing');
-		clearInterval(youtubePlayProgress);
+		if ( youtubePlayProgress ){
+			clearInterval(youtubePlayProgress);
+		}
 
 		let thisEvent = {
 			category: 'Videos',
@@ -435,7 +437,9 @@ nebula.youtubeStateChange = function(e){
 			try {
 				if ( e.target.getPlayerState() == 2 && pauseFlag ){ //This must use getPlayerState() since e.data is not actually "current" inside of this setTimeout(). Paused = 2
 					jQuery(thisVideo.element).removeClass('playing');
-					clearInterval(youtubePlayProgress);
+					if ( youtubePlayProgress ){
+						clearInterval(youtubePlayProgress);
+					}
 
 					let thisEvent = {
 						category: 'Videos',

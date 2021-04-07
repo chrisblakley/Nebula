@@ -1,6 +1,5 @@
 #@TODO: Move to root directory.
 #@TODO: Rename this file to be: .htaccess
-#@TODO: Find/Replace "yourdomain" with the actual domain name!
 
 #BEGIN WordPress
 <IfModule mod_rewrite.c>
@@ -34,14 +33,14 @@
 #Ensure the WordPress Address and Site Address settings match this choice! (WordPress Admin > Settings > General)
 
 #Force no-www
-RewriteEngine On
-RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
-RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+#RewriteEngine On
+#RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+#RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 
 #Force www
 #RewriteEngine On
-RewriteCond %{HTTP_HOST} !^www\.
-RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
+#RewriteCond %{HTTP_HOST} !^www\.
+#RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
 ###################
 
 #Compression (with conditionals for various Apache and enabled modules)
@@ -204,10 +203,16 @@ RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
 	</If>
 </IfVersion>
 
+#Interpret .mjs files as JavaScript
+<IfModule mod_mime.c>
+	AddType text/javascript js mjs
+</IfModule>
+
+#Try to prevent comment spam by checking the referrer
 #RewriteEngine On
 #RewriteCond %{REQUEST_METHOD} POST
 #RewriteCond %{REQUEST_URI} .wp-comments-post.php
-#RewriteCond %{HTTP_REFERER} !yourdomain.com [OR] #Domain with subdirectories (if applicable)
+#RewriteCond %{HTTP_HOST}@@%{HTTP_REFERER} !^([^@]*)@@https?://\1/.*
 #RewriteCond %{HTTP_USER_AGENT} ^$
 #RewriteRule (.*) http://%{REMOTE_ADDR}/$ [R=301,L]
 
