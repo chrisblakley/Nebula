@@ -241,7 +241,7 @@ if ( !trait_exists('Security') ){
 					}
 				}
 
-				//If either of the above remote requests received data, update the local file and store the data in a transient for 24 hours
+				//If either of the above remote requests received data, update the local file and store the data in a transient for 36 hours
 				if ( !is_wp_error($response) && !empty($spam_domain_list) ){
 					WP_Filesystem();
 					global $wp_filesystem;

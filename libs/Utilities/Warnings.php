@@ -117,7 +117,7 @@ if ( !trait_exists('Warnings') ){
 									'description' => '<i class="fas fa-fw fa-server"></i> File system permissions error. Consider changing the FS_METHOD in wp-config.php.',
 								);
 							} else {
-								set_transient('nebula_fs_method', true, YEAR_IN_SECONDS); //On success, set a transient. This transient never needs to expire (but it's fine if it does).
+								set_transient('nebula_fs_method', true); //On success, set a transient. No expiration.
 							}
 						}
 					}
@@ -222,6 +222,7 @@ if ( !trait_exists('Warnings') ){
 
 				//Check specific directories for indexing (Apache directory listings)
 				$directory_indexing = get_transient('nebula_directory_indexing');
+
 				if ( empty($directory_indexing) || nebula()->is_debug() || nebula()->is_auditing() ){ //Use the transient unless ?debug or explicitly auditing
 					$directories = array(get_home_url(), includes_url(), content_url()); //Directories to test
 					$found_problem = false;
@@ -250,7 +251,7 @@ if ( !trait_exists('Warnings') ){
 
 					//If we did not find a problem, set a longer transient
 					if ( empty($found_problem) ){
-						set_transient('nebula_directory_indexing', 'good', MONTH_IN_SECONDS); //Check again in a month
+						set_transient('nebula_directory_indexing', 'good'); //No expiration so it is not cleared when making new posts
 					}
 				} else {
 					if ( $directory_indexing === 'bad' ){

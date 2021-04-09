@@ -22,7 +22,7 @@ if ( !trait_exists('Admin') ){
 			//All admin pages (including AJAX requests)
 			if ( $this->is_admin_page() ){
 				add_filter('nebula_brain', array($this, 'admin_brain'));
-				add_action('save_post', array($this, 'clear_transients'));
+				add_action('save_post', array($this, 'clear_transients')); //When a post is saved (or when *starting* a new post)
 				add_action('profile_update', array($this, 'clear_transients'));
 				add_action('upgrader_process_complete', array($this, 'theme_update_automation'), 10, 2); //Action 'upgrader_post_install' also exists.
 				add_filter('auth_cookie_expiration', array($this, 'session_expire'));

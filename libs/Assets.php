@@ -227,6 +227,7 @@ if ( !trait_exists('Assets') ){
 					'isFrontPage' => is_front_page(),
 				),
 				'screen' => array(
+					'isFrontend' => !$this->is_admin_page(),
 					'pagenow' => $pagenow
 				),
 				'dom' => null,

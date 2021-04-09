@@ -103,7 +103,7 @@ nebula.performanceMetrics = async function(){
 						}, 'cls console table');
 
 						//Log the total if it is less than nominal
-						if ( cls > 0.1 ){ //Anything over 0.1 needs improvement
+						if ( nebula.screen.isFrontend && cls > 0.1 ){ //Anything over 0.1 needs improvement
 							console.warn('Significant Cumulative Layout Shift (CLS):', cls, 'https://web.dev/cls/');
 						}
 					}).observe({type: 'layout-shift', buffered: true});

@@ -77,7 +77,7 @@ if ( !trait_exists('Logs') ){
 					dbDelta($create_logs_table_sql);
 				}
 
-				set_transient('nebula_logs_table_exists', true, YEAR_IN_SECONDS); //This could be permanent since the above only needs to run once
+				set_transient('nebula_logs_table_exists', true); //Never expire since the above only needs to run once
 			}
 		}
 

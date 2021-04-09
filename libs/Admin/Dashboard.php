@@ -120,7 +120,7 @@ if ( !trait_exists('Dashboard') ){
 				$count_posts = get_transient('nebula_count_posts_' . $post_type);
 				if ( empty($count_posts) || $this->is_debug() ){
 					$count_posts = wp_count_posts($post_type);
-					$cache_length = ( is_plugin_active('transients-manager/transients-manager.php') )? WEEK_IN_SECONDS : DAY_IN_SECONDS; //If Transient Monitor (plugin) is active, transients with expirations are deleted when posts are published/updated, so this could be infinitely long.
+					$cache_length = ( is_plugin_active('transients-manager/transients-manager.php') )? WEEK_IN_SECONDS : DAY_IN_SECONDS; //If Transient Monitor (plugin) is active, transients with expirations are deleted when posts are published/updated, so this could be infinitely long (as long as an expiration exists).
 					set_transient('nebula_count_posts_' . $post_type, $count_posts, $cache_length);
 				}
 
@@ -156,7 +156,7 @@ if ( !trait_exists('Dashboard') ){
 			$earliest_post = get_transient('nebula_earliest_post');
 			if ( empty($earliest_post) || $this->is_debug() ){
 				$earliest_post = new WP_Query(array('post_type' => 'any', 'post_status' => 'publish', 'showposts' => 1, 'orderby' => 'publish_date', 'order' => 'ASC'));
-				set_transient('nebula_earliest_post', $earliest_post, YEAR_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long.
+				set_transient('nebula_earliest_post', $earliest_post, YEAR_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long (as long as an expiration exists).
 			}
 			while ( $earliest_post->have_posts() ){ $earliest_post->the_post();
 				echo '<li><i class="far fa-fw fa-calendar"></i> Earliest: <span title="' . get_the_date() . ' @ ' . get_the_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_date() . ' ' . get_the_time())) . ' ago</strong></span><small style="display: block;"><i class="far fa-fw fa-file-alt"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => esc_html(get_the_title()), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small></li>';

@@ -7,32 +7,26 @@ jQuery.noConflict();
  Import Modules
  ===========================*/
 
+import './modules/optimization.js';
 import './modules/utilities.js';
 import './modules/extensions.js';
-import './modules/search.js';
-import './modules/optimization.js';
-import './modules/forms.js';
-import './admin-modules/helpers.js'; //Admin module
 
 /*==========================
  DOM Ready
  ===========================*/
 
-jQuery(function(){
+jQuery(async function(){
 	window.performance.mark('(Nebula) DOM Ready [Start]');
 
 	nebula.cacheSelectors();
 
-	if ( nebula.screen.base === 'profile' ){ //Only needed on Users' profile page
+	if ( nebula.screen.base === 'profile' ){ //Only needed on Users profile page
 		import('./admin-modules/users.js').then(function(module){
 			nebula.userHeadshotFields();
 		});
 	}
 
 	nebula.initializationStuff();
-	nebula.sassCooldown();
-
-	jQuery('#post textarea').allowTabChar();
 
 	if ( !jQuery('li#menu-comments').is(':visible') ){
 		jQuery('#dashboard_right_now .main').append('Comments are disabled <small>(via <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a>)</small>.');
@@ -40,11 +34,10 @@ jQuery(function(){
 
 	//If Nebula Options Page
 	if ( nebula.screen.base === 'appearance_page_nebula_options' ){
-		//Await 2 imports here for forms.js and options.js
-
-		import('./admin-modules/options.js').then(function(module){
-			nebula.optionsInit();
-		});
+		await import('./modules/search.js'); //Only really need the keywordFilter from here...
+		await import('./modules/forms.js'); //Only really need the liveValidator from here...
+		await import('./admin-modules/options.js');
+		nebula.optionsInit();
 	}
 
 	//Remove Sass render trigger query
@@ -64,7 +57,14 @@ jQuery(window).on('load', function(){
 	window.performance.mark('(Nebula) Window Load [Start]');
 
 	nebula.cacheSelectors();
-	nebula.uniqueSlugChecker();
+
+	if ( nebula.screen.base === 'post' || jQuery('#sass-cooldown, #post textarea').length ){
+		import('./admin-modules/helpers.js').then(function(module){
+			jQuery('#post textarea').allowTabChar();
+			nebula.sassCooldown(); //Needed on every page
+			nebula.uniqueSlugChecker(); //Only needed on edit post pages
+		});
+	}
 
 	if ( nebula.screen.base === 'dashboard' ){ //Only needed on Dashboard page
 		import('./admin-modules/dashboard.js').then(function(module){
