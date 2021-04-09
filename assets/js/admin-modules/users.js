@@ -1,3 +1,5 @@
+window.performance.mark('(Nebula) Inside /admin-modules/users.js');
+
 //Add user fields for headshot image
 nebula.userHeadshotFields = function(){
 	if ( jQuery('body').hasClass('profile-php') ){

@@ -1,3 +1,5 @@
+window.performance.mark('(Nebula) Inside /modules/videos.js');
+
 nebula.videos = {};
 
 //Initialize Video Functionality and Tracking

@@ -1,3 +1,5 @@
+window.performance.mark('(Nebula) Inside /modules/forms.js');
+
 nebula.cf7Functions = async function(){
 	if ( !jQuery('.wpcf7-form').length ){
 		return false;

@@ -1,3 +1,5 @@
+window.performance.mark('(Nebula) Inside /modules/helpers.js');
+
 //Miscellaneous helper classes and functions
 nebula.helpers = async function(){
 	if ( typeof window.ga !== 'function' ){

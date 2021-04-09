@@ -1,3 +1,5 @@
+window.performance.mark('(Nebula) Inside /modules/location.js');
+
 //Places - Address Autocomplete
 //This uses the Google Maps Geocoding API
 //The passed selector must be an input element

@@ -1,3 +1,5 @@
+window.performance.mark('(Nebula) Inside /admin-modules/dashboard.js');
+
 //Developer Metabox functions
 nebula.developerMetaboxes = function(){
 	//Developer Info Metabox
@@ -65,7 +67,9 @@ nebula.developerMetaboxes = function(){
 	}
 
 	if ( jQuery('div#performance_metabox').length ){
-		nebula.checkPageSpeed(); //Performance Timing
+		window.requestAnimationFrame(function(){ //Update when Safari supports requestIdleCallback
+			nebula.checkPageSpeed(); //Performance Timing
+		});
 	}
 };
 

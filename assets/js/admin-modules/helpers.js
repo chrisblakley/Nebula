@@ -1,3 +1,5 @@
+window.performance.mark('(Nebula) Inside /admin-modules/helpers.js');
+
 //Notify for possible duplicate post slug
 nebula.uniqueSlugChecker = function(){
 	if ( jQuery('.edit-post-post-link__link-post-name').length ){

@@ -1,5 +1,7 @@
 //Note: Do not use jQuery in this file!
 
+window.performance.mark('(Nebula) Inside /modules/usage.js');
+
 //Detect Window Errors
 window.addEventListener('error', function(error){
 	let errorMessage = error.message + ' at ' + error.lineno + ' of ' + error.filename;

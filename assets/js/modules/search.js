@@ -1,3 +1,5 @@
+window.performance.mark('(Nebula) Inside /modules/search.js');
+
 nebula.initSearchFunctions = function(){
 	//DOM Ready
 	nebula.menuSearchReplacement();

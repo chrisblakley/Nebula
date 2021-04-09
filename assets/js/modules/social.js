@@ -1,3 +1,5 @@
+window.performance.mark('(Nebula) Inside /modules/social.js');
+
 //Load the SDK asynchronously
 nebula.facebookSDK = async function(){
 	if ( jQuery('[class*="fb-"]:not(.fb-root), .require-fbsdk').length ){ //Only load the Facebook SDK when needed

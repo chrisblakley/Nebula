@@ -19,6 +19,8 @@ import './admin-modules/helpers.js'; //Admin module
  ===========================*/
 
 jQuery(function(){
+	window.performance.mark('(Nebula) DOM Ready [Start]');
+
 	nebula.cacheSelectors();
 
 	if ( nebula.screen.base === 'profile' ){ //Only needed on Users' profile page
@@ -38,6 +40,8 @@ jQuery(function(){
 
 	//If Nebula Options Page
 	if ( nebula.screen.base === 'appearance_page_nebula_options' ){
+		//Await 2 imports here for forms.js and options.js
+
 		import('./admin-modules/options.js').then(function(module){
 			nebula.optionsInit();
 		});
@@ -47,6 +51,9 @@ jQuery(function(){
 	if ( nebula.get('sass') && !nebula.get('persistent') ){
 		window.history.replaceState({}, document.title, nebula.removeQueryParameter('sass', window.location.href));
 	}
+
+	window.performance.mark('(Nebula) DOM Ready [End]');
+	window.performance.measure('(Nebula) DOM Ready Functions', '(Nebula) DOM Ready [Start]', '(Nebula) DOM Ready [End]');
 });
 
 /*==========================
@@ -54,6 +61,8 @@ jQuery(function(){
  ===========================*/
 
 jQuery(window).on('load', function(){
+	window.performance.mark('(Nebula) Window Load [Start]');
+
 	nebula.cacheSelectors();
 	nebula.uniqueSlugChecker();
 
@@ -71,6 +80,11 @@ jQuery(window).on('load', function(){
 	} catch {
 		//Ignore errors
 	}
+
+	window.performance.mark('(Nebula) Window Load [End]');
+	window.performance.measure('(Nebula) Window Load Functions', '(Nebula) Window Load [Start]', '(Nebula) Window Load [End]');
+	window.performance.measure('(Nebula) Window Loaded', 'navigationStart', '(Nebula) Window Load [End]');
+	nebula.performanceMetrics();
 });
 
 //Initialization alerts

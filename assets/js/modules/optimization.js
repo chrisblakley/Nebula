@@ -1,3 +1,5 @@
+window.performance.mark('(Nebula) Inside /modules/optimization.js');
+
 //Cache DOM selectors
 nebula.cacheSelectors = function(){
 	nebula.dom = nebula?.dom || {
@@ -201,11 +203,11 @@ nebula.workbox = async function(){
 					});
 
 					//Show the button
-					window.requestIdleCallback(function(){ //when Safari supports requestIdleCallback
+					//window.requestIdleCallback(function(){ //when Safari supports requestIdleCallback
 						window.requestAnimationFrame(function(){
 							//jQuery('#nebula-sw-update').addClass('active'); //Not showing to users as of Feb 2021. Need to make sure this reload method works (and with multiple tabs)
 						});
-					});
+					//});
 				});
 
 				//If the service worker becomes redundant

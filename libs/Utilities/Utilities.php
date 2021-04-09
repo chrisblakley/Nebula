@@ -1026,44 +1026,6 @@ if ( !trait_exists('Utilities') ){
 			return array('r' => $r, 'g' => $g, 'b' => $b);
 		}
 
-		//Compare values using passed parameters
-		public function compare_operator($a=null, $b=null, $c='=='){
-			$override = apply_filters('pre_nebula_compare_operator', null, $a, $b, $c);
-			if ( isset($override) ){return $override;}
-
-			if ( empty($a) || empty($b) ){
-				trigger_error('nebula_compare_operator requires values to compare.');
-				return false;
-			}
-
-			switch ( $c ){
-				case "=":
-				case "==":
-				case "===":
-				case "e":
-					return $a === $b;
-				case ">=":
-				case "=>":
-				case "gte":
-				case "ge":
-					return $a >= $b;
-				case "<=":
-				case "=<":
-				case "lte":
-				case "le":
-					return $a <= $b;
-				case ">":
-				case "gt":
-					return $a > $b;
-				case "<":
-				case "lt":
-					return $a < $b;
-				default:
-					trigger_error('nebula_compare_operator does not allow "' . $c . '".');
-					return false;
-			}
-		}
-
 		//Add server timings to an array
 		//To add time to an entry, simply use the action 'end' on the same unique_id again
 		public function timer($unique_id, $action='start', $category=false){

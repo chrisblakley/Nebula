@@ -1,3 +1,5 @@
+window.performance.mark('(Nebula) Inside /admin-modules/options.js');
+
 nebula.optionsInit = function(){
 	//These happen on DOM ready
 	nebula.checkWindowHeightForStickyNav();

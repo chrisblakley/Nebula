@@ -1,3 +1,5 @@
+window.performance.mark('(Nebula) Inside /modules/extensions.js');
+
 //These must be inside of this function to assure jQuery is defined
 nebula.addExpressions = function(){
 	//Custom CSS expression for a case-insensitive :contains(). Source: https://css-tricks.com/snippets/jquery/make-jquery-contains-case-insensitive/
