@@ -236,11 +236,15 @@ if ( !trait_exists('Functions') ){
 		}
 
 		//Update variables within the service worker JavaScript file for install caching
-		public function update_sw_js(){
+		public function update_sw_js($version=false){
 			$this->timer('Update SW');
 
 			$override = apply_filters('pre_nebula_update_swjs', null);
 			if ( isset($override) ){return;}
+
+			if ( empty($version) ){
+				$version = apply_filters('nebula_sw_cache_version', $version);
+			}
 
 			WP_Filesystem();
 			global $wp_filesystem;
@@ -263,7 +267,7 @@ if ( !trait_exists('Functions') ){
 
 				$replace = array(
 					"$1" . strtolower(get_option('stylesheet')) . "$3",
-					"$1" . 'v' . apply_filters('nebula_sw_cache_version', $this->child_version()) . "$3 //" . date('l, F j, Y g:i:s A'),
+					"$1" . 'v' . $version . "$3 //" . date('l, F j, Y g:i:s A'),
 					"$1" . home_url('/') . "offline/$3",
 					"$1" . get_theme_file_uri('/assets/img') . "/offline.svg$3",
 					"$1cd" . $this->ga_definition_index($this->get_option('cd_offline')) . "$3",

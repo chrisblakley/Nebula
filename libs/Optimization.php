@@ -11,8 +11,8 @@ if ( !trait_exists('Optimization') ){
 
 			if ( $this->get_option('service_worker') && !$this->is_background_request() && !is_customize_preview() ){
 				add_action('send_headers', array($this, 'nebula_http2_ob_start'));
-				add_action('wp_enqueue_scripts', array($this, 'styles_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
-				add_action('wp_enqueue_scripts', array($this, 'scripts_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
+				add_action('wp_print_scripts', array($this, 'styles_http2_server_push_header'), 9998); //Run this last to get all enqueued scripts
+				add_action('wp_print_scripts', array($this, 'scripts_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
 			}
 
 			//Non-WordPress Admin optimizations
@@ -39,7 +39,7 @@ if ( !trait_exists('Optimization') ){
 				add_action('wp_enqueue_scripts', array($this, 'scan_assets'), 9000);
 				add_action('wp_enqueue_scripts', array($this, 'dequeues'), 9001); //Dequeue styles and scripts that are hooked into the wp_enqueue_scripts action
 				add_action('wp_print_styles', array($this, 'dequeues'), 9001); //Dequeue styles that are hooked into the wp_print_styles action
-				add_action('wp_print_scripts', array($this, 'dequeues'), 9001); //Dequeue scripts that are hooked into the wp_print_styles action
+				add_action('wp_print_scripts', array($this, 'dequeues'), 9001); //Dequeue scripts that are hooked into the wp_print_scripts action
 				add_action('wp_enqueue_scripts', array($this, 'remove_actions'), 9001);
 			}
 
@@ -237,8 +237,6 @@ if ( !trait_exists('Optimization') ){
 			return $tag;
 		}
 
-
-
 		//Prep assets for lazy loading. Be careful of dependencies!
 		//When lazy loading JS files, the window load listener may not trigger! Be careful!
 		//Array should be built as: handle => condition
@@ -287,15 +285,21 @@ if ( !trait_exists('Optimization') ){
 
 		//Start output buffering so headers can be sent later for HTTP2 Server Push
 		public function nebula_http2_ob_start(){
+			$this->timer('Headers Sent [Mark]', 'mark'); //Piggybacking on this action to mark this point in time
+
 			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
-				ob_start();
+				$this->timer('Headers Output Buffering');
+				ob_start('nebula_ob_flushed');
 			}
 		}
+
+
 
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
 		//This uses a link preload header, so these resources must be used within a few seconds of window load.
 		public function styles_http2_server_push_header(){
 			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
+				$timer_name = $this->timer('HTTP2 Server Push Header (Styles)', 'start');
 				global $wp_styles;
 
 				foreach ( $wp_styles->queue as $handle ){
@@ -304,11 +308,14 @@ if ( !trait_exists('Optimization') ){
 						$this->http2_server_push_file($wp_styles->registered[$handle]->src . $ver, 'style');
 					}
 				}
+
+				$timer_name = $this->timer($timer_name, 'end');
 			}
 		}
 
 		public function scripts_http2_server_push_header(){
 			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
+				$timer_name = $this->timer('HTTP2 Server Push Header (Scripts)', 'start');
 				global $wp_scripts;
 
 				foreach ( $wp_scripts->queue as $handle ){
@@ -317,6 +324,10 @@ if ( !trait_exists('Optimization') ){
 						$this->http2_server_push_file($wp_scripts->registered[$handle]->src . $ver, 'script');
 					}
 				}
+
+				$timer_name = $this->timer($timer_name, 'end');
+
+				ob_end_flush(); //Clear the output buffering
 			}
 		}
 
@@ -599,7 +610,7 @@ if ( !trait_exists('Optimization') ){
 			if ( !is_admin() ){
 				//Get the last WordPress action handle that was called (so we know which one we are likely "inside")
 				$action_keys = array_keys($GLOBALS['wp_actions']); //Store in a variable first so only the variable is passed to end() as a reference
-				$last_action = end($action_keys); //Change to array_key_last($GLOBALS['wp_actions']) when PHP 7.3 is minimum version
+				$last_action = end($action_keys); //Change to array_key_last($GLOBALS['wp_actions']) when PHP 7.3 is minimum version and remove the line above
 
 				$timer_name = $this->timer('Advanced Dequeues (' . $last_action . ')', 'start');
 				$this->deregister('contact-form-7', 'style'); //Removing CF7 styles in favor of Bootstrap + Nebula
@@ -612,6 +623,20 @@ if ( !trait_exists('Optimization') ){
 				}
 
 				if ( !empty($last_action) ){
+					//Ignore script dependencies on style-based hooks (enqueue_scripts and print_scripts)
+					if ( strpos($last_action, 'scripts') !== false ){
+						//Remove "wp-polyfill" but first need to remove that dependency from other scripts. In the future, this may no longer be needed... hopefully. Watch this issue: https://github.com/WordPress/gutenberg/issues/21616
+						$scripts = wp_scripts(); //Get all of the script dependencies
+						foreach ( $scripts->registered as $registered_script ){ //Loop through all registered scripts
+							foreach ( $registered_script->deps as $dep_key => $handle ){ //Loop through each of the dependencies
+								if ( $handle === 'wp-polyfill' ){ //If this dependency is "wp-polyfill"
+									unset($registered_script->deps[$dep_key]); //Remove this dependency
+								}
+							}
+						}
+						$this->deregister('wp-polyfill', 'script', false); //Now we can deregister "wp-polyfill" without breaking other assets
+					}
+
 					//Dequeue styles based on selected Nebula options
 					if ( $last_action !== 'wp_print_scripts' ){ //Check the last hook to run and skip dequeuing styles on the print scripts hook
 						$styles_to_dequeue = $this->get_option('dequeue_styles');
@@ -677,12 +702,12 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		//Deregister assets. Using this function will note it in the Nebula Admin Bar to make it easier to troubleshoot
-		public function deregister($handle, $type){
+		public function deregister($handle, $type, $indicate=true){
 			if ( !empty($handle) ){
 				//Styles
 				if ( strpos(strtolower($type), 'style') !== false || strpos(strtolower($type), 'css') !== false ){
 					//Check if this style was enqueued
-					if ( wp_style_is($handle, 'enqueued') ){
+					if ( $indicate && wp_style_is($handle, 'enqueued') ){
 						$this->deregistered_assets['styles'][] = $handle; //Add it to the array to log in the admin bar
 					}
 
@@ -694,7 +719,7 @@ if ( !trait_exists('Optimization') ){
 
 				//Scripts
 				//Check if this script was enqueued (and show note if so)
-				if ( wp_script_is($handle, 'enqueued') ){
+				if ( $indicate && wp_script_is($handle, 'enqueued') ){
 					$this->deregistered_assets['scripts'][] = $handle;
 				}
 
@@ -881,5 +906,10 @@ if ( !trait_exists('Optimization') ){
 		public function lazy_iframe($src=false, $attributes=''){
 			$this->lazy_load('<iframe src="' . $src . '" ' . $attributes . ' loading="lazy"></iframe>');
 		}
+	}
+
+	function nebula_ob_flushed($buffer){
+		nebula()->timer('Header Output Buffering', 'end');
+		return $buffer;
 	}
 }

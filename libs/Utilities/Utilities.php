@@ -1050,6 +1050,9 @@ if ( !trait_exists('Utilities') ){
 
 				//Immediately stop one-off timing marks
 				if ( $action === 'mark' || $action === 'once' ){
+					//Start and stop the Query Monitor timing so it appears without error
+					do_action('qm/stop', $unique_id); //Immediately end the Query Monitor timer so it appears without error
+
 					$this->server_timings[$unique_id]['end'] = $this->server_timings[$unique_id]['start']+0.001;
 					$this->server_timings[$unique_id]['time'] = 0.001; //Force non-empty time of 1 millisecond
 					$this->server_timings[$unique_id]['active'] = false;
@@ -1155,6 +1158,17 @@ if ( !trait_exists('Utilities') ){
 				return $this->child_version();
 			}
 
+			//Parse the actual Nebula style.scss file which is closer to real-time than using wp_get_theme() below (which is sufficient for most uses), but is a little more intensive
+			if ( $return === 'realtime' ){
+				WP_Filesystem();
+				global $wp_filesystem;
+				$style_scss = $wp_filesystem->get_contents(get_template_directory() . '/assets/scss/style.scss');
+				if ( !empty($style_scss) ){
+					preg_match("/(?:Version: )(?<number>\d+?\.\d+?\.\d+?\.\d+?)$/m", $style_scss, $realtime_version_number);
+					return $realtime_version_number['number'];
+				}
+			}
+
 			$nebula_theme_info = ( is_child_theme() )? wp_get_theme(str_replace('-child', '', get_template())) : wp_get_theme(); //Get the parent theme (regardless of if child theme is active)
 
 			if ( $return === 'raw' ){ //Check this first to prevent needing to RegEx altogether
@@ -1185,7 +1199,8 @@ if ( !trait_exists('Utilities') ){
 			);
 
 			switch ( $return ){
-				case ('raw'): //Shouldn't ever reach this. See early return above.
+				case ('raw'): //Should not ever reach this. See early return above.
+				case ('realtime'): //Probably would not reach this unless Sass is disabled and requesting parent theme realtime version
 					return $nebula_theme_info->get('Version'); //Ex: 7.2.19.8475
 				case ('version'):
 				case ('full'):

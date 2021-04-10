@@ -21,23 +21,30 @@ nebula.performanceMetrics = async function(){
 				window.performance.measure('(Nebula) Until CPU Idle', 'navigationStart', '(Nebula) CPU Idle');
 
 				let timingCalcuations = {
-					'Redirect': {start: Math.round(performance.timing.redirectStart - performance.timing.navigationStart), duration: Math.round(performance.timing.redirectEnd - performance.timing.redirectStart)},
-					'Unload': {start: Math.round(performance.timing.unloadStart - performance.timing.navigationStart), duration: Math.round(performance.timing.unloadEnd - performance.timing.unloadStart)},
-					'App Cache': {start: Math.round(performance.timing.fetchStart - performance.timing.navigationStart), duration: Math.round(performance.timing.domainLookupStart - performance.timing.fetchStart)},
-					'DNS': {start: Math.round(performance.timing.domainLookupStart - performance.timing.navigationStart), duration: Math.round(performance.timing.domainLookupEnd - performance.timing.domainLookupStart)},
-					'TCP': {start: Math.round(performance.timing.connectStart - performance.timing.navigationStart), duration: Math.round(performance.timing.connectEnd - performance.timing.connectStart)},
-					'Request': {start: Math.round(performance.timing.requestStart - performance.timing.navigationStart), duration: Math.round(performance.timing.responseStart - performance.timing.requestStart)},
-					'Response': {start: Math.round(performance.timing.responseStart - performance.timing.navigationStart), duration: Math.round(performance.timing.responseEnd - performance.timing.responseStart)},
-					'Processing': {start: Math.round(performance.timing.domLoading - performance.timing.navigationStart), duration: Math.round(performance.timing.loadEventStart - performance.timing.domLoading)},
-					'onLoad': {start: Math.round(performance.timing.loadEventStart - performance.timing.navigationStart), duration: Math.round(performance.timing.loadEventEnd - performance.timing.loadEventStart)},
-					'DOM Ready': {start: 0, duration: Math.round(performance.timing.domComplete - performance.timing.navigationStart)},
-					'Total Load': {start: 0, duration: Math.round(performance.timing.loadEventEnd - performance.timing.navigationStart)},
-					'CPU Idle': {start: 0, duration: Math.round(Date.now() - performance.timing.navigationStart)}
+					'Redirect': {start: Math.round(performance.timing.redirectStart - performance.timing.navigationStart), duration: Math.round(performance.timing.redirectEnd - performance.timing.redirectStart), type: 'Measurement'},
+					'Unload': {start: Math.round(performance.timing.unloadStart - performance.timing.navigationStart), duration: Math.round(performance.timing.unloadEnd - performance.timing.unloadStart), type: 'Measurement'},
+					'App Cache': {start: Math.round(performance.timing.fetchStart - performance.timing.navigationStart), duration: Math.round(performance.timing.domainLookupStart - performance.timing.fetchStart), type: 'Measurement'},
+					'DNS': {start: Math.round(performance.timing.domainLookupStart - performance.timing.navigationStart), duration: Math.round(performance.timing.domainLookupEnd - performance.timing.domainLookupStart), type: 'Measurement'},
+					'TCP': {start: Math.round(performance.timing.connectStart - performance.timing.navigationStart), duration: Math.round(performance.timing.connectEnd - performance.timing.connectStart), type: 'Measurement'},
+					'Request': {start: Math.round(performance.timing.requestStart - performance.timing.navigationStart), duration: Math.round(performance.timing.responseStart - performance.timing.requestStart), type: 'Measurement'},
+					'Response': {start: Math.round(performance.timing.responseStart - performance.timing.navigationStart), duration: Math.round(performance.timing.responseEnd - performance.timing.responseStart), type: 'Measurement'},
+					'Processing': {start: Math.round(performance.timing.domLoading - performance.timing.navigationStart), duration: Math.round(performance.timing.loadEventStart - performance.timing.domLoading), type: 'Measurement'},
+					'onLoad': {start: Math.round(performance.timing.loadEventStart - performance.timing.navigationStart), duration: Math.round(performance.timing.loadEventEnd - performance.timing.loadEventStart), type: 'Measurement'},
+					'Until DOM Ready': {start: 0, duration: Math.round(performance.timing.domComplete - performance.timing.navigationStart), type: 'Measurement'},
+					'Until Fully Loaded': {start: 0, duration: Math.round(performance.timing.loadEventEnd - performance.timing.navigationStart), type: 'Measurement'},
 				};
 
 				//Add custom JS measurements too
+				performance.getEntriesByType('mark').forEach(function(mark){
+					timingCalcuations[mark.name] = {
+						type: 'Mark',
+						start: Math.round(mark.startTime),
+						duration: false
+					};
+				});
 				performance.getEntriesByType('measure').forEach(function(measurement){
 					timingCalcuations[measurement.name] = {
+						type: 'Measurement',
 						start: Math.round(measurement.startTime),
 						duration: Math.round(measurement.duration)
 					};
@@ -45,8 +52,9 @@ nebula.performanceMetrics = async function(){
 
 				let clientTimings = {};
 				jQuery.each(timingCalcuations, function(name, timings){
-					if ( !isNaN(timings.duration) && timings.duration > 0 && timings.duration < 6_000_000 ){
+					if ( !isNaN(timings.start) && timings.start > -2 ){
 						clientTimings[name] = {
+							type: timings.type,
 							start: timings.start,
 							duration: timings.duration
 						};
@@ -54,7 +62,7 @@ nebula.performanceMetrics = async function(){
 				});
 
 				console.groupCollapsed('Performance');
-				console.groupCollapsed('Measurements');
+				console.groupCollapsed('Marks & Measurements');
 				console.table(jQuery.extend(nebula.site.timings, clientTimings)); //Performance Timings
 				console.groupEnd(); //End Measurements
 
