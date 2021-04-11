@@ -78,7 +78,7 @@
 								'Minor Page Speed Impact' => 'minor page speed impact',
 								'Moderate Page Speed Impact' => 'moderate page speed impact',
 								'Major Page Speed Impact' => 'major page speed impact',
-								'EU GDPR' => 'gdpr',
+								'Privacy' => 'privacy', //GDPR, CCPA
 							);
 						?>
 						<datalist id="preset-filters">

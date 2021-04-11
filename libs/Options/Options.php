@@ -241,7 +241,6 @@ if ( !trait_exists('Options') ){
 				'wp_core_updates_notify' => 1,
 				'unnecessary_metaboxes' => 1,
 				'scss' => 0,
-				'scss_processing_only_when_logged_in' => 0,
 				'critical_css' => 0,
 				'console_css' => 1,
 				'cookie_notification' => '',

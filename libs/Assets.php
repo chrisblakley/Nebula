@@ -338,11 +338,6 @@ if ( !trait_exists('Assets') ){
 			if ( nebula()->is_analytics_allowed() ){
 				wp_enqueue_script('nebula-usage');
 			}
-
-			if ( is_page_template('tpl-search.php') ){ //Form pages (that use selects) or Advanced Search Template. The Chosen library is also dynamically loaded in nebula.js.
-				wp_enqueue_style('nebula-chosen');
-				wp_enqueue_script('nebula-chosen');
-			}
 		}
 
 		//Enqueue login scripts

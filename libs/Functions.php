@@ -83,7 +83,14 @@ if ( !trait_exists('Functions') ){
 			add_filter('wpcf7_form_elements', array($this, 'cf7_autocomplete_attribute'));
 			add_filter('wpcf7_special_mail_tags', array($this, 'cf7_custom_special_mail_tags'), 10, 3);
 
-			add_action('shutdown', array($this, 'flush_rewrite_on_debug'));
+			if ( $this->is_debug() ){
+				if ( !defined('DONOTCACHEPAGE') ){
+					define('DONOTCACHEPAGE', true); //Tell other plugins not to cache this page
+				}
+
+				add_action('send_headers', 'nocache_headers'); //WP Core function that adds nocache headers
+				add_action('shutdown', array($this, 'flush_rewrite_on_debug'));
+			}
 		}
 
 		//Adjust the content width when the full width page template is being used
@@ -504,7 +511,7 @@ if ( !trait_exists('Functions') ){
 
 			$data = array_merge($defaults, $options);
 
-			//@todo "Nebula" 0: Include support for multi-authors: is_multi_author
+			//Include support for multi-authors: is_multi_author
 
 			if ( ($this->get_option('author_bios') || $data['force']) && get_theme_mod('post_author', true) ){
 				$label = '';
@@ -1707,7 +1714,7 @@ if ( !trait_exists('Functions') ){
 									nonce: nebula.site.ajax.nonce,
 									action: 'nebula_infinite_load',
 									page: pageNumber,
-									args: <?php echo json_encode($args); ?>,
+									args: JSON.stringify(<?php echo json_encode($args); ?>),
 									loop: <?php echo json_encode($loop); ?>,
 								})
 							}).then(function(response){
@@ -1764,11 +1771,11 @@ if ( !trait_exists('Functions') ){
 			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 
 			$page_number = sanitize_text_field($_POST['page']);
-			$args = $_POST['args'];
-			$args['paged'] = $page_number;
+			$args = json_decode(stripslashes($_POST['args']), true); //Remove escaped slashes and decode to an array
+			$args['paged'] = $page_number; //Add the page number to the array
 			$loop = sanitize_text_field($_POST['loop']);
-
 			$args = array_map('esc_attr', $args); //Sanitize the args array
+
 			query_posts($args);
 
 			if ( $loop == 'false' ){
@@ -3027,7 +3034,7 @@ if ( !trait_exists('Functions') ){
 		}
 
 		//Find field names and add the autocomplete attribute when found
-		public function autocomplete_find_replace($content, $finds=array(), $autocomplete_value){
+		public function autocomplete_find_replace($content, $finds=array(), $autocomplete_value=''){
 			if ( !empty($content) && !empty($finds) && !empty($autocomplete_value) ){
 				if ( is_string($finds) ){
 					$finds = array($finds); //Convert the string to an array

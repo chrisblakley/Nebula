@@ -81,6 +81,13 @@ jQuery(window).on('load', function(){
 		//Ignore errors
 	}
 
+	//Remove this once QM allows sortable Timings table
+	if ( jQuery('#qm-timing').length ){
+		import('./modules/helpers.js').then(function(module){ //Front-end helpers JS
+			nebula.qmSortableHelper(); //Temporary QM helper.
+		});
+	}
+
 	window.performance.mark('(Nebula) Window Load [End]');
 	window.performance.measure('(Nebula) Window Load Functions', '(Nebula) Window Load [Start]', '(Nebula) Window Load [End]');
 	window.performance.measure('(Nebula) Window Loaded', 'navigationStart', '(Nebula) Window Load [End]');

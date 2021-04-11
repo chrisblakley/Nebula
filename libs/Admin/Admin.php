@@ -164,14 +164,14 @@ if ( !trait_exists('Admin') ){
 				$transient_manager = new PW_Transients_Manager();
 				$transient_manager->delete_transients_with_expirations();
 			} else {
-				$all_transients_to_delete = apply_filters('nebula_delete_transients_on_save', array(
+				//Clear post/page information and related transients
+				$all_transients_to_delete = apply_filters('nebula_delete_transients_on_save', array( //Allow other functions to hook in to delete transients on post save
 					'nebula_autocomplete_menus', //Autocomplete Search
 					'nebula_autocomplete_categories', //Autocomplete Search
 					'nebula_autocomplete_tags', //Autocomplete Search
 					'nebula_autocomplete_authors', //Autocomplete Search
-					'nebula_everything_query', //Advanced Search
 					'nebula_latest_post', //Latest update
-				)); //Allow other functions to hook in to delete transients on post save
+				));
 
 				foreach ( $all_transients_to_delete as $transient_to_delete ){
 					delete_transient($transient_to_delete);
@@ -501,7 +501,6 @@ if ( !trait_exists('Admin') ){
 		public function remove_admin_bar_logo() {
 			if ( is_admin_bar_showing() ){
 				global $wp_admin_bar;
-				/** @var WP_Admin_Bar $wp_admin_bar */
 				$wp_admin_bar->remove_menu('wp-logo');
 				$wp_admin_bar->remove_menu('wpseo-menu'); //Remove Yoast SEO from admin bar
 			}

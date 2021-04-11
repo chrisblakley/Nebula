@@ -72,6 +72,11 @@ nebula.helpers = async function(){
 	});
 
 	nebula.dragDropUpload();
+
+	//Remove this once QM allows sortable Timings table
+	if ( jQuery('#qm-timing').length ){
+		nebula.qmSortableHelper(); //Temporary QM helper.
+	}
 };
 
 //Sub-menu viewport overflow detector
@@ -569,3 +574,22 @@ nebula.help = function(message, path, usage=false){
 		nebula.usage(message);
 	}
 };
+
+//This is only meant to be a temporary solution to allow for sorting the Query Monitor Timings table. Delete this as soon as possible.
+nebula.qmSortableHelper = function(){
+	if ( jQuery('#qm-timing').length ){
+		const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+		const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+			v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+		)(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+		document.querySelectorAll('#qm-timing th').forEach(th => th.addEventListener('click', (() => {
+			jQuery('#qm-timing th').removeAttr('style');
+			jQuery(th).attr('style', 'font-weight: bold !important;');
+
+			const table = th.closest('table.qm-sortable');
+			const tbody = table.querySelector('tbody');
+			Array.from(tbody.querySelectorAll('tr')).sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc)).forEach(tr => tbody.appendChild(tr) );
+		})));
+	}
+}

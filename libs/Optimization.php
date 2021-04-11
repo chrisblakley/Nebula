@@ -293,8 +293,6 @@ if ( !trait_exists('Optimization') ){
 			}
 		}
 
-
-
 		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
 		//This uses a link preload header, so these resources must be used within a few seconds of window load.
 		public function styles_http2_server_push_header(){
@@ -553,6 +551,8 @@ if ( !trait_exists('Optimization') ){
 		//Scan the front-end styles and scripts to be able to deregister them from Nebula Options
 		public function scan_assets(){
 			if ( !is_admin() && current_user_can('manage_options') && (isset($_GET['nebula-scan']) || isset($_GET['sass']) || isset($_GET['debug']) || $this->get_option('audit_mode')) ){ //Only run on front-end for admin users. Also add a query string so this doesn't run every single pageload
+				$this->timer('Scan Assets');
+
 				if ( isset($_GET['nebula-scan']) && $_GET['nebula-scan'] === 'reset' ){ //Use this to reset and re-scan from scratch
 					update_option('optimizable_registered_styles', array());
 					update_option('optimizable_registered_scripts', array());
@@ -599,6 +599,8 @@ if ( !trait_exists('Optimization') ){
 
 				$all_registered_scripts = array_intersect_key($all_registered_scripts, array_unique(array_map('serialize', $all_registered_scripts))); //De-dupe the array
 				update_option('optimizable_registered_scripts', $all_registered_scripts);
+
+				$this->timer('Scan Assets', 'end');
 			}
 		}
 
@@ -608,11 +610,8 @@ if ( !trait_exists('Optimization') ){
 			if ( isset($override) ){return;}
 
 			if ( !is_admin() ){
-				//Get the last WordPress action handle that was called (so we know which one we are likely "inside")
-				$action_keys = array_keys($GLOBALS['wp_actions']); //Store in a variable first so only the variable is passed to end() as a reference
-				$last_action = end($action_keys); //Change to array_key_last($GLOBALS['wp_actions']) when PHP 7.3 is minimum version and remove the line above
-
-				$timer_name = $this->timer('Advanced Dequeues (' . $last_action . ')', 'start');
+				$current_action = current_action(); //Get the current WordPress action handle that was called (so we know which one we are "inside")
+				$timer_name = $this->timer('Advanced Dequeues (' . $current_action . ')');
 				$this->deregister('contact-form-7', 'style'); //Removing CF7 styles in favor of Bootstrap + Nebula
 				$this->deregister('wp-embed', 'script'); //WP Core WP-Embed - Override this only if embedding external WordPress posts into this WordPress site. Other oEmbeds are NOT AFFECTED by this!
 
@@ -622,23 +621,24 @@ if ( !trait_exists('Optimization') ){
 					$this->deregister('thickbox', 'script'); //WP Thickbox - Override this if thickbox type gallery IS used on the homepage.
 				}
 
-				if ( !empty($last_action) ){
+				if ( !empty($current_action) ){
 					//Ignore script dependencies on style-based hooks (enqueue_scripts and print_scripts)
-					if ( strpos($last_action, 'scripts') !== false ){
-						//Remove "wp-polyfill" but first need to remove that dependency from other scripts. In the future, this may no longer be needed... hopefully. Watch this issue: https://github.com/WordPress/gutenberg/issues/21616
-						$scripts = wp_scripts(); //Get all of the script dependencies
-						foreach ( $scripts->registered as $registered_script ){ //Loop through all registered scripts
-							foreach ( $registered_script->deps as $dep_key => $handle ){ //Loop through each of the dependencies
-								if ( $handle === 'wp-polyfill' ){ //If this dependency is "wp-polyfill"
-									unset($registered_script->deps[$dep_key]); //Remove this dependency
-								}
-							}
-						}
-						$this->deregister('wp-polyfill', 'script', false); //Now we can deregister "wp-polyfill" without breaking other assets
-					}
+					// if ( strpos($current_action, 'scripts') !== false ){
+					//	//Disabled because some functionality still needs wp-polyfill even in modern browsers. Ugh. Ex: https://nebula.gearside.com/functions/infinite_load_query/
+					// 	//Remove "wp-polyfill" but first need to remove that dependency from other scripts. In the future, this may no longer be needed... hopefully. Watch this issue: https://github.com/WordPress/gutenberg/issues/21616
+					// 	$scripts = wp_scripts(); //Get all of the script dependencies
+					// 	foreach ( $scripts->registered as $registered_script ){ //Loop through all registered scripts
+					// 		foreach ( $registered_script->deps as $dep_key => $handle ){ //Loop through each of the dependencies
+					// 			if ( $handle === 'wp-polyfill' ){ //If this dependency is "wp-polyfill"
+					// 				unset($registered_script->deps[$dep_key]); //Remove this dependency
+					// 			}
+					// 		}
+					// 	}
+					// 	$this->deregister('wp-polyfill', 'script', false); //Now we can deregister "wp-polyfill" without breaking other assets
+					// }
 
 					//Dequeue styles based on selected Nebula options
-					if ( $last_action !== 'wp_print_scripts' ){ //Check the last hook to run and skip dequeuing styles on the print scripts hook
+					if ( $current_action !== 'wp_print_scripts' ){ //Check the last hook to run and skip dequeuing styles on the print scripts hook
 						$styles_to_dequeue = $this->get_option('dequeue_styles');
 						if ( !empty($styles_to_dequeue) ){
 							$this->check_dequeue_rules($styles_to_dequeue, 'styles');
@@ -646,7 +646,7 @@ if ( !trait_exists('Optimization') ){
 					}
 
 					//Dequeue scripts based on selected Nebula options
-					if ( $last_action !== 'wp_print_styles' ){ //Check the last hook to run and skip dequeuing scripts on the print styles hook
+					if ( $current_action !== 'wp_print_styles' ){ //Check the last hook to run and skip dequeuing scripts on the print styles hook
 						$scripts_to_dequeue = $this->get_option('dequeue_scripts');
 						if ( !empty($scripts_to_dequeue) ){
 							$this->check_dequeue_rules($scripts_to_dequeue, 'scripts');
@@ -909,7 +909,7 @@ if ( !trait_exists('Optimization') ){
 	}
 
 	function nebula_ob_flushed($buffer){
-		nebula()->timer('Header Output Buffering', 'end');
+		nebula()->timer('Headers Output Buffering', 'end');
 		return $buffer;
 	}
 }

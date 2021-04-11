@@ -414,19 +414,9 @@ if ( !trait_exists('Metaboxes') ){
 
 					<input type="checkbox" name="nebula_options[scss]" id="scss" value="1" <?php checked('1', !empty($nebula_options['scss'])); ?> /><label for="scss">Sass</label>
 					<p class="nebula-help-text short-help form-text text-muted">Enable the bundled SCSS compiler. (Default: <?php echo $this->user_friendly_default('scss'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">
-						Save Nebula Options to manually process all SCSS files. This option will automatically be disabled after 30 days without processing. CSS files will automatically be minified, but source maps are available for debugging.<br /><br />
-						Last processed: <?php echo $last_processed_text; ?>
+					<p class="nebula-help-text more-help form-text text-muted">Automatically process Sass for logged-in users (who can publish posts). Saving Nebula Options will also process all SCSS files. This option will automatically be disabled after 30 days without processing. CSS files will automatically be minified, but source maps are available for debugging.<br /><br />Last processed: <?php echo $last_processed_text; ?>
 					</p>
 					<p class="option-keywords">sass scss sccs scass css moderate page speed impact optimization optimize</p>
-				</div>
-
-				<div class="form-group" dependent-or="scss">
-					<input type="checkbox" name="nebula_options[scss_processing_only_when_logged_in]" id="scss_processing_only_when_logged_in" value="1" <?php checked('1', !empty($nebula_options['scss_processing_only_when_logged_in'])); ?> /><label for="scss_processing_only_when_logged_in">Only Process Sass for Specific Roles</label>
-					<p class="nebula-help-text short-help form-text text-muted">Limits Sass scanning and processing for logged-in users with a role of author or higher. (Default: <?php echo $this->user_friendly_default('scss_processing_only_when_logged_in'); ?>)</p>
-					<p class="dependent-note hidden">This option is dependent on the SCSS compiler.</p>
-					<p class="nebula-help-text more-help form-text text-muted">This drastically improves performance for website visitors, but requires developers to be logged into WordPress to make changes to CSS styles. If SCSS changes have been made, regular website visitors will not see the changes until an eligible logged-in user visits the website (or WordPress admin). When off, any visitor to the website will trigger a scan/processing of Sass files.</p>
-					<p class="option-keywords">sass scss sccs scass css major page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group" dependent-or="scss">
@@ -497,7 +487,7 @@ if ( !trait_exists('Metaboxes') ){
 					<textarea name="nebula_options[cookie_notification]" id="cookie_notification" class="form-control textarea" rows="3"><?php echo $nebula_options['cookie_notification']; ?></textarea>
 					<p class="nebula-help-text short-help form-text text-muted">The text that will appear in the cookie notification (leave empty to disable).</p>
 					<p class="nebula-help-text more-help form-text text-muted">If a <a href="options-privacy.php">Privacy Policy</a> page is set with WordPress core, a link will appear to that page. This field accepts HTML for cross-linking to additional legal pages.</p>
-					<p class="option-keywords">privacy policy data security legal gdpr ccpa notice usage tracking cookies</p>
+					<p class="option-keywords">privacy policy data security legal gdpr ccpa privacy notice usage tracking cookies</p>
 				</div>
 			<?php
 
@@ -642,7 +632,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<input type="checkbox" name="nebula_options[observe_dnt]" id="observe_dnt" value="1" <?php checked('1', !empty($nebula_options['observe_dnt'])); ?> /><label for="observe_dnt">Observe "Do Not Track" Requests</label>
 					<p class="nebula-help-text short-help form-text text-muted">Comply with user requests of "Do Not Track" (DNT). Analytics data will not be collected for these users. (Default: <?php echo $this->user_friendly_default('observe_dnt'); ?>)</p>
-					<p class="option-keywords">gdpr</p>
+					<p class="option-keywords">gdpr ccpa privacy</p>
 				</div>
 
 				<div class="form-group">

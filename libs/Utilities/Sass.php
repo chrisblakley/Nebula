@@ -53,7 +53,7 @@ if ( !trait_exists('Sass') ){
 						}
 
 						//Check when Sass processing is allowed to happen
-						if ( $this->get_option('scss_processing_only_when_logged_in') && !current_user_can('publish_posts') ){ //If this option is enabled but the role is lower than necessary
+						if ( !current_user_can('publish_posts') ){ //If the role of this user is lower than necessary
 							$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not processed. It can only be processed by logged in users (per Nebula option).' : $this->sass_process_status;
 							$this->timer('Sass (Total)', 'end');
 							return false;
