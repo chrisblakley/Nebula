@@ -273,7 +273,7 @@ if ( !trait_exists('Assets') ){
 				'client' => array( //Client data is here inside user because the cookie is not transferred between clients.
 					'bot' => $this->is_bot(),
 					'remote_addr' => $this->get_ip_address(),
-					'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+					'user_agent' => ( !empty($_SERVER['HTTP_USER_AGENT']) )? $_SERVER['HTTP_USER_AGENT']: '',
 					'device' => array(
 						'full' => $this->get_device('full'),
 						'formfactor' => $this->get_device('formfactor'),

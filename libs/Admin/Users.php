@@ -91,7 +91,7 @@ if ( !trait_exists('Users') ){
 		}
 
 		//Custom columns content to user listings
-		public function user_columns_content($value='', $column_name, $id){
+		public function user_columns_content($value, $column_name, $id){
 			if ( $column_name === 'company' ){
 				return get_the_author_meta('jobcompany', $id);
 			}
@@ -115,12 +115,19 @@ if ( !trait_exists('Users') ){
 			}
 
 			if ( $column_name === 'id' ){
-				return $id;
+				$you = '';
+				if ( $id === get_current_user_id() ){
+					$you = ' <strong>(You)</strong>';
+				}
+
+				return $id . $you;
 			}
 
 			if ( $column_name === 'gacid' ){
 				return '<small>' . esc_html(get_user_meta($id, 'gacid', true)) . '</small>';
 			}
+
+			return $value; //Always return the default value to prevent conflicts with other column data!
 		}
 
 		public function user_columns_orderby($query){

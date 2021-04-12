@@ -659,41 +659,43 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		//Loop through the dequeue rules and deregister assets when matching
-		public function check_dequeue_rules($assets = array(), $type){
-			foreach ( array_filter($assets) as $handle => $rules ){
-				$rules = str_replace(' ', '', $rules); //Sanitize the text input
+		public function check_dequeue_rules($assets = array(), $type=''){
+			if ( !empty($type) ){
+				foreach ( array_filter($assets) as $handle => $rules ){
+					$rules = str_replace(' ', '', $rules); //Sanitize the text input
 
-				if ( !empty($rules) ){
-					//If dequeueing everywhere on front-end
-					if ( $rules === '*' ){
-						$this->deregister($handle, $type);
-						continue; //No need to check anything further since this handle is dequeued on all pages. Go to the next handle.
-					}
-
-					//Loop through each of the rules for this handle
-					foreach ( array_filter(explode(',', $rules)) as $rule ){
-						//If an ID is used check it
-						if ( intval($rule) && get_the_id() === intval($rule) ){
+					if ( !empty($rules) ){
+						//If dequeueing everywhere on front-end
+						if ( $rules === '*' ){
 							$this->deregister($handle, $type);
-							break; //No need to check at additional rules for this handle. Go to the next handle.
+							continue; //No need to check anything further since this handle is dequeued on all pages. Go to the next handle.
 						}
 
-						//Check if rule is an inverted function. Ex: "!is_front_page"
-						$invert = false;
-						if ( strpos($rule, '!') === 0 ){
-							$invert = true;
-							$rule = ltrim($rule, '!'); //Remove the "!" character since we have now detected it
-						}
-
-						$rule = str_replace('()', '', $rule); //If called as an executable function, remove the "()". Ex: is_front_page()
-
-						//If the rule is a function name. Ex: "is_front_page"
-						if ( function_exists($rule) ){
-							$conditional_function = ( !empty($invert) )? !call_user_func($rule) : call_user_func($rule); //Check for not empty here because it is empty be default (above)
-
-							if ( $conditional_function ){
+						//Loop through each of the rules for this handle
+						foreach ( array_filter(explode(',', $rules)) as $rule ){
+							//If an ID is used check it
+							if ( intval($rule) && get_the_id() === intval($rule) ){
 								$this->deregister($handle, $type);
 								break; //No need to check at additional rules for this handle. Go to the next handle.
+							}
+
+							//Check if rule is an inverted function. Ex: "!is_front_page"
+							$invert = false;
+							if ( strpos($rule, '!') === 0 ){
+								$invert = true;
+								$rule = ltrim($rule, '!'); //Remove the "!" character since we have now detected it
+							}
+
+							$rule = str_replace('()', '', $rule); //If called as an executable function, remove the "()". Ex: is_front_page()
+
+							//If the rule is a function name. Ex: "is_front_page"
+							if ( function_exists($rule) ){
+								$conditional_function = ( !empty($invert) )? !call_user_func($rule) : call_user_func($rule); //Check for not empty here because it is empty be default (above)
+
+								if ( $conditional_function ){
+									$this->deregister($handle, $type);
+									break; //No need to check at additional rules for this handle. Go to the next handle.
+								}
 							}
 						}
 					}
