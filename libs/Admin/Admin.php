@@ -118,7 +118,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->is_login_page() ){
 				add_action('login_head', array($this, 'admin_ga_pageview'));
 				add_filter('login_headerurl', array($this, 'custom_login_header_url'));
-				add_filter('login_headertitle', array($this, 'new_wp_login_title'));
+				add_filter('login_headertext', array($this, 'new_wp_login_title'));
 			}
 
 			//Disable auto curly quotes (smart quotes)
@@ -1097,15 +1097,13 @@ if ( !trait_exists('Admin') ){
 
 		//When checking for theme updates, store the next and current Nebula versions from the response. Hook is inside the theme-update-checker.php library.
 		public function theme_update_version_store($update){
-			if ( !empty($update) && $this->allow_theme_update() ){ //Update is empty if/when the update checker is somehow disabled at the server-level (like if the cron is deactivated)
+			if ( !empty($update) && $this->allow_theme_update() ){ //Update is null if/when the update checker is somehow disabled at the server-level (like if the cron is deactivated)
 				$this->update_data('next_version', $update->version);
 				$this->update_data('current_version', $this->version('full'));
 				$this->update_data('current_version_date', $this->version('date'));
-
-				return $update;
 			}
 
-			return false;
+			return $update; //Always return $update from this hook to prevent errors in the library!
 		}
 
 		//Update the theme, output progress, and post-update tasks
