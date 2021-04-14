@@ -192,6 +192,19 @@ if ( !trait_exists('Dashboard') ){
 			$active_plugins = get_option('active_plugins', array());
 			echo '<li><i class="fas fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> ' . $all_plugins_plural . '</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
 
+			//Must-Use Plugins
+			$mu_plugin_count = get_transient('nebula_count_mu_plugins');
+			if ( empty($mu_plugin_count) || $this->is_debug() ){
+				if ( file_exists(WPMU_PLUGIN_DIR) ){
+					$mu_plugin_count = count(glob(WPMU_PLUGIN_DIR . '/*')); //This just counts the directories, but is accurrate enough for this purpose
+					set_transient('nebula_count_mu_plugins', $mu_plugin_count, MONTH_IN_SECONDS);
+				}
+			}
+			if ( $mu_plugin_count >= 1 ){
+				$mu_plugins_plural = ( $mu_plugin_count === 1 )? 'Must-Use Plugin' : 'Must-Use Plugins';
+				echo '<li><i class="fas fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . $mu_plugin_count . '</strong> ' . $mu_plugins_plural . '</a></li>';
+			}
+
 			//Users
 			$user_count = get_transient('nebula_count_users');
 			if ( empty($user_count) || $this->is_debug() ){
@@ -680,15 +693,15 @@ if ( !trait_exists('Dashboard') ){
 					set_transient('nebula_directory_size_child_theme', $nebula_child_size, DAY_IN_SECONDS);
 				}
 
-				echo '<li><i class="fas fa-code"></i> Parent theme directory size: <strong>' . round($nebula_parent_size/1048576, 2) . 'mb</strong> </li>'; //PHP 7.4 use numeric separators here
-				echo '<li><i class="fas fa-code"></i> Child theme directory size: <strong>' . round($nebula_child_size/1048576, 2) . 'mb</strong> </li>'; //PHP 7.4 use numeric separators here
+				echo '<li><i class="fas fa-code"></i> Parent theme directory size: <strong>' . $this->format_bytes($nebula_parent_size, 2) . '</strong> </li>';
+				echo '<li><i class="fas fa-code"></i> Child theme directory size: <strong>' . $this->format_bytes($nebula_child_size, 2) . '</strong> </li>';
 			} else {
 				$nebula_size = get_transient('nebula_directory_size_theme');
 				if ( empty($nebula_size) || $this->is_debug() ){
 					$nebula_size = $this->foldersize(get_stylesheet_directory());
 					set_transient('nebula_directory_size_theme', $nebula_size, DAY_IN_SECONDS);
 				}
-				echo '<li><i class="fas fa-code"></i> Theme directory size: <strong>' . round($nebula_size/1048576, 2) . 'mb</strong> </li>'; //PHP 7.4 use numeric separators here
+				echo '<li><i class="fas fa-code"></i> Theme directory size: <strong>' . $this->format_bytes($nebula_size, 2) . '</strong> </li>';
 			}
 
 			do_action('nebula_dev_dashboard_directories');
@@ -702,18 +715,18 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			if ( function_exists('wp_max_upload_size') ){
-				$upload_max = '<small>(Max upload: <strong>' . strval(round((int) wp_max_upload_size()/(1024*1024))) . 'mb</strong>)</small>';
+				$upload_max = '<small>(Max upload: <strong>' . $this->format_bytes(((int) wp_max_upload_size())) . '</strong>)</small>';
 			} elseif ( ini_get('upload_max_filesize') ){
 				$upload_max = '<small>(Max upload: <strong>' . ini_get('upload_max_filesize') . '</strong>)</small>';
 			} else {
 				$upload_max = '';
 			}
-			echo '<li><i class="fas fa-fw fa-images"></i> Uploads directory size: <strong>' . round($uploads_size/1048576, 2) . 'mb</strong> ' . $upload_max . '</li>'; //PHP 7.4 use numeric separators here
+			echo '<li><i class="fas fa-fw fa-images"></i> Uploads directory size: <strong>' . $this->format_bytes($uploads_size, 2) . '</strong> ' . $upload_max . '</li>';
 
 			//PHP Disk Space
 			if ( function_exists('disk_total_space') && function_exists('disk_free_space') ){
-				$disk_total_space = disk_total_space(ABSPATH)/1073741824; //In GB //PHP 7.4 use numeric separators here
-				$disk_free_space = disk_free_space(ABSPATH)/1073741824; //In GB //PHP 7.4 use numeric separators here
+				$disk_total_space = disk_total_space(ABSPATH);
+				$disk_free_space = disk_free_space(ABSPATH);
 
 				$disk_usage_color = 'inherit';
 				if ( $disk_free_space < 5 ){
@@ -722,7 +735,14 @@ if ( !trait_exists('Dashboard') ){
 					$disk_usage_color = '#ca8038'; //Warning
 				}
 
-				echo '<li><i class="fas fa-fw fa-hdd"></i> Disk Space Available: <strong style="color: ' . $disk_usage_color . ';">' . round($disk_free_space, 2) . 'gb</strong> <small>(Total space: <strong>' . round($disk_total_space, 0) . 'gb</strong>)</small></li>';
+				echo '<li><i class="fas fa-fw fa-hdd"></i> Disk Space Available: <strong style="color: ' . $disk_usage_color . ';">' . $this->format_bytes($disk_free_space, 2) . '</strong> <small>(Total space: <strong>' . $this->format_bytes($disk_total_space) . '</strong>)</small></li>';
+			}
+
+			//Log Files
+			foreach ( $this->get_log_files('all', true) as $types ){ //Always get fresh data here
+				foreach ( $types as $log_file ){
+					echo '<li><i class="far fa-fw fa-file-alt"></i> <code title="' . $log_file['shortpath'] . '">' . $log_file['name'] . '</code> File: <strong>' . $this->format_bytes($log_file['bytes']) . '</strong></li>';
+				}
 			}
 
 			//Service Worker

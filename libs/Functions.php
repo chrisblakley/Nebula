@@ -2906,7 +2906,7 @@ if ( !trait_exists('Functions') ){
 					$sunrise = strtotime(date_sunrise(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
 					$sunset = strtotime(date_sunset(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
 					$length_of_daylight = $sunset-$sunrise;
-					$length_of_darkness = 86400-$length_of_daylight; //PHP 7.4 use numeric separators here
+					$length_of_darkness = DAY_IN_SECONDS-$length_of_daylight;
 
 					if ( time() >= $sunrise && time() <= $sunset ){
 						$classes[] = 'time-daylight';
@@ -2919,7 +2919,7 @@ if ( !trait_exists('Functions') ){
 						}
 					} else {
 						$classes[] = 'time-darkness';
-						$previous_sunset_modifier = ( date('H') < 12 )? 86400 : 0; //Times are in UTC, so if it is after actual midnight (before noon) we need to use the sunset minus 1 day in formulas //PHP 7.4 use numeric separators here
+						$previous_sunset_modifier = ( date('H') < 12 )? DAY_IN_SECONDS : 0; //Times are in UTC, so if it is after actual midnight (before noon) we need to use the sunset minus 1 day in formulas
 						$solar_midnight = (($sunset-$previous_sunset_modifier)+($length_of_darkness/2)); //Calculate the appropriate solar midnight (either yesterday's or tomorrow's) [see above]
 						if ( strtotime('now') < $solar_midnight ){
 							$classes[] = 'time-waning-crescent'; //Before solar midnight

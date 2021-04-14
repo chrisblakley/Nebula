@@ -230,7 +230,7 @@ if ( !trait_exists('Warnings') ){
 						//Get the contents of the directory
 						$directory_request = $this->remote_get($directory, array(
 							'timeout' => 3,
-							'limit_response_size' => 512000 //Limit the response to 512kb //PHP 7.4 use numeric separators here
+							'limit_response_size' => KB_IN_BYTES*512 //Limit the response to 512kb
 						));
 
 						if ( !is_wp_error($directory_request) && !empty($directory_request) ){ //If not an error and response exists
@@ -267,7 +267,7 @@ if ( !trait_exists('Warnings') ){
 					$directories_to_scan = array(ABSPATH . '/wp-admin', ABSPATH . '/wp-includes', get_template_directory(), get_stylesheet_directory()); //Change this to simply ABSPATH to scan the entire WordPress directory
 					foreach ( $directories_to_scan as $directory ){
 						foreach ( $this->glob_r($directory . '/*') as $file ){
-							if ( !$this->contains($file, array('/cache')) ){ //Skip certain directories
+							if ( !$this->contains($file, array('/cache', '/uploads')) ){ //Skip certain directories
 								if ( is_file($file) ){
 									//If file was last modified before the year 2000
 									if ( filemtime($file) < 946702800 ){ //PHP 7.4 use numeric separators here
@@ -278,10 +278,10 @@ if ( !trait_exists('Warnings') ){
 									}
 
 									//If the file size is larger than 10mb
-									if ( filesize($file) > 10485760 ){ //PHP 7.4 use numeric separators here
+									if ( filesize($file) > MB_IN_BYTES*10 ){
 										$nebula_warnings['large_file'] = array(
 											'level' => 'warning',
-											'description' => '<i class="fas fa-fw fa-file"></i> <strong>' . $file . '</strong> has a large filesize of ' . bcdiv(filesize($file), 1048576, 0) . 'mb.' //PHP 7.4 use numeric separators here
+											'description' => '<i class="fas fa-fw fa-file"></i> <strong>' . $file . '</strong> has a large filesize of ' . bcdiv(filesize($file), MB_IN_BYTES, 0) . 'mb.'
 										);
 									}
 								}
@@ -289,19 +289,14 @@ if ( !trait_exists('Warnings') ){
 						}
 					}
 				} else { //Otherwise just check a few files
-					//Check for large error_log, debug_log, or nebula.log files
-					$log_file_locations = array(
-						get_template_directory() . '/nebula.log',
-						get_stylesheet_directory() . '/nebula.log',
-						ABSPATH . 'wp-content/debug.log', //Within /wp-content/ directory
-						ABSPATH . 'error_log' //Within WP root directory
-					);
-					foreach ( $log_file_locations as $log_file ){
-						if ( file_exists($log_file) && filesize($log_file) > 26214400 ){ //If <25mb //PHP 7.4 use numeric separators here
-							$nebula_warnings['large_debug_file'] = array(
-								'level' => 'warning',
-								'description' => '<i class="fas fa-fw fa-weight"></i> Large debug file: <strong>' . $log_file . '</strong>',
-							);
+					foreach ( $this->get_log_files('all') as $types ){
+						foreach ( $types as $log_file ){
+							if ( $log_file['bytes'] > MB_IN_BYTES*25 ){
+								$nebula_warnings[] = array( //No key on this one so they do not overwrite when multiple are present
+									'level' => 'warning',
+									'description' => '<i class="fas fa-fw fa-weight"></i> Large debug file: <strong>' . $log_file['shortpath'] . '</strong> (' . $this->format_bytes($log_file['bytes']) . ') <small><a href="' . esc_url(add_query_arg('debug', 'true')) . '">Re-Scan?</a></small>',
+								);
+							}
 						}
 					}
 				}
@@ -563,7 +558,7 @@ if ( !trait_exists('Warnings') ){
 
 				foreach ( $disk_paths as $path ){
 					if ( file_exists($path['directory']) ){
-						$disk_space_free = disk_free_space($path['directory'])/1073741824; //In GB //PHP 7.4 use numeric separators here
+						$disk_space_free = disk_free_space($path['directory'])/GB_IN_BYTES; //In GB
 
 						if ( $disk_space_free < $path['critical'] ){
 							$nebula_warnings['disk_space_low'] = array(

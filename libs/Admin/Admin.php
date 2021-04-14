@@ -171,6 +171,7 @@ if ( !trait_exists('Admin') ){
 					'nebula_autocomplete_tags', //Autocomplete Search
 					'nebula_autocomplete_authors', //Autocomplete Search
 					'nebula_latest_post', //Latest update
+					'nebula_all_log_files', //Log file scan
 				));
 
 				foreach ( $all_transients_to_delete as $transient_to_delete ){
@@ -1259,7 +1260,7 @@ if ( !trait_exists('Admin') ){
 
 		//Control session time (for the "Remember Me" checkbox)
 		public function session_expire($expirein){
-			return 2592000; //30 days (Default is 1209600 (14 days) //PHP 7.4 use numeric separators here
+			return MONTH_IN_SECONDS; //Default is 1209600 (14 days)
 		}
 
 		//Send Google Analytics pageviews on the WP Admin and Login pages too

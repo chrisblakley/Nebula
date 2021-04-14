@@ -757,7 +757,94 @@ if ( !trait_exists('Utilities') ){
 			return $files;
 		}
 
-		//Add up the filesizes of files in a directory (and it's sub-directories)
+		//Get all PHP log files
+		public function get_log_files($requested_type='all', $fresh=false){
+			$timer_name = $this->timer('Get Log Files');
+
+			//Use the transient so we avoid scanning multiple times in short periods of time
+			$all_log_files = get_transient('nebula_all_log_files');
+			if ( !empty($fresh) || empty($all_log_files) || $this->is_debug() ){
+				//If multiple calls to this function request fresh data on a single page load, store the first scan in memory so we still avoid actually scanning more than once
+				$all_log_files = wp_cache_get('nebula_all_log_files');
+				if ( empty($all_log_files) ){
+
+					$file_names = array(
+						'php' => 'error_log',
+						'wordpress' => 'debug.log',
+						'nebula' => 'nebula.log'
+					);
+
+					//Prepare the list
+					$all_log_files = array(
+						'php' => array(),
+						'wordpress' => array(),
+						'nebula' => array()
+					);
+
+					//Check all theme files
+					foreach ( $this->glob_r(WP_CONTENT_DIR . '/themes/*') as $file ){
+						if ( $this->contains($file, array('/twenty')) ){ //Ignore certain strings (this can be anything in the filepath)
+							continue; //Move on to the next file
+						}
+
+						foreach ( $file_names as $type => $name ){
+							if ( strpos($file, '/' . $name) !== false ){
+								$all_log_files[$type][] = array(
+									'type' => $type,
+									'path' => $file, //Full file path
+									'shortpath' => '/' . str_replace(ABSPATH, '', $file), //Relative to the root WP directory
+									'name' => $name,
+									'bytes' => filesize($file),
+								);
+
+								break 2; //Move on to the next file
+							}
+						}
+					}
+
+					//Check for the content directory debug.log file (this is separate to reduce the glob process because it is a single file in a set location)
+					$wp_content_debug_log = WP_CONTENT_DIR . '/debug.log';
+					if ( file_exists($wp_content_debug_log) ){
+						$all_log_files['wordpress'][] = array(
+							'type' => 'wordpress',
+							'path' => $wp_content_debug_log,
+							'shortpath' => '/' . str_replace(ABSPATH, '', $wp_content_debug_log), //Relative to the root WP directory
+							'name' => 'debug.log',
+							'bytes' => filesize($wp_content_debug_log),
+						);
+					}
+
+					wp_cache_set('nebula_all_log_files', $all_log_files); //Store in object cache
+				}
+
+				set_transient('nebula_all_log_files', $all_log_files, MINUTE_IN_SECONDS*15); //Dial in an appropriate cache length for this
+			}
+
+			$this->timer($timer_name, 'end');
+
+			if ( $requested_type === 'all' ){
+				return $all_log_files;
+			}
+
+			switch ( str_replace(array('_', ',', '-'), '', $requested_type) ){
+				case 'php':
+				case 'errorlog':
+				case 'errors':
+					return $all_log_files['php'];
+				case 'wordpress':
+				case 'wp':
+				case 'debuglog':
+				case 'debug':
+					return $all_log_files['wordpress'];
+				case 'nebula':
+				case 'nebulalog':
+					return $all_log_files['nebula'];
+				default:
+					return $all_log_files;
+			}
+		}
+
+		//Add up the filesizes (in bytes) of files in a directory (and it's sub-directories)
 		public function foldersize($path){
 			$override = apply_filters('pre_foldersize', null, $path);
 			if ( isset($override) ){return $override;}
@@ -778,7 +865,18 @@ if ( !trait_exists('Utilities') ){
 				}
 			}
 
-			return $total_size;
+			return $total_size; //Return total size in bytes
+		}
+
+		//Format a filesize to an appropriate unit
+		public function format_bytes($bytes, $precision=2){
+			$units = array('b', 'kb', 'mb', 'gb', 'tb');
+		    $bytes = max($bytes, 0);
+			$base = ( $bytes )? log($bytes) : 0;
+		    $pow = floor($base/log(1024));
+		    $pow = min($pow, count($units)-1);
+		    $bytes = $bytes/pow(1024, $pow);
+		    return round($bytes, $precision) . $units[$pow];
 		}
 
 		//Recursively copy files/directories
@@ -1096,11 +1194,11 @@ if ( !trait_exists('Utilities') ){
 				}
 			}
 
-			//Add pre-Nebula WordPress time
+			//Pre-Nebula WordPress Core Time
 			$this->server_timings['WordPress Core'] = array(
-				'start' => $_SERVER['REQUEST_TIME_FLOAT'],
-				'end' => $_SERVER['REQUEST_TIME_FLOAT']+$this->time_before_nebula,
-				'time' => $this->time_before_nebula-$_SERVER['REQUEST_TIME_FLOAT']
+				'start' => WP_START_TIMESTAMP,
+				'end' => $this->time_before_nebula,
+				'time' => $this->time_before_nebula-WP_START_TIMESTAMP
 			);
 
 			//Database Queries
@@ -1120,14 +1218,14 @@ if ( !trait_exists('Utilities') ){
 			$this->server_timings['PHP System'] = array(
 				'start' => $_SERVER['REQUEST_TIME_FLOAT'],
 				'end' => $_SERVER['REQUEST_TIME_FLOAT']+($resource_usage['ru_stime.tv_usec']),
-				'time' => $resource_usage['ru_stime.tv_usec']/1000000
+				'time' => $resource_usage['ru_stime.tv_usec']/1000000 //PHP 7.4 use numeric separators here
 			);
 
 			//User resource usage timing
 			$this->server_timings['PHP User'] = array(
 				'start' => $_SERVER['REQUEST_TIME_FLOAT'],
 				'end' => $_SERVER['REQUEST_TIME_FLOAT']+($resource_usage['ru_utime.tv_usec']),
-				'time' => $resource_usage['ru_utime.tv_usec']/1000000
+				'time' => $resource_usage['ru_utime.tv_usec']/1000000 //PHP 7.4 use numeric separators here
 			);
 
 			//Add Nebula total
