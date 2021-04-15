@@ -24,7 +24,7 @@ if ( !trait_exists('Admin') ){
 				add_filter('nebula_brain', array($this, 'admin_brain'));
 				add_action('save_post', array($this, 'clear_transients'));
 				add_action('profile_update', array($this, 'clear_transients'));
-				add_action('upgrader_process_complete', array($this, 'theme_update_automation'), 10, 2); //Action 'upgrader_post_install' also exists.
+				//add_action('upgrader_process_complete', array($this, 'theme_update_automation'), 10, 2); //Action 'upgrader_post_install' also exists.
 				add_filter('auth_cookie_expiration', array($this, 'session_expire'));
 				add_action('after_setup_theme', array($this, 'custom_media_display_settings'));
 
@@ -43,8 +43,8 @@ if ( !trait_exists('Admin') ){
 
 				if ( current_user_can('edit_others_posts') ){
 					add_action('admin_init', array($this, 'theme_json'));
-					add_filter('puc_request_update_result_theme-Nebula', array($this, 'theme_update_version_store'), 10, 2); //This hook is found in UpdateChecker.php in the filterUpdateResult() function.
-					add_filter('site_transient_update_themes', array($this, 'force_nebula_theme_update'), 99, 1);
+					//add_filter('puc_request_update_result_theme-Nebula', array($this, 'theme_update_version_store'), 10, 2); //This hook is found in UpdateChecker.php in the filterUpdateResult() function.
+					//add_filter('site_transient_update_themes', array($this, 'force_nebula_theme_update'), 99, 1);
 				}
 			}
 
@@ -1098,8 +1098,7 @@ if ( !trait_exists('Admin') ){
 				$this->update_data('current_version_date', $this->version('date'));
 			}
 
-			if ( !$this->allow_theme_update() ){
-				//Check for unsupported version: if newer version of Nebula has a "u" at the end of the version number, disable automated updates.
+			if ( 1==1 ){ //No longer allow theme updates on this branch
 				$remote_version_info = get_option('external_theme_updates-Nebula-main');
 				if ( !empty($remote_version_info->checkedVersion) && strpos($remote_version_info->checkedVersion, 'u') && str_replace('u', '', $remote_version_info->checkedVersion) !== str_replace('u', '', $this->version('raw')) ){
 					$this->update_data('version_legacy', 'true');
@@ -1107,13 +1106,6 @@ if ( !trait_exists('Admin') ){
 					$this->update_data('current_version_date', $this->version('date'));
 					$this->update_data('next_version', 'INCOMPATIBLE');
 				}
-			} elseif ( current_user_can('update_themes') && is_child_theme() ){
-				require_once get_template_directory() . '/inc/vendor/plugin-update-checker/plugin-update-checker.php';
-				$theme_update_checker = Puc_v4_Factory::buildUpdateChecker(
-					'https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/nebula_theme.json',
-					get_template_directory() . '/functions.php',
-					'Nebula' //The filter hook above must match this
-				);
 			}
 		}
 

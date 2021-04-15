@@ -68,7 +68,7 @@ if ( !trait_exists('Utilities') ){
 		//Generate Nebula Session ID
 		public function nebula_session_id(){
 			$timer_name = $this->timer('Session ID');
-			$server_generated_session_id = ( session_id() )? session_id() : '!' . uniqid(); //@todo "nebula" 0: decommission for session
+			$server_generated_session_id = '!' . uniqid();
 
 			//Check object cache first
 			$session_id = wp_cache_get('nebula_session_id', $server_generated_session_id); //If session_id() is not available, it will re-generate the Nebula session ID
