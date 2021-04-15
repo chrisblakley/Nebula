@@ -117,6 +117,7 @@ if ( !trait_exists('Dashboard') ){
 					continue;
 				}
 
+				//Potential candidate for new Nebula transient() function
 				$count_posts = get_transient('nebula_count_posts_' . $post_type);
 				if ( empty($count_posts) || $this->is_debug() ){
 					$count_posts = wp_count_posts($post_type);
@@ -153,6 +154,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//Earliest post
+			//Potential candidate for new Nebula transient() function
 			$earliest_post = get_transient('nebula_earliest_post');
 			if ( empty($earliest_post) || $this->is_debug() ){
 				$earliest_post = new WP_Query(array('post_type' => 'any', 'post_status' => 'publish', 'showposts' => 1, 'orderby' => 'publish_date', 'order' => 'ASC'));
@@ -164,6 +166,7 @@ if ( !trait_exists('Dashboard') ){
 			wp_reset_postdata();
 
 			//Last updated
+			//Potential candidate for new Nebula transient() function
 			$latest_post = get_transient('nebula_latest_post');
 			if ( empty($latest_post) || $this->is_debug() ){
 				$latest_post = new WP_Query(array('post_type' => 'any', 'showposts' => 1, 'orderby' => 'modified', 'order' => 'DESC'));
@@ -183,6 +186,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fas fa-fw fa-history"></i> Storing <strong ' . $revision_style . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
 
 			//Plugins
+			//Potential candidate for new Nebula transient() function
 			$all_plugins = get_transient('nebula_count_plugins');
 			if ( empty($all_plugins) || $this->is_debug() ){
 				$all_plugins = get_plugins();
@@ -193,6 +197,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fas fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> ' . $all_plugins_plural . '</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
 
 			//Must-Use Plugins
+			//Potential candidate for new Nebula transient() function
 			$mu_plugin_count = get_transient('nebula_count_mu_plugins');
 			if ( empty($mu_plugin_count) || $this->is_debug() ){
 				if ( file_exists(WPMU_PLUGIN_DIR) ){
@@ -206,6 +211,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//Users
+			//Potential candidate for new Nebula transient() function
 			$user_count = get_transient('nebula_count_users');
 			if ( empty($user_count) || $this->is_debug() ){
 				$user_count = count_users();
@@ -314,7 +320,8 @@ if ( !trait_exists('Dashboard') ){
 			}
 			echo '<li><i class="fas fa-fw ' . $fa_role . '"></i> Role: <strong class="admin-user-info admin-user-role">' . $user_role . '</strong></li>';
 
-			//User's posts
+			//Posts by this user
+			//Potential candidate for new Nebula transient() function
 			$your_posts = get_transient('nebula_count_posts_user_' . $user_info->ID);
 			if ( empty($your_posts) || $this->is_debug() ){
 				$your_posts = count_user_posts($user_info->ID);
@@ -443,6 +450,7 @@ if ( !trait_exists('Dashboard') ){
 			$this->timer('Nebula To-Do Dashboard Metabox');
 			do_action('nebula_todo_manager');
 
+			//Potential candidate for new Nebula transient() function
 			$todo_items = get_transient('nebula_todo_items');
 			if ( empty($todo_items) || $this->is_debug() ){
 				$todo_items = array(
@@ -681,12 +689,14 @@ if ( !trait_exists('Dashboard') ){
 
 			//Theme directory size(s)
 			if ( is_child_theme() ){
+				//Potential candidate for new Nebula transient() function
 				$nebula_parent_size = get_transient('nebula_directory_size_parent_theme');
 				if ( empty($nebula_parent_size) || $this->is_debug() ){
 					$nebula_parent_size = $this->foldersize(get_template_directory());
 					set_transient('nebula_directory_size_parent_theme', $nebula_parent_size, DAY_IN_SECONDS);
 				}
 
+				//Potential candidate for new Nebula transient() function
 				$nebula_child_size = get_transient('nebula_directory_size_child_theme');
 				if ( empty($nebula_child_size) || $this->is_debug() ){
 					$nebula_child_size = $this->foldersize(get_stylesheet_directory());
@@ -696,6 +706,7 @@ if ( !trait_exists('Dashboard') ){
 				echo '<li><i class="fas fa-code"></i> Parent theme directory size: <strong>' . $this->format_bytes($nebula_parent_size, 2) . '</strong> </li>';
 				echo '<li><i class="fas fa-code"></i> Child theme directory size: <strong>' . $this->format_bytes($nebula_child_size, 2) . '</strong> </li>';
 			} else {
+				//Potential candidate for new Nebula transient() function
 				$nebula_size = get_transient('nebula_directory_size_theme');
 				if ( empty($nebula_size) || $this->is_debug() ){
 					$nebula_size = $this->foldersize(get_stylesheet_directory());
@@ -707,12 +718,19 @@ if ( !trait_exists('Dashboard') ){
 			do_action('nebula_dev_dashboard_directories');
 
 			//Uploads directory size (and max upload size)
-			$upload_dir = wp_upload_dir();
+			//Potential candidate for new Nebula transient() function
 			$uploads_size = get_transient('nebula_directory_size_uploads');
 			if ( empty($uploads_size) || $this->is_debug() ){
+				$upload_dir = wp_upload_dir();
 				$uploads_size = $this->foldersize($upload_dir['basedir']);
 				set_transient('nebula_directory_size_uploads', $uploads_size, HOUR_IN_SECONDS*36);
 			}
+
+			//Here is how it will be after the next major version release:
+			// $uploads_size = $this->transient('nebula_directory_size_uploads', function(){
+			// 	$upload_dir = wp_upload_dir();
+			// 	return $this->foldersize($upload_dir['basedir']);
+			// }, HOUR_IN_SECONDS*36);
 
 			if ( function_exists('wp_max_upload_size') ){
 				$upload_max = '<small>(Max upload: <strong>' . $this->format_bytes(((int) wp_max_upload_size())) . '</strong>)</small>';
@@ -741,7 +759,7 @@ if ( !trait_exists('Dashboard') ){
 			//Log Files
 			foreach ( $this->get_log_files('all', true) as $types ){ //Always get fresh data here
 				foreach ( $types as $log_file ){
-					echo '<li><i class="far fa-fw fa-file-alt"></i> <code title="' . $log_file['shortpath'] . '">' . $log_file['name'] . '</code> File: <strong>' . $this->format_bytes($log_file['bytes']) . '</strong></li>';
+					echo '<li><i class="far fa-fw fa-file-alt"></i> <code title="' . $log_file['shortpath'] . '" style="cursor: help;">' . $log_file['name'] . '</code> File: <strong>' . $this->format_bytes($log_file['bytes']) . '</strong></li>';
 				}
 			}
 
@@ -1053,6 +1071,7 @@ if ( !trait_exists('Dashboard') ){
 			$this->timer('Nebula Hubspot Dashboard Metabox');
 			do_action('nebula_hubspot_contacts');
 
+			//Potential candidate for new Nebula transient() function
 			$hubspot_contacts_json = get_transient('nebula_hubspot_contacts');
 			if ( empty($hubspot_contacts_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 				$requested_properties = '&property=' . implode('&property=', apply_filters('nebula_hubspot_metabox_properties', array('firstname', 'lastname', 'full_name', 'email', 'createdate')));

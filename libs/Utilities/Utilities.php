@@ -629,6 +629,28 @@ if ( !trait_exists('Utilities') ){
 			}
 		}
 
+		//Handle the caching of the transient and object cache simultaneously
+		//This is best used when assigning a variable from an "expensive" output
+		public function transient($name, $function, $expiration=null, $fresh=false){
+			$data = get_transient($name);
+			if ( !empty($fresh) || empty($data) || $this->is_debug() ){
+				$data = wp_cache_get($name);
+				if ( empty($data) ){ //This does not get a "fresh" option because we always only want it to run once per load
+					if ( is_string($function) ){
+						$data = call_user_func($function); //If the function name is passed as a string, call it
+					} else {
+						$data = $function(); //Otherwise, assume the function is passed as an actual function
+					}
+
+					wp_cache_set($name, $data); //Set the object cache (memory for multiple calls during this current load)
+				}
+
+				set_transient($name, $data, $expiration); //Set the transient (DB to speed up future loads)
+			}
+
+			return $data;
+		}
+
 		//Create a session and cookie
 		public function set_cookie($name, $value){
 			$string_value = (string) $value;
@@ -762,6 +784,7 @@ if ( !trait_exists('Utilities') ){
 			$timer_name = $this->timer('Get Log Files');
 
 			//Use the transient so we avoid scanning multiple times in short periods of time
+			//Potential candidate for new Nebula transient() function
 			$all_log_files = get_transient('nebula_all_log_files');
 			if ( !empty($fresh) || empty($all_log_files) || $this->is_debug() ){
 				//If multiple calls to this function request fresh data on a single page load, store the first scan in memory so we still avoid actually scanning more than once
@@ -871,12 +894,12 @@ if ( !trait_exists('Utilities') ){
 		//Format a filesize to an appropriate unit
 		public function format_bytes($bytes, $precision=2){
 			$units = array('b', 'kb', 'mb', 'gb', 'tb');
-		    $bytes = max($bytes, 0);
+			$bytes = max($bytes, 0);
 			$base = ( $bytes )? log($bytes) : 0;
-		    $pow = floor($base/log(1024));
-		    $pow = min($pow, count($units)-1);
-		    $bytes = $bytes/pow(1024, $pow);
-		    return round($bytes, $precision) . $units[$pow];
+			$pow = floor($base/log(1024));
+			$pow = min($pow, count($units)-1);
+			$bytes = $bytes/pow(1024, $pow);
+			return round($bytes, $precision) . $units[$pow];
 		}
 
 		//Recursively copy files/directories

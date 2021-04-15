@@ -57,6 +57,7 @@ if ( !trait_exists('Logs') ){
 				return;
 			}
 
+			//Potential candidate for new Nebula transient() function - note: no expiration
 			$logs_table_transient = get_transient('nebula_logs_table_exists');
 			if ( empty($logs_table_transient) ){
 				global $wpdb;
@@ -202,6 +203,7 @@ if ( !trait_exists('Logs') ){
 				}
 
 				//Otherwise get the actual logs data (rows)
+				//Potential candidate for new Nebula transient() function
 				$nebula_logs_data = get_transient('nebula_logs');
 				if ( empty($nebula_logs_data) || $this->is_debug() ){
 					$nebula_logs_data = $wpdb->get_results("SELECT * FROM $wpdb->nebula_logs ORDER BY timestamp DESC LIMIT 100"); //Get all data (last 100 logs) from the DB table in descending order (latest first)

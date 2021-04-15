@@ -1260,6 +1260,7 @@ if ( !trait_exists('Functions') ){
 			}
 
 			//Get Transients
+			//Potential candidate for new Nebula transient() function
 			$video_json = get_transient('nebula_' . $provider . '_' . $id);
 			if ( empty($video_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
 				if ( $provider === 'youtube' ){
@@ -1809,6 +1810,7 @@ if ( !trait_exists('Functions') ){
 			);
 			$options = wp_parse_args($args, $defaults);
 
+			//Potential candidate for new Nebula transient() function
 			$related_post_ids = get_transient('nebula-related-' . $options['taxonomy'] . '-' . $post_id);
 			if ( empty($related_post_ids) || $this->is_debug() ){
 				$term_args = array(
@@ -2320,6 +2322,7 @@ if ( !trait_exists('Functions') ){
 				}
 			}
 
+			//Potential candidate for new Nebula transient() function - but what about the $tweets-error condition?
 			$tweets = get_transient('nebula_twitter_' . $data['user']);
 			if ( empty($tweets) || !empty($tweets->error) || $this->is_debug() ){
 				$args = array('headers' => array('Authorization' => 'Bearer ' . $bearer));
@@ -2580,6 +2583,7 @@ if ( !trait_exists('Functions') ){
 
 					//Find menu items
 					if ( !$this->in_array_any(array('menu'), $ignore_post_types) && $this->in_array_any(array('any', 'menu'), $types) ){
+						//Potential candidate for new Nebula transient() function
 						$menus = get_transient('nebula_autocomplete_menus');
 						if ( empty($menus) || $this->is_debug() ){
 							$menus = get_terms('nav_menu');
@@ -2624,6 +2628,7 @@ if ( !trait_exists('Functions') ){
 
 					//Find categories
 					if ( !$this->in_array_any(array('category', 'cat'), $ignore_post_types) && $this->in_array_any(array('any', 'category', 'cat'), $types) ){
+						//Potential candidate for new Nebula transient() function
 						$categories = get_transient('nebula_autocomplete_categories');
 						if ( empty($categories) || $this->is_debug() ){
 							$categories = get_categories();
@@ -2650,6 +2655,7 @@ if ( !trait_exists('Functions') ){
 
 					//Find tags
 					if ( !$this->in_array_any(array('tag'), $ignore_post_types) && $this->in_array_any(array('any', 'tag'), $types) ){
+						//Potential candidate for new Nebula transient() function
 						$tags = get_transient('nebula_autocomplete_tags');
 						if ( empty($tags) || $this->is_debug() ){
 							$tags = get_tags();
@@ -2676,6 +2682,7 @@ if ( !trait_exists('Functions') ){
 
 					//Find authors (if author bios are enabled)
 					if ( $this->get_option('author_bios') && !$this->in_array_any(array('author'), $ignore_post_types) && $this->in_array_any(array('any', 'author'), $types) ){
+						//Potential candidate for new Nebula transient() function
 						$authors = get_transient('nebula_autocomplete_authors');
 						if ( empty($authors) || $this->is_debug() ){
 							$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?

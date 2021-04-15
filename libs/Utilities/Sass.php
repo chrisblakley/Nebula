@@ -393,6 +393,7 @@ if ( !trait_exists('Sass') ){
 			$variable_name = $this->normalize_color_name($variable);
 			$transient_name = 'nebula_sass_variable_' . $variable_name; //Does this need to be more unique (to include the location too)? Cannot just append $filepath...
 
+			//Potential candidate for new Nebula transient() function
 			$scss_variables = get_transient($transient_name);
 			if ( empty($scss_variables) || $this->is_debug() ){
 				$timer_name = $this->timer('Sass Variable (' . $variable . ')', 'start', 'Sass');
