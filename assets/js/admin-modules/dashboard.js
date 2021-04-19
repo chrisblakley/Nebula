@@ -71,6 +71,14 @@ nebula.developerMetaboxes = function(){
 			nebula.checkPageSpeed(); //Performance Timing
 		});
 	}
+
+	//At-a-Glance Metabox
+	if ( jQuery('div#nebula_ataglance').length ){
+		let loadedTime = new Date();
+		jQuery(document).on('mouseover', '#last-loaded', function(){
+			jQuery(this).attr('title', nebula.timeAgo(loadedTime)); //Update the title tag to be the relative time since the page loaded
+		});
+	}
 };
 
 //Check the page speed using (in this priority) Google Lighthouse, or a rudimentary iframe timing

@@ -90,15 +90,17 @@ nebula.performanceMetrics = async function(){
 								cls += entry.value;
 
 								for ( let source of entry.sources ){
-									var node = ( source.node )? nebula.domTreeToString(jQuery(source.node.parentElement)) : 'Unknown (' + Math.floor(Math.random()*99999)+10000 + ')'; //Sometimes the parentElement is null
+									if ( !jQuery(source.node.parentElement).parents('#wpadminbar').length && !jQuery(source.node.parentElement).parents('#audit-results').length ){ //Ignore WP admin bar and Nebula audit results section
+										var node = ( source.node )? nebula.domTreeToString(jQuery(source.node.parentElement)) : 'Unknown (' + Math.floor(Math.random()*99999)+10000 + ')'; //Sometimes the parentElement is null
 
-									clsCalculations[node] = {
-										node: source.node,
-										parent: source.node?.parentElement,
-										entryStart: Math.round(entry.startTime),
-										entryCLS: entry.value,
-										totalCLS: cls,
-									};
+										clsCalculations[node] = {
+											node: source.node,
+											parent: source.node?.parentElement,
+											entryStart: Math.round(entry.startTime),
+											entryCLS: entry.value,
+											totalCLS: cls,
+										};
+									}
 								}
 							}
 						}
@@ -146,7 +148,7 @@ nebula.workbox = async function(){
 	if ( nebula.site?.options?.sw ){ //If Service Worker is enabled in Nebula Options
 		if ( 'serviceWorker' in navigator ){ //If Service Worker is supported (Firefox 44+, Chrome 45+, Edge 17+, Safari 12+)
 			//When debugging unregister SW and clear caches
-			if ( nebula.get('debug') || nebula.dom.html.hasClass('debug') ){
+			if ( nebula.site?.options?.bypass_cache || nebula.get('debug') || nebula.get('audit') || nebula.dom.html.hasClass('debug') ){
 				nebula.unregisterServiceWorker(); //Unregister the ServiceWorker
 				nebula.emptyCaches(); //Clear the caches
 				return false;

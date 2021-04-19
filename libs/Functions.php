@@ -83,13 +83,16 @@ if ( !trait_exists('Functions') ){
 			add_filter('wpcf7_form_elements', array($this, 'cf7_autocomplete_attribute'));
 			add_filter('wpcf7_special_mail_tags', array($this, 'cf7_custom_special_mail_tags'), 10, 3);
 
-			if ( $this->is_debug() ){
+			if ( $this->is_bypass_cache() ){
 				if ( !defined('DONOTCACHEPAGE') ){
 					define('DONOTCACHEPAGE', true); //Tell other plugins not to cache this page
 				}
 
+				add_filter('style_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
+				add_filter('script_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
+				add_action('send_headers', array($this, 'clear_site_data'));
 				add_action('send_headers', 'nocache_headers'); //WP Core function that adds nocache headers
-				add_action('shutdown', array($this, 'flush_rewrite_on_debug'));
+				add_action('shutdown', array($this, 'flush_rewrite_on_debug')); //Just on debug, not when auditing
 			}
 		}
 
@@ -3194,6 +3197,18 @@ if ( !trait_exists('Functions') ){
 		}
 		public function arbitrary_code_footer(){
 			echo $this->get_option('arbitrary_code_footer');
+		}
+
+		//Get fresh resources when debugging
+		public function add_debug_query_arg($src){
+			return add_query_arg('debug', str_replace('.', '', $this->version('raw')) . '-' . rand(10000, 99999), $src); //PHP 7.4 use numeric separators here
+		}
+
+		//Tell the browser to clear caches when the debug query string is present
+		public function clear_site_data(){
+			if ( !$this->is_browser('safari') ){ //This header is not currently supported in Safari or iOS as of February 2021: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Clear-Site-Data#browser_compatibility
+				header('Clear-Site-Data: "cache", "storage", "executionContexts"'); //Do not clear cookies here because it forces logout which is annoying when Customizer is saved/closed
+			}
 		}
 
 		//Flush rewrite rules when using ?debug at shutdown

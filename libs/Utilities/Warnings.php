@@ -762,7 +762,8 @@ if ( !trait_exists('Warnings') ){
 
 										//Log the total if it is less than nominal
 										if ( auditedCls > 0.1 ){ //Anything over 0.1 needs improvement
-											jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-expand-arrows-alt"></i> Significant Cumulative Layout Shift (CLS): ' + auditedCls + '</li>');
+											jQuery('#audit-results ul li.significant-cls-warning').remove(); //Remove the previous bullets to only show the latest one
+											jQuery('#audit-results ul').append('<li class="significant-cls-warning"><i class="fas fa-fw fa-expand-arrows-alt"></i> Significant Cumulative Layout Shift (CLS): ' + auditedCls + '</li>');
 										}
 									}).observe({type: 'layout-shift', buffered: true});
 								}

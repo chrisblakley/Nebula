@@ -16,13 +16,6 @@ if ( !trait_exists('Assets') ){
 				add_action('login_enqueue_scripts', array($this, 'login_enqueue_scripts'));
 				add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 
-				if ( $this->is_debug() || !empty($GLOBALS['wp_customize']) ){ //this "wp_customize" global exists when the Customizer is saved or closed without saving– be careful!
-					add_action('send_headers', array($this, 'clear_site_data'));
-
-					add_filter('style_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
-					add_filter('script_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
-				}
-
 				add_action('login_head', array($this, 'nebula_login_logo'));
 
 				add_action('wp_enqueue_scripts', array($this, 'output_nebula_data'));
@@ -54,7 +47,7 @@ if ( !trait_exists('Assets') ){
 			//Use CDNJS to pull common libraries: http://cdnjs.com/
 			//nebula()->register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
 			if ( $this->is_admin_page() || $this->get_option('allow_bootstrap_js') ){
-				$this->bootstrap('js');
+				$this->bootstrap('js'); //For Bootstrap v5, register this, but dynamically load it via a module instead
 			}
 			$this->register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', array('defer', 'crossorigin'), null, '1.12.1', true);
 			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/mmenu-js/8.5.22/mmenu.min.js', array('defer', 'crossorigin'), null, '8.5.22', true);
@@ -204,6 +197,7 @@ if ( !trait_exists('Assets') ){
 						'adblock_detect' => $this->get_option('adblock_detect'),
 						'manage_options' => current_user_can('manage_options'),
 						'debug' => $this->is_debug(),
+						'bypass_cache' => $this->is_bypass_cache(),
 						'sidebar_expanders' => get_theme_mod('sidebar_accordion_expanders', true),
 					),
 					'resources' => array(
@@ -331,7 +325,7 @@ if ( !trait_exists('Assets') ){
 			}
 
 			//Scripts
-			wp_enqueue_script('nebula-bootstrap');
+			wp_enqueue_script('nebula-bootstrap'); //Remove this with Bootstrap 5 in favor of a dynamic load module
 			wp_enqueue_script('nebula-nebula');
 
 			//Conditionals
@@ -408,18 +402,6 @@ if ( !trait_exists('Assets') ){
 			}
 
 			return true;
-		}
-
-		//Tell the browser to clear caches when the debug query string is present
-		public function clear_site_data(){
-			if ( !$this->is_browser('safari') ){ //This header is not currently supported in Safari or iOS as of February 2021: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Clear-Site-Data#browser_compatibility
-				header('Clear-Site-Data: "cache", "storage", "executionContexts"'); //Do not clear cookies here because it forces logout which is annoying when Customizer is saved/closed
-			}
-		}
-
-		//Get fresh resources when debugging
-		public function add_debug_query_arg($src){
-			return add_query_arg('debug', str_replace('.', '', $this->version('raw')) . '-' . rand(1000, 9999), $src);
 		}
 	}
 }

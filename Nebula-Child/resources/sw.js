@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 const THEME_NAME = 'nebula-child';
-const NEBULA_VERSION = 'v8.11.14.882'; //Wednesday, April 14, 2021 9:10:13 PM
+const NEBULA_VERSION = 'v8.11.18.902'; //Sunday, April 18, 2021 9:38:27 PM
 const OFFLINE_URL = 'https://nebula.gearside.com/offline/';
 const OFFLINE_IMG = 'https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/offline.svg';
 const OFFLINE_GA_DIMENSION = 'cd2';
@@ -64,7 +64,7 @@ function isCacheAllowed(event){
 	let eventURL = event.url.href || event.url; //The file being requested
 
 	//Check domains, directories, and pages
-	let pageRegex = /\/chrome-extension:\/\/|\/wp-login.php|\/wp-admin|\/wp-json|analytics|hubspot|hs-scripts|customize.php|customize_|no-cache|admin-ajax|gutenberg\//;
+	let pageRegex = /\/chrome-extension:\/\/|\/wp-login.php|\/wp-admin|\/wp-json|analytics|hubspot|hs-scripts|customize.php|customize_|no-cache|admin-ajax|gutenberg\//; //Add debug= or audit= to this?
 	if ( pageRegex.test(eventReferrer) || pageRegex.test(eventURL) ){
 		return false;
 	}

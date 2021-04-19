@@ -627,8 +627,8 @@ nebula.millisecondsToString = function(ms){
 //For cross-browser support, timestamp must be passed as a string (not a Date object) in the format: Fri Mar 27 21:40:02 +0000 2016
 //Consider using RelativeTimeFormat native JavaScript functionality
 nebula.timeAgo = function(timestamp, raw){ //http://af-design.com/blog/2009/02/10/twitter-like-timestamps/
-	if ( typeof timestamp === 'object' ){
-		nebula.help('Pass date as string in the format: Fri Mar 27 21:40:02 +0000 2016', '/functions/timeAgo/');
+	if ( !timestamp instanceof Date ){
+		nebula.help('Pass date as string in the format: Fri Mar 27 21:40:02 +0000 2016 (Your format: ' + timestamp + ')', '/functions/timeAgo/');
 	}
 
 	let postDate = new Date(timestamp);
@@ -642,7 +642,7 @@ nebula.timeAgo = function(timestamp, raw){ //http://af-design.com/blog/2009/02/1
 	if ( diff <= 1 ){ return 'just now'; }
 	if ( diff < 20 ){ return diff + ' seconds ago'; }
 	if ( diff < 60 ){ return 'less than a minute ago'; }
-	if ( diff <= 90 ){ return 'one minute ago'; }
+	if ( diff <= 90 ){ return '1 minute ago'; }
 	if ( diff <= 3540 ){ return Math.round(diff/60) + ' minutes ago'; }
 	if ( diff <= 5400 ){ return '1 hour ago'; }
 	if ( diff <= 86_400 ){ return Math.round(diff/3600) + ' hours ago'; }

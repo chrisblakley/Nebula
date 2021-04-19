@@ -25,7 +25,7 @@ if ( !trait_exists('Admin') ){
 				add_action('save_post', array($this, 'clear_transients')); //When a post is saved (or when *starting* a new post)
 				add_action('profile_update', array($this, 'clear_transients'));
 				add_action('upgrader_process_complete', array($this, 'theme_update_automation'), 10, 2); //Action 'upgrader_post_install' also exists.
-				add_filter('auth_cookie_expiration', array($this, 'session_expire'));
+				add_filter('auth_cookie_expiration', array($this, 'session_expire')); //This is the user auto-signout session length
 				add_action('after_setup_theme', array($this, 'custom_media_display_settings'));
 
 				add_filter('wp_check_filetype_and_ext', array($this, 'allow_svg_uploads'), 10, 4);

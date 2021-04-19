@@ -330,6 +330,16 @@ if ( !trait_exists('Utilities') ){
 			return false;
 		}
 
+		//If we should bypass the caches (if/when possible)
+		public function is_bypass_cache(){
+			//During debug, auditing, or when Customizer is saved/closed (yes, this global exists when closing Customizer without saving too)
+			if ( $this->is_debug() || $this->is_auditing() || !empty($GLOBALS['wp_customize']) || isset($_GET['nocache']) ){
+				return true;
+			}
+
+			return false;
+		}
+
 		//Check if the current site is live to the public.
 		//Note: This checks if the hostname of the home URL matches any of the valid hostnames.
 		//If the Valid Hostnames option is empty, this will return true as it is unknown.

@@ -70,10 +70,15 @@ if ( !trait_exists('Dashboard') ){
 
 		public function dashboard_nebula_ataglance(){
 			$this->timer('Nebula At-a-Glance Dashboard Metabox');
-			global $wp_version;
-			global $wp_post_types;
 
 			echo '<ul class="nebula-fa-ul">';
+
+			//Data Loaded Time (for Development environments)
+			if ( (function_exists('wp_get_environment_type') && wp_get_environment_type() !== 'production') || WP_DEBUG || $this->is_debug() ){
+				echo '<li><i class="fas fa-fw fa-clock"></i> This data as of <strong id="last-loaded" title="Just now" style="cursor: help;">' . date('l, F j, Y - g:i:sa') . '</strong></li>';
+			}
+
+			//Website URL
 			echo '<li><i class="fas fa-fw fa-globe"></i> <a href="' . home_url('/') . '" target="_blank" rel="noopener noreferrer">' . home_url('/') . '</a></li>';
 
 			//Address
@@ -88,6 +93,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//WordPress Version
+			global $wp_version;
 			echo '<li><i class="fab fa-fw fa-wordpress"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener noreferrer">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
 			//Nebula Version
@@ -109,6 +115,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//Post Types
+			global $wp_post_types;
 			foreach ( get_post_types() as $post_type ){
 				//Only show post types that show_ui (unless forced with one of the arrays below)
 				$force_show = array('wpcf7_contact_form'); //These will show even if their show_ui is false.
