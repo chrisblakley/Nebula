@@ -59,6 +59,13 @@ if ( !class_exists('Nebula') ){
 			define('NEBULA_DIR', get_template_directory()); //Nebula path
 			define('NEBULA_URL', get_template_directory_uri()); //Nebula URL
 
+			//Super Globals
+			$this->globals = array(
+				'wp_version' => $GLOBALS['wp_version'],
+				'pagenow' => $GLOBALS['pagenow'],
+				'wp_customize' => ( !empty($GLOBALS['wp_customize']) )? $GLOBALS['wp_customize'] : null, //Not empty when closing the Customizer (whether saved or not)
+			);
+
 			//Variables
 			$this->time_before_nebula = microtime(true); //Prep the time before Nebula begins
 		}

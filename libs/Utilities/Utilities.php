@@ -160,7 +160,7 @@ if ( !trait_exists('Utilities') ){
 
 		//Check if viewing the login page.
 		public function is_login_page(){
-			if ( in_array($GLOBALS['pagenow'], array('wp-login.php', 'wp-register.php')) || $_SERVER['PHP_SELF'] == '/wp-login.php' ){
+			if ( in_array($this->globals['pagenow'], array('wp-login.php', 'wp-register.php')) || $_SERVER['PHP_SELF'] == '/wp-login.php' ){
 				return true;
 			}
 
@@ -333,7 +333,7 @@ if ( !trait_exists('Utilities') ){
 		//If we should bypass the caches (if/when possible)
 		public function is_bypass_cache(){
 			//During debug, auditing, or when Customizer is saved/closed (yes, this global exists when closing Customizer without saving too)
-			if ( $this->is_debug() || $this->is_auditing() || !empty($GLOBALS['wp_customize']) || isset($_GET['nocache']) ){
+			if ( $this->is_debug() || $this->is_auditing() || !empty($this->globals['wp_customize']) || isset($_GET['nocache']) ){
 				return true;
 			}
 
