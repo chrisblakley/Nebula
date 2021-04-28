@@ -12,22 +12,6 @@
 </IfModule>
 #END WordPress
 
-<IfModule mod_headers.c>
-	Header set Connection keep-alive
-
-	#Allow cross-origin fonts
-	<FilesMatch "\.(ttf|ttc|otf|eot|woff|font.css|css)$">
-		Header set Access-Control-Allow-Origin "*"
-	</FilesMatch>
-</IfModule>
-
-#Forbid HTTP access to certain WordPress core PHP files
-<IfModule mod_rewrite.c>
-	RewriteEngine On
-	RewriteRule wp-admin/install(-helper)?\.php - [R=403,NC,L]
-	RewriteRule wp-includes/rss-functions.php - [R=403,NC,L]
-</IfModule>
-
 ###################
 #@TODO: Pick one of the following: Force no-www -or- Force www
 #Ensure the WordPress Address and Site Address settings match this choice! (WordPress Admin > Settings > General)
@@ -42,6 +26,15 @@
 #RewriteCond %{HTTP_HOST} !^www\.
 #RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
 ###################
+
+<IfModule mod_headers.c>
+	Header set Connection keep-alive
+
+	#Allow cross-origin fonts
+	<FilesMatch "\.(ttf|ttc|otf|eot|woff|font.css|css)$">
+		Header set Access-Control-Allow-Origin "*"
+	</FilesMatch>
+</IfModule>
 
 #Compression (with conditionals for various Apache and enabled modules)
 <IfModule mod_deflate.c>
@@ -190,22 +183,31 @@
 </IfModule>
 
 #Unset the cache on all files when ?debug query string is used
-<IfVersion >= 2.4>
-	#If the debug query parameter exists on the request itself or the referrer
-	<If "%{QUERY_STRING} =~ /(^|&)debug/ || %{HTTP_REFERER} =~ /(\?|&)debug/">
-		#Unset all caches
-		FileETag None
-		Header unset ETag
-		Header unset Cache-Control
-		Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
-		Header set Pragma "no-cache"
-		Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
-	</If>
-</IfVersion>
+<IfModule version.c>
+	<IfVersion >= 2.4>
+		#If the debug query parameter exists on the request itself or the referrer
+		<If "%{QUERY_STRING} =~ /(^|&)debug/ || %{HTTP_REFERER} =~ /(\?|&)debug/">
+			#Unset all caches
+			FileETag None
+			Header unset ETag
+			Header unset Cache-Control
+			Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+			Header set Pragma "no-cache"
+			Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+		</If>
+	</IfVersion>
+</IfModule>
 
 #Interpret .mjs files as JavaScript
 <IfModule mod_mime.c>
 	AddType text/javascript js mjs
+</IfModule>
+
+#Forbid HTTP access to certain WordPress core PHP files
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteRule wp-admin/install(-helper)?\.php - [R=403,NC,L]
+	RewriteRule wp-includes/rss-functions.php - [R=403,NC,L]
 </IfModule>
 
 #Try to prevent comment spam by checking the referrer

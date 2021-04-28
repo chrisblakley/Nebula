@@ -294,7 +294,7 @@ if ( !trait_exists('Warnings') ){
 							if ( $log_file['bytes'] > MB_IN_BYTES*25 ){
 								$nebula_warnings[] = array( //No key on this one so they do not overwrite when multiple are present
 									'level' => 'warning',
-									'description' => '<i class="fas fa-fw fa-weight"></i> Large debug file: <strong>' . $log_file['shortpath'] . '</strong> (' . $this->format_bytes($log_file['bytes']) . ') <small><a href="' . esc_url(add_query_arg('debug', 'true')) . '">Re-Scan?</a></small>',
+									'description' => '<i class="fas fa-fw fa-weight"></i> Large debug file: <strong>' . $log_file['shortpath'] . '</strong> (' . $this->format_bytes($log_file['bytes'], 1) . ') <small><a href="' . esc_url(add_query_arg('debug', 'true')) . '">Re-Scan?</a></small>',
 								);
 							}
 						}

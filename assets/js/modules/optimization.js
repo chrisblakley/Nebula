@@ -164,7 +164,7 @@ nebula.workbox = async function(){
 				//Listen for Service Worker installation (this is different than PWA installation)
 				workbox.addEventListener('installed', function(event){
 					//Skip waiting
-					workbox.messageSkipWaiting(); //Will probably end up using this, but try it without it first– it was not in the tutorial
+					workbox.messageSkipWaiting(); //Will probably end up using this, but try it without if first- it was not in the tutorial
 
 					if ( !event.isUpdate ){
 						//Service worker installed for the first time

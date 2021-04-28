@@ -22,22 +22,17 @@ nebula.isDoNotTrack = function(){
 		return nebula.user.dnt;
 	}
 
-	//If the nogo query string exists (to prevent self-reporting)
+	//If the noga query string exists (to prevent self-reporting)
 	if ( nebula.get('noga') ){
-		return true;
+		return true; //Do not track internal visits
 	}
 
-	//Otherwise, check if the browser supports DNT
-	if ( window.doNotTrack || navigator.doNotTrack || navigator.msDoNotTrack || 'msTrackingProtectionEnabled' in window.external ){
-		//Check if DNT is enabled
-		if ( window.doNotTrack == '1' || navigator.doNotTrack == 'yes' || navigator.doNotTrack == '1' || navigator.msDoNotTrack == '1' || window.external.msTrackingProtectionEnabled() ){
-			return true; //This user prefers not to be tracked
-		}
-
-		return false; //This user is allowing tracking.
+	//Check for browser support and user preference of DNT
+	if ( navigator?.doNotTrack == '1' || window?.doNotTrack == '1' ){ //Safari still does not have full support and relies on window (not navigator)
+		return true; //This user prefers not to be tracked
 	}
 
-	return false; //The browser does not support DNT
+	return false; //The user is allowing tracking -or- the browser does not support DNT
 };
 
 nebula.timings = [];

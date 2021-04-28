@@ -902,7 +902,7 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Format a filesize to an appropriate unit
-		public function format_bytes($bytes, $precision=2){
+		public function format_bytes($bytes, $precision=1){
 			$units = array('b', 'kb', 'mb', 'gb', 'tb');
 			$bytes = max($bytes, 0);
 			$base = ( $bytes )? log($bytes) : 0;

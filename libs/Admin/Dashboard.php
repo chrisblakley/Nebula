@@ -710,8 +710,8 @@ if ( !trait_exists('Dashboard') ){
 					set_transient('nebula_directory_size_child_theme', $nebula_child_size, DAY_IN_SECONDS);
 				}
 
-				echo '<li><i class="fas fa-code"></i> Parent theme directory size: <strong>' . $this->format_bytes($nebula_parent_size, 2) . '</strong> </li>';
-				echo '<li><i class="fas fa-code"></i> Child theme directory size: <strong>' . $this->format_bytes($nebula_child_size, 2) . '</strong> </li>';
+				echo '<li><i class="fas fa-code"></i> Parent theme directory size: <strong>' . $this->format_bytes($nebula_parent_size, 1) . '</strong> </li>';
+				echo '<li><i class="fas fa-code"></i> Child theme directory size: <strong>' . $this->format_bytes($nebula_child_size, 1) . '</strong> </li>';
 			} else {
 				//Potential candidate for new Nebula transient() function
 				$nebula_size = get_transient('nebula_directory_size_theme');
@@ -719,7 +719,7 @@ if ( !trait_exists('Dashboard') ){
 					$nebula_size = $this->foldersize(get_stylesheet_directory());
 					set_transient('nebula_directory_size_theme', $nebula_size, DAY_IN_SECONDS);
 				}
-				echo '<li><i class="fas fa-code"></i> Theme directory size: <strong>' . $this->format_bytes($nebula_size, 2) . '</strong> </li>';
+				echo '<li><i class="fas fa-code"></i> Theme directory size: <strong>' . $this->format_bytes($nebula_size, 1) . '</strong> </li>';
 			}
 
 			do_action('nebula_dev_dashboard_directories');
@@ -746,7 +746,7 @@ if ( !trait_exists('Dashboard') ){
 			} else {
 				$upload_max = '';
 			}
-			echo '<li><i class="fas fa-fw fa-images"></i> Uploads directory size: <strong>' . $this->format_bytes($uploads_size, 2) . '</strong> ' . $upload_max . '</li>';
+			echo '<li><i class="fas fa-fw fa-images"></i> Uploads directory size: <strong>' . $this->format_bytes($uploads_size, 1) . '</strong> ' . $upload_max . '</li>';
 
 			//PHP Disk Space
 			if ( function_exists('disk_total_space') && function_exists('disk_free_space') ){
@@ -760,7 +760,7 @@ if ( !trait_exists('Dashboard') ){
 					$disk_usage_color = '#ca8038'; //Warning
 				}
 
-				echo '<li><i class="fas fa-fw fa-hdd"></i> Disk Space Available: <strong style="color: ' . $disk_usage_color . ';">' . $this->format_bytes($disk_free_space, 2) . '</strong> <small>(Total space: <strong>' . $this->format_bytes($disk_total_space) . '</strong>)</small></li>';
+				echo '<li><i class="fas fa-fw fa-hdd"></i> Disk Space Available: <strong style="color: ' . $disk_usage_color . ';">' . $this->format_bytes($disk_free_space, 1) . '</strong> <small>(Total space: <strong>' . $this->format_bytes($disk_total_space) . '</strong>)</small></li>';
 			}
 
 			//Log Files

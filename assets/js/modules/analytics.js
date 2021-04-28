@@ -40,7 +40,7 @@ nebula.eventTracking = async function(){
 		return false;
 	}
 
-	nebula.cacheSelectors(); //If event tracking is initialized by the async GA callback, selectors won't be cached yet
+	nebula.cacheSelectors(); //Just to be safe (this is no longer called from anywhere besides nebula.js so this should never be needed)
 
 	nebula.once(function(){
 		window.dataLayer = window.dataLayer || []; //Prevent overwriting an existing GTM Data Layer array
@@ -97,7 +97,7 @@ nebula.eventTracking = async function(){
 		}
 
 		//Button Clicks
-		let nebulaButtonSelector = wp.hooks.applyFilters('nebulaButtonSelectors', 'button, .button, .btn, [role="button"], a.wp-block-button__link, .hs-button');
+		let nebulaButtonSelector = wp.hooks.applyFilters('nebulaButtonSelectors', 'button, .button, .btn, [role="button"], a.wp-block-button__link, .hs-button'); //Allow child theme or plugins to add button selectors without needing to override/duplicate this function
 		nebula.dom.document.on('mousedown', nebulaButtonSelector, function(e){
 			let thisEvent = {
 				event: e,

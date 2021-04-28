@@ -188,12 +188,12 @@
 		"telephone": "+<?php echo nebula()->get_option('phone_number'); ?>",
 
 		<?php if ( nebula()->get_option('latitude') ): ?>
-			"geo": {
+			"geo": { //SEMRush Warning: The property geo is not recognized by Schema.org vocabulary - maybe just for certain types?
 				"@type": "GeoCoordinates",
 				"latitude": "<?php echo nebula()->get_option('latitude'); ?>",
 				"longitude": "<?php echo nebula()->get_option('longitude'); ?>"
 			},
-			"hasMap": "https://www.google.com/maps/place/<?php echo nebula()->get_option('latitude'); ?>,<?php echo nebula()->get_option('longitude'); ?>",
+			"hasMap": "https://www.google.com/maps/place/<?php echo nebula()->get_option('latitude'); ?>,<?php echo nebula()->get_option('longitude'); ?>", //SEMRush Warning: The property hasMap is not recognized by Schema.org vocabulary - maybe just for certain types?
 		<?php endif; ?>
 
 		<?php if ( $company_type !== 'Organization' && $company_type !== 'Corporation' ): ?>

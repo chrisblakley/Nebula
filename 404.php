@@ -32,8 +32,7 @@
 					<?php endif; ?>
 
 					<?php echo nebula()->search_form(); ?>
-
-					<?php if ( !is_string(nebula()->slug_keywords) && !empty(nebula()->error_query) && nebula()->error_query->have_posts() ): //Check if the error query (from /libs/Functions.php) found any matches ?>
+					<?php if ( is_string(nebula()->slug_keywords) && !empty(nebula()->error_query) && nebula()->error_query->have_posts() ): //Check if the error query (from /libs/Functions.php) found any matches ?>
 						<div id="error-page-suggestions">
 							<h2><?php _e('Suggestions', 'nebula'); ?></h2>
 							<?php while ( nebula()->error_query->have_posts() ): ?>

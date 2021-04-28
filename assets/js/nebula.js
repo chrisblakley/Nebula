@@ -24,7 +24,6 @@ jQuery(function(){
 	nebula.initBootstrapFunctions(); //Must be in DOM ready
 	nebula.helpers();
 	nebula.svgImgs();
-	nebula.errorMitigation();
 	nebula.subnavExpanders();
 
 	//Search
@@ -72,6 +71,7 @@ jQuery(window).on('load', function(){
 
 	nebula.cacheSelectors(); //Just to make sure
 	nebula.lazyLoadAssets(); //Move to (or use) requestIdleCallback when Safari supports it
+	nebula.errorMitigation();
 
 	//Navigation
 	nebula.overflowDetector(); //Move to (or use) requestIdleCallback when Safari supports it?

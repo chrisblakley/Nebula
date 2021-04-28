@@ -11,6 +11,7 @@ if ( !trait_exists('Functions') ){
 		public function hooks(){
 			global $pagenow;
 
+			$this->slug_keywords = false; //Start with this false for 404 pages
 			$this->twitter_widget_loaded = false;
 			$this->linkedin_widget_loaded = false;
 			$this->pinterest_widget_loaded = false;

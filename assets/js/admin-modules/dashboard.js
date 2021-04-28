@@ -99,7 +99,7 @@ nebula.getLighthouseResults = function(){
 	jQuery('#performance-sub-status strong').text('Google Lighthouse report in-progress.');
 
 	var sourceURL = jQuery('#testloadcon').attr('data-src') + '?noga'; //No GA so it does not get flooded with bot traffic
-	fetch('https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' + encodeURIComponent(sourceURL)).then(function(response){
+	fetch('https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' + encodeURIComponent(sourceURL), {cache: 'no-cache'}).then(function(response){
 		return response.json(); //This returns a promise
 	}).then(function(json){
 		if ( json && json.captchaResult === 'CAPTCHA_NOT_NEEDED' ){
@@ -115,6 +115,8 @@ nebula.getLighthouseResults = function(){
 			jQuery('#performance-sub-status strong').html('<a href="https://developers.google.com/speed/pagespeed/insights/?url=' + encodeURIComponent(sourceURL) + '" target="_blank" rel="noopener">' + pagespeedCompletedDate + '</a>');
 
 			if ( json.lighthouseResult.audits ){
+				console.log('Lighthouse Performance Data:', json.lighthouseResult.audits);
+
 				//Server Response Time
 				var serverResponseTime = json.lighthouseResult.audits['server-response-time'];
 				jQuery('#performance-ttfb').remove(); //Remove the PHP-timed data
@@ -152,7 +154,7 @@ nebula.getLighthouseResults = function(){
 					'diff': ((windowLoad - domReady)/1000).toFixed(3) + 's'
 				});
 
-				//First Contentful Paint (15%)
+				//First Contentful Paint
 				var firstContentfulPaint = json.lighthouseResult.audits['first-contentful-paint'];
 				nebula.appendPerformanceMetric({
 					'icon': 'fas fa-paint-brush',
@@ -164,7 +166,7 @@ nebula.getLighthouseResults = function(){
 					'error': 4000
 				});
 
-				//Largest Contentful Paint (25%)
+				//Largest Contentful Paint
 				var largestContentfulPaint = json.lighthouseResult.audits['largest-contentful-paint'];
 				nebula.appendPerformanceMetric({
 					'icon': 'fas fa-paint-roller',
@@ -188,7 +190,7 @@ nebula.getLighthouseResults = function(){
 					'error': 300
 				});
 
-				//Time to Interactive (15%)
+				//Time to Interactive
 				var timeToInteractive = json.lighthouseResult.audits['interactive'];
 				nebula.appendPerformanceMetric({
 					'icon': 'far fa-hand-pointer',
@@ -200,7 +202,7 @@ nebula.getLighthouseResults = function(){
 					'error': 7300
 				});
 
-				//Speed Index (15%)
+				//Speed Index
 				var speedIndex = json.lighthouseResult.audits['speed-index'];
 				nebula.appendPerformanceMetric({
 					'icon': 'fas fa-tachometer-alt',
@@ -212,7 +214,7 @@ nebula.getLighthouseResults = function(){
 					'error': 5800
 				});
 
-				//Total Blocking Time (25%)
+				//Total Blocking Time
 				var totalBlockingTime = json.lighthouseResult.audits['total-blocking-time'];
 				nebula.appendPerformanceMetric({
 					'icon': 'fas fa-hand-paper',
@@ -224,12 +226,12 @@ nebula.getLighthouseResults = function(){
 					'error': 600
 				});
 
-				//Cumulative Layout Shift (5%)
+				//Cumulative Layout Shift
 				var cumulativeLayoutShift = json.lighthouseResult.audits['cumulative-layout-shift'];
 				nebula.appendPerformanceMetric({
 					'icon': 'fas fa-arrows-alt-v',
 					'label': 'Cumulative Layout Shift (CLS)',
-					'text': cumulativeLayoutShift.displayValue,
+					'text': cumulativeLayoutShift.numericValue.toFixed(3), //cumulativeLayoutShift.displayValue
 					'description': cumulativeLayoutShift.description,
 					'value': cumulativeLayoutShift.numericValue,
 					'warning': 0.1,
@@ -263,7 +265,11 @@ nebula.getLighthouseResults = function(){
 			jQuery('#performance_metabox h2 i').removeClass('fa-spinner fa-spin').addClass('fa-stopwatch');
 			jQuery('#performance_metabox h2 span span').html('Performance <small>(via Google Lighthouse)</small>');
 		} else { //If the fetch data is not expected, run iframe test instead...
-			console.warn('Fetch data is not expected from Lighthouse.', json);
+			if ( json.code ){
+				console.warn('Received Lighthouse error code:', json.code, json.message);
+			}
+
+			console.warn('Fetch data is not expected from Lighthouse. Running iframe test instead.', json);
 			nebula.runIframeSpeedTest();
 		}
 	}).catch(function(error){
@@ -284,6 +290,8 @@ nebula.runIframeSpeedTest = function(){
 	jQuery('#testloadcon').append(iframe);
 
 	jQuery('#testloadcon iframe').on('load', function(){
+		console.log('Iframe Performance Data:', JSON.parse(JSON.stringify(iframe.contentWindow.performance))); //Needs to stringify/parse to de-synchronize the object and retain the actual values (just for this output)
+
 		//Server Response Time
 		var iframeResponseEnd = Math.round(iframe.contentWindow.performance.timing.responseEnd-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until server response finishes
 		jQuery('#performance-ttfb').remove(); //Remove the PHP-timed data

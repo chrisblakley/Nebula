@@ -331,14 +331,16 @@ nebula.youtubeReady = function(e){
 	nebula.videos = nebula.videos || {}; //Always make sure this is defined
 
 	let id = nebula.getYoutubeID(e.target);
-	if ( id && !nebula.videos.hasOwnProperty(id) ){ //If the video object doesn't use the Youtube video ID, make a new one by duplicating from the Iframe ID
-		nebula.videos[id] = nebula.videos[jQuery(e.target.getIframe()).attr('id')];
-	}
+	if ( id ){
+		if ( !nebula.videos.hasOwnProperty(id) ){ //If the video object doesn't use the Youtube video ID, make a new one by duplicating from the Iframe ID
+			nebula.videos[id] = nebula.videos[jQuery(e.target.getIframe()).attr('id')];
+		}
 
-	nebula.videos[id].title = nebula.getYoutubeTitle(e.target) ?? 'Unkown';
-	nebula.videos[id].duration = e.target.getDuration(); //The total duration of the video. Unit: Seconds
-	nebula.videos[id].current = e.target.getCurrentTime(); //The current position of the video. Units: Seconds
-	nebula.videos[id].percent = e.target.getCurrentTime()/e.target.getDuration(); //The percent of the current position. Multiply by 100 for actual percent.
+		nebula.videos[id].title = nebula.getYoutubeTitle(e.target) ?? 'Unkown';
+		nebula.videos[id].duration = e.target.getDuration(); //The total duration of the video. Unit: Seconds
+		nebula.videos[id].current = e.target.getCurrentTime(); //The current position of the video. Units: Seconds
+		nebula.videos[id].percent = e.target.getCurrentTime()/e.target.getDuration(); //The percent of the current position. Multiply by 100 for actual percent.
+	}
 };
 
 nebula.youtubeStateChange = function(e){

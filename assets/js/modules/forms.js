@@ -363,10 +363,10 @@ nebula.updateFormFlow = function(formID, field, info = ''){
 		info = ' (' + info + ')';
 	}
 
-	if ( !nebula.formFlow[formID] ){
-		nebula.formFlow[formID] = formID + ': ' + field + info; //Start a new form flow string beginning with the form ID
+	if ( nebula.formFlow[formID] ){ //If this form ID already exists
+		nebula.formFlow[formID] += ' > ' + field + info; //Append the next field to the string
 	} else {
-		nebula.formFlow[formID] += ' > ' + field + info;
+		nebula.formFlow[formID] = formID + ': ' + field + info; //Otherwise start a new form flow string beginning with the form ID
 	}
 
 	ga('set', nebula.analytics.dimensions.formFlow, nebula.formFlow[formID]); //Update form field history. scope: session

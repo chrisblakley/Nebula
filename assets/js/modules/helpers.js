@@ -29,7 +29,7 @@ nebula.helpers = async function(){
 	jQuery('a img').closest('a').addClass('no-icon');
 	jQuery('.no-icon:not(a)').find('a').addClass('no-icon');
 
-	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0px'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
+	jQuery('span.nebula-code').parent('p').css('margin-bottom', '0'); //Fix for <p> tags wrapping Nebula pre spans in the WYSIWYG
 
 	//Maintain tab navigability on hashchange (and when loaded with a hash). This also helps accessibility for things like skip to content links
 	if ( document.location.hash ){
@@ -455,7 +455,6 @@ nebula.mmenus = async function(){
 	let offcanvasNav = jQuery('#offcanvasnav'); //This is essential, so check it here in case this function is called manually
 	if ( offcanvasNav.length ){
 		let offcanvasNavTriggerIcon = jQuery('a.offcanvasnavtrigger i');
-
 		let navbars = []; //Think of these as "rows" in the Mmenu panel
 
 		//Add the search navbar
