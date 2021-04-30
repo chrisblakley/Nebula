@@ -195,7 +195,7 @@ nebula.svgImgs = async function(){
 				theSVG = theSVG.attr('role', 'img');
 				theSVG = theSVG.attr('alt', nebula.sanitize(oThis.attr('alt'))); //An SVG with a role of img must include an alt attribute
 				theSVG = theSVG.attr('aria-label', nebula.sanitize(oThis.attr('alt'))); //Add an aria-label attribute as well
-				theSVG = theSVG.attr('data-original-src', oThis.attr('src')); //Add an attribute of the original SVG location
+				theSVG = theSVG.attr('data-originalsrc', oThis.attr('src')); //Add an attribute of the original SVG location
 				theSVG = theSVG.removeAttr('xmlns:a'); //Remove invalid XML tags
 
 				oThis.replaceWith(theSVG); //Replace image with new SVG
