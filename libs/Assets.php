@@ -249,7 +249,7 @@ if ( !trait_exists('Assets') ){
 					'adblock' => false,
 				),
 				'geolocation' => false,
-				'referrer' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : false //This is updated every page (not just for the initial session)
+				'referrer' => ( isset($this->super->server['HTTP_REFERER']) )? $this->super->server['HTTP_REFERER'] : false //This is updated every page (not just for the initial session)
 			);
 
 			//User Data
@@ -267,7 +267,7 @@ if ( !trait_exists('Assets') ){
 				'client' => array( //Client data is here inside user because the cookie is not transferred between clients.
 					'bot' => $this->is_bot(),
 					'remote_addr' => $this->get_ip_address(),
-					'user_agent' => ( !empty($_SERVER['HTTP_USER_AGENT']) )? $_SERVER['HTTP_USER_AGENT']: '',
+					'user_agent' => ( !empty($this->super->server['HTTP_USER_AGENT']) )? $this->super->server['HTTP_USER_AGENT']: '',
 					'device' => array(
 						'full' => $this->get_device('full'),
 						'formfactor' => $this->get_device('formfactor'),

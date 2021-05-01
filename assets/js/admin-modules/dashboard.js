@@ -8,7 +8,7 @@ nebula.developerMetaboxes = function(){
 
 		//Nebula filesystem search
 		jQuery(document).on('submit', '.searchfiles', function(e){
-			if ( jQuery('input.findterm').val().trim().length >= 3 ){
+			if ( jQuery('input.findterm').val().trim().length >= 2 ){
 				jQuery('#searchprogress').removeClass('fa-search').addClass('fas fa-spinner fa-spin fa-fw');
 
 				fetch(nebula.site.ajax.url, {
@@ -35,7 +35,7 @@ nebula.developerMetaboxes = function(){
 					jQuery('div.search_results').html(error).addClass('done');
 				});
 			} else {
-				jQuery('input.findterm').val('').attr('placeholder', 'Minimum 3 characters.');
+				jQuery('input.findterm').val('').attr('placeholder', 'Minimum 2 characters.');
 			}
 			e.preventDefault();
 			return false;

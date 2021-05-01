@@ -17,11 +17,11 @@ if ( !trait_exists('Automation') ){
 
 				add_action('after_switch_theme', array($this, 'activation_notice'));
 
-				if ( isset($_GET['nebula-initialization']) && $pagenow === 'themes.php' ){
+				if ( isset($this->super->get['nebula-initialization']) && $pagenow === 'themes.php' ){
 					add_action('admin_init', array($this, 'initialization'));
 				}
 
-				if ( (isset($_GET['nebula-initialization']) || isset($_GET['initialization-success'])) && $pagenow === 'themes.php' ){
+				if ( (isset($this->super->get['nebula-initialization']) || isset($this->super->get['initialization-success'])) && $pagenow === 'themes.php' ){
 					add_action('admin_notices', array($this, 'activation'));
 				}
 
@@ -236,7 +236,7 @@ if ( !trait_exists('Automation') ){
 					</p>
 					<p><a class="button button-primary" href="themes.php?page=nebula_options">Configure Nebula Options</a></p>
 				</div>
-			<?php elseif ( (isset($_GET['nebula-initialization']) || isset($_GET['initialization-success'])) && current_user_can('manage_options') ): ?>
+			<?php elseif ( (isset($this->super->get['nebula-initialization']) || isset($this->super->get['initialization-success'])) && current_user_can('manage_options') ): ?>
 				<div id="nebula-activate-success" class="updated">
 					<p>
 						<strong class="nebula-activated-title">Nebula has been initialized!</strong><br />

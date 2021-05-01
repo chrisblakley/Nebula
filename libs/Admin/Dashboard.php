@@ -618,7 +618,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( empty($domain) ){
 				$domain = '<small>(None)</small>';
 			}
-			echo '<li><i class="fas fa-fw fa-info-circle"></i> <a href="http://whois.domaintools.com/' . $_SERVER['SERVER_NAME'] . '" target="_blank" rel="noopener noreferrer" title="WHOIS Lookup">Domain</a>: <strong>' . $domain . '</strong></li>';
+			echo '<li><i class="fas fa-fw fa-info-circle"></i> <a href="http://whois.domaintools.com/' . $this->super->server['SERVER_NAME'] . '" target="_blank" rel="noopener noreferrer" title="WHOIS Lookup">Domain</a>: <strong>' . $domain . '</strong></li>';
 
 			//Host
 			function top_domain_name($url){
@@ -645,10 +645,10 @@ if ( !trait_exists('Dashboard') ){
 
 			//Server IP address (and connection security)
 			$secureServer = '';
-			if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443 ){
+			if ( (!empty($this->super->server['HTTPS']) && $this->super->server['HTTPS'] !== 'off') || $this->super->server['SERVER_PORT'] === 443 ){
 				$secureServer = '<small class="secured-connection"><i class="fas fa-fw fa-lock"></i>Secured Connection</small>';
 			}
-			echo '<li><i class="fas fa-fw fa-upload"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $_SERVER['SERVER_ADDR'] . '" target="_blank" rel="noopener noreferrer">' . apply_filters('nebula_dashboard_server_ip', $_SERVER['SERVER_ADDR']) . '</a></strong> ' . $secureServer . '</li>';
+			echo '<li><i class="fas fa-fw fa-upload"></i> Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $this->super->server['SERVER_ADDR'] . '" target="_blank" rel="noopener noreferrer">' . apply_filters('nebula_dashboard_server_ip', $this->super->server['SERVER_ADDR']) . '</a></strong> ' . $secureServer . '</li>';
 
 			//Server operating system
 			if ( strpos(strtolower(PHP_OS), 'linux') !== false ){
@@ -661,13 +661,13 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fab fa-fw ' . $php_os_icon . '"></i> Server OS: <strong>' . PHP_OS . '</strong></li>';
 
 			//Server software
-			$server_software = $_SERVER['SERVER_SOFTWARE'];
+			$server_software = $this->super->server['SERVER_SOFTWARE'];
 			if ( strlen($server_software) > 10 ){
-				$server_software = strtok($_SERVER['SERVER_SOFTWARE'], ' '); //Shorten to until the first space
+				$server_software = strtok($this->super->server['SERVER_SOFTWARE'], ' '); //Shorten to until the first space
 			}
-			echo '<li><i class="fas fa-fw fa-server"></i> Server Software: <strong title="' . $_SERVER['SERVER_SOFTWARE'] . '">' . $server_software . '</strong></li>';
+			echo '<li><i class="fas fa-fw fa-server"></i> Server Software: <strong title="' . $this->super->server['SERVER_SOFTWARE'] . '">' . $server_software . '</strong></li>';
 
-			echo '<li><i class="fas fa-fw fa-ethernet"></i> Server Protocol: <strong>' . $_SERVER['SERVER_PROTOCOL'] . '</strong></li>';
+			echo '<li><i class="fas fa-fw fa-ethernet"></i> Server Protocol: <strong>' . $this->super->server['SERVER_PROTOCOL'] . '</strong></li>';
 
 			//MySQL version
 			$mysql_version = mysqli_get_client_version();
@@ -884,17 +884,17 @@ if ( !trait_exists('Dashboard') ){
 
 		//Search theme or plugin files via Developer Information Dashboard Metabox
 		public function search_theme_files(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied. Refresh and try again.'); }
+			if ( !wp_verify_nonce($this->super->post['nonce'], 'nebula_ajax_nonce') ){ wp_die('Permission Denied. Refresh and try again.'); }
 
 			//@todo Nebula 0: Remove these when possible...
 			ini_set('max_execution_time', 120);
 			ini_set('memory_limit', '512M');
 
-			$searchTerm = htmlentities(stripslashes($_POST['searchData']));
-			$requestedDirectory = strtolower(sanitize_text_field($_POST['directory']));
+			$searchTerm = htmlentities(stripslashes($this->super->post['searchData']));
+			$requestedDirectory = strtolower(sanitize_text_field($this->super->post['directory']));
 
-			if ( strlen($searchTerm) < 3 ){
-				wp_die('<p><strong>Error:</strong> Minimum 3 characters needed to search!</p>');
+			if ( strlen($searchTerm) < 2 ){
+				wp_die('<p><strong>Error:</strong> Minimum 2 characters needed to search!</p>');
 			}
 
 			$uploadDirectory = wp_upload_dir();
@@ -946,6 +946,7 @@ if ( !trait_exists('Dashboard') ){
 								$actualLineNumber = $lineNumber+1;
 								$actualLine = $this->string_limit_chars(trim(htmlentities($line)), 200);
 								$actualLine = ( !empty($actualLine['is_limited']) )? trim($actualLine['text']) . '...' : $actualLine['text'];
+								$actualLine = ( !empty($actualLine) )? $actualLine : '[This line is not readable by Nebula.]'; //Lines in some file types are not readable
 
 								echo '<div class="linewrap">
 								<p class="resulttext">' . str_replace($dirpath, '', dirname($file)) . '/<strong>' . basename($file) . '</strong> on <a class="linenumber" href="#">line ' . $actualLineNumber . '</a>.</p>

@@ -46,8 +46,8 @@
 								<?php if ( get_theme_mod('nebula_mobile_search', true) ): ?>
 									<form id="mobileheadersearch" class="nebula-search search" method="get" action="<?php echo home_url('/'); ?>" role="search">
 										<?php
-											if ( !empty($_GET['s']) || !empty($_GET['rs']) ) {
-												$current_search = ( !empty($_GET['s']) )? $_GET['s'] : $_GET['rs'];
+											if ( !empty(nebula()->super->get['s']) || !empty(nebula()->super->get['rs']) ) {
+												$current_search = ( !empty(nebula()->super->get['s']) )? nebula()->super->get['s'] : nebula()->super->get['rs'];
 											}
 											$header_search_placeholder = ( isset($current_search) )? $current_search : __('Search', 'nebula');
 										?>

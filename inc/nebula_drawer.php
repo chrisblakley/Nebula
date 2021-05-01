@@ -1,4 +1,4 @@
-<?php if ( !is_search() && (array_key_exists('s', $_GET) || array_key_exists('rs', $_GET)) ): ?>
+<?php if ( !is_search() && (array_key_exists('s', nebula()->super->get) || array_key_exists('rs', nebula()->super->get)) ): ?>
 	<div id="nebula-drawer" class="single-result-redirect">
 		<div class="container">
 			<div class="row">
@@ -11,7 +11,7 @@
 			</div><!--/row-->
 		</div><!--/container-->
 	</div>
-<?php elseif ( (is_page('search') || is_page_template('tpl-search.php')) && array_key_exists('invalid', $_GET) ): ?>
+<?php elseif ( (is_page('search') || is_page_template('tpl-search.php')) && array_key_exists('invalid', nebula()->super->get) ): ?>
 	<div id="nebula-drawer" class="invalid">
 		<div class="container">
 			<div class="row">
@@ -23,7 +23,7 @@
 			</div><!--/row-->
 		</div><!--/container-->
 	</div>
-<?php elseif ( is_404() || !have_posts() || array_key_exists('s', $_GET) ): ?>
+<?php elseif ( is_404() || !have_posts() || array_key_exists('s', nebula()->super->get) ): ?>
 	<div id="nebula-drawer" class="container-fluid suggestedpage" style="display: <?php echo ( !empty(nebula()->error_404_exact_match) )? 'block' : 'none'; ?>">
 		<div class="container">
 			<div class="row">

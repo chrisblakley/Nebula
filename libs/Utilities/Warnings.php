@@ -124,7 +124,7 @@ if ( !trait_exists('Warnings') ){
 				}
 
 				//If the site is served via HTTPS but the Site URL is still set to HTTP
-				if ( (is_ssl() || isset($_SERVER['HTTPS'])) && (strpos(home_url(), 'http://') !== false || strpos(get_option('siteurl'), 'http://') !== false) ){
+				if ( (is_ssl() || isset($this->super->server['HTTPS'])) && (strpos(home_url(), 'http://') !== false || strpos(get_option('siteurl'), 'http://') !== false) ){
 					$nebula_warnings['site_url_http'] = array(
 						'level' => 'error',
 						'description' => '<i class="fas fa-fw fa-lock-open"></i> <a href="options-general.php">Website Address</a> settings are http but the site is served from https.',
@@ -691,7 +691,7 @@ if ( !trait_exists('Warnings') ){
 		public function advanced_warning_output(){
 			if ( $this->is_auditing() ){
 				//Log when manually auditing pages individually
-				if ( isset($_GET['audit']) ){
+				if ( isset($this->super->get['audit']) ){
 					$this->add_log('Nebula audit performed on ' . $this->requested_url(), 1);
 				}
 

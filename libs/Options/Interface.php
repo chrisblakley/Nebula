@@ -2,18 +2,18 @@
 
 <?php
 	$active_tab = 'metadata';
-	if ( !empty($_GET['tab']) ){
-		$active_tab = strtolower($_GET['tab']);
+	if ( !empty($this->super->get['tab']) ){
+		$active_tab = strtolower($this->super->get['tab']);
 	}
 
 	$direct_option = false;
-	if ( !empty($_GET['option']) ){
-		$direct_option = $_GET['option'];
+	if ( !empty($this->super->get['option']) ){
+		$direct_option = $this->super->get['option'];
 	}
 
 	$pre_filter = false;
-	if ( !empty($_GET['filter']) ){
-		$pre_filter = $_GET['filter'];
+	if ( !empty($this->super->get['filter']) ){
+		$pre_filter = $this->super->get['filter'];
 	}
 ?>
 
@@ -25,7 +25,7 @@
 			wp_die('You do not have sufficient permissions to access this page.');
 		}
 
-		if ( isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true' ){
+		if ( isset($this->super->get['settings-updated']) && $this->super->get['settings-updated'] == 'true' ){
 			$this->usage('Nebula Options Saved');
 			$this->add_log('Nebula Options saved');
 			do_action('nebula_options_saved');

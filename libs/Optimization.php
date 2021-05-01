@@ -148,7 +148,7 @@ if ( !trait_exists('Optimization') ){
 		public function use_less_data(){return $this->is_save_data();}
 		public function is_lite(){return $this->is_save_data();}
 		public function is_save_data(){
-			if ( isset($_SERVER['HTTP_SAVE_DATA']) && stristr($_SERVER['HTTP_SAVE_DATA'], 'on') !== false ){
+			if ( isset($this->super->server['HTTP_SAVE_DATA']) && stristr($this->super->server['HTTP_SAVE_DATA'], 'on') !== false ){
 				return true;
 			}
 
@@ -338,7 +338,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Set Server Timing header
 		public function server_timing_header(){
-			if ( $this->is_dev() || isset($_GET['timings']) ){ //Only output server timings for developers, or if timings query string is present
+			if ( $this->is_dev() || isset($this->super->get['timings']) ){ //Only output server timings for developers, or if timings query string is present
 				$this->finalize_timings();
 				$server_timing_header_string = 'Server-Timing: ';
 
@@ -372,7 +372,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Include server timings for developers
 		public function output_console_debug_timings(){
-			if ( $this->is_dev() || isset($_GET['timings']) ){ //Only output server timings for developers or if timings query string present
+			if ( $this->is_dev() || isset($this->super->get['timings']) ){ //Only output server timings for developers or if timings query string present
 				$this->finalize_timings();
 
 				if ( !empty($this->server_timings) && is_array($this->server_timings) ){
@@ -389,7 +389,7 @@ if ( !trait_exists('Optimization') ){
 							continue;
 						}
 
-						$start_time = ( !empty($data['start']) )? round(($data['start']-$_SERVER['REQUEST_TIME_FLOAT'])*1000) : -1;
+						$start_time = ( !empty($data['start']) )? round(($data['start']-$this->super->server['REQUEST_TIME_FLOAT'])*1000) : -1;
 
 						$testTimes['[PHP] ' . $label] = array(
 							'start' => $start_time, //Convert seconds to milliseconds
@@ -550,10 +550,10 @@ if ( !trait_exists('Optimization') ){
 
 		//Scan the front-end styles and scripts to be able to deregister them from Nebula Options
 		public function scan_assets(){
-			if ( !is_admin() && current_user_can('manage_options') && (isset($_GET['nebula-scan']) || isset($_GET['sass']) || isset($_GET['debug']) || $this->get_option('audit_mode')) ){ //Only run on front-end for admin users. Also add a query string so this doesn't run every single pageload
+			if ( !is_admin() && current_user_can('manage_options') && (isset($this->super->get['nebula-scan']) || isset($this->super->get['sass']) || isset($this->super->get['debug']) || $this->get_option('audit_mode')) ){ //Only run on front-end for admin users. Also add a query string so this doesn't run every single pageload
 				$this->timer('Scan Assets');
 
-				if ( isset($_GET['nebula-scan']) && $_GET['nebula-scan'] === 'reset' ){ //Use this to reset and re-scan from scratch
+				if ( isset($this->super->get['nebula-scan']) && $this->super->get['nebula-scan'] === 'reset' ){ //Use this to reset and re-scan from scratch
 					update_option('optimizable_registered_styles', array());
 					update_option('optimizable_registered_scripts', array());
 				}

@@ -381,7 +381,7 @@ if ( !trait_exists('Functions') ){
 
 		//Redirect to favicon to force-clear the cached version when ?favicon is added to the URL.
 		public function favicon_cache(){
-			if ( array_key_exists('favicon', $_GET) ){
+			if ( array_key_exists('favicon', $this->super->get) ){
 				header('Location: ' . get_theme_file_uri('/assets/img/meta') . '/favicon.ico');
 				exit;
 			}
@@ -1013,7 +1013,7 @@ if ( !trait_exists('Functions') ){
 			echo '<div class="sharing-links">';
 
 			//If the 'shareapi' cookie exists and 'shareapi' is requested, return *only* the Share API
-			if ( isset($_COOKIE['shareapi']) || in_array($networks, array('shareapi')) ){
+			if ( isset($this->super->cookie['shareapi']) || in_array($networks, array('shareapi')) ){
 				$networks = array('shareapi');
 			}
 
@@ -1074,7 +1074,7 @@ if ( !trait_exists('Functions') ){
 			echo '<div class="sharing-links">';
 
 			//If the 'shareapi' cookie and 'shareapi' is requested, return *only* the Share API
-			if ( isset($_COOKIE['shareapi']) || in_array($networks, array('shareapi')) ){
+			if ( isset($this->super->cookie['shareapi']) || in_array($networks, array('shareapi')) ){
 				$networks = array('shareapi');
 			}
 
@@ -1773,12 +1773,12 @@ if ( !trait_exists('Functions') ){
 
 		//Infinite Load AJAX Call
 		public function infinite_load(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+			if ( !wp_verify_nonce($this->super->post['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
 
-			$page_number = sanitize_text_field($_POST['page']);
-			$args = json_decode(stripslashes($_POST['args']), true); //Remove escaped slashes and decode to an array
+			$page_number = sanitize_text_field($this->super->post['page']);
+			$args = json_decode(stripslashes($this->super->post['args']), true); //Remove escaped slashes and decode to an array
 			$args['paged'] = $page_number; //Add the page number to the array
-			$loop = sanitize_text_field($_POST['loop']);
+			$loop = sanitize_text_field($this->super->post['loop']);
 			$args = array_map('esc_attr', $args); //Sanitize the args array
 
 			query_posts($args);
@@ -2295,13 +2295,14 @@ if ( !trait_exists('Functions') ){
 			));
 
 			$data = array_merge($defaults, $options);
+			$post = $this->super->post; //Get the $_POST data
 
-			if ( !empty($_POST['data']) ){
-				if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-				$data['user'] = ( isset($_POST['data']['user']) )? sanitize_text_field($_POST['data']['user']) : $defaults['user'];
-				$data['list'] = ( isset($_POST['data']['list']) )? sanitize_text_field($_POST['data']['list']) : $defaults['list']; //Only used for list feeds
-				$data['number'] = ( isset($_POST['data']['number']) )? sanitize_text_field($_POST['data']['number']) : $defaults['number'];
-				$data['retweets'] = ( isset($_POST['data']['retweets']) )? sanitize_text_field($_POST['data']['retweets']) : $defaults['retweets']; //1: Yes, 0: No
+			if ( !empty($post['data']) ){
+				if ( !wp_verify_nonce($post['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+				$data['user'] = ( isset($post['data']['user']) )? sanitize_text_field($post['data']['user']) : $defaults['user'];
+				$data['list'] = ( isset($post['data']['list']) )? sanitize_text_field($post['data']['list']) : $defaults['list']; //Only used for list feeds
+				$data['number'] = ( isset($post['data']['number']) )? sanitize_text_field($post['data']['number']) : $defaults['number'];
+				$data['retweets'] = ( isset($post['data']['retweets']) )? sanitize_text_field($post['data']['retweets']) : $defaults['retweets']; //1: Yes, 0: No
 			}
 
 			$twitter_timing_id = $this->timer('Twitter Cache (' . $data['user'] . ')', 'start', 'Twitter Cache');
@@ -2318,7 +2319,7 @@ if ( !trait_exists('Functions') ){
 			if ( empty($bearer) ){
 				trigger_error('A Twitter bearer token is required to get tweets', E_USER_WARNING);
 
-				if ( !empty($_POST['data']) ){
+				if ( !empty($post['data']) ){
 					echo false;
 					wp_die();
 				} else {
@@ -2342,7 +2343,7 @@ if ( !trait_exists('Functions') ){
 				if ( empty($tweets) || !empty($tweets->error) ){
 					trigger_error('No tweets were retrieved. Verify all options are correct, the requested Twitter account exists, and that an active bearer token is being used.', E_USER_NOTICE);
 
-					if ( !empty($_POST['data']) ){
+					if ( !empty($post['data']) ){
 						echo false;
 						wp_die();
 					} else {
@@ -2378,7 +2379,7 @@ if ( !trait_exists('Functions') ){
 
 			$this->timer($twitter_timing_id, 'end');
 
-			if ( !empty($_POST['data']) ){
+			if ( !empty($post['data']) ){
 				echo json_encode($tweets);
 				wp_die();
 			} else {
@@ -2409,8 +2410,8 @@ if ( !trait_exists('Functions') ){
 		//Prevent empty search query error (Show all results instead)
 		public function redirect_empty_search($query){
 			global $wp_query;
-			if ( isset($_GET['s']) && $wp_query->query && !array_key_exists('invalid', $_GET) ){
-				if ( $_GET['s'] == '' && $wp_query->query['s'] == '' && !$this->is_admin_page() ){
+			if ( isset($this->super->get['s']) && $wp_query->query && !array_key_exists('invalid', $this->super->get) ){
+				if ( $this->super->get['s'] == '' && $wp_query->query['s'] == '' && !$this->is_admin_page() ){
 					header('Location: ' . home_url('/') . 'search/?invalid'); //Why not wp_redirect() here?
 					exit;
 				} else {
@@ -2425,11 +2426,11 @@ if ( !trait_exists('Functions') ){
 				global $wp_query;
 
 				if ( $wp_query->post_count == 1 && $wp_query->max_num_pages == 1 ){
-					if ( isset($_GET['s']) ){
+					if ( isset($this->super->get['s']) ){
 						//If the redirected post is the homepage, serve the regular search results page with one result (to prevent a redirect loop)
 						if ( $wp_query->posts['0']->ID !== 1 && get_permalink($wp_query->posts['0']->ID) !== home_url() . '/' ){
-							$_GET['s'] = str_replace(' ', '+', $_GET['s']);
-							wp_redirect(get_permalink($wp_query->posts['0']->ID ) . '?rs=' . $_GET['s']);
+							$this->super->get['s'] = str_replace(' ', '+', $this->super->get['s']);
+							wp_redirect(get_permalink($wp_query->posts['0']->ID ) . '?rs=' . $this->super->get['s']);
 							exit;
 						}
 					} else {
@@ -2444,17 +2445,17 @@ if ( !trait_exists('Functions') ){
 		public function rest_autocomplete_search(){
 			$timer_name = $this->timer('Autocomplete Search');
 
-			if ( isset($_GET['term']) ){
+			if ( isset($this->super->get['term']) ){
 				ini_set('memory_limit', '256M'); //@todo Nebula 0: Remove these when possible...
 
-				$term = sanitize_text_field(trim($_GET['term']));
+				$term = sanitize_text_field(trim($this->super->get['term']));
 				if ( empty($term) ){
 					return false;
 				}
 
 				$types = 'any';
-				if ( isset($_GET['types']) ){
-					$types =  explode(',', sanitize_text_field(trim($_GET['types'])));
+				if ( isset($this->super->get['types']) ){
+					$types =  explode(',', sanitize_text_field(trim($this->super->get['types'])));
 				}
 
 				//Prepare the standard WP search query parameters (do not include custom fields here).
@@ -2846,7 +2847,7 @@ if ( !trait_exists('Functions') ){
 				if ( !is_search() && !is_archive() && !is_front_page() && !is_404() ){
 					global $post;
 					if ( isset($post) ){
-						$segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
+						$segments = explode('/', trim(parse_url($this->super->server['REQUEST_URI'], PHP_URL_PATH), '/'));
 						$parents = get_post_ancestors($post->ID);
 						foreach ( $parents as $parent ){
 							if ( !empty($parent) ){
@@ -3009,7 +3010,7 @@ if ( !trait_exists('Functions') ){
 			$http = site_url(false, 'http');
 			$https = site_url(false, 'https');
 
-			if ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ){
+			if ( isset($this->super->server['HTTPS']) && $this->super->server['HTTPS'] === 'on' ){
 				return str_replace($http, $https, $url);
 			} else {
 				return $url;
@@ -3133,8 +3134,8 @@ if ( !trait_exists('Functions') ){
 				}
 
 				//Device information
-				if ( isset($_SERVER['HTTP_USER_AGENT']) ){
-					$debug_data .= $_SERVER['HTTP_USER_AGENT'] . PHP_EOL;
+				if ( isset($this->super->server['HTTP_USER_AGENT']) ){
+					$debug_data .= $this->super->server['HTTP_USER_AGENT'] . PHP_EOL;
 				}
 				if ( $this->get_option('device_detection') ){
 					$debug_data .= ucwords($this->get_device('formfactor'));

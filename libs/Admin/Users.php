@@ -44,7 +44,7 @@ if ( !trait_exists('Users') ){
 			if ( is_user_logged_in() ){
 				$logged_in_users = $this->get_data('users_status');
 
-				$unique_id = $this->get_ip_address() . '.' . preg_replace("/[^a-zA-Z0-9\.]+/", "", $_SERVER['HTTP_USER_AGENT']);
+				$unique_id = $this->get_ip_address() . '.' . preg_replace("/[^a-zA-Z0-9\.]+/", "", $this->super->server['HTTP_USER_AGENT']);
 				$current_user = wp_get_current_user();
 
 				//Technically, this should be sorted by user ID -then- unique id -then- the rest of the info. Currently, concurrent logins won't reset until they have ALL expired.
@@ -274,12 +274,12 @@ if ( !trait_exists('Users') ){
 				return false;
 			}
 
-			update_user_meta($user_id, 'jobtitle', sanitize_text_field($_POST['jobtitle']));
-			update_user_meta($user_id, 'jobcompany', sanitize_text_field($_POST['jobcompany']));
-			update_user_meta($user_id, 'jobcompanywebsite', sanitize_text_field($_POST['jobcompanywebsite']));
-			update_user_meta($user_id, 'usercity', sanitize_text_field($_POST['usercity']));
-			update_user_meta($user_id, 'userstate', sanitize_text_field($_POST['userstate']));
-			update_user_meta($user_id, 'phonenumber', sanitize_text_field($_POST['phonenumber']));
+			update_user_meta($user_id, 'jobtitle', sanitize_text_field($this->super->post['jobtitle']));
+			update_user_meta($user_id, 'jobcompany', sanitize_text_field($this->super->post['jobcompany']));
+			update_user_meta($user_id, 'jobcompanywebsite', sanitize_text_field($this->super->post['jobcompanywebsite']));
+			update_user_meta($user_id, 'usercity', sanitize_text_field($this->super->post['usercity']));
+			update_user_meta($user_id, 'userstate', sanitize_text_field($this->super->post['userstate']));
+			update_user_meta($user_id, 'phonenumber', sanitize_text_field($this->super->post['phonenumber']));
 		}
 
 		//Remove Yoast SEO user roles

@@ -133,11 +133,11 @@ if ( !trait_exists('Device') ){
 				return true;
 			}
 
-			if ( !empty($_SERVER['HTTP_USER_AGENT']) ){
+			if ( !empty($this->super->server['HTTP_USER_AGENT']) ){
 				$bot_regex = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http', 'favicon', 'curl', 'coda', 'netcraft');
 				$all_bot_regex = apply_filters('nebula_bot_regex', $bot_regex);
 				foreach( $all_bot_regex as $bot_regex ){
-					if ( strpos(strtolower($_SERVER['HTTP_USER_AGENT']), $bot_regex) !== false ){
+					if ( strpos(strtolower($this->super->server['HTTP_USER_AGENT']), $bot_regex) !== false ){
 						return true;
 					}
 				}
@@ -148,7 +148,7 @@ if ( !trait_exists('Device') ){
 
 		//Check if the current visitor is Googlebot (search indexing)
 		function is_googlebot(){
-			if ( !empty($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') ){
+			if ( !empty($this->super->server['HTTP_USER_AGENT']) && strpos($this->super->server['HTTP_USER_AGENT'], 'Googlebot') ){
 				$hostname = gethostbyaddr($this->get_ip_address(false));
 				if ( preg_match('/\.googlebot|google\.com$/i', $hostname) ){
 					return true;

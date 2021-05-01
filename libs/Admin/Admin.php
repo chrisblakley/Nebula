@@ -1077,7 +1077,7 @@ if ( !trait_exists('Admin') ){
 
 		//Force a re-install of the Nebula theme
 		public function force_nebula_theme_update($updates){
-			if ( isset($_GET['force-nebula-theme-update']) && current_user_can('update_themes') && $this->is_nebula() && is_child_theme() ){
+			if ( isset($this->super->get['force-nebula-theme-update']) && current_user_can('update_themes') && $this->is_nebula() && is_child_theme() ){
 				if ( empty(wp_cache_get('nebula_force_theme_update_log')) ){ //Only log this once per pageload
 					$parent_theme = wp_get_theme()->get('Template');
 
@@ -1266,7 +1266,7 @@ if ( !trait_exists('Admin') ){
 
 		//Send Google Analytics pageviews on the WP Admin and Login pages too
 		public function admin_ga_pageview(){
-			if ( empty($_POST['signed_request']) && $this->get_option('ga_tracking_id') ){
+			if ( empty($this->super->post['signed_request']) && $this->get_option('ga_tracking_id') ){
 				?>
 					<script>
 						window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
@@ -1436,11 +1436,11 @@ if ( !trait_exists('Admin') ){
 		//Duplicate post
 		public function duplicate_post_as_draft(){
 			global $wpdb;
-			if ( !(isset($_GET['post']) || isset($_POST['post']) || (isset($_REQUEST['action']) && $_REQUEST['action'] === 'duplicate_post_as_draft')) ){
+			if ( !(isset($this->super->post['post']) || isset($this->super->post['post']) || (isset($this->super->request['action']) && $this->super->request['action'] === 'duplicate_post_as_draft')) ){
 				wp_die('No post to duplicate has been supplied!');
 			}
 
-			$post_id = ( isset($_GET['post'] )? intval($_GET['post']) : intval($_POST['post'])); //Get the original post id
+			$post_id = ( isset($this->super->get['post'] )? intval($this->super->get['post']) : intval($this->super->post['post'])); //Get the original post id
 			$post = get_post($post_id); //Get all the original post data
 
 			$current_user = wp_get_current_user();
@@ -1528,7 +1528,7 @@ if ( !trait_exists('Admin') ){
 		//Clear caches when plugins are activated if W3 Total Cache is active
 		public function clear_all_w3_caches(){
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
-			if ( function_exists('w3tc_pgcache_flush') && isset($_SERVER['activate']) && $_SERVER['activate'] == 'true'){
+			if ( function_exists('w3tc_pgcache_flush') && isset($this->super->server['activate']) && $this->super->server['activate'] == 'true'){
 				w3tc_pgcache_flush();
 			}
 		}
@@ -1602,7 +1602,7 @@ if ( !trait_exists('Admin') ){
 		}
 
 		public function save_post_class_meta($post_id, $post){
-			if ( !isset($_POST['nebula_post_nonce']) || !wp_verify_nonce($_POST['nebula_post_nonce'], basename(__FILE__)) ){
+			if ( !isset($this->super->post['nebula_post_nonce']) || !wp_verify_nonce($this->super->post['nebula_post_nonce'], basename(__FILE__)) ){
 				return $post_id;
 			}
 
@@ -1613,7 +1613,7 @@ if ( !trait_exists('Admin') ){
 
 			$nebula_post_meta_fields = array('nebula_body_classes', 'nebula_post_classes', 'nebula_internal_search_keywords');
 			foreach ( $nebula_post_meta_fields as $nebula_post_meta_field ){
-				$new_meta_value = sanitize_text_field($_POST[$nebula_post_meta_field]); //Get the posted data and sanitize it if needed.
+				$new_meta_value = sanitize_text_field($this->super->post[$nebula_post_meta_field]); //Get the posted data and sanitize it if needed.
 				$meta_value = get_post_meta($post_id, $nebula_post_meta_field, true); //Get the meta value of the custom field key.
 				if ( $new_meta_value && empty($meta_value) ){ //If a new meta value was added and there was no previous value, add it.
 					add_post_meta($post_id, $nebula_post_meta_field, $new_meta_value, true);

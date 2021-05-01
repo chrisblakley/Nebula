@@ -39,29 +39,29 @@ if ( !trait_exists('Sass') ){
 
 				$sass_throttle = get_transient('nebula_sass_throttle'); //This prevents Sass from compiling multiple times in quick succession
 				if ( empty($sass_throttle) || $pagenow === 'update.php' || $this->is_debug() ){
-					$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not throttled (so okay to process).' : $this->sass_process_status;
+					$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass was not throttled (so okay to process).' : $this->sass_process_status;
 
 					//Ignore background requests (except for automated theme updates) and bots
 					if ( !$this->is_background_request() && !$this->is_bot() && $pagenow !== 'update-core.php' ){ //Ignore update-core.php (this listing page of updates)– that is different than update.php (which is the actual updater). Note: update.php is not considered a "background" request
-						$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass is enabled, and the request is okay to process.' : $this->sass_process_status;
+						$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass is enabled, and the request is okay to process.' : $this->sass_process_status;
 
 						//Ignore fetch requests (like via Service Worker) - Only process Sass on certain requests SW will fetch with the sec-fetch-mode header as "cors" or "no-cors".
-						if ( isset($_SERVER['HTTP_SEC_FETCH_MODE']) && !in_array($_SERVER['HTTP_SEC_FETCH_MODE'], array('navigate', 'nested-navigate', 'same-origin')) ){ //Maybe same-site too? Just avoid "cors" and "no-cors"
-							$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not processed. The fetch mode of "' . sanitize_text_field($_SERVER['HTTP_SEC_FETCH_MODE']) . '" was not suitable.' : $this->sass_process_status;
+						if ( isset($this->super->server['HTTP_SEC_FETCH_MODE']) && !in_array($this->super->server['HTTP_SEC_FETCH_MODE'], array('navigate', 'nested-navigate', 'same-origin')) ){ //Maybe same-site too? Just avoid "cors" and "no-cors"
+							$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass was not processed. The fetch mode of "' . sanitize_text_field($this->super->server['HTTP_SEC_FETCH_MODE']) . '" was not suitable.' : $this->sass_process_status;
 							$this->timer('Sass (Total)', 'end');
 							return false;
 						}
 
 						//Check when Sass processing is allowed to happen
 						if ( !current_user_can('publish_posts') ){ //If the role of this user is lower than necessary
-							$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not processed. It can only be processed by logged in users (per Nebula option).' : $this->sass_process_status;
+							$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass was not processed. It can only be processed by logged in users (per Nebula option).' : $this->sass_process_status;
 							$this->timer('Sass (Total)', 'end');
 							return false;
 						}
 
 						if ( !is_writable(get_template_directory()) || !is_writable(get_template_directory() . '/style.css') ){
 							trigger_error('The template directory or files are not writable. Can not compile Sass files!', E_USER_NOTICE);
-							$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass was not processed. The template directory or files are not writable.' : $this->sass_process_status;
+							$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass was not processed. The template directory or files are not writable.' : $this->sass_process_status;
 							$this->timer('Sass (Total)', 'end');
 							return false;
 						}
@@ -91,15 +91,15 @@ if ( !trait_exists('Sass') ){
 
 						//Check if all Sass files should be rendered
 						if ( $this->is_staff() ){ //Forcing all Sass files to process via query string is only allowed by staff
-							if ( isset($_GET['sass']) || isset($_GET['scss']) ){
+							if ( isset($this->super->get['sass']) || isset($this->super->get['scss']) ){
 								$force_all = true;
-								$this->sass_process_status = ( isset($_GET['sass']) )? 'All Sass files were processed forcefully via query string.' : $this->sass_process_status;
+								$this->sass_process_status = ( isset($this->super->get['sass']) )? 'All Sass files were processed forcefully via query string.' : $this->sass_process_status;
 								$this->add_log('Sass force re-process requested', 1); //Logging this one because it was specifically requested. The other conditions below are otherwise detected.
 							}
 
-							if ( !$force_all && (isset($_GET['settings-updated']) || $this->get_data('need_sass_compile') === 'true') ){
+							if ( !$force_all && (isset($this->super->get['settings-updated']) || $this->get_data('need_sass_compile') === 'true') ){
 								$force_all = true;
-								$this->sass_process_status = ( isset($_GET['sass']) )? 'All Sass files were processed forcefully after Nebula Options saved.' : $this->sass_process_status;
+								$this->sass_process_status = ( isset($this->super->get['sass']) )? 'All Sass files were processed forcefully after Nebula Options saved.' : $this->sass_process_status;
 							}
 						}
 
@@ -113,7 +113,7 @@ if ( !trait_exists('Sass') ){
 										$critical_file = $scss_location['core'] . 'critical.scss';
 										if ( file_exists($critical_file) && $scss_last_processed-filemtime($critical_file) < -30 ){
 											$force_all = true; //If critical.scss file has been edited, reprocess everything.
-											$this->sass_process_status = ( isset($_GET['sass']) )? 'All Sass files were processed forcefully because critical Sass was modified.' : $this->sass_process_status;
+											$this->sass_process_status = ( isset($this->super->get['sass']) )? 'All Sass files were processed forcefully because critical Sass was modified.' : $this->sass_process_status;
 											break; //No need to continue looking at individual directories/files since we are not reprocessing everything anyway
 										}
 									}
@@ -122,7 +122,7 @@ if ( !trait_exists('Sass') ){
 										foreach ( glob($imports_directory . '*') as $import_file ){ //Loop through all partial files
 											if ( $scss_last_processed-filemtime($import_file) < -30 ){
 												$force_all = true; //If any partial file has been edited, reprocess everything.
-												$this->sass_process_status = ( isset($_GET['sass']) )? 'All Sass files were processed forcefully because a partial file was modified (' . $import_file . ').' : $this->sass_process_status;
+												$this->sass_process_status = ( isset($this->super->get['sass']) )? 'All Sass files were processed forcefully because a partial file was modified (' . $import_file . ').' : $this->sass_process_status;
 												break 3; //Break out of all 3 foreach loops since we are now reprocessing everything anyway
 											}
 										}
@@ -148,19 +148,19 @@ if ( !trait_exists('Sass') ){
 							set_transient('nebula_sass_throttle', time(), 15); //15 second cache to throttle Sass from being re-processed again immediately. This may work as an object cache, but there is at least 4-6 seconds between the two process times, so this transient works well. Maybe it can be shortened to 10 seconds in the future?
 						}
 
-						$this->sass_process_status = ( !isset($_GET['sass']) && $this->was_sass_processed )? $this->sass_files_processed . ' Sass file(s) have been processed.' : $this->sass_process_status; //Show this status if Sass was processed but not explicitly forced. Otherwise use the existing status
+						$this->sass_process_status = ( !isset($this->super->get['sass']) && $this->was_sass_processed )? $this->sass_files_processed . ' Sass file(s) have been processed.' : $this->sass_process_status; //Show this status if Sass was processed but not explicitly forced. Otherwise use the existing status
 
 						if ( time()-$this->latest_scss_mtime >= MONTH_IN_SECONDS ){ //If the last style.scss modification has not happened within a month disable Sass to optimize all future page loads (no need to check files at all)
 							$this->update_option('scss', 0); //Once Sass is disabled this way, a developer would need to re-enable it in Nebula Options.
 							$this->sass_process_status = 'Sass processing has been disabled to improve performance because style.scss has not been modified in a month.';
 							$this->add_log('Sass processing has been disabled due to inactivity to improve performance.', 4); //The chances of someone noticing the above status is unlikely as it happens once after inactive development, so log this message explicitly
 						}
-					} elseif ( $this->is_dev() && !$this->is_admin_page() && (isset($_GET['sass']) || isset($_GET['scss'])) ){
-						$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass can not compile because it is disabled in Nebula Functions.' : $this->sass_process_status;
+					} elseif ( $this->is_dev() && !$this->is_admin_page() && (isset($this->super->get['sass']) || isset($this->super->get['scss'])) ){
+						$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass can not compile because it is disabled in Nebula Functions.' : $this->sass_process_status;
 						trigger_error('Sass can not compile because it is disabled in Nebula Functions.', E_USER_NOTICE);
 					}
 				} else {
-					$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass is throttled between processing. <span id="sass-cooldown-wait">Please wait for <strong id="sass-cooldown">15 seconds</strong>. </span><a id="sass-cooldown-again" class="hidden" href="?sass=true">Click here to try again now.</a>' : $this->sass_process_status;
+					$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass is throttled between processing. <span id="sass-cooldown-wait">Please wait for <strong id="sass-cooldown">15 seconds</strong>. </span><a id="sass-cooldown-again" class="hidden" href="?sass=true">Click here to try again now.</a>' : $this->sass_process_status;
 				}
 
 				$this->timer('Sass (Total)', 'stop', 'Sass');
@@ -330,7 +330,7 @@ if ( !trait_exists('Sass') ){
 				if ( $this->is_staff() || current_user_can('publish_pages') ){ //Staff or Editors
 					foreach ( $sass_errors as $sass_error ){
 						echo '<div class="nebula-admin-notice notice notice-error"><p><strong>[Sass Compilation Error]</strong> ' . $sass_error['message'] . ' in <strong>' . $sass_error['file'] . '</strong>. This file has been skipped and was not processed.</p></div>';
-						$this->sass_process_status = ( isset($_GET['sass']) )? 'Sass processing encountered an error and file(s) were skipped.' : $this->sass_process_status;
+						$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass processing encountered an error and file(s) were skipped.' : $this->sass_process_status;
 					}
 				}
 

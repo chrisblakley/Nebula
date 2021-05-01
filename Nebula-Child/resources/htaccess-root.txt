@@ -1,6 +1,10 @@
 #@TODO: Move to root directory.
 #@TODO: Rename this file to be: .htaccess
 
+############################
+# WordPress
+############################
+
 #BEGIN WordPress
 <IfModule mod_rewrite.c>
 	RewriteEngine On
@@ -27,16 +31,11 @@
 #RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
 ###################
 
-<IfModule mod_headers.c>
-	Header set Connection keep-alive
+############################
+# Compression
+# Conditionals for various Apache versions and enabled modules
+############################
 
-	#Allow cross-origin fonts
-	<FilesMatch "\.(ttf|ttc|otf|eot|woff|font.css|css)$">
-		Header set Access-Control-Allow-Origin "*"
-	</FilesMatch>
-</IfModule>
-
-#Compression (with conditionals for various Apache and enabled modules)
 <IfModule mod_deflate.c>
 	#Force deflate for mangled headers
 	<IfModule mod_setenvif.c>
@@ -145,7 +144,10 @@
 	</IfModule>
 </IfModule>
 
-#Cache files for applicable periods
+############################
+# Caching
+############################
+
 <IfModule mod_expires.c>
 	#Cache files for certain lengths of time
 	#1 Year
@@ -198,10 +200,35 @@
 	</IfVersion>
 </IfModule>
 
+############################
+# Redirects
+############################
+
+#If in a subdirectory, prepend that directory to all redirects.
+RedirectMatch 301 /wp-content/index.php /
+
+############################
+# Files & Connections
+############################
+
+<IfModule mod_headers.c>
+	#Keep connections alive
+	Header set Connection keep-alive
+
+	#Allow cross-origin fonts
+	<FilesMatch "\.(ttf|ttc|otf|eot|woff|font.css|css)$">
+		Header set Access-Control-Allow-Origin "*"
+	</FilesMatch>
+</IfModule>
+
 #Interpret .mjs files as JavaScript
 <IfModule mod_mime.c>
 	AddType text/javascript js mjs
 </IfModule>
+
+############################
+# Security
+############################
 
 #Forbid HTTP access to certain WordPress core PHP files
 <IfModule mod_rewrite.c>
@@ -217,10 +244,6 @@
 #RewriteCond %{HTTP_HOST}@@%{HTTP_REFERER} !^([^@]*)@@https?://\1/.*
 #RewriteCond %{HTTP_USER_AGENT} ^$
 #RewriteRule (.*) http://%{REMOTE_ADDR}/$ [R=301,L]
-
-#301 Redirects Here
-#If in a subdirectory, prepend that directory to all redirects.
-RedirectMatch 301 /wp-content/index.php /
 
 #Block XML-RPC
 <Files xmlrpc.php>

@@ -60,10 +60,13 @@ if ( !class_exists('Nebula') ){
 			define('NEBULA_URL', get_template_directory_uri()); //Nebula URL
 
 			//Super Globals
-			$this->globals = array(
-				'wp_version' => $GLOBALS['wp_version'],
-				'pagenow' => $GLOBALS['pagenow'],
-				'wp_customize' => ( !empty($GLOBALS['wp_customize']) )? $GLOBALS['wp_customize'] : null, //Not empty when closing the Customizer (whether saved or not)
+			$this->super = new Super(
+				$_SERVER,
+				$_GET,
+				$_POST,
+				$_COOKIE,
+				$GLOBALS,
+				( isset($_SESSION) )? $_SESSION : null
 			);
 
 			//Variables
@@ -96,7 +99,26 @@ if ( !class_exists('Nebula') ){
 }
 
 //The main function responsible for returning Nebula instance
-add_action('init', 'nebula', 1);
+add_action('init', 'nebula', 1); //Must call this by function handle so the child theme can also call it
 function nebula(){
 	return Nebula::instance();
+}
+
+//Encapsulate superglobals into a class
+class Super {
+	public $server;
+	public $get;
+	public $post;
+	public $session;
+	public $cookie;
+	public $globals;
+
+	public function __construct($server, $get, $post, $cookie, $globals, $session){
+		$this->server = $server;
+		$this->get = $get;
+		$this->post = $post;
+		$this->session = $session;
+		$this->cookie = $cookie;
+		$this->globals = $globals;
+	}
 }

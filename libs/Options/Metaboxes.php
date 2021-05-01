@@ -1483,7 +1483,7 @@ if ( !trait_exists('Metaboxes') ){
 					</div>
 
 					<p class="nebula-help-text short-help form-text text-muted">API keys from the <a href="https://console.developers.google.com/project" target="_blank" rel="noopener noreferrer">Google Developers Console</a>.</p>
-					<p class="nebula-help-text more-help form-text text-muted">In the Developers Console make a new project (if you don't have one yet). Under "Credentials" create a new key. Your current server IP address is <code><?php echo $_SERVER['SERVER_ADDR']; ?></code> (for IP restricting). Do not use an IP restricted key in JavaScript or any client-side code! Use HTTP referrer restrictions for browser keys.</p>
+					<p class="nebula-help-text more-help form-text text-muted">In the Developers Console make a new project (if you don't have one yet). Under "Credentials" create a new key. Your current server IP address is <code><?php echo $this->super->server['SERVER_ADDR']; ?></code> (for IP restricting). Do not use an IP restricted key in JavaScript or any client-side code! Use HTTP referrer restrictions for browser keys.</p>
 					<p class="option-keywords"></p>
 				</div>
 
@@ -1729,7 +1729,7 @@ if ( !trait_exists('Metaboxes') ){
 
 		public function nebula_dashboard_references_metabox($nebula_options){
 			$serverProtocol = 'http://';
-			if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443 ){
+			if ( (!empty($this->super->server['HTTPS']) && $this->super->server['HTTPS'] !== 'off') || $this->super->server['SERVER_PORT'] === 443 ){
 				$serverProtocol = 'https://';
 			}
 
@@ -1741,9 +1741,9 @@ if ( !trait_exists('Metaboxes') ){
 			?>
 				<div class="form-group">
 					<label for="cpanel_url">Server Control Panel URL</label>
-					<input type="text" name="nebula_options[cpanel_url]" id="cpanel_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['cpanel_url']; ?>" placeholder="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" />
+					<input type="text" name="nebula_options[cpanel_url]" id="cpanel_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['cpanel_url']; ?>" placeholder="<?php echo $serverProtocol . $this->super->server['SERVER_NAME']; ?>:2082" />
 					<p class="nebula-help-text short-help form-text text-muted">Link to the control panel of the hosting account.</p>
-					<p class="nebula-help-text more-help form-text text-muted">cPanel on this domain would be: <a href="<?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082" target="_blank" rel="noopener noreferrer"><?php echo $serverProtocol . $_SERVER['SERVER_NAME']; ?>:2082</a></p>
+					<p class="nebula-help-text more-help form-text text-muted">cPanel on this domain would be: <a href="<?php echo $serverProtocol . $this->super->server['SERVER_NAME']; ?>:2082" target="_blank" rel="noopener noreferrer"><?php echo $serverProtocol . $this->super->server['SERVER_NAME']; ?>:2082</a></p>
 					<p class="option-keywords"></p>
 				</div>
 

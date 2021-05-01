@@ -321,7 +321,7 @@
 				<?php do_action('nebula_ga_after_send_pageview'); ?>
 			});
 
-			<?php if ( (isset($_SERVER['HTTP_X_PURPOSE']) && $_SERVER['HTTP_X_PURPOSE'] === 'preview') && (isset($_SERVER['HTTP_USER_AGENT']) && strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'snapchat') > 0) ): //Check if viewing in Snapchat ?>
+			<?php if ( (isset(nebula()->super->server['HTTP_X_PURPOSE']) && nebula()->super->server['HTTP_X_PURPOSE'] === 'preview') && (isset(nebula()->super->server['HTTP_USER_AGENT']) && strpos(strtolower(nebula()->super->server['HTTP_USER_AGENT']), 'snapchat') > 0) ): //Check if viewing in Snapchat ?>
 				nebula.snapchatPageShown = false;
 				function onSnapchatPageShow(){ //Listen for swipe-up for Snapchat users due to preloading. This function is called from Snapchat itself!
 					nebula.snapchatPageShown = true;
@@ -407,7 +407,7 @@
 		<?php
 			$hubspot_identify = array(
 				'ipaddress' => nebula()->get_ip_address(),
-				'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+				'user_agent' => nebula()->super->server['HTTP_USER_AGENT'],
 				'session_id' => nebula()->nebula_session_id(), //If this hits rate limits, consider removing it
 			);
 

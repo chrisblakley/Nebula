@@ -42,8 +42,8 @@ if ( !trait_exists('Utilities') ){
 		public function get_ip_address($anonymize=true){
 			$ip_keys = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR');
 			foreach ( $ip_keys as $key ){
-				if ( array_key_exists($key, $_SERVER) === true ){
-					foreach ( explode(',', $_SERVER[$key]) as $ip ){
+				if ( array_key_exists($key, $this->super->server) === true ){
+					foreach ( explode(',', $this->super->server[$key]) as $ip ){
 						$ip = trim($ip);
 
 						if ( filter_var($ip, FILTER_VALIDATE_IP) ){ //Validate IP
@@ -160,7 +160,7 @@ if ( !trait_exists('Utilities') ){
 
 		//Check if viewing the login page.
 		public function is_login_page(){
-			if ( in_array($this->globals['pagenow'], array('wp-login.php', 'wp-register.php')) || $_SERVER['PHP_SELF'] == '/wp-login.php' ){
+			if ( in_array($this->super->globals['pagenow'], array('wp-login.php', 'wp-register.php')) || $this->super->server['PHP_SELF'] == '/wp-login.php' ){
 				return true;
 			}
 
@@ -309,7 +309,7 @@ if ( !trait_exists('Utilities') ){
 			if ( isset($override) ){return $override;}
 
 			$very_strict = ( $strict > 1 )? $strict : false;
-			if ( array_key_exists('debug', $_GET) ){
+			if ( array_key_exists('debug', $this->super->get) ){
 				if ( !empty($strict) ){
 					if ( $this->is_dev($very_strict) || $this->is_client($very_strict) ){
 						return true;
@@ -323,7 +323,7 @@ if ( !trait_exists('Utilities') ){
 
 		//If the current pageload is requested with more advanced detections
 		public function is_auditing(){
-			if ( ($this->get_option('audit_mode') || isset($_GET['audit'])) && (current_user_can('manage_options') || $this->is_dev()) && !is_customize_preview() && !$this->is_admin_page() ){
+			if ( ($this->get_option('audit_mode') || isset($this->super->get['audit'])) && (current_user_can('manage_options') || $this->is_dev()) && !is_customize_preview() && !$this->is_admin_page() ){
 				return true;
 			}
 
@@ -333,7 +333,7 @@ if ( !trait_exists('Utilities') ){
 		//If we should bypass the caches (if/when possible)
 		public function is_bypass_cache(){
 			//During debug, auditing, or when Customizer is saved/closed (yes, this global exists when closing Customizer without saving too)
-			if ( $this->is_debug() || $this->is_auditing() || !empty($this->globals['wp_customize']) || isset($_GET['nocache']) ){
+			if ( $this->is_debug() || $this->is_auditing() || !empty($this->super->globals['wp_customize']) || isset($this->super->get['nocache']) ){
 				return true;
 			}
 
@@ -391,7 +391,7 @@ if ( !trait_exists('Utilities') ){
 			if ( isset($override) ){return $override;}
 
 			$protocol = ( is_ssl() )? 'https' : 'http';
-			$full_url = $protocol . '://' . $_SERVER["$host"] . $_SERVER["REQUEST_URI"];
+			$full_url = $protocol . '://' . $this->super->server["$host"] . $this->super->server["REQUEST_URI"];
 
 			return esc_url($full_url);
 		}
@@ -668,7 +668,7 @@ if ( !trait_exists('Utilities') ){
 				$string_value = 'false';
 			}
 
-			$_COOKIE[$name] = $string_value;
+			$this->super->cookie[$name] = $string_value;
 			if ( !headers_sent() ){
 				setcookie(
 					$name,
@@ -1061,7 +1061,7 @@ if ( !trait_exists('Utilities') ){
 		//If the request was made via AJAX
 		public function is_ajax(){return $this->is_ajax_request();} //Alias
 		public function is_ajax_request(){
-			if ( wp_doing_ajax() || (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') ){
+			if ( wp_doing_ajax() || (!empty($this->super->server['HTTP_X_REQUESTED_WITH']) && strtolower($this->super->server['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') ){
 				return true;
 			}
 
@@ -1076,7 +1076,7 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			//Check for the REST API
-			if ( (defined('REST_REQUEST') && REST_REQUEST) || isset($_GET['rest_route']) ){
+			if ( (defined('REST_REQUEST') && REST_REQUEST) || isset($this->super->get['rest_route']) ){
 				return true;
 			}
 
@@ -1249,15 +1249,15 @@ if ( !trait_exists('Utilities') ){
 
 			//System resource usage timing
 			$this->server_timings['PHP System'] = array(
-				'start' => $_SERVER['REQUEST_TIME_FLOAT'],
-				'end' => $_SERVER['REQUEST_TIME_FLOAT']+($resource_usage['ru_stime.tv_usec']),
+				'start' => $this->super->server['REQUEST_TIME_FLOAT'],
+				'end' => $this->super->server['REQUEST_TIME_FLOAT']+($resource_usage['ru_stime.tv_usec']),
 				'time' => $resource_usage['ru_stime.tv_usec']/1000000 //PHP 7.4 use numeric separators here
 			);
 
 			//User resource usage timing
 			$this->server_timings['PHP User'] = array(
-				'start' => $_SERVER['REQUEST_TIME_FLOAT'],
-				'end' => $_SERVER['REQUEST_TIME_FLOAT']+($resource_usage['ru_utime.tv_usec']),
+				'start' => $this->super->server['REQUEST_TIME_FLOAT'],
+				'end' => $this->super->server['REQUEST_TIME_FLOAT']+($resource_usage['ru_utime.tv_usec']),
 				'time' => $resource_usage['ru_utime.tv_usec']/1000000 //PHP 7.4 use numeric separators here
 			);
 
@@ -1270,9 +1270,9 @@ if ( !trait_exists('Utilities') ){
 
 			//Total PHP execution time
 			$this->server_timings['PHP [Total]'] = array(
-				'start' => $_SERVER['REQUEST_TIME_FLOAT'],
+				'start' => $this->super->server['REQUEST_TIME_FLOAT'],
 				'end' => microtime(true),
-				'time' => microtime(true)-$_SERVER['REQUEST_TIME_FLOAT']
+				'time' => microtime(true)-$this->super->server['REQUEST_TIME_FLOAT']
 			);
 
 			return apply_filters('nebula_finalize_timings', $this->server_timings); //Allow functions/plugins to add/modifiy timings

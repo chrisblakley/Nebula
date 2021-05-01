@@ -55,14 +55,14 @@ if ( !trait_exists('Security') ){
 		//Log direct access to templates and prevent certain query strings
 		public function bad_access_prevention(){
 			//Log template direct access attempts
-			if ( array_key_exists('ndaat', $_GET) ){
-				$this->ga_send_exception('(Security) Direct Template Access Prevention on ' . $_GET['ndaat'], 0, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Direct Template Access Attempt'));
+			if ( array_key_exists('ndaat', $this->super->get) ){
+				$this->ga_send_exception('(Security) Direct Template Access Prevention on ' . $this->super->get['ndaat'], 0, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Direct Template Access Attempt'));
 				header('Location: ' . home_url('/'));
 				exit;
 			}
 
 			//Prevent known bot/brute-force query strings.
-			if ( array_key_exists('modTest', $_GET) ){
+			if ( array_key_exists('modTest', $this->super->get) ){
 				header("HTTP/1.1 403 Unauthorized");
 				exit;
 			}
@@ -120,14 +120,14 @@ if ( !trait_exists('Security') ){
 
 		//Check referrer in order to comment
 		public function check_referrer(){
-			if ( !isset($_SERVER['HTTP_REFERER']) || empty($_SERVER['HTTP_REFERER']) ){
+			if ( !isset($this->super->server['HTTP_REFERER']) || empty($this->super->server['HTTP_REFERER']) ){
 				wp_die('Please do not access this file directly.');
 			}
 		}
 
 		//Disable author archives to prevent ?author=1 from showing usernames.
 		public function redirect_author_template(){
-			if ( (isset($_GET['author']) || basename($this->current_theme_template) == 'author.php') && !$this->get_option('author_bios') ){
+			if ( (isset($this->super->get['author']) || basename($this->current_theme_template) == 'author.php') && !$this->get_option('author_bios') ){
 				wp_redirect(apply_filters('nebula_no_author_redirect', home_url('/') . '?s=about'));
 				exit;
 			}
@@ -160,14 +160,14 @@ if ( !trait_exists('Security') ){
 			}
 
 			//Google Page Speed
-			if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Google Page Speed') !== false ){
+			if ( strpos($this->super->server['HTTP_USER_AGENT'], 'Google Page Speed') !== false ){
 				if ( $this->url_components('extension') !== 'js' ){
 					global $post;
 				}
 			}
 
 			//Internet Archive Wayback Machine
-			if ( strpos($_SERVER['HTTP_USER_AGENT'], 'archive.org_bot') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Wayback Save Page') !== false ){
+			if ( strpos($this->super->server['HTTP_USER_AGENT'], 'archive.org_bot') !== false || strpos($this->super->server['HTTP_USER_AGENT'], 'Wayback Save Page') !== false ){
 				global $post;
 			}
 		}
@@ -177,7 +177,7 @@ if ( !trait_exists('Security') ){
 			$this->timer('Spam Domain Prevention');
 
 			//Skip lookups if user has already been checked or for logged in users.
-			if ( (isset($_COOKIE['spam_domain']) && $_COOKIE['spam_domain'] === false) || is_user_logged_in() ){
+			if ( (isset($this->super->cookie['spam_domain']) && $this->super->cookie['spam_domain'] === false) || is_user_logged_in() ){
 				return false;
 			}
 
@@ -186,22 +186,22 @@ if ( !trait_exists('Security') ){
 				$ip_address = $this->get_ip_address();
 
 				if ( count($spam_domain_array) > 1 ){
-					if ( isset($_SERVER['HTTP_REFERER']) && $this->contains(strtolower($_SERVER['HTTP_REFERER']), $spam_domain_array) ){
-						$this->ga_send_exception('(Security) Spam domain prevented. Referrer: ' . $_SERVER['HTTP_REFERER'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Referrer'));
+					if ( isset($this->super->server['HTTP_REFERER']) && $this->contains(strtolower($this->super->server['HTTP_REFERER']), $spam_domain_array) ){
+						$this->ga_send_exception('(Security) Spam domain prevented. Referrer: ' . $this->super->server['HTTP_REFERER'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Referrer'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
 
-					if ( isset($_SERVER['REMOTE_HOST']) && $this->contains(strtolower($_SERVER['REMOTE_HOST']), $spam_domain_array) ){
-						$this->ga_send_exception('(Security) Spam domain prevented. Hostname: ' . $_SERVER['REMOTE_HOST'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Hostname'));
+					if ( isset($this->super->server['REMOTE_HOST']) && $this->contains(strtolower($this->super->server['REMOTE_HOST']), $spam_domain_array) ){
+						$this->ga_send_exception('(Security) Spam domain prevented. Hostname: ' . $this->super->server['REMOTE_HOST'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Hostname'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
 
-					if ( isset($_SERVER['SERVER_NAME']) && $this->contains(strtolower($_SERVER['SERVER_NAME']), $spam_domain_array) ){
-						$this->ga_send_exception('(Security) Spam domain prevented. Server Name: ' . $_SERVER['SERVER_NAME'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Server Name'));
+					if ( isset($this->super->server['SERVER_NAME']) && $this->contains(strtolower($this->super->server['SERVER_NAME']), $spam_domain_array) ){
+						$this->ga_send_exception('(Security) Spam domain prevented. Server Name: ' . $this->super->server['SERVER_NAME'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Server Name'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
@@ -281,7 +281,7 @@ if ( !trait_exists('Security') ){
 
 		//Cookie Notification HTML that appears in the footer
 		public function cookie_notification(){
-			if ( $this->option('cookie_notification') && empty($_COOKIE['acceptcookies']) ){
+			if ( $this->option('cookie_notification') && empty($this->super->cookie['acceptcookies']) ){
 				?>
 				<div id="nebula-cookie-notification" role="region" aria-label="Accept Cookies">
 					<p><?php echo $this->option('cookie_notification'); ?></p>

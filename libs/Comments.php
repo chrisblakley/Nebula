@@ -108,9 +108,9 @@ trait Comments {
 				echo 'cookieAuthorName = "";';
 				echo 'cookieAuthorEmail = "";';
 
-				if ( isset($_COOKIE['comment_author_' . COOKIEHASH]) ){
-					echo 'cookieAuthorName = "' . $_COOKIE['comment_author_' . COOKIEHASH] . '";';
-					echo 'cookieAuthorEmail = "' . $_COOKIE['comment_author_email_' . COOKIEHASH] . '";';
+				if ( isset($this->super->cookie['comment_author_' . COOKIEHASH]) ){
+					echo 'cookieAuthorName = "' . $this->super->cookie['comment_author_' . COOKIEHASH] . '";';
+					echo 'cookieAuthorEmail = "' . $this->super->cookie['comment_author_email_' . COOKIEHASH] . '";';
 				}
 			echo '</script>';
 		}

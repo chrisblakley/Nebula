@@ -29,11 +29,11 @@ if ( !trait_exists('Analytics') ){
 				return false;
 			}
 
-			if ( isset($_GET['noga']) || is_customize_preview() ){ //Disable analytics for ?noga query string
+			if ( isset($this->super->get['noga']) || is_customize_preview() ){ //Disable analytics for ?noga query string
 				return false;
 			}
 
-			if ( $this->get_ip_address() === wp_privacy_anonymize_ip($_SERVER['SERVER_ADDR']) ){ //Disable analytics for self-requests by the server
+			if ( $this->get_ip_address() === wp_privacy_anonymize_ip($this->super->server['SERVER_ADDR']) ){ //Disable analytics for self-requests by the server
 				return false;
 			}
 
@@ -43,7 +43,7 @@ if ( !trait_exists('Analytics') ){
 		//If the "Do Not Track" browser setting is enabled
 		//True = DNT, False = tracking allowed
 		public function is_do_not_track(){
-			if ( isset($_SERVER['HTTP_DNT']) && $_SERVER['HTTP_DNT'] == 1 ){
+			if ( isset($this->super->server['HTTP_DNT']) && $this->super->server['HTTP_DNT'] == 1 ){
 				return true;
 			}
 
@@ -56,8 +56,8 @@ if ( !trait_exists('Analytics') ){
 			if ( isset($override) ){return $override;}
 
 			$cid = $this->generate_UUID();
-			if ( isset($_COOKIE['_ga']) ){
-				list($version, $domainDepth, $cid1, $cid2) = explode('.', $_COOKIE["_ga"], 4);
+			if ( isset($this->super->cookie['_ga']) ){
+				list($version, $domainDepth, $cid1, $cid2) = explode('.', $this->super->cookie["_ga"], 4);
 				$contents = array('version' => $version, 'domainDepth' => $domainDepth, 'cid' => $cid1 . '.' . $cid2);
 				$cid = $contents['cid'];
 			}
@@ -179,7 +179,7 @@ if ( !trait_exists('Analytics') ){
 				't' => 'pageview',
 				'tid' => 'UA-36461517-5',
 				'cid' => $this->ga_parse_cookie(),
-				'ua' => rawurlencode($_SERVER['HTTP_USER_AGENT']),
+				'ua' => rawurlencode($this->super->server['HTTP_USER_AGENT']),
 				'uip' => $this->get_ip_address(),
 				'dh' => ( function_exists('gethostname') )? gethostname() : '',
 				'dl' => $action,
@@ -222,7 +222,7 @@ if ( !trait_exists('Analytics') ){
 						't' => 'exception',
 						'exd' => '(PHP) ' . $message . ' on line ' . $error['line'] . ' in ' . $file,
 						'exf' => true,
-						'cd12' => (( isset($_SERVER['HTTPS']) )? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
+						'cd12' => (( isset($this->super->server['HTTPS']) )? 'https' : 'http') . '://' . $this->super->server['HTTP_HOST'] . $this->super->server['REQUEST_URI']
 					));
 				}
 			}
@@ -267,10 +267,10 @@ if ( !trait_exists('Analytics') ){
 				'v' => 1, //Protocol Version
 				'tid' => $this->get_option('ga_tracking_id'), //Tracking ID
 				'cid' => $this->ga_parse_cookie(), //Client ID
-				'ua' => ( !empty($_SERVER['HTTP_USER_AGENT']) )? rawurlencode($_SERVER['HTTP_USER_AGENT']): '', //User Agent
+				'ua' => ( !empty($this->super->server['HTTP_USER_AGENT']) )? rawurlencode($this->super->server['HTTP_USER_AGENT']): '', //User Agent
 				'uip' => $this->get_ip_address(), //Anonymized IP Address
-				'ul' => ( class_exists('Locale') && !empty($_SERVER['HTTP_ACCEPT_LANGUAGE']) )? locale_accept_from_http($_SERVER['HTTP_ACCEPT_LANGUAGE']) : '', //User Language
-				'dr' => ( isset($_SERVER['HTTP_REFERER']) )? $_SERVER['HTTP_REFERER'] : '', //Referrer
+				'ul' => ( class_exists('Locale') && !empty($this->super->server['HTTP_ACCEPT_LANGUAGE']) )? locale_accept_from_http($this->super->server['HTTP_ACCEPT_LANGUAGE']) : '', //User Language
+				'dr' => ( isset($this->super->server['HTTP_REFERER']) )? $this->super->server['HTTP_REFERER'] : '', //Referrer
 				'dl' => $this->requested_url(), //Likely "admin-ajax.php" until overwritten
 				'dt' => ( get_the_title() )? get_the_title() : '', //Likely empty until overwritten
 			);
@@ -310,27 +310,27 @@ if ( !trait_exists('Analytics') ){
 			$utm_query = array();
 
 			//Set the utm_campaign parameter
-			if ( isset($_GET['utm_campaign']) ){
-				$utm_query[] = 'utm_campaign=' . $_GET['utm_campaign'];
+			if ( isset($this->super->get['utm_campaign']) ){
+				$utm_query[] = 'utm_campaign=' . $this->super->get['utm_campaign'];
 			}
 
 			//Set the utm_source parameter
 			$utm_source = $this->url_components('hostname', site_url()); //Default to the hostname of the site
-			if ( isset($_GET['utm_source']) ){
-				$utm_source = esc_attr($_GET['utm_source']);
+			if ( isset($this->super->get['utm_source']) ){
+				$utm_source = esc_attr($this->super->get['utm_source']);
 			}
 			$utm_query[] = 'utm_source=' . $utm_source;
 
 			//Set the utm_medium parameter
 			$utm_medium = 'feed';
-			if ( isset($_GET['utm_medium']) ){
-				$utm_medium = esc_attr($_GET['utm_medium']);
+			if ( isset($this->super->get['utm_medium']) ){
+				$utm_medium = esc_attr($this->super->get['utm_medium']);
 			}
 			$utm_query[] = 'utm_medium=' . $utm_medium;
 
 			//Set the utm_content parameter
-			if ( isset($_GET['utm_content']) ){
-				$utm_query[] = 'utm_content=' . $_GET['utm_content'];
+			if ( isset($this->super->get['utm_content']) ){
+				$utm_query[] = 'utm_content=' . $this->super->get['utm_content'];
 			}
 
 			$url = explode('?', $link);

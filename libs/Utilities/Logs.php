@@ -53,7 +53,7 @@ if ( !trait_exists('Logs') ){
 
 		//Create Nebula logs table
 		public function create_tables(){
-			if ( !$this->is_admin_page() && !isset($_GET['settings-updated']) && !$this->is_staff() ){ //Only trigger this in admin when Nebula Options are saved (by a staff member)
+			if ( !$this->is_admin_page() && !isset($this->super->get['settings-updated']) && !$this->is_staff() ){ //Only trigger this in admin when Nebula Options are saved (by a staff member)
 				return;
 			}
 
@@ -114,10 +114,10 @@ if ( !trait_exists('Logs') ){
 
 		//Insert log via admin interface (AJAX)
 		public function add_log_via_ajax(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('{response:"Permission Denied. Refresh and try again."}'); }
+			if ( !wp_verify_nonce($this->super->post['nonce'], 'nebula_ajax_nonce') ){ wp_die('{response:"Permission Denied. Refresh and try again."}'); }
 
-			$message = sanitize_text_field($_POST['message']); //Sanitize message string
-			$importance = intval($_POST['importance']); //Sanitize importance integer @todo "Nebula" 0: nullish coalescing operator here (set to 4)
+			$message = sanitize_text_field($this->super->post['message']); //Sanitize message string
+			$importance = intval($this->super->post['importance']); //Sanitize importance integer @todo "Nebula" 0: nullish coalescing operator here (set to 4)
 
 			$this->add_log($message, $importance);
 			exit('{response:success}');
@@ -138,9 +138,9 @@ if ( !trait_exists('Logs') ){
 
 		//Remove log via admin interface (AJAX)
 		public function remove_log_via_ajax(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('{response:"Permission Denied. Refresh and try again."}'); }
+			if ( !wp_verify_nonce($this->super->post['nonce'], 'nebula_ajax_nonce') ){ wp_die('{response:"Permission Denied. Refresh and try again."}'); }
 
-			$log_id = intval($_POST['id']); //Sanitize ID
+			$log_id = intval($this->super->post['id']); //Sanitize ID
 			$this->remove_log($log_id);
 			exit('{response:success}');
 		}
@@ -160,9 +160,9 @@ if ( !trait_exists('Logs') ){
 
 		//Remove all low importance logs from DB via admin interface (AJAX)
 		public function clean_logs_via_ajax(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'nebula_ajax_nonce') ){ wp_die('{response:"Permission Denied. Refresh and try again."}'); }
+			if ( !wp_verify_nonce($this->super->post['nonce'], 'nebula_ajax_nonce') ){ wp_die('{response:"Permission Denied. Refresh and try again."}'); }
 
-			$importance = intval($_POST['importance']); //Sanitize importance
+			$importance = intval($this->super->post['importance']); //Sanitize importance
 			$this->clean_logs($importance);
 			exit('{response:success}');
 		}
