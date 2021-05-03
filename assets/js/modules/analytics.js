@@ -81,19 +81,16 @@ nebula.eventTracking = async function(){
 		if ( 'localStorage' in window ){
 			let prev = {
 				'path': document.location.pathname, //Prep the "previous page" to this page for future use.
-				'quick': false //Reset the flag
+				'quick': true //Set this to true initially until it is not longer considered a quick back
 			};
 
 			localStorage.setItem('prev', JSON.stringify(prev)); //Store them in localstorage
 
-			//This detects quick navigations/refresh/exit that happen in the first 4 seconds after window load
-			window.addEventListener('beforeunload', function(e){
-				let activeTime = Date.now() - performance.timing.loadEventEnd;
-				if ( activeTime < 4000 ){
-					prev.quick = true;
-					localStorage.setItem('prev', JSON.stringify(prev)); //Store the flag to tell the next page it was a quick back
-				}
-			});
+			//After 4 seconds change quick to false so it is no longer considered a quick back
+			setTimeout(function(){
+				prev.quick = false;
+				localStorage.setItem('prev', JSON.stringify(prev));
+			}, 4000);
 		}
 
 		//Button Clicks
@@ -910,7 +907,7 @@ nebula.eventTracking = async function(){
 			if ( 'ReportingObserver' in window ){ //Chrome 68+
 				let nebulaReportingObserver = new ReportingObserver(function(reports, observer){
 					for ( let report of reports ){
-						if ( report.body && !['extension', 'about:blank'].some((item) => report.body.sourceFile.includes(item)) ){ //Ignore certain files
+						if ( report?.body?.sourceFile && !['extension', 'about:blank'].some((item) => report.body.sourceFile.includes(item)) ){ //Ignore certain files
 							ga('send', 'exception', {'exDescription': '(JS) Reporting Observer [' + report.type + ']: ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber, 'exFatal': false});
 						}
 					}
@@ -1256,7 +1253,7 @@ nebula.scrollDepth = async function(){
 		}
 
 		//if ( nebula.analytics.metrics.maxScroll ){ //Trying this for all visitors, but may limit to this custom metric if too many events...
-			window.addEventListener('beforeunload', function(e){ //Watch for the unload to send max scroll depth to GA (to avoid tons of events)
+			window.addEventListener('beforeunload', function(e){ //Watch for the unload to send max scroll depth to GA (to avoid tons of events). Note: this event listener invalidates BFCache in Firefox...
 				nebula.updateMaxScrollDepth(); //Check one last time
 
 				let thisEvent = {

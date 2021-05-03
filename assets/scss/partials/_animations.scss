@@ -65,7 +65,7 @@
 	0% {transform: translate3d(0, 0, 0); animation-timing-function: easing(easeOutQuad);}
 	25% {transform: translate3d(20px, 0, 0); animation-timing-function: easing(easeOutQuad);}
 	75% {transform: translate3d(-20px, 0, 0); animation-timing-function: linear;}
-	0% {transform: translate3d(0, 0, 0); animation-timing-function: linear;}
+	100% {transform: translate3d(0, 0, 0); animation-timing-function: linear;}
 }
 
 //Wave Y
@@ -75,7 +75,7 @@
 	0% {transform: translate3d(0, 0, 0); animation-timing-function: easing(easeOutQuad);}
 	25% {transform: translate3d(0, 50%, 0); animation-timing-function: easing(easeOutQuad);}
 	75% {transform: translate3d(0, -50%, 0); animation-timing-function: linear;}
-	0% {transform: translate3d(0, 0, 0); animation-timing-function: linear;}
+	100% {transform: translate3d(0, 0, 0); animation-timing-function: linear;}
 }
 
 

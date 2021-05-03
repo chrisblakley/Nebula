@@ -149,7 +149,7 @@ if ( !trait_exists('Warnings') ){
 								$sitemap_warning = true;
 								$nebula_warnings['missing_sitemap'] = array(
 									'level' => 'warning',
-									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. Yoast is enabled, but <a href="' . home_url('/') . 'sitemap_index.xml' . '" target="_blank">sitemap_index.xml</a> is unavailable.'
+									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. Yoast is enabled, but <a href="' . home_url('/') . 'sitemap_index.xml" target="_blank">sitemap_index.xml</a> is unavailable.'
 								);
 							}
 						} elseif ( is_plugin_active('autodescription/autodescription.php') ){ //The SEO Framework
@@ -157,7 +157,7 @@ if ( !trait_exists('Warnings') ){
 								$sitemap_warning = true;
 								$nebula_warnings['missing_sitemap'] = array(
 									'level' => 'warning',
-									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. The SEO Framework is enabled, but <a href="' . home_url('/') . 'sitemap.xml' . '" target="_blank">sitemap.xml</a> is unavailable.'
+									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. The SEO Framework is enabled, but <a href="' . home_url('/') . 'sitemap.xml" target="_blank">sitemap.xml</a> is unavailable.'
 								);
 							}
 						} else {
@@ -165,7 +165,7 @@ if ( !trait_exists('Warnings') ){
 								$sitemap_warning = true;
 								$nebula_warnings['missing_sitemap'] = array(
 									'level' => 'warning',
-									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. WordPress core <a href="' . home_url('/') . 'wp-sitemap.xml' . '" target="_blank">sitemap_index.xml</a> is unavailable.'
+									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. WordPress core <a href="' . home_url('/') . 'wp-sitemap.xml" target="_blank">sitemap_index.xml</a> is unavailable.'
 								);
 
 								//Check if the SimpleXML PHP module is installed on the server (required for WP core sitemap generation)

@@ -465,9 +465,9 @@ if ( !trait_exists('Optimization') ){
 			$default_prefetches = array();
 
 			//Subpages
-			if ( !is_front_page() ){
-				//$default_prefetches[] = home_url('/'); //Prefetch the home page on subpages. Disabled because this may be loading more than we want on initial pageload
-			}
+			// if ( !is_front_page() ){
+			// 	//$default_prefetches[] = home_url('/'); //Prefetch the home page on subpages. Disabled because this may be loading more than we want on initial pageload
+			// }
 
 			//Search Results
 			if ( is_search() ){

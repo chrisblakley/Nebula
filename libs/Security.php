@@ -30,7 +30,7 @@ if ( !trait_exists('Security') ){
 			}
 		}
 
-		//Additional security headers.
+		//Additional security headers
 		//Test with https://securityheaders.io/
 		public function security_headers(){
 			header('x-frame-options: SAMEORIGIN');
@@ -43,12 +43,14 @@ if ( !trait_exists('Security') ){
 			header('Cross-Origin-Opener-Policy: same-origin-allow-popups;');
 
 			if ( is_ssl() ){
-				header('Strict-Transport-Security: max-age=' . YEAR_IN_SECONDS . '; includeSubDomains; preload'); //https://scotthelme.co.uk/hsts-the-missing-link-in-tls/
+				header('Strict-Transport-Security: max-age=' . YEAR_IN_SECONDS . '; includeSubDomains; preload'); //https://scotthelme.co.uk/hsts-the-missing-link-in-tls/ and consider submitting to https://hstspreload.org/
 				header('Referrer-Policy: no-referrer-when-downgrade'); //https://scotthelme.co.uk/a-new-security-header-referrer-policy/
 
 				//Content Security Policy (CSP) and Feature Policy should be set by the child theme. Nebula cannot predict what endpoints or what features will be used, so setting these security policies in the parent theme (outside the control of developers) would be far too restrictive.
-					//Content Security Policy: https://scotthelme.co.uk/content-security-policy-an-introduction/
-					//Feature Policy: https://scotthelme.co.uk/a-new-security-header-feature-policy/ and https://caniuse.com/#feat=feature-policy
+				$csp = apply_filters('nebula_csp', 'default-src https: "unsafe-inline";'); //Require https and ignore (allow) inline scripts by default, allow others to hook in to modify the default CSP
+				header('Content-Security-Policy-Report-Only: ' . $csp); //Nebula only reports to the console
+
+				//Permissions Policy: https://scotthelme.co.uk/goodbye-feature-policy-and-hello-permissions-policy/ and https://caniuse.com/#feat=feature-policy and https://caniuse.com/permissions-policy
 			}
 		}
 
