@@ -1420,11 +1420,11 @@ if ( !trait_exists('Functions') ){
 
 				echo '</ol>';
 			} elseif ( is_home() || is_front_page() ){
-				echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . ' <span class="sr-only">' . get_bloginfo('title') . '</span></span></a><meta itemprop="position" content="' . $position . '" /></li></ol>';
+				echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . ' <span class="visually-hidden">' . get_bloginfo('title') . '</span></span></a><meta itemprop="position" content="' . $position . '" /></li></ol>';
 				$position++;
 				return false;
 			} else {
-				echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . ' <span class="sr-only">' . get_bloginfo('title') . '</span></span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ';
+				echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . ' <span class="visually-hidden">' . get_bloginfo('title') . '</span></span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ';
 				$position++;
 
 				if ( is_category() ){
@@ -1589,13 +1589,11 @@ if ( !trait_exists('Functions') ){
 
 			$placeholder = ( get_search_query() )? get_search_query() : __('Search', 'nebula');
 
-			$form = '<form id="searchform" class="form-group form-inline ignore-form" role="search" method="get" action="' . home_url('/') . '">
-						<div class="input-group mb-2 mr-sm-2 mb-sm-0">
-							<div class="input-group-prepend mb-2">
-								<div class="input-group-text"><i class="fas fa-search"></i></div>
-							</div>
-							<label class="sr-only" for="s">Search</label>
-							<input id="s" class="form-control ignore-form mb-2" type="text" name="s" value="' . get_search_query() . '" placeholder="' . $placeholder . '" role="search" />
+			$form = '<form id="searchform" class="ignore-form" role="search" method="get" action="' . home_url('/') . '">
+						<div class="input-group">
+							<div class="input-group-text"><i class="fas fa-search"></i></div>
+							<label class="visually-hidden" for="s">Search</label>
+							<input id="s" class="form-control ignore-form" type="text" name="s" value="' . get_search_query() . '" placeholder="' . $placeholder . '" role="search" />
 						</div>';
 
 			if ( !empty($button) ){
@@ -1620,7 +1618,7 @@ if ( !trait_exists('Functions') ){
 					<form id="nebula-hero-search" class="form-group search ignore-form" method="get" action="' . home_url('/') . '" role="search">
 						<div class="input-group">
 							<i class="fas fa-search"></i>
-							<label class="sr-only" for="nebula-hero-search-input">Autocomplete Search</label>
+							<label class="visually-hidden" for="nebula-hero-search-input">Autocomplete Search</label>
 							<input id="nebula-hero-search-input" type="search" class="form-control open input search nofade ignore-form" name="s" placeholder="' . $placeholder . '" autocomplete="off" tabindex="0" x-webkit-speech />
 						</div>
 					</form>

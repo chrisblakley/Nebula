@@ -929,15 +929,15 @@ if ( !trait_exists('Widgets') ){
 				if ( $instance['video_provider'] === 'youtube' ){
 					$youtube_data = nebula()->video_meta('youtube', $instance['video_id']);
 					?>
-					<div class="embed-responsive embed-responsive-16by9">
-						<iframe class="youtube embed-responsive-item" src="//www.youtube.com/embed/<?php echo $instance['video_id']; ?>?wmode=transparent&enablejsapi=1&rel=0" width="560" height="315" title="<?php echo $instance['title']; ?>" loading="lazy"></iframe>
+					<div class="ratio ratio-16x9">
+						<iframe class="youtube" src="//www.youtube.com/embed/<?php echo $instance['video_id']; ?>?wmode=transparent&enablejsapi=1&rel=0" width="560" height="315" title="<?php echo $instance['title']; ?>" loading="lazy"></iframe>
 					</div>
 					<?php
 				} else {
 					$vimeo_data = nebula()->video_meta('vimeo', '208432684');
 					?>
-					<div class="embed-responsive embed-responsive-16by9">
-						<iframe id="<?php echo $instance['video_id']; ?>" class="vimeo embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $instance['video_id']; ?>" width="560" height="315" title="<?php echo $instance['title']; ?>" loading="lazy"></iframe>
+					<div class="ratio ratio-16x9">
+						<iframe id="<?php echo $instance['video_id']; ?>" class="vimeo" src="https://player.vimeo.com/video/<?php echo $instance['video_id']; ?>" width="560" height="315" title="<?php echo $instance['title']; ?>" loading="lazy"></iframe>
 					</div>
 					<?php
 				}

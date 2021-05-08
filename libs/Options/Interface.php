@@ -54,11 +54,11 @@
 					<div id="stickynav">
 						<ul id="options-navigation" class="nav nav-pills flex-column">
 							<?php foreach ( $this->get_option_categories() as $category ): ?>
-								<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === strtolower($category['name']) )? 'active' : ''; ?>" href="#<?php echo strtolower($category['name']); ?>" data-toggle="tab"><i class="fas fa-fw <?php echo $category['icon']; ?>"></i> <?php echo $category['name']; ?></a></li>
+								<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === strtolower($category['name']) )? 'active' : ''; ?>" href="#<?php echo strtolower($category['name']); ?>" data-bs-toggle="tab"><i class="fas fa-fw <?php echo $category['icon']; ?>"></i> <?php echo $category['name']; ?></a></li>
 							<?php endforeach; ?>
 
 							<?php if ( current_user_can('manage_options') ): ?>
-								<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'diagnostic' )? 'active' : ''; ?>" href="#diagnostic" data-toggle="tab"><i class="fas fa-fw fa-life-ring"></i> Diagnostic</a></li>
+								<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'diagnostic' )? 'active' : ''; ?>" href="#diagnostic" data-bs-toggle="tab"><i class="fas fa-fw fa-life-ring"></i> Diagnostic</a></li>
 							<?php endif; ?>
 						</ul>
 

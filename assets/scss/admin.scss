@@ -42,6 +42,7 @@ ul.nebula-fa-ul {margin-left: 1.5em; padding-left: 0;
 //Ensure Dashboard metabox titles are all left-aligned (v5.5+)
 .js .postbox .hndle,
 .js .widget .widget-top {justify-content: start;}
+.postbox a {text-decoration: none;} //Remove underlines from Dashboard metabox links
 
 .filtereditem {display: none !important;}
 

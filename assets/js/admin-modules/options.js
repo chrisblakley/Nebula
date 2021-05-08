@@ -7,7 +7,7 @@ nebula.optionsInit = function(){
 	nebula.logs();
 
 	//These wait for Window load
-	jQuery(window).on('load', function(){
+	nebula.bufferedWindowLoad(function(){
 		nebula.optionsFilters();
 		nebula.assetScan();
 	});

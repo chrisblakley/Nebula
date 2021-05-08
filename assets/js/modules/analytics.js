@@ -131,7 +131,7 @@ nebula.eventTracking = async function(){
 				event: e,
 				category: 'Accordion',
 				action: 'Shown', //GA4 Name: "accordion_toggle"?
-				label: jQuery('[data-target="#' + e.target.id + '"]').text().trim() || e.target.id,
+				label: jQuery('[data-bs-target="#' + e.target.id + '"]').text().trim() || e.target.id,
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -143,7 +143,7 @@ nebula.eventTracking = async function(){
 				event: e,
 				category: 'Accordion',
 				action: 'Hidden', //GA4 Name: "accordion_toggle"?
-				label: jQuery('[data-target="#' + e.target.id + '"]').text().trim() || e.target.id,
+				label: jQuery('[data-bs-target="#' + e.target.id + '"]').text().trim() || e.target.id,
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -719,7 +719,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Skip to Content and other screen reader link focuses (which indicate screenreader software is being used in this session)
-		nebula.dom.document.on('focus', '.sr-only', function(e){
+		nebula.dom.document.on('focus', '.visually-hidden', function(e){
 			let thisEvent = {
 				event: e,
 				category: 'Accessibility Links',
@@ -734,7 +734,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Skip to Content and other screen reader link clicks (which indicate screenreader software is being used in this session)
-		nebula.dom.document.on('click', '.sr-only', function(e){
+		nebula.dom.document.on('click', '.visually-hidden', function(e){
 			let thisEvent = {
 				event: e,
 				category: 'Accessibility Links',

@@ -55,7 +55,7 @@ function register_nebula_child_assets(){
 	 Register Child Scripts
 	 ===========================*/
 
-	//Use CDNJS to pull common libraries: http://cdnjs.com/
+	//Use jsDelivr to pull common libraries: https://www.jsdelivr.com/
 	//nebula()->register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
 	nebula()->register_script('nebula-main', get_stylesheet_directory_uri() . '/assets/js/main.js', array('defer', 'module'), array('jquery-core', 'nebula-nebula', 'wp-hooks'), nebula()->child_version(), true); //nebula.js (in the parent Nebula theme) is defined as a dependent here.
 }

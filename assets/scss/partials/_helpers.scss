@@ -108,7 +108,7 @@
 
 //Only needed when full Bootstrap assets are not loaded
 .bs-grid {
-	.sr-only {border: 0; clip: rect(0,0,0,0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px;}
+	.visually-hidden {border: 0; clip: rect(0,0,0,0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px;}
 	.form-control {padding: .375rem .75rem; border: 1px solid #ced4da;}
 	.input-group {position: relative; display: flex; flex-wrap: wrap; align-items: stretch; width: 100%;}
 	.btn {display: inline-block; text-align: center; white-space: nowrap; vertical-align: middle; border: 1px solid transparent; padding: .375rem .75rem;}

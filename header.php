@@ -12,7 +12,7 @@
 
 			<?php nebula()->timer('Header Template'); ?>
 			<header id="header-section">
-				<a class="skip-to-content-link sr-only" href="#content-section">Skip to Content</a>
+				<a class="skip-to-content-link visually-hidden" href="#content-section">Skip to Content</a>
 
 				<?php if ( (get_theme_mod('nebula_offcanvas_menu', true) && (has_nav_menu('offcanvas') || has_nav_menu('primary'))) || get_theme_mod('nebula_mobile_search', true) ): ?>
 					<div id="mobilebarcon">
@@ -51,7 +51,7 @@
 											}
 											$header_search_placeholder = ( isset($current_search) )? $current_search : __('Search', 'nebula');
 										?>
-										<label class="sr-only" for="nebula-mobile-search"><?php _e('Search', 'nebula'); ?></label>
+										<label class="visually-hidden" for="nebula-mobile-search"><?php _e('Search', 'nebula'); ?></label>
 										<input id="nebula-mobile-search" class="open input search" type="search" name="s" placeholder="<?php echo $header_search_placeholder; ?>" autocomplete="off" x-webkit-speech />
 									</form>
 								<?php endif; ?>

@@ -47,13 +47,13 @@ wp.blocks.registerBlockType('nebula/vimeo', {
 				'div',
 				{
 					id: 'nebula-vimeo-block-' + props.instanceId,
-					className: 'nebula-vimeo embed-responsive embed-responsive-16by9 ' + props.className,
+					className: 'nebula-vimeo ratio ratio-16x9 ' + props.className,
 				},
 				wp.element.createElement(
 					'iframe',
 					{
 						id: 'phg-overview-video', //Does this need to be an option? I'd prefer not
-						className: 'vimeo embed-responsive-item',
+						className: 'vimeo',
 						width: 400,
 						height: 300,
 						src: String('https://player.vimeo.com/video/' + props.attributes.videoID + ''),

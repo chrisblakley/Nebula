@@ -325,11 +325,11 @@ if ( !trait_exists('Shortcodes') ){
 			extract(shortcode_atts(array("id" => null, "height" => '', "width" => '', "autoplay" => '0', "badge" => '1', "byline" => '1', "color" => '00adef', "loop" => '0', "portrait" => '1', "title" => '1'), $atts));
 
 			$vimeo_data = $this->video_meta('vimeo', $id);
-			$vimeo = '<div class="nebula-vimeo embed-responsive embed-responsive-16by9">';
+			$vimeo = '<div class="nebula-vimeo ratio ratio-16x9">';
 			if ( !empty($vimeo_data) && empty($vimeo_data['error']) ){
-				$vimeo .= '<iframe id="' . esc_attr($vimeo_data['safetitle']) . '" class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . esc_attr($id) . '?api=1&player_id=' . esc_attr($vimeo_data['safetitle'], 'url') . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" autoplay="' . esc_attr($autoplay) . '" badge="' . esc_attr($badge) . '" byline="' . esc_attr($byline) . '" color="' . esc_attr($color) . '" loop="' . esc_attr($loop) . '" portrait="' . esc_attr($portrait) . '" title="' . esc_attr($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen loading="lazy"></iframe>';
+				$vimeo .= '<iframe id="' . esc_attr($vimeo_data['safetitle']) . '" class="vimeo" src="//player.vimeo.com/video/' . esc_attr($id) . '?api=1&player_id=' . esc_attr($vimeo_data['safetitle'], 'url') . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" autoplay="' . esc_attr($autoplay) . '" badge="' . esc_attr($badge) . '" byline="' . esc_attr($byline) . '" color="' . esc_attr($color) . '" loop="' . esc_attr($loop) . '" portrait="' . esc_attr($portrait) . '" title="' . esc_attr($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen loading="lazy"></iframe>';
 			} else {
-				$vimeo .= '<iframe class="vimeo embed-responsive-item" src="//player.vimeo.com/video/' . esc_attr($id) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" autoplay="' . esc_attr($autoplay) . '" badge="' . esc_attr($badge) . '" byline="' . esc_attr($byline) . '" color="' . esc_attr($color) . '" loop="' . esc_attr($loop) . '" portrait="' . esc_attr($portrait) . '" title="' . esc_attr($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen loading="lazy"></iframe>';
+				$vimeo .= '<iframe class="vimeo" src="//player.vimeo.com/video/' . esc_attr($id) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" autoplay="' . esc_attr($autoplay) . '" badge="' . esc_attr($badge) . '" byline="' . esc_attr($byline) . '" color="' . esc_attr($color) . '" loop="' . esc_attr($loop) . '" portrait="' . esc_attr($portrait) . '" title="' . esc_attr($title) . '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen loading="lazy"></iframe>';
 
 				if ( $this->is_dev() ){
 					$vimeo .= '<script>console.warn("' . esc_html($vimeo_data['error']) . ' (via Vimeo shortcode)");</script>';
@@ -349,12 +349,12 @@ if ( !trait_exists('Shortcodes') ){
 			}
 
 			$youtube_data = $this->video_meta('youtube', $id);
-			$youtube = '<div class="nebula-youtube embed-responsive embed-responsive-16by9">';
+			$youtube = '<div class="nebula-youtube ratio ratio-16x9">';
 			if ( !empty($youtube_data) && empty($youtube_data['error']) ){
 				//Note: removed &origin=' . youtube_meta($id, 'origin') . ' right before &rel= due to console warnings. Doesn't seem to be an issue.
-				$youtube .= '<iframe id="' . esc_attr($youtube_data['safetitle']) . '" class="' . esc_attr('youtube embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($youtube_data['id'], 'url') . '?wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen="" loading="lazy"></iframe>';
+				$youtube .= '<iframe id="' . esc_attr($youtube_data['safetitle']) . '" class="' . esc_attr('youtube ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($youtube_data['id'], 'url') . '?wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen="" loading="lazy"></iframe>';
 			} else {
-				$youtube .= '<iframe class="' . esc_attr('no-api embed-responsive-item ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($id, 'url') . '?wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen loading="lazy"></iframe>';
+				$youtube .= '<iframe class="' . esc_attr('no-api ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($id, 'url') . '?wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen loading="lazy"></iframe>';
 				if ( $this->is_dev() ){
 					$youtube .= '<script>console.warn("(' . esc_attr($youtube_data['error']) . ' (via Youtube shortcode)");</script>';
 				}
@@ -479,7 +479,7 @@ if ( !trait_exists('Shortcodes') ){
 			return '<div class="card">
 				<div class="card-header">
 					<h5 class="mb-0" id="heading' . $unique_id . '">
-						<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse' . $unique_id . '" aria-expanded="false" aria-controls="collapse' . $unique_id . '"><i class="fas fa-plus"></i> ' . $title . '</button>
+						<button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse' . $unique_id . '" aria-expanded="false" aria-controls="collapse' . $unique_id . '"><i class="fas fa-plus"></i> ' . $title . '</button>
 					</h5>
 				</div>
 
@@ -491,7 +491,7 @@ if ( !trait_exists('Shortcodes') ){
 
 		public function tooltip_shortcode($atts, $content=''){
 			extract(shortcode_atts(array('tip' => '', 'placement' => 'top', 'class' => '', 'style' => ''), $atts));
-			return '<span class="nebula-tooltip ttip ' . esc_attr($class) . '" data-toggle="tooltip" data-placement="' . esc_attr($placement) . '" title="' . esc_attr($tip) . '" style="' . esc_attr($style) . '">' . esc_attr($content) . '</span>';
+			return '<span class="nebula-tooltip ttip ' . esc_attr($class) . '" data-bs-toggle="tooltip" data-bs-placement="' . esc_attr($placement) . '" title="' . esc_attr($tip) . '" style="' . esc_attr($style) . '">' . esc_attr($content) . '</span>';
 		}
 
 		public function slider_shortcode($atts, $content=''){
@@ -512,7 +512,7 @@ if ( !trait_exists('Shortcodes') ){
 
 			$return = '<div id="' . esc_attr($id) . '" class="carousel slide ' . esc_attr($indicators) . '" data-ride="carousel">';
 			$return .= $this->parse_shortcode_content(do_shortcode($content));
-			$return .= '<a class="left carousel-control" href="#' . esc_attr($id) . '" data-slide="prev"><span class="icon-prev"></span><span class="sr-only">Previous</span></a><a class="right carousel-control" href="#' . esc_attr($id) . '" data-slide="next"><span class="icon-next"></span><span class="sr-only">Next</span></a></div>';
+			$return .= '<a class="left carousel-control" href="#' . esc_attr($id) . '" data-slide="prev"><span class="icon-prev"></span><span class="visually-hidden">Previous</span></a><a class="right carousel-control" href="#' . esc_attr($id) . '" data-slide="next"><span class="icon-next"></span><span class="visually-hidden">Next</span></a></div>';
 
 			return $return;
 		}

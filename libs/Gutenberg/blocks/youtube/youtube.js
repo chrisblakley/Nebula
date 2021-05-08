@@ -69,13 +69,13 @@ wp.blocks.registerBlockType('nebula/youtube', {
 				'div',
 				{
 					id: 'nebula-youtube-block-' + props.instanceId,
-					className: 'nebula-youtube embed-responsive embed-responsive-16by9 ' + props.className, //This className var is confirmed working, but this is the Block Editor element– not the front-end!
+					className: 'nebula-youtube ratio ratio-16x9 ' + props.className, //This className var is confirmed working, but this is the Block Editor element– not the front-end!
 				},
 				wp.element.createElement(
 					'iframe',
 					{
 						id: 'nebula-youtube-block', //Does this need to be an option? I would prefer not
-						className: 'youtube embed-responsive-item',
+						className: 'youtube',
 						width: 400,
 						height: 300,
 						src: '//www.youtube.com/embed/' + props.attributes.videoID + '?wmode=transparent&enablejsapi=1&rel=0&t=' + props.attributes.videoTimestamp, //WCtWWgtzC-c

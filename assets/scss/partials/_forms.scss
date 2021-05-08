@@ -2,6 +2,8 @@
 // Forms
 // ===========================
 
+.nebula-form-group {margin-bottom: 30px;}
+
 fieldset {border: 0; margin: 0; padding: 0;}
 textarea {resize: vertical; max-width: 100%;}
 
@@ -98,7 +100,7 @@ input[type="file"].custom-file-input {cursor: pointer;}
 
 //Nebula Search Forms
 form.nebula-search {position: relative; display: inline-block; margin: 0;
-	.input-group {align-items: center;} //Modify Bootstrap to center align Nebula search input content
+	.nebula-input-group {display: flex; align-items: center;} //Modify Bootstrap to center align Nebula search input content
 
 	input {max-width: 30px; padding: 0 6px; color: transparent; font-size: rem(12px); line-height: 1.15rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; outline: none; cursor: pointer; transition: all 0.25s;  will-change: width;
 		&:hover {background-color: rgba(255, 255, 255, 0.3);}

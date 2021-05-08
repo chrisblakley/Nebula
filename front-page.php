@@ -54,8 +54,8 @@
 
 					<?php if ( get_theme_mod('nebula_hero_youtube_id') ): ?>
 						<?php $youtube_data = nebula()->video_meta('youtube', get_theme_mod('nebula_hero_youtube_id')); ?>
-						<div class="embed-responsive embed-responsive-16by9">
-							<iframe class="youtube embed-responsive-item" title="<?php echo $youtube_data['title']; ?>" width="560" height="315" src="//www.youtube.com/embed/<?php echo $youtube_data['id']; ?>?wmode=transparent&enablejsapi=1&rel=0"></iframe>
+						<div class="ratio ratio-16x9">
+							<iframe class="youtube" title="<?php echo $youtube_data['title']; ?>" width="560" height="315" src="//www.youtube.com/embed/<?php echo $youtube_data['id']; ?>?wmode=transparent&enablejsapi=1&rel=0"></iframe>
 						</div>
 					<?php endif; ?>
 				</div><!--/col-->
@@ -75,7 +75,7 @@
 						<?php endif; ?>
 
 						<?php if ( get_theme_mod('nebula_hero_cta_btn_2_text') && get_theme_mod('nebula_hero_cta_btn_2_url') ): ?>
-							<a class="btn btn-lg btn-light ml-4" href="<?php echo get_theme_mod('nebula_hero_cta_btn_2_url'); ?>"><?php echo get_theme_mod('nebula_hero_cta_btn_2_text'); ?></a>
+							<a class="btn btn-lg btn-light ms-4" href="<?php echo get_theme_mod('nebula_hero_cta_btn_2_url'); ?>"><?php echo get_theme_mod('nebula_hero_cta_btn_2_text'); ?></a>
 						<?php endif; ?>
 					</div><!--/col-->
 				</div><!--/row-->

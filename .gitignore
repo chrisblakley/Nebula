@@ -82,3 +82,4 @@ $RECYCLE.BIN/
 *.cache
 *.secret.php
 error_log
+/Nebula-Child/data/

@@ -13,7 +13,7 @@
 	.admin-bar & {will-change: auto;} //Prevent this from affecting the admin-bar
 	.mm-wrapper_opening &:before {@include background-color(#000, 0.7); /* backdrop-filter: blur(2px); */} //Backdrop filter is laggy as of Feb 2021
 
-	.skip-to-content-link.sr-only {top: 15px; left: -150px; transition: left 0.4s easing(easeOutBack);
+	.skip-to-content-link.visually-hidden {top: 15px; left: -150px; transition: left 0.4s easing(easeOutBack);
 		&:focus {left: -80px; color: #fff; background: $primary_color; width: auto; height: auto; overflow: visible; margin: 0; padding: 5px 15px 5px 100px; clip: unset; clip-path: unset; z-index: 999999;}
 	}
 
@@ -94,7 +94,7 @@
 }
 
 #bigheadingcon {position: relative; @include linear-gradient(to bottom, $primary_color, darken($primary_color, 5%));
-	.title-desc-con {padding-top: 120px; padding-bottom: 60px;
+	.title-desc-con {position: relative; padding-top: 120px; padding-bottom: 60px;
 		h1, h2, h3, h4, h5, h6 {color: #fff;}
 
 		.page-title,

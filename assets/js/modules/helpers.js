@@ -219,7 +219,7 @@ nebula.scrollToListeners = function(){
 	//An href starts with a hash ID but is not only a hash ("#content" but not "#"). Do not use *="#" to prevent conflicts with other libraries who are linking to separate pages with an anchor on the destination.
 	nebula.dom.document.on('click keyup', 'a[href^="#"]:not([href="#"])', function(e){
 		if ( e.type === 'click' || (e.type === 'keyup' && (e.key === ' ' || e.key === 'Enter')) ){ //Spacebar or Enter
-			let avoid = '.no-scroll, .mm-menu, .carousel, .tab-content, .modal, [data-toggle], #wpadminbar, #query-monitor';
+			let avoid = '.no-scroll, .mm-menu, .carousel, .tab-content, .modal, [data-bs-toggle], #wpadminbar, #query-monitor';
 			if ( !jQuery(this).is(avoid) && !jQuery(this).parents(avoid).length ){
 				if ( location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname ){ //Ensure the link does not have a protocol and is internal
 					let thisHash = this.hash; //Defined here because scope of "this" changes later
@@ -343,7 +343,7 @@ nebula.temporaryClass = function(element, activeClass, inactiveClass, period = 1
 //Vertical subnav expanders
 nebula.subnavExpanders = function(){
 	if ( nebula.site?.options?.sidebar_expanders && jQuery('#sidebar-section .menu').length ){
-		jQuery('#sidebar-section .menu li.menu-item:has(ul)').addClass('has-expander').append('<a class="toplevelvert_expander closed" href="#"><i class="fas fa-caret-left"></i> <span class="sr-only">Expand</span></a>');
+		jQuery('#sidebar-section .menu li.menu-item:has(ul)').addClass('has-expander').append('<a class="toplevelvert_expander closed" href="#"><i class="fas fa-caret-left"></i> <span class="visually-hidden">Expand</span></a>');
 		jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
 		nebula.dom.document.on('click', '.toplevelvert_expander', function(){
 			jQuery(this).toggleClass('closed open').parent().children('.sub-menu').slideToggle();
@@ -519,7 +519,7 @@ nebula.mmenus = async function(){
 					offcanvasNavTriggerIcon.removeClass('fa-bars').addClass('fa-times');
 
 					if ( typeof jQuery.tooltip !== 'undefined' ){
-						jQuery('[data-toggle="tooltip"]').tooltip('hide');
+						jQuery('[data-bs-toggle="tooltip"]').tooltip('hide');
 					}
 
 					nebula.timer('(Nebula) Mmenu', 'start');

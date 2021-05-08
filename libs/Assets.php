@@ -27,8 +27,9 @@ if ( !trait_exists('Assets') ){
 		public function register_scripts(){
 			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
-			wp_register_style('nebula-font_awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css', null, '5.15.3', 'all');
-			wp_register_style('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/mmenu-js/8.5.22/mmenu.min.css', null, '8.5.22', 'all');
+			wp_register_style('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css', null, '5.0.0', 'all');
+			wp_register_style('nebula-font_awesome', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css', null, '5.15.3', 'all');
+			wp_register_style('nebula-mmenu', 'https://cdn.jsdelivr.net/npm/mmenu-js@8.5.23/dist/mmenu.min.css', null, '8.5.23', 'all');
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap'), $this->version('full'), 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, $this->version('full'), 'all');
 			wp_register_style('nebula-admin', get_template_directory_uri() . '/assets/css/admin.css', null, $this->version('full'), 'all');
@@ -37,54 +38,24 @@ if ( !trait_exists('Assets') ){
 				wp_register_style('nebula-remote_font', esc_url($this->get_option('remote_font_url')), array(), null, 'all');
 			}
 
-			$this->bootstrap('css');
-			wp_register_style('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/jquery.dataTables.min.css', null, '1.10.21', 'all');
-			wp_register_style('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css', null, '1.8.7', 'all');
-			wp_register_style('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.structure.min.css', null, '1.12.1', 'all');
+			wp_register_style('nebula-datatables', 'https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css', null, '1.10.24', 'all'); //Switch to jsDelivr when available
+			wp_register_style('nebula-chosen', 'https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/chosen.min.css', null, '1.8.7', 'all');
+			wp_register_style('nebula-jquery_ui', 'https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.12.1/jquery-ui.structure.min.css', null, '1.12.1', 'all');
 			wp_register_style('nebula-pre', get_template_directory_uri() . '/assets/css/pre.css', null, $this->version('full'), 'all');
 
 			//Scripts
-			//Use CDNJS to pull common libraries: http://cdnjs.com/
+			//Use jsDelivr to pull common libraries: https://www.jsdelivr.com/
 			//nebula()->register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
-			if ( $this->is_admin_page() || $this->get_option('allow_bootstrap_js') ){
-				$this->bootstrap('js'); //For Bootstrap v5, register this, but dynamically load it via a module instead
-			}
-			$this->register_script('nebula-jquery_ui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', array('defer', 'crossorigin'), null, '1.12.1', true);
-			$this->register_script('nebula-mmenu', 'https://cdnjs.cloudflare.com/ajax/libs/mmenu-js/8.5.22/mmenu.min.js', array('defer', 'crossorigin'), null, '8.5.22', true);
-			$this->register_script('nebula-vimeo', 'https://cdnjs.cloudflare.com/ajax/libs/vimeo-player/2.15.0/player.min.js', null, null, '2.15.0', true);
-			$this->register_script('nebula-datatables', 'https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.10.21', true);
-			$this->register_script('nebula-chosen', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js', array('defer', 'crossorigin'), null, '1.8.7', true);
+			$this->register_script('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '5.0.0', true);
+			$this->register_script('nebula-jquery_ui', 'https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.12.1/jquery-ui.min.js', array('defer', 'crossorigin'), null, '1.12.1', true);
+			$this->register_script('nebula-mmenu', 'https://cdn.jsdelivr.net/npm/mmenu-js@8.5.23/dist/mmenu.min.js', array('defer', 'crossorigin'), null, '8.5.23', true);
+			$this->register_script('nebula-vimeo', 'https://cdn.jsdelivr.net/npm/@vimeo/player@2.15.0/dist/player.min.js', null, null, '2.15.0', true);
+			$this->register_script('nebula-datatables', 'https://cdn.jsdelivr.net/npm/datatables.net@1.10.24/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.10.24', true);
+			$this->register_script('nebula-chosen', 'https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/chosen.jquery.min.js', array('defer', 'crossorigin'), null, '1.8.7', true);
 			$this->register_script('nebula-usage', get_template_directory_uri() . '/assets/js/modules/usage.js', array('async', 'module'), null, $this->version('full'), false);
 			$this->register_script('nebula-nebula', get_template_directory_uri() . '/assets/js/nebula.js', array('defer', 'module'), array('jquery-core', 'wp-hooks'), $this->version('full'), true);
 			$this->register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', array('defer', 'module'), array('jquery-core'), $this->version('full'), true);
 			$this->register_script('nebula-admin', get_template_directory_uri() . '/assets/js/admin.js', array('defer', 'module'), array('jquery'), $this->version('full'), true);
-		}
-
-		//Register or return the requested Bootstrap file.
-		public function bootstrap($file=false){
-			if ( !$this->is_admin_page() ){ //Skip checking on admin pages because we always use the full/latest version of Bootstrap on admin pages
-				if ( $this->get_option('bootstrap_version') === 'grid' ){
-					//Bootstrap Reboot and Grid only
-					if ( $file === 'css' ){
-						return wp_register_style('nebula-bootstrap', get_template_directory_uri() . '/assets/css/vendor/bootstrap-reboot-grid.css', null, '4.6.0', 'all'); //Served locally to combine multiple resources (Reboot and Grid)
-					} elseif ( $file === 'js' ){
-						return false;
-					} else {
-						return 'grid';
-					}
-				}
-			}
-
-			//Latest
-			if ( $file === 'css' ){
-				return wp_register_style('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css', null, '4.6.0', 'all'); //This will eventually update to Bootstrap 5
-			} elseif ( $file === 'js' ){
-				return $this->register_script('nebula-bootstrap', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '4.5.3', true); //This will eventually update to Bootstrap 5
-			} elseif ( $file === 'reboot' ){
-				return 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap-reboot.min.css'; //This will eventually update to Bootstrap 5
-			} else {
-				return 'latest';
-			}
 		}
 
 		//Build Nebula data object and output to the <head>
@@ -325,7 +296,7 @@ if ( !trait_exists('Assets') ){
 			}
 
 			//Scripts
-			wp_enqueue_script('nebula-bootstrap'); //Remove this with Bootstrap 5 in favor of a dynamic load module
+			//wp_enqueue_script('nebula-bootstrap'); //This is lazy-loaded in JS only when needed
 			wp_enqueue_script('nebula-nebula');
 
 			//Conditionals

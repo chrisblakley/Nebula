@@ -67,7 +67,7 @@ if ( !trait_exists('Gutenberg') ){
 			if ( !empty($attributes) ){
 				$youtube_data = nebula()->video_meta('youtube', $attribites['videoID']);
 
-				return '<div class="nebula-youtube embed-responsive embed-responsive-16by9 ' . $attributes['className'] . '"><iframe id="' . $youtube_data['safetitle'] . '" class="youtube embed-responsive-item" width="1024" height="768" src="//www.youtube.com/embed/' . $youtube_data['id'] . '?wmode=transparent&enablejsapi=1&rel=0&t=' . $attribites['videoTimestamp'] . '" frameborder="0" allowfullscreen loading="lazy"></iframe></div>';
+				return '<div class="nebula-youtube ratio ratio-16x9 ' . $attributes['className'] . '"><iframe id="' . $youtube_data['safetitle'] . '" class="youtube" width="1024" height="768" src="//www.youtube.com/embed/' . $youtube_data['id'] . '?wmode=transparent&enablejsapi=1&rel=0&t=' . $attribites['videoTimestamp'] . '" frameborder="0" allowfullscreen loading="lazy"></iframe></div>';
 			}
 		}
 
@@ -99,7 +99,7 @@ if ( !trait_exists('Gutenberg') ){
 		public function nebula_vimeo_block_frontend_output($attribites){
 			$vimeo_data = nebula()->video_meta('vimeo', $attribites['videoID']);
 
-			return '<div class="embed-responsive embed-responsive-16by9"><iframe class="vimeo embed-responsive-item" data-vimeo-id="' . $vimeo_data['id'] . '" src="https://player.vimeo.com/video/' . $vimeo_data['id'] . '" width="560" height="315" loading="lazy"></iframe></div>';
+			return '<div class="ratio ratio-16x9"><iframe class="vimeo" data-vimeo-id="' . $vimeo_data['id'] . '" src="https://player.vimeo.com/video/' . $vimeo_data['id'] . '" width="560" height="315" loading="lazy"></iframe></div>';
 		}
 
 

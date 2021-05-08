@@ -157,7 +157,7 @@ nebula.workbox = async function(){
 			window.performance.mark('(Nebula) SW Registration [Start]');
 
 			//Dynamically import Workbox-Window
-			import('https://storage.googleapis.com/workbox-cdn/releases/6.1.5/workbox-window.prod.mjs').then(async function(module){
+			import('https://cdn.jsdelivr.net/npm/workbox-window@6.1.5/build/workbox-window.prod.mjs').then(async function(module){
 				const Workbox = module.Workbox;
 				const workbox = new Workbox(nebula.site.sw_url);
 
@@ -442,6 +442,13 @@ nebula.prefetch = async function(url = '', callback, element){
 //Lazy load images, styles, and JavaScript assets
 nebula.lazyLoadAssets = async function(){
 	nebula.site.resources.lazy.promises = {};
+
+	//Detect if Bootstrap JS is needed and load it
+	//A wildcard attribute name selector would be super useful here, but does not exist. Something like [data-bs-*] would be perfect...
+	//That being said, the Offcanvas component will be used on 95% of Nebula sites, so this will likely load on every page regardless.
+	if ( jQuery('.offcanvas, .accordion, .alert, .carousel, .collapse, .dropdown-menu, .modal, .nav-tabs, .nav-pills').length ){
+		nebula.loadJS(nebula.site.resources.scripts['nebula_bootstrap']); //Load Bootstrap JS
+	}
 
 	//Lazy load elements as they scroll into viewport
 	try {

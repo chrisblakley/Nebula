@@ -57,17 +57,17 @@ nebula.regex = {
 nebula.initBootstrapFunctions = async function(){
 	if ( typeof bootstrap !== 'undefined' ){
 		//Tooltips
-		if ( jQuery('[data-toggle="tooltip"]').length ){
-			jQuery('[data-toggle="tooltip"]').tooltip();
+		if ( jQuery('[data-bs-toggle="tooltip"]').length ){
+			jQuery('[data-bs-toggle="tooltip"]').tooltip();
 		}
 
 		//Popovers
-		if ( jQuery('[data-toggle="popover"]').length ){
-			jQuery('[data-toggle="popover"]').popover({'trigger': 'hover'});
+		if ( jQuery('[data-bs-toggle="popover"]').length ){
+			jQuery('[data-bs-toggle="popover"]').popover({'trigger': 'hover'});
 		}
 
 		nebula.checkBootstrapToggleButtons();
-		jQuery('[data-toggle=buttons] input').on('change', function(){
+		jQuery('[data-bs-toggle=buttons] input').on('change', function(){
 			nebula.checkBootstrapToggleButtons();
 		});
 
@@ -79,13 +79,13 @@ nebula.initBootstrapFunctions = async function(){
 					let slideCount = jQuery(this).find('.carousel-item').length;
 
 					let i = 0;
-					let markup = '<ol class="carousel-indicators">'; //@TODO "Nebula" 0: Why is there no space between indicators when using this auto-indicators?
+					let markup = '<div class="carousel-indicators">';
 					while ( i < slideCount ){
 						let active = ( i === 0 )? 'class="active"' : '';
-						markup += '<li data-target="#' + carouselID + '" data-slide-to="' + i + '" ' + active + '></li>';
+						markup += '<button type="button" data-bs-target="#' + carouselID + '" data-bs-slide-to="' + i + '" ' + active + '></button>';
 						i++;
 					}
-					markup += '</ol>';
+					markup += '</div>';
 					jQuery(this).prepend(markup);
 					jQuery(this).find('.carousel-item').first().addClass('active');
 
@@ -129,7 +129,7 @@ nebula.initBootstrapFunctions = async function(){
 
 //Add an "inactive" class to toggle buttons when one is checked to allow for additional styling options
 nebula.checkBootstrapToggleButtons = async function(){
-	jQuery('[data-toggle=buttons]').each(function(){
+	jQuery('[data-bs-toggle=buttons]').each(function(){
 		if ( jQuery(this).find('input:checked').length ){
 			jQuery(this).find('input').each(function(){
 				if ( jQuery(this).is(':checked') ){
@@ -438,7 +438,7 @@ nebula.memoize = function(action, handle = '', value = false){
 
 //Cookie Management
 nebula.createCookie = function(name, value, days = 3650){ //Reduce the default days in 2027 to lower than 10 years (and each year thereafter)
-	let expires = ''; //Must remain var
+	let expires = '';
 	let date = new Date();
 	date.setTime(date.getTime()+(days*24*60*60*1000));
 	expires = '; expires=' + date.toGMTString(); //Note: Do not let this cookie expire past 2038 or it instantly expires. http://en.wikipedia.org/wiki/Year_2038_problem

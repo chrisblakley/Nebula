@@ -174,25 +174,25 @@ if ( !trait_exists('Metaboxes') ){
 						<div class="col-sm-5">
 							<div class="form-group">
 								<label for="locality">City</label>
-								<input type="text" name="nebula_options[locality]" id="locality" class="form-control nebula-validate-text mb-2 mr-sm-2 mb-sm-0" value="<?php echo $nebula_options['locality']; ?>" placeholder="Syracuse" autocomplete="address-level2" />
+								<input type="text" name="nebula_options[locality]" id="locality" class="form-control nebula-validate-text mb-2 me-sm-2 mb-sm-0" value="<?php echo $nebula_options['locality']; ?>" placeholder="Syracuse" autocomplete="address-level2" />
 							</div>
 						</div>
 						<div class="col-sm-2">
 							<div class="form-group">
 								<label for="region">State</label>
-								<input type="text" name="nebula_options[region]" id="region" class="form-control nebula-validate-text mb-2 mr-sm-2 mb-sm-0" value="<?php echo $nebula_options['region']; ?>" placeholder="NY" autocomplete="address-level1" />
+								<input type="text" name="nebula_options[region]" id="region" class="form-control nebula-validate-text mb-2 me-sm-2 mb-sm-0" value="<?php echo $nebula_options['region']; ?>" placeholder="NY" autocomplete="address-level1" />
 							</div>
 						</div>
 						<div class="col-sm-3">
 							<div class="form-group">
 								<label for="postal_code">Postal Code</label>
-								<input type="text" name="nebula_options[postal_code]" id="postal_code" class="form-control nebula-validate-regex mb-2 mr-sm-2 mb-sm-0" data-valid-regex="\d{5,}" value="<?php echo $nebula_options['postal_code']; ?>" placeholder="13204" autocomplete="postal-code" />
+								<input type="text" name="nebula_options[postal_code]" id="postal_code" class="form-control nebula-validate-regex mb-2 me-sm-2 mb-sm-0" data-valid-regex="\d{5,}" value="<?php echo $nebula_options['postal_code']; ?>" placeholder="13204" autocomplete="postal-code" />
 							</div>
 						</div>
 						<div class="col-sm-2">
 							<div class="form-group">
 								<label for="country_name">Country</label>
-								<input type="text" name="nebula_options[country_name]" id="country_name" class="form-control nebula-validate-text mb-2 mr-sm-2 mb-sm-0" value="<?php echo $nebula_options['country_name']; ?>" placeholder="USA" autocomplete="country" />
+								<input type="text" name="nebula_options[country_name]" id="country_name" class="form-control nebula-validate-text mb-2 me-sm-2 mb-sm-0" value="<?php echo $nebula_options['country_name']; ?>" placeholder="USA" autocomplete="country" />
 							</div>
 						</div>
 					</div>
@@ -388,13 +388,6 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text short-help form-text text-muted">Which Bootstrap version to use. (Default: <?php echo $this->user_friendly_default('bootstrap_version'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Bootstrap 3 will support IE8+. Bootstrap 4 alpha 5 will support IE9+. Bootstrap latest supports IE10+. Grid loads only framework (and reboot) CSS. WordPress admin pages will still load Bootstrap latest regardless of this selection.</p>
 					<p class="option-keywords">optimization moderate page speed impact optimization optimize</p>
-				</div>
-
-				<div class="form-group">
-					<input type="checkbox" name="nebula_options[allow_bootstrap_js]" id="allow_bootstrap_js" value="1" <?php checked('1', !empty($nebula_options['allow_bootstrap_js'])); ?> /><label for="allow_bootstrap_js">Allow Bootstrap JS</label>
-					<p class="nebula-help-text short-help form-text text-muted">Allow Bootstrap JavaScript. (Default: <?php echo $this->user_friendly_default('allow_bootstrap_js'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">Disabling this saves a resource request, but JS functionality of Bootstrap will not work (accordions, sliders, toggles, etc).</p>
-					<p class="option-keywords">moderate page speed impact optimization optimize</p>
 				</div>
 			<?php
 
@@ -1981,7 +1974,6 @@ if ( !trait_exists('Metaboxes') ){
 							Nebula is using <strong class="nebula-disabled">Bootstrap version 3</strong> for support of IE8.
 						<?php endif; ?>
 					</li>
-					<li>Nebula <?php echo ( empty($nebula_options['allow_bootstrap_js']) )? '<strong class="nebula-disabled">has disabled' : '<strong class="nebula-enabled">is allowing'; ?> Bootstrap JavaScript</strong>.</li>
 				</ul>
 
 				<a class="button button-primary" href="<?php echo admin_url('update-core.php?force-check=1&force-nebula-theme-update'); ?>">Re-Install Nebula from GitHub</a>
