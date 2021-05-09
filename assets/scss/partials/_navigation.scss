@@ -24,10 +24,6 @@
 	@include media("lg"){visibility: hidden; height: 0; border: 0 solid rgba(0, 0, 0, 0);} //Border color hack for actual visibility detection
 }
 
-#offcanvasnav {visibility: hidden; height: 0;
-	&.mm-menu {visibility: visible; height: 100%;}
-}
-
 //Includes Utility and Primary navigation rows (which also includes the logo)
 #navigation-section {position: relative; z-index: 500;
 	&.mp-above {padding-bottom: 20px;}
@@ -125,5 +121,38 @@
 			a {display: block; padding: 10px 20px; text-align: left; font-size: rem(16px); line-height: rem(21px); color: #fff;}
 			@include nebula-dropdown(14px, 21px);
 		}
+	}
+}
+
+//Offcanvas Drawer
+body:before {content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0); backdrop-filter: blur(0); transition: all 0.25s ease; pointer-events: none;} /* Prep for the Bootstrap offcanvas background overlay to add animation transitions */
+	body.offcanvas-backdrop:before {background-color: rgba(0, 0, 0, 0.75); backdrop-filter: blur(3px); pointer-events: all;}
+
+
+//Offcanvas Menu
+.offcanvas-body nav {
+	ul {list-style: none; padding-left: 0;
+		li {margin-top: 10px;
+			a {display: block; width: 100%; padding: 8px 15px; text-decoration: none; background: none;
+				&:hover,
+				&:focus {background: $primary_color; color: readable-color($primary_color) !important;}
+			}
+
+			ul.sub-menu {
+				li {margin-top: 0; margin-left: 16px; border-left: 1px solid $primary_color;
+					a {text-decoration: none;}
+				}
+			}
+		}
+	}
+
+	nav#offcanvas-utility-nav {margin-top: 35px;
+		ul li {margin-top: 0;
+			a {padding: 3px 15px;}
+		}
+	}
+
+	li.current-menu-item {font-weight: bold;
+		ul li {font-weight: normal;}
 	}
 }

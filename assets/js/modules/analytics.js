@@ -480,12 +480,42 @@ nebula.eventTracking = async function(){
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-navigation-menu-click'}));
 		});
 
-		//Offcanvas Navigation Menu (Mmenu)
-		nebula.dom.document.on('mousedown', '#offcanvasnav .mm-menu li a:not(.mm-next)', function(e){
+		//Offcanvas Menu Open
+		nebula.dom.document.on('show.bs.offcanvas', function(e){
 			let thisEvent = {
 				event: e,
 				category: 'Navigation Menu',
-				action: 'Offcanvas Menu', //GA4 Name: "menu_click"?
+				action: 'Offcanvas Menu (' + e.target.id + ')',
+				label: 'Opened',
+			};
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-offcanvas-shown'}));
+
+			nebula.timer('(Nebula) Offcanvas Menu', 'start');
+		});
+
+		//Offcanvas Menu Close
+		nebula.dom.document.on('hide.bs.offcanvas', function(e){
+			let thisEvent = {
+				event: e,
+				category: 'Navigation Menu',
+				action: 'Offcanvas Menu (' + e.target.id + ')',
+				label: 'Closed (without Navigation)',
+			};
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-offcanvas-closed'}));
+		});
+
+		//Offcanvas Navigation Link
+		nebula.dom.document.on('mousedown', '.offcanvas-body a', function(e){
+			let thisEvent = {
+				event: e,
+				category: 'Navigation Menu',
+				action: 'Offcanvas Menu (' + e.target.id + ')', //GA4 Name: "menu_click"?
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				linkText: jQuery(this).text().trim()
 			};
@@ -494,6 +524,8 @@ nebula.eventTracking = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-navigation-menu-click'}));
+
+			ga('send', 'timing', 'Offcanvas Menu', 'Navigated', Math.round(nebula.timer('(Nebula) Offcanvas Menu', 'lap')), 'From opening offcanvas menu until navigation');
 		});
 
 		//Breadcrumb Navigation

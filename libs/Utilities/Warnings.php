@@ -914,11 +914,6 @@ if ( !trait_exists('Warnings') ){
 									}
 								});
 
-								//Check for modals inside of #body-wrapper
-								if ( entireDOM.find('#body-wrapper .modal').length ){
-									jQuery('#audit-results ul').append('<li><i class="far fa-fw fa-window-restore"></i> Modal found inside of #body-wrapper. Move modals to the footer outside of the #body-wrapper div.</li>');
-								}
-
 								<?php do_action('nebula_audits_js'); ?>
 
 								var nebulaWarnings = <?php echo $nebula_warnings; ?> || {};

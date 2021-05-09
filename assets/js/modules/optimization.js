@@ -515,8 +515,6 @@ nebula.lazyLoadAssets = async function(){
 		}
 	});
 
-	nebula.initMmenu(); //Mmenu lazy load happens in its own function
-
 	//Load the Google Maps API if 'googlemap' class exists
 	if ( jQuery('.googlemap').length ){
 		if ( google?.maps ){ //If the API has not already been called

@@ -15,36 +15,6 @@ html .btn {max-width: 100%; white-space: normal;}
 
 svg.svg-inline--fa {max-width: none;} //Remove max-width: 100% for Font Awesome SVG icons
 
-//Offcanvas Mmenu Modifications
-.mm-menu .mm-navbar a[href]:hover {color: rgba(0, 0, 0, 0.6);}
-.mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-noresults):after {margin-left: 0;}
-.mm-list a {border: none;
-	&.mm-subopen {width: 80px;} /* Sometimes the width does not work. If it is too wide- remove this line. */
-	&.mm-subopen + a, .mm-list a.mm-subopen + span {margin-right: 80px;} /* Sometimes the width does not work. If it is too wide- remove this line. */
-	&.mm-subopen:hover {@include background-color(#000, 0.1);}
-}
-.mm-menu .mm-listview > li a:not(.mm-btn_next) {color: #292b2c;}
-.mm-list > li > a:hover {@include background-color(#000, 0.1);}
-.mm-menu.mm-light .mm-list > li > a.mm-subclose:hover {text-decoration: none; @include background-color(#000, 0.05);}
-.mm-menu.mm-hassearch > .mm-panel > .mm-list:first-child {margin-top: 0;}
-.mm-list > li:not(.mm-subtitle):not(.mm-label):not(.mm-search):not(.mm-noresults):after {margin-left: 0;}
-.mm-menu li.current_page_item {@include background-color(#fff); font-weight: 800; color: #000;
-	.mm-counter {font-weight: 400;}
-	a:not(.mm-btn_next) {
-		&:before {content: "\f138"; @include font-awesome("solid"); margin-right: 5px; color: rgba(0, 0, 0, 0.6);}
-	}
-}
-.mm-listview {
-	a:hover {@include background-color(#000, 0.05);}
-
-	.mm-btn_next {width: 90px;
-		&:after {transition: right 0.5s easing(custom, "0.175, 0.885, 0.320, 1.275"); will-change: right;} //Figure out if this is still used/needed
-		&:hover:after {right: 15px;}
-	}
-}
-.mm-slideout {z-index: auto;}
-#offcanvasnav:not(.mm-menu) {display: none;} //Hide the Mmenu until the library has loaded
-
 .wpcf7-form,
 .nebula-login-form {
 	label {display: block; margin-bottom: 0; font-size: rem(14px);}
