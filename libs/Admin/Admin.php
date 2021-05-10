@@ -1197,9 +1197,7 @@ if ( !trait_exists('Admin') ){
 
 		//Send an email to the current user and site admin(s)
 		public function send_email_to_admins($subject, $message, $attachments=false){
-			//Potential candidate for new Nebula transient() function
-			$nebula_admin_email_sent = get_transient('nebula_admin_email_sent');
-			if ( empty($nebula_admin_email_sent) || $this->is_debug() ){
+			$nebula_admin_email_sent = nebula()->transient('nebula_admin_email_sent', function(){
 				$current_user = wp_get_current_user();
 				$to = $current_user->user_email;
 				$headers = array(); //Prep a headers array if needed
@@ -1214,12 +1212,13 @@ if ( !trait_exists('Admin') ){
 
 				//Send the email, and on success set a transient to prevent multiple emails
 				if ( wp_mail($to, $subject, $message, $headers, $attachments) ){
-					set_transient('nebula_admin_email_sent', true, MINUTE_IN_SECONDS);
 					return true;
 				}
-			}
 
-			return false;
+				return false;
+			}, MINUTE_IN_SECONDS);
+
+			return $nebula_admin_email_sent; //This is boolean
 		}
 
 		//Get the notification email address and all developer administrators
@@ -1319,9 +1318,7 @@ if ( !trait_exists('Admin') ){
 			$override = apply_filters('pre_nebula_php_version_support', null, $php_version);
 			if ( isset($override) ){return;}
 
-			//Potential candidate for new Nebula transient() function??
-			$php_timeline = get_transient('nebula_php_timeline');
-			if ( empty($php_timeline) || $this->is_debug() ){
+			$php_timeline = nebula()->transient('nebula_php_timeline', function(){
 				$php_timeline_json_file = get_template_directory() . '/inc/data/php_timeline.json'; //This local JSON file will either be updated or used directly later
 				global $wp_filesystem;
 				WP_Filesystem();
@@ -1331,12 +1328,12 @@ if ( !trait_exists('Admin') ){
 					$php_timeline = $response['body'];
 					if ( !empty($php_timeline) ){
 						$wp_filesystem->put_contents($php_timeline_json_file, $php_timeline); //Update the local JSON file with the new remote file
-						set_transient('nebula_php_timeline', $php_timeline, MONTH_IN_SECONDS); //1 month cache
+						return $php_timeline;
 					}
-				} else {
-					$php_timeline = $wp_filesystem->get_contents($php_timeline_json_file); //Otherwise use the existing local JSON file
 				}
-			}
+
+				return $wp_filesystem->get_contents($php_timeline_json_file); //Otherwise use the existing local JSON file
+			}, MONTH_IN_SECONDS);
 
 			$php_timeline = json_decode($php_timeline);
 			if ( !empty($php_timeline) ){

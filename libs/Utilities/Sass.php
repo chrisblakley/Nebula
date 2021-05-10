@@ -393,22 +393,21 @@ if ( !trait_exists('Sass') ){
 			$variable_name = $this->normalize_color_name($variable);
 			$transient_name = 'nebula_sass_variable_' . $variable_name; //Does this need to be more unique (to include the location too)? Cannot just append $filepath...
 
-			//Potential candidate for new Nebula transient() function
-			$scss_variables = get_transient($transient_name);
-			if ( empty($scss_variables) || $this->is_debug() ){
-				$timer_name = $this->timer('Sass Variable (' . $variable . ')', 'start', 'Sass');
+			$scss_variables = nebula()->transient($transient_name, function($data){
+				$timer_name = $this->timer('Sass Variable (' . $data['variable'] . ')', 'start', 'Sass');
 
-				if ( !file_exists($filepath) ){
+				if ( !file_exists($data['filepath']) ){
 					$this->timer($timer_name, 'end');
 					return false;
 				}
 
 				WP_Filesystem();
 				global $wp_filesystem;
-				$scss_variables = $wp_filesystem->get_contents($filepath);
-				set_transient($transient_name, $scss_variables, HOUR_IN_SECONDS*12); //1 hour cache
+				$scss_variables = $wp_filesystem->get_contents($data['filepath']);
 				$this->timer($timer_name, 'end');
-			}
+
+				return $scss_variables;
+			}, array('variable' => $variable, 'filepath' => $filepath), HOUR_IN_SECONDS*12);
 
 			preg_match('/(?<comment>\/\/|\/\*\s?)?\$' . $variable_name . ':\s?(?<value>.*)(;|\s?!default;)(.*$)?/m', $scss_variables, $matches);
 

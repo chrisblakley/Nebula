@@ -128,7 +128,6 @@
 body:before {content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0); backdrop-filter: blur(0); transition: all 0.25s ease; pointer-events: none;} /* Prep for the Bootstrap offcanvas background overlay to add animation transitions */
 	body.offcanvas-backdrop:before {background-color: rgba(0, 0, 0, 0.75); backdrop-filter: blur(3px); pointer-events: all;}
 
-
 //Offcanvas Menu
 .offcanvas-body nav {
 	ul {list-style: none; padding-left: 0;

@@ -641,15 +641,27 @@ if ( !trait_exists('Utilities') ){
 
 		//Handle the caching of the transient and object cache simultaneously
 		//This is best used when assigning a variable from an "expensive" output
-		public function transient($name, $function, $expiration=null, $fresh=false){
+		//When passing parameters they must ALWAYS be passed as an array!
+		public function transient($name, $function, $parameters=array(), $expiration=null, $fresh=false){
+			//If the parameters varibale is not passed at all, use it as the expiration. This could be avoided by listing the parameters by name when calling this function...
+			if ( is_int($parameters) ){
+				$expiration = $parameters;
+				$fresh = $expiration;
+				$parameters = array(); //And reset the $parameters variable to be an empty array
+			}
+
 			$data = get_transient($name);
 			if ( !empty($fresh) || empty($data) || $this->is_debug() ){
 				$data = wp_cache_get($name);
 				if ( empty($data) ){ //This does not get a "fresh" option because we always only want it to run once per load
 					if ( is_string($function) ){
-						$data = call_user_func($function); //If the function name is passed as a string, call it
+						$data = call_user_func($function, $parameters); //If the function name is passed as a string, call it
 					} else {
-						$data = $function(); //Otherwise, assume the function is passed as an actual function
+						$data = $function($parameters); //Otherwise, assume the function is passed as an actual function
+					}
+
+					if ( is_null($data) ){
+						return false; //If the function does not return, do not store anything in the cache
 					}
 
 					wp_cache_set($name, $data); //Set the object cache (memory for multiple calls during this current load)
@@ -794,64 +806,55 @@ if ( !trait_exists('Utilities') ){
 			$timer_name = $this->timer('Get Log Files');
 
 			//Use the transient so we avoid scanning multiple times in short periods of time
-			//Potential candidate for new Nebula transient() function
-			$all_log_files = get_transient('nebula_all_log_files');
-			if ( !empty($fresh) || empty($all_log_files) || $this->is_debug() ){
-				//If multiple calls to this function request fresh data on a single page load, store the first scan in memory so we still avoid actually scanning more than once
-				$all_log_files = wp_cache_get('nebula_all_log_files');
-				if ( empty($all_log_files) ){
+			$all_log_files = nebula()->transient('nebula_all_log_files', function(){
+				$file_names = array(
+					'php' => 'error_log',
+					'wordpress' => 'debug.log',
+					'nebula' => 'nebula.log'
+				);
 
-					$file_names = array(
-						'php' => 'error_log',
-						'wordpress' => 'debug.log',
-						'nebula' => 'nebula.log'
-					);
+				//Prepare the list
+				$all_log_files = array(
+					'php' => array(),
+					'wordpress' => array(),
+					'nebula' => array()
+				);
 
-					//Prepare the list
-					$all_log_files = array(
-						'php' => array(),
-						'wordpress' => array(),
-						'nebula' => array()
-					);
-
-					//Check all theme files
-					foreach ( $this->glob_r(WP_CONTENT_DIR . '/themes/*') as $file ){
-						if ( $this->contains($file, array('/twenty')) ){ //Ignore certain strings (this can be anything in the filepath)
-							continue; //Move on to the next file
-						}
-
-						foreach ( $file_names as $type => $name ){
-							if ( strpos($file, '/' . $name) !== false ){
-								$all_log_files[$type][] = array(
-									'type' => $type,
-									'path' => $file, //Full file path
-									'shortpath' => '/' . str_replace(ABSPATH, '', $file), //Relative to the root WP directory
-									'name' => $name,
-									'bytes' => filesize($file),
-								);
-
-								break 2; //Move on to the next file
-							}
-						}
+				//Check all theme files
+				foreach ( $this->glob_r(WP_CONTENT_DIR . '/themes/*') as $file ){
+					if ( $this->contains($file, array('/twenty')) ){ //Ignore certain strings (this can be anything in the filepath)
+						continue; //Move on to the next file
 					}
 
-					//Check for the content directory debug.log file (this is separate to reduce the glob process because it is a single file in a set location)
-					$wp_content_debug_log = WP_CONTENT_DIR . '/debug.log';
-					if ( file_exists($wp_content_debug_log) ){
-						$all_log_files['wordpress'][] = array(
-							'type' => 'wordpress',
-							'path' => $wp_content_debug_log,
-							'shortpath' => '/' . str_replace(ABSPATH, '', $wp_content_debug_log), //Relative to the root WP directory
-							'name' => 'debug.log',
-							'bytes' => filesize($wp_content_debug_log),
-						);
-					}
+					foreach ( $file_names as $type => $name ){
+						if ( strpos($file, '/' . $name) !== false ){
+							$all_log_files[$type][] = array(
+								'type' => $type,
+								'path' => $file, //Full file path
+								'shortpath' => '/' . str_replace(ABSPATH, '', $file), //Relative to the root WP directory
+								'name' => $name,
+								'bytes' => filesize($file),
+							);
 
-					wp_cache_set('nebula_all_log_files', $all_log_files); //Store in object cache
+							break 2; //Move on to the next file
+						}
+					}
 				}
 
-				set_transient('nebula_all_log_files', $all_log_files, MINUTE_IN_SECONDS*15); //Dial in an appropriate cache length for this
-			}
+				//Check for the content directory debug.log file (this is separate to reduce the glob process because it is a single file in a set location)
+				$wp_content_debug_log = WP_CONTENT_DIR . '/debug.log';
+				if ( file_exists($wp_content_debug_log) ){
+					$all_log_files['wordpress'][] = array(
+						'type' => 'wordpress',
+						'path' => $wp_content_debug_log,
+						'shortpath' => '/' . str_replace(ABSPATH, '', $wp_content_debug_log), //Relative to the root WP directory
+						'name' => 'debug.log',
+						'bytes' => filesize($wp_content_debug_log),
+					);
+				}
+
+				return $all_log_files;
+			}, MINUTE_IN_SECONDS*15);
 
 			$this->timer($timer_name, 'end');
 

@@ -124,13 +124,11 @@ if ( !trait_exists('Dashboard') ){
 					continue;
 				}
 
-				//Potential candidate for new Nebula transient() function
-				$count_posts = get_transient('nebula_count_posts_' . $post_type);
-				if ( empty($count_posts) || $this->is_debug() ){
-					$count_posts = wp_count_posts($post_type);
-					$cache_length = ( is_plugin_active('transients-manager/transients-manager.php') )? WEEK_IN_SECONDS : DAY_IN_SECONDS; //If Transient Monitor (plugin) is active, transients with expirations are deleted when posts are published/updated, so this could be infinitely long (as long as an expiration exists).
-					set_transient('nebula_count_posts_' . $post_type, $count_posts, $cache_length);
-				}
+				$cache_length = ( is_plugin_active('transients-manager/transients-manager.php') )? WEEK_IN_SECONDS : DAY_IN_SECONDS; //If Transient Monitor (plugin) is active, transients with expirations are deleted when posts are published/updated, so this could be infinitely long (as long as an expiration exists).
+				$count_posts = nebula()->transient('nebula_count_posts_' . $post_type, function($data){
+					$count_posts = wp_count_posts($data['post_type']);
+					return $count_posts;
+				}, array('post_type' => $post_type), $cache_length);
 
 				$labels_plural = ( $count_posts->publish === 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
 				switch ( $post_type ){
@@ -161,24 +159,19 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//Earliest post
-			//Potential candidate for new Nebula transient() function
-			$earliest_post = get_transient('nebula_earliest_post');
-			if ( empty($earliest_post) || $this->is_debug() ){
-				$earliest_post = new WP_Query(array('post_type' => 'any', 'post_status' => 'publish', 'showposts' => 1, 'orderby' => 'publish_date', 'order' => 'ASC'));
-				set_transient('nebula_earliest_post', $earliest_post, YEAR_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long (as long as an expiration exists).
-			}
+			$earliest_post = nebula()->transient('nebula_earliest_post', function(){
+				return new WP_Query(array('post_type' => 'any', 'post_status' => 'publish', 'showposts' => 1, 'orderby' => 'publish_date', 'order' => 'ASC'));
+			}, YEAR_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long (as long as an expiration exists).
+
 			while ( $earliest_post->have_posts() ){ $earliest_post->the_post();
 				echo '<li><i class="far fa-fw fa-calendar"></i> Earliest: <span title="' . get_the_date() . ' @ ' . get_the_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_date() . ' ' . get_the_time())) . ' ago</strong></span><small style="display: block;"><i class="far fa-fw fa-file-alt"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => esc_html(get_the_title()), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small></li>';
 			}
 			wp_reset_postdata();
 
 			//Last updated
-			//Potential candidate for new Nebula transient() function
-			$latest_post = get_transient('nebula_latest_post');
-			if ( empty($latest_post) || $this->is_debug() ){
-				$latest_post = new WP_Query(array('post_type' => 'any', 'showposts' => 1, 'orderby' => 'modified', 'order' => 'DESC'));
-				set_transient('nebula_latest_post', $latest_post, WEEK_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long.
-			}
+			$latest_post = nebula()->transient('nebula_latest_post', function(){
+				return new WP_Query(array('post_type' => 'any', 'showposts' => 1, 'orderby' => 'modified', 'order' => 'DESC'));
+			}, WEEK_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long.
 			while ( $latest_post->have_posts() ){ $latest_post->the_post();
 				echo '<li><i class="far fa-fw fa-calendar"></i> Updated: <span title="' . get_the_modified_date() . ' @ ' . get_the_modified_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_modified_date())) . ' ago</strong></span>
 					<small style="display: block;"><i class="far fa-fw fa-file-alt"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => esc_html(get_the_title()), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small>
@@ -193,37 +186,30 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fas fa-fw fa-history"></i> Storing <strong ' . $revision_style . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
 
 			//Plugins
-			//Potential candidate for new Nebula transient() function
-			$all_plugins = get_transient('nebula_count_plugins');
-			if ( empty($all_plugins) || $this->is_debug() ){
-				$all_plugins = get_plugins();
-				set_transient('nebula_count_plugins', $all_plugins, WEEK_IN_SECONDS);
-			}
+			$all_plugins = nebula()->transient('nebula_count_plugins', function(){
+				return get_plugins();
+			}, WEEK_IN_SECONDS);
 			$all_plugins_plural = ( count($all_plugins) === 1 )? 'Plugin' : 'Plugins';
 			$active_plugins = get_option('active_plugins', array());
 			echo '<li><i class="fas fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> ' . $all_plugins_plural . '</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
 
 			//Must-Use Plugins
-			//Potential candidate for new Nebula transient() function
-			$mu_plugin_count = get_transient('nebula_count_mu_plugins');
-			if ( empty($mu_plugin_count) || $this->is_debug() ){
+			$mu_plugin_count = nebula()->transient('nebula_count_mu_plugins', function(){
 				if ( file_exists(WPMU_PLUGIN_DIR) ){
-					$mu_plugin_count = count(glob(WPMU_PLUGIN_DIR . '/*')); //This just counts the directories, but is accurrate enough for this purpose
-					set_transient('nebula_count_mu_plugins', $mu_plugin_count, MONTH_IN_SECONDS);
+					return $mu_plugin_count = count(glob(WPMU_PLUGIN_DIR . '/*')); //This just counts the directories, but is accurrate enough for this purpose
 				}
-			}
-			if ( $mu_plugin_count >= 1 ){
+
+				return false;
+			}, MONTH_IN_SECONDS);
+			if ( !empty($mu_plugin_count) && $mu_plugin_count >= 1 ){
 				$mu_plugins_plural = ( $mu_plugin_count === 1 )? 'Must-Use Plugin' : 'Must-Use Plugins';
 				echo '<li><i class="fas fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . $mu_plugin_count . '</strong> ' . $mu_plugins_plural . '</a></li>';
 			}
 
 			//Users
-			//Potential candidate for new Nebula transient() function
-			$user_count = get_transient('nebula_count_users');
-			if ( empty($user_count) || $this->is_debug() ){
-				$user_count = count_users();
-				set_transient('nebula_count_users', $user_count, WEEK_IN_SECONDS);
-			}
+			$user_count = nebula()->transient('nebula_count_users', function(){
+				return count_users();
+			}, WEEK_IN_SECONDS);
 			$users_icon = 'users';
 			$users_plural = 'Users';
 			if ( $user_count['total_users'] === 1 ){
@@ -328,12 +314,9 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fas fa-fw ' . $fa_role . '"></i> Role: <strong class="admin-user-info admin-user-role">' . $user_role . '</strong></li>';
 
 			//Posts by this user
-			//Potential candidate for new Nebula transient() function
-			$your_posts = get_transient('nebula_count_posts_user_' . $user_info->ID);
-			if ( empty($your_posts) || $this->is_debug() ){
-				$your_posts = count_user_posts($user_info->ID);
-				set_transient('nebula_count_posts_user_' . $user_info->ID, $your_posts, DAY_IN_SECONDS); //24 hour cache
-			}
+			$your_posts = nebula()->transient('nebula_count_posts_user_' . $user_info->ID, function($data){
+				return count_user_posts($data['id']);
+			}, array('id' => $user_info->ID), DAY_IN_SECONDS);
 			echo '<li><i class="fas fa-fw fa-thumbtack"></i> Your posts: <strong>' . $your_posts . '</strong></li>';
 
 			//Device
@@ -457,9 +440,7 @@ if ( !trait_exists('Dashboard') ){
 			$this->timer('Nebula To-Do Dashboard Metabox');
 			do_action('nebula_todo_manager');
 
-			//Potential candidate for new Nebula transient() function
-			$todo_items = get_transient('nebula_todo_items');
-			if ( empty($todo_items) || $this->is_debug() ){
+			$todo_items = nebula()->transient('nebula_todo_items', function(){
 				$todo_items = array(
 					'parent' => $this->todo_search_files(get_template_directory()),
 				);
@@ -468,9 +449,8 @@ if ( !trait_exists('Dashboard') ){
 					$todo_items['child'] = $this->todo_search_files(get_stylesheet_directory());
 				}
 
-				$todo_items = apply_filters('nebula_todo_items', $todo_items); //Add locations to the Todo Manager
-				set_transient('nebula_todo_items', $todo_items, MINUTE_IN_SECONDS*30); //30 minute cache
-			}
+				return apply_filters('nebula_todo_items', $todo_items); //Add locations to the Todo Manager
+			}, MINUTE_IN_SECONDS*30);
 
 			$file_count = 0;
 			$instance_count = 0;
@@ -696,42 +676,30 @@ if ( !trait_exists('Dashboard') ){
 
 			//Theme directory size(s)
 			if ( is_child_theme() ){
-				//Potential candidate for new Nebula transient() function
-				$nebula_parent_size = get_transient('nebula_directory_size_parent_theme');
-				if ( empty($nebula_parent_size) || $this->is_debug() ){
-					$nebula_parent_size = $this->foldersize(get_template_directory());
-					set_transient('nebula_directory_size_parent_theme', $nebula_parent_size, DAY_IN_SECONDS);
-				}
+				$nebula_parent_size = nebula()->transient('nebula_directory_size_parent_theme', function(){
+					return $this->foldersize(get_template_directory());
+				}, DAY_IN_SECONDS);
 
-				//Potential candidate for new Nebula transient() function
-				$nebula_child_size = get_transient('nebula_directory_size_child_theme');
-				if ( empty($nebula_child_size) || $this->is_debug() ){
-					$nebula_child_size = $this->foldersize(get_stylesheet_directory());
-					set_transient('nebula_directory_size_child_theme', $nebula_child_size, DAY_IN_SECONDS);
-				}
+				$nebula_child_size = nebula()->transient('nebula_directory_size_child_theme', function(){
+					return $this->foldersize(get_stylesheet_directory());
+				}, DAY_IN_SECONDS);
 
 				echo '<li><i class="fas fa-code"></i> Parent theme directory size: <strong>' . $this->format_bytes($nebula_parent_size, 1) . '</strong> </li>';
 				echo '<li><i class="fas fa-code"></i> Child theme directory size: <strong>' . $this->format_bytes($nebula_child_size, 1) . '</strong> </li>';
 			} else {
-				//Potential candidate for new Nebula transient() function
-				$nebula_size = get_transient('nebula_directory_size_theme');
-				if ( empty($nebula_size) || $this->is_debug() ){
-					$nebula_size = $this->foldersize(get_stylesheet_directory());
-					set_transient('nebula_directory_size_theme', $nebula_size, DAY_IN_SECONDS);
-				}
+				$nebula_size = nebula()->transient('nebula_directory_size_theme', function(){
+					return $this->foldersize(get_stylesheet_directory());
+				}, DAY_IN_SECONDS);
 				echo '<li><i class="fas fa-code"></i> Theme directory size: <strong>' . $this->format_bytes($nebula_size, 1) . '</strong> </li>';
 			}
 
 			do_action('nebula_dev_dashboard_directories');
 
 			//Uploads directory size (and max upload size)
-			//Potential candidate for new Nebula transient() function
-			$uploads_size = get_transient('nebula_directory_size_uploads');
-			if ( empty($uploads_size) || $this->is_debug() ){
+			$uploads_size = nebula()->transient('nebula_directory_size_uploads', function(){
 				$upload_dir = wp_upload_dir();
-				$uploads_size = $this->foldersize($upload_dir['basedir']);
-				set_transient('nebula_directory_size_uploads', $uploads_size, HOUR_IN_SECONDS*36);
-			}
+				return $this->foldersize($upload_dir['basedir']);
+			}, HOUR_IN_SECONDS*36);
 
 			//Here is how it will be after the next major version release:
 			// $uploads_size = $this->transient('nebula_directory_size_uploads', function(){
@@ -1079,18 +1047,15 @@ if ( !trait_exists('Dashboard') ){
 			$this->timer('Nebula Hubspot Dashboard Metabox');
 			do_action('nebula_hubspot_contacts');
 
-			//Potential candidate for new Nebula transient() function
-			$hubspot_contacts_json = get_transient('nebula_hubspot_contacts');
-			if ( empty($hubspot_contacts_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
+			$hubspot_contacts_json = nebula()->transient('nebula_hubspot_contacts', function(){
 				$requested_properties = '&property=' . implode('&property=', apply_filters('nebula_hubspot_metabox_properties', array('firstname', 'lastname', 'full_name', 'email', 'createdate')));
 				$response = $this->remote_get('https://api.hubapi.com/contacts/v1/lists/all/contacts/recent?hapikey=' . $this->get_option('hubspot_api') . '&count=4' . $requested_properties);
 				if ( is_wp_error($response) ){
 					return false;
 				}
 
-				$hubspot_contacts_json = $response['body'];
-				set_transient('nebula_hubspot_contacts', $hubspot_contacts_json, MINUTE_IN_SECONDS*30);
-			}
+				return $response['body'];
+			}, MINUTE_IN_SECONDS*30);
 
 			$hubspot_contacts_json = json_decode($hubspot_contacts_json);
 			if ( !empty($hubspot_contacts_json) ){

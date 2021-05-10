@@ -1264,39 +1264,38 @@ if ( !trait_exists('Functions') ){
 			}
 
 			//Get Transients
-			//Potential candidate for new Nebula transient() function
-			$video_json = get_transient('nebula_' . $provider . '_' . $id);
-			if ( empty($video_json) ){ //No ?debug option here (because multiple calls are made to this function). Clear with a force true when needed.
-				if ( $provider === 'youtube' ){
+			$video_json = nebula()->transient('nebula_' . $provider . '_' . $id, function($data){
+				if ( $data['provider'] === 'youtube' ){
 					if ( !$this->get_option('google_server_api_key') && $this->is_staff() ){
 						trigger_error('No Google Youtube Iframe API key. Youtube videos may not be tracked!', E_USER_WARNING);
 						echo '<script>console.warn("No Google Youtube Iframe API key. Youtube videos may not be tracked!");</script>';
 						$video_metadata['error'] = 'No Google Youtube Iframe API key.';
 					}
 
-					$response = $this->remote_get('https://www.googleapis.com/youtube/v3/videos?id=' . $id . '&part=snippet,contentDetails,statistics&key=' . $this->get_option('google_server_api_key'));
+					$response = $this->remote_get('https://www.googleapis.com/youtube/v3/videos?id=' . $data['id'] . '&part=snippet,contentDetails,statistics&key=' . $this->get_option('google_server_api_key'));
 					if ( is_wp_error($response) ){
 						trigger_error('Youtube video is unavailable.', E_USER_WARNING);
 						$video_metadata['error'] = 'Youtube video is unavailable.';
-						$this->timer($timer_name, 'end');
+						$this->timer($data['timer_name'], 'end');
 						return $video_metadata;
 					}
 
 					$video_json = $response['body'];
-				} elseif ( $provider === 'vimeo' ){
-					$response = $this->remote_get('http://vimeo.com/api/v2/video/' . $id . '.json');
+				} elseif ( $data['provider'] === 'vimeo' ){
+					$response = $this->remote_get('http://vimeo.com/api/v2/video/' . $data['id'] . '.json');
 					if ( is_wp_error($response) ){
 						trigger_error('Vimeo video is unavailable.', E_USER_WARNING);
 						$video_metadata['error'] = 'Vimeo video is unavailable.';
-						$this->timer($timer_name, 'end');
+						$this->timer($data['timer_name'], 'end');
 						return $video_metadata;
 					}
 
 					$video_json = $response['body'];
 				}
 
-				set_transient('nebula_' . $provider . '_' . $id, $video_json, HOUR_IN_SECONDS*12); //12 hour expiration
-			}
+				return $video_json;
+			}, array('provider' => $provider, 'id' => $id, 'timer_name' => $timer_name), HOUR_IN_SECONDS*12);
+
 			$video_json = json_decode($video_json);
 
 			//Check for errors
@@ -1812,23 +1811,21 @@ if ( !trait_exists('Functions') ){
 			);
 			$options = wp_parse_args($args, $defaults);
 
-			//Potential candidate for new Nebula transient() function
-			$related_post_ids = get_transient('nebula-related-' . $options['taxonomy'] . '-' . $post_id);
-			if ( empty($related_post_ids) || $this->is_debug() ){
+			$related_post_ids = nebula()->transient('nebula-related-' . $options['taxonomy'] . '-' . $post_id, function($data){
 				$term_args = array(
 					'fields' => 'ids',
 					'orderby' => 'count', //Sort by frequency
 					'order' => 'ASC' //Least popular to most popular
 				);
 
-				$orig_terms_set = wp_get_object_terms($post_id, $options['taxonomy'], $term_args);
+				$orig_terms_set = wp_get_object_terms($data['post_id'], $data['options']['taxonomy'], $term_args);
 				$orig_terms_set = array_map('intval', $orig_terms_set); //Make sure each returned term id to be an integer.
 				$terms_to_iterate = $orig_terms_set; //Store a copy that we'll be reducing by one item for each iteration.
 
 				$post_args = array(
 					'fields' => 'ids',
-					'post_type' => $options['post_type'],
-					'post__not_in' => array($post_id),
+					'post_type' => $data['options']['post_type'],
+					'post__not_in' => array($data['post_id']),
 					'posts_per_page' => 50 //Start with more than enough posts
 				);
 
@@ -1838,7 +1835,7 @@ if ( !trait_exists('Functions') ){
 				while ( count($terms_to_iterate) > 1 ){
 					$post_args['tax_query'] = array(
 						array(
-							'taxonomy' => $options['taxonomy'],
+							'taxonomy' => $data['options']['taxonomy'],
 							'field' => 'id',
 							'terms' => $terms_to_iterate,
 							'operator' => 'AND'
@@ -1856,10 +1853,10 @@ if ( !trait_exists('Functions') ){
 					array_pop($terms_to_iterate); //Remove the least related post ID
 				}
 
-				$post_args['posts_per_page'] = $options['max']; //Reduce the number to our desired max
+				$post_args['posts_per_page'] = $data['options']['max']; //Reduce the number to our desired max
 				$post_args['tax_query'] = array(
 					array(
-						'taxonomy' => $options['taxonomy'],
+						'taxonomy' => $data['options']['taxonomy'],
 						'field' => 'id',
 						'terms' => $orig_terms_set
 					)
@@ -1873,13 +1870,13 @@ if ( !trait_exists('Functions') ){
 						$related_post_ids[] = $id;
 					}
 
-					if ( count($related_post_ids) > $options['max'] ){
+					if ( count($related_post_ids) > $data['options']['max'] ){
 						break; //We have enough related post IDs now, stop the loop.
 					}
 				}
 
-				set_transient('nebula-related-' . $options['taxonomy'] . '-' . $post_id, $related_post_ids, DAY_IN_SECONDS);
-			}
+				return $related_post_ids;
+			}, array('options' => $options, 'post_id' => $post_id), DAY_IN_SECONDS);
 
 			if ( !$related_post_ids ){
 				$this->timer('Related Posts', 'end');
@@ -2325,12 +2322,10 @@ if ( !trait_exists('Functions') ){
 				}
 			}
 
-			//Potential candidate for new Nebula transient() function - but what about the $tweets-error condition?
-			$tweets = get_transient('nebula_twitter_' . $data['user']);
-			if ( empty($tweets) || !empty($tweets->error) || $this->is_debug() ){
-				$args = array('headers' => array('Authorization' => 'Bearer ' . $bearer));
+			$tweets = nebula()->transient('nebula_twitter_' . $data['user'], function($data){
+				$args = array('headers' => array('Authorization' => 'Bearer ' . $data['bearer']));
 
-				$response = $this->remote_get($feed, $args);
+				$response = $this->remote_get($data['feed'], $args);
 				if ( is_wp_error($response) ){
 					return false;
 				}
@@ -2341,9 +2336,9 @@ if ( !trait_exists('Functions') ){
 				if ( empty($tweets) || !empty($tweets->error) ){
 					trigger_error('No tweets were retrieved. Verify all options are correct, the requested Twitter account exists, and that an active bearer token is being used.', E_USER_NOTICE);
 
-					if ( !empty($post['data']) ){
+					if ( !empty($data['post']['data']) ){
 						echo false;
-						wp_die();
+						wp_die(); //Exit AJAX
 					} else {
 						return false;
 					}
@@ -2372,8 +2367,8 @@ if ( !trait_exists('Functions') ){
 					), trim($tweet->full_text));
 				}
 
-				set_transient('nebula_twitter_' . $data['user'], $tweets, MINUTE_IN_SECONDS*5); //5 minute expiration
-			}
+				return $tweets;
+			}, array('bearer' => $bearer, 'feed' => $feed, 'post' => $post), MINUTE_IN_SECONDS*5);
 
 			$this->timer($twitter_timing_id, 'end');
 
@@ -2586,12 +2581,9 @@ if ( !trait_exists('Functions') ){
 
 					//Find menu items
 					if ( !$this->in_array_any(array('menu'), $ignore_post_types) && $this->in_array_any(array('any', 'menu'), $types) ){
-						//Potential candidate for new Nebula transient() function
-						$menus = get_transient('nebula_autocomplete_menus');
-						if ( empty($menus) || $this->is_debug() ){
-							$menus = get_terms('nav_menu');
-							set_transient('nebula_autocomplete_menus', $menus, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
-						}
+						$menus = nebula()->transient('nebula_autocomplete_menus', function(){
+							return get_terms('nav_menu');
+						}, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 
 						foreach ( $menus as $menu ){
 							$menu_items = wp_get_nav_menu_items($menu->term_id);
@@ -2631,12 +2623,9 @@ if ( !trait_exists('Functions') ){
 
 					//Find categories
 					if ( !$this->in_array_any(array('category', 'cat'), $ignore_post_types) && $this->in_array_any(array('any', 'category', 'cat'), $types) ){
-						//Potential candidate for new Nebula transient() function
-						$categories = get_transient('nebula_autocomplete_categories');
-						if ( empty($categories) || $this->is_debug() ){
-							$categories = get_categories();
-							set_transient('nebula_autocomplete_categories', $categories, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
-						}
+						$categories = nebula()->transient('nebula_autocomplete_categories', function(){
+							return get_categories();
+						}, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 
 						foreach ( $categories as $category ){
 							$suggestion = array();
@@ -2658,12 +2647,9 @@ if ( !trait_exists('Functions') ){
 
 					//Find tags
 					if ( !$this->in_array_any(array('tag'), $ignore_post_types) && $this->in_array_any(array('any', 'tag'), $types) ){
-						//Potential candidate for new Nebula transient() function
-						$tags = get_transient('nebula_autocomplete_tags');
-						if ( empty($tags) || $this->is_debug() ){
-							$tags = get_tags();
-							set_transient('nebula_autocomplete_tags', $tags, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
-						}
+						$tags = nebula()->transient('nebula_autocomplete_tags', function(){
+							return get_tags();
+						}, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 
 						foreach ( $tags as $tag ){
 							$suggestion = array();
@@ -2685,12 +2671,9 @@ if ( !trait_exists('Functions') ){
 
 					//Find authors (if author bios are enabled)
 					if ( $this->get_option('author_bios') && !$this->in_array_any(array('author'), $ignore_post_types) && $this->in_array_any(array('any', 'author'), $types) ){
-						//Potential candidate for new Nebula transient() function
-						$authors = get_transient('nebula_autocomplete_authors');
-						if ( empty($authors) || $this->is_debug() ){
-							$authors = get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
-							set_transient('nebula_autocomplete_authors', $authors, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
-						}
+						$authors = nebula()->transient('nebula_autocomplete_authors', function(){
+							return get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
+						}, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 
 						foreach ( $authors as $author ){
 							$author_name = ( $author->first_name != '' )? $author->first_name . ' ' . $author->last_name : $author->display_name; //might need adjusting here

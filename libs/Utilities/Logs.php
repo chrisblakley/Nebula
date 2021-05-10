@@ -57,9 +57,7 @@ if ( !trait_exists('Logs') ){
 				return;
 			}
 
-			//Potential candidate for new Nebula transient() function - note: no expiration
-			$logs_table_transient = get_transient('nebula_logs_table_exists');
-			if ( empty($logs_table_transient) ){
+			$logs_table_transient = nebula()->transient('nebula_logs_table_exists', function(){
 				global $wpdb;
 
 				$logs_table = $wpdb->query("SHOW TABLES LIKE '" . $wpdb->nebula_logs . "'"); //DB Query here
@@ -78,8 +76,8 @@ if ( !trait_exists('Logs') ){
 					dbDelta($create_logs_table_sql);
 				}
 
-				set_transient('nebula_logs_table_exists', true); //Never expire since the above only needs to run once
-			}
+				return true;
+			}); //No expiration for this transient
 		}
 
 		//Insert log into DB
@@ -203,12 +201,10 @@ if ( !trait_exists('Logs') ){
 				}
 
 				//Otherwise get the actual logs data (rows)
-				//Potential candidate for new Nebula transient() function
-				$nebula_logs_data = get_transient('nebula_logs');
-				if ( empty($nebula_logs_data) || $this->is_debug() ){
-					$nebula_logs_data = $wpdb->get_results("SELECT * FROM $wpdb->nebula_logs ORDER BY timestamp DESC LIMIT 100"); //Get all data (last 100 logs) from the DB table in descending order (latest first)
-					set_transient('nebula_logs', $nebula_logs_data, HOUR_IN_SECONDS);
-				}
+				$nebula_logs_data = nebula()->transient('nebula_logs', function(){
+					return $wpdb->get_results("SELECT * FROM $wpdb->nebula_logs ORDER BY timestamp DESC LIMIT 100"); //Get all data (last 100 logs) from the DB table in descending order (latest first)
+				}, HOUR_IN_SECONDS);
+
 				return (array) $nebula_logs_data; //Convert to an array and return
 			}
 
