@@ -66,9 +66,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="contact_email">Contact Email</label>
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><i class="far fa-fw fa-envelope"></i></div>
-						</div>
+						<div class="input-group-text"><i class="far fa-fw fa-envelope"></i></div>
 						<input type="email" name="nebula_options[contact_email]" id="contact_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['contact_email']; ?>" placeholder="<?php echo get_option('admin_email', $this->get_user_info('user_email', array('id' => 1))); ?>" autocomplete="email" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The main contact email address <strong>(visible in the frontend and in metadata!)</strong>.</p>
@@ -79,9 +77,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="notification_email">Notification Email</label>
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><i class="far fa-fw fa-envelope"></i></div>
-						</div>
+						<div class="input-group-text"><i class="far fa-fw fa-envelope"></i></div>
 						<input type="email" name="nebula_options[notification_email]" id="notification_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['notification_email']; ?>" placeholder="<?php echo get_option('admin_email', $this->get_user_info('user_email', array('id' => 1))); ?>" autocomplete="email" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The email address for Nebula notifications.</p>
@@ -113,9 +109,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="phone_number">Phone Number</label>
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><i class="fas fa-fw fa-phone"></i></div>
-						</div>
+						<div class="input-group-text"><i class="fas fa-fw fa-phone"></i></div>
 						<input type="tel" name="nebula_options[phone_number]" id="phone_number" class="form-control nebula-validate-regex" data-valid-regex="\d-\d{3}-\d{3}-\d{4}" value="<?php echo $nebula_options['phone_number']; ?>" placeholder="1-315-478-6700" autocomplete="tel" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The primary phone number used for Open Graph data. Use the format: "1-315-478-6700".</p>
@@ -125,9 +119,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="fax_number">Fax Number</label>
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><i class="fas fa-fw fa-fax"></i></div>
-						</div>
+						<div class="input-group-text"><i class="fas fa-fw fa-fax"></i></div>
 						<input type="tel" name="nebula_options[fax_number]" id="fax_number" class="form-control nebula-validate-regex" data-valid-regex="\d-\d{3}-\d{3}-\d{4}" value="<?php echo $nebula_options['fax_number']; ?>" placeholder="1-315-426-1392" autocomplete="tel" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The fax number used for Open Graph data. Use the format: "1-315-426-1392".</p>
@@ -141,9 +133,7 @@ if ( !trait_exists('Metaboxes') ){
 						<div class="col-sm-6">
 							<div class="form-group">
 								<div class="input-group mb-2">
-									<div class="input-group-prepend">
-										<div class="input-group-text">Latitude</div>
-									</div>
+									<div class="input-group-text">Latitude</div>
 									<input type="text" name="nebula_options[latitude]" id="latitude" class="form-control nebula-validate-regex" data-valid-regex="^-?\d+(.\d+)?$" value="<?php echo $nebula_options['latitude']; ?>" placeholder="43.0536854" />
 								</div>
 							</div>
@@ -151,9 +141,7 @@ if ( !trait_exists('Metaboxes') ){
 						<div class="col-sm-6">
 							<div class="form-group">
 								<div class="input-group">
-									<div class="input-group-prepend">
-										<div class="input-group-text">Longitude</div>
-									</div>
+									<div class="input-group-text">Longitude</div>
 									<input type="text" name="nebula_options[longitude]" id="longitude" class="form-control nebula-validate-regex" data-valid-regex="^-?\d+(.\d+)?$" value="<?php echo $nebula_options['longitude']; ?>" placeholder="-76.1654569" />
 								</div>
 							</div>
@@ -218,9 +206,7 @@ if ( !trait_exists('Metaboxes') ){
 							<div class="col">
 								<div class="form-group">
 									<div class="input-group" dependent-of="business_hours_<?php echo $weekday; ?>_enabled">
-										<div class="input-group-prepend">
-											<div class="input-group-text"><span><i class="far fa-fw fa-clock"></i> Open</span></div>
-										</div>
+										<div class="input-group-text"><span><i class="far fa-fw fa-clock"></i> Open</span></div>
 										<input type="text" name="nebula_options[business_hours_<?php echo $weekday; ?>_open]" id="business_hours_<?php echo $weekday; ?>_open" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" value="<?php echo $nebula_options['business_hours_' . $weekday . '_open']; ?>" />
 									</div>
 								</div>
@@ -228,9 +214,7 @@ if ( !trait_exists('Metaboxes') ){
 							<div class="col">
 								<div class="form-group">
 									<div class="input-group" dependent-of="business_hours_<?php echo $weekday; ?>_enabled">
-										<div class="input-group-prepend">
-											<div class="input-group-text"><span><i class="far fa-fw fa-clock"></i> Close</span></div>
-										</div>
+										<div class="input-group-text"><span><i class="far fa-fw fa-clock"></i> Close</span></div>
 										<input type="text" name="nebula_options[business_hours_<?php echo $weekday; ?>_close]" id="business_hours_<?php echo $weekday; ?>_close" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" value="<?php echo $nebula_options['business_hours_' . $weekday . '_close']; ?>" />
 									</div>
 								</div>
@@ -267,9 +251,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="facebookurl">Facebook</label>
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> URL</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> URL</span></div>
 						<input type="text" name="nebula_options[facebook_url]" id="facebook_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['facebook_url']; ?>" placeholder="http://www.facebook.com/PinckneyHugo" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Facebook page.</p>
@@ -278,9 +260,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group" dependent-of="facebook_url">
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> Page ID</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> Page ID</span></div>
 						<input type="text" name="nebula_options[facebook_page_id]" id="facebook_page_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_page_id']; ?>" placeholder="000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The ID of your Facebook page.</p>
@@ -289,9 +269,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group" dependent-of="facebook_url">
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> Admin IDs</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> Admin IDs</span></div>
 						<input type="text" name="nebula_options[facebook_admin_ids]" id="facebook_admin_ids" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_admin_ids']; ?>" placeholder="0000, 0000, 0000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">IDs of Facebook administrators.</p>
@@ -301,9 +279,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="twitter_username">Twitter</label>
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-twitter"></i> Username</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-twitter"></i> Username</span></div>
 						<input type="text" name="nebula_options[twitter_username]" id="twitter_username" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_username']; ?>" placeholder="@pinckneyhugo" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">Your Twitter username <strong>including the @ symbol</strong>.</p>
@@ -313,9 +289,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="linkedin_url">LinkedIn</label>
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-linkedin"></i> URL</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-linkedin"></i> URL</span></div>
 						<input type="text" name="nebula_options[linkedin_url]" id="linkedin_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['linkedin_url']; ?>" placeholder="https://www.linkedin.com/company/pinckney-hugo-group" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your LinkedIn profile.</p>
@@ -325,9 +299,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="youtube_url">Youtube</label>
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-youtube"></i> URL</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-youtube"></i> URL</span></div>
 						<input type="text" name="nebula_options[youtube_url]" id="youtube_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['youtube_url']; ?>" placeholder="https://www.youtube.com/user/pinckneyhugo" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Youtube channel.</p>
@@ -337,9 +309,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="instagram_url">Instagram</label>
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-instagram"></i> URL</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-instagram"></i> URL</span></div>
 						<input type="text" name="nebula_options[instagram_url]" id="instagram_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['instagram_url']; ?>" placeholder="https://www.instagram.com/pinckneyhugo" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Instagram profile.</p>
@@ -349,9 +319,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="pinterest_url">Pinterest</label>
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-pinterest"></i> URL</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-pinterest"></i> URL</span></div>
 						<input type="text" name="nebula_options[pinterest_url]" id="pinterest_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['pinterest_url']; ?>" placeholder="https://www.pinterest.com/pinckneyhugo" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Pinterest profile.</p>
@@ -681,9 +649,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Client ID</div>
-							</div>
+							<div class="input-group-text">Client ID</div>
 							<input type="text" name="nebula_options[cd_gacid]" id="cd_gacid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_gacid']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Store the Google Analytics CID in an accessible dimension for reporting. Scope: User</p>
@@ -692,9 +658,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Hit ID</div>
-							</div>
+							<div class="input-group-text">Hit ID</div>
 							<input type="text" name="nebula_options[cd_hitid]" id="cd_hitid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hitid']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Gives each individual hit an ID. Scope: Hit</p>
@@ -704,9 +668,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Hit Time</div>
-							</div>
+							<div class="input-group-text">Hit Time</div>
 							<input type="text" name="nebula_options[cd_hittime]" id="cd_hittime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hittime']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track the time of each individual hit. Scope: Hit</p>
@@ -716,9 +678,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Hit Type</div>
-							</div>
+							<div class="input-group-text">Hit Type</div>
 							<input type="text" name="nebula_options[cd_hittype]" id="cd_hittype" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hittype']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track the type of each hit (such as pageview, event, exception, etc). Scope: Hit</p>
@@ -727,9 +687,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Hit Interactivity</div>
-							</div>
+							<div class="input-group-text">Hit Interactivity</div>
 							<input type="text" name="nebula_options[cd_hitinteractivity]" id="cd_hitinteractivity" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hitinteractivity']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track whether the hit is interactive or non-interactive. Scope: Hit</p>
@@ -739,9 +697,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Hit Transport Method</div>
-							</div>
+							<div class="input-group-text">Hit Transport Method</div>
 							<input type="text" name="nebula_options[cd_hitmethod]" id="cd_hitmethod" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hitmethod']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track the transport method of the hit (such as JavaScript, Beacon, or Server-Side). Scope: Hit</p>
@@ -750,9 +706,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Save Data</div>
-							</div>
+							<div class="input-group-text">Save Data</div>
 							<input type="text" name="nebula_options[cd_savedata]" id="cd_savedata" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_savedata']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track when the user has requested less data usage. Scope: Session</p>
@@ -762,9 +716,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Reduced Motion Preference</div>
-							</div>
+							<div class="input-group-text">Reduced Motion Preference</div>
 							<input type="text" name="nebula_options[cd_reducedmotion]" id="cd_reducedmotion" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_reducedmotion']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track the users motion preference. Scope: Session</p>
@@ -774,9 +726,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Color Scheme Preference</div>
-							</div>
+							<div class="input-group-text">Color Scheme Preference</div>
 							<input type="text" name="nebula_options[cd_colorscheme]" id="cd_colorscheme" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_colorscheme']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track the users color scheme preference. Scope: Session</p>
@@ -786,9 +736,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Offline</div>
-							</div>
+							<div class="input-group-text">Offline</div>
 							<input type="text" name="nebula_options[cd_offline]" id="cd_offline" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_offline']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Note what data was sent while the user was offline. Scope: Hit</p>
@@ -798,9 +746,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Device Memory</div>
-							</div>
+							<div class="input-group-text">Device Memory</div>
 							<input type="text" name="nebula_options[cd_devicememory]" id="cd_devicememory" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_devicememory']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track the available memory of the device as "Lite" or "Full". Scope: Hit</p>
@@ -810,9 +756,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Visibility State</div>
-							</div>
+							<div class="input-group-text">Visibility State</div>
 							<input type="text" name="nebula_options[cd_visibilitystate]" id="cd_visibilitystate" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_visibilitystate']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Logs the visibilty state of the window with each hit. Scope: Hit</p>
@@ -821,9 +765,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Network Connection</div>
-							</div>
+							<div class="input-group-text">Network Connection</div>
 							<input type="text" name="nebula_options[cd_network]" id="cd_network" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_network']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Logs the connection state of the network (Online/Offline). Scope: Hit</p>
@@ -833,9 +775,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Navigation Type</div>
-							</div>
+							<div class="input-group-text">Navigation Type</div>
 							<input type="text" name="nebula_options[cd_navigationtype]" id="cd_navigationtype" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_navigationtype']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Logs the type of navigation used to load the page (navigation, reload, back/forward). Scope: Hit</p>
@@ -844,9 +784,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Redirect Count</div>
-							</div>
+							<div class="input-group-text">Redirect Count</div>
 							<input type="text" name="nebula_options[cd_redirectcount]" id="cd_redirectcount" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_redirectcount']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Logs the number of redirects made before loading the requested page. Scope: Hit</p>
@@ -859,9 +797,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Author</div>
-							</div>
+							<div class="input-group-text">Author</div>
 							<input type="text" name="nebula_options[cd_author]" id="cd_author" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_author']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks the article author's name on single posts. Scope: Hit</p>
@@ -870,9 +806,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Categories</div>
-							</div>
+							<div class="input-group-text">Categories</div>
 							<input type="text" name="nebula_options[cd_categories]" id="cd_categories" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_categories']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks the article author's name on single posts. Scope: Hit</p>
@@ -881,9 +815,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Tags</div>
-							</div>
+							<div class="input-group-text">Tags</div>
 							<input type="text" name="nebula_options[cd_tags]" id="cd_tags" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_tags']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sends a string of all the post's tags to the pageview hit. Scope: Hit</p>
@@ -892,9 +824,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Word Count</div>
-							</div>
+							<div class="input-group-text">Word Count</div>
 							<input type="text" name="nebula_options[cd_wordcount]" id="cd_wordcount" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_wordcount']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sends word count range for single posts. Scope: Hit</p>
@@ -903,9 +833,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Publish Date</div>
-							</div>
+							<div class="input-group-text">Publish Date</div>
 							<input type="text" name="nebula_options[cd_publishdate]" id="cd_publishdate" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_publishdate']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sends the date the post was published in the format <code>YYYY-MM-DD</code>. Scope: Hit</p>
@@ -918,9 +846,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group" dependent-or="business_hours_sunday_enabled business_hours_monday_enabled business_hours_tuesday_enabled business_hours_wednesday_enabled business_hours_thursday_enabled business_hours_friday_enabled business_hours_saturday_enabled">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Business Hours</div>
-							</div>
+							<div class="input-group-text">Business Hours</div>
 							<input type="text" name="nebula_options[cd_businesshours]" id="cd_businesshours" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_businesshours']; ?>" />
 						</div>
 						<p class="dependent-note hidden">This option is dependent on Business Hours (Metadata tab).</p>
@@ -930,9 +856,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Relative Time</div>
-							</div>
+							<div class="input-group-text">Relative Time</div>
 							<input type="text" name="nebula_options[cd_relativetime]" id="cd_relativetime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_relativetime']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sends the relative time (Ex: "Late Morning", "Early Evening", etc.) based on the business timezone (via WordPress settings). Scope: Hit</p>
@@ -941,9 +865,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group" dependent-of="weather">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Weather</div>
-							</div>
+							<div class="input-group-text">Weather</div>
 							<input type="text" name="nebula_options[cd_weather]" id="cd_weather" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_weather']; ?>" />
 						</div>
 						<p class="dependent-note hidden">This option is dependent on Weather Detection (Functions tab) being enabled.</p>
@@ -953,9 +875,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group" dependent-of="weather">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Temperature</div>
-							</div>
+							<div class="input-group-text">Temperature</div>
 							<input type="text" name="nebula_options[cd_temperature]" id="cd_temperature" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_temperature']; ?>" />
 						</div>
 						<p class="dependent-note hidden">This option is dependent on Weather Detection (Functions tab) being enabled.</p>
@@ -969,9 +889,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Role</div>
-							</div>
+							<div class="input-group-text">Role</div>
 							<input type="text" name="nebula_options[cd_role]" id="cd_role" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_role']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sends the current user's role (as well as staff affiliation if available) for associated users. Scope: User</p>
@@ -981,9 +899,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Session ID</div>
-							</div>
+							<div class="input-group-text">Session ID</div>
 							<input type="text" name="nebula_options[cd_sessionid]" id="cd_sessionid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_sessionid']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">ID system so that you can group hits into specific user sessions. Scope: Session</p>
@@ -993,9 +909,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">User ID</div>
-							</div>
+							<div class="input-group-text">User ID</div>
 							<input type="text" name="nebula_options[cd_userid]" id="cd_userid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_userid']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">If allowing visitors to sign up to create WordPress accounts, this will send user IDs to Google Analytics. Scope: User</p>
@@ -1005,9 +919,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Facebook ID</div>
-							</div>
+							<div class="input-group-text">Facebook ID</div>
 							<input type="text" name="nebula_options[cd_fbid]" id="cd_fbid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_fbid']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Send Facebook ID to Google Analytics when using Facebook Connect API. Scope: User</p>
@@ -1017,9 +929,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Local Timestamp</div>
-							</div>
+							<div class="input-group-text">Local Timestamp</div>
 							<input type="text" name="nebula_options[cd_timestamp]" id="cd_timestamp" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_timestamp']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Adds a timestamp (in the user's local time) with timezone offset. Scope: Hit</p>
@@ -1029,9 +939,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Window Type</div>
-							</div>
+							<div class="input-group-text">Window Type</div>
 							<input type="text" name="nebula_options[cd_windowtype]" id="cd_windowtype" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_windowtype']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Stores the type of window the site is being accessed from (Ex: Iframe or Standalone App). Scope: Hit</p>
@@ -1041,9 +949,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Geolocation</div>
-							</div>
+							<div class="input-group-text">Geolocation</div>
 							<input type="text" name="nebula_options[cd_geolocation]" id="cd_geolocation" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_geolocation']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Allows latitude and longitude coordinates to be sent after being detected. Scope: Session</p>
@@ -1053,9 +959,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Geolocation Accuracy</div>
-							</div>
+							<div class="input-group-text">Geolocation Accuracy</div>
 							<input type="text" name="nebula_options[cd_geoaccuracy]" id="cd_geoaccuracy" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_geoaccuracy']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Allows geolocation accuracy to be sent after being detected. Scope: Session</p>
@@ -1065,9 +969,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Geolocation Name</div>
-							</div>
+							<div class="input-group-text">Geolocation Name</div>
 							<input type="text" name="nebula_options[cd_geoname]" id="cd_geoname" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_geoname']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Allows named location information to be sent after being detected using map polygons. Scope: Session</p>
@@ -1077,9 +979,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">WPML Language</div>
-							</div>
+							<div class="input-group-text">WPML Language</div>
 							<input type="text" name="nebula_options[cd_wpmllang]" id="cd_wpmllang" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_wpmllang']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Store the language displayed to the user via the WPML plugin. Scope: User</p>
@@ -1089,9 +989,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Blocker Detection</div>
-							</div>
+							<div class="input-group-text">Blocker Detection</div>
 							<input type="text" name="nebula_options[cd_blocker]" id="cd_blocker" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_blocker']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Detects if the user is blocking resources such as ads or Google Analytics. Scope: Session</p>
@@ -1101,9 +999,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Query String</div>
-							</div>
+							<div class="input-group-text">Query String</div>
 							<input type="text" name="nebula_options[cd_querystring]" id="cd_querystring" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_querystring']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Moves the query string from the "page" dimension for cleaner URLs. Scope: Hit</p>
@@ -1113,9 +1009,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Text Fragment</div>
-							</div>
+							<div class="input-group-text">Text Fragment</div>
 							<input type="text" name="nebula_options[cd_textfragment]" id="cd_textfragment" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_textfragment']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Logs the text fragment from the URL. Useful for detecting Google SERP Feature links. Scope: Hit</p>
@@ -1124,9 +1018,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Media Query: Breakpoint</div>
-							</div>
+							<div class="input-group-text">Media Query: Breakpoint</div>
 							<input type="text" name="nebula_options[cd_mqbreakpoint]" id="cd_mqbreakpoint" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_mqbreakpoint']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Detect which media query breakpoint is associated with this hit. Scope: Hit</p>
@@ -1135,9 +1027,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Media Query: Resolution</div>
-							</div>
+							<div class="input-group-text">Media Query: Resolution</div>
 							<input type="text" name="nebula_options[cd_mqresolution]" id="cd_mqresolution" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_mqresolution']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Detect the resolution factor associated with this hit. Scope: Hit</p>
@@ -1146,9 +1036,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Media Query: Orientation</div>
-							</div>
+							<div class="input-group-text">Media Query: Orientation</div>
 							<input type="text" name="nebula_options[cd_mqorientation]" id="cd_mqorientation" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_mqorientation']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Detect the device orientation associated with this hit. Scope: Hit</p>
@@ -1157,9 +1045,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Security Note</div>
-							</div>
+							<div class="input-group-text">Security Note</div>
 							<input type="text" name="nebula_options[cd_securitynote]" id="cd_securitynote" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_securitynote']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Adds a note to the user for potential security issues and on possible bots. Scope: User</p>
@@ -1172,9 +1058,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Event Intent</div>
-							</div>
+							<div class="input-group-text">Event Intent</div>
 							<input type="text" name="nebula_options[cd_eventintent]" id="cd_eventintent" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_eventintent']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Log whether the event was true, or just a possible intention. Scope: Hit</p>
@@ -1183,9 +1067,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Contact Method</div>
-							</div>
+							<div class="input-group-text">Contact Method</div>
 							<input type="text" name="nebula_options[cd_contactmethod]" id="cd_contactmethod" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_contactmethod']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">If the user triggers a contact event, the method of contact is stored here. Scope: Session</p>
@@ -1194,9 +1076,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Form Timing</div>
-							</div>
+							<div class="input-group-text">Form Timing</div>
 							<input type="text" name="nebula_options[cd_formtiming]" id="cd_formtiming" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_formtiming']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sends form timings along with the each submission. Scope: Hit</p>
@@ -1206,9 +1086,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Form Flow</div>
-							</div>
+							<div class="input-group-text">Form Flow</div>
 							<input type="text" name="nebula_options[cd_formflow]" id="cd_formflow" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_formflow']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Track the field path the user takes through forms. Scope: Session</p>
@@ -1218,9 +1096,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Video Watcher</div>
-							</div>
+							<div class="input-group-text">Video Watcher</div>
 							<input type="text" name="nebula_options[cd_videowatcher]" id="cd_videowatcher" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_videowatcher']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sets a dimension when videos are started and finished. Scope: Session</p>
@@ -1229,9 +1105,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Ecommerce Cart</div>
-							</div>
+							<div class="input-group-text">Ecommerce Cart</div>
 							<input type="text" name="nebula_options[cd_woocart]" id="cd_woocart" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_woocart']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">If the user has any product(s) in their cart. Scope: Hit</p>
@@ -1240,9 +1114,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Ecommerce Customer</div>
-							</div>
+							<div class="input-group-text">Ecommerce Customer</div>
 							<input type="text" name="nebula_options[cd_woocustomer]" id="cd_woocustomer" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_woocustomer']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sets a dimension when a user completes the checkout process in WooCommerce. Scope: User</p>
@@ -1266,9 +1138,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Server Response</div>
-							</div>
+							<div class="input-group-text">Server Response</div>
 							<input type="text" name="nebula_options[cm_serverresponsetime]" id="cm_serverresponsetime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_serverresponsetime']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Navigation start until server response finishes (includes PHP rendering time). Scope: Hit, Format: Integer</p>
@@ -1278,9 +1148,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">DOM Ready</div>
-							</div>
+							<div class="input-group-text">DOM Ready</div>
 							<input type="text" name="nebula_options[cm_domreadytime]" id="cm_domreadytime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_domreadytime']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Navigation start until DOM ready. Scope: Hit, Format: Integer</p>
@@ -1290,9 +1158,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Window Loaded</div>
-							</div>
+							<div class="input-group-text">Window Loaded</div>
 							<input type="text" name="nebula_options[cm_windowloadedtime]" id="cm_windowloadedtime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_windowloadedtime']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Navigation start until window loaded. Scope: Hit, Format: Integer</p>
@@ -1306,9 +1172,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Notable Downloads</div>
-							</div>
+							<div class="input-group-text">Notable Downloads</div>
 							<input type="text" name="nebula_options[cm_notabledownloads]" id="cm_notabledownloads" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_notabledownloads']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user downloads a notable file. Scope: Hit, Format: Integer</p>
@@ -1318,9 +1182,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Form Impressions</div>
-							</div>
+							<div class="input-group-text">Form Impressions</div>
 							<input type="text" name="nebula_options[cm_formimpressions]" id="cm_formimpressions" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_formimpressions']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a form is in view as the user scrolls. Scope: Hit, Format: Integer</p>
@@ -1330,9 +1192,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Form Starts</div>
-							</div>
+							<div class="input-group-text">Form Starts</div>
 							<input type="text" name="nebula_options[cm_formstarts]" id="cm_formstarts" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_formstarts']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user begins entering a form. Scope: Hit, Format: Integer</p>
@@ -1342,9 +1202,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Form Submissions</div>
-							</div>
+							<div class="input-group-text">Form Submissions</div>
 							<input type="text" name="nebula_options[cm_formsubmissions]" id="cm_formsubmissions" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_formsubmissions']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user submits a form. Scope: Hit, Format: Integer</p>
@@ -1354,9 +1212,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Max Scroll Percent</div>
-							</div>
+							<div class="input-group-text">Max Scroll Percent</div>
 							<input type="text" name="nebula_options[cm_maxscroll]" id="cm_maxscroll" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_maxscroll']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Calculates the maximum scroll percentage the user reached per page. Scope: Hit, Format: Integer</p>
@@ -1370,9 +1226,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Video Starts</div>
-							</div>
+							<div class="input-group-text">Video Starts</div>
 							<input type="text" name="nebula_options[cm_videostarts]" id="cm_videostarts" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_videostarts']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user begins playing a video. Scope: Hit, Format: Integer</p>
@@ -1381,9 +1235,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Video Play Time</div>
-							</div>
+							<div class="input-group-text">Video Play Time</div>
 							<input type="text" name="nebula_options[cm_videoplaytime]" id="cm_videoplaytime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_videoplaytime']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks playing duration when a user pauses or completes a video. Scope: Hit, Format: Time</p>
@@ -1392,9 +1244,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Video Completions</div>
-							</div>
+							<div class="input-group-text">Video Completions</div>
 							<input type="text" name="nebula_options[cm_videocompletions]" id="cm_videocompletions" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_videocompletions']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user completes playing a video. Scope: Hit, Format: Integer</p>
@@ -1407,9 +1257,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Word Count</div>
-							</div>
+							<div class="input-group-text">Word Count</div>
 							<input type="text" name="nebula_options[cm_wordcount]" id="cm_wordcount" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_wordcount']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Sends word count for single posts. Scope: Hit, Format: Integer</p>
@@ -1418,9 +1266,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Autocomplete Searches</div>
-							</div>
+							<div class="input-group-text">Autocomplete Searches</div>
 							<input type="text" name="nebula_options[cm_autocompletesearches]" id="cm_autocompletesearches" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_autocompletesearches']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a set of autocomplete search results is returned to the user (count is the search, not the result quantity). Scope: Hit, Format: Integer</p>
@@ -1429,9 +1275,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<div class="input-group">
-							<div class="input-group-prepend">
-								<div class="input-group-text">Autocomplete Search Clicks</div>
-							</div>
+							<div class="input-group-text">Autocomplete Search Clicks</div>
 							<input type="text" name="nebula_options[cm_autocompletesearchclicks]" id="cm_autocompletesearchclicks" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_autocompletesearchclicks']; ?>" />
 						</div>
 						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user clicks an autocomplete search result. Scope: Hit, Format: Integer</p>
@@ -1461,17 +1305,13 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="google_browser_api_key">Google Public API</label>
 
 					<div class="input-group">
-						<div class="input-group-prepend">
-									<div class="input-group-text">HTTP Restricted</div>
-								</div>
+						<div class="input-group-text">HTTP Restricted</div>
 						<input type="text" name="nebula_options[google_browser_api_key]" id="google_browser_api_key" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_browser_api_key']; ?>" />
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="input-group">
-						<div class="input-group-prepend">
-									<div class="input-group-text">IP Restricted</div>
-								</div>
+						<div class="input-group-text">IP Restricted</div>
 						<input type="text" name="nebula_options[google_server_api_key]" id="google_server_api_key" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_server_api_key']; ?>" />
 					</div>
 
@@ -1492,18 +1332,14 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="hubspot_api">Hubspot</label>
 
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text">API Key</div>
-						</div>
+						<div class="input-group-text">API Key</div>
 						<input type="text" name="nebula_options[hubspot_api]" id="hubspot_api" class="form-control nebula-validate-text" value="<?php echo $nebula_options['hubspot_api']; ?>" />
 					</div>
 				</div>
 
 				<div class="form-group">
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text">Portal ID</div>
-						</div>
+						<div class="input-group-text">Portal ID</div>
 						<input type="text" name="nebula_options[hubspot_portal]" id="hubspot_portal" class="form-control nebula-validate-text" value="<?php echo $nebula_options['hubspot_portal']; ?>" />
 					</div>
 
@@ -1529,9 +1365,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="facebook_app_id">Facebook</label>
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> App ID</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> App ID</span></div>
 						<input type="text" name="nebula_options[facebook_app_id]" id="facebook_app_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_app_id']; ?>" placeholder="000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The App ID of the associated Facebook page/app.</p>
@@ -1541,9 +1375,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> App Secret</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> App Secret</span></div>
 						<input type="text" name="nebula_options[facebook_app_secret]" id="facebook_app_secret" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_app_secret']; ?>" placeholder="00000000000000000000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The App Secret of the associated Facebook page/app.</p>
@@ -1553,9 +1385,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> Access Token</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-facebook"></i> Access Token</span></div>
 						<input type="text" name="nebula_options[facebook_access_token]" id="facebook_access_token" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_access_token']; ?>" placeholder="000000000000000|000000000000000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The Access Token of the associated Facebook page/app.</p>
@@ -1566,9 +1396,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="twitter_consumer_key">Twitter</label>
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-twitter"></i> Consumer Key</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-twitter"></i> Consumer Key</span></div>
 						<input type="text" name="nebula_options[twitter_consumer_key]" id="twitter_consumer_key" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_consumer_key']; ?>" placeholder="000000000000000000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The Consumer Key key is used for generating a bearer token and/or accessing custom Twitter feeds.</p>
@@ -1577,9 +1405,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-twitter"></i> Consumer Secret</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-twitter"></i> Consumer Secret</span></div>
 						<input type="text" name="nebula_options[twitter_consumer_secret]" id="twitter_consumer_secret" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_consumer_secret']; ?>" placeholder="000000000000000000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The Consumer Secret key is used for generating a bearer token and/or accessing custom Twitter feeds.</p>
@@ -1588,9 +1414,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-twitter"></i> Bearer Token</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-twitter"></i> Bearer Token</span></div>
 						<input type="text" name="nebula_options[twitter_bearer_token]" id="twitter_bearer_token" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_bearer_token']; ?>" placeholder="000000000000000000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The bearer token is for creating custom Twitter feeds: <a href="https://nebula.gearside.com/utilities/twitter-bearer-token-generator/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=twitter+help<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank" rel="noopener noreferrer">Generate a bearer token here</a></p>
@@ -1600,9 +1424,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="instagram_user_id">Instagram</label>
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-instagram"></i> User ID</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-instagram"></i> User ID</span></div>
 						<input type="text" name="nebula_options[instagram_user_id]" id="instagram_user_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['instagram_user_id']; ?>" placeholder="00000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The user ID and access token are used for creating custom Instagram feeds.</p>
@@ -1612,9 +1434,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-instagram"></i> Access Token</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-instagram"></i> Access Token</span></div>
 						<input type="text" name="nebula_options[instagram_access_token]" id="instagram_access_token" class="form-control nebula-validate-text" value="<?php echo $nebula_options['instagram_access_token']; ?>" placeholder="000000000000000000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The user ID and access token are used for creating custom Instagram feeds.</p>
@@ -1624,9 +1444,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-instagram"></i> Client ID</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-instagram"></i> Client ID</span></div>
 						<input type="text" name="nebula_options[instagram_client_id]" id="instagram_client_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['instagram_client_id']; ?>" placeholder="000000000000000000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">For client ID and client secret, register an application using the Instagram API platform then Register a new Client.</p>
@@ -1635,9 +1453,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<div class="input-group">
-						<div class="input-group-prepend">
-							<div class="input-group-text"><span><i class="fab fa-fw fa-instagram"></i> Client Secret</span></div>
-						</div>
+						<div class="input-group-text"><span><i class="fab fa-fw fa-instagram"></i> Client Secret</span></div>
 						<input type="text" name="nebula_options[instagram_client_secret]" id="instagram_client_secret" class="form-control nebula-validate-text" value="<?php echo $nebula_options['instagram_client_secret']; ?>" placeholder="000000000000000000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">For client ID and client secret, register an application using the Instagram API platform then Register a new Client.</p>
@@ -1888,9 +1704,7 @@ if ( !trait_exists('Metaboxes') ){
 					<?php foreach ( $all_registered_assets as $asset ): ?>
 						<div class="form-group no-help <?php echo ( !empty($dequeue_assets[$asset['handle']]) )? 'active' : ''; ?>">
 							<div class="input-group">
-								<div class="input-group-prepend">
-									<div class="input-group-text" title="<?php echo ( !empty($dequeue_assets[$asset['handle']]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fab fa-fw fa-<?php echo $icon; ?>"></i> <?php echo $asset['handle']; ?></div>
-								</div>
+								<div class="input-group-text" title="<?php echo ( !empty($dequeue_assets[$asset['handle']]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fab fa-fw fa-<?php echo $icon; ?>"></i> <?php echo $asset['handle']; ?></div>
 								<input type="text" name="<?php echo $option_handle; ?>[<?php echo $asset['handle']; ?>]" id="<?php echo $asset['handle'] . '-' . $type; ?>" class="form-control nebula-validate-regex" data-valid-regex="^(\*)$|^(([0-9a-z!_()]+)(,\s?)*)+$" value="<?php echo ( !empty($dequeue_assets[$asset['handle']]) )? $dequeue_assets[$asset['handle']] : ''; ?>" />
 							</div>
 							<p class="nebula-help-text short-help form-text text-muted">Source: <?php echo str_replace(content_url(), '', $asset['src']); ?></p>
@@ -1905,9 +1719,7 @@ if ( !trait_exists('Metaboxes') ){
 						<?php foreach ( $existing_dequeued_assets as $handle => $rule ): ?>
 							<div class="form-group no-help <?php echo ( !empty($dequeue_assets[$handle]) )? 'active' : ''; ?>">
 								<div class="input-group">
-									<div class="input-group-prepend">
-										<div class="input-group-text" title="<?php echo ( !empty($dequeue_assets[$handle]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fab fa-fw fa-js"></i> <?php echo $handle; ?></div>
-									</div>
+									<div class="input-group-text" title="<?php echo ( !empty($dequeue_assets[$handle]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fab fa-fw fa-js"></i> <?php echo $handle; ?></div>
 									<input type="text" name="<?php echo $option_handle; ?>[<?php echo $handle; ?>]" id="<?php echo $handle . '-' . $type; ?>" class="form-control nebula-validate-regex" data-valid-regex="^(\*)$|^(([0-9a-z!_()]+)(,\s?)*)+$" value="<?php echo ( !empty($dequeue_assets[$handle]) )? $dequeue_assets[$handle] : ''; ?>" />
 								</div>
 							</div>

@@ -278,6 +278,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 	.multi-form-group {margin-bottom: 15px; padding: 0; border: none; transition: all 0.25s ease;
 		.form-group {margin-bottom: 0;}
 		.form-text {font-size: 12px;}
+		.input-group-text {line-height: 1.4;} //Make Bootstrap match WordPress core
 	}
 
 	.input-group {transition: opacity 0.25s;}
