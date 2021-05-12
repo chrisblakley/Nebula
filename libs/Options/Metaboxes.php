@@ -346,17 +346,6 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text more-help form-text text-muted">Be careful changing this option as some plugins/page functionality may rely on jQuery loading in the &lt;head&gt;, however some speed improvements may be realized by loading later.<br /><strong>Note:</strong> some plugins may override this and bring jQuery back to the head.<br /><strong>Remember:</strong> if loading in the footer, embedded script tags cannot use jQuery in template files.</p>
 					<p class="option-keywords">old support plugins minor page speed impact optimization optimize</p>
 				</div>
-
-				<div class="form-group">
-					<label for="bootstrap_version">Bootstrap Version</label>
-					<select name="nebula_options[bootstrap_version]" id="bootstrap_version" class="form-select nebula-validate-select">
-						<option value="latest" <?php selected('latest', $nebula_options['bootstrap_version']); ?>>Latest</option>
-						<option value="grid" <?php selected('grid', $nebula_options['bootstrap_version']); ?>>Grid Only</option>
-					</select>
-					<p class="nebula-help-text short-help form-text text-muted">Which Bootstrap version to use. (Default: <?php echo $this->user_friendly_default('bootstrap_version'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">Bootstrap 3 will support IE8+. Bootstrap 4 alpha 5 will support IE9+. Bootstrap latest supports IE10+. Grid loads only framework (and reboot) CSS. WordPress admin pages will still load Bootstrap latest regardless of this selection.</p>
-					<p class="option-keywords">optimization moderate page speed impact optimization optimize</p>
-				</div>
 			<?php
 
 			do_action('nebula_options_assets_metabox', $nebula_options);

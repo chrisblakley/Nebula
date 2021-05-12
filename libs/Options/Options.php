@@ -220,7 +220,6 @@ if ( !trait_exists('Options') ){
 
 				//Functions Tab
 				'jquery_location' => 'wordpress',
-				'bootstrap_version' => 'latest',
 				'limit_image_dimensions' => 0,
 				'jpeg_quality' => 82, //WordPress default is 90
 				'admin_bar' => 1,

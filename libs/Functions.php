@@ -2795,9 +2795,6 @@ if ( !trait_exists('Functions') ){
 					$classes[] = 'chrome';
 				}
 
-				//Alternate Bootstrap versions
-				$classes[] = 'bs-' . $this->get_option('bootstrap_version');
-
 				//User Information
 				$current_user = wp_get_current_user();
 				if ( is_user_logged_in() ){

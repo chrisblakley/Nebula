@@ -302,18 +302,12 @@ if ( !trait_exists('Warnings') ){
 				}
 
 				//Check for hard Debug Mode
+				//We do not check for WP_DEBUG_LOG as it can intentionally be used on live websites. Nebula does warn when the log file gets large and indicates when it exists in the Developer Info Dashboard Metabox.
 				if ( $this->is_warning_level('verbose') && WP_DEBUG ){
 					$nebula_warnings['wp_debug'] = array(
 						'level' => 'warning',
 						'description' => '<i class="fas fa-fw fa-bug"></i> <strong>WP_DEBUG</strong> is enabled <small>(Generally defined in wp-config.php)</small>'
 					);
-
-					if ( WP_DEBUG_LOG ){
-						$nebula_warnings['wp_debug_log'] = array(
-							'level' => 'warning',
-							'description' => '<i class="fas fa-fw fa-bug"></i> Debug logging (<strong>WP_DEBUG_LOG</strong>) to /wp-content/debug.log is enabled <small>(Generally defined in wp-config.php)</small>'
-						);
-					}
 
 					if ( WP_DEBUG_DISPLAY ){
 						$nebula_warnings['wp_debug_display'] = array(
