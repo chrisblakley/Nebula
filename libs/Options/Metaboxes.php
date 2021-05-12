@@ -515,7 +515,7 @@ if ( !trait_exists('Metaboxes') ){
 						<option value="strict" <?php selected('strict', $nebula_options['warnings']); ?>>Strict (All Checks)</option>
 					</select>
 					<p class="nebula-help-text short-help form-text text-muted">Allow Nebula to check for common implementation errors and warnings and report them in the WP Admin and console for logged-in users. (Default: <?php echo $this->user_friendly_default('warnings'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted"></p>
+					<p class="nebula-help-text more-help form-text text-muted">To ignore certain warnings during development, change the WordPress environment out of "production" using the <code></code>WP_ENVIRONMENT_TYPE<code> constant. Remember to remove it or change to production when live!</p>
 					<p class="option-keywords">discretionary minor page speed impact companion admin notices admin_notices advanced warnings advanced_warnings audit mode audit_mode</p>
 				</div>
 

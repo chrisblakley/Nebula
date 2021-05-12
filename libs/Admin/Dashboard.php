@@ -74,7 +74,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<ul class="nebula-fa-ul">';
 
 			//Data Loaded Time (for Development environments)
-			if ( (function_exists('wp_get_environment_type') && wp_get_environment_type() !== 'production') || WP_DEBUG || $this->is_debug() ){
+			if ( wp_get_environment_type() !== 'production' || WP_DEBUG || $this->is_debug() ){
 				echo '<li><i class="fas fa-fw fa-clock"></i> This data as of <strong id="last-loaded" title="Just now" style="cursor: help;">' . date('l, F j, Y - g:i:sa') . '</strong></li>';
 			}
 

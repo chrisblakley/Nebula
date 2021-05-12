@@ -222,7 +222,6 @@ if ( !trait_exists('Warnings') ){
 
 				//Check specific directories for indexing (Apache directory listings)
 				$directory_indexing = get_transient('nebula_directory_indexing');
-
 				if ( empty($directory_indexing) || nebula()->is_debug() || nebula()->is_auditing() ){ //Use the transient unless ?debug or explicitly auditing
 					$directories = array(get_home_url(), includes_url(), content_url()); //Directories to test
 					$found_problem = false;
@@ -304,16 +303,18 @@ if ( !trait_exists('Warnings') ){
 				//Check for hard Debug Mode
 				//We do not check for WP_DEBUG_LOG as it can intentionally be used on live websites. Nebula does warn when the log file gets large and indicates when it exists in the Developer Info Dashboard Metabox.
 				if ( $this->is_warning_level('verbose') && WP_DEBUG ){
-					$nebula_warnings['wp_debug'] = array(
-						'level' => 'warning',
-						'description' => '<i class="fas fa-fw fa-bug"></i> <strong>WP_DEBUG</strong> is enabled <small>(Generally defined in wp-config.php)</small>'
-					);
-
-					if ( WP_DEBUG_DISPLAY ){
-						$nebula_warnings['wp_debug_display'] = array(
-							'level' => 'error',
-							'description' => '<i class="fas fa-fw fa-bug"></i> Debug errors and warnings are being displayed on the front-end (<Strong>WP_DEBUG_DISPLAY</strong>) <small>(Generally defined in wp-config.php)</small>'
+					if ( wp_get_environment_type() === 'production' ){ //Do not warn in development environments
+						$nebula_warnings['wp_debug'] = array(
+							'level' => 'warning',
+							'description' => '<i class="fas fa-fw fa-bug"></i> <strong>WP_DEBUG</strong> is enabled <small>(Generally defined in wp-config.php)</small>'
 						);
+
+						if ( WP_DEBUG_DISPLAY ){
+							$nebula_warnings['wp_debug_display'] = array(
+								'level' => 'error',
+								'description' => '<i class="fas fa-fw fa-bug"></i> Debug errors and warnings are being displayed on the front-end (<Strong>WP_DEBUG_DISPLAY</strong>) <small>(Generally defined in wp-config.php)</small>'
+							);
+						}
 					}
 				}
 

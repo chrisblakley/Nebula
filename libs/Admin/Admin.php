@@ -1197,9 +1197,10 @@ if ( !trait_exists('Admin') ){
 
 		//Send an email to the current user and site admin(s)
 		public function send_email_to_admins($subject, $message, $attachments=false){
-			$nebula_admin_email_sent = nebula()->transient('nebula_admin_email_sent', function(){
+			$nebula_admin_email_sent = nebula()->transient('nebula_admin_email_sent', function($data){
 				$current_user = wp_get_current_user();
 				$to = $current_user->user_email;
+
 				$headers = array(); //Prep a headers array if needed
 
 				$carbon_copies = $this->get_notification_emails(false);
@@ -1211,12 +1212,12 @@ if ( !trait_exists('Admin') ){
 				});
 
 				//Send the email, and on success set a transient to prevent multiple emails
-				if ( wp_mail($to, $subject, $message, $headers, $attachments) ){
-					return true;
+				if ( wp_mail($to, $data['subject'], $data['message'], $headers, $data['attachments']) ){ //wp_mail() returns boolean
+					return true; //Success
 				}
 
-				return false;
-			}, MINUTE_IN_SECONDS);
+				return false; //Failed (non-fatal, but email was not sent)
+			}, array('subject' => $subject, 'message' => $message, 'attachments' => $attachments, ), MINUTE_IN_SECONDS);
 
 			return $nebula_admin_email_sent; //This is boolean
 		}
