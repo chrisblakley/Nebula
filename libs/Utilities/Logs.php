@@ -192,16 +192,16 @@ if ( !trait_exists('Logs') ){
 		//Get all logs data (or just the column names)
 		public function get_logs($rows=true){
 			if ( $this->get_option('logs') && $this->is_staff() ){
-				global $wpdb;
-
 				//Only return column names if requested
 				if ( empty($rows) ){
+					global $wpdb;
 					$nebula_logs_data_head = $wpdb->get_results("SHOW columns FROM $wpdb->nebula_logs"); //Get the column names from the primary table
 					return (array) $nebula_logs_data_head; //Convert to an array and return
 				}
 
 				//Otherwise get the actual logs data (rows)
 				$nebula_logs_data = nebula()->transient('nebula_logs', function(){
+					global $wpdb; //Need to re-declare so it is available within this function
 					return $wpdb->get_results("SELECT * FROM $wpdb->nebula_logs ORDER BY timestamp DESC LIMIT 100"); //Get all data (last 100 logs) from the DB table in descending order (latest first)
 				}, HOUR_IN_SECONDS);
 

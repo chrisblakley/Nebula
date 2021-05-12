@@ -34,7 +34,9 @@ nebula.optionsInit = function(){
 		}, 500);
 	});
 
-	jQuery('#nebula-option-filter').trigger('keydown').focus(); //Trigger if a ?filter= parameter is used.
+	if ( nebula.get('prefiltered') ){
+		jQuery('#nebula-option-filter').trigger('keydown').focus(); //Trigger if a ?prefiltered= parameter is used.
+	}
 
 	nebula.checkDependents(); //Check all dependents
 	nebula.checkImportants();
@@ -90,7 +92,7 @@ nebula.optionsFilters = function(){
 		nebula.debounce(function(){
 			var url = nebula.site.admin_url + 'themes.php?page=nebula_options';
 			if ( jQuery('#nebula-option-filter').val() !== '' ){
-				url = nebula.site.admin_url + 'themes.php?page=nebula_options&filter=' + jQuery('#nebula-option-filter').val();
+				url = nebula.site.admin_url + 'themes.php?page=nebula_options&prefiltered=' + jQuery('#nebula-option-filter').val();
 			}
 
 			history.replaceState(null, document.title, url);
@@ -220,7 +222,7 @@ nebula.checkDependents = function(inputObject){
 			});
 		}
 	} else { //Check all dependencies
-		jQuery('input, textarea').each(function(){
+		jQuery('#nebula-options-section').find('input, textarea').each(function(){ //Never let this touch #nebula-option-filter
 			nebula.checkDependents(jQuery(this));
 			jQuery(this).trigger('blur'); //Trigger validation on all inputs
 		});

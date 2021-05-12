@@ -370,7 +370,7 @@ if ( !trait_exists('Metaboxes') ){
 			?>
 				<div class="form-group">
 					<label for="jquery_location">jQuery Location</label>
-					<select name="nebula_options[jquery_location]" id="jquery_location" class="form-control nebula-validate-select">
+					<select name="nebula_options[jquery_location]" id="jquery_location" class="form-select nebula-validate-select">
 						<option value="wordpress" <?php selected('wordpress', $nebula_options['jquery_location']); ?>>&lt;head&gt; (Default)</option>
 						<option value="footer" <?php selected('footer', $nebula_options['jquery_location']); ?>>&lt;footer&gt; (Performant)</option>
 					</select>
@@ -381,7 +381,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<label for="bootstrap_version">Bootstrap Version</label>
-					<select name="nebula_options[bootstrap_version]" id="bootstrap_version" class="form-control nebula-validate-select">
+					<select name="nebula_options[bootstrap_version]" id="bootstrap_version" class="form-select nebula-validate-select">
 						<option value="latest" <?php selected('latest', $nebula_options['bootstrap_version']); ?>>Latest</option>
 						<option value="grid" <?php selected('grid', $nebula_options['bootstrap_version']); ?>>Grid Only</option>
 					</select>
@@ -551,7 +551,7 @@ if ( !trait_exists('Metaboxes') ){
 			?>
 				<div class="form-group">
 					<label for="warnings">Nebula Warnings</label>
-					<select name="nebula_options[warnings]" id="warnings" class="form-control nebula-validate-select">
+					<select name="nebula_options[warnings]" id="warnings" class="form-select nebula-validate-select">
 						<option value="off" <?php selected('off', $nebula_options['warnings']); ?>>Off</option>
 						<option value="critical" <?php selected('critical', $nebula_options['warnings']); ?>>Critical (Essential Checks Only)</option>
 						<option value="verbose" <?php selected('verbose', $nebula_options['warnings']); ?>>Verbose (Include Significant Checks)</option>
@@ -1822,34 +1822,34 @@ if ( !trait_exists('Metaboxes') ){
 
 		public function dequeue_styles_metabox($nebula_options){
 			$all_registered_styles = get_option('optimizable_registered_styles');
-
-			if ( !empty($nebula_options['dequeue_styles']) ){
-				$this->output_dequeue_fields($all_registered_styles, $nebula_options['dequeue_styles'], 'css');
-			}
+			$dequeue_styles = ( !empty($nebula_options['dequeue_styles']) )? $nebula_options['dequeue_styles'] : false;
+			$this->output_dequeue_fields($all_registered_styles, $dequeue_styles, 'css');
 
 			do_action('nebula_options_dequeue_styles_metabox', $nebula_options);
 		}
 
 		public function dequeue_scripts_metabox($nebula_options){
 			$all_registered_scripts = get_option('optimizable_registered_scripts');
-
-			if ( !empty($nebula_options['dequeue_scripts']) ){
-				$this->output_dequeue_fields($all_registered_scripts, $nebula_options['dequeue_scripts'], 'js'); //nebula_options[dequeue_scripts]
-			}
+			$dequeue_scripts = ( !empty($nebula_options['dequeue_scripts']) )? $nebula_options['dequeue_scripts'] : false;
+			$this->output_dequeue_fields($all_registered_scripts, $dequeue_scripts, 'js'); //nebula_options[dequeue_scripts]
 
 			do_action('nebula_options_dequeue_scripts_metabox', $nebula_options);
 		}
 
 		public function output_dequeue_fields($all_registered_assets=array(), $dequeue_assets=array(), $type=''){
+			if ( empty($all_registered_assets) ){ //If the option has not yet been filled, set an empty array
+				$all_registered_assets = array();
+			}
+
+			if ( empty($dequeue_assets) ){
+				$dequeue_assets = array();
+			}
+
 			$option_handle = 'nebula_options[dequeue_scripts]';
 			$icon = 'js';
 			if ( $type === 'css' || strpos($type, 'style') !== false ){
 				$option_handle = 'nebula_options[dequeue_styles]';
 				$icon = 'css3-alt';
-			}
-
-			if ( empty($all_registered_assets) ){ //If the option has not yet been filled, set an empty array
-				$all_registered_assets = array();
 			}
 
 			//Check for existing handles that have rules that may not be present in the above scan

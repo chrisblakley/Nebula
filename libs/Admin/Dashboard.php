@@ -196,7 +196,7 @@ if ( !trait_exists('Dashboard') ){
 			//Must-Use Plugins
 			$mu_plugin_count = nebula()->transient('nebula_count_mu_plugins', function(){
 				if ( file_exists(WPMU_PLUGIN_DIR) ){
-					return $mu_plugin_count = count(glob(WPMU_PLUGIN_DIR . '/*')); //This just counts the directories, but is accurrate enough for this purpose
+					return count(glob(WPMU_PLUGIN_DIR . '/*')); //This just counts the directories, but is accurrate enough for this purpose
 				}
 
 				return false;
