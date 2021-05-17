@@ -3,25 +3,25 @@
 // ===========================
 
 //Top row that appears at mobile sizes.
-#mobilebarcon {visibility: visible; position: relative; background: $primary_color; width: 100%; height: 42px; overflow: hidden; z-index: 1; transition: all 0.5s; border: 0 solid rgba(255, 255, 255, 0); //Border color hack for actual visibility detection. No will-change here because it is not often expected for this transition to happen.
+#mobilebarcon {visibility: visible; position: relative; background: $primary_color; width: 100%; height: 42px; overflow: hidden; z-index: 1; transition: all 0.5s; border: 0 solid rgb(255 255 255 / 0%); //Border color hack for actual visibility detection. No will-change here because it is not often expected for this transition to happen.
 	a {font-size: rem(32px); @include link-colors(#fff, #aaa); text-decoration: underline;}
 	.mobilerow {display: block;
 		#mobileheadersearch {display: flex; align-items: center;
 			input {width: 100%; color: #fff; font-size: rem(18px); padding-left: 10px; line-height: 42px; min-height: 42px; background: none; border: none; outline: none; box-shadow: none; border-radius: 0;}
-			input::-webkit-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
-			input:-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
-			input::-moz-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
-			input:-ms-input-placeholder {font-weight: 300; color: rgba(255, 255, 255, 0.9);}
+			input::-webkit-input-placeholder {font-weight: 300; color: rgb(255 255 255 / 90%);}
+			input:-moz-placeholder {font-weight: 300; color: rgb(255 255 255 / 90%);}
+			input::-moz-placeholder {font-weight: 300; color: rgb(255 255 255 / 90%);}
+			input:-ms-input-placeholder {font-weight: 300; color: rgb(255 255 255 / 90%);}
 			&:before {content: "\f002"; @include font-awesome(); color: #fff; font-size: rem(18px); padding-left: 15px;}
 		}
 	}
-	a.offcanvasnavtrigger {position: relative; font-size: rem(24px); padding: 0 14px; height: 42px; line-height: 42px; text-align: center; text-decoration: none; color: #fff; @include background-color(#fff, 0.25); z-index: 99999;
+	a.offcanvasnavtrigger {position: relative; font-size: rem(24px); padding: 0 14px; height: 42px; line-height: 42px; text-align: center; text-decoration: none; color: #fff; @include background-color(#fff, 25%); z-index: 99999;
 		&:hover,
-		&:focus {color: #fff; @include background-color(#fff, 0.4);}
-		&.active {color: #fff; @include background-color(#fff, 0);}
+		&:focus {color: #fff; @include background-color(#fff, 40%);}
+		&.active {color: #fff; @include background-color(#fff, 0%);}
 	}
 
-	@include media("lg"){visibility: hidden; height: 0; border: 0 solid rgba(0, 0, 0, 0);} //Border color hack for actual visibility detection
+	@include media("lg"){visibility: hidden; height: 0; border: 0 solid rgb(0 0 0 / 90%);} //Border color hack for actual visibility detection
 }
 
 //Includes Utility and Primary navigation rows (which also includes the logo)
@@ -32,7 +32,7 @@
 
 //Extend animated sub menu dropdowns for WordPress menus (Used with the utility nav and primary nav)
 @mixin nebula-dropdown($font-size: 14px, $line-height: 21px){
-	ul.sub-menu {position: absolute; display: block; top: 100%; transform: translate3d(0, 20%, 0); left: -9999px; right: auto; height: auto; margin: 0; padding: 5px 0; opacity: 0; text-align: left; transition: transform 0.35s easing(easeOutBack), opacity 0.25s; will-change: opacity, transform, left; @include background-color(#fff, 0.95); backdrop-filter: blur(12px); box-shadow: 0 15px 50px 0 rgba(0, 0, 0, 0.25); z-index: 1001;
+	ul.sub-menu {position: absolute; display: block; top: 100%; transform: translate3d(0, 20%, 0); left: -9999px; right: auto; height: auto; margin: 0; padding: 5px 0; opacity: 0; text-align: left; transition: transform 0.35s easing(easeOutBack), opacity 0.25s; will-change: opacity, transform, left; @include background-color(#fff, 95%); backdrop-filter: blur(12px); box-shadow: 0 15px 50px 0 rgb(0 0 0 / 25%); z-index: 1001;
 		.no-js & {width: 400px;}
 
 		li.menu-item {display: block; margin: 0; padding: 0 5px;
@@ -100,7 +100,7 @@
 	}
 }
 
-#utilitynavcon {max-height: 0; opacity: 0; background: rgba(0, 0, 0, 0.5); transition: all 0.5s;
+#utilitynavcon {max-height: 0; opacity: 0; background: rgb(0 0 0 / 50%); transition: all 0.5s;
 	@include media("lg"){height: auto; max-height: 200px; opacity: 1;}
 
 	#utility-nav {position: relative;
@@ -125,8 +125,8 @@
 }
 
 //Offcanvas Drawer
-body:before {content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0); backdrop-filter: blur(0); transition: all 0.25s ease; pointer-events: none;} //Prep for the Bootstrap offcanvas background overlay to add animation transitions
-	body.offcanvas-backdrop:before {background-color: rgba(0, 0, 0, 0.75); backdrop-filter: blur(3px); pointer-events: all;} //offcanvas-backdrop is not being added to the body class... maybe a bug because the backdrop itself is not appearing.
+body:before {content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgb(0 0 0 / 0%); backdrop-filter: blur(0); transition: all 0.25s ease; pointer-events: none;} //Prep for the Bootstrap offcanvas background overlay to add animation transitions
+	body.offcanvas-backdrop:before {background-color: rgb(0 0 0 / 75%); backdrop-filter: blur(3px); pointer-events: all;} //offcanvas-backdrop is not being added to the body class... maybe a bug because the backdrop itself is not appearing.
 
 //Offcanvas Menu
 .offcanvas-body nav {

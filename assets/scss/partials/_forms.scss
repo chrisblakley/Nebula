@@ -34,8 +34,8 @@ h3.comment-reply-title {font-size: rem(12px);}
 .logged-in-as {margin: 0;}
 
 //Lighten placeholders and fade them on focus
-$placeholder_color: rgba(153, 153, 153, 0.9);
-$placeholder_color_focus: rgba(153, 153, 153, 0) !important;
+$placeholder_color: rgb(153 153 153 / 90%);
+$placeholder_color_focus: rgb(153 153 153 / 0%) !important;
 input,
 textarea {
 	&::-webkit-input-placeholder {font-weight: 300; color: $placeholder_color; transition: all 0.25s;}
@@ -63,7 +63,7 @@ input[type="file"].custom-file-input {cursor: pointer;}
 		&:after {
 			content: "Release to upload...";
 			color: $success_color;
-			background-color: rgba($success_color, 0.2);
+			background-color: rgb($success_color / 20%);
 			background-image: linear-gradient(90deg, $success_color 50%, transparent 50%), linear-gradient(90deg, $success_color 50%, transparent 50%), linear-gradient(0deg, $success_color 50%, transparent 50%), linear-gradient(0deg, $success_color 50%, transparent 50%);
 			background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
 			background-size: 15px 2px, 15px 2px, 2px 15px, 2px 15px;
@@ -82,7 +82,7 @@ input[type="file"].custom-file-input {cursor: pointer;}
 	&.rejected {border: 1px solid $danger_color;
 		* {opacity: 0.05;}
 
-		&:after {content: "Invalid upload."; background-color: rgba($danger_color, 0.2); color: $danger_color;}
+		&:after {content: "Invalid upload."; background-color: rgb($danger_color / 20%); color: $danger_color;}
 	}
 }
 
@@ -102,12 +102,12 @@ input[type="file"].custom-file-input {cursor: pointer;}
 form.nebula-search {position: relative; display: inline-block; margin: 0;
 	.nebula-input-group {display: flex; align-items: center;} //Modify Bootstrap to center align Nebula search input content
 
-	input {max-width: 30px; padding: 0 6px; color: transparent; font-size: rem(12px); line-height: 1.15rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; outline: none; cursor: pointer; transition: all 0.25s;  will-change: width;
-		&:hover {background-color: rgba(255, 255, 255, 0.3);}
+	input {max-width: 30px; padding: 0 6px; color: transparent; font-size: rem(12px); line-height: 1.15rem; background: rgb(255 255 255 / 10%); border: 1px solid rgb(255 255 255 / 10%); border-radius: 20px; outline: none; cursor: pointer; transition: all 0.25s;  will-change: width;
+		&:hover {background-color: rgb(255 255 255 / 30%);}
 		&:focus,
-		&.focus {max-width: 210px; padding-left: 25px; cursor: auto; color: #fff; background-color: rgba(255, 255, 255, 0.3);}
+		&.focus {max-width: 210px; padding-left: 25px; cursor: auto; color: #fff; background-color: rgb(255 255 255 / 30%);}
 		&.open {max-width: 100%; padding-left: 25px; cursor: auto; color: #fff;}
-		&.active {border-color: $primary_color; box-shadow: 0 0 5px rgba(red($primary_color), green($primary_color), blue($primary_color), 0.5);}
+		&.active {border-color: $primary_color; box-shadow: 0 0 5px rgb(red($primary_color) green($primary_color) blue($primary_color) / 50%);}
 
 		&::-webkit-search-decoration,
 		&::-webkit-search-cancel-button {display: none;}
@@ -121,5 +121,5 @@ form.nebula-search {position: relative; display: inline-block; margin: 0;
 		&:focus::-webkit-input-placeholder, &.open::-webkit-input-placeholder {color: #aaa;}
 	}
 
-	i, svg {position: absolute; left: 7px; font-size: rem(12px); color: rgba(255, 255, 255, 0.75); opacity: 0.5; pointer-events: none;}
+	i, svg {position: absolute; left: 7px; font-size: rem(12px); color: rgb(255 255 255 / 75%); opacity: 0.5; pointer-events: none;}
 }

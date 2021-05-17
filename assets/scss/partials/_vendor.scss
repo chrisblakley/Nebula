@@ -38,7 +38,7 @@ span.wpcf7-list-item-label {font-size: rem(14px);
 	&:before,
 	&:after {content: " ";}
 }
-.debuginfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; font-size: 0; line-height: 0; @include background-color(#fff); color: rgba(255, 255, 255, 0); pointer-events: none;} //Is this still needed?
+.debuginfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; font-size: 0; line-height: 0; @include background-color(#fff); color: rgb(255 255 255 / 0%); pointer-events: none;} //Is this still needed?
 
 //Nice animated spinner when submit is active
 .wpcf7-form button#submit {display: inline-block; position: relative; overflow: hidden; transition: all 0.25s ease, padding 0.4s easing(easeOutBack);

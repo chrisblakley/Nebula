@@ -51,8 +51,8 @@ div#nebula-hero-formcon {text-align: center; display: none;
 form#nebula-hero-search {display: inline-block; position: relative; margin: 0; width: 100%; max-width: 600px; text-align: center; z-index: 100; transition: all 0.5s;
 	i, svg {position: absolute; top: rem(12px); left: 13px; font-size: rem(16px); color: #292b2c; pointer-events: none; z-index: 100;}
 
-	input {display: block; width: 100%; font-size: rem(18px); line-height: rem(18px); padding: 8px 0 8px 35px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0 3px 24px rgba(0, 0, 0, 0.2);
-		&:focus {@include background-color(#fff, 0.95); box-shadow: 0 0 32px rgba(red($primary_color), green($primary_color), blue($primary_color), 0.6);}
+	input {display: block; width: 100%; font-size: rem(18px); line-height: rem(18px); padding: 8px 0 8px 35px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0 3px 24px rgb(0 0 0 / 20%);
+		&:focus {@include background-color(#fff, 0.95); box-shadow: 0 0 32px rgb(red($primary_color) green($primary_color) blue($primary_color) / 60%);}
 	}
 
 	&.autocompleted input {border-bottom-left-radius: 0; border-bottom-right-radius: 0; border: none;}
@@ -88,7 +88,7 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 }
 
 //jQuery UI Autocomplete
-.ui-autocomplete.ui-widget-content {margin-top: -10px; @include background-color(#fff, 0.95); backdrop-filter: blur(6px); border: none; border-top: 1px dotted #ddd; box-shadow: 1px 6px 9px 0 rgba(0, 0, 0, 0.2); z-index: 9999 !important; overflow: hidden;
+.ui-autocomplete.ui-widget-content {margin-top: -10px; @include background-color(#fff, 0.95); backdrop-filter: blur(6px); border: none; border-top: 1px dotted #ddd; box-shadow: 1px 6px 9px 0 rgb(0 0 0 / 20%); z-index: 9999 !important; overflow: hidden;
 	.ui-menu .ui-menu-item {font-size: rem(12px); padding: 3px 5px;}
 	.ui-state-hover,
 	.ui-widget-content .ui-state-hover,
@@ -190,6 +190,6 @@ a.resetfilters {font-size: rem(12px); color: $danger_color; opacity: 0;
 }
 
 //Service Worker update prompt
-#nebula-sw-update {position: fixed; bottom: 10px; transform: translate3d(0, 0, 0); margin: 0 auto; left: 0; right: 0; background: $primary_color; color: readable-color($primary_color); font-size: rem(16px); border: none; border-radius: 50px; box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.3); padding: 10px 20px; outline: none; z-index: 9000; opacity: 0; transition: all 1s easing(easeOutBack); will-change: opacity, transform;
+#nebula-sw-update {position: fixed; bottom: 10px; transform: translate3d(0, 0, 0); margin: 0 auto; left: 0; right: 0; background: $primary_color; color: readable-color($primary_color); font-size: rem(16px); border: none; border-radius: 50px; box-shadow: 0 8px 24px 0 rgb(0 0 0 / 30%); padding: 10px 20px; outline: none; z-index: 9000; opacity: 0; transition: all 1s easing(easeOutBack); will-change: opacity, transform;
 	&.active {transform: translate3d(0, -10px, 0); opacity: 1;}
 }

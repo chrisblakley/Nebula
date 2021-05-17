@@ -32,7 +32,7 @@
 	#hero-content {margin-top: 80px; margin-bottom: 80px;
 		@include media("md"){margin-top: 100px; margin-bottom: 100px;}
 
-		h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: rem(48px); line-height: 1; font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgba(0, 0, 0, 0.1); transition: all 0.5s;
+		h1 {position: relative; text-align: center; color: #fff; margin: 0; padding: 0; font-size: rem(48px); line-height: 1; font-weight: 800; z-index: 10; text-shadow: 0 3px 16px rgb(0 0 0 / 10%); transition: all 0.5s;
 			@include media("md"){font-size: rem(60px);}
 			@include media("lg"){font-size: rem(90px);}
 		}
@@ -42,7 +42,7 @@
 			@include media("lg"){font-size: rem(32px);}
 		}
 
-		h3 {position: relative; text-align: center; color: #fff; margin: 0 0 18px; padding: 0; font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5); transition: all 0.5s;}
+		h3 {position: relative; text-align: center; color: #fff; margin: 0 0 18px; padding: 0; font-weight: 300; z-index: 1; text-shadow: 0 3px 10px rgb(0 0 0 / 50%); transition: all 0.5s;}
 
 		img,
 		iframe {margin-top: 50px;}
@@ -59,7 +59,7 @@
 .custom-color-overlay {position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;}
 .nebula-color-overlay {position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, #5B22E8, #FF2362); animation: nebulahero 60s infinite linear; opacity: 0.75; z-index: 0; pointer-events: none;
 	#footer-section & {opacity: 0.85;
-		&:after {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1; pointer-events: none;}
+		&:after {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgb(0 0 0 / 70%); z-index: 1; pointer-events: none;}
 	}
 }
 @keyframes nebulahero {

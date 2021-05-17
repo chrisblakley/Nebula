@@ -8,7 +8,7 @@ if ( !trait_exists('Sass') ){
 			$this->sass_process_status = '';
 			$this->sass_files_processed = 0;
 			$this->was_sass_processed = false;
-			$this->latest_scss_mtime = 0; //Prep a flag to determine the last modified SCSS file
+			$this->latest_scss_mtime = 0; //Prep a flag to determine the last modified SCSS file time
 
 			if ( $this->get_option('scss') && !$this->is_background_request() && !is_customize_preview() ){
 				add_action('init', array($this, 'scss_controller'));
@@ -180,7 +180,7 @@ if ( !trait_exists('Sass') ){
 				$this->timer('Sass (' . $location_name . ')', 'start', 'Sass');
 
 				//Require SCSSPHP
-				require_once get_template_directory() . '/inc/vendor/scssphp/scss.inc.php'; //SCSSPHP is a compiler for SCSS 3.x
+				require_once get_template_directory() . '/inc/vendor/scssphp/scss.inc.php'; //Run the autoloader. SCSSPHP is a compiler for SCSS 3.x
 				$this->scss = new \ScssPhp\ScssPhp\Compiler();
 
 				//Register import directories
@@ -192,7 +192,7 @@ if ( !trait_exists('Sass') ){
 				}
 
 				//Set compiling options
-				$this->scss->setFormatter('ScssPhp\ScssPhp\Formatter\Compressed'); //Minify CSS (while leaving "/*!" comments for WordPress).
+				$this->scss->setOutputStyle(\ScssPhp\ScssPhp\OutputStyle::COMPRESSED); //Minify CSS (while leaving "/*!" comments for WordPress).
 
 				//Source Maps
 				$this->scss->setSourceMap(1); //0 = No .map, 1 = Inline .map, 2 = Output .map file
@@ -203,18 +203,18 @@ if ( !trait_exists('Sass') ){
 
 				//Variables
 				$nebula_scss_variables = array(
-					'parent_partials_directory' => get_template_directory() . '/assets/scss/partials/',
-					'child_partials_directory' => get_stylesheet_directory() . '/assets/scss/partials/',
-					'template_directory' => '"' . get_template_directory_uri() . '"',
-					'stylesheet_directory' => '"' . get_stylesheet_directory_uri() . '"',
-					'this_directory' => '"' . $location_paths['uri'] . '"',
-					'primary_color' => $this->get_color('primary_color', false, '#0098d7'),
-					'secondary_color' => $this->get_color('secondary_color', false, '#95d600'),
-					'background_color' => $this->get_color('background_color', false, '#f6f6f6'),
+					'parent_partials_directory' => \ScssPhp\ScssPhp\ValueConverter::fromPhp(get_template_directory() . '/assets/scss/partials/'), //There must be a better way to call fromPhp() here...
+					'child_partials_directory' => \ScssPhp\ScssPhp\ValueConverter::fromPhp(get_stylesheet_directory() . '/assets/scss/partials/'), //There must be a better way to call fromPhp() here...
+					'template_directory' => \ScssPhp\ScssPhp\ValueConverter::fromPhp(get_template_directory_uri()), //There must be a better way to call fromPhp() here...
+					'stylesheet_directory' => \ScssPhp\ScssPhp\ValueConverter::fromPhp(get_stylesheet_directory_uri()), //There must be a better way to call fromPhp() here...
+					'this_directory' => \ScssPhp\ScssPhp\ValueConverter::fromPhp($location_paths['uri']), //There must be a better way to call fromPhp() here...
+					'primary_color' => \ScssPhp\ScssPhp\ValueConverter::parseValue($this->get_color('primary_color', false, '#0098d7')), //There must be a better way to call parseValue() here...
+					'secondary_color' => \ScssPhp\ScssPhp\ValueConverter::parseValue($this->get_color('secondary_color', false, '#95d600')), //There must be a better way to call parseValue() here...
+					'background_color' => \ScssPhp\ScssPhp\ValueConverter::parseValue($this->get_color('background_color', false, '#f6f6f6')), //There must be a better way to call parseValue() here...
 				);
 
 				$all_scss_variables = apply_filters('nebula_scss_variables', $nebula_scss_variables);
-				$this->scss->setVariables($nebula_scss_variables);
+				$this->scss->addVariables($nebula_scss_variables);
 
 				//Imports/Partials (find the last modified time)
 				$latest_import = 0;
@@ -282,7 +282,7 @@ if ( !trait_exists('Sass') ){
 
 								//Catch fatal compilation errors when PHP v7.0+ to provide additional information without crashing
 								try {
-									$compiled_css = $this->scss->compile($this_scss_contents, $scss_file); //Compile the SCSS
+									$compiled_css = $this->scss->compileString($this_scss_contents, $scss_file)->getCss(); //Compile the SCSS
 									$this->was_sass_processed = true;
 									$this->sass_files_processed++;
 								} catch (\Throwable $error){
@@ -497,7 +497,7 @@ if ( !trait_exists('Sass') ){
 			$scss->registerFunction(
 				'php_linear_channel',
 				function($args, $kwargs){
-					return $this->linear_channel($kwargs['php_color_value'][1]);
+					return \ScssPhp\ScssPhp\ValueConverter::parseValue($this->linear_channel($kwargs['php_color_value'][1])); //There must be a better way to call parseValue() here...
 				},
 				array('php_color_value')
 			);
@@ -505,8 +505,8 @@ if ( !trait_exists('Sass') ){
 			//Calculate the luminance for a color.
 			$scss->registerFunction(
 				'php_luminance',
-				function($args, $kwargs) {
-					return $this->luminance($kwargs['php_color'][1]);
+				function($args, $kwargs){
+					return \ScssPhp\ScssPhp\ValueConverter::parseValue($this->luminance($kwargs['php_color'][1])); //There must be a better way to call parseValue() here...
 				},
 				array('php_color')
 			);
@@ -514,8 +514,8 @@ if ( !trait_exists('Sass') ){
 			//Calculate the contrast ratio between two colors.
 			$scss->registerFunction(
 				'php_contrast',
-				function($args, $kwargs) {
-					return $this->contrast($kwargs['php_back'][1], $kwargs['php_front'][1]);
+				function($args, $kwargs){
+					return \ScssPhp\ScssPhp\ValueConverter::parseValue($this->contrast($kwargs['php_back'][1], $kwargs['php_front'][1])); //There must be a better way to call parseValue() here...
 				},
 				array('php_back', 'php_front')
 			);

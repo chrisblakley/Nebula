@@ -206,7 +206,7 @@ ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {width: 19px; height: 
 	}
 	&:focus button i,
 	&:hover button i {background-position: 0 -20px; background-repeat: no-repeat;}
-	&[aria-expanded="true"] {background: #ebebeb; border-color: #999; box-shadow: inset 0 2px 5px -3px rgba(0,0,0,.3);
+	&[aria-expanded="true"] {background: #ebebeb; border-color: #999; box-shadow: inset 0 2px 5px -3px rgb(0 0 0 / 30%);
 		i {background-position: 0 -20px; background-repeat: no-repeat;}
 	}
 }
@@ -262,7 +262,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 			i, path {color: #23282d; fill: #23282d;}
 
 			&:focus,
-			&:hover {background-color: rgba($primary_color, 10%);}
+			&:hover {background-color: rgb($primary_color / 10%);}
 
 			&.active {background-color: $primary_color; color: readable-color($primary_color);
 				i, path {color: readable-color($primary_color); fill: readable-color($primary_color);}
@@ -383,7 +383,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 				&[data-importance="10"] {color: $danger_color; font-weight: bold;}
 
 				&:hover,
-				&.prompted {cursor: pointer; background: rgba($danger_color, 0.2);
+				&.prompted {cursor: pointer; background: rgb($danger_color / 20%);
 					.remove {max-width: 15px;} //Icon
 				}
 			}

@@ -58,7 +58,7 @@
 	.btn.btn-#{$name},
 	.btn.btn-#{$name}:visited {background-color: $bg; border-color: $bg; color: $fg;
 		&:hover, &:focus {background: darken($bg, 10%); border-color: darken($bg, 10%); color: $fg;}
-		&:focus {box-shadow: 0 0 0 0.2rem rgba($bg, 0.25);}
+		&:focus {box-shadow: 0 0 0 0.2rem rgb($bg, 25%);}
 		&:active,
 		&.active {background: $active_bg; border-color: $active_bg; color: $active_fg;}
 	}
@@ -131,9 +131,9 @@
 	}
 }
 
-//.element {@include background-color(#333, 0.5);}
-@mixin background-color($color, $opacity: 1){
-    background-color: $color; background-color: rgba($color, $opacity);
+//.element {@include background-color(#333, 50%);}
+@mixin background-color($color, $opacity: 10%){
+    background-color: $color; background-color: rgb($color, $opacity);
 }
 
 //.element {@include linear-gradient(to bottom, #31B7D7, #EDAC7D);}
@@ -222,8 +222,8 @@
 	}
 }
 
-//.element {@include diffuse-shadow(8, rgba(0, 0, 0, 0.25), true);}
-@mixin diffuse-shadow($size, $color: rgba(0, 0, 0, 0.125), $multiply: false){
+//.element {@include diffuse-shadow(8, rgb(0 0 0 / 25%), true);}
+@mixin diffuse-shadow($size, $color: rgb(0 0 0 / 12.5%), $multiply: false){
 	$val: 0 1px 1px $color;
 	@for ( $i from 1 through $size ){
 		@if ( $i % 2 == 0 ){
