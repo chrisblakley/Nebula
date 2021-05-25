@@ -111,7 +111,7 @@ nebula.eventTracking = async function(){
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-button-click'}));
 		});
 
-		//Image Clicks
+		//Linked Image Clicks
 		nebula.dom.document.on('click', 'a img', function(e){
 			let thisEvent = {
 				event: e,

@@ -224,7 +224,7 @@ class Compiler
      */
     protected $charsetSeen;
     /**
-     * @var array<int, string>
+     * @var array<int, string|null>
      */
     protected $sourceNames;
 
@@ -608,7 +608,7 @@ class Compiler
     /**
      * Instantiate parser
      *
-     * @param string $path
+     * @param string|null $path
      *
      * @return \ScssPhp\ScssPhp\Parser
      */
@@ -621,7 +621,7 @@ class Compiler
         // Otherwise, the CSS will be rendered as-is. It can even be extended!
         $cssOnly = false;
 
-        if (substr($path, -4) === '.css') {
+        if ($path !== null && substr($path, -4) === '.css') {
             $cssOnly = true;
         }
 
@@ -4713,7 +4713,7 @@ class Compiler
             throw new \InvalidArgumentException('The argument is not a sass string. Did you forgot to use "assertString"?');
         }
 
-        return $this->compileValue($value);
+        return $this->compileStringContent($value);
     }
 
     /**
@@ -5838,12 +5838,16 @@ class Compiler
     }
 
     /**
-     * @param string $path
+     * @param string|null $path
      *
      * @return string
      */
     private function getPrettyPath($path)
     {
+        if ($path === null) {
+            return '(unknown file)';
+        }
+
         $normalizedPath = $path;
         $normalizedRootDirectory = $this->rootDirectory.'/';
 
@@ -6071,6 +6075,10 @@ class Compiler
             }
 
             $file = $this->sourceNames[$env->block->sourceIndex];
+
+            if ($file === null) {
+                continue;
+            }
 
             if (realpath($file) === $name) {
                 throw $this->error('An @import loop has been found: %s imports %s', $file, basename($file));
@@ -8576,48 +8584,32 @@ will be an error in future versions of Sass.\n         on line $line of $fname";
     protected static $libNth = ['list', 'n'];
     protected function libNth($args)
     {
-        $list = $this->coerceList($args[0]);
-        $n = $this->assertInteger($args[1], 'n');
-
-        if ($n === 0) {
-            throw SassScriptException::forArgument('List index may not be 0.', 'n');
-        }
-
-        $listLength = \count($list[2]);
-
-        if (abs($n) > $listLength) {
-            throw SassScriptException::forArgument("Invalid index $n for a list with $listLength elements.", 'n');
-        }
+        $list = $this->coerceList($args[0], ',', false);
+        $n = $this->assertNumber($args[1])->getDimension();
 
         if ($n > 0) {
             $n--;
-        } else {
-            $n += $listLength;
+        } elseif ($n < 0) {
+            $n += \count($list[2]);
         }
 
-        return $list[2][$n];
+        return isset($list[2][$n]) ? $list[2][$n] : static::$defaultValue;
     }
 
     protected static $libSetNth = ['list', 'n', 'value'];
     protected function libSetNth($args)
     {
         $list = $this->coerceList($args[0]);
-        $n = $this->assertInteger($args[1], 'n');
-
-        if ($n === 0) {
-            throw SassScriptException::forArgument('List index may not be 0.', 'n');
-        }
-
-        $listLength = \count($list[2]);
-
-        if (abs($n) > $listLength) {
-            throw SassScriptException::forArgument("Invalid index $n for a list with $listLength elements.", 'n');
-        }
+        $n = $this->assertNumber($args[1])->getDimension();
 
         if ($n > 0) {
             $n--;
-        } else {
-            $n += $listLength;
+        } elseif ($n < 0) {
+            $n += \count($list[2]);
+        }
+
+        if (! isset($list[2][$n])) {
+            throw $this->error('Invalid argument for "n"');
         }
 
         $list[2][$n] = $args[2];
