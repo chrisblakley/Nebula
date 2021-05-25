@@ -52,7 +52,7 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 	i, svg {position: absolute; top: rem(12px); left: 13px; font-size: rem(16px); color: #292b2c; pointer-events: none; z-index: 100;}
 
 	input {display: block; width: 100%; font-size: rem(18px); line-height: rem(18px); padding: 8px 0 8px 35px; @include background-color(#fff, 0.9); border-radius: 0; box-shadow: 0 3px 24px rgb(0 0 0 / 20%);
-		&:focus {@include background-color(#fff, 0.95); box-shadow: 0 0 32px rgb(red($primary_color) green($primary_color) blue($primary_color) / 60%);}
+		&:focus {@include background-color(#fff, 0.95); box-shadow: 0 0 32px rgb(red($primary_color), green($primary_color), blue($primary_color), 60%);}
 	}
 
 	&.autocompleted input {border-bottom-left-radius: 0; border-bottom-right-radius: 0; border: none;}

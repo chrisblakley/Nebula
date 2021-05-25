@@ -262,7 +262,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 			i, path {color: #23282d; fill: #23282d;}
 
 			&:focus,
-			&:hover {background-color: rgb($primary_color / 10%);}
+			&:hover {background-color: rgb($primary_color, 10%);}
 
 			&.active {background-color: $primary_color; color: readable-color($primary_color);
 				i, path {color: readable-color($primary_color); fill: readable-color($primary_color);}
@@ -383,7 +383,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 				&[data-importance="10"] {color: $danger_color; font-weight: bold;}
 
 				&:hover,
-				&.prompted {cursor: pointer; background: rgb($danger_color / 20%);
+				&.prompted {cursor: pointer; background: rgb($danger_color, 20%);
 					.remove {max-width: 15px;} //Icon
 				}
 			}

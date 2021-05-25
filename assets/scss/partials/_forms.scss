@@ -63,7 +63,7 @@ input[type="file"].custom-file-input {cursor: pointer;}
 		&:after {
 			content: "Release to upload...";
 			color: $success_color;
-			background-color: rgb($success_color / 20%);
+			background-color: rgb($success_color, 20%);
 			background-image: linear-gradient(90deg, $success_color 50%, transparent 50%), linear-gradient(90deg, $success_color 50%, transparent 50%), linear-gradient(0deg, $success_color 50%, transparent 50%), linear-gradient(0deg, $success_color 50%, transparent 50%);
 			background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
 			background-size: 15px 2px, 15px 2px, 2px 15px, 2px 15px;
@@ -82,7 +82,7 @@ input[type="file"].custom-file-input {cursor: pointer;}
 	&.rejected {border: 1px solid $danger_color;
 		* {opacity: 0.05;}
 
-		&:after {content: "Invalid upload."; background-color: rgb($danger_color / 20%); color: $danger_color;}
+		&:after {content: "Invalid upload."; background-color: rgb($danger_color, 20%); color: $danger_color;}
 	}
 }
 
@@ -107,7 +107,7 @@ form.nebula-search {position: relative; display: inline-block; margin: 0;
 		&:focus,
 		&.focus {max-width: 210px; padding-left: 25px; cursor: auto; color: #fff; background-color: rgb(255 255 255 / 30%);}
 		&.open {max-width: 100%; padding-left: 25px; cursor: auto; color: #fff;}
-		&.active {border-color: $primary_color; box-shadow: 0 0 5px rgb(red($primary_color) green($primary_color) blue($primary_color) / 50%);}
+		&.active {border-color: $primary_color; box-shadow: 0 0 5px rgb(red($primary_color), green($primary_color), blue($primary_color), 50%);}
 
 		&::-webkit-search-decoration,
 		&::-webkit-search-cancel-button {display: none;}

@@ -1125,7 +1125,7 @@ if ( !trait_exists('Admin') ){
 					$this->usage('Automated Theme Update', array('cd11' => 'From ' . $prev_version . ' to ' . $new_version, 'cm1' => $num_theme_updates));
 
 					$log_success = $this->add_log('Nebula theme update (via WP) from ' . $prev_version . ' to ' . $new_version, 5);
-					$log_progress_message = ( !empty($log_success) )? 'Annotated in Nebula diagnostic logs!' : 'Skipped annotating in Nebula diagnostic logs.';
+					$log_progress_message = ( !empty($log_success) )? 'Annotated in <a href="/themes.php?page=nebula_options&tab=diagnostic#nebula_logs_metabox">Nebula diagnostic logs</a>!' : 'Skipped annotating in Nebula diagnostic logs.';
 					$this->output_nebula_update_progress($log_progress_message);
 
 					$this->output_nebula_update_progress('Sending admin notification email(s)...');

@@ -515,7 +515,7 @@ if ( !trait_exists('Metaboxes') ){
 						<option value="strict" <?php selected('strict', $nebula_options['warnings']); ?>>Strict (All Checks)</option>
 					</select>
 					<p class="nebula-help-text short-help form-text text-muted">Allow Nebula to check for common implementation errors and warnings and report them in the WP Admin and console for logged-in users. (Default: <?php echo $this->user_friendly_default('warnings'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">To ignore certain warnings during development, change the WordPress environment out of "production" using the <code></code>WP_ENVIRONMENT_TYPE<code> constant. Remember to remove it or change to production when live!</p>
+					<p class="nebula-help-text more-help form-text text-muted">To ignore certain warnings during development, change the WordPress environment out of "production" using the <code>WP_ENVIRONMENT_TYPE</code> constant. Remember to remove it or change to production when live!</p>
 					<p class="option-keywords">discretionary minor page speed impact companion admin notices admin_notices advanced warnings advanced_warnings audit mode audit_mode</p>
 				</div>
 
@@ -1762,17 +1762,6 @@ if ( !trait_exists('Metaboxes') ){
 							Nebula is using the <strong class="nebula-enabled">WordPress Core version of jQuery</strong> without modification.
 						<?php else: ?>
 							Nebula is <strong class="nebula-disabled">moving jQuery to the &lt;footer&gt;</strong>.
-						<?php endif; ?>
-					</li>
-					<li>
-						<?php if ( $nebula_options['bootstrap_version'] === 'latest' ): ?>
-							Nebula is using the <strong class="nebula-enabled">latest version of Bootstrap</strong> with all features.
-						<?php elseif ( $nebula_options['bootstrap_version'] === 'grid' ): ?>
-							Nebula is using the <strong class="nebula-disabled">latest version of Bootstrap, but only the grid</strong>.
-						<?php elseif ( $nebula_options['bootstrap_version'] === 'bootstrap4a5' ): ?>
-							Nebula is using <strong class="nebula-disabled">Bootstrap version 4 alpha 5</strong> for support of IE9.
-						<?php else: ?>
-							Nebula is using <strong class="nebula-disabled">Bootstrap version 3</strong> for support of IE8.
 						<?php endif; ?>
 					</li>
 				</ul>
