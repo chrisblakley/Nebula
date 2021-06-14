@@ -1434,7 +1434,8 @@ if ( !trait_exists('Admin') ){
 		//Duplicate post
 		public function duplicate_post_as_draft(){
 			global $wpdb;
-			if ( !(isset($this->super->post['post']) || isset($this->super->post['post']) || (isset($this->super->request['action']) && $this->super->request['action'] === 'duplicate_post_as_draft')) ){
+
+			if ( !(isset($this->super->get['post']) || isset($this->super->post['post']) || (isset($this->super->request['action']) && $this->super->request['action'] === 'duplicate_post_as_draft')) ){
 				wp_die('No post to duplicate has been supplied!');
 			}
 
