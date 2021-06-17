@@ -1,4 +1,4 @@
-window.performance.mark('(Nebula) Inside /modules/helpers.js');
+window.performance.mark('(Nebula) Inside helpers.js (module)');
 
 //Miscellaneous helper classes and functions
 nebula.helpers = async function(){
@@ -451,7 +451,7 @@ nebula.help = function(message, path, usage=false){
 
 	let url = documentationHostname + path;
 
-	console.error('📎 [Nebula Help]', message, 'Docs: ' + url); //Show the message to the developer in the console
+	//console.error('📎 [Nebula Help]', message, 'Docs: ' + url); //Show the message to the developer in the console. Disabled to reduce console clutter.
 	ga('send', 'exception', {'exDescription': '(JS) ' + message, 'exFatal': false}); //Report the error to Google Analytics to log it
 
 	if ( usage ){

@@ -1,4 +1,4 @@
-window.performance.mark('(Nebula) Inside /modules/utilities.js');
+window.performance.mark('(Nebula) Inside utilities.js (module)');
 
 //Safely wait for the window load event, or if it has already occurred run the callback immediately.
 //Use this function inside of dynamically imported files in case the window load event happens before the imported file has finished loading

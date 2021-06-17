@@ -1,4 +1,4 @@
-window.performance.mark('(Nebula) Inside /modules/optimization.js');
+window.performance.mark('(Nebula) Inside optimization.js (module)');
 
 //Cache DOM selectors
 nebula.cacheSelectors = function(){

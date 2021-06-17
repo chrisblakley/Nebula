@@ -1,4 +1,4 @@
-window.performance.mark('(Nebula) Inside /modules/extensions.js');
+window.performance.mark('(Nebula) Inside extensions.js (module)');
 
 //These must be inside of this function to assure jQuery is defined
 nebula.addExpressions = function(){

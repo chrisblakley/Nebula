@@ -1,4 +1,4 @@
-window.performance.mark('(Nebula) Inside /modules/analytics.js');
+window.performance.mark('(Nebula) Inside analytics.js (module)');
 
 //Generate a unique ID for hits and windows (used in /inc/analytics.php)
 export function uuid(a){
@@ -561,7 +561,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Footer Navigation Menu
-		nebula.dom.document.on('mousedown', '#powerfooter ul.menu a', function(e){
+		nebula.dom.document.on('mousedown', '#powerfooter a', function(e){
 			let thisEvent = {
 				event: e,
 				category: 'Navigation Menu',

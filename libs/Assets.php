@@ -122,7 +122,8 @@ if ( !trait_exists('Assets') ){
 			$this->brain = array(
 				'version' => array(
 					'number' => $this->version('full'),
-					'date' => $this->version('date')
+					'date' => $this->version('date'),
+					'child' => $this->child_version(),
 				),
 				'site' => array(
 					'name' => get_bloginfo('name'),

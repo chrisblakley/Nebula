@@ -12,7 +12,7 @@ jQuery(function(){
 
 	//Analytics
 	if ( !nebula.isDoNotTrack() ){
-		import('./modules/usage.js').then(function(module){
+		import('./modules/usage.js?ver=' + nebula.version.child).then(function(module){
 			module.supplementalEventTracking();
 		});
 	}

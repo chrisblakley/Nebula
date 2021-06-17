@@ -1,6 +1,6 @@
 //Note: Do not use jQuery in this file!
 
-window.performance.mark('(Nebula) Inside /modules/usage.js');
+window.performance.mark('(Nebula) Inside usage.js (module)');
 
 //Detect Window Errors
 window.addEventListener('error', function(error){

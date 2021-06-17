@@ -7,6 +7,7 @@ jQuery.noConflict();
  Import Modules
  ===========================*/
 
+//How can we append the '?ver=' + nebula.version.number to these without erroring or causing a race condition with DOM ready? These also need to be available for child themes ASAP. Using the import() function or await causes race conditions, and we cannot concatenate as-is with variables.
 import './modules/optimization.js';
 import './modules/utilities.js';
 import './modules/helpers.js';
@@ -28,14 +29,14 @@ jQuery(function(){
 
 	//Search
 	if ( jQuery('input[type="search"], input[name="s"], [class*="search"]').length || nebula.get('s') ){
-		import('./modules/search.js').then(function(module){
+		import('./modules/search.js?ver=' + nebula.version.number).then(function(module){
 			nebula.initSearchFunctions();
 		});
 	}
 
 	//Forms
 	if ( jQuery('form:not([role="search"]):not(#adminbarsearch), input:not([type="search"]):not([name="s"]):not([type="submit"]), .wpcf7').length ){ //If non-search forms/inputs exist
-		import('./modules/forms.js').then(function(module){
+		import('./modules/forms.js?ver=' + nebula.version.number).then(function(module){
 			nebula.liveValidator();
 			nebula.cf7Functions();
 			nebula.cf7LocalStorage();
@@ -53,7 +54,7 @@ jQuery(function(){
 
 	//Analytics
 	if ( !nebula.isDoNotTrack() ){
-		import('./modules/analytics.js').then(function(module){
+		import('./modules/analytics.js?ver=' + nebula.version.number).then(function(module){
 			nebula.eventTracking();
 		});
 	}
@@ -78,21 +79,21 @@ jQuery(window).on('load', function(){
 
 	//Videos
 	if ( jQuery('video, iframe[src*="vimeo"], iframe[src*="youtube"]').length ){
-		import('./modules/video.js').then(function(module){
+		import('./modules/video.js?ver=' + nebula.version.number).then(function(module){
 			nebula.initVideoTracking(); //Move to (or use) requestIdleCallback when Safari supports it?
 		});
 	}
 
 	//Location
 	if ( jQuery('#address-autocomplete').length ){
-		import('./modules/location.js').then(function(module){
+		import('./modules/location.js?ver=' + nebula.version.number).then(function(module){
 			nebula.addressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete');
 		});
 	}
 
 	//Social
 	if ( jQuery('[class*="fb"], [class*="share"]').length ){
-		import('./modules/social.js').then(function(module){
+		import('./modules/social.js?ver=' + nebula.version.number).then(function(module){
 			nebula.facebookSDK();
 			nebula.socialSharing();
 		});
