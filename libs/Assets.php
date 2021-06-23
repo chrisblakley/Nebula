@@ -27,7 +27,7 @@ if ( !trait_exists('Assets') ){
 		public function register_scripts(){
 			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
-			wp_register_style('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css', null, '5.0.2', 'all');
+			wp_register_style('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css', null, '5.0.1', 'all');
 			wp_register_style('nebula-font_awesome', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css', null, '5.15.3', 'all');
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap'), $this->version('full'), 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, $this->version('full'), 'all');
@@ -45,7 +45,7 @@ if ( !trait_exists('Assets') ){
 			//Scripts
 			//Use jsDelivr to pull common libraries: https://www.jsdelivr.com/
 			//nebula()->register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
-			$this->register_script('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '5.0.2', true);
+			$this->register_script('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '5.0.1', true);
 			$this->register_script('nebula-jquery_ui', 'https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.12.1/jquery-ui.min.js', array('defer', 'crossorigin'), null, '1.12.1', true);
 			$this->register_script('nebula-vimeo', 'https://cdn.jsdelivr.net/npm/@vimeo/player@2.15.0/dist/player.min.js', null, null, '2.15.0', true);
 			$this->register_script('nebula-datatables', 'https://cdn.jsdelivr.net/npm/datatables.net@1.10.24/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.10.24', true);
