@@ -6,8 +6,9 @@ if ( !trait_exists('Logs') ){
 	trait Logs {
 		public function hooks(){
 			if ( $this->get_option('logs') ){
+				add_action('init', array($this, 'register_table_names')); //This must happen on all pages so logs can be added or retrieved
+
 				if ( $this->is_staff() ){
-					add_action('init', array($this, 'register_table_names')); //This must happen on all pages so logs can be added or retrieved
 					add_action('admin_init', array($this, 'create_tables') );
 				}
 
@@ -42,7 +43,7 @@ if ( !trait_exists('Logs') ){
 
 		//Register table name in $wpdb global
 		public function register_table_names(){
-			if ( $this->get_option('logs') && $this->is_staff() ){ //User must be staff to register/create the table
+			if ( $this->get_option('logs') ){
 				global $wpdb;
 
 				if ( !isset($wpdb->nebula_logs) ){
