@@ -149,6 +149,11 @@ body:not(.wp-admin) {
 	.avoid-clicks {pointer-events: none;}
 	.allow-clicks {pointer-events: all;}
 	.filtered {display: none;}
+
+	//Animate focus indicator
+	@media (prefers-reduced-motion: no-preference){
+		:focus {transition: outline-offset 0.25s ease, box-shadow 0.25s ease; outline-offset: 4px;} //Box shadow for Bootstrap form inputs and buttons
+	}
 }
 
 hr.nebula-line {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; @include background-color(#fff); margin: 3px 0; padding: 0;

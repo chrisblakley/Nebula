@@ -24,7 +24,7 @@ code {font-family: monospace; background: #f6f6f6; border: 1px solid #ccc; paddi
 a:not(.btn):not(.wp-block-button__link) {@include link-colors($primary_color, $secondary_color, darken($primary_color, 15%)); text-decoration: none; transition: all 0.25s;
 	&:hover,
 	&:focus,
-	&:active {text-decoration: none; outline: none;}
+	&:active {text-decoration: none; /* outline: none; */}
 }
 
 .screen-reader-text {clip: rect(1px, 1px, 1px, 1px); position: absolute !important; height: 1px; width: 1px; overflow: hidden;}

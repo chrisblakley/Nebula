@@ -339,7 +339,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="jquery_location">jQuery Location</label>
 					<select name="nebula_options[jquery_location]" id="jquery_location" class="form-select nebula-validate-select">
-						<option value="wordpress" <?php selected('wordpress', $nebula_options['jquery_location']); ?>>&lt;head&gt; (Default)</option>
+						<option value="wordpress" <?php selected('wordpress', $nebula_options['jquery_location']); ?>>&lt;head&gt; (WordPress Default)</option>
 						<option value="footer" <?php selected('footer', $nebula_options['jquery_location']); ?>>&lt;footer&gt; (Performant)</option>
 					</select>
 					<p class="nebula-help-text short-help form-text text-muted">Where to load jQuery (head is blocking, footer is more performant). (Default: <?php echo $this->user_friendly_default('jquery_location'); ?>)</p>
