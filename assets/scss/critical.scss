@@ -7,6 +7,11 @@
 // Header
 // ===========================
 
+//Screen reader skip to content
+#skip-to-content-link.visually-hidden-focusable {position: absolute; top: 15px; left: -150px; transition: left 0.4s easing(easeOutBack);
+	&:focus {left: -80px; background: $primary_color; color: readable-color($primary_color); width: auto; height: auto; overflow: visible; margin: 0; padding: 5px 15px 5px 100px; clip: unset; clip-path: unset; z-index: 999999;}
+}
+
 //Logo and primary navigation row
 #logonavcon {display: block; position: relative; width: 100%; text-align: center; box-shadow: none; z-index: 5; transition: all .5s easing(easeInOutCubic);
 	@include media("lg"){top: 0;}

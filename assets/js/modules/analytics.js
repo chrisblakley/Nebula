@@ -750,8 +750,8 @@ nebula.eventTracking = async function(){
 			}
 		});
 
-		//Skip to Content and other screen reader link focuses (which indicate screenreader software is being used in this session)
-		nebula.dom.document.on('focus', '.visually-hidden', function(e){
+		//Focus on Skip to Content and other screen reader links (which indicate screenreader software is being used in this session)
+		nebula.dom.document.on('focus', '#skip-to-content-link, .visually-hidden, .visually-hidden-focusable', function(e){
 			let thisEvent = {
 				event: e,
 				category: 'Accessibility Links',
@@ -765,8 +765,8 @@ nebula.eventTracking = async function(){
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-accessibility-link'}));
 		});
 
-		//Skip to Content and other screen reader link clicks (which indicate screenreader software is being used in this session)
-		nebula.dom.document.on('click', '.visually-hidden', function(e){
+		//Clicks on Skip to Content and other screen reader links (which indicate screenreader software is being used in this session)
+		nebula.dom.document.on('click', '#skip-to-content-link, .visually-hidden, .visually-hidden-focusable', function(e){
 			let thisEvent = {
 				event: e,
 				category: 'Accessibility Links',

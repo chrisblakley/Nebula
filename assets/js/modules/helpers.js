@@ -25,6 +25,11 @@ nebula.helpers = async function(){
 		nebula.dom.html.addClass('device-memory-' + deviceMemoryLevel);
 	}
 
+	//Skip to Content button clicks - skip to the content section
+	jQuery('#skip-to-content-link').on('click', function(){
+		nebula.focusOnElement(jQuery('#content-section'));
+	});
+
 	//Remove filetype icons from images within <a> tags and buttons. Note: these contribute to CLS because they are not animations
 	jQuery('a img').closest('a').addClass('no-icon');
 	jQuery('.no-icon:not(a)').find('a').addClass('no-icon');

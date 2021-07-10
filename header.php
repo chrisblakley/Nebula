@@ -11,7 +11,7 @@
 
 		<?php nebula()->timer('Header Template'); ?>
 		<header id="header-section">
-			<a class="skip-to-content-link visually-hidden" href="#content-section">Skip to Content</a>
+			<a id="skip-to-content-link" class="visually-hidden-focusable" href="#content-section">Skip to Content</a>
 
 			<?php if ( (get_theme_mod('nebula_offcanvas_menu', true) && (has_nav_menu('offcanvas') || has_nav_menu('primary'))) || get_theme_mod('nebula_mobile_search', true) ): ?>
 				<div id="mobilebarcon">
