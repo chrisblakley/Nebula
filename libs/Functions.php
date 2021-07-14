@@ -1588,15 +1588,17 @@ if ( !trait_exists('Functions') ){
 
 			$placeholder = ( get_search_query() )? get_search_query() : __('Search', 'nebula');
 
-			$form = '<form id="searchform" class="ignore-form" role="search" method="get" action="' . home_url('/') . '">
-						<div class="input-group">
-							<div class="input-group-text"><i class="fas fa-search"></i></div>
-							<label class="visually-hidden" for="s">Search</label>
-							<input id="s" class="form-control ignore-form" type="text" name="s" value="' . get_search_query() . '" placeholder="' . $placeholder . '" role="search" />
+			$form = '<form id="searchform" class="row gx-2 ignore-form" role="search" method="get" action="' . home_url('/') . '">
+						<div class="col col-md-3">
+							<div class="input-group">
+								<div class="input-group-text"><i class="fas fa-search"></i></div>
+								<label class="visually-hidden" for="s">Search</label>
+								<input id="s" class="form-control ignore-form" type="text" name="s" value="' . get_search_query() . '" placeholder="' . $placeholder . '" role="search" />
+							</div>
 						</div>';
 
 			if ( !empty($button) ){
-				$form .= '<button id="searchsubmit" class="btn btn-brand wp_search_submit mb-2" type="submit">' . __('Submit', 'nebula') . '</button>';
+				$form .= '<div class="col"><button id="searchsubmit" class="btn btn-brand wp_search_submit mb-2" type="submit">' . __('Submit', 'nebula') . '</button></div>';
 			}
 
 			$form .= '</form>';
@@ -1915,6 +1917,28 @@ if ( !trait_exists('Functions') ){
 			}
 
 			return $single_template;
+		}
+
+		//Feedback System
+		//If no CF7 form ID is provided, this simply logs yes/no from users in Google Analytics
+		public function feedback($form_id=false){
+			?>
+				<div id="nebula-feedback-system" class="<?php echo ( empty($form_id) )? 'no-feedback-form' : 'has-feedback-form'; ?>">
+					<div id="nebula-feedback-question" class="">
+						<span><?php echo __('Was this page helpful?', 'nebula'); ?></span> <a id="nebula-feedback-yes" class="nebula-feedback-button" href="#"><i class="fas fa-fw fa-thumbs-up"></i> <?php echo __('Yes', 'nebula'); ?></a> <a id="nebula-feedback-no" class="nebula-feedback-button" href="#"><i class="fas fa-fw fa-thumbs-down"></i> <?php echo __('No', 'nebula'); ?></a>
+					</div>
+
+					<?php if ( !empty($form_id) ): ?>
+						<div id="nebula-feedback-form-container" data-form-id="<?php echo $form_id; ?>">
+							<?php echo do_shortcode('[contact-form-7 id="' . $form_id . '"]'); ?>
+						</div>
+					<?php endif; ?>
+
+					<div id="nebula-feedback-thanks">
+						<span><?php echo __('Thank you for your feedback!', 'nebula'); ?></span>
+					</div>
+				</div>
+			<?php
 		}
 
 		//Check if business hours exist in Nebula Options
@@ -3129,7 +3153,7 @@ if ( !trait_exists('Functions') ){
 				}
 
 				//Anonymized IP address
-				$debug_data .= 'IP: ' . $this->get_ip_address();
+				$debug_data .= 'Anonymized IP: ' . $this->get_ip_address();
 				$debug_data .= PHP_EOL;
 
 				return apply_filters('nebula_cf7_debug_data', $debug_data);

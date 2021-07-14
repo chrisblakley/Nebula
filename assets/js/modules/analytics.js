@@ -592,7 +592,7 @@ nebula.eventTracking = async function(){
 			if ( linkElement ){ //If we ended up with a link after all
 				let href = linkElement.attr('href');
 				if ( href ){ //href may be undefined in special circumstances so we can ignore those
-					let domain = nebula.site.domain;
+					let domain = nebula?.site?.domain || window.location.hostname;
 
 					if ( href.includes('http') ){ //If the link contains "http"
 						if ( !href.includes(domain) || href.includes('.' + domain) ){ //If the link does not contain "example.com" -or- if the link does contain a subdomain like "something.example.com"

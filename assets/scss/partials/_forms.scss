@@ -123,3 +123,35 @@ form.nebula-search {position: relative; display: inline-block; margin: 0;
 
 	i, svg {position: absolute; left: 7px; font-size: rem(12px); color: rgb(255 255 255 / 75%); opacity: 0.5; pointer-events: none;}
 }
+
+//Nebula Feedback System
+#nebula-feedback-system {margin-top: 50px; margin-bottom: 50px;
+	#nebula-feedback-question {display: flex; gap: 15px; align-items: center;
+		.nebula-feedback-button {background: #ddd; border-radius: 5px; padding: 2px 10px; color: #212529;}
+
+		#nebula-feedback-yes {
+			i {color: rgba($success_color, 60%);}
+			&:hover,
+			&:focus {background: rgba($success_color, 10%);}
+		}
+
+		#nebula-feedback-no {
+			i {color: rgba($danger_color, 60%);}
+			&:hover,
+			&:focus {background: rgba($danger_color, 10%);}
+		}
+
+		&.not-helpful-active {
+			#nebula-feedback-yes {white-space: nowrap; overflow: hidden; pointer-events: none;}
+			#nebula-feedback-no {background: rgba($danger_color, 10%); pointer-events: none;}
+		}
+	}
+
+	#nebula-feedback-form-container {display: none; margin-top: 15px; width: 100%; max-width: 400px;
+		.nebula-form-group {margin-bottom: 15px;}
+		.form-label {font-size: rem(16px);}
+		textarea {height: 100px; max-height: 500px;}
+	}
+
+	#nebula-feedback-thanks {display: none; color: $success_color; font-style: italic;}
+}

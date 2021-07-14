@@ -421,6 +421,15 @@ nebula.cf7LocalStorage = function(){
 
 //Form live (soft) validator
 nebula.liveValidator = function(){
+	//CF7 Invalid events
+	nebula.dom.document.on('wpcf7invalid', function(e){
+		setTimeout(function(){ //This triggers before these classes are added by CF7 so wait for 1ms
+			jQuery('#' + e.detail.unitTag).find('.wpcf7-not-valid').each(function(){ //Find invalid fields only within this CF7 form
+				nebula.applyValidationClasses(jQuery(this), 'invalid', true);
+			});
+		}, 1);
+	});
+
 	//Standard text inputs and select menus
 	nebula.dom.document.on('keyup change blur', '.nebula-validate-text, .nebula-validate-textarea, .nebula-validate-select', function(e){
 		if ( jQuery(this).val() === '' ){
@@ -550,18 +559,94 @@ nebula.applyValidationClasses = function(element, validation, showFeedback){
 	}
 
 	//Find the invalid feedback element (if it exists)
+	let parentElement = element.parent();
 	let feedbackElement = false;
 	if ( element.parent().find('.invalid-feedback').length ){
+		parentElement = element.parent();
 		feedbackElement = element.parent().find('.invalid-feedback');
 	} else if ( element.closest('.form-group, .form-check').find('.invalid-feedback').length ){
+		parentElement = element.closest('.form-group, .form-check');
 		feedbackElement = element.closest('.form-group, .form-check').find('.invalid-feedback');
+	} else if ( element.parents('.nebula-form-group').find('.invalid-feedback').length ){
+		parentElement = element.parents('.nebula-form-group');
+		feedbackElement = element.parents('.nebula-form-group').find('.invalid-feedback');
 	}
 
 	if ( feedbackElement ){
 		if ( validation === 'feedback' || showFeedback ){
 			feedbackElement.removeClass('hidden').show();
+
+			if ( parentElement.find('.wpcf7-not-valid-tip').length ){
+				parentElement.find('.wpcf7-not-valid-tip').addClass('hidden'); //Hide the default CF7 message if we have a more helpful one for this field
+			}
 		} else {
 			feedbackElement.addClass('hidden').hide();
 		}
 	}
 };
+
+//Nebula Feedback System
+nebula.initFeedbackSystem = function(){
+	//User clicks "Yes"
+	nebula.dom.document.on('click', '#nebula-feedback-yes', function(e){
+		let thisEvent = {
+			event: e,
+			category: 'User Feedback',
+			action: 'Helpful',
+			label: 'The user indicated that this page was helpful!',
+		};
+
+		nebula.dom.document.trigger('nebula_event', thisEvent);
+		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-feedback-system'}));
+
+		//Thank the user
+		jQuery('#nebula-feedback-question').slideUp();
+		jQuery('#nebula-feedback-thanks').slideDown();
+
+		return false;
+	});
+
+	//User clicks "No"
+	nebula.dom.document.on('click', '#nebula-feedback-no', function(e){
+		let thisEvent = {
+			event: e,
+			category: 'User Feedback',
+			action: 'Not Helpful',
+			label: 'The user indicated that this page was not helpful.',
+		};
+
+		nebula.dom.document.trigger('nebula_event', thisEvent);
+		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-feedback-system'}));
+
+		if ( jQuery('.has-feedback-form').length ){ //If a CF7 form exists for additional feedback
+			jQuery('#nebula-feedback-question').addClass('not-helpful-active');
+			jQuery('#nebula-feedback-yes').animate({
+				width: 0,
+				paddingLeft: 0,
+				paddingRight: 0,
+				marginRight: -15 //This is to remove the extra grid gap
+			}, 250);
+
+			//Show the CF7 form
+			jQuery('#nebula-feedback-form-container').slideDown();
+
+			//Listen for submission of this form
+			nebula.dom.document.on('wpcf7mailsent', function(e){
+				if ( e.detail.contactFormId == jQuery('#nebula-feedback-form-container').attr('data-form-id') ){ //We only care about the feedback form
+					jQuery('#nebula-feedback-form-container').slideUp();
+					jQuery('#nebula-feedback-question').slideUp();
+					jQuery('#nebula-feedback-thanks').slideDown();
+				}
+			});
+
+		} else {
+			//Thank the user
+			jQuery('#nebula-feedback-question').slideUp();
+			jQuery('#nebula-feedback-thanks').slideDown();
+		}
+
+		return false;
+	});
+}

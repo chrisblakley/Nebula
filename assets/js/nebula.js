@@ -35,11 +35,12 @@ jQuery(function(){
 	}
 
 	//Forms
-	if ( jQuery('form:not([role="search"]):not(#adminbarsearch), input:not([type="search"]):not([name="s"]):not([type="submit"]), .wpcf7').length ){ //If non-search forms/inputs exist
+	if ( jQuery('form:not([role="search"]):not(#adminbarsearch), input:not([type="search"]):not([name="s"]):not([type="submit"]), .wpcf7, #nebula-feedback-system').length ){ //If non-search forms/inputs exist
 		import('./modules/forms.js?ver=' + nebula.version.number).then(function(module){
 			nebula.liveValidator();
 			nebula.cf7Functions();
 			nebula.cf7LocalStorage();
+			nebula.initFeedbackSystem();
 		});
 	}
 

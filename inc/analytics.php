@@ -238,7 +238,7 @@
 							model.set(nebula.analytics.dimensions.queryString, '?' + model.get('location').split('?').pop(), true); //Store just the query string in the custom dimension
 
 							if ( !model.get('location').includes('gclid') && !model.get('location').includes('utm_') && !model.get('location').includes('?s') && !model.get('location').includes('?rs') ){ //Ignore search queries and UTMs are fine too because GA removes them from page reports
-								//model.set('location', model.get('location').split('?').shift(), true); //Only keep the URL before the "?" as the location... This may be breaking UTM tracking as GA may try to process the location data for UTMs.... which would be removed. Disabling this for now, even though we are allowing utm_ and gclid
+								//model.set('page', model.get('location').split('?').shift(), true); //Only keep the URL before the "?" as the location... Never modify the location data as it is used for session-level dimensions such as UTM and GCLID
 							}
 						}
 					<?php endif; ?>
