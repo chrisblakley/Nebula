@@ -78,6 +78,32 @@
 	100% {transform: translate3d(0, 0, 0); animation-timing-function: linear;}
 }
 
+//Intensify
+.nebula-intensifies {animation: nebula-intensifies 3s infinite ease-out; transform-origin: bottom center; will-change: transform;}
+@keyframes nebula-intensifies {
+	@for $i from 0 through 100 {
+		#{$i * 1%} {
+			//Swap between left/right
+			$sign: -1;
+			@if $i % 2 == 0 {
+				$sign: 1;
+			}
+
+			//Rotate (max of 8)
+			$rotation: 8;
+			@if $i < 10 {
+				$rotation: $i;
+			}
+
+			@if $i != 100 {
+				transform:  translate($sign * random(5) * 1px, $sign * random(5) * 1px);
+			} @else {
+				transform: translate(0, 0) rotate(0deg); //Reset on the last frame
+			}
+		}
+	}
+}
+
 
 // ===========================
 // One-Time

@@ -27,6 +27,8 @@ button {cursor: pointer;}
 	&:focus {background: $secondary_color;}
 }
 
+#searchform {max-width: 500px;}
+
 div.nebula-button {margin-bottom: 10px;}
 
 //Form Styles

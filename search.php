@@ -28,9 +28,10 @@
 				<?php if ( have_posts() ): ?>
 					<div id="searchresults">
 						<?php get_template_part('loop', 'search'); ?>
-					</div><!--/#searchresults-->
+					</div>
 				<?php else: ?>
 					<p><?php _e('No search results.', 'nebula'); ?></p>
+					<?php do_action('nebula_no_search_results'); ?>
 				<?php endif; ?>
 			</main><!--/col-->
 

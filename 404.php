@@ -55,6 +55,8 @@
 						</div>
 					<?php endif; ?>
 					<?php wp_reset_postdata(); ?>
+
+					<?php do_action('nebula_404_content'); ?>
 				</article>
 			</main><!--/col-->
 

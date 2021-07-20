@@ -1589,7 +1589,7 @@ if ( !trait_exists('Functions') ){
 			$placeholder = ( get_search_query() )? get_search_query() : __('Search', 'nebula');
 
 			$form = '<form id="searchform" class="row gx-2 ignore-form" role="search" method="get" action="' . home_url('/') . '">
-						<div class="col col-md-3">
+						<div class="col">
 							<div class="input-group">
 								<div class="input-group-text"><i class="fas fa-search"></i></div>
 								<label class="visually-hidden" for="s">Search</label>

@@ -634,7 +634,7 @@ nebula.initFeedbackSystem = function(){
 
 			//Listen for submission of this form
 			nebula.dom.document.on('wpcf7mailsent', function(e){
-				if ( e.detail.contactFormId == jQuery('#nebula-feedback-form-container').attr('data-form-id') ){ //We only care about the feedback form
+				if ( e.detail.contactFormId === parseInt(jQuery('#nebula-feedback-form-container').attr('data-form-id')) ){ //We only care about the feedback form
 					jQuery('#nebula-feedback-form-container').slideUp();
 					jQuery('#nebula-feedback-question').slideUp();
 					jQuery('#nebula-feedback-thanks').slideDown();
@@ -649,4 +649,4 @@ nebula.initFeedbackSystem = function(){
 
 		return false;
 	});
-}
+};
