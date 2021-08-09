@@ -2312,7 +2312,9 @@ if ( !trait_exists('Functions') ){
 				'number' => 5,
 				'retweets' => 1,
 			));
-
+			
+			$options = ( is_array($options) )? $options : array(); //Ensure the provided options is an array (and assign an empty array if it does not exist). Remember, this function may be called via WP hook.
+			
 			$data = array_merge($defaults, $options);
 			$post = $this->super->post; //Get the $_POST data
 

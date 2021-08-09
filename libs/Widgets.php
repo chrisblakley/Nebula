@@ -726,6 +726,7 @@ if ( !trait_exists('Widgets') ){
 			$social_networks[] = ( !empty($instance['twitter']) )? 'twitter' : false;
 			$social_networks[] = ( !empty($instance['linkedin']) )? 'linkedin' : false;
 			$social_networks[] = ( !empty($instance['pinterest']) )? 'pinterest' : false;
+				$social_networks[] = ( !empty($instance['native_buttons']) )? 'native_buttons' : false;
 			$social_networks = array_filter($social_networks);
 			?>
 				<?php if ( !empty($social_networks) ): ?>

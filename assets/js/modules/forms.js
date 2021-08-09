@@ -116,18 +116,12 @@ nebula.cf7Functions = async function(){
 		}
 	});
 
-	//CF7 before submission
+	//CF7 Submit "Attempts" (submissions of any CF7 form on the HTML-side– before REST API)
+	//This metric should always match the "Submit (Processing)" metric or else something is wrong!
 	nebula.dom.document.on('wpcf7beforesubmit', function(e){
 		try {
 			jQuery(e.target).find('button#submit').addClass('active');
-		} catch {
-			//Do nothing
-		}
-	});
 
-	//CF7 Submit "Attempts" (CF7 AJAX response after any submit attempt). This triggers after the other submit triggers.
-	nebula.dom.document.on('wpcf7submit', function(e){
-		try {
 			let thisEvent = {
 				event: e,
 				category: 'CF7 Form',
@@ -143,9 +137,7 @@ nebula.cf7Functions = async function(){
 				thisEvent.inputs = nebula.timings[e.detail.unitTag].laps + ' inputs';
 			}
 
-			thisEvent.label = 'Submission attempt for form ID: ' + thisEvent.unitTag;
-
-			nebula.crmForm(thisEvent.unitTag); //nebula.crmForm() here because it triggers after all others. No nebula.crm() here so it doesn't overwrite the other (more valuable) data.
+			thisEvent.label = 'HTML submission attempt for form ID: ' + thisEvent.unitTag;
 
 			ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Attempt)');
 			ga('set', nebula.analytics.dimensions.formTiming, nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')');
@@ -153,6 +145,36 @@ nebula.cf7Functions = async function(){
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label); //This event is required for the notable form metric!
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-submit-attempt'}));
 			if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)'});}
+			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
+		} catch {
+			ga('send', 'exception', {'exDescription': '(JS) CF7 Catch (cf7 HTML form submit): ' + error, 'exFatal': false});
+			nebula.usage('CF7 (HTML) Catch: ' + error);
+		}
+	});
+
+	//CF7 Submit "Processing" (CF7 AJAX response after any submit attempt). This triggers after the other submit triggers.
+	//This metric should always match the "Submit (Attempt)" metric or else something is wrong!
+	nebula.dom.document.on('wpcf7submit', function(e){
+		try {
+			let thisEvent = {
+				event: e,
+				category: 'CF7 Form',
+				action: 'Submit (Processing)', //GA4 Name: "form_processing"?
+				formID: e.detail.contactFormId, //CF7 Form ID
+				postID: e.detail.containerPostId, //Post/Page ID
+				unitTag: e.detail.unitTag, //CF7 Unit Tag
+			};
+
+			thisEvent.label = 'Submission attempt for form ID: ' + thisEvent.unitTag;
+
+			nebula.crmForm(thisEvent.unitTag); //nebula.crmForm() here because it triggers after all others. No nebula.crm() here so it doesn't overwrite the other (more valuable) data.
+
+			ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Processing)');
+			ga('set', nebula.analytics.dimensions.formTiming, nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')'); //This is a backup for the HTML form listener
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label); //This event is required for the notable form metric!
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-submit-processing'}));
+			if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Processing)'});}
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
 
 			jQuery('#' + e.detail.unitTag).find('button#submit').removeClass('active');

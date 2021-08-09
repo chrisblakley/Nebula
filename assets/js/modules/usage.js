@@ -39,7 +39,7 @@ nebula.usage = async function(error = {}){
 		if ( message ){
 			let description = '(JS) ' + message;
 			if ( lineNumber || fileName ){
-				description += ' at ' + lineNumber + ' of ' + fileName;
+				description += ' at ' + lineNumber + ' of ' + fileName + ' (v' + nebula.version.number + ')';
 			}
 
 			navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [

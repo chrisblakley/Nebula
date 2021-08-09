@@ -159,7 +159,7 @@ nebula.workbox = async function(){
 			window.performance.mark('(Nebula) SW Registration [Start]');
 
 			//Dynamically import Workbox-Window
-			import('https://cdn.jsdelivr.net/npm/workbox-window@6.1.5/build/workbox-window.prod.mjs').then(async function(module){
+			import('https://cdn.jsdelivr.net/npm/workbox-window@6.2.2/build/workbox-window.prod.mjs').then(async function(module){
 				const Workbox = module.Workbox;
 				const workbox = new Workbox(nebula.site.sw_url);
 

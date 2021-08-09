@@ -151,8 +151,6 @@
 	100% {opacity: 0; transform: translate3d(40px, 0, 0); pointer-events: none;}
 }
 
-
-
 //Fade in
 [nebula-hover*="nebula-fade-in"]:hover,
 .nebula-fade-in {opacity: 0; pointer-events: none; will-change: opacity;
@@ -207,7 +205,6 @@
 	0% {display: block; opacity: 0; transform: translate3d(40px, 0, 0);} //display: block here in case element is hidden with a display: none on render.
 	100% {opacity: 1; transform: translate3d(0, 0, 0);}
 }
-
 
 //Shrink and fade out
 [nebula-hover*="nebula-zoom-out"]:hover,
