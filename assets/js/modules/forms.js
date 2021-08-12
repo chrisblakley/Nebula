@@ -116,7 +116,7 @@ nebula.cf7Functions = async function(){
 		}
 	});
 
-	//CF7 Submit "Attempts" (submissions of any CF7 form on the HTML-side– before REST API)
+	//CF7 Submit "Attempts" (submissions of any CF7 form on the HTML-side: before REST API)
 	//This metric should always match the "Submit (Processing)" metric or else something is wrong!
 	nebula.dom.document.on('wpcf7beforesubmit', function(e){
 		try {
@@ -165,7 +165,7 @@ nebula.cf7Functions = async function(){
 				unitTag: e.detail.unitTag, //CF7 Unit Tag
 			};
 
-			thisEvent.label = 'Submission attempt for form ID: ' + thisEvent.unitTag;
+			thisEvent.label = 'Submission processing for form ID: ' + thisEvent.unitTag;
 
 			nebula.crmForm(thisEvent.unitTag); //nebula.crmForm() here because it triggers after all others. No nebula.crm() here so it doesn't overwrite the other (more valuable) data.
 
@@ -192,7 +192,7 @@ nebula.cf7Functions = async function(){
 			let thisEvent = {
 				event: e,
 				category: 'CF7 Form',
-				action: 'Submit (Invalid)', //GA4 Name: "form_invalid"?
+				action: 'Submit (CF7 Invalid)', //GA4 Name: "form_invalid"?
 				formID: e.detail.contactFormId, //CF7 Form ID
 				postID: e.detail.containerPostId, //Post/Page ID
 				unitTag: e.detail.unitTag, //CF7 Unit Tag
@@ -233,7 +233,7 @@ nebula.cf7Functions = async function(){
 			let thisEvent = {
 				event: e,
 				category: 'CF7 Form',
-				action: 'Submit (Invalid)', //GA4 Name: "form_invalid"?
+				action: 'Submit (HTML5 Invalid)', //GA4 Name: "form_invalid"?
 				label: 'General HTML5 validation error',
 			};
 
