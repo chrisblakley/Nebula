@@ -17,7 +17,7 @@ nebula.addExpressions = function(){
 
 //Escape required characters from a provided string. https://github.com/kvz/locutus
 nebula.preg_quote = function(string, delimiter){
-	return (string + '').replaceAll(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');
+	return String(string).replaceAll(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');
 };
 
 //Parse dates (equivalent of PHP strtotime function). https://github.com/kvz/locutus

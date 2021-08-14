@@ -95,7 +95,7 @@ nebula.overflowDetector = async function(){
 
 					if ( submenuRight > nebula.dom.window.width() ){ //If the right side is greater than the width of the viewport
 						jQuery(this).children('.sub-menu').addClass('overflowing overflowing-left');
-					} else if (submenuLeft > nebula.dom.window.width() ) {
+					} else if ( submenuLeft > nebula.dom.window.width() ){
 						jQuery(this).children('.sub-menu').addClass('overflowing overflowing-right');
 					} else {
 						jQuery(this).children('.sub-menu').removeClass('overflowing overflowing-left overflowing-right');
@@ -276,7 +276,7 @@ nebula.scrollTo = function(element, offset = 0, speed = 500, onlyWhenBelow = fal
 		//Account for the scroll-padding-top CSS property on the body element
 		let scrollPaddingTop = parseInt(nebula.dom.body.css('scroll-padding-top'), 10); //Parse the CSS value as a base-10 integer
 		if ( !isNaN(scrollPaddingTop) ){
-			offset = offset + scrollPaddingTop;
+			offset += scrollPaddingTop; //Add the scroll padding top to the offset
 		}
 
 		//Call this function with a jQuery object to trigger scroll to an element (not just a selector string).

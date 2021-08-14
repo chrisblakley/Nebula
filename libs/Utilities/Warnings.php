@@ -322,7 +322,7 @@ if ( !trait_exists('Warnings') ){
 				if ( $this->is_safe_mode() ){
 					$nebula_warnings['safe_mode'] = array(
 						'level' => 'error',
-						'description' => '<i class="fas fa-fw fa-hard-hat"></i> <strong>Nebula Safe Mode</strong> is active <small>(' . WPMU_PLUGIN_DIR . '/nebula-safe-mode.php' . ')</small>'
+						'description' => '<i class="fas fa-fw fa-hard-hat"></i> <strong>Nebula Safe Mode</strong> is active <small>(' . WPMU_PLUGIN_DIR . '/nebula-safe-mode.php)</small>'
 					);
 				}
 

@@ -69,7 +69,7 @@ nebula.cf7Functions = async function(){
 			let thisEvent = {
 				event: e,
 				category: 'CF7 Form',
-				action: 'Started Form (Focus)',  //GA4 Name: "form_start"?
+				action: 'Started Form (Focus)', //GA4 Name: "form_start"?
 				formID: formID, //Actual ID (not Unit Tag)
 				field: thisField,
 				fieldInfo: fieldInfo

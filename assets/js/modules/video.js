@@ -6,7 +6,7 @@ nebula.videos = {};
 nebula.initVideoTracking = async function(){
 	nebula.videos = nebula.videos || {}; //This is likely the first time this gets defined
 
-	nebula.HTML5VideoTracking();
+	nebula.html5VideoTracking();
 	nebula.youtubeTracking();
 	nebula.vimeoTracking();
 };
@@ -25,7 +25,7 @@ nebula.lazyVideoTracking = function(element){
 };
 
 //Native HTML5 Videos
-nebula.HTML5VideoTracking = function(){
+nebula.html5VideoTracking = function(){
 	jQuery('video').each(function(){
 		let id = jQuery(this).attr('id'); //An ID is required so HTML5 videos can be properly identified by Nebula and child themes
 
@@ -74,13 +74,11 @@ nebula.addHTML5VideoPlayer = function(id, element){
 				title: element.attr('title'),
 				artist: element.attr('artist') || '',
 				album: element.attr('album') || '',
-/*
-				artwork: [{
-					src: 'https://dummyimage.com/512x512',
-					sizes: '512x512',
-					type: 'image/png'
-				}]
-*/
+				// artwork: [{
+				// 	src: 'https://dummyimage.com/512x512',
+				// 	sizes: '512x512',
+				// 	type: 'image/png'
+				// }]
 			});
 		}
 
@@ -148,7 +146,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 			action: 'Paused',
 			playTime: Math.round(thisVideo.watched),
 			percent: Math.round(thisVideo.percent*100),
-			progress:  Math.round(thisVideo.current*1000),
+			progress: Math.round(thisVideo.current*1000),
 			title: thisVideo.title,
 			autoplay: thisVideo.autoplay
 		};
@@ -379,7 +377,7 @@ nebula.youtubeStateChange = function(e){
 			let youtubePlayProgress = setInterval(function(){
 				thisVideo.current = e.target.getCurrentTime();
 				thisVideo.percent = thisVideo.current/thisVideo.duration;
-				thisVideo.watched = thisVideo.watched+(updateInterval/1000);
+				thisVideo.watched += updateInterval/1000; //Add to the watched duration
 				thisVideo.watchedPercent = (thisVideo.watched)/thisVideo.duration;
 
 				if ( thisVideo.watchedPercent > 0.25 && !thisVideo.engaged ){
@@ -450,7 +448,7 @@ nebula.youtubeStateChange = function(e){
 						action: 'Paused',
 						playTime: Math.round(thisVideo.watched),
 						percent: Math.round(thisVideo.percent*100),
-						progress:  thisVideo.current*1000,
+						progress: thisVideo.current*1000,
 						title: thisVideo.title,
 						autoplay: thisVideo.autoplay
 					};
@@ -481,7 +479,7 @@ nebula.youtubeStateChange = function(e){
 nebula.youtubeError = function(error){
 	ga('send', 'exception', {'exDescription': '(JS) Youtube API error: ' + error.data, 'exFatal': false});
 	nebula.crm('event', 'Youtube API Error');
-}
+};
 
 //Get the ID of the Youtube video (or use best fallback possible)
 nebula.getYoutubeID = function(target){
@@ -496,13 +494,10 @@ nebula.getYoutubeID = function(target){
 	if ( !id ){
 		if ( target.getDebugText ){
 			id = JSON.parse(target.getDebugText()).debug_videoId;
+		} else if ( typeof target.getVideoUrl === 'function' ){
+			id = nebula.get('v', target.getVideoUrl()); //Parse the video URL for the ID or use the iframe ID
 		} else {
-			if ( typeof target.getVideoUrl === 'function' ){
-				id = nebula.get('v', target.getVideoUrl()); //Parse the video URL for the ID or use the iframe ID
-			} else {
-				id = jQuery(target.getIframe()).attr('src').split('?')[0].split('/').pop() || jQuery(target.getIframe()).attr('id'); //Parse the video URL for the ID or use the iframe ID
-			}
-
+			id = jQuery(target.getIframe()).attr('src').split('?')[0].split('/').pop() || jQuery(target.getIframe()).attr('id'); //Parse the video URL for the ID or use the iframe ID
 		}
 	}
 

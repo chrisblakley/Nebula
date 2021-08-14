@@ -80,7 +80,7 @@ nebula.performanceMetrics = async function(){
 				console.groupEnd(); //End Resources
 
 				//Monitor Cumulative Layout Shift (CLS) with the Layout Instability API
-				//This runs after the initial task has finished– which means it outputs after the Performance console group has closed... This is also an observer, so will log to the console anytime a layout shift happens.
+				//This runs after the initial task has finished- which means it outputs after the Performance console group has closed... This is also an observer, so will log to the console anytime a layout shift happens.
 				if ( 'PerformanceObserver' in window ){
 					let cls = 0;
 					let clsCalculations = {};
@@ -416,7 +416,7 @@ nebula.prefetch = async function(url = '', callback, element){
 		}
 
 		//Ignore certain files
-		if ( /\.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/.test(url) ){
+		if ( (/\.(?:pdf|docx?|xlsx?|pptx?|zipx?|rar|tar|txt|rtf|ics|vcard)/).test(url) ){
 			return false;
 		}
 
@@ -489,9 +489,9 @@ nebula.lazyLoadAssets = async function(){
 	//Load all lazy elements at once if requested
 	nebula.dom.window.on('nebula_load', function(){
 		if ( typeof window.requestIdleCallback === 'function' ){ //If requestIdleCallback exists, use it. Remove this check when Safari supports it
-				window.requestIdleCallback(function(){
-					nebula.loadEverything();
-				});
+			window.requestIdleCallback(function(){
+				nebula.loadEverything();
+			});
 		} else { //Otherwise, just run immediately
 			nebula.loadEverything();
 		}
@@ -593,9 +593,9 @@ nebula.loadJS = async function(url, handle){
 		});
 
 		return nebula.site.resources.lazy.promises[handle];
-	} else {
-		nebula.help('nebula.loadJS() requires a valid URL. The requested URL is invalid: ' + url, '/functions/loadjs/');
 	}
+
+	nebula.help('nebula.loadJS() requires a valid URL. The requested URL is invalid: ' + url, '/functions/loadjs/');
 };
 
 //Dynamically load CSS files using JS

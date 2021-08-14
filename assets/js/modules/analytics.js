@@ -583,10 +583,8 @@ nebula.eventTracking = async function(){
 			let linkElement = false; //Assume the element is not a link first
 			if ( oThis.is('a') ){ //If this element is an <a> tag, use it
 				linkElement = oThis;
-			} else { //If the clicked element is not an <a> tag
-				if ( oThis.parents('a').length ){ //Check parent elements to an <a> tag
-					linkElement = oThis.parents('a'); //Use the parent <a> as the target element
-				}
+			} else if ( oThis.parents('a').length ){ //If the clicked element is not an <a> tag, check parent elements to an <a> tag
+				linkElement = oThis.parents('a'); //Use the parent <a> as the target element
 			}
 
 			if ( linkElement ){ //If we ended up with a link after all
@@ -903,12 +901,10 @@ nebula.eventTracking = async function(){
 					if ( words.length > 8 ){
 						words = words.slice(0, 8).join(' ');
 						ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]'); //GA4: This will need to change significantly. Event Name: "copy_text"?
+					} else if ( selection.trim() === '' ){
+						ga('send', 'event', thisEvent.category, '[0 words]'); //GA4: This will need to change significantly. Event Name: "copy_text"?
 					} else {
-						if ( selection.trim() === '' ){
-							ga('send', 'event', thisEvent.category, '[0 words]'); //GA4: This will need to change significantly. Event Name: "copy_text"?
-						} else {
-							ga('send', 'event', thisEvent.category, words.length + ' words', selection, words.length); //GA4: This will need to change significantly. Event Name: "copy_text"?
-						}
+						ga('send', 'event', thisEvent.category, words.length + ' words', selection, words.length); //GA4: This will need to change significantly. Event Name: "copy_text"?
 					}
 
 					ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]'); //GA4: This will need to change significantly. Event Name: "copy_text"?
@@ -1345,8 +1341,8 @@ nebula.crm = async function(action, data, sendNow = true){
 
 		//Check if email was identified or just supporting data
 		if ( 'email' in data ){
-			if ( !nebula.user.known && nebula.regex.email.test(data['email']) ){
-				nebula.dom.document.trigger('nebula_crm_identification', {email: nebula.regex.email.test(data['email']), data: data});
+			if ( !nebula.user.known && nebula.regex.email.test(data.email) ){
+				nebula.dom.document.trigger('nebula_crm_identification', {email: nebula.regex.email.test(data.email), data: data});
 				ga('send', 'event', 'CRM', 'Contact Identified', "A contact's email address in the CRM has been identified.");
 				nebula.user.known = true;
 			}
@@ -1363,7 +1359,7 @@ nebula.crm = async function(action, data, sendNow = true){
 
 		_hsq.push(['setPath', window.location.href.replace(nebula.site.directory.root, '') + '#virtual-pageview/' + data]);
 		let oldTitle = document.title;
-		document.title = document.title + ' (Virtual)';
+		document.title += ' (Virtual)'; //Append to the title
 		_hsq.push(['trackPageView']);
 		document.title = oldTitle;
 	}
@@ -1378,7 +1374,7 @@ nebula.crmForm = async function(formID){
 	let crmFormObj = {};
 
 	if ( formID ){
-		crmFormObj['form_contacted'] = 'CF7 (' + formID + ') Submit Attempt'; //This is triggered on submission attempt, so it may capture abandoned forms due to validation errors.
+		crmFormObj.form_contacted = 'CF7 (' + formID + ') Submit Attempt'; //This is triggered on submission attempt, so it may capture abandoned forms due to validation errors.
 	}
 
 	jQuery('form [class*="crm-"]').each(function(){
@@ -1387,7 +1383,7 @@ nebula.crmForm = async function(formID){
 				ga('set', nebula.analytics.dimensions.poi, jQuery('.notable-poi').val());
 			}
 
-			let cat = /crm-([a-z\_]+)/g.exec(jQuery(this).attr('class'));
+			let cat = (/crm-([a-z\_]+)/g).exec(jQuery(this).attr('class'));
 			if ( cat ){
 				let thisCat = cat[1];
 				crmFormObj[thisCat] = jQuery(this).val();

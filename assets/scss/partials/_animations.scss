@@ -27,7 +27,6 @@
 .slower {animation-duration: 2s !important;}
 .slowest {animation-duration: 3s !important;}
 
-
 // ===========================
 // Continuous
 // These animations are intended to be infinitely repeated
@@ -103,7 +102,6 @@
 		}
 	}
 }
-
 
 // ===========================
 // One-Time
@@ -385,7 +383,6 @@
 	20%, 60% {transform: translate3d(0, -10px, 0);}
 	40%, 80% {transform: translate3d(0, 10px, 0);}
 }
-
 
 // ===========================
 // Hovers

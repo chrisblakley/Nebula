@@ -350,9 +350,9 @@ nebula.once = function(fn, args, unique){
 		if ( typeof nebula.onces[unique] === 'undefined' || !nebula.onces[unique] ){
 			nebula.onces[unique] = true;
 			return true;
-		} else {
-			return false;
 		}
+
+		return false;
 	}
 };
 
@@ -418,7 +418,7 @@ nebula.throttle = function(callback, cooldown = 1000, uniqueID = 'No Unique ID')
 };
 
 //Cache "expensive" functions by storing the result (similar to WordPress Transients)
-//Consider enhancing in the future to allow the cache to work beyond a single page view– perhaps add another parameter for that?
+//Consider enhancing in the future to allow the cache to work beyond a single page view- perhaps add another parameter for that?
 nebula.memoize = function(action, handle = '', value = false){
 	nebula.memoizeCache = nebula.memoizeCache || {};
 
@@ -581,10 +581,8 @@ nebula.timer = function(uniqueID, action, name){
 			nebula.timings[uniqueID].total = currentTime-nebula.timings[uniqueID].started;
 			//@todo "Nebula" 0: Add all hot laps together (any non-"out" laps)
 			return nebula.timings[uniqueID].total;
-		} else {
-			if ( !nebula.timings[uniqueID].lap[lapNumber-1].out ){
-				return nebula.timings[uniqueID].lap[lapNumber-1].duration;
-			}
+		} else if ( !nebula.timings[uniqueID].lap[lapNumber-1].out ){
+			return nebula.timings[uniqueID].lap[lapNumber-1].duration;
 		}
 	}
 };

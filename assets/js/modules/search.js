@@ -27,7 +27,6 @@ nebula.keywordFilter = function(container, parent, values = 'string', filteredCl
 	jQuery(container).find(parent + '.' + filteredClass).removeClass(filteredClass); //Reset everything for a new search filter
 
 	if ( values.length ){
-		//If a regex pattern is specified
 		if ( values.length === 1 && values[0].length > 2 && values[0].charAt(0) === '/' && values[0].slice(-1) === '/' ){
 			let regex = new RegExp(values[0].substring(1).slice(0, -1), 'i'); //Convert the string to RegEx after removing the first and last /
 			jQuery(container).find(parent).each(function(){ //Loop through each element to check against the regex pattern
@@ -37,37 +36,35 @@ nebula.keywordFilter = function(container, parent, values = 'string', filteredCl
 					jQuery(this).removeClass(filteredClass);
 				}
 			});
-		} else {
-			if ( !operator || operator === 'and' || operator === 'all' ){ //Match only elements that contain all keywords (Default operator is And if not provided)
-				jQuery.each(values, function(index, value){ //Loop through the values to search for
-					if ( value && value.trim().length ){ //If the value exists and is not empty
-						let regex = new RegExp(value, 'i');
+		} else if ( !operator || operator === 'and' || operator === 'all' ){ //Match only elements that contain all keywords (Default operator is And if not provided)
+			jQuery.each(values, function(index, value){ //Loop through the values to search for
+				if ( value && value.trim().length ){ //If the value exists and is not empty
+					let regex = new RegExp(value, 'i');
 
-						jQuery(container).find(parent).not('.' + filteredClass).each(function(){ //Now check elements that have not yet been filtered for this value
-							let elementText = jQuery(this).text().trim().replaceAll(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
-							if ( !regex.test(elementText) ){
-								jQuery(this).addClass(filteredClass);
-							}
-						});
-					}
-				});
-			} else { //Match elements that contains any keyword
-				let pattern = '';
-				jQuery.each(values, function(index, value){
-					if ( value.trim().length ){ //If the value is not empty, add it to the pattern
-						pattern += value + '|';
-					}
-				});
-				pattern = pattern.slice(0, -1); //Remove the last | character
-				let regex = new RegExp(pattern, 'i');
-				jQuery(container).find(parent).each(function(){ //Loop through each element to check against the regex pattern
-					let elementText = jQuery(this).text().trim().replaceAll(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
-					jQuery(this).addClass(filteredClass);
-					if ( regex.test(elementText) ){
-						jQuery(this).removeClass(filteredClass);
-					}
-				});
-			}
+					jQuery(container).find(parent).not('.' + filteredClass).each(function(){ //Now check elements that have not yet been filtered for this value
+						let elementText = jQuery(this).text().trim().replaceAll(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
+						if ( !regex.test(elementText) ){
+							jQuery(this).addClass(filteredClass);
+						}
+					});
+				}
+			});
+		} else { //Match elements that contains any keyword
+			let pattern = '';
+			jQuery.each(values, function(index, value){
+				if ( value.trim().length ){ //If the value is not empty, add it to the pattern
+					pattern += value + '|';
+				}
+			});
+			pattern = pattern.slice(0, -1); //Remove the last | character
+			let regex = new RegExp(pattern, 'i');
+			jQuery(container).find(parent).each(function(){ //Loop through each element to check against the regex pattern
+				let elementText = jQuery(this).text().trim().replaceAll(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
+				jQuery(this).addClass(filteredClass);
+				if ( regex.test(elementText) ){
+					jQuery(this).removeClass(filteredClass);
+				}
+			});
 		}
 	}
 };
@@ -321,9 +318,9 @@ nebula.searchValidator = function(){
 				jQuery(this).parent().find('.input.search').prop('title', 'Enter a valid search term.').attr('data-prev-placeholder', jQuery(this).attr('placeholder')).attr('placeholder', 'Enter a valid search term').addClass('focusError').trigger('focus').attr('value', '');
 				jQuery(this).parent().find('.btn.submit').prop('title', 'Enter a valid search term.').addClass('notallowed');
 				return false;
-			} else {
-				return true;
 			}
+
+			return true;
 		});
 	}
 };

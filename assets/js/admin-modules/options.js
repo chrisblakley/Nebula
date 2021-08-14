@@ -409,7 +409,7 @@ nebula.logs = function(){
 				})
 			}).then(function(response){
 				if ( response.ok ){
-					jQuery('#nebula-log-reload-container').load(window.location.href +  ' #nebula-logs', function(){
+					jQuery('#nebula-log-reload-container').load(window.location.href + ' #nebula-logs', function(){
 						jQuery('#log-count').text(jQuery('#nebula-logs tr').not('.removed').length); //Re-count rows
 						jQuery('#clean-log-progress').removeClass('fa-spinner fa-spin').addClass('fa-trash-alt');
 					}); //Reload just the table
