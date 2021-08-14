@@ -476,7 +476,7 @@ nebula.youtubeStateChange = function(e){
 			}
 		}, 1000);
 	}
-}
+};
 
 nebula.youtubeError = function(error){
 	ga('send', 'exception', {'exDescription': '(JS) Youtube API error: ' + error.data, 'exFatal': false});

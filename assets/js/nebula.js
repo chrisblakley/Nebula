@@ -3,15 +3,7 @@
 window.performance.mark('(Nebula) Inside nebula.js');
 jQuery.noConflict();
 
-/*==========================
- Import Modules
- ===========================*/
-
-//How can we append the '?ver=' + nebula.version.number to these without erroring or causing a race condition with DOM ready? These also need to be available for child themes ASAP. Using the import() function or await causes race conditions, and we cannot concatenate as-is with variables.
-import './modules/optimization.js';
-import './modules/utilities.js';
-import './modules/helpers.js';
-import './modules/extensions.js';
+//Note: "Essential" JS modules are imported via Assets.php to have version parameters properly concatenated (which the JS import command does not support) for cache busting.
 
 /*==========================
  DOM Ready

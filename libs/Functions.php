@@ -2312,9 +2312,9 @@ if ( !trait_exists('Functions') ){
 				'number' => 5,
 				'retweets' => 1,
 			));
-			
+
 			$options = ( is_array($options) )? $options : array(); //Ensure the provided options is an array (and assign an empty array if it does not exist). Remember, this function may be called via WP hook.
-			
+
 			$data = array_merge($defaults, $options);
 			$post = $this->super->post; //Get the $_POST data
 
@@ -3213,6 +3213,7 @@ if ( !trait_exists('Functions') ){
 		//Tell the browser to clear caches when the debug query string is present
 		public function clear_site_data(){
 			if ( !$this->is_browser('safari') ){ //This header is not currently supported in Safari or iOS as of February 2021: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Clear-Site-Data#browser_compatibility
+				//Note: Adding this header significantly increases server-response time!
 				header('Clear-Site-Data: "cache", "storage", "executionContexts"'); //Do not clear cookies here because it forces logout which is annoying when Customizer is saved/closed
 			}
 		}
@@ -3222,7 +3223,7 @@ if ( !trait_exists('Functions') ){
 			if ( $this->is_debug() ){
 				$this->timer('Flush Rewrite Rules');
 
-				flush_rewrite_rules(); //Note: this is an expensive operation
+				flush_rewrite_rules(); //Note: this is an expensive operation and significantly increases server-response time!
 				$this->update_child_version_number();
 
 				$this->timer('Flush Rewrite Rules', 'end');

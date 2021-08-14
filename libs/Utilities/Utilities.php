@@ -321,6 +321,16 @@ if ( !trait_exists('Utilities') ){
 			return false;
 		}
 
+		//If Nebula Safe Mode is currently active
+		public function is_safe_mode(){
+			//Check if nebula-safe-mode.php is active
+			if ( file_exists(WPMU_PLUGIN_DIR . '/nebula-safe-mode.php') ){
+				return true;
+			}
+
+			return false;
+		}
+
 		//If the current pageload is requested with more advanced detections
 		public function is_auditing(){
 			if ( ($this->get_option('audit_mode') || isset($this->super->get['audit'])) && (current_user_can('manage_options') || $this->is_dev()) && !is_customize_preview() && !$this->is_admin_page() ){

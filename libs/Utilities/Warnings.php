@@ -318,6 +318,14 @@ if ( !trait_exists('Warnings') ){
 					}
 				}
 
+				//Check for Safe Mode
+				if ( $this->is_safe_mode() ){
+					$nebula_warnings['safe_mode'] = array(
+						'level' => 'error',
+						'description' => '<i class="fas fa-fw fa-hard-hat"></i> <strong>Nebula Safe Mode</strong> is active <small>(' . WPMU_PLUGIN_DIR . '/nebula-safe-mode.php' . ')</small>'
+					);
+				}
+
 				//Check for Google Analytics Tracking ID
 				if ( !$this->get_option('ga_tracking_id') && !$this->get_option('gtm_id') ){
 					$nebula_warnings['ga_tracking_id'] = array(

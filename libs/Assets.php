@@ -20,6 +20,8 @@ if ( !trait_exists('Assets') ){
 
 				add_action('wp_enqueue_scripts', array($this, 'output_nebula_data'));
 				add_action('admin_enqueue_scripts', array($this, 'output_nebula_data'));
+
+				add_action('wp_footer', array($this, 'import_essential_js'));
 			}
 		}
 
@@ -281,7 +283,20 @@ if ( !trait_exists('Assets') ){
 			$this->brain['user']['known'] = ( !empty($this->brain['user']['email']) )? true : false; //Move to companion plugin
 
 			echo '<script type="text/javascript">const nebula = ' . json_encode($this->brain) . '</script>'; //Output the data to <head>
+
 			$this->timer('Output Nebula Data', 'end');
+		}
+
+		//Import essential Nebula JS modules (with proper version concatenation) used on all pages
+		public function import_essential_js(){
+			?>
+				<script type="module">
+					import '<?php echo get_template_directory_uri(); ?>/assets/js/modules/optimization.js?ver=<?php echo nebula()->version('full') ?>';
+					import '<?php echo get_template_directory_uri(); ?>/assets/js/modules/utilities.js?ver=<?php echo nebula()->version('full') ?>';
+					import '<?php echo get_template_directory_uri(); ?>/assets/js/modules/helpers.js?ver=<?php echo nebula()->version('full') ?>';
+					import '<?php echo get_template_directory_uri(); ?>/assets/js/modules/extensions.js?ver=<?php echo nebula()->version('full') ?>';
+				</script>
+			<?php
 		}
 
 		//Enqueue frontend scripts
