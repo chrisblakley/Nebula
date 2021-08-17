@@ -512,7 +512,7 @@ nebula.lazyLoadAssets = async function(){
 	jQuery.each(nebula.site.resources.lazy.scripts, function(handle, condition){
 		if ( condition === 'all' || jQuery(condition).length ){
 			if ( nebula.site.resources.scripts[handle.replaceAll('-', '_')] ){ //If that handle exists in the registered scripts
-				nebula.loadJS(nebula.site.resources.scripts[handle.replaceAll('-', '_'), handle]); //Load it (with a Promise)
+				nebula.loadJS(nebula.site.resources.scripts[handle.replaceAll('-', '_')], handle); //Load it (with a Promise)
 			}
 		}
 	});

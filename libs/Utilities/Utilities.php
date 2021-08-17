@@ -210,7 +210,7 @@ if ( !trait_exists('Utilities') ){
 			if ( is_user_logged_in() ){
 				$current_user = wp_get_current_user();
 				if ( !empty($current_user->user_email) ){
-					list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
+					$current_user_domain = explode('@', $current_user->user_email)[1];
 
 					$dev_email_domains = ( $this->get_option('dev_email_domain') )? $this->get_option('dev_email_domain') : ''; //Ensure correct type
 					$dev_email_domains = explode(',', $dev_email_domains);
@@ -250,12 +250,12 @@ if ( !trait_exists('Utilities') ){
 				}
 			}
 
+			//Check if the current user's email domain matches any of the client email domains from Nebula Options
 			if ( is_user_logged_in() ){
 				$current_user = wp_get_current_user();
 				if ( !empty($current_user->user_email) ){
-					list($current_user_email, $current_user_domain) = explode('@', $current_user->user_email);
+					$current_user_domain = explode('@', $current_user->user_email)[1];
 
-					//Check if the current user's email domain matches any of the client email domains from Nebula Options
 					$client_email_domains = ( $this->get_option('client_email_domain') )? $this->get_option('client_email_domain') : ''; //Ensure correct type
 					$client_email_domains = explode(',', $client_email_domains);
 					foreach ( $client_email_domains as $client_email_domain ){

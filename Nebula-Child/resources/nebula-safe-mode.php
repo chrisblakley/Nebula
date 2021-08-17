@@ -36,36 +36,79 @@ if ( !function_exists('wp_get_current_user') ){
 	include ABSPATH . 'wp-includes/pluggable.php';
 }
 
-//Determine who safe mode is allowed for. Edit the conditional in this function to control who can view the website in safe mode.
+//Determine who safe mode is allowed for. Customize the conditionals in this function or write your own to control who can view the website in safe mode.
 function is_nebula_safe_mode_allowed(){
-	if ( !empty($_GET['safe-mode']) || array_key_exists('safe-mode', $_GET) || is_user_logged_in() ){ //Choose which users should see the site in safe mode.
+	//Never show safe mode to Googlebot (or anyone claiming to be Googlebot)
+	if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') ){
+		return false;
+	}
+
+	//If the ?safe-mode query string exists
+	if ( !empty($_GET['safe-mode']) || array_key_exists('safe-mode', $_GET) ){
 		return true;
 	}
+
+	//For any logged-in user
+	// if ( is_user_logged_in() ){
+	// 	return true;
+	// }
+
+	//For administrators only
+	// if ( current_user_can('manage_options') ){
+	// 	return true;
+	// }
+
+	//For specific User IDs
+	// $allowed_user_ids = array(99999); //Modify these to match actual user ID(s)
+	// if ( in_array(get_current_user_id(), $allowed_user_ids) ){
+	// 	return true;
+	// }
+
+	//For specific IP addresses
+	//Note: REMOTE_ADDR is not a perfectly accurate way to detect IP, but may be sufficient for this.
+	// $allowed_ips = array('999.99.99.99'); //Modify these to match actual IP(s)
+	// foreach ( $allowed_ips as $allowed_ip ){
+	// 	if ( wp_privacy_anonymize_ip($allowed_ip) == wp_privacy_anonymize_ip($_SERVER['REMOTE_ADDR']) ){ //Anonymizing to avoid processing all visitors' IPs
+	// 		return true;
+	// 	}
+	// }
+
+	//For logged-in users with specific email domain(s)
+	// if ( is_user_logged_in() ){
+	// 	$current_user = wp_get_current_user();
+	// 	if ( !empty($current_user->user_email) ){
+	// 		$current_user_domain = explode('@', $current_user->user_email)[1];
+	// 		$dev_email_domains = array('example.com'); //Modify these to match actual email domain(s)
+	// 		foreach ( $dev_email_domains as $dev_email_domain ){
+	// 			if ( $dev_email_domain === $current_user_domain ){
+	// 				return true;
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	return false;
 }
 
 //Temporarily bypass most plugins
-//add_action('option_active_plugins', 'nebula_bypass_plugins');
+add_action('option_active_plugins', 'nebula_bypass_plugins');
 function nebula_bypass_plugins($plugins=array()){
 	if ( is_nebula_safe_mode_allowed() ){
 		//Enter plugins allowed to still function while in safe mode
 		$allowed_plugins = array(
-			'query-monitor/query-monitor.php'
+			'query-monitor/query-monitor.php',
+			'wp-all-export-pro/wp-all-export-pro.php'
 		);
 
 		//Loop through all active WordPress plugins
 		foreach ( $plugins as $key => $plugin ){
-			//Loop through all allowed plugins (defined above)
-			foreach ( $allowed_plugins as $allowed_plugin ){
-				//If this active plugin is allowed, skip it
-				if ( $plugin === $allowed_plugin ){
-					continue;
-				}
-
-				//Otherwise bypass the plugin by "unsetting" it (tricking WP into thinking it is deactivated). This is only a temporary "deactivation".
-				unset($plugins[$key]);
+			//If this plugin is an allowed plugin, skip it
+			if ( in_array($plugin, $allowed_plugins) ){
+				continue;
 			}
+
+			//Otherwise bypass the plugin by "unsetting" it (tricking WP into thinking it is deactivated). This is only a temporary "deactivation".
+			unset($plugins[$key]);
 		}
 	}
 
@@ -95,7 +138,7 @@ function nebula_prevent_activating_plugins(){
 //add_filter('template', 'nebula_bypass_theme');
 function nebula_bypass_theme($themes){
 	if ( is_nebula_safe_mode_allowed() ){
-		//Feel free to return a string of the preferred temporary theme here early
+		//Feel free to return early with a string of the preferred temporary theme here
 
 		add_action('admin_enqueue_scripts', 'nebula_prevent_activating_themes');
 

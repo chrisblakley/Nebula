@@ -1280,7 +1280,7 @@ nebula.scrollDepth = async function(){
 			footerObserver.observe(jQuery(preFooterSelector)[0]); //Observe the element
 		}
 
-		//if ( nebula.analytics.metrics.maxScroll ){ //Trying this for all visitors, but may limit to this custom metric if too many events...
+		if ( nebula.analytics.metrics.maxScroll ){ //Limiting this event to when this custom metric is used because of the number of events this records
 			window.addEventListener('beforeunload', function(e){ //Watch for the unload to send max scroll depth to GA (to avoid tons of events). Note: this event listener invalidates BFCache in Firefox...
 				nebula.updateMaxScrollDepth(); //Check one last time
 
@@ -1297,7 +1297,7 @@ nebula.scrollDepth = async function(){
 				ga('set', nebula.analytics.metrics.maxScroll, thisEvent.maxScrollPercent); //Set the custom metric to the max percent
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.description, {'nonInteraction': true}); //Ideally this would send only once per page per session– and only if that page hadn't reached 100% previously in the session... Consider localstorage
 			});
-		//}
+		}
 	}
 };
 
