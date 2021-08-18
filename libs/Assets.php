@@ -18,8 +18,8 @@ if ( !trait_exists('Assets') ){
 
 				add_action('login_head', array($this, 'nebula_login_logo'));
 
-				add_action('wp_enqueue_scripts', array($this, 'output_nebula_data'));
-				add_action('admin_enqueue_scripts', array($this, 'output_nebula_data'));
+				add_action('wp_enqueue_scripts', array($this, 'output_nebula_data'), 9000);
+				add_action('admin_enqueue_scripts', array($this, 'output_nebula_data'), 9000);
 
 				add_action('wp_footer', array($this, 'import_essential_js'));
 			}
