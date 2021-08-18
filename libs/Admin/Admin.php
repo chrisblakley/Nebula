@@ -86,6 +86,10 @@ if ( !trait_exists('Admin') ){
 
 				//Override some Yoast settings
 				if ( is_plugin_active('wordpress-seo/wp-seo.php') ){
+					//Move Yoast post metabox to the buttom
+					add_action('wpseo_metabox_prio', array($this, 'lower_yoast_post_metabox'));
+
+					//Prevent indexing of authors
 					if ( !$this->get_option('author_bios') ){
 						add_action('admin_init', array($this, 'disable_yoast_author_indexing'));
 					}
@@ -1422,6 +1426,11 @@ if ( !trait_exists('Admin') ){
 			unset($columns['wpseo-metadesc']);
 			unset($columns['wpseo-focuskw']);
 			return $columns;
+		}
+
+		//Lower the Yoast post metabox
+		public function lower_yoast_post_metabox(){
+			return 'low';
 		}
 
 		//Prevent Yoast from publishing author sitemaps when Nebula author bios are disabled

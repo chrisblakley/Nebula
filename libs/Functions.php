@@ -2776,6 +2776,7 @@ if ( !trait_exists('Functions') ){
 				if ( !empty($this->slug_keywords) ){
 					//Query the DB with clues from the requested URL
 					$this->error_query = new WP_Query(array('post_status' => 'publish', 'posts_per_page' => 4, 's' => str_replace('-', ' ', $this->slug_keywords))); //Query the DB for this term
+
 					if ( function_exists('relevanssi_do_query') ){
 						relevanssi_do_query($this->error_query);
 					}

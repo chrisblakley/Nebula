@@ -454,6 +454,10 @@ nebula.liveValidator = function(){
 
 	//Standard text inputs and select menus
 	nebula.dom.document.on('keyup change blur', '.nebula-validate-text, .nebula-validate-textarea, .nebula-validate-select', function(e){
+		if ( e.type === 'focusout' ){
+			jQuery(this).val(jQuery(this).val().trim()); //Trim leading/trailing whitespace on blur
+		}
+
 		if ( jQuery(this).val() === '' ){
 			nebula.applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( jQuery(this).val().trim().length ){
@@ -465,6 +469,10 @@ nebula.liveValidator = function(){
 
 	//RegEx input
 	nebula.dom.document.on('keyup change blur', '.nebula-validate-regex', function(e){
+		if ( e.type === 'focusout' ){
+			jQuery(this).val(jQuery(this).val().trim()); //Trim leading/trailing whitespace on blur
+		}
+
 		let pattern = new RegExp(jQuery(this).attr('data-valid-regex'), 'i');
 
 		if ( jQuery(this).val() === '' ){
@@ -478,6 +486,10 @@ nebula.liveValidator = function(){
 
 	//URL inputs
 	nebula.dom.document.on('keyup change blur', '.nebula-validate-url', function(e){
+		if ( e.type === 'focusout' ){
+			jQuery(this).val(jQuery(this).val().trim()); //Trim leading/trailing whitespace on blur
+		}
+
 		if ( jQuery(this).val() === '' ){
 			nebula.applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( nebula.regex.url.test(jQuery(this).val()) ){
@@ -489,6 +501,10 @@ nebula.liveValidator = function(){
 
 	//Email address inputs
 	nebula.dom.document.on('keyup change blur', '.nebula-validate-email', function(e){
+		if ( e.type === 'focusout' ){
+			jQuery(this).val(jQuery(this).val().trim()); //Trim leading/trailing whitespace on blur
+		}
+
 		if ( jQuery(this).val() === '' ){
 			nebula.applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( nebula.regex.email.test(jQuery(this).val()) ){
@@ -500,6 +516,10 @@ nebula.liveValidator = function(){
 
 	//Phone number inputs
 	nebula.dom.document.on('keyup change blur', '.nebula-validate-phone', function(e){
+		if ( e.type === 'focusout' ){
+			jQuery(this).val(jQuery(this).val().trim()); //Trim leading/trailing whitespace on blur
+		}
+
 		if ( jQuery(this).val() === '' ){
 			nebula.applyValidationClasses(jQuery(this), 'reset', false);
 		} else if ( nebula.regex.phone.test(jQuery(this).val()) ){
@@ -511,7 +531,11 @@ nebula.liveValidator = function(){
 
 	//Date inputs
 	nebula.dom.document.on('keyup change blur', '.nebula-validate-date', function(e){
-		//Used to use moment.js to validate the date and check that it was between 1800-2999. Now just check that it is not empty.
+		if ( e.type === 'focusout' ){
+			jQuery(this).val(jQuery(this).val().trim()); //Trim leading/trailing whitespace on blur
+		}
+
+		//Used to use day.js to validate the date and check that it was between 1800-2999. Now just check that it is not empty.
 
 		if ( jQuery(this).val() === '' ){
 			nebula.applyValidationClasses(jQuery(this), 'reset', false);
