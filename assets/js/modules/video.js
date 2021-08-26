@@ -13,7 +13,7 @@ nebula.initVideoTracking = async function(){
 
 //Track lazy-loaded videos
 //Note: element can be anything! Don't assume it is a video.
-nebula.lazyVideoTracking = function(element){
+nebula.lazyVideoAPI = function(element){
 	//Re-kick the API for lazy-loaded Youtube and Vimeo videos, and enable tracking for lazy-loaded HTML5 videos.
 	if ( element.is('iframe[src*="youtube"]') ){
 		nebula.addYoutubePlayer(element.attr('id'), element);

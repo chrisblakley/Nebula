@@ -559,7 +559,7 @@ nebula.loadElement = async function(element){
 		let thisContent = jQuery(lazyElement.text()).on('load loadeddata', function(){ //Warning: DOM text is reinterpreted as HTML without escaping meta-characters. Not sure how to sanitize this?
 			//If the lazy content is a video (or potentially a video iframe) re-kick the video tracking
 			if ( jQuery(thisContent[0]).is('video, iframe') ){
-				nebula.lazyVideoTracking(jQuery(thisContent[0]));
+				nebula.lazyVideoAPI(jQuery(thisContent[0]));
 			}
 		});
 

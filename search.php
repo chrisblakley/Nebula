@@ -29,6 +29,8 @@
 					<div id="searchresults">
 						<?php get_template_part('loop', 'search'); ?>
 					</div>
+
+					<?php do_action('nebula_after_search_results'); ?>
 				<?php else: ?>
 					<p><?php _e('No search results.', 'nebula'); ?></p>
 					<?php do_action('nebula_no_search_results'); ?>

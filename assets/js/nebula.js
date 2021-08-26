@@ -71,7 +71,7 @@ jQuery(window).on('load', function(){
 	nebula.overflowDetector(); //Move to (or use) requestIdleCallback when Safari supports it?
 
 	//Videos
-	if ( jQuery('video, iframe[src*="vimeo"], iframe[src*="youtube"]').length ){
+	if ( jQuery('video, iframe[src*="vimeo"], iframe[src*="youtube"]').length || (jQuery('noscript.nebula-lazy').length && (jQuery('noscript.nebula-lazy').text().includes('vimeo') || jQuery('noscript.nebula-lazy').text().includes('youtube'))) ){ //Check for videos that will be lazy loaded by scanning the text of noscript elements for video tags
 		import('./modules/video.js?ver=' + nebula.version.number).then(function(module){
 			nebula.initVideoTracking(); //Move to (or use) requestIdleCallback when Safari supports it?
 		});
