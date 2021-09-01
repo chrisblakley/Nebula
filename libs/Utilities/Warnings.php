@@ -366,9 +366,11 @@ if ( !trait_exists('Warnings') ){
 
 							//Check if the images are the same
 							if ( file_exists($child_theme_meta_image) && file_exists($parent_theme_meta_image) && md5_file($child_theme_meta_image) === md5_file($parent_theme_meta_image) ){ //Compare the two files to see if they are identical
+								$child_filename = str_replace(get_stylesheet_directory(), '', $child_theme_meta_image);
+
 								$nebula_warnings['child_meta_graphics'] = array(
 									'level' => 'error',
-									'description' => '<i class="fas fa-fw fa-images"></i> Child theme meta graphics exist, but are identical to the Nebula meta graphics. Ensure that child theme meta graphics are unique to this website!</em>'
+									'description' => '<i class="fas fa-fw fa-images"></i> Child theme meta graphics exist, but are identical to the Nebula meta graphics (' . $child_filename . '). Ensure that child theme meta graphics are unique to this website!</em>' //yolo
 								);
 
 								break; //Exit the loop as soon as we find a match

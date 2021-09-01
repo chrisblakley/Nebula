@@ -86,12 +86,18 @@ if ( !trait_exists('Logs') ){
 			if ( $this->get_option('logs') && is_user_logged_in() && !empty($message) ){
 				global $wpdb;
 
-				$log_insertion = $wpdb->insert($wpdb->nebula_logs, array(
-					'timestamp' => sanitize_text_field(date('U')),
-					'message' => sanitize_text_field($message),
-					'user_id' => intval(get_current_user_id()), //Note: returns 0 in cron jobs
-					'importance' => intval($importance)
-				)); //DB Query
+				try {
+					$log_insertion = $wpdb->insert($wpdb->nebula_logs, array(
+						'timestamp' => sanitize_text_field(date('U')),
+						'message' => sanitize_text_field($message),
+						'user_id' => intval(get_current_user_id()), //Note: returns 0 in cron jobs
+						'importance' => intval($importance)
+					)); //DB Query
+				} catch(Exception $e){
+					//This could happen if the option was enabled (somehow) by non-staff, and a log was attempted to be added
+					$this->update_option('logs', 0); //Disable the option just to be safe. Unfortunately this cannot be logged somewhere...
+					return false;
+				}
 
 				delete_transient('nebula_logs');
 
