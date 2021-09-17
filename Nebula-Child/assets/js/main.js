@@ -30,16 +30,13 @@ window.addEventListener('load', function(){
 
 	//Window load functions here
 
+	//Listen for window resizes like this
+	// window.addEventListener('resize', function(){
+	// 	nebula.debounce(function(){
+	// 		//Functionality goes here
+	// 	}, 250, 'window resize');
+	// }, {passive: true}); //End Window Resize
+
 	window.performance.mark('(Child) Window Load [End]');
 	window.performance.measure('(Child) Window Load Functions', '(Child) Window Load [Start]', '(Child) Window Load [End]');
 }); //End Window Load
-
-/*==========================
- Window Resize
- ===========================*/
-
-// window.addEventListener('resize', function(){
-// 	nebula.debounce(function(){
-//
-// 	}, 250, 'window resize');
-// }, {passive: true}); //End Window Resize

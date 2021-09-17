@@ -819,7 +819,12 @@ nebula.eventTracking = async function(){
 
 		//Word copy tracking
 		let copyCount = 0;
-		nebula.dom.document.on('cut copy', function(){
+		nebula.dom.document.on('cut copy', function(e){
+			//Ignore clipboard events that occur within form inputs or on Woocommerce checkout/confirmation pages
+			if ( jQuery(e.target).is('input, textarea') || jQuery(e.target).parents('form').length || jQuery('body.woocommerce-checkout').length || jQuery('body.woocommerce-order-received').length ){
+				return false;
+			}
+
 			let selection = window.getSelection().toString().trim();
 
 			if ( selection ){

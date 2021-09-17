@@ -113,15 +113,3 @@ jQuery(window).on('load', function(){
 	window.performance.measure('(Nebula) Window Loaded', 'navigationStart', '(Nebula) Window Load [End]');
 	nebula.performanceMetrics();
 });
-
-/*==========================
- Window Resize
- ===========================*/
-
-window.addEventListener('resize', function(){
-	nebula.debounce(function(){ //Must use debounce here (not throttle) so it always runs after the resize finishes (throttle does not always run at the end)
-		if ( typeof nebula.lastWindowWidth !== 'undefined' && nebula.dom.window.width() !== nebula.lastWindowWidth ){ //If the width actually changed
-			nebula.lastWindowWidth = nebula.dom.window.width();
-		}
-	}, 250, 'nebula window resize');
-}, {passive: true}); //End Window Resize
