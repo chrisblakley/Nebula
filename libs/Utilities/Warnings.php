@@ -278,9 +278,11 @@ if ( !trait_exists('Warnings') ){
 
 									//If the file size is larger than 10mb
 									if ( filesize($file) > MB_IN_BYTES*10 ){
+										$filesize = ( version_compare(PHP_VERSION, '8.0.0') >= 0 )? bcdiv(filesize($file), MB_IN_BYTES, 0) : filesize($file)/1000;
+
 										$nebula_warnings['large_file'] = array(
 											'level' => 'warning',
-											'description' => '<i class="fas fa-fw fa-file"></i> <strong>' . $file . '</strong> has a large filesize of ' . bcdiv(filesize($file), MB_IN_BYTES, 0) . 'mb.'
+											'description' => '<i class="fas fa-fw fa-file"></i> <strong>' . $file . '</strong> has a large filesize of ' . $filesize . 'mb.'
 										);
 									}
 								}
