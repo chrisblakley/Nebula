@@ -217,8 +217,8 @@ nebula.autocompleteSearch = function(element, types = ''){
 
 					nebula.dom.document.trigger('nebula_event', thisEvent);
 					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.term);
-					if ( typeof fbq === 'function' ){fbq('track', 'Search', {search_string: thisEvent.term});}
-					if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.term);}
+					nebula.fbq('track', 'Search', {search_string: thisEvent.term});
+					nebula.clarity('set', thisEvent.category, thisEvent.term);
 					nebula.crm('identify', {internal_search: thisEvent.term});
 				}, 1500, 'autocomplete success buffer');
 

@@ -234,8 +234,8 @@ nebula.eventTracking = async function(){
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileName);
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-download'}));
-				if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: thisEvent.fileName});}
-				if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.fileName);}
+				nebula.fbq('track', 'ViewContent', {content_name: thisEvent.fileName});
+				nebula.clarity('set', thisEvent.category, thisEvent.fileName);
 				nebula.crm('event', 'File Download');
 			});
 		});
@@ -258,8 +258,8 @@ nebula.eventTracking = async function(){
 
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileName);
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-download'}));
-				if ( typeof fbq === 'function' ){fbq('track', 'ViewContent', {content_name: thisEvent.fileName});}
-				if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.fileName);}
+				nebula.fbq('track', 'ViewContent', {content_name: thisEvent.fileName});
+				nebula.clarity('set', thisEvent.category, thisEvent.fileName);
 				nebula.crm('event', 'Notable File Download');
 			}
 		});
@@ -279,8 +279,8 @@ nebula.eventTracking = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.query);
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-internal-search'}));
-			if ( typeof fbq === 'function' ){fbq('track', 'Search', {search_string: thisEvent.query});}
-			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.query);}
+			nebula.fbq('track', 'Search', {search_string: thisEvent.query});
+			nebula.clarity('set', thisEvent.category, thisEvent.query);
 			nebula.crm('identify', {internal_search: thisEvent.query});
 		});
 
@@ -398,8 +398,8 @@ nebula.eventTracking = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.emailAddress);
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-mailto'}));
-			if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: thisEvent.action});}
-			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
+			nebula.fbq('track', 'Lead', {content_name: thisEvent.action});
+			nebula.clarity('set', thisEvent.category, thisEvent.action);
 			nebula.crm('event', thisEvent.action);
 			nebula.crm('identify', {mailto_contacted: thisEvent.emailAddress});
 		});
@@ -419,8 +419,8 @@ nebula.eventTracking = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-click-to-call'}));
-			if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: thisEvent.action});}
-			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
+			nebula.fbq('track', 'Lead', {content_name: thisEvent.action});
+			nebula.clarity('set', thisEvent.category, thisEvent.action);
 			nebula.crm('event', thisEvent.action);
 			nebula.crm('identify', {phone_contacted: thisEvent.phoneNumber});
 		});
@@ -440,8 +440,8 @@ nebula.eventTracking = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-sms'}));
-			if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: thisEvent.action});}
-			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
+			nebula.fbq('track', 'Lead', {content_name: thisEvent.action});
+			nebula.clarity('set', thisEvent.category, thisEvent.action);
 			nebula.crm('event', thisEvent.action);
 			nebula.crm('identify', {phone_contacted: thisEvent.phoneNumber});
 		});
@@ -1082,8 +1082,8 @@ nebula.ecommerceTracking = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.product);
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-add-to-cart'}));
-			if ( typeof fbq === 'function' ){fbq('track', 'AddToCart');}
-			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
+			nebula.fbq('track', 'AddToCart');
+			nebula.clarity('set', thisEvent.category, thisEvent.action);
 			nebula.crm('event', 'Ecommerce Add to Cart');
 		});
 
@@ -1129,8 +1129,8 @@ nebula.ecommerceTracking = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-proceed-to-checkout'}));
-			if ( typeof fbq === 'function' ){fbq('track', 'InitiateCheckout');}
-			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
+			nebula.fbq('track', 'InitiateCheckout');
+			nebula.clarity('set', thisEvent.category, thisEvent.action);
 			nebula.crm('event', 'Ecommerce Proceed to Checkout');
 		});
 
@@ -1164,8 +1164,8 @@ nebula.ecommerceTracking = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-place-order-button'}));
-			if ( typeof fbq === 'function' ){fbq('track', 'Purchase');}
-			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
+			nebula.fbq('track', 'Purchase');
+			nebula.clarity('set', thisEvent.category, thisEvent.action);
 			nebula.crm('event', 'Ecommerce Placed Order');
 			nebula.crm('identify', {hs_lifecyclestage_customer_date: 1}); //@todo "Nebula" 0: What kind of date format does Hubspot expect here?
 		});
@@ -1312,6 +1312,20 @@ nebula.updateMaxScrollDepth = function(){
 		if ( nebula.dom.window.scrollTop() > nebula.maxScrollDepth ){
 			nebula.maxScrollDepth = nebula.dom.window.scrollTop();
 		}
+	}
+};
+
+//Facebook conversion tracking
+nebula.fbq = function(type='track', eventName='', parameters={}){
+	if ( typeof fbq === 'function' ){
+		fbq(type, eventName, parameters);
+	}
+};
+
+//Microsoft Clarity tracking
+nebula.clarity = function(type='set', key='', value=''){
+	if ( typeof clarity === 'function' ){
+		clarity(type, key, value);
 	}
 };
 

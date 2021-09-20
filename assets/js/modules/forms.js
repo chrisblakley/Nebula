@@ -144,8 +144,8 @@ nebula.cf7Functions = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label); //This event is required for the notable form metric!
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-submit-attempt'}));
-			if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)'});}
-			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
+			nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)'});
+			nebula.clarity('set', thisEvent.category, thisEvent.action);
 		} catch {
 			ga('send', 'exception', {'exDescription': '(JS) CF7 Catch (cf7 HTML form submit): ' + error, 'exFatal': false});
 			nebula.usage('CF7 (HTML) Catch: ' + error);
@@ -174,8 +174,8 @@ nebula.cf7Functions = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label); //This event is required for the notable form metric!
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-submit-processing'}));
-			if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Processing)'});}
-			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
+			nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Processing)'});
+			nebula.clarity('track', 'Lead', {content_name: 'Form Submit (Processing)'});
 
 			jQuery('#' + e.detail.unitTag).find('button#submit').removeClass('active');
 			jQuery('.invalid-feedback').addClass('hidden'); //Reset all of the "live" feedback to let CF7 handle its feedback
@@ -351,8 +351,8 @@ nebula.cf7Functions = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-submit-success'}));
-			if ( typeof fbq === 'function' ){fbq('track', 'Lead', {content_name: 'Form Submit (Success)'});}
-			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
+			nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Success)'});
+			nebula.clarity('set', thisEvent.category, thisEvent.action);
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unitTag + ') Submit Success'}, false);
 			nebula.crm('event', 'Contact Form (' + thisEvent.unitTag + ') Submit Success');
 
