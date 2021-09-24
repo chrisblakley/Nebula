@@ -223,7 +223,7 @@ if ( !trait_exists('Warnings') ){
 				//Check specific directories for indexing (Apache directory listings)
 				$directory_indexing = get_transient('nebula_directory_indexing');
 				if ( empty($directory_indexing) || nebula()->is_debug() || nebula()->is_auditing() ){ //Use the transient unless ?debug or explicitly auditing
-					$directories = array(get_home_url(), includes_url(), content_url()); //Directories to test
+					$directories = array(includes_url(), content_url()); //Directories to test
 					$found_problem = false;
 					foreach ( $directories as $directory ){
 						//Get the contents of the directory
@@ -256,7 +256,7 @@ if ( !trait_exists('Warnings') ){
 					if ( $directory_indexing === 'bad' ){
 						$nebula_warnings['directory_indexing'] = array(
 							'level' => 'error',
-							'description' => '<i class="far fa-fw fa-list-alt"></i> At the time last checked, directory indexing was allowed. Visitors may be able to see file listings of directories! <a href="' . home_url('/?audit=true') . '" target="_blank">Run an audit to re-scan &raquo;</a>',
+							'description' => '<i class="far fa-fw fa-list-alt"></i> <strong>Directory indexing not disabled</strong> (at the time last checked). Visitors may be able to see file listings of directories such as the <a href="' . includes_url() . '" target="_blank">Includes URL</a> or <a href="' . content_url() . '" target="_blank">Content URL</a> (and/or others)! <a href="' . home_url('/?audit=true') . '" target="_blank">Run an audit to re-scan &raquo;</a>',
 						);
 					}
 				}
@@ -278,7 +278,7 @@ if ( !trait_exists('Warnings') ){
 
 									//If the file size is larger than 10mb
 									if ( filesize($file) > MB_IN_BYTES*10 ){
-										$filesize = ( version_compare(PHP_VERSION, '8.0.0') >= 0 )? bcdiv(filesize($file), MB_IN_BYTES, 0) : filesize($file)/1000;
+										$filesize = ( version_compare(PHP_VERSION, '8.0.0') >= 0 )? bcdiv(filesize($file), MB_IN_BYTES, 0) : number_format(filesize($file)/MB_IN_BYTES, 2);
 
 										$nebula_warnings['large_file'] = array(
 											'level' => 'warning',

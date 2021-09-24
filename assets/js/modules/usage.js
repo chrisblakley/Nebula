@@ -59,6 +59,7 @@ nebula.usage = async function(error = {}){
 				'cd7=' + nebula.user.cid, //GA CID
 				'cd9=' + nebula.site.is_child, //Is child theme?
 				'cd12=' + window.location.href, //Permalink
+				'cd16=' + nebula.version.date, //Nebula version commit date
 				'cn=Nebula Usage', //Campaign
 				'cs=' + nebula.site.home_url, //Source
 				'cm=WordPress', //Medium
