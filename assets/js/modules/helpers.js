@@ -17,7 +17,7 @@ nebula.helpers = async function(){
 	}
 
 	nebula.dom.html.removeClass('no-js').addClass('js');
-	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'nofollow external noopener'); //Add rel attributes to external links. Although search crawlers do use JavaScript, don't rely on this line to instruct them. Use standard HTML attributes whenever possible.
+	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'external noreferrer noopener'); //Add rel attributes to external links. Although search crawlers do use JavaScript, don't rely on this line to instruct them. Use standard HTML attributes whenever possible.
 
 	//Note the level of RAM available for a "lite" or "full" experience
 	if ( 'deviceMemory' in navigator ){ //Device Memory - Chrome 64+

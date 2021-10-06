@@ -4,6 +4,11 @@ window.performance.mark('(Nebula) Inside usage.js (module)');
 
 //Detect Window Errors
 window.addEventListener('error', function(error){
+	//Ignore browser extension errors
+	if ( error?.filename.includes('-extension://') ){ //Ex: chrome-extension:// or safari-extension://
+		return false;
+	}
+
 	let errorMessage = error.message + ' at ' + error.lineno + ' of ' + error.filename;
 	if ( error.message.toLowerCase().includes('script error') ){ //If it is a script error
 		errorMessage = 'Script error (An error occurred in a script hosted on a different domain)'; //No additional information is available because of the browser's same-origin policy. Use CORS when possible to get additional information.

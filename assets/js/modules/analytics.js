@@ -664,7 +664,7 @@ nebula.eventTracking = async function(){
 		}
 
 		//Dead Clicks (Non-Linked Click Attempts)
-		nebula.dom.document.on('click', 'img', function(e){
+		nebula.dom.document.on('click', 'img', function(e){ //Clicks on images
 			if ( !jQuery(this).parents('a, button').length ){
 				let thisEvent = {
 					event: e,
@@ -678,6 +678,24 @@ nebula.eventTracking = async function(){
 				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.src, {'nonInteraction': true}); //Non-interaction because if the user leaves due to this it should be considered a bounce
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-dead-click'}));
 				nebula.crm('event', thisEvent.category);
+			}
+		});
+		nebula.dom.document.on('click', function(e){ //Check for clicks on unlinked underlined text
+			if ( jQuery(e.target).css('text-decoration').includes('underline') || jQuery(e.target).is('u') ){ //Do not use jQuery(this) to avoid issues with the document (depending on what was actually clicked)
+				if ( !jQuery(e.target).is('a, button') && !jQuery(e.target).parents('a, button').length && !jQuery(e.target).find('a, button').length ){ //Check if this element is an <a> tag or if parents or children are
+					let thisEvent = {
+						event: e,
+						category: 'Dead Click',
+						action: 'Underlined Text', //GA4 Name: "dead_click"?
+						element: 'Text',
+						text: jQuery(e.target).text().trim()
+					};
+
+					nebula.dom.document.trigger('nebula_event', thisEvent);
+					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.text, {'nonInteraction': true}); //Non-interaction because if the user leaves due to this it should be considered a bounce
+					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-dead-click'}));
+					nebula.crm('event', thisEvent.category);
+				}
 			}
 		});
 
@@ -732,16 +750,14 @@ nebula.eventTracking = async function(){
 				let thisEvent = {
 					event: e,
 					category: 'Rage Clicks',
-					action: 'Detected', //GA4 Name: "rage_clicks"?
+					action: numberOfClicks + ' clicks in ' + timeDiff + ' seconds detected within ' + maxDistance + 'px', //GA4 Name: "rage_clicks"?
 					clicks: numberOfClicks,
 					period: timeDiff,
 					selector: nebula.domTreeToString(e.target),
 				};
 
-				thisEvent.description = numberOfClicks + ' clicks in ' + timeDiff + ' seconds detected within ' + maxDistance + 'px of ' + thisEvent.selector;
-
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.description, {'nonInteraction': true}); //Non-interaction because if the user exits due to this it should be considered a bounce
+				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.selector, {'nonInteraction': true}); //Non-interaction because if the user exits due to this it should be considered a bounce
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-rage-clicks'}));
 
 				clickEvents.splice(clickEvents.length-5, 5); //Remove unused click points
