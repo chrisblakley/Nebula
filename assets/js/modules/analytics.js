@@ -385,18 +385,31 @@ nebula.eventTracking = async function(){
 
 		//Mailto link tracking
 		nebula.dom.document.on('mousedown', 'a[href^="mailto"]', function(e){
+			let emailAddress = jQuery(this).attr('href').replace('mailto:', '');
+			let emailDomain = emailAddress.split('@')[1]; //Get everything after the @
+
+			//Mask the email with asterisks
+			let anonymizedEmail = emailAddress.charAt(0); //Start by preserving the first character
+			Array.from(emailAddress.split('@')[0]).slice(1).forEach(function(){ //Get an array of chars before @ and remove the first index
+				anonymizedEmail += '*'; //Add an asterisk for each character in the array
+			});
+			anonymizedEmail += '@' + emailDomain; //Add the domain
+
 			let thisEvent = {
 				event: e,
 				category: 'Contact',
 				action: 'Mailto', //GA4 Name: "mailto"?
+				label: ( emailAddress.toLowerCase().includes(window.location.hostname) )? emailAddress : anonymizedEmail, //If the email matches the website use it, otherwise use the anonymized email
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				emailAddress: jQuery(this).attr('href').replace('mailto:', '')
+				emailAddress: emailAddress,
+				emailDomain: emailDomain,
+				anonymizedEmail: anonymizedEmail
 			};
 
 			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.emailAddress);
+			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-mailto'}));
 			nebula.fbq('track', 'Lead', {content_name: thisEvent.action});
 			nebula.clarity('set', thisEvent.category, thisEvent.action);

@@ -7,6 +7,10 @@ assignees: ''
 
 ---
 
+_Version information can be found in the lower right of most WP admin screens_
+**WordPress Version**:
+**Nebula Version**:
+
 **Describe the Problem**
 A clear and concise description of what the bug is.
 
@@ -20,7 +24,7 @@ A clear and concise description of what the bug is.
 A clear and concise description of what you expected to happen.
 
 **Screenshots**
-Screenshots are incredibly helpful. Please include them if possible.
+Screenshots are incredibly helpful. If possible, please include screenshots of the problem, any JS console errors, and even the Developer Metabox in the WordPress Admin Dashboard.
 
 **Environment Details**
 Device, operating system, browser, and versions of each

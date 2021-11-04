@@ -33,7 +33,7 @@ if ( !trait_exists('Security') ){
 		//Additional security headers
 		//Test with https://securityheaders.io/
 		public function security_headers(){
-			header('x-frame-options: SAMEORIGIN');
+			//header('x-frame-options: SAMEORIGIN'); //This controls if/where we allow our website to be embedded in iframes
 			header('X-XSS-Protection: 1; mode=block');
 			header('X-Content-Type-Options: nosniff'); //Ensure MIME types match expected
 			header('Access-Control-Allow-Headers: X-WP-Nonce'); //Allow this header for WP Block Editor compatibility with CSP
