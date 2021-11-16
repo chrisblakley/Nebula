@@ -8,51 +8,51 @@
 
 .nebulashadow {position: relative;
 	&.floating {
-		&:after {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-shadow: 0 17px 25px -15px rgb(0 0 0 / 40%); z-index: -1; pointer-events: none;}
+		&::after {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-shadow: 0 17px 25px -15px rgb(0 0 0 / 40%); z-index: -1; pointer-events: none;}
 		&.above {
-			&:before {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-shadow: 0 -17px 25px -15px rgb(0 0 0 / 40%); z-index: -1; pointer-events: none;}
+			&::before {content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-shadow: 0 -17px 25px -15px rgb(0 0 0 / 40%); z-index: -1; pointer-events: none;}
 		}
 	}
 
 	&.bulging {
-		&:after {content: ""; position: absolute; left: 0; right: 0; bottom: -13px; width: 96%; height: 30px; margin: 0 auto; background: rgb(0 0 0 / 40%); filter: blur(25px); border-radius: 50%; transform: scaleY(.3); z-index: -1; pointer-events: none;}
+		&::after {content: ""; position: absolute; left: 0; right: 0; bottom: -13px; width: 96%; height: 30px; margin: 0 auto; background: rgb(0 0 0 / 40%); filter: blur(25px); border-radius: 50%; transform: scaleY(.3); z-index: -1; pointer-events: none;}
 		&.above {
-			&:before {content: ""; position: absolute; left: 0; right: 0; top: -13px; width: 96%; height: 30px; margin: 0 auto; background: rgb(0 0 0 / 40%); filter: blur(25px); border-radius: 50%; transform:scaleY(.3); z-index: -1; pointer-events: none;}
+			&::before {content: ""; position: absolute; left: 0; right: 0; top: -13px; width: 96%; height: 30px; margin: 0 auto; background: rgb(0 0 0 / 40%); filter: blur(25px); border-radius: 50%; transform:scaleY(.3); z-index: -1; pointer-events: none;}
 		}
 	}
 
 	&.curling {//This can not appear above.
-		&:before {content: ""; position: absolute; bottom: 4px; left: 10px; height: 20px; width: 70%; background: rgb(0 0 0 / 40%); filter: blur(6px); transform: rotate(-3deg); z-index: -1; pointer-events: none;}
-		&:after {content: ""; position: absolute; bottom: 4px; right: 10px; height: 20px; width: 70%; background: rgb(0 0 0 / 40%); filter: blur(6px); transform: rotate(3deg); z-index: -1; pointer-events: none;}
+		&::before {content: ""; position: absolute; bottom: 4px; left: 10px; height: 20px; width: 70%; background: rgb(0 0 0 / 40%); filter: blur(6px); transform: rotate(-3deg); z-index: -1; pointer-events: none;}
+		&::after {content: ""; position: absolute; bottom: 4px; right: 10px; height: 20px; width: 70%; background: rgb(0 0 0 / 40%); filter: blur(6px); transform: rotate(3deg); z-index: -1; pointer-events: none;}
 	}
 
 	&.hovering {
-		&:after {content: ""; position: absolute; left: 0; right: 0; bottom: -30px; width: 98%; height: 30px; margin: 0 auto; background: rgb(0 0 0 / 15%); filter: blur(15px); border-radius: 50%; transform:scaleY(.2); z-index: -1; pointer-events: none;}
+		&::after {content: ""; position: absolute; left: 0; right: 0; bottom: -30px; width: 98%; height: 30px; margin: 0 auto; background: rgb(0 0 0 / 15%); filter: blur(15px); border-radius: 50%; transform:scaleY(.2); z-index: -1; pointer-events: none;}
 		&.above {
-			&:before {content: ""; position: absolute; left: 0; right: 0; top: -30px; width: 98%; height: 30px; margin: 0 auto; background: rgb(0 0 0 / 15%); filter: blur(15px); border-radius: 50%; transform:scaleY(.2); z-index: -1; pointer-events: none;}
+			&::before {content: ""; position: absolute; left: 0; right: 0; top: -30px; width: 98%; height: 30px; margin: 0 auto; background: rgb(0 0 0 / 15%); filter: blur(15px); border-radius: 50%; transform:scaleY(.2); z-index: -1; pointer-events: none;}
 		}
 	}
 
 	&.anchored-right {
-		&:after {content: ""; position: absolute; bottom: 0; left: 10px; height: 20px; width: 92%; background: rgb(0 0 0 / 40%); filter: blur(6px); transform: rotate(-2deg); z-index: -1; pointer-events: none;}
+		&::after {content: ""; position: absolute; bottom: 0; left: 10px; height: 20px; width: 92%; background: rgb(0 0 0 / 40%); filter: blur(6px); transform: rotate(-2deg); z-index: -1; pointer-events: none;}
 		&.above {
-			&:before {content: ""; position: absolute; top: 0; left: 10px; height: 20px; width: 92%; background: rgb(0 0 0 / 40%); filter: blur(6px); transform: rotate(2deg); z-index: -1; pointer-events: none;}
+			&::before {content: ""; position: absolute; top: 0; left: 10px; height: 20px; width: 92%; background: rgb(0 0 0 / 40%); filter: blur(6px); transform: rotate(2deg); z-index: -1; pointer-events: none;}
 		}
 	}
 
 	&.anchored-left {
-		&:after {content: ""; position: absolute; bottom: 0; right: 10px; height: 20px; width: 92%; background: rgb(0 0 0 / 40%); filter: blur(6px); transform: rotate(2deg); z-index: -1; pointer-events: none;}
+		&::after {content: ""; position: absolute; bottom: 0; right: 10px; height: 20px; width: 92%; background: rgb(0 0 0 / 40%); filter: blur(6px); transform: rotate(2deg); z-index: -1; pointer-events: none;}
 		&.above {
-			&:before {content: ""; position: absolute; top: 0; right: 10px; height: 20px; width: 92%; background: rgb(0 0 0 / 40%); filter: blur(6px); transform: rotate(-2deg); z-index: -1; pointer-events: none;}
+			&::before {content: ""; position: absolute; top: 0; right: 10px; height: 20px; width: 92%; background: rgb(0 0 0 / 40%); filter: blur(6px); transform: rotate(-2deg); z-index: -1; pointer-events: none;}
 		}
 	}
 
 	&.above {
-		&:after {display: none;}
+		&::after {display: none;}
 	}
 
 	&.below {
-		&:after {display: block;}
+		&::after {display: block;}
 	}
 
 	&.inner-top {box-shadow: inset 0 17px 25px -15px rgb(0 0 0 / 40%);}
@@ -158,7 +158,7 @@ body:not(.wp-admin) {
 
 hr.nebula-line {display: block; height: 1px; border: 0; border-top: 1px solid #ccc; @include background-color(#fff); margin: 3px 0; padding: 0;
 	.rgba & {display: block; height: 1px; border: 0; margin: 3px 0; padding: 0; mix-blend-mode: screen;}
-	.rgba &:before {content: ""; position: relative; top: -1px; height: 1px; display: block; @include background-color(#000, 0.2); mix-blend-mode: multiply;}
+	.rgba &::before {content: ""; position: relative; top: -1px; height: 1px; display: block; @include background-color(#000, 0.2); mix-blend-mode: multiply;}
 	&.zero {margin: 0;}
 }
 
@@ -207,30 +207,30 @@ body.admin-bar {scroll-padding-top: 32px;} //Account for the admin bar height wh
 //Nebula social share buttons
 a.nebula-share-btn {display: inline-block; padding: 5px 7px; border-radius: 3px; font-size: rem(12px); line-height: 1; color: #fff !important; text-shadow: 1px 1px rgb(0 0 0 / 25%); margin-right: 5px;
 	&:last-child {margin-right: 0;}
-	&:before {font-family: "Font Awesome 5 Brands"; margin-right: 4px; text-shadow: none;}
+	&::before {font-family: "Font Awesome 5 Brands"; margin-right: 4px; text-shadow: none;}
 
 	&.facebook {background: brand(facebook);
-		&:before {content: "\f09a";}
+		&::before {content: "\f09a";}
 		&:hover {background: darken(brand(facebook), 15%);}
 	}
 	&.twitter {background: brand(twitter);
-		&:before {content: "\f099";}
+		&::before {content: "\f099";}
 		&:hover {background: darken(brand(twitter), 15%);}
 	}
 	&.linkedin {background: brand(linkedin);
-		&:before {content: "\f0e1";}
+		&::before {content: "\f0e1";}
 		&:hover {background: darken(brand(linkedin), 15%);}
 	}
 	&.pinterest{background: brand(pinterest);
-		&:before {content: "\f0d2";}
+		&::before {content: "\f0d2";}
 		&:hover {background: darken(brand(pinterest), 15%);}
 	}
 	&.email {background: grey;
-		&:before {content: "\f0e0"; @include font-awesome("solid");}
+		&::before {content: "\f0e0"; @include font-awesome("solid");}
 		&:hover {background: darken(grey, 15%);}
 	}
 	&.webshare, &.shareapi {background: orange;
-		&:before {content: "\f1e0"; @include font-awesome("solid");}
+		&::before {content: "\f1e0"; @include font-awesome("solid");}
 		&:hover {background: darken(orange, 15%);}
 	}
 }
@@ -245,12 +245,12 @@ a.nebula-share-btn {display: inline-block; padding: 5px 7px; border-radius: 3px;
 		.entry-content {
 			@if $specific { //Some file extensions must explicitly request an icon
 				a.icon[href$=".#{$filetype}" i] {text-decoration: none; border-bottom: 1px dotted $color;
-					&:before {content: "#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
+					&::before {content: "#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
 				}
 			} @else {
 				a[href$=".#{$filetype}" i]:not(.no-icon):not(.btn):not(.wp-block-button__link),
 				li.icon a[href$=".#{$filetype}" i] {text-decoration: none; border-bottom: 1px dotted $color;
-					&:before {content: "#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
+					&::before {content: "#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
 				}
 			}
 		}
@@ -269,7 +269,7 @@ a.nebula-share-btn {display: inline-block; padding: 5px 7px; border-radius: 3px;
 @include file_icon(css scss, "\f1c9", #30a9dc, true);
 
 a.white, li.icon.white a {@include link-colors(#fff, #ccc);
-	&:before {color: #fff !important;}
+	&::before {color: #fff !important;}
 }
 
 // ===========================

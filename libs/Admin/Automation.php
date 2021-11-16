@@ -467,7 +467,7 @@ if ( !trait_exists('Automation') ){
 		public function force_settings(){
 			//Force initialization date
 			if ( 1 === 2 ){
-				$force_date = 'May 24, 2014'; //Set the desired initialization date here. Format should be an easily convertable date like: "March 27, 2012"
+				$force_date = 'May 24, 2014'; //Set the desired initialization date here. Format should be an easily convertible date like: "March 27, 2012"
 				if ( strtotime($force_date) !== false ){ //Check if provided date string is valid
 					$this->update_data('initialized', strtotime($force_date));
 					return false;

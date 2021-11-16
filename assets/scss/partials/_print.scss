@@ -7,9 +7,9 @@
 
 	//* {/* background: transparent !important;  */ color: #000 !important; box-shadow: none !important; text-shadow: none !important;}
 	//a, a:visited {text-decoration: underline;}
-	/* .entry-content a[href]:after {content: " (" attr(href) ")";} */
+	/* .entry-content a[href]::after {content: " (" attr(href) ")";} */
 
-	.ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {content: "";} /* Do not show links for images, or javascript/internal links */
+	.ir a::after, a[href^="javascript:"]::after, a[href^="#"]::after {content: "";} /* Do not show links for images, or javascript/internal links */
 	thead {display: table-header-group;}
 	tr, img {page-break-inside: avoid;}
 	//img {max-width: 100% !important;}

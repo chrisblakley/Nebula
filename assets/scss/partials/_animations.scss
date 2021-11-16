@@ -10,8 +10,8 @@
 //Accomodate users who prefer less motion (Note: this may not affect JavaScript animations)
 @media ( prefers-reduced-motion: reduce ){
 	*,
-	:before,
-	:after {animation-duration: 0.001s !important; transition-duration: 0.001s !important; animation-iteration-count: 1 !important;} //Override all CSS animations
+	::before,
+	::after {animation-duration: 0.001s !important; transition-duration: 0.001s !important; animation-iteration-count: 1 !important;} //Override all CSS animations
 }
 
 // ===========================

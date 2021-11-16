@@ -294,6 +294,8 @@ if ( !trait_exists('Sass') ){
 										'message' => $unprotected_array[$prefix . 'message']
 									);
 
+									do_action('qm/error', $error);
+
 									continue; //Skip the file that contains errors
 								}
 

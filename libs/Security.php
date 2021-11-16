@@ -222,6 +222,7 @@ if ( !trait_exists('Security') ){
 				$this->set_cookie('spam_domain', false);
 			}
 
+			do_action('qm/info', 'Spam Domain Check Performed');
 			$this->timer('Spam Domain Prevention', 'end');
 		}
 

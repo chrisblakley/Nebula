@@ -136,6 +136,7 @@ if ( !trait_exists('Utilities') ){
 				$session_id .= $key . ':' . $value . ';';
 			}
 
+			//do_action('qm/info', 'Nebula Session ID: ' . $session_id);
 			wp_cache_set('nebula_session_id', $session_id, $cache_group); //Store in object cache grouped by the unique ID to prevent interference
 			$this->timer($timer_name, 'end');
 			return $session_id;
@@ -653,10 +654,10 @@ if ( !trait_exists('Utilities') ){
 		//This is best used when assigning a variable from an "expensive" output
 		//When passing parameters they must ALWAYS be passed as an array!
 		public function transient($name, $function, $parameters=array(), $expiration=null, $fresh=false){
-			//If the parameters varibale is not passed at all, use it as the expiration. This could be avoided by listing the parameters by name when calling this function...
+			//If the parameters variable is not passed at all, use it as the expiration. This could be avoided by listing the parameters by name when calling this function...
 			if ( is_int($parameters) ){
-				$expiration = $parameters;
 				$fresh = $expiration;
+				$expiration = $parameters;
 				$parameters = array(); //And reset the $parameters variable to be an empty array
 			}
 
@@ -677,6 +678,7 @@ if ( !trait_exists('Utilities') ){
 					wp_cache_set($name, $data); //Set the object cache (memory for multiple calls during this current load)
 				}
 
+				do_action('qm/info', 'Transient Updated: ' . $name);
 				set_transient($name, $data, $expiration); //Set the transient (DB to speed up future loads)
 			}
 
@@ -1062,6 +1064,7 @@ if ( !trait_exists('Utilities') ){
 
 			//Get the remote resource
 			$response = wp_safe_remote_get($url, $args);
+			do_action('qm/info', 'Nebula Remote Get: ' . $url);
 			if ( is_wp_error($response) ){
 				set_transient('nebula_site_available_' . $hostname, 'Unavailable', MINUTE_IN_SECONDS*10); //10 minute expiration
 			}
@@ -1669,6 +1672,7 @@ if ( !trait_exists('Utilities') ){
 				));
 			} else {
 				$response = wp_remote_get($get_url); //Change this to nebula remote_get?
+				do_action('qm/info', 'Hubspot Remote Get: ' . $get_url); //Remove this if changing to nebula remote_get
 			}
 
 			if ( !is_wp_error($response) ){

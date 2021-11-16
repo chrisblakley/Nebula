@@ -93,13 +93,15 @@ if ( !trait_exists('Logs') ){
 						'user_id' => intval(get_current_user_id()), //Note: returns 0 in cron jobs
 						'importance' => intval($importance)
 					)); //DB Query
-				} catch(Exception $e){
+				} catch(Exception $error){
 					//This could happen if the option was enabled (somehow) by non-staff, and a log was attempted to be added
 					$this->update_option('logs', 0); //Disable the option just to be safe. Unfortunately this cannot be logged somewhere...
+					do_action('qm/error', $error);
 					return false;
 				}
 
 				delete_transient('nebula_logs');
+				do_action('qm/info', 'Added Nebula Log: ' . sanitize_text_field($message));
 
 /*
 				if ( !empty($optimize) ){

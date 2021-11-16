@@ -387,11 +387,16 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('mousedown', 'a[href^="mailto"]', function(e){
 			let emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 			let emailDomain = emailAddress.split('@')[1]; //Get everything after the @
+			let emailCharacterArray = Array.from(emailAddress.split('@')[0]).slice(1); //Get an array of chars before @ and remove the first index
 
 			//Mask the email with asterisks
 			let anonymizedEmail = emailAddress.charAt(0); //Start by preserving the first character
-			Array.from(emailAddress.split('@')[0]).slice(1).forEach(function(){ //Get an array of chars before @ and remove the first index
-				anonymizedEmail += '*'; //Add an asterisk for each character in the array
+			emailCharacterArray.forEach(function(character, index){ //Get an array of chars before @ and remove the first index
+				if ( index === emailCharacterArray.length-1 ){ //If the current index is the last item (character)
+					anonymizedEmail += character; //Use the last letter as-is
+				} else {
+					anonymizedEmail += '*'; //Add an asterisk for each character in the array
+				}
 			});
 			anonymizedEmail += '@' + emailDomain; //Add the domain
 

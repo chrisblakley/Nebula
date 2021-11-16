@@ -16,7 +16,7 @@
 }
 
 .loadmorecon {position: relative; text-align: center; margin: 50px 0;
-	&:before {content: "\f141"; @include font-awesome("solid"); position: absolute; top: 10px; left: 0; width: 100%; display: block; text-align: center; opacity: 0; pointer-events: none;}
+	&::before {content: "\f141"; @include font-awesome("solid"); position: absolute; top: 10px; left: 0; width: 100%; display: block; text-align: center; opacity: 0; pointer-events: none;}
 
 	.infinite-loading {display: none; position: absolute; top: 0; left: 0; width: 100%;
 		div {display: inline-block; width: 6px; height: 6px; border-radius: 12px; background: #444; animation: nebula-zoom 1s infinite easing(easeInOutQuad);
@@ -27,13 +27,13 @@
 	&.loading .infinite-loading {display: block;}
 
 	&.disabled a {color: #444; opacity: 0.3; pointer-events: none;
-		&:after {content: ""; opacity: 0; pointer-events: none;}
+		&::after {content: ""; opacity: 0; pointer-events: none;}
 	}
 
 	.infinite-load-more {position: relative; font-size: rem(18px); padding: 10px;
-		&:after {content: "\f107"; @include font-awesome("solid"); position: absolute; bottom: -10px; transform: translate3d(0, 0, 0); left: 0; width: 100%; display: block; text-align: center; transition: transform 0.25s ease; will-change: transform;}
-		&:hover:after,
-		&:focus:after {transform: translate3d(0, -3px, 0);}
+		&::after {content: "\f107"; @include font-awesome("solid"); position: absolute; bottom: -10px; transform: translate3d(0, 0, 0); left: 0; width: 100%; display: block; text-align: center; transition: transform 0.25s ease; will-change: transform;}
+		&:hover::after,
+		&:focus::after {transform: translate3d(0, -3px, 0);}
 	}
 
 	&.loading .infinite-load-more {opacity: 0; pointer-events: none;}
@@ -60,31 +60,31 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 
 .form-identifier-nebula-hero-search { //Only on front-page hero search
 	.external-link a {
-		&:after {content: "\f35d"; @include font-awesome("solid"); margin-left: 5px; font-size: rem(10px); opacity: 0.4;}
+		&::after {content: "\f35d"; @include font-awesome("solid"); margin-left: 5px; font-size: rem(10px); opacity: 0.4;}
 	}
 }
 .ui-autocomplete.ui-widget-content li {position: relative;
 	& a {@include link-colors(#292b2c, #292b2c);
-		&:before {content: "\f105"; @include font-awesome("solid"); width: 10px; margin-right: 5px; font-size: rem(10px); text-align: center; opacity: 0.5;}
+		&::before {content: "\f105"; @include font-awesome("solid"); width: 10px; margin-right: 5px; font-size: rem(10px); text-align: center; opacity: 0.5;}
 	}
-	&.type-post a:before {content: "\f1ea";}
-	&.type-page a:before {content: "\f15c";}
-	&.type-category a:before {content: "\f02e";}
-	&.type-tag a:before {content: "\f02b";}
-	&.type-menu-item a:before {content: "\f0c9";}
-	&.type-event a:before {content: "\f073";}
-	&.type-product a:before {content: "\f07a";}
-	&.type-attachment a:before {content: "\f1c5";}
-	&.file-zip a:before {content: "\f1c6";}
-	&.type-user a:before {content: "\f007";}
-	&.page-home a:before {content: "\f015";}
-	&.sticky-post a:before {content: "\f08d";}
+	&.type-post a::before {content: "\f1ea";}
+	&.type-page a::before {content: "\f15c";}
+	&.type-category a::before {content: "\f02e";}
+	&.type-tag a::before {content: "\f02b";}
+	&.type-menu-item a::before {content: "\f0c9";}
+	&.type-event a::before {content: "\f073";}
+	&.type-product a::before {content: "\f07a";}
+	&.type-attachment a::before {content: "\f1c5";}
+	&.file-zip a::before {content: "\f1c6";}
+	&.type-user a::before {content: "\f007";}
+	&.page-home a::before {content: "\f015";}
+	&.sticky-post a::before {content: "\f08d";}
 
 	&.search-link {font-size: rem(12px); border-top: 1px dotted #ddd;
 		a {opacity: 0.7;}
 	}
-	&.more-results a:before {content: "\f002";}
-	&.no-results a:before {content: "\00a0";}
+	&.more-results a::before {content: "\f002";}
+	&.no-results a::before {content: "\00a0";}
 }
 
 //jQuery UI Autocomplete

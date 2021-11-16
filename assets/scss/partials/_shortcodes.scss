@@ -20,10 +20,10 @@
 .accordion {position: relative; margin-top: 10px; margin-bottom: 10px;}
 .accordion-item {margin: 4px 0; border: 2px solid #e5e5e5; transition: border-color 0.3s ease;
 	.accordion-toggle .accordion-heading {display: block; padding: 10px 15px; font-size: rem(20px); color: #2c3e50; background-color: #fafafa; cursor: pointer;
-		&:before {content: "\f067"; @include font-awesome("solid"); position: relative; display: inline-block; bottom: 0.1em; margin-right: 10px; color: #000; font-size: rem(12px); transform: rotate(45deg); transition: all 0.3s ease;}
+		&::before {content: "\f067"; @include font-awesome("solid"); position: relative; display: inline-block; bottom: 0.1em; margin-right: 10px; color: #000; font-size: rem(12px); transform: rotate(45deg); transition: all 0.3s ease;}
 	}
 
-	&.accordion-collapsed .accordion-toggle .accordion-heading:before {color: #d3d3d3; transform: rotate(0);}
+	&.accordion-collapsed .accordion-toggle .accordion-heading::before {color: #d3d3d3; transform: rotate(0);}
 	.accordion-content-con {display: none;
 		.accordion-content {padding: 15px; border-top: 2px solid #e5e5e5;}
 	}
@@ -35,7 +35,7 @@
 
 //About the Author
 .about-the-author {
-	&:before {content: ""; display: block; border-top: 5px solid $primary_color; width: 150px; margin-bottom: 25px;}
+	&::before {content: ""; display: block; border-top: 5px solid $primary_color; width: 150px; margin-bottom: 25px;}
 
 	.headshot-title-con {display: flex; align-items: center; margin-bottom: 10px;
 		p {margin: 0; color: #777;}
@@ -52,7 +52,7 @@
 }
 
 .nebula-twitter-widget {
-	&:before {content: ""; display: block; border-top: 5px solid $primary_color; width: 150px; margin-bottom: 25px;}
+	&::before {content: ""; display: block; border-top: 5px solid $primary_color; width: 150px; margin-bottom: 25px;}
 
 	.user-profile-con {display: flex; align-items: center; margin-bottom: 10px;
 		p {margin: 0; color: #777;}

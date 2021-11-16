@@ -1164,9 +1164,11 @@ if ( !trait_exists('Admin') ){
 				global $pagenow;
 				if ( $pagenow === 'update.php' && !empty($message) ){ //During the actual update $pagenow is "update.php" not "update-core.php"
 					echo '<p>' . $message . '</p>';
+					do_action('qm/info', 'Nebula Theme Update Progress: ' . $message);
 				}
 			} catch(exception $error){
 				//Ignore output errors to prevent interrupting update
+				do_action('qm/info', $error);
 			}
 		}
 
@@ -1217,9 +1219,11 @@ if ( !trait_exists('Admin') ){
 
 				//Send the email, and on success set a transient to prevent multiple emails
 				if ( wp_mail($to, $data['subject'], $data['message'], $headers, $data['attachments']) ){ //wp_mail() returns boolean
+					do_action('qm/info', 'Admin email successfully sent');
 					return true; //Success
 				}
 
+				do_action('qm/error', 'Admin email failed (non-fatal, but email was not sent)');
 				return false; //Failed (non-fatal, but email was not sent)
 			}, array('subject' => $subject, 'message' => $message, 'attachments' => $attachments, ), MINUTE_IN_SECONDS);
 
@@ -1302,6 +1306,7 @@ if ( !trait_exists('Admin') ){
 			if ( !empty($warnings) ){
 				foreach( $warnings as $warning ){
 					$category = ( !empty($warning['category']) )? '[' . $warning['category'] . ']' : '[Nebula]';
+					$dismissible_class = ( !empty($warning['dismissible']) )? 'is-dismissible' : '';
 
 					if ( $warning['level'] === 'warning' ){
 						$warning['level'] = 'warning';
@@ -1311,7 +1316,7 @@ if ( !trait_exists('Admin') ){
 						$warning['level'] = 'info';
 					}
 
-					echo '<div class="nebula-admin-notice notice notice-' . $warning['level'] . '"><p><span class="nebula-warning-category">' . $category . '</span> ' . $warning['description'] . '</p></div>'; //@TODO "Nebula" 0: Make these dismissable
+					echo '<div class="nebula-admin-notice notice notice-' . $warning['level'] . ' ' . $dismissible_class . '"><p><span class="nebula-warning-category">' . $category . '</span> ' . $warning['description'] . '</p></div>';
 				}
 			}
 

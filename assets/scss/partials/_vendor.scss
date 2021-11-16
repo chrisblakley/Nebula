@@ -35,17 +35,17 @@ span.wpcf7-list-item {display: inline-block; margin: 0 0 0 1em;
 	&.first {margin: 0;}
 }
 span.wpcf7-list-item-label {font-size: rem(14px);
-	&:before,
-	&:after {content: " ";}
+	&::before,
+	&::after {content: " ";}
 }
 .debuginfo {display: none; opacity: 0; height: 0; visibility: hidden; padding: 0; margin: 0; font-size: 0; line-height: 0; @include background-color(#fff); color: rgb(255 255 255 / 0%); pointer-events: none;} //Is this still needed?
 
 //Nice animated spinner when submit is active
 .wpcf7-form button#submit {display: inline-block; position: relative; overflow: hidden; transition: all 0.25s ease, padding 0.4s easing(easeOutBack);
-	&:before {content: "\f110"; @include font-awesome("solid"); position: absolute; top: 0; left: -25px; height: 100%; display: -ms-inline-flexbox; display: inline-flex; -ms-flex-align: center; align-items: center; transition: left 0.4s easing(easeOutBack); animation: nebula-spin 2s infinite linear;}
+	&::before {content: "\f110"; @include font-awesome("solid"); position: absolute; top: 0; left: -25px; height: 100%; display: -ms-inline-flexbox; display: inline-flex; -ms-flex-align: center; align-items: center; transition: left 0.4s easing(easeOutBack); animation: nebula-spin 2s infinite linear;}
 
 	&.active {padding-left: 35px;
-	    &:before, svg {left: 10px;}
+	    &::before, svg {left: 10px;}
 	}
 }
 
@@ -54,23 +54,23 @@ span.wpcf7-list-item-label {font-size: rem(14px);
 .wpcf7-not-valid-tip {color: $danger_color;}
 
 .wpcf7-response-output {position: relative; width: 100%; margin: 0; border-radius: 4px; font-size: rem(14px); text-align: center; padding: 0; transition: all 0.5s ease;
-	&:before {content: ""; @include font-awesome("solid"); font-size: rem(36px); display: block; width: 100%; margin-bottom: 15px; text-align: center;}
+	&::before {content: ""; @include font-awesome("solid"); font-size: rem(36px); display: block; width: 100%; margin-bottom: 15px; text-align: center;}
 
 	.unaccepted &,
 	.invalid &,
 	.aborted &,
 	.failed & {color: readable-color($danger_color); background: $danger_color; border: 1px solid $danger_color; padding: 25px 10px 15px;
-		&:before {content: "\f057";}
+		&::before {content: "\f057";}
 		svg {display: block;}
 	}
 
 	.spam & {color: readable-color($danger_color); background: $danger_color; border: 1px solid $danger_color; padding: 25px 10px 15px;
-		&:before {content: "\f05e";}
+		&::before {content: "\f05e";}
 		svg {display: block;}
 	}
 
 	.sent & {color: readable-color($success_color); background: $success_color; border: 1px solid $success_color; padding: 25px 10px 15px;
-		&:before {content: "\f00c";}
+		&::before {content: "\f00c";}
 		svg {display: block;}
 	}
 }

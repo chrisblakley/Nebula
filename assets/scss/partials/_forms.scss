@@ -57,12 +57,12 @@ input[type="file"].custom-file-input {cursor: pointer;}
 
 	* {transition: opacity 0.25s ease;}
 
-	&:after {position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; color: #000; font-weight: bold; pointer-events: none; transition: background-color 0.25s ease;}
+	&::after {position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; color: #000; font-weight: bold; pointer-events: none; transition: background-color 0.25s ease;}
 
 	&.dragover {border: none;
 		* {opacity: 0.05;}
 
-		&:after {
+		&::after {
 			content: "Release to upload...";
 			color: $success_color;
 			background-color: rgb($success_color, 20%);
@@ -84,7 +84,7 @@ input[type="file"].custom-file-input {cursor: pointer;}
 	&.rejected {border: 1px solid $danger_color;
 		* {opacity: 0.05;}
 
-		&:after {content: "Invalid upload."; background-color: rgb($danger_color, 20%); color: $danger_color;}
+		&::after {content: "Invalid upload."; background-color: rgb($danger_color, 20%); color: $danger_color;}
 	}
 }
 

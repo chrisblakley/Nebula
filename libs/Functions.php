@@ -291,6 +291,7 @@ if ( !trait_exists('Functions') ){
 				$sw_js = preg_replace($find, $replace, $sw_js);
 				$update_sw_js = $wp_filesystem->put_contents($this->sw_location(false), $sw_js);
 				do_action('nebula_wrote_sw_js');
+				do_action('qm/info', 'Updated sw.js File');
 			}
 
 			$this->timer('Update SW', 'end');
@@ -376,6 +377,7 @@ if ( !trait_exists('Functions') ){
 			WP_Filesystem();
 			global $wp_filesystem;
 			$wp_filesystem->put_contents($this->manifest_json_location(false), $manifest_json);
+			do_action('qm/info', 'Updated manifest.json File');
 			$this->timer($timer_name, 'end');
 		}
 

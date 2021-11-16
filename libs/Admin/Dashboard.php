@@ -194,13 +194,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fas fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> ' . $all_plugins_plural . '</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
 
 			//Must-Use Plugins
-			$mu_plugin_count = nebula()->transient('nebula_count_mu_plugins', function(){
-				if ( file_exists(WPMU_PLUGIN_DIR) ){
-					return count(glob(WPMU_PLUGIN_DIR . '/*')); //This just counts the directories, but is accurrate enough for this purpose
-				}
-
-				return false;
-			}, MONTH_IN_SECONDS);
+			$mu_plugin_count = count(array_diff(scandir(WPMU_PLUGIN_DIR), array('..', '.'))); //Count the files in the mu-plugins directory (and remove the "." and ".." directories from scandir())
 			if ( !empty($mu_plugin_count) && $mu_plugin_count >= 1 ){
 				$mu_plugins_plural = ( $mu_plugin_count === 1 )? 'Must-Use Plugin' : 'Must-Use Plugins';
 				echo '<li><i class="fas fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . $mu_plugin_count . '</strong> ' . $mu_plugins_plural . '</a></li>';
@@ -448,6 +442,8 @@ if ( !trait_exists('Dashboard') ){
 				if ( is_child_theme() ){
 					$todo_items['child'] = $this->todo_search_files(get_stylesheet_directory());
 				}
+
+				do_action('qm/info', 'To-Do Scan Performed');
 
 				return apply_filters('nebula_todo_items', $todo_items); //Add locations to the Todo Manager
 			}, MINUTE_IN_SECONDS*30);
@@ -740,6 +736,11 @@ if ( !trait_exists('Dashboard') ){
 				echo '<li><i class="fas fa-fw fa-hdd"></i> Disk Space Available: <strong style="color: ' . $disk_usage_color . ';">' . $this->format_bytes($disk_free_space, 1) . '</strong> <small>(Total space: <strong>' . $this->format_bytes($disk_total_space) . '</strong>)</small></li>';
 			}
 
+			//Link to Query Monitor Environment Panel
+			//if ( is_plugin_active('query-monitor/query-monitor.php') ){
+				//echo '<li><i class="fas fa-fw fa-table"></i> <a href="#qm-environment">Additional Server Information <small>(Query Monitor)</small></a></li>'; //Not currently possible: https://github.com/johnbillion/query-monitor/issues/622
+			//}
+
 			//Log Files
 			foreach ( $this->get_log_files('all', true) as $types ){ //Always get fresh data here
 				foreach ( $types as $log_file ){
@@ -778,6 +779,7 @@ if ( !trait_exists('Dashboard') ){
 				$sass_option = ( nebula()->get_option('scss') )? '' : ' <small><em><a href="themes.php?page=nebula_options&tab=functions&option=scss">Sass is currently <strong>disabled</strong> &raquo;</a></em></small>';
 				echo '<li><i class="fab fa-fw fa-sass"></i> Sass Processed: <span title="' . date("F j, Y", $this->get_data('scss_last_processed')) . ' @ ' . date("g:i:sa", $this->get_data('scss_last_processed')) . '" style="cursor: help;"><strong>' . human_time_diff($this->get_data('scss_last_processed')) . ' ago</strong></span> ' . $sass_option . '</li>';
 			}
+
 			echo '</ul>';
 
 			//Directory search

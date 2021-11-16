@@ -94,6 +94,7 @@ if ( !trait_exists('Warnings') ){
 									if ( $term->slug === $post->post_name ){ //If this page slug matches a taxonomy term
 										$nebula_warnings['slug_conflict'] = array(
 											'level' => 'error',
+											'dismissible' => true,
 											'description' => '<i class="fas fa-fw fa-link"></i> Slug conflict with ' . ucwords(str_replace('_', ' ', $taxonomy)) . ': <strong>' . $term->slug . '</strong> - Consider changing this page slug.'
 										);
 										return false;
@@ -114,6 +115,7 @@ if ( !trait_exists('Warnings') ){
 							if ( empty($test_file) ){
 								$nebula_warnings['file_permissions'] = array(
 									'level' => 'error',
+									'dismissible' => true,
 									'description' => '<i class="fas fa-fw fa-server"></i> File system permissions error. Consider changing the FS_METHOD in wp-config.php.',
 								);
 							} else {
@@ -127,6 +129,7 @@ if ( !trait_exists('Warnings') ){
 				if ( (is_ssl() || isset($this->super->server['HTTPS'])) && (strpos(home_url(), 'http://') !== false || strpos(get_option('siteurl'), 'http://') !== false) ){
 					$nebula_warnings['site_url_http'] = array(
 						'level' => 'error',
+						'dismissible' => true,
 						'description' => '<i class="fas fa-fw fa-lock-open"></i> <a href="options-general.php">Website Address</a> settings are http but the site is served from https.',
 						'url' => admin_url('options-general.php')
 					);
@@ -136,6 +139,7 @@ if ( !trait_exists('Warnings') ){
 				if ( get_option('blog_public') == 0 ){ //Stored as a string
 					$nebula_warnings['search_visibility'] = array(
 						'level' => 'error',
+						'dismissible' => true,
 						'description' => '<i class="fab fa-fw fa-searchengin"></i> <a href="options-reading.php">Search Engine Visibility</a> is currently disabled! Therefore, additional SEO checks were not performed.',
 						'url' => admin_url('options-reading.php')
 					);
@@ -149,6 +153,7 @@ if ( !trait_exists('Warnings') ){
 								$sitemap_warning = true;
 								$nebula_warnings['missing_sitemap'] = array(
 									'level' => 'warning',
+									'dismissible' => true,
 									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. Yoast is enabled, but <a href="' . home_url('/') . 'sitemap_index.xml" target="_blank">sitemap_index.xml</a> is unavailable.'
 								);
 							}
@@ -157,6 +162,7 @@ if ( !trait_exists('Warnings') ){
 								$sitemap_warning = true;
 								$nebula_warnings['missing_sitemap'] = array(
 									'level' => 'warning',
+									'dismissible' => true,
 									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. The SEO Framework is enabled, but <a href="' . home_url('/') . 'sitemap.xml" target="_blank">sitemap.xml</a> is unavailable.'
 								);
 							}
@@ -165,6 +171,7 @@ if ( !trait_exists('Warnings') ){
 								$sitemap_warning = true;
 								$nebula_warnings['missing_sitemap'] = array(
 									'level' => 'warning',
+									'dismissible' => true,
 									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. WordPress core <a href="' . home_url('/') . 'wp-sitemap.xml" target="_blank">sitemap_index.xml</a> is unavailable.'
 								);
 
@@ -173,6 +180,7 @@ if ( !trait_exists('Warnings') ){
 									$sitemap_warning = true;
 									$nebula_warnings['simplexml'] = array(
 										'level' => 'warning',
+										'dismissible' => true,
 										'description' => '<i class="fas fa-fw fa-sitemap"></i> SimpleXML PHP module is not available. This is required for WordPress core sitemap generation.'
 									);
 								}
@@ -191,6 +199,7 @@ if ( !trait_exists('Warnings') ){
 						if ( empty($ping_sites) || $ping_sites === 'http://rpc.pingomatic.com/' ){ //If it is empty or only has the default value
 							$nebula_warnings['update_services'] = array(
 								'level' => 'warning',
+								'dismissible' => true,
 								'description' => '<i class="fas fa-fw fa-rss"></i> Additional <a href="options-writing.php">Update Services</a> should be pinged. <a href="https://codex.wordpress.org/Update_Services#XML-RPC_Ping_Services" target="_blank" rel="noopener">Recommended update services &raquo;</a>',
 								'url' => admin_url('options-writing.php')
 							);
@@ -205,6 +214,7 @@ if ( !trait_exists('Warnings') ){
 						if ( $php_version_lifecycle['end']-time() < MONTH_IN_SECONDS ){ //If end of life is within 1 month
 							$nebula_warnings['php_lifecycle_main'] = array(
 								'level' => 'warning',
+								'dismissible' => true,
 								'description' => '<i class="fab fa-fw fa-php"></i> PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end in ' . human_time_diff($php_version_lifecycle['end']) . ' on ' . date('F j, Y', $php_version_lifecycle['end']) . '.',
 								'url' => 'http://php.net/supported-versions.php',
 								'meta' => array('target' => '_blank', 'rel' => 'noopener')
@@ -213,6 +223,7 @@ if ( !trait_exists('Warnings') ){
 					} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
 						$nebula_warnings['php_lifecycle_end'] = array(
 							'level' => 'error',
+							'dismissible' => false,
 							'description' => '<i class="fab fa-fw fa-php"></i> PHP ' . PHP_VERSION . ' <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">no longer receives security updates</a>! End of life occurred ' . human_time_diff($php_version_lifecycle['end']) . ' ago on ' . date('F j, Y', $php_version_lifecycle['end']) . '.',
 							'url' => 'http://php.net/supported-versions.php',
 							'meta' => array('target' => '_blank', 'rel' => 'noopener')
@@ -237,6 +248,7 @@ if ( !trait_exists('Warnings') ){
 								if ( strpos(strtolower($directory_request['body']), 'index of') ){ //Check if the "Index of" text appears in the body content (bad)
 									$nebula_warnings['directory_indexing'] = array(
 										'level' => 'error',
+										'dismissible' => false,
 										'description' => '<i class="far fa-fw fa-list-alt"></i> Directory indexing is not disabled. Visitors can see file listings of directories!',
 									);
 
@@ -256,6 +268,7 @@ if ( !trait_exists('Warnings') ){
 					if ( $directory_indexing === 'bad' ){
 						$nebula_warnings['directory_indexing'] = array(
 							'level' => 'error',
+							'dismissible' => true,
 							'description' => '<i class="far fa-fw fa-list-alt"></i> <strong>Directory indexing not disabled</strong> (at the time last checked). Visitors may be able to see file listings of directories such as the <a href="' . includes_url() . '" target="_blank">Includes URL</a> or <a href="' . content_url() . '" target="_blank">Content URL</a> (and/or others)! <a href="' . home_url('/?audit=true') . '" target="_blank">Run an audit to re-scan &raquo;</a>',
 						);
 					}
@@ -272,6 +285,7 @@ if ( !trait_exists('Warnings') ){
 									if ( filemtime($file) < 946702800 ){ //PHP 7.4 use numeric separators here
 										$nebula_warnings['unusual_filemtime'] = array(
 											'level' => 'warning',
+											'dismissible' => true,
 											'description' => '<i class="fas fa-fw fa-hourglass-start"></i> <strong>' . $file . '</strong> was last modified on ' . date('F j, Y', filemtime($file)) . '. This is somewhat unusual and should be looked into.'
 										);
 									}
@@ -282,6 +296,7 @@ if ( !trait_exists('Warnings') ){
 
 										$nebula_warnings['large_file'] = array(
 											'level' => 'warning',
+											'dismissible' => true,
 											'description' => '<i class="fas fa-fw fa-file"></i> <strong>' . $file . '</strong> has a large filesize of ' . $filesize . 'mb.'
 										);
 									}
@@ -295,6 +310,7 @@ if ( !trait_exists('Warnings') ){
 							if ( $log_file['bytes'] > MB_IN_BYTES*25 ){
 								$nebula_warnings[] = array( //No key on this one so they do not overwrite when multiple are present
 									'level' => 'warning',
+									'dismissible' => true,
 									'description' => '<i class="fas fa-fw fa-weight"></i> Large debug file: <strong>' . $log_file['shortpath'] . '</strong> (' . $this->format_bytes($log_file['bytes'], 1) . ') <small><a href="' . esc_url(add_query_arg('debug', 'true')) . '">Re-Scan?</a></small>',
 								);
 							}
@@ -308,12 +324,14 @@ if ( !trait_exists('Warnings') ){
 					if ( wp_get_environment_type() === 'production' ){ //Do not warn in development environments
 						$nebula_warnings['wp_debug'] = array(
 							'level' => 'warning',
+							'dismissible' => true,
 							'description' => '<i class="fas fa-fw fa-bug"></i> <strong>WP_DEBUG</strong> is enabled <small>(Generally defined in wp-config.php)</small>'
 						);
 
 						if ( WP_DEBUG_DISPLAY ){
 							$nebula_warnings['wp_debug_display'] = array(
 								'level' => 'error',
+								'dismissible' => true,
 								'description' => '<i class="fas fa-fw fa-bug"></i> Debug errors and warnings are being displayed on the front-end (<Strong>WP_DEBUG_DISPLAY</strong>) <small>(Generally defined in wp-config.php)</small>'
 							);
 						}
@@ -324,6 +342,7 @@ if ( !trait_exists('Warnings') ){
 				if ( $this->is_safe_mode() ){
 					$nebula_warnings['safe_mode'] = array(
 						'level' => 'error',
+						'dismissible' => false,
 						'description' => '<i class="fas fa-fw fa-hard-hat"></i> <strong>Nebula Safe Mode</strong> is active <small>(' . WPMU_PLUGIN_DIR . '/nebula-safe-mode.php)</small>'
 					);
 				}
@@ -332,6 +351,7 @@ if ( !trait_exists('Warnings') ){
 				if ( !$this->get_option('ga_tracking_id') && !$this->get_option('gtm_id') ){
 					$nebula_warnings['ga_tracking_id'] = array(
 						'level' => 'error',
+						'dismissible' => true,
 						'description' => '<i class="fas fa-fw fa-chart-area"></i> A <a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">Google Tag Manager ID</a> is strongly recommended!',
 						'url' => admin_url('themes.php?page=nebula_options&tab=analytics')
 					);
@@ -343,6 +363,7 @@ if ( !trait_exists('Warnings') ){
 					if ( empty($ee_ga_settings['ga_id']) ){
 						$nebula_warnings['enhanced_ecommerce'] = array(
 							'level' => 'error',
+							'dismissible' => true,
 							'description' => '<i class="fas fa-fw fa-chart-area"></i> <a href="admin.php?page=wc-settings&tab=integration">WooCommerce Enhanced Ecommerce</a> is missing a Google Analytics ID!',
 							'url' => admin_url('admin.php?page=wc-settings&tab=integration')
 						);
@@ -356,6 +377,7 @@ if ( !trait_exists('Warnings') ){
 					if ( !file_exists(dirname(get_stylesheet_directory()) . '/' . $active_theme->get('Template')) ){
 						$nebula_warnings['no_parent_theme'] = array(
 							'level' => 'error',
+							'dismissible' => false,
 							'description' => '<i class="fas fa-fw fa-baby-carriage"></i> A child theme is active, but its parent theme directory <strong>' . $active_theme->get('Template') . '</strong> does not exist!<br/><em>The "Template:" setting in the <a href="' . get_stylesheet_uri() . '" target="_blank" rel="noopener">style.css</a> file of the child theme must match the directory name (above) of the parent theme.</em>'
 						);
 					}
@@ -372,6 +394,7 @@ if ( !trait_exists('Warnings') ){
 
 								$nebula_warnings['child_meta_graphics'] = array(
 									'level' => 'error',
+									'dismissible' => true,
 									'description' => '<i class="fas fa-fw fa-images"></i> Child theme meta graphics exist, but are identical to the Nebula meta graphics (' . $child_filename . '). Ensure that child theme meta graphics are unique to this website!</em>' //yolo
 								);
 
@@ -381,6 +404,7 @@ if ( !trait_exists('Warnings') ){
 					} else {
 						$nebula_warnings['child_meta_graphics'] = array(
 							'level' => 'error',
+							'dismissible' => true,
 							'description' => '<i class="far fa-fw fa-images"></i> A child theme is active, but missing meta graphics. Create a <code>/assets/img/meta/</code> directory in the child theme (or copy it over from the Nebula parent theme).</em>'
 						);
 					}
@@ -391,6 +415,7 @@ if ( !trait_exists('Warnings') ){
 					if ( !get_option('relevanssi_indexed') ){
 						$nebula_warnings['relevanssi_index'] = array(
 							'level' => 'error',
+							'dismissible' => true,
 							'description' => '<i class="fas fa-fw fa-search-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> must build an index to search the site. This must be triggered manually.',
 							'url' => admin_url('options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing')
 						);
@@ -399,6 +424,7 @@ if ( !trait_exists('Warnings') ){
 					if ( get_option('relevanssi_index_fields') === 'none' ){
 						$nebula_warnings['relevanssi_custom_fields'] = array(
 							'level' => 'warning',
+							'dismissible' => true,
 							'description' => '<i class="fas fa-fw fa-search-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> is not set to search custom fields.',
 							'url' => admin_url('options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing')
 						);
@@ -409,6 +435,7 @@ if ( !trait_exists('Warnings') ){
 				if ( $this->get_option('google_optimize_id') ){
 					$nebula_warnings['google_optimize_active'] = array(
 						'level' => 'error',
+						'dismissible' => true,
 						'description' => '<i class="far fa-fw fa-window-restore"></i> <a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!',
 						'url' => 'https://optimize.google.com/optimize/home/'
 					);
@@ -417,6 +444,7 @@ if ( !trait_exists('Warnings') ){
 					if ( !$this->get_option('ga_tracking_id') && !$this->get_option('gtm_id') ){
 						$nebula_warnings['google_optimize_analytics'] = array(
 							'level' => 'error',
+							'dismissible' => true,
 							'description' => '<i class="far fa-fw fa-window-restore"></i> <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Google Optimize ID</a> exists without a <a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics Tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">GTM ID</a>.',
 							'url' => admin_url('themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id')
 						);
@@ -429,6 +457,7 @@ if ( !trait_exists('Warnings') ){
 					if ( !file_exists($this->sw_location(false)) ){
 						$nebula_warnings['sw_missing'] = array(
 							'level' => 'error',
+							'dismissible' => true,
 							'description' => '<i class="far fa-fw fa-file"></i> Service Worker is enabled in <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">Nebula Options</a>, but no Service Worker JavaScript file was found. Either use the <a href="https://github.com/chrisblakley/Nebula/blob/main/Nebula-Child/resources/sw.js" target="_blank">provided sw.js file</a> (by moving it to the root directory), or override the function <a href="https://nebula.gearside.com/functions/sw_location/?utm_campaign=documentation&utm_medium=admin+notice&utm_source=service+worker#override" target="_blank">sw_location()</a> to locate the actual JavaScript file you are using.'
 						);
 					}
@@ -439,6 +468,7 @@ if ( !trait_exists('Warnings') ){
 						if ( is_null($offline_page) ){
 							$nebula_warnings['sw_offline'] = array(
 								'level' => 'warning',
+								'dismissible' => true,
 								'description' => '<i class="fas fa-fw fa-ethernet"></i> It is recommended to make an Offline page when using Service Worker. <a href="post-new.php?post_type=page">Manually add one</a>'
 							);
 						}
@@ -448,6 +478,7 @@ if ( !trait_exists('Warnings') ){
 					if ( !is_ssl() ){
 						$nebula_warnings['sw_ssl'] = array(
 							'level' => 'warning',
+							'dismissible' => true,
 							'description' => '<i class="fas fa-fw fa-lock-open"></i> Service Worker requires an SSL. Either update the site to https or <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">disable Service Worker</a>.'
 						);
 					}
@@ -457,6 +488,7 @@ if ( !trait_exists('Warnings') ){
 				if ( strtolower(get_bloginfo('description')) === 'just another wordpress site' ){
 					$nebula_warnings['default_tagline'] = array(
 						'level' => 'warning',
+						'dismissible' => true,
 						'description' => '<a href="options-general.php">Site Tagline</a> is still "Just Another WordPress Site"!',
 						'url' => admin_url('options-general.php')
 					);
@@ -466,6 +498,7 @@ if ( !trait_exists('Warnings') ){
 				if ( empty(get_privacy_policy_url()) ){
 					$nebula_warnings['missing_privacy_policy'] = array(
 						'level' => 'warning',
+						'dismissible' => true,
 						'description' => '<i class="fas fa-fw fa-file-alt"></i> <a href="options-privacy.php">Privacy policy</a> is not setup with WordPress.',
 						'url' => admin_url('options-privacy.php')
 					);
@@ -475,6 +508,7 @@ if ( !trait_exists('Warnings') ){
 				if ( !empty($this->sass_process_status) ){
 					$nebula_warnings['sass_status'] = array(
 						'level' => 'log',
+						'dismissible' => true,
 						'description' => '<i class="fab fa-fw fa-sass"></i> ' . $this->sass_process_status
 					);
 				}
@@ -485,6 +519,7 @@ if ( !trait_exists('Warnings') ){
 				if ( is_null($all_nebula_warnings) ){
 					$all_nebula_warnings = array(array(
 						'level' => 'error',
+						'dismissible' => true,
 						'description' => '<i class="fas fa-fw fa-skull"></i> <code>$nebula_warnings</code> array is null. When hooking into the <code>nebula_warnings</code> filter be sure that it is returned too!'
 					));
 				}
@@ -525,6 +560,7 @@ if ( !trait_exists('Warnings') ){
 					if ( $email_domain !== $this->url_components('domain') ){
 						$nebula_warnings['default_email_domain'] = array(
 							'level' => 'warning',
+							'dismissible' => true,
 							'description' => '<i class="fas fa-fw fa-address-card"></i> <a href="themes.php?page=nebula_options&tab=metadata&option=contact_email">Default contact email domain</a> (<code>' . $email_domain . '</code>) does not match website (<code>' . $this->url_components('domain') . '</code>). This email address will appear in metadata, so please verify this is acceptable.',
 							'url' => admin_url('themes.php?page=nebula_options&tab=metadata&option=contact_email')
 						);
@@ -540,6 +576,7 @@ if ( !trait_exists('Warnings') ){
 
 					$nebula_warnings['wp_readme'] = array(
 						'level' => 'warning',
+						'dismissible' => true,
 						'description' => '<i class="far fa-fw fa-file-alt"></i> The WordPress core <a href="' . home_url('/') . 'readme.html">readme.html</a> file exists (which exposes version information) and ' . $description,
 						'url' => home_url('/') . 'readme.html'
 					);
@@ -549,6 +586,7 @@ if ( !trait_exists('Warnings') ){
 				if ( ini_get('upload_max_filesize') !== ini_get('post_max_size') ){
 					$nebula_warnings['max_upload'] = array(
 						'level' => 'warning',
+						'dismissible' => true,
 						'description' => '<i class="far fa-fw fa-file-alt"></i> The <code>post_max_size</code> (' . ini_get('post_max_size') . ') is different from the <code>upload_max_filesize</code> (' . ini_get('upload_max_filesize') . ').',
 					);
 				}
@@ -570,11 +608,13 @@ if ( !trait_exists('Warnings') ){
 						if ( $disk_space_free < $path['critical'] ){
 							$nebula_warnings['disk_space_low'] = array(
 								'level' => 'error',
+								'dismissible' => true,
 								'description' => '<i class="fas fa-fw fa-hdd"></i> Available disk space in <strong>' . $path['directory'] . '</strong> critically low! Only <strong>' . round($disk_space_free, 2) . 'gb</strong> remaining.'
 							);
 						} elseif ( $disk_space_free < $path['low'] ){
 							$nebula_warnings['disk_space_low'] = array(
 								'level' => 'warning',
+								'dismissible' => true,
 								'description' => '<i class="far fa-fw fa-hdd"></i> Low disk space available in <strong>' . $path['directory'] . '</strong>. Only <strong>' . round($disk_space_free, 2) . 'gb</strong> remaining.'
 							);
 						}
@@ -635,11 +675,13 @@ if ( !trait_exists('Warnings') ){
 												if ( $category === 'debug_output' ){
 													$nebula_warnings['unintentional_output'] = array(
 														'level' => 'warning',
+														'dismissible' => true,
 														'description' => '<i class="fas fa-fw fa-bug"></i> Possible debug output in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . ($line_number+1) . '</strong>.'
 													);
 												} elseif ( $category === 'custom' ){
 													$nebula_warnings['unintentional_output'] = array(
 														'level' => 'warning',
+														'dismissible' => true,
 														'description' => '<i class="fas fa-fw fa-bug"></i> Possible unintentional output detected in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . ($line_number+1) . '</strong>.'
 													);
 												}
@@ -659,6 +701,7 @@ if ( !trait_exists('Warnings') ){
 							$word_count_warning = ( $word_count === 0 )? 'Word count audit is not looking for custom fields outside of the main content editor. <a href="https://nebula.gearside.com/functions/word_count/?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=word+count+audit+warning" target="_blank">Hook custom fields into the Nebula word count functionality</a> to properly audit.' : 'Word count (' . $word_count . ') is low for SEO purposes (Over 1,000 is good, but 1,900+ is ideal). <small>Note: Detected word count may not include custom fields!</small>';
 							$nebula_warnings['word_count'] = array(
 								'level' => 'warning',
+								'dismissible' => true,
 								'description' => '<i class="far fa-fw fa-file"></i> ' . $word_count_warning,
 								'url' => get_edit_post_link(get_the_id()),
 								'meta' => array('target' => '_blank', 'rel' => 'noopener')
@@ -671,6 +714,7 @@ if ( !trait_exists('Warnings') ){
 				if ( !is_plugin_active('wordpress-seo/wp-seo.php') && !is_plugin_active('autodescription/autodescription.php') ){
 					$nebula_warnings['seo_plugin_missing'] = array(
 						'level' => 'warning',
+						'dismissible' => true,
 						'description' => '<i class="fas fa-fw fa-search-plus"></i> A recommended SEO plugin is not active.',
 						'url' => admin_url('themes.php?page=tgmpa-install-plugins')
 					);
