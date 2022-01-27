@@ -85,20 +85,20 @@
 <?php endif; ?>
 
 <?php //Open Graph Thumbnails ?>
-<?php if ( !empty($post) && has_post_thumbnail($post->ID) ): ?>
+<?php if ( !empty($post) && has_post_thumbnail($post->ID) ): //If this post has a featured image, use it for Open Graph (OG) ?>
 	<?php if ( get_the_post_thumbnail($post->ID, 'open_graph_large') ): ?>
 		<meta property="og:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'open_graph_large'); ?>" />
 	<?php else: ?>
 		<meta property="og:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'open_graph_small'); ?>" />
 	<?php endif; ?>
+<?php else: //Otherwise, check the image meta directory for a generic brand OG image ?>
+	<?php if ( file_exists(get_theme_file_path('/assets/img/meta') . '/og-thumb.png') ): ?>
+		<meta property="og:image" content="<?php echo $image_meta_directory . '/og-thumb.png' . $cache_query; ?>" />
+	<?php endif; ?>
+	<?php for ( $i = 2; file_exists(get_theme_file_path('/assets/img/meta') . '/og-thumb-' . $i . '.png'); $i++ ): //Check for additional Open Graph thumbnail images named "og-thumb-#.png" ?>
+		<meta property="og:image" content="<?php echo $image_meta_directory . '/og-thumb-' . $i . '.png' . $cache_query; ?>" />
+	<?php endfor; ?>
 <?php endif; ?>
-
-<?php if ( file_exists(get_theme_file_path('/assets/img/meta') . '/og-thumb.png') ): ?>
-	<meta property="og:image" content="<?php echo $image_meta_directory . '/og-thumb.png' . $cache_query; ?>" />
-<?php endif; ?>
-<?php for ( $i = 2; file_exists(get_theme_file_path('/assets/img/meta') . '/og-thumb-' . $i . '.png'); $i++ ): //Check for additional Open Graph thumbnail images named "og-thumb-#.png" ?>
-	<meta property="og:image" content="<?php echo $image_meta_directory . '/og-thumb-' . $i . '.png' . $cache_query; ?>" />
-<?php endfor; ?>
 
 <?php if ( !has_site_icon() ): ?>
 	<link rel="mask-icon" href="<?php echo $image_meta_directory . '/safari-pinned-tab.svg' . $cache_query; ?>" color="<?php echo nebula()->get_color('primary'); ?>" />

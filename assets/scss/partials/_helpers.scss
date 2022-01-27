@@ -279,8 +279,8 @@ a.white, li.icon.white a {@include link-colors(#fff, #ccc);
 @include add-color-class("brand", $primary_color);
 @include add-color-class("brand-secondary", $secondary_color);
 
-.phg {margin-left: 3px; padding-left: 15px; background: url($template_directory + "/assets/img/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px; text-decoration: none !important;
-	&.white {background: url($template_directory + "/assets/img/phg/phg-symbol-white.svg") 0 6px no-repeat; background-size: 13px 8px;
+.phg {margin-left: 3px; padding-left: 18px; background: url($template_directory + "/assets/img/phg/phg-symbol.svg") no-repeat; background-size: 13%; background-position: left center; text-decoration: none !important;
+	&.white {background: url($template_directory + "/assets/img/phg/phg-symbol-white.svg") no-repeat;
 		span {color: #fff;}
 		&:hover span {color: #aaa;}
 	}

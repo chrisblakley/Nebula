@@ -657,8 +657,9 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fas fa-fw fa-ethernet"></i> Server Protocol: <strong>' . $this->super->server['SERVER_PROTOCOL'] . '</strong></li>';
 
 			//MySQL version
+			global $wpdb;
 			$mysql_version = mysqli_get_client_version();
-			echo '<li><i class="fas fa-fw fa-database"></i> MySQL Version: <strong title="Raw: ' . $mysql_version . '">' . floor($mysql_version/10000) . '.' . floor(($mysql_version%10000)/100) . '.' . ($mysql_version%10000)%100 . '</strong></li>'; //PHP 7.4 use numeric separators here
+			echo '<li><i class="fas fa-fw fa-database"></i> MySQL Version: <strong title="Raw: ' . $mysql_version . '">' . floor($mysql_version/10000) . '.' . floor(($mysql_version%10000)/100) . '.' . ($mysql_version%10000)%100 . '</strong> <small>(' . get_class($wpdb->dbh) . ')</small></li>'; //PHP 7.4 use numeric separators here
 
 			//PHP version
 			$php_version_color = 'inherit';
@@ -676,10 +677,10 @@ if ( !trait_exists('Dashboard') ){
 					$php_version_cursor = 'help';
 				}
 			}
-			echo '<li><i class="fas fa-fw fa-wrench"></i> PHP Version: <strong style="color: ' . $php_version_color . '; cursor: ' . $php_version_cursor . ';" title="' . $php_version_info . '">' . PHP_VERSION . '</strong></li>';
+			echo '<li><i class="fas fa-fw fa-wrench"></i> PHP Version: <strong style="color: ' . $php_version_color . '; cursor: ' . $php_version_cursor . ';" title="' . $php_version_info . '">' . PHP_VERSION . '</strong> <small>(SAPI: <strong>' . php_sapi_name() . '</strong>)</small></li>';
 
 			//PHP memory limit
-			echo '<li><i class="fas fa-fw fa-cogs"></i> PHP Memory Limit: <strong>' . WP_MEMORY_LIMIT . '</strong></li>';
+			echo '<li><i class="fas fa-fw fa-cogs"></i> PHP Memory Limit: <strong>' . ini_get('memory_limit') . '</strong></li>';
 
 			//Theme directory size(s)
 			if ( is_child_theme() ){
@@ -782,6 +783,8 @@ if ( !trait_exists('Dashboard') ){
 				echo '<li><i class="fab fa-fw fa-sass"></i> Sass Processed: <span title="' . date("F j, Y", $this->get_data('scss_last_processed')) . ' @ ' . date("g:i:sa", $this->get_data('scss_last_processed')) . '" style="cursor: help;"><strong>' . human_time_diff($this->get_data('scss_last_processed')) . ' ago</strong></span> ' . $sass_option . '</li>';
 			}
 
+			echo '<li><i class="fab fa-fw fa-wordpress"></i> <a href="site-health.php?tab=debug">WP Site Info &raquo;</a></li>'; //Link to WP Health Check Info page
+
 			echo '</ul>';
 
 			//Directory search
@@ -807,7 +810,7 @@ if ( !trait_exists('Dashboard') ){
 
 			$all_directory_search_options = apply_filters('nebula_directory_search_options', $directory_search_options); //Allow other functions to hook in to add directories to search
 
-			echo '<form id="theme" class="searchfiles"><i id="searchprogress" class="fas fa-fw fa-search"></i> <input class="findterm" type="text" placeholder="Search files" /><select class="searchdirectory">';
+			echo '<form id="theme" class="searchfiles"><i id="searchprogress" class="fas fa-fw fa-search"></i> <input class="findterm" type="text" placeholder="Search files" autocorrect="off" autocapitalize="off" spellcheck="false" /><select class="searchdirectory">';
 			foreach ( $all_directory_search_options as $name => $option_html ){
 				echo $option_html;
 			}

@@ -164,8 +164,8 @@ if ( !trait_exists('Admin') ){
 		public function clear_transients(){
 			$this->timer('Clear Transients');
 
-			if ( class_exists('PW_Transients_Manager') ){
-				$transient_manager = new PW_Transients_Manager();
+			if ( class_exists('AM_Transients_Manager') ){
+				$transient_manager = new AM_Transients_Manager(); //"PW_" changed to "AM_" in December 2021
 				$transient_manager->delete_transients_with_expirations();
 			} else {
 				//Clear post/page information and related transients
