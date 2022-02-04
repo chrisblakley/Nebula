@@ -116,7 +116,7 @@
 		<div class="row">
 			<main id="top" class="col-md" role="main">
 				<?php
-					rewind_posts();
+					rewind_posts(); //Ensure the first (latest) post appears
 					get_template_part('loop', 'author');
 				?>
 			</main><!--/col-->

@@ -108,6 +108,11 @@ if ( !trait_exists('Admin') ){
 				add_filter('manage_media_columns', array($this, 'muc_column'));
 				add_action('manage_media_custom_column', array($this, 'muc_value'), 10, 2);
 
+				//Extend the WP admin posts search to include custom fields
+				add_action('posts_join', array($this, 'search_custom_post_meta_join'));
+				add_action('posts_where', array($this, 'search_custom_post_meta_where'));
+				add_action('posts_distinct', array($this, 'search_custom_post_meta_distinct'));
+
 				if ( $this->is_dev(true) && current_user_can('manage_options') ){
 					add_action('admin_menu', array($this, 'all_settings_link'));
 				}
@@ -1636,6 +1641,47 @@ if ( !trait_exists('Admin') ){
 					delete_post_meta($post_id, $nebula_post_meta_field, $meta_value);
 				}
 			}
+		}
+
+		//Extend the WP admin posts search to include custom fields
+		public function search_custom_post_meta_join($join){
+			global $pagenow, $wpdb;
+
+			//Perform the filter when searching on the edit page (post listings)
+			if ( is_admin() && $pagenow === 'edit.php' && !empty($_GET['s']) ){
+				$join .= 'LEFT JOIN ' . $wpdb->postmeta . ' ON ' . $wpdb->posts . '.ID = ' . $wpdb->postmeta . '.post_id ';
+			}
+
+			return $join;
+		}
+
+		public function search_custom_post_meta_where($where){
+			global $pagenow, $wpdb;
+
+			//Perform the filter when searching on the edit page (post listings)
+			if ( is_admin() && $pagenow === 'edit.php' && !empty($_GET['s']) ){
+				$where = preg_replace(
+					"/\(\s*" . $wpdb->posts . ".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
+					"(" . $wpdb->posts . ".post_title LIKE $1) OR (" . $wpdb->postmeta . ".meta_value LIKE $1)",
+					$where
+				);
+
+				$where.= " GROUP BY {$wpdb->posts}.id"; //Limit to unique results (avoid duplicates)
+			}
+
+			return $where;
+		}
+
+		//Limit to unique results (this may be redundant)
+		public function search_custom_post_meta_distinct($where){
+			global $pagenow, $wpdb;
+
+			//Perform the filter when searching on the edit page (post listings)
+			if ( is_admin() && $pagenow === 'edit.php' && !empty($_GET['s']) ){
+				return "DISTINCT";
+			}
+
+			return $where;
 		}
 	}
 }

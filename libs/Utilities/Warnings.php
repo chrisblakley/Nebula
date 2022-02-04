@@ -502,6 +502,16 @@ if ( !trait_exists('Warnings') ){
 						'description' => '<i class="fas fa-fw fa-file-alt"></i> <a href="options-privacy.php">Privacy policy</a> is not setup with WordPress.',
 						'url' => admin_url('options-privacy.php')
 					);
+				} else {
+					//Ensure a privacy policy is set with WordPress core
+					if ( get_privacy_policy_url() == get_home_url() ){
+						$nebula_warnings['privacy_policy_is_frontpage'] = array(
+							'level' => 'warning',
+							'dismissible' => true,
+							'description' => '<i class="fas fa-fw fa-file-alt"></i> <a href="options-privacy.php">Privacy policy</a> cannot be the Front Page.',
+							'url' => admin_url('options-privacy.php')
+						);
+					}
 				}
 
 				//Check if all Sass files were processed

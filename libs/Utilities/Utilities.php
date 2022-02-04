@@ -1097,12 +1097,12 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			//Check if a CRON is running
-			if ( defined('DOING_CRON') ){
+			if ( defined('DOING_CRON') && DOING_CRON ){
 				return true;
 			}
 
 			//Check if it is an XMLRPC request
-			if ( defined('XMLRPC_REQUEST') ){
+			if ( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST ){
 				return true;
 			}
 

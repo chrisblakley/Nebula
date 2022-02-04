@@ -28,7 +28,7 @@ nebula.socialSharing = async function(){
 		//These events will need to correspond to the GA4 event name "share" and use "content_type" and "item_id" as parameters: https://support.google.com/analytics/answer/9267735
 
 		//Facebook
-		jQuery('.fbshare, a.nebula-share.facebook').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
+		jQuery('a.facebook-share, .facebook-share a, a.nebula-share.facebook, .nebula-share a.facebook').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
 			let thisEvent = {
 				event: e,
 				category: 'Social',
@@ -51,7 +51,7 @@ nebula.socialSharing = async function(){
 		});
 
 		//Twitter
-		jQuery('.twshare, a.nebula-share-btn.twitter').attr('href', 'https://twitter.com/intent/tweet?url=' + encloc + '&text=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
+		jQuery('a.twitter-share, .twitter-share a, a.nebula-share.twitter, .nebula-share a.twitter').attr('href', 'https://twitter.com/intent/tweet?url=' + encloc + '&text=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
 			let thisEvent = {
 				event: e,
 				category: 'Social',
@@ -74,7 +74,7 @@ nebula.socialSharing = async function(){
 		});
 
 		//LinkedIn
-		jQuery('.lishare, a.nebula-share-btn.linkedin').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
+		jQuery('a.linkedin-share, .linkedin-share a, a.nebula-share.linkedin, .nebula-share a.linkedin').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
 			let thisEvent = {
 				event: e,
 				category: 'Social',
@@ -97,7 +97,7 @@ nebula.socialSharing = async function(){
 		});
 
 		//Pinterest
-		jQuery('.pinshare, a.nebula-share-btn.pinterest').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
+		jQuery('a.pinterest-share, .pinterest-share a, a.nebula-share.pinterest, .nebula-share a.pinterest').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
 			let thisEvent = {
 				event: e,
 				category: 'Social',
@@ -120,7 +120,11 @@ nebula.socialSharing = async function(){
 		});
 
 		//Email
-		jQuery('.emshare, a.nebula-share-btn.email').attr('href', 'mailto:?subject=' + enctitle + '&body=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
+		jQuery('a.email-share, .email-share a, a.nebula-share.email, .nebula-share a.email').each(function(){
+			let emailSubject = jQuery(this).attr('data-subject') || document.title; //Use the page title unless a data attribute for the subject exists (Note that we are not using encoded values here)
+			let emailBody = jQuery(this).attr('data-body') || window.location.href; //Use the page URL unless a data attribute for the body exists (Note that we are not using encoded values here)
+			jQuery(this).attr('href', 'mailto:?subject=' + encodeURIComponent(emailSubject) + '&body=' + encodeURIComponent(emailBody)).attr({'target': '_blank', 'rel': 'noopener'});
+		}).on('click', function(e){
 			let thisEvent = {
 				event: e,
 				category: 'Social',
@@ -139,7 +143,7 @@ nebula.socialSharing = async function(){
 
 		//Web Share API: https://caniuse.com/mdn-api_navigator_share
 		if ( 'share' in navigator ){ //Chrome 61+
-			nebula.dom.document.on('click', 'a.nebula-share.webshare, a.nebula-share.shareapi', function(){
+			nebula.dom.document.on('click', 'a.api-share, .api-share a, a.nebula-share.api, .nebula-share a.api', function(){
 				let oThis = jQuery(this);
 				let originalText = oThis.html();
 
@@ -174,7 +178,7 @@ nebula.socialSharing = async function(){
 
 			nebula.createCookie('shareapi', true); //Set a cookie to speed up future page loads by not loading third-party share buttons.
 		} else {
-			jQuery('a.nebula-share.webshare, a.nebula-share.shareapi').addClass('hidden');
+			jQuery('a.api-share, .api-share a, a.nebula-share.api, .nebula-share a.api').addClass('hidden');
 		}
 	}
 };

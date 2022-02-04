@@ -349,6 +349,7 @@ if ( !trait_exists('Options') ){
 				'dns_url' => '',
 				'registrar_url' => '',
 				'github_url' => '',
+				'github_pat' => '',
 				'google_adsense_url' => '',
 				'amazon_associates_url' => '',
 				'mention_url' => '',

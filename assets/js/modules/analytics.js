@@ -55,6 +55,13 @@ nebula.eventTracking = async function(){
 			});
 		}
 
+		//When the page is restored from BFCache (which means it is not fully reloaded)
+		window.addEventListener('pageshow', function(event){
+			if ( event.persisted === true ){
+				ga('send', 'pageview'); //Send another pageview if the page is restored from bfcache
+			}
+		});
+
 		//Back/Forward
 		if ( performance.navigation.type === 2 ){ //If the user arrived at this page via the back/forward button
 			let previousPage = '(Unknown)';
@@ -92,6 +99,14 @@ nebula.eventTracking = async function(){
 				localStorage.setItem('prev', JSON.stringify(prev));
 			}, 4000);
 		}
+
+		//When the page becomes frozen/unfrozen by the browser Lifecycle API
+		document.addEventListener('freeze', function(event){
+			ga('send', 'event', 'Page Lifecycle', 'Frozen'); //Note that "frozen" does not indicate an error. The browser has preserved its state as inactive.
+		});
+		document.addEventListener('resume', function(event){
+			ga('send', 'event', 'Page Lifecycle', 'Resumed'); //This may happen when it is unfrozen from a frozen state, or from BFCache.
+		});
 
 		//Button Clicks
 		let nebulaButtonSelector = wp.hooks.applyFilters('nebulaButtonSelectors', 'button, .button, .btn, [role="button"], a.wp-block-button__link, .hs-button'); //Allow child theme or plugins to add button selectors without needing to override/duplicate this function
@@ -1320,7 +1335,7 @@ nebula.scrollDepth = async function(){
 		}
 
 		if ( nebula.analytics.metrics.maxScroll ){ //Limiting this event to when this custom metric is used because of the number of events this records
-			window.addEventListener('beforeunload', function(e){ //Watch for the unload to send max scroll depth to GA (to avoid tons of events). Note: this event listener invalidates BFCache in Firefox...
+			window.addEventListener('pagehide', function(e){ //Watch for the pagehide (equivalent of old "unload") to send max scroll depth to GA (to avoid tons of events). Note: "unload" and "beforeunload" event listeners invalidate BFCache in Firefox...
 				nebula.updateMaxScrollDepth(); //Check one last time
 
 				let thisEvent = {

@@ -1319,6 +1319,13 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="option-keywords"></p>
 				</div>
 
+				<div class="form-group">
+					<label for="github_pat">GitHub Personal Access Token</label>
+					<input type="text" name="nebula_options[github_pat]" id="github_pat" class="form-control" placeholder="0000000000000000000000000000000000000000" value="<?php echo $nebula_options['github_pat']; ?>" />
+					<p class="nebula-help-text short-help form-text text-muted"><a href="https://github.com/settings/tokens/new" target="_blank">Generate a Personal Access Token</a> to retrieve Issues and commits on the WordPress Dashboard <a href="https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token" target="_blank">(GitHub instructions here)</a>. Nebula only needs basic repo and read discussion scopes.</p>
+					<p class="option-keywords">github api pat personal access token issues commits discussions metabox</p>
+				</div>
+
 				<div class="form-group mb-2">
 					<label for="hubspot_api">Hubspot</label>
 
