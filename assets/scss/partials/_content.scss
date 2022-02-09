@@ -72,13 +72,17 @@
 
 //Block Editor Template Content
 .page-template-block-editor {
-	h1 {font-size: 44px; text-align: center;}
+	&.has-featured-image #bigheadingcon {height: 500px;}
 
 	.entry-content,
 	.entry-widgets,
 	.entry-comments {padding-left: 40px; padding-right: 40px;
 		> * {max-width: 640px; margin: 0 auto;} //Better selector for this?
 
+		.block-featured-image {margin-top: -400px; margin-bottom: 15px;}
+		.block-breadcrumbs ol {padding-left: 0;}
+
+		h1 {font-size: 44px; margin-top: 75px;}
 		h2 {font-size: 32px; margin-top: 32px;}
 		h3 {margin-top: 32px;}
 

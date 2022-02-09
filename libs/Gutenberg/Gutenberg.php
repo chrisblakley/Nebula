@@ -10,6 +10,7 @@ if ( !trait_exists('Gutenberg') ){
 
 				add_action('init', array($this, 'youtube_gutenberg_block'));
 				add_action('init', array($this, 'vimeo_gutenberg_block'));
+				//add_action('init', array($this, 'breadcrumbs_gutenberg_block'));
 
 /*
 				add_action('init', array($this, 'gutenberg_hello_world_block'));
@@ -101,6 +102,44 @@ if ( !trait_exists('Gutenberg') ){
 
 			return '<div class="ratio ratio-16x9"><iframe class="vimeo" data-vimeo-id="' . $vimeo_data['id'] . '" src="https://player.vimeo.com/video/' . $vimeo_data['id'] . '" width="560" height="315" loading="lazy"></iframe></div>';
 		}
+
+
+
+
+
+
+
+
+
+
+		//Nebula Breadcrumbs
+// 		public function breadcrumbs_gutenberg_block(){
+// 			if ( function_exists('register_block_type') ){
+// 				//Editor Script
+// 				wp_register_script(
+// 					'nebula-breadcrumbs-block',
+// 					get_template_directory_uri() . '/libs/Gutenberg/blocks/breadcrumbs/breadcrumbs.js',
+// 					array('wp-blocks', 'wp-i18n', 'wp-element') //I dont think wp-i18n is needed here
+// 				);
+//
+// 				register_block_type('nebula/breadcrumbs', array(
+// 					'editor_script' => 'nebula-breadcrumbs-block',
+// 					//'script' => 'nebula-breadcrumbs-block', //Use this to create the element in the "save" object of the block JS file
+// 					'render_callback' => array($this, 'nebula_breadcrumbs_block_frontend_output'), //Use this to create the element in PHP
+// 				));
+// 			}
+// 		}
+//
+// 		//Nebula Breadcrumbs Block front-end
+// 		public function nebula_breadcrumbs_block_frontend_output($attribites){
+// 			if ( !nebula()->is_admin_page() ){
+// 				return nebula()->breadcrumbs();
+// 			}
+// 		}
+
+
+
+
 
 
 

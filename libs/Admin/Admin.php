@@ -1648,7 +1648,7 @@ if ( !trait_exists('Admin') ){
 			global $pagenow, $wpdb;
 
 			//Perform the filter when searching on the edit page (post listings)
-			if ( is_admin() && $pagenow === 'edit.php' && !empty($_GET['s']) ){
+			if ( is_admin() && $pagenow === 'edit.php' && !empty($this->super->get['s']) ){
 				$join .= 'LEFT JOIN ' . $wpdb->postmeta . ' ON ' . $wpdb->posts . '.ID = ' . $wpdb->postmeta . '.post_id ';
 			}
 
@@ -1659,7 +1659,7 @@ if ( !trait_exists('Admin') ){
 			global $pagenow, $wpdb;
 
 			//Perform the filter when searching on the edit page (post listings)
-			if ( is_admin() && $pagenow === 'edit.php' && !empty($_GET['s']) ){
+			if ( is_admin() && $pagenow === 'edit.php' && !empty($this->super->get['s']) ){
 				$where = preg_replace(
 					"/\(\s*" . $wpdb->posts . ".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
 					"(" . $wpdb->posts . ".post_title LIKE $1) OR (" . $wpdb->postmeta . ".meta_value LIKE $1)",
@@ -1674,10 +1674,10 @@ if ( !trait_exists('Admin') ){
 
 		//Limit to unique results (this may be redundant)
 		public function search_custom_post_meta_distinct($where){
-			global $pagenow, $wpdb;
+			global $pagenow;
 
 			//Perform the filter when searching on the edit page (post listings)
-			if ( is_admin() && $pagenow === 'edit.php' && !empty($_GET['s']) ){
+			if ( is_admin() && $pagenow === 'edit.php' && !empty($this->super->get['s']) ){
 				return "DISTINCT";
 			}
 

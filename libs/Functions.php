@@ -1923,6 +1923,7 @@ if ( !trait_exists('Functions') ){
 
 		//Feedback System
 		//If no CF7 form ID is provided, this simply logs yes/no from users in Google Analytics
+		//Nebula does not automatically add this to pages! It must be added in the child theme. Consider adding a function in via hooks such as 'loop_end', 'nebula_after_search_results', 'nebula_no_search_results', 'nebula_404_content' to conditionally/dynamically add this feedback form. Refer to the child functions file for an example.
 		public function feedback($form_id=false){
 			?>
 				<div id="nebula-feedback-system" class="<?php echo ( empty($form_id) )? 'no-feedback-form' : 'has-feedback-form'; ?>">
@@ -2882,6 +2883,11 @@ if ( !trait_exists('Functions') ){
 					$classes[] = 'hfeed'; //Adds `hfeed` to non singular pages.
 				}
 
+				//If this post has a featured image
+				if ( has_post_thumbnail() ){
+					$classes[] = 'has-featured-image';
+				}
+
 				//Customizer
 				if ( is_customize_preview() ){
 					$classes[] = 'customizer-preview';
@@ -2999,6 +3005,11 @@ if ( !trait_exists('Functions') ){
 				$classes[] = 'author-id-' . $post->post_author;
 				if ( is_multi_author() ){
 					$classes[] = 'multi-author';
+				}
+
+				//If this post has a featured image
+				if ( has_post_thumbnail() ){
+					$classes[] = 'has-featured-image';
 				}
 
 				//Remove "hentry" meta class on pages or if Author Bios are disabled

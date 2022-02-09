@@ -1083,9 +1083,9 @@ if ( !trait_exists('Dashboard') ){
 				));
 
 				if ( is_wp_error($commits_response) ){
-			        echo '<p>There was an error retrieving the GitHub commits...</p>';
-			        return false;
-			    }
+					echo '<p>There was an error retrieving the GitHub commits...</p>';
+					return false;
+				}
 
 			    $github_commit_json = $commits_response['body'];
 				set_transient('nebula_github_commits', $github_commit_json, HOUR_IN_SECONDS*3); //3 hour expiration
@@ -1138,9 +1138,9 @@ if ( !trait_exists('Dashboard') ){
 				));
 
 				if ( is_wp_error($issues_response) ){
-			        echo '<p>There was an error retrieving the GitHub issues...</p>';
-			        return false;
-			    }
+					echo '<p>There was an error retrieving the GitHub issues...</p>';
+					return false;
+				}
 
 			    $github_issues_json = json_decode($issues_response['body']);
 
@@ -1157,7 +1157,6 @@ if ( !trait_exists('Dashboard') ){
 				//}
 
 				$github_discussions_json = json_decode($discussions_response['body']);
-
 
 				//Then combine the issues and discussions by most recent first
 				$github_combined_posts = json_encode($github_issues_json); //Replace this when discussions api is available

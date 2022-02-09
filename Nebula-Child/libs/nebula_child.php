@@ -57,4 +57,55 @@ add_filter('block_categories', function($categories, $post){
 		)
 	);
 }, 3, 2);
+
+
+
+
+
+
+
+//Example hooks to add the feedback system to all posts, pages, and custom post types
+//add_action('loop_end', 'show_nebula_feedback_system');
+//add_action('nebula_after_search_results', 'show_nebula_feedback_system');
+//add_action('nebula_no_search_results', 'show_nebula_feedback_system');
+//add_action('nebula_404_content', 'show_nebula_feedback_system');
+function show_nebula_feedback_system(){
+	//Ignore WP admin pages
+	if ( nebula()->is_admin_page() ){
+		return false;
+	}
+
+	//Ignore certain pages
+	if ( is_page(99999) || is_page(99999) || is_page(99999) ){
+		return false;
+	}
+
+	//Ignore the home page
+	if ( is_front_page() ){
+		return false;
+	}
+
+	//Ignore non-single posts/pages, but allow search and 404 templates
+	if ( !is_singular() && !is_search() && !is_404() ){
+		return false;
+	}
+
+	//Only use the nebula_404_content action for 404 feedback (this is to prevent the feedback system from appearing multiple times from the error_query)
+	if ( current_action() === 'loop_end' && is_404() ){
+		return false;
+	}
+
+	//Only use the nebula_after_search_results and nebula_no_search_results for search results listings (to prevent the feedback system from appearing in the head)
+	if ( current_action() === 'loop_end' && is_search() ){
+		return false;
+	}
+
+	nebula()->feedback(99999); //Show the feedback system with a custom CF7 form ID
+}
+
+
+
+
+
+
 ?>
