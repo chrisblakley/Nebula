@@ -30,7 +30,7 @@
 					<?php endif; ?>
 
 					<div class="block-breadcrumbs alignwide">
-						<?php nebula()->breadcrumbs(); //yolo: maybe this becomes a block? ?>
+						<?php nebula()->breadcrumbs(); //maybe this becomes a block? ?>
 					</div>
 
 					<h1 class="entry-title"><?php echo esc_html(get_the_title()); ?></h1>

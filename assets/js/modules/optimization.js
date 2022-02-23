@@ -590,6 +590,10 @@ nebula.loadJS = async function(url, handle){
 			lazyScriptElement.onerror = reject;
 
 			document.body.appendChild(lazyScriptElement);
+		}).then(function(){
+			//Trigger an event if that is an option to listen for as well
+			nebula.dom.document.trigger('nebula_loadjs_' + handle.replaceAll(/[^a-zA-Z]/gi, '')); //This one is specific to the handle being loaded. Ex: 'nebula_loadjs_bootstrapbundleminjs'
+			nebula.dom.document.trigger('nebula_loadjs', handle); //This one is a generic one that passes the handle name
 		});
 
 		return nebula.site.resources.lazy.promises[handle];

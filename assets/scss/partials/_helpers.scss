@@ -242,12 +242,12 @@ a.nebula-share-btn {display: inline-block; padding: 5px 7px; border-radius: 3px;
 //@include file_icon(doc docx, f1c2, #2b5797);
 @mixin file_icon($filetypes, $unicode: "\f016", $color: #292b2c, $specific: false){
 	@each $filetype in $filetypes {
-		.entry-content {
-			@if $specific { //Some file extensions must explicitly request an icon
-				a.icon[href$=".#{$filetype}" i] {text-decoration: none; border-bottom: 1px dotted $color;
-					&::before {content: "#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
-				}
-			} @else {
+		@if $specific { //Some file extensions must explicitly request an icon. These can be called anywhere on the page.
+			a.icon[href$=".#{$filetype}" i] {text-decoration: none; border-bottom: 1px dotted $color;
+				&::before {content: "#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
+			}
+		} @else { //Otherwise, it only automatically adds icons to links within the entry content area.
+			.entry-content {
 				a[href$=".#{$filetype}" i]:not(.no-icon):not(.btn):not(.wp-block-button__link),
 				li.icon a[href$=".#{$filetype}" i] {text-decoration: none; border-bottom: 1px dotted $color;
 					&::before {content: "#{$unicode}"; @include font-awesome("solid"); color: $color; margin-right: 7px; font-weight: 300;}
