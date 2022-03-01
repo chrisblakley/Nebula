@@ -18,7 +18,7 @@
 					<div class="row mobilerow">
 						<div class="col">
 							<?php if ( get_theme_mod('nebula_offcanvas_menu', true) && (has_nav_menu('offcanvas') || has_nav_menu('primary')) ): ?>
-								<a class="offcanvasnavtrigger alignleft" data-bs-toggle="offcanvas" href="#offcanvas-menu" role="button" aria-controls="offcanvas-menu" title="Navigation"><i class="fas fa-bars"></i></a>
+								<a class="offcanvasnavtrigger alignleft" data-bs-toggle="offcanvas" href="#offcanvas-menu" role="button" aria-controls="offcanvas-menu" title="Navigation"><i class="fa-solid fa-bars"></i></a>
 							<?php endif; ?>
 
 							<?php if ( get_theme_mod('nebula_mobile_search', true) ): ?>

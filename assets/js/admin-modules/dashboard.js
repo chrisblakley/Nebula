@@ -9,7 +9,7 @@ nebula.developerMetaboxes = function(){
 		//Nebula filesystem search
 		jQuery(document).on('submit', '.searchfiles', function(e){
 			if ( jQuery('input.findterm').val().trim().length >= 2 ){
-				jQuery('#searchprogress').removeClass('fa-search').addClass('fas fa-spinner fa-spin fa-fw');
+				jQuery('#searchprogress').removeClass('fa-search').addClass('fa-solid fa-spinner fa-spin fa-fw');
 
 				fetch(nebula.site.ajax.url, {
 					method: 'POST',
@@ -29,7 +29,7 @@ nebula.developerMetaboxes = function(){
 						return response.text();
 					}
 				}).then(function(response){
-					jQuery('#searchprogress').removeClass('fa-spinner fa-spin').addClass('fas fa-search fa-fw');
+					jQuery('#searchprogress').removeClass('fa-spinner fa-spin').addClass('fa-solid fa-search fa-fw');
 					jQuery('div.search_results').html(response).addClass('done');
 				}).catch(function(error){
 					jQuery('div.search_results').html(error).addClass('done');
@@ -121,7 +121,7 @@ nebula.getLighthouseResults = function(){
 				var serverResponseTime = json.lighthouseResult.audits['server-response-time'];
 				jQuery('#performance-ttfb').remove(); //Remove the PHP-timed data
 				nebula.appendPerformanceMetric({
-					'icon': 'fas fa-hdd',
+					'icon': 'fa-solid fa-hdd',
 					'label': 'Server Response Time',
 					'text': (serverResponseTime.numericValue/1000).toFixed(3) + ' seconds',
 					'description': serverResponseTime.description,
@@ -133,7 +133,7 @@ nebula.getLighthouseResults = function(){
 				//DOM Ready
 				var domReady = json.lighthouseResult.audits['metrics'].details.items[0].observedDomContentLoaded;
 				nebula.appendPerformanceMetric({
-					'icon': 'fas fa-clock',
+					'icon': 'fa-solid fa-stopwatch',
 					'label': 'DOM Ready',
 					'text': (domReady/1000).toFixed(3) + ' seconds',
 					'value': domReady,
@@ -145,7 +145,7 @@ nebula.getLighthouseResults = function(){
 				//Window Load
 				var windowLoad = json.lighthouseResult.audits['metrics'].details.items[0].observedLoad;
 				nebula.appendPerformanceMetric({
-					'icon': 'fas fa-clock',
+					'icon': 'fa-solid fa-stopwatch',
 					'label': 'Window Load',
 					'text': (windowLoad/1000).toFixed(3) + ' seconds',
 					'value': windowLoad,
@@ -157,7 +157,7 @@ nebula.getLighthouseResults = function(){
 				//First Contentful Paint
 				var firstContentfulPaint = json.lighthouseResult.audits['first-contentful-paint'];
 				nebula.appendPerformanceMetric({
-					'icon': 'fas fa-paint-brush',
+					'icon': 'fa-solid fa-paint-brush',
 					'label': 'First Contentful Paint (FCP)',
 					'text': (firstContentfulPaint.numericValue/1000).toFixed(3) + ' seconds',
 					'description': firstContentfulPaint.description,
@@ -169,7 +169,7 @@ nebula.getLighthouseResults = function(){
 				//Largest Contentful Paint
 				var largestContentfulPaint = json.lighthouseResult.audits['largest-contentful-paint'];
 				nebula.appendPerformanceMetric({
-					'icon': 'fas fa-paint-roller',
+					'icon': 'fa-solid fa-paint-roller',
 					'label': 'Largest Contentful Paint (LCP)',
 					'text': (largestContentfulPaint.numericValue/1000).toFixed(3) + ' seconds',
 					'description': largestContentfulPaint.description,
@@ -181,7 +181,7 @@ nebula.getLighthouseResults = function(){
 				//First Input Delay
 				var firstInputDelay = json.lighthouseResult.audits['max-potential-fid'];
 				nebula.appendPerformanceMetric({
-					'icon': 'fas fa-mouse-pointer',
+					'icon': 'fa-solid fa-mouse-pointer',
 					'label': 'First Input Delay (FID)',
 					'text': (firstInputDelay.numericValue/1000).toFixed(3) + ' seconds',
 					'description': firstInputDelay.description,
@@ -193,7 +193,7 @@ nebula.getLighthouseResults = function(){
 				//Time to Interactive
 				var timeToInteractive = json.lighthouseResult.audits['interactive'];
 				nebula.appendPerformanceMetric({
-					'icon': 'far fa-hand-pointer',
+					'icon': 'fa-regular fa-hand-pointer',
 					'label': 'Time to Interactive (TTI)',
 					'text': (timeToInteractive.numericValue/1000).toFixed(3) + ' seconds',
 					'description': timeToInteractive.description,
@@ -205,7 +205,7 @@ nebula.getLighthouseResults = function(){
 				//Speed Index
 				var speedIndex = json.lighthouseResult.audits['speed-index'];
 				nebula.appendPerformanceMetric({
-					'icon': 'fas fa-tachometer-alt',
+					'icon': 'fa-solid fa-tachometer-alt',
 					'label': 'Speed Index',
 					'text': (speedIndex.numericValue/1000).toFixed(3) + ' seconds',
 					'description': speedIndex.description,
@@ -217,7 +217,7 @@ nebula.getLighthouseResults = function(){
 				//Total Blocking Time
 				var totalBlockingTime = json.lighthouseResult.audits['total-blocking-time'];
 				nebula.appendPerformanceMetric({
-					'icon': 'fas fa-hand-paper',
+					'icon': 'fa-solid fa-octagon-exclamation',
 					'label': 'Total Blocking Time (TBT)',
 					'text': (totalBlockingTime.numericValue/1000).toFixed(3) + ' seconds',
 					'description': totalBlockingTime.description,
@@ -229,7 +229,7 @@ nebula.getLighthouseResults = function(){
 				//Cumulative Layout Shift
 				var cumulativeLayoutShift = json.lighthouseResult.audits['cumulative-layout-shift'];
 				nebula.appendPerformanceMetric({
-					'icon': 'fas fa-arrows-alt-v',
+					'icon': 'fa-solid fa-arrows-alt-v',
 					'label': 'Cumulative Layout Shift (CLS)',
 					'text': cumulativeLayoutShift.numericValue.toFixed(3), //cumulativeLayoutShift.displayValue
 					'description': cumulativeLayoutShift.description,
@@ -241,7 +241,7 @@ nebula.getLighthouseResults = function(){
 				//Total Byte Weight
 				var totalByteWeight = json.lighthouseResult.audits['total-byte-weight'];
 				nebula.appendPerformanceMetric({
-					'icon': 'fas fa-weight-hanging',
+					'icon': 'fa-solid fa-weight-hanging',
 					'label': 'Total Byte Weight',
 					'text': (totalByteWeight.numericValue/1024/1024).toFixed(2) + 'mb',
 					'description': totalByteWeight.description,
@@ -253,7 +253,7 @@ nebula.getLighthouseResults = function(){
 				//Network Requests
 				var networkRequests = json.lighthouseResult.audits['network-requests'].details.items.length;
 				nebula.appendPerformanceMetric({
-					'icon': 'fas fa-list-ol',
+					'icon': 'fa-solid fa-list-ol',
 					'label': 'Network Requests',
 					'text': networkRequests,
 					'value': networkRequests,
@@ -296,7 +296,7 @@ nebula.runIframeSpeedTest = function(){
 		var iframeResponseEnd = Math.round(iframe.contentWindow.performance.timing.responseEnd-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until server response finishes
 		jQuery('#performance-ttfb').remove(); //Remove the PHP-timed data
 		nebula.appendPerformanceMetric({
-			'icon': 'fas fa-hdd',
+			'icon': 'fa-solid fa-hdd',
 			'label': 'Server Response Time',
 			'text': iframeResponseEnd/1000 + ' seconds',
 			'value': iframeResponseEnd,
@@ -307,7 +307,7 @@ nebula.runIframeSpeedTest = function(){
 		//DOM Ready
 		var iframeDomReady = Math.round(iframe.contentWindow.performance.timing.domContentLoadedEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until DOM ready
 		nebula.appendPerformanceMetric({
-			'icon': 'fas fa-clock',
+			'icon': 'fa-solid fa-stopwatch',
 			'label': 'DOM Ready',
 			'text': iframeDomReady/1000 + ' seconds',
 			'value': iframeDomReady,
@@ -318,7 +318,7 @@ nebula.runIframeSpeedTest = function(){
 		//Window Load
 		var iframeWindowLoaded = Math.round(iframe.contentWindow.performance.timing.loadEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until window load
 		nebula.appendPerformanceMetric({
-			'icon': 'fas fa-clock',
+			'icon': 'fa-solid fa-stopwatch',
 			'label': 'Window Load',
 			'text': iframeWindowLoaded/1000 + ' seconds',
 			'value': iframeWindowLoaded,
@@ -349,10 +349,10 @@ nebula.appendPerformanceMetric = function(data){
 		if ( data.value ){
 			if ( data.value > data.error ){
 				warningLevel = 'error';
-				icon = '<i class="fa-fw fas fa-exclamation-triangle"></i>';
+				icon = '<i class="fa-fw fa-solid fa-exclamation-triangle"></i>';
 			} else if ( data.value > data.warning ){
 				warningLevel = 'warning';
-				icon = '<i class="fa-fw fas fa-exclamation-circle"></i>';
+				icon = '<i class="fa-fw fa-solid fa-exclamation-circle"></i>';
 			}
 		}
 

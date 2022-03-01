@@ -420,7 +420,7 @@ if ( !trait_exists('Options') ){
 			//Nebula Options page
 			add_theme_page(
 				'Nebula Options', //Page Title
-				'Nebula Options', //Menu Title
+				'<i class="fa-solid fa-gear"></i> Nebula Options', //Menu Title
 				'manage_options', //Capabilities
 				'nebula_options', //Menu Slug (Unique)
 				array($this, 'options_page') //Function

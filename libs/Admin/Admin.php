@@ -264,7 +264,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('cpanel_url') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Server Control Panel',
-					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-cogs"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-cogs"></i>',
 					'url' => $this->get_option('cpanel_url')
 				);
 			}
@@ -272,7 +272,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('hosting_url') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Hosting',
-					'icon' => '<i class="nebula-admin-fa far fa-fw fa-hdd"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-regular fa-fw fa-hdd"></i>',
 					'url' => $this->get_option('hosting_url')
 				);
 			}
@@ -280,7 +280,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('dns_url') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'DNS',
-					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-map-signs"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-map-signs"></i>',
 					'url' => $this->get_option('dns_url')
 				);
 			}
@@ -288,7 +288,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('registrar_url') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Domain Registrar',
-					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-globe"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-globe"></i>',
 					'url' => $this->get_option('registrar_url')
 				);
 			}
@@ -296,7 +296,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('github_url') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'GitHub Repository',
-					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-github"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-github"></i>',
 					'url' => $this->get_option('github_url')
 				);
 			}
@@ -304,7 +304,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('ga_tracking_id') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Google Analytics',
-					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-chart-area"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-chart-area"></i>',
 					'url' => 'https://analytics.google.com/analytics/web/'
 				);
 			}
@@ -312,7 +312,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('gtm_id') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Google Tag Manager',
-					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-google"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-google"></i>',
 					'url' => 'https://tagmanager.google.com'
 				);
 			}
@@ -320,39 +320,39 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('google_optimize_id') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Google Optimize',
-					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-chart-pie"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-chart-pie"></i>',
 					'url' => 'https://optimize.google.com/optimize/home'
 				);
 			}
 
 			$third_party_resources['administrative'][] = array(
 				'name' => 'Google Search Console',
-				'icon' => '<i class="nebula-admin-fa fab fa-fw fa-google"></i>',
+				'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-google"></i>',
 				'url' => 'https://search.google.com/search-console'
 			);
 
 			$third_party_resources['administrative'][] = array(
 				'name' => 'Bing Webmaster Tools',
-				'icon' => '<i class="nebula-admin-fa fab fa-fw fa-microsoft"></i>',
+				'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-microsoft"></i>',
 				'url' => 'https://www.bing.com/toolbox/webmaster'
 			);
 
 			if ( is_plugin_active('wordpress-seo/wp-seo.php') ){ //If Yoast SEO is active link to its sitemap
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Yoast SEO Sitemap',
-					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-sitemap"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-sitemap"></i>',
 					'url' => home_url('/') . 'sitemap_index.xml'
 				);
 			} elseif ( is_plugin_active('autodescription/autodescription.php') ){ //If The SEO Framework is active link to its sitemap
 				$third_party_resources['administrative'][] = array(
 					'name' => 'The SEO Framework Sitemap',
-					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-sitemap"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-sitemap"></i>',
 					'url' => home_url('/') . 'sitemap.xml'
 				);
 			} else { //Otherwise link to the core WordPress sitemap
 				$third_party_resources['administrative'][] = array(
 					'name' => 'WordPress Sitemap',
-					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-sitemap"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-sitemap"></i>',
 					'url' => home_url('/') . 'wp-sitemap.xml'
 				);
 			}
@@ -360,7 +360,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('adwords_remarketing_conversion_id') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Google AdWords',
-					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-search-plus"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-search-plus"></i>',
 					'url' => 'https://adwords.google.com/home/'
 				);
 			}
@@ -368,7 +368,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('facebook_custom_audience_pixel_id') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Facebook Ads Manager',
-					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-facebook-official"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-facebook-official"></i>',
 					'url' => 'https://www.facebook.com/ads/manager/account/campaigns'
 				);
 			}
@@ -376,7 +376,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('google_adsense_url') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Google AdSense',
-					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-money"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-money"></i>',
 					'url' => 'https://www.google.com/adsense'
 				);
 			}
@@ -384,21 +384,21 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('amazon_associates_url') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Amazon Associates',
-					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-amazon"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-amazon"></i>',
 					'url' => 'https://affiliate-program.amazon.com/home'
 				);
 			}
 
 			$third_party_resources['administrative'][] = array(
 				'name' => 'Google My Business',
-				'icon' => '<i class="nebula-admin-fa far fa-fw fa-building"></i>',
+				'icon' => '<i class="nebula-admin-fa fa-regular fa-fw fa-building"></i>',
 				'url' => 'https://www.google.com/business/'
 			);
 
 			if ( $this->is_ecommerce() ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Google Merchant Center',
-					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-store"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-store"></i>',
 					'url' => 'https://www.google.com/retail/solutions/merchant-center/'
 				);
 			}
@@ -406,7 +406,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('facebook_app_id') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Facebook For Developers',
-					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-facebook"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-facebook"></i>',
 					'url' => 'https://developers.facebook.com/'
 				);
 			}
@@ -414,7 +414,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('google_server_api_key') || $this->get_option('google_browser_api_key') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Google APIs',
-					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-code"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-code"></i>',
 					'url' => 'https://console.developers.google.com/iam-admin/projects'
 				);
 			}
@@ -422,7 +422,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('hubspot_api') || $this->get_option('hubspot_portal') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Hubspot',
-					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-hubspot"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-hubspot"></i>',
 					'url' => 'https://app.hubspot.com/reports-dashboard/' . $this->get_option('hubspot_portal')
 				);
 			}
@@ -430,7 +430,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('mention_url') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Mention',
-					'icon' => '<i class="nebula-admin-fa fas fa-fw fa-star"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-star"></i>',
 					'url' => 'https://web.mention.com'
 				);
 			}
@@ -439,7 +439,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('facebook_url') ){
 				$third_party_resources['social'][] = array(
 					'name' => 'Facebook',
-					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-facebook-square"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-facebook-square"></i>',
 					'url' => $this->get_option('facebook_url')
 				);
 			}
@@ -447,7 +447,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('twitter_username') ){
 				$third_party_resources['social'][] = array(
 					'name' => 'Twitter',
-					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-twitter-square"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-twitter-square"></i>',
 					'url' => $this->twitter_url()
 				);
 			}
@@ -455,7 +455,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('linkedin_url') ){
 				$third_party_resources['social'][] = array(
 					'name' => 'LinkedIn',
-					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-linkedin"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-linkedin"></i>',
 					'url' => $this->get_option('linkedin_url')
 				);
 			}
@@ -463,7 +463,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('youtube_url') ){
 				$third_party_resources['social'][] = array(
 					'name' => 'Youtube',
-					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-youtube"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-youtube"></i>',
 					'url' => $this->get_option('youtube_url')
 				);
 			}
@@ -471,7 +471,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('instagram_url') ){
 				$third_party_resources['social'][] = array(
 					'name' => 'Instagram',
-					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-instagram"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-instagram"></i>',
 					'url' => $this->get_option('instagram_url')
 				);
 			}
@@ -479,7 +479,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('disqus_shortname') ){
 				$third_party_resources['social'][] = array(
 					'name' => 'Disqus',
-					'icon' => '<i class="nebula-admin-fa far fa-fw fa-comments"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-regular fa-fw fa-comments"></i>',
 					'url' => 'https://' . $this->get_option('disqus_shortname') . '.disqus.com/admin/moderate/'
 				);
 			}
@@ -487,7 +487,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->google_review_url() ){
 				$third_party_resources['social'][] = array(
 					'name' => 'Google Review Link',
-					'icon' => '<i class="nebula-admin-fa fab fa-fw fa-google"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-google"></i>',
 					'url' => $this->google_review_url()
 				);
 			}
@@ -544,12 +544,12 @@ if ( !trait_exists('Admin') ){
 					//Note any assets that Nebula is deregistering on this post/page
 					$info_icon = '';
 					if ( !empty($this->deregistered_assets['styles']) || !empty($this->deregistered_assets['scripts']) ){
-						$info_icon = ' <i class="nebula-admin-fa fas fa-fw fa-info-circle deregistered-asset-info"></i>';
+						$info_icon = ' <i class="nebula-admin-fa fa-solid fa-fw fa-info-circle deregistered-asset-info"></i>';
 
 						$wp_admin_bar->add_node(array(
 							'parent' => $node_id,
 							'id' => 'nebula-deregisters',
-							'title' => '<i class="nebula-admin-fa fas fa-fw fa-ban"></i> Nebula is deregistering assets on this page!',
+							'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-ban"></i> Nebula is deregistering assets on this page!',
 							'href' => admin_url('themes.php?page=nebula_options&tab=Advanced'),
 							'meta' => array('target' => '_blank', 'rel' => 'noopener')
 						));
@@ -560,7 +560,7 @@ if ( !trait_exists('Admin') ){
 								$wp_admin_bar->add_node(array(
 									'parent' => 'nebula-deregisters',
 									'id' => 'nebula-deregisters-styles-' . $handle,
-									'title' => '<span class="nebula-admin-light"><i class="nebula-admin-fa fab fa-fw fa-css3-alt"></i> CSS:</span> ' . $handle,
+									'title' => '<span class="nebula-admin-light"><i class="nebula-admin-fa fa-brands fa-fw fa-css3-alt"></i> CSS:</span> ' . $handle,
 									'href' => admin_url('themes.php?page=nebula_options&tab=Advanced'),
 									'meta' => array('target' => '_blank', 'rel' => 'noopener')
 								));
@@ -573,7 +573,7 @@ if ( !trait_exists('Admin') ){
 								$wp_admin_bar->add_node(array(
 									'parent' => 'nebula-deregisters',
 									'id' => 'nebula-deregisters-scripts-' . $handle,
-									'title' => '<span class="nebula-admin-light"><i class="nebula-admin-fa fab fa-fw fa-js"></i> JS:</span> ' . $handle,
+									'title' => '<span class="nebula-admin-light"><i class="nebula-admin-fa fa-brands fa-fw fa-js"></i> JS:</span> ' . $handle,
 									'href' => admin_url('themes.php?page=nebula_options&tab=Advanced'),
 									'meta' => array('target' => '_blank', 'rel' => 'noopener')
 								));
@@ -608,7 +608,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => $node_id,
 						'id' => 'nebula-created',
-						'title' => '<i class="nebula-admin-fa far fa-fw fa-calendar"></i> <span title="' . human_time_diff($original_date) . ' ago">Created: ' . date('F j, Y', $original_date) . '</span> <span class="nebula-admin-light">(' . $original_author . ')</span>',
+						'title' => '<i class="nebula-admin-fa fa-regular fa-fw fa-calendar"></i> <span title="' . human_time_diff($original_date) . ' ago">Created: ' . date('F j, Y', $original_date) . '</span> <span class="nebula-admin-light">(' . $original_author . ')</span>',
 						'href' => get_edit_post_link(),
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					));
@@ -619,7 +619,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => $node_id,
 						'id' => 'nebula-modified',
-						'title' => '<i class="nebula-admin-fa far fa-fw fa-clock"></i> <span title="' . human_time_diff($modified_date) . ' ago">Modified: ' . date('F j, Y', $modified_date) . '</span> <span class="nebula-admin-light">(' . $modified_author . ')</span>',
+						'title' => '<i class="nebula-admin-fa fa-regular fa-fw fa-clock"></i> <span title="' . human_time_diff($modified_date) . ' ago">Modified: ' . date('F j, Y', $modified_date) . '</span> <span class="nebula-admin-light">(' . $modified_author . ')</span>',
 						'href' => get_edit_post_link(),
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					));
@@ -630,7 +630,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => $node_id,
 						'id' => 'nebula-status',
-						'title' => '<i class="nebula-admin-fa fas fa-fw fa-map-marker"></i> Status: ' . ucwords($status),
+						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-map-marker"></i> Status: ' . ucwords($status),
 						'href' => get_edit_post_link(),
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					));
@@ -641,7 +641,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => $node_id,
 						'id' => 'nebula-template',
-						'title' => '<i class="nebula-admin-fa far fa-fw fa-object-group"></i> Template: ' . basename($this->current_theme_template) . ' <span class="nebula-admin-light">(' . dirname($this->current_theme_template) . ')</span>',
+						'title' => '<i class="nebula-admin-fa fa-regular fa-fw fa-object-group"></i> Template: ' . basename($this->current_theme_template) . ' <span class="nebula-admin-light">(' . dirname($this->current_theme_template) . ')</span>',
 						'href' => get_edit_post_link(),
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					));
@@ -654,14 +654,14 @@ if ( !trait_exists('Admin') ){
 						$wp_admin_bar->add_node(array(
 							'parent' => $node_id,
 							'id' => 'nebula-ancestors',
-							'title' => '<i class="nebula-admin-fa fas fa-fw fa-level-up-alt"></i> Ancestor ' . ucwords($post_type_object->labels->name) . ' <small>(' . count($ancestors) . ')</small>',
+							'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-level-up-alt"></i> Ancestor ' . ucwords($post_type_object->labels->name) . ' <small>(' . count($ancestors) . ')</small>',
 						));
 
 						foreach ( $ancestors as $parent ){
 							$wp_admin_bar->add_node(array(
 								'parent' => 'nebula-ancestors',
 								'id' => 'nebula-parent-' . $parent,
-								'title' => '<i class="nebula-admin-fa far fa-fw fa-file"></i> ' . esc_html(get_the_title($parent)),
+								'title' => '<i class="nebula-admin-fa fa-regular fa-fw fa-file"></i> ' . esc_html(get_the_title($parent)),
 								'href' => ( $this->is_admin_page() )? get_edit_post_link($parent) : get_permalink($parent),
 							));
 						}
@@ -680,7 +680,7 @@ if ( !trait_exists('Admin') ){
 							$wp_admin_bar->add_node(array(
 								'parent' => $node_id,
 								'id' => 'nebula-children',
-								'title' => '<i class="nebula-admin-fa fas fa-fw fa-level-down-alt"></i> Children ' . ucwords($post_type_object->labels->name) . ' <small>(' . $child_pages->found_posts . ')</small>',
+								'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-level-down-alt"></i> Children ' . ucwords($post_type_object->labels->name) . ' <small>(' . $child_pages->found_posts . ')</small>',
 							));
 
 							while ( $child_pages->have_posts() ){
@@ -688,7 +688,7 @@ if ( !trait_exists('Admin') ){
 								$wp_admin_bar->add_node(array(
 									'parent' => 'nebula-children',
 									'id' => 'nebula-child-' . get_the_id(),
-									'title' => '<i class="nebula-admin-fa fas fa-fw fa-file"></i> ' . esc_html(get_the_title()),
+									'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-file"></i> ' . esc_html(get_the_title()),
 									'href' => ( $this->is_admin_page() )? get_edit_post_link() : get_permalink(),
 								));
 							}
@@ -718,7 +718,7 @@ if ( !trait_exists('Admin') ){
 
 				$wp_admin_bar->add_node(array(
 					'id' => 'nebula',
-					'title' => '<i class="nebula-admin-fa fas fa-fw ' . $nebula_adminbar_icon . '"></i> Nebula',
+					'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $nebula_adminbar_icon . '"></i> Nebula',
 					'href' => 'https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')),
 					'meta' => array(
 						'target' => '_blank',
@@ -740,7 +740,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula',
 						'id' => 'nebula-warnings',
-						'title' => '<i class="nebula-admin-fa fas fa-fw fa-exclamation-triangle"></i> Warnings',
+						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-exclamation-triangle"></i> Warnings',
 					));
 
 					foreach( $warnings as $key => $warning ){
@@ -755,7 +755,7 @@ if ( !trait_exists('Admin') ){
 						$wp_admin_bar->add_node(array(
 							'parent' => 'nebula-warnings',
 							'id' => 'nebula-warning-' . $key,
-							'title' => '<i class="nebula-admin-fa fas fa-fw ' . $warning_icon . '" style="margin-left: 5px;"></i> ' . strip_tags($warning['description']),
+							'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $warning_icon . '" style="margin-left: 5px;"></i> ' . strip_tags($warning['description']),
 							'href' => ( !empty($warning['url']) )? $warning['url'] : '',
 							'meta' => array(
 								'target' => '_blank',
@@ -776,7 +776,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula',
 						'id' => 'nebula-warning',
-						'title' => '<i class="nebula-admin-fa fas fa-fw fa-exclamation-triangle" style="color: #ca3838; margin-right: 5px;"></i> ' . $nebula_warning_description,
+						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-exclamation-triangle" style="color: #ca3838; margin-right: 5px;"></i> ' . $nebula_warning_description,
 						'href' => admin_url($nebula_warning_href),
 					));
 				}
@@ -785,7 +785,7 @@ if ( !trait_exists('Admin') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula',
 					'id' => 'nebula-documentation',
-					'title' => '<i class="nebula-admin-fa fas fa-fw fa-file-alt"></i> Nebula Documentation',
+					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-file-alt"></i> Nebula Documentation',
 					'href' => 'https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')),
 					'meta' => array(
 						'target' => '_blank',
@@ -796,7 +796,7 @@ if ( !trait_exists('Admin') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula-documentation',
 					'id' => 'nebula-documentation-functions',
-					'title' => '<i class="nebula-admin-fa fas fa-fw fa-file-alt"></i> Functions & Variables',
+					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-file-alt"></i> Functions & Variables',
 					'href' => 'https://nebula.gearside.com/documentation/functions/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')),
 					'meta' => array(
 						'target' => '_blank',
@@ -807,7 +807,7 @@ if ( !trait_exists('Admin') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula-documentation',
 					'id' => 'nebula-documentation-examples',
-					'title' => '<i class="nebula-admin-fa fas fa-fw fa-file-alt"></i> Examples & Tips',
+					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-file-alt"></i> Examples & Tips',
 					'href' => 'https://nebula.gearside.com/documentation/examples-tips/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')),
 					'meta' => array(
 						'target' => '_blank',
@@ -818,7 +818,7 @@ if ( !trait_exists('Admin') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula-documentation',
 					'id' => 'nebula-documentation-faq',
-					'title' => '<i class="nebula-admin-fa fas fa-fw fa-question"></i> FAQs',
+					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-question"></i> FAQs',
 					'href' => 'https://nebula.gearside.com/faq/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')),
 					'meta' => array(
 						'target' => '_blank',
@@ -832,7 +832,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula',
 						'id' => 'nebula-resources',
-						'title' => '<i class="nebula-admin-fa fas fa-fw fa-toolbox"></i> Third-Party Resources',
+						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-toolbox"></i> Third-Party Resources',
 					));
 
 					if ( current_user_can('edit_others_posts') && !empty($third_party_resources['administrative']) ){
@@ -876,7 +876,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula',
 						'id' => 'nebula-options',
-						'title' => '<i class="nebula-admin-fa fas fa-fw fa-cog"></i> Options',
+						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-cog"></i> Options',
 						'href' => admin_url('themes.php?page=nebula_options')
 					));
 
@@ -884,7 +884,7 @@ if ( !trait_exists('Admin') ){
 						$wp_admin_bar->add_node(array(
 							'parent' => 'nebula-options',
 							'id' => 'nebula-options-' . $category['name'],
-							'title' => '<i class="nebula-admin-fa fas fa-fw ' . $category['icon'] . '"></i> ' . $category['name'],
+							'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $category['icon'] . '"></i> ' . $category['name'],
 							'href' => admin_url('themes.php?page=nebula_options&tab=' . $category['name']),
 							'meta' => array('target' => '_blank', 'rel' => 'noopener')
 						));
@@ -893,7 +893,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-options',
 						'id' => 'nebula-options-help',
-						'title' => '<i class="nebula-admin-fa far fa-fw fa-question-circle"></i> Help & Documentation',
+						'title' => '<i class="nebula-admin-fa fa-regular fa-fw fa-question-circle"></i> Help & Documentation',
 						'href' => 'https://nebula.gearside.com/documentation/options/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar+help',
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					));
@@ -901,7 +901,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula',
 						'id' => 'nebula-github',
-						'title' => '<i class="nebula-admin-fa fab fa-fw fa-github"></i> Nebula Github',
+						'title' => '<i class="nebula-admin-fa fa-brands fa-fw fa-github"></i> Nebula Github',
 						'href' => 'https://github.com/chrisblakley/Nebula',
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					));
@@ -934,7 +934,7 @@ if ( !trait_exists('Admin') ){
 						$wp_admin_bar->add_node(array(
 							'parent' => 'nebula-utilities',
 							'id' => 'nebula-scss-reprocess',
-							'title' => '<i class="nebula-admin-fa fab fa-fw fa-sass"></i> Re-process All Sass Files',
+							'title' => '<i class="nebula-admin-fa fa-brands fa-fw fa-sass"></i> Re-process All Sass Files',
 							'href' => esc_url(add_query_arg('sass', 'true')),
 							'meta' => array('title' => 'Process all Sass files and reload the page. ' . $scss_last_processed_text)
 						));
@@ -944,7 +944,7 @@ if ( !trait_exists('Admin') ){
 						$wp_admin_bar->add_node(array(
 							'parent' => 'nebula-utilities',
 							'id' => 'nebula-audit',
-							'title' => '<i class="nebula-admin-fa fas fa-fw fa-list-alt"></i> Audit This Page',
+							'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-list-alt"></i> Audit This Page',
 							'href' => esc_url(add_query_arg('audit', 'true')),
 							'meta' => array('title' => 'Checks the current page for common issues')
 						));
@@ -952,7 +952,7 @@ if ( !trait_exists('Admin') ){
 						$wp_admin_bar->add_node(array(
 							'parent' => 'nebula-utilities',
 							'id' => 'nebula-scan',
-							'title' => '<i class="nebula-admin-fa fas fa-fw fa-microscope"></i> Scan This Page for Assets',
+							'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-microscope"></i> Scan This Page for Assets',
 							'href' => esc_url(add_query_arg('nebula-scan', 'true')),
 							'meta' => array('title' => 'Scans the current page for registered styles and scripts (for advanced optimization in Nebula Options > Advanced > Dequeues)')
 						));
@@ -962,14 +962,14 @@ if ( !trait_exists('Admin') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula',
 					'id' => 'nebula-utilities',
-					'title' => '<i class="nebula-admin-fa fas fa-fw fa-tools"></i> Utilities & Tools',
+					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-tools"></i> Utilities & Tools',
 				));
 
 				if ( current_user_can('edit_others_posts') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-utilities',
 						'id' => 'nebula-add-debug',
-						'title' => '<i class="nebula-admin-fa fas fa-fw fa-sync"></i> Reload &amp; Clear Caches',
+						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-sync"></i> Reload &amp; Clear Caches',
 						'href' => esc_url(add_query_arg('debug', 'true')),
 						'meta' => array('title' => 'Append ?debug to force clear certain caches')
 					));
@@ -983,10 +983,10 @@ if ( !trait_exists('Admin') ){
 		public function admin_bar_warning_styles(){
 			if ( is_admin_bar_showing() ){ ?>
 				<style type="text/css">
-					#wpadminbar .nebula-admin-fa {font-family: "Font Awesome 5 Solid", "Font Awesome 5 Free", "Font Awesome 5 Pro"; font-weight: 900;}
-						#wpadminbar .nebula-admin-fa.fab {font-family: "Font Awesome 5 Brands", "Font Awesome 5 Free", "Font Awesome 5 Pro"; font-weight: 400;}
-					#wpadminbar .svg-inline--fa {color: #a0a5aa; color: rgba(240, 245, 250, .6); margin-right: 5px;}
-					#wpadminbar .nebula-admin-light {font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, .6); line-height: inherit;}
+					#wpadminbar .nebula-admin-fa {font-family: "Font Awesome 6 Solid", "Font Awesome 6 Free", "Font Awesome 6 Pro"; font-weight: 900;}
+						#wpadminbar .nebula-admin-fa.fa-brands {font-family: "Font Awesome 6 Brands", "Font Awesome 6 Free", "Font Awesome 6 Pro"; font-weight: 400;}
+					#wpadminbar .svg-inline--fa {color: #a0a5aa; color: rgba(240, 245, 250, 0.6); margin-right: 5px;}
+					#wpadminbar .nebula-admin-light {font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, 0.6); line-height: inherit;}
 
 					#wpadminbar:not(.mobile) .ab-top-menu > #wp-admin-bar-nebula.has-warning > .ab-item {background: #ca3838;}
 						#wpadminbar:not(.mobile) .ab-top-menu > #wp-admin-bar-nebula.has-warning.hover > .ab-item,

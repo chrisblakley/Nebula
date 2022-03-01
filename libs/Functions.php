@@ -480,7 +480,7 @@ if ( !trait_exists('Functions') ){
 			//Apply the requested label
 			$label = '';
 			if ( $data['label'] == 'icon' ){
-				$label = '<i class="nebula-post-date-label far fa-fw fa-calendar"></i> ';
+				$label = '<i class="nebula-post-date-label fa-regular fa-fw fa-calendar"></i> ';
 			} elseif ( $data['label'] == 'text' ){
 				$label = '<span class="nebula-post-date-label">' . esc_html(ucwords($data['type'])) . ' </span>';
 			}
@@ -522,7 +522,7 @@ if ( !trait_exists('Functions') ){
 			if ( ($this->get_option('author_bios') || $data['force']) && get_theme_mod('post_author', true) ){
 				$label = '';
 				if ( $data['label'] === 'icon' ){
-					$label = '<i class="nebula-post-author-label fas fa-fw fa-user"></i> ';
+					$label = '<i class="nebula-post-author-label fa-solid fa-fw fa-user"></i> ';
 				} elseif ( $data['label'] === 'text' ){
 					$label = '<span class="nebula-post-author-label">Author </span>';
 				}
@@ -561,7 +561,7 @@ if ( !trait_exists('Functions') ){
 
 				if ( $data['icon'] ){
 					$post_icon = $wp_post_types[$post_type]->menu_icon;
-					$post_icon_img = '<i class="fas fa-thumbtack"></i>';
+					$post_icon_img = '<i class="fa-solid fa-thumbtack"></i>';
 
 					if ( !empty($post_icon) ){
 						$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" loading="lazy" />';
@@ -574,9 +574,9 @@ if ( !trait_exists('Functions') ){
 					if ( gettype($data['icon']) === 'string' && $data['icon'] !== '' ){
 						$post_icon_img = '<i class="' . esc_html($data['icon']) . '"></i>';
 					}elseif ( $post_type === 'post' ){
-						$post_icon_img = '<i class="fas fa-fw fa-thumbtack"></i>';
+						$post_icon_img = '<i class="fa-solid fa-fw fa-thumbtack"></i>';
 					} elseif ( $post_type === 'page' ){
-						$post_icon_img = '<i class="fas fa-fw fa-file-alt"></i>';
+						$post_icon_img = '<i class="fa-solid fa-fw fa-file-alt"></i>';
 					}
 				}
 
@@ -605,7 +605,7 @@ if ( !trait_exists('Functions') ){
 			if ( get_theme_mod('post_categories', true) || $data['force'] ){
 				$label = '';
 				if ( $data['label'] === 'icon' ){
-					$label = '<i class="nebula-post-categories-label fas fa-fw fa-bookmark"></i> ';
+					$label = '<i class="nebula-post-categories-label fa-solid fa-fw fa-bookmark"></i> ';
 				} elseif ( $data['label'] === 'text' ){
 					$label = '<span class="nebula-post-categories-label">' . __('Category', 'nebula') . '</span>';
 				}
@@ -648,7 +648,7 @@ if ( !trait_exists('Functions') ){
 					$label = '';
 					if ( $data['label'] === 'icon' ){
 						$tag_plural = ( count(get_the_tags()) > 1 )? __('tags', 'nebula') : __('tag', 'nebula');
-						$label = '<i class="nebula-post-tags-label fas fa-fw fa-' . $tag_plural . '"></i> ';
+						$label = '<i class="nebula-post-tags-label fa-solid fa-fw fa-' . $tag_plural . '"></i> ';
 					} elseif ( $data['label'] === 'text' ){
 						$label = '<span class="nebula-post-tags-label">' . ucwords($tag_plural) . ' </span>';
 					}
@@ -678,7 +678,7 @@ if ( !trait_exists('Functions') ){
 
 				$the_icon = '';
 				if ( $data['icon'] ){
-					$the_icon = '<i class="fas fa-fw fa-expand"></i> ';
+					$the_icon = '<i class="fa-solid fa-fw fa-expand"></i> ';
 				}
 
 				$metadata = wp_get_attachment_metadata();
@@ -694,7 +694,7 @@ if ( !trait_exists('Functions') ){
 		public function post_exif($icon=true){
 			$the_icon = '';
 			if ( $icon ){
-				$the_icon = '<i class="fas fa-fw fa-camera-retro"></i> ';
+				$the_icon = '<i class="fa-solid fa-fw fa-camera-retro"></i> ';
 			}
 
 			$imgmeta = wp_get_attachment_metadata();
@@ -1117,7 +1117,7 @@ if ( !trait_exists('Functions') ){
 			if ( isset($override) ){return;}
 			?>
 				<div class="nebula-social-button webshare">
-					<a class="btn btn-secondary btn-sm" href="#" target="_blank"><i class="fas fa-fw fa-share"></i> <?php _e('Share', 'nebula'); ?></a>
+					<a class="btn btn-secondary btn-sm" href="#" target="_blank"><i class="fa-solid fa-fw fa-share"></i> <?php _e('Share', 'nebula'); ?></a>
 				</div>
 			<?php
 		}
@@ -1442,7 +1442,7 @@ if ( !trait_exists('Functions') ){
 
 					$prefix = '';
 					if ( $data['prefix'] === 'icon' ){
-						$prefix = '<i class="fas fa-bookmark"></i>';
+						$prefix = '<i class="fa-solid fa-bookmark"></i>';
 					} elseif ( $data['prefix'] === 'text' ){
 						$prefix = 'Category: ';
 					}
@@ -1557,7 +1557,7 @@ if ( !trait_exists('Functions') ){
 				} elseif ( is_tag() ){
 					$prefix = '';
 					if ( $data['prefix'] === 'icon' ){
-						$prefix = '<i class="fas fa-tag"></i>';
+						$prefix = '<i class="fa-solid fa-tag"></i>';
 					} elseif ( $data['prefix'] === 'text' ){
 						$prefix = 'Tag: ';
 					}
@@ -1593,7 +1593,7 @@ if ( !trait_exists('Functions') ){
 			$form = '<form id="searchform" class="row gx-2 ignore-form" role="search" method="get" action="' . home_url('/') . '">
 						<div class="col">
 							<div class="input-group">
-								<div class="input-group-text"><i class="fas fa-search"></i></div>
+								<div class="input-group-text"><i class="fa-solid fa-search"></i></div>
 								<label class="visually-hidden" for="s">Search</label>
 								<input id="s" class="form-control ignore-form" type="text" name="s" value="' . get_search_query() . '" placeholder="' . $placeholder . '" role="search" autocorrect="off" autocapitalize="off" spellcheck="false" />
 							</div>
@@ -1620,7 +1620,7 @@ if ( !trait_exists('Functions') ){
 			$form = '<div id="nebula-hero-formcon">
 					<form id="nebula-hero-search" class="form-group search ignore-form" method="get" action="' . home_url('/') . '" role="search">
 						<div class="input-group">
-							<i class="fas fa-search"></i>
+							<i class="fa-solid fa-search"></i>
 							<label class="visually-hidden" for="nebula-hero-search-input">Autocomplete Search</label>
 							<input id="nebula-hero-search-input" type="search" class="form-control open input search nofade ignore-form" name="s" placeholder="' . $placeholder . '" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" x-webkit-speech />
 						</div>
@@ -1928,7 +1928,7 @@ if ( !trait_exists('Functions') ){
 			?>
 				<div id="nebula-feedback-system" class="<?php echo ( empty($form_id) )? 'no-feedback-form' : 'has-feedback-form'; ?>">
 					<div id="nebula-feedback-question" class="">
-						<span><?php echo __('Was this page helpful?', 'nebula'); ?></span> <a id="nebula-feedback-yes" class="nebula-feedback-button" href="#"><i class="fas fa-fw fa-thumbs-up"></i> <?php echo __('Yes', 'nebula'); ?></a> <a id="nebula-feedback-no" class="nebula-feedback-button" href="#"><i class="fas fa-fw fa-thumbs-down"></i> <?php echo __('No', 'nebula'); ?></a>
+						<span><?php echo __('Was this page helpful?', 'nebula'); ?></span> <a id="nebula-feedback-yes" class="nebula-feedback-button" href="#"><i class="fa-solid fa-fw fa-thumbs-up"></i> <?php echo __('Yes', 'nebula'); ?></a> <a id="nebula-feedback-no" class="nebula-feedback-button" href="#"><i class="fa-solid fa-fw fa-thumbs-down"></i> <?php echo __('No', 'nebula'); ?></a>
 					</div>
 
 					<?php if ( !empty($form_id) ): ?>

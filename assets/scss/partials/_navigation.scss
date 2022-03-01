@@ -7,7 +7,7 @@
 	a {font-size: rem(32px); @include link-colors(#fff, #aaa); text-decoration: underline;}
 	.mobilerow {display: block;
 		#mobileheadersearch {display: flex; align-items: center;
-			input {width: 100%; color: #fff; font-size: rem(18px); padding-left: 10px; line-height: 42px; min-height: 42px; background: none; border: none; outline: none; box-shadow: none; border-radius: 0;}
+			input {width: 100%; color: #fff; font-size: rem(18px); padding-left: 10px; line-height: 42px; min-height: 42px; background: none; border: none; outline: none; box-shadow: none; border-radius: 0; -webkit-appearance: none;}
 			input::-webkit-input-placeholder {font-weight: 300; color: rgb(255 255 255 / 90%);}
 			input:-moz-placeholder {font-weight: 300; color: rgb(255 255 255 / 90%);}
 			input::-moz-placeholder {font-weight: 300; color: rgb(255 255 255 / 90%);}

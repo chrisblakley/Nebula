@@ -62,7 +62,7 @@ nebula.optionsInit = function(){
 
 			//More Help expander icons
 			//if ( jQuery(this).parent().find('.more-help').length ){
-				jQuery(this).append('<a class="toggle-more-help" href="#" title="Toggle more information" tabindex="-1"><i class="fas fa-fw fa-question-circle"></i></a>');
+				jQuery(this).append('<a class="toggle-more-help" href="#" title="Toggle more information" tabindex="-1"><i class="fa-solid fa-fw fa-question-circle"></i></a>');
 			//}
 		}
 	});
@@ -245,7 +245,7 @@ nebula.checkImportants = function(){
 	jQuery('.tab-pane').each(function(){
 		if ( jQuery(this).find('.important-empty').length ){
 			if ( !jQuery('.nav-link[href$=' + jQuery(this).attr('id') + '] .empty-important-tab-warning').length ){ //If the warning isn't already showing
-				jQuery('.nav-link[href$=' + jQuery(this).attr('id') + ']').append('<i class="fas fa-fw fa-exclamation-triangle empty-important-tab-warning"></i>');
+				jQuery('.nav-link[href$=' + jQuery(this).attr('id') + ']').append('<i class="fa-solid fa-fw fa-exclamation-triangle empty-important-tab-warning"></i>');
 			}
 		} else {
 			jQuery('.nav-link[href$=' + jQuery(this).attr('id') + ']').find('.empty-important-tab-warnings').remove();
@@ -285,7 +285,7 @@ nebula.assetScan = function(){
 		if ( oThis.attr('data-skip-fetch') !== 'true' ){ //Use Fetch unless it fails
 			var initialText = oThis.html();
 
-			oThis.html('<i class="fas fa-fw fa-spin fa-spinner"></i> Scanning Front-End...');
+			oThis.html('<i class="fa-solid fa-fw fa-spin fa-spinner"></i> Scanning Front-End...');
 			jQuery('.asset-scan-status').html('Automatic asset scan in progress...');
 
 			fetch(nebula.site.home_url + '?nebula-scan', {
@@ -296,10 +296,10 @@ nebula.assetScan = function(){
 			}).then(function(response){
 				if ( response.ok ){
 					oThis.html(initialText);
-					jQuery('.asset-scan-status').html('<strong class="nebula-enabled"><i class="fas fa-fw fa-check"></i> Automatic scan successful.</strong> You may refresh this page when ready to see available assets.');
+					jQuery('.asset-scan-status').html('<strong class="nebula-enabled"><i class="fa-solid fa-fw fa-check"></i> Automatic scan successful.</strong> You may refresh this page when ready to see available assets.');
 				}
 			}).catch(function(error){
-				oThis.html('Manually Scan Front-End <i class="fas fa-fw fa-external-link-alt"></i>');
+				oThis.html('Manually Scan Front-End <i class="fa-solid fa-fw fa-external-link-alt"></i>');
 				jQuery('.asset-scan-status').html('<strong class="nebula-disabled">Automatic scan failed.</strong> Click the button again to manually scan the front-end in a new window.').attr('data-skip-fetch', 'true');
 			});
 

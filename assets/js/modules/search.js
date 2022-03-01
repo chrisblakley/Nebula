@@ -74,7 +74,7 @@ nebula.menuSearchReplacement = async function(){
 	if ( jQuery('.nebula-search').length ){
 		jQuery('.menu .nebula-search').each(function(){
 			let randomMenuSearchID = Math.floor((Math.random()*100)+1); //Why does it need this again? Add comment please.
-			jQuery(this).html('<form class="wp-menu-nebula-search nebula-search search footer-search" method="get" action="' + nebula.site.home_url + '/"><div class="nebula-input-group"><i class="fas fa-search"></i><label class="visually-hidden" for="nebula-menu-search-' + randomMenuSearchID + '">Search</label><input type="search" id="nebula-menu-search-' + randomMenuSearchID + '" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></div></form>');
+			jQuery(this).html('<form class="wp-menu-nebula-search nebula-search search footer-search" method="get" action="' + nebula.site.home_url + '/"><div class="nebula-input-group"><i class="fa-solid fa-search"></i><label class="visually-hidden" for="nebula-menu-search-' + randomMenuSearchID + '">Search</label><input type="search" id="nebula-menu-search-' + randomMenuSearchID + '" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></div></form>');
 		});
 
 		jQuery('.nebula-search input').on('focus', function(){

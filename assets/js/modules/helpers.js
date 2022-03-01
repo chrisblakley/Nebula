@@ -328,7 +328,7 @@ nebula.temporaryClass = function(element, activeClass, inactiveClass, period = 1
 		}
 
 		if ( !inactiveClass ){
-			if ( element.is('fa, fas, far, fab, fad') ){ //Font Awesome icon element
+			if ( element.is('fa, fas, far, fab, fad, fat, fal, fa-solid, fa-regular, fa-brands, fa-duotone, fa-thin, fa-light') ){ //Font Awesome icon element
 				inactiveClass = (/fa-(?!fw)\S+/i).test(element.attr('class')); //Match the first Font Awesome icon class that is the actual icon (exclude fa-fw for example)
 			} else if ( element.is('bi') ){ //Bootstrap icon element
 				inactiveClass = (/bi-\S+/i).test(element.attr('class')); //Match the first Bootstrap icon class
@@ -349,7 +349,7 @@ nebula.temporaryClass = function(element, activeClass, inactiveClass, period = 1
 //Vertical subnav expanders
 nebula.subnavExpanders = function(){
 	if ( nebula.site?.options?.sidebar_expanders && jQuery('#sidebar-section .menu').length ){
-		jQuery('#sidebar-section .menu li.menu-item:has(ul)').addClass('has-expander').append('<a class="toplevelvert_expander closed" href="#"><i class="fas fa-caret-left"></i> <span class="visually-hidden">Expand</span></a>');
+		jQuery('#sidebar-section .menu li.menu-item:has(ul)').addClass('has-expander').append('<a class="toplevelvert_expander closed" href="#"><i class="fa-solid fa-caret-left"></i> <span class="visually-hidden">Expand</span></a>');
 		jQuery('.toplevelvert_expander').parent().children('.sub-menu').hide();
 		nebula.dom.document.on('click', '.toplevelvert_expander', function(){
 			jQuery(this).toggleClass('closed open').parent().children('.sub-menu').slideToggle();

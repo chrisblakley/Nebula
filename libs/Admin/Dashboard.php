@@ -79,34 +79,34 @@ if ( !trait_exists('Dashboard') ){
 
 			//Data Loaded Time (for Development environments)
 			if ( wp_get_environment_type() !== 'production' || WP_DEBUG || $this->is_debug() ){
-				echo '<li><i class="fas fa-fw fa-clock"></i> This data as of <strong id="last-loaded" title="Just now" style="cursor: help;">' . date('l, F j, Y - g:i:sa') . '</strong></li>';
+				echo '<li><i class="fa-solid fa-fw fa-clock"></i> This data as of <strong id="last-loaded" title="Just now" style="cursor: help;">' . date('l, F j, Y - g:i:sa') . '</strong></li>';
 			}
 
 			//Website URL
-			echo '<li><i class="fas fa-fw fa-globe"></i> <a href="' . home_url('/') . '" target="_blank" rel="noopener noreferrer">' . home_url('/') . '</a></li>';
+			echo '<li><i class="fa-solid fa-fw fa-globe"></i> <a href="' . home_url('/') . '" target="_blank" rel="noopener noreferrer">' . home_url('/') . '</a></li>';
 
 			//Address
 			if ( $this->get_option('street_address') ){
-				echo '<li><i class="fas fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/' . $this->full_address(1) . '" target="_blank" rel="noopener noreferrer">' . $this->full_address() . '</a></li>';
+				echo '<li><i class="fa-solid fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/' . $this->full_address(1) . '" target="_blank" rel="noopener noreferrer">' . $this->full_address() . '</a></li>';
 			}
 
 			//Open/Closed
 			if ( $this->has_business_hours() ){
 				$open_closed = ( $this->business_open() )? '<strong style="color: green;">Open</strong>' : '<strong>Closed</strong>';
-				echo '<li><i class="far fa-fw fa-clock"></i> Currently ' . $open_closed . '</li>';
+				echo '<li><i class="fa-regular fa-fw fa-clock"></i> Currently ' . $open_closed . '</li>';
 			}
 
 			//WordPress Version
 			global $wp_version;
-			echo '<li><i class="fab fa-fw fa-wordpress"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener noreferrer">WordPress</a> <strong>' . $wp_version . '</strong></li>';
+			echo '<li><i class="fa-brands fa-fw fa-wordpress"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener noreferrer">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
 			//Nebula Version
 			//Note: Ignore the time here (in the title attribute on hover) as it is only meant to reference the calendar date based on the "major", "minor", and "patch" number (and not interpret the "build" number)
-			echo '<li><i class="far fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . '" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('realtime') . '</a></strong> <small title="' . $this->version('date') . '" style="cursor: help;">(Committed ' . human_time_diff($this->version('utc')) . ' ago)</small></li>';
+			echo '<li><i class="fa-regular fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . '" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('realtime') . '</a></strong> <small title="' . $this->version('date') . '" style="cursor: help;">(Committed ' . human_time_diff($this->version('utc')) . ' ago)</small></li>';
 
 			//Child Theme
 			if ( is_child_theme() ){
-				echo '<li><i class="fas fa-fw fa-child"></i><a href="themes.php">Child theme</a> active <small>(' . get_option('stylesheet') . ' v' . $this->child_version() . ')</small></li>';
+				echo '<li><i class="fa-solid fa-fw fa-child"></i><a href="themes.php">Child theme</a> active <small>(' . get_option('stylesheet') . ' v' . $this->child_version() . ')</small></li>';
 			}
 
 			//Multisite (and Super Admin detection)
@@ -115,7 +115,7 @@ if ( !trait_exists('Dashboard') ){
 				if ( is_super_admin() ){
 					$network_admin_link = ' <small><a href="' . network_admin_url() . '">(Network Admin)</a></small></li>';
 				}
-				echo '<li><i class="fas fa-fw fa-cubes"></i> Multisite' . $network_admin_link;
+				echo '<li><i class="fa-solid fa-fw fa-cubes"></i> Multisite' . $network_admin_link;
 			}
 
 			//Post Types
@@ -137,20 +137,20 @@ if ( !trait_exists('Dashboard') ){
 				$labels_plural = ( $count_posts->publish === 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
 				switch ( $post_type ){
 					case ('post'):
-						$post_icon_img = '<i class="fas fa-fw fa-thumbtack"></i>';
+						$post_icon_img = '<i class="fa-solid fa-fw fa-thumbtack"></i>';
 						break;
 					case ('page'):
-						$post_icon_img = '<i class="fas fa-fw fa-file-alt"></i>';
+						$post_icon_img = '<i class="fa-solid fa-fw fa-file-alt"></i>';
 						break;
 					case ('wp_block'):
-						$post_icon_img = '<i class="far fa-fw fa-clone"></i>';
+						$post_icon_img = '<i class="fa-regular fa-fw fa-clone"></i>';
 						break;
 					case ('wpcf7_contact_form'):
-						$post_icon_img = '<i class="fas fa-fw fa-envelope"></i>';
+						$post_icon_img = '<i class="fa-solid fa-fw fa-envelope"></i>';
 						break;
 					default:
 						$post_icon = $wp_post_types[$post_type]->menu_icon;
-						$post_icon_img = '<i class="fas fa-fw fa-thumbtack"></i>';
+						$post_icon_img = '<i class="fa-solid fa-fw fa-thumbtack"></i>';
 						if ( !empty($post_icon) ){
 							$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" loading="lazy" />';
 							if ( strpos('dashicons-', $post_icon) >= 0 ){
@@ -168,7 +168,7 @@ if ( !trait_exists('Dashboard') ){
 			}, YEAR_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long (as long as an expiration exists).
 
 			while ( $earliest_post->have_posts() ){ $earliest_post->the_post();
-				echo '<li><i class="far fa-fw fa-calendar"></i> Earliest: <span title="' . get_the_date() . ' @ ' . get_the_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_date() . ' ' . get_the_time())) . ' ago</strong></span><small style="display: block;"><i class="far fa-fw fa-file-alt"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => esc_html(get_the_title()), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small></li>';
+				echo '<li><i class="fa-regular fa-fw fa-calendar"></i> Earliest: <span title="' . get_the_date() . ' @ ' . get_the_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_date() . ' ' . get_the_time())) . ' ago</strong></span><small style="display: block;"><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => esc_html(get_the_title()), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small></li>';
 			}
 			wp_reset_postdata();
 
@@ -177,8 +177,8 @@ if ( !trait_exists('Dashboard') ){
 				return new WP_Query(array('post_type' => 'any', 'showposts' => 1, 'orderby' => 'modified', 'order' => 'DESC'));
 			}, WEEK_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long.
 			while ( $latest_post->have_posts() ){ $latest_post->the_post();
-				echo '<li><i class="far fa-fw fa-calendar"></i> Updated: <span title="' . get_the_modified_date() . ' @ ' . get_the_modified_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_modified_date())) . ' ago</strong></span>
-					<small style="display: block;"><i class="far fa-fw fa-file-alt"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => esc_html(get_the_title()), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small>
+				echo '<li><i class="fa-regular fa-fw fa-calendar"></i> Updated: <span title="' . get_the_modified_date() . ' @ ' . get_the_modified_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_modified_date())) . ' ago</strong></span>
+					<small style="display: block;"><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => esc_html(get_the_title()), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small>
 				</li>';
 			}
 			wp_reset_postdata();
@@ -187,7 +187,7 @@ if ( !trait_exists('Dashboard') ){
 			$revision_count = ( WP_POST_REVISIONS == -1 )? 'all' : WP_POST_REVISIONS;
 			$revision_style = ( $revision_count === 0 )? 'style="color: red;"' : '';
 			$revisions_plural = ( $revision_count === 1 )? 'revision' : 'revisions';
-			echo '<li><i class="fas fa-fw fa-history"></i> Storing <strong ' . $revision_style . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
+			echo '<li><i class="fa-solid fa-fw fa-history"></i> Storing <strong ' . $revision_style . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
 
 			//Plugins
 			$all_plugins = nebula()->transient('nebula_count_plugins', function(){
@@ -195,14 +195,14 @@ if ( !trait_exists('Dashboard') ){
 			}, WEEK_IN_SECONDS);
 			$all_plugins_plural = ( count($all_plugins) === 1 )? 'Plugin' : 'Plugins';
 			$active_plugins = get_option('active_plugins', array());
-			echo '<li><i class="fas fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> ' . $all_plugins_plural . '</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
+			echo '<li><i class="fa-solid fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> ' . $all_plugins_plural . '</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
 
 			//Must-Use Plugins
 			if ( is_array(scandir(WPMU_PLUGIN_DIR)) ){ //Make sure this directory exists
 				$mu_plugin_count = count(array_diff(scandir(WPMU_PLUGIN_DIR), array('..', '.'))); //Count the files in the mu-plugins directory (and remove the "." and ".." directories from scandir())
 				if ( !empty($mu_plugin_count) && $mu_plugin_count >= 1 ){
 					$mu_plugins_plural = ( $mu_plugin_count === 1 )? 'Must-Use Plugin' : 'Must-Use Plugins';
-					echo '<li><i class="fas fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . $mu_plugin_count . '</strong> ' . $mu_plugins_plural . '</a></li>';
+					echo '<li><i class="fa-solid fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . $mu_plugin_count . '</strong> ' . $mu_plugins_plural . '</a></li>';
 				}
 			}
 
@@ -216,24 +216,24 @@ if ( !trait_exists('Dashboard') ){
 				$users_plural = 'User';
 				$users_icon = 'user';
 			}
-			echo '<li><i class="fas fa-fw fa-' . $users_icon . '"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . $this->online_users('count') . ' currently active)</small></li>';
+			echo '<li><i class="fa-solid fa-fw fa-' . $users_icon . '"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . $this->online_users('count') . ' currently active)</small></li>';
 
 			//Comments
 			if ( $this->get_option('comments') && $this->get_option('disqus_shortname') == '' ){
 				$comments_count = wp_count_comments();
 				$comments_plural = ( $comments_count->approved === 1 )? 'Comment' : 'Comments';
-				echo '<li><i class="fas fa-fw fa-comments"></i> <strong>' . $comments_count->approved . '</strong> ' . $comments_plural . '</li>';
+				echo '<li><i class="fa-solid fa-fw fa-comments"></i> <strong>' . $comments_count->approved . '</strong> ' . $comments_plural . '</li>';
 			} else {
 				if ( !$this->get_option('comments') ){
-					echo '<li><i class="far fa-fw fa-comment"></i> Comments disabled <small>(via <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a>)</small></li>';
+					echo '<li><i class="fa-regular fa-fw fa-comment"></i> Comments disabled <small>(via <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a>)</small></li>';
 				} else {
-					echo '<li><i class="far fa-fw fa-comments"></i> Using <a href="https://' . $this->get_option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank" rel="noopener noreferrer">Disqus comment system</a>.</li>';
+					echo '<li><i class="fa-regular fa-fw fa-comments"></i> Using <a href="https://' . $this->get_option('disqus_shortname') . '.disqus.com/admin/moderate/" target="_blank" rel="noopener noreferrer">Disqus comment system</a>.</li>';
 				}
 			}
 
 			//Global Admin Bar
 			if ( !$this->get_option('admin_bar') ){
-				echo '<li><i class="far fa-fw fa-bars"></i> Admin Bar disabled <small>(for all users via <a href="themes.php?page=nebula_options&tab=functions&option=admin_bar">Nebula Options</a>)</small></li>';
+				echo '<li><i class="fa-regular fa-fw fa-bars"></i> Admin Bar disabled <small>(for all users via <a href="themes.php?page=nebula_options&tab=functions&option=admin_bar">Nebula Options</a>)</small></li>';
 			}
 
 			echo '</ul>';
@@ -250,7 +250,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( $headshot_thumbnail ){
 				$headshot_html = '<img src="' . esc_attr($headshot_thumbnail) . '" style="float: left; max-width: 20px; border-radius: 100px;" loading="lazy" />&nbsp;';
 			} else {
-				$headshot_html = '<i class="fas fa-fw fa-user"></i>&nbsp;';
+				$headshot_html = '<i class="fa-solid fa-fw fa-user"></i>&nbsp;';
 			}
 
 			wp_add_dashboard_widget('nebula_current_user', $headshot_html . $this->get_user_info('display_name'), array($this, 'dashboard_current_user'));
@@ -279,23 +279,23 @@ if ( !trait_exists('Dashboard') ){
 				}
 			}
 			if ( !empty($job_title) || !empty($company) ){
-				echo '<li><i class="far fa-fw fa-building"></i> ' . $job_title . $company . '</li>';
+				echo '<li><i class="fa-regular fa-fw fa-building"></i> ' . $job_title . $company . '</li>';
 			}
 
 			//Location
 			if ( get_the_author_meta('usercity', $user_info->ID) && get_the_author_meta('userstate', $user_info->ID) ){
-				echo '<li><i class="fas fa-fw fa-map-marker"></i> <strong>' . get_the_author_meta('usercity', $user_info->ID) . ', ' . get_the_author_meta('userstate', $user_info->ID) . '</strong></li>';
+				echo '<li><i class="fa-solid fa-fw fa-map-marker"></i> <strong>' . get_the_author_meta('usercity', $user_info->ID) . ', ' . get_the_author_meta('userstate', $user_info->ID) . '</strong></li>';
 			}
 
 			//Email
-			echo '<li><i class="far fa-fw fa-envelope"></i> Email: <strong>' . $user_info->user_email . '</strong></li>';
+			echo '<li><i class="fa-regular fa-fw fa-envelope"></i> Email: <strong>' . $user_info->user_email . '</strong></li>';
 
 			if ( get_the_author_meta('phonenumber', $user_info->ID) ){
-				echo '<li><i class="fas fa-fw fa-phone"></i> Phone: <strong>' . get_the_author_meta('phonenumber', $user_info->ID) . '</strong></li>';
+				echo '<li><i class="fa-solid fa-fw fa-phone"></i> Phone: <strong>' . get_the_author_meta('phonenumber', $user_info->ID) . '</strong></li>';
 			}
 
-			echo '<li><i class="far fa-fw fa-user"></i> Username: <strong>' . $user_info->user_login . '</strong></li>';
-			echo '<li><i class="fas fa-fw fa-info-circle"></i> ID: <strong>' . $user_info->ID . '</strong></li>';
+			echo '<li><i class="fa-regular fa-fw fa-user"></i> Username: <strong>' . $user_info->user_login . '</strong></li>';
+			echo '<li><i class="fa-solid fa-fw fa-info-circle"></i> ID: <strong>' . $user_info->ID . '</strong></li>';
 
 			//Role
 			$fa_role = 'fa-user';
@@ -311,62 +311,62 @@ if ( !trait_exists('Dashboard') ){
 					default: $fa_role = 'fa-user'; break;
 				}
 			}
-			echo '<li><i class="fas fa-fw ' . $fa_role . '"></i> Role: <strong class="admin-user-info admin-user-role">' . $user_role . '</strong></li>';
+			echo '<li><i class="fa-solid fa-fw ' . $fa_role . '"></i> Role: <strong class="admin-user-info admin-user-role">' . $user_role . '</strong></li>';
 
 			//Posts by this user
 			$your_posts = nebula()->transient('nebula_count_posts_user_' . $user_info->ID, function($data){
 				return count_user_posts($data['id']);
 			}, array('id' => $user_info->ID), DAY_IN_SECONDS);
-			echo '<li><i class="fas fa-fw fa-thumbtack"></i> Your posts: <strong>' . $your_posts . '</strong></li>';
+			echo '<li><i class="fa-solid fa-fw fa-thumbtack"></i> Your posts: <strong>' . $your_posts . '</strong></li>';
 
 			//Device
 			if ( $this->is_desktop() ){
-				echo '<li><i class="fas fa-fw fa-desktop"></i> Device: <strong>Desktop/Laptop</strong></li>';
+				echo '<li><i class="fa-solid fa-fw fa-desktop"></i> Device: <strong>Desktop/Laptop</strong></li>';
 			} else {
-				echo '<li><i class="fas fa-fw fa-mobile-alt"></i> Device: <strong>' . ucwords($this->get_device('full')) . '</strong> <small>(Mobile)</small></li>';
+				echo '<li><i class="fa-solid fa-fw fa-mobile-alt"></i> Device: <strong>' . ucwords($this->get_device('full')) . '</strong> <small>(Mobile)</small></li>';
 			}
 
 			//Browser
 			switch ( str_replace(array('mobile', ' '), '', strtolower($this->get_browser('name'))) ){
 				case 'edge':
-					$browser_icon = 'fab fa-edge';
+					$browser_icon = 'fa-brands fa-edge';
 					break;
 				case 'safari':
-					$browser_icon = 'fab fa-safari';
+					$browser_icon = 'fa-brands fa-safari';
 					break;
 				case 'firefox':
-					$browser_icon = 'fab fa-firefox';
+					$browser_icon = 'fa-brands fa-firefox';
 					break;
 				case 'chrome':
 				case 'chrome mobile':
-					$browser_icon = 'fab fa-chrome';
+					$browser_icon = 'fa-brands fa-chrome';
 					break;
 				case 'opera':
-					$browser_icon = 'fab fa-opera';
+					$browser_icon = 'fa-brands fa-opera';
 					break;
 				default:
-					$browser_icon = 'fas fa-globe';
+					$browser_icon = 'fa-solid fa-globe';
 					break;
 			}
 			echo '<li><i class="fa-fw ' . $browser_icon . '"></i> Browser: <strong>' . ucwords($this->get_browser('full')) . '</strong></li>';
 
 			//IP Address
-			echo '<li><i class="fas fa-fw fa-globe"></i> IP Address: <a href="http://whatismyipaddress.com/ip/' . $this->get_ip_address() . '" target="_blank" rel="noopener noreferrer"><strong class="admin-user-info admin-user-ip" title="Anonymized IP Address">' . $this->get_ip_address() . '</strong></a></li>';
+			echo '<li><i class="fa-solid fa-fw fa-globe"></i> IP Address: <a href="http://whatismyipaddress.com/ip/' . $this->get_ip_address() . '" target="_blank" rel="noopener noreferrer"><strong class="admin-user-info admin-user-ip" title="Anonymized IP Address">' . $this->get_ip_address() . '</strong></a></li>';
 
 			//Multiple locations
 			if ( $this->user_single_concurrent($user_info->ID) > 1 ){
-				echo '<li><i class="fas fa-fw fa-users"></i> Active in <strong>' . $this->user_single_concurrent($user_info->ID) . ' locations</strong>.</li>';
+				echo '<li><i class="fa-solid fa-fw fa-users"></i> Active in <strong>' . $this->user_single_concurrent($user_info->ID) . ' locations</strong>.</li>';
 			}
 
 			//User Admin Bar
 			if ( !get_user_option('show_admin_bar_front', $user_info->ID) ){
-				echo '<li><i class="fas fa-fw fa-bars"></i> Admin Bar disabled <small>(for just you via <a href="profile.php">User Profile</a>)</small></li>';
+				echo '<li><i class="fa-solid fa-fw fa-bars"></i> Admin Bar disabled <small>(for just you via <a href="profile.php">User Profile</a>)</small></li>';
 			}
 
 			do_action('nebula_user_metabox');
 			echo '</ul>';
 
-			echo '<p><small><em><a href="profile.php"><i class="fas fa-fw fa-pencil-alt"></i> Manage your user information</a></em></small></p>';
+			echo '<p><small><em><a href="profile.php"><i class="fa-solid fa-fw fa-pencil-alt"></i> Manage your user information</a></em></small></p>';
 			$this->timer('Nebula Current User Dashboard Metabox', 'end');
 		}
 
@@ -418,9 +418,9 @@ if ( !trait_exists('Dashboard') ){
 			$this->timer('Nebula PHG Dashboard Metabox');
 			echo '<a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+photo' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . '" target="_blank" rel="noopener noreferrer"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" loading="lazy" /></a>';
 			echo '<ul class="nebula-fa-ul">';
-			echo '<li><i class="fas fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener noreferrer">760 West Genesee Street, Syracuse, NY 13204</a></li>';
-			echo '<li><i class="fas fa-fw fa-link"></i> <a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+textlink' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . '" target="_blank">PinckneyHugo.com</a></li>';
-			echo '<li><i class="fas fa-fw fa-phone"></i> (315) 478-6700</li>';
+			echo '<li><i class="fa-solid fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener noreferrer">760 West Genesee Street, Syracuse, NY 13204</a></li>';
+			echo '<li><i class="fa-solid fa-fw fa-link"></i> <a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+textlink' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . '" target="_blank">PinckneyHugo.com</a></li>';
+			echo '<li><i class="fa-solid fa-fw fa-phone"></i> (315) 478-6700</li>';
 			echo '</ul>';
 			$this->timer('Nebula PHG Dashboard Metabox', 'end');
 		}
@@ -432,7 +432,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//TODO Metabox
 		public function todo_metabox(){
-			wp_add_dashboard_widget('todo_manager', '<i class="fas fa-fw fa-check-square"></i>&nbsp;To-Do Manager', array($this, 'todo_metabox_content'));
+			wp_add_dashboard_widget('todo_manager', '<i class="fa-solid fa-fw fa-check-square"></i>&nbsp;To-Do Manager', array($this, 'todo_metabox_content'));
 		}
 
 		//TODO metabox content
@@ -458,7 +458,7 @@ if ( !trait_exists('Dashboard') ){
 			$instance_count = 0;
 			?>
 				<p class="todoresults_title">
-					<strong>Active @todo Comments</strong> <a class="todo_help_icon" href="https://gearside.com/wordpress-dashboard-todo-manager/?utm_campaign=nebula&utm_medium=nebula&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=todo+metabox<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank" rel="noopener noreferrer"><i class="far fw fa-question-circle"></i> Documentation &raquo;</a>
+					<strong>Active @todo Comments</strong> <a class="todo_help_icon" href="https://gearside.com/wordpress-dashboard-todo-manager/?utm_campaign=nebula&utm_medium=nebula&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=todo+metabox<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank" rel="noopener noreferrer"><i class="fa-regular fw fa-question-circle"></i> Documentation &raquo;</a>
 				</p>
 
 				<div class="todo_results">
@@ -517,15 +517,15 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			if ( empty($instance_count) ){
-				echo '<p style="margin-top: 50px; text-align: center; font-size: 24px; line-height: 28px; opacity: 0.1;"><i class="far fa-smile" style="font-size: 32px;"></i><br />Nothing!</p>';
+				echo '<p style="margin-top: 50px; text-align: center; font-size: 24px; line-height: 28px; opacity: 0.1;"><i class="fa-regular fa-smile" style="font-size: 32px;"></i><br />Nothing!</p>';
 			}
 			?>
 				</div><!--/todo_results-->
 				<p>
-					<i class="far fa-fw fa-file-code"></i> Found <strong><?php echo $file_count; ?> files</strong> with <strong><?php echo $instance_count; ?> @todo comments</strong>.
+					<i class="fa-regular fa-fw fa-file-code"></i> Found <strong><?php echo $file_count; ?> files</strong> with <strong><?php echo $instance_count; ?> @todo comments</strong>.
 
 					<?php if ( $this->get_option('github_url') ): ?>
-						<br /><i class="fab fa-fw fa-github"></i> <a href="<?php echo $this->get_option('github_url'); ?>/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">Check the GitHub repository</a> for additional issues.
+						<br /><i class="fa-brands fa-fw fa-github"></i> <a href="<?php echo $this->get_option('github_url'); ?>/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">Check the GitHub repository</a> for additional issues.
 					<?php endif; ?>
 				</p>
 			<?php
@@ -591,7 +591,7 @@ if ( !trait_exists('Dashboard') ){
 					$environment_type_icon = 'fa-flask';
 				}
 
-				echo '<li><i class="fas fa-fw ' . $environment_type_icon . '"></i> Environment Type: <strong>' . $environment_type . '</strong></li>';
+				echo '<li><i class="fa-solid fa-fw ' . $environment_type_icon . '"></i> Environment Type: <strong>' . $environment_type . '</strong></li>';
 			}
 
 			//Domain
@@ -600,7 +600,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( empty($domain) ){
 				$domain = '<small>(None)</small>';
 			}
-			echo '<li><i class="fas fa-fw fa-info-circle"></i> <a href="http://whois.domaintools.com/' . $this->super->server['SERVER_NAME'] . '" target="_blank" rel="noopener noreferrer" title="WHOIS Lookup">Domain</a>: <strong>' . $domain . '</strong></li>';
+			echo '<li><i class="fa-solid fa-fw fa-info-circle"></i> <a href="http://whois.domaintools.com/' . $this->super->server['SERVER_NAME'] . '" target="_blank" rel="noopener noreferrer" title="WHOIS Lookup">Domain</a>: <strong>' . $domain . '</strong></li>';
 
 			//Host
 			function top_domain_name($url){
@@ -618,7 +618,7 @@ if ( !trait_exists('Dashboard') ){
 				$dnsrecord = ( dns_get_record(top_domain_name(gethostname()), DNS_NS) )? dns_get_record(top_domain_name(gethostname()), DNS_NS) : '';
 				restore_error_handler();
 
-				echo '<li><i class="far fa-fw fa-hdd"></i> Host: <strong>' . top_domain_name(gethostname()) . '</strong>';
+				echo '<li><i class="fa-regular fa-fw fa-hdd"></i> Host: <strong>' . top_domain_name(gethostname()) . '</strong>';
 				if ( !empty($dnsrecord[0]['target']) ){
 					echo ' <small>(' . top_domain_name($dnsrecord[0]['target']) . ')</small>';
 				}
@@ -628,17 +628,17 @@ if ( !trait_exists('Dashboard') ){
 			//Server IP address (and connection security)
 			$secureServer = '';
 			if ( (!empty($this->super->server['HTTPS']) && $this->super->server['HTTPS'] !== 'off') || $this->super->server['SERVER_PORT'] === 443 ){
-				$secureServer = '<small class="secured-connection"><i class="fas fa-fw fa-lock"></i>Secured Connection</small>';
+				$secureServer = '<small class="secured-connection"><i class="fa-solid fa-fw fa-lock"></i>Secured Connection</small>';
 			}
 			$public_local_ip = ( preg_match('/^(127\.|192\.168|172\.|10\.)/', $this->super->server['SERVER_ADDR']) )? 'Local' : 'Public'; //Check if the server IP is likely local (private) or public (this is not perfectly exact)
-			echo '<li><i class="fas fa-fw fa-upload"></i> ' . $public_local_ip . ' Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $this->super->server['SERVER_ADDR'] . '" target="_blank" rel="noopener noreferrer">' . apply_filters('nebula_dashboard_server_ip', $this->super->server['SERVER_ADDR']) . '</a></strong> ' . $secureServer . '</li>';
+			echo '<li><i class="fa-solid fa-fw fa-upload"></i> ' . $public_local_ip . ' Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $this->super->server['SERVER_ADDR'] . '" target="_blank" rel="noopener noreferrer">' . apply_filters('nebula_dashboard_server_ip', $this->super->server['SERVER_ADDR']) . '</a></strong> ' . $secureServer . '</li>';
 
 			//Server Time Zone
 			if ( date_default_timezone_get() === get_option('timezone_string') ){
-				echo '<li><i class="fas fa-fw fa-globe-americas"></i> Timezone: <strong>' . date_default_timezone_get() . '</strong></li>';
+				echo '<li><i class="fa-solid fa-fw fa-globe-americas"></i> Timezone: <strong>' . date_default_timezone_get() . '</strong></li>';
 			} else {
-				echo '<li><i class="fas fa-fw fa-globe-americas"></i> Server Timezone: <strong>' . date_default_timezone_get() . '</strong></li>';
-				echo '<li><i class="fas fa-fw fa-globe-americas"></i> WordPress Timezone: <strong>' . get_option('timezone_string') . '</strong></li>';
+				echo '<li><i class="fa-solid fa-fw fa-globe-americas"></i> Server Timezone: <strong>' . date_default_timezone_get() . '</strong></li>';
+				echo '<li><i class="fa-solid fa-fw fa-globe-americas"></i> WordPress Timezone: <strong>' . get_option('timezone_string') . '</strong></li>';
 			}
 
 			//Server operating system
@@ -649,21 +649,21 @@ if ( !trait_exists('Dashboard') ){
 			} else {
 				$php_os_icon = 'fa-upload';
 			}
-			echo '<li><i class="fab fa-fw ' . $php_os_icon . '"></i> Server OS: <strong>' . PHP_OS . '</strong></li>';
+			echo '<li><i class="fa-brands fa-fw ' . $php_os_icon . '"></i> Server OS: <strong>' . PHP_OS . '</strong></li>';
 
 			//Server software
 			$server_software = $this->super->server['SERVER_SOFTWARE'];
 			if ( strlen($server_software) > 10 ){
 				$server_software = strtok($this->super->server['SERVER_SOFTWARE'], ' '); //Shorten to until the first space
 			}
-			echo '<li><i class="fas fa-fw fa-server"></i> Server Software: <strong title="' . $this->super->server['SERVER_SOFTWARE'] . '">' . $server_software . '</strong></li>';
+			echo '<li><i class="fa-solid fa-fw fa-server"></i> Server Software: <strong title="' . $this->super->server['SERVER_SOFTWARE'] . '">' . $server_software . '</strong></li>';
 
-			echo '<li><i class="fas fa-fw fa-ethernet"></i> Server Protocol: <strong>' . $this->super->server['SERVER_PROTOCOL'] . '</strong></li>';
+			echo '<li><i class="fa-solid fa-fw fa-ethernet"></i> Server Protocol: <strong>' . $this->super->server['SERVER_PROTOCOL'] . '</strong></li>';
 
 			//MySQL version
 			global $wpdb;
 			$mysql_version = mysqli_get_client_version();
-			echo '<li><i class="fas fa-fw fa-database"></i> MySQL Version: <strong title="Raw: ' . $mysql_version . '">' . floor($mysql_version/10000) . '.' . floor(($mysql_version%10000)/100) . '.' . ($mysql_version%10000)%100 . '</strong> <small>(' . get_class($wpdb->dbh) . ')</small></li>'; //PHP 7.4 use numeric separators here
+			echo '<li><i class="fa-solid fa-fw fa-database"></i> MySQL Version: <strong title="Raw: ' . $mysql_version . '">' . floor($mysql_version/10000) . '.' . floor(($mysql_version%10000)/100) . '.' . ($mysql_version%10000)%100 . '</strong> <small>(' . get_class($wpdb->dbh) . ')</small></li>'; //PHP 7.4 use numeric separators here
 
 			//PHP version
 			$php_version_color = 'inherit';
@@ -681,10 +681,10 @@ if ( !trait_exists('Dashboard') ){
 					$php_version_cursor = 'help';
 				}
 			}
-			echo '<li><i class="fas fa-fw fa-wrench"></i> PHP Version: <strong style="color: ' . $php_version_color . '; cursor: ' . $php_version_cursor . ';" title="' . $php_version_info . '">' . PHP_VERSION . '</strong> <small>(SAPI: <strong>' . php_sapi_name() . '</strong>)</small></li>';
+			echo '<li><i class="fa-solid fa-fw fa-wrench"></i> PHP Version: <strong style="color: ' . $php_version_color . '; cursor: ' . $php_version_cursor . ';" title="' . $php_version_info . '">' . PHP_VERSION . '</strong> <small>(SAPI: <strong>' . php_sapi_name() . '</strong>)</small></li>';
 
 			//PHP memory limit
-			echo '<li><i class="fas fa-fw fa-cogs"></i> PHP Memory Limit: <strong>' . ini_get('memory_limit') . '</strong></li>';
+			echo '<li><i class="fa-solid fa-fw fa-cogs"></i> PHP Memory Limit: <strong>' . ini_get('memory_limit') . '</strong></li>';
 
 			//Theme directory size(s)
 			if ( is_child_theme() ){
@@ -696,13 +696,13 @@ if ( !trait_exists('Dashboard') ){
 					return $this->foldersize(get_stylesheet_directory());
 				}, DAY_IN_SECONDS);
 
-				echo '<li><i class="fas fa-code"></i> Parent theme directory size: <strong>' . $this->format_bytes($nebula_parent_size, 1) . '</strong> </li>';
-				echo '<li><i class="fas fa-code"></i> Child theme directory size: <strong>' . $this->format_bytes($nebula_child_size, 1) . '</strong> </li>';
+				echo '<li><i class="fa-solid fa-code"></i> Parent theme directory size: <strong>' . $this->format_bytes($nebula_parent_size, 1) . '</strong> </li>';
+				echo '<li><i class="fa-solid fa-code"></i> Child theme directory size: <strong>' . $this->format_bytes($nebula_child_size, 1) . '</strong> </li>';
 			} else {
 				$nebula_size = nebula()->transient('nebula_directory_size_theme', function(){
 					return $this->foldersize(get_stylesheet_directory());
 				}, DAY_IN_SECONDS);
-				echo '<li><i class="fas fa-code"></i> Theme directory size: <strong>' . $this->format_bytes($nebula_size, 1) . '</strong> </li>';
+				echo '<li><i class="fa-solid fa-code"></i> Theme directory size: <strong>' . $this->format_bytes($nebula_size, 1) . '</strong> </li>';
 			}
 
 			do_action('nebula_dev_dashboard_directories');
@@ -726,7 +726,7 @@ if ( !trait_exists('Dashboard') ){
 			} else {
 				$upload_max = '';
 			}
-			echo '<li><i class="fas fa-fw fa-images"></i> Uploads directory size: <strong>' . $this->format_bytes($uploads_size, 1) . '</strong> ' . $upload_max . '</li>';
+			echo '<li><i class="fa-solid fa-fw fa-images"></i> Uploads directory size: <strong>' . $this->format_bytes($uploads_size, 1) . '</strong> ' . $upload_max . '</li>';
 
 			//PHP Disk Space
 			if ( function_exists('disk_total_space') && function_exists('disk_free_space') ){
@@ -740,29 +740,29 @@ if ( !trait_exists('Dashboard') ){
 					$disk_usage_color = '#ca8038'; //Warning
 				}
 
-				echo '<li><i class="fas fa-fw fa-hdd"></i> Disk Space Available: <strong style="color: ' . $disk_usage_color . ';">' . $this->format_bytes($disk_free_space, 1) . '</strong> <small>(Total space: <strong>' . $this->format_bytes($disk_total_space) . '</strong>)</small></li>';
+				echo '<li><i class="fa-solid fa-fw fa-hdd"></i> Disk Space Available: <strong style="color: ' . $disk_usage_color . ';">' . $this->format_bytes($disk_free_space, 1) . '</strong> <small>(Total space: <strong>' . $this->format_bytes($disk_total_space) . '</strong>)</small></li>';
 			}
 
 			//Link to Query Monitor Environment Panel
 			//if ( is_plugin_active('query-monitor/query-monitor.php') ){
-				//echo '<li><i class="fas fa-fw fa-table"></i> <a href="#qm-environment">Additional Server Information <small>(Query Monitor)</small></a></li>'; //Not currently possible: https://github.com/johnbillion/query-monitor/issues/622
+				//echo '<li><i class="fa-solid fa-fw fa-table"></i> <a href="#qm-environment">Additional Server Information <small>(Query Monitor)</small></a></li>'; //Not currently possible: https://github.com/johnbillion/query-monitor/issues/622
 			//}
 
 			//Log Files
 			foreach ( $this->get_log_files('all', true) as $types ){ //Always get fresh data here
 				foreach ( $types as $log_file ){
-					echo '<li><i class="far fa-fw fa-file-alt"></i> <code title="' . $log_file['shortpath'] . '" style="cursor: help;">' . $log_file['name'] . '</code> File: <strong>' . $this->format_bytes($log_file['bytes']) . '</strong></li>';
+					echo '<li><i class="fa-regular fa-fw fa-file-alt"></i> <code title="' . $log_file['shortpath'] . '" style="cursor: help;">' . $log_file['name'] . '</code> File: <strong>' . $this->format_bytes($log_file['bytes']) . '</strong></li>';
 				}
 			}
 
 			//Service Worker
 			if ( $this->get_option('service_worker') ){
 				if ( !is_ssl() ){
-					echo '<li><i class="fas fa-fw fa-microchip" style="color: red;"></i> <strong>Not</strong> using service worker. No SSL.</li>';
+					echo '<li><i class="fa-solid fa-fw fa-microchip" style="color: red;"></i> <strong>Not</strong> using service worker. No SSL.</li>';
 				} elseif ( !file_exists($this->sw_location(false)) ){
-					echo '<li><i class="fas fa-fw fa-microchip" style="color: red;"></i> <strong>Not</strong> using service worker. Service worker file does not exist.</li>';
+					echo '<li><i class="fa-solid fa-fw fa-microchip" style="color: red;"></i> <strong>Not</strong> using service worker. Service worker file does not exist.</li>';
 				} else {
-					echo '<li><i class="fas fa-fw fa-microchip"></i> Using service worker</li>';
+					echo '<li><i class="fa-solid fa-fw fa-microchip"></i> Using service worker</li>';
 				}
 			}
 
@@ -776,18 +776,18 @@ if ( !trait_exists('Dashboard') ){
 				}
 				return $install_date;
 			}
-			echo '<li><i class="far fa-fw fa-calendar"></i> Installed: ' . initial_install_date() . '</li>';
+			echo '<li><i class="fa-regular fa-fw fa-calendar"></i> Installed: ' . initial_install_date() . '</li>';
 
 			$latest_file = $this->last_modified();
-			echo '<li><i class="far fa-fw fa-calendar"></i> <span title="' . $latest_file['path'] . '" style="cursor: help;">Modified:</span> <span title="' . date("F j, Y", $latest_file['date']) . ' @ ' . date("g:ia", $latest_file['date']) . '" style="cursor: help;"><strong>' . human_time_diff($latest_file['date']) . ' ago</strong></span></li>';
+			echo '<li><i class="fa-regular fa-fw fa-calendar"></i> <span title="' . $latest_file['path'] . '" style="cursor: help;">Modified:</span> <span title="' . date("F j, Y", $latest_file['date']) . ' @ ' . date("g:ia", $latest_file['date']) . '" style="cursor: help;"><strong>' . human_time_diff($latest_file['date']) . ' ago</strong></span></li>';
 
 			//SCSS last processed date
 			if ( $this->get_data('scss_last_processed') ){
 				$sass_option = ( nebula()->get_option('scss') )? '' : ' <small><em><a href="themes.php?page=nebula_options&tab=functions&option=scss">Sass is currently <strong>disabled</strong> &raquo;</a></em></small>';
-				echo '<li><i class="fab fa-fw fa-sass"></i> Sass Processed: <span title="' . date("F j, Y", $this->get_data('scss_last_processed')) . ' @ ' . date("g:i:sa", $this->get_data('scss_last_processed')) . '" style="cursor: help;"><strong>' . human_time_diff($this->get_data('scss_last_processed')) . ' ago</strong></span> ' . $sass_option . '</li>';
+				echo '<li><i class="fa-brands fa-fw fa-sass"></i> Sass Processed: <span title="' . date("F j, Y", $this->get_data('scss_last_processed')) . ' @ ' . date("g:i:sa", $this->get_data('scss_last_processed')) . '" style="cursor: help;"><strong>' . human_time_diff($this->get_data('scss_last_processed')) . ' ago</strong></span> ' . $sass_option . '</li>';
 			}
 
-			echo '<li><i class="fab fa-fw fa-wordpress"></i> <a href="site-health.php?tab=debug">WP Site Info &raquo;</a></li>'; //Link to WP Health Check Info page
+			echo '<li><i class="fa-brands fa-fw fa-wordpress"></i> <a href="site-health.php?tab=debug">WP Site Info &raquo;</a></li>'; //Link to WP Health Check Info page
 
 			echo '</ul>';
 
@@ -814,7 +814,7 @@ if ( !trait_exists('Dashboard') ){
 
 			$all_directory_search_options = apply_filters('nebula_directory_search_options', $directory_search_options); //Allow other functions to hook in to add directories to search
 
-			echo '<form id="theme" class="searchfiles"><i id="searchprogress" class="fas fa-fw fa-search"></i> <input class="findterm" type="text" placeholder="Search files" autocorrect="off" autocapitalize="off" spellcheck="false" /><select class="searchdirectory">';
+			echo '<form id="theme" class="searchfiles"><i id="searchprogress" class="fa-solid fa-fw fa-search"></i> <input class="findterm" type="text" placeholder="Search files" autocorrect="off" autocapitalize="off" spellcheck="false" /><select class="searchdirectory">';
 			foreach ( $all_directory_search_options as $name => $option_html ){
 				echo $option_html;
 			}
@@ -961,7 +961,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Performance Timing
 		public function performance_metabox(){
-			wp_add_dashboard_widget('performance_metabox', '<i id="performance-status-icon" class="fas fa-fw fa-stopwatch"></i> <span id="performance-title">&nbsp;Performance</span>', array($this, 'performance_timing'));
+			wp_add_dashboard_widget('performance_metabox', '<i id="performance-status-icon" class="fa-solid fa-fw fa-stopwatch"></i> <span id="performance-title">&nbsp;Performance</span>', array($this, 'performance_timing'));
 		}
 
 		public function performance_timing(){
@@ -975,10 +975,10 @@ if ( !trait_exists('Dashboard') ){
 			echo '<ul id="nebula-performance-metrics" class="nebula-fa-ul">';
 
 			//Sub-status
-			echo '<li id="performance-sub-status"><i class="far fa-fw fa-comment"></i> <span class="label">Status</span>: <strong>Preparing test...</strong></li>';
+			echo '<li id="performance-sub-status"><i class="fa-regular fa-fw fa-comment"></i> <span class="label">Status</span>: <strong>Preparing test...</strong></li>';
 
 			//PHP-Measured Server Load Time (TTFB)
-			echo '<li id="performance-ttfb"><i class="far fa-fw fa-clock"></i> <span class="label">PHP Response Time</span>: <strong class="datapoint" title="Calculated via PHP render time">' . timer_stop(0, 3) . ' seconds</strong></li>';
+			echo '<li id="performance-ttfb"><i class="fa-regular fa-fw fa-clock"></i> <span class="label">PHP Response Time</span>: <strong class="datapoint" title="Calculated via PHP render time">' . timer_stop(0, 3) . ' seconds</strong></li>';
 			echo '</ul>';
 
 			echo '<p><small><a href="https://web.dev/lighthouse-performance/" target="_blank" rel="noopener noreferrer">Learn about user-centric performance metrics &raquo;</a></small></p>';
@@ -988,13 +988,13 @@ if ( !trait_exists('Dashboard') ){
 		//Add a dashboard metabox for design reference
 		public function design_metabox(){
 			global $wp_meta_boxes;
-			wp_add_dashboard_widget('nebula_design', '<i class="fas fa-fw fa-palette"></i> &nbsp;Design Reference', array($this, 'dashboard_nebula_design'));
+			wp_add_dashboard_widget('nebula_design', '<i class="fa-solid fa-fw fa-palette"></i> &nbsp;Design Reference', array($this, 'dashboard_nebula_design'));
 		}
 
 		public function dashboard_nebula_design(){
 			$this->timer('Nebula Design Dashboard Metabox');
 			if ( $this->get_option('design_reference_link') ){
-				echo '<p><i class="fas fa-fw fa-file-image"></i> <a href="' . $this->get_option('design_reference_link') . '" target="_blank">Design File(s) &raquo;</a></p>';
+				echo '<p><i class="fa-solid fa-fw fa-file-image"></i> <a href="' . $this->get_option('design_reference_link') . '" target="_blank">Design File(s) &raquo;</a></p>';
 			}
 
 			$notable_colors = apply_filters('nebula_notable_colors', array('$primary_color', '$secondary_color')); //Allow other themes and plugins to designate notable colors
@@ -1062,7 +1062,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( nebula()->get_option('github_url') && nebula()->get_option('github_pat') ){
 				$repo_name = str_replace('https://github.com/', '', nebula()->get_option('github_url'));
 				global $wp_meta_boxes;
-				wp_add_dashboard_widget('nebula_github', '<i class="fab fa-fw fa-github"></i>&nbsp;' . $repo_name, array($this, 'dashboard_nebula_github'));
+				wp_add_dashboard_widget('nebula_github', '<i class="fa-brands fa-fw fa-github"></i>&nbsp;' . $repo_name, array($this, 'dashboard_nebula_github'));
 			}
 		}
 
@@ -1115,7 +1115,7 @@ if ( !trait_exists('Dashboard') ){
 				$commit_date_time = strtotime($commits[$i]->commit->committer->date);
 				$commit_date_icon = ( date('Y-m-d', $commit_date_time) === date('Y-m-d') )? 'fa-clock' : 'fa-calendar';
 				echo '<p>
-					<i class="far fa-fw ' . $commit_date_icon . '"></i> <a href="' . $commits[$i]->html_url . '" target="_blank" title="' . date('F j, Y @ g:ia', $commit_date_time) . '">' . human_time_diff($commit_date_time) . ' ago</a><br />
+					<i class="fa-regular fa-fw ' . $commit_date_icon . '"></i> <a href="' . $commits[$i]->html_url . '" target="_blank" title="' . date('F j, Y @ g:ia', $commit_date_time) . '">' . human_time_diff($commit_date_time) . ' ago</a><br />
 					<small style="display: block;">' . nebula()->excerpt(array('text' => $commits[$i]->commit->message, 'words' => 15, 'ellipsis' => true, 'more' => false)) . '</small>
 				</p>';
 			}
@@ -1184,7 +1184,7 @@ if ( !trait_exists('Dashboard') ){
 					echo '<li>
 						<p>
 							<a href="' . $github_combined_posts[$i]->html_url . '" target="_blank">' . htmlentities($github_combined_posts[$i]->title) . '</a><br />
-							<small><i class="far fa-fw ' . $github_post_date_icon . '"></i> <span title="' . date('F j, Y @ g:ia', $github_post_date_time) . '">' . $github_post_type . ' updated ' . human_time_diff($github_post_date_time) . ' ago</span></small>
+							<small><i class="fa-regular fa-fw ' . $github_post_date_icon . '"></i> <span title="' . date('F j, Y @ g:ia', $github_post_date_time) . '">' . $github_post_type . ' updated ' . human_time_diff($github_post_date_time) . ' ago</span></small>
 						</p>
 					</li>';
 				}
@@ -1200,7 +1200,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Hubspot Contacts
 		public function hubspot_metabox(){
-			wp_add_dashboard_widget('hubspot_contacts', '<i class="fab fa-fw fa-hubspot"></i>&nbsp;Latest Hubspot Contacts', array($this, 'hubspot_contacts_content'));
+			wp_add_dashboard_widget('hubspot_contacts', '<i class="fa-brands fa-fw fa-hubspot"></i>&nbsp;Latest Hubspot Contacts', array($this, 'hubspot_contacts_content'));
 		}
 
 		//Hubspot Contacts metabox content
@@ -1249,13 +1249,13 @@ if ( !trait_exists('Dashboard') ){
 						}
 						?>
 
-						<li><?php echo ( $has_name )? '<i class="fas fa-fw fa-user"></i> ' : '<i class="far fa-fw fa-envelope"></i> '; ?><strong><a href="<?php echo $contact->{'profile-url'}; ?>" target="_blank"><?php echo ( $has_name )? $contact_name : $contact_email; ?></a></strong></li>
+						<li><?php echo ( $has_name )? '<i class="fa-solid fa-fw fa-user"></i> ' : '<i class="fa-regular fa-fw fa-envelope"></i> '; ?><strong><a href="<?php echo $contact->{'profile-url'}; ?>" target="_blank"><?php echo ( $has_name )? $contact_name : $contact_email; ?></a></strong></li>
 
 						<?php if ( $has_name ): ?>
-							<li><i class="far fa-fw fa-envelope"></i> <?php echo $contact_email; ?><br /></li>
+							<li><i class="fa-regular fa-fw fa-envelope"></i> <?php echo $contact_email; ?><br /></li>
 						<?php endif; ?>
 
-						<li><i class="far fa-fw fa-<?php echo ( date('Y-m-d', $contact->addedAt/1000) === date('Y-m-d') )? 'clock' : 'calendar'; ?>"></i> <span title="<?php echo date('F j, Y @ g:ia', $contact->addedAt/1000); ?>" style="cursor: help;"><?php echo human_time_diff($contact->addedAt/1000) . ' ago'; ?></span></li>
+						<li><i class="fa-regular fa-fw fa-<?php echo ( date('Y-m-d', $contact->addedAt/1000) === date('Y-m-d') )? 'clock' : 'calendar'; ?>"></i> <span title="<?php echo date('F j, Y @ g:ia', $contact->addedAt/1000); ?>" style="cursor: help;"><?php echo human_time_diff($contact->addedAt/1000) . ' ago'; ?></span></li>
 
 						<?php
 						$after_contact = apply_filters('nebula_hubspot_metabox_after_contact', '', $contact);

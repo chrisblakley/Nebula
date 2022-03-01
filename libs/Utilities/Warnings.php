@@ -95,7 +95,7 @@ if ( !trait_exists('Warnings') ){
 										$nebula_warnings['slug_conflict'] = array(
 											'level' => 'error',
 											'dismissible' => true,
-											'description' => '<i class="fas fa-fw fa-link"></i> Slug conflict with ' . ucwords(str_replace('_', ' ', $taxonomy)) . ': <strong>' . $term->slug . '</strong> - Consider changing this page slug.'
+											'description' => '<i class="fa-solid fa-fw fa-link"></i> Slug conflict with ' . ucwords(str_replace('_', ' ', $taxonomy)) . ': <strong>' . $term->slug . '</strong> - Consider changing this page slug.'
 										);
 										return false;
 									}
@@ -116,7 +116,7 @@ if ( !trait_exists('Warnings') ){
 								$nebula_warnings['file_permissions'] = array(
 									'level' => 'error',
 									'dismissible' => true,
-									'description' => '<i class="fas fa-fw fa-server"></i> File system permissions error. Consider changing the FS_METHOD in wp-config.php.',
+									'description' => '<i class="fa-solid fa-fw fa-server"></i> File system permissions error. Consider changing the FS_METHOD in wp-config.php.',
 								);
 							} else {
 								set_transient('nebula_fs_method', true); //On success, set a transient. No expiration.
@@ -130,7 +130,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings['site_url_http'] = array(
 						'level' => 'error',
 						'dismissible' => true,
-						'description' => '<i class="fas fa-fw fa-lock-open"></i> <a href="options-general.php">Website Address</a> settings are http but the site is served from https.',
+						'description' => '<i class="fa-solid fa-fw fa-lock-open"></i> <a href="options-general.php">Website Address</a> settings are http but the site is served from https.',
 						'url' => admin_url('options-general.php')
 					);
 				}
@@ -140,7 +140,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings['search_visibility'] = array(
 						'level' => 'error',
 						'dismissible' => true,
-						'description' => '<i class="fab fa-fw fa-searchengin"></i> <a href="options-reading.php">Search Engine Visibility</a> is currently disabled! Therefore, additional SEO checks were not performed.',
+						'description' => '<i class="fa-brands fa-fw fa-searchengin"></i> <a href="options-reading.php">Search Engine Visibility</a> is currently disabled! Therefore, additional SEO checks were not performed.',
 						'url' => admin_url('options-reading.php')
 					);
 				} else {
@@ -154,7 +154,7 @@ if ( !trait_exists('Warnings') ){
 								$nebula_warnings['missing_sitemap'] = array(
 									'level' => 'warning',
 									'dismissible' => true,
-									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. Yoast is enabled, but <a href="' . home_url('/') . 'sitemap_index.xml" target="_blank">sitemap_index.xml</a> is unavailable.'
+									'description' => '<i class="fa-solid fa-fw fa-sitemap"></i> Missing sitemap XML. Yoast is enabled, but <a href="' . home_url('/') . 'sitemap_index.xml" target="_blank">sitemap_index.xml</a> is unavailable.'
 								);
 							}
 						} elseif ( is_plugin_active('autodescription/autodescription.php') ){ //The SEO Framework
@@ -163,7 +163,7 @@ if ( !trait_exists('Warnings') ){
 								$nebula_warnings['missing_sitemap'] = array(
 									'level' => 'warning',
 									'dismissible' => true,
-									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. The SEO Framework is enabled, but <a href="' . home_url('/') . 'sitemap.xml" target="_blank">sitemap.xml</a> is unavailable.'
+									'description' => '<i class="fa-solid fa-fw fa-sitemap"></i> Missing sitemap XML. The SEO Framework is enabled, but <a href="' . home_url('/') . 'sitemap.xml" target="_blank">sitemap.xml</a> is unavailable.'
 								);
 							}
 						} else {
@@ -172,7 +172,7 @@ if ( !trait_exists('Warnings') ){
 								$nebula_warnings['missing_sitemap'] = array(
 									'level' => 'warning',
 									'dismissible' => true,
-									'description' => '<i class="fas fa-fw fa-sitemap"></i> Missing sitemap XML. WordPress core <a href="' . home_url('/') . 'wp-sitemap.xml" target="_blank">sitemap_index.xml</a> is unavailable.'
+									'description' => '<i class="fa-solid fa-fw fa-sitemap"></i> Missing sitemap XML. WordPress core <a href="' . home_url('/') . 'wp-sitemap.xml" target="_blank">sitemap_index.xml</a> is unavailable.'
 								);
 
 								//Check if the SimpleXML PHP module is installed on the server (required for WP core sitemap generation)
@@ -181,7 +181,7 @@ if ( !trait_exists('Warnings') ){
 									$nebula_warnings['simplexml'] = array(
 										'level' => 'warning',
 										'dismissible' => true,
-										'description' => '<i class="fas fa-fw fa-sitemap"></i> SimpleXML PHP module is not available. This is required for WordPress core sitemap generation.'
+										'description' => '<i class="fa-solid fa-fw fa-sitemap"></i> SimpleXML PHP module is not available. This is required for WordPress core sitemap generation.'
 									);
 								}
 							}
@@ -200,7 +200,7 @@ if ( !trait_exists('Warnings') ){
 							$nebula_warnings['update_services'] = array(
 								'level' => 'warning',
 								'dismissible' => true,
-								'description' => '<i class="fas fa-fw fa-rss"></i> Additional <a href="options-writing.php">Update Services</a> should be pinged. <a href="https://codex.wordpress.org/Update_Services#XML-RPC_Ping_Services" target="_blank" rel="noopener">Recommended update services &raquo;</a>',
+								'description' => '<i class="fa-solid fa-fw fa-rss"></i> Additional <a href="options-writing.php">Update Services</a> should be pinged. <a href="https://codex.wordpress.org/Update_Services#XML-RPC_Ping_Services" target="_blank" rel="noopener">Recommended update services &raquo;</a>',
 								'url' => admin_url('options-writing.php')
 							);
 						}
@@ -215,7 +215,7 @@ if ( !trait_exists('Warnings') ){
 							$nebula_warnings['php_lifecycle_main'] = array(
 								'level' => 'warning',
 								'dismissible' => true,
-								'description' => '<i class="fab fa-fw fa-php"></i> PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end in ' . human_time_diff($php_version_lifecycle['end']) . ' on ' . date('F j, Y', $php_version_lifecycle['end']) . '.',
+								'description' => '<i class="fa-brands fa-fw fa-php"></i> PHP <strong>' . PHP_VERSION . '</strong> <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">is nearing end of life</a>. Security updates end in ' . human_time_diff($php_version_lifecycle['end']) . ' on ' . date('F j, Y', $php_version_lifecycle['end']) . '.',
 								'url' => 'http://php.net/supported-versions.php',
 								'meta' => array('target' => '_blank', 'rel' => 'noopener')
 							);
@@ -224,7 +224,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings['php_lifecycle_end'] = array(
 							'level' => 'error',
 							'dismissible' => false,
-							'description' => '<i class="fab fa-fw fa-php"></i> PHP ' . PHP_VERSION . ' <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">no longer receives security updates</a>! End of life occurred ' . human_time_diff($php_version_lifecycle['end']) . ' ago on ' . date('F j, Y', $php_version_lifecycle['end']) . '.',
+							'description' => '<i class="fa-brands fa-fw fa-php"></i> PHP ' . PHP_VERSION . ' <a href="http://php.net/supported-versions.php" target="_blank" rel="noopener">no longer receives security updates</a>! End of life occurred ' . human_time_diff($php_version_lifecycle['end']) . ' ago on ' . date('F j, Y', $php_version_lifecycle['end']) . '.',
 							'url' => 'http://php.net/supported-versions.php',
 							'meta' => array('target' => '_blank', 'rel' => 'noopener')
 						);
@@ -249,7 +249,7 @@ if ( !trait_exists('Warnings') ){
 									$nebula_warnings['directory_indexing'] = array(
 										'level' => 'error',
 										'dismissible' => false,
-										'description' => '<i class="far fa-fw fa-list-alt"></i> Directory indexing is not disabled. Visitors can see file listings of directories!',
+										'description' => '<i class="fa-regular fa-fw fa-list-alt"></i> Directory indexing is not disabled. Visitors can see file listings of directories!',
 									);
 
 									$found_problem = true;
@@ -269,7 +269,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings['directory_indexing'] = array(
 							'level' => 'error',
 							'dismissible' => true,
-							'description' => '<i class="far fa-fw fa-list-alt"></i> <strong>Directory indexing not disabled</strong> (at the time last checked). Visitors may be able to see file listings of directories such as the <a href="' . includes_url() . '" target="_blank">Includes URL</a> or <a href="' . content_url() . '" target="_blank">Content URL</a> (and/or others)! <a href="' . home_url('/?audit=true') . '" target="_blank">Run an audit to re-scan &raquo;</a>',
+							'description' => '<i class="fa-regular fa-fw fa-list-alt"></i> <strong>Directory indexing not disabled</strong> (at the time last checked). Visitors may be able to see file listings of directories such as the <a href="' . includes_url() . '" target="_blank">Includes URL</a> or <a href="' . content_url() . '" target="_blank">Content URL</a> (and/or others)! <a href="' . home_url('/?audit=true') . '" target="_blank">Run an audit to re-scan &raquo;</a>',
 						);
 					}
 				}
@@ -286,7 +286,7 @@ if ( !trait_exists('Warnings') ){
 										$nebula_warnings['unusual_filemtime'] = array(
 											'level' => 'warning',
 											'dismissible' => true,
-											'description' => '<i class="fas fa-fw fa-hourglass-start"></i> <strong>' . $file . '</strong> was last modified on ' . date('F j, Y', filemtime($file)) . '. This is somewhat unusual and should be looked into.'
+											'description' => '<i class="fa-solid fa-fw fa-hourglass-start"></i> <strong>' . $file . '</strong> was last modified on ' . date('F j, Y', filemtime($file)) . '. This is somewhat unusual and should be looked into.'
 										);
 									}
 
@@ -297,7 +297,7 @@ if ( !trait_exists('Warnings') ){
 										$nebula_warnings['large_file'] = array(
 											'level' => 'warning',
 											'dismissible' => true,
-											'description' => '<i class="fas fa-fw fa-file"></i> <strong>' . $file . '</strong> has a large filesize of ' . $filesize . 'mb.'
+											'description' => '<i class="fa-solid fa-fw fa-file"></i> <strong>' . $file . '</strong> has a large filesize of ' . $filesize . 'mb.'
 										);
 									}
 								}
@@ -311,7 +311,7 @@ if ( !trait_exists('Warnings') ){
 								$nebula_warnings[] = array( //No key on this one so they do not overwrite when multiple are present
 									'level' => 'warning',
 									'dismissible' => true,
-									'description' => '<i class="fas fa-fw fa-weight"></i> Large debug file: <strong>' . $log_file['shortpath'] . '</strong> (' . $this->format_bytes($log_file['bytes'], 1) . ') <small><a href="' . esc_url(add_query_arg('debug', 'true')) . '">Re-Scan?</a></small>',
+									'description' => '<i class="fa-solid fa-fw fa-weight"></i> Large debug file: <strong>' . $log_file['shortpath'] . '</strong> (' . $this->format_bytes($log_file['bytes'], 1) . ') <small><a href="' . esc_url(add_query_arg('debug', 'true')) . '">Re-Scan?</a></small>',
 								);
 							}
 						}
@@ -325,14 +325,14 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings['wp_debug'] = array(
 							'level' => 'warning',
 							'dismissible' => true,
-							'description' => '<i class="fas fa-fw fa-bug"></i> <strong>WP_DEBUG</strong> is enabled <small>(Generally defined in wp-config.php)</small>'
+							'description' => '<i class="fa-solid fa-fw fa-bug"></i> <strong>WP_DEBUG</strong> is enabled <small>(Generally defined in wp-config.php)</small>'
 						);
 
 						if ( WP_DEBUG_DISPLAY ){
 							$nebula_warnings['wp_debug_display'] = array(
 								'level' => 'error',
 								'dismissible' => true,
-								'description' => '<i class="fas fa-fw fa-bug"></i> Debug errors and warnings are being displayed on the front-end (<Strong>WP_DEBUG_DISPLAY</strong>) <small>(Generally defined in wp-config.php)</small>'
+								'description' => '<i class="fa-solid fa-fw fa-bug"></i> Debug errors and warnings are being displayed on the front-end (<Strong>WP_DEBUG_DISPLAY</strong>) <small>(Generally defined in wp-config.php)</small>'
 							);
 						}
 					}
@@ -343,7 +343,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings['safe_mode'] = array(
 						'level' => 'error',
 						'dismissible' => false,
-						'description' => '<i class="fas fa-fw fa-hard-hat"></i> <strong>Nebula Safe Mode</strong> is active <small>(' . WPMU_PLUGIN_DIR . '/nebula-safe-mode.php)</small>'
+						'description' => '<i class="fa-solid fa-fw fa-hard-hat"></i> <strong>Nebula Safe Mode</strong> is active <small>(' . WPMU_PLUGIN_DIR . '/nebula-safe-mode.php)</small>'
 					);
 				}
 
@@ -352,7 +352,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings['ga_tracking_id'] = array(
 						'level' => 'error',
 						'dismissible' => true,
-						'description' => '<i class="fas fa-fw fa-chart-area"></i> A <a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">Google Tag Manager ID</a> is strongly recommended!',
+						'description' => '<i class="fa-solid fa-fw fa-chart-area"></i> A <a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">Google Tag Manager ID</a> is strongly recommended!',
 						'url' => admin_url('themes.php?page=nebula_options&tab=analytics')
 					);
 				}
@@ -364,7 +364,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings['enhanced_ecommerce'] = array(
 							'level' => 'error',
 							'dismissible' => true,
-							'description' => '<i class="fas fa-fw fa-chart-area"></i> <a href="admin.php?page=wc-settings&tab=integration">WooCommerce Enhanced Ecommerce</a> is missing a Google Analytics ID!',
+							'description' => '<i class="fa-solid fa-fw fa-chart-area"></i> <a href="admin.php?page=wc-settings&tab=integration">WooCommerce Enhanced Ecommerce</a> is missing a Google Analytics ID!',
 							'url' => admin_url('admin.php?page=wc-settings&tab=integration')
 						);
 					}
@@ -378,7 +378,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings['no_parent_theme'] = array(
 							'level' => 'error',
 							'dismissible' => false,
-							'description' => '<i class="fas fa-fw fa-baby-carriage"></i> A child theme is active, but its parent theme directory <strong>' . $active_theme->get('Template') . '</strong> does not exist!<br/><em>The "Template:" setting in the <a href="' . get_stylesheet_uri() . '" target="_blank" rel="noopener">style.css</a> file of the child theme must match the directory name (above) of the parent theme.</em>'
+							'description' => '<i class="fa-solid fa-fw fa-baby-carriage"></i> A child theme is active, but its parent theme directory <strong>' . $active_theme->get('Template') . '</strong> does not exist!<br/><em>The "Template:" setting in the <a href="' . get_stylesheet_uri() . '" target="_blank" rel="noopener">style.css</a> file of the child theme must match the directory name (above) of the parent theme.</em>'
 						);
 					}
 
@@ -395,7 +395,7 @@ if ( !trait_exists('Warnings') ){
 								$nebula_warnings['child_meta_graphics'] = array(
 									'level' => 'error',
 									'dismissible' => true,
-									'description' => '<i class="fas fa-fw fa-images"></i> Child theme meta graphics exist, but are identical to the Nebula meta graphics (' . $child_filename . '). Ensure that child theme meta graphics are unique to this website!</em>' //yolo
+									'description' => '<i class="fa-solid fa-fw fa-images"></i> Child theme meta graphics exist, but are identical to the Nebula meta graphics (' . $child_filename . '). Ensure that child theme meta graphics are unique to this website!</em>' //yolo
 								);
 
 								break; //Exit the loop as soon as we find a match
@@ -405,7 +405,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings['child_meta_graphics'] = array(
 							'level' => 'error',
 							'dismissible' => true,
-							'description' => '<i class="far fa-fw fa-images"></i> A child theme is active, but missing meta graphics. Create a <code>/assets/img/meta/</code> directory in the child theme (or copy it over from the Nebula parent theme).</em>'
+							'description' => '<i class="fa-regular fa-fw fa-images"></i> A child theme is active, but missing meta graphics. Create a <code>/assets/img/meta/</code> directory in the child theme (or copy it over from the Nebula parent theme).</em>'
 						);
 					}
 				}
@@ -416,7 +416,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings['relevanssi_index'] = array(
 							'level' => 'error',
 							'dismissible' => true,
-							'description' => '<i class="fas fa-fw fa-search-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> must build an index to search the site. This must be triggered manually.',
+							'description' => '<i class="fa-solid fa-fw fa-search-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> must build an index to search the site. This must be triggered manually.',
 							'url' => admin_url('options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing')
 						);
 					}
@@ -425,7 +425,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings['relevanssi_custom_fields'] = array(
 							'level' => 'warning',
 							'dismissible' => true,
-							'description' => '<i class="fas fa-fw fa-search-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> is not set to search custom fields.',
+							'description' => '<i class="fa-solid fa-fw fa-search-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> is not set to search custom fields.',
 							'url' => admin_url('options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing')
 						);
 					}
@@ -436,7 +436,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings['google_optimize_active'] = array(
 						'level' => 'error',
 						'dismissible' => true,
-						'description' => '<i class="far fa-fw fa-window-restore"></i> <a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!',
+						'description' => '<i class="fa-regular fa-fw fa-window-restore"></i> <a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!',
 						'url' => 'https://optimize.google.com/optimize/home/'
 					);
 
@@ -445,7 +445,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings['google_optimize_analytics'] = array(
 							'level' => 'error',
 							'dismissible' => true,
-							'description' => '<i class="far fa-fw fa-window-restore"></i> <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Google Optimize ID</a> exists without a <a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics Tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">GTM ID</a>.',
+							'description' => '<i class="fa-regular fa-fw fa-window-restore"></i> <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Google Optimize ID</a> exists without a <a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics Tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">GTM ID</a>.',
 							'url' => admin_url('themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id')
 						);
 					}
@@ -458,7 +458,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings['sw_missing'] = array(
 							'level' => 'error',
 							'dismissible' => true,
-							'description' => '<i class="far fa-fw fa-file"></i> Service Worker is enabled in <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">Nebula Options</a>, but no Service Worker JavaScript file was found. Either use the <a href="https://github.com/chrisblakley/Nebula/blob/main/Nebula-Child/resources/sw.js" target="_blank">provided sw.js file</a> (by moving it to the root directory), or override the function <a href="https://nebula.gearside.com/functions/sw_location/?utm_campaign=documentation&utm_medium=admin+notice&utm_source=service+worker#override" target="_blank">sw_location()</a> to locate the actual JavaScript file you are using.'
+							'description' => '<i class="fa-regular fa-fw fa-file"></i> Service Worker is enabled in <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">Nebula Options</a>, but no Service Worker JavaScript file was found. Either use the <a href="https://github.com/chrisblakley/Nebula/blob/main/Nebula-Child/resources/sw.js" target="_blank">provided sw.js file</a> (by moving it to the root directory), or override the function <a href="https://nebula.gearside.com/functions/sw_location/?utm_campaign=documentation&utm_medium=admin+notice&utm_source=service+worker#override" target="_blank">sw_location()</a> to locate the actual JavaScript file you are using.'
 						);
 					}
 
@@ -469,7 +469,7 @@ if ( !trait_exists('Warnings') ){
 							$nebula_warnings['sw_offline'] = array(
 								'level' => 'warning',
 								'dismissible' => true,
-								'description' => '<i class="fas fa-fw fa-ethernet"></i> It is recommended to make an Offline page when using Service Worker. <a href="post-new.php?post_type=page">Manually add one</a>'
+								'description' => '<i class="fa-solid fa-fw fa-ethernet"></i> It is recommended to make an Offline page when using Service Worker. <a href="post-new.php?post_type=page">Manually add one</a>'
 							);
 						}
 					}
@@ -479,7 +479,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings['sw_ssl'] = array(
 							'level' => 'warning',
 							'dismissible' => true,
-							'description' => '<i class="fas fa-fw fa-lock-open"></i> Service Worker requires an SSL. Either update the site to https or <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">disable Service Worker</a>.'
+							'description' => '<i class="fa-solid fa-fw fa-lock-open"></i> Service Worker requires an SSL. Either update the site to https or <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">disable Service Worker</a>.'
 						);
 					}
 				}
@@ -499,7 +499,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings['missing_privacy_policy'] = array(
 						'level' => 'warning',
 						'dismissible' => true,
-						'description' => '<i class="fas fa-fw fa-file-alt"></i> <a href="options-privacy.php">Privacy policy</a> is not setup with WordPress.',
+						'description' => '<i class="fa-solid fa-fw fa-file-alt"></i> <a href="options-privacy.php">Privacy policy</a> is not setup with WordPress.',
 						'url' => admin_url('options-privacy.php')
 					);
 				} else {
@@ -508,7 +508,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings['privacy_policy_is_frontpage'] = array(
 							'level' => 'warning',
 							'dismissible' => true,
-							'description' => '<i class="fas fa-fw fa-file-alt"></i> <a href="options-privacy.php">Privacy policy</a> cannot be the Front Page.',
+							'description' => '<i class="fa-solid fa-fw fa-file-alt"></i> <a href="options-privacy.php">Privacy policy</a> cannot be the Front Page.',
 							'url' => admin_url('options-privacy.php')
 						);
 					}
@@ -519,7 +519,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings['sass_status'] = array(
 						'level' => 'log',
 						'dismissible' => true,
-						'description' => '<i class="fab fa-fw fa-sass"></i> ' . $this->sass_process_status
+						'description' => '<i class="fa-brands fa-fw fa-sass"></i> ' . $this->sass_process_status
 					);
 				}
 
@@ -530,7 +530,7 @@ if ( !trait_exists('Warnings') ){
 					$all_nebula_warnings = array(array(
 						'level' => 'error',
 						'dismissible' => true,
-						'description' => '<i class="fas fa-fw fa-skull"></i> <code>$nebula_warnings</code> array is null. When hooking into the <code>nebula_warnings</code> filter be sure that it is returned too!'
+						'description' => '<i class="fa-solid fa-fw fa-skull"></i> <code>$nebula_warnings</code> array is null. When hooking into the <code>nebula_warnings</code> filter be sure that it is returned too!'
 					));
 				}
 
@@ -571,7 +571,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings['default_email_domain'] = array(
 							'level' => 'warning',
 							'dismissible' => true,
-							'description' => '<i class="fas fa-fw fa-address-card"></i> <a href="themes.php?page=nebula_options&tab=metadata&option=contact_email">Default contact email domain</a> (<code>' . $email_domain . '</code>) does not match website (<code>' . $this->url_components('domain') . '</code>). This email address will appear in metadata, so please verify this is acceptable.',
+							'description' => '<i class="fa-solid fa-fw fa-address-card"></i> <a href="themes.php?page=nebula_options&tab=metadata&option=contact_email">Default contact email domain</a> (<code>' . $email_domain . '</code>) does not match website (<code>' . $this->url_components('domain') . '</code>). This email address will appear in metadata, so please verify this is acceptable.',
 							'url' => admin_url('themes.php?page=nebula_options&tab=metadata&option=contact_email')
 						);
 					}
@@ -587,7 +587,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings['wp_readme'] = array(
 						'level' => 'warning',
 						'dismissible' => true,
-						'description' => '<i class="far fa-fw fa-file-alt"></i> The WordPress core <a href="' . home_url('/') . 'readme.html">readme.html</a> file exists (which exposes version information) and ' . $description,
+						'description' => '<i class="fa-regular fa-fw fa-file-alt"></i> The WordPress core <a href="' . home_url('/') . 'readme.html">readme.html</a> file exists (which exposes version information) and ' . $description,
 						'url' => home_url('/') . 'readme.html'
 					);
 				}
@@ -597,7 +597,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings['max_upload'] = array(
 						'level' => 'warning',
 						'dismissible' => true,
-						'description' => '<i class="far fa-fw fa-file-alt"></i> The <code>post_max_size</code> (' . ini_get('post_max_size') . ') is different from the <code>upload_max_filesize</code> (' . ini_get('upload_max_filesize') . ').',
+						'description' => '<i class="fa-regular fa-fw fa-file-alt"></i> The <code>post_max_size</code> (' . ini_get('post_max_size') . ') is different from the <code>upload_max_filesize</code> (' . ini_get('upload_max_filesize') . ').',
 					);
 				}
 
@@ -619,13 +619,13 @@ if ( !trait_exists('Warnings') ){
 							$nebula_warnings['disk_space_low'] = array(
 								'level' => 'error',
 								'dismissible' => true,
-								'description' => '<i class="fas fa-fw fa-hdd"></i> Available disk space in <strong>' . $path['directory'] . '</strong> critically low! Only <strong>' . round($disk_space_free, 2) . 'gb</strong> remaining.'
+								'description' => '<i class="fa-solid fa-fw fa-hdd"></i> Available disk space in <strong>' . $path['directory'] . '</strong> critically low! Only <strong>' . round($disk_space_free, 2) . 'gb</strong> remaining.'
 							);
 						} elseif ( $disk_space_free < $path['low'] ){
 							$nebula_warnings['disk_space_low'] = array(
 								'level' => 'warning',
 								'dismissible' => true,
-								'description' => '<i class="far fa-fw fa-hdd"></i> Low disk space available in <strong>' . $path['directory'] . '</strong>. Only <strong>' . round($disk_space_free, 2) . 'gb</strong> remaining.'
+								'description' => '<i class="fa-regular fa-fw fa-hdd"></i> Low disk space available in <strong>' . $path['directory'] . '</strong>. Only <strong>' . round($disk_space_free, 2) . 'gb</strong> remaining.'
 							);
 						}
 					}
@@ -686,13 +686,13 @@ if ( !trait_exists('Warnings') ){
 													$nebula_warnings['unintentional_output'] = array(
 														'level' => 'warning',
 														'dismissible' => true,
-														'description' => '<i class="fas fa-fw fa-bug"></i> Possible debug output in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . ($line_number+1) . '</strong>.'
+														'description' => '<i class="fa-solid fa-fw fa-bug"></i> Possible debug output in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . ($line_number+1) . '</strong>.'
 													);
 												} elseif ( $category === 'custom' ){
 													$nebula_warnings['unintentional_output'] = array(
 														'level' => 'warning',
 														'dismissible' => true,
-														'description' => '<i class="fas fa-fw fa-bug"></i> Possible unintentional output detected in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . ($line_number+1) . '</strong>.'
+														'description' => '<i class="fa-solid fa-fw fa-bug"></i> Possible unintentional output detected in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . ($line_number+1) . '</strong>.'
 													);
 												}
 											}
@@ -712,7 +712,7 @@ if ( !trait_exists('Warnings') ){
 							$nebula_warnings['word_count'] = array(
 								'level' => 'warning',
 								'dismissible' => true,
-								'description' => '<i class="far fa-fw fa-file"></i> ' . $word_count_warning,
+								'description' => '<i class="fa-regular fa-fw fa-file"></i> ' . $word_count_warning,
 								'url' => get_edit_post_link(get_the_id()),
 								'meta' => array('target' => '_blank', 'rel' => 'noopener')
 							);
@@ -725,7 +725,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings['seo_plugin_missing'] = array(
 						'level' => 'warning',
 						'dismissible' => true,
-						'description' => '<i class="fas fa-fw fa-search-plus"></i> A recommended SEO plugin is not active.',
+						'description' => '<i class="fa-solid fa-fw fa-search-plus"></i> A recommended SEO plugin is not active.',
 						'url' => admin_url('themes.php?page=tgmpa-install-plugins')
 					);
 				}
@@ -813,66 +813,66 @@ if ( !trait_exists('Warnings') ){
 										//Log the total if it is less than nominal
 										if ( auditedCls > 0.1 ){ //Anything over 0.1 needs improvement
 											jQuery('#audit-results ul li.significant-cls-warning').remove(); //Remove the previous bullets to only show the latest one
-											jQuery('#audit-results ul').append('<li class="significant-cls-warning"><i class="fas fa-fw fa-expand-arrows-alt"></i> Significant Cumulative Layout Shift (CLS): ' + auditedCls + '</li>');
+											jQuery('#audit-results ul').append('<li class="significant-cls-warning"><i class="fa-solid fa-fw fa-expand-arrows-alt"></i> Significant Cumulative Layout Shift (CLS): ' + auditedCls + '</li>');
 										}
 									}).observe({type: 'layout-shift', buffered: true});
 								}
 
 								//Check protocol
 								if ( window.location.href.includes('http://') ){
-									jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-unlock-alt"></i> Non-secure http protocol</li>');
+									jQuery("#audit-results ul").append('<li><i class="fa-solid fa-fw fa-unlock-alt"></i> Non-secure http protocol</li>');
 								} else if ( window.location.href.includes('https://') ){
 									//check for non-secure resource requests here?
 								}
 
 								//Empty meta description
 								if ( !entireDOM.find('meta[name="description"]').length ){
-									jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-align-left"></i> Missing meta description</li>');
+									jQuery("#audit-results ul").append('<li><i class="fa-solid fa-fw fa-align-left"></i> Missing meta description</li>');
 								} else {
 									if ( !entireDOM.find('meta[name="description"]').attr('content').length ){
-										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-align-left"></i> Meta description tag exists but is empty</li>');
+										jQuery("#audit-results ul").append('<li><i class="fa-solid fa-fw fa-align-left"></i> Meta description tag exists but is empty</li>');
 									} else {
 										if ( entireDOM.find('meta[name="description"]').attr('content').length < 60 ){
-											jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-align-left"></i> Short meta description</li>');
+											jQuery("#audit-results ul").append('<li><i class="fa-solid fa-fw fa-align-left"></i> Short meta description</li>');
 										}
 									}
 								}
 
 								//Check title
 								if ( !document.title.length ){
-									jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Missing page title</li>');
+									jQuery("#audit-results ul").append('<li><i class="fa-solid fa-fw fa-heading"></i> Missing page title</li>');
 								} else {
 									if ( document.title.length < 25 ){
-										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Short page title</li>');
+										jQuery("#audit-results ul").append('<li><i class="fa-solid fa-fw fa-heading"></i> Short page title</li>');
 									}
 
 									if ( document.title.includes('Home') ){
-										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Improve page title keywords (remove "Home")</li>');
+										jQuery("#audit-results ul").append('<li><i class="fa-solid fa-fw fa-heading"></i> Improve page title keywords (remove "Home")</li>');
 									}
 								}
 
 								//Check H1
 								if ( !entireDOM.find('h1').length ){
-									jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Missing H1 tag</li>');
+									jQuery("#audit-results ul").append('<li><i class="fa-solid fa-fw fa-heading"></i> Missing H1 tag</li>');
 
 									if ( entireDOM.find('h1').length > 1 ){
-										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Too many H1 tags</li>');
+										jQuery("#audit-results ul").append('<li><i class="fa-solid fa-fw fa-heading"></i> Too many H1 tags</li>');
 									}
 								}
 
 								//Check H2
 								if ( !entireDOM.find('h2').length ){
-									jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Missing H2 tags</li>');
+									jQuery("#audit-results ul").append('<li><i class="fa-solid fa-fw fa-heading"></i> Missing H2 tags</li>');
 								} else if ( entireDOM.find('h2').length <= 2 ){
-									jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-heading"></i> Very few H2 tags</li>');
+									jQuery("#audit-results ul").append('<li><i class="fa-solid fa-fw fa-heading"></i> Very few H2 tags</li>');
 								}
 
 								//Check that each <article> and <section> has a heading tag
 								//https://www.w3.org/wiki/HTML/Usage/Headings/Missing
 								entireDOM.find('article, section').each(function(){
 									if ( !jQuery(this).find('h1, h2, h3, h4, h5, h6').length ){
-										jQuery(this).addClass('nebula-audit audit-warn').append(jQuery('<div class="audit-desc"><i class="fas fa-fw fa-heading"></i> Missing heading tag in this ' + jQuery(this).prop('tagName').toLowerCase() + '</div>'));
-										jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-heading"></i> Missing heading tag within a &lt;' + jQuery(this).prop('tagName').toLowerCase() + '&gt; tag.</li>');
+										jQuery(this).addClass('nebula-audit audit-warn').append(jQuery('<div class="audit-desc"><i class="fa-solid fa-fw fa-heading"></i> Missing heading tag in this ' + jQuery(this).prop('tagName').toLowerCase() + '</div>'));
+										jQuery('#audit-results ul').append('<li><i class="fa-solid fa-fw fa-heading"></i> Missing heading tag within a &lt;' + jQuery(this).prop('tagName').toLowerCase() + '&gt; tag.</li>');
 									}
 								});
 
@@ -881,7 +881,7 @@ if ( !trait_exists('Warnings') ){
 									var skipToContentTarget = jQuery('.skip-to-content-link').attr('href');
 
 									if ( skipToContentTarget && !jQuery(skipToContentTarget).length ){
-										jQuery("#audit-results ul").append('<li><i class="fas fa-fw fa-link"></i> Skip to Content link target (' + skipToContentTarget + ') does not exist.</li>');
+										jQuery("#audit-results ul").append('<li><i class="fa-solid fa-fw fa-link"></i> Skip to Content link target (' + skipToContentTarget + ') does not exist.</li>');
 									}
 								}
 
@@ -889,7 +889,7 @@ if ( !trait_exists('Warnings') ){
 								var commonPlaceholderWords = ['lorem', 'ipsum', 'dolor', 'sit amet', 'consectetur', 'adipiscing', 'malesuada', 'vestibulum']; //Be careful of false positives due to parts of real words (Ex: "amet" in "parameter")
 								jQuery.each(commonPlaceholderWords, function(i, word){
 									if ( entireDOM.html().includes(word) ){
-										jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-remove-format"></i> Placeholder text found ("' + word + '").</li>');
+										jQuery('#audit-results ul').append('<li><i class="fa-solid fa-fw fa-remove-format"></i> Placeholder text found ("' + word + '").</li>');
 										return false;
 									}
 								});
@@ -900,8 +900,8 @@ if ( !trait_exists('Warnings') ){
 										return false;
 									}
 
-									jQuery(this).addClass('nebula-audit audit-error').append(jQuery('<div class="audit-desc"><i class="far fa-fw fa-image"></i> Broken image</div>'));
-									jQuery('#audit-results ul').append('<li><i class="far fa-fw fa-image"></i> Broken image</li>');
+									jQuery(this).addClass('nebula-audit audit-error').append(jQuery('<div class="audit-desc"><i class="fa-regular fa-fw fa-image"></i> Broken image</div>'));
+									jQuery('#audit-results ul').append('<li><i class="fa-regular fa-fw fa-image"></i> Broken image</li>');
 								});
 
 								//Images
@@ -912,27 +912,27 @@ if ( !trait_exists('Warnings') ){
 
 									//Check img alt
 									if ( !jQuery(this).is('[alt]') ){
-										jQuery(this).wrap('<div class="nebula-audit audit-error"></div>').after('<div class="audit-desc"><i class="far fa-fw fa-image"></i> Missing ALT attribute</div>');
-										jQuery('#audit-results ul').append('<li><i class="far fa-fw fa-image"></i> Missing ALT attribute</li>');
+										jQuery(this).wrap('<div class="nebula-audit audit-error"></div>').after('<div class="audit-desc"><i class="fa-regular fa-fw fa-image"></i> Missing ALT attribute</div>');
+										jQuery('#audit-results ul').append('<li><i class="fa-regular fa-fw fa-image"></i> Missing ALT attribute</li>');
 									}
 
 									//Check image filesize. Note: cached files are 0
 									var iTime = performance.getEntriesByName(jQuery(this).attr('src'))[0];
 									if ( iTime && iTime.transferSize >= 500_000 ){
-										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-image"></i> Image filesize over 500kb</div>');
-										jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-image"></i> Image filesize over 500kb</li>');
+										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fa-solid fa-fw fa-image"></i> Image filesize over 500kb</div>');
+										jQuery('#audit-results ul').append('<li><i class="fa-solid fa-fw fa-image"></i> Image filesize over 500kb</li>');
 									}
 
 									//Check image width
 									if ( jQuery(this)[0].naturalWidth > 1200 ){
-										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-image"></i> Image wider than 1200px</div>');
-										jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-image"></i> Image wider than 1200px</li>');
+										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fa-solid fa-fw fa-image"></i> Image wider than 1200px</div>');
+										jQuery('#audit-results ul').append('<li><i class="fa-solid fa-fw fa-image"></i> Image wider than 1200px</li>');
 									}
 
 									//Check image link
 									if ( !jQuery(this).parents('a').length ){
-										jQuery(this).wrap('<div class="nebula-audit audit-notice"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-unlink"></i> Unlinked Image</div>');
-										jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-image"></i> Unlinked image</li>');
+										jQuery(this).wrap('<div class="nebula-audit audit-notice"></div>').after('<div class="audit-desc"><i class="fa-solid fa-fw fa-unlink"></i> Unlinked Image</div>');
+										jQuery('#audit-results ul').append('<li><i class="fa-solid fa-fw fa-image"></i> Unlinked image</li>');
 									}
 								});
 
@@ -942,15 +942,15 @@ if ( !trait_exists('Warnings') ){
 									if ( window.performance ){
 										var vTime = performance.getEntriesByName(jQuery(this).find('source').attr('src'))[0];
 										if ( vTime && vTime.transferSize >= 5_000_000 ){ //5mb+
-											jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-file-video"></i> Video filesize over 5mb</div>');
-											jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-file-video"></i> Video filesize over 5mb</li>');
+											jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fa-solid fa-fw fa-file-video"></i> Video filesize over 5mb</div>');
+											jQuery('#audit-results ul').append('<li><i class="fa-solid fa-fw fa-file-video"></i> Video filesize over 5mb</li>');
 										}
 									}
 
 									//Check unmuted autoplay
 									if ( jQuery(this).is('[autoplay]') && !jQuery(this).is('[muted]') ){
-										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-video"></i> Autoplay without muted attribute</div>');
-										jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-video"></i> Videos set to autoplay without being muted will not autoplay in Chrome.</li>');
+										jQuery(this).wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fa-solid fa-fw fa-video"></i> Autoplay without muted attribute</div>');
+										jQuery('#audit-results ul').append('<li><i class="fa-solid fa-fw fa-video"></i> Videos set to autoplay without being muted will not autoplay in Chrome.</li>');
 									}
 								});
 
@@ -970,8 +970,8 @@ if ( !trait_exists('Warnings') ){
 									});
 
 									if ( formFieldCount > 6 ){
-										jQuery(this).wrap('<div class="nebula-audit audit-notice"></div>').after('<div class="audit-desc"><i class="fas fa-fw fa-pencil-alt"></i> Many form fields</div>');
-										jQuery('#audit-results ul').append('<li><i class="fas fa-fw fa-pencil-alt"></i> Many form fields</li>');
+										jQuery(this).wrap('<div class="nebula-audit audit-notice"></div>').after('<div class="audit-desc"><i class="fa-solid fa-fw fa-pencil-alt"></i> Many form fields</div>');
+										jQuery('#audit-results ul').append('<li><i class="fa-solid fa-fw fa-pencil-alt"></i> Many form fields</li>');
 									}
 								});
 
@@ -988,15 +988,15 @@ if ( !trait_exists('Warnings') ){
 								<?php if ( !(is_home() || is_front_page()) ): ?>
 									//Check breadcrumb schema tag
 									if ( !jQuery('[itemtype*=BreadcrumbList]').length ){
-										jQuery('#audit-results ul').append('<li><i class="fas fa-bread-slice"></i> Missing breadcrumb schema tag</li>');
+										jQuery('#audit-results ul').append('<li><i class="fa-solid fa-bread-slice"></i> Missing breadcrumb schema tag</li>');
 									}
 								<?php endif; ?>
 
 								//Check issue count (do this last)
 								if ( jQuery('#audit-results ul li').length <= 0 ){
-									jQuery('#audit-results').append('<p><strong><i class="fas fa-fw fa-check"></i> No issues were found on this page.</strong> Be sure to check other pages (and run <a href="https://nebula.gearside.com/get-started/checklists/testing-checklist/" target="_blank">more authoritative tests</a>)!</p>');
+									jQuery('#audit-results').append('<p><strong><i class="fa-solid fa-fw fa-check"></i> No issues were found on this page.</strong> Be sure to check other pages (and run <a href="https://nebula.gearside.com/get-started/checklists/testing-checklist/" target="_blank">more authoritative tests</a>)!</p>');
 								} else {
-									jQuery('#audit-results').append('<p><strong><i class="fas fa-fw fa-times"></i> Found issues: ' + jQuery('#audit-results ul li').length + '<strong></p>');
+									jQuery('#audit-results').append('<p><strong><i class="fa-solid fa-fw fa-times"></i> Found issues: ' + jQuery('#audit-results ul li').length + '<strong></p>');
 								}
 								jQuery('#audit-results').append('<p><small>Note: This does not check for @todo comments. Use the Nebula To-Do Manager in the WordPress admin dashboard to view.</small></p>');
 							}, 1);

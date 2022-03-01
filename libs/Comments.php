@@ -86,7 +86,7 @@ trait Comments {
 	public function disqus_link($nebula_warnings){
 		$nebula_warnings['disqus'] = array(
 			'level' => 'info',
-			'description' => '<i class="fab fa-fw fa-php"></i> You are using the Disqus commenting system. <a href="https://' . $this->get_option('disqus_shortname') . '.disqus.com/admin/moderate" target="_blank" rel="noopener">View the comment listings on Disqus &raquo;</a>',
+			'description' => '<i class="fa-brands fa-fw fa-php"></i> You are using the Disqus commenting system. <a href="https://' . $this->get_option('disqus_shortname') . '.disqus.com/admin/moderate" target="_blank" rel="noopener">View the comment listings on Disqus &raquo;</a>',
 			'url' => 'https://' . $this->get_option('disqus_shortname') . '.disqus.com/admin/moderate',
 			'meta' => array('target' => '_blank', 'rel' => 'noopener')
 		);
@@ -132,13 +132,13 @@ trait Comments {
 			$comments_text = 'Comments';
 
 			if ( get_comments_number() == 0 ){
-				$comment_icon = 'far fa-comment';
+				$comment_icon = 'fa-regular fa-comment';
 				$comment_show = ( $data['empty'] )? '' : 'hidden'; //If comment link should show if no comments. True = show, False = hidden
 			} elseif ( get_comments_number() == 1 ){
-				$comment_icon = 'fas fa-comment';
+				$comment_icon = 'fa-solid fa-comment';
 				$comments_text = 'Comment';
 			} elseif ( get_comments_number() > 1 ){
-				$comment_icon = 'fas fa-comments';
+				$comment_icon = 'fa-solid fa-comments';
 			}
 
 			$the_icon = '';

@@ -228,13 +228,13 @@ if ( !trait_exists('Shortcodes') ){
 			}
 
 			//Choose the appropriate FA weight
-			$mode = 'fas';
+			$mode = 'fa-solid';
 			if ( $mode === 'regular' || $mode === 'r' || $mode === 'far' ){
-				$mode = 'far';
+				$mode = 'fa-regular';
 			} elseif ( $mode === 'light' || $mode === 'l' || $mode === 'fal' ){
-				$mode = 'fal';
+				$mode = 'fa-light';
 			} elseif ( $mode === 'brand' || $mode === 'b' || $mode === 'fab' ){
-				$mode = 'fab';
+				$mode = 'fa-brands';
 			}
 
 			$extra_style = ( !empty($color) )? 'color:' . $color . ';' :'';
@@ -254,7 +254,7 @@ if ( !trait_exists('Shortcodes') ){
 				if ( strpos($icon, 'fa-') === false){
 					$icon = 'fa-' . $icon;
 				}
-				$icon = '<i class="fas fa-fw ' . esc_attr($icon) . '"></i> ';
+				$icon = '<i class="fa-solid fa-fw ' . esc_attr($icon) . '"></i> ';
 			}
 
 			if ( $size ){
@@ -479,7 +479,7 @@ if ( !trait_exists('Shortcodes') ){
 			return '<div class="card">
 				<div class="card-header">
 					<h5 class="mb-0" id="heading' . $unique_id . '">
-						<button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse' . $unique_id . '" aria-expanded="false" aria-controls="collapse' . $unique_id . '"><i class="fas fa-plus"></i> ' . $title . '</button>
+						<button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapse' . $unique_id . '" aria-expanded="false" aria-controls="collapse' . $unique_id . '"><i class="fa-solid fa-plus"></i> ' . $title . '</button>
 					</h5>
 				</div>
 
