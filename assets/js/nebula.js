@@ -23,6 +23,7 @@ jQuery(function(){
 	if ( jQuery('input[type="search"], input[name="s"], [class*="search"]').length || nebula.get('s') ){
 		import('./modules/search.js?ver=' + nebula.version.number).then(function(module){
 			nebula.initSearchFunctions();
+			nebula.dom.document.trigger('nebula_module_loaded', 'search.js');
 		});
 	}
 
@@ -33,6 +34,7 @@ jQuery(function(){
 			nebula.cf7Functions();
 			nebula.cf7LocalStorage();
 			nebula.initFeedbackSystem();
+			nebula.dom.document.trigger('nebula_module_loaded', 'forms.js');
 		});
 	}
 
@@ -49,6 +51,7 @@ jQuery(function(){
 	if ( !nebula.isDoNotTrack() ){
 		import('./modules/analytics.js?ver=' + nebula.version.number).then(function(module){
 			nebula.eventTracking();
+			nebula.dom.document.trigger('nebula_module_loaded', 'analytics.js');
 		});
 	}
 
@@ -74,6 +77,7 @@ jQuery(window).on('load', function(){
 	if ( jQuery('video, iframe[src*="vimeo"], iframe[src*="youtube"]').length || (jQuery('noscript.nebula-lazy').length && (jQuery('noscript.nebula-lazy').text().includes('vimeo') || jQuery('noscript.nebula-lazy').text().includes('youtube'))) ){ //Check for videos that will be lazy loaded by scanning the text of noscript elements for video tags
 		import('./modules/video.js?ver=' + nebula.version.number).then(function(module){
 			nebula.initVideoTracking(); //Move to (or use) requestIdleCallback when Safari supports it?
+			nebula.dom.document.trigger('nebula_module_loaded', 'video.js');
 		});
 	}
 
@@ -81,6 +85,7 @@ jQuery(window).on('load', function(){
 	if ( jQuery('#address-autocomplete').length ){
 		import('./modules/location.js?ver=' + nebula.version.number).then(function(module){
 			nebula.addressAutocomplete('#address-autocomplete', 'nebulaGlobalAddressAutocomplete');
+			nebula.dom.document.trigger('nebula_module_loaded', 'location.js');
 		});
 	}
 
@@ -89,6 +94,7 @@ jQuery(window).on('load', function(){
 		import('./modules/social.js?ver=' + nebula.version.number).then(function(module){
 			nebula.facebookSDK();
 			nebula.socialSharing();
+			nebula.dom.document.trigger('nebula_module_loaded', 'social.js');
 		});
 	}
 

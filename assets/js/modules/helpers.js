@@ -19,6 +19,10 @@ nebula.helpers = async function(){
 	nebula.dom.html.removeClass('no-js').addClass('js');
 	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'external noreferrer noopener'); //Add rel attributes to external links. Although search crawlers do use JavaScript, don't rely on this line to instruct them. Use standard HTML attributes whenever possible.
 
+	//Add general region classes (Note: not done in location.js because it is anonymized and global)
+	jQuery('html').addClass('country-' + Intl.DateTimeFormat().resolvedOptions().locale.split('-').pop().toLowerCase());
+	jQuery('html').addClass('timezone-' + Intl.DateTimeFormat().resolvedOptions().timeZone.replaceAll(/[_\/]/gi, '-').toLowerCase());
+
 	//Note the level of RAM available for a "lite" or "full" experience
 	if ( 'deviceMemory' in navigator ){ //Device Memory - Chrome 64+
 		let deviceMemoryLevel = ( navigator.deviceMemory < 1 )? 'lite' : 'full'; //Possible values (GB of RAM): 0.25, 0.5, 1, 2, 4, 8

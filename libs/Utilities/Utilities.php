@@ -1111,6 +1111,11 @@ if ( !trait_exists('Utilities') ){
 				return true;
 			}
 
+			//If autosaving
+			if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ){
+				return false;
+			}
+
 			return false;
 		}
 

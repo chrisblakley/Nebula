@@ -91,7 +91,7 @@ if ( !trait_exists('Device') ){
 				return $additional_checks;
 			}
 
-			global $is_gecko, $is_opera, $is_safari, $is_chrome;
+			global $is_gecko, $is_opera, $is_safari, $is_chrome, $is_edge;
 			switch ( strtolower($info) ){
 				case 'full':
 				case 'name':
@@ -100,6 +100,7 @@ if ( !trait_exists('Device') ){
 					if ( $is_opera ){return 'opera';}
 					elseif ( $is_safari ){return 'safari';}
 					elseif ( $is_chrome ){return 'chrome';}
+					elseif ( $is_edge ){return 'edge';}
 					return false;
 				case 'engine':
 					if ( $is_gecko ){return 'gecko';}

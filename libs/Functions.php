@@ -2883,6 +2883,11 @@ if ( !trait_exists('Functions') ){
 					$classes[] = 'hfeed'; //Adds `hfeed` to non singular pages.
 				}
 
+				//Give each page a unique class
+				if ( is_page() ){
+					$classes[] = 'page-' . basename(get_permalink());
+				}
+
 				//If this post has a featured image
 				if ( has_post_thumbnail() ){
 					$classes[] = 'has-featured-image';
