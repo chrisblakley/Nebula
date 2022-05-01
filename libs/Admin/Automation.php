@@ -10,7 +10,7 @@ if ( !trait_exists('Automation') ){
 
 				//Detect and prompt install of Recommended and Optional plugins using TGMPA
 				//Configuration Documentation: http://tgmpluginactivation.com/configuration/
-				if ( $this->is_admin_page() && $this->is_dev(true) || current_user_can('manage_options') ){
+				if ( $this->is_admin_page() && $this->get_option('bundled_plugins_notification') && ($this->is_dev(true) || current_user_can('manage_options')) ){
 					require_once get_template_directory() . '/inc/vendor/class-tgm-plugin-activation.php';
 					add_action('tgmpa_register', array($this, 'register_required_plugins'));
 				}

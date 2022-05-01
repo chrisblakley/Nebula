@@ -528,6 +528,13 @@ if ( !trait_exists('Metaboxes') ){
 					</div>
 
 					<div class="form-group">
+						<input type="checkbox" name="nebula_options[bundled_plugins_notification]" id="bundled_plugins_notification" value="1" <?php checked('1', !empty($nebula_options['bundled_plugins_notification'])); ?> /><label for="bundled_plugins_notification">Bundled Plugins Notification</label>
+						<p class="nebula-help-text short-help form-text text-muted">Control whether or not the Nebula bundled plugins notifications appears on admin pages for all users. (Default: <?php echo $this->user_friendly_default('bundled_plugins_notification'); ?>)</p>
+						<p class="nebula-help-text more-help form-text text-muted">When on, each WP user will need to dismiss the prompt individually. When disabled, it is not shown to any user.</p>
+						<p class="option-keywords">discretionary</p>
+					</div>
+
+					<div class="form-group">
 						<input type="checkbox" name="nebula_options[wp_core_updates_notify]" id="wp_core_updates_notify" value="1" <?php checked('1', !empty($nebula_options['wp_core_updates_notify'])); ?> /><label for="wp_core_updates_notify">WordPress Core Update Notification</label>
 						<p class="nebula-help-text short-help form-text text-muted">Control whether or not the Wordpress Core update notifications show up on the admin pages. (Default: <?php echo $this->user_friendly_default('wp_core_updates_notify'); ?>)</p>
 						<p class="option-keywords">discretionary</p>

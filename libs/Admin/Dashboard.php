@@ -198,7 +198,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fa-solid fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> ' . $all_plugins_plural . '</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
 
 			//Must-Use Plugins
-			if ( is_array(scandir(WPMU_PLUGIN_DIR)) ){ //Make sure this directory exists
+			if ( is_dir(WPMU_PLUGIN_DIR) && is_array(scandir(WPMU_PLUGIN_DIR)) ){ //Make sure this directory exists
 				$mu_plugin_count = count(array_diff(scandir(WPMU_PLUGIN_DIR), array('..', '.'))); //Count the files in the mu-plugins directory (and remove the "." and ".." directories from scandir())
 				if ( !empty($mu_plugin_count) && $mu_plugin_count >= 1 ){
 					$mu_plugins_plural = ( $mu_plugin_count === 1 )? 'Must-Use Plugin' : 'Must-Use Plugins';
@@ -643,13 +643,13 @@ if ( !trait_exists('Dashboard') ){
 
 			//Server operating system
 			if ( strpos(strtolower(PHP_OS), 'linux') !== false ){
-				$php_os_icon = 'fa-linux';
+				$php_os_icon = 'fa-brands fa-linux';
 			} elseif ( strpos(strtolower(PHP_OS), 'windows') !== false ){
-				$php_os_icon = 'fa-windows';
+				$php_os_icon = 'fa-brands fa-windows';
 			} else {
-				$php_os_icon = 'fa-upload';
+				$php_os_icon = 'fa-solid fa-upload';
 			}
-			echo '<li><i class="fa-brands fa-fw ' . $php_os_icon . '"></i> Server OS: <strong>' . PHP_OS . '</strong></li>';
+			echo '<li><i class="fa-fw ' . $php_os_icon . '"></i> Server OS: <strong>' . PHP_OS . '</strong></li>';
 
 			//Server software
 			$server_software = $this->super->server['SERVER_SOFTWARE'];

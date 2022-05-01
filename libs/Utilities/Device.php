@@ -13,6 +13,11 @@ if ( !trait_exists('Device') ){
 			$override = apply_filters('pre_nebula_is_mobile', null);
 			if ( isset($override) ){return $override;}
 
+			//Check User Agent Client Hints
+			if ( isset($_SERVER['HTTP_SEC_CH_UA_MOBILE']) && $_SERVER['HTTP_SEC_CH_UA_MOBILE'] === '?1' ){ //if Sec-CH-UA-Mobile client hint is ?1
+				return true;
+			}
+
 			global $is_iphone;
 			if ( wp_is_mobile() || $is_iphone ){
 				return true;
@@ -30,6 +35,11 @@ if ( !trait_exists('Device') ){
 				return true;
 			}
 
+			//Check User Agent Client Hints
+			if ( isset($_SERVER['HTTP_SEC_CH_UA_MOBILE']) && $_SERVER['HTTP_SEC_CH_UA_MOBILE'] === '?0' ){ //if Sec-CH-UA-Mobile client hint is ?0
+				return true;
+			}
+
 			return false;
 		}
 
@@ -37,6 +47,11 @@ if ( !trait_exists('Device') ){
 		public function get_os($info='name'){
 			$override = apply_filters('pre_nebula_get_os', null, $info);
 			if ( isset($override) ){return $override;}
+
+			//Check User Agent Client Hints
+			if ( isset($_SERVER['HTTP_SEC_CH_UA_PLATFORM']) ){ //if Sec-CH-UA-Platform client hint
+				return $_SERVER['HTTP_SEC_CH_UA_PLATFORM'];
+			}
 
 			global $is_iphone;
 			switch ( strtolower($info) ){
@@ -57,6 +72,7 @@ if ( !trait_exists('Device') ){
 			if ( isset($override) ){return $override;}
 
 			global $is_iphone;
+
 			$info = str_replace(' ', '', $info);
 			switch ( strtolower($info) ){
 				case 'brand':
@@ -70,13 +86,15 @@ if ( !trait_exists('Device') ){
 					}
 					break;
 				case 'formfactor':
-					if ( wp_is_mobile() || $is_iphone ){
+					if ( wp_is_mobile() || $is_iphone || $this->is_mobile() ){
 						return 'mobile';
 					}
 					return 'desktop';
 				default:
 					return '';
 			}
+
+			//Could consider checking/parsing the HTTP_SEC_CH_UA header here
 		}
 
 		//Returns the requested information of the browser being used.
@@ -92,6 +110,7 @@ if ( !trait_exists('Device') ){
 			}
 
 			global $is_gecko, $is_opera, $is_safari, $is_chrome, $is_edge;
+
 			switch ( strtolower($info) ){
 				case 'full':
 				case 'name':
@@ -101,6 +120,32 @@ if ( !trait_exists('Device') ){
 					elseif ( $is_safari ){return 'safari';}
 					elseif ( $is_chrome ){return 'chrome';}
 					elseif ( $is_edge ){return 'edge';}
+
+					//Check User Agent Client Hints
+					if ( isset($_SERVER['HTTP_SEC_CH_UA']) ){ //if Sec-CH-UA-Platform client hint
+						$ch_ua = strtolower($_SERVER['HTTP_SEC_CH_UA']);
+
+						if ( str_contains($ch_ua, 'chrome') ){
+							return 'chrome';
+						}
+
+						if ( str_contains($ch_ua, 'safari') ){
+							return 'safari';
+						}
+
+						if ( str_contains($ch_ua, 'firefox') ){
+							return 'firefox';
+						}
+
+						if ( str_contains($ch_ua, 'edge') ){
+							return 'edge';
+						}
+
+						if ( str_contains($ch_ua, 'opera') ){
+							return 'opera';
+						}
+					}
+
 					return false;
 				case 'engine':
 					if ( $is_gecko ){return 'gecko';}
@@ -109,6 +154,8 @@ if ( !trait_exists('Device') ){
 				default:
 					return false;
 			}
+
+
 		}
 
 		//Check the browser
@@ -119,6 +166,15 @@ if ( !trait_exists('Device') ){
 			//This only checks browser name
 			if ( $this->get_browser() == strtolower($browser) ){
 				return true;
+			}
+
+			//Check User Agent Client Hints
+			if ( isset($_SERVER['HTTP_SEC_CH_UA']) ){ //if Sec-CH-UA-Platform client hint
+				$ch_ua = strtolower($_SERVER['HTTP_SEC_CH_UA']);
+
+				if ( str_contains($ch_ua, strtolower($browser)) ){
+					return true;
+				}
 			}
 
 			return false;
