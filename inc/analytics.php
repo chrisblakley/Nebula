@@ -9,7 +9,7 @@
 	<?php nebula()->timer('Analytics (Include)'); ?>
 	<?php if ( nebula()->get_option('ga_measurement_id') ): //Google Analytics ?>
 		<script src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>" async></script>
-		<script type="module" async>
+		<script async>
 			window.performance.mark('(Nebula) Analytics [Start]');
 
 			window.dataLayer = window.dataLayer || [];

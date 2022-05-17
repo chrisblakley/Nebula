@@ -539,7 +539,6 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('mousedown', 'a[href^="mailto"]', function(e){
 			let emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 			let emailDomain = emailAddress.split('@')[1]; //Get everything after the @
-			let emailCharacterArray = Array.from(emailAddress.split('@')[0]).slice(1); //Get an array of chars before @ and remove the first index
 			let anonymizedEmail = nebula.anonymizeEmail(emailAddress); //Mask the email with asterisks
 
 			let thisEvent = {
