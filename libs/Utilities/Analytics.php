@@ -10,8 +10,6 @@ if ( !trait_exists('Analytics') ){
 	trait Analytics {
 		public function hooks(){
 			if ( !$this->is_background_request() && !is_customize_preview() ){
-				add_filter('nebula_brain', array($this, 'ga_definitions'));
-
 				add_filter('the_permalink_rss', array($this, 'add_utm_to_feeds'), 100);
 				add_filter('the_excerpt_rss', array($this, 'add_utm_to_feeds_content_links'), 200);
 				add_filter('the_content_feed', array($this, 'add_utm_to_feeds_content_links'), 200);
@@ -69,7 +67,7 @@ if ( !trait_exists('Analytics') ){
 		//Note: Experiment ID and Variant are core dimensions in Google Analytics!
 		public function google_optimize_tag(){
 			if ( $this->get_option('google_optimize_id') ){ ?>
-				<script src="https://www.googleoptimize.com/optimize.js?id=<?php echo $this->get_option('google_optimize_id'); ?>"></script>
+				<script src="https://www.googleoptimize.com/optimize.js?id=<?php echo esc_html(nebula()->get_option('google_optimize_id')); ?>"></script>
 			<?php }
 		}
 
@@ -88,125 +86,46 @@ if ( !trait_exists('Analytics') ){
 			);
 		}
 
-		//Return the index of the custom dimension or metric
-		public function ga_definition_index($definition){
-			return str_replace(array('dimension', 'metric'), '', esc_html($definition));
-		}
-
-		//Store analytics and custom dimensions/metrics into the Nebula data object
-		public function ga_definitions($brain){
-			$brain['analytics'] = array( //Set this even if analytics is not enabled
-				'isReady' => false,
-				'trackingID' => esc_html($this->get_option('ga_tracking_id')),
-				'dimensions' => array( //This may need to be heavily modified for GA4 (since parameter names can be used directly)
-					'gaCID' => esc_html($this->get_option('cd_gacid')),
-					'hitID' => esc_html($this->get_option('cd_hitid')),
-					'hitTime' => esc_html($this->get_option('cd_hittime')),
-					'hitType' => esc_html($this->get_option('cd_hittype')),
-					'hitInteractivity' => esc_html($this->get_option('cd_hitinteractivity')),
-					'hitMethod' => esc_html($this->get_option('cd_hitmethod')),
-					'saveData' => esc_html($this->get_option('cd_savedata')),
-					'reducedMotion' => esc_html($this->get_option('cd_reducedmotion')),
-					'colorScheme' => esc_html($this->get_option('cd_colorscheme')),
-					'offline' => esc_html($this->get_option('cd_offline')),
-					'deviceMemory' => esc_html($this->get_option('cd_devicememory')),
-					'network' => esc_html($this->get_option('cd_network')),
-					'referrer' => esc_html($this->get_option('cd_referrer')),
-					'navigationtype' => esc_html($this->get_option('cd_navigationtype')),
-					'redirectcount' => esc_html($this->get_option('cd_redirectcount')),
-					'author' => esc_html($this->get_option('cd_author')),
-					'businessHours' => esc_html($this->get_option('cd_businesshours')),
-					'categories' => esc_html($this->get_option('cd_categories')),
-					'tags' => esc_html($this->get_option('cd_tags')),
-					'contactMethod' => esc_html($this->get_option('cd_contactmethod')),
-					'formTiming' => esc_html($this->get_option('cd_formtiming')),
-					'formFlow' => esc_html($this->get_option('cd_formflow')),
-					'windowType' => esc_html($this->get_option('cd_windowtype')),
-					'geolocation' => esc_html($this->get_option('cd_geolocation')),
-					'geoAccuracy' => esc_html($this->get_option('cd_geoaccuracy')),
-					'geoName' => esc_html($this->get_option('cd_geoname')),
-					'wpmlLang' => esc_html($this->get_option('cd_wpmllang')),
-					'relativeTime' => esc_html($this->get_option('cd_relativetime')),
-					'sessionID' => esc_html($this->get_option('cd_sessionid')),
-					'securityNote' => esc_html($this->get_option('cd_securitynote')),
-					'poi' => esc_html($this->get_option('cd_notablepoi')),
-					'role' => esc_html($this->get_option('cd_role')),
-					'timestamp' => esc_html($this->get_option('cd_timestamp')),
-					'userID' => esc_html($this->get_option('cd_userid')),
-					'fbID' => esc_html($this->get_option('cd_fbid')),
-					'videoWatcher' => esc_html($this->get_option('cd_videowatcher')),
-					'eventIntent' => esc_html($this->get_option('cd_eventintent')),
-					'wordCount' => esc_html($this->get_option('cd_wordcount')),
-					'weather' => esc_html($this->get_option('cd_weather')),
-					'temperature' => esc_html($this->get_option('cd_temperature')),
-					'publishDate' => esc_html($this->get_option('cd_publishdate')),
-					'blocker' => esc_html($this->get_option('cd_blocker')),
-					'queryString' => esc_html($this->get_option('cd_querystring')),
-					'textFragment' => esc_html($this->get_option('cd_textfragment')),
-					'mqBreakpoint' => esc_html($this->get_option('cd_mqbreakpoint')),
-					'mqResolution' => esc_html($this->get_option('cd_mqresolution')),
-					'mqOrientation' => esc_html($this->get_option('cd_mqorientation')),
-					'visibilityState' => esc_html($this->get_option('cd_visibilitystate')),
-				),
-				'metrics' => array( //This may need to be heavily modified for GA4 (since parameter names can be used directly)
-					'serverResponseTime' => esc_html($this->get_option('cm_serverresponsetime')),
-					'domReadyTime' => esc_html($this->get_option('cm_domreadytime')),
-					'windowLoadedTime' => esc_html($this->get_option('cm_windowloadedtime')),
-					'formImpressions' => esc_html($this->get_option('cm_formimpressions')),
-					'formStarts' => esc_html($this->get_option('cm_formstarts')),
-					'formSubmissions' => esc_html($this->get_option('cm_formsubmissions')),
-					'notableDownloads' => esc_html($this->get_option('cm_notabledownloads')),
-					'engagedReaders' => esc_html($this->get_option('cm_engagedreaders')),
-					'videoStarts' => esc_html($this->get_option('cm_videostarts')),
-					'videoPlaytime' => esc_html($this->get_option('cm_videoplaytime')),
-					'videoCompletions' => esc_html($this->get_option('cm_videocompletions')),
-					'autocompleteSearches' => esc_html($this->get_option('cm_autocompletesearches')),
-					'autocompleteSearchClicks' => esc_html($this->get_option('cm_autocompletesearchclicks')),
-					'wordCount' => esc_html($this->get_option('cm_wordcount')),
-					'maxScroll' => esc_html($this->get_option('cm_maxscroll')),
-				),
-			);
-
-			return $brain;
-		}
-
 		//Nebula usage data
-		//This will need to be updated for GA4 if/when the usage property is updated
-		public function usage($action, $data=array()){
+		public function usage($name='usage_data', $event_parameters=array()){
 			$date = new DateTime('now', new DateTimeZone('America/New_York'));
-			$defaults = array(
-				'v' => 1,
-				't' => 'pageview',
-				'tid' => 'UA-36461517-5',
-				'cid' => $this->ga_parse_cookie(),
-				'ua' => rawurlencode($this->super->server['HTTP_USER_AGENT']),
-				'uip' => $this->get_ip_address(),
-				'dh' => ( function_exists('gethostname') )? gethostname() : '',
-				'dl' => $action,
-				'dt' => get_bloginfo('name'), //Consider urlencode() here
-				'cd1' => home_url('/'),
-				'cd2' => time(),
-				'cd8' => $date->format('F j, Y, g:ia'),
-				'cd3' => get_bloginfo('version'),
-				'cd6' => $this->version('raw'),
-				'cd4' => get_bloginfo('description'),
-				'cd5' => site_url(),
-				'cd7' => $this->ga_parse_cookie(),
-				'cd9' => ( is_child_theme() )? 'Child' : 'Parent',
-				'cd13' => get_current_user_id(),
-				'cd14' => PHP_VERSION,
-				'cd15' => mysqli_get_client_version(),
-				'cn' => 'Nebula Usage',
-				'cs' => home_url('/'),
-				'cm' => 'WordPress'
+			$data = array(
+				'client_id' => $this->ga_parse_cookie(), //Can just use the one generated for this user
+				'non_personalized_ads' => true, //We do not need this data for Nebula exception tracking
+				'events' => array(array(
+					'name' => $name,
+					'params' => array(
+						'user_agent' => rawurlencode($this->super->server['HTTP_USER_AGENT']),
+						'hostname' => ( function_exists('gethostname') )? gethostname() : '',
+						'page_location' => $this->requested_url(),
+						'website_name' => get_bloginfo('name'),
+						'home_url' => home_url('/'),
+						'unix_timestamp' => time(),
+						'eastern_timestamp' => $date->format('F j, Y, g:ia'),
+						'wordpress_version' => get_bloginfo('version'),
+						'nebula_version' => $this->version('raw'),
+						'site_description' => get_bloginfo('description'),
+						'site_url' => site_url(),
+						'client_id' => $this->ga_parse_cookie(),
+						'theme_type' => ( is_child_theme() )? 'Child' : 'Parent',
+						'wp_user_id' => get_current_user_id(),
+						'php_version' => PHP_VERSION,
+						'mysql_version' => mysqli_get_client_version(),
+						'transport_method' => 'Server-Side',
+					)
+				))
 			);
 
-			if ( strtolower($action) === 'theme activation' ){
-				$defaults['cd10'] = ( $this->get_data('first_activation') && time()-$this->get_data('first_activation') > 60 )? 'Reactivated - First at ' . $this->get_data('first_activation') . ' (' . human_time_diff($this->get_data('first_activation')) . ' ago)' : 'Initial Activation';
+			if ( $name === 'theme_activation' ){
+				$data['events'][0]['params']['activation_type'] = ( $this->get_data('first_activation') && time()-$this->get_data('first_activation') > 60 )? 'Reactivated - First at ' . $this->get_data('first_activation') . ' (' . human_time_diff($this->get_data('first_activation')) . ' ago)' : 'Initial Activation';
 			}
 
-			$data = array_merge($defaults, $data); //Add passed parameters
-			$this->ga_send_data($data, true);
+			$data['events'][0]['params'] = array_merge($data['events'][0]['params'], $event_parameters); //Add passed parameters
+
+			$response = wp_remote_post('https://www.google-analytics.com/mp/collect?measurement_id=G-79YGGYLVJK&api_secret=rRFT9IynSg-DEo5t7j1mqw', array(
+				'body' => json_encode($data),
+				'method' => 'POST',
+			));
 		}
 
 		//Log fatal errors in Google Analytics as crashes
@@ -215,14 +134,14 @@ if ( !trait_exists('Analytics') ){
 			if ( isset($error) && $error['type'] === E_ERROR ){
 				$message = str_replace(WP_CONTENT_DIR, '', strstr($error['message'], ' in /', true)); //Remove high-level directories to reduce clutter and prevent PII
 				$file = str_replace(WP_CONTENT_DIR, '', strstr($error['file'], 'wp-content')); //Remove high-level directories to reduce clutter and prevent PII
-				$this->ga_send_exception('(PHP) ' . $message . ' on line ' . $error['line'] . ' in .../' . $file, 1);
+				$this->ga_send_exception('(PHP) ' . $message . ' on line ' . $error['line'] . ' in .../' . $file, true); //Send it to this site's analytics
 
-				if ( preg_match('/themes\/Nebula-?(main|master|parent|\d+\.\d+)?\//i', $file) && !strpos(strtolower($file), 'scssphp') ){ //If the error is in Nebula parent (and not a Sass compile error) log it for continued improvement of Nebula itself //Remove "master" after a period of time (Maybe January 2021)
-					$this->usage('PHP Fatal Error', array(
-						't' => 'exception',
-						'exd' => '(PHP) ' . $message . ' on line ' . $error['line'] . ' in ' . $file,
-						'exf' => true,
-						'cd12' => (( isset($this->super->server['HTTPS']) )? 'https' : 'http') . '://' . $this->super->server['HTTP_HOST'] . $this->super->server['REQUEST_URI']
+				if ( preg_match('/themes\/Nebula-?(main|master|parent|\d+\.\d+)?\//i', $file) && !strpos(strtolower($file), 'scssphp') ){ //If the error is in Nebula parent (and not a Sass compile error) log it for continued improvement of Nebula itself //Remove "master" after a period of time (Maybe January 2021) //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					$this->usage('exception', array(
+						'event_category' => 'PHP Fatal Error',
+						'description' => '(PHP) ' . $message . ' on line ' . $error['line'] . ' in ' . $file,
+						'fatal' => true,
+						'permalink' => (( isset($this->super->server['HTTPS']) )? 'https' : 'http') . '://' . $this->super->server['HTTP_HOST'] . $this->super->server['REQUEST_URI']
 					));
 				}
 			}
@@ -235,26 +154,29 @@ if ( !trait_exists('Analytics') ){
 			$override = apply_filters('pre_ga_send_exception', null, $message, $fatal, $array);
 			if ( isset($override) ){return;}
 
-			$data = array(
-				't' => 'exception',
-				'exd' => $message,
-				'exf' => $fatal,
-				'dt' => 'Page Not Found'
+			$event_parameters = array(
+				'description' => $message,
+				'fatal' => $fatal,
+				'page_title' => 'Page Not Found'
 			);
 
-			$data = array_merge($this->ga_common_parameters(), $data); //Add custom definition parameters
-			$data = array_merge($data, $array); //Add passed parameters
-			$this->ga_send_data($data, false); //Disabling force parameter here in an attempt to reduce or eliminate "(not set)" landing page data in Google Analytics.
+			$data = array_merge($event_parameters, $array); //Add passed parameters
+			$data = $this->ga_build_event('exception', $data);
+			$this->ga_send_data($data);
 		}
 
 		//Send Data to Google Analytics
 		//https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event
-		public function ga_send_data($data, $force=false){
+		public function ga_send_data($data){
 			$override = apply_filters('pre_ga_send_data', null, $data);
 			if ( isset($override) ){return;}
 
-			if ( $force || $this->get_option('ga_server_side_fallback') ){
-				$response = wp_remote_get('https://www.google-analytics.com/collect?payload_data&' . http_build_query($data)); //https://ga-dev-tools.appspot.com/hit-builder/
+			//The GA Measurement Protocol requires a Measurement ID and an API Secret key
+			if ( $this->get_option('ga_api_secret') && $this->get_option('ga_measurement_id') ){
+				$response = wp_remote_post('https://www.google-analytics.com/mp/collect?measurement_id=' . $this->get_option('ga_measurement_id') . '&api_secret=' . $this->get_option('ga_api_secret'), array(
+					'body' => json_encode($data),
+					'method' => 'POST',
+				));
 				return $response;
 			}
 
@@ -262,44 +184,42 @@ if ( !trait_exists('Analytics') ){
 		}
 
 		//Add measurement protocol parameters for custom definitions
-		public function ga_common_parameters($parameters=array()){
+		public function ga_build_event($event_name='select_content', $event_parameters=array(), $user_properties=array()){
+			global $post; //Not entirely sure this is necessary
+
 			$default_common_parameters = array(
-				'v' => 1, //Protocol Version
-				'tid' => $this->get_option('ga_tracking_id'), //Tracking ID
-				'cid' => $this->ga_parse_cookie(), //Client ID
-				'ua' => ( !empty($this->super->server['HTTP_USER_AGENT']) )? rawurlencode($this->super->server['HTTP_USER_AGENT']): '', //User Agent
-				'uip' => $this->get_ip_address(), //Anonymized IP Address
-				'ul' => ( class_exists('Locale') && !empty($this->super->server['HTTP_ACCEPT_LANGUAGE']) )? locale_accept_from_http($this->super->server['HTTP_ACCEPT_LANGUAGE']) : '', //User Language
-				'dr' => ( isset($this->super->server['HTTP_REFERER']) )? $this->super->server['HTTP_REFERER'] : '', //Referrer
-				'dl' => $this->requested_url(), //Likely "admin-ajax.php" until overwritten
-				'dt' => ( get_the_title() )? get_the_title() : '', //Likely empty until overwritten
+				'client_id' => $this->ga_parse_cookie(),
+				'non_personalized_ads' => false,
+				'user_properties' => array(
+					'client_id' => array('value' => $this->ga_parse_cookie())
+				),
+				'events' => array(array(
+					'name' => $event_name,
+					'params' => array(
+						'user_agent' => ( !empty($this->super->server['HTTP_USER_AGENT']) )? rawurlencode($this->super->server['HTTP_USER_AGENT']): '',
+						'language' => ( class_exists('Locale') && !empty($this->super->server['HTTP_ACCEPT_LANGUAGE']) )? locale_accept_from_http($this->super->server['HTTP_ACCEPT_LANGUAGE']) : '',
+						'page_referrer' => ( isset($this->super->server['HTTP_REFERER']) )? $this->super->server['HTTP_REFERER'] : '',
+						'page_location' => $this->requested_url(), //Likely "admin-ajax.php" until overwritten
+						'page_title' => ( get_the_title() )? get_the_title() : '', //Likely empty until overwritten
+						'nebula_session_id' => $this->nebula_session_id(),
+						'transport_method' => 'Server-Side'
+					)
+				))
 			);
 
 			//User ID
 			if ( is_user_logged_in() ){
-				$default_common_parameters['uid'] = get_current_user_id(); //User ID
-				if ( $this->get_option('cd_userid') ){
-					$default_common_parameters['cd' . $this->ga_definition_index($this->get_option('cd_userid'))] = get_current_user_id();
-				}
+				$default_common_parameters['user_properties']['wp_id'] = array('value' => get_current_user_id()); //User ID
 			}
 
-			//Session ID
-			if ( $this->get_option('cd_sessionid') ){
-				$default_common_parameters['cd' . $this->ga_definition_index($this->get_option('cd_sessionid'))] = $this->nebula_session_id();
-			}
+			//Transport Method
+			$default_common_parameters['events'][0]['params']['transport_method'] = 'Server-Side';
 
-			//Transport method
-			if ( $this->get_option('cd_hitmethod') ){
-				$default_common_parameters['cd' . $this->ga_definition_index($this->get_option('cd_hitmethod'))] = 'Server-Side';
-			}
+			//Merge with provided data
+			$default_common_parameters['user_properties'] = array_merge($default_common_parameters['user_properties'], $user_properties); //Add passed user properties
+			$default_common_parameters['events'][0]['params'] = array_merge($default_common_parameters['events'][0]['params'], $event_parameters); //Add passed event parameters
 
-			//Anonymize IP
-			if ( $this->get_option('ga_anonymize_ip') ){
-				$default_common_parameters['aip'] = 1;
-			}
-
-			$common_parameters = array_merge($default_common_parameters, $parameters); //Add passed parameters
-			$common_parameters = apply_filters('nebula_measurement_protocol_custom_definitions', $common_parameters);
+			$common_parameters = apply_filters('nebula_measurement_protocol_custom_definitions', $default_common_parameters);
 
 			return $common_parameters;
 		}

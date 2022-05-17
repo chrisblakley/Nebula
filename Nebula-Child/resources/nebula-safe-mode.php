@@ -39,7 +39,7 @@ if ( !function_exists('wp_get_current_user') ){
 //Determine who safe mode is allowed for. Customize the conditionals in this function or write your own to control who can view the website in safe mode.
 function is_nebula_safe_mode_allowed(){
 	//Never show safe mode to Googlebot (or anyone claiming to be Googlebot)
-	if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') ){
+	if ( strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 		return false;
 	}
 

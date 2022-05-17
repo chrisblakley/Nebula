@@ -26,7 +26,7 @@
 		}
 
 		if ( isset($this->super->get['settings-updated']) && $this->super->get['settings-updated'] == 'true' ){
-			$this->usage('Nebula Options Saved');
+			$this->usage('nebula_options_saved');
 			$this->add_log('Nebula Options saved');
 			do_action('nebula_options_saved');
 			?>
@@ -54,11 +54,15 @@
 					<div id="stickynav">
 						<ul id="options-navigation" class="nav nav-pills flex-column" role="tablist" aria-orientation="vertical">
 							<?php foreach ( $this->get_option_categories() as $category ): ?>
-								<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === strtolower($category['name']) )? 'active' : ''; ?>" href="#<?php echo strtolower($category['name']); ?>" data-bs-toggle="pill"><i class="fa-solid fa-fw <?php echo $category['icon']; ?>"></i> <?php echo $category['name']; ?></a></li>
+								<li class="nav-item">
+									<a class="nav-link <?php echo ( $active_tab === strtolower($category['name']) )? 'active' : ''; ?>" href="#<?php echo trim(preg_replace('/\s&.*$/', '', strtolower($category['name']))); //Regex strips everything after and including  the "&" in the name ?>" data-bs-toggle="pill"><i class="fa-solid fa-fw <?php echo $category['icon']; ?>"></i> <?php echo $category['name']; ?></a>
+								</li>
 							<?php endforeach; ?>
 
 							<?php if ( current_user_can('manage_options') ): ?>
-								<li class="nav-item"><a class="nav-link <?php echo ( $active_tab === 'diagnostic' )? 'active' : ''; ?>" href="#diagnostic" data-bs-toggle="pill"><i class="fa-solid fa-fw fa-life-ring"></i> Diagnostic</a></li>
+								<li class="nav-item">
+									<a class="nav-link <?php echo ( $active_tab === 'diagnostic' )? 'active' : ''; ?>" href="#diagnostic" data-bs-toggle="pill"><i class="fa-solid fa-fw fa-life-ring"></i> Diagnostic</a>
+								</li>
 							<?php endif; ?>
 						</ul>
 
@@ -148,7 +152,7 @@
 					<div id="analytics" class="tab-pane <?php echo ( $active_tab === 'analytics' )? 'active' : ''; ?>">
 						<div class="row title-row">
 							<div class="col-xl-8">
-								<h2 class="pane-title">Analytics</h2>
+								<h2 class="pane-title">Analytics &amp; Privacy</h2>
 							</div><!--/col-->
 						</div><!--/row-->
 						<div class="row">

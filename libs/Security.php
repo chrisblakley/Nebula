@@ -13,7 +13,7 @@ if ( !trait_exists('Security') ){
 			add_filter('login_errors', array($this, 'login_errors'));
 			add_filter('the_generator', '__return_empty_string'); //Remove Wordpress version info from head and feeds
 			add_action('check_comment_flood', array($this, 'check_referrer'));
-			//add_action('wp_footer', array($this, 'track_notable_bots')); //Disabled for now. Not super useful.
+			add_action('wp_footer', array($this, 'track_notable_bots'));
 			add_action('get_header', array($this, 'redirect_author_template'));
 			add_filter('xmlrpc_enabled', '__return_false'); //Disable XML-RPC that require authentication
 			add_filter('xmlrpc_methods', function(){return array();}, PHP_INT_MAX); //Disable all XML-RPC requests with the highest priority
@@ -58,7 +58,7 @@ if ( !trait_exists('Security') ){
 		public function bad_access_prevention(){
 			//Log template direct access attempts
 			if ( array_key_exists('ndaat', $this->super->get) ){
-				$this->ga_send_exception('(Security) Direct Template Access Prevention on ' . $this->super->get['ndaat'], 0, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Direct Template Access Attempt'));
+				$this->ga_send_exception('(Security) Direct Template Access Prevention on ' . $this->super->get['ndaat'], false, array('security_note' => 'Direct Template Access Attempt'));
 				header('Location: ' . home_url('/'));
 				exit;
 			}
@@ -96,18 +96,18 @@ if ( !trait_exists('Security') ){
 			if ( isset($override) ){return $override;}
 
 			if ( !empty($error) ){
-				$dimensions = array('dl'=> wp_login_url(), 'dt' => 'Log In');
+				$event_properties = array('page_location'=> wp_login_url(), 'page_title' => 'Log In');
 
 				if ( $this->contains($error, array('The password you entered for the username')) ){
 					$incorrect_username_start = strpos($error, 'for the username ')+17;
 					$incorrect_username_stop = strpos($error, ' is incorrect')-$incorrect_username_start;
 					$incorrect_username = strip_tags(substr($error, $incorrect_username_start, $incorrect_username_stop));
-					$this->ga_send_exception('(Security) Login error (incorrect password) for user ' . $incorrect_username, 0, $dimensions);
+					$this->ga_send_exception('(Security) Login error (incorrect password) for user ' . $incorrect_username, false, $event_properties);
 				} else {
-					if ( $this->contains($error, array('Invalid username')) && $this->get_option('cd_securitynote') ){ //If no username was entered, tag the user as a potential bot
-						$dimensions['cd' . $this->ga_definition_index($this->get_option('cd_securitynote'))] = 'Possible Bot';
+					if ( $this->contains($error, array('Invalid username')) ){ //If no username was entered, tag the user as a potential bot
+						$event_properties['security_note'] = 'Possible Bot';
 					}
-					$this->ga_send_exception('(Security) Login error: ' . strip_tags($error), 0, $dimensions);
+					$this->ga_send_exception('(Security) Login error: ' . strip_tags($error), false, $event_properties);
 				}
 
 				if ( !$this->is_bot() ){
@@ -152,26 +152,47 @@ if ( !trait_exists('Security') ){
 		}
 
 		//Track Notable Bots
+		//This data can indicate when the website was shared on certain platforms. That is why we are only tracking bots that are sent by a user action (and not search indexing bots, for example).
 		function track_notable_bots(){
 			$override = apply_filters('pre_track_notable_bots', null);
 			if ( isset($override) ){return;}
 
-			//Ignore users who have already been checked, or are logged in.
+			//Ignore logged-in users
 			if ( is_user_logged_in() ){
 				return false;
 			}
 
-			//Google Page Speed
-			if ( strpos($this->super->server['HTTP_USER_AGENT'], 'Google Page Speed') !== false ){
+			$user_agent = strtolower($this->super->server['HTTP_USER_AGENT']); //Normalize the user agent for matching against
+
+			//Lighthouse (Ex: web.dev) (Formerly Google Page Speed Insights)
+			if ( strpos($user_agent, 'chrome-lighthouse') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				if ( $this->url_components('extension') !== 'js' ){
-					global $post;
+					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Chrome Lighthouse')));
 				}
 			}
 
-			//Internet Archive Wayback Machine
-			if ( strpos($this->super->server['HTTP_USER_AGENT'], 'archive.org_bot') !== false || strpos($this->super->server['HTTP_USER_AGENT'], 'Wayback Save Page') !== false ){
-				global $post;
+			//Redditbot
+			if ( strpos($user_agent, 'redditbot') !== false ){
+				$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Redditbot')));
 			}
+
+			//Slackbot
+			if ( $this->is_slackbot() ){
+				$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Slackbot')));
+			}
+
+			//Discordbot
+			if ( strpos($user_agent, 'discordbot') !== false ){
+				$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Discordbot')));
+			}
+
+			//Internet Archive Wayback Machine
+			if ( strpos($user_agent, 'archive.org_bot') !== false || strpos($user_agent, 'wayback save page') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Internet Archive Wayback Machine')));
+			}
+
+			//Other Notable Bots:
+				//bingbot
 		}
 
 		//Check referrer for known spam domains
@@ -189,34 +210,34 @@ if ( !trait_exists('Security') ){
 
 				if ( count($spam_domain_array) > 1 ){
 					if ( isset($this->super->server['HTTP_REFERER']) && $this->contains(strtolower($this->super->server['HTTP_REFERER']), $spam_domain_array) ){
-						$this->ga_send_exception('(Security) Spam domain prevented. Referrer: ' . $this->super->server['HTTP_REFERER'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Referrer'));
+						$this->ga_send_exception('(Security) Spam domain prevented. Referrer: ' . $this->super->server['HTTP_REFERER'], true, array('security_note' => 'Spam Referrer'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
 
 					if ( isset($this->super->server['REMOTE_HOST']) && $this->contains(strtolower($this->super->server['REMOTE_HOST']), $spam_domain_array) ){
-						$this->ga_send_exception('(Security) Spam domain prevented. Hostname: ' . $this->super->server['REMOTE_HOST'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Hostname'));
+						$this->ga_send_exception('(Security) Spam domain prevented. Hostname: ' . $this->super->server['REMOTE_HOST'], true, array('security_note' => 'Spam Hostname'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
 
 					if ( isset($this->super->server['SERVER_NAME']) && $this->contains(strtolower($this->super->server['SERVER_NAME']), $spam_domain_array) ){
-						$this->ga_send_exception('(Security) Spam domain prevented. Server Name: ' . $this->super->server['SERVER_NAME'], 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Server Name'));
+						$this->ga_send_exception('(Security) Spam domain prevented. Server Name: ' . $this->super->server['SERVER_NAME'], true, array('security_note' => 'Spam Server Name'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
 
 					if ( isset($ip_address) && $this->contains(strtolower(gethostbyaddr($ip_address)), $spam_domain_array) ){
-						$this->ga_send_exception('(Security) Spam domain prevented. Network Hostname: ' . $ip_address, 1, array('cd' . $this->ga_definition_index($this->get_option('cd_securitynote')) => 'Spam Network Hostname'));
+						$this->ga_send_exception('(Security) Spam domain prevented. Network Hostname: ' . $ip_address, true, array('security_note' => 'Spam Network Hostname'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
 						wp_die();
 					}
 				} else {
-					$this->ga_send_exception('(Security) spammers.txt has no entries!', 0);
+					$this->ga_send_exception('(Security) spammers.txt has no entries!', false);
 				}
 
 				$this->set_cookie('spam_domain', false);
@@ -270,7 +291,7 @@ if ( !trait_exists('Security') ){
 					}
 				}
 			} else {
-				$this->ga_send_exception('(Security) spammers.txt was not available!', 0);
+				$this->ga_send_exception('(Security) spammers.txt was not available!', false);
 			}
 
 			//Add manual and user-added spam domains
@@ -283,7 +304,7 @@ if ( !trait_exists('Security') ){
 
 		//Cookie Notification HTML that appears in the footer
 		public function cookie_notification(){
-			if ( $this->option('cookie_notification') && empty($this->super->cookie['acceptcookies']) ){
+			if ( ($this->option('cookie_notification') || $this->option('ga_require_consent')) && empty($this->super->cookie['acceptcookies']) ){ //Show if the Cookie Notification or Require Consent Nebula option is enabled
 				?>
 				<div id="nebula-cookie-notification" role="region" aria-label="Accept Cookies">
 					<p><?php echo $this->option('cookie_notification'); ?></p>

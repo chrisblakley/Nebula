@@ -153,17 +153,24 @@ nebula.errorMitigation = function(){
 
 			fetch(fallbackPNG, {
 				method: 'GET',
+				priority: 'low',
 			}).then(function(response){
 				if ( response.ok ){
 					thisImage.prop('src', fallbackPNG);
 					thisImage.removeClass('svg');
 				}
 			}).catch(function(error){
-				ga('send', 'exception', {'exDescription': '(JS) Broken Image: ' + imagePath, 'exFatal': false});
+				gtag('event', 'Exception', {
+					description: '(JS) Broken Image: ' + imagePath,
+					fatal: false
+				});
 				nebula.crm?.('event', 'Broken Image'); //May not be defined if analytics is not active so using optional chaining on the execution of this function
 			});
 		} else {
-			ga('send', 'exception', {'exDescription': '(JS) Broken Image: ' + imagePath, 'exFatal': false});
+			gtag('event', 'Exception', {
+				description: '(JS) Broken Image: ' + imagePath,
+				fatal: false
+			});
 			nebula.crm?.('event', 'Broken Image'); //May not be defined if analytics is not active so using optional chaining on the execution of this function
 		}
 	});
@@ -711,6 +718,25 @@ nebula.sanitize = function(text){
 	return document.createElement('div').appendChild(document.createTextNode(text)).parentNode.innerHTML;
 };
 
+//Mask the email with asterisks
+nebula.anonymizeEmail = function(emailAddress){
+	let anonymizedEmail = '';
+
+	if ( emailAddress.includes('@') && emailAddress.includes('.') ){ //Very simple validation. If a valid email address is not provided, no anonymization will happen!
+		anonymizedEmail = emailAddress.charAt(0); //Start by preserving the first character
+		emailCharacterArray.forEach(function(character, index){ //Get an array of chars before @ and remove the first index
+			if ( index === emailCharacterArray.length-1 ){ //If the current index is the last item (character)
+				anonymizedEmail += character; //Use the last letter as-is
+			} else {
+				anonymizedEmail += '*'; //Add an asterisk for each character in the array
+			}
+		});
+		anonymizedEmail += '@' + emailDomain; //Add the domain
+	}
+
+	return anonymizedEmail;
+}
+
 //Check if a string is alphanumeric
 nebula.isAlphanumeric = function(string = '', allowWords = true){
 	if ( !allowWords && string.length > 1 ){ //Ignore meta keys whose "character" is a word (not a letter)
@@ -786,7 +812,10 @@ nebula.desktopNotification = function(title, message = false, clickCallback, sho
 		}
 		if ( errorCallback ){
 			instance.onerror = function(){
-				ga('send', 'exception', {'exDescription': '(JS) Desktop Notification error', 'exFatal': false});
+				gtag('event', 'Exception', {
+					description: '(JS) Desktop Notification error',
+					fatal: false
+				});
 				errorCallback();
 			};
 		}
@@ -850,7 +879,13 @@ nebula.networkConnection = function(){
 //Page Visibility
 nebula.visibilityChangeActions = function(){
 	if ( document.visibilityState === 'prerender' ){ //Page was prerendered
-		ga('send', 'event', 'Page Visibility', 'Prerendered', 'Page loaded before tab/window was visible', {'nonInteraction': true});
+		gtag('event', 'page_visibility', {
+			event_category: 'Page Visibility',
+			event_action: 'Prerendered',
+			event_label: 'Page loaded before tab/window was visible',
+			non_interaction: true
+		});
+
 		nebula.pauseAllVideos(false);
 	}
 

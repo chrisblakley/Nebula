@@ -173,14 +173,19 @@ nebula.autocompleteSearch = function(element, types = ''){
 				let searchResults = nebula.memoize('get', 'autocomplete search (' + request.term.toLowerCase() + ') [' + typesQuery + ']'); //Try from stored memory first
 
 				if ( !searchResults ){
-					var fetchResponse = await fetch(nebula.site.home_url + '/wp-json/nebula/v2/autocomplete_search?term=' + request.term + typesQuery, {importance: 'high'}).then(function(fetchResponse){
+					var fetchResponse = await fetch(nebula.site.home_url + '/wp-json/nebula/v2/autocomplete_search?term=' + request.term + typesQuery, {
+						priority: 'high'
+					}).then(function(fetchResponse){
 						return fetchResponse.json();
 					}).then(function(fetchData){
 						searchResults = nebula.memoize('set', 'autocomplete search (' + request.term.toLowerCase() + ') [' + typesQuery + ']', fetchData); //Add to stored memory
 					}).catch(function(error){
 						nebula.dom.document.trigger('nebula_autocomplete_search_error', request.term);
 						nebula.debounce(function(){
-							ga('send', 'exception', {'exDescription': '(JS) Autocomplete AJAX error: ' + error, 'exFatal': false});
+							gtag('event', 'exception', {
+								description: '(JS) Autocomplete AJAX error: ' + error,
+								fatal: false
+							});
 							nebula.crm('event', 'Autocomplete Search AJAX Error');
 						}, 1500, 'autocomplete error buffer');
 						element.closest('form').removeClass('searching');
@@ -189,7 +194,6 @@ nebula.autocompleteSearch = function(element, types = ''){
 				}
 
 				nebula.dom.document.trigger('nebula_autocomplete_search_success', searchResults);
-				ga('set', nebula.analytics.metrics.autocompleteSearches, 1);
 
 				var noSearchResults = ' (No Results)'; //Prep the string
 
@@ -208,21 +212,27 @@ nebula.autocompleteSearch = function(element, types = ''){
 
 				nebula.debounce(function(){
 					let thisEvent = {
-						category: 'Internal Search',
-						action: 'Autocomplete Search' + noSearchResults, //GA4 name: "search"
+						event_name: 'search',
+						event_category: 'Internal Search',
+						event_action: 'Autocomplete Search' + noSearchResults,
 						request: request,
 						term: request.term.toLowerCase(),
-						noResults: ( noSearchResults )? true : false,
+						no_search_results: ( noSearchResults )? true : false,
 					};
 
 					nebula.dom.document.trigger('nebula_event', thisEvent);
-					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.term);
+					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 					nebula.fbq('track', 'Search', {search_string: thisEvent.term});
 					nebula.clarity('set', thisEvent.category, thisEvent.term);
 					nebula.crm('identify', {internal_search: thisEvent.term});
 				}, 1500, 'autocomplete success buffer');
 
-				ga('send', 'timing', 'Autocomplete Search', 'Server Response', Math.round(nebula.timer('(Nebula) Autocomplete Search', 'lap')), 'Each search until server results');
+				gtag('event', 'timing_complete', {
+					name: 'Server Response',
+					value: Math.round(nebula.timer('(Nebula) Autocomplete Search', 'lap')),
+					event_category: 'Autocomplete Search',
+					event_label: 'Each search until server results',
+				});
 
 				sourceResponse(searchResults); //Respond to the jQuery UI Autocomplete now
 
@@ -234,18 +244,24 @@ nebula.autocompleteSearch = function(element, types = ''){
 			},
 			select: function(event, ui){
 				let thisEvent = {
-					category: 'Internal Search',
-					action: 'Autocomplete Click', //GA4 name: "select_content"
+					event_name: 'select_content',
+					event_category: 'Internal Search',
+					event_action: 'Autocomplete Click',
 					ui: ui,
-					label: ui.item.label,
+					event_label: ui.item.label,
 					external: ( typeof ui.item.external !== 'undefined' )? true : false,
 				};
 
-				ga('set', nebula.analytics.metrics.autocompleteSearchClicks, 1);
 				nebula.dom.document.trigger('nebula_autocomplete_search_selected', thisEvent.ui);
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
-				ga('send', 'timing', 'Autocomplete Search', 'Until Navigation', Math.round(nebula.timer('(Nebula) Autocomplete Search', 'end')), 'From first initial search until navigation');
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+
+				gtag('event', 'timing_complete', {
+					name: 'Until Navigation',
+					value: Math.round(nebula.timer('(Nebula) Autocomplete Search', 'end')),
+					event_category: 'Autocomplete Search',
+					event_label: 'From first initial search until navigation',
+				});
 
 				if ( thisEvent.external ){
 					window.open(ui.item.link, '_blank');

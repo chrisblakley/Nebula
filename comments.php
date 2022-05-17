@@ -31,7 +31,10 @@
 
 					//Track comments in Google Analytics
 					this.callbacks.onNewComment = [function(comment){
-						ga('send', 'event', 'Comment (via Disqus)', 'Submit', comment.id);
+						gtag('event', 'Submit', {
+							event_category: 'Comment (via Disqus)',
+							comment_id: comment.id,
+						});
 					}];
 				}
 			</script>

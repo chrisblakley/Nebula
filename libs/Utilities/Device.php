@@ -50,7 +50,7 @@ if ( !trait_exists('Device') ){
 
 			//Check User Agent Client Hints
 			if ( isset($_SERVER['HTTP_SEC_CH_UA_PLATFORM']) ){ //if Sec-CH-UA-Platform client hint
-				return $_SERVER['HTTP_SEC_CH_UA_PLATFORM'];
+				return str_replace(array('"', '\\'), '', $_SERVER['HTTP_SEC_CH_UA_PLATFORM']); //Strip quotes and escapes Ex: \"macOS\"
 			}
 
 			global $is_iphone;
@@ -94,7 +94,7 @@ if ( !trait_exists('Device') ){
 					return '';
 			}
 
-			//Could consider checking/parsing the HTTP_SEC_CH_UA header here
+			//Could consider checking/parsing the HTTP_SEC_CH_UA header here. If so, strip out quotes and escapes- Ex: str_replace(array('"', '\\'), '', $_SERVER['HTTP_SEC_CH_UA_PLATFORM'])
 		}
 
 		//Returns the requested information of the browser being used.
@@ -154,8 +154,6 @@ if ( !trait_exists('Device') ){
 				default:
 					return false;
 			}
-
-
 		}
 
 		//Check the browser
@@ -194,10 +192,14 @@ if ( !trait_exists('Device') ){
 				$bot_regex = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http', 'favicon', 'curl', 'coda', 'netcraft');
 				$all_bot_regex = apply_filters('nebula_bot_regex', $bot_regex);
 				foreach( $all_bot_regex as $bot_regex ){
-					if ( strpos(strtolower($this->super->server['HTTP_USER_AGENT']), $bot_regex) !== false ){
+					if ( strpos(strtolower($this->super->server['HTTP_USER_AGENT']), $bot_regex) !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 						return true;
 					}
 				}
+			}
+
+			if ( $this->is_slackbot() ){ //The regex above should already capture this
+				return true;
 			}
 
 			return false;
@@ -205,11 +207,20 @@ if ( !trait_exists('Device') ){
 
 		//Check if the current visitor is Googlebot (search indexing)
 		function is_googlebot(){
-			if ( !empty($this->super->server['HTTP_USER_AGENT']) && strpos($this->super->server['HTTP_USER_AGENT'], 'Googlebot') ){
+			if ( !empty($this->super->server['HTTP_USER_AGENT']) && strpos($this->super->server['HTTP_USER_AGENT'], 'Googlebot') ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				$hostname = gethostbyaddr($this->get_ip_address(false));
 				if ( preg_match('/\.googlebot|google\.com$/i', $hostname) ){
 					return true;
 				}
+			}
+
+			return false;
+		}
+
+		//Check if the current visitor is Slackbot. Keep in mind that any device can spoof this user agent.
+		function is_slackbot(){
+			if ( !empty($this->super->server['HTTP_USER_AGENT']) && strpos($this->super->server['HTTP_USER_AGENT'], 'Slackbot') ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				return true;
 			}
 
 			return false;

@@ -54,7 +54,11 @@
 							<h1 class="page title"><?php _e('No Results Found', 'nebula'); ?></h1>
 							<p><?php _e('Your search for', 'nebula'); ?> <span class="search-term">"<?php echo get_search_query(); ?>"</span> <?php printf(_n('returned %s result.', 'returned %s results.', $wp_query->found_posts, 'nebula'), number_format_i18n($wp_query->found_posts)); ?></p>
 							<script>
-								ga('send', 'event', 'Internal Search', 'No Results', jQuery('#s').val(), {'nonInteraction': true});
+								gtag('event', 'No Results', {
+									event_category: 'Internal Search',
+									query: jQuery('#s').val(),
+									non_interaction: true
+								});
 							</script>
 						<?php endif; ?>
 						<?php echo nebula()->search_form(); ?>

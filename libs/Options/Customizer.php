@@ -11,7 +11,7 @@ trait Customizer {
 
 	//Render Sass on Customizer Save
 	public function customizer_saved_actions(){
-		$this->usage('Customizer Saved');
+		$this->usage('customizer_saved');
 		$this->add_log('Customizer saved', 1);
 		$this->update_data('need_sass_compile', 'true');
 	}

@@ -65,7 +65,7 @@ if ( !class_exists('Nebula') ){
 				$_GET,
 				$_POST,
 				$_COOKIE,
-				$GLOBALS,
+				$GLOBALS, //@todo "Nebula" 0: In PHP 8.1 make sure this doesn't trigger a runtime error with how "protected" the $GLOBALS variable is becoming
 				( isset($_SESSION) )? $_SESSION : null
 			);
 

@@ -13,6 +13,10 @@ jQuery(function(){
 	}
 
 	jQuery(document).on('submit', '#lostpasswordform', function(){
-		ga('send', 'event', 'Login', 'Password Reset', 'Password reset for ' + jQuery('#user_login').val());
+		gtag('event', 'login', {
+			event_category: 'Login',
+			event_action: 'Password Reset',
+			event_label: 'Password reset for ' + jQuery('#user_login').val(),
+		});
 	});
 });

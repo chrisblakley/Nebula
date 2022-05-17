@@ -267,7 +267,6 @@ if ( !trait_exists('Functions') ){
 					"/(const NEBULA_VERSION = ')(.+)(';)(.+$)?/m",
 					"/(const OFFLINE_URL = ')(.+)(';)/m",
 					"/(const OFFLINE_IMG = ')(.+)(';)/m",
-					"/(const OFFLINE_GA_DIMENSION = ')(.+)(';)/m",
 					"/(const META_ICON = ')(.+)(';)/m",
 					"/(const MANIFEST = ')(.+)(';)/m",
 					"/(const HOME_URL = ')(.+)(';)/m",
@@ -281,7 +280,6 @@ if ( !trait_exists('Functions') ){
 					"$1" . 'v' . $version . "$3 //" . date('l, F j, Y g:i:s A'),
 					"$1" . home_url('/') . "offline/$3",
 					"$1" . get_theme_file_uri('/assets/img') . "/offline.svg$3",
-					"$1cd" . $this->ga_definition_index($this->get_option('cd_offline')) . "$3",
 					"$1" . get_theme_file_uri('/assets/img/meta') . "/android-chrome-512x512.png$3",
 					"$1" . $this->manifest_json_location() . "$3",
 					"$1" . home_url('/') . "$3",
@@ -396,7 +394,7 @@ if ( !trait_exists('Functions') ){
 			}
 
 			//If HTML is passed, immediately parse it with HTML
-			if ( strpos($img, '<img') !== false ){
+			if ( strpos($img, '<img') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				return ( preg_match('~\bsrc="([^"]++)"~', $img, $matches) )? $matches[1] : ''; //Pull the img src from the HTML tag itself
 			}
 
@@ -566,7 +564,7 @@ if ( !trait_exists('Functions') ){
 					if ( !empty($post_icon) ){
 						$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" loading="lazy" />';
 
-						if ( strpos('dashicons-', $post_icon) >= 0 ){
+						if ( strpos('dashicons-', $post_icon) >= 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 							$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
 						}
 					}
@@ -1170,7 +1168,7 @@ if ( !trait_exists('Functions') ){
 				return false;
 			} elseif ( empty($username) && $this->get_option('twitter_username') ){
 				$username = $this->get_option('twitter_username');
-			} elseif ( strpos($username, '@') === false ){
+			} elseif ( strpos($username, '@') === false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				$username = '@' . $username;
 			}
 			?>
@@ -1722,7 +1720,8 @@ if ( !trait_exists('Functions') ){
 									page: pageNumber,
 									args: JSON.stringify(<?php echo json_encode($args); ?>),
 									loop: <?php echo json_encode($loop); ?>,
-								})
+								}),
+								priority: 'high'
 							}).then(function(response){
 								if ( response.ok ){
 									return response.text();
@@ -1756,11 +1755,18 @@ if ( !trait_exists('Functions') ){
 								history.replaceState(null, document.title, nebula.post.permalink + 'page/' + pageNumber + newQueryStrings);
 								document.dispatchEvent(new Event('nebula_infinite_finish'));
 
-								ga('send', 'event', 'Infinite Query', 'Load More', 'Loaded page ' + pageNumber);
+								gtag('event', 'Load More', {
+									event_category: 'Infinite Query',
+									event_label: 'Loaded page ' + pageNumber,
+								});
+
 								pageNumber++;
 							}).catch(function(error){
 								document.dispatchEvent(new Event('nebula_infinite_finish'));
-								ga('send', 'event', 'Error', 'AJAX Error', 'Infinite Query Load More AJAX');
+								gtag('event', 'exception', {
+									description: 'AJAX Error: Infinite Query Load More AJAX',
+									fatal: false
+								});
 							});
 						}
 
@@ -2210,7 +2216,7 @@ if ( !trait_exists('Functions') ){
 			$html .= 'class="phg ' . $anim . ' ' . $white . '"';
 
 			if ( $data['linked'] ){
-				$html .= ' href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+link+function' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . '" target="_blank" rel="noopener"';
+				$html .= ' href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+link+function" target="_blank" rel="noopener"';
 			}
 
 			$html .= '><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">' . __('Group', 'nebula') . '</span>';
@@ -2575,7 +2581,7 @@ if ( !trait_exists('Functions') ){
 						if ( $attachments ){
 							$attachment_count = 0;
 							foreach ( $attachments as $attachment ){
-								if ( in_array($attachment->ID, $ignore_post_ids) || strpos(get_attachment_link($attachment->ID), '?attachment_id=') ){ //Skip if media item is not associated with a post.
+								if ( in_array($attachment->ID, $ignore_post_ids) || strpos(get_attachment_link($attachment->ID), '?attachment_id=') ){ //Skip if media item is not associated with a post. //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 									continue;
 								}
 								$suggestion = array();
@@ -2636,7 +2642,7 @@ if ( !trait_exists('Functions') ){
 										if ( $path_parts['extension'] ){
 											$suggestion['classes'] .= ' file-' . $path_parts['extension'];
 											$suggestion['external'] = true;
-										} elseif ( !strpos($suggestion['link'], $this->url_components('domain')) ){
+										} elseif ( !strpos($suggestion['link'], $this->url_components('domain')) ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 											$suggestion['classes'] .= ' external-link';
 											$suggestion['external'] = true;
 										}
@@ -3076,7 +3082,7 @@ if ( !trait_exists('Functions') ){
 				}
 
 				foreach ( $finds as $find ){
-					$field_name_pos = strpos(strtolower($content), 'name="' . strtolower($find) . '"');
+					$field_name_pos = strpos(strtolower($content), 'name="' . strtolower($find) . '"'); //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 					if ( !empty($field_name_pos) ){
 						$content = substr_replace($content, ' autocomplete="' . $autocomplete_value . '" ', $field_name_pos, 0);
 					}

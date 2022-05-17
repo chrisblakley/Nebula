@@ -126,7 +126,7 @@ if ( !trait_exists('Warnings') ){
 				}
 
 				//If the site is served via HTTPS but the Site URL is still set to HTTP
-				if ( (is_ssl() || isset($this->super->server['HTTPS'])) && (strpos(home_url(), 'http://') !== false || strpos(get_option('siteurl'), 'http://') !== false) ){
+				if ( (is_ssl() || isset($this->super->server['HTTPS'])) && (strpos(home_url(), 'http://') !== false || strpos(get_option('siteurl'), 'http://') !== false) ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 					$nebula_warnings['site_url_http'] = array(
 						'level' => 'error',
 						'dismissible' => true,
@@ -245,7 +245,7 @@ if ( !trait_exists('Warnings') ){
 
 						if ( !is_wp_error($directory_request) && !empty($directory_request) ){ //If not an error and response exists
 							if ( $directory_request['response']['code'] <= 400 ){ //Check if the response code is less than 400 (in this case 400+ is good)
-								if ( strpos(strtolower($directory_request['body']), 'index of') ){ //Check if the "Index of" text appears in the body content (bad)
+								if ( strpos(strtolower($directory_request['body']), 'index of') ){ //Check if the "Index of" text appears in the body content (bad) //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 									$nebula_warnings['directory_indexing'] = array(
 										'level' => 'error',
 										'dismissible' => false,
@@ -347,12 +347,12 @@ if ( !trait_exists('Warnings') ){
 					);
 				}
 
-				//Check for Google Analytics Tracking ID
-				if ( !$this->get_option('ga_tracking_id') && !$this->get_option('gtm_id') ){
-					$nebula_warnings['ga_tracking_id'] = array(
+				//Check for Google Analytics Measurement ID
+				if ( !$this->get_option('ga_measurement_id') && !$this->get_option('gtm_id') ){
+					$nebula_warnings['ga_measurement_id'] = array(
 						'level' => 'error',
 						'dismissible' => true,
-						'description' => '<i class="fa-solid fa-fw fa-chart-area"></i> A <a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">Google Tag Manager ID</a> is strongly recommended!',
+						'description' => '<i class="fa-solid fa-fw fa-chart-area"></i> A <a href="themes.php?page=nebula_options&tab=analytics&option=ga_measurement_id">Google Analytics tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">Google Tag Manager ID</a> is strongly recommended!',
 						'url' => admin_url('themes.php?page=nebula_options&tab=analytics')
 					);
 				}
@@ -395,7 +395,7 @@ if ( !trait_exists('Warnings') ){
 								$nebula_warnings['child_meta_graphics'] = array(
 									'level' => 'error',
 									'dismissible' => true,
-									'description' => '<i class="fa-solid fa-fw fa-images"></i> Child theme meta graphics exist, but are identical to the Nebula meta graphics (' . $child_filename . '). Ensure that child theme meta graphics are unique to this website!</em>' //yolo
+									'description' => '<i class="fa-solid fa-fw fa-images"></i> Child theme meta graphics exist, but are identical to the Nebula meta graphics (' . $child_filename . '). Ensure that child theme meta graphics are unique to this website!</em>'
 								);
 
 								break; //Exit the loop as soon as we find a match
@@ -441,12 +441,12 @@ if ( !trait_exists('Warnings') ){
 					);
 
 					//Google Optimize requires Google Analytics
-					if ( !$this->get_option('ga_tracking_id') && !$this->get_option('gtm_id') ){
+					if ( !$this->get_option('ga_measurement_id') && !$this->get_option('gtm_id') ){
 						$nebula_warnings['google_optimize_analytics'] = array(
 							'level' => 'error',
 							'dismissible' => true,
-							'description' => '<i class="fa-regular fa-fw fa-window-restore"></i> <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Google Optimize ID</a> exists without a <a href="themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id">Google Analytics Tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">GTM ID</a>.',
-							'url' => admin_url('themes.php?page=nebula_options&tab=analytics&option=ga_tracking_id')
+							'description' => '<i class="fa-regular fa-fw fa-window-restore"></i> <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Google Optimize ID</a> exists without a <a href="themes.php?page=nebula_options&tab=analytics&option=ga_measurement_id">Google Analytics Tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">GTM ID</a>.',
+							'url' => admin_url('themes.php?page=nebula_options&tab=analytics&option=ga_measurement_id')
 						);
 					}
 				}

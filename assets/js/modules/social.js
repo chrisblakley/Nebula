@@ -31,18 +31,18 @@ nebula.socialSharing = async function(){
 		jQuery('a.facebook-share, .facebook-share a, a.nebula-share.facebook, .nebula-share a.facebook').attr('href', 'http://www.facebook.com/sharer.php?u=' + encloc + '&t=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Social',
-				action: 'Share', //GA4 Name: "share"
+				event_name: 'share',
+				event_category: 'Social',
+				event_action: 'Share',
 				intent: 'Intent',
 				network: 'Facebook',
 				url: window.location.href,
 				title: document.title
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
-			nebula.crm('event', thisEvent.network + ' ' + thisEvent.action);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			nebula.crm('event', thisEvent.network + ' ' + thisEvent.event_action);
 
 			if ( nebula.dom.body.hasClass('desktop') ){
 				window.open(jQuery(this).attr('href'), 'facebookShareWindow', 'width=550, height=450, ' + popupAttrs);
@@ -54,18 +54,18 @@ nebula.socialSharing = async function(){
 		jQuery('a.twitter-share, .twitter-share a, a.nebula-share.twitter, .nebula-share a.twitter').attr('href', 'https://twitter.com/intent/tweet?url=' + encloc + '&text=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Social',
-				action: 'Share', //GA4 Name: "share"
+				event_name: 'share',
+				event_category: 'Social',
+				event_action: 'Share',
 				intent: 'Intent',
 				network: 'Twitter',
 				url: window.location.href,
 				title: document.title
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
-			nebula.crm('event', thisEvent.network + ' ' + thisEvent.action);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			nebula.crm('event', thisEvent.network + ' ' + thisEvent.event_action);
 
 			if ( nebula.dom.body.hasClass('desktop') ){
 				window.open(jQuery(this).attr('href'), 'twitterShareWindow', 'width=600, height=254, ' + popupAttrs);
@@ -77,18 +77,18 @@ nebula.socialSharing = async function(){
 		jQuery('a.linkedin-share, .linkedin-share a, a.nebula-share.linkedin, .nebula-share a.linkedin').attr('href', 'http://www.linkedin.com/shareArticle?mini=true&url=' + encloc + '&title=' + enctitle).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Social',
-				action: 'Share', //GA4 Name: "share"
+				event_name: 'share',
+				event_category: 'Social',
+				event_action: 'Share',
 				intent: 'Intent',
 				network: 'LinkedIn',
 				url: window.location.href,
 				title: document.title
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
-			nebula.crm('event', thisEvent.network + ' ' + thisEvent.action);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			nebula.crm('event', thisEvent.network + ' ' + thisEvent.event_action);
 
 			if ( nebula.dom.body.hasClass('desktop') ){
 				window.open(jQuery(this).attr('href'), 'linkedinShareWindow', 'width=600, height=473, ' + popupAttrs);
@@ -100,18 +100,18 @@ nebula.socialSharing = async function(){
 		jQuery('a.pinterest-share, .pinterest-share a, a.nebula-share.pinterest, .nebula-share a.pinterest').attr('href', 'http://pinterest.com/pin/create/button/?url=' + encloc).attr({'target': '_blank', 'rel': 'noopener'}).on('click', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Social',
-				action: 'Share', //GA4 Name: "share"
+				event_name: 'share',
+				event_category: 'Social',
+				event_action: 'Share',
 				intent: 'Intent',
 				network: 'Pinterest',
 				url: window.location.href,
 				title: document.title
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
-			nebula.crm('event', thisEvent.network + ' ' + thisEvent.action);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			nebula.crm('event', thisEvent.network + ' ' + thisEvent.event_action);
 
 			if ( nebula.dom.body.hasClass('desktop') ){
 				window.open(jQuery(this).attr('href'), 'pinterestShareWindow', 'width=600, height=450, ' + popupAttrs);
@@ -127,18 +127,18 @@ nebula.socialSharing = async function(){
 		}).on('click', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Social',
-				action: 'Share', //GA4 Name: "share"
+				event_name: 'share',
+				event_category: 'Social',
+				event_action: 'Share',
 				intent: 'Intent',
 				network: 'Email',
 				url: window.location.href,
 				title: document.title
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
-			nebula.crm('event', thisEvent.network + ' ' + thisEvent.action);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			nebula.crm('event', thisEvent.network + ' ' + thisEvent.event_action);
 		});
 
 		//Web Share API: https://caniuse.com/mdn-api_navigator_share
@@ -154,8 +154,9 @@ nebula.socialSharing = async function(){
 				}).then(function(){
 					let thisEvent = {
 						event: e,
-						category: 'Social',
-						action: 'Share', //GA4 Name: "share"
+						event_name: 'share',
+						event_category: 'Social',
+						event_action: 'Share',
 						intent: 'Intent',
 						network: 'Web Share API',
 						url: window.location.href,
@@ -163,12 +164,15 @@ nebula.socialSharing = async function(){
 					};
 
 					nebula.dom.document.trigger('nebula_event', thisEvent);
-					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.network);
+					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 					nebula.crm('event', thisEvent.network);
 					oThis.addClass('success');
 					nebula.createCookie('shareapi', true);
 				}).catch(function(error){ //This can happen on iOS when the user closes the drawer without sharing
-					ga('send', 'exception', {'exDescription': '(JS) Share API Error: ' + error, 'exFatal': false});
+					gtag('event', 'exception', {
+						description: '(JS) Share API Error: ' + error,
+						fatal: false
+					});
 					oThis.addClass('error').html(originalText);
 					nebula.createCookie('shareapi', false);
 				});

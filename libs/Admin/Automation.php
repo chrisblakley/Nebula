@@ -40,12 +40,6 @@ if ( !trait_exists('Automation') ){
 
 				$bundled_plugins = array(
 					array(
-						'name' => 'Nebula Companion',
-						'slug' => 'nebula-companion',
-						'source' => 'https://github.com/chrisblakley/Nebula-Companion/archive/main.zip',
-						'required' => false,
-					),
-					array(
 						'name' => 'Contact Form 7',
 						'slug' => 'contact-form-7',
 						'required' => true,
@@ -219,7 +213,7 @@ if ( !trait_exists('Automation') ){
 		}
 
 		public function activation(){
-			$this->usage('Theme Activation');
+			$this->usage('theme_activation');
 			$this->add_log('Theme activation', 6);
 
 			//If not initialized before, set default options if they haven't been already
@@ -284,7 +278,7 @@ if ( !trait_exists('Automation') ){
 			if ( current_user_can('manage_options') ){
 				$this->timer('Full Initialization');
 
-				$this->usage('Initialization');
+				$this->usage('initialization');
 				$this->add_log('Theme settings have been re-initialized.', 7);
 				$this->full_automation();
 				$this->initialization_email_prev_settings();

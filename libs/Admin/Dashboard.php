@@ -102,7 +102,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//Nebula Version
 			//Note: Ignore the time here (in the title attribute on hover) as it is only meant to reference the calendar date based on the "major", "minor", and "patch" number (and not interpret the "build" number)
-			echo '<li><i class="fa-regular fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . '" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('realtime') . '</a></strong> <small title="' . $this->version('date') . '" style="cursor: help;">(Committed ' . human_time_diff($this->version('utc')) . ' ago)</small></li>';
+			echo '<li><i class="fa-regular fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('realtime') . '</a></strong> <small title="' . $this->version('date') . '" style="cursor: help;">(Committed ' . human_time_diff($this->version('utc')) . ' ago)</small></li>';
 
 			//Child Theme
 			if ( is_child_theme() ){
@@ -153,7 +153,7 @@ if ( !trait_exists('Dashboard') ){
 						$post_icon_img = '<i class="fa-solid fa-fw fa-thumbtack"></i>';
 						if ( !empty($post_icon) ){
 							$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" loading="lazy" />';
-							if ( strpos('dashicons-', $post_icon) >= 0 ){
+							if ( strpos('dashicons-', $post_icon) >= 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 								$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
 							}
 						}
@@ -416,10 +416,10 @@ if ( !trait_exists('Dashboard') ){
 		//Pinckney Hugo Group metabox content
 		public function dashboard_phg(){
 			$this->timer('Nebula PHG Dashboard Metabox');
-			echo '<a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+photo' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . '" target="_blank" rel="noopener noreferrer"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" loading="lazy" /></a>';
+			echo '<a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+photo" target="_blank" rel="noopener noreferrer"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" loading="lazy" /></a>';
 			echo '<ul class="nebula-fa-ul">';
 			echo '<li><i class="fa-solid fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener noreferrer">760 West Genesee Street, Syracuse, NY 13204</a></li>';
-			echo '<li><i class="fa-solid fa-fw fa-link"></i> <a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+textlink' . $this->get_user_info('user_email', array('prepend' => '&crm-email=')) . '" target="_blank">PinckneyHugo.com</a></li>';
+			echo '<li><i class="fa-solid fa-fw fa-link"></i> <a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+textlink" target="_blank">PinckneyHugo.com</a></li>';
 			echo '<li><i class="fa-solid fa-fw fa-phone"></i> (315) 478-6700</li>';
 			echo '</ul>';
 			$this->timer('Nebula PHG Dashboard Metabox', 'end');
@@ -458,7 +458,7 @@ if ( !trait_exists('Dashboard') ){
 			$instance_count = 0;
 			?>
 				<p class="todoresults_title">
-					<strong>Active @todo Comments</strong> <a class="todo_help_icon" href="https://gearside.com/wordpress-dashboard-todo-manager/?utm_campaign=nebula&utm_medium=nebula&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=todo+metabox<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank" rel="noopener noreferrer"><i class="fa-regular fw fa-question-circle"></i> Documentation &raquo;</a>
+					<strong>Active @todo Comments</strong> <a class="todo_help_icon" href="https://gearside.com/wordpress-dashboard-todo-manager/?utm_campaign=nebula&utm_medium=nebula&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=todo+metabox" target="_blank" rel="noopener noreferrer"><i class="fa-regular fw fa-question-circle"></i> Documentation &raquo;</a>
 				</p>
 
 				<div class="todo_results">
@@ -642,9 +642,9 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//Server operating system
-			if ( strpos(strtolower(PHP_OS), 'linux') !== false ){
+			if ( strpos(strtolower(PHP_OS), 'linux') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				$php_os_icon = 'fa-brands fa-linux';
-			} elseif ( strpos(strtolower(PHP_OS), 'windows') !== false ){
+			} elseif ( strpos(strtolower(PHP_OS), 'windows') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				$php_os_icon = 'fa-brands fa-windows';
 			} else {
 				$php_os_icon = 'fa-solid fa-upload';
@@ -921,7 +921,7 @@ if ( !trait_exists('Dashboard') ){
 			foreach ( $this->glob_r($dirpath . '/*') as $file ){
 				$counted = 0;
 				if ( is_file($file) ){
-					if ( strpos(basename($file), $searchTerm) !== false ){
+					if ( strpos(basename($file), $searchTerm) !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 						echo '<p class="resulttext">' . str_replace($dirpath, '', dirname($file)) . '/<strong>' . basename($file) . '</strong></p>';
 						$file_counter++;
 						$counted = 1;
@@ -1170,11 +1170,11 @@ if ( !trait_exists('Dashboard') ){
 				echo '<ul>';
 				for ( $i=0; $i <= 2; $i++ ){ //Get 3 issues
 					$github_post_type = 'Unknown';
-					if ( strpos($github_combined_posts[$i]->html_url, 'issue') > 0 ){
+					if ( strpos($github_combined_posts[$i]->html_url, 'issue') > 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 						$github_post_type = 'Issue';
-					} elseif ( strpos($github_combined_posts[$i]->html_url, 'pull') > 0 ){
+					} elseif ( strpos($github_combined_posts[$i]->html_url, 'pull') > 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 						$github_post_type = 'Pull Request';
-					} elseif ( strpos($github_combined_posts[$i]->html_url, 'discussion') > 0 ){
+					} elseif ( strpos($github_combined_posts[$i]->html_url, 'discussion') > 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 						$github_post_type = 'Discussion';
 					}
 

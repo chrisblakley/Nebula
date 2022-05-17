@@ -23,13 +23,15 @@ nebula.cf7Functions = async function(){
 			entries.forEach(function(entry){
 				if ( entry.intersectionRatio > 0 ){
 					let thisEvent = {
-						category: 'CF7 Form',
-						action: 'Impression', //GA4 Name: "form_impression"?
-						formID: jQuery(entry.target).closest('.wpcf7').attr('id') || jQuery(entry.target).attr('id'),
+						event_name: 'form_impression',
+						event_category: 'CF7 Form',
+						event_action: 'Impression',
+						form_id: jQuery(entry.target).closest('.wpcf7').attr('id') || jQuery(entry.target).attr('id'),
+						non_interaction: true
 					};
 
 					nebula.dom.document.trigger('nebula_event', thisEvent);
-					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.formID, {'nonInteraction': true});
+					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-cf7-impression'}));
 
 					cf7Observer.unobserve(entry.target); //Stop observing the element
@@ -68,34 +70,35 @@ nebula.cf7Functions = async function(){
 		if ( !jQuery(this).hasClass('.ignore-form') && !jQuery(this).find('.ignore-form').length && !jQuery(this).parents('.ignore-form').length ){
 			let thisEvent = {
 				event: e,
-				category: 'CF7 Form',
-				action: 'Started Form (Focus)', //GA4 Name: "form_start"?
-				formID: formID, //Actual ID (not Unit Tag)
-				field: thisField,
-				fieldInfo: fieldInfo
+				event_category: 'CF7 Form',
+				event_action: 'Started Form (Focus)',
+				form_id: formID, //Actual ID (not Unit Tag)
+				form_field: thisField,
+				form_field_info: fieldInfo
 			};
+
+			thisEvent.form_flow = nebula.updateFormFlow(thisEvent.formID, thisEvent.field, thisEvent.fieldInfo);
 
 			//Form starts
 			if ( typeof formStarted[formID] === 'undefined' || !formStarted[formID] ){
-				thisEvent.label = 'Began filling out form ID: ' + thisEvent.formID + ' (' + thisEvent.field + ')';
+				thisEvent.event_name = 'form_start';
+				thisEvent.event_label = 'Began filling out form ID: ' + thisEvent.formID + ' (' + thisEvent.field + ')';
 
-				ga('set', nebula.analytics.metrics.formStarts, 1);
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.formID + ') Started'}, false);
 				nebula.crm('event', 'Contact Form (' + thisEvent.formID + ') Started (' + thisEvent.field + ')');
 				formStarted[formID] = true;
 			}
 
-			nebula.updateFormFlow(thisEvent.formID, thisEvent.field, thisEvent.fieldInfo);
-
 			//Track each individual field focuses
 			if ( !jQuery(this).is('button') ){
-				thisEvent.action = 'Individual Field Focused';
-				thisEvent.label = 'Focus into ' + thisEvent.field + ' (Form ID: ' + thisEvent.formID + ')';
+				thisEvent.event_name = 'form_field_focus';
+				thisEvent.event_action = 'Individual Field Focused';
+				thisEvent.event_label = 'Focus into ' + thisEvent.field + ' (Form ID: ' + thisEvent.formID + ')';
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-started'}));
 			}
 		}
@@ -112,7 +115,13 @@ nebula.cf7Functions = async function(){
 			} else if ( jQuery(this).attr('placeholder').length ){
 				labelText = ' "' + jQuery(this).attr('placeholder') + '"';
 			}
-			ga('send', 'timing', 'CF7 Form', nebula.timings[formID].lap[nebula.timings[formID].laps-1].name + labelText + ' (Form ID: ' + formID + ')', Math.round(nebula.timings[formID].lap[nebula.timings[formID].laps-1].duration), 'Amount of time on this input field (until next focus or submit).');
+
+			gtag('event', 'timing_complete', {
+				name: nebula.timings[formID].lap[nebula.timings[formID].laps-1].name + labelText + ' (Form ID: ' + formID + ')',
+				value: Math.round(nebula.timings[formID].lap[nebula.timings[formID].laps-1].duration),
+				event_category: 'CF7 Form',
+				event_label: 'Amount of time on this input field (until next focus or submit).',
+			});
 		}
 	});
 
@@ -124,30 +133,37 @@ nebula.cf7Functions = async function(){
 
 			let thisEvent = {
 				event: e,
-				category: 'CF7 Form',
-				action: 'Submit (Attempt)', //GA4 Name: "form_attempt"?
-				formID: e.detail.contactFormId, //CF7 Form ID
-				postID: e.detail.containerPostId, //Post/Page ID
-				unitTag: e.detail.unitTag, //CF7 Unit Tag
+				event_name: 'form_submit_attempt',
+				event_category: 'CF7 Form',
+				event_action: 'Submit (Attempt)',
+				form_id: e.detail.contactFormId, //CF7 Form ID
+				post_id: e.detail.containerPostId, //Post/Page ID
+				unit_tag: e.detail.unitTag, //CF7 Unit Tag
 			};
 
 			//If timing data exists
 			if ( nebula.timings && typeof nebula.timings[e.detail.unitTag] !== 'undefined' ){
-				thisEvent.formTime = nebula.timer(e.detail.unitTag, 'lap', 'wpcf7-submit-attempt');
+				thisEvent.form_time = nebula.timer(e.detail.unitTag, 'lap', 'wpcf7-submit-attempt');
 				thisEvent.inputs = nebula.timings[e.detail.unitTag].laps + ' inputs';
 			}
 
-			thisEvent.label = 'HTML submission attempt for form ID: ' + thisEvent.unitTag;
+			thisEvent.form_timing = nebula.millisecondsToString(thisEvent.form_time) + 'ms (' + thisEvent.inputs + ')';
+			thisEvent.event_label = 'HTML submission attempt for form ID: ' + thisEvent.unit_tag;
 
-			ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Attempt)');
-			ga('set', nebula.analytics.dimensions.formTiming, nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')');
+			gtag('set', 'user_properties', {
+				contact_method : 'CF7 Form (Attempt)'
+			});
+
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label); //This event is required for the notable form metric!
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent)); //This event is required for the notable form metric!
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-submit-attempt'}));
 			nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)'});
-			nebula.clarity('set', thisEvent.category, thisEvent.action);
+			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 		} catch {
-			ga('send', 'exception', {'exDescription': '(JS) CF7 Catch (cf7 HTML form submit): ' + error, 'exFatal': false});
+			gtag('event', 'exception', {
+				description: '(JS) CF7 Catch (cf7 HTML form submit): ' + error,
+				fatal: false
+			});
 			nebula.usage('CF7 (HTML) Catch: ' + error);
 		}
 	});
@@ -158,21 +174,25 @@ nebula.cf7Functions = async function(){
 		try {
 			let thisEvent = {
 				event: e,
-				category: 'CF7 Form',
-				action: 'Submit (Processing)', //GA4 Name: "form_processing"?
-				formID: e.detail.contactFormId, //CF7 Form ID
-				postID: e.detail.containerPostId, //Post/Page ID
-				unitTag: e.detail.unitTag, //CF7 Unit Tag
+				event_name: 'form_processing',
+				event_category: 'CF7 Form',
+				event_action: 'Submit (Processing)',
+				form_id: e.detail.contactFormId, //CF7 Form ID
+				post_id: e.detail.containerPostId, //Post/Page ID
+				unit_tag: e.detail.unitTag, //CF7 Unit Tag
 			};
 
-			thisEvent.label = 'Submission processing for form ID: ' + thisEvent.unitTag;
+			thisEvent.event_label = 'Submission processing for form ID: ' + thisEvent.unitTag;
+			thisEvent.form_timing = nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')'; //This is a backup for the HTML form listener
 
 			nebula.crmForm(thisEvent.unitTag); //nebula.crmForm() here because it triggers after all others. No nebula.crm() here so it doesn't overwrite the other (more valuable) data.
 
-			ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Processing)');
-			ga('set', nebula.analytics.dimensions.formTiming, nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')'); //This is a backup for the HTML form listener
+			gtag('set', 'user_properties', {
+				contact_method : 'CF7 Form (Processing)'
+			});
+
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label); //This event is required for the notable form metric!
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent)); //This event is required for the notable form metric!
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-submit-processing'}));
 			nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Processing)'});
 			nebula.clarity('track', 'Lead', {content_name: 'Form Submit (Processing)'});
@@ -181,7 +201,10 @@ nebula.cf7Functions = async function(){
 			jQuery('.invalid-feedback').addClass('hidden'); //Reset all of the "live" feedback to let CF7 handle its feedback
 			jQuery('#cf7-privacy-acceptance').trigger('change'); //Until CF7 has a native invalid indicator for the privacy acceptance checkbox, force the Nebula validator here
 		} catch(error){
-			ga('send', 'exception', {'exDescription': '(JS) CF7 Catch (wpcf7submit): ' + error, 'exFatal': false});
+			gtag('event', 'exception', {
+				description: '(JS) CF7 Catch (wpcf7submit): ' + error,
+				fatal: false
+			});
 			nebula.usage('CF7 Catch: ' + error);
 		}
 	});
@@ -191,11 +214,15 @@ nebula.cf7Functions = async function(){
 		try {
 			let thisEvent = {
 				event: e,
-				category: 'CF7 Form',
-				action: 'Submit (CF7 Invalid)', //GA4 Name: "form_invalid"?
-				formID: e.detail.contactFormId, //CF7 Form ID
-				postID: e.detail.containerPostId, //Post/Page ID
-				unitTag: e.detail.unitTag, //CF7 Unit Tag
+				event_name: 'form_invalid',
+				event_category: 'CF7 Form',
+				event_action: 'Submit (CF7 Invalid)',
+				description: '(JS) Invalid form submission for form ID ' + e.detail.unitTag,
+				form_id: e.detail.contactFormId, //CF7 Form ID
+				post_id: e.detail.containerPostId, //Post/Page ID
+				unit_tag: e.detail.unitTag, //CF7 Unit Tag
+				form_flow: nebula.updateFormFlow(thisEvent.unitTag, '[Invalid]'),
+				fatal: false
 			};
 
 			//If timing data exists
@@ -204,25 +231,30 @@ nebula.cf7Functions = async function(){
 				thisEvent.inputs = nebula.timings[e.detail.unitTag].laps + ' inputs';
 			}
 
-			thisEvent.label = 'Form validation errors occurred on form ID: ' + thisEvent.unitTag;
+			thisEvent.event_label = 'Form validation errors occurred on form ID: ' + thisEvent.unitTag;
+			thisEvent.form_timing = nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')';
 
 			//Apply Bootstrap validation classes to invalid fields
 			jQuery('.wpcf7-not-valid').each(function(){
 				jQuery(this).addClass('is-invalid');
 			});
 
-			nebula.updateFormFlow(thisEvent.unitTag, '[Invalid]');
-			ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Invalid)');
-			ga('set', nebula.analytics.dimensions.formTiming, nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')');
+			gtag('set', 'user_properties', {
+				contact_method : 'CF7 Form (Invalid)'
+			});
+
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			gtag('event', 'exception', nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-invalid'}));
-			ga('send', 'exception', {'exDescription': '(JS) Invalid form submission for form ID ' + thisEvent.unitTag, 'exFatal': false});
 			nebula.scrollTo(jQuery('.wpcf7-not-valid').first(), 35); //Scroll to the first invalid input
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unitTag + ') Invalid'}, false);
 			nebula.crm('event', 'Contact Form (' + thisEvent.unitTag + ') Invalid');
 		} catch(error){
-			ga('send', 'exception', {'exDescription': '(JS) CF7 Catch (wpcf7invalid): ' + error, 'exFatal': false});
+			gtag('event', 'exception', {
+				description: '(JS) CF7 Catch (wpcf7invalid): ' + error,
+				fatal: false
+			});
 			nebula.usage('CF7 Catch: ' + error);
 		}
 	});
@@ -232,13 +264,14 @@ nebula.cf7Functions = async function(){
 		nebula.debounce(function(){
 			let thisEvent = {
 				event: e,
-				category: 'CF7 Form',
-				action: 'Submit (HTML5 Invalid)', //GA4 Name: "form_invalid"?
-				label: 'General HTML5 validation error',
+				event_name: 'form_invalid',
+				event_category: 'CF7 Form',
+				event_action: 'Submit (HTML5 Invalid)',
+				event_label: 'General HTML5 validation error',
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-invalid'}));
 			nebula.crm('identify', {'form_contacted': 'CF7 HTML5 Validation Error'});
 		}, 50, 'invalid form');
@@ -254,28 +287,37 @@ nebula.cf7Functions = async function(){
 
 			let thisEvent = {
 				event: e,
-				category: 'CF7 Form',
-				action: 'Submit (Spam)', //GA4 Name: "form_spam"?
-				formID: e.detail.contactFormId, //CF7 Form ID
-				postID: e.detail.containerPostId, //Post/Page ID
-				unitTag: e.detail.unitTag, //CF7 Unit Tag
-				formTime: nebula.timer(e.detail.unitTag, 'end'),
-				inputs: formInputs
+				event_name: 'form_spam',
+				event_category: 'CF7 Form',
+				event_action: 'Submit (Spam)',
+				form_id: e.detail.contactFormId, //CF7 Form ID
+				post_id: e.detail.containerPostId, //Post/Page ID
+				unit_tag: e.detail.unitTag, //CF7 Unit Tag
+				description: '(JS) Spam form submission for form ID ' + e.detail.unitTag,
+				form_time: nebula.timer(e.detail.unitTag, 'end'),
+				form_inputs: formInputs,
+				form_flow: nebula.updateFormFlow(thisEvent.unitTag, '[Spam]'),
+				fatal: true //Fatal because the user was unable to submit
 			};
 
-			thisEvent.label = 'Form submission failed spam tests on form ID: ' + thisEvent.unitTag;
+			thisEvent.event_label = 'Form submission failed spam tests on form ID: ' + thisEvent.unitTag;
+			thisEvent.form_timing = nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')';
 
-			nebula.updateFormFlow(thisEvent.unitTag, '[Spam]');
-			ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Spam)');
-			ga('set', nebula.analytics.dimensions.formTiming, nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')');
+			gtag('set', 'user_properties', {
+				contact_method : 'CF7 Form (Spam)'
+			});
+
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			gtag('event', 'exception', nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-spam'}));
-			ga('send', 'exception', {'exDescription': '(JS) Spam form submission for form ID ' + thisEvent.unitTag, 'exFatal': false});
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unitTag + ') Submit Spam'}, false);
 			nebula.crm('event', 'Contact Form (' + thisEvent.unitTag + ') Spam');
 		} catch(error){
-			ga('send', 'exception', {'exDescription': '(JS) CF7 Catch (wpcf7spam): ' + error, 'exFatal': false});
+			gtag('event', 'exception', {
+				description: '(JS) CF7 Catch (wpcf7spam): ' + error,
+				fatal: false
+			});
 			nebula.usage('CF7 Catch: ' + error);
 		}
 	});
@@ -290,28 +332,37 @@ nebula.cf7Functions = async function(){
 
 			let thisEvent = {
 				event: e,
-				category: 'CF7 Form',
-				action: 'Submit (Mail Failed)', //GA4 Name: "form_failed"?
-				formID: e.detail.contactFormId, //CF7 Form ID
-				postID: e.detail.containerPostId, //Post/Page ID
-				unitTag: e.detail.unitTag, //CF7 Unit Tag
-				formTime: nebula.timer(e.detail.unitTag, 'end'),
-				inputs: formInputs
+				event_name: 'form_failed',
+				event_category: 'CF7 Form',
+				event_action: 'Submit (Mail Failed)',
+				form_id: e.detail.contactFormId, //CF7 Form ID
+				post_id: e.detail.containerPostId, //Post/Page ID
+				unit_tag: e.detail.unitTag, //CF7 Unit Tag
+				description: '(JS) Mail failed to send for form ID ' + e.detail.unitTag,
+				form_time: nebula.timer(e.detail.unitTag, 'end'),
+				form_inputs: formInputs,
+				form_flow: nebula.updateFormFlow(thisEvent.unitTag, '[Failed]'),
+				fatal: true //Fatal because the user was unable to submit
 			};
 
-			thisEvent.label = 'Form submission email send failed for form ID: ' + thisEvent.unitTag;
+			thisEvent.event_label = 'Form submission email send failed for form ID: ' + thisEvent.unitTag;
+			thisEvent.form_timing = nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')';
 
-			nebula.updateFormFlow(thisEvent.unitTag, '[Failed]');
-			ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Failed)');
-			ga('set', nebula.analytics.dimensions.formTiming, nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')');
+			gtag('set', 'user_properties', {
+				contact_method : 'CF7 Form (Failed)'
+			});
+
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			gtag('event', 'exception', nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-failed'}));
-			ga('send', 'exception', {'exDescription': '(JS) Mail failed to send for form ID ' + thisEvent.unitTag, 'exFatal': true});
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unitTag + ') Submit Failed'}, false);
 			nebula.crm('event', 'Contact Form (' + thisEvent.unitTag + ') Failed');
 		} catch(error){
-			ga('send', 'exception', {'exDescription': '(JS) CF7 Catch (wpcf7mailfailed): ' + error, 'exFatal': false});
+			gtag('event', 'exception', {
+				description: '(JS) CF7 Catch (wpcf7mailfailed): ' + error,
+				fatal: false
+			});
 			nebula.usage('CF7 Catch: ' + error);
 		}
 	});
@@ -330,29 +381,35 @@ nebula.cf7Functions = async function(){
 
 			let thisEvent = {
 				event: e,
-				category: 'CF7 Form',
-				action: 'Submit (Success)', //GA4 Name: "form_submit" (and also somehow "generate_lead"?)
-				formID: e.detail.contactFormId, //CF7 Form ID
-				postID: e.detail.containerPostId, //Post/Page ID
-				unitTag: e.detail.unitTag, //CF7 Unit Tag ("f" is CF7 form ID, "p" is WP post ID, and "o" is the count if there are multiple per page)
-				formTime: nebula.timer(e.detail.unitTag, 'end'),
-				inputs: formInputs
+				event_name: 'generate_lead',
+				event_category: 'CF7 Form',
+				event_action: 'Submit (Success)',
+				form_id: e.detail.contactFormId, //CF7 Form ID
+				post_id: e.detail.containerPostId, //Post/Page ID
+				unit_tag: e.detail.unitTag, //CF7 Unit Tag ("f" is CF7 form ID, "p" is WP post ID, and "o" is the count if there are multiple per page)
+				form_time: nebula.timer(e.detail.unitTag, 'end'),
+				form_inputs: formInputs,
+				form_flow: nebula.updateFormFlow(thisEvent.unitTag, '[Success]')
 			};
 
-			thisEvent.label = 'Form ID: ' + thisEvent.unitTag;
+			thisEvent.form_timing = nebula.millisecondsToString(thisEvent.form_time) + 'ms (' + thisEvent.form_inputs + ')';
+			thisEvent.event_label = 'Form ID: ' + thisEvent.unitTag;
 
-			nebula.updateFormFlow(thisEvent.unitTag, '[Success]');
-			if ( !jQuery('#' + e.detail.unitTag).hasClass('.ignore-form') && !jQuery('#' + e.detail.unitTag).find('.ignore-form').length && !jQuery('#' + e.detail.unitTag).parents('.ignore-form').length ){
-				ga('set', nebula.analytics.metrics.formSubmissions, 1);
-			}
-			ga('set', nebula.analytics.dimensions.contactMethod, 'CF7 Form (Success)');
-			ga('set', nebula.analytics.dimensions.formTiming, nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')');
-			ga('send', 'timing', thisEvent.category, 'Form Completion (ID: ' + thisEvent.unitTag + ')', Math.round(thisEvent.formTime), 'Initial form focus until valid submit');
+			gtag('set', 'user_properties', {
+				contact_method : 'CF7 Form'
+			});
+
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			gtag('event', 'timing_complete', {
+				name: 'Form Completion (ID: ' + thisEvent.unitTag + ')',
+				value: Math.round(thisEvent.formTime),
+				event_category: thisEvent.event_category,
+				event_label: 'Initial form focus until valid submit',
+			});
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-submit-success'}));
 			nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Success)'});
-			nebula.clarity('set', thisEvent.category, thisEvent.action);
+			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unitTag + ') Submit Success'}, false);
 			nebula.crm('event', 'Contact Form (' + thisEvent.unitTag + ') Submit Success');
 
@@ -366,7 +423,10 @@ nebula.cf7Functions = async function(){
 
 			jQuery('#' + e.detail.unitTag).find('.is-valid, .is-invalid').removeClass('is-valid is-invalid'); //Clear all validation classes
 		} catch(error){
-			ga('send', 'exception', {'exDescription': '(JS) CF7 Catch (wpcf7mailsent): ' + error, 'exFatal': false});
+			gtag('event', 'exception', {
+				description: '(JS) CF7 Catch (wpcf7mailsent): ' + error,
+				fatal: false
+			});
 			nebula.usage('CF7 Catch: ' + error);
 		}
 	});
@@ -391,7 +451,12 @@ nebula.updateFormFlow = function(formID, field, info = ''){
 		nebula.formFlow[formID] = formID + ': ' + field + info; //Otherwise start a new form flow string beginning with the form ID
 	}
 
-	ga('set', nebula.analytics.dimensions.formFlow, nebula.formFlow[formID]); //Update form field history. scope: session
+	//Set the user property. @todo "Nebula" 0: When GA4 allows session-scoped custom dimensions, update this to session scope!
+	gtag('set', 'user_properties', {
+		form_flow : nebula.formFlow[formID]
+	});
+
+	return nebula.formFlow[formID];
 };
 
 //Enable localstorage on CF7 text inputs and textareas
@@ -637,13 +702,14 @@ nebula.initFeedbackSystem = function(){
 	nebula.dom.document.on('click', '#nebula-feedback-yes', function(e){
 		let thisEvent = {
 			event: e,
-			category: 'User Feedback',
-			action: 'Helpful',
-			label: 'The user indicated that this page was helpful!',
+			event_name: 'user_feedback',
+			event_category: 'User Feedback',
+			event_action: 'Helpful',
+			event_label: 'The user indicated that this page was helpful!',
 		};
 
 		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+		gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-feedback-system'}));
 
 		//Thank the user
@@ -657,13 +723,14 @@ nebula.initFeedbackSystem = function(){
 	nebula.dom.document.on('click', '#nebula-feedback-no', function(e){
 		let thisEvent = {
 			event: e,
-			category: 'User Feedback',
-			action: 'Not Helpful',
-			label: 'The user indicated that this page was not helpful.',
+			event_name: 'user_feedback',
+			event_category: 'User Feedback',
+			event_action: 'Not Helpful',
+			event_label: 'The user indicated that this page was not helpful.',
 		};
 
 		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+		gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-feedback-system'}));
 
 		if ( jQuery('.has-feedback-form').length ){ //If a CF7 form exists for additional feedback

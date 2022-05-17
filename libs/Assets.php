@@ -30,7 +30,7 @@ if ( !trait_exists('Assets') ){
 			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
 			wp_register_style('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css', null, '5.1.3', 'all');
-			wp_register_style('nebula-font_awesome', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.0/css/all.min.css', null, '6.1.0', 'all');
+			wp_register_style('nebula-font_awesome', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css', null, '6.1.1', 'all');
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap'), $this->version('full'), 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, $this->version('full'), 'all');
 			wp_register_style('nebula-admin', get_template_directory_uri() . '/assets/css/admin.css', null, $this->version('full'), 'all');
@@ -75,14 +75,14 @@ if ( !trait_exists('Assets') ){
 
 			//Prep lazy assets for JS loading later
 			foreach ( $wp_styles->registered as $handle => $data ){ //Must use registered here because lazy styles are dequeued already
-				if ( (strpos($handle, 'nebula-') !== false && strpos($handle, 'admin') === false && strpos($handle, 'login') === false) || (!empty($lazy_assets_for_preload['styles']) && array_key_exists($handle, $lazy_assets_for_preload['styles'])) ){ //If the handle contains "nebula-" but not "admin" or "login" -or- if the asset is prepped for lazy-loading
+				if ( (strpos($handle, 'nebula-') !== false && strpos($handle, 'admin') === false && strpos($handle, 'login') === false) || (!empty($lazy_assets_for_preload['styles']) && array_key_exists($handle, $lazy_assets_for_preload['styles'])) ){ //If the handle contains "nebula-" but not "admin" or "login" -or- if the asset is prepped for lazy-loading //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 					$ver = ( !empty($data->ver) )? '?ver=' . $data->ver : '';
 					$nebula_assets_for_js['styles'][str_replace('-', '_', $handle)] = $data->src . $ver;
 				}
 			}
 
 			foreach ( $wp_scripts->registered as $handle => $data ){ //Must use registered here because lazy scripts are dequeued already
-				if ( (strpos($handle, 'nebula-') !== false && strpos($handle, 'admin') === false && strpos($handle, 'login') === false) || (!empty($lazy_assets_for_preload['scripts']) && array_key_exists($handle, $lazy_assets_for_preload['scripts'])) ){ //If the handle contains "nebula-" but not "admin" or "login" -or- if the asset is prepped for lazy-loading
+				if ( (strpos($handle, 'nebula-') !== false && strpos($handle, 'admin') === false && strpos($handle, 'login') === false) || (!empty($lazy_assets_for_preload['scripts']) && array_key_exists($handle, $lazy_assets_for_preload['scripts'])) ){ //If the handle contains "nebula-" but not "admin" or "login" -or- if the asset is prepped for lazy-loading //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 					$ver = ( !empty($data->ver) )? '?ver=' . $data->ver : '';
 					$nebula_assets_for_js['scripts'][str_replace('-', '_', $handle)] = str_replace(array('#defer', '#async'), '', $data->src . $ver);
 				}
@@ -156,7 +156,7 @@ if ( !trait_exists('Assets') ){
 					),
 					'options' => array(
 						'sw' => $this->get_option('service_worker'),
-						'gaid' => esc_html($this->get_option('ga_tracking_id')),
+						'gaid' => esc_html($this->get_option('ga_measurement_id')),
 						'nebula_google_browser_api_key' => esc_html($this->get_option('google_browser_api_key')),
 						'facebook_url' => esc_url($this->get_option('facebook_url')),
 						'facebook_app_id' => esc_html($this->get_option('facebook_app_id')),

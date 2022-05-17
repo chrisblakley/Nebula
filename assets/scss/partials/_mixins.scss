@@ -269,15 +269,14 @@
 }
 
 //Prepend an icon to a link that slides in on hover.
-//a.element {@include iconpeek("\f054");} //Optionally pass a FontAwesome icon from http://fortawesome.github.io/Font-Awesome/icons/ using the provided unicode.
-@mixin iconpeek($icon: "\f061", $style: "Font Awesome 5 Solid"){
-    display: inline-block; position: relative; overflow: hidden; transition: padding 0.4s easing(easeOutBack);
-    &::before {content: $icon; font-family: $style; display: none;}
-    svg {position: absolute; left: 0; transform: translate3d(-25px, 0, 0); height: 100%; transition: transform 0.4s easing(easeOutBack); will-change: transform;}
+//a.element {@include iconpeek();}
+@mixin iconpeek(){
+	display: inline-block; position: relative; overflow: hidden; transform: translate3d(-20px, 0, 0); transition: transform 0.4s easing(easeOutBack) !important; will-change: transform;
+	svg, i {transform: translate3d(-20px, 0, 0); transition: transform 0.4s easing(easeOutBack); will-change: transform;}
 
-    &:hover {padding-left: 25px;
-        svg {transform: translate3d(0, 0, 0);}
-    }
+	&:hover {transform: translate3d(0, 0, 0);
+		svg, i {transform: translate3d(0, 0, 0);}
+	}
 }
 
 //.element-solid {@include arrow("top", "left", 10px, #4fade3);}

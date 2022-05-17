@@ -125,16 +125,34 @@ nebula.performanceMetrics = async function(){
 
 				//Report certain timings to Google Analytics
 				if ( timingCalcuations['Processing'] && timingCalcuations['DOM Ready'] && timingCalcuations['Total Load'] ){
-					ga('set', nebula.analytics.metrics.serverResponseTime, timingCalcuations['Processing'].start);
-					ga('set', nebula.analytics.metrics.domReadyTime, timingCalcuations['DOM Ready'].duration);
-					ga('set', nebula.analytics.metrics.windowLoadedTime, timingCalcuations['Total Load'].duration);
-					ga('send', 'event', 'Performance Timing', 'track', 'Used to deliver performance metrics to Google Analytics', {'nonInteraction': true});
-
 					//Send as User Timings as well
-					ga('send', 'timing', 'Performance Timing', 'Server Response', timingCalcuations['Processing'].start, 'Navigation start until server response finishes (includes PHP execution time)');
-					ga('send', 'timing', 'Performance Timing', 'DOM Ready', timingCalcuations['DOM Ready'].duration, 'Navigation start until DOM ready');
-					ga('send', 'timing', 'Performance Timing', 'Window Load', timingCalcuations['Total Load'].duration, 'Navigation start until window load');
-					ga('send', 'timing', 'Performance Timing', 'CPU Idle', timingCalcuations['CPU Idle'].duration, 'Navigation start until CPU idle');
+					gtag('event', 'timing_complete', {
+						name: 'Server Response',
+						value: timingCalcuations['Processing'].start,
+						event_category: 'Performance Timing',
+						event_label: 'Navigation start until server response finishes (includes PHP execution time)',
+					});
+
+					gtag('event', 'timing_complete', {
+						name: 'DOM Ready',
+						value: timingCalcuations['DOM Ready'].duration,
+						event_category: 'Performance Timing',
+						event_label: 'Navigation start until DOM ready',
+					});
+
+					gtag('event', 'timing_complete', {
+						name: 'Window Load',
+						value: timingCalcuations['Total Load'].duration,
+						event_category: 'Performance Timing',
+						event_label: 'Navigation start until window load',
+					});
+
+					gtag('event', 'timing_complete', {
+						name: 'CPU Idle',
+						value: timingCalcuations['CPU Idle'].duration,
+						event_category: 'Performance Timing',
+						event_label: 'Navigation start until CPU idle',
+					});
 				}
 			});
 		}
@@ -159,7 +177,7 @@ nebula.workbox = async function(){
 			window.performance.mark('(Nebula) SW Registration [Start]');
 
 			//Dynamically import Workbox-Window
-			import('https://cdn.jsdelivr.net/npm/workbox-window@6.5.1/build/workbox-window.prod.mjs').then(async function(module){
+			import('https://cdn.jsdelivr.net/npm/workbox-window@6.5.2/build/workbox-window.prod.mjs').then(async function(module){
 				const Workbox = module.Workbox;
 				const workbox = new Workbox(nebula.site.sw_url);
 
@@ -224,7 +242,10 @@ nebula.workbox = async function(){
 
 				//If the service worker becomes redundant
 				workbox.addEventListener('redundant', function(event){
-					ga('send', 'exception', {'exDescription': '(JS) The installed service worker became redundant.', 'exFatal': false});
+					gtag('event', 'exception', {
+						description: '(JS) The installed service worker became redundant.',
+						fatal: false
+					});
 				});
 
 				//Notify the user of cache updates (this is from documentation, so test this thoroughly)
@@ -241,7 +262,10 @@ nebula.workbox = async function(){
 					window.performance.mark('(Nebula) SW Registration [End]');
 					window.performance.measure('(Nebula) SW Registration', '(Nebula) SW Registration [Start]', '(Nebula) SW Registration [End]');
 				}).catch(function(error){
-					ga('send', 'exception', {'exDescription': '(JS) ServiceWorker registration failed: ' + error, 'exFatal': false});
+					gtag('event', 'exception', {
+						description: '(JS) ServiceWorker registration failed: ' + error,
+						fatal: false
+					});
 				});
 			});
 
@@ -293,27 +317,29 @@ nebula.pwa = function(){
 			installPromptEvent.prompt(); //Show the modal add to home screen dialog
 
 			let thisEvent = {
-				category: 'Progressive Web App',
-				action: 'Install Prompt Shown',
-				label: 'The PWA install prompt was shown to the user',
+				event_name: 'pwa_install',
+				event_category: 'Progressive Web App',
+				event_action: 'Install Prompt Shown',
+				event_label: 'The PWA install prompt was shown to the user',
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 
 			//Wait for the user to respond to the prompt
 			installPromptEvent.userChoice.then(function(result){
 				jQuery('.nebula-sw-install-button').removeClass('prompted').addClass('ready');
 
 				let thisEvent = {
-					category: 'Progressive Web App',
-					action: 'Install Prompt User Choice',
+					event_name: 'pwa_install',
+					event_category: 'Progressive Web App',
+					event_action: 'Install Prompt User Choice',
 					result: result,
 					outcome: result.outcome,
 				};
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.outcome);
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				nebula.crm('event', 'Install Prompt ' + thisEvent.outcome);
 			});
 		} else {
@@ -328,13 +354,14 @@ nebula.pwa = function(){
 		jQuery('.nebula-sw-install-button').removeClass('ready').addClass('success');
 
 		let thisEvent = {
-			category: 'Progressive Web App',
-			action: 'App Installed',
-			label: 'The PWA has been installed',
+			event_name: 'pwa_install',
+			event_category: 'Progressive Web App',
+			event_action: 'App Installed',
+			event_label: 'The PWA has been installed',
 		};
 
 		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+		gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 	});
 };
 

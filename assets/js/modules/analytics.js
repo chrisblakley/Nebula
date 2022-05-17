@@ -1,12 +1,12 @@
 window.performance.mark('(Nebula) Inside analytics.js (module)');
 
 //Generate a unique ID for hits and windows (used in /inc/analytics.php)
-export function uuid(a){
+export function uuid(a){ //Does not technically need to be exported anymore as it is only now used here in this file
 	return a ? (a^Math.random()*16 >> a/4).toString(16) : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, uuid);
 }
 
 //Get local time string with timezone offset (used in /inc/analytics.php)
-export function localTimestamp(){
+export function localTimestamp(){ //Does not technically need to be exported anymore as it is only now used here in this file
 	var now = new Date();
 	var tzo = -now.getTimezoneOffset();
 	var dif = ( tzo >= 0 )? '+' : '-';
@@ -19,10 +19,12 @@ export function localTimestamp(){
 }
 
 //Set a custom dimension in both GA and MS Clarity (used in /inc/analytics.php)
-export function setDimension(name, value, index){
+export function setDimension(name, value){ //Does not technically need to be exported anymore as it is only now used here in this file
 	//Google Analytics
-	if ( typeof ga === 'function' && index ){
-		ga('set', index, value);
+	if ( typeof gtag === 'function' && name ){
+		gtag('set', 'user_properties', {
+			[name] : value
+		});
 	}
 
 	//Microsoft Clarity
@@ -34,6 +36,80 @@ export function setDimension(name, value, index){
 	document.dispatchEvent(new CustomEvent('nebula_dimension', {detail: {'name': name, 'value': value}})); //Allow this dimension to be sent to other platforms from outside Nebula
 }
 
+//Prep an object of dimensions that can be included in any subsequent event sends to GA
+nebula.allHitDimensions = function(){
+	let dimensions = {};
+
+	dimensions.query_string = window.location.search;
+	dimensions.network_connection = ( navigator.onLine )? 'Online' : 'Offline';
+	dimensions.visibility_state = document.visibilityState;
+	dimensions.local_timestamp = localTimestamp();
+	dimensions.hit_time = String(new Date);
+	dimensions.hit_id = uuid(); //Give each hit a unique ID
+
+	//Bootstrap Breakpoint
+	if ( window.matchMedia("(min-width: 2048px)").matches ){
+		dimensions.mq_breakpoint = 'uw';
+	} else if ( window.matchMedia("(min-width: 1400px)").matches ){
+		dimensions.mq_breakpoint = 'xxl';
+	} else if ( window.matchMedia("(min-width: 1200px)").matches ){
+		dimensions.mq_breakpoint = 'xl';
+	} else if ( window.matchMedia("(min-width: 992px)").matches ){
+		dimensions.mq_breakpoint = 'lg';
+	} else if ( window.matchMedia("(min-width: 768px)").matches ){
+		dimensions.mq_breakpoint = 'md';
+	} else if ( window.matchMedia("(min-width: 544px)").matches ){
+		dimensions.mq_breakpoint = 'sm';
+	} else {
+		dimensions.mq_breakpoint = 'sm';
+	}
+
+	//Screen Resolution
+	if ( window.matchMedia("(min-resolution: 192dpi)").matches ){
+		dimensions.screen_resolution = '2x';
+	} else if ( window.matchMedia("(min-resolution: 144dpi)").matches ){
+		dimensions.screen_resolution = '1.5x';
+	} else {
+		dimensions.screen_resolution = '1x';
+	}
+
+	//Screen Orientation
+	if ( window.matchMedia("(orientation: portrait)").matches ){
+		dimensions.screen_orientation = 'Portrait';
+	} else if ( window.matchMedia("(orientation: landscape)").matches ){
+		dimensions.screen_orientation = 'Landscape';
+	}
+
+	//Device Memory
+	if ( 'deviceMemory' in navigator ){ //Chrome 64+
+		let deviceMemoryLevel = ( navigator.deviceMemory < 1 )? 'Lite' : 'Full';
+		dimensions.device_memory = navigator.deviceMemory + '(' + deviceMemoryLevel + ')';
+	} else {
+		dimensions.device_memory = 'Unavailable';
+	}
+
+	return dimensions;
+};
+
+//Prep an event object to send to Google Analytics
+nebula.gaEventObject = function(eventObject){
+	delete eventObject['e']; //Remove the DOM Event key
+	delete eventObject['event']; //Remove the DOM Event key
+	delete eventObject['event_name']; //Name is sent separately outside of the object parameter, so remove it here
+	delete eventObject['email_address'];
+
+	for ( var key of Object.keys(eventObject) ){
+		if ( typeof eventObject[key] === 'object' || typeof eventObject[key] === 'function' ){
+			delete eventObject[key]; //Remove any objects or functions
+		}
+	}
+
+	//Add contextual parameters to the event object
+	let fullContextObject = Object.assign(nebula.allHitDimensions(), eventObject);
+
+	return fullContextObject;
+};
+
 //Google Analytics Universal Analytics Event Trackers
 nebula.eventTracking = async function(){
 	if ( nebula.isDoNotTrack() ){
@@ -42,23 +118,35 @@ nebula.eventTracking = async function(){
 
 	nebula.cacheSelectors(); //Just to be safe (this is no longer called from anywhere besides nebula.js so this should never be needed)
 
+	//Check for Topics API support @todo "Nebula" 0: when it is better supported update this further
+	if ( 'browsingTopics' in document && document.featurePolicy.allowsFeature('browsing-topics') ){
+		//console.log('Topics API is available on this page', document.browsingTopics());
+
+		gtag('event', 'browser_navigation', {
+			event_category: 'Topics API',
+			event_action: 'Available',
+			non_interaction: true
+		});
+	}
+
 	nebula.once(function(){
 		window.dataLayer = window.dataLayer || []; //Prevent overwriting an existing GTM Data Layer array
 
 		nebula.dom.document.trigger('nebula_event_tracking');
 
-		if ( typeof window.ga === 'function' ){
-			window.ga(function(tracker){
-				nebula.dom.document.trigger('nebula_ga_tracker', tracker);
-				nebula.user.cid = tracker.get('clientId');
-				window.dataLayer.push(Object.assign({'event': 'nebula-ga-tracker', 'client-id': nebula.user.cid}));
+		if ( nebula?.user?.cid ){
+			window.dataLayer.push(Object.assign({'client-id': nebula.user.cid}));
+		} else if ( nebula?.analytics?.measurementID && typeof window.gtag === 'function' ){
+			gtag('get', nebula.analytics.measurementID, 'client_id', function(clientId){
+				nebula.user.id = clientId;
+				window.dataLayer.push(Object.assign({'client-id': clientId}));
 			});
 		}
 
 		//When the page is restored from BFCache (which means it is not fully reloaded)
 		window.addEventListener('pageshow', function(event){
 			if ( event.persisted === true ){
-				ga('send', 'pageview'); //Send another pageview if the page is restored from bfcache
+				gtag('event', 'page_view'); //Send another pageview if the page is restored from bfcache
 			}
 		});
 
@@ -72,16 +160,34 @@ nebula.eventTracking = async function(){
 				quickBack = prev.quick || false;
 			}
 
-			ga('send', 'event', 'Browser Navigation', 'Back/Forward', 'From: ' + previousPage, {'nonInteraction': true});
+			gtag('event', 'browser_navigation', {
+				event_category: 'Browser Navigation',
+				event_action: 'Back/Forward',
+				event_label: 'From: ' + previousPage,
+				previous_page: previousPage,
+				non_interaction: true
+			});
 
 			if ( quickBack && previousPage !== document.location.pathname ){ //If the previous page was viewed for a very short time and is different than the current page
-				ga('send', 'event', 'Quick Back', 'Quickly left from: ' + previousPage, 'Back to: ' + document.location.pathname, {'nonInteraction': true}); //Technically this could be a "quick forward" too, but less likely
+				gtag('event', 'quick_back', { //Technically this could be a "quick forward" too, but less likely
+					event_category: 'Quick Back',
+					event_action: 'Quickly left from: ' + previousPage,
+					event_label: 'Back to: ' + document.location.pathname,
+					back_from: previousPage,
+					back_to: document.location.pathname,
+					non_interaction: true
+				});
 			}
 		}
 
 		//Reloads
 		if ( performance.navigation.type === 1 ){ //If the user reloaded the page
-			ga('send', 'event', 'Browser Navigation', 'Reload', document.location.pathname, {'nonInteraction': true});
+			gtag('event', 'browser_navigation', {
+				event_category: 'Browser Navigation',
+				event_action: 'Reload',
+				event_label: document.location.pathname,
+				non_interaction: true
+			});
 		}
 
 		//Prep page info and detect quick unloads
@@ -102,10 +208,18 @@ nebula.eventTracking = async function(){
 
 		//When the page becomes frozen/unfrozen by the browser Lifecycle API
 		document.addEventListener('freeze', function(event){
-			ga('send', 'event', 'Page Lifecycle', 'Frozen'); //Note that "frozen" does not indicate an error. The browser has preserved its state as inactive.
+			gtag('event', 'page_lifecycle_frozen', { //Note that "frozen" does not indicate an error. The browser has preserved its state as inactive.
+				event_category: 'Page Lifecycle',
+				event_action: 'Frozen',
+				non_interaction: true
+			});
 		});
 		document.addEventListener('resume', function(event){
-			ga('send', 'event', 'Page Lifecycle', 'Resumed'); //This may happen when it is unfrozen from a frozen state, or from BFCache.
+			gtag('event', 'page_lifecycle_resumed', { //This may happen when it is unfrozen from a frozen state, or from BFCache.
+				event_category: 'Page Lifecycle',
+				event_action: 'Resumed',
+				non_interaction: true
+			});
 		});
 
 		//Button Clicks
@@ -113,16 +227,16 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('mousedown', nebulaButtonSelector, function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Button',
-				action: 'Click', //GA4 Name: "button_click"?
+				event_name: 'button_click',
+				event_category: 'Button',
+				event_action: 'Click',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				text: jQuery(this).val() || jQuery(this).attr('value') || jQuery(this).text() || jQuery(this).attr('title') || '(Unknown)',
 				link: jQuery(this).attr('href') || jQuery(this).attr('title') || '(Unknown)'
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', 'Button Click', thisEvent.text.trim(), thisEvent.link);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-button-click'}));
 		});
 
@@ -130,13 +244,14 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('click', 'a img', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Image Click',
-				action: jQuery(this).attr('alt') || jQuery(this).attr('src'),
-				label: jQuery(this).parents('a').attr('href'),
+				event_name: 'image_click',
+				event_category: 'Image Click',
+				event_action: jQuery(this).attr('alt') || jQuery(this).attr('src'),
+				event_label: jQuery(this).parents('a').attr('href')
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-image-click'}));
 		});
 
@@ -144,25 +259,27 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('shown.bs.collapse', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Accordion',
-				action: 'Shown', //GA4 Name: "accordion_toggle"?
-				label: jQuery('[data-bs-target="#' + e.target.id + '"]').text().trim() || e.target.id,
+				event_name: 'accordion_toggle',
+				event_category: 'Accordion',
+				event_action: 'Shown',
+				event_label: jQuery('[data-bs-target="#' + e.target.id + '"]').text().trim() || e.target.id,
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-accordion-shown'}));
 		});
 		nebula.dom.document.on('hidden.bs.collapse', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Accordion',
-				action: 'Hidden', //GA4 Name: "accordion_toggle"?
-				label: jQuery('[data-bs-target="#' + e.target.id + '"]').text().trim() || e.target.id,
+				event_name: 'accordion_toggle',
+				event_category: 'Accordion',
+				event_action: 'Hidden',
+				event_label: jQuery('[data-bs-target="#' + e.target.id + '"]').text().trim() || e.target.id,
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-accordion-hidden'}));
 		});
 
@@ -170,25 +287,27 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('shown.bs.modal', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Modal',
-				action: 'Shown', //GA4 Name: "modal_toggle"?
-				label: jQuery('#' + e.target.id + ' .modal-title').text().trim() || e.target.id,
+				event_name: 'modal_toggle',
+				event_category: 'Modal',
+				event_action: 'Shown',
+				event_label: jQuery('#' + e.target.id + ' .modal-title').text().trim() || e.target.id,
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-modal-shown'}));
 		});
 		nebula.dom.document.on('hidden.bs.modal', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Modal',
-				action: 'Hidden', //GA4 Name: "modal_toggle"?
-				label: jQuery('#' + e.target.id + ' .modal-title').text().trim() || e.target.id,
+				event_name: 'modal_toggle',
+				event_category: 'Modal',
+				event_action: 'Hidden',
+				event_label: jQuery('#' + e.target.id + ' .modal-title').text().trim() || e.target.id,
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-modal-hidden'}));
 		});
 
@@ -197,8 +316,9 @@ nebula.eventTracking = async function(){
 			if ( window.event ){ //Only if sliding manually
 				let thisEvent = {
 					event: e,
-					category: 'Carousel',
-					action: e.target.id || e.target.title || e.target.className.replaceAll(/\s/g, '.'), //GA4 Name: "carousel_slide"?
+					event_name: 'carousel_slide',
+					event_category: 'Carousel',
+					event_action: e.target.id || e.target.title || e.target.className.replaceAll(/\s/g, '.'),
 					from: e.from,
 					to: e.to,
 				};
@@ -207,10 +327,10 @@ nebula.eventTracking = async function(){
 				thisEvent.activeSlideName = thisEvent.activeSlide.attr('id') || thisEvent.activeSlide.attr('title') || 'Unnamed';
 				thisEvent.prevSlide = jQuery(e.target).find('.carousel-item').eq(e.from);
 				thisEvent.prevSlideName = thisEvent.prevSlide.attr('id') || thisEvent.prevSlide.attr('title') || 'Unnamed';
-				thisEvent.label = 'Slide to ' + thisEvent.to + ' (' + thisEvent.activeSlideName + ') from ' + thisEvent.from + ' (' + thisEvent.prevSlideName + ')';
+				thisEvent.event_label = 'Slide to ' + thisEvent.to + ' (' + thisEvent.activeSlideName + ') from ' + thisEvent.from + ' (' + thisEvent.prevSlideName + ')';
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-carousel-slide'}));
 			}
 		});
@@ -221,14 +341,15 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('submit', 'form', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Generic Form',
-				action: 'Submit', //GA4 Name: "form_submit"? How to differentiate it from conversions?
+				event_name: 'form_submit', //How to differentiate this from conversions?
+				event_category: 'Generic Form',
+				event_action: 'Submit',
 				formID: e.target.id || 'form.' + e.target.className.replaceAll(/\s/g, '.'),
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.formID);
-			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			if ( typeof clarity === 'function' ){clarity('set', thisEvent.event_category, thisEvent.event_action);}
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-generic-form'}));
 		});
 
@@ -238,19 +359,19 @@ nebula.eventTracking = async function(){
 			jQuery("a[href$='." + extension + "' i]").on('mousedown', function(e){ //Cannot defer case insensitive attribute selectors in jQuery (or else you will get an "unrecognized expression" error)
 				let thisEvent = {
 					event: e,
-					category: 'Download',
-					action: extension, //GA4 Name: "file_download" Note: This is a default GA4 event and is not needed to be tracked in Nebula. Consider deleting entirely.
+					event_name: 'file_download', //Note: This is a default GA4 event and is not needed to be tracked in Nebula. Consider deleting entirely.
+					event_category: 'Download',
+					event_action: extension,
 					intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-					extension: extension,
-					fileName: jQuery(this).attr('href').substr(jQuery(this).attr('href').lastIndexOf('/')+1),
+					file_extension: extension,
+					file_name: jQuery(this).attr('href').substr(jQuery(this).attr('href').lastIndexOf('/')+1),
 				};
 
-				ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileName);
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-download'}));
-				nebula.fbq('track', 'ViewContent', {content_name: thisEvent.fileName});
-				nebula.clarity('set', thisEvent.category, thisEvent.fileName);
+				nebula.fbq('track', 'ViewContent', {content_name: thisEvent.file_name});
+				nebula.clarity('set', thisEvent.event_category, thisEvent.file_name);
 				nebula.crm('event', 'File Download');
 			});
 		});
@@ -259,22 +380,21 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('mousedown', '.notable a, a.notable', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Download',
-				action: 'Notable', //GA4 Name: "file_download"
+				event_name: 'file_download',
+				event_category: 'Download',
+				event_action: 'Notable',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				filePath: jQuery(this).attr('href').trim(),
-				linkText: jQuery(this).text()
+				file_path: jQuery(this).attr('href').trim(),
+				link_text: jQuery(this).text()
 			};
 
-			if ( thisEvent.filePath.length && thisEvent.filePath !== '#' ){
-				thisEvent.fileName = filePath.substr(filePath.lastIndexOf('/')+1);
-				ga('set', nebula.analytics.metrics.notableDownloads, 1);
+			if ( thisEvent.file_path.length && thisEvent.file_path !== '#' ){
+				thisEvent.file_name = file_path.substr(file_path.lastIndexOf('/')+1);
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileName);
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-download'}));
-				nebula.fbq('track', 'ViewContent', {content_name: thisEvent.fileName});
-				nebula.clarity('set', thisEvent.category, thisEvent.fileName);
+				nebula.fbq('track', 'ViewContent', {content_name: thisEvent.file_name});
+				nebula.clarity('set', thisEvent.event_category, thisEvent.file_name);
 				nebula.crm('event', 'Notable File Download');
 			}
 		});
@@ -285,17 +405,18 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('submit', internalSearchInputSelector, function(){
 			let thisEvent = {
 				event: e,
-				category: 'Internal Search',
-				action: 'Submit', //GA4 Name: "search"
+				event_name: 'search',
+				event_category: 'Internal Search',
+				event_action: 'Submit',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				query: jQuery(this).find('input[name="s"]').val().toLowerCase().trim()
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.query);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-internal-search'}));
 			nebula.fbq('track', 'Search', {search_string: thisEvent.query});
-			nebula.clarity('set', thisEvent.category, thisEvent.query);
+			nebula.clarity('set', thisEvent.event_category, thisEvent.query);
 			nebula.crm('identify', {internal_search: thisEvent.query});
 		});
 
@@ -303,15 +424,15 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('mousedown', 'a.internal-suggestion', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Page Suggestion',
-				action: 'Internal', //GA4 name: "select_content"
+				event_name: 'select_content',
+				event_category: 'Page Suggestion',
+				event_action: 'Internal',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				suggestion: jQuery(this).text(),
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.suggestion);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			nebula.crm('event', 'Page Suggestion Click');
 		});
 
@@ -325,13 +446,17 @@ nebula.eventTracking = async function(){
 
 				let thisEvent = {
 					event: e,
-					category: 'Keyboard Shortcut',
-					action: 'Zoom In (Ctrl+)', //GA4 Name: "zoom_change"?
-					modifiedZoomLevel: modifiedZoomLevel
+					event_name: 'zoom_change',
+					event_category: 'Keyboard Shortcut',
+					event_action: 'Zoom In (Ctrl+)',
+					modified_zoom_level: modifiedZoomLevel,
+					non_interaction: true
 				};
 
+				thisEvent.event_label = 'Modified Zoom Level: ' + thisEvent.modified_zoom_level;
+
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, 'Modified Zoom Level: ' + thisEvent.modifiedZoomLevel, {'nonInteraction': true});
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-keyboard-shortcut'}));
 			}
 
@@ -341,13 +466,17 @@ nebula.eventTracking = async function(){
 
 				let thisEvent = {
 					event: e,
-					category: 'Keyboard Shortcut',
-					action: 'Zoom Out (Ctrl-)', //GA4 Name: "zoom_change"?
-					modifiedZoomLevel: modifiedZoomLevel
+					event_name: 'zoom_change',
+					event_category: 'Keyboard Shortcut',
+					event_action: 'Zoom Out (Ctrl-)',
+					modified_zoom_level: modifiedZoomLevel,
+					non_interaction: true
 				};
 
+				thisEvent.event_label = 'Modified Zoom Level: ' + thisEvent.modified_zoom_level;
+
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, 'Modified Zoom Level: ' + thisEvent.modifiedZoomLevel, {'nonInteraction': true});
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-keyboard-shortcut'}));
 			}
 
@@ -357,13 +486,17 @@ nebula.eventTracking = async function(){
 
 				let thisEvent = {
 					event: e,
-					category: 'Keyboard Shortcut',
-					action: 'Reset Zoom (Ctrl+0)', //GA4 Name: "zoom_change"?
-					modifiedZoomLevel: modifiedZoomLevel
+					event_name: 'zoom_change',
+					event_category: 'Keyboard Shortcut',
+					event_action: 'Reset Zoom (Ctrl+0)',
+					modified_zoom_level: modifiedZoomLevel,
+					non_interaction: true
 				};
 
+				thisEvent.event_label = 'Modified Zoom Level: ' + thisEvent.modified_zoom_level;
+
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, 'Modified Zoom Level: ' + thisEvent.modifiedZoomLevel, {'nonInteraction': true});
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-keyboard-shortcut'}));
 			}
 
@@ -371,13 +504,15 @@ nebula.eventTracking = async function(){
 			if ( (e.ctrlKey || e.metaKey) && e.keyCode === 70 ){
 				let thisEvent = {
 					event: e,
-					category: 'Keyboard Shortcut',
-					action: 'Find on Page (Ctrl+F)', //GA4 Name: "search" but we will not have a "search_term" parameter. Make sure we do have something to note that this is a Find On Page
-					highlightedText: window.getSelection().toString().trim() || '(No highlighted text when initiating find)'
+					event_name: 'search', //We will not have a "search_term" parameter. Make sure we do have something to note that this is a Find On Page
+					event_category: 'Keyboard Shortcut',
+					event_action: 'Find on Page (Ctrl+F)',
+					highlighted_ext: window.getSelection().toString().trim() || '(No highlighted text when initiating find)',
+					non_interaction: true
 				};
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.highlightedText, {'nonInteraction': true});
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-keyboard-shortcut'}));
 			}
 
@@ -385,15 +520,17 @@ nebula.eventTracking = async function(){
 			if ( (e.ctrlKey || e.metaKey) && e.keyCode === 68 ){ //Ctrl+D
 				let thisEvent = {
 					event: e,
-					category: 'Keyboard Shortcut',
-					action: 'Bookmark (Ctrl+D)', //GA4 Name: "bookmark"?
-					label: 'User bookmarked the page (with keyboard shortcut)'
+					event_name: 'bookmark',
+					event_category: 'Keyboard Shortcut',
+					event_action: 'Bookmark (Ctrl+D)',
+					event_label: 'User bookmarked the page (with keyboard shortcut)',
+					non_interaction: true
 				};
 
 				nebula.removeQueryParameter(['utm_campaign', 'utm_medium', 'utm_source', 'utm_content', 'utm_term'], window.location.href); //Remove existing UTM parameters
 				history.replaceState(null, document.title, window.location.href + '?utm_source=bookmark');
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label, {'nonInteraction': true});
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-keyboard-shortcut'}));
 			}
 		});
@@ -403,37 +540,30 @@ nebula.eventTracking = async function(){
 			let emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 			let emailDomain = emailAddress.split('@')[1]; //Get everything after the @
 			let emailCharacterArray = Array.from(emailAddress.split('@')[0]).slice(1); //Get an array of chars before @ and remove the first index
-
-			//Mask the email with asterisks
-			let anonymizedEmail = emailAddress.charAt(0); //Start by preserving the first character
-			emailCharacterArray.forEach(function(character, index){ //Get an array of chars before @ and remove the first index
-				if ( index === emailCharacterArray.length-1 ){ //If the current index is the last item (character)
-					anonymizedEmail += character; //Use the last letter as-is
-				} else {
-					anonymizedEmail += '*'; //Add an asterisk for each character in the array
-				}
-			});
-			anonymizedEmail += '@' + emailDomain; //Add the domain
+			let anonymizedEmail = nebula.anonymizeEmail(emailAddress); //Mask the email with asterisks
 
 			let thisEvent = {
 				event: e,
-				category: 'Contact',
-				action: 'Mailto', //GA4 Name: "mailto"?
-				label: ( emailAddress.toLowerCase().includes(window.location.hostname) )? emailAddress : anonymizedEmail, //If the email matches the website use it, otherwise use the anonymized email
+				event_name: 'mailto',
+				event_category: 'Contact',
+				event_action: 'Mailto',
+				event_label: ( emailAddress.toLowerCase().includes(window.location.hostname) )? emailAddress : anonymizedEmail, //If the email matches the website use it, otherwise use the anonymized email
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				emailAddress: emailAddress,
-				emailDomain: emailDomain,
-				anonymizedEmail: anonymizedEmail
+				email_address: emailAddress,
+				email_domain: emailDomain,
+				anonymized_email: anonymizedEmail
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-			ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
+			gtag('set', 'user_properties', {
+				contact_method : 'Email'
+			});
+
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-mailto'}));
-			nebula.fbq('track', 'Lead', {content_name: thisEvent.action});
-			nebula.clarity('set', thisEvent.category, thisEvent.action);
-			nebula.crm('event', thisEvent.action);
+			nebula.fbq('track', 'Lead', {content_name: thisEvent.event_action});
+			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
+			nebula.crm('event', thisEvent.event_action);
 			nebula.crm('identify', {mailto_contacted: thisEvent.emailAddress});
 		});
 
@@ -441,20 +571,23 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('mousedown', 'a[href^="tel"]', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Contact',
-				action: 'Click-to-Call', //GA4 Name: "click_to_call"?
+				event_name: 'click_to_call',
+				event_category: 'Contact',
+				event_action: 'Click-to-Call',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				phoneNumber: jQuery(this).attr('href').replace('tel:', '')
+				phone_umber: jQuery(this).attr('href').replace('tel:', '')
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-			ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
+			gtag('set', 'user_properties', {
+				contact_method : 'Phone'
+			});
+
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-click-to-call'}));
-			nebula.fbq('track', 'Lead', {content_name: thisEvent.action});
-			nebula.clarity('set', thisEvent.category, thisEvent.action);
-			nebula.crm('event', thisEvent.action);
+			nebula.fbq('track', 'Lead', {content_name: thisEvent.event_action});
+			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
+			nebula.crm('event', thisEvent.event_action);
 			nebula.crm('identify', {phone_contacted: thisEvent.phoneNumber});
 		});
 
@@ -462,20 +595,23 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('mousedown', 'a[href^="sms"]', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Contact',
-				action: 'SMS', //GA4 Name: "sms"?
+				event_name: 'sms',
+				event_category: 'Contact',
+				event_action: 'SMS',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				phoneNumber: jQuery(this).attr('href').replace('tel:', '')
+				phone_number: jQuery(this).attr('href').replace('tel:', '')
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
-			ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
+			gtag('set', 'user_properties', {
+				contact_method : 'SMS'
+			});
+
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-sms'}));
-			nebula.fbq('track', 'Lead', {content_name: thisEvent.action});
-			nebula.clarity('set', thisEvent.category, thisEvent.action);
-			nebula.crm('event', thisEvent.action);
+			nebula.fbq('track', 'Lead', {content_name: thisEvent.event_action});
+			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
+			nebula.crm('event', thisEvent.event_action);
 			nebula.crm('identify', {phone_contacted: thisEvent.phoneNumber});
 		});
 
@@ -485,15 +621,15 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('mousedown', '#utility-nav ul.menu a', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Navigation Menu',
-				action: 'Utility Menu', //GA4 Name: "menu_click"?
+				event_name: 'menu_click',
+				event_category: 'Navigation Menu',
+				event_action: 'Utility Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				linkText: jQuery(this).text().trim()
+				link_text: jQuery(this).text().trim()
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-navigation-menu-click'}));
 		});
 
@@ -501,15 +637,15 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('mousedown', '#primary-nav ul.menu a', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Navigation Menu',
-				action: 'Primary Menu', //GA4 Name: "menu_click"?
+				event_name: 'menu_click',
+				event_category: 'Navigation Menu',
+				event_action: 'Primary Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				linkText: jQuery(this).text().trim()
+				link_text: jQuery(this).text().trim()
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-navigation-menu-click'}));
 		});
 
@@ -517,13 +653,14 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('show.bs.offcanvas', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Navigation Menu',
-				action: 'Offcanvas Menu (' + e.target.id + ')',
-				label: 'Opened',
+				event_name: 'menu_toggle',
+				event_category: 'Navigation Menu',
+				event_action: 'Offcanvas Menu (' + e.target.id + ')',
+				event_label: 'Opened',
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-offcanvas-shown'}));
 
 			nebula.timer('(Nebula) Offcanvas Menu', 'start');
@@ -533,13 +670,14 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('hide.bs.offcanvas', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Navigation Menu',
-				action: 'Offcanvas Menu (' + e.target.id + ')',
-				label: 'Closed (without Navigation)',
+				event_name: 'menu_toggle',
+				event_category: 'Navigation Menu',
+				event_action: 'Offcanvas Menu (' + e.target.id + ')',
+				event_label: 'Closed (without Navigation)',
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-offcanvas-closed'}));
 		});
 
@@ -547,33 +685,38 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('mousedown', '.offcanvas-body a', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Navigation Menu',
-				action: 'Offcanvas Menu (' + e.target.id + ')', //GA4 Name: "menu_click"?
+				event_name: 'menu_click',
+				event_category: 'Navigation Menu',
+				event_action: 'Offcanvas Menu (' + e.target.id + ')',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				linkText: jQuery(this).text().trim()
+				link_text: jQuery(this).text().trim()
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-navigation-menu-click'}));
 
-			ga('send', 'timing', 'Offcanvas Menu', 'Navigated', Math.round(nebula.timer('(Nebula) Offcanvas Menu', 'lap')), 'From opening offcanvas menu until navigation');
+			gtag('event', 'timing_complete', {
+				name: 'Navigated',
+				value: Math.round(nebula.timer('(Nebula) Offcanvas Menu', 'lap')),
+				event_category: 'Offcanvas Menu',
+				event_label: 'From opening offcanvas menu until navigation',
+			});
 		});
 
 		//Breadcrumb Navigation
 		nebula.dom.document.on('mousedown', 'ol.nebula-breadcrumbs a', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Navigation Menu',
-				action: 'Breadcrumbs', //GA4 Name: "menu_click"?
+				event_name: 'menu_click',
+				event_category: 'Navigation Menu',
+				event_action: 'Breadcrumbs',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				linkText: jQuery(this).text().trim()
+				link_text: jQuery(this).text().trim()
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-navigation-menu-click'}));
 		});
 
@@ -581,15 +724,15 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('mousedown', '#sidebar-section ul.menu a', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Navigation Menu',
-				action: 'Sidebar Menu', //GA4 Name: "menu_click"?
+				event_name: 'menu_click',
+				event_category: 'Navigation Menu',
+				event_action: 'Sidebar Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				linkText: jQuery(this).text().trim()
+				link_text: jQuery(this).text().trim()
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-navigation-menu-click'}));
 		});
 
@@ -597,15 +740,15 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('mousedown', '#powerfooter a', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Navigation Menu',
-				action: 'Footer Menu', //GA4 Name: "menu_click"?
+				event_name: 'menu_click',
+				event_category: 'Navigation Menu',
+				event_action: 'Footer Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				linkText: jQuery(this).text().trim()
+				link_text: jQuery(this).text().trim()
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-navigation-menu-click'}));
 		});
 
@@ -625,21 +768,31 @@ nebula.eventTracking = async function(){
 				if ( href ){ //href may be undefined in special circumstances so we can ignore those
 					let domain = nebula?.site?.domain || window.location.hostname;
 
+					let excludedDomain = false;
+					let excludeDomains = wp.hooks.applyFilters('excludeDomains', []); //Don't log these domains/subdomains as outbound links
+					jQuery.each(excludeDomains, function(index, excludeDomain){
+						if ( href.includes(excludeDomain) ){
+							excludedDomain = true;
+						}
+					});
+
 					if ( href.includes('http') ){ //If the link contains "http"
 						if ( !href.includes(domain) || href.includes('.' + domain) ){ //If the link does not contain "example.com" -or- if the link does contain a subdomain like "something.example.com"
-							if ( !href.includes('//www.' + domain) ){ //Exclude the "www" subdomain
+							if ( !excludedDomain && !href.includes('//www.' + domain) ){ //Exclude the "www" subdomain and other defined excluded domains (above)
 								let thisEvent = {
 									event: e,
-									category: 'Outbound Link',
-									action: 'Click',
-									linkText: linkElement.text().trim(),
+									event_name: 'outbound_link',
+									event_category: 'Outbound Link',
+									event_action: 'Click',
+									outbound: true,
+									subdomain: href.includes('.' + domain), //Boolean if this is a subdomain of the primary domain
+									link_text: linkElement.text().trim(),
 									intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 									href: href
 								};
 
-								ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 								nebula.dom.document.trigger('nebula_event', thisEvent);
-								ga('send', 'event', thisEvent.category, thisEvent.linkText, thisEvent.href);
+								gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 								window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-outbound-link-click'}));
 							}
 						}
@@ -652,16 +805,17 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('mousedown', '#nebula-cookie-notification a', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Cookie Notification',
-				action: 'Click', //GA4 Name: "cookie_notification"?
+				event_name: 'cookie_notification',
+				event_category: 'Cookie Notification',
+				event_action: 'Click',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				text: jQuery(this).text(),
-				link: jQuery(this).attr('href')
+				text: jQuery(this).text().trim(),
+				link: jQuery(this).attr('href'),
+				non_interaction: true //Non-interaction because the user is not interacting with any content yet so this should not influence the bounce rate
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.text.trim(), thisEvent.link, {'nonInteraction': true}); //Non-interaction because the user is not interacting with any content yet so this should not influence the bounce rate
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-cookie-notification-click'}));
 		});
 
@@ -670,13 +824,14 @@ nebula.eventTracking = async function(){
 			nebula.dom.window.on('popstate', function(e){ //When a state that was previously pushed is used, or "popped". This *only* triggers when a pushed state is popped!
 				let thisEvent = {
 					event: e,
-					category: 'History Popstate',
-					action: document.title,
+					event_name: 'history_popstate',
+					event_category: 'History Popstate',
+					event_action: document.title,
 					location: document.location,
 					state: JSON.stringify(e.state)
 				};
 
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.location);
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			});
 		}
 
@@ -685,15 +840,18 @@ nebula.eventTracking = async function(){
 			let previousPage = nebula.session.referrer || document.referrer || '(Unknown Previous Page)';
 
 			let thisEvent = {
-				category: 'High Redirect Count',
-				action: performance.navigation.redirectCount + ' Redirects',
-				label: 'Previous Page: ' + previousPage,
+				event_name: 'high_redirect_count',
+				event_category: 'High Redirect Count',
+				event_action: performance.navigation.redirectCount + ' Redirects',
+				event_label: 'Previous Page: ' + previousPage,
+				redirect_count: performance.navigation.redirectCount,
+				non_interaction: true //Non-interaction because this happens on load
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', category, action, label, {'nonInteraction': true}); //Non-interaction because this happens on load
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-high-redirect-count'}));
-			nebula.crm('event', thisEvent.category);
+			nebula.crm('event', thisEvent.event_category);
 		}
 
 		//Dead Clicks (Non-Linked Click Attempts)
@@ -701,16 +859,18 @@ nebula.eventTracking = async function(){
 			if ( !jQuery(this).parents('a, button').length ){
 				let thisEvent = {
 					event: e,
-					category: 'Dead Click',
-					action: 'Image', //GA4 Name: "dead_click"?
+					event_name: 'dead_click',
+					event_category: 'Dead Click',
+					event_action: 'Image',
 					element: 'Image',
-					src: jQuery(this).attr('src')
+					src: jQuery(this).attr('src'),
+					non_interaction: true //Non-interaction because if the user leaves due to this it should be considered a bounce
 				};
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.src, {'nonInteraction': true}); //Non-interaction because if the user leaves due to this it should be considered a bounce
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-dead-click'}));
-				nebula.crm('event', thisEvent.category);
+				nebula.crm('event', thisEvent.event_category);
 			}
 		});
 		nebula.dom.document.on('click', function(e){ //Check for clicks on unlinked underlined text
@@ -718,16 +878,18 @@ nebula.eventTracking = async function(){
 				if ( !jQuery(e.target).is('a, button') && !jQuery(e.target).parents('a, button').length && !jQuery(e.target).find('a, button').length ){ //Check if this element is an <a> tag or if parents or children are
 					let thisEvent = {
 						event: e,
-						category: 'Dead Click',
-						action: 'Underlined Text', //GA4 Name: "dead_click"?
+						event_name: 'dead_click',
+						event_category: 'Dead Click',
+						event_action: 'Underlined Text',
 						element: 'Text',
-						text: jQuery(e.target).text().trim()
+						text: jQuery(e.target).text().trim(),
+						non_interaction: true //Non-interaction because if the user leaves due to this it should be considered a bounce
 					};
 
 					nebula.dom.document.trigger('nebula_event', thisEvent);
-					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.text, {'nonInteraction': true}); //Non-interaction because if the user leaves due to this it should be considered a bounce
+					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-dead-click'}));
-					nebula.crm('event', thisEvent.category);
+					nebula.crm('event', thisEvent.event_category);
 				}
 			}
 		});
@@ -782,15 +944,17 @@ nebula.eventTracking = async function(){
 				//If we have not returned null by now, we have a set of rage clicks
 				let thisEvent = {
 					event: e,
-					category: 'Rage Clicks',
-					action: numberOfClicks + ' clicks in ' + timeDiff + ' seconds detected within ' + maxDistance + 'px', //GA4 Name: "rage_clicks"?
+					event_name: 'rage_clicks',
+					event_category: 'Rage Clicks',
+					event_action: numberOfClicks + ' clicks in ' + timeDiff + ' seconds detected within ' + maxDistance + 'px',
 					clicks: numberOfClicks,
 					period: timeDiff,
 					selector: nebula.domTreeToString(e.target),
+					non_interaction: true //Non-interaction because if the user exits due to this it should be considered a bounce
 				};
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.selector, {'nonInteraction': true}); //Non-interaction because if the user exits due to this it should be considered a bounce
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-rage-clicks'}));
 
 				clickEvents.splice(clickEvents.length-5, 5); //Remove unused click points
@@ -801,14 +965,16 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('focus', '#skip-to-content-link, .visually-hidden, .visually-hidden-focusable', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Accessibility Links',
-				action: 'Focus', //GA4 Name: "accessibility_links"?
-				linkText: jQuery(this).text().trim()
+				event_name: 'accessibility_links',
+				event_category: 'Accessibility Links',
+				event_action: 'Focus',
+				link_text: jQuery(this).text().trim(),
+				non_interaction: true //Non-interaction because they are not actually taking action and these links do not indicate engagement
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText, {'nonInteraction': true}); //Non-interaction because they are not actually taking action and these links do not indicate engagement
-			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			if ( typeof clarity === 'function' ){clarity('set', thisEvent.event_category, thisEvent.event_action);}
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-accessibility-link'}));
 		});
 
@@ -816,15 +982,17 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('click', '#skip-to-content-link, .visually-hidden, .visually-hidden-focusable', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Accessibility Links',
-				action: 'Click', //GA4 Name: "accessibility_links"?
+				event_name: 'accessibility_links',
+				event_category: 'Accessibility Links',
+				event_action: 'Click',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				linkText: jQuery(this).text().trim()
+				link_text: jQuery(this).text().trim(),
+				non_interaction: true //Non-interaction because these links do not indicate engagement
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.linkText, {'nonInteraction': true}); //Non-interaction because these links do not indicate engagement
-			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			if ( typeof clarity === 'function' ){clarity('set', thisEvent.event_category, thisEvent.event_action);}
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-accessibility-link'}));
 		});
 
@@ -832,38 +1000,44 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('enterpictureinpicture', 'video', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Videos',
-				action: 'Enter Picture-in-Picture', //GA4 Name: "video_pip"?
-				videoID: e.target.id
+				event_name: 'video_pip',
+				event_category: 'Videos',
+				event_action: 'Enter Picture-in-Picture',
+				videoID: e.target.id,
+				non_interaction: true //Non-interaction because this may not be triggered by the user
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.videoID, {'nonInteraction': true}); //Non-interaction because this may not be triggered by the user.
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 		});
 
 		//Video Leave Picture-in-Picture
 		nebula.dom.document.on('leavepictureinpicture', 'video', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Videos',
-				action: 'Leave Picture-in-Picture', //GA4 Name: "video_pip"?
-				videoID: e.target.id
+				event_name: 'video_pip',
+				event_category: 'Videos',
+				event_action: 'Leave Picture-in-Picture',
+				videoID: e.target.id,
+				non_interaction: true //Non-interaction because this may not be triggered by the user
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.videoID, {'nonInteraction': true}); //Non-interaction because this may not be triggered by the user.
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 		});
 
 		//Page Visibility
 		nebula.dom.document.on('visibilitychange', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Visibility Change',
-				action: document.visibilityState, //Hidden, Visible, Prerender, or Unloaded
-				label: 'The state of the visibility of this page has changed.'
+				event_name: 'visibility_change',
+				event_category: 'Visibility Change',
+				event_action: document.visibilityState, //Hidden, Visible, Prerender, or Unloaded
+				event_label: 'The state of the visibility of this page has changed.',
+				non_interaction: true //Non-interaction because these are not interactions with the website itself
 			};
 
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label, {'nonInteraction': true}); //Non-interaction because these are not interactions with the website itself
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 		});
 
 		//Word copy tracking
@@ -883,35 +1057,37 @@ nebula.eventTracking = async function(){
 				//Track Email or Phone copies as contact intent.
 				if ( nebula.regex.email.test(selection) ){
 					let thisEvent = {
-						category: 'Contact',
-						action: 'Email (Copy)', //GA4 Name: "mailto"?
+						event_name: 'mailto',
+						event_category: 'Contact',
+						event_action: 'Email (Copy)',
 						intent: 'Intent',
-						emailAddress: selection,
+						email_address: nebula.anonymizeEmail(selection), //Mask the email with asterisks,
 						words: words,
-						wordcount: wordsLength
+						word_count: wordsLength
 					};
 
-					ga('set', nebula.analytics.dimensions.contactMethod, 'Mailto');
-					ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+					gtag('set', 'user_properties', {
+						contact_method : 'Email'
+					});
+
 					nebula.dom.document.trigger('nebula_event', thisEvent);
-					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.emailAddress);
+					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-copied-email'}));
 					nebula.crm('event', 'Email Address Copied');
 					nebula.crm('identify', {mailto_contacted: thisEvent.emailAddress});
 				} else if ( nebula.regex.address.test(selection) ){
 					let thisEvent = {
-						category: 'Contact',
-						action: 'Street Address (Copy)',
+						event_name: 'address_copy', //Probably could be a better name
+						event_category: 'Contact',
+						event_action: 'Street Address (Copy)',
 						intent: 'Intent',
 						address: selection,
 						words: words,
-						wordcount: wordsLength
+						word_count: wordsLength
 					};
 
-					ga('set', nebula.analytics.dimensions.contactMethod, 'Street Address');
-					ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 					nebula.dom.document.trigger('nebula_event', thisEvent);
-					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.address);
+					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-copied-address'}));
 					nebula.crm('event', 'Street Address Copied');
 				} else {
@@ -921,18 +1097,21 @@ nebula.eventTracking = async function(){
 					//If the first three/four chars are numbers and the full string is either 10 or 11 characters (to capture numbers with words) -or- if it matches the phone RegEx pattern
 					if ( (!isNaN(firstFourNumbers) && firstFourNumbers.toString().length >= 3 && (alphanumPhone.length === 10 || alphanumPhone.length === 11)) || nebula.regex.phone.test(selection) ){
 						let thisEvent = {
-							category: 'Contact',
-							action: 'Phone (Copy)', //GA4 Name: "click_to_call"?
+							event_name: 'click_to_call',
+							event_category: 'Contact',
+							event_action: 'Phone (Copy)',
 							intent: 'Intent',
-							phoneNumber: selection,
+							phone_number: selection,
 							words: words,
-							wordcount: wordsLength
+							word_count: wordsLength
 						};
 
-						ga('set', nebula.analytics.dimensions.contactMethod, 'Click-to-Call');
-						ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
+						gtag('set', 'user_properties', {
+							contact_method : 'Phone'
+						});
+
 						nebula.dom.document.trigger('nebula_event', thisEvent);
-						ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.phoneNumber);
+						gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 						window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-copied-phone'}));
 						nebula.crm('event', 'Phone Number Copied');
 						nebula.crm('identify', {phone_contacted: thisEvent.phoneNumber});
@@ -941,27 +1120,30 @@ nebula.eventTracking = async function(){
 
 				//Send the regular copied text event since it does not contain contact information
 				let thisEvent = {
-					category: 'Copied Text',
-					action: 'Copy', //This is not used for the below events //GA4 Name: "copy_text"?
+					event_name: 'copy_text',
+					event_category: 'Copied Text',
+					event_action: 'Copy',
 					intent: 'Intent',
 					selection: selection,
 					words: words,
-					wordcount: wordsLength
+					word_count: wordsLength
 				};
+
+				if ( selection.length > 150 ){
+					thisEvent.selection = thisEvent.selection.substring(0, 150) + '...'; //Max character length for GA event is 256
+				} else if ( thisEvent.word_count >= 10 ){
+					thisEvent.words = thisEvent.words.slice(0, 10).join(' ') + '... [' + thisEvent.word_count + ' Words]';
+				} else if ( selection.trim() === '' ){
+					thisEvent.words = '[0 words]';
+				}
+				if ( thisEvent.words.length > 150 ){
+					thisEvent.words = thisEvent.words.substring(0, 150) + '...'; //Max character length for GA event is 256
+				}
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 
-				if ( copyCount < 5 ){
-					if ( words.length > 8 ){
-						words = words.slice(0, 8).join(' ');
-						ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]'); //GA4: This will need to change significantly. Event Name: "copy_text"?
-					} else if ( selection.trim() === '' ){
-						ga('send', 'event', thisEvent.category, '[0 words]'); //GA4: This will need to change significantly. Event Name: "copy_text"?
-					} else {
-						ga('send', 'event', thisEvent.category, words.length + ' words', selection, words.length); //GA4: This will need to change significantly. Event Name: "copy_text"?
-					}
-
-					ga('send', 'event', thisEvent.category, words.length + ' words', words + '... [' + wordsLength + ' words]'); //GA4: This will need to change significantly. Event Name: "copy_text"?
+				if ( copyCount < 5 ){ //If fewer than 5 copies have happened in this page view
+					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-copied-text'}));
 					nebula.crm('event', 'Text Copied');
 				}
@@ -977,7 +1159,13 @@ nebula.eventTracking = async function(){
 				errorMessage = 'Unknown error';
 			}
 
-			ga('send', 'exception', {'exDescription': '(JS) AJAX Error (' + jqXHR.status + '): ' + errorMessage + ' on ' + settings.url, 'exFatal': true});
+			gtag('event', 'exception', {
+				xhr_status: jqXHR.status,
+				error_message: errorMessage,
+				url: settings.url,
+				description: '(JS) AJAX Error (' + jqXHR.status + '): ' + errorMessage + ' on ' + settings.url,
+				fatal: true
+			});
 			window.dataLayer.push({'event': 'nebula-ajax-error', 'error': errorMessage});
 			nebula.crm('event', 'AJAX Error');
 		});
@@ -990,7 +1178,14 @@ nebula.eventTracking = async function(){
 				let nebulaReportingObserver = new ReportingObserver(function(reports, observer){
 					for ( let report of reports ){
 						if ( report?.body?.sourceFile && !['extension', 'about:blank'].some((item) => report.body.sourceFile.includes(item)) ){ //Ignore certain files
-							ga('send', 'exception', {'exDescription': '(JS) Reporting Observer [' + report.type + ']: ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber, 'exFatal': false});
+							gtag('event', 'exception', {
+								report_type: report.type,
+								report_message: report.body.message,
+								source_file: report.body.sourceFile,
+								line_number: report.body.lineNumber,
+								description: '(JS) Reporting Observer [' + report.type + ']: ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber,
+								fatal: false
+							});
 						}
 					}
 				}, {buffered: true}); //Buffer to capture reports that happened prior to the observer being created
@@ -1004,18 +1199,18 @@ nebula.eventTracking = async function(){
 		//Capture Print Intent
 		function sendPrintEvent(action, trigger){
 			let thisEvent = {
-				category: 'Print',
-				action: action, //GA4 Name: "print"?
-				label: 'User triggered print via ' + trigger,
+				event_name: 'print',
+				event_category: 'Print',
+				event_action: action,
+				event_label: 'User triggered print via ' + trigger,
 				intent: 'Intent'
 			};
 
-			ga('set', nebula.analytics.dimensions.eventIntent, thisEvent.intent);
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-print'}));
-			if ( typeof clarity === 'function' ){clarity('set', thisEvent.category, thisEvent.action);}
-			nebula.crm('event', thisEvent.category);
+			if ( typeof clarity === 'function' ){clarity('set', thisEvent.event_category, thisEvent.event_action);}
+			nebula.crm('event', thisEvent.event_category);
 		}
 
 		//Note: This sends 2 events per print (beforeprint and afterprint). If one occurs more than the other we can remove one.
@@ -1027,43 +1222,20 @@ nebula.eventTracking = async function(){
 			}
 		});
 
-		//Detect Adblock
-		if ( nebula.user.client.bot === false && nebula.site.options.adblock_detect ){ //If not a bot and adblock detection is active
-			window.performance.mark('(Nebula) Detect AdBlock [Start]');
-
-			//Attempt to retrieve a fake ad file
-			fetch(nebula.site.directory.template.uri + '/assets/js/vendor/autotrack.js', { //This is not the real autotrack library
-				importance: 'low',
-				cache: 'force-cache'
-			}).then(function(response){
-				nebula.session.flags.adblock = false;
-			}).catch(function(error){
-				nebula.dom.html.addClass('ad-blocker');
-				ga('set', nebula.analytics.dimensions.blocker, 'Ad Blocker');
-				if ( nebula.session.flags.adblock !== true ){ //If this is the first time blocking it, log it
-					ga('send', 'event', 'Ad Blocker', 'Blocked', 'This user is using ad blocking software.', {'nonInteraction': true}); //Uses an event because it is asynchronous!
-					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-adblock-detected'}));
-					nebula.session.flags.adblock = true;
-				}
-			}).finally(function(){
-				window.performance.mark('(Nebula) Detect AdBlock [End]');
-				window.performance.measure('(Nebula) Detect AdBlock', '(Nebula) Detect AdBlock [Start]', '(Nebula) Detect AdBlock [End]');
-			});
-		}
-
 		//DataTables Filter
 		nebula.dom.document.on('keyup', '.dataTables_filter input', function(e){
 			let oThis = jQuery(this);
 			let thisEvent = {
 				event: e,
-				category: 'DataTables',
-				action: 'Search Filter', //GA4 Name: "search"?
+				event_name: 'search',
+				event_category: 'DataTables',
+				event_action: 'Search Filter',
 				query: oThis.val().toLowerCase().trim()
 			};
 
 			nebula.debounce(function(){
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.query);
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-datatables'}));
 			}, 1000, 'datatables_search_filter');
 		});
@@ -1072,13 +1244,14 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('click', 'th.sorting', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'DataTables',
-				action: 'Sort', //GA4 Name: "datatables_sort"?
+				event_name: 'datatables_sort',
+				event_category: 'DataTables',
+				event_action: 'Sort',
 				heading: jQuery(this).text()
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.heading);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-datatables'}));
 		});
 
@@ -1086,13 +1259,14 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('click', 'a.paginate_button ', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'DataTables',
-				action: 'Paginate', //GA4 Name: "datatables_paginate"?
+				event_name: 'datatables_paginate',
+				event_category: 'DataTables',
+				event_action: 'Paginate',
 				page: jQuery(this).text()
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.page);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-datatables'}));
 		});
 
@@ -1100,13 +1274,14 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('change', '.dataTables_length select', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'DataTables',
-				action: 'Shown Entries Change', //Number of visible rows select dropdown
+				event_name: 'datatables_length',
+				event_category: 'DataTables',
+				event_action: 'Shown Entries Change', //Number of visible rows select dropdown
 				selected: jQuery(this).val()
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.selected);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-datatables'}));
 		});
 
@@ -1123,16 +1298,17 @@ nebula.ecommerceTracking = async function(){
 		nebula.dom.document.on('click', 'a.add_to_cart, .single_add_to_cart_button', function(e){ //@todo "Nebula" 0: is there a trigger from WooCommerce this can listen for?
 			let thisEvent = {
 				event: e,
-				category: 'Ecommerce',
-				action: 'Add to Cart', //GA4 Name: "add_to_cart"
+				event_name: 'add_to_cart',
+				event_category: 'Ecommerce',
+				event_action: 'Add to Cart',
 				product: jQuery(this).attr('data-product_id')
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.product);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-add-to-cart'}));
 			nebula.fbq('track', 'AddToCart');
-			nebula.clarity('set', thisEvent.category, thisEvent.action);
+			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 			nebula.crm('event', 'Ecommerce Add to Cart');
 		});
 
@@ -1140,13 +1316,14 @@ nebula.ecommerceTracking = async function(){
 		nebula.dom.document.on('click', '.button[name="update_cart"]', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Ecommerce',
-				action: 'Update Cart Button',
-				label: 'Update Cart button click'
+				event_name: 'update_cart',
+				event_category: 'Ecommerce',
+				event_action: 'Update Cart Button',
+				event_label: 'Update Cart button click'
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-update-cart'}));
 			nebula.crm('event', 'Ecommerce Update Cart');
 		});
@@ -1155,13 +1332,14 @@ nebula.ecommerceTracking = async function(){
 		nebula.dom.document.on('click', '.product-remove a.remove', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Ecommerce',
-				action: 'Remove This Item', //GA4 Name: "remove_from_cart"
+				event_name: 'remove_from_cart',
+				event_category: 'Ecommerce',
+				event_action: 'Remove This Item',
 				product: jQuery(this).attr('data-product_id')
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.product);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-remove-item'}));
 			nebula.crm('event', 'Ecommerce Remove From Cart');
 		});
@@ -1170,16 +1348,17 @@ nebula.ecommerceTracking = async function(){
 		nebula.dom.document.on('click', '.wc-proceed-to-checkout .checkout-button', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Ecommerce',
-				action: 'Proceed to Checkout Button', //GA4 Name: "begin_checkout"
-				label: 'Proceed to Checkout button click'
+				event_name: 'begin_checkout',
+				event_category: 'Ecommerce',
+				event_action: 'Proceed to Checkout Button',
+				event_label: 'Proceed to Checkout button click'
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-proceed-to-checkout'}));
 			nebula.fbq('track', 'InitiateCheckout');
-			nebula.clarity('set', thisEvent.category, thisEvent.action);
+			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 			nebula.crm('event', 'Ecommerce Proceed to Checkout');
 		});
 
@@ -1189,13 +1368,14 @@ nebula.ecommerceTracking = async function(){
 
 			let thisEvent = {
 				event: e,
-				category: 'Ecommerce',
-				action: 'Started Checkout Form', //GA4 Name: "checkout_progress"?
-				label: 'Began filling out the checkout form (Billing First Name)'
+				event_name: 'checkout_progress',
+				event_category: 'Ecommerce',
+				event_action: 'Started Checkout Form',
+				event_label: 'Began filling out the checkout form (Billing First Name)'
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-started-checkout-form'}));
 			nebula.crm('event', 'Ecommerce Started Checkout Form');
 		});
@@ -1204,17 +1384,24 @@ nebula.ecommerceTracking = async function(){
 		nebula.dom.document.on('click', '#place_order', function(e){
 			let thisEvent = {
 				event: e,
-				category: 'Ecommerce',
-				action: 'Place Order Button', //GA4 Name: "purchase"
-				label: 'Place Order button click'
+				event_name: 'purchase',
+				event_category: 'Ecommerce',
+				event_action: 'Place Order Button',
+				event_label: 'Place Order button click'
 			};
 
-			ga('send', 'timing', 'Ecommerce', 'Checkout Form', Math.round(nebula.timer('(Nebula) Ecommerce Checkout', 'end')), 'Billing details start to Place Order button click');
+			gtag('event', 'timing_complete', {
+				name: 'Checkout Form',
+				value: Math.round(nebula.timer('(Nebula) Ecommerce Checkout', 'end')),
+				event_category: 'Ecommerce',
+				event_label: 'Billing details start to Place Order button click',
+			});
+
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-place-order-button'}));
 			nebula.fbq('track', 'Purchase');
-			nebula.clarity('set', thisEvent.category, thisEvent.action);
+			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 			nebula.crm('event', 'Ecommerce Placed Order');
 			nebula.crm('identify', {hs_lifecyclestage_customer_date: 1}); //@todo "Nebula" 0: What kind of date format does Hubspot expect here?
 		});
@@ -1241,14 +1428,16 @@ nebula.scrollDepth = async function(){
 				nebula.scrollBegin = performance.now()-scrollReady; //Calculate when the first scroll happens
 				if ( nebula.scrollBegin > 250 ){ //Try to avoid autoscrolls on pageload
 					let thisEvent = {
-						category: 'Scroll Depth',
-						action: 'Began Scrolling',
-						scrollStart: nebula.dom.window.scrollTop() + 'px',
-						timeBeforeScrollStart: Math.round(nebula.scrollBegin)
+						event_name: 'scroll',
+						event_category: 'Scroll Depth',
+						event_action: 'Began Scrolling',
+						scroll_start: nebula.dom.window.scrollTop() + 'px',
+						time_before_scroll_start: Math.round(nebula.scrollBegin),
+						non_interaction: true
 					};
-					thisEvent.label = 'Initial scroll started at ' + thisEvent.scrollStart;
+					thisEvent.event_label = 'Initial scroll started at ' + thisEvent.scrollStart;
 					nebula.dom.document.trigger('nebula_event', thisEvent);
-					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.scrollStart, thisEvent.scrollStartTime, {'nonInteraction': true}); //Event value is time until scrolling.
+					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				}
 			}, 'begin scrolling');
 
@@ -1263,12 +1452,14 @@ nebula.scrollDepth = async function(){
 
 						nebula.once(function(){
 							let thisEvent = {
-								category: 'Scroll Depth',
-								action: 'Excessive Scrolling',
-								label: 'User scrolled ' + excessiveScrollThreshold + 'px (or more) on this page.',
+								event_name: 'excessive_scrolling',
+								event_category: 'Scroll Depth',
+								event_action: 'Excessive Scrolling',
+								event_label: 'User scrolled ' + excessiveScrollThreshold + 'px (or more) on this page.',
+								non_interaction: true
 							};
 							nebula.dom.document.trigger('nebula_event', thisEvent);
-							ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label, {'nonInteraction': true});
+							gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 						}, 'excessive scrolling');
 					}
 				}
@@ -1282,16 +1473,18 @@ nebula.scrollDepth = async function(){
 
 						nebula.once(function(){
 							let thisEvent = {
-								category: 'Scroll Depth',
-								action: 'Entire Page',
+								event_name: 'scroll',
+								event_category: 'Scroll Depth',
+								event_action: 'Entire Page',
 								distance: nebula.dom.document.height(),
-								scrollEnd: performance.now()-(nebula.scrollBegin+scrollReady),
+								scroll_end: performance.now()-(nebula.scrollBegin+scrollReady),
+								non_interaction: true
 							};
 
 							thisEvent.timetoScrollEnd = Math.round(thisEvent.scrollEnd);
 
 							nebula.dom.document.trigger('nebula_event', thisEvent);
-							ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.distance, thisEvent.timetoScrollEnd, {'nonInteraction': true}); //Event value is time to reach end
+							gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 							window.removeEventListener('scroll', scrollDepthHandler);
 						}, 'end scrolling');
 					}
@@ -1312,13 +1505,15 @@ nebula.scrollDepth = async function(){
 				entries.forEach(function(entry){
 					if ( entry.intersectionRatio > 0 ){
 						let thisEvent = {
-							category: 'Scroll Depth',
-							action: 'Reached Footer',
-							label: 'The footer of the page scrolled into the viewport'
+							event_name: 'scroll',
+							event_category: 'Scroll Depth',
+							event_action: 'Reached Footer',
+							event_label: 'The footer of the page scrolled into the viewport',
+							non_interaction: true
 						};
 
 						nebula.dom.document.trigger('nebula_event', thisEvent);
-						ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.label, {'nonInteraction': true});
+						gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 
 						nebula.updateMaxScrollDepth();
 						footerObserver.unobserve(entry.target); //Stop observing the element
@@ -1332,25 +1527,6 @@ nebula.scrollDepth = async function(){
 			//Observe the pre-footer section (or whatever element is after the main content area)
 			let preFooterSelector = wp.hooks.applyFilters('nebulaPreFooterSelector', '#footer-section'); //This should be the first section after the "content"
 			footerObserver.observe(jQuery(preFooterSelector)[0]); //Observe the element
-		}
-
-		if ( nebula.analytics.metrics.maxScroll ){ //Limiting this event to when this custom metric is used because of the number of events this records
-			window.addEventListener('pagehide', function(e){ //Watch for the pagehide (equivalent of old "unload") to send max scroll depth to GA (to avoid tons of events). Note: "unload" and "beforeunload" event listeners invalidate BFCache in Firefox...
-				nebula.updateMaxScrollDepth(); //Check one last time
-
-				let thisEvent = {
-					category: 'Scroll Depth',
-					action: 'Max Scroll Depth',
-					maxScrollPixels: nebula.maxScrollDepth,
-					maxScrollPercent: Math.round(100*(nebula.maxScrollDepth/(nebula.dom.document.height()-window.innerHeight))) //Round to the nearest percent
-				};
-
-				thisEvent.description = 'The user reached a maximum scroll depth of ' + thisEvent.maxScrollPercent + '% (' + thisEvent.maxScrollPixels + 'px) when the page was unloaded.';
-
-				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('set', nebula.analytics.metrics.maxScroll, thisEvent.maxScrollPercent); //Set the custom metric to the max percent
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.description, {'nonInteraction': true}); //Ideally this would send only once per page per session– and only if that page hadn't reached 100% previously in the session... Consider localstorage
-			});
 		}
 	}
 };
@@ -1411,12 +1587,20 @@ nebula.crm = async function(action, data, sendNow = true){
 		if ( 'email' in data ){
 			if ( !nebula.user.known && nebula.regex.email.test(data.email) ){
 				nebula.dom.document.trigger('nebula_crm_identification', {email: nebula.regex.email.test(data.email), data: data});
-				ga('send', 'event', 'CRM', 'Contact Identified', "A contact's email address in the CRM has been identified.");
+				gtag('event', 'Contact Identified', {
+					event_category: 'CRM',
+					event_label: "A contact's email address in the CRM has been identified.",
+					non_interaction: true
+				});
 				nebula.user.known = true;
 			}
 		} else {
 			nebula.dom.document.trigger('nebula_crm_details', {data: data});
-			ga('send', 'event', 'CRM', 'Supporting Information', 'Information associated with this user has been identified.');
+			gtag('event', 'Supporting Information', {
+				event_category: 'CRM',
+				event_label: 'Information associated with this user has been identified.',
+				non_interaction: true
+			});
 		}
 	}
 
@@ -1437,7 +1621,7 @@ nebula.crm = async function(action, data, sendNow = true){
 
 //Easily send form data to nebula.crm() with crm-* classes
 //Add a class to the input field with the category to use. Ex: crm-firstname or crm-email or crm-fullname
-//Call this function before sending a ga() event because it sets dimensions too
+//Call this function before sending a gtm() event because it sets dimensions too
 nebula.crmForm = async function(formID){
 	let crmFormObj = {};
 
@@ -1448,7 +1632,7 @@ nebula.crmForm = async function(formID){
 	jQuery('form [class*="crm-"]').each(function(){
 		if ( jQuery(this).val().trim().length ){
 			if ( jQuery(this).attr('class').includes('crm-notable_poi') ){
-				ga('set', nebula.analytics.dimensions.poi, jQuery('.notable-poi').val());
+				setDimension('notable_poi', jQuery('.notable-poi').val());
 			}
 
 			let cat = (/crm-([a-z\_]+)/g).exec(jQuery(this).attr('class'));

@@ -42,28 +42,29 @@ nebula.googleAddressAutocompleteCallback = function(autocompleteInput, uniqueID 
 		let simplePlace = nebula.sanitizeGooglePlaceData(place, uniqueID);
 
 		let thisEvent = {
-			category: 'Contact',
-			action: 'Autocomplete Address',
+			event_name: 'autocomplete_address',
+			event_category: 'Contact',
+			event_action: 'Autocomplete Address',
+			event_label: simplePlace.city + ', ' + simplePlace.state.abbr + ' ' + simplePlace.zip.code,
 			intent: 'Intent',
 			place: place,
-			simplePlace: simplePlace
+			simple_place: simplePlace
 		};
 
 		nebula.dom.document.trigger('nebula_address_selected', [place, simplePlace, jQuery(autocompleteInput)]);
 		nebula.dom.document.trigger('nebula_event', thisEvent);
-		ga('set', nebula.analytics.dimensions.contactMethod, thisEvent.action);
-		ga('send', 'event', 'Contact', 'Autocomplete Address', simplePlace.city + ', ' + simplePlace.state.abbr + ' ' + simplePlace.zip.code);
+		gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 
 		nebula.crm('identify', {
-			'street_number': simplePlace.street.number,
-			'street_name': simplePlace.street.name,
-			'street_full': simplePlace.street.full,
-			'city': simplePlace.city,
-			'county': simplePlace.county,
-			'state': simplePlace.state.name,
-			'country': simplePlace.country.name,
-			'zip': simplePlace.zip.code,
-			'address': simplePlace.street.full + ', ' + simplePlace.city + ', ' + simplePlace.state.abbr + ' ' + simplePlace.zip.code
+			street_number: simplePlace.street.number,
+			street_name: simplePlace.street.name,
+			street_full: simplePlace.street.full,
+			city: simplePlace.city,
+			county: simplePlace.county,
+			state: simplePlace.state.name,
+			country: simplePlace.country.name,
+			zip: simplePlace.zip.code,
+			address: simplePlace.street.full + ', ' + simplePlace.city + ', ' + simplePlace.state.abbr + ' ' + simplePlace.zip.code
 		});
 	});
 
@@ -223,27 +224,41 @@ function geoSuccessCallback(position){
 		address: false
 	};
 
+	nebula.session.geolocation.accuracy.color = '#ff1900';
+	nebula.session.geolocation.accuracy.description = 'Very Poor (>1500m)';
 	if ( nebula.session.geolocation.accuracy.meters < 50 ){
 		nebula.session.geolocation.accuracy.color = '#00bb00';
-		ga('set', nebula.analytics.dimensions.geoAccuracy, 'Excellent (<50m)');
+		nebula.session.geolocation.accuracy.description = 'Excellent (<50m)';
 	} else if ( nebula.session.geolocation.accuracy.meters > 50 && nebula.session.geolocation.accuracy.meters < 300 ){
 		nebula.session.geolocation.accuracy.color = '#a4ed00';
-		ga('set', nebula.analytics.dimensions.geoAccuracy, 'Good (50m - 300m)');
+		nebula.session.geolocation.accuracy.description = 'Good (50m - 300m)';
 	} else if ( nebula.session.geolocation.accuracy.meters > 300 && nebula.session.geolocation.accuracy.meters < 1500 ){
 		nebula.session.geolocation.accuracy.color = '#ffc600';
-		ga('set', nebula.analytics.dimensions.geoAccuracy, 'Poor (300m - 1500m)');
-	} else {
-		nebula.session.geolocation.accuracy.color = '#ff1900';
-		ga('set', nebula.analytics.dimensions.geoAccuracy, 'Very Poor (>1500m)');
+		nebula.session.geolocation.accuracy.description = 'Poor (300m - 1500m)';
 	}
+
+	gtag('set', 'user_properties', {
+		geolocation_accuracy : nebula.session.geolocation.accuracy.description
+	});
 
 	nebula.addressLookup(position.coords.latitude, position.coords.longitude);
 
 	sessionStorage['nebulaSession'] = JSON.stringify(nebula.session);
 	nebula.dom.document.trigger('geolocationSuccess', nebula.session.geolocation);
 	nebula.dom.body.addClass('geo-latlng-' + nebula.session.geolocation.coordinates.latitude.toFixed(4).replace('.', '_') + '_' + nebula.session.geolocation.coordinates.longitude.toFixed(4).replace('.', '_') + ' geo-acc-' + nebula.session.geolocation.accuracy.meters.toFixed(0).replace('.', ''));
-	ga('set', nebula.analytics.dimensions.geolocation, nebula.session.geolocation.coordinates.latitude.toFixed(4) + ', ' + nebula.session.geolocation.coordinates.longitude.toFixed(4));
-	ga('send', 'event', 'Geolocation', nebula.session.geolocation.coordinates.latitude.toFixed(4) + ', ' + nebula.session.geolocation.coordinates.longitude.toFixed(4), 'Accuracy: ' + nebula.session.geolocation.accuracy.meters.toFixed(2) + ' meters');
+	nebula.session.geolocation.coordinates.anonymized = nebula.session.geolocation.coordinates.latitude.toFixed(2) + ', ' + nebula.session.geolocation.coordinates.longitude.toFixed(2);
+
+	gtag('set', 'user_properties', {
+		geolocation : nebula.session.geolocation.coordinates.anonymized
+	});
+
+	gtag('event', 'geolocation', {
+		event_category: 'Geolocation',
+		event_action: 'Success',
+		coordinates: nebula.session.geolocation.coordinates.anonymized,
+		accuracy: nebula.session.geolocation.accuracy.meters.toFixed(2) + ' meters'
+	});
+
 	nebula.crm('identify', {'geolocation': nebula.session.geolocation.coordinates.latitude.toFixed(4) + ', ' + nebula.session.geolocation.coordinates.longitude.toFixed(4) + ' (Accuracy: ' + nebula.session.geolocation.accuracy.meters.toFixed(2) + ' meters'});
 }
 
@@ -280,8 +295,10 @@ function geoErrorCallback(error){
 
 	nebula.dom.document.trigger('geolocationError');
 	nebula.dom.body.addClass('geo-error');
-	ga('set', nebula.analytics.dimensions.geolocation, geolocationErrorMessage);
-	ga('send', 'exception', {'exDescription': '(JS) Geolocation error: ' + geolocationErrorMessage, 'exFatal': false});
+	gtag('event', 'exception', {
+		description: '(JS) Geolocation error: ' + geolocationErrorMessage,
+		fatal: false
+	});
 	nebula.crm('event', 'Geolocation Error');
 }
 

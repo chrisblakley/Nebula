@@ -23,7 +23,8 @@ nebula.developerMetaboxes = function(){
 						action: 'search_theme_files',
 						directory: jQuery('select.searchdirectory').val(),
 						searchData: jQuery('input.findterm').val()
-					})
+					}),
+					priority: 'high'
 				}).then(function(response){
 					if ( response.ok ){
 						return response.text();
@@ -99,7 +100,10 @@ nebula.getLighthouseResults = function(){
 	jQuery('#performance-sub-status strong').text('Google Lighthouse report in-progress.');
 
 	var sourceURL = jQuery('#testloadcon').attr('data-src') + '?noga'; //No GA so it does not get flooded with bot traffic
-	fetch('https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' + encodeURIComponent(sourceURL), {cache: 'no-cache'}).then(function(response){
+	fetch('https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' + encodeURIComponent(sourceURL), {
+		cache: 'no-cache',
+		priority: 'low'
+	}).then(function(response){
 		return response.json(); //This returns a promise
 	}).then(function(json){
 		if ( json && json.captchaResult === 'CAPTCHA_NOT_NEEDED' ){

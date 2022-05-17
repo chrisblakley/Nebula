@@ -2,8 +2,8 @@ window.performance.mark('(Nebula) Inside helpers.js (module)');
 
 //Miscellaneous helper classes and functions
 nebula.helpers = async function(){
-	if ( typeof window.ga !== 'function' ){
-		window.ga = function(){}; //Prevent ga() calls from erroring if GA is off or blocked. This is supplemental to a similar check in analytics.php
+	if ( typeof window.gtag !== 'function' ){
+		window.gtag = function(){}; //Prevent gtag() calls from erroring if GA is off or blocked. This is supplemental to a similar check in analytics.php
 	}
 
 	//Remove Sass render trigger query
@@ -119,9 +119,10 @@ nebula.dragDropUpload = async function(){
 		//Activate drag and drop listeners for each drop area class on the page
 		document.querySelectorAll('.nebula-drop-area').forEach(function(dropArea){
 			let thisEvent = {
-				category: 'Drag and Drop File Upload',
-				formID: jQuery(dropArea).closest('form').attr('id') || 'form.' + jQuery(dropArea).closest('form').attr('class').replace(/\s/g, '.'),
-				fileInputID: jQuery(dropArea).find('input[type="file"]').attr('id'),
+				event_name: 'file_upload',
+				event_category: 'Drag and Drop File Upload',
+				form_id: jQuery(dropArea).closest('form').attr('id') || 'form.' + jQuery(dropArea).closest('form').attr('class').replace(/\s/g, '.'),
+				file_input_id: jQuery(dropArea).find('input[type="file"]').attr('id'),
 			};
 
 			//Drag over
@@ -133,9 +134,9 @@ nebula.dragDropUpload = async function(){
 				e.dataTransfer.dropEffect = 'copy'; //Visualize to the user the "copy" cursor
 
 				nebula.debounce(function(){
-					thisEvent.action = 'Drag Over';
+					thisEvent.event_action = 'Drag Over';
 					nebula.dom.document.trigger('nebula_event', thisEvent);
-					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileInputID);
+					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				}, 500, 'file drag over');
 			});
 
@@ -143,9 +144,9 @@ nebula.dragDropUpload = async function(){
 			dropArea.addEventListener('dragleave', function(e){
 				jQuery(dropArea).addClass('dragover');
 
-				thisEvent.action = 'Drag Leave';
+				thisEvent.event_action = 'Drag Leave';
 				nebula.dom.document.trigger('nebula_event', thisEvent);
-				ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileInputID);
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			});
 
 			//Drop
@@ -159,7 +160,7 @@ nebula.dragDropUpload = async function(){
 				let acceptedFiles = jQuery(fileInput).attr('accept').replaceAll(/\s?\./g, '').split(',');
 				let thisFileType = e.dataTransfer.files[0].type.replace(/\S+\//, '');
 
-				thisEvent.fileType = thisFileType;
+				thisEvent.file_type = thisFileType;
 				thisEvent.file = e.dataTransfer.files[0];
 
 				if ( !jQuery(fileInput).attr('accept').length || (e.dataTransfer.files.length === 1 && acceptedFiles.includes(thisFileType)) ){ //If the uploader does not restrict file types, or if only one file was uploaded and that filetype is accepted
@@ -168,17 +169,17 @@ nebula.dragDropUpload = async function(){
 					fileInput.files = e.dataTransfer.files; //Fill the file upload input with the uploaded file
 					jQuery(fileInput).parents('.custom-file').find('.custom-file-label').text(e.dataTransfer.files[0].name); //Update the Bootstrap label to show the filename
 
-					thisEvent.action = 'Dropped (Accepted)';
+					thisEvent.event_action = 'Dropped (Accepted)';
 					nebula.dom.document.trigger('nebula_event', thisEvent);
-					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileType);
+					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 
 				} else {
 					nebula.temporaryClass(jQuery(dropArea), 'rejected', '', 1500);
 					nebula.applyValidationClasses(jQuery(fileInput), 'invalid', true); //Show the invalid message
 
-					thisEvent.action = 'Dropped (Rejected)';
+					thisEvent.event_action = 'Dropped (Rejected)';
 					nebula.dom.document.trigger('nebula_event', thisEvent);
-					ga('send', 'event', thisEvent.category, thisEvent.action, thisEvent.fileType);
+					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				}
 			});
 		});
@@ -192,7 +193,7 @@ nebula.svgImgs = async function(){
 
 		if ( oThis.attr('src').includes('.svg') ){ //If the src has a .svg extension
 			fetch(oThis.attr('src'), {
-				method: 'GET',
+				method: 'GET', //Could set a priority here, but should these be high or low?
 			}).then(function(response){
 				if ( response.ok ){
 					return response.text();
@@ -408,7 +409,11 @@ nebula.pre = async function(){
 					oThis.text('Copy to clipboard').removeClass('success');
 				}, 1500);
 			}).catch(function(error){ //This can happen if the user denies clipboard permissions
-				ga('send', 'exception', {'exDescription': '(JS) Clipboard API error: ' + error, 'exFatal': false});
+				gtag('event', 'Exception', { //Report the error to Google Analytics to log it
+					description: '(JS) Clipboard API error: ' + error,
+					fatal: false
+				});
+
 				oThis.text('Unable to copy.').addClass('error');
 			});
 
@@ -425,6 +430,17 @@ nebula.cookieNotification = async function(){
 			jQuery('#nebula-cookie-notification').addClass('active');
 		});
 
+
+
+
+
+
+
+
+
+
+
+
 		//Hide the interface upon acceptance
 		nebula.dom.document.on('click', '#nebula-cookie-accept', function(){
 			nebula.createCookie('acceptcookies', true);
@@ -438,8 +454,21 @@ nebula.cookieNotification = async function(){
 				}, 1000); //The animation is set to 750ms
 			});
 
+			gtag('consent', 'update', {ad_storage: 'granted'});
+
 			return false;
 		});
+
+
+
+
+
+
+
+
+
+
+
 	}
 };
 
@@ -462,7 +491,10 @@ nebula.help = function(message, path, usage=false){
 	let url = documentationHostname + path;
 
 	//console.error('📎 [Nebula Help]', message, 'Docs: ' + url); //Show the message to the developer in the console. Disabled to reduce console clutter.
-	ga('send', 'exception', {'exDescription': '(JS) ' + message, 'exFatal': false}); //Report the error to Google Analytics to log it
+	gtag('event', 'Exception', { //Report the error to Google Analytics to log it
+		description: '(JS) ' + message,
+		fatal: false
+	});
 
 	if ( usage ){
 		nebula.usage(message);

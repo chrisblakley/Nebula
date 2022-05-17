@@ -80,17 +80,18 @@ if ( !trait_exists('Ecommerce') ){
 		//Add custom dimensions/metrics to the Nebula object
 		public function ecommerce_nebula_data($brain){
 			$brain['site']['ecommerce'] = true;
-			$brain['analytics']['dimensions']['wooCart'] = $this->get_option('cd_woocart');
-			$brain['analytics']['dimensions']['wooCustomer'] = $this->get_option('cd_woocustomer');
 			return $brain;
 		}
 
 		//Set custom dimensions before the Google Analytics pageview is sent. DO NOT send any events in this function!
 		public function woo_custom_ga_dimensions(){
 			//Set custom dimension for if the cart is empty or full
-			if ( $this->get_option('cd_woocart') && !empty(WC()->cart) ){
+			if ( !empty(WC()->cart) ){
 				$cart_text = ( WC()->cart->get_cart_contents_count() >= 1 )? 'Full Cart (' . WC()->cart->get_cart_contents_count() . ')' : 'Empty Cart';
-				echo 'ga("set", nebula.analytics.dimensions.wooCart, "' . $cart_text . '");';
+
+				echo 'gtag("set", "user_properties", {
+					woocommerce_cart : "' . $cart_text . '"
+				});';
 			}
 		}
 
@@ -100,10 +101,11 @@ if ( !trait_exists('Ecommerce') ){
 
 			//Set custom dimension and send event on order received page.
 			if ( is_order_received_page() ){
-				if ( $this->get_option('cd_woocustomer') ){
-					echo 'ga("set", nebula.analytics.dimensions.wooCustomer, "Order Received");';
-				}
-				echo 'ga("send", "event", "Ecommerce", "Order Received", "Order Received page load (Success from payment gateway)");';
+				echo 'gtag("set", "user_properties", {
+					woocommerce_customer : "Order Received"
+				});';
+
+				echo 'gtag("event", "purchase", {event_category: "Ecommerce", event_action: "Order Received", event_label: "Order Received page load (Success from payment gateway)"});';
 			}
 		}
 

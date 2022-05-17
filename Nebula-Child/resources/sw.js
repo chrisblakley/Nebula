@@ -1,15 +1,14 @@
 //BEGIN automated edits. These will be automatically overwritten.
 const THEME_NAME = 'nebula-child';
-const NEBULA_VERSION = 'v10.0.1.009'; //Sunday, May 1, 2022 12:12:24 AM
+const NEBULA_VERSION = 'v10.0.17.388'; //Tuesday, May 17, 2022 9:19:21 AM
 const OFFLINE_URL = 'https://nebula.gearside.com/offline/';
 const OFFLINE_IMG = 'https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/offline.svg';
-const OFFLINE_GA_DIMENSION = 'cd2';
 const META_ICON = 'https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/meta/android-chrome-512x512.png';
 const MANIFEST = 'https://nebula.gearside.com/wp-content/themes/Nebula-main/inc/manifest.json';
 const HOME_URL = 'https://nebula.gearside.com/';
 //END automated edits
 
-importScripts('https://cdn.jsdelivr.net/npm/workbox-sw@6.5.1/build/workbox-sw.min.js'); //Do not forget to update Workbox Window in the optimization.js module
+importScripts('https://cdn.jsdelivr.net/npm/workbox-sw@6.5.2/build/workbox-sw.min.js'); //Do not forget to update Workbox Window in the optimization.js module
 workbox.setConfig({debug: false}); //https://developers.google.com/web/tools/workbox/guides/troubleshoot-and-debug
 //The Service Worker console can be inspected by visiting chrome://inspect/#service-workers
 
@@ -127,11 +126,11 @@ workbox.routing.registerRoute(
 
 //Offline response
 workbox.routing.setCatchHandler(function(params){
-	if ( params.event.request.mode === 'navigate' ){
+	if ( params?.event?.request?.mode === 'navigate' ){
 		return caches.match(workbox.precaching.getCacheKeyForURL(OFFLINE_URL));
 	}
 
-	if ( params.event.request.destination === 'image' ){
+	if ( params?.event?.request?.destination === 'image' ){
 		return caches.match(workbox.precaching.getCacheKeyForURL(OFFLINE_IMG));
 	}
 
@@ -139,12 +138,7 @@ workbox.routing.setCatchHandler(function(params){
 });
 
 //Offline Google Analytics: https://developers.google.com/web/tools/workbox/modules/workbox-google-analytics
-//Noticing some strange (not set) Language traffic in GA... currently testing this before bringing it back.
-workbox.googleAnalytics.initialize({
-	parameterOverrides: {
-		[OFFLINE_GA_DIMENSION]: 'offline', //Set a custom dimension to note offline hits (if set in Nebula Options)
-	},
-});
+//Note: this has been deprecated with GA4. Be on the lookout for new offline GA recipes using the measurement protocol.
 
 //Handle messages from the window
 addEventListener('message', function(event){

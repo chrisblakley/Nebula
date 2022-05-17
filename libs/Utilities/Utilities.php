@@ -359,7 +359,7 @@ if ( !trait_exists('Utilities') ){
 			if ( isset($override) ){return $override;}
 
 			if ( $this->get_option('hostnames') ){
-				if ( strpos($this->get_option('hostnames'), $this->url_components('hostname', home_url())) >= 0 ){
+				if ( strpos($this->get_option('hostnames'), $this->url_components('hostname', home_url())) >= 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 					return true;
 				}
 				return false;
@@ -601,7 +601,7 @@ if ( !trait_exists('Utilities') ){
 
 				case ('file'): //Filename will be just the filename/extension.
 				case ('filename'):
-					if ( strpos(basename($url_components['path']), '.') !== false ){
+					if ( strpos(basename($url_components['path']), '.') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 						return basename($url_components['path']);
 					}
 
@@ -610,7 +610,7 @@ if ( !trait_exists('Utilities') ){
 				case ('type'):
 				case ('filetype'):
 				case ('extension'): //Only the extension (without ".")
-					if ( strpos(basename($url_components['path']), '.') !== false ){
+					if ( strpos(basename($url_components['path']), '.') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 						$file_parts = explode('.', $url_components['path']);
 						return $file_parts[count($file_parts)-1];
 					}
@@ -618,7 +618,7 @@ if ( !trait_exists('Utilities') ){
 					return false;
 
 				case ('path'): //Path should be just the path without the filename/extension.
-					if ( strpos(basename($url_components['path']), '.') !== false ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
+					if ( strpos(basename($url_components['path']), '.') !== false ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 						return str_replace(basename($url_components['path']), '', $url_components['path']);
 					}
 
@@ -715,7 +715,7 @@ if ( !trait_exists('Utilities') ){
 
 			global $wpdb;
 
-			if ( strpos($wpdb->remove_placeholder_escape($where), '_%_') > -1 ){
+			if ( strpos($wpdb->remove_placeholder_escape($where), '_%_') > -1 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				$where = preg_replace(
 					"/meta_key = ([\'\"])(.+)_%_/",
 					"meta_key LIKE $1$2_%_",
@@ -839,7 +839,7 @@ if ( !trait_exists('Utilities') ){
 					}
 
 					foreach ( $file_names as $type => $name ){
-						if ( strpos($file, '/' . $name) !== false ){
+						if ( strpos($file, '/' . $name) !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 							$all_log_files[$type][] = array(
 								'type' => $type,
 								'path' => $file, //Full file path
@@ -989,7 +989,7 @@ if ( !trait_exists('Utilities') ){
 			if ( isset($override) ){return $override;}
 
 			//Make sure the URL is valid
-			if ( empty($url) || strpos($url, 'http') !== 0 ){
+			if ( empty($url) || strpos($url, 'http') !== 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				trigger_error('Error: Requested URL is either empty or missing acceptable protocol.', E_USER_ERROR);
 				return false;
 			}
@@ -1047,7 +1047,7 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			//Must be a valid URL
-			if ( empty($url) || strpos($url, 'http') !== 0 ){
+			if ( empty($url) || strpos($url, 'http') !== 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				return new WP_Error('broke', 'Requested URL is either empty or missing acceptable protocol.');
 			}
 
@@ -1667,7 +1667,7 @@ if ( !trait_exists('Utilities') ){
 
 		//Send data to Hubspot CRM via PHP curl
 		public function hubspot_curl($url, $content=null){
-			$sep = ( strpos($url, '?') === false )? '?' : '&';
+			$sep = ( strpos($url, '?') === false )? '?' : '&'; //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 			$get_url = $url . $sep . 'hapikey=' . $this->get_option('hubspot_api');
 
 			if ( !empty($content) ){

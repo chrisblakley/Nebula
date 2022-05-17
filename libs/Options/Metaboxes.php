@@ -21,8 +21,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				//Analytics
 				add_meta_box('nebula_main_analytics_metabox', 'Main', array($this, 'nebula_main_analytics_metabox'), 'nebula_options', 'analytics');
-				add_meta_box('nebula_custom_dimensions_metabox', 'Custom Dimensions', array($this, 'nebula_custom_dimensions_metabox'), 'nebula_options', 'analytics_side');
-				add_meta_box('nebula_custom_metrics_metabox', 'Custom Metrics', array($this, 'nebula_custom_metrics_metabox'), 'nebula_options', 'analytics');
+				add_meta_box('nebula_additional_analytics_metabox', 'Additional', array($this, 'nebula_additional_analytics_metabox'), 'nebula_options', 'analytics_side');
 
 				//APIs
 				add_meta_box('nebula_main_apis_metabox', 'Main', array($this, 'nebula_main_apis_metabox'), 'nebula_options', 'apis');
@@ -186,7 +185,7 @@ if ( !trait_exists('Metaboxes') ){
 					</div>
 
 					<p class="nebula-help-text short-help form-text text-muted">The address of the location (or headquarters if multiple locations).</p>
-					<p class="nebula-help-text more-help form-text text-muted">Use <a href="https://nebula.gearside.com/functions/full_address/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=address+help<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank" rel="noopener noreferrer"><code>nebula()->full_address()</code></a> to get the formatted address in one function.</p>
+					<p class="nebula-help-text more-help form-text text-muted">Use <a href="https://nebula.gearside.com/functions/full_address/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=address+help" target="_blank" rel="noopener noreferrer"><code>nebula()->full_address()</code></a> to get the formatted address in one function.</p>
 					<p class="option-keywords">location recommended seo</p>
 				</div>
 
@@ -346,6 +345,21 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text more-help form-text text-muted">Be careful changing this option as some plugins/page functionality may rely on jQuery loading in the &lt;head&gt;, however some speed improvements may be realized by loading later.<br /><strong>Note:</strong> some plugins may override this and bring jQuery back to the head.<br /><strong>Remember:</strong> if loading in the footer, embedded script tags cannot use jQuery in template files.</p>
 					<p class="option-keywords">old support plugins minor page speed impact optimization optimize</p>
 				</div>
+
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[limit_image_dimensions]" id="limit_image_dimensions" value="1" <?php checked('1', !empty($nebula_options['limit_image_dimensions'])); ?> /><label for="limit_image_dimensions">Limit Image Dimensions</label>
+					<p class="nebula-help-text short-help form-text text-muted">Limit image sizes to 1200px on the front-end. (Default: <?php echo $this->user_friendly_default('limit_image_dimensions'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">This attempts to prevent content managers from accidentally loading large filesize images on the front-end.</p>
+					<p class="option-keywords">major page speed impact optimization optimize</p>
+				</div>
+
+				<div class="form-group">
+					<label for="jpeg_quality">JPG Quality</label>
+					<input type="text" name="nebula_options[jpeg_quality]" id="jpeg_quality" class="form-control nebula-validate-text" value="<?php echo $this->option('jpeg_quality'); ?>" placeholder="<?php echo $this->user_friendly_default('jpeg_quality'); ?>" />
+					<p class="nebula-help-text short-help form-text text-muted">Set the JPG compression level on resized images. (Default: <?php echo $this->user_friendly_default('jpeg_quality'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">This changes the quality of JPG images when WordPress creates scaled sizes. Smaller number is more optimized, but larger number is better quality.</p>
+					<p class="option-keywords">moderate page speed impact optimization optimize</p>
+				</div>
 			<?php
 
 			do_action('nebula_options_assets_metabox', $nebula_options);
@@ -378,21 +392,6 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[limit_image_dimensions]" id="limit_image_dimensions" value="1" <?php checked('1', !empty($nebula_options['limit_image_dimensions'])); ?> /><label for="limit_image_dimensions">Limit Image Dimensions</label>
-					<p class="nebula-help-text short-help form-text text-muted">Limit image sizes to 1200px on the front-end. (Default: <?php echo $this->user_friendly_default('limit_image_dimensions'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">This attempts to prevent content managers from accidentally loading large filesize images on the front-end.</p>
-					<p class="option-keywords">major page speed impact optimization optimize</p>
-				</div>
-
-				<div class="form-group">
-					<label for="jpeg_quality">JPG Quality</label>
-					<input type="text" name="nebula_options[jpeg_quality]" id="jpeg_quality" class="form-control nebula-validate-text" value="<?php echo $this->option('jpeg_quality'); ?>" placeholder="<?php echo $this->user_friendly_default('jpeg_quality'); ?>" />
-					<p class="nebula-help-text short-help form-text text-muted">Set the JPG compression level on resized images. (Default: <?php echo $this->user_friendly_default('jpeg_quality'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">This changes the quality of JPG images when WordPress creates scaled sizes. Smaller number is more optimized, but larger number is better quality.</p>
-					<p class="option-keywords">moderate page speed impact optimization optimize</p>
-				</div>
-
-				<div class="form-group">
 					<input type="checkbox" name="nebula_options[author_bios]" id="author_bios" value="1" <?php checked('1', !empty($nebula_options['author_bios'])); ?> /><label for="author_bios">Author Bios</label>
 					<p class="nebula-help-text short-help form-text text-muted">Allow authors to have bios that show their info (and post archives). (Default: <?php echo $this->user_friendly_default('author_bios'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">This also enables searching by author, and displaying author names on posts.<br />If disabled, the author page attempts to redirect to an <a href="<?php echo home_url('/'); ?>?s=about" target="_blank">About Us page</a> (use the filter hook <code>nebula_no_author_redirect</code> to better control where it redirects- especially if no search results are found when clicking that link).<br />If disabled, remember to also disable the <a href="<?php echo admin_url('admin.php?page=wpseo_titles#top#archives'); ?>" target="_blank">Author archives option in Yoast</a> to hide them from the sitemap.</p>
@@ -420,24 +419,9 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[adblock_detect]" id="adblock_detect" value="1" <?php checked('1', !empty($nebula_options['adblock_detect'])); ?> /><label for="adblock_detect">Ad Block Detection</label>
-					<p class="nebula-help-text short-help form-text text-muted">Detect if visitors are using ad blocking software.(Default: <?php echo $this->user_friendly_default('adblock_detect'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">It is encouraged to add a custom dimension for "Blocker" within the "Analytics" tab when using this feature.</p>
-					<p class="option-keywords">discretionary</p>
-				</div>
-
-				<div class="form-group">
 					<input type="checkbox" name="nebula_options[console_css]" id="console_css" value="1" <?php checked('1', !empty($nebula_options['console_css'])); ?> /><label for="console_css">Console CSS</label>
 					<p class="nebula-help-text short-help form-text text-muted">Adds CSS to the browser console. (Default: <?php echo $this->user_friendly_default('console_css'); ?>)</p>
 					<p class="option-keywords">discretionary</p>
-				</div>
-
-				<div class="form-group">
-					<label for="cookie_notification">Cookie Notification</label>
-					<textarea name="nebula_options[cookie_notification]" id="cookie_notification" class="form-control textarea" rows="3"><?php echo $nebula_options['cookie_notification']; ?></textarea>
-					<p class="nebula-help-text short-help form-text text-muted">The text that will appear in the cookie notification (leave empty to disable).</p>
-					<p class="nebula-help-text more-help form-text text-muted">If a <a href="options-privacy.php">Privacy Policy</a> page is set with WordPress core, a link will appear to that page. This field accepts HTML for cross-linking to additional legal pages.</p>
-					<p class="option-keywords">privacy policy data security legal gdpr ccpa privacy notice usage tracking cookies</p>
 				</div>
 			<?php
 
@@ -467,7 +451,7 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group" dependent-or="dev_email_domain dev_ip">
-					<input type="checkbox" name="nebula_options[todo_manager_metabox]" id="todo_manager_metabox" value="1" <?php checked('1', !empty($nebula_options['todo_manager_metabox'])); ?> /><label for="todo_manager_metabox">Todo Manager</label>
+					<input type="checkbox" name="nebula_options[todo_manager_metabox]" id="todo_manager_metabox" value="1" <?php checked('1', !empty($nebula_options['todo_manager_metabox'])); ?> /><label for="todo_manager_metabox">To-Do Manager</label>
 					<p class="dependent-note hidden">This option is dependent on Developer IPs and/or Developer Email Domains (Administration tab).</p>
 					<p class="nebula-help-text short-help form-text text-muted">Aggregate todo comments in code. (Default: <?php echo $this->user_friendly_default('todo_manager_metabox'); ?>)</p>
 					<p class="option-keywords"></p>
@@ -552,48 +536,61 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_main_analytics_metabox($nebula_options){
 			?>
 				<div class="form-group important-option" important-or="gtm_id">
-					<label for="ga_tracking_id">Google Analytics Tracking ID</label>
-					<input type="text" name="nebula_options[ga_tracking_id]" id="ga_tracking_id" class="form-control nebula-validate-regex" data-valid-regex="^UA-\d+-\d+$" value="<?php echo $nebula_options['ga_tracking_id']; ?>" placeholder="UA-00000000-1" />
-					<p class="nebula-help-text short-help form-text text-muted">This will add the tracking number to the appropriate locations.</p>
-					<p class="option-keywords">remote resource recommended minor page speed impact optimization optimize</p>
+					<label for="ga_measurement_id">Google Analytics Measurement ID</label>
+					<input type="text" name="nebula_options[ga_measurement_id]" id="ga_measurement_id" class="form-control nebula-validate-regex" data-valid-regex="^G-.+$" value="<?php echo $nebula_options['ga_measurement_id']; ?>" placeholder="G-0000000000" />
+					<p class="nebula-help-text short-help form-text text-muted">This will add Google Analytics tracking to the appropriate locations.</p>
+					<p class="option-keywords">remote resource recommended minor page speed impact optimization optimize ga4</p>
 				</div>
 
-				<div class="form-group important-option" important-or="ga_tracking_id">
+				<div class="form-group important-option" important-or="ga_measurement_id">
 					<label for="gtm_id">Google Tag Manager ID</label>
 					<input type="text" name="nebula_options[gtm_id]" id="gtm_id" class="form-control nebula-validate-regex" data-valid-regex="^GTM-\S+$" value="<?php echo $nebula_options['gtm_id']; ?>" placeholder="GTM-0000000" />
 					<p class="nebula-help-text short-help form-text text-muted">This will add the Google Tag Manager scripts to the appropriate locations.</p>
-					<p class="option-keywords">remote resource recommended minor page speed impact optimization optimize</p>
+					<p class="option-keywords">remote resource recommended minor page speed impact optimization optimize ga4</p>
 				</div>
 
-				<div class="form-group" dependent-or="ga_tracking_id gtm_id">
+				<div class="form-group" dependent-or="ga_measurement_id">
+					<label for="ga_api_secret">Google Analytics API Secret</label>
+					<input type="text" name="nebula_options[ga_api_secret]" id="ga_api_secret" class="form-control" value="<?php echo $nebula_options['ga_api_secret']; ?>" placeholder="0000000000000000000000000" />
+					<p class="nebula-help-text short-help form-text text-muted">The API Secret key for using the GA4 Measurement Protocol.</p>
+					<p class="nebula-help-text more-help form-text text-muted">This allows server-side events to be sent to GA4. Obtain it in GA > Admin > Data Streams > [Select your stream] > Measurement Protocol API secrets (under Additional Settings).</p>
+					<p class="option-keywords">ga4 secret key</p>
+				</div>
+
+				<div class="form-group" dependent-or="ga_measurement_id">
+					<input type="checkbox" name="nebula_options[ga_require_consent]" id="ga_require_consent" value="1" <?php checked('1', !empty($nebula_options['ga_require_consent'])); ?> /><label for="ga_require_consent">Require Tracking Consent</label>
+					<p class="nebula-help-text short-help form-text text-muted">Do not track Google Analytics data unless user consent is given. <strong>Warning: This will <em>dramatically</em> decrease the amount of analytics data collected when enabled!</strong> (Default: <?php echo $this->user_friendly_default('ga_require_consent'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">When enabled, Google Analytics will not be tracked until a user has accepted the cookie notification. The notification message can be customized in the Cookie Notification Nebula option.</p>
+					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group" dependent-or="ga_measurement_id">
+					<input type="checkbox" name="nebula_options[observe_dnt]" id="observe_dnt" value="1" <?php checked('1', !empty($nebula_options['observe_dnt'])); ?> /><label for="observe_dnt">Observe "Do Not Track" Requests</label>
+					<p class="nebula-help-text short-help form-text text-muted">Comply with user requests of "Do Not Track" (DNT) via their browser settings. Analytics data will not be collected for these users at all (even if they consent to tracking via the cookie notification). (Default: <?php echo $this->user_friendly_default('observe_dnt'); ?>)</p>
+					<p class="option-keywords">gdpr ccpa privacy</p>
+				</div>
+
+				<div class="form-group" dependent-or="ga_measurement_id gtm_id">
 					<input type="checkbox" name="nebula_options[ga_wpuserid]" id="ga_wpuserid" value="1" <?php checked('1', !empty($nebula_options['ga_wpuserid'])); ?> /><label for="ga_wpuserid">Use WordPress User ID</label>
 					<p class="nebula-help-text short-help form-text text-muted">Use the WordPress User ID as the Google Analytics User ID. (Default: <?php echo $this->user_friendly_default('ga_wpuserid'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">This allows more accurate user reporting. Note: Users who share accounts (including developers/clients) can cause inaccurate reports! This functionality is most useful when opening sign-ups to the public.</p>
 					<p class="option-keywords"></p>
 				</div>
 
-				<div class="form-group" dependent-or="ga_tracking_id gtm_id">
-					<input type="checkbox" name="nebula_options[ga_displayfeatures]" id="ga_displayfeatures" value="1" <?php checked('1', !empty($nebula_options['ga_displayfeatures'])); ?> /><label for="ga_displayfeatures">Display Features</label>
-					<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/display-features" target="_blank" rel="noopener noreferrer">Google display features</a> in the analytics tag. (Default: <?php echo $this->user_friendly_default('ga_displayfeatures'); ?>)</p>
-					<p class="dependent-note hidden">This option is dependent on a Google Analytics Tracking ID.</p>
-					<p class="nebula-help-text more-help form-text text-muted">This enables Advertising Features in Google Analytics, such as Remarketing, Demographics and Interest Reporting, and more.</p>
-					<p class="option-keywords"></p>
-				</div>
-
-				<div class="form-group" dependent-or="ga_tracking_id gtm_id">
-					<input type="checkbox" name="nebula_options[ga_linkid]" id="ga_linkid" value="1" <?php checked('1', !empty($nebula_options['ga_linkid'])); ?> /><label for="ga_linkid">Enhanced Link Attribution (Link ID)</label>
-					<p class="nebula-help-text short-help form-text text-muted">Toggle the <a href="https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-link-attribution" target="_blank" rel="noopener noreferrer">Enhanced Link Attribution</a> in the Property Settings of the Google Analytics Admin. Be sure to enable it in Google Analytics too! (Default: <?php echo $this->user_friendly_default('ga_linkid'); ?>)</p>
-					<p class="dependent-note hidden">This option is dependent on a Google Analytics Tracking ID.</p>
-					<p class="nebula-help-text more-help form-text text-muted">This improves the accuracy of your In-Page Analytics report by automatically differentiating between multiple links to the same URL on a single page by using link element IDs. Use the <a href="https://chrome.google.com/webstore/detail/page-analytics-by-google/fnbdnhhicmebfgdgglcdacdapkcihcoh" target="_blank" rel="noopener noreferrer">Page Analytics by Google</a> Chrome extension to view the page overlay.</p>
-					<p class="option-keywords">minor page speed impact optimization optimize</p>
-				</div>
-
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[observe_dnt]" id="observe_dnt" value="1" <?php checked('1', !empty($nebula_options['observe_dnt'])); ?> /><label for="observe_dnt">Observe "Do Not Track" Requests</label>
-					<p class="nebula-help-text short-help form-text text-muted">Comply with user requests of "Do Not Track" (DNT). Analytics data will not be collected for these users. (Default: <?php echo $this->user_friendly_default('observe_dnt'); ?>)</p>
-					<p class="option-keywords">gdpr ccpa privacy</p>
+					<label for="cookie_notification">Cookie Notification</label>
+					<textarea name="nebula_options[cookie_notification]" id="cookie_notification" class="form-control textarea" rows="3"><?php echo $nebula_options['cookie_notification']; ?></textarea>
+					<p class="nebula-help-text short-help form-text text-muted">The text that will appear in the cookie notification (leave empty to disable).</p>
+					<p class="nebula-help-text more-help form-text text-muted">If a <a href="options-privacy.php">Privacy Policy</a> page is set with WordPress core, a link will appear to that page. This field accepts HTML for cross-linking to additional legal pages.</p>
+					<p class="option-keywords">privacy policy data security legal gdpr ccpa privacy notice usage tracking cookies</p>
 				</div>
+			<?php
 
+			do_action('nebula_options_analytics_metabox', $nebula_options);
+		}
+
+		public function nebula_additional_analytics_metabox($nebula_options){
+			?>
 				<div class="form-group">
 					<label for="adwords_remarketing_conversion_id">AdWords Remarketing Conversion ID</label>
 					<input type="text" name="nebula_options[adwords_remarketing_conversion_id]" id="adwords_remarketing_conversion_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['adwords_remarketing_conversion_id']; ?>" placeholder="000000000" />
@@ -603,7 +600,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<label for="google_optimize_id">Google Optimize ID</label>
-					<input type="text" name="nebula_options[google_optimize_id]" id="google_optimize_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_optimize_id']; ?>" placeholder="00000000000" />
+					<input type="text" name="nebula_options[google_optimize_id]" id="google_optimize_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['google_optimize_id']; ?>" placeholder="GTM-0000000" />
 					<p class="nebula-help-text short-help form-text text-muted">The ID used by <a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener noreferrer">Google Optimize</a> to enable experiences/tests.</p>
 					<p class="nebula-help-text more-help form-text text-muted">Entering the ID here will load the Google Optimize script in the <code>&lt;head&gt;</code> of all pages.</p>
 					<p class="option-keywords">remote resource minor page speed impact optimization optimize</p>
@@ -613,7 +610,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="hostnames">Valid Hostnames</label>
 					<input type="text" name="nebula_options[hostnames]" id="hostnames" class="form-control nebula-validate-text" value="<?php echo $nebula_options['hostnames']; ?>" placeholder="<?php echo $this->url_components('domain'); ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">These help generate regex patterns for Google Analytics filters.</p>
-					<p class="nebula-help-text more-help form-text text-muted">It is also used for the is_site_live() function! Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)! Include this RegEx pattern for a filter/segment <a href="https://nebula.gearside.com/utilities/domain-regex-generator/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=valid+hostnames+help<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank" rel="noopener noreferrer">(Learn how to use this)</a>: <input type="text" value="<?php echo $this->valid_hostname_regex(); ?>" readonly style="width: 50%;" /></p>
+					<p class="nebula-help-text more-help form-text text-muted">It is also used for the is_site_live() function! Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)! Include this RegEx pattern for a filter/segment <a href="https://nebula.gearside.com/utilities/domain-regex-generator/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=valid+hostnames+help" target="_blank" rel="noopener noreferrer">(Learn how to use this)</a>: <input type="text" value="<?php echo $this->valid_hostname_regex(); ?>" readonly style="width: 50%;" /></p>
 					<p class="option-keywords"></p>
 				</div>
 
@@ -633,656 +630,7 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 			<?php
 
-			do_action('nebula_options_analytics_metabox', $nebula_options);
-		}
-
-		public function nebula_custom_dimensions_metabox($nebula_options){
-			?>
-				<p class="text-muted">These are optional dimensions that can be passed into Google Analytics which allows for 20 custom dimensions (or 200 for Google Analytics Premium). To set these up, define the Custom Dimension in the Google Analytics property, then paste the dimension index string ("dimension1", "dimension12", etc.) into the appropriate input field below. The scope for each dimension is noted in their respective help sections. Dimensions that require additional code are marked with a *.</p>
-
-				<?php $dimension_regex = '^dimension([0-9]{1,3})$'; ?>
-
-				<div class="option-sub-group">
-					<h4>Hit Data</h4>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Client ID</div>
-							<input type="text" name="nebula_options[cd_gacid]" id="cd_gacid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_gacid']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Store the Google Analytics CID in an accessible dimension for reporting. Scope: User</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Hit ID</div>
-							<input type="text" name="nebula_options[cd_hitid]" id="cd_hitid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hitid']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Gives each individual hit an ID. Scope: Hit</p>
-						<p class="nebula-help-text more-help form-text text-muted">This will allow for finding median values! All you have to do is add the Hit ID dimension to your report, sort the metric values in ascending order, and then read the middle value.</p>
-						<p class="option-keywords">recommended custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Hit Time</div>
-							<input type="text" name="nebula_options[cd_hittime]" id="cd_hittime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hittime']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Track the time of each individual hit. Scope: Hit</p>
-						<p class="nebula-help-text more-help form-text text-muted">Useful for reporting on specific users.</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Hit Type</div>
-							<input type="text" name="nebula_options[cd_hittype]" id="cd_hittype" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hittype']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Track the type of each hit (such as pageview, event, exception, etc). Scope: Hit</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Hit Interactivity</div>
-							<input type="text" name="nebula_options[cd_hitinteractivity]" id="cd_hitinteractivity" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hitinteractivity']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Track whether the hit is interactive or non-interactive. Scope: Hit</p>
-						<p class="nebula-help-text more-help form-text text-muted">Useful for determining which events are affecting the bounce rate.</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Hit Transport Method</div>
-							<input type="text" name="nebula_options[cd_hitmethod]" id="cd_hitmethod" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_hitmethod']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Track the transport method of the hit (such as JavaScript, Beacon, or Server-Side). Scope: Hit</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Save Data</div>
-							<input type="text" name="nebula_options[cd_savedata]" id="cd_savedata" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_savedata']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Track when the user has requested less data usage. Scope: Session</p>
-						<p class="nebula-help-text more-help form-text text-muted">This listens for the <code>HTTP_SAVE_DATA</code> header on the server-side.</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Reduced Motion Preference</div>
-							<input type="text" name="nebula_options[cd_reducedmotion]" id="cd_reducedmotion" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_reducedmotion']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Track the users motion preference. Scope: Session</p>
-						<p class="nebula-help-text more-help form-text text-muted">This listens for the "Reduce motion" preference from the user's operating system.</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Color Scheme Preference</div>
-							<input type="text" name="nebula_options[cd_colorscheme]" id="cd_colorscheme" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_colorscheme']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Track the users color scheme preference. Scope: Session</p>
-						<p class="nebula-help-text more-help form-text text-muted">This listens for the "Color Scheme" preference from the user's operating system.</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Offline</div>
-							<input type="text" name="nebula_options[cd_offline]" id="cd_offline" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_offline']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Note what data was sent while the user was offline. Scope: Hit</p>
-						<p class="nebula-help-text more-help form-text text-muted"></p>
-						<p class="option-keywords">service worker sw.js workbox custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Device Memory</div>
-							<input type="text" name="nebula_options[cd_devicememory]" id="cd_devicememory" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_devicememory']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Track the available memory of the device as "Lite" or "Full". Scope: Hit</p>
-						<p class="nebula-help-text more-help form-text text-muted">If alternate components are used on the site for "lite" devices, this dimension will show which version was seen by users.</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Visibility State</div>
-							<input type="text" name="nebula_options[cd_visibilitystate]" id="cd_visibilitystate" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_visibilitystate']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Logs the visibilty state of the window with each hit. Scope: Hit</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Network Connection</div>
-							<input type="text" name="nebula_options[cd_network]" id="cd_network" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_network']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Logs the connection state of the network (Online/Offline). Scope: Hit</p>
-						<p class="nebula-help-text more-help form-text text-muted">Note that browsers report online/offline differently. Connection to a LAN without Internet may be reported as "online".</p>
-						<p class="option-keywords"></p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Navigation Type</div>
-							<input type="text" name="nebula_options[cd_navigationtype]" id="cd_navigationtype" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_navigationtype']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Logs the type of navigation used to load the page (navigation, reload, back/forward). Scope: Hit</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Redirect Count</div>
-							<input type="text" name="nebula_options[cd_redirectcount]" id="cd_redirectcount" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_redirectcount']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Logs the number of redirects made before loading the requested page. Scope: Hit</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-				</div><!-- /sub-group -->
-
-				<div class="option-sub-group">
-					<h4>Post Data</h4>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Author</div>
-							<input type="text" name="nebula_options[cd_author]" id="cd_author" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_author']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Tracks the article author's name on single posts. Scope: Hit</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Categories</div>
-							<input type="text" name="nebula_options[cd_categories]" id="cd_categories" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_categories']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Tracks the article author's name on single posts. Scope: Hit</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Tags</div>
-							<input type="text" name="nebula_options[cd_tags]" id="cd_tags" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_tags']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Sends a string of all the post's tags to the pageview hit. Scope: Hit</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Word Count</div>
-							<input type="text" name="nebula_options[cd_wordcount]" id="cd_wordcount" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_wordcount']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Sends word count range for single posts. Scope: Hit</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Publish Date</div>
-							<input type="text" name="nebula_options[cd_publishdate]" id="cd_publishdate" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_publishdate']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Sends the date the post was published in the format <code>YYYY-MM-DD</code>. Scope: Hit</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-				</div><!-- /sub-group -->
-
-				<div class="option-sub-group">
-					<h4>Business Data</h4>
-
-					<div class="form-group" dependent-or="business_hours_sunday_enabled business_hours_monday_enabled business_hours_tuesday_enabled business_hours_wednesday_enabled business_hours_thursday_enabled business_hours_friday_enabled business_hours_saturday_enabled">
-						<div class="input-group">
-							<div class="input-group-text">Business Hours</div>
-							<input type="text" name="nebula_options[cd_businesshours]" id="cd_businesshours" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_businesshours']; ?>" />
-						</div>
-						<p class="dependent-note hidden">This option is dependent on Business Hours (Metadata tab).</p>
-						<p class="nebula-help-text short-help form-text text-muted">Passes "During Business Hours", or "Non-Business Hours". Scope: Hit</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Relative Time</div>
-							<input type="text" name="nebula_options[cd_relativetime]" id="cd_relativetime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_relativetime']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Sends the relative time (Ex: "Late Morning", "Early Evening", etc.) based on the business timezone (via WordPress settings). Scope: Hit</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group" dependent-of="weather">
-						<div class="input-group">
-							<div class="input-group-text">Weather</div>
-							<input type="text" name="nebula_options[cd_weather]" id="cd_weather" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_weather']; ?>" />
-						</div>
-						<p class="dependent-note hidden">This option is dependent on Weather Detection (Functions tab) being enabled.</p>
-						<p class="nebula-help-text short-help form-text text-muted">Sends the current weather conditions (at the business location) as a dimension. Scope: Hit</p>
-						<p class="option-keywords">location custom dimension</p>
-					</div>
-
-					<div class="form-group" dependent-of="weather">
-						<div class="input-group">
-							<div class="input-group-text">Temperature</div>
-							<input type="text" name="nebula_options[cd_temperature]" id="cd_temperature" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_temperature']; ?>" />
-						</div>
-						<p class="dependent-note hidden">This option is dependent on Weather Detection (Functions tab) being enabled.</p>
-						<p class="nebula-help-text short-help form-text text-muted">Sends temperature ranges (at the business location) in 5&deg;F intervals. Scope: Hit</p>
-						<p class="option-keywords">location custom dimension</p>
-					</div>
-				</div><!-- /sub-group -->
-
-				<div class="option-sub-group">
-					<h4>User Data</h4>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Role</div>
-							<input type="text" name="nebula_options[cd_role]" id="cd_role" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_role']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Sends the current user's role (as well as staff affiliation if available) for associated users. Scope: User</p>
-						<p class="nebula-help-text more-help form-text text-muted">Session ID does contain this information, but this is explicitly more human readable (and scoped to the user).</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Session ID</div>
-							<input type="text" name="nebula_options[cd_sessionid]" id="cd_sessionid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_sessionid']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">ID system so that you can group hits into specific user sessions. Scope: Session</p>
-						<p class="nebula-help-text more-help form-text text-muted">This ID is not personally identifiable and therefore fits within the <a href="https://support.google.com/analytics/answer/2795983" target="_blank" rel="noopener noreferrer">Google Analytics ToS</a> for PII. <a href="https://nebula.gearside.com/functions/nebula_session_id/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=session+id+help<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank" rel="noopener noreferrer">Session ID Documentation &raquo;</a></p>
-						<p class="option-keywords">recommended custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">User ID</div>
-							<input type="text" name="nebula_options[cd_userid]" id="cd_userid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_userid']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">If allowing visitors to sign up to create WordPress accounts, this will send user IDs to Google Analytics. Scope: User</p>
-						<p class="nebula-help-text more-help form-text text-muted">User IDs are also passed in the Session ID, but this scope is tied more specifically to the user (it can often capture data even when they are not currently logged in).</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Facebook ID</div>
-							<input type="text" name="nebula_options[cd_fbid]" id="cd_fbid" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_fbid']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Send Facebook ID to Google Analytics when using Facebook Connect API. Scope: User</p>
-						<p class="nebula-help-text more-help form-text text-muted">Add the ID to this URL to view it: <code>https://www.facebook.com/app_scoped_user_id/</code></p>
-						<p class="option-keywords">social custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Local Timestamp</div>
-							<input type="text" name="nebula_options[cd_timestamp]" id="cd_timestamp" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_timestamp']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Adds a timestamp (in the user's local time) with timezone offset. Scope: Hit</p>
-						<p class="nebula-help-text more-help form-text text-muted">Ex: "1449332547 (2015/12/05 11:22:26.886 UTC-05:00)". Can be compared to the server time stored in the Session ID.</p>
-						<p class="option-keywords">location recommended custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Window Type</div>
-							<input type="text" name="nebula_options[cd_windowtype]" id="cd_windowtype" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_windowtype']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Stores the type of window the site is being accessed from (Ex: Iframe or Standalone App). Scope: Hit</p>
-						<p class="nebula-help-text more-help form-text text-muted">This only records alternate window types (non-standard browser windows).</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Geolocation</div>
-							<input type="text" name="nebula_options[cd_geolocation]" id="cd_geolocation" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_geolocation']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Allows latitude and longitude coordinates to be sent after being detected. Scope: Session</p>
-						<p class="nebula-help-text more-help form-text text-muted">Additional code is required for this to work! </p>
-						<p class="option-keywords">location custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Geolocation Accuracy</div>
-							<input type="text" name="nebula_options[cd_geoaccuracy]" id="cd_geoaccuracy" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_geoaccuracy']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Allows geolocation accuracy to be sent after being detected. Scope: Session</p>
-						<p class="nebula-help-text more-help form-text text-muted">Additional code is required for this to work!</p>
-						<p class="option-keywords">location custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Geolocation Name</div>
-							<input type="text" name="nebula_options[cd_geoname]" id="cd_geoname" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_geoname']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Allows named location information to be sent after being detected using map polygons. Scope: Session</p>
-						<p class="nebula-help-text more-help form-text text-muted">Additional code is required for this to work!</p>
-						<p class="option-keywords">location custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">WPML Language</div>
-							<input type="text" name="nebula_options[cd_wpmllang]" id="cd_wpmllang" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_wpmllang']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Store the language displayed to the user via the WPML plugin. Scope: User</p>
-						<p class="nebula-help-text more-help form-text text-muted">This requires the WPML plugin!</p>
-						<p class="option-keywords">wpml multi-language translation localization internationalization custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Blocker Detection</div>
-							<input type="text" name="nebula_options[cd_blocker]" id="cd_blocker" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_blocker']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Detects if the user is blocking resources such as ads or Google Analytics. Scope: Session</p>
-						<p class="nebula-help-text more-help form-text text-muted">Ad Blocker detection must be enabled for that resource detection to work! This can be used even if not intending to serve ads on this site. It is important that this dimension is not set to the "hit" scope.</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Query String</div>
-							<input type="text" name="nebula_options[cd_querystring]" id="cd_querystring" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_querystring']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Moves the query string from the "page" dimension for cleaner URLs. Scope: Hit</p>
-						<p class="nebula-help-text more-help form-text text-muted">This cleans up page reports by consolidating page paths. Query strings can be shown by using a custom dimension.</p>
-						<p class="option-keywords">autotrack recommended custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Text Fragment</div>
-							<input type="text" name="nebula_options[cd_textfragment]" id="cd_textfragment" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_textfragment']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Logs the text fragment from the URL. Useful for detecting Google SERP Feature links. Scope: Hit</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Media Query: Breakpoint</div>
-							<input type="text" name="nebula_options[cd_mqbreakpoint]" id="cd_mqbreakpoint" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_mqbreakpoint']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Detect which media query breakpoint is associated with this hit. Scope: Hit</p>
-						<p class="option-keywords">autotrack custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Media Query: Resolution</div>
-							<input type="text" name="nebula_options[cd_mqresolution]" id="cd_mqresolution" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_mqresolution']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Detect the resolution factor associated with this hit. Scope: Hit</p>
-						<p class="option-keywords">autotrack custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Media Query: Orientation</div>
-							<input type="text" name="nebula_options[cd_mqorientation]" id="cd_mqorientation" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_mqorientation']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Detect the device orientation associated with this hit. Scope: Hit</p>
-						<p class="option-keywords">autotrack custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Security Note</div>
-							<input type="text" name="nebula_options[cd_securitynote]" id="cd_securitynote" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_securitynote']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Adds a note to the user for potential security issues and on possible bots. Scope: User</p>
-						<p class="option-keywords">recommended custom dimension</p>
-					</div>
-				</div><!-- /sub-group -->
-
-				<div class="option-sub-group">
-					<h4>Conversion Data</h4>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Event Intent</div>
-							<input type="text" name="nebula_options[cd_eventintent]" id="cd_eventintent" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_eventintent']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Log whether the event was true, or just a possible intention. Scope: Hit</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Contact Method</div>
-							<input type="text" name="nebula_options[cd_contactmethod]" id="cd_contactmethod" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_contactmethod']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">If the user triggers a contact event, the method of contact is stored here. Scope: Session</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Form Timing</div>
-							<input type="text" name="nebula_options[cd_formtiming]" id="cd_formtiming" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_formtiming']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Sends form timings along with the each submission. Scope: Hit</p>
-						<p class="nebula-help-text more-help form-text text-muted">Timings are automatically sent to Google Analytics in Nebula, but are sampled in the User Timings report. Data will be in milliseconds.</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Form Flow</div>
-							<input type="text" name="nebula_options[cd_formflow]" id="cd_formflow" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_formflow']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Track the field path the user takes through forms. Scope: Session</p>
-						<p class="nebula-help-text more-help form-text text-muted">Because this data is scoped to the session, it will only track the last form of the session. This data can be useful in detecting form abandonment (as submit actions are stored in this dimension too).</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Video Watcher</div>
-							<input type="text" name="nebula_options[cd_videowatcher]" id="cd_videowatcher" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_videowatcher']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Sets a dimension when videos are started and finished. Scope: Session</p>
-						<p class="option-keywords">custom dimension</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Ecommerce Cart</div>
-							<input type="text" name="nebula_options[cd_woocart]" id="cd_woocart" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_woocart']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">If the user has any product(s) in their cart. Scope: Hit</p>
-						<p class="option-keywords">ecommerce woocommerce</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Ecommerce Customer</div>
-							<input type="text" name="nebula_options[cd_woocustomer]" id="cd_woocustomer" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $dimension_regex; ?>" value="<?php echo $nebula_options['cd_woocustomer']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Sets a dimension when a user completes the checkout process in WooCommerce. Scope: User</p>
-						<p class="nebula-help-text more-help form-text text-muted">Appears in Google Analytics as "Order Received".</p>
-						<p class="option-keywords">ecommerce woocommerce custom dimension</p>
-					</div>
-				</div><!-- /sub-group -->
-			<?php
-
-			do_action('nebula_options_custom_dimensions_metabox', $nebula_options);
-		}
-
-		public function nebula_custom_metrics_metabox($nebula_options){
-			?>
-				<p class="text-muted">These are optional metrics that can be passed into Google Analytics which allows for 20 custom metrics (or 200 for Google Analytics Premium). To set these up, define the Custom Metric in the Google Analytics property, then paste the metric index string ("metric1", "metric12", etc.) into the appropriate input field below. The scope and format for each metric is noted in their respective help sections. Metrics that require additional code are marked with a *. These are useful for manual interpretation of data, or to be included in <a href="https://nebula.gearside.com/get-started/recommendations/google-analytics-calculated-metrics/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=custom+metrics<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank">Calculated Metrics formulas</a>.</p>
-
-				<?php $metric_regex = '^metric([0-9]{1,3})$'; ?>
-
-				<div class="option-sub-group">
-					<h4>Timing Data</h4>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Server Response</div>
-							<input type="text" name="nebula_options[cm_serverresponsetime]" id="cm_serverresponsetime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_serverresponsetime']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Navigation start until server response finishes (includes PHP rendering time). Scope: Hit, Format: Integer</p>
-						<p class="nebula-help-text more-help form-text text-muted">Use these timing metrics to segment reports based on load times.</p>
-						<p class="option-keywords">custom metric</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">DOM Ready</div>
-							<input type="text" name="nebula_options[cm_domreadytime]" id="cm_domreadytime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_domreadytime']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Navigation start until DOM ready. Scope: Hit, Format: Integer</p>
-						<p class="nebula-help-text more-help form-text text-muted">Use these timing metrics to segment reports based on load times.</p>
-						<p class="option-keywords">custom metric</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Window Loaded</div>
-							<input type="text" name="nebula_options[cm_windowloadedtime]" id="cm_windowloadedtime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_windowloadedtime']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Navigation start until window loaded. Scope: Hit, Format: Integer</p>
-						<p class="nebula-help-text more-help form-text text-muted">Use these timing metrics to segment reports based on load times.</p>
-						<p class="option-keywords">custom metric</p>
-					</div>
-				</div><!-- /sub-group -->
-
-				<div class="option-sub-group">
-					<h4>Conversion Data</h4>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Notable Downloads</div>
-							<input type="text" name="nebula_options[cm_notabledownloads]" id="cm_notabledownloads" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_notabledownloads']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user downloads a notable file. Scope: Hit, Format: Integer</p>
-						<p class="nebula-help-text more-help form-text text-muted">To use, add the class "notable" to either the or its parent.</p>
-						<p class="option-keywords">custom metric</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Form Impressions</div>
-							<input type="text" name="nebula_options[cm_formimpressions]" id="cm_formimpressions" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_formimpressions']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Tracks when a form is in view as the user scrolls. Scope: Hit, Format: Integer</p>
-						<p class="nebula-help-text more-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form, somewhere inside it, or to a parent element.</p>
-						<p class="option-keywords">custom metric</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Form Starts</div>
-							<input type="text" name="nebula_options[cm_formstarts]" id="cm_formstarts" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_formstarts']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user begins entering a form. Scope: Hit, Format: Integer</p>
-						<p class="nebula-help-text more-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form, somewhere inside it, or to a parent element.</p>
-						<p class="option-keywords">custom metric</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Form Submissions</div>
-							<input type="text" name="nebula_options[cm_formsubmissions]" id="cm_formsubmissions" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_formsubmissions']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user submits a form. Scope: Hit, Format: Integer</p>
-						<p class="nebula-help-text more-help form-text text-muted">To ignore a form, add the class "ignore-form" to the form, somewhere inside it, or to a parent element.</p>
-						<p class="option-keywords">custom metric</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Max Scroll Percent</div>
-							<input type="text" name="nebula_options[cm_maxscroll]" id="cm_maxscroll" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_maxscroll']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Calculates the maximum scroll percentage the user reached per page. Scope: Hit, Format: Integer</p>
-						<p class="nebula-help-text more-help form-text text-muted">Useful as a calculated metric in Google Analytics called "Avg. Max Scroll Percentage" of <code>{{Max Scroll Percentage}}/(100*{{Unique Pageviews}})</code>. Create a custom report with the metrics "Avg. Max Scroll Percentage" and "Unique Pageviews" and dimensions "Page", "Source / Medium", etc.</p>
-						<p class="option-keywords">custom metric</p>
-					</div>
-				</div><!-- /sub-group -->
-
-				<div class="option-sub-group">
-					<h4>Video Data</h4>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Video Starts</div>
-							<input type="text" name="nebula_options[cm_videostarts]" id="cm_videostarts" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_videostarts']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user begins playing a video. Scope: Hit, Format: Integer</p>
-						<p class="option-keywords">custom metric</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Video Play Time</div>
-							<input type="text" name="nebula_options[cm_videoplaytime]" id="cm_videoplaytime" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_videoplaytime']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Tracks playing duration when a user pauses or completes a video. Scope: Hit, Format: Time</p>
-						<p class="option-keywords">custom metric</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Video Completions</div>
-							<input type="text" name="nebula_options[cm_videocompletions]" id="cm_videocompletions" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_videocompletions']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user completes playing a video. Scope: Hit, Format: Integer</p>
-						<p class="option-keywords">custom metric</p>
-					</div>
-				</div><!-- /sub-group -->
-
-				<div class="option-sub-group">
-					<h4>Miscellaneous</h4>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Word Count</div>
-							<input type="text" name="nebula_options[cm_wordcount]" id="cm_wordcount" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_wordcount']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Sends word count for single posts. Scope: Hit, Format: Integer</p>
-						<p class="option-keywords">custom metric</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Autocomplete Searches</div>
-							<input type="text" name="nebula_options[cm_autocompletesearches]" id="cm_autocompletesearches" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_autocompletesearches']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Tracks when a set of autocomplete search results is returned to the user (count is the search, not the result quantity). Scope: Hit, Format: Integer</p>
-						<p class="option-keywords">custom metric</p>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-text">Autocomplete Search Clicks</div>
-							<input type="text" name="nebula_options[cm_autocompletesearchclicks]" id="cm_autocompletesearchclicks" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $metric_regex; ?>" value="<?php echo $nebula_options['cm_autocompletesearchclicks']; ?>" />
-						</div>
-						<p class="nebula-help-text short-help form-text text-muted">Tracks when a user clicks an autocomplete search result. Scope: Hit, Format: Integer</p>
-						<p class="option-keywords">custom metric</p>
-					</div>
-				</div><!-- /sub-group -->
-			<?php
-
-			do_action('nebula_options_custom_metrics_metabox', $nebula_options);
+			do_action('nebula_options_analytics_additional_metabox', $nebula_options);
 		}
 
 		/*==========================
@@ -1422,7 +770,7 @@ if ( !trait_exists('Metaboxes') ){
 						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-twitter"></i> Bearer Token</span></div>
 						<input type="text" name="nebula_options[twitter_bearer_token]" id="twitter_bearer_token" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_bearer_token']; ?>" placeholder="000000000000000000000000000000" />
 					</div>
-					<p class="nebula-help-text short-help form-text text-muted">The bearer token is for creating custom Twitter feeds: <a href="https://nebula.gearside.com/utilities/twitter-bearer-token-generator/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=twitter+help<?php echo $this->get_user_info('user_email', array('prepend' => '&crm-email=')); ?>" target="_blank" rel="noopener noreferrer">Generate a bearer token here</a></p>
+					<p class="nebula-help-text short-help form-text text-muted">The bearer token is for creating custom Twitter feeds: <a href="https://nebula.gearside.com/utilities/twitter-bearer-token-generator/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=twitter+help" target="_blank" rel="noopener noreferrer">Generate a bearer token here</a></p>
 					<p class="option-keywords">social remote resource</p>
 				</div>
 
@@ -1668,7 +1016,7 @@ if ( !trait_exists('Metaboxes') ){
 
 			$option_handle = 'nebula_options[dequeue_scripts]';
 			$icon = 'js';
-			if ( $type === 'css' || strpos($type, 'style') !== false ){
+			if ( $type === 'css' || strpos($type, 'style') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				$option_handle = 'nebula_options[dequeue_styles]';
 				$icon = 'css3-alt';
 			}
@@ -1780,6 +1128,7 @@ if ( !trait_exists('Metaboxes') ){
 							Nebula is <strong class="nebula-disabled">moving jQuery to the &lt;footer&gt;</strong>.
 						<?php endif; ?>
 					</li>
+					<li>Google Analytics is <?php echo ( !empty($nebula_options['ga_require_consent']) )? '<strong class="nebula-disabled">only tracking after user consent</strong>' : '<strong class="nebula-enabled">tracking without needing user consent</strong>'; ?>.</li>
 				</ul>
 
 				<a class="button button-primary" href="<?php echo admin_url('update-core.php?force-check=1&force-nebula-theme-update'); ?>">Re-Install Nebula from GitHub</a>
