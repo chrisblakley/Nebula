@@ -221,9 +221,10 @@ nebula.cf7Functions = async function(){
 				form_id: e.detail.contactFormId, //CF7 Form ID
 				post_id: e.detail.containerPostId, //Post/Page ID
 				unit_tag: e.detail.unitTag, //CF7 Unit Tag
-				form_flow: nebula.updateFormFlow(thisEvent.unitTag, '[Invalid]'),
 				fatal: false
 			};
+
+			thisEvent.form_flow = nebula.updateFormFlow(thisEvent.unitTag, '[Invalid]');
 
 			//If timing data exists
 			if ( nebula.timings && typeof nebula.timings[e.detail.unitTag] !== 'undefined' ){

@@ -585,7 +585,7 @@ nebula.loadElement = async function(element){
 		//The actual lazy loaded element as a jQuery object
 		let thisContent = jQuery(lazyElement.text()).on('load loadeddata', function(){ //Warning: DOM text is reinterpreted as HTML without escaping meta-characters. Not sure how to sanitize this?
 			//If the lazy content is a video (or potentially a video iframe) re-kick the video tracking
-			if ( jQuery(thisContent[0]).is('video, iframe') ){
+			if ( jQuery(thisContent[0]).is('video, iframe') && typeof nebula.lazyVideoAPI === 'function' ){ //This function is likely defined after this JS module is loaded, but if so, the APIs would not need to be re-kicked anyway
 				nebula.lazyVideoAPI(jQuery(thisContent[0]));
 			}
 		});

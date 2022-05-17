@@ -23,7 +23,7 @@ export function setDimension(name, value){ //Does not technically need to be exp
 	//Google Analytics
 	if ( typeof gtag === 'function' && name ){
 		gtag('set', 'user_properties', {
-			[name] : value
+			[name]: value
 		});
 	}
 

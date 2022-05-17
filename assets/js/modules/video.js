@@ -167,7 +167,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 		gtag('event', 'timing_complete', {
 			name: thisEvent.event_action,
 			value: thisEvent.progress,
-			event_category: thisEvent.event_category
+			event_category: thisEvent.event_category,
 			event_label: thisEvent.title,
 		});
 
@@ -253,7 +253,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 		gtag('event', 'timing_complete', {
 			name: thisEvent.event_action,
 			value: thisEvent.progress,
-			event_category: thisEvent.event_category
+			event_category: thisEvent.event_category,
 			event_label: thisEvent.title,
 		});
 
@@ -451,7 +451,7 @@ nebula.youtubeStateChange = function(e){
 		gtag('event', 'timing_complete', {
 			name: thisEvent.event_action,
 			value: thisEvent.progress,
-			event_category: thisEvent.event_category
+			event_category: thisEvent.event_category,
 			event_label: thisEvent.title,
 		});
 
@@ -490,7 +490,7 @@ nebula.youtubeStateChange = function(e){
 					gtag('event', 'timing_complete', {
 						name: thisEvent.event_action,
 						value: thisEvent.progress,
-						event_category: thisEvent.event_category
+						event_category: thisEvent.event_category,
 						event_label: thisEvent.title,
 					});
 
@@ -702,7 +702,7 @@ nebula.createVimeoPlayers = function(){
 				gtag('event', 'timing_complete', {
 					name: thisEvent.event_action,
 					value: Math.round(e.seconds*1000),
-					event_category: thisEvent.event_category
+					event_category: thisEvent.event_category,
 					event_label: thisEvent.title,
 				});
 
@@ -756,7 +756,7 @@ nebula.createVimeoPlayers = function(){
 				gtag('event', 'timing_complete', {
 					name: thisEvent.event_action,
 					value: thisEvent.progress,
-					event_category: thisEvent.event_category
+					event_category: thisEvent.event_category,
 					event_label: thisEvent.title,
 				});
 
