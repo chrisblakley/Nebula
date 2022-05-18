@@ -238,7 +238,7 @@ function geoSuccessCallback(position){
 	}
 
 	gtag('set', 'user_properties', {
-		geolocation_accuracy : nebula.session.geolocation.accuracy.description
+		geolocation_accuracy: nebula.session.geolocation.accuracy.description
 	});
 
 	nebula.addressLookup(position.coords.latitude, position.coords.longitude);
@@ -249,7 +249,7 @@ function geoSuccessCallback(position){
 	nebula.session.geolocation.coordinates.anonymized = nebula.session.geolocation.coordinates.latitude.toFixed(2) + ', ' + nebula.session.geolocation.coordinates.longitude.toFixed(2);
 
 	gtag('set', 'user_properties', {
-		geolocation : nebula.session.geolocation.coordinates.anonymized
+		geolocation: nebula.session.geolocation.coordinates.anonymized
 	});
 
 	gtag('event', 'geolocation', {

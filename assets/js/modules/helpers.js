@@ -430,17 +430,6 @@ nebula.cookieNotification = async function(){
 			jQuery('#nebula-cookie-notification').addClass('active');
 		});
 
-
-
-
-
-
-
-
-
-
-
-
 		//Hide the interface upon acceptance
 		nebula.dom.document.on('click', '#nebula-cookie-accept', function(){
 			nebula.createCookie('acceptcookies', true);
@@ -458,17 +447,6 @@ nebula.cookieNotification = async function(){
 
 			return false;
 		});
-
-
-
-
-
-
-
-
-
-
-
 	}
 };
 

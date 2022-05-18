@@ -151,7 +151,7 @@ nebula.cf7Functions = async function(){
 			thisEvent.event_label = 'HTML submission attempt for form ID: ' + thisEvent.unit_tag;
 
 			gtag('set', 'user_properties', {
-				contact_method : 'CF7 Form (Attempt)'
+				contact_method: 'CF7 Form (Attempt)'
 			});
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -188,7 +188,7 @@ nebula.cf7Functions = async function(){
 			nebula.crmForm(thisEvent.unitTag); //nebula.crmForm() here because it triggers after all others. No nebula.crm() here so it doesn't overwrite the other (more valuable) data.
 
 			gtag('set', 'user_properties', {
-				contact_method : 'CF7 Form (Processing)'
+				contact_method: 'CF7 Form (Processing)'
 			});
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -241,7 +241,7 @@ nebula.cf7Functions = async function(){
 			});
 
 			gtag('set', 'user_properties', {
-				contact_method : 'CF7 Form (Invalid)'
+				contact_method: 'CF7 Form (Invalid)'
 			});
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -297,15 +297,15 @@ nebula.cf7Functions = async function(){
 				description: '(JS) Spam form submission for form ID ' + e.detail.unitTag,
 				form_time: nebula.timer(e.detail.unitTag, 'end'),
 				form_inputs: formInputs,
-				form_flow: nebula.updateFormFlow(thisEvent.unitTag, '[Spam]'),
 				fatal: true //Fatal because the user was unable to submit
 			};
 
+			thisEvent.form_flow = nebula.updateFormFlow(thisEvent.unitTag, '[Spam]');
 			thisEvent.event_label = 'Form submission failed spam tests on form ID: ' + thisEvent.unitTag;
 			thisEvent.form_timing = nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')';
 
 			gtag('set', 'user_properties', {
-				contact_method : 'CF7 Form (Spam)'
+				contact_method: 'CF7 Form (Spam)'
 			});
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -342,15 +342,15 @@ nebula.cf7Functions = async function(){
 				description: '(JS) Mail failed to send for form ID ' + e.detail.unitTag,
 				form_time: nebula.timer(e.detail.unitTag, 'end'),
 				form_inputs: formInputs,
-				form_flow: nebula.updateFormFlow(thisEvent.unitTag, '[Failed]'),
 				fatal: true //Fatal because the user was unable to submit
 			};
 
+			thisEvent.form_flow = nebula.updateFormFlow(thisEvent.unitTag, '[Failed]');
 			thisEvent.event_label = 'Form submission email send failed for form ID: ' + thisEvent.unitTag;
 			thisEvent.form_timing = nebula.millisecondsToString(thisEvent.formTime) + 'ms (' + thisEvent.inputs + ')';
 
 			gtag('set', 'user_properties', {
-				contact_method : 'CF7 Form (Failed)'
+				contact_method: 'CF7 Form (Failed)'
 			});
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -390,14 +390,14 @@ nebula.cf7Functions = async function(){
 				unit_tag: e.detail.unitTag, //CF7 Unit Tag ("f" is CF7 form ID, "p" is WP post ID, and "o" is the count if there are multiple per page)
 				form_time: nebula.timer(e.detail.unitTag, 'end'),
 				form_inputs: formInputs,
-				form_flow: nebula.updateFormFlow(thisEvent.unitTag, '[Success]')
 			};
 
+			thisEvent.form_flow = nebula.updateFormFlow(thisEvent.unitTag, '[Success]');
 			thisEvent.form_timing = nebula.millisecondsToString(thisEvent.form_time) + 'ms (' + thisEvent.form_inputs + ')';
 			thisEvent.event_label = 'Form ID: ' + thisEvent.unitTag;
 
 			gtag('set', 'user_properties', {
-				contact_method : 'CF7 Form'
+				contact_method: 'CF7 Form'
 			});
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -454,7 +454,7 @@ nebula.updateFormFlow = function(formID, field, info = ''){
 
 	//Set the user property. @todo "Nebula" 0: When GA4 allows session-scoped custom dimensions, update this to session scope!
 	gtag('set', 'user_properties', {
-		form_flow : nebula.formFlow[formID]
+		form_flow: nebula.formFlow[formID]
 	});
 
 	return nebula.formFlow[formID];

@@ -736,7 +736,7 @@ nebula.anonymizeEmail = function(emailAddress){
 	}
 
 	return anonymizedEmail;
-}
+};
 
 //Check if a string is alphanumeric
 nebula.isAlphanumeric = function(string = '', allowWords = true){

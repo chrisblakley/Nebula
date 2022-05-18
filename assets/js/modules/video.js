@@ -168,7 +168,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 			name: thisEvent.event_action,
 			value: thisEvent.progress,
 			event_category: thisEvent.event_category,
-			event_label: thisEvent.title,
+			event_label: thisEvent.title
 		});
 
 		nebula.crm('event', 'Video Paused: ' + thisEvent.title);

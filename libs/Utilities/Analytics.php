@@ -185,8 +185,6 @@ if ( !trait_exists('Analytics') ){
 
 		//Add measurement protocol parameters for custom definitions
 		public function ga_build_event($event_name='select_content', $event_parameters=array(), $user_properties=array()){
-			global $post; //Not entirely sure this is necessary
-
 			$default_common_parameters = array(
 				'client_id' => $this->ga_parse_cookie(),
 				'non_personalized_ads' => false,
