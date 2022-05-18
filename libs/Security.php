@@ -162,33 +162,35 @@ if ( !trait_exists('Security') ){
 				return false;
 			}
 
-			$user_agent = strtolower($this->super->server['HTTP_USER_AGENT']); //Normalize the user agent for matching against
+			if ( isset($this->super->server['HTTP_USER_AGENT']) ){
+				$user_agent = strtolower($this->super->server['HTTP_USER_AGENT']); //Normalize the user agent for matching against
 
-			//Lighthouse (Ex: web.dev) (Formerly Google Page Speed Insights)
-			if ( strpos($user_agent, 'chrome-lighthouse') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-				if ( $this->url_components('extension') !== 'js' ){
-					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Chrome Lighthouse')));
+				//Lighthouse (Ex: web.dev) (Formerly Google Page Speed Insights)
+				if ( strpos($user_agent, 'chrome-lighthouse') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					if ( $this->url_components('extension') !== 'js' ){
+						$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Chrome Lighthouse')));
+					}
 				}
-			}
 
-			//Redditbot
-			if ( strpos($user_agent, 'redditbot') !== false ){
-				$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Redditbot')));
-			}
+				//Redditbot
+				if ( strpos($user_agent, 'redditbot') !== false ){
+					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Redditbot')));
+				}
 
-			//Slackbot
-			if ( $this->is_slackbot() ){
-				$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Slackbot')));
-			}
+				//Slackbot
+				if ( $this->is_slackbot() ){
+					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Slackbot')));
+				}
 
-			//Discordbot
-			if ( strpos($user_agent, 'discordbot') !== false ){
-				$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Discordbot')));
-			}
+				//Discordbot
+				if ( strpos($user_agent, 'discordbot') !== false ){
+					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Discordbot')));
+				}
 
-			//Internet Archive Wayback Machine
-			if ( strpos($user_agent, 'archive.org_bot') !== false || strpos($user_agent, 'wayback save page') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-				$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Internet Archive Wayback Machine')));
+				//Internet Archive Wayback Machine
+				if ( strpos($user_agent, 'archive.org_bot') !== false || strpos($user_agent, 'wayback save page') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Internet Archive Wayback Machine')));
+				}
 			}
 
 			//Other Notable Bots:

@@ -77,17 +77,17 @@ nebula.cf7Functions = async function(){
 				form_field_info: fieldInfo
 			};
 
-			thisEvent.form_flow = nebula.updateFormFlow(thisEvent.formID, thisEvent.field, thisEvent.fieldInfo);
+			thisEvent.form_flow = nebula.updateFormFlow(thisEvent.form_id, thisEvent.form_field, thisEvent.form_field_info);
 
 			//Form starts
 			if ( typeof formStarted[formID] === 'undefined' || !formStarted[formID] ){
 				thisEvent.event_name = 'form_start';
-				thisEvent.event_label = 'Began filling out form ID: ' + thisEvent.formID + ' (' + thisEvent.field + ')';
+				thisEvent.event_label = 'Began filling out form ID: ' + thisEvent.form_id + ' (' + thisEvent.form_field + ')';
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-				nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.formID + ') Started'}, false);
-				nebula.crm('event', 'Contact Form (' + thisEvent.formID + ') Started (' + thisEvent.field + ')');
+				nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.form_id + ') Started'}, false);
+				nebula.crm('event', 'Contact Form (' + thisEvent.form_id + ') Started (' + thisEvent.form_field + ')');
 				formStarted[formID] = true;
 			}
 
@@ -95,7 +95,7 @@ nebula.cf7Functions = async function(){
 			if ( !jQuery(this).is('button') ){
 				thisEvent.event_name = 'form_field_focus';
 				thisEvent.event_action = 'Individual Field Focused';
-				thisEvent.event_label = 'Focus into ' + thisEvent.field + ' (Form ID: ' + thisEvent.formID + ')';
+				thisEvent.event_label = 'Focus into ' + thisEvent.form_field + ' (Form ID: ' + thisEvent.form_id + ')';
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
