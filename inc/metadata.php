@@ -29,6 +29,11 @@
 
 <?php do_action('nebula_head_open'); ?>
 
+<?php if ( nebula()->is_debug() ): //htaccess tries to handle this as well, but do it here too ?>
+	<meta http-equiv="Cache-control" content="no-cache">
+	<meta http-equiv="Expires" content="-1">
+<?php endif; ?>
+
 <meta name="referrer" content="always">
 <meta name="HandheldFriendly" content="True" />
 <meta name="MobileOptimized" content="320" />

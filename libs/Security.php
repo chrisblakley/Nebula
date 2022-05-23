@@ -165,15 +165,15 @@ if ( !trait_exists('Security') ){
 			if ( isset($this->super->server['HTTP_USER_AGENT']) ){
 				$user_agent = strtolower($this->super->server['HTTP_USER_AGENT']); //Normalize the user agent for matching against
 
-				//Lighthouse (Ex: web.dev) (Formerly Google Page Speed Insights)
-				if ( strpos($user_agent, 'chrome-lighthouse') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				//Lighthouse (Ex: web.dev) (Formerly Google Page Speed Insights) - Ignore Nebula Dashboard tests (?noga)
+				if ( !isset($this->super->get['noga']) && strpos($user_agent, 'chrome-lighthouse') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 					if ( $this->url_components('extension') !== 'js' ){
 						$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Chrome Lighthouse')));
 					}
 				}
 
 				//Redditbot
-				if ( strpos($user_agent, 'redditbot') !== false ){
+				if ( strpos($user_agent, 'redditbot') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Redditbot')));
 				}
 
@@ -183,8 +183,13 @@ if ( !trait_exists('Security') ){
 				}
 
 				//Discordbot
-				if ( strpos($user_agent, 'discordbot') !== false ){
+				if ( strpos($user_agent, 'discordbot') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Discordbot')));
+				}
+
+				//Screaming Frog SEO Spider
+				if ( strpos($user_agent, 'screaming frog') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Screaming Frog SEO Spider')));
 				}
 
 				//Internet Archive Wayback Machine

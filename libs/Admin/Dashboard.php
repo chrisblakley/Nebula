@@ -123,6 +123,11 @@ if ( !trait_exists('Dashboard') ){
 				echo '<li><i class="fa-solid fa-fw fa-chart-area"></i> GA Measurment ID: <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noreferrer noopener">' . $this->get_option('ga_measurement_id') . '</a></li>';
 			}
 
+			//GA Property ID
+			if ( $this->get_option('ga_property_id') ){
+				echo '<li><i class="fa-solid fa-fw fa-rectangle-list"></i> GA Property ID: <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noreferrer noopener">' . $this->get_option('ga_property_id') . '</a></li>';
+			}
+
 			//GTM Container ID
 			if ( $this->get_option('gtm_id') ){
 				echo '<li><i class="fa-solid fa-fw fa-tags"></i> GTM Container ID: <a href="https://tagmanager.google.com/" target="_blank" rel="noreferrer noopener">' . $this->get_option('gtm_id') . '</a></li>';

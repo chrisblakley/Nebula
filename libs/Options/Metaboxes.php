@@ -558,6 +558,14 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group" dependent-or="ga_measurement_id">
+					<label for="ga_api_secret">Google Analytics Property ID</label>
+					<input type="text" name="nebula_options[ga_property_id]" id="ga_property_id" class="form-control" value="<?php echo $nebula_options['ga_property_id']; ?>" placeholder="000000000" />
+					<p class="nebula-help-text short-help form-text text-muted">This is the property ID (available in the Property Settings of a GA4 property). This is helpful when searching for properties since the Measurement ID does not trigger results.</p>
+					<p class="nebula-help-text more-help form-text text-muted"></p>
+					<p class="option-keywords">ga4 property id</p>
+				</div>
+
+				<div class="form-group" dependent-or="ga_measurement_id">
 					<input type="checkbox" name="nebula_options[ga_require_consent]" id="ga_require_consent" value="1" <?php checked('1', !empty($nebula_options['ga_require_consent'])); ?> /><label for="ga_require_consent">Require Tracking Consent</label>
 					<p class="nebula-help-text short-help form-text text-muted">Do not track Google Analytics data unless user consent is given. <strong>Warning: This will <em>dramatically</em> decrease the amount of analytics data collected when enabled!</strong> (Default: <?php echo $this->user_friendly_default('ga_require_consent'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">When enabled, Google Analytics will not be tracked until a user has accepted the cookie notification. The notification message can be customized in the Cookie Notification Nebula option.</p>

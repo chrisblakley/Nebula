@@ -14,7 +14,7 @@ window.addEventListener('error', function(error){
 		errorMessage = 'Script error (An error occurred in a script hosted on a different domain)'; //No additional information is available because of the browser's same-origin policy. Use CORS when possible to get additional information.
 	}
 
-	gtag('event', 'Exception', {
+	gtag('event', 'exception', {
 		description: '(JS) ' + errorMessage,
 		fatal: false //Is there a better way to detect fatal vs non-fatal errors?
 	});

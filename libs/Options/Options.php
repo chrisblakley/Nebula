@@ -246,6 +246,7 @@ if ( !trait_exists('Options') ){
 
 				//Analytics Tab
 				'ga_measurement_id' => '',
+				'ga_property_id' => '',
 				'gtm_id' => '',
 				'ga_api_secret' => '',
 				'ga_require_consent' => 0,
