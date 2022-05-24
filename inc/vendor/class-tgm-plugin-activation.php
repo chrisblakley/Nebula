@@ -33,7 +33,6 @@
 */
 
 if ( ! class_exists( 'TGM_Plugin_Activation' ) ) {
-
 	/**
 	 * Automatic plugin installation and activation library.
 	 *

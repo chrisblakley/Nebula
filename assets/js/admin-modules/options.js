@@ -10,6 +10,10 @@ nebula.optionsInit = function(){
 	nebula.bufferedWindowLoad(function(){
 		nebula.optionsFilters();
 		nebula.assetScan();
+
+		if ( !jQuery('#cookie_notification').is(':visible') ){
+			jQuery('.nebula-adb-reminder-con').prepend('<strong class="nebula-adb-reminder">Your ad-blocker is hiding this option field!</strong><br/>');
+		}
 	});
 
 	//Window Resize

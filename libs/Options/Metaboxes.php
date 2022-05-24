@@ -513,7 +513,7 @@ if ( !trait_exists('Metaboxes') ){
 
 					<div class="form-group">
 						<input type="checkbox" name="nebula_options[bundled_plugins_notification]" id="bundled_plugins_notification" value="1" <?php checked('1', !empty($nebula_options['bundled_plugins_notification'])); ?> /><label for="bundled_plugins_notification">Bundled Plugins Notification</label>
-						<p class="nebula-help-text short-help form-text text-muted">Control whether or not the Nebula bundled plugins notifications appears on admin pages for all users. (Default: <?php echo $this->user_friendly_default('bundled_plugins_notification'); ?>)</p>
+						<p class="nebula-help-text short-help form-text text-muted">Control whether or not the <a href="plugins.php?page=tgmpa-install-plugins&plugin_status=install">Nebula bundled plugins</a> notifications appears on admin pages for all users. (Default: <?php echo $this->user_friendly_default('bundled_plugins_notification'); ?>)</p>
 						<p class="nebula-help-text more-help form-text text-muted">When on, each WP user will need to dismiss the prompt individually. When disabled, it is not shown to any user.</p>
 						<p class="option-keywords">discretionary</p>
 					</div>
@@ -588,7 +588,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="cookie_notification">Cookie Notification</label>
 					<textarea name="nebula_options[cookie_notification]" id="cookie_notification" class="form-control textarea" rows="3"><?php echo $nebula_options['cookie_notification']; ?></textarea>
-					<p class="nebula-help-text short-help form-text text-muted">The text that will appear in the cookie notification (leave empty to disable).</p>
+					<p class="nebula-help-text short-help form-text text-muted nebula-adb-reminder-con">The text that will appear in the cookie notification (leave empty to disable).</p>
 					<p class="nebula-help-text more-help form-text text-muted">If a <a href="options-privacy.php">Privacy Policy</a> page is set with WordPress core, a link will appear to that page. This field accepts HTML for cross-linking to additional legal pages.</p>
 					<p class="option-keywords">privacy policy data security legal gdpr ccpa privacy notice usage tracking cookies</p>
 				</div>
@@ -1137,6 +1137,7 @@ if ( !trait_exists('Metaboxes') ){
 						<?php endif; ?>
 					</li>
 					<li>Google Analytics is <?php echo ( !empty($nebula_options['ga_require_consent']) )? '<strong class="nebula-disabled">only tracking after user consent</strong>' : '<strong class="nebula-enabled">tracking without needing user consent</strong>'; ?>.</li>
+					<li><a href="plugins.php?page=tgmpa-install-plugins&plugin_status=install">Nebula bundled plugins page</a> can be accessed here.</li>
 				</ul>
 
 				<a class="button button-primary" href="<?php echo admin_url('update-core.php?force-check=1&force-nebula-theme-update'); ?>">Re-Install Nebula from GitHub</a>

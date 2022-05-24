@@ -594,6 +594,8 @@ if ( !trait_exists('Dashboard') ){
 			do_action('nebula_developer_info');
 			echo '<ul class="nebula-fa-ul serverdetections">';
 
+			echo '<li class="cookie_notification text_ad ads advertisement ads_content ads_div ads_google adsbygoogle adscontainer adsense-box nebula-adb-tester"></li>'; //Alert developers if their ad-blocker is still active
+
 			//Environment Type
 			if ( function_exists('wp_get_environment_type') ){ //New as of WP 5.5 (August 2020). Remove this conditional eventually.
 				$environment_type = ucwords(wp_get_environment_type());

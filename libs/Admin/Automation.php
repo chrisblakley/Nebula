@@ -10,9 +10,13 @@ if ( !trait_exists('Automation') ){
 
 				//Detect and prompt install of Recommended and Optional plugins using TGMPA
 				//Configuration Documentation: http://tgmpluginactivation.com/configuration/
-				if ( $this->is_admin_page() && $this->get_option('bundled_plugins_notification') && ($this->is_dev(true) || current_user_can('manage_options')) ){
-					require_once get_template_directory() . '/inc/vendor/class-tgm-plugin-activation.php';
-					add_action('tgmpa_register', array($this, 'register_required_plugins'));
+				if ( $this->is_admin_page() && ($this->is_dev(true) || current_user_can('manage_options')) ){ //If the WP admin is being viewed and this user is an admin or developer
+					if ( ($this->get_option('bundled_plugins_notification') || !get_user_meta(get_current_user_id(), 'tgmpa_dismissed_notice_nebula')) || (isset($this->super->get['page']) && strpos($this->super->get['page'], 'tgmpa') !== false) ){ //If the option is enabled or the user has not dismissed the prompt, or if this page has been specifically requested //@todo "Nebula" 0: Update this strpos() for PHP8 too
+						require_once get_template_directory() . '/inc/vendor/class-tgm-plugin-activation.php';
+						add_action('tgmpa_register', array($this, 'register_required_plugins'));
+					} else {
+						add_action('admin_menu', array($this, 'quicker_recommended_plugins_menu_link')); //Add a link without needing the entire library
+					}
 				}
 
 				add_action('after_switch_theme', array($this, 'activation_notice'));
@@ -31,10 +35,21 @@ if ( !trait_exists('Automation') ){
 			}
 		}
 
+		//When the entire TGMP library is not available (if the user dismissed or disabled the prompt), still provide a link to that admin page. This is only needed when that prompt has been dismissed– otherwise the library creates this link.
+		public function quicker_recommended_plugins_menu_link(){
+			add_submenu_page(
+				'plugins.php', //Parent Slug
+				'Recommended Plugins', //Page Title (irrelevant here)
+				'Recommended Plugins', //Menu Title
+				'manage_options', //Capabilities
+				'plugins.php?page=tgmpa-install-plugins&plugin_status=install', //Where it links to
+			);
+		}
+
 		public function register_required_plugins(){
 			global $pagenow;
 
-			//If this user is on the Plugins or Themes (Apperance) admin pages or has not yet dismissed the TGMPA admin notice
+			//If this user is on the Plugins or Themes (Appearance) admin pages or has not yet dismissed the TGMPA admin notice
 			if ( $pagenow === 'plugins.php' || $pagenow === 'themes.php' || !get_user_meta(get_current_user_id(), 'tgmpa_dismissed_notice_nebula') ){
 				$this->timer('Register Bundled Plugins');
 

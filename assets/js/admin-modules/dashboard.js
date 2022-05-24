@@ -4,6 +4,14 @@ window.performance.mark('(Nebula) Inside /admin-modules/dashboard.js');
 nebula.developerMetaboxes = function(){
 	//Developer Info Metabox
 	if ( jQuery('div#phg_developer_info').length ){
+		if ( jQuery('.serverdetections').length ){ //If viewing the dashboard
+			if ( !jQuery('.nebula-adb-tester').is(':visible') ){
+				jQuery('.serverdetections').prepend('<li class="nebula-adb-reminder"><i class="fa-solid fa-shield-halved"></i> Your ad-blocker is enabled</li>');
+			} else {
+				jQuery('.nebula-adb-tester').remove();
+			}
+		}
+
 		jQuery('.searchterm').removeClass('button-disabled').removeAttr('disabled title'); //Enable the button now that JS has loaded
 
 		//Nebula filesystem search
