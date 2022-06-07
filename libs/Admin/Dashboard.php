@@ -768,7 +768,7 @@ if ( !trait_exists('Dashboard') ){
 			//Log Files
 			foreach ( $this->get_log_files('all', true) as $types ){ //Always get fresh data here
 				foreach ( $types as $log_file ){
-					echo '<li><i class="fa-regular fa-fw fa-file-alt"></i> <code title="' . $log_file['shortpath'] . '" style="cursor: help;">' . $log_file['name'] . '</code> File: <strong>' . $this->format_bytes($log_file['bytes']) . '</strong></li>';
+					echo '<li><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . $log_file['shortpath'] . '" target="_blank"><code title="' . $log_file['shortpath'] . '" style="cursor: help;">' . $log_file['name'] . '</code></a> File: <strong>' . $this->format_bytes($log_file['bytes']) . '</strong></li>';
 				}
 			}
 

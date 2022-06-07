@@ -224,7 +224,7 @@ nebula.eventTracking = async function(){
 
 		//Button Clicks
 		let nebulaButtonSelector = wp.hooks.applyFilters('nebulaButtonSelectors', 'button, .button, .btn, [role="button"], a.wp-block-button__link, .hs-button'); //Allow child theme or plugins to add button selectors without needing to override/duplicate this function
-		nebula.dom.document.on('mousedown', nebulaButtonSelector, function(e){
+		nebula.dom.document.on('pointerdown', nebulaButtonSelector, function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'button_click',
@@ -356,7 +356,7 @@ nebula.eventTracking = async function(){
 		//Notable File Downloads
 		let notableFileExtensions = wp.hooks.applyFilters('nebulaNotableFiles', ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv', 'zip', 'zipx', 'rar', 'gz', 'tar', 'txt', 'rtf', 'ics', 'vcard']);
 		jQuery.each(notableFileExtensions, function(index, extension){
-			jQuery("a[href$='." + extension + "' i]").on('mousedown', function(e){ //Cannot defer case insensitive attribute selectors in jQuery (or else you will get an "unrecognized expression" error)
+			jQuery("a[href$='." + extension + "' i]").on('pointerdown', function(e){ //Cannot defer case insensitive attribute selectors in jQuery (or else you will get an "unrecognized expression" error)
 				let thisEvent = {
 					event: e,
 					event_name: 'file_download', //Note: This is a default GA4 event and is not needed to be tracked in Nebula. Consider deleting entirely.
@@ -377,7 +377,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Notable Downloads
-		nebula.dom.document.on('mousedown', '.notable a, a.notable', function(e){
+		nebula.dom.document.on('pointerdown', '.notable a, a.notable', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'file_download',
@@ -421,7 +421,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Suggested pages on 404 results
-		nebula.dom.document.on('mousedown', 'a.internal-suggestion', function(e){
+		nebula.dom.document.on('pointerdown', 'a.internal-suggestion', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'select_content',
@@ -536,7 +536,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Mailto link tracking
-		nebula.dom.document.on('mousedown', 'a[href^="mailto"]', function(e){
+		nebula.dom.document.on('pointerdown', 'a[href^="mailto"]', function(e){
 			let emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 			let emailDomain = emailAddress.split('@')[1]; //Get everything after the @
 			let anonymizedEmail = nebula.anonymizeEmail(emailAddress); //Mask the email with asterisks
@@ -567,7 +567,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Telephone link tracking
-		nebula.dom.document.on('mousedown', 'a[href^="tel"]', function(e){
+		nebula.dom.document.on('pointerdown', 'a[href^="tel"]', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'click_to_call',
@@ -591,7 +591,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//SMS link tracking
-		nebula.dom.document.on('mousedown', 'a[href^="sms"]', function(e){
+		nebula.dom.document.on('pointerdown', 'a[href^="sms"]', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'sms',
@@ -617,7 +617,7 @@ nebula.eventTracking = async function(){
 		//Street Address click //@todo "Nebula" 0: How to detect when a user clicks an address that is not linked, but mobile opens the map anyway? What about when it *is* linked?
 
 		//Utility Navigation Menu
-		nebula.dom.document.on('mousedown', '#utility-nav ul.menu a', function(e){
+		nebula.dom.document.on('pointerdown', '#utility-nav ul.menu a', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'menu_click',
@@ -633,7 +633,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Primary Navigation Menu
-		nebula.dom.document.on('mousedown', '#primary-nav ul.menu a', function(e){
+		nebula.dom.document.on('pointerdown', '#primary-nav ul.menu a', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'menu_click',
@@ -681,7 +681,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Offcanvas Navigation Link
-		nebula.dom.document.on('mousedown', '.offcanvas-body a', function(e){
+		nebula.dom.document.on('pointerdown', '.offcanvas-body a', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'menu_click',
@@ -704,7 +704,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Breadcrumb Navigation
-		nebula.dom.document.on('mousedown', 'ol.nebula-breadcrumbs a', function(e){
+		nebula.dom.document.on('pointerdown', 'ol.nebula-breadcrumbs a', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'menu_click',
@@ -720,7 +720,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Sidebar Navigation Menu
-		nebula.dom.document.on('mousedown', '#sidebar-section ul.menu a', function(e){
+		nebula.dom.document.on('pointerdown', '#sidebar-section ul.menu a', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'menu_click',
@@ -736,7 +736,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Footer Navigation Menu
-		nebula.dom.document.on('mousedown', '#powerfooter a', function(e){
+		nebula.dom.document.on('pointerdown', '#powerfooter a', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'menu_click',
@@ -801,7 +801,7 @@ nebula.eventTracking = async function(){
 		}, false);
 
 		//Nebula Cookie Notification link clicks
-		nebula.dom.document.on('mousedown', '#nebula-cookie-notification a', function(e){
+		nebula.dom.document.on('pointerdown', '#nebula-cookie-notification a', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'cookie_notification',

@@ -9,7 +9,10 @@ if ( !trait_exists('Users') ){
 
 			//Exclude AJAX and REST requests
 			if ( !$this->is_background_request() ){
-				add_action('user_register', array($this, 'detect_new_admin_users'));
+				add_action('user_register', array($this, 'log_new_user'), 10, 1);
+				add_action('delete_user', array($this, 'log_delete_user'), 10, 3);
+				add_action('password_reset', array($this, 'log_password_reset'), 10, 1);
+				add_filter('email_change_email', array($this, 'log_admin_email_change'), 10, 3);
 
 				add_filter('manage_users_columns', array($this, 'user_columns_head'));
 				add_filter('manage_users_sortable_columns', array($this, 'user_columns_sortable'));
@@ -33,10 +36,33 @@ if ( !trait_exists('Users') ){
 		}
 
 		//Log when administrators are created
-		public function detect_new_admin_users($user_id){
+		public function log_new_user($user_id){
 			if ( user_can($user_id, 'manage_options') ){
-				$this->add_log('New admin user registered (User ID: ' . $user_id . ')', 6);
+				$this->add_log('New admin user registered (' . get_user_by('id', $user_id)->user_login . ')', 6);
 			}
+		}
+
+		//Log when administrators are deleted
+		public function log_delete_user($user_id, $reassign, $user){
+			if ( user_can($user_id, 'manage_options') ){
+				$this->add_log('Admin user deleted (' . get_user_by('id', $user_id)->user_login . ')', 8);
+			}
+		}
+
+		//Log when administrator passwords are reset
+		public function log_password_reset($user){
+			if ( user_can($user->ID, 'manage_options') ){
+				nebula()->add_log('Admin password reset (' . $user->user_login . ')', 6);
+			}
+		}
+
+		//Log when administrator email addresses are changed
+		public function log_admin_email_change($email_change_email, $user, $userdata){
+			if ( user_can($user['ID'], 'manage_options') ){
+				nebula()->add_log('Admin email changed (' . $user['user_login'] . ')', 6);
+			}
+
+			return $email_change_email;
 		}
 
 		//Update user online status

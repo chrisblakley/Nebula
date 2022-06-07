@@ -25,7 +25,7 @@ if ( !trait_exists('Security') ){
 			}
 
 			//Disable the file editor for non-developers
-			if ( !$this->is_dev() && !defined('DISALLOW_FILE_EDIT') ){
+			if ( !defined('DISALLOW_FILE_EDIT') && !$this->is_dev() ){
 				define('DISALLOW_FILE_EDIT', true);
 			}
 		}
@@ -163,13 +163,18 @@ if ( !trait_exists('Security') ){
 			}
 
 			if ( isset($this->super->server['HTTP_USER_AGENT']) ){
-				$user_agent = strtolower($this->super->server['HTTP_USER_AGENT']); //Normalize the user agent for matching against
+				$user_agent = str_replace(' ', '_', strtolower($this->super->server['HTTP_USER_AGENT'])); //Normalize the user agent for matching against
 
 				//Lighthouse (Ex: web.dev) (Formerly Google Page Speed Insights) - Ignore Nebula Dashboard tests (?noga)
 				if ( !isset($this->super->get['noga']) && strpos($user_agent, 'chrome-lighthouse') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 					if ( $this->url_components('extension') !== 'js' ){
 						$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Chrome Lighthouse')));
 					}
+				}
+
+				//W3C Validators
+				if ( strpos($user_agent, 'w3c_validator') !== false || strpos($user_agent, 'w3c_css_validator') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'W3C Validator')));
 				}
 
 				//Redditbot
@@ -188,18 +193,27 @@ if ( !trait_exists('Security') ){
 				}
 
 				//Screaming Frog SEO Spider
-				if ( strpos($user_agent, 'screaming frog') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( strpos($user_agent, 'screaming_frog') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Screaming Frog SEO Spider')));
 				}
 
 				//Internet Archive Wayback Machine
-				if ( strpos($user_agent, 'archive.org_bot') !== false || strpos($user_agent, 'wayback save page') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( strpos($user_agent, 'archive.org_bot') !== false || strpos($user_agent, 'wayback_save_page') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Internet Archive Wayback Machine')));
 				}
 			}
 
-			//Other Notable Bots:
+			//Other Notable Bots (these have been manually normalized to match above):
 				//bingbot
+				//seositecheckup
+				//gtmetrix
+				//pingdompagespeed or pingbot
+				//twitterbot
+				//semrushbot
+				//ahrefsbot
+				//facebookexternalhit
+				//microsoft_office
+				//google-structured-data-testing-tool
 		}
 
 		//Check referrer for known spam domains

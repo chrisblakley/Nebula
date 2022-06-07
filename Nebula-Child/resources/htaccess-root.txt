@@ -259,7 +259,7 @@ RewriteCond %{QUERY_STRING} GLOBALS(=|[|%[0-9A-Z]{0,2}) [OR]
 RewriteCond %{QUERY_STRING} _REQUEST(=|[|%[0-9A-Z]{0,2})
 RewriteRule ^(.*)$ index.php [F,L]
 
-#Deny access to certain files
+#Deny access to certain files (including all .log files)
 <FilesMatch "(\.htaccess|wp-config\.php|(.*)[\._]log|user\.ini)$">
 	order allow,deny
 	deny from all

@@ -17,6 +17,11 @@ if ( !trait_exists('Logs') ){
 					add_action('wp_ajax_remove_log', array($this, 'remove_log_via_ajax'));
 					add_action('wp_ajax_clean_logs', array($this, 'clean_logs_via_ajax'));
 				}
+
+				//Additional events to log
+				if ( $this->get_option('logs') ){ //Ignore these hooks if logging is not enabled
+					add_filter('auto_update_core', array($this, 'log_auto_core_update'), 10, 2);
+				}
 			}
 		}
 
@@ -218,6 +223,12 @@ if ( !trait_exists('Logs') ){
 			}
 
 			return false;
+		}
+
+		//Attempt to log automatic WordPress core updates
+		public function log_auto_core_update($update, $item){
+			nebula()->add_log('Automatic WP Core update', 4); //I don't know if this will properly log because logs require a logged-in user, but this may happen at any time...
+			return $update;
 		}
 	}
 }

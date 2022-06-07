@@ -11,9 +11,11 @@ nebula.optionsInit = function(){
 		nebula.optionsFilters();
 		nebula.assetScan();
 
-		if ( !jQuery('#cookie_notification').is(':visible') ){
-			jQuery('.nebula-adb-reminder-con').prepend('<strong class="nebula-adb-reminder">Your ad-blocker is hiding this option field!</strong><br/>');
-		}
+		jQuery(document).on('shown.bs.tab', function(e){
+			if ( jQuery('.cookie-label').is(':visible') && !jQuery('#cookie_notification').is(':visible') ){
+				jQuery('.nebula-adb-reminder-con').prepend('<strong class="nebula-adb-reminder">Your ad-blocker is hiding this option field!</strong><br/>');
+			}
+		});
 	});
 
 	//Window Resize
@@ -55,7 +57,7 @@ nebula.optionsInit = function(){
 				//Dev handle names
 				var optionHandle = jQuery(this).closest('.form-group').find('[name^=nebula_options]').attr('id');
 				if ( typeof optionHandle !== 'undefined' ){
-					var devUsage = '<span class="dev-handle form-text text-muted">Dev usage: <code>nebula()->get_option(\'' + optionHandle + '\');</code></span>';
+					var devUsage = '<br/><br/><span class="dev-handle form-text text-muted">Dev usage: <code>nebula()->get_option(\'' + optionHandle + '\');</code></span>';
 					if ( jQuery(this).parent().find('.more-help').length ){
 						jQuery(this).closest('.form-group').find('.more-help').append(devUsage);
 					} else {

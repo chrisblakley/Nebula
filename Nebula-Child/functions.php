@@ -57,7 +57,13 @@ function register_nebula_child_assets(){
 
 	//Use jsDelivr to pull common libraries: https://www.jsdelivr.com/
 	//nebula()->register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
-	nebula()->register_script('nebula-main', get_stylesheet_directory_uri() . '/assets/js/main.js', array('defer', 'module'), array('jquery-core', 'nebula-nebula', 'wp-hooks'), nebula()->child_version(), true); //nebula.js (in the parent Nebula theme) is defined as a dependent here.
+
+	$nebula_child_script_dependencies = array('jquery-core', 'nebula-nebula', 'wp-hooks');
+	if ( defined('ICL_LANGUAGE_NAME') ){
+		$nebula_child_script_dependencies[] = 'wp-i18n'; //Allow JS strings to be translated as well https://make.wordpress.org/core/2018/11/09/new-javascript-i18n-support-in-wordpress/
+	}
+
+	nebula()->register_script('nebula-main', get_stylesheet_directory_uri() . '/assets/js/main.js', array('defer', 'module'), $nebula_child_script_dependencies, nebula()->child_version(), true); //nebula.js (in the parent Nebula theme) is defined as a dependent here.
 }
 
 //Enqueue Child Styles & Scripts on the Front-End

@@ -586,7 +586,7 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
-					<label for="cookie_notification">Cookie Notification</label>
+					<label class="cookie-label" for="cookie_notification">Cookie Notification</label>
 					<textarea name="nebula_options[cookie_notification]" id="cookie_notification" class="form-control textarea" rows="3"><?php echo $nebula_options['cookie_notification']; ?></textarea>
 					<p class="nebula-help-text short-help form-text text-muted nebula-adb-reminder-con">The text that will appear in the cookie notification (leave empty to disable).</p>
 					<p class="nebula-help-text more-help form-text text-muted">If a <a href="options-privacy.php">Privacy Policy</a> page is set with WordPress core, a link will appear to that page. This field accepts HTML for cross-linking to additional legal pages.</p>

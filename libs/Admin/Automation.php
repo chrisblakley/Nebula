@@ -11,7 +11,7 @@ if ( !trait_exists('Automation') ){
 				//Detect and prompt install of Recommended and Optional plugins using TGMPA
 				//Configuration Documentation: http://tgmpluginactivation.com/configuration/
 				if ( $this->is_admin_page() && ($this->is_dev(true) || current_user_can('manage_options')) ){ //If the WP admin is being viewed and this user is an admin or developer
-					if ( ($this->get_option('bundled_plugins_notification') || !get_user_meta(get_current_user_id(), 'tgmpa_dismissed_notice_nebula')) || (isset($this->super->get['page']) && strpos($this->super->get['page'], 'tgmpa') !== false) ){ //If the option is enabled or the user has not dismissed the prompt, or if this page has been specifically requested //@todo "Nebula" 0: Update this strpos() for PHP8 too
+					if ( ($this->get_option('bundled_plugins_notification') || !get_user_meta(get_current_user_id(), 'tgmpa_dismissed_notice_nebula')) || (isset($this->super->get['page']) && strpos($this->super->get['page'], 'tgmpa') !== false) ){ //If the option is enabled or the user has not dismissed the prompt, or if this page has been specifically requested //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 						require_once get_template_directory() . '/inc/vendor/class-tgm-plugin-activation.php';
 						add_action('tgmpa_register', array($this, 'register_required_plugins'));
 					} else {

@@ -252,6 +252,33 @@ nebula.removeQueryParameter = function(keys, url = location.search){
 	return updatedQuery; //Return just the query string alone
 };
 
+//Fetch API simplified wrapper
+nebula.fetch = async function(url=false, headers={}, type='json'){
+	if ( !url ){
+		nebula.help('nebula.fetch() requires a URL to retreive.', '/functions/fetch/');
+		return false;
+	}
+
+	if ( typeof headers !== 'object' ){ //If the type is passed as the second parameter
+		type = headers;
+		headers = {};
+	}
+
+	let fetchedData = await fetch(url, headers).then(function(response){
+		if ( response.ok ){
+			if ( type === 'json' ){
+				return response.json();
+			} else {
+				return response.text();
+			}
+		}
+	}).then(function(json){
+		return json;
+	});
+
+	return fetchedData;
+};
+
 //Trigger a reflow on an element.
 //This is useful for repeating animations.
 nebula.reflow = function(selector){
