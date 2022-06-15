@@ -51,7 +51,7 @@ nebula.performanceMetrics = async function(){
 				});
 
 				let clientTimings = {};
-				jQuery.each(timingCalcuations, function(name, timings){
+				jQuery.each(timingCalcuations, function(name, timings){ //This is an object (not an array)
 					if ( !isNaN(timings.start) && timings.start > -2 ){
 						clientTimings[name] = {
 							type: timings.type,
@@ -453,7 +453,7 @@ nebula.prefetch = async function(url = '', callback, element){
 		//Ignore blocklisted terms (logout, 1-click purchase buttons, etc.)
 		let prefetchBlocklist = wp.hooks.applyFilters('nebulaPrefetchBlocklist', ['logout', 'wp-admin']);
 
-		jQuery.each(prefetchBlocklist, function(index, value){
+		prefetchBlocklist.forEach(function(index, value){
 			if ( url.includes(value) ){
 				url = ''; //Empty the URL so it will fail the next condition
 				return false; //This just breaks out of the loop (does not stop the function)
@@ -526,7 +526,7 @@ nebula.lazyLoadAssets = async function(){
 
 	//Lazy load CSS assets
 	//Listen for requestIdleCallback here when Safari supports it
-	jQuery.each(nebula.site.resources.lazy.styles, function(handle, condition){
+	nebula.site.resources.lazy.styles.forEach(function(handle, condition){
 		if ( condition === 'all' || jQuery(condition).length ){
 			if ( nebula.site.resources.styles[handle.replaceAll('-', '_')] ){ //If that handle exists in the registered styles
 				nebula.loadCSS(nebula.site.resources.styles[handle.replaceAll('-', '_')]);
@@ -536,7 +536,7 @@ nebula.lazyLoadAssets = async function(){
 
 	//Lazy load JS assets
 	//Listen for requestIdleCallback here when Safari supports it
-	jQuery.each(nebula.site.resources.lazy.scripts, function(handle, condition){
+	nebula.site.resources.lazy.scripts.forEach(function(handle, condition){
 		if ( condition === 'all' || jQuery(condition).length ){
 			if ( nebula.site.resources.scripts[handle.replaceAll('-', '_')] ){ //If that handle exists in the registered scripts
 				nebula.loadJS(nebula.site.resources.scripts[handle.replaceAll('-', '_')], handle); //Load it (with a Promise)

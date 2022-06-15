@@ -193,8 +193,8 @@ nebula.eventTracking = async function(){
 		//Prep page info and detect quick unloads
 		if ( 'localStorage' in window ){
 			let prev = {
-				'path': document.location.pathname, //Prep the "previous page" to this page for future use.
-				'quick': true //Set this to true initially until it is not longer considered a quick back
+				path: document.location.pathname, //Prep the "previous page" to this page for future use.
+				quick: true //Set this to true initially until it is not longer considered a quick back
 			};
 
 			localStorage.setItem('prev', JSON.stringify(prev)); //Store them in localstorage
@@ -355,7 +355,7 @@ nebula.eventTracking = async function(){
 
 		//Notable File Downloads
 		let notableFileExtensions = wp.hooks.applyFilters('nebulaNotableFiles', ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv', 'zip', 'zipx', 'rar', 'gz', 'tar', 'txt', 'rtf', 'ics', 'vcard']);
-		jQuery.each(notableFileExtensions, function(index, extension){
+		notableFileExtensions.forEach(function(index, extension){
 			jQuery("a[href$='." + extension + "' i]").on('pointerdown', function(e){ //Cannot defer case insensitive attribute selectors in jQuery (or else you will get an "unrecognized expression" error)
 				let thisEvent = {
 					event: e,
@@ -769,7 +769,7 @@ nebula.eventTracking = async function(){
 
 					let excludedDomain = false;
 					let excludeDomains = wp.hooks.applyFilters('excludeDomains', []); //Don't log these domains/subdomains as outbound links
-					jQuery.each(excludeDomains, function(index, excludeDomain){
+					excludeDomains.forEach(function(index, excludeDomain){
 						if ( href.includes(excludeDomain) ){
 							excludedDomain = true;
 						}
@@ -818,7 +818,7 @@ nebula.eventTracking = async function(){
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-cookie-notification-click'}));
 		});
 
-		//History Popstate (dynamic URL changes via the History API when "states" are pushed into the browser history)
+		//History Popstate (dynamic URL changes via the History API when "states" are pushed into the browser history) //@todo "Nebula" 0: Update this to Navigation API when it is supported
 		if ( typeof history.pushState === 'function' ){
 			nebula.dom.window.on('popstate', function(e){ //When a state that was previously pushed is used, or "popped". This *only* triggers when a pushed state is popped!
 				let thisEvent = {
@@ -1571,7 +1571,7 @@ nebula.crm = async function(action, data, sendNow = true){
 	if ( action === 'identify' ){
 		_hsq.push(['identify', data]);
 
-		jQuery.each(data, function(key, value){
+		data.forEach(function(key, value){
 			nebula.user[key] = value;
 		});
 

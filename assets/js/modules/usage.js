@@ -4,8 +4,8 @@ window.performance.mark('(Nebula) Inside usage.js (module)');
 
 //Detect Window Errors
 window.addEventListener('error', function(error){
-	//Ignore browser extension errors
-	if ( error?.filename.includes('-extension://') ){ //Ex: chrome-extension:// or safari-extension://
+	//Ignore browser extension errors and JS console eager evaluation errors
+	if ( error?.filename.includes('-extension://') || error?.message.includes('side-effect in debug-evaluate') ){ //Ex: chrome-extension:// or safari-extension:// -or- errors originating from the JS console itself
 		return false;
 	}
 

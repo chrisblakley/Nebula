@@ -645,7 +645,8 @@ if ( !trait_exists('Functions') ){
 				if ( $tag_list ){
 					$label = '';
 					if ( $data['label'] === 'icon' ){
-						$tag_plural = ( count(get_the_tags()) > 1 )? __('tags', 'nebula') : __('tag', 'nebula');
+						$the_tags = get_the_tags();
+						$tag_plural = ( !empty($the_tags) && is_array($the_tags) && count($the_tags) > 1 )? __('tags', 'nebula') : __('tag', 'nebula'); //One time get_the_tags() was not an array and caused a PHP error, so this conditional is for extra precaution
 						$label = '<i class="nebula-post-tags-label fa-solid fa-fw fa-' . $tag_plural . '"></i> ';
 					} elseif ( $data['label'] === 'text' ){
 						$label = '<span class="nebula-post-tags-label">' . ucwords($tag_plural) . ' </span>';

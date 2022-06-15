@@ -781,7 +781,7 @@ nebula.pauseAllVideos = function(force = false){
 		return false; //If videos don't exist, then no need to pause
 	}
 
-	jQuery.each(nebula.videos, function(){
+	nebula.videos.forEach(function(){
 		if ( this.platform === 'html5' ){
 			if ( (force || !jQuery(this.element).hasClass('ignore-visibility')) ){
 				jQuery(this.element)[0].pause(); //Pause HTML5 Videos

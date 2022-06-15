@@ -37,7 +37,7 @@ nebula.keywordFilter = function(container, parent, values = 'string', filteredCl
 				}
 			});
 		} else if ( !operator || operator === 'and' || operator === 'all' ){ //Match only elements that contain all keywords (Default operator is And if not provided)
-			jQuery.each(values, function(index, value){ //Loop through the values to search for
+			values.forEach(function(index, value){ //Loop through the values to search for
 				if ( value && value.trim().length ){ //If the value exists and is not empty
 					let regex = new RegExp(value, 'i');
 
@@ -51,7 +51,7 @@ nebula.keywordFilter = function(container, parent, values = 'string', filteredCl
 			});
 		} else { //Match elements that contains any keyword
 			let pattern = '';
-			jQuery.each(values, function(index, value){
+			values.forEach(function(index, value){
 				if ( value.trim().length ){ //If the value is not empty, add it to the pattern
 					pattern += value + '|';
 				}
@@ -201,7 +201,7 @@ nebula.autocompleteSearch = function(element, types = ''){
 					nebula.dom.document.trigger('nebula_autocomplete_search_results', searchResults);
 					nebula.prefetch(searchResults[0].link);
 
-					jQuery.each(searchResults, function(index, value){
+					searchResults.forEach(function(index, value){
 						value.label = value.label.replaceAll(/&#038;/g, '\&');
 					});
 

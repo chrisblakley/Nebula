@@ -234,7 +234,7 @@ nebula.removeQueryParameter = function(keys, url = location.search){
 
 	let queryParameters = new URLSearchParams(urlQuery);
 
-	jQuery.each(keys, function(index, item){
+	keys.forEach(function(index, item){
 		queryParameters.delete(item);
 	});
 
@@ -268,9 +268,9 @@ nebula.fetch = async function(url=false, headers={}, type='json'){
 		if ( response.ok ){
 			if ( type === 'json' ){
 				return response.json();
-			} else {
-				return response.text();
 			}
+
+			return response.text();
 		}
 	}).then(function(json){
 		return json;

@@ -23,7 +23,7 @@
 			gtag('config', '<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>', {
 				send_page_view: true,
 				<?php if ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() ): ?>
-					user_id: '<?php echo get_current_user_id(); //This property must be less than 256 characters ?>'
+					user_id: '<?php echo get_current_user_id(); //This property must be less than 256 characters ?>',
 				<?php endif; ?>
 				debug_mode: <?php echo ( nebula()->is_dev() || nebula()->is_debug() )? 'true' : 'false'; ?>
 			});
