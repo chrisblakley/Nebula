@@ -1571,7 +1571,7 @@ nebula.crm = async function(action, data, sendNow = true){
 	if ( action === 'identify' ){
 		_hsq.push(['identify', data]);
 
-		data.forEach(function(key, value){
+		jQuery.each(data, function(key, value){
 			nebula.user[key] = value;
 		});
 

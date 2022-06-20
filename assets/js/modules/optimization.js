@@ -475,8 +475,10 @@ nebula.lazyLoadAssets = async function(){
 	//Detect if Bootstrap JS is needed and load it
 	//A wildcard attribute name selector would be super useful here, but does not exist. Something like [data-bs-*] would be perfect...
 	//That being said, the Offcanvas component will be used on 95% of Nebula sites, so this will likely load on every page regardless.
-	if ( jQuery('.offcanvas, .accordion, .alert, .carousel, .collapse, .dropdown-menu, .modal, .nav-tabs, .nav-pills').length ){
-		nebula.loadJS(nebula.site.resources.scripts['nebula_bootstrap']); //Load Bootstrap JS
+	if ( jQuery('.offcanvas, .accordion, .alert, .carousel, .collapse, .dropdown-menu, .modal, .nav-tabs, .nav-pills, [data-bs-toggle]').length ){
+		nebula.loadJS(nebula.site.resources.scripts['nebula_bootstrap']).then(function(){
+			nebula.initBootstrapFunctions(); //Initialize Nebula Bootstrap helper functionality
+		}); //Load Bootstrap JS
 	}
 
 	//Lazy load elements as they scroll into viewport
@@ -526,7 +528,7 @@ nebula.lazyLoadAssets = async function(){
 
 	//Lazy load CSS assets
 	//Listen for requestIdleCallback here when Safari supports it
-	nebula.site.resources.lazy.styles.forEach(function(handle, condition){
+	jQuery.each(nebula.site.resources.lazy.styles, function(handle, condition){
 		if ( condition === 'all' || jQuery(condition).length ){
 			if ( nebula.site.resources.styles[handle.replaceAll('-', '_')] ){ //If that handle exists in the registered styles
 				nebula.loadCSS(nebula.site.resources.styles[handle.replaceAll('-', '_')]);
@@ -536,7 +538,7 @@ nebula.lazyLoadAssets = async function(){
 
 	//Lazy load JS assets
 	//Listen for requestIdleCallback here when Safari supports it
-	nebula.site.resources.lazy.scripts.forEach(function(handle, condition){
+	jQuery.each(nebula.site.resources.lazy.scripts, function(handle, condition){
 		if ( condition === 'all' || jQuery(condition).length ){
 			if ( nebula.site.resources.scripts[handle.replaceAll('-', '_')] ){ //If that handle exists in the registered scripts
 				nebula.loadJS(nebula.site.resources.scripts[handle.replaceAll('-', '_')], handle); //Load it (with a Promise)
@@ -600,7 +602,9 @@ nebula.loadElement = async function(element){
 	}
 };
 
-nebula.loadJS = async function(url, handle){
+//Load a JavaScript resource
+//This returns a promise, but the callback parameter could also be used
+nebula.loadJS = async function(url, handle, callback=false){
 	nebula.site.resources.lazy.promises = nebula.site.resources.lazy.promises || {}; //Ensure this exists
 
 	//Listen for requestIdleCallback when Safari supports it
@@ -621,6 +625,10 @@ nebula.loadJS = async function(url, handle){
 			//Trigger an event if that is an option to listen for as well
 			nebula.dom.document.trigger('nebula_loadjs_' + handle.replaceAll(/[^a-zA-Z]/gi, '')); //This one is specific to the handle being loaded. Ex: 'nebula_loadjs_bootstrapbundleminjs'
 			nebula.dom.document.trigger('nebula_loadjs', handle); //This one is a generic one that passes the handle name
+
+			if ( callback ){ //Callback just in case it is preferred instead of the returned promise.
+				callback();
+			}
 		});
 
 		return nebula.site.resources.lazy.promises[handle];

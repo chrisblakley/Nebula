@@ -292,7 +292,7 @@ nebula.reflow = function(selector){
 		return false;
 	}
 
-	element.width();
+	element.width(); //Could use element.offsetHeight here without jQuery
 };
 
 //Handle repeated animations in a single function.

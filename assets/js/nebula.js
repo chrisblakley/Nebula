@@ -14,7 +14,6 @@ jQuery(function(){
 
 	nebula.cacheSelectors(); //Always do this first
 	nebula.addExpressions();
-	nebula.initBootstrapFunctions(); //Must be in DOM ready
 	nebula.helpers();
 	nebula.svgImgs();
 	nebula.subnavExpanders();
