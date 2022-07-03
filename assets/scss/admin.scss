@@ -351,6 +351,28 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 	}
 }
 
+//Nebula CF7 Submissions
+.cf7-submits-possible-spam {opacity: 0.5;}
+
+table#nebula-cf7-submission-data {border-collapse: collapse; width: 100%; margin-top: 22px; border: 1px solid #444;
+	thead {font-weight: bold; background: $primary_color; color: readable-color($primary_color);
+		td {padding: 15px;}
+	}
+
+	tbody {
+		tr {transition: background 0.25s ease;
+			&:nth-child(even) {background: #e3e3e3;}
+			&:hover {@include background-color($primary_color, 0.2);}
+
+			td {padding: 5px 10px; border: 1px solid #999; overflow: hidden; text-overflow: ellipsis; word-break: break-word;
+				&:nth-child(1){width: 210px;}
+			}
+
+			&.no-data td {opacity: 0.4;}
+		}
+	}
+}
+
 //Nebula Logs Table
 #nebula_logs_metabox {
 	.inside {max-height: 500px; overflow: auto;}

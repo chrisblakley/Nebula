@@ -425,7 +425,8 @@ if ( !trait_exists('Utilities') ){
 				$url = 'http://example.com' . $url; //Prepend it with a temporary protocol, SLD, and TLD so it can be parsed (and removed later).
 			}
 
-			$url_components = parse_url($url);
+			$url_components = parse_url(html_entity_decode($url));
+
 			if ( empty($url_components['host']) ){
 				return;
 			}
@@ -650,6 +651,25 @@ if ( !trait_exists('Utilities') ){
 			}
 		}
 
+		//Store initial UTM tags through each session
+		public function utms(){
+			$query_string = $this->url_components('query');
+			$notable_tags = array('utm_', 'fbclid', 'mc_eid', 'gclid', 'gclsrc', 'dclid', '_hsenc', 'vero_id', 'mkt_tok');
+
+			foreach ( $notable_tags as $tag ){
+				if ( strpos(strtolower($query_string), $tag) > -1 ){ //If UTM parameters exist //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					$this->set_cookie('nebula_utms', $this->url_components('all'), strtotime('+1 hours')); //Set/update the cookie with an hour expiration and store the entire LP URL
+					return $this->url_components('all'); //Return the entire landing page URL with full query string
+				}
+			}
+
+			if ( !empty($_COOKIE['nebula_utms']) ){
+				return htmlspecialchars($_COOKIE['nebula_utms']);
+			}
+
+			return '';
+		}
+
 		//Handle the caching of the transient and object cache simultaneously
 		//This is best used when assigning a variable from an "expensive" output
 		//When passing parameters they must ALWAYS be passed as an array!
@@ -686,10 +706,14 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Create a session and cookie
-		public function set_cookie($name, $value){
+		public function set_cookie($name, $value, $expiration){
 			$string_value = (string) $value;
 			if ( empty($string_value) ){
 				$string_value = 'false';
+			}
+
+			if ( empty($expiration) ){
+				$expiration = strtotime('January 1, 2035');
 			}
 
 			$this->super->cookie[$name] = $string_value;
@@ -697,7 +721,7 @@ if ( !trait_exists('Utilities') ){
 				setcookie(
 					$name,
 					$string_value,
-					strtotime('January 1, 2035'), //Note: Do not let this cookie expire past 2038 or it instantly expires. http://en.wikipedia.org/wiki/Year_2038_problem
+					$expiration, //Note: Do not let this cookie expire past 2038 or it instantly expires. http://en.wikipedia.org/wiki/Year_2038_problem
 					COOKIEPATH,
 					COOKIE_DOMAIN,
 					is_ssl(), //Secure (HTTPS)

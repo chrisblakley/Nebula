@@ -196,7 +196,7 @@ nebula.checkDependents = function(inputObject){
 				var dependentOrs = jQuery(this).attr('dependent-and').split(' ');
 				var totalDependents = dependentAnds.length;
 				var dependentsChecked = 0;
-				dependentAnds.forEach(function(){
+				jQuery.each(dependentAnds, function(){
 					if ( nebula.isCheckedOrHasValue(jQuery('#' + this)) ){
 						dependentsChecked++;
 					}
@@ -216,7 +216,7 @@ nebula.checkDependents = function(inputObject){
 				var dependentOrs = jQuery(this).attr('dependent-or').split(' ');
 				var totalDependents = dependentOrs.length;
 				var dependentsUnchecked = 0;
-				dependentOrs.forEach(function(){
+				jQuery.each(dependentOrs, function(){
 					if ( !nebula.isCheckedOrHasValue(jQuery('#' + this)) ){
 						dependentsUnchecked++;
 					}

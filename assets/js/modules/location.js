@@ -20,7 +20,7 @@ nebula.addressAutocomplete = function(autocompleteInput, uniqueID = 'unnamed'){
 					google.load('maps', '3', {
 						other_params: 'libraries=places&key=' + nebula.site.options.nebula_google_browser_api_key,
 						callback: function(){
-							autocompleteInputs.forEach(function(uniqueID, input){
+							jQuery.each(autocompleteInputs, function(uniqueID, input){
 								nebula.googleAddressAutocompleteCallback(input, uniqueID);
 							});
 						}

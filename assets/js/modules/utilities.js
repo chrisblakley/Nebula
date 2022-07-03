@@ -207,7 +207,7 @@ nebula.get = function(parameter = false, url = location.search){
 	let queryParameters = new URLSearchParams(url);
 
 	let queries = [];
-	queryParameters.forEach(function(value, key){
+	jQuery.each(queryParameters, function(value, key){
 		queries[key] = value;
 	});
 
@@ -234,7 +234,7 @@ nebula.removeQueryParameter = function(keys, url = location.search){
 
 	let queryParameters = new URLSearchParams(urlQuery);
 
-	keys.forEach(function(index, item){
+	jQuery.each(keys, function(index, item){
 		queryParameters.delete(item);
 	});
 
@@ -752,7 +752,7 @@ nebula.anonymizeEmail = function(emailAddress){
 	if ( emailAddress.includes('@') && emailAddress.includes('.') ){ //Very simple validation. If a valid email address is not provided, no anonymization will happen!
 		anonymizedEmail = emailAddress.charAt(0); //Start by preserving the first character
 		let emailCharacterArray = Array.from(emailAddress.split('@')[0]).slice(1); //Get an array of chars before @ and remove the first index
-		emailCharacterArray.forEach(function(character, index){
+		jQuery.each(emailCharacterArray, function(character, index){
 			if ( index === emailCharacterArray.length-1 ){ //If the current index is the last item (character)
 				anonymizedEmail += character; //Use the last letter as-is
 			} else {

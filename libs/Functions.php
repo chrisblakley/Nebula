@@ -84,6 +84,11 @@ if ( !trait_exists('Functions') ){
 			add_filter('wpcf7_form_elements', array($this, 'cf7_autocomplete_attribute'));
 			add_filter('wpcf7_special_mail_tags', array($this, 'cf7_custom_special_mail_tags'), 10, 3);
 
+			if (is_plugin_active('contact-form-7/wp-contact-form-7.php') && $this->get_option('store_form_submissions') ){ //If CF7 is installed and active and capturing submission data is enabled
+				add_action('init', array($this, 'cf7_storage_cpt'));
+				add_action('wpcf7_before_send_mail', array($this, 'cf7_storage'), 2, 1);
+			}
+
 			if ( $this->is_bypass_cache() ){
 				if ( !defined('DONOTCACHEPAGE') ){
 					define('DONOTCACHEPAGE', true); //Tell other plugins not to cache this page
@@ -3118,76 +3123,172 @@ if ( !trait_exists('Functions') ){
 
 			//Debug Info
 			if ( $name === 'debuginfo' || $name === '_debuginfo' || $name === '_nebula_debuginfo' || $name === '_nebula_debug' ){
-				$debug_data = 'Nebula ' . $this->version('full') . PHP_EOL;
-				$debug_data .= $this->nebula_session_id() . PHP_EOL;
-
-				//Logged-in User Info
-				$user_id = (int) $submission->get_meta('current_user_id');
-				if ( !empty($user_id) ){
-					$user_info = get_userdata($user_id);
-
-					$debug_data .= 'User: ' . $user_info->user_login . ' (' . $user_info->ID . ')' . PHP_EOL;
-					$debug_data .= 'Name: ' . $user_info->display_name . PHP_EOL;
-					$debug_data .= 'Email: ' . $user_info->user_email . PHP_EOL;
-
-					if ( get_the_author_meta('phonenumber', $user_info->ID) ){
-						$debug_data .= 'Phone: ' . get_the_author_meta('phonenumber', $user_info->ID) . PHP_EOL;
-					}
-
-					if ( get_the_author_meta('jobtitle', $user_info->ID) ){
-						$debug_data .= 'Title: ' . get_the_author_meta('jobtitle', $user_info->ID) . PHP_EOL;
-					}
-
-					if ( get_the_author_meta('jobcompany', $user_info->ID) ){
-						$debug_data .= 'Company: ' . get_the_author_meta('jobcompany', $user_info->ID) . PHP_EOL;
-					}
-
-					if ( get_the_author_meta('jobcompanywebsite', $user_info->ID) ){
-						$debug_data .= 'Company Website: ' . get_the_author_meta('jobcompanywebsite', $user_info->ID) . PHP_EOL;
-					}
-
-					if ( get_the_author_meta('usercity', $user_info->ID) && get_the_author_meta('userstate', $user_info->ID) ){
-						$debug_data .= get_the_author_meta('usercity', $user_info->ID) . ', ' . get_the_author_meta('userstate', $user_info->ID) . PHP_EOL;
-					}
-
-					$debug_data .= $this->user_role() . PHP_EOL; //Role
+				$nebula_debug_info = $this->cf7_debug_info($submission);
+				$debug_output = '';
+				foreach ( $nebula_debug_info as $key => $value ){
+					$debug_output .= ucwords(str_replace('_', ' ', $key)) . ': ' . $value . PHP_EOL;
 				}
-
-				//Bot detection
-				if ( $this->is_bot() ){
-					$debug_data .= '<strong>Bot detected!</strong>' . PHP_EOL;
-				}
-
-				//WPML Language
-				if ( defined('ICL_LANGUAGE_NAME') ){
-					$debug_data .= 'WPML Language: ' . ICL_LANGUAGE_NAME . ' (' . ICL_LANGUAGE_CODE . ')' . PHP_EOL;
-				}
-
-				//Device information
-				if ( isset($this->super->server['HTTP_USER_AGENT']) ){
-					$debug_data .= $this->super->server['HTTP_USER_AGENT'] . PHP_EOL;
-				}
-				if ( $this->get_option('device_detection') ){
-					$debug_data .= ucwords($this->get_device('formfactor'));
-
-					$device = $this->get_device('full');
-					if ( !empty($device) ){
-						$debug_data .= ', ' . $device;
-					}
-
-					$debug_data .= ', ' . $this->get_os();
-					$debug_data .= ', ' . $this->get_browser('full');
-					$debug_data .= PHP_EOL;
-				}
-
-				//Anonymized IP address
-				$debug_data .= 'Anonymized IP: ' . $this->get_ip_address();
-				$debug_data .= PHP_EOL;
-
-				return apply_filters('nebula_cf7_debug_data', $debug_data);
+				return $debug_output;
 			}
 
 			return $output;
+		}
+
+		//Create a custom post type for Contact Form 7 submission storage
+		public function cf7_storage_cpt(){
+			register_post_type('nebula_cf7_submits', array( //This is the text that appears in the URL
+				'labels' => array( //https://developer.wordpress.org/reference/functions/get_post_type_labels/
+					'name' => 'CF7 Submissions', //Plural
+					'singular_name' => 'CF7 Submission',
+					'edit_item' => 'CF7 Submission Details',
+					'menu_name' => '<i class="fa-solid fa-table-list"></i> CF7 Submissions',
+				),
+				'description' => 'Contact Form 7 form submissions',
+				'menu_icon' => 'dashicons-feedback',
+				'supports' => array('title'),
+				'capabilities' => array(
+					'create_posts' => false, //Remove the Add New button
+				),
+				'map_meta_cap' => true, //User can view even though they cannot create posts in the admin
+				//'show_in_menu' => true, //Show as a top-level menu item
+				'show_in_menu' => 'wpcf7', //Show as a submenu item of Contact Form 7
+				'menu_position' => 31, //CF7 itself is at 29 or 30
+				'show_in_nav_menus' => false,
+				'has_archive' => false,
+				'exclude_from_search' => true,
+				'show_in_rest' => false,
+				'public' => true, //Allow it to appear in the admin menu
+				'publicly_queryable' => false, //Don't let visitors ever access this data
+			));
+		}
+
+		//Listen for form submissions to store into the DB right before sending the mail
+		//Note: Spam submissions often do not come through this function, so cannot be mitigated/noted here
+		public function cf7_storage($form){
+			$submission = WPCF7_Submission::get_instance();
+			$submission_data = $_POST; //This contains the WPCF7 metadata
+			$contact_form = WPCF7_ContactForm::get_current();
+			$form_id = $contact_form->id(); //Use this to get information about the form
+
+			//Add more data to the submission
+			$submission_data['form_id'] = $form_id;
+			$submission_data['form_name'] = get_the_title($form_id);
+
+			//Nebula contextual data
+			$nebula_debug_info = $this->cf7_debug_info($submission);
+			foreach ( $nebula_debug_info as $key => $value ){
+				$submission_data['_' . $key] = $value;
+			}
+
+			$unique_identifier = '';
+			if ( !empty($submission_data['name']) ){
+				$unique_identifier = ' from ' . $submission_data['name'];
+			} elseif ( !empty($submission_data['your-name']) ){
+				$unique_identifier = ' from ' . $submission_data['your-name'];
+			} elseif ( !empty($submission_data['first-name']) ){
+				$unique_identifier = ' from ' . $submission_data['first-name'];
+			} elseif ( !empty($submission_data['email']) ){
+				$unique_identifier = ' from ' . $submission_data['email'];
+			} elseif ( !empty($submission_data['your-email']) ){
+				$unique_identifier = ' from ' . $submission_data['your-email'];
+			}
+
+			$submission_title = get_the_title($form_id) . ' submission' . $unique_identifier ;
+
+			//Store it in a CPT
+			$submission_id = wp_insert_post(array(
+				'post_title' => $submission_title,
+				'post_content' => json_encode($submission_data),
+				'post_status' => 'private',
+				'post_type' => 'nebula_cf7_submits', //This needs to match the CPT slug!
+				'meta_input' => array(
+					'form_id' => $form_id, //Associate this submission with its CF7 form ID
+				)
+			));
+		}
+
+		//Build debug info data for CF7 messages and/or Nebula CF7 storage
+		public function cf7_debug_info($cf7_instance){
+			if ( !is_object($cf7_instance) ){
+				return array();
+			}
+
+			$debug_info = array();
+
+			$debug_info['nebula_timestamp'] = date('U');
+			$debug_info['nebula_date_formatted'] = date('l, F j, Y \a\t g:ia');
+			$debug_info['nebula_version'] = $this->version('full') . ' (Committed ' . $this->version('date') . ')';
+			$debug_info['nebula_child_version'] = $this->child_version('full');
+			$debug_info['nebula_session_id'] = $this->nebula_session_id();
+			$debug_info['nebula_ga_cid'] = $this->ga_parse_cookie();
+			$debug_info['nebula_utms'] = htmlspecialchars_decode($this->utms());
+
+			//Logged-in User Info
+			$user_id = (int) $cf7_instance->get_meta('current_user_id');
+			if ( !empty($user_id) ){
+				//Staff
+				if ( $this->is_dev() ){
+					$debug_info['nebula_staff'] = 'Developer';
+				} elseif ( $this->is_client() ){
+					$debug_info['nebula_staff'] = 'Client';
+				} elseif ( $this->is_staff() ){
+					$debug_info['nebula_staff'] = 'Staff';
+				}
+
+				$user_info = get_userdata($user_id);
+
+				$debug_info['nebula_user_id'] = $user_info->ID;
+				$debug_info['nebula_username'] = $user_info->user_login;
+				$debug_info['nebula_display_name'] = $user_info->display_name;
+				$debug_info['nebula_email'] = $user_info->user_email;
+
+				if ( get_the_author_meta('phonenumber', $user_info->ID) ){
+					$debug_info['nebula_phone'] = get_the_author_meta('phonenumber', $user_info->ID);
+				}
+
+				if ( get_the_author_meta('jobtitle', $user_info->ID) ){
+					$debug_info['nebula_job_title'] = get_the_author_meta('jobtitle', $user_info->ID);
+				}
+
+				if ( get_the_author_meta('jobcompany', $user_info->ID) ){
+					$debug_info['nebula_company'] = get_the_author_meta('jobcompany', $user_info->ID);
+				}
+
+				if ( get_the_author_meta('jobcompanywebsite', $user_info->ID) ){
+					$debug_info['nebula_company_website'] = get_the_author_meta('jobcompanywebsite', $user_info->ID);
+				}
+
+				if ( get_the_author_meta('usercity', $user_info->ID) && get_the_author_meta('userstate', $user_info->ID) ){
+					$debug_info['nebula_city_state'] = get_the_author_meta('usercity', $user_info->ID) . ', ' . get_the_author_meta('userstate', $user_info->ID);
+				}
+
+				$debug_info['nebula_role'] = $this->user_role();
+			}
+
+			//Bot detection
+			if ( $this->is_bot() ){
+				$debug_info['nebula_bot'] = 'Bot detected';
+			}
+
+			//WPML Language
+			if ( defined('ICL_LANGUAGE_NAME') ){
+				$debug_info['nebula_language'] = ICL_LANGUAGE_NAME . ' (' . ICL_LANGUAGE_CODE . ')';
+			}
+
+			//Device information
+			if ( isset($this->super->server['HTTP_USER_AGENT']) ){
+				$debug_info['nebula_user_agent'] = $this->super->server['HTTP_USER_AGENT'];
+			}
+
+			$debug_info['nebula_device_type'] = ucwords($this->get_device('formfactor'));
+			$debug_info['nebula_device'] = $this->get_device('full');
+			$debug_info['nebula_os'] = $this->get_os();
+			$debug_info['nebula_browser'] = $this->get_browser('full');
+
+			//Anonymized IP address
+			$debug_info['nebula_anonymized_ip'] = $this->get_ip_address();
+
+			return apply_filters('nebula_cf7_debug_info', $debug_info);
 		}
 
 		//Add Google API key to Advanced Custom Fields Google Map field type

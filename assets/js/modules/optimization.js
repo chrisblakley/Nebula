@@ -453,7 +453,7 @@ nebula.prefetch = async function(url = '', callback, element){
 		//Ignore blocklisted terms (logout, 1-click purchase buttons, etc.)
 		let prefetchBlocklist = wp.hooks.applyFilters('nebulaPrefetchBlocklist', ['logout', 'wp-admin']);
 
-		prefetchBlocklist.forEach(function(index, value){
+		jQuery.each(prefetchBlocklist, function(index, value){
 			if ( url.includes(value) ){
 				url = ''; //Empty the URL so it will fail the next condition
 				return false; //This just breaks out of the loop (does not stop the function)
@@ -613,6 +613,8 @@ nebula.loadJS = async function(url, handle, callback=false){
 			handle = url.split('\\').pop().split('/').pop().split('?')[0]; //Get the filename from the URL and remove query strings
 		}
 
+		//Look into import() here instead of generating a <script> element to append. The import() function does work with third-party endpoints.
+
 		//Store the promise so it can be listened for elsewhere if necessary
 		nebula.site.resources.lazy.promises[handle] = new Promise(function(resolve, reject){
 			var lazyScriptElement = document.createElement('script');
@@ -627,7 +629,7 @@ nebula.loadJS = async function(url, handle, callback=false){
 			nebula.dom.document.trigger('nebula_loadjs', handle); //This one is a generic one that passes the handle name
 
 			if ( callback ){ //Callback just in case it is preferred instead of the returned promise.
-				callback();
+				return callback(); //Should this have a return on it? That would break the promise, but if a callback is specified it would be expected...
 			}
 		});
 

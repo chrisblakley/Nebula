@@ -887,7 +887,7 @@ if ( !trait_exists('Warnings') ){
 
 								//Check for placeholder text (in the page content and metadata)
 								var commonPlaceholderWords = ['lorem', 'ipsum', 'dolor', 'sit amet', 'consectetur', 'adipiscing', 'malesuada', 'vestibulum']; //Be careful of false positives due to parts of real words (Ex: "amet" in "parameter")
-								commonPlaceholderWords.forEach(function(i, word){
+								jQuery.each(commonPlaceholderWords, function(i, word){
 									if ( entireDOM.html().includes(word) ){
 										jQuery('#audit-results ul').append('<li><i class="fa-solid fa-fw fa-remove-format"></i> Placeholder text found ("' + word + '").</li>');
 										return false;
@@ -978,7 +978,7 @@ if ( !trait_exists('Warnings') ){
 								<?php do_action('nebula_audits_js'); ?>
 
 								var nebulaWarnings = <?php echo $nebula_warnings; ?> || {};
-								nebulaWarnings.forEach(function(i, warning){
+								jQuery.each(nebulaWarnings, function(i, warning){
 									if ( warning.description.indexOf('Audit Mode') > 0 ){
 										return true; //Skip
 									}

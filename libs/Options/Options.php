@@ -232,6 +232,7 @@ if ( !trait_exists('Options') ){
 				'additional_design_references' => '',
 				'author_bios' => 0,
 				'comments' => 0,
+				'store_form_submissions' => 1,
 				'service_worker' => 0,
 				'adblock_detect' => 0,
 				'spam_domain_prevention' => 0,

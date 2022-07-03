@@ -120,12 +120,12 @@ if ( !trait_exists('Dashboard') ){
 
 			//GA Measurement ID
 			if ( $this->get_option('ga_measurement_id') ){
-				echo '<li><i class="fa-solid fa-fw fa-chart-area"></i> GA Measurment ID: <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noreferrer noopener">' . $this->get_option('ga_measurement_id') . '</a></li>';
+				echo '<li><i class="fa-solid fa-fw fa-chart-area"></i> GA Measurment ID: <a href="' . $this->google_analytics_url() . '" target="_blank" rel="noreferrer noopener">' . $this->get_option('ga_measurement_id') . '</a></li>';
 			}
 
 			//GA Property ID
 			if ( $this->get_option('ga_property_id') ){
-				echo '<li><i class="fa-solid fa-fw fa-rectangle-list"></i> GA Property ID: <a href="https://analytics.google.com/analytics/web/" target="_blank" rel="noreferrer noopener">' . $this->get_option('ga_property_id') . '</a></li>';
+				echo '<li><i class="fa-solid fa-fw fa-rectangle-list"></i> GA Property ID: <a href="' . $this->google_analytics_url() . '" target="_blank" rel="noreferrer noopener">' . $this->get_option('ga_property_id') . '</a></li>';
 			}
 
 			//GTM Container ID
@@ -149,20 +149,22 @@ if ( !trait_exists('Dashboard') ){
 					return $count_posts;
 				}, array('post_type' => $post_type), $cache_length);
 
-				$labels_plural = ( $count_posts->publish === 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
+				$count = $count_posts->publish;
 				switch ( $post_type ){
-					case ('post'):
+					case ( 'post' ):
 						$post_icon_img = '<i class="fa-solid fa-fw fa-thumbtack"></i>';
 						break;
-					case ('page'):
+					case ( 'page' ):
 						$post_icon_img = '<i class="fa-solid fa-fw fa-file-alt"></i>';
 						break;
-					case ('wp_block'):
+					case ( 'wp_block' ):
 						$post_icon_img = '<i class="fa-regular fa-fw fa-clone"></i>';
 						break;
-					case ('wpcf7_contact_form'):
+					case ( 'wpcf7_contact_form' ):
 						$post_icon_img = '<i class="fa-solid fa-fw fa-envelope"></i>';
 						break;
+					case ( 'nebula_cf7_submits' ):
+						$count = $count_posts->private; //These are all stored privately
 					default:
 						$post_icon = $wp_post_types[$post_type]->menu_icon;
 						$post_icon_img = '<i class="fa-solid fa-fw fa-thumbtack"></i>';
@@ -174,7 +176,10 @@ if ( !trait_exists('Dashboard') ){
 						}
 						break;
 				}
-				echo '<li>' . $post_icon_img . ' <a href="edit.php?post_type=' . $post_type . '"><strong>' . $count_posts->publish . '</strong> ' . $labels_plural . '</a></li>';
+
+				$labels_plural = ( $count === 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
+
+				echo '<li>' . $post_icon_img . ' <a href="edit.php?post_type=' . $post_type . '"><strong>' . $count . '</strong> ' . $labels_plural . '</a></li>';
 			}
 
 			//Earliest post

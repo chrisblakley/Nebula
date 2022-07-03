@@ -406,6 +406,13 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
+					<input type="checkbox" name="nebula_options[store_form_submissions]" id="store_form_submissions" value="1" <?php checked('1', !empty($nebula_options['store_form_submissions'])); ?> /><label for="store_form_submissions">Store Form Submissions</label>
+					<p class="nebula-help-text short-help form-text text-muted">Store CF7 form submissions in WordPress. (Default: <?php echo $this->user_friendly_default('store_form_submissions'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">This will capture Contact Form 7 form submissions and store them in WordPress. This will not have any affect on third-party form storage plugins, nor will it change email submission behavior. This will have no effect if the Contact Form 7 plugin is not installed or inactive. Disabling this option will <strong>not</strong> delete form submissions already captured.</p>
+					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group">
 					<input type="checkbox" name="nebula_options[service_worker]" id="service_worker" value="1" <?php checked('1', !empty($nebula_options['service_worker'])); ?> /><label for="service_worker">Service Worker</label>
 					<p class="nebula-help-text short-help form-text text-muted">Utilize a service worker to improve speed, provide content when offline, and other benefits of being a progressive web app. (Default: <?php echo $this->user_friendly_default('service_worker'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">This also enables HTTP2 Server Push when available. Enabling this feature requires a service worker JavaScript file. Move the provided sw.js into the root directory (or write your own). Service Worker location: <code><?php echo $this->sw_location(); ?></code></p>

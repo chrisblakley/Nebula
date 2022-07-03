@@ -18,6 +18,14 @@ jQuery(function(){
 	nebula.svgImgs();
 	nebula.subnavExpanders();
 
+	//Analytics
+	if ( !nebula.isDoNotTrack() ){
+		import('./modules/analytics.js?ver=' + nebula.version.number).then(function(module){
+			nebula.eventTracking();
+			nebula.dom.document.trigger('nebula_module_loaded', 'analytics.js');
+		});
+	}
+
 	//Search
 	if ( jQuery('input[type="search"], input[name="s"], [class*="search"]').length || nebula.get('s') ){
 		import('./modules/search.js?ver=' + nebula.version.number).then(function(module){
@@ -45,14 +53,6 @@ jQuery(function(){
 	nebula.dom.document.on('visibilitychange', function(){
 		nebula.visibilityChangeActions();
 	});
-
-	//Analytics
-	if ( !nebula.isDoNotTrack() ){
-		import('./modules/analytics.js?ver=' + nebula.version.number).then(function(module){
-			nebula.eventTracking();
-			nebula.dom.document.trigger('nebula_module_loaded', 'analytics.js');
-		});
-	}
 
 	window.performance.mark('(Nebula) DOM Ready [End]');
 	window.performance.measure('(Nebula) DOM Ready Functions', '(Nebula) DOM Ready [Start]', '(Nebula) DOM Ready [End]');

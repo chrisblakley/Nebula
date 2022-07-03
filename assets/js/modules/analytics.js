@@ -355,7 +355,7 @@ nebula.eventTracking = async function(){
 
 		//Notable File Downloads
 		let notableFileExtensions = wp.hooks.applyFilters('nebulaNotableFiles', ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv', 'zip', 'zipx', 'rar', 'gz', 'tar', 'txt', 'rtf', 'ics', 'vcard']);
-		notableFileExtensions.forEach(function(index, extension){
+		jQuery.each(notableFileExtensions, function(index, extension){
 			jQuery("a[href$='." + extension + "' i]").on('pointerdown', function(e){ //Cannot defer case insensitive attribute selectors in jQuery (or else you will get an "unrecognized expression" error)
 				let thisEvent = {
 					event: e,
@@ -769,7 +769,7 @@ nebula.eventTracking = async function(){
 
 					let excludedDomain = false;
 					let excludeDomains = wp.hooks.applyFilters('excludeDomains', []); //Don't log these domains/subdomains as outbound links
-					excludeDomains.forEach(function(index, excludeDomain){
+					jQuery.each(excludeDomains, function(index, excludeDomain){
 						if ( href.includes(excludeDomain) ){
 							excludedDomain = true;
 						}

@@ -20,6 +20,14 @@ if ( !trait_exists('Analytics') ){
 			register_shutdown_function(array($this, 'ga_log_fatal_php_errors'));
 		}
 
+		public function google_analytics_url(){
+			if ( !empty($this->get_option('ga_property_id')) ){
+				return 'https://analytics.google.com/analytics/web/?hl=en&pli=1#/p' . $this->get_option('ga_property_id') . '/reports/intelligenthome'; //Link right to this GA property
+			}
+
+			return 'https://analytics.google.com/analytics/web/'; //Just link to Google Analytics
+		}
+
 		//If analytics should be allowed.
 		//Note: be careful using this conditional for AJAX analytics as the request is made by the server IP.
 		public function is_analytics_allowed(){

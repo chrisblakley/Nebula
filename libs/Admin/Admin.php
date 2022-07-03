@@ -35,8 +35,8 @@ if ( !trait_exists('Admin') ){
 
 				if ( current_user_can('publish_posts') ){
 					add_action('admin_action_duplicate_post_as_draft', array($this, 'duplicate_post_as_draft'));
-					add_filter('post_row_actions', array($this, 'rd_duplicate_post_link'), 10, 2);
-					add_filter('page_row_actions', array($this, 'rd_duplicate_post_link'), 10, 2);
+					add_filter('post_row_actions', array($this, 'duplicate_post_link'), 10, 2);
+					add_filter('page_row_actions', array($this, 'duplicate_post_link'), 10, 2);
 				}
 
 				add_action('admin_init', array($this, 'clear_all_w3_caches'));
@@ -84,9 +84,24 @@ if ( !trait_exists('Admin') ){
 
 				add_action('pre_get_posts', array($this, 'id_column_orderby')); //Handles the order when the ID column is sorted
 
+				//CF7 Submissions Columns
+				if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') && $this->get_option('store_form_submissions') ){ //If CF7 is installed and active and capturing submission data is enabled
+					add_filter('manage_posts_columns', array($this, 'cf7_submissions_columns_head'));
+					add_filter('manage_edit-nebula_cf7_submits_sortable_columns', array($this, 'cf7_submissions_columns_sortable'));
+					add_action('manage_posts_custom_column', array($this, 'cf7_submissions_columns_content' ), 15, 2);
+					add_action('pre_get_posts', array($this, 'cf7_submissions_columns_orderby')); //Handles the order when a user column is sorted
+					add_filter('display_post_states', array($this, 'cf7_submissions_remove_post_state'), 10, 2); //Hide the private post state text on listing pages
+					add_filter('post_row_actions', array($this, 'cf7_submissions_remove_quick_actions'), 10, 2);
+					add_action('edit_form_top', array($this, 'cf7_submissions_back_button'));
+					add_action('edit_form_after_title', array($this, 'cf7_storage_output'), 10, 1);
+					add_action('restrict_manage_posts', array($this, 'cf7_submissions_filters'), 10, 1);
+					add_action('manage_posts_extra_tablenav', array($this, 'cf7_submissions_actions'), 10, 1);
+					add_filter('parse_query', array($this, 'cf7_submissions_parse_query'), 10, 1);
+				}
+
 				//Override some Yoast settings
 				if ( is_plugin_active('wordpress-seo/wp-seo.php') ){
-					//Move Yoast post metabox to the buttom
+					//Move Yoast post metabox to the bottom
 					add_action('wpseo_metabox_prio', array($this, 'lower_yoast_post_metabox'));
 
 					//Prevent indexing of authors
@@ -305,7 +320,7 @@ if ( !trait_exists('Admin') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Google Analytics',
 					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-chart-area"></i>',
-					'url' => 'https://analytics.google.com/analytics/web/'
+					'url' => $this->google_analytics_url()
 				);
 			}
 
@@ -1456,6 +1471,14 @@ if ( !trait_exists('Admin') ){
 			}
 		}
 
+		//Add the "duplicate" link to the post actions list (this works for custom post types too).
+		public function duplicate_post_link($actions, $post){
+			if ( current_user_can('edit_posts') && $post->post_type !== 'nebula_cf7_submits' ){
+				$actions['duplicate'] = '<a href="admin.php?action=duplicate_post_as_draft&post=' . $post->ID . '" title="Duplicate this item" rel="permalink">Duplicate</a>';
+			}
+			return $actions;
+		}
+
 		//Duplicate post
 		public function duplicate_post_as_draft(){
 			global $wpdb;
@@ -1517,14 +1540,6 @@ if ( !trait_exists('Admin') ){
 			}
 		}
 
-		//Add the duplicate link to action list for post_row_actions (This works for custom post types too).
-		public function rd_duplicate_post_link($actions, $post){
-			if ( current_user_can('edit_posts') ){
-				$actions['duplicate'] = '<a href="admin.php?action=duplicate_post_as_draft&amp;post=' . $post->ID . '" title="Duplicate this item" rel="permalink">Duplicate</a>';
-			}
-			return $actions;
-		}
-
 		//Show File URL column on Media Library listings
 		public function muc_column($cols){
 			$cols['media_url'] = 'File URL';
@@ -1534,6 +1549,236 @@ if ( !trait_exists('Admin') ){
 		public function muc_value($column_name, $id){
 			if ( $column_name === 'media_url' ){
 				echo '<input type="text" width="100%" value="' . wp_get_attachment_url($id) . '" readonly />';
+			}
+		}
+
+		//Add columns to CF7 submission listings
+		public function cf7_submissions_columns_head($columns){
+			$columns['formatted_date'] = 'Formatted Date';
+			$columns['form_name'] = 'Form Name';
+			$columns['page_title'] = 'Page Title';
+			unset($columns['date']); //Replacing the WP date column with our own
+			unset($columns['id']); //This ID is confusing since it is the submission ID
+			return $columns;
+		}
+		public function cf7_submissions_columns_sortable($columns){
+			$columns['formatted_date'] = 'date';
+			$columns['form_name'] = 'form_name';
+			$columns['page_title'] = 'page_title';
+			return $columns;
+		}
+
+		//Custom columns content to CF7 submission listings
+		public function cf7_submissions_columns_content($column_name, $id){
+			if ( $this->is_admin_page() ){
+				$submission_data = get_post($id); //Remember: this $id is the submission ID (not the form ID)!
+				$form_data = json_decode($submission_data->post_content);
+				$form_id = ( is_object($form_data) )? $form_data->_wpcf7 : false; //CF7 Form ID
+				$post_id = ( is_object($form_data) )? $form_data->_wpcf7_container_post : false; //The page the CF7 submission was from
+
+				if ( $column_name === 'formatted_date' ){
+					if ( !empty($form_data) ){
+						echo $form_data->_nebula_date_formatted . '<br />' . '<small>' . human_time_diff($form_data->_nebula_timestamp) . ' ago</small>';
+					}
+				}
+
+				if ( $column_name === 'form_name' ){
+					if ( !empty($form_id) ){
+						echo '<strong><a href="admin.php?page=wpcf7&post=' . $form_id . '&action=edit">' . get_the_title($form_id) . ' &raquo;</a></strong><br /><small>Form ID: ' . $form_id . '</small>';
+					} else {
+						echo '<span class="cf7-submits-possible-spam">Spam?<br /><small>The message could not be decoded.</small></span>';
+					}
+				}
+
+				if ( $column_name === 'page_title' ){
+					if ( !empty($post_id) ){
+						echo '<a href="' . get_permalink($post_id) . '" target="_blank">' . get_the_title($post_id) . ' &raquo;</a><br /><small>Post ID: ' . $post_id . '</small>';
+					}
+				}
+
+				echo '';
+			}
+		}
+		public function cf7_submissions_columns_orderby($query){
+			if ( $this->is_admin_page() ){
+				$orderby = strtolower($query->get('orderby'));
+
+				if ( $orderby === 'form_name' ){
+					$query->set('orderby', 'form_name');
+				}
+
+				if ( $orderby === 'page_title' ){
+					$query->set('orderby', 'page_title');
+				}
+			}
+		}
+
+		//Add dropdown menu(s) for filtering CF7 submission listings
+		public function cf7_submissions_filters($post_type){
+			if ( $this->is_admin_page() && $post_type == 'nebula_cf7_submits' ){
+				//Get a list of CF7 forms
+				$cf7_forms = array();
+				if ( post_type_exists('wpcf7_contact_form') ){
+					$cf7_filter_query = new WP_Query(array('post_type' => 'wpcf7_contact_form', 'post_per_page' => -1)); //Why is this empty when a filter is active? cf7_submissions_parse_query is conflicting!
+					if ( $cf7_filter_query->have_posts() ){
+						while ( $cf7_filter_query->have_posts() ){
+    						$cf7_filter_query->the_post();
+    						$cf7_forms[] = get_the_ID();
+						}
+						wp_reset_postdata();
+					}
+				}
+
+				?>
+				<label for="filter-by-form" class="screen-reader-text">Filter by form</label>
+				<select name="cf7_form_id" id="filter-by-form">
+					<option <?php echo ( empty($_GET['cf7_form_id']) )? 'selected="selected"' : ''; ?> value="0">All forms</option>
+					<?php foreach ( $cf7_forms as $cf7_form ): ?>
+						<option value="<?php echo $cf7_form; ?>" <?php echo ( !empty($_GET['cf7_form_id']) && $_GET['cf7_form_id'] == $cf7_form )? 'selected="selected"' : ''; ?>><?php echo get_the_title($cf7_form); ?></option>
+					<?php endforeach; ?>
+				</select>
+				<?php
+			}
+		}
+
+		//Add buttons for additional actions with CF7 submissions
+		public function cf7_submissions_actions($which){ //Which designates top or bottom
+			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
+				$filtered_id = ( !empty($_GET['cf7_form_id']) )? $_GET['cf7_form_id'] : '';
+
+				//Determine where the export button should link to
+				$export_text = 'Export <small>(WP Core)</small>';
+				$export_url = 'export.php';
+				if ( is_plugin_active('advanced-cf7-db/advanced-cf7-db.php') ){
+					$export_text = 'Export <small>(Advanced CF7 DB)</small>';
+					$export_url = 'admin.php?page=contact-form-listing&cf7_id=' . $filtered_id;
+				} elseif ( is_plugin_active('contact-form-cfdb7/contact-form-cfdb-7.php') ){
+					$export_text = 'Export <small>(Contact Form CFDB7)</small>';
+					$export_url = 'admin.php?page=cfdb7-list.php&fid=' . $filtered_id;
+				} elseif ( is_plugin_active('wp-all-export-pro/wp-all-export-pro.php') ){
+					$export_text = 'Export <small>(WP All Export)</small>';
+					$export_url = 'admin.php?page=pmxe-admin-export';
+				}
+
+				echo '<a class="button" href="' . $export_url . '">' . $export_text . '</a>';
+			}
+		}
+
+		//Handle the filters to only list desired CF7 submissions
+		public function cf7_submissions_parse_query($query){
+			if ( $query->query['post_type'] == 'nebula_cf7_submits' ){ //Only modify this specific query
+				global $pagenow;
+				$current_page = isset($_GET['post_type'])? $_GET['post_type'] : '';
+
+				if ( $this->is_admin_page() && $current_page == 'nebula_cf7_submits' && $pagenow == 'edit.php' ){
+					if ( isset($_GET['cf7_form_id']) && $_GET['cf7_form_id'] != 0 ){ //If the filter request is for a specific form ID
+						$query->query_vars['meta_key'] = 'form_id';
+						$query->query_vars['meta_value'] = $_GET['cf7_form_id'];
+						$query->query_vars['meta_compare'] = '=';
+					}
+				}
+			}
+
+			return $query;
+		}
+
+		//Hide the "Private" post state usually appended to titles on CF7 submissions admin listings
+		public function cf7_submissions_remove_post_state($post_states){
+			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
+				return false;
+			}
+
+			return $post_states;
+		}
+
+		//Disable the quick actions on CF7 submissions admin listings
+		public function cf7_submissions_remove_quick_actions($actions, $post){
+			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
+				unset($actions['edit']);
+				unset($actions['trash']);
+				unset($actions['view']);
+				unset($actions['inline hide-if-no-js']);
+			}
+
+			return $actions;
+		}
+
+		//Show a back button on CF7 submission detail pages
+		public function cf7_submissions_back_button(){
+			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
+				$previous_url = ( !empty($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'post_type=nebula_cf7_submits') > -1 && strpos($_SERVER['HTTP_REFERER'], 'cf7_form_id=') > -1 )? $_SERVER['HTTP_REFERER'] : 'edit.php?post_type=nebula_cf7_submits'; //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				echo '<a class="button" href="' . $previous_url . '">&laquo; Back to CF7 Submissions</a>';
+			}
+		}
+
+		//Output the details of each CF7 submission
+		public function cf7_storage_output($post){
+			if ( $this->is_admin_page() && $post->post_type === 'nebula_cf7_submits' ){
+				$form_data = json_decode($post->post_content);
+
+				?>
+					<table id="nebula-cf7-submission-data">
+						<thead>
+							<tr>
+								<td>Field</td>
+								<td>Value</td>
+							</tr>
+						</thead>
+						<tbody>
+				<?php
+
+				if ( !empty($form_data) ){
+					foreach( $form_data as $key => $value ){
+						$classes = array();
+
+						if ( is_array($value) ){
+							$value = implode(', ', $value);
+						}
+
+						if ( $key === '_wpcf7' ){
+							$value = '<a href="admin.php?page=wpcf7&post=' . $value . '&action=edit">' . $value . ' (' . get_the_title($value) . ') &raquo;</a>';
+						}
+
+						if ( $key === '_wpcf7_container_post' ){
+							$value = '<a href="' . get_permalink($value) . '">' . $value . ' (' . get_the_title($value) . ') &raquo;</a>';
+						}
+
+						if ( $key === '_nebula_date_formatted' ){
+							$value = $value . ' (' . human_time_diff($form_data->_nebula_timestamp) . ' ago)';
+						}
+
+						if ( $key === '_nebula_username' || $key === '_nebula_user_id' ){
+							$value = '<a href="user-edit.php?user_id=' . $form_data->_nebula_user_id . '">' . $value . ' &raquo;</a>';
+						}
+
+						if ( $key === '_nebula_session_id' ){
+							$value = str_replace(array(':', ';'), array(': ', ';<br />'), $value);
+						}
+
+						if ( $key === '_nebula_ga_cid' ){
+							$value = '<a href="' . $this->google_analytics_url() . '" target="_blank" rel="noopener noreferrer">' . $value . ' &raquo;</a>';
+						}
+
+						if ( $key === '_nebula_user_agent' ){
+							$value = '<a href="https://developers.whatismybrowser.com/useragents/parse/" target="_blank" rel="noopener noreferrer">' . $value . ' &raquo;</a>';
+						}
+
+						if ( substr($key, 0, 1) === '_' ){ //@todo "Nebula" 0: Use str_starts_with in PHP8
+							$classes[] = 'wpcf7-metadata';
+						}
+
+						if ( empty($value) ){
+							$classes[] = 'no-data';
+						}
+
+						echo '<tr class="' . implode(', ', $classes) . '"><td><strong>' . $key . '</strong></td><td>' . $value . '</td></tr>';
+					}
+				} else {
+					$formatted_invalid_json = str_replace(array('{', '":', ',"', '}'), array('{<br />', '": ', ',<br />"', '<br />}'), $post->post_content);
+					echo '<tr><td><strong>Invalid JSON</strong><br />Possibly spam?<br /><br /><small>Note: the JSON here may validate when copy/pasted, but the original data could not be decoded.</small></td><td>' . $formatted_invalid_json . '</td></tr>';
+				}
+
+				echo '</tbody></table>';
 			}
 		}
 
@@ -1579,14 +1824,17 @@ if ( !trait_exists('Admin') ){
 
 		public function post_meta_boxes_setup(){
 			add_action('add_meta_boxes', array($this, 'nebula_add_post_metabox'));
-			add_action('save_post', array($this, 'save_post_class_meta' ), 10, 2);
+			add_action('save_post', array($this, 'save_post_class_meta'), 10, 2);
+
+			add_action('add_meta_boxes', array($this, 'nebula_add_cf7_notes_metabox'));
+			add_action('save_post', array($this, 'save_cf7_notes_meta'), 10, 2);
 		}
 
 		//Internal Search Keywords post metabox and Custom Field
 		public function nebula_add_post_metabox(){
 			$builtin_types = array('post', 'page', 'attachment');
 			$custom_types = get_post_types(array('_builtin' => false));
-			$avoid_types = array('acf', 'acf-field-group', 'wpcf7_contact_form');
+			$avoid_types = array('acf', 'acf-field-group', 'wpcf7_contact_form', 'nebula_cf7_submits');
 
 			foreach ( $builtin_types as $builtin_type ){
 				add_meta_box('nebula-post-data', 'Nebula Post Data', array($this, 'nebula_post_metabox' ), $builtin_type, 'side', 'default');
@@ -1637,7 +1885,51 @@ if ( !trait_exists('Admin') ){
 
 			$nebula_post_meta_fields = array('nebula_body_classes', 'nebula_post_classes', 'nebula_internal_search_keywords');
 			foreach ( $nebula_post_meta_fields as $nebula_post_meta_field ){
-				$new_meta_value = sanitize_text_field($this->super->post[$nebula_post_meta_field]); //Get the posted data and sanitize it if needed.
+				if ( !empty($this->super->post[$nebula_post_meta_field]) ){
+					$new_meta_value = sanitize_text_field($this->super->post[$nebula_post_meta_field]); //Get the posted data and sanitize it if needed.
+					$meta_value = get_post_meta($post_id, $nebula_post_meta_field, true); //Get the meta value of the custom field key.
+					if ( $new_meta_value && empty($meta_value) ){ //If a new meta value was added and there was no previous value, add it.
+						add_post_meta($post_id, $nebula_post_meta_field, $new_meta_value, true);
+					} elseif ( $new_meta_value && $meta_value !== $new_meta_value ){ //If the new meta value does not match the old value, update it.
+						update_post_meta($post_id, $nebula_post_meta_field, $new_meta_value);
+					} elseif ( $new_meta_value === '' && $meta_value ){ //If there is no new meta value but an old value exists, delete it.
+						delete_post_meta($post_id, $nebula_post_meta_field, $meta_value);
+					}
+				}
+			}
+		}
+
+		//Nebula CF7 Submission Notes
+		public function nebula_add_cf7_notes_metabox(){
+			add_meta_box('nebula-post-data', 'Nebula CF7 Notes', array($this, 'nebula_cf7_notes_metabox' ), 'nebula_cf7_submits', 'side', 'default');
+		}
+
+		//Internal Search Keywords post metabox content
+		function nebula_cf7_notes_metabox($object, $box){
+			wp_nonce_field(basename(__FILE__), 'nebula_post_nonce');
+			?>
+			<div>
+				<p>
+					<strong>CF7 Submission Notes</strong>
+					<textarea id="nebula-cf7-submission-notes" class="textarea large-text" name="nebula_cf7_submission_notes" placeholder="Notes related to this Contact Form 7 submission..." style="min-height: 250px;"><?php echo get_post_meta($object->ID, 'nebula_cf7_submission_notes', true); ?></textarea>
+					<span class="howto">Keep any notes here to help provide context and information related to this form submission.</span>
+				</p>
+			</div>
+			<?php
+		}
+
+		public function save_cf7_notes_meta($post_id, $post){
+			if ( !isset($this->super->post['nebula_post_nonce']) || !wp_verify_nonce($this->super->post['nebula_post_nonce'], basename(__FILE__)) ){
+				return $post_id;
+			}
+
+			$post_type = get_post_type_object($post->post_type); //Get the post type object.
+			if ( !current_user_can($post_type->cap->edit_post, $post_id) ){ //Check if the current user has permission to edit the post.
+				return $post_id;
+			}
+
+			if ( !empty($this->super->post['nebula_cf7_submission_notes']) ){
+				$new_meta_value = sanitize_text_field($this->super->post['nebula_cf7_submission_notes']); //Get the posted data and sanitize it if needed.
 				$meta_value = get_post_meta($post_id, $nebula_post_meta_field, true); //Get the meta value of the custom field key.
 				if ( $new_meta_value && empty($meta_value) ){ //If a new meta value was added and there was no previous value, add it.
 					add_post_meta($post_id, $nebula_post_meta_field, $new_meta_value, true);
