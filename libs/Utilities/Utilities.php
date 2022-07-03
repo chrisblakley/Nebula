@@ -663,8 +663,8 @@ if ( !trait_exists('Utilities') ){
 				}
 			}
 
-			if ( !empty($_COOKIE['nebula_utms']) ){
-				return htmlspecialchars($_COOKIE['nebula_utms']);
+			if ( !empty($this->super->cookie['nebula_utms']) ){
+				return htmlspecialchars($this->super->cookie['nebula_utms']);
 			}
 
 			return '';

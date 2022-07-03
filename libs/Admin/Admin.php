@@ -1578,7 +1578,7 @@ if ( !trait_exists('Admin') ){
 
 				if ( $column_name === 'formatted_date' ){
 					if ( !empty($form_data) ){
-						echo $form_data->_nebula_date_formatted . '<br />' . '<small>' . human_time_diff($form_data->_nebula_timestamp) . ' ago</small>';
+						echo $form_data->_nebula_date_formatted . '<br /><small>' . human_time_diff($form_data->_nebula_timestamp) . ' ago</small>';
 					}
 				}
 
@@ -1622,8 +1622,8 @@ if ( !trait_exists('Admin') ){
 					$cf7_filter_query = new WP_Query(array('post_type' => 'wpcf7_contact_form', 'post_per_page' => -1)); //Why is this empty when a filter is active? cf7_submissions_parse_query is conflicting!
 					if ( $cf7_filter_query->have_posts() ){
 						while ( $cf7_filter_query->have_posts() ){
-    						$cf7_filter_query->the_post();
-    						$cf7_forms[] = get_the_ID();
+							$cf7_filter_query->the_post();
+							$cf7_forms[] = get_the_ID();
 						}
 						wp_reset_postdata();
 					}
@@ -1632,9 +1632,9 @@ if ( !trait_exists('Admin') ){
 				?>
 				<label for="filter-by-form" class="screen-reader-text">Filter by form</label>
 				<select name="cf7_form_id" id="filter-by-form">
-					<option <?php echo ( empty($_GET['cf7_form_id']) )? 'selected="selected"' : ''; ?> value="0">All forms</option>
+					<option <?php echo ( empty($this->super->get['cf7_form_id']) )? 'selected="selected"' : ''; ?> value="0">All forms</option>
 					<?php foreach ( $cf7_forms as $cf7_form ): ?>
-						<option value="<?php echo $cf7_form; ?>" <?php echo ( !empty($_GET['cf7_form_id']) && $_GET['cf7_form_id'] == $cf7_form )? 'selected="selected"' : ''; ?>><?php echo get_the_title($cf7_form); ?></option>
+						<option value="<?php echo $cf7_form; ?>" <?php echo ( !empty($this->super->get['cf7_form_id']) && $this->super->get['cf7_form_id'] == $cf7_form )? 'selected="selected"' : ''; ?>><?php echo get_the_title($cf7_form); ?></option>
 					<?php endforeach; ?>
 				</select>
 				<?php
@@ -1644,7 +1644,7 @@ if ( !trait_exists('Admin') ){
 		//Add buttons for additional actions with CF7 submissions
 		public function cf7_submissions_actions($which){ //Which designates top or bottom
 			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
-				$filtered_id = ( !empty($_GET['cf7_form_id']) )? $_GET['cf7_form_id'] : '';
+				$filtered_id = ( !empty($this->super->get['cf7_form_id']) )? $this->super->get['cf7_form_id'] : '';
 
 				//Determine where the export button should link to
 				$export_text = 'Export <small>(WP Core)</small>';
@@ -1668,12 +1668,12 @@ if ( !trait_exists('Admin') ){
 		public function cf7_submissions_parse_query($query){
 			if ( $query->query['post_type'] == 'nebula_cf7_submits' ){ //Only modify this specific query
 				global $pagenow;
-				$current_page = isset($_GET['post_type'])? $_GET['post_type'] : '';
+				$current_page = isset($this->super->get['post_type'])? $this->super->get['post_type'] : '';
 
 				if ( $this->is_admin_page() && $current_page == 'nebula_cf7_submits' && $pagenow == 'edit.php' ){
-					if ( isset($_GET['cf7_form_id']) && $_GET['cf7_form_id'] != 0 ){ //If the filter request is for a specific form ID
+					if ( isset($this->super->get['cf7_form_id']) && $this->super->get['cf7_form_id'] != 0 ){ //If the filter request is for a specific form ID
 						$query->query_vars['meta_key'] = 'form_id';
-						$query->query_vars['meta_value'] = $_GET['cf7_form_id'];
+						$query->query_vars['meta_value'] = $this->super->get['cf7_form_id'];
 						$query->query_vars['meta_compare'] = '=';
 					}
 				}
@@ -1706,7 +1706,7 @@ if ( !trait_exists('Admin') ){
 		//Show a back button on CF7 submission detail pages
 		public function cf7_submissions_back_button(){
 			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
-				$previous_url = ( !empty($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'post_type=nebula_cf7_submits') > -1 && strpos($_SERVER['HTTP_REFERER'], 'cf7_form_id=') > -1 )? $_SERVER['HTTP_REFERER'] : 'edit.php?post_type=nebula_cf7_submits'; //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				$previous_url = ( !empty($this->super->server['HTTP_REFERER']) && strpos($this->super->server['HTTP_REFERER'], 'post_type=nebula_cf7_submits') > -1 && strpos($this->super->server['HTTP_REFERER'], 'cf7_form_id=') > -1 )? $this->super->server['HTTP_REFERER'] : 'edit.php?post_type=nebula_cf7_submits'; //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				echo '<a class="button" href="' . $previous_url . '">&laquo; Back to CF7 Submissions</a>';
 			}
 		}
@@ -1756,7 +1756,7 @@ if ( !trait_exists('Admin') ){
 						}
 
 						if ( $key === '_nebula_ga_cid' ){
-							$value = '<a href="' . $this->google_analytics_url() . '" target="_blank" rel="noopener noreferrer">' . $value . ' &raquo;</a>';
+							$value = '<a href="' . $this->google_analytics_url() . '" target="_blank" rel="noopener noreferrer">' . $value . ' &raquo;</a>'; //If a user explorer is ever added to GA4, link directly to that report. Possibly even to this individual CID.
 						}
 
 						if ( $key === '_nebula_user_agent' ){

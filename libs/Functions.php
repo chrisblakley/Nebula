@@ -1026,7 +1026,7 @@ if ( !trait_exists('Functions') ){
 			foreach ( $networks as $network ){
 				//Share API
 				if ( in_array($network, array('shareapi')) ){
-					echo '<a class="nebula-share-btn nebula-share webshare" href="#">' . __('Share', 'nebula') . '</a>';
+					echo '<a class="nebula-share-btn nebula-share shareapi" href="#">' . __('Share', 'nebula') . '</a>';
 				}
 
 				//Facebook
@@ -1120,7 +1120,7 @@ if ( !trait_exists('Functions') ){
 			$override = apply_filters('pre_nebula_share_api', null);
 			if ( isset($override) ){return;}
 			?>
-				<div class="nebula-social-button webshare">
+				<div class="nebula-social-button shareapi">
 					<a class="btn btn-secondary btn-sm" href="#" target="_blank"><i class="fa-solid fa-fw fa-share"></i> <?php _e('Share', 'nebula'); ?></a>
 				</div>
 			<?php
@@ -3166,7 +3166,7 @@ if ( !trait_exists('Functions') ){
 		//Note: Spam submissions often do not come through this function, so cannot be mitigated/noted here
 		public function cf7_storage($form){
 			$submission = WPCF7_Submission::get_instance();
-			$submission_data = $_POST; //This contains the WPCF7 metadata
+			$submission_data = $this->super->post; //This contains the WPCF7 metadata
 			$contact_form = WPCF7_ContactForm::get_current();
 			$form_id = $contact_form->id(); //Use this to get information about the form
 
@@ -3196,7 +3196,7 @@ if ( !trait_exists('Functions') ){
 			$submission_title = get_the_title($form_id) . ' submission' . $unique_identifier ;
 
 			//Store it in a CPT
-			$submission_id = wp_insert_post(array(
+			wp_insert_post(array(
 				'post_title' => $submission_title,
 				'post_content' => json_encode($submission_data),
 				'post_status' => 'private',

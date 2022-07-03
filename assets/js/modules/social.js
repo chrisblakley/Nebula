@@ -143,7 +143,7 @@ nebula.socialSharing = async function(){
 
 		//Web Share API: https://caniuse.com/mdn-api_navigator_share
 		if ( 'share' in navigator ){ //Chrome 61+
-			nebula.dom.document.on('click', 'a.api-share, .api-share a, a.nebula-share.api, .nebula-share a.api', function(){
+			nebula.dom.document.on('click', 'a.shareapi, .shareapi a, a.nebula-share.shareapi, .nebula-share a.shareapi', function(){
 				let oThis = jQuery(this);
 				let originalText = oThis.html();
 
@@ -182,7 +182,7 @@ nebula.socialSharing = async function(){
 
 			nebula.createCookie('shareapi', true); //Set a cookie to speed up future page loads by not loading third-party share buttons.
 		} else {
-			jQuery('a.api-share, .api-share a, a.nebula-share.api, .nebula-share a.api').addClass('hidden');
+			jQuery('a.api-share, .api-share a, a.nebula-share.shareapi, .nebula-share a.shareapi').addClass('hidden');
 		}
 	}
 };

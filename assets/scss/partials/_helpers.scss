@@ -229,7 +229,7 @@ a.nebula-share-btn {display: inline-block; padding: 5px 7px; border-radius: 3px;
 		&::before {content: "\f0e0"; @include font-awesome("solid");}
 		&:hover {background: darken(grey, 15%);}
 	}
-	&.webshare, &.shareapi {background: orange;
+	&.shareapi {background: orange;
 		&::before {content: "\f1e0"; @include font-awesome("solid");}
 		&:hover {background: darken(orange, 15%);}
 	}

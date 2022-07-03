@@ -60,6 +60,7 @@ if ( !class_exists('Nebula') ){
 			define('NEBULA_URL', get_template_directory_uri()); //Nebula URL
 
 			//Super Globals
+			//Call these like normal, but using nebula()->super->get['example']
 			$this->super = new Super(
 				$_SERVER,
 				$_GET,
