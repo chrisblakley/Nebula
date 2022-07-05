@@ -1716,69 +1716,86 @@ if ( !trait_exists('Admin') ){
 			if ( $this->is_admin_page() && $post->post_type === 'nebula_cf7_submits' ){
 				$form_data = json_decode($post->post_content);
 
-				?>
-					<table id="nebula-cf7-submission-data">
-						<thead>
-							<tr>
-								<td>Field</td>
-								<td>Value</td>
-							</tr>
-						</thead>
-						<tbody>
-				<?php
-
 				if ( !empty($form_data) ){
-					foreach( $form_data as $key => $value ){
-						$classes = array();
+					$form_output = array(
+						'real' => array(),
+						'metadata' => array(),
+					);
 
-						if ( is_array($value) ){
-							$value = implode(', ', $value);
+					//Triage each datapoint into their appropriate type
+					foreach ( $form_data as $key => $value ){
+						if ( substr($key, 0, 1) === '_' || substr($key, 0, 3) === 'hp-' ){
+							$form_output['metadata'][$key] = $value;
+						} else {
+							$form_output['real'][$key] = $value;
+						}
+					}
+
+					//Output each data type
+					foreach ( $form_output as $data_type => $datapoints ){
+						?>
+						<table id="nebula-cf7-submission-<?php echo $data_type; ?>" class="nebula-cf7-submissions">
+							<thead>
+								<tr>
+									<td><?php echo ( $data_type === 'metadata' )? 'Metadata' : 'Field'; ?></td>
+									<td>Value</td>
+								</tr>
+							</thead>
+							<tbody>
+						<?php
+
+						foreach ( $datapoints as $key => $value ){
+							$classes = array();
+
+							if ( is_array($value) ){
+								$value = implode(', ', $value);
+							}
+
+							if ( $key === '_wpcf7' || $key === 'form_name' || $key === 'form_id' ){
+								$value = '<a href="admin.php?page=wpcf7&post=' . $form_data->form_id . '&action=edit">' . $value . ' &raquo;</a>';
+							}
+
+							if ( $key === '_wpcf7_container_post' ){
+								$value = '<a href="' . get_permalink($value) . '">' . $value . ' (' . get_the_title($value) . ') &raquo;</a>';
+							}
+
+							if ( $key === '_nebula_date_formatted' ){
+								$value = $value . ' (' . human_time_diff($form_data->_nebula_timestamp) . ' ago)';
+							}
+
+							if ( $key === '_nebula_username' || $key === '_nebula_user_id' ){
+								$value = '<a href="user-edit.php?user_id=' . $form_data->_nebula_user_id . '">' . $value . ' &raquo;</a>';
+							}
+
+							if ( $key === '_nebula_session_id' ){
+								$value = str_replace(array(':', ';'), array(': ', '<br />'), $value);
+							}
+
+							if ( $key === '_nebula_ga_cid' ){
+								$value = '<a href="' . $this->google_analytics_url() . '" target="_blank" rel="noopener noreferrer">' . $value . ' &raquo;</a>'; //If a user explorer is ever added to GA4, link directly to that report. Possibly even to this individual CID.
+							}
+
+							if ( $key === '_nebula_user_agent' ){
+								$value = '<a href="https://developers.whatismybrowser.com/useragents/parse/" target="_blank" rel="noopener noreferrer">' . $value . ' &raquo;</a>';
+							}
+
+							if ( substr($key, 0, 1) === '_' || substr($key, 0, 3) === 'hp-' ){ //@todo "Nebula" 0: Use str_starts_with in PHP8
+								$classes[] = 'wpcf7-metadata';
+							}
+
+							if ( empty($value) ){
+								$classes[] = 'no-data';
+							}
+
+							echo '<tr class="' . implode(' ', $classes) . '"><td><strong>' . $key . '</strong></td><td>' . $value . '</td></tr>';
 						}
 
-						if ( $key === '_wpcf7' ){
-							$value = '<a href="admin.php?page=wpcf7&post=' . $value . '&action=edit">' . $value . ' (' . get_the_title($value) . ') &raquo;</a>';
-						}
-
-						if ( $key === '_wpcf7_container_post' ){
-							$value = '<a href="' . get_permalink($value) . '">' . $value . ' (' . get_the_title($value) . ') &raquo;</a>';
-						}
-
-						if ( $key === '_nebula_date_formatted' ){
-							$value = $value . ' (' . human_time_diff($form_data->_nebula_timestamp) . ' ago)';
-						}
-
-						if ( $key === '_nebula_username' || $key === '_nebula_user_id' ){
-							$value = '<a href="user-edit.php?user_id=' . $form_data->_nebula_user_id . '">' . $value . ' &raquo;</a>';
-						}
-
-						if ( $key === '_nebula_session_id' ){
-							$value = str_replace(array(':', ';'), array(': ', ';<br />'), $value);
-						}
-
-						if ( $key === '_nebula_ga_cid' ){
-							$value = '<a href="' . $this->google_analytics_url() . '" target="_blank" rel="noopener noreferrer">' . $value . ' &raquo;</a>'; //If a user explorer is ever added to GA4, link directly to that report. Possibly even to this individual CID.
-						}
-
-						if ( $key === '_nebula_user_agent' ){
-							$value = '<a href="https://developers.whatismybrowser.com/useragents/parse/" target="_blank" rel="noopener noreferrer">' . $value . ' &raquo;</a>';
-						}
-
-						if ( substr($key, 0, 1) === '_' ){ //@todo "Nebula" 0: Use str_starts_with in PHP8
-							$classes[] = 'wpcf7-metadata';
-						}
-
-						if ( empty($value) ){
-							$classes[] = 'no-data';
-						}
-
-						echo '<tr class="' . implode(', ', $classes) . '"><td><strong>' . $key . '</strong></td><td>' . $value . '</td></tr>';
+						echo '</tbody></table>';
 					}
 				} else {
 					$formatted_invalid_json = str_replace(array('{', '":', ',"', '}'), array('{<br />', '": ', ',<br />"', '<br />}'), $post->post_content);
-					echo '<tr><td><strong>Invalid JSON</strong><br />Possibly spam?<br /><br /><small>Note: the JSON here may validate when copy/pasted, but the original data could not be decoded.</small></td><td>' . $formatted_invalid_json . '</td></tr>';
+					echo '<table id="nebula-cf7-submission-spam" class="nebula-cf7-submissions"><thead><tr><td>Field</td><td>Value</td></tr></thead><tbody><tr><td><strong>Invalid JSON</strong><br />Possibly spam?<br /><br /><small>Note: the JSON here may validate when copy/pasted, but the original data could not be decoded.</small></td><td>' . $formatted_invalid_json . '</td></tr></tbody></table>';
 				}
-
-				echo '</tbody></table>';
 			}
 		}
 

@@ -354,10 +354,19 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 //Nebula CF7 Submissions
 .cf7-submits-possible-spam {opacity: 0.5;}
 
-table#nebula-cf7-submission-data {border-collapse: collapse; width: 100%; margin-top: 22px; border: 1px solid #444;
+table.nebula-cf7-submissions {border-collapse: collapse; width: 100%; margin-top: 22px; border: 1px solid #444;
 	thead {font-weight: bold; background: $primary_color; color: readable-color($primary_color);
 		td {padding: 15px;}
 	}
+
+	&#nebula-cf7-submission-metadata {margin-top: 50px;
+		thead {background: grey;}
+	}
+
+	&#nebula-cf7-submission-spam {
+		thead {background: $danger_color; color: readable-color($danger_color);}
+	}
+
 
 	tbody {
 		tr {transition: background 0.25s ease;
