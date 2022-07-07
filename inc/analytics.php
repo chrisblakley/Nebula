@@ -19,14 +19,142 @@
 				gtag('consent', 'default', {ad_storage: 'denied'});
 			<?php endif; ?>
 
+			<?php
+				$pageview_properties = array(
+					'send_page_view' => true,
+					'debug_mode' => ( nebula()->is_dev() || nebula()->is_debug() )? 'true' : 'false',
+				);
+
+				//WordPress User ID
+				if ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() ){
+					$pageview_properties['user_id'] = get_current_user_id(); //This property must be less than 256 characters
+				}
+
+				if ( is_singular() || is_page() ){
+					global $post;
+
+					if ( is_singular() ){
+						//Designate single posts because they aren't always easily distinguishable from the URL alone
+						$pageview_properties['single_post'] = 'Single Post';
+
+						//Article author
+						if ( nebula()->get_option('author_bios') ){
+							$pageview_properties['post_author'] = get_the_author();
+						}
+
+						//Article's published year
+						$pageview_properties['publish_date'] = get_the_date('Y-m-d');
+					}
+
+					//Word Count
+					$word_count = nebula()->word_count();
+					if ( $word_count ){
+						echo 'nebula.post.wordcount = ' . $word_count . ';';
+						$pageview_properties['word_count'] = nebula()->word_count(array('range' => true));
+					}
+				}
+
+				//Business Open/Closed
+				if ( nebula()->has_business_hours() ){
+					if ( nebula()->business_open() ){
+						$business_open = 'During Business Hours';
+						echo 'nebula.user.client.businessopen = true;';
+					} else {
+						$business_open = 'Non-Business Hours';
+						echo 'nebula.user.client.businessopen = false;';
+					}
+
+					$pageview_properties['business_hours'] = $business_open;
+				}
+
+				//Relative time ("Late Morning", "Early Evening")
+				$relative_time = nebula()->relative_time();
+				$time_description = implode(' ', $relative_time['description']);
+				$time_range = $relative_time['standard'][0] . ':00' . $relative_time['ampm'] . ' - ' . $relative_time['standard'][2] . ':59' . $relative_time['ampm'];
+				$pageview_properties['relative_time'] = ucwords($time_description) . ' (' . $time_range . ')';
+
+				//Role
+				$pageview_properties['user_role'] = nebula()->user_role();
+
+				//WPML Language
+				if ( defined('ICL_LANGUAGE_NAME') ){
+					$pageview_properties['wpml_language'] = ICL_LANGUAGE_NAME . ' (' . ICL_LANGUAGE_CODE . ')';
+				}
+			?>
+
+			//Set the property JS object here
+			nebula.pageviewProperties = <?php echo json_encode(apply_filters('nebula_ga_pageview_properties', $pageview_properties)); //Allow other functions to modify the PHP pageview properties ?>
+
+			//Post Categories and Tags
+			nebula.pageviewProperties.post_categories = nebula.post.categories;
+			nebula.pageviewProperties.post_tags = nebula.post.tags;
+
+			if ( window.performance ){
+				//Redirects
+				nebula.pageviewProperties.redirect_count = performance.navigation.redirectCount;
+
+				//Navigation Type
+				nebula.pageviewProperties.navigation_type = 'Unknown';
+				switch ( performance.navigation.type ){
+					case 0: //Normal navigation
+						nebula.pageviewProperties.navigation_type = 'Navigation';
+						break;
+					case 1: //Reload
+						nebula.pageviewProperties.navigation_type = 'Reload';
+						break;
+					case 2: //Forward or Back button
+						nebula.pageviewProperties.navigation_type = 'Back/Forward';
+						break;
+					default:
+						nebula.pageviewProperties.navigation_type = 'Other (' + performance.navigation.type + ')';
+						break;
+				}
+
+				//Text Fragment (Ex: #:~:text=This%20is%20an%20example.
+				if ( window.performance ){
+					var firstNavigationEntry = window.performance.getEntriesByType('navigation')[0];
+					if ( typeof firstNavigationEntry === 'object' ){ //This object sometimes does not exist in Safari
+						var textFragment = firstNavigationEntry.name.match('#:~:text=(.*)');
+						if ( textFragment ){ //If the text fragment exists, set the GA dimension
+							nebula.pageviewProperties.text_fragment = decodeURIComponent(textFragment[1]);
+						}
+					}
+				}
+			}
+
+			if ( window !== window.top ){
+				var htmlClasses = document.getElementsByTagName('html')[0].getAttribute("class") || '';
+				document.getElementsByTagName('html')[0].setAttribute('class', headCSS + 'in-iframe'); //Use vanilla JS in case jQuery is not yet available
+				nebula.pageviewProperties.window_type = 'Iframe: ' + window.top.location.href;
+			}
+
+			if ( navigator.standalone || window.matchMedia('(display-mode: standalone)').matches ){
+				var htmlClasses = document.getElementsByTagName('html')[0].getAttribute("class") || '';
+				document.getElementsByTagName('html')[0].setAttribute('class', headCSS + 'in-standalone-app'); //Use vanilla JS in case jQuery is not yet available
+				nebula.pageviewProperties.window_type = 'Standalone App';
+			}
+
+			nebula.user.saveData = <?php echo json_encode(nebula()->is_save_data()); //JSON Encode forces boolean return to print ?>;
+			nebula.pageviewProperties.save_data = nebula.user.saveData;
+
+			//Prefers reduced motion
+			nebula.user.prefersReducedMotion = false;
+			if ( window.matchMedia('(prefers-reduced-motion: reduce)').matches ){
+				nebula.user.prefersReducedMotion = true;
+			}
+			nebula.pageviewProperties.prefers_reduced_motion = nebula.user.prefersReducedMotion;
+
+			//Prefers color scheme
+			nebula.user.prefersColorScheme = 'light';
+			if ( window.matchMedia('(prefers-color-scheme: dark)').matches ){
+				nebula.user.prefersColorScheme = 'dark';
+			}
+			nebula.pageviewProperties.prefers_color_scheme = nebula.user.prefersColorScheme;
+
+			<?php do_action('nebula_ga_before_pageview'); //Simple action for adding/modifying all custom definitions (including JS) before the pageview hit is sent. ?>
+
 			gtag('js', new Date());
-			gtag('config', '<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>', {
-				send_page_view: true,
-				<?php if ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() ): ?>
-					user_id: '<?php echo get_current_user_id(); //This property must be less than 256 characters ?>',
-				<?php endif; ?>
-				debug_mode: <?php echo ( nebula()->is_dev() || nebula()->is_debug() )? 'true' : 'false'; ?>
-			});
+			gtag('config', '<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>', nebula.pageviewProperties);
 
 			window.performance.mark('(Nebula) Analytics Pageview'); //Inexact
 			window.performance.measure('(Nebula) Time to Analytics Pageview', 'navigationStart', '(Nebula) Analytics Pageview');
@@ -39,8 +167,6 @@
 					client_id: gaClientId
 				});
 			});
-
-			<?php do_action('nebula_ga_before_dimensions'); //Hook into for adding more custom definitions before the pageview hit is sent. Can override any above definitions too. ?>
 
 			<?php if ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() ): //Need to do this twice because user_id cannot be accessed in GA4 reports, so need to send it again as a custom dimension. ?>
 				gtag('set', 'user_properties', {
@@ -63,137 +189,6 @@
 					traffic_type : 'internal' //This is a default GA4 property name/value for internal traffic filtering
 				});
 			<?php endif; ?>
-
-			if ( window.performance ){
-				gtag('set', 'user_properties', {
-					redirect_count: performance.navigation.redirectCount
-				});
-
-				//Navigation Type
-				var navigationTypeLabel = 'Unknown';
-				switch ( performance.navigation.type ){
-					case 0: //Normal navigation
-						navigationTypeLabel = 'Navigation';
-						break;
-					case 1: //Reload
-						navigationTypeLabel = 'Reload';
-						break;
-					case 2: //Forward or Back button
-						navigationTypeLabel = 'Back/Forward';
-						break;
-					default:
-						navigationTypeLabel = 'Other (' + performance.navigation.type + ')';
-						break;
-				}
-				gtag('set', 'user_properties', {
-					navigation_type: navigationTypeLabel
-				});
-
-				//Text Fragment (Ex: #:~:text=This%20is%20an%20example.
-				if ( window.performance ){
-					var firstNavigationEntry = window.performance.getEntriesByType('navigation')[0];
-					if ( typeof firstNavigationEntry === 'object' ){ //This object sometimes does not exist in Safari
-						var textFragment = firstNavigationEntry.name.match('#:~:text=(.*)');
-						if ( textFragment ){ //If the text fragment exists, set the GA dimension
-							gtag('set', 'user_properties', {
-								text_fragment: decodeURIComponent(textFragment[1])
-							});
-						}
-					}
-				}
-			}
-
-			<?php
-				if ( is_singular() || is_page() ){
-					global $post;
-
-					if ( is_singular() ){
-						//Article author
-						if ( nebula()->get_option('author_bios') ){
-							echo 'gtag("set", "user_properties", {post_author: "' . get_the_author() . '"});';
-						}
-
-						//Article's published year
-						echo 'gtag("set", "user_properties", {publish_date: "' . get_the_date('Y-m-d') . '"});';
-					}
-
-					echo 'gtag("set", "user_properties", {post_categories: nebula.post.categories});';
-					echo 'gtag("set", "user_properties", {post_tags: nebula.post.tags});';
-
-					//Word Count
-					$word_count = nebula()->word_count();
-					if ( $word_count ){
-						echo 'nebula.post.wordcount = ' . $word_count . ';';
-						echo 'gtag("set", "user_properties", {word_count: "' . nebula()->word_count(array('range' => true)) . '"});';
-					}
-				}
-
-				//Business Open/Closed
-				if ( nebula()->has_business_hours() ){
-					if ( nebula()->business_open() ){
-						$business_open = 'During Business Hours';
-						echo 'nebula.user.client.businessopen = true;';
-					} else {
-						$business_open = 'Non-Business Hours';
-						echo 'nebula.user.client.businessopen = false;';
-					}
-
-					echo 'gtag("set", "user_properties", {business_hours: "' . $business_open . '"});';
-				}
-
-				//Relative time ("Late Morning", "Early Evening")
-				$relative_time = nebula()->relative_time();
-				$time_description = implode(' ', $relative_time['description']);
-				$time_range = $relative_time['standard'][0] . ':00' . $relative_time['ampm'] . ' - ' . $relative_time['standard'][2] . ':59' . $relative_time['ampm'];
-				echo 'gtag("set", "user_properties", {relative_time: "' . ucwords($time_description) . ' (' . $time_range . ')"});';
-
-				//Role
-				echo 'gtag("set", "user_properties", {user_role: "' . nebula()->user_role() . '"});';
-
-				//WPML Language
-				if ( defined('ICL_LANGUAGE_NAME') ){
-					echo 'gtag("set", "user_properties", {wpml_language: "' . ICL_LANGUAGE_NAME . ' (' . ICL_LANGUAGE_CODE . ')"});';
-				}
-			?>
-
-			if ( window !== window.top ){
-				var htmlClasses = document.getElementsByTagName('html')[0].getAttribute("class") || '';
-				document.getElementsByTagName('html')[0].setAttribute('class', headCSS + 'in-iframe'); //Use vanilla JS in case jQuery is not yet available
-				gtag('set', 'user_properties', {
-					window_type: 'Iframe: ' + window.top.location.href
-				});
-			}
-
-			if ( navigator.standalone || window.matchMedia('(display-mode: standalone)').matches ){
-				var htmlClasses = document.getElementsByTagName('html')[0].getAttribute("class") || '';
-				document.getElementsByTagName('html')[0].setAttribute('class', headCSS + 'in-standalone-app'); //Use vanilla JS in case jQuery is not yet available
-				gtag('set', 'user_properties', {
-					window_type: 'Standalone App'
-				});
-			}
-
-			nebula.user.saveData = <?php echo json_encode(nebula()->is_save_data()); //JSON Encode forces boolean return to print ?>;
-			gtag('set', 'user_properties', {
-				save_data: nebula.user.saveData
-			});
-
-			//Prefers reduced motion
-			nebula.user.prefersReducedMotion = false;
-			if ( window.matchMedia('(prefers-reduced-motion: reduce)').matches ){
-				nebula.user.prefersReducedMotion = true;
-			}
-			gtag('set', 'user_properties', {
-				prefers_reduced_motion: nebula.user.prefersReducedMotion
-			});
-
-			//Prefers color scheme
-			nebula.user.prefersColorScheme = 'light';
-			if ( window.matchMedia('(prefers-color-scheme: dark)').matches ){
-				nebula.user.prefersColorScheme = 'dark';
-			}
-			gtag('set', 'user_properties', {
-				prefers_color_scheme: nebula.user.prefersColorScheme
-			});
 
 			<?php if ( is_404() ): //Track 404 Errors ?>
 				var lastReferrer = nebula.session?.referrer || document.referrer || '(Unknown Referrer)';
