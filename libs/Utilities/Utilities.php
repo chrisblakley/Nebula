@@ -77,7 +77,7 @@ if ( !trait_exists('Utilities') ){
 			//Check object cache first
 			$session_id = wp_cache_get('nebula_session_id', $cache_group); //If session_id() is not available, it will re-generate the Nebula session ID
 			if ( !empty($session_id) ){
-				return $session_id;
+				return sanitize_text_field($session_id);
 			}
 
 			$timer_name = $this->timer('Session ID');
@@ -139,7 +139,7 @@ if ( !trait_exists('Utilities') ){
 			//do_action('qm/info', 'Nebula Session ID: ' . $session_id);
 			wp_cache_set('nebula_session_id', $session_id, $cache_group); //Store in object cache grouped by the unique ID to prevent interference
 			$this->timer($timer_name, 'end');
-			return $session_id;
+			return sanitize_text_field($session_id);
 		}
 
 		//Check if currently viewing an admin page (or the Customizer)
@@ -659,12 +659,12 @@ if ( !trait_exists('Utilities') ){
 			foreach ( $notable_tags as $tag ){
 				if ( strpos(strtolower($query_string), $tag) > -1 ){ //If UTM parameters exist //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 					$this->set_cookie('nebula_utms', $this->url_components('all'), strtotime('+1 hours')); //Set/update the cookie with an hour expiration and store the entire LP URL
-					return $this->url_components('all'); //Return the entire landing page URL with full query string
+					return sanitize_text_field($this->url_components('all')); //Return the entire landing page URL with full query string sanitized
 				}
 			}
 
 			if ( !empty($this->super->cookie['nebula_utms']) ){
-				return htmlspecialchars($this->super->cookie['nebula_utms']);
+				return sanitize_text_field(htmlspecialchars($this->super->cookie['nebula_utms']));
 			}
 
 			return '';

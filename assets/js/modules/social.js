@@ -144,6 +144,20 @@ nebula.socialSharing = async function(){
 		//Web Share API: https://caniuse.com/mdn-api_navigator_share
 		if ( 'share' in navigator ){ //Chrome 61+
 			nebula.dom.document.on('click', 'a.shareapi, .shareapi a, a.nebula-share.shareapi, .nebula-share a.shareapi', function(){
+				let thisEvent = {
+					event: e,
+					event_name: 'share',
+					event_category: 'Social',
+					event_action: 'Share',
+					intent: 'Intent',
+					network: 'Share API (Drawer Opened)',
+					url: window.location.href,
+					title: document.title,
+				};
+
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+
 				let oThis = jQuery(this);
 				let originalText = oThis.html();
 
@@ -158,7 +172,7 @@ nebula.socialSharing = async function(){
 						event_category: 'Social',
 						event_action: 'Share',
 						intent: 'Intent',
-						network: 'Web Share API',
+						network: 'Share API (Success)',
 						url: window.location.href,
 						title: document.title,
 					};

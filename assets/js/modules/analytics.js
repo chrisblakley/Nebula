@@ -1195,6 +1195,30 @@ nebula.eventTracking = async function(){
 			//Ignore errors
 		}
 
+		//Content Editable element changes
+		nebula.dom.document.on('focus', '[contenteditable]', function(){
+			if ( !jQuery(this).is('[data-original-text]') ){ //If it does not already have this attribute (only want to capture the first focus)
+				jQuery(this).attr('data-original-text', jQuery(this).text()); //Store the original text for content editable elements
+			}
+		});
+		nebula.dom.document.on('blur', '[contenteditable]', function(){
+			if ( jQuery(this).attr('data-original-text') && jQuery(this).text() != jQuery(this).attr('data-original-text') ){
+				let thisEvent = {
+					event_name: 'contenteditable',
+					event_category: 'Content Editable',
+					event_action: 'Text Changed',
+					original_text: jQuery(this).attr('data-original-text'),
+					new_text: jQuery(this).text()
+				};
+
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-print'}));
+				if ( typeof clarity === 'function' ){clarity('set', thisEvent.event_category, thisEvent.event_action);}
+				nebula.crm('event', thisEvent.event_category);
+			}
+		});
+
 		//Capture Print Intent
 		function sendPrintEvent(action, trigger){
 			let thisEvent = {

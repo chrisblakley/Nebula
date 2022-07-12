@@ -68,7 +68,7 @@ if ( !trait_exists('Analytics') ){
 				$cid = $contents['cid'];
 			}
 
-			return esc_html($cid);
+			return sanitize_text_field(esc_html($cid));
 		}
 
 		//Google Optimize Tag

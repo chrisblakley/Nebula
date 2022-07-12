@@ -3166,13 +3166,13 @@ if ( !trait_exists('Functions') ){
 		//Note: Spam submissions often do not come through this function, so cannot be mitigated/noted here
 		public function cf7_storage($form){
 			$submission = WPCF7_Submission::get_instance();
-			$submission_data = $this->super->post; //This contains the WPCF7 metadata
+			$submission_data = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS); //Get the $_POST data array and sanitize it
 			$contact_form = WPCF7_ContactForm::get_current();
-			$form_id = $contact_form->id(); //Use this to get information about the form
+			$form_id = intval($contact_form->id()); //Use this to get information about the form
 
 			//Add more data to the submission
 			$submission_data['form_id'] = $form_id;
-			$submission_data['form_name'] = get_the_title($form_id);
+			$submission_data['form_name'] = sanitize_text_field(get_the_title($form_id));
 
 			//Nebula contextual data
 			$nebula_debug_info = $this->cf7_debug_info($submission);
@@ -3182,27 +3182,28 @@ if ( !trait_exists('Functions') ){
 
 			$unique_identifier = '';
 			if ( !empty($submission_data['name']) ){
-				$unique_identifier = ' from ' . $submission_data['name'];
+				$unique_identifier = ' from ' . sanitize_text_field($submission_data['name']);
 			} elseif ( !empty($submission_data['your-name']) ){
-				$unique_identifier = ' from ' . $submission_data['your-name'];
+				$unique_identifier = ' from ' . sanitize_text_field($submission_data['your-name']);
 			} elseif ( !empty($submission_data['first-name']) ){
-				$unique_identifier = ' from ' . $submission_data['first-name'];
+				$unique_identifier = ' from ' . sanitize_text_field($submission_data['first-name']);
 			} elseif ( !empty($submission_data['email']) ){
-				$unique_identifier = ' from ' . $submission_data['email'];
+				$unique_identifier = ' from ' . sanitize_text_field($submission_data['email']);
 			} elseif ( !empty($submission_data['your-email']) ){
-				$unique_identifier = ' from ' . $submission_data['your-email'];
+				$unique_identifier = ' from ' . sanitize_text_field($submission_data['your-email']);
 			}
 
 			$submission_title = get_the_title($form_id) . ' submission' . $unique_identifier ;
+			$submission_data = map_deep($submission_data, 'sanitize_text_field'); //Deep sanitization of the full data array
 
 			//Store it in a CPT
 			wp_insert_post(array(
-				'post_title' => $submission_title,
+				'post_title' => sanitize_text_field($submission_title),
 				'post_content' => json_encode($submission_data),
 				'post_status' => 'private',
 				'post_type' => 'nebula_cf7_submits', //This needs to match the CPT slug!
 				'meta_input' => array(
-					'form_id' => $form_id, //Associate this submission with its CF7 form ID
+					'form_id' => intval($form_id), //Associate this submission with its CF7 form ID
 				)
 			));
 		}
@@ -3219,9 +3220,9 @@ if ( !trait_exists('Functions') ){
 			$debug_info['nebula_date_formatted'] = date('l, F j, Y \a\t g:ia');
 			$debug_info['nebula_version'] = $this->version('full') . ' (Committed ' . $this->version('date') . ')';
 			$debug_info['nebula_child_version'] = $this->child_version('full');
-			$debug_info['nebula_session_id'] = $this->nebula_session_id();
-			$debug_info['nebula_ga_cid'] = $this->ga_parse_cookie();
-			$debug_info['nebula_utms'] = htmlspecialchars_decode($this->utms());
+			$debug_info['nebula_session_id'] = sanitize_text_field($this->nebula_session_id());
+			$debug_info['nebula_ga_cid'] = sanitize_text_field($this->ga_parse_cookie());
+			$debug_info['nebula_utms'] = sanitize_text_field(htmlspecialchars_decode($this->utms()));
 
 			//Logged-in User Info
 			$user_id = (int) $cf7_instance->get_meta('current_user_id');
@@ -3277,7 +3278,7 @@ if ( !trait_exists('Functions') ){
 
 			//Device information
 			if ( isset($this->super->server['HTTP_USER_AGENT']) ){
-				$debug_info['nebula_user_agent'] = $this->super->server['HTTP_USER_AGENT'];
+				$debug_info['nebula_user_agent'] = sanitize_text_field($this->super->server['HTTP_USER_AGENT']);
 			}
 
 			$debug_info['nebula_device_type'] = ucwords($this->get_device('formfactor'));
@@ -3286,7 +3287,9 @@ if ( !trait_exists('Functions') ){
 			$debug_info['nebula_browser'] = $this->get_browser('full');
 
 			//Anonymized IP address
-			$debug_info['nebula_anonymized_ip'] = $this->get_ip_address();
+			$debug_info['nebula_anonymized_ip'] = sanitize_text_field($this->get_ip_address());
+
+			$debug_info = map_deep($debug_info, 'sanitize_text_field'); //Deep sanitization of the full data array
 
 			return apply_filters('nebula_cf7_debug_info', $debug_info);
 		}
