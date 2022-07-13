@@ -93,6 +93,10 @@ nebula.allHitDimensions = function(){
 
 //Prep an event object to send to Google Analytics
 nebula.gaEventObject = function(eventObject){
+	if ( nebula.user.staff && eventObject['event_name'].length > 40 ){ //If the event name is longer than 40 characters
+		console.warn('[Nebula Help] The GA4 event name "' + eventObject['event_name'] + '" is too long (' + eventObject['event_name'].length + ' characters). Event names must be 40 characters or less.');
+	}
+
 	delete eventObject['e']; //Remove the DOM Event key
 	delete eventObject['event']; //Remove the DOM Event key
 	delete eventObject['event_name']; //Name is sent separately outside of the object parameter, so remove it here
@@ -1202,7 +1206,7 @@ nebula.eventTracking = async function(){
 			}
 		});
 		nebula.dom.document.on('blur', '[contenteditable]', function(){
-			if ( jQuery(this).attr('data-original-text') && jQuery(this).text() != jQuery(this).attr('data-original-text') ){
+			if ( jQuery(this).attr('data-original-text') && jQuery(this).text() !== jQuery(this).attr('data-original-text') ){
 				let thisEvent = {
 					event_name: 'contenteditable',
 					event_category: 'Content Editable',

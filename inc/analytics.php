@@ -35,7 +35,7 @@
 
 					if ( is_singular() ){
 						//Designate single posts because they aren't always easily distinguishable from the URL alone
-						$pageview_properties['single_post'] = 'Single Post';
+						$pageview_properties['single_post'] = ( is_front_page() )? 'Front Page' : 'Single Post';
 
 						//Article author
 						if ( nebula()->get_option('author_bios') ){
@@ -52,6 +52,11 @@
 						echo 'nebula.post.wordcount = ' . $word_count . ';';
 						$pageview_properties['word_count'] = nebula()->word_count(array('range' => true));
 					}
+				}
+
+				//Query Strings
+				if ( !empty(nebula()->url_components('query')) ){
+					$pageview_properties['query_string'] = nebula()->url_components('query');
 				}
 
 				//Business Open/Closed
@@ -83,7 +88,7 @@
 			?>
 
 			//Set the property JS object here
-			nebula.pageviewProperties = <?php echo json_encode(apply_filters('nebula_ga_pageview_properties', $pageview_properties)); //Allow other functions to modify the PHP pageview properties ?>
+			nebula.pageviewProperties = <?php echo json_encode(apply_filters('nebula_ga_pageview_properties', $pageview_properties)); //Allow other functions to modify the PHP pageview properties ?>;
 
 			//Post Categories and Tags
 			nebula.pageviewProperties.post_categories = nebula.post.categories;
@@ -110,7 +115,7 @@
 						break;
 				}
 
-				//Text Fragment (Ex: #:~:text=This%20is%20an%20example.
+				//Text Fragment Ex: #:~:text=This%20is%20an%20example.
 				if ( window.performance ){
 					var firstNavigationEntry = window.performance.getEntriesByType('navigation')[0];
 					if ( typeof firstNavigationEntry === 'object' ){ //This object sometimes does not exist in Safari
@@ -177,18 +182,21 @@
 			gtag('get', '<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>', 'session_id', function(gaSessionId){
 				let nebulaSessionId = nebula?.session?.id || '';
 				gtag('set', 'user_properties', {
-					ga_session_id: gaSessionId
-				});
-				gtag('set', 'user_properties', {
+					ga_session_id: gaSessionId,
 					nebula_session_id: nebulaSessionId + 'ga:' + gaSessionId
 				});
 			});
 
 			<?php if ( nebula()->is_staff() ): ?>
 				gtag('set', 'user_properties', {
-					traffic_type : 'internal' //This is a default GA4 property name/value for internal traffic filtering
+					traffic_type: 'internal' //This is a default GA4 property name/value for internal traffic filtering
 				});
 			<?php endif; ?>
+
+			//User role
+			gtag('set', 'user_properties', {
+				role: '<?php echo nebula()->user_role(); ?>'
+			});
 
 			<?php if ( is_404() ): //Track 404 Errors ?>
 				var lastReferrer = nebula.session?.referrer || document.referrer || '(Unknown Referrer)';

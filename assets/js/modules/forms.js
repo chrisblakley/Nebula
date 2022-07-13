@@ -59,7 +59,7 @@ nebula.cf7Functions = async function(){
 
 	//Form starts and field focuses
 	nebula.dom.document.on('focus', '.wpcf7-form input, .wpcf7-form select, .wpcf7-form button, .wpcf7-form textarea', function(e){
-		let formID = jQuery(this).closest('div.wpcf7').attr('id');
+		let formID = jQuery(this).closest('div.wpcf7').attr('id'); //This wraps the form element
 
 		let thisField = e.target.name || jQuery(this).closest('.form-group').find('label').text() || e.target.id || 'Unknown';
 		let fieldInfo = '';
@@ -422,6 +422,7 @@ nebula.cf7Functions = async function(){
 				});
 			}
 
+			jQuery('#' + e.detail.unitTag).find('button#submit').removeClass('active');
 			jQuery('#' + e.detail.unitTag).find('.is-valid, .is-invalid').removeClass('is-valid is-invalid'); //Clear all validation classes
 		} catch(error){
 			gtag('event', 'exception', {

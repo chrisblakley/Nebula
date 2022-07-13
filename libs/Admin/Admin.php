@@ -1649,7 +1649,10 @@ if ( !trait_exists('Admin') ){
 				//Determine where the export button should link to
 				$export_text = 'Export <small>(WP Core)</small>';
 				$export_url = 'export.php';
-				if ( is_plugin_active('advanced-cf7-db/advanced-cf7-db.php') ){ //https://wordpress.org/plugins/advanced-cf7-db/
+				if ( is_plugin_active('flamingo/flamingo.php') ){ //https://wordpress.org/plugins/flamingo/
+					$export_text = 'Export <small>(Flamingo)</small>';
+					$export_url = 'admin.php?page=flamingo_inbound';
+				} elseif ( is_plugin_active('advanced-cf7-db/advanced-cf7-db.php') ){ //https://wordpress.org/plugins/advanced-cf7-db/
 					$export_text = 'Export <small>(Advanced CF7 DB)</small>';
 					$export_url = 'admin.php?page=contact-form-listing&cf7_id=' . $filtered_id;
 				} elseif ( is_plugin_active('contact-form-cfdb7/contact-form-cfdb-7.php') ){ //https://wordpress.org/plugins/contact-form-cfdb7/
