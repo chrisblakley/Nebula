@@ -16,7 +16,7 @@ if ( !trait_exists('Security') ){
 			add_action('wp_footer', array($this, 'track_notable_bots'));
 			add_action('get_header', array($this, 'redirect_author_template'));
 			add_filter('xmlrpc_enabled', '__return_false'); //Disable XML-RPC that require authentication
-			add_filter('xmlrpc_methods', function(){return array();}, PHP_INT_MAX); //Disable all XML-RPC requests with the highest priority
+			add_filter('xmlrpc_methods', array($this, 'xmlrpc_methods'), 5, 1); //Disable all XML-RPC requests with a high priority
 			add_filter('rest_endpoints', array($this, 'rest_endpoints_security'));
 			add_action('wp_footer', array($this, 'cookie_notification'));
 
@@ -133,6 +133,13 @@ if ( !trait_exists('Security') ){
 				wp_redirect(apply_filters('nebula_no_author_redirect', home_url('/') . '?s=about'));
 				exit;
 			}
+		}
+
+		//Disable all XML-RPC requests
+		public function xmlrpc_methods($methods){
+			$override = apply_filters('pre_nebula_xmlrpc_methods', null, $methods);
+			if ( isset($override) ){return $override;}
+			return array(); //Empty the array of methods
 		}
 
 		//Manage what is exposed in the REST API
