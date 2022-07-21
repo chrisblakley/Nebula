@@ -10,4 +10,4 @@ h1, h2, h3, h4, h5, h6 {color: $text_color;
 	a {color: $primary_color;}
 }
 
-a:not(.btn) {@include link-colors($primary_color, $secondary_color, darken($primary_color, 15%));}
+a:not(.btn):not(.wp-block-button__link) {@include link-colors($primary_color, $secondary_color, darken($primary_color, 15%));}
