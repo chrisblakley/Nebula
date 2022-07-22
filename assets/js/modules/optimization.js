@@ -475,7 +475,7 @@ nebula.lazyLoadAssets = async function(){
 	//Detect if Bootstrap JS is needed and load it
 	//A wildcard attribute name selector would be super useful here, but does not exist. Something like [data-bs-*] would be perfect...
 	//That being said, the Offcanvas component will be used on 95% of Nebula sites, so this will likely load on every page regardless.
-	if ( typeof bootstrap !== 'undefined' ){ //If Bootstrap JS has not already been initialized
+	if ( typeof bootstrap === 'undefined' ){ //If Bootstrap JS has not already been initialized
 		if ( jQuery('.offcanvas, .accordion, .alert, .carousel, .collapse, .dropdown-menu, .modal, .nav-tabs, .nav-pills, [data-bs-toggle]').length ){
 			nebula.loadJS(nebula.site.resources.scripts['nebula_bootstrap']).then(function(){ //Load Bootstrap JS
 				nebula.initBootstrapFunctions(); //Initialize Nebula Bootstrap helper functionality now that Bootstrap JS has finished loading here
