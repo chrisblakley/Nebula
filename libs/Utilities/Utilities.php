@@ -348,6 +348,10 @@ if ( !trait_exists('Utilities') ){
 				return true;
 			}
 
+			if ( defined('DONOTCACHEPAGE') && !empty(DONOTCACHEPAGE) ){
+				return true;
+			}
+
 			return false;
 		}
 
@@ -1328,10 +1332,15 @@ if ( !trait_exists('Utilities') ){
 			$override = apply_filters('pre_nebula_version', null, $return);
 			if ( isset($override) ){return $override;}
 
+			$appended_version = apply_filters('nebula_version_appended', ''); //Allow others to append an additional version number at the end of Nebula's. This would assist in clearing caches in the parent theme in certain circumstances.
+			if ( !empty($appended_version) && substr($appended_version, 0, 1) !== '.' ){ //If it does not start with a dot, add one. //@todo "Nebula" 0: In PHP8 use str_starts_with here
+				$appended_version .= '.' . $appended_version;
+			}
+
 			$return = str_replace(array(' ', '_', '-'), '', strtolower($return));
 
 			if ( $return === 'child' && is_child_theme() ){
-				return $this->child_version();
+				return $this->child_version(); //This version gets appended on its own
 			}
 
 			//Parse the actual Nebula style.scss file which is closer to real-time than using wp_get_theme() below (which is sufficient for most uses), but is a little more intensive
@@ -1341,14 +1350,14 @@ if ( !trait_exists('Utilities') ){
 				$style_scss = $wp_filesystem->get_contents(get_template_directory() . '/assets/scss/style.scss');
 				if ( !empty($style_scss) ){
 					preg_match("/(?:Version: )(?<number>\d+?\.\d+?\.\d+?\.\d+?)$/m", $style_scss, $realtime_version_number);
-					return $realtime_version_number['number'];
+					return $realtime_version_number['number']; //Appended version number is not applied to the realtime version
 				}
 			}
 
 			$nebula_theme_info = ( is_child_theme() )? wp_get_theme(str_replace('-child', '', get_template())) : wp_get_theme(); //Get the parent theme (regardless of if child theme is active)
 
 			if ( $return === 'raw' ){ //Check this first to prevent needing to RegEx altogether
-				return $nebula_theme_info->get('Version'); //Ex: 7.2.23.8475
+				return $nebula_theme_info->get('Version') . $appended_version; //Ex: 7.2.23.8475
 			}
 
 			preg_match('/(?<primary>(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+[a-z]?))\.?(?<build>\d+)?/i', $nebula_theme_info->get('Version'), $nebula_version);
@@ -1367,6 +1376,7 @@ if ( !trait_exists('Utilities') ){
 				'minor' => $nebula_version['minor'],
 				'patch' => $nebula_version['patch'],
 				'build' => ( isset($nebula_version['build']) )? $nebula_version['build'] : false,
+				'appended' =>  $appended_version,
 				'utc' => strtotime($nebula_version_month . $nebula_version_day_formated . $nebula_version_year),
 				'date' => $nebula_version_month . $nebula_version_day_formated . $nebula_version_year,
 				'year' => $nebula_version_year,
@@ -1380,7 +1390,7 @@ if ( !trait_exists('Utilities') ){
 					return $nebula_theme_info->get('Version'); //Ex: 7.2.19.8475
 				case ('version'):
 				case ('full'):
-					return $nebula_version_info['full']; //Ex: 7.2.23.8475
+					return $nebula_version_info['full'] . $appended_version; //Ex: 7.2.23.8475 (plus any appended number)
 				case ('primary'):
 					return $nebula_version_info['primary']; //Ex: 7.2.23
 				case ('date'):
@@ -1402,9 +1412,14 @@ if ( !trait_exists('Utilities') ){
 				return $this->version('full'); //Return the parent theme version if child theme is not active
 			}
 
+			$appended_version = apply_filters('nebula_version_appended', ''); //Allow others to append an additional version number at the end of Nebula's. This would assist in clearing caches in the parent theme in certain circumstances.
+			if ( !empty($appended_version) && substr($appended_version, 0, 1) !== '.' ){ //If it does not start with a dot, add one. //@todo "Nebula" 0: In PHP8 use str_starts_with here
+				$appended_version .= '.' . $appended_version;
+			}
+
 			//Get the version number from the child theme stylesheet
 			$child_theme_info = wp_get_theme();
-			return $child_theme_info->get('Version');
+			return $child_theme_info->get('Version') . $appended_version;
 		}
 
 		//Update the child theme version whenever Sass is re-processed

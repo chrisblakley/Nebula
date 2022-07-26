@@ -25,6 +25,17 @@ if ( !class_exists('Nebula') ){
 
 require_once get_stylesheet_directory() . '/libs/nebula_child.php'; //Nebula Child
 
+//Control what to append to Nebula asset version numbers when desired
+add_filter('nebula_version_appended', function($version){
+	if ( nebula()->is_bypass_cache() ){ //If debug mode is requested or any other reason to bypass cache
+		return rand(10000, 99999); //Return a random number
+	}
+
+	//Feel free to customize this or even hard-code a number here as needed. Don't forget to return it!
+
+	return $version;
+});
+
 add_action('wp_enqueue_scripts', 'register_nebula_child_assets', 327);
 add_action('login_enqueue_scripts', 'register_nebula_child_assets', 327);
 add_action('admin_enqueue_scripts', 'register_nebula_child_assets', 327);

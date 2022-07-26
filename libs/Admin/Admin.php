@@ -28,8 +28,8 @@ if ( !trait_exists('Admin') ){
 				add_filter('auth_cookie_expiration', array($this, 'session_expire')); //This is the user auto-signout session length
 				add_action('after_setup_theme', array($this, 'custom_media_display_settings'));
 
-				add_filter('wp_check_filetype_and_ext', array($this, 'allow_svg_uploads'), 10, 4);
 				add_filter('upload_mimes', array($this, 'additional_upload_mime_types'));
+				add_filter('wp_check_filetype_and_ext', array($this, 'allow_svg_uploads'), 10, 4);
 
 				add_action('_core_updated_successfully', array($this, 'log_core_wp_updates'), 10, 2); //This happens after successful WP core update
 
@@ -1403,6 +1403,10 @@ if ( !trait_exists('Admin') ){
 		}
 
 		//Allow SVG files to be uploaded to the Media Library
+		public function additional_upload_mime_types($mime_types){
+			$mime_types['svg'] = 'image/svg+xml';
+			return $mime_types;
+		}
 		public function allow_svg_uploads($data, $file, $filename, $mimes){
 			$filetype = wp_check_filetype($filename, $mimes);
 
@@ -1411,10 +1415,6 @@ if ( !trait_exists('Admin') ){
 				'type' => $filetype['type'],
 				'proper_filename' => $data['proper_filename']
 			);
-		}
-		public function additional_upload_mime_types($mime_types){
-			$mime_types['svg'] = 'image/svg+xml';
-			return $mime_types;
 		}
 
 		//Change default values for the upload media box
@@ -1570,7 +1570,7 @@ if ( !trait_exists('Admin') ){
 
 		//Custom columns content to CF7 submission listings
 		public function cf7_submissions_columns_content($column_name, $id){
-			if ( $this->is_admin_page() ){
+			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
 				$submission_data = get_post($id); //Remember: this $id is the submission ID (not the form ID)!
 				$form_data = json_decode($submission_data->post_content);
 				$form_id = ( is_object($form_data) )? $form_data->_wpcf7 : false; //CF7 Form ID
@@ -1600,15 +1600,19 @@ if ( !trait_exists('Admin') ){
 			}
 		}
 		public function cf7_submissions_columns_orderby($query){
-			if ( $this->is_admin_page() ){
-				$orderby = strtolower($query->get('orderby'));
+			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
+				$orderby = $query->get('orderby');
 
-				if ( $orderby === 'form_name' ){
-					$query->set('orderby', 'form_name');
-				}
+				if ( is_string($orderby) ){
+					$orderby = strtolower($orderby);
 
-				if ( $orderby === 'page_title' ){
-					$query->set('orderby', 'page_title');
+					if ( $orderby === 'form_name' ){
+						$query->set('orderby', 'form_name');
+					}
+
+					if ( $orderby === 'page_title' ){
+						$query->set('orderby', 'page_title');
+					}
 				}
 			}
 		}
