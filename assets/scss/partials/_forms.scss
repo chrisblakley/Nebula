@@ -13,8 +13,10 @@ textarea {resize: vertical; max-width: 100%;}
 	.success {color: $success_color;}
 }
 
-input[type="checkbox"]{-webkit-appearance: checkbox;}
-input[type="radio"]{-webkit-appearance: radio;}
+//Setting these as :where so they can be easily overwritten. May just completely remove them in the future...
+:where(input[type="checkbox"]){-webkit-appearance: checkbox;}
+:where(input[type="radio"]){-webkit-appearance: radio;}
+
 button {cursor: pointer;}
 
 #wp_search_submit {color: #292b2c !important;

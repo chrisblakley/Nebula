@@ -3346,6 +3346,9 @@ if ( !trait_exists('Functions') ){
 				//Note: Adding this header significantly increases server-response time!
 				header('Clear-Site-Data: "cache", "storage", "executionContexts"'); //Do not clear cookies here because it forces logout which is annoying when Customizer is saved/closed
 			}
+
+			clearstatcache(); //This one is specifically for PHP functions like file_exists()
+			header('Cache-Control: must-revalidate');
 		}
 
 		//Flush rewrite rules when using ?debug at shutdown

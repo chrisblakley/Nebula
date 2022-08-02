@@ -217,6 +217,7 @@ if ( !trait_exists('Options') ){
 				'youtube_url' => '',
 				'instagram_url' => '',
 				'pinterest_url' => '',
+				'tiktok_url' => '',
 
 				//Functions Tab
 				'jquery_location' => 'wordpress',

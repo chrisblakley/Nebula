@@ -58,8 +58,11 @@ add_filter('block_categories', function($categories, $post){
 	);
 }, 3, 2);
 
-
-
+//Override Nebula parent page templates
+// add_filter('theme_page_templates', function($templates){
+// 	unset( $templates['page-templates/fullwidth.php'] );
+// 	return $templates;
+// });
 
 
 

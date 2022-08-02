@@ -324,6 +324,16 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Pinterest profile.</p>
 					<p class="option-keywords">social seo</p>
 				</div>
+
+				<div class="form-group">
+					<label for="tiktok_url">TikTok</label>
+					<div class="input-group">
+						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-tiktok"></i> URL</span></div>
+						<input type="text" name="nebula_options[tiktok_url]" id="tiktok_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['tiktok_url']; ?>" placeholder="https://www.tiktok.com/@pinckneyhugo" />
+					</div>
+					<p class="nebula-help-text short-help form-text text-muted">The full URL of your TikTok profile (including the @ symbol).</p>
+					<p class="option-keywords">social seo</p>
+				</div>
 			<?php
 
 			do_action('nebula_options_social_metadata_metabox', $nebula_options);
