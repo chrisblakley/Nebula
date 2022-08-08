@@ -1554,17 +1554,23 @@ if ( !trait_exists('Admin') ){
 
 		//Add columns to CF7 submission listings
 		public function cf7_submissions_columns_head($columns){
-			$columns['formatted_date'] = 'Formatted Date';
-			$columns['form_name'] = 'Form Name';
-			$columns['page_title'] = 'Page Title';
-			unset($columns['date']); //Replacing the WP date column with our own
-			unset($columns['id']); //This ID is confusing since it is the submission ID
+			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
+				$columns['formatted_date'] = 'Formatted Date';
+				$columns['form_name'] = 'Form Name';
+				$columns['page_title'] = 'Page Title';
+				unset($columns['date']); //Replacing the WP date column with our own
+				unset($columns['id']); //This ID is confusing since it is the submission ID
+			}
+
 			return $columns;
 		}
 		public function cf7_submissions_columns_sortable($columns){
-			$columns['formatted_date'] = 'date';
-			$columns['form_name'] = 'form_name';
-			$columns['page_title'] = 'page_title';
+			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
+				$columns['formatted_date'] = 'date';
+				$columns['form_name'] = 'form_name';
+				$columns['page_title'] = 'page_title';
+			}
+
 			return $columns;
 		}
 
