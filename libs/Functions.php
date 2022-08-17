@@ -2826,10 +2826,15 @@ if ( !trait_exists('Functions') ){
 				$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, $this->get_browser('name'))); //Browser name
 				$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, $this->get_browser('engine'))); //Rendering engine
 
-				//Browser language
-				$classes[] = 'lang-' . strtolower(get_bloginfo('language'));
+				//Website language
+				$classes[] = 'lang-blog-' . strtolower(get_bloginfo('language'));
 				if ( is_rtl() ){
 					$classes[] = 'lang-dir-rtl';
+				}
+
+				//Preferred browser language
+				if ( !empty($_SERVER['HTTP_ACCEPT_LANGUAGE']) ){
+					$classes[] = 'lang-user-' . strtolower(explode(",", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]); //Example: fr-fr,en-us;q=0.7,en;q=0.3
 				}
 
 				//When installed to the homescreen, Chrome is detected as "Chrome Mobile". Supplement it with a "chrome" class.

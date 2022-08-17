@@ -59,8 +59,8 @@ function register_nebula_child_assets(){
 	 ===========================*/
 
 	//wp_register_style($handle, $src, $dependencies, $version, $media);
-	wp_register_style('nebula-child', get_stylesheet_directory_uri() . '/style.css', array('nebula-main'), nebula()->child_version(), 'all'); //Need a different version number here. Use the last time Sass was processed (if sass enabled) or... what otherwise?
-	wp_register_style('nebula-login-child', get_stylesheet_directory_uri() . '/assets/css/login.css', array('nebula-login'), nebula()->child_version(), 'all');
+	wp_register_style('nebula-child', get_stylesheet_directory_uri() . '/style.css', array('nebula-main'), filemtime(get_stylesheet_directory() . '/style.css'), 'all');
+	//wp_register_style('nebula-login-child', get_stylesheet_directory_uri() . '/assets/css/login.css', array('nebula-login'), filemtime(get_stylesheet_directory() . '/assets/css/login.css'), 'all'); //Uncomment this if using it
 
 	/*==========================
 	 Register Child Scripts
@@ -74,7 +74,7 @@ function register_nebula_child_assets(){
 		$nebula_child_script_dependencies[] = 'wp-i18n'; //Allow JS strings to be translated as well https://make.wordpress.org/core/2018/11/09/new-javascript-i18n-support-in-wordpress/
 	}
 
-	nebula()->register_script('nebula-main', get_stylesheet_directory_uri() . '/assets/js/main.js', array('defer', 'module'), $nebula_child_script_dependencies, nebula()->child_version(), true); //nebula.js (in the parent Nebula theme) is defined as a dependent here.
+	nebula()->register_script('nebula-main', get_stylesheet_directory_uri() . '/assets/js/main.js', array('defer', 'module'), $nebula_child_script_dependencies, filemtime(get_stylesheet_directory() . '/assets/js/main.js'), true); //nebula.js (in the parent Nebula theme) is defined as a dependent here.
 }
 
 //Enqueue Child Styles & Scripts on the Front-End

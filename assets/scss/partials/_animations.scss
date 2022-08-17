@@ -204,6 +204,25 @@
 	100% {opacity: 1; transform: translate3d(0, 0, 0);}
 }
 
+//Reveal In
+[nebula-hover*="nebula-reveal-in"]:hover,
+.nebula-reveal-in {opacity: 0; pointer-events: none; will-change: opacity;
+	&.animate,
+	&.load-animate {animation: nebula-reveal-in 1.5s easing(easeOutQuad) forwards; opacity: 1; pointer-events: all;}
+}
+@include keyframes(nebula-reveal-in){
+	0% {display: block; mask: linear-gradient(90deg, #000 25%, #000000e6 50%, #00000000) 150% 0 / 400% no-repeat; opacity: 0.2;} //display: block here in case element is hidden with a display: none on render.
+	100% {mask: linear-gradient(90deg, #000 25%, #000000e6 50%, #00000000) 0 / 400% no-repeat; opacity: 1;}
+}
+
+//Reveal Out
+[nebula-hover*="nebula-reveal-out"]:hover,
+.nebula-reveal-out.animate {animation: nebula-reveal-out 1.5s easing(easeInOutQuad) forwards; will-change: opacity;}
+@include keyframes(nebula-reveal-out){
+	0% {mask: linear-gradient(90deg, #000 25%, #000000e6 50%, #00000000) 0 / 400% no-repeat; opacity: 1;}
+	100% {mask: linear-gradient(90deg, #000 25%, #000000e6 50%, #00000000) 150% 0 / 400% no-repeat; opacity: 0;}
+}
+
 //Shrink and fade out
 [nebula-hover*="nebula-zoom-out"]:hover,
 .nebula-zoom-out.animate {animation: nebula-zoom-out 0.5s easing(easeInOutQuad) forwards; will-change: opacity, transform;}
@@ -226,21 +245,21 @@
   100% {transform: scale3d(1, 1, 1);}
 }
 
-//Increase width from the center (reveal contents)
-[nebula-hover*="nebula-reveal-in"]:hover,
-.nebula-reveal-in {width: 100%; transform: scale3d(0, 1, 1); pointer-events: none; overflow: hidden; will-change: transform;
+//Increase width from the center (twist contents)
+[nebula-hover*="nebula-twist-in"]:hover,
+.nebula-twist-in {width: 100%; transform: scale3d(0, 1, 1); pointer-events: none; overflow: hidden; will-change: transform;
 	&.animate,
-	&.load-animate {animation: nebula-reveal-in 0.5s easing(easeInOutQuad) forwards; pointer-events: all;}
+	&.load-animate {animation: nebula-twist-in 0.5s easing(easeInOutQuad) forwards; pointer-events: all;}
 }
-@include keyframes(nebula-reveal-in){
+@include keyframes(nebula-twist-in){
     0% {display: block; transform: scale3d(0, 1, 1);}
     100% {transform: scale3d(1, 1, 1);}
 }
 
 //Decrease width from the center (hide contents)
-[nebula-hover*="nebula-reveal-out"]:hover,
-.nebula-reveal-out {width: 100%; transform: scaleX(1); pointer-events: none; overflow: hidden; will-change: transform;}
-@include keyframes(nebula-reveal-out){
+[nebula-hover*="nebula-twist-out"]:hover,
+.nebula-twist-out.animate {animation: nebula-twist-out 0.5s easing(easeInOutQuad) forwards; width: 100%; transform: scaleX(1); pointer-events: none; overflow: hidden; will-change: transform;}
+@include keyframes(nebula-twist-out){
     0% {display: block; transform: scaleX(1);}
     100% {transform: scaleX(0);}
 }

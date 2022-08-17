@@ -94,6 +94,7 @@ if ( !trait_exists('Admin') ){
 					add_filter('post_row_actions', array($this, 'cf7_submissions_remove_quick_actions'), 10, 2);
 					add_action('edit_form_top', array($this, 'cf7_submissions_back_button'));
 					add_action('edit_form_after_title', array($this, 'cf7_storage_output'), 10, 1);
+					add_filter('months_dropdown_results', '__return_empty_array'); //Remove the original date month dropdown
 					add_action('restrict_manage_posts', array($this, 'cf7_submissions_filters'), 10, 1);
 					add_action('manage_posts_extra_tablenav', array($this, 'cf7_submissions_actions'), 10, 1);
 					add_filter('parse_query', array($this, 'cf7_submissions_parse_query'), 10, 1);
@@ -1641,14 +1642,55 @@ if ( !trait_exists('Admin') ){
 
 				?>
 				<label for="filter-by-form" class="screen-reader-text">Filter by form</label>
-				<select name="cf7_form_id" id="filter-by-form">
+				<select id="filter-by-form" name="cf7_form_id">
 					<option <?php echo ( empty($this->super->get['cf7_form_id']) )? 'selected="selected"' : ''; ?> value="0">All forms</option>
 					<?php foreach ( $cf7_forms as $cf7_form ): ?>
 						<option value="<?php echo $cf7_form; ?>" <?php echo ( !empty($this->super->get['cf7_form_id']) && $this->super->get['cf7_form_id'] == $cf7_form )? 'selected="selected"' : ''; ?>><?php echo get_the_title($cf7_form); ?></option>
 					<?php endforeach; ?>
 				</select>
+
+				<?php $start_date = ( !empty($this->super->get['daterange_start']) )? $this->super->get['daterange_start'] : ''; ?>
+				<label for="filter-by-daterange-start">Start Date:</label>
+				<input type="date" id="filter-by-daterange-start" name="daterange_start" value="<?php echo $start_date; ?>" placeholder="Start Date" />
+
+				<?php $end_date = ( !empty($this->super->get['daterange_end']) )? $this->super->get['daterange_end'] : ''; ?>
+				<label for="filter-by-daterange-end">End Date:</label>
+				<input type="date" id="filter-by-daterange-end" name="daterange_end" value="<?php echo $end_date; ?>" placeholder="End Date" />
 				<?php
 			}
+		}
+
+		//Handle the filters to only list desired CF7 submissions
+		public function cf7_submissions_parse_query($query){
+			if ( $query->query['post_type'] == 'nebula_cf7_submits' ){ //Only modify this specific query
+				global $pagenow;
+				$current_page = isset($this->super->get['post_type'])? $this->super->get['post_type'] : '';
+
+				if ( $this->is_admin_page() && $current_page == 'nebula_cf7_submits' && $pagenow == 'edit.php' ){
+					//Form ID filter
+					if ( isset($this->super->get['cf7_form_id']) && $this->super->get['cf7_form_id'] != 0 ){
+						$query->query_vars['meta_key'] = 'form_id';
+						$query->query_vars['meta_value'] = $this->super->get['cf7_form_id'];
+						$query->query_vars['meta_compare'] = '=';
+					}
+
+					//Date Range filter
+					if ( isset($this->super->get['daterange_start']) || isset($this->super->get['daterange_end']) ){
+						$start_date = ( isset($this->super->get['daterange_start']) )? $this->super->get['daterange_start'] : date('Y-m-d');
+						$end_date = ( isset($this->super->get['daterange_end']) )? $this->super->get['daterange_end'] : date('Y-m-d');
+
+						$query->query_vars['date_query'] = array(
+							array(
+								'after' => $start_date,
+								'before' => $end_date,
+								'inclusive' => true
+							)
+						);
+					}
+				}
+			}
+
+			return $query;
 		}
 
 		//Add buttons for additional actions with CF7 submissions
@@ -1675,24 +1717,6 @@ if ( !trait_exists('Admin') ){
 
 				echo '<a class="button" href="' . $export_url . '">' . $export_text . '</a>';
 			}
-		}
-
-		//Handle the filters to only list desired CF7 submissions
-		public function cf7_submissions_parse_query($query){
-			if ( $query->query['post_type'] == 'nebula_cf7_submits' ){ //Only modify this specific query
-				global $pagenow;
-				$current_page = isset($this->super->get['post_type'])? $this->super->get['post_type'] : '';
-
-				if ( $this->is_admin_page() && $current_page == 'nebula_cf7_submits' && $pagenow == 'edit.php' ){
-					if ( isset($this->super->get['cf7_form_id']) && $this->super->get['cf7_form_id'] != 0 ){ //If the filter request is for a specific form ID
-						$query->query_vars['meta_key'] = 'form_id';
-						$query->query_vars['meta_value'] = $this->super->get['cf7_form_id'];
-						$query->query_vars['meta_compare'] = '=';
-					}
-				}
-			}
-
-			return $query;
 		}
 
 		//Hide the "Private" post state usually appended to titles on CF7 submissions admin listings

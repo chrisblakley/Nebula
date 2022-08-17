@@ -177,7 +177,7 @@ nebula.workbox = async function(){
 			window.performance.mark('(Nebula) SW Registration [Start]');
 
 			//Dynamically import Workbox-Window
-			import('https://cdn.jsdelivr.net/npm/workbox-window@6.5.2/build/workbox-window.prod.mjs').then(async function(module){
+			import('https://cdn.jsdelivr.net/npm/workbox-window@6.5.4/build/workbox-window.prod.mjs').then(async function(module){
 				const Workbox = module.Workbox;
 				const workbox = new Workbox(nebula.site.sw_url);
 
@@ -292,7 +292,7 @@ nebula.emptyCaches = function(){
 	if ( 'caches' in window ){
 		caches.keys().then(function(names){
 			for ( let name of names ){
-				caches.delete(names[i]);
+				caches.delete(names[name]);
 			}
 		});
 	}

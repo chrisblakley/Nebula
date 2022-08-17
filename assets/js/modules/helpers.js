@@ -20,13 +20,13 @@ nebula.helpers = async function(){
 	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'external noreferrer noopener'); //Add rel attributes to external links. Although search crawlers do use JavaScript, don't rely on this line to instruct them. Use standard HTML attributes whenever possible.
 
 	//Add general region classes (Note: not done in location.js because it is anonymized and global)
-	jQuery('html').addClass('country-' + Intl.DateTimeFormat().resolvedOptions().locale.split('-').pop().toLowerCase());
-	jQuery('html').addClass('timezone-' + Intl.DateTimeFormat().resolvedOptions().timeZone.replaceAll(/[_\/]/gi, '-').toLowerCase());
+	jQuery('body').addClass('locale-' + Intl.DateTimeFormat().resolvedOptions().locale.split('-').pop().toLowerCase());
+	jQuery('body').addClass('timezone-' + Intl.DateTimeFormat().resolvedOptions().timeZone.replaceAll(/[_\/]/gi, '-').toLowerCase());
 
 	//Note the level of RAM available for a "lite" or "full" experience
 	if ( 'deviceMemory' in navigator ){ //Device Memory - Chrome 64+
 		let deviceMemoryLevel = ( navigator.deviceMemory < 1 )? 'lite' : 'full'; //Possible values (GB of RAM): 0.25, 0.5, 1, 2, 4, 8
-		nebula.dom.html.addClass('device-memory-' + deviceMemoryLevel);
+		nebula.dom.body.addClass('device-memory-' + deviceMemoryLevel);
 	}
 
 	//Skip to Content button clicks - skip to the content section
@@ -60,6 +60,10 @@ nebula.helpers = async function(){
 			jQuery(this).parents('.custom-file').find('.custom-file-label').text(fileName);
 		}
 	});
+
+	//Add Bootstrap form control to WP search block
+	jQuery('.wp-block-search__input').addClass('form-control');
+	jQuery('.wp-block-search__button').addClass('btn btn-primary');
 
 	//Deactivate potential active states when the escape key is pressed
 	nebula.dom.document.on('keydown', function(e){

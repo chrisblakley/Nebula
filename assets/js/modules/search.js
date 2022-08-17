@@ -93,7 +93,7 @@ nebula.menuSearchReplacement = async function(){
 
 //Enable autocomplete search on WordPress core selectors
 nebula.autocompleteSearchListeners = async function(){
-	let autocompleteSearchSelector = wp.hooks.applyFilters('nebulaAutocompleteSearchSelector', '.nebula-search input, input#s, input.search');
+	let autocompleteSearchSelector = wp.hooks.applyFilters('nebulaAutocompleteSearchSelector', '.nebula-search input, input#s, input.search, input[name="s"]');
 	jQuery(autocompleteSearchSelector).one('focus', function(){ //Only do this once
 		if ( !jQuery(this).hasClass('no-autocomplete') ){ //Use this class to disable or override the default Nebula autocomplete search parameters
 			nebula.loadJS(nebula.site.resources.scripts.nebula_jquery_ui, 'jquery-ui').then(function(){
@@ -102,7 +102,7 @@ nebula.autocompleteSearchListeners = async function(){
 				});
 
 				//I do not know why this cannot be debounced
-				jQuery('input#s, input.search').on('keyup paste', function(e){
+				jQuery('input#s, input.search, input[name="s"]').on('keyup paste', function(e){
 					let allowedKeys = ['Backspace', 'Delete']; //Non-alphanumeric keys that are still allowed to trigger a search
 
 					if ( jQuery(this).val().trim().length && (nebula.isAlphanumeric(e.key, false) || allowedKeys.includes(e.key) ) ){
@@ -290,12 +290,12 @@ nebula.autocompleteSearch = function(element, types = ''){
 };
 
 nebula.wpSearchInput = function(){
-	jQuery('#post-0 #s, #nebula-drawer #s, .search-results #s').trigger('focus'); //Automatically focus on specific search inputs
+	jQuery('#post-0 input[name="s"], #nebula-drawer input[name="s"], .search-results input[name="s"]').trigger('focus'); //Automatically focus on specific search inputs
 
 	//Set search value as placeholder
-	let searchVal = nebula.get('s') || jQuery('#s').val();
+	let searchVal = nebula.get('s') || jQuery('input[name="s"]').val();
 	if ( searchVal ){
-		jQuery('#s, .nebula-search input').attr('placeholder', searchVal.replaceAll('+', ' '));
+		jQuery('input[name="s"], .nebula-search input').attr('placeholder', searchVal.replaceAll('+', ' '));
 	}
 };
 
@@ -383,7 +383,7 @@ nebula.singleResultDrawer = async function(){
 	let searchTerm = nebula.get('rs');
 	if ( searchTerm ){
 		searchTerm = searchTerm.replaceAll(/\%20|\+/g, ' ').replaceAll(/\%22|"|'/g, '');
-		jQuery('#searchform input#s').val(searchTerm);
+		jQuery('#searchform input[name="s"]').val(searchTerm);
 
 		nebula.dom.document.on('click', '#nebula-drawer .close', function(){
 			window.history.replaceState({}, document.title, nebula.removeQueryParameter('rs', window.location.href));
