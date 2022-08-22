@@ -144,52 +144,54 @@ if ( !trait_exists('Warnings') ){
 						'url' => admin_url('options-reading.php')
 					);
 				} else {
-					//Check for sitemap
-					$sitemap_transient = get_transient('nebula_check_sitemap');
-					if ( empty($sitemap_transient) || $this->is_debug() ){
-						$sitemap_warning = false;
-						if ( is_plugin_active('wordpress-seo/wp-seo.php') ){ //Yoast
-							if ( !$this->is_available(home_url('/') . 'sitemap_index.xml', false, true) ){
-								$sitemap_warning = true;
-								$nebula_warnings['missing_sitemap'] = array(
-									'level' => 'warning',
-									'dismissible' => true,
-									'description' => '<i class="fa-solid fa-fw fa-sitemap"></i> Missing sitemap XML. Yoast is enabled, but <a href="' . home_url('/') . 'sitemap_index.xml" target="_blank">sitemap_index.xml</a> is unavailable.'
-								);
-							}
-						} elseif ( is_plugin_active('autodescription/autodescription.php') ){ //The SEO Framework
-							if ( !$this->is_available(home_url('/') . 'sitemap.xml', false, true) ){
-								$sitemap_warning = true;
-								$nebula_warnings['missing_sitemap'] = array(
-									'level' => 'warning',
-									'dismissible' => true,
-									'description' => '<i class="fa-solid fa-fw fa-sitemap"></i> Missing sitemap XML. The SEO Framework is enabled, but <a href="' . home_url('/') . 'sitemap.xml" target="_blank">sitemap.xml</a> is unavailable.'
-								);
-							}
-						} else {
-							if ( !$this->is_available(home_url('/') . 'wp-sitemap.xml', false, true)  ){ //WordPress Core
-								$sitemap_warning = true;
-								$nebula_warnings['missing_sitemap'] = array(
-									'level' => 'warning',
-									'dismissible' => true,
-									'description' => '<i class="fa-solid fa-fw fa-sitemap"></i> Missing sitemap XML. WordPress core <a href="' . home_url('/') . 'wp-sitemap.xml" target="_blank">sitemap_index.xml</a> is unavailable.'
-								);
-
-								//Check if the SimpleXML PHP module is installed on the server (required for WP core sitemap generation)
-								if ( !function_exists('simplexml_load_string') ){
+					if ( $this->is_transients_enabled() ){ //Only check these if transients are not suspended
+						//Check for sitemap
+						$sitemap_transient = get_transient('nebula_check_sitemap');
+						if ( empty($sitemap_transient) || $this->is_debug() ){
+							$sitemap_warning = false;
+							if ( is_plugin_active('wordpress-seo/wp-seo.php') ){ //Yoast
+								if ( !$this->is_available(home_url('/') . 'sitemap_index.xml', false, true) ){
 									$sitemap_warning = true;
-									$nebula_warnings['simplexml'] = array(
+									$nebula_warnings['missing_sitemap'] = array(
 										'level' => 'warning',
 										'dismissible' => true,
-										'description' => '<i class="fa-solid fa-fw fa-sitemap"></i> SimpleXML PHP module is not available. This is required for WordPress core sitemap generation.'
+										'description' => '<i class="fa-solid fa-fw fa-sitemap"></i> Missing sitemap XML. Yoast is enabled, but <a href="' . home_url('/') . 'sitemap_index.xml" target="_blank">sitemap_index.xml</a> is unavailable.'
 									);
 								}
-							}
-						}
+							} elseif ( is_plugin_active('autodescription/autodescription.php') ){ //The SEO Framework
+								if ( !$this->is_available(home_url('/') . 'sitemap.xml', false, true) ){
+									$sitemap_warning = true;
+									$nebula_warnings['missing_sitemap'] = array(
+										'level' => 'warning',
+										'dismissible' => true,
+										'description' => '<i class="fa-solid fa-fw fa-sitemap"></i> Missing sitemap XML. The SEO Framework is enabled, but <a href="' . home_url('/') . 'sitemap.xml" target="_blank">sitemap.xml</a> is unavailable.'
+									);
+								}
+							} else {
+								if ( !$this->is_available(home_url('/') . 'wp-sitemap.xml', false, true)  ){ //WordPress Core
+									$sitemap_warning = true;
+									$nebula_warnings['missing_sitemap'] = array(
+										'level' => 'warning',
+										'dismissible' => true,
+										'description' => '<i class="fa-solid fa-fw fa-sitemap"></i> Missing sitemap XML. WordPress core <a href="' . home_url('/') . 'wp-sitemap.xml" target="_blank">sitemap_index.xml</a> is unavailable.'
+									);
 
-						//If there is no warning, only check periodically
-						if ( !$sitemap_warning ){
-							set_transient('nebula_check_sitemap', 'Sitemap Found', WEEK_IN_SECONDS);
+									//Check if the SimpleXML PHP module is installed on the server (required for WP core sitemap generation)
+									if ( !function_exists('simplexml_load_string') ){
+										$sitemap_warning = true;
+										$nebula_warnings['simplexml'] = array(
+											'level' => 'warning',
+											'dismissible' => true,
+											'description' => '<i class="fa-solid fa-fw fa-sitemap"></i> SimpleXML PHP module is not available. This is required for WordPress core sitemap generation.'
+										);
+									}
+								}
+							}
+
+							//If there is no warning, only check periodically
+							if ( !$sitemap_warning ){
+								set_transient('nebula_check_sitemap', 'Sitemap Found', WEEK_IN_SECONDS);
+							}
 						}
 					}
 
@@ -232,45 +234,47 @@ if ( !trait_exists('Warnings') ){
 				}
 
 				//Check specific directories for indexing (Apache directory listings)
-				$directory_indexing = get_transient('nebula_directory_indexing');
-				if ( empty($directory_indexing) || nebula()->is_debug() || nebula()->is_auditing() ){ //Use the transient unless ?debug or explicitly auditing
-					$directories = array(includes_url(), content_url()); //Directories to test
-					$found_problem = false;
-					foreach ( $directories as $directory ){
-						//Get the contents of the directory
-						$directory_request = $this->remote_get($directory, array(
-							'timeout' => 3,
-							'limit_response_size' => KB_IN_BYTES*512 //Limit the response to 512kb
-						));
+				if ( $this->is_transients_enabled() ){ //Don't run these checks without transients because they are too time consuming to run every admin page load
+					$directory_indexing = get_transient('nebula_directory_indexing');
+					if ( empty($directory_indexing) || nebula()->is_debug() || nebula()->is_auditing() ){ //Use the transient unless ?debug or explicitly auditing
+						$directories = array(includes_url(), content_url()); //Directories to test
+						$found_problem = false;
+						foreach ( $directories as $directory ){
+							//Get the contents of the directory
+							$directory_request = $this->remote_get($directory, array(
+								'timeout' => 3,
+								'limit_response_size' => KB_IN_BYTES*512 //Limit the response to 512kb
+							));
 
-						if ( !is_wp_error($directory_request) && !empty($directory_request) ){ //If not an error and response exists
-							if ( $directory_request['response']['code'] <= 400 ){ //Check if the response code is less than 400 (in this case 400+ is good)
-								if ( strpos(strtolower($directory_request['body']), 'index of') ){ //Check if the "Index of" text appears in the body content (bad) //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-									$nebula_warnings['directory_indexing'] = array(
-										'level' => 'error',
-										'dismissible' => false,
-										'description' => '<i class="fa-regular fa-fw fa-list-alt"></i> Directory indexing is not disabled. Visitors can see file listings of directories!',
-									);
+							if ( !is_wp_error($directory_request) && !empty($directory_request) ){ //If not an error and response exists
+								if ( $directory_request['response']['code'] <= 400 ){ //Check if the response code is less than 400 (in this case 400+ is good)
+									if ( strpos(strtolower($directory_request['body']), 'index of') ){ //Check if the "Index of" text appears in the body content (bad) //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+										$nebula_warnings['directory_indexing'] = array(
+											'level' => 'error',
+											'dismissible' => false,
+											'description' => '<i class="fa-regular fa-fw fa-list-alt"></i> Directory indexing is not disabled. Visitors can see file listings of directories!',
+										);
 
-									$found_problem = true;
-									set_transient('nebula_directory_indexing', 'bad', WEEK_IN_SECONDS);
-									break; //Exit loop since we found an issue
+										$found_problem = true;
+										set_transient('nebula_directory_indexing', 'bad', WEEK_IN_SECONDS);
+										break; //Exit loop since we found an issue
+									}
 								}
 							}
 						}
-					}
 
-					//If we did not find a problem, set a longer transient
-					if ( empty($found_problem) ){
-						set_transient('nebula_directory_indexing', 'good'); //No expiration so it is not cleared when making new posts
-					}
-				} else {
-					if ( $directory_indexing === 'bad' ){
-						$nebula_warnings['directory_indexing'] = array(
-							'level' => 'error',
-							'dismissible' => true,
-							'description' => '<i class="fa-regular fa-fw fa-list-alt"></i> <strong>Directory indexing not disabled</strong> (at the time last checked). Visitors may be able to see file listings of directories such as the <a href="' . includes_url() . '" target="_blank">Includes URL</a> or <a href="' . content_url() . '" target="_blank">Content URL</a> (and/or others)! <a href="' . home_url('/?audit=true') . '" target="_blank">Run an audit to re-scan &raquo;</a>',
-						);
+						//If we did not find a problem, set a longer transient
+						if ( empty($found_problem) ){
+							set_transient('nebula_directory_indexing', 'good'); //No expiration so it is not cleared when making new posts
+						}
+					} else {
+						if ( $directory_indexing === 'bad' ){
+							$nebula_warnings['directory_indexing'] = array(
+								'level' => 'error',
+								'dismissible' => true,
+								'description' => '<i class="fa-regular fa-fw fa-list-alt"></i> <strong>Directory indexing not disabled</strong> (at the time last checked). Visitors may be able to see file listings of directories such as the <a href="' . includes_url() . '" target="_blank">Includes URL</a> or <a href="' . content_url() . '" target="_blank">Content URL</a> (and/or others)! <a href="' . home_url('/?audit=true') . '" target="_blank">Run an audit to re-scan &raquo;</a>',
+							);
+						}
 					}
 				}
 

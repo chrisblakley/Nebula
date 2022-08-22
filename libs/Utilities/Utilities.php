@@ -709,6 +709,15 @@ if ( !trait_exists('Utilities') ){
 			return $data;
 		}
 
+		//Check if transients are not being suspended
+		public function is_transients_enabled(){
+			if ( class_exists('AM_Transients_Manager') && get_option('pw_tm_suspend') ){
+				return false; //Transients are suspended
+			}
+
+			return true; //Transients are enabled
+		}
+
 		//Create a session and cookie
 		public function set_cookie($name, $value, $expiration){
 			$string_value = (string) $value;
@@ -1025,18 +1034,22 @@ if ( !trait_exists('Utilities') ){
 			$timer_name = $this->timer('Is Available (' . $url . ')', 'start', 'Is Available');
 			$hostname = str_replace('.', '_', $this->url_components('hostname', $url)); //The hostname label for transients
 
-			//Check transient first
-			$site_available_buffer = get_transient('nebula_site_available_' . $hostname);
-			if ( !empty($site_available_buffer) && $allow_cache ){ //If this hostname was found in a transient and specifically allowing a cached response.
-				if ( $site_available_buffer === 'Available' ){
-					set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*30); //Re-up the transient with a 30 minute expiration
-					$this->timer($timer_name, 'end');
-					return true; //This hostname has worked within the last 30 minutes
-				}
+			if ( $this->is_transients_enabled() ){
+				//Check transient first
+				$site_available_buffer = get_transient('nebula_site_available_' . $hostname);
+				if ( !empty($site_available_buffer) && $allow_cache ){ //If this hostname was found in a transient and specifically allowing a cached response.
+					if ( $site_available_buffer === 'Available' ){
+						set_transient('nebula_site_available_' . $hostname, 'Available', MINUTE_IN_SECONDS*30); //Re-up the transient with a 30 minute expiration
+						$this->timer($timer_name, 'end');
+						return true; //This hostname has worked within the last 30 minutes
+					}
 
-				set_transient('nebula_site_available_' . $hostname, 'Unavailable', MINUTE_IN_SECONDS*15); //15 minute expiration
-				$this->timer($timer_name, 'end');
-				return false; //This hostname has not worked within the last 15 minutes
+					set_transient('nebula_site_available_' . $hostname, 'Unavailable', MINUTE_IN_SECONDS*15); //15 minute expiration
+					$this->timer($timer_name, 'end');
+					return false; //This hostname has not worked within the last 15 minutes
+				}
+			} else {
+				$allow_remote_request = false; //If transients are being suspended, don't pre-check if URLs are available
 			}
 
 			//Make an actual request to the URL if: the transient was empty or specifically requested a non-cached response, and specifically allowing a lookup
@@ -1333,8 +1346,9 @@ if ( !trait_exists('Utilities') ){
 			if ( isset($override) ){return $override;}
 
 			$appended_version = apply_filters('nebula_version_appended', ''); //Allow others to append an additional version number at the end of Nebula's. This would assist in clearing caches in the parent theme in certain circumstances.
+			$appended_version_number = '';
 			if ( !empty($appended_version) && substr($appended_version, 0, 1) !== '.' ){ //If it does not start with a dot, add one. //@todo "Nebula" 0: In PHP8 use str_starts_with here
-				$appended_version .= '.' . $appended_version;
+				$appended_version_number .= '.' . $appended_version;
 			}
 
 			$return = str_replace(array(' ', '_', '-'), '', strtolower($return));
@@ -1357,7 +1371,7 @@ if ( !trait_exists('Utilities') ){
 			$nebula_theme_info = ( is_child_theme() )? wp_get_theme(str_replace('-child', '', get_template())) : wp_get_theme(); //Get the parent theme (regardless of if child theme is active)
 
 			if ( $return === 'raw' ){ //Check this first to prevent needing to RegEx altogether
-				return $nebula_theme_info->get('Version') . $appended_version; //Ex: 7.2.23.8475
+				return $nebula_theme_info->get('Version') . $appended_version_number; //Ex: 7.2.23.8475
 			}
 
 			preg_match('/(?<primary>(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+[a-z]?))\.?(?<build>\d+)?/i', $nebula_theme_info->get('Version'), $nebula_version);
@@ -1413,13 +1427,14 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			$appended_version = apply_filters('nebula_version_appended', ''); //Allow others to append an additional version number at the end of Nebula's. This would assist in clearing caches in the parent theme in certain circumstances.
+			$appended_version_number = '';
 			if ( !empty($appended_version) && substr($appended_version, 0, 1) !== '.' ){ //If it does not start with a dot, add one. //@todo "Nebula" 0: In PHP8 use str_starts_with here
-				$appended_version .= '.' . $appended_version;
+				$appended_version_number .= '.' . $appended_version;
 			}
 
 			//Get the version number from the child theme stylesheet
 			$child_theme_info = wp_get_theme();
-			return $child_theme_info->get('Version') . $appended_version;
+			return $child_theme_info->get('Version') . $appended_version_number;
 		}
 
 		//Update the child theme version whenever Sass is re-processed
