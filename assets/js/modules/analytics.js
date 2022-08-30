@@ -389,7 +389,7 @@ nebula.eventTracking = async function(){
 				event_action: 'Notable',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				file_path: jQuery(this).attr('href').trim(),
-				link_text: jQuery(this).text()
+				text: jQuery(this).text()
 			};
 
 			if ( thisEvent.file_path.length && thisEvent.file_path !== '#' ){
@@ -628,7 +628,7 @@ nebula.eventTracking = async function(){
 				event_category: 'Navigation Menu',
 				event_action: 'Utility Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				link_text: jQuery(this).text().trim()
+				text: jQuery(this).text().trim()
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -644,7 +644,7 @@ nebula.eventTracking = async function(){
 				event_category: 'Navigation Menu',
 				event_action: 'Primary Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				link_text: jQuery(this).text().trim()
+				text: jQuery(this).text().trim()
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -692,7 +692,7 @@ nebula.eventTracking = async function(){
 				event_category: 'Navigation Menu',
 				event_action: 'Offcanvas Menu (' + e.target.id + ')',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				link_text: jQuery(this).text().trim()
+				text: jQuery(this).text().trim()
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -715,7 +715,7 @@ nebula.eventTracking = async function(){
 				event_category: 'Navigation Menu',
 				event_action: 'Breadcrumbs',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				link_text: jQuery(this).text().trim()
+				text: jQuery(this).text().trim()
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -731,7 +731,7 @@ nebula.eventTracking = async function(){
 				event_category: 'Navigation Menu',
 				event_action: 'Sidebar Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				link_text: jQuery(this).text().trim()
+				text: jQuery(this).text().trim()
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -747,7 +747,7 @@ nebula.eventTracking = async function(){
 				event_category: 'Navigation Menu',
 				event_action: 'Footer Menu',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				link_text: jQuery(this).text().trim()
+				text: jQuery(this).text().trim()
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -789,7 +789,7 @@ nebula.eventTracking = async function(){
 									event_action: 'Click',
 									outbound: true,
 									subdomain: href.includes('.' + domain), //Boolean if this is a subdomain of the primary domain
-									link_text: linkElement.text().trim(),
+									text: linkElement.text().trim(),
 									intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 									href: href
 								};
@@ -885,7 +885,7 @@ nebula.eventTracking = async function(){
 						event_category: 'Dead Click',
 						event_action: 'Underlined Text',
 						element: 'Text',
-						text: jQuery(e.target).text().trim(),
+						click_text: jQuery(e.target).text().trim(),
 						non_interaction: true //Non-interaction because if the user leaves due to this it should be considered a bounce
 					};
 
@@ -971,7 +971,7 @@ nebula.eventTracking = async function(){
 				event_name: 'accessibility_links',
 				event_category: 'Accessibility Links',
 				event_action: 'Focus',
-				link_text: jQuery(this).text().trim(),
+				text: jQuery(this).text().trim(),
 				non_interaction: true //Non-interaction because they are not actually taking action and these links do not indicate engagement
 			};
 
@@ -989,7 +989,7 @@ nebula.eventTracking = async function(){
 				event_category: 'Accessibility Links',
 				event_action: 'Click',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				link_text: jQuery(this).text().trim(),
+				text: jQuery(this).text().trim(),
 				non_interaction: true //Non-interaction because these links do not indicate engagement
 			};
 
