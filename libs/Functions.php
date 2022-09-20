@@ -949,19 +949,25 @@ if ( !trait_exists('Functions') ){
 		}
 
 		//Use WP Pagenavi if active, or manually paginate.
-		public function paginate(){
+		public function paginate( $query = false, $args = array() ){
 			if ( function_exists('wp_pagenavi') ){
 				wp_pagenavi();
 			} else {
-				global $wp_query;
+				if( !$query ){
+					global $wp_query;
+					$query = $wp_query;
+				}
+
 				$big = 999999999; //An unlikely integer //PHP 7.4 use numeric separators here
+
+				// Set some defaults if not passed by the $args value...
+				$args['base'] = ($args['base'])?$args['base']:str_replace($big, '%#%', esc_url(get_pagenum_link($big)));
+				$args['format'] = ($args['format'])?$args['format']:'?paged=%#%';
+				$args['current'] = ($args['current'])?$args['current']:max(1, get_query_var('paged'));
+				$args['total'] = ($args['total'])?$args['total']:$query->max_num_pages;
+				
 				echo '<div class="wp-pagination">';
-					echo paginate_links(array(
-						'base' => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
-						'format' => '?paged=%#%',
-						'current' => max(1, get_query_var('paged')),
-						'total' => $wp_query->max_num_pages
-					));
+					echo paginate_links( $args );
 				echo '</div>';
 			}
 		}
