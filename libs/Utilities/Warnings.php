@@ -420,7 +420,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings['relevanssi_index'] = array(
 							'level' => 'error',
 							'dismissible' => true,
-							'description' => '<i class="fa-solid fa-fw fa-search-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> must build an index to search the site. This must be triggered manually.',
+							'description' => '<i class="fa-solid fa-fw fa-magnifying-glass-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> must build an index to search the site. This must be triggered manually.',
 							'url' => admin_url('options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing')
 						);
 					}
@@ -429,7 +429,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings['relevanssi_custom_fields'] = array(
 							'level' => 'warning',
 							'dismissible' => true,
-							'description' => '<i class="fa-solid fa-fw fa-search-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> is not set to search custom fields.',
+							'description' => '<i class="fa-solid fa-fw fa-magnifying-glass-plus"></i> <a href="options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing">Relevanssi</a> is not set to search custom fields.',
 							'url' => admin_url('options-general.php?page=relevanssi%2Frelevanssi.php&tab=indexing')
 						);
 					}
@@ -729,7 +729,7 @@ if ( !trait_exists('Warnings') ){
 					$nebula_warnings['seo_plugin_missing'] = array(
 						'level' => 'warning',
 						'dismissible' => true,
-						'description' => '<i class="fa-solid fa-fw fa-search-plus"></i> A recommended SEO plugin is not active.',
+						'description' => '<i class="fa-solid fa-fw fa-magnifying-glass-plus"></i> A recommended SEO plugin is not active.',
 						'url' => admin_url('themes.php?page=tgmpa-install-plugins')
 					);
 				}

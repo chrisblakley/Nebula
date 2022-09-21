@@ -836,7 +836,7 @@ if ( !trait_exists('Dashboard') ){
 
 			$all_directory_search_options = apply_filters('nebula_directory_search_options', $directory_search_options); //Allow other functions to hook in to add directories to search
 
-			echo '<form id="theme" class="searchfiles"><i id="searchprogress" class="fa-solid fa-fw fa-search"></i> <input class="findterm" type="text" placeholder="Search files" autocorrect="off" autocapitalize="off" spellcheck="false" /><select class="searchdirectory">';
+			echo '<form id="theme" class="searchfiles"><i id="searchprogress" class="fa-solid fa-fw fa-magnifying-glass"></i> <input class="findterm" type="text" placeholder="Search files" autocorrect="off" autocapitalize="off" spellcheck="false" /><select class="searchdirectory">';
 			foreach ( $all_directory_search_options as $name => $option_html ){
 				echo $option_html;
 			}

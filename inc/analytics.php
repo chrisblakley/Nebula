@@ -36,6 +36,7 @@
 					if ( is_singular() ){
 						//Designate single posts because they aren't always easily distinguishable from the URL alone
 						$pageview_properties['single_post'] = ( is_front_page() )? 'Front Page' : 'Single Post';
+						$pageview_properties['post_type'] = get_post_type(get_the_ID());
 
 						//Article author
 						if ( nebula()->get_option('author_bios') ){
@@ -212,7 +213,7 @@
 	<?php else: //If Tracking ID is empty: ?>
 		<?php if ( !nebula()->get_option('gtm_id') ): //If GTM ID is also empty, set an empty gtag() function to prevent JS errors ?>
 			<script>
-				function gtag(){};
+				function gtag(){}; //No GA in Nebula
 			</script>
 		<?php endif; ?>
 	<?php endif; ?>

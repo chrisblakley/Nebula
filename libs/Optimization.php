@@ -29,7 +29,7 @@ if ( !trait_exists('Optimization') ){
 					add_action('wp_head', array($this, 'listen_for_jquery_footer_errors'));
 				}
 
-				add_filter('script_loader_tag', array($this, 'modify_script_attributes'), 10, 2);
+				add_filter('script_loader_tag', array($this, 'modify_script_attributes'), 10, 3);
 			}
 
 			add_action('wp_head', array($this, 'prebrowsing'));
@@ -190,7 +190,7 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		//Add/modify defer, async, module, and/or crossorigin attributes to scripts
-		public function modify_script_attributes($tag, $handle){
+		public function modify_script_attributes($tag, $handle, $src){
 			$crossorigin_exececution = wp_scripts()->get_data($handle, 'crossorigin');
 			$defer_exececution = wp_scripts()->get_data($handle, 'defer');
 			$async_exececution = wp_scripts()->get_data($handle, 'async');
@@ -225,13 +225,15 @@ if ( !trait_exists('Optimization') ){
 			*/
 
 			//Add defer attribute if it is requested and does not already exist
-			if ( !empty($defer_exececution) && strpos($tag, 'defer=') === false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-				$tag = str_replace(' src', ' defer="defer" src', $tag); //Add the defer attribute
+			$additional_handles_to_defer = apply_filters('nebula_defer_handles', array()); //Allow other plugins/themes to simply add defer attributes to scripts
+			if ( (!empty($defer_exececution) || in_array($handle, $additional_handles_to_defer)) && strpos($tag, 'defer') === false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				$tag = str_replace(' src', ' defer src', $tag); //Add the defer attribute
 			}
 
 			//Add async attribute if it is requested and does not already exist
-			if ( !empty($async_exececution) && strpos($tag, 'async=') === false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-				$tag = str_replace(' src', ' async="async" src', $tag); //Add the async attribute
+			$additional_handles_to_async = apply_filters('nebula_async_handles', array('google-recaptcha')); //Allow other plugins/themes to simply add async attributes to scripts
+			if ( (!empty($async_exececution) || in_array($handle, $additional_handles_to_async)) && strpos($tag, 'async') === false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				$tag = str_replace(' src', ' async src', $tag); //Add the async attribute
 			}
 
 			return $tag;
@@ -249,7 +251,7 @@ if ( !trait_exists('Optimization') ){
 				'scripts' => array(),
 			);
 
-			return apply_filters('nebula_lazy_load_assets', $assets); //Allow other plugins/themes to lazy-load assets;
+			return apply_filters('nebula_lazy_load_assets', $assets); //Allow other plugins/themes to lazy-load assets
 		}
 
 		//Dequeue styles prepped for lazy-loading

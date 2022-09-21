@@ -227,7 +227,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Button Clicks
-		let nebulaButtonSelector = wp.hooks.applyFilters('nebulaButtonSelectors', 'button, .button, .btn, [role="button"], a.wp-block-button__link, .hs-button'); //Allow child theme or plugins to add button selectors without needing to override/duplicate this function
+		let nebulaButtonSelector = wp.hooks.applyFilters('nebulaButtonSelectors', 'button, .button, .btn, [role="button"], a.wp-block-button__link, .woocommerce-button, .hs-button'); //Allow child theme or plugins to add button selectors without needing to override/duplicate this function
 		nebula.dom.document.on('pointerdown', nebulaButtonSelector, function(e){
 			let thisEvent = {
 				event: e,
@@ -348,7 +348,7 @@ nebula.eventTracking = async function(){
 				event_name: 'form_submit', //How to differentiate this from conversions?
 				event_category: 'Generic Form',
 				event_action: 'Submit',
-				formID: e.target.id || 'form.' + e.target.className.replaceAll(/\s/g, '.'),
+				form_id: e.target.id || 'form.' + e.target.className.replaceAll(/\s/g, '.'),
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);

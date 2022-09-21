@@ -253,7 +253,7 @@ if ( !trait_exists('Metaboxes') ){
 						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-facebook"></i> URL</span></div>
 						<input type="text" name="nebula_options[facebook_url]" id="facebook_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['facebook_url']; ?>" placeholder="http://www.facebook.com/PinckneyHugo" />
 					</div>
-					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Facebook page.</p>
+					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Facebook page (starting with <code>https://</code>).</p>
 					<p class="option-keywords">social seo</p>
 				</div>
 
@@ -291,7 +291,7 @@ if ( !trait_exists('Metaboxes') ){
 						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-linkedin"></i> URL</span></div>
 						<input type="text" name="nebula_options[linkedin_url]" id="linkedin_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['linkedin_url']; ?>" placeholder="https://www.linkedin.com/company/pinckney-hugo-group" />
 					</div>
-					<p class="nebula-help-text short-help form-text text-muted">The full URL of your LinkedIn profile.</p>
+					<p class="nebula-help-text short-help form-text text-muted">The full URL of your LinkedIn profile (starting with <code>https://</code>).</p>
 					<p class="option-keywords">social seo</p>
 				</div>
 
@@ -301,7 +301,7 @@ if ( !trait_exists('Metaboxes') ){
 						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-youtube"></i> URL</span></div>
 						<input type="text" name="nebula_options[youtube_url]" id="youtube_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['youtube_url']; ?>" placeholder="https://www.youtube.com/user/pinckneyhugo" />
 					</div>
-					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Youtube channel.</p>
+					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Youtube channel (starting with <code>https://</code>).</p>
 					<p class="option-keywords">social seo</p>
 				</div>
 
@@ -311,7 +311,7 @@ if ( !trait_exists('Metaboxes') ){
 						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-instagram"></i> URL</span></div>
 						<input type="text" name="nebula_options[instagram_url]" id="instagram_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['instagram_url']; ?>" placeholder="https://www.instagram.com/pinckneyhugo" />
 					</div>
-					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Instagram profile.</p>
+					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Instagram profile (starting with <code>https://</code>).</p>
 					<p class="option-keywords">social seo</p>
 				</div>
 
@@ -321,7 +321,7 @@ if ( !trait_exists('Metaboxes') ){
 						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-pinterest"></i> URL</span></div>
 						<input type="text" name="nebula_options[pinterest_url]" id="pinterest_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['pinterest_url']; ?>" placeholder="https://www.pinterest.com/pinckneyhugo" />
 					</div>
-					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Pinterest profile.</p>
+					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Pinterest profile (starting with <code>https://</code>).</p>
 					<p class="option-keywords">social seo</p>
 				</div>
 
@@ -331,7 +331,7 @@ if ( !trait_exists('Metaboxes') ){
 						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-tiktok"></i> URL</span></div>
 						<input type="text" name="nebula_options[tiktok_url]" id="tiktok_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['tiktok_url']; ?>" placeholder="https://www.tiktok.com/@pinckneyhugo" />
 					</div>
-					<p class="nebula-help-text short-help form-text text-muted">The full URL of your TikTok profile (including the @ symbol).</p>
+					<p class="nebula-help-text short-help form-text text-muted">The full URL of your TikTok profile (starting with <code>https://</code> and including the <code>@</code> symbol).</p>
 					<p class="option-keywords">social seo</p>
 				</div>
 			<?php

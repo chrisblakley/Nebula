@@ -949,7 +949,7 @@ if ( !trait_exists('Functions') ){
 		}
 
 		//Use WP Pagenavi if active, or manually paginate.
-		public function paginate( $query = false, $args = array() ){
+		public function paginate($query=false, $args=array()){
 			if ( function_exists('wp_pagenavi') ){
 				wp_pagenavi();
 			} else {
@@ -960,14 +960,14 @@ if ( !trait_exists('Functions') ){
 
 				$big = 999999999; //An unlikely integer //PHP 7.4 use numeric separators here
 
-				// Set some defaults if not passed by the $args value...
-				$args['base'] = ($args['base'])?$args['base']:str_replace($big, '%#%', esc_url(get_pagenum_link($big)));
-				$args['format'] = ($args['format'])?$args['format']:'?paged=%#%';
-				$args['current'] = ($args['current'])?$args['current']:max(1, get_query_var('paged'));
-				$args['total'] = ($args['total'])?$args['total']:$query->max_num_pages;
-				
+				//Set some defaults if not passed by the $args value...
+				$args['base'] = ( $args['base'] )? $args['base'] : str_replace($big, '%#%', esc_url(get_pagenum_link($big)));
+				$args['format'] = ( $args['format'] )? $args['format'] : '?paged=%#%';
+				$args['current'] = ( $args['current'] )? $args['current'] : max(1, get_query_var('paged'));
+				$args['total'] = ( $args['total'] )? $args['total'] : $query->max_num_pages;
+
 				echo '<div class="wp-pagination">';
-					echo paginate_links( $args );
+					echo paginate_links($args);
 				echo '</div>';
 			}
 		}
@@ -1603,7 +1603,7 @@ if ( !trait_exists('Functions') ){
 			$form = '<form id="searchform" class="row gx-2 ignore-form" role="search" method="get" action="' . home_url('/') . '">
 						<div class="col">
 							<div class="input-group">
-								<div class="input-group-text"><i class="fa-solid fa-search"></i></div>
+								<div class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></div>
 								<label class="visually-hidden" for="s">Search</label>
 								<input id="s" class="form-control ignore-form" type="text" name="s" value="' . get_search_query() . '" placeholder="' . $placeholder . '" role="search" autocorrect="off" autocapitalize="off" spellcheck="false" />
 							</div>
@@ -1630,7 +1630,7 @@ if ( !trait_exists('Functions') ){
 			$form = '<div id="nebula-hero-formcon">
 					<form id="nebula-hero-search" class="form-group search ignore-form" method="get" action="' . home_url('/') . '" role="search">
 						<div class="input-group">
-							<i class="fa-solid fa-search"></i>
+							<i class="fa-solid fa-magnifying-glass"></i>
 							<label class="visually-hidden" for="nebula-hero-search-input">Autocomplete Search</label>
 							<input id="nebula-hero-search-input" type="search" class="form-control open input search nofade ignore-form" name="s" placeholder="' . $placeholder . '" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" x-webkit-speech />
 						</div>

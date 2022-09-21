@@ -67,7 +67,7 @@
 						</ul>
 
 						<div class="input-group">
-							<div class="input-group-text"><i class="fa-solid fa-fw fa-search"></i></div>
+							<div class="input-group-text"><i class="fa-solid fa-fw fa-magnifying-glass"></i></div>
 							<input type="text" list="preset-filters" id="nebula-option-filter" class="form-control" value="<?php echo $pre_filter; ?>" placeholder="Find an option..." />
 						</div>
 						<p id="reset-filter" class="hidden"><a class="btn btn-danger" href="#"><i class="fa-solid fa-fw fa-times"></i> Reset Filter</a></p>

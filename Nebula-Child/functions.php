@@ -95,10 +95,4 @@ add_action('admin_enqueue_scripts', function(){
 	//Note: child theme admin.css is enqueued by WordPress core when that color scheme is selected per user
 }, 327);
 
-
-
-
-
-
-
 //Close functions.php. DO NOT add anything after this closing tag!! ?>

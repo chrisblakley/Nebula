@@ -376,7 +376,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('adwords_remarketing_conversion_id') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Google AdWords',
-					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-search-plus"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-magnifying-glass-plus"></i>',
 					'url' => 'https://adwords.google.com/home/'
 				);
 			}

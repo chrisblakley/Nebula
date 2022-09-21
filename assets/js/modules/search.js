@@ -74,7 +74,7 @@ nebula.menuSearchReplacement = async function(){
 	if ( jQuery('.nebula-search').length ){
 		jQuery('.menu .nebula-search').each(function(){
 			let randomMenuSearchID = Math.floor((Math.random()*100)+1); //Why does it need this again? Add comment please.
-			jQuery(this).html('<form class="wp-menu-nebula-search nebula-search search footer-search" method="get" action="' + nebula.site.home_url + '/"><div class="nebula-input-group"><i class="fa-solid fa-search"></i><label class="visually-hidden" for="nebula-menu-search-' + randomMenuSearchID + '">Search</label><input type="search" id="nebula-menu-search-' + randomMenuSearchID + '" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></div></form>');
+			jQuery(this).html('<form class="wp-menu-nebula-search nebula-search search footer-search" method="get" action="' + nebula.site.home_url + '/"><div class="nebula-input-group"><i class="fa-solid fa-magnifying-glass"></i><label class="visually-hidden" for="nebula-menu-search-' + randomMenuSearchID + '">Search</label><input type="search" id="nebula-menu-search-' + randomMenuSearchID + '" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></div></form>');
 		});
 
 		jQuery('.nebula-search input').on('focus', function(){
@@ -114,7 +114,7 @@ nebula.autocompleteSearchListeners = async function(){
 						nebula.autocompleteSearch(jQuery(this), types);
 					} else {
 						jQuery(this).closest('form').removeClass('searching');
-						jQuery(this).closest('.input-group, .nebula-input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
+						jQuery(this).closest('.input-group, .nebula-input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-magnifying-glass');
 					}
 				});
 			});
@@ -147,10 +147,10 @@ nebula.autocompleteSearch = function(element, types = ''){
 			}, 10_000);
 
 			//Swap magnifying glass on Bootstrap input-group
-			element.closest('.input-group, .nebula-input-group').find('.fa-search').removeClass('fa-search').addClass('fa-spin fa-spinner');
+			element.closest('.input-group, .nebula-input-group').find('.fa-magnifying-glass').removeClass('fa-magnifying-glass').addClass('fa-spin fa-spinner');
 		} else {
 			element.closest('form').removeClass('searching');
-			element.closest('.input-group, .nebula-input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
+			element.closest('.input-group, .nebula-input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-magnifying-glass');
 		}
 
 		let typesQuery = '';
@@ -189,7 +189,7 @@ nebula.autocompleteSearch = function(element, types = ''){
 							nebula.crm('event', 'Autocomplete Search AJAX Error');
 						}, 1500, 'autocomplete error buffer');
 						element.closest('form').removeClass('searching');
-						element.closest('.input-group, .nebula-input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
+						element.closest('.input-group, .nebula-input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-magnifying-glass');
 					});
 				}
 
@@ -237,7 +237,7 @@ nebula.autocompleteSearch = function(element, types = ''){
 				sourceResponse(searchResults); //Respond to the jQuery UI Autocomplete now
 
 				element.closest('form').removeClass('searching').addClass('autocompleted');
-				element.closest('.input-group, .nebula-input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-search');
+				element.closest('.input-group, .nebula-input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-magnifying-glass');
 			},
 			focus: function(event, ui){
 				event.preventDefault(); //Prevent input value from changing.

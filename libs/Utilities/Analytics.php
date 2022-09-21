@@ -61,7 +61,7 @@ if ( !trait_exists('Analytics') ){
 			$override = apply_filters('pre_ga_parse_cookie', null);
 			if ( isset($override) ){return $override;}
 
-			$cid = $this->generate_UUID();
+			$cid = $this->generate_UUID(); //Start with a local (non-Google) unique ID
 			if ( isset($this->super->cookie['_ga']) ){
 				list($version, $domainDepth, $cid1, $cid2) = explode('.', $this->super->cookie["_ga"], 4);
 				$contents = array('version' => $version, 'domainDepth' => $domainDepth, 'cid' => $cid1 . '.' . $cid2);
