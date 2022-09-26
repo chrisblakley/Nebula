@@ -191,6 +191,7 @@ if ( !trait_exists('Assets') ){
 					'tags' => $this->post_tags(array('string' => true)),
 					'page' => ( get_query_var('paged') )? get_query_var('paged') : 1,
 					'isFrontPage' => is_front_page(),
+					'ancestors' => array(),
 				),
 				'screen' => array(
 					'isFrontend' => !$this->is_admin_page(),
@@ -198,6 +199,11 @@ if ( !trait_exists('Assets') ){
 				),
 				'dom' => null,
 			);
+
+			//Add ancestors to the post object
+			foreach ( get_post_ancestors(get_the_id()) as $ancestor_id ){
+				$this->brain['post']['ancestors'][$ancestor_id] = get_post_field('post_name', $ancestor_id);
+			}
 
 			//Add admin screens when available
 			if ( function_exists('get_current_screen') ){ //This function only exists on admin pages (and only after the admin_init hook triggers)

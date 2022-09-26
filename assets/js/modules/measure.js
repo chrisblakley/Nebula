@@ -784,7 +784,7 @@ nebula.eventTracking = async function(){
 							if ( !excludedDomain && !href.includes('//www.' + domain) ){ //Exclude the "www" subdomain and other defined excluded domains (above)
 								let thisEvent = {
 									event: e,
-									event_name: 'outbound_link',
+									event_name: 'nebula_outbound', //Purposefully different from the GA4 Enhanced Measurement to prevent inflated metrics
 									event_category: 'Outbound Link',
 									event_action: 'Click',
 									outbound: true,

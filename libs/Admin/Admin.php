@@ -1824,7 +1824,13 @@ if ( !trait_exists('Admin') ){
 								$classes[] = 'no-data';
 							}
 
-							echo '<tr class="' . implode(' ', $classes) . '"><td><strong>' . $key . '</strong></td><td>' . $value . '</td></tr>';
+							//Convert objects to strings
+							if ( is_object($value) ){
+								$value = json_decode(json_encode($value), true);
+							}
+
+							echo '<tr class="' . implode(' ', $classes) . '"><td><strong>' . $key . '</strong></td>';
+							echo '<td>' . $value . '</td></tr>';
 						}
 
 						echo '</tbody></table>';

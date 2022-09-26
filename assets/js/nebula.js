@@ -20,9 +20,9 @@ jQuery(function(){
 
 	//Analytics
 	if ( !nebula.isDoNotTrack() ){
-		import('./modules/analytics.js?ver=' + nebula.version.number).then(function(module){
+		import('./modules/measure.js?ver=' + nebula.version.number).then(function(module){
 			nebula.eventTracking();
-			nebula.dom.document.trigger('nebula_module_loaded', 'analytics.js');
+			nebula.dom.document.trigger('nebula_module_loaded', 'measure.js');
 		});
 	}
 

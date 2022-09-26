@@ -95,6 +95,11 @@
 			nebula.pageviewProperties.post_categories = nebula.post.categories;
 			nebula.pageviewProperties.post_tags = nebula.post.tags;
 
+			//Post Ancestors
+			if ( nebula?.post?.ancestors ){
+				nebula.pageviewProperties.ancestors = Object.values(nebula.post.ancestors).join(); //Convert the list of ancestor slugs into a comma-separated string
+			}
+
 			if ( window.performance ){
 				//Redirects
 				nebula.pageviewProperties.redirect_count = performance.navigation.redirectCount;
