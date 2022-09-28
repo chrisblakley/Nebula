@@ -216,6 +216,8 @@ ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {width: 19px; height: 
 //#wp-fullscreen-buttons .mce-btn.mce-nebula-icon button i,
 //.mce-toolbar .mce-btn-group .mce-btn.mce-nebula-icon button i {}
 
+#menu-management #nav-menu-footer {position: relative;} //Don't make the bottom menu editing row sticky- too easy to accidentally click delete.
+
 #footer-upgrade strong.nebula {cursor: help;}
 
 #wpfooter a {text-decoration: none;}

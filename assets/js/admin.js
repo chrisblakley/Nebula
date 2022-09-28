@@ -72,6 +72,10 @@ jQuery(window).on('load', function(){
 		});
 	}
 
+	if ( nebula.screen.base === 'nav-menus' ){
+		jQuery('.menu-delete').html('<i class="fa-solid fa-triangle-exclamation"></i> Delete the <strong>Entire</strong> Menu'); //Update the Delete Menu text to be more explicit
+	}
+
 	//Force disable the WordPress core fullscreen editor for all users.
 	try {
 		if ( wp.data.select('core/edit-post').isFeatureActive('fullscreenMode') ){

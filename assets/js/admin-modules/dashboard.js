@@ -229,7 +229,7 @@ nebula.getLighthouseResults = function(){
 				//Total Blocking Time
 				var totalBlockingTime = json.lighthouseResult.audits['total-blocking-time'];
 				nebula.appendPerformanceMetric({
-					'icon': 'fa-solid fa-octagon-exclamation',
+					'icon': 'fa-solid fa-shield-halved',
 					'label': 'Total Blocking Time (TBT)',
 					'text': (totalBlockingTime.numericValue/1000).toFixed(3) + ' seconds',
 					'description': totalBlockingTime.description,

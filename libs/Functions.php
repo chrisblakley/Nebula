@@ -3207,7 +3207,7 @@ if ( !trait_exists('Functions') ){
 			$submission_title = get_the_title($form_id) . ' submission' . $unique_identifier ;
 			$submission_data = map_deep($submission_data, 'sanitize_text_field'); //Deep sanitization of the full data array
 
-			apply_filters('nebula_cf7_submission_data', $submission_data); //Allow others to add/modify CF7 submission data before it is stored
+			$submission_data = apply_filters('nebula_cf7_submission_data', $submission_data); //Allow others to add/modify CF7 submission data before it is stored
 
 			//Store it in a CPT
 			wp_insert_post(array(
