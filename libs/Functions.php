@@ -1572,14 +1572,14 @@ if ( !trait_exists('Functions') ){
 						$prefix = 'Tag: ';
 					}
 
-					echo apply_filters('nebula_breadcrumbs_tag', $data['before'] . $prefix . '<span itemprop="name">' . single_tag_title('', false) . '</span>' . $data['after'], $data);
+					echo apply_filters('nebula_breadcrumbs_tag', $data['before'] . $prefix . '<span itemprop="name">' . single_tag_title('', false) . '</span><meta itemprop="position" content="' . $position . '" />' . $data['after'], $data);
 					//echo $data['before'] . '<a class="current-breadcrumb-link" href="' . get_tag_link($thisTag->term_id) . '">'. $prefix . single_tag_title('', false) . '</a>' . $data['after']; //@todo "Nebula": Need to get $thisTag like $thisCat above
 				} elseif ( is_author() ){
 					//@TODO "Nebula" 0: Support for multi author? is_multi_author()
 
 					global $author;
 					$userdata = get_userdata($author);
-					echo apply_filters('nebula_breadcrumbs_author', $data['before'] . '<span itemprop="name">' . $userdata->display_name . '</span>' . $data['after'], $data);
+					echo apply_filters('nebula_breadcrumbs_author', $data['before'] . '<span itemprop="name">' . $userdata->display_name . '</span><meta itemprop="position" content="' . $position . '" />' . $data['after'], $data);
 				} elseif ( is_404() ){
 					echo apply_filters('nebula_breadcrumbs_error', $data['before'] . '<span itemprop="name">Error 404</span>' . $data['after'], $data);
 				}

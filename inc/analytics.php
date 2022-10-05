@@ -7,6 +7,16 @@
 
 <?php if ( nebula()->is_analytics_allowed() ): ?>
 	<?php nebula()->timer('Analytics (Include)'); ?>
+	<?php if ( nebula()->get_option('ga_tracking_id') ): //Universal Google Analytics //@todo "Nebula" 0: Remove after July 2023 ?>
+		<script src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html(nebula()->get_option('ga_tracking_id')); ?>" async></script>
+		<script async>
+  			window.dataLayer = window.dataLayer || [];
+  			function gtag(){dataLayer.push(arguments);}
+  			gtag('js', new Date());
+  			gtag('config', <?php echo esc_html(nebula()->get_option('ga_tracking_id')); ?>);
+		</script>
+	<?php endif; ?>
+
 	<?php if ( nebula()->get_option('ga_measurement_id') ): //Google Analytics ?>
 		<script src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>" async></script>
 		<script async>

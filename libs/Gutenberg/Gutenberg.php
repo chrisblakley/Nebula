@@ -113,7 +113,10 @@ if ( !trait_exists('Gutenberg') ){
 					'render_callback' => function($attributes){ //Use this to create the element in PHP (With attributes passed as a parameter)
 						$youtube_data = nebula()->video_meta('youtube', $attributes['videoID']);
 
-					return '<div class="nebula-youtube ratio ratio-16x9 ' . $attributes['className'] . '"><iframe id="' . $youtube_data['safetitle'] . '" class="youtube" width="1024" height="768" src="//www.youtube.com/embed/' . $youtube_data['id'] . '?wmode=transparent&enablejsapi=1&rel=0&t=' . $attributes['videoTimestamp'] . '" frameborder="0" allowfullscreen loading="lazy"></iframe></div>';
+						$class_name = ( isset($attributes['className']) )? $attributes['className'] : '';
+						$video_timestamp = ( isset($attributes['videoTimestamp']) )? $attributes['videoTimestamp'] : '';
+
+						return '<div class="nebula-youtube ratio ratio-16x9 ' . $class_name . '"><iframe id="' . $youtube_data['safetitle'] . '" class="youtube" width="1024" height="768" src="//www.youtube.com/embed/' . $youtube_data['id'] . '?wmode=transparent&enablejsapi=1&rel=0&t=' . $video_timestamp . '" frameborder="0" allowfullscreen loading="lazy"></iframe></div>';
 					},
 				));
 			}

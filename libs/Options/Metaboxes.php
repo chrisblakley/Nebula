@@ -553,10 +553,17 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_main_analytics_metabox($nebula_options){
 			?>
 				<div class="form-group important-option" important-or="gtm_id">
-					<label for="ga_measurement_id">Google Analytics Measurement ID</label>
+					<label for="ga_measurement_id">Google Analytics (GA4) Measurement ID</label>
 					<input type="text" name="nebula_options[ga_measurement_id]" id="ga_measurement_id" class="form-control nebula-validate-regex" data-valid-regex="^G-.+$" value="<?php echo $nebula_options['ga_measurement_id']; ?>" placeholder="G-0000000000" />
 					<p class="nebula-help-text short-help form-text text-muted">This will add Google Analytics tracking to the appropriate locations.</p>
 					<p class="option-keywords">remote resource recommended minor page speed impact optimization optimize ga4</p>
+				</div>
+
+				<div class="form-group"><!-- @todo "Nebula" 0: Remove after July 2023 -->
+					<label for="ga_tracking_id">Google Analytics UA Tracking ID <small><em>(Optional)</em></small></label>
+					<input type="text" name="nebula_options[ga_tracking_id]" id="ga_tracking_id" class="form-control nebula-validate-regex" data-valid-regex="^UA-\d+-\d+$" value="<?php echo $nebula_options['ga_tracking_id']; ?>" placeholder="UA-00000000-1" />
+					<p class="nebula-help-text short-help form-text text-muted">The Tracking ID for the <strong>Universal Analytics</strong> property (Not GA4!). This should only be used for data redundancy as <strong>GA will stop collecting this data in July 2023</strong>.</p>
+					<p class="option-keywords">remote resource recommended minor page speed impact optimization optimize universal analytics ua</p>
 				</div>
 
 				<div class="form-group important-option" important-or="ga_measurement_id">

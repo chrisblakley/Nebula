@@ -249,6 +249,7 @@ if ( !trait_exists('Options') ){
 				//Analytics Tab
 				'ga_measurement_id' => '',
 				'ga_property_id' => '',
+				'ga_tracking_id' => '', //@todo "Nebula" 0: Remove after July 2023
 				'gtm_id' => '',
 				'ga_api_secret' => '',
 				'ga_require_consent' => 0,
