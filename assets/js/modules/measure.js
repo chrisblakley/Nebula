@@ -263,8 +263,8 @@ nebula.eventTracking = async function(){
 				event_action: jQuery(this).attr('alt') || jQuery(this).attr('src'), //@todo "Nebula" 0: Remove after July 2023
 				alt: jQuery(this).attr('alt'),
 				src: jQuery(this).attr('src'),
-				event_label: jQuery(this).parents('a').attr('href') //@todo "Nebula" 0: Remove after July 2023
-				link: jQuery(this).parents('a').attr('href'),
+				event_label: jQuery(this).parents('a').attr('href'), //@todo "Nebula" 0: Remove after July 2023
+				link: jQuery(this).parents('a').attr('href')
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
