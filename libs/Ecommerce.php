@@ -25,8 +25,8 @@ if ( !trait_exists('Ecommerce') ){
 				}
 
 				if ( !$this->is_background_request() ){
-					add_action('nebula_ga_before_send_pageview', array($this, 'woo_custom_ga_dimensions'));
-					add_action('nebula_ga_after_send_pageview', array($this, 'woo_custom_ga_events'));
+					add_action('nebula_ga_before_pageview', array($this, 'woo_custom_ga_dimensions'));
+					add_action('nebula_ga_after_pageview', array($this, 'woo_custom_ga_events'));
 				}
 			}
 		}
@@ -99,13 +99,63 @@ if ( !trait_exists('Ecommerce') ){
 		public function woo_custom_ga_events(){
 			echo 'nebula.site.ecommerce = true;'; //Set the ecommerce setting to true
 
-			//Set custom dimension and send event on order received page.
-			if ( is_order_received_page() ){
-				echo 'gtag("set", "user_properties", {
-					woocommerce_customer : "Order Received"
-				});';
+			//View product detail page
+			if ( is_product() ){
+				global $product;
+				$variation = wc_get_product($product->get_variation_id()); //If no variation, this will appear the same as the product itself
 
-				echo 'gtag("event", "purchase", {event_category: "Ecommerce", event_action: "Order Received", event_label: "Order Received page load (Success from payment gateway)"});';
+				$product_item = array(
+					'item_id' => $product->get_id(),
+					'item_name' => $product->get_name(),
+					'item_variant' => $variation->get_name(),
+					'currency' => 'USD',
+					'price' => $product->get_price(),
+					'quantity' => 1,
+				);
+
+				echo 'gtag("event", "view_item", {
+					currency: "USD",
+					items: [' . json_encode($product_item) . ']
+				});';
+			}
+
+			//View Cart and Checkout pages
+			if ( is_cart() || is_checkout() && is_dev() ){
+				$page_type = '';
+				if ( is_cart() ){
+					$page_type = 'view_cart';
+				} elseif ( is_checkout_pay_page() ){
+					$page_type = 'add_payment_info';
+				} elseif ( is_checkout() ){
+					$page_type = 'begin_checkout';
+				}
+
+				global $woocommerce;
+				$cart_items = $woocommerce->cart->get_cart();
+
+				$product_items = array(); //Prep this for the GA payload
+				$index = 0;
+				foreach( $cart_items as $cart_item => $item_properties ){ //Loop through all of the items in the cart
+					$product = wc_get_product($item_properties['data']->get_id());
+					$variation = wc_get_product($product->get_variation_id()); //If no variation, this will appear the same as the product itself
+
+					$product_items[] = array(
+						'item_id' => $item_properties['data']->get_id(),
+						'item_name' => $product->get_name(),
+						'item_variant' => $variation->get_name(),
+						'currency' => 'USD',
+						'price' => get_post_meta($item_properties['product_id'], '_price', true),
+						'quantity' => $item_properties['quantity'],
+						'index' => $index, //This just counts up for each unique item in the cart
+					);
+
+					$index++;
+				}
+
+				echo 'gtag("event", "' . $page_type . '", {
+					currency: "USD",
+					items: ' . json_encode($product_items) . '
+				});';
 			}
 		}
 
@@ -116,21 +166,44 @@ if ( !trait_exists('Ecommerce') ){
 
 		//Checkout visitor data
 		public function woocommerce_order_data($order_id){
+			$order = new WC_Order($order_id);
+
+			echo '<script>';
+			echo 'gtag("set", "user_properties", {
+				woocommerce_customer : "Order Received"
+			});';
+
+			$product_items = array(); //Prep this for the GA payload
+			$index = 0;
+			foreach ( $order->get_items() as $item_id => $item ){ //Loop through all of the items in the order
+				$variation = wc_get_product($product->get_variation_id()); //If no variation, this will appear the same as the product itself
+				$product_items[] = array(
+					'item_id' => $item->get_product_id(),
+					'item_name' => $item->get_name(),
+					'currency' => 'USD',
+					'item_variant' => $variation->get_name(),
+					'price' => $item->get_meta('_price', true),
+					'quantity' => $item->get_quantity(),
+					'index' => $index,
+				);
+
+				$index++;
+			}
+
+			echo 'gtag("event", "purchase", {
+				transaction_id: "' . $order->get_id() . '",
+				value: ' . $order->get_total() . ', //Grand total price
+				tax: ' . $order->get_total_tax() . ',
+				shipping: ' . $order->get_shipping_total() . ',
+				currency: "' . $order->get_currency() . '",
+				items: ' . json_encode($product_items) . '
+			});';
+
+			echo '</script>';
+
 			if ( $this->get_option('hubspot_portal') ){
 				$order = new WC_Order($order_id);
-
-				//Append order ID and product IDs
-				$products = array();
-				$items = $order->get_items();
-				foreach ( $items as $item ) {
-					$products['ecommerce_product_ids'] = $item['product_id'];
-				}
-				$products['ecommerce_order_id'] = $order_id;
 				?>
-
-
-
-
 
 				<?php if ( 1==2 ): //@todo "Nebula" 0: See if this script tag will break anything! If this can't be done here, try the above "woo_custom_ga_events" function... but can order details be accessed from that page? ?>
 				<script>
@@ -150,12 +223,6 @@ if ( !trait_exists('Ecommerce') ){
 					}]);
 				</script>
 				<?php endif; ?>
-
-
-
-
-
-
 				<?php
 			}
 		}

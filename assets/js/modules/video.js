@@ -120,7 +120,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 		thisVideo.watchedPercent = thisVideo.seen.length;
 		thisVideo.watched = (thisVideo.seen.length/100)*thisVideo.duration; //Roughly calculate time watched based on percent seen
 
-		if ( thisVideo.watchedPercent > 25 && !thisVideo.engaged ){
+		if ( !thisVideo.autoplay && thisVideo.watchedPercent > 25 && !thisVideo.engaged ){
 			if ( nebula.isInView(element) ){
 				let thisEvent = {
 					event_name: 'video_engagement',
@@ -178,48 +178,46 @@ nebula.addHTML5VideoPlayer = function(id, element){
 	element.on('seeked', function(){
 		let thisVideo = nebula.videos[id];
 
-		if ( thisVideo.current == 0 && element.is('[loop]') ){ //If the video is set to loop and is starting again
-			//If it is an autoplay video without controls, don't log loops
-			if ( element.is('[autoplay]') && !element.is('[controls]') ){
-				return false;
-			}
-
-			let thisEvent = {
-				event_name: 'video_complete',
-				event_category: 'Videos',
-				event_action: ( nebula.isInView(element) )? 'Ended (Looped)' : 'Ended (Looped) (Not In View)',
-				video_title: thisVideo.title,
-				video_provider: 'html5',
-				autoplay: thisVideo.autoplay,
-				non_interaction: true
-			};
-
-			if ( thisVideo.autoplay ){
-				thisEvent.event_action += ' (Autoplay)';
-			}
-
-			nebula.dom.document.trigger('nebula_event', thisEvent);
-			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-		} else { //Otherwise, the user seeked
-			nebula.debounce(function(){
+		//If it is an autoplay video or without controls, don't log loops
+		if ( !thisVideo.autoplay && !element.is('[autoplay]') && element.is('[controls]') ){
+			if ( thisVideo.current == 0 && element.is('[loop]') ){ //If the video is set to loop and is starting again
 				let thisEvent = {
-					event_name: 'video_seek',
+					event_name: 'video_complete',
 					event_category: 'Videos',
-					event_action: 'Seek',
-					position: thisVideo.current.toFixed(0),
+					event_action: ( nebula.isInView(element) )? 'Ended (Looped)' : 'Ended (Looped) (Not In View)',
 					video_title: thisVideo.title,
 					video_provider: 'html5',
-					autoplay: thisVideo.autoplay
+					autoplay: thisVideo.autoplay,
+					non_interaction: true
 				};
 
-				thisEvent.event_label = thisEvent.title + ' [to: ' + thisEvent.position + ']';
+				if ( thisVideo.autoplay ){
+					thisEvent.event_action += ' (Autoplay)';
+				}
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-				nebula.crm('event', 'Video Seek: ' + thisEvent.title);
-				thisVideo.seeker = true;
-				nebula.dom.document.trigger('nebula_seeked_video', thisVideo);
-			}, 250, 'video seeking');
+			} else { //Otherwise, the user seeked
+				nebula.debounce(function(){
+					let thisEvent = {
+						event_name: 'video_seek',
+						event_category: 'Videos',
+						event_action: 'Seek',
+						position: thisVideo.current.toFixed(0),
+						video_title: thisVideo.title,
+						video_provider: 'html5',
+						autoplay: thisVideo.autoplay
+					};
+
+					thisEvent.event_label = thisEvent.title + ' [to: ' + thisEvent.position + ']';
+
+					nebula.dom.document.trigger('nebula_event', thisEvent);
+					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+					nebula.crm('event', 'Video Seek: ' + thisEvent.title);
+					thisVideo.seeker = true;
+					nebula.dom.document.trigger('nebula_seeked_video', thisVideo);
+				}, 250, 'video seeking');
+			}
 		}
 	});
 
@@ -398,7 +396,7 @@ nebula.youtubeStateChange = function(e){
 				thisVideo.watched += updateInterval/1000; //Add to the watched duration
 				thisVideo.watchedPercent = (thisVideo.watched)/thisVideo.duration;
 
-				if ( thisVideo.watchedPercent > 0.25 && !thisVideo.engaged ){
+				if ( !thisVideo.autoplay && thisVideo.watchedPercent > 0.25 && !thisVideo.engaged ){
 					if ( nebula.isInView(jQuery(thisVideo.element)) ){
 						let thisEvent = {
 							event_name: 'video_engagement',
@@ -656,7 +654,7 @@ nebula.createVimeoPlayers = function(){
 				nebula.videos[id].watchedPercent = nebula.videos[id].seen.length;
 				nebula.videos[id].watched = (nebula.videos[id].seen.length/100)*nebula.videos[id].duration; //Roughly calculate time watched based on percent seen
 
-				if ( nebula.videos[id].watchedPercent > 25 && !nebula.videos[id].engaged ){
+				if ( !nebula.videos[id].autoplay && nebula.videos[id].watchedPercent > 25 && !nebula.videos[id].engaged ){
 					if ( nebula.isInView(jQuery(nebula.videos[id].element)) ){
 						let thisEvent = {
 							event_name: 'video_engagement',

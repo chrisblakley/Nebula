@@ -171,14 +171,6 @@ if ( !trait_exists('Automation') ){
 					),
 				);
 
-				if ( file_exists(WP_PLUGIN_DIR . '/woocommerce') ){
-					array_push($bundled_plugins, array(
-						'name' => 'Google Analytics and Google Shopping plugin for WooCommerce',
-						'slug' => 'enhanced-e-commerce-for-woocommerce-store',
-						'required' => true
-					));
-				}
-
 				$all_bundled_plugins = apply_filters('nebula_bundled_plugins', $bundled_plugins); //Allow other themes and plugins to bundle additional plugins
 
 				$config = array(

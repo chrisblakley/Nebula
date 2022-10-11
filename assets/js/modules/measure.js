@@ -1413,18 +1413,29 @@ nebula.eventTracking = async function(){
 };
 
 //Ecommerce event tracking
-//Note: These supplement the plugin Enhanced Ecommerce for WooCommerce
+//Note: These supplement the server-side event tracking
 nebula.ecommerceTracking = async function(){
 	if ( nebula.site?.ecommerce ){
+		//Note the following only work when the add to cart with AJAX Woocommerce setting is enabled
+		// //Add to Cart
+		// nebula.dom.body.on('adding_to_cart', function(button, data){
+		// 	//Do stuff
+		// });
+		// //Remove from Cart
+		// nebula.dom.body.on('removed_from_cart', function(response, cart_hash, button){
+		// 	//Do Stuff
+		// });
+
 		//Add to Cart clicks
-		nebula.dom.document.on('click', 'a.add_to_cart, .single_add_to_cart_button', function(e){ //@todo "Nebula" 0: is there a trigger from WooCommerce this can listen for?
+		nebula.dom.document.on('click', 'button[name="add-to-cart"], a.add_to_cart, .single_add_to_cart_button', function(e){ //@todo "Nebula" 0: is there a trigger from WooCommerce this can listen for?
 			let thisEvent = {
 				event: e,
 				event_name: 'add_to_cart',
 				event_category: 'Ecommerce',
 				event_action: 'Add to Cart',
-				event_label: jQuery(this).attr('data-product_id'), //@todo "Nebula" 0: Remove after July 2023
-				product: jQuery(this).attr('data-product_id')
+				item_id: jQuery(this).attr('value') || nebula.post.id,
+				event_label: jQuery(this).attr('data-product_id') || nebula.post.id, //@todo "Nebula" 0: Remove after July 2023
+				product: jQuery(this).attr('data-product_id') || nebula.post.id
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1436,7 +1447,7 @@ nebula.ecommerceTracking = async function(){
 		});
 
 		//Update cart clicks
-		nebula.dom.document.on('click', '.button[name="update_cart"]', function(e){
+		nebula.dom.document.on('click', 'button[name="update_cart"]', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'update_cart',
@@ -1459,6 +1470,7 @@ nebula.ecommerceTracking = async function(){
 				event_category: 'Ecommerce',
 				event_action: 'Remove This Item',
 				event_label: jQuery(this).attr('data-product_id'), //@todo "Nebula" 0: Remove after July 2023
+				item_id: jQuery(this).attr('data-product_id'),
 				product: jQuery(this).attr('data-product_id')
 			};
 

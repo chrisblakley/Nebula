@@ -224,6 +224,8 @@
 					non_interaction: true
 				});
 			<?php endif; ?>
+
+			<?php do_action('nebula_ga_after_pageview'); ?>
 		</script>
 	<?php else: //If Tracking ID is empty: ?>
 		<?php if ( !nebula()->get_option('gtm_id') ): //If GTM ID is also empty, set an empty gtag() function to prevent JS errors ?>
