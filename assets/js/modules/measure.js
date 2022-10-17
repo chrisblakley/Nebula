@@ -93,6 +93,11 @@ nebula.allHitDimensions = function(){
 
 //Prep an event object to send to Google Analytics
 nebula.gaEventObject = function(eventObject){
+	if ( !eventObject['event_name'] ){
+		console.warn('[Nebula Help] GA4 requires an event name! This event does not have an event_name:', eventObject);
+		eventObject['event_name'] = 'unnamed_event';
+	}
+
 	if ( nebula.user.staff && eventObject['event_name'].length > 40 ){ //If the event name is longer than 40 characters
 		console.warn('[Nebula Help] The GA4 event name "' + eventObject['event_name'] + '" is too long (' + eventObject['event_name'].length + ' characters). Event names must be 40 characters or less.');
 	}

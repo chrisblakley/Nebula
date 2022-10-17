@@ -32,7 +32,9 @@ nebula.cf7Functions = async function(){
 					};
 
 					nebula.dom.document.trigger('nebula_event', thisEvent);
-					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+					if ( typeof gaEventObject === 'function' ){ //If the page is loaded pre-scrolled this may not be available for the very first intersection
+						gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+					}
 					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-cf7-impression'}));
 
 					cf7Observer.unobserve(entry.target); //Stop observing the element

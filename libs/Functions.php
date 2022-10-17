@@ -75,7 +75,6 @@ if ( !trait_exists('Functions') ){
 
 			if ( is_plugin_active('wordpress-seo/wp-seo.php') ){ //If Yoast is active
 				add_filter('wpseo_metadesc', array($this, 'meta_description')); //Yoast hook
-				add_filter('wpseo_twitter_card_type', array($this, 'allow_large_twitter_summary'), 10, 2); //Yoast hook
 			}
 
 			if ( is_user_logged_in() ){
@@ -3178,6 +3177,7 @@ if ( !trait_exists('Functions') ){
 		public function cf7_storage($form){
 			$submission = WPCF7_Submission::get_instance();
 			$submission_data = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS); //Get the $_POST data array and sanitize it
+			$submission_uploads = $submission->uploaded_files();
 			$contact_form = WPCF7_ContactForm::get_current();
 			$form_id = intval($contact_form->id()); //Use this to get information about the form
 
@@ -3204,13 +3204,24 @@ if ( !trait_exists('Functions') ){
 				$unique_identifier = ' from ' . sanitize_text_field($submission_data['your-email']);
 			}
 
+			//Handle file uploads
+			if ( !empty($submission_uploads) ){
+				foreach ( $submission_uploads as $upload_field_name => $file_uploads ){
+					foreach ( $file_uploads as $file_count => $file_location ){
+						//Note that /wpcf7_uploads/ is only a temporary storage location. The file upload is deleted after the email is sent. https://contactform7.com/file-uploading-and-attachment/#How-your-uploaded-files-are-managed
+						$file_location = apply_filters('nebula_cf7_file_location', $file_location); //Allow others to modify the outputted uploaded file storage location string. Note: This does NOT change where the file is stored!
+						$submission_data[$upload_field_name . '_' . $file_count] = $file_location;
+					}
+				}
+			}
+
 			$submission_title = get_the_title($form_id) . ' submission' . $unique_identifier ;
 			$submission_data = map_deep($submission_data, 'sanitize_text_field'); //Deep sanitization of the full data array
 
 			$submission_data = apply_filters('nebula_cf7_submission_data', $submission_data); //Allow others to add/modify CF7 submission data before it is stored
 
 			//Store it in a CPT
-			wp_insert_post(array(
+			$new_post_id = wp_insert_post(array(
 				'post_title' => sanitize_text_field($submission_title),
 				'post_content' => json_encode($submission_data),
 				'post_status' => 'private',
@@ -3326,15 +3337,6 @@ if ( !trait_exists('Functions') ){
 			}
 
 			return $metadesc;
-		}
-
-		//Allow using large Twitter cards with Yoast (without upgrading)
-		public function allow_large_twitter_summary($value){
-			if ( $value === 'summary' ){ //&& get_the_post_thumbnail($post->ID, 'twitter_large')
-				$value = 'summary_large_image';
-			}
-
-			return $value;
 		}
 
 		//Execute arbitrary code from the options
