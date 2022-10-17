@@ -137,7 +137,7 @@ nebula.dragDropUpload = async function(){
 				e.dataTransfer.dropEffect = 'copy'; //Visualize to the user the "copy" cursor
 
 				nebula.debounce(function(){
-					thisEvent.event_name = 'file_upload_dragover',
+					thisEvent.event_name = 'file_upload_dragover';
 					thisEvent.event_action = 'Drag Over';
 					nebula.dom.document.trigger('nebula_event', thisEvent);
 					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
@@ -148,7 +148,7 @@ nebula.dragDropUpload = async function(){
 			dropArea.addEventListener('dragleave', function(e){
 				jQuery(dropArea).addClass('dragover');
 
-				thisEvent.event_name = 'file_upload_dragleave',
+				thisEvent.event_name = 'file_upload_dragleave';
 				thisEvent.event_action = 'Drag Leave';
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
@@ -174,7 +174,7 @@ nebula.dragDropUpload = async function(){
 					fileInput.files = e.dataTransfer.files; //Fill the file upload input with the uploaded file
 					jQuery(fileInput).parents('.custom-file').find('.custom-file-label').text(e.dataTransfer.files[0].name); //Update the Bootstrap label to show the filename
 
-					thisEvent.event_name = 'file_upload_dragdrop_accepted',
+					thisEvent.event_name = 'file_upload_dragdrop_accepted';
 					thisEvent.event_action = 'Dropped (Accepted)';
 					nebula.dom.document.trigger('nebula_event', thisEvent);
 					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
@@ -183,7 +183,7 @@ nebula.dragDropUpload = async function(){
 					nebula.temporaryClass(jQuery(dropArea), 'rejected', '', 1500);
 					nebula.applyValidationClasses(jQuery(fileInput), 'invalid', true); //Show the invalid message
 
-					thisEvent.event_name = 'file_upload_dragdrop_rejected',
+					thisEvent.event_name = 'file_upload_dragdrop_rejected';
 					thisEvent.event_action = 'Dropped (Rejected)';
 					nebula.dom.document.trigger('nebula_event', thisEvent);
 					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
