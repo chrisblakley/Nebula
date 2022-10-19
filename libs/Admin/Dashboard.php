@@ -822,6 +822,11 @@ if ( !trait_exists('Dashboard') ){
 				$directory_search_options['theme'] = '<option value="theme" selected="selected">Theme</option>';
 			}
 
+			//Must-Use Plugins (if any exist)
+			if ( is_dir(WPMU_PLUGIN_DIR) && is_array(scandir(WPMU_PLUGIN_DIR)) ){
+				$directory_search_options['mu_plugins'] = '<option value="mu_plugins">Must-Use Plugins</option>';
+			}
+
 			//Add active plugins to search list
 			$directory_search_options['all_plugins'] = '<option value="all_plugins">All Plugins</option>';
 			$all_plugins = get_plugins();
@@ -914,6 +919,7 @@ if ( !trait_exists('Dashboard') ){
 				'parent' => get_template_directory(),
 				'child' => get_stylesheet_directory(),
 				'plugins' => WP_PLUGIN_DIR,
+				'mu_plugins' => WPMU_PLUGIN_DIR,
 				'all_plugins' => WP_PLUGIN_DIR,
 				'uploads' => $uploadDirectory['basedir'],
 			);

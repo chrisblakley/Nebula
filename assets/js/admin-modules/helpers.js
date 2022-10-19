@@ -1,5 +1,8 @@
 window.performance.mark('(Nebula) Inside /admin-modules/helpers.js');
 
+//Ensure all links in CF7 submission tables open in a new tab
+jQuery('.nebula-cf7-submissions a').attr('target', '_blank').attr('rel', 'noopener noreferrer');
+
 //Notify for possible duplicate post slug
 nebula.uniqueSlugChecker = function(){
 	if ( jQuery('.edit-post-post-link__link-post-name').length ){

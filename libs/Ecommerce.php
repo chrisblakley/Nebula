@@ -114,6 +114,10 @@ if ( !trait_exists('Ecommerce') ){
 				);
 
 				echo 'gtag("event", "view_item", {
+					event_category: "Ecommerce",
+					event_action: "View Item",
+					event_label: "Product: ' . $product->get_name() . ' (ID: ' . $product->get_id() . ')",
+					value: "' . $product->get_price() . '",
 					currency: "USD",
 					items: [' . json_encode($product_item) . ']
 				});';
@@ -132,6 +136,7 @@ if ( !trait_exists('Ecommerce') ){
 
 				global $woocommerce;
 				$cart_items = $woocommerce->cart->get_cart();
+				$cart_total = $woocommerce->cart->get_cart_contents_total();
 
 				$product_items = array(); //Prep this for the GA payload
 				$index = 0;
@@ -139,10 +144,15 @@ if ( !trait_exists('Ecommerce') ){
 					$product = wc_get_product($item_properties['data']->get_id());
 					$variation = wc_get_product($product->get_variation_id()); //If no variation, this will appear the same as the product itself
 
+					$item_variant = '';
+					if ( !empty($variation) ){
+						$item_variant = $variation->get_name();
+					}
+
 					$product_items[] = array(
 						'item_id' => $item_properties['data']->get_id(),
 						'item_name' => $product->get_name(),
-						'item_variant' => $variation->get_name(),
+						'item_variant' => $item_variant,
 						'currency' => 'USD',
 						'price' => get_post_meta($item_properties['product_id'], '_price', true),
 						'quantity' => $item_properties['quantity'],
@@ -153,6 +163,10 @@ if ( !trait_exists('Ecommerce') ){
 				}
 
 				echo 'gtag("event", "' . $page_type . '", {
+					event_category: "Ecommerce",
+					event_action: "Checkout: ' . $page_type . '",
+					event_label: "Cart Total: ' . $cart_total . ' (' . count($product_items) . ' items)",
+					value: "' . $cart_total . '",
 					currency: "USD",
 					items: ' . json_encode($product_items) . '
 				});';
@@ -176,12 +190,18 @@ if ( !trait_exists('Ecommerce') ){
 			$product_items = array(); //Prep this for the GA payload
 			$index = 0;
 			foreach ( $order->get_items() as $item_id => $item ){ //Loop through all of the items in the order
-				$variation = wc_get_product($product->get_variation_id()); //If no variation, this will appear the same as the product itself
+				$variation = wc_get_product($item->get_variation_id()); //If no variation, this will appear the same as the product itself
+
+				$item_variant = '';
+				if ( !empty($variation) ){
+					$item_variant = $variation->get_name();
+				}
+
 				$product_items[] = array(
 					'item_id' => $item->get_product_id(),
 					'item_name' => $item->get_name(),
 					'currency' => 'USD',
-					'item_variant' => $variation->get_name(),
+					'item_variant' => $item_variant,
 					'price' => $item->get_meta('_price', true),
 					'quantity' => $item->get_quantity(),
 					'index' => $index,
@@ -191,6 +211,9 @@ if ( !trait_exists('Ecommerce') ){
 			}
 
 			echo 'gtag("event", "purchase", {
+				event_category: "Ecommerce",
+				event_action: "Purchase",
+				event_label: "Order ID: ' . $order->get_id() . ' (' . $order->get_total() . ')",
 				transaction_id: "' . $order->get_id() . '",
 				value: ' . $order->get_total() . ', //Grand total price
 				tax: ' . $order->get_total_tax() . ',

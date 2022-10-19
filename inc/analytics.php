@@ -217,8 +217,8 @@
 			<?php if ( is_404() ): //Track 404 Errors ?>
 				var lastReferrer = nebula.session?.referrer || document.referrer || '(Unknown Referrer)';
 				gtag('event', '<?php echo esc_url(nebula()->requested_url()); ?>', {
-					event_label: 'Referrer: ' + lastReferrer,
 					event_category: '404 Not Found',
+					event_label: 'Referrer: ' + lastReferrer,
 					requested_url: '<?php echo esc_url(nebula()->requested_url()); ?>',
 					referrer: lastReferrer,
 					non_interaction: true
