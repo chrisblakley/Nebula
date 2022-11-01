@@ -264,17 +264,30 @@ nebula.addHTML5VideoPlayer = function(id, element){
 //Prepare Youtube Iframe API
 nebula.youtubeTracking = function(){
 	nebula.once(function(){
-		if ( jQuery('iframe[src*="youtube"], .lazy-youtube').length ){
-			//Load the Youtube iframe API script
-			let tag = document.createElement('script');
-			tag.src = 'https://www.youtube.com/iframe_api';
-			let firstScriptTag = document.getElementsByTagName('script')[0];
-			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+		if ( jQuery('iframe[src*="youtube"], .lazy-youtube').length ){ //If Youtube iframes or lazy Youtube videos exist
+			//Note: With GA4 or GTM, the iframe_api script may already be added and if so, the onYouTubeIframeAPIReady function may have already been called!
+			//If this happens, GA4 will "claim" those videos by making its own players and Nebula will be unable to track them
+
+			//If the onYouTubeIframeAPIReady has already been called
+			if ( typeof YT !== 'undefined' && YT.loaded ){
+				nebula.youtubeIframeReady(); //The API has already been loaded, so just call Nebula's ready functionality
+			} else { //Otherwise load the JavaScript
+				//Load the Youtube iframe API script
+				let tag = document.createElement('script');
+				tag.src = 'https://www.youtube.com/iframe_api';
+				let firstScriptTag = document.getElementsByTagName('script')[0];
+				firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+			}
 		}
 	}, 'nebula youtube api');
 };
 
 window.onYouTubeIframeAPIReady = function(e){ //Not scoped to the nebula object because the Youtube API calls this itself
+	nebula.youtubeIframeReady(); //Call Nebula's Youtube ready functionality
+};
+
+//Nebula's Iframe API Ready functionality
+nebula.youtubeIframeReady = function(){
 	window.performance.mark('(Nebula) Loading Youtube Videos [Start]');
 	jQuery('iframe[src*="youtube"]').each(function(){
 		if ( !jQuery(this).hasClass('ignore') ){ //Use this class to ignore certain videos from tracking
@@ -308,7 +321,7 @@ window.onYouTubeIframeAPIReady = function(e){ //Not scoped to the nebula object 
 	window.performance.measure('(Nebula) Loading Youtube Videos', '(Nebula) Loading Youtube Videos [Start]', '(Nebula) Loading Youtube Videos [End]');
 
 	let pauseFlag = false;
-};
+}
 
 nebula.addYoutubePlayer = function(id = false, element){
 	if ( !id ){
@@ -317,13 +330,13 @@ nebula.addYoutubePlayer = function(id = false, element){
 
 	nebula.videos = nebula.videos || {}; //Always make sure this is defined
 
-	if ( typeof YT !== 'undefined' ){
+	if ( typeof YT !== 'undefined' ){ //Ensure the Youtube API is loaded
 		nebula.videos[id] = {
 			player: new YT.Player(id, { //YT.Player parameter must match the iframe ID!
-				events: { //If these events are only showing up as "true", try removing the &origin= parameter from the Youtube iframe src.
-					'onReady': nebula.youtubeReady,
-					'onStateChange': nebula.youtubeStateChange,
-					'onError': nebula.youtubeError
+				events: {
+					onReady: nebula.youtubeReady,
+					onStateChange: nebula.youtubeStateChange,
+					onError: nebula.youtubeError
 				}
 			}),
 			platform: 'youtube', //The platform the video is hosted using.
@@ -335,10 +348,13 @@ nebula.addYoutubePlayer = function(id = false, element){
 			watchedPercent: 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
 			pausedYet: 0, //If this video has been paused yet by the user.
 		};
+
+		console.log('this video info:', nebula.videos[id]);
 	}
 };
 
 nebula.youtubeReady = function(e){
+	//If GA4 or GTM have already "claimed" a video, this function will not run for that video
 	if ( typeof videoProgress === 'undefined' ){
 		let videoProgress = {};
 	}
@@ -346,6 +362,7 @@ nebula.youtubeReady = function(e){
 	nebula.videos = nebula.videos || {}; //Always make sure this is defined
 
 	let id = nebula.getYoutubeID(e.target);
+
 	if ( id ){
 		if ( !nebula.videos.hasOwnProperty(id) ){ //If the video object doesn't use the Youtube video ID, make a new one by duplicating from the Iframe ID
 			nebula.videos[id] = nebula.videos[jQuery(e.target.getIframe()).attr('id')];

@@ -68,15 +68,26 @@ nebula.performanceMetrics = async function(){
 
 				console.groupCollapsed('Resources');
 				let resourceCalcuations = {};
+				let renderBlockingResourceCount = 0;
 				performance.getEntriesByType('resource').forEach(function(resource){
 					resourceCalcuations[resource.name] = {
-						type: resource.initiatorType,
-						protocol: resource.nextHopProtocol,
-						start: Math.round(resource.fetchStart),
-						duration: Math.round(resource.duration)
+						type: resource.initiatorType, //Ex: link, fetch, script, css, img, other
+						protocol: resource.nextHopProtocol, //Ex: h2
+						start: Math.round(resource.fetchStart), //How many ms elapsed before this resource request started
+						duration: Math.round(resource.duration), //How many ms did it take to load this resource
+						renderBlocking: null, //Start empty and we will fill it below
 					};
+
+					//Check if this resource is render blocking
+					if ( resource?.renderBlockingStatus ){ //Chrome 107+
+						resourceCalcuations[resource.name].renderBlocking = 'Blocking';
+						renderBlockingResourceCount++; //Increment the total count
+					}
 				});
 				console.table(resourceCalcuations); //Resource Timings
+				if ( renderBlockingResourceCount >= 10 ){
+					console.warn('Many render blocking resources:', renderBlockingResourceCount, 'https://web.dev/render-blocking-resources/');
+				}
 				console.groupEnd(); //End Resources
 
 				//Monitor Cumulative Layout Shift (CLS) with the Layout Instability API

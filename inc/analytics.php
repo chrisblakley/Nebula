@@ -49,20 +49,20 @@
 						$pageview_properties['post_type'] = get_post_type(get_the_ID());
 
 						//Article author
-						if ( nebula()->get_option('author_bios') ){
-							$pageview_properties['post_author'] = get_the_author();
-						}
+						// if ( nebula()->get_option('author_bios') ){
+						// 	$pageview_properties['post_author'] = get_the_author();
+						// }
 
 						//Article's published year
 						$pageview_properties['publish_date'] = get_the_date('Y-m-d');
 					}
 
 					//Word Count
-					$word_count = nebula()->word_count();
-					if ( $word_count ){
-						echo 'nebula.post.wordcount = ' . $word_count . ';';
-						$pageview_properties['word_count'] = nebula()->word_count(array('range' => true));
-					}
+					// $word_count = nebula()->word_count();
+					// if ( $word_count ){
+					// 	echo 'nebula.post.wordcount = ' . $word_count . ';';
+					// 	$pageview_properties['word_count'] = nebula()->word_count(array('range' => true));
+					// }
 				}
 
 				//Query Strings
@@ -71,26 +71,26 @@
 				}
 
 				//Business Open/Closed
-				if ( nebula()->has_business_hours() ){
-					if ( nebula()->business_open() ){
-						$business_open = 'During Business Hours';
-						echo 'nebula.user.client.businessopen = true;';
-					} else {
-						$business_open = 'Non-Business Hours';
-						echo 'nebula.user.client.businessopen = false;';
-					}
-
-					$pageview_properties['business_hours'] = $business_open;
-				}
+// 				if ( nebula()->has_business_hours() ){
+// 					if ( nebula()->business_open() ){
+// 						$business_open = 'During Business Hours';
+// 						echo 'nebula.user.client.businessopen = true;';
+// 					} else {
+// 						$business_open = 'Non-Business Hours';
+// 						echo 'nebula.user.client.businessopen = false;';
+// 					}
+//
+// 					$pageview_properties['business_hours'] = $business_open;
+// 				}
 
 				//Relative time ("Late Morning", "Early Evening")
-				$relative_time = nebula()->relative_time();
-				$time_description = implode(' ', $relative_time['description']);
-				$time_range = $relative_time['standard'][0] . ':00' . $relative_time['ampm'] . ' - ' . $relative_time['standard'][2] . ':59' . $relative_time['ampm'];
-				$pageview_properties['relative_time'] = ucwords($time_description) . ' (' . $time_range . ')';
+				// $relative_time = nebula()->relative_time();
+				// $time_description = implode(' ', $relative_time['description']);
+				// $time_range = $relative_time['standard'][0] . ':00' . $relative_time['ampm'] . ' - ' . $relative_time['standard'][2] . ':59' . $relative_time['ampm'];
+				// $pageview_properties['relative_time'] = ucwords($time_description) . ' (' . $time_range . ')';
 
 				//Role
-				$pageview_properties['user_role'] = nebula()->user_role();
+				//$pageview_properties['user_role'] = nebula()->user_role();
 
 				//WPML Language
 				if ( defined('ICL_LANGUAGE_NAME') ){
@@ -132,15 +132,15 @@
 				}
 
 				//Text Fragment Ex: #:~:text=This%20is%20an%20example.
-				if ( window.performance ){
-					var firstNavigationEntry = window.performance.getEntriesByType('navigation')[0];
-					if ( typeof firstNavigationEntry === 'object' ){ //This object sometimes does not exist in Safari
-						var textFragment = firstNavigationEntry.name.match('#:~:text=(.*)');
-						if ( textFragment ){ //If the text fragment exists, set the GA dimension
-							nebula.pageviewProperties.text_fragment = decodeURIComponent(textFragment[1]);
-						}
-					}
-				}
+				// if ( window.performance ){
+				// 	var firstNavigationEntry = window.performance.getEntriesByType('navigation')[0];
+				// 	if ( typeof firstNavigationEntry === 'object' ){ //This object sometimes does not exist in Safari
+				// 		var textFragment = firstNavigationEntry.name.match('#:~:text=(.*)');
+				// 		if ( textFragment ){ //If the text fragment exists, set the GA dimension
+				// 			nebula.pageviewProperties.text_fragment = decodeURIComponent(textFragment[1]);
+				// 		}
+				// 	}
+				// }
 			}
 
 			if ( window !== window.top ){
@@ -156,21 +156,21 @@
 			}
 
 			nebula.user.saveData = <?php echo json_encode(nebula()->is_save_data()); //JSON Encode forces boolean return to print ?>;
-			nebula.pageviewProperties.save_data = nebula.user.saveData;
+			//nebula.pageviewProperties.save_data = nebula.user.saveData;
 
 			//Prefers reduced motion
-			nebula.user.prefersReducedMotion = false;
-			if ( window.matchMedia('(prefers-reduced-motion: reduce)').matches ){
-				nebula.user.prefersReducedMotion = true;
-			}
-			nebula.pageviewProperties.prefers_reduced_motion = nebula.user.prefersReducedMotion;
+			// nebula.user.prefersReducedMotion = false;
+			// if ( window.matchMedia('(prefers-reduced-motion: reduce)').matches ){
+			// 	nebula.user.prefersReducedMotion = true;
+			// }
+			// nebula.pageviewProperties.prefers_reduced_motion = nebula.user.prefersReducedMotion;
 
 			//Prefers color scheme
-			nebula.user.prefersColorScheme = 'light';
-			if ( window.matchMedia('(prefers-color-scheme: dark)').matches ){
-				nebula.user.prefersColorScheme = 'dark';
-			}
-			nebula.pageviewProperties.prefers_color_scheme = nebula.user.prefersColorScheme;
+			// nebula.user.prefersColorScheme = 'light';
+			// if ( window.matchMedia('(prefers-color-scheme: dark)').matches ){
+			// 	nebula.user.prefersColorScheme = 'dark';
+			// }
+			// nebula.pageviewProperties.prefers_color_scheme = nebula.user.prefersColorScheme;
 
 			<?php do_action('nebula_ga_before_pageview'); //Simple action for adding/modifying all custom definitions (including JS) before the pageview hit is sent. ?>
 
@@ -210,9 +210,9 @@
 			<?php endif; ?>
 
 			//User role
-			gtag('set', 'user_properties', {
-				role: '<?php echo nebula()->user_role(); ?>'
-			});
+			// gtag('set', 'user_properties', {
+			// 	role: '<?php echo nebula()->user_role(); ?>'
+			// });
 
 			<?php if ( is_404() ): //Track 404 Errors ?>
 				var lastReferrer = nebula.session?.referrer || document.referrer || '(Unknown Referrer)';

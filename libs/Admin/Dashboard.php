@@ -77,10 +77,8 @@ if ( !trait_exists('Dashboard') ){
 
 			echo '<ul class="nebula-fa-ul">';
 
-			//Data Loaded Time (for Development environments)
-			if ( wp_get_environment_type() !== 'production' || WP_DEBUG || $this->is_debug() ){
-				echo '<li><i class="fa-solid fa-fw fa-clock"></i> This data as of <strong id="last-loaded" title="Just now" style="cursor: help;">' . date('l, F j, Y - g:i:sa') . '</strong></li>';
-			}
+			//Data Loaded Time
+			echo '<li><i class="fa-solid fa-fw fa-clock"></i> <strong id="last-loaded" title="Just now" style="cursor: help;">' . date('l, F j, Y - g:i:sa') . '</strong></li>';
 
 			//Website URL
 			echo '<li><i class="fa-solid fa-fw fa-globe"></i> <a href="' . home_url('/') . '" target="_blank" rel="noopener noreferrer">' . home_url('/') . '</a></li>';

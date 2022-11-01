@@ -750,6 +750,8 @@ nebula.anonymizeEmail = function(emailAddress){
 	let anonymizedEmail = '';
 
 	if ( emailAddress.includes('@') && emailAddress.includes('.') ){ //Very simple validation. If a valid email address is not provided, no anonymization will happen!
+		let emailDomain = emailAddress.split('@')[1]; //Get everything after the @
+
 		anonymizedEmail = emailAddress.charAt(0); //Start by preserving the first character
 		let emailCharacterArray = Array.from(emailAddress.split('@')[0]).slice(1); //Get an array of chars before @ and remove the first index
 		jQuery.each(emailCharacterArray, function(character, index){

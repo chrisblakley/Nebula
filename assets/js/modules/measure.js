@@ -40,53 +40,53 @@ export function setDimension(name, value){ //Does not technically need to be exp
 nebula.allHitDimensions = function(){
 	let dimensions = {};
 
-	dimensions.query_string = window.location.search;
-	dimensions.network_connection = ( navigator.onLine )? 'Online' : 'Offline';
-	dimensions.visibility_state = document.visibilityState;
-	dimensions.local_timestamp = localTimestamp();
-	dimensions.hit_time = String(new Date);
-	dimensions.hit_id = uuid(); //Give each hit a unique ID
+	// dimensions.query_string = window.location.search;
+	// dimensions.network_connection = ( navigator.onLine )? 'Online' : 'Offline';
+	// dimensions.visibility_state = document.visibilityState;
+	// dimensions.local_timestamp = localTimestamp();
+	// dimensions.hit_time = String(new Date);
+	// dimensions.hit_id = uuid(); //Give each hit a unique ID
 
 	//Bootstrap Breakpoint
-	if ( window.matchMedia("(min-width: 2048px)").matches ){
-		dimensions.mq_breakpoint = 'uw';
-	} else if ( window.matchMedia("(min-width: 1400px)").matches ){
-		dimensions.mq_breakpoint = 'xxl';
-	} else if ( window.matchMedia("(min-width: 1200px)").matches ){
-		dimensions.mq_breakpoint = 'xl';
-	} else if ( window.matchMedia("(min-width: 992px)").matches ){
-		dimensions.mq_breakpoint = 'lg';
-	} else if ( window.matchMedia("(min-width: 768px)").matches ){
-		dimensions.mq_breakpoint = 'md';
-	} else if ( window.matchMedia("(min-width: 544px)").matches ){
-		dimensions.mq_breakpoint = 'sm';
-	} else {
-		dimensions.mq_breakpoint = 'sm';
-	}
+	// if ( window.matchMedia("(min-width: 2048px)").matches ){
+	// 	dimensions.mq_breakpoint = 'uw';
+	// } else if ( window.matchMedia("(min-width: 1400px)").matches ){
+	// 	dimensions.mq_breakpoint = 'xxl';
+	// } else if ( window.matchMedia("(min-width: 1200px)").matches ){
+	// 	dimensions.mq_breakpoint = 'xl';
+	// } else if ( window.matchMedia("(min-width: 992px)").matches ){
+	// 	dimensions.mq_breakpoint = 'lg';
+	// } else if ( window.matchMedia("(min-width: 768px)").matches ){
+	// 	dimensions.mq_breakpoint = 'md';
+	// } else if ( window.matchMedia("(min-width: 544px)").matches ){
+	// 	dimensions.mq_breakpoint = 'sm';
+	// } else {
+	// 	dimensions.mq_breakpoint = 'sm';
+	// }
 
 	//Screen Resolution
-	if ( window.matchMedia("(min-resolution: 192dpi)").matches ){
-		dimensions.screen_resolution = '2x';
-	} else if ( window.matchMedia("(min-resolution: 144dpi)").matches ){
-		dimensions.screen_resolution = '1.5x';
-	} else {
-		dimensions.screen_resolution = '1x';
-	}
+	// if ( window.matchMedia("(min-resolution: 192dpi)").matches ){
+	// 	dimensions.screen_resolution = '2x';
+	// } else if ( window.matchMedia("(min-resolution: 144dpi)").matches ){
+	// 	dimensions.screen_resolution = '1.5x';
+	// } else {
+	// 	dimensions.screen_resolution = '1x';
+	// }
 
 	//Screen Orientation
-	if ( window.matchMedia("(orientation: portrait)").matches ){
-		dimensions.screen_orientation = 'Portrait';
-	} else if ( window.matchMedia("(orientation: landscape)").matches ){
-		dimensions.screen_orientation = 'Landscape';
-	}
+	// if ( window.matchMedia("(orientation: portrait)").matches ){
+	// 	dimensions.screen_orientation = 'Portrait';
+	// } else if ( window.matchMedia("(orientation: landscape)").matches ){
+	// 	dimensions.screen_orientation = 'Landscape';
+	// }
 
 	//Device Memory
-	if ( 'deviceMemory' in navigator ){ //Chrome 64+
-		let deviceMemoryLevel = ( navigator.deviceMemory < 1 )? 'Lite' : 'Full';
-		dimensions.device_memory = navigator.deviceMemory + '(' + deviceMemoryLevel + ')';
-	} else {
-		dimensions.device_memory = 'Unavailable';
-	}
+	// if ( 'deviceMemory' in navigator ){ //Chrome 64+
+	// 	let deviceMemoryLevel = ( navigator.deviceMemory < 1 )? 'Lite' : 'Full';
+	// 	dimensions.device_memory = navigator.deviceMemory + '(' + deviceMemoryLevel + ')';
+	// } else {
+	// 	dimensions.device_memory = 'Unavailable';
+	// }
 
 	return dimensions;
 };
@@ -1113,20 +1113,20 @@ nebula.eventTracking = async function(){
 		});
 
 		//Page Visibility
-		nebula.dom.document.on('visibilitychange', function(e){
-			let thisEvent = {
-				event: e,
-				event_name: 'visibility_change',
-				event_category: 'Visibility Change', //@todo "Nebula" 0: Remove after July 2023
-				event_action: document.visibilityState, //@todo "Nebula" 0: Remove after July 2023
-				event_label: 'The state of the visibility of this page has changed.', //@todo "Nebula" 0: Remove after July 2023
-				state: document.visibilityState, //Hidden, Visible, Prerender, or Unloaded
-				description: 'The state of the visibility of this page has changed.',
-				non_interaction: true //Non-interaction because these are not interactions with the website itself
-			};
-
-			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-		});
+// 		nebula.dom.document.on('visibilitychange', function(e){
+// 			let thisEvent = {
+// 				event: e,
+// 				event_name: 'visibility_change',
+// 				event_category: 'Visibility Change', //@todo "Nebula" 0: Remove after July 2023
+// 				event_action: document.visibilityState, //@todo "Nebula" 0: Remove after July 2023
+// 				event_label: 'The state of the visibility of this page has changed.', //@todo "Nebula" 0: Remove after July 2023
+// 				state: document.visibilityState, //Hidden, Visible, Prerender, or Unloaded
+// 				description: 'The state of the visibility of this page has changed.',
+// 				non_interaction: true //Non-interaction because these are not interactions with the website itself
+// 			};
+//
+// 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+// 		});
 
 		//Word copy tracking
 		let copyCount = 0;
