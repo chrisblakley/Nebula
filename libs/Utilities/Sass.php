@@ -4,12 +4,13 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Sass') ){
 	trait Sass {
-		public function hooks(){
-			$this->sass_process_status = '';
-			$this->sass_files_processed = 0;
-			$this->was_sass_processed = false;
-			$this->latest_scss_mtime = 0; //Prep a flag to determine the last modified SCSS file time
+		public $scss;
+		public $sass_process_status = '';
+		public $sass_files_processed = 0;
+		public $was_sass_processed = false;
+		public $latest_scss_mtime = 0; //Prep a flag to determine the last modified SCSS file time
 
+		public function hooks(){
 			if ( $this->get_option('scss') && !$this->is_background_request() && !is_customize_preview() ){
 				add_action('init', array($this, 'scss_controller'));
 				add_action('nebula_body_open', array($this, 'output_sass_errors')); //Front-end

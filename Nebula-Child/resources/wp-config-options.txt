@@ -79,8 +79,8 @@ define('RELOCATE', true); //Used to update site URLs
  ===========================*/
 
 //PHP Memory
-define('WP_MEMORY_LIMIT', 64);
-define('WP_MAX_MEMORY_LIMIT', 256);
+define('WP_MEMORY_LIMIT', '512M');
+define('WP_MAX_MEMORY_LIMIT', '1024M');
 
 define('WP_CACHE', true); //WordPress Cache
 

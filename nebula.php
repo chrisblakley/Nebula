@@ -40,6 +40,10 @@ if ( !class_exists('Nebula') ){
 		use Admin { Admin::hooks as AdminHooks; }
 		use Ecommerce { Ecommerce::hooks as EcommerceHooks; }
 
+		//Designate all future properties here first (to avoid dynamic properties). Preferably, this is done in the trait to keep everything together.
+		public $super = array();
+		public $time_before_nebula = 0;
+
 		//Get active instance
 		private static $instance;
 		public static function instance(){

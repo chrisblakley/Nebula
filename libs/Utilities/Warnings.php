@@ -4,9 +4,9 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Warnings') ){
 	trait Warnings {
-		public function hooks(){
-			$this->warnings = false;
+		public $warnings = false;
 
+		public function hooks(){
 			if ( is_user_logged_in() && !$this->is_background_request() && !is_customize_preview() ){
 				add_action('wp_head', array($this, 'console_warnings'));
 				add_filter('nebula_warnings', array($this, 'advanced_warnings'));

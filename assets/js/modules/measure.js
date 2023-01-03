@@ -426,7 +426,8 @@ nebula.eventTracking = async function(){
 				event_action: 'Notable',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				file_path: jQuery(this).attr('href').trim(),
-				text: jQuery(this).text()
+				text: jQuery(this).text(),
+				link: jQuery(this).attr('href')
 			};
 
 			if ( thisEvent.file_path.length && thisEvent.file_path !== '#' ){
@@ -448,6 +449,7 @@ nebula.eventTracking = async function(){
 				event: e,
 				event_name: 'search',
 				event_category: 'Internal Search', //@todo "Nebula" 0: Remove after July 2023
+				event_action: 'Search Query', //@todo "Nebula" 0: Remove after July 2023
 				event_label: jQuery(this).find('input[name="s"]').val().toLowerCase().trim(), //@todo "Nebula" 0: Remove after July 2023
 				type: 'Internal Search',
 				event_action: 'Submit',
@@ -461,6 +463,24 @@ nebula.eventTracking = async function(){
 			nebula.fbq('track', 'Search', {search_string: thisEvent.query});
 			nebula.clarity('set', thisEvent.event_category, thisEvent.query);
 			nebula.crm('identify', {internal_search: thisEvent.query});
+		});
+
+		//Search results link clicks
+		nebula.dom.document.on('pointerdown', '#searchresults a', function(e){
+			let thisEvent = {
+				event: e,
+				event_name: 'serp_click',
+				event_category: 'Internal Search', //@todo "Nebula" 0: Remove after July 2023
+				event_action: 'SERP Click', //@todo "Nebula" 0: Remove after July 2023
+				event_label: jQuery(this).attr('href'), //@todo "Nebula" 0: Remove after July 2023
+				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
+				text: jQuery(this).text(),
+				link: jQuery(this).attr('href'),
+			};
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			nebula.crm('event', 'Page Suggestion Click');
 		});
 
 		//Suggested pages on 404 results
@@ -857,7 +877,7 @@ nebula.eventTracking = async function(){
 									subdomain: href.includes('.' + domain), //Boolean if this is a subdomain of the primary domain
 									text: linkElement.text().trim(),
 									intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-									href: href
+									link: href
 								};
 
 								nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1269,28 +1289,28 @@ nebula.eventTracking = async function(){
 		//Note: Window errors are detected in usage.js for better visibility
 
 		//Reporting Observer deprecations and interventions
-		try {
-			if ( 'ReportingObserver' in window ){ //Chrome 68+
-				let nebulaReportingObserver = new ReportingObserver(function(reports, observer){
-					for ( let report of reports ){
-						if ( report?.body?.sourceFile && !['extension', 'about:blank'].some((item) => report.body.sourceFile.includes(item)) ){ //Ignore certain files
-							gtag('event', 'exception', {
-								report_type: report.type,
-								report_message: report.body.message,
-								source_file: report.body.sourceFile,
-								line_number: report.body.lineNumber,
-								description: '(JS) Reporting Observer [' + report.type + ']: ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber,
-								fatal: false
-							});
-						}
-					}
-				}, {buffered: true}); //Buffer to capture reports that happened prior to the observer being created
-
-				nebulaReportingObserver.observe();
-			}
-		} catch {
-			//Ignore errors
-		}
+// 		try {
+// 			if ( 'ReportingObserver' in window ){ //Chrome 68+
+// 				let nebulaReportingObserver = new ReportingObserver(function(reports, observer){
+// 					for ( let report of reports ){
+// 						if ( report?.body?.sourceFile && !['extension', 'about:blank'].some((item) => report.body.sourceFile.includes(item)) ){ //Ignore certain files
+// 							gtag('event', 'exception', {
+// 								report_type: report.type,
+// 								report_message: report.body.message,
+// 								source_file: report.body.sourceFile,
+// 								line_number: report.body.lineNumber,
+// 								description: '(JS) Reporting Observer [' + report.type + ']: ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber,
+// 								fatal: false
+// 							});
+// 						}
+// 					}
+// 				}, {buffered: true}); //Buffer to capture reports that happened prior to the observer being created
+//
+// 				nebulaReportingObserver.observe();
+// 			}
+// 		} catch {
+// 			//Ignore errors
+// 		}
 
 		//Content Editable element changes
 		nebula.dom.document.on('focus', '[contenteditable]', function(){

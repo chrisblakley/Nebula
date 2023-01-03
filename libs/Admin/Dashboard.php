@@ -78,7 +78,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<ul class="nebula-fa-ul">';
 
 			//Data Loaded Time
-			echo '<li><i class="fa-solid fa-fw fa-clock"></i> <strong id="last-loaded" title="Just now" style="cursor: help;">' . date('l, F j, Y - g:i:sa') . '</strong></li>';
+			echo '<li><i class="fa-solid fa-fw fa-clock" title="This page last loaded"></i> <strong id="last-loaded" title="Just now" style="cursor: help;">' . date('l, F j, Y - g:i:sa') . '</strong></li>'; //The "Just Now" title text gets updated by JavaScript after load
 
 			//Website URL
 			echo '<li><i class="fa-solid fa-fw fa-globe"></i> <a href="' . home_url('/') . '" target="_blank" rel="noopener noreferrer">' . home_url('/') . '</a></li>';

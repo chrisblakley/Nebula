@@ -62,8 +62,10 @@ if ( !trait_exists('Device') ){
 					}
 					break;
 				default:
-					return false;
+					return '';
 			}
+
+			return '';
 		}
 
 		//Returns the requested information of the model of the user's device.
@@ -95,6 +97,7 @@ if ( !trait_exists('Device') ){
 			}
 
 			//Could consider checking/parsing the HTTP_SEC_CH_UA header here. If so, strip out quotes and escapes- Ex: str_replace(array('"', '\\'), '', $_SERVER['HTTP_SEC_CH_UA_PLATFORM'])
+			return '';
 		}
 
 		//Returns the requested information of the browser being used.
@@ -146,14 +149,16 @@ if ( !trait_exists('Device') ){
 						}
 					}
 
-					return false;
+					return '';
 				case 'engine':
 					if ( $is_gecko ){return 'gecko';}
 					elseif ( $is_safari ){return 'webkit';}
-					return false;
+					return '';
 				default:
-					return false;
+					return '';
 			}
+
+			return '';
 		}
 
 		//Check the browser
@@ -206,15 +211,22 @@ if ( !trait_exists('Device') ){
 		}
 
 		//Check if the current visitor is Googlebot (search indexing)
-		function is_googlebot(){
-			if ( !empty($this->super->server['HTTP_USER_AGENT']) && strpos($this->super->server['HTTP_USER_AGENT'], 'Googlebot') ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-				$hostname = gethostbyaddr($this->get_ip_address(false));
-				if ( preg_match('/\.googlebot|google\.com$/i', $hostname) ){
-					return true;
+		//Strict mode checks against the hostname as well
+		function is_googlebot($strict=false){
+			if ( !empty($this->super->server['HTTP_USER_AGENT']) && strpos(strtolower($this->super->server['HTTP_USER_AGENT']), 'googlebot') ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( !empty($strict) ){
+					$hostname = gethostbyaddr($this->get_ip_address(false));
+					if ( preg_match('/\.googlebot|google\.com$/i', $hostname) ){
+						return true; //the UA and hostname are both Google
+					}
+
+					return false; //The UA is Google, but not the hostname. Return false because strict mode was desired.
 				}
+
+				return true; //Only the UA is Googlebot (this could be easily spoofed by savvy users)
 			}
 
-			return false;
+			return false; //This is not Googlebot
 		}
 
 		//Check if the current visitor is Slackbot. Keep in mind that any device can spoof this user agent.

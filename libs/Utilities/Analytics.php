@@ -97,9 +97,13 @@ if ( !trait_exists('Analytics') ){
 		//Nebula usage data
 		public function usage($name='usage_data', $event_parameters=array()){
 			$date = new DateTime('now', new DateTimeZone('America/New_York'));
+
+			$php_version_parts = explode('.', PHP_VERSION);
+			$major_php_version = $php_version_parts[0] . '.' . $php_version_parts[1]; //Limit version numbers to only major.minor
+
 			$data = array(
 				'client_id' => $this->ga_parse_cookie(), //Can just use the one generated for this user
-				'non_personalized_ads' => true, //We do not need this data for Nebula exception tracking
+				'non_personalized_ads' => true, //We do not need this data for Nebula usage
 				'events' => array(array(
 					'name' => $name,
 					'params' => array(
@@ -117,7 +121,7 @@ if ( !trait_exists('Analytics') ){
 						'client_id' => $this->ga_parse_cookie(),
 						'theme_type' => ( is_child_theme() )? 'Child' : 'Parent',
 						'wp_user_id' => get_current_user_id(),
-						'php_version' => PHP_VERSION,
+						'php_version' => $major_php_version,
 						'mysql_version' => mysqli_get_client_version(),
 						'transport_method' => 'Server-Side',
 					)

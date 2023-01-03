@@ -16,9 +16,9 @@ if ( !trait_exists('Utilities') ){
 		use Sass { Sass::hooks as SassHooks;}
 		use Warnings { Warnings::hooks as WarningsHooks;}
 
-		public function hooks(){
-			$this->server_timings = array();
+		public $server_timings = array();
 
+		public function hooks(){
 			add_filter('posts_where', array($this, 'fuzzy_posts_where'));
 			$this->LogsHooks(); //Register Logs hooks
 			$this->AnalyticsHooks(); //Register Analytics hooks
@@ -983,7 +983,7 @@ if ( !trait_exists('Utilities') ){
 
 			//Loop through the folder
 			$directory = dir($source);
-			while ( false !== $entry = $directory->read() ){ //@TODO "Nebula" 0: I don't like the assignment operator inside of this condition here. Re-write it.
+			while ( false !== ($entry = $directory->read()) ){ //Assign the $entry variable to the next directory entry (which will be false if it does not exist)
 				//Skip pointers
 				if ( $entry == '.' || $entry == '..' ){
 					continue;

@@ -4,9 +4,9 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Shortcodes') ){
 	trait Shortcodes {
-		public function hooks(){
-			$this->shortcode_flags = array();
+		public $shortcode_flags = array();
 
+		public function hooks(){
 			add_shortcode('widget', array($this, 'widget'));
 
 			//Div

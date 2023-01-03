@@ -73,7 +73,7 @@ jQuery(window).on('load', function(){
 	nebula.overflowDetector(); //Move to (or use) requestIdleCallback when Safari supports it?
 
 	//Videos
-	if ( jQuery('video, iframe[src*="vimeo"], iframe[src*="youtube"]').length || (jQuery('noscript.nebula-lazy').length && (jQuery('noscript.nebula-lazy').text().includes('vimeo') || jQuery('noscript.nebula-lazy').text().includes('youtube'))) ){ //Check for videos that will be lazy loaded by scanning the text of noscript elements for video tags
+	if ( jQuery('video, iframe[src*="vimeo"], iframe[src*="youtube"], iframe[data-src*="vimeo"], iframe[data-src*="youtube"]').length || (jQuery('noscript.nebula-lazy').length && (jQuery('noscript.nebula-lazy').text().includes('vimeo') || jQuery('noscript.nebula-lazy').text().includes('youtube'))) ){ //Check for videos that will be lazy loaded by scanning the text of noscript elements for video tags. May consider triggering video tracking simply if any iframe exists rather than trying to account for all permutations of possible attributes...
 		import('./modules/video.js?ver=' + nebula.version.number).then(function(module){
 			nebula.initVideoTracking(); //Move to (or use) requestIdleCallback when Safari supports it?
 			nebula.dom.document.trigger('nebula_module_loaded', 'video.js');

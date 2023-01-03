@@ -4,17 +4,14 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Functions') ){
 	trait Functions {
-		public $twitter_widget_loaded;
-		public $linkedin_widget_loaded;
-		public $pinterest_widget_loaded;
+		public $slug_keywords = false; //Start with this false for 404 pages
+		public $twitter_widget_loaded = false;
+		public $linkedin_widget_loaded = false;
+		public $pinterest_widget_loaded = false;
+		public $current_theme_template;
 
 		public function hooks(){
 			global $pagenow;
-
-			$this->slug_keywords = false; //Start with this false for 404 pages
-			$this->twitter_widget_loaded = false;
-			$this->linkedin_widget_loaded = false;
-			$this->pinterest_widget_loaded = false;
 
 			add_action('template_redirect', array($this, 'set_content_width'));
 			add_action('after_setup_theme', array($this, 'theme_setup'));
@@ -2718,7 +2715,7 @@ if ( !trait_exists('Functions') ){
 					//Find authors (if author bios are enabled)
 					if ( $this->get_option('author_bios') && !$this->in_array_any(array('author'), $ignore_post_types) && $this->in_array_any(array('any', 'author'), $types) ){
 						$authors = nebula()->transient('nebula_autocomplete_authors', function(){
-							return get_users(array('role' => 'author')); //@TODO "Nebula" 0: This should get users who have made at least one post. Maybe get all roles (except subscribers) then if postcount >= 1?
+							return get_users(array('role' => 'author', 'has_published_posts' => true, 'role__not_in' => array('subscriber')));
 						}, WEEK_IN_SECONDS); //This transient is deleted when a post is updated or Nebula Options are saved.
 
 						foreach ( $authors as $author ){
@@ -2950,13 +2947,12 @@ if ( !trait_exists('Functions') ){
 				}
 
 				if ( $this->get_option('latitude') && $this->get_option('longitude') ){
-					$lat = floatval($this->get_option('latitude'));
-					$lng = floatval($this->get_option('longitude'));
-					$gmt = intval(get_option('gmt_offset'));
-					$zenith = 90+50/60; //Civil twilight = 96°, Nautical twilight = 102°, Astronomical twilight = 108°
+					$latitude = floatval($this->get_option('latitude'));
+					$longitude = floatval($this->get_option('longitude'));
 					global $sunrise, $sunset;
-					$sunrise = strtotime(date_sunrise(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
-					$sunset = strtotime(date_sunset(strtotime('today'), SUNFUNCS_RET_STRING, $lat, $lng, $zenith, $gmt));
+					$suninfo = date_sun_info(strtotime('today'), $latitude, $longitude); //Civil twilight = 96°, Nautical twilight = 102°, Astronomical twilight = 108° - these are already accounted for in this PHP function
+					$sunrise = strtotime($suninfo['sunrise']); //The timestamp of the sunrise (zenith angle = 90°35')
+					$sunset  = strtotime($suninfo['sunset']); //The timestamp of the sunset (zenith angle = 90°35')
 					$length_of_daylight = $sunset-$sunrise;
 					$length_of_darkness = DAY_IN_SECONDS-$length_of_daylight;
 

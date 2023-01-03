@@ -15,9 +15,9 @@ nebula.initVideoTracking = async function(){
 //Note: element can be anything! Don't assume it is a video.
 nebula.lazyVideoAPI = function(element){
 	//Re-kick the API for lazy-loaded Youtube and Vimeo videos, and enable tracking for lazy-loaded HTML5 videos.
-	if ( element.is('iframe[src*="youtube"]') ){
+	if ( element.is('iframe[src*="youtube"], iframe[data-src*="youtube"]') ){
 		nebula.addYoutubePlayer(element.attr('id'), element);
-	} else if ( element.is('iframe[src*="vimeo"]') ){
+	} else if ( element.is('iframe[src*="vimeo"], iframe[data-src*="vimeo"]') ){
 		nebula.createVimeoPlayers();
 	} else if ( element.is('video') ){
 		nebula.addHTML5VideoPlayer(element.attr('id'), element);
@@ -264,7 +264,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 //Prepare Youtube Iframe API
 nebula.youtubeTracking = function(){
 	nebula.once(function(){
-		if ( jQuery('iframe[src*="youtube"], .lazy-youtube').length ){ //If Youtube iframes or lazy Youtube videos exist
+		if ( jQuery('iframe[src*="youtube"], iframe[data-src*="youtube"], .lazy-youtube').length ){ //If Youtube iframes or lazy Youtube videos exist
 			//Note: With GA4 or GTM, the iframe_api script may already be added and if so, the onYouTubeIframeAPIReady function may have already been called!
 			//If this happens, GA4 will "claim" those videos by making its own players and Nebula will be unable to track them
 
@@ -289,7 +289,7 @@ window.onYouTubeIframeAPIReady = function(e){ //Not scoped to the nebula object 
 //Nebula's Iframe API Ready functionality
 nebula.youtubeIframeReady = function(){
 	window.performance.mark('(Nebula) Loading Youtube Videos [Start]');
-	jQuery('iframe[src*="youtube"]').each(function(){
+	jQuery('iframe[src*="youtube"], iframe[data-src*="youtube"]').each(function(){
 		if ( !jQuery(this).hasClass('ignore') ){ //Use this class to ignore certain videos from tracking
 			//If this iframe is using a data-src, make sure the src matches
 			if ( !jQuery(this).attr('src').includes('youtube') ){ //If the src does not contain "youtube"
@@ -321,7 +321,7 @@ nebula.youtubeIframeReady = function(){
 	window.performance.measure('(Nebula) Loading Youtube Videos', '(Nebula) Loading Youtube Videos [Start]', '(Nebula) Loading Youtube Videos [End]');
 
 	let pauseFlag = false;
-}
+};
 
 nebula.addYoutubePlayer = function(id = false, element){
 	if ( !id ){
@@ -575,7 +575,7 @@ nebula.getYoutubeTitle = function(target){
 //Prepare Vimeo API
 nebula.vimeoTracking = function(){
 	//Load the Vimeo API script (player.js) remotely (with local backup)
-	if ( jQuery('iframe[src*="vimeo"], .lazy-vimeo').length ){
+	if ( jQuery('iframe[src*="vimeo"], iframe[data-src*="vimeo"], .lazy-vimeo').length ){
 		nebula.loadJS(nebula.site.resources.scripts.nebula_vimeo, 'vimeo').then(function(){
 			nebula.createVimeoPlayers();
 		});
@@ -584,7 +584,7 @@ nebula.vimeoTracking = function(){
 
 //To trigger events on these videos, use the syntax: nebula.videos['208432684'].player.play();
 nebula.createVimeoPlayers = function(){
-	jQuery('iframe[src*="vimeo"]').each(function(){ //This is not finding lazy loaded videos
+	jQuery('iframe[src*="vimeo"], iframe[data-src*="vimeo"]').each(function(){ //This is not finding lazy loaded videos
 		if ( !jQuery(this).hasClass('ignore') ){ //Use this class to ignore certain videos from tracking
 			let id = jQuery(this).attr('data-video-id') || jQuery(this).attr('data-vimeo-id') || jQuery(this).attr('id') || false;
 			if ( !id ){

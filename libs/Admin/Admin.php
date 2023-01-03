@@ -619,7 +619,6 @@ if ( !trait_exists('Admin') ){
 				}
 
 				//Add created date under View/Edit node
-				//@TODO "Nebula" 0: get_the_author() is not working when in Admin
 				if ( !empty($original_date) ){
 					$wp_admin_bar->add_node(array(
 						'parent' => $node_id,

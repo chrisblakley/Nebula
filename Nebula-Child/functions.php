@@ -60,7 +60,10 @@ function register_nebula_child_assets(){
 
 	//wp_register_style($handle, $src, $dependencies, $version, $media);
 	wp_register_style('nebula-child', get_stylesheet_directory_uri() . '/style.css', array('nebula-main'), filemtime(get_stylesheet_directory() . '/style.css'), 'all');
-	//wp_register_style('nebula-login-child', get_stylesheet_directory_uri() . '/assets/css/login.css', array('nebula-login'), filemtime(get_stylesheet_directory() . '/assets/css/login.css'), 'all'); //Uncomment this if using it
+	if ( file_exists(get_stylesheet_directory() . '/assets/css/login.css') ){
+		wp_register_style('nebula-child-login', get_stylesheet_directory_uri() . '/assets/css/login.css', array('nebula-login'), filemtime(get_stylesheet_directory() . '/assets/css/login.css'), 'all'); //Uncomment this if using it
+	}
+	wp_register_style('nebula-child-admin', get_stylesheet_directory_uri() . '/assets/css/admin.css', array('nebula-admin'), filemtime(get_stylesheet_directory() . '/assets/css/admin.css'), 'all');
 
 	/*==========================
 	 Register Child Scripts
@@ -86,13 +89,14 @@ add_action('wp_enqueue_scripts', function(){
 //Enqueue Child Styles & Scripts on the Login page
 add_action('login_enqueue_scripts', function(){
 	if ( file_exists(get_stylesheet_directory() . '/assets/css/login.css') ){
-		wp_enqueue_style('nebula-login-child');
+		wp_enqueue_style('nebula-child-login');
 	}
 }, 327);
 
 //Enqueue Child Styles & Scripts on Admin pages
 add_action('admin_enqueue_scripts', function(){
 	//Note: child theme admin.css is enqueued by WordPress core when that color scheme is selected per user
+	//wp_enqueue_style('nebula-child-admin'); //Force it to be enqueued here if desired by uncommenting this line
 }, 327);
 
 //Close functions.php. DO NOT add anything after this closing tag!! ?>
