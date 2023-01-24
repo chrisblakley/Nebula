@@ -247,8 +247,9 @@ nebula.eventTracking = async function(){
 			let thisEvent = {
 				event: e,
 				event_name: 'button_click',
-				event_category: 'Button', //@todo "Nebula" 0: Remove after July 2023
-				event_action: 'Click', //@todo "Nebula" 0: Remove after July 2023
+				event_category: 'Button Click', //@todo "Nebula" 0: Remove after July 2023
+				event_action: jQuery(this).text(), //@todo "Nebula" 0: Remove after July 2023
+				event_label: jQuery(this).attr('href'), //@todo "Nebula" 0: Remove after July 2023
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				text: jQuery(this).val() || jQuery(this).attr('value') || jQuery(this).text() || jQuery(this).attr('title') || '(Unknown)',
 				link: jQuery(this).attr('href') || jQuery(this).attr('title') || '(Unknown)'

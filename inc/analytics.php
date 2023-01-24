@@ -246,17 +246,14 @@
 	})(window,document,'script','dataLayer','<?php echo nebula()->get_option('gtm_id'); ?>');</script>
 <?php endif; ?>
 
-<?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('adwords_remarketing_conversion_id') && !is_customize_preview() ): //Google AdWords Remarketing Tag ?>
-	<link rel="prefetch" href="//www.googleadservices.com/pagead/conversion.js" />
-
-	<script type="text/javascript">
-		/* <![CDATA[ */
-		var google_conversion_id = <?php echo esc_html(nebula()->get_option('adwords_remarketing_conversion_id')); ?>;
-		var google_custom_params = window.google_tag_params;
-		var google_remarketing_only = true;
-		/* ]]> */
+<?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('google_ads_id') && !is_customize_preview() ): ?>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo nebula()->get_option('google_ads_id'); ?>"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		gtag('config', '<?php echo nebula()->get_option('google_ads_id'); ?>', {allow_enhanced_conversions: true});
 	</script>
-	<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js"></script>
 <?php endif; ?>
 
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('facebook_custom_audience_pixel_id') && !is_customize_preview() ): //Facebook Custom Audience ?>

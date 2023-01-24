@@ -254,7 +254,7 @@ if ( !trait_exists('Options') ){
 				'ga_api_secret' => '',
 				'ga_require_consent' => 0,
 				'ga_wpuserid' => 0,
-				'adwords_remarketing_conversion_id' => '',
+				'google_ads_id' => '',
 				'google_optimize_id' => '',
 				'hostnames' => '',
 				'google_search_console_verification' => '',

@@ -624,10 +624,10 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_additional_analytics_metabox($nebula_options){
 			?>
 				<div class="form-group">
-					<label for="adwords_remarketing_conversion_id">AdWords Remarketing Conversion ID</label>
-					<input type="text" name="nebula_options[adwords_remarketing_conversion_id]" id="adwords_remarketing_conversion_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['adwords_remarketing_conversion_id']; ?>" placeholder="000000000" />
-					<p class="nebula-help-text short-help form-text text-muted">This conversion ID is used to enable the Google AdWords remarketing tag.</p>
-					<p class="option-keywords">remote resource minor page speed impact optimization optimize</p>
+					<label for="google_ads_id">Google Ads ID</label>
+					<input type="text" name="nebula_options[google_ads_id]" id="google_ads_id" class="form-control nebula-validate-regex" data-valid-regex="^AW-.+$" value="<?php echo $nebula_options['google_ads_id']; ?>" placeholder="AW-00000000" />
+					<p class="nebula-help-text short-help form-text text-muted">This is a quick way to implement a Google Ads tag on the website.</p>
+					<p class="option-keywords">remote resource minor page speed impact optimization optimize google ads adwords</p>
 				</div>
 
 				<div class="form-group">
@@ -1253,7 +1253,7 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_logs_metabox($nebula_data){
 			$nebula_options = get_option('nebula_options');
 
-			if ( !empty($nebula_options['logs']) ):
+			if ( function_exists('mb_strimwidth') && !empty($nebula_options['logs']) ): //Double check that multibyte functions are available first
 				if ( $this->is_staff() ):
 					$this->timer('Nebula Logs Metabox');
 					$columns = $this->get_logs(false);
@@ -1279,7 +1279,7 @@ if ( !trait_exists('Metaboxes') ){
 											<td class="<?php echo $column; ?>">
 												<div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis;">
 													<?php
-														$sanitized_value = sanitize_text_field(mb_strimwidth($value, 0, 153, '...'));
+														$sanitized_value = sanitize_text_field(mb_strimwidth($value, 0, 153, '...')); //Use multibytye function for more accurate string length slice
 
 														if ( $column === 'user_id' ){
 															$sanitized_value = ( $sanitized_value === 0 )? '(Cron)' : get_userdata($sanitized_value)->display_name;
