@@ -40,3 +40,18 @@ window.addEventListener('load', function(){
 	window.performance.mark('(Child) Window Load [End]');
 	window.performance.measure('(Child) Window Load Functions', '(Child) Window Load [Start]', '(Child) Window Load [End]');
 }); //End Window Load
+
+/*==========================
+ Modules
+ ===========================*/
+
+//Listen for specific Nebula modules
+// jQuery(document).on('nebula_module_loaded', function(event, module){
+// 	if ( module === 'search.js' ){ //Change the module name here as needed
+// 		//Functionality goes here
+// 	}
+// });
+
+/*==========================
+ Additional Functionality
+ ===========================*/

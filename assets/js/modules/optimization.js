@@ -563,7 +563,7 @@ nebula.lazyLoadAssets = async function(){
 
 	//Load the Google Maps API if 'googlemap' class exists
 	if ( jQuery('.googlemap').length ){
-		if ( !google || !google?.maps ){ //If the API has not already been called
+		if ( typeof google == 'undefined' || typeof google.maps == 'undefined' ){ //If the API has not already been called
 			nebula.loadJS('https://www.google.com/jsapi?key=' + nebula.site.options.nebula_google_browser_api_key, 'google-maps').then(function(){ //May not need key here, but just to be safe.
 				google.load('maps', '3', {
 					other_params: 'libraries=places&key=' + nebula.site.options.nebula_google_browser_api_key,
