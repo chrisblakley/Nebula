@@ -196,7 +196,7 @@ nebula.socialSharing = async function(){
 
 			nebula.createCookie('shareapi', true); //Set a cookie to speed up future page loads by not loading third-party share buttons.
 		} else {
-			jQuery('a.api-share, .api-share a, a.nebula-share.shareapi, .nebula-share a.shareapi').addClass('hidden');
+			jQuery('a.shareapi, .shareapi a, a.nebula-share.shareapi, .nebula-share a.shareapi').addClass('hidden');
 		}
 	}
 };

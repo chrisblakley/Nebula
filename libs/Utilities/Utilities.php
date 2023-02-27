@@ -837,6 +837,19 @@ if ( !trait_exists('Utilities') ){
 			return (bool) array_intersect($needles, $haystack);
 		}
 
+		//Return a singular or plural label string based on the value
+		public function singular_plural($value, $singular, $plural=''){
+			if ( $value == 1 ){
+				return $singular;
+			}
+
+			if ( empty($plural) ){
+				$plural = $singular + 's'; //Append an "s" to the singular label to simplify calling the function most of the time
+			}
+
+			return $plural;
+		}
+
 		//Recursive Glob
 		public function glob_r($pattern, $flags=0){
 			$override = apply_filters('pre_glob_r', null, $pattern, $flags);

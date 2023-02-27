@@ -242,14 +242,14 @@ nebula.eventTracking = async function(){
 		});
 
 		//Button Clicks
-		let nebulaButtonSelector = wp.hooks.applyFilters('nebulaButtonSelectors', 'button, .button, .btn, [role="button"], a.wp-block-button__link, .woocommerce-button, .hs-button'); //Allow child theme or plugins to add button selectors without needing to override/duplicate this function
+		let nebulaButtonSelector = wp.hooks.applyFilters('nebulaButtonSelectors', 'button, .button, .btn, [role="button"], a.wp-block-button__link, .wp-element-button, .woocommerce-button, .hs-button'); //Allow child theme or plugins to add button selectors without needing to override/duplicate this function
 		nebula.dom.document.on('pointerdown', nebulaButtonSelector, function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'button_click',
 				event_category: 'Button Click', //@todo "Nebula" 0: Remove after July 2023
-				event_action: jQuery(this).text(), //@todo "Nebula" 0: Remove after July 2023
-				event_label: jQuery(this).attr('href'), //@todo "Nebula" 0: Remove after July 2023
+				event_action: jQuery(this).val() || jQuery(this).attr('value') || jQuery(this).text() || jQuery(this).attr('title') || '(Unknown)', //@todo "Nebula" 0: Remove after July 2023
+				event_label: jQuery(this).attr('href') || jQuery(this).attr('title') || '(Unknown)',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				text: jQuery(this).val() || jQuery(this).attr('value') || jQuery(this).text() || jQuery(this).attr('title') || '(Unknown)',
 				link: jQuery(this).attr('href') || jQuery(this).attr('title') || '(Unknown)'
@@ -1752,7 +1752,7 @@ nebula.crm = async function(action, data, sendNow = true){
 		if ( 'email' in data ){
 			if ( !nebula.user.known && nebula.regex.email.test(data.email) ){
 				nebula.dom.document.trigger('nebula_crm_identification', {email: nebula.regex.email.test(data.email), data: data});
-				gtag('event', 'Contact Identified', {
+				gtag('event', 'crm_contact_identified', {
 					event_category: 'CRM',
 					event_label: "A contact's email address in the CRM has been identified.",
 					non_interaction: true
@@ -1761,7 +1761,7 @@ nebula.crm = async function(action, data, sendNow = true){
 			}
 		} else {
 			nebula.dom.document.trigger('nebula_crm_details', {data: data});
-			gtag('event', 'Supporting Information', {
+			gtag('event', 'crm_supporting_information', {
 				event_category: 'CRM',
 				event_label: 'Information associated with this user has been identified.',
 				non_interaction: true

@@ -793,6 +793,19 @@ nebula.isAlphanumeric = function(string = '', allowWords = true){
 	return false;
 };
 
+//Return a singular or plural label string based on the value
+nebula.singularPlural = function(value, singular, plural=''){
+	if ( value == 1 ){
+		return singular;
+	}
+
+	if ( !plural ){
+		plural = singular + 's'; //Append an "s" to the singular label to simplify calling the function most of the time
+	}
+
+	return plural;
+};
+
 //Create desktop notifications
 nebula.desktopNotification = function(title, message = false, clickCallback, showCallback, closeCallback, errorCallback){
 	if ( nebula.checkNotificationPermission() ){

@@ -153,20 +153,19 @@ if ( !trait_exists('Admin') ){
 			add_filter('run_wptexturize', '__return_false');
 
 			//Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
-			if ( !$this->get_option('admin_bar') && !$this->is_admin_page() ){ //If Admin Bar is disabled and viewing front-end (admin bar is always visible in Admin Dashboard)
-				show_admin_bar(false);
-
-				add_action('wp_print_scripts', array($this, 'dequeue_admin_bar'), 9999);
-				add_action('wp_print_styles', array($this, 'dequeue_admin_bar'), 9999);
-				add_action('init', array($this, 'admin_only_features')); //TODO "Nebula" 0: Possible to remove and add directly remove action here
-				add_filter('wp_head', array($this, 'remove_admin_bar_style_frontend'), 99);
-			} else { //Else the admin bar is enabled
+			if ( (($this->is_dev(true) || current_user_can('manage_options')) && $this->get_option('admin_bar')) || $this->is_admin_page() ){ //If the admin bar Nebula option is allowing it to show (or viewing an admin page)
 				add_action('wp_before_admin_bar_render', array($this, 'remove_admin_bar_logo'), 0);
 				add_action('admin_bar_menu', array($this, 'admin_bar_menus'), 800); //Add Nebula menus to Admin Bar
 				add_action('get_header', array($this, 'remove_admin_bar_bump')); //TODO "Nebula" 0: Possible to remove and add directly remove action here
 				add_action('wp_after_admin_bar_render', array($this, 'admin_bar_style_script_overrides'), 11);
 				add_action('wp_head', array($this, 'admin_bar_warning_styles'), 11);
 				add_action('admin_print_styles', array($this, 'admin_bar_warning_styles'), 11);
+			} else { //Otherwise the Nebula option for admin bar is set to disable it
+				show_admin_bar(false);
+				add_action('wp_print_scripts', array($this, 'dequeue_admin_bar'), 9999);
+				add_action('wp_print_styles', array($this, 'dequeue_admin_bar'), 9999);
+				add_action('init', array($this, 'admin_only_features')); //TODO "Nebula" 0: Possible to remove and add directly remove action here
+				add_filter('wp_head', array($this, 'remove_admin_bar_style_frontend'), 99);
 			}
 
 			//Disable Wordpress Core update notifications in WP Admin
