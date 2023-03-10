@@ -1304,7 +1304,9 @@ if ( !trait_exists('Functions') ){
 				return $video_json;
 			}, array('provider' => $provider, 'id' => $id, 'timer_name' => $timer_name), HOUR_IN_SECONDS*12);
 
-			$video_json = json_decode($video_json);
+			if ( !is_array($video_json) ){ //If it is not already an array, decode it from the JSON string
+				$video_json = json_decode($video_json);
+			}
 
 			//Check for errors
 			if ( empty($video_json) ){

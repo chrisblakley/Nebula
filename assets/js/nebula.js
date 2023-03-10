@@ -19,7 +19,15 @@ jQuery(function(){
 	nebula.subnavExpanders();
 
 	//Analytics
-	if ( !nebula.isDoNotTrack() ){
+	if ( nebula.isDoNotTrack() ){ //If requesting not to track
+		//Create empty functions to prevent undefined errors
+		nebula.gaEventObject = function(){};
+		nebula.usage = function(){};
+		nebula.crm = function(){};
+		nebula.crmForm = function(){};
+		nebula.clarity = function(){};
+		nebula.fbq = function(){};
+	} else {
 		import('./modules/measure.js?ver=' + nebula.version.number).then(function(module){
 			nebula.eventTracking();
 			nebula.dom.document.trigger('nebula_module_loaded', 'measure.js');
