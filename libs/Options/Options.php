@@ -295,7 +295,8 @@ if ( !trait_exists('Options') ){
 				'google_adsense_url' => '',
 				'amazon_associates_url' => '',
 				'mention_url' => '',
-				'logs' => 0,
+				'administrative_log' => 0,
+				'js_error_log' => 0,
 				'notes' => '',
 
 				//Advanced Tab

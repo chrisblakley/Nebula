@@ -1000,10 +1000,17 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_notes_metabox($nebula_options){
 			?>
 				<div class="form-group" dependent-or="dev_email_domain dev_ip client_email_domain client_ip">
-					<input type="checkbox" name="nebula_options[logs]" id="logs" value="1" <?php checked('1', !empty($nebula_options['logs'])); ?> /><label for="logs">Automatic Logs</label>
-					<p class="nebula-help-text short-help form-text text-muted">Automatically log notable administrative events such as when the Nebula theme is updated (Default: <?php echo $this->user_friendly_default('logs'); ?>)</p>
+					<input type="checkbox" name="nebula_options[administrative_log]" id="administrative_log" value="1" <?php checked('1', !empty($nebula_options['administrative_log'])); ?> /><label for="administrative_log">Administrative Logs</label>
+					<p class="nebula-help-text short-help form-text text-muted">Automatically log notable administrative events such as when the Nebula theme is updated (Default: <?php echo $this->user_friendly_default('administrative_log'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">This does not log any user data.</p>
 					<p class="option-keywords">annotations logging database</p>
+				</div>
+
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[js_error_log]" id="js_error_log" value="1" <?php checked('1', !empty($nebula_options['js_error_log'])); ?> /><label for="js_error_log">Log JavaScript Errors</label>
+					<p class="nebula-help-text short-help form-text text-muted">Log JavaScript window errors to a js_error.log file in the child theme directory. (Default: <?php echo $this->user_friendly_default('js_error_log'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">This does not log any user data. Use this only when necessary as it adds a lot of overhead to the browser and server processing!</p>
+					<p class="option-keywords">annotations logging database errors exceptions ux user experience log file</p>
 				</div>
 
 				<div class="form-group">
@@ -1253,7 +1260,7 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_logs_metabox($nebula_data){
 			$nebula_options = get_option('nebula_options');
 
-			if ( function_exists('mb_strimwidth') && !empty($nebula_options['logs']) ): //Double check that multibyte functions are available first
+			if ( function_exists('mb_strimwidth') && !empty($nebula_options['administrative_log']) ): //Double check that multibyte functions are available first
 				if ( $this->is_staff() ):
 					$this->timer('Nebula Logs Metabox');
 					$columns = $this->get_logs(false);

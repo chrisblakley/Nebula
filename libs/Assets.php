@@ -171,6 +171,7 @@ if ( !trait_exists('Assets') ){
 						'adblock_detect' => $this->get_option('adblock_detect'),
 						'manage_options' => current_user_can('manage_options'),
 						'debug' => $this->is_debug(),
+						'js_error_log' => $this->get_option('js_error_log'),
 						'bypass_cache' => $this->is_bypass_cache(),
 						'sidebar_expanders' => get_theme_mod('sidebar_accordion_expanders', true),
 					),

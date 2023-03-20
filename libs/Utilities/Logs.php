@@ -5,7 +5,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Logs') ){
 	trait Logs {
 		public function hooks(){
-			if ( $this->get_option('logs') ){
+			if ( $this->get_option('administrative_log') ){ //This log option is to log administrative changes as a table in Nebula Options
 				add_action('init', array($this, 'register_table_names')); //This must happen on all pages so logs can be added or retrieved
 
 				if ( $this->is_staff() ){
@@ -19,10 +19,39 @@ if ( !trait_exists('Logs') ){
 				}
 
 				//Additional events to log
-				if ( $this->get_option('logs') ){ //Ignore these hooks if logging is not enabled
+				if ( $this->get_option('administrative_log') ){ //Ignore these hooks if logging is not enabled
 					add_filter('auto_update_core', array($this, 'log_auto_core_update'), 10, 2);
 				}
 			}
+
+			if ( $this->get_option('js_error_log') ){ //This log option is to capture JavaScript errors in a log file on the server
+				add_action('wp_ajax_nebula_js_error_log', array($this, 'js_error_log'));
+				add_action('wp_ajax_nopriv_nebula_js_error_log', array($this, 'js_error_log'));
+			}
+		}
+
+		//Log JavaScript errors to a file
+		public function js_error_log(){
+			$post = $this->super->post; //Get the $_POST data
+
+			if ( !empty($post['message']) ){ //If we have data
+				if ( !wp_verify_nonce($post['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
+
+				$js_log_file = get_stylesheet_directory() . '/js_error.log';
+
+				//Check the file size to be safe
+				if ( filesize($js_log_file) >= MB_IN_BYTES*100 ){ //100mb limit
+					unlink($js_log_file); //Delete the file to start a new one. This is to be overly cautious.
+				}
+
+				$error_message = ( isset($post['message']) )? sanitize_text_field($post['message']) : false; //Sanitize the error message text
+
+				if ( !empty($error_message) ){
+					$this->debug_log($error_message, $js_log_file);
+				}
+			}
+
+			exit;
 		}
 
 		//Log a message to a file
@@ -48,7 +77,7 @@ if ( !trait_exists('Logs') ){
 
 		//Register table name in $wpdb global
 		public function register_table_names(){
-			if ( $this->get_option('logs') ){
+			if ( $this->get_option('administrative_log') ){
 				global $wpdb;
 
 				if ( !isset($wpdb->nebula_logs) ){
@@ -88,7 +117,7 @@ if ( !trait_exists('Logs') ){
 
 		//Insert log into DB
 		public function add_log($message='', $importance=0, $optimize=true){
-			if ( $this->get_option('logs') && is_user_logged_in() && !empty($message) ){
+			if ( $this->get_option('administrative_log') && is_user_logged_in() && !empty($message) ){
 				global $wpdb;
 
 				try {
@@ -100,7 +129,7 @@ if ( !trait_exists('Logs') ){
 					)); //DB Query
 				} catch(Exception $error){
 					//This could happen if the option was enabled (somehow) by non-staff, and a log was attempted to be added
-					$this->update_option('logs', 0); //Disable the option just to be safe. Unfortunately this cannot be logged somewhere...
+					$this->update_option('administrative_log', 0); //Disable the option just to be safe. Unfortunately this cannot be logged somewhere...
 					do_action('qm/error', $error);
 					return false;
 				}
@@ -137,7 +166,7 @@ if ( !trait_exists('Logs') ){
 
 		//Remove log from DB
 		public function remove_log($id){
-			if ( $this->get_option('logs') && $this->is_staff() ){
+			if ( $this->get_option('administrative_log') && $this->is_staff() ){
 				global $wpdb;
 
 				$wpdb->delete($wpdb->nebula_logs, array('id' => intval($id))); //DB Query
@@ -159,7 +188,7 @@ if ( !trait_exists('Logs') ){
 
 		//Remove all low importance logs from DB (by default this removes any log messages with importance of 4 or below)
 		public function clean_logs($importance=4){
-			if ( $this->get_option('logs') && $this->is_staff() ){
+			if ( $this->get_option('administrative_log') && $this->is_staff() ){
 				global $wpdb;
 
 				$wpdb->query($wpdb->prepare("DELETE FROM " . $wpdb->nebula_logs . " WHERE importance <= %d", $importance)); //DB Query
@@ -181,7 +210,7 @@ if ( !trait_exists('Logs') ){
 
 		//Remove low importance logs before a date
 		public function optimize_logs(){
-			if ( $this->get_option('logs') && $this->is_staff() ){
+			if ( $this->get_option('administrative_log') && $this->is_staff() ){
 				$row_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->nebula_logs); //DB Query - Count the rows in the table
 
 				if ( $row_count >= 800 ){
@@ -194,7 +223,7 @@ if ( !trait_exists('Logs') ){
 						$row_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->nebula_logs); //DB Query - Count the rows in the table
 						if ( $row_count >= 400 ){
 							$this->add_log('Nebula Logs were automatically disabled due to an unexpectedly large database table.', 10, false); //Add a log without recursively attempting to optimize
-							$this->update_option('logs', 0); //Disable Nebula Logs automatically to prevent an unexpectedly large database table
+							$this->update_option('administrative_log', 0); //Disable Nebula Logs automatically to prevent an unexpectedly large database table
 						}
 					}
 				}
@@ -205,7 +234,7 @@ if ( !trait_exists('Logs') ){
 
 		//Get all logs data (or just the column names)
 		public function get_logs($rows=true){
-			if ( $this->get_option('logs') && $this->is_staff() ){
+			if ( $this->get_option('administrative_log') && $this->is_staff() ){
 				//Only return column names if requested
 				if ( empty($rows) ){
 					global $wpdb;

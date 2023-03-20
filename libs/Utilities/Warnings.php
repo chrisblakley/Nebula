@@ -342,6 +342,18 @@ if ( !trait_exists('Warnings') ){
 					}
 				}
 
+				//Check if logging JavaScript errors
+				if ( $this->get_option('js_error_log') ){
+					$js_log_file = get_stylesheet_directory() . '/js_error.log';
+
+					$nebula_warnings['js_error_log'] = array(
+						'level' => 'warning',
+						'dismissible' => false,
+						'description' => '<i class="fa-solid fa-fw fa-hard-hat"></i> <strong><a href="themes.php?page=nebula_options&tab=administration" target="_blank">JS Error Logging</a></strong> is active: <strong>' . str_replace(ABSPATH, '', $js_log_file) . '</strong> (' . $this->format_bytes(filesize($js_log_file), 1) . ')',
+						'url' => admin_url('themes.php?page=nebula_options&tab=administration')
+					);
+				}
+
 				//Check for Safe Mode
 				if ( $this->is_safe_mode() ){
 					$nebula_warnings['safe_mode'] = array(
