@@ -168,6 +168,7 @@ if ( !trait_exists('Assets') ){
 						'youtube_url' => esc_url($this->get_option('youtube_url')),
 						'instagram_url' => esc_url($this->get_option('instagram_url')),
 						'pinterest_url' => esc_url($this->get_option('pinterest_url')),
+						'attribution_tracking' => esc_url($this->get_option('attribution_tracking')),
 						'adblock_detect' => $this->get_option('adblock_detect'),
 						'manage_options' => current_user_can('manage_options'),
 						'debug' => $this->is_debug(),

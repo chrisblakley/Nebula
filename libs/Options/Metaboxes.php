@@ -602,6 +602,12 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="option-keywords">gdpr ccpa privacy</p>
 				</div>
 
+				<div class="form-group">
+					<input type="checkbox" name="nebula_options[attribution_tracking]" id="attribution_tracking" value="1" <?php checked('1', !empty($nebula_options['attribution_tracking'])); ?> /><label for="attribution_tracking">Attribution Tracking</label>
+					<p class="nebula-help-text short-help form-text text-muted">Track "last-non-organic" attribution by storing UTM and other notable tracking query parameters in a cookie to retrieve on users' subsequent returning visits (on the same device). This will fill an input with a class of <code>attribution</code> with the data if it exists as well as be used in CF7 form submissions. This option must be enabled in order to use the PHP function <code>nebula()->utms()</code> and JS function <code>nebula.attributionTracking()</code>. (Default: <?php echo $this->user_friendly_default('attribution_tracking'); ?>)</p>
+					<p class="option-keywords">gdpr ccpa privacy ads campaigns cookies</p>
+				</div>
+
 				<div class="form-group" dependent-or="ga_measurement_id gtm_id">
 					<input type="checkbox" name="nebula_options[ga_wpuserid]" id="ga_wpuserid" value="1" <?php checked('1', !empty($nebula_options['ga_wpuserid'])); ?> /><label for="ga_wpuserid">Use WordPress User ID</label>
 					<p class="nebula-help-text short-help form-text text-muted">Use the WordPress User ID as the Google Analytics User ID. (Default: <?php echo $this->user_friendly_default('ga_wpuserid'); ?>)</p>

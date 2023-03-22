@@ -656,19 +656,26 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Store initial UTM tags through each session
+		//This is very similar to the JavaScript method of attribution tracking. That JS method works with third-party CRMs, where this is useful locally. Both are included in CF7 debuginfo (which may be interesting to compare)
 		public function utms(){
-			$query_string = $this->url_components('query');
-			$notable_tags = array('utm_', 'fbclid', 'mc_eid', 'gclid', 'gclsrc', 'dclid', '_hsenc', 'vero_id', 'mkt_tok');
-
-			foreach ( $notable_tags as $tag ){
-				if ( strpos(strtolower($query_string), $tag) > -1 ){ //If UTM parameters exist //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-					$this->set_cookie('nebula_utms', $this->url_components('all'), strtotime('+1 hours')); //Set/update the cookie with an hour expiration and store the entire LP URL
-					return sanitize_text_field($this->url_components('all')); //Return the entire landing page URL with full query string sanitized
-				}
+			if ( !$this->is_analytics_allowed() ){ //Do nothing if analytics is not allowed
+				return '';
 			}
 
-			if ( !empty($this->super->cookie['nebula_utms']) ){
-				return sanitize_text_field(htmlspecialchars($this->super->cookie['nebula_utms']));
+			if ( $this->get_option('attribution_tracking') ){ //This functionality requires the Attribution Tracking Nebula Option because it adds tracking cookies
+				$query_string = $this->url_components('query');
+				$notable_tags = array('utm_', 'fbclid', 'mc_eid', 'gclid', 'gclsrc', 'dclid', '_hsenc', 'vero_id', 'mkt_tok');
+
+				foreach ( $notable_tags as $tag ){
+					if ( strpos(strtolower($query_string), $tag) > -1 ){ //If UTM parameters exist //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						$this->set_cookie('nebula_utms', $this->url_components('all'), strtotime('+1 hours')); //Set/update the cookie with an hour expiration and store the entire LP URL
+						return sanitize_text_field($this->url_components('all')); //Return the entire landing page URL with full query string sanitized
+					}
+				}
+
+				if ( !empty($this->super->cookie['nebula_utms']) ){
+					return sanitize_text_field(htmlspecialchars($this->super->cookie['nebula_utms']));
+				}
 			}
 
 			return '';

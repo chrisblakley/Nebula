@@ -3246,6 +3246,11 @@ if ( !trait_exists('Functions') ){
 			$debug_info['nebula_ga_cid'] = sanitize_text_field($this->ga_parse_cookie());
 			$debug_info['nebula_utms'] = sanitize_text_field(htmlspecialchars_decode($this->utms()));
 
+			//Check for the JS-based attribution cookie
+			if ( isset($this->super->cookie['attribution']) ){
+				$debug_info['nebula_attribution'] = sanitize_text_field($this->super->cookie['attribution']);
+			}
+
 			//Logged-in User Info
 			$user_id = (int) $cf7_instance->get_meta('current_user_id');
 			if ( !empty($user_id) ){

@@ -154,6 +154,8 @@ nebula.eventTracking = async function(){
 			});
 		}
 
+		nebula.attributionTracking();
+
 		//When the page is restored from BFCache (which means it is not fully reloaded)
 		window.addEventListener('pageshow', function(event){
 			if ( event.persisted === true ){
@@ -1692,6 +1694,59 @@ nebula.scrollDepth = async function(){
 			//Observe the pre-footer section (or whatever element is after the main content area)
 			let preFooterSelector = wp.hooks.applyFilters('nebulaPreFooterSelector', '#footer-section'); //This should be the first section after the "content"
 			footerObserver.observe(jQuery(preFooterSelector)[0]); //Observe the element
+		}
+	}
+};
+
+//Track campaigns that attributed to returning visitor conversions
+nebula.attributionTracking = function(){
+	if ( nebula.site.options.attribution_tracking ){ //If the Nebula Option is enabled
+		if ( nebula.isDoNotTrack() ){
+			return false;
+		}
+
+		//Check if relevant query parameters exist in the URL
+		//This overwrites anytime there is a UTM tag, so it would be considered "last-non-organic" attribution
+		const queryParams = new URLSearchParams(window.location.search);
+		if ( queryParams.has('utm_') ){ //If any UTM tags exist
+			//Loop through the query string to capture just the UTM parameters
+			let utmParameters = {}; //Prep an object to fill
+			for ( const [key, value] of queryParams.entries() ){
+				if ( key.includes('utm_') ){ //If this key is a UTM parameter
+					utmParameters[key] = value;
+				}
+			}
+
+			nebula.createCookie('attribution', JSON.stringify(utmParameters)); //Store the UTM parameters in a cookie
+		} else { //If no UTMs, check for other notable tracking parameters
+			let trackingParameters = {}; //Prep an object to fill
+
+			//Loop through notable tracking parameters to store in the attribution cookie
+			let notableQueryParameters = {
+				google_ads_click: 'gclid', //Google Ads Click ID
+				google_ads_source: 'gclsrc', //Google Ads Click Source
+				doubleclick: 'dclid', //DoubleClick Click ID (typically offline tracking)
+				facebook: 'fbclid',
+				linkedin: 'li_',
+				hubspot: 'hsa_',
+				mailchimp: 'mc_eid',
+				vero: 'vero_id',
+				marketo: 'mkt_tok'
+			};
+			jQuery.each(notableQueryParameters, function(platform, parameter){
+				if ( queryParams.has(parameter) ){
+					trackingParameters[key] = queryParams.get(parameter);
+				}
+			});
+
+			if ( trackingParameters ){
+				nebula.createCookie('attribution', JSON.stringify(trackingParameters)); //Store the other notable parameters in a cookie
+			}
+		}
+
+		//Now check if the cookie exists
+		if ( nebula.readCookie('attribution') && jQuery('input.attribution').length ){ //If our attribution cookie exists and we have an input to use
+			jQuery('input.attribution').val(nebula.readCookie('attribution')); //Fill the designated form field(s)
 		}
 	}
 };

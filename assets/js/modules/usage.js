@@ -13,25 +13,23 @@ window.addEventListener('error', function(error){
 
 	if ( error.message.toLowerCase().includes('script error') ){ //If it is a script error
 		errorMessage = 'Script error (An error occurred in a script hosted on a different domain)'; //No additional information is available because of the browser's same-origin policy. Use CORS when possible to get additional information.
-	} else {
-		if ( nebula.site?.options?.js_error_log ){ //If the option is enabled to log JS errors
-			fetch(nebula.site.ajax.url, {
-				method: 'POST',
-				credentials: 'same-origin',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-					'Cache-Control': 'no-cache',
-				},
-				body: new URLSearchParams({
-					nonce: nebula.site.ajax.nonce,
-					action: 'nebula_js_error_log',
-					message: errorMessage,
-					line: error.lineno,
-					filename: error.filename
-				}),
-				priority: 'high'
-			});
-		}
+	} else if ( nebula.site?.options?.js_error_log ){ //If the option is enabled to log JS errors
+		fetch(nebula.site.ajax.url, {
+			method: 'POST',
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Cache-Control': 'no-cache',
+			},
+			body: new URLSearchParams({
+				nonce: nebula.site.ajax.nonce,
+				action: 'nebula_js_error_log',
+				message: errorMessage,
+				line: error.lineno,
+				filename: error.filename
+			}),
+			priority: 'high'
+		});
 	}
 
 	gtag('event', 'exception', {
