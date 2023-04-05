@@ -4,7 +4,7 @@ window.performance.mark('(Nebula) Inside usage.js (module)');
 
 //Detect Window Errors
 window.addEventListener('error', function(error){
-	let errorMessage = error.message + ' at ' + error.lineno + ' of ' + error.filename;
+	let errorMessage = error.message + ' at ' + error.lineno + ' of ' + error.filename + ' on ' + window.location.href;
 
 	//Ignore browser extension errors and JS console eager evaluation errors
 	if ( errorMessage.toLowerCase().includes('-extension://') || errorMessage.toLowerCase().includes('side-effect in debug-evaluate') || errorMessage.toLowerCase().includes('unexpected end of input') ){ //Ex: chrome-extension:// or safari-extension:// -or- errors originating from the JS console itself
@@ -14,6 +14,18 @@ window.addEventListener('error', function(error){
 	if ( error.message.toLowerCase().includes('script error') ){ //If it is a script error
 		errorMessage = 'Script error (An error occurred in a script hosted on a different domain)'; //No additional information is available because of the browser's same-origin policy. Use CORS when possible to get additional information.
 	} else if ( nebula.site?.options?.js_error_log ){ //If the option is enabled to log JS errors
+		let device = nebula.user.client.browser.full + ' (' + nebula.user.client.device.formfactor + ' - ' + nebula.user.client.os + ')';
+
+		let user = '';
+		if ( nebula?.user?.id ){
+			user = ' [' + nebula.user.id + ']';
+		}
+		if ( nebula.user.staff ){
+			user += ' (' + nebula.user.staff + ')';
+		}
+
+		errorMessage += ' using ' + device + user; //Append device and WP data
+
 		fetch(nebula.site.ajax.url, {
 			method: 'POST',
 			credentials: 'same-origin',
@@ -26,7 +38,10 @@ window.addEventListener('error', function(error){
 				action: 'nebula_js_error_log',
 				message: errorMessage,
 				line: error.lineno,
-				filename: error.filename
+				filename: error.filename,
+				page: window.location.href,
+				device: device,
+				user: user
 			}),
 			priority: 'high'
 		});

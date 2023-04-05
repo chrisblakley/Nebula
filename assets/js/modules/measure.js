@@ -1708,7 +1708,7 @@ nebula.attributionTracking = function(){
 		//Check if relevant query parameters exist in the URL
 		//This overwrites anytime there is a UTM tag, so it would be considered "last-non-organic" attribution
 		const queryParams = new URLSearchParams(window.location.search);
-		if ( queryParams.has('utm_') ){ //If any UTM tags exist
+		if ( queryParams.has('utm_source') ){ //Check for the only required UTM tag (since .has() cannot do partial matches)
 			//Loop through the query string to capture just the UTM parameters
 			let utmParameters = {}; //Prep an object to fill
 			for ( const [key, value] of queryParams.entries() ){

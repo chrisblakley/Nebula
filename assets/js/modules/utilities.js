@@ -484,10 +484,9 @@ nebula.memoize = function(action, handle = '', value = false){
 
 //Cookie Management
 nebula.createCookie = function(name, value, days = 3650){ //Reduce the default days in 2027 to lower than 10 years (and each year thereafter)
-	let expires = '';
 	let date = new Date();
 	date.setTime(date.getTime()+(days*24*60*60*1000));
-	expires = '; expires=' + date.toGMTString(); //Note: Do not let this cookie expire past 2038 or it instantly expires. http://en.wikipedia.org/wiki/Year_2038_problem
+	let expires = '; expires=' + date.toGMTString(); //Note: Do not let this cookie expire past 2038 or it instantly expires. http://en.wikipedia.org/wiki/Year_2038_problem
 	document.cookie = name + '=' + value + expires + '; path=/;SameSite=Lax';
 };
 

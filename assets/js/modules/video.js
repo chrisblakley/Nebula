@@ -377,6 +377,11 @@ nebula.youtubeReady = function(e){
 
 nebula.youtubeStateChange = function(e){
 	let thisVideo = nebula.videos[nebula.getYoutubeID(e.target)];
+
+	if ( !thisVideo ){
+		return false;
+	}
+
 	thisVideo.title = nebula.getYoutubeTitle(e.target) ?? 'Unknown';
 
 	//Playing

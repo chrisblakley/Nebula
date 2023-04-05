@@ -28,13 +28,17 @@
 add_action('init', function(){
 	register_post_type('events', array( //This is the text that appears in the URL
 		'labels' => array( //https://developer.wordpress.org/reference/functions/get_post_type_labels/
-			'name' => 'Events', //Plural
-			'singular_name' => 'Event',
+			'name' => 'Events', //Plural <-- Change this to match your desired post type name
+			'singular_name' => 'Event', // <-- Change this to match your desired post type name
 		),
 		'description' => 'Upcoming webinars and conferences.',
 		'menu_icon' => 'dashicons-calendar', //https://developer.wordpress.org/resource/dashicons/
 		'has_archive' => true,
 		'taxonomies' => array('category', 'post_tag'),
+		'rewrite' => array(
+			'slug' => 'events', // <-- Change this to match your desired post type name
+			'with_front' => false //This prevents any modification to the global permalink structure from also appearing on this CPT permalink URL
+		),
 		'supports' => array('title', 'editor', 'revisions', 'excerpt', 'thumbnail'),
 		'public' => true,
 		'publicly_queryable' => true, //Keep this to prevent 404s on the front-end (unless it should not be available to visitors)

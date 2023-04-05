@@ -3244,11 +3244,14 @@ if ( !trait_exists('Functions') ){
 			$debug_info['nebula_child_version'] = $this->child_version('full');
 			$debug_info['nebula_session_id'] = sanitize_text_field($this->nebula_session_id());
 			$debug_info['nebula_ga_cid'] = sanitize_text_field($this->ga_parse_cookie());
-			$debug_info['nebula_utms'] = sanitize_text_field(htmlspecialchars_decode($this->utms()));
 
-			//Check for the JS-based attribution cookie
-			if ( isset($this->super->cookie['attribution']) ){
-				$debug_info['nebula_attribution'] = sanitize_text_field($this->super->cookie['attribution']);
+			if ( $this->get_option('attribution_tracking') ){ //Don't output these unless this option is enabled (to prevent empty values from appearing like a lack of activity)
+				$debug_info['nebula_utms'] = sanitize_text_field(htmlspecialchars_decode($this->utms())); //Check for PHP-based attribution cookie
+
+				//Check for the JS-based attribution cookie
+				if ( isset($this->super->cookie['attribution']) ){
+					$debug_info['nebula_attribution'] = sanitize_text_field($this->super->cookie['attribution']);
+				}
 			}
 
 			//Logged-in User Info
