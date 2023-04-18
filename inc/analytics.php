@@ -102,8 +102,8 @@
 			nebula.pageviewProperties = <?php echo json_encode(apply_filters('nebula_ga_pageview_properties', $pageview_properties)); //Allow other functions to modify the PHP pageview properties ?>;
 
 			//Post Categories and Tags
-			nebula.pageviewProperties.post_categories = nebula.post.categories;
-			nebula.pageviewProperties.post_tags = nebula.post.tags;
+			nebula.pageviewProperties.post_categories = nebula?.post?.categories;
+			nebula.pageviewProperties.post_tags = nebula?.post?.tags;
 
 			//Post Ancestors
 			if ( nebula?.post?.ancestors ){

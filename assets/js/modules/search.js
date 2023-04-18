@@ -163,6 +163,11 @@ nebula.autocompleteSearch = function(element, types = ''){
 			return false;
 		}
 
+		let minLength = 3;
+		if ( element.attr('data-min-length') ){
+			minLength = element.attr('data-min-length');
+		}
+
 		element.autocomplete({ //jQuery UI dependent
 			position: {
 				my: 'left top-2px',
@@ -277,7 +282,7 @@ nebula.autocompleteSearch = function(element, types = ''){
 			close: function(){
 				element.closest('form').removeClass('autocompleted');
 			},
-			minLength: 3, //Require at least 3 characters
+			minLength: minLength, //Require at least 3 characters (unless overridden by an attribute)
 		}).data('ui-autocomplete')._renderItem = function(ul, item){
 			let thisSimilarity = ( typeof item.similarity !== 'undefined' )? item.similarity.toFixed(1) + '% Match' : '';
 			let listItem = jQuery("<li class='" + item.classes + "' title='" + thisSimilarity + "'></li>").data("item.autocomplete", item).append("<a href='" + item.link + "'> " + item.label.replaceAll(/\\/g, '') + "</a>").appendTo(ul);
@@ -290,7 +295,7 @@ nebula.autocompleteSearch = function(element, types = ''){
 };
 
 nebula.wpSearchInput = function(){
-	jQuery('#post-0 input[name="s"], #nebula-drawer input[name="s"], .search-results input[name="s"]').trigger('focus'); //Automatically focus on specific search inputs
+	//jQuery('#post-0 input[name="s"], #nebula-drawer input[name="s"], .search-results input[name="s"]').trigger('focus'); //Automatically focus on specific search inputs
 
 	//Set search value as placeholder
 	let searchVal = nebula.get('s') || jQuery('input[name="s"]').val();
