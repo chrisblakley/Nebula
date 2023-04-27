@@ -119,7 +119,8 @@ if ( !trait_exists('Ecommerce') ){
 					event_label: "Product: ' . $product->get_name() . ' (ID: ' . $product->get_id() . ')",
 					value: "' . $product->get_price() . '",
 					currency: "USD",
-					items: [' . json_encode($product_item) . ']
+					items: [' . json_encode($product_item) . '],
+					non_interaction: true
 				});';
 			}
 
@@ -168,7 +169,16 @@ if ( !trait_exists('Ecommerce') ){
 					event_label: "Cart Total: ' . $cart_total . ' (' . count($product_items) . ' items)",
 					value: "' . $cart_total . '",
 					currency: "USD",
-					items: ' . json_encode($product_items) . '
+					items: ' . json_encode($product_items) . ',
+					non_interaction: true
+				});';
+			}
+
+			if ( is_order_received_page() ){
+				echo 'gtag("event", "order_received", { //This event is to provide redundancy for the "purchase" event
+					event_category: "Ecommerce",
+					event_action: "Order Received",
+					event_label: "Order Received page load (Success from payment gateway)"
 				});';
 			}
 		}

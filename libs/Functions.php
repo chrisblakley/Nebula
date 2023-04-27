@@ -82,6 +82,7 @@ if ( !trait_exists('Functions') ){
 
 			if (is_plugin_active('contact-form-7/wp-contact-form-7.php') && $this->get_option('store_form_submissions') ){ //If CF7 is installed and active and capturing submission data is enabled
 				add_action('init', array($this, 'cf7_storage_cpt'));
+				add_filter('wpcf7_posted_data', array($this, 'cf7_enhance_data'));
 				add_action('wpcf7_before_send_mail', array($this, 'cf7_storage'), 2, 1);
 			}
 
@@ -3168,6 +3169,16 @@ if ( !trait_exists('Functions') ){
 				'public' => true, //Allow it to appear in the admin menu
 				'publicly_queryable' => false, //Don't let visitors ever access this data
 			));
+		}
+
+		//Modify/add data to CF7 submissions in a way that other themes/plugins can use it as well
+		public function cf7_enhance_data($submission_data=array()){
+			$nebula_debug_info = $this->cf7_debug_info($submission_data);
+			foreach ( $nebula_debug_info as $key => $value ){
+				$submission_data['_' . $key] = $value;
+			}
+
+			return $submission_data;
 		}
 
 		//Listen for form submissions to store into the DB right before sending the mail
