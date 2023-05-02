@@ -1718,7 +1718,7 @@ nebula.attributionTracking = function(){
 			}
 
 			nebula.createCookie('attribution', JSON.stringify(utmParameters)); //Store the UTM parameters in a cookie
-		} else { //If no UTMs, check for other notable tracking parameters
+		} else if ( !nebula.readCookie('attribution') ){ //If no UTMs and the cookie does not already exist, check for other notable tracking parameters
 			let trackingParameters = {}; //Prep an object to fill
 
 			//Loop through notable tracking parameters to store in the attribution cookie

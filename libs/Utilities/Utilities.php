@@ -668,7 +668,7 @@ if ( !trait_exists('Utilities') ){
 
 				foreach ( $notable_tags as $tag ){
 					if ( strpos(strtolower($query_string), $tag) > -1 ){ //If UTM parameters exist //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-						$this->set_cookie('nebula_utms', $this->url_components('all'), strtotime('+1 hours')); //Set/update the cookie with an hour expiration and store the entire LP URL
+						$this->set_cookie('nebula_utms', $this->url_components('all'), strtotime('+14 months')); //Set/update the cookie and store the entire LP URL
 						return sanitize_text_field($this->url_components('all')); //Return the entire landing page URL with full query string sanitized
 					}
 				}
