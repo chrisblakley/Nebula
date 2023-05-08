@@ -70,9 +70,9 @@ if ( !trait_exists('Sass') ){
 						//Nebula SCSS locations
 						$scss_locations = array(
 							'parent' => array(
-								'directory' => get_template_directory(), //This is where the .scss files exist
+								'directory' => get_template_directory(), //Root theme/plugin directory
 								'uri' => get_template_directory_uri(), //This is for reference to the directory URL in for files within the CSS itself
-								'core' => get_template_directory() . '/assets/scss/', //Optional: This is used to check for special .scss files like critical.scss
+								'core' => get_template_directory() . '/assets/scss/', //Where the .scss files are located
 								'imports' => array(get_template_directory() . '/assets/scss/partials/'), //The directory where import partials are located
 								'output' => get_template_directory() . '/assets/css/', //This is where the processed .css files will be placed
 							)
@@ -81,9 +81,9 @@ if ( !trait_exists('Sass') ){
 						//Child theme SCSS locations
 						if ( is_child_theme() ){
 							$scss_locations['child'] = array(
-								'directory' => get_stylesheet_directory(), //This is where the .scss files exist
+								'directory' => get_stylesheet_directory(), //Root theme/plugin directory
 								'uri' => get_stylesheet_directory_uri(), //This is for reference to the directory URL in for files within the CSS itself
-								'core' => get_template_directory() . '/assets/scss/', //Optional: This is used to check for special .scss files like critical.scss
+								'core' => get_stylesheet_directory() . '/assets/scss/', //Where the .scss files are located
 								'imports' => array(get_stylesheet_directory() . '/assets/scss/partials/'), //The directory where import partials are located
 								'output' => get_stylesheet_directory() . '/assets/css/', //This is where the processed .css files will be placed
 							);
@@ -112,13 +112,11 @@ if ( !trait_exists('Sass') ){
 							if ( $this->get_data('scss_last_processed') != 0 ){
 								foreach ( $all_scss_locations as $scss_location ){ //Loop through each location (parent, child, relevant plugins, etc.)
 									//Check core directory for "special" files
-									if ( !empty($scss_location['core']) ){
-										$critical_file = $scss_location['core'] . 'critical.scss';
-										if ( file_exists($critical_file) && $scss_last_processed-filemtime($critical_file) < -30 ){
-											$force_all = true; //If critical.scss file has been edited, reprocess everything.
-											$this->sass_process_status = ( isset($this->super->get['sass']) )? 'All Sass files were processed forcefully because critical Sass was modified.' : $this->sass_process_status;
-											break; //No need to continue looking at individual directories/files since we are not reprocessing everything anyway
-										}
+									$critical_file = $scss_location['core'] . 'critical.scss';
+									if ( file_exists($critical_file) && $scss_last_processed-filemtime($critical_file) < -30 ){
+										$force_all = true; //If critical.scss file has been edited, reprocess everything.
+										$this->sass_process_status = ( isset($this->super->get['sass']) )? 'All Sass files were processed forcefully because critical Sass was modified.' : $this->sass_process_status;
+										break; //No need to continue looking at individual directories/files since we are not reprocessing everything anyway
 									}
 
 									foreach ( $scss_location['imports'] as $imports_directory ){ //Loop through all imports directories
@@ -238,7 +236,7 @@ if ( !trait_exists('Sass') ){
 				do_action('nebula_before_sass_compile', $location_paths); //Allow modification of files before looping through to compile Sass
 
 				//Compile each SCSS file
-				foreach ( glob($location_paths['directory'] . '/assets/scss/*.scss') as $scss_file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
+				foreach ( glob($location_paths['core'] . '*.scss') as $scss_file ){ //@TODO "Nebula" 0: Change to glob_r() but will need to create subdirectories if they don't exist.
 					$scss_file_path_info = pathinfo($scss_file);
 					$debug_name = str_replace(WP_CONTENT_DIR, '', $scss_file_path_info['dirname']) . '/' . $scss_file_path_info['basename'];
 					$this->timer('Sass File (' . $debug_name . ')');
@@ -256,17 +254,16 @@ if ( !trait_exists('Sass') ){
 					//If file exists, and has .scss extension, and doesn't begin with "_".
 					if ( is_file($scss_file) && $scss_file_path_info['extension'] === 'scss' && $scss_file_path_info['filename'][0] !== '_' ){
 						//Determine the .css output filepath
-						$output_directory = $location_paths['directory'] . '/assets/css/'; //Default to the assets directory
-
-						if ( ($location_name == 'parent' || $location_name == 'child') && $scss_file_path_info['filename'] === 'style' ){
-							$output_directory = $location_paths['directory'] . '/'; //Root directory for theme style.css
-						} elseif ( !empty($location_paths['output']) ){
-							$output_directory = $location_paths['output'] . '/';
+						$output_directory = $location_paths['output']; //Default to the output directory
+						if ( ($location_name == 'parent' || $location_name == 'child') ){
+							if ( $scss_file_path_info['filename'] === 'style' ){
+								$output_directory = $location_paths['directory'] . '/'; //Root directory for theme style.css
+							}
 						}
 
 						$css_filepath = $output_directory . $scss_file_path_info['filename'] . '.css';
 
-						wp_mkdir_p($location_paths['directory'] . '/assets/css'); //Create the /css directory (in case it doesn't exist already).
+						wp_mkdir_p($location_paths['output']); //Create the output directory (in case it doesn't exist already)
 
 						//Update the last SCSS file modification time (if later than the latest yet)
 						if ( filemtime($scss_file) > $this->latest_scss_mtime ){
