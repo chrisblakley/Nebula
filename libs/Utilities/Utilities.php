@@ -663,6 +663,12 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			if ( $this->get_option('attribution_tracking') ){ //This functionality requires the Attribution Tracking Nebula Option because it adds tracking cookies
+				//Check the cookie first
+				if ( !empty($this->super->cookie['nebula_utms']) ){
+					return sanitize_text_field(htmlspecialchars($this->super->cookie['nebula_utms']));
+				}
+
+				//Otherwise check for UTM parameters
 				$query_string = $this->url_components('query');
 				$notable_tags = array('utm_', 'fbclid', 'mc_eid', 'gclid', 'gclsrc', 'dclid', '_hsenc', 'vero_id', 'mkt_tok');
 
@@ -671,10 +677,6 @@ if ( !trait_exists('Utilities') ){
 						$this->set_cookie('nebula_utms', $this->url_components('all'), strtotime('+14 months')); //Set/update the cookie and store the entire LP URL
 						return sanitize_text_field($this->url_components('all')); //Return the entire landing page URL with full query string sanitized
 					}
-				}
-
-				if ( !empty($this->super->cookie['nebula_utms']) ){
-					return sanitize_text_field(htmlspecialchars($this->super->cookie['nebula_utms']));
 				}
 			}
 

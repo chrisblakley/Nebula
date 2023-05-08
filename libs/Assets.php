@@ -8,6 +8,8 @@ if ( !trait_exists('Assets') ){
 
 		public function hooks(){
 			if ( !$this->is_background_request() ){
+				add_action('parse_query', array($this, 'utms')); //Prep this before headers are sent
+
 				//Register styles/scripts
 				add_action('wp_enqueue_scripts', array($this, 'register_scripts'));
 				add_action('login_enqueue_scripts', array($this, 'register_scripts'));

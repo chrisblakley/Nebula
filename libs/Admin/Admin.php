@@ -1557,6 +1557,7 @@ if ( !trait_exists('Admin') ){
 				$columns['formatted_date'] = 'Formatted Date';
 				$columns['form_name'] = 'Form Name';
 				$columns['page_title'] = 'Page Title';
+				$columns['notes'] = 'Internal Notes';
 				unset($columns['date']); //Replacing the WP date column with our own
 				unset($columns['id']); //This ID is confusing since it is the submission ID
 			}
@@ -1568,15 +1569,16 @@ if ( !trait_exists('Admin') ){
 				$columns['formatted_date'] = 'date';
 				$columns['form_name'] = 'form_name';
 				$columns['page_title'] = 'page_title';
+				$columns['notes'] = 'notes';
 			}
 
 			return $columns;
 		}
 
 		//Custom columns content to CF7 submission listings
-		public function cf7_submissions_columns_content($column_name, $id){
+		public function cf7_submissions_columns_content($column_name, $submission_id){
 			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
-				$submission_data = get_post($id); //Remember: this $id is the submission ID (not the form ID)!
+				$submission_data = get_post($submission_id); //Remember: this $submission_id is the submission ID (not the form ID)!
 				$form_data = json_decode($submission_data->post_content);
 				$form_id = ( is_object($form_data) )? $form_data->_wpcf7 : false; //CF7 Form ID
 				$post_id = ( is_object($form_data) )? $form_data->_wpcf7_container_post : false; //The page the CF7 submission was from
@@ -1601,6 +1603,12 @@ if ( !trait_exists('Admin') ){
 					}
 				}
 
+				if ( $column_name === 'notes' ){
+					if ( !empty($post_id) ){
+						echo '<span>' . get_post_meta($submission_id, 'nebula_cf7_submission_notes', true) . '</span>';
+					}
+				}
+
 				echo '';
 			}
 		}
@@ -1617,6 +1625,10 @@ if ( !trait_exists('Admin') ){
 
 					if ( $orderby === 'page_title' ){
 						$query->set('orderby', 'page_title');
+					}
+
+					if ( $orderby === 'notes' ){
+						$query->set('orderby', 'notes');
 					}
 				}
 			}
@@ -1818,7 +1830,7 @@ if ( !trait_exists('Admin') ){
 								$classes[] = 'wpcf7-metadata';
 							}
 
-							if ( empty($value) ){
+							if ( empty($value) || $value == '[]' || $value == '{}' ){
 								$classes[] = 'no-data';
 							}
 
@@ -1884,10 +1896,8 @@ if ( !trait_exists('Admin') ){
 
 		public function post_meta_boxes_setup(){
 			add_action('add_meta_boxes', array($this, 'nebula_add_post_metabox'));
-			add_action('save_post', array($this, 'save_post_class_meta'), 10, 2);
-
 			add_action('add_meta_boxes', array($this, 'nebula_add_cf7_notes_metabox'));
-			add_action('save_post', array($this, 'save_cf7_notes_meta'), 10, 2);
+			add_action('save_post', array($this, 'save_post_custom_meta'), 10, 2); //Use this to save all custom meta (internal search, classes, CF7 submission notes, etc.)
 		}
 
 		//Internal Search Keywords post metabox and Custom Field
@@ -1933,7 +1943,7 @@ if ( !trait_exists('Admin') ){
 			<?php
 		}
 
-		public function save_post_class_meta($post_id, $post){
+		public function save_post_custom_meta($post_id, $post){
 			if ( !isset($this->super->post['nebula_post_nonce']) || !wp_verify_nonce($this->super->post['nebula_post_nonce'], basename(__FILE__)) ){
 				return $post_id;
 			}
@@ -1943,7 +1953,7 @@ if ( !trait_exists('Admin') ){
 				return $post_id;
 			}
 
-			$nebula_post_meta_fields = array('nebula_body_classes', 'nebula_post_classes', 'nebula_internal_search_keywords');
+			$nebula_post_meta_fields = array('nebula_body_classes', 'nebula_post_classes', 'nebula_internal_search_keywords', 'nebula_cf7_submission_notes');
 			foreach ( $nebula_post_meta_fields as $nebula_post_meta_field ){
 				if ( !empty($this->super->post[$nebula_post_meta_field]) ){
 					$new_meta_value = sanitize_text_field($this->super->post[$nebula_post_meta_field]); //Get the posted data and sanitize it if needed.
@@ -1976,29 +1986,6 @@ if ( !trait_exists('Admin') ){
 				</p>
 			</div>
 			<?php
-		}
-
-		public function save_cf7_notes_meta($post_id, $post){
-			if ( !isset($this->super->post['nebula_post_nonce']) || !wp_verify_nonce($this->super->post['nebula_post_nonce'], basename(__FILE__)) ){
-				return $post_id;
-			}
-
-			$post_type = get_post_type_object($post->post_type); //Get the post type object.
-			if ( !current_user_can($post_type->cap->edit_post, $post_id) ){ //Check if the current user has permission to edit the post.
-				return $post_id;
-			}
-
-			if ( !empty($this->super->post['nebula_cf7_submission_notes']) ){
-				$new_meta_value = sanitize_text_field($this->super->post['nebula_cf7_submission_notes']); //Get the posted data and sanitize it if needed.
-				$meta_value = get_post_meta($post_id, $nebula_post_meta_field, true); //Get the meta value of the custom field key.
-				if ( $new_meta_value && empty($meta_value) ){ //If a new meta value was added and there was no previous value, add it.
-					add_post_meta($post_id, $nebula_post_meta_field, $new_meta_value, true);
-				} elseif ( $new_meta_value && $meta_value !== $new_meta_value ){ //If the new meta value does not match the old value, update it.
-					update_post_meta($post_id, $nebula_post_meta_field, $new_meta_value);
-				} elseif ( $new_meta_value === '' && $meta_value ){ //If there is no new meta value but an old value exists, delete it.
-					delete_post_meta($post_id, $nebula_post_meta_field, $meta_value);
-				}
-			}
 		}
 
 		//Extend the WP admin posts search to include custom fields

@@ -70,20 +70,22 @@ if ( !trait_exists('Sass') ){
 						//Nebula SCSS locations
 						$scss_locations = array(
 							'parent' => array(
-								'directory' => get_template_directory(),
-								'uri' => get_template_directory_uri(),
-								'core' => get_template_directory() . '/assets/scss/',
-								'imports' => array(get_template_directory() . '/assets/scss/partials/')
+								'directory' => get_template_directory(), //This is where the .scss files exist
+								'uri' => get_template_directory_uri(), //This is for reference to the directory URL in for files within the CSS itself
+								'core' => get_template_directory() . '/assets/scss/', //Optional: This is used to check for special .scss files like critical.scss
+								'imports' => array(get_template_directory() . '/assets/scss/partials/'), //The directory where import partials are located
+								'output' => get_template_directory() . '/assets/css/', //This is where the processed .css files will be placed
 							)
 						);
 
 						//Child theme SCSS locations
 						if ( is_child_theme() ){
 							$scss_locations['child'] = array(
-								'directory' => get_stylesheet_directory(),
-								'uri' => get_stylesheet_directory_uri(),
-								'core' => get_template_directory() . '/assets/scss/',
-								'imports' => array(get_stylesheet_directory() . '/assets/scss/partials/')
+								'directory' => get_stylesheet_directory(), //This is where the .scss files exist
+								'uri' => get_stylesheet_directory_uri(), //This is for reference to the directory URL in for files within the CSS itself
+								'core' => get_template_directory() . '/assets/scss/', //Optional: This is used to check for special .scss files like critical.scss
+								'imports' => array(get_stylesheet_directory() . '/assets/scss/partials/'), //The directory where import partials are located
+								'output' => get_stylesheet_directory() . '/assets/css/', //This is where the processed .css files will be placed
 							);
 						}
 
@@ -185,11 +187,13 @@ if ( !trait_exists('Sass') ){
 				$this->scss = new \ScssPhp\ScssPhp\Compiler();
 
 				//Register import directories
-				if ( !is_array($location_paths['imports']) ){
-					$location_paths['imports'] = array($location_paths['imports']); //Convert to an array if passes as a string
-				}
-				foreach ( $location_paths['imports'] as $imports_directory ){
-					$this->scss->addImportPath($imports_directory);
+				if ( !empty($location_paths['imports']) ){
+					if ( !is_array($location_paths['imports']) ){
+						$location_paths['imports'] = array($location_paths['imports']); //Convert to an array if passes as a string
+					}
+					foreach ( $location_paths['imports'] as $imports_directory ){
+						$this->scss->addImportPath($imports_directory);
+					}
 				}
 
 				//Set compiling options
@@ -251,7 +255,17 @@ if ( !trait_exists('Sass') ){
 
 					//If file exists, and has .scss extension, and doesn't begin with "_".
 					if ( is_file($scss_file) && $scss_file_path_info['extension'] === 'scss' && $scss_file_path_info['filename'][0] !== '_' ){
-						$css_filepath = ( $scss_file_path_info['filename'] === 'style' )? $location_paths['directory'] . '/style.css': $location_paths['directory'] . '/assets/css/' . $scss_file_path_info['filename'] . '.css'; //style.css to the root directory. All others to the /css directory in the /assets/scss directory.
+						//Determine the .css output filepath
+						$output_directory = $location_paths['directory'] . '/assets/css/'; //Default to the assets directory
+
+						if ( ($location_name == 'parent' || $location_name == 'child') && $scss_file_path_info['filename'] === 'style' ){
+							$output_directory = $location_paths['directory'] . '/'; //Root directory for theme style.css
+						} elseif ( !empty($location_paths['output']) ){
+							$output_directory = $location_paths['output'] . '/';
+						}
+
+						$css_filepath = $output_directory . $scss_file_path_info['filename'] . '.css';
+
 						wp_mkdir_p($location_paths['directory'] . '/assets/css'); //Create the /css directory (in case it doesn't exist already).
 
 						//Update the last SCSS file modification time (if later than the latest yet)
