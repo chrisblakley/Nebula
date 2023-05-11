@@ -32,8 +32,11 @@
 			<?php
 				$pageview_properties = array(
 					'send_page_view' => true,
-					'debug_mode' => ( nebula()->is_dev() || nebula()->is_debug() )? 'true' : 'false',
 				);
+
+				if ( nebula()->is_dev() || nebula()->is_debug() ){
+					$pageview_properties['debug_mode'] = true;
+				}
 
 				//WordPress User ID
 				if ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() ){

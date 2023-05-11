@@ -92,29 +92,44 @@ nebula.allHitDimensions = function(){
 };
 
 //Prep an event object to send to Google Analytics
+//Note: this process destructively modifies the passed object. That object cannot easily be cloned because it often contains nested objects.
 nebula.gaEventObject = function(eventObject){
 	if ( !eventObject['event_name'] ){
 		console.warn('[Nebula Help] GA4 requires an event name! This event does not have an event_name:', eventObject);
 		eventObject['event_name'] = 'unnamed_event';
 	}
 
-	if ( nebula.user.staff && eventObject['event_name'].length > 40 ){ //If the event name is longer than 40 characters
-		console.warn('[Nebula Help] The GA4 event name "' + eventObject['event_name'] + '" is too long (' + eventObject['event_name'].length + ' characters). Event names must be 40 characters or less.');
-	}
-
-	delete eventObject['e']; //Remove the DOM Event key
-	delete eventObject['event']; //Remove the DOM Event key
-	delete eventObject['event_name']; //Name is sent separately outside of the object parameter, so remove it here
-	delete eventObject['email_address'];
-
-	for ( var key of Object.keys(eventObject) ){
-		if ( typeof eventObject[key] === 'object' || typeof eventObject[key] === 'function' ){
-			delete eventObject[key]; //Remove any objects or functions
+	//Removing nested objects so we can clone it to prevent further altering the original object
+	for ( var key in eventObject ){
+		if ( (typeof eventObject[key] === 'object' || || typeof eventObject[key] === 'function') && eventObject[key] !== null ){
+			delete eventObject[key]; //Delete the nested object property
 		}
 	}
 
+	try {
+		var clonedEventObject = structuredClone(eventObject); //Has to be var to be available outside of the try
+	} catch(e){
+		var clonedEventObject = eventObject; //If the clone fails, just use the provided object directly
+	}
+
+	if ( nebula.user.staff && clonedEventObject['event_name'].length > 40 ){ //If the event name is longer than 40 characters
+		console.warn('[Nebula Help] The GA4 event name "' + clonedEventObject['event_name'] + '" is too long (' + clonedEventObject['event_name'].length + ' characters). Event names must be 40 characters or less.');
+	}
+
+	//Remember: the following modifies the original object! So it cannot be used again without re-adding these back in elsewhere!
+	delete clonedEventObject['e']; //Remove the DOM Event key
+	delete clonedEventObject['event']; //Remove the DOM Event key
+	delete clonedEventObject['event_name']; //Name is sent separately outside of the object parameter, so remove it here. We don't want to "use up" additional parameters on this.
+	delete clonedEventObject['email_address'];
+
+	// for ( var key of Object.keys(clonedEventObject) ){
+	// 	if ( typeof clonedEventObject[key] === 'object' || typeof clonedEventObject[key] === 'function' ){
+	// 		delete clonedEventObject[key]; //Remove any objects or functions
+	// 	}
+	// }
+
 	//Add contextual parameters to the event object
-	let fullContextObject = Object.assign(nebula.allHitDimensions(), eventObject);
+	let fullContextObject = Object.assign(nebula.allHitDimensions(), clonedEventObject);
 
 	return fullContextObject;
 };

@@ -253,7 +253,7 @@ nebula.cf7Functions = async function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-			gtag('event', 'exception', nebula.gaEventObject(thisEvent));
+			//gtag('event', 'exception', nebula.gaEventObject(thisEvent)); //This breaks because thisEvent gets modified by gaEventObject()
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-invalid'}));
 			nebula.scrollTo(jQuery('.wpcf7-not-valid').first(), 35); //Scroll to the first invalid input
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unitTag + ') Invalid'}, false);
