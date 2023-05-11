@@ -101,7 +101,7 @@ nebula.gaEventObject = function(eventObject){
 
 	//Removing nested objects so we can clone it to prevent further altering the original object
 	for ( var key in eventObject ){
-		if ( (typeof eventObject[key] === 'object' || || typeof eventObject[key] === 'function') && eventObject[key] !== null ){
+		if ( (typeof eventObject[key] === 'object' || typeof eventObject[key] === 'function') && eventObject[key] !== null ){
 			delete eventObject[key]; //Delete the nested object property
 		}
 	}
