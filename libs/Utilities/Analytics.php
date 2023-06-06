@@ -86,11 +86,11 @@ if ( !trait_exists('Analytics') ){
 
 			return sprintf(
 				'%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-				mt_rand(0, 0xffff), mt_rand(0, 0xffff), //32 bits for "time_low"
-				mt_rand(0, 0xffff), //16 bits for "time_mid"
-				mt_rand(0, 0x0fff) | 0x4000, //16 bits for "time_hi_and_version", Four most significant bits holds version number 4
-				mt_rand(0, 0x3fff) | 0x8000, //16 bits, 8 bits for "clk_seq_hi_res", 8 bits for "clk_seq_low", Two most significant bits holds zero and one for variant DCE1.1
-				mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff) //48 bits for "node"
+				random_int(0, 0xffff), random_int(0, 0xffff), //32 bits for "time_low"
+				random_int(0, 0xffff), //16 bits for "time_mid"
+				random_int(0, 0x0fff) | 0x4000, //16 bits for "time_hi_and_version", Four most significant bits holds version number 4
+				random_int(0, 0x3fff) | 0x8000, //16 bits, 8 bits for "clk_seq_hi_res", 8 bits for "clk_seq_low", Two most significant bits holds zero and one for variant DCE1.1
+				random_int(0, 0xffff), random_int(0, 0xffff), random_int(0, 0xffff) //48 bits for "node"
 			);
 		}
 
@@ -269,10 +269,10 @@ if ( !trait_exists('Analytics') ){
 			$utm_query_str = implode('&amp;', $utm_query);
 			$url_query = $utm_query_str;
 			if ( count($url) > 1 ){
-				$url_query = "${url[1]}&amp;{$utm_query_str}";
+				$url_query = $url[1] . '&amp;' . $utm_query_str;
 			}
 
-			$tracking_link = "${url[0]}?{$url_query}";
+			$tracking_link = $url[0] . '?' . $url_query;
 			return $tracking_link;
 		}
 

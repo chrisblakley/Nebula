@@ -2,12 +2,17 @@
 
 if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
-//Recommended WooCommerce Google Analytics Plugin: https://wordpress.org/plugins/enhanced-e-commerce-for-woocommerce-store/
+//Recommended WooCommerce Google Analytics 4 Plugin: https://wordpress.org/plugins/woocommerce-google-analytics-integration/
 
 if ( !trait_exists('Ecommerce') ){
 	trait Ecommerce {
 		public function hooks(){
 			if ( !is_customize_preview() ){
+				//Register this script without using it so that Woocommerce Google Analytics does not block the Nebula GA send_page_view.
+				add_action('wp_enqueue_scripts', function(){
+					wp_register_script('google-tag-manager', 'https://www.googletagmanager.com/gtag/js?id=' . esc_html(nebula()->get_option('ga_tracking_id')), array(), nebula()->child_version(), false); //Remember: This script is not actually used anywhere! This is only to prevent Woocommerce from sending its own page_view to GA4.
+				}, 1);
+
 				add_action('after_setup_theme', array($this, 'theme_setup_ecommerce'));
 				remove_action('woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10);
 				add_action('woocommerce_before_main_content', array($this, 'custom_woocommerce_start'), 10);
@@ -49,30 +54,34 @@ if ( !trait_exists('Ecommerce') ){
 		//WooCommerce admin notifications
 		public function woocommerce_admin_notices($nebula_warnings){
 			//Check for problematic plugin WooCommerce Google Analytics Integration
-			if ( is_plugin_active('woocommerce-google-analytics-integration/woocommerce-google-analytics-integration.php') ){
-				$nebula_warnings['ecommerce_bad_ga_plugin'] = array(
-					'level' => 'error',
-					'description' => '<i class="fa-regular fa-fw fa-credit-card"></i> It is recommended to deactivate and remove the plugin <a href="plugins.php">WooCommerce Google Analytics Integration</a> in favor of the plugin <a href="https://wordpress.org/plugins/enhanced-e-commerce-for-woocommerce-store/" target="_blank" rel="noopener noreferrer">Google Analytics and Google Shopping plugin for WooCommerce</a>. <a href="plugins.php">Manage Plugins &raquo;</a>'
-				);
-			} elseif ( file_exists(WP_PLUGIN_DIR . '/woocommerce-google-analytics-integration') ){
-				$nebula_warnings['ecommerce_bad_ga_plugin'] = array(
-					'level' => 'warn',
-					'description' => '<i class="fa-regular fa-fw fa-credit-card"></i> The plugin WooCommerce Google Analytics Integration is deactivated but should be removed entirely! <a href="plugins.php">Manage Plugins &raquo;</a>'
-				);
-			}
 
-			//Check for approved plugin Google Analytics and Google Shopping plugin for WooCommerce
-			if ( !file_exists(WP_PLUGIN_DIR . '/enhanced-e-commerce-for-woocommerce-store') ){
-				$nebula_warnings['ecommerce_good_ga_plugin'] = array(
-					'level' => 'warn',
-					'description' => '<i class="fa-regular fa-fw fa-credit-card"></i> WooCommerce is active, but the recommended plugin <a href="https://wordpress.org/plugins/enhanced-e-commerce-for-woocommerce-store/" target="_blank" rel="noopener noreferrer">Google Analytics and Google Shopping plugin for WooCommerce</a> is not installed. <a href="themes.php?page=tgmpa-install-plugins">Install Recommended Plugins &raquo;</a>'
-				);
-			} elseif ( !is_plugin_active('enhanced-e-commerce-for-woocommerce-store/enhanced-ecommerce-google-analytics.php') ){
-				$nebula_warnings['ecommerce_good_ga_plugin'] = array(
-					'level' => 'warn',
-					'description' => '<i class="fa-regular fa-fw fa-credit-card"></i> WooCommerce is active, but while the recommended plugin <a href="plugins.php">Google Analytics and Google Shopping plugin for WooCommerce</a> is installed, it is not activated. <a href="plugins.php">Manage Plugins &raquo;</a>'
-				);
-			}
+			//Note: May 2023 - Commented these all out as we need to start from scratch here with GA4. Everything is back on the table.
+				//This one (by Woocommerce itself) seems to be the best for GA4 without the bloat: https://wordpress.org/plugins/woocommerce-google-analytics-integration/
+
+// 			if ( is_plugin_active('woocommerce-google-analytics-integration/woocommerce-google-analytics-integration.php') ){
+// 				$nebula_warnings['ecommerce_bad_ga_plugin'] = array(
+// 					'level' => 'error',
+// 					'description' => '<i class="fa-regular fa-fw fa-credit-card"></i> It is recommended to deactivate and remove the plugin <a href="plugins.php">WooCommerce Google Analytics Integration</a> in favor of the plugin <a href="https://wordpress.org/plugins/enhanced-e-commerce-for-woocommerce-store/" target="_blank" rel="noopener noreferrer">Google Analytics and Google Shopping plugin for WooCommerce</a>. <a href="plugins.php">Manage Plugins &raquo;</a>'
+// 				);
+// 			} elseif ( file_exists(WP_PLUGIN_DIR . '/woocommerce-google-analytics-integration') ){
+// 				$nebula_warnings['ecommerce_bad_ga_plugin'] = array(
+// 					'level' => 'warn',
+// 					'description' => '<i class="fa-regular fa-fw fa-credit-card"></i> The plugin WooCommerce Google Analytics Integration is deactivated but should be removed entirely! <a href="plugins.php">Manage Plugins &raquo;</a>'
+// 				);
+// 			}
+//
+// 			//Check for approved plugin Google Analytics and Google Shopping plugin for WooCommerce
+// 			if ( !file_exists(WP_PLUGIN_DIR . '/enhanced-e-commerce-for-woocommerce-store') ){
+// 				$nebula_warnings['ecommerce_good_ga_plugin'] = array(
+// 					'level' => 'warn',
+// 					'description' => '<i class="fa-regular fa-fw fa-credit-card"></i> WooCommerce is active, but the recommended plugin <a href="https://wordpress.org/plugins/enhanced-e-commerce-for-woocommerce-store/" target="_blank" rel="noopener noreferrer">Google Analytics and Google Shopping plugin for WooCommerce</a> is not installed. <a href="themes.php?page=tgmpa-install-plugins">Install Recommended Plugins &raquo;</a>'
+// 				);
+// 			} elseif ( !is_plugin_active('enhanced-e-commerce-for-woocommerce-store/enhanced-ecommerce-google-analytics.php') ){
+// 				$nebula_warnings['ecommerce_good_ga_plugin'] = array(
+// 					'level' => 'warn',
+// 					'description' => '<i class="fa-regular fa-fw fa-credit-card"></i> WooCommerce is active, but while the recommended plugin <a href="plugins.php">Google Analytics and Google Shopping plugin for WooCommerce</a> is installed, it is not activated. <a href="plugins.php">Manage Plugins &raquo;</a>'
+// 				);
+// 			}
 
 			return $nebula_warnings;
 		}
@@ -220,9 +229,9 @@ if ( !trait_exists('Ecommerce') ){
 				$index++;
 			}
 
-			echo 'gtag("event", "purchase", {
+			echo 'gtag("event", "nebula_purchase", {
 				event_category: "Ecommerce",
-				event_action: "Purchase",
+				event_action: "Purchase (Nebula)",
 				event_label: "Order ID: ' . $order->get_id() . ' (' . $order->get_total() . ')",
 				transaction_id: "' . $order->get_id() . '",
 				value: ' . $order->get_total() . ', //Grand total price

@@ -35,7 +35,7 @@ nebula.cf7Functions = async function(){
 					if ( typeof gaEventObject === 'function' ){ //If the page is loaded pre-scrolled this may not be available for the very first intersection
 						gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 					}
-					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-cf7-impression'}));
+					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_cf7_impression'}));
 
 					cf7Observer.unobserve(entry.target); //Stop observing the element
 				}
@@ -103,7 +103,7 @@ nebula.cf7Functions = async function(){
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-started'}));
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_started'}));
 			}
 		}
 
@@ -161,7 +161,7 @@ nebula.cf7Functions = async function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent)); //This event is required for the notable form metric!
-			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-submit-attempt'}));
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_submit_attempt'}));
 			nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)'});
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 		} catch {
@@ -199,7 +199,7 @@ nebula.cf7Functions = async function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent)); //This event is required for the notable form metric!
-			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-submit-processing'}));
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_submit_processing'}));
 			nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Processing)'});
 			nebula.clarity('track', 'Lead', {content_name: 'Form Submit (Processing)'});
 
@@ -254,7 +254,7 @@ nebula.cf7Functions = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			//gtag('event', 'exception', nebula.gaEventObject(thisEvent)); //This breaks because thisEvent gets modified by gaEventObject()
-			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-invalid'}));
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_invalid'}));
 			nebula.scrollTo(jQuery('.wpcf7-not-valid').first(), 35); //Scroll to the first invalid input
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unitTag + ') Invalid'}, false);
 			nebula.crm('event', 'Contact Form (' + thisEvent.unitTag + ') Invalid');
@@ -280,7 +280,7 @@ nebula.cf7Functions = async function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-invalid'}));
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_invalid'}));
 			nebula.crm('identify', {'form_contacted': 'CF7 HTML5 Validation Error'});
 		}, 50, 'invalid form');
 	});
@@ -319,7 +319,7 @@ nebula.cf7Functions = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			gtag('event', 'exception', nebula.gaEventObject(thisEvent));
-			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-spam'}));
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_spam'}));
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unitTag + ') Submit Spam'}, false);
 			nebula.crm('event', 'Contact Form (' + thisEvent.unitTag + ') Spam');
 		} catch(error){
@@ -365,7 +365,7 @@ nebula.cf7Functions = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			gtag('event', 'exception', nebula.gaEventObject(thisEvent));
-			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-failed'}));
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_failed'}));
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unitTag + ') Submit Failed'}, false);
 			nebula.crm('event', 'Contact Form (' + thisEvent.unitTag + ') Failed');
 		} catch(error){
@@ -418,7 +418,7 @@ nebula.cf7Functions = async function(){
 				event_category: thisEvent.event_category,
 				event_label: 'Initial form focus until valid submit',
 			});
-			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-form-submit-success'}));
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_submit_success'}));
 			nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Success)'});
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unitTag + ') Submit Success'}, false);
@@ -722,7 +722,7 @@ nebula.initFeedbackSystem = function(){
 
 		nebula.dom.document.trigger('nebula_event', thisEvent);
 		gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-feedback-system'}));
+		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_feedback_system'}));
 
 		//Thank the user
 		jQuery('#nebula-feedback-question').slideUp();
@@ -743,7 +743,7 @@ nebula.initFeedbackSystem = function(){
 
 		nebula.dom.document.trigger('nebula_event', thisEvent);
 		gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula-feedback-system'}));
+		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_feedback_system'}));
 
 		if ( jQuery('.has-feedback-form').length ){ //If a CF7 form exists for additional feedback
 			jQuery('#nebula-feedback-question').addClass('not-helpful-active');

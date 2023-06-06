@@ -74,13 +74,14 @@ if ( !trait_exists('Functions') ){
 				add_filter('wpseo_metadesc', array($this, 'meta_description')); //Yoast hook
 			}
 
+			//yolo
 			if ( is_user_logged_in() ){
 				add_filter('wpcf7_verify_nonce', '__return_true'); //Always verify CF7 nonce for logged-in users (this allows for it to detect user data)
 			}
 			add_filter('wpcf7_form_elements', array($this, 'cf7_autocomplete_attribute'));
 			add_filter('wpcf7_special_mail_tags', array($this, 'cf7_custom_special_mail_tags'), 10, 3);
 
-			if (is_plugin_active('contact-form-7/wp-contact-form-7.php') && $this->get_option('store_form_submissions') ){ //If CF7 is installed and active and capturing submission data is enabled
+			if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') && $this->get_option('store_form_submissions') ){ //If CF7 is installed and active and capturing submission data is enabled
 				add_action('init', array($this, 'cf7_storage_cpt'));
 				add_filter('wpcf7_posted_data', array($this, 'cf7_enhance_data'));
 				add_action('wpcf7_before_send_mail', array($this, 'cf7_storage'), 2, 1);
@@ -275,7 +276,7 @@ if ( !trait_exists('Functions') ){
 					"/(const START_URL = ')(.+)(';)/m",
 				);
 
-				//$new_cache_name = "nebula-" . strtolower(get_option('stylesheet')) . "-" . mt_rand(10000, 99999); //PHP 7.4 use numeric separators here
+				//$new_cache_name = "nebula-" . strtolower(get_option('stylesheet')) . "-" . random_int(100000, 999999); //PHP 7.4 use numeric separators here
 
 				$replace = array(
 					"$1" . strtolower(get_option('stylesheet')) . "$3",
@@ -3072,6 +3073,7 @@ if ( !trait_exists('Functions') ){
 		}
 
 		//Add autocomplete attributes to CF7 form fields
+		//Note: Is this still needed? When commented out, the fields are still getting autocomplete attributes...
 		public function cf7_autocomplete_attribute($content){
 			$this->timer('CF7 Autocomplete Attributes');
 			$content = $this->autocomplete_find_replace($content, array('name', 'full-name', 'fullname', 'your-name'), 'name');
@@ -3097,7 +3099,12 @@ if ( !trait_exists('Functions') ){
 				}
 
 				foreach ( $finds as $find ){
-					$field_name_pos = strpos(strtolower($content), 'name="' . strtolower($find) . '"'); //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					if ( strpos(strtolower($content), 'autocomplete') >= 1 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						continue; //Skip it if it already has an autocomplete attribute
+					}
+
+					$field_name_pos = strpos(strtolower($content), ' name="' . strtolower($find) . '"'); //The space before name= prevents data-name= attributes from matching. @todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+
 					if ( !empty($field_name_pos) ){
 						$content = substr_replace($content, ' autocomplete="' . $autocomplete_value . '" ', $field_name_pos, 0);
 					}
@@ -3369,7 +3376,7 @@ if ( !trait_exists('Functions') ){
 
 		//Get fresh resources when debugging
 		public function add_debug_query_arg($src){
-			return add_query_arg('debug', str_replace('.', '', $this->version('raw')) . '-' . rand(10000, 99999), $src); //PHP 7.4 use numeric separators here
+			return add_query_arg('debug', str_replace('.', '', $this->version('raw')) . '-' . random_int(100000, 999999), $src); //PHP 7.4 use numeric separators here
 		}
 
 		//Tell the browser to clear caches when the debug query string is present

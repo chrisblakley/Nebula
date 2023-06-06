@@ -171,6 +171,14 @@ if ( !trait_exists('Automation') ){
 					),
 				);
 
+				if ( is_plugin_active('woocommerce/woocommerce.php') ){
+					$bundled_plugins[] = array(
+						'name' => 'WooCommerce Google Analytics Integration',
+						'slug' => 'woocommerce-google-analytics-integration',
+						'required' => true,
+					);
+				}
+
 				$all_bundled_plugins = apply_filters('nebula_bundled_plugins', $bundled_plugins); //Allow other themes and plugins to bundle additional plugins
 
 				$config = array(

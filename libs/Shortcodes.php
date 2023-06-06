@@ -128,7 +128,7 @@ if ( !trait_exists('Shortcodes') ){
 
 			//Call the widget directly via PHP: https://codex.wordpress.org/Template_Tags/the_widget
 			the_widget(esc_html($widget_name), $instance, array(
-				'widget_id' => 'arbitrary-instance-' . rand(10000, 99999), //PHP 7.4 use numeric separators here
+				'widget_id' => 'arbitrary-instance-' . random_int(100000, 999999), //PHP 7.4 use numeric separators here
 				'before_widget' => '',
 				'after_widget' => '',
 				'before_title' => '',

@@ -178,7 +178,7 @@
 			<?php do_action('nebula_ga_before_pageview'); //Simple action for adding/modifying all custom definitions (including JS) before the pageview hit is sent. ?>
 
 			gtag('js', new Date());
-			gtag('config', '<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>', nebula.pageviewProperties);
+			gtag('config', '<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>', nebula.pageviewProperties); //This sends the page_view
 
 			window.performance.mark('(Nebula) Analytics Pageview'); //Inexact
 			window.performance.measure('(Nebula) Time to Analytics Pageview', 'navigationStart', '(Nebula) Analytics Pageview');
@@ -231,10 +231,12 @@
 
 			<?php do_action('nebula_ga_after_pageview'); ?>
 		</script>
-	<?php else: //If Tracking ID is empty: ?>
-		<?php if ( !nebula()->get_option('gtm_id') ): //If GTM ID is also empty, set an empty gtag() function to prevent JS errors ?>
+	<?php else: //If Measurement ID is empty: ?>
+		<?php if ( !nebula()->get_option('ga_tracking_id') && !nebula()->get_option('gtm_id') ): //If GTM ID is also empty, set an empty gtag() function to prevent JS errors ?>
 			<script>
-				function gtag(){}; //No GA in Nebula
+				if ( typeof gtag == 'undefined' ){
+					function gtag(){}; //No GA in Nebula
+				}
 			</script>
 		<?php endif; ?>
 	<?php endif; ?>

@@ -9,7 +9,7 @@
 	global $post;
 	$company_type = ( nebula()->get_option('business_type') )? esc_html(nebula()->get_option('business_type')) : 'LocalBusiness';
 	$image_meta_directory = get_theme_file_uri('/assets/img/meta'); //Use this and concatenate the filenames so that it will never revert back to the parent theme if individual meta images are missing.
-	$cache_query = ( nebula()->is_debug() )? '?nocache' . mt_rand(1000, mt_getrandmax()) . '=debug' . mt_rand(1000, mt_getrandmax()) : ''; //Add a random query string when debugging to force-clear the cache.
+	$cache_query = ( nebula()->is_debug() )? '?nocache' . random_int(100000, 999999) . '=debug' . random_int(100000, 999999) : ''; //Add a random query string when debugging to force-clear the cache.
 
 	/*
 		Use http://realfavicongenerator.net to generate metagraphics or upload a 512x512 image to set as the Site Icon in the Customizer.

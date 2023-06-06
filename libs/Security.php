@@ -24,6 +24,11 @@ if ( !trait_exists('Security') ){
 				add_action('wp_loaded', array($this, 'spam_domain_prevention'));
 			}
 
+			if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ){
+				add_filter('wpcf7_validate_email', array($this, 'ignore_invalid_email_addresses'), 10, 2);
+				add_filter('wpcf7_validate_email*', array($this, 'ignore_invalid_email_addresses'), 10, 2);
+			}
+
 			//Disable the file editor for non-developers
 			if ( !defined('DISALLOW_FILE_EDIT') && !$this->is_dev() ){
 				define('DISALLOW_FILE_EDIT', true);
@@ -327,7 +332,87 @@ if ( !trait_exists('Security') ){
 				'bitcoinpile.com',
 			);
 			$all_spam_domains = apply_filters('nebula_spam_domains', $manual_nebula_spam_domains);
+
 			return array_merge($spam_domain_array, $all_spam_domains);
+		}
+
+		//Add custom validation for CF7 form fields
+		//https://contactform7.com/2015/03/28/custom-validation/
+		function ignore_invalid_email_addresses($result, $tag){ //$result is an instance of WPCF7_Validation class that manages a sequence of validation processes. $tag is an instance of WPCF7_FormTag.
+    		//$input_type = $tag['type']; //The type of tag (either "email" or "email*") - this function only runs on email types so this is not needed
+    		$field_name = $tag->name; //The name of this input itself by the form creator (such as "email" or "your-email")
+			$field_value = $_POST[$field_name]; //The value of this input field provided by the user (the actual email address)
+
+			if ( empty($field_value) ){
+				return $result; //Exit as we are missing data
+			}
+
+			$bad_domain_array = $this->get_bad_email_domains_list();
+
+			if ( count($bad_domain_array) > 1 ){
+				if ( $this->contains(strtolower(trim($field_value)), $bad_domain_array) ){
+					$result->invalidate($tag, 'Please enter a valid email address.');
+				}
+			}
+
+    		return $result;
+		}
+
+		//Return an array of bad email domains from Hubspot (or the latest Nebula on GitHub)
+		public function get_bad_email_domains_list(){
+			$bad_email_domains_file = get_template_directory() . '/inc/data/bad_email_domains.csv';
+
+			$bad_email_domains_list = nebula()->transient('nebula_bad_email_domains', function($data){
+				$response = $this->remote_get('https://f.hubspotusercontent40.net/hubfs/2832391/Marketing/Lead-Capture/free-domains-2.csv'); //Originall found here: https://knowledge.hubspot.com/forms/what-domains-are-blocked-when-using-the-forms-email-domains-to-block-feature
+				if ( !is_wp_error($response) ){
+					$bad_email_domains_list = $response['body'];
+				}
+
+				//If there was an error or empty response, try my GitHub repo
+				if ( is_wp_error($response) || empty($bad_email_domains_list) ){ //This does not check availability because it is the same hostname as above.
+					$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/bad_email_domains.csv');
+					if ( !is_wp_error($response) ){
+						$bad_email_domains_list = $response['body'];
+					}
+				}
+
+				//If either of the above remote requests received data, update the local file and store the data in a transient for 36 hours
+				if ( !is_wp_error($response) && !empty($bad_email_domains_list) ){
+					WP_Filesystem();
+					global $wp_filesystem;
+					$wp_filesystem->put_contents($data['bad_email_domains_file'], $bad_email_domains_list);
+
+					return $bad_email_domains_list;
+				}
+			}, array('bad_email_domains_file' => $bad_email_domains_file), HOUR_IN_SECONDS*36);
+
+			//If neither remote resource worked, get the local file
+			if ( empty($bad_email_domains_list) ){
+				WP_Filesystem();
+				global $wp_filesystem;
+				$bad_email_domains_list = $wp_filesystem->get_contents($bad_email_domains_file);
+			}
+
+			//If one of the above methods worked, parse the data.
+			if ( !empty($bad_email_domains_list) ){
+				$bad_email_domain_array = array();
+				foreach( explode("\n", $bad_email_domains_list) as $line ){
+					if ( !empty($line) ){
+						$bad_email_domain_array[] = $line;
+					}
+				}
+			} else {
+				$this->ga_send_exception('(Security) Hubspot bad email domains CSV was not available!', false);
+			}
+
+			//Add manual and user-added spam domains
+			//Could add domains like testing.com or test.com but that would make debugging more difficult and we don't see this used enough to warrant preventing it.
+			$manual_nebula_bad_email_domains = array(
+				'mailinator.com',
+			);
+			$all_bad_email_domains = apply_filters('nebula_bad_email_domains', $manual_nebula_bad_email_domains);
+
+			return array_merge($bad_email_domain_array, $all_bad_email_domains);
 		}
 
 		//Cookie Notification HTML that appears in the footer

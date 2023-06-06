@@ -670,7 +670,7 @@ if ( !trait_exists('Utilities') ){
 
 				//Otherwise check for UTM parameters
 				$query_string = $this->url_components('query');
-				$notable_tags = array('utm_', 'fbclid', 'mc_eid', 'gclid', 'gclsrc', 'dclid', '_hsenc', 'vero_id', 'mkt_tok');
+				$notable_tags = array('utm_', 'fbclid', 'mc_eid', 'gclid', 'gclsrc', 'dclid', 'gbraid', 'wbraid', '_hsenc', 'vero_id', 'mkt_tok');
 
 				foreach ( $notable_tags as $tag ){
 					if ( strpos(strtolower($query_string), $tag) > -1 ){ //If UTM parameters exist //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
@@ -1252,7 +1252,7 @@ if ( !trait_exists('Utilities') ){
 			if ( $action === 'start' || $action === 'mark' || $action === 'once' ){
 				//Prevent duplicates by appending a random number to the ID (only when duplicate)
 				if ( !empty($this->server_timings[$unique_id]) ){
-					$unique_id .= '_d' . rand(10000, 99999);
+					$unique_id .= '_d' . random_int(100000, 999999);
 				}
 
 				do_action('qm/start', $unique_id); //Inform Query Monitor as well

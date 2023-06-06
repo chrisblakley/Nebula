@@ -208,7 +208,7 @@ if ( !trait_exists('Admin') ){
 
 		//Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
 		public function admin_favicon(){
-			$cache_buster = ( $this->is_debug() )? '?r' . mt_rand(1000, mt_getrandmax()) : '';
+			$cache_buster = ( $this->is_debug() )? '?r' . random_int(100000, 999999) : '';
 			echo '<link rel="shortcut icon" href="' . get_theme_file_uri('/assets/img/meta/favicon.ico') . $cache_buster . '" />';
 		}
 

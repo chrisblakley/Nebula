@@ -206,18 +206,18 @@ nebula.focusOnElement = function(element = false){
 nebula.get = function(parameter = false, url = location.search){
 	let queryParameters = new URLSearchParams(url);
 
+	if ( parameter ){ //If a specific parameter is requested
+		return queryParameters.get(parameter); //Return it (or null if it does not exist)
+	}
+
+	//Otherwise we will return all of the query parameters
 	let queries = [];
-	jQuery.each(queryParameters, function(value, key){
+	queryParameters.forEach(function(value, key){ //Do not use jQuery here!
 		queries[key] = value;
 	});
 
-	if ( !parameter ){
-		return queries;
-	}
-
-	return queries[parameter] || false;
+	return queries;
 };
-
 //Remove an array of parameters from the query string.
 nebula.removeQueryParameter = function(keys, url = location.search){
 	//Convert single key to an array if it is provided as a string
