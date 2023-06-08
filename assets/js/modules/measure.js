@@ -513,6 +513,21 @@ nebula.eventTracking = async function(){
 			nebula.crm('event', 'Page Suggestion Click');
 		});
 
+		//No search results
+		if ( jQuery('.no-search-results').length ){ //This relies on this class existing when no search results are shown
+			let thisEvent = {
+				event_name: 'no_search_results',
+				event_category: 'Internal Search', //@todo "Nebula" 0: Remove after July 2023
+				event_action: 'No Search Results', //@todo "Nebula" 0: Remove after July 2023
+				event_label: nebula.get('s'), //@todo "Nebula" 0: Remove after July 2023
+				query: nebula.get('s'),
+				non_interaction: true //This happens immediately on load and should not affect bounce rate
+			};
+
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			nebula.crm('event', 'No Search Results');
+		});
+
 		//Suggested pages on 404 results
 		nebula.dom.document.on('pointerdown', 'a.internal-suggestion', function(e){
 			let thisEvent = {
