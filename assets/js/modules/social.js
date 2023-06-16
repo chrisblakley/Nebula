@@ -143,7 +143,7 @@ nebula.socialSharing = async function(){
 
 		//Web Share API: https://caniuse.com/mdn-api_navigator_share
 		if ( 'share' in navigator ){ //Chrome 61+
-			nebula.dom.document.on('click', 'a.shareapi, .shareapi a, a.nebula-share.shareapi, .nebula-share a.shareapi', function(){
+			nebula.dom.document.on('click', 'a.shareapi, .shareapi a, a.nebula-share.shareapi, .nebula-share a.shareapi', function(e){
 				let thisEvent = {
 					event: e,
 					event_name: 'share',
