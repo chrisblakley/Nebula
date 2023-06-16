@@ -526,7 +526,7 @@ nebula.eventTracking = async function(){
 
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			nebula.crm('event', 'No Search Results');
-		});
+		};
 
 		//Suggested pages on 404 results
 		nebula.dom.document.on('pointerdown', 'a.internal-suggestion', function(e){
