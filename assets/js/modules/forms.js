@@ -718,11 +718,12 @@ nebula.initFeedbackSystem = function(){
 			event_category: 'User Feedback',
 			event_action: 'Helpful',
 			event_label: 'The user indicated that this page was helpful!',
+			response: 'Helpful',
 		};
 
 		nebula.dom.document.trigger('nebula_event', thisEvent);
 		gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_feedback_system'}));
+		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_user_feedback_helpful'}));
 
 		//Thank the user
 		jQuery('#nebula-feedback-question').slideUp();
@@ -739,11 +740,12 @@ nebula.initFeedbackSystem = function(){
 			event_category: 'User Feedback',
 			event_action: 'Not Helpful',
 			event_label: 'The user indicated that this page was not helpful.',
+			response: 'Not Helpful',
 		};
 
 		nebula.dom.document.trigger('nebula_event', thisEvent);
 		gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_feedback_system'}));
+		window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_user_feedback_not_helpful'}));
 
 		if ( jQuery('.has-feedback-form').length ){ //If a CF7 form exists for additional feedback
 			jQuery('#nebula-feedback-question').addClass('not-helpful-active');
@@ -757,15 +759,35 @@ nebula.initFeedbackSystem = function(){
 			//Show the CF7 form
 			jQuery('#nebula-feedback-form-container').slideDown();
 
-			//Listen for submission of this form
+			//Listen for submission of this feedback message form
 			nebula.dom.document.on('wpcf7mailsent', function(e){
 				if ( e.detail.contactFormId === parseInt(jQuery('#nebula-feedback-form-container').attr('data-form-id')) ){ //We only care about the feedback form
 					jQuery('#nebula-feedback-form-container').slideUp();
 					jQuery('#nebula-feedback-question').slideUp();
 					jQuery('#nebula-feedback-thanks').slideDown();
+
+					let feedbackMessage = jQuery('#nebula-feedback-system textarea').val();
+					if ( !feedbackMessage.includes('@') && /\d/.test(feedbackMessage) ){ //If the message does NOT include PII such as "@" or any number at all
+						if ( feedbackMessage.length > 95 ){ //If the message string is longer than 95 characters
+							feedbackMessage = feedbackMessage.slice(0, 95) + '...'; //Limit to 95 characters plus an ellipsis
+						}
+
+						let thisEvent = {
+							event: e,
+							event_name: 'user_feedback_message',
+							event_category: 'User Feedback',
+							event_action: 'Message',
+							event_label: feedbackMessage,
+							response: 'Message',
+							message: feedbackMessage,
+						};
+
+						nebula.dom.document.trigger('nebula_event', thisEvent);
+						gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+						window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_user_feedback_message'}));
+					}
 				}
 			});
-
 		} else {
 			//Thank the user
 			jQuery('#nebula-feedback-question').slideUp();
