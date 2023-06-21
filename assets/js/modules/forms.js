@@ -767,12 +767,12 @@ nebula.initFeedbackSystem = function(){
 					jQuery('#nebula-feedback-thanks').slideDown();
 
 					let feedbackMessage = jQuery('#nebula-feedback-system textarea').val();
-					if ( !feedbackMessage.includes('@') && /\d/.test(feedbackMessage) ){ //If the message does NOT include PII such as "@" or any number at all
+					if ( !feedbackMessage.includes('@') && (/\d/).test(feedbackMessage) ){ //If the message does NOT include PII such as "@" or any number at all
 						if ( feedbackMessage.length > 95 ){ //If the message string is longer than 95 characters
 							feedbackMessage = feedbackMessage.slice(0, 95) + '...'; //Limit to 95 characters plus an ellipsis
 						}
 
-						let thisEvent = {
+						thisEvent = {
 							event: e,
 							event_name: 'user_feedback_message',
 							event_category: 'User Feedback',
