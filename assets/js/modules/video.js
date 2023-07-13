@@ -412,7 +412,7 @@ nebula.youtubeStateChange = function(e){
 			thisVideo.current = e.target.getCurrentTime();
 			thisVideo.percent = thisVideo.current/thisVideo.duration;
 
-			let youtubePlayProgress = setInterval(function(){
+			window.youtubePlayProgress = setInterval(function(){
 				thisVideo.current = e.target.getCurrentTime();
 				thisVideo.percent = thisVideo.current/thisVideo.duration;
 				thisVideo.watched += updateInterval/1000; //Add to the watched duration
@@ -446,8 +446,8 @@ nebula.youtubeStateChange = function(e){
 	//Ended
 	if ( e.data === YT.PlayerState.ENDED ){
 		jQuery(thisVideo.element).removeClass('playing');
-		if ( youtubePlayProgress ){
-			clearInterval(youtubePlayProgress);
+		if ( window.youtubePlayProgress ){
+			clearInterval(window.youtubePlayProgress);
 		}
 
 		let thisEvent = {
@@ -484,8 +484,8 @@ nebula.youtubeStateChange = function(e){
 			try {
 				if ( e.target.getPlayerState() == 2 && pauseFlag ){ //This must use getPlayerState() since e.data is not actually "current" inside of this setTimeout(). Paused = 2
 					jQuery(thisVideo.element).removeClass('playing');
-					if ( youtubePlayProgress ){
-						clearInterval(youtubePlayProgress);
+					if ( window.youtubePlayProgress ){
+						clearInterval(window.youtubePlayProgress);
 					}
 
 					let thisEvent = {

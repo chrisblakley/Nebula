@@ -106,12 +106,12 @@ nebula.overflowDetector = async function(){
 					} else if ( submenuLeft > nebula.dom.window.width() ){
 						jQuery(this).children('.sub-menu').addClass('overflowing overflowing-right');
 					} else {
-						jQuery(this).children('.sub-menu').removeClass('overflowing overflowing-left overflowing-right');
+						//jQuery(this).children('.sub-menu').removeClass('overflowing overflowing-left overflowing-right'); //This sometimes causes a movement/overflow on click so seems to work fine/better with it commented out.
 					}
 				}
 			},
 			'mouseleave': function(){
-				jQuery(this).children('.sub-menu').removeClass('overflowing');
+				jQuery(this).children('.sub-menu').removeClass('overflowing overflowing-left overflowing-right');
 			}
 		});
 	}
@@ -450,7 +450,13 @@ nebula.cookieNotification = async function(){
 				}, 1000); //The animation is set to 750ms
 			});
 
-			gtag('consent', 'update', {ad_storage: 'granted'});
+			gtag('consent', 'update', {
+				ad_storage: 'granted', //Explicitly allows storage (such as cookies) related to advertising
+				analytics_storage: 'granted', //Explicitly allows storage (such as cookies) related to analytics
+				functionality_storage: 'granted', //Explicitly allows storage that supports the functionality of the website
+				personalization_storage: 'granted', //Explicitly allows storage related to personalization
+				security_storage: 'granted' //Explicitly allows storage related to security such as authentication functionality, fraud prevention, and other user protection
+			});
 
 			return false;
 		});

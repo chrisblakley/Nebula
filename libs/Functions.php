@@ -74,7 +74,6 @@ if ( !trait_exists('Functions') ){
 				add_filter('wpseo_metadesc', array($this, 'meta_description')); //Yoast hook
 			}
 
-			//yolo
 			if ( is_user_logged_in() ){
 				add_filter('wpcf7_verify_nonce', '__return_true'); //Always verify CF7 nonce for logged-in users (this allows for it to detect user data)
 			}

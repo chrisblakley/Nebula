@@ -50,12 +50,14 @@
 }
 
 //Cookie Notification
-#nebula-cookie-notification {position: fixed; bottom: auto; bottom: 40px; left: 0; right: 0; margin: 0 auto; background: rgb(0 0 0 / 90%); backdrop-filter: blur(3px); color: #bbb; font-size: 14px; padding: 25px; max-width: 300px; box-shadow: 0 6px 24px 0 rgb(0 0 0 / 30%); z-index: 1001; opacity: 0; pointer-events: none; will-change: opacity; transition: opacity 0.75s ease; //z-index no higher than 1049 so it appears behind Bootstrap offcanvas menu
+#nebula-cookie-notification {position: fixed; bottom: auto; bottom: 40px; left: 0; right: 0; margin: 0 auto; background: rgb(0 0 0 / 90%); backdrop-filter: blur(3px); color: #bbb; font-size: 1rem; padding: 25px; max-width: 300px; box-shadow: 0 6px 24px 0 rgb(0 0 0 / 30%); z-index: 1001; opacity: 0; pointer-events: none; will-change: opacity; transition: opacity 0.75s ease; //z-index no higher than 1049 so it appears behind Bootstrap offcanvas menu
 	@include media("md"){max-width: 400px; right: auto; top: unset; bottom: 40px; margin: unset; will-change: opacity, transform; transition: all 0.75s easing(easeOutBack);} //Desktop
 
 	&.active {opacity: 1; transform: translate3d(0, 0, 0); pointer-events: all;
 		@include media("md"){transform: translate3d(40px, 0, 0);}
 	}
+
+	p {color: #ffffffb2;}
 
 	//In case the user-editable cookie text includes HTML links
 	a {color: #fff;

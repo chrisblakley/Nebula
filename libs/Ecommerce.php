@@ -111,7 +111,11 @@ if ( !trait_exists('Ecommerce') ){
 			//View product detail page
 			if ( is_product() ){
 				global $product;
-				if ( ! is_object( $product)) $product = wc_get_product( get_the_ID() );
+
+				if ( !is_object($product) ){ //The global $product is only an object of class WC_Product when the_post() is used. Else, it comes over as a string.
+					$product = wc_get_product(get_the_ID());
+				}
+
 				$variation = wc_get_product($product->get_variation_id()); //If no variation, this will appear the same as the product itself
 
 				$product_item = array(

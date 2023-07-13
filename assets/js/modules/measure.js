@@ -277,10 +277,10 @@ nebula.eventTracking = async function(){
 				event: e,
 				event_name: 'button_click',
 				event_category: 'Button Click', //@todo "Nebula" 0: Remove after July 2023
-				event_action: jQuery(this).val() || jQuery(this).attr('value') || jQuery(this).text() || jQuery(this).attr('title') || '(Unknown)', //@todo "Nebula" 0: Remove after July 2023
+				event_action: (jQuery(this).val() || jQuery(this).attr('value') || jQuery(this).text() || jQuery(this).attr('title') || '(Unknown)').trim(), //@todo "Nebula" 0: Remove after July 2023
 				event_label: jQuery(this).attr('href') || jQuery(this).attr('title') || '(Unknown)',
 				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
-				text: jQuery(this).val() || jQuery(this).attr('value') || jQuery(this).text() || jQuery(this).attr('title') || '(Unknown)',
+				text: (jQuery(this).val() || jQuery(this).attr('value') || jQuery(this).text() || jQuery(this).attr('title') || '(Unknown)').trim(),
 				link: jQuery(this).attr('href') || jQuery(this).attr('title') || '(Unknown)'
 			};
 
@@ -1322,7 +1322,7 @@ nebula.eventTracking = async function(){
 
 			gtag('event', 'exception', {
 				xhr_status: jqXHR.status,
-				error_message: errorMessage,
+				message: errorMessage,
 				url: settings.url,
 				description: '(JS) AJAX Error (' + jqXHR.status + '): ' + errorMessage + ' on ' + settings.url,
 				fatal: true
