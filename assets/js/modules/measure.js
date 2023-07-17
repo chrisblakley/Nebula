@@ -1751,6 +1751,7 @@ nebula.attributionTracking = function(){
 		//Check if relevant query parameters exist in the URL
 		//This overwrites anytime there is a UTM tag, so it would be considered "last-non-organic" attribution
 		const queryParams = new URLSearchParams(window.location.search);
+
 		if ( queryParams.has('utm_source') ){ //Check for the only required UTM tag (since .has() cannot do partial matches)
 			//Loop through the query string to capture just the UTM parameters
 			let utmParameters = {}; //Prep an object to fill
@@ -1778,13 +1779,14 @@ nebula.attributionTracking = function(){
 				vero: 'vero_id',
 				marketo: 'mkt_tok'
 			};
+
 			jQuery.each(notableQueryParameters, function(platform, parameter){
-				if ( queryParams.has(parameter) ){
-					trackingParameters[key] = queryParams.get(parameter);
+				if ( queryParams.has(parameter) ){ //If this parameter exists
+					trackingParameters[parameter] = queryParams.get(parameter); //Store it in the object
 				}
 			});
 
-			if ( trackingParameters ){
+			if ( trackingParameters ){ //If we ended up with a non-empty object
 				nebula.createCookie('attribution', JSON.stringify(trackingParameters)); //Store the other notable parameters in a cookie
 			}
 		}
