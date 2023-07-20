@@ -1604,9 +1604,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				if ( $column_name === 'notes' ){
-					if ( !empty($post_id) ){
-						echo '<span>' . get_post_meta($submission_id, 'nebula_cf7_submission_notes', true) . '</span>';
-					}
+					echo '<span>' . get_post_meta($submission_id, 'nebula_cf7_submission_notes', true) . '</span>';
 				}
 
 				echo '';
