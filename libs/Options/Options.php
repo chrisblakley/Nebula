@@ -18,7 +18,7 @@ if ( !trait_exists('Options') ){
 			add_action('current_screen', array($this, 'register_options'));
 			add_action('admin_menu', array($this, 'admin_sub_menu'));
 			add_action('nebula_options_saved', array($this, 'create_hubspot_properties'));
-			add_action('init', array($this, 'check_for_new_options'));
+			add_action('init', array($this, 'theme_update_options_check'));
 		}
 
 		/*==========================
@@ -308,23 +308,28 @@ if ( !trait_exists('Options') ){
 			return apply_filters('nebula_default_options', $nebula_options_defaults);
 		}
 
-		//Check for new options after the theme update. If any are found use their default value.
-		public function check_for_new_options(){
+		//Check for multi-site instances after the theme update, update options for all sites
+		public function theme_update_options_check(){
 			if ( ($this->get_data('check_new_options') === 'true' || $this->is_debug()) && current_user_can('manage_options') ){
 				$this->timer('Checking for New Options');
 				do_action('qm/info', 'Checking for New Nebula Options...');
 
-				$nebula_options = get_option('nebula_options');
-				$nebula_default_options = $this->default_options();
+				// Check for a Multisite instance
+				if ( is_multisite() ) {
+					$nebula_sub_sites = get_sites();
 
-				if ( is_array($nebula_default_options) && is_array($nebula_options) ){ //Ensure both are arrays to continue
-					$different_keys = array_diff_key($nebula_default_options, $nebula_options);
-					foreach ( $different_keys as $different_key => $different_value ){
-						if ( !isset($nebula_options[$different_key]) || is_null($nebula_options[$different_key]) ){ //If this key is not in the array (a new option was added to Nebula)
-							$this->update_option($different_key, $nebula_default_options[$different_key]); //Create it with its default value
-							do_action('qm/info', 'New Nebula Option Found: ' . $different_key);
-						}
+					// Loop through each subsite
+					foreach ($nebula_sub_sites as $sub_site) {
+						// Have to Switch to Blog in order to set options
+						switch_to_blog($sub_site->blog_id);
+						// Check and update options for this sub-site
+						$this->check_for_new_options();
+						// Return to the current site
+						restore_current_blog();
 					}
+				} else {
+					// If not a multi-site instance, perform the check and update options for the main site as usual
+					$this->check_for_new_options();
 				}
 
 				$this->update_data('check_new_options', 'false');
@@ -332,6 +337,21 @@ if ( !trait_exists('Options') ){
 			}
 		}
 
+		//Check for new options. If any are found use their default value.
+		private function check_for_new_options() {
+			$nebula_options = get_option('nebula_options');
+			$nebula_default_options = $this->default_options();
+
+			if ( is_array($nebula_default_options) && is_array($nebula_options) ){ //Ensure both are arrays to continue
+				$different_keys = array_diff_key($nebula_default_options, $nebula_options);
+				foreach ( $different_keys as $different_key => $different_value ){
+					if ( !isset($nebula_options[$different_key]) || is_null($nebula_options[$different_key]) ){ //If this key is not in the array (a new option was added to Nebula)
+						$this->update_option($different_key, $nebula_default_options[$different_key]); //Create it with its default value
+						do_action('qm/info', 'New Nebula Option Found: ' . $different_key);
+					}
+				}
+			}
+		}
 		//Get the "user friendly" default value for a Nebula Option
 		public function user_friendly_default($option){
 			$nebula_options_defaults = $this->default_options();
