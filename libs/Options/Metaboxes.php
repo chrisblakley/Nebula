@@ -1141,6 +1141,9 @@ if ( !trait_exists('Metaboxes') ){
 			?>
 				<p>This is a list of possible Nebula configurations that may allow or prevent certain functionality from happening. For more references, be sure to check Nebula warnings in the Admin Dashboard, try running a Nebula Audit (from the admin bar), or check the At-A-Glance metabox on the Dashboard. The other metaboxes in this Diagnostic tab may be helpful as well.</p>
 				<ul>
+					<?php if ( is_multisite() ): ?>
+						<li>This is a multi-site installation of WordPress!</li>
+					<?php endif; ?>
 					<li>
 						<?php if ( is_child_theme() ): ?>
 							<strong>Nebula Child</strong> theme is active<?php echo ( $this->allow_theme_update() )? '. Automated updates <strong class="nebula-enabled">are</strong> allowed.' : ', but automated updates are <strong class="nebula-disabled">not</strong> allowed.'; ?>
@@ -1177,7 +1180,10 @@ if ( !trait_exists('Metaboxes') ){
 					<li><a href="plugins.php?page=tgmpa-install-plugins&plugin_status=install">Nebula bundled plugins page</a> can be accessed here.</li>
 				</ul>
 
-				<a class="button button-primary" href="<?php echo admin_url('update-core.php?force-check=1&force-nebula-theme-update'); ?>">Re-Install Nebula from GitHub</a>
+				<a class="button button-primary" href="<?php echo admin_url('update-core.php?force-check=1&force-nebula-theme-update'); ?>" <?php echo ( is_multisite() )? 'disabled' : ''; ?>>Re-Install Nebula from GitHub</a>
+				<?php if ( is_multisite() ): ?>
+					<br /><small class="nebula-disabled">Nebula cannot re-install itself on WordPress multi-site installations because the theme is managed at the Network Admin level and not by the individual site.</small>
+				<?php endif; ?>
 			<?php
 		}
 
