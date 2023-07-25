@@ -1557,7 +1557,13 @@ if ( !trait_exists('Admin') ){
 				$columns['formatted_date'] = 'Formatted Date';
 				$columns['form_name'] = 'Form Name';
 				$columns['page_title'] = 'Page Title';
+
+				if ( $this->get_option('attribution_tracking') ){
+					$columns['attribution'] = 'Attribution';
+				}
+
 				$columns['notes'] = 'Internal Notes';
+
 				unset($columns['date']); //Replacing the WP date column with our own
 				unset($columns['id']); //This ID is confusing since it is the submission ID
 			}
@@ -1600,6 +1606,15 @@ if ( !trait_exists('Admin') ){
 				if ( $column_name === 'page_title' ){
 					if ( !empty($post_id) ){
 						echo '<a href="' . get_permalink($post_id) . '" target="_blank">' . get_the_title($post_id) . ' &raquo;</a><br /><small>Post ID: ' . $post_id . '</small>';
+					}
+				}
+
+				//Check for attribution data if it is being used
+				if ( $this->get_option('attribution_tracking') && $column_name === 'attribution' ){
+					if ( !empty(str_replace('{}', '', json_decode($submission_data->post_content)->_nebula_attribution)) ){ //If we have attribution data
+						echo '<span>' . json_decode($submission_data->post_content)->_nebula_attribution . '</span>';
+					} elseif ( !empty(json_decode($submission_data->post_content)->_nebula_utms) ){ //If we have UTM data
+						echo '<span>' . json_decode($submission_data->post_content)->_nebula_utms . '</span>';
 					}
 				}
 

@@ -400,7 +400,7 @@ nebula.predictiveCacheListeners = async function(){
 				nebula.prefetch(url); //Attempt to prefetch
 			}, 250);
 		}
-	}, function(){
+	}).on('mouseleave', function(){
 		if ( predictiveHoverTimeout ){
 			window.clearTimeout(predictiveHoverTimeout);
 			predictiveHoverTimeout = null;
