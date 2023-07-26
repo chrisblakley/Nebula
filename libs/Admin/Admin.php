@@ -1131,6 +1131,7 @@ if ( !trait_exists('Admin') ){
 		}
 
 		//Update the theme, output progress, and post-update tasks
+		//Note: The "old" theme functions will be what runs during the update process and those hooks/actions will be used. The "new" theme version files are not used until the next page load after the update processing page.
 		public function theme_update_automation($wp_upgrader, $hook_extra){
 			$override = apply_filters('pre_nebula_theme_update_automation', null);
 			if ( isset($override) ){return;}

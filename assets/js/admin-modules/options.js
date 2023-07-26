@@ -44,6 +44,13 @@ nebula.optionsInit = function(){
 		jQuery('#nebula-option-filter').trigger('keydown').focus(); //Trigger if a ?prefiltered= parameter is used.
 	}
 
+	//Sync options checkboxes to their hidden text input values.
+	//This prevents an edge case where unchecked checkboxes are NULL rather than false, so they get re-enabled on multisite Nebula updates
+	jQuery(document).on('change', '.sync-checkbox', function(){
+		let value = ( jQuery(this).is(':checked') )? 1 : 0; //Because the value is stored in text we need 1 and 0 specifically rather than "true" and "false"
+		jQuery(this).parents('.form-group').find('input[type="hidden"]').val(value);
+	});
+
 	nebula.checkDependents(); //Check all dependents
 	nebula.checkImportants();
 	jQuery('input').on('keyup change', function(){

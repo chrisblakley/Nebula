@@ -85,7 +85,9 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[force_wp_timezone]" id="force_wp_timezone" value="1" <?php checked('1', !empty($nebula_options['force_wp_timezone'])); ?> /><label for="force_wp_timezone">Force WP Timezone</label>
+					<input type="hidden" name="nebula_options[force_wp_timezone]" value="<?php echo $nebula_options['force_wp_timezone']; ?>">
+					<input id="force_wp_timezone" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['force_wp_timezone'])); ?>><label for="force_wp_timezone">Force WP Timezone</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Force the timezone to use the WordPress setting (<code><?php echo get_option('timezone_string'); ?></code>). Disabling this will use whatever the server is set to. (Default: <?php echo $this->user_friendly_default('force_wp_timezone'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">With the current setting, the time is <strong><?php echo date('F j, Y - g:ia'); ?></strong>. </p>
 					<p class="option-keywords">time zone dst</p>
@@ -200,7 +202,8 @@ if ( !trait_exists('Metaboxes') ){
 					<?php foreach ( $weekdays as $weekday ): ?>
 						<div class="row non-filter mb-4 mb-sm-2">
 							<div class="col-sm-3 mb-2 mb-sm-0">
-								<input type="checkbox" name="nebula_options[business_hours_<?php echo $weekday; ?>_enabled]" id="business_hours_<?php echo $weekday; ?>_enabled" value="1" <?php checked('1', !empty($nebula_options['business_hours_' . $weekday . '_enabled'])); ?> /><label for="business_hours_<?php echo $weekday; ?>_enabled"><?php echo ucfirst($weekday); ?></label>
+								<input type="hidden" name="nebula_options[business_hours_<?php echo $weekday; ?>_enabled]" value="<?php echo $nebula_options['force_wp_timezone']; ?>">
+								<input id="business_hours_<?php echo $weekday; ?>_enabled" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['business_hours_' . $weekday . '_enabled'])); ?>><label for="business_hours_<?php echo $weekday; ?>_enabled"><?php echo ucfirst($weekday); ?></label>
 							</div><!--/col-->
 							<div class="col">
 								<div class="form-group">
@@ -357,7 +360,9 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[limit_image_dimensions]" id="limit_image_dimensions" value="1" <?php checked('1', !empty($nebula_options['limit_image_dimensions'])); ?> /><label for="limit_image_dimensions">Limit Image Dimensions</label>
+					<input type="hidden" name="nebula_options[limit_image_dimensions]" value="<?php echo $nebula_options['limit_image_dimensions']; ?>">
+					<input id="limit_image_dimensions" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['limit_image_dimensions'])); ?>><label for="limit_image_dimensions">Limit Image Dimensions</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Limit image sizes to 1200px on the front-end. (Default: <?php echo $this->user_friendly_default('limit_image_dimensions'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">This attempts to prevent content managers from accidentally loading large filesize images on the front-end.</p>
 					<p class="option-keywords">major page speed impact optimization optimize</p>
@@ -386,7 +391,9 @@ if ( !trait_exists('Metaboxes') ){
 						}
 					?>
 
-					<input type="checkbox" name="nebula_options[scss]" id="scss" value="1" <?php checked('1', !empty($nebula_options['scss'])); ?> /><label for="scss">Sass</label>
+					<input type="hidden" name="nebula_options[scss]" value="<?php echo $nebula_options['scss']; ?>">
+					<input id="scss" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['scss'])); ?>><label for="scss">Sass</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Enable the bundled SCSS compiler. (Default: <?php echo $this->user_friendly_default('scss'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Automatically process Sass for logged-in users (who can publish posts). Saving Nebula Options will also process all SCSS files. This option will automatically be disabled after 30 days without processing. CSS files will automatically be minified, but source maps are available for debugging.<br /><br />Last processed: <?php echo $last_processed_text; ?>
 					</p>
@@ -394,7 +401,9 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group" dependent-or="scss">
-					<input type="checkbox" name="nebula_options[critical_css]" id="critical_css" value="1" <?php checked('1', !empty($nebula_options['critical_css'])); ?> /><label for="critical_css">Critical CSS</label>
+					<input type="hidden" name="nebula_options[critical_css]" value="<?php echo $nebula_options['critical_css']; ?>">
+					<input id="critical_css" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['critical_css'])); ?>><label for="critical_css">Critical CSS</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Output critical CSS for above-the-fold content in the <code>&lt;head&gt;</code> of the document. (Default: <?php echo $this->user_friendly_default('critical_css'); ?>)</p>
 					<p class="dependent-note hidden">This option is dependent on the SCSS compiler.</p>
 					<p class="nebula-help-text more-help form-text text-muted">Styles in critical.css will be embedded in the HTML while also imported into style.css. This improves perceived page load time for users without overcomplicating stylesheets.</p>
@@ -402,41 +411,53 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[author_bios]" id="author_bios" value="1" <?php checked('1', !empty($nebula_options['author_bios'])); ?> /><label for="author_bios">Author Bios</label>
+					<input type="hidden" name="nebula_options[author_bios]" value="<?php echo $nebula_options['author_bios']; ?>">
+					<input id="author_bios" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['author_bios'])); ?>><label for="author_bios">Author Bios</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Allow authors to have bios that show their info (and post archives). (Default: <?php echo $this->user_friendly_default('author_bios'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">This also enables searching by author, and displaying author names on posts.<br />If disabled, the author page attempts to redirect to an <a href="<?php echo home_url('/'); ?>?s=about" target="_blank">About Us page</a> (use the filter hook <code>nebula_no_author_redirect</code> to better control where it redirects- especially if no search results are found when clicking that link).<br />If disabled, remember to also disable the <a href="<?php echo admin_url('admin.php?page=wpseo_titles#top#archives'); ?>" target="_blank">Author archives option in Yoast</a> to hide them from the sitemap.</p>
 					<p class="option-keywords">seo</p>
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[comments]" id="comments" value="1" <?php checked('1', !empty($nebula_options['comments'])); ?> /><label for="comments">Comments</label>
+					<input type="hidden" name="nebula_options[comments]" value="<?php echo $nebula_options['comments']; ?>">
+					<input id="comments" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['comments'])); ?>><label for="comments">Comments</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Ability to force disable comments. (Default: <?php echo $this->user_friendly_default('comments'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">If enabled, comments must also be opened as usual in Wordpress Settings > Discussion (Allow people to post comments on new articles).</p>
 					<p class="option-keywords"></p>
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[store_form_submissions]" id="store_form_submissions" value="1" <?php checked('1', !empty($nebula_options['store_form_submissions'])); ?> /><label for="store_form_submissions">Store Form Submissions</label>
+					<input type="hidden" name="nebula_options[store_form_submissions]" value="<?php echo $nebula_options['store_form_submissions']; ?>">
+					<input id="store_form_submissions" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['store_form_submissions'])); ?>><label for="store_form_submissions">Store Form Submissions</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Store CF7 form submissions in WordPress. (Default: <?php echo $this->user_friendly_default('store_form_submissions'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">This will capture Contact Form 7 form submissions and store them in WordPress. This will not have any affect on third-party form storage plugins, nor will it change email submission behavior. This will have no effect if the Contact Form 7 plugin is not installed or inactive. Disabling this option will <strong>not</strong> delete form submissions already captured.</p>
 					<p class="option-keywords"></p>
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[service_worker]" id="service_worker" value="1" <?php checked('1', !empty($nebula_options['service_worker'])); ?> /><label for="service_worker">Service Worker</label>
+					<input type="hidden" name="nebula_options[service_worker]" value="<?php echo $nebula_options['service_worker']; ?>">
+					<input id="service_worker" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['service_worker'])); ?>><label for="service_worker">Service Worker</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Utilize a service worker to improve speed, provide content when offline, and other benefits of being a progressive web app. (Default: <?php echo $this->user_friendly_default('service_worker'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">This also enables HTTP2 Server Push when available. Enabling this feature requires a service worker JavaScript file. Move the provided sw.js into the root directory (or write your own). Service Worker location: <code><?php echo $this->sw_location(); ?></code></p>
 					<p class="option-keywords">moderate page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[spam_domain_prevention]" id="spam_domain_prevention" value="1" <?php checked('1', !empty($nebula_options['spam_domain_prevention'])); ?> /><label for="spam_domain_prevention">Spam Domain Prevention</label>
+					<input type="hidden" name="nebula_options[spam_domain_prevention]" value="<?php echo $nebula_options['spam_domain_prevention']; ?>">
+					<input id="spam_domain_prevention" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['spam_domain_prevention'])); ?>><label for="spam_domain_prevention">Spam Domain Prevention</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Block traffic from known spambots and other illegitimate domains. (Default: <?php echo $this->user_friendly_default('spam_domain_prevention'); ?>)</p>
 					<p class="option-keywords">security remote resource recommended minor page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[console_css]" id="console_css" value="1" <?php checked('1', !empty($nebula_options['console_css'])); ?> /><label for="console_css">Console CSS</label>
+					<input type="hidden" name="nebula_options[console_css]" value="<?php echo $nebula_options['console_css']; ?>">
+					<input id="console_css" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['console_css'])); ?>><label for="console_css">Console CSS</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Adds CSS to the browser console. (Default: <?php echo $this->user_friendly_default('console_css'); ?>)</p>
 					<p class="option-keywords">discretionary</p>
 				</div>
@@ -448,41 +469,53 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_admin_references_metabox($nebula_options){
 			?>
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[admin_bar]" id="admin_bar" value="1" <?php checked('1', !empty($nebula_options['admin_bar'])); ?> /><label for="admin_bar">Admin Bar</label>
+					<input type="hidden" name="nebula_options[admin_bar]" value="<?php echo $nebula_options['admin_bar']; ?>">
+					<input id="admin_bar" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['admin_bar'])); ?>><label for="admin_bar">Admin Bar</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Control the Wordpress Admin bar globally on the frontend for all users. (Default: <?php echo $this->user_friendly_default('admin_bar'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Note: When enabled, the Admin Bar can be temporarily toggled using the keyboard shortcut <strong>Alt+A</strong> without needing to disable it permanently for all users.</p>
 					<p class="option-keywords"></p>
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[unnecessary_metaboxes]" id="unnecessary_metaboxes" value="1" <?php checked('1', !empty($nebula_options['unnecessary_metaboxes'])); ?> /><label for="unnecessary_metaboxes">Remove Unnecessary Metaboxes</label>
+					<input type="hidden" name="nebula_options[unnecessary_metaboxes]" value="<?php echo $nebula_options['unnecessary_metaboxes']; ?>">
+					<input id="unnecessary_metaboxes" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['unnecessary_metaboxes'])); ?>><label for="unnecessary_metaboxes">Remove Unnecessary Metaboxes</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Remove metaboxes on the Dashboard that are not necessary for most users. (Default: <?php echo $this->user_friendly_default('unnecessary_metaboxes'); ?>)</p>
 					<p class="option-keywords">recommended</p>
 				</div>
 
 				<div class="form-group" dependent-or="dev_email_domain dev_ip">
-					<input type="checkbox" name="nebula_options[dev_info_metabox]" id="dev_info_metabox" value="1" <?php checked('1', !empty($nebula_options['dev_info_metabox'])); ?> /><label for="dev_info_metabox">Developer Info Metabox</label>
+					<input type="hidden" name="nebula_options[dev_info_metabox]" value="<?php echo $nebula_options['dev_info_metabox']; ?>">
+					<input id="dev_info_metabox" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['dev_info_metabox'])); ?>><label for="dev_info_metabox">Developer Info Metabox</label>
+
 					<p class="dependent-note hidden">This option is dependent on Developer IPs and/or Developer Email Domains (Administration tab).</p>
 					<p class="nebula-help-text short-help form-text text-muted">Show theme and server information useful to developers. (Default: <?php echo $this->user_friendly_default('dev_info_metabox'); ?>)</p>
 					<p class="option-keywords">recommended</p>
 				</div>
 
 				<div class="form-group" dependent-or="dev_email_domain dev_ip">
-					<input type="checkbox" name="nebula_options[todo_manager_metabox]" id="todo_manager_metabox" value="1" <?php checked('1', !empty($nebula_options['todo_manager_metabox'])); ?> /><label for="todo_manager_metabox">To-Do Manager</label>
+					<input type="hidden" name="nebula_options[todo_manager_metabox]" value="<?php echo $nebula_options['todo_manager_metabox']; ?>">
+					<input id="todo_manager_metabox" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['todo_manager_metabox'])); ?>><label for="todo_manager_metabox">To-Do Manager</label>
+
 					<p class="dependent-note hidden">This option is dependent on Developer IPs and/or Developer Email Domains (Administration tab).</p>
 					<p class="nebula-help-text short-help form-text text-muted">Aggregate todo comments in code. (Default: <?php echo $this->user_friendly_default('todo_manager_metabox'); ?>)</p>
 					<p class="option-keywords"></p>
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[performance_metabox]" id="performance_metabox" value="1" <?php checked('1', !empty($nebula_options['performance_metabox'])); ?> /><label for="performance_metabox">Performance Metabox</label>
+					<input type="hidden" name="nebula_options[performance_metabox]" value="<?php echo $nebula_options['performance_metabox']; ?>">
+					<input id="performance_metabox" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['performance_metabox'])); ?>><label for="performance_metabox">Performance Metabox</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Test load times from the WordPress Dashboard <?php echo ( $this->is_dev() )? '(Note: This always appears for developers even if disabled!)' : ''; ?>. (Default: <?php echo $this->user_friendly_default('performance_metabox'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Tests are prioritized from Google Lighthouse or a simple iframe timer.</p>
 					<p class="option-keywords"></p>
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[design_reference_metabox]" id="design_reference_metabox" value="1" <?php checked('1', !empty($nebula_options['design_reference_metabox'])); ?> /><label for="design_reference_metabox">Design Reference Metabox</label>
+					<input type="hidden" name="nebula_options[design_reference_metabox]" value="<?php echo $nebula_options['design_reference_metabox']; ?>">
+					<input id="design_reference_metabox" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['design_reference_metabox'])); ?>><label for="design_reference_metabox">Design Reference Metabox</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Show the Design Reference dashboard metabox. (Default: <?php echo $this->user_friendly_default('design_reference_metabox'); ?>)</p>
 					<p class="option-keywords"></p>
 				</div>
@@ -522,21 +555,27 @@ if ( !trait_exists('Metaboxes') ){
 
 				<?php if ( $this->is_dev() ): //These are only shown to developers to prevent non-devs from re-enabling updates that could break something ?>
 					<div class="form-group">
-						<input type="checkbox" name="nebula_options[theme_update_notification]" id="theme_update_notification" value="1" <?php checked('1', !empty($nebula_options['theme_update_notification'])); ?> /><label for="theme_update_notification">Nebula Theme Update Notification</label>
+						<input type="hidden" name="nebula_options[theme_update_notification]" value="<?php echo $nebula_options['theme_update_notification']; ?>">
+					<input id="theme_update_notification" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['theme_update_notification'])); ?>><label for="theme_update_notification">Nebula Theme Update Notification</label>
+
 						<p class="nebula-help-text short-help form-text text-muted">Enable easy updates to the Nebula theme. (Default: <?php echo $this->user_friendly_default('theme_update_notification'); ?>)</p>
 						<p class="nebula-help-text more-help form-text text-muted"><strong>Child theme must be activated to work!</strong></p>
 						<p class="option-keywords">discretionary</p>
 					</div>
 
 					<div class="form-group">
-						<input type="checkbox" name="nebula_options[bundled_plugins_notification]" id="bundled_plugins_notification" value="1" <?php checked('1', !empty($nebula_options['bundled_plugins_notification'])); ?> /><label for="bundled_plugins_notification">Bundled Plugins Notification</label>
+						<input type="hidden" name="nebula_options[bundled_plugins_notification]" value="<?php echo $nebula_options['bundled_plugins_notification']; ?>">
+					<input id="bundled_plugins_notification" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['bundled_plugins_notification'])); ?>><label for="bundled_plugins_notification">Bundled Plugins Notification</label>
+
 						<p class="nebula-help-text short-help form-text text-muted">Control whether or not the <a href="plugins.php?page=tgmpa-install-plugins&plugin_status=install">Nebula bundled plugins</a> notifications appears on admin pages for all users. (Default: <?php echo $this->user_friendly_default('bundled_plugins_notification'); ?>)</p>
 						<p class="nebula-help-text more-help form-text text-muted">When on, each WP user will need to dismiss the prompt individually. When disabled, it is not shown to any user.</p>
 						<p class="option-keywords">discretionary</p>
 					</div>
 
 					<div class="form-group">
-						<input type="checkbox" name="nebula_options[wp_core_updates_notify]" id="wp_core_updates_notify" value="1" <?php checked('1', !empty($nebula_options['wp_core_updates_notify'])); ?> /><label for="wp_core_updates_notify">WordPress Core Update Notification</label>
+						<input type="hidden" name="nebula_options[wp_core_updates_notify]" value="<?php echo $nebula_options['wp_core_updates_notify']; ?>">
+					<input id="wp_core_updates_notify" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['wp_core_updates_notify'])); ?>><label for="wp_core_updates_notify">WordPress Core Update Notification</label>
+
 						<p class="nebula-help-text short-help form-text text-muted">Control whether or not the Wordpress Core update notifications show up on the admin pages. (Default: <?php echo $this->user_friendly_default('wp_core_updates_notify'); ?>)</p>
 						<p class="option-keywords">discretionary</p>
 					</div>
@@ -590,20 +629,26 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group" dependent-or="ga_measurement_id">
-					<input type="checkbox" name="nebula_options[ga_require_consent]" id="ga_require_consent" value="1" <?php checked('1', !empty($nebula_options['ga_require_consent'])); ?> /><label for="ga_require_consent">Require Tracking Consent</label>
+					<input type="hidden" name="nebula_options[ga_require_consent]" value="<?php echo $nebula_options['ga_require_consent']; ?>">
+					<input id="ga_require_consent" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['ga_require_consent'])); ?>><label for="ga_require_consent">Require Tracking Consent</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Do not track Google Analytics data unless user consent is given. <strong>Warning: This will <em>dramatically</em> decrease the amount of analytics data collected when enabled!</strong> (Default: <?php echo $this->user_friendly_default('ga_require_consent'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">When enabled, Google Analytics will not be tracked until a user has accepted the cookie notification. The notification message can be customized in the Cookie Notification Nebula option.</p>
 					<p class="option-keywords"></p>
 				</div>
 
 				<div class="form-group" dependent-or="ga_measurement_id">
-					<input type="checkbox" name="nebula_options[observe_dnt]" id="observe_dnt" value="1" <?php checked('1', !empty($nebula_options['observe_dnt'])); ?> /><label for="observe_dnt">Observe "Do Not Track" Requests</label>
+					<input type="hidden" name="nebula_options[observe_dnt]" value="<?php echo $nebula_options['observe_dnt']; ?>">
+					<input id="observe_dnt" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['observe_dnt'])); ?>><label for="observe_dnt">Observe "Do Not Track" Requests</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Comply with user requests of "Do Not Track" (DNT) via their browser settings. Analytics data will not be collected for these users at all (even if they consent to tracking via the cookie notification). (Default: <?php echo $this->user_friendly_default('observe_dnt'); ?>)</p>
 					<p class="option-keywords">gdpr ccpa privacy</p>
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[attribution_tracking]" id="attribution_tracking" value="1" <?php checked('1', !empty($nebula_options['attribution_tracking'])); ?> /><label for="attribution_tracking">Attribution Tracking</label>
+					<input type="hidden" name="nebula_options[attribution_tracking]" value="<?php echo $nebula_options['attribution_tracking']; ?>">
+					<input id="attribution_tracking" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['attribution_tracking'])); ?>><label for="attribution_tracking">Attribution Tracking</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Track "last-non-organic" attribution by storing UTM and other notable tracking query parameters in a cookie to retrieve on users' subsequent returning visits (on the same device). This will fill an input with a class of <code>attribution</code> with the data if it exists as well as be used in CF7 form submissions. This option must be enabled in order to use the PHP function <code>nebula()->utms()</code> and JS function <code>nebula.attributionTracking()</code>. (Default: <?php echo $this->user_friendly_default('attribution_tracking'); ?>)</p>
 					<p class="option-keywords">gdpr ccpa privacy ads campaigns cookies</p>
 				</div>
@@ -979,21 +1024,27 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[google_adsense_url]" id="google_adsense_url" value="1" <?php checked('1', !empty($nebula_options['google_adsense_url'])); ?> /><label for="google_adsense_url">Google AdSense URL</label>
+					<input type="hidden" name="nebula_options[google_adsense_url]" value="<?php echo $nebula_options['google_adsense_url']; ?>">
+					<input id="google_adsense_url" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['google_adsense_url'])); ?>><label for="google_adsense_url">Google AdSense URL</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://www.google.com/adsense/" target="_blank" rel="noopener noreferrer">Google AdSense</a> account. (Default: <?php echo $this->user_friendly_default('google_adsense_url'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted"><strong>This is only a dashboard link!</strong> It does nothing beyond add a convenient link on the dashboard.</p>
 					<p class="option-keywords">discretionary</p>
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[amazon_associates_url]" id="amazon_associates_url" value="1" <?php checked('1', !empty($nebula_options['amazon_associates_url'])); ?> /><label for="amazon_associates_url">Amazon Associates URL</label>
+					<input type="hidden" name="nebula_options[amazon_associates_url]" value="<?php echo $nebula_options['amazon_associates_url']; ?>">
+					<input id="amazon_associates_url" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['amazon_associates_url'])); ?>><label for="amazon_associates_url">Amazon Associates URL</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://affiliate-program.amazon.com/home" target="_blank" rel="noopener noreferrer">Amazon Associates</a> account. (Default: <?php echo $this->user_friendly_default('amazon_associates_url'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted"><strong>This is only a dashboard link!</strong> It does nothing beyond add a convenient link on the dashboard.</p>
 					<p class="option-keywords">discretionary</p>
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[mention_url]" id="mention_url" value="1" <?php checked('1', !empty($nebula_options['mention_url'])); ?> /><label for="mention_url">Mention URL</label>
+					<input type="hidden" name="nebula_options[mention_url]" value="<?php echo $nebula_options['mention_url']; ?>">
+					<input id="mention_url" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['mention_url'])); ?>><label for="mention_url">Mention URL</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Dashboard reference link to this project's <a href="https://mention.com/" target="_blank" rel="noopener noreferrer">Mention</a> account. (Default: <?php echo $this->user_friendly_default('mention_url'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted"><strong>This is only a dashboard link!</strong> It does nothing beyond add a convenient link on the dashboard.</p>
 					<p class="option-keywords">discretionary</p>
@@ -1006,14 +1057,18 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_notes_metabox($nebula_options){
 			?>
 				<div class="form-group" dependent-or="dev_email_domain dev_ip client_email_domain client_ip">
-					<input type="checkbox" name="nebula_options[administrative_log]" id="administrative_log" value="1" <?php checked('1', !empty($nebula_options['administrative_log'])); ?> /><label for="administrative_log">Administrative Logs</label>
+					<input type="hidden" name="nebula_options[administrative_log]" value="<?php echo $nebula_options['administrative_log']; ?>">
+					<input id="administrative_log" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['administrative_log'])); ?>><label for="administrative_log">Administrative Logs</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Automatically log notable administrative events such as when the Nebula theme is updated (Default: <?php echo $this->user_friendly_default('administrative_log'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">This does not log any user data.</p>
 					<p class="option-keywords">annotations logging database</p>
 				</div>
 
 				<div class="form-group">
-					<input type="checkbox" name="nebula_options[js_error_log]" id="js_error_log" value="1" <?php checked('1', !empty($nebula_options['js_error_log'])); ?> /><label for="js_error_log">Log JavaScript Errors</label>
+					<input type="hidden" name="nebula_options[js_error_log]" value="<?php echo $nebula_options['js_error_log']; ?>">
+					<input id="js_error_log" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['js_error_log'])); ?>><label for="js_error_log">Log JavaScript Errors</label>
+
 					<p class="nebula-help-text short-help form-text text-muted">Log JavaScript window errors to a js_error.log file in the child theme directory. (Default: <?php echo $this->user_friendly_default('js_error_log'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">This does not log any user data. Use this only when necessary as it adds a lot of overhead to the browser and server processing!</p>
 					<p class="option-keywords">annotations logging database errors exceptions ux user experience log file</p>
