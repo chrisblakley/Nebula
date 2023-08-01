@@ -442,7 +442,7 @@ if ( !trait_exists('Metaboxes') ){
 					<input id="service_worker" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['service_worker'])); ?>><label for="service_worker">Service Worker</label>
 
 					<p class="nebula-help-text short-help form-text text-muted">Utilize a service worker to improve speed, provide content when offline, and other benefits of being a progressive web app. (Default: <?php echo $this->user_friendly_default('service_worker'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">This also enables HTTP2 Server Push when available. Enabling this feature requires a service worker JavaScript file. Move the provided sw.js into the root directory (or write your own). Service Worker location: <code><?php echo $this->sw_location(); ?></code></p>
+					<p class="nebula-help-text more-help form-text text-muted">Enabling this feature requires a service worker JavaScript file. Move the provided sw.js into the root directory (or write your own). Service Worker location: <code><?php echo $this->sw_location(); ?></code></p>
 					<p class="option-keywords">moderate page speed impact optimization optimize</p>
 				</div>
 

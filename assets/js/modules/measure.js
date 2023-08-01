@@ -148,15 +148,30 @@ nebula.eventTracking = async function(){
 	nebula.cacheSelectors(); //Just to be safe (this is no longer called from anywhere besides nebula.js so this should never be needed)
 
 	//Check for Topics API support @todo "Nebula" 0: when it is better supported update this further
-	if ( 'browsingTopics' in document && document.featurePolicy.allowsFeature('browsing-topics') ){
-		//console.log('Topics API is available on this page', document.browsingTopics());
+	if ( 'browsingTopics' in document && document.featurePolicy.allowsFeature('browsing-topics') ){ //Seems to be available in Chrome 117+ (at least in Canary)
+		//console.log('Topics API is available on this page!');
 
-		gtag('event', 'topics_api', {
+		//This event is just for reference to know that it is available. Will remove after widespread support.
+		gtag('event', 'topics_api_available', {
 			event_category: 'Topics API', //@todo "Nebula" 0: Remove after July 2023
 			event_action: 'Available', //@todo "Nebula" 0: Remove after July 2023
-			status: 'Available',
 			event_label: 'The Topics API is available in this browser', //@todo "Nebula" 0: Remove after July 2023
+			status: 'Available',
 			non_interaction: true
+		});
+
+		document.browsingTopics().then(function(topics){
+			//console.log('Interest Topics:', topics);
+
+			if ( topics ){ //If the topics array is not empty
+				gtag('event', 'topics_api', {
+					event_category: 'Topics API', //@todo "Nebula" 0: Remove after July 2023
+					event_action: 'Interests', //@todo "Nebula" 0: Remove after July 2023
+					event_label: topics.join(', '), //@todo "Nebula" 0: Remove after July 2023
+					interests: topics.join(', '),
+					non_interaction: true
+				});
+			}
 		});
 	}
 

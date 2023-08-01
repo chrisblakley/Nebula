@@ -9,10 +9,10 @@ if ( !trait_exists('Optimization') ){
 		public function hooks(){
 			$this->deregistered_assets = array('styles' => array(), 'scripts' => array());
 
-			if ( $this->get_option('service_worker') && !$this->is_background_request() && !is_customize_preview() ){
-				add_action('send_headers', array($this, 'nebula_http2_ob_start'));
-				add_action('wp_print_scripts', array($this, 'styles_http2_server_push_header'), 9998); //Run this last to get all enqueued scripts
-				add_action('wp_print_scripts', array($this, 'scripts_http2_server_push_header'), 9999); //Run this last to get all enqueued scripts
+			if ( !$this->is_background_request() && !is_customize_preview() ){
+				add_action('send_headers', array($this, 'nebula_early_hints_ob_start'));
+				add_action('wp_print_scripts', array($this, 'styles_early_hints_header'), 9998); //Run this last to get all enqueued scripts
+				add_action('wp_print_scripts', array($this, 'scripts_early_hints_header'), 9999); //Run this last to get all enqueued scripts
 			}
 
 			//Non-WordPress Admin optimizations
@@ -285,8 +285,8 @@ if ( !trait_exists('Optimization') ){
 			}
 		}
 
-		//Start output buffering so headers can be sent later for HTTP2 Server Push
-		public function nebula_http2_ob_start(){
+		//Start output buffering so headers can be sent later for Early Hints
+		public function nebula_early_hints_ob_start(){
 			$this->timer('Headers Sent [Mark]', 'mark'); //Piggybacking on this action to mark this point in time
 
 			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
@@ -295,17 +295,17 @@ if ( !trait_exists('Optimization') ){
 			}
 		}
 
-		//Use HTTP2 Server Push to push multiple CSS and JS resources at once
+		//Use Early Hints to push multiple CSS and JS resources at once
 		//This uses a link preload header, so these resources must be used within a few seconds of window load.
-		public function styles_http2_server_push_header(){
+		public function styles_early_hints_header(){
 			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
-				$timer_name = $this->timer('HTTP2 Server Push Header (Styles)', 'start');
+				$timer_name = $this->timer('Early Hints Header (Styles)', 'start');
 				global $wp_styles;
 
 				foreach ( $wp_styles->queue as $handle ){
 					if ( wp_style_is($handle, 'registered') && !empty($wp_styles->registered[$handle]->src) ){ //If this style is still registered (and src exists)
 						$ver = ( !empty($wp_styles->registered[$handle]->ver) )? '?ver=' . $wp_styles->registered[$handle]->ver : '';
-						$this->http2_server_push_file($wp_styles->registered[$handle]->src . $ver, 'style');
+						$this->early_hints_file($wp_styles->registered[$handle]->src . $ver, 'style');
 					}
 				}
 
@@ -313,15 +313,15 @@ if ( !trait_exists('Optimization') ){
 			}
 		}
 
-		public function scripts_http2_server_push_header(){
+		public function scripts_early_hints_header(){
 			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
-				$timer_name = $this->timer('HTTP2 Server Push Header (Scripts)', 'start');
+				$timer_name = $this->timer('Early Hints Header (Scripts)', 'start');
 				global $wp_scripts;
 
 				foreach ( $wp_scripts->queue as $handle ){
 					if ( wp_script_is($handle, 'registered') && !empty($wp_scripts->registered[$handle]->src) ){ //If this script is still registered (and src exists)
 						$ver = ( !empty($wp_scripts->registered[$handle]->ver) )? '?ver=' . $wp_scripts->registered[$handle]->ver : '';
-						$this->http2_server_push_file($wp_scripts->registered[$handle]->src . $ver, 'script');
+						$this->early_hints_file($wp_scripts->registered[$handle]->src . $ver, 'script');
 					}
 				}
 
@@ -331,10 +331,10 @@ if ( !trait_exists('Optimization') ){
 			}
 		}
 
-		public function http2_server_push_file($src, $filetype){
+		public function early_hints_file($src, $filetype){
 			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
 				$crossorigin = ( strpos($src, get_site_url()) === false || $filetype === 'font' )? ' crossorigin=anonymous' : ''; //Add crossorigin attribute for remote assets and all fonts //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-				header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel=preload; as=' . $filetype . ';' . $crossorigin, false); //Send the header for the HTTP2 Server Push (strtok to remove everything after and including "#")
+				header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel=preload; as=' . $filetype . '; nopush' . $crossorigin, false); //Send the header for the Early Hint (strtok to remove everything after and including "#")
 			}
 		}
 
@@ -614,8 +614,10 @@ if ( !trait_exists('Optimization') ){
 			if ( !is_admin() ){
 				$current_action = current_action(); //Get the current WordPress action handle that was called (so we know which one we are "inside")
 				$timer_name = $this->timer('Advanced Dequeues (' . $current_action . ')');
+
 				$this->deregister('contact-form-7', 'style'); //Removing CF7 styles in favor of Bootstrap + Nebula
 				$this->deregister('wp-embed', 'script'); //WP Core WP-Embed - Override this only if embedding external WordPress posts into this WordPress site. Other oEmbeds are NOT AFFECTED by this!
+				$this->deregister('classic-theme-styles', 'style'); //WP 6.1 added "classic-themes.css" file. Get rid of it.
 
 				//Page specific dequeues
 				if ( is_front_page() ){

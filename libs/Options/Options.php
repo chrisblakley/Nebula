@@ -54,7 +54,7 @@ if ( !trait_exists('Options') ){
 				return false;
 			}
 
-			if ( filter_var($nebula_options[$option], FILTER_VALIDATE_BOOLEAN) === 1 ){ //@todo "Nebula" 0: Could this be causing a problem with boolean options that are set to off (0) which may get filtered out entirely?
+			if ( filter_var($nebula_options[$option], FILTER_VALIDATE_BOOLEAN) === 1 ){
 				return true;
 			}
 
@@ -65,8 +65,6 @@ if ( !trait_exists('Options') ){
 		public function set_option($option, $value){return $this->update_option($option, $value);}
 		public function update_option($option, $value){
 			if ( current_user_can('manage_options') ){
-				//@todo "Nebula" 0: does this need to use update_blog_option(id, 'nebula_options', $nebula_options) when on multisite?
-
 				$nebula_options = get_option('nebula_options');
 				if ( empty($nebula_options[$option]) || $nebula_options[$option] !== $value ){
 					$nebula_options[$option] = $value;
@@ -317,7 +315,7 @@ if ( !trait_exists('Options') ){
 				do_action('qm/info', 'Checking for New Nebula Options...');
 
 				//Check for a Multisite instance
-				if ( is_multisite() ) { //Note that this change did not resolve the issue. It may be a step in the right direction, but the revert issue still exists. https://github.com/chrisblakley/Nebula/issues/2255
+				if ( is_multisite() ) { //Note that this change did not resolve the issue. Do we still need to do it this way? https://github.com/chrisblakley/Nebula/issues/2255
 					$nebula_sub_sites = get_sites();
 
 					//Loop through each subsite
