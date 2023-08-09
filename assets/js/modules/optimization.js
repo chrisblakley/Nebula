@@ -14,26 +14,15 @@ nebula.cacheSelectors = function(){
 
 //Record performance timing
 nebula.performanceMetrics = async function(){
-	if ( nebula.get('timings') || nebula.user?.staff === 'developer' ){ //Only available to Developers or with ?timings
-		if ( window.performance?.timing && typeof window.requestIdleCallback === 'function' ){ //Remove the requestIdleCallback condition when Safari supports it)
-			window.requestIdleCallback(function(){
-				window.performance.mark('(Nebula) CPU Idle');
-				window.performance.measure('(Nebula) Until CPU Idle', 'navigationStart', '(Nebula) CPU Idle');
+	if ( window.performance?.timing && typeof window.requestIdleCallback === 'function' ){ //@todo "Nebula" 0: Remove the requestIdleCallback condition when Safari supports it)
+		window.requestIdleCallback(function(){
+			window.performance.mark('(Nebula) CPU Idle');
+			window.performance.measure('(Nebula) Until CPU Idle', 'navigationStart', '(Nebula) CPU Idle');
 
-				let timingCalcuations = {
-					'Redirect': {start: Math.round(performance.timing.redirectStart - performance.timing.navigationStart), duration: Math.round(performance.timing.redirectEnd - performance.timing.redirectStart), type: 'Measurement'},
-					'Unload': {start: Math.round(performance.timing.unloadStart - performance.timing.navigationStart), duration: Math.round(performance.timing.unloadEnd - performance.timing.unloadStart), type: 'Measurement'},
-					'App Cache': {start: Math.round(performance.timing.fetchStart - performance.timing.navigationStart), duration: Math.round(performance.timing.domainLookupStart - performance.timing.fetchStart), type: 'Measurement'},
-					'DNS': {start: Math.round(performance.timing.domainLookupStart - performance.timing.navigationStart), duration: Math.round(performance.timing.domainLookupEnd - performance.timing.domainLookupStart), type: 'Measurement'},
-					'TCP': {start: Math.round(performance.timing.connectStart - performance.timing.navigationStart), duration: Math.round(performance.timing.connectEnd - performance.timing.connectStart), type: 'Measurement'},
-					'Request': {start: Math.round(performance.timing.requestStart - performance.timing.navigationStart), duration: Math.round(performance.timing.responseStart - performance.timing.requestStart), type: 'Measurement'},
-					'Response': {start: Math.round(performance.timing.responseStart - performance.timing.navigationStart), duration: Math.round(performance.timing.responseEnd - performance.timing.responseStart), type: 'Measurement'},
-					'Processing': {start: Math.round(performance.timing.domLoading - performance.timing.navigationStart), duration: Math.round(performance.timing.loadEventStart - performance.timing.domLoading), type: 'Measurement'},
-					'onLoad': {start: Math.round(performance.timing.loadEventStart - performance.timing.navigationStart), duration: Math.round(performance.timing.loadEventEnd - performance.timing.loadEventStart), type: 'Measurement'},
-					'Until DOM Ready': {start: 0, duration: Math.round(performance.timing.domComplete - performance.timing.navigationStart), type: 'Measurement'},
-					'Until Fully Loaded': {start: 0, duration: Math.round(performance.timing.loadEventEnd - performance.timing.navigationStart), type: 'Measurement'},
-				};
+			let timingCalcuations = {};
 
+			//Check additional timings and output to the console when requested or for developers
+			if ( nebula.get('timings') || nebula.user?.staff === 'developer' ){ //Only available to Developers or with ?timings
 				//Add custom JS measurements too
 				performance.getEntriesByType('mark').forEach(function(mark){
 					timingCalcuations[mark.name] = {
@@ -56,7 +45,7 @@ nebula.performanceMetrics = async function(){
 						clientTimings[name] = {
 							type: timings.type,
 							start: timings.start,
-							duration: timings.duration
+							duration: ( timings.duration )? timings.duration : -1 //If we have a duration, use it
 						};
 					}
 				});
@@ -133,40 +122,21 @@ nebula.performanceMetrics = async function(){
 				}
 
 				console.groupEnd(); //End Performance (Parent Group)
+			}
 
-				//Report certain timings to Google Analytics
-				if ( timingCalcuations['Processing'] && timingCalcuations['DOM Ready'] && timingCalcuations['Total Load'] ){
-					//Send as User Timings as well
-					gtag('event', 'timing_complete', {
-						name: 'Server Response',
-						value: timingCalcuations['Processing'].start,
-						event_category: 'Performance Timing',
-						event_label: 'Navigation start until server response finishes (includes PHP execution time)',
-					});
-
-					gtag('event', 'timing_complete', {
-						name: 'DOM Ready',
-						value: timingCalcuations['DOM Ready'].duration,
-						event_category: 'Performance Timing',
-						event_label: 'Navigation start until DOM ready',
-					});
-
-					gtag('event', 'timing_complete', {
-						name: 'Window Load',
-						value: timingCalcuations['Total Load'].duration,
-						event_category: 'Performance Timing',
-						event_label: 'Navigation start until window load',
-					});
-
-					gtag('event', 'timing_complete', {
-						name: 'CPU Idle',
-						value: timingCalcuations['CPU Idle'].duration,
-						event_category: 'Performance Timing',
-						event_label: 'Navigation start until CPU idle',
-					});
-				}
-			});
-		}
+			//Report certain timings to Google Analytics
+			let navigationPerformanceEntry = performance.getEntriesByType('navigation')[0]; //There is typically only ever 1 in this, but we always just want the first one
+			if ( navigationPerformanceEntry ){
+				gtag('event', 'load_timings', {
+					session_page_type: ( nebula.isLandingPage() )? 'Landing Page' : 'Subsequent Page',
+					server_response: Math.round(navigationPerformanceEntry.responseStart),
+					dom_interactive: Math.round(navigationPerformanceEntry.domInteractive),
+					dom_complete: Math.round(navigationPerformanceEntry.domComplete),
+					fully_loaded: Math.round(navigationPerformanceEntry.duration),
+					non_interaction: true
+				});
+			}
+		});
 	}
 };
 

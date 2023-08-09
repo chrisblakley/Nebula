@@ -332,7 +332,7 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		public function early_hints_file($src, $filetype){
-			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
+			if ( !$this->is_admin_page(true, true) ){ //Exclude admin, login, and Customizer pages
 				$crossorigin = ( strpos($src, get_site_url()) === false || $filetype === 'font' )? ' crossorigin=anonymous' : ''; //Add crossorigin attribute for remote assets and all fonts //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel=preload; as=' . $filetype . '; nopush' . $crossorigin, false); //Send the header for the Early Hint (strtok to remove everything after and including "#")
 			}

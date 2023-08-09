@@ -913,6 +913,7 @@ nebula.eventTracking = async function(){
 
 			if ( linkElement ){ //If we ended up with a link after all
 				let href = linkElement.attr('href');
+
 				if ( href ){ //href may be undefined in special circumstances so we can ignore those
 					let domain = nebula?.site?.domain || window.location.hostname;
 

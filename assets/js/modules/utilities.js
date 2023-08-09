@@ -35,6 +35,27 @@ nebula.isDoNotTrack = function(){
 	return false; //The user is allowing tracking -or- the browser does not support DNT
 };
 
+//Check if this page view is the first in a session
+nebula.isLandingPage = function(){
+	if ( nebula.isDoNotTrack() ){
+		return false; //Not tracking this user
+	}
+
+	if ( jQuery('body').hasClass('is-landing-page') ){ //If this function is called again on this page, detect it this way since the storage method will now think it is false
+		return true;
+	}
+
+	let lpTimestamp = localStorage.getItem('landing_page');
+
+	if ( !lpTimestamp || Date.now() >= parseInt(lpTimestamp)+60*60*1000 ){ //If the storage item does not exist, or if the timestamp is over an hour ago
+		localStorage.setItem('landing_page', Date.now().toString()); //Set the (new) timestamp
+		jQuery('body').addClass('is-landing-page');
+		return true;
+	}
+
+	return false; //This page view is not the first of the session
+};
+
 nebula.timings = [];
 nebula.scroll = {
 	offset: 0, //Used for global scroll offsets (when not able to modify certain links or to save redundant parameters)
