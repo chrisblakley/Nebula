@@ -129,10 +129,10 @@ nebula.performanceMetrics = async function(){
 			if ( navigationPerformanceEntry ){
 				gtag('event', 'load_timings', {
 					session_page_type: ( nebula.isLandingPage() )? 'Landing Page' : 'Subsequent Page',
-					server_response: Math.round(navigationPerformanceEntry.responseStart),
-					dom_interactive: Math.round(navigationPerformanceEntry.domInteractive),
-					dom_complete: Math.round(navigationPerformanceEntry.domComplete),
-					fully_loaded: Math.round(navigationPerformanceEntry.duration),
+					server_response: Math.round(navigationPerformanceEntry.responseStart)/1000,
+					dom_interactive: Math.round(navigationPerformanceEntry.domInteractive)/1000,
+					dom_complete: Math.round(navigationPerformanceEntry.domComplete)/1000,
+					fully_loaded: Math.round(navigationPerformanceEntry.duration)/1000,
 					non_interaction: true
 				});
 			}
