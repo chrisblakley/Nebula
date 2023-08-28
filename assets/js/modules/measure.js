@@ -902,13 +902,13 @@ nebula.eventTracking = async function(){
 
 		//Outbound links (do not use jQuery click listener here)
 		document.body.addEventListener('click', function(e){
-			let oThis = jQuery(e.target); //Convert the JS event to a jQuery object
+			let $oThis = jQuery(e.target); //Convert the JS event to a jQuery object
 
 			let linkElement = false; //Assume the element is not a link first
-			if ( oThis.is('a') ){ //If this element is an <a> tag, use it
-				linkElement = oThis;
-			} else if ( oThis.parents('a').length ){ //If the clicked element is not an <a> tag, check parent elements to an <a> tag
-				linkElement = oThis.parents('a'); //Use the parent <a> as the target element
+			if ( $oThis.is('a') ){ //If this element is an <a> tag, use it
+				linkElement = $oThis;
+			} else if ( $oThis.parents('a').length ){ //If the clicked element is not an <a> tag, check parent elements to an <a> tag
+				linkElement = $oThis.parents('a'); //Use the parent <a> as the target element
 			}
 
 			if ( linkElement ){ //If we ended up with a link after all
@@ -1427,14 +1427,14 @@ nebula.eventTracking = async function(){
 
 		//DataTables Filter
 		nebula.dom.document.on('keyup', '.dataTables_filter input', function(e){
-			let oThis = jQuery(this);
+			let $oThis = jQuery(this);
 			let thisEvent = {
 				event: e,
 				event_name: 'datatables_filter',
 				event_category: 'Datatables', //@todo "Nebula" 0: Remove after July 2023
-				event_label: oThis.val().toLowerCase().trim(), //@todo "Nebula" 0: Remove after July 2023
+				event_label: $oThis.val().toLowerCase().trim(), //@todo "Nebula" 0: Remove after July 2023
 				event_action: 'Search Filter',
-				query: oThis.val().toLowerCase().trim()
+				query: $oThis.val().toLowerCase().trim()
 			};
 
 			nebula.debounce(function(){

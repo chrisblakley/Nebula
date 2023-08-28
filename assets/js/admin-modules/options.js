@@ -82,15 +82,15 @@ nebula.optionsInit = function(){
 
 	//Show/hide more information
 	jQuery(document).on('click', '.toggle-more-help', function(){
-		var formGroup = jQuery(this).closest('.form-group, .multi-form-group');
-		jQuery('.form-group.highlight, .multi-form-group.highlight').not(formGroup).removeClass('highlight').find('.more-help').slideUp(); //Un-highlight all other options
-		formGroup.toggleClass('highlight').find('.more-help').slideToggle(); //Toggle highlight on this option
+		var $formGroup = jQuery(this).closest('.form-group, .multi-form-group');
+		jQuery('.form-group.highlight, .multi-form-group.highlight').not($formGroup).removeClass('highlight').find('.more-help').slideUp(); //Un-highlight all other options
+		$formGroup.toggleClass('highlight').find('.more-help').slideToggle(); //Toggle highlight on this option
 
 		var thisTab = jQuery(this).closest('.tab-pane').attr('id');
 		var thisOption = jQuery(this).closest('.form-group, .multi-form-group').find('.form-control').attr('id') || jQuery(this).closest('.form-group, .multi-form-group').find('label').attr('for');
 
 		var url = nebula.site.admin_url + 'themes.php?page=nebula_options&tab=' + thisTab;
-		if ( formGroup.hasClass('highlight') ){
+		if ( $formGroup.hasClass('highlight') ){
 			url += '&option=' + thisOption;
 		}
 		history.replaceState(null, document.title, url); //Modify the URL so the direct link can be copied
@@ -199,8 +199,8 @@ nebula.checkDependents = function(inputObject){
 
 			//The dependent-and attribute must have ALL checked
 			jQuery('[dependent-and~=' + inputObject.attr('id') + ']').each(function(){
-				var oThis = jQuery(this);
-				var dependentOrs = jQuery(this).attr('dependent-and').split(' ');
+				var $oThis = jQuery(this);
+				var dependentOrs = oThis.attr('dependent-and').split(' ');
 				var totalDependents = dependentAnds.length;
 				var dependentsChecked = 0;
 				jQuery.each(dependentAnds, function(){
@@ -210,7 +210,7 @@ nebula.checkDependents = function(inputObject){
 				});
 
 				if ( dependentsChecked === totalDependents ){
-					oThis.removeClass('inactive').find('.dependent-note').addClass('hidden');
+					$oThis.removeClass('inactive').find('.dependent-note').addClass('hidden');
 				}
 			});
 		} else {
@@ -219,8 +219,8 @@ nebula.checkDependents = function(inputObject){
 
 			//The dependent-or attribute can have ANY checked
 			jQuery('[dependent-or~=' + inputObject.attr('id') + ']').each(function(){
-				var oThis = jQuery(this);
-				var dependentOrs = jQuery(this).attr('dependent-or').split(' ');
+				var $oThis = jQuery(this);
+				var dependentOrs = oThis.attr('dependent-or').split(' ');
 				var totalDependents = dependentOrs.length;
 				var dependentsUnchecked = 0;
 				jQuery.each(dependentOrs, function(){
@@ -230,7 +230,7 @@ nebula.checkDependents = function(inputObject){
 				});
 
 				if ( dependentsUnchecked === totalDependents ){
-					oThis.addClass('inactive').find('.dependent-note').removeClass('hidden');
+					$oThis.addClass('inactive').find('.dependent-note').removeClass('hidden');
 				}
 			});
 		}
@@ -294,11 +294,11 @@ nebula.isCheckedOrHasValue = function(inputObject){
 nebula.assetScan = function(){
 	//Run automatic asset scan when button is clicked
 	jQuery('.scan-frontend-assets').on('click', function(){ //Note there are two of these sections (one for styles, one for scripts). This will handle both simultaneously.
-		let oThis = jQuery(this);
-		if ( oThis.attr('data-skip-fetch') !== 'true' ){ //Use Fetch unless it fails
-			var initialText = oThis.html();
+		let $oThis = jQuery(this);
+		if ( $oThis.attr('data-skip-fetch') !== 'true' ){ //Use Fetch unless it fails
+			var initialText = $oThis.html();
 
-			oThis.html('<i class="fa-solid fa-fw fa-spin fa-spinner"></i> Scanning Front-End...');
+			$oThis.html('<i class="fa-solid fa-fw fa-spin fa-spinner"></i> Scanning Front-End...');
 			jQuery('.asset-scan-status').html('Automatic asset scan in progress...');
 
 			fetch(nebula.site.home_url + '?nebula-scan', {
@@ -308,11 +308,11 @@ nebula.assetScan = function(){
 				}
 			}).then(function(response){
 				if ( response.ok ){
-					oThis.html(initialText);
+					$oThis.html(initialText);
 					jQuery('.asset-scan-status').html('<strong class="nebula-enabled"><i class="fa-solid fa-fw fa-check"></i> Automatic scan successful.</strong> You may refresh this page when ready to see available assets.');
 				}
 			}).catch(function(error){
-				oThis.html('Manually Scan Front-End <i class="fa-solid fa-fw fa-external-link-alt"></i>');
+				$oThis.html('Manually Scan Front-End <i class="fa-solid fa-fw fa-external-link-alt"></i>');
 				jQuery('.asset-scan-status').html('<strong class="nebula-disabled">Automatic scan failed.</strong> Click the button again to manually scan the front-end in a new window.').attr('data-skip-fetch', 'true');
 			});
 
@@ -366,13 +366,13 @@ nebula.logs = function(){
 
 	//Remove a message from logs
 	jQuery(document).on('click', 'table#nebula-logs tbody tr', function(){
-		var oThis = jQuery(this);
-		var logID = oThis.attr('data-id');
+		var $oThis = jQuery(this);
+		var logID = $oThis.attr('data-id');
 
-		oThis.addClass('prompted');
+		$oThis.addClass('prompted');
 
 		if ( logID && confirm('Are you sure you want to delete this message from the log? There is no undo.') ){
-			oThis.find('.remove').removeClass('fa-ban').addClass('fa-spinner fa-spin');
+			$oThis.find('.remove').removeClass('fa-ban').addClass('fa-spinner fa-spin');
 
 			var logCount = parseInt(jQuery('#log-count').text()); //Number of log rows before removal
 
@@ -391,11 +391,11 @@ nebula.logs = function(){
 			}).then(function(response){
 				if ( response.ok ){
 					//Artificially update the table without doing a reload of the whole page in case there are unsaved changes!
-					oThis.fadeOut(250).addClass('removed'); //Artificially hide the removed row
+					$oThis.fadeOut(250).addClass('removed'); //Artificially hide the removed row
 					jQuery('#log-count').text(logCount-1); //Artificially update the log count
 				}
 			}).catch(function(error){
-				oThis.find('.remove').removeClass('fa-spinner fa-spin').addClass('fa-ban');
+				$oThis.find('.remove').removeClass('fa-spinner fa-spin').addClass('fa-ban');
 			});
 		} else {
 			jQuery(this).removeClass('prompted');

@@ -127,12 +127,13 @@ nebula.performanceMetrics = async function(){
 			//Report certain timings to Google Analytics
 			let navigationPerformanceEntry = performance.getEntriesByType('navigation')[0]; //There is typically only ever 1 in this, but we always just want the first one
 			if ( navigationPerformanceEntry ){
-				gtag('event', 'load_timings', {
+				gtag('event', 'load_timings', { //These are sent in seconds (not milliseconds) so create Custom Metrics with the appropriate units
 					session_page_type: ( nebula.isLandingPage() )? 'Landing Page' : 'Subsequent Page',
-					server_response: Math.round(navigationPerformanceEntry.responseStart)/1000,
+					server_response: Math.round(navigationPerformanceEntry.responseStart)/1000, //@todo "Nebula" 0: These aren't coming into GA4 as expected...
 					dom_interactive: Math.round(navigationPerformanceEntry.domInteractive)/1000,
 					dom_complete: Math.round(navigationPerformanceEntry.domComplete)/1000,
 					fully_loaded: Math.round(navigationPerformanceEntry.duration)/1000,
+					link: window.location.href, //Using "link" so additional custom dimensions are not needed
 					non_interaction: true
 				});
 			}
@@ -361,8 +362,8 @@ nebula.predictiveCacheListeners = async function(){
 	//Internal link hovers
 	let predictiveHoverTimeout;
 	jQuery('a').on('mouseenter', function(){
-		let oThis = jQuery(this);
-		let url = oThis.attr('href');
+		let $oThis = jQuery(this);
+		let url = $oThis.attr('href');
 
 		if ( url && !predictiveHoverTimeout ){
 			predictiveHoverTimeout = window.setTimeout(function(){

@@ -360,13 +360,13 @@ nebula.animationTriggers = function(){
 	});
 };
 
-nebula.loadAnimate = function(oThis){
-	let animationDelay = oThis.attr('nebula-delay');
+nebula.loadAnimate = function($oThis){
+	let animationDelay = $oThis.attr('nebula-delay');
 	if ( typeof animationDelay === 'undefined' || animationDelay === 0 ){
-		nebula.animate(oThis, 'load-animate');
+		nebula.animate($oThis, 'load-animate');
 	} else {
 		setTimeout(function(){
-			nebula.animate(oThis, 'load-animate');
+			nebula.animate($oThis, 'load-animate');
 		}, animationDelay);
 	}
 };
@@ -713,22 +713,22 @@ nebula.timeAgo = function(timestamp, raw){ //http://af-design.com/blog/2009/02/1
 };
 
 //Convert DOM elements into a tree string
-nebula.domTreeToString = function(element){
+nebula.domTreeToString = function($element){
 	try {
 		//If the element is a selector, convert to a jQuery object
-		if ( typeof element === 'string' ){
-			element = jQuery(element);
+		if ( typeof $element === 'string' ){
+			$element = jQuery($element);
 		}
 
 		//If the element is a native JS object, convert to jQuery
-		if ( element.nodeType ){
-			element = jQuery(element);
-		} else if ( element[0]?.nodeType ){
-			element = jQuery(element[0]);
+		if ( $element.nodeType ){
+			$element = jQuery($element);
+		} else if ( $element[0]?.nodeType ){
+			$element = jQuery($element[0]);
 		}
 
 		//Map the parent elements into an array and concatenate together
-		let selector = element.parents().map(function(){
+		let selector = $element.parents().map(function(){
 			let parentTag = this.tagName.toLowerCase();
 
 			//Append the ID if a parent element has one
@@ -740,16 +740,16 @@ nebula.domTreeToString = function(element){
 			return parentTag;
 		}).get().reverse().concat([this.nodeName]).join(' ');
 
-		selector += element[0]?.tagName.toLowerCase(); //changed from .get(0)
+		selector += $element[0]?.tagName.toLowerCase(); //changed from .get(0)
 
 		//Append the ID to the last element
-		let id = element.attr('id');
+		let id = $element.attr('id');
 		if ( id ){
 			selector += '#' + id;
 		}
 
 		//Add the classnames to the last element
-		let classNames = element.attr('class');
+		let classNames = $element.attr('class');
 		if ( classNames ){
 			selector += '.' + classNames.trim().replaceAll(/\s/gi, '.');
 		}
@@ -977,15 +977,15 @@ nebula.visibilityChangeActions = function(){
 
 //Check if an element is within the viewport
 //This has been working really well, but could be replaced with IntersectionObserver...
-nebula.isInViewport = function(element, offset){return nebula.isInView(element, offset);};
-nebula.isInView = function(element, offset = 1){
-	if ( element ){
-		if ( typeof element === 'string' ){
-			element = jQuery(element);
+nebula.isInViewport = function($element, offset){return nebula.isInView($element, offset);};
+nebula.isInView = function($element, offset = 1){
+	if ( $element ){
+		if ( typeof $element === 'string' ){
+			$element = jQuery($element);
 		}
 
-		let elementTop = element.offset().top;
-		let elementBottom = element.offset().top+element.innerHeight();
+		let elementTop = $element.offset().top;
+		let elementBottom = $element.offset().top+$element.innerHeight();
 
 		let windowTop = nebula.dom.document.scrollTop();
 		let windowBottom = nebula.dom.document.scrollTop()+nebula.dom.window.height()*offset;

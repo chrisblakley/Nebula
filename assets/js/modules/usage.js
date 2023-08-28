@@ -113,29 +113,6 @@ nebula.usage = async function(error = false){
 				}),
 				priority: 'low'
 			});
-
-			//UA (Remove this after July 2023)
-			navigator.sendBeacon && navigator.sendBeacon('https://www.google-analytics.com/collect', [
-				'v=1', //Protocol Version
-				'tid=UA-36461517-5', //Tracking ID
-				'cid=' + nebula.user.cid,
-				'ua=' + nebula.user.client.user_agent, //User Agent
-				'dl=' + window.location.href, //Page
-				'dt=' + document.title, //Title
-				't=exception', //Hit Type
-				'exd=' + description, //Exception Detail
-				'exf=1', //Fatal Exception?
-				'cd1=' + nebula.site.home_url, //Homepage URL
-				'cd2=' + Date.now(), //UNIX Time
-				'cd6=' + nebula.version.number, //Nebula version
-				'cd5=' + nebula.site.directory.root, //Site_URL
-				'cd7=' + nebula.user.cid, //GA CID
-				'cd9=' + nebula.site.is_child, //Is child theme?
-				'cd12=' + window.location.href, //Permalink
-				'cn=Nebula Usage', //Campaign
-				'cs=' + nebula.site.home_url, //Source
-				'cm=WordPress', //Medium
-			].join('&'));
 		}
 	}
 };

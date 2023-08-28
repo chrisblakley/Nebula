@@ -194,6 +194,11 @@ if ( !trait_exists('Security') ){
 					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Redditbot')));
 				}
 
+				//OpenAI GPT Bot
+				if ( strpos($user_agent, 'gptbot') !== false ){
+					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'GPTBot')));
+				}
+
 				//Slackbot
 				if ( $this->is_slackbot() ){
 					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Slackbot')));

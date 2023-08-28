@@ -196,7 +196,11 @@ if ( !trait_exists('Analytics') ){
 		}
 
 		//Add measurement protocol parameters for custom definitions
-		public function ga_build_event($event_name='select_content', $event_parameters=array(), $user_properties=array()){
+		public function ga_build_event($event_name='', $event_parameters=array(), $user_properties=array()){
+			if ( empty($event_name) ){
+				return false;
+			}
+
 			$default_common_parameters = array(
 				'client_id' => $this->ga_parse_cookie(),
 				'non_personalized_ads' => false,
@@ -204,7 +208,7 @@ if ( !trait_exists('Analytics') ){
 					'client_id' => array('value' => $this->ga_parse_cookie())
 				),
 				'events' => array(array(
-					'name' => $event_name,
+					'name' => 'nmp_' . $event_name, //mp_ indicates Nebula Measurement Protocol
 					'params' => array(
 						'user_agent' => ( !empty($this->super->server['HTTP_USER_AGENT']) )? rawurlencode($this->super->server['HTTP_USER_AGENT']): '',
 						'language' => ( class_exists('Locale') && !empty($this->super->server['HTTP_ACCEPT_LANGUAGE']) )? locale_accept_from_http($this->super->server['HTTP_ACCEPT_LANGUAGE']) : '',

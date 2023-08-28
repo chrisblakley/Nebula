@@ -371,6 +371,20 @@ if ( !trait_exists('Utilities') ){
 			return true;
 		}
 
+		//Check if the current page loaded is a tagged campaign (UTMs, etc.)
+		public function is_campaign_page($url=false){
+			$query_string = ( !empty($url) )? $url : $this->url_components('query'); //Use the provided URL otherwise check just the query string
+			$notable_tags = array('utm_', 'fbclid', 'gclid', 'gclsrc', 'dclid', 'gbraid', 'wbraid', 'mc_eid', '_hsenc', 'vero_id', 'mkt_tok');
+
+			foreach ( $notable_tags as $tag ){
+				if ( strpos(strtolower($query_string), $tag) > -1 ){ //If UTM parameters exist //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					return true; //This is a tagged campaign page (return true as soon as any match)
+				}
+			}
+
+			return false; //This is not a tagged campaign page
+		}
+
 		//Check if the site is an ecommerce website
 		public function is_ecommerce(){
 			if ( is_plugin_active('woocommerce/woocommerce.php') ){
@@ -670,7 +684,7 @@ if ( !trait_exists('Utilities') ){
 
 				//Otherwise check for UTM parameters
 				$query_string = $this->url_components('query');
-				$notable_tags = array('utm_', 'fbclid', 'mc_eid', 'gclid', 'gclsrc', 'dclid', 'gbraid', 'wbraid', '_hsenc', 'vero_id', 'mkt_tok');
+				$notable_tags = array('utm_', 'fbclid', 'gclid', 'gclsrc', 'dclid', 'gbraid', 'wbraid', 'mc_eid', '_hsenc', 'vero_id', 'mkt_tok');
 
 				foreach ( $notable_tags as $tag ){
 					if ( strpos(strtolower($query_string), $tag) > -1 ){ //If UTM parameters exist //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
@@ -1397,6 +1411,12 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			preg_match('/(?<primary>(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+[a-z]?))\.?(?<build>\d+)?/i', $nebula_theme_info->get('Version'), $nebula_version);
+
+			//If the preg_match fails, exit early here
+			if ( empty($nebula_version) ){
+				return 0; //May need to return different types based on what $return value is expected... Trying an int for now.
+			}
+
 			$nebula_version['patch'] = preg_replace('/\D/', '', $nebula_version['patch']); //Remove letters from patch number
 
 			$nebula_version_year = ( $nebula_version['minor'] >= 8 )? 2012+$nebula_version['major']+1 : 2012+$nebula_version['major'];

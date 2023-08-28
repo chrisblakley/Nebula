@@ -196,35 +196,35 @@ nebula.dragDropUpload = async function(){
 //Convert img tags with class .svg to raw SVG elements
 nebula.svgImgs = async function(){
 	jQuery('img.svg').each(function(){
-		let oThis = jQuery(this);
+		let $oThis = jQuery(this);
 
-		if ( oThis.attr('src').includes('.svg') ){ //If the src has a .svg extension
-			fetch(oThis.attr('src'), {
+		if ( $oThis.attr('src').includes('.svg') ){ //If the src has a .svg extension
+			fetch($oThis.attr('src'), {
 				method: 'GET', //Could set a priority here, but should these be high or low?
 			}).then(function(response){
 				if ( response.ok ){
 					return response.text();
 				}
 			}).then(function(data){
-				let theSVG = jQuery(data); //Get the SVG tag, ignore the rest
-				theSVG = theSVG.attr('id', oThis.attr('id')); //Add replaced image's ID to the new SVG
-				theSVG = theSVG.attr('class', oThis.attr('class') + ' replaced-svg'); //Add replaced image's classes to the new SVG
-				theSVG = theSVG.attr('role', 'img');
-				theSVG = theSVG.attr('alt', nebula.sanitize(oThis.attr('alt'))); //An SVG with a role of img must include an alt attribute
-				theSVG = theSVG.attr('aria-label', nebula.sanitize(oThis.attr('alt'))); //Add an aria-label attribute as well
-				theSVG = theSVG.attr('data-originalsrc', oThis.attr('src')); //Add an attribute of the original SVG location
-				theSVG = theSVG.removeAttr('xmlns:a'); //Remove invalid XML tags
+				let $theSVG = jQuery(data); //Get the SVG tag, ignore the rest
+				$theSVG = $theSVG.attr('id', $oThis.attr('id')); //Add replaced image's ID to the new SVG
+				$theSVG = $theSVG.attr('class', $oThis.attr('class') + ' replaced-svg'); //Add replaced image's classes to the new SVG
+				$theSVG = $theSVG.attr('role', 'img');
+				$theSVG = $theSVG.attr('alt', nebula.sanitize($oThis.attr('alt'))); //An SVG with a role of img must include an alt attribute
+				$theSVG = $theSVG.attr('aria-label', nebula.sanitize($oThis.attr('alt'))); //Add an aria-label attribute as well
+				$theSVG = $theSVG.attr('data-originalsrc', $oThis.attr('src')); //Add an attribute of the original SVG location
+				$theSVG = $theSVG.removeAttr('xmlns:a'); //Remove invalid XML tags
 
-				oThis.replaceWith(theSVG); //Replace image with new SVG
+				$oThis.replaceWith($theSVG); //Replace image with new SVG
 
 				//Use the alt attribute as a title tag within the SVG (title must be the first tag inside the <svg>) as well
-				if ( oThis.attr('alt') ){
-					theSVG.prepend('<title>' + nebula.sanitize(oThis.attr('alt')) + '</title>'); //Sanitized to prevent XSS
+				if ( $oThis.attr('alt') ){
+					$theSVG.prepend('<title>' + nebula.sanitize($oThis.attr('alt')) + '</title>'); //Sanitized to prevent XSS
 				}
 
 				//Move the title attribute to the description element within the SVG
-				if ( oThis.attr('title') ){
-					theSVG.prepend('<description>' + nebula.sanitize(oThis.attr('title')) + '</description>'); //Sanitized to prevent XSS
+				if ( $oThis.attr('title') ){
+					$theSVG.prepend('<description>' + nebula.sanitize($oThis.attr('title')) + '</description>'); //Sanitized to prevent XSS
 				}
 			});
 		}
@@ -282,7 +282,7 @@ nebula.scrollToListeners = function(){
 //Scroll an element into view
 //This can eventually be replaced with scrollIntoView() native JS function, but until it has a timing feature it is not as robust. Also smooth scroll-behavior in CSS interferes with this.
 //Note: Offset must be an integer
-nebula.scrollTo = function(element, offset = 0, speed = 500, onlyWhenBelow = false, callback){
+nebula.scrollTo = function($element, offset = 0, speed = 500, onlyWhenBelow = false, callback){
 	if ( !offset ){
 		offset = nebula.scroll.offset || 0; //Note: This selector should be the height of the fixed header, or a hard-coded offset.
 	}
@@ -294,17 +294,17 @@ nebula.scrollTo = function(element, offset = 0, speed = 500, onlyWhenBelow = fal
 	}
 
 	//Call this function with a jQuery object to trigger scroll to an element (not just a selector string).
-	if ( element ){
-		if ( typeof element === 'string' ){
-			element = jQuery.find(element); //Use find here to prevent arbitrary JS execution
-		} else if ( !element.jquery ){ //Check if it is already a jQuery object
-			element = jQuery(element);
+	if ( $element ){
+		if ( typeof $element === 'string' ){
+			$element = jQuery.find($element); //Use find here to prevent arbitrary JS execution
+		} else if ( !$element.jquery ){ //Check if it is already a jQuery object
+			$element = jQuery($element);
 		}
 
-		if ( element.length ){
+		if ( $element.length ){
 			let willScroll = true;
 			if ( onlyWhenBelow ){
-				let elementTop = element.offset().top-offset;
+				let elementTop = $element.offset().top-offset;
 				let viewportTop = nebula.dom.document.scrollTop();
 				if ( viewportTop-elementTop <= 0 ){
 					willScroll = false;
@@ -317,9 +317,9 @@ nebula.scrollTo = function(element, offset = 0, speed = 500, onlyWhenBelow = fal
 				}
 
 				jQuery('html, body').animate({
-					scrollTop: element.offset().top-offset
+					scrollTop: $element.offset().top-offset
 				}, speed, function(){
-					nebula.focusOnElement(element);
+					nebula.focusOnElement($element);
 
 					if ( callback ){
 						return callback();
@@ -333,25 +333,25 @@ nebula.scrollTo = function(element, offset = 0, speed = 500, onlyWhenBelow = fal
 };
 
 //Temporarily change an element class (like Font Awesome or Bootstrap icon) and then change back after a period of time
-nebula.temporaryClass = function(element, activeClass, inactiveClass, period = 1500){
-	if ( element && activeClass ){
-		if ( typeof element === 'string' ){
-			element = jQuery(element);
+nebula.temporaryClass = function($element, activeClass, inactiveClass, period = 1500){
+	if ( $element && activeClass ){
+		if ( typeof $element === 'string' ){
+			$element = jQuery($element);
 		}
 
 		if ( !inactiveClass ){
-			if ( element.is('fa, fas, far, fab, fad, fat, fal, fa-solid, fa-regular, fa-brands, fa-duotone, fa-thin, fa-light') ){ //Font Awesome icon element
-				inactiveClass = (/fa-(?!fw)\S+/i).test(element.attr('class')); //Match the first Font Awesome icon class that is the actual icon (exclude fa-fw for example)
-			} else if ( element.is('bi') ){ //Bootstrap icon element
-				inactiveClass = (/bi-\S+/i).test(element.attr('class')); //Match the first Bootstrap icon class
+			if ( $element.is('fa, fas, far, fab, fad, fat, fal, fa-solid, fa-regular, fa-brands, fa-duotone, fa-thin, fa-light') ){ //Font Awesome icon element
+				inactiveClass = (/fa-(?!fw)\S+/i).test($element.attr('class')); //Match the first Font Awesome icon class that is the actual icon (exclude fa-fw for example)
+			} else if ( $element.is('bi') ){ //Bootstrap icon element
+				inactiveClass = (/bi-\S+/i).test($element.attr('class')); //Match the first Bootstrap icon class
 			} else {
 				inactiveClass = ''; //Set to an empty string to only use a temporary active class
 			}
 		}
 
-		element.removeClass(inactiveClass).addClass(activeClass + ' temporary-status-active'); //Remove the inactive class and add the active class
+		$element.removeClass(inactiveClass).addClass(activeClass + ' temporary-status-active'); //Remove the inactive class and add the active class
 		setTimeout(function(){
-			element.removeClass(activeClass + ' temporary-status-active').addClass(inactiveClass); //After the period of time, revert back to the inactive class
+			$element.removeClass(activeClass + ' temporary-status-active').addClass(inactiveClass); //After the period of time, revert back to the inactive class
 		}, period);
 	}
 
@@ -403,17 +403,17 @@ nebula.pre = async function(){
 		});
 
 		nebula.dom.document.on('click', '.nebula-selectcopy-code', function(){
-			let oThis = jQuery(this);
-			if ( oThis.hasClass('error') ){ //If we already errored, stop trying
+			let $oThis = jQuery(this);
+			if ( $oThis.hasClass('error') ){ //If we already errored, stop trying
 				return false;
 			}
 
 			let text = jQuery(this).closest('.nebula-code-con').find('pre').text();
 
 			navigator.clipboard.writeText(text).then(function(){
-				oThis.text('Copied!').removeClass('error').addClass('success');
+				$oThis.text('Copied!').removeClass('error').addClass('success');
 				setTimeout(function(){
-					oThis.text('Copy to clipboard').removeClass('success');
+					$oThis.text('Copy to clipboard').removeClass('success');
 				}, 1500);
 			}).catch(function(error){ //This can happen if the user denies clipboard permissions
 				gtag('event', 'Exception', { //Report the error to Google Analytics to log it
@@ -421,7 +421,7 @@ nebula.pre = async function(){
 					fatal: false
 				});
 
-				oThis.text('Unable to copy.').addClass('error');
+				$oThis.text('Unable to copy.').addClass('error');
 			});
 
 			return false;

@@ -158,8 +158,8 @@ nebula.socialSharing = async function(){
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 
-				let oThis = jQuery(this);
-				let originalText = oThis.html();
+				let $oThis = jQuery(this);
+				let originalText = $oThis.html();
 
 				navigator.share({
 					title: document.title,
@@ -180,14 +180,14 @@ nebula.socialSharing = async function(){
 					nebula.dom.document.trigger('nebula_event', thisEvent);
 					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 					nebula.crm('event', thisEvent.network);
-					oThis.addClass('success');
+					$oThis.addClass('success');
 					nebula.createCookie('shareapi', true);
 				}).catch(function(error){ //This can happen on iOS when the user closes the drawer without sharing
 					gtag('event', 'exception', {
 						description: '(JS) Share API Error: ' + error,
 						fatal: false
 					});
-					oThis.addClass('error').html(originalText);
+					$oThis.addClass('error').html(originalText);
 					nebula.createCookie('shareapi', false);
 				});
 

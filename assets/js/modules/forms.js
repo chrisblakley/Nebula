@@ -666,33 +666,33 @@ nebula.liveValidator = function(){
 };
 
 //Apply Bootstrap and CF7 appropriate validation classes to appropriate elements
-nebula.applyValidationClasses = function(element, validation, showFeedback){
-	if ( typeof element === 'string' ){
-		element = jQuery(element);
-	} else if ( typeof element !== 'object' ){
+nebula.applyValidationClasses = function($element, validation, showFeedback){
+	if ( typeof $element === 'string' ){
+		$element = jQuery($element);
+	} else if ( typeof $element !== 'object' ){
 		return false;
 	}
 
 	if ( validation === 'success' || validation === 'valid' ){
-		element.removeClass('wpcf7-not-valid is-invalid').addClass('is-valid').parent().find('.wpcf7-not-valid-tip').remove();
+		$element.removeClass('wpcf7-not-valid is-invalid').addClass('is-valid').parent().find('.wpcf7-not-valid-tip').remove();
 	} else if ( validation === 'danger' || validation === 'error' || validation === 'invalid' ){
-		element.removeClass('wpcf7-not-valid is-valid').addClass('is-invalid');
+		$element.removeClass('wpcf7-not-valid is-valid').addClass('is-invalid');
 	} else if ( validation === 'reset' || validation === 'remove' ){
-		element.removeClass('wpcf7-not-valid is-invalid is-valid').parent().find('.wpcf7-not-valid-tip').remove();
+		$element.removeClass('wpcf7-not-valid is-invalid is-valid').parent().find('.wpcf7-not-valid-tip').remove();
 	}
 
 	//Find the invalid feedback element (if it exists)
-	let parentElement = element.parent();
+	let parentElement = $element.parent();
 	let feedbackElement = false;
-	if ( element.parent().find('.invalid-feedback').length ){
-		parentElement = element.parent();
-		feedbackElement = element.parent().find('.invalid-feedback');
-	} else if ( element.closest('.form-group, .form-check').find('.invalid-feedback').length ){
-		parentElement = element.closest('.form-group, .form-check');
-		feedbackElement = element.closest('.form-group, .form-check').find('.invalid-feedback');
-	} else if ( element.parents('.nebula-form-group').find('.invalid-feedback').length ){
-		parentElement = element.parents('.nebula-form-group');
-		feedbackElement = element.parents('.nebula-form-group').find('.invalid-feedback');
+	if ( $element.parent().find('.invalid-feedback').length ){
+		parentElement = $element.parent();
+		feedbackElement = $element.parent().find('.invalid-feedback');
+	} else if ( $element.closest('.form-group, .form-check').find('.invalid-feedback').length ){
+		parentElement = $element.closest('.form-group, .form-check');
+		feedbackElement = $element.closest('.form-group, .form-check').find('.invalid-feedback');
+	} else if ( $element.parents('.nebula-form-group').find('.invalid-feedback').length ){
+		parentElement = $element.parents('.nebula-form-group');
+		feedbackElement = $element.parents('.nebula-form-group').find('.invalid-feedback');
 	}
 
 	if ( feedbackElement ){

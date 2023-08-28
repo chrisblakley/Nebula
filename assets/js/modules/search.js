@@ -125,32 +125,32 @@ nebula.autocompleteSearchListeners = async function(){
 };
 
 //Run an autocomplete search on a passed element.
-nebula.autocompleteSearch = function(element, types = ''){
-	if ( typeof element === 'string' ){
-		element = jQuery(element);
+nebula.autocompleteSearch = function($element, types = ''){
+	if ( typeof $element === 'string' ){
+		$element = jQuery($element);
 	}
 
 	if ( types && Array.isArray(types) ){
 		types = types.join(','); //Convert an array to to a comma-separated string
 	}
 
-	nebula.dom.document.trigger('nebula_autocomplete_search_start', element);
+	nebula.dom.document.trigger('nebula_autocomplete_search_start', $element);
 	nebula.timer('(Nebula) Autocomplete Search', 'start');
 	nebula.timer('(Nebula) Autocomplete Response', 'start');
 
-	if ( element.val().trim().length ){
-		if ( element.val().trim().length >= 2 ){ //This checks the length for animation but the minlength (below) handles it for autocomplete
+	if ( $element.val().trim().length ){
+		if ( $element.val().trim().length >= 2 ){ //This checks the length for animation but the minlength (below) handles it for autocomplete
 			//Add "searching" class for custom Nebula styled forms
-			element.closest('form').addClass('searching');
+			$element.closest('form').addClass('searching');
 			setTimeout(function(){
-				element.closest('form').removeClass('searching');
+				$element.closest('form').removeClass('searching');
 			}, 10_000);
 
 			//Swap magnifying glass on Bootstrap input-group
-			element.closest('.input-group, .nebula-input-group').find('.fa-magnifying-glass').removeClass('fa-magnifying-glass').addClass('fa-spin fa-spinner');
+			$element.closest('.input-group, .nebula-input-group').find('.fa-magnifying-glass').removeClass('fa-magnifying-glass').addClass('fa-spin fa-spinner');
 		} else {
-			element.closest('form').removeClass('searching');
-			element.closest('.input-group, .nebula-input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-magnifying-glass');
+			$element.closest('form').removeClass('searching');
+			$element.closest('.input-group, .nebula-input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-magnifying-glass');
 		}
 
 		let typesQuery = '';
@@ -158,17 +158,17 @@ nebula.autocompleteSearch = function(element, types = ''){
 			typesQuery = '&types=' + types;
 		}
 
-		if ( typeof element.autocomplete !== 'function' ){
+		if ( typeof $element.autocomplete !== 'function' ){
 			nebula.help('nebula.autocompleteSearch requires jQuery UI. Load that library before calling this function', '/functions/autocompletesearch/');
 			return false;
 		}
 
 		let minLength = 3;
-		if ( element.attr('data-min-length') ){
-			minLength = element.attr('data-min-length');
+		if ( $element.attr('data-min-length') ){
+			minLength = $element.attr('data-min-length');
 		}
 
-		element.autocomplete({ //jQuery UI dependent
+		$element.autocomplete({ //jQuery UI dependent
 			position: {
 				my: 'left top-2px',
 				at: 'left bottom',
@@ -193,8 +193,8 @@ nebula.autocompleteSearch = function(element, types = ''){
 							});
 							nebula.crm('event', 'Autocomplete Search AJAX Error');
 						}, 1500, 'autocomplete error buffer');
-						element.closest('form').removeClass('searching');
-						element.closest('.input-group, .nebula-input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-magnifying-glass');
+						$element.closest('form').removeClass('searching');
+						$element.closest('.input-group, .nebula-input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-magnifying-glass');
 					});
 				}
 
@@ -241,8 +241,8 @@ nebula.autocompleteSearch = function(element, types = ''){
 
 				sourceResponse(searchResults); //Respond to the jQuery UI Autocomplete now
 
-				element.closest('form').removeClass('searching').addClass('autocompleted');
-				element.closest('.input-group, .nebula-input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-magnifying-glass');
+				$element.closest('form').removeClass('searching').addClass('autocompleted');
+				$element.closest('.input-group, .nebula-input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-magnifying-glass');
 			},
 			focus: function(event, ui){
 				event.preventDefault(); //Prevent input value from changing.
@@ -275,12 +275,12 @@ nebula.autocompleteSearch = function(element, types = ''){
 				}
 			},
 			open: function(){
-				element.closest('form').addClass('autocompleted');
+				$element.closest('form').addClass('autocompleted');
 				let heroAutoCompleteDropdown = jQuery('.form-identifier-nebula-hero-search');
-				heroAutoCompleteDropdown.css('max-width', element.outerWidth());
+				heroAutoCompleteDropdown.css('max-width', $element.outerWidth());
 			},
 			close: function(){
-				element.closest('form').removeClass('autocompleted');
+				$element.closest('form').removeClass('autocompleted');
 			},
 			minLength: minLength, //Require at least 3 characters (unless overridden by an attribute)
 		}).data('ui-autocomplete')._renderItem = function(ul, item){
@@ -289,8 +289,8 @@ nebula.autocompleteSearch = function(element, types = ''){
 			return listItem;
 		};
 
-		let thisFormIdentifier = element.closest('form').attr('id') || element.closest('form').attr('name') || element.closest('form').attr('class');
-		element.autocomplete('widget').addClass('form-identifier-' + thisFormIdentifier);
+		let thisFormIdentifier = $element.closest('form').attr('id') || $element.closest('form').attr('name') || $element.closest('form').attr('class');
+		$element.autocomplete('widget').addClass('form-identifier-' + thisFormIdentifier);
 	}
 };
 

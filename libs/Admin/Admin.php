@@ -2,6 +2,10 @@
 
 if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
+//This has to be done here because it has to be the first thing in the file and can't be conditionally loaded anymore because of the "use" token.
+require_once get_template_directory() . '/inc/vendor/plugin-update-checker/plugin-update-checker.php';
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+
 if ( !trait_exists('Admin') ){
 	require_once get_template_directory() . '/libs/Admin/Automation.php';
 	require_once get_template_directory() . '/libs/Admin/Dashboard.php';
@@ -1087,8 +1091,8 @@ if ( !trait_exists('Admin') ){
 			}
 
 			if ( current_user_can('update_themes') && is_child_theme() ){
-				require_once get_template_directory() . '/inc/vendor/plugin-update-checker/plugin-update-checker.php';
-				$theme_update_checker = Puc_v4_Factory::buildUpdateChecker(
+				//Can no longer conditionally require the PUC library here because it needs a "use" token which can only be done at the top of this file with no conditionals. https://github.com/YahnisElsts/plugin-update-checker/releases/tag/v5.0
+				$theme_update_checker = PucFactory::buildUpdateChecker(
 					'https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/nebula_theme.json',
 					get_template_directory() . '/functions.php',
 					'Nebula' //The filter hook above must match this
