@@ -371,6 +371,19 @@ nebula.loadAnimate = function($oThis){
 	}
 };
 
+//Get local time string with timezone offset
+nebula.localTimestamp = function(){ //Does not technically need to be exported anymore as it is only now used here in this file
+	var now = new Date();
+	var tzo = -now.getTimezoneOffset();
+	var dif = ( tzo >= 0 )? '+' : '-';
+	var pad = function(num){
+		var norm = Math.abs(Math.floor(num));
+		return (( norm < 10 )? '0' : '') + norm;
+	};
+
+	return Math.round(now/1000) + ' (' + now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds()) + '.' + pad(now.getMilliseconds()) + ' UTC' + dif + pad(tzo/60) + ':' + pad(tzo%60) + ')';
+};
+
 //Generate a unique ID that always begins with a letter to be safe in CSS selectors
 nebula.uniqueId = function(prefix='nuid', random=false){
 	const seconds = Date.now() * 1000 + Math.random() * 1000; //Convert the current time into seconds
@@ -422,6 +435,19 @@ nebula.once = function(fn, args, unique){
 		return false;
 	}
 };
+
+//I don't think this is needed because requestIdleCallback should only be called once per pageload, but preserving this here for a bit before I delete it.
+// nebula.idleOnce = function(fn, args, unique){
+// 	if ( typeof window.requestIdleCallback === 'function' ){ //@todo "Nebula" 0: Remove the requestIdleCallback condition when Safari supports it)
+// 		if ( !unique ){
+// 			unique = nebula.uniqueId();
+// 		}
+//
+// 		window.requestIdleCallback(function(){ //yolo
+// 			nebula.once(fn, args, unique);
+// 		});
+// 	}
+// };
 
 //Waits for events to finish before triggering
 //Passing immediate triggers the function on the leading edge (instead of the trailing edge).

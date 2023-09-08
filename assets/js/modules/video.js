@@ -348,8 +348,6 @@ nebula.addYoutubePlayer = function(id = false, element){
 			watchedPercent: 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
 			pausedYet: 0, //If this video has been paused yet by the user.
 		};
-
-		console.log('this video info:', nebula.videos[id]);
 	}
 };
 

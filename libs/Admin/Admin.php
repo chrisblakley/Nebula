@@ -48,7 +48,7 @@ if ( !trait_exists('Admin') ){
 				if ( current_user_can('edit_others_posts') && $this->allow_theme_update() ){
 					add_action('admin_init', array($this, 'theme_json'));
 					add_filter('puc_request_update_result_theme-Nebula', array($this, 'theme_update_version_store'), 10, 2); //This hook is found in UpdateChecker.php in the filterUpdateResult() function.
-					add_filter('site_transient_update_themes', array($this, 'force_nebula_theme_update'), 99, 1);
+					add_filter('site_transient_update_themes', array($this, 'force_nebula_theme_update'), 99, 1); //This is a core WP hook (not a plugin or library)
 				}
 			}
 
@@ -1104,6 +1104,10 @@ if ( !trait_exists('Admin') ){
 
 		//Force a re-install of the Nebula theme
 		public function force_nebula_theme_update($updates){
+			if ( empty($updates) ){ //If no updates are available at the time of checking, ignore it. This filter runs multiple times, so only need ones that includes updates.
+				return $updates;
+			}
+
 			if ( isset($this->super->get['force-nebula-theme-update']) && current_user_can('update_themes') && $this->is_nebula() && is_child_theme() ){
 				if ( empty(wp_cache_get('nebula_force_theme_update_log')) ){ //Only log this once per pageload
 					$parent_theme = wp_get_theme()->get('Template');

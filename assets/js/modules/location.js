@@ -46,7 +46,6 @@ nebula.googleAddressAutocompleteCallback = function(autocompleteInput, uniqueID 
 			event_category: 'Contact',
 			event_action: 'Autocomplete Address',
 			event_label: simplePlace.city + ', ' + simplePlace.state.abbr + ' ' + simplePlace.zip.code,
-			intent: 'Intent',
 			place: place,
 			simple_place: simplePlace
 		};

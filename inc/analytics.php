@@ -8,6 +8,7 @@
 <?php if ( nebula()->is_analytics_allowed() ): ?>
 	<?php nebula()->timer('Analytics (Include)'); ?>
 	<?php if ( nebula()->get_option('ga_tracking_id') ): //Universal Google Analytics //@todo "Nebula" 0: Remove after July 2023 ?>
+		<!-- Nebula GA (UA) -->
 		<script src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html(nebula()->get_option('ga_tracking_id')); ?>" async></script>
 		<script async>
 			window.dataLayer = window.dataLayer || [];
@@ -18,6 +19,7 @@
 	<?php endif; ?>
 
 	<?php if ( nebula()->get_option('ga_measurement_id') ): //Google Analytics ?>
+		<!-- Nebula GA4 -->
 		<script src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>" async></script>
 		<script async>
 			window.performance.mark('(Nebula) Analytics [Start]');
@@ -245,6 +247,7 @@
 <?php endif; ?>
 
 <?php if ( nebula()->get_option('gtm_id') ): //Google Tag Manager (can be used for more than just tracking) ?>
+	<!-- Nebula GTM -->
 	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -253,6 +256,7 @@
 <?php endif; ?>
 
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('google_ads_id') && !is_customize_preview() ): ?>
+	<!-- Nebula Google Ads -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo nebula()->get_option('google_ads_id'); ?>"></script>
 	<script>
 		window.dataLayer = window.dataLayer || [];
@@ -263,8 +267,8 @@
 <?php endif; ?>
 
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('facebook_custom_audience_pixel_id') && !is_customize_preview() ): //Facebook Custom Audience ?>
+	<!-- Nebula FB -->
 	<link rel="prefetch" href="//connect.facebook.net/en_US/fbevents.js" />
-
 	<script>
 		!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 		n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
@@ -280,6 +284,7 @@
 <?php endif; ?>
 
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('hubspot_portal') ): //Hubspot CRM ?>
+	<!-- Nebula Hubspot -->
 	<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/<?php echo esc_html(nebula()->get_option('hubspot_portal')); ?>.js"></script>
 	<script>
 		var _hsq = window._hsq = window._hsq || [];

@@ -2,6 +2,10 @@ window.performance.mark('(Nebula) Inside optimization.js (module)');
 
 //Cache DOM selectors
 nebula.cacheSelectors = function(){
+	if ( nebula?.dom && window.dataLayer ){
+		return false; //Already cached them
+	}
+
 	nebula.dom = nebula?.dom || {
 		document: jQuery(document),
 		window: jQuery(window),
@@ -16,127 +20,129 @@ nebula.cacheSelectors = function(){
 nebula.performanceMetrics = async function(){
 	if ( window.performance?.timing && typeof window.requestIdleCallback === 'function' ){ //@todo "Nebula" 0: Remove the requestIdleCallback condition when Safari supports it)
 		window.requestIdleCallback(function(){
-			window.performance.mark('(Nebula) CPU Idle');
-			window.performance.measure('(Nebula) Until CPU Idle', 'navigationStart', '(Nebula) CPU Idle');
+			nebula.once(function(){ //Just to be safe that this only triggers once per page load
+				window.performance.mark('(Nebula) CPU Idle');
+				window.performance.measure('(Nebula) Until CPU Idle', 'navigationStart', '(Nebula) CPU Idle');
 
-			let timingCalcuations = {};
+				let timingCalcuations = {};
 
-			//Check additional timings and output to the console when requested or for developers
-			if ( nebula.get('timings') || nebula.user?.staff === 'developer' ){ //Only available to Developers or with ?timings
-				//Add custom JS measurements too
-				performance.getEntriesByType('mark').forEach(function(mark){
-					timingCalcuations[mark.name] = {
-						type: 'Mark',
-						start: Math.round(mark.startTime),
-						duration: false
-					};
-				});
-				performance.getEntriesByType('measure').forEach(function(measurement){
-					timingCalcuations[measurement.name] = {
-						type: 'Measurement',
-						start: Math.round(measurement.startTime),
-						duration: Math.round(measurement.duration)
-					};
-				});
-
-				let clientTimings = {};
-				jQuery.each(timingCalcuations, function(name, timings){ //This is an object (not an array)
-					if ( !isNaN(timings.start) && timings.start > -2 ){
-						clientTimings[name] = {
-							type: timings.type,
-							start: timings.start,
-							duration: ( timings.duration )? timings.duration : -1 //If we have a duration, use it
+				//Check additional timings and output to the console when requested or for developers
+				if ( nebula.get('timings') || nebula.user?.staff === 'developer' ){ //Only available to Developers or with ?timings
+					//Add custom JS measurements too
+					performance.getEntriesByType('mark').forEach(function(mark){
+						timingCalcuations[mark.name] = {
+							type: 'Mark',
+							start: Math.round(mark.startTime),
+							duration: false
 						};
+					});
+					performance.getEntriesByType('measure').forEach(function(measurement){
+						timingCalcuations[measurement.name] = {
+							type: 'Measurement',
+							start: Math.round(measurement.startTime),
+							duration: Math.round(measurement.duration)
+						};
+					});
+
+					let clientTimings = {};
+					jQuery.each(timingCalcuations, function(name, timings){ //This is an object (not an array)
+						if ( !isNaN(timings.start) && timings.start > -2 ){
+							clientTimings[name] = {
+								type: timings.type,
+								start: timings.start,
+								duration: ( timings.duration )? timings.duration : -1 //If we have a duration, use it
+							};
+						}
+					});
+
+					console.groupCollapsed('Performance');
+					console.groupCollapsed('Marks & Measurements');
+					console.table(jQuery.extend(nebula.site.timings, clientTimings)); //Performance Timings
+					console.groupEnd(); //End Measurements
+
+					console.groupCollapsed('Resources');
+					let resourceCalcuations = {};
+					let renderBlockingResourceCount = 0;
+					performance.getEntriesByType('resource').forEach(function(resource){
+						resourceCalcuations[resource.name] = {
+							type: resource.initiatorType, //Ex: link, fetch, script, css, img, other
+							protocol: resource.nextHopProtocol, //Ex: h2
+							start: Math.round(resource.fetchStart), //How many ms elapsed before this resource request started
+							duration: Math.round(resource.duration), //How many ms did it take to load this resource
+							renderBlocking: null, //Start empty and we will fill it below
+						};
+
+						//Check if this resource is render blocking
+						if ( resource?.renderBlockingStatus ){ //Chrome 107+
+							resourceCalcuations[resource.name].renderBlocking = 'Blocking';
+							renderBlockingResourceCount++; //Increment the total count
+						}
+					});
+					console.table(resourceCalcuations); //Resource Timings
+					if ( renderBlockingResourceCount >= 10 ){
+						console.warn('Many render blocking resources:', renderBlockingResourceCount, 'https://web.dev/render-blocking-resources/');
 					}
-				});
+					console.groupEnd(); //End Resources
 
-				console.groupCollapsed('Performance');
-				console.groupCollapsed('Marks & Measurements');
-				console.table(jQuery.extend(nebula.site.timings, clientTimings)); //Performance Timings
-				console.groupEnd(); //End Measurements
+					//Monitor Cumulative Layout Shift (CLS) with the Layout Instability API
+					//This runs after the initial task has finished- which means it outputs after the Performance console group has closed... This is also an observer, so will log to the console anytime a layout shift happens.
+					if ( 'PerformanceObserver' in window ){
+						let cls = 0;
+						let clsCalculations = {};
+						new PerformanceObserver(function(list){
+							for ( let entry of list.getEntries() ){
+								if ( !entry.hadRecentInput ){
+									cls += entry.value;
 
-				console.groupCollapsed('Resources');
-				let resourceCalcuations = {};
-				let renderBlockingResourceCount = 0;
-				performance.getEntriesByType('resource').forEach(function(resource){
-					resourceCalcuations[resource.name] = {
-						type: resource.initiatorType, //Ex: link, fetch, script, css, img, other
-						protocol: resource.nextHopProtocol, //Ex: h2
-						start: Math.round(resource.fetchStart), //How many ms elapsed before this resource request started
-						duration: Math.round(resource.duration), //How many ms did it take to load this resource
-						renderBlocking: null, //Start empty and we will fill it below
-					};
+									for ( let source of entry.sources ){
+										if ( source?.node ){
+											if ( !jQuery(source.node.parentElement).parents('#wpadminbar').length && !jQuery(source.node.parentElement).parents('#audit-results').length ){ //Ignore WP admin bar and Nebula audit results section
+												var node = ( source.node )? nebula.domTreeToString(jQuery(source.node.parentElement)) : 'Unknown (' + Math.floor(Math.random()*99999)+10000 + ')'; //Sometimes the parentElement is null
 
-					//Check if this resource is render blocking
-					if ( resource?.renderBlockingStatus ){ //Chrome 107+
-						resourceCalcuations[resource.name].renderBlocking = 'Blocking';
-						renderBlockingResourceCount++; //Increment the total count
-					}
-				});
-				console.table(resourceCalcuations); //Resource Timings
-				if ( renderBlockingResourceCount >= 10 ){
-					console.warn('Many render blocking resources:', renderBlockingResourceCount, 'https://web.dev/render-blocking-resources/');
-				}
-				console.groupEnd(); //End Resources
-
-				//Monitor Cumulative Layout Shift (CLS) with the Layout Instability API
-				//This runs after the initial task has finished- which means it outputs after the Performance console group has closed... This is also an observer, so will log to the console anytime a layout shift happens.
-				if ( 'PerformanceObserver' in window ){
-					let cls = 0;
-					let clsCalculations = {};
-					new PerformanceObserver(function(list){
-						for ( let entry of list.getEntries() ){
-							if ( !entry.hadRecentInput ){
-								cls += entry.value;
-
-								for ( let source of entry.sources ){
-									if ( source?.node ){
-										if ( !jQuery(source.node.parentElement).parents('#wpadminbar').length && !jQuery(source.node.parentElement).parents('#audit-results').length ){ //Ignore WP admin bar and Nebula audit results section
-											var node = ( source.node )? nebula.domTreeToString(jQuery(source.node.parentElement)) : 'Unknown (' + Math.floor(Math.random()*99999)+10000 + ')'; //Sometimes the parentElement is null
-
-											clsCalculations[node] = {
-												node: source.node,
-												parent: source.node?.parentElement,
-												entryStart: Math.round(entry.startTime),
-												entryCLS: entry.value,
-												totalCLS: cls,
-											};
+												clsCalculations[node] = {
+													node: source.node,
+													parent: source.node?.parentElement,
+													entryStart: Math.round(entry.startTime),
+													entryCLS: entry.value,
+													totalCLS: cls,
+												};
+											}
 										}
 									}
 								}
 							}
-						}
 
-						//Only output this once on load to avoid cluttering the console
-						nebula.once(function(){
-							console.groupCollapsed('Cumulative Layout Shift (CLS)');
-							console.table(clsCalculations); //CLS Values
-							console.groupEnd(); //End CLS
-						}, 'cls console table');
+							//Only output this once on load to avoid cluttering the console
+							nebula.once(function(){
+								console.groupCollapsed('Cumulative Layout Shift (CLS)');
+								console.table(clsCalculations); //CLS Values
+								console.groupEnd(); //End CLS
+							}, 'cls console table');
 
-						//Log the total if it is less than nominal
-						if ( nebula.screen.isFrontend && cls > 0.1 ){ //Anything over 0.1 needs improvement
-							console.warn('Significant Cumulative Layout Shift (CLS):', cls, 'https://web.dev/cls/');
-						}
-					}).observe({type: 'layout-shift', buffered: true});
+							//Log the total if it is less than nominal
+							if ( nebula.screen.isFrontend && cls > 0.1 ){ //Anything over 0.1 needs improvement
+								console.warn('Significant Cumulative Layout Shift (CLS):', cls, 'https://web.dev/cls/');
+							}
+						}).observe({type: 'layout-shift', buffered: true});
+					}
+
+					console.groupEnd(); //End Performance (Parent Group)
 				}
 
-				console.groupEnd(); //End Performance (Parent Group)
-			}
-
-			//Report certain timings to Google Analytics
-			let navigationPerformanceEntry = performance.getEntriesByType('navigation')[0]; //There is typically only ever 1 in this, but we always just want the first one
-			if ( navigationPerformanceEntry ){
-				gtag('event', 'load_timings', { //These are sent in seconds (not milliseconds) so create Custom Metrics with the appropriate units
-					session_page_type: ( nebula.isLandingPage() )? 'Landing Page' : 'Subsequent Page',
-					server_response: Math.round(navigationPerformanceEntry.responseStart)/1000, //@todo "Nebula" 0: These aren't coming into GA4 as expected...
-					dom_interactive: Math.round(navigationPerformanceEntry.domInteractive)/1000,
-					dom_complete: Math.round(navigationPerformanceEntry.domComplete)/1000,
-					fully_loaded: Math.round(navigationPerformanceEntry.duration)/1000,
-					link: window.location.href, //Using "link" so additional custom dimensions are not needed
-					non_interaction: true
-				});
-			}
+				//Report certain timings to Google Analytics
+				let navigationPerformanceEntry = performance.getEntriesByType('navigation')[0]; //There is typically only ever 1 in this, but we always just want the first one
+				if ( navigationPerformanceEntry ){
+					gtag('event', 'load_timings', { //These are sent in seconds (not milliseconds) so create Custom Metrics with the appropriate units
+						session_page_type: ( nebula.isLandingPage() )? 'Landing Page' : 'Subsequent Page',
+						server_response: Math.round(navigationPerformanceEntry.responseStart)/1000, //@todo "Nebula" 0: These aren't coming into GA4 as expected...
+						dom_interactive: Math.round(navigationPerformanceEntry.domInteractive)/1000,
+						dom_complete: Math.round(navigationPerformanceEntry.domComplete)/1000,
+						fully_loaded: Math.round(navigationPerformanceEntry.duration)/1000,
+						link: window.location.href, //Using "link" so additional custom dimensions are not needed
+						non_interaction: true
+					});
+				}
+			}, 'performance idle');
 		});
 	}
 };
@@ -159,7 +165,7 @@ nebula.workbox = async function(){
 			window.performance.mark('(Nebula) SW Registration [Start]');
 
 			//Dynamically import Workbox-Window
-			import('https://cdn.jsdelivr.net/npm/workbox-window@6.5.4/build/workbox-window.prod.mjs').then(async function(module){
+			import('https://cdn.jsdelivr.net/npm/workbox-window@7.0.0/build/workbox-window.prod.mjs').then(async function(module){
 				const Workbox = module.Workbox;
 				const workbox = new Workbox(nebula.site.sw_url);
 

@@ -34,7 +34,6 @@ nebula.socialSharing = async function(){
 				event_name: 'share',
 				event_category: 'Social',
 				event_action: 'Share',
-				intent: 'Intent',
 				network: 'Facebook',
 				url: window.location.href,
 				title: document.title
@@ -57,7 +56,6 @@ nebula.socialSharing = async function(){
 				event_name: 'share',
 				event_category: 'Social',
 				event_action: 'Share',
-				intent: 'Intent',
 				network: 'Twitter',
 				url: window.location.href,
 				title: document.title
@@ -80,7 +78,6 @@ nebula.socialSharing = async function(){
 				event_name: 'share',
 				event_category: 'Social',
 				event_action: 'Share',
-				intent: 'Intent',
 				network: 'LinkedIn',
 				url: window.location.href,
 				title: document.title
@@ -103,7 +100,6 @@ nebula.socialSharing = async function(){
 				event_name: 'share',
 				event_category: 'Social',
 				event_action: 'Share',
-				intent: 'Intent',
 				network: 'Pinterest',
 				url: window.location.href,
 				title: document.title
@@ -130,7 +126,6 @@ nebula.socialSharing = async function(){
 				event_name: 'share',
 				event_category: 'Social',
 				event_action: 'Share',
-				intent: 'Intent',
 				network: 'Email',
 				url: window.location.href,
 				title: document.title
@@ -149,7 +144,6 @@ nebula.socialSharing = async function(){
 					event_name: 'share',
 					event_category: 'Social',
 					event_action: 'Share',
-					intent: 'Intent',
 					network: 'Share API (Drawer Opened)',
 					url: window.location.href,
 					title: document.title,
@@ -171,7 +165,6 @@ nebula.socialSharing = async function(){
 						event_name: 'share',
 						event_category: 'Social',
 						event_action: 'Share',
-						intent: 'Intent',
 						network: 'Share API (Success)',
 						url: window.location.href,
 						title: document.title,

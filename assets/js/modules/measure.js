@@ -1,25 +1,7 @@
 window.performance.mark('(Nebula) Inside analytics.js (module)');
 
-//Generate a unique ID for hits and windows (used in /inc/analytics.php)
-export function uuid(a){ //Does not technically need to be exported anymore as it is only now used here in this file
-	return a ? (a^Math.random()*16 >> a/4).toString(16) : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, uuid);
-}
-
-//Get local time string with timezone offset (used in /inc/analytics.php)
-export function localTimestamp(){ //Does not technically need to be exported anymore as it is only now used here in this file
-	var now = new Date();
-	var tzo = -now.getTimezoneOffset();
-	var dif = ( tzo >= 0 )? '+' : '-';
-	var pad = function(num){
-		var norm = Math.abs(Math.floor(num));
-		return (( norm < 10 )? '0' : '') + norm;
-	};
-
-	return Math.round(now/1000) + ' (' + now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds()) + '.' + pad(now.getMilliseconds()) + ' UTC' + dif + pad(tzo/60) + ':' + pad(tzo%60) + ')';
-}
-
 //Set a custom dimension in both GA and MS Clarity (used in /inc/analytics.php)
-export function setDimension(name, value){ //Does not technically need to be exported anymore as it is only now used here in this file
+nebula.setDimension = function(name, value){ //Does not technically need to be exported anymore as it is only now used here in this file
 	//Google Analytics
 	if ( typeof gtag === 'function' && name ){
 		gtag('set', 'user_properties', {
@@ -34,7 +16,7 @@ export function setDimension(name, value){ //Does not technically need to be exp
 
 	//Others
 	document.dispatchEvent(new CustomEvent('nebula_dimension', {detail: {'name': name, 'value': value}})); //Allow this dimension to be sent to other platforms from outside Nebula
-}
+};
 
 //Prep an object of dimensions that can be included in any subsequent event sends to GA
 nebula.allHitDimensions = function(){
@@ -48,9 +30,9 @@ nebula.allHitDimensions = function(){
 	// dimensions.query_string = window.location.search;
 	// dimensions.network_connection = ( navigator.onLine )? 'Online' : 'Offline';
 	// dimensions.visibility_state = document.visibilityState;
-	// dimensions.local_timestamp = localTimestamp();
+	// dimensions.local_timestamp = nebula.localTimestamp();
 	// dimensions.hit_time = String(new Date);
-	// dimensions.hit_id = uuid(); //Give each hit a unique ID
+	// dimensions.hit_id = nebula.uniqueId(); //Give each hit a unique ID
 
 	//Bootstrap Breakpoint
 	// if ( window.matchMedia("(min-width: 2048px)").matches ){
@@ -287,14 +269,13 @@ nebula.eventTracking = async function(){
 
 		//Button Clicks
 		let nebulaButtonSelector = wp.hooks.applyFilters('nebulaButtonSelectors', 'button, .button, .btn, [role="button"], a.wp-block-button__link, .wp-element-button, .woocommerce-button, .hs-button'); //Allow child theme or plugins to add button selectors without needing to override/duplicate this function
-		nebula.dom.document.on('pointerdown', nebulaButtonSelector, function(e){
+		nebula.dom.document.on('click', nebulaButtonSelector, function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'button_click',
 				event_category: 'Button Click', //@todo "Nebula" 0: Remove after July 2023
 				event_action: (jQuery(this).val() || jQuery(this).attr('value') || jQuery(this).text() || jQuery(this).attr('title') || '(Unknown)').trim(), //@todo "Nebula" 0: Remove after July 2023
 				event_label: jQuery(this).attr('href') || jQuery(this).attr('title') || '(Unknown)',
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				text: (jQuery(this).val() || jQuery(this).attr('value') || jQuery(this).text() || jQuery(this).attr('title') || '(Unknown)').trim(),
 				link: jQuery(this).attr('href') || jQuery(this).attr('title') || '(Unknown)'
 			};
@@ -439,14 +420,13 @@ nebula.eventTracking = async function(){
 		//Notable File Downloads
 		let notableFileExtensions = wp.hooks.applyFilters('nebulaNotableFiles', ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv', 'zip', 'zipx', 'rar', 'gz', 'tar', 'txt', 'rtf', 'ics', 'vcard']);
 		jQuery.each(notableFileExtensions, function(index, extension){
-			jQuery("a[href$='." + extension + "' i]").on('pointerdown', function(e){ //Cannot defer case insensitive attribute selectors in jQuery (or else you will get an "unrecognized expression" error)
+			jQuery("a[href$='." + extension + "' i]").on('click', function(e){ //Cannot defer case insensitive attribute selectors in jQuery (or else you will get an "unrecognized expression" error)
 				let thisEvent = {
 					event: e,
 					event_name: 'nebula_file_download', //Note: This is a default GA4 event
 					event_category: 'File Download', //@todo "Nebula" 0: Remove after July 2023
 					event_action: extension, //@todo "Nebula" 0: Remove after July 2023
 					event_label: jQuery(this).attr('href').substr(jQuery(this).attr('href').lastIndexOf('/')+1), //@todo "Nebula" 0: Remove after July 2023
-					intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 					text: jQuery(this).text().trim(),
 					file_extension: extension,
 					file_name: jQuery(this).attr('href').substr(jQuery(this).attr('href').lastIndexOf('/')+1),
@@ -462,14 +442,13 @@ nebula.eventTracking = async function(){
 		});
 
 		//Notable Downloads
-		nebula.dom.document.on('pointerdown', '.notable a, a.notable', function(e){
+		nebula.dom.document.on('click', '.notable a, a.notable', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'notable_file_download',
 				event_category: 'File Download', //@todo "Nebula" 0: Remove after July 2023
 				event_label: jQuery(this).attr('href').trim(), //@todo "Nebula" 0: Remove after July 2023
 				event_action: 'Notable',
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				file_path: jQuery(this).attr('href').trim(),
 				text: jQuery(this).text(),
 				link: jQuery(this).attr('href')
@@ -479,7 +458,7 @@ nebula.eventTracking = async function(){
 				thisEvent.file_name = file_path.substr(file_path.lastIndexOf('/')+1);
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_file_download'}));
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'notable_file_download'}));
 				nebula.fbq('track', 'ViewContent', {content_name: thisEvent.file_name});
 				nebula.clarity('set', thisEvent.event_category, thisEvent.file_name);
 				nebula.crm('event', 'Notable File Download');
@@ -498,7 +477,6 @@ nebula.eventTracking = async function(){
 				event_label: jQuery(this).find('input[name="s"]').val().toLowerCase().trim(), //@todo "Nebula" 0: Remove after July 2023
 				type: 'Internal Search',
 				event_action: 'Submit',
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				query: jQuery(this).find('input[name="s"]').val().toLowerCase().trim()
 			};
 
@@ -511,14 +489,13 @@ nebula.eventTracking = async function(){
 		});
 
 		//Search results link clicks
-		nebula.dom.document.on('pointerdown', '#searchresults a', function(e){
+		nebula.dom.document.on('click', '#searchresults a', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'serp_click',
 				event_category: 'Internal Search', //@todo "Nebula" 0: Remove after July 2023
 				event_action: 'SERP Click', //@todo "Nebula" 0: Remove after July 2023
 				event_label: jQuery(this).attr('href'), //@todo "Nebula" 0: Remove after July 2023
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				text: jQuery(this).text(),
 				link: jQuery(this).attr('href'),
 			};
@@ -544,7 +521,7 @@ nebula.eventTracking = async function(){
 		};
 
 		//Suggested pages on 404 results
-		nebula.dom.document.on('pointerdown', 'a.internal-suggestion', function(e){
+		nebula.dom.document.on('click', 'a.internal-suggestion', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'page_suggestion_click',
@@ -552,7 +529,6 @@ nebula.eventTracking = async function(){
 				event_action: 'Internal', //@todo "Nebula" 0: Remove after July 2023
 				event_label: jQuery(this).text(), //@todo "Nebula" 0: Remove after July 2023
 				type: 'Internal',
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				text: jQuery(this).text(),
 			};
 
@@ -665,7 +641,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Mailto link tracking
-		nebula.dom.document.on('pointerdown', 'a[href^="mailto"]', function(e){
+		nebula.dom.document.on('click', 'a[href^="mailto"]', function(e){
 			let emailAddress = jQuery(this).attr('href').replace('mailto:', '');
 			let emailDomain = emailAddress.split('@')[1]; //Get everything after the @
 			let anonymizedEmail = nebula.anonymizeEmail(emailAddress); //Mask the email with asterisks
@@ -677,7 +653,6 @@ nebula.eventTracking = async function(){
 				event_action: 'Mailto', //@todo "Nebula" 0: Remove after July 2023
 				type: 'Mailto',
 				event_label: ( emailAddress.toLowerCase().includes(window.location.hostname) )? emailAddress : anonymizedEmail, //If the email matches the website use it, otherwise use the anonymized email //@todo "Nebula" 0: Remove after July 2023
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				email_address: ( emailAddress.toLowerCase().includes(window.location.hostname) )? emailAddress : anonymizedEmail,
 				email_domain: emailDomain,
 			};
@@ -696,7 +671,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Telephone link tracking
-		nebula.dom.document.on('pointerdown', 'a[href^="tel"]', function(e){
+		nebula.dom.document.on('click', 'a[href^="tel"]', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'click_to_call',
@@ -704,7 +679,6 @@ nebula.eventTracking = async function(){
 				event_action: 'Click-to-Call', //@todo "Nebula" 0: Remove after July 2023
 				event_label: jQuery(this).attr('href').replace('tel:', ''), //@todo "Nebula" 0: Remove after July 2023
 				type: 'Click-to-Call',
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				phone_number: jQuery(this).attr('href').replace('tel:', '')
 			};
 
@@ -722,7 +696,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//SMS link tracking
-		nebula.dom.document.on('pointerdown', 'a[href^="sms"]', function(e){
+		nebula.dom.document.on('click', 'a[href^="sms"]', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'sms',
@@ -730,7 +704,6 @@ nebula.eventTracking = async function(){
 				event_action: 'SMS', //@todo "Nebula" 0: Remove after July 2023
 				event_label: jQuery(this).attr('href').replace('sms:', ''), //@todo "Nebula" 0: Remove after July 2023
 				type: 'SMS',
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				phone_number: jQuery(this).attr('href').replace('sms:', '')
 			};
 
@@ -750,7 +723,7 @@ nebula.eventTracking = async function(){
 		//Street Address click //@todo "Nebula" 0: How to detect when a user clicks an address that is not linked, but mobile opens the map anyway? What about when it *is* linked?
 
 		//Utility Navigation Menu
-		nebula.dom.document.on('pointerdown', '#utility-nav ul.menu a', function(e){
+		nebula.dom.document.on('click', '#utility-nav ul.menu a', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'menu_click',
@@ -758,7 +731,6 @@ nebula.eventTracking = async function(){
 				event_action: 'Utility Menu', //@todo "Nebula" 0: Remove after July 2023
 				event_label: jQuery(this).text().trim(), //@todo "Nebula" 0: Remove after July 2023
 				menu: 'Utility Menu',
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				text: jQuery(this).text().trim()
 			};
 
@@ -768,7 +740,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Primary Navigation Menu
-		nebula.dom.document.on('pointerdown', '#primary-nav ul.menu a', function(e){
+		nebula.dom.document.on('click', '#primary-nav ul.menu a', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'menu_click',
@@ -776,7 +748,6 @@ nebula.eventTracking = async function(){
 				event_action: 'Primary Menu', //@todo "Nebula" 0: Remove after July 2023
 				event_label: jQuery(this).text().trim(), //@todo "Nebula" 0: Remove after July 2023
 				menu: 'Primary Menu',
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				text: jQuery(this).text().trim()
 			};
 
@@ -822,7 +793,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Offcanvas Navigation Link
-		nebula.dom.document.on('pointerdown', '.offcanvas-body a', function(e){
+		nebula.dom.document.on('click', '.offcanvas-body a', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'menu_click',
@@ -830,7 +801,6 @@ nebula.eventTracking = async function(){
 				event_action: 'Offcanvas Menu', //@todo "Nebula" 0: Remove after July 2023
 				event_label: jQuery(this).text().trim(), //@todo "Nebula" 0: Remove after July 2023
 				menu: 'Offcanvas Menu (' + e.target.id + ')',
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				text: jQuery(this).text().trim()
 			};
 
@@ -847,7 +817,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Breadcrumb Navigation
-		nebula.dom.document.on('pointerdown', 'ol.nebula-breadcrumbs a', function(e){
+		nebula.dom.document.on('click', 'ol.nebula-breadcrumbs a', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'menu_click',
@@ -855,7 +825,6 @@ nebula.eventTracking = async function(){
 				event_action: 'Breadcrumbs', //@todo "Nebula" 0: Remove after July 2023
 				event_label: jQuery(this).text().trim(), //@todo "Nebula" 0: Remove after July 2023
 				menu: 'Breadcrumbs',
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				text: jQuery(this).text().trim()
 			};
 
@@ -865,7 +834,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Sidebar Navigation Menu
-		nebula.dom.document.on('pointerdown', '#sidebar-section ul.menu a', function(e){
+		nebula.dom.document.on('click', '#sidebar-section ul.menu a', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'menu_click',
@@ -873,7 +842,6 @@ nebula.eventTracking = async function(){
 				event_action: 'Sidebar Menu', //@todo "Nebula" 0: Remove after July 2023
 				event_label: jQuery(this).text().trim(), //@todo "Nebula" 0: Remove after July 2023
 				menu: 'Sidebar Menu',
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				text: jQuery(this).text().trim()
 			};
 
@@ -883,7 +851,7 @@ nebula.eventTracking = async function(){
 		});
 
 		//Footer Navigation Menu
-		nebula.dom.document.on('pointerdown', '#powerfooter a', function(e){
+		nebula.dom.document.on('click', '#powerfooter a', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'menu_click',
@@ -891,7 +859,6 @@ nebula.eventTracking = async function(){
 				event_action: 'Footer Menu', //@todo "Nebula" 0: Remove after July 2023
 				event_label: jQuery(this).text().trim(), //@todo "Nebula" 0: Remove after July 2023
 				menu: 'Footer Menu',
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				text: jQuery(this).text().trim()
 			};
 
@@ -937,7 +904,6 @@ nebula.eventTracking = async function(){
 									outbound: true,
 									subdomain: href.includes('.' + domain), //Boolean if this is a subdomain of the primary domain
 									text: linkElement.text().trim(),
-									intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 									link: href
 								};
 
@@ -952,14 +918,13 @@ nebula.eventTracking = async function(){
 		}, false);
 
 		//Nebula Cookie Notification link clicks
-		nebula.dom.document.on('pointerdown', '#nebula-cookie-notification a', function(e){
+		nebula.dom.document.on('click', '#nebula-cookie-notification a', function(e){
 			let thisEvent = {
 				event: e,
 				event_name: 'cookie_notification',
 				event_category: 'Cookie Notification', //@todo "Nebula" 0: Remove after July 2023
 				event_action: 'Click',
 				event_label: jQuery(this).attr('href'), //@todo "Nebula" 0: Remove after July 2023
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				text: jQuery(this).text().trim(),
 				link: jQuery(this).attr('href'),
 				non_interaction: true //Non-interaction because the user is not interacting with any content yet so this should not influence the bounce rate
@@ -1148,7 +1113,6 @@ nebula.eventTracking = async function(){
 				event_action: 'Click', //@todo "Nebula" 0: Remove after July 2023
 				event_label: jQuery(this).text().trim(), //@todo "Nebula" 0: Remove after July 2023
 				state: 'Click',
-				intent: ( e.which >= 2 )? 'Intent' : 'Explicit',
 				text: jQuery(this).text().trim(),
 				non_interaction: true //Non-interaction because these links do not indicate engagement
 			};
@@ -1231,7 +1195,6 @@ nebula.eventTracking = async function(){
 						event_action: 'Email (Copy)', //@todo "Nebula" 0: Remove after July 2023
 						event_label: nebula.anonymizeEmail(selection), //@todo "Nebula" 0: Remove after July 2023
 						type: 'Email (Copy)',
-						intent: 'Intent',
 						email_address: nebula.anonymizeEmail(selection), //Mask the email with asterisks,
 						words: words,
 						word_count: wordsLength
@@ -1253,7 +1216,6 @@ nebula.eventTracking = async function(){
 						event_action: 'Street Address (Copy)', //@todo "Nebula" 0: Remove after July 2023
 						event_label: selection, //@todo "Nebula" 0: Remove after July 2023
 						type: 'Street Address (Copy)',
-						intent: 'Intent',
 						address: selection,
 						words: words,
 						word_count: wordsLength
@@ -1275,7 +1237,6 @@ nebula.eventTracking = async function(){
 							event_action: 'Phone (Copy)', //@todo "Nebula" 0: Remove after July 2023
 							event_label: selection, //@todo "Nebula" 0: Remove after July 2023
 							type: 'Phone (Copy)',
-							intent: 'Intent',
 							phone_number: selection,
 							words: words,
 							word_count: wordsLength
@@ -1298,7 +1259,6 @@ nebula.eventTracking = async function(){
 					event_name: 'copy_text',
 					event_category: 'Copied Text',
 					event_action: 'Copy',
-					intent: 'Intent',
 					selection: selection,
 					words: words,
 					word_count: wordsLength
@@ -1406,7 +1366,6 @@ nebula.eventTracking = async function(){
 				event_label: 'User triggered print via ' + trigger, //@todo "Nebula" 0: Remove after July 2023
 				event_action: action,
 				description: 'User triggered print via ' + trigger,
-				intent: 'Intent'
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1915,7 +1874,7 @@ nebula.crmForm = async function(formID){
 	jQuery('form [class*="crm-"]').each(function(){
 		if ( jQuery(this).val().trim().length ){
 			if ( jQuery(this).attr('class').includes('crm-notable_poi') ){
-				setDimension('notable_poi', jQuery('.notable-poi').val());
+				nebula.setDimension('notable_poi', jQuery('.notable-poi').val());
 			}
 
 			let cat = (/crm-([a-z\_]+)/g).exec(jQuery(this).attr('class'));
