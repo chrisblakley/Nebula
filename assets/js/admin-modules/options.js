@@ -200,7 +200,7 @@ nebula.checkDependents = function(inputObject){
 			//The dependent-and attribute must have ALL checked
 			jQuery('[dependent-and~=' + inputObject.attr('id') + ']').each(function(){
 				var $oThis = jQuery(this);
-				var dependentOrs = oThis.attr('dependent-and').split(' ');
+				var dependentOrs = $oThis.attr('dependent-and').split(' ');
 				var totalDependents = dependentAnds.length;
 				var dependentsChecked = 0;
 				jQuery.each(dependentAnds, function(){
@@ -220,7 +220,7 @@ nebula.checkDependents = function(inputObject){
 			//The dependent-or attribute can have ANY checked
 			jQuery('[dependent-or~=' + inputObject.attr('id') + ']').each(function(){
 				var $oThis = jQuery(this);
-				var dependentOrs = oThis.attr('dependent-or').split(' ');
+				var dependentOrs = $oThis.attr('dependent-or').split(' ');
 				var totalDependents = dependentOrs.length;
 				var dependentsUnchecked = 0;
 				jQuery.each(dependentOrs, function(){

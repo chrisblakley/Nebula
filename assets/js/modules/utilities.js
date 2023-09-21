@@ -182,14 +182,14 @@ nebula.errorMitigation = function(){
 				}
 			}).catch(function(error){
 				gtag('event', 'Exception', {
-					description: '(JS) Broken Image: ' + imagePath,
+					message: '(JS) Broken Image: ' + imagePath,
 					fatal: false
 				});
 				nebula.crm?.('event', 'Broken Image'); //May not be defined if analytics is not active so using optional chaining on the execution of this function
 			});
 		} else {
 			gtag('event', 'Exception', {
-				description: '(JS) Broken Image: ' + imagePath,
+				message: '(JS) Broken Image: ' + imagePath,
 				fatal: false
 			});
 			nebula.crm?.('event', 'Broken Image'); //May not be defined if analytics is not active so using optional chaining on the execution of this function
@@ -914,7 +914,7 @@ nebula.desktopNotification = function(title, message = false, clickCallback, sho
 		if ( errorCallback ){
 			instance.onerror = function(){
 				gtag('event', 'Exception', {
-					description: '(JS) Desktop Notification error',
+					message: '(JS) Desktop Notification error',
 					fatal: false
 				});
 				errorCallback();

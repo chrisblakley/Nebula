@@ -177,7 +177,7 @@ nebula.socialSharing = async function(){
 					nebula.createCookie('shareapi', true);
 				}).catch(function(error){ //This can happen on iOS when the user closes the drawer without sharing
 					gtag('event', 'exception', {
-						description: '(JS) Share API Error: ' + error,
+						message: '(JS) Share API Error: ' + error,
 						fatal: false
 					});
 					$oThis.addClass('error').html(originalText);

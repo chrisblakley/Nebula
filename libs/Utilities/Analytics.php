@@ -151,7 +151,7 @@ if ( !trait_exists('Analytics') ){
 				if ( preg_match('/themes\/Nebula-?(main|master|parent|\d+\.\d+)?\//i', $file) && !strpos(strtolower($file), 'scssphp') ){ //If the error is in Nebula parent (and not a Sass compile error) log it for continued improvement of Nebula itself //Remove "master" after a period of time (Maybe January 2021) //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 					$this->usage('exception', array(
 						'event_category' => 'PHP Fatal Error',
-						'description' => '(PHP) ' . $message . ' on line ' . $error['line'] . ' in ' . $file,
+						'message' => '(PHP) ' . $message . ' on line ' . $error['line'] . ' in ' . $file,
 						'fatal' => true,
 						'permalink' => (( isset($this->super->server['HTTPS']) )? 'https' : 'http') . '://' . $this->super->server['HTTP_HOST'] . $this->super->server['REQUEST_URI']
 					));
@@ -167,7 +167,7 @@ if ( !trait_exists('Analytics') ){
 			if ( isset($override) ){return;}
 
 			$event_parameters = array(
-				'description' => $message,
+				'message' => $message,
 				'fatal' => $fatal,
 				'page_title' => 'Page Not Found'
 			);

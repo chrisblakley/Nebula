@@ -417,7 +417,7 @@ nebula.pre = async function(){
 				}, 1500);
 			}).catch(function(error){ //This can happen if the user denies clipboard permissions
 				gtag('event', 'Exception', { //Report the error to Google Analytics to log it
-					description: '(JS) Clipboard API error: ' + error,
+					message: '(JS) Clipboard API error: ' + error,
 					fatal: false
 				});
 
@@ -483,7 +483,7 @@ nebula.help = function(message, path, usage=false){
 
 	//console.error('📎 [Nebula Help]', message, 'Docs: ' + url); //Show the message to the developer in the console. Disabled to reduce console clutter.
 	gtag('event', 'Exception', { //Report the error to Google Analytics to log it
-		description: '(JS) ' + message,
+		message: '(JS) ' + message,
 		fatal: false
 	});
 

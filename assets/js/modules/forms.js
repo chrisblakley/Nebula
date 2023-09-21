@@ -166,7 +166,7 @@ nebula.cf7Functions = async function(){
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 		} catch {
 			gtag('event', 'exception', {
-				description: '(JS) CF7 Catch (cf7 HTML form submit): ' + error,
+				message: '(JS) CF7 Catch (cf7 HTML form submit): ' + error,
 				fatal: false
 			});
 			nebula.usage('CF7 (HTML) Catch: ' + error);
@@ -208,7 +208,7 @@ nebula.cf7Functions = async function(){
 			jQuery('#cf7-privacy-acceptance').trigger('change'); //Until CF7 has a native invalid indicator for the privacy acceptance checkbox, force the Nebula validator here
 		} catch(error){
 			gtag('event', 'exception', {
-				description: '(JS) CF7 Catch (wpcf7submit): ' + error,
+				message: '(JS) CF7 Catch (wpcf7submit): ' + error,
 				fatal: false
 			});
 			nebula.usage('CF7 Catch: ' + error);
@@ -260,7 +260,7 @@ nebula.cf7Functions = async function(){
 			nebula.crm('event', 'Contact Form (' + thisEvent.unitTag + ') Invalid');
 		} catch(error){
 			gtag('event', 'exception', {
-				description: '(JS) CF7 Catch (wpcf7invalid): ' + error,
+				message: '(JS) CF7 Catch (wpcf7invalid): ' + error,
 				fatal: false
 			});
 			nebula.usage('CF7 Catch: ' + error);
@@ -324,7 +324,7 @@ nebula.cf7Functions = async function(){
 			nebula.crm('event', 'Contact Form (' + thisEvent.unitTag + ') Spam');
 		} catch(error){
 			gtag('event', 'exception', {
-				description: '(JS) CF7 Catch (wpcf7spam): ' + error,
+				message: '(JS) CF7 Catch (wpcf7spam): ' + error,
 				fatal: false
 			});
 			nebula.usage('CF7 Catch: ' + error);
@@ -370,7 +370,7 @@ nebula.cf7Functions = async function(){
 			nebula.crm('event', 'Contact Form (' + thisEvent.unitTag + ') Failed');
 		} catch(error){
 			gtag('event', 'exception', {
-				description: '(JS) CF7 Catch (wpcf7mailfailed): ' + error,
+				message: '(JS) CF7 Catch (wpcf7mailfailed): ' + error,
 				fatal: false
 			});
 			nebula.usage('CF7 Catch: ' + error);
@@ -436,7 +436,7 @@ nebula.cf7Functions = async function(){
 			jQuery('#' + e.detail.unitTag).find('.is-valid, .is-invalid').removeClass('is-valid is-invalid'); //Clear all validation classes
 		} catch(error){
 			gtag('event', 'exception', {
-				description: '(JS) CF7 Catch (wpcf7mailsent): ' + error,
+				message: '(JS) CF7 Catch (wpcf7mailsent): ' + error,
 				fatal: false
 			});
 			nebula.usage('CF7 Catch: ' + error);

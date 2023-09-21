@@ -1775,7 +1775,7 @@ if ( !trait_exists('Functions') ){
 							}).catch(function(error){
 								document.dispatchEvent(new Event('nebula_infinite_finish'));
 								gtag('event', 'exception', {
-									description: 'AJAX Error: Infinite Query Load More AJAX',
+									message: 'AJAX Error: Infinite Query Load More AJAX',
 									fatal: false
 								});
 							});

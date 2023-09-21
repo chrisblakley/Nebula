@@ -39,7 +39,12 @@ nebula.keywordFilter = function(container, parent, values = 'string', filteredCl
 		} else if ( !operator || operator === 'and' || operator === 'all' ){ //Match only elements that contain all keywords (Default operator is And if not provided)
 			jQuery.each(values, function(index, value){ //Loop through the values to search for
 				if ( value && value.trim().length ){ //If the value exists and is not empty
-					let regex = new RegExp(value, 'i');
+					//Check if the value is a valid RegEx string
+					try {
+						let regex = new RegExp(value, 'i');
+					} catch(error){ //This is an invalid RegEx pattern
+						return false; //Ignore this search
+					}
 
 					jQuery(container).find(parent).not('.' + filteredClass).each(function(){ //Now check elements that have not yet been filtered for this value
 						let elementText = jQuery(this).text().trim().replaceAll(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
@@ -188,7 +193,7 @@ nebula.autocompleteSearch = function($element, types = ''){
 						nebula.dom.document.trigger('nebula_autocomplete_search_error', request.term);
 						nebula.debounce(function(){
 							gtag('event', 'exception', {
-								description: '(JS) Autocomplete AJAX error: ' + error,
+								message: '(JS) Autocomplete AJAX error: ' + error,
 								fatal: false
 							});
 							nebula.crm('event', 'Autocomplete Search AJAX Error');

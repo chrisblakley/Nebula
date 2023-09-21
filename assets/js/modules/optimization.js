@@ -134,7 +134,7 @@ nebula.performanceMetrics = async function(){
 				if ( navigationPerformanceEntry ){
 					gtag('event', 'load_timings', { //These are sent in seconds (not milliseconds) so create Custom Metrics with the appropriate units
 						session_page_type: ( nebula.isLandingPage() )? 'Landing Page' : 'Subsequent Page',
-						server_response: Math.round(navigationPerformanceEntry.responseStart)/1000, //@todo "Nebula" 0: These aren't coming into GA4 as expected...
+						server_response: Math.round(navigationPerformanceEntry.responseStart)/1000,
 						dom_interactive: Math.round(navigationPerformanceEntry.domInteractive)/1000,
 						dom_complete: Math.round(navigationPerformanceEntry.domComplete)/1000,
 						fully_loaded: Math.round(navigationPerformanceEntry.duration)/1000,
@@ -231,7 +231,7 @@ nebula.workbox = async function(){
 				//If the service worker becomes redundant
 				workbox.addEventListener('redundant', function(event){
 					gtag('event', 'exception', {
-						description: '(JS) The installed service worker became redundant.',
+						message: '(JS) The installed service worker became redundant.',
 						fatal: false
 					});
 				});
@@ -251,7 +251,7 @@ nebula.workbox = async function(){
 					window.performance.measure('(Nebula) SW Registration', '(Nebula) SW Registration [Start]', '(Nebula) SW Registration [End]');
 				}).catch(function(error){
 					gtag('event', 'exception', {
-						description: '(JS) ServiceWorker registration failed: ' + error,
+						message: '(JS) ServiceWorker registration failed: ' + error,
 						fatal: false
 					});
 				});

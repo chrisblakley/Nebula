@@ -187,7 +187,7 @@ if ( !trait_exists('Metaboxes') ){
 					</div>
 
 					<p class="nebula-help-text short-help form-text text-muted">The address of the location (or headquarters if multiple locations).</p>
-					<p class="nebula-help-text more-help form-text text-muted">Use <a href="https://nebula.gearside.com/functions/full_address/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=address+help" target="_blank" rel="noopener noreferrer"><code>nebula()->full_address()</code></a> to get the formatted address in one function.</p>
+					<p class="nebula-help-text more-help form-text text-muted">Use <a href="https://nebula.gearside.com/functions/full_address/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=address+help" target="_blank" rel="noopener noreferrer"><code>nebula()->full_address()</code></a> to get the formatted address in one function. Get the individual components using <code>nebula()->get_option('street_address')</code> with the respective option names: <code>street_address</code>, <code>locality</code> (city), <code>region</code> (state), <code>postal_code</code> (zip code), and <code>country_name</code></p>
 					<p class="option-keywords">location recommended seo</p>
 				</div>
 

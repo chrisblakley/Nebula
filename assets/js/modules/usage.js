@@ -48,7 +48,7 @@ window.addEventListener('error', function(error){
 	}
 
 	gtag('event', 'exception', {
-		description: '(JS) ' + errorMessage,
+		message: '(JS) ' + errorMessage,
 		fatal: false //Is there a better way to detect fatal vs non-fatal errors?
 	});
 

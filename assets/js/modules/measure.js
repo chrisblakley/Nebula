@@ -159,6 +159,7 @@ nebula.eventTracking = async function(){
 
 	nebula.once(function(){
 		window.dataLayer = window.dataLayer || []; //Prevent overwriting an existing GTM Data Layer array
+		window.hj = window.hj || function(){(hj.q=hj.q||[]).push(arguments);}; //Ensure Hotjar is initialized
 
 		nebula.dom.document.trigger('nebula_event_tracking');
 
@@ -414,6 +415,7 @@ nebula.eventTracking = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.event_category, thisEvent.event_action);}
+			nebula.hj('event', thisEvent.event_name);
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_generic_form'}));
 		});
 
@@ -437,6 +439,7 @@ nebula.eventTracking = async function(){
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_file_download'}));
 				nebula.fbq('track', 'ViewContent', {content_name: thisEvent.file_name});
 				nebula.clarity('set', thisEvent.event_category, thisEvent.file_name);
+				nebula.hj('event', thisEvent.event_name);
 				nebula.crm('event', 'File Download');
 			});
 		});
@@ -485,6 +488,7 @@ nebula.eventTracking = async function(){
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_internal_search'}));
 			nebula.fbq('track', 'Search', {search_string: thisEvent.query});
 			nebula.clarity('set', thisEvent.event_category, thisEvent.query);
+			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('identify', {internal_search: thisEvent.query});
 		});
 
@@ -666,6 +670,7 @@ nebula.eventTracking = async function(){
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_mailto'}));
 			nebula.fbq('track', 'Lead', {content_name: thisEvent.event_action});
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
+			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('event', thisEvent.event_action);
 			nebula.crm('identify', {mailto_contacted: thisEvent.emailAddress});
 		});
@@ -691,6 +696,7 @@ nebula.eventTracking = async function(){
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_click_to_call'}));
 			nebula.fbq('track', 'Lead', {content_name: thisEvent.event_action});
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
+			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('event', thisEvent.event_action);
 			nebula.crm('identify', {phone_contacted: thisEvent.phoneNumber});
 		});
@@ -909,6 +915,7 @@ nebula.eventTracking = async function(){
 
 								nebula.dom.document.trigger('nebula_event', thisEvent);
 								gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+								nebula.hj('event', thisEvent.event_name);
 								window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_outbound_link_click'}));
 							}
 						}
@@ -969,6 +976,7 @@ nebula.eventTracking = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_high_redirect_count'}));
+			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('event', thisEvent.event_category);
 		}
 
@@ -1304,6 +1312,7 @@ nebula.eventTracking = async function(){
 				fatal: true
 			});
 			window.dataLayer.push({'event': 'nebula_ajax_error', 'error': errorMessage});
+			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('event', 'AJAX Error');
 		});
 
@@ -1317,7 +1326,7 @@ nebula.eventTracking = async function(){
 // 						if ( report?.body?.sourceFile && !['extension', 'about:blank'].some((item) => report.body.sourceFile.includes(item)) ){ //Ignore certain files
 // 							gtag('event', 'exception', {
 // 								report_type: report.type,
-// 								report_message: report.body.message,
+// 								message: report.body.message,
 // 								source_file: report.body.sourceFile,
 // 								line_number: report.body.lineNumber,
 // 								description: '(JS) Reporting Observer [' + report.type + ']: ' + report.body.message + ' in ' + report.body.sourceFile + ' on line ' + report.body.lineNumber,
@@ -1372,6 +1381,7 @@ nebula.eventTracking = async function(){
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_print'}));
 			if ( typeof clarity === 'function' ){clarity('set', thisEvent.event_category, thisEvent.event_action);}
+			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('event', thisEvent.event_category);
 		}
 
@@ -1488,6 +1498,7 @@ nebula.ecommerceTracking = async function(){
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_add_to_cart'}));
 			nebula.fbq('track', 'AddToCart');
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
+			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('event', 'Ecommerce Add to Cart');
 		});
 
@@ -1504,6 +1515,7 @@ nebula.ecommerceTracking = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_update_cart'}));
+			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('event', 'Ecommerce Update Cart');
 		});
 
@@ -1522,6 +1534,7 @@ nebula.ecommerceTracking = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_remove_item'}));
+			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('event', 'Ecommerce Remove From Cart');
 		});
 
@@ -1540,6 +1553,7 @@ nebula.ecommerceTracking = async function(){
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_proceed_to_checkout'}));
 			nebula.fbq('track', 'InitiateCheckout');
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
+			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('event', 'Ecommerce Proceed to Checkout');
 		});
 
@@ -1558,6 +1572,7 @@ nebula.ecommerceTracking = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_started_checkout_form'}));
+			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('event', 'Ecommerce Started Checkout Form');
 		});
 
@@ -1584,6 +1599,7 @@ nebula.ecommerceTracking = async function(){
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_place_order_button'}));
 			nebula.fbq('track', 'Purchase');
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
+			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('event', 'Ecommerce Placed Order');
 			nebula.crm('identify', {hs_lifecyclestage_customer_date: 1}); //@todo "Nebula" 0: What kind of date format does Hubspot expect here?
 		});
@@ -1795,6 +1811,14 @@ nebula.clarity = function(type='set', key='', value=''){
 		clarity(type, key, value);
 	}
 };
+
+//Hotjar tracking
+//https://help.hotjar.com/hc/en-us/articles/4412561401111
+nebula.hj = function(type='event', value=''){
+	if ( typeof hj === 'function' && value ){
+		hj(type, value);
+	}
+}
 
 //Send data to the CRM
 nebula.crm = async function(action, data, sendNow = true){

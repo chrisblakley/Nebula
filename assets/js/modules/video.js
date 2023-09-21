@@ -525,7 +525,7 @@ nebula.youtubeStateChange = function(e){
 
 nebula.youtubeError = function(error){
 	gtag('event', 'exception', {
-		description: '(JS) Youtube API error: ' + error.data,
+		message: '(JS) Youtube API error: ' + error.data,
 		fatal: false
 	});
 	nebula.crm('event', 'Youtube API Error');

@@ -295,7 +295,7 @@ function geoErrorCallback(error){
 	nebula.dom.document.trigger('geolocationError');
 	nebula.dom.body.addClass('geo-error');
 	gtag('event', 'exception', {
-		description: '(JS) Geolocation error: ' + geolocationErrorMessage,
+		message: '(JS) Geolocation error: ' + geolocationErrorMessage,
 		fatal: false
 	});
 	nebula.crm('event', 'Geolocation Error');
