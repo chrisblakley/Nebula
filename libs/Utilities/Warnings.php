@@ -7,7 +7,7 @@ if ( !trait_exists('Warnings') ){
 		public $warnings = false;
 
 		public function hooks(){
-			if ( is_user_logged_in() && !$this->is_background_request() && !is_customize_preview() ){
+			if ( (is_user_logged_in() || $this->is_auditing()) && !$this->is_background_request() && !is_customize_preview() ){
 				add_action('wp_head', array($this, 'console_warnings'));
 				add_filter('nebula_warnings', array($this, 'advanced_warnings'));
 				add_action('wp_footer', array($this, 'advanced_warning_output'), 9999); //Late execution as possible
@@ -447,26 +447,6 @@ if ( !trait_exists('Warnings') ){
 					}
 				}
 
-				//Check if Google Optimize is enabled
-				if ( $this->get_option('google_optimize_id') ){
-					$nebula_warnings['google_optimize_active'] = array(
-						'level' => 'error',
-						'dismissible' => true,
-						'description' => '<i class="fa-regular fa-fw fa-window-restore"></i> <a href="https://optimize.google.com/optimize/home/" target="_blank" rel="noopener">Google Optimize</a> is enabled (via <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Nebula Options</a>). Disable when not actively experimenting!',
-						'url' => 'https://optimize.google.com/optimize/home/'
-					);
-
-					//Google Optimize requires Google Analytics
-					if ( !$this->get_option('ga_measurement_id') && !$this->get_option('gtm_id') ){
-						$nebula_warnings['google_optimize_analytics'] = array(
-							'level' => 'error',
-							'dismissible' => true,
-							'description' => '<i class="fa-regular fa-fw fa-window-restore"></i> <a href="themes.php?page=nebula_options&tab=analytics&option=google_optimize_id">Google Optimize ID</a> exists without a <a href="themes.php?page=nebula_options&tab=analytics&option=ga_measurement_id">Google Analytics Tracking ID</a> or <a href="themes.php?page=nebula_options&tab=analytics&option=gtm_id">GTM ID</a>.',
-							'url' => admin_url('themes.php?page=nebula_options&tab=analytics&option=ga_measurement_id')
-						);
-					}
-				}
-
 				//Service Worker checks
 				if ( $this->get_option('service_worker') ){
 					//Check for Service Worker JavaScript file when using Service Worker
@@ -783,6 +763,8 @@ if ( !trait_exists('Warnings') ){
 					<script>
 						jQuery(window).on('load', function(){
 							setTimeout(function(){
+								console.log('[Nebula Audit] Performing Nebula Audit...');
+
 								jQuery('body').append(jQuery('<div id="audit-results"><p><strong>Nebula Audit Results:</strong></p><ul></ul></div>'));
 
 								var entireDOM = jQuery('html').clone(); //Duplicate the entire HTML to run audits against
@@ -893,8 +875,8 @@ if ( !trait_exists('Warnings') ){
 								});
 
 								//Check for a #content-section (or whatever the target is) if Skip to Content button exists
-								if ( jQuery('.skip-to-content-link').length ){
-									var skipToContentTarget = jQuery('.skip-to-content-link').attr('href');
+								if ( jQuery('#skip-to-content-link').length ){
+									var skipToContentTarget = jQuery('#skip-to-content-link').attr('href');
 
 									if ( skipToContentTarget && !jQuery(skipToContentTarget).length ){
 										jQuery("#audit-results ul").append('<li><i class="fa-solid fa-fw fa-link"></i> Skip to Content link target (' + skipToContentTarget + ') does not exist.</li>');
@@ -1012,6 +994,12 @@ if ( !trait_exists('Warnings') ){
 								if ( jQuery('#audit-results ul li').length <= 0 ){
 									jQuery('#audit-results').append('<p><strong><i class="fa-solid fa-fw fa-check"></i> No issues were found on this page.</strong> Be sure to check other pages (and run <a href="https://nebula.gearside.com/get-started/checklists/testing-checklist/" target="_blank">more authoritative tests</a>)!</p>');
 								} else {
+									//Output each result to the console as well
+									console.log('[Nebula Audit] Issues Found:', jQuery('#audit-results ul li').length);
+									jQuery('#audit-results ul li').each(function(){
+										console.log('[Nebula Audit] ' + jQuery(this).text());
+									});
+
 									jQuery('#audit-results').append('<p><strong><i class="fa-solid fa-fw fa-times"></i> Found issues: ' + jQuery('#audit-results ul li').length + '<strong></p>');
 								}
 								jQuery('#audit-results').append('<p><small>Note: This does not check for @todo comments. Use the Nebula To-Do Manager in the WordPress admin dashboard to view.</small></p>');

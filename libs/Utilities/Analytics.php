@@ -13,8 +13,6 @@ if ( !trait_exists('Analytics') ){
 				add_filter('the_permalink_rss', array($this, 'add_utm_to_feeds'), 100);
 				add_filter('the_excerpt_rss', array($this, 'add_utm_to_feeds_content_links'), 200);
 				add_filter('the_content_feed', array($this, 'add_utm_to_feeds_content_links'), 200);
-
-				add_action('nebula_head_open', array($this, 'google_optimize_tag'));
 			}
 
 			register_shutdown_function(array($this, 'ga_log_fatal_php_errors'));
@@ -69,14 +67,6 @@ if ( !trait_exists('Analytics') ){
 			}
 
 			return sanitize_text_field(esc_html($cid));
-		}
-
-		//Google Optimize Tag
-		//Note: Experiment ID and Variant are core dimensions in Google Analytics!
-		public function google_optimize_tag(){
-			if ( $this->get_option('google_optimize_id') ){ ?>
-				<script src="https://www.googleoptimize.com/optimize.js?id=<?php echo esc_html(nebula()->get_option('google_optimize_id')); ?>"></script>
-			<?php }
 		}
 
 		//Generate UUID v4 function (needed to generate a CID when one isn't available)

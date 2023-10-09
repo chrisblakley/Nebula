@@ -56,6 +56,8 @@ if ( !trait_exists('Security') ){
 				header('Content-Security-Policy-Report-Only: ' . $csp); //Nebula only reports to the console
 
 				//Permissions Policy: https://scotthelme.co.uk/goodbye-feature-policy-and-hello-permissions-policy/ and https://caniuse.com/#feat=feature-policy and https://caniuse.com/permissions-policy
+				$pp = apply_filters('nebula_pp', " accelerometer=(), camera=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"); //Block usage of all atypical permissions. WP filter to allow others to hook in to modify the default Permissions Policy.
+				//header('Permissions-Policy: ' . $pp); //This is commented out for now
 			}
 		}
 

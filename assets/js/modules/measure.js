@@ -981,8 +981,8 @@ nebula.eventTracking = async function(){
 		}
 
 		//Dead Clicks (Non-Linked Click Attempts)
-		nebula.dom.document.on('click', 'img', function(e){ //Clicks on images
-			if ( !jQuery(this).parents('a, button').length ){
+		nebula.dom.document.on('click', 'img', function(e){ //Clicks on images (Remember to never return false inside of these functions!)
+			if ( !jQuery(this).parents('a, button').length && !jQuery(this).is('[data-bs-toggle]') ){ //If it is not inside of a button and not used as a Bootstrap trigger
 				let thisEvent = {
 					event: e,
 					event_name: 'dead_click',
@@ -1818,7 +1818,7 @@ nebula.hj = function(type='event', value=''){
 	if ( typeof hj === 'function' && value ){
 		hj(type, value);
 	}
-}
+};
 
 //Send data to the CRM
 nebula.crm = async function(action, data, sendNow = true){

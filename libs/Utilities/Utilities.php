@@ -25,7 +25,7 @@ if ( !trait_exists('Utilities') ){
 			$this->DeviceHooks(); //Register Device hooks
 			$this->SassHooks(); //Register Sass hooks
 
-			if ( is_user_logged_in() && !$this->is_background_request() && !is_customize_preview() ){
+			if ( (is_user_logged_in() || $this->is_auditing()) && !$this->is_background_request() && !is_customize_preview() ){
 				$this->WarningsHooks(); //Register Warnings hooks
 			}
 
@@ -334,8 +334,18 @@ if ( !trait_exists('Utilities') ){
 
 		//If the current pageload is requested with more advanced detections
 		public function is_auditing(){
-			if ( ($this->get_option('audit_mode') || isset($this->super->get['audit'])) && (current_user_can('manage_options') || $this->is_dev()) && !is_customize_preview() && !$this->is_admin_page() ){
-				return true;
+			if ( is_customize_preview() ){
+				return false;
+			}
+
+			if ( $this->is_admin_page() ){
+				return false;
+			}
+
+			if ( $this->get_option('audit_mode') || isset($this->super->get['audit']) ){
+				if ( current_user_can('manage_options') || $this->is_dev() || $this->is_client() ){
+					return true;
+				}
 			}
 
 			return false;

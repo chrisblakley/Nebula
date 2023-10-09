@@ -336,14 +336,6 @@ if ( !trait_exists('Admin') ){
 				);
 			}
 
-			if ( $this->get_option('google_optimize_id') ){
-				$third_party_resources['administrative'][] = array(
-					'name' => 'Google Optimize',
-					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-chart-pie"></i>',
-					'url' => 'https://optimize.google.com/optimize/home'
-				);
-			}
-
 			$third_party_resources['administrative'][] = array(
 				'name' => 'Google Search Console',
 				'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-google"></i>',

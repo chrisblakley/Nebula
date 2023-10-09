@@ -255,7 +255,6 @@ if ( !trait_exists('Options') ){
 				'ga_require_consent' => 0,
 				'ga_wpuserid' => 0,
 				'google_ads_id' => '',
-				'google_optimize_id' => '',
 				'hostnames' => '',
 				'google_search_console_verification' => '',
 				'facebook_custom_audience_pixel_id' => '',

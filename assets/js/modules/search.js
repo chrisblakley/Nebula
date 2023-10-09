@@ -41,7 +41,7 @@ nebula.keywordFilter = function(container, parent, values = 'string', filteredCl
 				if ( value && value.trim().length ){ //If the value exists and is not empty
 					//Check if the value is a valid RegEx string
 					try {
-						let regex = new RegExp(value, 'i');
+						var regex = new RegExp(value, 'i'); //Keep var here so variable can be used outside of the try/catch without erroring
 					} catch(error){ //This is an invalid RegEx pattern
 						return false; //Ignore this search
 					}
