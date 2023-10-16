@@ -162,7 +162,7 @@ nebula.cf7Functions = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent)); //This event is required for the notable form metric!
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_submit_attempt'}));
-			nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)'});
+			//nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)'});
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 		} catch {
 			gtag('event', 'exception', {
@@ -200,7 +200,7 @@ nebula.cf7Functions = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent)); //This event is required for the notable form metric!
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_submit_processing'}));
-			nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Processing)'});
+			//nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Processing)'});
 			nebula.clarity('track', 'Lead', {content_name: 'Form Submit (Processing)'});
 
 			jQuery('#' + e.detail.unitTag).find('button#submit').removeClass('active');
