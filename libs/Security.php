@@ -102,7 +102,7 @@ if ( !trait_exists('Security') ){
 			$override = apply_filters('pre_nebula_login_errors', null, $error);
 			if ( isset($override) ){return $override;}
 
-			if ( !empty($error) ){
+			if ( !empty($error) ){ //If an error exists
 				$event_properties = array('page_location'=> wp_login_url(), 'page_title' => 'Log In');
 
 				if ( $this->contains($error, array('The password you entered for the username')) ){
@@ -117,7 +117,7 @@ if ( !trait_exists('Security') ){
 					$this->ga_send_exception('(Security) Login error: ' . strip_tags($error), false, $event_properties);
 				}
 
-				if ( !$this->is_bot() ){
+				if ( !$this->is_bot() ){ //If it is a human show a generic error message (otherwise if it is a bot we will show an empty string below)
 					return 'Login Error.';
 				}
 

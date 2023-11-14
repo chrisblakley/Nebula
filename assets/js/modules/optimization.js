@@ -489,7 +489,7 @@ nebula.lazyLoadAssets = async function(){
 		});
 
 		//Create the entries and add them to the observer
-		jQuery('.nebula-lazy-position, .lazy-load').each(function(){
+		jQuery('.nebula-lazy-position, .lazy-load, .nebula-lazy').each(function(){
 			lazyObserver.observe(jQuery(this)[0]); //Observe the element
 		});
 
@@ -589,8 +589,8 @@ nebula.loadElement = async function(element){
 	}
 
 	//Background images
-	if ( element.hasClass('lazy-load') ){
-		element.removeClass('lazy-load').addClass('lazy-loaded');
+	if ( element.hasClass('lazy-load') || element.hasClass('nebula-lazy') ){
+		element.removeClass('lazy-load nebula-lazy').addClass('lazy-loaded');
 	}
 };
 

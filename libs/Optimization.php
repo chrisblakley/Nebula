@@ -15,12 +15,13 @@ if ( !trait_exists('Optimization') ){
 				add_action('wp_print_scripts', array($this, 'scripts_early_hints_header'), 9999); //Run this last to get all enqueued scripts
 			}
 
-			//Non-WordPress Admin optimizations
+			//Optimizations for the front-end (Not WordPress Admin or BG requests)
 			if ( !$this->is_background_request() ){
 				if ( !$this->is_admin_page(true) ){
-					add_filter('wp_enqueue_scripts', array($this, 'defer_async_additional_scripts'));
+					add_filter('wp_enqueue_scripts', array($this, 'defer_async_additional_scripts')); //@todo "Nebula" 0: This may no longer be needed as of WP 6.3 for async and defer script attributes
 					add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
 					add_action('wp_footer', array($this, 'dequeue_lazy_load_scripts'));
+					add_filter('render_block_core/image', array($this, 'lazy_core_img_blocks'), 10, 3);
 
 					add_action('wp_enqueue_scripts', array($this, 'deregister_jquery_migrate'));
 					add_filter('wp_default_scripts', array($this, 'remove_jquery_migrate'));
@@ -157,17 +158,18 @@ if ( !trait_exists('Optimization') ){
 
 		//Allow scripts to be registered with additional attributes
 		public function register_script($handle=null, $src=null, $attributes=array(), $deps=array(), $ver=false, $in_footer=false){
-			wp_register_script($handle, $src, $deps, $ver, $in_footer);
+			wp_register_script($handle, $src, $deps, $ver, $in_footer); //@todo "Nebula" 0: Update this to use the new syntax as of WP 6.3
 
 			if ( !empty($attributes) ){
 				$attributes = ( is_array($attributes) )? $attributes : array($attributes); //Make sure it is an array
 				foreach ( $attributes as $attribute ){
-					wp_script_add_data($handle, $attribute, true);
+					$is_data_added = wp_script_add_data($handle, $attribute, true); //@todo "Nebula" 0: this may not be working with the module attribute
 				}
 			}
 		}
 
 		//Defer and Async specific scripts. This only works with registered/enqueued scripts!
+		//@todo "Nebula" 0: This may no longer be needed as of WP 6.3 for async and defer script attributes
 		public function defer_async_additional_scripts(){
 			if ( !$this->is_admin_page(true) ){
 				$to_defer = apply_filters('nebula_defer_scripts', array('jquery-migrate', 'jquery.form', 'contact-form-7', 'wp-embed')); //Allow other functions to hook in to add defer to existing scripts
@@ -192,14 +194,14 @@ if ( !trait_exists('Optimization') ){
 		//Add/modify defer, async, module, and/or crossorigin attributes to scripts
 		public function modify_script_attributes($tag, $handle, $src){
 			$crossorigin_exececution = wp_scripts()->get_data($handle, 'crossorigin');
-			$defer_exececution = wp_scripts()->get_data($handle, 'defer');
-			$async_exececution = wp_scripts()->get_data($handle, 'async');
+			$defer_exececution = wp_scripts()->get_data($handle, 'defer'); //@todo "Nebula" 0: This may no longer be needed as of WP 6.3 for async and defer script attributes
+			$async_exececution = wp_scripts()->get_data($handle, 'async'); //@todo "Nebula" 0: This may no longer be needed as of WP 6.3 for async and defer script attributes
 			$module_execution = wp_scripts()->get_data($handle, 'module');
 
 			//Add module type attribute if it is requested
 			if ( !empty($module_execution) && strpos($tag, "type='module'") === false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				if ( strpos($tag, 'type=') ){ //If the type attribute already exists  //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-					$tag = str_replace("type='text/javascript'", "type='module'", $tag); //Change the type='text/javascript' attribute to type='module'
+					$tag = preg_replace('/type=["\']text\/javascript["\']/', 'type=\'module\'', $tag); //Change the type='text/javascript' attribute to type='module' (the preg_replace regex pattern is used to be agnostic to what type of quotation mark WP core uses)
 				} else {
 					$tag = str_replace('script src', 'script type="module" src', $tag);
 				}
@@ -211,6 +213,7 @@ if ( !trait_exists('Optimization') ){
 			}
 
 			//Ignore if neither defer nor async attribute is found
+			//@todo "Nebula" 0: This may no longer be needed as of WP 6.3 for async and defer script attributes
 			if ( empty($defer_exececution) && empty($async_exececution) ){
 				return $tag;
 			}
@@ -225,12 +228,14 @@ if ( !trait_exists('Optimization') ){
 			*/
 
 			//Add defer attribute if it is requested and does not already exist
+			//@todo "Nebula" 0: This may no longer be needed as of WP 6.3 for async and defer script attributes
 			$additional_handles_to_defer = apply_filters('nebula_defer_handles', array()); //Allow other plugins/themes to simply add defer attributes to scripts
 			if ( (!empty($defer_exececution) || in_array($handle, $additional_handles_to_defer)) && strpos($tag, 'defer') === false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				$tag = str_replace(' src', ' defer src', $tag); //Add the defer attribute
 			}
 
 			//Add async attribute if it is requested and does not already exist
+			//@todo "Nebula" 0: This may no longer be needed as of WP 6.3 for async and defer script attributes
 			$additional_handles_to_async = apply_filters('nebula_async_handles', array('google-recaptcha')); //Allow other plugins/themes to simply add async attributes to scripts
 			if ( (!empty($async_exececution) || in_array($handle, $additional_handles_to_async)) && strpos($tag, 'async') === false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				$tag = str_replace(' src', ' async src', $tag); //Add the async attribute
@@ -911,6 +916,15 @@ if ( !trait_exists('Optimization') ){
 		//Lazy-load iframes
 		public function lazy_iframe($src=false, $attributes=''){
 			$this->lazy_load('<iframe src="' . $src . '" ' . $attributes . ' loading="lazy"></iframe>');
+		}
+
+		//Lazy-load WP Core image blocks
+		public function lazy_core_img_blocks($block_content, $block){
+			if ($block['blockName'] === 'core/image') {
+				$block_content = preg_replace('/<img(.*?)>/', '<img$1 loading="lazy">', $block_content);
+			}
+
+			return $block_content;
 		}
 	}
 

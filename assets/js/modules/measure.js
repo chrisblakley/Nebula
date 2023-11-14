@@ -133,28 +133,23 @@ nebula.eventTracking = async function(){
 	if ( 'browsingTopics' in document && document.featurePolicy.allowsFeature('browsing-topics') ){ //Seems to be available in Chrome 117+ (at least in Canary)
 		//console.log('Topics API is available on this page!');
 
-		//This event is just for reference to know that it is available. Will remove after widespread support.
-		gtag('event', 'topics_api_available', {
-			event_category: 'Topics API', //@todo "Nebula" 0: Remove after July 2023
-			event_action: 'Available', //@todo "Nebula" 0: Remove after July 2023
-			event_label: 'The Topics API is available in this browser', //@todo "Nebula" 0: Remove after July 2023
-			status: 'Available',
-			non_interaction: true
-		});
+		try {
+			document.browsingTopics().then(function(topics){
+				//console.log('Interest Topics:', topics);
 
-		document.browsingTopics().then(function(topics){
-			//console.log('Interest Topics:', topics);
-
-			if ( topics ){ //If the topics array is not empty
-				gtag('event', 'topics_api', {
-					event_category: 'Topics API', //@todo "Nebula" 0: Remove after July 2023
-					event_action: 'Interests', //@todo "Nebula" 0: Remove after July 2023
-					event_label: topics.join(', '), //@todo "Nebula" 0: Remove after July 2023
-					interests: topics.join(', '),
-					non_interaction: true
-				});
-			}
-		});
+				if ( topics ){ //If the topics array is not empty
+					gtag('event', 'topics_api', {
+						event_category: 'Topics API', //@todo "Nebula" 0: Remove after July 2023
+						event_action: 'Interests', //@todo "Nebula" 0: Remove after July 2023
+						event_label: topics.join(', '), //@todo "Nebula" 0: Remove after July 2023
+						interests: topics.join(', '),
+						non_interaction: true
+					});
+				}
+			});
+		} catch {
+			//Ignore errors
+		}
 	}
 
 	nebula.once(function(){
