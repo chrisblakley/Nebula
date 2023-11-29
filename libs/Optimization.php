@@ -163,7 +163,7 @@ if ( !trait_exists('Optimization') ){
 			if ( !empty($attributes) ){
 				$attributes = ( is_array($attributes) )? $attributes : array($attributes); //Make sure it is an array
 				foreach ( $attributes as $attribute ){
-					$is_data_added = wp_script_add_data($handle, $attribute, true); //@todo "Nebula" 0: this may not be working with the module attribute
+					$is_data_added = wp_script_add_data($handle, $attribute, true);
 				}
 			}
 		}

@@ -20,7 +20,7 @@
 				classes: 'widget btn nebula-icon',
 				onclick: function(){
 					ed.focus();
-					ed.selection.setContent('[button href=http://pinckneyhugo.com/ target=_blank]Click Here[/button]');
+					ed.selection.setContent('[button href=https://example.com/ target=_blank]Click Here[/button]');
 				}
 			});
 
@@ -137,19 +137,19 @@
 				classes: 'widget btn colorbutton nebula-icon',
 				onclick: function(){
 					ed.focus();
-					ed.selection.setContent('[map q="Pinckney Hugo Group"]');
+					ed.selection.setContent('[map q="Syracuse"]');
 				},
 				menu: [{
 					text: 'Place',
 					onclick: function(){
 						ed.focus();
-						ed.selection.setContent('[map q="Pinckney Hugo Group"]');
+						ed.selection.setContent('[map q="Syracuse"]');
 					}
 				}, {
 					text: 'Directions',
 					onclick: function(){
 						ed.focus();
-						ed.selection.setContent('[map mode=directions origin="Pinckney Hugo Group" destination="Destiny USA"]');
+						ed.selection.setContent('[map mode=directions origin="Syracuse" destination="New York City"]');
 					}
 				}, {
 					text: 'Search',
@@ -172,7 +172,7 @@
 				classes: 'widget btn nebula-icon',
 				onclick: function(){
 					ed.focus();
-					ed.selection.setContent('[slider frame status]<br />[slide title="TITLE_HERE" link=http://www.pinckneyhugo.com target=_blank]IMAGE_URL_HERE[/slide]<br />[/slider]');
+					ed.selection.setContent('[slider frame status]<br />[slide title="TITLE_HERE" link=https://www.example.com target=_blank]IMAGE_URL_HERE[/slide]<br />[/slider]');
 				}
 			});
 

@@ -254,7 +254,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="facebookurl">Facebook</label>
 					<div class="input-group">
 						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-facebook"></i> URL</span></div>
-						<input type="text" name="nebula_options[facebook_url]" id="facebook_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['facebook_url']; ?>" placeholder="http://www.facebook.com/PinckneyHugo" />
+						<input type="text" name="nebula_options[facebook_url]" id="facebook_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['facebook_url']; ?>" placeholder="http://www.facebook.com/Example" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Facebook page (starting with <code>https://</code>).</p>
 					<p class="option-keywords">social seo</p>
@@ -282,7 +282,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="twitter_username">Twitter</label>
 					<div class="input-group">
 						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-twitter"></i> Username</span></div>
-						<input type="text" name="nebula_options[twitter_username]" id="twitter_username" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_username']; ?>" placeholder="@pinckneyhugo" />
+						<input type="text" name="nebula_options[twitter_username]" id="twitter_username" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_username']; ?>" placeholder="@example" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">Your Twitter username <strong>including the @ symbol</strong>.</p>
 					<p class="option-keywords">social seo</p>
@@ -292,7 +292,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="linkedin_url">LinkedIn</label>
 					<div class="input-group">
 						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-linkedin"></i> URL</span></div>
-						<input type="text" name="nebula_options[linkedin_url]" id="linkedin_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['linkedin_url']; ?>" placeholder="https://www.linkedin.com/company/pinckney-hugo-group" />
+						<input type="text" name="nebula_options[linkedin_url]" id="linkedin_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['linkedin_url']; ?>" placeholder="https://www.linkedin.com/company/example" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your LinkedIn profile (starting with <code>https://</code>).</p>
 					<p class="option-keywords">social seo</p>
@@ -302,7 +302,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="youtube_url">Youtube</label>
 					<div class="input-group">
 						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-youtube"></i> URL</span></div>
-						<input type="text" name="nebula_options[youtube_url]" id="youtube_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['youtube_url']; ?>" placeholder="https://www.youtube.com/user/pinckneyhugo" />
+						<input type="text" name="nebula_options[youtube_url]" id="youtube_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['youtube_url']; ?>" placeholder="https://www.youtube.com/user/example" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Youtube channel (starting with <code>https://</code>).</p>
 					<p class="option-keywords">social seo</p>
@@ -312,7 +312,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="instagram_url">Instagram</label>
 					<div class="input-group">
 						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-instagram"></i> URL</span></div>
-						<input type="text" name="nebula_options[instagram_url]" id="instagram_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['instagram_url']; ?>" placeholder="https://www.instagram.com/pinckneyhugo" />
+						<input type="text" name="nebula_options[instagram_url]" id="instagram_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['instagram_url']; ?>" placeholder="https://www.instagram.com/example" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Instagram profile (starting with <code>https://</code>).</p>
 					<p class="option-keywords">social seo</p>
@@ -322,7 +322,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="pinterest_url">Pinterest</label>
 					<div class="input-group">
 						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-pinterest"></i> URL</span></div>
-						<input type="text" name="nebula_options[pinterest_url]" id="pinterest_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['pinterest_url']; ?>" placeholder="https://www.pinterest.com/pinckneyhugo" />
+						<input type="text" name="nebula_options[pinterest_url]" id="pinterest_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['pinterest_url']; ?>" placeholder="https://www.pinterest.com/example" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Pinterest profile (starting with <code>https://</code>).</p>
 					<p class="option-keywords">social seo</p>
@@ -332,7 +332,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="tiktok_url">TikTok</label>
 					<div class="input-group">
 						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-tiktok"></i> URL</span></div>
-						<input type="text" name="nebula_options[tiktok_url]" id="tiktok_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['tiktok_url']; ?>" placeholder="https://www.tiktok.com/@pinckneyhugo" />
+						<input type="text" name="nebula_options[tiktok_url]" id="tiktok_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['tiktok_url']; ?>" placeholder="https://www.tiktok.com/@example" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your TikTok profile (starting with <code>https://</code> and including the <code>@</code> symbol).</p>
 					<p class="option-keywords">social seo</p>
@@ -940,7 +940,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="dev_email_domain">Developer Email Domains</label>
 					<input type="text" name="nebula_options[dev_email_domain]" id="dev_email_domain" class="form-control nebula-validate-text" value="<?php echo $nebula_options['dev_email_domain']; ?>" placeholder="<?php echo $current_user_domain; ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">Comma separated domains of the developer emails (without the "@") to enable specific console logs and other dev info.<br/>Your email domain is: <code><?php echo $current_user_domain; ?></code></p>
-					<p class="nebula-help-text more-help form-text text-muted">RegEx may also be used here. Ex: <code>/@pinckneyhugo\./i</code></p>
+					<p class="nebula-help-text more-help form-text text-muted">RegEx may also be used here. Ex: <code>/@example\./i</code></p>
 					<p class="option-keywords">staff logs recommended</p>
 				</div>
 
@@ -956,7 +956,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="client_email_domain">Client Email Domains</label>
 					<input type="text" name="nebula_options[client_email_domain]" id="client_email_domain" class="form-control nebula-validate-text" value="<?php echo $nebula_options['client_email_domain']; ?>" placeholder="<?php echo $current_user_domain; ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">Comma separated domains of the developer emails (without the "@") to enable certain features.<br/>Your email domain is: <code><?php echo $current_user_domain; ?></code></p>
-					<p class="nebula-help-text more-help form-text text-muted">RegEx may also be used here. Ex: <code>/@pinckneyhugo\./i</code></p>
+					<p class="nebula-help-text more-help form-text text-muted">RegEx may also be used here. Ex: <code>/@example\./i</code></p>
 					<p class="option-keywords">staff logs recommended</p>
 				</div>
 			<?php

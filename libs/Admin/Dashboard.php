@@ -19,7 +19,7 @@ if ( !trait_exists('Dashboard') ){
 
 				if ( current_user_can('edit_others_posts') ){
 					add_action('wp_dashboard_setup', array($this, 'administrative_metabox'));
-					add_action('wp_dashboard_setup', array($this, 'phg_metabox'));
+					//add_action('wp_dashboard_setup', array($this, 'phg_metabox'));
 
 					if ( $this->get_option('todo_manager_metabox') && $this->is_dev() ){
 						add_action('wp_dashboard_setup', array($this, 'todo_metabox'));
@@ -424,23 +424,6 @@ if ( !trait_exists('Dashboard') ){
 			echo '</div></div>';
 
 			$this->timer('Nebula Administrative Dashboard Metabox', 'end');
-		}
-
-		//Pinckney Hugo Group metabox
-		public function phg_metabox(){
-			wp_add_dashboard_widget('nebula_phg', $this->pinckneyhugogroup(array('linked' => false)), array($this, 'dashboard_phg'));
-		}
-
-		//Pinckney Hugo Group metabox content
-		public function dashboard_phg(){
-			$this->timer('Nebula PHG Dashboard Metabox');
-			echo '<a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+photo" target="_blank" rel="noopener noreferrer"><img src="' . get_template_directory_uri() . '/assets/img/phg/phg-building.jpg" style="width: 100%;" loading="lazy" /></a>';
-			echo '<ul class="nebula-fa-ul">';
-			echo '<li><i class="fa-solid fa-fw fa-map-marker"></i> <a href="https://www.google.com/maps/place/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener noreferrer">760 West Genesee Street, Syracuse, NY 13204</a></li>';
-			echo '<li><i class="fa-solid fa-fw fa-link"></i> <a href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+dashboard+metabox+textlink" target="_blank">PinckneyHugo.com</a></li>';
-			echo '<li><i class="fa-solid fa-fw fa-phone"></i> (315) 478-6700</li>';
-			echo '</ul>';
-			$this->timer('Nebula PHG Dashboard Metabox', 'end');
 		}
 
 		//Extension skip list for both To-Do Manager and Developer Metabox

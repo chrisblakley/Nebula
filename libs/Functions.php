@@ -958,10 +958,10 @@ if ( !trait_exists('Functions') ){
 				$big = 999999999; //An unlikely integer //PHP 7.4 use numeric separators here
 
 				//Set some defaults if not passed by the $args value...
-				$args['base'] = ( $args['base'] )? $args['base'] : str_replace($big, '%#%', esc_url(get_pagenum_link($big)));
-				$args['format'] = ( $args['format'] )? $args['format'] : '?paged=%#%';
-				$args['current'] = ( $args['current'] )? $args['current'] : max(1, get_query_var('paged'));
-				$args['total'] = ( $args['total'] )? $args['total'] : $query->max_num_pages;
+				$args['base'] = ( !empty($args['base']) )? $args['base'] : str_replace($big, '%#%', esc_url(get_pagenum_link($big)));
+				$args['format'] = ( !empty($args['format']) )? $args['format'] : '?paged=%#%';
+				$args['current'] = ( !empty($args['current']) )? $args['current'] : max(1, get_query_var('paged'));
+				$args['total'] = ( !empty($args['total']) )? $args['total'] : $query->max_num_pages;
 
 				echo '<div class="wp-pagination">';
 					echo paginate_links($args);
@@ -2206,39 +2206,6 @@ if ( !trait_exists('Functions') ){
 
 			$this->timer($timer_name, 'end');
 			return esc_url($logo);
-		}
-
-		//Print the PHG logo as text with or without hover animation.
-		public function pinckney_hugo_group($options){ $this->pinckneyhugogroup($options); }
-		public function phg($options){ $this->pinckneyhugogroup($options); }
-		public function pinckneyhugogroup($options=array()){
-			$defaults = array(
-				'animate' => false,
-				'white' => false,
-				'linked' => true,
-			);
-
-			$data = array_merge($defaults, $options);
-
-			$anim = ( $data['animate'] )? 'anim' : '';
-			$white = ( $data['white'] )? 'white' : '';
-			$html = ( $data['linked'] )? '<a ' : '<span ';
-
-			$html .= 'class="phg ' . $anim . ' ' . $white . '"';
-
-			if ( $data['linked'] ){
-				$html .= ' href="http://www.pinckneyhugo.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=phg+link+function" target="_blank" rel="noopener"';
-			}
-
-			$html .= '><span class="pinckney">Pinckney</span><span class="hugo">Hugo</span><span class="group">' . __('Group', 'nebula') . '</span>';
-
-			if ( $data['linked'] ){
-				$html .= '</a>';
-			} else {
-				$html .= '</span>';
-			}
-
-			return $html;
 		}
 
 		//Get a datapoint for a user

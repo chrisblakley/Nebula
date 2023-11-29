@@ -279,39 +279,6 @@ a.white, li.icon.white a {@include link-colors(#fff, #ccc);
 @include add-color-class("brand", $primary_color);
 @include add-color-class("brand-secondary", $secondary_color);
 
-.phg {margin-left: 3px; padding-left: 18px; background: url($template_directory + "/assets/img/phg/phg-symbol.svg") no-repeat; background-size: 13%; background-position: left center; text-decoration: none !important;
-	&.white {background: url($template_directory + "/assets/img/phg/phg-symbol-white.svg") no-repeat;
-		span {color: #fff;}
-		&:hover span {color: #aaa;}
-	}
-	span {transition: all 0.25s;
-		&.pinckney {color: brand(phg);}
-		&.hugo {color: brand(phg, 2);}
-		&.group {color: brand(phg, 3);}
-	}
-	&:hover {
-		span.pinckney {color: brand(phg);}
-		span.hugo {color: brand(phg, 2);}
-		span.group {color: brand(phg, 3);}
-	}
-
-	&.anim {margin-left: 0; padding-left: 0; text-decoration: none !important; background: url($template_directory + "/assets/img/phg/phg-symbol.svg") -15px 6px no-repeat; background-size: 13px 8px; transition: all 0.25s;
-		span {margin-right: 3px; transition: all 0.25s;
-			&:last-child {margin-right: 0;}
-			&.pinckney {color: inherit;}
-			&.hugo {color: inherit;}
-			&.group {color: inherit;}
-		}
-		&:hover {margin-left: 3px; padding-left: 15px; background: url($template_directory + "/assets/img/phg/phg-symbol.svg") 0 6px no-repeat; background-size: 13px 8px;
-			span {margin-right: 0;
-				&.pinckney {color: brand(phg);}
-				&.hugo {color: brand(phg, 2);}
-				&.group {color: brand(phg, 3);}
-			}
-		}
-	}
-}
-
 //@include brand_link(facebook);
 @mixin brand_link($brand){
 	@if brand($brand) == brand($brand, 2){

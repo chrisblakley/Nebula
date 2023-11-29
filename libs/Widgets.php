@@ -415,7 +415,7 @@ if ( !trait_exists('Widgets') ){
 				</p>
 				<p class="mode_required" data-for="mode-directions">
 					<label for="<?php echo $this->get_field_id('waypoints'); ?>">Waypoints</label>
-					<input class="widefat" id="<?php echo $this->get_field_id('waypoints'); ?>" name="<?php echo $this->get_field_name('waypoints'); ?>" type="text" value="<?php echo ( isset($instance['waypoints']) )? $instance['waypoints'] : ''; ?>" placeholder="Pinckney Hugo Group|Blarney Stone" />
+					<input class="widefat" id="<?php echo $this->get_field_id('waypoints'); ?>" name="<?php echo $this->get_field_name('waypoints'); ?>" type="text" value="<?php echo ( isset($instance['waypoints']) )? $instance['waypoints'] : ''; ?>" placeholder="Destiny USA|Blarney Stone" />
 				</p>
 				<p class="mode_required" data-for="mode-directions">
 					<label for="<?php echo $this->get_field_id('travel_mode'); ?>">Travel Mode</label>

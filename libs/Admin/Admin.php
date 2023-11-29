@@ -1890,7 +1890,7 @@ if ( !trait_exists('Admin') ){
 
 		//Admin footer left side
 		public function change_admin_footer_left(){
-			return $this->pinckneyhugogroup() . ' &bull; <a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener">760 West Genesee Street, Syracuse, NY 13204</a> &bull; (315) 478-6700';
+			//return '<a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener">760 West Genesee Street, Syracuse, NY 13204</a> &bull; (315) 478-6700';
 		}
 
 		//Admin footer right side
