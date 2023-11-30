@@ -3,7 +3,7 @@ window.performance.mark('(Nebula) Inside /admin-modules/dashboard.js');
 //Developer Metabox functions
 nebula.developerMetaboxes = function(){
 	//Developer Info Metabox
-	if ( jQuery('div#phg_developer_info').length ){
+	if ( jQuery('div#nebula_developer_info').length ){
 		if ( jQuery('.serverdetections').length ){ //If viewing the dashboard
 			if ( !jQuery('.nebula-adb-tester').is(':visible') ){
 				jQuery('.serverdetections').prepend('<li class="nebula-adb-reminder"><i class="fa-solid fa-shield-halved"></i> Your ad-blocker is enabled</li>');

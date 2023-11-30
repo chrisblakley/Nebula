@@ -24,7 +24,7 @@ wp.blocks.registerBlockType('nebula/breadcrumbs', {
 				wp.element.createElement(
 					'iframe',
 					{
-						id: 'phg-overview-video', //Does this need to be an option? I'd prefer not
+						id: 'nebula-breadcrumbs-block', //Does this need to be an option? I'd prefer not
 						className: 'breadcrumbs',
 						width: 400,
 						height: 300,

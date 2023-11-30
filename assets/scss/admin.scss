@@ -72,7 +72,7 @@ th#id {width: 50px;}
 .nebula-adb-reminder {color: $danger_color;} //Used by Dev Metabox and Nebula Options page
 
 //Dev Metabox
-#phg_developer_info {
+#nebula_developer_info {
 	.secured-connection {
 		i, svg {color: $success_color;}
 	}
@@ -226,8 +226,8 @@ ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {width: 19px; height: 
 #wpfooter a {text-decoration: none;}
 
 .nebula_admin_notice {
-	a {color: brand(phg); transition: all 0.25s;
-		&:hover {color: brand(phg, 2);}
+	a {color: $primary_color; transition: all 0.25s;
+		&:hover {color: $secondary_color;}
 	}
 }
 

@@ -19,7 +19,6 @@ if ( !trait_exists('Dashboard') ){
 
 				if ( current_user_can('edit_others_posts') ){
 					add_action('wp_dashboard_setup', array($this, 'administrative_metabox'));
-					//add_action('wp_dashboard_setup', array($this, 'phg_metabox'));
 
 					if ( $this->get_option('todo_manager_metabox') && $this->is_dev() ){
 						add_action('wp_dashboard_setup', array($this, 'todo_metabox'));
@@ -571,7 +570,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Developer Info Metabox
 		public function dev_info_metabox(){
-			wp_add_dashboard_widget('phg_developer_info', 'Developer Information', array($this, 'dashboard_developer_info'));
+			wp_add_dashboard_widget('nebula_developer_info', 'Developer Information', array($this, 'dashboard_developer_info'));
 		}
 
 		//Developer Info Metabox content

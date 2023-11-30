@@ -26,7 +26,7 @@
 
 	.Sidebar { grid-area: Sidebar; outline: 1px solid pink;}
 
-	.Footer { grid-area: Footer; background: url($template_directory + "/assets/img/phg/phg-nebula-mountain.jpg") no-repeat bottom center / cover; outline: 1px solid cyan;}
+	.Footer { grid-area: Footer; background: url($template_directory + "/assets/img/nebula-mountain.jpg") no-repeat bottom center / cover; outline: 1px solid cyan;}
 
 	#footer-section {display: none;}
 }
