@@ -1850,8 +1850,9 @@ if ( !trait_exists('Admin') ){
 
 							//Convert objects to strings
 							if ( is_object($value) ){
-								$value = json_decode(json_encode($value), true);
-							} elseif ( is_array($value) ){
+								$value = json_decode(wp_json_encode($value), true);
+							}
+							if ( is_array($value) ){
 								$value = implode(',', $value);
 							}
 

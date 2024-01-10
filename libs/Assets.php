@@ -295,7 +295,7 @@ if ( !trait_exists('Assets') ){
 			$this->brain = apply_filters('nebula_brain', $this->brain); //Allow other functions to hook in to add/modify data
 			$this->brain['user']['known'] = ( !empty($this->brain['user']['email']) )? true : false; //Move to companion plugin
 
-			echo '<script type="text/javascript">const nebula = ' . json_encode($this->brain) . '</script>'; //Output the data to <head>
+			echo '<script type="text/javascript">const nebula = ' . wp_json_encode($this->brain) . '</script>'; //Output the data to <head>
 
 			$this->timer('Output Nebula Data', 'end');
 		}

@@ -1167,7 +1167,7 @@ if ( !trait_exists('Dashboard') ){
 				$github_discussions_json = json_decode($discussions_response['body']);
 
 				//Then combine the issues and discussions by most recent first
-				$github_combined_posts = json_encode($github_issues_json); //Replace this when discussions api is available
+				$github_combined_posts = wp_json_encode($github_issues_json); //Replace this when discussions api is available
 
 				set_transient('nebula_github_posts', $github_combined_posts, MINUTE_IN_SECONDS*30); //30 minute expiration
 			}

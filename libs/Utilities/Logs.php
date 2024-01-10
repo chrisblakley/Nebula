@@ -66,7 +66,7 @@ if ( !trait_exists('Logs') ){
 
 			//If the message is not a string, encode it as JSON
 			if ( !is_string($message) ){
-				$message = json_encode($message);
+				$message = wp_json_encode($message);
 			}
 
 			$message = '[' . date('l, F j, Y - g:i:sa') . '] ' . $message . ' (on ' . $this->requested_url() . ')' . PHP_EOL; //Add timestamp, URL, and newline

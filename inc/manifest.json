@@ -59,28 +59,8 @@
 							"type": "image/png",
 							"purpose": "any maskable"
 						}, {
-							"src": "https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/meta/mstile-144x144.png",
-							"sizes": "144x144",
-							"type": "image/png",
-							"purpose": "any maskable"
-						}, {
 							"src": "https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/meta/mstile-150x150.png",
-							"sizes": "150x150",
-							"type": "image/png",
-							"purpose": "any maskable"
-						}, {
-							"src": "https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/meta/mstile-310x150.png",
-							"sizes": "310x150",
-							"type": "image/png",
-							"purpose": "any maskable"
-						}, {
-							"src": "https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/meta/mstile-310x310.png",
-							"sizes": "310x310",
-							"type": "image/png",
-							"purpose": "any maskable"
-						}, {
-							"src": "https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/meta/mstile-70x70.png",
-							"sizes": "70x70",
+							"sizes": "270x270",
 							"type": "image/png",
 							"purpose": "any maskable"
 						}, {

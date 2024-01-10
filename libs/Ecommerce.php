@@ -133,7 +133,7 @@ if ( !trait_exists('Ecommerce') ){
 					event_label: "Product: ' . $product->get_name() . ' (ID: ' . $product->get_id() . ')",
 					value: "' . $product->get_price() . '",
 					currency: "USD",
-					items: [' . json_encode($product_item) . '],
+					items: [' . wp_json_encode($product_item) . '],
 					non_interaction: true
 				});';
 			}
@@ -183,7 +183,7 @@ if ( !trait_exists('Ecommerce') ){
 					event_label: "Cart Total: ' . $cart_total . ' (' . count($product_items) . ' items)",
 					value: "' . $cart_total . '",
 					currency: "USD",
-					items: ' . json_encode($product_items) . ',
+					items: ' . wp_json_encode($product_items) . ',
 					non_interaction: true
 				});';
 			}
@@ -243,7 +243,7 @@ if ( !trait_exists('Ecommerce') ){
 				tax: ' . $order->get_total_tax() . ',
 				shipping: ' . $order->get_shipping_total() . ',
 				currency: "' . $order->get_currency() . '",
-				items: ' . json_encode($product_items) . '
+				items: ' . wp_json_encode($product_items) . '
 			});';
 
 			echo '</script>';
@@ -299,7 +299,7 @@ if ( !trait_exists('Ecommerce') ){
 							"height": "<?php echo $post_thumbnail_meta[2]; ?>"
 						},
 
-						"description": <?php echo json_encode($this->excerpt(array('words' => 100, 'more' => '', 'ellipsis' => false, 'structured' => false))); ?>,
+						"description": <?php echo wp_json_encode($this->excerpt(array('words' => 100, 'more' => '', 'ellipsis' => false, 'structured' => false))); ?>,
 
 						"offers": {
 							"@type": "Offer",

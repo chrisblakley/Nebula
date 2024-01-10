@@ -331,7 +331,7 @@ if ( !trait_exists('Functions') ){
 
 			$shortcuts = apply_filters('nebula_manifest_shortcuts', array()); //Allow the child theme (or plugins) to add shortcuts to the PWA
 			if ( !empty($shortcuts) ){
-				$manifest_json .= '"shortcuts": ' . json_encode($shortcuts, JSON_PRETTY_PRINT) . ',';
+				$manifest_json .= '"shortcuts": ' . wp_json_encode($shortcuts, JSON_PRETTY_PRINT) . ',';
 			}
 
 			$manifest_json .= '"icons": [';
@@ -1729,8 +1729,8 @@ if ( !trait_exists('Functions') ){
 									nonce: nebula.site.ajax.nonce,
 									action: 'nebula_infinite_load',
 									page: pageNumber,
-									args: JSON.stringify(<?php echo json_encode($args); ?>),
-									loop: <?php echo json_encode($loop); ?>,
+									args: JSON.stringify(<?php echo wp_json_encode($args); ?>),
+									loop: <?php echo wp_json_encode($loop); ?>,
 								}),
 								priority: 'high'
 							}).then(function(response){
@@ -2386,7 +2386,7 @@ if ( !trait_exists('Functions') ){
 			$this->timer($twitter_timing_id, 'end');
 
 			if ( !empty($post['data']) ){
-				echo json_encode($tweets);
+				echo wp_json_encode($tweets);
 				wp_die();
 			} else {
 				return $tweets;
@@ -3205,7 +3205,7 @@ if ( !trait_exists('Functions') ){
 			//Store it in a CPT
 			$new_post_id = wp_insert_post(array(
 				'post_title' => sanitize_text_field($submission_title),
-				'post_content' => json_encode($submission_data),
+				'post_content' => wp_json_encode($submission_data),
 				'post_status' => 'private',
 				'post_type' => 'nebula_cf7_submits', //This needs to match the CPT slug!
 				'meta_input' => array(

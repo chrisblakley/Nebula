@@ -411,7 +411,7 @@ if ( !trait_exists('Optimization') ){
 						return $a['start'] - $b['start'];
 					});
 
-					echo '<script type="text/javascript">nebula.site.timings = ' . json_encode($testTimes) . ';</script>'; //Output the data to <head>
+					echo '<script type="text/javascript">nebula.site.timings = ' . wp_json_encode($testTimes) . ';</script>'; //Output the data to <head>
 				}
 			}
 		}

@@ -198,7 +198,7 @@ if ( !trait_exists('Warnings') ){
 					//If not pinging additional update services (blog must be public for this to be available)
 					if ( $this->is_warning_level('verbose') ){
 						$ping_sites = get_option('ping_sites');
-						if ( empty($ping_sites) || $ping_sites === 'http://rpc.pingomatic.com/' ){ //If it is empty or only has the default value
+						if ( $ping_sites === 'http://rpc.pingomatic.com/' ){ //If it only has the default value (ignore empty value if that is done intentionally)
 							$nebula_warnings['update_services'] = array(
 								'level' => 'warning',
 								'dismissible' => true,
@@ -296,7 +296,7 @@ if ( !trait_exists('Warnings') ){
 
 									//If the file size is larger than 10mb
 									if ( filesize($file) > MB_IN_BYTES*10 ){
-										$filesize = ( version_compare(PHP_VERSION, '8.0.0') >= 0 )? bcdiv(filesize($file), MB_IN_BYTES, 0) : number_format(filesize($file)/MB_IN_BYTES, 2);
+										$filesize = ( function_exists('bcdiv') )? bcdiv(filesize($file), MB_IN_BYTES, 0) : number_format(filesize($file)/MB_IN_BYTES, 2);
 
 										$nebula_warnings['large_file'] = array(
 											'level' => 'warning',
@@ -741,7 +741,7 @@ if ( !trait_exists('Warnings') ){
 					$this->add_log('Nebula audit performed on ' . $this->requested_url(), 1);
 				}
 
-				$nebula_warnings = json_encode($this->warnings);
+				$nebula_warnings = wp_json_encode($this->warnings);
 				?>
 					<style>
 						.nebula-audit .audit-desc {position: absolute; bottom: 0; right: 0; color: #fff; background: grey; font-size: 10px; padding: 3px 5px; z-index: 9999;}

@@ -125,7 +125,7 @@ if ( !trait_exists('Analytics') ){
 			$data['events'][0]['params'] = array_merge($data['events'][0]['params'], $event_parameters); //Add passed parameters
 
 			$response = wp_remote_post('https://www.google-analytics.com/mp/collect?measurement_id=G-79YGGYLVJK&api_secret=rRFT9IynSg-DEo5t7j1mqw', array(
-				'body' => json_encode($data),
+				'body' => wp_json_encode($data),
 				'method' => 'POST',
 			));
 		}
@@ -176,7 +176,7 @@ if ( !trait_exists('Analytics') ){
 			//The GA Measurement Protocol requires a Measurement ID and an API Secret key
 			if ( $this->get_option('ga_api_secret') && $this->get_option('ga_measurement_id') ){
 				$response = wp_remote_post('https://www.google-analytics.com/mp/collect?measurement_id=' . $this->get_option('ga_measurement_id') . '&api_secret=' . $this->get_option('ga_api_secret'), array(
-					'body' => json_encode($data),
+					'body' => wp_json_encode($data),
 					'method' => 'POST',
 				));
 				return $response;

@@ -104,7 +104,7 @@
 			?>
 
 			//Set the property JS object here
-			nebula.pageviewProperties = <?php echo json_encode(apply_filters('nebula_ga_pageview_properties', $pageview_properties)); //Allow other functions to modify the PHP pageview properties ?>;
+			nebula.pageviewProperties = <?php echo wp_json_encode(apply_filters('nebula_ga_pageview_properties', $pageview_properties)); //Allow other functions to modify the PHP pageview properties ?>;
 
 			//Post Categories and Tags
 			nebula.pageviewProperties.post_categories = nebula?.post?.categories;
@@ -160,7 +160,7 @@
 				nebula.pageviewProperties.window_type = 'Standalone App';
 			}
 
-			nebula.user.saveData = <?php echo json_encode(nebula()->is_save_data()); //JSON Encode forces boolean return to print ?>;
+			nebula.user.saveData = <?php echo wp_json_encode(nebula()->is_save_data()); //JSON Encode forces boolean return to print ?>;
 			//nebula.pageviewProperties.save_data = nebula.user.saveData;
 
 			//Prefers reduced motion
@@ -320,7 +320,7 @@
 			$hubspot_identify['bot'] = ( nebula()->is_bot() )? 1 : 0;
 		?>
 
-		var hubspotIdentify = <?php echo json_encode(apply_filters('nebula_hubspot_identify', $hubspot_identify)); //Allow other functions to hook into Hubspot identifications ?>;
+		var hubspotIdentify = <?php echo wp_json_encode(apply_filters('nebula_hubspot_identify', $hubspot_identify)); //Allow other functions to hook into Hubspot identifications ?>;
 		hubspotIdentify.cookies = ( window.navigator.cookieEnabled )? '1' : '0';
 		hubspotIdentify.screen = window.screen.width + 'x' + window.screen.height + ' (' + window.screen.colorDepth + ' bits)';
 
