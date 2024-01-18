@@ -1588,7 +1588,7 @@ if ( !trait_exists('Admin') ){
 				$submission_data = get_post($submission_id); //Remember: this $submission_id is the submission ID (not the form ID)!
 				$form_data = json_decode($submission_data->post_content);
 				$form_id = ( is_object($form_data) )? $form_data->_wpcf7 : false; //CF7 Form ID
-				$post_id = ( is_object($form_data) )? $form_data->_wpcf7_container_post : false; //The page the CF7 submission was from
+				$post_id = ( is_object($form_data) )? $form_data->_wpcf7_container_post : false; //The page the CF7 submission was from. @todo "Nebula" 0: Is this still working? Post Titles are all empty
 
 				if ( $column_name === 'formatted_date' ){
 					if ( !empty($form_data) ){

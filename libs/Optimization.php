@@ -693,6 +693,12 @@ if ( !trait_exists('Optimization') ){
 							if ( strpos($rule, '!') === 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 								$invert = true;
 								$rule = ltrim($rule, '!'); //Remove the "!" character since we have now detected it
+
+								//Now check if the rule is simply an "inverted" ID
+								if ( intval($rule) && get_the_id() !== intval($rule) ){
+									$this->deregister($handle, $type);
+									break; //No need to check at additional rules for this handle. Go to the next handle.
+								}
 							}
 
 							$rule = str_replace('()', '', $rule); //If called as an executable function, remove the "()". Ex: is_front_page()

@@ -3173,6 +3173,15 @@ if ( !trait_exists('Functions') ){
 				$submission_data['_' . $key] = $value;
 			}
 
+			//Try to get the last recaptcha score from CF7 (0.1 = most bot, 0.9 = most human)
+			$recaptcha = $submission->get_meta('recaptcha'); //This is not working (probably due to it being a protected array entry)
+			if ( !empty($recaptcha) ){
+				$submission_data['_recaptcha_spam_score'] = $recaptcha['response']['score'];
+			} elseif ( class_exists('WPCF7_RECAPTCHA') ){
+				$recaptcha_service = WPCF7_RECAPTCHA::get_instance();
+				$submission_data['_last_recaptcha_spam_score'] = $recaptcha_service->get_last_score();
+			}
+
 			$unique_identifier = '';
 			if ( !empty($submission_data['name']) ){
 				$unique_identifier = ' from ' . sanitize_text_field($submission_data['name']);

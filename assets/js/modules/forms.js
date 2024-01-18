@@ -26,7 +26,7 @@ nebula.cf7Functions = async function(){
 						event_name: 'cf7_form_impression',
 						event_category: 'CF7 Form',
 						event_action: 'Impression',
-						event_label: jQuery(entry.target).closest('.wpcf7').attr('id') || jQuery(entry.target).attr('id'), //@todo "Nebula" 0: Remove after July 2023
+						event_label: jQuery(entry.target).closest('.wpcf7').attr('id') || jQuery(entry.target).attr('id'),
 						form_id: jQuery(entry.target).closest('.wpcf7').attr('id') || jQuery(entry.target).attr('id'),
 						non_interaction: true
 					};
@@ -75,7 +75,7 @@ nebula.cf7Functions = async function(){
 				event: e,
 				event_category: 'CF7 Form',
 				event_action: 'Started Form (Focus)',
-				event_label: formID, //@todo "Nebula" 0: Remove after July 2023
+				event_label: formID,
 				form_id: formID, //Actual ID (not Unit Tag)
 				form_field: thisField,
 				form_field_info: fieldInfo
@@ -140,7 +140,7 @@ nebula.cf7Functions = async function(){
 				event_name: 'cf7_form_submit_attempt',
 				event_category: 'CF7 Form',
 				event_action: 'Submit (Attempt)',
-				event_label: e.detail.unitTag, //@todo "Nebula" 0: Remove after July 2023
+				event_label: e.detail.unitTag,
 				form_id: e.detail.contactFormId, //CF7 Form ID
 				post_id: e.detail.containerPostId, //Post/Page ID
 				unit_tag: e.detail.unitTag, //CF7 Unit Tag
@@ -182,7 +182,7 @@ nebula.cf7Functions = async function(){
 				event_name: 'cf7_form_submit_processing',
 				event_category: 'CF7 Form',
 				event_action: 'Submit (Processing)',
-				event_label: e.detail.unitTag, //@todo "Nebula" 0: Remove after July 2023
+				event_label: e.detail.unitTag,
 				form_id: e.detail.contactFormId, //CF7 Form ID
 				post_id: e.detail.containerPostId, //Post/Page ID
 				unit_tag: e.detail.unitTag, //CF7 Unit Tag
@@ -223,7 +223,7 @@ nebula.cf7Functions = async function(){
 				event_name: 'cf7_form_submit_invalid',
 				event_category: 'CF7 Form',
 				event_action: 'Submit (CF7 Invalid)',
-				event_label: e.detail.unitTag, //@todo "Nebula" 0: Remove after July 2023
+				event_label: e.detail.unitTag,
 				description: '(JS) Invalid form submission for form ID ' + e.detail.unitTag,
 				form_id: e.detail.contactFormId, //CF7 Form ID
 				post_id: e.detail.containerPostId, //Post/Page ID
@@ -275,7 +275,8 @@ nebula.cf7Functions = async function(){
 				event_name: 'cf7_form_submit_invalid',
 				event_category: 'CF7 Form',
 				event_action: 'Submit (HTML5 Invalid)',
-				event_label: 'General HTML5 validation error', //@todo "Nebula" 0: Remove after July 2023 - change to description
+				event_label: 'General HTML5 validation error',
+				description: 'General HTML5 validation error',
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -298,7 +299,7 @@ nebula.cf7Functions = async function(){
 				event_name: 'cf7_form_submit_spam',
 				event_category: 'CF7 Form',
 				event_action: 'Submit (Spam)',
-				event_label: e.detail.unitTag, //@todo "Nebula" 0: Remove after July 2023
+				event_label: e.detail.unitTag,
 				form_id: e.detail.contactFormId, //CF7 Form ID
 				post_id: e.detail.containerPostId, //Post/Page ID
 				unit_tag: e.detail.unitTag, //CF7 Unit Tag
@@ -344,7 +345,7 @@ nebula.cf7Functions = async function(){
 				event_name: 'cf7_form_submit_failed',
 				event_category: 'CF7 Form',
 				event_action: 'Submit (Mail Failed)',
-				event_label: e.detail.unitTag, //@todo "Nebula" 0: Remove after July 2023
+				event_label: e.detail.unitTag,
 				form_id: e.detail.contactFormId, //CF7 Form ID
 				post_id: e.detail.containerPostId, //Post/Page ID
 				unit_tag: e.detail.unitTag, //CF7 Unit Tag
@@ -387,14 +388,12 @@ nebula.cf7Functions = async function(){
 				formInputs = nebula.timings[e.detail.unitTag].laps + ' inputs';
 			}
 
-			//These event may want to correspond to the GA4 event name "generate_lead" and use "value" and "currency" as parameters: https://support.google.com/analytics/answer/9267735 (or consider multiple events?)
-
 			let thisEvent = {
 				event: e,
 				event_name: 'cf7_form_submit_success',
 				event_category: 'CF7 Form',
 				event_action: 'Submit (Success)',
-				event_label: e.detail.unitTag, //@todo "Nebula" 0: Remove after July 2023
+				event_label: e.detail.unitTag,
 				form_id: e.detail.contactFormId, //CF7 Form ID
 				post_id: e.detail.containerPostId, //Post/Page ID
 				unit_tag: e.detail.unitTag, //CF7 Unit Tag ("f" is CF7 form ID, "p" is WP post ID, and "o" is the count if there are multiple per page)
@@ -411,7 +410,7 @@ nebula.cf7Functions = async function(){
 			});
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
-			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent)); //Note that this event is often received by GA before attempt/processing events
 			gtag('event', 'timing_complete', {
 				name: 'Form Completion (ID: ' + thisEvent.unitTag + ')',
 				value: Math.round(thisEvent.formTime),
