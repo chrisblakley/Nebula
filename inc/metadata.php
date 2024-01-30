@@ -168,6 +168,25 @@
 <link rel="profile" href="https://gmpg.org/xfn/11" />
 
 <?php
+	//Speculation Rules to Prerender next pages
+	$speculative_pages = apply_filters('nebula_speculative_preload_pages', array('/')); //Start with the homepage and then allow child themes to add to this list
+?>
+<script type="speculationrules">
+	{
+		"prerender": [{
+			"source": "list",
+			"urls": [<?php echo implode(', ', array_map(function($page){
+				return '"' . $page . '"';
+			}, $speculative_pages)); ?>]
+		}, {
+			"source": "document",
+			"where": {"href_matches": "/*\\?*#*"},
+			"eagerness": "moderate"
+		}]
+	}
+</script>
+
+<?php
 	//JSON-LD Structured Data
 	//Google Structured Data Documentation: https://developers.google.com/search/docs/data-types/data-type-selector
 	//JSON-LD Examples: https://jsonld.com/

@@ -452,6 +452,8 @@ nebula.cookieNotification = async function(){
 
 			gtag('consent', 'update', {
 				ad_storage: 'granted', //Explicitly allows storage (such as cookies) related to advertising
+				ad_user_data: 'granted', //Sets consent for sending user data to Google for advertising purposes (New in 2024)
+				ad_personalization: 'granted', //Sets consent for personalized advertising (New in 2024)
 				analytics_storage: 'granted', //Explicitly allows storage (such as cookies) related to analytics
 				functionality_storage: 'granted', //Explicitly allows storage that supports the functionality of the website
 				personalization_storage: 'granted', //Explicitly allows storage related to personalization

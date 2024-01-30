@@ -744,6 +744,9 @@ if ( !trait_exists('Warnings') ){
 				$nebula_warnings = wp_json_encode($this->warnings);
 				?>
 					<style>
+						::spelling-error {text-decoration: wavy red;} /* Coming in Chrome 121 //@todo "Nebula" 0: Does this require contenteditable and/or spellcheck="true"? If so, add it via JS */
+						::grammar-error {text-decoration: wavy green;}
+
 						.nebula-audit .audit-desc {position: absolute; bottom: 0; right: 0; color: #fff; background: grey; font-size: 10px; padding: 3px 5px; z-index: 9999;}
 							.nebula-audit .nebula-audit .audit-desc {right: auto; left: 0; top: 0; bottom: auto;}
 								.nebula-audit .nebula-audit .nebula-audit .audit-desc {right: auto; left: 0; bottom: 0; top: auto;}

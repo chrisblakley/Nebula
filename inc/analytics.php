@@ -42,7 +42,7 @@
 
 				//WordPress User ID
 				if ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() ){
-					$pageview_properties['user_id'] = get_current_user_id(); //This property must be less than 256 characters
+					$pageview_properties['user_id'] = get_current_user_id(); //This property must be less than 256 characters (and cannot match the CID)
 				}
 
 				if ( is_singular() || is_page() ){
@@ -94,7 +94,7 @@
 				// $time_range = $relative_time['standard'][0] . ':00' . $relative_time['ampm'] . ' - ' . $relative_time['standard'][2] . ':59' . $relative_time['ampm'];
 				// $pageview_properties['relative_time'] = ucwords($time_description) . ' (' . $time_range . ')';
 
-				//Role
+				//WP Role
 				//$pageview_properties['user_role'] = nebula()->user_role();
 
 				//WPML Language

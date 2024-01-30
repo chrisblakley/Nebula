@@ -616,7 +616,7 @@ nebula.liveValidator = function(){
 		if ( jQuery(this).val() === '' ){
 			nebula.applyValidationClasses(jQuery(this), 'reset', false);
 		} else {
-			nebula.applyValidationClasses(jQuery(this), 'invalid', ( e.type !== 'keyup' ));
+			nebula.applyValidationClasses(jQuery(this), 'valid', ( e.type !== 'keyup' )); //This indicates it is valid as long as it isn't empty
 		}
 	});
 
