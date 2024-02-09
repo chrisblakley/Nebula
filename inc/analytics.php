@@ -42,7 +42,8 @@
 
 				//WordPress User ID
 				if ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() ){
-					$pageview_properties['user_id'] = get_current_user_id(); //This property must be less than 256 characters (and cannot match the CID)
+					$pageview_properties['user_id'] = get_current_user_id(); //This property must be less than 256 characters (and cannot match the CID). GA4 does not make this easily available in reporting.
+					$pageview_properties['wp_id'] = get_current_user_id(); //This is to make it more easily available in GA4 reports/explorations
 				}
 
 				if ( is_singular() || is_page() ){
@@ -95,7 +96,7 @@
 				// $pageview_properties['relative_time'] = ucwords($time_description) . ' (' . $time_range . ')';
 
 				//WP Role
-				//$pageview_properties['user_role'] = nebula()->user_role();
+				$pageview_properties['user_role'] = nebula()->user_role();
 
 				//WPML Language
 				if ( defined('ICL_LANGUAGE_NAME') ){
