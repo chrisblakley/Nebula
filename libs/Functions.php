@@ -978,6 +978,7 @@ if ( !trait_exists('Functions') ){
 					return esc_url($this->get_option('facebook_url'));
 
 				case 'twitter':
+				case 'x':
 					return $this->twitter_url(); //Use the provided function from Nebula Options
 
 				case 'linkedin':
@@ -992,6 +993,9 @@ if ( !trait_exists('Functions') ){
 
 				case 'youtube':
 					return esc_url($this->get_option('youtube_url'));
+
+				case 'tiktok':
+					return esc_url($this->get_option('tiktok_url'));
 
 				default:
 					return false;
