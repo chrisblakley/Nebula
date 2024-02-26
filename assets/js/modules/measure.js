@@ -129,26 +129,27 @@ nebula.eventTracking = async function(){
 
 	nebula.cacheSelectors(); //Just to be safe (this is no longer called from anywhere besides nebula.js so this should never be needed)
 
-	//Check for Topics API support @todo "Nebula" 0: when it is better supported update this further
-	if ( 'browsingTopics' in document && document.featurePolicy.allowsFeature('browsing-topics') ){ //Seems to be available in Chrome 117+ (at least in Canary)
-		try {
-			document.browsingTopics().then(function(topics){
-				//console.log('Interest Topics:', topics);
-
-				if ( topics && topics.length ){ //If the topics array is not empty
-					gtag('event', 'topics_api', {
-						event_category: 'Topics API',
-						event_action: 'Interests',
-						event_label: topics.join(', '),
-						interests: topics.join(', '),
-						non_interaction: true
-					});
-				}
-			});
-		} catch {
-			//Ignore errors
-		}
-	}
+	//Check for Topics API support
+	//Note: This may require a high level of user engagement before these are available. Removing for now to avoid attestation check message.
+// 	if ( 'browsingTopics' in document && document.featurePolicy.allowsFeature('browsing-topics') ){ //Seems to be available in Chrome 117+ (at least in Canary)
+// 		try {
+// 			document.browsingTopics().then(function(topics){
+// 				//console.log('Interest Topics:', topics);
+//
+// 				if ( topics && topics.length ){ //If the topics array is not empty
+// 					gtag('event', 'topics_api', {
+// 						event_category: 'Topics API',
+// 						event_action: 'Interests',
+// 						event_label: topics.join(', '),
+// 						interests: topics.join(', '),
+// 						non_interaction: true
+// 					});
+// 				}
+// 			});
+// 		} catch {
+// 			//Ignore errors
+// 		}
+// 	}
 
 	nebula.once(function(){
 		window.dataLayer = window.dataLayer || []; //Prevent overwriting an existing GTM Data Layer array

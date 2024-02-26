@@ -239,6 +239,7 @@ nebula.get = function(parameter = false, url = location.search){
 
 	return queries;
 };
+
 //Remove an array of parameters from the query string.
 nebula.removeQueryParameter = function(keys, url = location.search){
 	//Convert single key to an array if it is provided as a string
