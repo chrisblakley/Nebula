@@ -1970,16 +1970,18 @@ if ( !trait_exists('Admin') ){
 
 			$nebula_post_meta_fields = array('nebula_body_classes', 'nebula_post_classes', 'nebula_internal_search_keywords', 'nebula_cf7_submission_notes');
 			foreach ( $nebula_post_meta_fields as $nebula_post_meta_field ){
+				$meta_value = get_post_meta($post_id, $nebula_post_meta_field, true); //Get the meta value of the custom field key.
+
 				if ( !empty($this->super->post[$nebula_post_meta_field]) ){
 					$new_meta_value = sanitize_text_field($this->super->post[$nebula_post_meta_field]); //Get the posted data and sanitize it if needed.
-					$meta_value = get_post_meta($post_id, $nebula_post_meta_field, true); //Get the meta value of the custom field key.
+
 					if ( $new_meta_value && empty($meta_value) ){ //If a new meta value was added and there was no previous value, add it.
 						add_post_meta($post_id, $nebula_post_meta_field, $new_meta_value, true);
 					} elseif ( $new_meta_value && $meta_value !== $new_meta_value ){ //If the new meta value does not match the old value, update it.
 						update_post_meta($post_id, $nebula_post_meta_field, $new_meta_value);
-					} elseif ( $new_meta_value === '' && $meta_value ){ //If there is no new meta value but an old value exists, delete it.
-						delete_post_meta($post_id, $nebula_post_meta_field, $meta_value);
 					}
+				} else {
+					delete_post_meta($post_id, $nebula_post_meta_field, $meta_value);
 				}
 			}
 		}

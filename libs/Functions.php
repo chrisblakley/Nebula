@@ -9,6 +9,7 @@ if ( !trait_exists('Functions') ){
 		public $linkedin_widget_loaded = false;
 		public $pinterest_widget_loaded = false;
 		public $current_theme_template;
+		public $error_query;
 
 		public function hooks(){
 			global $pagenow;
