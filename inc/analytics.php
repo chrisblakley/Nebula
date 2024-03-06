@@ -7,7 +7,7 @@
 
 <?php if ( nebula()->is_analytics_allowed() ): ?>
 	<?php nebula()->timer('Analytics (Include)'); ?>
-	<?php if ( nebula()->get_option('ga_tracking_id') ): //Universal Google Analytics //@todo "Nebula" 0: Remove after July 2023 ?>
+	<?php if ( nebula()->get_option('ga_tracking_id') ): //Universal Google Analytics //@todo "Nebula" 0: Remove after 2024 ?>
 		<!-- Nebula GA (UA) -->
 		<script src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html(nebula()->get_option('ga_tracking_id')); ?>" async></script>
 		<script async>
@@ -45,6 +45,9 @@
 					$pageview_properties['user_id'] = get_current_user_id(); //This property must be less than 256 characters (and cannot match the CID). GA4 does not make this easily available in reporting.
 					$pageview_properties['wp_id'] = get_current_user_id(); //This is to make it more easily available in GA4 reports/explorations
 				}
+
+				//WP Role (regardless of logged-in state)
+				$pageview_properties['user_role'] = nebula()->user_role();
 
 				if ( is_singular() || is_page() ){
 					global $post;
@@ -94,9 +97,6 @@
 				// $time_description = implode(' ', $relative_time['description']);
 				// $time_range = $relative_time['standard'][0] . ':00' . $relative_time['ampm'] . ' - ' . $relative_time['standard'][2] . ':59' . $relative_time['ampm'];
 				// $pageview_properties['relative_time'] = ucwords($time_description) . ' (' . $time_range . ')';
-
-				//WP Role
-				$pageview_properties['user_role'] = nebula()->user_role();
 
 				//WPML Language
 				if ( defined('ICL_LANGUAGE_NAME') ){
@@ -178,6 +178,23 @@
 			// }
 			// nebula.pageviewProperties.prefers_color_scheme = nebula.user.prefersColorScheme;
 
+			<?php if ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() ): //Need to do this twice because user_id cannot be accessed in GA4 reports, so need to send it again as a custom dimension. ?>
+				gtag('set', 'user_properties', {
+					user_id: '<?php echo get_current_user_id(); ?>'
+				});
+			<?php endif; ?>
+
+			<?php if ( nebula()->is_staff() ): ?>
+				gtag('set', 'user_properties', {
+					traffic_type: 'internal' //This is a default GA4 property name/value for internal traffic filtering
+				});
+			<?php endif; ?>
+
+			//User role
+			gtag('set', 'user_properties', {
+				role: '<?php echo nebula()->user_role(); ?>'
+			});
+
 			<?php do_action('nebula_ga_before_pageview'); //Simple action for adding/modifying all custom definitions (including JS) before the pageview hit is sent. ?>
 
 			gtag('js', new Date());
@@ -190,35 +207,18 @@
 				nebula.user.cid = gaClientId; //Update the CID in Nebula ASAP to reflect the actual GA CID
 				nebula.session.id = nebula.session.id.replace(/cid:(.*?);/i, 'cid:' + gaClientId + ';'); //Replace the CID in the Nebula Session ID as well
 
-				gtag('set', 'user_properties', {
+				gtag('set', 'user_properties', { //Prep this for subsequent payloads
 					client_id: gaClientId
 				});
 			});
 
-			<?php if ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() ): //Need to do this twice because user_id cannot be accessed in GA4 reports, so need to send it again as a custom dimension. ?>
-				gtag('set', 'user_properties', {
-					user_id: '<?php echo get_current_user_id(); ?>'
-				});
-			<?php endif; ?>
-
 			gtag('get', '<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>', 'session_id', function(gaSessionId){
 				let nebulaSessionId = nebula?.session?.id || '';
-				gtag('set', 'user_properties', {
+				gtag('set', 'user_properties', { //Prep this for subsequent payloads
 					ga_session_id: gaSessionId,
 					nebula_session_id: nebulaSessionId + 'ga:' + gaSessionId
 				});
 			});
-
-			<?php if ( nebula()->is_staff() ): ?>
-				gtag('set', 'user_properties', {
-					traffic_type: 'internal' //This is a default GA4 property name/value for internal traffic filtering
-				});
-			<?php endif; ?>
-
-			//User role
-			// gtag('set', 'user_properties', {
-			// 	role: '<?php echo nebula()->user_role(); ?>'
-			// });
 
 			<?php if ( is_404() ): //Track 404 Errors ?>
 				var lastReferrer = nebula.session?.referrer || document.referrer || '(Unknown Referrer)';
@@ -249,11 +249,21 @@
 
 <?php if ( nebula()->get_option('gtm_id') ): //Google Tag Manager (can be used for more than just tracking) ?>
 	<!-- Nebula GTM <?php echo nebula()->get_option('ga_property_id'); ?> -->
-	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-	})(window,document,'script','dataLayer','<?php echo nebula()->get_option('gtm_id'); ?>');</script>
+	<script>
+		<?php if ( nebula()->get_option('ga_measurement_id') ): //If we have both GA4 and GTM, delay GTM to prevent any inadvertent GA4 tags in GTM from overriding Nebula ?>
+			setTimeout(function(){ //Ensure GA4 JS has initialized first
+		<?php endif; ?>
+
+			(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+			new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+			j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+			'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+			})(window,document,'script','dataLayer','<?php echo nebula()->get_option('gtm_id'); ?>');
+
+		<?php if ( nebula()->get_option('ga_measurement_id') ): ?>
+			}, 1000);
+		<?php endif; ?>
+	</script>
 <?php endif; ?>
 
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('google_ads_id') && !is_customize_preview() ): ?>
