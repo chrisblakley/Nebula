@@ -260,8 +260,8 @@
 			'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 			})(window,document,'script','dataLayer','<?php echo nebula()->get_option('gtm_id'); ?>');
 
-		<?php if ( nebula()->get_option('ga_measurement_id') ): ?>
-			}, 1000);
+		<?php if ( nebula()->get_option('ga_measurement_id') ): //100ms and 250ms seem to work here, but currently 500ms to be safe ?>
+			}, 500);
 		<?php endif; ?>
 	</script>
 <?php endif; ?>

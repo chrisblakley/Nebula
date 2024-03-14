@@ -1564,6 +1564,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				$columns['notes'] = 'Internal Notes';
+				$columns['cf7_version'] = 'CF7 Version';
 
 				unset($columns['date']); //Replacing the WP date column with our own
 				unset($columns['id']); //This ID is confusing since it is the submission ID
@@ -1621,6 +1622,10 @@ if ( !trait_exists('Admin') ){
 
 				if ( $column_name === 'notes' ){
 					echo '<span>' . get_post_meta($submission_id, 'nebula_cf7_submission_notes', true) . '</span>';
+				}
+
+				if ( $column_name === 'cf7_version' ){
+					echo '<span>' . json_decode($submission_data->post_content)->_wpcf7_version . '</span>';
 				}
 
 				echo '';

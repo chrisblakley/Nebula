@@ -146,7 +146,7 @@ nebula.dragDropUpload = async function(){
 
 			//Drag out
 			dropArea.addEventListener('dragleave', function(e){
-				jQuery(dropArea).addClass('dragover');
+				jQuery(dropArea).removeClass('dragover');
 
 				thisEvent.event_name = 'file_upload_dragleave';
 				thisEvent.event_action = 'Drag Leave';

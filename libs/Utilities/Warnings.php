@@ -196,7 +196,7 @@ if ( !trait_exists('Warnings') ){
 					}
 
 					//If not pinging additional update services (blog must be public for this to be available)
-					if ( $this->is_warning_level('verbose') ){
+					if ( !is_multisite() && $this->is_warning_level('verbose') ){ //This option isunavailable on Multisite installs of WP
 						$ping_sites = get_option('ping_sites');
 						if ( $ping_sites === 'http://rpc.pingomatic.com/' ){ //If it only has the default value (ignore empty value if that is done intentionally)
 							$nebula_warnings['update_services'] = array(

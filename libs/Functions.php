@@ -3234,8 +3234,11 @@ if ( !trait_exists('Functions') ){
 				return array();
 			}
 
+			global $wp_version;
+
 			$debug_info = array();
 
+			$debug_info['wp_core_version'] = $wp_version;
 			$debug_info['nebula_timestamp'] = date('U');
 			$debug_info['nebula_date_formatted'] = date('l, F j, Y \a\t g:ia');
 			$debug_info['nebula_version'] = $this->version('full') . ' (Committed ' . $this->version('date') . ')';
