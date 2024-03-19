@@ -372,7 +372,6 @@ table.nebula-cf7-submissions {border-collapse: collapse; width: 100%; margin-top
 		thead {background: $danger_color; color: readable-color($danger_color);}
 	}
 
-
 	tbody {
 		tr {transition: background 0.25s ease;
 			&:nth-child(even) {background: #e3e3e3;}
@@ -383,6 +382,7 @@ table.nebula-cf7-submissions {border-collapse: collapse; width: 100%; margin-top
 			}
 
 			&.no-data td {opacity: 0.4;}
+			&.mail-failed {background: $danger_color; color: readable-color($danger_color);}
 		}
 	}
 }

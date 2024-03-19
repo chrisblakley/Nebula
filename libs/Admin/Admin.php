@@ -97,7 +97,7 @@ if ( !trait_exists('Admin') ){
 					add_filter('display_post_states', array($this, 'cf7_submissions_remove_post_state'), 10, 2); //Hide the private post state text on listing pages
 					add_filter('post_row_actions', array($this, 'cf7_submissions_remove_quick_actions'), 10, 2);
 					add_action('edit_form_top', array($this, 'cf7_submissions_back_button'));
-					add_action('edit_form_after_title', array($this, 'cf7_storage_output'), 10, 1);
+					add_action('edit_form_after_title', array($this, 'cf7_storage_output'), 10, 1); //This is where the actual submission details are output
 					add_filter('months_dropdown_results', '__return_empty_array'); //Remove the original date month dropdown
 					add_action('restrict_manage_posts', array($this, 'cf7_submissions_filters'), 10, 1);
 					add_action('manage_posts_extra_tablenav', array($this, 'cf7_submissions_actions'), 10, 1);
@@ -1600,6 +1600,8 @@ if ( !trait_exists('Admin') ){
 				if ( $column_name === 'form_name' ){
 					if ( !empty($form_id) ){
 						echo '<strong><a href="admin.php?page=wpcf7&post=' . $form_id . '&action=edit">' . get_the_title($form_id) . ' &raquo;</a></strong><br /><small>Form ID: ' . $form_id . '</small>';
+					} elseif ( !empty($form_data->_detected_form_id) ){ //This is included on spam detected submissions
+						echo '<span class="cf7-submits-possible-spam"><span>' . get_the_title($form_data->_detected_form_id) . '</span><br /><small>Form ID: ' . $form_data->_detected_form_id . '</small></span>';
 					} else {
 						echo '<span class="cf7-submits-possible-spam">Spam?<br /><small>The message could not be decoded.</small></span>';
 					}
@@ -1608,11 +1610,13 @@ if ( !trait_exists('Admin') ){
 				if ( $column_name === 'page_title' ){
 					if ( !empty($post_id) ){
 						echo '<a href="' . get_permalink($post_id) . '" target="_blank">' . get_the_title($post_id) . ' &raquo;</a><br /><small>Post ID: ' . $post_id . '</small>';
+					} elseif ( !empty($form_data->_detected_page_id) ){ //This is included on spam detected submissions
+						echo '<span class="cf7-submits-possible-spam"><span>' . get_the_title($form_data->_detected_page_id) . '</span><br /><small>Post ID: ' . $form_data->_detected_page_id . '</small></span>';
 					}
 				}
 
 				//Check for attribution data if it is being used
-				if ( $this->get_option('attribution_tracking') && $column_name === 'attribution' ){
+				if ( $this->get_option('attribution_tracking') && $column_name === 'attribution' && isset($submission_data) ){
 					if ( !empty(str_replace('{}', '', json_decode($submission_data->post_content)->_nebula_attribution)) ){ //If we have attribution data
 						echo '<span>' . json_decode($submission_data->post_content)->_nebula_attribution . '</span>';
 					} elseif ( !empty(json_decode($submission_data->post_content)->_nebula_utms) ){ //If we have UTM data
@@ -1625,7 +1629,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				if ( $column_name === 'cf7_version' ){
-					echo '<span>' . json_decode($submission_data->post_content)->_wpcf7_version . '</span>';
+					echo '<span>' . $form_data->_wpcf7_version . '</span>';
 				}
 
 				echo '';
@@ -1685,6 +1689,13 @@ if ( !trait_exists('Admin') ){
 				<?php $end_date = ( !empty($this->super->get['daterange_end']) )? $this->super->get['daterange_end'] : ''; ?>
 				<label for="filter-by-daterange-end">End Date:</label>
 				<input type="date" id="filter-by-daterange-end" name="daterange_end" value="<?php echo $end_date; ?>" placeholder="End Date" />
+
+				<label for="filter-by-form-status" class="screen-reader-text">Filter by status</label>
+				<select id="filter-by-form-status" name="cf7_form_status">
+					<option <?php echo ( empty($this->super->get['cf7_form_status']) || $this->super->get['cf7_form_status'] != 'spam' )? 'selected="selected"' : ''; ?> value="0">Submissions</option>
+					<option value="spam" <?php echo ( !empty($this->super->get['cf7_form_status']) && $this->super->get['cf7_form_status'] == 'spam' )? 'selected="selected"' : ''; ?>>Spam</option>
+				</select>
+
 				<?php
 			}
 		}
@@ -1715,6 +1726,11 @@ if ( !trait_exists('Admin') ){
 								'inclusive' => true
 							)
 						);
+					}
+
+					//Spam filter (to show only spam)
+					if ( isset($this->super->get['cf7_form_status']) && $this->super->get['cf7_form_status'] == 'spam' ){
+						$query->query_vars['post_status'] = 'spam';
 					}
 				}
 			}
@@ -1773,7 +1789,9 @@ if ( !trait_exists('Admin') ){
 		public function cf7_submissions_back_button(){
 			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
 				$previous_url = ( !empty($this->super->server['HTTP_REFERER']) && strpos($this->super->server['HTTP_REFERER'], 'post_type=nebula_cf7_submits') > -1 && strpos($this->super->server['HTTP_REFERER'], 'cf7_form_id=') > -1 )? $this->super->server['HTTP_REFERER'] : 'edit.php?post_type=nebula_cf7_submits'; //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-				echo '<a class="button" href="' . $previous_url . '">&laquo; Back to CF7 Submissions</a>';
+
+				$form_type_label = ( get_post_status() == 'spam' )? 'Spam' : ' Submissions';
+				echo '<a class="button" href="' . $previous_url . '">&laquo; Back to CF7 ' . ucwords($form_type_label) . '</a>';
 			}
 		}
 
@@ -1783,6 +1801,10 @@ if ( !trait_exists('Admin') ){
 				$form_data = json_decode($post->post_content);
 
 				if ( !empty($form_data) ){
+					if ( $post->post_status === 'spam' ){
+						echo '<p>This submission has been noted as potential spam although it has valid JSON. <strong>Any HTML tags have been removed from the data.</strong></p>';
+					}
+
 					$form_output = array(
 						'real' => array(),
 						'metadata' => array(),
@@ -1853,6 +1875,10 @@ if ( !trait_exists('Admin') ){
 								$classes[] = 'no-data';
 							}
 
+							if ( $key === 'mail_failed' ){
+								$classes[] = 'mail-failed';
+							}
+
 							//Convert objects to strings
 							if ( is_object($value) ){
 								$value = json_decode(wp_json_encode($value), true);
@@ -1861,14 +1887,20 @@ if ( !trait_exists('Admin') ){
 								$value = implode(',', $value);
 							}
 
+							if ( $post->post_status === 'spam' ){ //This is for spam submissions that have valid JSON
+								$value = strip_tags($value); //Do not parse HTML on potential spam submissions
+							}
+
 							echo '<tr class="' . implode(' ', $classes) . '"><td><strong>' . $key . '</strong></td>';
 							echo '<td>' . $value . '</td></tr>';
 						}
 
 						echo '</tbody></table>';
 					}
-				} else {
-					$formatted_invalid_json = str_replace(array('{', '":', ',"', '}'), array('{<br />', '": ', ',<br />"', '<br />}'), $post->post_content);
+				} else { //This is for potential spam submissions with invalid JSON
+					echo '<p>This submission has been noted as potential spam due to invalid JSON.</p>';
+
+					$formatted_invalid_json = str_replace(array('{', '":', ',"', '}'), array('{<br />', '": ', ',<br />"', '<br />}'), htmlspecialchars($post->post_content));
 					echo '<table id="nebula-cf7-submission-spam" class="nebula-cf7-submissions"><thead><tr><td>Field</td><td>Value</td></tr></thead><tbody><tr><td><strong>Invalid JSON</strong><br />Possibly spam?<br /><br /><small>Note: the JSON here may validate when copy/pasted, but the original data could not be decoded.</small></td><td>' . $formatted_invalid_json . '</td></tr></tbody></table>';
 				}
 			}

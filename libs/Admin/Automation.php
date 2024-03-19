@@ -32,6 +32,10 @@ if ( !trait_exists('Automation') ){
 				add_action('admin_init', array($this, 'set_dates'));
 
 				//add_action('admin_init', array($this, 'force_settings' ), 9); //Uncomment this line to force an initialization date.
+
+				//Delete CF7 Spam forms using a WP cron job
+				add_action('wp', array($this, 'schedule_delete_old_spam_posts'));
+				add_action('delete_old_spam_posts_event', array($this, 'delete_old_spam_posts'));
 			}
 		}
 
@@ -473,6 +477,66 @@ if ( !trait_exists('Automation') ){
 			}
 
 			return true; //Automated Nebula updates are allowed
+		}
+
+		//Add a cron job to delete old spam posts from nebula_cf7_submits
+		public function schedule_delete_old_spam_posts(){
+			if ( !wp_next_scheduled('delete_old_spam_posts_event') ){
+				wp_schedule_event(time(), 'daily', 'delete_old_spam_posts_event');
+			}
+		}
+
+		//Delete old spam CF7 submit posts and limit the number stored
+		public function delete_old_spam_posts(){
+    		//Query posts to be deleted by date
+    		$posts_to_delete = new WP_Query(array(
+        		'post_type' => 'nebula_cf7_submits',
+        		'post_status' => 'spam',
+        		'date_query' => array(
+            		'before' => date('Y-m-d H:i:s', strtotime('-30 days')),
+        		),
+        		'fields' => 'ids',
+        		'posts_per_page' => -1,
+    		));
+
+    		//Delete expired posts by date
+			if ( $posts_to_delete->have_posts() ){
+    			while ( $posts_to_delete->have_posts() ){
+        			$posts_to_delete->the_post();
+        			wp_delete_post(get_the_ID(), true);
+    			}
+    			wp_reset_postdata();
+			}
+
+			//Query remaining posts after deletion
+			$remaining_posts = new WP_Query(array(
+    			'post_type' => 'nebula_cf7_submits',
+    			'post_status' => 'spam',
+    			'posts_per_page' => -1,
+			));
+
+			$num_remaining_posts = $remaining_posts->post_count; //Count the number of spam posts
+
+			//If there are more than 50 posts remaining, delete the oldest ones first
+    		if ( $num_remaining_posts > 50 ){
+        		//Order remaining posts by date in ascending order
+        		$remaining_posts = new WP_Query(array(
+            		'post_type' => 'nebula_cf7_submits',
+            		'post_status' => 'spam',
+            		'posts_per_page' => $num_remaining_posts-50, //This is the number we want to delete (remaining posts minus how many to keep)
+            		'orderby' => 'date',
+            		'order' => 'ASC',
+        		));
+
+        		//Delete the oldest posts
+        		if ( $remaining_posts->have_posts() ){
+            		while ( $remaining_posts->have_posts() ){
+                		$remaining_posts->the_post();
+                		wp_delete_post(get_the_ID(), true);
+            		}
+            		wp_reset_postdata();
+        		}
+    		}
 		}
 
 		//Force an initialization date.

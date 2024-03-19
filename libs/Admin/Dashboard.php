@@ -810,13 +810,11 @@ if ( !trait_exists('Dashboard') ){
 			//Add active plugins to search list
 			$directory_search_options['all_plugins'] = '<option value="all_plugins">All Plugins</option>';
 			$all_plugins = get_plugins();
-			$active_plugins = get_option('active_plugins');
-			foreach ( $active_plugins as $active_plugin ){
-				if ( isset($all_plugins[$active_plugin]) ){
-					$plugin_name = $all_plugins[$active_plugin]['Name'];
-					$safe_plugin_name = str_replace(array(' ', '-', '/'), '_', strtolower($plugin_name));
-					$directory_search_options[$safe_plugin_name] = '<option value="' . $safe_plugin_name . '">' . $plugin_name . '</option>';
-				}
+			foreach ( $all_plugins as $plugin => $plugin_data ){
+				$plugin_name = $plugin_data['Name'];
+				$safe_plugin_name = str_replace(array(' ', '-', '/'), '_', strtolower($plugin_name));
+				$inactive_indicator = ( is_plugin_active($plugin) )? '' : ' (Inactive)';
+				$directory_search_options[$safe_plugin_name] = '<option value="' . $safe_plugin_name . '">' . $plugin_name . $inactive_indicator . '</option>';
 			}
 
 			$all_directory_search_options = apply_filters('nebula_directory_search_options', $directory_search_options); //Allow other functions to hook in to add directories to search
@@ -905,14 +903,11 @@ if ( !trait_exists('Dashboard') ){
 			);
 
 			$all_plugins = get_plugins();
-			$active_plugins = get_option('active_plugins');
-			foreach ( $active_plugins as $active_plugin ){
-				if ( isset($all_plugins[$active_plugin]) ){
-					$plugin_name = $all_plugins[$active_plugin]['Name'];
-					$safe_plugin_name = str_replace(array(' ', '-', '/'), '_', strtolower($plugin_name));
-					$plugin_folder = explode('/', $active_plugin);
-					$search_directories[$safe_plugin_name] = WP_PLUGIN_DIR . '/' . $plugin_folder[0];
-				}
+			foreach ( $all_plugins as $plugin => $plugin_data ){
+				$plugin_name = $plugin_data['Name'];
+				$safe_plugin_name = str_replace(array(' ', '-', '/'), '_', strtolower($plugin_name));
+				$plugin_folder = explode('/', $plugin);
+				$search_directories[$safe_plugin_name] = WP_PLUGIN_DIR . '/' . $plugin_folder[0];
 			}
 
 			$all_search_directories = apply_filters('nebula_search_directories', $search_directories); //Allow other functions to hook in to add directories

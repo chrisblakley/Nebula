@@ -10,6 +10,7 @@ if ( !trait_exists('Functions') ){
 		public $pinterest_widget_loaded = false;
 		public $current_theme_template;
 		public $error_query;
+		public $cf7_enhance_data_temp;
 
 		public function hooks(){
 			global $pagenow;
@@ -82,9 +83,11 @@ if ( !trait_exists('Functions') ){
 			add_filter('wpcf7_special_mail_tags', array($this, 'cf7_custom_special_mail_tags'), 10, 3);
 
 			if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') && $this->get_option('store_form_submissions') ){ //If CF7 is installed and active and capturing submission data is enabled
-				add_action('init', array($this, 'cf7_storage_cpt'));
-				add_filter('wpcf7_posted_data', array($this, 'cf7_enhance_data'));
-				add_action('wpcf7_before_send_mail', array($this, 'cf7_storage'), 2, 1);
+				add_action('init', array($this, 'cf7_storage_taxonomies')); //Custom Post Type and Custom Status
+				add_filter('wpcf7_posted_data', array($this, 'cf7_enhance_data')); //Add more context for CF7 form submissions
+				add_action('wpcf7_before_send_mail', array($this, 'cf7_storage'), 2, 1); //Store CF7 submissions as a CPT
+				add_action('wpcf7_mail_failed', array($this, 'cf7_storage_fail_addendum'), 2, 1); //Annotate submissions where the CF7 mail failed
+				add_filter('wpcf7_submission_result', array($this, 'cf7_storage_spam_check'), 2, 2); //Listen for form submissions that CF7 has identified as spam
 			}
 
 			if ( $this->is_bypass_cache() ){
@@ -3122,7 +3125,7 @@ if ( !trait_exists('Functions') ){
 		}
 
 		//Create a custom post type for Contact Form 7 submission storage
-		public function cf7_storage_cpt(){
+		public function cf7_storage_taxonomies(){
 			register_post_type('nebula_cf7_submits', array( //This is the text that appears in the URL
 				'labels' => array( //https://developer.wordpress.org/reference/functions/get_post_type_labels/
 					'name' => 'CF7 Submissions', //Plural
@@ -3147,6 +3150,16 @@ if ( !trait_exists('Functions') ){
 				'public' => true, //Allow it to appear in the admin menu
 				'publicly_queryable' => false, //Don't let visitors ever access this data
 			));
+
+			register_post_status('spam', array(
+				'post_type' => array('nebula_cf7_submits'), //Only for Nebula CF7 Submissions CPT
+				'label' => _x('Spam', 'post status label', 'text-domain'),
+				'public' => false,
+				'exclude_from_search' => true,
+				'show_in_admin_all_list' => false,
+				'show_in_admin_status_list' => false,
+				'label_count' => _n_noop('Spam <span class="count">(%s)</span>', 'Spam <span class="count">(%s)</span>', 'text-domain'),
+			));
 		}
 
 		//Modify/add data to CF7 submissions in a way that other themes/plugins can use it as well
@@ -3155,6 +3168,8 @@ if ( !trait_exists('Functions') ){
 			foreach ( $nebula_debug_info as $key => $value ){
 				$submission_data['_' . $key] = $value;
 			}
+
+			$this->cf7_enhance_data_temp = $submission_data; //Hold onto this so it can be referenced later if something goes wrong with the form submission
 
 			return $submission_data;
 		}
@@ -3187,6 +3202,10 @@ if ( !trait_exists('Functions') ){
 				$submission_data['_last_recaptcha_spam_score'] = $recaptcha_service->get_last_score();
 			}
 
+			//Try to get the spam log for this submission
+			$spam_log = $submission->get_spam_log();
+			$submission_data['_wpcf7_spam_log'] = implode('<br />', $spam_log);
+
 			$unique_identifier = '';
 			if ( !empty($submission_data['name']) ){
 				$unique_identifier = ' from ' . sanitize_text_field($submission_data['name']);
@@ -3212,8 +3231,8 @@ if ( !trait_exists('Functions') ){
 			}
 
 			$submission_title = apply_filters('nebula_cf7_submission_title', get_the_title($form_id) . ' submission' . $unique_identifier, $submission_data); //Allow others to modify the title of the CF7 submissions as they are shown in WP Admin
-			$submission_data = map_deep($submission_data, 'sanitize_text_field'); //Deep sanitization of the full data array
 
+			$submission_data = map_deep($submission_data, 'sanitize_text_field'); //Deep sanitization of the full data array
 			$submission_data = apply_filters('nebula_cf7_submission_data', $submission_data); //Allow others to add/modify CF7 submission data before it is stored
 
 			//Store it in a CPT
@@ -3228,12 +3247,89 @@ if ( !trait_exists('Functions') ){
 			));
 		}
 
-		//Build debug info data for CF7 messages and/or Nebula CF7 storage
-		public function cf7_debug_info($cf7_instance){
-			if ( !is_object($cf7_instance) ){
-				return array();
+		//Add an addendum to the stored data that indicates that CF7 failed to send mail (wpcf7_mail_failed)
+		public function cf7_storage_fail_addendum($form){
+			$args = array(
+    			'post_type' => 'nebula_cf7_submits',
+				'post_status' => 'private',
+    			'posts_per_page' => 1,
+    			'orderby' => 'date',
+    			'order' => 'DESC',
+			);
+
+			$query = new WP_Query($args);
+
+			if ( $query->have_posts() ){
+				$query->the_post();
+
+				//If the last form submission was not within the last few seconds it might not have been the one that errored!
+				if ( time()-strtotime(get_the_date()) <= 60 ){
+					return false;
+				}
+
+				//Append to the submission title
+				$existing_title = get_the_title(); //Get the existing post content
+				$modified_title = str_replace('Private: ', '', $existing_title) . ' (Mail Failed)'; //Annotate the mail failed for the last submission
+
+				//Add an explanation to the submission data
+    			$existing_content = get_the_content(); //Get the existing post content
+    			$existing_data = json_decode($existing_content, true); //Decode the existing JSON content into an array
+    			$existing_data['mail_failed'] = 'CF7 Mail Failed may have been triggered with this submission. The user likely saw an error message that indicated it was not submitted, and administrators likely did not receive an email notifcation about this form submission!'; //Add the new item to the data array
+    			$modified_content = wp_json_encode($existing_data); //Encode the modified data array back to JSON
+
+				//Update the post with the modified content
+				$modified_post_id = wp_update_post(array(
+        			'ID' => get_the_ID(),
+        			'post_title' => $modified_title,
+					'post_content' => $modified_content,
+    			));
+
+				wp_reset_postdata();
+			}
+		}
+
+		public function cf7_storage_spam_check($result){
+			if ( $result['status'] == 'spam' ){ //If the result was determined to be spam
+				$submission_data = $this->cf7_enhance_data_temp; //Get the enhanced posted data from memory
+
+				$form_id = 'Unknown';
+				$submission_title = 'Unknown Form';
+
+				//Try to get the Form ID
+				if ( isset($this->super->post['_wpcf7']) && is_numeric($this->super->post['_wpcf7']) ){
+					$form_id = $this->super->post['_wpcf7'];
+					$submission_title = get_the_title($form_id);
+
+					//Try to get other metadata from the post
+					$submission_data['_detected_wpcf7_version'] = $this->super->post['_wpcf7_version'];
+					$submission_data['_detected_wpcf7_locale'] = $this->super->post['_wpcf7_locale'];
+					$submission_data['_detected_wpcf7_unit_tag'] = $this->super->post['_wpcf7_unit_tag'];
+					$submission_data['_detected_post_id'] = $this->super->post['_wpcf7_container_post'];
+					$submission_data['_detected_post_title'] = get_the_title($this->super->post['_wpcf7_container_post']);
+				}
+
+				$submission_title .= ' (Spam)';
+
+				$submission_data['_detected_form_id'] = $form_id;
+				$submission_data['_detected_form_name'] = get_the_title($form_id);
+
+				//Store it in a CPT
+				$new_post_id = wp_insert_post(array(
+					'post_title' => sanitize_text_field($submission_title),
+					'post_content' => wp_json_encode($submission_data),
+					'post_status' => 'spam',
+					'post_type' => 'nebula_cf7_submits', //This needs to match the CPT slug!
+					'meta_input' => array(
+						'form_id' => intval($form_id), //Associate this submission with its CF7 form ID
+					)
+				));
 			}
 
+			return $result; //Always return in a filter
+		}
+
+		//Build debug info data for CF7 messages and/or Nebula CF7 storage
+		public function cf7_debug_info($cf7_instance){
 			global $wp_version;
 
 			$debug_info = array();
@@ -3256,45 +3352,47 @@ if ( !trait_exists('Functions') ){
 			}
 
 			//Logged-in User Info
-			$user_id = (int) $cf7_instance->get_meta('current_user_id');
-			if ( !empty($user_id) ){
-				//Staff
-				if ( $this->is_dev() ){
-					$debug_info['nebula_staff'] = 'Developer';
-				} elseif ( $this->is_client() ){
-					$debug_info['nebula_staff'] = 'Client';
-				} elseif ( $this->is_staff() ){
-					$debug_info['nebula_staff'] = 'Staff';
+			if ( is_object($cf7_instance) ){
+				$user_id = (int) $cf7_instance->get_meta('current_user_id');
+				if ( !empty($user_id) ){
+					//Staff
+					if ( $this->is_dev() ){
+						$debug_info['nebula_staff'] = 'Developer';
+					} elseif ( $this->is_client() ){
+						$debug_info['nebula_staff'] = 'Client';
+					} elseif ( $this->is_staff() ){
+						$debug_info['nebula_staff'] = 'Staff';
+					}
+
+					$user_info = get_userdata($user_id);
+
+					$debug_info['nebula_user_id'] = $user_info->ID;
+					$debug_info['nebula_username'] = $user_info->user_login;
+					$debug_info['nebula_display_name'] = $user_info->display_name;
+					$debug_info['nebula_email'] = $user_info->user_email;
+
+					if ( get_the_author_meta('phonenumber', $user_info->ID) ){
+						$debug_info['nebula_phone'] = get_the_author_meta('phonenumber', $user_info->ID);
+					}
+
+					if ( get_the_author_meta('jobtitle', $user_info->ID) ){
+						$debug_info['nebula_job_title'] = get_the_author_meta('jobtitle', $user_info->ID);
+					}
+
+					if ( get_the_author_meta('jobcompany', $user_info->ID) ){
+						$debug_info['nebula_company'] = get_the_author_meta('jobcompany', $user_info->ID);
+					}
+
+					if ( get_the_author_meta('jobcompanywebsite', $user_info->ID) ){
+						$debug_info['nebula_company_website'] = get_the_author_meta('jobcompanywebsite', $user_info->ID);
+					}
+
+					if ( get_the_author_meta('usercity', $user_info->ID) && get_the_author_meta('userstate', $user_info->ID) ){
+						$debug_info['nebula_city_state'] = get_the_author_meta('usercity', $user_info->ID) . ', ' . get_the_author_meta('userstate', $user_info->ID);
+					}
+
+					$debug_info['nebula_role'] = $this->user_role();
 				}
-
-				$user_info = get_userdata($user_id);
-
-				$debug_info['nebula_user_id'] = $user_info->ID;
-				$debug_info['nebula_username'] = $user_info->user_login;
-				$debug_info['nebula_display_name'] = $user_info->display_name;
-				$debug_info['nebula_email'] = $user_info->user_email;
-
-				if ( get_the_author_meta('phonenumber', $user_info->ID) ){
-					$debug_info['nebula_phone'] = get_the_author_meta('phonenumber', $user_info->ID);
-				}
-
-				if ( get_the_author_meta('jobtitle', $user_info->ID) ){
-					$debug_info['nebula_job_title'] = get_the_author_meta('jobtitle', $user_info->ID);
-				}
-
-				if ( get_the_author_meta('jobcompany', $user_info->ID) ){
-					$debug_info['nebula_company'] = get_the_author_meta('jobcompany', $user_info->ID);
-				}
-
-				if ( get_the_author_meta('jobcompanywebsite', $user_info->ID) ){
-					$debug_info['nebula_company_website'] = get_the_author_meta('jobcompanywebsite', $user_info->ID);
-				}
-
-				if ( get_the_author_meta('usercity', $user_info->ID) && get_the_author_meta('userstate', $user_info->ID) ){
-					$debug_info['nebula_city_state'] = get_the_author_meta('usercity', $user_info->ID) . ', ' . get_the_author_meta('userstate', $user_info->ID);
-				}
-
-				$debug_info['nebula_role'] = $this->user_role();
 			}
 
 			//Bot detection

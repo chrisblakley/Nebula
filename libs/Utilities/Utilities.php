@@ -32,9 +32,9 @@ if ( !trait_exists('Utilities') ){
 			//Update the child theme version number at various points
 			if ( is_user_logged_in() ){
 				add_action('save_post', array($this, 'update_child_version_number')); //When a post is created or updated
-				add_action('nebula_options_saved', array($this, 'update_child_version_number')); //Nebula ptions save
+				add_action('nebula_options_saved', array($this, 'update_child_version_number')); //Nebula options save
 				add_action('upgrader_process_complete', array($this, 'update_child_version_number')); //WordPress Core, theme, or plugin updates
-				add_action('nebula_scss_post_compile_once', array($this, 'update_child_version_number'));
+				add_action('nebula_scss_post_compile_once', array($this, 'update_child_version_number')); //When Sass is processed
 			}
 		}
 

@@ -56,6 +56,7 @@ if ( !trait_exists('Logs') ){
 
 		//Log a message to a file
 		//Note: This will create a new file if it does not exist, but does not create new directories!
+		public function log($message='', $filepath=false){$this->debug_log($message, $filepath);} //Alias in case this is called as nebula()->log()
 		public function debug_log($message='', $filepath=false){
 			if ( empty($filepath) ){
 				$filepath = get_template_directory() . '/nebula.log';
