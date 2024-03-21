@@ -360,7 +360,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 .cf7-submits-possible-spam {opacity: 0.5;}
 
 table.nebula-cf7-submissions {border-collapse: collapse; width: 100%; margin-top: 22px; border: 1px solid #444;
-	thead {font-weight: bold; background: $primary_color; color: readable-color($primary_color);
+	thead {font-weight: bold; background: $success_color; color: readable-color($success_color);
 		td {padding: 15px;}
 	}
 
@@ -368,8 +368,16 @@ table.nebula-cf7-submissions {border-collapse: collapse; width: 100%; margin-top
 		thead {background: grey;}
 	}
 
-	&#nebula-cf7-submission-spam {
+	&.nebula-cf7-submission-spam {
 		thead {background: $danger_color; color: readable-color($danger_color);}
+	}
+
+	&.nebula-cf7-submission-invalid {
+		thead {background: $warning_color; color: readable-color($warning_color);}
+	}
+
+	&.nebula-cf7-submission-caution {
+		thead {background: $info_color; color: readable-color($info_color);}
 	}
 
 	tbody {
@@ -382,6 +390,7 @@ table.nebula-cf7-submissions {border-collapse: collapse; width: 100%; margin-top
 			}
 
 			&.no-data td {opacity: 0.4;}
+			&.invalid-field {background: $danger_color; color: readable-color($danger_color);}
 			&.mail-failed {background: $danger_color; color: readable-color($danger_color);}
 		}
 	}

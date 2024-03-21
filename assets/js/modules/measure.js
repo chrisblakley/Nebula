@@ -1603,130 +1603,131 @@ nebula.ecommerceTracking = async function(){
 };
 
 //Detect scroll depth
-//Note: This is a default GA4 event and is not needed to be tracked in Nebula. Consider deleting entirely.
+//Note: Although "scroll" is a GA4 Enhanced Measurement, it only tracks when the user reaches the bottom of the page.
 nebula.scrollDepth = async function(){
-// 	if ( window.performance ){ //Safari 11+
-// 		let scrollReady = performance.now();
-// 		let reachedBottom = false; //Flag for optimization after detection is finished
-// 		let excessiveScrolling = false; //Flag for optimization after detection is finished
-// 		let lastScrollCheckpoint = nebula.dom.window.scrollTop(); //Set a checkpoint of the current scroll distance to subtract against later
-// 		let totalScrollDistance = 0; //Down and up distance
-// 		let excessiveScrollThreshold = nebula.dom.document.height()*2; //Set the threshold for an excessive scroll distance
-//
-// 		nebula.maxScrollDepth = 0; //This needs to be accessed from multiple other functions later
-// 		nebula.updateMaxScrollDepth(); //Update it first right away on load (the rest will be throttled)
-//
-// 		let scrollDepthHandler = function(){
-// 			//Only check for initial scroll once
-// 			nebula.once(function(){
-// 				nebula.scrollBegin = performance.now()-scrollReady; //Calculate when the first scroll happens
-// 				if ( nebula.scrollBegin > 250 ){ //Try to avoid autoscrolls on pageload
-// 					let thisEvent = {
-// 						event_name: 'scroll',
-// 						event_category: 'Scroll Depth',
-// 						event_action: 'Began Scrolling',
-// 						event_label: nebula.dom.window.scrollTop() + 'px',
-// 						scroll_start: nebula.dom.window.scrollTop() + 'px',
-// 						time_before_scroll_start: Math.round(nebula.scrollBegin),
-// 						non_interaction: true
-// 					};
-// 					thisEvent.event_label = 'Initial scroll started at ' + thisEvent.scroll_start;
-// 					nebula.dom.document.trigger('nebula_event', thisEvent);
-// 					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-// 				}
-// 			}, 'begin scrolling');
-//
-// 			//Check scroll distance periodically
-// 			nebula.throttle(function(){
-// 				//Total Scroll Distance
-// 				if ( !excessiveScrolling ){
-// 					totalScrollDistance += Math.abs(nebula.dom.window.scrollTop()-lastScrollCheckpoint); //Increase the total scroll distance (always positive regardless of scroll direction)
-// 					lastScrollCheckpoint = nebula.dom.window.scrollTop(); //Update the checkpoint
-// 					if ( totalScrollDistance >= excessiveScrollThreshold ){
-// 						excessiveScrolling = true; //Set to true to disable excessive scroll tracking after it is detected
-//
-// 						nebula.once(function(){
-// 							let thisEvent = {
-// 								event_name: 'excessive_scrolling',
-// 								event_category: 'Scroll Depth',
-// 								event_action: 'Excessive Scrolling',
-// 								event_label: 'User scrolled ' + excessiveScrollThreshold + 'px (or more) on this page.',
-// 								description: 'User scrolled ' + excessiveScrollThreshold + 'px (or more) on this page.',
-// 								non_interaction: true
-// 							};
-// 							nebula.dom.document.trigger('nebula_event', thisEvent);
-// 							gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-// 						}, 'excessive scrolling');
-// 					}
-// 				}
-//
-// 				nebula.updateMaxScrollDepth();
-//
-// 				//When user reaches the bottom of the page
-// 				if ( !reachedBottom ){
-// 					if ( (nebula.dom.window.height()+nebula.dom.window.scrollTop()) >= nebula.dom.document.height() ){ //If user has reached the bottom of the page
-// 						reachedBottom = true;
-//
-// 						nebula.once(function(){
-// 							let thisEvent = {
-// 								event_name: 'scroll',
-// 								event_category: 'Scroll Depth',
-// 								event_action: 'Entire Page',
-// 								event_label: nebula.dom.document.height(),
-// 								distance: nebula.dom.document.height(),
-// 								scroll_end: performance.now()-(nebula.scrollBegin+scrollReady),
-// 								non_interaction: true
-// 							};
-//
-// 							thisEvent.timetoScrollEnd = Math.round(thisEvent.scrollEnd);
-//
-// 							nebula.dom.document.trigger('nebula_event', thisEvent);
-// 							gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-// 							window.removeEventListener('scroll', scrollDepthHandler);
-// 						}, 'end scrolling');
-// 					}
-// 				}
-//
-// 				//Stop listening to scroll after no longer necessary
-// 				if ( reachedBottom && excessiveScrolling ){
-// 					window.removeEventListener('scroll', scrollDepthHandler); //Stop watching scrolling– no longer needed if all detections are true
-// 				}
-// 			}, 1000, 'scroll depth');
-// 		};
-//
-// 		window.addEventListener('scroll', scrollDepthHandler); //Watch for scrolling ("scroll" is passive by default)
-//
-// 		//Track when the user reaches the end of the content
-// 		if ( jQuery('#footer-section').length ){
-// 			let footerObserver = new IntersectionObserver(function(entries){
-// 				entries.forEach(function(entry){
-// 					if ( entry.intersectionRatio > 0 ){
-// 						let thisEvent = {
-// 							event_name: 'scroll',
-// 							event_category: 'Scroll Depth',
-// 							event_action: 'Reached Footer',
-// 							event_label: 'The footer of the page scrolled into the viewport',
-//							description: 'The footer of the page scrolled into the viewport',
-// 							non_interaction: true
-// 						};
-//
-// 						nebula.dom.document.trigger('nebula_event', thisEvent);
-// 						gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-//
-// 						nebula.updateMaxScrollDepth();
-// 						footerObserver.unobserve(entry.target); //Stop observing the element
-// 					}
-// 				});
-// 			}, {
-// 				rootMargin: '0px', //0px uses the actual viewport bounds, 100% is double the viewport
-// 				threshold: 0.1 //How much of the element needs to be in view before this is triggered (this is a percentage between 0 and 1)
-// 			});
-//
-// 			//Observe the pre-footer section (or whatever element is after the main content area)
-// 			let preFooterSelector = wp.hooks.applyFilters('nebulaPreFooterSelector', '#footer-section'); //This should be the first section after the "content"
-// 			footerObserver.observe(jQuery(preFooterSelector)[0]); //Observe the element
-// 		}
-// 	}
+	if ( window.performance ){ //Safari 11+
+		let scrollReady = performance.now();
+		let reachedBottom = false; //Flag for optimization after detection is finished
+		let excessiveScrolling = false; //Flag for optimization after detection is finished
+		let lastScrollCheckpoint = nebula.dom.window.scrollTop(); //Set a checkpoint of the current scroll distance to subtract against later
+		let totalScrollDistance = 0; //Down and up distance
+		let excessiveScrollThreshold = nebula.dom.document.height()*2; //Set the threshold for an excessive scroll distance
+
+		nebula.maxScrollDepth = 0; //This needs to be accessed from multiple other functions later
+		nebula.updateMaxScrollDepth(); //Update it first right away on load (the rest will be throttled)
+
+		let scrollDepthHandler = function(){
+			//Only check for initial scroll once
+			nebula.once(function(){
+				nebula.scrollBegin = performance.now()-scrollReady; //Calculate when the first scroll happens
+				if ( nebula.scrollBegin > 250 ){ //Try to avoid autoscrolls on pageload
+					let thisEvent = {
+						event_name: 'nebula_scroll',
+						event_category: 'Scroll Depth',
+						event_action: 'Began Scrolling',
+						event_label: nebula.dom.window.scrollTop() + 'px',
+						scroll_start: nebula.dom.window.scrollTop() + 'px',
+						time_before_scroll_start: Math.round(nebula.scrollBegin),
+						non_interaction: true
+					};
+					thisEvent.event_label = 'Initial scroll started at ' + thisEvent.scroll_start;
+					nebula.dom.document.trigger('nebula_event', thisEvent);
+					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+				}
+			}, 'begin scrolling');
+
+			//Check scroll distance periodically
+			nebula.throttle(function(){
+				//Total Scroll Distance
+				if ( !excessiveScrolling ){
+					totalScrollDistance += Math.abs(nebula.dom.window.scrollTop()-lastScrollCheckpoint); //Increase the total scroll distance (always positive regardless of scroll direction)
+					lastScrollCheckpoint = nebula.dom.window.scrollTop(); //Update the checkpoint
+					if ( totalScrollDistance >= excessiveScrollThreshold ){
+						excessiveScrolling = true; //Set to true to disable excessive scroll tracking after it is detected
+
+						nebula.once(function(){
+							let thisEvent = {
+								event_name: 'excessive_scrolling',
+								event_category: 'Scroll Depth',
+								event_action: 'Excessive Scrolling',
+								event_label: 'User scrolled ' + excessiveScrollThreshold + 'px (or more) on this page.',
+								description: 'User scrolled ' + excessiveScrollThreshold + 'px (or more) on this page.',
+								non_interaction: true
+							};
+							nebula.dom.document.trigger('nebula_event', thisEvent);
+							gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+						}, 'excessive scrolling');
+					}
+				}
+
+				nebula.updateMaxScrollDepth();
+
+				//When user reaches the bottom of the page
+				//Note: GA4 "scroll" Enhanced Measurement indicates the bottom as 90% of the document height
+				if ( !reachedBottom ){
+					if ( (nebula.dom.window.height()+nebula.dom.window.scrollTop()) >= nebula.dom.document.height() ){ //If user has reached the bottom of the page
+						reachedBottom = true;
+
+						nebula.once(function(){
+							let thisEvent = {
+								event_name: 'nebula_scroll',
+								event_category: 'Scroll Depth',
+								event_action: 'Entire Page',
+								event_label: nebula.dom.document.height(),
+								distance: nebula.dom.document.height(),
+								scroll_end: performance.now()-(nebula.scrollBegin+scrollReady),
+								non_interaction: true
+							};
+
+							thisEvent.timetoScrollEnd = Math.round(thisEvent.scrollEnd);
+
+							nebula.dom.document.trigger('nebula_event', thisEvent);
+							gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+							window.removeEventListener('scroll', scrollDepthHandler);
+						}, 'end scrolling');
+					}
+				}
+
+				//Stop listening to scroll after no longer necessary
+				if ( reachedBottom && excessiveScrolling ){
+					window.removeEventListener('scroll', scrollDepthHandler); //Stop watching scrolling– no longer needed if all detections are true
+				}
+			}, 1000, 'scroll depth');
+		};
+
+		window.addEventListener('scroll', scrollDepthHandler); //Watch for scrolling ("scroll" is passive by default)
+
+		//Track when the user reaches the end of the content
+		if ( jQuery('#footer-section').length ){
+			let footerObserver = new IntersectionObserver(function(entries){
+				entries.forEach(function(entry){
+					if ( entry.intersectionRatio > 0 ){
+						let thisEvent = {
+							event_name: 'nebula_scroll',
+							event_category: 'Scroll Depth',
+							event_action: 'Reached Footer',
+							event_label: 'The footer of the page scrolled into the viewport',
+							description: 'The footer of the page scrolled into the viewport',
+							non_interaction: true
+						};
+
+						nebula.dom.document.trigger('nebula_event', thisEvent);
+						gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+
+						nebula.updateMaxScrollDepth();
+						footerObserver.unobserve(entry.target); //Stop observing the element
+					}
+				});
+			}, {
+				rootMargin: '0px', //0px uses the actual viewport bounds, 100% is double the viewport
+				threshold: 0.1 //How much of the element needs to be in view before this is triggered (this is a percentage between 0 and 1)
+			});
+
+			//Observe the pre-footer section (or whatever element is after the main content area)
+			let preFooterSelector = wp.hooks.applyFilters('nebulaPreFooterSelector', '#footer-section'); //This should be the first section after the "content"
+			footerObserver.observe(jQuery(preFooterSelector)[0]); //Observe the element
+		}
+	}
 };
 
 //Track campaigns that attributed to returning visitor conversions

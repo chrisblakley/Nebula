@@ -10,7 +10,6 @@ if ( !trait_exists('Functions') ){
 		public $pinterest_widget_loaded = false;
 		public $current_theme_template;
 		public $error_query;
-		public $cf7_enhance_data_temp;
 
 		public function hooks(){
 			global $pagenow;
@@ -85,9 +84,7 @@ if ( !trait_exists('Functions') ){
 			if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') && $this->get_option('store_form_submissions') ){ //If CF7 is installed and active and capturing submission data is enabled
 				add_action('init', array($this, 'cf7_storage_taxonomies')); //Custom Post Type and Custom Status
 				add_filter('wpcf7_posted_data', array($this, 'cf7_enhance_data')); //Add more context for CF7 form submissions
-				add_action('wpcf7_before_send_mail', array($this, 'cf7_storage'), 2, 1); //Store CF7 submissions as a CPT
-				add_action('wpcf7_mail_failed', array($this, 'cf7_storage_fail_addendum'), 2, 1); //Annotate submissions where the CF7 mail failed
-				add_filter('wpcf7_submission_result', array($this, 'cf7_storage_spam_check'), 2, 2); //Listen for form submissions that CF7 has identified as spam
+				add_action('wpcf7_submit', array($this, 'cf7_storage'), 2, 2); //Store CF7 submissions as a CPT (formerly hooked on wpcf7_before_send_mail)
 			}
 
 			if ( $this->is_bypass_cache() ){
@@ -3160,28 +3157,74 @@ if ( !trait_exists('Functions') ){
 				'show_in_admin_status_list' => false,
 				'label_count' => _n_noop('Spam <span class="count">(%s)</span>', 'Spam <span class="count">(%s)</span>', 'text-domain'),
 			));
+
+			register_post_status('invalid', array(
+				'post_type' => array('nebula_cf7_submits'), //Only for Nebula CF7 Submissions CPT
+				'label' => _x('Invalid', 'post status label', 'text-domain'),
+				'public' => false,
+				'exclude_from_search' => true,
+				'show_in_admin_all_list' => false,
+				'show_in_admin_status_list' => false,
+				'label_count' => _n_noop('Invalid <span class="count">(%s)</span>', 'Invalid <span class="count">(%s)</span>', 'text-domain'),
+			));
 		}
 
-		//Modify/add data to CF7 submissions in a way that other themes/plugins can use it as well
+		//Modify/add data to CF7 submissions in a way that other themes/plugins can use it as well (remember: cf7_storage calls this function as well)
 		public function cf7_enhance_data($submission_data=array()){
 			$nebula_debug_info = $this->cf7_debug_info($submission_data);
 			foreach ( $nebula_debug_info as $key => $value ){
 				$submission_data['_' . $key] = $value;
 			}
 
-			$this->cf7_enhance_data_temp = $submission_data; //Hold onto this so it can be referenced later if something goes wrong with the form submission
-
 			return $submission_data;
 		}
 
 		//Listen for form submissions to store into the DB right before sending the mail
 		//Note: Spam submissions often do not come through this function, so cannot be mitigated/noted here
-		public function cf7_storage($form){
+		public function cf7_storage($form, $result){
 			$submission = WPCF7_Submission::get_instance();
 			$submission_data = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS); //Get the $_POST data array and sanitize it
 			$submission_uploads = $submission->uploaded_files();
 			$contact_form = WPCF7_ContactForm::get_current();
 			$form_id = intval($contact_form->id()); //Use this to get information about the form
+
+			//$result examples:
+				//Validation Error: {"contact_form_id":1962,"status":"validation_failed","message":"One or more fields have an error. Please check and try again.","invalid_fields":{"email":{"reason":"The e-mail address entered is invalid.","idref":"your-email"}},"posted_data_hash":""}
+				//No consent: {"contact_form_id":1962,"status":"validation_failed","message":"One or more fields have an error. Please check and try again.","invalid_fields":{"privacy-acceptance":{"reason":"You must accept the terms and conditions before sending your message.","idref":"cf7-privacy-acceptance"}},"posted_data_hash":""}
+				//Success: {"contact_form_id":1962,"status":"mail_sent","message":"Thank you for your message. It has been sent.","posted_data_hash":"42854ce084a745127ab9774cecdf7b42"}
+				//Spam: {"contact_form_id":1962,"status":"spam","message":"There was an error trying to send your message. Please try again later.","posted_data_hash":""}
+
+			//Invalid: validation_failed
+			//Success: mail_sent
+			//Fail: mail_failed
+			//Spam: spam
+			$status = $result['status'];
+
+			//If the form is invalid and also does not have consent acceptance we do not process form field input data
+			$is_processing_allowed = true;
+			if ( $status == 'validation_failed' ){ //If the user had a validation error
+				if ( empty($submission->collect_consent()) ){ //If CF7 does not have consent
+					$is_processing_allowed = false;
+				}
+
+				if ( !empty($result['invalid_fields']['privacy-acceptance']) ){ //If the acceptance checkbox is in the invalid field list
+					$is_processing_allowed = false;
+				}
+			}
+
+			if ( !$is_processing_allowed ){
+				//Preserve the WPCF7 metadata
+				$wpcf7_metadata = array(
+					'_wpcf7' => $submission_data['_wpcf7'],
+					'_wpcf7_version' => $submission_data['_wpcf7_version'],
+					'_wpcf7_locale' => $submission_data['_wpcf7_locale'],
+					'_wpcf7_unit_tag' => $submission_data['_wpcf7_unit_tag'],
+					'_wpcf7_container_post' => $submission_data['_wpcf7_container_post'],
+				);
+
+				$submission_data = array(); //Empty the submission data to remove all form input field data
+				$submission_data = array_merge($submission_data, $wpcf7_metadata); //Now restore the WPCF7 metadata since it was just removed
+			}
 
 			//Add more data to the submission
 			$submission_data['form_id'] = $form_id;
@@ -3202,25 +3245,26 @@ if ( !trait_exists('Functions') ){
 				$submission_data['_last_recaptcha_spam_score'] = $recaptcha_service->get_last_score();
 			}
 
-			//Try to get the spam log for this submission
-			$spam_log = $submission->get_spam_log();
-			$submission_data['_wpcf7_spam_log'] = implode('<br />', $spam_log);
+			$submission_data['_wpcf7_recaptcha'] = $submission->pull('recaptcha');
+			$submission_data['_wpcf7_spam_log'] = $submission->get_spam_log(); //Try to get the spam log for this submission
 
 			$unique_identifier = '';
-			if ( !empty($submission_data['name']) ){
-				$unique_identifier = ' from ' . sanitize_text_field($submission_data['name']);
-			} elseif ( !empty($submission_data['your-name']) ){
-				$unique_identifier = ' from ' . sanitize_text_field($submission_data['your-name']);
-			} elseif ( !empty($submission_data['first-name']) ){
-				$unique_identifier = ' from ' . sanitize_text_field($submission_data['first-name']);
-			} elseif ( !empty($submission_data['email']) ){
-				$unique_identifier = ' from ' . sanitize_text_field($submission_data['email']);
-			} elseif ( !empty($submission_data['your-email']) ){
-				$unique_identifier = ' from ' . sanitize_text_field($submission_data['your-email']);
+			if ( $is_processing_allowed ){
+				if ( !empty($submission_data['name']) ){
+					$unique_identifier = ' from ' . sanitize_text_field($submission_data['name']);
+				} elseif ( !empty($submission_data['your-name']) ){
+					$unique_identifier = ' from ' . sanitize_text_field($submission_data['your-name']);
+				} elseif ( !empty($submission_data['first-name']) ){
+					$unique_identifier = ' from ' . sanitize_text_field($submission_data['first-name']);
+				} elseif ( !empty($submission_data['email']) ){
+					$unique_identifier = ' from ' . sanitize_text_field($submission_data['email']);
+				} elseif ( !empty($submission_data['your-email']) ){
+					$unique_identifier = ' from ' . sanitize_text_field($submission_data['your-email']);
+				}
 			}
 
 			//Handle file uploads
-			if ( !empty($submission_uploads) ){
+			if ( $is_processing_allowed && !empty($submission_uploads) ){
 				foreach ( $submission_uploads as $upload_field_name => $file_uploads ){
 					foreach ( $file_uploads as $file_count => $file_location ){
 						//Note that /wpcf7_uploads/ is only a temporary storage location. The file upload is deleted after the email is sent. https://contactform7.com/file-uploading-and-attachment/#How-your-uploaded-files-are-managed
@@ -3232,100 +3276,36 @@ if ( !trait_exists('Functions') ){
 
 			$submission_title = apply_filters('nebula_cf7_submission_title', get_the_title($form_id) . ' submission' . $unique_identifier, $submission_data); //Allow others to modify the title of the CF7 submissions as they are shown in WP Admin
 
+			//Determine the WP post status and annotate the submission title if necessary
+			$post_status = 'private'; //Private status for success and mail failed
+			$submission_data['message_shown'] = $result['message']; //This is the confirmation or error message the user was shown when submitting
+
+			if ( $status == 'mail_failed' ){
+				$submission_title = $submission_title . ' (Mail Failed)';
+				$submission_data['mail_failed'] = 'CF7 Mail Failed may have been triggered with this submission. The user likely saw an error message that indicated it was not submitted, and administrators likely did not receive an email notifcation about this form submission!'; //Add the new item to the data array
+			} elseif ( $status == 'validation_failed' ){
+				$post_status = 'invalid';
+				$submission_data['invalid_fields'] = addslashes(json_encode($result['invalid_fields'], JSON_PRETTY_PRINT));
+				$submission_title = $submission_title . ' (Invalid)';
+			} elseif ( $status == 'spam' ){
+				$post_status = 'spam';
+				$submission_title = $submission_title . ' (Spam)';
+			}
+
 			$submission_data = map_deep($submission_data, 'sanitize_text_field'); //Deep sanitization of the full data array
 			$submission_data = apply_filters('nebula_cf7_submission_data', $submission_data); //Allow others to add/modify CF7 submission data before it is stored
 
 			//Store it in a CPT
+			//@todo "Nebula" 0: Consider rate limiting this so the same user cannot inadvertently submit many invalid forms in a short period of time
 			$new_post_id = wp_insert_post(array(
 				'post_title' => sanitize_text_field($submission_title),
 				'post_content' => wp_json_encode($submission_data),
-				'post_status' => 'private',
+				'post_status' => $post_status, //private, invalid, or spam
 				'post_type' => 'nebula_cf7_submits', //This needs to match the CPT slug!
 				'meta_input' => array(
 					'form_id' => intval($form_id), //Associate this submission with its CF7 form ID
 				)
 			));
-		}
-
-		//Add an addendum to the stored data that indicates that CF7 failed to send mail (wpcf7_mail_failed)
-		public function cf7_storage_fail_addendum($form){
-			$args = array(
-    			'post_type' => 'nebula_cf7_submits',
-				'post_status' => 'private',
-    			'posts_per_page' => 1,
-    			'orderby' => 'date',
-    			'order' => 'DESC',
-			);
-
-			$query = new WP_Query($args);
-
-			if ( $query->have_posts() ){
-				$query->the_post();
-
-				//If the last form submission was not within the last few seconds it might not have been the one that errored!
-				if ( time()-strtotime(get_the_date()) <= 60 ){
-					return false;
-				}
-
-				//Append to the submission title
-				$existing_title = get_the_title(); //Get the existing post content
-				$modified_title = str_replace('Private: ', '', $existing_title) . ' (Mail Failed)'; //Annotate the mail failed for the last submission
-
-				//Add an explanation to the submission data
-    			$existing_content = get_the_content(); //Get the existing post content
-    			$existing_data = json_decode($existing_content, true); //Decode the existing JSON content into an array
-    			$existing_data['mail_failed'] = 'CF7 Mail Failed may have been triggered with this submission. The user likely saw an error message that indicated it was not submitted, and administrators likely did not receive an email notifcation about this form submission!'; //Add the new item to the data array
-    			$modified_content = wp_json_encode($existing_data); //Encode the modified data array back to JSON
-
-				//Update the post with the modified content
-				$modified_post_id = wp_update_post(array(
-        			'ID' => get_the_ID(),
-        			'post_title' => $modified_title,
-					'post_content' => $modified_content,
-    			));
-
-				wp_reset_postdata();
-			}
-		}
-
-		public function cf7_storage_spam_check($result){
-			if ( $result['status'] == 'spam' ){ //If the result was determined to be spam
-				$submission_data = $this->cf7_enhance_data_temp; //Get the enhanced posted data from memory
-
-				$form_id = 'Unknown';
-				$submission_title = 'Unknown Form';
-
-				//Try to get the Form ID
-				if ( isset($this->super->post['_wpcf7']) && is_numeric($this->super->post['_wpcf7']) ){
-					$form_id = $this->super->post['_wpcf7'];
-					$submission_title = get_the_title($form_id);
-
-					//Try to get other metadata from the post
-					$submission_data['_detected_wpcf7_version'] = $this->super->post['_wpcf7_version'];
-					$submission_data['_detected_wpcf7_locale'] = $this->super->post['_wpcf7_locale'];
-					$submission_data['_detected_wpcf7_unit_tag'] = $this->super->post['_wpcf7_unit_tag'];
-					$submission_data['_detected_post_id'] = $this->super->post['_wpcf7_container_post'];
-					$submission_data['_detected_post_title'] = get_the_title($this->super->post['_wpcf7_container_post']);
-				}
-
-				$submission_title .= ' (Spam)';
-
-				$submission_data['_detected_form_id'] = $form_id;
-				$submission_data['_detected_form_name'] = get_the_title($form_id);
-
-				//Store it in a CPT
-				$new_post_id = wp_insert_post(array(
-					'post_title' => sanitize_text_field($submission_title),
-					'post_content' => wp_json_encode($submission_data),
-					'post_status' => 'spam',
-					'post_type' => 'nebula_cf7_submits', //This needs to match the CPT slug!
-					'meta_input' => array(
-						'form_id' => intval($form_id), //Associate this submission with its CF7 form ID
-					)
-				));
-			}
-
-			return $result; //Always return in a filter
 		}
 
 		//Build debug info data for CF7 messages and/or Nebula CF7 storage

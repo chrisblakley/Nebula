@@ -1588,20 +1588,21 @@ if ( !trait_exists('Admin') ){
 			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
 				$submission_data = get_post($submission_id); //Remember: this $submission_id is the submission ID (not the form ID)!
 				$form_data = json_decode($submission_data->post_content);
-				$form_id = ( is_object($form_data) )? $form_data->_wpcf7 : false; //CF7 Form ID
-				$post_id = ( is_object($form_data) )? $form_data->_wpcf7_container_post : false; //The page the CF7 submission was from. @todo "Nebula" 0: Is this still working? Post Titles are all empty
+
+				if ( empty($form_data) ){
+					$form_data = json_decode(strip_tags($submission_data->post_content)); //It may be spam, so strip the tags to try to validate the JSON
+				}
+
+				$form_id = ( is_object($form_data) && !empty($form_data->_wpcf7) )? $form_data->_wpcf7 : false; //CF7 Form ID
+				$post_id = ( is_object($form_data) && !empty($form_data->_wpcf7_container_post) )? $form_data->_wpcf7_container_post : false; //The page the CF7 submission was from. @todo "Nebula" 0: Is this still working? Post Titles are all empty
 
 				if ( $column_name === 'formatted_date' ){
-					if ( !empty($form_data) ){
-						echo $form_data->_nebula_date_formatted . '<br /><small>' . human_time_diff($form_data->_nebula_timestamp) . ' ago</small>';
-					}
+					echo date('l, F j, Y \a\t g:ia', strtotime(get_post_field('post_date', $submission_id))) . '<br /><small>' . human_time_diff(strtotime(get_post_field('post_date', $submission_id))) . ' ago</small>';
 				}
 
 				if ( $column_name === 'form_name' ){
 					if ( !empty($form_id) ){
 						echo '<strong><a href="admin.php?page=wpcf7&post=' . $form_id . '&action=edit">' . get_the_title($form_id) . ' &raquo;</a></strong><br /><small>Form ID: ' . $form_id . '</small>';
-					} elseif ( !empty($form_data->_detected_form_id) ){ //This is included on spam detected submissions
-						echo '<span class="cf7-submits-possible-spam"><span>' . get_the_title($form_data->_detected_form_id) . '</span><br /><small>Form ID: ' . $form_data->_detected_form_id . '</small></span>';
 					} else {
 						echo '<span class="cf7-submits-possible-spam">Spam?<br /><small>The message could not be decoded.</small></span>';
 					}
@@ -1617,10 +1618,14 @@ if ( !trait_exists('Admin') ){
 
 				//Check for attribution data if it is being used
 				if ( $this->get_option('attribution_tracking') && $column_name === 'attribution' && isset($submission_data) ){
-					if ( !empty(str_replace('{}', '', json_decode($submission_data->post_content)->_nebula_attribution)) ){ //If we have attribution data
-						echo '<span>' . json_decode($submission_data->post_content)->_nebula_attribution . '</span>';
-					} elseif ( !empty(json_decode($submission_data->post_content)->_nebula_utms) ){ //If we have UTM data
-						echo '<span>' . json_decode($submission_data->post_content)->_nebula_utms . '</span>';
+					$decoded_submission_content = json_decode($submission_data->post_content);
+
+					if ( !empty($decoded_submission_content->_nebula_attribution) ){
+						if ( !empty(str_replace('{}', '', $decoded_submission_content->_nebula_attribution)) ){ //If we have attribution data
+							echo '<span>' . $decoded_submission_content->_nebula_attribution . '</span>';
+						} elseif ( !empty($decoded_submission_content->_nebula_utms) ){ //If we have UTM data
+							echo '<span>' . $decoded_submission_content->_nebula_utms . '</span>';
+						}
 					}
 				}
 
@@ -1628,7 +1633,7 @@ if ( !trait_exists('Admin') ){
 					echo '<span>' . get_post_meta($submission_id, 'nebula_cf7_submission_notes', true) . '</span>';
 				}
 
-				if ( $column_name === 'cf7_version' ){
+				if ( $column_name === 'cf7_version' && !empty($form_data->_wpcf7_version) ){
 					echo '<span>' . $form_data->_wpcf7_version . '</span>';
 				}
 
@@ -1692,7 +1697,8 @@ if ( !trait_exists('Admin') ){
 
 				<label for="filter-by-form-status" class="screen-reader-text">Filter by status</label>
 				<select id="filter-by-form-status" name="cf7_form_status">
-					<option <?php echo ( empty($this->super->get['cf7_form_status']) || $this->super->get['cf7_form_status'] != 'spam' )? 'selected="selected"' : ''; ?> value="0">Submissions</option>
+					<option <?php echo ( empty($this->super->get['cf7_form_status']) || ($this->super->get['cf7_form_status'] != 'invalid' && $this->super->get['cf7_form_status'] != 'spam') )? 'selected="selected"' : ''; ?> value="0">Submissions</option>
+					<option value="invalid" <?php echo ( !empty($this->super->get['cf7_form_status']) && $this->super->get['cf7_form_status'] == 'invalid' )? 'selected="selected"' : ''; ?>>Invalid</option>
 					<option value="spam" <?php echo ( !empty($this->super->get['cf7_form_status']) && $this->super->get['cf7_form_status'] == 'spam' )? 'selected="selected"' : ''; ?>>Spam</option>
 				</select>
 
@@ -1728,6 +1734,11 @@ if ( !trait_exists('Admin') ){
 						);
 					}
 
+					//Invalid filter (to show only invalid)
+					if ( isset($this->super->get['cf7_form_status']) && $this->super->get['cf7_form_status'] == 'invalid' ){
+						$query->query_vars['post_status'] = 'invalid';
+					}
+
 					//Spam filter (to show only spam)
 					if ( isset($this->super->get['cf7_form_status']) && $this->super->get['cf7_form_status'] == 'spam' ){
 						$query->query_vars['post_status'] = 'spam';
@@ -1760,7 +1771,7 @@ if ( !trait_exists('Admin') ){
 					$export_url = 'admin.php?page=pmxe-admin-export';
 				}
 
-				echo '<a class="button" href="' . $export_url . '">' . $export_text . '</a>';
+				echo '<a class="button" href="' . $export_url . '"><i class="fa-solid fa-fw fa-file-arrow-down"></i> ' . $export_text . '</a>';
 			}
 		}
 
@@ -1790,7 +1801,13 @@ if ( !trait_exists('Admin') ){
 			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
 				$previous_url = ( !empty($this->super->server['HTTP_REFERER']) && strpos($this->super->server['HTTP_REFERER'], 'post_type=nebula_cf7_submits') > -1 && strpos($this->super->server['HTTP_REFERER'], 'cf7_form_id=') > -1 )? $this->super->server['HTTP_REFERER'] : 'edit.php?post_type=nebula_cf7_submits'; //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 
-				$form_type_label = ( get_post_status() == 'spam' )? 'Spam' : ' Submissions';
+				$form_type_label = 'Submissions';
+				if ( get_post_status() == 'invalid' ){
+					$form_type_label = 'Invalid Submissions';
+				} elseif ( get_post_status() == 'spam' ){
+					$form_type_label = 'Spam';
+				}
+
 				echo '<a class="button" href="' . $previous_url . '">&laquo; Back to CF7 ' . ucwords($form_type_label) . '</a>';
 			}
 		}
@@ -1799,10 +1816,26 @@ if ( !trait_exists('Admin') ){
 		public function cf7_storage_output($post){
 			if ( $this->is_admin_page() && $post->post_type === 'nebula_cf7_submits' ){
 				$form_data = json_decode($post->post_content);
+				$is_spam = ( $post->post_status === 'spam' || empty($form_data) || empty($form_data->_wpcf7) );
+				$is_invalid = ( $post->post_status === 'invalid' );
+				$is_caution = ( empty($form_data->_nebula_ga_cid) || strpos($form_data->_nebula_ga_cid, '-') !== false ); //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+
+				if ( empty($form_data) ){
+					echo '<p>This submission has been noted as potential spam due to invalid JSON.</p>';
+
+					$formatted_invalid_json = str_replace(array('{', '":', ',"', '}'), array('{<br />', '": ', ',<br />"', '<br />}'), htmlspecialchars($post->post_content));
+					echo '<table id="nebula-cf7-submission-spam" class="nebula-cf7-submissions nebula-cf7-submission-spam"><thead><tr><td>Original Data</td><td>&nbsp;</td></tr></thead><tbody><tr><td><strong>Invalid JSON</strong><br />Possibly spam?<br /><br /><small>Note: the JSON here may validate when copy/pasted, but the original data could not be decoded.</small></td><td>' . $formatted_invalid_json . '</td></tr></tbody></table>';
+
+					$form_data = json_decode(strip_tags($post->post_content)); //Now strip the tags and try parsing it again in the normal table
+				}
 
 				if ( !empty($form_data) ){
-					if ( $post->post_status === 'spam' ){
-						echo '<p>This submission has been noted as potential spam although it has valid JSON. <strong>Any HTML tags have been removed from the data.</strong></p>';
+					if ( $is_spam ){
+						echo '<p>This submission has been noted as potential spam. <strong>Any HTML tags have been removed from the data.</strong> Do not visit any URLs that may appear in the data.</p>';
+					} elseif ( $is_invalid ){
+						echo '<p>This submission was determined to be invalid. Invalid fields are highlighted below. The user was shown a validation error message when attempting to submit this information (see below). The user may have fixed the invalid fields and attempted to submit again, or they may have abandoned the form without re-submitting.</p><p>Note: If the acceptance checkbox was not checked, form field input data will have been removed from this submission and will not appear below as it was not processed or stored.</p>';
+					} elseif ( $is_caution ){
+						echo '<p>This user has a non-native Google Analytics Client ID (' . $form_data->_nebula_ga_cid . '). This could mean the user has an ad-blocker active, or that it may be a bot/spam. Use caution.</p>';
 					}
 
 					$form_output = array(
@@ -1819,14 +1852,48 @@ if ( !trait_exists('Admin') ){
 						}
 					}
 
+					$invalid_fields = array();
+					if ( $is_invalid ){
+						foreach ( json_decode($form_output['real']['invalid_fields']) as $invalid_field_name => $invalid_details ){
+							array_push($invalid_fields, $invalid_field_name);
+						}
+					}
+
 					//Output each data type
 					foreach ( $form_output as $data_type => $datapoints ){
+						$table_class = '';
+						if ( !empty($is_spam) ){
+							$table_class = 'nebula-cf7-submission-spam';
+						} elseif ( !empty($is_invalid) ){
+							$table_class = 'nebula-cf7-submission-invalid';
+						} elseif ( !empty($is_caution) ){
+							$table_class = 'nebula-cf7-submission-caution';
+						}
+
 						?>
-						<table id="nebula-cf7-submission-<?php echo $data_type; ?>" class="nebula-cf7-submissions">
+						<table id="nebula-cf7-submission-<?php echo $data_type; ?>" class="nebula-cf7-submissions <?php echo $table_class; ?>">
 							<thead>
 								<tr>
-									<td><?php echo ( $data_type === 'metadata' )? 'Metadata' : 'Field'; ?></td>
-									<td>Value</td>
+									<td>
+										<?php
+											$data_label = 'Field';
+											if ( $data_type === 'metadata' ){
+												$data_label = 'Metadata';
+											}
+
+											echo $data_label;
+										?>
+									</td>
+									<td>
+										<?php
+											$value_label = 'Value';
+											if ( $is_spam ){
+												$value_label = 'Sanitized Data';
+											}
+
+											echo $value_label;
+										?>
+									</td>
 								</tr>
 							</thead>
 							<tbody>
@@ -1835,7 +1902,13 @@ if ( !trait_exists('Admin') ){
 						foreach ( $datapoints as $key => $value ){
 							$classes = array();
 
-							if ( is_array($value) ){
+							if ( in_array($key, $invalid_fields) ){
+								$classes[] = 'invalid-field';
+							}
+
+							if ( is_object($value) || is_object($value[0]) ){ //If the value is an object or an array of objects (such as with the CF7 Spam Log)
+								$value = json_encode($value, JSON_PRETTY_PRINT);
+							} elseif ( is_array($value) ){
 								$value = implode(', ', $value);
 							}
 
@@ -1897,11 +1970,8 @@ if ( !trait_exists('Admin') ){
 
 						echo '</tbody></table>';
 					}
-				} else { //This is for potential spam submissions with invalid JSON
-					echo '<p>This submission has been noted as potential spam due to invalid JSON.</p>';
-
-					$formatted_invalid_json = str_replace(array('{', '":', ',"', '}'), array('{<br />', '": ', ',<br />"', '<br />}'), htmlspecialchars($post->post_content));
-					echo '<table id="nebula-cf7-submission-spam" class="nebula-cf7-submissions"><thead><tr><td>Field</td><td>Value</td></tr></thead><tbody><tr><td><strong>Invalid JSON</strong><br />Possibly spam?<br /><br /><small>Note: the JSON here may validate when copy/pasted, but the original data could not be decoded.</small></td><td>' . $formatted_invalid_json . '</td></tr></tbody></table>';
+				} else {
+					echo '<p>This data could not be sanitized for displaying in an organized method.</p>';
 				}
 			}
 		}
