@@ -51,6 +51,7 @@ if ( !trait_exists('Functions') ){
 			add_filter('the_posts', array($this, 'always_get_post_custom'));
 			add_action('pre_get_posts', array($this, 'redirect_empty_search'));
 			add_action('template_redirect', array($this, 'redirect_single_search_result'));
+			add_filter('relevanssi_post_ok', array($this, 'exclude_from_relevanssi'), 10, 2);
 
 			if ( !$this->is_background_request() && !$this->is_admin_page() ){
 				add_action('wp_head', array($this, 'arbitrary_code_head'), 1000);
@@ -2452,6 +2453,23 @@ if ( !trait_exists('Functions') ){
 			}
 		}
 
+		//Explicitly exclude certain posts/types from Relevanssi search
+		public function exclude_from_relevanssi($post_ok, $post_id){
+			//If this is an ignored post type
+			$ignore_post_types = apply_filters('nebula_autocomplete_ignore_types', array('nebula_cf7_submits')); //Allow post types to be globally ignored from autocomplete search
+			if ( in_array(get_post_type($post_id), $ignore_post_types) ){
+				return false;
+			}
+
+			//If this is an ignored post ID
+			$ignore_post_ids = apply_filters('nebula_autocomplete_ignore_ids', array()); //Allow individual posts to be globally ignored from autocomplete search
+			if ( in_array($post_id, $ignore_post_ids) ){
+				return false;
+			}
+
+			return $post_ok;
+		}
+
 		//Autocomplete Search (REST endpoint)
 		public function rest_autocomplete_search(){
 			$timer_name = $this->timer('Autocomplete Search');
@@ -2467,6 +2485,11 @@ if ( !trait_exists('Functions') ){
 				$types = 'any';
 				if ( isset($this->super->get['types']) ){
 					$types =  explode(',', sanitize_text_field(trim($this->super->get['types'])));
+
+					//This is not necessary
+					$types = array_filter($types, function($type){
+						return $type !== 'nebula_cf7_submits';
+					});
 				}
 
 				//Prepare the standard WP search query parameters (do not include custom fields here).
@@ -2526,7 +2549,7 @@ if ( !trait_exists('Functions') ){
 					$autocomplete_query->posts = array_unique(array_merge($query1->posts, $query2->posts), SORT_REGULAR); //Is this the right way to do it? Or should we use parse_query here?
 					$autocomplete_query->post_count = count($autocomplete_query->posts);
 
-					$ignore_post_types = apply_filters('nebula_autocomplete_ignore_types', array()); //Allow post types to be globally ignored from autocomplete search
+					$ignore_post_types = apply_filters('nebula_autocomplete_ignore_types', array('nebula_cf7_submits')); //Allow post types to be globally ignored from autocomplete search
 					$ignore_post_ids = apply_filters('nebula_autocomplete_ignore_ids', array()); //Allow individual posts to be globally ignored from autocomplete search
 
 					$suggestions = array();
@@ -2540,6 +2563,7 @@ if ( !trait_exists('Functions') ){
 							if ( in_array(get_the_id(), $ignore_post_ids) || !get_the_title() ){ //Ignore results without titles
 								continue;
 							}
+
 							$post = get_post();
 
 							$suggestion = array();
@@ -3137,7 +3161,6 @@ if ( !trait_exists('Functions') ){
 					'create_posts' => false, //Remove the Add New button
 				),
 				'map_meta_cap' => true, //User can view even though they cannot create posts in the admin
-				//'show_in_menu' => true, //Show as a top-level menu item
 				'show_in_menu' => 'wpcf7', //Show as a submenu item of Contact Form 7
 				'menu_position' => 31, //CF7 itself is at 29 or 30
 				'show_in_nav_menus' => false,
@@ -3148,24 +3171,39 @@ if ( !trait_exists('Functions') ){
 				'publicly_queryable' => false, //Don't let visitors ever access this data
 			));
 
+			register_post_status('submission', array(
+				'post_type' => array('nebula_cf7_submits'), //Only for Nebula CF7 Submissions CPT
+				'label' => _x('Submission', 'post status label', 'nebula'),
+				'public' => true, //This must be true for it to appear in the "All" list
+				'internal' => true,
+				'protected' => true,
+				'private' => true,
+				'exclude_from_search' => true,
+				'show_in_admin_all_list' => true, //We want valid submissions to appear in the "All" list
+				'show_in_admin_status_list' => true, //This is the linked list above the listing table
+				'label_count' => _n_noop('Submissions <span class="count">(%s)</span>', 'Submission <span class="count">(%s)</span>', 'nebula'),
+			));
+
 			register_post_status('spam', array(
 				'post_type' => array('nebula_cf7_submits'), //Only for Nebula CF7 Submissions CPT
-				'label' => _x('Spam', 'post status label', 'text-domain'),
+				'label' => _x('Spam', 'post status label', 'nebula'),
 				'public' => false,
+				'internal' => true,
 				'exclude_from_search' => true,
-				'show_in_admin_all_list' => false,
-				'show_in_admin_status_list' => false,
-				'label_count' => _n_noop('Spam <span class="count">(%s)</span>', 'Spam <span class="count">(%s)</span>', 'text-domain'),
+				'show_in_admin_all_list' => false, //This is the "All" list grouping above the listing table
+				'show_in_admin_status_list' => true, //This is the linked list above the listing table
+				'label_count' => _n_noop('Spam <span class="count">(%s)</span>', 'Spam <span class="count">(%s)</span>', 'nebula'),
 			));
 
 			register_post_status('invalid', array(
 				'post_type' => array('nebula_cf7_submits'), //Only for Nebula CF7 Submissions CPT
-				'label' => _x('Invalid', 'post status label', 'text-domain'),
+				'label' => _x('Invalid', 'post status label', 'nebula'),
 				'public' => false,
+				'internal' => true,
 				'exclude_from_search' => true,
-				'show_in_admin_all_list' => false,
-				'show_in_admin_status_list' => false,
-				'label_count' => _n_noop('Invalid <span class="count">(%s)</span>', 'Invalid <span class="count">(%s)</span>', 'text-domain'),
+				'show_in_admin_all_list' => false, //This is the "All" list grouping above the listing table
+				'show_in_admin_status_list' => true, //This is the linked list above the listing table
+				'label_count' => _n_noop('Invalid <span class="count">(%s)</span>', 'Invalid <span class="count">(%s)</span>', 'nebula'),
 			));
 		}
 
@@ -3203,9 +3241,9 @@ if ( !trait_exists('Functions') ){
 			//If the form is invalid and also does not have consent acceptance we do not process form field input data
 			$is_processing_allowed = true;
 			if ( $status == 'validation_failed' ){ //If the user had a validation error
-				if ( empty($submission->collect_consent()) ){ //If CF7 does not have consent
-					$is_processing_allowed = false;
-				}
+				// if ( empty($submission->collect_consent()) ){ //Disabled because this is a false positive if the acceptance checkbox does not exist
+				// 	$is_processing_allowed = false;
+				// }
 
 				if ( !empty($result['invalid_fields']['privacy-acceptance']) ){ //If the acceptance checkbox is in the invalid field list
 					$is_processing_allowed = false;
@@ -3274,10 +3312,10 @@ if ( !trait_exists('Functions') ){
 				}
 			}
 
-			$submission_title = apply_filters('nebula_cf7_submission_title', get_the_title($form_id) . ' submission' . $unique_identifier, $submission_data); //Allow others to modify the title of the CF7 submissions as they are shown in WP Admin
+			$submission_title = apply_filters('nebula_cf7_submission_title', get_the_title($form_id) . $unique_identifier, $submission_data); //Allow others to modify the title of the CF7 submissions as they are shown in WP Admin
 
 			//Determine the WP post status and annotate the submission title if necessary
-			$post_status = 'private'; //Private status for success and mail failed
+			$post_status = 'submission'; //"submission" status for success and mail failed
 			$submission_data['message_shown'] = $result['message']; //This is the confirmation or error message the user was shown when submitting
 
 			if ( $status == 'mail_failed' ){
@@ -3300,7 +3338,7 @@ if ( !trait_exists('Functions') ){
 			$new_post_id = wp_insert_post(array(
 				'post_title' => sanitize_text_field($submission_title),
 				'post_content' => wp_json_encode($submission_data),
-				'post_status' => $post_status, //private, invalid, or spam
+				'post_status' => $post_status, //submission, invalid, or spam
 				'post_type' => 'nebula_cf7_submits', //This needs to match the CPT slug!
 				'meta_input' => array(
 					'form_id' => intval($form_id), //Associate this submission with its CF7 form ID

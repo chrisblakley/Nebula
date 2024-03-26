@@ -455,6 +455,15 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
+					<input type="hidden" name="nebula_options[cf7_spam_detection_agent]" value="<?php echo $nebula_options['cf7_spam_detection_agent']; ?>">
+					<input id="cf7_spam_detection_agent" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['cf7_spam_detection_agent'])); ?>><label for="cf7_spam_detection_agent">CF7 Spam Detection Agent</label>
+
+					<p class="nebula-help-text short-help form-text text-muted">Nebula will block all CF7 form submissions that contain any HTML hyperlink tags. (Default: <?php echo $this->user_friendly_default('cf7_spam_detection_agent'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">Only enable this option if this website is not expecting any input fields in any CF7 forms to contain hyperlinks because this will block those submissions as spam! Note: This only works with the Contact Form 7 plugin.</p>
+					<p class="option-keywords">security spam wpcf7 contact form 7</p>
+				</div>
+
+				<div class="form-group">
 					<input type="hidden" name="nebula_options[console_css]" value="<?php echo $nebula_options['console_css']; ?>">
 					<input id="console_css" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['console_css'])); ?>><label for="console_css">Console CSS</label>
 

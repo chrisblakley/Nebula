@@ -359,6 +359,25 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 //Nebula CF7 Submissions
 .cf7-submits-possible-spam {opacity: 0.5;}
 
+.post-type-nebula_cf7_submits {
+	table.wp-list-table {table-layout: auto;
+		td.title {max-width: 250px;}
+		td.formatted_date .today {font-weight: bold;}
+		td.attribution,
+		td.notes {max-width: 200px;}
+	}
+
+
+
+	#post-body-content {
+		.nebula-cf7-notice {background: #fff; border: 1px solid #c3c4c7; border-left-width: 4px; box-shadow: 0 1px 1px rgba(0,0,0,.04); margin-top: 19px; padding: 1px 12px;
+			&.notice-caution {border-left-color: $info_color;}
+			&.notice-invalid {border-left-color: $warning_color;}
+			&.notice-spam {border-left-color: $danger_color;}
+		}
+	}
+}
+
 table.nebula-cf7-submissions {border-collapse: collapse; width: 100%; margin-top: 22px; border: 1px solid #444;
 	thead {font-weight: bold; background: $success_color; color: readable-color($success_color);
 		td {padding: 15px;}

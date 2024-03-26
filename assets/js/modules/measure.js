@@ -1603,7 +1603,7 @@ nebula.ecommerceTracking = async function(){
 };
 
 //Detect scroll depth
-//Note: Although "scroll" is a GA4 Enhanced Measurement, it only tracks when the user reaches the bottom of the page.
+//Note: Although "scroll" is a GA4 Enhanced Measurement, it only tracks when the user reaches the bottom of the page (90% scrolled). Any "scroll" event in GA4 only triggers at 90%– it does not mean that a user began scrolling– only that they finished scrolling.
 nebula.scrollDepth = async function(){
 	if ( window.performance ){ //Safari 11+
 		let scrollReady = performance.now();

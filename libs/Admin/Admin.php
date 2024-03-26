@@ -98,6 +98,7 @@ if ( !trait_exists('Admin') ){
 					add_filter('post_row_actions', array($this, 'cf7_submissions_remove_quick_actions'), 10, 2);
 					add_action('edit_form_top', array($this, 'cf7_submissions_back_button'));
 					add_action('edit_form_after_title', array($this, 'cf7_storage_output'), 10, 1); //This is where the actual submission details are output
+					add_action('admin_footer-post.php', array($this, 'add_cf7_statuses_to_dropdown'));
 					add_filter('months_dropdown_results', '__return_empty_array'); //Remove the original date month dropdown
 					add_action('restrict_manage_posts', array($this, 'cf7_submissions_filters'), 10, 1);
 					add_action('manage_posts_extra_tablenav', array($this, 'cf7_submissions_actions'), 10, 1);
@@ -545,7 +546,7 @@ if ( !trait_exists('Admin') ){
 				$original_author = get_the_author_meta('display_name', get_post_field('post_author', $current_id));
 				$modified_date = strtotime(get_post_field('post_modified', $current_id));
 				if ( get_post_meta($current_id, '_edit_last', true) ){
-					$last_user = get_userdata(get_post_meta( $current_id, '_edit_last', true));
+					$last_user = get_userdata(get_post_meta($current_id, '_edit_last', true));
 					$modified_author = $last_user->display_name;
 				}
 
@@ -1563,6 +1564,12 @@ if ( !trait_exists('Admin') ){
 					$columns['attribution'] = 'Attribution';
 				}
 
+				if ( get_post_status() == 'invalid' ){
+					$columns['ga_cid'] = 'GA Client ID'; //Best way to "identify" multiples from the same user
+				} elseif ( get_post_status() == 'spam' ){
+					$columns['anonymized_ip'] = 'Anonymized IP';
+				}
+
 				$columns['notes'] = 'Internal Notes';
 				$columns['cf7_version'] = 'CF7 Version';
 
@@ -1597,7 +1604,9 @@ if ( !trait_exists('Admin') ){
 				$post_id = ( is_object($form_data) && !empty($form_data->_wpcf7_container_post) )? $form_data->_wpcf7_container_post : false; //The page the CF7 submission was from. @todo "Nebula" 0: Is this still working? Post Titles are all empty
 
 				if ( $column_name === 'formatted_date' ){
-					echo date('l, F j, Y \a\t g:ia', strtotime(get_post_field('post_date', $submission_id))) . '<br /><small>' . human_time_diff(strtotime(get_post_field('post_date', $submission_id))) . ' ago</small>';
+					$today_text = ( date('Y-n-j', strtotime(get_post_field('post_date', $submission_id))) == date('Y-n-j') )? 'today' : '';
+					$today_parens = ( !empty($today_text) )? ' <em>(Today)</em>' : '';
+					echo '<span class="' . $today_text . '" title="' . ucwords($today_text) . '">' . date('l, F j, Y \a\t g:ia', strtotime(get_post_field('post_date', $submission_id))) . '<br /><small>' . human_time_diff(strtotime(get_post_field('post_date', $submission_id))) . ' ago' . $today_parens . '</small></span>';
 				}
 
 				if ( $column_name === 'form_name' ){
@@ -1627,6 +1636,14 @@ if ( !trait_exists('Admin') ){
 							echo '<span>' . $decoded_submission_content->_nebula_utms . '</span>';
 						}
 					}
+				}
+
+				if ( $column_name === 'anonymized_ip' && !empty($form_data->_nebula_anonymized_ip) ){
+					echo '<span>' . $form_data->_nebula_anonymized_ip . '</span>';
+				}
+
+				if ( $column_name === 'ga_cid' && !empty($form_data->_nebula_ga_cid) ){
+					echo '<span>' . $form_data->_nebula_ga_cid . '</span>';
 				}
 
 				if ( $column_name === 'notes' ){
@@ -1799,7 +1816,7 @@ if ( !trait_exists('Admin') ){
 		//Show a back button on CF7 submission detail pages
 		public function cf7_submissions_back_button(){
 			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
-				$previous_url = ( !empty($this->super->server['HTTP_REFERER']) && strpos($this->super->server['HTTP_REFERER'], 'post_type=nebula_cf7_submits') > -1 && strpos($this->super->server['HTTP_REFERER'], 'cf7_form_id=') > -1 )? $this->super->server['HTTP_REFERER'] : 'edit.php?post_type=nebula_cf7_submits'; //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				$cf7_status_listing_url = admin_url('edit.php?post_type=nebula_cf7_submits&post_status=' . get_post_status());
 
 				$form_type_label = 'Submissions';
 				if ( get_post_status() == 'invalid' ){
@@ -1808,7 +1825,7 @@ if ( !trait_exists('Admin') ){
 					$form_type_label = 'Spam';
 				}
 
-				echo '<a class="button" href="' . $previous_url . '">&laquo; Back to CF7 ' . ucwords($form_type_label) . '</a>';
+				echo '<a class="button" href="' . $cf7_status_listing_url . '">&laquo; Back to CF7 ' . ucwords($form_type_label) . '</a>';
 			}
 		}
 
@@ -1818,7 +1835,16 @@ if ( !trait_exists('Admin') ){
 				$form_data = json_decode($post->post_content);
 				$is_spam = ( $post->post_status === 'spam' || empty($form_data) || empty($form_data->_wpcf7) );
 				$is_invalid = ( $post->post_status === 'invalid' );
-				$is_caution = ( empty($form_data->_nebula_ga_cid) || strpos($form_data->_nebula_ga_cid, '-') !== false ); //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+
+				//Check for indicators of bot/spam submissions that were logged as actual
+				$is_caution = false;
+				if ( !$is_spam ){
+					if ( empty($form_data->_nebula_ga_cid) || strpos($form_data->_nebula_ga_cid, '-') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						$is_caution = true;
+					} elseif ( 1==2 ){ //@todo "Nebula" 0: Check for <a (beginning of a link tag) in the message, but remember that we don't know what the field name is to check... preg_match("/<a.*href=.*>/i", $value)
+						$is_caution = true;
+					}
+				}
 
 				if ( empty($form_data) ){
 					echo '<p>This submission has been noted as potential spam due to invalid JSON.</p>';
@@ -1831,11 +1857,11 @@ if ( !trait_exists('Admin') ){
 
 				if ( !empty($form_data) ){
 					if ( $is_spam ){
-						echo '<p>This submission has been noted as potential spam. <strong>Any HTML tags have been removed from the data.</strong> Do not visit any URLs that may appear in the data.</p>';
+						echo '<div class="nebula-cf7-notice notice-spam"><p><i class="fa-solid fa-fw fa-triangle-exclamation"></i> <strong>This submission has been noted as potential spam.</strong> Any HTML tags have been removed from the data. Do not visit any URLs that may appear in the data.</p></div>';
 					} elseif ( $is_invalid ){
-						echo '<p>This submission was determined to be invalid. Invalid fields are highlighted below. The user was shown a validation error message when attempting to submit this information (see below). The user may have fixed the invalid fields and attempted to submit again, or they may have abandoned the form without re-submitting.</p><p>Note: If the acceptance checkbox was not checked, form field input data will have been removed from this submission and will not appear below as it was not processed or stored.</p>';
+						echo '<div class="nebula-cf7-notice notice-invalid"><p><i class="fa-solid fa-fw fa-comment-slash"></i> <strong>This submission was determined to be invalid.</strong> Invalid fields are highlighted below. The user was shown a validation error message when attempting to submit this information (see below). The user may have fixed the invalid fields and attempted to submit again, or they may have abandoned the form without re-submitting.</p><p>Note: If the acceptance checkbox was not checked, form field input data will have been removed from this submission and will not appear below as it was not processed or stored.</p></div>';
 					} elseif ( $is_caution ){
-						echo '<p>This user has a non-native Google Analytics Client ID (' . $form_data->_nebula_ga_cid . '). This could mean the user has an ad-blocker active, or that it may be a bot/spam. Use caution.</p>';
+						echo '<div class="nebula-cf7-notice notice-caution"><p><i class="fa-solid fa-fw fa-circle-question"></i> This user has a non-native Google Analytics Client ID (' . $form_data->_nebula_ga_cid . '). <strong>This could mean the user has an ad-blocker active, or that it may be a bot or spam.</strong> Use caution.</p></div>';
 					}
 
 					$form_output = array(
@@ -1906,7 +1932,7 @@ if ( !trait_exists('Admin') ){
 								$classes[] = 'invalid-field';
 							}
 
-							if ( is_object($value) || is_object($value[0]) ){ //If the value is an object or an array of objects (such as with the CF7 Spam Log)
+							if ( is_object($value) || (isset($value[0]) && is_object($value[0])) ){ //If the value is an object or an array of objects (such as with the CF7 Spam Log)
 								$value = json_encode($value, JSON_PRETTY_PRINT);
 							} elseif ( is_array($value) ){
 								$value = implode(', ', $value);
@@ -1976,6 +2002,38 @@ if ( !trait_exists('Admin') ){
 			}
 		}
 
+		//Add the various CF7 submission statuses to the Publish status dropdown in the WP editor
+		//This is a hacky way to do this, but WordPress does not have a better option as of March 2024
+		function add_cf7_statuses_to_dropdown(){
+			global $post;
+
+			if ( $post->post_type == 'nebula_cf7_submits' ){
+				echo '<script>';
+					echo "jQuery(function(){";
+						echo "jQuery('select[name=\"post_status\"]').append('";
+							$complete = '';
+							if( $post->post_status == 'submission' ){
+            					$complete = 'selected=\"selected\"';
+        					}
+							echo "<option value=\"submission\" " . $complete . ">Submission</option>";
+
+							$complete = '';
+							if( $post->post_status == 'invalid' ){
+            					$complete = 'selected=\"selected\"';
+        					}
+							echo "<option value=\"invalid\" " . $complete . ">Invalid</option>";
+
+							$complete = '';
+							if( $post->post_status == 'spam' ){
+            					$complete = 'selected=\"selected\"';
+        					}
+							echo "<option value=\"spam\" " . $complete . ">Spam</option>";
+						echo "');";
+					echo "});";
+				echo '</script>';
+			}
+		}
+
 		//All Settings page link
 		public function all_settings_link(){
 			add_theme_page('All Settings', 'All Settings', 'administrator', 'options.php');
@@ -2018,7 +2076,7 @@ if ( !trait_exists('Admin') ){
 
 		public function post_meta_boxes_setup(){
 			add_action('add_meta_boxes', array($this, 'nebula_add_post_metabox'));
-			add_action('add_meta_boxes', array($this, 'nebula_add_cf7_notes_metabox'));
+			add_action('add_meta_boxes', array($this, 'nebula_add_cf7_metabox'));
 			add_action('save_post', array($this, 'save_post_custom_meta'), 10, 2); //Use this to save all custom meta (internal search, classes, CF7 submission notes, etc.)
 		}
 
@@ -2075,7 +2133,7 @@ if ( !trait_exists('Admin') ){
 				return $post_id;
 			}
 
-			$nebula_post_meta_fields = array('nebula_body_classes', 'nebula_post_classes', 'nebula_internal_search_keywords', 'nebula_cf7_submission_notes');
+			$nebula_post_meta_fields = array('nebula_body_classes', 'nebula_post_classes', 'nebula_internal_search_keywords', 'nebula_cf7_submission_preserve', 'nebula_cf7_submission_notes');
 			foreach ( $nebula_post_meta_fields as $nebula_post_meta_field ){
 				$meta_value = get_post_meta($post_id, $nebula_post_meta_field, true); //Get the meta value of the custom field key.
 
@@ -2093,18 +2151,30 @@ if ( !trait_exists('Admin') ){
 			}
 		}
 
-		//Nebula CF7 Submission Notes
-		public function nebula_add_cf7_notes_metabox(){
-			add_meta_box('nebula-post-data', 'Nebula CF7 Notes', array($this, 'nebula_cf7_notes_metabox' ), 'nebula_cf7_submits', 'side', 'default');
+		//Nebula CF7 Submissions Metabox
+		public function nebula_add_cf7_metabox(){
+			add_meta_box('nebula-post-data', 'Nebula CF7', array($this, 'nebula_cf7_metabox' ), 'nebula_cf7_submits', 'side', 'default');
 		}
 
-		//Internal Search Keywords post metabox content
-		function nebula_cf7_notes_metabox($object, $box){
+		//Nebula CF7 Submission custom fields
+		public function nebula_cf7_metabox($object, $box){
 			wp_nonce_field(basename(__FILE__), 'nebula_post_nonce');
+
+			if ( $object->post_type == 'nebula_cf7_submits' ){
+				if ( $object->post_status == 'spam' || $object->post_status == 'invalid' ){
+					?>
+					<label class="mt-2">
+						<input type="checkbox" id="nebula-cf7-submission-preserve" name="nebula_cf7_submission_preserve" <?php checked(get_post_meta($object->ID, 'nebula_cf7_submission_preserve', true), 'on'); ?> /> Preserve
+					</label>
+					<span class="howto">This prevents this submission from being automatically deleted.</span>
+					<?php
+				}
+			}
+
 			?>
 			<div>
 				<p>
-					<strong>CF7 Submission Notes</strong>
+					<strong><i class="fa-solid fa-fw fa-pen-to-square"></i> CF7 Submission Notes</strong>
 					<textarea id="nebula-cf7-submission-notes" class="textarea large-text" name="nebula_cf7_submission_notes" placeholder="Notes related to this Contact Form 7 submission..." style="min-height: 250px;"><?php echo get_post_meta($object->ID, 'nebula_cf7_submission_notes', true); ?></textarea>
 					<span class="howto">Keep any notes here to help provide context and information related to this form submission.</span>
 				</p>

@@ -27,6 +27,7 @@ if ( !trait_exists('Security') ){
 			if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ){
 				add_filter('wpcf7_validate_email', array($this, 'ignore_invalid_email_addresses'), 10, 2);
 				add_filter('wpcf7_validate_email*', array($this, 'ignore_invalid_email_addresses'), 10, 2);
+				add_filter('wpcf7_spam', array($this, 'nebula_cf7_spam_detection_agent'), 10, 2);
 			}
 
 			//Disable the file editor for non-developers
@@ -439,5 +440,41 @@ if ( !trait_exists('Security') ){
 				<?php
 			}
 		}
+
+		//Nebula can check for spam form submissions
+		public function nebula_cf7_spam_detection_agent($is_spam, $submission=null){
+			if ( $is_spam ) { //If the submission was already detected as spam, don't check further details
+				return $is_spam;
+			}
+
+			//Only if the Nebula Option is enabled
+			if ( $this->get_option('cf7_spam_detection_agent') ){
+				$cf7_form = WPCF7_ContactForm::get_current();
+				$form_tags = $cf7_form->scan_form_tags();
+
+				foreach ( $form_tags as $tag ) {
+					$value = ( isset($_POST[$tag->name]) )? $_POST[$tag->name] : '';
+
+					if ( is_string($value) && preg_match("/<a.*href=.*>/i", $value) ) { //If the input value contains an <a> tag
+						$is_spam = true;
+
+						if ( $submission ) {
+							$submission->add_spam_log(array(
+								'agent' => 'nebula',
+								'reason' => sprintf(
+									__('Nebula detected a form field (%1$s) that contained an HTML hyperlink.', 'nebula'),
+									$tag->name
+								),
+							));
+						}
+
+						return $is_spam; //Exit the loop since we found a match
+					}
+				}
+			}
+
+			return $is_spam;
+		}
+
 	}
 }

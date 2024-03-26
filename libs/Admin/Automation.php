@@ -30,12 +30,10 @@ if ( !trait_exists('Automation') ){
 				}
 
 				add_action('admin_init', array($this, 'set_dates'));
-
 				//add_action('admin_init', array($this, 'force_settings' ), 9); //Uncomment this line to force an initialization date.
 
-				//Delete CF7 Spam forms using a WP cron job
-				add_action('wp', array($this, 'schedule_delete_cf7_expired'));
-				add_action('nebula_delete_cf7_expired_hook', array($this, 'delete_cf7_expired'));
+				add_action('init', array($this, 'schedule_delete_cf7_expired')); //Add to the WP Cron to regularly delete CF7 Spam/Invalid submissions
+				//add_action('nebula_delete_cf7_expired_hook', array($this, 'delete_cf7_expired')); //Moved to nebula.php so WP Cron can run it better. Delete this eventually.
 			}
 		}
 
@@ -486,7 +484,7 @@ if ( !trait_exists('Automation') ){
 			}
 		}
 
-		//Delete old spam CF7 submit posts and limit the number stored
+ 		//Delete old spam CF7 submit posts and limit the number stored
 		public function delete_cf7_expired(){ //This is the function that the action references
 			//Query posts to be deleted by date
 			$posts_to_delete = new WP_Query(array(
@@ -497,43 +495,65 @@ if ( !trait_exists('Automation') ){
 				),
 				'fields' => 'ids',
 				'posts_per_page' => -1,
+				'meta_query' => array(
+    				array(
+        				'key' => 'nebula_cf7_submission_preserve',
+        				'value' => 'on',
+        				'compare' => 'NOT EXISTS', //Exclude posts that are being preserving
+    				),
+				),
 			));
 
 			//Delete expired posts by date
 			if ( $posts_to_delete->have_posts() ){
 				while ( $posts_to_delete->have_posts() ){
 					$posts_to_delete->the_post();
-					wp_delete_post(get_the_ID(), true);
+
+					if ( empty(get_post_meta(get_the_ID(), 'nebula_cf7_submission_preserve', true)) ){ //Only if we are not preserving this post
+						wp_delete_post(get_the_ID(), true);
+					}
 				}
+
 				wp_reset_postdata();
 			}
 
-			//Query remaining posts after deletion
-			$remaining_posts = new WP_Query(array(
+			//Now limit the number of spam posts regardless of date
+			$remaining_spam_posts = new WP_Query(array(
 				'post_type' => 'nebula_cf7_submits',
-				'post_status' => array('spam', 'invalid'),
+				'post_status' => array('spam'),
 				'posts_per_page' => -1,
 			));
 
-			$num_remaining_posts = $remaining_posts->post_count; //Count the number of spam and invalid posts
+			$num_remaining_spam_posts = $remaining_spam_posts->post_count; //Count the number of spam and invalid posts
 
-			//If there are more than 50 posts remaining, delete the oldest ones first
-			if ( $num_remaining_posts > 50 ){
+			//If there are more than 50 spam posts remaining, delete the oldest ones first
+			if ( $num_remaining_spam_posts > 50 ){
 				//Order remaining posts by date in ascending order
-				$remaining_posts = new WP_Query(array(
+				$remaining_spam_posts = new WP_Query(array(
 					'post_type' => 'nebula_cf7_submits',
-					'post_status' => array('spam', 'invalid'),
-					'posts_per_page' => $num_remaining_posts-50, //This is the number we want to delete (remaining posts minus how many to keep)
+					'post_status' => array('spam'),
+					'posts_per_page' => $num_remaining_spam_posts-50, //This is the number we want to delete (remaining posts minus how many to keep)
 					'orderby' => 'date',
 					'order' => 'ASC',
+					'meta_query' => array(
+        				array(
+            				'key' => 'nebula_cf7_submission_preserve',
+            				'value' => 'on',
+            				'compare' => 'NOT EXISTS', //Exclude posts that are being preserving
+        				),
+    				),
 				));
 
 				//Delete the oldest posts
-				if ( $remaining_posts->have_posts() ){
-					while ( $remaining_posts->have_posts() ){
-						$remaining_posts->the_post();
-						wp_delete_post(get_the_ID(), true);
+				if ( $remaining_spam_posts->have_posts() ){
+					while ( $remaining_spam_posts->have_posts() ){
+						$remaining_spam_posts->the_post();
+
+						if ( empty(get_post_meta(get_the_ID(), 'nebula_cf7_submission_preserve', true)) ){ //Only if we are not preserving this post
+							wp_delete_post(get_the_ID(), true);
+						}
 					}
+
 					wp_reset_postdata();
 				}
 			}

@@ -99,6 +99,8 @@ if ( !class_exists('Nebula') ){
 			if ( is_plugin_active('woocommerce/woocommerce.php') ){
 				$this->EcommerceHooks(); //Register Ecommerce hooks
 			}
+
+			add_action('nebula_delete_cf7_expired_hook', array($this, 'delete_cf7_expired')); //This must live here so the WP Cron can run it properly
 		}
 	}
 }

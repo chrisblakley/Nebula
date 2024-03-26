@@ -27,6 +27,7 @@ jQuery(async function(){
 	}
 
 	nebula.initializationStuff();
+	nebula.cf7SubmissionsOrganization();
 
 	if ( !jQuery('li#menu-comments').is(':visible') ){
 		jQuery('#dashboard_right_now .main').append('Comments are disabled <small>(via <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a>)</small>.');
@@ -113,3 +114,13 @@ nebula.initializationStuff = function(){
 		history.replaceState(null, document.title, cleanURL[0]);
 	}
 };
+
+//Re-organize the CF7 submission details screen
+nebula.cf7SubmissionsOrganization = function(){
+	if ( jQuery('.post-type-nebula_cf7_submits').length ){
+		jQuery('#save-post').val('Save').insertBefore('#publish').css('float', 'right');
+		jQuery('#publish').remove();
+		jQuery('#minor-publishing-actions').remove();
+		jQuery('#save-action .spinner').remove();
+	}
+}

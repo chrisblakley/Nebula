@@ -237,6 +237,7 @@ if ( !trait_exists('Options') ){
 				'service_worker' => 0,
 				'adblock_detect' => 0,
 				'spam_domain_prevention' => 0,
+				'cf7_spam_detection_agent' => 0,
 				'theme_update_notification' => 1,
 				'bundled_plugins_notification' => 1,
 				'wp_core_updates_notify' => 1,
