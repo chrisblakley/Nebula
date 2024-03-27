@@ -123,4 +123,4 @@ nebula.cf7SubmissionsOrganization = function(){
 		jQuery('#minor-publishing-actions').remove();
 		jQuery('#save-action .spinner').remove();
 	}
-}
+};

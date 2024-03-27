@@ -90,6 +90,7 @@ if ( !trait_exists('Admin') ){
 
 				//CF7 Submissions Columns
 				if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') && $this->get_option('store_form_submissions') ){ //If CF7 is installed and active and capturing submission data is enabled
+					add_filter('views_edit-nebula_cf7_submits', array($this, 'cf7_submissions_status_list_cleanup'));
 					add_filter('manage_posts_columns', array($this, 'cf7_submissions_columns_head'));
 					add_filter('manage_edit-nebula_cf7_submits_sortable_columns', array($this, 'cf7_submissions_columns_sortable'));
 					add_action('manage_posts_custom_column', array($this, 'cf7_submissions_columns_content' ), 15, 2);
@@ -1553,6 +1554,15 @@ if ( !trait_exists('Admin') ){
 			}
 		}
 
+		//Remove unnecessary statuses from the CF7 submission listing admin status list
+		public function cf7_submissions_status_list_cleanup($views){
+			unset($views['private']);
+			unset($views['draft']);
+			unset($views['mine']);
+			//Note: "trash" will only appear when it contains submissions, so not explicitly removing it here
+			return $views;
+		}
+
 		//Add columns to CF7 submission listings
 		public function cf7_submissions_columns_head($columns){
 			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
@@ -1604,14 +1614,16 @@ if ( !trait_exists('Admin') ){
 				$post_id = ( is_object($form_data) && !empty($form_data->_wpcf7_container_post) )? $form_data->_wpcf7_container_post : false; //The page the CF7 submission was from. @todo "Nebula" 0: Is this still working? Post Titles are all empty
 
 				if ( $column_name === 'formatted_date' ){
+					$time_diff_icon = ( strtotime(get_post_field('post_date', $submission_id)) > time()-DAY_IN_SECONDS )? '<i class="fa-regular fa-fw fa-clock"></i>' : '<i class="fa-regular fa-fw fa-calendar"></i>';
 					$today_text = ( date('Y-n-j', strtotime(get_post_field('post_date', $submission_id))) == date('Y-n-j') )? 'today' : '';
+					$today_icon = ( !empty($today_text) )? '&raquo; ' : '';
 					$today_parens = ( !empty($today_text) )? ' <em>(Today)</em>' : '';
-					echo '<span class="' . $today_text . '" title="' . ucwords($today_text) . '">' . date('l, F j, Y \a\t g:ia', strtotime(get_post_field('post_date', $submission_id))) . '<br /><small>' . human_time_diff(strtotime(get_post_field('post_date', $submission_id))) . ' ago' . $today_parens . '</small></span>';
+					echo $today_icon . '<span class="' . $today_text . '" title="' . ucwords($today_text) . '">' . date('l, F j, Y \a\t g:ia', strtotime(get_post_field('post_date', $submission_id))) . '</span><br /><small>' . $time_diff_icon . ' ' . human_time_diff(strtotime(get_post_field('post_date', $submission_id))) . ' ago' . $today_parens . '</small>';
 				}
 
 				if ( $column_name === 'form_name' ){
 					if ( !empty($form_id) ){
-						echo '<strong><a href="admin.php?page=wpcf7&post=' . $form_id . '&action=edit">' . get_the_title($form_id) . ' &raquo;</a></strong><br /><small>Form ID: ' . $form_id . '</small>';
+						echo '<strong><a href="admin.php?page=wpcf7&post=' . $form_id . '&action=edit">' . get_the_title($form_id) . ' &raquo;</a></strong><br /><small><i class="fa-regular fa-fw fa-rectangle-list"></i> Form ID: ' . $form_id . '</small>';
 					} else {
 						echo '<span class="cf7-submits-possible-spam">Spam?<br /><small>The message could not be decoded.</small></span>';
 					}
@@ -1619,7 +1631,7 @@ if ( !trait_exists('Admin') ){
 
 				if ( $column_name === 'page_title' ){
 					if ( !empty($post_id) ){
-						echo '<a href="' . get_permalink($post_id) . '" target="_blank">' . get_the_title($post_id) . ' &raquo;</a><br /><small>Post ID: ' . $post_id . '</small>';
+						echo '<a href="' . get_permalink($post_id) . '" target="_blank">' . get_the_title($post_id) . ' &raquo;</a><br /><small><i class="fa-regular fa-fw fa-window-maximize"></i> Post ID: ' . $post_id . '</small>';
 					} elseif ( !empty($form_data->_detected_page_id) ){ //This is included on spam detected submissions
 						echo '<span class="cf7-submits-possible-spam"><span>' . get_the_title($form_data->_detected_page_id) . '</span><br /><small>Post ID: ' . $form_data->_detected_page_id . '</small></span>';
 					}
@@ -1647,6 +1659,18 @@ if ( !trait_exists('Admin') ){
 				}
 
 				if ( $column_name === 'notes' ){
+					if ( strpos(strtolower(get_the_title($submission_id)), 'mail fail') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						echo '<p><i class="fa-solid fa-fw fa-triangle-exclamation"></i> Mail Failed<br /><small>An administrator did not get an email notification of this submission!</small></p>';
+					}
+
+					if ( !empty(get_post_field('nebula_cf7_submission_preserve', $submission_id)) ){
+						echo '<p><i class="fa-solid fa-fw fa-shield-halved"></i> Preserved<br /><small>This submission will not be automatically deleted</small></p>';
+					}
+
+					if ( !empty($form_data->_nebula_ga_cid) && strpos($form_data->_nebula_ga_cid, '-') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						echo '<p><i class="fa-regular fa-fw fa-circle-user"></i> Non-Native GA Client ID<br /><small>Indicates ad-blocker or spambot</small></p>';
+					}
+
 					echo '<span>' . get_post_meta($submission_id, 'nebula_cf7_submission_notes', true) . '</span>';
 				}
 
@@ -2013,20 +2037,20 @@ if ( !trait_exists('Admin') ){
 						echo "jQuery('select[name=\"post_status\"]').append('";
 							$complete = '';
 							if( $post->post_status == 'submission' ){
-            					$complete = 'selected=\"selected\"';
-        					}
+								$complete = 'selected=\"selected\"';
+							}
 							echo "<option value=\"submission\" " . $complete . ">Submission</option>";
 
 							$complete = '';
 							if( $post->post_status == 'invalid' ){
-            					$complete = 'selected=\"selected\"';
-        					}
+								$complete = 'selected=\"selected\"';
+							}
 							echo "<option value=\"invalid\" " . $complete . ">Invalid</option>";
 
 							$complete = '';
 							if( $post->post_status == 'spam' ){
-            					$complete = 'selected=\"selected\"';
-        					}
+								$complete = 'selected=\"selected\"';
+							}
 							echo "<option value=\"spam\" " . $complete . ">Spam</option>";
 						echo "');";
 					echo "});";
@@ -2036,7 +2060,7 @@ if ( !trait_exists('Admin') ){
 
 		//All Settings page link
 		public function all_settings_link(){
-			add_theme_page('All Settings', 'All Settings', 'administrator', 'options.php');
+			add_theme_page('All Settings', 'All Settings', 'administrator', 'options.php'); //This appears as a submenu in the "Appearance" menu
 		}
 
 		//Ensure Relevanssi indexes Nebula custom fields

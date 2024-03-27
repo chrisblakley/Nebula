@@ -7,7 +7,7 @@ if ( !trait_exists('Functions') ){
 		public $slug_keywords = false; //Start with this false for 404 pages
 		public $twitter_widget_loaded = false;
 		public $linkedin_widget_loaded = false;
-		public $pinterest_widget_loaded = false;
+		public $pinterest_pin_widget_loaded = false;
 		public $current_theme_template;
 		public $error_query;
 
@@ -3152,7 +3152,7 @@ if ( !trait_exists('Functions') ){
 					'name' => 'CF7 Submissions', //Plural
 					'singular_name' => 'CF7 Submission',
 					'edit_item' => 'CF7 Submission Details',
-					'menu_name' => '<i class="fa-solid fa-table-list"></i> CF7 Submissions',
+					'menu_name' => '<i class="fa-solid fa-fw fa-table-list"></i> CF7 Submissions',
 				),
 				'description' => 'Contact Form 7 form submissions',
 				'menu_icon' => 'dashicons-feedback',
@@ -3171,6 +3171,8 @@ if ( !trait_exists('Functions') ){
 				'publicly_queryable' => false, //Don't let visitors ever access this data
 			));
 
+			//@todo "Nebula" 0: If possible, I would set "submission" to be the default status viewed instead of "All" and then allow the spam/invalid posts to appear in "All".
+			//@todo "Nebula" 0: After that, when viewing the "All" list, add a color-coded left-border to each row to indicate the submission type
 			register_post_status('submission', array(
 				'post_type' => array('nebula_cf7_submits'), //Only for Nebula CF7 Submissions CPT
 				'label' => _x('Submission', 'post status label', 'nebula'),
@@ -3184,17 +3186,6 @@ if ( !trait_exists('Functions') ){
 				'label_count' => _n_noop('Submissions <span class="count">(%s)</span>', 'Submission <span class="count">(%s)</span>', 'nebula'),
 			));
 
-			register_post_status('spam', array(
-				'post_type' => array('nebula_cf7_submits'), //Only for Nebula CF7 Submissions CPT
-				'label' => _x('Spam', 'post status label', 'nebula'),
-				'public' => false,
-				'internal' => true,
-				'exclude_from_search' => true,
-				'show_in_admin_all_list' => false, //This is the "All" list grouping above the listing table
-				'show_in_admin_status_list' => true, //This is the linked list above the listing table
-				'label_count' => _n_noop('Spam <span class="count">(%s)</span>', 'Spam <span class="count">(%s)</span>', 'nebula'),
-			));
-
 			register_post_status('invalid', array(
 				'post_type' => array('nebula_cf7_submits'), //Only for Nebula CF7 Submissions CPT
 				'label' => _x('Invalid', 'post status label', 'nebula'),
@@ -3204,6 +3195,17 @@ if ( !trait_exists('Functions') ){
 				'show_in_admin_all_list' => false, //This is the "All" list grouping above the listing table
 				'show_in_admin_status_list' => true, //This is the linked list above the listing table
 				'label_count' => _n_noop('Invalid <span class="count">(%s)</span>', 'Invalid <span class="count">(%s)</span>', 'nebula'),
+			));
+
+			register_post_status('spam', array(
+				'post_type' => array('nebula_cf7_submits'), //Only for Nebula CF7 Submissions CPT
+				'label' => _x('Spam', 'post status label', 'nebula'),
+				'public' => false,
+				'internal' => true,
+				'exclude_from_search' => true,
+				'show_in_admin_all_list' => false, //This is the "All" list grouping above the listing table
+				'show_in_admin_status_list' => true, //This is the linked list above the listing table
+				'label_count' => _n_noop('Spam <span class="count">(%s)</span>', 'Spam <span class="count">(%s)</span>', 'nebula'),
 			));
 		}
 
@@ -3288,13 +3290,7 @@ if ( !trait_exists('Functions') ){
 
 			$unique_identifier = '';
 			if ( $is_processing_allowed ){
-				if ( !empty($submission_data['name']) ){
-					$unique_identifier = ' from ' . sanitize_text_field($submission_data['name']);
-				} elseif ( !empty($submission_data['your-name']) ){
-					$unique_identifier = ' from ' . sanitize_text_field($submission_data['your-name']);
-				} elseif ( !empty($submission_data['first-name']) ){
-					$unique_identifier = ' from ' . sanitize_text_field($submission_data['first-name']);
-				} elseif ( !empty($submission_data['email']) ){
+				if ( !empty($submission_data['email']) ){
 					$unique_identifier = ' from ' . sanitize_text_field($submission_data['email']);
 				} elseif ( !empty($submission_data['your-email']) ){
 					$unique_identifier = ' from ' . sanitize_text_field($submission_data['your-email']);

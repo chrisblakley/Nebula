@@ -453,7 +453,7 @@ if ( !trait_exists('Security') ){
 				$form_tags = $cf7_form->scan_form_tags();
 
 				foreach ( $form_tags as $tag ) {
-					$value = ( isset($_POST[$tag->name]) )? $_POST[$tag->name] : '';
+					$value = ( isset($this->super->post[$tag->name]) )? $this->super->post[$tag->name] : '';
 
 					if ( is_string($value) && preg_match("/<a.*href=.*>/i", $value) ) { //If the input value contains an <a> tag
 						$is_spam = true;
