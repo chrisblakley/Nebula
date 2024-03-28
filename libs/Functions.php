@@ -3240,6 +3240,11 @@ if ( !trait_exists('Functions') ){
 			//Spam: spam
 			$status = $result['status'];
 
+			//If we are not capturing spam messages, ignore them here
+			if ( $status == 'spam' && !$this->get_option('cf7_spam_submission_capture') ){
+				return false;
+			}
+
 			//If the form is invalid and also does not have consent acceptance we do not process form field input data
 			$is_processing_allowed = true;
 			if ( $status == 'validation_failed' ){ //If the user had a validation error

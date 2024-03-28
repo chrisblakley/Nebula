@@ -356,6 +356,15 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 	}
 }
 
+.notice-emphasize {
+	a {color: #fff; text-decoration: underline; text-underline-offset: 1px; text-decoration-style: dotted;
+		&:hover,
+		&:focus {color: #aaa;}
+	}
+
+	&.notice-error {background: $danger_color; border-color: $danger_color; color: #fff;}
+}
+
 //Nebula CF7 Submissions
 .cf7-submits-possible-spam {opacity: 0.5;}
 
@@ -366,8 +375,6 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 		td.attribution,
 		td.notes {max-width: 200px;}
 	}
-
-
 
 	#post-body-content {
 		.nebula-cf7-notice {background: #fff; border: 1px solid #c3c4c7; border-left-width: 4px; box-shadow: 0 1px 1px rgba(0,0,0,.04); margin-top: 19px; padding: 1px 12px;

@@ -430,11 +430,29 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<input type="hidden" name="nebula_options[store_form_submissions]" value="<?php echo $nebula_options['store_form_submissions']; ?>">
-					<input id="store_form_submissions" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['store_form_submissions'])); ?>><label for="store_form_submissions">Store Form Submissions</label>
+					<input id="store_form_submissions" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['store_form_submissions'])); ?>><label for="store_form_submissions">Store CF7 Form Submissions</label>
 
 					<p class="nebula-help-text short-help form-text text-muted">Store CF7 form submissions in WordPress. (Default: <?php echo $this->user_friendly_default('store_form_submissions'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">This will capture Contact Form 7 form submissions and store them in WordPress. This will not have any affect on third-party form storage plugins, nor will it change email submission behavior. This will have no effect if the Contact Form 7 plugin is not installed or inactive. Disabling this option will <strong>not</strong> delete form submissions already captured.</p>
+					<p class="nebula-help-text more-help form-text text-muted">This will capture Contact Form 7 form submissions (including invalid attempts) and store them in WordPress. This will not have any affect on third-party form storage plugins, nor will it change email submission behavior. This will have no effect if the Contact Form 7 plugin is not installed or inactive. Disabling this option will <strong>not</strong> delete form submissions already captured. Spam submissions can also be stored with the separate option below.</p>
 					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group">
+					<input type="hidden" name="nebula_options[cf7_spam_submission_capture]" value="<?php echo $nebula_options['cf7_spam_submission_capture']; ?>">
+					<input id="cf7_spam_submission_capture" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['cf7_spam_submission_capture'])); ?>><label for="cf7_spam_submission_capture">CF7 Spam Submission Capture</label>
+
+					<p class="nebula-help-text short-help form-text text-muted">Enabling this will store all detected spam submissions in the <a href="<?php echo admin_url('edit.php?post_type=nebula_cf7_submits'); ?>">CF7 Submissions</a> table. (Default: <?php echo $this->user_friendly_default('cf7_spam_submission_capture'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">This is useful for diagnosing spam form submissions to determine cause and detection method as well as identifying attributes of the spam visitor. No more than 50 submissions will be stored in total unless they are manually preserved. Note: This captures all spam submissions– not just Nebula detections, so this works independently from the "CF7 Spam Detection Agent" option.</p>
+					<p class="option-keywords">security spam wpcf7 contact form 7</p>
+				</div>
+
+				<div class="form-group">
+					<input type="hidden" name="nebula_options[cf7_spam_detection_agent]" value="<?php echo $nebula_options['cf7_spam_detection_agent']; ?>">
+					<input id="cf7_spam_detection_agent" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['cf7_spam_detection_agent'])); ?>><label for="cf7_spam_detection_agent">CF7 Spam Detection Agent</label>
+
+					<p class="nebula-help-text short-help form-text text-muted">Nebula will block all CF7 form submissions that contain any HTML hyperlink tags. (Default: <?php echo $this->user_friendly_default('cf7_spam_detection_agent'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">Only enable this option if this website is not expecting any input fields in any CF7 forms to contain hyperlinks because this will block those submissions as spam! Note: This only works with the Contact Form 7 plugin.</p>
+					<p class="option-keywords">security spam wpcf7 contact form 7</p>
 				</div>
 
 				<div class="form-group">
@@ -452,15 +470,6 @@ if ( !trait_exists('Metaboxes') ){
 
 					<p class="nebula-help-text short-help form-text text-muted">Block traffic from known spambots and other illegitimate domains. (Default: <?php echo $this->user_friendly_default('spam_domain_prevention'); ?>)</p>
 					<p class="option-keywords">security remote resource recommended minor page speed impact optimization optimize</p>
-				</div>
-
-				<div class="form-group">
-					<input type="hidden" name="nebula_options[cf7_spam_detection_agent]" value="<?php echo $nebula_options['cf7_spam_detection_agent']; ?>">
-					<input id="cf7_spam_detection_agent" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['cf7_spam_detection_agent'])); ?>><label for="cf7_spam_detection_agent">CF7 Spam Detection Agent</label>
-
-					<p class="nebula-help-text short-help form-text text-muted">Nebula will block all CF7 form submissions that contain any HTML hyperlink tags. (Default: <?php echo $this->user_friendly_default('cf7_spam_detection_agent'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">Only enable this option if this website is not expecting any input fields in any CF7 forms to contain hyperlinks because this will block those submissions as spam! Note: This only works with the Contact Form 7 plugin.</p>
-					<p class="option-keywords">security spam wpcf7 contact form 7</p>
 				</div>
 
 				<div class="form-group">

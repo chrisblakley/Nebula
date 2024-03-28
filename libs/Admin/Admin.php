@@ -1348,6 +1348,12 @@ if ( !trait_exists('Admin') ){
 				}
 			}
 
+			//Now check for non-warnings for minor notes
+			//Check if CF7 spam capture is disabled when attempting to view the spam submission list
+			if ( get_post_type() == 'nebula_cf7_submits' && get_post_status() === 'spam' && !$this->get_option('cf7_spam_submission_capture') ){
+				echo '<div class="nebula-admin-notice notice notice-error notice-emphasize"><p><i class="fa-solid fa-fw fa-triangle-exclamation"></i> <strong><a href="' . admin_url('themes.php?page=nebula_options&tab=functions&option=cf7_spam_submission_capture') . '">Nebula CF7 spam capture</a> is currently disabled!</strong> New spam submissions will not appear here.</p></div>';
+			}
+
 			$this->timer('Admin Notices', 'end');
 		}
 
