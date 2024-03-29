@@ -1657,7 +1657,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				if ( $column_name === 'anonymized_ip' && !empty($form_data->_nebula_anonymized_ip) ){
-					echo '<span>' . $form_data->_nebula_anonymized_ip . '</span>';
+					echo '<span><a href="https://whatismyipaddress.com/ip/' . $form_data->_nebula_anonymized_ip . '" target="_blank" rel="noopener noreferrer">' . $form_data->_nebula_anonymized_ip . '</a></span>';
 				}
 
 				if ( $column_name === 'ga_cid' && !empty($form_data->_nebula_ga_cid) ){
@@ -1866,13 +1866,21 @@ if ( !trait_exists('Admin') ){
 				$is_spam = ( $post->post_status === 'spam' || empty($form_data) || empty($form_data->_wpcf7) );
 				$is_invalid = ( $post->post_status === 'invalid' );
 
-				//Check for indicators of bot/spam submissions that were logged as actual
+				//Check for suspicious indicators of bot/spam submissions that were logged as actual submissions
 				$is_caution = false;
 				if ( !$is_spam ){
 					if ( empty($form_data->_nebula_ga_cid) || strpos($form_data->_nebula_ga_cid, '-') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-						$is_caution = true;
-					} elseif ( 1==2 ){ //@todo "Nebula" 0: Check for <a (beginning of a link tag) in the message, but remember that we don't know what the field name is to check... preg_match("/<a.*href=.*>/i", $value)
-						$is_caution = true;
+						$is_caution = '<i class="fa-solid fa-fw fa-circle-question"></i> Caution: This user has a non-native Google Analytics Client ID (' . $form_data->_nebula_ga_cid . '). This could mean <strong>the user has an ad-blocker active, or that it may be a bot or spam.</strong>';
+					} elseif ( version_compare($form_data->_nebula_version, '11.10.29') >= 0 && empty($form_data->_nebula_form_flow) ){ //@todo "Nebula 0: After a while the version_compare part of the conditional can be removed. The _nebula_form_flow field was added on March 29, 2024.
+						$is_caution = '<i class="fa-solid fa-fw fa-circle-question"></i> Caution: The Nebula Form Flow field is empty which could mean <strong>the user has JavaScript disabled, or that it may be a bot or spam</strong>.';
+					} else {
+						//Loop through the form data to look for HTML tags
+						foreach ( $form_data as $key => $value ){
+							if ( substr($key, 0, 1) != '_' && is_string($value) && preg_match("/<a.*href=.*>/i", $value) ){
+								$is_caution = '<i class="fa-solid fa-fw fa-circle-question"></i> Caution: A hyperlink HTML tag was found in the submission. If users are not expected to be including HTML this could imply that this may be a bot or spam.';
+								break;
+							}
+						}
 					}
 				}
 
@@ -1891,7 +1899,7 @@ if ( !trait_exists('Admin') ){
 					} elseif ( $is_invalid ){
 						echo '<div class="nebula-cf7-notice notice-invalid"><p><i class="fa-solid fa-fw fa-comment-slash"></i> <strong>This submission was determined to be invalid.</strong> Invalid fields are highlighted below. The user was shown a validation error message when attempting to submit this information (see below). The user may have fixed the invalid fields and attempted to submit again, or they may have abandoned the form without re-submitting.</p><p>Note: If the acceptance checkbox was not checked, form field input data will have been removed from this submission and will not appear below as it was not processed or stored.</p></div>';
 					} elseif ( $is_caution ){
-						echo '<div class="nebula-cf7-notice notice-caution"><p><i class="fa-solid fa-fw fa-circle-question"></i> This user has a non-native Google Analytics Client ID (' . $form_data->_nebula_ga_cid . '). <strong>This could mean the user has an ad-blocker active, or that it may be a bot or spam.</strong> Use caution.</p></div>';
+						echo '<div class="nebula-cf7-notice notice-caution"><p>' . $is_caution . '</p></div>';
 					}
 
 					$form_output = array(
@@ -1990,6 +1998,10 @@ if ( !trait_exists('Admin') ){
 
 							if ( $key === '_nebula_ga_cid' ){
 								$value = '<a href="' . $this->google_analytics_url() . '" target="_blank" rel="noopener noreferrer">' . $value . ' &raquo;</a>'; //If a user explorer is ever added to GA4, link directly to that report. Possibly even to this individual CID.
+							}
+
+							if ( $key === '_nebula_anonymized_ip' ){
+								$value = '<a href="https://whatismyipaddress.com/ip/' . $value . '/" target="_blank" rel="noopener noreferrer">' . $value . '</a>';
 							}
 
 							if ( $key === '_nebula_user_agent' ){

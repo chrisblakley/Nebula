@@ -61,11 +61,11 @@ if ( !trait_exists('Automation') ){
 						'slug' => 'contact-form-7',
 						'required' => true,
 					),
-					// array(
-					// 	'name' => 'Advanced Contact Form 7 DB', //Need to find a new plugin, or wait for an update due to security vulnerability
-					// 	'slug' => 'advanced-cf7-db',
-					// 	'required' => true,
-					// ),
+					array(
+						'name' => 'Honeypot for Contact Form 7',
+						'slug' => 'contact-form-7-honeypot',
+						'required' => true,
+					),
 					array(
 						'name' => 'Contact Form 7 Database Addon – CFDB7', //Backup CF7 DB plugin until (if) the preferred plugin (advanced-cf7-db) is updated
 						'slug' => 'contact-form-cfdb7',
@@ -86,11 +86,6 @@ if ( !trait_exists('Automation') ){
 						'slug' => 'regenerate-thumbnails',
 						'required' => false,
 					),
-					// array(
-					// 	'name' => 'W3 Total Cache',
-					// 	'slug' => 'w3-total-cache',
-					// 	'required' => false,
-					// ),
 					array(
 						'name' => 'WP-PageNavi',
 						'slug' => 'wp-pagenavi',

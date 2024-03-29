@@ -443,6 +443,7 @@ nebula.cf7Functions = async function(){
 	});
 };
 
+//Note: formID is the wrapping div ID. Ex: "wpcf7-f1962-p905-o1"
 nebula.updateFormFlow = function(formID, field, info = ''){
 	if ( typeof nebula.formFlow === 'undefined' ){
 		nebula.formFlow = {};
@@ -466,6 +467,16 @@ nebula.updateFormFlow = function(formID, field, info = ''){
 	gtag('set', 'user_properties', {
 		form_flow: nebula.formFlow[formID]
 	});
+
+	//Update or create a hidden field
+	if ( jQuery('#' + formID + ' #nebula-form-flow').length ){
+		jQuery('#' + formID + ' #nebula-form-flow').val(nebula.formFlow[formID]);
+	} else {
+		jQuery('#' + formID + ' form').prepend(jQuery('<input type="hidden" id="nebula-form-flow" name="_nebula_form_flow" class="hidden">').attr({
+    		value: nebula.formFlow[formID],
+			style: 'display: none;'
+		}));
+	}
 
 	return nebula.formFlow[formID];
 };
