@@ -1629,7 +1629,7 @@ if ( !trait_exists('Admin') ){
 
 				if ( $column_name === 'form_name' ){
 					if ( !empty($form_id) ){
-						echo '<strong><a href="admin.php?page=wpcf7&post=' . $form_id . '&action=edit">' . get_the_title($form_id) . ' &raquo;</a></strong><br /><small><i class="fa-regular fa-fw fa-rectangle-list"></i> Form ID: ' . $form_id . '</small>';
+						echo '<strong><a href="admin.php?page=wpcf7&post=' . $form_id . '&action=edit">' . get_the_title($form_id) . '</a></strong><br /><small><i class="fa-regular fa-fw fa-rectangle-list"></i> Form ID: ' . $form_id . '</small>';
 					} else {
 						echo '<span class="cf7-submits-possible-spam">Spam?<br /><small>The message could not be decoded.</small></span>';
 					}
@@ -1637,7 +1637,7 @@ if ( !trait_exists('Admin') ){
 
 				if ( $column_name === 'page_title' ){
 					if ( !empty($post_id) ){
-						echo '<a href="' . get_permalink($post_id) . '" target="_blank">' . get_the_title($post_id) . ' &raquo;</a><br /><small><i class="fa-regular fa-fw fa-window-maximize"></i> Post ID: ' . $post_id . '</small>';
+						echo '<a href="' . get_permalink($post_id) . '" target="_blank">' . get_the_title($post_id) . '</a><br /><small><i class="fa-regular fa-fw fa-window-maximize"></i> Post ID: ' . $post_id . '</small>';
 					} elseif ( !empty($form_data->_detected_page_id) ){ //This is included on spam detected submissions
 						echo '<span class="cf7-submits-possible-spam"><span>' . get_the_title($form_data->_detected_page_id) . '</span><br /><small>Post ID: ' . $form_data->_detected_page_id . '</small></span>';
 					}
@@ -1869,16 +1869,35 @@ if ( !trait_exists('Admin') ){
 				//Check for suspicious indicators of bot/spam submissions that were logged as actual submissions
 				$is_caution = false;
 				if ( !$is_spam ){
-					if ( empty($form_data->_nebula_ga_cid) || strpos($form_data->_nebula_ga_cid, '-') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-						$is_caution = '<i class="fa-solid fa-fw fa-circle-question"></i> Caution: This user has a non-native Google Analytics Client ID (' . $form_data->_nebula_ga_cid . '). This could mean <strong>the user has an ad-blocker active, or that it may be a bot or spam.</strong>';
-					} elseif ( version_compare($form_data->_nebula_version, '11.10.29') >= 0 && empty($form_data->_nebula_form_flow) ){ //@todo "Nebula 0: After a while the version_compare part of the conditional can be removed. The _nebula_form_flow field was added on March 29, 2024.
-						$is_caution = '<i class="fa-solid fa-fw fa-circle-question"></i> Caution: The Nebula Form Flow field is empty which could mean <strong>the user has JavaScript disabled, or that it may be a bot or spam</strong>.';
-					} else {
-						//Loop through the form data to look for HTML tags
-						foreach ( $form_data as $key => $value ){
-							if ( substr($key, 0, 1) != '_' && is_string($value) && preg_match("/<a.*href=.*>/i", $value) ){
+					//Loop through the form data to look for HTML tags
+					foreach ( $form_data as $key => $value ){
+						if ( substr($key, 0, 1) != '_' && is_string($value) ){ //If it is not a metadata field and we have data
+							//Check for unicode character encodings
+							if ( preg_match('/^u[0-9a-fA-F]{4}/', $value) === 1 ){
+								$is_caution = '<i class="fa-solid fa-fw fa-circle-question"></i> Caution: <strong>Unicode encodings were detected in this submission.</strong> This is a high likelyhood of spam!';
+								break;
+							}
+
+							//Check for HTML hyperlink tags
+							if ( preg_match("/<a.*href=.*>/i", $value) ){
 								$is_caution = '<i class="fa-solid fa-fw fa-circle-question"></i> Caution: A hyperlink HTML tag was found in the submission. If users are not expected to be including HTML this could imply that this may be a bot or spam.';
 								break;
+							}
+						}
+					}
+
+					if ( empty($is_caution) ){ //If the above checks did not find any problems, continue checking other aspects
+						if ( empty($form_data->_nebula_ga_cid) || strpos($form_data->_nebula_ga_cid, '-') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+							$is_caution = '<i class="fa-solid fa-fw fa-circle-question"></i> Caution: This user has a non-native Google Analytics Client ID (' . $form_data->_nebula_ga_cid . '). This could mean <strong>the user has an ad-blocker active, or that it may be a bot or spam.</strong>';
+						} elseif ( version_compare($form_data->_nebula_version, '11.10.29') >= 0 && empty($form_data->_nebula_form_flow) ){ //@todo "Nebula 0: After a while the version_compare part of the conditional can be removed. The _nebula_form_flow field was added on March 29, 2024.
+							$is_caution = '<i class="fa-solid fa-fw fa-circle-question"></i> Caution: The Nebula Form Flow field is empty which could mean <strong>the user has JavaScript disabled, or that it may be a bot or spam</strong>.';
+						} else {
+							//Loop through the form data to look for HTML tags
+							foreach ( $form_data as $key => $value ){
+								if ( substr($key, 0, 1) != '_' && is_string($value) && preg_match("/<a.*href=.*>/i", $value) ){
+									$is_caution = '<i class="fa-solid fa-fw fa-circle-question"></i> Caution: A hyperlink HTML tag was found in the submission. If users are not expected to be including HTML this could imply that this may be a bot or spam.';
+									break;
+								}
 							}
 						}
 					}
@@ -1896,10 +1915,14 @@ if ( !trait_exists('Admin') ){
 				if ( !empty($form_data) ){
 					if ( $is_spam ){
 						echo '<div class="nebula-cf7-notice notice-spam"><p><i class="fa-solid fa-fw fa-triangle-exclamation"></i> <strong>This submission has been noted as potential spam.</strong> Any HTML tags have been removed from the data. Do not visit any URLs that may appear in the data.</p></div>';
-					} elseif ( $is_invalid ){
-						echo '<div class="nebula-cf7-notice notice-invalid"><p><i class="fa-solid fa-fw fa-comment-slash"></i> <strong>This submission was determined to be invalid.</strong> Invalid fields are highlighted below. The user was shown a validation error message when attempting to submit this information (see below). The user may have fixed the invalid fields and attempted to submit again, or they may have abandoned the form without re-submitting.</p><p>Note: If the acceptance checkbox was not checked, form field input data will have been removed from this submission and will not appear below as it was not processed or stored.</p></div>';
-					} elseif ( $is_caution ){
-						echo '<div class="nebula-cf7-notice notice-caution"><p>' . $is_caution . '</p></div>';
+					} else {
+						if ( $is_invalid ){
+							echo '<div class="nebula-cf7-notice notice-invalid"><p><i class="fa-solid fa-fw fa-comment-slash"></i> <strong>This submission was determined to be invalid.</strong> Invalid fields are highlighted below. The user was shown a validation error message when attempting to submit this information (see below). The user may have fixed the invalid fields and attempted to submit again, or they may have abandoned the form without re-submitting.</p><p>Note: If the acceptance checkbox was not checked, form field input data will have been removed from this submission and will not appear below as it was not processed or stored.</p></div>';
+						}
+
+						if ( $is_caution ){
+							echo '<div class="nebula-cf7-notice notice-caution"><p>' . $is_caution . '</p></div>';
+						}
 					}
 
 					$form_output = array(
@@ -1977,11 +2000,15 @@ if ( !trait_exists('Admin') ){
 							}
 
 							if ( $key === '_wpcf7' || $key === 'form_name' || $key === 'form_id' ){
-								$value = '<a href="admin.php?page=wpcf7&post=' . $form_data->form_id . '&action=edit">' . $value . ' &raquo;</a>';
+								$value = '<a href="admin.php?page=wpcf7&post=' . $form_data->form_id . '&action=edit">' . $value . '</a>';
 							}
 
 							if ( $key === '_wpcf7_container_post' ){
-								$value = '<a href="' . get_permalink($value) . '">' . $value . ' (' . get_the_title($value) . ') &raquo;</a>';
+								$value = '<a href="' . get_permalink($value) . '">' . $value . ' (' . get_the_title($value) . ')</a>';
+							}
+
+							if ( $key === '_nebula_referrer' || $key === '_nebula_landing_page' || $key === '_nebula_current_page' ){
+								$value = '<a href="' . $value . '">' . $value . '</a>';
 							}
 
 							if ( $key === '_nebula_date_formatted' ){
@@ -1989,7 +2016,7 @@ if ( !trait_exists('Admin') ){
 							}
 
 							if ( $key === '_nebula_username' || $key === '_nebula_user_id' ){
-								$value = '<a href="user-edit.php?user_id=' . $form_data->_nebula_user_id . '">' . $value . ' &raquo;</a>';
+								$value = '<a href="user-edit.php?user_id=' . $form_data->_nebula_user_id . '">' . $value . '</a>';
 							}
 
 							if ( $key === '_nebula_session_id' ){
@@ -1997,7 +2024,7 @@ if ( !trait_exists('Admin') ){
 							}
 
 							if ( $key === '_nebula_ga_cid' ){
-								$value = '<a href="' . $this->google_analytics_url() . '" target="_blank" rel="noopener noreferrer">' . $value . ' &raquo;</a>'; //If a user explorer is ever added to GA4, link directly to that report. Possibly even to this individual CID.
+								$value = '<a href="' . $this->google_analytics_url() . '" target="_blank" rel="noopener noreferrer">' . $value . '</a>'; //If a user explorer is ever added to GA4, link directly to that report. Possibly even to this individual CID.
 							}
 
 							if ( $key === '_nebula_anonymized_ip' ){
@@ -2005,7 +2032,7 @@ if ( !trait_exists('Admin') ){
 							}
 
 							if ( $key === '_nebula_user_agent' ){
-								$value = '<a href="https://developers.whatismybrowser.com/useragents/parse/" target="_blank" rel="noopener noreferrer">' . $value . ' &raquo;</a>';
+								$value = '<a href="https://developers.whatismybrowser.com/useragents/parse/" target="_blank" rel="noopener noreferrer">' . $value . '</a>';
 							}
 
 							if ( substr($key, 0, 1) === '_' || substr($key, 0, 3) === 'hp-' ){ //@todo "Nebula" 0: Use str_starts_with in PHP8

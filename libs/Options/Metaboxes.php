@@ -421,9 +421,9 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<input type="hidden" name="nebula_options[comments]" value="<?php echo $nebula_options['comments']; ?>">
-					<input id="comments" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['comments'])); ?>><label for="comments">Comments</label>
+					<input id="comments" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['comments'])); ?>><label for="comments">Allow Comments</label>
 
-					<p class="nebula-help-text short-help form-text text-muted">Ability to force disable comments. (Default: <?php echo $this->user_friendly_default('comments'); ?>)</p>
+					<p class="nebula-help-text short-help form-text text-muted">Disabling this option will force disable post comments site-wide. (Default: <?php echo $this->user_friendly_default('comments'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">If enabled, comments must also be opened as usual in Wordpress Settings > Discussion (Allow people to post comments on new articles).</p>
 					<p class="option-keywords"></p>
 				</div>
@@ -456,20 +456,20 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
+					<input type="hidden" name="nebula_options[spam_domain_prevention]" value="<?php echo $nebula_options['spam_domain_prevention']; ?>">
+					<input id="spam_domain_prevention" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['spam_domain_prevention'])); ?>><label for="spam_domain_prevention">Spam Domain Prevention</label>
+
+					<p class="nebula-help-text short-help form-text text-muted">Block traffic from known spambots and other illegitimate domains. (Default: <?php echo $this->user_friendly_default('spam_domain_prevention'); ?>)</p>
+					<p class="option-keywords">security remote resource recommended minor page speed impact optimization optimize</p>
+				</div>
+
+				<div class="form-group">
 					<input type="hidden" name="nebula_options[service_worker]" value="<?php echo $nebula_options['service_worker']; ?>">
 					<input id="service_worker" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['service_worker'])); ?>><label for="service_worker">Service Worker</label>
 
 					<p class="nebula-help-text short-help form-text text-muted">Utilize a service worker to improve speed, provide content when offline, and other benefits of being a progressive web app. (Default: <?php echo $this->user_friendly_default('service_worker'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Enabling this feature requires a service worker JavaScript file. Move the provided sw.js into the root directory (or write your own). Service Worker location: <code><?php echo $this->sw_location(); ?></code></p>
 					<p class="option-keywords">moderate page speed impact optimization optimize</p>
-				</div>
-
-				<div class="form-group">
-					<input type="hidden" name="nebula_options[spam_domain_prevention]" value="<?php echo $nebula_options['spam_domain_prevention']; ?>">
-					<input id="spam_domain_prevention" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['spam_domain_prevention'])); ?>><label for="spam_domain_prevention">Spam Domain Prevention</label>
-
-					<p class="nebula-help-text short-help form-text text-muted">Block traffic from known spambots and other illegitimate domains. (Default: <?php echo $this->user_friendly_default('spam_domain_prevention'); ?>)</p>
-					<p class="option-keywords">security remote resource recommended minor page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group">

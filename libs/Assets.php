@@ -33,8 +33,8 @@ if ( !trait_exists('Assets') ){
 		public function register_scripts(){
 			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
-			wp_register_style('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css', null, '5.3.2', 'all');
-			wp_register_style('nebula-font_awesome', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/all.min.css', null, '6.4.2', 'all');
+			wp_register_style('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css', null, '5.3.3', 'all');
+			wp_register_style('nebula-font_awesome', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css', null, '6.5.2', 'all');
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap'), $this->version('full'), 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, $this->version('full'), 'all');
 			wp_register_style('nebula-admin', get_template_directory_uri() . '/assets/css/admin.css', null, $this->version('full'), 'all');
@@ -53,7 +53,7 @@ if ( !trait_exists('Assets') ){
 			//nebula()->register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
 			$this->register_script('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '5.3.2', true);
 			$this->register_script('nebula-jquery_ui', 'https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.13.2/jquery-ui.min.js', array('defer', 'crossorigin'), null, '1.13.2', true);
-			$this->register_script('nebula-vimeo', 'https://cdn.jsdelivr.net/npm/@vimeo/player@2.20.1/dist/player.min.js', null, null, '2.20.1', true);
+			$this->register_script('nebula-vimeo', 'https://cdn.jsdelivr.net/npm/@vimeo/player@2.22.0/dist/player.min.js', null, null, '2.22.0', true);
 			$this->register_script('nebula-datatables', 'https://cdn.jsdelivr.net/npm/datatables.net@1.13.6/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.13.6', true); //Nebula registers this asset, but does not init the JS.
 			$this->register_script('nebula-chosen', 'https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/chosen.jquery.min.js', array('defer', 'crossorigin'), null, '1.8.7', true);
 			$this->register_script('nebula-usage', get_template_directory_uri() . '/assets/js/modules/usage.js', array('async', 'module'), null, $this->version('full'), false);
@@ -225,6 +225,29 @@ if ( !trait_exists('Assets') ){
 				}
 			}
 
+			//Store referrer and landing page of the session
+			$referrer = '(No Session Cookie)';
+			$landing_page = '(No Session Cookie)';
+			try {
+				if ( isset($this->super->cookie['session']) ){
+					$session_cookie_data = json_decode(stripslashes($this->super->cookie['session']), true);
+					$referrer = $session_cookie_data['referrer'];
+					$landing_page = $session_cookie_data['landing_page'];
+				} else {
+					$referrer = ( isset($this->super->server['HTTP_REFERER']) )? $this->super->server['HTTP_REFERER'] : false; //Use the referrer header if it exists
+					$landing_page = $this->url_components('all'); //Get the full URL including query string
+
+					$session_cookie_data = array(
+						'referrer' => $referrer,
+						'landing_page' => $landing_page,
+					);
+
+					setcookie('session', json_encode($session_cookie_data), time()+HOUR_IN_SECONDS, '/');
+				}
+			} catch ( Exception $e ){
+				//Ignore errors
+			}
+
 			//Check for session data
 			$this->brain['session'] = array(
 				'ip' => $this->get_ip_address(),
@@ -234,7 +257,8 @@ if ( !trait_exists('Assets') ){
 					'adblock' => false,
 				),
 				'geolocation' => false,
-				'referrer' => ( isset($this->super->server['HTTP_REFERER']) )? $this->super->server['HTTP_REFERER'] : false //This is updated every page (not just for the initial session)
+				'referrer' => $referrer,
+				'landing_page' => $landing_page,
 			);
 
 			//User Data

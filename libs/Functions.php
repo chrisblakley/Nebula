@@ -3276,7 +3276,7 @@ if ( !trait_exists('Functions') ){
 			$submission_data['form_name'] = sanitize_text_field(get_the_title($form_id));
 
 			//Nebula contextual data
-			$nebula_debug_info = $this->cf7_debug_info($submission);
+			$nebula_debug_info = $this->cf7_debug_info($submission, $submission_data);
 			foreach ( $nebula_debug_info as $key => $value ){
 				$submission_data['_' . $key] = $value;
 			}
@@ -3348,7 +3348,7 @@ if ( !trait_exists('Functions') ){
 		}
 
 		//Build debug info data for CF7 messages and/or Nebula CF7 storage
-		public function cf7_debug_info($cf7_instance){
+		public function cf7_debug_info($submission, $submission_data=false){
 			global $wp_version;
 
 			$debug_info = array();
@@ -3361,6 +3361,16 @@ if ( !trait_exists('Functions') ){
 			$debug_info['nebula_session_id'] = sanitize_text_field($this->nebula_session_id());
 			$debug_info['nebula_ga_cid'] = sanitize_text_field($this->ga_parse_cookie());
 
+			if ( !empty($submission_data) ){
+				$debug_info['nebula_current_page'] = sanitize_text_field(get_permalink($submission_data['_wpcf7_container_post']));
+			}
+
+			$session_cookie_data = json_decode(stripslashes($this->super->cookie['session']), true);
+			if ( isset($session_cookie_data['landing_page']) ){
+				$debug_info['nebula_referrer'] = sanitize_text_field($session_cookie_data['referrer']); //This is the original referrer (not just the previous page)
+				$debug_info['nebula_landing_page'] = sanitize_text_field($session_cookie_data['landing_page']); //This is the first page view of the session
+			}
+
 			if ( $this->get_option('attribution_tracking') ){ //Don't output these unless this option is enabled (to prevent empty values from appearing like a lack of activity)
 				$debug_info['nebula_utms'] = sanitize_text_field(htmlspecialchars_decode($this->utms())); //Check for PHP-based attribution cookie
 
@@ -3371,8 +3381,8 @@ if ( !trait_exists('Functions') ){
 			}
 
 			//Logged-in User Info
-			if ( is_object($cf7_instance) ){
-				$user_id = (int) $cf7_instance->get_meta('current_user_id');
+			if ( is_object($submission) ){
+				$user_id = (int) $submission->get_meta('current_user_id');
 				if ( !empty($user_id) ){
 					//Staff
 					if ( $this->is_dev() ){

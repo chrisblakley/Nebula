@@ -1,4 +1,16 @@
 [{
+	"8.3": {
+		"security": "23 Nov 2025",
+		"end": "23 Nov 2026"
+	},
+	"8.2": {
+		"security": "8 Dec 2024",
+		"end": "8 Dec 2025"
+	},
+	"8.1": {
+		"security": "25 Nov 2023",
+		"end": "25 Nov 2024"
+	},
 	"8.0": {
 		"security": "26 Nov 2022",
 		"end": "26 Nov 2023"
