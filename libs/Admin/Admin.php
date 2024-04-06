@@ -100,6 +100,7 @@ if ( !trait_exists('Admin') ){
 					add_action('edit_form_top', array($this, 'cf7_submissions_back_button'));
 					add_action('edit_form_after_title', array($this, 'cf7_storage_output'), 10, 1); //This is where the actual submission details are output
 					add_action('admin_footer-post.php', array($this, 'add_cf7_statuses_to_dropdown'));
+					add_action('admin_menu', array($this, 'add_cf7_menu_badge_count'));
 					add_filter('months_dropdown_results', '__return_empty_array'); //Remove the original date month dropdown
 					add_action('restrict_manage_posts', array($this, 'cf7_submissions_filters'), 10, 1);
 					add_action('manage_posts_extra_tablenav', array($this, 'cf7_submissions_actions'), 10, 1);
@@ -595,23 +596,25 @@ if ( !trait_exists('Admin') ){
 					}
 
 					//Add a node for the current post information
-					$post_type_object = get_post_type_object(get_post_type());
-					if ( !empty($post_type_object) ){ //Ignore non-posts like user profiles
-						$post_type_name = $post_type_object->labels->singular_name;
+					if ( get_post_type() != 'nebula_cf7_submits' ){ //Ignore certain post types
+						$post_type_object = get_post_type_object(get_post_type());
+						if ( !empty($post_type_object) ){ //Ignore non-posts like user profiles
+							$post_type_name = $post_type_object->labels->singular_name;
 
-						$current_id = get_the_id();
-						if ( is_home() ){
-							$current_id = get_option('page_for_posts');
-						} elseif ( is_archive() ){
-							$term_object = get_queried_object();
-							$current_id = $term_object->term_id;
-							$post_type_name = $term_object->taxonomy;
-							$original_date = false;
-							$status = false;
+							$current_id = get_the_id();
+							if ( is_home() ){
+								$current_id = get_option('page_for_posts');
+							} elseif ( is_archive() ){
+								$term_object = get_queried_object();
+								$current_id = $term_object->term_id;
+								$post_type_name = $term_object->taxonomy;
+								$original_date = false;
+								$status = false;
+							}
+
+							$new_content_node->title = ucfirst($node_id) . ' ' . ucwords($post_type_name) . ' <span class="nebula-admin-light">(ID: ' . $current_id . ')' . $info_icon . '</span>';
+							$wp_admin_bar->add_node($new_content_node);
 						}
-
-						$new_content_node->title = ucfirst($node_id) . ' ' . ucwords($post_type_name) . ' <span class="nebula-admin-light">(ID: ' . $current_id . ')' . $info_icon . '</span>';
-						$wp_admin_bar->add_node($new_content_node);
 					}
 				}
 
@@ -1622,7 +1625,7 @@ if ( !trait_exists('Admin') ){
 				if ( $column_name === 'formatted_date' ){
 					$time_diff_icon = ( strtotime(get_post_field('post_date', $submission_id)) > time()-DAY_IN_SECONDS )? '<i class="fa-regular fa-fw fa-clock"></i>' : '<i class="fa-regular fa-fw fa-calendar"></i>';
 					$today_text = ( date('Y-n-j', strtotime(get_post_field('post_date', $submission_id))) == date('Y-n-j') )? 'today' : '';
-					$today_icon = ( !empty($today_text) )? '&raquo; ' : '';
+					$today_icon = ( !empty($today_text) )? '<span class="cf7-submits-today-color">&raquo;</span> ' : '';
 					$today_parens = ( !empty($today_text) )? ' <em>(Today)</em>' : '';
 					echo $today_icon . '<span class="' . $today_text . '" title="' . ucwords($today_text) . '">' . date('l, F j, Y \a\t g:ia', strtotime(get_post_field('post_date', $submission_id))) . '</span><br /><small>' . $time_diff_icon . ' ' . human_time_diff(strtotime(get_post_field('post_date', $submission_id))) . ' ago' . $today_parens . '</small>';
 				}
@@ -1874,13 +1877,13 @@ if ( !trait_exists('Admin') ){
 						if ( substr($key, 0, 1) != '_' && is_string($value) ){ //If it is not a metadata field and we have data
 							//Check for unicode character encodings
 							if ( preg_match('/^u[0-9a-fA-F]{4}/', $value) === 1 ){
-								$is_caution = '<i class="fa-solid fa-fw fa-circle-question"></i> Caution: <strong>Unicode encodings were detected in this submission.</strong> This is a high likelyhood of spam!';
+								$is_caution = '<i class="fa-solid fa-fw fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> <strong>Unicode encodings were detected in this submission.</strong> This is a high likelyhood of spam!';
 								break;
 							}
 
 							//Check for HTML hyperlink tags
 							if ( preg_match("/<a.*href=.*>/i", $value) ){
-								$is_caution = '<i class="fa-solid fa-fw fa-circle-question"></i> Caution: A hyperlink HTML tag was found in the submission. If users are not expected to be including HTML this could imply that this may be a bot or spam.';
+								$is_caution = '<i class="fa-solid fa-fw fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> A hyperlink HTML tag was found in the submission. If users are not expected to be including HTML this could imply that this may be a bot or spam.';
 								break;
 							}
 						}
@@ -1888,14 +1891,14 @@ if ( !trait_exists('Admin') ){
 
 					if ( empty($is_caution) ){ //If the above checks did not find any problems, continue checking other aspects
 						if ( empty($form_data->_nebula_ga_cid) || strpos($form_data->_nebula_ga_cid, '-') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-							$is_caution = '<i class="fa-solid fa-fw fa-circle-question"></i> Caution: This user has a non-native Google Analytics Client ID (' . $form_data->_nebula_ga_cid . '). This could mean <strong>the user has an ad-blocker active, or that it may be a bot or spam.</strong>';
+							$is_caution = '<i class="fa-solid fa-fw fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> This user has a non-native Google Analytics Client ID (' . $form_data->_nebula_ga_cid . '). This could mean <strong>the user has an ad-blocker active, or that it may be a bot or spam.</strong>';
 						} elseif ( version_compare($form_data->_nebula_version, '11.10.29') >= 0 && empty($form_data->_nebula_form_flow) ){ //@todo "Nebula 0: After a while the version_compare part of the conditional can be removed. The _nebula_form_flow field was added on March 29, 2024.
-							$is_caution = '<i class="fa-solid fa-fw fa-circle-question"></i> Caution: The Nebula Form Flow field is empty which could mean <strong>the user has JavaScript disabled, or that it may be a bot or spam</strong>.';
+							$is_caution = '<i class="fa-solid fa-fw fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> The Nebula Form Flow field is empty which could mean <strong>the user has JavaScript disabled, or that it may be a bot or spam</strong>.';
 						} else {
 							//Loop through the form data to look for HTML tags
 							foreach ( $form_data as $key => $value ){
 								if ( substr($key, 0, 1) != '_' && is_string($value) && preg_match("/<a.*href=.*>/i", $value) ){
-									$is_caution = '<i class="fa-solid fa-fw fa-circle-question"></i> Caution: A hyperlink HTML tag was found in the submission. If users are not expected to be including HTML this could imply that this may be a bot or spam.';
+									$is_caution = '<i class="fa-solid fa-fw fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> A hyperlink HTML tag was found in the submission. If users are not expected to be including HTML this could imply that this may be a bot or spam.';
 									break;
 								}
 							}
@@ -1914,16 +1917,77 @@ if ( !trait_exists('Admin') ){
 
 				if ( !empty($form_data) ){
 					if ( $is_spam ){
-						echo '<div class="nebula-cf7-notice notice-spam"><p><i class="fa-solid fa-fw fa-triangle-exclamation"></i> <strong>This submission has been noted as potential spam.</strong> Any HTML tags have been removed from the data. Do not visit any URLs that may appear in the data.</p></div>';
+						echo '<div class="nebula-cf7-notice notice-spam"><p><i class="fa-solid fa-fw fa-triangle-exclamation text-danger"></i> <strong class="text-danger">This submission has been noted as potential spam.</strong> Any HTML tags have been removed from the data. Do not visit any URLs that may appear in the data.</p></div>';
 					} else {
 						if ( $is_invalid ){
 							echo '<div class="nebula-cf7-notice notice-invalid"><p><i class="fa-solid fa-fw fa-comment-slash"></i> <strong>This submission was determined to be invalid.</strong> Invalid fields are highlighted below. The user was shown a validation error message when attempting to submit this information (see below). The user may have fixed the invalid fields and attempted to submit again, or they may have abandoned the form without re-submitting.</p><p>Note: If the acceptance checkbox was not checked, form field input data will have been removed from this submission and will not appear below as it was not processed or stored.</p></div>';
+
+							//Check if this invalid attempt was eventually successful later or not
+							if ( empty($is_caution) && strpos(get_the_title($post->ID), '@') !== false ){ //Only query on non-caution invalid submissions when we have an email address //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+								$successful_submissions_query = new WP_Query(array(
+									'post_type' => 'nebula_cf7_submits',
+									'post_status' => 'submission',
+									'posts_per_page' => 1,
+									'date_query' => array(
+										'after' => date('Y-m-d', $form_data->_nebula_timestamp),
+										'before' => date('Y-m-d'),
+										'inclusive' => true,
+									),
+									's' => str_replace(' (Invalid)', '', get_the_title($post->ID)), //Remove the "Invalid" label and check for successful submissions
+								));
+
+								if ( $successful_submissions_query->have_posts() ){
+									while ( $successful_submissions_query->have_posts() ){
+										$successful_submissions_query->the_post();
+										echo '<div class="nebula-cf7-notice notice-success"><p><i class="fa-solid fa-fw fa-circle-check text-success"></i> <strong class="text-success">User was eventually successful!</strong> This user was able to fix these validation errors and submit successfully after this. <a href="' . get_edit_post_link(get_the_ID()) . '">View the successful submission &raquo;</a></p></div>';
+									}
+
+									wp_reset_postdata();
+								} else {
+									echo '<div class="nebula-cf7-notice notice-error"><p><i class="fa-solid fa-fw fa-user-xmark text-danger"></i> <strong class="text-danger">User may have abandoned after failure!</strong> This user may <strong>not</strong>have submitted successfully after receiving these validation errors.</p></div>'; //"May" because if the email address was the one that was invalid, that may cause the query to return an empty result (since the post title relies on this)
+								}
+							}
+						} else {
+							//Check if this successful submission was associated with any invalid attempts
+							if ( empty($is_caution) ){ //Only query on non-caution invalid submissions
+								$invalid_submissions_query = new WP_Query(array(
+									'post_type' => 'nebula_cf7_submits',
+									'post_status' => 'invalid',
+									'posts_per_page' => -1,
+									'orderby' => 'date',
+									'order' => 'ASC', //We want the first invalid attempt
+									'date_query' => array(
+										'after' => date('Y-m-d', $form_data->_nebula_timestamp-DAY_IN_SECONDS), //Only check in the last 24 hours
+										'before' => date('Y-m-d', $form_data->_nebula_timestamp),
+										'inclusive' => true,
+									),
+									's' => get_the_title($post->ID),
+								));
+
+								$invalid_submission_count = $invalid_submissions_query->found_posts; //Count the number of posts from the query
+								if ( !empty($form_data->_nebula_form_flow) ){ //If form_flow exists, count the "[Invalid]"
+									$invalid_submission_count = substr_count($form_data->_nebula_form_flow, "[Invalid]"); //This is more accurate if we have it
+								}
+
+								if ( $invalid_submissions_query->have_posts() ){
+									$output_complete = false;
+									while ( $invalid_submissions_query->have_posts() && empty($output_complete) ){ //We only want to output this once
+										$invalid_submissions_query->the_post();
+										$output_complete = true;
+										echo '<div class="nebula-cf7-notice notice-warning"><p><i class="fa-solid fa-fw fa-circle-xmark"></i> <strong>User had ' . $invalid_submission_count . ' invalid attempt(s)!</strong> Prior to this successful submission, this user attempted to submit this form at least <strong>' . $invalid_submission_count . ' time(s)</strong>. <a href="' . get_edit_post_link(get_the_ID()) . '">View the earliest invalid submission &raquo;</a></p></div>';
+									}
+
+									wp_reset_postdata();
+								}
+							}
 						}
 
 						if ( $is_caution ){
 							echo '<div class="nebula-cf7-notice notice-caution"><p>' . $is_caution . '</p></div>';
 						}
 					}
+
+					echo '<h2 class="nebula-form-title">' . get_the_title($form_data->_wpcf7) . '</h2>'; //Output the name of the form
 
 					$form_output = array(
 						'real' => array(),
@@ -2100,6 +2164,39 @@ if ( !trait_exists('Admin') ){
 						echo "');";
 					echo "});";
 				echo '</script>';
+			}
+		}
+
+		//Add a badge icon to the admin menu indicating the number of new submissions
+		function add_cf7_menu_badge_count(){
+			global $submenu;
+
+			$cf7_submissions_query = new WP_Query(array(
+				'post_type' => 'nebula_cf7_submits',
+				'post_status' => 'submission',
+				'posts_per_page' => -1,
+				'date_query' => array(
+					'after' => date('Y-m-d'), //Today only
+					'before' => date('Y-m-d'),
+					'inclusive' => true,
+				)
+			));
+
+			$badge_number = $cf7_submissions_query->found_posts; //Count the number of posts from the query
+
+			if ( $badge_number > 0 ){
+				//Loop through the top-level submenu items
+				foreach ( $submenu as $key => $menu ){
+					if ( $key == 'wpcf7' ){
+						//Now loop through that submenu's submenu items
+						foreach ( $menu as $index => $item ){
+							if ( $item[2] == 'edit.php?post_type=nebula_cf7_submits' ){
+								$submenu[$key][$index][0] .= '<small class="menu-counter cf7-submits-today-bg">' . $badge_number . ' Today</small>';
+								break; //Exit the loop
+							}
+						}
+					}
+				}
 			}
 		}
 

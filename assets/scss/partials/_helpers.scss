@@ -94,6 +94,12 @@
 	&.btn-danger:focus {color: #fff;}
 }
 
+//These help on the admin side where Bootstrap CSS is not loaded
+.text-success {color: $success_color;}
+.text-warning {color: $warning_color;}
+.text-danger {color: $danger_color;}
+.text-info {color: darken($info_color, 11%);}
+
 .nebula-flex-first {order: -1;} //Default flex order is 0. This class forces a column before that.
 
 .col-centered {float: none; margin: 0 auto;}

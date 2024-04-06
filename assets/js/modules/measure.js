@@ -1182,7 +1182,7 @@ nebula.eventTracking = async function(){
 		nebula.dom.document.on('cut copy', function(e){
 			//Ignore clipboard events that occur within form inputs or on Woocommerce checkout/confirmation pages
 			if ( jQuery(e.target).is('input, textarea') || jQuery(e.target).parents('form').length || jQuery('body.woocommerce-checkout').length || jQuery('body.woocommerce-order-received').length ){
-				return false;
+				return; //Exit the function but allow the original cut/copy to occur
 			}
 
 			let selection = window.getSelection().toString().trimAll();

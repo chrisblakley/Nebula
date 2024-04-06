@@ -346,10 +346,15 @@ if ( !trait_exists('Warnings') ){
 				if ( $this->get_option('js_error_log') ){
 					$js_log_file = get_stylesheet_directory() . '/js_error.log';
 
+					$js_error_log_filesize = '';
+					if ( file_exists($js_log_file) ){
+						$js_error_log_filesize = ' (' . $this->format_bytes(filesize($js_log_file), 1) . ')';
+					}
+
 					$nebula_warnings['js_error_log'] = array(
 						'level' => 'warning',
 						'dismissible' => false,
-						'description' => '<i class="fa-solid fa-fw fa-hard-hat"></i> <strong><a href="themes.php?page=nebula_options&tab=administration" target="_blank">JS Error Logging</a></strong> is active: <strong>' . str_replace(ABSPATH, '', $js_log_file) . '</strong> (' . $this->format_bytes(filesize($js_log_file), 1) . ')',
+						'description' => '<i class="fa-solid fa-fw fa-hard-hat"></i> <strong><a href="themes.php?page=nebula_options&tab=administration" target="_blank">JS Error Logging</a></strong> is active: <strong>' . str_replace(ABSPATH, '', $js_log_file) . '</strong>' . $js_error_log_filesize,
 						'url' => admin_url('themes.php?page=nebula_options&tab=administration')
 					);
 				}

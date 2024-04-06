@@ -366,6 +366,13 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 }
 
 //Nebula CF7 Submissions
+#adminmenu .toplevel_page_wpcf7.wp-not-current-submenu .wp-submenu {min-width: 225px;} //Widen admin submenu for badge count (when not on that page)
+
+.cf7-submits-today-color {color: $success_color;}
+.cf7-submits-today-bg {background-color: $success_color !important;}
+
+#poststuff .nebula-form-title {padding: 15px 0 0 0; font-size: 28px;}
+
 .cf7-submits-possible-spam {opacity: 0.5;}
 
 .post-type-nebula_cf7_submits {
@@ -377,9 +384,13 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 	}
 
 	#post-body-content {
-		.nebula-cf7-notice {background: #fff; border: 1px solid #c3c4c7; border-left-width: 4px; box-shadow: 0 1px 1px rgba(0,0,0,.04); margin-top: 19px; padding: 1px 12px;
-			&.notice-caution {border-left-color: $info_color;}
+		.nebula-cf7-notice {background: #fff; border: 1px solid #c3c4c7; border-left-width: 4px; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04); margin-top: 19px; padding: 1px 12px;
+			&.notice-success {border-left-color: $success_color;}
+			&.notice-info,
+			&.notice-caution {border-left-color: darken($info_color, 11%);}
+			&.notice-warning,
 			&.notice-invalid {border-left-color: $warning_color;}
+			&.notice-error,
 			&.notice-spam {border-left-color: $danger_color;}
 		}
 	}
@@ -403,7 +414,7 @@ table.nebula-cf7-submissions {border-collapse: collapse; width: 100%; margin-top
 	}
 
 	&.nebula-cf7-submission-caution {
-		thead {background: $info_color; color: readable-color($info_color);}
+		thead {background: darken($info_color, 11%); color: readable-color(darken($info_color, 11%));}
 	}
 
 	tbody {

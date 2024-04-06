@@ -3210,13 +3210,13 @@ if ( !trait_exists('Functions') ){
 		}
 
 		//Modify/add data to CF7 submissions in a way that other themes/plugins can use it as well (remember: cf7_storage calls this function as well)
-		public function cf7_enhance_data($submission_data=array()){
-			$nebula_debug_info = $this->cf7_debug_info($submission_data);
+		public function cf7_enhance_data($posted_data=array()){
+			$nebula_debug_info = $this->cf7_debug_info($posted_data);
 			foreach ( $nebula_debug_info as $key => $value ){
-				$submission_data['_' . $key] = $value;
+				$posted_data['_' . $key] = $value;
 			}
 
-			return $submission_data;
+			return $posted_data;
 		}
 
 		//Listen for form submissions to store into the DB right before sending the mail
