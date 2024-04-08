@@ -3258,13 +3258,14 @@ if ( !trait_exists('Functions') ){
 			}
 
 			if ( !$is_processing_allowed ){
-				//Preserve the WPCF7 metadata
+				//Preserve some metadata
 				$wpcf7_metadata = array(
 					'_wpcf7' => $submission_data['_wpcf7'],
 					'_wpcf7_version' => $submission_data['_wpcf7_version'],
 					'_wpcf7_locale' => $submission_data['_wpcf7_locale'],
 					'_wpcf7_unit_tag' => $submission_data['_wpcf7_unit_tag'],
 					'_wpcf7_container_post' => $submission_data['_wpcf7_container_post'],
+					'_nebula_form_flow' => $submission_data['_nebula_form_flow'],
 				);
 
 				$submission_data = array(); //Empty the submission data to remove all form input field data

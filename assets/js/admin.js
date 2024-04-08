@@ -117,6 +117,18 @@ nebula.initializationStuff = function(){
 
 //Re-organize the CF7 submission details screen
 nebula.cf7SubmissionsOrganization = function(){
+	//Submission listing page
+	if ( jQuery('.post-type-nebula_cf7_submits .wp-list-table').length ){
+		jQuery('.cf7-note-caution').each(function(){
+			jQuery(this).parents('tr').addClass('caution-row');
+		});
+
+		jQuery('.cf7-note-failed').each(function(){
+			jQuery(this).parents('tr').addClass('failed-row');
+		});
+	}
+
+	//Submission details page
 	if ( jQuery('.post-type-nebula_cf7_submits').length ){
 		jQuery('#save-post').val('Save').insertBefore('#publish').css('float', 'right');
 		jQuery('#publish').remove();

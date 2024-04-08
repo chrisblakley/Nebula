@@ -368,7 +368,10 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 //Nebula CF7 Submissions
 #adminmenu .toplevel_page_wpcf7.wp-not-current-submenu .wp-submenu {min-width: 225px;} //Widen admin submenu for badge count (when not on that page)
 
-.cf7-submits-today-color {color: $success_color;}
+.cf7-submits-today-color {color: $success_color;
+	.status-invalid & {color: $warning_color;}
+	.status-spam & {color: $danger_color;}
+}
 .cf7-submits-today-bg {background-color: $success_color !important;}
 
 #poststuff .nebula-form-title {padding: 15px 0 0 0; font-size: 28px;}
@@ -376,8 +379,27 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 .cf7-submits-possible-spam {opacity: 0.5;}
 
 .post-type-nebula_cf7_submits {
+	$submission_color: $success_color;
+	$caution_color: darken($info_color, 11%);
+	$failed_color: #9C12BB;
+	$invalid_color: $warning_color;
+	$spam_color: $danger_color;
+
 	table.wp-list-table {table-layout: auto;
+		tr.status-submission {
+			th {border-left: 4px solid rgba($submission_color, 0.5); }
+
+			&.caution-row th {border-left: 4px solid rgba($caution_color, 0.15);}
+			&.failed-row th {border-left: 4px solid rgba($failed_color, 0.5);}
+		}
+		tr.status-invalid th {border-left: 4px solid rgba($invalid_color, 0.25);}
+		tr.status-spam th {border-left: 4px solid rgba($spam_color, 0.25);}
+
+		.cf7-note-failed i,
+		.cf7-note-failed strong {color: #9C12BB;}
+
 		td.title {max-width: 250px;}
+		td.formatted_date .just-now,
 		td.formatted_date .today {font-weight: bold;}
 		td.attribution,
 		td.notes {max-width: 200px;}
@@ -385,13 +407,13 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 
 	#post-body-content {
 		.nebula-cf7-notice {background: #fff; border: 1px solid #c3c4c7; border-left-width: 4px; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04); margin-top: 19px; padding: 1px 12px;
-			&.notice-success {border-left-color: $success_color;}
+			&.notice-success {border-left-color: $submission_color;}
 			&.notice-info,
-			&.notice-caution {border-left-color: darken($info_color, 11%);}
+			&.notice-caution {border-left-color: $caution_color;}
 			&.notice-warning,
-			&.notice-invalid {border-left-color: $warning_color;}
+			&.notice-invalid {border-left-color: $invalid_color;}
 			&.notice-error,
-			&.notice-spam {border-left-color: $danger_color;}
+			&.notice-spam {border-left-color: $spam_color;}
 		}
 	}
 }

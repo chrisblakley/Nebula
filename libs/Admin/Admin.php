@@ -1623,11 +1623,25 @@ if ( !trait_exists('Admin') ){
 				$post_id = ( is_object($form_data) && !empty($form_data->_wpcf7_container_post) )? $form_data->_wpcf7_container_post : false; //The page the CF7 submission was from. @todo "Nebula" 0: Is this still working? Post Titles are all empty
 
 				if ( $column_name === 'formatted_date' ){
-					$time_diff_icon = ( strtotime(get_post_field('post_date', $submission_id)) > time()-DAY_IN_SECONDS )? '<i class="fa-regular fa-fw fa-clock"></i>' : '<i class="fa-regular fa-fw fa-calendar"></i>';
-					$today_text = ( date('Y-n-j', strtotime(get_post_field('post_date', $submission_id))) == date('Y-n-j') )? 'today' : '';
-					$today_icon = ( !empty($today_text) )? '<span class="cf7-submits-today-color">&raquo;</span> ' : '';
-					$today_parens = ( !empty($today_text) )? ' <em>(Today)</em>' : '';
-					echo $today_icon . '<span class="' . $today_text . '" title="' . ucwords($today_text) . '">' . date('l, F j, Y \a\t g:ia', strtotime(get_post_field('post_date', $submission_id))) . '</span><br /><small>' . $time_diff_icon . ' ' . human_time_diff(strtotime(get_post_field('post_date', $submission_id))) . ' ago' . $today_parens . '</small>';
+					$today_text = '';
+					$today_icon = '';
+					$time_diff_icon = '<i class="fa-regular fa-fw fa-calendar"></i>'; //Default for longer than a day ago
+
+					if ( time()-strtotime(get_post_field('post_date', $submission_id)) < HOUR_IN_SECONDS ){ //Within the hour
+						$time_diff_icon = '<i class="fa-solid fa-fw fa-stopwatch"></i>';
+						$today_icon = '<span class="cf7-submits-today-color">&rarr;</span> ';
+						$today_text = 'Just Now';
+					} elseif ( date('Y-n-j', strtotime(get_post_field('post_date', $submission_id))) == date('Y-n-j') ){ //Within today's calendar date
+						$time_diff_icon = '<i class="fa-solid fa-fw fa-clock"></i>';
+						$today_icon = '<span class="cf7-submits-today-color">&raquo;</span> ';
+						$today_text = 'today';
+					} elseif ( time()-strtotime(get_post_field('post_date', $submission_id)) < DAY_IN_SECONDS ){ //Within the last 24-hours
+						$time_diff_icon = '<i class="fa-solid fa-fw fa-calendar-day"></i>';
+						$today_icon = '<span>&rsaquo;</span> ';
+					}
+
+					$today_parens = ( !empty($today_text) )? ' <em>(' . ucwords($today_text) . ')</em>' : '';
+					echo $today_icon . '<span class="' . str_replace(' ', '-', strtolower($today_text)) . '" title="' . ucwords($today_text) . '">' . date('l, F j, Y \a\t g:ia', strtotime(get_post_field('post_date', $submission_id))) . '</span><br /><small>' . $time_diff_icon . ' ' . human_time_diff(strtotime(get_post_field('post_date', $submission_id))) . ' ago' . $today_parens . '</small>';
 				}
 
 				if ( $column_name === 'form_name' ){
@@ -1669,15 +1683,20 @@ if ( !trait_exists('Admin') ){
 
 				if ( $column_name === 'notes' ){
 					if ( strpos(strtolower(get_the_title($submission_id)), 'mail fail') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-						echo '<p><i class="fa-solid fa-fw fa-triangle-exclamation"></i> Mail Failed<br /><small>An administrator did not get an email notification of this submission!</small></p>';
+						echo '<p class="cf7-note-failed"><i class="fa-solid fa-fw fa-triangle-exclamation"></i> <strong>Mail Failed</strong><br /><small>An administrator did not get an email notification of this submission!</small></p>';
 					}
 
 					if ( !empty(get_post_field('nebula_cf7_submission_preserve', $submission_id)) ){
 						echo '<p><i class="fa-solid fa-fw fa-shield-halved"></i> Preserved<br /><small>This submission will not be automatically deleted</small></p>';
 					}
 
-					if ( !empty($form_data->_nebula_ga_cid) && strpos($form_data->_nebula_ga_cid, '-') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-						echo '<p><i class="fa-regular fa-fw fa-circle-user"></i> Non-Native GA Client ID<br /><small>Indicates ad-blocker or spambot</small></p>';
+					//Check for caution indicators
+					$is_adblocker = (!empty($form_data->_nebula_ga_cid) && strpos($form_data->_nebula_ga_cid, '-') !== false); //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					$is_nojs = (version_compare($form_data->_nebula_version, '11.10.29') >= 0 && empty($form_data->_nebula_form_flow)); //@todo "Nebula 0: After a while the version_compare part of the conditional can be removed. The _nebula_form_flow field was added on March 29, 2024.
+					if ( $is_nojs ){
+						echo '<p class="cf7-note-caution"><i class="fa-solid fa-fw fa-code"></i> JS Disabled<br /><small>This user either has JavaScript disabled or is more likely a spambot</small></p>';
+					} elseif ( $is_adblocker ){
+						echo '<p class="cf7-note-caution"><i class="fa-regular fa-fw fa-circle-user"></i> Ad-Blocker<br /><small>This user is either blocking analytics or possibly is a spambot</small></p>';
 					}
 
 					echo '<span>' . get_post_meta($submission_id, 'nebula_cf7_submission_notes', true) . '</span>';
@@ -1744,14 +1763,6 @@ if ( !trait_exists('Admin') ){
 				<?php $end_date = ( !empty($this->super->get['daterange_end']) )? $this->super->get['daterange_end'] : ''; ?>
 				<label for="filter-by-daterange-end">End Date:</label>
 				<input type="date" id="filter-by-daterange-end" name="daterange_end" value="<?php echo $end_date; ?>" placeholder="End Date" />
-
-				<label for="filter-by-form-status" class="screen-reader-text">Filter by status</label>
-				<select id="filter-by-form-status" name="cf7_form_status">
-					<option <?php echo ( empty($this->super->get['cf7_form_status']) || ($this->super->get['cf7_form_status'] != 'invalid' && $this->super->get['cf7_form_status'] != 'spam') )? 'selected="selected"' : ''; ?> value="0">Submissions</option>
-					<option value="invalid" <?php echo ( !empty($this->super->get['cf7_form_status']) && $this->super->get['cf7_form_status'] == 'invalid' )? 'selected="selected"' : ''; ?>>Invalid</option>
-					<option value="spam" <?php echo ( !empty($this->super->get['cf7_form_status']) && $this->super->get['cf7_form_status'] == 'spam' )? 'selected="selected"' : ''; ?>>Spam</option>
-				</select>
-
 				<?php
 			}
 		}
