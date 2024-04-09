@@ -382,7 +382,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 	$submission_color: $success_color;
 	$caution_color: darken($info_color, 11%);
 	$failed_color: #9C12BB;
-	$invalid_color: $warning_color;
+	$invalid_color: darken($warning_color, 15%);
 	$spam_color: $danger_color;
 
 	table.wp-list-table {table-layout: auto;
@@ -396,7 +396,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 		tr.status-spam th {border-left: 4px solid rgba($spam_color, 0.25);}
 
 		.cf7-note-failed i,
-		.cf7-note-failed strong {color: #9C12BB;}
+		.cf7-note-failed strong {color: $failed_color;}
 
 		td.title {max-width: 250px;}
 		td.formatted_date .just-now,
@@ -410,11 +410,15 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 			&.notice-success {border-left-color: $submission_color;}
 			&.notice-info,
 			&.notice-caution {border-left-color: $caution_color;}
+			&.notice-mail-failed {border-left-color: $failed_color;}
 			&.notice-warning,
 			&.notice-invalid {border-left-color: $invalid_color;}
 			&.notice-error,
 			&.notice-spam {border-left-color: $spam_color;}
 		}
+
+		.invalid-submission-item i {color: $invalid_color;}
+		.this-successful-submission i {color: $submission_color;}
 	}
 }
 

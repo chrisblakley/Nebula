@@ -5,10 +5,14 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Assets') ){
 	trait Assets {
 		public $brain = array();
+		public $referrer = '(No Session Cookie)';
+		public $landing_page = '(No Session Cookie)';
 
 		public function hooks(){
 			if ( !$this->is_background_request() ){
-				add_action('parse_query', array($this, 'utms')); //Prep this before headers are sent
+				//Prep these before headers are sent
+				add_action('parse_query', array($this, 'utms'));
+				add_action('init', array($this, 'init_session_data'));
 
 				//Register styles/scripts
 				add_action('wp_enqueue_scripts', array($this, 'register_scripts'));
@@ -26,6 +30,29 @@ if ( !trait_exists('Assets') ){
 				add_action('admin_enqueue_scripts', array($this, 'output_nebula_data'), 9000);
 
 				add_action('wp_footer', array($this, 'import_essential_js'));
+			}
+		}
+
+		//Prep initial session values so they can be stored in a cookie before headers are sent
+		public function init_session_data(){
+			try {
+				if ( isset($this->super->cookie['session']) ){
+					$session_cookie_data = json_decode(stripslashes($this->super->cookie['session']), true);
+					$this->referrer = $session_cookie_data['referrer'];
+					$this->landing_page = $session_cookie_data['landing_page'];
+				} else {
+					$this->referrer = ( isset($this->super->server['HTTP_REFERER']) )? $this->super->server['HTTP_REFERER'] : false; //Use the referrer header if it exists
+					$this->landing_page = $this->url_components('all'); //Get the full URL including query string
+
+					$session_cookie_data = array(
+						'referrer' => $this->referrer,
+						'landing_page' => $this->landing_page,
+					);
+
+					setcookie('session', json_encode($session_cookie_data), time()+HOUR_IN_SECONDS, '/');
+				}
+			} catch ( Exception $e ){
+				//Ignore errors
 			}
 		}
 
@@ -225,29 +252,6 @@ if ( !trait_exists('Assets') ){
 				}
 			}
 
-			//Store referrer and landing page of the session
-			$referrer = '(No Session Cookie)';
-			$landing_page = '(No Session Cookie)';
-			try {
-				if ( isset($this->super->cookie['session']) ){
-					$session_cookie_data = json_decode(stripslashes($this->super->cookie['session']), true);
-					$referrer = $session_cookie_data['referrer'];
-					$landing_page = $session_cookie_data['landing_page'];
-				} else {
-					$referrer = ( isset($this->super->server['HTTP_REFERER']) )? $this->super->server['HTTP_REFERER'] : false; //Use the referrer header if it exists
-					$landing_page = $this->url_components('all'); //Get the full URL including query string
-
-					$session_cookie_data = array(
-						'referrer' => $referrer,
-						'landing_page' => $landing_page,
-					);
-
-					setcookie('session', json_encode($session_cookie_data), time()+HOUR_IN_SECONDS, '/');
-				}
-			} catch ( Exception $e ){
-				//Ignore errors
-			}
-
 			//Check for session data
 			$this->brain['session'] = array(
 				'ip' => $this->get_ip_address(),
@@ -257,8 +261,8 @@ if ( !trait_exists('Assets') ){
 					'adblock' => false,
 				),
 				'geolocation' => false,
-				'referrer' => $referrer,
-				'landing_page' => $landing_page,
+				'referrer' => $this->referrer,
+				'landing_page' => $this->landing_page,
 			);
 
 			//User Data

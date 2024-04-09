@@ -1694,7 +1694,7 @@ if ( !trait_exists('Admin') ){
 					$is_adblocker = (!empty($form_data->_nebula_ga_cid) && strpos($form_data->_nebula_ga_cid, '-') !== false); //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 					$is_nojs = (version_compare($form_data->_nebula_version, '11.10.29') >= 0 && empty($form_data->_nebula_form_flow)); //@todo "Nebula 0: After a while the version_compare part of the conditional can be removed. The _nebula_form_flow field was added on March 29, 2024.
 					if ( $is_nojs ){
-						echo '<p class="cf7-note-caution"><i class="fa-solid fa-fw fa-code"></i> JS Disabled<br /><small>This user either has JavaScript disabled or is more likely a spambot</small></p>';
+						echo '<p class="cf7-note-caution"><i class="fa-solid fa-fw fa-code"></i> No JavaScript<br /><small>This user either has disabled JavaScript or is more likely a spambot</small></p>';
 					} elseif ( $is_adblocker ){
 						echo '<p class="cf7-note-caution"><i class="fa-regular fa-fw fa-circle-user"></i> Ad-Blocker<br /><small>This user is either blocking analytics or possibly is a spambot</small></p>';
 					}
@@ -1883,6 +1883,11 @@ if ( !trait_exists('Admin') ){
 				//Check for suspicious indicators of bot/spam submissions that were logged as actual submissions
 				$is_caution = false;
 				if ( !$is_spam ){
+					//Check if the send mail failed
+					if ( strpos(strtolower(get_the_title($post->ID)), 'mail fail') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						echo '<div class="nebula-cf7-notice notice-mail-failed"><p><i class="fa-solid fa-fw fa-envelope"></i> <strong>Email notification failed.</strong> The email notification to administators has failed for this submission.</p></div>';
+					}
+
 					//Loop through the form data to look for HTML tags
 					foreach ( $form_data as $key => $value ){
 						if ( substr($key, 0, 1) != '_' && is_string($value) ){ //If it is not a metadata field and we have data
@@ -1904,7 +1909,7 @@ if ( !trait_exists('Admin') ){
 						if ( empty($form_data->_nebula_ga_cid) || strpos($form_data->_nebula_ga_cid, '-') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 							$is_caution = '<i class="fa-solid fa-fw fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> This user has a non-native Google Analytics Client ID (' . $form_data->_nebula_ga_cid . '). This could mean <strong>the user has an ad-blocker active, or that it may be a bot or spam.</strong>';
 						} elseif ( version_compare($form_data->_nebula_version, '11.10.29') >= 0 && empty($form_data->_nebula_form_flow) ){ //@todo "Nebula 0: After a while the version_compare part of the conditional can be removed. The _nebula_form_flow field was added on March 29, 2024.
-							$is_caution = '<i class="fa-solid fa-fw fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> The Nebula Form Flow field is empty which could mean <strong>the user has JavaScript disabled, or that it may be a bot or spam</strong>.';
+							$is_caution = '<i class="fa-solid fa-fw fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> The Nebula Form Flow field is empty which could mean <strong>the user has disabled JavaScript, or that it may be a bot or spam</strong>.';
 						} else {
 							//Loop through the form data to look for HTML tags
 							foreach ( $form_data as $key => $value ){
@@ -1934,29 +1939,27 @@ if ( !trait_exists('Admin') ){
 							echo '<div class="nebula-cf7-notice notice-invalid"><p><i class="fa-solid fa-fw fa-comment-slash"></i> <strong>This submission was determined to be invalid.</strong> Invalid fields are highlighted below. The user was shown a validation error message when attempting to submit this information (see below). The user may have fixed the invalid fields and attempted to submit again, or they may have abandoned the form without re-submitting.</p><p>Note: If the acceptance checkbox was not checked, form field input data will have been removed from this submission and will not appear below as it was not processed or stored.</p></div>';
 
 							//Check if this invalid attempt was eventually successful later or not
-							if ( empty($is_caution) && strpos(get_the_title($post->ID), '@') !== false ){ //Only query on non-caution invalid submissions when we have an email address //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-								$successful_submissions_query = new WP_Query(array(
-									'post_type' => 'nebula_cf7_submits',
-									'post_status' => 'submission',
-									'posts_per_page' => 1,
-									'date_query' => array(
-										'after' => date('Y-m-d', $form_data->_nebula_timestamp),
-										'before' => date('Y-m-d'),
-										'inclusive' => true,
-									),
-									's' => str_replace(' (Invalid)', '', get_the_title($post->ID)), //Remove the "Invalid" label and check for successful submissions
-								));
+							$successful_submissions_query = new WP_Query(array(
+								'post_type' => 'nebula_cf7_submits',
+								'post_status' => 'submission',
+								'posts_per_page' => 1,
+								'date_query' => array(
+									'after' => date('Y-m-d', $form_data->_nebula_timestamp),
+									'before' => date('Y-m-d'),
+									'inclusive' => true,
+								),
+								's' => $form_data->_nebula_ga_cid, //This lives in the post_content itself so a simple search works
+							));
 
-								if ( $successful_submissions_query->have_posts() ){
-									while ( $successful_submissions_query->have_posts() ){
-										$successful_submissions_query->the_post();
-										echo '<div class="nebula-cf7-notice notice-success"><p><i class="fa-solid fa-fw fa-circle-check text-success"></i> <strong class="text-success">User was eventually successful!</strong> This user was able to fix these validation errors and submit successfully after this. <a href="' . get_edit_post_link(get_the_ID()) . '">View the successful submission &raquo;</a></p></div>';
-									}
-
-									wp_reset_postdata();
-								} else {
-									echo '<div class="nebula-cf7-notice notice-error"><p><i class="fa-solid fa-fw fa-user-xmark text-danger"></i> <strong class="text-danger">User may have abandoned after failure!</strong> This user may <strong>not</strong>have submitted successfully after receiving these validation errors.</p></div>'; //"May" because if the email address was the one that was invalid, that may cause the query to return an empty result (since the post title relies on this)
+							if ( $successful_submissions_query->have_posts() ){
+								while ( $successful_submissions_query->have_posts() ){
+									$successful_submissions_query->the_post();
+									echo '<div class="nebula-cf7-notice notice-success"><p><i class="fa-solid fa-fw fa-circle-check text-success"></i> <strong class="text-success">User was eventually successful!</strong> This user was able to fix these validation errors and submit successfully after this. <a href="' . get_edit_post_link(get_the_ID()) . '">View the successful submission &raquo;</a></p></div>';
 								}
+
+								wp_reset_postdata();
+							} else {
+								echo '<div class="nebula-cf7-notice notice-error"><p><i class="fa-solid fa-fw fa-user-xmark text-danger"></i> <strong class="text-danger">User may have abandoned after failure!</strong> This user may <strong>not</strong> have submitted successfully after receiving these validation errors.</p></div>'; //"May" because if the email address was the one that was invalid, that may cause the query to return an empty result (since the post title relies on this)
 							}
 						} else {
 							//Check if this successful submission was associated with any invalid attempts
@@ -1972,7 +1975,7 @@ if ( !trait_exists('Admin') ){
 										'before' => date('Y-m-d', $form_data->_nebula_timestamp),
 										'inclusive' => true,
 									),
-									's' => get_the_title($post->ID),
+									's' => $form_data->_nebula_ga_cid,
 								));
 
 								$invalid_submission_count = $invalid_submissions_query->found_posts; //Count the number of posts from the query
@@ -1981,11 +1984,15 @@ if ( !trait_exists('Admin') ){
 								}
 
 								if ( $invalid_submissions_query->have_posts() ){
-									$output_complete = false;
-									while ( $invalid_submissions_query->have_posts() && empty($output_complete) ){ //We only want to output this once
+									$the_invalid_submissions = array();
+
+									while ( $invalid_submissions_query->have_posts() ){ //We only want to output this once
 										$invalid_submissions_query->the_post();
-										$output_complete = true;
-										echo '<div class="nebula-cf7-notice notice-warning"><p><i class="fa-solid fa-fw fa-circle-xmark"></i> <strong>User had ' . $invalid_submission_count . ' invalid attempt(s)!</strong> Prior to this successful submission, this user attempted to submit this form at least <strong>' . $invalid_submission_count . ' time(s)</strong>. <a href="' . get_edit_post_link(get_the_ID()) . '">View the earliest invalid submission &raquo;</a></p></div>';
+										$the_invalid_submissions[] = '<li><a href="' . get_edit_post_link(get_the_ID()) . '"><strong class="invalid-submission-item"><i class="fa-solid fa-fw fa-xmark"></i> ' . ucwords(get_post_status()) . ' Submission &raquo;</strong></a> <small>' . get_the_date('F j, Y \a\t g:i:sa') . '</small></li>';
+									}
+
+									if ( !empty($the_invalid_submissions) ){
+										echo '<div class="nebula-cf7-notice notice-warning"><p><i class="fa-solid fa-fw fa-circle-xmark"></i> <strong>User had ' . $invalid_submission_count . ' invalid attempt(s)!</strong> Prior to this successful submission, this user attempted to submit this form at least <strong>' . $invalid_submission_count . ' time(s)</strong>.<ol>' . implode($the_invalid_submissions) . '<li><strong class="this-successful-submission"><i class="fa-solid fa-fw fa-check"></i> This Successful Submission</strong> <small>' . get_the_date('F j, Y \a\t g:i:sa', $post->ID) . '</small></li></ol></p></div>';
 									}
 
 									wp_reset_postdata();
