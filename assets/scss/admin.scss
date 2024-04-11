@@ -391,8 +391,9 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 			th {border-left: 4px solid rgba($submission_color, 0.5); }
 			&.caution-row th {border-left: 4px solid rgba($caution_color, 0.15);}
 			&.failed-row th {border-left: 4px solid rgba($failed_color, 0.5);}
+			&.invalid-row th {border-left: 4px solid rgba($invalid_color, 0.55);} //Invalid submissions moved to the submission status listing table
 		}
-		tr.status-invalid th {border-left: 4px solid rgba($invalid_color, 0.55);}
+		tr.status-invalid th {border-left: 4px solid rgba($invalid_color, 0.55);} //Invalid submissions on the invalid submissions listing table
 		tr.status-spam th {border-left: 4px solid rgba($spam_color, 0.25);}
 		tr.internal-row th {border-left: 4px solid rgba($internal_color, 0.2);}
 
@@ -407,6 +408,9 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 	}
 
 	#post-body-content {
+		#titlediv::before {content: "🔒"; position: absolute; top: 0; left: 8px; height: 95%; display: inline-flex; align-items: center; font-size: 1.2em; opacity: 0.5;}
+		#title {padding-left: 35px;}
+
 		.nebula-cf7-notice {background: #fff; border: 1px solid #c3c4c7; border-left-width: 4px; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04); margin-top: 19px; padding: 1px 12px;
 			&.notice-success {border-left-color: $submission_color;}
 			&.notice-info,

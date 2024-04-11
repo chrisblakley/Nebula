@@ -636,11 +636,12 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fa-solid fa-fw fa-upload"></i> ' . $public_local_ip . ' Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $this->super->server['SERVER_ADDR'] . '" target="_blank" rel="noopener noreferrer">' . apply_filters('nebula_dashboard_server_ip', $this->super->server['SERVER_ADDR']) . '</a></strong> ' . $secureServer . '</li>';
 
 			//Server Time Zone
-			if ( date_default_timezone_get() === get_option('timezone_string') ){
+			if ( !empty(get_option('timezone_string')) && date_default_timezone_get() === get_option('timezone_string') && wp_timezone_string() === get_option('timezone_string') ){
 				echo '<li><i class="fa-solid fa-fw fa-globe-americas"></i> Timezone: <strong>' . date_default_timezone_get() . '</strong></li>';
 			} else {
 				echo '<li><i class="fa-solid fa-fw fa-globe-americas"></i> Server Timezone: <strong>' . date_default_timezone_get() . '</strong></li>';
-				echo '<li><i class="fa-solid fa-fw fa-globe-americas"></i> WordPress Timezone: <strong>' . get_option('timezone_string') . '</strong></li>';
+				echo '<li><i class="fa-solid fa-fw fa-globe-americas"></i> WordPress Timezone Option: <strong>' . get_option('timezone_string') . '</strong></li>';
+				echo '<li><i class="fa-solid fa-fw fa-globe-americas"></i> WordPress Timezone String: <strong>' . wp_timezone_string() . '</strong></li>';
 			}
 
 			//Server operating system

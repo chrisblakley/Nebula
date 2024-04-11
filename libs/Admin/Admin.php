@@ -1682,15 +1682,22 @@ if ( !trait_exists('Admin') ){
 				}
 
 				if ( $column_name === 'notes' ){
+					//Originally invalid submissions that were moved to the "successful" submissions listing status
+					if ( get_post_status() == 'submission' && strpos(strtolower(get_the_title($submission_id)), '(invalid)') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						echo '<p class="cf7-note-invalid"><i class="fa-solid fa-fw fa-triangle-exclamation"></i> <strong>Originally Invalid</strong><br /><small>This submission was originally invalid, but moved to this submissions list by a content manager. No email notification was sent out!</small></p>';
+					}
+
+					//Mail failed
 					if ( strpos(strtolower(get_the_title($submission_id)), 'mail fail') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 						echo '<p class="cf7-note-failed"><i class="fa-solid fa-fw fa-triangle-exclamation"></i> <strong>Mail Failed</strong><br /><small>An administrator did not get an email notification of this submission!</small></p>';
 					}
 
+					//Preserved submissions
 					if ( !empty(get_post_field('nebula_cf7_submission_preserve', $submission_id)) ){
 						echo '<p><i class="fa-solid fa-fw fa-shield-halved"></i> Preserved<br /><small>This submission will not be automatically deleted</small></p>';
 					}
 
-					//Check for internal staff
+					//Interal Staff submissions
 					if ( !empty($form_data->_nebula_staff) ){
 						echo '<p class="cf7-note-internal"><i class="fa-solid fa-fw fa-clipboard-user"></i> Internal Staff<br /><small>This submission was by someone on the internal staff.</small></p>';
 					}
@@ -1883,7 +1890,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->is_admin_page() && $post->post_type === 'nebula_cf7_submits' ){
 				$form_data = json_decode($post->post_content);
 				$is_spam = ( $post->post_status === 'spam' || empty($form_data) || empty($form_data->_wpcf7) );
-				$is_invalid = ( $post->post_status === 'invalid' );
+				$is_invalid = ( $post->post_status === 'invalid' || strpos($post->post_title, '(Invalid)') !== false ); //If it was originally invalid or moved from the "invalid" status
 
 				//Check for suspicious indicators of bot/spam submissions that were logged as actual submissions
 				$is_caution = false;
@@ -1979,7 +1986,7 @@ if ( !trait_exists('Admin') ){
 								$submission_label = 'Invalid Submission &raquo;';
 								$submission_icon = '<i class="fa-solid fa-fw fa-xmark"></i>';
 
-								if ( get_post_status() == 'submission' ){
+								if ( get_post_status() == 'submission' && strpos(get_the_title(), '(Invalid)') === false ){ //Only if it was a successful submission originally (and not moved from another status) //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 									$success_count++;
 									$submission_class = 'successful-submission-item';
 									$submission_label = 'Successful Submission &raquo;';
@@ -1991,7 +1998,7 @@ if ( !trait_exists('Admin') ){
 								if ( get_the_ID() == $post->ID ){
 									$submission_class .= ' this-submission';
 									$submission_label = 'This ' . str_replace(' &raquo;', '', $submission_label);
-									$submission_icon = ( get_post_status() == 'submission' )? '<i class="fa-solid fa-fw fa-circle-check"></i><i class="fa-solid fa-arrow-right"></i>' : '<i class="fa-solid fa-fw fa-circle-xmark"></i><i class="fa-solid fa-arrow-right"></i>';
+									$submission_icon = ( get_post_status() == 'submission' && strpos(get_the_title(), '(Invalid)') === false )? '<i class="fa-solid fa-fw fa-circle-check"></i><i class="fa-solid fa-arrow-right"></i>' : '<i class="fa-solid fa-fw fa-circle-xmark"></i><i class="fa-solid fa-arrow-right"></i>';
 								}
 
 								$the_invalid_submissions[] = '<li data-date="' . get_the_date('Y-m-dTh:i:s') . '" class="' . get_post_status() . '-submission-item ' . $submission_class . '"><a href="' . get_edit_post_link(get_the_ID()) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('F j, Y \a\t g:i:sa') . ')</small></li>';

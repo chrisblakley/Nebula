@@ -88,7 +88,7 @@ if ( !trait_exists('Metaboxes') ){
 					<input type="hidden" name="nebula_options[force_wp_timezone]" value="<?php echo $nebula_options['force_wp_timezone']; ?>">
 					<input id="force_wp_timezone" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['force_wp_timezone'])); ?>><label for="force_wp_timezone">Force WP Timezone</label>
 
-					<p class="nebula-help-text short-help form-text text-muted">Force the timezone to use the WordPress setting (<code><?php echo get_option('timezone_string'); ?></code>). Disabling this will use whatever the server is set to. (Default: <?php echo $this->user_friendly_default('force_wp_timezone'); ?>)</p>
+					<p class="nebula-help-text short-help form-text text-muted">Force the timezone to use the WordPress setting (<code><?php echo wp_timezone_string(); ?></code>). Disabling this will use whatever the server is set to. (Default: <?php echo $this->user_friendly_default('force_wp_timezone'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">With the current setting, the time is <strong><?php echo date('F j, Y - g:ia'); ?></strong>. </p>
 					<p class="option-keywords">time zone dst</p>
 				</div>

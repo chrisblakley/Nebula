@@ -123,6 +123,10 @@ nebula.cf7SubmissionsOrganization = function(){
 			jQuery(this).parents('tr').addClass('caution-row');
 		});
 
+		jQuery('.cf7-note-invalid').each(function(){
+			jQuery(this).parents('tr').addClass('invalid-row');
+		});
+
 		jQuery('.cf7-note-failed').each(function(){
 			jQuery(this).parents('tr').addClass('failed-row');
 		});
@@ -134,6 +138,8 @@ nebula.cf7SubmissionsOrganization = function(){
 
 	//Submission details page
 	if ( jQuery('.post-type-nebula_cf7_submits').length ){
+		jQuery('#title').attr('disabled', 'disabled'); //Prevent the submission title from being modified
+
 		jQuery('#save-post').val('Save').insertBefore('#publish').css('float', 'right');
 		jQuery('#publish').remove();
 		jQuery('#minor-publishing-actions').remove();

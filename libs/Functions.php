@@ -221,7 +221,7 @@ if ( !trait_exists('Functions') ){
 		public function set_default_timezone(){
 			if ( $this->get_option('force_wp_timezone') ){
 				//@todo "Nebula" 0: Use null coalescing operator here if possible
-				$timezone_option = get_option('timezone_string');
+				$timezone_option = wp_timezone_string();
 				if ( empty($timezone_option) ){
 					$timezone_option = 'America/New_York';
 				}
