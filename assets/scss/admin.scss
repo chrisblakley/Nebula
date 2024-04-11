@@ -384,16 +384,17 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 	$failed_color: #9C12BB;
 	$invalid_color: darken($warning_color, 15%);
 	$spam_color: $danger_color;
+	$internal_color: #666;
 
 	table.wp-list-table {table-layout: auto;
 		tr.status-submission {
 			th {border-left: 4px solid rgba($submission_color, 0.5); }
-
 			&.caution-row th {border-left: 4px solid rgba($caution_color, 0.15);}
 			&.failed-row th {border-left: 4px solid rgba($failed_color, 0.5);}
 		}
-		tr.status-invalid th {border-left: 4px solid rgba($invalid_color, 0.25);}
+		tr.status-invalid th {border-left: 4px solid rgba($invalid_color, 0.55);}
 		tr.status-spam th {border-left: 4px solid rgba($spam_color, 0.25);}
+		tr.internal-row th {border-left: 4px solid rgba($internal_color, 0.2);}
 
 		.cf7-note-failed i,
 		.cf7-note-failed strong {color: $failed_color;}
@@ -415,10 +416,19 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 			&.notice-invalid {border-left-color: $invalid_color;}
 			&.notice-error,
 			&.notice-spam {border-left-color: $spam_color;}
+			&.notice-internal {border-left-color: $internal_color;}
 		}
 
-		.invalid-submission-item i {color: $invalid_color;}
-		.this-successful-submission i {color: $submission_color;}
+		.nebula-cf7-notice {
+			ol {margin-left: 20px;
+				.invalid-submission-item i {color: $invalid_color;}
+				.successful-submission-item i {color: $submission_color;}
+				.this-submission {font-weight: bold; font-size: 1.1em;
+					&::marker {font-weight: bold;}
+					a {text-decoration: none;}
+				}
+			}
+		}
 	}
 }
 

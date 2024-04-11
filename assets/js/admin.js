@@ -126,6 +126,10 @@ nebula.cf7SubmissionsOrganization = function(){
 		jQuery('.cf7-note-failed').each(function(){
 			jQuery(this).parents('tr').addClass('failed-row');
 		});
+
+		jQuery('.cf7-note-internal').each(function(){
+			jQuery(this).parents('tr').addClass('internal-row');
+		});
 	}
 
 	//Submission details page
