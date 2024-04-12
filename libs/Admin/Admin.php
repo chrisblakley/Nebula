@@ -606,8 +606,10 @@ if ( !trait_exists('Admin') ){
 								$current_id = get_option('page_for_posts');
 							} elseif ( is_archive() ){
 								$term_object = get_queried_object();
-								$current_id = $term_object->term_id;
-								$post_type_name = $term_object->taxonomy;
+								if ( !empty($term_object->term_id) ){
+									$current_id = $term_object->term_id;
+									$post_type_name = $term_object->taxonomy;
+								}
 								$original_date = false;
 								$status = false;
 							}
@@ -1697,7 +1699,7 @@ if ( !trait_exists('Admin') ){
 						echo '<p><i class="fa-solid fa-fw fa-shield-halved"></i> Preserved<br /><small>This submission will not be automatically deleted</small></p>';
 					}
 
-					//Interal Staff submissions
+					//Internal Staff submissions
 					if ( !empty($form_data->_nebula_staff) ){
 						echo '<p class="cf7-note-internal"><i class="fa-solid fa-fw fa-clipboard-user"></i> Internal Staff<br /><small>This submission was by someone on the internal staff.</small></p>';
 					}
@@ -1964,11 +1966,11 @@ if ( !trait_exists('Admin') ){
 							'posts_per_page' => 15, //Limit the number of results
 							'orderby' => 'date',
 							'order' => 'ASC', //Earliest to more recent
-							'date_query' => array(
-								'after' => date('Y-m-d', $form_data->_nebula_timestamp-YEAR_IN_SECONDS), //Check over the last year for successful/invalid submissions
-								'before' => date('Y-m-d'),
-								'inclusive' => true,
-							),
+							// 'date_query' => array(
+							// 	'after' => date('Y-m-d', $form_data->_nebula_timestamp-YEAR_IN_SECONDS), //Check over the last year for successful/invalid submissions
+							// 	'before' => date('Y-m-d'),
+							// 	'inclusive' => true,
+							// ),
 							's' => $form_data->_nebula_ga_cid,
 						));
 
@@ -2259,7 +2261,7 @@ if ( !trait_exists('Admin') ){
 
 		//Admin footer left side
 		public function change_admin_footer_left(){
-			//return '<a href="https://www.google.com/maps/dir/Current+Location/760+West+Genesee+Street+Syracuse+NY+13204" target="_blank" rel="noopener">760 West Genesee Street, Syracuse, NY 13204</a> &bull; (315) 478-6700';
+			//return '';
 		}
 
 		//Admin footer right side

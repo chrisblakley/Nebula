@@ -111,9 +111,9 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="phone_number">Phone Number</label>
 					<div class="input-group">
 						<div class="input-group-text"><i class="fa-solid fa-fw fa-phone"></i></div>
-						<input type="tel" name="nebula_options[phone_number]" id="phone_number" class="form-control nebula-validate-regex" data-valid-regex="\d-\d{3}-\d{3}-\d{4}" value="<?php echo $nebula_options['phone_number']; ?>" placeholder="1-315-478-6700" autocomplete="tel" />
+						<input type="tel" name="nebula_options[phone_number]" id="phone_number" class="form-control nebula-validate-regex" data-valid-regex="\d-\d{3}-\d{3}-\d{4}" value="<?php echo $nebula_options['phone_number']; ?>" placeholder="1-555-555-5555" autocomplete="tel" />
 					</div>
-					<p class="nebula-help-text short-help form-text text-muted">The primary phone number used for Open Graph data. Use the format: "1-315-478-6700".</p>
+					<p class="nebula-help-text short-help form-text text-muted">The primary phone number used for Open Graph data. Use the format: "1-555-555-5555".</p>
 					<p class="option-keywords">recommended seo</p>
 				</div>
 
@@ -121,9 +121,9 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="fax_number">Fax Number</label>
 					<div class="input-group">
 						<div class="input-group-text"><i class="fa-solid fa-fw fa-fax"></i></div>
-						<input type="tel" name="nebula_options[fax_number]" id="fax_number" class="form-control nebula-validate-regex" data-valid-regex="\d-\d{3}-\d{3}-\d{4}" value="<?php echo $nebula_options['fax_number']; ?>" placeholder="1-315-426-1392" autocomplete="tel" />
+						<input type="tel" name="nebula_options[fax_number]" id="fax_number" class="form-control nebula-validate-regex" data-valid-regex="\d-\d{3}-\d{3}-\d{4}" value="<?php echo $nebula_options['fax_number']; ?>" placeholder="1-555-555-5555" autocomplete="tel" />
 					</div>
-					<p class="nebula-help-text short-help form-text text-muted">The fax number used for Open Graph data. Use the format: "1-315-426-1392".</p>
+					<p class="nebula-help-text short-help form-text text-muted">The fax number used for Open Graph data. Use the format: "1-555-555-5555".</p>
 					<p class="option-keywords"></p>
 				</div>
 
@@ -156,7 +156,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="multi-form-group">
 					<div class="form-group">
 						<label for="street_address">Address</label>
-						<input type="text" name="nebula_options[street_address]" id="street_address" class="form-control nebula-validate-text mb-2" value="<?php echo $nebula_options['street_address']; ?>" placeholder="760 West Genesee Street" autocomplete="street-address" />
+						<input type="text" name="nebula_options[street_address]" id="street_address" class="form-control nebula-validate-text mb-2" value="<?php echo $nebula_options['street_address']; ?>" placeholder="233 East Washington Street" autocomplete="street-address" />
 					</div>
 
 					<div class="row">
@@ -175,7 +175,7 @@ if ( !trait_exists('Metaboxes') ){
 						<div class="col-sm-3">
 							<div class="form-group">
 								<label for="postal_code">Postal Code</label>
-								<input type="text" name="nebula_options[postal_code]" id="postal_code" class="form-control nebula-validate-regex mb-2 me-sm-2 mb-sm-0" data-valid-regex="\d{5,}" value="<?php echo $nebula_options['postal_code']; ?>" placeholder="13204" autocomplete="postal-code" />
+								<input type="text" name="nebula_options[postal_code]" id="postal_code" class="form-control nebula-validate-regex mb-2 me-sm-2 mb-sm-0" data-valid-regex="\d{5,}" value="<?php echo $nebula_options['postal_code']; ?>" placeholder="13202" autocomplete="postal-code" />
 							</div>
 						</div>
 						<div class="col-sm-2">

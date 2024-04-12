@@ -217,11 +217,20 @@ if ( !trait_exists('Functions') ){
 		}
 
 		//Set server timezone to match Wordpress
-		//@todo "Nebula" 0: WordPress Health Check does not like this function, but often has incorrect timestamps... Disabling for now and will monitor.
 		public function set_default_timezone(){
 			if ( $this->get_option('force_wp_timezone') ){
 				//@todo "Nebula" 0: Use null coalescing operator here if possible
 				$timezone_option = wp_timezone_string();
+
+				//If that returns an offset instead of a named timezone
+				if ( strpos($timezone_option, ':') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					$date_timezone = wp_timezone();
+					if ( !empty($date_timezone['timezone']) ){
+						$timezone_option = $date_timezone['timezone'];
+					}
+				}
+
+				//If we still do not have a usable option, default to Eastern Time
 				if ( empty($timezone_option) ){
 					$timezone_option = 'America/New_York';
 				}
@@ -3381,19 +3390,19 @@ if ( !trait_exists('Functions') ){
 				}
 			}
 
+			//Staff
+			if ( $this->is_dev() ){
+				$debug_info['nebula_staff'] = 'Developer';
+			} elseif ( $this->is_client() ){
+				$debug_info['nebula_staff'] = 'Client';
+			} elseif ( $this->is_staff() ){
+				$debug_info['nebula_staff'] = 'Staff';
+			}
+
 			//Logged-in User Info
 			if ( is_object($submission) ){
 				$user_id = (int) $submission->get_meta('current_user_id');
 				if ( !empty($user_id) ){
-					//Staff
-					if ( $this->is_dev() ){
-						$debug_info['nebula_staff'] = 'Developer';
-					} elseif ( $this->is_client() ){
-						$debug_info['nebula_staff'] = 'Client';
-					} elseif ( $this->is_staff() ){
-						$debug_info['nebula_staff'] = 'Staff';
-					}
-
 					$user_info = get_userdata($user_id);
 
 					$debug_info['nebula_user_id'] = $user_info->ID;

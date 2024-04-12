@@ -174,7 +174,7 @@ if ( !trait_exists('Utilities') ){
 			return false;
 		}
 
-		//Format phone numbers into the preferred (315) 478-6700 format.
+		//Format phone numbers into the preferred (555) 555-5555 format
 		public function phone_format($number=false){
 			if ( !empty($number) ){
 				return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '($1) $2-$3', $number);
@@ -183,8 +183,8 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Check if the current IP address matches any of the dev IP address from Nebula Options
-		//Passing $strict bypasses IP check, so user must be a dev and logged in.
-		//Note: This should not be used for security purposes since IP addresses can be spoofed.
+		//Passing $strict bypasses IP check, so user must be a dev and logged in
+		//Note: This should not be used for security purposes since IP addresses can be spoofed
 		public function is_dev($strict=false){
 			$override = apply_filters('pre_is_dev', null, $strict);
 			if ( isset($override) ){return $override;}

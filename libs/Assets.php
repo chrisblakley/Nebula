@@ -7,6 +7,7 @@ if ( !trait_exists('Assets') ){
 		public $brain = array();
 		public $referrer = '(No Session Cookie)';
 		public $landing_page = '(No Session Cookie)';
+		public $default_cid = '';
 
 		public function hooks(){
 			if ( !$this->is_background_request() ){
@@ -35,24 +36,29 @@ if ( !trait_exists('Assets') ){
 
 		//Prep initial session values so they can be stored in a cookie before headers are sent
 		public function init_session_data(){
-			try {
-				if ( isset($this->super->cookie['session']) ){
-					$session_cookie_data = json_decode(stripslashes($this->super->cookie['session']), true);
-					$this->referrer = $session_cookie_data['referrer'];
-					$this->landing_page = $session_cookie_data['landing_page'];
-				} else {
-					$this->referrer = ( isset($this->super->server['HTTP_REFERER']) )? $this->super->server['HTTP_REFERER'] : false; //Use the referrer header if it exists
-					$this->landing_page = $this->url_components('all'); //Get the full URL including query string
+			if ( $this->is_analytics_allowed() ){ //Only store this information if tracking is allowed
+				try {
+					if ( isset($this->super->cookie['session']) ){
+						$session_cookie_data = json_decode(stripslashes($this->super->cookie['session']), true);
+						$this->referrer = $session_cookie_data['referrer'];
+						$this->landing_page = $session_cookie_data['landing_page'];
+						$this->default_cid = $session_cookie_data['default_cid'];
+					} else {
+						$this->referrer = ( isset($this->super->server['HTTP_REFERER']) )? $this->super->server['HTTP_REFERER'] : false; //Use the referrer header if it exists
+						$this->landing_page = $this->url_components('all'); //Get the full URL including query string
+						$this->default_cid = $this->generate_UUID(); //Start with a default UUID
 
-					$session_cookie_data = array(
-						'referrer' => $this->referrer,
-						'landing_page' => $this->landing_page,
-					);
+						$session_cookie_data = array(
+							'referrer' => $this->referrer,
+							'landing_page' => $this->landing_page,
+							'default_cid' => $this->default_cid,
+						);
 
-					setcookie('session', json_encode($session_cookie_data), time()+HOUR_IN_SECONDS, '/');
+						setcookie('session', json_encode($session_cookie_data), time()+HOUR_IN_SECONDS, '/');
+					}
+				} catch ( Exception $e ){
+					//Ignore errors
 				}
-			} catch ( Exception $e ){
-				//Ignore errors
 			}
 		}
 
