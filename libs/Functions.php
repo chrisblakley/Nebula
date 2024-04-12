@@ -225,7 +225,7 @@ if ( !trait_exists('Functions') ){
 				//If that returns an offset instead of a named timezone
 				if ( strpos($timezone_option, ':') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 					$date_timezone = wp_timezone();
-					if ( !empty($date_timezone['timezone']) ){
+					if ( !empty($date_timezone->timezone) ){
 						$timezone_option = $date_timezone['timezone'];
 					}
 				}

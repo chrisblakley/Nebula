@@ -386,6 +386,11 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 	$spam_color: $danger_color;
 	$internal_color: #666;
 
+	.color-submission {color: $submission_color;}
+	.color-failed {color: $failed_color;}
+	.color-invalid {color: $invalid_color;}
+	.color-spam {color: $spam_color;}
+
 	table.wp-list-table {table-layout: auto;
 		tr.status-submission {
 			th {border-left: 4px solid rgba($submission_color, 0.5); }

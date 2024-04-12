@@ -1977,7 +1977,7 @@ if ( !trait_exists('Admin') ){
 						if ( $submission_history_query->have_posts() ){
 							$invalid_count = 0;
 							$success_count = 0;
-							$the_invalid_submissions = array();
+							$the_submissions = array();
 
 							while ( $submission_history_query->have_posts() ){ //We only want to output this once
 								$submission_history_query->the_post();
@@ -2003,11 +2003,15 @@ if ( !trait_exists('Admin') ){
 									$submission_icon = ( get_post_status() == 'submission' && strpos(get_the_title(), '(Invalid)') === false )? '<i class="fa-solid fa-fw fa-circle-check"></i><i class="fa-solid fa-arrow-right"></i>' : '<i class="fa-solid fa-fw fa-circle-xmark"></i><i class="fa-solid fa-arrow-right"></i>';
 								}
 
-								$the_invalid_submissions[] = '<li data-date="' . get_the_date('Y-m-dTh:i:s') . '" class="' . get_post_status() . '-submission-item ' . $submission_class . '"><a href="' . get_edit_post_link(get_the_ID()) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('F j, Y \a\t g:i:sa') . ')</small></li>';
+								$the_submissions[] = '<li data-date="' . get_the_date('Y-m-dTh:i:s') . '" class="' . get_post_status() . '-submission-item ' . $submission_class . '"><a href="' . get_edit_post_link(get_the_ID()) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('F j, Y \a\t g:i:sa') . ')</small></li>';
 							}
 
-							if ( $invalid_count >= 1 ){
-								echo '<div class="nebula-cf7-notice notice-warning"><p><i class="fa-solid fa-fw fa-circle-xmark"></i> <strong>User had ' . $invalid_count . ' invalid attempt(s)!</strong> This user attempted to submit forms at least <strong>' . $invalid_count . ' time(s)</strong>.<ol>' . implode($the_invalid_submissions) . '</ol></p></div>';
+							if ( count($the_submissions) >= 2 ){ //If this user has submitted a form more than once (successfully or not)
+								if ( $invalid_count >= 1 ){ //If any of those submissions were invalid
+									echo '<div class="nebula-cf7-notice notice-warning"><p><i class="fa-solid fa-fw fa-circle-xmark color-invalid"></i> <strong>User had ' . $invalid_count . ' invalid attempt(s)!</strong> This user attempted to submit forms at least <strong>' . $invalid_count . ' time(s)</strong>.<ol>' . implode($the_submissions) . '</ol></p></div>';
+								} else { //Otherwise, all submissions were successful
+									echo '<div class="nebula-cf7-notice notice-success"><p><i class="fa-solid fa-fw fa-check-double color-submission"></i> <strong>User submitted multiple times.</strong> This user has submitted at least <strong>' . count($the_submissions) . ' forms</strong> successfully.<ol>' . implode($the_submissions) . '</ol></p></div>';
+								}
 							}
 
 							if ( $is_invalid ){
