@@ -687,7 +687,11 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fa-solid fa-fw fa-wrench"></i> PHP Version: <strong style="color: ' . $php_version_color . '; cursor: ' . $php_version_cursor . ';" title="' . $php_version_info . '">' . PHP_VERSION . '</strong> <small>(SAPI: <strong>' . php_sapi_name() . '</strong>)</small></li>';
 
 			//PHP memory limit
-			echo '<li><i class="fa-solid fa-fw fa-cogs"></i> PHP Memory Limit: <strong>' . ini_get('memory_limit') . '</strong></li>';
+			echo '<li><i class="fa-solid fa-fw fa-memory"></i> PHP Memory Limit: <strong>' . ini_get('memory_limit') . '</strong></li>';
+
+			//Persistent Object Caching (memcached)
+			$memcached_enabled = ( extension_loaded('memcached') )? 'Enabled' : 'Disabled';
+			echo '<li><i class="fa-solid fa-fw fa-box"></i> PHP Memcached: <strong>' . $memcached_enabled . '</strong></li>';
 
 			//Theme directory size(s)
 			if ( is_child_theme() ){

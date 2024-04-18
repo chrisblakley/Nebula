@@ -36,6 +36,8 @@ if ( !trait_exists('Assets') ){
 
 		//Prep initial session values so they can be stored in a cookie before headers are sent
 		public function init_session_data(){
+			$this->default_cid = $this->generate_UUID(); //Start with a default UUID
+
 			if ( $this->is_analytics_allowed() ){ //Only store this information if tracking is allowed
 				try {
 					if ( isset($this->super->cookie['session']) ){
@@ -46,7 +48,6 @@ if ( !trait_exists('Assets') ){
 					} else {
 						$this->referrer = ( isset($this->super->server['HTTP_REFERER']) )? $this->super->server['HTTP_REFERER'] : false; //Use the referrer header if it exists
 						$this->landing_page = $this->url_components('all'); //Get the full URL including query string
-						$this->default_cid = $this->generate_UUID(); //Start with a default UUID
 
 						$session_cookie_data = array(
 							'referrer' => $this->referrer,

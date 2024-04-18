@@ -1960,69 +1960,71 @@ if ( !trait_exists('Admin') ){
 						}
 
 						//Check if this submission was associated with any other submissions
-						$submission_history_query = new WP_Query(array(
-							'post_type' => 'nebula_cf7_submits',
-							'post_status' => array('submission', 'invalid'),
-							'posts_per_page' => 15, //Limit the number of results
-							'orderby' => 'date',
-							'order' => 'ASC', //Earliest to more recent
-							// 'date_query' => array(
-							// 	'after' => date('Y-m-d', $form_data->_nebula_timestamp-YEAR_IN_SECONDS), //Check over the last year for successful/invalid submissions
-							// 	'before' => date('Y-m-d'),
-							// 	'inclusive' => true,
-							// ),
-							's' => $form_data->_nebula_ga_cid,
-						));
+						if ( !empty($form_data->_nebula_ga_cid) ){
+							$submission_history_query = new WP_Query(array(
+								'post_type' => 'nebula_cf7_submits',
+								'post_status' => array('submission', 'invalid'),
+								'posts_per_page' => 15, //Limit the number of results
+								'orderby' => 'date',
+								'order' => 'ASC', //Earliest to more recent
+								// 'date_query' => array(
+								// 	'after' => date('Y-m-d', $form_data->_nebula_timestamp-YEAR_IN_SECONDS), //Check over the last year for successful/invalid submissions
+								// 	'before' => date('Y-m-d'),
+								// 	'inclusive' => true,
+								// ),
+								's' => $form_data->_nebula_ga_cid,
+							));
 
-						if ( $submission_history_query->have_posts() ){
-							$invalid_count = 0;
-							$success_count = 0;
-							$the_submissions = array();
+							if ( $submission_history_query->have_posts() ){
+								$invalid_count = 0;
+								$success_count = 0;
+								$the_submissions = array();
 
-							while ( $submission_history_query->have_posts() ){ //We only want to output this once
-								$submission_history_query->the_post();
+								while ( $submission_history_query->have_posts() ){ //We only want to output this once
+									$submission_history_query->the_post();
 
-								$invalid_form_data = json_decode(strip_tags(get_the_content()));
+									$invalid_form_data = json_decode(strip_tags(get_the_content()));
 
-								$submission_class = 'invalid-submission-item';
-								$submission_label = 'Invalid Submission &raquo;';
-								$submission_icon = '<i class="fa-solid fa-fw fa-xmark"></i>';
+									$submission_class = 'invalid-submission-item';
+									$submission_label = 'Invalid Submission &raquo;';
+									$submission_icon = '<i class="fa-solid fa-fw fa-xmark"></i>';
 
-								if ( get_post_status() == 'submission' && strpos(get_the_title(), '(Invalid)') === false ){ //Only if it was a successful submission originally (and not moved from another status) //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-									$success_count++;
-									$submission_class = 'successful-submission-item';
-									$submission_label = 'Successful Submission &raquo;';
-									$submission_icon = '<i class="fa-solid fa-fw fa-check"></i>';
-								} else {
-									$invalid_count++;
+									if ( get_post_status() == 'submission' && strpos(get_the_title(), '(Invalid)') === false ){ //Only if it was a successful submission originally (and not moved from another status) //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+										$success_count++;
+										$submission_class = 'successful-submission-item';
+										$submission_label = 'Successful Submission &raquo;';
+										$submission_icon = '<i class="fa-solid fa-fw fa-check"></i>';
+									} else {
+										$invalid_count++;
+									}
+
+									if ( get_the_ID() == $post->ID ){
+										$submission_class .= ' this-submission';
+										$submission_label = 'This ' . str_replace(' &raquo;', '', $submission_label);
+										$submission_icon = ( get_post_status() == 'submission' && strpos(get_the_title(), '(Invalid)') === false )? '<i class="fa-solid fa-fw fa-circle-check"></i><i class="fa-solid fa-arrow-right"></i>' : '<i class="fa-solid fa-fw fa-circle-xmark"></i><i class="fa-solid fa-arrow-right"></i>';
+									}
+
+									$the_submissions[] = '<li data-date="' . get_the_date('Y-m-dTh:i:s') . '" class="' . get_post_status() . '-submission-item ' . $submission_class . '"><a href="' . get_edit_post_link(get_the_ID()) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('F j, Y \a\t g:i:sa') . ')</small></li>';
 								}
 
-								if ( get_the_ID() == $post->ID ){
-									$submission_class .= ' this-submission';
-									$submission_label = 'This ' . str_replace(' &raquo;', '', $submission_label);
-									$submission_icon = ( get_post_status() == 'submission' && strpos(get_the_title(), '(Invalid)') === false )? '<i class="fa-solid fa-fw fa-circle-check"></i><i class="fa-solid fa-arrow-right"></i>' : '<i class="fa-solid fa-fw fa-circle-xmark"></i><i class="fa-solid fa-arrow-right"></i>';
+								if ( count($the_submissions) >= 2 ){ //If this user has submitted a form more than once (successfully or not)
+									if ( $invalid_count >= 1 ){ //If any of those submissions were invalid
+										echo '<div class="nebula-cf7-notice notice-warning"><p><i class="fa-solid fa-fw fa-circle-xmark color-invalid"></i> <strong>User had ' . $invalid_count . ' invalid attempt(s)!</strong> This user attempted to submit forms at least <strong>' . $invalid_count . ' time(s)</strong>.<ol>' . implode($the_submissions) . '</ol></p></div>';
+									} else { //Otherwise, all submissions were successful
+										echo '<div class="nebula-cf7-notice notice-success"><p><i class="fa-solid fa-fw fa-check-double color-submission"></i> <strong>User submitted multiple times.</strong> This user has submitted at least <strong>' . count($the_submissions) . ' forms</strong> successfully.<ol>' . implode($the_submissions) . '</ol></p></div>';
+									}
 								}
 
-								$the_submissions[] = '<li data-date="' . get_the_date('Y-m-dTh:i:s') . '" class="' . get_post_status() . '-submission-item ' . $submission_class . '"><a href="' . get_edit_post_link(get_the_ID()) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('F j, Y \a\t g:i:sa') . ')</small></li>';
+								if ( $is_invalid ){
+									if ( $success_count == 0 ){
+										echo '<div class="nebula-cf7-notice notice-error"><p><i class="fa-solid fa-fw fa-user-xmark text-danger"></i> <strong class="text-danger">User may have abandoned after failure!</strong> This user may <strong>not</strong> have submitted successfully after receiving these validation errors.</p></div>'; //"May" because if the email address was the one that was invalid, that may cause the query to return an empty result (since the post title relies on this)
+									} else {
+										echo '<div class="nebula-cf7-notice notice-success"><p><i class="fa-solid fa-fw fa-circle-check text-success"></i> <strong class="text-success">User was eventually successful!</strong> This user was able to fix these validation errors and submit successfully after this. <a href="' . get_edit_post_link(get_the_ID()) . '">View the successful submission &raquo;</a></p></div>';
+									}
+								}
+
+								wp_reset_postdata();
 							}
-
-							if ( count($the_submissions) >= 2 ){ //If this user has submitted a form more than once (successfully or not)
-								if ( $invalid_count >= 1 ){ //If any of those submissions were invalid
-									echo '<div class="nebula-cf7-notice notice-warning"><p><i class="fa-solid fa-fw fa-circle-xmark color-invalid"></i> <strong>User had ' . $invalid_count . ' invalid attempt(s)!</strong> This user attempted to submit forms at least <strong>' . $invalid_count . ' time(s)</strong>.<ol>' . implode($the_submissions) . '</ol></p></div>';
-								} else { //Otherwise, all submissions were successful
-									echo '<div class="nebula-cf7-notice notice-success"><p><i class="fa-solid fa-fw fa-check-double color-submission"></i> <strong>User submitted multiple times.</strong> This user has submitted at least <strong>' . count($the_submissions) . ' forms</strong> successfully.<ol>' . implode($the_submissions) . '</ol></p></div>';
-								}
-							}
-
-							if ( $is_invalid ){
-								if ( $success_count == 0 ){
-									echo '<div class="nebula-cf7-notice notice-error"><p><i class="fa-solid fa-fw fa-user-xmark text-danger"></i> <strong class="text-danger">User may have abandoned after failure!</strong> This user may <strong>not</strong> have submitted successfully after receiving these validation errors.</p></div>'; //"May" because if the email address was the one that was invalid, that may cause the query to return an empty result (since the post title relies on this)
-								} else {
-									echo '<div class="nebula-cf7-notice notice-success"><p><i class="fa-solid fa-fw fa-circle-check text-success"></i> <strong class="text-success">User was eventually successful!</strong> This user was able to fix these validation errors and submit successfully after this. <a href="' . get_edit_post_link(get_the_ID()) . '">View the successful submission &raquo;</a></p></div>';
-								}
-							}
-
-							wp_reset_postdata();
 						}
 
 						if ( $is_caution ){

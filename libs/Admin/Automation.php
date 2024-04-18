@@ -32,7 +32,7 @@ if ( !trait_exists('Automation') ){
 				add_action('admin_init', array($this, 'set_dates'));
 				//add_action('admin_init', array($this, 'force_settings' ), 9); //Uncomment this line to force an initialization date.
 
-				add_action('init', array($this, 'schedule_delete_cf7_expired')); //Add to the WP Cron to regularly delete CF7 Spam/Invalid submissions
+				add_action('init', array($this, 'schedule_cron_events')); //Add to the WP Cron to regularly delete CF7 Spam/Invalid submissions
 				//add_action('nebula_delete_cf7_expired_hook', array($this, 'delete_cf7_expired')); //Moved to nebula.php so WP Cron can run it better. Delete this eventually.
 			}
 		}
@@ -472,8 +472,10 @@ if ( !trait_exists('Automation') ){
 			return true; //Automated Nebula updates are allowed
 		}
 
-		//Add a cron job to regularly delete old invalid/spam posts from nebula_cf7_submits
-		public function schedule_delete_cf7_expired(){
+		//Schedule cron jobs
+		//Place the hook actions related to these in nebula.php
+		public function schedule_cron_events(){
+			//Add a cron job to regularly delete old invalid/spam posts from nebula_cf7_submits
 			if ( !wp_next_scheduled('nebula_delete_cf7_expired_hook') ){
 				wp_schedule_event(time(), 'hourly', 'nebula_delete_cf7_expired_hook'); //This initializes the "hook" action which in turn calls the respective function name
 			}
