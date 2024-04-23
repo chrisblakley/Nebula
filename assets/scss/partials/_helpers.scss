@@ -213,30 +213,23 @@ body.admin-bar {scroll-padding-top: 32px;} //Account for the admin bar height wh
 //Nebula social share buttons
 a.nebula-share-btn {display: inline-block; padding: 5px 7px; border-radius: 3px; font-size: rem(12px); line-height: 1; color: #fff !important; text-shadow: 1px 1px rgb(0 0 0 / 25%); margin-right: 5px;
 	&:last-child {margin-right: 0;}
-	&::before {font-family: "Font Awesome 5 Brands"; margin-right: 4px; text-shadow: none;}
 
 	&.facebook {background: brand(facebook);
-		&::before {content: "\f09a";}
 		&:hover {background: darken(brand(facebook), 15%);}
 	}
-	&.twitter {background: brand(twitter);
-		&::before {content: "\f099";}
+	&.twitter {background: brand(twitter);		
 		&:hover {background: darken(brand(twitter), 15%);}
 	}
-	&.linkedin {background: brand(linkedin);
-		&::before {content: "\f0e1";}
+	&.linkedin {background: brand(linkedin);		
 		&:hover {background: darken(brand(linkedin), 15%);}
 	}
-	&.pinterest{background: brand(pinterest);
-		&::before {content: "\f0d2";}
+	&.pinterest{background: brand(pinterest);		
 		&:hover {background: darken(brand(pinterest), 15%);}
 	}
-	&.email {background: grey;
-		&::before {content: "\f0e0"; @include font-awesome("solid");}
+	&.email {background: grey;		
 		&:hover {background: darken(grey, 15%);}
 	}
-	&.shareapi {background: orange;
-		&::before {content: "\f1e0"; @include font-awesome("solid");}
+	&.shareapi {background: orange;		
 		&:hover {background: darken(orange, 15%);}
 	}
 }
