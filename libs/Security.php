@@ -281,7 +281,7 @@ if ( !trait_exists('Security') ){
 					$this->ga_send_exception('(Security) spammers.txt has no entries!', false);
 				}
 
-				$this->set_cookie('spam_domain', false);
+				$this->set_cookie('spam_domain', false, $options = null);
 			}
 
 			do_action('qm/info', 'Spam Domain Check Performed');
