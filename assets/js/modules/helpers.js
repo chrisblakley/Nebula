@@ -69,9 +69,7 @@ nebula.helpers = async function(){
 	nebula.dom.document.on('keydown', function(e){
 		if ( e.key === 'Escape' ){
 			nebula.dom.document.trigger('esc'); //Trigger a simpler DOM event. Is this helpful?
-
-			//Close modals
-			jQuery('.modal').modal('hide');
+			jQuery('.modal').modal('hide'); //Close modals
 		}
 	});
 

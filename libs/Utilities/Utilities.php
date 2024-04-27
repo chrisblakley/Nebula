@@ -754,7 +754,7 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Create a session and cookie
-		public function set_cookie($name, $value, $expiration){
+		public function set_cookie($name, $value, $expiration=false){
 			$string_value = (string) $value;
 			if ( empty($string_value) ){
 				$string_value = 'false';
@@ -765,6 +765,7 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			$this->super->cookie[$name] = $string_value;
+
 			if ( !headers_sent() ){
 				setcookie(
 					$name,

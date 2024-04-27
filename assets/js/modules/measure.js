@@ -175,12 +175,29 @@ nebula.eventTracking = async function(){
 
 		nebula.attributionTracking();
 
+		//When a pageswap happens via the View Transition API
+		nebula.dom.document.on('pageswap', function(event){
+			if ( event.viewTransition ){ //Ignore if a view transition did not actually occur
+				gtag('event', 'pageswap', {
+					event_category: 'View Transition',
+					event_action: 'Page Swap',
+					event_label: 'From ' + event.oldURL + ' to ' + event.newURL,
+					location: event.newURL,
+					old_url: event.oldURL,
+					new_url: event.newURL
+				});
+			}
+		});
+
 		//When the page is restored from BFCache (which means it is not fully reloaded)
 		window.addEventListener('pageshow', function(event){
 			if ( event.persisted === true ){
-				//Send another pageview if the page is restored from bfcache
-				gtag('event', 'page_view', {
-					type: 'bfcache'
+				//When the page is restored from bfcache
+				gtag('event', 'bfcache', {
+					event_category: 'Back/Forward Cache',
+					event_action: 'Restored',
+					event_label: event.target.location.href,
+					location: event.target.location.href
 				});
 			}
 		});

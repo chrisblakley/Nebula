@@ -1724,22 +1724,30 @@ if ( !trait_exists('Admin') ){
 			}
 		}
 		public function cf7_submissions_columns_orderby($query){
-			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
-				$orderby = $query->get('orderby');
+			if ( $this->is_admin_page() ){
+				if ( $query->get('post_type') == 'nebula_cf7_submits' ){
+					$query->set('orderby', 'ID'); //Default to sort by ID
+					$query->set('order', 'DESC'); //Newest ID first
 
-				if ( is_string($orderby) ){
-					$orderby = strtolower($orderby);
+					$orderby = $query->get('orderby');
 
-					if ( $orderby === 'form_name' ){
-						$query->set('orderby', 'form_name');
-					}
+					if ( is_string($orderby) ){
+						$orderby = strtolower($orderby);
 
-					if ( $orderby === 'page_title' ){
-						$query->set('orderby', 'page_title');
-					}
+						if ( $orderby === 'form_name' ){
+							$query->set('orderby', 'form_name');
+							$query->set('order', 'ASC');
+						}
 
-					if ( $orderby === 'notes' ){
-						$query->set('orderby', 'notes');
+						if ( $orderby === 'page_title' ){
+							$query->set('orderby', 'page_title');
+							$query->set('order', 'ASC');
+						}
+
+						if ( $orderby === 'notes' ){
+							$query->set('orderby', 'notes');
+							$query->set('order', 'ASC');
+						}
 					}
 				}
 			}
@@ -1965,13 +1973,8 @@ if ( !trait_exists('Admin') ){
 								'post_type' => 'nebula_cf7_submits',
 								'post_status' => array('submission', 'invalid'),
 								'posts_per_page' => 15, //Limit the number of results
-								'orderby' => 'date',
+								'orderby' => 'ID', //Use ID to avoid timezone confusion
 								'order' => 'ASC', //Earliest to more recent
-								// 'date_query' => array(
-								// 	'after' => date('Y-m-d', $form_data->_nebula_timestamp-YEAR_IN_SECONDS), //Check over the last year for successful/invalid submissions
-								// 	'before' => date('Y-m-d'),
-								// 	'inclusive' => true,
-								// ),
 								's' => $form_data->_nebula_ga_cid,
 							));
 
@@ -2004,7 +2007,7 @@ if ( !trait_exists('Admin') ){
 										$submission_icon = ( get_post_status() == 'submission' && strpos(get_the_title(), '(Invalid)') === false )? '<i class="fa-solid fa-fw fa-circle-check"></i><i class="fa-solid fa-arrow-right"></i>' : '<i class="fa-solid fa-fw fa-circle-xmark"></i><i class="fa-solid fa-arrow-right"></i>';
 									}
 
-									$the_submissions[] = '<li data-date="' . get_the_date('Y-m-dTh:i:s') . '" class="' . get_post_status() . '-submission-item ' . $submission_class . '"><a href="' . get_edit_post_link(get_the_ID()) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('F j, Y \a\t g:i:sa') . ')</small></li>';
+									$the_submissions[] = '<li data-date="' . get_the_date('Y-m-dTh:i:s') . '" class="' . get_post_status() . '-submission-item ' . $submission_class . '"><a href="' . get_edit_post_link(get_the_ID()) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('l, F j, Y \a\t g:i:sa') . ')</small></li>';
 								}
 
 								if ( count($the_submissions) >= 2 ){ //If this user has submitted a form more than once (successfully or not)
