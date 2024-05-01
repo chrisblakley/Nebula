@@ -2007,7 +2007,7 @@ if ( !trait_exists('Admin') ){
 										$submission_icon = ( get_post_status() == 'submission' && strpos(get_the_title(), '(Invalid)') === false )? '<i class="fa-solid fa-fw fa-circle-check"></i><i class="fa-solid fa-arrow-right"></i>' : '<i class="fa-solid fa-fw fa-circle-xmark"></i><i class="fa-solid fa-arrow-right"></i>';
 									}
 
-									$the_submissions[] = '<li data-date="' . get_the_date('Y-m-dTh:i:s') . '" class="' . get_post_status() . '-submission-item ' . $submission_class . '"><a href="' . get_edit_post_link(get_the_ID()) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('l, F j, Y \a\t g:i:sa') . ')</small></li>';
+									$the_submissions[] = '<li class="' . get_post_status() . '-submission-item ' . $submission_class . '"><a href="' . get_edit_post_link(get_the_ID()) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('l, F j, Y \a\t g:i:sa') . ')</small></li>';
 								}
 
 								if ( count($the_submissions) >= 2 ){ //If this user has submitted a form more than once (successfully or not)
