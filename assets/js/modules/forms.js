@@ -5,6 +5,12 @@ nebula.cf7Functions = async function(){
 		return false;
 	}
 
+	//Indicate a form page on all CF7 forms
+	jQuery('.wpcf7').each(function(){
+		let formID = jQuery(this).attr('id');
+		nebula.updateFormFlow(formID, '[Form Page View]');
+	});
+
 	jQuery('.wpcf7-form p:empty').remove(); //Remove empty <p> tags within CF7 forms
 
 	let formStarted = {};
@@ -22,14 +28,18 @@ nebula.cf7Functions = async function(){
 		let cf7Observer = new IntersectionObserver(function(entries){
 			entries.forEach(function(entry){
 				if ( entry.intersectionRatio > 0 ){
+					let formID = jQuery(entry.target).closest('.wpcf7').attr('id') || jQuery(entry.target).attr('id');
+
 					let thisEvent = {
 						event_name: 'cf7_form_impression',
 						event_category: 'CF7 Form',
 						event_action: 'Impression',
 						event_label: jQuery(entry.target).closest('.wpcf7').attr('id') || jQuery(entry.target).attr('id'),
-						form_id: jQuery(entry.target).closest('.wpcf7').attr('id') || jQuery(entry.target).attr('id'),
+						form_id: formID,
 						non_interaction: true
 					};
+
+					thisEvent.form_flow = nebula.updateFormFlow(formID, '[Impression]');
 
 					nebula.dom.document.trigger('nebula_event', thisEvent);
 					if ( typeof gaEventObject === 'function' ){ //If the page is loaded pre-scrolled this may not be available for the very first intersection
@@ -447,6 +457,10 @@ nebula.cf7Functions = async function(){
 nebula.updateFormFlow = function(formID, field, info = ''){
 	if ( typeof nebula.formFlow === 'undefined' ){
 		nebula.formFlow = {};
+	}
+
+	if ( !formID ){
+		return false;
 	}
 
 	if ( info !== '' ){

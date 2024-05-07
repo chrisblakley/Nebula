@@ -1973,18 +1973,25 @@ if ( !trait_exists('Admin') ){
 								'post_type' => 'nebula_cf7_submits',
 								'post_status' => array('submission', 'invalid'),
 								'posts_per_page' => 15, //Limit the number of results
-								'orderby' => 'ID', //Use ID to avoid timezone confusion
-								'order' => 'ASC', //Earliest to more recent
+								'orderby' => 'ID', //Use ID to avoid timezone confusion (not working for some reason, so adjusting below)
+								'order' => 'ASC', //Earliest to more recent (not working for some reason, so adjusting below)
 								's' => $form_data->_nebula_ga_cid,
 							));
 
 							if ( $submission_history_query->have_posts() ){
+								$submission_history_posts = $submission_history_query->posts;
+
+								//Sort the posts array by ID from lowest to highest (since the orderby and order in the above query is not working)
+    							usort($submission_history_posts, function($a, $b){
+        							return $a->ID-$b->ID;
+    							});
+
 								$invalid_count = 0;
 								$success_count = 0;
 								$the_submissions = array();
 
-								while ( $submission_history_query->have_posts() ){ //We only want to output this once
-									$submission_history_query->the_post();
+								foreach ( $submission_history_posts as $post ){ //Loop through the posts
+									setup_postdata($post); //Set up WP post data
 
 									$invalid_form_data = json_decode(strip_tags(get_the_content()));
 
@@ -2007,7 +2014,7 @@ if ( !trait_exists('Admin') ){
 										$submission_icon = ( get_post_status() == 'submission' && strpos(get_the_title(), '(Invalid)') === false )? '<i class="fa-solid fa-fw fa-circle-check"></i><i class="fa-solid fa-arrow-right"></i>' : '<i class="fa-solid fa-fw fa-circle-xmark"></i><i class="fa-solid fa-arrow-right"></i>';
 									}
 
-									$the_submissions[] = '<li class="' . get_post_status() . '-submission-item ' . $submission_class . '"><a href="' . get_edit_post_link(get_the_ID()) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('l, F j, Y \a\t g:i:sa') . ')</small></li>';
+									$the_submissions[] = '<li class="' . get_post_status() . '-submission-item ' . $submission_class . '" data-id="' . get_the_ID() . '"><a href="' . get_edit_post_link(get_the_ID()) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('l, F j, Y \a\t g:i:sa') . ')</small></li>';
 								}
 
 								if ( count($the_submissions) >= 2 ){ //If this user has submitted a form more than once (successfully or not)
@@ -2026,7 +2033,7 @@ if ( !trait_exists('Admin') ){
 									}
 								}
 
-								wp_reset_postdata();
+								wp_reset_postdata(); //Reset the global post data
 							}
 						}
 

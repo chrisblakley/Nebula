@@ -689,9 +689,18 @@ if ( !trait_exists('Dashboard') ){
 			//PHP memory limit
 			echo '<li><i class="fa-solid fa-fw fa-memory"></i> PHP Memory Limit: <strong>' . ini_get('memory_limit') . '</strong></li>';
 
-			//Persistent Object Caching (memcached)
-			$memcached_enabled = ( extension_loaded('memcached') )? 'Enabled' : 'Disabled';
-			echo '<li><i class="fa-solid fa-fw fa-box"></i> PHP Memcached: <strong>' . $memcached_enabled . '</strong></li>';
+			//Persistent Object Caching (Memcached or Redis)
+			$memory_cache_enabled = '<strong>Disabled</strong>';
+			if ( extension_loaded('memcached') ){
+				$memory_cache_enabled = '<strong>Enabled</strong> <small>(Memcached)</small>';
+			} elseif ( extension_loaded('redis') ){
+				$memory_cache_enabled = '<strong>Enabled</strong> <small>(Redis)</small>';
+			}
+			echo '<li><i class="fa-solid fa-fw fa-box"></i> Memory Cache: ' . $memory_cache_enabled . '</li>';
+
+			//Bytecode Caching aka Opcode Cache (Zend Opcache)
+			$opcode_cache_enabled = ( extension_loaded('Zend OPcache') )? '<strong>Enabled</strong> <small>(Zend OPcache)</small>' : '<strong class="highlight-bad">Disabled</strong>';
+			echo '<li><i class="fa-solid fa-fw fa-box"></i> Opcode Cache: ' . $opcode_cache_enabled . '</li>';
 
 			//Theme directory size(s)
 			if ( is_child_theme() ){

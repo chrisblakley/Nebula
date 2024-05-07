@@ -73,6 +73,9 @@ th#id {width: 50px;}
 
 //Dev Metabox
 #nebula_developer_info {
+	.highlight-good {color: $success_color;}
+	.highlight-bad {color: $danger_color;}
+
 	.secured-connection {
 		i, svg {color: $success_color;}
 	}
