@@ -180,7 +180,15 @@
 			}, $speculative_pages)); ?>]
 		}, {
 			"source": "document",
-			"where": {"href_matches": "/*\\?*#*"},
+			"where": {
+				"and": [
+					{"href_matches": "/*"},
+					{"not": {"href_matches": "/wp-admin"}},
+					{"not": {"href_matches": ".xml"}},
+					{"not": {"selector_matches": ".no-prerender"}},
+					{"not": {"selector_matches": "[rel=nofollow]"}}
+				]
+			},
 			"eagerness": "moderate"
 		}]
 	}

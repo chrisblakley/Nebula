@@ -483,7 +483,7 @@ if ( !trait_exists('Shortcodes') ){
 					</h5>
 				</div>
 
-				<div id="collapse' . $unique_id . '" aria-labelledby="heading' . $unique_id . '" class="collapse ' . esc_attr($default) . ' ' . esc_attr($class) . '">
+				<div id="collapse' . $unique_id . '" class="collapse ' . esc_attr($default) . ' ' . esc_attr($class) . '">
 					<p class="card-body">' . $content . '</p>
 				</div>
 			</div>';

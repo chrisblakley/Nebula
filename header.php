@@ -37,7 +37,7 @@
 					</div><!--/row-->
 				</div>
 
-				<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas-menu" aria-labelledby="offcanvas-menu-label">
+				<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas-menu">
 					<?php nebula()->timer('Offcanvas Menu'); ?>
 					<div class="offcanvas-header">
 						<h5 class="offcanvas-title" id="offcanvas-menu-label"><?php echo apply_filters('nebula_offcanvas_menu_title', __('Menu', 'nebula')); ?></h5>
