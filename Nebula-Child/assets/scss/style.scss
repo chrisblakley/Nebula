@@ -26,3 +26,6 @@
 @import "header";
 @import "sidebar";
 @import "footer";
+
+//Enable View Transitions
+@view-transition {navigation: auto;}

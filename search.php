@@ -16,7 +16,7 @@
 <?php get_template_part('inc/nebula_drawer'); ?>
 
 <?php nebula()->timer('Search Template'); ?>
-<section id="content-section">
+<main id="content-section" role="main">
 	<div class="container">
 		<div class="row">
 			<div class="col">
@@ -24,7 +24,7 @@
 			</div><!--/col-->
 		</div><!--/row-->
 		<div class="row">
-			<main id="top" class="col" role="main">
+			<div id="top" class="col">
 				<?php if ( have_posts() ): ?>
 					<div id="searchresults">
 						<?php get_template_part('loop', 'search'); ?>
@@ -35,12 +35,12 @@
 					<p class="no-search-results"><?php _e('No search results.', 'nebula'); ?></p>
 					<?php do_action('nebula_no_search_results'); ?>
 				<?php endif; ?>
-			</main><!--/col-->
+			</div><!--/col-->
 
 			<?php get_sidebar(); ?>
 		</div><!--/row-->
 	</div><!--/container-->
-</section>
+</main>
 <?php nebula()->timer('Search Template', 'end'); ?>
 
 <?php get_footer(); ?>

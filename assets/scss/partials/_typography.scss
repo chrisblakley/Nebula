@@ -2,13 +2,15 @@
 // Typography
 // ===========================
 
-h1, h2, h3, h4, h5, h6 {line-height: 1.15em; margin-bottom: 0.5em;
+h1, h2, h3, h4, h5, h6 {line-height: 1.15em; margin-bottom: 0.5em; text-wrap: balance;
 	a {color: $primary_color;}
 }
 
 p, li, dt, dl, div {line-height: 1.625em;}
 span {font-size: inherit;}
 
-blockquote {hanging-punctuation: first last;} //Only available in Safari
+blockquote {text-wrap: balance; hanging-punctuation: first last;} //Hanging punctuation only available in Safari
 
-::target-text {background: rgb(0 120 171 / 20%);} //Style text fragment highlights
+//::target-text {background: rgb(0 120 171 / 20%);} //Style text fragment highlights. Note: Deactivated due to slow performance when recalculating styles (~2.7ms).
+
+.text-balanced {white-space: unset; text-wrap: balance;}

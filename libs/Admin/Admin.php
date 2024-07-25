@@ -36,6 +36,9 @@ if ( !trait_exists('Admin') ){
 				add_filter('wp_check_filetype_and_ext', array($this, 'allow_svg_uploads'), 10, 4);
 
 				add_action('_core_updated_successfully', array($this, 'log_core_wp_updates'), 10, 2); //This happens after successful WP core update
+				add_action('activated_plugin', array($this, 'log_plugin_activated'), 10, 2);
+				add_action('deactivated_plugin', array($this, 'log_plugin_deactivated'), 10, 2);
+				add_action('upgrader_process_complete', array($this, 'log_plugin_updated'), 10, 2);
 
 				if ( current_user_can('publish_posts') ){
 					add_action('admin_action_duplicate_post_as_draft', array($this, 'duplicate_post_as_draft'));
@@ -144,6 +147,8 @@ if ( !trait_exists('Admin') ){
 				add_filter('update_footer', array($this, 'change_admin_footer_right'), 11);
 				add_action('load-post.php', array($this, 'post_meta_boxes_setup'));
 				add_action('load-post-new.php', array($this, 'post_meta_boxes_setup'));
+
+				add_action( 'debug_information', array($this, 'site_health_info'));
 			}
 
 			//Login Page
@@ -161,7 +166,7 @@ if ( !trait_exists('Admin') ){
 
 			//Disable Admin Bar (and WP Update Notifications) for everyone but administrators (or specific users)
 			if ( (($this->is_dev(true) || current_user_can('manage_options')) && $this->get_option('admin_bar')) || $this->is_admin_page() ){ //If the admin bar Nebula option is allowing it to show (or viewing an admin page)
-				add_action('wp_before_admin_bar_render', array($this, 'remove_admin_bar_logo'), 0);
+				add_action('wp_before_admin_bar_render', array($this, 'admin_bar_modifications'), 0);
 				add_action('admin_bar_menu', array($this, 'admin_bar_menus'), 800); //Add Nebula menus to Admin Bar
 				add_action('get_header', array($this, 'remove_admin_bar_bump')); //TODO "Nebula" 0: Possible to remove and add directly remove action here
 				add_action('wp_after_admin_bar_render', array($this, 'admin_bar_style_script_overrides'), 11);
@@ -216,7 +221,15 @@ if ( !trait_exists('Admin') ){
 		//Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
 		public function admin_favicon(){
 			$cache_buster = ( $this->is_debug() )? '?r' . random_int(100000, 999999) : '';
-			echo '<link rel="shortcut icon" href="' . get_theme_file_uri('/assets/img/meta/favicon.ico') . $cache_buster . '" />';
+
+ 			if ( has_site_icon() ){ //Prefer the Customizer icons if they exist
+				echo '<link rel="shortcut icon" type="image/png" sizes="16x16" href="' . get_site_icon_url(16, get_theme_file_uri('/assets/img/meta') . '/favicon-16x16.png') . $cache_buster . '" />';
+				echo '<link rel="shortcut icon" type="image/png" sizes="32x32" href="' . get_site_icon_url(32, get_theme_file_uri('/assets/img/meta') . '/favicon-32x32.png') . $cache_buster . '" />';
+ 			} else {
+				echo '<link rel="shortcut icon" type="image/png" sizes="16x16" href="' . get_theme_file_uri('/assets/img/meta') . '/favicon-16x16.png' . $cache_buster . '" />';
+				echo '<link rel="shortcut icon" type="image/png" sizes="32x32" href="' . get_theme_file_uri('/assets/img/meta') . '/favicon-32x32.png' . $cache_buster . '" />';
+				echo '<link rel="shortcut icon" href="' . get_theme_file_uri('/assets/img/meta/favicon.ico') . $cache_buster . '" />';
+			}
 		}
 
 		//Add classes to the admin body
@@ -522,11 +535,20 @@ if ( !trait_exists('Admin') ){
 			<?php }
 		}
 
-		public function remove_admin_bar_logo() {
+		public function admin_bar_modifications() {
 			if ( is_admin_bar_showing() ){
 				global $wp_admin_bar;
-				$wp_admin_bar->remove_menu('wp-logo');
+
+				//Remove logos and other extraneous nodes from the WP admin bar
+				$wp_admin_bar->remove_menu('wp-logo'); //Remove the WordPress logo
 				$wp_admin_bar->remove_menu('wpseo-menu'); //Remove Yoast SEO from admin bar
+
+				//Change "View" to "Preview" when posts are unpublished
+				$post_node = $wp_admin_bar->get_node('preview');
+				if ( $post_node ){ //If the node exists
+					$post_node->title = str_replace('View', 'Preview', $post_node->title); //Change the text from "View" to "Preview"
+					$wp_admin_bar->add_node($post_node); //Re-add the node to the admin bar
+				}
 			}
 		}
 
@@ -1211,6 +1233,38 @@ if ( !trait_exists('Admin') ){
 			$message = '<p>WordPress core has been updated to ' . $new_wp_version . ' for ' . get_bloginfo('name') . ' (' . home_url('/') . ') by ' . $current_user->display_name . ' on ' . date('F j, Y') . ' at ' . date('g:ia') . '. The previous version was ' . $old_wp_version . '.</p>';
 
 			$this->send_email_to_admins($subject, $message);
+		}
+
+		//Log when a plugin is activated
+		public function log_plugin_activated($plugin, $network_wide){
+			$plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin);
+			$plugin_name = $plugin_data['Name'];
+			$plugin_version = $plugin_data['Version'];
+
+			$this->add_log('Plugin activated: ' . $plugin_name . ' (Version: ' . $plugin_version . ')', 6);
+		}
+
+		//Log when a plugin is deactivated
+		public function log_plugin_deactivated($plugin, $network_wide){
+			$plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin);
+			$plugin_name = $plugin_data['Name'];
+			$plugin_version = $plugin_data['Version'];
+
+			$this->add_log('Plugin deactivated: ' . $plugin_name . ' (Version: ' . $plugin_version . ')', 6);
+		}
+
+		//Log when a plugin is updated
+		public function log_plugin_updated($upgrader_object, $options){
+			if ( $options['type'] == 'plugin' && $options['action'] == 'update' ){
+				// Loop through each plugin being updated
+				foreach ($options['plugins'] as $plugin) {
+					$plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin);
+					$plugin_name = $plugin_data['Name'];
+					$plugin_version = $plugin_data['Version'];
+
+					$this->add_log('Plugin updated: ' . $plugin_name . ' (To version: ' . $plugin_version . ')', 4); //Level 4 so these will be removed when logs are cleaned
+				}
+			}
 		}
 
 		//Send an email to the current user and site admin that Nebula has been updated.
@@ -2442,6 +2496,87 @@ if ( !trait_exists('Admin') ){
 			}
 
 			return $where;
+		}
+
+		public function site_health_info($debug_info){
+			$fields = array();
+
+			/*
+				Basically the same things that are in the metaboxes options file... I don't love that this is redundant... Maybe the "Diagnostic" nebula options just links to the site health page with Nebula expanded? If so, logs metabox would need a new home– maybe administrative?
+				Maybe this just gets limited to basic stuff and the diagnostics can stay in nebula options... could even provide a link to detailed diagnostics from here... some of these are simple enough that maybe duplicating isnt even that big of a deal, though.
+				The *RIGHT* way to do this would be to have 1 function that preps all of the data for all 3 of these "output locations" and then these functions just call that to build the array.
+				- last nebula update
+				- core wp update notifications
+				- core wp admin notifications
+				- initial nebula version at install
+				- critical css
+				- nebula logs
+				- cf7 form capture? maybe only if spam capture is enabled?
+				- admin bar
+				- jquery override or no
+				- google analytics consent
+				- cookie notification text
+				- dequeuing styles/scripts?
+			*/
+
+			$fields['is_multisite'] = array(
+				'label' => 'Multisite?',
+				'value' => ( is_multisite() )? 'Yes' : 'No',
+			);
+
+			global $wp_version;
+			$fields['wordpress_version'] = array(
+				'label' => 'WordPress Version',
+				'value' => $wp_version,
+			);
+
+			$fields['nebula_version'] = array(
+				'label' => 'Nebula Version',
+				'value' => $this->version('full') . ' (Committed on ' . $this->version('date') . ')',
+			);
+
+			// $nebula_initialized = $this->get_option('initialized');
+			// $fields['initialization_date'] = array(
+			// 	'label' => 'Nebula Initialization Date',
+			// 	'value' => date('F j, Y', $nebula_initialized) . ' at ' . date('g:ia', $nebula_initialized) . ' (' . human_time_diff($nebula_initialized) . ' ago)',
+			// );
+
+			$fields['sass'] = array(
+				'label' => 'Sass Enabled?',
+				'value' => ( $this->get_option('scss') )? 'Yes' : 'No',
+			);
+
+			// $nebula_last_sass = $this->get_option('scss_last_processed');
+			// $fields['last_sass'] = array(
+			// 	'label' => 'Sass Last Processed',
+			// 	'value' => date('F j, Y', $nebula_last_sass) . ' at ' . date('g:ia', $nebula_last_sass) . ' (' . human_time_diff($nebula_last_sass) . ' ago)',
+			// );
+
+			$fields['ga_measurement_id'] = array(
+				'label' => 'GA Measurement ID',
+				'value' => $this->get_option('ga_measurement_id'),
+			);
+
+			$fields['gtm_id'] = array(
+				'label' => 'GTM ID',
+				'value' => $this->get_option('gtm_id'),
+			);
+
+			$fields['service_worker'] = array(
+				'label' => 'Service Worker',
+				'value' => ( $this->get_option('service_worker') )? 'Yes' : 'No',
+			);
+
+			//Add more here...
+
+			//Now add the fields to the main parent item
+			$debug_info['nebula'] = array(
+				'label' => 'Nebula',
+				'description' => 'Various Nebula options, functionalities, and data that can be a helpful reference. See more in the <a href="index.php">Developer Information metabox (WP Dashboard)</a> and <a href="themes.php?page=nebula_options&tab=diagnostic">Nebula Diagnostics (Nebula Options)</a>',
+				'fields' => $fields,
+			);
+
+			return $debug_info;
 		}
 	}
 }

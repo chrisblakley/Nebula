@@ -8,7 +8,8 @@
 
 html {height: auto; font-size: 16px; overflow-x: hidden; scroll-behavior: smooth;} //Declare font-size in px here only. Use rem or rem() Sass function everywhere else.
 body {overflow-x: hidden; background: $background_color; padding: env(safe-area-inset); -webkit-font-smoothing: antialiased;} //@todo "Nebula" 0: Overflow hidden breaks position sticky... Without it, horizontal scroll happens...
-::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 15%), 0.3);}
+
+//::selection {background: lighten($primary_color, 50%); background: rgba(lighten($primary_color, 15%), 0.3);} //Note: Deactivated due to slow performance when recalculating styles (~2.3ms).
 
 img,
 svg {vertical-align: middle; max-width: 100%; height: auto;
@@ -29,6 +30,10 @@ a {text-decoration: none;}
 	&:hover,
 	&:focus,
 	&:active {text-decoration: none;}
+
+	//Differentiate text links within articles with an underline for accessibility
+	#content-section article p &,
+	#content-section article li & {text-decoration: underline; text-decoration-style: dotted;}
 }
 
 .screen-reader-text {clip: rect(1px, 1px, 1px, 1px); position: absolute !important; height: 1px; width: 1px; overflow: hidden;}

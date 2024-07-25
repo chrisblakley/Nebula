@@ -1004,12 +1004,13 @@ if ( !trait_exists('Utilities') ){
 
 		//Format a filesize to an appropriate unit
 		public function format_bytes($bytes, $precision=1){
-			$units = array('b', 'kb', 'mb', 'gb', 'tb');
+			$units = array('b', 'kb', 'mb', 'gb', 'tb', 'pb');
 			$bytes = max($bytes, 0);
 			$base = ( $bytes )? log($bytes) : 0;
 			$pow = floor($base/log(1024));
 			$pow = min($pow, count($units)-1);
 			$bytes = $bytes/pow(1024, $pow);
+
 			return round($bytes, $precision) . $units[$pow];
 		}
 

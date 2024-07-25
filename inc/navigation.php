@@ -1,7 +1,7 @@
 <?php nebula()->timer('Navigation (Include)'); ?>
-<div id="navigation-section" class="mp-<?php echo get_theme_mod('menu_position', 'over'); ?>">
+<section id="navigation-section" class="mp-<?php echo get_theme_mod('menu_position', 'over'); ?>">
 	<?php if ( has_nav_menu('utility') ): ?>
-		<div id="utilitynavcon">
+		<div id="utilitynavcon" role="navigation">
 			<div class="container">
 				<div class="row">
 					<div class="col">
@@ -15,7 +15,7 @@
 		</div>
 	<?php endif; ?>
 
-	<div id="logonavcon">
+	<div id="logonavcon" role="navigation">
 		<div class="container">
 			<div class="row align-items-center">
 				<div class="col-lg-4 logocon">
@@ -39,5 +39,5 @@
 			</div><!--/row-->
 		</div><!--/container-->
 	</div>
-</div>
+</section>
 <?php nebula()->timer('Navigation (Include)', 'end'); ?>

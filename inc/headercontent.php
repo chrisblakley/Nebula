@@ -1,5 +1,5 @@
 <?php nebula()->timer('Header Content (Include)'); ?>
-<section id="bigheadingcon">
+<section id="bigheadingcon" class="hero-area" role="complementary">
 	<div class="custom-color-overlay"></div>
 
 	<?php if ( get_theme_mod('menu_position', 'over') === 'over' ): ?>

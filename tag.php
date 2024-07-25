@@ -16,7 +16,7 @@
 <?php get_template_part('inc/nebula_drawer'); ?>
 
 <?php nebula()->timer('Tag Template'); ?>
-<section id="content-section">
+<main id="content-section" role="main">
 	<div class="container">
 		<div class="row">
 			<div class="col">
@@ -24,14 +24,14 @@
 			</div><!--/col-->
 		</div><!--/row-->
 		<div class="row">
-			<div id="top" class="col-md" role="main">
+			<div id="top" class="col-md">
 				<?php get_template_part('loop', 'tag'); ?>
 			</div><!--/col-->
 
 			<?php get_sidebar(); ?>
 		</div><!--/row-->
 	</div><!--/container-->
-</section>
+</main>
 <?php nebula()->timer('Tag Template', 'end'); ?>
 
 <?php get_footer(); ?>

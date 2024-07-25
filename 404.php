@@ -16,7 +16,7 @@
 <?php get_template_part('inc/nebula_drawer'); ?>
 
 <?php nebula()->timer('404 Template'); ?>
-<section id="content-section">
+<main id="content-section" role="main">
 	<div class="container">
 		<div class="row">
 			<div class="col">
@@ -24,7 +24,7 @@
 			</div><!--/col-->
 		</div><!--/row-->
 		<div class="row">
-			<main id="top" class="col" role="main">
+			<div id="top" class="col">
 				<article id="post-0" class="post error404 not-found">
 					<?php if ( get_theme_mod('title_location') === 'content' ): ?>
 						<h1 class="page-title"><?php _e('Not Found', 'nebula'); ?></h1>
@@ -58,12 +58,12 @@
 
 					<?php do_action('nebula_404_content'); ?>
 				</article>
-			</main><!--/col-->
+			</div><!--/col-->
 
 			<?php get_sidebar(); ?>
 		</div><!--/row-->
 	</div><!--/container-->
-</section>
+</main>
 <?php nebula()->timer('404 Template', 'end'); ?>
 
 <?php get_footer(); ?>

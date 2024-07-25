@@ -93,8 +93,8 @@ if ( !trait_exists('Functions') ){
 					define('DONOTCACHEPAGE', true); //Tell other plugins not to cache this page
 				}
 
-				add_filter('style_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
-				add_filter('script_loader_src', array($this, 'add_debug_query_arg'), 500, 1);
+				add_filter('style_loader_src', array($this, 'add_debug_query_args'), 500, 2);
+				add_filter('script_loader_src', array($this, 'add_debug_query_args'), 500, 2);
 				add_action('send_headers', array($this, 'clear_site_data'));
 				add_action('send_headers', 'nocache_headers'); //WP Core function that adds nocache headers
 				add_action('shutdown', array($this, 'flush_rewrite_on_debug')); //Just on debug, not when auditing
@@ -1614,7 +1614,7 @@ if ( !trait_exists('Functions') ){
 
 			$placeholder = ( get_search_query() )? get_search_query() : __('Search', 'nebula');
 
-			$form = '<form id="searchform" class="row gx-2 ignore-form" role="search" method="get" action="' . home_url('/') . '">
+			$form = '<search><form id="searchform" class="row gx-2 ignore-form" role="search" method="get" action="' . home_url('/') . '">
 						<div class="col">
 							<div class="input-group">
 								<div class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></div>
@@ -1627,7 +1627,7 @@ if ( !trait_exists('Functions') ){
 				$form .= '<div class="col"><button id="searchsubmit" class="btn btn-brand wp_search_submit mb-2" type="submit">' . __('Submit', 'nebula') . '</button></div>';
 			}
 
-			$form .= '</form>';
+			$form .= '</form></search>';
 
 			return $form;
 		}
@@ -1641,7 +1641,7 @@ if ( !trait_exists('Functions') ){
 			$override = apply_filters('pre_nebula_hero_search', null, $placeholder);
 			if ( isset($override) ){return $override;}
 
-			$form = '<div id="nebula-hero-formcon">
+			$form = '<search id="nebula-hero-formcon">
 					<form id="nebula-hero-search" class="form-group search ignore-form" method="get" action="' . home_url('/') . '" role="search">
 						<div class="input-group">
 							<i class="fa-solid fa-magnifying-glass"></i>
@@ -1649,7 +1649,7 @@ if ( !trait_exists('Functions') ){
 							<input id="nebula-hero-search-input" type="search" class="form-control open input search nofade ignore-form" name="s" placeholder="' . $placeholder . '" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" x-webkit-speech />
 						</div>
 					</form>
-				</div>';
+				</search>';
 
 			return $form;
 		}
@@ -2465,7 +2465,7 @@ if ( !trait_exists('Functions') ){
 		//Explicitly exclude certain posts/types from Relevanssi search
 		public function exclude_from_relevanssi($post_ok, $post_id){
 			//If this is an ignored post type
-			$ignore_post_types = apply_filters('nebula_autocomplete_ignore_types', array('nebula_cf7_submits')); //Allow post types to be globally ignored from autocomplete search
+			$ignore_post_types = apply_filters('nebula_autocomplete_ignore_types', array('nebula_cf7_submits')); //Allow post types to be globally ignored from relevanssi/autocomplete search
 			if ( in_array(get_post_type($post_id), $ignore_post_types) ){
 				return false;
 			}
@@ -3494,9 +3494,11 @@ if ( !trait_exists('Functions') ){
 			echo $this->get_option('arbitrary_code_footer');
 		}
 
-		//Get fresh resources when debugging
-		public function add_debug_query_arg($src){
-			return add_query_arg('debug', str_replace('.', '', $this->version('raw')) . '-' . random_int(100000, 999999), $src); //PHP 7.4 use numeric separators here
+		//Get fresh resources when debugging and identify asset registration information
+		public function add_debug_query_args($src, $handle){
+			$src = add_query_arg('handle', $handle, $src); //Append the registration "handle" to more easily identify each
+			$src = add_query_arg('debug', str_replace('.', '', $this->version('raw')) . '-' . random_int(100000, 999999), $src); //Add a debug parameter to to ensure no cache //PHP 7.4 use numeric separators here
+			return $src;
 		}
 
 		//Tell the browser to clear caches when the debug query string is present

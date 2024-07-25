@@ -111,20 +111,20 @@
 	</div><!--/row-->
 </section><!--/container-->
 
-<section id="content-section">
+<main id="content-section" role="main">
 	<div class="container">
 		<div class="row">
-			<main id="top" class="col-md" role="main">
+			<div id="top" class="col-md">
 				<?php
 					rewind_posts(); //Ensure the first (latest) post appears
 					get_template_part('loop', 'author');
 				?>
-			</main><!--/col-->
+			</div><!--/col-->
 
 			<?php get_sidebar(); ?>
 		</div><!--/row-->
 	</div><!--/container-->
-</section><!--/content-section-->
+</main><!--/content-section-->
 <?php nebula()->timer('Author Template', 'end'); ?>
 
 <?php get_footer(); ?>

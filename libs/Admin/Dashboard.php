@@ -692,14 +692,14 @@ if ( !trait_exists('Dashboard') ){
 			//Persistent Object Caching (Memcached or Redis)
 			$memory_cache_enabled = '<strong>Disabled</strong>';
 			if ( extension_loaded('memcached') ){
-				$memory_cache_enabled = '<strong>Enabled</strong> <small>(Memcached)</small>';
+				$memory_cache_enabled = '<strong>Memcached</strong>';
 			} elseif ( extension_loaded('redis') ){
-				$memory_cache_enabled = '<strong>Enabled</strong> <small>(Redis)</small>';
+				$memory_cache_enabled = '<strong>Redis</strong>';
 			}
 			echo '<li><i class="fa-solid fa-fw fa-box"></i> Memory Cache: ' . $memory_cache_enabled . '</li>';
 
 			//Bytecode Caching aka Opcode Cache (Zend Opcache)
-			$opcode_cache_enabled = ( extension_loaded('Zend OPcache') )? '<strong>Enabled</strong> <small>(Zend OPcache)</small>' : '<strong class="highlight-bad">Disabled</strong>';
+			$opcode_cache_enabled = ( extension_loaded('Zend OPcache') )? '<strong>Zend OPcache</strong>' : '<strong class="highlight-bad">Disabled</strong>';
 			echo '<li><i class="fa-solid fa-fw fa-box"></i> Opcode Cache: ' . $opcode_cache_enabled . '</li>';
 
 			//Theme directory size(s)

@@ -86,10 +86,10 @@
 
 <?php get_template_part('inc/nebula_drawer'); ?>
 
-<section id="content-section">
+<main id="content-section" role="main">
 	<div class="container">
 		<div class="row">
-			<main id="top" class="col" role="main">
+			<div id="top" class="col">
 				<?php if ( get_option('show_on_front') === 'posts' ): //"Your latest posts" ?>
 					<?php get_template_part('loop', 'index'); ?>
 				<?php else: //"A static page" ?>
@@ -101,12 +101,12 @@
 						</article>
 					<?php endwhile; ?>
 				<?php endif; ?>
-			</main><!--/col-->
+			</div><!--/col-->
 
 			<?php get_sidebar(); ?>
 		</div><!--/row-->
 	</div><!--/container-->
-</section>
+</main>
 <?php nebula()->timer('Front Page Template', 'end'); ?>
 
 <?php get_footer(); ?>

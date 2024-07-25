@@ -16,7 +16,7 @@
 <?php get_template_part('inc/nebula_drawer'); ?>
 
 <?php nebula()->timer('Page Template'); ?>
-<section id="content-section">
+<main id="content-section" role="main">
 	<div class="container">
 		<div class="row">
 			<div class="col">
@@ -24,7 +24,7 @@
 			</div><!--/col-->
 		</div><!--/row-->
 		<div class="row">
-			<main id="top" class="col" role="main">
+			<div id="top" class="col">
 				<?php if ( have_posts() ) while ( have_posts() ): the_post(); ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 						<?php if ( has_post_thumbnail() && get_theme_mod('featured_image_location') === 'content' ): ?>
@@ -42,12 +42,12 @@
 
 					<?php comments_template(); ?>
 				<?php endwhile; ?>
-			</main><!--/col-->
+			</div><!--/col-->
 
 			<?php get_sidebar(); ?>
 		</div><!--/row-->
 	</div><!--/container-->
-</section>
+</main>
 <?php nebula()->timer('Page Template', 'end'); ?>
 
 <?php get_footer(); ?>
