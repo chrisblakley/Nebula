@@ -1325,7 +1325,7 @@ nebula.eventTracking = async function(){
 				fatal: true
 			});
 			window.dataLayer.push({'event': 'nebula_ajax_error', 'error': errorMessage});
-			nebula.hj('event', thisEvent.event_name);
+			nebula.hj('event', 'AJAX Error');
 			nebula.crm('event', 'AJAX Error');
 		});
 

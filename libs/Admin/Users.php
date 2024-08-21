@@ -101,7 +101,7 @@ if ( !trait_exists('Users') ){
 			$columns['status'] = 'Last Seen';
 			$columns['id'] = 'ID';
 
-			if ( $this->get_option('ga_tracking_id') || $this->get_option('gtm_id') ){
+			if ( $this->get_option('ga_measurement_id') || $this->get_option('gtm_id') ){
 				$columns['gacid'] = 'GA Client ID'; //This is the last GA CID. It could be different if the user logs in on different computers/browsers.
 			}
 

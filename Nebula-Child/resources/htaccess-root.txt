@@ -1,9 +1,9 @@
 #@TODO: Move to root directory.
 #@TODO: Rename this file to be: .htaccess
 
-############################
+#############################
 # WordPress
-############################
+#############################
 
 #BEGIN WordPress
 <IfModule mod_rewrite.c>
@@ -16,7 +16,7 @@
 </IfModule>
 #END WordPress
 
-###################
+#############################
 #@TODO: Pick one of the following: Force no-www -or- Force www
 #Ensure the WordPress Address and Site Address settings match this choice! (WordPress Admin > Settings > General)
 
@@ -29,12 +29,28 @@
 #RewriteEngine On
 #RewriteCond %{HTTP_HOST} !^www\.
 #RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
-###################
+#############################
 
-############################
+#############################
 # Compression
 # Conditionals for various Apache versions and enabled modules
-############################
+#############################
+
+<IfModule mod_brotli.c>
+	FilterDeclare BROTLI_COMPRESS
+
+	#Specify content types to compress
+	FilterProvider BROTLI_COMPRESS BROTLI "%{CONTENT_TYPE} =~ m#^text/(html|css|plain|xml|x-component)#i"
+	FilterProvider BROTLI_COMPRESS BROTLI "%{CONTENT_TYPE} =~ m#^application/(javascript|json|xml|xhtml+xml|rss+xml|atom+xml|vnd.ms-fontobject|x-font-ttf|x-font-woff|wasm)#i"
+	FilterProvider BROTLI_COMPRESS BROTLI "%{CONTENT_TYPE} =~ m#^image/(svg+xml)#i"
+	FilterProvider BROTLI_COMPRESS BROTLI "%{CONTENT_TYPE} = 'font/opentype'"
+
+	FilterChain BROTLI_COMPRESS
+	FilterProtocol BROTLI_COMPRESS BROTLI change=yes;byteranges=no
+
+	#Brotli compression quality (optional, defaults to 5, range is 0-11)
+	BrotliCompressionQuality 6
+</IfModule>
 
 <IfModule mod_deflate.c>
 	#Force deflate for mangled headers
@@ -144,15 +160,15 @@
 	</IfModule>
 </IfModule>
 
-############################
+#############################
 # Caching
-############################
+#############################
 
 <IfModule mod_expires.c>
 	#Cache files for certain lengths of time
 	#1 Year
 	<FilesMatch "\.(ico|pdf|flv|png|gif|jpg|jpeg|svg|woff|woff2|mp3|css)$">
-		Header set Cache-Control "max-age=31536000, public"
+		Header set Cache-Control "max-age=31536000, stale-while-revalidate=2592000, public"
 	</FilesMatch>
 
 	#1 Week (This is the minimum recommended by Google)
@@ -165,7 +181,7 @@
 	#10 Hours
 	# PHP/HTML here to prevent nonce from expiring in cache
 	<FilesMatch "\.(php|html)$">
-		Header set Cache-Control "max-age=36000, public"
+		Header set Cache-Control "max-age=36000, public, vary: User-Agent"
 	</FilesMatch>
 
 	#Disable Cache for filetypes
@@ -200,16 +216,16 @@
 	</IfVersion>
 </IfModule>
 
-############################
+#############################
 # Redirects
-############################
+#############################
 
 #If in a subdirectory, prepend that directory to all redirects.
 RedirectMatch 301 /wp-content/index.php /
 
-############################
+#############################
 # Files & Connections
-############################
+#############################
 
 <IfModule mod_headers.c>
 	#Keep connections alive
@@ -226,9 +242,9 @@ RedirectMatch 301 /wp-content/index.php /
 	AddType text/javascript js mjs
 </IfModule>
 
-############################
+#############################
 # Security
-############################
+#############################
 
 #Forbid HTTP access to certain WordPress core PHP files
 <IfModule mod_rewrite.c>

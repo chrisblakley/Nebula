@@ -289,6 +289,10 @@
 			if ( nebula()->get_option('pinterest_url') ){
 				$company_same_as .= '"' . nebula()->social_url('pinterest') . '",';
 			}
+
+			if ( nebula()->get_option('wikipedia_url') ){
+				$company_same_as .= '"' . nebula()->social_url('wikipedia') . '",';
+			}
 		?>
 		<?php if ( !empty($company_same_as) ): ?>
 			"sameAs": [

@@ -980,7 +980,7 @@ if ( !trait_exists('Functions') ){
 			}
 		}
 
-		//A consistent way to link to social network profiles
+		//A consistent way to link to social network and other external profiles
 		public function social_link($network){return $this->social_url($network);}
 		public function social_url($network){
 			switch ( strtolower($network) ){
@@ -1007,6 +1007,9 @@ if ( !trait_exists('Functions') ){
 
 				case 'tiktok':
 					return esc_url($this->get_option('tiktok_url'));
+
+				case 'wikipedia':
+					return esc_url($this->get_option('wikipedia_url'));
 
 				default:
 					return false;

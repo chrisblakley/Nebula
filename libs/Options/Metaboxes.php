@@ -13,7 +13,7 @@ if ( !trait_exists('Metaboxes') ){
 				//Metadata
 				add_meta_box('nebula_site_information', 'Site Information', array($this, 'site_information_metabox'), 'nebula_options', 'metadata');
 				add_meta_box('nebula_business_information', 'Business Information', array($this, 'nebula_business_information'), 'nebula_options', 'metadata');
-				add_meta_box('nebula_social_networks', 'Social Networks', array($this, 'nebula_social_networks'), 'nebula_options', 'metadata_side');
+				add_meta_box('nebula_external_profiles', 'External Profiles', array($this, 'nebula_external_profiles'), 'nebula_options', 'metadata_side');
 
 				//Functions
 				add_meta_box('nebula_assets_metabox', 'Assets', array($this, 'nebula_assets_metabox'), 'nebula_options', 'functions_side');
@@ -248,7 +248,7 @@ if ( !trait_exists('Metaboxes') ){
 			do_action('nebula_options_business_information_metabox', $nebula_options);
 		}
 
-		public function nebula_social_networks($nebula_options){
+		public function nebula_external_profiles($nebula_options){
 			?>
 				<div class="form-group">
 					<label for="facebookurl">Facebook</label>
@@ -335,6 +335,16 @@ if ( !trait_exists('Metaboxes') ){
 						<input type="text" name="nebula_options[tiktok_url]" id="tiktok_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['tiktok_url']; ?>" placeholder="https://www.tiktok.com/@example" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your TikTok profile (starting with <code>https://</code> and including the <code>@</code> symbol).</p>
+					<p class="option-keywords">social seo</p>
+				</div>
+
+				<div class="form-group">
+					<label for="wikipedia_url">Wikipedia</label>
+					<div class="input-group">
+						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-wikipedia-w"></i> URL</span></div>
+						<input type="text" name="nebula_options[wikipedia_url]" id="wikipedia_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['wikipedia_url']; ?>" placeholder="https://en.wikipedia.org/wiki/example" />
+					</div>
+					<p class="nebula-help-text short-help form-text text-muted">The full URL of the Wikipedia article associated with your brand (starting with <code>https://</code>).</p>
 					<p class="option-keywords">social seo</p>
 				</div>
 			<?php
@@ -548,7 +558,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="additional_design_references">Additional Design Notes</label>
 					<textarea name="nebula_options[additional_design_references]" id="additional_design_references" class="form-control nebula-validate-textarea" rows="2"><?php echo $nebula_options['additional_design_references']; ?></textarea>
-					<p class="nebula-help-text short-help form-text text-muted">Add design references (such as links to brand guides) to the admin dashboard</p>
+					<p class="nebula-help-text short-help form-text text-muted">Add design references (such as links to brand guides or the names of the designers) to the admin dashboard</p>
 					<p class="option-keywords"></p>
 				</div>
 			<?php
@@ -614,13 +624,6 @@ if ( !trait_exists('Metaboxes') ){
 					<input type="text" name="nebula_options[ga_measurement_id]" id="ga_measurement_id" class="form-control nebula-validate-regex" data-valid-regex="^G-.+$" value="<?php echo $nebula_options['ga_measurement_id']; ?>" placeholder="G-0000000000" />
 					<p class="nebula-help-text short-help form-text text-muted">This will add Google Analytics tracking to the appropriate locations.</p>
 					<p class="option-keywords">remote resource recommended minor page speed impact optimization optimize ga4</p>
-				</div>
-
-				<div class="form-group"><!-- @todo "Nebula" 0: Remove after July 2023 -->
-					<label for="ga_tracking_id">Google Analytics UA Tracking ID <small><em>(Optional)</em></small></label>
-					<input type="text" name="nebula_options[ga_tracking_id]" id="ga_tracking_id" class="form-control nebula-validate-regex" data-valid-regex="^UA-\d+-\d+$" value="<?php echo $nebula_options['ga_tracking_id']; ?>" placeholder="UA-00000000-1" />
-					<p class="nebula-help-text short-help form-text text-muted">The Tracking ID for the <strong>Universal Analytics</strong> property (Not GA4!). This should only be used for data redundancy as <strong>GA will stop collecting this data in July 2023</strong>.</p>
-					<p class="option-keywords">remote resource recommended minor page speed impact optimization optimize universal analytics ua</p>
 				</div>
 
 				<div class="form-group important-option" important-or="ga_measurement_id">
