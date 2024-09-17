@@ -250,32 +250,94 @@ if ( !trait_exists('Security') ){
 				$ip_address = $this->get_ip_address();
 
 				if ( count($spam_domain_array) > 1 ){
+					//Check the Referrer
 					if ( isset($this->super->server['HTTP_REFERER']) && $this->contains(strtolower($this->super->server['HTTP_REFERER']), $spam_domain_array) ){
 						$this->ga_send_exception('(Security) Spam domain prevented. Referrer: ' . $this->super->server['HTTP_REFERER'], true, array('security_note' => 'Spam Referrer'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
-						wp_die();
+						wp_die(
+							'Access forbidden.', //Message
+							'403 Forbidden', //Title
+							array(
+								'response' => 403, //HTTP status code
+								'back_link' => false //Remove the back link
+							)
+						);
 					}
 
+					//Check the Remote Host (the hostname of the client making the request)
 					if ( isset($this->super->server['REMOTE_HOST']) && $this->contains(strtolower($this->super->server['REMOTE_HOST']), $spam_domain_array) ){
 						$this->ga_send_exception('(Security) Spam domain prevented. Hostname: ' . $this->super->server['REMOTE_HOST'], true, array('security_note' => 'Spam Hostname'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
-						wp_die();
+						wp_die(
+							'Access forbidden.', //Message
+							'403 Forbidden', //Title
+							array(
+								'response' => 403, //HTTP status code
+								'back_link' => false //Remove the back link
+							)
+						);
 					}
 
+					//Check the Server Name (the server's domain name)
 					if ( isset($this->super->server['SERVER_NAME']) && $this->contains(strtolower($this->super->server['SERVER_NAME']), $spam_domain_array) ){
 						$this->ga_send_exception('(Security) Spam domain prevented. Server Name: ' . $this->super->server['SERVER_NAME'], true, array('security_note' => 'Spam Server Name'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
-						wp_die();
+						wp_die(
+							'Access forbidden.', //Message
+							'403 Forbidden', //Title
+							array(
+								'response' => 403, //HTTP status code
+								'back_link' => false //Remove the back link
+							)
+						);
 					}
 
+					//Check the Network Hostname (reverse DNS lookup of the client IP address)
 					if ( isset($ip_address) && $this->contains(strtolower(gethostbyaddr($ip_address)), $spam_domain_array) ){
 						$this->ga_send_exception('(Security) Spam domain prevented. Network Hostname: ' . $ip_address, true, array('security_note' => 'Spam Network Hostname'));
 						do_action('nebula_spambot_prevention');
 						header('HTTP/1.1 403 Forbidden');
-						wp_die();
+						wp_die(
+							'Access forbidden.', //Message
+							'403 Forbidden', //Title
+							array(
+								'response' => 403, //HTTP status code
+								'back_link' => false //Remove the back link
+							)
+						);
+					}
+
+					//Check Query String of the requested page URL. Note: Commented out as we are now checking the entire URI below
+					// if ( isset($_SERVER['QUERY_STRING']) && $this->contains(strtolower($_SERVER['QUERY_STRING']), $spam_domain_array) ){
+					// 	$this->ga_send_exception('(Security) Spam domain prevented. Query String: ' . $_SERVER['QUERY_STRING'], true, array('security_note' => 'Spam Query'));
+					// 	do_action('nebula_spambot_prevention');
+					// 	header('HTTP/1.1 403 Forbidden');
+					// 	wp_die(
+					// 		'Access forbidden.', //Message
+					// 		'403 Forbidden', //Title
+					// 		array(
+					// 			'response' => 403, //HTTP status code
+					// 			'back_link' => false //Remove the back link
+					// 		)
+					// 	);
+					// }
+
+					//Check the entire URL of this requested page (including the query string)
+					if ( isset($_SERVER['REQUEST_URI']) && $this->contains(strtolower($_SERVER['REQUEST_URI']), $spam_domain_array) ){
+						$this->ga_send_exception('(Security) Spam domain prevented. URL: ' . $_SERVER['REQUEST_URI'], true, array('security_note' => 'Spam domain in the requested URL'));
+						do_action('nebula_spambot_prevention');
+						header('HTTP/1.1 403 Forbidden');
+						wp_die(
+							'Access forbidden.', //Message
+							'403 Forbidden', //Title
+							array(
+								'response' => 403, //HTTP status code
+								'back_link' => false //Remove the back link
+							)
+						);
 					}
 				} else {
 					$this->ga_send_exception('(Security) spammers.txt has no entries!', false);
@@ -338,6 +400,12 @@ if ( !trait_exists('Security') ){
 			//Add manual and user-added spam domains
 			$manual_nebula_spam_domains = array(
 				'bitcoinpile.com',
+				'84lv.com', //2024
+				'16lv.com', //2024
+				'1-88.vip', //2024
+				'top8.co', //2024
+				'tip8.co', //2024
+				'1-88.live', //2024
 			);
 			$all_spam_domains = apply_filters('nebula_spam_domains', $manual_nebula_spam_domains);
 

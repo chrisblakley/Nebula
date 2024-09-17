@@ -469,7 +469,7 @@ if ( !trait_exists('Metaboxes') ){
 					<input type="hidden" name="nebula_options[spam_domain_prevention]" value="<?php echo $nebula_options['spam_domain_prevention']; ?>">
 					<input id="spam_domain_prevention" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['spam_domain_prevention'])); ?>><label for="spam_domain_prevention">Spam Domain Prevention</label>
 
-					<p class="nebula-help-text short-help form-text text-muted">Block traffic from known spambots and other illegitimate domains. (Default: <?php echo $this->user_friendly_default('spam_domain_prevention'); ?>)</p>
+					<p class="nebula-help-text short-help form-text text-muted">Block traffic from known spambots and other illegitimate domains. Note: This also checks the request URL for these domains. (Default: <?php echo $this->user_friendly_default('spam_domain_prevention'); ?>)</p>
 					<p class="option-keywords">security remote resource recommended minor page speed impact optimization optimize</p>
 				</div>
 
