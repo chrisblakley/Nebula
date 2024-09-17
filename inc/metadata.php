@@ -364,7 +364,58 @@
 <?php endif; ?>
 
 <?php if ( is_singular('post') ): ?>
-	<?php if ( !function_exists('is_product') || (function_exists('is_product') && !is_product()) ): //But not product posts ?>
+	<?php if ( get_post_format() == 'video' ): //For Video pages ?>
+		<script type="application/ld+json">
+			{
+				"@context": "https://schema.org/",
+				"@type": "VideoObject",
+				"mainEntityofPage": {
+					"@type": "WebPage",
+					"@id": "<?php echo esc_url(get_permalink()); ?>"
+				},
+				"name": "<?php echo esc_html(get_the_title()); ?>",
+				"url": "<?php echo esc_url(get_permalink()); ?>",
+
+				<?php $post_thumbnail_meta = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'full'); ?>
+				<?php if ( !empty($post_thumbnail_meta) ): ?>
+					"image": {
+						"@type": "ImageObject",
+						"url": "<?php echo $post_thumbnail_meta[0]; ?>",
+						"width": "<?php echo $post_thumbnail_meta[1]; ?>",
+						"height": "<?php echo $post_thumbnail_meta[2]; ?>"
+					},
+				<?php else: ?>
+					"image": {
+						"@type": "ImageObject",
+						"url": "<?php echo $image_meta_directory; ?>/og-thumb.png",
+						"width": "1200",
+						"height": "600"
+					},
+				<?php endif; ?>
+
+				"uploadDate": "<?php echo get_the_date('c'); ?>",
+				"dateModified": "<?php echo get_the_modified_date('c'); ?>",
+				"author": {
+					<?php if ( nebula()->get_option('author_bios') ): ?>
+						"@type": "Person",
+						"name": "<?php echo the_author_meta('display_name', $post->post_author); ?>"
+					<?php else: ?>
+						"@type": "Organization",
+						"name": "<?php echo nebula()->get_option('site_owner'); ?>"
+					<?php endif; ?>
+				},
+				"publisher": {
+					"@type": "Organization",
+					"name": "<?php echo ( nebula()->get_option('site_owner') )? nebula()->get_option('site_owner') : get_bloginfo('name'); ?>",
+					"logo": {
+						"@type": "ImageObject",
+						"url": "<?php echo nebula()->logo('meta'); ?>"
+					}
+				},
+				"description": "<?php echo nebula()->meta_description(); ?>"
+			}
+		</script>
+	<?php elseif ( !function_exists('is_product') || (function_exists('is_product') && !is_product()) ): //But not product posts ?>
 		<script type="application/ld+json">
 			{
 				"@context": "https://schema.org/",

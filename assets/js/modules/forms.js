@@ -102,6 +102,7 @@ nebula.cf7Functions = async function(){
 				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.form_id + ') Started'}, false);
 				nebula.crm('event', 'Contact Form (' + thisEvent.form_id + ') Started (' + thisEvent.form_field + ')');
+				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_started'})); //This is the event name to use in the GTM custom event trigger
 				formStarted[formID] = true;
 			}
 
@@ -113,7 +114,6 @@ nebula.cf7Functions = async function(){
 
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_started'}));
 			}
 		}
 
@@ -171,7 +171,7 @@ nebula.cf7Functions = async function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent)); //This event is required for the notable form metric!
-			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_submit_attempt'}));
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_submit_attempt'})); //This is the event name to use in the GTM custom event trigger
 			//nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Attempt)'});
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 		} catch {
@@ -209,7 +209,7 @@ nebula.cf7Functions = async function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent)); //This event is required for the notable form metric!
-			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_submit_processing'}));
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_submit_processing'})); //This is the event name to use in the GTM custom event trigger
 			//nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Processing)'});
 			nebula.clarity('track', 'Lead', {content_name: 'Form Submit (Processing)'});
 
@@ -264,7 +264,7 @@ nebula.cf7Functions = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			//gtag('event', 'exception', nebula.gaEventObject(thisEvent)); //This breaks because thisEvent gets modified by gaEventObject()
-			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_invalid'}));
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_invalid'})); //This is the event name to use in the GTM custom event trigger
 			nebula.scrollTo(jQuery('.wpcf7-not-valid').first(), 35); //Scroll to the first invalid input
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unit_tag + ') Invalid'}, false);
 			nebula.crm('event', 'Contact Form (' + thisEvent.unit_tag + ') Invalid');
@@ -291,7 +291,7 @@ nebula.cf7Functions = async function(){
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_invalid'}));
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_invalid'})); //This is the event name to use in the GTM custom event trigger
 			nebula.crm('identify', {'form_contacted': 'CF7 HTML5 Validation Error'});
 		}, 50, 'invalid form');
 	});
@@ -330,7 +330,7 @@ nebula.cf7Functions = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			gtag('event', 'exception', nebula.gaEventObject(thisEvent));
-			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_spam'}));
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_spam'})); //This is the event name to use in the GTM custom event trigger
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unit_tag + ') Submit Spam'}, false);
 			nebula.crm('event', 'Contact Form (' + thisEvent.unit_tag + ') Spam');
 		} catch(error){
@@ -376,7 +376,7 @@ nebula.cf7Functions = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			gtag('event', 'exception', nebula.gaEventObject(thisEvent));
-			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_failed'}));
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_failed'})); //This is the event name to use in the GTM custom event trigger
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unit_tag + ') Submit Failed'}, false);
 			nebula.crm('event', 'Contact Form (' + thisEvent.unit_tag + ') Failed');
 		} catch(error){
@@ -427,7 +427,7 @@ nebula.cf7Functions = async function(){
 				event_category: thisEvent.event_category,
 				event_label: 'Initial form focus until valid submit',
 			});
-			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_submit_success'}));
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_submit_success'})); //This is the event name to use in the GTM custom event trigger
 			nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Success)'});
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unit_tag + ') Submit Success'}, false);

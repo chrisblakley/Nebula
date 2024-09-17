@@ -194,7 +194,7 @@ if ( !trait_exists('Device') ){
 			}
 
 			if ( !empty($this->super->server['HTTP_USER_AGENT']) ){
-				$bot_regex = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http', 'favicon', 'curl', 'coda', 'netcraft');
+				$bot_regex = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http', 'favicon', 'curl', 'coda', 'netcraft'); //Consider 'cloudflare-' as long as it is not ever used in actual users' user agent
 				$all_bot_regex = apply_filters('nebula_bot_regex', $bot_regex);
 				foreach( $all_bot_regex as $bot_regex ){
 					if ( strpos(strtolower($this->super->server['HTTP_USER_AGENT']), $bot_regex) !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8

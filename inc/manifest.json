@@ -16,7 +16,7 @@
         "url": "\/documentation\/functions\/?utm_source=pwa",
         "icons": [
             {
-                "src": "\/home\/gearside\/public_html\/nebula.gearside.com\/wp-content\/plugins\/nebula-docs\/\/images\/pwa-functions.png",
+                "src": "https:\/\/nebula.gearside.com\/wp-content\/plugins\/nebula-docs\/images\/pwa-functions.png",
                 "sizes": "192x192"
             }
         ]
@@ -28,7 +28,7 @@
         "url": "\/faq\/?utm_source=pwa",
         "icons": [
             {
-                "src": "\/home\/gearside\/public_html\/nebula.gearside.com\/wp-content\/plugins\/nebula-docs\/\/images\/pwa-faq.png",
+                "src": "https:\/\/nebula.gearside.com\/wp-content\/plugins\/nebula-docs\/images\/pwa-faq.png",
                 "sizes": "192x192"
             }
         ]

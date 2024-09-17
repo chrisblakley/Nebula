@@ -749,8 +749,8 @@ if ( !trait_exists('Warnings') ){
 				$nebula_warnings = wp_json_encode($this->warnings);
 				?>
 					<style>
-						::spelling-error {text-decoration: wavy red;} /* Coming in Chrome 121 //@todo "Nebula" 0: Does this require contenteditable and/or spellcheck="true"? If so, add it via JS */
-						::grammar-error {text-decoration: wavy green;}
+						::spelling-error {text-decoration: 3px underline wavy red; text-decoration-skip-ink: none;} /* This requires contenteditable on elements */
+						::grammar-error {text-decoration: 3px underline wavy green; text-decoration-skip-ink: none;} /* This requires contenteditable on elements */
 
 						.nebula-audit .audit-desc {position: absolute; bottom: 0; right: 0; color: #fff; background: grey; font-size: 10px; padding: 3px 5px; z-index: 9999;}
 							.nebula-audit .nebula-audit .audit-desc {right: auto; left: 0; top: 0; bottom: auto;}
@@ -1063,21 +1063,40 @@ if ( !trait_exists('Warnings') ){
 										jQuery('#audit-results').append('<p><strong><i class="fa-solid fa-fw fa-times"></i> Found issues: ' + jQuery('#audit-results ul li').length + '<strong></p>');
 									}
 									jQuery('#audit-results').append('<p><small>Note: This does not check for @todo comments. Use the Nebula To-Do Manager in the WordPress admin dashboard to view.</small></p>');
+								});
 
+								//Now add contenteditable to all elements and then focus on each of them to trigger spellcheck
+								jQuery('*').not('#wpadminbar *').not('#audit-results *').not('#query-monitor-main *').each(function(){
+									if ( ['p', 'textarea', 'li', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'label', 'a', 'strong', 'em', 'button', 'blockquote', 'caption', 'dt', 'dd', 'summary', 'figcaption', 'legend'].includes(this.tagName.toLowerCase()) ){
+										jQuery(this).attr('contenteditable', 'true');
+									}
+								});
+
+								//Then loop through each contenteditable element and apply focus to trigger the spelling/grammar checks
+								if ( jQuery('[contenteditable]').length < 1000 ){
+									jQuery('[contenteditable]').each(function(index) {
+										let oThis = jQuery(this);
+
+										setTimeout(function() {
+											oThis.focus();
+
+											if ( index === jQuery('[contenteditable]').length-1 ){ //If this is the last element, scroll to the bottom when done
+												setTimeout(function() {
+													jQuery('#audit-results ul').append('<li><i class="fa-solid fa-fw fa-pencil"></i> Spell check performed on ' + jQuery('[contenteditable]').length + ' text elements.</li>');
+													window.scrollTo({top: document.body.scrollHeight+2000, behavior: 'smooth'});
+												}, 500 + index * 100); //Ensure scrolling happens after the last focus
+											}
+										}, 500 + index * 20); //Delay to ensure spellcheck application
 									});
+								} else {
+									jQuery('#audit-results ul').append('<li><i class="fa-solid fa-fw fa-pencil"></i> Spell check was not performed as there are too many text elements <small>(' + jQuery('[contenteditable]').length + ')</small>.</li>');
+								}
 
 
 
 
 
-
-
-
-
-
-
-
-							}, 1);
+							}, 1); //End setTimeout to init audit checks
 						});
 					</script>
 				<?php

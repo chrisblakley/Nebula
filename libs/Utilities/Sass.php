@@ -510,8 +510,9 @@ if ( !trait_exists('Sass') ){
 			//Calculate the linear channel of a color
 			$scss->registerFunction(
 				'php_linear_channel',
-				function($args, $kwargs){
-					return \ScssPhp\ScssPhp\ValueConverter::parseValue($this->linear_channel($kwargs['php_color_value'][1])); //There must be a better way to call parseValue() here...
+				function($args){
+					$php_color_value = $args[0][1];
+					return \ScssPhp\ScssPhp\ValueConverter::parseValue($this->linear_channel($php_color_value)); //There must be a better way to call parseValue() here...
 				},
 				array('php_color_value')
 			);
@@ -519,8 +520,9 @@ if ( !trait_exists('Sass') ){
 			//Calculate the luminance for a color.
 			$scss->registerFunction(
 				'php_luminance',
-				function($args, $kwargs){
-					return \ScssPhp\ScssPhp\ValueConverter::parseValue($this->luminance($kwargs['php_color'][1])); //There must be a better way to call parseValue() here...
+				function($args){
+					$php_color = $args[0][1];
+					return \ScssPhp\ScssPhp\ValueConverter::parseValue($this->luminance($php_color)); //There must be a better way to call parseValue() here...
 				},
 				array('php_color')
 			);
@@ -528,8 +530,10 @@ if ( !trait_exists('Sass') ){
 			//Calculate the contrast ratio between two colors.
 			$scss->registerFunction(
 				'php_contrast',
-				function($args, $kwargs){
-					return \ScssPhp\ScssPhp\ValueConverter::parseValue($this->contrast($kwargs['php_back'][1], $kwargs['php_front'][1])); //There must be a better way to call parseValue() here...
+				function($args){
+					$php_back = $args[0][1];
+					$php_front = $args[1][1];
+					return \ScssPhp\ScssPhp\ValueConverter::parseValue($this->contrast($php_back, $php_front)); //There must be a better way to call parseValue() here...
 				},
 				array('php_back', 'php_front')
 			);

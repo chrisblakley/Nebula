@@ -9,9 +9,7 @@ nebula.bufferedWindowLoad = function(callback){
 	}
 
 	//If the window has not yet loaded, add an event listener to wait for it
-	window.addEventListener('load', function(){
-		return callback();
-	});
+	window.addEventListener('load', () => callback());
 };
 
 //Check if the user has enabled DNT (if supported in their browser)
@@ -304,7 +302,8 @@ nebula.fetch = async function(url=false, headers={}, type='json'){
 //Trigger a reflow on an element.
 //This is useful for repeating animations.
 nebula.reflow = function(selector){
-	let element;
+	let element; //This must be let and not const
+
 	if ( typeof selector === 'string' ){
 		element = jQuery(selector);
 	} else if ( typeof selector === 'object' ){
@@ -402,9 +401,7 @@ nebula.uniqueId = function(prefix='nuid', random=false){
 //To add parameters, use an array as the 2nd parameter. Ex: nebula.once(customFunction, ['parameter1', 'parameter2'], 'test example');
 //Can be used for boolean. Ex: nebula.once('boolean test');
 nebula.once = function(fn, args, unique){
-	if ( typeof nebula.onces === 'undefined' ){
-		nebula.onces = {};
-	}
+	nebula.onces = nebula.onces || {};
 
 	if ( typeof args === 'string' ){ //If no parameters
 		unique = args;
@@ -414,67 +411,56 @@ nebula.once = function(fn, args, unique){
 	//Reset all
 	if ( fn === 'clear' || fn === 'reset' ){
 		nebula.onces = {};
+		return true;
 	}
 
 	//Remove a single entry
 	if ( fn === 'remove' ){
 		delete nebula.onces[unique];
+		return true;
 	}
 
-	if ( typeof fn === 'function' ){ //If the first parameter is a function
-		if ( typeof nebula.onces[unique] === 'undefined' || !nebula.onces[unique] ){
+	// If the first parameter fn is a function, execute it only once
+	if ( typeof fn === 'function' ){
+		if ( !nebula.onces[unique] ){
 			nebula.onces[unique] = true;
 			return fn.apply(this, args);
 		}
-	} else { //Else return boolean
-		unique = fn; //If only one parameter is passed
-		if ( typeof nebula.onces[unique] === 'undefined' || !nebula.onces[unique] ){
-			nebula.onces[unique] = true;
-			return true;
-		}
 
-		return false;
+		return false; //Do nothing if already executed
 	}
-};
 
-//I don't think this is needed because requestIdleCallback should only be called once per pageload, but preserving this here for a bit before I delete it.
-// nebula.idleOnce = function(fn, args, unique){
-// 	if ( typeof window.requestIdleCallback === 'function' ){ //@todo "Nebula" 0: Remove the requestIdleCallback condition when Safari supports it)
-// 		if ( !unique ){
-// 			unique = nebula.uniqueId();
-// 		}
-//
-// 		window.requestIdleCallback(function(){ //yolo
-// 			nebula.once(fn, args, unique);
-// 		});
-// 	}
-// };
+	//If the first parameter fn is not a function, assume it's the 'unique' identifier and return boolean
+	if ( !nebula.onces[fn] ){
+		nebula.onces[fn] = true;
+		return true;
+	}
+
+	return false;
+};
 
 //Waits for events to finish before triggering
 //Passing immediate triggers the function on the leading edge (instead of the trailing edge).
-nebula.debounce = function(callback = false, wait = 1000, uniqueID = 'No Unique ID', immediate = false){
-	if ( !callback ){
+nebula.debounce = function(callback, wait = 1000, uniqueID = 'No Unique ID', immediate = false){
+	if ( typeof callback !== 'function' ){
 		nebula.help('nebula.debounce() requires a callback function.', '/functions/debounce/');
 		return false;
 	}
 
-	if ( typeof nebula.debounceTimers === 'undefined' ){
-		nebula.debounceTimers = {};
-	}
+	nebula.debounceTimers = nebula.debounceTimers || {};
 
-	let context = this;
-	let args = arguments;
-	let later = function(){
+	const later = () => { //Arrow function allows for proper context scoping without needing additional variables
 		nebula.debounceTimers[uniqueID] = null;
 		if ( !immediate ){
-			callback.apply(context, args);
+			callback.apply(this, arguments);
 		}
 	};
 
-	let callNow = immediate && !nebula.debounceTimers[uniqueID];
+	const callNow = immediate && !nebula.debounceTimers[uniqueID];
 
 	clearTimeout(nebula.debounceTimers[uniqueID]); //Clear the timeout on every event. Once events stop the timeout is allowed to complete.
 	nebula.debounceTimers[uniqueID] = setTimeout(later, wait);
+
 	if ( callNow ){
 		callback.apply(context, args);
 	}
@@ -487,22 +473,18 @@ nebula.throttle = function(callback, cooldown = 1000, uniqueID = 'No Unique ID')
 		return false;
 	}
 
-	if ( typeof nebula.throttleTimers === 'undefined' ){
-		nebula.throttleTimers = {};
-	}
+	nebula.throttleTimers = nebula.throttleTimers || {};
 
-	let context = this;
-	let args = arguments;
-	let later = function(){
-		if ( typeof nebula.throttleTimers[uniqueID] === 'undefined' ){ //If we're not waiting
-			window.requestAnimationFrame(function(){
-				callback.apply(context, args); //Execute callback function
+	const later = () => {
+		if ( !nebula.throttleTimers[uniqueID] ){
+			window.requestAnimationFrame(() => {
+				callback.apply(this, arguments); //Execute the callback function
 
-				nebula.throttleTimers[uniqueID] = 'waiting'; //Prevent future invocations
+				nebula.throttleTimers[uniqueID] = true; //Prevent future invocations
 
 				//After the cooldown period, allow future invocations
-				setTimeout(function(){
-					nebula.throttleTimers[uniqueID] = undefined; //Allow future invocations (undefined means it is not waiting)
+				setTimeout(() => {
+					nebula.throttleTimers[uniqueID] = false;
 				}, cooldown);
 			});
 		}
@@ -801,7 +783,7 @@ nebula.vibrate = function(pattern){
 
 //Sanitize text
 nebula.sanitize = function(text){
-	return document.createElement('div').appendChild(document.createTextNode(text)).parentNode.innerHTML;
+	return document.createElement('div').appendChild(document.createTextNode(text)).parentNode.innerHTML; //Raw JS is more efficient than jQuery for this
 };
 
 //Mask the email with asterisks

@@ -36,19 +36,21 @@
 # Conditionals for various Apache versions and enabled modules
 #############################
 
+#Note: No compression on video files to avoid high CPU usage with potential worse file sizes or no improvement
+
 <IfModule mod_brotli.c>
 	FilterDeclare BROTLI_COMPRESS
 
 	#Specify content types to compress
 	FilterProvider BROTLI_COMPRESS BROTLI "%{CONTENT_TYPE} =~ m#^text/(html|css|plain|xml|x-component)#i"
 	FilterProvider BROTLI_COMPRESS BROTLI "%{CONTENT_TYPE} =~ m#^application/(javascript|json|xml|xhtml+xml|rss+xml|atom+xml|vnd.ms-fontobject|x-font-ttf|x-font-woff|wasm)#i"
-	FilterProvider BROTLI_COMPRESS BROTLI "%{CONTENT_TYPE} =~ m#^image/(svg+xml)#i"
+	FilterProvider BROTLI_COMPRESS BROTLI "%{CONTENT_TYPE} =~ m#^image/(svg+xml|jpeg|jpg|png|webp|gif|x-icon)#i"
 	FilterProvider BROTLI_COMPRESS BROTLI "%{CONTENT_TYPE} = 'font/opentype'"
 
 	FilterChain BROTLI_COMPRESS
 	FilterProtocol BROTLI_COMPRESS BROTLI change=yes;byteranges=no
 
-	#Brotli compression quality (optional, defaults to 5, range is 0-11)
+	#Brotli compression quality (optional, default is 5, range is 0 (fastest compression, larger file sizes) to 11 (slowest compression, smaller file sizes))
 	BrotliCompressionQuality 6
 </IfModule>
 
