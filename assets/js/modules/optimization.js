@@ -27,8 +27,8 @@ nebula.performanceMetrics = async function(){
 				window.performance.measure('(Nebula) Until CPU Idle', 'navigationStart', '(Nebula) CPU Idle', {
 					detail: {
 						devtools: {
-							dataType: "track-entry",
-							track: "Nebula",
+							dataType: 'track-entry',
+							track: 'Nebula',
 						}
 					}
 				});
@@ -176,7 +176,7 @@ nebula.workbox = async function(){
 			window.performance.mark('(Nebula) SW Registration [Start]');
 
 			//Dynamically import Workbox-Window
-			import('https://cdn.jsdelivr.net/npm/workbox-window@7.3.0/build/workbox-window.prod.mjs').then(function(module){
+			import('https://cdn.jsdelivr.net/npm/workbox-window@7.1.0/build/workbox-window.prod.mjs').then(function(module){
 				const Workbox = module.Workbox;
 				const workbox = new Workbox(nebula.site.sw_url);
 
@@ -289,13 +289,13 @@ nebula.unregisterServiceWorker = function(){
 
 //Clear the caches
 nebula.emptyCaches = async function(){
-    if ( 'caches' in window ){
-        const names = await caches.keys();
-        for ( let name of names ){
+	if ( 'caches' in window ){
+		const names = await caches.keys();
+		for ( let name of names ){
 			await nebula.yield();
-            await caches.delete(name);
-        }
-    }
+			await caches.delete(name);
+		}
+	}
 };
 
 //Progressive Web App functions (when the user installs the PWA onto their device)

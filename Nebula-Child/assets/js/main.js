@@ -21,8 +21,8 @@ jQuery(function(){
 	window.performance.measure('(Child) DOM Ready Functions', '(Child) DOM Ready [Start]', '(Child) DOM Ready [End]', {
 		detail: {
 			devtools: {
-				dataType: "track-entry",
-				track: "Nebula",
+				dataType: 'track-entry',
+				track: 'Nebula',
 			}
 		}
 	});
@@ -48,8 +48,8 @@ window.addEventListener('load', function(){
 	window.performance.measure('(Child) Window Load Functions', '(Child) Window Load [Start]', '(Child) Window Load [End]', {
 		detail: {
 			devtools: {
-				dataType: "track-entry",
-				track: "Nebula",
+				dataType: 'track-entry',
+				track: 'Nebula',
 			}
 		}
 	});

@@ -126,16 +126,16 @@ jQuery(window).on('load', function(){
 	window.performance.measure('(Nebula) Window Load Functions', '(Nebula) Window Load [Start]', '(Nebula) Window Load [End]', {
 		detail: {
 			devtools: {
-				dataType: "track-entry",
-				track: "Nebula",
+				dataType: 'track-entry',
+				track: 'Nebula',
 			}
 		}
 	});
 	window.performance.measure('(Nebula) Window Loaded', 'navigationStart', '(Nebula) Window Load [End]', {
 		detail: {
 			devtools: {
-				dataType: "track-entry",
-				track: "Nebula",
+				dataType: 'track-entry',
+				track: 'Nebula',
 			}
 		}
 	});
