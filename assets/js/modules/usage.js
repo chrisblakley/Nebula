@@ -3,7 +3,7 @@
 window.performance.mark('(Nebula) Inside usage.js (module)');
 
 //Detect Window Errors
-window.addEventListener('error', function(error){
+window.addEventListener('error', async function(error){
 	let errorMessage = error.message + ' at ' + error.lineno + ' of ' + error.filename + ' on ' + window.location.href;
 
 	//Ignore browser extension errors and JS console eager evaluation errors
@@ -14,6 +14,8 @@ window.addEventListener('error', function(error){
 	if ( error.message.toLowerCase().includes('script error') ){ //If it is a script error
 		errorMessage = 'Script error (An error occurred in a script hosted on a different domain)'; //No additional information is available because of the browser's same-origin policy. Use CORS when possible to get additional information.
 	} else if ( nebula.site?.options?.js_error_log ){ //If the option is enabled to log JS errors
+		await nebula.yield();
+
 		let device = nebula.user.client.browser.full + ' (' + nebula.user.client.device.formfactor + ' - ' + nebula.user.client.os + ')';
 
 		let user = '';
@@ -65,6 +67,8 @@ window.addEventListener('error', function(error){
 //Track Nebula framework errors for quality assurance.
 nebula.usage = async function(error = false){
 	if ( error ){
+		await nebula.yield();
+
 		let message = '';
 		let lineNumber = '';
 		let fileName = '';

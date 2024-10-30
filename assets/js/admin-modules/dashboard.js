@@ -113,8 +113,10 @@ nebula.getLighthouseResults = function(){
 		priority: 'low'
 	}).then(function(response){
 		return response.json(); //This returns a promise
-	}).then(function(json){
+	}).then(async function(json){
 		if ( json && json.captchaResult === 'CAPTCHA_NOT_NEEDED' ){
+			await nebula.yield();
+
 			var pagespeedCompletedDate = new Date(json.analysisUTCTimestamp).toLocaleDateString(false, {year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit'});
 
 			//Screenshot
@@ -292,7 +294,9 @@ nebula.getLighthouseResults = function(){
 };
 
 //Load the home page in an iframe and time the DOM and Window load times
-nebula.runIframeSpeedTest = function(){
+nebula.runIframeSpeedTest = async function(){
+	await nebula.yield();
+
 	jQuery('#performance_metabox h2 span span').html('Measuring Performance <small>(via Iframe)</small>');
 
 	var iframe = document.createElement('iframe');
@@ -301,7 +305,9 @@ nebula.runIframeSpeedTest = function(){
 	iframe.src = jQuery('#testloadcon').attr('data-src') + '?noga'; //Cannot use nebula.site.home_url here for some reason even though it obeys https. No GA so it does not get flooded with bot traffic
 	jQuery('#testloadcon').append(iframe);
 
-	jQuery('#testloadcon iframe').on('load', function(){
+	jQuery('#testloadcon iframe').on('load', async function(){
+		await nebula.yield();
+
 		console.log('Iframe Performance Data:', JSON.parse(JSON.stringify(iframe.contentWindow.performance))); //Needs to stringify/parse to de-synchronize the object and retain the actual values (just for this output)
 
 		//Server Response Time

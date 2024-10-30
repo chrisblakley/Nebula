@@ -18,7 +18,14 @@ jQuery(function(){
 	}
 
 	window.performance.mark('(Child) DOM Ready [End]');
-	window.performance.measure('(Child) DOM Ready Functions', '(Child) DOM Ready [Start]', '(Child) DOM Ready [End]');
+	window.performance.measure('(Child) DOM Ready Functions', '(Child) DOM Ready [Start]', '(Child) DOM Ready [End]', {
+		detail: {
+			devtools: {
+				dataType: "track-entry",
+				track: "Nebula",
+			}
+		}
+	});
 }); //End Document Ready
 
 /*==========================
@@ -38,7 +45,14 @@ window.addEventListener('load', function(){
 	// }, {passive: true}); //End Window Resize
 
 	window.performance.mark('(Child) Window Load [End]');
-	window.performance.measure('(Child) Window Load Functions', '(Child) Window Load [Start]', '(Child) Window Load [End]');
+	window.performance.measure('(Child) Window Load Functions', '(Child) Window Load [Start]', '(Child) Window Load [End]', {
+		detail: {
+			devtools: {
+				dataType: "track-entry",
+				track: "Nebula",
+			}
+		}
+	});
 }); //End Window Load
 
 /*==========================

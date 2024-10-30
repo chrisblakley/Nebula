@@ -29,7 +29,9 @@ nebula.keywordFilter = function(container, parent, values = 'string', filteredCl
 	if ( values.length ){
 		if ( values.length === 1 && values[0].length > 2 && values[0].charAt(0) === '/' && values[0].slice(-1) === '/' ){
 			let regex = new RegExp(values[0].substring(1).slice(0, -1), 'i'); //Convert the string to RegEx after removing the first and last /
-			jQuery(container).find(parent).each(function(){ //Loop through each element to check against the regex pattern
+			jQuery(container).find(parent).each(async function(){ //Loop through each element to check against the regex pattern
+				await nebula.yield();
+
 				let elementText = jQuery(this).text().trim().replaceAll(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
 				jQuery(this).addClass(filteredClass);
 				if ( regex.test(elementText) ){
@@ -37,7 +39,9 @@ nebula.keywordFilter = function(container, parent, values = 'string', filteredCl
 				}
 			});
 		} else if ( !operator || operator === 'and' || operator === 'all' ){ //Match only elements that contain all keywords (Default operator is And if not provided)
-			jQuery.each(values, function(index, value){ //Loop through the values to search for
+			jQuery.each(values, async function(index, value){ //Loop through the values to search for
+				await nebula.yield();
+
 				if ( value && value.trim().length ){ //If the value exists and is not empty
 					//Check if the value is a valid RegEx string
 					try {
@@ -62,8 +66,11 @@ nebula.keywordFilter = function(container, parent, values = 'string', filteredCl
 				}
 			});
 			pattern = pattern.slice(0, -1); //Remove the last | character
+
 			let regex = new RegExp(pattern, 'i');
-			jQuery(container).find(parent).each(function(){ //Loop through each element to check against the regex pattern
+			jQuery(container).find(parent).each(async function(){ //Loop through each element to check against the regex pattern
+				await nebula.yield();
+
 				let elementText = jQuery(this).text().trim().replaceAll(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
 				jQuery(this).addClass(filteredClass);
 				if ( regex.test(elementText) ){
@@ -77,7 +84,9 @@ nebula.keywordFilter = function(container, parent, values = 'string', filteredCl
 //Menu Search Replacement
 nebula.menuSearchReplacement = async function(){
 	if ( jQuery('.nebula-search').length ){
-		jQuery('.menu .nebula-search').each(function(){
+		jQuery('.menu .nebula-search').each(async function(){
+			await nebula.yield();
+
 			let randomMenuSearchID = Math.floor((Math.random()*100)+1); //Why does it need this again? Add comment please.
 			jQuery(this).html('<form class="wp-menu-nebula-search nebula-search search footer-search" method="get" action="' + nebula.site.home_url + '/"><div class="nebula-input-group"><i class="fa-solid fa-magnifying-glass"></i><label class="visually-hidden" for="nebula-menu-search-' + randomMenuSearchID + '">Search</label><input type="search" id="nebula-menu-search-' + randomMenuSearchID + '" class="nebula-search input search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech /></div></form>');
 		});
@@ -107,19 +116,22 @@ nebula.autocompleteSearchListeners = async function(){
 				});
 
 				//I do not know why this cannot be debounced
-				jQuery('input#s, input.search, input[name="s"]').on('keyup paste', function(e){
+				jQuery('input#s, input.search, input[name="s"]').on('keyup paste', async function(e){
+					await nebula.yield();
+
+					let $oThis = jQuery(this);
 					let allowedKeys = ['Backspace', 'Delete']; //Non-alphanumeric keys that are still allowed to trigger a search
 
-					if ( jQuery(this).val().trim().length && (nebula.isAlphanumeric(e.key, false) || allowedKeys.includes(e.key) ) ){
+					if ( $oThis.val().trim().length && (nebula.isAlphanumeric(e.key, false) || allowedKeys.includes(e.key) ) ){
 						let types = false;
-						if ( jQuery(this).is('[data-types]') ){
-							types = jQuery(this).attr('data-types');
+						if ( $oThis.is('[data-types]') ){
+							types = $oThis.attr('data-types');
 						}
 
-						nebula.autocompleteSearch(jQuery(this), types);
+						nebula.autocompleteSearch($oThis, types);
 					} else {
-						jQuery(this).closest('form').removeClass('searching');
-						jQuery(this).closest('.input-group, .nebula-input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-magnifying-glass');
+						$oThis.closest('form').removeClass('searching');
+						$oThis.closest('.input-group, .nebula-input-group').find('.fa-spin').removeClass('fa-spin fa-spinner').addClass('fa-magnifying-glass');
 					}
 				});
 			});
@@ -130,7 +142,9 @@ nebula.autocompleteSearchListeners = async function(){
 };
 
 //Run an autocomplete search on a passed element.
-nebula.autocompleteSearch = function($element, types = ''){
+nebula.autocompleteSearch = async function($element, types = ''){
+	await nebula.yield();
+
 	if ( typeof $element === 'string' ){
 		$element = jQuery($element);
 	}
@@ -180,9 +194,13 @@ nebula.autocompleteSearch = function($element, types = ''){
 				collision: 'flip',
 			},
 			source: async function(request, sourceResponse){
+				await nebula.yield();
+
 				let searchResults = nebula.memoize('get', 'autocomplete search (' + request.term.toLowerCase() + ') [' + typesQuery + ']'); //Try from stored memory first
 
+				//If we didn't find the search from stored memory, do an actual search
 				if ( !searchResults ){
+					//Fetch an actual search query from the WP JSON API
 					var fetchResponse = await fetch(nebula.site.home_url + '/wp-json/nebula/v2/autocomplete_search?term=' + request.term + typesQuery, {
 						priority: 'high'
 					}).then(function(fetchResponse){
@@ -313,7 +331,9 @@ nebula.wpSearchInput = function(){
 nebula.searchValidator = function(){
 	//Wrap in requestIdleCallback when Safari supports it
 	if ( jQuery('.input.search').length ){
-		jQuery('.input.search').each(function(){
+		jQuery('.input.search').each(async function(){
+			await nebula.yield();
+
 			if ( jQuery(this).val() === '' || jQuery(this).val().trim().length === 0 ){
 				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
 			} else {
@@ -322,7 +342,9 @@ nebula.searchValidator = function(){
 			}
 		});
 
-		jQuery('.input.search').on('focus blur change keyup paste cut', function(e){
+		jQuery('.input.search').on('focus blur change keyup paste cut', async function(e){
+			await nebula.yield();
+
 			let thisPlaceholder = ( jQuery(this).attr('data-prev-placeholder') !== 'undefined' )? jQuery(this).attr('data-prev-placeholder') : 'Search';
 			if ( jQuery(this).val() === '' || jQuery(this).val().trim().length === 0 ){
 				jQuery(this).parent().children('.btn.submit').addClass('disallowed');
@@ -353,15 +375,19 @@ nebula.searchValidator = function(){
 
 //Highlight search terms
 nebula.searchTermHighlighter = async function(){
-	window.requestAnimationFrame(function(){
+	window.requestAnimationFrame(async function(){
 		let searchTerm = nebula.get('s');
 		if ( searchTerm ){
-			let termPattern = new RegExp('(?![^<]+>)(' + nebula.preg_quote(searchTerm.replaceAll(/(\+|%22|%20)/g, ' ')) + ')', 'ig'); //Find the search term within the text
-			jQuery('article .entry-title a, article .entry-summary').each(function(){
-				jQuery(this).html(function(i, html){
+			let termPattern = new RegExp('(?![^<]+>)(' + nebula.preg_quote(searchTerm.replaceAll(/(\+|%22|%20)/g, ' ')) + ')', 'ig'); // Find the search term within the text
+
+			//Loop using for...of so that it can yield asynchronously without having a race condition when using jQuery.each()
+			for ( const element of jQuery('article .entry-title a, article .entry-summary') ){
+				await nebula.yield();
+
+				jQuery(element).html(function(i, html){
 					return html.replace(termPattern, '<mark class="searchresultword">$1</mark>'); //Wrap each found search term
 				});
-			});
+			}
 
 			nebula.emphasizeSearchTerms();
 		}
@@ -372,7 +398,9 @@ nebula.searchTermHighlighter = async function(){
 nebula.emphasizeSearchTerms = async function(){
 	window.requestAnimationFrame(function(){
 		let origBGColor = jQuery('.searchresultword').css('background-color');
-		jQuery('.searchresultword').each(function(i){
+		jQuery('.searchresultword').each(async function(i){
+			await nebula.yield();
+
 			let stallFor = 150 * parseInt(i); //This creates the offset "wave" effect
 			jQuery(this).delay(stallFor).animate({
 				backgroundColor: 'rgba(255, 255, 0, 0.5)',
@@ -390,6 +418,8 @@ nebula.emphasizeSearchTerms = async function(){
 
 //Single search result redirection drawer
 nebula.singleResultDrawer = async function(){
+	await nebula.yield();
+
 	let searchTerm = nebula.get('rs');
 	if ( searchTerm ){
 		searchTerm = searchTerm.replaceAll(/\%20|\+/g, ' ').replaceAll(/\%22|"|'/g, '');

@@ -55,7 +55,15 @@ if ( !trait_exists('Assets') ){
 							'default_cid' => $this->default_cid,
 						);
 
-						setcookie('session', json_encode($session_cookie_data), time()+HOUR_IN_SECONDS, '/');
+						setcookie(
+							'session',
+							json_encode($session_cookie_data),
+							time()+HOUR_IN_SECONDS,
+							COOKIEPATH,
+							COOKIE_DOMAIN,
+							is_ssl(), //Secure (only send over HTTPS)
+							true //HttpOnly (inaccessible to JavaScript)
+						);
 					}
 				} catch ( Exception $e ){
 					//Ignore errors

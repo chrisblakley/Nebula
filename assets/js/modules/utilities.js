@@ -20,6 +20,11 @@ nebula.isDoNotTrack = function(){
 		return nebula.user.dnt;
 	}
 
+	//Check for Global Privacy Control (GPC) support
+	if ( navigator?.globalPrivacyControl === true ){
+		return true; //The user does not provide consent to sell or share their data
+	}
+
 	//If the noga query string exists (to prevent self-reporting)
 	if ( nebula.get('noga') ){
 		return true; //Do not track internal visits
@@ -30,7 +35,7 @@ nebula.isDoNotTrack = function(){
 		return true; //This user prefers not to be tracked
 	}
 
-	return false; //The user is allowing tracking -or- the browser does not support DNT
+	return false; //The user is allowing tracking -or- the browser does not support DNT features
 };
 
 //Check if this page view is the first in a session
@@ -75,6 +80,8 @@ nebula.regex = {
 
 nebula.initBootstrapFunctions = async function(){
 	if ( typeof bootstrap !== 'undefined' ){
+		await nebula.yield();
+
 		//Tooltips
 		if ( jQuery('[data-bs-toggle="tooltip"]').length ){
 			jQuery('[data-bs-toggle="tooltip"]').tooltip();
@@ -92,7 +99,9 @@ nebula.initBootstrapFunctions = async function(){
 
 		//Carousels - Override this to customize options
 		if ( jQuery('.carousel').length ){
-			jQuery('.carousel').each(function(){
+			jQuery('.carousel').each(async function(){
+				await nebula.yield();
+
 				if ( jQuery(this).hasClass('auto-indicators') ){
 					let carouselID = jQuery(this).attr('id');
 					let slideCount = jQuery(this).find('.carousel-item').length;
@@ -148,7 +157,9 @@ nebula.initBootstrapFunctions = async function(){
 
 //Add an "inactive" class to toggle buttons when one is checked to allow for additional styling options
 nebula.checkBootstrapToggleButtons = async function(){
-	jQuery('[data-bs-toggle=buttons]').each(function(){
+	jQuery('[data-bs-toggle=buttons]').each(async function(){
+		await nebula.yield();
+
 		if ( jQuery(this).find('input:checked').length ){
 			jQuery(this).find('input').each(function(){
 				if ( jQuery(this).is(':checked') ){
@@ -164,7 +175,16 @@ nebula.checkBootstrapToggleButtons = async function(){
 //Try to fix some errors automatically
 nebula.errorMitigation = function(){
 	//Try to fall back to .png on .svg errors. Else log the broken image.
-	jQuery('img').on('error', function(){
+	let brokenImageCount = 0;
+	jQuery('img').on('error', async function(){
+		brokenImageCount++; // Increment broken image counter
+
+		if ( brokenImageCount >= 5 ){
+			return; //Stop fetching after a certain amount of broken images
+		}
+
+		await nebula.yield();
+
 		let thisImage = jQuery(this);
 		let imagePath = thisImage.attr('src');
 		if ( imagePath.split('.').pop() === 'svg' ){
@@ -273,9 +293,9 @@ nebula.removeQueryParameter = function(keys, url = location.search){
 };
 
 //Fetch API simplified wrapper
-nebula.fetch = async function(url=false, headers={}, type='json'){
+nebula.fetch = async function(url = false, headers = {}, type = 'json') {
 	if ( !url ){
-		nebula.help('nebula.fetch() requires a URL to retreive.', '/functions/fetch/');
+		nebula.help('nebula.fetch() requires a URL to retrieve.', '/functions/fetch/');
 		return false;
 	}
 
@@ -284,19 +304,37 @@ nebula.fetch = async function(url=false, headers={}, type='json'){
 		headers = {};
 	}
 
-	let fetchedData = await fetch(url, headers).then(function(response){
-		if ( response.ok ){
-			if ( type === 'json' ){
-				return response.json();
+	const fetchLabel = nebula.sanitize(url);
+	window.performance.mark('(Nebula) Fetch Start ' + fetchLabel);
+
+	await nebula.yield();
+
+	//Create a new promise to handle fetch
+	let fetchPromise = new Promise(async function(resolve, reject){
+		try {
+			let response = await fetch(url, headers);
+
+			if ( !response.ok ){
+				throw new Error('Network response was not ok: ' + response.statusText);
 			}
 
-			return response.text();
+			let data;
+			if ( type === 'json' ){
+				data = await response.json();
+			} else {
+				data = await response.text();
+			}
+
+			window.performance.mark('(Nebula) Fetch End ' + fetchLabel);
+			window.performance.measure('(Nebula) Fetch ' + url, '(Nebula) Fetch Start ' + fetchLabel, '(Nebula) Fetch End ' + fetchLabel);
+
+			resolve(data);
+		} catch(error){
+			reject(error);
 		}
-	}).then(function(json){
-		return json;
 	});
 
-	return fetchedData;
+	return fetchPromise;
 };
 
 //Trigger a reflow on an element.
@@ -317,7 +355,9 @@ nebula.reflow = function(selector){
 };
 
 //Handle repeated animations in a single function.
-nebula.animate = function(selector, newAnimationClasses, oldAnimationClasses){
+nebula.animate = async function(selector, newAnimationClasses, oldAnimationClasses){
+	await nebula.yield();
+
 	let element;
 	if ( typeof selector === 'string' ){
 		element = jQuery(selector);
@@ -360,7 +400,9 @@ nebula.animationTriggers = function(){
 	});
 };
 
-nebula.loadAnimate = function($oThis){
+nebula.loadAnimate = async function($oThis){
+	await nebula.yield();
+
 	let animationDelay = $oThis.attr('nebula-delay');
 	if ( typeof animationDelay === 'undefined' || animationDelay === 0 ){
 		nebula.animate($oThis, 'load-animate');
@@ -441,7 +483,9 @@ nebula.once = function(fn, args, unique){
 
 //Waits for events to finish before triggering
 //Passing immediate triggers the function on the leading edge (instead of the trailing edge).
-nebula.debounce = function(callback, wait = 1000, uniqueID = 'No Unique ID', immediate = false){
+nebula.debounce = async function(callback, wait = 1000, uniqueID = 'No Unique ID', immediate = false){
+	await nebula.yield();
+
 	if ( typeof callback !== 'function' ){
 		nebula.help('nebula.debounce() requires a callback function.', '/functions/debounce/');
 		return false;
@@ -1005,4 +1049,46 @@ nebula.isInView = function($element, offset = 1){
 	}
 
 	return false;
+};
+
+//A looping function nearly identical to jQuery.each() but supports an async callback function (and can be awaited)
+//For example, since this loop function can awaited, the callback function can be yielded inside without causing a race condition
+nebula.each = async function(object, callback){
+	if ( !object || !callback ){
+		return false;
+	}
+
+	// Check if object is array-like
+	if ( Array.isArray(object) || typeof object.length === 'number' ){
+		for ( let index = 0; index < object.length; index++ ){
+			let result = await callback.call(object[index], index, object[index]);
+
+			if ( result === false ){ // If callback returns false, break the loop
+				break;
+			}
+		}
+	} else {
+		// For objects with key-value pairs
+		for ( let key in object ){
+			if ( object.hasOwnProperty(key) ){
+				let result = await callback.call(object[key], key, object[key]);
+
+				if ( result === false ){ // If callback returns false, break the loop
+					break;
+				}
+			}
+		}
+	}
+
+	return object; //Return the original object (to enable chaining)
+};
+
+//Yield back to the main thread when supported by the browser. Otherwise, do nothing.
+nebula.yield = function(){
+	//Use scheduler.yield if it exists
+	if ( 'scheduler' in window && 'yield' in scheduler ){
+		return scheduler.yield();
+	}
+
+	return; //Fall back to nothing (no yielding)
 };

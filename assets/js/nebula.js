@@ -1,6 +1,7 @@
 'use strict';
 
 window.performance.mark('(Nebula) Inside nebula.js');
+
 jQuery.noConflict();
 
 //Note: "Essential" JS modules are imported via Assets.php to have version parameters properly concatenated (which the JS import command does not support) for cache busting.
@@ -122,7 +123,21 @@ jQuery(window).on('load', function(){
 	nebula.cookieNotification();
 
 	window.performance.mark('(Nebula) Window Load [End]');
-	window.performance.measure('(Nebula) Window Load Functions', '(Nebula) Window Load [Start]', '(Nebula) Window Load [End]');
-	window.performance.measure('(Nebula) Window Loaded', 'navigationStart', '(Nebula) Window Load [End]');
+	window.performance.measure('(Nebula) Window Load Functions', '(Nebula) Window Load [Start]', '(Nebula) Window Load [End]', {
+		detail: {
+			devtools: {
+				dataType: "track-entry",
+				track: "Nebula",
+			}
+		}
+	});
+	window.performance.measure('(Nebula) Window Loaded', 'navigationStart', '(Nebula) Window Load [End]', {
+		detail: {
+			devtools: {
+				dataType: "track-entry",
+				track: "Nebula",
+			}
+		}
+	});
 	nebula.performanceMetrics();
 });

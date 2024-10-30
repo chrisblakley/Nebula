@@ -1030,6 +1030,19 @@ if ( !trait_exists('Warnings') ){
 										}
 									});
 
+									//AI enhanced audits
+									if ( window?.ai?.assistant && typeof window.ai.assistant.create === 'function' ){ //Check if the AI APIs are available in this browser
+// 										//Write a meta description based on the page content //@todo "Nebula" 0: This is "working" but the results are not good enough yet.
+// 										const writer = await window.ai.writer.create({
+// 											tone: "neutral",
+// 											format: "plain-text",
+// 											length: "short"
+// 										});
+//
+// 										const aiMetaDescription = await writer.write("Write an enticing meta description for a web page between 70 and 150 characters in length. It should strictly be shorter than 150 characters. Do not exceed 150 characters long. It should be based on the following content: " + jQuery('.entry-title').text() + ' ' + jQuery('.entry-content').text());
+// 										jQuery('#audit-results ul').append('<li><i class="fa-solid fa-robot"></i> AI Meta Description Idea: ' + aiMetaDescription + '</li>'); //@todo "Nebula" 0: Make a separate UL for AI results
+									}
+
 									<?php do_action('nebula_audits_js'); ?>
 
 									await Promise.all(fetchPromises);

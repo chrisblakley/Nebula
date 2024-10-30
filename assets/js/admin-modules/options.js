@@ -19,7 +19,8 @@ nebula.optionsInit = function(){
 	});
 
 	//Window Resize
-	window.addEventListener('resize', function(){
+	window.addEventListener('resize', async function(){
+		await nebula.yield();
 		nebula.checkWindowHeightForStickyNav();
 	});
 
@@ -58,7 +59,9 @@ nebula.optionsInit = function(){
 		nebula.checkImportants();
 	});
 
-	jQuery('.short-help').each(function(){
+	jQuery('.short-help').each(async function(){
+		await nebula.yield();
+
 		if ( !jQuery(this).parents('.no-help').length ){
 			if ( nebula.user.staff === 'developer' ){
 				//Dev handle names
@@ -101,7 +104,9 @@ nebula.optionsInit = function(){
 
 nebula.optionsFilters = function(){
 	//Option filter
-	jQuery('#nebula-option-filter').on('keydown keyup change focus blur', function(e){
+	jQuery('#nebula-option-filter').on('keydown keyup change focus blur', async function(e){
+		await nebula.yield();
+
 		nebula.debounce(function(){
 			var url = nebula.site.admin_url + 'themes.php?page=nebula_options';
 			if ( jQuery('#nebula-option-filter').val() !== '' ){

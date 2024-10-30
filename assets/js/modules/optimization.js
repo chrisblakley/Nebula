@@ -18,11 +18,20 @@ nebula.cacheSelectors = function(){
 
 //Record performance timing
 nebula.performanceMetrics = async function(){
+	//await nebula.yield();
+
 	if ( window.performance?.timing && typeof window.requestIdleCallback === 'function' ){ //@todo "Nebula" 0: Remove the requestIdleCallback condition when Safari supports it)
 		window.requestIdleCallback(function(){
 			nebula.once(function(){ //Just to be safe that this only triggers once per page load
 				window.performance.mark('(Nebula) CPU Idle');
-				window.performance.measure('(Nebula) Until CPU Idle', 'navigationStart', '(Nebula) CPU Idle');
+				window.performance.measure('(Nebula) Until CPU Idle', 'navigationStart', '(Nebula) CPU Idle', {
+					detail: {
+						devtools: {
+							dataType: "track-entry",
+							track: "Nebula",
+						}
+					}
+				});
 
 				let timingCalcuations = {};
 
@@ -89,8 +98,10 @@ nebula.performanceMetrics = async function(){
 					if ( 'PerformanceObserver' in window ){
 						let cls = 0;
 						let clsCalculations = {};
-						new PerformanceObserver(function(list){
+						new PerformanceObserver(async function(list){
 							for ( let entry of list.getEntries() ){
+								//await nebula.yield();
+
 								if ( !entry.hadRecentInput ){
 									cls += entry.value;
 
@@ -165,7 +176,7 @@ nebula.workbox = async function(){
 			window.performance.mark('(Nebula) SW Registration [Start]');
 
 			//Dynamically import Workbox-Window
-			import('https://cdn.jsdelivr.net/npm/workbox-window@7.1.0/build/workbox-window.prod.mjs').then(async function(module){
+			import('https://cdn.jsdelivr.net/npm/workbox-window@7.3.0/build/workbox-window.prod.mjs').then(function(module){
 				const Workbox = module.Workbox;
 				const workbox = new Workbox(nebula.site.sw_url);
 
@@ -267,8 +278,9 @@ nebula.workbox = async function(){
 //Force unregister all existing service workers
 nebula.unregisterServiceWorker = function(){
 	if ( 'serviceWorker' in navigator ){
-		navigator.serviceWorker.getRegistrations().then(function(registrations){
+		navigator.serviceWorker.getRegistrations().then(async function(registrations){
 			for ( let registration of registrations ){
+				await nebula.yield();
 				registration.unregister();
 			}
 		});
@@ -276,14 +288,14 @@ nebula.unregisterServiceWorker = function(){
 };
 
 //Clear the caches
-nebula.emptyCaches = function(){
-	if ( 'caches' in window ){
-		caches.keys().then(function(names){
-			for ( let name of names ){
-				caches.delete(names[name]);
-			}
-		});
-	}
+nebula.emptyCaches = async function(){
+    if ( 'caches' in window ){
+        const names = await caches.keys();
+        for ( let name of names ){
+			await nebula.yield();
+            await caches.delete(name);
+        }
+    }
 };
 
 //Progressive Web App functions (when the user installs the PWA onto their device)
@@ -367,7 +379,9 @@ nebula.predictiveCacheListeners = async function(){
 
 	//Internal link hovers
 	let predictiveHoverTimeout;
-	jQuery('a').on('mouseenter', function(){
+	jQuery('a').on('mouseenter', async function(){
+		//await nebula.yield();
+
 		let $oThis = jQuery(this);
 		let url = $oThis.attr('href');
 
@@ -477,7 +491,9 @@ nebula.lazyLoadAssets = async function(){
 	try {
 		//Observe the entries that are identified and added later (below)
 		let lazyObserver = new IntersectionObserver(function(entries){
-			entries.forEach(function(entry){
+			entries.forEach(async function(entry){
+				//await nebula.yield();
+
 				if ( entry.intersectionRatio > 0 ){
 					nebula.loadElement(jQuery(entry.target));
 					lazyObserver.unobserve(entry.target); //Stop observing the element
@@ -564,13 +580,16 @@ nebula.lazyLoadAssets = async function(){
 //Either call this directly, or trigger 'nebula_load' on the window
 nebula.loadEverything = async function(){
 	//Listen for requestIdleCallback here when Safari supports it
-	jQuery('.nebula-lazy-position, .lazy-load, .nebula-lazy').each(function(){
+	jQuery('.nebula-lazy-position, .lazy-load, .nebula-lazy').each(async function(){
+		//await nebula.yield();
 		nebula.loadElement(jQuery(this)); //Load the element immediately
 	});
 };
 
 //Load the Nebula lazy load element
 nebula.loadElement = async function(element){
+	//await nebula.yield();
+
 	//Lazy elements using <samp> positioning
 	if ( element.is('samp') ){
 		let lazyElement = element.next('noscript.nebula-lazy');
@@ -597,6 +616,8 @@ nebula.loadElement = async function(element){
 //Load a JavaScript resource
 //This returns a promise, but the callback parameter could also be used
 nebula.loadJS = async function(url, handle, callback=false){
+	//await nebula.yield();
+
 	nebula.site.resources.lazy.promises = nebula.site.resources.lazy.promises || {}; //Ensure this exists
 
 	//Listen for requestIdleCallback when Safari supports it
@@ -634,6 +655,8 @@ nebula.loadJS = async function(url, handle, callback=false){
 //Dynamically load CSS files using JS
 //If JavaScript is disabled, these are loaded via <noscript> tags
 nebula.loadCSS = async function(url){
+	//await nebula.yield();
+
 	if ( typeof url === 'string' ){
 		jQuery('head').append('<link rel="stylesheet" href="' + url + '" type="text/css" media="screen">');
 	} else {

@@ -184,9 +184,16 @@
 				"and": [
 					{"href_matches": "/*"},
 					{"not": {"href_matches": "/wp-admin"}},
-					{"not": {"href_matches": ".xml"}},
+					{"not": {"href_matches": "logout"}},
+					{"not": {"href_matches": "nonce"}},
+					{"not": {"href_matches": "cart"}},
+					{"not": {"href_matches": "#"}}, //Exclude in-page anchors
+					{"not": {"href_matches": "mailto:"}},
+					{"not": {"href_matches": "tel:"}},
+					{"not": {"href_matches": "\\.(pdf|docx?|xlsx?|pptx?|xml|zip|rar|7z|csv|cal|exe|dmg|iso|mp4|mp3|wav|avi|mov|css|js|json)$"}},
 					{"not": {"selector_matches": ".no-prerender"}},
-					{"not": {"selector_matches": "[rel=nofollow]"}}
+					{"not": {"selector_matches": "[rel*=nofollow]"}},
+					{"not": {"selector_matches": "[target=_blank]"}}
 				]
 			},
 			"eagerness": "moderate"

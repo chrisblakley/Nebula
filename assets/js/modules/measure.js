@@ -1,4 +1,4 @@
-window.performance.mark('(Nebula) Inside analytics.js (module)');
+window.performance.mark('(Nebula) Inside measure.js (module)');
 
 //Set a custom dimension in both GA and MS Clarity (used in /inc/analytics.php)
 nebula.setDimension = function(name, value){ //Does not technically need to be exported anymore as it is only now used here in this file
@@ -1622,6 +1622,8 @@ nebula.ecommerceTracking = async function(){
 //Detect scroll depth
 //Note: Although "scroll" is a GA4 Enhanced Measurement, it only tracks when the user reaches the bottom of the page (90% scrolled). Any "scroll" event in GA4 only triggers at 90%– it does not mean that a user began scrolling– only that they finished scrolling.
 nebula.scrollDepth = async function(){
+	await nebula.yield();
+
 	if ( window.performance ){ //Safari 11+
 		let scrollReady = performance.now();
 		let reachedBottom = false; //Flag for optimization after detection is finished
@@ -1654,9 +1656,11 @@ nebula.scrollDepth = async function(){
 			}, 'begin scrolling');
 
 			//Check scroll distance periodically
-			nebula.throttle(function(){
+			nebula.throttle(async function(){
 				//Total Scroll Distance
 				if ( !excessiveScrolling ){
+					await nebula.yield();
+
 					totalScrollDistance += Math.abs(nebula.dom.window.scrollTop()-lastScrollCheckpoint); //Increase the total scroll distance (always positive regardless of scroll direction)
 					lastScrollCheckpoint = nebula.dom.window.scrollTop(); //Update the checkpoint
 					if ( totalScrollDistance >= excessiveScrollThreshold ){
@@ -1682,6 +1686,8 @@ nebula.scrollDepth = async function(){
 				//When user reaches the bottom of the page
 				//Note: GA4 "scroll" Enhanced Measurement indicates the bottom as 90% of the document height
 				if ( !reachedBottom ){
+					await nebula.yield();
+
 					if ( (nebula.dom.window.height()+nebula.dom.window.scrollTop()) >= nebula.dom.document.height() ){ //If user has reached the bottom of the page
 						reachedBottom = true;
 

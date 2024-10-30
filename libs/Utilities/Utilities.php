@@ -774,7 +774,7 @@ if ( !trait_exists('Utilities') ){
 					COOKIEPATH,
 					COOKIE_DOMAIN,
 					is_ssl(), //Secure (HTTPS)
-					true //HTTP only (not available in JS)
+					true //HTTP only (not available in JavaScript)
 				);
 			}
 		}
@@ -1177,7 +1177,7 @@ if ( !trait_exists('Utilities') ){
 
 		//If this request is using AJAX, REST API, CRON, or some other type of background request. This can be used to ignore non-essential/visual functionality to speed up those requests.
 		public function is_background_request(){
-			//Check for AJAX
+			//Check for AJAX (including the WP Heartbeat)
 			if ( $this->is_ajax_request() ){
 				return true;
 			}
@@ -1204,7 +1204,12 @@ if ( !trait_exists('Utilities') ){
 
 			//If autosaving
 			if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ){
-				return false;
+				return true;
+			}
+
+			//CLI
+			if ( defined('WP_CLI') && WP_CLI ){
+				return true;
 			}
 
 			return false;

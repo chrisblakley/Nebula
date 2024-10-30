@@ -1,6 +1,6 @@
 //BEGIN automated edits. These will be automatically overwritten.
 const THEME_NAME = 'nebula-child';
-const NEBULA_VERSION = 'v12.4.17.558'; //Tuesday, September 17, 2024 1:24:04 PM
+const NEBULA_VERSION = 'v12.5.30.593'; //Wednesday, October 30, 2024 2:13:16 PM
 const OFFLINE_URL = 'https://nebula.gearside.com/offline/';
 const OFFLINE_IMG = 'https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/offline.svg';
 const META_ICON = 'https://nebula.gearside.com/wp-content/themes/Nebula-main/assets/img/meta/android-chrome-512x512.png';
@@ -8,7 +8,7 @@ const MANIFEST = 'https://nebula.gearside.com/wp-content/themes/Nebula-main/inc/
 const HOME_URL = 'https://nebula.gearside.com/';
 //END automated edits
 
-importScripts('https://cdn.jsdelivr.net/npm/workbox-sw@7.1.0/build/workbox-sw.min.js'); //DO NOT FORGET: Update Workbox Window in the optimization.js module!
+importScripts('https://cdn.jsdelivr.net/npm/workbox-sw@7.3.0/build/workbox-sw.min.js'); //DO NOT FORGET: Update Workbox Window in the optimization.js module!
 workbox.setConfig({debug: false}); //https://developers.google.com/web/tools/workbox/guides/troubleshoot-and-debug
 //The Service Worker console can be inspected by visiting chrome://inspect/#service-workers
 

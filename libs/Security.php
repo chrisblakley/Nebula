@@ -37,24 +37,24 @@ if ( !trait_exists('Security') ){
 		}
 
 		//Additional security headers
-		//Test with https://securityheaders.io/
+		//Test with https://securityheaders.io/ and/or https://developer.mozilla.org/en-US/observatory
 		public function security_headers(){
 			//header('x-frame-options: SAMEORIGIN'); //This controls if/where we allow our website to be embedded in iframes
 			header('X-XSS-Protection: 1; mode=block');
 			header('X-Content-Type-Options: nosniff'); //Ensure MIME types match expected
 			header('Access-Control-Allow-Headers: X-WP-Nonce'); //Allow this header for WP Block Editor compatibility with CSP
 			header('Developed-with-Nebula: https://nebula.gearside.com'); //Nebula header
-			header('Cross-Origin-Resource-Policy: cross-origin;'); //Allow resources to be loaded cross-origin
-			header('Cross-Origin-Embedder-Policy: unsafe-none;'); //Eventually consider upgrading this to require-corp
-			header('Cross-Origin-Opener-Policy: same-origin-allow-popups;');
+			header('Cross-Origin-Resource-Policy: cross-origin'); //Allow resources to be loaded cross-origin
+			header('Cross-Origin-Embedder-Policy: unsafe-none'); //Eventually consider upgrading this to require-corp
+			header('Cross-Origin-Opener-Policy: same-origin-allow-popups');
 
 			if ( is_ssl() ){
 				header('Strict-Transport-Security: max-age=' . YEAR_IN_SECONDS . '; includeSubDomains; preload'); //https://scotthelme.co.uk/hsts-the-missing-link-in-tls/ and consider submitting to https://hstspreload.org/
-				header('Referrer-Policy: no-referrer-when-downgrade'); //https://scotthelme.co.uk/a-new-security-header-referrer-policy/
+				header('Referrer-Policy: strict-origin-when-cross-origin'); //https://scotthelme.co.uk/a-new-security-header-referrer-policy/
 
 				//Content Security Policy (CSP) and Feature Policy should be set by the child theme. Nebula cannot predict what endpoints or what features will be used, so setting these security policies in the parent theme (outside the control of developers) would be far too restrictive.
-				$csp = apply_filters('nebula_csp', "default-src * https: data: blob: 'unsafe-inline' 'unsafe-hashes';"); //Allow all hosts, require https, data, or blob protocols, and ignore (allow) inline scripts by default. WP filter to allow others to hook in to modify the default CSP.
-				header('Content-Security-Policy-Report-Only: ' . $csp); //Nebula only reports to the console
+				$csp = apply_filters('nebula_csp', "default-src * https: data: blob: 'unsafe-inline' 'unsafe-hashes'; object-src 'self'; base-uri 'self'"); //Allow all hosts, require https, data, or blob protocols, and ignore (allow) inline scripts by default. This is a flexible default CSP, but it is recommended to strengthen it via the child theme! WP filter to allow others to hook in to modify the default CSP.
+				header('Content-Security-Policy-Report-Only: ' . $csp); //Nebula only reports to the console without enforcing
 
 				//Permissions Policy: https://scotthelme.co.uk/goodbye-feature-policy-and-hello-permissions-policy/ and https://caniuse.com/#feat=feature-policy and https://caniuse.com/permissions-policy
 				$pp = apply_filters('nebula_pp', " accelerometer=(), camera=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"); //Block usage of all atypical permissions. WP filter to allow others to hook in to modify the default Permissions Policy.
@@ -350,51 +350,87 @@ if ( !trait_exists('Security') ){
 			$this->timer('Spam Domain Prevention', 'end');
 		}
 
-		//Return an array of spam domains from Matomo (or the latest Nebula on GitHub)
+		//Return an array of spam domains
 		public function get_spam_domain_list(){
-			$spam_domain_json_file = get_template_directory() . '/inc/data/spam_domain_list.txt';
-
-			$spam_domain_list = nebula()->transient('nebula_spam_domain_list', function($data){
+			//First get the latest spam domain list maintained by Matomo or Nebula's cache of the Matomo list
+			$spam_domain_public_file = get_template_directory() . '/inc/data/spam_domain_list.txt'; //Eventually change this to "spam_domain_public_list.txt"
+			$spam_domain_public_list = nebula()->transient('nebula_spam_domain_public_list', function($data){
 				$response = $this->remote_get('https://raw.githubusercontent.com/matomo-org/referrer-spam-list/master/spammers.txt'); //Watch for this to change from "master" to "main" (if ever)
 				if ( !is_wp_error($response) ){
-					$spam_domain_list = $response['body'];
+					$spam_domain_public_list = $response['body'];
 				}
 
 				//If there was an error or empty response, try my GitHub repo
-				if ( is_wp_error($response) || empty($spam_domain_list) ){ //This does not check availability because it is the same hostname as above.
-					$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/spam_domain_list.txt');
+				if ( is_wp_error($response) || empty($spam_domain_public_list) ){ //This does not check availability because it is the same hostname as above.
+					$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/spam_domain_list.txt'); //Eventually change this to "spam_domain_public_list.txt"
 					if ( !is_wp_error($response) ){
-						$spam_domain_list = $response['body'];
+						$spam_domain_public_list = $response['body'];
 					}
 				}
 
 				//If either of the above remote requests received data, update the local file and store the data in a transient for 36 hours
-				if ( !is_wp_error($response) && !empty($spam_domain_list) ){
+				if ( !is_wp_error($response) && !empty($spam_domain_public_list) ){
 					WP_Filesystem();
 					global $wp_filesystem;
-					$wp_filesystem->put_contents($data['spam_domain_json_file'], $spam_domain_list);
+					$wp_filesystem->put_contents($data['spam_domain_public_file'], $spam_domain_public_list);
 
-					return $spam_domain_list;
+					return $spam_domain_public_list;
 				}
-			}, array('spam_domain_json_file' => $spam_domain_json_file), HOUR_IN_SECONDS*36);
+			}, array('spam_domain_public_file' => $spam_domain_public_file), HOUR_IN_SECONDS*36);
 
 			//If neither remote resource worked, get the local file
-			if ( empty($spam_domain_list) ){
+			if ( empty($spam_domain_public_list) ){
 				WP_Filesystem();
 				global $wp_filesystem;
-				$spam_domain_list = $wp_filesystem->get_contents($spam_domain_json_file);
+				$spam_domain_public_list = $wp_filesystem->get_contents($spam_domain_public_file);
 			}
 
 			//If one of the above methods worked, parse the data.
-			if ( !empty($spam_domain_list) ){
+			if ( !empty($spam_domain_public_list) ){
 				$spam_domain_array = array();
-				foreach( explode("\n", $spam_domain_list) as $line ){
+				foreach( explode("\n", $spam_domain_public_list) as $line ){
 					if ( !empty($line) ){
 						$spam_domain_array[] = $line;
 					}
 				}
 			} else {
-				$this->ga_send_exception('(Security) spammers.txt was not available!', false);
+				$this->ga_send_exception('(Security) Public spammers.txt was not available!', false);
+			}
+
+			//Next get the latest spam domain "manual" list maintained by Nebula or the local cache of the Nebula list
+			$spam_domain_private_file = get_template_directory() . '/inc/data/spam_domain_private_list.txt';
+			$spam_domain_private_list = nebula()->transient('nebula_spam_domain_private_list', function($data){
+				$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/spam_domain_private_list.txt');
+				if ( !is_wp_error($response) ){
+					$spam_domain_private_list = $response['body'];
+				}
+
+				//If the above remote request received data, update the local file and store the data in a transient for 36 hours
+				if ( !is_wp_error($response) && !empty($spam_domain_private_list) ){
+					WP_Filesystem();
+					global $wp_filesystem;
+					$wp_filesystem->put_contents($data['spam_domain_private_file'], $spam_domain_private_list);
+
+					return $spam_domain_private_list;
+				}
+			}, array('spam_domain_private_file' => $spam_domain_private_file), HOUR_IN_SECONDS*36);
+
+			//If neither remote resource worked, get the local file
+			if ( empty($spam_domain_private_list) ){
+				WP_Filesystem();
+				global $wp_filesystem;
+				$spam_domain_private_list = $wp_filesystem->get_contents($spam_domain_private_file);
+			}
+
+			if ( !empty($spam_domain_private_list) ){
+				$spam_domain_array = array();
+				foreach( explode("\n", $spam_domain_private_list) as $line ){
+					if ( !empty($line) ){
+						$spam_domain_array[] = $line;
+					}
+				}
+			} else {
+				$this->ga_send_exception('(Security) Private spam_domain_private_list.txt was not available!', false);
 			}
 
 			//Add manual and user-added spam domains

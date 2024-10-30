@@ -3,8 +3,11 @@
 // ===========================
 
 :root {
+	interpolate-size: allow-keywords; //Allow animation to/from intrinsic sizes like "auto"
 	accent-color: $primary_color; //Set HTML form fields to use the brand color for accents
 }
+
+@view-transition {navigation: auto;} //Multi-Page View Transitions
 
 html {height: auto; font-size: 16px; overflow-x: hidden; scroll-behavior: smooth;} //Declare font-size in px here only. Use rem or rem() Sass function everywhere else.
 body {overflow-x: hidden; background: $background_color; padding: env(safe-area-inset); -webkit-font-smoothing: antialiased;} //@todo "Nebula" 0: Overflow hidden breaks position sticky... Without it, horizontal scroll happens...

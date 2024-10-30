@@ -3,6 +3,8 @@ window.performance.mark('(Nebula) Inside /modules/social.js');
 //Load the SDK asynchronously
 nebula.facebookSDK = async function(){
 	if ( jQuery('[class*="fb-"]:not(.fb-root), .require-fbsdk').length ){ //Only load the Facebook SDK when needed
+		await nebula.yield();
+
 		(function(d, s, id){
 			var js, fjs = d.getElementsByTagName(s)[0];
 			if ( d.getElementById(id) ){
@@ -19,6 +21,8 @@ nebula.facebookSDK = async function(){
 //Social sharing buttons
 nebula.socialSharing = async function(){
 	if ( jQuery('[class*="share"]').length ){
+		await nebula.yield();
+
 		const encloc = encodeURIComponent(window.location.href);
 		const enctitle = encodeURIComponent(document.title);
 		let popupTop = nebula.dom.window.height()/2-275;

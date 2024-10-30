@@ -94,7 +94,9 @@ nebula.helpers = async function(){
 nebula.overflowDetector = async function(){
 	if ( jQuery('.sub-menu').length ){ //Only add the event listener if sub-menus actually exist
 		jQuery('.menu li.menu-item').on({
-			'mouseenter focus focusin': function(){
+			'mouseenter focus focusin': async function(){
+				await nebula.yield();
+
 				if ( jQuery(this).children('.sub-menu').length ){ //Check if this menu has sub-menus
 					let submenuLeft = jQuery(this).children('.sub-menu').offset().left; //Left side of the sub-menu
 					let submenuRight = submenuLeft+jQuery(this).children('.sub-menu').width(); //Right side of the sub-menu
@@ -119,7 +121,9 @@ nebula.overflowDetector = async function(){
 nebula.dragDropUpload = async function(){
 	if ( jQuery('.nebula-drop-area').length ){
 		//Activate drag and drop listeners for each drop area class on the page
-		document.querySelectorAll('.nebula-drop-area').forEach(function(dropArea){
+		document.querySelectorAll('.nebula-drop-area').forEach(async function(dropArea){
+			await nebula.yield();
+
 			let thisEvent = {
 				event_category: 'Drag and Drop File Upload',
 				form_id: jQuery(dropArea).closest('form').attr('id') || 'form.' + jQuery(dropArea).closest('form').attr('class').replace(/\s/g, '.'),
@@ -193,7 +197,9 @@ nebula.dragDropUpload = async function(){
 
 //Convert img tags with class .svg to raw SVG elements
 nebula.svgImgs = async function(){
-	jQuery('img.svg').each(function(){
+	jQuery('img.svg').each(async function(){
+		await nebula.yield();
+
 		let $oThis = jQuery(this);
 
 		if ( $oThis.attr('src').includes('.svg') ){ //If the src has a .svg extension
@@ -375,7 +381,9 @@ nebula.subnavExpanders = function(){
 //Functionality for selecting and copying text using Nebula Pre tags.
 nebula.pre = async function(){
 	//Format non-shortcode pre tags to be styled properly
-	jQuery('pre.nebula-code').each(function(){
+	jQuery('pre.nebula-code').each(async function(){
+		await nebula.yield();
+
 		if ( !jQuery(this).parent('.nebula-code-con').length ){
 			let lang = jQuery(this).attr('data-lang') || '';
 			if ( lang === '' ){

@@ -4,6 +4,8 @@ nebula.videos = {};
 
 //Initialize Video Functionality and Tracking
 nebula.initVideoTracking = async function(){
+	await nebula.yield();
+
 	nebula.videos = nebula.videos || {}; //This is likely the first time this gets defined
 
 	nebula.html5VideoTracking();

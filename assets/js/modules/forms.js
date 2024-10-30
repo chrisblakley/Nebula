@@ -6,7 +6,9 @@ nebula.cf7Functions = async function(){
 	}
 
 	//Indicate a form page on all CF7 forms
-	jQuery('.wpcf7').each(function(){
+	jQuery('.wpcf7').each(async function(){
+		//await nebula.yield();
+
 		let formID = jQuery(this).attr('id');
 		nebula.updateFormFlow(formID, '[Form Page View]');
 	});
@@ -16,7 +18,9 @@ nebula.cf7Functions = async function(){
 	let formStarted = {};
 
 	//Replace submit input with a button so a spinner icon can be used instead of the CF7 spin gif (unless it has the class "no-button")
-	jQuery('.wpcf7-form input[type=submit]').each(function(){
+	jQuery('.wpcf7-form input[type=submit]').each(async function(){
+		//await nebula.yield();
+
 		if ( !jQuery(this).hasClass('no-button') ){
 			jQuery(this).replaceWith('<button id="submit" type="submit" class="' + nebula.sanitize(jQuery(this).attr('class')) + '">' + nebula.sanitize(jQuery(this).val()) + '</button>'); //Sanitized to prevent XSS
 		}
@@ -26,7 +30,9 @@ nebula.cf7Functions = async function(){
 	try {
 		//Observe the entries that are identified and added later (below)
 		let cf7Observer = new IntersectionObserver(function(entries){
-			entries.forEach(function(entry){
+			entries.forEach(async function(entry){
+				//await nebula.yield();
+
 				if ( entry.intersectionRatio > 0 ){
 					let formID = jQuery(entry.target).closest('.wpcf7').attr('id') || jQuery(entry.target).attr('id');
 
@@ -217,6 +223,8 @@ nebula.cf7Functions = async function(){
 			jQuery('.invalid-feedback').addClass('hidden'); //Reset all of the "live" feedback to let CF7 handle its feedback
 			jQuery('#cf7-privacy-acceptance').trigger('change'); //Until CF7 has a native invalid indicator for the privacy acceptance checkbox, force the Nebula validator here
 		} catch(error){
+			console.error('Error in wpcf7submit event listener:', error.message, error.stack); //Don't fail silently– output to the console.
+
 			gtag('event', 'exception', {
 				message: '(JS) CF7 Catch (wpcf7submit): ' + error,
 				fatal: false
@@ -269,6 +277,8 @@ nebula.cf7Functions = async function(){
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unit_tag + ') Invalid'}, false);
 			nebula.crm('event', 'Contact Form (' + thisEvent.unit_tag + ') Invalid');
 		} catch(error){
+			console.error('Error in wpcf7invalid event listener:', error.message, error.stack); //Don't fail silently– output to the console.
+
 			gtag('event', 'exception', {
 				message: '(JS) CF7 Catch (wpcf7invalid): ' + error,
 				fatal: false
@@ -334,6 +344,8 @@ nebula.cf7Functions = async function(){
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unit_tag + ') Submit Spam'}, false);
 			nebula.crm('event', 'Contact Form (' + thisEvent.unit_tag + ') Spam');
 		} catch(error){
+			console.error('Error in wpcf7spam event listener:', error.message, error.stack); //Don't fail silently– output to the console.
+
 			gtag('event', 'exception', {
 				message: '(JS) CF7 Catch (wpcf7spam): ' + error,
 				fatal: false
@@ -380,6 +392,8 @@ nebula.cf7Functions = async function(){
 			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.unit_tag + ') Submit Failed'}, false);
 			nebula.crm('event', 'Contact Form (' + thisEvent.unit_tag + ') Failed');
 		} catch(error){
+			console.error('Error in wpcf7mailfailed event listener:', error.message, error.stack); //Don't fail silently– output to the console.
+
 			gtag('event', 'exception', {
 				message: '(JS) CF7 Catch (wpcf7mailfailed): ' + error,
 				fatal: false
@@ -444,6 +458,8 @@ nebula.cf7Functions = async function(){
 			jQuery('#' + e.detail.unitTag).find('button#submit').removeClass('active');
 			jQuery('#' + e.detail.unitTag).find('.is-valid, .is-invalid').removeClass('is-valid is-invalid'); //Clear all validation classes
 		} catch(error){
+			console.error('Error in wpcf7mailsent event listener:', error.message, error.stack); //Don't fail silently– output to the console.
+
 			gtag('event', 'exception', {
 				message: '(JS) CF7 Catch (wpcf7mailsent): ' + error,
 				fatal: false
@@ -690,7 +706,9 @@ nebula.liveValidator = function(){
 };
 
 //Apply Bootstrap and CF7 appropriate validation classes to appropriate elements
-nebula.applyValidationClasses = function($element, validation, showFeedback){
+nebula.applyValidationClasses = async function($element, validation, showFeedback){
+	//await nebula.yield();
+
 	if ( typeof $element === 'string' ){
 		$element = jQuery($element);
 	} else if ( typeof $element !== 'object' ){
