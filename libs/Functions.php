@@ -40,7 +40,7 @@ if ( !trait_exists('Functions') ){
 
 			add_action('init', array($this, 'index_now_rewrite_rule'));
 			add_action('wp', array($this, 'index_now_output_key'));
-			add_action('nebula_options_saved', array($this, 'index_now_generate_key')); //This will only actually re-generate if an Index Now key does not already exist
+			add_action('nebula_options_saved', array($this, 'index_now_generate_key')); //This will only actually re-generate if an IndexNow key does not already exist
 
 			add_action('wp_loaded', array($this, 'favicon_cache'));
 			add_action('after_setup_theme', array($this, 'nav_menu_locations'));
@@ -407,7 +407,7 @@ if ( !trait_exists('Functions') ){
 			add_rewrite_rule('^nebula-index-now-([a-zA-Z0-9]+)\.txt$', 'index.php?nebula_index_now_key=$matches[1]', 'top');
 		}
 
-		//Output the Index Now key txt file
+		//Output the IndexNow key txt file
 		public function index_now_output_key(){
 			if ( !$this->get_option('index_now') ){
 				return false;
@@ -447,7 +447,7 @@ if ( !trait_exists('Functions') ){
 			return $actual_index_now_key;
 		}
 
-		//Generate an Index Now key and store it in Nebula Options
+		//Generate an IndexNow key and store it in Nebula Options
 		public function index_now_generate_key($force=false){
 			if ( !$this->get_option('index_now') ){
 				return false;

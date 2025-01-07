@@ -193,7 +193,7 @@ if ( !trait_exists('Admin') ){
 			return $brain;
 		}
 
-		//POST to Index Now to inform some search engines of content update
+		//POST to IndexNow to inform some search engines of content update
 		public function index_now_post($post_id, $post){
 			if ( $post->post_status !== 'publish' ){
 				return;
@@ -205,7 +205,7 @@ if ( !trait_exists('Admin') ){
 			//Define the target search engine URL
 			//https://www.indexnow.org/searchengines.json
 			//Bing, for example: https://www.bing.com/indexnow/meta.json
-			$search_engine_urls = ['https://www.bing.com/indexnow']; //As Index Now support grows, add other desired search engines to this list
+			$search_engine_urls = ['https://www.bing.com/indexnow']; //As IndexNow support grows, add other desired search engines to this list
 
 			//Make the POST requests
 			foreach ( $search_engine_urls as $search_engine_url ){
@@ -222,10 +222,10 @@ if ( !trait_exists('Admin') ){
 				]);
 
 				if ( is_wp_error($response) ){
-					do_action('qm/error', 'Index Now POST error for ' . $search_engine_url);
+					do_action('qm/error', 'IndexNow POST error for ' . $search_engine_url);
 				} else {
 					if ( wp_remote_retrieve_response_code($response) >= 400 ){ //Ideal response codes are 200 and 202. 4xx level response codes indicate a problem.
-						do_action('qm/error', 'Index Now response code ' . $response_code . ' from ' . $search_engine_url); //https://www.indexnow.org/documentation
+						do_action('qm/error', 'IndexNow response code ' . $response_code . ' from ' . $search_engine_url); //https://www.indexnow.org/documentation
 					}
 				}
 			};
