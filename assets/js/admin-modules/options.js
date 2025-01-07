@@ -199,11 +199,11 @@ nebula.checkWindowHeightForStickyNav = function(){
 nebula.checkDependents = function(inputObject){
 	if ( inputObject ){ //Check a single option's dependents
 		if ( nebula.isCheckedOrHasValue(inputObject) ){
-			jQuery('[dependent-of=' + inputObject.attr('id') + ']').removeClass('inactive').find('.dependent-note').addClass('hidden');
-			jQuery('[dependent-or~=' + inputObject.attr('id') + ']').removeClass('inactive').find('.dependent-note').addClass('hidden');
+			jQuery("[dependent-of='" + jQuery.escapeSelector(inputObject.attr('id')) + "']").removeClass('inactive').find('.dependent-note').addClass('hidden');
+			jQuery("[dependent-or~='" + jQuery.escapeSelector(inputObject.attr('id')) + "']").removeClass('inactive').find('.dependent-note').addClass('hidden');
 
 			//The dependent-and attribute must have ALL checked
-			jQuery('[dependent-and~=' + inputObject.attr('id') + ']').each(function(){
+			jQuery("[dependent-and~='" + jQuery.escapeSelector(inputObject.attr('id')) + "']").each(function(){
 				var $oThis = jQuery(this);
 				var dependentOrs = $oThis.attr('dependent-and').split(' ');
 				var totalDependents = dependentAnds.length;
@@ -219,11 +219,11 @@ nebula.checkDependents = function(inputObject){
 				}
 			});
 		} else {
-			jQuery('[dependent-of=' + inputObject.attr('id') + ']').addClass('inactive').find('.dependent-note').removeClass('hidden');
-			jQuery('[dependent-and~=' + inputObject.attr('id') + ']').addClass('inactive').find('.dependent-note').removeClass('hidden');
+			jQuery("[dependent-of='" + jQuery.escapeSelector(inputObject.attr('id')) + "']").addClass('inactive').find('.dependent-note').removeClass('hidden');
+			jQuery("[dependent-or~='" + jQuery.escapeSelector(inputObject.attr('id')) + "']").addClass('inactive').find('.dependent-note').removeClass('hidden');
 
 			//The dependent-or attribute can have ANY checked
-			jQuery('[dependent-or~=' + inputObject.attr('id') + ']').each(function(){
+			jQuery("[dependent-and~='" + jQuery.escapeSelector(inputObject.attr('id')) + "']").each(function(){
 				var $oThis = jQuery(this);
 				var dependentOrs = $oThis.attr('dependent-or').split(' ');
 				var totalDependents = dependentOrs.length;

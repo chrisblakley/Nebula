@@ -17,7 +17,7 @@ export function supplementalEventTracking(){
 	// 		event_action: 'Action',
 	// 		event_label: 'Label',
 	// 		text: jQuery(this).text(), //For example: the text of the clicked link
-	// 		link: jQuery(this).attr('href'). //For example: the href of the clicked link
+	// 		link: jQuery(this).attr('href'), //For example: the href of the clicked link
 	// 		something_extra: 'Extra', //Feel free to send additional custom parameters to help identify this event
 	// 		non_interaction: true //If this action is not significant (or if not initiated by the user explicitly)
 	// 	});

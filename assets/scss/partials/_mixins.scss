@@ -136,8 +136,8 @@
     background-color: $color; background-color: rgb($color, $opacity);
 }
 
-//.element {@include linear-gradient(to bottom, #31B7D7, #EDAC7D);}
-//.element {@include linear-gradient(to right, #E47D7D 0%, #C195D3 50%, #4FB4E8 100%);}
+//.element {@include linear-gradient(to bottom in oklch, #31B7D7, #EDAC7D);}
+//.element {@include linear-gradient(to right in oklch, #E47D7D 0%, #C195D3 50%, #4FB4E8 100%);}
 @mixin linear-gradient($direction, $colors...){
 	background: nth(nth($colors, 1), 1); background: linear-gradient($direction, $colors);
 }

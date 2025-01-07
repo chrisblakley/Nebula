@@ -338,8 +338,9 @@ if ( !trait_exists('Optimization') ){
 
 		public function early_hints_file($src, $filetype){
 			if ( !$this->is_admin_page(true, true) ){ //Exclude admin, login, and Customizer pages
-				$crossorigin = ( strpos($src, get_site_url()) === false || $filetype === 'font' )? ' crossorigin=anonymous' : ''; //Add crossorigin attribute for remote assets and all fonts //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-				header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel=preload; as=' . $filetype . '; nopush' . $crossorigin, false); //Send the header for the Early Hint (strtok to remove everything after and including "#")
+				//$crossorigin = ( strpos($src, get_site_url()) === false || $filetype === 'font' )? ' crossorigin=anonymous' : ''; //Add crossorigin attribute for remote assets and all fonts //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				//header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel="preload"; as="' . $filetype . '"; nopush; crossorigin="anonymous"', false); //Send the header for the Early Hint (strtok to remove everything after and including "#")
+				//Note: This is triggering console warnings that the preloads are not used (and also "not used within a few seconds"). This happens regardless of the crossorigin attribute or allow-origin header.
 			}
 		}
 

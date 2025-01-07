@@ -37,7 +37,7 @@ if ( !trait_exists('Analytics') ){
 				return false;
 			}
 
-			if ( $this->get_ip_address() === wp_privacy_anonymize_ip($this->super->server['SERVER_ADDR']) ){ //Disable analytics for self-requests by the server
+			if ( isset($this->super->server['SERVER_ADDR']) && $this->get_ip_address() === wp_privacy_anonymize_ip($this->super->server['SERVER_ADDR']) ){ //Disable analytics for self-requests by the server
 				return false;
 			}
 
@@ -112,7 +112,7 @@ if ( !trait_exists('Analytics') ){
 						'theme_type' => ( is_child_theme() )? 'Child' : 'Parent',
 						'wp_user_id' => get_current_user_id(),
 						'php_version' => $major_php_version,
-						'mysql_version' => mysqli_get_client_version(),
+						'mysql_version' => function_exists('mysqli_get_client_version') ? mysqli_get_client_version() : 'Unknown',
 						'transport_method' => 'Server-Side',
 					)
 				))

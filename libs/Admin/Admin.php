@@ -26,6 +26,7 @@ if ( !trait_exists('Admin') ){
 			//All admin pages (including AJAX requests)
 			if ( $this->is_admin_page() ){
 				add_filter('nebula_brain', array($this, 'admin_brain'));
+				add_action('save_post', array($this, 'index_now_post'), 10, 2); //When a post is saved (or when *starting* a new post)
 				add_action('save_post', array($this, 'clear_transients')); //When a post is saved (or when *starting* a new post)
 				add_action('profile_update', array($this, 'clear_transients'));
 				add_action('upgrader_process_complete', array($this, 'theme_update_automation'), 10, 2); //Action 'upgrader_post_install' also exists.
@@ -190,6 +191,44 @@ if ( !trait_exists('Admin') ){
 		public function admin_brain($brain){
 			$brain['site']['admin_url'] = get_admin_url();
 			return $brain;
+		}
+
+		//POST to Index Now to inform some search engines of content update
+		public function index_now_post($post_id, $post){
+			if ( $post->post_status !== 'publish' ){
+				return;
+			}
+
+			$post_url = get_permalink($post_id);
+			$index_now_key = $this->index_now_get_key();
+
+			//Define the target search engine URL
+			//https://www.indexnow.org/searchengines.json
+			//Bing, for example: https://www.bing.com/indexnow/meta.json
+			$search_engine_urls = ['https://www.bing.com/indexnow']; //As Index Now support grows, add other desired search engines to this list
+
+			//Make the POST requests
+			foreach ( $search_engine_urls as $search_engine_url ){
+				$response = wp_remote_post($search_engine_url, [
+					'method' => 'POST',
+					'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
+					'body' => json_encode(array(
+						'host' => parse_url(get_home_url(), PHP_URL_HOST),
+						'key' => $index_now_key,
+						'keyLocation' => trailingslashit(get_home_url()) . 'nebula-index-now-' . $index_now_key . '.txt',
+						'urlList' => [$post_url]
+					)),
+					'data_format' => 'body'
+				]);
+
+				if ( is_wp_error($response) ){
+					do_action('qm/error', 'Index Now POST error for ' . $search_engine_url);
+				} else {
+					if ( wp_remote_retrieve_response_code($response) >= 400 ){ //Ideal response codes are 200 and 202. 4xx level response codes indicate a problem.
+						do_action('qm/error', 'Index Now response code ' . $response_code . ' from ' . $search_engine_url); //https://www.indexnow.org/documentation
+					}
+				}
+			};
 		}
 
 		//Force expire query transients when posts/pages are saved.

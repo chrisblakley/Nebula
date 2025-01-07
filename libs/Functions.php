@@ -38,6 +38,10 @@ if ( !trait_exists('Functions') ){
 				}
 			}
 
+			add_action('init', array($this, 'index_now_rewrite_rule'));
+			add_action('wp', array($this, 'index_now_output_key'));
+			add_action('nebula_options_saved', array($this, 'index_now_generate_key')); //This will only actually re-generate if an Index Now key does not already exist
+
 			add_action('wp_loaded', array($this, 'favicon_cache'));
 			add_action('after_setup_theme', array($this, 'nav_menu_locations'));
 			add_filter('nav_menu_link_attributes', array($this, 'add_menu_attributes'), 10, 3);
@@ -390,6 +394,77 @@ if ( !trait_exists('Functions') ){
 			$wp_filesystem->put_contents($this->manifest_json_location(false), $manifest_json);
 			do_action('qm/info', 'Updated manifest.json File');
 			$this->timer($timer_name, 'end');
+		}
+
+		//Ex: https://nebula.gearside.com/nebula-index-now-0123456789AB.txt
+		public function index_now_rewrite_rule(){
+			if ( !$this->get_option('index_now') ){
+				return false;
+			}
+
+			global $wp;
+			$wp->add_query_var('nebula_index_now_key');
+			add_rewrite_rule('^nebula-index-now-([a-zA-Z0-9]+)\.txt$', 'index.php?nebula_index_now_key=$matches[1]', 'top');
+		}
+
+		//Output the Index Now key txt file
+		public function index_now_output_key(){
+			if ( !$this->get_option('index_now') ){
+				return false;
+			}
+
+			$url_key = get_query_var('nebula_index_now_key');
+
+			if ( empty($url_key) ){
+				return false;
+			}
+
+			$actual_index_now_key = $this->index_now_get_key();
+
+			if ( $url_key === $actual_index_now_key ){ //If the keys match, output the key txt file
+				header_remove();
+				header('Content-Type: text/plain; charset=UTF-8');
+				echo esc_html($actual_index_now_key);
+				die;
+			}
+
+			//Otherwise show a 404
+			global $wp_query;
+			$wp_query->set_404();
+		}
+
+		public function index_now_get_key(){
+			if ( !$this->get_option('index_now') ){
+				return false;
+			}
+
+			$actual_index_now_key = $this->get_option('index_now_key');
+
+			if ( empty($actual_index_now_key) ){
+				$actual_index_now_key = $this->index_now_generate_key();
+			}
+
+			return $actual_index_now_key;
+		}
+
+		//Generate an Index Now key and store it in Nebula Options
+		public function index_now_generate_key($force=false){
+			if ( !$this->get_option('index_now') ){
+				return false;
+			}
+
+			if ( !$this->get_option('index_now_key') || $force ){ //If we do not already have a key or if we are forcing a new key to be generated
+				//Generate a random 12-character string
+				$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+				for ( $i = 0; $i < 12; $i++ ){
+					$index_now_key .= $chars[random_int(0, strlen($chars)-1)];
+				}
+
+				$this->update_option('index_now_key', $index_now_key);
+				flush_rewrite_rules(); //Flush rewrite rules so the redirect works later
+			}
+
+			return $index_now_key;
 		}
 
 		//Redirect to favicon to force-clear the cached version when ?favicon is added to the URL.

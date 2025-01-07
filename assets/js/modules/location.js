@@ -131,30 +131,30 @@ nebula.sanitizeGooglePlaceData = function(place = false, uniqueID = 'unnamed'){
 	for ( let component of place.address_components ){
 		//Lots of different address types. This function uses only the common ones: https://developers.google.com/maps/documentation/geocoding/#Types
 		switch ( component.types[0] ){
-			case "street_number":
+			case 'street_number':
 				nebula.user.address[uniqueID].street.number = component.short_name; //123
 				break;
-			case "route":
+			case 'route':
 				nebula.user.address[uniqueID].street.name = component.long_name; //Street Name Rd.
 				break;
-			case "locality":
+			case 'locality':
 				nebula.user.address[uniqueID].city = component.long_name; //Liverpool
 				break;
-			case "administrative_area_level_2":
+			case 'administrative_area_level_2':
 				nebula.user.address[uniqueID].county = component.long_name; //Onondaga County
 				break;
-			case "administrative_area_level_1":
+			case 'administrative_area_level_1':
 				nebula.user.address[uniqueID].state.name = component.long_name; //New York
 				nebula.user.address[uniqueID].state.abbr = component.short_name; //NY
 				break;
-			case "country":
+			case 'country':
 				nebula.user.address[uniqueID].country.name = component.long_name; //United States
 				nebula.user.address[uniqueID].country.abbr = component.short_name; //US
 				break;
-			case "postal_code":
+			case 'postal_code':
 				nebula.user.address[uniqueID].zip.code = component.short_name; //13088
 				break;
-			case "postal_code_suffix":
+			case 'postal_code_suffix':
 				nebula.user.address[uniqueID].zip.suffix = component.short_name; //4725
 				break;
 			default:
@@ -272,15 +272,15 @@ function geoErrorCallback(error){
 			geoErrorNote = 'Denied';
 			break;
 		case error.POSITION_UNAVAILABLE:
-			geolocationErrorMessage = "Data from location services is currently unavailable.";
+			geolocationErrorMessage = 'Data from location services is currently unavailable.';
 			geoErrorNote = 'Unavailable';
 			break;
 		case error.TIMEOUT:
-			geolocationErrorMessage = "Location could not be determined within a specified timeout period.";
+			geolocationErrorMessage = 'Location could not be determined within a specified timeout period.';
 			geoErrorNote = 'Timeout';
 			break;
 		default:
-			geolocationErrorMessage = "An unknown error has occurred.";
+			geolocationErrorMessage = 'An unknown error has occurred.';
 			geoErrorNote = 'Error';
 			break;
 	}
@@ -311,14 +311,14 @@ nebula.addressLookup = function(lat, lng){
 		if ( status === google.maps.GeocoderStatus.OK ){
 			if ( results ){
 				nebula.session.geolocation.address = {
-					number: nebula.extractFromAddress(results[0].address_components, "street_number"),
-					street: nebula.extractFromAddress(results[0].address_components, "route"),
-					city: nebula.extractFromAddress(results[0].address_components, "locality"),
-					town: nebula.extractFromAddress(results[0].address_components, "administrative_area_level_3"),
-					county: nebula.extractFromAddress(results[0].address_components, "administrative_area_level_2"),
-					state: nebula.extractFromAddress(results[0].address_components, "administrative_area_level_1"),
-					country: nebula.extractFromAddress(results[0].address_components, "country"),
-					zip: nebula.extractFromAddress(results[0].address_components, "postal_code"),
+					number: nebula.extractFromAddress(results[0].address_components, 'street_number'),
+					street: nebula.extractFromAddress(results[0].address_components, 'route'),
+					city: nebula.extractFromAddress(results[0].address_components, 'locality'),
+					town: nebula.extractFromAddress(results[0].address_components, 'administrative_area_level_3'),
+					county: nebula.extractFromAddress(results[0].address_components, 'administrative_area_level_2'),
+					state: nebula.extractFromAddress(results[0].address_components, 'administrative_area_level_1'),
+					country: nebula.extractFromAddress(results[0].address_components, 'country'),
+					zip: nebula.extractFromAddress(results[0].address_components, 'postal_code'),
 					formatted: results[0].formatted_address,
 					place: {
 						id: results[0].place_id,

@@ -450,6 +450,7 @@ nebula.eventTracking = async function(){
 				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_file_download'}));
 				nebula.fbq('track', 'ViewContent', {content_name: thisEvent.file_name});
+				nebula.uetq({ec: thisEvent.event_name, ea: thisEvent.event_category, el: thisEvent.event_label});
 				nebula.clarity('set', thisEvent.event_category, thisEvent.file_name);
 				nebula.hj('event', thisEvent.event_name);
 				nebula.crm('event', 'File Download');
@@ -475,6 +476,7 @@ nebula.eventTracking = async function(){
 				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				window.dataLayer.push(Object.assign(thisEvent, {'event': 'notable_file_download'}));
 				nebula.fbq('track', 'ViewContent', {content_name: thisEvent.file_name});
+				nebula.uetq({ec: thisEvent.event_name, ea: thisEvent.event_category, el: thisEvent.event_label});
 				nebula.clarity('set', thisEvent.event_category, thisEvent.file_name);
 				nebula.crm('event', 'Notable File Download');
 			}
@@ -682,6 +684,7 @@ nebula.eventTracking = async function(){
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_mailto'}));
 			nebula.fbq('track', 'Lead', {content_name: thisEvent.event_action});
+			nebula.uetq({ec: thisEvent.event_name, ea: thisEvent.event_category, el: thisEvent.event_label});
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('event', thisEvent.event_action);
@@ -708,6 +711,7 @@ nebula.eventTracking = async function(){
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_click_to_call'}));
 			nebula.fbq('track', 'Lead', {content_name: thisEvent.event_action});
+			nebula.uetq({ec: thisEvent.event_name, ea: thisEvent.event_category, el: thisEvent.event_label});
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('event', thisEvent.event_action);
@@ -734,6 +738,7 @@ nebula.eventTracking = async function(){
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_sms'}));
 			nebula.fbq('track', 'Lead', {content_name: thisEvent.event_action});
+			nebula.uetq({ec: thisEvent.event_name, ea: thisEvent.event_category, el: thisEvent.event_label});
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 			nebula.crm('event', thisEvent.event_action);
 			nebula.crm('identify', {phone_contacted: thisEvent.phoneNumber});
@@ -1510,6 +1515,7 @@ nebula.ecommerceTracking = async function(){
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_add_to_cart'}));
 			nebula.fbq('track', 'AddToCart');
+			nebula.uetq({ec: thisEvent.event_name, ea: thisEvent.event_action, el: thisEvent.event_label});
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('event', 'Ecommerce Add to Cart');
@@ -1565,6 +1571,7 @@ nebula.ecommerceTracking = async function(){
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_proceed_to_checkout'}));
 			nebula.fbq('track', 'InitiateCheckout');
+			nebula.uetq({ec: thisEvent.event_name, ea: thisEvent.event_action, el: thisEvent.event_label});
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('event', 'Ecommerce Proceed to Checkout');
@@ -1611,6 +1618,7 @@ nebula.ecommerceTracking = async function(){
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_place_order_button'}));
 			nebula.fbq('track', 'Purchase');
+			nebula.uetq({ec: thisEvent.event_name, ea: thisEvent.event_action, el: thisEvent.event_label});
 			nebula.clarity('set', thisEvent.event_category, thisEvent.event_action);
 			nebula.hj('event', thisEvent.event_name);
 			nebula.crm('event', 'Ecommerce Placed Order');
@@ -1825,6 +1833,14 @@ nebula.fbq = function(type='track', eventName='', parameters={}){
 		fbq(type, eventName, parameters);
 	}
 };
+
+//Bing conversion tracking
+nebula.uetq = function(parameters={}){
+	if ( typeof uetq === 'function' ){
+		window.uetq.push(parameters);
+	}
+};
+
 
 //Microsoft Clarity tracking
 nebula.clarity = function(type='set', key='', value=''){

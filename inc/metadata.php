@@ -6,6 +6,8 @@
 
 	nebula()->timer('Metadata');
 
+	$nebula_metadata_file_location = ( strpos(realpath(__FILE__), get_template_directory()) === 0 )? 'parent' : 'child'; //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+
 	global $post;
 	$company_type = ( nebula()->get_option('business_type') )? esc_html(nebula()->get_option('business_type')) : 'LocalBusiness';
 	$image_meta_directory = get_theme_file_uri('/assets/img/meta'); //Use this and concatenate the filenames so that it will never revert back to the parent theme if individual meta images are missing.
@@ -171,7 +173,7 @@
 	//Speculation Rules to Prerender next pages
 	$speculative_pages = apply_filters('nebula_speculative_preload_pages', array('/')); //Start with the homepage and then allow child themes to add to this list
 ?>
-<script type="speculationrules">
+<script type="speculationrules" data-theme="nebula-<?php echo $nebula_metadata_file_location; ?>">
 	{
 		"prerender": [{
 			"source": "list",

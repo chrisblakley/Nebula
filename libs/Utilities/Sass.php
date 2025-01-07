@@ -331,7 +331,7 @@ if ( !trait_exists('Sass') ){
 		public function touch_sass_stylesheet(){
 			$main_sass_file = get_template_directory() . '/assets/scss/style.scss'; //This is the parent stylesheet (which should always exist)
 
-			if ( file_exists($main_sass_file) ){
+			if ( file_exists($main_sass_file) && is_writable($main_sass_file) ){
 				touch($main_sass_file);
 			}
 		}
