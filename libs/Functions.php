@@ -17,6 +17,7 @@ if ( !trait_exists('Functions') ){
 			add_action('template_redirect', array($this, 'set_content_width'));
 			add_action('after_setup_theme', array($this, 'theme_setup'));
 			add_filter('site_icon_image_sizes', array($this, 'site_icon_sizes'));
+			add_filter('get_site_icon_url', array($this, 'add_query_to_icon_url'));
 			add_filter('image_size_names_choose', array($this, 'image_size_human_names'));
 			add_action('rest_api_init', array($this, 'rest_api_routes'));
 			add_action('wp_head', array($this, 'add_back_post_feed'));
@@ -208,6 +209,26 @@ if ( !trait_exists('Functions') ){
 			$nebula_sizes = array(16, 32, 70, 150, 180, 192, 310);
 			$all_sizes = array_unique(array_merge($core_sizes, $nebula_sizes));
 			return $all_sizes;
+		}
+
+		//Add a version query string to favicons
+		public function add_query_to_icon_url($url){
+			if ( strpos($url, 'ver=') !== false ){ //If the version number already exists (not likely), just return it //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				return $url;
+			}
+
+			$cache_query = 'ver=' . nebula()->child_version('full'); //Start with the child theme version number that is similarly used for other assets (including the /inc/metadata.php template)
+			if ( nebula()->is_debug() ){
+				$cache_query = 'nocache' . random_int(100000, 999999) . '=debug' . random_int(100000, 999999); //Add a random query string when debugging to force-clear the cache.
+			}
+
+			if ( strpos($url, '?') !== false ){ //If the URL already has a "?" append using "&" //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				$url .= '&' . $cache_query;
+			} else {
+				$url .= '?' . $cache_query;
+			}
+
+			return $url;
 		}
 
 		//Register REST API routes/endpoints

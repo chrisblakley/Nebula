@@ -1499,6 +1499,7 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Update the child theme version whenever Sass is re-processed
+		//This updates the third digit, so version 1.0.0 becomes 1.0.1 and then 1.0.2 and so on.
 		public function update_child_version_number(){
 			$override = apply_filters('pre_nebula_update_child_version', null);
 			if ( isset($override) ){return $override;}
@@ -1516,7 +1517,7 @@ if ( !trait_exists('Utilities') ){
 				$child_stylesheet = $wp_filesystem->get_contents($child_stylesheet_location);
 				if ( !empty($child_stylesheet) ){
 					$child_stylesheet = preg_replace_callback("/(Version: \d+?\.\d+?\.)(\d+)$/m", function($matches){
-						return $matches[1] . (intval($matches[2])+1); //Add one to the security digit
+						return $matches[1] . (intval($matches[2])+1); //Add one to the security (third) digit
 					}, $child_stylesheet);
 
 					$wp_filesystem->put_contents($child_stylesheet_location, $child_stylesheet); //Update the file

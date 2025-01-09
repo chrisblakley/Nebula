@@ -115,11 +115,11 @@
 	<link rel="mask-icon" href="<?php echo $image_meta_directory . '/safari-pinned-tab.svg' . $cache_query; ?>" color="<?php echo nebula()->get_color('primary'); ?>" />
 	<link rel="shortcut icon" type="image/png" href="<?php echo $image_meta_directory . '/favicon.ico' . $cache_query; ?>" />
 <?php endif; ?>
-<link rel="shortcut icon" type="image/png" sizes="16x16" href="<?php echo get_site_icon_url(16, $image_meta_directory . '/favicon-16x16.png') . $cache_query; ?>" />
-<link rel="shortcut icon" type="image/png" sizes="32x32" href="<?php echo get_site_icon_url(32, $image_meta_directory . '/favicon-32x32.png') . $cache_query; ?>" />
+<link rel="shortcut icon" type="image/png" sizes="16x16" href="<?php echo get_site_icon_url(16, $image_meta_directory . '/favicon-16x16.png'); ?>" />
+<link rel="shortcut icon" type="image/png" sizes="32x32" href="<?php echo get_site_icon_url(32, $image_meta_directory . '/favicon-32x32.png'); ?>" />
 
-<link rel="apple-touch-icon" sizes="180x180" href="<?php echo get_site_icon_url(180, $image_meta_directory . '/apple-touch-icon.png') . $cache_query; ?>" />
-<link rel="icon" type="image/png" sizes="192x192" href="<?php echo get_site_icon_url(192, $image_meta_directory . '/android-chrome-192x192.png') . $cache_query; ?>" />
+<link rel="apple-touch-icon" sizes="180x180" href="<?php echo get_site_icon_url(180, $image_meta_directory . '/apple-touch-icon.png'); ?>" />
+<link rel="icon" type="image/png" sizes="192x192" href="<?php echo get_site_icon_url(192, $image_meta_directory . '/android-chrome-192x192.png'); ?>" />
 
 <?php //Facebook Metadata ?>
 <?php if ( nebula()->get_option('facebook_app_id') ): ?>
@@ -136,18 +136,18 @@
 <?php if ( !empty($post) && has_post_thumbnail($post->ID) ): ?>
 	<?php if ( get_the_post_thumbnail($post->ID, 'twitter_large') ): ?>
 		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'twitter_large') . '?' . uniqid(); ?>" />
+		<meta name="twitter:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'twitter_large') . $cache_query; ?>" />
 	<?php else: ?>
 		<meta name="twitter:card" content="summary" />
-		<meta name="twitter:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'twitter_small') . '?' . uniqid(); ?>" />
+		<meta name="twitter:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'twitter_small') . $cache_query; ?>" />
 	<?php endif; ?>
 <?php else: ?>
 	<?php if ( file_exists(get_theme_file_path('/assets/img/meta') . '/twitter-card_large.png') ): ?>
 		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:image" content="<?php echo $image_meta_directory . '/twitter-card_large.png?' . uniqid(); ?>" />
+		<meta name="twitter:image" content="<?php echo $image_meta_directory . '/twitter-card_large.png' . $cache_query; ?>" />
 	<?php else: ?>
 		<meta name="twitter:card" content="summary" />
-		<meta name="twitter:image" content="<?php echo $image_meta_directory . '/twitter-card.png?' . uniqid(); ?>" />
+		<meta name="twitter:image" content="<?php echo $image_meta_directory . '/twitter-card.png' . $cache_query; ?>" />
 	<?php endif; ?>
 <?php endif; ?>
 <?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): ?>
