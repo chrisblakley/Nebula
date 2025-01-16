@@ -317,8 +317,8 @@
 			"priceRange": "",
 		<?php endif; ?>
 
-		"image": "<?php echo $image_meta_directory; ?>/og-thumb.png",
-		"logo": "<?php echo nebula()->logo('meta'); ?>"
+		"image": "<?php echo $image_meta_directory; ?>/og-thumb.png<?php echo $cache_query ?>",
+		"logo": "<?php echo nebula()->logo('meta') . $cache_query; ?>"
 	}
 </script>
 
@@ -371,7 +371,7 @@
 				],
 			<?php endif; ?>
 
-			"image": "<?php echo esc_attr(get_the_author_meta('headshot_url', $user->ID)); ?>"
+			"image": "<?php echo esc_attr(get_the_author_meta('headshot_url', $user->ID)) . $cache_query; ?>"
 		}
 	</script>
 <?php endif; ?>
@@ -393,14 +393,14 @@
 				<?php if ( !empty($post_thumbnail_meta) ): ?>
 					"image": {
 						"@type": "ImageObject",
-						"url": "<?php echo $post_thumbnail_meta[0]; ?>",
+						"url": "<?php echo $post_thumbnail_meta[0] . $cache_query; ?>",
 						"width": "<?php echo $post_thumbnail_meta[1]; ?>",
 						"height": "<?php echo $post_thumbnail_meta[2]; ?>"
 					},
 				<?php else: ?>
 					"image": {
 						"@type": "ImageObject",
-						"url": "<?php echo $image_meta_directory; ?>/og-thumb.png",
+						"url": "<?php echo $image_meta_directory; ?>/og-thumb.png<?php echo $cache_query ?>",
 						"width": "1200",
 						"height": "600"
 					},
@@ -422,7 +422,7 @@
 					"name": "<?php echo ( nebula()->get_option('site_owner') )? nebula()->get_option('site_owner') : get_bloginfo('name'); ?>",
 					"logo": {
 						"@type": "ImageObject",
-						"url": "<?php echo nebula()->logo('meta'); ?>"
+						"url": "<?php echo nebula()->logo('meta') . $cache_query; ?>"
 					}
 				},
 				"description": "<?php echo nebula()->meta_description(); ?>"
@@ -439,18 +439,18 @@
 				},
 				"headline": "<?php echo esc_html(get_the_title()); ?>",
 
-				<?php $post_thumbnail_meta = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'full'); ?>
+				<?php $post_thumbnail_meta = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'full') . $cache_query; ?>
 				<?php if ( !empty($post_thumbnail_meta) ): ?>
 					"image": {
 						"@type": "ImageObject",
-						"url": "<?php echo $post_thumbnail_meta[0]; ?>",
+						"url": "<?php echo $post_thumbnail_meta[0] . $cache_query; ?>",
 						"width": "<?php echo $post_thumbnail_meta[1]; ?>",
 						"height": "<?php echo $post_thumbnail_meta[2]; ?>"
 					},
 				<?php else: ?>
 					"image": {
 						"@type": "ImageObject",
-						"url": "<?php echo $image_meta_directory; ?>/og-thumb.png",
+						"url": "<?php echo $image_meta_directory; ?>/og-thumb.png<?php echo $cache_query ?>",
 						"width": "1200",
 						"height": "600"
 					},
@@ -472,7 +472,7 @@
 					"name": "<?php echo ( nebula()->get_option('site_owner') )? nebula()->get_option('site_owner') : get_bloginfo('name'); ?>",
 					"logo": {
 						"@type": "ImageObject",
-						"url": "<?php echo nebula()->logo('meta'); ?>"
+						"url": "<?php echo nebula()->logo('meta') . $cache_query; ?>"
 					}
 				},
 				"description": "<?php echo nebula()->meta_description(); ?>"
