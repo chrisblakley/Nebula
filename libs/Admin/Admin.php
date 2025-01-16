@@ -2092,22 +2092,34 @@ if ( !trait_exists('Admin') ){
 									$submission_label = 'Invalid Submission &raquo;';
 									$submission_icon = '<i class="fa-solid fa-fw fa-xmark"></i>';
 
-									if ( get_post_status() == 'submission' && strpos(get_the_title(), '(Invalid)') === false ){ //Only if it was a successful submission originally (and not moved from another status) //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-										$success_count++;
-										$submission_class = 'successful-submission-item';
-										$submission_label = 'Successful Submission &raquo;';
-										$submission_icon = '<i class="fa-solid fa-fw fa-check"></i>';
+									if ( get_post_status() == 'submission' ){ //Only if it was a successful submission originally (and not moved from another status) //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+										if ( strpos(get_the_title(), '(Invalid)') !== false ){
+											$invalid_count++;
+										} elseif ( strpos(get_the_title(), '(Mail Failed)') !== false ){
+											$invalid_count++;
+											//$success_count++;
+											$submission_class = 'caution-submission-item'; //Caution because Nebula captures the form, but the email was not sent
+											$submission_label = 'Failed Submission &raquo;';
+											$submission_icon = '<i class="fa-solid fa-fw fa-triangle-exclamation"></i>';
+										} else {
+											$success_count++;
+											$submission_class = 'successful-submission-item';
+											$submission_label = 'Successful Submission &raquo;';
+											$submission_icon = '<i class="fa-solid fa-fw fa-check"></i>';
+										}
 									} else {
 										$invalid_count++;
 									}
 
+									//get_the_ID() is the "overall" post that is being viewed on the page
+									//$post->ID is the post in this loop of all the submissions from this user
 									if ( get_the_ID() == $post->ID ){
 										$submission_class .= ' this-submission';
 										$submission_label = 'This ' . str_replace(' &raquo;', '', $submission_label);
 										$submission_icon = ( get_post_status() == 'submission' && strpos(get_the_title(), '(Invalid)') === false )? '<i class="fa-solid fa-fw fa-circle-check"></i><i class="fa-solid fa-arrow-right"></i>' : '<i class="fa-solid fa-fw fa-circle-xmark"></i><i class="fa-solid fa-arrow-right"></i>';
 									}
 
-									$the_submissions[] = '<li class="' . get_post_status() . '-submission-item ' . $submission_class . '" data-id="' . get_the_ID() . '"><a href="' . get_edit_post_link(get_the_ID()) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('l, F j, Y \a\t g:i:sa') . ')</small></li>';
+									$the_submissions[] = '<li class="' . get_post_status() . '-submission-item ' . $submission_class . '" data-id="' . $post->ID . '"><a href="' . get_edit_post_link($post->ID) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('l, F j, Y \a\t g:i:sa') . ')</small></li>';
 								}
 
 								if ( count($the_submissions) >= 2 ){ //If this user has submitted a form more than once (successfully or not)
@@ -2346,6 +2358,38 @@ if ( !trait_exists('Admin') ){
 					}
 				}
 			}
+		}
+
+		//Test if SMTP is working yolo
+		public function check_smtp_status(){
+			//Attempt to retrieve SMTP settings from PHPMailer or WordPress options
+			$smtp_host = ( defined('SMTP_HOST') )? SMTP_HOST : ini_get('SMTP'); //Fallback to php.ini 'SMTP' setting
+			$smtp_port = ( defined('SMTP_PORT') )? SMTP_PORT : (int)ini_get('smtp_port'); //Fallback to php.ini 'smtp_port'
+
+			if ( empty($smtp_host) || empty($smtp_port) ){
+				return 'unknown'; //Cannot test SMTP if no host or port is defined
+			}
+
+			// Check for cached status
+			$cached_status = get_transient('smtp_status');
+			if ( $cached_status !== false ){
+				return $cached_status; //Return cached result
+			}
+
+			$error_code = null; //To store error code if connection fails
+			$error_message = null; //To store error message if connection fails
+			$connection = @fsockopen($smtp_host, $smtp_port, $error_code, $error_message, 5); //Perform SMTP check (timeout is 5 seconds)
+
+			if ( $connection ){
+				fclose($connection);
+				$status = 'ok'; // SMTP is working
+			} else {
+				$status = 'error'; // SMTP is not working
+			}
+
+			set_transient('smtp_status', $status, HOUR_IN_SECONDS*12); //Cache the result for 12 hours
+
+			return $status;
 		}
 
 		//All Settings page link

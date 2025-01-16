@@ -435,6 +435,7 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 			ol {margin-left: 20px;
 				.invalid-submission-item i {color: $invalid_color;}
 				.successful-submission-item i {color: $submission_color;}
+				.caution-submission-item i {color: $caution_color;}
 				.this-submission {font-weight: bold; font-size: 1.1em;
 					&::marker {font-weight: bold;}
 					a {text-decoration: none;}

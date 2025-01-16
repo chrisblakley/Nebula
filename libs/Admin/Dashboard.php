@@ -702,6 +702,16 @@ if ( !trait_exists('Dashboard') ){
 			$opcode_cache_enabled = ( extension_loaded('Zend OPcache') )? '<strong>Zend OPcache</strong>' : '<strong class="highlight-bad">Disabled</strong>';
 			echo '<li><i class="fa-solid fa-fw fa-box"></i> Opcode Cache: ' . $opcode_cache_enabled . '</li>';
 
+			//Check SMTP mail status
+			$smtp_status = $this->check_smtp_status();
+			$smtp_status_output = '<strong>Working</strong>';
+			if ( $smtp_status == 'error' ){
+				$smtp_status_output = '<strong style="color: #ca3838;">Error</strong>';
+			} elseif ( $smtp_status == 'unknown' ){
+				$smtp_status_output = '<em>Unable to Check</em>';
+			}
+			echo '<li><i class="fa-solid fa-fw fa-envelope"></i> SMTP Status: ' . $smtp_status_output . '</li>';
+
 			//Theme directory size(s)
 			if ( is_child_theme() ){
 				$nebula_parent_size = nebula()->transient('nebula_directory_size_parent_theme', function(){
