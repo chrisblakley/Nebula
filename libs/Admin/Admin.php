@@ -1785,6 +1785,11 @@ if ( !trait_exists('Admin') ){
 					//Mail failed
 					if ( strpos(strtolower(get_the_title($submission_id)), 'mail fail') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 						echo '<p class="cf7-note-failed"><i class="fa-solid fa-fw fa-triangle-exclamation"></i> <strong>Mail Failed</strong><br /><small>An administrator did not get an email notification of this submission!</small></p>';
+
+						//If it failed within the last few days, denote that in a transient
+						if ( strtotime(get_the_date('Y-m-d H:i:s', $submission_id)) >= strtotime('-2 days') ){
+							set_transient('smtp_status', 'Recent CF7 Fail Error', DAY_IN_SECONDS*5); //Remember this must contain the word "error" for Dashboard status check
+						}
 					}
 
 					//Preserved submissions
@@ -2001,6 +2006,11 @@ if ( !trait_exists('Admin') ){
 					//Check if the send mail failed
 					if ( strpos(strtolower(get_the_title($post->ID)), 'mail fail') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 						echo '<div class="nebula-cf7-notice notice-mail-failed"><p><i class="fa-solid fa-fw fa-envelope"></i> <strong>Email notification failed.</strong> The email notification to administators has failed for this submission.</p></div>';
+
+						//If it failed within the last few days, denote that in a transient
+						if ( strtotime(get_the_date('Y-m-d H:i:s', $post->ID)) >= strtotime('-2 days') ){
+							set_transient('smtp_status', 'Recent CF7 Fail Error', DAY_IN_SECONDS*5); //Remember this must contain the word "error" for Dashboard status check
+						}
 					}
 
 					//Loop through the form data to look for HTML tags
