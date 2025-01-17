@@ -202,7 +202,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//Revisions
 			$revision_count = ( WP_POST_REVISIONS == -1 )? 'all' : WP_POST_REVISIONS;
-			$revision_style = ( $revision_count === 0 )? 'style="color: red;"' : '';
+			$revision_style = ( $revision_count === 0 )? 'style="color: #ca3838;"' : '';
 			$revisions_plural = ( $revision_count === 1 )? 'revision' : 'revisions';
 			echo '<li><i class="fa-solid fa-fw fa-history"></i> Storing <strong ' . $revision_style . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
 
@@ -675,11 +675,11 @@ if ( !trait_exists('Dashboard') ){
 			$php_version_lifecycle = $this->php_version_support();
 			if ( !empty($php_version_lifecycle) ){
 				if ( $php_version_lifecycle['lifecycle'] === 'security' ){
-					$php_version_color = '#ca8038'; //Warning
+					$php_version_color = '#ca8038'; //Warning (orange)
 					$php_version_info = 'This version is nearing end of life. Security updates end on ' . date('F j, Y', $php_version_lifecycle['end']) . '.';
 					$php_version_cursor = 'help';
 				} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
-					$php_version_color = '#ca3838'; //Danger
+					$php_version_color = '#ca3838'; //Danger (red)
 					$php_version_info = 'This version no longer receives security updates! End of life occurred on ' . date('F j, Y', $php_version_lifecycle['end']) . '.';
 					$php_version_cursor = 'help';
 				}
@@ -705,10 +705,10 @@ if ( !trait_exists('Dashboard') ){
 			//Check SMTP mail status
 			$smtp_status = $this->check_smtp_status();
 			$smtp_status_output = '<strong>Working</strong>';
-			if ( $smtp_status == 'error' ){
-				$smtp_status_output = '<strong style="color: #ca3838;">Error</strong>';
-			} elseif ( $smtp_status == 'unknown' ){
-				$smtp_status_output = '<em>Unable to Check</em>';
+			if ( strpos(strtolower($smtp_status), 'error') != false ){
+				$smtp_status_output = '<strong style="color: #ca3838;">' . $smtp_status . '</strong>';
+			} elseif ( strtolower($smtp_status) == 'unknown' ){
+				$smtp_status_output = '<em style="color: #ca8038;">Unable to Check</em>';
 			}
 			echo '<li><i class="fa-solid fa-fw fa-envelope"></i> SMTP Status: ' . $smtp_status_output . '</li>';
 
@@ -760,10 +760,12 @@ if ( !trait_exists('Dashboard') ){
 				$disk_free_space = disk_free_space(ABSPATH);
 
 				$disk_usage_color = 'inherit';
-				if ( $disk_free_space < 5 ){
-					$disk_usage_color = '#ca3838'; //Danger
-				} elseif ( $disk_free_space < 10 ){
+				if ( $disk_free_space/GB_IN_BYTES < 10 ){
 					$disk_usage_color = '#ca8038'; //Warning
+
+					if ( $disk_free_space/GB_IN_BYTES < 5 ){
+						$disk_usage_color = '#ca3838'; //Danger
+					}
 				}
 
 				echo '<li><i class="fa-solid fa-fw fa-hdd"></i> Disk Space Available: <strong style="color: ' . $disk_usage_color . ';">' . $this->format_bytes($disk_free_space, 1) . '</strong> <small>(Total space: <strong>' . $this->format_bytes($disk_total_space) . '</strong>)</small></li>';
@@ -784,9 +786,9 @@ if ( !trait_exists('Dashboard') ){
 			//Service Worker
 			if ( $this->get_option('service_worker') ){
 				if ( !is_ssl() ){
-					echo '<li><i class="fa-solid fa-fw fa-microchip" style="color: red;"></i> <strong>Not</strong> using service worker. No SSL.</li>';
+					echo '<li><i class="fa-solid fa-fw fa-microchip" style="color: #ca3838;"></i> <strong>Not</strong> using service worker. No SSL.</li>';
 				} elseif ( !file_exists($this->sw_location(false)) ){
-					echo '<li><i class="fa-solid fa-fw fa-microchip" style="color: red;"></i> <strong>Not</strong> using service worker. Service worker file does not exist.</li>';
+					echo '<li><i class="fa-solid fa-fw fa-microchip" style="color: #ca3838;"></i> <strong>Not</strong> using service worker. Service worker file does not exist.</li>';
 				} else {
 					echo '<li><i class="fa-solid fa-fw fa-microchip"></i> Using service worker</li>';
 				}

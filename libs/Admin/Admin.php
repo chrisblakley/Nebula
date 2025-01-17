@@ -2360,31 +2360,39 @@ if ( !trait_exists('Admin') ){
 			}
 		}
 
-		//Test if SMTP is working yolo
+		//Test if SMTP is working
 		public function check_smtp_status(){
-			//Attempt to retrieve SMTP settings from PHPMailer or WordPress options
-			$smtp_host = ( defined('SMTP_HOST') )? SMTP_HOST : ini_get('SMTP'); //Fallback to php.ini 'SMTP' setting
-			$smtp_port = ( defined('SMTP_PORT') )? SMTP_PORT : (int)ini_get('smtp_port'); //Fallback to php.ini 'smtp_port'
+			// Retrieve SMTP settings
+			$smtp_host = defined('SMTP_HOST') ? SMTP_HOST : ini_get('SMTP'); // Fallback to php.ini 'SMTP' setting
+			$smtp_port = defined('SMTP_PORT') ? SMTP_PORT : (int)ini_get('smtp_port'); // Fallback to php.ini 'smtp_port'
 
 			if ( empty($smtp_host) || empty($smtp_port) ){
-				return 'unknown'; //Cannot test SMTP if no host or port is defined
+				return 'Unknown'; // Cannot test SMTP if no host or port is defined
 			}
 
-			// Check for cached status
+			//Check for cached status (this also includes recent CF7 Mail Failed errors)
 			$cached_status = get_transient('smtp_status');
-			if ( $cached_status !== false ){
-				return $cached_status; //Return cached result
+			if ( $cached_status !== false ) {
+				return $cached_status; // Return cached result
 			}
 
-			$error_code = null; //To store error code if connection fails
-			$error_message = null; //To store error message if connection fails
-			$connection = @fsockopen($smtp_host, $smtp_port, $error_code, $error_message, 5); //Perform SMTP check (timeout is 5 seconds)
+			$status = 'Working';
 
-			if ( $connection ){
-				fclose($connection);
-				$status = 'ok'; // SMTP is working
+			//Open a connection to the SMTP server
+			$connection = @stream_socket_client('tcp://' . $smtp_host . ':' . $smtp_port, $error_code, $error_message, 5); //Perform SMTP check (timeout is 5 seconds). Note: This "@" will suppress warnings even though "@" does not suppress fatal errors in PHP8+ it is okay here because the "errors" are only at the warning level.
+			if ( !$connection ){
+				$status = 'Connection Error';
 			} else {
-				$status = 'error'; // SMTP is not working
+				//Perform SMTP handshake
+				fwrite($connection, "EHLO localhost\r\n");
+				$response = fgets($connection, 512);
+				if ( strpos($response, '220') === false && strpos($response, '250') === false ){
+					$status = 'Handshake Error';
+				}
+
+				//Close the connection
+				fwrite($connection, "QUIT\r\n");
+				fclose($connection);
 			}
 
 			set_transient('smtp_status', $status, HOUR_IN_SECONDS*12); //Cache the result for 12 hours

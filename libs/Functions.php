@@ -86,6 +86,7 @@ if ( !trait_exists('Functions') ){
 			}
 			add_filter('wpcf7_form_elements', array($this, 'cf7_autocomplete_attribute'));
 			add_filter('wpcf7_special_mail_tags', array($this, 'cf7_custom_special_mail_tags'), 10, 3);
+			add_action('wpcf7_mail_failed', array($this, 'cf7_note_mail_failed'));
 
 			if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') && $this->get_option('store_form_submissions') ){ //If CF7 is installed and active and capturing submission data is enabled
 				add_action('init', array($this, 'cf7_storage_taxonomies')); //Custom Post Type and Custom Status
@@ -2460,7 +2461,7 @@ if ( !trait_exists('Functions') ){
 				$tweets = json_decode($response['body']);
 
 				//If there are no tweets -or- if an error is return (for example if an account does not exist)
-				if ( empty($tweets) || !empty($tweets->error) ){
+				if ( empty($tweets) || !empty($tweets->errors) || !empty($tweets->error) ){
 					trigger_error('No tweets were retrieved. Verify all options are correct, the requested Twitter account exists, and that an active bearer token is being used.', E_USER_NOTICE);
 
 					if ( !empty($data['post']['data']) ){
@@ -3251,6 +3252,11 @@ if ( !trait_exists('Functions') ){
 			}
 
 			return $output;
+		}
+
+		//Note when CF7 emails have failed recently
+		public function cf7_note_mail_failed(){
+			set_transient('smtp_status', 'Recent CF7 Fail Error', DAY_IN_SECONDS*5); //Remember this must contain the word "error" for Dashboard status check
 		}
 
 		//Create a custom post type for Contact Form 7 submission storage
