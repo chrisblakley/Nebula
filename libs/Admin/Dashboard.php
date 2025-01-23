@@ -704,9 +704,9 @@ if ( !trait_exists('Dashboard') ){
 
 			//Check SMTP mail status
 			$smtp_status = $this->check_smtp_status();
-			$smtp_status_output = '<strong>Working</strong>';
+			$smtp_status_output = '<strong>' . $smtp_status . '</strong>';
 			if ( strpos(strtolower($smtp_status), 'error') != false ){
-				$smtp_status_output = '<strong style="color: #ca3838;">' . $smtp_status . '</strong>';
+				$smtp_status_output = '<strong style="color: #ca3838;"><i class="fa-solid fa-fw fa-exclamation-triangle"></i> ' . $smtp_status . '</strong>';
 			} elseif ( strtolower($smtp_status) == 'unknown' ){
 				$smtp_status_output = '<em style="color: #ca8038;">Unable to Check</em>';
 			}

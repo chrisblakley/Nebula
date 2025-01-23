@@ -97,10 +97,12 @@
 
 <?php //Open Graph Thumbnails ?>
 <?php if ( !empty($post) && has_post_thumbnail($post->ID) ): //If this post has a featured image, use it for Open Graph (OG) ?>
-	<?php if ( get_the_post_thumbnail($post->ID, 'open_graph_large') ): ?>
-		<meta property="og:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'open_graph_large'); ?>" />
-	<?php else: ?>
-		<meta property="og:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'open_graph_small'); ?>" />
+	<?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): //Only output if Yoast is not handling post thumbnails ?>
+		<?php if ( get_the_post_thumbnail($post->ID, 'open_graph_large') ): ?>
+			<meta property="og:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'open_graph_large'); ?>" />
+		<?php else: ?>
+			<meta property="og:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'open_graph_small'); ?>" />
+		<?php endif; ?>
 	<?php endif; ?>
 <?php else: //Otherwise, check the image meta directory for a generic brand OG image ?>
 	<?php if ( file_exists(get_theme_file_path('/assets/img/meta') . '/og-thumb.png') ): ?>

@@ -108,6 +108,11 @@ if ( !trait_exists('Ecommerce') ){
 		public function woo_custom_ga_events(){
 			echo 'nebula.site.ecommerce = true;'; //Set the ecommerce setting to true
 
+			//If analytics is being managed by a plugin, ignore the remaining events
+			if ( is_plugin_active('woocommerce-google-analytics-integration/woocommerce-google-analytics-integration.php') ){
+				return false;
+			}
+
 			//View product detail page
 			if ( is_product() ){
 				global $product;

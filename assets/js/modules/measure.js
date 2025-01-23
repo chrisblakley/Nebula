@@ -1596,6 +1596,25 @@ nebula.ecommerceTracking = async function(){
 			nebula.crm('event', 'Ecommerce Started Checkout Form');
 		});
 
+		//Note: Google Analytics for Woocommerce plugin does not send "add_shipping_info" nor "add_payment_info" events as of January 2025 so we need to handle those with Nebula here
+		if ( jQuery('#checkout').length ){ //If we are on the Checkout page
+			//Monitor for shipping method selection (for the Checkout Journey report)
+			nebula.dom.document.on('change', '.woocommerce-shipping-fields input, input#ship-to-different-address-checkbox, input[name="shipping_address_1"], input[name="shipping_method"]', function(){
+				gtag('event', 'add_shipping_info');
+			});
+
+			//Monitor for payment method selection (for the Checkout Journey report). Note: Stripe input fields are within an iframe!
+			nebula.dom.document.on('change', '#payment input, input[name="payment_method"]', function(){
+				gtag('event', 'add_payment_info');
+			});
+			nebula.dom.document.on('mouseover', '.payment_methods', function(){ //This helps when iframes exist within the payment methods section
+				nebula.once(function(){
+					gtag('event', 'add_payment_info');
+					nebula.dom.document.off('mouseover', '.payment_methods'); //Remove the listener once it occurs
+				}, 'add payment info');
+			});
+		}
+
 		//Place order button
 		nebula.dom.document.on('pointerdown', '#place_order', function(e){
 			let thisEvent = {
@@ -1836,7 +1855,7 @@ nebula.fbq = function(type='track', eventName='', parameters={}){
 
 //Bing conversion tracking
 nebula.uetq = function(parameters={}){
-	if ( typeof uetq === 'function' ){
+	if ( window.uetq && typeof window.uetq.push === 'function' ){
 		window.uetq.push(parameters);
 	}
 };

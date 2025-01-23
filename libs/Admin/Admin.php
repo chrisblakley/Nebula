@@ -2380,13 +2380,13 @@ if ( !trait_exists('Admin') ){
 				return 'Unknown'; // Cannot test SMTP if no host or port is defined
 			}
 
-			//Check for cached status (this also includes recent CF7 Mail Failed errors)
+			//Check for cached status (this also includes recent CF7 Mail Failed errors from elsewhere)
 			$cached_status = get_transient('smtp_status');
 			if ( $cached_status !== false ) {
 				return $cached_status; // Return cached result
 			}
 
-			$status = 'Working';
+			$status = 'Tests Passed'; //Does not guarantee it is working, only that these tests passed
 
 			//Open a connection to the SMTP server
 			$connection = @stream_socket_client('tcp://' . $smtp_host . ':' . $smtp_port, $error_code, $error_message, 5); //Perform SMTP check (timeout is 5 seconds). Note: This "@" will suppress warnings even though "@" does not suppress fatal errors in PHP8+ it is okay here because the "errors" are only at the warning level.

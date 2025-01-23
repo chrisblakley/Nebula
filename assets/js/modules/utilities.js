@@ -445,7 +445,7 @@ nebula.uniqueId = function(prefix='nuid', random=false){
 nebula.once = function(fn, args, unique){
 	nebula.onces = nebula.onces || {};
 
-	if ( typeof args === 'string' ){ //If no parameters
+	if ( typeof args === 'string' ){ //If no parameters, treat it as the unique string
 		unique = args;
 		args = [];
 	}
