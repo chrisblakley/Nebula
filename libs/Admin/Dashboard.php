@@ -702,15 +702,44 @@ if ( !trait_exists('Dashboard') ){
 			$opcode_cache_enabled = ( extension_loaded('Zend OPcache') )? '<strong>Zend OPcache</strong>' : '<strong class="highlight-bad">Disabled</strong>';
 			echo '<li><i class="fa-solid fa-fw fa-box"></i> Opcode Cache: ' . $opcode_cache_enabled . '</li>';
 
+			//Count total WordPress updates available
+			require_once ABSPATH . 'wp-admin/includes/update.php';
+			$update_data = wp_get_update_data();
+			$updates_count = $update_data['counts']['total'];
+			if ( $updates_count > 0 ){
+				$updates_style = '';
+
+				if ( $updates_count > 10 ){ //If there are many updates available
+					$updates_style = 'style="color: #ca3838;"';
+				}
+
+				$updates_count = '<a href="update-core.php" ' . $updates_style . '>' . $updates_count . ' &raquo;</a>';
+				echo '<li><i class="fa-regular fa-fw fa-circle-up"></i> Updates Available: <strong>' . $updates_count . '</strong></li>';
+			}
+
 			//Check SMTP mail status
 			$smtp_status = $this->check_smtp_status();
-			$smtp_status_output = '<strong>' . $smtp_status . '</strong>';
+			$smtp_status_output = ''; //Empty unless there is a problem
 			if ( strpos(strtolower($smtp_status), 'error') != false ){
 				$smtp_status_output = '<strong style="color: #ca3838;"><i class="fa-solid fa-fw fa-exclamation-triangle"></i> ' . $smtp_status . '</strong>';
 			} elseif ( strtolower($smtp_status) == 'unknown' ){
 				$smtp_status_output = '<em style="color: #ca8038;">Unable to Check</em>';
 			}
-			echo '<li><i class="fa-solid fa-fw fa-envelope"></i> SMTP Status: ' . $smtp_status_output . '</li>';
+			if ( !empty($smtp_status_output) ){
+				echo '<li><i class="fa-solid fa-fw fa-envelope"></i> SMTP Status: ' . $smtp_status_output . '</li>';
+			}
+
+			//Count 404s if the Redirection plugin is being used
+			if ( is_plugin_active('redirection/redirection.php') ){
+				$count_of_404s = $this->transient('redirection_404_count', function(){
+					global $wpdb;
+					return $wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM ' . $wpdb->prefix . 'redirection_404 WHERE http_code = 404 AND created >= %s', date('Y-m-d H:i:s', strtotime('-24 hours'))));
+				}, HOUR_IN_SECONDS);
+
+				if ( !empty($count_of_404s) ){ //Only show when they exist (this also prevents showing null if something is wrong with the query)
+					echo '<li><i class="fa-solid fa-fw fa-file-half-dashed"></i> 404s: <strong><a href="tools.php?page=redirection.php&sub=404s">' . $count_of_404s . '</a></strong> <small>(last 24 hours)</small></li>';
+				}
+			}
 
 			//Theme directory size(s)
 			if ( is_child_theme() ){
@@ -739,12 +768,6 @@ if ( !trait_exists('Dashboard') ){
 				return $this->foldersize($upload_dir['basedir']);
 			}, HOUR_IN_SECONDS*36);
 
-			//Here is how it will be after the next major version release:
-			// $uploads_size = $this->transient('nebula_directory_size_uploads', function(){
-			// 	$upload_dir = wp_upload_dir();
-			// 	return $this->foldersize($upload_dir['basedir']);
-			// }, HOUR_IN_SECONDS*36);
-
 			if ( function_exists('wp_max_upload_size') ){
 				$upload_max = '<small>(Max upload: <strong>' . $this->format_bytes(((int) wp_max_upload_size())) . '</strong>)</small>';
 			} elseif ( ini_get('upload_max_filesize') ){
@@ -759,16 +782,18 @@ if ( !trait_exists('Dashboard') ){
 				$disk_total_space = disk_total_space(ABSPATH);
 				$disk_free_space = disk_free_space(ABSPATH);
 
-				$disk_usage_color = 'inherit';
-				if ( $disk_free_space/GB_IN_BYTES < 10 ){
-					$disk_usage_color = '#ca8038'; //Warning
+				if ( !empty($disk_total_space) ){ //Ignore when this results in 0 bytes total
+					$disk_usage_color = 'inherit';
+					if ( $disk_free_space/GB_IN_BYTES < 10 ){
+						$disk_usage_color = '#ca8038'; //Warning
 
-					if ( $disk_free_space/GB_IN_BYTES < 5 ){
-						$disk_usage_color = '#ca3838'; //Danger
+						if ( $disk_free_space/GB_IN_BYTES < 5 ){
+							$disk_usage_color = '#ca3838'; //Danger
+						}
 					}
-				}
 
-				echo '<li><i class="fa-solid fa-fw fa-hdd"></i> Disk Space Available: <strong style="color: ' . $disk_usage_color . ';">' . $this->format_bytes($disk_free_space, 1) . '</strong> <small>(Total space: <strong>' . $this->format_bytes($disk_total_space) . '</strong>)</small></li>';
+					echo '<li><i class="fa-solid fa-fw fa-hdd"></i> Disk Space Available: <strong style="color: ' . $disk_usage_color . ';">' . $this->format_bytes($disk_free_space, 1) . '</strong> <small>(Total space: <strong>' . $this->format_bytes($disk_total_space) . '</strong>)</small></li>';
+				}
 			}
 
 			//Link to Query Monitor Environment Panel
@@ -781,6 +806,21 @@ if ( !trait_exists('Dashboard') ){
 				foreach ( $types as $log_file ){
 					echo '<li><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . $log_file['shortpath'] . '" target="_blank"><code title="' . $log_file['shortpath'] . '" style="cursor: help;">' . $log_file['name'] . '</code></a> File: <strong>' . $this->format_bytes($log_file['bytes']) . '</strong></li>';
 				}
+			}
+
+			//Fatal error count
+			$fatal_error_count = $this->transient('fatal_error_count', function(){
+				return $this->count_fatal_errors();
+			}, HOUR_IN_SECONDS);
+
+			if ( !empty($fatal_error_count) ){
+				$fatal_error_count_description = '';
+
+				if ( intval($fatal_error_count) ){ //If the result is a number (not a string which represents a problem)
+					$fatal_error_count_description = ' <small>(last 7 days)</small>';
+				}
+
+				echo '<li><i class="fa-solid fa-fw fa-bug"></i> Fatal Errors: <strong><a href="' . trailingslashit(home_url()) . str_replace(ABSPATH, '', ini_get('error_log')) . '" target="_blank">' . $fatal_error_count . '</a></strong>' . $fatal_error_count_description . '</li>';
 			}
 
 			//Service Worker

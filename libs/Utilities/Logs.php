@@ -261,5 +261,57 @@ if ( !trait_exists('Logs') ){
 			nebula()->add_log('Automatic WP Core update', 4); //I don't know if this will properly log because logs require a logged-in user, but this may happen at any time...
 			return $update;
 		}
+
+		//Count the number of fatal errors in the error_log file if it exists
+		public function count_fatal_errors(){
+			if ( !ini_get('log_errors') ){ //Check if error logging is enabled
+				return false;
+			}
+
+			$log_file = ini_get('error_log'); //Path to the error log file
+
+			//Ensure the log file exists and is readable
+			if ( !$log_file || !file_exists($log_file) ){
+				return 0;
+			}
+
+			//Ensure the log file exists and is readable
+			if ( !is_readable($log_file) ){
+				return 'Error log file not readable';
+			}
+
+			if ( filesize($log_file) > MB_IN_BYTES*10 ){ //10mb
+				return 'Error log file too large (' . $this->format_bytes(filesize($log_file)) . ')';
+			}
+
+			$fatal_error_count = 0; //Initialize counter
+			$one_week_ago = strtotime('-7 days'); //Get the timestamp for one week ago
+
+			//Open the log file for reading
+			$file_handle = fopen($log_file, 'r');
+			if ( $file_handle ){
+				while ( ($line = fgets($file_handle)) !== false ){
+					//Extract the timestamp from the log line (assuming standard log format)
+					if ( preg_match('/\[(.*?)\]/', $line, $matches) ){
+						$log_timestamp = strtotime($matches[1]);
+
+						//Stop reading if the log line is outside the desired date range
+						if ( $log_timestamp < $one_week_ago ){
+							break;
+						}
+
+						//Check if the line contains a fatal error within the desired range
+						if ( strpos(strtolower($line), 'fatal') !== false ){
+							$fatal_error_count++;
+						}
+					} else {
+						break; //Stop reading if the timestamp cannot be matched
+					}
+				}
+				fclose($file_handle);
+			}
+
+			return $fatal_error_count;
+		}
 	}
 }
