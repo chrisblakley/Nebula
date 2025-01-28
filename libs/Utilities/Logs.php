@@ -262,6 +262,111 @@ if ( !trait_exists('Logs') ){
 			return $update;
 		}
 
+		//Get all PHP log files
+		public function get_log_files($requested_type='all', $fresh=false){
+			$timer_name = $this->timer('Get Log Files');
+
+			//Use the transient so we avoid scanning multiple times in short periods of time
+			$all_log_files = nebula()->transient('nebula_all_log_files', function(){
+				$file_names = array(
+					'php' => 'error_log',
+					'wordpress' => 'debug.log',
+					'nebula' => 'nebula.log',
+					'javascript' => 'js_error.log',
+				);
+
+				//Prepare the list
+				$all_log_files = array(
+					'php' => array(),
+					'wordpress' => array(),
+					'nebula' => array()
+				);
+
+				//Add the PHP ini log file
+				$all_log_files['php'][] = array(
+					'type' => 'php',
+					'path' => ini_get('error_log'), //Full file path
+					'name' => basename(ini_get('error_log')),
+					'shortpath' => ( strpos(ini_get('error_log'), WP_CONTENT_DIR) !== false )? '/' . str_replace(ABSPATH, '', ini_get('error_log')) : ini_get('error_log'), //Shorten the path if it is within the WordPress directory
+					'bytes' => filesize(ini_get('error_log')),
+				);
+
+				//Check all theme files
+				foreach ( $this->glob_r(WP_CONTENT_DIR . '/themes/*') as $file ){
+					if ( $this->contains($file, array('/twenty')) ){ //Ignore certain strings (this can be anything in the filepath)
+						continue; //Move on to the next file
+					}
+
+					foreach ( $file_names as $type => $name ){
+						if ( strpos($file, '/' . $name) !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+							$all_log_files[$type][] = array(
+								'type' => $type,
+								'path' => $file, //Full file path
+								'shortpath' => '/' . str_replace(ABSPATH, '', $file), //Relative to the root WP directory
+								'name' => $name,
+								'bytes' => filesize($file),
+							);
+
+							break 2; //Move on to the next file
+						}
+					}
+				}
+
+				//Check for the content directory debug.log file (this is separate to reduce the glob process because it is a single file in a set location)
+				$wp_content_debug_log = WP_CONTENT_DIR . '/debug.log';
+				if ( file_exists($wp_content_debug_log) ){
+					$all_log_files['wordpress'][] = array(
+						'type' => 'wordpress',
+						'path' => $wp_content_debug_log,
+						'shortpath' => '/' . str_replace(ABSPATH, '', $wp_content_debug_log), //Relative to the root WP directory
+						'name' => 'debug.log',
+						'bytes' => filesize($wp_content_debug_log),
+					);
+				}
+
+				//De-duplicate the arrays (so that no endpoint URL exists more than once at all regardless of nested "type" array)
+				$seen = array();
+				foreach ( $all_log_files as $key => &$logs ){
+					$logs = array_filter($logs, function($log) use (&$seen){
+						$url = $log['path'];
+
+						if ( in_array($url, $seen) ){
+							return false; //Exclude/Remove this as it is a duplicate
+						}
+
+						$seen[] = $url; //Mark the path as seen
+						return true; //Keep unique logs
+					});
+				}
+				unset($logs); //Delete the reference array that was only needed for de-duping
+
+				return $all_log_files;
+			}, MINUTE_IN_SECONDS*15);
+
+			$this->timer($timer_name, 'end');
+
+			if ( $requested_type === 'all' ){
+				return $all_log_files;
+			}
+
+			switch ( str_replace(array('_', ',', '-'), '', $requested_type) ){
+				case 'php':
+				case 'errorlog':
+				case 'errors':
+					return $all_log_files['php'];
+				case 'wordpress':
+				case 'wp':
+				case 'debuglog':
+				case 'debug':
+					return $all_log_files['wordpress'];
+				case 'nebula':
+				case 'nebulalog':
+					return $all_log_files['nebula'];
+				default:
+					return $all_log_files;
+			}
+		}
+
 		//Count the number of fatal errors in the error_log file if it exists
 		public function count_fatal_errors(){
 			if ( !ini_get('log_errors') ){ //Check if error logging is enabled

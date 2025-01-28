@@ -105,6 +105,10 @@ if ( !trait_exists('Functions') ){
 				add_action('send_headers', 'nocache_headers'); //WP Core function that adds nocache headers
 				add_action('shutdown', array($this, 'flush_rewrite_on_debug')); //Just on debug, not when auditing
 			}
+
+			if ( is_404() ){
+				add_action('send_headers', array($this, 'send_404_headers'));
+			}
 		}
 
 		//Adjust the content width when the full width page template is being used
@@ -214,6 +218,10 @@ if ( !trait_exists('Functions') ){
 
 		//Add a version query string to favicons
 		public function add_query_to_icon_url($url){
+			if ( strpos($url, '.') === false ){ //If the URL does not have a file extension, do not add a ?ver= query parameter //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				return $url;
+			}
+
 			if ( strpos($url, 'ver=') !== false ){ //If the version number already exists (not likely), just return it //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				return $url;
 			}
@@ -3565,6 +3573,16 @@ if ( !trait_exists('Functions') ){
 			$debug_info = map_deep($debug_info, 'sanitize_text_field'); //Deep sanitization of the full data array
 
 			return apply_filters('nebula_cf7_debug_info', $debug_info);
+		}
+
+		//Send headers for 404 pages specifically
+		public function send_404_headers(){
+			if ( is_404() ){ //Check again to ensure
+				header('X-Page-Type: 404'); //Designate this as a 404 page
+				header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0'); //No caching 404 pages
+				header('Pragma: no-cache'); //No caching 404 pages
+				header('Expires: 0'); //No caching 404 pages
+			}
 		}
 
 		//Add Google API key to Advanced Custom Fields Google Map field type

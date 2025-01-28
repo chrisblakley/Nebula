@@ -1597,7 +1597,7 @@ nebula.ecommerceTracking = async function(){
 		});
 
 		//Note: Google Analytics for Woocommerce plugin does not send "add_shipping_info" nor "add_payment_info" events as of January 2025 so we need to handle those with Nebula here
-		if ( jQuery('#checkout').length ){ //If we are on the Checkout page
+		if ( jQuery('#checkout').length || jQuery('[class*="woocommerce"] input').length ){ //If we are on the Checkout page
 			//Monitor for shipping method selection (for the Checkout Journey report)
 			nebula.dom.document.on('change', '.woocommerce-shipping-fields input, input#ship-to-different-address-checkbox, input[name="shipping_address_1"], input[name="shipping_method"]', function(){
 				gtag('event', 'add_shipping_info');
@@ -1605,13 +1605,21 @@ nebula.ecommerceTracking = async function(){
 
 			//Monitor for payment method selection (for the Checkout Journey report). Note: Stripe input fields are within an iframe!
 			nebula.dom.document.on('change', '#payment input, input[name="payment_method"]', function(){
-				gtag('event', 'add_payment_info');
+				if ( jQuery(this).va() != '' ){ //Only if the input has value (prevents this from triggering on load)
+					gtag('event', 'add_payment_info');
+				}
 			});
-			nebula.dom.document.on('mouseover', '.payment_methods', function(){ //This helps when iframes exist within the payment methods section
+			nebula.dom.document.on('mouseover', '.payment_methods', function(){ //This helps when iframes exist within the payment methods section on desktop
 				nebula.once(function(){
 					gtag('event', 'add_payment_info');
 					nebula.dom.document.off('mouseover', '.payment_methods'); //Remove the listener once it occurs
 				}, 'add payment info');
+			});
+
+			//If a user clicks the place order button, assume they have completed both the shipping and payment method sections (or they themselves have presumed to- even if there is a validation error)
+			nebula.dom.document.on('click', 'button[name="woocommerce_checkout_place_order"]', function(){
+				gtag('event', 'add_shipping_info');
+				gtag('event', 'add_payment_info');
 			});
 		}
 

@@ -684,7 +684,7 @@ if ( !trait_exists('Dashboard') ){
 					$php_version_cursor = 'help';
 				}
 			}
-			echo '<li><i class="fa-solid fa-fw fa-wrench"></i> PHP Version: <strong style="color: ' . $php_version_color . '; cursor: ' . $php_version_cursor . ';" title="' . $php_version_info . '">' . PHP_VERSION . '</strong> <small>(SAPI: <strong>' . php_sapi_name() . '</strong>)</small></li>';
+			echo '<li><i class="fa-solid fa-fw fa-wrench"></i> PHP Version: <a href="https://www.php.net/supported-versions.php" target="_blank" rel="noopener noreferrer" style="color: ' . $php_version_color . '; cursor: ' . $php_version_cursor . ';" title="' . $php_version_info . '"><strong>' . PHP_VERSION . '</strong></a> <small>(SAPI: <strong>' . php_sapi_name() . '</strong>)</small></li>';
 
 			//PHP memory limit
 			echo '<li><i class="fa-solid fa-fw fa-memory"></i> PHP Memory Limit: <strong>' . ini_get('memory_limit') . '</strong></li>';
@@ -737,7 +737,7 @@ if ( !trait_exists('Dashboard') ){
 				}, HOUR_IN_SECONDS);
 
 				if ( !empty($count_of_404s) ){ //Only show when they exist (this also prevents showing null if something is wrong with the query)
-					echo '<li><i class="fa-solid fa-fw fa-file-half-dashed"></i> 404s: <strong><a href="tools.php?page=redirection.php&sub=404s">' . $count_of_404s . '</a></strong> <small>(last 24 hours)</small></li>';
+					echo '<li><i class="fa-solid fa-fw fa-file-half-dashed"></i> 404s: <strong><a href="tools.php?page=redirection.php&sub=404s&groupby=url">' . $count_of_404s . '</a></strong> <small>(last 24 hours)</small></li>';
 				}
 			}
 
@@ -783,16 +783,18 @@ if ( !trait_exists('Dashboard') ){
 				$disk_free_space = disk_free_space(ABSPATH);
 
 				if ( !empty($disk_total_space) ){ //Ignore when this results in 0 bytes total
+					$disk_space_percent_used = round((($disk_total_space-$disk_free_space)/$disk_total_space)*100);
+
 					$disk_usage_color = 'inherit';
-					if ( $disk_free_space/GB_IN_BYTES < 10 ){
+					if ( $disk_free_space/GB_IN_BYTES < 10 || $disk_space_percent_used > 75 ){
 						$disk_usage_color = '#ca8038'; //Warning
 
-						if ( $disk_free_space/GB_IN_BYTES < 5 ){
+						if ( $disk_free_space/GB_IN_BYTES < 5 || $disk_space_percent_used > 90 ){
 							$disk_usage_color = '#ca3838'; //Danger
 						}
 					}
 
-					echo '<li><i class="fa-solid fa-fw fa-hdd"></i> Disk Space Available: <strong style="color: ' . $disk_usage_color . ';">' . $this->format_bytes($disk_free_space, 1) . '</strong> <small>(Total space: <strong>' . $this->format_bytes($disk_total_space) . '</strong>)</small></li>';
+					echo '<li><i class="fa-solid fa-fw fa-hdd"></i> Disk Space Available: <strong style="color: ' . $disk_usage_color . ';">' . $this->format_bytes($disk_free_space, 1) . '</strong> <small style="color: ' . $disk_usage_color . ';">(Using ' . $disk_space_percent_used . '% of <strong>' . $this->format_bytes($disk_total_space) . '</strong> total)</small></li>';
 				}
 			}
 
@@ -820,7 +822,7 @@ if ( !trait_exists('Dashboard') ){
 					$fatal_error_count_description = ' <small>(last 7 days)</small>';
 				}
 
-				echo '<li><i class="fa-solid fa-fw fa-bug"></i> Fatal Errors: <strong><a href="' . trailingslashit(home_url()) . str_replace(ABSPATH, '', ini_get('error_log')) . '" target="_blank">' . $fatal_error_count . '</a></strong>' . $fatal_error_count_description . '</li>';
+				echo '<li><i class="fa-solid fa-fw fa-bug"></i> Fatal Errors: <strong><a href="' . ini_get('error_log') . '" target="_blank">' . $fatal_error_count . '</a></strong>' . $fatal_error_count_description . '</li>'; //The <a> tag is just to show the location of the error log file
 			}
 
 			//Service Worker

@@ -585,7 +585,6 @@ if ( !trait_exists('Metaboxes') ){
 					<div class="form-group">
 						<input type="hidden" name="nebula_options[theme_update_notification]" value="<?php echo $nebula_options['theme_update_notification']; ?>">
 					<input id="theme_update_notification" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['theme_update_notification'])); ?>><label for="theme_update_notification">Nebula Theme Update Notification</label>
-
 						<p class="nebula-help-text short-help form-text text-muted">Enable easy updates to the Nebula theme. (Default: <?php echo $this->user_friendly_default('theme_update_notification'); ?>)</p>
 						<p class="nebula-help-text more-help form-text text-muted"><strong>Child theme must be activated to work!</strong></p>
 						<p class="option-keywords">discretionary</p>
@@ -1353,7 +1352,12 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="next_version">Next Nebula version</label>
 					<input type="text" name="nebula_options[next_version]" id="next_version" class="form-control" value="<?php echo $nebula_data['next_version']; ?>" readonly />
-					<p class="nebula-help-text short-help form-text text-muted">The latest version available on <a href="https://github.com/chrisblakley/Nebula" target="_blank">GitHub</a>.</p>
+					<p class="nebula-help-text short-help form-text text-muted">
+						The latest version available on <a href="https://github.com/chrisblakley/Nebula" target="_blank">GitHub</a>.
+						<?php if ( !$this->allow_theme_update() ): ?>
+							<br /><strong class="nebula-disabled">Note: Nebula updates have been manually disabled by a developer via Nebula Options (Administration tab).</strong>
+						<?php endif; ?>
+					</p>
 					<p class="nebula-help-text more-help form-text text-muted">Re-checks with <a href="update-core.php">theme update check</a> only when Nebula Child is activated.</p>
 					<p class="option-keywords">readonly</p>
 				</div>
