@@ -1605,7 +1605,7 @@ nebula.ecommerceTracking = async function(){
 
 			//Monitor for payment method selection (for the Checkout Journey report). Note: Stripe input fields are within an iframe!
 			nebula.dom.document.on('change', '#payment input, input[name="payment_method"]', function(){
-				if ( jQuery(this).va() != '' ){ //Only if the input has value (prevents this from triggering on load)
+				if ( jQuery(this).val() != '' ){ //Only if the input has value (prevents this from triggering on load)
 					gtag('event', 'add_payment_info');
 				}
 			});

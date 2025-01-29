@@ -98,8 +98,11 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fa-brands fa-fw fa-wordpress"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener noreferrer">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
 			//Nebula Version
-			//Note: Ignore the time here (in the title attribute on hover) as it is only meant to reference the calendar date based on the "major", "minor", and "patch" number (and not interpret the "build" number)
-			echo '<li><i class="fa-regular fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('realtime') . '</a></strong> <small title="' . $this->version('date') . '" style="cursor: help;">(Committed ' . human_time_diff($this->version('utc')) . ' ago)</small></li>';
+			$time_diff = human_time_diff($this->version('utc')) . ' ago';
+			if ( date('Y-m-d', $this->version('utc')) === date('Y-m-d', strtotime('now')) ){ //If it was committed today
+				$time_diff = 'today';
+			}
+			echo '<li><i class="fa-regular fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('realtime') . '</a></strong> <small title="' . $this->version('date') . '" style="cursor: help;">(Committed ' . $time_diff . ')</small></li>';
 
 			//Child Theme
 			if ( is_child_theme() ){
@@ -733,11 +736,25 @@ if ( !trait_exists('Dashboard') ){
 			if ( is_plugin_active('redirection/redirection.php') ){
 				$count_of_404s = $this->transient('redirection_404_count', function(){
 					global $wpdb;
-					return $wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM ' . $wpdb->prefix . 'redirection_404 WHERE http_code = 404 AND created >= %s', date('Y-m-d H:i:s', strtotime('-24 hours'))));
+
+					//Count the rows in PHP (instead of MySQL) to avoid processing the entire DB table
+					$results = $wpdb->get_col($wpdb->prepare(
+						'SELECT http_code FROM ' . $wpdb->prefix . 'redirection_404
+						WHERE http_code = 404
+						AND created >= %s
+						LIMIT 1000',
+						date('Y-m-d H:i:s', strtotime('-24 hours'))
+					));
+
+					return count($results);
 				}, HOUR_IN_SECONDS);
 
 				if ( !empty($count_of_404s) ){ //Only show when they exist (this also prevents showing null if something is wrong with the query)
-					echo '<li><i class="fa-solid fa-fw fa-file-half-dashed"></i> 404s: <strong><a href="tools.php?page=redirection.php&sub=404s&groupby=url">' . $count_of_404s . '</a></strong> <small>(last 24 hours)</small></li>';
+					if ( $count_of_404s >= 999 ){ //If we reached the limit above, assume there are more that weren't counted
+						$count_of_404s = '1000+';
+					}
+
+					echo '<li><i class="fa-solid fa-fw fa-file-half-dashed"></i> 404s: <strong><a href="tools.php?page=redirection.php&sub=404s&groupby=url">' . $count_of_404s . '</a></strong> <small>(Last 24 hours)</small></li>';
 				}
 			}
 
@@ -806,7 +823,9 @@ if ( !trait_exists('Dashboard') ){
 			//Log Files
 			foreach ( $this->get_log_files('all', true) as $types ){ //Always get fresh data here
 				foreach ( $types as $log_file ){
-					echo '<li><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . $log_file['shortpath'] . '" target="_blank"><code title="' . $log_file['shortpath'] . '" style="cursor: help;">' . $log_file['name'] . '</code></a> File: <strong>' . $this->format_bytes($log_file['bytes']) . '</strong></li>';
+					if ( !empty($log_file['bytes']) && $log_file['bytes'] > 999 ){ //Only show the file if it has a size and is at least 1kb
+						echo '<li><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . $log_file['shortpath'] . '" target="_blank"><code title="' . $log_file['shortpath'] . '" style="cursor: help;">' . $log_file['name'] . '</code></a> File: <strong>' . $this->format_bytes($log_file['bytes']) . '</strong></li>';
+					}
 				}
 			}
 
