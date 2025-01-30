@@ -16,6 +16,9 @@ $warning_color: #ffc107 !default; //Generally #ffc107
 $info_color: #17a2b8 !default; //Generally #17a2b8
 $success_color: #28a745 !default; //Generally #28a745
 
+//Additional colors that may be useful
+$caution_color: #b95e00 !default;
+
 //CSS variables defined in Bootstrap
 $sm: 576; //Why cant var(--breakpoint-sm) be used here?
 $md: 768;

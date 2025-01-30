@@ -89,7 +89,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//Open/Closed
 			if ( $this->has_business_hours() ){
-				$open_closed = ( $this->business_open() )? '<strong style="color: green;">Open</strong>' : '<strong>Closed</strong>';
+				$open_closed = ( $this->business_open() )? '<strong class="text-success">Open</strong>' : '<strong>Closed</strong>';
 				echo '<li><i class="fa-regular fa-fw fa-clock"></i> Currently ' . $open_closed . '</li>';
 			}
 
@@ -205,9 +205,9 @@ if ( !trait_exists('Dashboard') ){
 
 			//Revisions
 			$revision_count = ( WP_POST_REVISIONS == -1 )? 'all' : WP_POST_REVISIONS;
-			$revision_style = ( $revision_count === 0 )? 'style="color: #ca3838;"' : '';
+			$revision_class = ( $revision_count === 0 )? 'class="text-danger"' : '';
 			$revisions_plural = ( $revision_count === 1 )? 'revision' : 'revisions';
-			echo '<li><i class="fa-solid fa-fw fa-history"></i> Storing <strong ' . $revision_style . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
+			echo '<li><i class="fa-solid fa-fw fa-history"></i> Storing <strong ' . $revision_class . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
 
 			//Plugins
 			$all_plugins = nebula()->transient('nebula_count_plugins', function(){
@@ -672,22 +672,22 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fa-solid fa-fw fa-database"></i> MySQL Version: <strong title="Raw: ' . $mysql_version . '">' . floor($mysql_version/10000) . '.' . floor(($mysql_version%10000)/100) . '.' . ($mysql_version%10000)%100 . '</strong> <small>(' . get_class($wpdb->dbh) . ')</small></li>'; //PHP 7.4 use numeric separators here
 
 			//PHP version
-			$php_version_color = 'inherit';
+			$php_version_class = '';
 			$php_version_info = '';
 			$php_version_cursor = 'normal';
 			$php_version_lifecycle = $this->php_version_support();
 			if ( !empty($php_version_lifecycle) ){
 				if ( $php_version_lifecycle['lifecycle'] === 'security' ){
-					$php_version_color = '#ca8038'; //Warning (orange)
+					$php_version_class = 'text-caution'; //Warning (orange)
 					$php_version_info = 'This version is nearing end of life. Security updates end on ' . date('F j, Y', $php_version_lifecycle['end']) . '.';
 					$php_version_cursor = 'help';
 				} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
-					$php_version_color = '#ca3838'; //Danger (red)
+					$php_version_class = 'text-danger'; //Danger (red)
 					$php_version_info = 'This version no longer receives security updates! End of life occurred on ' . date('F j, Y', $php_version_lifecycle['end']) . '.';
 					$php_version_cursor = 'help';
 				}
 			}
-			echo '<li><i class="fa-solid fa-fw fa-wrench"></i> PHP Version: <a href="https://www.php.net/supported-versions.php" target="_blank" rel="noopener noreferrer" style="color: ' . $php_version_color . '; cursor: ' . $php_version_cursor . ';" title="' . $php_version_info . '"><strong>' . PHP_VERSION . '</strong></a> <small>(SAPI: <strong>' . php_sapi_name() . '</strong>)</small></li>';
+			echo '<li><i class="fa-solid fa-fw fa-wrench"></i> PHP Version: <a class="' . $php_version_class . '" href="https://www.php.net/supported-versions.php" target="_blank" rel="noopener noreferrer" style="cursor: ' . $php_version_cursor . ';" title="' . $php_version_info . '"><strong>' . PHP_VERSION . '</strong></a> <small>(SAPI: <strong>' . php_sapi_name() . '</strong>)</small></li>';
 
 			//PHP memory limit
 			echo '<li><i class="fa-solid fa-fw fa-memory"></i> PHP Memory Limit: <strong>' . ini_get('memory_limit') . '</strong></li>';
@@ -710,13 +710,13 @@ if ( !trait_exists('Dashboard') ){
 			$update_data = wp_get_update_data();
 			$updates_count = $update_data['counts']['total'];
 			if ( $updates_count > 0 ){
-				$updates_style = '';
+				$updates_class = '';
 
 				if ( $updates_count > 10 ){ //If there are many updates available
-					$updates_style = 'style="color: #ca3838;"';
+					$updates_class = 'text-danger"';
 				}
 
-				$updates_count = '<a href="update-core.php" ' . $updates_style . '>' . $updates_count . ' &raquo;</a>';
+				$updates_count = '<a class="' . $updates_class . '" href="update-core.php">' . $updates_count . ' &raquo;</a>';
 				echo '<li><i class="fa-regular fa-fw fa-circle-up"></i> Updates Available: <strong>' . $updates_count . '</strong></li>';
 			}
 
@@ -724,9 +724,9 @@ if ( !trait_exists('Dashboard') ){
 			$smtp_status = $this->check_smtp_status();
 			$smtp_status_output = ''; //Empty unless there is a problem
 			if ( strpos(strtolower($smtp_status), 'error') != false ){
-				$smtp_status_output = '<strong style="color: #ca3838;"><i class="fa-solid fa-fw fa-exclamation-triangle"></i> ' . $smtp_status . '</strong>';
+				$smtp_status_output = '<strong class="text-danger"><i class="fa-solid fa-fw fa-exclamation-triangle"></i> ' . $smtp_status . '</strong>';
 			} elseif ( strtolower($smtp_status) == 'unknown' ){
-				$smtp_status_output = '<em style="color: #ca8038;">Unable to Check</em>';
+				$smtp_status_output = '<em class="text-caution">Unable to Check</em>';
 			}
 			if ( !empty($smtp_status_output) ){
 				echo '<li><i class="fa-solid fa-fw fa-envelope"></i> SMTP Status: ' . $smtp_status_output . '</li>';
@@ -751,7 +751,9 @@ if ( !trait_exists('Dashboard') ){
 
 				if ( !empty($count_of_404s) ){ //Only show when they exist (this also prevents showing null if something is wrong with the query)
 					if ( $count_of_404s >= 999 ){ //If we reached the limit above, assume there are more that weren't counted
-						$count_of_404s = '1000+';
+						$count_of_404s = '<span class="text-danger"><i class="fa-solid fa-fw fa-exclamation-triangle"></i> 1000+</span>';
+					} elseif ( $count_of_404s >= 500 ){
+						$count_of_404s = '<span class="text-caution">' . $count_of_404s . '</span>';
 					}
 
 					echo '<li><i class="fa-solid fa-fw fa-file-half-dashed"></i> 404s: <strong><a href="tools.php?page=redirection.php&sub=404s&groupby=url">' . $count_of_404s . '</a></strong> <small>(Last 24 hours)</small></li>';
@@ -802,16 +804,16 @@ if ( !trait_exists('Dashboard') ){
 				if ( !empty($disk_total_space) ){ //Ignore when this results in 0 bytes total
 					$disk_space_percent_used = round((($disk_total_space-$disk_free_space)/$disk_total_space)*100);
 
-					$disk_usage_color = 'inherit';
+					$disk_usage_class = '';
 					if ( $disk_free_space/GB_IN_BYTES < 10 || $disk_space_percent_used > 75 ){
-						$disk_usage_color = '#ca8038'; //Warning
+						$disk_usage_class = 'text-caution'; //Warning
 
 						if ( $disk_free_space/GB_IN_BYTES < 5 || $disk_space_percent_used > 90 ){
-							$disk_usage_color = '#ca3838'; //Danger
+							$disk_usage_class = 'text-danger'; //Danger
 						}
 					}
 
-					echo '<li><i class="fa-solid fa-fw fa-hdd"></i> Disk Space Available: <strong style="color: ' . $disk_usage_color . ';">' . $this->format_bytes($disk_free_space, 1) . '</strong> <small style="color: ' . $disk_usage_color . ';">(Using ' . $disk_space_percent_used . '% of <strong>' . $this->format_bytes($disk_total_space) . '</strong> total)</small></li>';
+					echo '<li><i class="fa-solid fa-fw fa-hdd"></i> Disk Space Available: <strong class="' . $disk_usage_class . '">' . $this->format_bytes($disk_free_space, 1) . '</strong> <small class="' . $disk_usage_class . '">(Using ' . $disk_space_percent_used . '% of <strong>' . $this->format_bytes($disk_total_space) . '</strong> total)</small></li>';
 				}
 			}
 
@@ -847,9 +849,9 @@ if ( !trait_exists('Dashboard') ){
 			//Service Worker
 			if ( $this->get_option('service_worker') ){
 				if ( !is_ssl() ){
-					echo '<li><i class="fa-solid fa-fw fa-microchip" style="color: #ca3838;"></i> <strong>Not</strong> using service worker. No SSL.</li>';
+					echo '<li><i class="fa-solid fa-fw fa-microchip" class="text-danger"></i> <strong>Not</strong> using service worker. No SSL.</li>';
 				} elseif ( !file_exists($this->sw_location(false)) ){
-					echo '<li><i class="fa-solid fa-fw fa-microchip" style="color: #ca3838;"></i> <strong>Not</strong> using service worker. Service worker file does not exist.</li>';
+					echo '<li><i class="fa-solid fa-fw fa-microchip" class="text-danger"></i> <strong>Not</strong> using service worker. Service worker file does not exist.</li>';
 				} else {
 					echo '<li><i class="fa-solid fa-fw fa-microchip"></i> Using service worker</li>';
 				}
