@@ -2096,7 +2096,7 @@ if ( !trait_exists('Admin') ){
 								foreach ( $submission_history_posts as $post ){ //Loop through the posts
 									setup_postdata($post); //Set up WP post data
 
-									$invalid_form_data = json_decode(strip_tags(get_the_content()));
+									$invalid_form_data = json_decode(strip_tags(get_the_content(null, false, $post->ID)));
 
 									$submission_class = 'invalid-submission-item';
 									$submission_label = 'Invalid Submission &raquo;';
@@ -2129,7 +2129,7 @@ if ( !trait_exists('Admin') ){
 										$submission_icon = ( get_post_status() == 'submission' && strpos(get_the_title(), '(Invalid)') === false )? '<i class="fa-solid fa-fw fa-circle-check"></i><i class="fa-solid fa-arrow-right"></i>' : '<i class="fa-solid fa-fw fa-circle-xmark"></i><i class="fa-solid fa-arrow-right"></i>';
 									}
 
-									$the_submissions[] = '<li class="' . get_post_status() . '-submission-item ' . $submission_class . '" data-id="' . $post->ID . '"><a href="' . get_edit_post_link($post->ID) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('l, F j, Y \a\t g:i:sa') . ')</small></li>';
+									$the_submissions[] = '<li class="' . get_post_status($post->ID) . '-submission-item ' . $submission_class . '" data-id="' . $post->ID . '"><a href="' . get_edit_post_link($post->ID) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('l, F j, Y \a\t g:i:sa', $post->ID) . ')</small></li>';
 								}
 
 								if ( count($the_submissions) >= 2 ){ //If this user has submitted a form more than once (successfully or not)
