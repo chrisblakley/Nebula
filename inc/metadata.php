@@ -441,7 +441,7 @@
 				},
 				"headline": "<?php echo esc_html(get_the_title()); ?>",
 
-				<?php $post_thumbnail_meta = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'full') . $cache_query; ?>
+				<?php $post_thumbnail_meta = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'full'); ?>
 				<?php if ( !empty($post_thumbnail_meta) ): ?>
 					"image": {
 						"@type": "ImageObject",

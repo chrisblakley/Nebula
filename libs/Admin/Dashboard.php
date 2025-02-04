@@ -756,7 +756,7 @@ if ( !trait_exists('Dashboard') ){
 						$count_of_404s = '<span class="text-caution">' . $count_of_404s . '</span>';
 					}
 
-					echo '<li><i class="fa-solid fa-fw fa-file-half-dashed"></i> 404s: <strong><a href="tools.php?page=redirection.php&sub=404s&groupby=url">' . $count_of_404s . '</a></strong> <small>(Last 24 hours)</small></li>';
+					echo '<li><i class="fa-regular fa-fw fa-file-excel"></i> 404s: <strong><a href="tools.php?page=redirection.php&sub=404s&groupby=url">' . $count_of_404s . '</a></strong> <small>(Last 24 hours)</small></li>';
 				}
 			}
 
@@ -778,6 +778,17 @@ if ( !trait_exists('Dashboard') ){
 				}, DAY_IN_SECONDS);
 				echo '<li><i class="fa-solid fa-code"></i> Theme directory size: <strong>' . $this->format_bytes($nebula_size, 1) . '</strong> </li>';
 			}
+
+			//Plugins directory size (and count)
+			$plugins_size = nebula()->transient('nebula_directory_size_plugins', function(){
+				$plugins_dir = WP_CONTENT_DIR . '/plugins';
+				return $this->foldersize($plugins_dir);
+			}, HOUR_IN_SECONDS*36);
+			$all_plugins = nebula()->transient('nebula_count_plugins', function(){
+				return get_plugins();
+			}, WEEK_IN_SECONDS);
+			$active_plugins = get_option('active_plugins', array());
+			echo '<li><i class="fa-solid fa-plug"></i> Plugins directory size: <strong>' . $this->format_bytes($plugins_size, 1) . '</strong> <small>(' . count($active_plugins) . ' active of ' . count($all_plugins) . ' installed)</small></li>';
 
 			do_action('nebula_dev_dashboard_directories');
 
@@ -843,7 +854,7 @@ if ( !trait_exists('Dashboard') ){
 					$fatal_error_count_description = ' <small>(last 7 days)</small>';
 				}
 
-				echo '<li><i class="fa-solid fa-fw fa-bug"></i> Fatal Errors: <strong><a href="' . ini_get('error_log') . '" target="_blank">' . $fatal_error_count . '</a></strong>' . $fatal_error_count_description . '</li>'; //The <a> tag is just to show the location of the error log file
+				echo '<li class="text-danger"><i class="fa-solid fa-fw fa-bug"></i> Fatal Errors: <strong><a class="text-danger" href="' . ini_get('error_log') . '" target="_blank">' . $fatal_error_count . '</a></strong>' . $fatal_error_count_description . '</li>'; //The <a> tag is just to show the location of the error log file
 			}
 
 			//Service Worker

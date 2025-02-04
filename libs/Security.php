@@ -6,6 +6,7 @@ if ( !trait_exists('Security') ){
 	trait Security {
 		public function hooks(){
 			add_action('wp_loaded', array($this, 'bad_access_prevention'));
+			add_action('init', array($this, 'block_obvious_bad_requests'));
 			add_filter('wp_headers', array($this, 'remove_x_pingback'), 11, 2);
 			add_filter('bloginfo_url', array($this, 'hijack_pingback_url'), 11, 2);
 			add_action('send_headers', array($this, 'security_headers'));
@@ -73,8 +74,48 @@ if ( !trait_exists('Security') ){
 
 			//Prevent known bot/brute-force query strings.
 			if ( array_key_exists('modTest', $this->super->get) ){
-				header("HTTP/1.1 403 Unauthorized");
-				exit;
+				header('HTTP/1.1 403 Forbidden (Err: NBAPQ)');
+				wp_die(
+					'Access forbidden.', //Message
+					'403 Forbidden', //Title
+					array(
+						'response' => 403, //HTTP status code
+						'back_link' => false //Remove the back link
+					)
+				);
+			}
+		}
+
+		//Block common and obvious methods from accessing anything
+		public function block_obvious_bad_requests(){
+			if ( $this->get_option('block_obvious_bad_requests') ){ //Only when Nebula option is enabled
+				$banned_user_agents = array(
+					'python-requests',
+					'go-http-client',
+					'httpclient',
+					'scrapy',
+				);
+
+				//Get the User-Agent (default to empty string if not set)
+				$user_agent = '';
+				if ( isset($_SERVER['HTTP_USER_AGENT']) ){
+					$user_agent = $_SERVER['HTTP_USER_AGENT'];
+				}
+
+				//Check if the User-Agent matches any in the list (case-insensitive)
+				foreach( $banned_user_agents as $banned_ua ){
+					if ( stripos(strtolower($user_agent), strtolower($banned_ua)) !== false ){
+						header('HTTP/1.1 403 Forbidden (Err: NBOBRUA)');
+						wp_die(
+							'Access forbidden.', //Message
+							'403 Forbidden', //Title
+							array(
+								'response' => 403, //HTTP status code
+								'back_link' => false //Remove the back link
+							)
+						);
+					}
+				}
 			}
 		}
 
@@ -254,7 +295,7 @@ if ( !trait_exists('Security') ){
 					if ( isset($this->super->server['HTTP_REFERER']) && $this->contains(strtolower($this->super->server['HTTP_REFERER']), $spam_domain_array) ){
 						$this->ga_send_exception('(Security) Spam domain prevented. Referrer: ' . $this->super->server['HTTP_REFERER'], true, array('security_note' => 'Spam Referrer'));
 						do_action('nebula_spambot_prevention');
-						header('HTTP/1.1 403 Forbidden');
+						header('HTTP/1.1 403 Forbidden (Err: NSDPR)');
 						wp_die(
 							'Access forbidden.', //Message
 							'403 Forbidden', //Title
@@ -269,7 +310,7 @@ if ( !trait_exists('Security') ){
 					if ( isset($this->super->server['REMOTE_HOST']) && $this->contains(strtolower($this->super->server['REMOTE_HOST']), $spam_domain_array) ){
 						$this->ga_send_exception('(Security) Spam domain prevented. Hostname: ' . $this->super->server['REMOTE_HOST'], true, array('security_note' => 'Spam Hostname'));
 						do_action('nebula_spambot_prevention');
-						header('HTTP/1.1 403 Forbidden');
+						header('HTTP/1.1 403 Forbidden (Err: NSDPH)');
 						wp_die(
 							'Access forbidden.', //Message
 							'403 Forbidden', //Title
@@ -284,7 +325,7 @@ if ( !trait_exists('Security') ){
 					if ( isset($this->super->server['SERVER_NAME']) && $this->contains(strtolower($this->super->server['SERVER_NAME']), $spam_domain_array) ){
 						$this->ga_send_exception('(Security) Spam domain prevented. Server Name: ' . $this->super->server['SERVER_NAME'], true, array('security_note' => 'Spam Server Name'));
 						do_action('nebula_spambot_prevention');
-						header('HTTP/1.1 403 Forbidden');
+						header('HTTP/1.1 403 Forbidden (Err: NSDPS)');
 						wp_die(
 							'Access forbidden.', //Message
 							'403 Forbidden', //Title
@@ -299,7 +340,7 @@ if ( !trait_exists('Security') ){
 					if ( isset($ip_address) && $this->contains(strtolower(gethostbyaddr($ip_address)), $spam_domain_array) ){
 						$this->ga_send_exception('(Security) Spam domain prevented. Network Hostname: ' . $ip_address, true, array('security_note' => 'Spam Network Hostname'));
 						do_action('nebula_spambot_prevention');
-						header('HTTP/1.1 403 Forbidden');
+						header('HTTP/1.1 403 Forbidden (Err: NSDPN)');
 						wp_die(
 							'Access forbidden.', //Message
 							'403 Forbidden', //Title
@@ -329,7 +370,7 @@ if ( !trait_exists('Security') ){
 					if ( isset($_SERVER['REQUEST_URI']) && $this->contains(strtolower($_SERVER['REQUEST_URI']), $spam_domain_array) ){
 						$this->ga_send_exception('(Security) Spam domain prevented. URL: ' . $_SERVER['REQUEST_URI'], true, array('security_note' => 'Spam domain in the requested URL'));
 						do_action('nebula_spambot_prevention');
-						header('HTTP/1.1 403 Forbidden');
+						header('HTTP/1.1 403 Forbidden (Err: NSDPU)');
 						wp_die(
 							'Access forbidden.', //Message
 							'403 Forbidden', //Title

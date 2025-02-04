@@ -10,6 +10,7 @@ if ( !trait_exists('Functions') ){
 		public $pinterest_pin_widget_loaded = false;
 		public $current_theme_template;
 		public $error_query;
+		public $error_404_exact_match;
 
 		public function hooks(){
 			global $pagenow;
@@ -482,6 +483,8 @@ if ( !trait_exists('Functions') ){
 			if ( !$this->get_option('index_now') ){
 				return false;
 			}
+
+			$index_now_key = '';
 
 			if ( !$this->get_option('index_now_key') || $force ){ //If we do not already have a key or if we are forcing a new key to be generated
 				//Generate a random 12-character string

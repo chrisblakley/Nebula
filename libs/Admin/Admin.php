@@ -2102,10 +2102,10 @@ if ( !trait_exists('Admin') ){
 									$submission_label = 'Invalid Submission &raquo;';
 									$submission_icon = '<i class="fa-solid fa-fw fa-xmark"></i>';
 
-									if ( get_post_status() == 'submission' ){ //Only if it was a successful submission originally (and not moved from another status) //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-										if ( strpos(get_the_title(), '(Invalid)') !== false ){
+									if ( get_post_status($post->ID) == 'submission' ){ //Only if it was a successful submission originally (and not moved from another status)
+										if ( strpos(get_the_title($post->ID), '(Invalid)') !== false ){
 											$invalid_count++;
-										} elseif ( strpos(get_the_title(), '(Mail Failed)') !== false ){
+										} elseif ( strpos(get_the_title($post->ID), '(Mail Failed)') !== false ){
 											$invalid_count++;
 											//$success_count++;
 											$submission_class = 'caution-submission-item'; //Caution because Nebula captures the form, but the email was not sent
@@ -2123,7 +2123,7 @@ if ( !trait_exists('Admin') ){
 
 									//get_the_ID() is the "overall" post that is being viewed on the page
 									//$post->ID is the post in this loop of all the submissions from this user
-									if ( get_the_ID() == $post->ID ){
+									if ( get_the_ID() == $post->ID ){ //If the post in the list is the submission we are viewing the full details of
 										$submission_class .= ' this-submission';
 										$submission_label = 'This ' . str_replace(' &raquo;', '', $submission_label);
 										$submission_icon = ( get_post_status() == 'submission' && strpos(get_the_title(), '(Invalid)') === false )? '<i class="fa-solid fa-fw fa-circle-check"></i><i class="fa-solid fa-arrow-right"></i>' : '<i class="fa-solid fa-fw fa-circle-xmark"></i><i class="fa-solid fa-arrow-right"></i>';

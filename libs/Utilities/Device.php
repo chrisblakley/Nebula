@@ -203,9 +203,15 @@ if ( !trait_exists('Device') ){
 				}
 			}
 
+			if ( $this->is_gpt_bot() ){ //The regex above should already capture this
+				return true;
+			}
+
 			if ( $this->is_slackbot() ){ //The regex above should already capture this
 				return true;
 			}
+
+			//@todo "Nebula" 0: Others to consider: DiscordBot
 
 			return false;
 		}
@@ -227,6 +233,16 @@ if ( !trait_exists('Device') ){
 			}
 
 			return false; //This is not Googlebot
+		}
+
+		//Check if this visitor is a known GPT (or AI) bot. Remember, there will always be more that cannot easily be detected!
+		function is_ai_bot(){return $this->is_gpt_bot();}
+		function is_gpt_bot(){
+			if ( !empty($this->super->server['HTTP_USER_AGENT']) && strpos($this->super->server['HTTP_USER_AGENT'], 'gptbot') ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				return true;
+			}
+
+			return false;
 		}
 
 		//Check if the current visitor is Slackbot. Keep in mind that any device can spoof this user agent.

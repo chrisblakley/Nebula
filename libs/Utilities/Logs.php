@@ -40,8 +40,10 @@ if ( !trait_exists('Logs') ){
 				$js_log_file = get_stylesheet_directory() . '/js_error.log';
 
 				//Check the file size to be safe
-				if ( filesize($js_log_file) >= MB_IN_BYTES*100 ){ //100mb limit
-					unlink($js_log_file); //Delete the file to start a new one. This is to be overly cautious.
+				if ( file_exists($js_log_file) ){
+					if ( filesize($js_log_file) >= MB_IN_BYTES*100 ){ //100mb limit
+						unlink($js_log_file); //Delete the file to start a new one. This is to be overly cautious.
+					}
 				}
 
 				$error_message = ( isset($post['message']) )? sanitize_text_field($post['message']) : false; //Sanitize the error message text
@@ -282,14 +284,17 @@ if ( !trait_exists('Logs') ){
 					'nebula' => array()
 				);
 
-				//Add the PHP ini log file
-				$all_log_files['php'][] = array(
-					'type' => 'php',
-					'path' => ini_get('error_log'), //Full file path
-					'name' => basename(ini_get('error_log')),
-					'shortpath' => ( strpos(ini_get('error_log'), WP_CONTENT_DIR) !== false )? '/' . str_replace(ABSPATH, '', ini_get('error_log')) : ini_get('error_log'), //Shorten the path if it is within the WordPress directory
-					'bytes' => filesize(ini_get('error_log')),
-				);
+				//Add the PHP ini log file (if it exists)
+				$ini_error_log_file = ini_get('error_log');
+				if ( file_exists($ini_error_log_file) ){
+					$all_log_files['php'][] = array(
+						'type' => 'php',
+						'path' => ini_get('error_log'), //Full file path
+						'name' => basename(ini_get('error_log')),
+						'shortpath' => ( strpos(ini_get('error_log'), WP_CONTENT_DIR) !== false )? '/' . str_replace(ABSPATH, '', ini_get('error_log')) : ini_get('error_log'), //Shorten the path if it is within the WordPress directory
+						'bytes' => filesize(ini_get('error_log')),
+					);
+				}
 
 				//Check all theme files
 				foreach ( $this->glob_r(WP_CONTENT_DIR . '/themes/*') as $file ){
@@ -298,7 +303,7 @@ if ( !trait_exists('Logs') ){
 					}
 
 					foreach ( $file_names as $type => $name ){
-						if ( strpos($file, '/' . $name) !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						if ( strpos($file, '/' . $name) !== false ){ //If this file contains one of the target log file names (from the array above). //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 							$all_log_files[$type][] = array(
 								'type' => $type,
 								'path' => $file, //Full file path
@@ -375,18 +380,20 @@ if ( !trait_exists('Logs') ){
 
 			$log_file = ini_get('error_log'); //Path to the error log file
 
-			//Ensure the log file exists and is readable
+			//Ensure the log file exists
 			if ( !$log_file || !file_exists($log_file) ){
 				return 0;
 			}
 
-			//Ensure the log file exists and is readable
+			//Ensure the log file is readable
 			if ( !is_readable($log_file) ){
 				return 'Error log file not readable';
 			}
 
-			if ( filesize($log_file) > MB_IN_BYTES*10 ){ //10mb
-				return 'Error log file too large (' . $this->format_bytes(filesize($log_file)) . ')';
+			//Ignore log files that would be too slow to process
+			$log_file_size = filesize($log_file);
+			if ( $log_file_size > MB_IN_BYTES*20 ){ //Only process files within this size threshold
+				return 'Error log file too large (' . $this->format_bytes($log_file_size) . ')';
 			}
 
 			$fatal_error_count = 0; //Initialize counter
@@ -400,13 +407,13 @@ if ( !trait_exists('Logs') ){
 					if ( preg_match('/\[(.*?)\]/', $line, $matches) ){
 						$log_timestamp = strtotime($matches[1]);
 
-						//Stop reading if the log line is outside the desired date range
+						//Skip dates that are outside the desired threshold (remember that the most recent log entries are at the end)
 						if ( $log_timestamp < $one_week_ago ){
-							break;
+							continue;
 						}
 
 						//Check if the line contains a fatal error within the desired range
-						if ( strpos(strtolower($line), 'fatal') !== false ){
+						if ( strpos(strtolower($line), 'php fatal') !== false || strpos(strtolower($line), 'fatal error:') !== false ){ //Note: WP automatic plugin updates often have text that says "will not be checked for fatal errors" so we need to avoid that false positive
 							$fatal_error_count++;
 						}
 					} else {

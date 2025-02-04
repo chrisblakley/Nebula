@@ -18,6 +18,7 @@ if ( !trait_exists('Metaboxes') ){
 				//Functions
 				add_meta_box('nebula_assets_metabox', 'Assets', array($this, 'nebula_assets_metabox'), 'nebula_options', 'functions_side');
 				add_meta_box('nebula_front_end_metabox', 'Front-End', array($this, 'nebula_front_end_metabox'), 'nebula_options', 'functions');
+				add_meta_box('nebula_back_end_metabox', 'Back-End', array($this, 'nebula_back_end_metabox'), 'nebula_options', 'functions');
 
 				//Analytics
 				add_meta_box('nebula_main_analytics_metabox', 'Main', array($this, 'nebula_main_analytics_metabox'), 'nebula_options', 'analytics');
@@ -390,6 +391,29 @@ if ( !trait_exists('Metaboxes') ){
 			do_action('nebula_options_assets_metabox', $nebula_options);
 		}
 
+		public function nebula_back_end_metabox($nebula_options){
+			?>
+				<div class="form-group">
+					<input type="hidden" name="nebula_options[block_obvious_bad_requests]" value="<?php echo $nebula_options['block_obvious_bad_requests']; ?>">
+					<input id="block_obvious_bad_requests" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['block_obvious_bad_requests'])); ?>><label for="block_obvious_bad_requests">Block Obvious Bad Requests</label>
+
+					<p class="nebula-help-text short-help form-text text-muted">Block obvious bad requests with a 403 response code. This includes user agents that are commonly used to scan websites for vulnerable and sensitive files. (Default: <?php echo $this->user_friendly_default('block_obvious_bad_requests'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">This includes bot scrapers written in Python or Go, for example, that do not disguise their user agent to look like human traffic.</p>
+					<p class="option-keywords">security block spam bots user agent ip address secure firewall waf</p>
+				</div>
+
+				<div class="form-group">
+					<input type="hidden" name="nebula_options[spam_domain_prevention]" value="<?php echo $nebula_options['spam_domain_prevention']; ?>">
+					<input id="spam_domain_prevention" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['spam_domain_prevention'])); ?>><label for="spam_domain_prevention">Spam Domain Prevention</label>
+
+					<p class="nebula-help-text short-help form-text text-muted">Block traffic from known spambots and other illegitimate domains. Note: This also checks the request URL for these domains. (Default: <?php echo $this->user_friendly_default('spam_domain_prevention'); ?>)</p>
+					<p class="option-keywords">security remote resource recommended minor page speed impact optimization optimize</p>
+				</div>
+			<?php
+
+			do_action('nebula_options_backend_metabox', $nebula_options);
+		}
+
 		public function nebula_front_end_metabox($nebula_options){
 			?>
 				<div class="form-group">
@@ -463,14 +487,6 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text short-help form-text text-muted">Nebula will block all CF7 form submissions that contain any HTML hyperlink tags. (Default: <?php echo $this->user_friendly_default('cf7_spam_detection_agent'); ?>)</p>
 					<p class="nebula-help-text more-help form-text text-muted">Only enable this option if this website is not expecting any input fields in any CF7 forms to contain hyperlinks because this will block those submissions as spam! Note: This only works with the Contact Form 7 plugin.</p>
 					<p class="option-keywords">security spam wpcf7 contact form 7</p>
-				</div>
-
-				<div class="form-group">
-					<input type="hidden" name="nebula_options[spam_domain_prevention]" value="<?php echo $nebula_options['spam_domain_prevention']; ?>">
-					<input id="spam_domain_prevention" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['spam_domain_prevention'])); ?>><label for="spam_domain_prevention">Spam Domain Prevention</label>
-
-					<p class="nebula-help-text short-help form-text text-muted">Block traffic from known spambots and other illegitimate domains. Note: This also checks the request URL for these domains. (Default: <?php echo $this->user_friendly_default('spam_domain_prevention'); ?>)</p>
-					<p class="option-keywords">security remote resource recommended minor page speed impact optimization optimize</p>
 				</div>
 
 				<div class="form-group">

@@ -248,6 +248,7 @@ if ( !trait_exists('Options') ){
 				'critical_css' => 0,
 				'console_css' => 1,
 				'cookie_notification' => '',
+				'block_obvious_bad_requests' => 0,
 
 				//Analytics Tab
 				'ga_measurement_id' => '',
