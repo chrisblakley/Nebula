@@ -198,15 +198,21 @@ nebula.checkWindowHeightForStickyNav = function(){
 //Use the attribute dependent-of="" with the id of the dependent checkbox
 nebula.checkDependents = function(inputObject){
 	if ( inputObject ){ //Check a single option's dependents
-		if ( nebula.isCheckedOrHasValue(inputObject) ){
-			jQuery("[dependent-of='" + jQuery.escapeSelector(inputObject.attr('id')) + "']").removeClass('inactive').find('.dependent-note').addClass('hidden');
-			jQuery("[dependent-or~='" + jQuery.escapeSelector(inputObject.attr('id')) + "']").removeClass('inactive').find('.dependent-note').addClass('hidden');
+		if ( inputObject.parents('#nebula_dequeue_styles_metabox, #nebula_dequeue_scripts_metabox').length ){ //Skip the large number of advanced "dequeue" input options that are dynamically generated and do not have dependents
+			return false;
+		}
 
-			//The dependent-and attribute must have ALL checked
-			jQuery("[dependent-and~='" + jQuery.escapeSelector(inputObject.attr('id')) + "']").each(function(){
+		var escapedSelector = jQuery.escapeSelector(inputObject.attr('id'));
+
+		if ( nebula.isCheckedOrHasValue(inputObject) ){ //If this checkbox is checked or text input has any value at all
+			//Start by removing the inactive state on any "or" dependents since this option is checked/active
+			jQuery("[dependent-of='" + escapedSelector + "']").removeClass('inactive').find('.dependent-note').addClass('hidden');
+			jQuery("[dependent-or~='" + escapedSelector + "']").removeClass('inactive').find('.dependent-note').addClass('hidden');
+
+			//Now loop through the "and" dependents because they must have ALL checked
+			jQuery("[dependent-and~='" + escapedSelector + "']").each(function(){
 				var $oThis = jQuery(this);
-				var dependentOrs = $oThis.attr('dependent-and').split(' ');
-				var totalDependents = dependentAnds.length;
+				var dependentAnds = $oThis.attr('dependent-and').split(' '); //Separate all of the "and" dependents into an array
 				var dependentsChecked = 0;
 				jQuery.each(dependentAnds, function(){
 					if ( nebula.isCheckedOrHasValue(jQuery('#' + this)) ){
@@ -214,19 +220,19 @@ nebula.checkDependents = function(inputObject){
 					}
 				});
 
-				if ( dependentsChecked === totalDependents ){
+				if ( dependentsChecked === dependentAnds.length ){ //If all of the "and" dependents are checked, this option should be active
 					$oThis.removeClass('inactive').find('.dependent-note').addClass('hidden');
 				}
 			});
 		} else {
-			jQuery("[dependent-of='" + jQuery.escapeSelector(inputObject.attr('id')) + "']").addClass('inactive').find('.dependent-note').removeClass('hidden');
-			jQuery("[dependent-or~='" + jQuery.escapeSelector(inputObject.attr('id')) + "']").addClass('inactive').find('.dependent-note').removeClass('hidden');
+			//Start by adding the inactive state to any "and" dependents since this option is unchecked/empty
+			jQuery("[dependent-of='" + escapedSelector + "']").addClass('inactive').find('.dependent-note').removeClass('hidden');
+			jQuery("[dependent-and~='" + escapedSelector + "']").addClass('inactive').find('.dependent-note').removeClass('hidden');
 
 			//The dependent-or attribute can have ANY checked
-			jQuery("[dependent-and~='" + jQuery.escapeSelector(inputObject.attr('id')) + "']").each(function(){
+			jQuery("[dependent-or~='" + escapedSelector + "']").each(function(){
 				var $oThis = jQuery(this);
 				var dependentOrs = $oThis.attr('dependent-or').split(' ');
-				var totalDependents = dependentOrs.length;
 				var dependentsUnchecked = 0;
 				jQuery.each(dependentOrs, function(){
 					if ( !nebula.isCheckedOrHasValue(jQuery('#' + this)) ){
@@ -234,7 +240,7 @@ nebula.checkDependents = function(inputObject){
 					}
 				});
 
-				if ( dependentsUnchecked === totalDependents ){
+				if ( dependentsUnchecked === dependentOrs.length ){ //If all of the "or" dependents are unchecked, this option should be inactive
 					$oThis.addClass('inactive').find('.dependent-note').removeClass('hidden');
 				}
 			});

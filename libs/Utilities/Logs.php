@@ -121,7 +121,16 @@ if ( !trait_exists('Logs') ){
 		//Insert log into DB
 		//Reminder: Importance of 4 or less will get removed when logs are cleaned. Importance of 6 or more will appear bold in list.
 		public function add_log($message='', $importance=0, $optimize=true){
-			if ( $this->get_option('administrative_log') && is_user_logged_in() && !empty($message) ){
+			if ( !is_user_logged_in() || empty($message) ){
+				return false;
+			}
+
+			//Add the log to the Sucuri audit log if the plugin is being used
+			if ( class_exists('SucuriScanEvent') && method_exists('SucuriScanEvent', 'reportInfoEvent') ){ //Check if the Sucuri class and one of the log functions exists
+				SucuriScanEvent::reportInfoEvent($message);
+			}
+
+			if ( $this->get_option('administrative_log') ){ //If the Nebula Option is enabled
 				global $wpdb;
 
 				try {

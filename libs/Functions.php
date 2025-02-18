@@ -2067,9 +2067,9 @@ if ( !trait_exists('Functions') ){
 		//Feedback System
 		//If no CF7 form ID is provided, this simply logs yes/no from users in Google Analytics
 		//Nebula does not automatically add this to pages! It must be added in the child theme. Consider adding a function in via hooks such as 'loop_end', 'nebula_after_search_results', 'nebula_no_search_results', 'nebula_404_content' to conditionally/dynamically add this feedback form. Refer to the child functions file for an example.
-		public function feedback($form_id=false){
+		public function feedback($form_id=false, $identifier='default'){
 			?>
-				<div id="nebula-feedback-system" class="<?php echo ( empty($form_id) )? 'no-feedback-form' : 'has-feedback-form'; ?>">
+				<div id="nebula-feedback-system" class="<?php echo ( empty($form_id) )? 'no-feedback-form' : 'has-feedback-form'; ?>" data-identifier="<?php echo sanitize_html_class($identifier); ?>">
 					<div id="nebula-feedback-question" class="">
 						<span><?php echo __('Was this page helpful?', 'nebula'); ?></span> <a id="nebula-feedback-yes" class="nebula-feedback-button" href="#"><i class="fa-solid fa-fw fa-thumbs-up"></i> <?php echo __('Yes', 'nebula'); ?></a> <a id="nebula-feedback-no" class="nebula-feedback-button" href="#"><i class="fa-solid fa-fw fa-thumbs-down"></i> <?php echo __('No', 'nebula'); ?></a>
 					</div>

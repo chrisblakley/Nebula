@@ -657,7 +657,7 @@ if ( !trait_exists('Utilities') ){
 
 				case ('query'):
 				case ('queries'):
-				case ('search'):
+				case ('search'): //Note: This returns the full query string without the "?" symbol (but "&" symbols will exist)
 					if ( isset($url_components['query']) ){
 						return $url_components['query'];
 					}
@@ -694,14 +694,26 @@ if ( !trait_exists('Utilities') ){
 					return sanitize_text_field(htmlspecialchars($this->super->cookie['nebula_utms']));
 				}
 
-				//Otherwise check for UTM parameters
-				$query_string = $this->url_components('query');
+				//Otherwise check for various UTM parameters
 				$notable_tags = array('utm_', 'fbclid', 'gclid', 'gclsrc', 'dclid', 'gbraid', 'wbraid', 'mc_eid', '_hsenc', 'vero_id', 'mkt_tok');
+				$urls_to_check = array(
+					$this->url_components('query'), //Check the URL of the current page request
+				);
 
-				foreach ( $notable_tags as $tag ){
-					if ( strpos(strtolower($query_string), $tag) > -1 ){ //If UTM parameters exist //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-						$this->set_cookie('nebula_utms', $this->url_components('all'), strtotime('+14 months')); //Set/update the cookie and store the entire LP URL
-						return sanitize_text_field($this->url_components('all')); //Return the entire landing page URL with full query string sanitized
+				//Check the referer header URL too (if it exists)
+				//Note: This will only be used if a UTM value is not found in the current page request
+				if ( !empty($this->super->server['HTTP_REFERER']) ){
+					if ( $this->url_components('domain', $this->super->server['HTTP_REFERER']) == $this->url_components('domain') ){ //Only if the referrer also matches the current website domain. Using "domain" instead of "hostname" to allow UTM parameters to be read from subdomains too.
+						$urls_to_check[] = $this->url_components('query', $this->super->server['HTTP_REFERER']);
+					}
+				}
+
+				foreach ( $urls_to_check as $query_string ){ //Loop through the URLs that may contain UTM tags
+					foreach ( $notable_tags as $tag ){ //Loop through each of the notable tracking tags
+						if ( strpos(strtolower($query_string), $tag) > -1 ){ //If UTM parameters exist //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+							$this->set_cookie('nebula_utms', $this->url_components('all'), strtotime('+14 months')); //Set/update the cookie and store the entire LP URL
+							return sanitize_text_field($this->url_components('all')); //Return the entire landing page URL with full query string sanitized
+						}
 					}
 				}
 			}

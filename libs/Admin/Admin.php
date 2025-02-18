@@ -2108,7 +2108,7 @@ if ( !trait_exists('Admin') ){
 										} elseif ( strpos(get_the_title($post->ID), '(Mail Failed)') !== false ){
 											$invalid_count++;
 											//$success_count++;
-											$submission_class = 'caution-submission-item'; //Caution because Nebula captures the form, but the email was not sent
+											$submission_class = 'error-submission-item'; //Nebula still captures the form, but the email was not sent
 											$submission_label = 'Failed Submission &raquo;';
 											$submission_icon = '<i class="fa-solid fa-fw fa-triangle-exclamation"></i>';
 										} else {

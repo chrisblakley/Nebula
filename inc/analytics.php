@@ -96,6 +96,9 @@
 			//Set the property JS object here
 			nebula.pageviewProperties = <?php echo wp_json_encode(apply_filters('nebula_ga_pageview_properties', $pageview_properties)); //Allow other functions to modify the PHP pageview properties ?>;
 
+			//Content Group
+			nebula.pageviewProperties.content_group = '<?php echo explode('/', trim(nebula()->url_components('pathname'), '/'))[0]; ?>'; //Use the *first* subdirectory to group content together for GA4
+
 			//Post Categories and Tags
 			nebula.pageviewProperties.post_categories = nebula?.post?.categories;
 			nebula.pageviewProperties.post_tags = nebula?.post?.tags;

@@ -724,9 +724,9 @@ if ( !trait_exists('Dashboard') ){
 			$smtp_status = $this->check_smtp_status();
 			$smtp_status_output = ''; //Empty unless there is a problem
 			if ( strpos(strtolower($smtp_status), 'error') != false ){
-				$smtp_status_output = '<strong class="text-danger"><i class="fa-solid fa-fw fa-exclamation-triangle"></i> ' . $smtp_status . '</strong>';
+				$smtp_status_output = '<a href="edit.php?post_type=nebula_cf7_submits"><strong class="text-danger"><i class="fa-solid fa-fw fa-exclamation-triangle"></i> ' . $smtp_status . '</strong></a>';
 			} elseif ( strtolower($smtp_status) == 'unknown' ){
-				$smtp_status_output = '<em class="text-caution">Unable to Check</em>';
+				$smtp_status_output = '<a href="edit.php?post_type=nebula_cf7_submits"><em class="text-caution">Unable to Check</em></a>';
 			}
 			if ( !empty($smtp_status_output) ){
 				echo '<li><i class="fa-solid fa-fw fa-envelope"></i> SMTP Status: ' . $smtp_status_output . '</li>';
@@ -816,10 +816,10 @@ if ( !trait_exists('Dashboard') ){
 					$disk_space_percent_used = round((($disk_total_space-$disk_free_space)/$disk_total_space)*100);
 
 					$disk_usage_class = '';
-					if ( $disk_free_space/GB_IN_BYTES < 10 || $disk_space_percent_used > 75 ){
+					if ( $disk_free_space/GB_IN_BYTES < 10 || $disk_space_percent_used > 85 ){
 						$disk_usage_class = 'text-caution'; //Warning
 
-						if ( $disk_free_space/GB_IN_BYTES < 5 || $disk_space_percent_used > 90 ){
+						if ( $disk_free_space/GB_IN_BYTES < 5 || $disk_space_percent_used > 95 ){
 							$disk_usage_class = 'text-danger'; //Danger
 						}
 					}

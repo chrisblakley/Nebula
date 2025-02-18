@@ -107,7 +107,13 @@ function show_nebula_feedback_system(){
 		return false;
 	}
 
-	nebula()->feedback(99999); //Show the feedback system with a custom CF7 form ID
+	if ( current_action() == 'loop_end' ){
+		if ( !is_main_query() || !in_the_loop() ){ //If we are not inside the main content area (to avoid outputting feedback below the footer)
+			return false;
+		}
+	}
+
+	nebula()->feedback(99999, 'nebula-child-' . current_action()); //Show the feedback system with a custom CF7 form ID
 }
 
 

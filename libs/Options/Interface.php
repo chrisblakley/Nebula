@@ -27,7 +27,7 @@
 
 		if ( isset($this->super->get['settings-updated']) && $this->super->get['settings-updated'] == 'true' ){
 			$this->usage('nebula_options_saved');
-			$this->add_log('Nebula Options saved');
+			$this->add_log('Nebula Options saved', 5);
 			do_action('nebula_options_saved');
 			?>
 			<div class="updated notice is-dismissible">

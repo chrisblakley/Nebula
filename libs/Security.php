@@ -87,14 +87,17 @@ if ( !trait_exists('Security') ){
 		}
 
 		//Block common and obvious methods from accessing anything
+		//Remember: This only blocks the most obvious access attempts. Use more sophisticated security systems for broader coverage.
 		public function block_obvious_bad_requests(){
 			if ( $this->get_option('block_obvious_bad_requests') ){ //Only when Nebula option is enabled
-				$banned_user_agents = array(
+				//Check User Agents
+				$banned_user_agents = apply_filters('nebula_banned_user_agents', array(
 					'python-requests',
 					'go-http-client',
 					'httpclient',
 					'scrapy',
-				);
+					'guzzlehttp',
+				));
 
 				//Get the User-Agent (default to empty string if not set)
 				$user_agent = '';
@@ -106,6 +109,27 @@ if ( !trait_exists('Security') ){
 				foreach( $banned_user_agents as $banned_ua ){
 					if ( stripos(strtolower($user_agent), strtolower($banned_ua)) !== false ){
 						header('HTTP/1.1 403 Forbidden (Err: NBOBRUA)');
+						wp_die(
+							'Access forbidden.', //Message
+							'403 Forbidden', //Title
+							array(
+								'response' => 403, //HTTP status code
+								'back_link' => false //Remove the back link
+							)
+						);
+					}
+				}
+
+				//Check endpoints
+				$blocked_endpoints = apply_filters('nebula_blocked_endpoints', array(
+					'.env',
+					'.aws',
+				));
+
+				$url = strtolower($this->requested_url());
+				foreach ( $blocked_endpoints as $blocked_endpoint ){
+					if ( strpos($url, $blocked_endpoint) !== false ){
+						header('HTTP/1.1 403 Forbidden (Err: NBOBRE)');
 						wp_die(
 							'Access forbidden.', //Message
 							'403 Forbidden', //Title

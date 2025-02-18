@@ -743,7 +743,7 @@ if ( !trait_exists('Warnings') ){
 			if ( $this->is_auditing() ){
 				//Log when manually auditing pages individually
 				if ( isset($this->super->get['audit']) ){
-					$this->add_log('Nebula audit performed on ' . $this->requested_url(), 1);
+					$this->add_log('Nebula audit performed on ' . $this->requested_url(), 5);
 				}
 
 				$nebula_warnings = wp_json_encode($this->warnings);

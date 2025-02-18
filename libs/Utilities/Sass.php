@@ -154,7 +154,7 @@ if ( !trait_exists('Sass') ){
 						if ( time()-$this->latest_scss_mtime >= MONTH_IN_SECONDS*3 ){ //If the last style.scss modification has not happened within 90 days disable Sass to optimize all future page loads (no need to check files at all)
 							$this->update_option('scss', 0); //Once Sass is disabled this way, a developer would need to re-enable it in Nebula Options.
 							$this->sass_process_status = 'Sass processing has been disabled to improve performance because style.scss has not been modified in 90 days.';
-							$this->add_log('Sass processing has been disabled due to inactivity to improve performance.', 4); //The chances of someone noticing the above status is unlikely as it happens once after inactive development, so log this message explicitly
+							$this->add_log('Sass processing has been disabled due to inactivity to improve performance.', 5); //The chances of someone noticing the above status is unlikely as it happens once after inactive development, so log this message explicitly
 						}
 					} elseif ( $this->is_dev() && !$this->is_admin_page() && (isset($this->super->get['sass']) || isset($this->super->get['scss'])) ){
 						$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass can not compile because it is disabled in Nebula Functions.' : $this->sass_process_status;
