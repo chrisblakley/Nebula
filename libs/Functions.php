@@ -3408,12 +3408,14 @@ if ( !trait_exists('Functions') ){
 			}
 
 			//Try to get the last recaptcha score from CF7 (0.1 = most bot, 0.9 = most human)
-			$recaptcha = $submission->get_meta('recaptcha'); //This is not working (probably due to it being a protected array entry)
-			if ( !empty($recaptcha) ){
-				$submission_data['_recaptcha_spam_score'] = $recaptcha['response']['score'];
-			} elseif ( class_exists('WPCF7_RECAPTCHA') ){
-				$recaptcha_service = WPCF7_RECAPTCHA::get_instance();
-				$submission_data['_last_recaptcha_spam_score'] = $recaptcha_service->get_last_score();
+			if ( is_object($submission) ){
+				$recaptcha = $submission->get_meta('recaptcha'); //This is not working (probably due to it being a protected array entry)
+				if ( !empty($recaptcha) ){
+					$submission_data['_recaptcha_spam_score'] = $recaptcha['response']['score'];
+				} elseif ( class_exists('WPCF7_RECAPTCHA') ){
+					$recaptcha_service = WPCF7_RECAPTCHA::get_instance();
+					$submission_data['_last_recaptcha_spam_score'] = $recaptcha_service->get_last_score();
+				}
 			}
 
 			$submission_data['_wpcf7_recaptcha'] = $submission->pull('recaptcha');
@@ -3487,9 +3489,17 @@ if ( !trait_exists('Functions') ){
 			$debug_info['nebula_session_id'] = sanitize_text_field($this->nebula_session_id());
 			$debug_info['nebula_ga_cid'] = sanitize_text_field($this->ga_parse_cookie());
 
-			if ( !empty($submission_data) ){
-				$debug_info['nebula_current_page'] = sanitize_text_field(get_permalink($submission_data['_wpcf7_container_post']));
+			$current_page = '';
+			if ( !empty($submission_data) && isset($submission_data['_wpcf7_container_post']) ){
+				$current_page = get_permalink($submission_data['_wpcf7_container_post']) . ' (via CF7 container post submission data)';
+			} elseif ( !empty($submission) && is_object($submission) ){
+				$current_page = esc_url_raw($submission->get_meta('url')) . ' (via CF7 submission object)';
+			} elseif ( !empty(get_the_ID()) ){
+				$current_page = get_permalink(get_the_ID()) . ' (via WP Post ID)';
+			} elseif ( get_queried_object_id() ){
+				$current_page = get_permalink(get_queried_object_id()) . ' (via WP queried object ID)';
 			}
+			$debug_info['nebula_current_page'] = sanitize_text_field($current_page);
 
 			$session_cookie_data = json_decode(stripslashes($this->super->cookie['session']), true);
 			if ( isset($session_cookie_data['landing_page']) ){

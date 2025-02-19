@@ -2241,8 +2241,15 @@ if ( !trait_exists('Admin') ){
 								$value = '<a href="' . get_permalink($value) . '">' . $value . ' (' . get_the_title($value) . ')</a>';
 							}
 
-							if ( $key === '_nebula_referrer' || $key === '_nebula_landing_page' || $key === '_nebula_current_page' ){
+							if ( $key === '_nebula_referrer' || $key === '_nebula_landing_page' ){
 								$value = '<a href="' . $value . '">' . $value . '</a>';
+							}
+
+							if ( $key === '_nebula_current_page' ){
+								$parts = explode(' (', $value, 2); //Use the space and open parenthesis to ensure it is the proper separator
+								$current_page_url = $parts[0];
+								$current_page_method = '(' . $parts[1]; //The detection method used to determine the page the form was submitted from (and add the parenthesis back in here)
+								$value = '<a href="' . $current_page_url . '">' . $current_page_url . '</a> <small>' . $current_page_method . '</small>';
 							}
 
 							if ( $key === '_nebula_date_formatted' ){
