@@ -1803,7 +1803,7 @@ nebula.attributionTracking = function(){
 			//Loop through the query string to capture just the UTM parameters
 			let utmParameters = {}; //Prep an object to fill
 			for ( const [key, value] of queryParams.entries() ){
-				if ( key.includes('utm_') ){ //If this key is a UTM parameter
+				if ( key.startsWith('utm_') ){ //If this key is a UTM parameter
 					utmParameters[key] = value;
 				}
 			}
@@ -1833,7 +1833,7 @@ nebula.attributionTracking = function(){
 				}
 			});
 
-			if ( trackingParameters ){ //If we ended up with a non-empty object
+			if ( Object.keys(trackingParameters).length > 0 ){ //If we ended up with a non-empty object
 				nebula.createCookie('attribution', JSON.stringify(trackingParameters)); //Store the other notable parameters in a cookie
 			}
 		}
