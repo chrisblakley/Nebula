@@ -1200,6 +1200,12 @@ if ( !trait_exists('Metaboxes') ){
 
 			?>
 				<div class="option-sub-group">
+					<div class="dequeue-assets-filter-container input-group mb-4">
+						<div class="input-group-text"><i class="fa-solid fa-fw fa-filter"></i> Filter</div>
+						<input type="text" class="form-control dequeue-assets-filter" />
+						<span class="dequeue-asset-reset hidden" style="display: inline-block; margin-left: 10px;"><a class="btn btn-danger" href="#"><i class="fa-solid fa-fw fa-times"></i> Reset</a></span>
+					</div>
+
 					<p>
 						Enter a comma-separated list of rules where these assets should be dequeued on the front-end (WP Admin is unaffected by these settings).<br>
 						Rules can be IDs and simple boolean function names (including inverted and custom functions) without parameters. Ex: <code>123, is_front_page, !is_singular</code><br>

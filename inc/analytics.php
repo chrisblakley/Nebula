@@ -36,7 +36,7 @@
 				}
 
 				//WP Role (regardless of logged-in state)
-				$pageview_properties['user_role'] = nebula()->user_role();
+				$pageview_properties['user_role'] = nebula()->user_role(); //Event-scoped user role property
 
 				if ( is_singular() || is_page() ){
 					global $post;
@@ -184,7 +184,7 @@
 
 			//User role
 			gtag('set', 'user_properties', {
-				role: '<?php echo nebula()->user_role(); ?>'
+				role: '<?php echo nebula()->user_role(); ?>' //User-scoped role property
 			});
 
 			<?php do_action('nebula_ga_before_pageview'); //Simple action for adding/modifying all custom definitions (including JS) before the pageview hit is sent. ?>

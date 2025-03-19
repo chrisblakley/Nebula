@@ -341,7 +341,7 @@ if ( !trait_exists('Shortcodes') ){
 		}
 
 		public function youtube_shortcode($atts){
-			extract(shortcode_atts(array("id" => null, "height" => '', "width" => '', "rel" => 0, "ignore_visibility" => '', "class" => ''), $atts));
+			extract(shortcode_atts(array("id" => null, "height" => '', "width" => '', "start" => '', "rel" => 0, "ignore_visibility" => '', "class" => ''), $atts));
 
 			$flags = $this->get_flags($atts);
 			if ( in_array('ignore_visibility', $flags) ){
@@ -352,9 +352,9 @@ if ( !trait_exists('Shortcodes') ){
 			$youtube = '<div class="nebula-youtube ratio ratio-16x9">';
 			if ( !empty($youtube_data) && empty($youtube_data['error']) ){
 				//Note: removed &origin=' . youtube_meta($id, 'origin') . ' right before &rel= due to console warnings. Doesn't seem to be an issue.
-				$youtube .= '<iframe id="' . esc_attr($youtube_data['safetitle']) . '" class="' . esc_attr('youtube ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($youtube_data['id'], 'url') . '?wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen="" loading="lazy"></iframe>';
+				$youtube .= '<iframe id="' . esc_attr($youtube_data['safetitle']) . '" class="' . esc_attr('youtube ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($youtube_data['id'], 'url') . '?start=' . esc_attr($start, 'url') . '&wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen="" loading="lazy"></iframe>';
 			} else {
-				$youtube .= '<iframe class="' . esc_attr('no-api ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($id, 'url') . '?wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen loading="lazy"></iframe>';
+				$youtube .= '<iframe class="' . esc_attr('no-api ' . $class . ' ' . $ignore_visibility) . '" width="' . esc_attr($width) . '" height="' . esc_attr($height) . '" src="//www.youtube.com/embed/' . esc_attr($id, 'url') . '?start=' . esc_attr($start, 'url') . '&wmode=transparent&enablejsapi=1&rel=' . esc_attr($rel, 'url') . '" frameborder="0" allowfullscreen loading="lazy"></iframe>';
 				if ( $this->is_dev() ){
 					$youtube .= '<script>console.warn("(' . esc_attr($youtube_data['error']) . ' (via Youtube shortcode)");</script>';
 				}

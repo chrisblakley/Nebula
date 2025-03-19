@@ -71,8 +71,8 @@ nebula.cf7Functions = async function(){
 
 	//Re-init forms inside Bootstrap modals (to enable AJAX submission) when needed
 	nebula.dom.document.on('shown.bs.modal', function(e){
-		if ( typeof wpcf7.initForm === 'function' && jQuery(e.target).find('.wpcf7-form').length && !jQuery(e.target).find('.ajax-loader').length ){ //If initForm function exists, and a form is inside the modal, and if it has not yet been initialized (The initForm function adds the ".ajax-loader" span)
-			wpcf7.initForm(jQuery(e.target).find('.wpcf7-form'));
+		if ( typeof wpcf7 !== 'undefined' && typeof wpcf7.init === 'function' && jQuery(e.target).find('.wpcf7-form').length && !jQuery(e.target).find('.ajax-loader').length ){ //If init function exists, and a form is inside the modal, and if it has not yet been initialized (The init function adds the ".ajax-loader" span)
+			wpcf7.init(jQuery(e.target).find('.wpcf7-form'));
 		}
 	});
 

@@ -53,7 +53,9 @@ nebula.addHTML5VideoPlayer = function(id, element){
 		video_title: videoTitle,
 		id: id,
 		element: element,
-		autoplay: ( element.attr('autoplay') )? true : false,
+		autoplay: nebula.isAutoplayVideo(element),
+		started: false, //If the video has been started yet
+		engaged: false, //Whether the viewer has watched enough of the video to be considered engaged.
 		video_percent: 0, //The decimal percent of the current position. Multiply by 100 for actual percent.
 		seeker: false, //Whether the viewer has seeked through the video at least once.
 		seen: [], //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
@@ -86,23 +88,28 @@ nebula.addHTML5VideoPlayer = function(id, element){
 
 		element.addClass('playing');
 
-		//Only report to GA for non-autoplay videos
-		if ( !element.is('[autoplay]') ){
-			let thisEvent = {
-				event_name: 'video_start',
-				event_category: 'Videos',
-				event_action: ( nebula.isInView(element) )? 'Play' : 'Play (Not In View)',
-				video_title: thisVideo.title,
-				video_provider: 'html5',
-				autoplay: thisVideo.autoplay
-			};
+		if ( !thisVideo.started ){ //If this HTML5 video has not yet been started
+			thisVideo.started = true;
 
-			thisEvent.non_interaction = thisEvent.autoplay; //Non-interaction if the video autoplays
+			//Only report to GA for non-autoplay HTML5 videos
+			if ( !nebula.isAutoplayVideo(element) ){
+				let thisEvent = {
+					event_name: 'video_start',
+					event_category: 'Videos',
+					event_action: ( nebula.isInView(element) )? 'Play' : 'Play (Not In View)',
+					event_label: thisVideo.title + ' (HTML5 Video)',
+					video_title: thisVideo.title,
+					video_provider: 'html5',
+					autoplay: thisVideo.autoplay
+				};
 
-			nebula.dom.document.trigger('nebula_event', thisEvent);
-			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-			if ( !thisVideo.autoplay ){
-				nebula.crm('event', 'Video Play Began: ' + thisVideo.title);
+				thisEvent.non_interaction = thisEvent.autoplay; //Non-interaction if the video autoplays
+
+				nebula.dom.document.trigger('nebula_event', thisEvent);
+				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+				if ( !thisVideo.autoplay ){
+					nebula.crm('event', 'Video Play Began: ' + thisVideo.title);
+				}
 			}
 		}
 
@@ -124,10 +131,13 @@ nebula.addHTML5VideoPlayer = function(id, element){
 
 		if ( !thisVideo.autoplay && thisVideo.watchedPercent > 25 && !thisVideo.engaged ){
 			if ( nebula.isInView(element) ){
+				thisVideo.engaged = true;
+
 				let thisEvent = {
 					event_name: 'video_engagement',
 					event_category: 'Videos',
 					event_action: ( thisVideo.autoplay )? 'Engaged' : 'Engaged (Autoplay)',
+					event_label: thisVideo.title + ' (HTML5 Video)',
 					video_title: thisVideo.title,
 					video_provider: 'html5',
 					autoplay: thisVideo.autoplay,
@@ -137,7 +147,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 				nebula.dom.document.trigger('nebula_event', thisEvent);
 				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 				nebula.crm('event', 'Video Engagement: ' + thisEvent.title);
-				thisVideo.engaged = true;
+
 				nebula.dom.document.trigger('nebula_engaged_video', thisVideo);
 			}
 		}
@@ -151,6 +161,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 			event_name: 'video_pause',
 			event_category: 'Videos',
 			event_action: 'Paused',
+			event_label: thisVideo.title + ' (HTML5 Video)',
 			first_pause: !thisVideo.pausedYet,
 			play_time: Math.round(thisVideo.watched),
 			video_percent: Math.round(thisVideo.percent*100),
@@ -181,12 +192,14 @@ nebula.addHTML5VideoPlayer = function(id, element){
 		let thisVideo = nebula.videos[id];
 
 		//If it is an autoplay video or without controls, don't log loops
-		if ( !thisVideo.autoplay && !element.is('[autoplay]') && element.is('[controls]') ){
+		if ( !thisVideo.autoplay && !nebula.isAutoplayVideo(element) && element.is('[controls]') ){
 			if ( thisVideo.current == 0 && element.is('[loop]') ){ //If the video is set to loop and is starting again
 				let thisEvent = {
 					event_name: 'video_complete',
 					event_category: 'Videos',
 					event_action: ( nebula.isInView(element) )? 'Ended (Looped)' : 'Ended (Looped) (Not In View)',
+					event_label: thisVideo.title + ' (HTML5 Video)',
+					event_label: 'HTML5 Video',
 					video_title: thisVideo.title,
 					video_provider: 'html5',
 					autoplay: thisVideo.autoplay,
@@ -205,6 +218,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 						event_name: 'video_seek',
 						event_category: 'Videos',
 						event_action: 'Seek',
+						event_label: thisVideo.title + ' (HTML5 Video)',
 						position: thisVideo.current.toFixed(0),
 						video_title: thisVideo.title,
 						video_provider: 'html5',
@@ -236,6 +250,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 			event_name: 'video_complete',
 			event_category: 'Videos',
 			event_action: ( nebula.isInView(element) )? 'Ended' : 'Ended (Not In View)',
+			event_label: thisVideo.title + ' (HTML5 Video)',
 			video_title: thisVideo.title,
 			video_provider: 'html5',
 			play_time: Math.round(thisVideo.watched),
@@ -321,8 +336,6 @@ nebula.youtubeIframeReady = function(){
 	});
 	window.performance.mark('(Nebula) Loading Youtube Videos [End]');
 	window.performance.measure('(Nebula) Loading Youtube Videos', '(Nebula) Loading Youtube Videos [Start]', '(Nebula) Loading Youtube Videos [End]');
-
-	let pauseFlag = false;
 };
 
 nebula.addYoutubePlayer = function(id = false, element){
@@ -343,12 +356,14 @@ nebula.addYoutubePlayer = function(id = false, element){
 			}),
 			platform: 'youtube', //The platform the video is hosted using.
 			element: element, //The player iframe.
-			autoplay: element.attr('src').includes('autoplay=1'), //Look for the autoplay parameter in the iframe src.
+			autoplay: nebula.isAutoplayVideo(element), //Look for the autoplay parameter in the iframe src.
 			id: id,
+			started: false, //If the video has been started yet
 			engaged: false, //Whether the viewer has watched enough of the video to be considered engaged.
 			watched: 0, //Amount of time watching the video (regardless of seeking). Accurate to half a second. Units: Seconds
 			watchedPercent: 0, //The decimal percentage of the video watched. Multiply by 100 for actual percent.
 			pausedYet: 0, //If this video has been paused yet by the user.
+			previousState: 'unplayed',
 		};
 	}
 };
@@ -386,26 +401,33 @@ nebula.youtubeStateChange = function(e){
 
 	//Playing
 	if ( e.data === YT.PlayerState.PLAYING ){
-		let thisEvent = {
-			event_name: 'video_start',
-			event_category: 'Videos',
-			event_action: ( nebula.isInView(jQuery(thisVideo.element)) )? 'Play' : 'Play (Not In View)',
-			video_title: thisVideo.title,
-			video_provider: 'youtube',
-			autoplay: thisVideo.autoplay
-		};
+		thisVideo.previousState = 'playing';
 
-		if ( thisVideo.autoplay ){
-			thisEvent.event_action += ' (Autoplay)';
-		} else {
-			jQuery(thisVideo.element).addClass('playing');
+		if ( !thisVideo.started ){ //If this Youtube video has not yet been started
+			thisVideo.started = true;
+
+			let thisEvent = {
+				event_name: 'video_start',
+				event_category: 'Videos',
+				event_action: ( nebula.isInView(jQuery(thisVideo.element)) )? 'Play' : 'Play (Not In View)',
+				event_label: thisVideo.title + ' (Youtube Video)',
+				video_title: thisVideo.title,
+				video_provider: 'youtube',
+				autoplay: thisVideo.autoplay
+			};
+
+			if ( thisVideo.autoplay ){
+				thisEvent.event_action += ' (Autoplay)';
+			} else {
+				jQuery(thisVideo.element).addClass('playing');
+			}
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			nebula.crm('event', 'Video Play Began: ' + thisEvent.title);
+			nebula.dom.document.trigger('nebula_playing_video', thisVideo);
 		}
 
-		nebula.dom.document.trigger('nebula_event', thisEvent);
-		gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-		nebula.crm('event', 'Video Play Began: ' + thisEvent.title);
-		nebula.dom.document.trigger('nebula_playing_video', thisVideo);
-		let pauseFlag = true;
 		let updateInterval = 500;
 
 		try {
@@ -424,6 +446,7 @@ nebula.youtubeStateChange = function(e){
 							event_name: 'video_engagement',
 							event_category: 'Videos',
 							event_action: ( thisVideo.autoplay )? 'Engaged' : 'Engaged (Autoplay)',
+							event_label: thisVideo.title + ' (Youtube Video)',
 							video_title: thisVideo.title,
 							video_provider: 'youtube',
 							autoplay: thisVideo.autoplay,
@@ -445,7 +468,10 @@ nebula.youtubeStateChange = function(e){
 
 	//Ended
 	if ( e.data === YT.PlayerState.ENDED ){
+		thisVideo.previousState = 'ended';
+
 		jQuery(thisVideo.element).removeClass('playing');
+
 		if ( window.youtubePlayProgress ){
 			clearInterval(window.youtubePlayProgress);
 		}
@@ -454,6 +480,7 @@ nebula.youtubeStateChange = function(e){
 			event_name: 'video_complete',
 			event_category: 'Videos',
 			event_action: ( nebula.isInView(jQuery(thisVideo.element)) )? 'Ended' : 'Ended (Not In View)',
+			event_label: thisVideo.title + ' (Youtube Video)',
 			video_title: thisVideo.title,
 			video_provider: 'youtube',
 			play_time: Math.round(thisVideo.watched/1000),
@@ -482,8 +509,10 @@ nebula.youtubeStateChange = function(e){
 	} else {
 		setTimeout(function(){ //Wait 1 second because seeking will always pause and automatically resume, so check if it is still playing a second from now
 			try {
-				if ( e.target.getPlayerState() == 2 && pauseFlag ){ //This must use getPlayerState() since e.data is not actually "current" inside of this setTimeout(). Paused = 2
+				if ( e.target.playerInfo.playerState == 2 && thisVideo.previousState == 'playing' ){ //The getPlayerState() function no longer works. Using e.target since e.data is not actually "current" inside of this setTimeout(). Paused = 2
+					thisVideo.previousState = 'paused';
 					jQuery(thisVideo.element).removeClass('playing');
+
 					if ( window.youtubePlayProgress ){
 						clearInterval(window.youtubePlayProgress);
 					}
@@ -492,6 +521,7 @@ nebula.youtubeStateChange = function(e){
 						event_name: 'video_pause',
 						event_category: 'Videos',
 						event_action: 'Paused',
+						event_label: thisVideo.title + ' (Youtube Video)',
 						first_pause: !thisVideo.pausedYet,
 						play_time: Math.round(thisVideo.watched),
 						video_percent: Math.round(thisVideo.percent*100),
@@ -516,7 +546,6 @@ nebula.youtubeStateChange = function(e){
 
 					nebula.crm('event', 'Video Paused: ' + thisEvent.title);
 					nebula.dom.document.trigger('nebula_paused_video', thisVideo);
-					pauseFlag = false;
 				}
 			} catch {
 				//Ignore errors
@@ -612,15 +641,16 @@ nebula.createVimeoPlayers = function(){
 				return; //Continue the loop
 			}
 
-			//Fill in the data object here
+			//Fill in the Vimeo data object here
 			nebula.videos[id] = {
 				player: new Vimeo.Player(jQuery(this)),
 				element: jQuery(this),
 				platform: 'vimeo', //The platform the video is hosted using.
-				autoplay: jQuery(this).attr('src').includes('autoplay=1'), //Look for the autoplay parameter in the iframe src.
+				autoplay: nebula.isAutoplayVideo(jQuery(this)), //Look for the autoplay parameter in the iframe src.
 				id: id,
 				current: 0, //The current position of the video. Units: Seconds
 				video_percent: 0, //The percent of the current position. Multiply by 100 for actual percent.
+				started: false, //If the video has been started yet
 				engaged: false, //Whether the viewer has watched enough of the video to be considered engaged.
 				seeker: false, //Whether the viewer has seeked through the video at least once.
 				seen: [], //An array of percentages seen by the viewer. This is to roughly estimate how much was watched.
@@ -641,25 +671,30 @@ nebula.createVimeoPlayers = function(){
 
 			//Play
 			nebula.videos[id].player.on('play', function(e){
-				let thisEvent = {
-					event_name: 'video_start',
-					event_category: 'Videos',
-					event_action: ( nebula.isInView(jQuery(nebula.videos[id].element)) )? 'Play' : 'Play (Not In View)',
-					video_title: nebula.videos[id].title,
-					video_provider: 'vimeo',
-					autoplay: nebula.videos[id].autoplay
-				};
+				if ( !thisVideo.started ){ //If this Vimeo video has not yet been started
+					thisVideo.started = true;
 
-				if ( nebula.videos[id].autoplay ){
-					thisEvent.event_action += ' (Autoplay)';
-				} else {
-					nebula.videos[id].element.addClass('playing');
+					let thisEvent = {
+						event_name: 'video_start',
+						event_category: 'Videos',
+						event_action: ( nebula.isInView(jQuery(nebula.videos[id].element)) )? 'Play' : 'Play (Not In View)',
+						event_label: nebula.videos[id].title + ' (Vimeo Video)',
+						video_title: nebula.videos[id].title,
+						video_provider: 'vimeo',
+						autoplay: nebula.videos[id].autoplay
+					};
+
+					if ( nebula.videos[id].autoplay ){
+						thisEvent.event_action += ' (Autoplay)';
+					} else {
+						nebula.videos[id].element.addClass('playing');
+					}
+
+					nebula.dom.document.trigger('nebula_event', thisEvent);
+					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+					nebula.crm('event', 'Video Play Began: ' + thisEvent.title);
+					nebula.dom.document.trigger('nebula_playing_video', nebula.videos[id].title);
 				}
-
-				nebula.dom.document.trigger('nebula_event', thisEvent);
-				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-				nebula.crm('event', 'Video Play Began: ' + thisEvent.title);
-				nebula.dom.document.trigger('nebula_playing_video', nebula.videos[id].title);
 			});
 
 			//Time Update
@@ -678,10 +713,13 @@ nebula.createVimeoPlayers = function(){
 
 				if ( !nebula.videos[id].autoplay && nebula.videos[id].watchedPercent > 25 && !nebula.videos[id].engaged ){
 					if ( nebula.isInView(jQuery(nebula.videos[id].element)) ){
+						nebula.videos[id].engaged = true;
+
 						let thisEvent = {
 							event_name: 'video_engagement',
 							event_category: 'Videos',
 							event_action: ( nebula.videos[id].autoplay )? 'Engaged' : 'Engaged (Autoplay)',
+							event_label: nebula.videos[id].title + ' (Vimeo Video)',
 							video_title: nebula.videos[id].title,
 							video_provider: 'vimeo',
 							autoplay: nebula.videos[id].autoplay,
@@ -691,7 +729,7 @@ nebula.createVimeoPlayers = function(){
 						nebula.dom.document.trigger('nebula_event', thisEvent);
 						gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 						nebula.crm('event', 'Video Engaged: ' + thisEvent.title);
-						nebula.videos[id].engaged = true;
+
 						nebula.dom.document.trigger('nebula_engaged_video', nebula.videos[id].title);
 					}
 				}
@@ -705,6 +743,7 @@ nebula.createVimeoPlayers = function(){
 					event_name: 'video_pause',
 					event_category: 'Videos',
 					event_action: 'Paused',
+					event_label: nebula.videos[id].title + ' (Vimeo Video)',
 					first_pause: !nebula.videos[id].pausedYet,
 					play_time: Math.round(nebula.videos[id].watched),
 					video_percent: Math.round(e.percent*100),
@@ -736,6 +775,7 @@ nebula.createVimeoPlayers = function(){
 					event_name: 'video_seek',
 					event_category: 'Videos',
 					event_action: 'Seek',
+					event_label: nebula.videos[id].title + ' (Vimeo Video)',
 					position: e.seconds,
 					video_title: nebula.videos[id].title,
 					video_provider: 'vimeo',
@@ -759,6 +799,7 @@ nebula.createVimeoPlayers = function(){
 					event_name: 'video_complete',
 					event_category: 'Videos',
 					event_action: ( nebula.isInView(jQuery(nebula.videos[id].element)) )? 'Ended' : 'Ended (Not In View)',
+					event_label: nebula.videos[id].title + ' (Vimeo Video)',
 					video_title: nebula.videos[id].title,
 					video_provider: 'vimeo',
 					play_time: Math.round(nebula.videos[id].watched),
@@ -820,4 +861,24 @@ nebula.pauseAllVideos = function(force = false){
 			}
 		}
 	});
+};
+
+//Detect if a video element's HTML is prepped to autoplay on load
+//Note: this does not detect if something else in JS is triggering the video to play automatically
+nebula.isAutoplayVideo = function(element){
+	if ( !element || !element.length ){
+		return false;
+	}
+
+	//Check for the autoplay HTML attribute
+	if ( element.is('[autoplay]') ){
+		return true;
+	}
+
+	//Check for &autoplay=1 query parameter
+	if ( element.attr('src') && element.attr('src').includes('autoplay=1') ){
+		return true;
+	}
+
+	return false;
 };

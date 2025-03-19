@@ -32,7 +32,13 @@ nebula.keywordFilter = function(container, parent, values = 'string', filteredCl
 			jQuery(container).find(parent).each(async function(){ //Loop through each element to check against the regex pattern
 				await nebula.yield();
 
+				//Get the text of this element
 				let elementText = jQuery(this).text().trim().replaceAll(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
+
+				if ( jQuery(this).find('input').length ){
+					elementText += ' ' + jQuery(this).find('input').val(); //If it is an input, let's test the value too
+				}
+
 				jQuery(this).addClass(filteredClass);
 				if ( regex.test(elementText) ){
 					jQuery(this).removeClass(filteredClass);
@@ -51,7 +57,13 @@ nebula.keywordFilter = function(container, parent, values = 'string', filteredCl
 					}
 
 					jQuery(container).find(parent).not('.' + filteredClass).each(function(){ //Now check elements that have not yet been filtered for this value
+						//Get the text of this element
 						let elementText = jQuery(this).text().trim().replaceAll(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
+
+						if ( jQuery(this).find('input').length ){
+							elementText += ' ' + jQuery(this).find('input').val(); //If it is an input, let's test the value too
+						}
+
 						if ( !regex.test(elementText) ){
 							jQuery(this).addClass(filteredClass);
 						}
@@ -72,6 +84,11 @@ nebula.keywordFilter = function(container, parent, values = 'string', filteredCl
 				await nebula.yield();
 
 				let elementText = jQuery(this).text().trim().replaceAll(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
+
+				if ( jQuery(this).find('input').length ){
+					elementText += ' ' + jQuery(this).find('input').val(); //If it is an input, let's test the value too
+				}
+
 				jQuery(this).addClass(filteredClass);
 				if ( regex.test(elementText) ){
 					jQuery(this).removeClass(filteredClass);

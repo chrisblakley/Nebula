@@ -104,7 +104,7 @@ nebula.optionsInit = function(){
 
 nebula.optionsFilters = function(){
 	//Option filter
-	jQuery('#nebula-option-filter').on('keydown keyup change focus blur', async function(e){
+	jQuery('#nebula-option-filter').on('input', async function(e){
 		await nebula.yield();
 
 		nebula.debounce(function(){
@@ -176,12 +176,41 @@ nebula.optionsFilters = function(){
 
 	//Trigger the filter if linking to a pre-filtered search
 	if ( jQuery('#nebula-option-filter').val() ){
-		jQuery('#nebula-option-filter').trigger('keyup');
+		jQuery('#nebula-option-filter').trigger('input');
 	}
 
 	jQuery('#reset-filter a').on('click', function(){
-		jQuery('#nebula-option-filter').val('').trigger('keydown');
+		jQuery('#nebula-option-filter').val('').trigger('input');
 		jQuery('.tab-pane').removeClass('active').first().addClass('active');
+		return false;
+	});
+
+	//Dequeue Styles/Scripts filter inputs
+	jQuery('.dequeue-assets-filter').on('input', async function(e){
+		//Prevent the form from submitting if pressing enter after searching
+		if ( e.type === 'keydown' && e.key === 'Enter' ){
+			e.preventDefault();
+			return false;
+		}
+
+		let keyword = jQuery(this).val();
+
+		if ( keyword.length > 0 ){
+			jQuery('#nebula_dequeue_styles_metabox, #nebula_dequeue_scripts_metabox').addClass('filtering');
+			jQuery('.dequeue-assets-filter-container .dequeue-asset-reset').removeClass('hidden');
+
+			nebula.keywordFilter('#nebula_dequeue_styles_metabox .option-sub-group, #nebula_dequeue_scripts_metabox .option-sub-group', '.form-group', keyword);
+		} else {
+			jQuery('#nebula_dequeue_styles_metabox, #nebula_dequeue_scripts_metabox').removeClass('filtering');
+			jQuery('.dequeue-assets-filter-container .dequeue-asset-reset').addClass('hidden');
+			jQuery('#nebula_dequeue_styles_metabox .filtereditem, #nebula_dequeue_scripts_metabox .filtereditem').removeClass('filtereditem');
+		}
+
+		jQuery('.dequeue-assets-filter').val(keyword); //Sync the two filters together
+	});
+
+	jQuery('.dequeue-asset-reset a').on('click', function(){
+		jQuery('.dequeue-assets-filter').val('').trigger('input');
 		return false;
 	});
 };

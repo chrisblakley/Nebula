@@ -1722,15 +1722,17 @@ if ( !trait_exists('Admin') ){
 					$today_icon = '';
 					$time_diff_icon = '<i class="fa-regular fa-fw fa-calendar"></i>'; //Default for longer than a day ago
 
-					if ( time()-strtotime(get_post_field('post_date', $submission_id)) < HOUR_IN_SECONDS ){ //Within the hour
+					$time_diff = time()-strtotime(get_post_field('post_date', $submission_id));
+
+					if ( $time_diff < HOUR_IN_SECONDS ){ //Within the hour
 						$time_diff_icon = '<i class="fa-solid fa-fw fa-stopwatch"></i>';
 						$today_icon = '<span class="cf7-submits-today-color">&rarr;</span> ';
-						$today_text = 'Just Now';
+						$today_text = ( $time_diff < MINUTE_IN_SECONDS*10 )? 'Just Now' : 'Past Hour';
 					} elseif ( date('Y-n-j', strtotime(get_post_field('post_date', $submission_id))) == date('Y-n-j') ){ //Within today's calendar date
 						$time_diff_icon = '<i class="fa-solid fa-fw fa-clock"></i>';
 						$today_icon = '<span class="cf7-submits-today-color">&raquo;</span> ';
 						$today_text = 'today';
-					} elseif ( time()-strtotime(get_post_field('post_date', $submission_id)) < DAY_IN_SECONDS ){ //Within the last 24-hours
+					} elseif ( $time_diff < DAY_IN_SECONDS ){ //Within the last 24-hours
 						$time_diff_icon = '<i class="fa-solid fa-fw fa-calendar-day"></i>';
 						$today_icon = '<span>&rsaquo;</span> ';
 					}
@@ -1786,8 +1788,10 @@ if ( !trait_exists('Admin') ){
 					if ( strpos(strtolower(get_the_title($submission_id)), 'mail fail') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 						echo '<p class="cf7-note-failed"><i class="fa-solid fa-fw fa-triangle-exclamation"></i> <strong>Mail Failed</strong><br /><small>An administrator did not get an email notification of this submission!</small></p>';
 
-						//If it failed within the last few days, denote that in a transient
-						if ( strtotime(get_the_date('Y-m-d H:i:s', $submission_id)) >= strtotime('-2 days') ){
+						//If it failed within the last few days or if it is the latest submissions even beyond a week old, denote that in a transient
+						global $wp_query;
+						$latest_submission_id = ( !empty($wp_query->posts) )? $wp_query->posts[0]->ID : null;
+						if ( strtotime(get_the_date('Y-m-d H:i:s', $submission_id)) >= strtotime('-2 days') || $submission_id == $latest_submission_id ){
 							set_transient('smtp_status', 'Recent CF7 Fail Error', DAY_IN_SECONDS*5); //Remember this must contain the word "error" for Dashboard status check
 						}
 					}
@@ -2246,9 +2250,15 @@ if ( !trait_exists('Admin') ){
 							}
 
 							if ( $key === '_nebula_current_page' ){
-								$parts = explode(' (', $value, 2); //Use the space and open parenthesis to ensure it is the proper separator
-								$current_page_url = $parts[0];
-								$current_page_method = '(' . $parts[1]; //The detection method used to determine the page the form was submitted from (and add the parenthesis back in here)
+								$current_page_url= $value;
+								$current_page_method = '';
+
+								if ( strpos($value, ' (') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+									$parts = explode(' (', $value, 2); //Use the space and open parenthesis to ensure it is the proper separator
+									$current_page_url = $parts[0];
+									$current_page_method = '(' . $parts[1]; //The detection method used to determine the page the form was submitted from (and add the parenthesis back in here)
+								}
+
 								$value = '<a href="' . $current_page_url . '">' . $current_page_url . '</a> <small>' . $current_page_method . '</small>';
 							}
 
@@ -2344,25 +2354,27 @@ if ( !trait_exists('Admin') ){
 			}
 		}
 
-		//Add a badge icon to the admin menu indicating the number of new submissions
+		//Add a badge icon to the admin menu indicating the number of new submissions today
 		function add_cf7_menu_badge_count(){
 			global $submenu;
 
-			$cf7_submissions_query = new WP_Query(array(
-				'post_type' => 'nebula_cf7_submits',
-				'post_status' => 'submission',
-				'posts_per_page' => -1,
-				'date_query' => array(
-					'after' => date('Y-m-d'), //Today only
-					'before' => date('Y-m-d'),
-					'inclusive' => true,
-				)
-			));
+			$badge_number = nebula()->transient('nebula_cf7_submits_badge', function(){
+				$cf7_submissions_query = new WP_Query(array(
+					'post_type' => 'nebula_cf7_submits',
+					'post_status' => 'submission',
+					'posts_per_page' => -1,
+					'date_query' => array(
+						'after' => date('Y-m-d'), //Today only
+						'before' => date('Y-m-d'),
+						'inclusive' => true,
+					)
+				));
 
-			$badge_number = $cf7_submissions_query->found_posts; //Count the number of posts from the query
+				return $cf7_submissions_query->found_posts; //Count the number of posts from the query
+			}, MINUTE_IN_SECONDS*10);
 
 			if ( $badge_number > 0 ){
-				//Loop through the top-level submenu items
+				//Loop through the top-level submenu items to find the appropriate item to append to
 				foreach ( $submenu as $key => $menu ){
 					if ( $key == 'wpcf7' ){
 						//Now loop through that submenu's submenu items
