@@ -391,6 +391,27 @@ if ( !trait_exists('Warnings') ){
 					}
 				}
 
+				//Show a warning banner for parent theme file changes only when viewing the WP Update or Themes screens
+				global $pagenow;
+				if ( $pagenow === 'update-core.php' || $pagenow === 'themes.php' ){
+					$modified_files = get_transient('nebula_theme_modified_files');
+					if ( !empty($modified_files) ){
+						$file_count = count($modified_files);
+						$file_list = implode("\n", $modified_files); //Join file names with new lines for the title attribute
+
+						$description = '<span title="' . esc_attr($title_attr) . '"><strong>' . $file_count . '</strong> Nebula parent theme ' . $this->singular_plural($file_count, 'file has', 'files have') . ' been modified.</span>';
+						if ( $pagenow === 'update-core.php' ){
+							$description .= ' <strong>If you update the Nebula theme, these modifications will be overwritten and lost!</strong> Please review those changes first.';
+						}
+
+						$nebula_warnings['parent_theme_files_changed'] = array(
+							'level' => ( $pagenow === 'update-core.php' )? 'error' : 'warning',
+							'dismissible' => false,
+							'description' => '<i class="fa-solid fa-square-binary"></i> ' . $description
+						);
+					}
+				}
+
 				//Child theme checks
 				if ( is_child_theme() ){
 					//Check if the parent theme template is correctly referenced
@@ -683,17 +704,19 @@ if ( !trait_exists('Warnings') ){
 											preg_match($regex, $full_line, $details); //Actually Look for the regex in the line
 
 											if ( !empty($details) ){
+												$relative_file_path = str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath);
+
 												if ( $category === 'debug_output' ){
 													$nebula_warnings['unintentional_output'] = array(
 														'level' => 'warning',
 														'dismissible' => true,
-														'description' => '<i class="fa-solid fa-fw fa-bug"></i> Possible debug output in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . ($line_number+1) . '</strong>.'
+														'description' => '<i class="fa-solid fa-fw fa-bug"></i> Possible debug output in <strong><a href="' . home_url($relative_file_path) . '" target="_blank">' . $relative_file_path . '</a></strong> on <strong>line ' . ($line_number+1) . '</strong>.'
 													);
 												} elseif ( $category === 'custom' ){
 													$nebula_warnings['unintentional_output'] = array(
 														'level' => 'warning',
 														'dismissible' => true,
-														'description' => '<i class="fa-solid fa-fw fa-bug"></i> Possible unintentional output detected in <strong>' . str_replace(get_stylesheet_directory(), '', dirname($filepath)) . '/' . basename($filepath) . '</strong> on <strong>line ' . ($line_number+1) . '</strong>.'
+														'description' => '<i class="fa-solid fa-fw fa-bug"></i> Possible unintentional output detected in <strong><a href="' . home_url($relative_file_path) . '" target="_blank">' . $relative_file_path . '</a></strong> on <strong>line ' . ($line_number+1) . '</strong>.'
 													);
 												}
 											}
@@ -752,21 +775,34 @@ if ( !trait_exists('Warnings') ){
 						::spelling-error {text-decoration: 3px underline wavy red; text-decoration-skip-ink: none;} /* This requires contenteditable on elements */
 						::grammar-error {text-decoration: 3px underline wavy green; text-decoration-skip-ink: none;} /* This requires contenteditable on elements */
 
-						.nebula-audit .audit-desc {position: absolute; bottom: 0; right: 0; color: #fff; background: grey; font-size: 10px; padding: 3px 5px; z-index: 9999;}
-							.nebula-audit .nebula-audit .audit-desc {right: auto; left: 0; top: 0; bottom: auto;}
-								.nebula-audit .nebula-audit .nebula-audit .audit-desc {right: auto; left: 0; bottom: 0; top: auto;}
-									.nebula-audit .nebula-audit .nebula-audit .nebula-audit .audit-desc {right: 0; left: auto; bottom: auto; top: 0;}
-						.audit-error {position: relative; border: 2px solid #dc3545;}
-							.audit-error .audit-desc {background: #dc3545;}
-						.audit-warn {position: relative; border: 2px solid #ffc107;}
-							.audit-warn .audit-desc {background: #ffc107;}
-						.audit-notice {position: relative; border: 2px solid #17a2b8;}
-							.audit-notice .audit-desc {background: #17a2b8;}
-						#audit-results {position: relative; background: #444; color: #fff; padding: 50px;}
-							#audit-results p,
-							#audit-results li {color: #fff;}
-							#audit-results a {color: #0098d7;}
-								#audit-results a:hover {color: #95d600;}
+						.nebula-audit {
+							/* Alternate the description location in the box if there are multiple layers */
+							.audit-desc {position: absolute; bottom: 0; right: 0; color: #fff; background: grey; font-size: 10px; padding: 3px 5px; z-index: 9999;
+								.audit-desc {right: auto; left: 0; top: 0; bottom: auto;
+									.audit-desc {right: auto; left: 0; bottom: 0; top: auto;
+										.audit-desc {right: 0; left: auto; bottom: auto; top: 0;}
+									}
+								}
+							}
+						}
+
+						.audit-error {position: relative; border: 2px solid #dc3545;
+							.audit-desc {background: #dc3545;}
+						}
+						.audit-warn {position: relative; border: 2px solid #ffc107;
+							.audit-desc {background: #ffc107;}
+						}
+						.audit-notice {position: relative; border: 2px solid #17a2b8;
+							.audit-desc {background: #17a2b8;}
+						}
+
+						#audit-results {position: relative; background: #444; color: #fff; padding: 50px;
+							p,
+							li {color: #fff;}
+							a {color: #0098d7;
+								&:hover {color: #95d600;}
+							}
+						}
 					</style>
 					<script>
 						jQuery(window).on('load', function(){
@@ -928,7 +964,7 @@ if ( !trait_exists('Warnings') ){
 											jQuery('#audit-results ul').append('<li><i class="fa-regular fa-fw fa-image"></i> Missing ALT attribute <small>(' + src + ')</small></li>');
 										}
 
-										//Check lazy loading attribute
+										//Check lazy/eager loading attribute
 										if ( !$oThis.is('[loading]') ){
 											$oThis.wrap('<div class="nebula-audit audit-error"></div>').after('<div class="audit-desc"><i class="fa-regular fa-fw fa-image"></i> Image not lazy loaded</div>');
 											jQuery('#audit-results ul').append('<li><i class="fa-regular fa-fw fa-image"></i> Image not lazy loaded <small>(' + src + ')</small></li>');
@@ -952,7 +988,7 @@ if ( !trait_exists('Warnings') ){
 											}
 
 											//Check for PNG files
-											if ( blob.type = 'image/png' ){
+											if ( blob.type == 'image/png' ){
 												$oThis.wrap('<div class="nebula-audit audit-warn"></div>').after('<div class="audit-desc"><i class="fa-solid fa-fw fa-image"></i> PNG Image</div>');
 												jQuery('#audit-results ul').append('<li><i class="fa-solid fa-fw fa-image"></i> PNG image used. Consider modern alternatives. <small>(' + src + ')</small></li>');
 											}

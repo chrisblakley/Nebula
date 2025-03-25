@@ -1271,6 +1271,15 @@ if ( !trait_exists('Metaboxes') ){
 						<li>Nebula was last updated via the WordPress updater <strong><?php echo human_time_diff($nebula_data['last_automated_update_date']); ?> ago</strong> (<strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['last_automated_update_date']); ?></strong>) by <strong><?php echo $nebula_data['last_automated_update_user']; ?></strong>.</li>
 					<?php endif; ?>
 
+					<?php
+						$modified_files = get_transient('nebula_theme_modified_files');
+						if ( !empty($modified_files) ){
+							$file_count = count($modified_files);
+							$title_attr = implode("\n", $modified_files); //Join file names with new lines for the title attribute
+							echo '<li><span class="text-caution" title="' . esc_attr($title_attr) . '"><strong>' . $file_count . '</strong> Parent theme ' . $this->singular_plural($file_count, 'file has', 'files have') . ' been modified.</span></li>';
+						}
+					?>
+
 					<li><strong>WordPress Core update notifications</strong> are <?php echo ( empty($nebula_options['wp_core_updates_notify']) )? '<strong class="nebula-disabled">hidden' : '<strong class="nebula-enabled">allowed'; ?></strong> by Nebula.</li>
 					<li>Nebula <strong>Sass processing</strong> is <?php echo ( empty($nebula_options['scss']) )? '<strong class="nebula-disabled">disabled' : '<strong class="nebula-enabled">enabled'; ?></strong>.</li>
 					<li>The <strong>WordPress Admin Bar</strong> is <?php echo ( empty($nebula_options['admin_bar']) )? '<strong class="nebula-disabled">hidden' : '<strong class="nebula-enabled">allowed'; ?></strong> by Nebula.</li>

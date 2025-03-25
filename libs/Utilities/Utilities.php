@@ -442,11 +442,7 @@ if ( !trait_exists('Utilities') ){
 			$override = apply_filters('pre_nebula_url_components', null, $segment, $url);
 			if ( isset($override) ){return $override;}
 
-			//If URL is not passed, get the current page URL.
-			//@todo "Nebula" 0: Use null coalescing operator here
-			if ( !$url ){
-				$url = $this->requested_url();
-			}
+			$url ??= $this->requested_url(); //If URL is not passed, get the current page URL.
 
 			//If it is not a valid URL, treat it as a relative path
 			$relative = false;

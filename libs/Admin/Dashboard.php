@@ -104,6 +104,20 @@ if ( !trait_exists('Dashboard') ){
 			}
 			echo '<li><i class="fa-regular fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('realtime') . '</a></strong> <small title="' . $this->version('date') . '" style="cursor: help;">(Committed ' . $time_diff . ')</small></li>';
 
+			//Check if parent theme files have been modified (this is in the Nebula metabox, but also happens in the developer info metabox)
+			if ( !$this->get_option('dev_info_metabox') || !$this->is_dev() ){ //Prevents this from appearing twice in the dashboard. Only show this if the Developer Info Metabox is not being shown.
+				$modified_files = get_transient('nebula_theme_modified_files');
+				if ( !empty($modified_files) ){
+					$file_count = count($modified_files);
+
+					$title_attr = implode("\n", $modified_files); //Join file names with new lines for the title attribute
+					$time_ago = human_time_diff(get_transient('nebula_theme_file_changes_check'), time());
+					$title_attr .= "\n\n Last checked " . $time_ago . " ago";
+
+					echo '<li><i class="fa-solid fa-square-binary"></i> <span class="text-caution cursor-help" title="' . esc_attr($title_attr) . '"><strong>' . $file_count . '</strong> Parent theme ' . $this->singular_plural($file_count, 'file has', 'files have') . ' been modified</span></li>';
+				}
+			}
+
 			//Child Theme
 			if ( is_child_theme() ){
 				echo '<li><i class="fa-solid fa-fw fa-child"></i><a href="themes.php">Child theme</a> active <small>(' . get_option('stylesheet') . ' v' . $this->child_version() . ')</small></li>';
@@ -536,10 +550,7 @@ if ( !trait_exists('Dashboard') ){
 		}
 
 		public function todo_search_files($directory=null){
-			//@todo "Nebula" 0: Use null coalescing operator here
-			if ( empty($directory) ){
-				$directory = get_template_directory();
-			}
+			$directory ??= get_template_directory();
 
 			ini_set('memory_limit', '512M'); //@todo Nebula 0: Remove these when possible...
 
@@ -600,11 +611,9 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//Domain
-			//@todo "Nebula" 0: Use null coalescing operator here if possible
 			$domain = $this->url_components('domain');
-			if ( empty($domain) ){
-				$domain = '<small>(None)</small>';
-			}
+			$domain ??= '<small>(None)</small>';
+
 			echo '<li><i class="fa-solid fa-fw fa-info-circle"></i> <a href="http://whois.domaintools.com/' . $this->super->server['SERVER_NAME'] . '" target="_blank" rel="noopener noreferrer" title="WHOIS Lookup">Domain</a>: <strong>' . $domain . '</strong></li>';
 
 			//Host
@@ -758,6 +767,18 @@ if ( !trait_exists('Dashboard') ){
 
 					echo '<li><i class="fa-regular fa-fw fa-file-excel"></i> 404s: <strong><a href="tools.php?page=redirection.php&sub=404s&groupby=url">' . $count_of_404s . '</a></strong> <small>(Last 24 hours)</small></li>';
 				}
+			}
+
+			//Check if parent theme files have been modified (this is in the developer info metabox, but also happens in the Nebula metabox)
+			$modified_files = get_transient('nebula_theme_modified_files');
+			if ( !empty($modified_files) ){
+				$file_count = count($modified_files);
+
+				$title_attr = implode("\n", $modified_files); //Join file names with new lines for the title attribute
+				$time_ago = human_time_diff(get_transient('nebula_theme_file_changes_check'), time());
+				$title_attr .= "\n\n Last checked " . $time_ago . " ago";
+
+				echo '<li><i class="fa-solid fa-square-binary"></i> <span class="text-caution cursor-help" title="' . esc_attr($title_attr) . '"><strong>' . $file_count . '</strong> Parent theme ' . $this->singular_plural($file_count, 'file has', 'files have') . ' been modified</span></li>';
 			}
 
 			//Theme directory size(s)
@@ -939,10 +960,7 @@ if ( !trait_exists('Dashboard') ){
 				);
 			}
 
-			//@todo "Nebula" 0: Use null coalescing operator here
-			if ( empty($directory) ){
-				$directory = get_template_directory();
-			}
+			$directory ??= get_template_directory();
 			$dir = $this->glob_r($directory . '/*');
 			$skip_files = array('/cache/', '/includes/data/', 'manifest.json', '.bak'); //Files or directories to skip. Be specific!
 

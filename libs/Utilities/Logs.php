@@ -278,7 +278,7 @@ if ( !trait_exists('Logs') ){
 			$timer_name = $this->timer('Get Log Files');
 
 			//Use the transient so we avoid scanning multiple times in short periods of time
-			$all_log_files = nebula()->transient('nebula_all_log_files', function(){
+			$all_log_files = $this->transient('nebula_all_log_files', function(){
 				$file_names = array(
 					'php' => 'error_log',
 					'wordpress' => 'debug.log',

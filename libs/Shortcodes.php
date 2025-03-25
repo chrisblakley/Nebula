@@ -280,10 +280,8 @@ if ( !trait_exists('Shortcodes') ){
 			extract(shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '', "region" => '', "width" => '100%', "height" => '350', "class" => '', "style" => ''), $atts));
 			$flags = $this->get_flags($atts);
 
-			//@todo "Nebula" 0: Use null coalescing operator here if possible
-			if ( empty($key) ){
-				$key = $this->get_option('google_browser_api_key');
-			}
+			$key ??= $this->get_option('google_browser_api_key');
+
 			if ( !empty($q) ){
 				$q = '&q=' . esc_url($q);
 			}
@@ -498,7 +496,6 @@ if ( !trait_exists('Shortcodes') ){
 			extract(shortcode_atts(array('id' => false, 'indicators' => true), $atts));
 			$flags = $this->get_flags($atts);
 
-			//@todo "Nebula" 0: Use null coalescing operator here if possible. Probably not possible but think about it.
 			if ( !$id ){
 				$id = 'nebula-slider-' . random_int(1, 10000); //PHP 7.4 use numeric separators here
 			} elseif ( strlen($id) > 0 && ctype_digit(substr($id, 0, 1)) ){

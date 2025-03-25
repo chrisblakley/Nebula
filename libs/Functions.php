@@ -254,7 +254,6 @@ if ( !trait_exists('Functions') ){
 		//Set server timezone to match Wordpress
 		public function set_default_timezone(){
 			if ( $this->get_option('force_wp_timezone') ){
-				//@todo "Nebula" 0: Use null coalescing operator here if possible
 				$timezone_option = wp_timezone_string();
 
 				//If that returns an offset instead of a named timezone
@@ -1053,11 +1052,7 @@ if ( !trait_exists('Functions') ){
 		//Determines the estimated time to read a post (in minutes).
 		//Note: Does not account for ACF fields unless hooked into 'nebula_word_count' above
 		public function estimated_reading_time($id=false){
-			//@todo "Nebula" 0: Use null coalescing operator here if possible
-			if ( empty($id) ){
-				$id = get_the_ID();
-			}
-
+			$id ??= get_the_ID();
 			$wpm = 250; //Words per minute reading speed
 			$content = $this->word_count(array('id' => $id));
 
@@ -1132,10 +1127,7 @@ if ( !trait_exists('Functions') ){
 			$override = apply_filters('pre_nebula_share', null, $networks, $id);
 			if ( isset($override) ){return;}
 
-			//@todo "Nebula" 0: Use null coalescing operator here if possible
-			if ( empty($id) ){
-				$id = get_the_id();
-			}
+			$id ??= get_the_id();
 
 			$encoded_url = urlencode(get_permalink($id));
 			$encoded_title = urlencode(get_the_title($id));
@@ -1461,6 +1453,10 @@ if ( !trait_exists('Functions') ){
 			} elseif ( $provider === 'vimeo' && is_array($video_json) && empty($video_json[0]) ){
 				$video_metadata['error'] = 'A Vimeo video with ID ' . $id . ' does not exist.';
 			}
+
+			//Start with default values so they are always defined
+			$video_metadata['title'] = 'unknown_title';
+			$video_metadata['safetitle'] = 'unknown_title';
 
 			//Build Data
 			if ( $provider === 'youtube' ){
@@ -2191,10 +2187,7 @@ if ( !trait_exists('Functions') ){
 
 		//If the business is open, return the time that the business closes today
 		public function business_open_until($day){
-			//@todo "Nebula" 0: Use null coalescing operator here if possible
-			if ( empty($day) ){
-				$day = strtolower(date('l'));
-			}
+			$day ??= strtolower(date('l'));
 
 			if ( $this->is_business_open() ){
 				return esc_html($this->get_option('business_hours_' . $day . '_close'));
@@ -3621,7 +3614,6 @@ if ( !trait_exists('Functions') ){
 		//Hooked as a filter called from Yoast (which passes $metadesc), and also called directly
 		public function meta_description($metadesc=null, $chars=160){
 			if ( empty($metadesc) ){
-				//@todo "Nebula" 0: Use null coalescing operator here if possible
 				$nebula_metadesc = $this->excerpt(array('length' => 'dynamic', 'characters' => $chars, 'more' => '', 'ellipsis' => false, 'strip_tags' => true));
 				if ( empty($nebula_metadesc) ){
 					$nebula_metadesc = get_bloginfo('description');

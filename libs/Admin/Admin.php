@@ -64,6 +64,8 @@ if ( !trait_exists('Admin') ){
 
 				remove_action('admin_enqueue_scripts', 'wp_auth_check_load'); //Disable the logged-in monitoring modal
 
+				add_action('admin_notices', array($this, 'check_parent_theme_file_changes'));
+
 				if ( current_user_can('edit_others_posts') && $this->is_warning_level('on') ){
 					add_action('admin_notices', array($this, 'show_admin_notices'));
 				}
@@ -1061,25 +1063,38 @@ if ( !trait_exists('Admin') ){
 		public function admin_bar_warning_styles(){
 			if ( is_admin_bar_showing() ){ ?>
 				<style type="text/css">
-					#wpadminbar .nebula-admin-fa {font-family: "Font Awesome 6 Solid", "Font Awesome 6 Free", "Font Awesome 6 Pro"; font-weight: 900;}
-						#wpadminbar .nebula-admin-fa.fa-brands {font-family: "Font Awesome 6 Brands", "Font Awesome 6 Free", "Font Awesome 6 Pro"; font-weight: 400;}
-					#wpadminbar .svg-inline--fa {color: #a0a5aa; color: rgba(240, 245, 250, 0.6); margin-right: 5px;}
-					#wpadminbar .nebula-admin-light {font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, 0.6); line-height: inherit;}
+					#wpadminbar {
+						.nebula-admin-fa {font-family: "Font Awesome 6 Solid", "Font Awesome 6 Free", "Font Awesome 6 Pro"; font-weight: 900;
+							&.fa-brands {font-family: "Font Awesome 6 Brands", "Font Awesome 6 Free", "Font Awesome 6 Pro"; font-weight: 400;}
+						}
 
-					#wpadminbar:not(.mobile) .ab-top-menu > #wp-admin-bar-nebula.has-warning > .ab-item {background: #ca3838;}
-						#wpadminbar:not(.mobile) .ab-top-menu > #wp-admin-bar-nebula.has-warning.hover > .ab-item,
-						#wpadminbar:not(.mobile) .ab-top-menu > #wp-admin-bar-nebula.has-warning:hover > .ab-item {background: maroon; color: #fff; transition: all 0.25s ease;}
+						.svg-inline--fa {color: #a0a5aa; color: rgba(240, 245, 250, 0.6); margin-right: 5px;}
+						.nebula-admin-light {font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, 0.6); line-height: inherit;}
 
-					#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings {background: #ca3838;}
-						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings > .ab-item,
-						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings > svg {color: #fff;}
-						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings .level-error svg {color: #ca3838;}
-						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-warnings .level-warning svg {color: #f6b83f;}
+						&:not(.mobile) {
+							.ab-top-menu > #wp-admin-bar-nebula.has-warning
+								> .ab-item {background: #ca3838;}
 
-					#wpadminbar:not(.mobile) .deregistered-asset-info {color: #f6b83f;}
-					#wpadminbar:not(.mobile) #wp-admin-bar-nebula-deregisters > .ab-item {background: #f6b83f; color: #000; transition: all 0.25s ease;}
-						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-deregisters.hover > .ab-item,
-						#wpadminbar:not(.mobile) #wp-admin-bar-nebula-deregisters:hover > .ab-item {background: #f5a326;}
+								&.hover > .ab-item,
+								&:hover > .ab-item {background: maroon; color: #fff; transition: all 0.25s ease;}
+							}
+
+							#wp-admin-bar-nebula-warnings {background: #ca3838;
+								> .ab-item,
+								> svg {color: #fff;}
+								.level-error svg {color: #ca3838;}
+								.level-warning svg {color: #f6b83f;}
+							}
+
+							.deregistered-asset-info {color: #f6b83f;}
+							#wp-admin-bar-nebula-deregisters {
+								> .ab-item {background: #f6b83f; color: #000; transition: all 0.25s ease;}
+
+								&.hover > .ab-item,
+								&:hover > .ab-item {background: #f5a326;}
+							}
+						}
+					}
 				</style>
 			<?php }
 		}
@@ -1097,11 +1112,15 @@ if ( !trait_exists('Admin') ){
 					html {margin-top: 32px !important; transition: margin-top 0.5s linear;}
 					* html body {margin-top: 32px !important;}
 
-					#wpadminbar {transition: top 0.5s linear;}
-					.admin-bar-inactive #wpadminbar {top: -32px; overflow: hidden;}
-					#wpadminbar i, #wpadminbar svg {-webkit-font-smoothing: antialiased;}
-						#wpadminbar .ab-sub-wrapper .fa-fw {width: 1.25em;}
-						#wpadminbar .svg-inline--fa {height: 1em;}
+					#wpadminbar {transition: top 0.5s linear;
+						.admin-bar-inactive & {top: -32px; overflow: hidden;}
+
+						i,
+						svg {-webkit-font-smoothing: antialiased;}
+
+						.ab-sub-wrapper .fa-fw {width: 1.25em;}
+						.svg-inline--fa {height: 1em;}
+					}
 
 					@media screen and (max-width: 782px){
 						html {margin-top: 46px !important;}
@@ -2697,6 +2716,86 @@ if ( !trait_exists('Admin') ){
 			);
 
 			return $debug_info;
+		}
+
+		//Compare hashes from the current Nebula parent theme to when it was built and committed to detect manual file changes
+		public function check_parent_theme_file_changes(){
+			//Only run for administrators in WP Admin
+			if ( is_admin() || current_user_can('update_themes') ){
+				global $pagenow;
+
+				$last_checked = get_transient('nebula_theme_file_changes_check');
+
+				if ( $last_checked === false || $pagenow === 'update-core.php' || $pagenow === 'themes.php' ){ //If it has not been recently checked, or if viewing the WP Updates page or the themes page
+					$hash_file = get_template_directory() . '/inc/data/hashes.json';
+
+					//Make sure the hashes.json file exists
+					if ( !file_exists($hash_file) ){
+						return;
+					}
+
+					$stored_hashes = json_decode(file_get_contents($hash_file), true); //Get saved hashes
+					$current_hashes = $this->generate_hashes(get_template_directory()); //Generate current hashes
+
+					$modified_files = [];
+					foreach ( $current_hashes as $file => $hash ){
+						if ( !isset($stored_hashes[$file]) || $stored_hashes[$file] !== $hash ){
+							$modified_files[] = $file;
+						}
+					}
+
+					//Store a list of modified files in a transient
+					$transient_duration = 6*HOUR_IN_SECONDS;
+
+					if ( !empty($modified_files) ){
+						set_transient('nebula_theme_modified_files', $modified_files, $transient_duration);
+					} else {
+						delete_transient('nebula_theme_modified_files'); //No files were modified, so delete the transient
+					}
+
+					set_transient('nebula_theme_file_changes_check', time(), $transient_duration);
+				}
+			}
+		}
+
+		//Scan through the theme directories to generate hashes to represent each file for comparisons
+		public function generate_hashes($directory, &$results=[]){
+			$files = scandir($directory);
+
+			foreach ( $files as $file ){
+				//Skip certain files
+				$skip_filenames = array('.', '..', 'hashes.json', '.gitignore', 'error_log');
+				if ( in_array($file, $skip_filenames, true) ){
+					continue; //Skip unnecessary files
+				}
+
+				//Skip files with certain extensions
+				$skip_file_extensions = array('png', 'jpg', 'gif', 'ico', 'woff', 'woff2', 'ttf', 'md', 'mo', 'po');
+				$file_extension = pathinfo($file, PATHINFO_EXTENSION);
+				if ( in_array($file_extension, $skip_file_extensions, true) ){
+					continue; //Skip this file
+				}
+
+				$full_path = $directory . DIRECTORY_SEPARATOR . $file;
+
+				if ( is_dir($full_path) ){
+					//Skip entire directories
+					$skip_directories = array('.github', 'data', 'img', 'webfonts');
+					if ( in_array($file, $skip_directories, true) ){
+						continue; //Skip this directory
+					}
+
+					$this->generate_hashes($full_path, $results);
+				} else {
+					$theme_directory = realpath(get_template_directory()); //Get absolute path of the theme
+					$full_path = realpath($full_path); //Ensure absolute path
+					$relative_path = ltrim(str_replace($theme_directory, '', $full_path), DIRECTORY_SEPARATOR); //Ensure no leading slash
+
+					$results[$relative_path] = hash_file('sha256', $full_path);
+				}
+			}
+
+			return $results;
 		}
 	}
 }

@@ -847,19 +847,25 @@ trait Customizer {
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('header_nav_scheme') ): //Subpage Header Nav Scheme ?>
-					#primary-nav ul li.menu-item > a,
-					#primary-nav ul li.menu-item > a:active,
-					#primary-nav ul li.menu-item > a:visited {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme')]; ?>;}
-						#primary-nav ul li.menu-item > a:hover,
-						#primary-nav ul li.menu-item > a:focus {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme') . '_alt']; ?>;}
+					#primary-nav ul li.menu-item {
+						> a,
+						> a:active
+						> a:visited {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme')]; ?>;}
+
+						> a:hover,
+						> a:focus {color: <?php echo $nav_schemes[get_theme_mod('header_nav_scheme') . '_alt']; ?>;}
+					}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('hero_nav_scheme') ): //Hero Nav Scheme ?>
-					.home #primary-nav ul li.menu-item > a,
-					.home #primary-nav ul li.menu-item > a:active,
-					.home #primary-nav ul li.menu-item > a:visited {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme')]; ?>;}
-						.home #primary-nav ul li.menu-item > a:hover,
-						.home #primary-nav ul li.menu-item > a:focus {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme') . '_alt']; ?>;}
+					.home #primary-nav ul li.menu-item {
+						> a,
+						> a:active,
+						> a:visited {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme')]; ?>;}
+
+						> a:hover,
+						> a:focus {color: <?php echo $nav_schemes[get_theme_mod('hero_nav_scheme') . '_alt']; ?>;}
+					}
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('featured_image_location') === 'hero' ): ?>
@@ -906,9 +912,11 @@ trait Customizer {
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('nebula_hero_text_color') ): ?>
-					#hero-section #hero-content h1,
-					#hero-section #hero-content h2,
-					#hero-section #hero-content p {color: <?php echo get_theme_mod('nebula_hero_text_color'); ?>;}
+					#hero-section #hero-content {
+						h1,
+						h2,
+						p {color: <?php echo get_theme_mod('nebula_hero_text_color'); ?>;}
+					}
 				<?php endif; ?>
 
 				<?php if ( !get_theme_mod('nebula_footer_spacing', true) ): ?>
@@ -920,16 +928,21 @@ trait Customizer {
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('footer_nav_scheme') ): //Footer Nav Scheme ?>
-					#footer-section a:not(.btn),
-					#footer-section a:not(.btn):active,
-					#footer-section a:not(.btn):visited {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme')]; ?>;}
-						#footer-section a:not(.btn):hover,
-						#footer-section a:not(.btn):focus {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme') . '_alt']; ?>;}
+					#footer-section {
+						a:not(.btn),
+						a:not(.btn):active,
+						a:not(.btn):visited {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme')]; ?>;}
+
+						a:not(.btn):hover,
+						a:not(.btn):focus {color: <?php echo $nav_schemes[get_theme_mod('footer_nav_scheme') . '_alt']; ?>;}
+					}
 
 					<?php if ( get_theme_mod('footer_nav_scheme') === 'dark' || get_theme_mod('footer_nav_scheme') === 'brand' ): //Handle copyright text and footer search on light backgrounds ?>
 						#footer-section .copyright {color: <?php echo $nav_schemes['dark']; ?>;}
-							form.footer-search:before, #footer-section form.nebula-search:before {color: <?php echo $nav_schemes['dark']; ?>;}
-								form.footer-search input, #footer-section form.nebula-search input {color: <?php echo $nav_schemes['dark']; ?>; border: 1px solid #ccc;}
+							form.footer-search:before,
+							#footer-section form.nebula-search:before {color: <?php echo $nav_schemes['dark']; ?>;}
+								form.footer-search input,
+								#footer-section form.nebula-search input {color: <?php echo $nav_schemes['dark']; ?>; border: 1px solid #ccc;}
 					<?php endif; ?>
 				<?php endif; ?>
 
@@ -946,11 +959,14 @@ trait Customizer {
 				<?php endif; ?>
 
 				<?php if ( get_theme_mod('fwa_nav_scheme') ): //Footer Widget Area Nav Scheme ?>
-					#footer-widget-section ul li.menu-item > a,
-					#footer-widget-section ul li.menu-item > a:active,
-					#footer-widget-section ul li.menu-item > a:visited {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme')]; ?>;}
-						#footer-widget-section ul li.menu-item > a:hover,
-						#footer-widget-section ul li.menu-item > a:focus {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme') . '_alt']; ?>;}
+					#footer-widget-section ul li.menu-item {
+						> a,
+						> a:active,
+						> a:visited {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme')]; ?>;}
+
+						> a:hover,
+						> a:focus {color: <?php echo $nav_schemes[get_theme_mod('fwa_nav_scheme') . '_alt']; ?>;}
+					}
 				<?php endif; ?>
 			</style>
 		<?php

@@ -101,6 +101,8 @@
 .text-danger {color: $danger_color;}
 .text-info {color: darken($info_color, 11%);}
 
+.cursor-help {cursor: help;}
+
 .nebula-flex-first {order: -1;} //Default flex order is 0. This class forces a column before that.
 
 .col-centered {float: none; margin: 0 auto;}
