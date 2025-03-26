@@ -372,7 +372,7 @@ if ( !trait_exists('Sass') ){
 			$scss = preg_replace("(" . str_replace('/', '\/', get_stylesheet_directory()) . ")", '', $scss); //Reduce theme path for SCSSPHP debug line comments (For child themes)
 			do_action('nebula_scss_post_compile_every');
 
-			$scss .= PHP_EOL . '/* ' . date('l, F j, Y \a\t g:i:s A', time()) . ' */';
+			$scss .= PHP_EOL . '/* ' . date('l, F j, Y \a\t g:i:s A', time()) . ' */'; //Add a last processed timestamp to the end of the CSS file
 
 			//Run these once
 			if ( $this->get_data('need_sass_compile') != 'false' ){

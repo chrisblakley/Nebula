@@ -2762,26 +2762,27 @@ if ( !trait_exists('Admin') ){
 		public function generate_hashes($directory, &$results=[]){
 			$files = scandir($directory);
 
-			foreach ( $files as $file ){
+			foreach ( $files as $this_file ){
 				//Skip certain files
-				$skip_filenames = array('.', '..', 'hashes.json', '.gitignore', 'error_log');
-				if ( in_array($file, $skip_filenames, true) ){
+				$skip_filenames = array('.', '..', 'hashes.json', '.gitignore', 'error_log', 'debug.log');
+				if ( in_array(strtolower($this_file), array_map('strtolower', $skip_filenames), true) ){
 					continue; //Skip unnecessary files
 				}
 
 				//Skip files with certain extensions
-				$skip_file_extensions = array('png', 'jpg', 'gif', 'ico', 'woff', 'woff2', 'ttf', 'md', 'mo', 'po');
-				$file_extension = pathinfo($file, PATHINFO_EXTENSION);
-				if ( in_array($file_extension, $skip_file_extensions, true) ){
+				//Note: We have to ignore .css files because they contain a timestamp of the Sass last processing time. The corresponding .scss files are still tracked. Considering removing the timestamp from the CSS files to avoid this problem...
+				$skip_file_extensions = array('css', 'log', 'png', 'jpg', 'jpeg', 'webp', 'gif', 'ico', 'woff', 'woff2', 'ttf', 'md', 'mo', 'po');
+				$this_file_extension = pathinfo($this_file, PATHINFO_EXTENSION);
+				if ( in_array(strtolower($this_file_extension), array_map('strtolower', $skip_file_extensions), true) ){
 					continue; //Skip this file
 				}
 
-				$full_path = $directory . DIRECTORY_SEPARATOR . $file;
+				$full_path = $directory . DIRECTORY_SEPARATOR . $this_file;
 
 				if ( is_dir($full_path) ){
 					//Skip entire directories
-					$skip_directories = array('.github', 'data', 'img', 'webfonts');
-					if ( in_array($file, $skip_directories, true) ){
+					$skip_directories = array('.github', 'data', 'img', 'webfonts', 'Nebula-Child');
+					if ( in_array(strtolower($this_file), array_map('strtolower', $skip_directories), true) ){
 						continue; //Skip this directory
 					}
 
