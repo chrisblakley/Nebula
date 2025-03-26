@@ -36,6 +36,8 @@ if ( !trait_exists('Warnings') ){
 
 		//Log warnings in the console
 		public function console_warnings($console_warnings=array()){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( (current_user_can('manage_options') || $this->is_dev()) && $this->is_warning_level('on') && !is_customize_preview() ){
 				$this->warnings = $this->check_warnings();
 
@@ -54,6 +56,8 @@ if ( !trait_exists('Warnings') ){
 
 		//Report warnings to Query Monitor
 		public function qm_warnings(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			$this->warnings = $this->check_warnings();
 
 			if ( !empty($this->warnings) ){
@@ -66,6 +70,8 @@ if ( !trait_exists('Warnings') ){
 
 		//Check for Nebula warnings
 		public function check_warnings(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( $this->is_ajax_request() ){
 				return false;
 			}
@@ -581,6 +587,7 @@ if ( !trait_exists('Warnings') ){
 
 		//Add more advanced and resource-intensive warnings to the Nebula check when requested (either via Audit Mode or enabled in Nebula Options)
 		public function advanced_warnings($nebula_warnings){
+			if ( $this->is_minimal_mode() ){return false;}
 			$this->timer('Advanced Warnings');
 
 			//Only check these when auditing (not on all pageviews) to prevent undesired server load
@@ -763,6 +770,8 @@ if ( !trait_exists('Warnings') ){
 
 		//Audit Output
 		public function advanced_warning_output(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( $this->is_auditing() ){
 				//Log when manually auditing pages individually
 				if ( isset($this->super->get['audit']) ){

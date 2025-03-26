@@ -33,6 +33,8 @@ if ( !trait_exists('Sass') ){
 			}
 		 ===========================*/
 		public function scss_controller($force_all = false){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			//Ensure Sass option is enabled
 			if ( $this->get_option('scss') ){
 				$this->timer('Sass (Total)', 'start', 'Sass');

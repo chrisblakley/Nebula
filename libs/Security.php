@@ -65,6 +65,8 @@ if ( !trait_exists('Security') ){
 
 		//Log direct access to templates and prevent certain query strings
 		public function bad_access_prevention(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			//Log template direct access attempts
 			if ( array_key_exists('ndaat', $this->super->get) ){
 				$this->ga_send_exception('(Security) Direct Template Access Prevention on ' . $this->super->get['ndaat'], false, array('security_note' => 'Direct Template Access Attempt'));
@@ -89,6 +91,8 @@ if ( !trait_exists('Security') ){
 		//Block common and obvious methods from accessing anything
 		//Remember: This only blocks the most obvious access attempts. Use more sophisticated security systems for broader coverage.
 		public function block_obvious_bad_requests(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( $this->get_option('block_obvious_bad_requests') ){ //Only when Nebula option is enabled
 				//Check User Agents
 				$banned_user_agents = apply_filters('nebula_banned_user_agents', array(
@@ -234,6 +238,7 @@ if ( !trait_exists('Security') ){
 		//Track Notable Bots
 		//This data can indicate when the website was shared on certain platforms. That is why we are only tracking bots that are sent by a user action (and not search indexing bots, for example).
 		function track_notable_bots(){
+			if ( $this->is_minimal_mode() ){return false;}
 			$override = apply_filters('pre_track_notable_bots', null);
 			if ( isset($override) ){return;}
 
@@ -303,6 +308,7 @@ if ( !trait_exists('Security') ){
 
 		//Check referrer for known spam domains
 		public function spam_domain_prevention(){
+			if ( $this->is_minimal_mode() ){return false;}
 			$this->timer('Spam Domain Prevention');
 
 			//Skip lookups if user has already been checked or for logged in users.
@@ -417,6 +423,8 @@ if ( !trait_exists('Security') ){
 
 		//Return an array of spam domains
 		public function get_spam_domain_list(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			//First get the latest spam domain list maintained by Matomo or Nebula's cache of the Matomo list
 			$spam_domain_public_file = get_template_directory() . '/inc/data/spam_domain_list.txt'; //Eventually change this to "spam_domain_public_list.txt"
 			$spam_domain_public_list = nebula()->transient('nebula_spam_domain_public_list', function($data){
@@ -537,6 +545,8 @@ if ( !trait_exists('Security') ){
 
 		//Return an array of bad email domains from Hubspot (or the latest Nebula on GitHub)
 		public function get_bad_email_domains_list(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			$bad_email_domains_file = get_template_directory() . '/inc/data/bad_email_domains.csv';
 
 			$bad_email_domains_list = nebula()->transient('nebula_bad_email_domains', function($data){
@@ -612,6 +622,8 @@ if ( !trait_exists('Security') ){
 
 		//Nebula can check for spam form submissions
 		public function nebula_cf7_spam_detection_agent($is_spam, $submission=null){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( $is_spam ) { //If the submission was already detected as spam, don't check further details
 				return $is_spam;
 			}

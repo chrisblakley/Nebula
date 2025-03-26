@@ -248,6 +248,8 @@ if ( !trait_exists('Optimization') ){
 		//When lazy loading JS files, the window load listener may not trigger! Be careful!
 		//Array should be built as: handle => condition
 		public function lazy_load_assets(){
+			if ( $this->is_minimal_mode() ){return array();}
+
 			$assets = array(
 				'styles' => array(
 					'nebula-font_awesome' => 'all',
@@ -261,6 +263,8 @@ if ( !trait_exists('Optimization') ){
 
 		//Dequeue styles prepped for lazy-loading
 		public function dequeue_lazy_load_styles(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			$lazy_load_assets = $this->lazy_load_assets();
 			if ( !empty($lazy_load_assets['styles']) && is_array($lazy_load_assets['styles']) ){
 				foreach ( $lazy_load_assets['styles'] as $handle => $condition ){
@@ -271,6 +275,8 @@ if ( !trait_exists('Optimization') ){
 
 		//Dequeue scripts prepped for lazy-loading
 		public function dequeue_lazy_load_scripts(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( $this->is_admin_page() ){ //Do not modify scripts on admin pages (Gutenberg compatibility)
 				return false;
 			}
@@ -292,6 +298,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Start output buffering so headers can be sent later for Early Hints
 		public function nebula_early_hints_ob_start(){
+			if ( $this->is_minimal_mode() ){return false;}
 			$this->timer('Headers Sent [Mark]', 'mark'); //Piggybacking on this action to mark this point in time
 
 			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
@@ -303,6 +310,7 @@ if ( !trait_exists('Optimization') ){
 		//Use Early Hints to push multiple CSS and JS resources at once
 		//This uses a link preload header, so these resources must be used within a few seconds of window load.
 		public function styles_early_hints_header(){
+			if ( $this->is_minimal_mode() ){return false;}
 			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
 				$timer_name = $this->timer('Early Hints Header (Styles)', 'start');
 				global $wp_styles;
@@ -319,6 +327,7 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		public function scripts_early_hints_header(){
+			if ( $this->is_minimal_mode() ){return false;}
 			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
 				$timer_name = $this->timer('Early Hints Header (Scripts)', 'start');
 				global $wp_scripts;
@@ -337,6 +346,7 @@ if ( !trait_exists('Optimization') ){
 		}
 
 		public function early_hints_file($src, $filetype){
+			if ( $this->is_minimal_mode() ){return false;}
 			if ( !$this->is_admin_page(true, true) ){ //Exclude admin, login, and Customizer pages
 				//$crossorigin = ( strpos($src, get_site_url()) === false || $filetype === 'font' )? ' crossorigin=anonymous' : ''; //Add crossorigin attribute for remote assets and all fonts //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				//header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel="preload"; as="' . $filetype . '"; nopush; crossorigin="anonymous"', false); //Send the header for the Early Hint (strtok to remove everything after and including "#")
@@ -346,6 +356,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Set Server Timing header
 		public function server_timing_header(){
+			if ( $this->is_minimal_mode() ){return false;}
 			if ( $this->is_dev() || isset($this->super->get['timings']) ){ //Only output server timings for developers, or if timings query string is present
 				$this->finalize_timings();
 				$server_timing_header_string = 'Server-Timing: ';
@@ -380,6 +391,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Include server timings for developers
 		public function output_console_debug_timings(){
+			if ( $this->is_minimal_mode() ){return false;}
 			if ( $this->is_dev() || isset($this->super->get['timings']) ){ //Only output server timings for developers or if timings query string present
 				$this->finalize_timings();
 
@@ -436,6 +448,7 @@ if ( !trait_exists('Optimization') ){
 */
 
 		public function prebrowsing(){
+			if ( $this->is_minimal_mode() ){return false;}
 			$override = apply_filters('pre_nebula_prebrowsing', null);
 			if ( isset($override) ){return;}
 
@@ -558,6 +571,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Scan the front-end styles and scripts to be able to deregister them from Nebula Options
 		public function scan_assets(){
+			if ( $this->is_minimal_mode() ){return false;}
 			if ( !is_admin() && current_user_can('manage_options') && (isset($this->super->get['nebula-scan']) || isset($this->super->get['sass']) || isset($this->super->get['debug']) || $this->get_option('audit_mode')) ){ //Only run on front-end for admin users. Also add a query string so this doesn't run every single pageload
 				$this->timer('Scan Assets');
 
@@ -614,6 +628,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Dequeue certain scripts
 		public function dequeues(){
+			if ( $this->is_minimal_mode() ){return false;}
 			$override = apply_filters('pre_nebula_dequeues', null);
 			if ( isset($override) ){return;}
 
@@ -670,6 +685,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Loop through the dequeue rules and deregister assets when matching
 		public function check_dequeue_rules($assets = array(), $type=''){
+			if ( $this->is_minimal_mode() ){return false;}
 			if ( !empty($type) ){
 				foreach ( array_filter($assets) as $handle => $rules ){
 					$rules = str_replace(' ', '', $rules); //Sanitize the text input
@@ -751,6 +767,7 @@ if ( !trait_exists('Optimization') ){
 		//Deregister jQuery Migrate
 		//Eventually this should be able to be removed, right? Not able to in April 2021 (WP Core v5.7) - If removing this and jQuery is loaded from the <head> because of jQuery Migrate, then this is still needed.
 		public function deregister_jquery_migrate(){
+			if ( $this->is_minimal_mode() ){return false;}
 			if ( !$this->is_admin_page(true) && !is_admin_bar_showing() && $this->get_option('jquery_location') !== 'wordpress' ){
 				wp_deregister_script('jquery'); //Deregister jQuery Migrate
 			}
@@ -759,6 +776,7 @@ if ( !trait_exists('Optimization') ){
 		//Remove jQuery Migrate, and re-add jQuery
 		//Eventually this should be able to be removed, right? Not able to in April 2021 (WP Core v5.7) - If removing this and jQuery is loaded from the <head> because of jQuery Migrate, then this is still needed.
 		public function remove_jquery_migrate($scripts){
+			if ( $this->is_minimal_mode() ){return false;}
 			if ( !$this->is_admin_page(true) && !is_admin_bar_showing() && $this->get_option('jquery_location') !== 'wordpress' ){
 				$scripts->remove('jquery');
 				$scripts->add('jquery', false, array('jquery-core'), null);
@@ -768,6 +786,7 @@ if ( !trait_exists('Optimization') ){
 		//If Nebula Options are set to load jQuery in the footer, move it there.
 		//Note: If any other registered script that is enqueued in the <head> has jQuery as a dependent, jQuery will be loaded in the head automatically
 		public function move_jquery_to_footer(){
+			if ( $this->is_minimal_mode() ){return false;}
 			//Let other plugins/themes add to list of pages/posts/whatever when to load jQuery in the <head>
 			//Return true to load jQuery from the <head>
 			if ( apply_filters('nebula_prevent_jquery_footer', false) ){
@@ -783,6 +802,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Listen for "jQuery is not defined" errors to provide help
 		public function listen_for_jquery_footer_errors(){
+			if ( $this->is_minimal_mode() ){return false;}
 			//If jQuery was moved back to the head, do not listen for these errors
 			if ( apply_filters('nebula_prevent_jquery_footer', false) ){
 				return;
@@ -808,6 +828,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Embed critical CSS styles into the document <head> to improve perceived load time
 		public function embed_critical_styles(){
+			if ( $this->is_minimal_mode() ){return false;}
 			if ( $this->get_option('critical_css') ){
 				$this->timer('Embedding Critical CSS');
 
@@ -833,6 +854,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Force settings within plugins
 		public function plugin_force_settings(){
+			if ( $this->is_minimal_mode() ){return false;}
 			$override = apply_filters('pre_nebula_plugin_force_settings', null);
 			if ( isset($override) ){return;}
 
@@ -866,8 +888,10 @@ if ( !trait_exists('Optimization') ){
 
 		//Disable Emojis
 		public function disable_wp_emojicons(){
+			if ( $this->is_minimal_mode() ){return false;}
 			$override = apply_filters('pre_disable_wp_emojicons', null);
 			if ( isset($override) ){return;}
+
 			remove_action('wp_head', 'print_emoji_detection_script', 7);
 			remove_action('wp_print_styles', 'print_emoji_styles');
 			remove_action('admin_print_styles', 'print_emoji_styles');
@@ -878,6 +902,7 @@ if ( !trait_exists('Optimization') ){
 			remove_filter('comment_text_rss', 'wp_staticize_emoji');
 		}
 		public function remove_emoji_prefetch($hints, $relation_type){
+			if ( $this->is_minimal_mode() ){return $hints;}
 			if ( $relation_type === 'dns-prefetch' ){
 				$matches = preg_grep('/emoji/', $hints);
 				return array_diff($hints, $matches);
@@ -886,6 +911,7 @@ if ( !trait_exists('Optimization') ){
 			return $hints;
 		}
 		public function disable_emojicons_tinymce($plugins){
+			if ( $this->is_minimal_mode() ){return $plugins;}
 			if ( is_array($plugins) ){
 				return array_diff($plugins, array('wpemoji'));
 			}

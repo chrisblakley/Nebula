@@ -132,6 +132,7 @@ if ( !trait_exists('Functions') ){
 
 		//Check if the Nebula Companion plugin is installed and active
 		public function is_companion_active(){
+			if ( $this->is_minimal_mode() ){return false;}
 			include_once ABSPATH . 'wp-admin/includes/plugin.php'; //Needed to use is_plugin_active() outside of WP admin
 			if ( is_plugin_active('nebula-companion/nebula-companion.php') || is_plugin_active('Nebula-Companion-main/nebula-companion.php') ){
 				return true;
@@ -142,6 +143,8 @@ if ( !trait_exists('Functions') ){
 
 		//Prep custom theme support
 		public function theme_setup(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			//Additions
 			add_theme_support('post-thumbnails');
 			add_theme_support('custom-logo'); //Custom logo support.
@@ -201,6 +204,8 @@ if ( !trait_exists('Functions') ){
 
 		//Give custom Nebula image sizes human readable names
 		public function image_size_human_names($sizes){
+			if ( $this->is_minimal_mode() ){return $sizes;}
+
 			return array_merge($sizes, array(
 				'square' => 'Square',
 				'open_graph_large' => 'Open Graph (Large)',
@@ -219,6 +224,8 @@ if ( !trait_exists('Functions') ){
 
 		//Add a version query string to favicons
 		public function add_query_to_icon_url($url){
+			if ( $this->is_minimal_mode() ){return $url;}
+
 			if ( strpos($url, '.') === false ){ //If the URL does not have a file extension, do not add a ?ver= query parameter //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				return $url;
 			}
@@ -243,16 +250,19 @@ if ( !trait_exists('Functions') ){
 
 		//Register REST API routes/endpoints
 		public function rest_api_routes(){
+			if ( $this->is_minimal_mode() ){return false;}
 			register_rest_route('nebula/v2', '/autocomplete_search/', array('methods' => 'GET', 'callback' => array($this, 'rest_autocomplete_search'), 'permission_callback' => '__return_true')); //.../wp-json/nebula/v2/autocomplete_search?term=whatever&types=post|page
 		}
 
 		//Add the Posts RSS Feed back in
 		public function add_back_post_feed(){
+			if ( $this->is_minimal_mode() ){return false;}
 			echo '<link rel="alternate" type="application/rss+xml" title="RSS 2.0 Feed" href="' . get_bloginfo('rss2_url') . '" />';
 		}
 
 		//Set server timezone to match Wordpress
 		public function set_default_timezone(){
+			if ( $this->is_minimal_mode() ){return false;}
 			if ( $this->get_option('force_wp_timezone') ){
 				$timezone_option = wp_timezone_string();
 
@@ -275,6 +285,7 @@ if ( !trait_exists('Functions') ){
 
 		//Add the Nebula note to the browser console (if enabled)
 		public function calling_card(){
+			if ( $this->is_minimal_mode() ){return false;}
 			if ( $this->is_desktop() && !is_customize_preview() ){
 				echo "<script>console.log('%c Created using Nebula " . esc_html($this->version('primary')) . "', 'padding: 2px 10px; background: #0098d7; color: #fff;');</script>";
 			}
@@ -295,6 +306,7 @@ if ( !trait_exists('Functions') ){
 
 		//Update variables within the service worker JavaScript file for install caching
 		public function update_sw_js($version=false){
+			if ( $this->is_minimal_mode() ){return false;}
 			$this->timer('Update SW');
 
 			$override = apply_filters('pre_nebula_update_swjs', null);
@@ -357,6 +369,7 @@ if ( !trait_exists('Functions') ){
 
 		//Create/Write a manifest JSON file
 		public function manifest_json(){
+			if ( $this->is_minimal_mode() ){return false;}
 			$timer_name = $this->timer('Write Manifest JSON', 'start', 'Manifest');
 
 			$override = apply_filters('pre_nebula_manifest_json', null);
@@ -428,6 +441,7 @@ if ( !trait_exists('Functions') ){
 
 		//Ex: https://nebula.gearside.com/nebula-index-now-0123456789AB.txt
 		public function index_now_rewrite_rule(){
+			if ( $this->is_minimal_mode() ){return false;}
 			if ( !$this->get_option('index_now') ){
 				return false;
 			}
@@ -439,6 +453,7 @@ if ( !trait_exists('Functions') ){
 
 		//Output the IndexNow key txt file
 		public function index_now_output_key(){
+			if ( $this->is_minimal_mode() ){return false;}
 			if ( !$this->get_option('index_now') ){
 				return false;
 			}
@@ -1764,6 +1779,7 @@ if ( !trait_exists('Functions') ){
 		//Infinite Load
 		//Ajax call handle in nebula()->infinite_load();
 		public function infinite_load_query($args=array('post_status' => 'publish', 'showposts' => 4), $loop=false){
+			if ( $this->is_minimal_mode() ){return false;}
 			$timer_name = $this->timer('Infinite Load Query');
 
 			$override = apply_filters('pre_nebula_infinite_load_query', null);
@@ -1934,6 +1950,7 @@ if ( !trait_exists('Functions') ){
 
 		//Related Posts by term frequency
 		public function related_posts($post_id=null, $args=array()){
+			if ( $this->is_minimal_mode() ){return false;}
 			$this->timer('Related Posts');
 
 			global $post, $wpdb;
@@ -2064,6 +2081,7 @@ if ( !trait_exists('Functions') ){
 		//If no CF7 form ID is provided, this simply logs yes/no from users in Google Analytics
 		//Nebula does not automatically add this to pages! It must be added in the child theme. Consider adding a function in via hooks such as 'loop_end', 'nebula_after_search_results', 'nebula_no_search_results', 'nebula_404_content' to conditionally/dynamically add this feedback form. Refer to the child functions file for an example.
 		public function feedback($form_id=false, $identifier='default'){
+			if ( $this->is_minimal_mode() ){return false;}
 			?>
 				<div id="nebula-feedback-system" class="<?php echo ( empty($form_id) )? 'no-feedback-form' : 'has-feedback-form'; ?>" data-identifier="<?php echo sanitize_html_class($identifier); ?>">
 					<div id="nebula-feedback-question" class="">
@@ -2085,6 +2103,7 @@ if ( !trait_exists('Functions') ){
 
 		//Check if business hours exist in Nebula Options
 		public function has_business_hours(){
+			if ( $this->is_minimal_mode() ){return false;}
 			//Check object cache first so the loop logic does not need to run more than once
 			$has_business_hours = wp_cache_get('has_business_hours');
 			if ( is_string($has_business_hours) ){
@@ -2111,6 +2130,7 @@ if ( !trait_exists('Functions') ){
 		public function is_business_open($date=null, $general=false){ return $this->business_open($date, $general); }
 		public function is_business_closed($date=null, $general=false){ return !$this->business_open($date, $general); }
 		public function business_open($date=null, $general=false){
+			if ( $this->is_minimal_mode() ){return false;}
 			$override = apply_filters('pre_business_open', null, $date, $general);
 			if ( isset($override) ){return $override;}
 
@@ -2547,6 +2567,8 @@ if ( !trait_exists('Functions') ){
 
 		//Redirect if only single search result
 		public function redirect_single_search_result(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( is_search() ){
 				global $wp_query;
 
@@ -2585,6 +2607,7 @@ if ( !trait_exists('Functions') ){
 
 		//Autocomplete Search (REST endpoint)
 		public function rest_autocomplete_search(){
+			if ( $this->is_minimal_mode() ){return false;}
 			$timer_name = $this->timer('Autocomplete Search');
 
 			if ( isset($this->super->get['term']) ){
@@ -2895,6 +2918,7 @@ if ( !trait_exists('Functions') ){
 
 		//404 page suggestions
 		public function internal_suggestions(){
+			if ( $this->is_minimal_mode() ){return false;}
 			if ( is_404() ){
 				$this->timer('Internal Suggestions');
 				$this->ga_send_exception('(PHP) 404 Error for requested URL: ' . $this->url_components()); //Track 404 error pages as exceptions in Google Analytics
@@ -3183,7 +3207,9 @@ if ( !trait_exists('Functions') ){
 		//Add autocomplete attributes to CF7 form fields
 		//Note: Is this still needed? When commented out, the fields are still getting autocomplete attributes...
 		public function cf7_autocomplete_attribute($content){
+			if ( $this->is_minimal_mode() ){return $content;}
 			$this->timer('CF7 Autocomplete Attributes');
+
 			$content = $this->autocomplete_find_replace($content, array('name', 'full-name', 'fullname', 'your-name'), 'name');
 			$content = $this->autocomplete_find_replace($content, array('first-name', 'firstname'), 'given-name');
 			$content = $this->autocomplete_find_replace($content, array('last-name', 'lastname'), 'family-name');
@@ -3340,6 +3366,8 @@ if ( !trait_exists('Functions') ){
 		//Listen for form submissions to store into the DB right before sending the mail
 		//Note: Spam submissions often do not come through this function, so cannot be mitigated/noted here
 		public function cf7_storage($form, $result){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			$submission = WPCF7_Submission::get_instance();
 			$submission_data = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS); //Get the $_POST data array and sanitize it
 			$submission_uploads = $submission->uploaded_files();
@@ -3470,6 +3498,7 @@ if ( !trait_exists('Functions') ){
 
 		//Build debug info data for CF7 messages and/or Nebula CF7 storage
 		public function cf7_debug_info($submission, $submission_data=false){
+			if ( $this->is_minimal_mode() ){return false;}
 			global $wp_version;
 
 			$debug_info = array();
@@ -3627,12 +3656,15 @@ if ( !trait_exists('Functions') ){
 
 		//Execute arbitrary code from the options
 		public function arbitrary_code_head(){
+			if ( $this->is_minimal_mode() ){return false;}
 			echo $this->get_option('arbitrary_code_head');
 		}
 		public function arbitrary_code_body(){
+			if ( $this->is_minimal_mode() ){return false;}
 			echo $this->get_option('arbitrary_code_body');
 		}
 		public function arbitrary_code_footer(){
+			if ( $this->is_minimal_mode() ){return false;}
 			echo $this->get_option('arbitrary_code_footer');
 		}
 
@@ -3656,6 +3688,8 @@ if ( !trait_exists('Functions') ){
 
 		//Flush rewrite rules when using ?debug at shutdown
 		public function flush_rewrite_on_debug(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( $this->is_debug() ){
 				$this->timer('Flush Rewrite Rules');
 

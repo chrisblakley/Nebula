@@ -67,6 +67,8 @@ if ( !trait_exists('Dashboard') ){
 
 		//WordPress Information metabox ("At a Glance" replacement)
 		public function ataglance_metabox(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			global $wp_meta_boxes;
 			wp_add_dashboard_widget('nebula_ataglance', '<img src="' . get_site_icon_url(32, get_theme_file_uri('/assets/img/meta') . '/favicon-32x32.png') . '" style="float: left; width: 20px; margin-right: 3px;" loading="lazy" />&nbsp;' . get_bloginfo('name'), array($this, 'dashboard_nebula_ataglance'));
 		}
@@ -278,6 +280,8 @@ if ( !trait_exists('Dashboard') ){
 
 		//Current User metabox
 		public function current_user_metabox(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			$headshotURL = esc_attr(get_the_author_meta('headshot_url', get_current_user_id()));
 			$headshot_thumbnail = str_replace('.jpg', '-150x150.jpg', $headshotURL);
 
@@ -406,6 +410,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Administrative metabox
 		public function administrative_metabox(){
+			if ( $this->is_minimal_mode() ){return false;}
 			wp_add_dashboard_widget('nebula_administrative', 'Administrative', array($this, 'dashboard_administrative'));
 		}
 
@@ -449,6 +454,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//TODO Metabox
 		public function todo_metabox(){
+			if ( $this->is_minimal_mode() ){return false;}
 			wp_add_dashboard_widget('todo_manager', '<i class="fa-solid fa-fw fa-check-square"></i>&nbsp;To-Do Manager', array($this, 'todo_metabox_content'));
 		}
 
@@ -584,6 +590,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Developer Info Metabox
 		public function dev_info_metabox(){
+			if ( $this->is_minimal_mode() ){return false;}
 			wp_add_dashboard_widget('nebula_developer_info', 'Developer Information', array($this, 'dashboard_developer_info'));
 		}
 
@@ -1082,6 +1089,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Performance Timing
 		public function performance_metabox(){
+			if ( $this->is_minimal_mode() ){return false;}
 			wp_add_dashboard_widget('performance_metabox', '<i id="performance-status-icon" class="fa-solid fa-fw fa-stopwatch"></i> <span id="performance-title">&nbsp;Performance</span>', array($this, 'performance_timing'));
 		}
 
@@ -1108,6 +1116,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Add a dashboard metabox for design reference
 		public function design_metabox(){
+			if ( $this->is_minimal_mode() ){return false;}
 			global $wp_meta_boxes;
 			wp_add_dashboard_widget('nebula_design', '<i class="fa-solid fa-fw fa-palette"></i> &nbsp;Design Reference', array($this, 'dashboard_nebula_design'));
 		}
@@ -1180,6 +1189,8 @@ if ( !trait_exists('Dashboard') ){
 
 		//Add a GitHub metabox for recently updated issues/discussions
 		public function github_metabox(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( nebula()->get_option('github_url') && nebula()->get_option('github_pat') ){
 				$repo_name = str_replace('https://github.com/', '', nebula()->get_option('github_url'));
 				global $wp_meta_boxes;
@@ -1321,6 +1332,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Hubspot Contacts
 		public function hubspot_metabox(){
+			if ( $this->is_minimal_mode() ){return false;}
 			wp_add_dashboard_widget('hubspot_contacts', '<i class="fa-brands fa-fw fa-hubspot"></i>&nbsp;Latest Hubspot Contacts', array($this, 'hubspot_contacts_content'));
 		}
 

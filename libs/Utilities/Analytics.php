@@ -29,6 +29,8 @@ if ( !trait_exists('Analytics') ){
 		//If analytics should be allowed.
 		//Note: be careful using this conditional for AJAX analytics as the request is made by the server IP.
 		public function is_analytics_allowed(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( $this->option('observe_dnt') && $this->is_do_not_track() ){
 				return false;
 			}
@@ -86,6 +88,7 @@ if ( !trait_exists('Analytics') ){
 
 		//Nebula usage data
 		public function usage($name='usage_data', $event_parameters=array()){
+			if ( $this->is_minimal_mode() ){return false;}
 			$date = new DateTime('now', new DateTimeZone('America/New_York'));
 
 			$php_version_parts = explode('.', PHP_VERSION);
@@ -132,6 +135,8 @@ if ( !trait_exists('Analytics') ){
 
 		//Log fatal errors in Google Analytics as crashes
 		public function ga_log_fatal_php_errors(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			$error = error_get_last();
 			if ( isset($error) && $error['type'] === E_ERROR ){
 				$message = str_replace(WP_CONTENT_DIR, '', strstr($error['message'], ' in /', true)); //Remove high-level directories to reduce clutter and prevent PII
@@ -153,6 +158,7 @@ if ( !trait_exists('Analytics') ){
 		//Note this ignores the "Server-Side Fallback" analytics Nebula option
 		//Also note that this does create a session in GA, so when initial requests 404, there will be (not set) Landing Pages and more users/sessions than pageviews. This can compound for things like metadata images where devices request many in batches and don't actually render anything beyond the response code (so a 404 will still cause this server-side GA payload, but will not have a JavaScript pageview).
 		public function ga_send_exception($message=null, $fatal=1, $array=array()){
+			if ( $this->is_minimal_mode() ){return false;}
 			$override = apply_filters('pre_ga_send_exception', null, $message, $fatal, $array);
 			if ( isset($override) ){return;}
 
@@ -170,6 +176,7 @@ if ( !trait_exists('Analytics') ){
 		//Send Data to Google Analytics
 		//https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event
 		public function ga_send_data($data){
+			if ( $this->is_minimal_mode() ){return false;}
 			$override = apply_filters('pre_ga_send_data', null, $data);
 			if ( isset($override) ){return;}
 
@@ -187,6 +194,7 @@ if ( !trait_exists('Analytics') ){
 
 		//Add measurement protocol parameters for custom definitions
 		public function ga_build_event($event_name='', $event_parameters=array(), $user_properties=array()){
+			if ( $this->is_minimal_mode() ){return false;}
 			if ( empty($event_name) ){
 				return false;
 			}
@@ -231,6 +239,8 @@ if ( !trait_exists('Analytics') ){
 		//Add Google Analytics UTM parameters to RSS (and other feed) links
 		//Manually control UTM parameters by adding them to the feed URL itself: https://example.com/feed?utm_campaign=summer+sale&utm_source=newsletter&utm_medium=email
 		public function add_utm_to_feeds($link){
+			if ( $this->is_minimal_mode() ){return $link;}
+
 			$utm_query = array();
 
 			//Set the utm_campaign parameter

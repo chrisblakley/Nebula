@@ -72,6 +72,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Generate Nebula Session ID
 		public function nebula_session_id(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			$cache_group = uniqid(); //Each "user" gets its own group so it persists without interfering with each other
 
 			//Check object cache first
@@ -324,7 +326,20 @@ if ( !trait_exists('Utilities') ){
 			return false;
 		}
 
+		//If Nebula Minimal Mode is currently active
+		//Minimal Mode runs only absolutely essential functionality and bypasses all others
+		public function is_minimal_mode(){
+			if ( $this->is_dev() ){ //Minimal Mode is only available to developers
+				if ( isset($this->super->get['minimal']) ){
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		//If Nebula Safe Mode is currently active
+		//Safe Mode runs only the Safe Mode file in the Must-Use plugins directory
 		public function is_safe_mode(){
 			//Check if nebula-safe-mode.php is active
 			if ( file_exists(WPMU_PLUGIN_DIR . '/nebula-safe-mode.php') ){
@@ -336,6 +351,8 @@ if ( !trait_exists('Utilities') ){
 
 		//If the current pageload is requested with more advanced detections
 		public function is_auditing(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( is_customize_preview() ){
 				return false;
 			}
@@ -409,6 +426,8 @@ if ( !trait_exists('Utilities') ){
 		//Valid Hostname Regex
 		//Enter ONLY the domain and TLD. The wildcard subdomain regex is automatically added.
 		public function valid_hostname_regex($domains=null){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			$domains = ( !empty($domains) && is_array($domains) )? $domains : array($this->url_components('domain')); //If a domain is not passed, use the current domain
 
 			//Add hostnames from Nebula Options
@@ -680,6 +699,8 @@ if ( !trait_exists('Utilities') ){
 		//Store initial UTM tags through each session
 		//This is very similar to the JavaScript method of attribution tracking. That JS method works with third-party CRMs, where this is useful locally. Both are included in CF7 debuginfo (which may be interesting to compare)
 		public function utms(){
+			if ( $this->is_minimal_mode() ){return '';}
+
 			if ( !$this->is_analytics_allowed() ){ //Do nothing if analytics is not allowed
 				return '';
 			}
@@ -1001,6 +1022,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Check if a website or resource is available
 		public function is_available($url=null, $allow_cache=true, $allow_remote_request=true, $args=array()){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			$override = apply_filters('pre_nebula_is_available', null, $url, $allow_cache, $allow_remote_request);
 			if ( isset($override) ){return $override;}
 
@@ -1062,6 +1085,8 @@ if ( !trait_exists('Utilities') ){
 		//Get a remote resource and if unavailable, don't re-check the resource for 5 minutes.
 		//Args docs: https://developer.wordpress.org/reference/classes/WP_Http/request/
 		public function remote_get($url, $args=null, $ignore_cache=false){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( apply_filters('disable_nebula_remote_get', false, $url) ){ //Consider a Nebula Option here as well?
 				return new WP_Error('disabled', 'Nebula remote_get has been disabled (for this or all requests).');
 			}
@@ -1206,6 +1231,8 @@ if ( !trait_exists('Utilities') ){
 		//Add server timings to an array
 		//To add time to an entry, simply use the action 'end' on the same unique_id again
 		public function timer($unique_id, $action='start', $category=false){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			//Unique ID is required
 			if ( empty($unique_id) || in_array(strtolower($unique_id), array('start', 'stop', 'end')) ){
 				return false;
@@ -1264,6 +1291,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Add category timings together, and add more times to the server timings array
 		public function finalize_timings(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			//Add category times together
 			if ( !empty($this->server_timings['categories']) ){
 				foreach ( $this->server_timings['categories'] as $category => $times ){
@@ -1456,6 +1485,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Create Custom Properties
 		public function create_hubspot_properties(){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( $this->get_option('hubspot_portal') ){
 				if ( $this->get_option('hubspot_api') ){
 					//Get an array of all existing Hubspot CRM contact properties
@@ -1712,6 +1743,8 @@ if ( !trait_exists('Utilities') ){
 
 		//Send data to Hubspot CRM via PHP curl
 		public function hubspot_curl($url, $content=null){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			$sep = ( strpos($url, '?') === false )? '?' : '&'; //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 			$get_url = $url . $sep . 'hapikey=' . $this->get_option('hubspot_api');
 
