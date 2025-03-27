@@ -131,8 +131,10 @@ if ( !trait_exists('Functions') ){
 		}
 
 		//Check if the Nebula Companion plugin is installed and active
+		//Note: As of 2021 the companion plugin has been deprecated.
 		public function is_companion_active(){
 			if ( $this->is_minimal_mode() ){return false;}
+
 			include_once ABSPATH . 'wp-admin/includes/plugin.php'; //Needed to use is_plugin_active() outside of WP admin
 			if ( is_plugin_active('nebula-companion/nebula-companion.php') || is_plugin_active('Nebula-Companion-main/nebula-companion.php') ){
 				return true;
@@ -217,6 +219,8 @@ if ( !trait_exists('Functions') ){
 
 		//Add custom meta icon (favicon) sizes when the site_icon is used via the Customizer
 		public function site_icon_sizes($core_sizes){
+			if ( $this->is_minimal_mode() ){return $core_sizes;}
+
 			$nebula_sizes = array(16, 32, 70, 150, 180, 192, 310);
 			$all_sizes = array_unique(array_merge($core_sizes, $nebula_sizes));
 			return $all_sizes;
@@ -263,6 +267,7 @@ if ( !trait_exists('Functions') ){
 		//Set server timezone to match Wordpress
 		public function set_default_timezone(){
 			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( $this->get_option('force_wp_timezone') ){
 				$timezone_option = wp_timezone_string();
 
@@ -286,6 +291,7 @@ if ( !trait_exists('Functions') ){
 		//Add the Nebula note to the browser console (if enabled)
 		public function calling_card(){
 			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( $this->is_desktop() && !is_customize_preview() ){
 				echo "<script>console.log('%c Created using Nebula " . esc_html($this->version('primary')) . "', 'padding: 2px 10px; background: #0098d7; color: #fff;');</script>";
 			}
@@ -442,6 +448,7 @@ if ( !trait_exists('Functions') ){
 		//Ex: https://nebula.gearside.com/nebula-index-now-0123456789AB.txt
 		public function index_now_rewrite_rule(){
 			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( !$this->get_option('index_now') ){
 				return false;
 			}
@@ -454,6 +461,7 @@ if ( !trait_exists('Functions') ){
 		//Output the IndexNow key txt file
 		public function index_now_output_key(){
 			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( !$this->get_option('index_now') ){
 				return false;
 			}
@@ -517,7 +525,7 @@ if ( !trait_exists('Functions') ){
 		//Redirect to favicon to force-clear the cached version when ?favicon is added to the URL.
 		public function favicon_cache(){
 			if ( array_key_exists('favicon', $this->super->get) ){
-				header('Location: ' . get_theme_file_uri('/assets/img/meta') . '/favicon.ico');
+				header('Location: ' . get_theme_file_uri('/assets/img/meta') . '/favicon.ico?nocache=' . time());
 				exit;
 			}
 		}
@@ -2104,6 +2112,7 @@ if ( !trait_exists('Functions') ){
 		//Check if business hours exist in Nebula Options
 		public function has_business_hours(){
 			if ( $this->is_minimal_mode() ){return false;}
+
 			//Check object cache first so the loop logic does not need to run more than once
 			$has_business_hours = wp_cache_get('has_business_hours');
 			if ( is_string($has_business_hours) ){
@@ -2432,6 +2441,8 @@ if ( !trait_exists('Functions') ){
 
 		//Twitter cached feed
 		public function twitter_cache($options=array()){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			$defaults = apply_filters('nebula_twitter_cache_defaults', array(
 				'user' => 'Great_Blakes',
 				'list' => null,
@@ -2919,6 +2930,7 @@ if ( !trait_exists('Functions') ){
 		//404 page suggestions
 		public function internal_suggestions(){
 			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( is_404() ){
 				$this->timer('Internal Suggestions');
 				$this->ga_send_exception('(PHP) 404 Error for requested URL: ' . $this->url_components()); //Track 404 error pages as exceptions in Google Analytics
@@ -3499,6 +3511,7 @@ if ( !trait_exists('Functions') ){
 		//Build debug info data for CF7 messages and/or Nebula CF7 storage
 		public function cf7_debug_info($submission, $submission_data=false){
 			if ( $this->is_minimal_mode() ){return false;}
+
 			global $wp_version;
 
 			$debug_info = array();
@@ -3677,10 +3690,10 @@ if ( !trait_exists('Functions') ){
 
 		//Tell the browser to clear caches when the debug query string is present
 		public function clear_site_data(){
-			if ( !$this->is_browser('safari') ){ //This header is not currently supported in Safari or iOS as of February 2021: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Clear-Site-Data#browser_compatibility
-				//Note: Adding this header significantly increases server-response time!
-				header('Clear-Site-Data: "cache", "storage", "executionContexts"'); //Do not clear cookies here because it forces logout which is annoying when Customizer is saved/closed
-			}
+			if ( $this->is_minimal_mode() ){return false;}
+
+			//Note: Adding this header significantly increases server-response time!
+			header('Clear-Site-Data: "cache", "storage", "executionContexts"'); //Do not clear cookies here because it forces logout which is annoying when Customizer is saved/closed
 
 			clearstatcache(); //This one is specifically for PHP functions like file_exists()
 			header('Cache-Control: must-revalidate');

@@ -89,6 +89,7 @@ if ( !trait_exists('Analytics') ){
 		//Nebula usage data
 		public function usage($name='usage_data', $event_parameters=array()){
 			if ( $this->is_minimal_mode() ){return false;}
+
 			$date = new DateTime('now', new DateTimeZone('America/New_York'));
 
 			$php_version_parts = explode('.', PHP_VERSION);

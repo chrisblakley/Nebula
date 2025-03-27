@@ -1014,7 +1014,6 @@ if ( !trait_exists('Admin') ){
 					));
 
 					if ( $this->get_option('scss') ){
-
 						$scss_last_processed_text = 'Sass has not yet been processed.';
 						if ( $this->get_data('scss_last_processed') ){
 							$scss_last_processed_relative = human_time_diff($this->get_data('scss_last_processed'));
@@ -1055,6 +1054,16 @@ if ( !trait_exists('Admin') ){
 					'id' => 'nebula-utilities',
 					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-tools"></i> Utilities & Tools',
 				));
+
+				if ( $this->is_dev() ){
+					$wp_admin_bar->add_node(array(
+						'parent' => 'nebula-utilities',
+						'id' => 'nebula-minimal-mode',
+						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-minimize"></i> Reload with Minimal Functionality',
+						'href' => esc_url(add_query_arg('minimal', 'true')),
+						'meta' => array('title' => 'Append ?minimal to load this page with only minimal Nebula functionality')
+					));
+				}
 
 				if ( current_user_can('edit_others_posts') ){
 					$wp_admin_bar->add_node(array(
@@ -2808,7 +2817,7 @@ if ( !trait_exists('Admin') ){
 
 			foreach ( $files as $this_file ){
 				//Skip certain files
-				$skip_filenames = array('.', '..', 'hashes.json', '.gitignore', 'error_log', 'debug.log');
+				$skip_filenames = array('.', '..', 'hashes.json', 'manifest.json', '.gitignore', 'error_log', 'debug.log');
 				if ( in_array(strtolower($this_file), array_map('strtolower', $skip_filenames), true) ){
 					continue; //Skip unnecessary files
 				}
