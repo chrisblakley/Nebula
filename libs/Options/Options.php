@@ -289,6 +289,7 @@ if ( !trait_exists('Options') ){
 				'dev_email_domain' => '',
 				'client_ip' => '',
 				'client_email_domain' => '',
+				'other_internal_domains' => '',
 				'cpanel_url' => '',
 				'hosting_url' => '',
 				'dns_url' => '',

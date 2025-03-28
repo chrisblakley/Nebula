@@ -193,17 +193,20 @@ if ( !trait_exists('Utilities') ){
 
 			if ( empty($strict) ){
 				$dev_ips = ( !empty($this->get_option('dev_ip')) )? $this->get_option('dev_ip') : '';
-				$dev_ips = explode(',', $dev_ips);
+
 				if ( !empty($dev_ips) ){
-					foreach ( $dev_ips as $dev_ip ){
-						$dev_ip = wp_privacy_anonymize_ip(trim($dev_ip));
+					$dev_ips = explode(',', $dev_ips);
+					if ( !empty($dev_ips) ){
+						foreach ( $dev_ips as $dev_ip ){
+							$dev_ip = wp_privacy_anonymize_ip(trim($dev_ip));
 
-						if ( !empty($dev_ip) && $dev_ip[0] !== '/' && $dev_ip === $this->get_ip_address() ){
-							return true;
-						}
+							if ( !empty($dev_ip) && $dev_ip[0] !== '/' && $dev_ip === $this->get_ip_address() ){
+								return true;
+							}
 
-						if ( !empty($dev_ip) && $dev_ip[0] === '/' && preg_match($dev_ip, $this->get_ip_address()) ){
-							return true;
+							if ( !empty($dev_ip) && $dev_ip[0] === '/' && preg_match($dev_ip, $this->get_ip_address()) ){
+								return true;
+							}
 						}
 					}
 				}
@@ -216,10 +219,12 @@ if ( !trait_exists('Utilities') ){
 					$current_user_domain = explode('@', $current_user->user_email)[1];
 
 					$dev_email_domains = ( $this->get_option('dev_email_domain') )? $this->get_option('dev_email_domain') : ''; //Ensure correct type
-					$dev_email_domains = explode(',', $dev_email_domains);
-					foreach ( $dev_email_domains as $dev_email_domain ){
-						if ( trim($dev_email_domain) === $current_user_domain ){
-							return true;
+					if ( !empty($dev_email_domains) ){
+						$dev_email_domains = explode(',', $dev_email_domains);
+						foreach ( $dev_email_domains as $dev_email_domain ){
+							if ( trim($dev_email_domain) === $current_user_domain ){
+								return true;
+							}
 						}
 					}
 				}
@@ -237,17 +242,20 @@ if ( !trait_exists('Utilities') ){
 
 			if ( empty($strict) ){
 				$client_ips = ( !empty($this->get_option('client_ip')) )? $this->get_option('client_ip') : '';
-				$client_ips = explode(',', $client_ips);
+
 				if ( !empty($client_ips) ){
-					foreach ( $client_ips as $client_ip ){
-						$client_ip = wp_privacy_anonymize_ip(trim($client_ip));
+					$client_ips = explode(',', $client_ips);
+					if ( !empty($client_ips) ){
+						foreach ( $client_ips as $client_ip ){
+							$client_ip = wp_privacy_anonymize_ip(trim($client_ip));
 
-						if ( !empty($client_ip) && $client_ip[0] !== '/' && $client_ip === $this->get_ip_address() ){
-							return true;
-						}
+							if ( !empty($client_ip) && $client_ip[0] !== '/' && $client_ip === $this->get_ip_address() ){
+								return true;
+							}
 
-						if ( !empty($client_ip) && $client_ip[0] === '/' && preg_match($client_ip, $this->get_ip_address()) ){
-							return true;
+							if ( !empty($client_ip) && $client_ip[0] === '/' && preg_match($client_ip, $this->get_ip_address()) ){
+								return true;
+							}
 						}
 					}
 				}
@@ -260,9 +268,35 @@ if ( !trait_exists('Utilities') ){
 					$current_user_domain = explode('@', $current_user->user_email)[1];
 
 					$client_email_domains = ( $this->get_option('client_email_domain') )? $this->get_option('client_email_domain') : ''; //Ensure correct type
-					$client_email_domains = explode(',', $client_email_domains);
-					foreach ( $client_email_domains as $client_email_domain ){
-						if ( trim($client_email_domain) === $current_user_domain ){
+					if ( !empty($client_email_domains) ){
+						$client_email_domains = explode(',', $client_email_domains);
+						foreach ( $client_email_domains as $client_email_domain ){
+							if ( trim($client_email_domain) === $current_user_domain ){
+								return true;
+							}
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+
+		//Check if the referring domain matches any provided in Nebula Options
+		//Note: This should not be used for feature detection nor security purposes!
+		public function is_internal_referrer(){
+			$override = apply_filters('pre_is_internal_referrer', null, $strict);
+			if ( isset($override) ){return $override;}
+
+			//Check if the referrer URL contains any of the other internal domains from Nebula Options
+			if ( !empty($this->super->server['HTTP_REFERER']) ){
+				$full_referrer = $this->super->server['HTTP_REFERER'];
+				$other_internal_domains = ( $this->get_option('other_internal_domains') )? $this->get_option('other_internal_domains') : ''; //Ensure correct type
+
+				if ( !empty($other_internal_domains) ){
+					$other_internal_domains = explode(',', $other_internal_domains);
+					foreach ( $other_internal_domains as $other_internal_domain ){
+						if ( strpos($full_referrer, trim($other_internal_domain)) !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 							return true;
 						}
 					}
@@ -291,6 +325,8 @@ if ( !trait_exists('Utilities') ){
 					$staff = ' (Developer)';
 				} elseif ( $this->is_client() ){
 					$staff = ' (Client)';
+				} elseif ( $this->is_internal_referrer() ){
+					$staff = ' (Internal)';
 				}
 			}
 

@@ -176,7 +176,7 @@
 				});
 			<?php endif; ?>
 
-			<?php if ( nebula()->is_staff() ): ?>
+			<?php if ( nebula()->is_staff() || nebula()->is_internal_referrer() ): ?>
 				gtag('set', 'user_properties', {
 					traffic_type: 'internal' //This is a default GA4 property name/value for internal traffic filtering
 				});

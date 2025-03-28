@@ -1020,6 +1020,14 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text more-help form-text text-muted">RegEx may also be used here. Ex: <code>/@example\./i</code></p>
 					<p class="option-keywords">staff logs recommended</p>
 				</div>
+
+				<div class="form-group">
+					<label for="dev_email_domain">Other Internal Domains</label>
+					<input type="text" name="nebula_options[other_internal_domains]" id="other_internal_domains" class="form-control nebula-validate-text" value="<?php echo $nebula_options['other_internal_domains']; ?>" placeholder="github.com" />
+					<p class="nebula-help-text short-help form-text text-muted">Comma separated domains of other internal systems such as project management software.</p>
+					<p class="nebula-help-text more-help form-text text-muted">Any user visiting the site from any of these domains will be tracked as internal in analytics, but will not have any other effect on what they see or have access to. RegEx may also be used here. Ex: <code>/example\./i</code></p>
+					<p class="option-keywords">internal referral referrer referer staff logs recommended</p>
+				</div>
 			<?php
 
 			do_action('nebula_options_staff_users_metabox', $nebula_options);
