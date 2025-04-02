@@ -1720,6 +1720,8 @@ if ( !trait_exists('Admin') ){
 
 		//Add columns to CF7 submission listings
 		public function cf7_submissions_columns_head($columns){
+			if ( $this->is_minimal_mode() ){return $columns;}
+
 			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
 				$columns['formatted_date'] = 'Formatted Date';
 				$columns['form_name'] = 'Form Name';
@@ -1745,6 +1747,8 @@ if ( !trait_exists('Admin') ){
 			return $columns;
 		}
 		public function cf7_submissions_columns_sortable($columns){
+			if ( $this->is_minimal_mode() ){return $columns;}
+
 			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
 				$columns['formatted_date'] = 'date';
 				$columns['form_name'] = 'form_name';
@@ -1879,6 +1883,8 @@ if ( !trait_exists('Admin') ){
 			}
 		}
 		public function cf7_submissions_columns_orderby($query){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( $this->is_admin_page() ){
 				if ( $query->get('post_type') == 'nebula_cf7_submits' ){
 					$query->set('orderby', 'ID'); //Default to sort by ID
@@ -1910,6 +1916,8 @@ if ( !trait_exists('Admin') ){
 
 		//Add dropdown menu(s) for filtering CF7 submission listings
 		public function cf7_submissions_filters($post_type){
+			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( $this->is_admin_page() && $post_type == 'nebula_cf7_submits' ){
 				//Get a list of CF7 forms
 				$cf7_forms = array();
@@ -1946,6 +1954,8 @@ if ( !trait_exists('Admin') ){
 
 		//Handle the filters to only list desired CF7 submissions
 		public function cf7_submissions_parse_query($query){
+			if ( $this->is_minimal_mode() ){return $query;}
+
 			if ( $query->query['post_type'] == 'nebula_cf7_submits' ){ //Only modify this specific query
 				global $pagenow;
 				$current_page = isset($this->super->get['post_type'])? $this->super->get['post_type'] : '';
@@ -1989,6 +1999,8 @@ if ( !trait_exists('Admin') ){
 
 		//Add buttons for additional actions with CF7 submissions
 		public function cf7_submissions_actions($which){ //Which designates top or bottom
+			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
 				$filtered_id = ( !empty($this->super->get['cf7_form_id']) )? $this->super->get['cf7_form_id'] : '';
 
@@ -2128,7 +2140,7 @@ if ( !trait_exists('Admin') ){
 						}
 
 						//Check if this submission was associated with any other submissions
-						if ( !empty($form_data->_nebula_ga_cid) ){
+						if ( !empty($form_data->_nebula_ga_cid) && !$this->is_minimal_mode() ){
 							$submission_history_query = new WP_Query(array(
 								'post_type' => 'nebula_cf7_submits',
 								'post_status' => array('submission', 'invalid'),
@@ -2239,6 +2251,10 @@ if ( !trait_exists('Admin') ){
 
 					//Output each data type
 					foreach ( $form_output as $data_type => $datapoints ){
+						if ( $this->is_minimal_mode() && $data_type == 'metadata' ){
+							continue; //Skip this datapoint
+						}
+
 						$table_class = '';
 						if ( !empty($is_spam) ){
 							$table_class = 'nebula-cf7-submission-spam';
@@ -2379,6 +2395,8 @@ if ( !trait_exists('Admin') ){
 		//This is a hacky way to do this, but WordPress does not have a better option as of March 2024
 		function add_cf7_statuses_to_dropdown(){
 			if ( $this->is_minimal_mode() ){return false;}
+
+			if ( $this->is_minimal_mode() ){return false;}
 			global $post;
 
 			if ( $post->post_type == 'nebula_cf7_submits' ){
@@ -2411,6 +2429,7 @@ if ( !trait_exists('Admin') ){
 		//Add a badge icon to the admin menu indicating the number of new submissions today
 		function add_cf7_menu_badge_count(){
 			if ( $this->is_minimal_mode() ){return false;}
+
 			global $submenu;
 
 			$badge_number = nebula()->transient('nebula_cf7_submits_badge', function(){
@@ -2611,12 +2630,12 @@ if ( !trait_exists('Admin') ){
 
 		//Nebula CF7 Submissions Metabox
 		public function nebula_add_cf7_metabox(){
+			if ( $this->is_minimal_mode() ){return false;}
 			add_meta_box('nebula-post-data', 'Nebula CF7', array($this, 'nebula_cf7_metabox' ), 'nebula_cf7_submits', 'side', 'default');
 		}
 
 		//Nebula CF7 Submission custom fields
 		public function nebula_cf7_metabox($object, $box){
-			if ( $this->is_minimal_mode() ){return false;}
 			wp_nonce_field(basename(__FILE__), 'nebula_post_nonce');
 
 			if ( $object->post_type == 'nebula_cf7_submits' ){

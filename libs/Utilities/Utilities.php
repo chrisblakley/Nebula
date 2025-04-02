@@ -363,7 +363,7 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//If Nebula Minimal Mode is currently active
-		//Minimal Mode runs only absolutely essential functionality and bypasses all others
+		//Minimal Mode runs only absolutely essential functionality and bypasses all others. Note that this does *not* reduce functionality of WP Core, or other plugins or themes; it is meant strictly to reduce Nebula-specific functionality. Also note that this includes Nebula optimization functions, so load times can possibly increase during Minimal Mode.
 		public function is_minimal_mode(){
 			if ( $this->is_dev() ){ //Minimal Mode is only available to developers
 				if ( isset($this->super->get['minimal']) ){

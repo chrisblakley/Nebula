@@ -15,28 +15,36 @@
 
 			window.dataLayer = window.dataLayer || [];
 			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
 
 			<?php if ( nebula()->option('ga_require_consent') ):  ?>
 				gtag('consent', 'default', {ad_storage: 'denied'});
 			<?php endif; ?>
 
 			<?php
-				$pageview_properties = array(
-					'send_page_view' => true,
+				$user_properties = array(); //For parameters that should persist across sessions
+				$pageview_properties = array( //For parameters that should be associated with this particular page/session
+					'send_page_view' => true, //This is the default value, but setting it here in case other systems want to modify it
 				);
 
 				if ( nebula()->is_dev() || nebula()->is_debug() ){
 					$pageview_properties['debug_mode'] = true;
 				}
-
+				
+				if ( nebula()->is_staff() || nebula()->is_internal_referrer() ){
+					$user_properties['traffic_type'] = 'internal'; //User property is correct (not pageview property) for internal traffic
+				}
+				
 				//WordPress User ID
 				if ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() ){
-					$pageview_properties['user_id'] = get_current_user_id(); //This property must be less than 256 characters (and cannot match the CID). GA4 does not make this easily available in reporting.
-					$pageview_properties['wp_id'] = get_current_user_id(); //This is to make it more easily available in GA4 reports/explorations
+					$pageview_properties['user_id'] = get_current_user_id(); //This property must be less than 256 characters (and cannot match the CID). Note: Pageview Property is correct (do not use a user property for this particular parameter)!
+					$user_properties['wp_user'] = get_current_user_id(); //This is to track WP users even if they are logged out
+					$pageview_properties['wp_id'] = get_current_user_id(); //This is to track WP user IDs of visitors who are currently logged in
 				}
 
 				//WP Role (regardless of logged-in state)
-				$pageview_properties['user_role'] = nebula()->user_role(); //Event-scoped user role property
+				$user_properties['user_role'] = nebula()->user_role(); //User-scoped role property
+				$pageview_properties['role'] = nebula()->user_role(); //Event-scoped user role property
 
 				if ( is_singular() || is_page() ){
 					global $post;
@@ -62,7 +70,10 @@
 					// 	$pageview_properties['word_count'] = nebula()->word_count(array('range' => true));
 					// }
 				}
-
+				
+				//Content Group				
+				$pageview_properties['content_group'] = explode('/', trim(nebula()->url_components('pathname'), '/'))[0]; //Use the *first* subdirectory to group content together for GA4
+				
 				//Query Strings
 				if ( !empty(nebula()->url_components('query')) ){
 					$pageview_properties['query_string'] = nebula()->url_components('query');
@@ -92,12 +103,12 @@
 					$pageview_properties['wpml_language'] = ICL_LANGUAGE_NAME . ' (' . ICL_LANGUAGE_CODE . ')';
 				}
 			?>
-
-			//Set the property JS object here
+			
+			//Prep a JS object for User Properties
+			nebula.userProperties = <?php echo wp_json_encode(apply_filters('nebula_ga_user_properties', $user_properties)); //Allow other functions to modify the PHP user properties ?>;
+			
+			//Prep a JS object for Pageview Properties
 			nebula.pageviewProperties = <?php echo wp_json_encode(apply_filters('nebula_ga_pageview_properties', $pageview_properties)); //Allow other functions to modify the PHP pageview properties ?>;
-
-			//Content Group
-			nebula.pageviewProperties.content_group = '<?php echo explode('/', trim(nebula()->url_components('pathname'), '/'))[0]; ?>'; //Use the *first* subdirectory to group content together for GA4
 
 			//Post Categories and Tags
 			nebula.pageviewProperties.post_categories = nebula?.post?.categories;
@@ -170,31 +181,15 @@
 			// }
 			// nebula.pageviewProperties.prefers_color_scheme = nebula.user.prefersColorScheme;
 
-			<?php if ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() ): //Need to do this twice because user_id cannot be accessed in GA4 reports, so need to send it again as a custom dimension. ?>
-				gtag('set', 'user_properties', {
-					user_id: '<?php echo get_current_user_id(); ?>'
-				});
-			<?php endif; ?>
-
-			<?php if ( nebula()->is_staff() || nebula()->is_internal_referrer() ): ?>
-				gtag('set', 'user_properties', {
-					traffic_type: 'internal' //This is a default GA4 property name/value for internal traffic filtering
-				});
-			<?php endif; ?>
-
-			//User role
-			gtag('set', 'user_properties', {
-				role: '<?php echo nebula()->user_role(); ?>' //User-scoped role property
-			});
-
 			<?php do_action('nebula_ga_before_pageview'); //Simple action for adding/modifying all custom definitions (including JS) before the pageview hit is sent. ?>
-
-			gtag('js', new Date());
+			
+			gtag('set', 'user_properties', nebula.userProperties); //Apply the User Properties
 			gtag('config', '<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>', nebula.pageviewProperties); //This sends the page_view
 
 			window.performance.mark('(Nebula) Analytics Pageview'); //Inexact
 			window.performance.measure('(Nebula) Time to Analytics Pageview', 'navigationStart', '(Nebula) Analytics Pageview');
-
+			
+			//After GA is initialized, obtain the Client ID (CID)
 			gtag('get', '<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>', 'client_id', function(gaClientId){
 				nebula.user.cid = gaClientId; //Update the CID in Nebula ASAP to reflect the actual GA CID
 				nebula.session.id = nebula.session.id.replace(/cid:(.*?);/i, 'cid:' + gaClientId + ';'); //Replace the CID in the Nebula Session ID as well

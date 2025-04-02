@@ -255,6 +255,9 @@ RedirectMatch 301 /wp-content/index.php /
 	RewriteRule wp-includes/rss-functions.php - [R=403,NC,L]
 </IfModule>
 
+#Attempt to disable the server signature
+Header unset Server
+
 #Try to prevent comment spam by checking the referrer
 #RewriteEngine On
 #RewriteCond %{REQUEST_METHOD} POST
