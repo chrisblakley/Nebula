@@ -121,7 +121,7 @@ nebula.gaEventObject = function(eventObject){
 	return fullContextObject;
 };
 
-//Google Analytics Universal Analytics Event Trackers
+//Google Analytics Event Tracking
 nebula.eventTracking = async function(){
 	if ( nebula.isDoNotTrack() ){
 		return false;
@@ -494,7 +494,7 @@ nebula.eventTracking = async function(){
 				event_label: jQuery(this).find('input[name="s"]').val().toLowerCase().trimAll(),
 				type: 'Internal Search',
 				event_action: 'Submit',
-				query: jQuery(this).find('input[name="s"]').val().toLowerCase().trimAll()
+				search_term: jQuery(this).find('input[name="s"]').val().toLowerCase().trimAll()
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -1421,7 +1421,7 @@ nebula.eventTracking = async function(){
 				event_category: 'Datatables',
 				event_label: $oThis.val().toLowerCase().trimAll(),
 				event_action: 'Search Filter',
-				query: $oThis.val().toLowerCase().trimAll()
+				search_term: $oThis.val().toLowerCase().trimAll()
 			};
 
 			nebula.debounce(function(){

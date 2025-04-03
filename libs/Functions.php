@@ -1398,11 +1398,14 @@ if ( !trait_exists('Functions') ){
 			if ( isset($override) ){return $override;}
 
 			$timer_name = $this->timer('Video Meta (' . $id . ')', 'start', 'Video Meta');
-
+			
+			//Ensure these default keys are always available
 			$video_metadata = array(
 				'origin' => $this->url_components('basedomain'),
 				'id' => $id,
-				'error' => false
+				'error' => false,
+				'title' => 'unknown_title',
+				'safetitle' => 'unknown_title'
 			);
 
 			if ( !empty($provider) ){
@@ -1476,10 +1479,6 @@ if ( !trait_exists('Functions') ){
 			} elseif ( $provider === 'vimeo' && is_array($video_json) && empty($video_json[0]) ){
 				$video_metadata['error'] = 'A Vimeo video with ID ' . $id . ' does not exist.';
 			}
-
-			//Start with default values so they are always defined
-			$video_metadata['title'] = 'unknown_title';
-			$video_metadata['safetitle'] = 'unknown_title';
 
 			//Build Data
 			if ( $provider === 'youtube' ){

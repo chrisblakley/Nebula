@@ -25,14 +25,15 @@
 				$user_properties = array(); //For parameters that should persist across sessions
 				$pageview_properties = array( //For parameters that should be associated with this particular page/session
 					'send_page_view' => true, //This is the default value, but setting it here in case other systems want to modify it
+					'nebula_referrer' => nebula()->referrer //This is the original referrer (not just the previous page)
 				);
 
 				if ( nebula()->is_dev() || nebula()->is_debug() ){
-					$pageview_properties['debug_mode'] = true;
+					$pageview_properties['debug_mode'] = true; //Pageview property is correct (not user property) for developer traffic
 				}
-				
+	
 				if ( nebula()->is_staff() || nebula()->is_internal_referrer() ){
-					$user_properties['traffic_type'] = 'internal'; //User property is correct (not pageview property) for internal traffic
+					$pageview_properties['traffic_type'] = 'internal'; //Pageview property is correct (not user property) for internal traffic
 				}
 				
 				//WordPress User ID
@@ -55,9 +56,9 @@
 						$pageview_properties['post_type'] = get_post_type(get_the_ID());
 
 						//Article author
-						// if ( nebula()->get_option('author_bios') ){
-						// 	$pageview_properties['post_author'] = get_the_author();
-						// }
+						if ( nebula()->get_option('author_bios') ){
+							$pageview_properties['post_author'] = get_the_author();
+						}
 
 						//Article's published year
 						$pageview_properties['publish_date'] = get_the_date('Y-m-d');
@@ -69,6 +70,11 @@
 					// 	echo 'nebula.post.wordcount = ' . $word_count . ';';
 					// 	$pageview_properties['word_count'] = nebula()->word_count(array('range' => true));
 					// }
+				}
+				
+				//Designate AI tool referrals (until Google Analytics introduces an "Organic AI" channel)
+				if ( nebula()->is_ai_channel() ){
+					$pageview_properties['ai_channel'] = true;
 				}
 				
 				//Content Group				
@@ -163,23 +169,27 @@
 				document.getElementsByTagName('html')[0].setAttribute('class', headCSS + 'in-standalone-app'); //Use vanilla JS in case jQuery is not yet available
 				nebula.pageviewProperties.window_type = 'Standalone App';
 			}
-
-			nebula.user.saveData = <?php echo wp_json_encode(nebula()->is_save_data()); //JSON Encode forces boolean return to print ?>;
-			//nebula.pageviewProperties.save_data = nebula.user.saveData;
+			
+			<?php if ( nebula()->is_save_data() ): ?>
+				nebula.user.saveData = true;
+				nebula.pageviewProperties.save_data = true;
+			<?php endif; ?>
 
 			//Prefers reduced motion
-			// nebula.user.prefersReducedMotion = false;
-			// if ( window.matchMedia('(prefers-reduced-motion: reduce)').matches ){
-			// 	nebula.user.prefersReducedMotion = true;
-			// }
-			// nebula.pageviewProperties.prefers_reduced_motion = nebula.user.prefersReducedMotion;
+			nebula.user.prefersReducedMotion = false;
+			if ( window.matchMedia('(prefers-reduced-motion: reduce)').matches ){
+				nebula.user.prefersReducedMotion = true;
+			}
+			nebula.pageviewProperties.prefers_reduced_motion = nebula.user.prefersReducedMotion;
 
 			//Prefers color scheme
-			// nebula.user.prefersColorScheme = 'light';
-			// if ( window.matchMedia('(prefers-color-scheme: dark)').matches ){
-			// 	nebula.user.prefersColorScheme = 'dark';
-			// }
-			// nebula.pageviewProperties.prefers_color_scheme = nebula.user.prefersColorScheme;
+			nebula.user.prefersColorScheme = 'default';
+			if ( window.matchMedia('(prefers-color-scheme: dark)').matches ){
+				nebula.user.prefersColorScheme = 'dark';
+			} else if ( window.matchMedia('(prefers-color-scheme: light)').matches ){
+				nebula.user.prefersColorScheme = 'dark';
+			}
+			nebula.pageviewProperties.prefers_color_scheme = nebula.user.prefersColorScheme;
 
 			<?php do_action('nebula_ga_before_pageview'); //Simple action for adding/modifying all custom definitions (including JS) before the pageview hit is sent. ?>
 			
