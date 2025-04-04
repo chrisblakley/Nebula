@@ -228,7 +228,8 @@ if ( !trait_exists('Admin') ){
 				if ( is_wp_error($response) ){
 					do_action('qm/error', 'IndexNow POST error for ' . $search_engine_url);
 				} else {
-					if ( wp_remote_retrieve_response_code($response) >= 400 ){ //Ideal response codes are 200 and 202. 4xx level response codes indicate a problem.
+					$response_code = wp_remote_retrieve_response_code($response);
+					if ( $response_code >= 400 ){ //Ideal response codes are 200 and 202. 4xx level response codes indicate a problem.
 						do_action('qm/error', 'IndexNow response code ' . $response_code . ' from ' . $search_engine_url); //https://www.indexnow.org/documentation
 					}
 				}
