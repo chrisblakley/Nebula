@@ -837,6 +837,7 @@ nebula.eventTracking = async function(){
 				value: Math.round(nebula.timer('(Nebula) Offcanvas Menu', 'lap')),
 				menu: 'Offcanvas Menu',
 				description: 'From opening offcanvas menu until navigation',
+				non_interaction: true
 			});
 		});
 
@@ -1639,6 +1640,7 @@ nebula.ecommerceTracking = async function(){
 				value: Math.round(nebula.timer('(Nebula) Ecommerce Checkout', 'end')),
 				event_category: 'Ecommerce',
 				event_label: 'Billing details start to Place Order button click',
+				non_interaction: true
 			});
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);

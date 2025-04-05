@@ -199,6 +199,10 @@ if ( !trait_exists('Admin') ){
 		public function index_now_post($post_id, $post){
 			if ( $this->is_minimal_mode() ){return false;}
 
+			if ( !$this->get_option('index_now') ){
+				return false;
+			}
+
 			if ( $post->post_status !== 'publish' ){
 				return;
 			}

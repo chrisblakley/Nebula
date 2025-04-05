@@ -141,6 +141,7 @@ nebula.cf7Functions = async function(){
 				value: Math.round(nebula.timings[formID].lap[nebula.timings[formID].laps-1].duration),
 				event_category: 'CF7 Form',
 				event_label: 'Amount of time on this input field (until next focus or submit).',
+				non_interaction: true
 			});
 		}
 	});
@@ -438,6 +439,7 @@ nebula.cf7Functions = async function(){
 				value: Math.round(thisEvent.formTime),
 				event_category: thisEvent.event_category,
 				event_label: 'Initial form focus until valid submit',
+				non_interaction: true
 			});
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_submit_success'})); //This is the event name to use in the GTM custom event trigger
 			nebula.fbq('track', 'Lead', {content_name: 'Form Submit (Success)'});

@@ -181,7 +181,8 @@ nebula.addHTML5VideoPlayer = function(id, element){
 			name: thisEvent.event_action,
 			value: thisEvent.progress,
 			event_category: thisEvent.event_category,
-			event_label: thisEvent.title
+			event_label: thisEvent.title,
+			non_interaction: true
 		});
 
 		nebula.crm('event', 'Video Paused: ' + thisEvent.title);
@@ -270,6 +271,7 @@ nebula.addHTML5VideoPlayer = function(id, element){
 			value: thisEvent.progress,
 			event_category: thisEvent.event_category,
 			event_label: thisEvent.title,
+			non_interaction: true
 		});
 
 		nebula.crm('event', 'Video Ended: ' + thisEvent.title);
@@ -500,6 +502,7 @@ nebula.youtubeStateChange = function(e){
 			value: thisEvent.progress,
 			event_category: thisEvent.event_category,
 			event_label: thisEvent.title,
+			non_interaction: true
 		});
 
 		nebula.crm('event', 'Video Ended: ' + thisEvent.title);
@@ -542,6 +545,7 @@ nebula.youtubeStateChange = function(e){
 						value: thisEvent.progress,
 						event_category: thisEvent.event_category,
 						event_label: thisEvent.title,
+						non_interaction: true
 					});
 
 					nebula.crm('event', 'Video Paused: ' + thisEvent.title);
@@ -763,6 +767,7 @@ nebula.createVimeoPlayers = function(){
 					value: Math.round(e.seconds*1000),
 					event_category: thisEvent.event_category,
 					event_label: thisEvent.title,
+					non_interaction: true
 				});
 
 				nebula.crm('event', 'Video Paused: ' + thisEvent.title);
@@ -819,6 +824,7 @@ nebula.createVimeoPlayers = function(){
 					value: thisEvent.progress,
 					event_category: thisEvent.event_category,
 					event_label: thisEvent.title,
+					non_interaction: true
 				});
 
 				nebula.crm('event', 'Video Ended: ' + thisEvent.title);

@@ -213,7 +213,11 @@ nebula.autocompleteSearch = async function($element, types = ''){
 			source: async function(request, sourceResponse){
 				await nebula.yield();
 
-				let searchResults = nebula.memoize('get', 'autocomplete search (' + request.term.toLowerCase() + ') [' + typesQuery + ']'); //Try from stored memory first
+				if ( !request?.term ){ //If the search term is empty, ignore it
+					return false;
+				}
+
+				let searchResults = nebula.memoize('get', 'autocomplete search (' + request.term.toLowerCase() + ') [' + typesQuery + ']'); //Try to get from stored memory first
 
 				//If we didn't find the search from stored memory, do an actual search
 				if ( !searchResults ){
@@ -257,11 +261,10 @@ nebula.autocompleteSearch = async function($element, types = ''){
 
 				nebula.debounce(function(){
 					let thisEvent = {
-						event_name: 'search',
+						event_name: 'autocomplete_search',
 						event_category: 'Internal Search',
 						event_action: 'Autocomplete Search' + noSearchResults,
-						request: request,
-						term: request.term.toLowerCase(),
+						search_term: request.term.toLowerCase(),
 						no_search_results: ( noSearchResults )? true : false,
 					};
 
@@ -277,6 +280,7 @@ nebula.autocompleteSearch = async function($element, types = ''){
 					value: Math.round(nebula.timer('(Nebula) Autocomplete Search', 'lap')),
 					event_category: 'Autocomplete Search',
 					event_label: 'Each search until server results',
+					non_interaction: true
 				});
 
 				sourceResponse(searchResults); //Respond to the jQuery UI Autocomplete now
@@ -289,11 +293,11 @@ nebula.autocompleteSearch = async function($element, types = ''){
 			},
 			select: function(event, ui){
 				let thisEvent = {
-					event_name: 'select_content',
+					event_name: 'autocomplete_search_result_click',
 					event_category: 'Internal Search',
 					event_action: 'Autocomplete Click',
-					ui: ui,
 					event_label: ui.item.label,
+					search_term: ui.item.label,
 					external: ( typeof ui.item.external !== 'undefined' )? true : false,
 				};
 
@@ -306,6 +310,7 @@ nebula.autocompleteSearch = async function($element, types = ''){
 					value: Math.round(nebula.timer('(Nebula) Autocomplete Search', 'end')),
 					event_category: 'Autocomplete Search',
 					event_label: 'From first initial search until navigation',
+					non_interaction: true
 				});
 
 				if ( thisEvent.external ){
