@@ -289,7 +289,10 @@ nebula.eventTracking = async function(){
 				event_action: (jQuery(this).val() || jQuery(this).attr('value') || jQuery(this).text() || jQuery(this).attr('title') || '(Unknown)').trimAll(),
 				event_label: jQuery(this).attr('href') || jQuery(this).attr('title') || '(Unknown)',
 				text: (jQuery(this).val() || jQuery(this).attr('value') || jQuery(this).text() || jQuery(this).attr('title') || '(Unknown)').trimAll(),
-				link: jQuery(this).attr('href') || jQuery(this).attr('title') || '(Unknown)'
+				link: jQuery(this).attr('href') || jQuery(this).attr('title') || '(Unknown)',
+				link_text: (jQuery(this).val() || jQuery(this).attr('value') || jQuery(this).text() || jQuery(this).attr('title') || '(Unknown)').trimAll(),
+				link_url: jQuery(this).attr('href') || jQuery(this).attr('title') || '(Unknown)',
+				link_classes: jQuery(this).attr('class'),
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -442,6 +445,9 @@ nebula.eventTracking = async function(){
 					event_action: extension,
 					event_label: jQuery(this).attr('href').substr(jQuery(this).attr('href').lastIndexOf('/')+1),
 					text: jQuery(this).text().trimAll(),
+					link_text: jQuery(this).text().trimAll(),
+					link_url: jQuery(this).attr('href'),
+					link_classes: jQuery(this).attr('class'),
 					file_extension: extension,
 					file_name: jQuery(this).attr('href').substr(jQuery(this).attr('href').lastIndexOf('/')+1),
 				};
@@ -467,7 +473,10 @@ nebula.eventTracking = async function(){
 				event_action: 'Notable',
 				file_path: jQuery(this).attr('href').trimAll(),
 				text: jQuery(this).text(),
-				link: jQuery(this).attr('href')
+				link: jQuery(this).attr('href'),
+				link_text: jQuery(this).text(),
+				link_url: jQuery(this).attr('href'),
+				link_classes: jQuery(this).attr('class'),
 			};
 
 			if ( thisEvent.file_path.length && thisEvent.file_path !== '#' ){
@@ -516,6 +525,9 @@ nebula.eventTracking = async function(){
 				event_label: jQuery(this).attr('href'),
 				text: jQuery(this).text(),
 				link: jQuery(this).attr('href'),
+				link_text: jQuery(this).text(),
+				link_url: jQuery(this).attr('href'),
+				link_classes: jQuery(this).attr('class'),
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -548,6 +560,9 @@ nebula.eventTracking = async function(){
 				event_label: jQuery(this).text(),
 				type: 'Internal',
 				text: jQuery(this).text(),
+				link_text: jQuery(this).text(),
+				link_url: jQuery(this).attr('href'),
+				link_classes: jQuery(this).attr('class'),
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -755,7 +770,11 @@ nebula.eventTracking = async function(){
 				event_action: 'Utility Menu',
 				event_label: jQuery(this).text().trimAll(),
 				menu: 'Utility Menu',
-				text: jQuery(this).text().trimAll()
+				text: jQuery(this).text().trimAll(),
+				link: jQuery(this).attr('href'),
+				link_text: jQuery(this).text().trimAll(),
+				link_url: jQuery(this).attr('href'),
+				link_classes: jQuery(this).attr('class'),
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -772,7 +791,11 @@ nebula.eventTracking = async function(){
 				event_action: 'Primary Menu',
 				event_label: jQuery(this).text().trimAll(),
 				menu: 'Primary Menu',
-				text: jQuery(this).text().trimAll()
+				text: jQuery(this).text().trimAll(),
+				link: jQuery(this).attr('href'),
+				link_text: jQuery(this).text().trimAll(),
+				link_url: jQuery(this).attr('href'),
+				link_classes: jQuery(this).attr('class'),
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -825,7 +848,11 @@ nebula.eventTracking = async function(){
 				event_action: 'Offcanvas Menu',
 				event_label: jQuery(this).text().trimAll(),
 				menu: 'Offcanvas Menu (' + e.target.id + ')',
-				text: jQuery(this).text().trimAll()
+				text: jQuery(this).text().trimAll(),
+				link: jQuery(this).attr('href'),
+				link_text: jQuery(this).text().trimAll(),
+				link_url: jQuery(this).attr('href'),
+				link_classes: jQuery(this).attr('class'),
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -850,7 +877,11 @@ nebula.eventTracking = async function(){
 				event_action: 'Breadcrumbs',
 				event_label: jQuery(this).text().trimAll(),
 				menu: 'Breadcrumbs',
-				text: jQuery(this).text().trimAll()
+				text: jQuery(this).text().trimAll(),
+				link: jQuery(this).attr('href'),
+				link_text: jQuery(this).text().trimAll(),
+				link_url: jQuery(this).attr('href'),
+				link_classes: jQuery(this).attr('class'),
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -867,7 +898,11 @@ nebula.eventTracking = async function(){
 				event_action: 'Sidebar Menu',
 				event_label: jQuery(this).text().trimAll(),
 				menu: 'Sidebar Menu',
-				text: jQuery(this).text().trimAll()
+				text: jQuery(this).text().trimAll(),
+				link: jQuery(this).attr('href'),
+				link_text: jQuery(this).text().trimAll(),
+				link_url: jQuery(this).attr('href'),
+				link_classes: jQuery(this).attr('class'),
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -884,7 +919,11 @@ nebula.eventTracking = async function(){
 				event_action: 'Footer Menu',
 				event_label: jQuery(this).text().trimAll(),
 				menu: 'Footer Menu',
-				text: jQuery(this).text().trimAll()
+				text: jQuery(this).text().trimAll(),
+				link: jQuery(this).attr('href'),
+				link_text: jQuery(this).text().trimAll(),
+				link_url: jQuery(this).attr('href'),
+				link_classes: jQuery(this).attr('class'),
 			};
 
 			nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -929,7 +968,10 @@ nebula.eventTracking = async function(){
 									outbound: true,
 									subdomain: href.includes('.' + domain), //Boolean if this is a subdomain of the primary domain
 									text: linkElement.text().trimAll(),
-									link: href
+									link: href,
+									link_text: linkElement.text().trimAll(),
+									link_url: href,
+									link_classes: linkElement.attr('class'),
 								};
 
 								nebula.dom.document.trigger('nebula_event', thisEvent);
@@ -953,6 +995,9 @@ nebula.eventTracking = async function(){
 				event_label: jQuery(this).attr('href'),
 				text: jQuery(this).text().trimAll(),
 				link: jQuery(this).attr('href'),
+				link_text: jQuery(this).text().trimAll(),
+				link_url: jQuery(this).attr('href'),
+				link_classes: jQuery(this).attr('class'),
 				non_interaction: true //Non-interaction because the user is not interacting with any content yet so this should not influence the bounce rate
 			};
 
@@ -1121,7 +1166,9 @@ nebula.eventTracking = async function(){
 				event_action: 'Focus',
 				event_label: jQuery(this).text().trimAll(),
 				state: 'Focus',
-				text: jQuery(this).text().trimAll(),
+				link_text: jQuery(this).text().trimAll(),
+				link_url: jQuery(this).attr('href'),
+				link_classes: jQuery(this).attr('class'),
 				non_interaction: true //Non-interaction because they are not actually taking action and these links do not indicate engagement
 			};
 
@@ -1140,7 +1187,9 @@ nebula.eventTracking = async function(){
 				event_action: 'Click',
 				event_label: jQuery(this).text().trimAll(),
 				state: 'Click',
-				text: jQuery(this).text().trimAll(),
+				link_text: jQuery(this).text().trimAll(),
+				link_url: jQuery(this).attr('href'),
+				link_classes: jQuery(this).attr('class'),
 				non_interaction: true //Non-interaction because these links do not indicate engagement
 			};
 

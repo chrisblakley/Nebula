@@ -285,7 +285,7 @@ if ( !trait_exists('Utilities') ){
 		//Check if the referring domain matches any provided in Nebula Options
 		//Note: This should not be used for feature detection nor security purposes!
 		public function is_internal_referrer(){
-			$override = apply_filters('pre_is_internal_referrer', null, $strict);
+			$override = apply_filters('pre_is_internal_referrer', null);
 			if ( isset($override) ){return $override;}
 
 			//Check if the referrer URL contains any of the other internal domains from Nebula Options

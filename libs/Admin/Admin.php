@@ -1371,7 +1371,7 @@ if ( !trait_exists('Admin') ){
 
 		//Send an email to the current user and site admin(s)
 		public function send_email_to_admins($subject, $message, $attachments=false){
-			$nebula_admin_email_sent = nebula()->transient('nebula_admin_email_sent', function($data){
+			$nebula_admin_email_sent = $this->transient('nebula_admin_email_sent', function($data){
 				$current_user = wp_get_current_user();
 				$to = $current_user->user_email;
 
@@ -1441,23 +1441,52 @@ if ( !trait_exists('Admin') ){
 		}
 
 		//Send Google Analytics pageviews on the WP Admin and Login pages too
+		//Note: This is essentially a simplified version of what happens in /inc/analytics.php on the front-end
 		public function admin_ga_pageview(){
 			if ( $this->is_minimal_mode() ){return false;}
 
 			if ( empty($this->super->post['signed_request']) && $this->get_option('ga_measurement_id') ){
+				$user_properties = array(); //For parameters that should persist across sessions
+				$pageview_properties = array( //For parameters that should be associated with this particular page/session
+					'send_page_view' => true, //This is the default value, but setting it here in case other systems want to modify it
+					'nebula_referrer' => $this->referrer //This is the original referrer (not just the previous page)
+				);
+
+				//WordPress User ID
+				if ( $this->get_option('ga_wpuserid') && is_user_logged_in() ){
+					$pageview_properties['user_id'] = get_current_user_id(); //This property must be less than 256 characters (and cannot match the CID). Note: Pageview Property is correct (do not use a user property for this particular parameter)!
+					$user_properties['wp_user'] = get_current_user_id(); //This is to track WP users even if they are logged out
+					$pageview_properties['wp_id'] = get_current_user_id(); //This is to track WP user IDs of visitors who are currently logged in
+				}
+
+				//WP Role (regardless of logged-in state)
+				$user_properties['user_role'] = $this->user_role(); //User-scoped role property
+				$pageview_properties['role'] = $this->user_role(); //Event-scoped user role property
+
+				if ( $this->is_staff() || $this->is_internal_referrer() ){
+					$pageview_properties['traffic_type'] = 'internal'; //Pageview property is correct (not user property) for internal traffic
+				}
+
+				//Query Strings
+				if ( !empty($this->url_components('query')) ){
+					$pageview_properties['query_string'] = $this->url_components('query');
+				}
+
 				?>
-					<script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>"></script>
+					<script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html($this->get_option('ga_measurement_id')); ?>"></script>
 					<script>
 						window.dataLayer = window.dataLayer || [];
 						function gtag(){dataLayer.push(arguments);}
 						gtag('js', new Date());
 
-						gtag('config', '<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>', {
-							send_page_view: true,
-							<?php if ( nebula()->get_option('ga_wpuserid') && is_user_logged_in() ): ?>
-								user_id: '<?php echo get_current_user_id(); //This property must be less than 256 characters ?>'
-							<?php endif; ?>
-						});
+						//Prep a JS object for User Properties
+						nebula.userProperties = <?php echo wp_json_encode(apply_filters('nebula_ga_user_properties', $user_properties)); //Allow other functions to modify the PHP user properties ?>;
+
+						//Prep a JS object for Pageview Properties
+						nebula.pageviewProperties = <?php echo wp_json_encode(apply_filters('nebula_ga_pageview_properties', $pageview_properties)); //Allow other functions to modify the PHP pageview properties ?>;
+
+						gtag('set', 'user_properties', nebula.userProperties); //Apply the User Properties
+						gtag('config', '<?php echo esc_html($this->get_option('ga_measurement_id')); ?>', nebula.pageviewProperties); //This sends the page_view
 					</script>
 				<?php
 			}
@@ -1514,7 +1543,7 @@ if ( !trait_exists('Admin') ){
 			$override = apply_filters('pre_nebula_php_version_support', null, $php_version);
 			if ( isset($override) ){return;}
 
-			$php_timeline = nebula()->transient('nebula_php_timeline', function(){
+			$php_timeline = $this->transient('nebula_php_timeline', function(){
 				$php_timeline_json_file = get_template_directory() . '/inc/data/php_timeline.json'; //This local JSON file will either be updated or used directly later
 				global $wp_filesystem;
 				WP_Filesystem();
@@ -2437,7 +2466,7 @@ if ( !trait_exists('Admin') ){
 
 			global $submenu;
 
-			$badge_number = nebula()->transient('nebula_cf7_submits_badge', function(){
+			$badge_number = $this->transient('nebula_cf7_submits_badge', function(){
 				$cf7_submissions_query = new WP_Query(array(
 					'post_type' => 'nebula_cf7_submits',
 					'post_status' => 'submission',

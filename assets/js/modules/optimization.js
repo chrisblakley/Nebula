@@ -149,7 +149,7 @@ nebula.performanceMetrics = async function(){
 						dom_interactive: Math.round(navigationPerformanceEntry.domInteractive)/1000,
 						dom_complete: Math.round(navigationPerformanceEntry.domComplete)/1000,
 						fully_loaded: Math.round(navigationPerformanceEntry.duration)/1000,
-						link: window.location.href, //Using "link" so additional custom dimensions are not needed
+						link_url: window.location.href, //Using "link_url" so additional custom dimensions are not needed
 						non_interaction: true
 					});
 				}
