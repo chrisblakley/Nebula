@@ -47,38 +47,41 @@
 				$user_properties['user_role'] = nebula()->user_role(); //User-scoped role property
 				$pageview_properties['role'] = nebula()->user_role(); //Event-scoped user role property
 
-				if ( is_singular() || is_page() ){
-					global $post;
 
-					if ( is_singular() ){
-						//Designate single posts because they aren't always easily distinguishable from the URL alone
-						$pageview_properties['single_post'] = ( is_front_page() )? 'Front Page' : 'Single Post';
-						$pageview_properties['post_type'] = get_post_type(get_the_ID());
+				if ( !is_front_page() ){
+					//Content Group
+					$pageview_properties['content_group'] = explode('/', trim(nebula()->url_components('pathname'), '/'))[0]; //Use the *first* subdirectory to group content together for GA4
 
-						//Article author
-						if ( nebula()->get_option('author_bios') ){
-							$pageview_properties['post_author'] = get_the_author();
+					if ( is_singular() || is_page() ){
+						global $post;
+
+						if ( is_singular() ){
+							//Designate single posts because they aren't always easily distinguishable from the URL alone
+							$pageview_properties['single_post'] = ( is_front_page() )? 'Front Page' : 'Single Post';
+							$pageview_properties['post_type'] = get_post_type(get_the_ID());
+
+							//Article author
+							if ( nebula()->get_option('author_bios') ){
+								$pageview_properties['post_author'] = get_the_author();
+							}
+
+							//Article's published year
+							$pageview_properties['publish_date'] = get_the_date('Y-m-d');
 						}
 
-						//Article's published year
-						$pageview_properties['publish_date'] = get_the_date('Y-m-d');
+						//Word Count
+						// $word_count = nebula()->word_count();
+						// if ( $word_count ){
+						// 	echo 'nebula.post.wordcount = ' . $word_count . ';';
+						// 	$pageview_properties['word_count'] = nebula()->word_count(array('range' => true));
+						// }
 					}
-
-					//Word Count
-					// $word_count = nebula()->word_count();
-					// if ( $word_count ){
-					// 	echo 'nebula.post.wordcount = ' . $word_count . ';';
-					// 	$pageview_properties['word_count'] = nebula()->word_count(array('range' => true));
-					// }
 				}
 
 				//Designate AI tool referrals (until Google Analytics introduces an "Organic AI" channel)
 				if ( nebula()->is_ai_channel() ){
 					$pageview_properties['ai_channel'] = true;
 				}
-
-				//Content Group
-				$pageview_properties['content_group'] = explode('/', trim(nebula()->url_components('pathname'), '/'))[0]; //Use the *first* subdirectory to group content together for GA4
 
 				//Query Strings
 				if ( !empty(nebula()->url_components('query')) ){
@@ -270,7 +273,7 @@
 <?php endif; ?>
 
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('google_ads_id') && !is_customize_preview() ): ?>
-	<!-- Nebula Google Ads -->
+	<!-- Nebula Google Ads <?php echo nebula()->get_option('google_ads_id'); ?> -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo nebula()->get_option('google_ads_id'); ?>"></script>
 	<script>
 		window.dataLayer = window.dataLayer || [];
@@ -281,7 +284,7 @@
 <?php endif; ?>
 
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('facebook_custom_audience_pixel_id') && !is_customize_preview() ): //Facebook Custom Audience ?>
-	<!-- Nebula FB -->
+	<!-- Nebula Meta/Facebook <?php echo esc_html(nebula()->get_option('facebook_custom_audience_pixel_id')); ?> -->
 	<link rel="prefetch" href="//connect.facebook.net/en_US/fbevents.js" />
 	<script>
 		!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -298,7 +301,7 @@
 <?php endif; ?>
 
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('hubspot_portal') ): //Hubspot CRM ?>
-	<!-- Nebula Hubspot -->
+	<!-- Nebula Hubspot <?php echo esc_html(nebula()->get_option('hubspot_portal')); ?> -->
 	<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/<?php echo esc_html(nebula()->get_option('hubspot_portal')); ?>.js"></script>
 	<script>
 		var _hsq = window._hsq = window._hsq || [];

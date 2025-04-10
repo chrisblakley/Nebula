@@ -27,7 +27,6 @@ nebula.allHitDimensions = function(){
 		dimensions.debug_mode = true;
 	}
 
-	// dimensions.query_string = window.location.search;
 	// dimensions.network_connection = ( navigator.onLine )? 'Online' : 'Offline';
 	// dimensions.visibility_state = document.visibilityState;
 	// dimensions.local_timestamp = nebula.localTimestamp();
@@ -35,21 +34,21 @@ nebula.allHitDimensions = function(){
 	// dimensions.hit_id = nebula.uniqueId(); //Give each hit a unique ID
 
 	//Bootstrap Breakpoint
-	// if ( window.matchMedia("(min-width: 2048px)").matches ){
-	// 	dimensions.mq_breakpoint = 'uw';
-	// } else if ( window.matchMedia("(min-width: 1400px)").matches ){
-	// 	dimensions.mq_breakpoint = 'xxl';
-	// } else if ( window.matchMedia("(min-width: 1200px)").matches ){
-	// 	dimensions.mq_breakpoint = 'xl';
-	// } else if ( window.matchMedia("(min-width: 992px)").matches ){
-	// 	dimensions.mq_breakpoint = 'lg';
-	// } else if ( window.matchMedia("(min-width: 768px)").matches ){
-	// 	dimensions.mq_breakpoint = 'md';
-	// } else if ( window.matchMedia("(min-width: 544px)").matches ){
-	// 	dimensions.mq_breakpoint = 'sm';
-	// } else {
-	// 	dimensions.mq_breakpoint = 'sm';
-	// }
+	if ( window.matchMedia("(min-width: 2048px)").matches ){
+		dimensions.mq_breakpoint = 'uw';
+	} else if ( window.matchMedia("(min-width: 1400px)").matches ){
+		dimensions.mq_breakpoint = 'xxl';
+	} else if ( window.matchMedia("(min-width: 1200px)").matches ){
+		dimensions.mq_breakpoint = 'xl';
+	} else if ( window.matchMedia("(min-width: 992px)").matches ){
+		dimensions.mq_breakpoint = 'lg';
+	} else if ( window.matchMedia("(min-width: 768px)").matches ){
+		dimensions.mq_breakpoint = 'md';
+	} else if ( window.matchMedia("(min-width: 544px)").matches ){
+		dimensions.mq_breakpoint = 'sm';
+	} else {
+		dimensions.mq_breakpoint = 'sm';
+	}
 
 	//Screen Resolution
 	// if ( window.matchMedia("(min-resolution: 192dpi)").matches ){
@@ -280,8 +279,8 @@ nebula.eventTracking = async function(){
 		// });
 
 		//Button Clicks
-		let nebulaButtonSelector = wp.hooks.applyFilters('nebulaButtonSelectors', 'button, .button, .btn, [role="button"], a.wp-block-button__link, .wp-element-button, .woocommerce-button, .hs-button'); //Allow child theme or plugins to add button selectors without needing to override/duplicate this function
-		nebula.dom.document.on('pointerdown', nebulaButtonSelector, function(e){ //Use "pointerdown" here so certain buttons with "onclick" functionality don't ignore this tracking (like Woocommerce buttons)
+		let nebulaButtonSelector = wp.hooks.applyFilters('nebulaButtonSelectors', 'button, .button, .btn, [role="button"], [class^="button"], [class^="btn"], a.wp-block-button__link, .wp-element-button, .woocommerce-button, .hs-button'); //Allow child theme or plugins to add button selectors without needing to override/duplicate this function
+		nebula.dom.document.on('pointerdown', nebulaButtonSelector, function(e){ //Use "pointerdown" here so certain buttons with "onclick" functionality don't ignore this tracking (like Woocommerce buttons). Do not use more than one listener here (such as "click pointerdown")!
 			let thisEvent = {
 				event: e,
 				event_name: 'button_click',
@@ -1260,108 +1259,110 @@ nebula.eventTracking = async function(){
 			let selection = window.getSelection().toString().trimAll();
 
 			if ( selection ){
-				let words = selection.split(' ');
+				let words = selection.split(' '); //Get an array of the words in the selection
 				let wordsLength = words.length;
 
-				//Track Email or Phone copies as contact intent.
-				if ( nebula.regex.email.test(selection) ){
-					let thisEvent = {
-						event_name: 'mailto',
-						event_category: 'Contact',
-						event_action: 'Email (Copy)',
-						event_label: nebula.anonymizeEmail(selection),
-						type: 'Email (Copy)',
-						email_address: nebula.anonymizeEmail(selection), //Mask the email with asterisks,
-						words: words,
-						word_count: wordsLength
-					};
-
-					gtag('set', 'user_properties', {
-						contact_method : 'Email'
-					});
-
-					nebula.dom.document.trigger('nebula_event', thisEvent);
-					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_mailto'}));
-					nebula.crm('event', 'Email Address Copied');
-					nebula.crm('identify', {mailto_contacted: thisEvent.emailAddress});
-				} else if ( nebula.regex.address.test(selection) ){
-					let thisEvent = {
-						event_name: 'address_copy', //Probably could be a better name
-						event_category: 'Contact',
-						event_action: 'Street Address (Copy)',
-						event_label: selection,
-						type: 'Street Address (Copy)',
-						address: selection,
-						words: words,
-						word_count: wordsLength
-					};
-
-					nebula.dom.document.trigger('nebula_event', thisEvent);
-					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_copied_address'}));
-					nebula.crm('event', 'Street Address Copied');
-				} else {
-					let alphanumPhone = selection.replaceAll(/\W/g, ''); //Keep only alphanumeric characters
-					let firstFourNumbers = parseInt(alphanumPhone.substring(0, 4)); //Store the first four numbers as an integer
-
-					//If the first three/four chars are numbers and the full string is either 10 or 11 characters (to capture numbers with words) -or- if it matches the phone RegEx pattern
-					if ( (!isNaN(firstFourNumbers) && firstFourNumbers.toString().length >= 3 && (alphanumPhone.length === 10 || alphanumPhone.length === 11)) || nebula.regex.phone.test(selection) ){
+				if ( wordsLength ){
+					//Track Email or Phone copies as contact intent.
+					if ( nebula.regex.email.test(selection) ){
 						let thisEvent = {
-							event_name: 'click_to_call',
+							event_name: 'mailto',
 							event_category: 'Contact',
-							event_action: 'Phone (Copy)',
-							event_label: selection,
-							type: 'Phone (Copy)',
-							phone_number: selection,
-							words: words,
+							event_action: 'Email (Copy)',
+							event_label: nebula.anonymizeEmail(selection),
+							type: 'Email (Copy)',
+							email_address: nebula.anonymizeEmail(selection), //Mask the email with asterisks,
+							words: selection,
 							word_count: wordsLength
 						};
 
 						gtag('set', 'user_properties', {
-							contact_method : 'Phone'
+							contact_method : 'Email'
 						});
 
 						nebula.dom.document.trigger('nebula_event', thisEvent);
 						gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-						window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_click_to_call'}));
-						nebula.crm('event', 'Phone Number Copied');
-						nebula.crm('identify', {phone_contacted: thisEvent.phoneNumber});
+						window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_mailto'}));
+						nebula.crm('event', 'Email Address Copied');
+						nebula.crm('identify', {mailto_contacted: thisEvent.emailAddress});
+					} else if ( nebula.regex.address.test(selection) ){
+						let thisEvent = {
+							event_name: 'address_copy', //Probably could be a better name
+							event_category: 'Contact',
+							event_action: 'Street Address (Copy)',
+							event_label: selection,
+							type: 'Street Address (Copy)',
+							address: selection,
+							words: selection,
+							word_count: wordsLength
+						};
+
+						nebula.dom.document.trigger('nebula_event', thisEvent);
+						gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+						window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_copied_address'}));
+						nebula.crm('event', 'Street Address Copied');
+					} else {
+						let alphanumPhone = selection.replaceAll(/\W/g, ''); //Keep only alphanumeric characters
+						let firstFourNumbers = parseInt(alphanumPhone.substring(0, 4)); //Store the first four numbers as an integer
+
+						//If the first three/four chars are numbers and the full string is either 10 or 11 characters (to capture numbers with words) -or- if it matches the phone RegEx pattern
+						if ( (!isNaN(firstFourNumbers) && firstFourNumbers.toString().length >= 3 && (alphanumPhone.length === 10 || alphanumPhone.length === 11)) || nebula.regex.phone.test(selection) ){
+							let thisEvent = {
+								event_name: 'click_to_call',
+								event_category: 'Contact',
+								event_action: 'Phone (Copy)',
+								event_label: selection,
+								type: 'Phone (Copy)',
+								phone_number: selection,
+								words: selection,
+								word_count: wordsLength
+							};
+
+							gtag('set', 'user_properties', {
+								contact_method : 'Phone'
+							});
+
+							nebula.dom.document.trigger('nebula_event', thisEvent);
+							gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+							window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_click_to_call'}));
+							nebula.crm('event', 'Phone Number Copied');
+							nebula.crm('identify', {phone_contacted: thisEvent.phoneNumber});
+						}
 					}
+
+					//Send the regular copied text event since it does not contain contact information
+					let thisEvent = {
+						event_name: 'copy_text',
+						event_category: 'Copied Text',
+						event_action: 'Copy',
+						selection: selection,
+						words: selection,
+						word_count: wordsLength
+					};
+
+					if ( selection.length > 150 ){
+						thisEvent.selection = thisEvent.selection.substring(0, 150) + '...'; //Max character length for GA event is 256
+					} else if ( thisEvent.word_count >= 10 ){
+						thisEvent.words = words.slice(0, 10).join(' ') + '... [' + thisEvent.word_count + ' Words]'; //Slice the array to only keep the first few words
+					} else if ( selection.trimAll() === '' ){
+						thisEvent.words = '[0 words]';
+					}
+					if ( thisEvent.words.length > 150 ){
+						thisEvent.words = thisEvent.words.substring(0, 150) + '...'; //Max character length for GA event is 256
+					}
+
+					nebula.dom.document.trigger('nebula_event', thisEvent);
+
+					if ( copyCount < 5 ){ //If fewer than 5 copies have happened in this page view
+						thisEvent.label = thisEvent.words;
+
+						gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+						window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_copied_text'}));
+						nebula.crm('event', 'Text Copied');
+					}
+
+					copyCount++;
 				}
-
-				//Send the regular copied text event since it does not contain contact information
-				let thisEvent = {
-					event_name: 'copy_text',
-					event_category: 'Copied Text',
-					event_action: 'Copy',
-					selection: selection,
-					words: words,
-					word_count: wordsLength
-				};
-
-				if ( selection.length > 150 ){
-					thisEvent.selection = thisEvent.selection.substring(0, 150) + '...'; //Max character length for GA event is 256
-				} else if ( thisEvent.word_count >= 10 ){
-					thisEvent.words = thisEvent.words.slice(0, 10).join(' ') + '... [' + thisEvent.word_count + ' Words]';
-				} else if ( selection.trimAll() === '' ){
-					thisEvent.words = '[0 words]';
-				}
-				if ( thisEvent.words.length > 150 ){
-					thisEvent.words = thisEvent.words.substring(0, 150) + '...'; //Max character length for GA event is 256
-				}
-
-				nebula.dom.document.trigger('nebula_event', thisEvent);
-
-				if ( copyCount < 5 ){ //If fewer than 5 copies have happened in this page view
-					thisEvent.label = thisEvent.words;
-
-					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-					window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_copied_text'}));
-					nebula.crm('event', 'Text Copied');
-				}
-
-				copyCount++;
 			}
 		});
 

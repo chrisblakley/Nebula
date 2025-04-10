@@ -48,12 +48,14 @@ nebula.isLandingPage = function(){
 		return true;
 	}
 
-	let lpTimestamp = localStorage.getItem('landing_page');
+	if ( typeof localStorage !== 'undefined' && localStorage !== null ){ //In some instances localStorage was null for some reason
+		let lpTimestamp = localStorage.getItem('landing_page');
 
-	if ( !lpTimestamp || Date.now() >= parseInt(lpTimestamp)+60*60*1000 ){ //If the storage item does not exist, or if the timestamp is over an hour ago
-		localStorage.setItem('landing_page', Date.now().toString()); //Set the (new) timestamp
-		jQuery('body').addClass('is-landing-page');
-		return true;
+		if ( !lpTimestamp || Date.now() >= parseInt(lpTimestamp)+60*60*1000 ){ //If the storage item does not exist, or if the timestamp is over an hour ago
+			localStorage.setItem('landing_page', Date.now().toString()); //Set the (new) timestamp
+			jQuery('body').addClass('is-landing-page');
+			return true;
+		}
 	}
 
 	return false; //This page view is not the first of the session
@@ -1037,14 +1039,16 @@ nebula.isInView = function($element, offset = 1){
 			$element = jQuery($element);
 		}
 
-		let elementTop = $element.offset().top;
-		let elementBottom = $element.offset().top+$element.innerHeight();
+		if ( $element.length ){
+			let elementTop = $element.offset().top;
+			let elementBottom = $element.offset().top+$element.innerHeight();
 
-		let windowTop = nebula.dom.document.scrollTop();
-		let windowBottom = nebula.dom.document.scrollTop()+nebula.dom.window.height()*offset;
+			let windowTop = nebula.dom.document.scrollTop();
+			let windowBottom = nebula.dom.document.scrollTop()+nebula.dom.window.height()*offset;
 
-		if ( !nebula.dom.body.hasClass('page-visibility-hidden') && ((elementTop >= windowTop && elementTop < windowBottom) || (elementBottom >= windowTop && elementBottom < windowBottom) || (elementTop < windowTop && elementBottom > windowBottom)) ){
-			return true;
+			if ( !nebula.dom.body.hasClass('page-visibility-hidden') && ((elementTop >= windowTop && elementTop < windowBottom) || (elementBottom >= windowTop && elementBottom < windowBottom) || (elementTop < windowTop && elementBottom > windowBottom)) ){
+				return true;
+			}
 		}
 	}
 

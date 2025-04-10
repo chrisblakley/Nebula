@@ -144,7 +144,7 @@ if ( !trait_exists('Analytics') ){
 				$file = str_replace(WP_CONTENT_DIR, '', strstr($error['file'], 'wp-content')); //Remove high-level directories to reduce clutter and prevent PII
 				$this->ga_send_exception('(PHP) ' . $message . ' on line ' . $error['line'] . ' in .../' . $file, true); //Send it to this site's analytics
 
-				if ( preg_match('/themes\/Nebula-?(main|master|parent|\d+\.\d+)?\//i', $file) && !strpos(strtolower($file), 'scssphp') ){ //If the error is in Nebula parent (and not a Sass compile error) log it for continued improvement of Nebula itself //Remove "master" after a period of time (Maybe January 2021) //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( preg_match('/themes\/Nebula-?(main|parent|\d+\.\d+)?\//i', $file) && !strpos(strtolower($file), 'scssphp') ){ //If the error is in Nebula parent (and not a Sass compile error) log it for continued improvement of Nebula itself //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 					$this->usage('exception', array(
 						'event_category' => 'PHP Fatal Error',
 						'message' => '(PHP) ' . $message . ' on line ' . $error['line'] . ' in ' . $file,

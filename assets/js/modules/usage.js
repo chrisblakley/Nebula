@@ -71,6 +71,7 @@ nebula.usage = async function(error = false){
 
 		let message = '';
 		let lineNumber = '';
+		let filePath = '';
 		let fileName = '';
 
 		if ( typeof error === 'string' ){ //If a string was sent from another function like nebula.help()
@@ -78,13 +79,17 @@ nebula.usage = async function(error = false){
 		} else if ( error?.filename.match(/themes\/Nebula-?(main|parent|\d+\.\d+)?\//i) ){
 			message = error.message;
 			lineNumber = error.lineno;
-			fileName = error.filename;
+			filePath = error.filename;
+			fileName = filePath.match(/[^/]+(?=\?|$)/)[0]; //This extracts only the "utilities.js" portion from the file path
 		}
 
 		if ( message ){
 			let description = '(JS) ' + message;
-			if ( lineNumber || fileName ){
-				description += ' at ' + lineNumber + ' of ' + fileName + ' (v' + nebula.version.number + ')';
+			let short_description = '(JS) ' + message;
+
+			if ( lineNumber || filePath ){
+				description += ' at ' + lineNumber + ' of ' + filePath + ' (v' + nebula.version.number + ')';
+				shortDescription += ' at ' + lineNumber + ' of ' + fileName;
 			}
 
 			//GA4
@@ -109,7 +114,9 @@ nebula.usage = async function(error = false){
 							theme_type: ( nebula.site.is_child )? 'Child' : 'Parent',
 							transport_method: 'JavaScript',
 							description: description,
+							short_description: shortDescription,
 							line_number: lineNumber,
+							file_path: filePath,
 							file_name: fileName,
 							fatal: true
 						}
