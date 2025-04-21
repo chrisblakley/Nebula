@@ -3,6 +3,22 @@ window.performance.mark('(Nebula) Inside /admin-modules/helpers.js');
 //Ensure all links in CF7 submission tables open in a new tab
 jQuery('.nebula-cf7-submissions a').attr('target', '_blank').attr('rel', 'noopener noreferrer');
 
+//Show relative times in title tooltips
+if ( jQuery('.relative-date-tooltip').length ){
+	let pageLoadTime = new Date();
+
+	jQuery(document).on('mouseover', '.relative-date-tooltip', function(){
+		let relativeDate = pageLoadTime; //Default to page load time
+
+		//Use a provided date if available
+		if ( jQuery(this).attr('data-date') ){
+			relativeDate = new Date(parseInt(jQuery(this).attr('data-date'))*1000);
+		}
+
+		jQuery(this).attr('title', nebula.timeAgo(relativeDate)); // Update the title to show relative time
+	});
+}
+
 //Notify for possible duplicate post slug
 nebula.uniqueSlugChecker = function(){
 	if ( jQuery('.edit-post-post-link__link-post-name').length ){

@@ -114,7 +114,7 @@
 <?php endif; ?>
 
 <?php if ( !has_site_icon() ): ?>
-	<link rel="mask-icon" href="<?php echo $image_meta_directory . '/safari-pinned-tab.svg' . $cache_query; ?>" color="<?php echo nebula()->get_color('primary'); ?>" />
+	<link rel="mask-icon" href="<?php echo $image_meta_directory . '/favicon.svg' . $cache_query; ?>" color="<?php echo nebula()->get_color('primary'); ?>" />
 	<link rel="shortcut icon" type="image/png" href="<?php echo $image_meta_directory . '/favicon.ico' . $cache_query; ?>" />
 <?php endif; ?>
 <link rel="shortcut icon" type="image/png" sizes="16x16" href="<?php echo get_site_icon_url(16, $image_meta_directory . '/favicon-16x16.png'); ?>" />

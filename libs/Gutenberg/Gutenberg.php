@@ -10,6 +10,9 @@ if ( !trait_exists('Gutenberg') ){
 
 				add_action('init', array($this, 'vimeo_gutenberg_block'));
 				add_action('init', array($this, 'youtube_gutenberg_block'));
+
+				add_action('init', array($this, 'code_gutenberg_block'));
+
 				//add_action('init', array($this, 'breadcrumbs_gutenberg_block'));
 
 /*
@@ -121,6 +124,51 @@ if ( !trait_exists('Gutenberg') ){
 				));
 			}
 		}
+
+
+
+
+
+
+
+
+		public function code_gutenberg_block(){
+			if ( function_exists('register_block_type') ){
+				wp_register_script(
+					'nebula-code-block',
+					get_template_directory_uri() . '/libs/Gutenberg/blocks/code/code.js',
+					array('wp-blocks', 'wp-element'),
+					$this->version('full')
+				);
+
+				register_block_type('nebula/code', array(
+					'editor_script' => 'nebula-code-block',
+					'render_callback' => function($attributes) {
+						$content = isset($attributes['content']) ? $attributes['content'] : '';
+						$language = isset($attributes['language']) ? $attributes['language'] : '';
+
+						// Wrap the output in a div with class 'nebula-code-con' and output the language class in the 'codetitle' div
+						$output = '<div class="nebula-code-con">';
+
+						// Add the 'codetitle' div with the language class
+						$output .= '<div class="nebula-code codetitle ' . esc_attr(strtolower($language)) . '">';
+						$output .= ( $language )? $language : '';
+						$output .= '</div>';
+
+						// Add the 'pre' element with the 'nebula-code' class and language-specific class
+						$output .= '<pre class="nebula-code ' . esc_attr(strtolower($language)) . '" data-language="' . esc_attr($language) . '">';
+						$output .= esc_html($content);
+						$output .= '</pre>';
+
+						$output .= '</div>'; // Close the 'nebula-code-con' div
+
+						return $output;
+					}
+				));
+			}
+		}
+
+
 
 
 

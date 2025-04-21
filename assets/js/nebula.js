@@ -4,7 +4,7 @@ window.performance.mark('(Nebula) Inside nebula.js');
 
 jQuery.noConflict();
 
-//Note: "Essential" JS modules are imported via Assets.php to have version parameters properly concatenated (which the JS import command does not support) for cache busting.
+//Note: "Essential" JS modules are imported via Assets.php
 
 /*==========================
  DOM Ready

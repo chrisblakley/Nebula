@@ -3,13 +3,7 @@
 window.performance.mark('(Nebula) Inside admin.js');
 jQuery.noConflict();
 
-/*==========================
- Import Modules
- ===========================*/
-
-import './modules/optimization.js';
-import './modules/utilities.js';
-import './modules/extensions.js';
+//Note: "Essential" JS modules are imported via Assets.php
 
 /*==========================
  DOM Ready
@@ -21,7 +15,7 @@ jQuery(async function(){
 	nebula.cacheSelectors();
 
 	if ( nebula.screen.base === 'profile' ){ //Only needed on Users profile page
-		import('./admin-modules/users.js').then(function(module){
+		import('./admin-modules/users.js?ver=' + nebula.version.number).then(function(module){
 			nebula.userHeadshotFields();
 		});
 	}
@@ -35,9 +29,9 @@ jQuery(async function(){
 
 	//If Nebula Options Page
 	if ( nebula.screen.base === 'appearance_page_nebula_options' ){
-		await import('./modules/search.js'); //Only really need the keywordFilter from here...
-		await import('./modules/forms.js'); //Only really need the liveValidator from here...
-		await import('./admin-modules/options.js');
+		await import('./modules/search.js?ver=' + nebula.version.number); //Only really need the keywordFilter from here...
+		await import('./modules/forms.js?ver=' + nebula.version.number); //Only really need the liveValidator from here...
+		await import('./admin-modules/options.js?ver=' + nebula.version.number);
 		nebula.optionsInit();
 	}
 
@@ -54,13 +48,13 @@ jQuery(async function(){
  Window Load
  ===========================*/
 
-jQuery(window).on('load', function(){
+jQuery(window).on('load', async function(){
 	window.performance.mark('(Nebula) Window Load [Start]');
 
 	nebula.cacheSelectors();
 
 	if ( nebula.screen.base === 'post' || jQuery('#sass-cooldown, #post textarea').length ){
-		import('./admin-modules/helpers.js').then(function(module){
+		import('./admin-modules/helpers.js?ver=' + nebula.version.number).then(function(module){
 			jQuery('#post textarea').allowTabChar();
 			nebula.sassCooldown(); //Needed on every page
 			nebula.uniqueSlugChecker(); //Only needed on edit post pages
@@ -68,9 +62,11 @@ jQuery(window).on('load', function(){
 	}
 
 	if ( nebula.screen.base === 'dashboard' ){ //Only needed on Dashboard page
-		import('./admin-modules/dashboard.js').then(function(module){
-			nebula.developerMetaboxes();
-		});
+		await import('./admin-modules/helpers.js?ver=' + nebula.version.number);
+		await import('./modules/search.js?ver=' + nebula.version.number); //For the File Size Monitor Metabox
+		await import('./admin-modules/dashboard.js?ver=' + nebula.version.number);
+
+		nebula.developerMetaboxes();
 	}
 
 	if ( nebula.screen.base === 'nav-menus' ){
@@ -88,7 +84,7 @@ jQuery(window).on('load', function(){
 
 	//Remove this once QM allows sortable Timings table
 	if ( jQuery('#qm-timing').length ){
-		import('./modules/helpers.js').then(function(module){ //Front-end helpers JS
+		import('./modules/helpers.js?ver=' + nebula.version.number).then(function(module){ //Front-end helpers JS
 			nebula.qmSortableHelper(); //Temporary QM helper.
 		});
 	}

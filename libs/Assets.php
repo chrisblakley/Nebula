@@ -30,7 +30,9 @@ if ( !trait_exists('Assets') ){
 				add_action('wp_head', array($this, 'output_nebula_data'), 5);
 				add_action('admin_enqueue_scripts', array($this, 'output_nebula_data'), 9000);
 
+				//Import essential modules on the front-end and WP admin
 				add_action('wp_footer', array($this, 'import_essential_js'));
+				add_action('admin_footer', array($this, 'import_essential_js'));
 			}
 		}
 
@@ -343,7 +345,7 @@ if ( !trait_exists('Assets') ){
 			$this->timer('Output Nebula Data', 'end');
 		}
 
-		//Import essential Nebula JS modules (with proper version concatenation) used on all pages
+		//Import essential Nebula JS modules (with proper version concatenation) used on all pages as well as the WP Admin
 		public function import_essential_js(){
 			?>
 				<script type="module">

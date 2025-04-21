@@ -29,9 +29,7 @@ nebula.keywordFilter = function(container, parent, values = 'string', filteredCl
 	if ( values.length ){
 		if ( values.length === 1 && values[0].length > 2 && values[0].charAt(0) === '/' && values[0].slice(-1) === '/' ){
 			let regex = new RegExp(values[0].substring(1).slice(0, -1), 'i'); //Convert the string to RegEx after removing the first and last /
-			jQuery(container).find(parent).each(async function(){ //Loop through each element to check against the regex pattern
-				await nebula.yield();
-
+			jQuery(container).find(parent).each(function(){ //Loop through each element to check against the regex pattern
 				//Get the text of this element
 				let elementText = jQuery(this).text().trim().replaceAll(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
 
@@ -45,9 +43,7 @@ nebula.keywordFilter = function(container, parent, values = 'string', filteredCl
 				}
 			});
 		} else if ( !operator || operator === 'and' || operator === 'all' ){ //Match only elements that contain all keywords (Default operator is And if not provided)
-			jQuery.each(values, async function(index, value){ //Loop through the values to search for
-				await nebula.yield();
-
+			jQuery.each(values, function(index, value){ //Loop through the values to search for
 				if ( value && value.trim().length ){ //If the value exists and is not empty
 					//Check if the value is a valid RegEx string
 					try {
@@ -80,9 +76,7 @@ nebula.keywordFilter = function(container, parent, values = 'string', filteredCl
 			pattern = pattern.slice(0, -1); //Remove the last | character
 
 			let regex = new RegExp(pattern, 'i');
-			jQuery(container).find(parent).each(async function(){ //Loop through each element to check against the regex pattern
-				await nebula.yield();
-
+			jQuery(container).find(parent).each(function(){ //Loop through each element to check against the regex pattern
 				let elementText = jQuery(this).text().trim().replaceAll(/\s\s+/g, ' '); //Combine all interior text of the element into a single line and remove extra whitespace
 
 				if ( jQuery(this).find('input').length ){

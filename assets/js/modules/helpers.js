@@ -210,9 +210,14 @@ nebula.svgImgs = async function(){
 					return response.text();
 				}
 			}).then(function(data){
-				let $theSVG = jQuery(data); //Get the SVG tag, ignore the rest
+				let $theSVG = jQuery(data).filter('svg'); //Only select the <svg> tag
 				$theSVG = $theSVG.attr('id', $oThis.attr('id')); //Add replaced image's ID to the new SVG
-				$theSVG = $theSVG.attr('class', $oThis.attr('class') + ' replaced-svg'); //Add replaced image's classes to the new SVG
+
+				let svgOriginalClass = $theSVG.attr('class') || '';
+				let imgClass = $oThis.attr('class') || '';
+				let combinedClass = (svgOriginalClass + ' ' + imgClass + ' replaced-svg').trim();
+				$theSVG = $theSVG.attr('class', combinedClass);
+
 				$theSVG = $theSVG.attr('role', 'img');
 				$theSVG = $theSVG.attr('alt', nebula.sanitize($oThis.attr('alt'))); //An SVG with a role of img must include an alt attribute
 				$theSVG = $theSVG.attr('aria-label', nebula.sanitize($oThis.attr('alt'))); //Add an aria-label attribute as well
@@ -484,7 +489,7 @@ nebula.help = function(message, path, usage=false){
 
 		let queryChar = ( path.includes('?') )? '&' : '?'; //If the path already has a query string, use an ampersand for ours
 
-		path = path + queryChar + 'utm_source=console';
+		path = path + queryChar + 'utm_campaign=documentation&utm_medium=help_js&utm_source=' + nebula.site.home_url + '&utm_content=help_js';
 	}
 
 	let url = documentationHostname + path;

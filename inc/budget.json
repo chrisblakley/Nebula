@@ -9,13 +9,13 @@
 			"budget": 160
 		}, {
 			"resourceType": "font",
-			"budget": 30
+			"budget": 200
 		}, {
 			"resourceType": "image",
-			"budget": 300
+			"budget": 150
 		}, {
 			"resourceType": "script",
-			"budget": 200
+			"budget": 160
 		}
 	]
 }]

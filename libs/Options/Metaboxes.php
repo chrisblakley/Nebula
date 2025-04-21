@@ -188,7 +188,7 @@ if ( !trait_exists('Metaboxes') ){
 					</div>
 
 					<p class="nebula-help-text short-help form-text text-muted">The address of the location (or headquarters if multiple locations).</p>
-					<p class="nebula-help-text more-help form-text text-muted">Use <a href="https://nebula.gearside.com/functions/full_address/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=address+help" target="_blank" rel="noopener noreferrer"><code>nebula()->full_address()</code></a> to get the formatted address in one function. Get the individual components using <code>nebula()->get_option('street_address')</code> with the respective option names: <code>street_address</code>, <code>locality</code> (city), <code>region</code> (state), <code>postal_code</code> (zip code), and <code>country_name</code></p>
+					<p class="nebula-help-text more-help form-text text-muted">Use <a href="https://nebula.gearside.com/functions/full_address/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(site_url()); ?>&utm_content=full_address_help" target="_blank" rel="noopener noreferrer"><code>nebula()->full_address()</code></a> to get the formatted address in one function. Get the individual components using <code>nebula()->get_option('street_address')</code> with the respective option names: <code>street_address</code>, <code>locality</code> (city), <code>region</code> (state), <code>postal_code</code> (zip code), and <code>country_name</code></p>
 					<p class="option-keywords">location recommended seo</p>
 				</div>
 
@@ -476,7 +476,7 @@ if ( !trait_exists('Metaboxes') ){
 					<input id="cf7_spam_submission_capture" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['cf7_spam_submission_capture'])); ?>><label for="cf7_spam_submission_capture">CF7 Spam Submission Capture</label>
 
 					<p class="nebula-help-text short-help form-text text-muted">Enabling this will store detected spam submissions in the <a href="<?php echo admin_url('edit.php?post_type=nebula_cf7_submits'); ?>">CF7 Submissions</a> table for a period of time to allow for review. (Default: <?php echo $this->user_friendly_default('cf7_spam_submission_capture'); ?>)</p>
-					<p class="nebula-help-text more-help form-text text-muted">This is useful for diagnosing spam form submissions to determine cause and detection method as well as identifying attributes of the spam visitor. No more than 50 submissions will be stored in total unless they are manually preserved. Note: This captures all spam submissions– not just Nebula detections, so this works independently from the "CF7 Spam Detection Agent" option.</p>
+					<p class="nebula-help-text more-help form-text text-muted">This is useful for diagnosing spam form submissions to determine cause and detection method as well as identifying attributes of the spam visitor. No more than 50 submissions will be stored in total unless they are manually preserved. Note: This captures all spam submissions- not just Nebula detections, so this works independently from the "CF7 Spam Detection Agent" option.</p>
 					<p class="option-keywords">security spam wpcf7 contact form 7</p>
 				</div>
 
@@ -728,7 +728,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label for="hostnames">Valid Hostnames</label>
 					<input type="text" name="nebula_options[hostnames]" id="hostnames" class="form-control nebula-validate-text" value="<?php echo $nebula_options['hostnames']; ?>" placeholder="<?php echo $this->url_components('domain'); ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">These help generate regex patterns for Google Analytics filters.</p>
-					<p class="nebula-help-text more-help form-text text-muted">It is also used for the is_site_live() function! Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)! Include this RegEx pattern for a filter/segment <a href="https://nebula.gearside.com/utilities/domain-regex-generator/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=valid+hostnames+help" target="_blank" rel="noopener noreferrer">(Learn how to use this)</a>: <input type="text" value="<?php echo $this->valid_hostname_regex(); ?>" readonly style="width: 50%;" /></p>
+					<p class="nebula-help-text more-help form-text text-muted">It is also used for the is_site_live() function! Enter a comma-separated list of all valid hostnames, and domains (including vanity domains) that are associated with this website. Enter only domain and TLD (no subdomains). The wildcard subdomain regex is added automatically. Add only domains you <strong>explicitly use your Tracking ID on</strong> (Do not include google.com, google.fr, mozilla.org, etc.)! Always test the following RegEx on a Segment before creating a Filter (and always have an unfiltered View)! Include this RegEx pattern for a filter/segment <a href="https://nebula.gearside.com/utilities/domain-regex-generator/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(site_url()); ?>&utm_content=valid_hostnames_help" target="_blank" rel="noopener noreferrer">(Learn how to use this)</a>: <input type="text" value="<?php echo $this->valid_hostname_regex(); ?>" readonly style="width: 50%;" /></p>
 					<p class="option-keywords"></p>
 				</div>
 
@@ -906,7 +906,7 @@ if ( !trait_exists('Metaboxes') ){
 						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-twitter"></i> Bearer Token</span></div>
 						<input type="text" name="nebula_options[twitter_bearer_token]" id="twitter_bearer_token" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_bearer_token']; ?>" placeholder="000000000000000000000000000000" />
 					</div>
-					<p class="nebula-help-text short-help form-text text-muted">The bearer token is for creating custom Twitter feeds: <a href="https://nebula.gearside.com/utilities/twitter-bearer-token-generator/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=twitter+help" target="_blank" rel="noopener noreferrer">Generate a bearer token here</a></p>
+					<p class="nebula-help-text short-help form-text text-muted">The bearer token is for creating custom Twitter feeds: <a href="https://nebula.gearside.com/utilities/twitter-bearer-token-generator/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(site_url()); ?>&utm_content=twitter_bearer_token_help" target="_blank" rel="noopener noreferrer">Generate a bearer token here</a></p>
 					<p class="option-keywords">social remote resource</p>
 				</div>
 

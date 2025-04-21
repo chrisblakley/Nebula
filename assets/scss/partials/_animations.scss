@@ -156,7 +156,7 @@
 	&.load-animate {animation: nebula-fade-in 1s easing(easeInOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
 @include keyframes(nebula-fade-in){
-	0% {display: block; opacity: 0;} //display: block here in case element is hidden with a display: none on render.
+	0% {opacity: 0;} //display: block here in case element is hidden with a display: none on render.
 	100% {opacity: 1;}
 }
 
@@ -167,7 +167,7 @@
 	&.load-animate {animation: nebula-fade-in-up 1.5s easing(easeOutBack) forwards; opacity: 1; pointer-events: all;}
 }
 @include keyframes(nebula-fade-in-up){
-	0% {display: block; opacity: 0; transform: translate3d(0, 40px, 0);} //display: block here in case element is hidden with a display: none on render.
+	0% {opacity: 0; transform: translate3d(0, 40px, 0);} //display: block here in case element is hidden with a display: none on render.
 	100% {opacity: 1; transform: translate3d(0, 0, 0);}
 }
 
@@ -178,7 +178,7 @@
 	&.load-animate {animation: nebula-fade-in-down 1s easing(easeOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
 @include keyframes(nebula-fade-in-down){
-	0% {display: block; opacity: 0; transform: translate3d(0, -40px, 0);} //display: block here in case element is hidden with a display: none on render.
+	0% {opacity: 0; transform: translate3d(0, -40px, 0);} //display: block here in case element is hidden with a display: none on render.
 	100% {opacity: 1; transform: translate3d(0, 0, 0);}
 }
 
@@ -189,7 +189,7 @@
 	&.load-animate {animation: nebula-fade-in-left 1s easing(easeOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
 @include keyframes(nebula-fade-in-left){
-	0% {display: block; opacity: 0; transform: translate3d(-40px, 0, 0);} //display: block here in case element is hidden with a display: none on render.
+	0% {opacity: 0; transform: translate3d(-40px, 0, 0);} //display: block here in case element is hidden with a display: none on render.
 	100% {opacity: 1; transform: translate3d(0, 0, 0);}
 }
 
@@ -200,7 +200,7 @@
 	&.load-animate {animation: nebula-fade-in-right 1s easing(easeOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
 @include keyframes(nebula-fade-in-right){
-	0% {display: block; opacity: 0; transform: translate3d(40px, 0, 0);} //display: block here in case element is hidden with a display: none on render.
+	0% {opacity: 0; transform: translate3d(40px, 0, 0);} //display: block here in case element is hidden with a display: none on render.
 	100% {opacity: 1; transform: translate3d(0, 0, 0);}
 }
 
@@ -211,7 +211,7 @@
 	&.load-animate {animation: nebula-reveal-in 1.5s easing(easeOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
 @include keyframes(nebula-reveal-in){
-	0% {display: block; mask: linear-gradient(90deg, #000 25%, #000000e6 50%, #00000000) 150% 0 / 400% no-repeat; opacity: 0.2;} //display: block here in case element is hidden with a display: none on render.
+	0% {mask: linear-gradient(90deg, #000 25%, #000000e6 50%, #00000000) 150% 0 / 400% no-repeat; opacity: 0.2;} //display: block here in case element is hidden with a display: none on render.
 	100% {mask: linear-gradient(90deg, #000 25%, #000000e6 50%, #00000000) 0 / 400% no-repeat; opacity: 1;}
 }
 
@@ -227,9 +227,9 @@
 [nebula-hover*="nebula-zoom-out"]:hover,
 .nebula-zoom-out.animate {animation: nebula-zoom-out 0.5s easing(easeInOutQuad) forwards; will-change: opacity, transform;}
 @include keyframes(nebula-zoom-out){
-    0% {transform: scale3d(1, 1, 1); opacity: 1;}
-    50% {opacity: 1;}
-    100% {transform: scale3d(0, 0, 0); opacity: 0; pointer-events: none;}
+	0% {transform: scale3d(1, 1, 1); opacity: 1;}
+	50% {opacity: 1;}
+	100% {transform: scale3d(0, 0, 0); opacity: 0; pointer-events: none;}
 }
 
 //Grow and fade in
@@ -239,7 +239,7 @@
 	&.load-animate {animation: nebula-zoom-in 1s easing(easeInOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
 @include keyframes(nebula-zoom-in){
-  0% {display: block; opacity: 0; transform: scale3d(0, 0, 0);}
+  0% {opacity: 0; transform: scale3d(0, 0, 0);}
   50% {opacity: 1; transform: scale3d(1.03, 1.03, 1.03);}
   70% {transform: scale3d(0.95, 0.95, 0.95);}
   100% {transform: scale3d(1, 1, 1);}
@@ -252,16 +252,16 @@
 	&.load-animate {animation: nebula-twist-in 0.5s easing(easeInOutQuad) forwards; pointer-events: all;}
 }
 @include keyframes(nebula-twist-in){
-    0% {display: block; transform: scale3d(0, 1, 1);}
-    100% {transform: scale3d(1, 1, 1);}
+	0% {transform: scale3d(0, 1, 1);}
+	100% {transform: scale3d(1, 1, 1);}
 }
 
 //Decrease width from the center (hide contents)
 [nebula-hover*="nebula-twist-out"]:hover,
 .nebula-twist-out.animate {animation: nebula-twist-out 0.5s easing(easeInOutQuad) forwards; width: 100%; transform: scaleX(1); pointer-events: none; overflow: hidden; will-change: transform;}
 @include keyframes(nebula-twist-out){
-    0% {display: block; transform: scaleX(1);}
-    100% {transform: scaleX(0);}
+	0% {transform: scaleX(1);}
+	100% {transform: scaleX(0);}
 }
 
 //Increase width from the center (stretch contents)
@@ -271,18 +271,18 @@
 	&.load-animate {animation: nebula-stretch-in 0.5s easing(easeInOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
 @include keyframes(nebula-stretch-in){
-    0% {display: block; transform: scale3d(0, 1, 1); opacity: 0;}
-    25% {opacity: 1;}
-    100% {transform: scale3d(1, 1, 1);}
+	0% {transform: scale3d(0, 1, 1); opacity: 0;}
+	25% {opacity: 1;}
+	100% {transform: scale3d(1, 1, 1);}
 }
 
 //Decrease width from the center (stretch contents)
 [nebula-hover*="nebula-stretch-out"]:hover,
 .nebula-stretch-out.animate {animation: nebula-stretch-out 0.5s easing(easeInOutQuad) forwards; will-change: opacity, transform;}
 @include keyframes(nebula-stretch-out){
-    0% {transform: scale3d(1, 1, 1);}
-    66% {opacity: 1;}
-    100% {transform: scale3d(0, 1, 1); opacity: 0; pointer-events: none;}
+	0% {transform: scale3d(1, 1, 1);}
+	66% {opacity: 1;}
+	100% {transform: scale3d(0, 1, 1); opacity: 0; pointer-events: none;}
 }
 
 //Rotate in along the x-axis (vertical flip)
@@ -336,8 +336,8 @@
 [nebula-hover*="nebula-tap"]:hover,
 .nebula-tap.animate {animation: nebula-tap 0.4s easing(easeOutBack); will-change: transform;}
 @include keyframes(nebula-tap){
-    0% {transform: scale3d(1, 1, 1);}
-    50% {transform: scale3d(0.9, 0.9, 0.9);}
+	0% {transform: scale3d(1, 1, 1);}
+	50% {transform: scale3d(0.9, 0.9, 0.9);}
 }
 
 //Depress and return (Mid)
@@ -345,8 +345,8 @@
 [nebula-hover*="nebula-push"]:hover,
 .nebula-push.animate {animation: nebula-push 0.4s easing(easeOutBack); will-change: transform;}
 @include keyframes(nebula-push){
-    0% {transform: scale3d(1, 1, 1);}
-    50% {transform: scale3d(0.8, 0.8, 0.8);}
+	0% {transform: scale3d(1, 1, 1);}
+	50% {transform: scale3d(0.8, 0.8, 0.8);}
 }
 
 //Depress and return (Large)
@@ -354,8 +354,8 @@
 [nebula-hover*="nebula-shove"]:hover,
 .nebula-shove.animate {animation: nebula-shove 0.4s easing(easeOutBack); will-change: transform;}
 @include keyframes(nebula-shove){
-    0% {transform: scale3d(1, 1, 1);}
-    50% {transform: scale3d(0.6, 0.6, 0.6);}
+	0% {transform: scale3d(1, 1, 1);}
+	50% {transform: scale3d(0.6, 0.6, 0.6);}
 }
 
 //Enlarge and return (Small)
@@ -363,8 +363,8 @@
 [nebula-hover*="nebula-tug"]:hover,
 .nebula-tug.animate {animation: nebula-tug 0.4s easing(easeOutBack); will-change: transform;}
 @include keyframes(nebula-tug){
-    0% {transform: scale3d(1, 1, 1);}
-    50% {transform: scale3d(1.1, 1.1, 1.1);}
+	0% {transform: scale3d(1, 1, 1);}
+	50% {transform: scale3d(1.1, 1.1, 1.1);}
 }
 
 //Enlarge and return (Mid)
@@ -372,8 +372,8 @@
 [nebula-hover*="nebula-pull"]:hover,
 .nebula-pull.animate {animation: nebula-pull 0.4s easing(easeOutBack); will-change: transform;}
 @include keyframes(nebula-pull){
-    0% {transform: scale3d(1, 1, 1);}
-    50% {transform: scale3d(1.2, 1.2, 1.2);}
+	0% {transform: scale3d(1, 1, 1);}
+	50% {transform: scale3d(1.2, 1.2, 1.2);}
 }
 
 //Enlarge and return (Large)
@@ -381,8 +381,8 @@
 [nebula-hover*="nebula-thrust"]:hover,
 .nebula-thrust.animate {animation: nebula-thrust 0.4s easing(easeOutBack); will-change: transform;}
 @include keyframes(nebula-thrust){
-    0% {transform: scale3d(1, 1, 1);}
-    50% {transform: scale3d(1.4, 1.4, 1.4);}
+	0% {transform: scale3d(1, 1, 1);}
+	50% {transform: scale3d(1.4, 1.4, 1.4);}
 }
 
 //Shake left and right

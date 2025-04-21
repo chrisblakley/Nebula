@@ -82,7 +82,7 @@ th#id {width: 50px;}
 	#testloadcon {pointer-events: none; opacity: 0; visibility: hidden; display: none;}
 	form.searchfiles {display: flex; align-items: center; margin-bottom: 10px;
 		#searchprogress {margin-right: 4px;}
-		input.findterm {padding: 2px 5px; font-size: 12px; border-radius: 4px; flex-grow: 2;}
+		input.findterm {font-size: 12px; flex-grow: 2;}
 		.searchdirectory {font-size: 12px; height: 23px; vertical-align: top; max-width: 130px;}
 		input.searchterm {font-size: 12px; line-height: 11px; height: 22px; margin: 1px; outline: none !important;}
 	}
@@ -136,6 +136,91 @@ ul#nebula-performance-metrics li {
 .precon {display: none; resize: none;
 	pre.actualline {display: table; font-family: monospace; font-size: 10px; margin: 0; color: #666; background: #fff; padding: 2px 5px; border-radius: 5px; resize: none; transition: all 0.25s;}
 }
+
+//Nebula log file table list
+#nebula_file_size_monitor {
+	&:has(.no-files-to-output) {display: none;}
+
+	[title] {cursor: help;}
+
+	.high-file-count {
+		strong {color: $danger-color;}
+	}
+
+	.filter-row {display: flex; align-items: center; gap: 5px; margin-bottom: 8px;
+		select {font-size: 13px;}
+		input {font-size: 12px; flex-grow: 2;}
+
+		.clear-keywords {color: $danger-color;}
+
+		//.highlight {border: 1px solid $danger-color; color: $danger-color;}
+	}
+
+	.transparent {opacity: 0;}
+	.reset-filters {color: $danger-color;}
+
+	.table-wrapper {max-height: 400px; overflow-y: auto; border: 1px solid #ddd;
+		table {width: 100%; border-collapse: collapse; table-layout: auto;
+			thead {position: sticky; top: 0; background: #fff; z-index: 1;
+				th {text-decoration: underline; white-space: nowrap;
+					i {text-decoration: none; margin-left: 4px;}
+				}
+			}
+
+			tbody {
+				tr {transition: background 0.25s ease;
+					&.alt-row {background: #f7f7f7;}
+					&:hover {background: #fffac2;}
+				}
+			}
+
+			th,
+			td {padding: 4px 8px; vertical-align: top; text-align: left;
+				&:last-child {text-align: right;}
+			}
+
+			.file-name {word-break: break-word; overflow-wrap: break-word; white-space: normal;
+				small {opacity: 0.6; font-weight: normal;}
+				.file-link {margin-left: 1px; font-size: 0.65rem; filter: grayscale(1); opacity: 0.6; transition: all 0.25s ease;
+					&:hover {filter: grayscale(0); opacity: 1;}
+				}
+
+				&:has(.security-concern) .file-link {display: none !important;}
+			}
+
+			.file-icons-group {display: inline-flex; gap: 4px;
+				.note-icon {opacity: 0.5;
+					&.fatal-error {color: $danger_color;}
+					&.contains-debug-output {color: $danger_color;}
+					&.security-concern {color: $danger_color; opacity: 0.8;}
+				}
+			}
+
+			.file-size {}
+
+			.no-entries,
+			.empty-file {opacity: 0.4;}
+
+			.tiny-file:not(:has(.security-concern)) {opacity: 0.6;}
+
+			.overbudget-file {font-weight: bold;}
+			.double-budget-file {color: $danger_color;}
+		}
+
+		.no-files-message {padding: 0 10px 5px 10px;}
+	}
+
+	.totals-row {margin-top: 2px; font-style: italic; text-align: right;}
+
+	.budget-description {margin-bottom: 5px;}
+
+	#nebula-optimization-tips {
+		ul {margin: 0;
+			li {list-style-type: disc; margin-left: 20px;}
+		}
+	}
+}
+
 
 //Design Reference metabox
 .design-reference-col {display: flex; margin-bottom: 15px; margin-right: 20px;

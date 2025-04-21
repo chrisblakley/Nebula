@@ -2,16 +2,32 @@
 @import "functions";
 //@import "mixins";
 
+$code_font_size: 14px;
+$code_line_height: 28px;
+$code_line_height_double: $code_line_height * 2;
+
 .nebula-code-con {margin: 0 0 20px;}
 	pre.nebula-code,
- 	.nebula-code-con pre {position: relative; display: block; height: auto; font: normal 12px/22px "Monaco", Monospace !important; color: #222; margin: 0; padding: 0 1em; overflow-x: auto; white-space: pre-wrap; word-wrap: normal; border: 1px solid #444; border-left: 5px solid #444; background: repeating-linear-gradient(to bottom, #f2f2f2 0, #f2f2f2 22px, #e8e8e8 22px, #e8e8e8 44px);}
-	.nebula-code.codetitle {display: block; text-align: right; color: #f1672c; font-weight: normal; font-size: rem(12px); line-height: rem(12px); margin: 0 0 2px; padding: 0; cursor: default;}
+	.nebula-code-con pre {position: relative; display: block; height: auto; font-style: normal; font-weight: normal; font-size: rem($code_font_size); line-height: rem($code_line_height); font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", "Monaco", monospace !important;
+color: #222; margin: 0; padding: 0 1em; overflow-x: auto; white-space: pre-wrap; word-wrap: normal; border: 1px solid #444; border-left: 5px solid #444; background: repeating-linear-gradient(to bottom, #f2f2f2 0, #f2f2f2 rem($code_line_height), #e8e8e8 rem($code_line_height), #e8e8e8 rem($code_line_height_double));}
+	.nebula-code.codetitle {display: block; text-align: right; color: #f1672c; font-weight: normal; font-size: rem($code_font_size); line-height: rem($code_font_size); margin: 0 0 2px; padding: 0; cursor: default;}
 
-.nebula-selectcopy-code {font-size: rem(12px); float: right; margin-top: 0; font-weight: normal; opacity: 0.7;
+.nebula-selectcopy-code {font-size: rem($code_font_size); float: right; margin-top: 0; font-weight: normal; opacity: 0.7;
 	&:hover {opacity: 1;}
 	&.success {color: $success_color;}
 	&.error {color: $danger_color;}
 }
+
+
+
+
+.wp-block-code {position: relative; display: block; height: auto; font-style: normal; font-weight: normal; font-size: rem($code_font_size); line-height: rem($code_line_height); font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", "Monaco", monospace !important;
+ color: #222; margin: 0; padding: 0 1em; overflow-x: auto; white-space: pre-wrap; word-wrap: normal; border: 1px solid #444; border-left: 5px solid #444; background: repeating-linear-gradient(to bottom, #f2f2f2 0, #f2f2f2 rem($code_line_height), #e8e8e8 rem($code_line_height), #e8e8e8 rem($code_line_height_double));
+	code {background: none; border: none; padding: 0;}
+}
+
+
+
 
 //@include nebula_code(javascript jquery js, #2b5797);
 @mixin nebula_code($languages, $color: $text_color, $unicode: false, $style: "Font Awesome 6 Solid"){
@@ -26,6 +42,7 @@
 		.nebula-code-con.#{$language} a,
 		.nebula-code.codetitle.#{$language} {color: $color;}
 
+		.wp-block-code.#{$language},
 		code.nebula-code.#{$language},
 		pre.nebula-code.#{$language},
 		.nebula-code-con.#{$language} pre,

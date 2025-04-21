@@ -1,4 +1,4 @@
-![Nebula readme icon](https://raw.githubusercontent.com/chrisblakley/Nebula/main/.github/assets/nebula-banner.jpg "Nebula readme banner")
+![Nebula readme icon](https://raw.githubusercontent.com/chrisblakley/Nebula/main/.github/assets/github-banner.png "Nebula readme banner")
 
 # Nebula is a WordPress theme framework that focuses on enhancing development
 
@@ -36,8 +36,8 @@ To take full advantage of Nebula's features, the following are recommended:
 2. Activate the Nebula theme and run the automated initialization.
 3. This will automatically install and activate the Nebula Child theme.
 4. It is recommended to rename the child theme (in `/assets/scss/style.scss` and the directory name itself).
-5. Create a `/assets/img/meta/` directory in the child theme (or copy it from the Nebula parent).
-6. Install and activate recommended plugins including the optional [Nebula Companion plugin](https://github.com/chrisblakley/Nebula-Companion).
+5. Create a `/assets/img/meta/` directory in the child theme (or copy it from the Nebula parent) and customize icons.
+6. Install and activate recommended plugins.
 7. Customize Nebula Options (including enabling Sass if desired)
 
 ## Documentation

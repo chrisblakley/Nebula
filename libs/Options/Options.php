@@ -130,7 +130,7 @@ if ( !trait_exists('Options') ){
 		}
 
 		//Get the full Twitter URL for a user
-		public function twitter_url($username=false){
+		public function twitter_url($username=null){
 			$username ??= $this->get_option('twitter_username');
 
 			if ( !empty($username) ){

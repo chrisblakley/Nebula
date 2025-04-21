@@ -431,13 +431,13 @@ nebula.localTimestamp = function(){ //Does not technically need to be exported a
 //Generate a unique ID that always begins with a letter to be safe in CSS selectors
 nebula.uniqueId = function(prefix='nuid', random=false){
 	const seconds = Date.now() * 1000 + Math.random() * 1000; //Convert the current time into seconds
-    const id = seconds.toString(16).replace(/\./g, '').padEnd(14, '0'); //Convert the timestamp into a base 16 string, remove decimal symbol, and set a minimum length (and always begin with a letter)
+	const id = seconds.toString(16).replace(/\./g, '').padEnd(14, '0'); //Convert the timestamp into a base 16 string, remove decimal symbol, and set a minimum length (and always begin with a letter)
 
 	if ( random ){
 		return prefix + id + '.' + Math.trunc(Math.random()*100000000); //Append a random number to the end if randomness is requested
 	}
 
-    return prefix + id;
+	return prefix + id;
 };
 
 //Allows something to be called once per pageload.

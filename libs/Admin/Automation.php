@@ -37,7 +37,7 @@ if ( !trait_exists('Automation') ){
 			}
 		}
 
-		//When the entire TGMP library is not available (if the user dismissed or disabled the prompt), still provide a link to that admin page. This is only needed when that prompt has been dismissed– otherwise the library creates this link.
+		//When the entire TGMP library is not available (if the user dismissed or disabled the prompt), still provide a link to that admin page. This is only needed when that prompt has been dismissed- otherwise the library creates this link.
 		public function quicker_recommended_plugins_menu_link(){
 			add_submenu_page(
 				'plugins.php', //Parent Slug
@@ -67,7 +67,7 @@ if ( !trait_exists('Automation') ){
 						'required' => true,
 					),
 					array(
-						'name' => 'Contact Form 7 Database Addon – CFDB7', //Backup CF7 DB plugin until (if) the preferred plugin (advanced-cf7-db) is updated
+						'name' => 'Contact Form 7 Database Addon - CFDB7', //Backup CF7 DB plugin until (if) the preferred plugin (advanced-cf7-db) is updated
 						'slug' => 'contact-form-cfdb7',
 						'required' => true
 					),
@@ -493,11 +493,11 @@ if ( !trait_exists('Automation') ){
 				'fields' => 'ids',
 				'posts_per_page' => -1,
 				'meta_query' => array(
-    				array(
-        				'key' => 'nebula_cf7_submission_preserve',
-        				'value' => 'on',
-        				'compare' => 'NOT EXISTS', //Exclude posts that are being preserving
-    				),
+					array(
+						'key' => 'nebula_cf7_submission_preserve',
+						'value' => 'on',
+						'compare' => 'NOT EXISTS', //Exclude posts that are being preserving
+					),
 				),
 			));
 
@@ -533,12 +533,12 @@ if ( !trait_exists('Automation') ){
 					'orderby' => 'date',
 					'order' => 'ASC',
 					'meta_query' => array(
-        				array(
-            				'key' => 'nebula_cf7_submission_preserve',
-            				'value' => 'on',
-            				'compare' => 'NOT EXISTS', //Exclude posts that are being preserving
-        				),
-    				),
+						array(
+							'key' => 'nebula_cf7_submission_preserve',
+							'value' => 'on',
+							'compare' => 'NOT EXISTS', //Exclude posts that are being preserving
+						),
+					),
 				));
 
 				//Delete the oldest posts

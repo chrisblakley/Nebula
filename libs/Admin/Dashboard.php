@@ -79,7 +79,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<ul class="nebula-fa-ul">';
 
 			//Data Loaded Time
-			echo '<li><i class="fa-solid fa-fw fa-clock" title="This page last loaded"></i> <strong id="last-loaded" title="Just now" style="cursor: help;">' . date('l, F j, Y - g:i:sa') . '</strong></li>'; //The "Just Now" title text gets updated by JavaScript after load
+			echo '<li><i class="fa-solid fa-fw fa-clock" title="This page last loaded"></i> <strong class="relative-date-tooltip" title="Just now" style="cursor: help;">' . date('l, F j, Y - g:i:sa') . '</strong></li>'; //The "Just Now" title text gets updated by JavaScript after load
 
 			//Website URL
 			echo '<li><i class="fa-solid fa-fw fa-globe"></i> <a href="' . home_url('/') . '" target="_blank" rel="noopener noreferrer">' . home_url('/') . '</a></li>';
@@ -104,7 +104,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( date('Y-m-d', $this->version('utc')) === date('Y-m-d', strtotime('now')) ){ //If it was committed today
 				$time_diff = 'today';
 			}
-			echo '<li><i class="fa-regular fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=at+a+glance+version" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('realtime') . '</a></strong> <small title="' . $this->version('date') . '" style="cursor: help;">(Committed ' . $time_diff . ')</small></li>';
+			echo '<li><i class="fa-regular fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=documentation&utm_medium=dashboard&utm_source=' . urlencode(site_url()) . '&utm_content=at+a+glance+version" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('realtime') . '</a></strong> <small title="' . $this->version('date') . '" style="cursor: help;">(Committed ' . $time_diff . ')</small></li>';
 
 			//Check if parent theme files have been modified (this is in the Nebula metabox, but also happens in the developer info metabox)
 			if ( !$this->get_option('dev_info_metabox') || !$this->is_dev() ){ //Prevents this from appearing twice in the dashboard. Only show this if the Developer Info Metabox is not being shown.
@@ -304,7 +304,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( get_the_author_meta('jobcompany', $user_info->ID) ){
 				$company = get_the_author_meta('jobcompany', $user_info->ID);
 				if ( get_the_author_meta('jobcompanywebsite', $user_info->ID) ){
-					$company = '<a class="this-user-company-name" href="' . get_the_author_meta('jobcompanywebsite', $user_info->ID) . '?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=user+metabox+job+title" target="_blank" rel="noopener noreferrer">' . $company . '</a>';
+					$company = '<a class="this-user-company-name" href="' . get_the_author_meta('jobcompanywebsite', $user_info->ID) . '?utm_campaign=documentation&utm_medium=dashboard&utm_source=' . urlencode(site_url()) . '&utm_content=user_metabox_job_title" target="_blank" rel="noopener noreferrer">' . $company . '</a>';
 				}
 			}
 
@@ -411,7 +411,7 @@ if ( !trait_exists('Dashboard') ){
 		//Administrative metabox
 		public function administrative_metabox(){
 			if ( $this->is_minimal_mode() ){return false;}
-			wp_add_dashboard_widget('nebula_administrative', 'Administrative', array($this, 'dashboard_administrative'));
+			wp_add_dashboard_widget('nebula_administrative', '<i class="fa-solid fa-fw fa-paperclip"></i> &nbsp;Administrative', array($this, 'dashboard_administrative'));
 		}
 
 		//Administrative metabox content
@@ -481,7 +481,7 @@ if ( !trait_exists('Dashboard') ){
 			$instance_count = 0;
 			?>
 				<p class="todoresults_title">
-					<strong>Active @todo Comments</strong> <a class="todo_help_icon" href="https://gearside.com/wordpress-dashboard-todo-manager/?utm_campaign=nebula&utm_medium=nebula&utm_source=<?php echo urlencode(get_bloginfo('name')); ?>&utm_content=todo+metabox" target="_blank" rel="noopener noreferrer"><i class="fa-regular fw fa-question-circle"></i> Documentation &raquo;</a>
+					<strong>Active @todo Comments</strong> <a class="todo_help_icon" href="https://gearside.com/wordpress-dashboard-todo-manager/?utm_campaign=documentation&utm_medium=dashboard&utm_source=<?php echo urlencode(site_url()); ?>&utm_content=todo_metabox" target="_blank" rel="noopener noreferrer"><i class="fa-regular fw fa-question-circle"></i> Documentation &raquo;</a>
 				</p>
 
 				<div class="todo_results">
@@ -591,7 +591,7 @@ if ( !trait_exists('Dashboard') ){
 		//Developer Info Metabox
 		public function dev_info_metabox(){
 			if ( $this->is_minimal_mode() ){return false;}
-			wp_add_dashboard_widget('nebula_developer_info', 'Developer Information', array($this, 'dashboard_developer_info'));
+			wp_add_dashboard_widget('nebula_developer_info', '<i class="fa-solid fa-fw fa-code"></i> &nbsp;Developer Information', array($this, 'dashboard_developer_info'));
 		}
 
 		//Developer Info Metabox content
@@ -1219,7 +1219,7 @@ if ( !trait_exists('Dashboard') ){
 					return false;
 				}
 
-			    $github_commit_json = $commits_response['body'];
+				$github_commit_json = $commits_response['body'];
 				set_transient('nebula_github_commits', $github_commit_json, HOUR_IN_SECONDS*3); //3 hour expiration
 			}
 
@@ -1274,7 +1274,7 @@ if ( !trait_exists('Dashboard') ){
 					return false;
 				}
 
-			    $github_issues_json = json_decode($issues_response['body']);
+				$github_issues_json = json_decode($issues_response['body']);
 
 				//Get the Discussions next
 				//GraphQL API is available, but webhooks not ready yet per (Feb 2021): https://github.com/github/feedback/discussions/43

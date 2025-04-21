@@ -153,6 +153,7 @@ body:not(.wp-admin) {
 		&.focusable:focus {clip: auto; height: auto; margin: 0; overflow: visible; position: static; width: auto;} //Allow the element to be focusable when navigated to via the keyboard
 	}
 	.invisible {visibility: hidden;} //Hide visually and from screenreaders, but maintain layout
+	.transparent {opacity: 0;}
 	.clearfix {@include clearfix();}
 	div.space {clear: both; display: block; overflow: hidden; visibility: hidden; width: 0; height: 0;}
 	.avoid-clicks {pointer-events: none;}

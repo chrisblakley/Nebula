@@ -59,9 +59,44 @@ if ( !trait_exists('Logs') ){
 		}
 
 		//Log a message to a file
-		//Note: This will create a new file if it does not exist, but does not create new directories!
-		public function log($message='', $filepath=false){$this->debug_log($message, $filepath);} //Alias in case this is called as nebula()->log()
-		public function debug_log($message='', $filepath=false){
+		//This shorter function accepts a file *name* instead of a full path and stores it in a /logs/ directory in the child or parent theme
+		//Useful for logging certain occurrences by website visitors themselves
+		public function log($message='', $filename=false, $verbose=false, $limited=true){
+			if ( $this->is_minimal_mode() ){return false;}
+
+			if ( empty($filename) || str_contains($filename, '/') ){ //If a filename is not provided or contains a full path
+				$this->debug_log($message, $filename, $verbose, $limited); //Treat this as an alias of the debug_log() function
+				return false;
+			}
+
+			$filepath = get_template_directory() . '/data/logs/';
+			if ( is_child_theme() ){
+				$filepath = get_stylesheet_directory() . '/data/logs/'; //Use the child theme directory if using a child theme
+			}
+
+			//Ensure the /logs/ directory exists in the appropriate theme location
+			if ( !file_exists($filepath) ){
+				wp_mkdir_p($filepath);
+			}
+
+			if ( !file_exists($filepath . 'index.html') ){
+				touch($filepath . 'index.html'); //Create an empty index.html file in the /data/logs/ directory to ensure no file listing
+			}
+
+			if ( !str_contains($filename, '.') ){ //If a file extension was not provided, add one
+				$filename .= '.log';
+			}
+
+			$filepath .= $filename;
+
+			$this->debug_log($message, $filepath, $verbose, $limited); //Now call the function that actually writes the log to the file
+		}
+
+		//Log a message to either a nebula.log file, or a full file *path*
+		//Useful for logging debug messages by developers
+		//If you want a shorter method by only providing a message and a file *name*, use nebula()->log()
+		//Note: This will create a new file and parent directories if they do not exist
+		public function debug_log($message='', $filepath=false, $verbose=false, $limited=true){
 			if ( $this->is_minimal_mode() ){return false;}
 
 			if ( empty($filepath) ){
@@ -71,12 +106,37 @@ if ( !trait_exists('Logs') ){
 				}
 			}
 
+			//Ensure the directory for the file exists
+			if ( !file_exists(dirname($filepath)) ){
+				wp_mkdir_p(dirname($filepath)); //Create the directory and any necessary parents
+			}
+
 			//If the message is not a string, encode it as JSON
 			if ( !is_string($message) ){
 				$message = wp_json_encode($message);
 			}
 
-			$message = '[' . date('l, F j, Y - g:i:sa') . '] ' . $message . ' (on ' . $this->requested_url() . ')' . PHP_EOL; //Add timestamp, URL, and newline
+			//If verbose data is requested, add it to the message
+			if ( !empty($verbose) ){
+				$message .= ' | IP: ' . $this->get_ip_address(false);
+				$message .= ' | Role: ' . $this->user_role(true);
+				$message .= ' | SID: ' . $this->nebula_session_id();
+
+				if ( !empty($this->super->server['HTTP_USER_AGENT']) ){
+					$message .= ' | UA: ' . $this->super->server['HTTP_USER_AGENT'];
+				}
+			}
+
+			$message = '[' . date('l, F j, Y - g:i:sa') . '] ' . $message . ' | URL: ' . $this->requested_url() . PHP_EOL; //Add timestamp, URL, and newline
+
+			//Limit the file size of Nebula-based log files
+			if ( !empty($limited) ){
+				if ( file_exists($filepath) && filesize($filepath) > (MB_IN_BYTES*100) ){
+					$lines = explode('\n', file_get_contents($filepath));
+					$half = array_slice($lines,ceil(count($lines)/2)); //Keep last 50%
+					file_put_contents($filepath, implode('\n', $half));
+				}
+			}
 
 			file_put_contents($filepath, $message, FILE_APPEND); //Create the log file if needed and append to it
 			do_action('qm/debug', $message); //Log it in Query Monitor as well
@@ -304,6 +364,7 @@ if ( !trait_exists('Logs') ){
 
 			//Use the transient so we avoid scanning multiple times in short periods of time
 			$all_log_files = $this->transient('nebula_all_log_files', function(){
+				//These file names are what we will be looking for when globbing the directories
 				$file_names = array(
 					'php' => 'error_log',
 					'wordpress' => 'debug.log',
@@ -318,7 +379,7 @@ if ( !trait_exists('Logs') ){
 					'nebula' => array()
 				);
 
-				//Add the PHP ini log file (if it exists)
+				//Add the PHP ini log file (if it exists). It may just be the same as the Wordpress debug.log file.
 				$ini_error_log_file = ini_get('error_log');
 				if ( file_exists($ini_error_log_file) ){
 					$all_log_files['php'][] = array(
@@ -348,6 +409,20 @@ if ( !trait_exists('Logs') ){
 
 							break 2; //Move on to the next file
 						}
+					}
+				}
+
+				//Now check the theme /data/logs/ directory for any files at all
+				$theme_directory = ( is_child_theme() )? get_stylesheet_directory() : get_template_directory();
+				if ( file_exists($theme_directory . '/data/logs/') ){
+					foreach ( $this->glob_r($theme_directory . '/data/logs/*') as $file ){
+						$all_log_files['theme'][] = array(
+							'type' => 'theme',
+							'path' => $file, //Full file path
+							'shortpath' => '/' . str_replace(ABSPATH, '', $file), //Relative to the root WP directory
+							'name' => basename($file),
+							'bytes' => filesize($file),
+						);
 					}
 				}
 

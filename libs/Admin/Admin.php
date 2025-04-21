@@ -27,8 +27,14 @@ if ( !trait_exists('Admin') ){
 			if ( $this->is_admin_page() ){
 				add_filter('nebula_brain', array($this, 'admin_brain'));
 				add_action('save_post', array($this, 'index_now_post'), 10, 2); //When a post is saved (or when *starting* a new post)
+
 				add_action('save_post', array($this, 'clear_transients')); //When a post is saved (or when *starting* a new post)
 				add_action('profile_update', array($this, 'clear_transients'));
+
+				if ( isset($this->super->get['clear-transients']) ){
+					add_action('init', array($this, 'clear_transients'));
+				}
+
 				add_action('upgrader_process_complete', array($this, 'theme_update_automation'), 10, 2); //Action 'upgrader_post_install' also exists.
 				add_filter('auth_cookie_expiration', array($this, 'session_expire')); //This is the user auto-signout session length
 				add_action('after_setup_theme', array($this, 'custom_media_display_settings'));
@@ -251,12 +257,25 @@ if ( !trait_exists('Admin') ){
 			} else {
 				//Clear post/page information and related transients
 				$all_transients_to_delete = apply_filters('nebula_delete_transients_on_save', array( //Allow other functions to hook in to delete transients on post save
-					'nebula_autocomplete_menus', //Autocomplete Search
-					'nebula_autocomplete_categories', //Autocomplete Search
-					'nebula_autocomplete_tags', //Autocomplete Search
-					'nebula_autocomplete_authors', //Autocomplete Search
-					'nebula_latest_post', //Latest update
-					'nebula_all_log_files', //Log file scan
+					'nebula_autocomplete_menus',
+					'nebula_autocomplete_categories',
+					'nebula_autocomplete_tags',
+					'nebula_autocomplete_authors',
+					'nebula_all_log_files',
+					'nebula_file_size_monitor_list',
+					'nebula_theme_file_changes_check',
+					'nebula_cf7_submits_badge',
+					'nebula_todo_items',
+					'nebula_spam_domain_public_list',
+					'nebula_directory_size_child_theme',
+					'nebula_directory_size_parent_theme',
+					'nebula_directory_size_uploads',
+					'nebula_directory_size_plugins',
+					'nebula_count_users',
+					'nebula_count_plugins',
+					'nebula_latest_post',
+					'nebula_earliest_post',
+					'nebula_php_timeline'
 				));
 
 				foreach ( $all_transients_to_delete as $transient_to_delete ){
@@ -815,7 +834,7 @@ if ( !trait_exists('Admin') ){
 				$wp_admin_bar->add_node(array(
 					'id' => 'nebula',
 					'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $nebula_adminbar_icon . '"></i> Nebula',
-					'href' => 'https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar',
+					'href' => 'https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=admin_bar&utm_source=' . urlencode(site_url()) . '&utm_content=admin_bar_main',
 					'meta' => array(
 						'target' => '_blank',
 						'rel' => 'noopener',
@@ -882,7 +901,7 @@ if ( !trait_exists('Admin') ){
 					'parent' => 'nebula',
 					'id' => 'nebula-documentation',
 					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-file-alt"></i> Nebula Documentation',
-					'href' => 'https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar',
+					'href' => 'https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=admin_bar&utm_source=' . urlencode(site_url()) . '&utm_content=admin_bar_documentation',
 					'meta' => array(
 						'target' => '_blank',
 						'rel' => 'noopener',
@@ -893,7 +912,7 @@ if ( !trait_exists('Admin') ){
 					'parent' => 'nebula-documentation',
 					'id' => 'nebula-documentation-functions',
 					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-file-alt"></i> Functions & Variables',
-					'href' => 'https://nebula.gearside.com/documentation/functions/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar',
+					'href' => 'https://nebula.gearside.com/documentation/functions/?utm_campaign=documentation&utm_medium=admin_bar&utm_source=' . urlencode(site_url()) . '&utm_content=admin_bar_functions',
 					'meta' => array(
 						'target' => '_blank',
 						'rel' => 'noopener',
@@ -904,7 +923,7 @@ if ( !trait_exists('Admin') ){
 					'parent' => 'nebula-documentation',
 					'id' => 'nebula-documentation-examples',
 					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-file-alt"></i> Examples & Tips',
-					'href' => 'https://nebula.gearside.com/documentation/examples-tips/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar',
+					'href' => 'https://nebula.gearside.com/documentation/examples-tips/?utm_campaign=documentation&utm_medium=admin_bar&utm_source=' . urlencode(site_url()) . '&utm_content=admin_bar_examples',
 					'meta' => array(
 						'target' => '_blank',
 						'rel' => 'noopener',
@@ -915,7 +934,7 @@ if ( !trait_exists('Admin') ){
 					'parent' => 'nebula-documentation',
 					'id' => 'nebula-documentation-faq',
 					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-question"></i> FAQs',
-					'href' => 'https://nebula.gearside.com/faq/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar',
+					'href' => 'https://nebula.gearside.com/faq/?utm_campaign=documentation&utm_medium=admin_bar&utm_source=' . urlencode(site_url()) . '&utm_content=admin_bar_faq',
 					'meta' => array(
 						'target' => '_blank',
 						'rel' => 'noopener',
@@ -990,7 +1009,7 @@ if ( !trait_exists('Admin') ){
 						'parent' => 'nebula-options',
 						'id' => 'nebula-options-help',
 						'title' => '<i class="nebula-admin-fa fa-regular fa-fw fa-question-circle"></i> Help & Documentation',
-						'href' => 'https://nebula.gearside.com/documentation/options/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=admin+bar+help',
+						'href' => 'https://nebula.gearside.com/documentation/options/?utm_campaign=documentation&utm_medium=admin_bar&utm_source=' . urlencode(site_url()) . '&utm_content=admin_bar_help',
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					));
 
@@ -2188,9 +2207,9 @@ if ( !trait_exists('Admin') ){
 								$submission_history_posts = $submission_history_query->posts;
 
 								//Sort the posts array by ID from lowest to highest (since the orderby and order in the above query is not working)
-    							usort($submission_history_posts, function($a, $b){
-        							return $a->ID-$b->ID;
-    							});
+								usort($submission_history_posts, function($a, $b){
+									return $a->ID-$b->ID;
+								});
 
 								$invalid_count = 0;
 								$success_count = 0;
@@ -2575,7 +2594,7 @@ if ( !trait_exists('Admin') ){
 			$nebula_version_output = 'Thank you for using Nebula!';
 			if ( current_user_can('publish_posts') ){
 				$wordpress_version_output = '<span><a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener">WordPress</a> <strong>' . $wp_version . '</strong></span>, ';
-				$nebula_version_output = '<span title="Committed: ' . $this->version('date') . '"><a href="https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=footer+version" target="_blank" rel="noopener">Nebula</a> <strong class="nebula"><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('version') . '</a></strong>' . $child . '</span>';
+				$nebula_version_output = '<span title="Committed: ' . $this->version('date') . '"><a href="https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=footer&utm_source=' . urlencode(site_url()) . '&utm_content=footer_version" target="_blank" rel="noopener">Nebula</a> <strong class="nebula"><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('version') . '</a></strong>' . $child . '</span>';
 			}
 
 			return $wordpress_version_output . $nebula_version_output;
@@ -2743,7 +2762,7 @@ if ( !trait_exists('Admin') ){
 			$fields = array();
 
 			/*
-				Basically the same things that are in the metaboxes options file... I don't love that this is redundant... Maybe the "Diagnostic" nebula options just links to the site health page with Nebula expanded? If so, logs metabox would need a new home– maybe administrative?
+				Basically the same things that are in the metaboxes options file... I don't love that this is redundant... Maybe the "Diagnostic" nebula options just links to the site health page with Nebula expanded? If so, logs metabox would need a new home- maybe administrative?
 				Maybe this just gets limited to basic stuff and the diagnostics can stay in nebula options... could even provide a link to detailed diagnostics from here... some of these are simple enough that maybe duplicating isnt even that big of a deal, though.
 				The *RIGHT* way to do this would be to have 1 function that preps all of the data for all 3 of these "output locations" and then these functions just call that to build the array.
 				- last nebula update

@@ -46,7 +46,14 @@ if ( !trait_exists('Warnings') ){
 					echo '<script>';
 					foreach( $this->warnings as $warning ){
 						$category = ( !empty($warning['category']) )? $warning['category'] : 'Nebula';
-						$log_level = ( $warning['level'] == 'warning' )? 'warn' : $warning['level'];
+
+						$log_level = $warning['level'];
+						if ( $warning['level'] == 'warning' ){
+							$log_level = 'warn';
+						} elseif ( $warning['level'] == 'success' ){
+							$log_level = 'log';
+						}
+
 						echo 'console.' . esc_html($log_level) . '("[' . esc_html($category) . '] ' . esc_html(addslashes(strip_tags($warning['description']))) . '");';
 					}
 					echo '</script>';
@@ -399,7 +406,7 @@ if ( !trait_exists('Warnings') ){
 
 				//Show a warning banner for parent theme file changes only when viewing the WP Update or Themes screens
 				global $pagenow;
-				if ( $pagenow === 'update-core.php' || $pagenow === 'themes.php' ){
+				if ( $pagenow === 'update-core.php' || ($pagenow === 'themes.php' && empty($this->super->get['page'])) ){
 					$modified_files = get_transient('nebula_theme_modified_files');
 					if ( !empty($modified_files) ){
 						$file_count = count($modified_files);
@@ -486,7 +493,7 @@ if ( !trait_exists('Warnings') ){
 						$nebula_warnings['sw_missing'] = array(
 							'level' => 'error',
 							'dismissible' => true,
-							'description' => '<i class="fa-regular fa-fw fa-file"></i> Service Worker is enabled in <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">Nebula Options</a>, but no Service Worker JavaScript file was found. Either use the <a href="https://github.com/chrisblakley/Nebula/blob/main/Nebula-Child/resources/sw.js" target="_blank">provided sw.js file</a> (by moving it to the root directory), or override the function <a href="https://nebula.gearside.com/functions/sw_location/?utm_campaign=documentation&utm_medium=admin+notice&utm_source=service+worker#override" target="_blank">sw_location()</a> to locate the actual JavaScript file you are using.'
+							'description' => '<i class="fa-regular fa-fw fa-file"></i> Service Worker is enabled in <a href="themes.php?page=nebula_options&tab=functions&option=service_worker">Nebula Options</a>, but no Service Worker JavaScript file was found. Either use the <a href="https://github.com/chrisblakley/Nebula/blob/main/Nebula-Child/resources/sw.js" target="_blank">provided sw.js file</a> (by moving it to the root directory), or override the function <a href="https://nebula.gearside.com/functions/sw_location/?utm_campaign=documentation&utm_medium=warnings&utm_source=' . urlencode(site_url()) . '&utm_content=sw_missing_warning#override" target="_blank">sw_location()</a> to locate the actual JavaScript file you are using.'
 						);
 					}
 
@@ -739,7 +746,7 @@ if ( !trait_exists('Warnings') ){
 						//Check word count for SEO
 						$word_count = $this->word_count();
 						if ( $word_count < 1900 ){
-							$word_count_warning = ( $word_count === 0 )? 'Word count audit is not looking for custom fields outside of the main content editor. <a href="https://nebula.gearside.com/functions/word_count/?utm_campaign=nebula&utm_medium=nebula&utm_source=' . urlencode(get_bloginfo('name')) . '&utm_content=word+count+audit+warning" target="_blank">Hook custom fields into the Nebula word count functionality</a> to properly audit.' : 'Word count (' . $word_count . ') is low for SEO purposes (Over 1,000 is good, but 1,900+ is ideal). <small>Note: Detected word count may not include custom fields!</small>';
+							$word_count_warning = ( $word_count === 0 )? 'Word count audit is not looking for custom fields outside of the main content editor. <a href="https://nebula.gearside.com/functions/word_count/?utm_campaign=documentation&utm_medium=warnings&utm_source=' . urlencode(site_url()) . '&utm_content=audit_word_count" target="_blank">Hook custom fields into the Nebula word count functionality</a> to properly audit.' : 'Word count (' . $word_count . ') is low for SEO purposes (Over 1,000 is good, but 1,900+ is ideal). <small>Note: Detected word count may not include custom fields!</small>';
 							$nebula_warnings['word_count'] = array(
 								'level' => 'warning',
 								'dismissible' => true,

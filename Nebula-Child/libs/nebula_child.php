@@ -49,7 +49,7 @@ add_action('init', function(){
 */
 
 //Create custom block category for this website
-add_filter('block_categories', function($categories, $post){
+add_filter('block_categories_all', function($categories, $post){
 	return array_merge(
 		$categories,
 		array(

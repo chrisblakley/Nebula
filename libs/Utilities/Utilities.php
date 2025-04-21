@@ -40,13 +40,27 @@ if ( !trait_exists('Utilities') ){
 
 		//Attempt to get the most accurate IP address from the visitor
 		public function get_ip_address($anonymize=true){
-			$ip_keys = array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR');
+			//This will get the first valid IP of the first matching header from this array
+			$ip_keys = array(
+				'HTTP_CF_CONNECTING_IP', //Set by Cloudflare to show the real client IP (not Cloudflare's proxy IP)
+				'HTTP_X_REAL_IP', //Used by some proxies (e.g. Nginx) to pass the real IP
+				'HTTP_CLIENT_IP', //Can be set by client/proxy; easily spoofed
+				'HTTP_X_FORWARDED_FOR', //Common proxy header; may include multiple IPs (first is original)
+				'HTTP_X_FORWARDED', //Less common variant of X-Forwarded-For
+				'HTTP_X_CLUSTER_CLIENT_IP', //Used by some load balancers (such as AWS Elastic Load Balancer)
+				'HTTP_FORWARDED_FOR', //Non-standard version of Forwarded header (rare)
+				'HTTP_FORWARDED', //Standardized header; format: "for=192.0.2.60; proto=http; by=203.0.113.43"
+				'REMOTE_ADDR' //IP address from direct connection (e.g. last proxy or client)
+			);
+
+			$server = array_change_key_case($this->super->server, CASE_UPPER); //Normalize key casing
+
 			foreach ( $ip_keys as $key ){
 				if ( array_key_exists($key, $this->super->server) === true ){
 					foreach ( explode(',', $this->super->server[$key]) as $ip ){
 						$ip = trim($ip);
 
-						if ( filter_var($ip, FILTER_VALIDATE_IP) ){ //Validate IP
+						if ( filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) ){ //Only accept valid, public IPs
 							return ( !empty($anonymize) )? wp_privacy_anonymize_ip($ip) : $ip; //Return the exact or anonymized IP address
 						}
 					}
@@ -309,6 +323,10 @@ if ( !trait_exists('Utilities') ){
 		//Get the role (and dev/client designation)
 		public function user_role($staff_info=true){
 			$usertype = 'Guest (Not Logged In)';
+
+			if ( $this->is_bot() ){
+				$usertype = 'Bot';
+			}
 
 			if ( is_user_logged_in() ){
 				$user_info = get_userdata(get_current_user_id());
@@ -992,12 +1010,14 @@ if ( !trait_exists('Utilities') ){
 		public function format_bytes($bytes, $precision=1){
 			$units = array('b', 'kb', 'mb', 'gb', 'tb', 'pb');
 			$bytes = max($bytes, 0);
-			$base = ( $bytes )? log($bytes) : 0;
+			$base = ($bytes)? log($bytes) : 0;
 			$pow = floor($base/log(1024));
 			$pow = min($pow, count($units)-1);
 			$bytes = $bytes/pow(1024, $pow);
 
-			return round($bytes, $precision) . $units[$pow];
+			$decimals = ( $pow >= 2 )? $precision : 0; //Only show the decimal places for files larger than 1mb
+
+			return round($bytes, $decimals) . $units[$pow];
 		}
 
 		//Recursively copy files/directories
@@ -1136,8 +1156,8 @@ if ( !trait_exists('Utilities') ){
 			$hostname = str_replace('.', '_', $this->url_components('hostname', $url));
 
 			//Check if the resource was unavailable in the last 10 minutes
-			if ( !$ignore_cache ){ //This is useful for debugging– it will always make the remote request regardless of availability of the endpoint
-				if ( !$this->is_available($url, true, false) ){ //We do not want to make 2 requests from this, so we tell is_available() to not make its own request (third parameter is "false")– note that this function also updates the "nebula_site_available..." transient if a problem arises– which will then be seen by is_available().
+			if ( !$ignore_cache ){ //This is useful for debugging- it will always make the remote request regardless of availability of the endpoint
+				if ( !$this->is_available($url, true, false) ){ //We do not want to make 2 requests from this, so we tell is_available() to not make its own request (third parameter is "false")- note that this function also updates the "nebula_site_available..." transient if a problem arises- which will then be seen by is_available().
 					$this->timer($timer_name, 'end');
 					return new WP_Error('unavailable', 'This resource was unavailable within the last 15 minutes.');
 				}

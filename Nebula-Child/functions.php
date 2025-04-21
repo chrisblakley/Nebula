@@ -7,12 +7,12 @@ if ( !class_exists('Nebula') ){
 
 /*==========================
  Child Theme Functions
- • Files with the same name will override the parent (except for this functions.php file).
- • This functions.php file is loaded BEFORE the parent theme functions.php file.
- • Child style.css and main.js are loaded AFTER the parent style.css and nebula.js respectively.
- • Parent Directory: get_template_directory_uri()
- • Child Directory: get_stylesheet_directory_uri()
- • get_template_part() will determine the appropriate template file automatically.
+ * Files with the same name will override the parent (except for this functions.php file).
+ * This functions.php file is loaded BEFORE the parent theme functions.php file.
+ * Child style.css and main.js are loaded AFTER the parent style.css and nebula.js respectively.
+ * Parent Directory: get_template_directory_uri()
+ * Child Directory: get_stylesheet_directory_uri()
+ * get_template_part() will determine the appropriate template file automatically.
 
  It is recommended not to override entire files in the Nebula functions directory. Instead, override the functions themselves (if needed) in functions.php, functions/nebula_child.php, or a new PHP file.
  To override functions, use the prefix "pre_" in an add_action() hook for the existing function name.

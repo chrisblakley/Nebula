@@ -45,7 +45,7 @@ if ( !trait_exists('Sass') ){
 					$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass was not throttled (so okay to process).' : $this->sass_process_status;
 
 					//Ignore background requests (except for automated theme updates) and bots
-					if ( !$this->is_background_request() && !$this->is_bot() && $pagenow !== 'update-core.php' ){ //Ignore update-core.php (this listing page of updates)– that is different than update.php (which is the actual updater). Note: update.php is not considered a "background" request
+					if ( !$this->is_background_request() && !$this->is_bot() && $pagenow !== 'update-core.php' ){ //Ignore update-core.php (this listing page of updates)- that is different than update.php (which is the actual updater). Note: update.php is not considered a "background" request
 						$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass is enabled, and the request is okay to process.' : $this->sass_process_status;
 
 						//Ignore fetch requests (like via Service Worker) - Only process Sass on certain requests SW will fetch with the sec-fetch-mode header as "cors" or "no-cors".
@@ -142,7 +142,7 @@ if ( !trait_exists('Sass') ){
 						//Find and render .scss files at each location
 						$this->was_sass_processed = false; //This is changed to true only when Sass is actually processed
 						foreach ( $all_scss_locations as $scss_location_name => $scss_location_paths ){
-							$this->render_scss($scss_location_name, $scss_location_paths, $force_all); //Remember: this does not mean Sass is being processed– this function checks the files first and then processes only when necessary. Also remember that this is checking a location (not an individual file), so the return here would be true if any Sass file in this location was processed.
+							$this->render_scss($scss_location_name, $scss_location_paths, $force_all); //Remember: this does not mean Sass is being processed- this function checks the files first and then processes only when necessary. Also remember that this is checking a location (not an individual file), so the return here would be true if any Sass file in this location was processed.
 						}
 
 						$this->update_data('need_sass_compile', 'false'); //Set it to false after Sass is finished. Do not wrap this in a "was_sass_processed" conditional! Or else it will constantly want to force-reprocess all Sass because 'need_sass_compile' will not get set to false (...for some reason? Just leave it alone).

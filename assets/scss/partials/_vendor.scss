@@ -45,7 +45,7 @@ span.wpcf7-list-item-label {font-size: rem(14px);
 	&::before {content: "\f110"; @include font-awesome("solid"); position: absolute; top: 0; left: -25px; height: 100%; display: -ms-inline-flexbox; display: inline-flex; -ms-flex-align: center; align-items: center; transition: left 0.4s easing(easeOutBack); animation: nebula-spin 2s infinite linear;}
 
 	&.active {padding-left: 35px;
-	    &::before, svg {left: 10px;}
+		&::before, svg {left: 10px;}
 	}
 }
 

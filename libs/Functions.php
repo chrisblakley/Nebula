@@ -705,7 +705,7 @@ if ( !trait_exists('Functions') ){
 					$post_icon_img = '<i class="fa-solid fa-thumbtack"></i>';
 
 					if ( !empty($post_icon) ){
-						$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" loading="lazy" />';
+						$post_icon_img = '<img src="' . $post_icon . '" alt="' . $post_type . ' icon" style="width: 16px; height: 16px;" loading="lazy" />';
 
 						if ( strpos('dashicons-', $post_icon) >= 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 							$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
@@ -1074,7 +1074,7 @@ if ( !trait_exists('Functions') ){
 
 		//Determines the estimated time to read a post (in minutes).
 		//Note: Does not account for ACF fields unless hooked into 'nebula_word_count' above
-		public function estimated_reading_time($id=false){
+		public function estimated_reading_time($id=null){
 			$id ??= get_the_ID();
 			$wpm = 250; //Words per minute reading speed
 			$content = $this->word_count(array('id' => $id));
@@ -1146,7 +1146,7 @@ if ( !trait_exists('Functions') ){
 
 		//Display non-native social buttons
 		//This is a more optimized solution that does not require SDKs and does not load third-party resources, so these will also be a consistent size.
-		public function share($networks=array('shareapi', 'facebook', 'twitter'), $id=false){
+		public function share($networks=array('shareapi', 'facebook', 'twitter'), $id=null){
 			$override = apply_filters('pre_nebula_share', null, $networks, $id);
 			if ( isset($override) ){return;}
 
@@ -1398,7 +1398,7 @@ if ( !trait_exists('Functions') ){
 			if ( isset($override) ){return $override;}
 
 			$timer_name = $this->timer('Video Meta (' . $id . ')', 'start', 'Video Meta');
-			
+
 			//Ensure these default keys are always available
 			$video_metadata = array(
 				'origin' => $this->url_components('basedomain'),
@@ -1602,6 +1602,19 @@ if ( !trait_exists('Functions') ){
 
 					echo apply_filters('nebula_breadcrumbs_category', $data['before'] . '<a class="current-breadcrumb-link" href="' . get_category_link($thisCat->term_id) . '" itemprop="item"><span itemprop="name">' . $prefix . single_cat_title('', false) . '</span></a><meta itemprop="position" content="' . $position . '" />' . $data['after'], $data);
 					$position++;
+				} elseif ( is_tag() ){
+					$tag = get_queried_object();
+					if ( $tag && !is_wp_error($tag) ){
+						$prefix = '';
+						if ( $data['prefix'] === 'icon' ){
+							$prefix = '<i class="fa-solid fa-tag"></i>';
+						} elseif ( $data['prefix'] === 'text' ){
+							$prefix = 'Tag: ';
+						}
+
+						echo apply_filters('nebula_breadcrumbs_tag', $data['before'] . '<a class="current-breadcrumb-link" href="' . esc_url(get_tag_link($tag->term_id)) . '" itemprop="item"><span itemprop="name">' . $prefix . esc_html($tag->name) . '</span></a><meta itemprop="position" content="' . $position . '" />' . $data['after'], $data);
+						$position++;
+					}
 				} elseif ( is_search() ){
 					echo $data['before'] . 'Search results' . $data['after'];
 				} elseif ( is_day() ){
@@ -1707,16 +1720,6 @@ if ( !trait_exists('Functions') ){
 					if ( !empty($data['current']) ){
 						echo ' ' . $data['delimiter_html'] . ' ' . $data['current_node'] . '<meta itemprop="position" content="' . $position . '" />' . $data['after'];
 					}
-				} elseif ( is_tag() ){
-					$prefix = '';
-					if ( $data['prefix'] === 'icon' ){
-						$prefix = '<i class="fa-solid fa-tag"></i>';
-					} elseif ( $data['prefix'] === 'text' ){
-						$prefix = 'Tag: ';
-					}
-
-					echo apply_filters('nebula_breadcrumbs_tag', $data['before'] . $prefix . '<span itemprop="name">' . single_tag_title('', false) . '</span><meta itemprop="position" content="' . $position . '" />' . $data['after'], $data);
-					//echo $data['before'] . '<a class="current-breadcrumb-link" href="' . get_tag_link($thisTag->term_id) . '">'. $prefix . single_tag_title('', false) . '</a>' . $data['after']; //@todo "Nebula": Need to get $thisTag like $thisCat above
 				} elseif ( is_author() ){
 					//@TODO "Nebula" 0: Support for multi author? is_multi_author()
 
@@ -2214,7 +2217,7 @@ if ( !trait_exists('Functions') ){
 		}
 
 		//If the business is open, return the time that the business closes today
-		public function business_open_until($day){
+		public function business_open_until($day=null){
 			$day ??= strtolower(date('l'));
 
 			if ( $this->is_business_open() ){
@@ -3097,9 +3100,9 @@ if ( !trait_exists('Functions') ){
 					$latitude = floatval($this->get_option('latitude'));
 					$longitude = floatval($this->get_option('longitude'));
 					global $sunrise, $sunset;
-					$suninfo = date_sun_info(strtotime('today'), $latitude, $longitude); //Civil twilight = 96°, Nautical twilight = 102°, Astronomical twilight = 108° - these are already accounted for in this PHP function
-					$sunrise = strtotime($suninfo['sunrise']); //The timestamp of the sunrise (zenith angle = 90°35')
-					$sunset  = strtotime($suninfo['sunset']); //The timestamp of the sunset (zenith angle = 90°35')
+					$suninfo = date_sun_info(strtotime('today'), $latitude, $longitude); //Civil twilight = 96deg, Nautical twilight = 102deg, Astronomical twilight = 108deg - these are already accounted for in this PHP function
+					$sunrise = strtotime($suninfo['sunrise']); //The timestamp of the sunrise (zenith angle = 90deg 35min)
+					$sunset  = strtotime($suninfo['sunset']); //The timestamp of the sunset (zenith angle = 90deg 35min)
 					$length_of_daylight = $sunset-$sunrise;
 					$length_of_darkness = DAY_IN_SECONDS-$length_of_daylight;
 
