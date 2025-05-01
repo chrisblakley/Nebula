@@ -133,7 +133,7 @@ if ( !trait_exists('Security') ){
 
 				$url = strtolower($this->requested_url());
 				foreach ( $blocked_endpoints as $blocked_endpoint ){
-					if ( strpos($url, $blocked_endpoint) !== false ){
+					if ( str_contains($url, $blocked_endpoint) ){
 						header('HTTP/1.1 403 Forbidden (Err: NBOBRE)');
 						wp_die(
 							'Access forbidden.', //Message
@@ -255,24 +255,24 @@ if ( !trait_exists('Security') ){
 				$user_agent = str_replace(' ', '_', strtolower($this->super->server['HTTP_USER_AGENT'])); //Normalize the user agent for matching against
 
 				//Lighthouse (Ex: web.dev) (Formerly Google Page Speed Insights) - Ignore Nebula Dashboard tests (?noga)
-				if ( !isset($this->super->get['noga']) && strpos($user_agent, 'chrome-lighthouse') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( !isset($this->super->get['noga']) && str_contains($user_agent, 'chrome-lighthouse') ){
 					if ( $this->url_components('extension') !== 'js' ){
 						$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Chrome Lighthouse')));
 					}
 				}
 
 				//W3C Validators
-				if ( strpos($user_agent, 'w3c_validator') !== false || strpos($user_agent, 'w3c_css_validator') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( str_contains($user_agent, 'w3c_validator') || str_contains($user_agent, 'w3c_css_validator') ){
 					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'W3C Validator')));
 				}
 
 				//Redditbot
-				if ( strpos($user_agent, 'redditbot') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( str_contains($user_agent, 'redditbot') ){
 					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Redditbot')));
 				}
 
 				//OpenAI GPT Bot
-				if ( strpos($user_agent, 'gptbot') !== false ){
+				if ( str_contains($user_agent, 'gptbot') ){
 					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'GPTBot')));
 				}
 
@@ -282,17 +282,17 @@ if ( !trait_exists('Security') ){
 				}
 
 				//Discordbot
-				if ( strpos($user_agent, 'discordbot') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( str_contains($user_agent, 'discordbot') ){
 					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Discordbot')));
 				}
 
 				//Screaming Frog SEO Spider
-				if ( strpos($user_agent, 'screaming_frog') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( str_contains($user_agent, 'screaming_frog') ){
 					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Screaming Frog SEO Spider')));
 				}
 
 				//Internet Archive Wayback Machine
-				if ( strpos($user_agent, 'archive.org_bot') !== false || strpos($user_agent, 'wayback_save_page') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( str_contains($user_agent, 'archive.org_bot') || str_contains($user_agent, 'wayback_save_page') ){
 					$this->ga_send_data($this->ga_build_event('notable_bot', array('bot' => 'Internet Archive Wayback Machine')));
 				}
 			}

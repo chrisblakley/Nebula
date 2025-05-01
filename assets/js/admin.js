@@ -67,7 +67,7 @@ jQuery(window).on('load', async function(){
 		await import('./admin-modules/dashboard.js?ver=' + nebula.version.number);
 
 		nebula.developerMetaboxes();
-		//nebula.simplifiedViewToggle();
+		nebula.simplifiedViewToggle();
 	}
 
 	if ( nebula.screen.base === 'nav-menus' ){

@@ -199,8 +199,8 @@ if ( !trait_exists('Optimization') ){
 			$module_execution = wp_scripts()->get_data($handle, 'module');
 
 			//Add module type attribute if it is requested
-			if ( !empty($module_execution) && strpos($tag, "type='module'") === false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-				if ( strpos($tag, 'type=') ){ //If the type attribute already exists  //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( !empty($module_execution) && !str_contains($tag, "type='module'") ){
+				if ( str_contains($tag, 'type=') ){ //If the type attribute already exists
 					$tag = preg_replace('/type=["\']text\/javascript["\']/', 'type=\'module\'', $tag); //Change the type='text/javascript' attribute to type='module' (the preg_replace regex pattern is used to be agnostic to what type of quotation mark WP core uses)
 				} else {
 					$tag = str_replace('script src', 'script type="module" src', $tag);
@@ -208,7 +208,7 @@ if ( !trait_exists('Optimization') ){
 			}
 
 			//Add crossorigin attribute if it is requested and does not already exist
-			if ( !empty($crossorigin_exececution) && strpos($tag, 'crossorigin=') === false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( !empty($crossorigin_exececution) && !str_contains($tag, 'crossorigin=') ){
 				$tag = str_replace(' src', ' crossorigin="anonymous" src', $tag); //Add the crossorigin attribute
 			}
 
@@ -230,14 +230,14 @@ if ( !trait_exists('Optimization') ){
 			//Add defer attribute if it is requested and does not already exist
 			//@todo "Nebula" 0: This may no longer be needed as of WP 6.3 for async and defer script attributes
 			$additional_handles_to_defer = apply_filters('nebula_defer_handles', array()); //Allow other plugins/themes to simply add defer attributes to scripts
-			if ( (!empty($defer_exececution) || in_array($handle, $additional_handles_to_defer)) && strpos($tag, 'defer') === false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( (!empty($defer_exececution) || in_array($handle, $additional_handles_to_defer)) && !str_contains($tag, 'defer') ){
 				$tag = str_replace(' src', ' defer src', $tag); //Add the defer attribute
 			}
 
 			//Add async attribute if it is requested and does not already exist
 			//@todo "Nebula" 0: This may no longer be needed as of WP 6.3 for async and defer script attributes
 			$additional_handles_to_async = apply_filters('nebula_async_handles', array('google-recaptcha')); //Allow other plugins/themes to simply add async attributes to scripts
-			if ( (!empty($async_exececution) || in_array($handle, $additional_handles_to_async)) && strpos($tag, 'async') === false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( (!empty($async_exececution) || in_array($handle, $additional_handles_to_async)) && !str_contains($tag, 'async') ){
 				$tag = str_replace(' src', ' async src', $tag); //Add the async attribute
 			}
 
@@ -348,7 +348,7 @@ if ( !trait_exists('Optimization') ){
 		public function early_hints_file($src, $filetype){
 			if ( $this->is_minimal_mode() ){return false;}
 			if ( !$this->is_admin_page(true, true) ){ //Exclude admin, login, and Customizer pages
-				//$crossorigin = ( strpos($src, get_site_url()) === false || $filetype === 'font' )? ' crossorigin=anonymous' : ''; //Add crossorigin attribute for remote assets and all fonts //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				//$crossorigin = ( !str_contains($src, get_site_url()) || $filetype === 'font' )? ' crossorigin=anonymous' : ''; //Add crossorigin attribute for remote assets and all fonts
 				//header('Link: <' . esc_url(str_replace($this->url_components('basedomain'), '', strtok($src, '#'))) . '>; rel="preload"; as="' . $filetype . '"; nopush; crossorigin="anonymous"', false); //Send the header for the Early Hint (strtok to remove everything after and including "#")
 				//Note: This is triggering console warnings that the preloads are not used (and also "not used within a few seconds"). This happens regardless of the crossorigin attribute or allow-origin header.
 			}
@@ -412,7 +412,7 @@ if ( !trait_exists('Optimization') ){
 
 			// Check for any server header containing the word "cache" and the value "hit"
 			foreach ( $server_headers as $key => $value ){
-				if ( strpos($key, 'cache') !== false && strtolower($value) === 'hit' ){ //@todo "Nebula" 0: Update this to use str_contains after php 8.0
+				if ( str_contains($key, 'cache') && strtolower($value) === 'hit' ){
 					return $key;
 				}
 			}
@@ -534,9 +534,9 @@ if ( !trait_exists('Optimization') ){
 
 			//Google fonts if used
 			if ( $this->get_option('remote_font_url') ){
-				if ( strpos($this->get_option('remote_font_url'), 'google') || strpos($this->get_option('remote_font_url'), 'gstatic') ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( str_contains($this->get_option('remote_font_url'), 'google') || str_contains($this->get_option('remote_font_url'), 'gstatic') ){
 					$default_preconnects[] = '//fonts.gstatic.com';
-				} elseif ( strpos($this->get_option('remote_font_url'), 'typekit') ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				} elseif ( str_contains($this->get_option('remote_font_url'), 'typekit') ){
 					$default_preconnects[] = '//use.typekit.net';
 				}
 			}
@@ -609,25 +609,25 @@ if ( !trait_exists('Optimization') ){
 			if ( !empty($preloads) && is_array($preloads) ){
 				foreach ( $preloads as $preload ){
 					switch ( $preload ){
-						case strpos($preload, '.css'): //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						case str_contains($preload, '.css'):
 							$filetype = 'style';
 							break;
-						case strpos($preload, '.js'): //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						case str_contains($preload, '.js'):
 							$filetype = 'script';
 							break;
-						case strpos($preload, 'fonts.googleapis'): //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-						case strpos($preload, '.woff'): //Captures both .woff and .woff2 //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						case str_contains($preload, 'fonts.googleapis'):
+						case str_contains($preload, '.woff'): //Captures both .woff and .woff2
 							$filetype = 'font';
 							break;
-						case strpos($preload, '.jpg'): //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-						case strpos($preload, '.jpeg'): //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-						case strpos($preload, '.png'): //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-						case strpos($preload, '.gif'): //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						case str_contains($preload, '.jpg'):
+						case str_contains($preload, '.jpeg'):
+						case str_contains($preload, '.png'):
+						case str_contains($preload, '.gif'):
 							$filetype = 'image';
 							break;
-						case strpos($preload, '.mp4'): //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-						case strpos($preload, '.ogv'): //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-						case strpos($preload, '.mov'): //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						case str_contains($preload, '.mp4'):
+						case str_contains($preload, '.ogv'):
+						case str_contains($preload, '.mov'):
 							$filetype = 'video';
 							break;
 						default:
@@ -657,7 +657,7 @@ if ( !trait_exists('Optimization') ){
 				$all_registered_styles = array();
 				global $wp_styles;
 				foreach ( $wp_styles->registered as $style ){
-					if ( strpos($style->src, 'wp-content') ){ //Limit the options to non-core styles //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					if ( str_contains($style->src, 'wp-content') ){ //Limit the options to non-core styles
 						$all_registered_styles[] = array(
 							'handle' => $style->handle,
 							'src' => $style->src
@@ -678,7 +678,7 @@ if ( !trait_exists('Optimization') ){
 				$all_registered_scripts = array();
 				global $wp_scripts;
 				foreach ( $wp_scripts->registered as $script ){
-					if ( strpos($script->src, 'wp-content') ){ //Limit the options to non-core scripts //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					if ( str_contains($script->src, 'wp-content') ){ //Limit the options to non-core scripts
 						$all_registered_scripts[] = array(
 							'handle' => $script->handle,
 							'src' => $script->src
@@ -719,7 +719,7 @@ if ( !trait_exists('Optimization') ){
 
 				if ( !empty($current_action) ){
 					//Ignore script dependencies on style-based hooks (enqueue_scripts and print_scripts)
-					// if ( strpos($current_action, 'scripts') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					// if ( str_contains($current_action, 'scripts') ){
 					//	//Disabled because some functionality still needs wp-polyfill even in modern browsers. Ugh. Ex: https://nebula.gearside.com/functions/infinite_load_query/
 					// 	//Remove "wp-polyfill" but first need to remove that dependency from other scripts. In the future, this may no longer be needed... hopefully. Watch this issue: https://github.com/WordPress/gutenberg/issues/21616
 					// 	$scripts = wp_scripts(); //Get all of the script dependencies
@@ -778,7 +778,7 @@ if ( !trait_exists('Optimization') ){
 
 							//Check if rule is an inverted function. Ex: "!is_front_page"
 							$invert = false;
-							if ( strpos($rule, '!') === 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+							if ( !str_contains($rule, '!') ){
 								$invert = true;
 								$rule = ltrim($rule, '!'); //Remove the "!" character since we have now detected it
 
@@ -810,7 +810,7 @@ if ( !trait_exists('Optimization') ){
 		public function deregister($handle, $type, $indicate=true){
 			if ( !empty($handle) ){
 				//Styles
-				if ( strpos(strtolower($type), 'style') !== false || strpos(strtolower($type), 'css') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( str_contains(strtolower($type), 'style') || str_contains(strtolower($type), 'css') ){
 					//Check if this style was enqueued
 					if ( $indicate && wp_style_is($handle, 'enqueued') ){
 						$this->deregistered_assets['styles'][] = $handle; //Add it to the array to log in the admin bar

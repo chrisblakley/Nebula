@@ -292,7 +292,7 @@ if ( !trait_exists('Sass') ){
 							$existing_css_contents = ( file_exists($css_filepath) )? $wp_filesystem->get_contents($css_filepath) : '';
 
 							//If the correlating .css file doesn't contain a comment to prevent overwriting
-							if ( !strpos(strtolower($existing_css_contents), 'scss disabled') ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+							if ( !str_contains(strtolower($existing_css_contents), 'scss disabled') ){
 								$this_scss_contents = $wp_filesystem->get_contents($scss_file); //Copy SCSS file contents
 
 								//Catch fatal compilation errors when PHP v7.0+ to provide additional information without crashing

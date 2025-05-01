@@ -1,12 +1,12 @@
 <?php
 	if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
-		header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF'])); //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+		header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
 		exit;
 	}
 
 	nebula()->timer('Metadata');
 
-	$nebula_metadata_file_location = ( strpos(realpath(__FILE__), get_template_directory()) === 0 )? 'parent' : 'child'; //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+	$nebula_metadata_file_location = ( !str_contains(realpath(__FILE__), get_template_directory()) )? 'parent' : 'child';
 
 	global $post;
 	$company_type = ( nebula()->get_option('business_type') )? esc_html(nebula()->get_option('business_type')) : 'LocalBusiness';

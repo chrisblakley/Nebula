@@ -139,7 +139,7 @@ if ( !trait_exists('Warnings') ){
 				}
 
 				//If the site is served via HTTPS but the Site URL is still set to HTTP
-				if ( (is_ssl() || isset($this->super->server['HTTPS'])) && (strpos(home_url(), 'http://') !== false || strpos(get_option('siteurl'), 'http://') !== false) ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( (is_ssl() || isset($this->super->server['HTTPS'])) && (str_contains(home_url(), 'http://') || str_contains(get_option('siteurl'), 'http://')) ){
 					$nebula_warnings['site_url_http'] = array(
 						'level' => 'error',
 						'dismissible' => true,
@@ -261,7 +261,7 @@ if ( !trait_exists('Warnings') ){
 
 							if ( !is_wp_error($directory_request) && !empty($directory_request) ){ //If not an error and response exists
 								if ( $directory_request['response']['code'] <= 400 ){ //Check if the response code is less than 400 (in this case 400+ is good)
-									if ( strpos(strtolower($directory_request['body']), 'index of') ){ //Check if the "Index of" text appears in the body content (bad) //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+									if ( str_contains(strtolower($directory_request['body']), 'index of') ){ //Check if the "Index of" text appears in the body content (bad)
 										$nebula_warnings['directory_indexing'] = array(
 											'level' => 'error',
 											'dismissible' => false,

@@ -531,10 +531,10 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group" dependent-or="dev_email_domain dev_ip">
 					<input type="hidden" name="nebula_options[dev_info_metabox]" value="<?php echo $nebula_options['dev_info_metabox']; ?>">
-					<input id="dev_info_metabox" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['dev_info_metabox'])); ?>><label for="dev_info_metabox">Developer Info Metabox</label>
+					<input id="dev_info_metabox" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['dev_info_metabox'])); ?>><label for="dev_info_metabox">Developer Info &amp; File Size Monitor Metaboxes</label>
 
 					<p class="dependent-note hidden">This option is dependent on Developer IPs and/or Developer Email Domains (Administration tab).</p>
-					<p class="nebula-help-text short-help form-text text-muted">Show theme and server information useful to developers. (Default: <?php echo $this->user_friendly_default('dev_info_metabox'); ?>)</p>
+					<p class="nebula-help-text short-help form-text text-muted">Show theme and server information useful to developers as well as the file size monitor. (Default: <?php echo $this->user_friendly_default('dev_info_metabox'); ?>)</p>
 					<p class="option-keywords">recommended</p>
 				</div>
 
@@ -1193,7 +1193,7 @@ if ( !trait_exists('Metaboxes') ){
 
 			$option_handle = 'nebula_options[dequeue_scripts]';
 			$icon = 'js';
-			if ( $type === 'css' || strpos($type, 'style') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( $type === 'css' || str_contains($type, 'style') ){
 				$option_handle = 'nebula_options[dequeue_styles]';
 				$icon = 'css3-alt';
 			}

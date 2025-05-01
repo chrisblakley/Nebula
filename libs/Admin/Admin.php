@@ -89,7 +89,7 @@ if ( !trait_exists('Admin') ){
 
 					//Loop through all post types to make ID column sortable
 					add_action('admin_head', function(){
-						if ( strpos(get_current_screen()->id, 'edit') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						if ( str_contains(get_current_screen()->id, 'edit') ){
 							foreach ( get_post_types(array(), 'names') as $post_type ){
 								add_filter('manage_edit-' . $post_type . '_sortable_columns', array($this, 'id_sortable_column'));
 							}
@@ -1562,7 +1562,7 @@ if ( !trait_exists('Admin') ){
 			$administrators = get_users(array('role' => 'administrator'));
 			foreach ( $administrators as $administrator ){
 				foreach ( $developer_domains as $developer_domain ){
-					if ( strpos($administrator->user_email, $developer_domain) !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					if ( str_contains($administrator->user_email, $developer_domain) ){
 						$notification_emails[] = $administrator->user_email;
 					}
 				}
@@ -1578,7 +1578,7 @@ if ( !trait_exists('Admin') ){
 
 			//Filter out any non-strings and non-email addresses and return the array
 			return array_filter($notification_emails, function($value){
-				if ( is_string($value) && strpos($value, '@') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( is_string($value) && str_contains($value, '@') ){
 					return true;
 				}
 			});
@@ -2020,12 +2020,12 @@ if ( !trait_exists('Admin') ){
 
 				if ( $column_name === 'notes' ){
 					//Originally invalid submissions that were moved to the "successful" submissions listing status
-					if ( get_post_status() == 'submission' && strpos(strtolower(get_the_title($submission_id)), '(invalid)') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					if ( get_post_status() == 'submission' && str_contains(strtolower(get_the_title($submission_id)), '(invalid)') ){
 						echo '<p class="cf7-note-invalid"><i class="fa-solid fa-fw fa-triangle-exclamation"></i> <strong>Originally Invalid</strong><br /><small>This submission was originally invalid, but moved to this submissions list by a content manager. No email notification was sent out!</small></p>';
 					}
 
 					//Mail failed
-					if ( strpos(strtolower(get_the_title($submission_id)), 'mail fail') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					if ( str_contains(strtolower(get_the_title($submission_id)), 'mail fail') ){
 						echo '<p class="cf7-note-failed"><i class="fa-solid fa-fw fa-triangle-exclamation"></i> <strong>Mail Failed</strong><br /><small>An administrator did not get an email notification of this submission!</small></p>';
 
 						//If it failed within the last few days or if it is the latest submissions even beyond a week old, denote that in a transient
@@ -2047,7 +2047,7 @@ if ( !trait_exists('Admin') ){
 					}
 
 					//Check for caution indicators
-					$is_adblocker = (!empty($form_data->_nebula_ga_cid) && strpos($form_data->_nebula_ga_cid, '-') !== false); //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					$is_adblocker = ( !empty($form_data->_nebula_ga_cid) && str_contains($form_data->_nebula_ga_cid, '-') );
 					$is_nojs = (version_compare($form_data->_nebula_version, '11.10.29') >= 0 && empty($form_data->_nebula_form_flow)); //@todo "Nebula 0: After a while the version_compare part of the conditional can be removed. The _nebula_form_flow field was added on March 29, 2024.
 					if ( $is_nojs ){
 						echo '<p class="cf7-note-caution"><i class="fa-solid fa-fw fa-code"></i> No JavaScript<br /><small>This user either has disabled JavaScript or is more likely a spambot</small></p>';
@@ -2250,13 +2250,13 @@ if ( !trait_exists('Admin') ){
 			if ( $this->is_admin_page() && $post->post_type === 'nebula_cf7_submits' ){
 				$form_data = json_decode($post->post_content);
 				$is_spam = ( $post->post_status === 'spam' || empty($form_data) || empty($form_data->_wpcf7) );
-				$is_invalid = ( $post->post_status === 'invalid' || strpos($post->post_title, '(Invalid)') !== false ); //If it was originally invalid or moved from the "invalid" status
+				$is_invalid = ( $post->post_status === 'invalid' || str_contains($post->post_title, '(Invalid)') ); //If it was originally invalid or moved from the "invalid" status
 
 				//Check for suspicious indicators of bot/spam submissions that were logged as actual submissions
 				$is_caution = false;
 				if ( !$is_spam ){
 					//Check if the send mail failed
-					if ( strpos(strtolower(get_the_title($post->ID)), 'mail fail') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					if ( str_contains(strtolower(get_the_title($post->ID)), 'mail fail') ){
 						echo '<div class="nebula-cf7-notice notice-mail-failed"><p><i class="fa-solid fa-fw fa-envelope"></i> <strong>Email notification failed.</strong> The email notification to administators has failed for this submission.</p></div>';
 
 						//If it failed within the last few days, denote that in a transient
@@ -2283,7 +2283,7 @@ if ( !trait_exists('Admin') ){
 					}
 
 					if ( empty($is_caution) ){ //If the above checks did not find any problems, continue checking other aspects
-						if ( empty($form_data->_nebula_ga_cid) || strpos($form_data->_nebula_ga_cid, '-') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						if ( empty($form_data->_nebula_ga_cid) || str_contains($form_data->_nebula_ga_cid, '-') ){
 							$is_caution = '<i class="fa-solid fa-fw fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> This user has a non-native Google Analytics Client ID (' . $form_data->_nebula_ga_cid . '). This could mean <strong>the user has an ad-blocker active, or that it may be a bot or spam.</strong>';
 						} elseif ( version_compare($form_data->_nebula_version, '11.10.29') >= 0 && empty($form_data->_nebula_form_flow) ){ //@todo "Nebula 0: After a while the version_compare part of the conditional can be removed. The _nebula_form_flow field was added on March 29, 2024.
 							$is_caution = '<i class="fa-solid fa-fw fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> The Nebula Form Flow field is empty which could mean <strong>the user has disabled JavaScript, or that it may be a bot or spam</strong>.';
@@ -2355,9 +2355,9 @@ if ( !trait_exists('Admin') ){
 									$submission_icon = '<i class="fa-solid fa-fw fa-xmark"></i>';
 
 									if ( get_post_status($post->ID) == 'submission' ){ //Only if it was a successful submission originally (and not moved from another status)
-										if ( strpos(get_the_title($post->ID), '(Invalid)') !== false ){
+										if ( str_contains(get_the_title($post->ID), '(Invalid)') ){
 											$invalid_count++;
-										} elseif ( strpos(get_the_title($post->ID), '(Mail Failed)') !== false ){
+										} elseif ( str_contains(get_the_title($post->ID), '(Mail Failed)') ){
 											$invalid_count++;
 											//$success_count++;
 											$submission_class = 'error-submission-item'; //Nebula still captures the form, but the email was not sent
@@ -2378,7 +2378,7 @@ if ( !trait_exists('Admin') ){
 									if ( get_the_ID() == $post->ID ){ //If the post in the list is the submission we are viewing the full details of
 										$submission_class .= ' this-submission';
 										$submission_label = 'This ' . str_replace(' &raquo;', '', $submission_label);
-										$submission_icon = ( get_post_status() == 'submission' && strpos(get_the_title(), '(Invalid)') === false )? '<i class="fa-solid fa-fw fa-circle-check"></i><i class="fa-solid fa-arrow-right"></i>' : '<i class="fa-solid fa-fw fa-circle-xmark"></i><i class="fa-solid fa-arrow-right"></i>';
+										$submission_icon = ( get_post_status() == 'submission' && !str_contains(get_the_title(), '(Invalid)') )? '<i class="fa-solid fa-fw fa-circle-check"></i><i class="fa-solid fa-arrow-right"></i>' : '<i class="fa-solid fa-fw fa-circle-xmark"></i><i class="fa-solid fa-arrow-right"></i>';
 									}
 
 									$the_submissions[] = '<li class="' . get_post_status($post->ID) . '-submission-item ' . $submission_class . '" data-id="' . $post->ID . '"><a href="' . get_edit_post_link($post->ID) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('l, F j, Y \a\t g:i:sa', $post->ID) . ')</small></li>';
@@ -2505,7 +2505,7 @@ if ( !trait_exists('Admin') ){
 								$current_page_url= $value;
 								$current_page_method = '';
 
-								if ( strpos($value, ' (') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+								if ( str_contains($value, ' (') ){
 									$parts = explode(' (', $value, 2); //Use the space and open parenthesis to ensure it is the proper separator
 									$current_page_url = $parts[0];
 									$current_page_method = '(' . $parts[1]; //The detection method used to determine the page the form was submitted from (and add the parenthesis back in here)
@@ -2674,7 +2674,7 @@ if ( !trait_exists('Admin') ){
 				//Perform SMTP handshake
 				fwrite($connection, "EHLO localhost\r\n");
 				$response = fgets($connection, 512);
-				if ( strpos($response, '220') === false && strpos($response, '250') === false ){
+				if ( !str_contains($response, '220') && !str_contains($response, '250') ){
 					$status = 'Handshake Error';
 				}
 

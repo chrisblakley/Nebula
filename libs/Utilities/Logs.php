@@ -411,7 +411,7 @@ if ( !trait_exists('Logs') ){
 						'type' => 'php',
 						'path' => ini_get('error_log'), //Full file path
 						'name' => basename(ini_get('error_log')),
-						'shortpath' => ( strpos(ini_get('error_log'), WP_CONTENT_DIR) !== false )? '/' . str_replace(ABSPATH, '', ini_get('error_log')) : ini_get('error_log'), //Shorten the path if it is within the WordPress directory
+						'shortpath' => ( str_contains(ini_get('error_log'), WP_CONTENT_DIR) )? '/' . str_replace(ABSPATH, '', ini_get('error_log')) : ini_get('error_log'), //Shorten the path if it is within the WordPress directory
 						'bytes' => filesize(ini_get('error_log')),
 					);
 				}
@@ -423,7 +423,7 @@ if ( !trait_exists('Logs') ){
 					}
 
 					foreach ( $file_names as $type => $name ){
-						if ( strpos($file, '/' . $name) !== false ){ //If this file contains one of the target log file names (from the array above). //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						if ( str_contains($file, '/' . $name) ){ //If this file contains one of the target log file names (from the array above)
 							$all_log_files[$type][] = array(
 								'type' => $type,
 								'path' => $file, //Full file path
@@ -551,7 +551,7 @@ if ( !trait_exists('Logs') ){
 						}
 
 						//Check if the line contains a fatal error within the desired range
-						if ( strpos(strtolower($line), 'php fatal') !== false || strpos(strtolower($line), 'fatal error:') !== false ){ //Note: WP automatic plugin updates often have text that says "will not be checked for fatal errors" so we need to avoid that false positive
+						if ( str_contains(strtolower($line), 'php fatal') || str_contains(strtolower($line), 'fatal error:') ){ //Note: WP automatic plugin updates often have text that says "will not be checked for fatal errors" so we need to avoid that false positive
 							$fatal_error_count++;
 						}
 					} else {

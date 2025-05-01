@@ -26,6 +26,7 @@ if ( !trait_exists('Dashboard') ){
 
 					if ( $this->get_option('dev_info_metabox') && $this->is_dev() ){
 						add_action('wp_dashboard_setup', array($this, 'dev_info_metabox'));
+						add_action('wp_dashboard_setup', array($this, 'file_size_monitor_metabox'));
 					}
 
 					if ( $this->get_option('performance_metabox') || $this->is_dev() ){ //Devs always see the performance metabox
@@ -36,7 +37,7 @@ if ( !trait_exists('Dashboard') ){
 						add_action('wp_dashboard_setup', array($this, 'design_metabox'));
 					}
 
-					if ( nebula()->get_option('github_url') && nebula()->get_option('github_pat') ){ //Requires a GitHub URL and Personal Access Token
+					if ( $this->get_option('github_url') && $this->get_option('github_pat') ){ //Requires a GitHub URL and Personal Access Token
 						add_action('wp_dashboard_setup', array($this, 'github_metabox'));
 					}
 
@@ -53,9 +54,9 @@ if ( !trait_exists('Dashboard') ){
 
 		//Output the simplify class name when the simplify dashboard metaboxes option is enabled
 		public function get_simplify_dashboard_class(){
-			// if ( $this->get_option('simplify_dashboard_metaboxes') ){ //@todo "Nebula" 0: Uncomment this after v13 release
-			// 	return 'simplify';
-			// }
+			if ( $this->get_option('simplify_dashboard_metaboxes') ){
+				return 'simplify';
+			}
 
 			return '';
 		}
@@ -175,7 +176,7 @@ if ( !trait_exists('Dashboard') ){
 				}
 
 				$cache_length = ( is_plugin_active('transients-manager/transients-manager.php') )? WEEK_IN_SECONDS : DAY_IN_SECONDS; //If Transient Monitor (plugin) is active, transients with expirations are deleted when posts are published/updated, so this could be infinitely long (as long as an expiration exists).
-				$count_posts = nebula()->transient('nebula_count_posts_' . $post_type, function($data){
+				$count_posts = $this->transient('nebula_count_posts_' . $post_type, function($data){
 					$count_posts = wp_count_posts($data['post_type']);
 					return $count_posts;
 				}, array('post_type' => $post_type), $cache_length);
@@ -201,7 +202,7 @@ if ( !trait_exists('Dashboard') ){
 						$post_icon_img = '<i class="fa-solid fa-fw fa-thumbtack"></i>';
 						if ( !empty($post_icon) ){
 							$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" loading="lazy" />';
-							if ( strpos('dashicons-', $post_icon) >= 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+							if ( str_contains('dashicons-', $post_icon) ){
 								$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
 							}
 						}
@@ -215,7 +216,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//Earliest post
-			$earliest_post = nebula()->transient('nebula_earliest_post', function(){
+			$earliest_post = $this->transient('nebula_earliest_post', function(){
 				return new WP_Query(array('post_type' => 'any', 'post_status' => 'publish', 'showposts' => 1, 'orderby' => 'publish_date', 'order' => 'ASC'));
 			}, YEAR_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long (as long as an expiration exists).
 
@@ -225,7 +226,7 @@ if ( !trait_exists('Dashboard') ){
 			wp_reset_postdata();
 
 			//Last updated
-			$latest_post = nebula()->transient('nebula_latest_post', function(){
+			$latest_post = $this->transient('nebula_latest_post', function(){
 				return new WP_Query(array('post_type' => 'any', 'showposts' => 1, 'orderby' => 'modified', 'order' => 'DESC'));
 			}, WEEK_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long.
 			while ( $latest_post->have_posts() ){ $latest_post->the_post();
@@ -242,7 +243,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fa-solid fa-fw fa-history"></i> Storing <strong ' . $revision_class . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
 
 			//Plugins
-			$all_plugins = nebula()->transient('nebula_count_plugins', function(){
+			$all_plugins = $this->transient('nebula_count_plugins', function(){
 				return get_plugins();
 			}, WEEK_IN_SECONDS);
 			$all_plugins_plural = ( count($all_plugins) === 1 )? 'Plugin' : 'Plugins';
@@ -259,7 +260,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//Users
-			$user_count = nebula()->transient('nebula_count_users', function(){
+			$user_count = $this->transient('nebula_count_users', function(){
 				return count_users();
 			}, WEEK_IN_SECONDS);
 			$users_icon = 'users';
@@ -370,7 +371,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li class="essential"><i class="fa-solid fa-fw ' . $fa_role . '"></i> Role: <strong class="admin-user-info admin-user-role">' . $user_role . '</strong></li>';
 
 			//Posts by this user
-			$your_posts = nebula()->transient('nebula_count_posts_user_' . $user_info->ID, function($data){
+			$your_posts = $this->transient('nebula_count_posts_user_' . $user_info->ID, function($data){
 				return count_user_posts($data['id']);
 			}, array('id' => $user_info->ID), DAY_IN_SECONDS);
 			echo '<li class="essential"><i class="fa-solid fa-fw fa-thumbtack"></i> Your posts: <strong>' . $your_posts . '</strong></li>';
@@ -495,7 +496,7 @@ if ( !trait_exists('Dashboard') ){
 			$this->timer('Nebula To-Do Dashboard Metabox', 'start', '[Nebula] Dashboard Metaboxes');
 			do_action('nebula_todo_manager');
 
-			$todo_items = nebula()->transient('nebula_todo_items', function(){
+			$todo_items = $this->transient('nebula_todo_items', function(){
 				$todo_items = array(
 					'parent' => $this->todo_search_files(get_template_directory()),
 				);
@@ -697,9 +698,9 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//Server operating system
-			if ( strpos(strtolower(PHP_OS), 'linux') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( str_contains(strtolower(PHP_OS), 'linux') ){
 				$php_os_icon = 'fa-brands fa-linux';
-			} elseif ( strpos(strtolower(PHP_OS), 'windows') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			} elseif ( str_contains(strtolower(PHP_OS), 'windows') ){
 				$php_os_icon = 'fa-brands fa-windows essential';
 			} else {
 				$php_os_icon = 'fa-solid fa-upload';
@@ -903,29 +904,29 @@ if ( !trait_exists('Dashboard') ){
 
 			//Theme directory size(s)
 			if ( is_child_theme() ){
-				$nebula_parent_size = nebula()->transient('nebula_directory_size_parent_theme', function(){
+				$nebula_parent_size = $this->transient('nebula_directory_size_parent_theme', function(){
 					return $this->foldersize(get_template_directory());
 				}, DAY_IN_SECONDS);
 
-				$nebula_child_size = nebula()->transient('nebula_directory_size_child_theme', function(){
+				$nebula_child_size = $this->transient('nebula_directory_size_child_theme', function(){
 					return $this->foldersize(get_stylesheet_directory());
 				}, DAY_IN_SECONDS);
 
 				echo '<li><i class="fa-solid fa-code"></i> Parent theme directory size: <strong>' . $this->format_bytes($nebula_parent_size, 1) . '</strong> </li>';
 				echo '<li><i class="fa-solid fa-code"></i> Child theme directory size: <strong>' . $this->format_bytes($nebula_child_size, 1) . '</strong> </li>';
 			} else {
-				$nebula_size = nebula()->transient('nebula_directory_size_theme', function(){
+				$nebula_size = $this->transient('nebula_directory_size_theme', function(){
 					return $this->foldersize(get_stylesheet_directory());
 				}, DAY_IN_SECONDS);
 				echo '<li><i class="fa-solid fa-code"></i> Theme directory size: <strong>' . $this->format_bytes($nebula_size, 1) . '</strong> </li>';
 			}
 
 			//Plugins directory size (and count)
-			$plugins_size = nebula()->transient('nebula_directory_size_plugins', function(){
+			$plugins_size = $this->transient('nebula_directory_size_plugins', function(){
 				$plugins_dir = WP_CONTENT_DIR . '/plugins';
 				return $this->foldersize($plugins_dir);
 			}, HOUR_IN_SECONDS*36);
-			$all_plugins = nebula()->transient('nebula_count_plugins', function(){
+			$all_plugins = $this->transient('nebula_count_plugins', function(){
 				return get_plugins();
 			}, WEEK_IN_SECONDS);
 			$active_plugins = get_option('active_plugins', array());
@@ -934,7 +935,7 @@ if ( !trait_exists('Dashboard') ){
 			do_action('nebula_dev_dashboard_directories');
 
 			//Uploads directory size (and max upload size)
-			$uploads_size = nebula()->transient('nebula_directory_size_uploads', function(){
+			$uploads_size = $this->transient('nebula_directory_size_uploads', function(){
 				$upload_dir = wp_upload_dir();
 				return $this->foldersize($upload_dir['basedir']);
 			}, HOUR_IN_SECONDS*36);
@@ -1026,7 +1027,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//SCSS last processed date
 			if ( $this->get_data('scss_last_processed') ){
-				$sass_option = ( nebula()->get_option('scss') )? '' : ' <small><em><a href="themes.php?page=nebula_options&tab=functions&option=scss">Sass is currently <strong>disabled</strong> &raquo;</a></em></small>';
+				$sass_option = ( $this->get_option('scss') )? '' : ' <small><em><a href="themes.php?page=nebula_options&tab=functions&option=scss">Sass is currently <strong>disabled</strong> &raquo;</a></em></small>';
 				echo '<li class="essential"><i class="fa-brands fa-fw fa-sass"></i> Sass Processed: <span title="' . date("F j, Y", $this->get_data('scss_last_processed')) . ' @ ' . date("g:i:sa", $this->get_data('scss_last_processed')) . '" style="cursor: help;"><strong>' . human_time_diff($this->get_data('scss_last_processed')) . ' ago</strong></span> ' . $sass_option . '</li>';
 			}
 
@@ -1069,6 +1070,564 @@ if ( !trait_exists('Dashboard') ){
 			echo '</select><input class="searchterm button button-primary button-disabled" type="submit" value="Search" title="Still loading... Please wait." /></form>';
 			echo '<div class="search_results"></div>';
 			$this->timer('Nebula Developer Dashboard Metabox', 'end');
+		}
+
+		//at launch, update the nebula options for developer info toggle to include file size monitor as well
+
+		//File Size Monitor Metabox
+		public function file_size_monitor_metabox(){
+			if ( $this->is_minimal_mode() ){return false;}
+			wp_add_dashboard_widget('nebula_file_size_monitor', '<i class="fa-solid fa-fw fa-weight-scale"></i>&nbsp;File Size Monitor', array($this, 'dashboard_file_size_monitor'));
+		}
+
+		public function dashboard_file_size_monitor(){
+			$this->timer('Nebula File Size Monitor Dashboard Metabox', 'start', '[Nebula] Dashboard Metaboxes');
+
+			$files_and_groups = $this->transient('nebula_file_size_monitor_list', function(){
+				$file_limit = apply_filters('nebula_file_size_monitor_limit', 1500); //Allow others to increase the limit if desired
+				$file_count = 0;
+
+				//Ignored certain files and directories
+				$ignored = apply_filters('nebula_file_size_monitor_ignored', array('resources', '.github', '.gitignore', '.git', 'screenshot.png', 'acf-json', 'img/meta')); //Allow others to ignore files or directories. Note: purposefully *not* ignoring /vendor directories because they may have files that load on the front-end and should be monitored.
+
+				//File size budgets should match /inc/budget.json for consistency
+				//This list of groups can also be modified by others as desired– which means groups and extensions can be added or moved, and budgets can be changed
+				$groups = apply_filters('nebula_file_size_monitor_groups', array(
+					'Images' => array(
+						'extensions' => array('png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'ico', 'bmp', 'avif', 'eps', 'heic'),
+						'budget' => (KB_IN_BYTES*150),
+						'linkable' => true
+					),
+					'Videos' => array(
+						'extensions' => array('mp4', 'webm', 'mov', 'avi', 'mkv', 'ogg'),
+						'budget' => (MB_IN_BYTES*2),
+						'linkable' => true
+					),
+					'Audio' => array(
+						'extensions' => array('mp3', 'wav', 'ogg', 'flac', 'm4a'),
+						'budget' => (MB_IN_BYTES*1),
+						'linkable' => true
+					),
+					'Scripts' => array(
+						'extensions' => array('js', 'mjs', 'ts'),
+						'budget' => (KB_IN_BYTES*160),
+						'linkable' => true
+					),
+					'Styles' => array(
+						'extensions' => array('css', 'scss', 'less', 'sass'),
+						'budget' => (KB_IN_BYTES*160),
+						'linkable' => true
+					),
+					'Fonts' => array(
+						'extensions' => array('woff', 'woff2', 'ttf', 'otf', 'eot'),
+						'budget' => (KB_IN_BYTES*200),
+						'linkable' => true
+					),
+					'Documents' => array(
+						'extensions' => array('pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt'),
+						'budget' => (MB_IN_BYTES*10),
+						'linkable' => true
+					),
+					'Data' => array(
+						'extensions' => array('json', 'xml', 'csv', 'tsv', 'yml', 'yaml', 'ics', 'vcf'),
+						'budget' => (MB_IN_BYTES*10),
+						'linkable' => true
+					),
+					'Logs' => array(
+						'extensions' => array('log', 'error_log'),
+						'budget' => (MB_IN_BYTES*25),
+						'linkable' => false
+					),
+					'Templating' => array('extensions' => array('php', 'html', 'htm'), 'linkable' => false),
+					'Text' => array('extensions' => array('txt', 'md'), 'linkable' => true),
+					'Localization' => array('extensions' => array('mo', 'po', 'pot'), 'linkable' => false),
+					'Config' => array('extensions' => array('htaccess', 'env', 'ini', 'conf'), 'linkable' => false),
+					'Archives' => array('extensions' => array('zip', 'tar', 'gz'), 'linkable' => false), //Not allowing links for archive files
+					'Other' => array('extensions' => array(), 'linkable' => false)
+				));
+
+
+
+				//Default theme directory to scan
+				$directory = get_template_directory();
+				if ( is_child_theme() ){
+					$directory = get_stylesheet_directory();
+				}
+
+				$rii = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS));
+				$files = array();
+
+				foreach ( $rii as $file ){
+					//Skip directories themselves
+					if ( $file->isDir() ){
+						continue;
+					}
+
+					//If we hit the limit, stop scanning files
+					if ( $file_count >= $file_limit ){
+						break;
+					}
+
+					$path = $file->getPathname();
+
+					$relative_path = str_replace($directory, '', $path);
+					$relative_path = ltrim(str_replace('\\', '/', $relative_path), '/');
+
+					//Skip ignored files and directories
+					foreach( $ignored as $ignore ){
+						if ( str_contains($relative_path, $ignore) ){
+							continue 2;
+						}
+					}
+
+					$files[] = $this->get_file_info($path, $groups);
+					$file_count++;
+				}
+
+				$all_log_files = $this->get_log_files(); //Get all of the log files Nebula detects
+
+				//Normalize the log files into a simple array of filepath strings
+				$normalized_additional_files = array();
+				foreach( $all_log_files as $category => $log_files ){
+					foreach( $log_files as $log_file ){
+						$normalized_additional_files[] = $log_file['path'];
+					}
+				}
+
+				$initial_theme_files_count = count($files);
+				$all_additional_files = apply_filters('nebula_file_size_monitor', $normalized_additional_files); //Allow others to monitor files outside the child theme
+
+				foreach ( $all_additional_files as $filepath ){
+					//If we hit the limit, stop scanning files
+					if ( $file_count >= $file_limit ){
+						break;
+					}
+
+					if ( file_exists($filepath) ){
+						//Skip files that are already monitored
+						if( in_array($filepath, array_column($files, 'path')) ){
+							continue;
+						}
+
+						$files[] = $this->get_file_info($filepath, $groups);
+						$file_count++;
+					}
+				}
+
+				usort($files, fn($a,$b)=>$b['size']-$a['size']);
+
+				return array(
+					'groups' => $groups,
+					'files' => $files,
+					'limit' => $file_limit,
+					'scanned' => $file_count,
+					'requested' => $initial_theme_files_count+count($all_additional_files),
+					'timestamp' => time(),
+				);
+			}, MINUTE_IN_SECONDS*30);
+
+			$groups = $files_and_groups['groups'];
+			$files = $files_and_groups['files'];
+
+			$scan_date = 'at ' . date('g:ia', $files_and_groups['timestamp']);
+			if ( date('Y-m-d', $files_and_groups['timestamp']) != date('Y-m-d') ){
+				$scan_date = 'on ' . date('F j, Y', $files_and_groups['timestamp']);
+			}
+
+			$types = array_unique(array_column($files, 'type'));
+			sort($types);
+			$used_groups = array_unique(array_column($files, 'group'));
+			sort($used_groups);
+
+			echo '<p>This monitors theme files and standard log locations as well as <a href="//nebula.gearside.com/examples/file-size-monitor-dashboard-metabox/?utm_campaign=documentation&utm_medium=dashboard&utm_source=' . urlencode(site_url()) . '&utm_content=file_size_monitor_adding#adding" target="_blank" rel="noopener noreferrer">any files manually added</a>.</p>'; //@todo: link to nebula documentation for examples of how to add files to the monitor. show an example of how to add individual files as well as an example of how to add entire directories of files
+
+			//Show a warning if scanning a high amount of files
+			if ( $files_and_groups['scanned'] >= $files_and_groups['limit'] ){
+				echo '<p class="high-file-count"><strong><i class="fa-solid fa-circle-exclamation"></i> Scan limit reached: only the first ' . number_format($files_and_groups['limit']) . ' files (' . number_format(($files_and_groups['limit']/$files_and_groups['requested'])*100, 1) . '%) were scanned.</strong> ' . number_format($files_and_groups['requested']) . ' files were added, but ' . number_format($files_and_groups['requested']-$files_and_groups['scanned']) . ' files were not scanned. This limit helps maintain performance. <a href="//nebula.gearside.com/examples/file-size-monitor-dashboard-metabox/?utm_campaign=documentation&utm_medium=dashboard&utm_source=' . urlencode(site_url()) . '&utm_content=file_size_monitor_limit#limit" target="_blank" rel="noopener noreferrer">This limit can be increased, but use caution.</a></p>';
+			} elseif ( $files_and_groups['scanned'] >= ($files_and_groups['limit']*0.75) ){
+				echo '<p class="high-file-count"><strong><i class="fa-solid fa-circle-exclamation"></i> You are currently monitoring ' . number_format(count($files)) . ' files</strong>, which is approaching the scan limit for performance reasons. <a href="//nebula.gearside.com/examples/file-size-monitor-dashboard-metabox/?utm_campaign=documentation&utm_medium=dashboard&utm_source=' . urlencode(site_url()) . '&utm_content=file_size_monitor_limit#limit" target="_blank" rel="noopener noreferrer">This limit can be increased, but please use caution.</a></p>';
+			}
+
+			//Output filter dropdowns
+			$default_group = str_replace(' ', '', strtolower(apply_filters('nebula_file_size_monitor_default_selection', 'largest')));
+
+			echo '<div class="filter-row">';
+				//File Groups dropdown
+				echo '<label for="filegroup-filter"><i class="fa-solid fa-fw fa-filter"></i> Filter: </label>';
+				echo '<select id="filegroup-filter" class="initial-state">';
+				echo '<option value="" ' . ( ( empty($default_group) || $default_group == 'all' || $default_group == 'allgroups' )? 'selected data-default="true"' : '' ) . '>All Groups</option>';
+
+				$priority_options = array(
+					'largest' => 'Largest Files',
+					'overbudget' => 'Over Budget',
+					'nearbudget' => 'Approaching Budget',
+					'recent' => 'Recently Modified',
+					'security' => 'Security Concerns'
+				);
+				echo '<optgroup label="Priority">';
+				foreach ( $priority_options as $value => $label ){
+					$selected = ( $default_group == $value || $default_group == str_replace(' ', '', strtolower($label)) )? ' selected data-default="true"' : ''; //If the default selected matches this option
+					echo '<option value="' . esc_attr($value) . '"' . $selected . '>' . esc_html($label) . '</option>';
+				}
+				echo '</optgroup>';
+
+				echo '<optgroup label="File Groups">';
+					foreach ( $used_groups as $group ){
+						$selected = ( $default_group == str_replace(' ', '', strtolower($group)) )? ' selected data-default="true"' : ''; //If the default selected matches this option
+						echo '<option value="' . esc_attr($group) . '" ' . $selected . '>' . esc_html($group) . '</option>';
+					}
+				echo '</optgroup>';
+				echo '</select>';
+
+				//File Type dropdown
+				echo '<label class="sr-only" for="filetype-filter">File Type: </label>';
+				echo '<select id="filetype-filter">';
+				echo '<option value="" selected data-default="true">All Types</option>';
+				foreach ( $types as $type ){
+					echo ( !empty($type) )? '<option value="' . esc_attr($type) . '">' . esc_html($type) . '</option>' : '';
+				}
+				echo '</select>';
+			echo '</div>';
+
+			echo '<div class="filter-row">';
+				//Keyword search input
+				echo '<label for="filekeyword-filter"><i class="fa-solid fa-fw fa-search"></i></label>';
+				echo '<input id="filekeyword-filter" type="text" placeholder="Find files" /><a class="clear-keywords transparent" href="#"><i class="fa-solid fa-times"></i> Clear</a>';
+			echo '</div>';
+
+			//Output the table
+			echo '<div class="table-wrapper ' . $this->get_simplify_dashboard_class() . '"><table>';
+			echo '<thead><tr><th class="file-name">File Name</th><th class="file-group">Group</th><th class="file-size">Size<i class="fa-solid fa-caret-down"></i></th><th class="budget-percent hidden">% Budget</th><th class="hidden">Keywords</th></tr></thead>';
+			echo '<tbody>';
+			foreach ( $files as $index => $file ){
+				//Row Classes
+				$row_class = '';
+				if ( $file['size'] == 0 ){
+					$row_class .= ' empty-file';
+				} elseif ( $file['size'] < KB_IN_BYTES ){
+					$row_class .= ' tiny-file';
+				}
+
+				//Check size thresholds for large-file and huge-file classes
+				if ( isset($file['budget']) && $file['budget'] > 0 ){
+					if ( $file['size'] > $file['budget'] ){
+						$row_class .= ' overbudget-file';
+
+						if ( $file['size'] > ($file['budget']*2) ){
+							$row_class .= ' overbudget double-budget-file';
+						}
+					} else if ( $file['size'] >= ($file['budget']*0.75) ){ //Files approaching the budget, but not yet over
+						$row_class .= ' approaching-budget';
+					}
+				}
+
+				//Icons
+				$file_icon = '';
+				if ( !empty($file['notes']) ){
+					if ( str_contains($file['notes'], 'recently-modified') ){
+						$file_icon .= '<i class="note-icon fa-regular fa-clock recently-modified" title="This file has been recently modified"></i>';
+					}
+
+					if ( str_contains($file['notes'], 'contains-todo') ){
+						$file_icon .= '<i class="note-icon fa-regular fa-note-sticky contains-todo" title="This file contains an @todo comment"></i>';
+					}
+
+					if ( str_contains($file['notes'], 'stale-log') ){
+						$file_icon .= '<i class="note-icon fa-solid fa-ghost stale-log" title="Stale log: no recent entries"></i>';
+					}
+
+					if ( str_contains($file['notes'], 'non-ascii-characters') ){
+						$file_icon .= '<i class="note-icon fa-regular fa-keyboard non-ascii-characters" title="This file contains non-ascii characters"></i>';
+					}
+
+					if ( str_contains($file['notes'], 'contains-debug-output') ){
+						$file_icon .= '<i class="note-icon fa-solid fa-wrench contains-debug-output" title="This file contains debug output!"></i>';
+					}
+
+					if ( str_contains($file['notes'], 'contains-fatal') ){
+						$file_icon .= '<i class="note-icon fa-solid fa-skull-crossbones fatal-error" title="This log contains a fatal error entry"></i>';
+					}
+
+					if ( str_contains($file['notes'], 'security-concern') ){
+						$file_icon .= '<i class="note-icon fa-solid fa-unlock security-concern" title="This file contains a security concern! ' . sanitize_html_class($file['notes']) . '"></i>';
+					}
+				}
+
+				//Additional Info
+				$additional_info = '';
+				if ( $file['type'] == 'log' && !empty($file['lines']) ){
+					$additional_info = ' <small class="entries line-count">(' . number_format($file['lines']) . ' entries)</small>';
+				}
+
+				//Links
+				$file_link = '';
+				if ( !empty($file['linkable']) && $file['size'] <= (MB_IN_BYTES*10) ){ //If the $file['linkable'] and the filesize is less than 10mb
+					$file_uri = str_replace(ABSPATH, site_url('/'), $file['path']);
+					$file_link = ' <a class="file-link" href="' . esc_url($file_uri) . '" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-fw fa-up-right-from-square"></i></a>';
+				}
+
+				//Budget
+				$budget_percent = '';
+				$budget_description = '';
+				if ( !empty($file['budget']) ){
+					$budget_percent = number_format(($file['size']*100)/$file['budget'], 1) . '%';
+					$budget_description = $budget_percent . ' of ' . $this->format_bytes($file['budget']) . ' budget';
+				}
+
+				echo '<tr class="' . trim($row_class) . '" data-type="' . esc_attr($file['type']) . '" data-group="' . esc_attr($file['group']) . '" data-budget="' . esc_attr($this->format_bytes($file['budget'])) . '">';
+				echo '<td class="file-name">' . ' <small>' . ($index+1) . '.</small> <span class="file-icons-group">' . $file_icon . '</span> <span title="' . esc_attr($file['path']) . '">' . esc_html($file['name']) . '</span>' . $additional_info . $file_link . '<small class="modified-info hidden"><br />(Modified ' . human_time_diff($file['modified'], time()) . ' ago)</small></td>';
+				echo '<td class="file-group">' . esc_html($file['group']) . '</td>';
+				echo '<td class="file-size" title="' . $budget_description . '">' . $this->format_bytes($file['size']) . '</td>';
+				echo '<td class="budget-percent hidden">' . $budget_percent . '</td>';
+				echo '<td class="file-keywords hidden">' . $file['group'] . ' ' . $file['notes'] . ' ' . $file['path'] . '</td>';
+				echo '</tr>';
+			}
+			echo '</tbody></table><div class="no-files-message hidden">No files match the selected criteria. <a class="reset-filters" href="#">Reset?</a></div></div>';
+			echo '<div class="totals-row"><small>Showing <span class="total-showing">All</span> of ' . number_format(count($files)) . ' monitored files <small class="relative-date-tooltip" data-date="' . $files_and_groups['timestamp'] . '">(' . $scan_date . ')</small>. <a class="monitor-re-scan" href="' . admin_url('?clear-transients') . '">Re-Scan?</a></small></div>';
+			echo '<p class="budget-description hidden">The budget for <strong class="filetype">These</strong> is <strong class="sizebudget">non-applicable</strong>. <a class="show-optimization-tips" href="#">Show Tips <i class="fa-solid fa-caret-down"></i></a></p>';
+			?>
+				<div id="nebula-optimization-tips" style="display: none;">
+					<ul>
+						<li class="tip hidden" data-group="images">Reduce image sizes to only the necessary dimensions. For hero/background images, consider limiting the dimensions and then scaling up using CSS.</li>
+						<li class="tip hidden" data-group="images">Use appropriate image formats! WEBP is <em>usually</em> better than PNG and often better than JPG. SVG is typically great, but not if the vector has a lot of vertices.</li>
+						<li class="tip hidden" data-group="images">Use a liberal amount of compression when saving.</li>
+						<li class="tip hidden" data-group="images">Save JPG images as "Progressive".</li>
+						<li class="tip hidden" data-group="images">Only use a batch optimizer <strong>after</strong> previous steps are completed! Bulk optimization tools will not resize images themselves.</li>
+						<li class="tip hidden" data-group="images">Use native lazy loading (<code>loading="lazy"</code>) on most images!</li>
+
+						<li class="tip hidden" data-group="fonts">Choose WOFF and WOFF2 formats when possible. TTF formats are not optimized for web usage.</li>
+						<li class="tip hidden" data-group="fonts">Limit font weights to only what is absolutely necessary. <strong>Strongly consider using a variable font!</strong></li>
+						<li class="tip hidden" data-group="fonts">Consider font display swap so the user can begin reading content while the page continues to load.</li>
+						<li class="tip hidden" data-group="fonts">Determine if locally hosting font files is advantageous.</li>
+						<li class="tip hidden" data-group="fonts">For icon font libraries, consider creating a kit that contains only the used icons.</li>
+
+						<li class="tip hidden" data-group="styles">CSS files often block rendering, so scrutinize which files are absolutely necessary.</li>
+						<li class="tip hidden" data-group="styles">For CSS from plugins, use advanced Nebula Options to conditionally deregister on unnecessary pages.</li>
+						<li class="tip hidden" data-group="styles">CSS can be lazy loaded by adding the link element to the DOM with JavaScript. For features that are not seen immediately, consider using this technique.</li>
+						<li class="tip hidden" data-group="styles">Minify CSS files when feasible. Preprocessors like Sass should automate this. If you are not using Nebula's built-in Sass preprocessor, strongly consider it.</li>
+
+						<li class="tip hidden" data-group="scripts">JavaScript must be processed, so large JS files are much worse than other formats of the same size!</li>
+						<li class="tip hidden" data-group="scripts">Use JS modules and conditionally/dynamically import only necessary files/functions.</li>
+						<li class="tip hidden" data-group="scripts">Defer and async JavaScript files</li>
+						<li class="tip hidden" data-group="scripts">Minify JavaScript when feasible.</li>
+
+						<li class="tip hidden" data-group="videos">Videos should be heavily compressed.</li>
+						<li class="tip hidden" data-group="videos">The WEBM format is designed for web use. MP4 files also optimize well.</li>
+						<li class="tip hidden" data-group="videos">Show a poster image or façade until the window has loaded, then start loading the video itself.</li>
+						<li class="tip hidden" data-group="videos">For decorative/background videos, be realistic with the duration.</li>
+						<li class="tip hidden" data-group="videos">For content videos, consider hosting on a streaming service. However, that may require other unoptimized resources.</li>
+						<li class="tip hidden" data-group="videos">Consider if videos are necessary for mobile at all; strongly consider avoiding them.</li>
+
+						<li class="tip hidden" data-group="logs">On production websites, scrutinize which log files are necessary to be enabled.</li>
+						<li class="tip hidden" data-group="logs">Regularly review log files to note corrective actions, and delete these before they get too large.</li>
+						<li class="tip hidden" data-group="logs">Consider using a log rotation tool to cap filesizes so they don't get out of control.</li>
+
+						<!-- <li class="tip general">Pay close attention to the overall file size footprint of each page.</li>
+						<li class="tip general">Ensure caching and compression is enabled in .htaccess! Consider using the provided Nebula resource.</li>
+						<li class="tip general">Files added to the WordPress Media Library in the /uploads/ directory often bypass developer review— regularly check for large files.</li> -->
+					</ul>
+				</div>
+			<?php
+
+			$this->timer('Nebula File Size Monitor Dashboard Metabox', 'end');
+		}
+
+		public function get_file_info($filepath, $groups, $directory=null){
+			$file_size_content_scan_limit = KB_IN_BYTES*300; //The file size limit for reading the contents of files. It will read only the first X bytes of the file.
+			$extension = strtolower(pathinfo($filepath, PATHINFO_EXTENSION) ?: '');
+			$group = 'Other';
+
+			foreach ( $groups as $label => $info ){
+				if ( in_array($extension, $info['extensions']) ){
+					$group = $label;
+					break;
+				}
+			}
+
+			$file_info = array(
+				'name' => basename($filepath),
+				'path' => $filepath,
+				'type' => $extension,
+				'group' => $group,
+				'linkable' => $groups[$group]['linkable'] ?? false,
+				'size' => filesize($filepath),
+				'budget' => $groups[$group]['budget'] ?? 0,
+				'modified' => filemtime($filepath)
+			);
+
+			$notes = array();
+
+			//Monitor file sizes
+			if ( filesize($filepath) > MB_IN_BYTES ){
+				$notes[] = 'large-file-size';
+			} elseif ( filesize($filepath) < (KB_IN_BYTES*10) ){
+				$notes[] = 'tiny-file-size';
+				$notes[] = 'trivial-file-size';
+			} elseif ( filesize($filepath) === 0 ){
+				$notes[] = 'empty-file-size';
+				$notes[] = 'zero-file-size';
+			}
+
+			if ( $group === 'Logs' || $extension === 'log' || basename($filepath) === 'error_log' ){
+				//Include entry counts (lines) for log files
+				$file_info['lines'] = count(file($filepath, FILE_SKIP_EMPTY_LINES));
+
+				//Check log files for fatal errors
+				$contents = file_get_contents($filepath, false, null, 0, $file_size_content_scan_limit);
+				if ( str_contains($contents, 'fatal') ){
+					$notes[] = 'contains-fatal';
+				}
+
+				//Check log files that have *not* been updated in a very long time
+				if ( filemtime($filepath) < time()-(MONTH_IN_SECONDS*6) ){
+					$notes[] = 'stale-log';
+				}
+			}
+
+			if ( in_array($group, array('Templating', 'Styles', 'Scripts')) ){
+				$contents = file_get_contents($filepath, false, null, 0, $file_size_content_scan_limit);
+				$contents = strtolower($contents);
+
+				//Check for @todo comments and other potential tech debt
+				$tech_debt_strings = array('@todo', 'fixme');
+				foreach ( $tech_debt_strings as $tech_debt_string ){
+					if ( str_contains($contents, $tech_debt_string) ){
+						$notes[] = 'potential-tech-debt';
+						$notes[] = 'contains-' . str_replace('@', '', $tech_debt_string);
+						break;
+					}
+				}
+
+				//Check for spaces instead of tabs
+				if ( str_contains($contents, '    ') ){
+					$notes[] = 'contains-space-indentation';
+				}
+
+				//Check for debug output
+				$debug_strings = array('var_dump', 'print_r', 'alert(', 'console.log('); //Ignore in-progress string check
+				foreach ( $debug_strings as $debug_string ){
+					if ( str_contains($contents, $debug_string) ){
+						$notes[] = 'contains-debug-output';
+						break;
+					}
+				}
+
+				//Code Quality
+				if ( preg_match('/["\']\s*[\.\+]\s*["\']/', $contents) ){ //Check for concatenation of two strings
+					$notes[] = 'concern-code-quality';
+					$notes[] = 'concern-concatenation';
+				}
+			}
+
+			$notes[] = 'last-modified-' . date('Y-m-d', filemtime($filepath)); //Add the last modified date so it can be searched
+
+			$file_modified_age = time()-filemtime($filepath);
+			if ( $file_modified_age < DAY_IN_SECONDS*7 ){
+				$notes[] = 'recently-modified';
+				$notes[] = 'recent-file';
+			} elseif ( $file_modified_age > YEAR_IN_SECONDS ){
+				$notes[] = 'old-file';
+
+				if ( $file_modified_age > YEAR_IN_SECONDS*10 ){ //Older than 10 years
+					$notes[] = 'ten-year-old-file';
+					$notes[] = 'decade-old-file';
+					$notes[] = 'ancient-file';
+				} elseif ( $file_modified_age > YEAR_IN_SECONDS*5 ){ //Older than 5 years
+					$notes[] = 'five-year-old-file';
+				} elseif ( $file_modified_age > YEAR_IN_SECONDS*2 ){ //Older than 2 years
+					$notes[] = 'two-year-old-file';
+				}
+			}
+
+			//Check for files with no extension
+			if ( pathinfo($filepath, PATHINFO_EXTENSION) === '' ){
+				$notes[] = 'no-extension';
+			}
+
+			if ( in_array($group, array('Templating', 'Text', 'Other')) ){
+				$contents = file_get_contents($filepath, false, null, 0, $file_size_content_scan_limit);
+				$contents = strtolower($contents);
+
+				//Check for placeholder text
+				if ( str_contains($contents, 'lorem ipsum') ){
+					$notes[] = 'contains-lorem-ipsum';
+					$notes[] = 'contains-placeholder-text';
+				}
+
+				//Check templating files for accessibility
+				if ( $group === 'Templating' ){
+					//Check for placeholder alt attributes
+					if ( str_contains($contents, 'alt="#"') ){
+						$notes[] = 'accessibility';
+						$notes[] = 'a11y';
+						$notes[] = 'placeholder-alt-attribute';
+					}
+
+					//Best-effort check for <img> elements with missing alt attributes (note: it may be acceptable if the element contains a role or is aria-hidden)
+					if ( preg_match('/<img\b(?![^>]*\balt=)[^>\n]*>/i', $contents) ){ //Check <img> elements that are missing alt until a newline limit
+						$notes[] = 'accessibility';
+						$notes[] = 'a11y';
+						$notes[] = 'missing-alt-attribute';
+					}
+				}
+
+				//Check for non-ASCII characters
+				if ( preg_match('/[^\x00-\x7F]/', $contents) ){
+					$notes[] = 'non-ascii-characters';
+				}
+
+				//Check for deprecated functionality
+				$deprecated_functions = array('mysql_connect(', 'ereg(');
+				foreach ( $deprecated_functions as $deprecated_function ){
+					if ( str_contains($contents, $deprecated_function) ){
+						$notes[] = 'security-concern';
+						$notes[] = 'uses-deprecated-function';
+						$notes[] = 'concern-deprecated-function';
+						break;
+					}
+				}
+
+				//Check if the file has dangerous permissions
+				$file_permissions = fileperms($filepath) & 0777;
+				if ( $file_permissions === 0777 || $file_permissions === 0666 ){
+					$notes[] = 'security-concern';
+					$notes[] = 'concern-file-permissions';
+				}
+
+				//Check for security concerns (do these last!)
+
+				//Check for remote includes
+				if ( preg_match('/\b(include|require)(_once)?\([\'"]http/', $contents) ){
+					$notes[] = 'security-concern';
+					$notes[] = 'concern-remote-include';
+				}
+
+				//Check file names for suspicious names/extensions
+				$suspicious_names = array('phpinfo', 'wp-config', '.exe', 'shell', 'c99.', 'r57.', 'b374k', 'swf', '.dll');
+				foreach ( $suspicious_names as $suspicious_name ){
+					if ( str_contains(strtolower($filepath), $suspicious_name) ){
+						$notes[] = 'security-concern';
+						$notes[] = 'concern-filename';
+						break;
+					}
+				}
+
+				//Check within files for suspicious strings
+				$suspicious_strings = array('eval(base64_decode', 'gzuncompress(', 'create_function(', 'shell_exec(', ' exec(', 'passthru(', 'popen(', 'proc_open(', 'phpinfo(');
+				foreach ( $suspicious_strings as $suspicious_string ){
+					if ( str_contains($contents, $suspicious_string) ){
+						$notes[] = 'security-concern';
+						$notes[] = 'concern-suspicious-string';
+						$notes[] = 'concern-' . preg_replace('/[^a-z0-9\-]/', '', strtolower($suspicious_string));
+						break;
+					}
+				}
+			}
+
+			$all_notes = apply_filters('nebula_file_size_monitor_notes', $notes, $file_info); //Allow others to check files for additional notes
+			$file_info['notes'] = implode(' ', array_unique($all_notes));
+
+			return $file_info;
 		}
 
 		//Get last modified filename and date from a directory
@@ -1164,7 +1723,7 @@ if ( !trait_exists('Dashboard') ){
 			foreach ( $this->glob_r($dirpath . '/*') as $file ){
 				$counted = 0;
 				if ( is_file($file) ){
-					if ( strpos(basename($file), $searchTerm) !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					if ( str_contains(basename($file), $searchTerm) ){
 						echo '<p class="resulttext">' . str_replace($dirpath, '', dirname($file)) . '/<strong>' . basename($file) . '</strong></p>';
 						$file_counter++;
 						$counted = 1;
@@ -1307,24 +1866,24 @@ if ( !trait_exists('Dashboard') ){
 		public function github_metabox(){
 			if ( $this->is_minimal_mode() ){return false;}
 
-			if ( nebula()->get_option('github_url') && nebula()->get_option('github_pat') ){
-				$repo_name = str_replace('https://github.com/', '', nebula()->get_option('github_url'));
+			if ( $this->get_option('github_url') && $this->get_option('github_pat') ){
+				$repo_name = str_replace('https://github.com/', '', $this->get_option('github_url'));
 				global $wp_meta_boxes;
 				wp_add_dashboard_widget('nebula_github', '<i class="fa-brands fa-fw fa-github"></i>&nbsp;' . $repo_name, array($this, 'dashboard_nebula_github'));
 			}
 		}
 
 		public function dashboard_nebula_github(){
-			nebula()->timer('Nebula Companion GitHub Dashboard', 'start', '[Nebula] Dashboard Metaboxes');
-			echo '<p><a href="' . nebula()->get_option('github_url') . '" target="_blank">GitHub Repository &raquo;</a></p>';
+			$this->timer('Nebula Companion GitHub Dashboard', 'start', '[Nebula] Dashboard Metaboxes');
+			echo '<p><a href="' . $this->get_option('github_url') . '" target="_blank">GitHub Repository &raquo;</a></p>';
 
-			$repo_name = str_replace('https://github.com/', '', nebula()->get_option('github_url'));
-			$github_personal_access_token = nebula()->get_option('github_pat');
+			$repo_name = str_replace('https://github.com/', '', $this->get_option('github_url'));
+			$github_personal_access_token = $this->get_option('github_pat');
 
 			//Commits
 			$github_commit_json = get_transient('nebula_github_commits');
-			if ( empty($github_commit_json) || nebula()->is_debug() ){
-				$commits_response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/commits', array(
+			if ( empty($github_commit_json) || $this->is_debug() ){
+				$commits_response = $this->remote_get('https://api.github.com/repos/' . $repo_name . '/commits', array(
 					'headers' => array(
 						'Authorization' => 'token ' . $github_personal_access_token,
 					)
@@ -1348,8 +1907,8 @@ if ( !trait_exists('Dashboard') ){
 						If this is a private repo, the <strong>Client ID</strong> and <strong>Client Secret</strong> from your GitHub app must be added in <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a> to retrieve issues.
 					</p>
 					<p>
-						<a href="<?php echo nebula()->get_option('github_url'); ?>/commits/main" target="_blank">Commits &raquo;</a><br />
-						<a href="<?php echo nebula()->get_option('github_url'); ?>/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">Issues &raquo;</a><br />
+						<a href="<?php echo $this->get_option('github_url'); ?>/commits/main" target="_blank">Commits &raquo;</a><br />
+						<a href="<?php echo $this->get_option('github_url'); ?>/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">Issues &raquo;</a><br />
 					</p>
 				<?php
 				return false;
@@ -1364,11 +1923,11 @@ if ( !trait_exists('Dashboard') ){
 				$commit_date_icon = ( date('Y-m-d', $commit_date_time) === date('Y-m-d') )? 'fa-clock' : 'fa-calendar';
 				echo '<p>
 					<i class="fa-regular fa-fw ' . $commit_date_icon . '"></i> <a href="' . $commits[$i]->html_url . '" target="_blank" title="' . date('F j, Y @ g:ia', $commit_date_time) . '">' . human_time_diff($commit_date_time) . ' ago</a><br />
-					<small style="display: block;">' . nebula()->excerpt(array('text' => $commits[$i]->commit->message, 'words' => 15, 'ellipsis' => true, 'more' => false)) . '</small>
+					<small style="display: block;">' . $this->excerpt(array('text' => $commits[$i]->commit->message, 'words' => 15, 'ellipsis' => true, 'more' => false)) . '</small>
 				</p>';
 			}
 
-			echo '<p><small><a href="' . nebula()->get_option('github_url') . '/commits/main" target="_blank">View all commits &raquo;</a></small></p>';
+			echo '<p><small><a href="' . $this->get_option('github_url') . '/commits/main" target="_blank">View all commits &raquo;</a></small></p>';
 			echo '</div>';
 
 			//Issues and Discussions
@@ -1376,10 +1935,10 @@ if ( !trait_exists('Dashboard') ){
 			echo '<strong>Recent Issues, Pull Requests, &amp; Discussions</strong><br />';
 
 			$github_combined_posts = get_transient('nebula_github_posts');
-			if ( empty($github_combined_posts) || nebula()->is_debug() ){
+			if ( empty($github_combined_posts) || $this->is_debug() ){
 				//Get the Issues first https://developer.github.com/v3/issues/
 				//Note: The Issues endpoint also returns pull requests (which is fine because we want that)
-				$issues_response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/issues?state=open&sort=updated&direction=desc&per_page=3', array(
+				$issues_response = $this->remote_get('https://api.github.com/repos/' . $repo_name . '/issues?state=open&sort=updated&direction=desc&per_page=3', array(
 					'headers' => array(
 						'Authorization' => 'token ' . $github_personal_access_token,
 					)
@@ -1394,7 +1953,7 @@ if ( !trait_exists('Dashboard') ){
 
 				//Get the Discussions next
 				//GraphQL API is available, but webhooks not ready yet per (Feb 2021): https://github.com/github/feedback/discussions/43
-				// $discussions_response = nebula()->remote_get('https://api.github.com/repos/' . $repo_name . '/discussions?sort=updated&direction=desc&per_page=3', array(
+				// $discussions_response = $this->remote_get('https://api.github.com/repos/' . $repo_name . '/discussions?sort=updated&direction=desc&per_page=3', array(
 				// 	'headers' => array(
 				// 		'Authorization' => 'token ' . $github_personal_access_token,
 				// 	)
@@ -1418,11 +1977,11 @@ if ( !trait_exists('Dashboard') ){
 				echo '<ul>';
 				for ( $i=0; $i <= 2; $i++ ){ //Get 3 issues
 					$github_post_type = 'Unknown';
-					if ( strpos($github_combined_posts[$i]->html_url, 'issue') > 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					if ( str_contains($github_combined_posts[$i]->html_url, 'issue') ){
 						$github_post_type = 'Issue';
-					} elseif ( strpos($github_combined_posts[$i]->html_url, 'pull') > 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					} elseif ( str_contains($github_combined_posts[$i]->html_url, 'pull') ){
 						$github_post_type = 'Pull Request';
-					} elseif ( strpos($github_combined_posts[$i]->html_url, 'discussion') > 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					} elseif ( str_contains($github_combined_posts[$i]->html_url, 'discussion') ){
 						$github_post_type = 'Discussion';
 					}
 
@@ -1441,9 +2000,9 @@ if ( !trait_exists('Dashboard') ){
 				echo '<p>No issues or discussions found.</p>';
 			}
 
-			echo '<p><small>View all <a href="' . nebula()->get_option('github_url') . '/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">issues</a>, <a href="' . nebula()->get_option('github_url') . '/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc" target="_blank">pull requests</a>, or <a href="' . nebula()->get_option('github_url') . '/discussions" target="_blank">discussions &raquo;</a></small></p>';
+			echo '<p><small>View all <a href="' . $this->get_option('github_url') . '/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">issues</a>, <a href="' . $this->get_option('github_url') . '/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc" target="_blank">pull requests</a>, or <a href="' . $this->get_option('github_url') . '/discussions" target="_blank">discussions &raquo;</a></small></p>';
 			echo '</div></div>';
-			nebula()->timer('Nebula Companion GitHub Dashboard', 'end');
+			$this->timer('Nebula Companion GitHub Dashboard', 'end');
 		}
 
 		//Hubspot Contacts
@@ -1457,7 +2016,7 @@ if ( !trait_exists('Dashboard') ){
 			$this->timer('Nebula Hubspot Dashboard Metabox', 'start', '[Nebula] Dashboard Metaboxes');
 			do_action('nebula_hubspot_contacts');
 
-			$hubspot_contacts_json = nebula()->transient('nebula_hubspot_contacts', function(){
+			$hubspot_contacts_json = $this->transient('nebula_hubspot_contacts', function(){
 				$requested_properties = '&property=' . implode('&property=', apply_filters('nebula_hubspot_metabox_properties', array('firstname', 'lastname', 'full_name', 'email', 'createdate')));
 				$response = $this->remote_get('https://api.hubapi.com/contacts/v1/lists/all/contacts/recent?hapikey=' . $this->get_option('hubspot_api') . '&count=4' . $requested_properties);
 				if ( is_wp_error($response) ){

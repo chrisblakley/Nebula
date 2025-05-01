@@ -123,14 +123,14 @@ if ( !trait_exists('Assets') ){
 
 			//Prep lazy assets for JS loading later
 			foreach ( $wp_styles->registered as $handle => $data ){ //Must use registered here because lazy styles are dequeued already
-				if ( (strpos($handle, 'nebula-') !== false && strpos($handle, 'admin') === false && strpos($handle, 'login') === false) || (!empty($lazy_assets_for_preload['styles']) && array_key_exists($handle, $lazy_assets_for_preload['styles'])) ){ //If the handle contains "nebula-" but not "admin" or "login" -or- if the asset is prepped for lazy-loading //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( (str_contains($handle, 'nebula-') && !str_contains($handle, 'admin') && !str_contains($handle, 'login')) || (!empty($lazy_assets_for_preload['styles']) && array_key_exists($handle, $lazy_assets_for_preload['styles'])) ){ //If the handle contains "nebula-" but not "admin" or "login" -or- if the asset is prepped for lazy-loading
 					$ver = ( !empty($data->ver) )? '?ver=' . $data->ver : '';
 					$nebula_assets_for_js['styles'][str_replace('-', '_', $handle)] = $data->src . $ver;
 				}
 			}
 
 			foreach ( $wp_scripts->registered as $handle => $data ){ //Must use registered here because lazy scripts are dequeued already
-				if ( (strpos($handle, 'nebula-') !== false && strpos($handle, 'admin') === false && strpos($handle, 'login') === false) || (!empty($lazy_assets_for_preload['scripts']) && array_key_exists($handle, $lazy_assets_for_preload['scripts'])) ){ //If the handle contains "nebula-" but not "admin" or "login" -or- if the asset is prepped for lazy-loading //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( (str_contains($handle, 'nebula-') && !str_contains($handle, 'admin') && !str_contains($handle, 'login')) || (!empty($lazy_assets_for_preload['scripts']) && array_key_exists($handle, $lazy_assets_for_preload['scripts'])) ){ //If the handle contains "nebula-" but not "admin" or "login" -or- if the asset is prepped for lazy-loading
 					$ver = ( !empty($data->ver) )? '?ver=' . $data->ver : '';
 					$nebula_assets_for_js['scripts'][str_replace('-', '_', $handle)] = str_replace(array('#defer', '#async'), '', $data->src . $ver);
 				}

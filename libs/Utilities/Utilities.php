@@ -310,7 +310,7 @@ if ( !trait_exists('Utilities') ){
 				if ( !empty($other_internal_domains) ){
 					$other_internal_domains = explode(',', $other_internal_domains);
 					foreach ( $other_internal_domains as $other_internal_domain ){
-						if ( strpos($full_referrer, trim($other_internal_domain)) !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						if ( str_contains($full_referrer, trim($other_internal_domain)) ){
 							return true;
 						}
 					}
@@ -446,7 +446,7 @@ if ( !trait_exists('Utilities') ){
 			if ( isset($override) ){return $override;}
 
 			if ( $this->get_option('hostnames') ){
-				if ( strpos($this->get_option('hostnames'), $this->url_components('hostname', home_url())) >= 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( str_contains($this->get_option('hostnames'), $this->url_components('hostname', home_url())) ){
 					return true;
 				}
 				return false;
@@ -460,7 +460,7 @@ if ( !trait_exists('Utilities') ){
 			$notable_tags = array('utm_', 'fbclid', 'gclid', 'gclsrc', 'dclid', 'gbraid', 'wbraid', 'mc_eid', '_hsenc', 'vero_id', 'mkt_tok');
 
 			foreach ( $notable_tags as $tag ){
-				if ( strpos(strtolower($query_string), $tag) > -1 ){ //If UTM parameters exist //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( str_contains(strtolower($query_string), $tag) ){ //If UTM parameters exist
 					return true; //This is a tagged campaign page (return true as soon as any match)
 				}
 			}
@@ -701,7 +701,7 @@ if ( !trait_exists('Utilities') ){
 
 				case ('file'): //Filename will be just the filename/extension.
 				case ('filename'):
-					if ( strpos(basename($url_components['path']), '.') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					if ( str_contains(basename($url_components['path']), '.') ){
 						return basename($url_components['path']);
 					}
 
@@ -710,7 +710,7 @@ if ( !trait_exists('Utilities') ){
 				case ('type'):
 				case ('filetype'):
 				case ('extension'): //Only the extension (without ".")
-					if ( strpos(basename($url_components['path']), '.') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					if ( str_contains(basename($url_components['path']), '.') ){
 						$file_parts = explode('.', $url_components['path']);
 						return $file_parts[count($file_parts)-1];
 					}
@@ -718,7 +718,7 @@ if ( !trait_exists('Utilities') ){
 					return false;
 
 				case ('path'): //Path should be just the path without the filename/extension.
-					if ( strpos(basename($url_components['path']), '.') !== false ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					if ( str_contains(basename($url_components['path']), '.') ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
 						return str_replace(basename($url_components['path']), '', $url_components['path']);
 					}
 
@@ -781,7 +781,7 @@ if ( !trait_exists('Utilities') ){
 
 				foreach ( $urls_to_check as $query_string ){ //Loop through the URLs that may contain UTM tags
 					foreach ( $notable_tags as $tag ){ //Loop through each of the notable tracking tags
-						if ( strpos(strtolower($query_string), $tag) > -1 ){ //If UTM parameters exist //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						if ( str_contains(strtolower($query_string), $tag) ){ //If UTM parameters exist
 							$this->set_cookie('nebula_utms', $this->url_components('all'), strtotime('+14 months')); //Set/update the cookie and store the entire LP URL
 							return sanitize_text_field($this->url_components('all')); //Return the entire landing page URL with full query string sanitized
 						}
@@ -871,7 +871,7 @@ if ( !trait_exists('Utilities') ){
 
 			global $wpdb;
 
-			if ( strpos($wpdb->remove_placeholder_escape($where), '_%_') > -1 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( str_contains($wpdb->remove_placeholder_escape($where), '_%_') ){
 				$where = preg_replace(
 					"/meta_key = ([\'\"])(.+)_%_/",
 					"meta_key LIKE $1$2_%_",
@@ -1084,7 +1084,7 @@ if ( !trait_exists('Utilities') ){
 			if ( isset($override) ){return $override;}
 
 			//Make sure the URL is valid
-			if ( empty($url) || strpos($url, 'http') !== 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( empty($url) || !str_starts_with($url, 'http') ){ //If the URL is empty or does not start with a valid protocol
 				trigger_error('Error: Requested URL is either empty or missing acceptable protocol.', E_USER_ERROR);
 				return false;
 			}
@@ -1148,7 +1148,7 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			//Must be a valid URL
-			if ( empty($url) || strpos($url, 'http') !== 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( empty($url) || !str_starts_with($url, 'http') ){ //If the URL is empty or does not start with a valid protocol
 				return new WP_Error('broke', 'Requested URL is either empty or missing acceptable protocol.');
 			}
 
@@ -1801,7 +1801,7 @@ if ( !trait_exists('Utilities') ){
 		public function hubspot_curl($url, $content=null){
 			if ( $this->is_minimal_mode() ){return false;}
 
-			$sep = ( strpos($url, '?') === false )? '?' : '&'; //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			$sep = ( !str_contains($url, '?') )? '?' : '&';
 			$get_url = $url . $sep . 'hapikey=' . $this->get_option('hubspot_api');
 
 			if ( !empty($content) ){

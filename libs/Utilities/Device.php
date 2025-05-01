@@ -222,7 +222,7 @@ if ( !trait_exists('Device') ){
 				$bot_regex = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http', 'favicon', 'curl', 'coda', 'netcraft', 'silktide'); //Consider 'cloudflare-' as long as it is not ever used in actual users' user agent
 				$all_bot_regex = apply_filters('nebula_bot_regex', $bot_regex);
 				foreach( $all_bot_regex as $bot_regex ){
-					if ( strpos(strtolower($this->super->server['HTTP_USER_AGENT']), $bot_regex) !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					if ( str_contains(strtolower($this->super->server['HTTP_USER_AGENT']), $bot_regex) ){
 						return true;
 					}
 				}
@@ -246,7 +246,7 @@ if ( !trait_exists('Device') ){
 		function is_googlebot($strict=false){
 			if ( $this->is_minimal_mode() ){return false;}
 
-			if ( !empty($this->super->server['HTTP_USER_AGENT']) && strpos(strtolower($this->super->server['HTTP_USER_AGENT']), 'googlebot') ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( !empty($this->super->server['HTTP_USER_AGENT']) && str_contains(strtolower($this->super->server['HTTP_USER_AGENT']), 'googlebot') ){
 				if ( !empty($strict) ){
 					$hostname = gethostbyaddr($this->get_ip_address(false));
 					if ( preg_match('/\.googlebot|google\.com$/i', $hostname) ){
@@ -267,7 +267,7 @@ if ( !trait_exists('Device') ){
 		function is_gpt_bot(){
 			if ( $this->is_minimal_mode() ){return false;}
 
-			if ( !empty($this->super->server['HTTP_USER_AGENT']) && strpos($this->super->server['HTTP_USER_AGENT'], 'gptbot') ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( !empty($this->super->server['HTTP_USER_AGENT']) && str_contains($this->super->server['HTTP_USER_AGENT'], 'gptbot') ){
 				return true;
 			}
 
@@ -278,7 +278,7 @@ if ( !trait_exists('Device') ){
 		function is_slackbot(){
 			if ( $this->is_minimal_mode() ){return false;}
 
-			if ( !empty($this->super->server['HTTP_USER_AGENT']) && strpos($this->super->server['HTTP_USER_AGENT'], 'Slackbot') ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( !empty($this->super->server['HTTP_USER_AGENT']) && str_contains($this->super->server['HTTP_USER_AGENT'], 'Slackbot') ){
 				return true;
 			}
 

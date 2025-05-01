@@ -223,7 +223,7 @@ if ( !trait_exists('Shortcodes') ){
 			extract(shortcode_atts(array('type' => '', 'mode' => 'solid', 'color' => 'inherit', 'size' => 'inherit', 'class' => ''), $atts));
 
 			//Prepend the fa- prefix to the icon name if not provided
-			if ( strpos($type, 'fa-') === false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( !str_contains($type, 'fa-') ){
 				$type = 'fa-' . $type;
 			}
 
@@ -251,7 +251,7 @@ if ( !trait_exists('Shortcodes') ){
 			}
 
 			if ( $icon ){
-				if ( strpos($icon, 'fa-') === false){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( !str_contains($icon, 'fa-') ){
 					$icon = 'fa-' . $icon;
 				}
 				$icon = '<i class="fa-solid fa-fw ' . esc_attr($icon) . '"></i> ';
@@ -259,7 +259,7 @@ if ( !trait_exists('Shortcodes') ){
 
 			if ( $size ){
 				$size = str_replace(array('small', 'medium', 'large'), array('sm', 'md', 'lg'), $size);
-				if ( strpos($size, 'btn-') === false){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( !str_contains($size, 'btn-') ){
 					$size = 'btn-' . $size;
 				}
 			}
@@ -383,7 +383,7 @@ if ( !trait_exists('Shortcodes') ){
 
 			$pre_tag_open = '';
 			$pre_tag_close = '';
-			if ( strpos($content, '<pre') === false && $force === false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( !str_contains($content, '<pre') && $force === false ){
 				$content = htmlspecialchars_decode($content);
 				$content = htmlspecialchars($content);
 				$pre_tag_open = '<pre class="nebula-code ' . esc_attr($lang) . '">';

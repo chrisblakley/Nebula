@@ -4,7 +4,7 @@
 	 */
 
 	if ( !defined('ABSPATH') ){ //Redirect (for logging) if accessed directly
-		header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF'])); //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+		header('Location: http://' . $_SERVER['HTTP_HOST'] . substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], "wp-content/")) . '?ndaat=' . basename($_SERVER['PHP_SELF']));
 		exit;
 	}
 
@@ -40,13 +40,13 @@
 
 								<h3 class="suggestion-title entry-title">
 									<i class="fa fa-fw fa-chevron-right"></i>
-									<?php if ( strpos(get_permalink(), nebula()->slug_keywords) ): //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8 ?>
+									<?php if ( str_contains(get_permalink(), nebula()->slug_keywords) ): ?>
 										<strong>
 									<?php endif; ?>
 
 									<a class="internal-suggestion" href="<?php echo get_permalink(); ?>"><?php echo esc_html(get_the_title()); ?></a>
 
-									<?php if ( strpos(get_permalink(), nebula()->slug_keywords) ): //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8 ?>
+									<?php if ( str_contains(get_permalink(), nebula()->slug_keywords) ): ?>
 										</strong>
 									<?php endif; ?>
 								</h3>

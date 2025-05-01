@@ -232,11 +232,11 @@ if ( !trait_exists('Functions') ){
 		public function add_query_to_icon_url($url){
 			if ( $this->is_minimal_mode() ){return $url;}
 
-			if ( strpos($url, '.') === false ){ //If the URL does not have a file extension, do not add a ?ver= query parameter //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( !str_contains($url, '.') ){ //If the URL does not have a file extension, do not add a ?ver= query parameter
 				return $url;
 			}
 
-			if ( strpos($url, 'ver=') !== false ){ //If the version number already exists (not likely), just return it //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( str_contains($url, 'ver=') ){ //If the version number already exists (not likely), just return it
 				return $url;
 			}
 
@@ -245,7 +245,7 @@ if ( !trait_exists('Functions') ){
 				$cache_query = 'nocache' . random_int(100000, 999999) . '=debug' . random_int(100000, 999999); //Add a random query string when debugging to force-clear the cache.
 			}
 
-			if ( strpos($url, '?') !== false ){ //If the URL already has a "?" append using "&" //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( str_contains($url, '?') ){ //If the URL already has a "?" append using "&"
 				$url .= '&' . $cache_query;
 			} else {
 				$url .= '?' . $cache_query;
@@ -274,7 +274,7 @@ if ( !trait_exists('Functions') ){
 				$timezone_option = wp_timezone_string();
 
 				//If that returns an offset instead of a named timezone
-				if ( strpos($timezone_option, ':') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+				if ( str_contains($timezone_option, ':') ){
 					$date_timezone = wp_timezone();
 					if ( !empty($date_timezone->timezone) ){
 						$timezone_option = $date_timezone['timezone'];
@@ -554,7 +554,7 @@ if ( !trait_exists('Functions') ){
 			}
 
 			//If HTML is passed, immediately parse it with HTML
-			if ( strpos($img, '<img') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			if ( str_contains($img, '<img') ){
 				return ( preg_match('~\bsrc="([^"]++)"~', $img, $matches) )? $matches[1] : ''; //Pull the img src from the HTML tag itself
 			}
 
@@ -724,7 +724,7 @@ if ( !trait_exists('Functions') ){
 					if ( !empty($post_icon) ){
 						$post_icon_img = '<img src="' . $post_icon . '" alt="' . $post_type . ' icon" style="width: 16px; height: 16px;" loading="lazy" />';
 
-						if ( strpos('dashicons-', $post_icon) >= 0 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+						if ( str_contains('dashicons-', $post_icon) ){
 							$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
 						}
 					}
@@ -1335,7 +1335,7 @@ if ( !trait_exists('Functions') ){
 				return false;
 			} elseif ( empty($username) && $this->get_option('twitter_username') ){
 				$username = $this->get_option('twitter_username');
-			} elseif ( strpos($username, '@') === false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+			} elseif ( !str_contains($username, '@') ){
 				$username = '@' . $username;
 			}
 			?>
@@ -2754,7 +2754,7 @@ if ( !trait_exists('Functions') ){
 						if ( $attachments ){
 							$attachment_count = 0;
 							foreach ( $attachments as $attachment ){
-								if ( in_array($attachment->ID, $ignore_post_ids) || strpos(get_attachment_link($attachment->ID), '?attachment_id=') ){ //Skip if media item is not associated with a post. //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+								if ( in_array($attachment->ID, $ignore_post_ids) || str_contains(get_attachment_link($attachment->ID), '?attachment_id=') ){ //Skip if media item is not associated with a post
 									continue;
 								}
 								$suggestion = array();
@@ -2815,7 +2815,7 @@ if ( !trait_exists('Functions') ){
 										if ( $path_parts['extension'] ){
 											$suggestion['classes'] .= ' file-' . $path_parts['extension'];
 											$suggestion['external'] = true;
-										} elseif ( !strpos($suggestion['link'], $this->url_components('domain')) ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+										} elseif ( !str_contains($suggestion['link'], $this->url_components('domain')) ){
 											$suggestion['classes'] .= ' external-link';
 											$suggestion['external'] = true;
 										}
@@ -3270,11 +3270,11 @@ if ( !trait_exists('Functions') ){
 				}
 
 				foreach ( $finds as $find ){
-					if ( strpos(strtolower($content), 'autocomplete') >= 1 ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					if ( str_contains(strtolower($content), 'autocomplete') ){
 						continue; //Skip it if it already has an autocomplete attribute
 					}
 
-					$field_name_pos = strpos(strtolower($content), ' name="' . strtolower($find) . '"'); //The space before name= prevents data-name= attributes from matching. @todo "Nebula" 0: Update strpos() to str_contains() in PHP8
+					$field_name_pos = str_contains(strtolower($content), ' name="' . strtolower($find) . '"'); //The space before name= prevents data-name= attributes from matching
 
 					if ( !empty($field_name_pos) ){
 						$content = substr_replace($content, ' autocomplete="' . $autocomplete_value . '" ', $field_name_pos, 0);
