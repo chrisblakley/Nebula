@@ -757,6 +757,7 @@ if ( !trait_exists('Optimization') ){
 		//Loop through the dequeue rules and deregister assets when matching
 		public function check_dequeue_rules($assets = array(), $type=''){
 			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( !empty($type) ){
 				foreach ( array_filter($assets) as $handle => $rules ){
 					$rules = str_replace(' ', '', $rules); //Sanitize the text input
@@ -778,7 +779,7 @@ if ( !trait_exists('Optimization') ){
 
 							//Check if rule is an inverted function. Ex: "!is_front_page"
 							$invert = false;
-							if ( !str_contains($rule, '!') ){
+							if ( str_starts_with($rule, '!') ){
 								$invert = true;
 								$rule = ltrim($rule, '!'); //Remove the "!" character since we have now detected it
 

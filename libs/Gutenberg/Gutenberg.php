@@ -143,12 +143,14 @@ if ( !trait_exists('Gutenberg') ){
 
 				register_block_type('nebula/code', array(
 					'editor_script' => 'nebula-code-block',
-					'render_callback' => function($attributes) {
+					'render_callback' => function($attributes){
+						//wp_enqueue_style('nebula-pre'); //Ensure the dependent CSS is enqueued? Is this necessary?
+
 						$content = isset($attributes['content']) ? $attributes['content'] : '';
 						$language = isset($attributes['language']) ? $attributes['language'] : '';
 
 						// Wrap the output in a div with class 'nebula-code-con' and output the language class in the 'codetitle' div
-						$output = '<div class="nebula-code-con">';
+						$output = '<div class="nebula-code-con nebula-code-block">';
 
 						// Add the 'codetitle' div with the language class
 						$output .= '<div class="nebula-code codetitle ' . esc_attr(strtolower($language)) . '">';

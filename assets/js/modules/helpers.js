@@ -457,7 +457,7 @@ nebula.pre = async function(){
 
 			lang = escape(lang); //Escape for reuse into the DOM
 
-			jQuery(this).addClass(lang.toLowerCase()).wrap('<div class="nebula-code-con clearfix ' + lang.toLowerCase() + '"></div>');
+			jQuery(this).addClass(lang.toLowerCase()).wrap('<div class="nebula-code-con via-helper-js clearfix ' + lang.toLowerCase() + '"></div>');
 			jQuery(this).closest('.nebula-code-con').prepend('<span class="nebula-code codetitle ' + lang.toLowerCase() + '">' + lang + '</span>');
 		}
 	});
