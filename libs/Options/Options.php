@@ -229,6 +229,7 @@ if ( !trait_exists('Options') ){
 				'design_reference_metabox' => 0,
 				'design_reference_link' => '',
 				'additional_design_references' => '',
+				'simplify_dashboard_metaboxes' => 1,
 				'author_bios' => 0,
 				'comments' => 0,
 				'store_form_submissions' => 1,
@@ -251,6 +252,7 @@ if ( !trait_exists('Options') ){
 				'ga_measurement_id' => '',
 				'ga_property_id' => '',
 				'gtm_id' => '',
+				'ga_linker_domains' => '',
 				'ga_api_secret' => '',
 				'ga_require_consent' => 0,
 				'ga_wpuserid' => 0,
@@ -314,7 +316,7 @@ if ( !trait_exists('Options') ){
 		//Check for multi-site instances after the theme update, update options for all sites
 		public function theme_update_options_check(){
 			if ( ($this->get_data('check_new_options') === 'true' || $this->is_debug()) && current_user_can('manage_options') ){
-				$this->timer('Checking for New Options');
+				$this->timer('Checking for New Options', 'start', '[Nebula] Options');
 				do_action('qm/info', 'Checking for New Nebula Options...');
 
 				//Check for a Multisite instance
@@ -393,7 +395,7 @@ if ( !trait_exists('Options') ){
 
 		//Output the options page interface
 		public function options_page(){
-			$this->timer('Rendering Options Interface');
+			$this->timer('Rendering Options Interface', 'start', '[Nebula] Options');
 			require_once get_template_directory() . '/libs/Options/Interface.php';
 			$this->timer('Rendering Options Interface', 'end');
 		}

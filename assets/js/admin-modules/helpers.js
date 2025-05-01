@@ -69,21 +69,35 @@ jQuery.fn.allowTabChar = function(){
 	return this;
 };
 
-//If Sass processing is throttled, countdown the cooldown to know when it is allowed to be processed again.
-nebula.sassCooldown = function(){
-	if ( jQuery('#sass-cooldown').length ){
-		let timeleft = 15;
+//Countdown any cooldown timers (such as when Sass processing is thresholded)
+//Note: this function is defined in both /modules/helpers.js and /admin-modules/helpers.js
+nebula.initCooldowns = function(){
+	jQuery('[data-cooldown]').each(function(){
+		let $oThis = jQuery(this);
+		let timeleft = parseInt($oThis.attr('data-cooldown'));
 		let cooldownTimer = setInterval(function(){
 			timeleft--;
 
-			let units = ( timeleft === 1 )? ' second' : ' seconds';
-			jQuery('#sass-cooldown').text(timeleft + units);
+			let units = '';
+			if ( $oThis.attr('data-units').includes('second') ){
+				units = ( timeleft === 1 )? ' second' : ' seconds';
+			} else if ( $oThis.attr('data-units') == 's' ){
+				units = 's';
+			}
+
+			let output = timeleft + units;
+			if ( $oThis.attr('data-parenthesis') ){
+				output = '(' + timeleft + units + ')';
+			}
+
+			$oThis.text(output);
 
 			if ( timeleft <= 0 ){
-				jQuery('#sass-cooldown-again').removeClass('hidden');
-				jQuery('#sass-cooldown-wait').addClass('hidden');
+				$oThis.parent().parent().find('.cooldown-wait').addClass('hidden');
+				$oThis.parent().parent().find('.cooldown-again').removeClass('hidden');
+
 				clearInterval(cooldownTimer);
 			}
 		}, 1000);
-	}
+	});
 };

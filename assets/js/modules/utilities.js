@@ -371,41 +371,63 @@ nebula.animate = async function(selector, newAnimationClasses, oldAnimationClass
 	}
 
 	newAnimationClasses += ' animate';
-	element.removeClass(newAnimationClasses); //Remove classes first so they can be re-added.
+	element.removeClass(newAnimationClasses); //Remove classes first so they can be re-added
 
 	if ( oldAnimationClasses ){
-		element.removeClass(oldAnimationClasses); //Remove conflicting animation classes.
+		element.removeClass(oldAnimationClasses); //Remove conflicting animation classes
 	}
 
-	nebula.reflow(element); //Refresh the element so it can be animated again.
-	element.addClass(newAnimationClasses); //Animate the element.
+	nebula.reflow(element); //Refresh the element so it can be animated again
+	element.addClass(newAnimationClasses).trigger('animating'); //Animate the element (and trigger a DOM event that can be listened to. Remember: this event happens at the beginning of the animation not the end.)
 };
 
 //Helpful animation event listeners
 nebula.animationTriggers = function(){
 	//On document ready
-	jQuery('.ready').each(function(){
+	jQuery('.ready, .animate-dom-ready').each(function(){
 		nebula.loadAnimate(jQuery(this));
 	});
 
 	//On window load
 	nebula.dom.window.on('load', function(){
-		jQuery('.load').each(function(){
+		jQuery('.load, .animate-window-load').each(function(){
 			nebula.loadAnimate(jQuery(this));
 		});
 	});
 
+	//On Font Ready
+	jQuery('.animate-font-load').each(function(){
+		let $oThis = jQuery(this);
+		let fontName = $oThis.attr('data-font-name') || $oThis.attr('nebula-font-name'); //The font name attribute should be the exact name as it would appear in CSS
+
+		if ( !fontName ){ //If we don't have a font name, just trigger the animation immediately
+			nebula.help('animate-font-load requires an attribute for the font name.', '/functions/animations/');
+			nebula.loadAnimate($oThis);
+		}
+
+		if ( document.fonts.check('1em "' + fontName + '"') ){
+			setTimeout(function(){
+				nebula.loadAnimate($oThis);
+			}, 100);
+		} else {
+			document.fonts.load('1em "' + fontName + '"').then(function(){
+				setTimeout(function(){
+					nebula.loadAnimate($oThis);
+				}, 100);
+			});
+		}
+	});
+
 	//On click
-	nebula.dom.document.on('click', '.click, [nebula-click]', function(){
-		let animationClass = jQuery(this).attr('nebula-click') || '';
+	nebula.dom.document.on('click', '.click, .animate-click, [data-click], [nebula-click]', function(){
+		let animationClass = jQuery(this).attr('data-click') || jQuery(this).attr('nebula-click') || '';
 		nebula.animate(jQuery(this), animationClass);
 	});
 };
 
-nebula.loadAnimate = async function($oThis){
-	await nebula.yield();
+nebula.loadAnimate = function($oThis){
+	let animationDelay = $oThis.attr('data-delay') || $oThis.attr('nebula-delay');
 
-	let animationDelay = $oThis.attr('nebula-delay');
 	if ( typeof animationDelay === 'undefined' || animationDelay === 0 ){
 		nebula.animate($oThis, 'load-animate');
 	} else {
@@ -828,8 +850,22 @@ nebula.vibrate = function(pattern){
 };
 
 //Sanitize text
+//This function simply ensures that text only contains actual text characters
 nebula.sanitize = function(text){
 	return document.createElement('div').appendChild(document.createTextNode(text)).parentNode.innerHTML; //Raw JS is more efficient than jQuery for this
+};
+
+//Strip out special characters to make a safe name that can be used with HTML classes
+nebula.sanitizeClassName = function(text){
+	let cleanText = nebula.sanitize(text).trim(); //Sanitize the text first
+
+	if ( /['"`]/.test(cleanText) ){ //This is an attempt to speed this up to avoid the RegEx happening when it does not need to
+		cleanText = cleanText.replace(/\"|\'|\`/ig, ""); //Remove quotes and apostrophes
+	}
+
+	cleanText = cleanText.toLowerCase().replaceAll(/(\(.*\))|\W/ig, ''); //Any non-word characters \W or anything inside of parenthesis (including the parenthesis) removed
+
+	return cleanText;
 };
 
 //Mask the email with asterisks

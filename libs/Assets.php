@@ -205,6 +205,7 @@ if ( !trait_exists('Assets') ){
 					'options' => array(
 						'sw' => $this->get_option('service_worker'),
 						'gaid' => esc_html($this->get_option('ga_measurement_id')),
+						'remote_font_url' => esc_html($this->get_option('remote_font_url')),
 						'nebula_google_browser_api_key' => esc_html($this->get_option('google_browser_api_key')),
 						'facebook_url' => esc_url($this->get_option('facebook_url')),
 						'facebook_app_id' => esc_html($this->get_option('facebook_app_id')),
@@ -338,7 +339,7 @@ if ( !trait_exists('Assets') ){
 			}
 
 			$this->brain = apply_filters('nebula_brain', $this->brain); //Allow other functions to hook in to add/modify data
-			$this->brain['user']['known'] = ( !empty($this->brain['user']['email']) )? true : false; //Move to companion plugin
+			$this->brain['user']['known'] = ( !empty($this->brain['user']['email']) )? true : false;
 
 			echo '<script type="text/javascript">const nebula = ' . wp_json_encode($this->brain) . '</script>'; //Output the data to <head>
 

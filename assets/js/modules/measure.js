@@ -1678,7 +1678,7 @@ nebula.ecommerceTracking = async function(){
 		nebula.dom.document.on('pointerdown', '#place_order', function(e){
 			let thisEvent = {
 				event: e,
-				event_name: 'purchase', //@todo "Nebula" 0: If/when adding a plugin for tracking purchases in GA4, rename this event to "place_order_click"
+				event_name: 'place_order_click',
 				event_category: 'Ecommerce',
 				event_action: 'Place Order Button',
 				event_label: 'Place Order button click'

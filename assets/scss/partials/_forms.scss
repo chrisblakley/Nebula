@@ -103,29 +103,28 @@ input[type="file"].custom-file-input {cursor: pointer;}
 }
 
 //Nebula Search Forms
-form.nebula-search {position: relative; display: inline-block; margin: 0;
+form.nebula-search {position: relative; display: inline-block; margin: 0; width: 33px; transition: all 0.25s ease; will-change: width;
 	.nebula-input-group {display: flex; align-items: center;} //Modify Bootstrap to center align Nebula search input content
 
-	input {max-width: 30px; padding: 0 6px; color: transparent; font-size: rem(12px); line-height: 1.15rem; background: rgb(255 255 255 / 10%); border: 1px solid rgb(255 255 255 / 10%); border-radius: 20px; outline: none; cursor: pointer; transition: all 0.25s;  will-change: width;
+	input {width: 100%; padding: 2px 8px; color: transparent; font-size: rem(16px); line-height: 1.15rem; background: rgb(255 255 255 / 15%); border: 1px solid rgb(255 255 255 / 15%); border-radius: 20px; outline: none; cursor: pointer; transition: all 0.25s ease;
 		&:hover {background-color: rgb(255 255 255 / 30%);}
-		&:focus,
-		&.focus {max-width: 210px; padding-left: 25px; cursor: auto; color: #fff; background-color: rgb(255 255 255 / 30%);}
-		&.open {max-width: 100%; padding-left: 25px; cursor: auto; color: #fff;}
+		&.open {padding-left: 25px; cursor: auto; color: #fff;}
 		&.active {border-color: $primary_color; box-shadow: 0 0 5px rgb(red($primary_color), green($primary_color), blue($primary_color), 50%);}
 
 		&::-webkit-search-decoration,
 		&::-webkit-search-cancel-button {display: none;}
-
-		&:-moz-placeholder {color: transparent;}
-		&:-ms-input-placeholder {color: transparent;}
-		&::-webkit-input-placeholder {color: transparent;}
-
-		&:focus:-moz-placeholder, &.open:-moz-placeholder {color: #aaa;}
-		&:focus:-ms-input-placeholder, &.open:-ms-input-placeholder {color: #aaa;}
-		&:focus::-webkit-input-placeholder, &.open::-webkit-input-placeholder {color: #aaa;}
 	}
 
-	i, svg {position: absolute; left: 7px; font-size: rem(12px); color: rgb(255 255 255 / 75%); opacity: 0.5; pointer-events: none;}
+	button.submit {position: absolute; left: 9px; font-size: rem(13px); color: rgb(255 255 255 / 75%); padding: 0; border: none; background: none; pointer-events: none;
+		i, svg {pointer-events: none;}
+	}
+
+	&:focus-within,
+	&:has(.focus) {width: 210px;
+		button.submit {color: rgb(255 255 255 / 100%); pointer-events: all;}
+
+		input {background-color: rgb(255 255 255 / 30%); padding-left: 25px; cursor: auto; color: #fff;}
+	}
 }
 
 //Nebula Feedback System

@@ -53,10 +53,10 @@ jQuery(window).on('load', async function(){
 
 	nebula.cacheSelectors();
 
-	if ( nebula.screen.base === 'post' || jQuery('#sass-cooldown, #post textarea').length ){
+	if ( nebula.screen.base === 'post' || jQuery('[data-cooldown], #post textarea').length ){
 		import('./admin-modules/helpers.js?ver=' + nebula.version.number).then(function(module){
 			jQuery('#post textarea').allowTabChar();
-			nebula.sassCooldown(); //Needed on every page
+			nebula.initCooldowns(); //Needed on every page
 			nebula.uniqueSlugChecker(); //Only needed on edit post pages
 		});
 	}
@@ -67,6 +67,7 @@ jQuery(window).on('load', async function(){
 		await import('./admin-modules/dashboard.js?ver=' + nebula.version.number);
 
 		nebula.developerMetaboxes();
+		//nebula.simplifiedViewToggle();
 	}
 
 	if ( nebula.screen.base === 'nav-menus' ){

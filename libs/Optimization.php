@@ -389,13 +389,49 @@ if ( !trait_exists('Optimization') ){
 			}
 		}
 
+		//Determine if the current page load was from a known cache
+		//Note: PHP is not the most reliable way of detecting cached responses
+		//Note: This only checks the main, initial page request– individual assets can still be cached!
+		public function is_known_cache_hit(){
+			$server_headers = array_change_key_case($this->super->server, CASE_LOWER); //Lowercase the server values we will be checking
+
+			// Check for Cloudflare Cache (CF-Cache-Status header)
+			if ( isset($this->super->server['http_cf_cache_status']) && $this->super->server['http_cf_cache_status'] === 'hit' ){
+				return 'Cloudflare';
+			}
+
+			//Check for Sucuri Cache (X-Sucuri-Cache header)
+			if ( isset($this->super->server['http_x_sucri_cache']) && $this->super->server['http_x_sucri_cache'] === 'hit' ){
+				return 'Sucuri';
+			}
+
+			//X-Cache header is used by SiteGround and Cloudfront
+			if ( isset($this->super->server['http_x_cache']) && $this->super->server['http_x_cache'] === 'hit' ) {
+				return 'X-Cache (SiteGround, Cloudfront)';
+			}
+
+			// Check for any server header containing the word "cache" and the value "hit"
+			foreach ( $server_headers as $key => $value ){
+				if ( strpos($key, 'cache') !== false && strtolower($value) === 'hit' ){ //@todo "Nebula" 0: Update this to use str_contains after php 8.0
+					return $key;
+				}
+			}
+
+			return false; //No identifiable cache was detected
+		}
+
 		//Include server timings for developers
 		public function output_console_debug_timings(){
 			if ( $this->is_minimal_mode() ){return false;}
+
 			if ( $this->is_dev() || isset($this->super->get['timings']) ){ //Only output server timings for developers or if timings query string present
-				$this->finalize_timings();
+				$this->finalize_timings(); //This ends any active timer
 
 				if ( !empty($this->server_timings) && is_array($this->server_timings) ){
+					$timings_output = array(
+						'categories' => array()
+					);
+
 					foreach ( $this->server_timings as $label => $data ){
 						if ( !empty($data['time']) ){
 							$time = $data['time'];
@@ -405,26 +441,61 @@ if ( !trait_exists('Optimization') ){
 							continue;
 						}
 
-						if ( $label === 'categories' || !empty($data['active']) || round($time*1000) <= 0 || (!empty($data['log']) && $data['log'] === false) ){
+						if ( !empty($data['active']) || round($time*1000) <= 0 || (!empty($data['log']) && $data['log'] === false) ){
 							continue;
 						}
 
 						$start_time = ( !empty($data['start']) )? round(($data['start']-$this->super->server['REQUEST_TIME_FLOAT'])*1000) : -1;
 
-						$testTimes['[PHP] ' . $label] = array(
+						//Add up all the timings within each category
+						if ( $label === 'categories' ){
+							//Loop through all of the categories
+							foreach ( $data as $category_label => $category_timings ){
+								$cumulative_category_time = 0;
+
+								//Loop through all of the timings
+								foreach ( $category_timings as $timing ){
+									$cumulative_category_time += $timing;
+								}
+
+								//Skip categories whose cumulative time is essentially 0
+								if ( $cumulative_category_time <= 0.001 ){
+									continue; //Skip this timing
+								}
+
+								$timings_output['categories'][$category_label] = $cumulative_category_time;
+							}
+
+							continue; //Go to the next item since this does not need to be added to the top-level array as well
+						}
+
+						$timings_output['[PHP] ' . $label] = array(
 							'start' => $start_time, //Convert seconds to milliseconds
 							'duration' => round($time*1000) //Convert seconds to milliseconds
 						);
 					}
 				}
 
-				if ( !empty($testTimes) ){
+				if ( !empty($timings_output) ){
 					//Sort by start time
-					uasort($testTimes, function($a, $b){
-						return $a['start'] - $b['start'];
+					uasort($timings_output, function($a, $b){
+						if ( isset($a['start']) && isset($b['start']) ){ //This ignores categories
+							return $a['start']-$b['start'];
+						}
 					});
 
-					echo '<script type="text/javascript">nebula.site.timings = ' . wp_json_encode($testTimes) . ';</script>'; //Output the data to <head>
+					//Sort categories by total time (descending)
+					uasort($timings_output['categories'], function($a, $b){
+						if ( $a == $b ){
+							return 0;
+						}
+						return ( $a > $b )? -1 : 1;
+					});
+
+					echo '<script type="text/javascript">';
+						echo 'nebula.site.timings = ' . wp_json_encode($timings_output) . ';';
+						echo 'nebula.post.ttfb = ' . (microtime(true)-$this->super->server['REQUEST_TIME_FLOAT']) . ';'; //Used to improve accuracy of displayed TTFB
+					echo '</script>'; //Output the data to <head>
 				}
 			}
 		}

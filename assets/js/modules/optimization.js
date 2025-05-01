@@ -18,7 +18,7 @@ nebula.cacheSelectors = function(){
 
 //Record performance timing
 nebula.performanceMetrics = async function(){
-	//await nebula.yield();
+	nebula.outputTimings();
 
 	if ( window.performance?.timing && typeof window.requestIdleCallback === 'function' ){ //@todo "Nebula" 0: Remove the requestIdleCallback condition when Safari supports it)
 		window.requestIdleCallback(function(){
@@ -63,6 +63,8 @@ nebula.performanceMetrics = async function(){
 							};
 						}
 					});
+
+					delete nebula.site.timings.categories; //Remove the categories from the timings object
 
 					console.groupCollapsed('Performance');
 					console.groupCollapsed('Marks & Measurements');
@@ -397,23 +399,6 @@ nebula.predictiveCacheListeners = async function(){
 			predictiveHoverTimeout = null;
 		}
 	});
-
-	//Once idle, prefetch the top-level nav items and buttons
-	//Disabled to reduce the broad background loading. The above hover prefetch is more focused.
-// 	if ( typeof window.requestIdleCallback === 'function' ){ //Waiting for Safari to support requestIdleCallback
-// 		//Prefetch certain elements on window idle
-// 		window.requestIdleCallback(function(){
-// 			//Top-level primary nav links
-// 			jQuery('ul#menu-primary > li.menu-item > a').each(function(){
-// 				nebula.prefetch(jQuery(this).attr('href'), false, jQuery(this));
-// 			});
-//
-// 			//First 5 buttons
-// 			jQuery('a.btn, a.wp-block-button__link').slice(0, 4).each(function(){
-// 				nebula.prefetch(jQuery(this).attr('href'), false, jQuery(this));
-// 			});
-// 		});
-// 	}
 };
 
 //Prefetch a resource
@@ -661,5 +646,38 @@ nebula.loadCSS = async function(url){
 		jQuery('head').append('<link rel="stylesheet" href="' + url + '" type="text/css" media="screen">');
 	} else {
 		nebula.help('nebula.loadCSS() requires a valid URL string. The requested URL is invalid: ' + url, '/functions/loadcss/');
+	}
+};
+
+//Output timings to respective locations
+nebula.outputTimings = function(){
+	//Update any location displaying the server response time
+	if ( nebula?.post?.ttfb ){
+		let ttfbClass = '';
+		if ( nebula.post.ttfb >= 2 ){
+			ttfbClass = 'essential text-danger';
+		} else if ( nebula.post.ttfb >= 1 ){
+			ttfbClass = 'essential text-caution';
+		}
+
+		jQuery('.nebula-ttfb-time').text(nebula.post.ttfb.toFixed(3)).addClass('updated');
+		jQuery('#nebula_ataglance .nebula-ttfb-time').parent().addClass(ttfbClass);
+	}
+
+	//If we have a timings object
+	if ( nebula?.site?.timings ){
+		//If that object contains categories
+		if ( nebula.site.timings.categories ){
+			//Add timings to the Admin Bar
+			let parentId = 'wp-admin-bar-nebula-timing-categories'; //ID of the parent node created in PHP
+			if ( jQuery('#' + parentId).length && !jQuery('#' + parentId).hasClass('updated') ){
+				jQuery.each(nebula.site.timings.categories, function(label, timing){
+					//Add a sub-node
+					jQuery('#' + parentId).find('ul.ab-submenu').append('<li role="group" id="wp-admin-bar-nebula-timing-category-' + label.toLowerCase() + '"><div class="ab-item ab-empty-item" role="menuitem">' + label + ': <strong>' + timing.toFixed(3) + ' seconds</strong></div></li>');
+				});
+			}
+		} else {
+			jQuery('#' + parentId).remove(); //Remove the parent node if no categories exist
+		}
 	}
 };

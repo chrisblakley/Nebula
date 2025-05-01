@@ -17,11 +17,33 @@ nebula.helpers = async function(){
 	}
 
 	nebula.dom.html.removeClass('no-js').addClass('js');
+
 	jQuery("a[href^='http']:not([href*='" + nebula.site.domain + "'])").attr('rel', 'external noreferrer noopener'); //Add rel attributes to external links. Although search crawlers do use JavaScript, don't rely on this line to instruct them. Use standard HTML attributes whenever possible.
 
 	//Add general region classes (Note: not done in location.js because it is anonymized and global)
 	nebula.dom.body.addClass('locale-' + Intl.DateTimeFormat().resolvedOptions().locale.split('-').pop().toLowerCase());
 	nebula.dom.body.addClass('timezone-' + Intl.DateTimeFormat().resolvedOptions().timeZone.replaceAll(/[_\/]/gi, '-').toLowerCase());
+
+	nebula.browserPreferences();
+
+	//Note when remote fonts are ready (and track these performance timings)
+	if ( nebula?.site?.options?.remote_font_url ){
+		let fontName = nebula.site.options.remote_font_url.match(/family=([^&:]+)/); //While Google Fonts exposes the font family name in the endpoint URI, many other platforms do not, so this will not work with a wide range of other services.
+
+		if ( fontName ){
+			fontName = fontName[1].replace(/\+/g, ' ').trim();
+
+			if ( document.fonts.check('1em "' + fontName + '"') ){
+				window.performance.mark('(Nebula) Font Ready (' + fontName + ')'); //The font was already ready when checked
+				nebula.dom.body.addClass('remote-font-loaded font-ready-' + nebula.sanitizeClassName(fontName));
+			} else {
+				document.fonts.load('1em "' + fontName + '"').then(function(){
+					window.performance.mark('(Nebula) Font Loaded (' + fontName + ')'); //The font has now loaded
+					nebula.dom.body.addClass('remote-font-loaded font-ready-' + nebula.sanitizeClassName(fontName));
+				});
+			}
+		}
+	}
 
 	//Note the level of RAM available for a "lite" or "full" experience
 	if ( 'deviceMemory' in navigator ){ //Device Memory - Chrome 64+
@@ -87,6 +109,40 @@ nebula.helpers = async function(){
 	//Remove this once QM allows sortable Timings table
 	if ( jQuery('#qm-timing').length ){
 		nebula.qmSortableHelper(); //Temporary QM helper.
+	}
+
+	nebula.initCooldowns();
+	nebula.accessibilityHelpers();
+};
+
+//Detect the user's various browser preferences
+nebula.browserPreferences = function(){
+	//Add classes for various browser preferences
+	if ( window.matchMedia('(prefers-color-scheme: light)').matches ){
+		jQuery('body').addClass('prefers-light-color-scheme');
+	}
+
+	if ( window.matchMedia('(prefers-color-scheme: dark)').matches ){
+		jQuery('body').addClass('prefers-dark-color-scheme');
+	}
+
+	if ( window.matchMedia('(prefers-contrast: more)').matches ){
+		jQuery('body').addClass('prefers-more-contrast');
+	}
+
+	if ( window.matchMedia('(prefers-reduced-transparency)').matches ){
+		jQuery('body').addClass('prefers-reduced-transparency');
+	}
+
+	if ( window.matchMedia('(prefers-reduced-data: reduce)').matches ){
+		jQuery('body').addClass('prefers-reduced-data');
+	}
+
+	//Remove animating timing classes when users prefer reduced motion
+	if ( window.matchMedia('(prefers-reduced-motion: reduce)').matches || jQuery('.bot-visitor').length ){
+		jQuery('body').addClass('prefers-reduced-motion');
+		let animationClasses = ['fastest', 'faster', 'fast', 'slow', 'slower', 'slowest', 'glacial'];
+		jQuery('.' + animationClasses.join(', .')).removeClass(animationClasses.join(' '));
 	}
 };
 
@@ -521,4 +577,54 @@ nebula.qmSortableHelper = function(){
 			Array.from(tbody.querySelectorAll('tr')).sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc)).forEach((tr) => tbody.appendChild(tr) );
 		})));
 	}
+};
+
+//Improve accessibility of certain elements when applicable
+nebula.accessibilityHelpers = function(){
+	//Add indicators to links that open in a new window/tab
+	jQuery('a[target="_blank"]').each(function(){
+		let existingAriaLabel = jQuery(this).attr('aria-label');
+
+		if ( !existingAriaLabel ){
+			jQuery(this).attr('aria-label', '(opens in a new window)');
+			return; //Continue to the next item
+		}
+
+		if ( !existingAriaLabel.toLowerCase().includes('new window') && !existingAriaLabel.toLowerCase().includes('new tab') ){
+			jQuery(this).attr('aria-label', existingAriaLabel + ' (opens in a new window)');
+		}
+	});
+};
+
+//Countdown any cooldown timers (such as when Sass processing is thresholded)
+//Note: this function is defined in both /modules/helpers.js and /admin-modules/helpers.js
+nebula.initCooldowns = function(){
+	jQuery('[data-cooldown]').each(function(){
+		let oThis = jQuery(this);
+		let timeleft = parseInt(oThis.attr('data-cooldown'));
+		let cooldownTimer = setInterval(function(){
+			timeleft--;
+
+			let units = '';
+			if ( oThis.attr('data-units').includes('second') ){
+				units = ( timeleft === 1 )? ' second' : ' seconds';
+			} else if ( oThis.attr('data-units') == 's' ){
+				units = 's';
+			}
+
+			let output = timeleft + units;
+			if ( oThis.attr('data-parenthesis') ){
+				output = '(' + timeleft + units + ')';
+			}
+
+			oThis.text(output);
+
+			if ( timeleft <= 0 ){
+				oThis.parent().parent().find('.cooldown-wait').addClass('hidden');
+				oThis.parent().parent().find('.cooldown-again').removeClass('hidden');
+
+				clearInterval(cooldownTimer);
+			}
+		}, 1000);
+	});
 };

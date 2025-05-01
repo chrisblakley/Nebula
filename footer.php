@@ -60,9 +60,9 @@
 						<?php if ( get_theme_mod('nebula_footer_search', true) ): ?>
 							<form class="nebula-search search footer-search" method="get" action="<?php echo home_url('/'); ?>" role="search">
 								<div class="nebula-input-group">
-									<i class="fa-solid fa-magnifying-glass"></i>
+									<button class="submit"><i class="fa-solid fa-magnifying-glass"></i><span class="visually-hidden">Search</span></button>
 									<label class="visually-hidden" for="nebula-footer-search"><?php _e('Search', 'nebula'); ?></label>
-									<input id="nebula-footer-search" class="open input search" type="search" name="s" placeholder="Search" autocomplete="off" x-webkit-speech />
+									<input id="nebula-footer-search" class="open input search" type="search" name="s" autocomplete="off" x-webkit-speech required />
 								</div>
 							</form>
 						<?php endif; ?>

@@ -71,11 +71,18 @@ th#id {width: 50px;}
 
 .nebula-adb-reminder {color: $danger_color;} //Used by Dev Metabox and Nebula Options page
 
+
+.postbox[id^="nebula"] [title] {cursor: help;} //Show the question mark on hover of any Nebula dashboard metabox item that has a tooltip
+
+
 //Dev Metabox
 #nebula_developer_info {
 	.highlight-good {color: $success_color;}
 	.highlight-bad {color: $danger_color;}
 
+	.unsecured-connection {
+		i, svg {color: $danger_color;}
+	}
 	.secured-connection {
 		i, svg {color: $success_color;}
 	}
@@ -159,7 +166,9 @@ ul#nebula-performance-metrics li {
 	.transparent {opacity: 0;}
 	.reset-filters {color: $danger-color;}
 
-	.table-wrapper {max-height: 400px; overflow-y: auto; border: 1px solid #ddd;
+	.table-wrapper {max-height: 400px; overflow-y: auto; border: 1px solid #ddd; transition: max-height 0.5s ease;
+		&.simplify {max-height: 180px;}
+
 		table {width: 100%; border-collapse: collapse; table-layout: auto;
 			thead {position: sticky; top: 0; background: #fff; z-index: 1;
 				th {text-decoration: underline; white-space: nowrap;
@@ -201,10 +210,13 @@ ul#nebula-performance-metrics li {
 			.no-entries,
 			.empty-file {opacity: 0.4;}
 
-			.tiny-file:not(:has(.security-concern)) {opacity: 0.6;}
+			.tiny-file:not(:has(.security-concern)):not([data-type="log"]) {opacity: 0.6;}
 
 			.overbudget-file {font-weight: bold;}
 			.double-budget-file {color: $danger_color;}
+
+			.line-count {} //This is for log file "entries" counts
+			.modified-info {} //This is the relative date in parenthesis for last modified time for all files
 		}
 
 		.no-files-message {padding: 0 10px 5px 10px;}
@@ -281,6 +293,39 @@ ul#nebula-performance-metrics li {
 
 #dashboard_right_now a[href$="options-reading.php"] {color: $danger_color !important; font-weight: 700;
 	&::before {content: "!"; background: $danger_color; color: #fff; padding: 0 7px; margin-right: 5px;}
+}
+
+#nebula_current_user {
+	#current-user-color-scheme-light-preference {display: none;}
+	#current-user-color-scheme-dark-preference {display: none;}
+	#current-user-contrast-more-preference {display: none;}
+	#current-user-transparency-preference {display: none;}
+	#current-user-motion-preference {display: none;}
+	#current-user-data-preference {display: none;}
+
+	@media ( prefers-color-scheme: light ){
+		#current-user-color-scheme-light-preference {display: block;}
+	}
+
+	@media ( prefers-color-scheme: dark ){
+		#current-user-color-scheme-dark-preference {display: block;}
+	}
+
+	@media ( prefers-contrast: more ){
+		#current-user-contrast-more-preference {display: block;}
+	}
+
+	@media ( prefers-reduced-transparency ){
+		#current-user-transparency-preference {display: block;}
+	}
+
+	@media ( prefers-reduced-motion: reduce ){
+		#current-user-motion-preference {display: block;}
+	}
+
+	@media ( prefers-reduced-data: reduce ){
+		#current-user-data-preference {display: block;}
+	}
 }
 
 ul.admin-menu-tree-page-tree .admin-menu-tree-page-expand {width: 19px; height: 20px;}
@@ -628,4 +673,21 @@ table.nebula-cf7-submissions {border-collapse: collapse; width: 100%; margin-top
 
 #customize-controls {
 	.nebula-help-text {display: block; font-size: 11px; padding-top: 4px; color: #888;}
+}
+
+//Simplify Nebula dashboard lists
+.expand-simplified-view {display: none;}
+ul.simplify {
+	li.expand-simplified-view {display: block; margin-left: -1.5em; font-style: italic;
+		//a {font-weight: bold;}
+	}
+
+	li:not(.essential):not(.nebula-adb-tester):not(.expand-simplified-view):not(.ignore-simplify) {display: none;
+		&.essential,
+		&:has(.essential),
+		&.text-caution,
+		&:has(.text-caution),
+		&.text-danger,
+		&:has(.text-danger) {display: block;}
+	}
 }

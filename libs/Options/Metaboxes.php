@@ -565,6 +565,14 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
+					<input type="hidden" name="nebula_options[simplify_dashboard_metaboxes]" value="<?php echo $nebula_options['simplify_dashboard_metaboxes']; ?>">
+					<input id="simplify_dashboard_metaboxes" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['simplify_dashboard_metaboxes'])); ?>><label for="simplify_dashboard_metaboxes">Simplify Dashboard Metaboxes</label>
+
+					<p class="nebula-help-text short-help form-text text-muted">Show only essential information within Nebula dashboard metaboxes on load. Viewing additional information requires clicking an expand link. (Default: <?php echo $this->user_friendly_default('simplify_dashboard_metaboxes'); ?>)</p>
+					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group">
 					<label for="design_reference_link">Design File(s) URL</label>
 					<input type="text" name="nebula_options[design_reference_link]" id="design_reference_link" class="form-control nebula-validate-url" value="<?php echo $nebula_options['design_reference_link']; ?>" placeholder="http://" />
 					<p class="nebula-help-text short-help form-text text-muted">Link to the design file(s).</p>
@@ -646,6 +654,14 @@ if ( !trait_exists('Metaboxes') ){
 					<input type="text" name="nebula_options[gtm_id]" id="gtm_id" class="form-control nebula-validate-regex" data-valid-regex="^GTM-\S+$" value="<?php echo $nebula_options['gtm_id']; ?>" placeholder="GTM-0000000" />
 					<p class="nebula-help-text short-help form-text text-muted">This will add the Google Tag Manager scripts to the appropriate locations.</p>
 					<p class="option-keywords">remote resource recommended minor page speed impact optimization optimize ga4</p>
+				</div>
+
+				<div class="form-group" dependent-of="ga_measurement_id">
+					<label for="ga_linker_domains">GA Linker Domains</label>
+					<input type="text" name="nebula_options[ga_linker_domains]" id="ga_linker_domains" class="form-control" value="<?php echo $nebula_options['ga_linker_domains']; ?>" />
+					<p class="nebula-help-text short-help form-text text-muted">A comma separated list of hostnames that will enable the Google Analytics Linker feature that allows sharing GA data across domains. <strong>This is only needed if you are using multiple domains!</strong> You must include the entire hostname (so add subdomains too if present).</p>
+					<p class="nebula-help-text more-help form-text text-muted">The hostname running this Nebula website will automatically be added, but can be included manually as well. Websites on each hostname will need to use the same GA property, and will also need to include the linker domains array.</p>
+					<p class="option-keywords">ga4 linker domains</p>
 				</div>
 
 				<div class="form-group" dependent-or="ga_measurement_id">

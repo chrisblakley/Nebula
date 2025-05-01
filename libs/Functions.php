@@ -23,6 +23,7 @@ if ( !trait_exists('Functions') ){
 			add_action('rest_api_init', array($this, 'rest_api_routes'));
 			add_action('wp_head', array($this, 'add_back_post_feed'));
 			add_action('init', array($this, 'set_default_timezone'), 1); //WP Health Check does not like this, but date() times break without this
+			add_filter('user_has_cap', array($this, 'allow_query_monitor'));
 
 			if ( $this->get_option('console_css') && !$this->is_background_request() ){
 				add_action('wp_head', array($this, 'calling_card'));
@@ -60,6 +61,7 @@ if ( !trait_exists('Functions') ){
 			add_filter('relevanssi_post_ok', array($this, 'exclude_from_relevanssi'), 10, 2);
 
 			if ( !$this->is_background_request() && !$this->is_admin_page() ){
+				add_action('wp_head', array($this, 'javascript_safety_net'), 10);
 				add_action('wp_head', array($this, 'arbitrary_code_head'), 1000);
 				add_action('nebula_body_open', array($this, 'arbitrary_code_body'), 1000);
 				add_action('wp_footer', array($this, 'arbitrary_code_footer'), 1000);
@@ -288,12 +290,27 @@ if ( !trait_exists('Functions') ){
 			}
 		}
 
+		//Allow Query Monitor to be viewed for specific non-logged-in users
+		public function allow_query_monitor($all_capabilities){
+			$nebula_temp_qm_ip = get_transient('nebula_temp_qm_ip');
+			if ( !empty($nebula_temp_qm_ip) && $this->get_ip_address() === $nebula_temp_qm_ip ){
+				$all_capabilities['view_query_monitor'] = true;
+			}
+
+			//@todo "Nebula" 0: Uncomment this once Query Monitor is working again to see if the race condition is resolved
+			// if ( $this->is_dev() ){
+			// 	$all_capabilities['view_query_monitor'] = true;
+			// }
+
+			return $all_capabilities;
+		}
+
 		//Add the Nebula note to the browser console (if enabled)
 		public function calling_card(){
 			if ( $this->is_minimal_mode() ){return false;}
 
 			if ( $this->is_desktop() && !is_customize_preview() ){
-				echo "<script>console.log('%c Created using Nebula " . esc_html($this->version('primary')) . "', 'padding: 2px 10px; background: #0098d7; color: #fff;');</script>";
+				echo "<script>console.log('%c Nebula " . esc_html($this->version('primary')) . "', 'padding: 2px 10px; background: linear-gradient(to right in oklch, #5b22e8, #ff2362); color: #fff;');</script>";
 			}
 		}
 
@@ -1397,7 +1414,7 @@ if ( !trait_exists('Functions') ){
 			$override = apply_filters('pre_video_meta', null, $provider, $id);
 			if ( isset($override) ){return $override;}
 
-			$timer_name = $this->timer('Video Meta (' . $id . ')', 'start', 'Video Meta');
+			$timer_name = $this->timer('Video Meta (' . $id . ')', 'start', '[Nebula] Videos');
 
 			//Ensure these default keys are always available
 			$video_metadata = array(
@@ -2977,6 +2994,7 @@ if ( !trait_exists('Functions') ){
 				$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, $this->get_browser('full'))); //Browser name and version
 				$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, $this->get_browser('name'))); //Browser name
 				$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, $this->get_browser('engine'))); //Rendering engine
+				$classes[] = ( $this->is_bot() )? 'bot bot-visitor device-bot' : '';
 
 				//Website language
 				$classes[] = 'lang-blog-' . strtolower(get_bloginfo('language'));
@@ -2985,8 +3003,13 @@ if ( !trait_exists('Functions') ){
 				}
 
 				//Preferred browser language
-				if ( !empty($_SERVER['HTTP_ACCEPT_LANGUAGE']) ){
-					$classes[] = 'lang-user-' . strtolower(explode(",", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]); //Example: fr-fr,en-us;q=0.7,en;q=0.3
+				if ( !empty($this->super->server['HTTP_ACCEPT_LANGUAGE']) ){
+					$classes[] = 'lang-user-' . strtolower(explode(",", $this->super->server['HTTP_ACCEPT_LANGUAGE'])[0]); //Example: fr-fr,en-us;q=0.7,en;q=0.3
+				}
+
+				//Cloudflare IPCountry header (if it exists)
+				if ( !empty($this->super->server['HTTP_CF_IPCOUNTRY']) ){
+					$classes[] = 'country-' . strtolower($this->super->server['HTTP_CF_IPCOUNTRY']);
 				}
 
 				//When installed to the homescreen, Chrome is detected as "Chrome Mobile". Supplement it with a "chrome" class.
@@ -3681,6 +3704,45 @@ if ( !trait_exists('Functions') ){
 		public function arbitrary_code_footer(){
 			if ( $this->is_minimal_mode() ){return false;}
 			echo $this->get_option('arbitrary_code_footer');
+		}
+
+		//Embedded JavaScript functionality that will run independently of other JS assets
+		//Do not use jQuery in this JavaScript!
+		public function javascript_safety_net(){
+			?>
+				<script>
+					//Listen for the DOM ready event
+					if ( document.readyState === 'loading' ){
+						document.addEventListener('DOMContentLoaded', onDomReady);
+					} else {
+						onDomReady();
+					}
+
+					function onDomReady(){
+						document.documentElement.classList.add('dom-ready');
+
+						//Ensure DOM Ready animations run within a few seconds
+						setTimeout(function(){
+							document.querySelectorAll('.animate-dom-ready:not(.load-animate)').forEach(function(element){
+								element.classList.add('load-animate', 'safety-net');
+								document.body.classList.add('safety-net-used');
+							});
+						}, 1500);
+					}
+
+					window.addEventListener('load', function(){
+						document.documentElement.classList.add('loaded');
+
+						//Ensure window load (and font load) animations run within a few seconds
+						setTimeout(function(){
+							document.querySelectorAll('.animate-window-load:not(.load-animate), .animate-font-load:not(.load-animate)').forEach(function(element){
+								element.classList.add('load-animate', 'safety-net');
+								document.body.classList.add('safety-net-used');
+							});
+						}, 1000);
+					});
+				</script>
+			<?php
 		}
 
 		//Get fresh resources when debugging and identify asset registration information

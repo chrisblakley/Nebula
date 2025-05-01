@@ -7,25 +7,21 @@
 // Otherwise, add class "animate" manually to create your own triggers (not all animations require "animate" class).
 // ===========================
 
-//Accomodate users who prefer less motion (Note: this may not affect JavaScript animations)
-@media ( prefers-reduced-motion: reduce ){
-	*,
-	::before,
-	::after {animation-duration: 0.001s !important; transition-duration: 0.001s !important; animation-iteration-count: 1 !important;} //Override all CSS animations
-}
-
 // ===========================
 // Modifiers
 // These helper classes make it easy to adjust animations without needing to copy/customize the entire animation property.
 // You can create custom speed classes in your own stylesheet to be applied too.
 // ===========================
 
+//Note: These class names need to match the helpers.js for reduced motion preferences to be observed.
+//These also need to be repeated in the prefers-reduced-motion media query below, too.
 .fastest {animation-duration: 0.25s !important;}
 .faster {animation-duration: 0.5s !important;}
 .fast {animation-duration: 0.75s !important;}
 .slow {animation-duration: 1s !important;}
 .slower {animation-duration: 2s !important;}
 .slowest {animation-duration: 3s !important;}
+.glacial {animation-duration: 5s !important;}
 
 // ===========================
 // Continuous
@@ -59,22 +55,20 @@
 
 //Wave X
 [nebula-hover*="nebula-wave-x"]:hover,
-.nebula-wave-x {animation: nebula-wave-x 3s infinite easing(easeInOutQuad); will-change: transform;}
+.nebula-wave-x {animation: nebula-wave-x 2s infinite easing(easeInOutSine); animation-delay: -1.5s; animation-fill-mode: both; will-change: transform;}
 @include keyframes(nebula-wave-x){
-	0% {transform: translate3d(0, 0, 0); animation-timing-function: easing(easeOutQuad);}
-	25% {transform: translate3d(20px, 0, 0); animation-timing-function: easing(easeOutQuad);}
-	75% {transform: translate3d(-20px, 0, 0); animation-timing-function: linear;}
-	100% {transform: translate3d(0, 0, 0); animation-timing-function: linear;}
+	0% {transform: translate3d(-20px, 0, 0);}
+	50% {transform: translate3d(20px, 0, 0);}
+	100% {transform: translate3d(-20px, 0, 0);}
 }
 
 //Wave Y
 [nebula-hover*="nebula-wave-y"]:hover,
-.nebula-wave-y {animation: nebula-wave-y 3s infinite linear; will-change: transform;}
+.nebula-wave-y {animation: nebula-wave-y 2s infinite easing(easeInOutSine); animation-fill-mode: both; animation-delay: -1.5s; will-change: transform;}
 @include keyframes(nebula-wave-y){
-	0% {transform: translate3d(0, 0, 0); animation-timing-function: easing(easeOutQuad);}
-	25% {transform: translate3d(0, 50%, 0); animation-timing-function: easing(easeOutQuad);}
-	75% {transform: translate3d(0, -50%, 0); animation-timing-function: linear;}
-	100% {transform: translate3d(0, 0, 0); animation-timing-function: linear;}
+	0% {transform: translate3d(0, -15%, 0);}
+	50% {transform: translate3d(0, 15%, 0);}
+	100% {transform: translate3d(0, -15%, 0);}
 }
 
 //Intensify
@@ -95,7 +89,7 @@
 			}
 
 			@if $i != 100 {
-				transform:  translate($sign * random(5) * 1px, $sign * random(5) * 1px);
+				transform: translate($sign * random(5) * 1px, $sign * random(5) * 1px);
 			} @else {
 				transform: translate(0, 0) rotate(0deg); //Reset on the last frame
 			}
@@ -208,11 +202,12 @@
 [nebula-hover*="nebula-reveal-in"]:hover,
 .nebula-reveal-in {opacity: 0; pointer-events: none; will-change: opacity;
 	&.animate,
-	&.load-animate {animation: nebula-reveal-in 1.5s easing(easeOutQuad) forwards; opacity: 1; pointer-events: all;}
+	&.load-animate {animation: nebula-reveal-in 2.5s easing(easeOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
 @include keyframes(nebula-reveal-in){
-	0% {mask: linear-gradient(90deg, #000 25%, #000000e6 50%, #00000000) 150% 0 / 400% no-repeat; opacity: 0.2;} //display: block here in case element is hidden with a display: none on render.
-	100% {mask: linear-gradient(90deg, #000 25%, #000000e6 50%, #00000000) 0 / 400% no-repeat; opacity: 1;}
+	0% {mask: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 60%) 150% 0 / 300% no-repeat; transform: translate3d(50px, 0, 0); opacity: 0;}
+	60% {transform: translate3d(0, 0, 0);}
+	100% {mask: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 60%) 0 0 / 300% no-repeat; opacity: 1;}
 }
 
 //Reveal Out
@@ -239,10 +234,10 @@
 	&.load-animate {animation: nebula-zoom-in 1s easing(easeInOutQuad) forwards; opacity: 1; pointer-events: all;}
 }
 @include keyframes(nebula-zoom-in){
-  0% {opacity: 0; transform: scale3d(0, 0, 0);}
-  50% {opacity: 1; transform: scale3d(1.03, 1.03, 1.03);}
-  70% {transform: scale3d(0.95, 0.95, 0.95);}
-  100% {transform: scale3d(1, 1, 1);}
+ 0% {opacity: 0; transform: scale3d(0, 0, 0);}
+ 50% {opacity: 1; transform: scale3d(1.03, 1.03, 1.03);}
+ 70% {transform: scale3d(0.95, 0.95, 0.95);}
+ 100% {transform: scale3d(1, 1, 1);}
 }
 
 //Increase width from the center (twist contents)
@@ -331,58 +326,230 @@
 	100% {transform: perspective(400px) rotate3d(0, 1, 0, 90deg); opacity: 0; pointer-events: none;}
 }
 
-//Depress and return (Small)
+//Tap (Small)
 //Built-in animation trigger on click by adding class "click".
 [nebula-hover*="nebula-tap"]:hover,
-.nebula-tap.animate {animation: nebula-tap 0.4s easing(easeOutBack); will-change: transform;}
+.nebula-tap.animate {animation: nebula-tap 0.6s easing(easeOutBack) forwards; will-change: transform;}
 @include keyframes(nebula-tap){
 	0% {transform: scale3d(1, 1, 1);}
-	50% {transform: scale3d(0.9, 0.9, 0.9);}
+	33% {transform: scale3d(0.9, 0.9, 0.9);}
+	66% {transform: scale3d(1.02, 1.02, 1.02);}
+	100% {transform: scale3d(1, 1, 1);}
 }
 
-//Depress and return (Mid)
+//Tap (Small, "Loose")
+//Built-in animation trigger on click by adding class "click".
+[nebula-hover*="nebula-tap-loose"]:hover,
+.nebula-tap-loose.animate {animation: nebula-tap-loose 1.1s easing(easeOutBack) forwards; will-change: transform;}
+@include keyframes(nebula-tap-loose){
+	0% {transform: scale3d(1, 1, 1);}
+	15% {transform: scale3d(0.9, 0.9, 0.9);}
+	35% {transform: scale3d(1.02, 1.02, 1.02);}
+	56% {transform: scale3d(0.99, 0.99, 0.99);}
+	80% {transform: scale3d(1.005, 1.005, 1.005);}
+	100% {transform: scale3d(1, 1, 1);}
+}
+
+//Push (Mid)
 //Built-in animation trigger on click by adding class "click".
 [nebula-hover*="nebula-push"]:hover,
-.nebula-push.animate {animation: nebula-push 0.4s easing(easeOutBack); will-change: transform;}
+.nebula-push.animate {animation: nebula-push 0.6s easing(easeOutBack) forwards; will-change: transform;}
 @include keyframes(nebula-push){
 	0% {transform: scale3d(1, 1, 1);}
-	50% {transform: scale3d(0.8, 0.8, 0.8);}
+	33% {transform: scale3d(0.8, 0.8, 0.8);}
+	66% {transform: scale3d(1.04, 1.04, 1.04);}
+	100% {transform: scale3d(1, 1, 1);}
 }
 
-//Depress and return (Large)
+//Push (Mid, "Loose")
+//Built-in animation trigger on click by adding class "click".
+[nebula-hover*="nebula-push-loose"]:hover,
+.nebula-push-loose.animate {animation: nebula-push-loose 1.1s easing(easeOutBack) forwards; will-change: transform;}
+@include keyframes(nebula-push-loose){
+	0% {transform: scale3d(1, 1, 1);}
+	15% {transform: scale3d(0.8, 0.8, 0.8);}
+	35% {transform: scale3d(1.06, 1.06, 1.06);}
+	56% {transform: scale3d(0.98, 0.98, 0.98);}
+	80% {transform: scale3d(1.01, 1.01, 1.01);}
+	100% {transform: scale3d(1, 1, 1);}
+}
+
+//Shove (Large)
 //Built-in animation trigger on click by adding class "click".
 [nebula-hover*="nebula-shove"]:hover,
-.nebula-shove.animate {animation: nebula-shove 0.4s easing(easeOutBack); will-change: transform;}
+.nebula-shove.animate {animation: nebula-shove 0.6s easing(easeOutBack) forwards; will-change: transform;}
 @include keyframes(nebula-shove){
 	0% {transform: scale3d(1, 1, 1);}
-	50% {transform: scale3d(0.6, 0.6, 0.6);}
+	33% {transform: scale3d(0.7, 0.7, 0.7);}
+	66% {transform: scale3d(1.06, 1.06, 1.06);}
+	100% {transform: scale3d(1, 1, 1);}
 }
 
-//Enlarge and return (Small)
+//Shove (Large, "Loose")
+//Built-in animation trigger on click by adding class "click".
+[nebula-hover*="nebula-shove-loose"]:hover,
+.nebula-shove-loose.animate {animation: nebula-shove-loose 1.05s easing(easeOutBack) forwards; will-change: transform;}
+@include keyframes(nebula-shove-loose){
+	0% {transform: scale3d(1, 1, 1);}
+	15% {transform: scale3d(0.7, 0.7, 0.7);}
+	35% {transform: scale3d(1.12, 1.12, 1.12);}
+	56% {transform: scale3d(0.97, 0.97, 0.97);}
+	80% {transform: scale3d(1.02, 1.02, 1.02);}
+	100% {transform: scale3d(1, 1, 1);}
+}
+
+//Shove Fade Out
+[nebula-hover*="nebula-shove-out"]:hover,
+.nebula-shove-out.animate {animation: nebula-shove-out 1s easing(easeOutQuad) forwards; will-change: opacity, transform;}
+@include keyframes(nebula-shove-out){
+	0% {transform: scale3d(1, 1, 1);}
+	50% {transform: scale3d(0.7, 0.7, 0.7);}
+	100% {opacity: 0; transform: scale3d(0, 0, 0);}
+}
+
+//Tug (Small)
 //Built-in animation trigger on click by adding class "click".
 [nebula-hover*="nebula-tug"]:hover,
-.nebula-tug.animate {animation: nebula-tug 0.4s easing(easeOutBack); will-change: transform;}
+.nebula-tug.animate {animation: nebula-tug 0.6s easing(easeOutBack) forwards; will-change: transform;}
 @include keyframes(nebula-tug){
 	0% {transform: scale3d(1, 1, 1);}
-	50% {transform: scale3d(1.1, 1.1, 1.1);}
+	33% {transform: scale3d(1.1, 1.1, 1.1);}
+	66% {transform: scale3d(0.98, 0.98, 0.98);}
+	100% {transform: scale3d(1, 1, 1);}
 }
 
-//Enlarge and return (Mid)
+//Tug (Small, "Loose")
+//Built-in animation trigger on click by adding class "click".
+[nebula-hover*="nebula-tug-loose"]:hover,
+.nebula-tug-loose.animate {animation: nebula-tug-loose 1.1s easing(easeOutBack) forwards; will-change: transform;}
+@include keyframes(nebula-tug-loose){
+	0% {transform: scale3d(1, 1, 1);}
+	15% {transform: scale3d(1.1, 1.1, 1.1);}
+	35% {transform: scale3d(0.98, 0.98, 0.98);}
+	56% {transform: scale3d(1.01, 1.01, 1.01);}
+	80% {transform: scale3d(0.995, 0.995, 0.995);}
+	100% {transform: scale3d(1, 1, 1);}
+}
+
+//Pull (Mid)
 //Built-in animation trigger on click by adding class "click".
 [nebula-hover*="nebula-pull"]:hover,
-.nebula-pull.animate {animation: nebula-pull 0.4s easing(easeOutBack); will-change: transform;}
+.nebula-pull.animate {animation: nebula-pull 0.6s easing(easeOutBack) forwards; will-change: transform;}
 @include keyframes(nebula-pull){
 	0% {transform: scale3d(1, 1, 1);}
-	50% {transform: scale3d(1.2, 1.2, 1.2);}
+	33% {transform: scale3d(1.2, 1.2, 1.2);}
+	66% {transform: scale3d(0.96, 0.96, 0.96);}
+	100% {transform: scale3d(1, 1, 1);}
 }
 
-//Enlarge and return (Large)
+//Pull (Mid, "Loose")
+//Built-in animation trigger on click by adding class "click".
+[nebula-hover*="nebula-pull-loose"]:hover,
+.nebula-pull-loose.animate {animation: nebula-pull-loose 1.1s easing(easeOutBack) forwards; will-change: transform;}
+@include keyframes(nebula-pull-loose){
+	0% {transform: scale3d(1, 1, 1);}
+	15% {transform: scale3d(1.2, 1.2, 1.2);}
+	35% {transform: scale3d(0.94, 0.94, 0.94);}
+	56% {transform: scale3d(1.02, 1.02, 1.02);}
+	80% {transform: scale3d(0.99, 0.99, 0.99);}
+	100% {transform: scale3d(1, 1, 1);}
+}
+
+//Pull In
+.nebula-pull-in {opacity: 0; pointer-events: none; will-change: opacity, transform;
+	&.animate,
+	&.load-animate {animation: nebula-pull-in 1.2s easing(easeOutBack) forwards; opacity: 1; pointer-events: all;}
+}
+@include keyframes(nebula-pull-in){
+	0% {opacity: 0; transform: scale3d(1, 1, 1);}
+	15% {transform: scale3d(1.2, 1.2, 1.2);}
+	35% {transform: scale3d(0.94, 0.94, 0.94);}
+	56% {opacity: 1; transform: scale3d(1.02, 1.02, 1.02);}
+	80% {opacity: 1; transform: scale3d(0.99, 0.99, 0.99);}
+	100% {opacity: 1; transform: scale3d(1, 1, 1);}
+}
+
+//Thrust (Large)
 //Built-in animation trigger on click by adding class "click".
 [nebula-hover*="nebula-thrust"]:hover,
-.nebula-thrust.animate {animation: nebula-thrust 0.4s easing(easeOutBack); will-change: transform;}
+.nebula-thrust.animate {animation: nebula-thrust 0.6s easing(easeOutBack) forwards; will-change: transform;}
 @include keyframes(nebula-thrust){
 	0% {transform: scale3d(1, 1, 1);}
-	50% {transform: scale3d(1.4, 1.4, 1.4);}
+	33% {transform: scale3d(1.4, 1.4, 1.4);}
+	66% {transform: scale3d(0.94, 0.94, 0.94);}
+	100% {transform: scale3d(1, 1, 1);}
+}
+
+//Thrust (Large, "Loose")
+//Built-in animation trigger on click by adding class "click".
+[nebula-hover*="nebula-thrust-loose"]:hover,
+.nebula-thrust-loose.animate {animation: nebula-thrust-loose 1.05s easing(easeOutBack) forwards; will-change: transform;}
+@include keyframes(nebula-thrust-loose){
+	0% {transform: scale3d(1, 1, 1);}
+	15% {transform: scale3d(1.3, 1.3, 1.3);}
+	35% {transform: scale3d(0.88, 0.88, 0.88);}
+	56% {transform: scale3d(1.03, 1.03, 1.03);}
+	80% {transform: scale3d(0.98, 0.98, 0.98);}
+	100% {transform: scale3d(1, 1, 1);}
+}
+
+//Thrust In
+.nebula-thrust-in {opacity: 0; pointer-events: none; will-change: opacity, transform;
+	&.animate,
+	&.load-animate {animation: nebula-thrust-in 1.2s easing(easeOutBack) forwards; opacity: 1; pointer-events: all;}
+}
+@include keyframes(nebula-thrust-in){
+	0% {opacity: 0; transform: scale3d(1, 1, 1);}
+	15% {transform: scale3d(1.3, 1.3, 1.3);}
+	35% {transform: scale3d(0.88, 0.88, 0.88);}
+	56% {opacity: 1; transform: scale3d(1.03, 1.03, 1.03);}
+	80% {opacity: 1; transform: scale3d(0.98, 0.98, 0.98);}
+	100% {opacity: 1; transform: scale3d(1, 1, 1);}
+}
+
+//Bounce (Jump up into the air and return)
+[nebula-hover*="nebula-bounce"]:hover,
+.nebula-bounce.animate {animation: nebula-bounce 1.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; transform-origin: bottom; will-change: transform;}
+@include keyframes(nebula-bounce){
+	0% {transform: scale3d(1, 1, 1) translate3d(0, 0, 0);}
+	8% {transform: scale3d(1.1, 0.85, 1) translate3d(0, 0, 0);}
+	14% {transform: scale3d(0.95, 1.05, 1) translate3d(0, -10px, 0);}
+	30% {transform: scale3d(1, 1, 1) translate3d(0, -80px, 0);}
+	34% {transform: scale3d(1, 1, 1) translate3d(0, -80px, 0);}
+	50% {transform: scale3d(1, 1, 1) translate3d(0, 0, 0);}
+	58% {transform: scale3d(1.05, 0.9, 1) translate3d(0, 0, 0);}
+	67% {transform: scale3d(0.98, 1.02, 1) translate3d(0, 0, 0);}
+	75% {transform: scale3d(1, 1, 1) translate3d(0, 0, 0);}
+	100% {transform: scale3d(1, 1, 1) translate3d(0, 0, 0);}
+}
+
+//Jump (Jump out towards the viewer and return)
+[nebula-hover*="nebula-jump"]:hover,
+.nebula-jump.animate {animation: nebula-jump 1.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; will-change: transform;}
+@include keyframes(nebula-jump){
+	0% {transform: scale3d(1, 1, 1);}
+	8% {transform: scale3d(0.90, 0.80, 1);}
+	14% {transform: scale3d(0.99, 1.01, 1);}
+	30% {transform: scale3d(1.3, 1.3, 1);}
+	34% {transform: scale3d(1.3, 1.3, 1);}
+	50% {transform: scale3d(1, 1, 1);}
+	58% {transform: scale3d(1.01, 0.99, 1);}
+	67% {transform: scale3d(0.99, 1.01, 1);}
+	75% {transform: scale3d(1, 1, 1);}
+	100% {transform: scale3d(1, 1, 1);}
+}
+
+//Fall In
+.nebula-fall-in {opacity: 0; pointer-events: none; will-change: opacity, transform;
+	&.animate,
+	&.load-animate {animation: nebula-fall-in 1.3s easing(easeOutBack) forwards; opacity: 1; pointer-events: all;}
+}
+@include keyframes(nebula-fall-in){
+	0% {opacity: 0; transform: scale3d(2, 2, 2);}
+	40% {transform: scale3d(0.88, 0.88, 0.88);}
+	56% {transform: scale3d(1.03, 1.03, 1.03);}
+	80% {transform: scale3d(0.98, 0.98, 0.98);}
+	100% {opacity: 1; transform: scale3d(1, 1, 1);}
 }
 
 //Shake left and right
@@ -418,4 +585,27 @@
 [nebula-hover*="nebula-grow"]:hover,
 .nebula-grow {transition: transform 0.4s easing(easeOutBack); will-change: transform;
 	&:hover {transform: scale3d(1.2, 1.2, 1.2);}
+}
+
+// ===========================
+// Animation Exclusions
+// Do not animate in certain situations.
+// ===========================
+
+//For bot traffic, immediately show all load-based animations (skipping the animation)
+.bot-visitor .load-animate {animation: none; opacity: 1; pointer-events: all;}
+
+//Accommodate users who prefer less motion (Note: this may not affect JavaScript animations)
+@media ( prefers-reduced-motion: reduce ){
+	*,
+	::before,
+	::after {animation-duration: 0.001s !important; transition-duration: 0.001s !important; animation-iteration-count: 1 !important;} //Override all CSS animations
+
+	.fastest,
+	.faster,
+	.fast,
+	.slow,
+	.slower,
+	.slowest,
+	.glacial {animation-duration: 0.001s !important;}
 }

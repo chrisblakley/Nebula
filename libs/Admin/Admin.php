@@ -35,6 +35,9 @@ if ( !trait_exists('Admin') ){
 					add_action('init', array($this, 'clear_transients'));
 				}
 
+				add_action('admin_init', array($this, 'clear_all_w3_caches'));
+				add_action('admin_init', array($this, 'nebula_allow_temp_qm'));
+
 				add_action('upgrader_process_complete', array($this, 'theme_update_automation'), 10, 2); //Action 'upgrader_post_install' also exists.
 				add_filter('auth_cookie_expiration', array($this, 'session_expire')); //This is the user auto-signout session length
 				add_action('after_setup_theme', array($this, 'custom_media_display_settings'));
@@ -53,7 +56,7 @@ if ( !trait_exists('Admin') ){
 					add_filter('page_row_actions', array($this, 'duplicate_post_link'), 10, 2);
 				}
 
-				add_action('admin_init', array($this, 'clear_all_w3_caches'));
+
 
 				if ( current_user_can('edit_others_posts') && $this->allow_theme_update() ){
 					add_action('admin_init', array($this, 'theme_json'));
@@ -157,7 +160,7 @@ if ( !trait_exists('Admin') ){
 				add_action('load-post.php', array($this, 'post_meta_boxes_setup'));
 				add_action('load-post-new.php', array($this, 'post_meta_boxes_setup'));
 
-				add_action( 'debug_information', array($this, 'site_health_info'));
+				add_action('debug_information', array($this, 'site_health_info'));
 			}
 
 			//Login Page
@@ -284,6 +287,17 @@ if ( !trait_exists('Admin') ){
 			}
 
 			$this->timer('Clear Transients', 'end');
+		}
+
+		//Toggle allowing Query Monitor temporarily for a specific IP
+		public function nebula_allow_temp_qm(){
+			if ( isset($this->super->get['nebula-temp-qm']) ){
+				if ( $this->super->get['nebula-temp-qm'] === 'start' ){
+					set_transient('nebula_temp_qm_ip', $this->get_ip_address(), HOUR_IN_SECONDS); //This only allows one at a time
+				} elseif ( $this->super->get['nebula-temp-qm'] === 'stop' ){
+					delete_transient('nebula_temp_qm_ip');
+				}
+			}
 		}
 
 		//Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
@@ -628,11 +642,32 @@ if ( !trait_exists('Admin') ){
 
 		//Create custom menus within the WordPress Admin Bar
 		public function admin_bar_menus(WP_Admin_Bar $wp_admin_bar){
-			if ( $this->is_minimal_mode() ){return false;}
-
 			if ( is_admin_bar_showing() ){
 				$this->timer('Nebula Admin Bar Menus');
 
+				//Include the TTFB in the Nebula admin bar title if Query Monitor is not active
+				$ttfb_description = '';
+				if ( !empty($this->super->server['REQUEST_TIME_FLOAT']) ){
+					if ( !is_plugin_active('query-monitor/query-monitor.php') || $this->is_minimal_mode() ){ //If QM is not active or show it during minimal mode
+						$ttfb_description = ' <small>(<span class="nebula-ttfb-time">~' . number_format((microtime(true)-$this->super->server['REQUEST_TIME_FLOAT']), 3) . '</span>s)</small>'; //This subtracts current time from when PHP first started processing
+					}
+				}
+
+				//Create the main top-level Nebula admin bar node
+				$wp_admin_bar->add_node(array(
+					'id' => 'nebula',
+					'title' => '<i class="nebula-admin-fa fa-solid fa-user-astronaut"></i> Nebula' . $ttfb_description, //fa-user-astronaut fa-satellite fa-rocket
+					'href' => 'https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=admin_bar&utm_source=' . urlencode(site_url()) . '&utm_content=admin_bar_main',
+					'meta' => array(
+						'target' => '_blank',
+						'rel' => 'noopener'
+					)
+				));
+
+				//Stop here during minimal mode
+				if ( $this->is_minimal_mode() ){return false;}
+
+				//Prep for the Post admin bar top-level node
 				wp_reset_query(); //Make sure the query is always reset in case the current page has a custom query that isn't reset.
 				global $post;
 
@@ -813,35 +848,74 @@ if ( !trait_exists('Admin') ){
 					}
 				}
 
-				$nebula_warning_icon = '';
-				$nebula_adminbar_icon = 'fa-star';
+				//Indicate when the page load is from a known cache
+				if ( !empty($this->is_known_cache_hit()) ){
+					$wp_admin_bar->add_node(array(
+						'id' => 'nebula-cache-hit',
+						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-server"></i> Cached Load',
+					));
+					$wp_admin_bar->add_node(array(
+						'parent' => 'nebula-cache-hit',
+						'id' => 'nebula-cache-source',
+						'title' => $this->is_known_cache_hit() . ' Cache Hit',
+					));
+				}
 
-				if ( current_user_can('manage_options') ){
+				//Show the warnings node when applicable
+				if ( current_user_can('manage_options') && !$this->is_minimal_mode() ){
 					$warnings = $this->check_warnings();
 
-					//Remove "log" level warnings so the admni bar menu only turns red for warnings and errors
 					if ( !empty($warnings) ){
+						//Remove "log" level warnings so the admin bar menu only turns red for warnings and errors
 						foreach ( $warnings as $key => $warning ){
-							if ( $warning['level'] === 'log' ){
+							if ( $warning['level'] === 'log' || $warning['level'] === 'success' ){
 								unset($warnings[$key]);
 							}
 						}
 
-						$nebula_adminbar_icon = 'fa-exclamation-triangle';
+						$warning_icon = 'fa-info-circle';
+						$warning_bg_class = 'has-warning';
+						if ( array_filter($warnings, function($item){return $item['level'] == 'error'; }) ){ //If the warnings contain an error entry
+							$warning_icon = 'fa-exclamation-triangle';
+							$warning_bg_class = 'has-error';
+						}
+
+						$wp_admin_bar->add_node(array(
+							'id' => 'nebula-warnings',
+							'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $warning_icon . '"></i> ' . count($warnings),
+							'meta' => array(
+								'class' => $warning_bg_class
+							)
+						));
+
+						//Now loop through to display the individual warnings as sub-nodes
+						foreach ( $warnings as $key => $warning ){
+							$warning_icon = 'fa-exclamation-triangle';
+
+							if ( $warning['level'] === 'error' ){
+								$warning_icon = 'fa-exclamation-triangle';
+							} elseif ( $warning['level'] === 'warning' ){
+								$warning_icon = 'fa-info-circle';
+							} elseif ( $warning['level'] === 'success' ){
+								$warning_icon = 'fa-check';
+							}
+
+							$wp_admin_bar->add_node(array(
+								'parent' => 'nebula-warnings',
+								'id' => 'nebula-warning-' . $key,
+								'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $warning_icon . '" style="margin-left: 5px;"></i> ' . strip_tags($warning['description']),
+								'href' => ( !empty($warning['url']) )? $warning['url'] : '',
+								'meta' => array(
+									'target' => '_blank',
+									'rel' => 'noopener',
+									'class' => 'nebula-warning level-' . $warning['level'],
+								)
+							));
+						}
 					}
 				}
 
-				$wp_admin_bar->add_node(array(
-					'id' => 'nebula',
-					'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $nebula_adminbar_icon . '"></i> Nebula',
-					'href' => 'https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=admin_bar&utm_source=' . urlencode(site_url()) . '&utm_content=admin_bar_main',
-					'meta' => array(
-						'target' => '_blank',
-						'rel' => 'noopener',
-						'class' => ( !empty($warnings) )? 'has-warning' : '',
-					)
-				));
-
+				//Now add sub-nodes to the main Nebula admin bar item
 				//Version number and date
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula',
@@ -850,51 +924,21 @@ if ( !trait_exists('Admin') ){
 					'href' => 'https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main',
 				));
 
-				//If there are warnings display them
-				if ( current_user_can('edit_others_posts') && !empty($warnings) ){
-					$wp_admin_bar->add_node(array(
-						'parent' => 'nebula',
-						'id' => 'nebula-warnings',
-						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-exclamation-triangle"></i> Warnings',
-					));
+				$wp_admin_bar->add_node(array(
+					'parent' => 'nebula',
+					'id' => 'nebula-timing-categories',
+					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-stopwatch"></i> Timing Categories'
+				));
 
-					foreach( $warnings as $key => $warning ){
-						$warning_icon = 'fa-exclamation-triangle';
-
-						if ( $warning['level'] === 'error' ){
-							$warning_icon = 'fa-exclamation-triangle';
-						} elseif ( $warning['level'] === 'warning' ){
-							$warning_icon = 'fa-info-circle';
-						}
-
-						$wp_admin_bar->add_node(array(
-							'parent' => 'nebula-warnings',
-							'id' => 'nebula-warning-' . $key,
-							'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $warning_icon . '" style="margin-left: 5px;"></i> ' . strip_tags($warning['description']),
-							'href' => ( !empty($warning['url']) )? $warning['url'] : '',
-							'meta' => array(
-								'target' => '_blank',
-								'rel' => 'noopener',
-								'class' => 'nebula-warning level-' . $warning['level'],
-							)
-						));
-					}
-				}
-
-				if ( current_user_can('edit_others_posts') && !empty($nebula_warning_icon) ){
-					if (!isset($nebula_warning_href)) {
-						$nebula_warning_href = '';
-					}
-					if (!isset($nebula_warning_description)) {
-						$nebula_warning_description = '';
-					}
-					$wp_admin_bar->add_node(array(
-						'parent' => 'nebula',
-						'id' => 'nebula-warning',
-						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-exclamation-triangle" style="color: #ca3838; margin-right: 5px;"></i> ' . $nebula_warning_description,
-						'href' => admin_url($nebula_warning_href),
-					));
-				}
+				//This empty node ensures the submenu can open. There may be a better way to do this...
+				$wp_admin_bar->add_node(array(
+					'parent' => 'nebula-timing-categories',
+					'id' => 'nebula-timing-category-heading',
+					'title' => '<strong><i class="nebula-admin-fa fa-solid fa-fw fa-arrow-down-9-1"></i> Durations (Desc.)</strong>',
+					'meta' => array(
+						'title' => 'Manual timing groups. These are durations (not timestamps) of functionality using Nebula Timers',
+					)
+				));
 
 				//Documentation Links
 				$wp_admin_bar->add_node(array(
@@ -1099,6 +1143,75 @@ if ( !trait_exists('Admin') ){
 					));
 				}
 
+				//Temporarily enables or disable Query Monitor for this IP when not logged in
+				if ( is_plugin_active('query-monitor/query-monitor.php') ){
+					$nebula_temp_qm_ip = get_transient('nebula_temp_qm_ip');
+					if ( empty($nebula_temp_qm_ip) || $this->get_ip_address() !== $nebula_temp_qm_ip ){
+						$wp_admin_bar->add_node(array(
+							'parent' => 'nebula-utilities',
+							'id' => 'nebula-allow-qm',
+							'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-toggle-off"></i> Allow QM for this IP for 1hr (' . $this->get_ip_address() . ')',
+							'href' => esc_url(
+								add_query_arg(array(
+									'nebula-temp-qm' => 'start',
+								), get_admin_url())
+							)
+						));
+					} else {
+						$wp_admin_bar->add_node(array(
+							'parent' => 'nebula-utilities',
+							'id' => 'nebula-allow-qm',
+							'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-toggle-on"></i> Stop QM for this IP now',
+							'href' => esc_url(
+								add_query_arg(array(
+									'nebula-temp-qm' => 'stop',
+								), get_admin_url())
+							)
+						));
+					}
+				}
+
+				//Show the Sass icon when scss files were processed during this load
+				if ( $this->get_option('scss') ){
+					if ( $this->was_sass_processed || !empty($this->sass_process_status) ){
+						$sass_color = 'sass-success';
+						$sass_icon = 'fa-check';
+						$sass_number = $this->sass_files_processed_count;
+
+						if ( !empty($this->sass_process_status) ){
+							if ( str_contains($this->sass_process_status, 'not processed') || str_contains($this->sass_process_status, 'an error') ){
+								$sass_color = 'sass-danger';
+								$sass_icon = 'fa-xmark';
+							} elseif ( str_contains($this->sass_process_status, 'throttled') ){
+								$sass_color = 'sass-warn';
+								$sass_icon = 'fa-stopwatch';
+								$sass_number = '<em class="cooldown-wait" data-cooldown="10" data-units="s" data-parenthesis="true">(10s)</em><small class="cooldown-again hidden">&raquo;</small>'; //This should match the cooldown threshold from Sass.php
+							}
+						}
+
+						$wp_admin_bar->add_node(array(
+							'id' => 'nebula-sass-processed',
+							'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $sass_icon . '"></i> <i class="nebula-admin-fa fa-brands fa-fw fa-sass"></i> ' . $sass_number,
+							'href' => '?sass=true',
+							'meta' => array(
+								'title' => ( $sass_color != 'sass-success' )? $this->sass_process_status : '',
+								'class' => $sass_color,
+							)
+						));
+
+						//List each of the CSS files processed
+						foreach ( $this->sass_files_processed as $index => $sass_file_processed ){
+							$wp_admin_bar->add_node(array(
+								'parent' => 'nebula-sass-processed',
+								'id' => 'nebula-sass-file-processed-' . $index,
+								'title' => preg_replace('#^.*?/wp-content#', '', $sass_file_processed), //Remove everything before and including /wp-content
+								'href' => esc_url(str_replace(realpath(WP_CONTENT_DIR), content_url(), $sass_file_processed)), //Replace the server absolute path with the clickable url
+								'meta' => array('target' => '_blank', 'rel' => 'noopener')
+							));
+						}
+					}
+				}
+
 				$this->timer('Nebula Admin Bar Menus', 'end');
 			}
 		}
@@ -1119,25 +1232,42 @@ if ( !trait_exists('Admin') ){
 
 						&:not(.mobile) {
 							.ab-top-menu > #wp-admin-bar-nebula.has-warning
-								> .ab-item {background: #ca3838;}
+								> .ab-item {background: #dc3545;}
 
 								&.hover > .ab-item,
 								&:hover > .ab-item {background: maroon; color: #fff; transition: all 0.25s ease;}
 							}
 
-							#wp-admin-bar-nebula-warnings {background: #ca3838;
-								> .ab-item,
-								> svg {color: #fff;}
-								.level-error svg {color: #ca3838;}
-								.level-warning svg {color: #f6b83f;}
+							#wp-admin-bar-nebula-timing-categories {
+								#wp-admin-bar-nebula-timing-category-heading {font-weight: bold !important; text-decoration: underline;}
+								strong {font-weight: bold !important;}
 							}
 
-							.deregistered-asset-info {color: #f6b83f;}
+							#wp-admin-bar-nebula-warnings {
+								&.has-error {background: #dc3545;}
+								&.has-warning {background: #ffc107;
+									&:not(:hover) > .ab-item {color: #000;}
+								}
+
+								.nebula-warning { /* Individual warning sub-node rows */
+									&.level-error i {color: #dc3545;}
+									&.level-warn i,
+									&.level-warning i {color: #ffc107;}
+								}
+							}
+
+							.deregistered-asset-info {color: #ffc107;}
 							#wp-admin-bar-nebula-deregisters {
-								> .ab-item {background: #f6b83f; color: #000; transition: all 0.25s ease;}
+								> .ab-item {background: #ffc107; color: #000; transition: all 0.25s ease;}
 
 								&.hover > .ab-item,
-								&:hover > .ab-item {background: #f5a326;}
+								&:hover > .ab-item {background: #ffc107;}
+							}
+
+							#wp-admin-bar-nebula-sass-processed {color: #fff;
+								&.sass-success > .ab-item {color: #28a745;}
+								&.sass-warn > .ab-item {color: #ffc107;}
+								&.sass-danger > .ab-item {background: #dc3545;}
 							}
 						}
 					}
@@ -1525,7 +1655,7 @@ if ( !trait_exists('Admin') ){
 		public function show_admin_notices(){
 			if ( $this->is_minimal_mode() ){return false;}
 
-			$this->timer('Admin Notices');
+			$this->timer('Admin Notices', 'start', '[Nebula] Warnings');
 
 			$warnings = $this->check_warnings();
 

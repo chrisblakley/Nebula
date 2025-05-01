@@ -92,6 +92,7 @@ if ( !trait_exists('Security') ){
 		//Remember: This only blocks the most obvious access attempts. Use more sophisticated security systems for broader coverage.
 		public function block_obvious_bad_requests(){
 			if ( $this->is_minimal_mode() ){return false;}
+			$this->timer('Block Obvious Bad Requests', 'start', '[Nebula] Security');
 
 			if ( $this->get_option('block_obvious_bad_requests') ){ //Only when Nebula option is enabled
 				//Check User Agents
@@ -145,6 +146,8 @@ if ( !trait_exists('Security') ){
 					}
 				}
 			}
+
+			$this->timer('Block Obvious Bad Requests', 'end');
 		}
 
 		//Disable Pingbacks to prevent security issues
@@ -241,6 +244,7 @@ if ( !trait_exists('Security') ){
 			if ( $this->is_minimal_mode() ){return false;}
 			$override = apply_filters('pre_track_notable_bots', null);
 			if ( isset($override) ){return;}
+			$this->timer('Notable Bot Tracking', 'start', '[Nebula] Security');
 
 			//Ignore logged-in users
 			if ( is_user_logged_in() ){
@@ -304,12 +308,14 @@ if ( !trait_exists('Security') ){
 				//facebookexternalhit
 				//microsoft_office
 				//google-structured-data-testing-tool
+
+			$this->timer('Notable Bot Tracking', 'end');
 		}
 
 		//Check referrer for known spam domains
 		public function spam_domain_prevention(){
 			if ( $this->is_minimal_mode() ){return false;}
-			$this->timer('Spam Domain Prevention');
+			$this->timer('Spam Domain Prevention', 'start', '[Nebula] Security');
 
 			//Skip lookups if user has already been checked or for logged in users.
 			if ( (isset($this->super->cookie['spam_domain']) && $this->super->cookie['spam_domain'] === false) || is_user_logged_in() ){
@@ -424,6 +430,7 @@ if ( !trait_exists('Security') ){
 		//Return an array of spam domains
 		public function get_spam_domain_list(){
 			if ( $this->is_minimal_mode() ){return false;}
+			$this->timer('Get Spam Domain List', 'start', '[Nebula] Security');
 
 			//First get the latest spam domain list maintained by Matomo or Nebula's cache of the Matomo list
 			$spam_domain_public_file = get_template_directory() . '/inc/data/spam_domain_list.txt'; //Eventually change this to "spam_domain_public_list.txt"
@@ -518,6 +525,8 @@ if ( !trait_exists('Security') ){
 			);
 			$all_spam_domains = apply_filters('nebula_spam_domains', $manual_nebula_spam_domains);
 
+			$this->timer('Get Spam Domain List');
+
 			return array_merge($spam_domain_array, $all_spam_domains);
 		}
 
@@ -546,6 +555,7 @@ if ( !trait_exists('Security') ){
 		//Return an array of bad email domains from Hubspot (or the latest Nebula on GitHub)
 		public function get_bad_email_domains_list(){
 			if ( $this->is_minimal_mode() ){return false;}
+			$this->timer('Get Bad Email Domains List', 'start', '[Nebula] Security');
 
 			$bad_email_domains_file = get_template_directory() . '/inc/data/bad_email_domains.csv';
 
@@ -599,6 +609,7 @@ if ( !trait_exists('Security') ){
 			);
 			$all_bad_email_domains = apply_filters('nebula_bad_email_domains', $manual_nebula_bad_email_domains);
 
+			$this->timer('Get Bad Email Domains List', 'end');
 			return array_merge($bad_email_domain_array, $all_bad_email_domains);
 		}
 

@@ -1010,7 +1010,7 @@ if ( !trait_exists('Utilities') ){
 		public function format_bytes($bytes, $precision=1){
 			$units = array('b', 'kb', 'mb', 'gb', 'tb', 'pb');
 			$bytes = max($bytes, 0);
-			$base = ($bytes)? log($bytes) : 0;
+			$base = ( $bytes )? log($bytes) : 0;
 			$pow = floor($base/log(1024));
 			$pow = min($pow, count($units)-1);
 			$bytes = $bytes/pow(1024, $pow);
@@ -1089,7 +1089,7 @@ if ( !trait_exists('Utilities') ){
 				return false;
 			}
 
-			$timer_name = $this->timer('Is Available (' . $url . ')', 'start', 'Is Available');
+			$timer_name = $this->timer('Is Available (' . $url . ')', 'start', '[Nebula] Is Available');
 			$hostname = str_replace('.', '_', $this->url_components('hostname', $url)); //The hostname label for transients
 
 			if ( $this->is_transients_enabled() ){
@@ -1152,7 +1152,7 @@ if ( !trait_exists('Utilities') ){
 				return new WP_Error('broke', 'Requested URL is either empty or missing acceptable protocol.');
 			}
 
-			$timer_name = $this->timer('Remote Get (' . $url . ')', 'start', 'Remote Get');
+			$timer_name = $this->timer('Remote Get (' . $url . ')', 'start', '[Nebula] Remote Get');
 			$hostname = str_replace('.', '_', $this->url_components('hostname', $url));
 
 			//Check if the resource was unavailable in the last 10 minutes

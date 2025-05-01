@@ -6,7 +6,7 @@ nebula.developerMetaboxes = function(){
 	if ( jQuery('div#nebula_developer_info').length ){
 		if ( jQuery('.serverdetections').length ){ //If viewing the dashboard
 			if ( !jQuery('.nebula-adb-tester').is(':visible') ){
-				jQuery('.serverdetections').prepend('<li class="nebula-adb-reminder"><i class="fa-solid fa-shield-halved"></i> Your ad-blocker is enabled</li>');
+				jQuery('.serverdetections').prepend('<li class="nebula-adb-reminder essential"><i class="fa-solid fa-shield-halved"></i> Your ad-blocker is enabled</li>');
 			} else {
 				jQuery('.nebula-adb-tester').remove();
 			}
@@ -83,122 +83,24 @@ nebula.developerMetaboxes = function(){
 
 	//File Size Monitor Metabox
 	if ( jQuery('div#nebula_file_size_monitor').length ){
-		nebula_file_size_monitor_table_filter(); //Run once immediately on load
+		nebula.fileSizeMonitorTableFilter(); //Run once immediately on load
 
 		//Dropdown Filters
 		jQuery(document).on('change', '#nebula_file_size_monitor .filter-row select', function(e){
-			nebula_file_size_monitor_table_filter();
+			jQuery('#nebula_file_size_monitor .simplify').removeClass('simplify');
+			jQuery('#filegroup-filter').removeClass('initial-state'); //It is now no longer in the initial state
+			nebula.fileSizeMonitorTableFilter();
 		});
-
-		function nebula_file_size_monitor_table_filter(){
-			let selectedGroup = jQuery('#filegroup-filter').val();
-			let selectedType = jQuery('#filetype-filter').val();
-			let visibleIndex = 0; //The number of visible rows
-			let anyVisibleRows = false; //If any rows are visible after filtering
-
-			//Loop through the rows now
-			jQuery('#nebula_file_size_monitor table tbody tr').each(function(i, row){
-				let $thisRow = jQuery(row);
-				let showRow = false;
-
-				$thisRow.removeClass('alt-row'); //Remove the zebra-striping so it can be re-added after filtering
-
-				let matchesGroup = (!selectedGroup || $thisRow.data('group') === selectedGroup); //Boolean if this row matches the selected file group (or if no group is selected)
-				let matchesType = (!selectedType || $thisRow.data('type') === selectedType); //Boolean if this row matches the selected file type (or if no type is selected)
-
-				//Check if this row meets the dropdown filter criteria
-				if ( selectedGroup === 'largest' && matchesType ){
-					if ( i < 10 ){
-						showRow = true;
-					}
-				} else if ( selectedGroup === 'overbudget' && $thisRow.hasClass('overbudget') && matchesType ){
-					showRow = true;
-				} else if ( selectedGroup === 'nearbudget' && $thisRow.hasClass('approaching-budget') && matchesType ){
-					showRow = true;
-				} else if ( selectedGroup === 'recent' && $thisRow.is(':has(.recently-modified)') && matchesType ){
-					showRow = true;
-				} else if ( selectedGroup === 'security' && $thisRow.is(':has(.security-concern)') && matchesType ){
-					showRow = true;
-				} else if ( matchesGroup && matchesType ){
-					showRow = true;
-				}
-
-				$thisRow.toggle(showRow); //Show or hide the row
-
-				if ( showRow ){
-					anyVisibleRows = true; //We do have results
-
-					//Prep for zebra striping
-					if ( visibleIndex%2 === 0 ){
-						$thisRow.addClass('alt-row');
-					}
-
-					visibleIndex++;
-				}
-			});
-
-			//Check if a "generic" group or type filter is selected
-			let genericGroups = ['All Groups', 'largest', 'overbudget', 'nearbudget', 'recent', 'security'];
-
-			let hasSpecificFilter = false;
-			if ( (selectedType && selectedType !== 'All Types') || (selectedGroup && !genericGroups.includes(selectedGroup)) ){
-				hasSpecificFilter = true;
-			}
-
-			//Show or hide certain columns
-			if ( hasSpecificFilter ){
-				jQuery('#nebula_file_size_monitor table th.file-group, #nebula_file_size_monitor table td.file-group').addClass('hidden');
-			} else {
-				jQuery('#nebula_file_size_monitor table th.file-group, #nebula_file_size_monitor table td.file-group').removeClass('hidden');
-			}
-
-			//Update the file type text to match the selected filter
-			if ( selectedType && selectedType !== 'All Types' ){
-				jQuery('.filetype').text(selectedType);
-			} else if ( selectedGroup && !genericGroups.includes(selectedGroup) ){
-				jQuery('.filetype').text(selectedGroup);
-			} else {
-				jQuery('.filetype').text('');
-			}
-
-			//Show the budgeted size for this group (based on the first visible result)
-			let visibleGroupBudget = jQuery('#nebula_file_size_monitor table tbody tr').filter(':visible').first();
-			let budgetText = (visibleGroupBudget.data('budget') || '').toString().trim().toLowerCase();
-			jQuery('.sizebudget').text(budgetText);
-			let hideBudget = ( !budgetText || budgetText === '0' || budgetText === '0b' ); //Boolean if the budget for this group is empty or 0
-
-			//Show or hide the budget description text and percent column
-			if ( hasSpecificFilter && !hideBudget ){
-				jQuery('.budget-description').removeClass('hidden');
-				jQuery('#nebula_file_size_monitor table th.budget-percent, #nebula_file_size_monitor table td.budget-percent').removeClass('hidden');
-			} else {
-				jQuery('.budget-description').addClass('hidden');
-				jQuery('#nebula_file_size_monitor table th.budget-percent, #nebula_file_size_monitor table td.budget-percent').addClass('hidden');
-			}
-
-			jQuery('.no-files-message').toggle(!anyVisibleRows); //Show or hide the "No Files" message depending if we have any results
-			jQuery('.totals-row .total-showing').text(visibleIndex.toLocaleString());
-
-			//Only show tips for this file group
-			if ( jQuery('#nebula-optimization-tips li[data-group*="' + selectedGroup.toLowerCase() + '"]').length ){
-				jQuery('.show-optimization-tips').removeClass('hidden');
-				jQuery('#nebula-optimization-tips').removeClass('hidden');
-			} else {
-				jQuery('.show-optimization-tips').addClass('hidden');
-				jQuery('#nebula-optimization-tips').addClass('hidden');
-			}
-
-			jQuery('#nebula-optimization-tips li').addClass('hidden');
-			jQuery('#nebula-optimization-tips li[data-group*="' + selectedGroup.toLowerCase() + '"]').removeClass('hidden'); //Maybe use the case-insensitive "i" here eventually?
-			jQuery('#nebula-optimization-tips li.general').removeClass('hidden');
-		}
 
 		//Change to all files when intending to filter by keyword
 		jQuery(document).on('focus keydown', '#nebula_file_size_monitor #filekeyword-filter', function(e){
-			//If keyword searching but viewing the default largest 10 files, automatically change to all files
-			if ( jQuery('#filegroup-filter').val() == 'largest' ){
+			jQuery('#nebula_file_size_monitor .simplify').removeClass('simplify');
+
+			//If keyword searching but viewing the default selection, automatically change to all files
+			if ( jQuery('#filegroup-filter option:selected').data('default') === true && jQuery('#filegroup-filter').hasClass('initial-state') ){ //If it is still in the initial state of the default selected group
 				jQuery('#filegroup-filter').val(''); //Automatically change to search all files
 				jQuery('#filegroup-filter').trigger('change');
+				jQuery('#filegroup-filter').removeClass('initial-state'); //It is now no longer in the initial state
 			}
 		});
 
@@ -222,7 +124,7 @@ nebula.developerMetaboxes = function(){
 				jQuery('.totals-row .total-showing').text(visibleRowCount);
 
 				//Show or hide the "No Files" message depending if we have any results
-				if ( visibleRowCount == 0 ){
+				if ( visibleRowCount === 0 ){
 					jQuery('.no-files-message').removeClass('hidden');
 				} else {
 					jQuery('.no-files-message').addClass('hidden');
@@ -233,6 +135,7 @@ nebula.developerMetaboxes = function(){
 		jQuery(document).on('click', '.show-optimization-tips', function(){
 			jQuery('#nebula-optimization-tips').slideDown();
 			jQuery('.show-optimization-tips').remove(); //Once it is clicked it stays open
+			return false;
 		});
 
 		//Clear keyword search input
@@ -245,7 +148,7 @@ nebula.developerMetaboxes = function(){
 		//Reset all filters to default
 		jQuery(document).on('click', '#nebula_file_size_monitor .reset-filters', function(){
 			jQuery('#nebula_file_size_monitor #filekeyword-filter').val('');
-			jQuery('#filegroup-filter').val('largest'); //Default value
+			jQuery('#filegroup-filter').val('largest'); //Use this as the default value now regardless of initial state
 			jQuery('#filetype-filter').val(''); //First value
 			jQuery('#nebula_file_size_monitor #filekeyword-filter').trigger('keyup');
 			jQuery('#nebula_file_size_monitor #filegroup-filter').trigger('change');
@@ -254,13 +157,127 @@ nebula.developerMetaboxes = function(){
 	}
 };
 
+nebula.fileSizeMonitorTableFilter = function(){
+	let selectedGroup = jQuery('#filegroup-filter').val();
+	let selectedType = jQuery('#filetype-filter').val();
+	let visibleIndex = 0; //The number of visible rows
+	let anyVisibleRows = false; //If any rows are visible after filtering
+
+	//Loop through the rows now
+	jQuery('#nebula_file_size_monitor table tbody tr').each(function(i, row){
+		let $thisRow = jQuery(row);
+		let showRow = false;
+
+		$thisRow.removeClass('alt-row'); //Remove the zebra-striping so it can be re-added after filtering
+
+		let matchesGroup = (!selectedGroup || $thisRow.data('group') === selectedGroup); //Boolean if this row matches the selected file group (or if no group is selected)
+		let matchesType = (!selectedType || $thisRow.data('type') === selectedType); //Boolean if this row matches the selected file type (or if no type is selected)
+
+		//Check if this row meets the dropdown filter criteria
+		if ( selectedGroup === 'largest' && matchesType ){
+			if ( i < 10 ){
+				showRow = true;
+			}
+		} else if ( selectedGroup === 'overbudget' && $thisRow.hasClass('overbudget') && matchesType ){
+			showRow = true;
+		} else if ( selectedGroup === 'nearbudget' && $thisRow.hasClass('approaching-budget') && matchesType ){
+			showRow = true;
+		} else if ( selectedGroup === 'recent' && $thisRow.is(':has(.recently-modified)') && matchesType ){
+			showRow = true;
+		} else if ( selectedGroup === 'security' && $thisRow.is(':has(.security-concern)') && matchesType ){
+			showRow = true;
+		} else if ( matchesGroup && matchesType ){
+			showRow = true;
+		}
+
+		$thisRow.toggle(showRow); //Show or hide the row
+
+		if ( showRow ){
+			anyVisibleRows = true; //We do have results
+
+			//Prep for zebra striping
+			if ( visibleIndex%2 === 0 ){
+				$thisRow.addClass('alt-row');
+			}
+
+			visibleIndex++;
+		}
+	});
+
+	//Check if a "generic" group or type filter is selected
+	let genericGroups = ['All Groups', 'largest', 'overbudget', 'nearbudget', 'recent', 'security'];
+
+	let hasSpecificFilter = false;
+	if ( (selectedType && selectedType !== 'All Types') || (selectedGroup && !genericGroups.includes(selectedGroup)) ){
+		hasSpecificFilter = true;
+	}
+
+	//Show or hide certain columns
+	if ( hasSpecificFilter ){
+		jQuery('#nebula_file_size_monitor table th.file-group, #nebula_file_size_monitor table td.file-group').addClass('hidden');
+	} else {
+		jQuery('#nebula_file_size_monitor table th.file-group, #nebula_file_size_monitor table td.file-group').removeClass('hidden');
+	}
+
+	//Update the file type text to match the selected filter
+	if ( selectedType && selectedType !== 'All Types' ){
+		jQuery('.filetype').text(selectedType);
+	} else if ( selectedGroup && !genericGroups.includes(selectedGroup) ){
+		jQuery('.filetype').text(selectedGroup);
+	} else {
+		jQuery('.filetype').text('');
+	}
+
+	//Show or hide the modified date
+	jQuery('.modified-info').addClass('hidden');
+	if ( selectedGroup == 'recent' ){
+		jQuery('.modified-info').removeClass('hidden');
+	}
+
+	//Show the budgeted size for this group (based on the first visible result)
+	let visibleGroupBudget = jQuery('#nebula_file_size_monitor table tbody tr').filter(':visible').first();
+	let budgetText = (visibleGroupBudget.data('budget') || '').toString().trim().toLowerCase();
+	jQuery('.sizebudget').text(budgetText);
+	let hideBudget = ( !budgetText || budgetText === '0' || budgetText === '0b' ); //Boolean if the budget for this group is empty or 0
+
+	//Show or hide the budget description text and percent column
+	if ( hasSpecificFilter && !hideBudget ){
+		jQuery('.budget-description').removeClass('hidden');
+		jQuery('#nebula_file_size_monitor table th.budget-percent, #nebula_file_size_monitor table td.budget-percent').removeClass('hidden');
+	} else {
+		jQuery('.budget-description').addClass('hidden');
+		jQuery('#nebula_file_size_monitor table th.budget-percent, #nebula_file_size_monitor table td.budget-percent').addClass('hidden');
+	}
+
+	jQuery('.no-files-message').toggle(!anyVisibleRows); //Show or hide the "No Files" message depending if we have any results
+	jQuery('.totals-row .total-showing').text(visibleIndex.toLocaleString());
+
+	//Only show tips for this file group
+	if ( jQuery('#nebula-optimization-tips li[data-group*="' + selectedGroup.toLowerCase() + '"]').length ){
+		jQuery('.show-optimization-tips').removeClass('hidden');
+		jQuery('#nebula-optimization-tips').removeClass('hidden');
+	} else {
+		jQuery('.show-optimization-tips').addClass('hidden');
+		jQuery('#nebula-optimization-tips').addClass('hidden');
+	}
+
+	jQuery('#nebula-optimization-tips li').addClass('hidden');
+	jQuery('#nebula-optimization-tips li[data-group*="' + selectedGroup.toLowerCase() + '"]').removeClass('hidden'); //Maybe use the case-insensitive "i" here eventually?
+	jQuery('#nebula-optimization-tips li.general').removeClass('hidden');
+};
+
+
+
+
+
+
 //Check the page speed using (in this priority) Google Lighthouse, or a rudimentary iframe timing
 nebula.checkPageSpeed = function(){
 	jQuery('#performance_metabox h2 i').removeClass('fa-stopwatch').addClass('fa-spinner fa-spin');
 
 	if ( location.hostname === 'localhost' || location.hostname === '127.0.0.1' ){ //If localhost or other "invalid" URL. This doesn't catch local TLDs, but the logic below will figure it out eventually.
 		jQuery('#performance-sub-status strong').text('Using iframe test due to local development.');
-		nebula.runIframeSpeedTest();
+		nebula.runIframeSpeedTest('Local Development Environment');
 		return;
 	}
 
@@ -443,22 +460,29 @@ nebula.getLighthouseResults = function(){
 			jQuery('#performance_metabox h2 i').removeClass('fa-spinner fa-spin').addClass('fa-stopwatch');
 			jQuery('#performance_metabox h2 span span').html('Performance <small>(via Google Lighthouse)</small>');
 		} else { //If the fetch data is not expected, run iframe test instead...
-			if ( json.code ){
-				console.warn('Received Lighthouse error code:', json.code, json.message);
+			let reason = '';
+
+			if ( json.error ){
+				reason = 'Lighthouse Error Code ' + json.error.code;
+				console.warn('Received Lighthouse error code:', json.error.code, json.error.message);
+
+				if ( json.error.details[0].reason ){
+					reason = 'Lighthouse ' + json.error.details[0].reason.replaceAll('_', ' ').toLowerCase();
+				}
 			}
 
 			console.warn('Fetch data is not expected from Lighthouse. Running iframe test instead.', json);
-			nebula.runIframeSpeedTest();
+			nebula.runIframeSpeedTest(reason);
 		}
 	}).catch(function(error){
 		console.warn('Google Lighthouse failed. Reverting to iframe test.', error);
 		jQuery('#performance-sub-status strong').text('Google Lighthouse failed. Reverting to iframe test.');
-		nebula.runIframeSpeedTest(); //If Google Lighthouse check fails, time with an iframe instead...
+		nebula.runIframeSpeedTest('Google Lighthouse Failed'); //If Google Lighthouse check fails, time with an iframe instead...
 	});
 };
 
 //Load the home page in an iframe and time the DOM and Window load times
-nebula.runIframeSpeedTest = async function(){
+nebula.runIframeSpeedTest = async function(reason=''){
 	await nebula.yield();
 
 	jQuery('#performance_metabox h2 span span').html('Measuring Performance <small>(via Iframe)</small>');
@@ -473,6 +497,10 @@ nebula.runIframeSpeedTest = async function(){
 		await nebula.yield();
 
 		console.log('Iframe Performance Data:', JSON.parse(JSON.stringify(iframe.contentWindow.performance))); //Needs to stringify/parse to de-synchronize the object and retain the actual values (just for this output)
+
+		if ( reason ){
+			jQuery('#performance-sub-reason').removeClass('hidden').find('.label').html('Reason: <strong>' + reason + '</strong>');
+		}
 
 		//Server Response Time
 		var iframeResponseEnd = Math.round(iframe.contentWindow.performance.timing.responseEnd-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until server response finishes
@@ -512,7 +540,7 @@ nebula.runIframeSpeedTest = async function(){
 
 		jQuery('#performance_metabox h2 i').removeClass('fa-spinner fa-spin').addClass('fa-stopwatch');
 		jQuery('#performance_metabox h2 span span').html('Performance <small>(via Iframe)</small>');
-		jQuery('#performance-sub-status strong').text('Iframe test completed.');
+		jQuery('#performance-sub-status strong').text('Iframe test completed');
 	});
 };
 
@@ -545,4 +573,12 @@ nebula.appendPerformanceMetric = function(data){
 
 		jQuery('ul#nebula-performance-metrics').append('<li class="' + warningLevel + '" title="' + description + '">' + icon + ' ' + data.label + ': <strong>' + data.text + '</strong>' + diff + '</li>');
 	}
+};
+
+nebula.simplifiedViewToggle = function(){
+	jQuery('.expand-simplified-view, .expand-simplified-view a').on('click', function(){
+		jQuery(this).parents('.inside').find('ul li:not(.ignore-simplify)').slideDown(); //Show the rest of the list items
+		jQuery(this).parents('.inside').find('.expand-simplified-view, .expand-simplified-view a').slideUp(); //Hide the toggle link itself
+		return false;
+	});
 };

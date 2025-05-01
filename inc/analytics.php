@@ -47,6 +47,20 @@
 				$user_properties['user_role'] = nebula()->user_role(); //User-scoped role property
 				$pageview_properties['role'] = nebula()->user_role(); //Event-scoped user role property
 
+				//If using GA Linker
+				if ( nebula()->get_option('ga_linker_domains') ){
+					$linker_domains = explode(',', nebula()->get_option('ga_linker_domains')); //Conver the string into an array
+					$linker_domains = array_map('trim', $linker_domains); //Remove spaces from each entry
+					$linker_domains[] = nebula()->url_components('domain'); //Add the current domain to the list
+					$linker_domains = array_unique($linker_domains); //Remove duplicate entries
+
+					//Wrap each entry in quotes
+					$linker_domains = array_map(function($linker_domain){
+						return "'" . $linker_domain . "'";
+					}, $linker_domains);
+
+					$pageview_properties['linker'] = '{domains: [' . implode(', ', $linker_domains) . ']}';
+				}
 
 				if ( !is_front_page() ){
 					//Content Group

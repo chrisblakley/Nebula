@@ -6,7 +6,8 @@ if ( !trait_exists('Sass') ){
 	trait Sass {
 		public $scss;
 		public $sass_process_status = '';
-		public $sass_files_processed = 0;
+		public $sass_files_processed = array();
+		public $sass_files_processed_count = 0;
 		public $was_sass_processed = false;
 		public $latest_scss_mtime = 0; //Prep a flag to determine the last modified SCSS file time
 
@@ -37,7 +38,7 @@ if ( !trait_exists('Sass') ){
 
 			//Ensure Sass option is enabled
 			if ( $this->get_option('scss') ){
-				$this->timer('Sass (Total)', 'start', 'Sass');
+				$this->timer('Sass (Total)', 'start', '[Nebula] Sass');
 				global $pagenow;
 
 				$sass_throttle = get_transient('nebula_sass_throttle'); //This prevents Sass from compiling multiple times in quick succession
@@ -148,10 +149,10 @@ if ( !trait_exists('Sass') ){
 						$this->update_data('need_sass_compile', 'false'); //Set it to false after Sass is finished. Do not wrap this in a "was_sass_processed" conditional! Or else it will constantly want to force-reprocess all Sass because 'need_sass_compile' will not get set to false (...for some reason? Just leave it alone).
 
 						if ( $this->was_sass_processed ){
-							set_transient('nebula_sass_throttle', time(), 15); //15 second cache to throttle Sass from being re-processed again immediately. This may work as an object cache, but there is at least 4-6 seconds between the two process times, so this transient works well. Maybe it can be shortened to 10 seconds in the future?
+							set_transient('nebula_sass_throttle', time(), 10); //10 second cache to throttle Sass from being re-processed again immediately. This may work as an object cache, but there is at least 4-6 seconds between the two process times, so this transient works well. Maybe it can be shortened to 10 seconds in the future?
 						}
 
-						$this->sass_process_status = ( !isset($this->super->get['sass']) && $this->was_sass_processed )? $this->sass_files_processed . ' Sass file(s) have been processed.' : $this->sass_process_status; //Show this status if Sass was processed but not explicitly forced. Otherwise use the existing status
+						$this->sass_process_status = ( !isset($this->super->get['sass']) && $this->was_sass_processed )? $this->sass_files_processed_count . ' Sass file(s) have been processed.' : $this->sass_process_status; //Show this status if Sass was processed but not explicitly forced. Otherwise use the existing status
 
 						if ( time()-$this->latest_scss_mtime >= MONTH_IN_SECONDS*3 ){ //If the last style.scss modification has not happened within 90 days disable Sass to optimize all future page loads (no need to check files at all)
 							$this->update_option('scss', 0); //Once Sass is disabled this way, a developer would need to re-enable it in Nebula Options.
@@ -163,10 +164,10 @@ if ( !trait_exists('Sass') ){
 						trigger_error('Sass can not compile because it is disabled in Nebula Functions.', E_USER_NOTICE);
 					}
 				} else {
-					$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass is throttled between processing. <span id="sass-cooldown-wait">Please wait for <strong id="sass-cooldown">15 seconds</strong>. </span><a id="sass-cooldown-again" class="hidden" href="?sass=true">Click here to try again now.</a>' : $this->sass_process_status;
+					$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass is throttled between processing. <span class="cooldown-wait">Please wait for <strong id="sass-cooldown" data-cooldown="10" data-units="seconds">10 seconds</strong>. </span><a class="cooldown-again hidden" href="?sass=true">Click here to try again now &raquo;</a>' : $this->sass_process_status;
 				}
 
-				$this->timer('Sass (Total)', 'stop', 'Sass');
+				$this->timer('Sass (Total)', 'end');
 			}
 
 			return $this->was_sass_processed;
@@ -180,7 +181,7 @@ if ( !trait_exists('Sass') ){
 			global $sass_errors;
 
 			if ( $this->get_option('scss') && !empty($location_name) && !empty($location_paths) ){
-				$this->timer('Sass (' . $location_name . ')', 'start', 'Sass');
+				$this->timer('Sass (' . $location_name . ')', 'start');
 
 				//Require SCSSPHP
 				require_once get_template_directory() . '/inc/vendor/scssphp/scss.inc.php'; //Run the autoloader. SCSSPHP is a compiler for SCSS 3.x
@@ -298,7 +299,8 @@ if ( !trait_exists('Sass') ){
 								try {
 									$compiled_css = $this->scss->compileString($this_scss_contents, $scss_file)->getCss(); //Compile the SCSS
 									$this->was_sass_processed = true;
-									$this->sass_files_processed++;
+									$this->sass_files_processed[] = $css_filepath;
+									$this->sass_files_processed_count++;
 								} catch (\Throwable $error){
 									$unprotected_array = (array) $error;
 									$prefix = chr(0) . '*' . chr(0);
@@ -411,7 +413,7 @@ if ( !trait_exists('Sass') ){
 			$transient_name = 'nebula_sass_variable_' . $variable_name; //Does this need to be more unique (to include the location too)? Cannot just append $filepath...
 
 			$scss_variables = nebula()->transient($transient_name, function($data){
-				$timer_name = $this->timer('Sass Variable (' . $data['variable'] . ')', 'start', 'Sass');
+				$timer_name = $this->timer('Sass Variable (' . $data['variable'] . ')', 'start', '[Nebula] Sass');
 
 				if ( !file_exists($data['filepath']) ){
 					$this->timer($timer_name, 'end');

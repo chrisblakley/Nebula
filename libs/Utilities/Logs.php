@@ -63,9 +63,11 @@ if ( !trait_exists('Logs') ){
 		//Useful for logging certain occurrences by website visitors themselves
 		public function log($message='', $filename=false, $verbose=false, $limited=true){
 			if ( $this->is_minimal_mode() ){return false;}
+			$this->timer('Log', 'start', '[Nebula] Logs');
 
 			if ( empty($filename) || str_contains($filename, '/') ){ //If a filename is not provided or contains a full path
 				$this->debug_log($message, $filename, $verbose, $limited); //Treat this as an alias of the debug_log() function
+				$this->timer('Log', 'end');
 				return false;
 			}
 
@@ -90,6 +92,7 @@ if ( !trait_exists('Logs') ){
 			$filepath .= $filename;
 
 			$this->debug_log($message, $filepath, $verbose, $limited); //Now call the function that actually writes the log to the file
+			$this->timer('Log', 'end');
 		}
 
 		//Log a message to either a nebula.log file, or a full file *path*
@@ -145,6 +148,7 @@ if ( !trait_exists('Logs') ){
 		//Register table name in $wpdb global
 		public function register_table_names(){
 			if ( $this->is_minimal_mode() ){return false;}
+			$this->timer('Register Logs Tables', 'start', '[Nebula] Logs');
 
 			if ( $this->get_option('administrative_log') ){
 				global $wpdb;
@@ -153,6 +157,8 @@ if ( !trait_exists('Logs') ){
 					$wpdb->nebula_logs = $wpdb->prefix . 'nebula_logs';
 				}
 			}
+
+			$this->timer('Register Logs Tables', 'end');
 		}
 
 		//Create Nebula logs table
@@ -162,6 +168,8 @@ if ( !trait_exists('Logs') ){
 			if ( !$this->is_admin_page() && !isset($this->super->get['settings-updated']) && !$this->is_staff() ){ //Only trigger this in admin when Nebula Options are saved (by a staff member)
 				return;
 			}
+
+			$this->timer('Create Logs Tables', 'start', '[Nebula] Logs');
 
 			$logs_table_transient = nebula()->transient('nebula_logs_table_exists', function(){
 				global $wpdb;
@@ -184,6 +192,8 @@ if ( !trait_exists('Logs') ){
 
 				return true;
 			}); //No expiration for this transient
+
+			$this->timer('Create Logs Tables', 'end', '[Nebula] Logs');
 		}
 
 		//Insert log into DB
@@ -194,6 +204,8 @@ if ( !trait_exists('Logs') ){
 			if ( !is_user_logged_in() || empty($message) ){
 				return false;
 			}
+
+			$this->timer('Add Log to Table', 'start', '[Nebula] Logs');
 
 			//Add the log to the Sucuri audit log if the plugin is being used
 			if ( class_exists('SucuriScanEvent') && method_exists('SucuriScanEvent', 'reportInfoEvent') ){ //Check if the Sucuri class and one of the log functions exists
@@ -214,6 +226,7 @@ if ( !trait_exists('Logs') ){
 					//This could happen if the option was enabled (somehow) by non-staff, and a log was attempted to be added
 					$this->update_option('administrative_log', 0); //Disable the option just to be safe. Unfortunately this cannot be logged somewhere...
 					do_action('qm/error', $error);
+					$this->timer('Add Log to Table', 'end');
 					return false;
 				}
 
@@ -230,9 +243,11 @@ if ( !trait_exists('Logs') ){
 					$this->debug_log($message . ' [User: ' . get_userdata(intval(get_current_user_id()))->display_name . ']'); //Log the message to a file too when debug mode is active
 				}
 
+				$this->timer('Add Log to Table', 'end');
 				return is_int($log_insertion); //Boolean return
 			}
 
+			$this->timer('Add Log to Table', 'end');
 			return false;
 		}
 
@@ -278,6 +293,7 @@ if ( !trait_exists('Logs') ){
 		//Remove all low importance logs from DB (by default this removes any log messages with importance of 4 or below)
 		public function clean_logs($importance=4){
 			if ( $this->is_minimal_mode() ){return false;}
+			$this->timer('Clean Logs Table', 'start', '[Nebula] Logs');
 
 			if ( $this->get_option('administrative_log') && $this->is_staff() ){
 				global $wpdb;
@@ -287,6 +303,7 @@ if ( !trait_exists('Logs') ){
 				delete_transient('nebula_logs');
 			}
 
+			$this->timer('Clean Logs Table', 'end');
 			return false;
 		}
 
@@ -304,6 +321,7 @@ if ( !trait_exists('Logs') ){
 		//Remove low importance logs before a date
 		public function optimize_logs(){
 			if ( $this->is_minimal_mode() ){return false;}
+			$this->timer('Optimize Logs Table', 'start', '[Nebula] Logs');
 
 			if ( $this->get_option('administrative_log') && $this->is_staff() ){
 				$row_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->nebula_logs); //DB Query - Count the rows in the table
@@ -325,29 +343,36 @@ if ( !trait_exists('Logs') ){
 
 				delete_transient('nebula_logs');
 			}
+
+			$this->timer('Optimize Logs Table', 'end');
 		}
 
 		//Get all logs data (or just the column names)
 		public function get_logs($rows=true){
 			if ( $this->is_minimal_mode() ){return false;}
+			$this->timer('Get Logs From Table', 'start', '[Nebula] Logs');
 
 			if ( $this->get_option('administrative_log') && $this->is_staff() ){
 				//Only return column names if requested
 				if ( empty($rows) ){
 					global $wpdb;
 					$nebula_logs_data_head = $wpdb->get_results("SHOW columns FROM $wpdb->nebula_logs"); //Get the column names from the primary table
+					$this->timer('Get Logs From Table', 'end');
 					return (array) $nebula_logs_data_head; //Convert to an array and return
 				}
 
 				//Otherwise get the actual logs data (rows)
 				$nebula_logs_data = nebula()->transient('nebula_logs', function(){
 					global $wpdb; //Need to re-declare so it is available within this function
+					$this->timer('Get Logs From Table', 'end');
 					return $wpdb->get_results("SELECT * FROM $wpdb->nebula_logs ORDER BY timestamp DESC LIMIT 100"); //Get all data (last 100 logs) from the DB table in descending order (latest first)
 				}, HOUR_IN_SECONDS);
 
+				$this->timer('Get Logs From Table', 'end');
 				return (array) $nebula_logs_data; //Convert to an array and return
 			}
 
+			$this->timer('Get Logs From Table', 'end');
 			return false;
 		}
 
@@ -360,7 +385,7 @@ if ( !trait_exists('Logs') ){
 		//Get all PHP log files
 		public function get_log_files($requested_type='all', $fresh=false){
 			if ( $this->is_minimal_mode() ){return false;}
-			$timer_name = $this->timer('Get Log Files');
+			$timer_name = $this->timer('Get Log Files', 'start', '[Nebula] Logs');
 
 			//Use the transient so we avoid scanning multiple times in short periods of time
 			$all_log_files = $this->transient('nebula_all_log_files', function(){
@@ -489,6 +514,8 @@ if ( !trait_exists('Logs') ){
 				return false;
 			}
 
+			$timer_name = $this->timer('Count Fatal Errors', 'start', '[Nebula] Logs');
+
 			$log_file = ini_get('error_log'); //Path to the error log file
 
 			//Ensure the log file exists
@@ -534,6 +561,7 @@ if ( !trait_exists('Logs') ){
 				fclose($file_handle);
 			}
 
+			$timer_name = $this->timer('Count Fatal Errors', 'end');
 			return $fatal_error_count;
 		}
 	}

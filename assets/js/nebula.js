@@ -63,6 +63,8 @@ jQuery(function(){
 		nebula.visibilityChangeActions();
 	});
 
+	nebula.dom.html.addClass('dom-ready');
+
 	window.performance.mark('(Nebula) DOM Ready [End]');
 	window.performance.measure('(Nebula) DOM Ready Functions', '(Nebula) DOM Ready [Start]', '(Nebula) DOM Ready [End]');
 });

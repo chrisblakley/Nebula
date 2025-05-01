@@ -182,12 +182,12 @@ if ( !trait_exists('Device') ){
 
 			return false;
 		}
-		
+
 		//Check if this traffic is coming from an AI website
 		//Note: This is a helper function only until Google Analytics introduces an "Organic AI" default channel group
 		public function is_ai_channel(){
 			$ai_tools = array('chatgpt.com', 'openai.com', 'gemini.google.com', 'claude.ai', 'anthropic.com', 'mistral.ai', 'copilot.microsoft.com', 'perplexity.ai', 'pi.ai', 'huggingface.co', 'stability.ai', 'midjourney.com', 'runwayml.com', 'grok.x.com', 'janitorai.com');
-			
+
 			foreach( $ai_tools as $ai_tool ){
 				//Check the referrer
 				if ( !empty($this->super->server['HTTP_REFERER']) ){
@@ -195,7 +195,7 @@ if ( !trait_exists('Device') ){
 						return true;
 					}
 				}
-				
+
 				//Check the utm_source
 				if( !empty($_GET['utm_source']) ){
 					if ( stripos($_GET['utm_source'], $ai_tool) !== false ){
@@ -203,10 +203,10 @@ if ( !trait_exists('Device') ){
 					}
 				}
 			}
-	
+
 			return false;
 		}
-		
+
 		//Check for bot/crawler traffic
 		//UA lookup: http://www.useragentstring.com/pages/Crawlerlist/
 		public function is_bot(){
@@ -219,7 +219,7 @@ if ( !trait_exists('Device') ){
 			}
 
 			if ( !empty($this->super->server['HTTP_USER_AGENT']) ){
-				$bot_regex = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http', 'favicon', 'curl', 'coda', 'netcraft'); //Consider 'cloudflare-' as long as it is not ever used in actual users' user agent
+				$bot_regex = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http', 'favicon', 'curl', 'coda', 'netcraft', 'silktide'); //Consider 'cloudflare-' as long as it is not ever used in actual users' user agent
 				$all_bot_regex = apply_filters('nebula_bot_regex', $bot_regex);
 				foreach( $all_bot_regex as $bot_regex ){
 					if ( strpos(strtolower($this->super->server['HTTP_USER_AGENT']), $bot_regex) !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8

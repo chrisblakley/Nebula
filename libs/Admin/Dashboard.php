@@ -51,6 +51,15 @@ if ( !trait_exists('Dashboard') ){
 			}
 		}
 
+		//Output the simplify class name when the simplify dashboard metaboxes option is enabled
+		public function get_simplify_dashboard_class(){
+			// if ( $this->get_option('simplify_dashboard_metaboxes') ){ //@todo "Nebula" 0: Uncomment this after v13 release
+			// 	return 'simplify';
+			// }
+
+			return '';
+		}
+
 		//Remove unnecessary Dashboard metaboxes
 		public function remove_dashboard_metaboxes(){
 			$override = apply_filters('pre_remove_dashboard_metaboxes', null);
@@ -74,15 +83,21 @@ if ( !trait_exists('Dashboard') ){
 		}
 
 		public function dashboard_nebula_ataglance(){
-			$this->timer('Nebula At-a-Glance Dashboard Metabox');
+			$this->timer('Nebula At-a-Glance Dashboard Metabox', 'start', '[Nebula] Dashboard Metaboxes');
 
-			echo '<ul class="nebula-fa-ul">';
+			echo '<ul class="nebula-fa-ul ' . $this->get_simplify_dashboard_class() . '">';
 
 			//Data Loaded Time
-			echo '<li><i class="fa-solid fa-fw fa-clock" title="This page last loaded"></i> <strong class="relative-date-tooltip" title="Just now" style="cursor: help;">' . date('l, F j, Y - g:i:sa') . '</strong></li>'; //The "Just Now" title text gets updated by JavaScript after load
+			echo '<li class="essential"><i class="fa-solid fa-fw fa-clock" title="This page last loaded"></i> <strong class="relative-date-tooltip" title="Just now" style="cursor: help;">' . date('l, F j, Y - g:i:sa') . '</strong></li>'; //The "Just Now" title text gets updated by JavaScript after load
+
+			//Page load time for this WP Dashboard request
+			if ( !empty($this->super->server['REQUEST_TIME_FLOAT']) ){
+				$response_time = (microtime(true)-$this->super->server['REQUEST_TIME_FLOAT']);
+				echo '<li class=""><i class="fa-solid fa-fw fa-stopwatch"></i> Server Response Time: <strong><span class="nebula-ttfb-time">~' . number_format($response_time, 3) . '</span> seconds</strong></li>'; //Note: essential/text classes are added by JavaScript where accurate total time is processed
+			}
 
 			//Website URL
-			echo '<li><i class="fa-solid fa-fw fa-globe"></i> <a href="' . home_url('/') . '" target="_blank" rel="noopener noreferrer">' . home_url('/') . '</a></li>';
+			echo '<li class="essential"><i class="fa-solid fa-fw fa-globe"></i> <a href="' . home_url('/') . '" target="_blank" rel="noopener noreferrer">' . home_url('/') . '</a></li>';
 
 			//Address
 			if ( $this->get_option('street_address') ){
@@ -97,14 +112,14 @@ if ( !trait_exists('Dashboard') ){
 
 			//WordPress Version
 			global $wp_version;
-			echo '<li><i class="fa-brands fa-fw fa-wordpress"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener noreferrer">WordPress</a> <strong>' . $wp_version . '</strong></li>';
+			echo '<li class="essential"><i class="fa-brands fa-fw fa-wordpress"></i> <a href="https://codex.wordpress.org/WordPress_Versions" target="_blank" rel="noopener noreferrer">WordPress</a> <strong>' . $wp_version . '</strong></li>';
 
 			//Nebula Version
 			$time_diff = human_time_diff($this->version('utc')) . ' ago';
 			if ( date('Y-m-d', $this->version('utc')) === date('Y-m-d', strtotime('now')) ){ //If it was committed today
 				$time_diff = 'today';
 			}
-			echo '<li><i class="fa-regular fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=documentation&utm_medium=dashboard&utm_source=' . urlencode(site_url()) . '&utm_content=at+a+glance+version" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('realtime') . '</a></strong> <small title="' . $this->version('date') . '" style="cursor: help;">(Committed ' . $time_diff . ')</small></li>';
+			echo '<li class="essential"><i class="fa-regular fa-fw fa-star"></i> <a href="https://nebula.gearside.com?utm_campaign=documentation&utm_medium=dashboard&utm_source=' . urlencode(site_url()) . '&utm_content=at+a+glance+version" target="_blank" rel="noopener noreferrer">Nebula</a> <strong><a href="https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main" target="_blank">' . $this->version('realtime') . '</a></strong> <small title="' . $this->version('date') . '" style="cursor: help;">(Committed ' . $time_diff . ')</small></li>';
 
 			//Check if parent theme files have been modified (this is in the Nebula metabox, but also happens in the developer info metabox)
 			if ( !$this->get_option('dev_info_metabox') || !$this->is_dev() ){ //Prevents this from appearing twice in the dashboard. Only show this if the Developer Info Metabox is not being shown.
@@ -131,7 +146,7 @@ if ( !trait_exists('Dashboard') ){
 				if ( is_super_admin() ){
 					$network_admin_link = ' <small><a href="' . network_admin_url() . '">(Network Admin)</a></small></li>';
 				}
-				echo '<li><i class="fa-solid fa-fw fa-cubes"></i> Multisite' . $network_admin_link;
+				echo '<li class="essential"><i class="fa-solid fa-fw fa-cubes"></i> Multisite' . $network_admin_link;
 			}
 
 			//GA Measurement ID
@@ -168,10 +183,10 @@ if ( !trait_exists('Dashboard') ){
 				$count = $count_posts->publish;
 				switch ( $post_type ){
 					case ( 'post' ):
-						$post_icon_img = '<i class="fa-solid fa-fw fa-thumbtack"></i>';
+						$post_icon_img = '<i class="fa-solid fa-fw fa-thumbtack essential"></i>';
 						break;
 					case ( 'page' ):
-						$post_icon_img = '<i class="fa-solid fa-fw fa-file-alt"></i>';
+						$post_icon_img = '<i class="fa-solid fa-fw fa-file-alt essential"></i>';
 						break;
 					case ( 'wp_block' ):
 						$post_icon_img = '<i class="fa-regular fa-fw fa-clone"></i>';
@@ -194,8 +209,9 @@ if ( !trait_exists('Dashboard') ){
 				}
 
 				$labels_plural = ( $count === 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
+				$essential_count_class = ( $count >= 12 )? 'essential' : ''; //If the post count is high, show this post type in simplified view
 
-				echo '<li>' . $post_icon_img . ' <a href="edit.php?post_type=' . $post_type . '"><strong>' . $count . '</strong> ' . $labels_plural . '</a></li>';
+				echo '<li>' . $post_icon_img . ' <a href="edit.php?post_type=' . $post_type . '"><strong class="' . $essential_count_class . '">' . $count . '</strong> ' . $labels_plural . '</a></li>';
 			}
 
 			//Earliest post
@@ -213,7 +229,7 @@ if ( !trait_exists('Dashboard') ){
 				return new WP_Query(array('post_type' => 'any', 'showposts' => 1, 'orderby' => 'modified', 'order' => 'DESC'));
 			}, WEEK_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long.
 			while ( $latest_post->have_posts() ){ $latest_post->the_post();
-				echo '<li><i class="fa-regular fa-fw fa-calendar"></i> Updated: <span title="' . get_the_modified_date() . ' @ ' . get_the_modified_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_modified_date())) . ' ago</strong></span>
+				echo '<li class="essential"><i class="fa-regular fa-fw fa-calendar"></i> Updated: <span title="' . get_the_modified_date() . ' @ ' . get_the_modified_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_modified_date())) . ' ago</strong></span>
 					<small style="display: block;"><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => esc_html(get_the_title()), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small>
 				</li>';
 			}
@@ -231,7 +247,7 @@ if ( !trait_exists('Dashboard') ){
 			}, WEEK_IN_SECONDS);
 			$all_plugins_plural = ( count($all_plugins) === 1 )? 'Plugin' : 'Plugins';
 			$active_plugins = get_option('active_plugins', array());
-			echo '<li><i class="fa-solid fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> ' . $all_plugins_plural . '</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
+			echo '<li class="essential"><i class="fa-solid fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> ' . $all_plugins_plural . '</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
 
 			//Must-Use Plugins
 			if ( is_dir(WPMU_PLUGIN_DIR) && is_array(scandir(WPMU_PLUGIN_DIR)) ){ //Make sure this directory exists
@@ -252,7 +268,7 @@ if ( !trait_exists('Dashboard') ){
 				$users_plural = 'User';
 				$users_icon = 'user';
 			}
-			echo '<li><i class="fa-solid fa-fw fa-' . $users_icon . '"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . $this->online_users('count') . ' currently active)</small></li>';
+			echo '<li class="essential"><i class="fa-solid fa-fw fa-' . $users_icon . '"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . $this->online_users('count') . ' currently active)</small></li>';
 
 			//Comments
 			if ( $this->get_option('comments') && $this->get_option('disqus_shortname') == '' ){
@@ -269,8 +285,10 @@ if ( !trait_exists('Dashboard') ){
 
 			//Global Admin Bar
 			if ( !$this->get_option('admin_bar') ){
-				echo '<li><i class="fa-regular fa-fw fa-bars"></i> Admin Bar disabled <small>(for all users via <a href="themes.php?page=nebula_options&tab=functions&option=admin_bar">Nebula Options</a>)</small></li>';
+				echo '<li class="essential"><i class="fa-regular fa-fw fa-bars"></i> Admin Bar disabled <small>(for all users via <a href="themes.php?page=nebula_options&tab=functions&option=admin_bar">Nebula Options</a>)</small></li>';
 			}
+
+			echo '<li class="expand-simplified-view essential"><a href="#">...Expand full list <i class="fa-solid fa-fw fa-caret-down"></i></a></li>';
 
 			echo '</ul>';
 
@@ -295,10 +313,10 @@ if ( !trait_exists('Dashboard') ){
 		}
 
 		public function dashboard_current_user(){
-			$this->timer('Nebula Current User Dashboard Metabox');
+			$this->timer('Nebula Current User Dashboard Metabox', 'start', '[Nebula] Dashboard Metaboxes');
 			$user_info = get_userdata(get_current_user_id());
 
-			echo '<ul class="nebula-fa-ul">';
+			echo '<ul class="nebula-fa-ul ' . $this->get_simplify_dashboard_class() . '">';
 			//Company
 			$company = '';
 			if ( get_the_author_meta('jobcompany', $user_info->ID) ){
@@ -326,14 +344,14 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//Email
-			echo '<li><i class="fa-regular fa-fw fa-envelope"></i> Email: <strong>' . $user_info->user_email . '</strong></li>';
+			echo '<li class="essential"><i class="fa-regular fa-fw fa-envelope"></i> Email: <strong>' . $user_info->user_email . '</strong></li>';
 
 			if ( get_the_author_meta('phonenumber', $user_info->ID) ){
 				echo '<li><i class="fa-solid fa-fw fa-phone"></i> Phone: <strong>' . get_the_author_meta('phonenumber', $user_info->ID) . '</strong></li>';
 			}
 
-			echo '<li><i class="fa-regular fa-fw fa-user"></i> Username: <strong>' . $user_info->user_login . '</strong></li>';
-			echo '<li><i class="fa-solid fa-fw fa-info-circle"></i> ID: <strong>' . $user_info->ID . '</strong></li>';
+			echo '<li class="essential"><i class="fa-regular fa-fw fa-user"></i> Username: <strong>' . $user_info->user_login . '</strong></li>';
+			echo '<li class="essential"><i class="fa-solid fa-fw fa-info-circle"></i> ID: <strong>' . $user_info->ID . '</strong></li>';
 
 			//Role
 			$fa_role = 'fa-user';
@@ -349,13 +367,13 @@ if ( !trait_exists('Dashboard') ){
 					default: $fa_role = 'fa-user'; break;
 				}
 			}
-			echo '<li><i class="fa-solid fa-fw ' . $fa_role . '"></i> Role: <strong class="admin-user-info admin-user-role">' . $user_role . '</strong></li>';
+			echo '<li class="essential"><i class="fa-solid fa-fw ' . $fa_role . '"></i> Role: <strong class="admin-user-info admin-user-role">' . $user_role . '</strong></li>';
 
 			//Posts by this user
 			$your_posts = nebula()->transient('nebula_count_posts_user_' . $user_info->ID, function($data){
 				return count_user_posts($data['id']);
 			}, array('id' => $user_info->ID), DAY_IN_SECONDS);
-			echo '<li><i class="fa-solid fa-fw fa-thumbtack"></i> Your posts: <strong>' . $your_posts . '</strong></li>';
+			echo '<li class="essential"><i class="fa-solid fa-fw fa-thumbtack"></i> Your posts: <strong>' . $your_posts . '</strong></li>';
 
 			//Device
 			if ( $this->is_desktop() ){
@@ -388,8 +406,20 @@ if ( !trait_exists('Dashboard') ){
 			}
 			echo '<li><i class="fa-fw ' . $browser_icon . '"></i> Browser: <strong>' . ucwords($this->get_browser('full')) . '</strong></li>';
 
+			echo '<li id="current-user-color-scheme-light-preference" class="ignore-simplify"><i class="fa-solid fa-fw fa-sun"></i> Prefers <strong>Light Color Scheme</strong></li>';
+			echo '<li id="current-user-color-scheme-dark-preference" class="ignore-simplify"><i class="fa-solid fa-fw fa-moon"></i> Prefers <strong>Dark Color Scheme</strong></li>';
+			echo '<li id="current-user-contrast-more-preference" class="ignore-simplify"><i class="fa-solid fa-fw fa-circle-half-stroke"></i> Prefers <strong>More Contrast</strong></li>';
+			echo '<li id="current-user-transparency-preference" class="ignore-simplify"><i class="fa-solid fa-fw fa-fill-drip"></i> Prefers <strong>Reduced Transparency</strong></li>';
+			echo '<li id="current-user-motion-preference" class="ignore-simplify"><i class="fa-solid fa-fw fa-arrows-to-circle"></i> Prefers <Strong>Reduced Motion</strong></li>';
+			echo '<li id="current-user-data-preference" class="ignore-simplify"><i class="fa-solid fa-fw fa-wifi"></i> Prefers <strong>Reduced Data</strong></li>';
+
 			//IP Address
-			echo '<li><i class="fa-solid fa-fw fa-globe"></i> Your IP Address: <a href="http://whatismyipaddress.com/ip/' . $this->get_ip_address() . '" target="_blank" rel="noopener noreferrer"><strong class="admin-user-info admin-user-ip" title="Anonymized IP Address">' . $this->get_ip_address() . '</strong></a> <small>(Anonymized)</small></li>';
+			echo '<li class="essential"><i class="fa-solid fa-fw fa-globe"></i> Your IP Address: <a href="http://whatismyipaddress.com/ip/' . $this->get_ip_address() . '" target="_blank" rel="noopener noreferrer"><strong class="admin-user-info admin-user-ip" title="Anonymized IP Address">' . $this->get_ip_address() . '</strong></a> <small>(Anonymized)</small></li>';
+
+			//Cloudflare IP Country header (if it exists)
+			if ( !empty($this->super->server['HTTP_CF_IPCOUNTRY']) ){
+				echo '<li><i class="fa-solid fa-fw fa-earth-americas"></i> Country: <strong>' . $this->super->server['HTTP_CF_IPCOUNTRY'] . '</strong></li>';
+			}
 
 			//Multiple locations
 			if ( $this->user_single_concurrent($user_info->ID) > 1 ){
@@ -402,6 +432,8 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			do_action('nebula_user_metabox');
+
+			echo '<li class="expand-simplified-view essential"><a href="#">...Expand full list <i class="fa-solid fa-fw fa-caret-down"></i></a></li>';
 			echo '</ul>';
 
 			echo '<p><small><em><a href="profile.php"><i class="fa-solid fa-fw fa-pencil-alt"></i> Manage your user information</a></em></small></p>';
@@ -416,7 +448,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Administrative metabox content
 		public function dashboard_administrative(){
-			$this->timer('Nebula Administrative Dashboard Metabox');
+			$this->timer('Nebula Administrative Dashboard Metabox', 'start', '[Nebula] Dashboard Metaboxes');
 			$third_party_resources = $this->third_party_resources();
 
 			echo '<div class="nebula-metabox-row"><div class="nebula-metabox-col">';
@@ -460,7 +492,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//TODO metabox content
 		public function todo_metabox_content(){
-			$this->timer('Nebula To-Do Dashboard Metabox');
+			$this->timer('Nebula To-Do Dashboard Metabox', 'start', '[Nebula] Dashboard Metaboxes');
 			do_action('nebula_todo_manager');
 
 			$todo_items = nebula()->transient('nebula_todo_items', function(){
@@ -596,9 +628,10 @@ if ( !trait_exists('Dashboard') ){
 
 		//Developer Info Metabox content
 		public function dashboard_developer_info(){
-			$this->timer('Nebula Developer Dashboard Metabox');
+			$this->timer('Nebula Developer Dashboard Metabox', 'start', '[Nebula] Dashboard Metaboxes');
 			do_action('nebula_developer_info');
-			echo '<ul class="nebula-fa-ul serverdetections">';
+
+			echo '<ul class="nebula-fa-ul serverdetections ' . $this->get_simplify_dashboard_class() . '">';
 
 			echo '<li class="cookie_notification text_ad ads advertisement ads_content ads_div ads_google adsbygoogle adscontainer adsense-box nebula-adb-tester"></li>'; //Alert developers if their ad-blocker is still active
 
@@ -621,7 +654,7 @@ if ( !trait_exists('Dashboard') ){
 			$domain = $this->url_components('domain');
 			$domain ??= '<small>(None)</small>';
 
-			echo '<li><i class="fa-solid fa-fw fa-info-circle"></i> <a href="http://whois.domaintools.com/' . $this->super->server['SERVER_NAME'] . '" target="_blank" rel="noopener noreferrer" title="WHOIS Lookup">Domain</a>: <strong>' . $domain . '</strong></li>';
+			echo '<li class="essential"><i class="fa-solid fa-fw fa-info-circle"></i> <a href="http://whois.domaintools.com/' . $this->super->server['SERVER_NAME'] . '" target="_blank" rel="noopener noreferrer" title="WHOIS Lookup">Domain</a>: <strong>' . $domain . '</strong></li>';
 
 			//Host
 			function top_domain_name($url){
@@ -647,27 +680,27 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//Server IP address (and connection security)
-			$secureServer = '';
+			$secure_server = '<small class="unsecured-connection essential"><i class="fa-solid fa-fw fa-unlock"></i>Unsecured Connection</small>';
 			if ( (!empty($this->super->server['HTTPS']) && $this->super->server['HTTPS'] !== 'off') || $this->super->server['SERVER_PORT'] === 443 ){
-				$secureServer = '<small class="secured-connection"><i class="fa-solid fa-fw fa-lock"></i>Secured Connection</small>';
+				$secure_server = '<small class="secured-connection"><i class="fa-solid fa-fw fa-lock"></i>Secured Connection</small>';
 			}
 			$public_local_ip = ( preg_match('/^(127\.|192\.168|172\.|10\.)/', $this->super->server['SERVER_ADDR']) )? 'Local' : 'Public'; //Check if the server IP is likely local (private) or public (this is not perfectly exact)
-			echo '<li><i class="fa-solid fa-fw fa-upload"></i> ' . $public_local_ip . ' Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $this->super->server['SERVER_ADDR'] . '" target="_blank" rel="noopener noreferrer">' . apply_filters('nebula_dashboard_server_ip', $this->super->server['SERVER_ADDR']) . '</a></strong> ' . $secureServer . '</li>';
+			echo '<li><i class="fa-solid fa-fw fa-upload"></i> ' . $public_local_ip . ' Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $this->super->server['SERVER_ADDR'] . '" target="_blank" rel="noopener noreferrer">' . apply_filters('nebula_dashboard_server_ip', $this->super->server['SERVER_ADDR']) . '</a></strong> ' . $secure_server . '</li>';
 
 			//Server Time Zone
 			if ( !empty(get_option('timezone_string')) && date_default_timezone_get() === get_option('timezone_string') && wp_timezone_string() === get_option('timezone_string') ){
 				echo '<li><i class="fa-solid fa-fw fa-globe-americas"></i> Timezone: <strong>' . date_default_timezone_get() . '</strong></li>';
 			} else {
-				echo '<li><i class="fa-solid fa-fw fa-globe-americas"></i> Server Timezone: <strong>' . date_default_timezone_get() . '</strong></li>';
-				echo '<li><i class="fa-solid fa-fw fa-globe-americas"></i> WordPress Timezone Option: <strong>' . get_option('timezone_string') . '</strong></li>';
-				echo '<li><i class="fa-solid fa-fw fa-globe-americas"></i> WordPress Timezone String: <strong>' . wp_timezone_string() . '</strong></li>';
+				echo '<li class="essential"><i class="fa-solid fa-fw fa-globe-americas"></i> Server Timezone: <strong>' . date_default_timezone_get() . '</strong></li>';
+				echo '<li class="essential"><i class="fa-solid fa-fw fa-globe-americas"></i> WordPress Timezone Option: <strong>' . get_option('timezone_string') . '</strong></li>';
+				echo '<li class="essential"><i class="fa-solid fa-fw fa-globe-americas"></i> WordPress Timezone String: <strong>' . wp_timezone_string() . '</strong></li>';
 			}
 
 			//Server operating system
 			if ( strpos(strtolower(PHP_OS), 'linux') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
 				$php_os_icon = 'fa-brands fa-linux';
 			} elseif ( strpos(strtolower(PHP_OS), 'windows') !== false ){ //@todo "Nebula" 0: Update strpos() to str_contains() in PHP8
-				$php_os_icon = 'fa-brands fa-windows';
+				$php_os_icon = 'fa-brands fa-windows essential';
 			} else {
 				$php_os_icon = 'fa-solid fa-upload';
 			}
@@ -694,32 +727,112 @@ if ( !trait_exists('Dashboard') ){
 			$php_version_lifecycle = $this->php_version_support();
 			if ( !empty($php_version_lifecycle) ){
 				if ( $php_version_lifecycle['lifecycle'] === 'security' ){
-					$php_version_class = 'text-caution'; //Warning (orange)
+					$php_version_class = 'text-caution essential'; //Warning (orange)
 					$php_version_info = 'This version is nearing end of life. Security updates end on ' . date('F j, Y', $php_version_lifecycle['end']) . '.';
 					$php_version_cursor = 'help';
 				} elseif ( $php_version_lifecycle['lifecycle'] === 'end' ){
-					$php_version_class = 'text-danger'; //Danger (red)
+					$php_version_class = 'text-danger essential'; //Danger (red)
 					$php_version_info = 'This version no longer receives security updates! End of life occurred on ' . date('F j, Y', $php_version_lifecycle['end']) . '.';
 					$php_version_cursor = 'help';
 				}
 			}
-			echo '<li><i class="fa-solid fa-fw fa-wrench"></i> PHP Version: <a class="' . $php_version_class . '" href="https://www.php.net/supported-versions.php" target="_blank" rel="noopener noreferrer" style="cursor: ' . $php_version_cursor . ';" title="' . $php_version_info . '"><strong>' . PHP_VERSION . '</strong></a> <small>(SAPI: <strong>' . php_sapi_name() . '</strong>)</small></li>';
+			echo '<li class="essential"><i class="fa-solid fa-fw fa-wrench"></i> PHP Version: <a class="' . $php_version_class . '" href="https://www.php.net/supported-versions.php" target="_blank" rel="noopener noreferrer" style="cursor: ' . $php_version_cursor . ';" title="' . $php_version_info . '"><strong>' . PHP_VERSION . '</strong></a> <small>(SAPI: <strong>' . php_sapi_name() . '</strong>)</small></li>';
 
 			//PHP memory limit
 			echo '<li><i class="fa-solid fa-fw fa-memory"></i> PHP Memory Limit: <strong>' . ini_get('memory_limit') . '</strong></li>';
 
 			//Persistent Object Caching (Memcached or Redis)
-			$memory_cache_enabled = '<strong>Disabled</strong>';
-			if ( extension_loaded('memcached') ){
+			$memory_cache_enabled = '<strong class="text-caution essential">Disabled</strong>';
+			if ( extension_loaded('memcache') ){
+				$memory_cache_enabled = '<strong>Memcache</strong>';
+			} elseif ( extension_loaded('memcached') ){
 				$memory_cache_enabled = '<strong>Memcached</strong>';
 			} elseif ( extension_loaded('redis') ){
 				$memory_cache_enabled = '<strong>Redis</strong>';
 			}
-			echo '<li><i class="fa-solid fa-fw fa-box"></i> Memory Cache: ' . $memory_cache_enabled . '</li>';
+			echo '<li title="This does not indicate that this memory cache extension is actually being used, just that it is loaded."><i class="fa-solid fa-fw fa-box"></i> Memory Cache Ext.: ' . $memory_cache_enabled . '</li>';
+
+			$object_cache_hit_output = '';
+			if ( is_object($this->super->globals['wp_object_cache']) ){
+				$object_cache_hits = $this->super->globals['wp_object_cache']->cache_hits ?? null;
+				$object_cache_misses = $this->super->globals['wp_object_cache']->cache_misses ?? null;
+
+				if ( $object_cache_hits+$object_cache_misses > 0 ){
+					$object_cache_hit_rate = round(($object_cache_hits/($object_cache_hits+$object_cache_misses))*100, 1);
+					$object_cache_hit_rate_class = ( $object_cache_hit_rate < 80 )? 'text-caution' : '';
+
+					$object_cache_hit_output = ' <small class="' . $object_cache_hit_rate_class . '">(Hit Rate: ' . $object_cache_hit_rate . '%)</small>';
+				}
+			}
+
+			$using_wp_persistent_cache = ( wp_using_ext_object_cache() )? '<strong title="Caching will work across multiple pages">Persistent</strong>' : '<strong title="Caching will only happen on individual page request (not across multiple pages)">Non-Persistent</strong>';
+			echo '<li><i class="fa-solid fa-fw fa-box"></i> WP Object Cache: ' . $using_wp_persistent_cache . $object_cache_hit_output . ' </li>';
 
 			//Bytecode Caching aka Opcode Cache (Zend Opcache)
-			$opcode_cache_enabled = ( extension_loaded('Zend OPcache') )? '<strong>Zend OPcache</strong>' : '<strong class="highlight-bad">Disabled</strong>';
-			echo '<li><i class="fa-solid fa-fw fa-box"></i> Opcode Cache: ' . $opcode_cache_enabled . '</li>';
+			$opcode_cache_name = '<strong class="text-danger essential">None</strong>';
+			if ( extension_loaded('Zend OPcache') ){
+				$opcode_cache_name = '<strong>Zend OPcache</strong>';
+			} elseif ( extension_loaded('opcache') ){
+				$opcode_cache_name = '<strong>OPcache</strong>';
+			}
+
+			if ( function_exists('opcache_get_status') ){
+				$opcache_status = opcache_get_status();
+
+				$opcache_hit_rate = '';
+				$opcache_stats = null;
+				if ( isset($opcache_status['statistics']) && is_array($opcache_status['statistics']) ){
+					$opcache_stats = $opcache_status['statistics'];
+				} else if ( isset($opcache_status['opcache_statistics']) && is_array($opcache_status['opcache_statistics']) ){
+					$opcache_stats = $opcache_status['opcache_statistics'];
+				}
+
+				if ( $opcache_stats && isset($opcache_stats['opcache_hit_rate']) ){
+					$opcache_hit_rate_class = ( $opcache_stats['opcache_hit_rate'] < 85 )? 'text-caution' : '';
+					$opcache_hit_rate = ' <small class="' . $opcache_hit_rate_class . '" title="When the hit rate is low, PHP must recompile code more often, which increases page load time.">(Hit Rate: ' . round($opcache_stats['opcache_hit_rate'], 1) . '%)</small>';
+				}
+
+				if ( isset($opcache_status['opcache_enabled']) && $opcache_status['opcache_enabled'] == 0 ){
+					echo '<li class="essential text-caution"><i class="fa-solid fa-fw fa-box"></i> Opcache Disabled</li>';
+				}
+			}
+
+			echo '<li><i class="fa-solid fa-fw fa-box"></i> Opcode Cache: ' . $opcode_cache_name . $opcache_hit_rate . '</li>';
+
+			if ( function_exists('sys_getloadavg') ){
+				$load = sys_getloadavg();
+				if ( is_array($load) && count($load) >= 3 ){
+					list($load_1m, $load_5m, $load_15m) = $load;
+
+					//Check each value against the warning threshold
+					$caution_threshold = 1;
+					$warning_threshold = 2;
+
+					//Check each value against the thresholds and assign classes accordingly
+					$class_1m = '';
+					if ( $load_1m > $warning_threshold ){
+						$class_1m = 'text-danger';
+					} elseif ( $load_1m > $caution_threshold ){
+						$class_1m = 'text-caution';
+					}
+
+					$class_5m = '';
+					if ( $load_5m > $warning_threshold ){
+						$class_5m = 'text-danger';
+					} elseif ( $load_5m > $caution_threshold ){
+						$class_5m = 'text-caution';
+					}
+
+					$class_15m = '';
+					if ( $load_15m > $warning_threshold ){
+						$class_15m = 'text-danger';
+					} elseif ( $load_15m > $caution_threshold ){
+						$class_15m = 'text-caution';
+					}
+
+					echo '<li title="Average number of processes waiting for CPU (higher = busier)"><i class="fa-solid fa-fw fa-network-wired"></i> Load Avg: <span class="' . $class_1m . '" title="1 minute"><strong>' . $load_1m . '</strong> <em>(1 min)</em></span>, <span class="' . $class_5m . '" title="5 minutes"><strong>' . $load_5m . '</strong> <em>(5 min)</em></span>, <span class="' . $class_15m . '" title="15 minutes"><strong>' . $load_15m . '</strong> <em>(15 min)</em></span></li>';
+				}
+			}
 
 			//Count total WordPress updates available
 			require_once ABSPATH . 'wp-admin/includes/update.php';
@@ -729,7 +842,7 @@ if ( !trait_exists('Dashboard') ){
 				$updates_class = '';
 
 				if ( $updates_count > 10 ){ //If there are many updates available
-					$updates_class = 'text-danger"';
+					$updates_class = 'text-danger essential';
 				}
 
 				$updates_count = '<a class="' . $updates_class . '" href="update-core.php">' . $updates_count . ' &raquo;</a>';
@@ -740,7 +853,7 @@ if ( !trait_exists('Dashboard') ){
 			$smtp_status = $this->check_smtp_status();
 			$smtp_status_output = ''; //Empty unless there is a problem
 			if ( strpos(strtolower($smtp_status), 'error') != false ){
-				$smtp_status_output = '<a href="edit.php?post_type=nebula_cf7_submits"><strong class="text-danger"><i class="fa-solid fa-fw fa-exclamation-triangle"></i> ' . $smtp_status . '</strong></a>';
+				$smtp_status_output = '<a href="edit.php?post_type=nebula_cf7_submits"><strong class="text-danger essential"><i class="fa-solid fa-fw fa-exclamation-triangle"></i> ' . $smtp_status . '</strong></a>';
 			} elseif ( strtolower($smtp_status) == 'unknown' ){
 				$smtp_status_output = '<a href="edit.php?post_type=nebula_cf7_submits"><em class="text-caution">Unable to Check</em></a>';
 			}
@@ -772,7 +885,7 @@ if ( !trait_exists('Dashboard') ){
 						$count_of_404s = '<span class="text-caution">' . $count_of_404s . '</span>';
 					}
 
-					echo '<li><i class="fa-regular fa-fw fa-file-excel"></i> 404s: <strong><a href="tools.php?page=redirection.php&sub=404s&groupby=url">' . $count_of_404s . '</a></strong> <small>(Last 24 hours)</small></li>';
+					echo '<li class="essential"><i class="fa-regular fa-fw fa-file-excel"></i> 404s: <strong><a href="tools.php?page=redirection.php&sub=404s&groupby=url">' . $count_of_404s . '</a></strong> <small>(Last 24 hours)</small></li>';
 				}
 			}
 
@@ -785,7 +898,7 @@ if ( !trait_exists('Dashboard') ){
 				$time_ago = human_time_diff(get_transient('nebula_theme_file_changes_check'), time());
 				$title_attr .= "\n\n Last checked " . $time_ago . " ago";
 
-				echo '<li><i class="fa-solid fa-square-binary"></i> <span class="text-caution cursor-help" title="' . esc_attr($title_attr) . '"><strong>' . $file_count . '</strong> Parent theme ' . $this->singular_plural($file_count, 'file has', 'files have') . ' been modified</span></li>';
+				echo '<li><i class="fa-solid fa-square-binary"></i> <span class="essential text-caution cursor-help" title="' . esc_attr($title_attr) . '"><strong>' . $file_count . '</strong> Parent theme ' . $this->singular_plural($file_count, 'file has', 'files have') . ' been modified</span></li>';
 			}
 
 			//Theme directory size(s)
@@ -865,7 +978,7 @@ if ( !trait_exists('Dashboard') ){
 			foreach ( $this->get_log_files('all', true) as $types ){ //Always get fresh data here
 				foreach ( $types as $log_file ){
 					if ( !empty($log_file['bytes']) && $log_file['bytes'] > 999 ){ //Only show the file if it has a size and is at least 1kb
-						echo '<li><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . $log_file['shortpath'] . '" target="_blank"><code title="' . $log_file['shortpath'] . '" style="cursor: help;">' . $log_file['name'] . '</code></a> File: <strong>' . $this->format_bytes($log_file['bytes']) . '</strong></li>';
+						echo '<li class="essential"><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . $log_file['shortpath'] . '" target="_blank"><code title="' . $log_file['shortpath'] . '" style="cursor: help;">' . $log_file['name'] . '</code></a> File: <strong>' . $this->format_bytes($log_file['bytes']) . '</strong></li>';
 					}
 				}
 			}
@@ -882,7 +995,7 @@ if ( !trait_exists('Dashboard') ){
 					$fatal_error_count_description = ' <small>(last 7 days)</small>';
 				}
 
-				echo '<li class="text-danger"><i class="fa-solid fa-fw fa-bug"></i> Fatal Errors: <strong><a class="text-danger" href="' . ini_get('error_log') . '" target="_blank">' . $fatal_error_count . '</a></strong>' . $fatal_error_count_description . '</li>'; //The <a> tag is just to show the location of the error log file
+				echo '<li class="essential text-danger"><i class="fa-solid fa-fw fa-bug"></i> Fatal Errors: <strong><a class="text-danger" href="' . ini_get('error_log') . '" target="_blank">' . $fatal_error_count . '</a></strong>' . $fatal_error_count_description . '</li>'; //The <a> tag is just to show the location of the error log file
 			}
 
 			//Service Worker
@@ -909,15 +1022,17 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li><i class="fa-regular fa-fw fa-calendar"></i> Installed: ' . initial_install_date() . '</li>';
 
 			$latest_file = $this->last_modified();
-			echo '<li><i class="fa-regular fa-fw fa-calendar"></i> <span title="' . $latest_file['path'] . '" style="cursor: help;">Modified:</span> <span title="' . date("F j, Y", $latest_file['date']) . ' @ ' . date("g:ia", $latest_file['date']) . '" style="cursor: help;"><strong>' . human_time_diff($latest_file['date']) . ' ago</strong></span></li>';
+			echo '<li class="essential"><i class="fa-regular fa-fw fa-calendar"></i> <span title="' . $latest_file['path'] . '" style="cursor: help;">Modified:</span> <span title="' . date("F j, Y", $latest_file['date']) . ' @ ' . date("g:ia", $latest_file['date']) . '" style="cursor: help;"><strong>' . human_time_diff($latest_file['date']) . ' ago</strong></span></li>';
 
 			//SCSS last processed date
 			if ( $this->get_data('scss_last_processed') ){
 				$sass_option = ( nebula()->get_option('scss') )? '' : ' <small><em><a href="themes.php?page=nebula_options&tab=functions&option=scss">Sass is currently <strong>disabled</strong> &raquo;</a></em></small>';
-				echo '<li><i class="fa-brands fa-fw fa-sass"></i> Sass Processed: <span title="' . date("F j, Y", $this->get_data('scss_last_processed')) . ' @ ' . date("g:i:sa", $this->get_data('scss_last_processed')) . '" style="cursor: help;"><strong>' . human_time_diff($this->get_data('scss_last_processed')) . ' ago</strong></span> ' . $sass_option . '</li>';
+				echo '<li class="essential"><i class="fa-brands fa-fw fa-sass"></i> Sass Processed: <span title="' . date("F j, Y", $this->get_data('scss_last_processed')) . ' @ ' . date("g:i:sa", $this->get_data('scss_last_processed')) . '" style="cursor: help;"><strong>' . human_time_diff($this->get_data('scss_last_processed')) . ' ago</strong></span> ' . $sass_option . '</li>';
 			}
 
 			echo '<li><i class="fa-brands fa-fw fa-wordpress"></i> <a href="site-health.php?tab=debug">WP Site Info &raquo;</a></li>'; //Link to WP Health Check Info page
+
+			echo '<li class="expand-simplified-view essential"><a href="#">...Expand full list <i class="fa-solid fa-fw fa-caret-down"></i></a></li>';
 
 			echo '</ul>';
 
@@ -1094,7 +1209,7 @@ if ( !trait_exists('Dashboard') ){
 		}
 
 		public function performance_timing(){
-			$this->timer('Nebula Performance Dashboard Metabox');
+			$this->timer('Nebula Performance Dashboard Metabox', 'start', '[Nebula] Dashboard Metaboxes');
 
 			//Prep for an iframe timer if needed
 			$home_url = ( is_ssl() )? str_replace('http://', 'https://', home_url('/')) : home_url('/'); //Sometimes the home_url() still has http even when is_ssl() true
@@ -1105,6 +1220,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//Sub-status
 			echo '<li id="performance-sub-status"><i class="fa-regular fa-fw fa-comment"></i> <span class="label">Status</span>: <strong>Preparing test...</strong></li>';
+			echo '<li id="performance-sub-reason" class="hidden"><i class="fa-regular fa-fw fa-note-sticky"></i> <span class="label"></span></li>';
 
 			//PHP-Measured Server Load Time (TTFB)
 			echo '<li id="performance-ttfb"><i class="fa-regular fa-fw fa-clock"></i> <span class="label">PHP Response Time</span>: <strong class="datapoint" title="Calculated via PHP render time">' . timer_stop(0, 3) . ' seconds</strong></li>';
@@ -1122,7 +1238,7 @@ if ( !trait_exists('Dashboard') ){
 		}
 
 		public function dashboard_nebula_design(){
-			$this->timer('Nebula Design Dashboard Metabox');
+			$this->timer('Nebula Design Dashboard Metabox', 'start', '[Nebula] Dashboard Metaboxes');
 			if ( $this->get_option('design_reference_link') ){
 				echo '<p><i class="fa-solid fa-fw fa-file-image"></i> <a href="' . $this->get_option('design_reference_link') . '" target="_blank">Design File(s) &raquo;</a></p>';
 			}
@@ -1199,7 +1315,7 @@ if ( !trait_exists('Dashboard') ){
 		}
 
 		public function dashboard_nebula_github(){
-			nebula()->timer('Nebula Companion GitHub Dashboard');
+			nebula()->timer('Nebula Companion GitHub Dashboard', 'start', '[Nebula] Dashboard Metaboxes');
 			echo '<p><a href="' . nebula()->get_option('github_url') . '" target="_blank">GitHub Repository &raquo;</a></p>';
 
 			$repo_name = str_replace('https://github.com/', '', nebula()->get_option('github_url'));
@@ -1338,7 +1454,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Hubspot Contacts metabox content
 		public function hubspot_contacts_content(){
-			$this->timer('Nebula Hubspot Dashboard Metabox');
+			$this->timer('Nebula Hubspot Dashboard Metabox', 'start', '[Nebula] Dashboard Metaboxes');
 			do_action('nebula_hubspot_contacts');
 
 			$hubspot_contacts_json = nebula()->transient('nebula_hubspot_contacts', function(){
