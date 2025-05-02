@@ -56,8 +56,6 @@ if ( !trait_exists('Admin') ){
 					add_filter('page_row_actions', array($this, 'duplicate_post_link'), 10, 2);
 				}
 
-
-
 				if ( current_user_can('edit_others_posts') && $this->allow_theme_update() ){
 					add_action('admin_init', array($this, 'theme_json'));
 					add_filter('puc_request_update_result_theme-Nebula', array($this, 'theme_update_version_store'), 10, 2); //This hook is found in UpdateChecker.php in the filterUpdateResult() function.
@@ -206,14 +204,14 @@ if ( !trait_exists('Admin') ){
 
 		//POST to IndexNow to inform some search engines of content update
 		public function index_now_post($post_id, $post){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( !$this->get_option('index_now') ){
-				return false;
+				return null;
 			}
 
 			if ( $post->post_status !== 'publish' ){
-				return;
+				return null;
 			}
 
 			$post_url = get_permalink($post_id);
@@ -251,7 +249,7 @@ if ( !trait_exists('Admin') ){
 
 		//Force expire query transients when posts/pages are saved.
 		public function clear_transients(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$this->timer('Clear Transients');
 
 			if ( class_exists('AM_Transients_Manager') ){
@@ -278,7 +276,8 @@ if ( !trait_exists('Admin') ){
 					'nebula_count_plugins',
 					'nebula_latest_post',
 					'nebula_earliest_post',
-					'nebula_php_timeline'
+					'nebula_php_timeline',
+					'nebula_theme_modified_files'
 				));
 
 				foreach ( $all_transients_to_delete as $transient_to_delete ){
@@ -302,7 +301,7 @@ if ( !trait_exists('Admin') ){
 
 		//Pull favicon from the theme folder (Front-end calls are in includes/metagraphics.php).
 		public function admin_favicon(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$cache_buster = ( $this->is_debug() )? '?r' . random_int(100000, 999999) : '';
 
  			if ( has_site_icon() ){ //Prefer the Customizer icons if they exist
@@ -316,6 +315,7 @@ if ( !trait_exists('Admin') ){
 		}
 
 		//Add classes to the admin body
+		//Remember: $classes here is a string!! (Not an array like on the front-end)
 		public function admin_body_classes($classes){
 			$classes .= ' nebula ';
 
@@ -323,12 +323,22 @@ if ( !trait_exists('Admin') ){
 			$user_roles = $current_user->roles;
 			$classes .= array_shift($user_roles);
 
+			//Staff
+			if ( $this->is_staff() ){
+				$classes .= ' is-staff';
+				if ( $this->is_dev() ){
+					$classes .= ' staff-developer';
+				} elseif ( $this->is_client() ){
+					$classes .= 'staff-client';
+				}
+			}
+
 			return $classes;
 		}
 
 		//Add the Brand color scheme to the admin User options
 		public function additional_admin_color_schemes(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$color_scheme_name = get_bloginfo('name');
 			if ( $this->get_option('site_owner') ){
 				$color_scheme_name = $this->get_option('site_owner');
@@ -347,7 +357,7 @@ if ( !trait_exists('Admin') ){
 
 		//Set the default admin color scheme to Brand for a specified user
 		public function set_default_admin_color($user_id){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			if ( is_child_theme() && file_exists(get_stylesheet_directory() . '/assets/css/admin.css') ){
 				wp_update_user(array(
 					'ID' => $user_id,
@@ -368,7 +378,7 @@ if ( !trait_exists('Admin') ){
 
 		//Aggregate all third-party resources into a single array
 		public function third_party_resources(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$third_party_resources = wp_cache_get('nebula_third_party_resources');
 			if ( is_array($third_party_resources) || !empty($third_party_resources) ){ //If it is an array (meaning it has run before but did not find anything) or if it is false
 				return $third_party_resources;
@@ -622,7 +632,7 @@ if ( !trait_exists('Admin') ){
 		}
 
 		public function admin_bar_modifications(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( is_admin_bar_showing() ){
 				global $wp_admin_bar;
@@ -656,7 +666,7 @@ if ( !trait_exists('Admin') ){
 				//Create the main top-level Nebula admin bar node
 				$wp_admin_bar->add_node(array(
 					'id' => 'nebula',
-					'title' => '<i class="nebula-admin-fa fa-solid fa-user-astronaut"></i> Nebula' . $ttfb_description, //fa-user-astronaut fa-satellite fa-rocket
+					'title' => '<i class="nebula-admin-fa fa-solid fa-user-astronaut nebula-symbol"></i> Nebula' . $ttfb_description, //fa-user-astronaut fa-satellite fa-rocket
 					'href' => 'https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=admin_bar&utm_source=' . urlencode(site_url()) . '&utm_content=admin_bar_main',
 					'meta' => array(
 						'target' => '_blank',
@@ -665,7 +675,7 @@ if ( !trait_exists('Admin') ){
 				));
 
 				//Stop here during minimal mode
-				if ( $this->is_minimal_mode() ){return false;}
+				if ( $this->is_minimal_mode() ){return null;}
 
 				//Prep for the Post admin bar top-level node
 				wp_reset_query(); //Make sure the query is always reset in case the current page has a custom query that isn't reset.
@@ -1218,7 +1228,7 @@ if ( !trait_exists('Admin') ){
 
 		//Colorize Nebula warning nodes in the admin bar
 		public function admin_bar_warning_styles(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( is_admin_bar_showing() ){ ?>
 				<style type="text/css">
@@ -1231,6 +1241,16 @@ if ( !trait_exists('Admin') ){
 						.nebula-admin-light {font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, 0.6); line-height: inherit;}
 
 						&:not(.mobile) {
+							.staff-developer & .nebula-symbol {
+								/* color: #ff2362; */
+								background: linear-gradient(to right in oklch, #5b22e8, #ff2362);
+								-webkit-background-clip: text;
+								-webkit-text-fill-color: transparent;
+								color: inherit;
+
+								path {fill: #ff2362;}
+							}
+
 							.ab-top-menu > #wp-admin-bar-nebula.has-warning
 								> .ab-item {background: #dc3545;}
 
@@ -1283,7 +1303,7 @@ if ( !trait_exists('Admin') ){
 		//Override some styles and add custom functionality
 		//Used on the front-end, but not in Admin area
 		public function admin_bar_style_script_overrides(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( !$this->is_admin_page(true) && is_admin_bar_showing() ){ ?>
 				<style type="text/css">
@@ -1335,7 +1355,7 @@ if ( !trait_exists('Admin') ){
 
 		//Nebula Theme Update Checker
 		public function theme_json(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$override = apply_filters('pre_nebula_theme_json', null);
 			if ( isset($override) ){return;}
 
@@ -1515,7 +1535,7 @@ if ( !trait_exists('Admin') ){
 				return $this->send_email_to_admins($subject, $message);
 			}
 
-			return false;
+			return null;
 		}
 
 		//Send an email to the current user and site admin(s)
@@ -1592,7 +1612,7 @@ if ( !trait_exists('Admin') ){
 		//Send Google Analytics pageviews on the WP Admin and Login pages too
 		//Note: This is essentially a simplified version of what happens in /inc/analytics.php on the front-end
 		public function admin_ga_pageview(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( empty($this->super->post['signed_request']) && $this->get_option('ga_measurement_id') ){
 				$user_properties = array(); //For parameters that should persist across sessions
@@ -1653,7 +1673,7 @@ if ( !trait_exists('Admin') ){
 
 		//Nebula Admin Notices/Warnings/Notifications
 		public function show_admin_notices(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			$this->timer('Admin Notices', 'start', '[Nebula] Warnings');
 
@@ -1688,7 +1708,7 @@ if ( !trait_exists('Admin') ){
 
 		//Check the current (or passed) PHP version against the PHP support timeline.
 		public function php_version_support($php_version=PHP_VERSION){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$override = apply_filters('pre_nebula_php_version_support', null, $php_version);
 			if ( isset($override) ){return;}
 
@@ -1737,7 +1757,7 @@ if ( !trait_exists('Admin') ){
 				}
 			}
 
-			return false;
+			return null;
 		}
 
 		//Allow SVG files to be uploaded to the Media Library
@@ -1944,7 +1964,7 @@ if ( !trait_exists('Admin') ){
 
 		//Custom columns content to CF7 submission listings
 		public function cf7_submissions_columns_content($column_name, $submission_id){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
 				$submission_data = get_post($submission_id); //Remember: this $submission_id is the submission ID (not the form ID)!
@@ -2066,7 +2086,7 @@ if ( !trait_exists('Admin') ){
 			}
 		}
 		public function cf7_submissions_columns_orderby($query){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( $this->is_admin_page() ){
 				if ( $query->get('post_type') == 'nebula_cf7_submits' ){
@@ -2099,7 +2119,7 @@ if ( !trait_exists('Admin') ){
 
 		//Add dropdown menu(s) for filtering CF7 submission listings
 		public function cf7_submissions_filters($post_type){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( $this->is_admin_page() && $post_type == 'nebula_cf7_submits' ){
 				//Get a list of CF7 forms
@@ -2182,7 +2202,7 @@ if ( !trait_exists('Admin') ){
 
 		//Add buttons for additional actions with CF7 submissions
 		public function cf7_submissions_actions($which){ //Which designates top or bottom
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
 				$filtered_id = ( !empty($this->super->get['cf7_form_id']) )? $this->super->get['cf7_form_id'] : '';
@@ -2211,7 +2231,7 @@ if ( !trait_exists('Admin') ){
 		//Hide the "Private" post state usually appended to titles on CF7 submissions admin listings
 		public function cf7_submissions_remove_post_state($post_states){
 			if ( $this->is_admin_page() && get_post_type() == 'nebula_cf7_submits' ){
-				return false;
+				return null;
 			}
 
 			return $post_states;
@@ -2577,9 +2597,9 @@ if ( !trait_exists('Admin') ){
 		//Add the various CF7 submission statuses to the Publish status dropdown in the WP editor
 		//This is a hacky way to do this, but WordPress does not have a better option as of March 2024
 		function add_cf7_statuses_to_dropdown(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			global $post;
 
 			if ( $post->post_type == 'nebula_cf7_submits' ){
@@ -2611,7 +2631,7 @@ if ( !trait_exists('Admin') ){
 
 		//Add a badge icon to the admin menu indicating the number of new submissions today
 		function add_cf7_menu_badge_count(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			global $submenu;
 
@@ -2648,7 +2668,7 @@ if ( !trait_exists('Admin') ){
 
 		//Test if SMTP is working
 		public function check_smtp_status(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			// Retrieve SMTP settings
 			$smtp_host = defined('SMTP_HOST') ? SMTP_HOST : ini_get('SMTP'); // Fallback to php.ini 'SMTP' setting
@@ -2702,7 +2722,7 @@ if ( !trait_exists('Admin') ){
 
 		//Clear caches when plugins are activated if W3 Total Cache is active
 		public function clear_all_w3_caches(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 			if ( function_exists('w3tc_pgcache_flush') && isset($this->super->server['activate']) && $this->super->server['activate'] == 'true'){
 				w3tc_pgcache_flush();
@@ -2716,7 +2736,7 @@ if ( !trait_exists('Admin') ){
 
 		//Admin footer right side
 		public function change_admin_footer_right(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			global $wp_version;
 			$child = ( is_child_theme() )? ' <small>(Child)</small>' : '';
 
@@ -2738,7 +2758,7 @@ if ( !trait_exists('Admin') ){
 
 		//Internal Search Keywords post metabox and Custom Field
 		public function nebula_add_post_metabox(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			$builtin_types = array('post', 'page', 'attachment');
 			$custom_types = get_post_types(array('_builtin' => false));
@@ -2782,7 +2802,7 @@ if ( !trait_exists('Admin') ){
 		}
 
 		public function save_post_custom_meta($post_id, $post){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( !isset($this->super->post['nebula_post_nonce']) || !wp_verify_nonce($this->super->post['nebula_post_nonce'], basename(__FILE__)) ){
 				return $post_id;
@@ -2813,7 +2833,7 @@ if ( !trait_exists('Admin') ){
 
 		//Nebula CF7 Submissions Metabox
 		public function nebula_add_cf7_metabox(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			add_meta_box('nebula-post-data', 'Nebula CF7', array($this, 'nebula_cf7_metabox' ), 'nebula_cf7_submits', 'side', 'default');
 		}
 
@@ -2971,7 +2991,7 @@ if ( !trait_exists('Admin') ){
 
 		//Compare hashes from the current Nebula parent theme to when it was built and committed to detect manual file changes
 		public function check_parent_theme_file_changes(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			//Only run for administrators in WP Admin
 			if ( is_admin() || current_user_can('update_themes') ){
@@ -3013,7 +3033,7 @@ if ( !trait_exists('Admin') ){
 
 		//Scan through the theme directories to generate hashes to represent each file for comparisons
 		public function generate_hashes($directory, &$results=[]){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			$files = scandir($directory);
 

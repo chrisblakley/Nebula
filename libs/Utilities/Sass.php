@@ -34,7 +34,7 @@ if ( !trait_exists('Sass') ){
 			}
 		 ===========================*/
 		public function scss_controller($force_all = false){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			//Ensure Sass option is enabled
 			if ( $this->get_option('scss') ){
@@ -53,21 +53,21 @@ if ( !trait_exists('Sass') ){
 						if ( isset($this->super->server['HTTP_SEC_FETCH_MODE']) && !in_array($this->super->server['HTTP_SEC_FETCH_MODE'], array('navigate', 'nested-navigate', 'same-origin')) ){ //Maybe same-site too? Just avoid "cors" and "no-cors"
 							$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass was not processed. The fetch mode of "' . sanitize_text_field($this->super->server['HTTP_SEC_FETCH_MODE']) . '" was not suitable.' : $this->sass_process_status;
 							$this->timer('Sass (Total)', 'end');
-							return false;
+							return null;
 						}
 
 						//Check when Sass processing is allowed to happen
 						if ( !current_user_can('publish_posts') ){ //If the role of this user is lower than necessary
 							$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass was not processed. It can only be processed by logged in users (per Nebula option).' : $this->sass_process_status;
 							$this->timer('Sass (Total)', 'end');
-							return false;
+							return null;
 						}
 
 						if ( !is_writable(get_template_directory()) || !is_writable(get_template_directory() . '/style.css') ){
 							trigger_error('The template directory or files are not writable. Can not compile Sass files!', E_USER_NOTICE);
 							$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass was not processed. The template directory or files are not writable.' : $this->sass_process_status;
 							$this->timer('Sass (Total)', 'end');
-							return false;
+							return null;
 						}
 
 						//Nebula SCSS locations
@@ -100,6 +100,7 @@ if ( !trait_exists('Sass') ){
 							if ( isset($this->super->get['sass']) || isset($this->super->get['scss']) ){
 								$force_all = true;
 								$this->sass_process_status = ( isset($this->super->get['sass']) )? 'All Sass files were processed forcefully via query string.' : $this->sass_process_status;
+								$this->clear_transients();
 								$this->add_log('Sass force re-process requested', 1); //Logging this one because it was specifically requested. The other conditions below are otherwise detected.
 							}
 
@@ -417,7 +418,7 @@ if ( !trait_exists('Sass') ){
 
 				if ( !file_exists($data['filepath']) ){
 					$this->timer($timer_name, 'end');
-					return false;
+					return null;
 				}
 
 				WP_Filesystem();
@@ -436,12 +437,12 @@ if ( !trait_exists('Sass') ){
 			}
 
 			if ( empty($matches['value']) ){
-				return false; //Color was not found
+				return null; //Color was not found
 			}
 
 			//If the color is exists but is commented out ignore it
 			if ( !empty($matches['comment']) ){
-				return false; //This is breaking lots of things
+				return null; //This is breaking lots of things
 			}
 
 			//Remove "!default" from colors if it exists

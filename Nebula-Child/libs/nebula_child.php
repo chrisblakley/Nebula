@@ -79,37 +79,37 @@ add_filter('block_categories_all', function($categories, $post){
 function show_nebula_feedback_system(){
 	//Ignore WP admin pages
 	if ( nebula()->is_admin_page() ){
-		return false;
+		return null;
 	}
 
 	//Ignore certain pages
 	if ( is_page(99999) || is_page(99999) || is_page(99999) ){
-		return false;
+		return null;
 	}
 
 	//Ignore the home page
 	if ( is_front_page() ){
-		return false;
+		return null;
 	}
 
 	//Ignore non-single posts/pages, but allow search and 404 templates
 	if ( !is_singular() && !is_search() && !is_404() ){
-		return false;
+		return null;
 	}
 
 	//Only use the nebula_404_content action for 404 feedback (this is to prevent the feedback system from appearing multiple times from the error_query)
 	if ( current_action() === 'loop_end' && is_404() ){
-		return false;
+		return null;
 	}
 
 	//Only use the nebula_after_search_results and nebula_no_search_results for search results listings (to prevent the feedback system from appearing in the head)
 	if ( current_action() === 'loop_end' && is_search() ){
-		return false;
+		return null;
 	}
 
 	if ( current_action() == 'loop_end' ){
 		if ( !is_main_query() || !in_the_loop() ){ //If we are not inside the main content area (to avoid outputting feedback below the footer)
-			return false;
+			return null;
 		}
 	}
 

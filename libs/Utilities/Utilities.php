@@ -67,7 +67,7 @@ if ( !trait_exists('Utilities') ){
 				}
 			}
 
-			return false;
+			return null;
 		}
 
 		//Check if Nebula is the active (parent) theme
@@ -86,7 +86,7 @@ if ( !trait_exists('Utilities') ){
 
 		//Generate Nebula Session ID
 		public function nebula_session_id(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			$cache_group = uniqid(); //Each "user" gets its own group so it persists without interfering with each other
 
@@ -405,7 +405,7 @@ if ( !trait_exists('Utilities') ){
 
 		//If the current pageload is requested with more advanced detections
 		public function is_auditing(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( is_customize_preview() ){
 				return false;
@@ -480,7 +480,7 @@ if ( !trait_exists('Utilities') ){
 		//Valid Hostname Regex
 		//Enter ONLY the domain and TLD. The wildcard subdomain regex is automatically added.
 		public function valid_hostname_regex($domains=null){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			$domains = ( !empty($domains) && is_array($domains) )? $domains : array($this->url_components('domain')); //If a domain is not passed, use the current domain
 
@@ -548,18 +548,18 @@ if ( !trait_exists('Utilities') ){
 				case ('scheme'): //Protocol and Scheme are aliases and return the same value.
 				case ('schema'):
 					if ( $relative ){
-						return false;
+						return null;
 					}
 
 					if ( isset($url_components['scheme']) ){
 						return $url_components['scheme'];
 					}
 
-					return false;
+					return null;
 
 				case ('port'):
 					if ( $relative ){
-						return false;
+						return null;
 					}
 
 					if ( isset($url_components['port']) ){
@@ -576,108 +576,108 @@ if ( !trait_exists('Utilities') ){
 						case ('ftps'):
 							return 990; //Default for ftps
 						default:
-							return false;
+							return null;
 					}
 
 				case ('user'): //Returns the username from this type of syntax: https://username:password@gearside.com/
 				case ('username'):
 					if ( $relative ){
-						return false;
+						return null;
 					}
 
 					if ( isset($url_components['user']) ){
 						return $url_components['user'];
 					}
 
-					return false;
+					return null;
 
 				case ('pass'): //Returns the password from this type of syntax: https://username:password@gearside.com/
 				case ('password'):
 					if ( $relative ){
-						return false;
+						return null;
 					}
 
 					if ( isset($url_components['pass']) ){
 						return $url_components['pass'];
 					}
 
-					return false;
+					return null;
 
 				case ('authority'):
 					if ( $relative ){
-						return false;
+						return null;
 					}
 
 					if ( isset($url_components['user'], $url_components['pass']) ){
 						return $url_components['user'] . ':' . $url_components['pass'] . '@' . $url_components['host'] . ':' . $this->url_components('port', $url);
 					}
 
-					return false;
+					return null;
 
 				case ('host'): //In http://something.example.com the host is "something.example.com"
 				case ('hostname'):
 					if ( $relative ){
-						return false;
+						return null;
 					}
 
 					if ( isset($url_components['host']) ){
 						return $url_components['host'];
 					}
 
-					return false;
+					return null;
 
 				case ('www') :
 					if ( $relative ){
-						return false;
+						return null;
 					}
 
 					if ( $host[0] === 'www' ){
 						return 'www';
 					}
 
-					return false;
+					return null;
 
 				case ('subdomain'):
 				case ('sub_domain'):
 					if ( $relative ){
-						return false;
+						return null;
 					}
 
 					if ( $host[0] !== 'www' && $host[0] !== $sld ){
 						return $host[0];
 					}
 
-					return false;
+					return null;
 
 				case ('domain') : //In http://example.com the domain is "example.com"
 					if ( $relative ){
-						return false;
+						return null;
 					}
 
 					if ( isset($domain[0]) ){
 						return $domain[0];
 					}
 
-					return false;
+					return null;
 
 				case ('basedomain'): //In http://example.com/something the basedomain is "http://example.com"
 				case ('base_domain'):
 				case ('origin') :
 					if ( $relative ){
-						return false;
+						return null;
 					}
 
 					if ( isset($url_components['scheme']) ){
 						return $url_components['scheme'] . '://' . $domain[0];
 					}
 
-					return false;
+					return null;
 
 				case ('sld') : //In example.com the sld is "example"
 				case ('second_level_domain'):
 				case ('second-level_domain'):
 					if ( $relative ){
-						return false;
+						return null;
 					}
 
 					return $sld;
@@ -686,7 +686,7 @@ if ( !trait_exists('Utilities') ){
 				case ('top_level_domain'):
 				case ('top-level_domain'):
 					if ( $relative ){
-						return false;
+						return null;
 					}
 
 					return $tld;
@@ -697,7 +697,7 @@ if ( !trait_exists('Utilities') ){
 						return $url_components['path'];
 					}
 
-					return false;
+					return null;
 
 				case ('file'): //Filename will be just the filename/extension.
 				case ('filename'):
@@ -705,7 +705,7 @@ if ( !trait_exists('Utilities') ){
 						return basename($url_components['path']);
 					}
 
-					return false;
+					return null;
 
 				case ('type'):
 				case ('filetype'):
@@ -715,7 +715,7 @@ if ( !trait_exists('Utilities') ){
 						return $file_parts[count($file_parts)-1];
 					}
 
-					return false;
+					return null;
 
 				case ('path'): //Path should be just the path without the filename/extension.
 					if ( str_contains(basename($url_components['path']), '.') ){ //@TODO "Nebula" 0: This will possibly give bad data if the directory name has a "." in it
@@ -731,7 +731,7 @@ if ( !trait_exists('Utilities') ){
 						return $url_components['query'];
 					}
 
-					return false;
+					return null;
 
 				case ('fragment'):
 				case ('fragments'):
@@ -743,7 +743,7 @@ if ( !trait_exists('Utilities') ){
 						return $url_components['fragment'];
 					}
 
-					return false;
+					return null;
 
 				default :
 					return $url;
@@ -781,6 +781,10 @@ if ( !trait_exists('Utilities') ){
 
 				foreach ( $urls_to_check as $query_string ){ //Loop through the URLs that may contain UTM tags
 					foreach ( $notable_tags as $tag ){ //Loop through each of the notable tracking tags
+						if ( empty($query_string) || empty($tag) ){
+							continue;
+						}
+
 						if ( str_contains(strtolower($query_string), $tag) ){ //If UTM parameters exist
 							$this->set_cookie('nebula_utms', $this->url_components('all'), strtotime('+14 months')); //Set/update the cookie and store the entire LP URL
 							return sanitize_text_field($this->url_components('all')); //Return the entire landing page URL with full query string sanitized
@@ -814,7 +818,7 @@ if ( !trait_exists('Utilities') ){
 					}
 
 					if ( is_null($data) ){
-						return false; //If the function does not return, do not store anything in the cache
+						return null; //If the function does not return, do not store anything in the cache
 					}
 
 					wp_cache_set($name, $data); //Set the object cache (memory for multiple calls during this current load)
@@ -1078,7 +1082,7 @@ if ( !trait_exists('Utilities') ){
 
 		//Check if a website or resource is available
 		public function is_available($url=null, $allow_cache=true, $allow_remote_request=true, $args=array()){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			$override = apply_filters('pre_nebula_is_available', null, $url, $allow_cache, $allow_remote_request);
 			if ( isset($override) ){return $override;}
@@ -1141,7 +1145,7 @@ if ( !trait_exists('Utilities') ){
 		//Get a remote resource and if unavailable, don't re-check the resource for 5 minutes.
 		//Args docs: https://developer.wordpress.org/reference/classes/WP_Http/request/
 		public function remote_get($url, $args=null, $ignore_cache=false){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( apply_filters('disable_nebula_remote_get', false, $url) ){ //Consider a Nebula Option here as well?
 				return new WP_Error('disabled', 'Nebula remote_get has been disabled (for this or all requests).');
@@ -1274,7 +1278,7 @@ if ( !trait_exists('Utilities') ){
 			} elseif ( strlen($color) == 3 ){
 				list($r, $g, $b) = array($color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]);
 			} else {
-				return false;
+				return null;
 			}
 
 			$r = hexdec($r);
@@ -1287,11 +1291,11 @@ if ( !trait_exists('Utilities') ){
 		//Add server timings to an array
 		//To add time to an entry, simply use the action 'end' on the same unique_id again
 		public function timer($unique_id, $action='start', $category=false){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			//Unique ID is required
 			if ( empty($unique_id) || in_array(strtolower($unique_id), array('start', 'stop', 'end')) ){
-				return false;
+				return null;
 			}
 
 			if ( $action === 'start' || $action === 'mark' || $action === 'once' ){
@@ -1342,12 +1346,12 @@ if ( !trait_exists('Utilities') ){
 				}
 			}
 
-			return false;
+			return null;
 		}
 
 		//Add category timings together, and add more times to the server timings array
 		public function finalize_timings(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			//Add category times together
 			if ( !empty($this->server_timings['categories']) ){
@@ -1541,7 +1545,7 @@ if ( !trait_exists('Utilities') ){
 
 		//Create Custom Properties
 		public function create_hubspot_properties(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( $this->get_option('hubspot_portal') ){
 				if ( $this->get_option('hubspot_api') ){
@@ -1799,7 +1803,7 @@ if ( !trait_exists('Utilities') ){
 
 		//Send data to Hubspot CRM via PHP curl
 		public function hubspot_curl($url, $content=null){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			$sep = ( !str_contains($url, '?') )? '?' : '&';
 			$get_url = $url . $sep . 'hapikey=' . $this->get_option('hubspot_api');
@@ -1818,7 +1822,7 @@ if ( !trait_exists('Utilities') ){
 				return $response['body'];
 			}
 
-			return false;
+			return null;
 		}
 	}
 }

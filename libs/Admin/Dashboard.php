@@ -64,7 +64,7 @@ if ( !trait_exists('Dashboard') ){
 		//Remove unnecessary Dashboard metaboxes
 		public function remove_dashboard_metaboxes(){
 			$override = apply_filters('pre_remove_dashboard_metaboxes', null);
-			if ( isset($override) ){return false;}
+			if ( isset($override) ){return null;}
 
 			//If necessary, dashboard metaboxes can be unset. To best future-proof, use remove_meta_box().
 			//remove_meta_box('dashboard_primary', 'dashboard', 'side'); //Wordpress News
@@ -77,7 +77,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//WordPress Information metabox ("At a Glance" replacement)
 		public function ataglance_metabox(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			global $wp_meta_boxes;
 			wp_add_dashboard_widget('nebula_ataglance', '<img src="' . get_site_icon_url(32, get_theme_file_uri('/assets/img/meta') . '/favicon-32x32.png') . '" style="float: left; width: 20px; margin-right: 3px;" loading="lazy" />&nbsp;' . get_bloginfo('name'), array($this, 'dashboard_nebula_ataglance'));
@@ -299,7 +299,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Current User metabox
 		public function current_user_metabox(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			$headshotURL = esc_attr(get_the_author_meta('headshot_url', get_current_user_id()));
 			$headshot_thumbnail = str_replace('.jpg', '-150x150.jpg', $headshotURL);
@@ -443,7 +443,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Administrative metabox
 		public function administrative_metabox(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			wp_add_dashboard_widget('nebula_administrative', '<i class="fa-solid fa-fw fa-paperclip"></i> &nbsp;Administrative', array($this, 'dashboard_administrative'));
 		}
 
@@ -487,7 +487,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//TODO Metabox
 		public function todo_metabox(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			wp_add_dashboard_widget('todo_manager', '<i class="fa-solid fa-fw fa-check-square"></i>&nbsp;To-Do Manager', array($this, 'todo_metabox_content'));
 		}
 
@@ -623,7 +623,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Developer Info Metabox
 		public function dev_info_metabox(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			wp_add_dashboard_widget('nebula_developer_info', '<i class="fa-solid fa-fw fa-code"></i> &nbsp;Developer Information', array($this, 'dashboard_developer_info'));
 		}
 
@@ -806,8 +806,11 @@ if ( !trait_exists('Dashboard') ){
 					list($load_1m, $load_5m, $load_15m) = $load;
 
 					//Check each value against the warning threshold
-					$caution_threshold = 1;
-					$warning_threshold = 2;
+					//Note: The thresholds are really dependent on how many CPU cores the server has. 1 process with 1 core = 100% utilization. However 1 process with 4 cores = 25% utilization.
+					$cpu_cores = apply_filters('nebula_cpu_cores', 1); //Allow developers to designate the number of CPU cores their server has to better reflect warning states for load averages
+
+					$caution_threshold = $cpu_cores*1; //100% utilization
+					$warning_threshold = $cpu_cores*2; //200% utilization
 
 					//Check each value against the thresholds and assign classes accordingly
 					$class_1m = '';
@@ -831,7 +834,7 @@ if ( !trait_exists('Dashboard') ){
 						$class_15m = 'text-caution';
 					}
 
-					echo '<li title="Average number of processes waiting for CPU (higher = busier)"><i class="fa-solid fa-fw fa-network-wired"></i> Load Avg: <span class="' . $class_1m . '" title="1 minute"><strong>' . $load_1m . '</strong> <em>(1 min)</em></span>, <span class="' . $class_5m . '" title="5 minutes"><strong>' . $load_5m . '</strong> <em>(5 min)</em></span>, <span class="' . $class_15m . '" title="15 minutes"><strong>' . $load_15m . '</strong> <em>(15 min)</em></span></li>';
+					echo '<li title="Average number of processes waiting for CPU (higher = busier). Caution thresholds depend on the amount of CPU cores (which can be set with a Nebula hook)."><i class="fa-solid fa-fw fa-network-wired"></i> Load Avg: <span class="' . $class_1m . '" title="1 minute"><strong>' . round($load_1m, 2) . '</strong> <em>(1 min)</em></span>, <span class="' . $class_5m . '" title="5 minutes"><strong>' . round($load_5m, 2) . '</strong> <em>(5 min)</em></span>, <span class="' . $class_15m . '" title="15 minutes"><strong>' . round($load_15m, 2) . '</strong> <em>(15 min)</em></span></li>';
 				}
 			}
 
@@ -1076,7 +1079,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//File Size Monitor Metabox
 		public function file_size_monitor_metabox(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			wp_add_dashboard_widget('nebula_file_size_monitor', '<i class="fa-solid fa-fw fa-weight-scale"></i>&nbsp;File Size Monitor', array($this, 'dashboard_file_size_monitor'));
 		}
 
@@ -1763,7 +1766,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Performance Timing
 		public function performance_metabox(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			wp_add_dashboard_widget('performance_metabox', '<i id="performance-status-icon" class="fa-solid fa-fw fa-stopwatch"></i> <span id="performance-title">&nbsp;Performance</span>', array($this, 'performance_timing'));
 		}
 
@@ -1791,7 +1794,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Add a dashboard metabox for design reference
 		public function design_metabox(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			global $wp_meta_boxes;
 			wp_add_dashboard_widget('nebula_design', '<i class="fa-solid fa-fw fa-palette"></i> &nbsp;Design Reference', array($this, 'dashboard_nebula_design'));
 		}
@@ -1864,7 +1867,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Add a GitHub metabox for recently updated issues/discussions
 		public function github_metabox(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( $this->get_option('github_url') && $this->get_option('github_pat') ){
 				$repo_name = str_replace('https://github.com/', '', $this->get_option('github_url'));
@@ -1891,7 +1894,7 @@ if ( !trait_exists('Dashboard') ){
 
 				if ( is_wp_error($commits_response) ){
 					echo '<p>There was an error retrieving the GitHub commits...</p>';
-					return false;
+					return null;
 				}
 
 				$github_commit_json = $commits_response['body'];
@@ -1911,7 +1914,7 @@ if ( !trait_exists('Dashboard') ){
 						<a href="<?php echo $this->get_option('github_url'); ?>/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">Issues &raquo;</a><br />
 					</p>
 				<?php
-				return false;
+				return null;
 			}
 
 			echo '<div class="nebula-metabox-row"><div class="nebula-metabox-col">';
@@ -1946,7 +1949,7 @@ if ( !trait_exists('Dashboard') ){
 
 				if ( is_wp_error($issues_response) ){
 					echo '<p>There was an error retrieving the GitHub issues...</p>';
-					return false;
+					return null;
 				}
 
 				$github_issues_json = json_decode($issues_response['body']);
@@ -2007,7 +2010,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Hubspot Contacts
 		public function hubspot_metabox(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			wp_add_dashboard_widget('hubspot_contacts', '<i class="fa-brands fa-fw fa-hubspot"></i>&nbsp;Latest Hubspot Contacts', array($this, 'hubspot_contacts_content'));
 		}
 
@@ -2020,7 +2023,7 @@ if ( !trait_exists('Dashboard') ){
 				$requested_properties = '&property=' . implode('&property=', apply_filters('nebula_hubspot_metabox_properties', array('firstname', 'lastname', 'full_name', 'email', 'createdate')));
 				$response = $this->remote_get('https://api.hubapi.com/contacts/v1/lists/all/contacts/recent?hapikey=' . $this->get_option('hubspot_api') . '&count=4' . $requested_properties);
 				if ( is_wp_error($response) ){
-					return false;
+					return null;
 				}
 
 				return $response['body'];

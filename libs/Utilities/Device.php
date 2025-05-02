@@ -210,7 +210,7 @@ if ( !trait_exists('Device') ){
 		//Check for bot/crawler traffic
 		//UA lookup: http://www.useragentstring.com/pages/Crawlerlist/
 		public function is_bot(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$override = apply_filters('pre_nebula_is_bot', null);
 			if ( isset($override) ){return $override;}
 
@@ -244,7 +244,7 @@ if ( !trait_exists('Device') ){
 		//Check if the current visitor is Googlebot (search indexing)
 		//Strict mode checks against the hostname as well
 		function is_googlebot($strict=false){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( !empty($this->super->server['HTTP_USER_AGENT']) && str_contains(strtolower($this->super->server['HTTP_USER_AGENT']), 'googlebot') ){
 				if ( !empty($strict) ){
@@ -265,7 +265,7 @@ if ( !trait_exists('Device') ){
 		//Check if this visitor is a known GPT (or AI) bot. Remember, there will always be more that cannot easily be detected!
 		function is_ai_bot(){return $this->is_gpt_bot();}
 		function is_gpt_bot(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( !empty($this->super->server['HTTP_USER_AGENT']) && str_contains($this->super->server['HTTP_USER_AGENT'], 'gptbot') ){
 				return true;
@@ -276,7 +276,7 @@ if ( !trait_exists('Device') ){
 
 		//Check if the current visitor is Slackbot. Keep in mind that any device can spoof this user agent.
 		function is_slackbot(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( !empty($this->super->server['HTTP_USER_AGENT']) && str_contains($this->super->server['HTTP_USER_AGENT'], 'Slackbot') ){
 				return true;

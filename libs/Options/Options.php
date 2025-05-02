@@ -42,16 +42,12 @@ if ( !trait_exists('Options') ){
 		}
 
 		//Check for the option and return it or a fallback.
-		public function option($option, $fallback=false){return $this->get_option($option, $fallback);}
-		public function get_option($option, $fallback=false){
+		public function option($option, $fallback=null){return $this->get_option($option, $fallback);}
+		public function get_option($option, $fallback=null){
 			$nebula_options = get_option('nebula_options');
 
 			if ( empty($nebula_options[$option]) ){
-				if ( !empty($fallback) ){
-					return $fallback;
-				}
-
-				return false;
+				return $fallback;
 			}
 
 			if ( filter_var($nebula_options[$option], FILTER_VALIDATE_BOOLEAN) === 1 ){
@@ -79,7 +75,7 @@ if ( !trait_exists('Options') ){
 			$nebula_data = get_option('nebula_data');
 
 			if ( empty($nebula_data[$option]) ){
-				return false;
+				return null;
 			}
 
 			return $nebula_data[$option];
@@ -104,7 +100,7 @@ if ( !trait_exists('Options') ){
 			$nebula_options = get_option('nebula_options');
 
 			if ( !$nebula_options['street_address'] ){
-				return false;
+				return null;
 			}
 
 			$full_address = $nebula_options['street_address'] . ', ' . $nebula_options['locality'] . ', ' . $nebula_options['region'] . ' ' . $nebula_options['postal_code'];
@@ -126,18 +122,18 @@ if ( !trait_exists('Options') ){
 				return 'https://search.google.com/local/writereview?placeid=' . $place_id; //come up with a default
 			}
 
-			return false; //Otherwise we do not have a URL
+			return null; //Otherwise we do not have a URL
 		}
 
 		//Get the full Twitter URL for a user
 		public function twitter_url($username=null){
-			$username ??= $this->get_option('twitter_username');
+			$username ??= $this->get_option('twitter_username', false);
 
 			if ( !empty($username) ){
 				return esc_url('https://twitter.com/' . str_replace('@', '', $username));
 			}
 
-			return false;
+			return $username;
 		}
 
 		//Prepare default data values

@@ -125,7 +125,7 @@ function nebula_prevent_activating_plugins(){
 					element.addEventListener('click', function(e){
 						e.preventDefault();
 						alert('Activating plugins is not allowed during Nebula Safe Mode.');
-						return false;
+						return null;
 					});
 				});
 			});
@@ -164,7 +164,7 @@ function nebula_prevent_activating_themes(){
 					element.addEventListener('click', function(e){
 						e.preventDefault();
 						alert('Activating themes is not allowed during Nebula Safe Mode.');
-						return false;
+						return null;
 					});
 				});
 			});

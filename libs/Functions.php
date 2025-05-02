@@ -135,7 +135,7 @@ if ( !trait_exists('Functions') ){
 		//Check if the Nebula Companion plugin is installed and active
 		//Note: As of 2021 the companion plugin has been deprecated.
 		public function is_companion_active(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			include_once ABSPATH . 'wp-admin/includes/plugin.php'; //Needed to use is_plugin_active() outside of WP admin
 			if ( is_plugin_active('nebula-companion/nebula-companion.php') || is_plugin_active('Nebula-Companion-main/nebula-companion.php') ){
@@ -147,7 +147,7 @@ if ( !trait_exists('Functions') ){
 
 		//Prep custom theme support
 		public function theme_setup(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			//Additions
 			add_theme_support('post-thumbnails');
@@ -256,19 +256,19 @@ if ( !trait_exists('Functions') ){
 
 		//Register REST API routes/endpoints
 		public function rest_api_routes(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			register_rest_route('nebula/v2', '/autocomplete_search/', array('methods' => 'GET', 'callback' => array($this, 'rest_autocomplete_search'), 'permission_callback' => '__return_true')); //.../wp-json/nebula/v2/autocomplete_search?term=whatever&types=post|page
 		}
 
 		//Add the Posts RSS Feed back in
 		public function add_back_post_feed(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			echo '<link rel="alternate" type="application/rss+xml" title="RSS 2.0 Feed" href="' . get_bloginfo('rss2_url') . '" />';
 		}
 
 		//Set server timezone to match Wordpress
 		public function set_default_timezone(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( $this->get_option('force_wp_timezone') ){
 				$timezone_option = wp_timezone_string();
@@ -307,7 +307,7 @@ if ( !trait_exists('Functions') ){
 
 		//Add the Nebula note to the browser console (if enabled)
 		public function calling_card(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( $this->is_desktop() && !is_customize_preview() ){
 				echo "<script>console.log('%c Nebula " . esc_html($this->version('primary')) . "', 'padding: 2px 10px; background: linear-gradient(to right in oklch, #5b22e8, #ff2362); color: #fff;');</script>";
@@ -329,7 +329,7 @@ if ( !trait_exists('Functions') ){
 
 		//Update variables within the service worker JavaScript file for install caching
 		public function update_sw_js($version=false){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$this->timer('Update SW');
 
 			$override = apply_filters('pre_nebula_update_swjs', null);
@@ -375,7 +375,7 @@ if ( !trait_exists('Functions') ){
 			}
 
 			$this->timer('Update SW', 'end');
-			return false;
+			return null;
 		}
 
 		//Manifest JSON file location
@@ -392,8 +392,8 @@ if ( !trait_exists('Functions') ){
 
 		//Create/Write a manifest JSON file
 		public function manifest_json(){
-			if ( $this->is_minimal_mode() ){return false;}
-			$timer_name = $this->timer('Write Manifest JSON', 'start', 'Manifest');
+			if ( $this->is_minimal_mode() ){return null;}
+			$timer_name = $this->timer('Write Manifest JSON', 'start', '[Nebula] Manifest');
 
 			$override = apply_filters('pre_nebula_manifest_json', null);
 			if ( isset($override) ){return;}
@@ -464,10 +464,10 @@ if ( !trait_exists('Functions') ){
 
 		//Ex: https://nebula.gearside.com/nebula-index-now-0123456789AB.txt
 		public function index_now_rewrite_rule(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( !$this->get_option('index_now') ){
-				return false;
+				return null;
 			}
 
 			global $wp;
@@ -477,16 +477,16 @@ if ( !trait_exists('Functions') ){
 
 		//Output the IndexNow key txt file
 		public function index_now_output_key(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( !$this->get_option('index_now') ){
-				return false;
+				return null;
 			}
 
 			$url_key = get_query_var('nebula_index_now_key');
 
 			if ( empty($url_key) ){
-				return false;
+				return null;
 			}
 
 			$actual_index_now_key = $this->index_now_get_key();
@@ -505,7 +505,7 @@ if ( !trait_exists('Functions') ){
 
 		public function index_now_get_key(){
 			if ( !$this->get_option('index_now') ){
-				return false;
+				return null;
 			}
 
 			$actual_index_now_key = $this->get_option('index_now_key');
@@ -520,7 +520,7 @@ if ( !trait_exists('Functions') ){
 		//Generate an IndexNow key and store it in Nebula Options
 		public function index_now_generate_key($force=false){
 			if ( !$this->get_option('index_now') ){
-				return false;
+				return null;
 			}
 
 			$index_now_key = '';
@@ -550,7 +550,7 @@ if ( !trait_exists('Functions') ){
 		//Convenience function to return only the URL for specific thumbnail sizes of an ID.
 		public function get_thumbnail_src($img=null, $size='full', $type='post'){
 			if ( empty($img) ){
-				return false;
+				return null;
 			}
 
 			//If HTML is passed, immediately parse it with HTML
@@ -632,7 +632,7 @@ if ( !trait_exists('Functions') ){
 			$data = array_merge($defaults, $options);
 
 			if ( $data['relative'] === 'disabled' ){
-				return false;
+				return null;
 			}
 
 			//Apply the requested label
@@ -772,7 +772,7 @@ if ( !trait_exists('Functions') ){
 					$category_list = get_the_category_list(', ', '', $data['id']);
 
 					if ( strip_tags($category_list) === 'Uncategorized' && !$data['show_uncategorized'] ){
-						return false;
+						return null;
 					}
 
 					if ( !$data['linked'] ){
@@ -928,7 +928,7 @@ if ( !trait_exists('Functions') ){
 				}
 
 				if ( empty($the_post) ){
-					return false;
+					return null;
 				}
 
 				if ( !empty($the_post->post_excerpt) ){
@@ -1086,7 +1086,7 @@ if ( !trait_exists('Functions') ){
 				return $word_count_range;
 			}
 
-			return false;
+			return null;
 		}
 
 		//Determines the estimated time to read a post (in minutes).
@@ -1155,10 +1155,10 @@ if ( !trait_exists('Functions') ){
 					return esc_url($this->get_option('wikipedia_url'));
 
 				default:
-					return false;
+					return null;
 			}
 
-			return false;
+			return null;
 		}
 
 		//Display non-native social buttons
@@ -1332,7 +1332,7 @@ if ( !trait_exists('Functions') ){
 			if ( isset($override) ){return;}
 
 			if ( empty($username) && !$this->get_option('twitter_username') ){
-				return false;
+				return null;
 			} elseif ( empty($username) && $this->get_option('twitter_username') ){
 				$username = $this->get_option('twitter_username');
 			} elseif ( !str_contains($username, '@') ){
@@ -1593,7 +1593,7 @@ if ( !trait_exists('Functions') ){
 			} elseif ( is_home() || is_front_page() ){
 				echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . ' <span class="visually-hidden">' . get_bloginfo('title') . '</span></span></a><meta itemprop="position" content="' . $position . '" /></li></ol>';
 				$position++;
-				return false;
+				return null;
 			} else {
 				echo '<ol class="nebula-breadcrumbs" itemscope itemtype="http://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $data['home_link'] . '" itemprop="item"><span itemprop="name">' . $data['home'] . ' <span class="visually-hidden">' . get_bloginfo('title') . '</span></span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ';
 				$position++;
@@ -1806,7 +1806,7 @@ if ( !trait_exists('Functions') ){
 		//Infinite Load
 		//Ajax call handle in nebula()->infinite_load();
 		public function infinite_load_query($args=array('post_status' => 'publish', 'showposts' => 4), $loop=false){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$timer_name = $this->timer('Infinite Load Query');
 
 			$override = apply_filters('pre_nebula_infinite_load_query', null);
@@ -1977,7 +1977,7 @@ if ( !trait_exists('Functions') ){
 
 		//Related Posts by term frequency
 		public function related_posts($post_id=null, $args=array()){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$this->timer('Related Posts');
 
 			global $post, $wpdb;
@@ -1988,7 +1988,7 @@ if ( !trait_exists('Functions') ){
 			}
 
 			if ( !$post_id ){
-				return false; //Post ID is required for this function
+				return null; //Post ID is required for this function
 			}
 
 			$defaults = array(
@@ -2067,7 +2067,7 @@ if ( !trait_exists('Functions') ){
 
 			if ( !$related_post_ids ){
 				$this->timer('Related Posts', 'end');
-				return false;
+				return null;
 			}
 
 			//Query for the related post IDs
@@ -2108,7 +2108,7 @@ if ( !trait_exists('Functions') ){
 		//If no CF7 form ID is provided, this simply logs yes/no from users in Google Analytics
 		//Nebula does not automatically add this to pages! It must be added in the child theme. Consider adding a function in via hooks such as 'loop_end', 'nebula_after_search_results', 'nebula_no_search_results', 'nebula_404_content' to conditionally/dynamically add this feedback form. Refer to the child functions file for an example.
 		public function feedback($form_id=false, $identifier='default'){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			?>
 				<div id="nebula-feedback-system" class="<?php echo ( empty($form_id) )? 'no-feedback-form' : 'has-feedback-form'; ?>" data-identifier="<?php echo sanitize_html_class($identifier); ?>">
 					<div id="nebula-feedback-question" class="">
@@ -2130,7 +2130,7 @@ if ( !trait_exists('Functions') ){
 
 		//Check if business hours exist in Nebula Options
 		public function has_business_hours(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			//Check object cache first so the loop logic does not need to run more than once
 			$has_business_hours = wp_cache_get('has_business_hours');
@@ -2158,7 +2158,7 @@ if ( !trait_exists('Functions') ){
 		public function is_business_open($date=null, $general=false){ return $this->business_open($date, $general); }
 		public function is_business_closed($date=null, $general=false){ return !$this->business_open($date, $general); }
 		public function business_open($date=null, $general=false){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$override = apply_filters('pre_business_open', null, $date, $general);
 			if ( isset($override) ){return $override;}
 
@@ -2241,7 +2241,7 @@ if ( !trait_exists('Functions') ){
 				return esc_html($this->get_option('business_hours_' . $day . '_close'));
 			}
 
-			return false;
+			return null;
 		}
 
 		//Get the relative time of day
@@ -2460,7 +2460,7 @@ if ( !trait_exists('Functions') ){
 
 		//Twitter cached feed
 		public function twitter_cache($options=array()){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			$defaults = apply_filters('nebula_twitter_cache_defaults', array(
 				'user' => 'Great_Blakes',
@@ -2500,7 +2500,7 @@ if ( !trait_exists('Functions') ){
 					echo false;
 					wp_die();
 				} else {
-					return false;
+					return null;
 				}
 			}
 
@@ -2509,7 +2509,7 @@ if ( !trait_exists('Functions') ){
 
 				$response = $this->remote_get($data['feed'], $args);
 				if ( is_wp_error($response) ){
-					return false;
+					return null;
 				}
 
 				$tweets = json_decode($response['body']);
@@ -2519,10 +2519,10 @@ if ( !trait_exists('Functions') ){
 					trigger_error('No tweets were retrieved. Verify all options are correct, the requested Twitter account exists, and that an active bearer token is being used.', E_USER_NOTICE);
 
 					if ( !empty($data['post']['data']) ){
-						echo false;
+						echo null;
 						wp_die(); //Exit AJAX
 					} else {
-						return false;
+						return null;
 					}
 				}
 
@@ -2597,7 +2597,7 @@ if ( !trait_exists('Functions') ){
 
 		//Redirect if only single search result
 		public function redirect_single_search_result(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( is_search() ){
 				global $wp_query;
@@ -2637,7 +2637,7 @@ if ( !trait_exists('Functions') ){
 
 		//Autocomplete Search (REST endpoint)
 		public function rest_autocomplete_search(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$timer_name = $this->timer('Autocomplete Search');
 
 			if ( isset($this->super->get['term']) ){
@@ -2645,7 +2645,7 @@ if ( !trait_exists('Functions') ){
 
 				$term = sanitize_text_field(trim($this->super->get['term']));
 				if ( empty($term) ){
-					return false;
+					return null;
 				}
 
 				$types = 'any';
@@ -2948,7 +2948,7 @@ if ( !trait_exists('Functions') ){
 
 		//404 page suggestions
 		public function internal_suggestions(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( is_404() ){
 				$this->timer('Internal Suggestions');
@@ -3403,7 +3403,7 @@ if ( !trait_exists('Functions') ){
 		//Listen for form submissions to store into the DB right before sending the mail
 		//Note: Spam submissions often do not come through this function, so cannot be mitigated/noted here
 		public function cf7_storage($form, $result){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			$submission = WPCF7_Submission::get_instance();
 			$submission_data = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS); //Get the $_POST data array and sanitize it
@@ -3425,7 +3425,7 @@ if ( !trait_exists('Functions') ){
 
 			//If we are not capturing spam messages, ignore them here
 			if ( $status == 'spam' && !$this->get_option('cf7_spam_submission_capture') ){
-				return false;
+				return null;
 			}
 
 			//If the form is invalid and also does not have consent acceptance we do not process form field input data
@@ -3535,7 +3535,7 @@ if ( !trait_exists('Functions') ){
 
 		//Build debug info data for CF7 messages and/or Nebula CF7 storage
 		public function cf7_debug_info($submission, $submission_data=false){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			global $wp_version;
 
@@ -3694,15 +3694,15 @@ if ( !trait_exists('Functions') ){
 
 		//Execute arbitrary code from the options
 		public function arbitrary_code_head(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			echo $this->get_option('arbitrary_code_head');
 		}
 		public function arbitrary_code_body(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			echo $this->get_option('arbitrary_code_body');
 		}
 		public function arbitrary_code_footer(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			echo $this->get_option('arbitrary_code_footer');
 		}
 
@@ -3754,7 +3754,7 @@ if ( !trait_exists('Functions') ){
 
 		//Tell the browser to clear caches when the debug query string is present
 		public function clear_site_data(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			//Note: Adding this header significantly increases server-response time!
 			header('Clear-Site-Data: "cache", "storage", "executionContexts"'); //Do not clear cookies here because it forces logout which is annoying when Customizer is saved/closed
@@ -3765,7 +3765,7 @@ if ( !trait_exists('Functions') ){
 
 		//Flush rewrite rules when using ?debug at shutdown
 		public function flush_rewrite_on_debug(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( $this->is_debug() ){
 				$this->timer('Flush Rewrite Rules');

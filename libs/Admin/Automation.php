@@ -432,7 +432,7 @@ if ( !trait_exists('Automation') ){
 
 			//Don't do anything if not an admin user or already using a child theme or if Nebula-Child already exists in the themes directory
 			if ( !current_user_can('manage_options') || is_child_theme() || file_exists($destination) ){
-				return false;
+				return null;
 			}
 
 			//Make sure child theme directory exists inside the parent theme
@@ -449,7 +449,7 @@ if ( !trait_exists('Automation') ){
 				}
 			}
 
-			return false;
+			return null;
 		}
 
 		public function is_initialized_before(){
@@ -563,7 +563,7 @@ if ( !trait_exists('Automation') ){
 				$force_date = 'May 24, 2014'; //Set the desired initialization date here. Format should be an easily convertible date like: "March 27, 2012"
 				if ( strtotime($force_date) !== false ){ //Check if provided date string is valid
 					$this->update_data('initialized', strtotime($force_date));
-					return false;
+					return null;
 				}
 			} else {
 				if ( !$this->is_initialized_before() ){

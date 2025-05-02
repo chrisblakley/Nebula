@@ -110,7 +110,7 @@ if ( !trait_exists('Ecommerce') ){
 
 			//If analytics is being managed by a plugin, ignore the remaining events
 			if ( is_plugin_active('woocommerce-google-analytics-integration/woocommerce-google-analytics-integration.php') ){
-				return false;
+				return null;
 			}
 
 			//View product detail page

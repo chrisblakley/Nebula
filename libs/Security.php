@@ -65,7 +65,7 @@ if ( !trait_exists('Security') ){
 
 		//Log direct access to templates and prevent certain query strings
 		public function bad_access_prevention(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			//Log template direct access attempts
 			if ( array_key_exists('ndaat', $this->super->get) ){
@@ -91,7 +91,7 @@ if ( !trait_exists('Security') ){
 		//Block common and obvious methods from accessing anything
 		//Remember: This only blocks the most obvious access attempts. Use more sophisticated security systems for broader coverage.
 		public function block_obvious_bad_requests(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$this->timer('Block Obvious Bad Requests', 'start', '[Nebula] Security');
 
 			if ( $this->get_option('block_obvious_bad_requests') ){ //Only when Nebula option is enabled
@@ -241,14 +241,14 @@ if ( !trait_exists('Security') ){
 		//Track Notable Bots
 		//This data can indicate when the website was shared on certain platforms. That is why we are only tracking bots that are sent by a user action (and not search indexing bots, for example).
 		function track_notable_bots(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$override = apply_filters('pre_track_notable_bots', null);
 			if ( isset($override) ){return;}
 			$this->timer('Notable Bot Tracking', 'start', '[Nebula] Security');
 
 			//Ignore logged-in users
 			if ( is_user_logged_in() ){
-				return false;
+				return null;
 			}
 
 			if ( isset($this->super->server['HTTP_USER_AGENT']) ){
@@ -314,12 +314,12 @@ if ( !trait_exists('Security') ){
 
 		//Check referrer for known spam domains
 		public function spam_domain_prevention(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$this->timer('Spam Domain Prevention', 'start', '[Nebula] Security');
 
 			//Skip lookups if user has already been checked or for logged in users.
 			if ( (isset($this->super->cookie['spam_domain']) && $this->super->cookie['spam_domain'] === false) || is_user_logged_in() ){
-				return false;
+				return null;
 			}
 
 			if ( $this->get_option('spam_domain_prevention') ){
@@ -429,7 +429,7 @@ if ( !trait_exists('Security') ){
 
 		//Return an array of spam domains
 		public function get_spam_domain_list(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$this->timer('Get Spam Domain List', 'start', '[Nebula] Security');
 
 			//First get the latest spam domain list maintained by Matomo or Nebula's cache of the Matomo list
@@ -554,7 +554,7 @@ if ( !trait_exists('Security') ){
 
 		//Return an array of bad email domains from Hubspot (or the latest Nebula on GitHub)
 		public function get_bad_email_domains_list(){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 			$this->timer('Get Bad Email Domains List', 'start', '[Nebula] Security');
 
 			$bad_email_domains_file = get_template_directory() . '/inc/data/bad_email_domains.csv';
@@ -633,7 +633,7 @@ if ( !trait_exists('Security') ){
 
 		//Nebula can check for spam form submissions
 		public function nebula_cf7_spam_detection_agent($is_spam, $submission=null){
-			if ( $this->is_minimal_mode() ){return false;}
+			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( $is_spam ) { //If the submission was already detected as spam, don't check further details
 				return $is_spam;

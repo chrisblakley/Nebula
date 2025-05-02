@@ -104,7 +104,7 @@ if ( !trait_exists('Widgets') ){
 			$author_info = get_userdata($user_id);
 
 			if ( empty($author_info) ){
-				return false;
+				return null;
 			}
 
 			$author_image = false;

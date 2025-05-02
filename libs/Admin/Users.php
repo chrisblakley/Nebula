@@ -195,7 +195,7 @@ if ( !trait_exists('Users') ){
 				return $logged_in_users[$id]['last'];
 			}
 
-			return false;
+			return null;
 		}
 
 		//Get a count of online users, or an array of online user IDs.
@@ -297,7 +297,7 @@ if ( !trait_exists('Users') ){
 		//Save the field values to the DB
 		public function save_extra_profile_fields($user_id){
 			if ( !current_user_can('edit_user', $user_id) ){
-				return false;
+				return null;
 			}
 
 			update_user_meta($user_id, 'jobtitle', sanitize_text_field($this->super->post['jobtitle']));
