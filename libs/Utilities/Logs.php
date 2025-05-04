@@ -166,14 +166,13 @@ if ( !trait_exists('Logs') ){
 			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( !$this->is_admin_page() && !isset($this->super->get['settings-updated']) && !$this->is_staff() ){ //Only trigger this in admin when Nebula Options are saved (by a staff member)
-				return;
+				return null;
 			}
 
-			$this->timer('Create Logs Tables', 'start', '[Nebula] Logs');
-
-			$logs_table_transient = nebula()->transient('nebula_logs_table_exists', function(){
+			$logs_table_transient = $this->transient('nebula_logs_table_exists', function(){
 				global $wpdb;
 
+				$this->timer('Create Logs Tables', 'start', '[Nebula] Logs');
 				$logs_table = $wpdb->query("SHOW TABLES LIKE '" . $wpdb->nebula_logs . "'"); //DB Query here
 
 				if ( empty($logs_table) ){
@@ -190,10 +189,10 @@ if ( !trait_exists('Logs') ){
 					dbDelta($create_logs_table_sql);
 				}
 
+				$this->timer('Create Logs Tables', 'end', '[Nebula] Logs');
+
 				return true;
 			}); //No expiration for this transient
-
-			$this->timer('Create Logs Tables', 'end', '[Nebula] Logs');
 		}
 
 		//Insert log into DB
@@ -362,7 +361,7 @@ if ( !trait_exists('Logs') ){
 				}
 
 				//Otherwise get the actual logs data (rows)
-				$nebula_logs_data = nebula()->transient('nebula_logs', function(){
+				$nebula_logs_data = $this->transient('nebula_logs', function(){
 					global $wpdb; //Need to re-declare so it is available within this function
 					$this->timer('Get Logs From Table', 'end');
 					return $wpdb->get_results("SELECT * FROM $wpdb->nebula_logs ORDER BY timestamp DESC LIMIT 100"); //Get all data (last 100 logs) from the DB table in descending order (latest first)
@@ -480,7 +479,7 @@ if ( !trait_exists('Logs') ){
 				unset($logs); //Delete the reference array that was only needed for de-duping
 
 				return $all_log_files;
-			}, MINUTE_IN_SECONDS*15);
+			}, HOUR_IN_SECONDS);
 
 			$this->timer($timer_name, 'end');
 
@@ -514,8 +513,6 @@ if ( !trait_exists('Logs') ){
 				return null;
 			}
 
-			$timer_name = $this->timer('Count Fatal Errors', 'start', '[Nebula] Logs');
-
 			$log_file = ini_get('error_log'); //Path to the error log file
 
 			//Ensure the log file exists
@@ -533,6 +530,8 @@ if ( !trait_exists('Logs') ){
 			if ( $log_file_size > MB_IN_BYTES*20 ){ //Only process files within this size threshold
 				return 'Error log file too large (' . $this->format_bytes($log_file_size) . ')';
 			}
+
+			$timer_name = $this->timer('Count Fatal Errors', 'start', '[Nebula] Logs');
 
 			$fatal_error_count = 0; //Initialize counter
 			$one_week_ago = strtotime('-7 days'); //Get the timestamp for one week ago

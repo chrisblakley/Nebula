@@ -404,7 +404,7 @@ if ( !trait_exists('Functions') ){
 				"description": "' . get_bloginfo('description') . '",
 				"theme_color": "' . get_theme_mod('nebula_primary_color', $this->get_color('$primary_color')) . '",
 				"background_color": "' . get_theme_mod('nebula_background_color', $this->get_color('$background_color')) . '",
-				"gcm_sender_id": "' . $this->get_option('gcm_sender_id') . '",
+				"gcm_sender_id": "' . $this->get_option('gcm_sender_id', '') . '",
 				"scope": "/",
 				"start_url": "' . home_url('/') . '?utm_source=pwa",
 				"display": "standalone",
@@ -722,10 +722,10 @@ if ( !trait_exists('Functions') ){
 					$post_icon_img = '<i class="fa-solid fa-thumbtack"></i>';
 
 					if ( !empty($post_icon) ){
-						$post_icon_img = '<img src="' . $post_icon . '" alt="' . $post_type . ' icon" style="width: 16px; height: 16px;" loading="lazy" />';
-
-						if ( str_contains('dashicons-', $post_icon) ){
-							$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
+						if ( str_starts_with($post_icon, 'http') || str_starts_with($post_icon, '/') ){
+							$post_icon_img = '<img src="' . esc_url($post_icon) . '" alt="' . esc_attr($post_type) . ' icon" style="width: 16px; height: 16px;" loading="lazy" />';
+						} elseif ( str_starts_with($post_icon, 'dashicons-') ){
+							$post_icon_img = '<i class="dashicons ' . esc_attr($post_icon) . '"></i>';
 						}
 					}
 
@@ -1129,30 +1129,30 @@ if ( !trait_exists('Functions') ){
 			switch ( strtolower($network) ){
 				case 'facebook':
 				case 'fb':
-					return esc_url($this->get_option('facebook_url'));
+					return esc_url($this->get_option('facebook_url', ''));
 
 				case 'twitter':
 				case 'x':
 					return $this->twitter_url(); //Use the provided function from Nebula Options
 
 				case 'linkedin':
-					return esc_url($this->get_option('linkedin_url'));
+					return esc_url($this->get_option('linkedin_url', ''));
 
 				case 'instagram':
 				case 'ig':
-					return esc_url($this->get_option('instagram_url'));
+					return esc_url($this->get_option('instagram_url', ''));
 
 				case 'pinterest':
-					return esc_url($this->get_option('pinterest_url'));
+					return esc_url($this->get_option('pinterest_url', ''));
 
 				case 'youtube':
-					return esc_url($this->get_option('youtube_url'));
+					return esc_url($this->get_option('youtube_url', ''));
 
 				case 'tiktok':
-					return esc_url($this->get_option('tiktok_url'));
+					return esc_url($this->get_option('tiktok_url', ''));
 
 				case 'wikipedia':
-					return esc_url($this->get_option('wikipedia_url'));
+					return esc_url($this->get_option('wikipedia_url', ''));
 
 				default:
 					return null;
@@ -1442,7 +1442,7 @@ if ( !trait_exists('Functions') ){
 						$video_metadata['error'] = 'No Google Youtube Iframe API key.';
 					}
 
-					$response = $this->remote_get('https://www.googleapis.com/youtube/v3/videos?id=' . $data['id'] . '&part=snippet,contentDetails,statistics&key=' . $this->get_option('google_server_api_key'));
+					$response = $this->remote_get('https://www.googleapis.com/youtube/v3/videos?id=' . $data['id'] . '&part=snippet,contentDetails,statistics&key=' . $this->get_option('google_server_api_key', ''));
 					if ( is_wp_error($response) ){
 						trigger_error('Youtube video is unavailable.', E_USER_WARNING);
 						$video_metadata['error'] = 'Youtube video is unavailable.';
@@ -1535,7 +1535,9 @@ if ( !trait_exists('Functions') ){
 			$override = apply_filters('pre_nebula_breadcrumbs', null);
 			if ( isset($override) ){return;}
 
-			$this->timer('Breadcrumbs');
+			if ( $this->is_background_request() ){return null;}
+
+			$this->timer('Breadcrumbs', 'start', '[Nebula] Markup');
 
 			global $post;
 			$defaults = apply_filters('nebula_breadcrumb_defaults', array(
@@ -1807,7 +1809,7 @@ if ( !trait_exists('Functions') ){
 		//Ajax call handle in nebula()->infinite_load();
 		public function infinite_load_query($args=array('post_status' => 'publish', 'showposts' => 4), $loop=false){
 			if ( $this->is_minimal_mode() ){return null;}
-			$timer_name = $this->timer('Infinite Load Query');
+			$timer_name = $this->timer('Infinite Load Query', 'start', '[Nebula] Search');
 
 			$override = apply_filters('pre_nebula_infinite_load_query', null);
 			if ( isset($override) ){return;}
@@ -1978,7 +1980,7 @@ if ( !trait_exists('Functions') ){
 		//Related Posts by term frequency
 		public function related_posts($post_id=null, $args=array()){
 			if ( $this->is_minimal_mode() ){return null;}
-			$this->timer('Related Posts');
+			$this->timer('Related Posts', 'start', '[Nebula] Search');
 
 			global $post, $wpdb;
 
@@ -2185,9 +2187,9 @@ if ( !trait_exists('Functions') ){
 				$businessHours = array();
 				foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
 					$businessHours[$weekday] = array(
-						'enabled' => $this->get_option('business_hours_' . $weekday . '_enabled'),
-						'open' => $this->get_option('business_hours_' . $weekday . '_open'),
-						'close' => $this->get_option('business_hours_' . $weekday . '_close')
+						'enabled' => $this->get_option('business_hours_' . $weekday . '_enabled', false),
+						'open' => $this->get_option('business_hours_' . $weekday . '_open', false),
+						'close' => $this->get_option('business_hours_' . $weekday . '_close', false)
 					);
 				}
 
@@ -2238,7 +2240,7 @@ if ( !trait_exists('Functions') ){
 			$day ??= strtolower(date('l'));
 
 			if ( $this->is_business_open() ){
-				return esc_html($this->get_option('business_hours_' . $day . '_close'));
+				return esc_html($this->get_option('business_hours_' . $day . '_close', false));
 			}
 
 			return null;
@@ -2316,7 +2318,7 @@ if ( !trait_exists('Functions') ){
 
 		//Get the appropriate logo from the themes, plugin, or Customizer
 		public function logo($location='header'){
-			$timer_name = $this->timer('Finding Appropriate Logo (' . $location . ')');
+			$timer_name = $this->timer('Finding Appropriate Logo (' . $location . ')', 'start', '[Nebula] Markup');
 
 			//Allow a theme or plugin to handle the logo itself. This assumes it does its own priorities or overrides for everything!
 			$hooked_logo = apply_filters('nebula_logo', false);
@@ -2482,7 +2484,7 @@ if ( !trait_exists('Functions') ){
 				$data['retweets'] = ( isset($post['data']['retweets']) )? sanitize_text_field($post['data']['retweets']) : $defaults['retweets']; //1: Yes, 0: No
 			}
 
-			$twitter_timing_id = $this->timer('Twitter Cache (' . $data['user'] . ')', 'start', 'Twitter Cache');
+			$twitter_timing_id = $this->timer('Twitter Cache (' . $data['user'] . ')', 'start', '[Nebula] Social');
 
 			error_reporting(0); //Prevent PHP errors from being cached.
 
@@ -2638,7 +2640,7 @@ if ( !trait_exists('Functions') ){
 		//Autocomplete Search (REST endpoint)
 		public function rest_autocomplete_search(){
 			if ( $this->is_minimal_mode() ){return null;}
-			$timer_name = $this->timer('Autocomplete Search');
+			$timer_name = $this->timer('Autocomplete Search', 'start', '[Nebula] Search');
 
 			if ( isset($this->super->get['term']) ){
 				ini_set('memory_limit', '256M'); //@todo Nebula 0: Remove these when possible...
@@ -2951,7 +2953,7 @@ if ( !trait_exists('Functions') ){
 			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( is_404() ){
-				$this->timer('Internal Suggestions');
+				$this->timer('Internal Suggestions', 'start', '[Nebula] Search');
 				$this->ga_send_exception('(PHP) 404 Error for requested URL: ' . $this->url_components()); //Track 404 error pages as exceptions in Google Analytics
 
 				$this->slug_keywords = array_filter(explode('/', $this->url_components('filepath'))); //Convert the requested filepath into an array (ignore query strings and remove empty items)
@@ -2978,13 +2980,15 @@ if ( !trait_exists('Functions') ){
 		//Add custom body classes
 		public function body_classes($classes){
 			if ( !$this->is_admin_page() ){
-				$this->timer('Nebula Body Classes');
+				$this->timer('Nebula Body Classes', 'start', '[Nebula] Markup');
 
 				$spaces_and_dots = array(' ', '.');
 				$underscores_and_hyphens = array('_', '-');
 
 				//Check the Save Data header
-				$classes[] = ( $this->is_save_data() )? 'save-data' : '';
+				if ( $this->is_save_data() ){
+					$classes[] = 'save-data';
+				}
 
 				//Device
 				$classes[] = strtolower($this->get_device('formfactor')); //Form factor (desktop, tablet, mobile)
@@ -3007,9 +3011,14 @@ if ( !trait_exists('Functions') ){
 					$classes[] = 'lang-user-' . strtolower(explode(",", $this->super->server['HTTP_ACCEPT_LANGUAGE'])[0]); //Example: fr-fr,en-us;q=0.7,en;q=0.3
 				}
 
-				//Cloudflare IPCountry header (if it exists)
-				if ( !empty($this->super->server['HTTP_CF_IPCOUNTRY']) ){
-					$classes[] = 'country-' . strtolower($this->super->server['HTTP_CF_IPCOUNTRY']);
+				//Geo data if available
+				if ( !empty($this->get_geo_data('country')) ){
+					$classes[] = 'country-' . strtolower($this->get_geo_data('country'));
+					do_action('qm/info', 'Geo Country: ' . $this->get_geo_data('country'));
+				}
+				if ( !empty($this->get_geo_data('region')) ){
+					$classes[] = 'region-' . str_replace(' ', '-', strtolower($this->get_geo_data('region')));
+					do_action('qm/info', 'Geo Region: ' . $this->get_geo_data('region'));
 				}
 
 				//When installed to the homescreen, Chrome is detected as "Chrome Mobile". Supplement it with a "chrome" class.
@@ -3173,7 +3182,7 @@ if ( !trait_exists('Functions') ){
 		//Add additional classes to post wrappers
 		public function post_classes($classes){
 			if ( !$this->is_admin_page() ){
-				$this->timer('Nebula Post Classes');
+				$this->timer('Nebula Post Classes', 'start', '[Nebula] Markup');
 
 				global $post;
 				global $wp_query;
@@ -3245,7 +3254,7 @@ if ( !trait_exists('Functions') ){
 		//Note: Is this still needed? When commented out, the fields are still getting autocomplete attributes...
 		public function cf7_autocomplete_attribute($content){
 			if ( $this->is_minimal_mode() ){return $content;}
-			$this->timer('CF7 Autocomplete Attributes');
+			$this->timer('CF7 Autocomplete Attributes', 'start', '[Nebula] Search');
 
 			$content = $this->autocomplete_find_replace($content, array('name', 'full-name', 'fullname', 'your-name'), 'name');
 			$content = $this->autocomplete_find_replace($content, array('first-name', 'firstname'), 'given-name');
@@ -3654,6 +3663,16 @@ if ( !trait_exists('Functions') ){
 			$debug_info['nebula_os'] = $this->get_os();
 			$debug_info['nebula_browser'] = $this->get_browser('full');
 
+			//Geo Data (if available)
+			if ( !empty($this->get_geo_data('country')) ){
+				$debug_info['geo_country'] = $this->get_geo_data('country');
+				$debug_info['geo_region'] = $this->get_geo_data('region');
+				$debug_info['geo_city'] = $this->get_geo_data('city');
+				$debug_info['geo_metro_code'] = $this->get_geo_data('metro_code');
+				$debug_info['geo_postal_code'] = $this->get_geo_data('postal_code');
+				$debug_info['geo_coordinates'] = $this->get_geo_data('coordinates');
+			}
+
 			//Anonymized IP address
 			$debug_info['nebula_anonymized_ip'] = sanitize_text_field($this->get_ip_address());
 
@@ -3695,15 +3714,27 @@ if ( !trait_exists('Functions') ){
 		//Execute arbitrary code from the options
 		public function arbitrary_code_head(){
 			if ( $this->is_minimal_mode() ){return null;}
-			echo $this->get_option('arbitrary_code_head');
+
+			if ( $this->get_option('arbitrary_code_head') ){
+				echo $this->get_option('arbitrary_code_head');
+				do_action('qm/info', 'Arbitrary <head> code is being used (in Nebula Options)');
+			}
 		}
 		public function arbitrary_code_body(){
 			if ( $this->is_minimal_mode() ){return null;}
-			echo $this->get_option('arbitrary_code_body');
+
+			if ( $this->get_option('arbitrary_code_body') ){
+				echo $this->get_option('arbitrary_code_body');
+				do_action('qm/info', 'Arbitrary <body> code is being used (in Nebula Options)');
+			}
 		}
 		public function arbitrary_code_footer(){
 			if ( $this->is_minimal_mode() ){return null;}
-			echo $this->get_option('arbitrary_code_footer');
+
+			if ( $this->get_option('arbitrary_code_footer') ){
+				echo $this->get_option('arbitrary_code_footer');
+				do_action('qm/info', 'Arbitrary footer code is being used (in Nebula Options)');
+			}
 		}
 
 		//Embedded JavaScript functionality that will run independently of other JS assets
@@ -3768,12 +3799,13 @@ if ( !trait_exists('Functions') ){
 			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( $this->is_debug() ){
-				$this->timer('Flush Rewrite Rules');
+				$this->timer('Flush Rewrite Rules', 'start', '[Nebula] Caching');
 
 				flush_rewrite_rules(); //Note: this is an expensive operation and significantly increases server-response time!
 				$this->update_child_version_number();
 
 				$this->timer('Flush Rewrite Rules', 'end');
+				do_action('qm/info', 'Rewrite rules were flushed');
 			}
 		}
 	}

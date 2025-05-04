@@ -32,6 +32,9 @@ if ( !trait_exists('Analytics') ){
 			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( $this->option('observe_dnt') && $this->is_do_not_track() ){
+				$this->once('is_analytics_allowed', function(){
+					do_action('qm/info', 'Observing "Do Not Track" requests');
+				});
 				return false;
 			}
 
@@ -68,7 +71,13 @@ if ( !trait_exists('Analytics') ){
 				$cid = $contents['cid'];
 			}
 
-			return sanitize_text_field(esc_html($cid));
+			$parsed_cookie_value = sanitize_text_field(esc_html($cid));
+
+			$this->once('is_analytics_allowed', function($parsed_cookie_value){
+				do_action('qm/info', 'Parsed GA cookie: ' . $parsed_cookie_value);
+			}, $parsed_cookie_value);
+
+			return $parsed_cookie_value;
 		}
 
 		//Generate UUID v4 function (needed to generate a CID when one isn't available)

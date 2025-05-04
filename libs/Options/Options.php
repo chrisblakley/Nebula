@@ -62,6 +62,7 @@ if ( !trait_exists('Options') ){
 		public function update_option($option, $value){
 			if ( current_user_can('manage_options') ){
 				$nebula_options = get_option('nebula_options');
+
 				if ( empty($nebula_options[$option]) || $nebula_options[$option] !== $value ){
 					$nebula_options[$option] = $value;
 					update_option('nebula_options', $nebula_options);

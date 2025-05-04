@@ -183,6 +183,95 @@ if ( !trait_exists('Device') ){
 			return false;
 		}
 
+		//Get geolocation info from common server headers if available
+		//Note: many servers require the feature to be enabled before these headers are sent with requests
+		public function get_geo_data($datapoint){
+			$override = apply_filters('pre_nebula_get_geolocation', null, $datapoint);
+			if ( isset($override) ){return $override;}
+
+			if ( empty($datapoint) ){
+				return null;
+			}
+
+			//If specifically requesting lat/long data, call the other function
+			if ( preg_match('/coordinates|lat|long|lng/', strtolower($datapoint)) ){
+				return $this->get_geo_coordinates();
+			}
+
+			//Default headers, but allow other systems to modify this list
+			$headers = apply_filters('nebula_geolocation_headers', array(
+				'country' => array('HTTP_CF_IPCOUNTRY', 'GEOIP_COUNTRY_CODE', 'CloudFront-Viewer-Country'),
+				'region' => array('HTTP_CF_REGION', 'HTTP_CF_REGION_CODE', 'GEOIP_REGION_NAME'), //State
+				'city' => array('HTTP_CF_IPCITY', 'GEOIP_CITY'),
+				'metro_code' => array('HTTP_CF_METRO_CODE'), //Area code
+				'postal_code' => array('HTTP_CF_POSTAL_CODE', 'GEOIP_POSTAL_CODE'), //Zip code
+			));
+
+			if ( !empty($headers[$datapoint]) ){
+				//Normalize $_SERVER keys to lowercase with underscores
+				$normalized_server = array();
+				foreach ( $this->super->server as $header => $value ){
+					$normalized_header = strtolower(str_replace('-', '_', $header));
+					$normalized_server[$normalized_header] = $value;
+				}
+
+				//Normalize header keys and look them up
+				foreach ( $headers[$datapoint] as $header ){
+					$normalized_header = strtolower(str_replace('-', '_', $header));
+					if ( !empty($normalized_server[$normalized_header]) ){
+						return $normalized_server[$normalized_header];
+					}
+				}
+			}
+
+			return null;
+		}
+
+		//Get geo coordinates from server headers if available
+		public function get_geo_coordinates(){
+			$override = apply_filters('pre_nebula_get_geo_coordinates', null);
+			if ( isset($override) ){return $override;}
+
+			//Default headers for latitude and longitude, extendable via filter
+			$headers = apply_filters('nebula_geo_coordinate_headers', array(
+				'latitude' => array('HTTP_CF_IPLATITUDE'),
+				'longitude' => array('HTTP_CF_IPLONGITUDE'),
+			));
+
+			//Normalize $_SERVER keys
+			$normalized_server = array();
+			foreach ( $this->super->server as $key => $value ){
+				$normalized_key = strtolower(str_replace('-', '_', $key));
+				$normalized_server[$normalized_key] = $value;
+			}
+
+			//Try to find a matching latitude
+			$latitude = null;
+			foreach ( $headers['latitude'] as $lat_header ){
+				$normalized_header = strtolower(str_replace('-', '_', $lat_header));
+				if ( !empty($normalized_server[$normalized_header]) ){
+					$latitude = $normalized_server[$normalized_header];
+					break;
+				}
+			}
+
+			//Try to find a matching longitude
+			$longitude = null;
+			foreach ( $headers['longitude'] as $lng_header ){
+				$normalized_header = strtolower(str_replace('-', '_', $lng_header));
+				if ( !empty($normalized_server[$normalized_header]) ){
+					$longitude = $normalized_server[$normalized_header];
+					break;
+				}
+			}
+
+			if ( isset($latitude) && isset($longitude) ){
+				return $latitude . ', ' . $longitude;
+			}
+
+			return null;
+		}
+
 		//Check if this traffic is coming from an AI website
 		//Note: This is a helper function only until Google Analytics introduces an "Organic AI" default channel group
 		public function is_ai_channel(){

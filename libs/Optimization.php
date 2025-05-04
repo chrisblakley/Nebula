@@ -150,6 +150,10 @@ if ( !trait_exists('Optimization') ){
 		public function is_lite(){return $this->is_save_data();}
 		public function is_save_data(){
 			if ( isset($this->super->server['HTTP_SAVE_DATA']) && stristr($this->super->server['HTTP_SAVE_DATA'], 'on') !== false ){
+				$this->once('is_save_data', function(){
+					do_action('qm/info', 'User prefers to save data');
+				});
+
 				return true;
 			}
 
@@ -312,7 +316,7 @@ if ( !trait_exists('Optimization') ){
 		public function styles_early_hints_header(){
 			if ( $this->is_minimal_mode() ){return null;}
 			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
-				$timer_name = $this->timer('Early Hints Header (Styles)', 'start');
+				$timer_name = $this->timer('Early Hints Header (Styles)', 'start', '[Nebula] Assets');
 				global $wp_styles;
 
 				foreach ( $wp_styles->queue as $handle ){
@@ -329,7 +333,7 @@ if ( !trait_exists('Optimization') ){
 		public function scripts_early_hints_header(){
 			if ( $this->is_minimal_mode() ){return null;}
 			if ( !$this->is_admin_page(true, true) && $this->get_option('service_worker') ){ //Exclude admin, login, and Customizer pages
-				$timer_name = $this->timer('Early Hints Header (Scripts)', 'start');
+				$timer_name = $this->timer('Early Hints Header (Scripts)', 'start', '[Nebula] Assets');
 				global $wp_scripts;
 
 				foreach ( $wp_scripts->queue as $handle ){
@@ -357,6 +361,7 @@ if ( !trait_exists('Optimization') ){
 		//Set Server Timing header
 		public function server_timing_header(){
 			if ( $this->is_minimal_mode() ){return null;}
+
 			if ( $this->is_dev() || isset($this->super->get['timings']) ){ //Only output server timings for developers, or if timings query string is present
 				$this->finalize_timings();
 				$server_timing_header_string = 'Server-Timing: ';
@@ -643,8 +648,9 @@ if ( !trait_exists('Optimization') ){
 		//Scan the front-end styles and scripts to be able to deregister them from Nebula Options
 		public function scan_assets(){
 			if ( $this->is_minimal_mode() ){return null;}
+
 			if ( !is_admin() && current_user_can('manage_options') && (isset($this->super->get['nebula-scan']) || isset($this->super->get['sass']) || isset($this->super->get['debug']) || $this->get_option('audit_mode')) ){ //Only run on front-end for admin users. Also add a query string so this doesn't run every single pageload
-				$this->timer('Scan Assets');
+				$this->timer('Scan Assets', 'start', '[Nebula] Assets');
 
 				if ( isset($this->super->get['nebula-scan']) && $this->super->get['nebula-scan'] === 'reset' ){ //Use this to reset and re-scan from scratch
 					update_option('optimizable_registered_styles', array());
@@ -693,6 +699,9 @@ if ( !trait_exists('Optimization') ){
 				$all_registered_scripts = array_intersect_key($all_registered_scripts, array_unique(array_map('serialize', $all_registered_scripts))); //De-dupe the array
 				update_option('optimizable_registered_scripts', $all_registered_scripts);
 
+				$this->once('scan_assets', function(){
+					do_action('qm/info', 'Assets were scanned');
+				});
 				$this->timer('Scan Assets', 'end');
 			}
 		}
@@ -705,7 +714,7 @@ if ( !trait_exists('Optimization') ){
 
 			if ( !is_admin() ){
 				$current_action = current_action(); //Get the current WordPress action handle that was called (so we know which one we are "inside")
-				$timer_name = $this->timer('Advanced Dequeues (' . $current_action . ')');
+				$timer_name = $this->timer('Advanced Dequeues (' . $current_action . ')', 'start', '[Nebula] Assets');
 
 				$this->deregister('contact-form-7', 'style'); //Removing CF7 styles in favor of Bootstrap + Nebula
 				$this->deregister('wp-embed', 'script'); //WP Core WP-Embed - Override this only if embedding external WordPress posts into this WordPress site. Other oEmbeds are NOT AFFECTED by this!
@@ -902,7 +911,7 @@ if ( !trait_exists('Optimization') ){
 		public function embed_critical_styles(){
 			if ( $this->is_minimal_mode() ){return null;}
 			if ( $this->get_option('critical_css') ){
-				$this->timer('Embedding Critical CSS');
+				$this->timer('Embedding Critical CSS', 'start', '[Nebula] Assets');
 
 				$critical_css_files = apply_filters('nebula_critical_css', array(
 					get_template_directory() . '/assets/css/critical.css',

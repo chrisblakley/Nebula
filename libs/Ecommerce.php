@@ -10,7 +10,7 @@ if ( !trait_exists('Ecommerce') ){
 			if ( !is_customize_preview() ){
 				//Register this script without using it so that Woocommerce Google Analytics does not block the Nebula GA send_page_view.
 				add_action('wp_enqueue_scripts', function(){
-					wp_register_script('google-tag-manager', 'https://www.googletagmanager.com/gtag/js?id=' . esc_html(nebula()->get_option('ga_measurement_id')), array(), nebula()->child_version(), false); //Remember: This script is not actually used anywhere! This is only to prevent Woocommerce from sending its own page_view to GA4.
+					wp_register_script('google-tag-manager', 'https://www.googletagmanager.com/gtag/js?id=' . esc_html(nebula()->get_option('ga_measurement_id', '')), array(), nebula()->child_version(), false); //Remember: This script is not actually used anywhere! This is only to prevent Woocommerce from sending its own page_view to GA4.
 				}, 1);
 
 				add_action('after_setup_theme', array($this, 'theme_setup_ecommerce'));
@@ -316,17 +316,17 @@ if ( !trait_exists('Ecommerce') ){
 								"@type": "<?php echo $company_type; ?>",
 								"name": "<?php echo ( $this->get_option('site_owner') )? $this->get_option('site_owner') : get_bloginfo('name'); ?>",
 								"image": "<?php echo get_theme_file_uri('/assets/img/logo.png'); ?>",
-								"telephone": "+<?php echo $this->get_option('phone_number'); ?>",
+								"telephone": "+<?php echo $this->get_option('phone_number', ''); ?>",
 								<?php if ( $company_type === 'LocalBusiness' ): ?>
 									"priceRange": "",
 								<?php endif; ?>
 								"address": {
 									"@type": "PostalAddress",
-									"streetAddress": "<?php echo $this->get_option('street_address'); ?>",
-									"addressLocality": "<?php echo $this->get_option('locality'); ?>",
-									"addressRegion": "<?php echo $this->get_option('region'); ?>",
-									"postalCode": "<?php echo $this->get_option('postal_code'); ?>",
-									"addressCountry": "<?php echo $this->get_option('country_name'); ?>"
+									"streetAddress": "<?php echo $this->get_option('street_address', ''); ?>",
+									"addressLocality": "<?php echo $this->get_option('locality', ''); ?>",
+									"addressRegion": "<?php echo $this->get_option('region', ''); ?>",
+									"postalCode": "<?php echo $this->get_option('postal_code', ''); ?>",
+									"addressCountry": "<?php echo $this->get_option('country_name', ''); ?>"
 								}
 							}
 						}

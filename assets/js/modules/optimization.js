@@ -660,24 +660,38 @@ nebula.outputTimings = function(){
 			ttfbClass = 'essential text-caution';
 		}
 
-		jQuery('.nebula-ttfb-time').text(nebula.post.ttfb.toFixed(3)).addClass('updated');
+		jQuery('.nebula-ttfb-time').text(nebula.post.ttfb.toFixed(2)).addClass('updated');
 		jQuery('#nebula_ataglance .nebula-ttfb-time').parent().addClass(ttfbClass);
 	}
 
 	//If we have a timings object
+	var parentId = 'wp-admin-bar-nebula-timing-categories'; //ID of the parent node created in PHP
+
 	if ( nebula?.site?.timings ){
 		//If that object contains categories
-		if ( nebula.site.timings.categories ){
+		if ( nebula?.site?.timings?.categories ){
 			//Add timings to the Admin Bar
-			let parentId = 'wp-admin-bar-nebula-timing-categories'; //ID of the parent node created in PHP
 			if ( jQuery('#' + parentId).length && !jQuery('#' + parentId).hasClass('updated') ){
 				jQuery.each(nebula.site.timings.categories, function(label, timing){
+					let timingClass = '';
+					if ( timing >= 1 ){
+						timingClass = 'danger';
+					} else if ( timing >= 0.5 ){
+						timingClass = 'warning';
+					} else if ( timing < 0.1 ){
+						timingClass = 'ignorable';
+					}
+
+					let labelOutput = label.replace(/^(\[[^\]\s]+\])/, '<span class="group-name">$1</span>'); //If square brackets exist at the beginning of the string, wrap it in a span
+
 					//Add a sub-node
-					jQuery('#' + parentId).find('ul.ab-submenu').append('<li role="group" id="wp-admin-bar-nebula-timing-category-' + label.toLowerCase() + '"><div class="ab-item ab-empty-item" role="menuitem">' + label + ': <strong>' + timing.toFixed(3) + ' seconds</strong></div></li>');
+					jQuery('#' + parentId).find('ul.ab-submenu').append('<li id="wp-admin-bar-nebula-timing-category-' + nebula.sanitizeClassName(label) + '" class="nebula-timing-category-item ' + timingClass + '" role="group"><div class="ab-item ab-empty-item" role="menuitem">' + labelOutput + ': <strong>' + timing.toFixed(3) + ' seconds</strong></div></li>');
 				});
 			}
 		} else {
 			jQuery('#' + parentId).remove(); //Remove the parent node if no categories exist
 		}
+	} else {
+		jQuery('#' + parentId).remove(); //Remove the parent node if no categories exist
 	}
 };

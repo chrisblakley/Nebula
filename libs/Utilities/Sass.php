@@ -100,7 +100,7 @@ if ( !trait_exists('Sass') ){
 							if ( isset($this->super->get['sass']) || isset($this->super->get['scss']) ){
 								$force_all = true;
 								$this->sass_process_status = ( isset($this->super->get['sass']) )? 'All Sass files were processed forcefully via query string.' : $this->sass_process_status;
-								$this->clear_transients();
+								//$this->clear_transients(); //This increases load time when Sass is processed... do we absolutely need to so this? If not, just clear some individually with this: delete_transient('example_transient_name');
 								$this->add_log('Sass force re-process requested', 1); //Logging this one because it was specifically requested. The other conditions below are otherwise detected.
 							}
 
@@ -154,6 +154,13 @@ if ( !trait_exists('Sass') ){
 						}
 
 						$this->sass_process_status = ( !isset($this->super->get['sass']) && $this->was_sass_processed )? $this->sass_files_processed_count . ' Sass file(s) have been processed.' : $this->sass_process_status; //Show this status if Sass was processed but not explicitly forced. Otherwise use the existing status
+
+						if ( $this->sass_files_processed_count > 0 ){
+							do_action('qm/info', $this->sass_files_processed_count . ' Sass files were processed');
+							if ( !empty($this->sass_process_status) ){
+								do_action('qm/info', 'Sass status: ' . $this->sass_process_status);
+							}
+						}
 
 						if ( time()-$this->latest_scss_mtime >= MONTH_IN_SECONDS*3 ){ //If the last style.scss modification has not happened within 90 days disable Sass to optimize all future page loads (no need to check files at all)
 							$this->update_option('scss', 0); //Once Sass is disabled this way, a developer would need to re-enable it in Nebula Options.

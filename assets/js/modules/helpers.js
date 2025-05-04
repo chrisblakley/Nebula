@@ -564,7 +564,22 @@ nebula.help = function(message, path, usage=false){
 //This is only meant to be a temporary solution to allow for sorting the Query Monitor Timings table. Delete this as soon as possible.
 nebula.qmSortableHelper = function(){
 	if ( jQuery('#qm-timing').length ){
-		const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+		//Normalize cell values (particularly for the "Memory" column
+		const getCellValue = (tr, idx) => {
+			const cell = tr.children[idx];
+			if ( !cell ) return '';
+			let text = cell.innerText || cell.textContent || '';
+			text = text.trim().replace(/^~\s*/, ''); //Remove leading "~"
+			text = text.replace(/,/g, ''); //Remove commas
+
+			//If value ends in "kB", strip it and parse as float
+			if ( text.match(/^\d+(\.\d+)?\s*kB$/i) ){
+				return parseFloat(text.replace(/kB/i, '').trim());
+			}
+
+			return text; //Fallback to plain text
+		};
+
 		const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
 			v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
 		)(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
@@ -574,7 +589,14 @@ nebula.qmSortableHelper = function(){
 			jQuery(th).attr('style', 'font-weight: bold !important;');
 			const table = th.closest('table.qm-sortable');
 			const tbody = table.querySelector('tbody');
-			Array.from(tbody.querySelectorAll('tr')).sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc)).forEach((tr) => tbody.appendChild(tr) );
+			const idx = Array.from(th.parentNode.children).indexOf(th);
+			const rows = Array.from(tbody.querySelectorAll('tr')).filter(tr => tr.children.length > idx);
+			rows.sort(comparer(idx, this.asc = !this.asc)).forEach(tr => tbody.appendChild(tr));
+
+			//Recalculate zebra striping
+			rows.forEach((tr, i) => {
+				tr.classList.toggle('qm-odd', i%2 === 0);
+			});
 		})));
 	}
 };

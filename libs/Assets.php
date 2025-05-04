@@ -67,6 +67,9 @@ if ( !trait_exists('Assets') ){
 							true //HttpOnly (inaccessible to JavaScript)
 						);
 					}
+
+					do_action('qm/info', 'Session Referrer: ' . $this->referrer);
+					do_action('qm/info', 'Session Landing Page: ' . $this->landing_page);
 				} catch ( Exception $e ){
 					//Ignore errors
 				}
@@ -108,7 +111,7 @@ if ( !trait_exists('Assets') ){
 
 		//Build Nebula data object and output to the <head>
 		public function output_nebula_data(){
-			$this->timer('Output Nebula Data');
+			$this->timer('Output Nebula Data', 'start', '[Nebula] Markup');
 
 			global $wp_styles, $wp_scripts, $upload_dir;
 			$upload_dir = wp_upload_dir();
@@ -231,7 +234,7 @@ if ( !trait_exists('Assets') ){
 					'timings' => false,
 					'ecommerce' => false,
 				),
-				'post' => ( is_search() )? null : array( //Conditional prevents wrong ID being used on search results
+				'post' => ( is_search() )? array() : array( //Conditional prevents wrong ID being used on search results
 					'id' => get_the_id(),
 					'permalink' => get_the_permalink(),
 					'title' => urlencode(get_the_title()),
@@ -271,10 +274,15 @@ if ( !trait_exists('Assets') ){
 			}
 
 			//Check for session data
+			$session_utms = $this->utms();
+			if ( !empty($session_utms) ){
+				do_action('qm/info', 'Attribution (UTMs, etc.): ' . $session_utms);
+			}
+
 			$this->brain['session'] = array(
 				'ip' => $this->get_ip_address(),
 				'id' => $this->nebula_session_id(),
-				'utms' => htmlspecialchars_decode($this->utms()),
+				'utms' => htmlspecialchars_decode($session_utms),
 				'flags' => array(
 					'adblock' => false,
 				),

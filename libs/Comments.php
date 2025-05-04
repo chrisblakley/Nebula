@@ -76,7 +76,7 @@ trait Comments {
 	//Add Disqus to preconnect optimizations
 	public function disqus_preconnect($default_preconnects){
 		if ( is_single() && $this->get_option('comments') ){
-			$default_preconnects[] = '//' . $this->get_option('disqus_shortname') . '.disqus.com';
+			$default_preconnects[] = '//' . $this->get_option('disqus_shortname', '') . '.disqus.com';
 		}
 
 		return $default_preconnects;
@@ -86,8 +86,8 @@ trait Comments {
 	public function disqus_link($nebula_warnings){
 		$nebula_warnings['disqus'] = array(
 			'level' => 'info',
-			'description' => '<i class="fa-brands fa-fw fa-php"></i> You are using the Disqus commenting system. <a href="https://' . $this->get_option('disqus_shortname') . '.disqus.com/admin/moderate" target="_blank" rel="noopener">View the comment listings on Disqus &raquo;</a>',
-			'url' => 'https://' . $this->get_option('disqus_shortname') . '.disqus.com/admin/moderate',
+			'description' => '<i class="fa-brands fa-fw fa-php"></i> You are using the Disqus commenting system. <a href="https://' . $this->get_option('disqus_shortname', '') . '.disqus.com/admin/moderate" target="_blank" rel="noopener">View the comment listings on Disqus &raquo;</a>',
+			'url' => 'https://' . $this->get_option('disqus_shortname', '') . '.disqus.com/admin/moderate',
 			'meta' => array('target' => '_blank', 'rel' => 'noopener')
 		);
 

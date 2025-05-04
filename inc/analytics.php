@@ -30,6 +30,7 @@
 
 				if ( nebula()->is_dev() || nebula()->is_debug() ){
 					$pageview_properties['debug_mode'] = true; //Pageview property is correct (not user property) for developer traffic
+					do_action('qm/info', 'GA debug mode');
 				}
 
 				if ( nebula()->is_staff() || nebula()->is_internal_referrer() ){
@@ -124,6 +125,7 @@
 				//WPML Language
 				if ( defined('ICL_LANGUAGE_NAME') ){
 					$pageview_properties['wpml_language'] = ICL_LANGUAGE_NAME . ' (' . ICL_LANGUAGE_CODE . ')';
+					do_action('qm/info', 'WPML Language: ' . ICL_LANGUAGE_NAME . ' (' . ICL_LANGUAGE_CODE . ')');
 				}
 			?>
 

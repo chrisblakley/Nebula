@@ -280,7 +280,7 @@ if ( !trait_exists('Shortcodes') ){
 			extract(shortcode_atts(array("key" => '', "mode" => 'place', "q" => '', "center" => '', "origin" => '', "destination" => '', "waypoints" => '', "avoid" => '', "zoom" => '', "maptype" => 'roadmap', "language" => '', "region" => '', "width" => '100%', "height" => '350', "class" => '', "style" => ''), $atts));
 			$flags = $this->get_flags($atts);
 
-			$key ??= $this->get_option('google_browser_api_key');
+			$key ??= $this->get_option('google_browser_api_key', '');
 
 			if ( !empty($q) ){
 				$q = '&q=' . esc_url($q);

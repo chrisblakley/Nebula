@@ -74,13 +74,13 @@
 	<meta property="og:site_name" content="<?php echo get_bloginfo('name'); ?>" />
 
 	<meta property="business:contact_data:website" content="<?php echo home_url('/'); ?>" />
-	<meta property="business:contact_data:phone_number" content="+<?php echo esc_attr(nebula()->get_option('phone_number')); ?>" />
-	<meta property="business:contact_data:fax_number" content="+<?php echo esc_attr(nebula()->get_option('fax_number')); ?>" />
-	<meta property="business:contact_data:street_address" content="<?php echo esc_attr(nebula()->get_option('street_address')); ?>" />
-	<meta property="business:contact_data:locality" content="<?php echo esc_attr(nebula()->get_option('locality')); ?>" />
-	<meta property="business:contact_data:region" content="<?php echo esc_attr(nebula()->get_option('region')); ?>" />
-	<meta property="business:contact_data:postal_code" content="<?php echo esc_attr(nebula()->get_option('postal_code')); ?>" />
-	<meta property="business:contact_data:country_name" content="<?php echo esc_attr(nebula()->get_option('country_name')); ?>" />
+	<meta property="business:contact_data:phone_number" content="+<?php echo esc_attr(nebula()->get_option('phone_number', '')); ?>" />
+	<meta property="business:contact_data:fax_number" content="+<?php echo esc_attr(nebula()->get_option('fax_number', '')); ?>" />
+	<meta property="business:contact_data:street_address" content="<?php echo esc_attr(nebula()->get_option('street_address', '')); ?>" />
+	<meta property="business:contact_data:locality" content="<?php echo esc_attr(nebula()->get_option('locality', '')); ?>" />
+	<meta property="business:contact_data:region" content="<?php echo esc_attr(nebula()->get_option('region', '')); ?>" />
+	<meta property="business:contact_data:postal_code" content="<?php echo esc_attr(nebula()->get_option('postal_code', '')); ?>" />
+	<meta property="business:contact_data:country_name" content="<?php echo esc_attr(nebula()->get_option('country_name', '')); ?>" />
 
 	<?php if ( $company_type !== 'Organization' && $company_type !== 'Corporation' ): ?>
 		<?php if ( nebula()->has_business_hours() ): ?>
@@ -165,12 +165,12 @@
 <?php endif; ?>
 
 <?php //Local/Geolocation Metadata ?>
-<meta name="geo.placename" content="<?php echo esc_attr(nebula()->get_option('locality')); ?>, <?php echo esc_attr(nebula()->get_option('region')); ?>" />
-<meta name="geo.position" content="<?php echo esc_attr(nebula()->get_option('latitude')); ?>;<?php echo esc_attr(nebula()->get_option('longitude')); ?>" />
-<meta name="geo.region" content="<?php echo get_bloginfo('language'); ?>" />
-<meta name="ICBM" content="<?php echo esc_attr(nebula()->get_option('latitude')); ?>, <?php echo esc_attr(nebula()->get_option('longitude')); ?>" />
-<meta property="place:location:latitude" content="<?php echo esc_attr(nebula()->get_option('latitude')); ?>" />
-<meta property="place:location:longitude" content="<?php echo esc_attr(nebula()->get_option('longitude')); ?>" />
+<meta name="geo.placename" content="<?php echo esc_attr(nebula()->get_option('locality', '')); ?>, <?php echo esc_attr(nebula()->get_option('region', '')); ?>" />
+<meta name="geo.position" content="<?php echo esc_attr(nebula()->get_option('latitude', '')); ?>;<?php echo esc_attr(nebula()->get_option('longitude', '')); ?>" />
+<meta name="geo.region" content="<?php echo get_bloginfo('language', ''); ?>" />
+<meta name="ICBM" content="<?php echo esc_attr(nebula()->get_option('latitude', '')); ?>, <?php echo esc_attr(nebula()->get_option('longitude', '')); ?>" />
+<meta property="place:location:latitude" content="<?php echo esc_attr(nebula()->get_option('latitude', '')); ?>" />
+<meta property="place:location:longitude" content="<?php echo esc_attr(nebula()->get_option('longitude', '')); ?>" />
 
 <link rel="manifest" href="<?php echo esc_url(nebula()->manifest_json_location()); ?>" />
 <link rel="profile" href="https://gmpg.org/xfn/11" />
@@ -226,13 +226,13 @@
 		"url": "<?php echo home_url('/'); ?>",
 		"address": {
 			"@type": "PostalAddress",
-			"streetAddress": "<?php echo nebula()->get_option('street_address'); ?>",
-			"addressLocality": "<?php echo nebula()->get_option('locality'); ?>",
-			"addressRegion": "<?php echo nebula()->get_option('region'); ?>",
-			"postalCode": "<?php echo nebula()->get_option('postal_code'); ?>",
-			"addressCountry": "<?php echo nebula()->get_option('country_name'); ?>"
+			"streetAddress": "<?php echo nebula()->get_option('street_address', ''); ?>",
+			"addressLocality": "<?php echo nebula()->get_option('locality', ''); ?>",
+			"addressRegion": "<?php echo nebula()->get_option('region', ''); ?>",
+			"postalCode": "<?php echo nebula()->get_option('postal_code', ''); ?>",
+			"addressCountry": "<?php echo nebula()->get_option('country_name', ''); ?>"
 		},
-		"telephone": "+<?php echo nebula()->get_option('phone_number'); ?>",
+		"telephone": "+<?php echo nebula()->get_option('phone_number', ''); ?>",
 
 		<?php if ( nebula()->get_option('latitude') ): ?>
 			"geo": {<?php //SEMRush Warning: The property geo is not recognized by Schema.org vocabulary - maybe just for certain types? ?>
@@ -275,7 +275,7 @@
 				"url": "<?php echo home_url(); ?>/contact",
 			<?php endif; ?>
 
-			"email": "<?php echo nebula()->get_option('contact_email'); ?>",
+			"email": "<?php echo nebula()->get_option('contact_email', ''); ?>",
 			"contactType": "customer service"
 		},
 

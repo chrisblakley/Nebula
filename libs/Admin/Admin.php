@@ -659,14 +659,21 @@ if ( !trait_exists('Admin') ){
 				$ttfb_description = '';
 				if ( !empty($this->super->server['REQUEST_TIME_FLOAT']) ){
 					if ( !is_plugin_active('query-monitor/query-monitor.php') || $this->is_minimal_mode() ){ //If QM is not active or show it during minimal mode
-						$ttfb_description = ' <small>(<span class="nebula-ttfb-time">~' . number_format((microtime(true)-$this->super->server['REQUEST_TIME_FLOAT']), 3) . '</span>s)</small>'; //This subtracts current time from when PHP first started processing
+						$ttfb_description = ' <small>(<span class="nebula-ttfb-time">~' . number_format((microtime(true)-$this->super->server['REQUEST_TIME_FLOAT']), 2) . '</span>s)</small>'; //This subtracts current time from when PHP first started processing
 					}
 				}
 
 				//Create the main top-level Nebula admin bar node
+				$nebula_icon = 'fa-star role-other';
+				if ( $this->is_dev() ){
+					$nebula_icon = 'fa-user-astronaut role-dev';
+				} elseif ( $this->is_staff() ){
+					$nebula_icon = 'fa-satellite role-staff';
+				}
+
 				$wp_admin_bar->add_node(array(
 					'id' => 'nebula',
-					'title' => '<i class="nebula-admin-fa fa-solid fa-user-astronaut nebula-symbol"></i> Nebula' . $ttfb_description, //fa-user-astronaut fa-satellite fa-rocket
+					'title' => '<i class="nebula-admin-fa fa-solid ' . $nebula_icon . ' nebula-admin-bar-icon nebula-symbol"></i> Nebula' . $ttfb_description, //fa-user-astronaut fa-satellite fa-rocket
 					'href' => 'https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=admin_bar&utm_source=' . urlencode(site_url()) . '&utm_content=admin_bar_main',
 					'meta' => array(
 						'target' => '_blank',
@@ -934,21 +941,23 @@ if ( !trait_exists('Admin') ){
 					'href' => 'https://github.com/chrisblakley/Nebula/compare/main@{' . date('Y-m-d', $this->version('utc')) . '}...main',
 				));
 
-				$wp_admin_bar->add_node(array(
-					'parent' => 'nebula',
-					'id' => 'nebula-timing-categories',
-					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-stopwatch"></i> Timing Categories'
-				));
+				if ( is_array($this->server_timings) ){
+					$wp_admin_bar->add_node(array(
+						'parent' => 'nebula',
+						'id' => 'nebula-timing-categories',
+						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-stopwatch"></i> Timing Categories'
+					));
 
-				//This empty node ensures the submenu can open. There may be a better way to do this...
-				$wp_admin_bar->add_node(array(
-					'parent' => 'nebula-timing-categories',
-					'id' => 'nebula-timing-category-heading',
-					'title' => '<strong><i class="nebula-admin-fa fa-solid fa-fw fa-arrow-down-9-1"></i> Durations (Desc.)</strong>',
-					'meta' => array(
-						'title' => 'Manual timing groups. These are durations (not timestamps) of functionality using Nebula Timers',
-					)
-				));
+					//This empty node ensures the submenu can open. There may be a better way to do this...
+					$wp_admin_bar->add_node(array(
+						'parent' => 'nebula-timing-categories',
+						'id' => 'nebula-timing-category-heading',
+						'title' => '<strong><i class="nebula-admin-fa fa-solid fa-fw fa-arrow-down-9-1"></i> Durations (Desc.)</strong>',
+						'meta' => array(
+							'title' => 'Manual timing groups. These are durations (not timestamps) of functionality using Nebula Timers. Remember: Due to overlap, it is impossible to truly time individual functionality. These timings represent best-effort ballparks. Only manually tracked timings will appear here!',
+						)
+					));
+				}
 
 				//Documentation Links
 				$wp_admin_bar->add_node(array(
@@ -1226,6 +1235,7 @@ if ( !trait_exists('Admin') ){
 			}
 		}
 
+		//Admin Bar CSS
 		//Colorize Nebula warning nodes in the admin bar
 		public function admin_bar_warning_styles(){
 			if ( $this->is_minimal_mode() ){return null;}
@@ -1233,6 +1243,11 @@ if ( !trait_exists('Admin') ){
 			if ( is_admin_bar_showing() ){ ?>
 				<style type="text/css">
 					#wpadminbar {
+						#wp-admin-bar-root-default > li > .ab-item {transition: all 0.25s ease;
+							.ab-icon,
+							.ab-label {transition: all 0.25s ease;}
+						}
+
 						.nebula-admin-fa {font-family: "Font Awesome 6 Solid", "Font Awesome 6 Free", "Font Awesome 6 Pro"; font-weight: 900;
 							&.fa-brands {font-family: "Font Awesome 6 Brands", "Font Awesome 6 Free", "Font Awesome 6 Pro"; font-weight: 400;}
 						}
@@ -1241,9 +1256,14 @@ if ( !trait_exists('Admin') ){
 						.nebula-admin-light {font-size: 10px; color: #a0a5aa; color: rgba(240, 245, 250, 0.6); line-height: inherit;}
 
 						&:not(.mobile) {
-							.staff-developer & .nebula-symbol {
+							.nebula-admin-bar-icon,
+							.nebula-symbol {color: #a7aaad;
+								path {fill: #a7aaad;}
+							}
+
+							.nebula-symbol.role-dev {
 								/* color: #ff2362; */
-								background: linear-gradient(to right in oklch, #5b22e8, #ff2362);
+								background: linear-gradient(to right in oklch, #9622ed, #fa239e); /* Using midpoints of the Nebula colors so it isn't as harsh */
 								-webkit-background-clip: text;
 								-webkit-text-fill-color: transparent;
 								color: inherit;
@@ -1251,16 +1271,33 @@ if ( !trait_exists('Admin') ){
 								path {fill: #ff2362;}
 							}
 
-							.ab-top-menu > #wp-admin-bar-nebula.has-warning
-								> .ab-item {background: #dc3545;}
+							#wp-admin-bar-nebula {
+								> .ab-item {transition: all 0.5s ease;}
 
-								&.hover > .ab-item,
-								&:hover > .ab-item {background: maroon; color: #fff; transition: all 0.25s ease;}
+								&:hover > .ab-item,
+								&.hover > .ab-item {background: linear-gradient(to right in oklch, #5b22e8, #ff2362); color: #fff;
+									.nebula-symbol {color: #fff !important; -webkit-text-fill-color: #fff;
+										path {fill: #fff !important;}
+									}
+								}
+
+								small {font-size: 0.7rem !important;}
+								.nebula-ttfb-time {font-size: 0.7rem !important;}
 							}
 
 							#wp-admin-bar-nebula-timing-categories {
-								#wp-admin-bar-nebula-timing-category-heading {font-weight: bold !important; text-decoration: underline;}
+								#wp-admin-bar-nebula-timing-category-heading {font-weight: bold !important; text-decoration: underline;
+									> .ab-item {cursor: help;}
+								}
 								strong {font-weight: bold !important;}
+
+								.nebula-timing-category-item {
+									.group-name {opacity: 0.6;}
+
+									&.danger strong {color: #dc3545;}
+									&.warning strong {color: #b95e00;}
+									&.ignorable {opacity: 0.5;}
+								}
 							}
 
 							#wp-admin-bar-nebula-warnings {
@@ -1300,6 +1337,7 @@ if ( !trait_exists('Admin') ){
 			remove_action('wp_head', '_admin_bar_bump_cb');
 		}
 
+		//Embedded Admin Bar CSS
 		//Override some styles and add custom functionality
 		//Used on the front-end, but not in Admin area
 		public function admin_bar_style_script_overrides(){
@@ -1578,7 +1616,7 @@ if ( !trait_exists('Admin') ){
 			}
 
 			//CC all developer administrators as well.
-			$developer_domains = explode(',', preg_replace('/\s+/', '', $this->get_option('dev_email_domain')));
+			$developer_domains = explode(',', preg_replace('/\s+/', '', $this->get_option('dev_email_domain', '')));
 			$administrators = get_users(array('role' => 'administrator'));
 			foreach ( $administrators as $administrator ){
 				foreach ( $developer_domains as $developer_domain ){
@@ -1642,7 +1680,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				?>
-					<script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html($this->get_option('ga_measurement_id')); ?>"></script>
+					<script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html($this->get_option('ga_measurement_id', '')); ?>"></script>
 					<script>
 						window.dataLayer = window.dataLayer || [];
 						function gtag(){dataLayer.push(arguments);}
@@ -1655,7 +1693,7 @@ if ( !trait_exists('Admin') ){
 						nebula.pageviewProperties = <?php echo wp_json_encode(apply_filters('nebula_ga_pageview_properties', $pageview_properties)); //Allow other functions to modify the PHP pageview properties ?>;
 
 						gtag('set', 'user_properties', nebula.userProperties); //Apply the User Properties
-						gtag('config', '<?php echo esc_html($this->get_option('ga_measurement_id')); ?>', nebula.pageviewProperties); //This sends the page_view
+						gtag('config', '<?php echo esc_html($this->get_option('ga_measurement_id', '')); ?>', nebula.pageviewProperties); //This sends the page_view
 					</script>
 				<?php
 			}

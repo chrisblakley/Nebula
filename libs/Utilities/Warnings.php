@@ -17,7 +17,7 @@ if ( !trait_exists('Warnings') ){
 
 		//Determine the desired warning level
 		public function is_warning_level($needed, $actual=false){
-			$actual = ( !empty($actual) )? $actual : $this->get_option('warnings'); //Get the selected warning level from Nebula Options
+			$actual = ( !empty($actual) )? $actual : $this->get_option('warnings', false); //Get the selected warning level from Nebula Options
 
 			if ( $actual === 'off' ){ //If the site setting is off return false
 				return false;
@@ -79,7 +79,7 @@ if ( !trait_exists('Warnings') ){
 		public function check_warnings(){
 			if ( $this->is_minimal_mode() ){return null;}
 
-			if ( $this->is_ajax_request() ){
+			if ( $this->is_background_request() ){
 				return null;
 			}
 
@@ -595,6 +595,11 @@ if ( !trait_exists('Warnings') ){
 		//Add more advanced and resource-intensive warnings to the Nebula check when requested (either via Audit Mode or enabled in Nebula Options)
 		public function advanced_warnings($nebula_warnings){
 			if ( $this->is_minimal_mode() ){return null;}
+
+			if ( $this->is_background_request() ){
+				return null;
+			}
+
 			$this->timer('Advanced Warnings', 'start', '[Nebula] Warnings');
 
 			//Only check these when auditing (not on all pageviews) to prevent undesired server load

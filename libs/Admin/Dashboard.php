@@ -834,7 +834,7 @@ if ( !trait_exists('Dashboard') ){
 						$class_15m = 'text-caution';
 					}
 
-					echo '<li title="Average number of processes waiting for CPU (higher = busier). Caution thresholds depend on the amount of CPU cores (which can be set with a Nebula hook)."><i class="fa-solid fa-fw fa-network-wired"></i> Load Avg: <span class="' . $class_1m . '" title="1 minute"><strong>' . round($load_1m, 2) . '</strong> <em>(1 min)</em></span>, <span class="' . $class_5m . '" title="5 minutes"><strong>' . round($load_5m, 2) . '</strong> <em>(5 min)</em></span>, <span class="' . $class_15m . '" title="15 minutes"><strong>' . round($load_15m, 2) . '</strong> <em>(15 min)</em></span></li>';
+					echo '<li title="Average number of processes waiting for CPU (higher = busier). Caution thresholds depend on the amount of CPU cores (which can be set with a Nebula hook)."><i class="fa-solid fa-fw fa-network-wired"></i> Load Avg: <span class="' . $class_1m . '" title="1 minute"><strong>' . number_format($load_1m, 2) . '</strong> <em>(1 min)</em></span>, <span class="' . $class_5m . '" title="5 minutes"><strong>' . number_format($load_5m, 2) . '</strong> <em>(5 min)</em></span>, <span class="' . $class_15m . '" title="15 minutes"><strong>' . number_format($load_15m, 2) . '</strong> <em>(15 min)</em></span></li>';
 				}
 			}
 
@@ -1878,10 +1878,10 @@ if ( !trait_exists('Dashboard') ){
 
 		public function dashboard_nebula_github(){
 			$this->timer('Nebula Companion GitHub Dashboard', 'start', '[Nebula] Dashboard Metaboxes');
-			echo '<p><a href="' . $this->get_option('github_url') . '" target="_blank">GitHub Repository &raquo;</a></p>';
+			echo '<p><a href="' . $this->get_option('github_url', '') . '" target="_blank">GitHub Repository &raquo;</a></p>';
 
-			$repo_name = str_replace('https://github.com/', '', $this->get_option('github_url'));
-			$github_personal_access_token = $this->get_option('github_pat');
+			$repo_name = str_replace('https://github.com/', '', $this->get_option('github_url', ''));
+			$github_personal_access_token = $this->get_option('github_pat', '');
 
 			//Commits
 			$github_commit_json = get_transient('nebula_github_commits');
@@ -1910,8 +1910,8 @@ if ( !trait_exists('Dashboard') ){
 						If this is a private repo, the <strong>Client ID</strong> and <strong>Client Secret</strong> from your GitHub app must be added in <a href="themes.php?page=nebula_options&tab=functions&option=comments">Nebula Options</a> to retrieve issues.
 					</p>
 					<p>
-						<a href="<?php echo $this->get_option('github_url'); ?>/commits/main" target="_blank">Commits &raquo;</a><br />
-						<a href="<?php echo $this->get_option('github_url'); ?>/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">Issues &raquo;</a><br />
+						<a href="<?php echo $this->get_option('github_url', ''); ?>/commits/main" target="_blank">Commits &raquo;</a><br />
+						<a href="<?php echo $this->get_option('github_url', ''); ?>/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">Issues &raquo;</a><br />
 					</p>
 				<?php
 				return null;
@@ -1930,7 +1930,7 @@ if ( !trait_exists('Dashboard') ){
 				</p>';
 			}
 
-			echo '<p><small><a href="' . $this->get_option('github_url') . '/commits/main" target="_blank">View all commits &raquo;</a></small></p>';
+			echo '<p><small><a href="' . $this->get_option('github_url', '') . '/commits/main" target="_blank">View all commits &raquo;</a></small></p>';
 			echo '</div>';
 
 			//Issues and Discussions
@@ -2003,7 +2003,7 @@ if ( !trait_exists('Dashboard') ){
 				echo '<p>No issues or discussions found.</p>';
 			}
 
-			echo '<p><small>View all <a href="' . $this->get_option('github_url') . '/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">issues</a>, <a href="' . $this->get_option('github_url') . '/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc" target="_blank">pull requests</a>, or <a href="' . $this->get_option('github_url') . '/discussions" target="_blank">discussions &raquo;</a></small></p>';
+			echo '<p><small>View all <a href="' . $this->get_option('github_url', '') . '/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">issues</a>, <a href="' . $this->get_option('github_url', '') . '/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc" target="_blank">pull requests</a>, or <a href="' . $this->get_option('github_url', '') . '/discussions" target="_blank">discussions &raquo;</a></small></p>';
 			echo '</div></div>';
 			$this->timer('Nebula Companion GitHub Dashboard', 'end');
 		}
@@ -2021,7 +2021,7 @@ if ( !trait_exists('Dashboard') ){
 
 			$hubspot_contacts_json = $this->transient('nebula_hubspot_contacts', function(){
 				$requested_properties = '&property=' . implode('&property=', apply_filters('nebula_hubspot_metabox_properties', array('firstname', 'lastname', 'full_name', 'email', 'createdate')));
-				$response = $this->remote_get('https://api.hubapi.com/contacts/v1/lists/all/contacts/recent?hapikey=' . $this->get_option('hubspot_api') . '&count=4' . $requested_properties);
+				$response = $this->remote_get('https://api.hubapi.com/contacts/v1/lists/all/contacts/recent?hapikey=' . $this->get_option('hubspot_api', '') . '&count=4' . $requested_properties);
 				if ( is_wp_error($response) ){
 					return null;
 				}
@@ -2083,7 +2083,7 @@ if ( !trait_exists('Dashboard') ){
 				echo '<p><small>Hubspot contacts unavailable.</small></p>';
 			}
 
-			echo '<p><small><a href="https://app.hubspot.com/sales/' . $this->get_option('hubspot_portal') . '/contacts/list/view/all/" target="_blank">View on Hubspot &raquo;</a></small></p>';
+			echo '<p><small><a href="https://app.hubspot.com/sales/' . $this->get_option('hubspot_portal', '') . '/contacts/list/view/all/" target="_blank">View on Hubspot &raquo;</a></small></p>';
 			$this->timer('Nebula Hubspot Dashboard Metabox', 'end');
 		}
 	}

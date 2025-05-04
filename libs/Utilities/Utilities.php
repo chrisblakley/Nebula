@@ -38,30 +38,50 @@ if ( !trait_exists('Utilities') ){
 			}
 		}
 
+		//Memoize functionality so it runs only once per unique key during the current request
+		public function once($unique_id, $callback, ...$args){
+			static $called = array();
+
+			if ( !isset($called[$unique_id]) ){
+				$called[$unique_id] = true;
+				$callback(...$args);
+			}
+		}
+
 		//Attempt to get the most accurate IP address from the visitor
 		public function get_ip_address($anonymize=true){
-			//This will get the first valid IP of the first matching header from this array
+			static $memoized = array(); //Prepare to memoize the output so it only has to be calculated once or twice (depending on anonymization)
+			$memoize_key = ( $anonymize )? 'anonymized' : 'full';
+			if ( array_key_exists($memoize_key, $memoized) ){
+				return $memoized[$memoize_key];
+			}
+
 			$ip_keys = array(
-				'HTTP_CF_CONNECTING_IP', //Set by Cloudflare to show the real client IP (not Cloudflare's proxy IP)
-				'HTTP_X_REAL_IP', //Used by some proxies (e.g. Nginx) to pass the real IP
-				'HTTP_CLIENT_IP', //Can be set by client/proxy; easily spoofed
-				'HTTP_X_FORWARDED_FOR', //Common proxy header; may include multiple IPs (first is original)
-				'HTTP_X_FORWARDED', //Less common variant of X-Forwarded-For
-				'HTTP_X_CLUSTER_CLIENT_IP', //Used by some load balancers (such as AWS Elastic Load Balancer)
-				'HTTP_FORWARDED_FOR', //Non-standard version of Forwarded header (rare)
-				'HTTP_FORWARDED', //Standardized header; format: "for=192.0.2.60; proto=http; by=203.0.113.43"
-				'REMOTE_ADDR' //IP address from direct connection (e.g. last proxy or client)
+				'HTTP_CF_CONNECTING_IP',
+				'HTTP_X_REAL_IP',
+				'HTTP_CLIENT_IP',
+				'HTTP_X_FORWARDED_FOR',
+				'HTTP_X_FORWARDED',
+				'HTTP_X_CLUSTER_CLIENT_IP',
+				'HTTP_FORWARDED_FOR',
+				'HTTP_FORWARDED',
+				'REMOTE_ADDR'
 			);
 
-			$server = array_change_key_case($this->super->server, CASE_UPPER); //Normalize key casing
+			$server = array_change_key_case($this->super->server, CASE_UPPER);
 
-			foreach ( $ip_keys as $key ){
-				if ( array_key_exists($key, $this->super->server) === true ){
-					foreach ( explode(',', $this->super->server[$key]) as $ip ){
+			foreach ( $ip_keys as $ip_key ){
+				if ( array_key_exists($ip_key, $server) ){
+					foreach ( explode(',', $server[$ip_key]) as $ip ){
 						$ip = trim($ip);
 
-						if ( filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) ){ //Only accept valid, public IPs
-							return ( !empty($anonymize) )? wp_privacy_anonymize_ip($ip) : $ip; //Return the exact or anonymized IP address
+						if ( filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) ){
+							$this->once('get_ip_address', function($ip_key){
+								do_action('qm/info', $ip_key . ' was used to determine IP address');
+							}, $ip_key);
+
+							$memoized[$memoize_key] = ( !empty($anonymize) )? wp_privacy_anonymize_ip($ip) : $ip;
+							return $memoized[$memoize_key];
 						}
 					}
 				}
@@ -81,6 +101,7 @@ if ( !trait_exists('Utilities') ){
 				return true;
 			}
 
+			do_action('qm/warning', 'Nebula was not detected as the active theme');
 			return false;
 		}
 
@@ -155,6 +176,7 @@ if ( !trait_exists('Utilities') ){
 			//do_action('qm/info', 'Nebula Session ID: ' . $session_id);
 			wp_cache_set('nebula_session_id', $session_id, $cache_group); //Store in object cache grouped by the unique ID to prevent interference
 			$this->timer($timer_name, 'end');
+			do_action('qm/info', 'Nebula Session ID: ' . $session_id);
 			return sanitize_text_field($session_id);
 		}
 
@@ -311,6 +333,10 @@ if ( !trait_exists('Utilities') ){
 					$other_internal_domains = explode(',', $other_internal_domains);
 					foreach ( $other_internal_domains as $other_internal_domain ){
 						if ( str_contains($full_referrer, trim($other_internal_domain)) ){
+							$this->once('is_internal_referrer', function(){
+								do_action('qm/info', 'The referrer (' . $full_referrer . ') is an internal domain (' . $other_internal_domain . ')');
+							});
+
 							return true;
 						}
 					}
@@ -348,6 +374,10 @@ if ( !trait_exists('Utilities') ){
 				}
 			}
 
+			$this->once('user_role', function($usertype, $staff){
+				do_action('qm/info', 'User Role: ' . $usertype . $staff);
+			}, $usertype, $staff);
+
 			return $usertype . $staff;
 		}
 
@@ -373,10 +403,13 @@ if ( !trait_exists('Utilities') ){
 					if ( $this->is_dev($very_strict) || $this->is_client($very_strict) ){
 						return true;
 					}
+
 					return false;
 				}
+
 				return true;
 			}
+
 			return false;
 		}
 
@@ -385,6 +418,10 @@ if ( !trait_exists('Utilities') ){
 		public function is_minimal_mode(){
 			if ( $this->is_dev() ){ //Minimal Mode is only available to developers
 				if ( isset($this->super->get['minimal']) ){
+					$this->once('is_minimal_mode', function(){
+						do_action('qm/info', 'Minimal Mode is active (Nebula will run only bare minimum functionality)');
+					});
+
 					return true;
 				}
 			}
@@ -397,6 +434,10 @@ if ( !trait_exists('Utilities') ){
 		public function is_safe_mode(){
 			//Check if nebula-safe-mode.php is active
 			if ( file_exists(WPMU_PLUGIN_DIR . '/nebula-safe-mode.php') ){
+				$this->once('is_safe_mode', function(){
+					do_action('qm/info', 'Safe Mode is active');
+				});
+
 				return true;
 			}
 
@@ -417,6 +458,10 @@ if ( !trait_exists('Utilities') ){
 
 			if ( $this->get_option('audit_mode') || isset($this->super->get['audit']) ){
 				if ( current_user_can('manage_options') || $this->is_dev() || $this->is_client() ){
+					$this->once('is_auditing', function(){
+						do_action('qm/info', 'Audit Mode is active');
+					});
+
 					return true;
 				}
 			}
@@ -456,11 +501,17 @@ if ( !trait_exists('Utilities') ){
 
 		//Check if the current page loaded is a tagged campaign (UTMs, etc.)
 		public function is_campaign_page($url=false){
+			if ( $this->is_background_request() ){return false;}
+
 			$query_string = ( !empty($url) )? $url : $this->url_components('query'); //Use the provided URL otherwise check just the query string
 			$notable_tags = array('utm_', 'fbclid', 'gclid', 'gclsrc', 'dclid', 'gbraid', 'wbraid', 'mc_eid', '_hsenc', 'vero_id', 'mkt_tok');
 
 			foreach ( $notable_tags as $tag ){
 				if ( str_contains(strtolower($query_string), $tag) ){ //If UTM parameters exist
+					$this->once('is_campaign_page', function(){
+						do_action('qm/info', 'Campaign query parameters exist!');
+					});
+
 					return true; //This is a tagged campaign page (return true as soon as any match)
 				}
 			}
@@ -809,6 +860,8 @@ if ( !trait_exists('Utilities') ){
 
 			$data = get_transient($name);
 			if ( !empty($fresh) || empty($data) || $this->is_debug() ){
+				$this->timer('Transient Re-Processing (' . $name . ')', 'start', '[Nebula] Transient Re-Processing'); //Note data processed that is usually "saved" by transients. This only *only* captures timing from functionality using this Nebula transient function.
+
 				$data = wp_cache_get($name);
 				if ( empty($data) ){ //This does not get a "fresh" option because we always only want it to run once per load
 					if ( is_string($function) ){
@@ -818,14 +871,18 @@ if ( !trait_exists('Utilities') ){
 					}
 
 					if ( is_null($data) ){
+						$this->timer('Transient Re-Processing (' . $name . ')', 'end');
+						do_action('qm/info', 'Transient Re-Processing Skipped (' . $name . ')');
 						return null; //If the function does not return, do not store anything in the cache
 					}
 
 					wp_cache_set($name, $data); //Set the object cache (memory for multiple calls during this current load)
 				}
 
-				do_action('qm/info', 'Transient Updated: ' . $name);
 				set_transient($name, $data, $expiration); //Set the transient (DB to speed up future loads)
+
+				$this->timer('Transient Re-Processing (' . $name . ')', 'end');
+				do_action('qm/info', 'Transient Re-Processed (' . $name . ')');
 			}
 
 			return $data;
@@ -1093,7 +1150,7 @@ if ( !trait_exists('Utilities') ){
 				return false;
 			}
 
-			$timer_name = $this->timer('Is Available (' . $url . ')', 'start', '[Nebula] Is Available');
+			$timer_name = $this->timer('Is Available (' . $url . ')', 'start', '[Nebula] Remote Requests');
 			$hostname = str_replace('.', '_', $this->url_components('hostname', $url)); //The hostname label for transients
 
 			if ( $this->is_transients_enabled() ){
@@ -1156,7 +1213,7 @@ if ( !trait_exists('Utilities') ){
 				return new WP_Error('broke', 'Requested URL is either empty or missing acceptable protocol.');
 			}
 
-			$timer_name = $this->timer('Remote Get (' . $url . ')', 'start', '[Nebula] Remote Get');
+			$timer_name = $this->timer('Remote Get (' . $url . ')', 'start', '[Nebula] Remote Requests');
 			$hostname = str_replace('.', '_', $this->url_components('hostname', $url));
 
 			//Check if the resource was unavailable in the last 10 minutes
@@ -1292,6 +1349,20 @@ if ( !trait_exists('Utilities') ){
 		//To add time to an entry, simply use the action 'end' on the same unique_id again
 		public function timer($unique_id, $action='start', $category=false){
 			if ( $this->is_minimal_mode() ){return null;}
+			if ( $this->is_background_request() ){return null;}
+
+			//Ignore all timers for non-Developers
+			if ( !$this->is_dev() ){
+				if ( is_plugin_active('query-monitor/query-monitor.php') && !current_user_can('view_query_monitor') ){
+					return null;
+				}
+			}
+
+			//If the timer array is getting too large, no more new timings
+			if ( is_array($this->server_timings) && count($this->server_timings) > 1000 ){
+				$this->server_timings = false; //Disable future timings
+				return null;
+			}
 
 			//Unique ID is required
 			if ( empty($unique_id) || in_array(strtolower($unique_id), array('start', 'stop', 'end')) ){
@@ -1312,6 +1383,11 @@ if ( !trait_exists('Utilities') ){
 					'category' => $category
 				);
 
+				//Add to array of this category (if categorization is used)
+				if ( !empty($category) ){
+					$this->server_timings['categories'][$category][] = 0; //Start with an empty time in this category to create it
+				}
+
 				//Immediately stop one-off timing marks
 				if ( $action === 'mark' || $action === 'once' ){
 					//Start and stop the Query Monitor timing so it appears without error
@@ -1320,11 +1396,6 @@ if ( !trait_exists('Utilities') ){
 					$this->server_timings[$unique_id]['end'] = $this->server_timings[$unique_id]['start']+0.001;
 					$this->server_timings[$unique_id]['time'] = 0.001; //Force non-empty time of 1 millisecond
 					$this->server_timings[$unique_id]['active'] = false;
-
-					//Add to array of this category (if categorization is used)
-					if ( !empty($category) ){
-						$this->server_timings['categories'][$category][] = 0.001; //Force non-empty time of 1 millisecond
-					}
 				}
 
 				return $unique_id; //Return the unique ID in case it was changed so that the 'end' call can know what to use
@@ -1338,6 +1409,8 @@ if ( !trait_exists('Utilities') ){
 
 					//Add to array of this category (if categorization is used)
 					$this_category = $this->server_timings[$unique_id]['category'];
+
+					//Add this individual time to the category if it exists
 					if ( !empty($this_category) ){
 						$this->server_timings['categories'][$this_category][] = $this->server_timings[$unique_id]['time'];
 					}
@@ -1352,6 +1425,12 @@ if ( !trait_exists('Utilities') ){
 		//Add category timings together, and add more times to the server timings array
 		public function finalize_timings(){
 			if ( $this->is_minimal_mode() ){return null;}
+			if ( $this->is_background_request() ){return null;}
+
+			//If the timer has been disabled, stop processing
+			if ( !is_array($this->server_timings) ){
+				return null;
+			}
 
 			//Add category times together
 			if ( !empty($this->server_timings['categories']) ){
@@ -1768,7 +1847,7 @@ if ( !trait_exists('Utilities') ){
 					if ( !empty($properties_created) ){
 						?>
 						<div class="updated notice notice-warning">
-							<p><strong>Nebula Hubspot properties created!</strong> <?php echo count($properties_created); ?> contact properties were created in Hubspot. Be sure to <a href="https://app.hubspot.com/property-settings/<?php echo $this->get_option('hubspot_portal'); ?>/contact" target="_blank">manually create any needed properties</a> specific to this website.</p>
+							<p><strong>Nebula Hubspot properties created!</strong> <?php echo count($properties_created); ?> contact properties were created in Hubspot. Be sure to <a href="https://app.hubspot.com/property-settings/<?php echo $this->get_option('hubspot_portal', ''); ?>/contact" target="_blank">manually create any needed properties</a> specific to this website.</p>
 							<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
 						</div>
 						<?php
@@ -1776,7 +1855,7 @@ if ( !trait_exists('Utilities') ){
 				} else {
 					?>
 					<div class="updated notice notice-warning">
-						<p><strong>Hubspot API Key Missing!</strong> <a href="https://app.hubspot.com/hapikeys">Get your API Key</a> then <a href="themes.php?page=nebula_options&tab=apis&option=hubspot_api">enter it here</a> and re-save Nebula Options, or <a href="https://app.hubspot.com/property-settings/<?php echo $this->get_option('hubspot_portal'); ?>/contact" target="_blank">manually create contact properties</a>.</p>
+						<p><strong>Hubspot API Key Missing!</strong> <a href="https://app.hubspot.com/hapikeys">Get your API Key</a> then <a href="themes.php?page=nebula_options&tab=apis&option=hubspot_api">enter it here</a> and re-save Nebula Options, or <a href="https://app.hubspot.com/property-settings/<?php echo $this->get_option('hubspot_portal', ''); ?>/contact" target="_blank">manually create contact properties</a>.</p>
 						<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
 					</div>
 
@@ -1806,7 +1885,7 @@ if ( !trait_exists('Utilities') ){
 			if ( $this->is_minimal_mode() ){return null;}
 
 			$sep = ( !str_contains($url, '?') )? '?' : '&';
-			$get_url = $url . $sep . 'hapikey=' . $this->get_option('hubspot_api');
+			$get_url = $url . $sep . 'hapikey=' . $this->get_option('hubspot_api', '');
 
 			if ( !empty($content) ){
 				$response = wp_remote_post($get_url, array(
