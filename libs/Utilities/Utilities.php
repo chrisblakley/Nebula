@@ -515,9 +515,10 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			//If this constant is defined as true, the WP object cache and transients will never be used!
-			if ( defined('DONOTCACHEPAGE') && !empty(DONOTCACHEPAGE) ){
-				return true;
-			}
+			//Note: Query Monitor will always define this as true for website admins, so I am disabling this part of the check.
+			// if ( defined('DONOTCACHEPAGE') && !empty(DONOTCACHEPAGE) ){
+			// 	return true;
+			// }
 
 			return false;
 		}
@@ -894,7 +895,7 @@ if ( !trait_exists('Utilities') ){
 			if ( is_int($parameters) ){
 				$fresh = $expiration;
 				$expiration = $parameters;
-				$parameters = array();
+				$parameters = array(); //And reset the $parameters variable to be an empty array
 			}
 
 			//If we are skipping the object cache and transients
@@ -919,23 +920,23 @@ if ( !trait_exists('Utilities') ){
 
 				//Try object cache again inside this block to avoid reprocessing if another process already set it this load (so no checking $fresh here)
 				$data = wp_cache_get($name);
-				if ( $data === false ){
+				if ( $data === false ){ //This does not get a "fresh" option because we always only want it to run once per load
 					if ( is_string($function) ){
-						$data = call_user_func($function, $parameters);
+						$data = call_user_func($function, $parameters); //If the function name is passed as a string, call it
 					} else {
-						$data = $function($parameters);
+						$data = $function($parameters); //Otherwise, assume the function is passed as an actual function
 					}
 
 					if ( is_null($data) ){
 						$this->timer('Transient Re-Processing (' . $name . ')', 'end');
 						do_action('qm/info', 'Transient Re-Processing Skipped (' . $name . ')');
-						return null;
+						return null; //If the function does not return, do not store anything in the cache
 					}
 
-					wp_cache_set($name, $data);
+					wp_cache_set($name, $data); //Set the object cache for multiple calls during this current load
 				}
 
-				set_transient($name, $data, $expiration);
+				set_transient($name, $data, $expiration); //Set the transient now
 				$this->timer('Transient Re-Processing (' . $name . ')', 'end');
 				do_action('qm/info', 'Transient Re-Processed (' . $name . ')');
 			}
