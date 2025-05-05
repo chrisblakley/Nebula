@@ -198,6 +198,17 @@ if ( !trait_exists('Device') ){
 				return $this->get_geo_coordinates();
 			}
 
+			//Aliases
+			if ( str_contains($datapoint, 'state') || str_contains($datapoint, 'province') ){
+				$datapoint = 'region';
+			}
+			if ( str_contains($datapoint, 'metro') || str_contains($datapoint, 'area') ){
+				$datapoint = 'metro_code';
+			}
+			if ( str_contains($datapoint, 'postal') || str_contains($datapoint, 'zip') ){
+				$datapoint = 'postal_code';
+			}
+
 			//Default headers, but allow other systems to modify this list
 			$headers = apply_filters('nebula_geolocation_headers', array(
 				'country' => array('HTTP_CF_IPCOUNTRY', 'GEOIP_COUNTRY_CODE', 'CloudFront-Viewer-Country'),

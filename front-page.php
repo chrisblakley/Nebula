@@ -12,7 +12,7 @@
 	get_header();
 ?>
 
-<?php nebula()->timer('Front Page Template'); ?>
+<?php nebula()->timer('Front Page Template', 'start', '[Nebula] Templating'); ?>
 <?php if ( get_theme_mod('nebula_hero', true) ): ?>
 	<section id="hero-section" class="nebulashadow inner-top inner-bottom" aria-label="hero">
 		<?php if ( get_theme_mod('nebula_hero_overlay_color') || get_theme_mod('nebula_hero_overlay_opacity') ): ?>

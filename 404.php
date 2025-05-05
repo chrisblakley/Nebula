@@ -15,7 +15,7 @@
 <?php get_template_part('inc/headercontent'); ?>
 <?php get_template_part('inc/nebula_drawer'); ?>
 
-<?php nebula()->timer('404 Template'); ?>
+<?php nebula()->timer('404 Template', 'start', '[Nebula] Templating'); ?>
 <main id="content-section" role="main">
 	<div class="container">
 		<div class="row">

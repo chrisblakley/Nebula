@@ -9,7 +9,7 @@
 		<div id="fb-root"></div>
 		<?php do_action('nebula_body_open'); ?>
 
-		<?php nebula()->timer('Header Template'); ?>
+		<?php nebula()->timer('Header Template', 'start', '[Nebula] Templating'); ?>
 		<header id="header-section">
 			<a id="skip-to-content-link" class="visually-hidden-focusable" href="#content-section">Skip to Content</a>
 
@@ -38,7 +38,7 @@
 				</div>
 
 				<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas-menu">
-					<?php nebula()->timer('Offcanvas Menu'); ?>
+					<?php nebula()->timer('Offcanvas Menu', 'start', '[Nebula] Templating'); ?>
 					<div class="offcanvas-header">
 						<h5 class="offcanvas-title" id="offcanvas-menu-label"><?php echo apply_filters('nebula_offcanvas_menu_title', __('Menu', 'nebula')); ?></h5>
 						<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -91,7 +91,7 @@
 			<?php endif; ?>
 
 			<?php if ( is_active_sidebar('header-widget-area') ): ?>
-				<?php nebula()->timer('Header Widgets'); ?>
+				<?php nebula()->timer('Header Widgets', 'start', '[Nebula] Templating'); ?>
 				<div id="header-widget-area">
 					<div class="container">
 						<?php dynamic_sidebar('header-widget-area'); ?>

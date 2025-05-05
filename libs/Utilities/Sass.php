@@ -136,8 +136,6 @@ if ( !trait_exists('Sass') ){
 							}
 						}
 
-						$this->update_data('need_sass_compile', 'true'); //Set this to true as we are compiling so we can use it as a flag to run some thing only once.
-
 						global $sass_errors;
 						$sass_errors = array();
 
@@ -386,8 +384,8 @@ if ( !trait_exists('Sass') ){
 
 			$scss .= PHP_EOL . '/* ' . date('l, F j, Y \a\t g:i:s A', time()) . ' */'; //Add a last processed timestamp to the end of the CSS file
 
-			//Run these once
-			if ( $this->get_data('need_sass_compile') != 'false' ){
+			//Run the Sass post-compile functionality only once
+			$this->once('nebula_sass_post_compile', function(){
 				do_action('nebula_scss_post_compile_once');
 
 				$this->update_data('scss_last_processed', time());
@@ -399,7 +397,7 @@ if ( !trait_exists('Sass') ){
 						$this->update_sw_js();
 					}
 				}
-			}
+			});
 
 			return $scss;
 		}

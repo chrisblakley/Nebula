@@ -12,7 +12,7 @@
 	get_header();
 ?>
 
-<?php nebula()->timer('Index Template'); ?>
+<?php nebula()->timer('Index Template', 'start', '[Nebula] Templating'); ?>
 <section id="bigheadingcon" role="complementary">
 	<div class="custom-color-overlay"></div>
 

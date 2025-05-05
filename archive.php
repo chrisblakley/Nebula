@@ -15,7 +15,7 @@
 <?php get_template_part('inc/headercontent'); ?>
 <?php get_template_part('inc/nebula_drawer'); ?>
 
-<?php nebula()->timer('Archive Template'); ?>
+<?php nebula()->timer('Archive Template', 'start', '[Nebula] Templating'); ?>
 <main id="content-section" role="main">
 	<div class="container">
 		<div class="row">

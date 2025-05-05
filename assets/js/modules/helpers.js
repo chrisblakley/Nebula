@@ -567,13 +567,13 @@ nebula.qmSortableHelper = function(){
 		//Normalize cell values (particularly for the "Memory" column
 		const getCellValue = (tr, idx) => {
 			const cell = tr.children[idx];
-			if ( !cell ) return '';
+			if ( !cell ){return '';}
 			let text = cell.innerText || cell.textContent || '';
 			text = text.trim().replace(/^~\s*/, ''); //Remove leading "~"
 			text = text.replace(/,/g, ''); //Remove commas
 
 			//If value ends in "kB", strip it and parse as float
-			if ( text.match(/^\d+(\.\d+)?\s*kB$/i) ){
+			if ( text.match(/^\d{1,6}(?:\.\d{1,2})?\s*kB$/i) ){
 				return parseFloat(text.replace(/kB/i, '').trim());
 			}
 
@@ -590,8 +590,8 @@ nebula.qmSortableHelper = function(){
 			const table = th.closest('table.qm-sortable');
 			const tbody = table.querySelector('tbody');
 			const idx = Array.from(th.parentNode.children).indexOf(th);
-			const rows = Array.from(tbody.querySelectorAll('tr')).filter(tr => tr.children.length > idx);
-			rows.sort(comparer(idx, this.asc = !this.asc)).forEach(tr => tbody.appendChild(tr));
+			const rows = Array.from(tbody.querySelectorAll('tr')).filter((tr) => tr.children.length > idx);
+			rows.sort(comparer(idx, this.asc = !this.asc)).forEach((tr) => tbody.appendChild(tr));
 
 			//Recalculate zebra striping
 			rows.forEach((tr, i) => {

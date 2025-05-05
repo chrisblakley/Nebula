@@ -276,7 +276,7 @@ if ( !trait_exists('Assets') ){
 			//Check for session data
 			$session_utms = $this->utms();
 			if ( !empty($session_utms) ){
-				do_action('qm/info', 'Attribution (UTMs, etc.): ' . $session_utms);
+				do_action('qm/info', 'Attribution: ' . $session_utms);
 			}
 
 			$this->brain['session'] = array(

@@ -1,4 +1,4 @@
-<?php nebula()->timer('Sidebar Template'); ?>
+<?php nebula()->timer('Sidebar Template', 'start', '[Nebula] Templating'); ?>
 <?php if ( get_theme_mod('sidebar_position') !== 'off' ): ?>
 	<div class="col-md-3 <?php echo ( get_theme_mod('sidebar_position') === 'left' )? 'nebula-flex-first' : 'offset-md-1'; ?>">
 		<aside id="sidebar-section" role="complementary">

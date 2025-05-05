@@ -469,13 +469,52 @@ if ( !trait_exists('Utilities') ){
 			return false;
 		}
 
-		//If we should bypass the caches (if/when possible)
-		public function is_bypass_cache(){
-			//During debug, auditing, or when Customizer is saved/closed (yes, this global exists when closing Customizer without saving too)
-			if ( $this->is_debug() || $this->is_auditing() || !empty($this->super->globals['wp_customize']) || isset($this->super->get['nocache']) ){
+		//Determine if we should allow persistent object cache and/or transients, or skip them for all data on this page load
+		public function is_bypass_cache($force=false){
+			//Skip caches if this function is called via force
+			if ( $force ){
 				return true;
 			}
 
+			//If any of the following query parameters exist, skip the cache
+			$skip_cache_query_strings = array('nocache', 'skipcache', 'bypasscache', 'fresh', 'debug', 'commit', 'sass', 'scss'); //Use any of these in the query string to skip caches
+			foreach ( $skip_cache_query_strings as $param ){
+				if ( isset($this->super->get[$param]) ){
+					return true;
+				}
+			}
+
+			//Clear caches on debug (Use ?debug to skip caches *and* re-run all functionality)
+			if ( $this->is_debug() ){
+				return true;
+			}
+
+			//On Nebula options saving
+			if ( isset($this->super->get['settings-updated']) && $this->super->get['settings-updated'] == 'true' ){
+				return true;
+			}
+
+			//When auditing
+			if ( $this->is_auditing() ){
+				return true;
+			}
+
+			//On theme initialization
+			if ( isset($this->super->get['nebula-initialization']) && $pagenow === 'themes.php' ){
+				return true;
+			}
+
+			//When Customizer is saved/closed (yes, this global exists when closing Customizer without saving too)
+			if ( !empty($this->super->globals['wp_customize']) ){
+				return true;
+			}
+
+			//If transients are intentionally suspended, ignore WP object cache too
+			if ( !$this->is_transients_enabled() ){
+				return true;
+			}
+
+			//If this constant is defined as true, the WP object cache and transients will never be used!
 			if ( defined('DONOTCACHEPAGE') && !empty(DONOTCACHEPAGE) ){
 				return true;
 			}
@@ -855,32 +894,48 @@ if ( !trait_exists('Utilities') ){
 			if ( is_int($parameters) ){
 				$fresh = $expiration;
 				$expiration = $parameters;
-				$parameters = array(); //And reset the $parameters variable to be an empty array
+				$parameters = array();
 			}
 
-			$data = get_transient($name);
-			if ( !empty($fresh) || empty($data) || $this->is_debug() ){
-				$this->timer('Transient Re-Processing (' . $name . ')', 'start', '[Nebula] Transient Re-Processing'); //Note data processed that is usually "saved" by transients. This only *only* captures timing from functionality using this Nebula transient function.
+			//If we are skipping the object cache and transients
+			if ( !$fresh && $this->is_bypass_cache() ){
+				$fresh = true;
+			}
 
+			//First try to get from object cache (fastest)
+			if ( !$fresh && !$this->is_debug() ){
 				$data = wp_cache_get($name);
-				if ( empty($data) ){ //This does not get a "fresh" option because we always only want it to run once per load
+				if ( $data !== false ){
+					//do_action('qm/info', 'Transient Avoided via object cache (' . $name . ')');
+					return $data;
+				}
+			}
+
+			//Fallback to DB transient if object cache missed
+			$data = get_transient($name);
+
+			if ( $fresh || $data === false || $this->is_debug() ){
+				$this->timer('Transient Re-Processing (' . $name . ')', 'start', '[Nebula] Transient Re-Processing');
+
+				//Try object cache again inside this block to avoid reprocessing if another process already set it this load (so no checking $fresh here)
+				$data = wp_cache_get($name);
+				if ( $data === false ){
 					if ( is_string($function) ){
-						$data = call_user_func($function, $parameters); //If the function name is passed as a string, call it
+						$data = call_user_func($function, $parameters);
 					} else {
-						$data = $function($parameters); //Otherwise, assume the function is passed as an actual function
+						$data = $function($parameters);
 					}
 
 					if ( is_null($data) ){
 						$this->timer('Transient Re-Processing (' . $name . ')', 'end');
 						do_action('qm/info', 'Transient Re-Processing Skipped (' . $name . ')');
-						return null; //If the function does not return, do not store anything in the cache
+						return null;
 					}
 
-					wp_cache_set($name, $data); //Set the object cache (memory for multiple calls during this current load)
+					wp_cache_set($name, $data);
 				}
 
-				set_transient($name, $data, $expiration); //Set the transient (DB to speed up future loads)
-
+				set_transient($name, $data, $expiration);
 				$this->timer('Transient Re-Processing (' . $name . ')', 'end');
 				do_action('qm/info', 'Transient Re-Processed (' . $name . ')');
 			}

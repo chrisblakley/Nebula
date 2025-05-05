@@ -224,6 +224,7 @@ if ( !trait_exists('Automation') ){
 		public function activation_notice(){
 			$this->set_dates();
 			add_action('admin_notices', array($this, 'activation'));
+			wp_cache_flush(); //Clear the object cache
 			flush_rewrite_rules(); //Note: this is an expensive operation
 		}
 

@@ -341,7 +341,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//Location
 			if ( get_the_author_meta('usercity', $user_info->ID) && get_the_author_meta('userstate', $user_info->ID) ){
-				echo '<li><i class="fa-solid fa-fw fa-map-marker"></i> <strong>' . get_the_author_meta('usercity', $user_info->ID) . ', ' . get_the_author_meta('userstate', $user_info->ID) . '</strong></li>';
+				echo '<li><i class="fa-solid fa-fw fa-location-dot"></i> <strong>' . get_the_author_meta('usercity', $user_info->ID) . ', ' . get_the_author_meta('userstate', $user_info->ID) . '</strong></li>';
 			}
 
 			//Email
@@ -417,9 +417,27 @@ if ( !trait_exists('Dashboard') ){
 			//IP Address
 			echo '<li class="essential"><i class="fa-solid fa-fw fa-globe"></i> Your IP Address: <a href="http://whatismyipaddress.com/ip/' . $this->get_ip_address() . '" target="_blank" rel="noopener noreferrer"><strong class="admin-user-info admin-user-ip" title="Anonymized IP Address">' . $this->get_ip_address() . '</strong></a> <small>(Anonymized)</small></li>';
 
-			//Cloudflare IP Country header (if it exists)
-			if ( !empty($this->super->server['HTTP_CF_IPCOUNTRY']) ){
-				echo '<li><i class="fa-solid fa-fw fa-earth-americas"></i> Country: <strong>' . $this->super->server['HTTP_CF_IPCOUNTRY'] . '</strong></li>';
+			//Server-provided geolocation data
+			if ( $this->get_geo_data('country') ){
+				echo '<li class="essential"><i class="fa-solid fa-fw fa-earth-americas"></i> <span title="Approximate device geolocation provided by request gateway">Country: <strong>' . $this->get_geo_data('country') . '</strong></span></li>';
+			}
+
+			if ( $this->get_geo_data('city') && $this->get_geo_data('region') ){
+				echo '<li><i class="fa-solid fa-fw fa-city"></i> <span title="Approximate device geolocation provided by request gateway">City: <strong>' . $this->get_geo_data('city') . ', ' . $this->get_geo_data('region') . '</strong></span></li>';
+			}
+
+			$metro_code = $this->get_geo_data('metro_code');
+			if ( !empty($metro_code) && $metro_code != 555 ){
+				echo '<li><i class="fa-solid fa-fw fa-map"></i> <span title="Approximate device geolocation provided by request gateway">Area Code: <strong>' . $metro_code . '</strong></span></li>';
+			}
+
+			if ( $this->get_geo_data('postal_code') ){
+				echo '<li><i class="fa-solid fa-fw fa-map-location-dot"></i> <span title="Approximate device geolocation provided by request gateway">Postal Code: <strong>' . $this->get_geo_data('postal_code') . '</strong></span></li>';
+			}
+
+			if ( $this->get_geo_coordinates() ){
+				$coordinates = $this->get_geo_coordinates();
+				echo '<li><i class="fa-solid fa-fw fa-location-crosshairs"></i> <span title="Approximate device geolocation provided by request gateway">Coordinates: <strong><a href="' . esc_url('https://maps.google.com?q=' . $coordinates) . '" target="_blank" rel="noopener noreferrer">' . $coordinates . '</a></strong></span></li>';
 			}
 
 			//Multiple locations
@@ -766,7 +784,7 @@ if ( !trait_exists('Dashboard') ){
 				}
 			}
 
-			$using_wp_persistent_cache = ( wp_using_ext_object_cache() )? '<strong title="Caching will work across multiple pages">Persistent</strong>' : '<strong title="Caching will only happen on individual page request (not across multiple pages)">Non-Persistent</strong>';
+			$using_wp_persistent_cache = ( wp_using_ext_object_cache() )? '<strong title="Caching will work across multiple pages">⚡ Persistent</strong>' : '<strong title="Caching will only happen on individual page request (not across multiple pages)">Non-Persistent</strong>';
 			echo '<li><i class="fa-solid fa-fw fa-box"></i> WP Object Cache: ' . $using_wp_persistent_cache . $object_cache_hit_output . ' </li>';
 
 			//Bytecode Caching aka Opcode Cache (Zend Opcache)

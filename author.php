@@ -15,7 +15,7 @@
 <?php get_template_part('inc/headercontent'); ?>
 <?php get_template_part('inc/nebula_drawer'); ?>
 
-<?php nebula()->timer('Author Template'); ?>
+<?php nebula()->timer('Author Template', 'start', '[Nebula] Templating'); ?>
 <?php if ( have_posts() ){ the_post(); } //Queue the first post then reset it before the loop. ?>
 <section id="about-the-author" class="container">
 	<div class="row">

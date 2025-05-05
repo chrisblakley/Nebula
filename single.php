@@ -20,7 +20,7 @@
 <?php get_template_part('inc/headercontent'); ?>
 <?php get_template_part('inc/nebula_drawer'); ?>
 
-<?php nebula()->timer('Single Template'); ?>
+<?php nebula()->timer('Single Template', 'start', '[Nebula] Templating'); ?>
 <main id="content-section" role="main">
 	<div class="container">
 		<div class="row">
