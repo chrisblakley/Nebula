@@ -1,5 +1,8 @@
 <?php
 
+//Note: Do not use WP Cache API such as wp_cache_set() or wp_cache_get() here because can persist across devices!
+//These functions are fast enough (since they mostly just read headers) that no caching is suitable
+
 if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 
 if ( !trait_exists('Device') ){
@@ -230,7 +233,12 @@ if ( !trait_exists('Device') ){
 				foreach ( $headers[$datapoint] as $header ){
 					$normalized_header = strtolower(str_replace('-', '_', $header));
 					if ( !empty($normalized_server[$normalized_header]) ){
-						return $normalized_server[$normalized_header];
+						$value = $normalized_server[$normalized_header];
+						$lower_value = strtolower((string)$value);
+
+						if ( $lower_value !== 'xx' && $lower_value != 555 ){ //Ignore "unknown" response values
+							return $value;
+						}
 					}
 				}
 			}
@@ -308,32 +316,52 @@ if ( !trait_exists('Device') ){
 		}
 
 		//Check for bot/crawler traffic
-		//UA lookup: http://www.useragentstring.com/pages/Crawlerlist/
 		public function is_bot(){
+			if ( !empty($this->get_bot_identity()) ){
+				return true;
+			}
+
+			return false;
+		}
+
+		//Get the actual name of the bot visitor
+		//UA lookup: http://www.useragentstring.com/pages/Crawlerlist/
+		public function get_bot_identity(){
 			if ( $this->is_minimal_mode() ){return null;}
-			$override = apply_filters('pre_nebula_is_bot', null);
+			$override = apply_filters('pre_nebula_get_bot_identity', null);
 			if ( isset($override) ){return $override;}
 
-			if ( $this->is_googlebot() ){
-				return true;
+			//Memoize so this only has to check once
+			static $result = null;
+			if ( isset($result) ){
+				return $result;
 			}
 
+			if ( $this->is_googlebot() ){
+				return 'Googlebot';
+			}
+
+			if ( $this->is_gpt_bot() ){
+				return 'GPT Bot';
+			}
+
+			if ( $this->is_slackbot() ){
+				return 'Slack Bot';
+			}
+
+			//Now check for other generic bot-related strings
 			if ( !empty($this->super->server['HTTP_USER_AGENT']) ){
-				$bot_regex = array('bot', 'crawl', 'spider', 'feed', 'slurp', 'tracker', 'http', 'favicon', 'curl', 'coda', 'netcraft', 'silktide'); //Consider 'cloudflare-' as long as it is not ever used in actual users' user agent
-				$all_bot_regex = apply_filters('nebula_bot_regex', $bot_regex);
-				foreach( $all_bot_regex as $bot_regex ){
-					if ( str_contains(strtolower($this->super->server['HTTP_USER_AGENT']), $bot_regex) ){
-						return true;
+				$user_agent = strtolower($this->super->server['HTTP_USER_AGENT']);
+
+				$bot_regexes = array('silktide', 'netcraft', 'coda', 'favicon', 'curl', 'http', 'tracker', 'slurp', 'feed', 'spider', 'crawl', 'bot'); //Arrange from least common (most specific) to most common (least specific)
+				$all_bot_regexes = apply_filters('nebula_bot_regex', $bot_regexes);
+
+				//Loop through each of the bot regex patterns
+				foreach( $all_bot_regexes as $bot_regex ){
+					if ( str_contains($user_agent, $bot_regex) ){
+						return $bot_regex;
 					}
 				}
-			}
-
-			if ( $this->is_gpt_bot() ){ //The regex above should already capture this
-				return true;
-			}
-
-			if ( $this->is_slackbot() ){ //The regex above should already capture this
-				return true;
 			}
 
 			//@todo "Nebula" 0: Others to consider: DiscordBot

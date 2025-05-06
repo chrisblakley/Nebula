@@ -85,7 +85,7 @@ if ( !trait_exists('Warnings') ){
 
 			if ( $this->is_auditing() || $this->is_warning_level('on') ){
 				//Check object cache first
-				$nebula_warnings = wp_cache_get('nebula_warnings');
+				$nebula_warnings = wp_cache_get('nebula_warnings', 'nebula');
 
 				if ( is_array($nebula_warnings) || !empty($nebula_warnings) ){ //If it is an array (meaning it has run before but did not find anything) or if it is false
 					return $nebula_warnings;
@@ -584,7 +584,7 @@ if ( !trait_exists('Warnings') ){
 					});
 				}
 
-				wp_cache_set('nebula_warnings', $all_nebula_warnings); //Store in object cache
+				wp_cache_set('nebula_warnings', $all_nebula_warnings, 'nebula', MINUTE_IN_SECONDS); //Store in object cache
 				$this->timer('Check Warnings', 'end');
 				return $all_nebula_warnings;
 			}

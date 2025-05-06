@@ -442,7 +442,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//Multiple locations
 			if ( $this->user_single_concurrent($user_info->ID) > 1 ){
-				echo '<li><i class="fa-solid fa-fw fa-users"></i> Active in <strong>' . $this->user_single_concurrent($user_info->ID) . ' locations</strong>.</li>';
+				echo '<li class="essential"><i class="fa-solid fa-fw fa-users"></i> Active in <strong>' . $this->user_single_concurrent($user_info->ID) . ' locations</strong>.</li>';
 			}
 
 			//User Admin Bar
@@ -696,6 +696,11 @@ if ( !trait_exists('Dashboard') ){
 					echo ' <small>(' . top_domain_name($dnsrecord[0]['target']) . ')</small>';
 				}
 				echo '</li>';
+			}
+
+			//Get the network gateway if it exists
+			if ( $this->get_network_gateway() ){
+				echo '<li><i class="fa-solid fa-fw fa-diagram-project"></i> Network Gateway: <strong>' . $this->get_network_gateway() . '</strong></li>';
 			}
 
 			//Server IP address (and connection security)

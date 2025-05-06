@@ -1179,8 +1179,8 @@ if ( !trait_exists('Functions') ){
 
 			echo '<div class="sharing-links">';
 
-			//If the 'shareapi' cookie exists and 'shareapi' is requested, return *only* the Share API
-			if ( isset($this->super->cookie['shareapi']) || in_array($networks, array('shareapi')) ){
+			//If the 'shareapi' is requested, return *only* the Share API
+			if ( in_array($networks, array('shareapi')) ){
 				$networks = array('shareapi');
 			}
 
@@ -1240,8 +1240,8 @@ if ( !trait_exists('Functions') ){
 
 			echo '<div class="sharing-links">';
 
-			//If the 'shareapi' cookie and 'shareapi' is requested, return *only* the Share API
-			if ( isset($this->super->cookie['shareapi']) || in_array($networks, array('shareapi')) ){
+			//If the 'shareapi' is requested, return *only* the Share API
+			if ( in_array($networks, array('shareapi')) ){
 				$networks = array('shareapi');
 			}
 
@@ -2146,12 +2146,12 @@ if ( !trait_exists('Functions') ){
 
 			foreach ( array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday') as $weekday ){
 				if ( $this->get_option('business_hours_' . $weekday . '_enabled') || $this->get_option('business_hours_' . $weekday . '_open') || $this->get_option('business_hours_' . $weekday . '_close') ){
-					wp_cache_set('has_business_hours', 'true');
+					wp_cache_set('has_business_hours', 'true', 'nebula', MONTH_IN_SECONDS);
 					return true;
 				}
 			}
 
-			wp_cache_set('has_business_hours', 'false');
+			wp_cache_set('has_business_hours', 'false', 'nebula', MONTH_IN_SECONDS);
 			return false;
 		}
 
@@ -2207,7 +2207,7 @@ if ( !trait_exists('Functions') ){
 
 						if ( date('Ymd', $days_off[$key]) === date('Ymd', $date) ){
 							nebula()->timer('Is Business Open', 'end');
-							wp_cache_set('is_business_open', 'false');
+							wp_cache_set('is_business_open', 'false', 'nebula', HOUR_IN_SECONDS*6);
 							return false;
 						}
 					}
@@ -2216,7 +2216,7 @@ if ( !trait_exists('Functions') ){
 				if ( $businessHours[$today]['enabled'] == '1' ){ //If the Nebula Options checkmark is checked for this day of the week.
 					if ( !empty($general) ){
 						nebula()->timer('Is Business Open', 'end');
-						wp_cache_set('is_business_open', 'true');
+						wp_cache_set('is_business_open', 'true', 'nebula', HOUR_IN_SECONDS*6);
 						return true;
 					}
 
@@ -2224,14 +2224,14 @@ if ( !trait_exists('Functions') ){
 					$closeToday = date('Gi', strtotime($businessHours[$today]['close'])-1); //Subtract one second to ensure midnight represents the same day
 					if ( date('Gi', $date) >= $openToday && date('Gi', $date) <= $closeToday ){
 						nebula()->timer('Is Business Open', 'end');
-						wp_cache_set('is_business_open', 'true');
+						wp_cache_set('is_business_open', 'true', 'nebula', MINUTE_IN_SECONDS);
 						return true;
 					}
 				}
 			}
 
 			nebula()->timer('Is Business Open', 'end');
-			wp_cache_set('is_business_open', 'false');
+			wp_cache_set('is_business_open', 'false', 'nebula', HOUR_IN_SECONDS*6);
 			return false;
 		}
 
@@ -2394,13 +2394,21 @@ if ( !trait_exists('Functions') ){
 				return $data['fallback'];
 			}
 
-			//Get from object cache unless specifically requested fresh data
-			if ( !$data['fresh'] ){
-				$userdata = wp_cache_get('nebula_user_info', 'user-id-' . $data['id']);
-			}
-			if ( empty($userdata) ){
+			//Try to get user data from the static variable (memoization within the current page load only)
+			static $memoized_user_data = array();
+			$cache_key = 'user-id-' . $data['id'];
+
+			if ( !empty($data['fresh']) || !isset($memoized_user_data[$cache_key]) ) {
+				//Fetch data from the database if not already memoized
 				$userdata = get_userdata($data['id']);
-				wp_cache_set('nebula_user_info', $userdata, 'user-id-' . $data['id']); //Store in object cache
+
+				if ( !empty($userdata) ) {
+					//Memoize the user data for the current page load
+					$memoized_user_data[$cache_key] = $userdata;
+				}
+			} else {
+				//Get the memoized data if it was previously loaded in the same page request
+				$userdata = $memoized_user_data[$cache_key];
 			}
 
 			if ( !empty($data['datapoint']) ){
@@ -3663,18 +3671,21 @@ if ( !trait_exists('Functions') ){
 			$debug_info['nebula_os'] = $this->get_os();
 			$debug_info['nebula_browser'] = $this->get_browser('full');
 
-			//Geo Data (if available)
-			if ( !empty($this->get_geo_data('country')) ){
-				$debug_info['geo_country'] = $this->get_geo_data('country');
-				$debug_info['geo_region'] = $this->get_geo_data('region');
-				$debug_info['geo_city'] = $this->get_geo_data('city');
-				$debug_info['geo_metro_code'] = $this->get_geo_data('metro_code');
-				$debug_info['geo_postal_code'] = $this->get_geo_data('postal_code');
-				$debug_info['geo_coordinates'] = $this->get_geo_data('coordinates');
-			}
-
 			//Anonymized IP address
 			$debug_info['nebula_anonymized_ip'] = sanitize_text_field($this->get_ip_address());
+
+			//Geo Data (if available)
+			if ( !empty($this->get_geo_data('country')) ){
+				$debug_info['nebula_geo_country'] = $this->get_geo_data('country');
+
+				if ( $this->get_geo_data('city') ){
+					$debug_info['nebula_geo_region'] = $this->get_geo_data('region');
+					$debug_info['nebula_geo_city'] = $this->get_geo_data('city');
+					$debug_info['nebula_geo_metro_code'] = $this->get_geo_data('metro_code');
+					$debug_info['nebula_geo_postal_code'] = $this->get_geo_data('postal_code');
+					$debug_info['nebula_geo_coordinates'] = $this->get_geo_data('coordinates');
+				}
+			}
 
 			$debug_info = map_deep($debug_info, 'sanitize_text_field'); //Deep sanitization of the full data array
 

@@ -86,7 +86,7 @@ trait Comments {
 	//Override the WP comment count function to prevent DB queries
 	//This will query once to ensure the object key names match (to prevent errors), but subsequent queries will be prevented
 	public function disable_wp_count_comments($counts, $post_id){
-		$default_keys = wp_cache_get('nebula_comment_count_keys');
+		$default_keys = wp_cache_get('nebula_comment_count_keys', 'nebula');
 
 		if ( $default_keys === false ){
 			remove_filter('wp_count_comments', array($this, 'disable_wp_count_comments'), 10); //Temporarily remove this filter to avoid recursion
@@ -94,7 +94,7 @@ trait Comments {
 			add_filter('wp_count_comments', array($this, 'disable_wp_count_comments'), 10, 2); //Re-add the filter so future calls will be prevented using the obtained key names
 
 			$default_keys = array_keys((array) $default);
-			wp_cache_set('nebula_comment_count_keys', $default_keys); //Store the key names in persistent object cache so future page loads won't need even the original query
+			wp_cache_set('nebula_comment_count_keys', $default_keys, 'nebula', YEAR_IN_SECONDS); //Store the key names in persistent object cache so future page loads won't need even the original query
 		}
 
 		$new_counts = array();

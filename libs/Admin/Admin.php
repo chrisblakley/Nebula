@@ -247,7 +247,7 @@ if ( !trait_exists('Admin') ){
 			};
 		}
 
-		//Force expire query transients when posts/pages are saved.
+		//Force expire query transients when posts/pages are saved
 		public function clear_transients(){
 			if ( $this->is_minimal_mode() ){return null;}
 			$this->timer('Clear Transients');
@@ -379,7 +379,7 @@ if ( !trait_exists('Admin') ){
 		//Aggregate all third-party resources into a single array
 		public function third_party_resources(){
 			if ( $this->is_minimal_mode() ){return null;}
-			$third_party_resources = wp_cache_get('nebula_third_party_resources');
+			$third_party_resources = wp_cache_get('nebula_third_party_resources', 'nebula');
 			if ( is_array($third_party_resources) || !empty($third_party_resources) ){ //If it is an array (meaning it has run before but did not find anything) or if it is false
 				return $third_party_resources;
 			}
@@ -617,7 +617,7 @@ if ( !trait_exists('Admin') ){
 
 			$this->timer('Aggregating Links to Active Third-Party Tools', 'end');
 
-			wp_cache_set('nebula_third_party_resources', $third_party_resources); //Store in object cache
+			wp_cache_set('nebula_third_party_resources', $third_party_resources, 'nebula', MONTH_IN_SECONDS); //Store in object cache
 			return $third_party_resources;
 		}
 
@@ -1436,7 +1436,7 @@ if ( !trait_exists('Admin') ){
 					);
 
 					$log_force_theme_update = $this->add_log('Nebula theme re-install (forced via WP) of version: ' . $this->version('full'), 7);
-					wp_cache_set('nebula_force_theme_update_log', $log_force_theme_update); //Store boolean in object cache
+					wp_cache_set('nebula_force_theme_update_log', $log_force_theme_update, 'nebula', MINUTE_IN_SECONDS); //Store boolean in object cache
 				}
 			}
 
@@ -2061,7 +2061,8 @@ if ( !trait_exists('Admin') ){
 
 					if ( !empty($decoded_submission_content->_nebula_attribution) ){
 						if ( !empty(str_replace('{}', '', $decoded_submission_content->_nebula_attribution)) ){ //If we have attribution data
-							echo '<span>' . $decoded_submission_content->_nebula_attribution . '</span>';
+							$cleaned_attribution_output = str_replace(array(',', ':'), array(', ', ': '), $decoded_submission_content->_nebula_attribution);
+							echo '<span>' . $cleaned_attribution_output . '</span>'; //Leave this as a span for the submission listing table
 						} elseif ( !empty($decoded_submission_content->_nebula_utms) ){ //If we have UTM data
 							echo '<span>' . $decoded_submission_content->_nebula_utms . '</span>';
 						}
@@ -2588,8 +2589,16 @@ if ( !trait_exists('Admin') ){
 								$value = '<a href="' . $this->google_analytics_url() . '" target="_blank" rel="noopener noreferrer">' . $value . '</a>'; //If a user explorer is ever added to GA4, link directly to that report. Possibly even to this individual CID.
 							}
 
+							if ( $key === '_nebula_attribution' ){
+								$value = '<pre>' . json_encode(json_decode($value), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . '</pre>';
+							}
+
 							if ( $key === '_nebula_anonymized_ip' ){
 								$value = '<a href="https://whatismyipaddress.com/ip/' . $value . '/" target="_blank" rel="noopener noreferrer">' . $value . '</a>';
+							}
+
+							if ( $key === '_nebula_geo_coordinates' ){
+								$value = '<a href="' . esc_url('https://maps.google.com?q=' . $value . '') . '" target="_blank" rel="noopener noreferrer">' . $value . '</a>';
 							}
 
 							if ( $key === '_nebula_user_agent' ){
@@ -2673,6 +2682,8 @@ if ( !trait_exists('Admin') ){
 
 			global $submenu;
 
+			$fresh = ( isset( $screen->id ) && $screen->id == 'edit-nebula_cf7_submits' )? true : false; //Update the badge when viewing the submissions listing admin page
+
 			$badge_number = $this->transient('nebula_cf7_submits_badge', function(){
 				$cf7_submissions_query = new WP_Query(array(
 					'post_type' => 'nebula_cf7_submits',
@@ -2686,7 +2697,7 @@ if ( !trait_exists('Admin') ){
 				));
 
 				return $cf7_submissions_query->found_posts; //Count the number of posts from the query
-			}, MINUTE_IN_SECONDS*10);
+			}, MINUTE_IN_SECONDS*10, $fresh);
 
 			if ( $badge_number > 0 ){
 				//Loop through the top-level submenu items to find the appropriate item to append to

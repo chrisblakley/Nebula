@@ -93,6 +93,11 @@
 					}
 				}
 
+				//Designate any traffic that is at all related to any attribution (current or previous)
+				if ( !empty(nebula()->super->cookie['attribution']) ){ //If the attribution cookie exists
+					$pageview_properties['attribution_related'] = true;
+				}
+
 				//Designate AI tool referrals (until Google Analytics introduces an "Organic AI" channel)
 				if ( nebula()->is_ai_channel() ){
 					$pageview_properties['ai_channel'] = true;

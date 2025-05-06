@@ -38,7 +38,7 @@ if ( !trait_exists('Utilities') ){
 			}
 		}
 
-		//Memoize functionality so it runs only once per unique key during the current request
+		//Allow functionality to only run once per unique key during the current request
 		public function once($unique_id, $callback, ...$args){
 			static $called = array();
 
@@ -109,11 +109,28 @@ if ( !trait_exists('Utilities') ){
 		public function nebula_session_id(){
 			if ( $this->is_minimal_mode() ){return null;}
 
-			$cache_group = uniqid(); //Each "user" gets its own group so it persists without interfering with each other
+			$session_cookie_data = $this->prep_new_session_cookie();
 
-			//Check object cache first
-			$session_id = wp_cache_get('nebula_session_id', $cache_group); //If session_id() is not available, it will re-generate the Nebula session ID
-			if ( !empty($session_id) ){
+			//Read and decode the cookie if it exists
+			if ( isset($this->super->cookie['session']) ){
+				$session_cookie_data = json_decode(stripslashes($this->super->cookie['session']), true);
+				if ( !is_array($session_cookie_data) ){
+					$session_cookie_data = $this->prep_new_session_cookie(); //Fallback in case of invalid JSON
+				}
+			}
+
+			//Get or create SID Key
+			if ( isset($session_cookie_data['sid_key']) && is_string($session_cookie_data['sid_key']) ){
+				$cache_group = sanitize_key($session_cookie_data['sid_key']);
+			} else {
+				$cache_group = uniqid('nebula_', true);
+				$session_cookie_data['sid_key'] = $cache_group;
+				$this->set_cookie('session', json_encode($session_cookie_data), time()+MONTH_IN_SECONDS); //Re-encode and set the full session cookie
+			}
+
+			//Check object cache
+			$session_id = wp_cache_get('nebula_session_id', $cache_group);
+			if ( $session_id !== false ){
 				return sanitize_text_field($session_id);
 			}
 
@@ -136,7 +153,7 @@ if ( !trait_exists('Utilities') ){
 				$session_data['dev'] = true;
 			}
 
-			//Logged in user role
+			//Logged-in user info
 			if ( is_user_logged_in() ){
 				$user_info = get_userdata(get_current_user_id());
 
@@ -153,30 +170,30 @@ if ( !trait_exists('Utilities') ){
 				$session_data['bot'] = true;
 			}
 
-			//Site Live
+			//Site live status
 			if ( !$this->is_site_live() ){
 				$session_data['l'] = false;
 			}
 
 			//Session ID
-			$session_data['s'] = $cache_group; //Use the unique ID that determines the group as the main ID
+			$session_data['s'] = $cache_group;
 
-			//Google Analytics CID
+			//GA CID
 			$session_data['cid'] = $this->ga_parse_cookie();
 
-			//Additional session information
+			//Custom filter
 			$all_session_data = apply_filters('nebula_session_id', $session_data);
 
-			//Convert to a string
+			//Convert to string
 			$session_id = '';
 			foreach ( $all_session_data as $key => $value ){
 				$session_id .= $key . ':' . $value . ';';
 			}
 
-			//do_action('qm/info', 'Nebula Session ID: ' . $session_id);
-			wp_cache_set('nebula_session_id', $session_id, $cache_group); //Store in object cache grouped by the unique ID to prevent interference
-			$this->timer($timer_name, 'end');
 			do_action('qm/info', 'Nebula Session ID: ' . $session_id);
+			wp_cache_set('nebula_session_id', $session_id, $cache_group, HOUR_IN_SECONDS*4);
+			$this->timer($timer_name, 'end');
+
 			return sanitize_text_field($session_id);
 		}
 
@@ -347,38 +364,45 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Get the role (and dev/client designation)
-		public function user_role($staff_info=true){
-			$usertype = 'Guest (Not Logged In)';
+		public function user_role(){
+			if ( $this->is_minimal_mode() ){return 'minimal';}
 
-			if ( $this->is_bot() ){
-				$usertype = 'Bot';
+			//Memoize for subsequent calls
+			static $cache = null;
+			if ( $cache !== null ){
+				return $cache;
 			}
+
+			$usertype = 'Guest (Not Logged In)';
 
 			if ( is_user_logged_in() ){
 				$user_info = get_userdata(get_current_user_id());
 				$usertype = 'Logged-In (Unknown Role)'; //Update the default in case a specific role cannot be found
 
 				if ( !empty($user_info->roles) ){
-					$usertype = ( is_multisite() && is_super_admin() )? 'Super Admin' : ucwords($user_info->roles[0]);
+					$usertype = ( is_multisite() && is_super_admin() ) ? 'Super Admin' : ucwords($user_info->roles[0]);
 				}
 			}
 
 			$staff = '';
-			if ( $staff_info ){
-				if ( $this->is_dev() ){
-					$staff = ' (Developer)';
-				} elseif ( $this->is_client() ){
-					$staff = ' (Client)';
-				} elseif ( $this->is_internal_referrer() ){
-					$staff = ' (Internal)';
-				}
+			if ( $this->is_dev() ){
+				$staff = ' (Developer)';
+			} elseif ( $this->is_client() ){
+				$staff = ' (Client)';
+			} elseif ( $this->is_internal_referrer() ){
+				$staff = ' (Internal)';
 			}
 
-			$this->once('user_role', function($usertype, $staff){
-				do_action('qm/info', 'User Role: ' . $usertype . $staff);
-			}, $usertype, $staff);
+			$bot_detail = '';
+			if ( $this->is_bot() ){
+				$bot_detail = 'Bot (' . $this->get_bot_identity() . ') ';
+			}
 
-			return $usertype . $staff;
+			do_action('qm/info', 'User Role: ' . $bot_detail . $usertype . $staff);
+
+			$cache = $bot_detail . $usertype . $staff; //Memoize the result for subsequent calls
+
+			return $cache;
 		}
 
 		//Check if the current IP address or logged-in user is a developer or client.
@@ -566,6 +590,35 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			return false;
+		}
+
+		//Identify the edge network or reverse proxy (e.g. Cloudflare) sitting between the client and server
+		public function get_network_gateway(){
+			$headers = array_change_key_case($this->super->server, CASE_LOWER);
+
+			$gateway_map = array(
+				'Cloudflare' => array('http_cf_ray', 'cf-ray', 'http_cf_connecting_ip'),
+				'Sucuri' => array('http_x_sucuri_clientip', 'x-sucuri-id'),
+				'Akamai' => array('http_x_akamai_edgescape', 'akamai-client-ip'),
+				'Fastly' => array('http_fastly_client_ip', 'fastly-client-ip'),
+				'AWS CloudFront' => array('http_x_amz_cf_id', 'http_x_amz_cf_pop', 'http_cloudfront_viewer_address'),
+				'StackPath' => array('http_x_stackpath_edge'),
+				'Imperva' => array('http_cip', 'http_via'),
+				'QUIC.cloud' => array('http_x_quic_cdn', 'http_x_real_ip'),
+				'Azure Front Door' => array('x-azure-ref', 'x-fd-healthprobe'),
+				'Google Cloud CDN' => array('http_x_goog_metrics', 'http_x_goog_request_log_id'),
+				'Other Reverse Proxy' => array('http_x_forwarded_for', 'x-forwarded-for', 'http_x_real_ip', 'http_forwarded', 'http_client_ip', 'http_via'),
+			);
+
+			foreach ( $gateway_map as $name => $keys ){
+				foreach ( $keys as $key ){
+					if ( isset($headers[$key]) ){
+						return $name;
+					}
+				}
+			}
+
+			return null;
 		}
 
 		//Valid Hostname Regex
@@ -964,7 +1017,7 @@ if ( !trait_exists('Utilities') ){
 				$expiration = strtotime('January 1, 2035');
 			}
 
-			$this->super->cookie[$name] = $string_value;
+			$this->super->cookie[$name] = $string_value; //Manually update the cookie memory data for this runtime (since this does not automatically happen)
 
 			if ( !headers_sent() ){
 				setcookie(

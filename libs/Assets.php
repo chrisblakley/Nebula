@@ -36,14 +36,32 @@ if ( !trait_exists('Assets') ){
 			}
 		}
 
+		//This prepares the session array for use with cookies but does not actually store the cookie!
+		public function prep_new_session_cookie(){
+			//Memoize so we don't generate a new unique ID every time this is called
+			static $memoized_data = null;
+			if ( $memoized_data !== null ){
+				return $memoized_data;
+			}
+
+			$memoized_data = array(
+				'sid_key' => uniqid('nebula_', true), //For persistent Session ID
+				'referrer' => $this->referrer,
+				'landing_page' => $this->landing_page,
+				'default_cid' => $this->default_cid,
+			);
+
+			return $memoized_data;
+		}
+
 		//Prep initial session values so they can be stored in a cookie before headers are sent
 		public function init_session_data(){
 			$this->default_cid = $this->generate_UUID(); //Start with a default UUID
 
 			if ( $this->is_analytics_allowed() ){ //Only store this information if tracking is allowed
 				try {
-					if ( isset($this->super->cookie['session']) ){
-						$session_cookie_data = json_decode(stripslashes($this->super->cookie['session']), true);
+					if ( isset($_COOKIE['session']) ){
+						$session_cookie_data = json_decode(stripslashes($_COOKIE['session']), true);
 						$this->referrer = $session_cookie_data['referrer'];
 						$this->landing_page = $session_cookie_data['landing_page'];
 						$this->default_cid = $session_cookie_data['default_cid'];
@@ -51,12 +69,9 @@ if ( !trait_exists('Assets') ){
 						$this->referrer = ( isset($this->super->server['HTTP_REFERER']) )? $this->super->server['HTTP_REFERER'] : false; //Use the referrer header if it exists
 						$this->landing_page = $this->url_components('all'); //Get the full URL including query string
 
-						$session_cookie_data = array(
-							'referrer' => $this->referrer,
-							'landing_page' => $this->landing_page,
-							'default_cid' => $this->default_cid,
-						);
+						$session_cookie_data = $this->prep_new_session_cookie();
 
+						//Store the cookie first
 						setcookie(
 							'session',
 							json_encode($session_cookie_data),
@@ -66,6 +81,9 @@ if ( !trait_exists('Assets') ){
 							is_ssl(), //Secure (only send over HTTPS)
 							true //HttpOnly (inaccessible to JavaScript)
 						);
+
+						//Then manually update the cookie memory data for this runtime (since this does not automatically happen)
+						$_COOKIE['session'] = json_encode($session_cookie_data);
 					}
 
 					do_action('qm/info', 'Session Referrer: ' . $this->referrer);

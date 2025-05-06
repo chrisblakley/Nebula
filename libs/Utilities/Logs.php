@@ -122,7 +122,7 @@ if ( !trait_exists('Logs') ){
 			//If verbose data is requested, add it to the message
 			if ( !empty($verbose) ){
 				$message .= ' | IP: ' . $this->get_ip_address(false);
-				$message .= ' | Role: ' . $this->user_role(true);
+				$message .= ' | Role: ' . $this->user_role();
 				$message .= ' | SID: ' . $this->nebula_session_id();
 
 				if ( !empty($this->super->server['HTTP_USER_AGENT']) ){

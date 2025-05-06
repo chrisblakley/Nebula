@@ -178,20 +178,16 @@ nebula.socialSharing = async function(){
 					gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 					nebula.crm('event', thisEvent.network);
 					$oThis.addClass('success');
-					nebula.createCookie('shareapi', true);
 				}).catch(function(error){ //This can happen on iOS when the user closes the drawer without sharing
 					gtag('event', 'exception', {
 						message: '(JS) Share API Error: ' + error,
 						fatal: false
 					});
 					$oThis.addClass('error').html(originalText);
-					nebula.createCookie('shareapi', false);
 				});
 
 				return false;
 			});
-
-			nebula.createCookie('shareapi', true); //Set a cookie to speed up future page loads by not loading third-party share buttons.
 		} else {
 			jQuery('a.shareapi, .shareapi a, a.nebula-share.shareapi, .nebula-share a.shareapi').addClass('hidden');
 		}

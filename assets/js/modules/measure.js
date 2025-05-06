@@ -1847,50 +1847,93 @@ nebula.attributionTracking = function(){
 			return false;
 		}
 
-		//Check if relevant query parameters exist in the URL
-		//This overwrites anytime there is a UTM tag, so it would be considered "last-non-organic" attribution
-		const queryParams = new URLSearchParams(window.location.search);
+		//Check if relevant tracking query parameters exist in the URL
+		let notableTrackingParameters = [
+			'utm_source',
+			'utm_campaign',
+			'utm_medium',
+			'utm_content',
+			'utm_term',
+			'gclid', //Google Ads Click ID
+			'gclsrc', //Google Ads Click Source
+			'gbraid',
+			'wbraid',
+			'dclid', //DoubleClick Click ID (typically offline tracking)
+			'msclkid', //Microsoft Click ID
+			'fbc', //Facebook Click ID
+			'fbclid', //Facebook Click ID
+			'li_', //LinkedIn
+			'tclid', //Twitter Click ID
+			'ttclid', //TikTok Click ID
+			'hsa_', //Hubspot
+			'mc_eid', //Mailchimp
+			'vero_id', //Vero
+			'mkt_tok', //Marketo
+			'email_id', //Email
+			'campaign_id', //Email
+			'subscriber_id', //Email
+			'mail_id', //Email
+			'keap', //Keap Email
+			'affiliate_id', //Affiliates
+			'coupon', //Affiliates
+			'promo', //Affiliates
+			'partner_id', //Affiliates
+			'partner', //Affiliates
+			'eloqua', //Eloqua
+			'pardot', //Pardot
+			'sfdc_id', //Salesforce
+		];
 
-		if ( queryParams.has('utm_source') ){ //Check for the only required UTM tag (since .has() cannot do partial matches)
-			//Loop through the query string to capture just the UTM parameters
-			let utmParameters = {}; //Prep an object to fill
-			for ( const [key, value] of queryParams.entries() ){
-				if ( key.startsWith('utm_') ){ //If this key is a UTM parameter
-					utmParameters[key] = value;
+		let urlSearchParams = new URLSearchParams(window.location.search);
+
+		let foundTrackingParameters = {};
+		for ( let queryParameter of urlSearchParams.keys() ){ //Loop through the URL query parameters
+			for ( let notableTrackingParameter of notableTrackingParameters ){ //Check against our list of notable tracking parameters
+				if ( queryParameter.startsWith(notableTrackingParameter) ){
+					foundTrackingParameters[queryParameter] = urlSearchParams.get(queryParameter);
+					break;
 				}
-			}
-
-			nebula.createCookie('attribution', JSON.stringify(utmParameters)); //Store the UTM parameters in a cookie
-		} else if ( !nebula.readCookie('attribution') ){ //If no UTMs and the cookie does not already exist, check for other notable tracking parameters
-			let trackingParameters = {}; //Prep an object to fill
-
-			//Loop through notable tracking parameters to store in the attribution cookie
-			let notableQueryParameters = {
-				google_ads_click: 'gclid', //Google Ads Click ID
-				google_ads_source: 'gclsrc', //Google Ads Click Source
-				google_ads_gbraid: 'gbraid',
-				google_ads_wbraid: 'wbraid',
-				doubleclick: 'dclid', //DoubleClick Click ID (typically offline tracking)
-				facebook: 'fbclid',
-				linkedin: 'li_',
-				hubspot: 'hsa_',
-				mailchimp: 'mc_eid',
-				vero: 'vero_id',
-				marketo: 'mkt_tok'
-			};
-
-			jQuery.each(notableQueryParameters, function(platform, parameter){
-				if ( queryParams.has(parameter) ){ //If this parameter exists
-					trackingParameters[parameter] = queryParams.get(parameter); //Store it in the object
-				}
-			});
-
-			if ( Object.keys(trackingParameters).length > 0 ){ //If we ended up with a non-empty object
-				nebula.createCookie('attribution', JSON.stringify(trackingParameters)); //Store the other notable parameters in a cookie
 			}
 		}
 
-		//Now check if the cookie exists
+		//If we found a tracking parameter
+		if ( Object.keys(foundTrackingParameters).length ){
+			foundTrackingParameters.path = window.location.pathname; //Include the page path to the entry
+
+			//If we already have the attribution cookie, update it
+			if ( nebula.readCookie('attribution') ){
+				var attributionData = JSON.parse(nebula.readCookie('attribution'));
+
+				attributionData.last = foundTrackingParameters; //Always overwrite the last touch attribution
+
+				//If we are missing the first-touch attribution, use this one now
+				if ( !attributionData?.first ){
+					attributionData.first = foundTrackingParameters;
+				}
+
+				//Now prepare to store multi-touch attributions
+				let previousEntry = attributionData.multi[attributionData.multi.length-1];
+				if ( JSON.stringify(previousEntry) !== JSON.stringify(foundTrackingParameters) ){ //If the current entry is different from the previous entry
+					attributionData.multi.push(foundTrackingParameters); //Push this tracking data to the multi-touch array
+
+					//Keep only the latest entries to save space
+					if ( attributionData.multi.length > 10 ){
+						attributionData.multi.shift(); //Remove oldest entry
+					}
+				}
+			} else { //Otherwise, create the cookie from scratch
+				var attributionData = {
+					first: foundTrackingParameters,
+					last: foundTrackingParameters,
+					multi: [foundTrackingParameters],
+				};
+			}
+
+			//Create or update the cookie with the latest attribution data
+			nebula.createCookie('attribution', JSON.stringify(attributionData));
+		}
+
+		//Now check if the cookie exists to fill the respective input field
 		if ( nebula.readCookie('attribution') && jQuery('input.attribution').length ){ //If our attribution cookie exists and we have an input to use
 			jQuery('input.attribution').val(nebula.readCookie('attribution')); //Fill the designated form field(s)
 		}
