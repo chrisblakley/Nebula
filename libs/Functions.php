@@ -3598,10 +3598,7 @@ if ( !trait_exists('Functions') ){
 				$debug_info['nebula_landing_page'] = sanitize_text_field($session_cookie_data['landing_page']); //This is the first page view of the session
 			}
 
-			if ( $this->get_option('attribution_tracking') ){ //Don't output these unless this option is enabled (to prevent empty values from appearing like a lack of activity)
-				$debug_info['nebula_utms'] = sanitize_text_field(htmlspecialchars_decode($this->utms())); //Check for PHP-based attribution cookie
-
-				//Check for the JS-based attribution cookie
+			if ( $this->get_option('attribution_tracking') ){ //Don't output this unless this option is enabled (to prevent empty values from appearing like a lack of activity)
 				if ( isset($this->super->cookie['attribution']) ){
 					$debug_info['nebula_attribution'] = sanitize_text_field($this->super->cookie['attribution']);
 				}
@@ -3678,6 +3675,7 @@ if ( !trait_exists('Functions') ){
 			if ( !empty($this->get_geo_data('country')) ){
 				$debug_info['nebula_geo_country'] = $this->get_geo_data('country');
 
+				//If additional granular data is available
 				if ( $this->get_geo_data('city') ){
 					$debug_info['nebula_geo_region'] = $this->get_geo_data('region');
 					$debug_info['nebula_geo_city'] = $this->get_geo_data('city');

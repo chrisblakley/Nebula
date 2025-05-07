@@ -10,6 +10,8 @@ if ( !trait_exists('Analytics') ){
 	trait Analytics {
 		public function hooks(){
 			if ( !$this->is_background_request() && !is_customize_preview() ){
+				add_action('template_redirect', array($this, 'attribution_tracking'));
+
 				add_filter('the_permalink_rss', array($this, 'add_utm_to_feeds'), 100);
 				add_filter('the_excerpt_rss', array($this, 'add_utm_to_feeds_content_links'), 200);
 				add_filter('the_content_feed', array($this, 'add_utm_to_feeds_content_links'), 200);
@@ -93,6 +95,121 @@ if ( !trait_exists('Analytics') ){
 				random_int(0, 0x3fff) | 0x8000, //16 bits, 8 bits for "clk_seq_hi_res", 8 bits for "clk_seq_low", Two most significant bits holds zero and one for variant DCE1.1
 				random_int(0, 0xffff), random_int(0, 0xffff), random_int(0, 0xffff) //48 bits for "node"
 			);
+		}
+
+		//Track campaigns that attributed to returning visitor conversions
+		public function attribution_tracking(){
+			if ( !$this->get_option('attribution_tracking') ){
+				return;
+			}
+
+			if ( $this->is_do_not_track() ){
+				return;
+			}
+
+			static $cache = null;
+			if ( isset($cache) ){
+				return $cache;
+			}
+
+			//Allow others to modify/add to the list of notable tracking parameters
+			$notable_tracking_parameters = apply_filters('nebula_notable_tracking_parameters', array(
+				'utm_source',
+				'utm_campaign',
+				'utm_medium',
+				'utm_content',
+				'utm_term',
+				'gclid', //Google Ads Click ID
+				'gclsrc', //Google Ads Click Source
+				'gbraid',
+				'wbraid',
+				'dclid', //DoubleClick Click ID (typically offline tracking)
+				'msclkid', //Microsoft Click ID
+				'fbc', //Facebook Click ID
+				'fbclid', //Facebook Click ID
+				'li_', //LinkedIn
+				'tclid', //Twitter Click ID
+				'ttclid', //TikTok Click ID
+				'hsa_', //Hubspot
+				'mc_eid', //Mailchimp
+				'vero_id', //Vero
+				'mkt_tok', //Marketo
+				'email_id', //Email
+				'campaign_id', //Email
+				'subscriber_id', //Email
+				'mail_id', //Email
+				'keap', //Keap Email
+				'srsltid', //Google Merchant Center
+				'affiliate_id', //Affiliates
+				'coupon', //Affiliates
+				'promo', //Affiliates
+				'partner_id', //Affiliates
+				'partner', //Affiliates
+				'eloqua', //Eloqua
+				'pardot', //Pardot
+				'sfdc_id', //Salesforce
+			));
+
+			$found_parameters = array();
+
+			foreach ( $this->super->get as $key => $value ){ //Loop through the URL query parameters
+				foreach ( $notable_tracking_parameters as $tracking_parameter ){ //Check against our list of notable tracking parameters
+					if ( str_contains($key, $tracking_parameter) ){
+						$found_parameters[$key] = sanitize_text_field($value);
+						break;
+					}
+				}
+			}
+
+			//If we found a tracking parameter
+			if ( !empty($found_parameters) ){
+				$found_parameters['path'] = strtok($_SERVER['REQUEST_URI'], '?'); //Include the page path to the entry (and ensure query parameters are excluded)
+
+				//If we already have the attribution cookie, update it
+				if ( isset($this->super->cookie['attribution']) ){
+					$attribution_data = json_decode(wp_unslash($this->super->cookie['attribution']), true);
+
+					if ( !is_array($attribution_data) ){
+						$attribution_data = array();
+					}
+
+					$attribution_data['last'] = $found_parameters; //Always overwrite the last touch attribution
+
+					//If we are missing the first-touch attribution, use this one now
+					if ( empty($attribution_data['first']) ){
+						$attribution_data['first'] = $found_parameters;
+					}
+
+					//Now prepare to store multi-touch attributions
+					if ( empty($attribution_data['multi']) || !is_array($attribution_data['multi']) ){
+						$attribution_data['multi'] = array();
+					}
+
+					$last_entry = end($attribution_data['multi']);
+					if ( json_encode($last_entry) !== json_encode($found_parameters) ){ //If the current entry is different from the previous entry
+						$attribution_data['multi'][] = $found_parameters; //Push this tracking data to the multi-touch array
+
+						//Keep only the latest entries to save space
+						if ( count($attribution_data['multi']) > 10 ){
+							array_shift($attribution_data['multi']); //Remove oldest entry
+						}
+					}
+				} else { //Otherwise, create the cookie from scratch
+					$attribution_data = array(
+						'first' => $found_parameters,
+						'last' => $found_parameters,
+						'multi' => array($found_parameters),
+					);
+				}
+
+				$this->set_cookie('attribution', wp_json_encode($attribution_data), time()+YEAR_IN_SECONDS, false); //Needs to be able to be read by JavaScript
+
+				$cache = true;
+				return $cache;
+			}
+
+			$cache = false;
+			return $cache;
 		}
 
 		//Nebula usage data

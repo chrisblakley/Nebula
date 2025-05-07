@@ -1840,100 +1840,14 @@ nebula.scrollDepth = async function(){
 	}
 };
 
-//Track campaigns that attributed to returning visitor conversions
+//Provide attribution data to necessary places
 nebula.attributionTracking = function(){
 	if ( nebula.site.options.attribution_tracking ){ //If the Nebula Option is enabled
 		if ( nebula.isDoNotTrack() ){
 			return false;
 		}
 
-		//Check if relevant tracking query parameters exist in the URL
-		let notableTrackingParameters = [
-			'utm_source',
-			'utm_campaign',
-			'utm_medium',
-			'utm_content',
-			'utm_term',
-			'gclid', //Google Ads Click ID
-			'gclsrc', //Google Ads Click Source
-			'gbraid',
-			'wbraid',
-			'dclid', //DoubleClick Click ID (typically offline tracking)
-			'msclkid', //Microsoft Click ID
-			'fbc', //Facebook Click ID
-			'fbclid', //Facebook Click ID
-			'li_', //LinkedIn
-			'tclid', //Twitter Click ID
-			'ttclid', //TikTok Click ID
-			'hsa_', //Hubspot
-			'mc_eid', //Mailchimp
-			'vero_id', //Vero
-			'mkt_tok', //Marketo
-			'email_id', //Email
-			'campaign_id', //Email
-			'subscriber_id', //Email
-			'mail_id', //Email
-			'keap', //Keap Email
-			'affiliate_id', //Affiliates
-			'coupon', //Affiliates
-			'promo', //Affiliates
-			'partner_id', //Affiliates
-			'partner', //Affiliates
-			'eloqua', //Eloqua
-			'pardot', //Pardot
-			'sfdc_id', //Salesforce
-		];
-
-		let urlSearchParams = new URLSearchParams(window.location.search);
-
-		let foundTrackingParameters = {};
-		for ( let queryParameter of urlSearchParams.keys() ){ //Loop through the URL query parameters
-			for ( let notableTrackingParameter of notableTrackingParameters ){ //Check against our list of notable tracking parameters
-				if ( queryParameter.startsWith(notableTrackingParameter) ){
-					foundTrackingParameters[queryParameter] = urlSearchParams.get(queryParameter);
-					break;
-				}
-			}
-		}
-
-		//If we found a tracking parameter
-		if ( Object.keys(foundTrackingParameters).length ){
-			foundTrackingParameters.path = window.location.pathname; //Include the page path to the entry
-
-			//If we already have the attribution cookie, update it
-			if ( nebula.readCookie('attribution') ){
-				var attributionData = JSON.parse(nebula.readCookie('attribution'));
-
-				attributionData.last = foundTrackingParameters; //Always overwrite the last touch attribution
-
-				//If we are missing the first-touch attribution, use this one now
-				if ( !attributionData?.first ){
-					attributionData.first = foundTrackingParameters;
-				}
-
-				//Now prepare to store multi-touch attributions
-				let previousEntry = attributionData.multi[attributionData.multi.length-1];
-				if ( JSON.stringify(previousEntry) !== JSON.stringify(foundTrackingParameters) ){ //If the current entry is different from the previous entry
-					attributionData.multi.push(foundTrackingParameters); //Push this tracking data to the multi-touch array
-
-					//Keep only the latest entries to save space
-					if ( attributionData.multi.length > 10 ){
-						attributionData.multi.shift(); //Remove oldest entry
-					}
-				}
-			} else { //Otherwise, create the cookie from scratch
-				var attributionData = {
-					first: foundTrackingParameters,
-					last: foundTrackingParameters,
-					multi: [foundTrackingParameters],
-				};
-			}
-
-			//Create or update the cookie with the latest attribution data
-			nebula.createCookie('attribution', JSON.stringify(attributionData));
-		}
-
-		//Now check if the cookie exists to fill the respective input field
+		//Check if the cookie attribution exists to fill the respective input field
 		if ( nebula.readCookie('attribution') && jQuery('input.attribution').length ){ //If our attribution cookie exists and we have an input to use
 			jQuery('input.attribution').val(nebula.readCookie('attribution')); //Fill the designated form field(s)
 		}

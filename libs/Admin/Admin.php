@@ -2063,8 +2063,6 @@ if ( !trait_exists('Admin') ){
 						if ( !empty(str_replace('{}', '', $decoded_submission_content->_nebula_attribution)) ){ //If we have attribution data
 							$cleaned_attribution_output = str_replace(array(',', ':'), array(', ', ': '), $decoded_submission_content->_nebula_attribution);
 							echo '<span>' . $cleaned_attribution_output . '</span>'; //Leave this as a span for the submission listing table
-						} elseif ( !empty($decoded_submission_content->_nebula_utms) ){ //If we have UTM data
-							echo '<span>' . $decoded_submission_content->_nebula_utms . '</span>';
 						}
 					}
 				}

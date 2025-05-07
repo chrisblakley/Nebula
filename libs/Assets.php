@@ -12,7 +12,6 @@ if ( !trait_exists('Assets') ){
 		public function hooks(){
 			if ( !$this->is_background_request() ){
 				//Prep these before headers are sent
-				add_action('parse_query', array($this, 'utms'));
 				add_action('init', array($this, 'init_session_data'));
 
 				//Register styles/scripts
@@ -60,8 +59,8 @@ if ( !trait_exists('Assets') ){
 
 			if ( $this->is_analytics_allowed() ){ //Only store this information if tracking is allowed
 				try {
-					if ( isset($_COOKIE['session']) ){
-						$session_cookie_data = json_decode(stripslashes($_COOKIE['session']), true);
+					if ( isset($this->super->cookie['session']) ){
+						$session_cookie_data = json_decode(stripslashes($this->super->cookie['session']), true);
 						$this->referrer = $session_cookie_data['referrer'];
 						$this->landing_page = $session_cookie_data['landing_page'];
 						$this->default_cid = $session_cookie_data['default_cid'];
@@ -71,19 +70,7 @@ if ( !trait_exists('Assets') ){
 
 						$session_cookie_data = $this->prep_new_session_cookie();
 
-						//Store the cookie first
-						setcookie(
-							'session',
-							json_encode($session_cookie_data),
-							time()+HOUR_IN_SECONDS,
-							COOKIEPATH,
-							COOKIE_DOMAIN,
-							is_ssl(), //Secure (only send over HTTPS)
-							true //HttpOnly (inaccessible to JavaScript)
-						);
-
-						//Then manually update the cookie memory data for this runtime (since this does not automatically happen)
-						$_COOKIE['session'] = json_encode($session_cookie_data);
+						$this->set_cookie('session', json_encode($session_cookie_data), time()+HOUR_IN_SECONDS*4, false); //Needs to be able to be read by JavaScript
 					}
 
 					do_action('qm/info', 'Session Referrer: ' . $this->referrer);
@@ -291,16 +278,9 @@ if ( !trait_exists('Assets') ){
 				}
 			}
 
-			//Check for session data
-			$session_utms = $this->utms();
-			if ( !empty($session_utms) ){
-				do_action('qm/info', 'Attribution: ' . $session_utms);
-			}
-
 			$this->brain['session'] = array(
 				'ip' => $this->get_ip_address(),
 				'id' => $this->nebula_session_id(),
-				'utms' => htmlspecialchars_decode($session_utms),
 				'flags' => array(
 					'adblock' => false,
 				),

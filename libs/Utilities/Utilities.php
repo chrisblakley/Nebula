@@ -125,7 +125,7 @@ if ( !trait_exists('Utilities') ){
 			} else {
 				$cache_group = uniqid('nebula_', true);
 				$session_cookie_data['sid_key'] = $cache_group;
-				$this->set_cookie('session', json_encode($session_cookie_data), time()+MONTH_IN_SECONDS); //Re-encode and set the full session cookie
+				$this->set_cookie('session', json_encode($session_cookie_data), time()+HOUR_IN_SECONDS*4, false); //Re-encode and set the full session cookie. Needs to be able to be read by JavaScript.
 			}
 
 			//Check object cache
@@ -894,52 +894,6 @@ if ( !trait_exists('Utilities') ){
 			}
 		}
 
-		//Store initial UTM tags through each session
-		//This is very similar to the JavaScript method of attribution tracking. That JS method works with third-party CRMs, where this is useful locally. Both are included in CF7 debuginfo (which may be interesting to compare)
-		public function utms(){
-			if ( $this->is_minimal_mode() ){return '';}
-
-			if ( !$this->is_analytics_allowed() ){ //Do nothing if analytics is not allowed
-				return '';
-			}
-
-			if ( $this->get_option('attribution_tracking') ){ //This functionality requires the Attribution Tracking Nebula Option because it adds tracking cookies
-				//Check the cookie first
-				if ( !empty($this->super->cookie['nebula_utms']) ){
-					return sanitize_text_field(htmlspecialchars($this->super->cookie['nebula_utms']));
-				}
-
-				//Otherwise check for various UTM parameters
-				$notable_tags = array('utm_', 'fbclid', 'gclid', 'gclsrc', 'dclid', 'gbraid', 'wbraid', 'mc_eid', '_hsenc', 'vero_id', 'mkt_tok');
-				$urls_to_check = array(
-					$this->url_components('query'), //Check the URL of the current page request
-				);
-
-				//Check the referer header URL too (if it exists)
-				//Note: This will only be used if a UTM value is not found in the current page request
-				if ( !empty($this->super->server['HTTP_REFERER']) ){
-					if ( $this->url_components('domain', $this->super->server['HTTP_REFERER']) == $this->url_components('domain') ){ //Only if the referrer also matches the current website domain. Using "domain" instead of "hostname" to allow UTM parameters to be read from subdomains too.
-						$urls_to_check[] = $this->url_components('query', $this->super->server['HTTP_REFERER']);
-					}
-				}
-
-				foreach ( $urls_to_check as $query_string ){ //Loop through the URLs that may contain UTM tags
-					foreach ( $notable_tags as $tag ){ //Loop through each of the notable tracking tags
-						if ( empty($query_string) || empty($tag) ){
-							continue;
-						}
-
-						if ( str_contains(strtolower($query_string), $tag) ){ //If UTM parameters exist
-							$this->set_cookie('nebula_utms', $this->url_components('all'), strtotime('+14 months')); //Set/update the cookie and store the entire LP URL
-							return sanitize_text_field($this->url_components('all')); //Return the entire landing page URL with full query string sanitized
-						}
-					}
-				}
-			}
-
-			return '';
-		}
-
 		//Handle the caching of the transient and object cache simultaneously
 		//This is best used when assigning a variable from an "expensive" output
 		//When passing parameters they must ALWAYS be passed as an array!
@@ -1007,7 +961,8 @@ if ( !trait_exists('Utilities') ){
 		}
 
 		//Create a session and cookie
-		public function set_cookie($name, $value, $expiration=false){
+		//Setting httponly makes the cookie inaccessible to JavaScript
+		public function set_cookie($name, $value, $expiration=false, $httponly=true){
 			$string_value = (string) $value;
 			if ( empty($string_value) ){
 				$string_value = 'false';
@@ -1027,7 +982,7 @@ if ( !trait_exists('Utilities') ){
 					COOKIEPATH,
 					COOKIE_DOMAIN,
 					is_ssl(), //Secure (HTTPS)
-					true //HTTP only (not available in JavaScript)
+					$httponly //HTTP only (not available in JavaScript)
 				);
 			}
 		}
@@ -1348,8 +1303,26 @@ if ( !trait_exists('Utilities') ){
 		//If the request was made via AJAX
 		public function is_ajax(){return $this->is_ajax_request();} //Alias
 		public function is_ajax_request(){
-			if ( wp_doing_ajax() || (!empty($this->super->server['HTTP_X_REQUESTED_WITH']) && strtolower($this->super->server['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') ){
+			if ( wp_doing_ajax() ){
 				return true;
+			}
+
+			if ( !empty($this->super->server['HTTP_X_REQUESTED_WITH']) && strtolower($this->super->server['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' ){
+				return true;
+			}
+
+			if ( !empty($this->super->server['REQUEST_URI']) ){
+				if ( str_contains($this->super->server['REQUEST_URI'], '-ajax=') ){
+					return true;
+				}
+
+				if ( str_contains($this->super->server['REQUEST_URI'], 'ajax.php') ){
+					return true;
+				}
+
+				if ( str_contains($this->super->server['REQUEST_URI'], 'action=health-check') ){
+					return true;
+				}
 			}
 
 			return false;
@@ -1365,6 +1338,13 @@ if ( !trait_exists('Utilities') ){
 			//Check for the REST API
 			if ( (defined('REST_REQUEST') && REST_REQUEST) || isset($this->super->get['rest_route']) ){
 				return true;
+			}
+
+			//Common REST API URIs
+			if ( isset($this->super->server['REQUEST_URI']) ){
+				if ( str_contains($this->super->server['REQUEST_URI'], '/wp-json/') ){
+					return true;
+				}
 			}
 
 			//Check if a CRON is running

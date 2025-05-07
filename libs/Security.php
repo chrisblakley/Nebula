@@ -383,7 +383,7 @@ if ( !trait_exists('Security') ){
 
 				//Mark as checked in session cookie
 				$session_cookie_data['spam_domain'] = false;
-				$this->set_cookie('session', json_encode($session_cookie_data), time()+YEAR_IN_SECONDS);
+				$this->set_cookie('session', json_encode($session_cookie_data), time()+HOUR_IN_SECONDS*4, true); //Needs to be able to be read by JavaScript
 			}
 
 			do_action('qm/info', 'Spam Domain Check Performed');
