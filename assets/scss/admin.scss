@@ -111,6 +111,9 @@ ul#nebula-performance-metrics li {
 	.todoresults_title {margin-bottom: 0;
 		.todo_help_icon {float: right; font-size: 10px;}
 	}
+
+	&:has(.todo-nothing-found) .todoresults_title {display: none;}
+
 	.todo_results {font-size: 10px; background: #f6f6f6; padding: 5px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; overflow: auto; white-space: nowrap; height: 350px; resize: vertical;
 		&.height-check {height: 1px;} //For prepping dynamic height in JS
 		.todofilewrap {margin-bottom: 10px;
@@ -135,6 +138,10 @@ ul#nebula-performance-metrics li {
 				.todoresult {font-size: 10px; margin: 0; padding: 0;}
 			}
 		}
+
+		&:has(.todo-nothing-found) {display: none; max-height: 80px !important;}
+
+		.todo-nothing-found {margin: 10px; text-align: center; font-size: 24px; line-height: 28px; opacity: 0.2;}
 	}
 }
 

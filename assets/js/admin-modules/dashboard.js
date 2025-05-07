@@ -86,14 +86,14 @@ nebula.developerMetaboxes = function(){
 		nebula.fileSizeMonitorTableFilter(); //Run once immediately on load
 
 		//Dropdown Filters
-		jQuery(document).on('change', '#nebula_file_size_monitor .filter-row select', function(e){
+		jQuery(document).on('change', '#nebula_file_size_monitor select', function(e){
 			jQuery('#nebula_file_size_monitor .simplify').removeClass('simplify');
 			jQuery('#filegroup-filter').removeClass('initial-state'); //It is now no longer in the initial state
 			nebula.fileSizeMonitorTableFilter();
 		});
 
 		//Change to all files when intending to filter by keyword
-		jQuery(document).on('focus keydown', '#nebula_file_size_monitor #filekeyword-filter', function(e){
+		jQuery(document).on('focus keypress change', '#nebula_file_size_monitor #filekeyword-filter, #keyword-helpers', function(e){
 			jQuery('#nebula_file_size_monitor .simplify').removeClass('simplify');
 
 			//If keyword searching but viewing the default selection, automatically change to all files
@@ -105,7 +105,7 @@ nebula.developerMetaboxes = function(){
 		});
 
 		//Keyword Search Filter
-		jQuery(document).on('keyup', '#nebula_file_size_monitor #filekeyword-filter', function(e){
+		jQuery(document).on('keypress', '#nebula_file_size_monitor #filekeyword-filter', function(e){
 			//Ignore meta keys
 			if ( ['Shift', 'Control', 'Alt', 'Meta'].includes(e.key) ){
 				return;
@@ -114,12 +114,14 @@ nebula.developerMetaboxes = function(){
 			nebula.keywordFilter('#nebula_file_size_monitor table tbody', 'tr', jQuery(this).val()); //Run the filter
 
 			setTimeout(function(){
+				//Show or hide the Clear button
 				if ( jQuery('#nebula_file_size_monitor #filekeyword-filter').val().length ){
 					jQuery('.clear-keywords').removeClass('transparent');
 				} else {
 					jQuery('.clear-keywords').addClass('transparent');
 				}
 
+				//Count the visible rows
 				let visibleRowCount = jQuery('#nebula_file_size_monitor table tbody tr:not(.filtereditem):visible').length;
 				jQuery('.totals-row .total-showing').text(visibleRowCount);
 
@@ -132,6 +134,12 @@ nebula.developerMetaboxes = function(){
 			}, 10);
 		});
 
+		jQuery(document).on('change', '#keyword-helpers', function(){
+			let selectedHelper = jQuery('#keyword-helpers').val();
+			jQuery('#filekeyword-filter').val(selectedHelper).trigger('keypress');
+			return false;
+		});
+
 		jQuery(document).on('click', '.show-optimization-tips', function(){
 			jQuery('#nebula-optimization-tips').slideDown();
 			jQuery('.show-optimization-tips').remove(); //Once it is clicked it stays open
@@ -141,7 +149,8 @@ nebula.developerMetaboxes = function(){
 		//Clear keyword search input
 		jQuery(document).on('click', '#nebula_file_size_monitor .clear-keywords', function(){
 			jQuery('#nebula_file_size_monitor #filekeyword-filter').val('');
-			jQuery('#nebula_file_size_monitor #filekeyword-filter').trigger('keyup');
+			jQuery('#nebula_file_size_monitor #filekeyword-filter').trigger('keypress');
+			jQuery('#keyword-helpers').val('');
 			return false;
 		});
 
@@ -150,8 +159,9 @@ nebula.developerMetaboxes = function(){
 			jQuery('#nebula_file_size_monitor #filekeyword-filter').val('');
 			jQuery('#filegroup-filter').val('largest'); //Use this as the default value now regardless of initial state
 			jQuery('#filetype-filter').val(''); //First value
-			jQuery('#nebula_file_size_monitor #filekeyword-filter').trigger('keyup');
+			jQuery('#nebula_file_size_monitor #filekeyword-filter').trigger('keypress');
 			jQuery('#nebula_file_size_monitor #filegroup-filter').trigger('change');
+			jQuery('#keyword-helpers').val('');
 			return false;
 		});
 	}

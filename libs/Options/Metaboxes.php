@@ -701,7 +701,7 @@ if ( !trait_exists('Metaboxes') ){
 					<input type="hidden" name="nebula_options[attribution_tracking]" value="<?php echo $nebula_options['attribution_tracking']; ?>">
 					<input id="attribution_tracking" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['attribution_tracking'])); ?>><label for="attribution_tracking">Attribution Tracking</label>
 
-					<p class="nebula-help-text short-help form-text text-muted">Track "last-non-organic" attribution by storing UTM and other notable tracking query parameters in a cookie to retrieve on users' subsequent returning visits (on the same device). This will fill an input with a class of <code>attribution</code> with the data if it exists as well as be used in CF7 form submissions. This option must be enabled in order to associate tracking parameters with website activity (and send them to CRMs). (Default: <?php echo $this->user_friendly_default('attribution_tracking'); ?>)</p>
+					<p class="nebula-help-text short-help form-text text-muted">Track attribution by storing UTM and other notable tracking query parameters in a cookie to retrieve on users' subsequent returning visits (on the same device). This will fill an input with a class of <code>attribution</code> with the data if it exists as well as be used in CF7 form submissions. This option must be enabled in order to associate tracking parameters with website activity (and send them to CRMs). (Default: <?php echo $this->user_friendly_default('attribution_tracking'); ?>)</p>
 					<p class="option-keywords">gdpr ccpa privacy ads campaigns cookies</p>
 				</div>
 

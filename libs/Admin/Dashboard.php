@@ -591,7 +591,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			if ( empty($instance_count) ){
-				echo '<p style="margin-top: 50px; text-align: center; font-size: 24px; line-height: 28px; opacity: 0.1;"><i class="fa-regular fa-smile" style="font-size: 32px;"></i><br />Nothing!</p>';
+				echo '<p class="todo-nothing-found"><i class="fa-regular fa-fw fa-smile"></i> None!</p>';
 			}
 			?>
 				</div><!--/todo_results-->
@@ -836,25 +836,26 @@ if ( !trait_exists('Dashboard') ){
 					$warning_threshold = $cpu_cores*2; //200% utilization
 
 					//Check each value against the thresholds and assign classes accordingly
+					//Note: Removing text color classes using "-off" until better thresholding is possible
 					$class_1m = '';
 					if ( $load_1m > $warning_threshold ){
-						$class_1m = 'text-danger';
+						$class_1m = 'essential text-danger-off';
 					} elseif ( $load_1m > $caution_threshold ){
-						$class_1m = 'text-caution';
+						$class_1m = 'essential text-caution-off';
 					}
 
 					$class_5m = '';
 					if ( $load_5m > $warning_threshold ){
-						$class_5m = 'text-danger';
+						$class_5m = 'essential text-danger-off';
 					} elseif ( $load_5m > $caution_threshold ){
-						$class_5m = 'text-caution';
+						$class_5m = 'essential text-caution-off';
 					}
 
 					$class_15m = '';
 					if ( $load_15m > $warning_threshold ){
-						$class_15m = 'text-danger';
+						$class_15m = 'essential text-danger-off';
 					} elseif ( $load_15m > $caution_threshold ){
-						$class_15m = 'text-caution';
+						$class_15m = 'essential text-caution-off';
 					}
 
 					echo '<li title="Average number of processes waiting for CPU (higher = busier). Caution thresholds depend on the amount of CPU cores (which can be set with a Nebula hook)."><i class="fa-solid fa-fw fa-network-wired"></i> Load Avg: <span class="' . $class_1m . '" title="1 minute"><strong>' . number_format($load_1m, 2) . '</strong> <em>(1 min)</em></span>, <span class="' . $class_5m . '" title="5 minutes"><strong>' . number_format($load_5m, 2) . '</strong> <em>(5 min)</em></span>, <span class="' . $class_15m . '" title="15 minutes"><strong>' . number_format($load_15m, 2) . '</strong> <em>(15 min)</em></span></li>';
@@ -1281,7 +1282,7 @@ if ( !trait_exists('Dashboard') ){
 				//File Groups dropdown
 				echo '<label for="filegroup-filter"><i class="fa-solid fa-fw fa-filter"></i> Filter: </label>';
 				echo '<select id="filegroup-filter" class="initial-state">';
-				echo '<option value="" ' . ( ( empty($default_group) || $default_group == 'all' || $default_group == 'allgroups' )? 'selected data-default="true"' : '' ) . '>All Groups</option>';
+				echo '<option value="" ' . ( ( empty($default_group) || $default_group == 'all' || $default_group == 'allgroups' )? 'selected data-default="true"' : '' ) . '>All File Groups</option>';
 
 				$priority_options = array(
 					'largest' => 'Largest Files',
@@ -1308,7 +1309,7 @@ if ( !trait_exists('Dashboard') ){
 				//File Type dropdown
 				echo '<label class="sr-only" for="filetype-filter">File Type: </label>';
 				echo '<select id="filetype-filter">';
-				echo '<option value="" selected data-default="true">All Types</option>';
+				echo '<option value="" selected data-default="true">All File Types</option>';
 				foreach ( $types as $type ){
 					echo ( !empty($type) )? '<option value="' . esc_attr($type) . '">' . esc_html($type) . '</option>' : '';
 				}
@@ -1318,7 +1319,41 @@ if ( !trait_exists('Dashboard') ){
 			echo '<div class="filter-row">';
 				//Keyword search input
 				echo '<label for="filekeyword-filter"><i class="fa-solid fa-fw fa-search"></i></label>';
-				echo '<input id="filekeyword-filter" type="text" placeholder="Find files" /><a class="clear-keywords transparent" href="#"><i class="fa-solid fa-times"></i> Clear</a>';
+				echo '<input id="filekeyword-filter" type="text" placeholder="Filter file list" />';
+
+				//Try to limit the option text of these to 16-17 characters
+				//Other naming ideas: Quick Searches, Search Presets, Quick Presets
+				echo '<select id="keyword-helpers">
+					<option selected default value="" disabled>Quick Searches</option>
+
+					<optgroup label="Contents">
+						<option value="accessibility">Accessibility</option>
+						<option value="contains-lorem">Contains Lorem</option>
+						<option value="debug-output">Debug Output</option>
+						<option value="fatal">Fatal Errors</option>
+						<option value="non-ascii">Non-ASCII Chars</option>
+						<option value="space-indentation">Space Indents</option>
+						<option value="tech-debt">Tech Debt</option>
+					</optgroup>
+
+					<optgroup label="Filesystem">
+						<option value="empty-file">Empty Files</option>
+						<option value="no-extension">No Extension</option>
+						<option value="old-file">Old Files</option>
+						<option value="stale-log">Stale Logs</option>
+					</optgroup>
+
+					<optgroup label="Security">
+						<option value="concern-">All Concerns</option>
+						<option value="file-permissions">Bad Permissions</option>
+						<option value="concern-filename">Filename Concerns</option>
+						<option value="deprecated-function">Deprecations</option>
+						<option value="remote-include">Remote Include</option>
+						<option value="suspicious-string">Suspicious Strings</option>
+					</optgroup>
+				</select>';
+
+				echo '<a class="clear-keywords transparent" href="#"><i class="fa-solid fa-times"></i> Clear</a>';
 			echo '</div>';
 
 			//Output the table
@@ -1387,7 +1422,7 @@ if ( !trait_exists('Dashboard') ){
 
 				//Links
 				$file_link = '';
-				if ( !empty($file['linkable']) && $file['size'] <= (MB_IN_BYTES*10) ){ //If the $file['linkable'] and the filesize is less than 10mb
+				if ( !empty($file['linkable']) && $file['size'] <= (MB_IN_BYTES*25) ){ //If the $file['linkable'] and the filesize is less than 25mb
 					$file_uri = str_replace(ABSPATH, site_url('/'), $file['path']);
 					$file_link = ' <a class="file-link" href="' . esc_url($file_uri) . '" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-fw fa-up-right-from-square"></i></a>';
 				}
@@ -1495,8 +1530,11 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			if ( $group === 'Logs' || $extension === 'log' || basename($filepath) === 'error_log' ){
-				//Include entry counts (lines) for log files
-				$file_info['lines'] = count(file($filepath, FILE_SKIP_EMPTY_LINES));
+				//Include entry counts (lines) for log files (when they aren't too large).
+				$file_info['lines'] = 0;
+				if ( filesize($filepath) <= MB_IN_BYTES*5 ){
+					$file_info['lines'] = count(file($filepath, FILE_SKIP_EMPTY_LINES)); //This could be updated to loop through each line in the future which will support larger file sizes (which is how the Dev Info fatal error counter works).
+				}
 
 				//Check log files for fatal errors
 				$contents = file_get_contents($filepath, false, null, 0, $file_size_content_scan_limit);

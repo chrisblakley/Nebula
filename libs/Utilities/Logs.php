@@ -536,7 +536,7 @@ if ( !trait_exists('Logs') ){
 			$fatal_error_count = 0; //Initialize counter
 			$one_week_ago = strtotime('-7 days'); //Get the timestamp for one week ago
 
-			//Open the log file for reading
+			//Open the log file for reading. This method does not load the entire file into memory at once, so it can handle larger files than the File Size Monitor (which is limited to 5mb)
 			$file_handle = fopen($log_file, 'r');
 			if ( $file_handle ){
 				while ( ($line = fgets($file_handle)) !== false ){
