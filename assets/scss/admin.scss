@@ -695,7 +695,11 @@ ul.simplify {
 		&:has(.essential),
 		&.text-caution,
 		&:has(.text-caution),
+		&.warning,
+		&:has(.warning),
 		&.text-danger,
-		&:has(.text-danger) {display: block;}
+		&:has(.text-danger),
+		&.error,
+		&:has(.error) {display: block;}
 	}
 }

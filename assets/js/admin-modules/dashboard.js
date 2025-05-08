@@ -93,7 +93,7 @@ nebula.developerMetaboxes = function(){
 		});
 
 		//Change to all files when intending to filter by keyword
-		jQuery(document).on('focus keypress change', '#nebula_file_size_monitor #filekeyword-filter, #keyword-helpers', function(e){
+		jQuery(document).on('focus keydown change', '#nebula_file_size_monitor #filekeyword-filter, #keyword-helpers', function(e){
 			jQuery('#nebula_file_size_monitor .simplify').removeClass('simplify');
 
 			//If keyword searching but viewing the default selection, automatically change to all files
@@ -105,10 +105,15 @@ nebula.developerMetaboxes = function(){
 		});
 
 		//Keyword Search Filter
-		jQuery(document).on('keypress', '#nebula_file_size_monitor #filekeyword-filter', function(e){
+		jQuery(document).on('keydown', '#nebula_file_size_monitor #filekeyword-filter', function(e){
 			//Ignore meta keys
 			if ( ['Shift', 'Control', 'Alt', 'Meta'].includes(e.key) ){
 				return;
+			}
+
+			//Reset the pre-made filter helpers dropdown select only when it wasn't used to trigger the keyword filter
+			if ( typeof e.key != 'undefined' ){ //This is what happens when the pre-made filter helper dropdown select triggers a keydown
+				jQuery('#keyword-helpers').val('');
 			}
 
 			nebula.keywordFilter('#nebula_file_size_monitor table tbody', 'tr', jQuery(this).val()); //Run the filter
@@ -127,7 +132,7 @@ nebula.developerMetaboxes = function(){
 
 				//Show or hide the "No Files" message depending if we have any results
 				if ( visibleRowCount === 0 ){
-					jQuery('.no-files-message').removeClass('hidden');
+					jQuery('.no-files-message').removeClass('hidden').show();
 				} else {
 					jQuery('.no-files-message').addClass('hidden');
 				}
@@ -136,7 +141,7 @@ nebula.developerMetaboxes = function(){
 
 		jQuery(document).on('change', '#keyword-helpers', function(){
 			let selectedHelper = jQuery('#keyword-helpers').val();
-			jQuery('#filekeyword-filter').val(selectedHelper).trigger('keypress');
+			jQuery('#filekeyword-filter').val(selectedHelper).trigger('keydown');
 			return false;
 		});
 
@@ -149,7 +154,7 @@ nebula.developerMetaboxes = function(){
 		//Clear keyword search input
 		jQuery(document).on('click', '#nebula_file_size_monitor .clear-keywords', function(){
 			jQuery('#nebula_file_size_monitor #filekeyword-filter').val('');
-			jQuery('#nebula_file_size_monitor #filekeyword-filter').trigger('keypress');
+			jQuery('#nebula_file_size_monitor #filekeyword-filter').trigger('keydown');
 			jQuery('#keyword-helpers').val('');
 			return false;
 		});
@@ -159,7 +164,7 @@ nebula.developerMetaboxes = function(){
 			jQuery('#nebula_file_size_monitor #filekeyword-filter').val('');
 			jQuery('#filegroup-filter').val('largest'); //Use this as the default value now regardless of initial state
 			jQuery('#filetype-filter').val(''); //First value
-			jQuery('#nebula_file_size_monitor #filekeyword-filter').trigger('keypress');
+			jQuery('#nebula_file_size_monitor #filekeyword-filter').trigger('keydown');
 			jQuery('#nebula_file_size_monitor #filegroup-filter').trigger('change');
 			jQuery('#keyword-helpers').val('');
 			return false;
@@ -299,7 +304,7 @@ nebula.getLighthouseResults = function(){
 	jQuery('#performance-sub-status strong').text('Google Lighthouse report in-progress.');
 
 	var sourceURL = jQuery('#testloadcon').attr('data-src') + '?noga'; //No GA so it does not get flooded with bot traffic
-	fetch('https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' + encodeURIComponent(sourceURL), {
+	fetch('https://pagespeedonline.googleapis.com/pagespeedonline/v5/runPagespeed?url=' + encodeURIComponent(sourceURL) + '&key=' + nebula.site.options.nebula_google_browser_api_key, {
 		cache: 'no-cache',
 		priority: 'low'
 	}).then(function(response){
@@ -326,7 +331,7 @@ nebula.getLighthouseResults = function(){
 				var serverResponseTime = json.lighthouseResult.audits['server-response-time'];
 				jQuery('#performance-ttfb').remove(); //Remove the PHP-timed data
 				nebula.appendPerformanceMetric({
-					'icon': 'fa-solid fa-hdd',
+					'icon': 'essential fa-solid fa-hdd',
 					'label': 'Server Response Time',
 					'text': (serverResponseTime.numericValue/1000).toFixed(3) + ' seconds',
 					'description': serverResponseTime.description,
@@ -338,7 +343,7 @@ nebula.getLighthouseResults = function(){
 				//DOM Ready
 				var domReady = json.lighthouseResult.audits['metrics'].details.items[0].observedDomContentLoaded;
 				nebula.appendPerformanceMetric({
-					'icon': 'fa-solid fa-stopwatch',
+					'icon': 'essential fa-solid fa-stopwatch',
 					'label': 'DOM Ready',
 					'text': (domReady/1000).toFixed(3) + ' seconds',
 					'value': domReady,
@@ -350,7 +355,7 @@ nebula.getLighthouseResults = function(){
 				//Window Load
 				var windowLoad = json.lighthouseResult.audits['metrics'].details.items[0].observedLoad;
 				nebula.appendPerformanceMetric({
-					'icon': 'fa-solid fa-stopwatch',
+					'icon': 'essential fa-solid fa-stopwatch',
 					'label': 'Window Load',
 					'text': (windowLoad/1000).toFixed(3) + ' seconds',
 					'value': windowLoad,
@@ -446,7 +451,7 @@ nebula.getLighthouseResults = function(){
 				//Total Byte Weight
 				var totalByteWeight = json.lighthouseResult.audits['total-byte-weight'];
 				nebula.appendPerformanceMetric({
-					'icon': 'fa-solid fa-weight-hanging',
+					'icon': 'essential fa-solid fa-weight-hanging',
 					'label': 'Total Byte Weight',
 					'text': (totalByteWeight.numericValue/1024/1024).toFixed(2) + 'mb',
 					'description': totalByteWeight.description,
@@ -458,7 +463,7 @@ nebula.getLighthouseResults = function(){
 				//Network Requests
 				var networkRequests = json.lighthouseResult.audits['network-requests'].details.items.length;
 				nebula.appendPerformanceMetric({
-					'icon': 'fa-solid fa-list-ol',
+					'icon': 'essential fa-solid fa-list-ol',
 					'label': 'Network Requests',
 					'text': networkRequests,
 					'value': networkRequests,
@@ -469,6 +474,7 @@ nebula.getLighthouseResults = function(){
 
 			jQuery('#performance_metabox h2 i').removeClass('fa-spinner fa-spin').addClass('fa-stopwatch');
 			jQuery('#performance_metabox h2 span span').html('Performance <small>(via Google Lighthouse)</small>');
+			jQuery('#nebula-performance-metrics.simplify .expand-simplified-view').removeClass('hidden').show();
 		} else { //If the fetch data is not expected, run iframe test instead...
 			let reason = '';
 
@@ -516,7 +522,7 @@ nebula.runIframeSpeedTest = async function(reason=''){
 		var iframeResponseEnd = Math.round(iframe.contentWindow.performance.timing.responseEnd-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until server response finishes
 		jQuery('#performance-ttfb').remove(); //Remove the PHP-timed data
 		nebula.appendPerformanceMetric({
-			'icon': 'fa-solid fa-hdd',
+			'icon': 'essential fa-solid fa-hdd',
 			'label': 'Server Response Time',
 			'text': iframeResponseEnd/1000 + ' seconds',
 			'value': iframeResponseEnd,
@@ -527,7 +533,7 @@ nebula.runIframeSpeedTest = async function(reason=''){
 		//DOM Ready
 		var iframeDomReady = Math.round(iframe.contentWindow.performance.timing.domContentLoadedEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until DOM ready
 		nebula.appendPerformanceMetric({
-			'icon': 'fa-solid fa-stopwatch',
+			'icon': 'essential fa-solid fa-stopwatch',
 			'label': 'DOM Ready',
 			'text': iframeDomReady/1000 + ' seconds',
 			'value': iframeDomReady,
@@ -538,7 +544,7 @@ nebula.runIframeSpeedTest = async function(reason=''){
 		//Window Load
 		var iframeWindowLoaded = Math.round(iframe.contentWindow.performance.timing.loadEventStart-iframe.contentWindow.performance.timing.navigationStart); //Navigation start until window load
 		nebula.appendPerformanceMetric({
-			'icon': 'fa-solid fa-stopwatch',
+			'icon': 'essential fa-solid fa-stopwatch',
 			'label': 'Window Load',
 			'text': iframeWindowLoaded/1000 + ' seconds',
 			'value': iframeWindowLoaded,
@@ -581,7 +587,7 @@ nebula.appendPerformanceMetric = function(data){
 			diff = ' <small>(' + data.diff + ' from previous)</small>';
 		}
 
-		jQuery('ul#nebula-performance-metrics').append('<li class="' + warningLevel + '" title="' + description + '">' + icon + ' ' + data.label + ': <strong>' + data.text + '</strong>' + diff + '</li>');
+		jQuery('ul#nebula-performance-metrics li.insert-here').before('<li class="' + warningLevel + '" title="' + description + '">' + icon + ' ' + data.label + ': <strong>' + data.text + '</strong>' + diff + '</li>');
 	}
 };
 

@@ -164,6 +164,7 @@ if ( !trait_exists('Analytics') ){
 			//If we found a tracking parameter
 			if ( !empty($found_parameters) ){
 				$found_parameters['path'] = strtok($_SERVER['REQUEST_URI'], '?'); //Include the page path to the entry (and ensure query parameters are excluded)
+				$found_parameters['date'] = date('Y-m-d\TH:i:s'); //Associate the date/time with the attribution
 
 				//If we already have the attribution cookie, update it
 				if ( isset($this->super->cookie['attribution']) ){
@@ -185,20 +186,33 @@ if ( !trait_exists('Analytics') ){
 						$attribution_data['multi'] = array();
 					}
 
-					$last_entry = end($attribution_data['multi']);
-					if ( json_encode($last_entry) !== json_encode($found_parameters) ){ //If the current entry is different from the previous entry
-						$attribution_data['multi'][] = $found_parameters; //Push this tracking data to the multi-touch array
+					if ( !empty($attribution_data['multi']) ){ //If we have a "multi" entry already, compare and update it
+						$last_entry = end($attribution_data['multi']);
 
-						//Keep only the latest entries to save space
-						if ( count($attribution_data['multi']) > 10 ){
-							array_shift($attribution_data['multi']); //Remove oldest entry
+						//Ignore "path" and "date" when comparing for uniqueness
+						$temp_last = $last_entry;
+						$temp_found = $found_parameters;
+						unset($temp_last['path'], $temp_last['date']);
+						unset($temp_found['path'], $temp_found['date']);
+						ksort($temp_last);
+						ksort($temp_found);
+
+						if ( json_encode($temp_last) !== json_encode($temp_found) ){ //If the current entry is different from the previous entry
+							$attribution_data['multi'][] = $found_parameters; //Push this tracking data to the multi-touch array
+
+							//Check if cookie size exceeds ~3800 bytes (leave headroom for name, headers, etc.)
+							$encoded_attribution_data = wp_json_encode($attribution_data);
+							while ( strlen($encoded_attribution_data) > 3800 && count($attribution_data['multi']) > 1 ){ //If it exceeds 3.8kb and has more than 1 multi entry
+								array_shift($attribution_data['multi']); //Remove oldest entry
+								$encoded_attribution_data = wp_json_encode($attribution_data); //Re-encode after trimming to test again
+							}
 						}
+					} else { //Otherwise, it is the first entry into multi
+						$attribution_data['multi'][] = $found_parameters;
 					}
 				} else { //Otherwise, create the cookie from scratch
 					$attribution_data = array(
-						'first' => $found_parameters,
-						'last' => $found_parameters,
-						'multi' => array($found_parameters),
+						'first' => $found_parameters //We add "last" and "multi" only when the second attribution visit is detected
 					);
 				}
 

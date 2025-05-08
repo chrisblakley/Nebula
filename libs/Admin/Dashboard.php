@@ -1266,6 +1266,29 @@ if ( !trait_exists('Dashboard') ){
 			$used_groups = array_unique(array_column($files, 'group'));
 			sort($used_groups);
 
+			//Check if specific directories were included in the file size monitor
+			$has_uploads = false;
+			$has_plugins = false;
+
+			foreach ( $files as $file ){
+				if ( !isset($file['path']) ){
+					continue;
+				}
+
+				if ( !$has_uploads && str_contains($file['path'], '/uploads/') ){
+					$has_uploads = true;
+				}
+
+				if ( !$has_plugins && str_contains($file['path'], '/plugins/') ){
+					$has_plugins = true;
+				}
+
+				//Exit early if both are found
+				if ( $has_uploads && $has_plugins ){
+					break;
+				}
+			}
+
 			echo '<p>This monitors theme files and standard log locations as well as <a href="//nebula.gearside.com/examples/file-size-monitor-dashboard-metabox/?utm_campaign=documentation&utm_medium=dashboard&utm_source=' . urlencode(site_url()) . '&utm_content=file_size_monitor_adding#adding" target="_blank" rel="noopener noreferrer">any files manually added</a>.</p>'; //@todo: link to nebula documentation for examples of how to add files to the monitor. show an example of how to add individual files as well as an example of how to add entire directories of files
 
 			//Show a warning if scanning a high amount of files
@@ -1319,18 +1342,19 @@ if ( !trait_exists('Dashboard') ){
 			echo '<div class="filter-row">';
 				//Keyword search input
 				echo '<label for="filekeyword-filter"><i class="fa-solid fa-fw fa-search"></i></label>';
-				echo '<input id="filekeyword-filter" type="text" placeholder="Filter file list" />';
+				echo '<input id="filekeyword-filter" type="text" placeholder="Filter" />';
 
 				//Try to limit the option text of these to 16-17 characters
 				//Other naming ideas: Quick Searches, Search Presets, Quick Presets
 				echo '<select id="keyword-helpers">
-					<option selected default value="" disabled>Quick Searches</option>
+					<option selected default value="" disabled>Pre-Made Filters</option>
 
 					<optgroup label="Contents">
 						<option value="accessibility">Accessibility</option>
+						<option value="concern-code-quality">Code Quality</option>
 						<option value="contains-lorem">Contains Lorem</option>
 						<option value="debug-output">Debug Output</option>
-						<option value="fatal">Fatal Errors</option>
+						<option value="contains-fatal">Fatal Errors</option>
 						<option value="non-ascii">Non-ASCII Chars</option>
 						<option value="space-indentation">Space Indents</option>
 						<option value="tech-debt">Tech Debt</option>
@@ -1340,11 +1364,22 @@ if ( !trait_exists('Dashboard') ){
 						<option value="empty-file">Empty Files</option>
 						<option value="no-extension">No Extension</option>
 						<option value="old-file">Old Files</option>
-						<option value="stale-log">Stale Logs</option>
-					</optgroup>
+						<option value="stale-log">Stale Logs</option>';
+
+						if ( $has_plugins || $has_uploads ){
+							echo '<option value="/themes/">Theme</option>';
+						}
+
+						if ( $has_plugins ){ //If the /plugins/ directory is included in any files monitored
+							echo '<option value="/plugins/">Plugins</option>';
+						}
+
+						if ( $has_uploads ){ //If the /uploads/ directory is included in any files monitored
+							echo '<option value="/uploads/">Uploads</option>';
+						}
+					echo '</optgroup>
 
 					<optgroup label="Security">
-						<option value="concern-">All Concerns</option>
 						<option value="file-permissions">Bad Permissions</option>
 						<option value="concern-filename">Filename Concerns</option>
 						<option value="deprecated-function">Deprecations</option>
@@ -1839,14 +1874,17 @@ if ( !trait_exists('Dashboard') ){
 			echo '<div id="testloadcon" data-src="' . $home_url . '" style="pointer-events: none; opacity: 0; visibility: hidden; display: none;"></div>'; //For iframe timing
 
 			echo '<img id="performance-screenshot" class="hidden" src="#" />';
-			echo '<ul id="nebula-performance-metrics" class="nebula-fa-ul">';
+			echo '<ul id="nebula-performance-metrics" class="nebula-fa-ul ' . $this->get_simplify_dashboard_class() . '">';
 
 			//Sub-status
-			echo '<li id="performance-sub-status"><i class="fa-regular fa-fw fa-comment"></i> <span class="label">Status</span>: <strong>Preparing test...</strong></li>';
-			echo '<li id="performance-sub-reason" class="hidden"><i class="fa-regular fa-fw fa-note-sticky"></i> <span class="label"></span></li>';
+			echo '<li id="performance-sub-status" class="essential"><i class="fa-regular fa-fw fa-comment"></i> <span class="label">Status</span>: <strong>Preparing test...</strong></li>';
+			echo '<li id="performance-sub-reason" class="essential hidden"><i class="fa-regular fa-fw fa-note-sticky"></i> <span class="label"></span></li>';
+
+			echo '<li class="insert-here hidden" style="display: none;"></li>';
+			echo '<li class="expand-simplified-view essential hidden" style="display: none;"><a href="#">...Expand full list <i class="fa-solid fa-fw fa-caret-down"></i></a></li>';
 
 			//PHP-Measured Server Load Time (TTFB)
-			echo '<li id="performance-ttfb"><i class="fa-regular fa-fw fa-clock"></i> <span class="label">PHP Response Time</span>: <strong class="datapoint" title="Calculated via PHP render time">' . timer_stop(0, 3) . ' seconds</strong></li>';
+			echo '<li id="performance-ttfb"><i class="fa-regular fa-fw fa-clock"></i> <span class="essential label">PHP Response Time</span>: <strong class="datapoint nebula-ttfb-time" title="Calculated via PHP render time">~' . timer_stop(0, 3) . '</strong> <strong>seconds</strong></li>';
 			echo '</ul>';
 
 			echo '<p><small><a href="https://web.dev/lighthouse-performance/" target="_blank" rel="noopener noreferrer">Learn about user-centric performance metrics &raquo;</a></small></p>';
