@@ -126,16 +126,7 @@ nebula.developerMetaboxes = function(){
 					jQuery('.clear-keywords').addClass('transparent');
 				}
 
-				//Count the visible rows
-				let visibleRowCount = jQuery('#nebula_file_size_monitor table tbody tr:not(.filtereditem):visible').length;
-				jQuery('.totals-row .total-showing').text(visibleRowCount);
-
-				//Show or hide the "No Files" message depending if we have any results
-				if ( visibleRowCount === 0 ){
-					jQuery('.no-files-message').removeClass('hidden').show();
-				} else {
-					jQuery('.no-files-message').addClass('hidden');
-				}
+				nebula.checkFileRowsResult();
 			}, 10);
 		});
 
@@ -145,13 +136,18 @@ nebula.developerMetaboxes = function(){
 			return false;
 		});
 
+		//Expand notes when clicking file rows
+		jQuery(document).on('click', '.file-name', function(){
+			jQuery(this).parents('tr').find('.file-keywords').toggleClass('hidden'); //yolo
+		});
+
 		jQuery(document).on('click', '.show-optimization-tips', function(){
 			jQuery('#nebula-optimization-tips').slideDown();
 			jQuery('.show-optimization-tips').remove(); //Once it is clicked it stays open
 			return false;
 		});
 
-		//Clear keyword search input
+		//Clear keyword search input //yolo should this just act as a full reset?
 		jQuery(document).on('click', '#nebula_file_size_monitor .clear-keywords', function(){
 			jQuery('#nebula_file_size_monitor #filekeyword-filter').val('');
 			jQuery('#nebula_file_size_monitor #filekeyword-filter').trigger('keydown');
@@ -279,12 +275,22 @@ nebula.fileSizeMonitorTableFilter = function(){
 	jQuery('#nebula-optimization-tips li').addClass('hidden');
 	jQuery('#nebula-optimization-tips li[data-group*="' + selectedGroup.toLowerCase() + '"]').removeClass('hidden'); //Maybe use the case-insensitive "i" here eventually?
 	jQuery('#nebula-optimization-tips li.general').removeClass('hidden');
+
+	nebula.checkFileRowsResult();
 };
 
+//Show or hide the "No Files" message depending if we have any results
+nebula.checkFileRowsResult = function(){
+	//Count the visible rows
+	let visibleRowCount = jQuery('#nebula_file_size_monitor table tbody tr:not(.filtereditem):visible').length;
+	jQuery('.totals-row .total-showing').text(visibleRowCount);
 
-
-
-
+	if ( visibleRowCount === 0 ){
+		jQuery('.no-files-message').removeClass('hidden').show();
+	} else {
+		jQuery('.no-files-message').addClass('hidden');
+	}
+}
 
 //Check the page speed using (in this priority) Google Lighthouse, or a rudimentary iframe timing
 nebula.checkPageSpeed = function(){

@@ -412,7 +412,7 @@ if ( !trait_exists('Warnings') ){
 						$file_count = count($modified_files);
 						$file_list = implode("\n", $modified_files); //Join file names with new lines for the title attribute
 
-						$description = '<span title="' . esc_attr($title_attr) . '"><strong>' . $file_count . '</strong> Nebula parent theme ' . $this->singular_plural($file_count, 'file has', 'files have') . ' been modified.</span>';
+						$description = '<span><strong>' . $file_count . '</strong> Nebula parent theme ' . $this->singular_plural($file_count, 'file has', 'files have') . ' been modified.</span>';
 						if ( $pagenow === 'update-core.php' ){
 							$description .= ' <strong>If you update the Nebula theme, these modifications will be overwritten and lost!</strong> Please review those changes first.';
 						}

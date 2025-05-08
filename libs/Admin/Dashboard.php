@@ -1357,12 +1357,14 @@ if ( !trait_exists('Dashboard') ){
 						<option value="contains-fatal">Fatal Errors</option>
 						<option value="non-ascii">Non-ASCII Chars</option>
 						<option value="space-indentation">Space Indents</option>
+						<option value="speed-optimization">Speed Optimization</option>
 						<option value="tech-debt">Tech Debt</option>
+						<option value="concern-ux">User Experience</option>
 					</optgroup>
 
 					<optgroup label="Filesystem">
 						<option value="empty-file">Empty Files</option>
-						<option value="no-extension">No Extension</option>
+						<option value="no-extension">No Extensions</option>
 						<option value="old-file">Old Files</option>
 						<option value="stale-log">Stale Logs</option>';
 
@@ -1383,7 +1385,7 @@ if ( !trait_exists('Dashboard') ){
 						<option value="file-permissions">Bad Permissions</option>
 						<option value="concern-filename">Filename Concerns</option>
 						<option value="deprecated-function">Deprecations</option>
-						<option value="remote-include">Remote Include</option>
+						<!-- <option value="remote-include">Remote Includes</option> -->
 						<option value="suspicious-string">Suspicious Strings</option>
 					</optgroup>
 				</select>';
@@ -1422,6 +1424,10 @@ if ( !trait_exists('Dashboard') ){
 				if ( !empty($file['notes']) ){
 					if ( str_contains($file['notes'], 'recently-modified') ){
 						$file_icon .= '<i class="note-icon fa-regular fa-clock recently-modified" title="This file has been recently modified"></i>';
+					}
+
+					if ( str_contains($file['notes'], 'accessibility') ){
+						$file_icon .= '<i class="note-icon fa-solid fa-universal-access a11y-issue-icon" title="This file has potential accessibility issues" style="color: #1C4F90;"></i>';
 					}
 
 					if ( str_contains($file['notes'], 'contains-todo') ){
@@ -1471,11 +1477,11 @@ if ( !trait_exists('Dashboard') ){
 				}
 
 				echo '<tr class="' . trim($row_class) . '" data-type="' . esc_attr($file['type']) . '" data-group="' . esc_attr($file['group']) . '" data-budget="' . esc_attr($this->format_bytes($file['budget'])) . '">';
-				echo '<td class="file-name">' . ' <small>' . ($index+1) . '.</small> <span class="file-icons-group">' . $file_icon . '</span> <span title="' . esc_attr($file['path']) . '">' . esc_html($file['name']) . '</span>' . $additional_info . $file_link . '<small class="modified-info hidden"><br />(Modified ' . human_time_diff($file['modified'], time()) . ' ago)</small></td>';
+				echo '<td class="file-name">' . ' <small>' . ($index+1) . '.</small> <span class="file-icons-group">' . $file_icon . '</span> <span title="' . esc_attr($file['path']) . '">' . esc_html($file['name']) . '</span>' . $additional_info . $file_link . '<small class="modified-info hidden"><br />(Modified ' . human_time_diff($file['modified'], time()) . ' ago)</small><small class="file-keywords hidden"><br /><i class="fa-solid fa-fw fa-turn-up fa-rotate-90"></i> ' . $file['group'] . ' ' . $file['notes'] . '</small></td>';
 				echo '<td class="file-group">' . esc_html($file['group']) . '</td>';
 				echo '<td class="file-size" title="' . $budget_description . '">' . $this->format_bytes($file['size']) . '</td>';
 				echo '<td class="budget-percent hidden">' . $budget_percent . '</td>';
-				echo '<td class="file-keywords hidden">' . $file['group'] . ' ' . $file['notes'] . ' ' . $file['path'] . '</td>';
+				echo '<td class="file-path hidden">' . $file['path'] . '</td>';
 				echo '</tr>';
 			}
 			echo '</tbody></table><div class="no-files-message hidden">No files match the selected criteria. <a class="reset-filters" href="#">Reset?</a></div></div>';
@@ -1588,11 +1594,11 @@ if ( !trait_exists('Dashboard') ){
 				$contents = strtolower($contents);
 
 				//Check for @todo comments and other potential tech debt
-				$tech_debt_strings = array('@todo', 'fixme');
+				$tech_debt_strings = array('@todo', 'fixme', 'style=', 'onclick=');
 				foreach ( $tech_debt_strings as $tech_debt_string ){
 					if ( str_contains($contents, $tech_debt_string) ){
 						$notes[] = 'potential-tech-debt';
-						$notes[] = 'contains-' . str_replace('@', '', $tech_debt_string);
+						$notes[] = 'contains-' . str_replace(array('@', '='), '', $tech_debt_string);
 						break;
 					}
 				}
@@ -1612,9 +1618,17 @@ if ( !trait_exists('Dashboard') ){
 				}
 
 				//Code Quality
-				if ( preg_match('/["\']\s*[\.\+]\s*["\']/', $contents) ){ //Check for concatenation of two strings
+				if ( preg_match('/(["\'])(?:\\\\\1|.)*?\1\s*[\.\+]\s*(["\'])(?:\\\\\2|.)*?\2/', $contents) ){ //Check for concatenation of two strings
 					$notes[] = 'concern-code-quality';
 					$notes[] = 'concern-concatenation';
+				}
+				if ( preg_match('/^\s*[^#\/\n]*\?.*?\?.*?:.*?:.*$/m', $contents) ){ //Nested ternary operators
+					$notes[] = 'concern-code-quality';
+					$notes[] = 'concern-nested-ternary';
+				}
+				if ( str_contains($contents, '.ajax(') ){ //jQuery AJAX (instead of JS Fetch)
+					$notes[] = 'concern-code-quality contains-ajax';
+					$notes[] = 'consider-alternatives';
 				}
 			}
 
@@ -1643,7 +1657,7 @@ if ( !trait_exists('Dashboard') ){
 				$notes[] = 'no-extension';
 			}
 
-			if ( in_array($group, array('Templating', 'Text', 'Other')) ){
+			if ( in_array($group, array('Templating', 'Text', 'Config', 'Other')) ){
 				$contents = file_get_contents($filepath, false, null, 0, $file_size_content_scan_limit);
 				$contents = strtolower($contents);
 
@@ -1662,11 +1676,32 @@ if ( !trait_exists('Dashboard') ){
 						$notes[] = 'placeholder-alt-attribute';
 					}
 
-					//Best-effort check for <img> elements with missing alt attributes (note: it may be acceptable if the element contains a role or is aria-hidden)
-					if ( preg_match('/<img\b(?![^>]*\balt=)[^>\n]*>/i', $contents) ){ //Check <img> elements that are missing alt until a newline limit
+					//Check forms for labels
+					if ( preg_match('/<form\b[^>]*>.*?(?!<label\b).*?<\/form>/is', $contents) ){
 						$notes[] = 'accessibility';
-						$notes[] = 'a11y';
-						$notes[] = 'missing-alt-attribute';
+						$notes[] = 'concern-missing-label';
+					}
+
+					//Check for blocking script tags without async/defer
+					if ( str_contains($contents, '<script') && preg_match('/<script[^>]+src=["\'][^"\']+\.js["\'](?![^>]*\b(async|defer)\b)(?![^>]*type=["\']module["\'])[^>]*>$/im', $contents) ){
+						$notes[] = 'concern-speed-optimization';
+						$notes[] = 'concern-blocking-js';
+					}
+
+					//If the file contains img tags
+					if ( str_contains($contents, '<img') ){
+						//Check for missing lazy loading
+						if ( preg_match('/<img\b(?![^>]*\bloading=["\']lazy["\'])[^>]*\/>/i', $contents) ){
+							$notes[] = 'concern-speed-optimization';
+							$notes[] = 'concern-no-lazy-load';
+						}
+
+						//Best-effort check for <img> elements with missing alt attributes (note: it may be acceptable if the element contains a role or is aria-hidden)
+						if ( preg_match('/<img\b(?![^>]*\balt=)[^>\n]*\/>/i', $contents) ){ //Check <img> elements that are missing alt until a newline limit
+							$notes[] = 'accessibility';
+							$notes[] = 'a11y';
+							$notes[] = 'missing-alt-attribute';
+						}
 					}
 				}
 
@@ -1675,8 +1710,14 @@ if ( !trait_exists('Dashboard') ){
 					$notes[] = 'non-ascii-characters';
 				}
 
+				//Check for disabling cache
+				if ( str_contains($contents, 'Header unset Cache-Control') || str_contains($contents, 'max-age=0') ){ //Check if we are disabling the cache
+					$notes[] = 'concern-ux';
+					$notes[] = 'concern-optimization';
+				}
+
 				//Check for deprecated functionality
-				$deprecated_functions = array('mysql_connect(', 'ereg(');
+				$deprecated_functions = array('mysql_connect(', 'ereg(', 'ga(', '_gaq.');
 				foreach ( $deprecated_functions as $deprecated_function ){
 					if ( str_contains($contents, $deprecated_function) ){
 						$notes[] = 'security-concern';
@@ -1702,7 +1743,7 @@ if ( !trait_exists('Dashboard') ){
 				}
 
 				//Check file names for suspicious names/extensions
-				$suspicious_names = array('phpinfo', 'wp-config', '.exe', 'shell', 'c99.', 'r57.', 'b374k', 'swf', '.dll');
+				$suspicious_names = apply_filters('nebula_suspicious_file_names', array('phpinfo', 'wp-config', '.exe', 'shell', 'swf', '.dll')); //Nebula flags questionable or unsafe development practices, but does not include signature-based detection. It is recommended to use dedicated security tools for that purpose.
 				foreach ( $suspicious_names as $suspicious_name ){
 					if ( str_contains(strtolower($filepath), $suspicious_name) ){
 						$notes[] = 'security-concern';
@@ -1712,7 +1753,7 @@ if ( !trait_exists('Dashboard') ){
 				}
 
 				//Check within files for suspicious strings
-				$suspicious_strings = array('eval(base64_decode', 'gzuncompress(', 'create_function(', 'shell_exec(', ' exec(', 'passthru(', 'popen(', 'proc_open(', 'phpinfo(');
+				$suspicious_strings = array('eval(base64_decode', 'gzuncompress(', 'create_function(', 'shell_exec(', ' exec(', 'passthru(', 'popen(', 'proc_open(', 'phpinfo(', 'wp_create_user(');
 				foreach ( $suspicious_strings as $suspicious_string ){
 					if ( str_contains($contents, $suspicious_string) ){
 						$notes[] = 'security-concern';
