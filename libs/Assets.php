@@ -85,8 +85,8 @@ if ( !trait_exists('Assets') ){
 		public function register_scripts(){
 			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
-			wp_register_style('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css', null, '5.3.3', 'all');
-			wp_register_style('nebula-font_awesome', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css', null, '6.7.2', 'all');
+			wp_register_style('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css', null, '5.3.6', 'all'); //https://www.jsdelivr.com/package/npm/bootstrap
+			wp_register_style('nebula-font_awesome', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css', null, '6.7.2', 'all'); //https://www.jsdelivr.com/package/npm/@fortawesome/fontawesome-free
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap'), $this->version('full'), 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, $this->version('full'), 'all');
 			wp_register_style('nebula-admin', get_template_directory_uri() . '/assets/css/admin.css', null, $this->version('full'), 'all');
@@ -95,19 +95,19 @@ if ( !trait_exists('Assets') ){
 				wp_register_style('nebula-remote_font', esc_url($this->get_option('remote_font_url')), array(), null, 'all');
 			}
 
-			wp_register_style('nebula-datatables', 'https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css', null, '1.13.6', 'all'); //Switch to jsDelivr if/when available
+			wp_register_style('nebula-datatables', 'https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.min.css', null, '2.3.0', 'all'); //Switch to jsDelivr if/when available
 			wp_register_style('nebula-chosen', 'https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/chosen.min.css', null, '1.8.7', 'all');
-			wp_register_style('nebula-jquery_ui', 'https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.13.3/jquery-ui.structure.min.css', null, '1.13.3', 'all');
+			wp_register_style('nebula-jquery_ui', 'https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.14.1/jquery-ui.structure.min.css', null, '1.14.1', 'all'); //https://www.jsdelivr.com/package/npm/jquery-ui
 			wp_register_style('nebula-pre', get_template_directory_uri() . '/assets/css/pre.css', null, $this->version('full'), 'all');
 
 			//Scripts
 			//Use jsDelivr to pull common libraries: https://www.jsdelivr.com/
 			//nebula()->register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
-			$this->register_script('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '5.3.3', true);
-			$this->register_script('nebula-jquery_ui', 'https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.13.3/jquery-ui.min.js', array('defer', 'crossorigin'), null, '1.13.3', true);
-			$this->register_script('nebula-vimeo', 'https://cdn.jsdelivr.net/npm/@vimeo/player@2.24.0/dist/player.min.js', null, null, '2.24.0', true);
-			$this->register_script('nebula-datatables', 'https://cdn.jsdelivr.net/npm/datatables.net@1.13.6/js/jquery.dataTables.min.js', array('defer', 'crossorigin'), null, '1.13.6', true); //Nebula registers this asset, but does not init the JS.
-			$this->register_script('nebula-chosen', 'https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/chosen.jquery.min.js', array('defer', 'crossorigin'), null, '1.8.7', true);
+			$this->register_script('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '5.3.6', true);
+			$this->register_script('nebula-jquery_ui', 'https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.14.1/jquery-ui.min.js', array('defer', 'crossorigin'), null, '1.14.1', true);
+			$this->register_script('nebula-vimeo', 'https://cdn.jsdelivr.net/npm/@vimeo/player@2.27.1/dist/player.min.js', null, null, '2.27.1', true); //https://www.jsdelivr.com/package/npm/@vimeo/player
+			$this->register_script('nebula-datatables', 'https://cdn.jsdelivr.net/npm/datatables.net@2.3.0/js/dataTables.min.js', array('defer', 'crossorigin'), null, '2.3.0', true); //Nebula registers this asset, but does not init the JS. https://www.jsdelivr.com/package/npm/datatables.net
+			$this->register_script('nebula-chosen', 'https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/chosen.jquery.min.js', array('defer', 'crossorigin'), null, '1.8.7', true); //https://www.jsdelivr.com/package/npm/chosen-js
 			$this->register_script('nebula-usage', get_template_directory_uri() . '/assets/js/modules/usage.js', array('async', 'module'), null, $this->version('full'), false);
 			$this->register_script('nebula-nebula', get_template_directory_uri() . '/assets/js/nebula.js', array('defer', 'module'), array('jquery-core', 'wp-hooks'), $this->version('full'), true);
 			$this->register_script('nebula-login', get_template_directory_uri() . '/assets/js/login.js', array('defer', 'module'), array('jquery-core'), $this->version('full'), true);

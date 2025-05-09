@@ -213,11 +213,11 @@
 			nebula.pageviewProperties.prefers_reduced_motion = nebula.user.prefersReducedMotion;
 
 			//Prefers color scheme
-			nebula.user.prefersColorScheme = 'default';
+			nebula.user.prefersColorScheme = '';
 			if ( window.matchMedia('(prefers-color-scheme: dark)').matches ){
 				nebula.user.prefersColorScheme = 'dark';
 			} else if ( window.matchMedia('(prefers-color-scheme: light)').matches ){
-				nebula.user.prefersColorScheme = 'dark';
+				nebula.user.prefersColorScheme = 'light';
 			}
 			nebula.pageviewProperties.prefers_color_scheme = nebula.user.prefersColorScheme;
 

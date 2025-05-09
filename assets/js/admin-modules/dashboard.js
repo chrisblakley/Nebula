@@ -138,7 +138,7 @@ nebula.developerMetaboxes = function(){
 
 		//Expand notes when clicking file rows
 		jQuery(document).on('click', '.file-name', function(){
-			jQuery(this).parents('tr').find('.file-keywords').toggleClass('hidden'); //yolo
+			jQuery(this).parents('tr').find('.file-keywords').toggleClass('hidden');
 		});
 
 		jQuery(document).on('click', '.show-optimization-tips', function(){
@@ -147,7 +147,7 @@ nebula.developerMetaboxes = function(){
 			return false;
 		});
 
-		//Clear keyword search input //yolo should this just act as a full reset?
+		//Clear keyword search input //@todo "Nebula" 0: Should this just act as a full reset?
 		jQuery(document).on('click', '#nebula_file_size_monitor .clear-keywords', function(){
 			jQuery('#nebula_file_size_monitor #filekeyword-filter').val('');
 			jQuery('#nebula_file_size_monitor #filekeyword-filter').trigger('keydown');

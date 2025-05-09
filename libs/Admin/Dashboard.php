@@ -1251,7 +1251,7 @@ if ( !trait_exists('Dashboard') ){
 					'requested' => $initial_theme_files_count+count($all_additional_files),
 					'timestamp' => time(),
 				);
-			}, MINUTE_IN_SECONDS*30);
+			}, HOUR_IN_SECONDS*4);
 
 			$groups = $files_and_groups['groups'];
 			$files = $files_and_groups['files'];
