@@ -15,6 +15,8 @@ if ( !trait_exists('Analytics') ){
 				add_filter('the_permalink_rss', array($this, 'add_utm_to_feeds'), 100);
 				add_filter('the_excerpt_rss', array($this, 'add_utm_to_feeds_content_links'), 200);
 				add_filter('the_content_feed', array($this, 'add_utm_to_feeds_content_links'), 200);
+				add_action('template_redirect', array($this, 'count_post_type_views'), 90);
+				add_action('template_redirect', array($this, 'count_404_views'));
 			}
 
 			register_shutdown_function(array($this, 'ga_log_fatal_php_errors'));
@@ -121,8 +123,16 @@ if ( !trait_exists('Analytics') ){
 				'utm_term',
 				'gclid', //Google Ads Click ID
 				'gclsrc', //Google Ads Click Source
-				'gbraid',
-				'wbraid',
+				'gbraid', //Google Ads
+				'wbraid', //Google Ads
+				'gad_source', //Google Ads
+				'gad_campaignid', //Google Ads
+				'gad_adgroupid', //Google Ads
+				'gad_creativeid', //Google Ads
+				'gad_network', //Google Ads
+				'gad_matchtype', //Google Ads
+				'gad_keyword', //Google Ads
+				'gad_placement', //Google Ads Display Network
 				'dclid', //DoubleClick Click ID (typically offline tracking)
 				'msclkid', //Microsoft Click ID
 				'fbc', //Facebook Click ID
@@ -425,6 +435,144 @@ if ( !trait_exists('Analytics') ){
 		public function add_utm_to_feeds_content_links($content){
 			$link = get_permalink(get_the_ID());
 			return str_replace($link, $this->add_utm_to_feeds($link), $content);
+		}
+
+		//Track server-side post type views over the last week
+		public function count_post_type_views(){
+			if ( $this->is_minimal_mode() ){return null;}
+
+			if ( !is_singular() ){
+				return null;
+			}
+
+			if ( $this->is_bot() || !$this->is_analytics_allowed() || $this->is_admin_page() ){
+				return null;
+			}
+
+			$post_type = get_post_type();
+			if ( !$post_type ){
+				return null;
+			}
+
+			$today = date('Y-m-d');
+			$stats = get_transient('nebula_analytics_post_type_views');
+
+			if ( !is_array($stats) ){
+				$stats = array(); //Create stats array if it doesn't exist
+			}
+
+			if ( !isset($stats[$today]) ){
+				$stats[$today] = array(); //Create today's array if it doesn't exist
+			}
+
+			if ( !isset($stats[$today][$post_type]) ){
+				$stats[$today][$post_type] = 0;
+			}
+
+			$stats[$today][$post_type]++;
+
+			//Prune entries older than 7 days
+			$cutoff = strtotime('-7 days');
+			foreach ( $stats as $date => $day_stats ){
+				if ( strtotime($date) < $cutoff ){
+					unset($stats[$date]);
+				}
+			}
+
+			set_transient('nebula_analytics_post_type_views', $stats, DAY_IN_SECONDS*8); //Buffer to avoid edge expiry
+		}
+
+		//Get the weekly post type counts
+		public function get_post_type_view_totals(){
+			if ( $this->is_minimal_mode() ){return array();}
+
+			$raw_stats = get_transient('nebula_analytics_post_type_views');
+			$totals = array();
+			$days = array();
+
+			if ( !is_array($raw_stats) ){
+				return array('totals' => $totals, 'days' => 0);
+			}
+
+			foreach ( $raw_stats as $date => $day_stats ){
+				$days[] = $date;
+				foreach ( $day_stats as $post_type => $count ){
+					if ( !isset($totals[$post_type]) ){
+						$totals[$post_type] = 0;
+					}
+					$totals[$post_type] += $count;
+				}
+			}
+
+			return array(
+				'totals' => $totals,
+				'days' => count($days),
+			);
+		}
+
+		//Count the number of times human visitors reached a 404 page
+		public function count_404_views(){
+			if ( $this->is_minimal_mode() ){return null;}
+
+			if ( !is_404() ){
+				return null;
+			}
+
+			//Ignore staff/developer traffic
+			if ( $this->is_staff() ){
+				return null;
+			}
+
+			//This 404 tracker only cares about human-traffic. Use the "Redirection" plugin (or other tool) to track all 404s.
+			if ( $this->is_bot() || !$this->is_analytics_allowed() || $this->is_admin_page() ){
+				return null;
+			}
+
+			$now = time();
+			$path = esc_url_raw($_SERVER['REQUEST_URI']);
+			$stats = get_transient('nebula_analytics_404_views');
+
+			if ( !is_array($stats) ){
+				$stats = array(); //Format: array(timestamp => array(paths))
+			}
+
+			//Record this exact time and path
+			if ( !isset($stats[$now]) ){
+				$stats[$now] = array();
+			}
+
+			$stats[$now][] = $path;
+
+			//Prune anything older than 24 hours
+			$cutoff = $now-DAY_IN_SECONDS;
+			foreach ( $stats as $timestamp => $paths ){
+				if ( $timestamp < $cutoff ){
+					unset($stats[$timestamp]);
+				}
+			}
+
+			set_transient('nebula_analytics_404_views', $stats, DAY_IN_SECONDS+300); //Small buffer to avoid edge expiry
+		}
+
+		//Get the number of 404s from the last 24-hours
+		//Remember: this attempts to only track "human traffic" 404s
+		public function get_404_count(){
+			$stats = get_transient('nebula_analytics_404_views');
+
+			if ( !is_array($stats) ){
+				return 0;
+			}
+
+			$cutoff = time()-DAY_IN_SECONDS;
+			$total = 0;
+
+			foreach ( $stats as $timestamp => $paths ){
+				if ( $timestamp >= $cutoff && is_array($paths) ){
+					$total += count($paths);
+				}
+			}
+
+			return $total;
 		}
 	}
 }

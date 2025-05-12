@@ -27,10 +27,19 @@ img.thumbnail,
 //Dashboard Font Awesome Lists
 ul.nebula-fa-ul {margin-left: 1.5em; padding-left: 0;
 	li {position: relative;
+		&:has(.not-fa-icon),
+		&:has(.dashicons) {margin-left: -1.5em;}
+
 		> i:first-of-type {left: -2em; position: absolute; top: 0.1em; text-align: center; width: 2em; line-height: inherit;
 			&.dashicons-before::before {font-size: 18px;}
 		}
+
 		> img:first-of-type {max-width: 14px; left: -1.5em; position: absolute; top: 0.35em; text-align: center; width: 2em; line-height: inherit;}
+
+		.not-fa-icon,
+		.dashicons {width: 18px;
+			&::before {font-size: 18px;}
+		}
 	}
 }
 
@@ -691,6 +700,7 @@ ul.simplify {
 	}
 
 	li:not(.essential):not(.nebula-adb-tester):not(.expand-simplified-view):not(.ignore-simplify) {display: none;
+		//Note do not add danger-color or success-color (or the other variants here). Use those to color the text without affecting the visibility.
 		&.essential,
 		&:has(.essential),
 		&.text-caution,

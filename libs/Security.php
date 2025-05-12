@@ -12,6 +12,8 @@ if ( !trait_exists('Security') ){
 			add_action('send_headers', array($this, 'security_headers'));
 			remove_action('wp_head', 'wlwmanifest_link');
 			add_filter('login_errors', array($this, 'login_errors'));
+			add_action('wp_login', array($this, 'track_login_success'), 10, 2);
+			add_action('wp_login_failed', array($this, 'track_login_failure'));
 			add_filter('the_generator', '__return_empty_string'); //Remove Wordpress version info from head and feeds
 			add_action('check_comment_flood', array($this, 'check_referrer'));
 			add_action('wp_footer', array($this, 'track_notable_bots'));
@@ -198,6 +200,97 @@ if ( !trait_exists('Security') ){
 			}
 
 			return $error;
+		}
+
+		//Count login success and failures
+		public function track_login_success($user_login, $user){
+			$this->increment_login_stat('success', $user_login);
+		}
+		public function track_login_failure($username){
+			$this->increment_login_stat('fail', $username);
+		}
+		public function increment_login_stat($type, $username=''){
+			if ( $type !== 'success' && $type !== 'fail' ){
+				return;
+			}
+
+			$today = date('Y-m-d');
+			$stats = get_transient('nebula_analytics_logins');
+
+			if ( !is_array($stats) ){
+				$stats = array();
+			}
+
+			if ( !isset($stats[$today]) || !is_array($stats[$today]) ){
+				$stats[$today] = array();
+			}
+
+			if ( !isset($stats[$today][$type]) || !is_array($stats[$today][$type]) ){
+				$stats[$today][$type] = array('count' => 0, 'usernames' => array());
+			}
+
+			$stats[$today][$type]['count']++;
+
+			if ( $username ){
+				$stats[$today][$type]['usernames'][] = $username;
+			}
+
+			//Prune to a true rolling 7-day window
+			$cutoff = strtotime('-6 days'); //Include today, so 7 total
+			foreach ( $stats as $date => $counts ){
+				if ( strtotime($date) < $cutoff ){
+					unset($stats[$date]);
+				}
+			}
+
+			set_transient('nebula_analytics_logins', $stats, DAY_IN_SECONDS*8); //Slightly over 7 days for buffer
+		}
+
+		// Get a count of successful or failed logins and optionally return an array of the associated usernames
+		public function get_login_counts($type, $usernames=false){
+			if ( $type !== 'success' && $type !== 'fail' ){
+				return ( $usernames )? array() : 0;
+			}
+
+			$stats = get_transient('nebula_analytics_logins');
+
+			if ( !is_array($stats) ){
+				return ( $usernames )? array() : 0;
+			}
+
+			if ( $usernames ){
+				$all_usernames = array();
+
+				// Loop through the stats to collect all usernames
+				foreach ( $stats as $day ){
+					// Ensure we're accessing the 'fail' or 'success' type correctly
+					if ( isset($day[$type]) && is_array($day[$type]) ){
+						// Access the usernames under the 'fail' or 'success' type
+						if ( isset($day[$type]['usernames']) && is_array($day[$type]['usernames']) ){
+							// Add usernames to the list based on their frequency (count)
+							foreach ( $day[$type]['usernames'] as $username ){
+								// Add the username for each failed login (no need to multiply by count since usernames are listed directly)
+								$all_usernames[] = $username;
+							}
+						}
+					}
+				}
+
+				// Sort usernames by frequency (descending)
+				arsort($all_usernames);
+				return $all_usernames;
+			}
+
+			$total = 0;
+
+			// Count the total successes/fails
+			foreach ( $stats as $day ){
+				if ( isset($day[$type]['count']) ){
+					$total += $day[$type]['count'];
+				}
+			}
+
+			return $total;
 		}
 
 		//Check referrer in order to comment
@@ -602,18 +695,18 @@ if ( !trait_exists('Security') ){
 				return $is_spam;
 			}
 
-			//Only if the Nebula Option is enabled
+			//Only use Nebula detection to block submissions if the Nebula Option is enabled
 			if ( $this->get_option('cf7_spam_detection_agent') ){
 				$cf7_form = WPCF7_ContactForm::get_current();
 				$form_tags = $cf7_form->scan_form_tags();
 
-				foreach ( $form_tags as $tag ) {
-					$value = ( isset($this->super->post[$tag->name]) )? $this->super->post[$tag->name] : '';
+				foreach ( $form_tags as $tag ){
+					$value = isset($this->super->post[$tag->name])? $this->super->post[$tag->name] : '';
 
-					if ( is_string($value) && preg_match("/<a.*href=.*>/i", $value) ) { //If the input value contains an <a> tag
+					if ( $this->is_spam_field_data_detected($value) ){
 						$is_spam = true;
 
-						if ( $submission ) {
+						if ( $submission ){
 							$submission->add_spam_log(array(
 								'agent' => 'nebula',
 								'reason' => sprintf(
@@ -623,7 +716,7 @@ if ( !trait_exists('Security') ){
 							));
 						}
 
-						return $is_spam; //Exit the loop since we found a match
+						return $is_spam;
 					}
 				}
 			}
@@ -631,5 +724,47 @@ if ( !trait_exists('Security') ){
 			return $is_spam;
 		}
 
+		//This actually runs the detection
+		public function is_spam_field_data_detected($value){
+			//If the value is an array, loop through each entry
+			if ( is_array($value) ){
+				foreach ( $value as $this_value ){
+					if ( $this->is_spam_field_data_detected($this_value) ){
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			if ( is_string($value) ){
+				//If a value contains an HTML <a> tag
+				if ( preg_match("/<a.*href=.*>/i", $value) ){
+					return true;
+				}
+
+				//If a value contains a script or iframe tag
+				if ( preg_match('/<(script|iframe)[^>]*>/i', $value) ){
+					return true;
+				}
+
+				//Detect excessive use of URLs
+				//if ( preg_match_all('/https?:\/\//i', $value, $matches) && count($matches[0]) >= 5 ){
+				//	return true;
+				//}
+
+				//Very long words without spaces
+				//if ( preg_match('/[a-zA-Z0-9]{50,}/i', $value) ){
+				//	return true;
+				//}
+
+				//A single character repeated many times
+				//if ( preg_match('/(\S)\1{14,}/i', $value) ){
+				//	return true;
+				//}
+			}
+
+			return false;
+		}
 	}
 }

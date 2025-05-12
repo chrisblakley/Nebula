@@ -3653,6 +3653,16 @@ if ( !trait_exists('Functions') ){
 				$debug_info['nebula_bot'] = 'Bot detected';
 			}
 
+			//Simple spam detection
+			//Note: this will only block form submissions if the Nebula Spam Agent option is actually enabled. It will always denote when submissions may be potentially be spam.
+			$normalized_submission = ( is_object($submission) )? (array)$submission : $submission; //Normalize the submission so we can loop through each field
+			foreach ( $normalized_submission as $key => $value ){
+				if ( !empty($value) && $this->is_spam_field_data_detected($value) ){
+					$debug_info['nebula_spam_detection'] = 'Potential spam detected';
+					break;
+				}
+			}
+
 			//WPML Language
 			if ( defined('ICL_LANGUAGE_NAME') ){
 				$debug_info['nebula_language'] = ICL_LANGUAGE_NAME . ' (' . ICL_LANGUAGE_CODE . ')';

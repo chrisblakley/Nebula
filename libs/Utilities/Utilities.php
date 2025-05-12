@@ -1088,7 +1088,7 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			if ( empty($plural) ){
-				$plural = $singular + 's'; //Append an "s" to the singular label to simplify calling the function most of the time
+				$plural = $singular . 's'; //Append an "s" to the singular label to simplify calling the function most of the time
 			}
 
 			return $plural;
@@ -1105,6 +1105,35 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			return $files;
+		}
+
+		//Calculate the file size of the database
+		private function get_database_size(){
+			if ( !$this->is_dev() ){
+				return null;
+			}
+
+			$total_bytes = $this->transient('wp_database_size', function(){
+				global $wpdb;
+
+				$tables = $wpdb->get_results('SHOW TABLE STATUS', ARRAY_A);
+				$total_bytes = 0;
+
+				foreach ( $tables as $table ){
+					if ( !str_contains($table['Name'], $wpdb->prefix) ){ //We are only counting WordPress tables
+						continue;
+					}
+
+					$data_length = isset($table['Data_length'] )? (int)$table['Data_length'] : 0;
+					$index_length = isset($table['Index_length'] )? (int)$table['Index_length'] : 0;
+
+					$total_bytes += $data_length + $index_length;
+				}
+
+				return $total_bytes;
+			}, DAY_IN_SECONDS);
+
+			return $total_bytes;
 		}
 
 		//Add up the filesizes (in bytes) of files in a directory (and it's sub-directories)

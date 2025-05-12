@@ -24,6 +24,8 @@ if ( !trait_exists('Assets') ){
 				add_action('login_enqueue_scripts', array($this, 'login_enqueue_scripts'));
 				add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 
+				add_action('wp_enqueue_scripts', array($this, 'count_assets'));
+
 				add_action('login_head', array($this, 'nebula_login_logo'));
 
 				add_action('wp_head', array($this, 'output_nebula_data'), 5);
@@ -421,6 +423,20 @@ if ( !trait_exists('Assets') ){
 					wp_enqueue_script('thickbox');
 					wp_enqueue_script('media-upload');
 				}
+			}
+		}
+
+		//Count enqueued assets on each page
+		public function count_assets(){
+			if ( $this->is_minimal_mode() ){return null;}
+
+			if ( !$this->is_background_request() ){
+				global $wp_styles, $wp_scripts;
+
+				$this->super->globals['nebula_asset_counts'] = array(
+					'css' => ( isset($wp_styles->queue) )? count($wp_styles->queue) : 0,
+					'js'  => ( isset($wp_scripts->queue) )? count($wp_scripts->queue) : 0,
+				);
 			}
 		}
 

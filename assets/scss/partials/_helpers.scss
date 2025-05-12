@@ -95,11 +95,16 @@
 }
 
 //These help on the admin side where Bootstrap CSS is not loaded
-.text-success {color: $success_color;}
-.text-warning {color: $warning_color;}
-.text-caution {color: $caution_color;}
-.text-danger {color: $danger_color;}
-.text-info {color: darken($info_color, 11%);}
+.text-success,
+.success-color {color: $success_color;}
+.text-warning,
+.warning-color {color: $warning_color;}
+.text-caution,
+.caution-color {color: $caution_color;}
+.text-danger,
+.danger-color {color: $danger_color;}
+.text-info,
+.info-color {color: darken($info_color, 11%);}
 
 .cursor-help {cursor: help;}
 

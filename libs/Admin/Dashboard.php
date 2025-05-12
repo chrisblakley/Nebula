@@ -167,12 +167,27 @@ if ( !trait_exists('Dashboard') ){
 
 			//Post Types
 			global $wp_post_types;
+			$post_type_all_stats = $this->get_post_type_view_totals();
+			$post_type_stats = $post_type_all_stats['totals']; //The number of views for each post type
+			$days_of_data = $post_type_all_stats['days']; //The number of days we have view data for
+			$valid_post_types = array(); //These are the post types we want to count and use for earliest, latest, modified, etc.
+
 			foreach ( get_post_types() as $post_type ){
 				//Only show post types that show_ui (unless forced with one of the arrays below)
 				$force_show = array('wpcf7_contact_form'); //These will show even if their show_ui is false.
 				$force_hide = array('attachment', 'acf', 'deprecated_log'); //These will be skipped even if their show_ui is true.
 				if ( (!$wp_post_types[$post_type]->show_ui && !in_array($post_type, $force_show)) || in_array($post_type, $force_hide)){
 					continue;
+				}
+
+				$valid_post_types[] = $post_type; //Add this post type to the valid list
+
+				//Check for server-stats for this post type
+				$post_type_stat_description = '';
+				if ( isset($post_type_stats[$post_type]) ){
+					$view_count = $post_type_stats[$post_type];
+					$label = ( $days_of_data >= 7 )? 'Weekly' : $days_of_data . '-day'; //If we don't have a full week, show the day count
+					$post_type_stat_description = '<small> (' . $label . ' Views: ' . $view_count . ')</small>'; //$this->singular_plural($view_count, 'view')
 				}
 
 				$cache_length = ( is_plugin_active('transients-manager/transients-manager.php') )? WEEK_IN_SECONDS : DAY_IN_SECONDS; //If Transient Monitor (plugin) is active, transients with expirations are deleted when posts are published/updated, so this could be infinitely long (as long as an expiration exists).
@@ -197,27 +212,33 @@ if ( !trait_exists('Dashboard') ){
 						break;
 					case ( 'nebula_cf7_submits' ):
 						$count = $count_posts->private; //These are all stored privately
+						break;
 					default:
 						$post_icon = $wp_post_types[$post_type]->menu_icon;
 						$post_icon_img = '<i class="fa-solid fa-fw fa-thumbtack"></i>';
+
 						if ( !empty($post_icon) ){
-							$post_icon_img = '<img src="' . $post_icon . '" style="width: 16px; height: 16px;" loading="lazy" />';
-							if ( str_contains('dashicons-', $post_icon) ){
-								$post_icon_img = '<i class="dashicons-before ' . $post_icon . '"></i>';
+							if ( str_contains($post_icon, 'dashicons-') ){
+								$post_icon_img = '<span class="not-fa-icon dashicons ' . $post_icon . '"></span>';
+							} else if ( filter_var($post_icon, FILTER_VALIDATE_URL) ){
+								$post_icon_img = '<img class="not-fa-icon " src="' . $post_icon . '" style="width: 16px; height: 16px;" loading="lazy" />';
+							} else {
+								$post_icon_img = esc_html($post_icon); //Fallback for non-url, non-dashicon cases
 							}
 						}
+
 						break;
 				}
 
-				$labels_plural = ( $count === 1 )? $wp_post_types[$post_type]->labels->singular_name : $wp_post_types[$post_type]->labels->name;
+				$labels_plural = $this->singular_plural($count, $wp_post_types[$post_type]->labels->singular_name, $wp_post_types[$post_type]->labels->name);
 				$essential_count_class = ( $count >= 12 )? 'essential' : ''; //If the post count is high, show this post type in simplified view
 
-				echo '<li>' . $post_icon_img . ' <a href="edit.php?post_type=' . $post_type . '"><strong class="' . $essential_count_class . '">' . $count . '</strong> ' . $labels_plural . '</a></li>';
+				echo '<li>' . $post_icon_img . ' <a href="edit.php?post_type=' . $post_type . '"><strong class="' . $essential_count_class . '">' . $count . '</strong> ' . $labels_plural . '</a>' . $post_type_stat_description . '</li>';
 			}
 
 			//Earliest post
-			$earliest_post = $this->transient('nebula_earliest_post', function(){
-				return new WP_Query(array('post_type' => 'any', 'post_status' => 'publish', 'showposts' => 1, 'orderby' => 'publish_date', 'order' => 'ASC'));
+			$earliest_post = $this->transient('nebula_earliest_post', function($valid_post_types){
+				return new WP_Query(array('post_type' => $valid_post_types, 'post_status' => 'publish', 'showposts' => 1, 'orderby' => 'publish_date', 'order' => 'ASC'));
 			}, YEAR_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long (as long as an expiration exists).
 
 			while ( $earliest_post->have_posts() ){ $earliest_post->the_post();
@@ -226,8 +247,8 @@ if ( !trait_exists('Dashboard') ){
 			wp_reset_postdata();
 
 			//Last updated
-			$latest_post = $this->transient('nebula_latest_post', function(){
-				return new WP_Query(array('post_type' => 'any', 'showposts' => 1, 'orderby' => 'modified', 'order' => 'DESC'));
+			$latest_post = $this->transient('nebula_latest_post', function($valid_post_types){
+				return new WP_Query(array('post_type' => $valid_post_types, 'post_status' => 'publish', 'showposts' => 1, 'orderby' => 'modified', 'order' => 'DESC'));
 			}, WEEK_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long.
 			while ( $latest_post->have_posts() ){ $latest_post->the_post();
 				echo '<li class="essential"><i class="fa-regular fa-fw fa-calendar"></i> Updated: <span title="' . get_the_modified_date() . ' @ ' . get_the_modified_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_modified_date())) . ' ago</strong></span>
@@ -239,14 +260,15 @@ if ( !trait_exists('Dashboard') ){
 			//Revisions
 			$revision_count = ( WP_POST_REVISIONS == -1 )? 'all' : WP_POST_REVISIONS;
 			$revision_class = ( $revision_count === 0 )? 'class="text-danger"' : '';
-			$revisions_plural = ( $revision_count === 1 )? 'revision' : 'revisions';
+			$revisions_plural = $this->singular_plural($revision_count, 'revision');
 			echo '<li><i class="fa-solid fa-fw fa-history"></i> Storing <strong ' . $revision_class . '>' . $revision_count . '</strong> ' . $revisions_plural . '.</li>';
 
 			//Plugins
 			$all_plugins = $this->transient('nebula_count_plugins', function(){
 				return get_plugins();
 			}, WEEK_IN_SECONDS);
-			$all_plugins_plural = ( count($all_plugins) === 1 )? 'Plugin' : 'Plugins';
+			$all_plugins_plural = $this->singular_plural(count($all_plugins), 'Plugin');
+
 			$active_plugins = get_option('active_plugins', array());
 			echo '<li class="essential"><i class="fa-solid fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . count($all_plugins) . '</strong> ' . $all_plugins_plural . '</a> installed <small>(' . count($active_plugins) . ' active)</small></li>';
 
@@ -254,7 +276,7 @@ if ( !trait_exists('Dashboard') ){
 			if ( is_dir(WPMU_PLUGIN_DIR) && is_array(scandir(WPMU_PLUGIN_DIR)) ){ //Make sure this directory exists
 				$mu_plugin_count = count(array_diff(scandir(WPMU_PLUGIN_DIR), array('..', '.'))); //Count the files in the mu-plugins directory (and remove the "." and ".." directories from scandir())
 				if ( !empty($mu_plugin_count) && $mu_plugin_count >= 1 ){
-					$mu_plugins_plural = ( $mu_plugin_count === 1 )? 'Must-Use Plugin' : 'Must-Use Plugins';
+					$mu_plugins_plural = $this->singular_plural($mu_plugin_count, 'Must-Use Plugin');
 					echo '<li><i class="fa-solid fa-fw fa-plug"></i> <a href="plugins.php"><strong>' . $mu_plugin_count . '</strong> ' . $mu_plugins_plural . '</a></li>';
 				}
 			}
@@ -271,10 +293,16 @@ if ( !trait_exists('Dashboard') ){
 			}
 			echo '<li class="essential"><i class="fa-solid fa-fw fa-' . $users_icon . '"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . $this->online_users('count') . ' currently active)</small></li>';
 
+			//Failed Login Count
+			if ( $this->get_login_counts('fail') > 0 ){
+				$username_tooltip = implode("\n", $this->get_login_counts('fail', true));
+				echo '<li class="essential text-danger" title="' . esc_attr($username_tooltip) . '"><i class="fa-solid fa-fw fa-user-xmark"></i> <strong>' . $this->get_login_counts('fail') . '</strong> Failed Logins <small>(Within the last week)</small>';
+			}
+
 			//Comments
 			if ( $this->get_option('comments') && $this->get_option('disqus_shortname') == '' ){
 				$comments_count = wp_count_comments();
-				$comments_plural = ( $comments_count->approved === 1 )? 'Comment' : 'Comments';
+				$comments_plural = $this->singular_plural($comments_count->approved, 'Comment');
 				echo '<li><i class="fa-solid fa-fw fa-comments"></i> <strong>' . $comments_count->approved . '</strong> ' . $comments_plural . '</li>';
 			} else {
 				if ( !$this->get_option('comments') ){
@@ -858,7 +886,15 @@ if ( !trait_exists('Dashboard') ){
 						$class_15m = 'essential text-caution-off';
 					}
 
-					echo '<li title="Average number of processes waiting for CPU (higher = busier). Caution thresholds depend on the amount of CPU cores (which can be set with a Nebula hook)."><i class="fa-solid fa-fw fa-network-wired"></i> Load Avg: <span class="' . $class_1m . '" title="1 minute"><strong>' . number_format($load_1m, 2) . '</strong> <em>(1 min)</em></span>, <span class="' . $class_5m . '" title="5 minutes"><strong>' . number_format($load_5m, 2) . '</strong> <em>(5 min)</em></span>, <span class="' . $class_15m . '" title="15 minutes"><strong>' . number_format($load_15m, 2) . '</strong> <em>(15 min)</em></span></li>';
+					//Increasing or decreasing load
+					$load_icon = '<i class="fa-solid fa-fw fa-network-wired"></i>'; //Default for steady traffic
+					if ( $load_1m > $load_5m && $load_5m > $load_15m ){
+						$load_icon = '<i class="fa-solid fa-arrow-trend-up caution-color" title="Traffic increasing"></i>';
+					}else if ( $load_1m < $load_5m && $load_5m < $load_15m ){
+						$load_icon = '<i class="fa-solid fa-arrow-trend-down caution-color" title="Traffic decreasing"></i>';
+					}
+
+					echo '<li title="Average number of processes waiting for CPU (higher = busier). Caution thresholds depend on the amount of CPU cores (which can be set with a Nebula hook).">' . $load_icon . ' Load Avg: <span class="' . $class_1m . '" title="1 minute"><strong>' . number_format($load_1m, 2) . '</strong> <em>(1 min)</em></span>, <span class="' . $class_5m . '" title="5 minutes"><strong>' . number_format($load_5m, 2) . '</strong> <em>(5 min)</em></span>, <span class="' . $class_15m . '" title="15 minutes"><strong>' . number_format($load_15m, 2) . '</strong> <em>(15 min)</em></span></li>';
 				}
 			}
 
@@ -871,6 +907,8 @@ if ( !trait_exists('Dashboard') ){
 
 				if ( $updates_count > 10 ){ //If there are many updates available
 					$updates_class = 'text-danger essential';
+				} elseif ( $updates_count >= 1 ){ //If even 1 update is available
+					$updates_class = 'essential';
 				}
 
 				$updates_count = '<a class="' . $updates_class . '" href="update-core.php">' . $updates_count . ' &raquo;</a>';
@@ -889,9 +927,11 @@ if ( !trait_exists('Dashboard') ){
 				echo '<li><i class="fa-solid fa-fw fa-envelope"></i> SMTP Status: ' . $smtp_status_output . '</li>';
 			}
 
-			//Count 404s if the Redirection plugin is being used
+			//404 Counts
+			$nebula_404_count = $this->get_404_count();
+			$redirection_404_count = 0;
 			if ( is_plugin_active('redirection/redirection.php') ){
-				$count_of_404s = $this->transient('redirection_404_count', function(){
+				$redirection_404_count = $this->transient('redirection_404_count', function(){
 					global $wpdb;
 
 					//Count the rows in PHP (instead of MySQL) to avoid processing the entire DB table
@@ -905,16 +945,31 @@ if ( !trait_exists('Dashboard') ){
 
 					return count($results);
 				}, HOUR_IN_SECONDS);
+			}
 
-				if ( !empty($count_of_404s) ){ //Only show when they exist (this also prevents showing null if something is wrong with the query)
-					if ( $count_of_404s >= 999 ){ //If we reached the limit above, assume there are more that weren't counted
-						$count_of_404s = '<span class="text-danger"><i class="fa-solid fa-fw fa-exclamation-triangle"></i> 1000+</span>';
-					} elseif ( $count_of_404s >= 500 ){
-						$count_of_404s = '<span class="text-caution">' . $count_of_404s . '</span>';
+			if ( !empty($nebula_404_count) || !empty($redirection_404_count) ){ //If either 404 counter has data, output it
+				$redirection_404_description = '';
+				$nebula_404_description = '';
+				$need_404_labels = ( !empty($nebula_404_count) && !empty($redirection_404_count) )? true : false; //If both systems are active, we need to label the outputs
+
+				if ( !empty($redirection_404_count) ){
+					if ( $redirection_404_count >= 999 ){ //If we reached the limit from the above query, assume there are more that weren't counted
+						$redirection_404_count = '<span class="text-danger"><i class="fa-solid fa-fw fa-exclamation-triangle"></i> 1000+</span>';
+					} elseif ( $redirection_404_count >= 500 ){
+						$redirection_404_count = '<span class="text-caution">' . $redirection_404_count . '</span>';
 					}
 
-					echo '<li class="essential"><i class="fa-regular fa-fw fa-file-excel"></i> 404s: <strong><a href="tools.php?page=redirection.php&sub=404s&groupby=url">' . $count_of_404s . '</a></strong> <small>(Last 24 hours)</small></li>';
+					$total_label = ( $need_404_labels )? ' total' : '';
+					$redirection_404_description = '<strong title="Total count is from the Redirection plugin."><a href="tools.php?page=redirection.php&sub=404s&groupby=url">' . $redirection_404_count . $total_label . '</a></strong>';
 				}
+
+				if ( !empty($nebula_404_count) ){
+					$user_label = ( $need_404_labels )? ' user' : '';
+					$output_404_delimiter = ( !empty($redirection_404_count) )? ', ' : ''; //If we also have Redirection 404s we need a delimiter
+					$nebula_404_description = $output_404_delimiter . '<span title="This Nebula count attempts to track only human 404 views.">' . $nebula_404_count . $user_label . '</span>';
+				}
+
+				echo '<li class="essential"><i class="fa-regular fa-fw fa-file-excel"></i> 404s: ' . $redirection_404_description . $nebula_404_description . ' <small>(Last 24 hours)</small></li>';
 			}
 
 			//Check if parent theme files have been modified (this is in the developer info metabox, but also happens in the Nebula metabox)
@@ -996,6 +1051,9 @@ if ( !trait_exists('Dashboard') ){
 					echo '<li><i class="fa-solid fa-fw fa-hdd"></i> Disk Space Available: <strong class="' . $disk_usage_class . '">' . $this->format_bytes($disk_free_space, 1) . '</strong> <small class="' . $disk_usage_class . '">(Using ' . $disk_space_percent_used . '% of <strong>' . $this->format_bytes($disk_total_space) . '</strong> total)</small></li>';
 				}
 			}
+
+			//WP Database Size
+			echo '<li><i class="fa-solid fa-fw fa-database"></i> WP Database Size: <strong>' . $this->format_bytes($this->get_database_size()) . '</strong></li>';
 
 			//Link to Query Monitor Environment Panel
 			//if ( is_plugin_active('query-monitor/query-monitor.php') ){

@@ -325,8 +325,9 @@ if ( !trait_exists('Device') ){
 		}
 
 		//Get the actual name of the bot visitor
+		//When $broad is true, it will also include "likely" bots
 		//UA lookup: http://www.useragentstring.com/pages/Crawlerlist/
-		public function get_bot_identity(){
+		public function get_bot_identity($broad=true){
 			if ( $this->is_minimal_mode() ){return null;}
 			$override = apply_filters('pre_nebula_get_bot_identity', null);
 			if ( isset($override) ){return $override;}
@@ -353,18 +354,43 @@ if ( !trait_exists('Device') ){
 			if ( !empty($this->super->server['HTTP_USER_AGENT']) ){
 				$user_agent = strtolower($this->super->server['HTTP_USER_AGENT']);
 
-				$bot_regexes = array('silktide', 'netcraft', 'coda', 'favicon', 'curl', 'http', 'tracker', 'slurp', 'feed', 'spider', 'crawl', 'bot'); //Arrange from least common (most specific) to most common (least specific)
+				$bot_regexes = array('silktide', 'netcraft', 'w3c_validator', 'redditbot', 'discordbot', 'screaming_frog', 'archive.org_bot', 'seositecheckup', 'gtmetrix', 'semrushbot', 'ahrefsbot', 'microsoft_office', 'structured-data-testing-tool', 'chrome-lighthouse', 'coda', 'favicon', 'curl', 'http', 'tracker', 'slurp', 'feed', 'spider', 'crawl', 'bot'); //Arrange from least common (most specific) to most common (least specific)
 				$all_bot_regexes = apply_filters('nebula_bot_regex', $bot_regexes);
 
 				//Loop through each of the bot regex patterns
-				foreach( $all_bot_regexes as $bot_regex ){
-					if ( str_contains($user_agent, $bot_regex) ){
-						return $bot_regex;
+				foreach( $all_bot_regexes as $bot_pattern ){
+					if ( str_starts_with($bot_pattern, '/') && strrpos($bot_pattern, '/') > 0 ){ //If a full regex pattern is provided, use it
+						if ( preg_match($bot_pattern, $user_agent) ){
+							return $bot_pattern;
+						}
+					} else { //Otherwise a partial regex pattern was provided
+						$safe_pattern = '/' . preg_quote($bot_pattern, '/') . '/i';
+						if ( preg_match($safe_pattern, $user_agent) ){
+							return $bot_pattern;
+						}
+					}
+				}
+
+				//If broad is requested, we will check likely bot signatures
+				if ( $broad ){
+					//No need to extend this array with a filter because the previous nebula_bot_regex will work and also supports regex
+					$broad_bot_user_agents = array(
+						'python-requests',
+						'go-http-client',
+						'curl/',
+						'wget/',
+						'scrapy',
+						'httpclient',
+						'scrapy',
+					);
+
+					foreach( $broad_bot_user_agents as $broad_bot_user_agent ){
+						if ( str_contains($user_agent, $broad_bot_user_agent) ){
+							return $broad_bot_user_agent;
+						}
 					}
 				}
 			}
-
-			//@todo "Nebula" 0: Others to consider: DiscordBot
 
 			return false;
 		}

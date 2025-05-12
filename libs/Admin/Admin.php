@@ -257,6 +257,7 @@ if ( !trait_exists('Admin') ){
 				$transient_manager->delete_transients_with_expirations();
 			} else {
 				//Clear post/page information and related transients
+				//Note: We purposefully do not clear nebula_analytics_* transients to preserve their data. They are self-managed, but can be manually cleared if desired.
 				$all_transients_to_delete = apply_filters('nebula_delete_transients_on_save', array( //Allow other functions to hook in to delete transients on post save
 					'nebula_autocomplete_menus',
 					'nebula_autocomplete_categories',
@@ -811,6 +812,18 @@ if ( !trait_exists('Admin') ){
 						'title' => '<i class="nebula-admin-fa fa-regular fa-fw fa-object-group"></i> Template: ' . basename($this->current_theme_template) . ' <span class="nebula-admin-light">(' . dirname($this->current_theme_template) . ')</span>',
 						'href' => get_edit_post_link(),
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
+					));
+				}
+
+				//Asset Count
+				if ( isset($this->super->globals['nebula_asset_counts']) ){
+					$asset_counts = $this->super->globals['nebula_asset_counts'];
+					$total_assets = $asset_counts['css']+$asset_counts['js'];
+
+					$wp_admin_bar->add_node(array(
+						'parent' => $node_id,
+						'id' => 'nebula-asset-count',
+						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-cubes-stacked"></i> Assets: ' . $total_assets . ' <span class="nebula-admin-light">(' . $asset_counts['css'] . ' CSS, ' . $asset_counts['js'] . ' JS)</span>',
 					));
 				}
 
@@ -2101,15 +2114,15 @@ if ( !trait_exists('Admin') ){
 
 					//Internal Staff submissions
 					if ( !empty($form_data->_nebula_staff) ){
-						echo '<p class="cf7-note-internal"><i class="fa-solid fa-fw fa-clipboard-user"></i> Internal Staff<br /><small>This submission was by someone on the internal staff.</small></p>';
+						echo '<p class="cf7-note-internal"><i class="fa-solid fa-fw fa-clipboard-user"></i> Internal Staff<br /><small>This submission was by someone on the internal staff</small></p>';
 					}
 
 					//Check for caution indicators
-					$is_adblocker = ( !empty($form_data->_nebula_ga_cid) && str_contains($form_data->_nebula_ga_cid, '-') );
-					$is_nojs = (version_compare($form_data->_nebula_version, '11.10.29') >= 0 && empty($form_data->_nebula_form_flow)); //@todo "Nebula 0: After a while the version_compare part of the conditional can be removed. The _nebula_form_flow field was added on March 29, 2024.
-					if ( $is_nojs ){
+					if ( get_post_status() != 'spam' && !empty($form_data->_nebula_spam_detection) ){
+						echo '<p class="cf7-note-caution"><i class="fa-solid fa-fw fa-robot"></i> Possible Spam<br /><small>This submission may be spam</small></p>';
+					} elseif ( empty($form_data->_nebula_form_flow) ){ //If the form flow data is missing it means they are not running JavaScript
 						echo '<p class="cf7-note-caution"><i class="fa-solid fa-fw fa-code"></i> No JavaScript<br /><small>This user either has disabled JavaScript or is more likely a spambot</small></p>';
-					} elseif ( $is_adblocker ){
+					} elseif ( ( !empty($form_data->_nebula_ga_cid) && str_contains($form_data->_nebula_ga_cid, '-') ) ){ //If this visitor is using an ad blocker
 						echo '<p class="cf7-note-caution"><i class="fa-regular fa-fw fa-circle-user"></i> Ad-Blocker<br /><small>This user is either blocking analytics or possibly is a spambot</small></p>';
 					}
 
