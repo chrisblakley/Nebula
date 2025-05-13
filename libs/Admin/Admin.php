@@ -2602,7 +2602,18 @@ if ( !trait_exists('Admin') ){
 							}
 
 							if ( $key === '_nebula_attribution' ){
-								$value = '<pre>' . json_encode(json_decode($value), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . '</pre>';
+								$output_value = '<pre>' . json_encode(json_decode($value), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . '</pre>';
+
+								$explanations = $this->lookup_query_parameter_definition($value); //Pass the string to the lookup function
+								if ( !empty($explanations) ){
+									$output_value .= '<div id="attribution-explanations"><strong>Attribution Explanations</strong><br/><ul>';
+									foreach ( $explanations as $explanation ){
+										$output_value .= '<li>' . esc_html($explanation) . '</li>';
+									}
+									$output_value .= '</ul></div>';
+								}
+
+								$value = $output_value; //Update the original value for output
 							}
 
 							if ( $key === '_nebula_anonymized_ip' ){

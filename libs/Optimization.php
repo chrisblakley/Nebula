@@ -396,7 +396,7 @@ if ( !trait_exists('Optimization') ){
 
 		//Determine if the current page load was from a known cache
 		//Note: PHP is not the most reliable way of detecting cached responses
-		//Note: This only checks the main, initial page request– individual assets can still be cached!
+		//Note: This only checks the main, initial page request- individual assets can still be cached!
 		public function is_known_cache_hit(){
 			$server_headers = array_change_key_case($this->super->server, CASE_LOWER); //Lowercase the server values we will be checking
 

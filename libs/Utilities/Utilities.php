@@ -1083,6 +1083,10 @@ if ( !trait_exists('Utilities') ){
 
 		//Return a singular or plural label string based on the value
 		public function singular_plural($value, $singular, $plural=''){
+			if ( is_string($value) ){
+				$value = floatval(str_replace(',', '', $value)); //Keep decimals if they exist
+			}
+
 			if ( $value == 1 ){
 				return $singular;
 			}

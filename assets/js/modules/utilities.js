@@ -609,6 +609,17 @@ nebula.eraseCookie = function(name){
 	nebula.createCookie(name, '', -1);
 };
 
+//Convert a value into human-readable file size format
+nebula.formatBytes = function(bytes){
+	if ( bytes === 0 ) return 0;
+
+	let sizes = ['b', 'kb', 'mb', 'gb', 'tb', 'pb'];
+	let i = Math.floor(Math.log(bytes)/Math.log(1024));
+	let size = bytes/Math.pow(1024, i);
+
+	return size.toFixed(1)+sizes[i];
+}
+
 //Time specific events. Unique ID is required. Returns time in milliseconds.
 //Data can be accessed outside of this function via nebula.timings array.
 nebula.timer = function(uniqueID, action, name){

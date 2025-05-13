@@ -294,19 +294,19 @@ if ( !trait_exists('Device') ){
 		//Check if this traffic is coming from an AI website
 		//Note: This is a helper function only until Google Analytics introduces an "Organic AI" default channel group
 		public function is_ai_channel(){
-			$ai_tools = array('chatgpt.com', 'openai.com', 'gemini.google.com', 'claude.ai', 'anthropic.com', 'mistral.ai', 'copilot.microsoft.com', 'perplexity.ai', 'pi.ai', 'huggingface.co', 'stability.ai', 'midjourney.com', 'runwayml.com', 'grok.x.com', 'janitorai.com');
+			$ai_tools = array('chatgpt.com', 'openai.com', 'gemini.google.com', 'deepseek.com', 'claude.ai', 'anthropic.com', 'mistral.ai', 'copilot.microsoft.com', 'perplexity', 'pi.ai', 'huggingface.co', 'stability.ai', 'midjourney.com', 'runwayml.com', 'grok.com', 'grok.x.com', 'janitorai.com');
 
 			foreach( $ai_tools as $ai_tool ){
 				//Check the referrer
 				if ( !empty($this->super->server['HTTP_REFERER']) ){
-					if ( stripos($this->super->server['HTTP_REFERER'], $ai_tool ) !== false ){
+					if ( str_contains($this->super->server['HTTP_REFERER'], $ai_tool ) ){
 						return true;
 					}
 				}
 
 				//Check the utm_source
 				if( !empty($_GET['utm_source']) ){
-					if ( stripos($_GET['utm_source'], $ai_tool) !== false ){
+					if ( str_contains($_GET['utm_source'], $ai_tool) ){
 						return true;
 					}
 				}

@@ -196,7 +196,7 @@ if ( !trait_exists('Dashboard') ){
 					return $count_posts;
 				}, array('post_type' => $post_type), $cache_length);
 
-				$count = $count_posts->publish;
+				$post_count = $count_posts->publish;
 				switch ( $post_type ){
 					case ( 'post' ):
 						$post_icon_img = '<i class="fa-solid fa-fw fa-thumbtack essential"></i>';
@@ -211,7 +211,7 @@ if ( !trait_exists('Dashboard') ){
 						$post_icon_img = '<i class="fa-solid fa-fw fa-envelope"></i>';
 						break;
 					case ( 'nebula_cf7_submits' ):
-						$count = $count_posts->private; //These are all stored privately
+						$post_count = $count_posts->private; //These are all stored privately
 						break;
 					default:
 						$post_icon = $wp_post_types[$post_type]->menu_icon;
@@ -230,10 +230,10 @@ if ( !trait_exists('Dashboard') ){
 						break;
 				}
 
-				$labels_plural = $this->singular_plural($count, $wp_post_types[$post_type]->labels->singular_name, $wp_post_types[$post_type]->labels->name);
-				$essential_count_class = ( $count >= 12 )? 'essential' : ''; //If the post count is high, show this post type in simplified view
+				$labels_plural = $this->singular_plural($post_count, $wp_post_types[$post_type]->labels->singular_name, $wp_post_types[$post_type]->labels->name);
+				$essential_count_class = ( $post_count >= 12 )? 'essential' : ''; //If the post count is high, show this post type in simplified view
 
-				echo '<li>' . $post_icon_img . ' <a href="edit.php?post_type=' . $post_type . '"><strong class="' . $essential_count_class . '">' . $count . '</strong> ' . $labels_plural . '</a>' . $post_type_stat_description . '</li>';
+				echo '<li>' . $post_icon_img . ' <a href="edit.php?post_type=' . $post_type . '"><strong class="' . $essential_count_class . '">' . number_format($post_count) . '</strong> ' . $labels_plural . '</a>' . $post_type_stat_description . '</li>';
 			}
 
 			//Earliest post
@@ -291,7 +291,7 @@ if ( !trait_exists('Dashboard') ){
 				$users_plural = 'User';
 				$users_icon = 'user';
 			}
-			echo '<li class="essential"><i class="fa-solid fa-fw fa-' . $users_icon . '"></i> <a href="users.php">' . $user_count['total_users'] . ' ' . $users_plural . '</a> <small>(' . $this->online_users('count') . ' currently active)</small></li>';
+			echo '<li class="essential"><i class="fa-solid fa-fw fa-' . $users_icon . '"></i> <a href="users.php">' . number_format($user_count['total_users']) . ' ' . $users_plural . '</a> <small>(' . $this->online_users('count') . ' currently active)</small></li>';
 
 			//Failed Login Count
 			if ( $this->get_login_counts('fail') > 0 ){
@@ -954,7 +954,7 @@ if ( !trait_exists('Dashboard') ){
 
 				if ( !empty($redirection_404_count) ){
 					if ( $redirection_404_count >= 999 ){ //If we reached the limit from the above query, assume there are more that weren't counted
-						$redirection_404_count = '<span class="text-danger"><i class="fa-solid fa-fw fa-exclamation-triangle"></i> 1000+</span>';
+						$redirection_404_count = '<span class="text-danger"><i class="fa-solid fa-fw fa-exclamation-triangle"></i> 1,000+</span>';
 					} elseif ( $redirection_404_count >= 500 ){
 						$redirection_404_count = '<span class="text-caution">' . $redirection_404_count . '</span>';
 					}
@@ -966,7 +966,7 @@ if ( !trait_exists('Dashboard') ){
 				if ( !empty($nebula_404_count) ){
 					$user_label = ( $need_404_labels )? ' user' : '';
 					$output_404_delimiter = ( !empty($redirection_404_count) )? ', ' : ''; //If we also have Redirection 404s we need a delimiter
-					$nebula_404_description = $output_404_delimiter . '<span title="This Nebula count attempts to track only human 404 views.">' . $nebula_404_count . $user_label . '</span>';
+					$nebula_404_description = $output_404_delimiter . '<span title="This Nebula count attempts to track only human 404 views.">' . number_format($nebula_404_count) . $user_label . '</span>';
 				}
 
 				echo '<li class="essential"><i class="fa-regular fa-fw fa-file-excel"></i> 404s: ' . $redirection_404_description . $nebula_404_description . ' <small>(Last 24 hours)</small></li>';
@@ -1176,10 +1176,10 @@ if ( !trait_exists('Dashboard') ){
 				$ignored = apply_filters('nebula_file_size_monitor_ignored', array('resources', '.github', '.gitignore', '.git', 'screenshot.png', 'acf-json', 'img/meta')); //Allow others to ignore files or directories. Note: purposefully *not* ignoring /vendor directories because they may have files that load on the front-end and should be monitored.
 
 				//File size budgets should match /inc/budget.json for consistency
-				//This list of groups can also be modified by others as desired– which means groups and extensions can be added or moved, and budgets can be changed
+				//This list of groups can also be modified by others as desired- which means groups and extensions can be added or moved, and budgets can be changed
 				$groups = apply_filters('nebula_file_size_monitor_groups', array(
 					'Images' => array(
-						'extensions' => array('png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'ico', 'bmp', 'avif', 'eps', 'heic'),
+						'extensions' => array('png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'ico', 'bmp', 'avif', 'eps', 'heic', 'tif'),
 						'budget' => (KB_IN_BYTES*150),
 						'linkable' => true
 					),
@@ -1537,14 +1537,14 @@ if ( !trait_exists('Dashboard') ){
 				echo '<tr class="' . trim($row_class) . '" data-type="' . esc_attr($file['type']) . '" data-group="' . esc_attr($file['group']) . '" data-budget="' . esc_attr($this->format_bytes($file['budget'])) . '">';
 				echo '<td class="file-name">' . ' <small>' . ($index+1) . '.</small> <span class="file-icons-group">' . $file_icon . '</span> <span title="' . esc_attr($file['path']) . '">' . esc_html($file['name']) . '</span>' . $additional_info . $file_link . '<small class="modified-info hidden"><br />(Modified ' . human_time_diff($file['modified'], time()) . ' ago)</small><small class="file-keywords hidden"><br /><i class="fa-solid fa-fw fa-turn-up fa-rotate-90"></i> ' . $file['group'] . ' ' . $file['notes'] . '</small></td>';
 				echo '<td class="file-group">' . esc_html($file['group']) . '</td>';
-				echo '<td class="file-size" title="' . $budget_description . '">' . $this->format_bytes($file['size']) . '</td>';
+				echo '<td class="file-size" data-file-size="' . $file['size'] . '" title="' . $budget_description . '">' . $this->format_bytes($file['size']) . '</td>';
 				echo '<td class="budget-percent hidden">' . $budget_percent . '</td>';
 				echo '<td class="file-path hidden">' . $file['path'] . '</td>';
 				echo '</tr>';
 			}
 			echo '</tbody></table><div class="no-files-message hidden">No files match the selected criteria. <a class="reset-filters" href="#">Reset?</a></div></div>';
-			echo '<div class="totals-row"><small>Showing <span class="total-showing">All</span> of ' . number_format(count($files)) . ' monitored files <small class="relative-date-tooltip" data-date="' . $files_and_groups['timestamp'] . '">(' . $scan_date . ')</small>. <a class="monitor-re-scan" href="' . admin_url('?clear-transients') . '">Re-Scan?</a></small></div>';
-			echo '<p class="budget-description hidden">The budget for <strong class="filetype">These</strong> is <strong class="sizebudget">non-applicable</strong>. <a class="show-optimization-tips" href="#">Show Tips <i class="fa-solid fa-caret-down"></i></a></p>';
+			echo '<div class="totals-row"><small>Showing <span class="total-showing">All</span><span class="total-file-size"></span> of ' . number_format(count($files)) . ' monitored files <small class="relative-date-tooltip" data-date="' . $files_and_groups['timestamp'] . '">(' . $scan_date . ')</small>. <a class="monitor-re-scan" href="' . admin_url('?clear-transients') . '">Re-Scan?</a></small></div>';
+			echo '<p class="budget-median-tips-intro"><span class="budget-description hidden">The budget for <strong class="filetype">These</strong> is <strong class="sizebudget">non-applicable</strong><small class="median-description hidden"> (Your median is <span class="median-file-size"></span>)</small>.<br /><a class="show-optimization-tips" href="#">Show Tips <i class="fa-solid fa-caret-down"></i></a></span></p>';
 			?>
 				<div id="nebula-optimization-tips" style="display: none;">
 					<ul>
@@ -1584,7 +1584,7 @@ if ( !trait_exists('Dashboard') ){
 
 						<!-- <li class="tip general">Pay close attention to the overall file size footprint of each page.</li>
 						<li class="tip general">Ensure caching and compression is enabled in .htaccess! Consider using the provided Nebula resource.</li>
-						<li class="tip general">Files added to the WordPress Media Library in the /uploads/ directory often bypass developer review— regularly check for large files.</li> -->
+						<li class="tip general">Files added to the WordPress Media Library in the /uploads/ directory often bypass developer review- regularly check for large files.</li> -->
 					</ul>
 				</div>
 			<?php

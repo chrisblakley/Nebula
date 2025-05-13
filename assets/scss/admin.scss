@@ -240,7 +240,7 @@ ul#nebula-performance-metrics li {
 
 	.totals-row {margin-top: 2px; font-style: italic; text-align: right;}
 
-	.budget-description {margin-bottom: 5px;}
+	.budget-median-tips-intro {margin-bottom: 5px;}
 
 	#nebula-optimization-tips {
 		ul {margin: 0;
@@ -626,6 +626,13 @@ table.nebula-cf7-submissions {border-collapse: collapse; width: 100%; margin-top
 			&.no-data td {opacity: 0.4;}
 			&.invalid-field {background: $danger_color; color: readable-color($danger_color);}
 			&.mail-failed {background: $danger_color; color: readable-color($danger_color);}
+		}
+	}
+
+	#attribution-explanations {margin-top: 10px;
+		strong {text-decoration: underline;}
+		ul {list-style: disc; padding-left: 1.5em; margin-top: 5px;
+			li {}
 		}
 	}
 }

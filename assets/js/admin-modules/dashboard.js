@@ -137,8 +137,10 @@ nebula.developerMetaboxes = function(){
 		});
 
 		//Expand notes when clicking file rows
-		jQuery(document).on('click', '.file-name', function(){
-			jQuery(this).parents('tr').find('.file-keywords').toggleClass('hidden');
+		jQuery(document).on('click', '.file-name', function(e){
+			if ( jQuery(e.target).closest('.file-link').length == 0 ){ //Ignore clicks on the outbound file link icon, though
+				jQuery(this).parents('tr').find('.file-keywords').toggleClass('hidden');
+			}
 		});
 
 		jQuery(document).on('click', '.show-optimization-tips', function(){
@@ -262,6 +264,44 @@ nebula.fileSizeMonitorTableFilter = function(){
 
 	jQuery('.no-files-message').toggle(!anyVisibleRows); //Show or hide the "No Files" message depending if we have any results
 	jQuery('.totals-row .total-showing').text(visibleIndex.toLocaleString());
+
+	//Calculate the cumulative total file size of visible rows
+	if ( anyVisibleRows ){
+		let totalFileSize = 0;
+		let visibleFileSizes = [];
+
+		jQuery('#nebula_file_size_monitor table tr:visible').each(function(){
+			let thisFileSize = parseInt(jQuery(this).find('.file-size').attr('data-file-size'));
+
+			if ( !isNaN(thisFileSize) ){
+				totalFileSize += thisFileSize;
+				visibleFileSizes.push(thisFileSize);
+			}
+		});
+
+		if ( totalFileSize ){
+			jQuery('.total-file-size').html(' (' + nebula.formatBytes(totalFileSize) + ')');
+
+			visibleFileSizes.sort(function(a, b){ return a - b; });
+
+			let medianFileSize = 0;
+			let len = visibleFileSizes.length;
+
+			if ( len%2 == 0 ){
+				medianFileSize = (visibleFileSizes[len/2-1]+visibleFileSizes[len/2])/2;
+			} else {
+				medianFileSize = visibleFileSizes[Math.floor(len/2)];
+			}
+
+			jQuery('.median-file-size').html(nebula.formatBytes(medianFileSize)).parent('.median-description').removeClass('hidden');
+		} else {
+			jQuery('.total-file-size').html(''); //Otherwise empty it
+			jQuery('.median-description').addClass('hidden');
+		}
+	} else {
+		jQuery('.total-file-size').html(''); //Otherwise empty it
+		jQuery('.median-description').addClass('hidden');
+	}
 
 	//Only show tips for this file group
 	if ( jQuery('#nebula-optimization-tips li[data-group*="' + selectedGroup.toLowerCase() + '"]').length ){

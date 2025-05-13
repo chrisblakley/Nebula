@@ -99,8 +99,16 @@ if ( !trait_exists('Analytics') ){
 			);
 		}
 
+		//Alias for getting the platform explanation from a query string parameter
+		public function lookup_query_parameter_definition($url=''){
+			if ( !empty($url) ){
+				return $this->attribution_tracking($url);
+			}
+		}
+
 		//Track campaigns that attributed to returning visitor conversions
-		public function attribution_tracking(){
+		//Pass a string of the query parameter to $get_definition_only to return the platform definition only (without processing the entire attribution)
+		public function attribution_tracking($get_definitions_only=false){
 			if ( !$this->get_option('attribution_tracking') ){
 				return;
 			}
@@ -109,61 +117,76 @@ if ( !trait_exists('Analytics') ){
 				return;
 			}
 
+			//Allow others to modify/add to the list of notable tracking parameters
+			$notable_tracking_parameters = apply_filters('nebula_notable_tracking_parameters', array(
+				'utm_source' => 'various platforms',
+				'utm_campaign' => 'various platforms',
+				'utm_medium' => 'various platforms',
+				'utm_content' => 'various platforms',
+				'utm_term' => 'various platforms',
+				'gclid' => 'Google Ads (Click ID)', //Google Ads Click ID
+				'gclsrc' => 'Google Ads (Click Source)', //Google Ads Click Source
+				'gbraid' => 'Google Ads', //Google Ads
+				'wbraid' => 'Google Ads', //Google Ads
+				'gad_source' => 'Google Ads', //Google Ads
+				'gad_campaignid' => 'Google Ads', //Google Ads
+				'gad_adgroupid' => 'Google Ads', //Google Ads
+				'gad_creativeid' => 'Google Ads', //Google Ads
+				'gad_network' => 'Google Ads', //Google Ads
+				'gad_matchtype' => 'Google Ads', //Google Ads
+				'gad_keyword' => 'Google Ads', //Google Ads
+				'gad_placement' => 'Google Ads Display Network', //Google Ads Display Network
+				'dclid' => 'DoubleClick (Click ID, typically offline tracking)', //DoubleClick Click ID (typically offline tracking)
+				'msclkid' => 'Microsoft Click ID', //Microsoft Click ID
+				'fbc' => 'Facebook (Click ID)', //Facebook Click ID
+				'fbclid' => 'Facebook (Click ID)', //Facebook Click ID
+				'li_' => 'LinkedIn', //LinkedIn
+				'tclid' => 'Twitter (Click ID)', //Twitter Click ID
+				'ttclid' => 'TikTok (Click ID)', //TikTok Click ID
+				'hsa_' => 'Hubspot', //Hubspot
+				'mc_eid' => 'Mailchimp', //Mailchimp
+				'vero_id' => 'Vero', //Vero
+				'mkt_tok' => 'Marketo', //Marketo
+				'email_id' => 'email marketing', //Email
+				'campaign_id' => 'email marketing', //Email
+				'subscriber_id' => 'email marketing', //Email
+				'mail_id' => 'email marketing', //Email
+				'keap' => 'Keap email marketing', //Keap Email
+				'srsltid' => 'Google Merchant Center', //Google Merchant Center
+				'affiliate_id' => 'Affiliate Marketing', //Affiliates
+				'coupon' => 'affiliate marketing', //Affiliates
+				'promo' => 'affiliate marketing', //Affiliates
+				'partner_id' => 'affiliate marketing', //Affiliates
+				'partner' => 'affiliate marketing', //Affiliates
+				'eloqua' => 'Eloqua marketing automation', //Eloqua
+				'pardot' => 'Pardot CRM', //Pardot
+				'sfdc_id' => 'Salesforce CRM', //Salesforce
+			));
+
+			//If we are only getting definitions, check it now
+			if ( !empty($get_definitions_only) ){
+				$string_to_check = $get_definitions_only; //Update the variable name to be more clear
+				$explanations = array();
+
+				foreach ( $notable_tracking_parameters as $param => $definition ){
+					if ( str_contains($string_to_check, $param) ){
+						$explanations[] = $param . ' is used by ' . $definition;
+					}
+				}
+
+				return $explanations;
+			}
+
+			//If we are processing the attribution, prep memoization
 			static $cache = null;
 			if ( isset($cache) ){
 				return $cache;
 			}
 
-			//Allow others to modify/add to the list of notable tracking parameters
-			$notable_tracking_parameters = apply_filters('nebula_notable_tracking_parameters', array(
-				'utm_source',
-				'utm_campaign',
-				'utm_medium',
-				'utm_content',
-				'utm_term',
-				'gclid', //Google Ads Click ID
-				'gclsrc', //Google Ads Click Source
-				'gbraid', //Google Ads
-				'wbraid', //Google Ads
-				'gad_source', //Google Ads
-				'gad_campaignid', //Google Ads
-				'gad_adgroupid', //Google Ads
-				'gad_creativeid', //Google Ads
-				'gad_network', //Google Ads
-				'gad_matchtype', //Google Ads
-				'gad_keyword', //Google Ads
-				'gad_placement', //Google Ads Display Network
-				'dclid', //DoubleClick Click ID (typically offline tracking)
-				'msclkid', //Microsoft Click ID
-				'fbc', //Facebook Click ID
-				'fbclid', //Facebook Click ID
-				'li_', //LinkedIn
-				'tclid', //Twitter Click ID
-				'ttclid', //TikTok Click ID
-				'hsa_', //Hubspot
-				'mc_eid', //Mailchimp
-				'vero_id', //Vero
-				'mkt_tok', //Marketo
-				'email_id', //Email
-				'campaign_id', //Email
-				'subscriber_id', //Email
-				'mail_id', //Email
-				'keap', //Keap Email
-				'srsltid', //Google Merchant Center
-				'affiliate_id', //Affiliates
-				'coupon', //Affiliates
-				'promo', //Affiliates
-				'partner_id', //Affiliates
-				'partner', //Affiliates
-				'eloqua', //Eloqua
-				'pardot', //Pardot
-				'sfdc_id', //Salesforce
-			));
-
 			$found_parameters = array();
 
 			foreach ( $this->super->get as $key => $value ){ //Loop through the URL query parameters
-				foreach ( $notable_tracking_parameters as $tracking_parameter ){ //Check against our list of notable tracking parameters
+				foreach ( $notable_tracking_parameters as $tracking_parameter => $definition ){ //Check against our list of notable tracking parameters
 					if ( str_contains($key, $tracking_parameter) ){
 						$found_parameters[$key] = sanitize_text_field($value);
 						break;
