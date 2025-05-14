@@ -146,7 +146,7 @@ nebula.performanceMetrics = async function(){
 				let navigationPerformanceEntry = performance.getEntriesByType('navigation')[0]; //There is typically only ever 1 in this, but we always just want the first one
 				if ( navigationPerformanceEntry ){
 					//Provide a "rating" of load time based on DOM Ready timing
-					loadSpeedRating = '';
+					let loadSpeedRating = '';
 					if ( navigationPerformanceEntry.domComplete <= 1500 ){
 						loadSpeedRating = 'fast';
 					} else if ( navigationPerformanceEntry.domComplete <= 3500 ){
