@@ -39,15 +39,22 @@ nebula.isDoNotTrack = function(){
 };
 
 //Check if this page view is the first in a session
+//Note: Always use this function in JS and never read it from the "session" cookie in JS directly because it (inherently) won't get updated for JS
 nebula.isLandingPage = function(){
 	if ( nebula.isDoNotTrack() ){
 		return false; //Not tracking this user
+	}
+
+	if ( nebula?.session?.is_landing_page ){
+		jQuery('body').addClass('is-landing-page');
+		return true;
 	}
 
 	if ( jQuery('body').hasClass('is-landing-page') ){ //If this function is called again on this page, detect it this way since the storage method will now think it is false
 		return true;
 	}
 
+	//This method may not be necessary anymore as the PHP detection exists now
 	if ( typeof localStorage !== 'undefined' && localStorage !== null ){ //In some instances localStorage was null for some reason
 		let lpTimestamp = localStorage.getItem('landing_page');
 
@@ -517,10 +524,13 @@ nebula.debounce = async function(callback, wait = 1000, uniqueID = 'No Unique ID
 
 	nebula.debounceTimers = nebula.debounceTimers || {};
 
+	const context = this;
+	const args = arguments;
+
 	const later = () => { //Arrow function allows for proper context scoping without needing additional variables
 		nebula.debounceTimers[uniqueID] = null;
 		if ( !immediate ){
-			callback.apply(this, arguments);
+			callback.apply(context, args);
 		}
 	};
 
@@ -618,7 +628,7 @@ nebula.formatBytes = function(bytes){
 	let size = bytes/Math.pow(1024, i);
 
 	return size.toFixed(1)+sizes[i];
-}
+};
 
 //Time specific events. Unique ID is required. Returns time in milliseconds.
 //Data can be accessed outside of this function via nebula.timings array.

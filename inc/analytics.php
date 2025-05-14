@@ -93,6 +93,14 @@
 					}
 				}
 
+				//Designate landing pages
+				//Note: This is also captured in optimization.js to be included with the load_timings event
+				if ( nebula()->is_landing_page ){ //Note: Always read this from PHP or nebula.session.is_landing_page in JS or nebula.isLandingPage() in JS. Never read this from the cookie in JS because it won't have updated.
+					$pageview_properties['session_page_type'] = 'Landing Page';
+				} else {
+					$pageview_properties['session_page_type'] = 'Subsequent Page';
+				}
+
 				//Designate any traffic that is at all related to any attribution (current or previous)
 				if ( !empty(nebula()->super->cookie['attribution']) ){ //If the attribution cookie exists
 					$pageview_properties['attribution_related'] = true;

@@ -252,10 +252,11 @@ if ( !trait_exists('Admin') ){
 			if ( $this->is_minimal_mode() ){return null;}
 			$this->timer('Clear Transients');
 
-			if ( class_exists('AM_Transients_Manager') ){
-				$transient_manager = new AM_Transients_Manager(); //"PW_" changed to "AM_" in December 2021
-				$transient_manager->delete_transients_with_expirations();
-			} else {
+			//May 2025: Only clearing these specific Nebula transients on post save now
+			//if ( class_exists('AM_Transients_Manager') ){
+			//	$transient_manager = new AM_Transients_Manager(); //"PW_" changed to "AM_" in December 2021
+			//	$transient_manager->delete_transients_with_expirations();
+			//} else {
 				//Clear post/page information and related transients
 				//Note: We purposefully do not clear nebula_analytics_* transients to preserve their data. They are self-managed, but can be manually cleared if desired.
 				$all_transients_to_delete = apply_filters('nebula_delete_transients_on_save', array( //Allow other functions to hook in to delete transients on post save
@@ -266,6 +267,7 @@ if ( !trait_exists('Admin') ){
 					'nebula_all_log_files',
 					'nebula_file_size_monitor_list',
 					'nebula_theme_file_changes_check',
+					'nebula_theme_modified_files',
 					'nebula_cf7_submits_badge',
 					'nebula_todo_items',
 					'nebula_spam_domain_public_list',
@@ -278,13 +280,12 @@ if ( !trait_exists('Admin') ){
 					'nebula_latest_post',
 					'nebula_earliest_post',
 					'nebula_php_timeline',
-					'nebula_theme_modified_files'
 				));
 
 				foreach ( $all_transients_to_delete as $transient_to_delete ){
 					delete_transient($transient_to_delete);
 				}
-			}
+			//}
 
 			$this->timer('Clear Transients', 'end');
 		}

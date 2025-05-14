@@ -1543,8 +1543,15 @@ if ( !trait_exists('Dashboard') ){
 				echo '</tr>';
 			}
 			echo '</tbody></table><div class="no-files-message hidden">No files match the selected criteria. <a class="reset-filters" href="#">Reset?</a></div></div>';
-			echo '<div class="totals-row"><small>Showing <span class="total-showing">All</span><span class="total-file-size"></span> of ' . number_format(count($files)) . ' monitored files <small class="relative-date-tooltip" data-date="' . $files_and_groups['timestamp'] . '">(' . $scan_date . ')</small>. <a class="monitor-re-scan" href="' . admin_url('?clear-transients') . '">Re-Scan?</a></small></div>';
-			echo '<p class="budget-median-tips-intro"><span class="budget-description hidden">The budget for <strong class="filetype">These</strong> is <strong class="sizebudget">non-applicable</strong><small class="median-description hidden"> (Your median is <span class="median-file-size"></span>)</small>.<br /><a class="show-optimization-tips" href="#">Show Tips <i class="fa-solid fa-caret-down"></i></a></span></p>';
+
+			echo '<table class="table-footer hidden"><tfoot><tr>
+				<td>Total: <span class="total-file-size"></span></td>
+				<td>Avg: <strong class="average-file-size"></strong></td>
+				<td>Med: <strong class="median-file-size"></strong></td>
+			</tr></tfoot></table>';
+
+			echo '<div class="totals-row"><small>Showing <span class="total-showing">All</span> of ' . number_format(count($files)) . ' monitored files <small class="relative-date-tooltip" data-date="' . $files_and_groups['timestamp'] . '">(' . $scan_date . ')</small>. <a class="monitor-re-scan" href="' . admin_url('?clear-transients') . '">Re-Scan?</a></small></div>';
+			echo '<p class="budget-description hidden">The budget for <strong class="filetype">These</strong> is <strong class="sizebudget">non-applicable</strong>. <a class="show-optimization-tips" href="#">Show Tips <i class="fa-solid fa-caret-down"></i></a></p>';
 			?>
 				<div id="nebula-optimization-tips" style="display: none;">
 					<ul>

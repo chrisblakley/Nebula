@@ -620,6 +620,9 @@ if ( !trait_exists('Functions') ){
 
 		//Date post meta
 		public function post_date($options=array()){
+			$override = apply_filters('pre_nebula_post_date', null, $options);
+			if ( isset($override) ){return $override;}
+
 			$defaults = apply_filters('nebula_post_date_defaults', array(
 				'label' => 'icon', //"icon" or "text"
 				'type' => 'published', //"published", or "modified"
@@ -667,6 +670,9 @@ if ( !trait_exists('Functions') ){
 
 		//Author post meta
 		public function post_author($options=array()){
+			$override = apply_filters('pre_nebula_post_author', null, $options);
+			if ( isset($override) ){return $override;}
+
 			$defaults = apply_filters('nebula_post_author_defaults', array(
 				'label' => 'icon', //"icon" or "text"
 				'linked' => true, //Link to author page
@@ -705,6 +711,9 @@ if ( !trait_exists('Functions') ){
 
 		//Post type meta
 		public function post_type($options=array()){
+			$override = apply_filters('pre_nebula_post_type', null, $options);
+			if ( isset($override) ){return $override;}
+
 			$defaults = apply_filters('nebula_post_type_defaults', array(
 				'icon' => true, //True for generic defaults, false to disable icon, or string of class name(s) for icon.
 				'linked' => false //True links output to the post type archive page
@@ -749,6 +758,9 @@ if ( !trait_exists('Functions') ){
 		//Categories post meta
 		public function post_cats($options=array()){return $this->post_categories($options);}
 		public function post_categories($options=array()){
+			$override = apply_filters('pre_nebula_post_categories', null, $options);
+			if ( isset($override) ){return $override;}
+
 			$defaults = apply_filters('nebula_post_categories_defaults', array(
 				'id' => get_the_ID(),
 				'label' => 'icon', //"icon" or "text"
@@ -761,66 +773,113 @@ if ( !trait_exists('Functions') ){
 			$data = array_merge($defaults, $options);
 
 			if ( get_theme_mod('post_categories', true) || $data['force'] ){
-				$label = '';
-				if ( $data['label'] === 'icon' ){
-					$label = '<i class="nebula-post-categories-label fa-solid fa-fw fa-bookmark"></i> ';
-				} elseif ( $data['label'] === 'text' ){
-					$label = '<span class="nebula-post-categories-label">' . __('Category', 'nebula') . '</span>';
-				}
+				$the_categories = get_the_category($data['id']);
 
-				if ( is_object_in_taxonomy(get_post_type(), 'category') ){
-					$category_list = get_the_category_list(', ', '', $data['id']);
-
-					if ( strip_tags($category_list) === 'Uncategorized' && !$data['show_uncategorized'] ){
-						return null;
+				if ( $the_categories && is_array($the_categories) ){
+					//Optionally filter out "Uncategorized"
+					if ( !$data['show_uncategorized'] ){
+						$the_categories = array_filter($the_categories, fn($cat) => $cat->slug !== 'uncategorized');
 					}
 
-					if ( !$data['linked'] ){
-						$category_list = strip_tags($category_list);
+					if ( empty($the_categories) ){return null;}
+
+					$label = '';
+					$cat_plural = ( count($the_categories) > 1 )? __('categories', 'nebula') : __('category', 'nebula');
+
+					if ( $data['label'] === 'icon' ){
+						$label = '<i class="nebula-post-categories-label fa-solid fa-fw fa-' . $cat_plural . '"></i> ';
+					} elseif ( $data['label'] === 'text' ){
+						$label = '<span class="nebula-post-categories-label">' . ucwords($cat_plural) . ' </span>';
 					}
 
+					//If we just want comma-separated plain text
 					if ( $data['string'] ){
-						return strip_tags($category_list);
+						$category_names = array_map(fn($cat) => $cat->name, $the_categories);
+						return implode(', ', $category_names);
 					}
 
-					return '<span class="posted-in meta-item post-categories">' . $label . $category_list . '</span>';
+					//Otherwise output individual span tags
+					$category_items = '';
+					$cat_count = count($the_categories);
+					$current = 0;
+
+					foreach ( $the_categories as $cat ){
+						$cat_name = esc_html($cat->name);
+						$current++;
+
+						if ( $data['linked'] ){
+							$cat_link = get_category_link($cat->term_id);
+							$category_items .= '<span role="listitem"><a href="' . esc_url($cat_link) . '">' . $cat_name . '</a></span>';
+						} else {
+							$category_items .= '<span role="listitem">' . $cat_name . '</span>';
+						}
+
+						if ( $current < $cat_count ){
+							$category_items .= ', ';
+						}
+					}
+
+					return '<span class="posted-in meta-item post-categories" role="list">' . $label . $category_items . '</span>';
 				}
 			}
 		}
 
 		//Tags post meta
 		public function post_tags($options=array()){
-			$defaults = apply_filters('nebula_post_tags_defaults', array(
+			$override = apply_filters('pre_nebula_post_tags', null, $options);
+			if ( isset($override) ){return $override;}
+
+			$defaults = array(
 				'id' => get_the_ID(),
 				'label' => 'icon', //"icon" or "text"
 				'linked' => true, //Link to tag archive
 				'force' => false,
 				'string' => false, //Return a string with no markup
-			));
+			);
 
 			$data = array_merge($defaults, $options);
 
 			if ( get_theme_mod('post_tags', true) || $data['force'] ){
-				$tag_list = get_the_tag_list('', ', ', '', $data['id']);
-				if ( $tag_list ){
+				$the_tags = get_the_tags($data['id']);
+
+				if ( $the_tags && is_array($the_tags) ){
 					$label = '';
+					$tag_plural = ( count($the_tags) > 1 )? __('tags', 'nebula') : __('tag', 'nebula');
+
 					if ( $data['label'] === 'icon' ){
-						$the_tags = get_the_tags();
-						$tag_plural = ( !empty($the_tags) && is_array($the_tags) && count($the_tags) > 1 )? __('tags', 'nebula') : __('tag', 'nebula'); //One time get_the_tags() was not an array and caused a PHP error, so this conditional is for extra precaution
 						$label = '<i class="nebula-post-tags-label fa-solid fa-fw fa-' . $tag_plural . '"></i> ';
 					} elseif ( $data['label'] === 'text' ){
 						$label = '<span class="nebula-post-tags-label">' . ucwords($tag_plural) . ' </span>';
 					}
 
-					if ( !$data['linked'] ){
-						$tag_list = strip_tags($tag_list);
-					}
-
+					//If we just want comma-separated plain text
 					if ( $data['string'] ){
-						return strip_tags($tag_list);
+						$tag_names = array_map(fn($tag) => $tag->name, $the_tags);
+						return implode(', ', $tag_names);
 					}
 
-					return '<span class="posted-in meta-item post-tags">' . $label . $tag_list . '</span>';
+					//Otherwise output individual span tags
+					$tag_items = '';
+					$tag_count = count($the_tags);
+					$current = 0;
+
+					foreach ( $the_tags as $tag ){
+						$tag_name = esc_html($tag->name);
+						$current++;
+
+						if ( $data['linked'] ){
+							$tag_link = get_tag_link($tag->term_id);
+							$tag_items .= '<span role="listitem"><a href="' . esc_url($tag_link) . '">' . $tag_name . '</a></span>';
+						} else {
+							$tag_items .= '<span role="listitem">' . $tag_name . '</span>';
+						}
+
+						if ( $current < $tag_count ) {
+							$tag_items .= ', ';
+						}
+					}
+
+					return '<span class="posted-in meta-item post-tags" role="list">' . $label . $tag_items . '</span>';
 				}
 			}
 		}

@@ -227,9 +227,9 @@ nebula.fileSizeMonitorTableFilter = function(){
 
 	//Show or hide certain columns
 	if ( hasSpecificFilter ){
-		jQuery('#nebula_file_size_monitor table th.file-group, #nebula_file_size_monitor table td.file-group').addClass('hidden');
+		jQuery('#nebula_file_size_monitor table th.file-group, #nebula_file_size_monitor table tbody td.file-group').addClass('hidden');
 	} else {
-		jQuery('#nebula_file_size_monitor table th.file-group, #nebula_file_size_monitor table td.file-group').removeClass('hidden');
+		jQuery('#nebula_file_size_monitor table th.file-group, #nebula_file_size_monitor table tbody td.file-group').removeClass('hidden');
 	}
 
 	//Update the file type text to match the selected filter
@@ -265,42 +265,50 @@ nebula.fileSizeMonitorTableFilter = function(){
 	jQuery('.no-files-message').toggle(!anyVisibleRows); //Show or hide the "No Files" message depending if we have any results
 	jQuery('.totals-row .total-showing').text(visibleIndex.toLocaleString());
 
+	jQuery('.table-footer').addClass('hidden');
+
 	//Calculate the cumulative total file size of visible rows
 	if ( anyVisibleRows ){
-		let totalFileSize = 0;
+		let totalMonitoredFileSize = 0; //The grand total of all monitored files
+		let totalVisibleFileSize = 0; //The total of filtered files currently showing
 		let visibleFileSizes = [];
 
-		jQuery('#nebula_file_size_monitor table tr:visible').each(function(){
+		jQuery('#nebula_file_size_monitor table tbody tr').each(function(){
 			let thisFileSize = parseInt(jQuery(this).find('.file-size').attr('data-file-size'));
 
 			if ( !isNaN(thisFileSize) ){
-				totalFileSize += thisFileSize;
-				visibleFileSizes.push(thisFileSize);
+				totalMonitoredFileSize += thisFileSize;
+
+				if ( jQuery(this).is(':visible') ){
+					totalVisibleFileSize += thisFileSize;
+					visibleFileSizes.push(thisFileSize);
+				}
 			}
 		});
 
-		if ( totalFileSize ){
-			jQuery('.total-file-size').html(' (' + nebula.formatBytes(totalFileSize) + ')');
+		if ( totalVisibleFileSize ){
+			let visiblePercentOfTotal = ((totalVisibleFileSize/totalMonitoredFileSize)*100).toFixed(1);
 
-			visibleFileSizes.sort(function(a, b){ return a - b; });
+			jQuery('.total-file-size').html('<strong>' + nebula.formatBytes(totalVisibleFileSize) + '</strong> <small>(' + visiblePercentOfTotal + '% of monitored files)</small>');
+
+			visibleFileSizes.sort(function(a, b){
+				return a-b;
+			});
+
+			let len = visibleFileSizes.length;
+			let averageFileSize = totalVisibleFileSize/len;
 
 			let medianFileSize = 0;
-			let len = visibleFileSizes.length;
-
 			if ( len%2 == 0 ){
 				medianFileSize = (visibleFileSizes[len/2-1]+visibleFileSizes[len/2])/2;
 			} else {
 				medianFileSize = visibleFileSizes[Math.floor(len/2)];
 			}
 
-			jQuery('.median-file-size').html(nebula.formatBytes(medianFileSize)).parent('.median-description').removeClass('hidden');
-		} else {
-			jQuery('.total-file-size').html(''); //Otherwise empty it
-			jQuery('.median-description').addClass('hidden');
+			jQuery('.average-file-size').html(nebula.formatBytes(averageFileSize));
+			jQuery('.median-file-size').html(nebula.formatBytes(medianFileSize));
+			jQuery('.table-footer').removeClass('hidden');
 		}
-	} else {
-		jQuery('.total-file-size').html(''); //Otherwise empty it
-		jQuery('.median-description').addClass('hidden');
 	}
 
 	//Only show tips for this file group

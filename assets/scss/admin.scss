@@ -238,9 +238,15 @@ ul#nebula-performance-metrics li {
 		.no-files-message {padding: 0 10px 5px 10px;}
 	}
 
+	table.table-footer {width: 100%; background: #efefef; border: 1px solid #ddd; border-top: none; font-size: rem(11px);
+		tr {display: flex; justify-content: space-around;
+			td {text-align: center;}
+		}
+	}
+
 	.totals-row {margin-top: 2px; font-style: italic; text-align: right;}
 
-	.budget-median-tips-intro {margin-bottom: 5px;}
+	.budget-description {margin-bottom: 5px;}
 
 	#nebula-optimization-tips {
 		ul {margin: 0;

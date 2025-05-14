@@ -145,12 +145,21 @@ nebula.performanceMetrics = async function(){
 				//Report certain timings to Google Analytics
 				let navigationPerformanceEntry = performance.getEntriesByType('navigation')[0]; //There is typically only ever 1 in this, but we always just want the first one
 				if ( navigationPerformanceEntry ){
+					//Provide a "rating" of load time based on DOM Ready timing
+					if ( navigationPerformanceEntry.domComplete <= 1500 ){
+						nebula.pageviewProperties.load_speed_rating = 'fast';
+					} else if ( navigationPerformanceEntry.domComplete <= 3500 ){
+						nebula.pageviewProperties.load_speed_rating = 'moderate';
+					} else {
+						nebula.pageviewProperties.load_speed_rating = 'slow';
+					}
+
 					gtag('event', 'load_timings', { //These are sent in seconds (not milliseconds) so create Custom Metrics with the appropriate units
 						session_page_type: ( nebula.isLandingPage() )? 'Landing Page' : 'Subsequent Page',
-						server_response: Math.round(navigationPerformanceEntry.responseStart)/1000,
-						dom_interactive: Math.round(navigationPerformanceEntry.domInteractive)/1000,
-						dom_complete: Math.round(navigationPerformanceEntry.domComplete)/1000,
-						fully_loaded: Math.round(navigationPerformanceEntry.duration)/1000,
+						server_response: (navigationPerformanceEntry.responseStart/1000).toFixed(3),
+						dom_interactive: (navigationPerformanceEntry.domInteractive/1000).toFixed(3),
+						dom_complete: (navigationPerformanceEntry.domComplete/1000).toFixed(3),
+						fully_loaded: (navigationPerformanceEntry.duration/1000).toFixed(3),
 						link_url: window.location.href, //Using "link_url" so additional custom dimensions are not needed
 						non_interaction: true
 					});

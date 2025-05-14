@@ -7,6 +7,7 @@ if ( !trait_exists('Assets') ){
 		public $brain = array();
 		public $referrer = '(No Session Cookie)';
 		public $landing_page = '(No Session Cookie)';
+		public $is_landing_page = null;
 		public $default_cid = '';
 
 		public function hooks(){
@@ -47,9 +48,10 @@ if ( !trait_exists('Assets') ){
 
 			$memoized_data = array(
 				'sid_key' => uniqid('nebula_', true), //For persistent Session ID
+				'default_cid' => $this->default_cid,
 				'referrer' => $this->referrer,
 				'landing_page' => $this->landing_page,
-				'default_cid' => $this->default_cid,
+				'is_landing_page' => true,
 			);
 
 			return $memoized_data;
@@ -62,13 +64,21 @@ if ( !trait_exists('Assets') ){
 			if ( $this->is_analytics_allowed() ){ //Only store this information if tracking is allowed
 				try {
 					if ( isset($this->super->cookie['session']) ){
-						$session_cookie_data = json_decode(stripslashes($this->super->cookie['session']), true);
+						$session_cookie_data = json_decode(stripslashes($this->super->cookie['session']), true); //Read values from the cookie to use in PHP variables
+
+						//Prep the variables for use elsewhere
 						$this->referrer = $session_cookie_data['referrer'];
 						$this->landing_page = $session_cookie_data['landing_page'];
 						$this->default_cid = $session_cookie_data['default_cid'];
+						$this->is_landing_page = false;
+
+						//Update the cookie data as well so it persists to the next page load
+						$session_cookie_data['is_landing_page'] = false;
+						$this->set_cookie('session', json_encode($session_cookie_data), time()+HOUR_IN_SECONDS*4, false); //Update the cookie with new data
 					} else {
 						$this->referrer = ( isset($this->super->server['HTTP_REFERER']) )? $this->super->server['HTTP_REFERER'] : false; //Use the referrer header if it exists
 						$this->landing_page = $this->url_components('all'); //Get the full URL including query string
+						$this->is_landing_page = true;
 
 						$session_cookie_data = $this->prep_new_session_cookie();
 
@@ -82,6 +92,8 @@ if ( !trait_exists('Assets') ){
 				}
 			}
 		}
+
+
 
 		//Register assets
 		public function register_scripts(){
@@ -289,6 +301,7 @@ if ( !trait_exists('Assets') ){
 				'geolocation' => false,
 				'referrer' => $this->referrer,
 				'landing_page' => $this->landing_page,
+				'is_landing_page' => $this->is_landing_page,
 			);
 
 			//User Data
