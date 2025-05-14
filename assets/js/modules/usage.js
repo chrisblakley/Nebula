@@ -85,7 +85,7 @@ nebula.usage = async function(error = false){
 
 		if ( message ){
 			let description = '(JS) ' + message;
-			let short_description = '(JS) ' + message;
+			let shortDescription = '(JS) ' + message;
 
 			if ( lineNumber || filePath ){
 				description += ' at ' + lineNumber + ' of ' + filePath + ' (v' + nebula.version.number + ')';
