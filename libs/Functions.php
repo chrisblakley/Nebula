@@ -1236,46 +1236,41 @@ if ( !trait_exists('Functions') ){
 				return str_replace(array(' ', '_', '-'), '', strtolower($value));
 			}, $networks);
 
-			echo '<div class="sharing-links">';
-
-			//If the 'shareapi' is requested, return *only* the Share API
-			if ( in_array($networks, array('shareapi')) ){
-				$networks = array('shareapi');
-			}
+			echo '<ul class="sharing-links">';
 
 			foreach ( $networks as $network ){
 				//Share API
 				if ( in_array($network, array('shareapi')) ){
-					echo '<a class="nebula-share-btn nebula-share shareapi" href="#">' . __('Share', 'nebula') . '</a>';
+					echo '<li class="hidden"><a class="nebula-share-btn nebula-share shareapi" href="#" title="Share this post"><i class="fa-solid fa-share-nodes me-1"></i>' . __('Share', 'nebula') . '</a></li>';
 				}
 
 				//Facebook
 				if ( in_array($network, array('facebook', 'fb')) ){
-					echo '<a class="nebula-share-btn facebook" href="http://www.facebook.com/sharer.php?u=' . $encoded_url . '&t=' . $encoded_title . '" target="_blank" rel="noopener">' . __('Share', 'nebula') . '</a>';
+					echo '<li><a class="nebula-share-btn facebook" href="http://www.facebook.com/sharer.php?u=' . $encoded_url . '&t=' . $encoded_title . '" target="_blank" rel="noopener" title="' . __('Share on Facebook', 'nebula') . '" role="listitem"><i class="fa-brands fa-facebook me-1"></i>' . __('Share', 'nebula') . '</a></li>';
 				}
 
-				//Twitter
-				if ( in_array($network, array('twitter')) ){
-					echo '<a class="nebula-share-btn twitter" href="https://twitter.com/intent/tweet?text=' . $encoded_title . '&url=' . $encoded_url . '" target="_blank" rel="noopener">' . __('Tweet', 'nebula') . '</a>';
+				//Twitter/X
+				if ( in_array($network, array('twitter', 'x')) ){
+					echo '<li><a class="nebula-share-btn twitter" href="https://twitter.com/intent/tweet?text=' . $encoded_title . '&url=' . $encoded_url . '" target="_blank" rel="noopener" title="' . __('Share on X', 'nebula') . '" role="listitem"><i class="fa-brands fa-x-twitter me-1"></i></i>' . __('Post', 'nebula') . '</a></li>';
 				}
 
 				//LinkedIn
 				if ( in_array($network, array('linkedin', 'li')) ){
-					echo '<a class="nebula-share-btn linkedin" href="http://www.linkedin.com/shareArticle?mini=true&url=' . $encoded_url . '&title=' . $encoded_title . '" target="_blank" rel="noopener">' . __('Share', 'nebula') . '</a>';
+					echo '<li><a class="nebula-share-btn linkedin" href="http://www.linkedin.com/shareArticle?mini=true&url=' . $encoded_url . '&title=' . $encoded_title . '" target="_blank" rel="noopener" title="' . __('Share on LinkedIn', 'nebula') . '" role="listitem"><i class="fa-brands fa-linkedin me-1" aria-hidden="true"></i>' . __('Share', 'nebula') . '</a></li>';
 				}
 
 				//Pinterest
 				if ( in_array($network, array('pinterest', 'pin')) ){
-					echo '<a class="nebula-share-btn pinterest" href="http://pinterest.com/pin/create/button/?url=' . $encoded_url . '" target="_blank" rel="noopener">' . __('Share', 'nebula') . '</a>';
+					echo '<li><a class="nebula-share-btn pinterest" href="http://pinterest.com/pin/create/button/?url=' . $encoded_url . '" target="_blank" rel="noopener" title="' . __('Share on Pinterest', 'nebula') . '" role="listitem"><i class="fa-brands fa-pinterest me-1" aria-hidden="true"></i>' . __('Share', 'nebula') . '</a></li>';
 				}
 
 				//Email
 				if ( in_array($network, array('email')) ){
-					echo '<a class="nebula-share-btn email" href="mailto:?subject=' . $encoded_title . '&body=' . $encoded_url . '" target="_blank" rel="noopener">' . __('Email', 'nebula') . '</a>';
+					echo '<li><a class="nebula-share-btn email" href="mailto:?subject=' . $encoded_title . '&body=' . $encoded_url . '" target="_blank" rel="noopener" title="' . __('Share by email', 'nebula') . '" role="listitem"><i class="fa-solid fa-envelope me-1" aria-hidden="true"></i>' . __('Email', 'nebula') . '</a></li>';
 				}
 			}
 
-			echo '</div><!--/sharing-links-->';
+			echo '</ul><!--/sharing-links-->';
 		}
 
 		//Display Native Social Buttons

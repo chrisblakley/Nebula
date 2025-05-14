@@ -178,9 +178,14 @@ a.resetfilters {font-size: rem(12px); color: $danger_color; opacity: 0;
 	}
 }
 
-.sharing-links {display: block;
-	.nebula-social-button {display: inline-block; margin-right: 10px;
-		span {vertical-align: inherit !important;}
+ul.sharing-links {list-style-type: none; margin: 0; padding: 0;
+	li {vertical-align: inherit !important;
+		&:not(.hidden) {display :inline-block; margin: 0 5px;
+			&:first-of-type {margin-left: 0;}
+			&:last-of-type{margin-right: 0;}
+		}
+
+		&.hidden + li {margin-left:0;}
 	}
 }
 

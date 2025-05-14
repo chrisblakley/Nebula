@@ -258,28 +258,27 @@ if ( !trait_exists('Admin') ){
 			//	$transient_manager->delete_transients_with_expirations();
 			//} else {
 				//Clear post/page information and related transients
-				//Note: We purposefully do not clear nebula_analytics_* transients to preserve their data. They are self-managed, but can be manually cleared if desired.
+				//Note: We purposefully do *not* clear nebula_analytics_* transients to preserve their data. They are self-managed, but can be manually cleared if desired.
+				//Other transients we do *not* need to clear when posts are updated: "nebula_directory_indexing", "nebula_php_timeline", "nebula_spam_domain_public_list"
 				$all_transients_to_delete = apply_filters('nebula_delete_transients_on_save', array( //Allow other functions to hook in to delete transients on post save
-					'nebula_autocomplete_menus',
-					'nebula_autocomplete_categories',
-					'nebula_autocomplete_tags',
-					'nebula_autocomplete_authors',
-					'nebula_all_log_files',
-					'nebula_file_size_monitor_list',
+					'nebula_autocomplete_menus', //Stores menus for the autocomplete search
+					'nebula_autocomplete_categories', //Stores categories for the autocomplete search
+					'nebula_autocomplete_tags', //Stores tags for the autocomplete search
+					'nebula_autocomplete_authors', //Stores authors for the autocomplete search
+					'nebula_all_log_files', //Stores a list of all known log files
+					'nebula_file_size_monitor_list', //Stores the list of files monitored by the File Size Monitor tool
 					'nebula_theme_file_changes_check',
-					'nebula_theme_modified_files',
-					'nebula_cf7_submits_badge',
-					'nebula_todo_items',
-					'nebula_spam_domain_public_list',
-					'nebula_directory_size_child_theme',
-					'nebula_directory_size_parent_theme',
-					'nebula_directory_size_uploads',
-					'nebula_directory_size_plugins',
-					'nebula_count_users',
-					'nebula_count_plugins',
-					'nebula_latest_post',
-					'nebula_earliest_post',
-					'nebula_php_timeline',
+					'nebula_theme_modified_files', //Checks if parent theme files were modified
+					'nebula_cf7_submits_badge', //Stores the number of CF7 submissions today
+					'nebula_todo_items', //Stores the to-do comments in theme files
+					'nebula_directory_size_child_theme', //Stores the file size of the child theme directory
+					'nebula_directory_size_parent_theme', //Stores the file size of the parent theme directory
+					'nebula_directory_size_uploads', //Stores the file size of the uploads directory
+					'nebula_directory_size_plugins', //Stores the file size of the plugins directory
+					'nebula_count_users', //Counts the number of WP users
+					'nebula_count_plugins', //Counts the number of WP plugins
+					'nebula_latest_post', //Stores the date of the latest post
+					'nebula_earliest_post', //Stores the date of the earliest post
 				));
 
 				foreach ( $all_transients_to_delete as $transient_to_delete ){

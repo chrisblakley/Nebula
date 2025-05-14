@@ -132,7 +132,7 @@ if ( !trait_exists('Warnings') ){
 									'description' => '<i class="fa-solid fa-fw fa-server"></i> File system permissions error. Consider changing the FS_METHOD in wp-config.php.',
 								);
 							} else {
-								set_transient('nebula_fs_method', true); //On success, set a transient. No expiration.
+								set_transient('nebula_fs_method', true, MONTH_IN_SECONDS); //On success, set a transient
 							}
 						}
 					}
@@ -278,7 +278,7 @@ if ( !trait_exists('Warnings') ){
 
 						//If we did not find a problem, set a longer transient
 						if ( empty($found_problem) ){
-							set_transient('nebula_directory_indexing', 'good'); //No expiration so it is not cleared when making new posts
+							set_transient('nebula_directory_indexing', 'good', WEEK_IN_SECONDS); //This used to not have an expiration so it wouldn't be cleared when creating/editing posts, but that allows it to get caught in persistent object storage. So now we don't clear all transients with an expiration anymore, we only clear specific transients, so this can get an expiration date now.
 						}
 					} else {
 						if ( $directory_indexing === 'bad' ){

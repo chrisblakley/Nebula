@@ -146,20 +146,22 @@ nebula.performanceMetrics = async function(){
 				let navigationPerformanceEntry = performance.getEntriesByType('navigation')[0]; //There is typically only ever 1 in this, but we always just want the first one
 				if ( navigationPerformanceEntry ){
 					//Provide a "rating" of load time based on DOM Ready timing
+					loadSpeedRating = '';
 					if ( navigationPerformanceEntry.domComplete <= 1500 ){
-						nebula.pageviewProperties.load_speed_rating = 'fast';
+						loadSpeedRating = 'fast';
 					} else if ( navigationPerformanceEntry.domComplete <= 3500 ){
-						nebula.pageviewProperties.load_speed_rating = 'moderate';
+						loadSpeedRating = 'moderate';
 					} else {
-						nebula.pageviewProperties.load_speed_rating = 'slow';
+						loadSpeedRating = 'slow';
 					}
 
 					gtag('event', 'load_timings', { //These are sent in seconds (not milliseconds) so create Custom Metrics with the appropriate units
-						session_page_type: ( nebula.isLandingPage() )? 'Landing Page' : 'Subsequent Page',
-						server_response: (navigationPerformanceEntry.responseStart/1000).toFixed(3),
-						dom_interactive: (navigationPerformanceEntry.domInteractive/1000).toFixed(3),
-						dom_complete: (navigationPerformanceEntry.domComplete/1000).toFixed(3),
-						fully_loaded: (navigationPerformanceEntry.duration/1000).toFixed(3),
+						session_page_type: ( nebula.isLandingPage() )? 'Landing Page' : 'Subsequent Page', //Dimension
+						load_speed_rating: loadSpeedRating, //Dimension
+						server_response: (navigationPerformanceEntry.responseStart/1000).toFixed(3), //Metric
+						dom_interactive: (navigationPerformanceEntry.domInteractive/1000).toFixed(3), //Metric
+						dom_complete: (navigationPerformanceEntry.domComplete/1000).toFixed(3), //Metric
+						fully_loaded: (navigationPerformanceEntry.duration/1000).toFixed(3), //Metric
 						link_url: window.location.href, //Using "link_url" so additional custom dimensions are not needed
 						non_interaction: true
 					});

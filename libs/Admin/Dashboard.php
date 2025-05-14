@@ -829,23 +829,25 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			if ( function_exists('opcache_get_status') ){
-				$opcache_status = opcache_get_status();
+				$opcache_status = @opcache_get_status(); //Using @ to suppress restriction errors by returning false instead
 
-				$opcache_hit_rate = '';
-				$opcache_stats = null;
-				if ( isset($opcache_status['statistics']) && is_array($opcache_status['statistics']) ){
-					$opcache_stats = $opcache_status['statistics'];
-				} else if ( isset($opcache_status['opcache_statistics']) && is_array($opcache_status['opcache_statistics']) ){
-					$opcache_stats = $opcache_status['opcache_statistics'];
-				}
+				if ( is_array($opcache_status) && isset($opcache_status['opcache_enabled']) ){
+					$opcache_hit_rate = '';
+					$opcache_stats = null;
+					if ( isset($opcache_status['statistics']) && is_array($opcache_status['statistics']) ){
+						$opcache_stats = $opcache_status['statistics'];
+					} else if ( isset($opcache_status['opcache_statistics']) && is_array($opcache_status['opcache_statistics']) ){
+						$opcache_stats = $opcache_status['opcache_statistics'];
+					}
 
-				if ( $opcache_stats && isset($opcache_stats['opcache_hit_rate']) ){
-					$opcache_hit_rate_class = ( $opcache_stats['opcache_hit_rate'] < 85 )? 'text-caution' : '';
-					$opcache_hit_rate = ' <small class="' . $opcache_hit_rate_class . '" title="When the hit rate is low, PHP must recompile code more often, which increases page load time.">(Hit Rate: ' . round($opcache_stats['opcache_hit_rate'], 1) . '%)</small>';
-				}
+					if ( $opcache_stats && isset($opcache_stats['opcache_hit_rate']) ){
+						$opcache_hit_rate_class = ( $opcache_stats['opcache_hit_rate'] < 85 )? 'text-caution' : '';
+						$opcache_hit_rate = ' <small class="' . $opcache_hit_rate_class . '" title="When the hit rate is low, PHP must recompile code more often, which increases page load time.">(Hit Rate: ' . round($opcache_stats['opcache_hit_rate'], 1) . '%)</small>';
+					}
 
-				if ( isset($opcache_status['opcache_enabled']) && $opcache_status['opcache_enabled'] == 0 ){
-					echo '<li class="essential text-caution"><i class="fa-solid fa-fw fa-box"></i> Opcache Disabled</li>';
+					if ( isset($opcache_status['opcache_enabled']) && $opcache_status['opcache_enabled'] == 0 ){
+						echo '<li class="essential text-caution"><i class="fa-solid fa-fw fa-box"></i> Opcache Disabled</li>';
+					}
 				}
 			}
 
