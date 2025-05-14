@@ -111,14 +111,14 @@ if ( !trait_exists('Assets') ){
 
 			wp_register_style('nebula-datatables', 'https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.min.css', null, '2.3.0', 'all'); //Switch to jsDelivr if/when available
 			wp_register_style('nebula-chosen', 'https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/chosen.min.css', null, '1.8.7', 'all');
-			wp_register_style('nebula-jquery_ui', 'https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.14.1/jquery-ui.structure.min.css', null, '1.14.1', 'all'); //https://www.jsdelivr.com/package/npm/jquery-ui
+			wp_register_style('nebula-jquery_ui', 'https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/themes/base/autocomplete.min.css', null, '1.14.1', 'all'); //https://www.jsdelivr.com/package/npm/jquery-ui
 			wp_register_style('nebula-pre', get_template_directory_uri() . '/assets/css/pre.css', null, $this->version('full'), 'all');
 
 			//Scripts
 			//Use jsDelivr to pull common libraries: https://www.jsdelivr.com/
 			//nebula()->register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
 			$this->register_script('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '5.3.6', true);
-			$this->register_script('nebula-jquery_ui', 'https://cdn.jsdelivr.net/npm/jquery-ui-dist@1.14.1/jquery-ui.min.js', array('defer', 'crossorigin'), null, '1.14.1', true);
+			$this->register_script('nebula-jquery_ui', 'https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/dist/jquery-ui.min.js', array('defer', 'crossorigin'), null, '1.14.1', true); //https://www.jsdelivr.com/package/npm/jquery-ui
 			$this->register_script('nebula-vimeo', 'https://cdn.jsdelivr.net/npm/@vimeo/player@2.27.1/dist/player.min.js', null, null, '2.27.1', true); //https://www.jsdelivr.com/package/npm/@vimeo/player
 			$this->register_script('nebula-datatables', 'https://cdn.jsdelivr.net/npm/datatables.net@2.3.0/js/dataTables.min.js', array('defer', 'crossorigin'), null, '2.3.0', true); //Nebula registers this asset, but does not init the JS. https://www.jsdelivr.com/package/npm/datatables.net
 			$this->register_script('nebula-chosen', 'https://cdn.jsdelivr.net/npm/chosen-js@1.8.7/chosen.jquery.min.js', array('defer', 'crossorigin'), null, '1.8.7', true); //https://www.jsdelivr.com/package/npm/chosen-js

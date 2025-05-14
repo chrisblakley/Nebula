@@ -63,10 +63,30 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 		&::after {content: "\f35d"; @include font-awesome("solid"); margin-left: 5px; font-size: rem(10px); opacity: 0.4;}
 	}
 }
-.ui-autocomplete.ui-widget-content li {position: relative;
-	& a {@include link-colors(#292b2c, #292b2c);
-		&::before {content: "\f105"; @include font-awesome("solid"); width: 10px; margin-right: 5px; font-size: rem(10px); text-align: center; opacity: 0.5;}
+
+//jQuery UI Autocomplete
+.ui-autocomplete.ui-widget-content {padding: 0; list-style: none; margin-top: -10px; @include background-color(#fff, 0.9); backdrop-filter: blur(6px); border: none; border-top: 1px dotted #ddd; box-shadow: 1px 6px 9px 0 rgb(0 0 0 / 20%); z-index: 9999 !important; overflow: hidden;
+
+	li {position: relative;
+		a {display: block; padding-left: 15px; padding-top: 3px; padding-bottom: 3px; @include link-colors(#292b2c, #292b2c); text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width: 100%; transition: none 0.25s;
+			&::before {content: "\f105"; @include font-awesome("solid"); width: 10px; margin-right: 5px; font-size: rem(10px); text-align: center; opacity: 0.5;}
+		}
 	}
+
+	.ui-menu .ui-menu-item {font-size: rem(12px); padding: 3px 5px;}
+	.ui-state-hover,
+	.ui-widget-content .ui-state-hover,
+	.ui-widget-header .ui-state-hover,
+	li.ui-state-focus,
+	.ui-widget-content li.ui-state-focus,
+	.ui-widget-header li.ui-state-focus,
+	.ui-widget-header li.ui-state-active {margin: 0; font-weight: normal; background: $primary_color; color: #fff; border: none;}
+	.ui-state-hover a,
+	li.ui-state-focus a,
+	a.ui-state-active {color: #fff;}
+
+	.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover, .ui-button.ui-state-active:focus {margin: 0; border: none; background: $primary_color;}
+
 	&.type-post a::before {content: "\f1ea";}
 	&.type-page a::before {content: "\f15c";}
 	&.type-category a::before {content: "\f02e";}
@@ -85,24 +105,6 @@ form#nebula-hero-search {display: inline-block; position: relative; margin: 0; w
 	}
 	&.more-results a::before {content: "\f002";}
 	&.no-results a::before {content: "\00a0";}
-}
-
-//jQuery UI Autocomplete
-.ui-autocomplete.ui-widget-content {margin-top: -10px; @include background-color(#fff, 0.95); backdrop-filter: blur(6px); border: none; border-top: 1px dotted #ddd; box-shadow: 1px 6px 9px 0 rgb(0 0 0 / 20%); z-index: 9999 !important; overflow: hidden;
-	.ui-menu .ui-menu-item {font-size: rem(12px); padding: 3px 5px;}
-	.ui-state-hover,
-	.ui-widget-content .ui-state-hover,
-	.ui-widget-header .ui-state-hover,
-	li.ui-state-focus,
-	.ui-widget-content li.ui-state-focus,
-	.ui-widget-header li.ui-state-focus,
-	.ui-widget-header li.ui-state-active {margin: 0; font-weight: normal; background: $primary_color; color: #fff; border: none;}
-	.ui-state-hover a,
-	li.ui-state-focus a,
-	a.ui-state-active {color: #fff;}
-	li a {display: inline-block; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; width: 100%; transition: none 0.25s;} //This is a duplicate selector of the & a on 67 above
-
-	.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover, .ui-button.ui-state-active:focus {margin: 0; border: none; background: $primary_color;}
 
 	@include mobile("landscape"){left: 0 !important; width: 100% !important;}
 }

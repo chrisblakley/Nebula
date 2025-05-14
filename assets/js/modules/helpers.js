@@ -608,7 +608,7 @@ nebula.accessibilityHelpers = function(){
 		let existingAriaLabel = jQuery(this).attr('aria-label');
 
 		if ( !existingAriaLabel ){
-			jQuery(this).attr('aria-label', '(opens in a new window)');
+			jQuery(this).attr('aria-label', jQuery(this).text() + ' (opens in a new window)');
 			return; //Continue to the next item
 		}
 
