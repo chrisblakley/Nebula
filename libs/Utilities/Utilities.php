@@ -131,7 +131,7 @@ if ( !trait_exists('Utilities') ){
 			//Check object cache
 			$session_id = wp_cache_get('nebula_session_id', $cache_group);
 			if ( $session_id !== false ){
-				return sanitize_text_field($session_id);
+				return sanitize_textarea_field($session_id);
 			}
 
 			$timer_name = $this->timer('Session ID');
@@ -194,7 +194,7 @@ if ( !trait_exists('Utilities') ){
 			wp_cache_set('nebula_session_id', $session_id, $cache_group, HOUR_IN_SECONDS*4);
 			$this->timer($timer_name, 'end');
 
-			return sanitize_text_field($session_id);
+			return sanitize_textarea_field($session_id);
 		}
 
 		//Check if currently viewing an admin page (or the Customizer)
@@ -558,8 +558,10 @@ if ( !trait_exists('Utilities') ){
 				if ( str_contains($this->get_option('hostnames'), $this->url_components('hostname', home_url())) ){
 					return true;
 				}
+
 				return false;
 			}
+
 			return true;
 		}
 
@@ -1274,6 +1276,7 @@ if ( !trait_exists('Utilities') ){
 				//Combine default args with passed args. Args docs: https://developer.wordpress.org/reference/classes/WP_Http/request/
 				$all_args = array_merge(array(
 					'redirection' => 5, //Follow 5 redirects before quitting
+					'timeout' => 2, //Only wait for 2 seconds before quitting
 				), $args);
 
 				//Only get the head data for slight speed improvement.

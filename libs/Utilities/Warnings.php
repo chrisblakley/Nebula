@@ -87,7 +87,7 @@ if ( !trait_exists('Warnings') ){
 				//Check object cache first
 				$nebula_warnings = wp_cache_get('nebula_warnings', 'nebula');
 
-				if ( is_array($nebula_warnings) || !empty($nebula_warnings) ){ //If it is an array (meaning it has run before but did not find anything) or if it is false
+				if ( !empty($nebula_warnings) ){ //If it is an array (meaning it has run before but did not find anything) or if it is false
 					return $nebula_warnings;
 				}
 
@@ -110,7 +110,8 @@ if ( !trait_exists('Warnings') ){
 											'dismissible' => true,
 											'description' => '<i class="fa-solid fa-fw fa-link"></i> Slug conflict with ' . ucwords(str_replace('_', ' ', $taxonomy)) . ': <strong>' . $term->slug . '</strong> - Consider changing this page slug.'
 										);
-										return null;
+
+										break 2;
 									}
 								}
 							}
@@ -308,8 +309,9 @@ if ( !trait_exists('Warnings') ){
 									}
 
 									//If the file size is larger than 10mb
-									if ( filesize($file) > MB_IN_BYTES*10 ){
-										$filesize = ( function_exists('bcdiv') )? bcdiv(filesize($file), MB_IN_BYTES, 0) : number_format(filesize($file)/MB_IN_BYTES, 2);
+									$filesize = filesize($file);
+									if ( $filesize > MB_IN_BYTES*10 ){
+										$filesize = ( function_exists('bcdiv') )? bcdiv($filesize, MB_IN_BYTES, 0) : number_format($filesize/MB_IN_BYTES, 2);
 
 										$nebula_warnings['large_file'] = array(
 											'level' => 'warning',
@@ -657,13 +659,13 @@ if ( !trait_exists('Warnings') ){
 						$disk_space_free = disk_free_space($path['directory'])/GB_IN_BYTES; //In GB
 
 						if ( $disk_space_free < $path['critical'] ){
-							$nebula_warnings['disk_space_low'] = array(
+							$nebula_warnings['disk_space_low_' . sanitize_class_name($path['directory'])] = array(
 								'level' => 'error',
 								'dismissible' => true,
 								'description' => '<i class="fa-solid fa-fw fa-hdd"></i> Available disk space in <strong>' . $path['directory'] . '</strong> critically low! Only <strong>' . round($disk_space_free, 2) . 'gb</strong> remaining.'
 							);
 						} elseif ( $disk_space_free < $path['low'] ){
-							$nebula_warnings['disk_space_low'] = array(
+							$nebula_warnings['disk_space_low_' . sanitize_class_name($path['directory'])] = array(
 								'level' => 'warning',
 								'dismissible' => true,
 								'description' => '<i class="fa-regular fa-fw fa-hdd"></i> Low disk space available in <strong>' . $path['directory'] . '</strong>. Only <strong>' . round($disk_space_free, 2) . 'gb</strong> remaining.'

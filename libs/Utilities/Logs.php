@@ -440,6 +440,14 @@ if ( !trait_exists('Logs') ){
 				$theme_directory = ( is_child_theme() )? get_stylesheet_directory() : get_template_directory();
 				if ( file_exists($theme_directory . '/data/logs/') ){
 					foreach ( $this->glob_r($theme_directory . '/data/logs/*') as $file ){
+						if ( $this->contains($file, array('index', 'htaccess', 'readme')) ){ //Ignore certain strings (this can be anything in the filepath)
+							continue; //Move on to the next file
+						}
+
+						if ( str_starts_with($file, '.') ){ //Ignore hidden files
+							continue; //Move on to the next file
+						}
+
 						$all_log_files['theme'][] = array(
 							'type' => 'theme',
 							'path' => $file, //Full file path

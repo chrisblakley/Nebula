@@ -53,18 +53,11 @@ nebula.developerMetaboxes = function(){
 
 	//To-Do Metabox
 	if ( jQuery('div#todo_manager').length ){
-		//Dynamic height for TODO results
 		if ( jQuery('.todo_results').length ){
 			jQuery(document).on('click', '.linenumber', function(){
 				jQuery(this).parents('.linewrap').find('.precon').slideToggle();
 				return false;
 			});
-
-			jQuery('.todo_results').addClass('height-check');
-			if ( jQuery('.todo_results')[0].scrollHeight <= 300 ){
-				jQuery('.todo_results').css('height', jQuery('.todo_results')[0].scrollHeight + 'px');
-			}
-			jQuery('.todo_results').removeClass('height-check');
 
 			//Hide TODO files with only hidden items
 			jQuery('.todofilewrap').each(function(){
@@ -78,6 +71,23 @@ nebula.developerMetaboxes = function(){
 	if ( jQuery('div#performance_metabox').length ){
 		window.requestAnimationFrame(function(){ //Update when Safari supports requestIdleCallback
 			nebula.checkPageSpeed(); //Performance Timing
+		});
+	}
+
+	//Log Viewer
+	if ( jQuery('div#nebula_log_viewer').length ){
+		jQuery('#log-viewer-select').on('change', function(){
+			if ( jQuery(this).val() ){ //Only reload if it has value
+				const url = new URL(window.location.href);
+				url.searchParams.set('log-viewer', jQuery(this).val());
+				window.location.href = url.toString(); //Reload the dashboard for the selected log file
+			}
+		});
+
+		jQuery('#reload-log-viewer').on('click', function(){
+			jQuery(this).find('i').addClass('fa-spin');
+			window.location.href = window.location.href; //Reload the page with the same log file
+			return false;
 		});
 	}
 
@@ -344,7 +354,7 @@ nebula.checkFileRowsResult = function(){
 nebula.checkPageSpeed = function(){
 	jQuery('#performance_metabox h2 i').removeClass('fa-stopwatch').addClass('fa-spinner fa-spin');
 
-	if ( location.hostname === 'localhost' || location.hostname === '127.0.0.1' ){ //If localhost or other "invalid" URL. This doesn't catch local TLDs, but the logic below will figure it out eventually.
+	if ( location.hostname === 'localhost' || location.hostname === '127.0.0.1' || jQuery('#nebula_log_viewer').length ){ //If localhost or other "invalid" URL. This doesn't catch local TLDs, but the logic below will figure it out eventually. Also, if the log viewer is showing, just run an iframe test to avoid using up the Lighthouse rate limit.
 		jQuery('#performance-sub-status strong').text('Using iframe test due to local development.');
 		nebula.runIframeSpeedTest('Local Development Environment');
 		return;

@@ -27,6 +27,7 @@ if ( !trait_exists('Dashboard') ){
 					if ( $this->get_option('dev_info_metabox') && $this->is_dev() ){
 						add_action('wp_dashboard_setup', array($this, 'dev_info_metabox'));
 						add_action('wp_dashboard_setup', array($this, 'file_size_monitor_metabox'));
+						add_action('wp_dashboard_setup', array($this, 'log_viewer_metabox'));
 					}
 
 					if ( $this->get_option('performance_metabox') || $this->is_dev() ){ //Devs always see the performance metabox
@@ -187,7 +188,7 @@ if ( !trait_exists('Dashboard') ){
 				if ( isset($post_type_stats[$post_type]) ){
 					$view_count = $post_type_stats[$post_type];
 					$label = ( $days_of_data >= 7 )? 'Weekly' : $days_of_data . '-day'; //If we don't have a full week, show the day count
-					$post_type_stat_description = '<small> (' . $label . ' Views: ' . $view_count . ')</small>'; //$this->singular_plural($view_count, 'view')
+					$post_type_stat_description = '<small> (' . $label . ' Views: ' . number_format($view_count) . ')</small>'; //$this->singular_plural($view_count, 'view')
 				}
 
 				$cache_length = ( is_plugin_active('transients-manager/transients-manager.php') )? WEEK_IN_SECONDS : DAY_IN_SECONDS; //If Transient Monitor (plugin) is active, transients with expirations are deleted when posts are published/updated, so this could be infinitely long (as long as an expiration exists).
@@ -296,7 +297,8 @@ if ( !trait_exists('Dashboard') ){
 			//Failed Login Count
 			if ( $this->get_login_counts('fail') > 0 ){
 				$username_tooltip = implode("\n", $this->get_login_counts('fail', true));
-				echo '<li class="essential text-danger" title="' . esc_attr($username_tooltip) . '"><i class="fa-solid fa-fw fa-user-xmark"></i> <strong>' . $this->get_login_counts('fail') . '</strong> Failed Logins <small>(Within the last week)</small>';
+				$failed_login_count = $this->get_login_counts('fail');
+				echo '<li class="essential text-danger" title="' . esc_attr($username_tooltip) . '"><i class="fa-solid fa-fw fa-user-xmark"></i> <strong>' . $failed_login_count . '</strong> Failed ' . $this->singular_plural($failed_login_count, 'login') . ' <small>(Within the last week)</small>';
 			}
 
 			//Comments
@@ -1066,7 +1068,7 @@ if ( !trait_exists('Dashboard') ){
 			foreach ( $this->get_log_files('all', true) as $types ){ //Always get fresh data here
 				foreach ( $types as $log_file ){
 					if ( !empty($log_file['bytes']) && $log_file['bytes'] > 999 ){ //Only show the file if it has a size and is at least 1kb
-						echo '<li class="essential"><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . $log_file['shortpath'] . '" target="_blank"><code title="' . $log_file['shortpath'] . '" style="cursor: help;">' . $log_file['name'] . '</code></a> File: <strong>' . $this->format_bytes($log_file['bytes']) . '</strong></li>';
+						echo '<li class="essential"><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . admin_url('?log-viewer=' . $log_file['shortpath']) . '"><code title="' . $log_file['shortpath'] . '" style="cursor: help;">' . $log_file['name'] . '</code></a> File: <strong>' . $this->format_bytes($log_file['bytes']) . '</strong></li>';
 					}
 				}
 			}
@@ -1159,7 +1161,154 @@ if ( !trait_exists('Dashboard') ){
 			$this->timer('Nebula Developer Dashboard Metabox', 'end');
 		}
 
-		//at launch, update the nebula options for developer info toggle to include file size monitor as well
+		//Error Log Viewer
+		public function log_viewer_metabox(){
+			if ( $this->is_minimal_mode() ){return null;}
+
+			if ( isset($this->super->get['log-viewer']) && current_user_can('manage_options') && $this->is_dev() ){
+				wp_add_dashboard_widget('nebula_log_viewer', '<i class="fa-solid fa-fw fa-file-lines"></i> &nbsp;Log Viewer', array($this, 'dashboard_log_viewer'));
+			}
+		}
+
+		public function dashboard_log_viewer(){
+			$this->timer('Nebula Log Viewer Dashboard Metabox', 'start', '[Nebula] Dashboard Metaboxes');
+
+			$requested_log = ( isset($this->super->get['log-viewer']) )? sanitize_text_field($this->super->get['log-viewer']) : ''; //If a specific log file is requested with ?log-viewer=
+			$requested_log_lower = strtolower($requested_log);
+			$allowed_log_files = $this->get_log_files();
+			$log_file = null;
+
+			//1. Try exact full path match
+			foreach ( $allowed_log_files as $type_group ){
+				foreach ( $type_group as $log ){
+					if ( hash_equals($requested_log, $log['path']) ){
+						$log_file = $log['path'];
+						break 2;
+					}
+				}
+			}
+
+			//2. If no full path, try partial path substring match (case-insensitive)
+			if ( empty($log_file) && !empty($requested_log) ){
+				foreach ( $allowed_log_files as $type_group ){
+					foreach ( $type_group as $log ){
+						if ( str_contains(strtolower($log['path']), $requested_log_lower) ){
+							$log_file = $log['path'];
+							break 2;
+						}
+					}
+				}
+			}
+
+			//3. If still no match, try exact file name match (case-insensitive)
+			if ( empty($log_file) && !empty($requested_log) ){
+				foreach ( $allowed_log_files as $type_group ){
+					foreach ( $type_group as $log ){
+						if ( $requested_log_lower === strtolower($log['name']) ){
+							$log_file = $log['path'];
+							break 2;
+						}
+					}
+				}
+			}
+
+			//Default to error_log or fallback (if a specific log file wasn't requested)
+			if ( empty($requested_log) && empty($log_file) ){
+				$log_file = ini_get('error_log');
+
+				if ( empty($log_file) ){
+					$log_file = WP_CONTENT_DIR . '/debug.log';
+				}
+			}
+
+			if ( !file_exists($log_file) ){
+				echo '<p><strong>No log file was found:</strong><br /><span>' . $requested_log . '</span></p>';
+				return;
+			}
+
+			$file_size = filesize($log_file);
+
+			//Check the file size
+			if ( $file_size > MB_IN_BYTES*50 ){ //We can work with larger files here because we don't load the entire file
+				echo '<p><strong>Log file is too large to display (' . size_format($file_size) . ').</strong></p>';
+				return;
+			}
+
+			$lines = $this->tail_file($log_file, 30); //Read the last lines
+			$last_modified = filemtime($log_file);
+
+			echo '<p><strong>/' . str_replace(ABSPATH, '', $log_file) . '</strong> <small>(' . size_format($file_size) . ')</small><br /><em><i class="fa-regular fa-clock"></i> Last modified ' . human_time_diff($last_modified, current_time('timestamp')) . ' ago <small>(' . date('l, F j, Y - g:i:sa', $last_modified) . ')</small></em></p>';
+
+			//Output the content
+			if ( empty($lines) || (count($lines) === 1 && trim($lines[0]) === '') ){ //If the lines are empty
+				echo '<p class="text-danger"><strong>No logs found in this file.</strong></p>';
+			} else {
+				//Loop through each of the log lines
+				echo '<pre id="log-contents">';
+					foreach ( $lines as $line ){
+						$line = esc_html($line);
+
+						if ( str_contains(strtolower($line), 'fatal') ){ //Highlight lines with fatal errors
+							echo '<span class="log-fatal">' . $line . "</span>\n";
+						} else {
+							echo $line . "\n";
+						}
+					}
+				echo '</pre>';
+			}
+
+			echo '<p><a id="reload-log-viewer" href="#"><i class="fa-solid fa-rotate"></i> Reload This Log</a></p>';
+
+			echo '<strong><label for="log-viewer-select">Select another log file:</label></strong>';
+			echo '<select id="log-viewer-select">';
+				echo '<option value="" disabled>View a log file...</option>';
+
+				foreach ( $allowed_log_files as $type => $logs ){
+					if ( !empty($logs) ){
+						foreach ( $logs as $log ){
+							$selected = ( strtolower($requested_log) === strtolower($log['name']) || str_contains($log['path'], $requested_log) )? ' selected' : '';
+							echo '<option value="' . esc_attr($log['name']) . '"' . $selected . '>' . esc_html($log['shortpath']) . ' (' . size_format($log['bytes']) . ')</option>';
+						}
+					}
+				}
+			echo '</select>';
+
+			$this->timer('Nebula Log Viewer Dashboard Metabox', 'end');
+		}
+
+		//Helper function to tail the last N lines of a file
+		protected function tail_file($filepath, $lines=20){
+			if ( !is_readable($filepath) ){
+				return array();
+			}
+
+			$fp = fopen($filepath, 'rb');
+			if ( !$fp ){
+				return array();
+			}
+
+			$buffer = '';
+			$chunk_size = 4096;
+			$pos = -1;
+			$line_count = 0;
+
+			fseek($fp, 0, SEEK_END);
+			$pos = ftell($fp);
+
+			while ( $pos > 0 && $line_count <= $lines ){
+				$seek = max(0, $pos - $chunk_size);
+				$read_size = $pos - $seek;
+				fseek($fp, $seek);
+				$chunk = fread($fp, $read_size);
+				$buffer = $chunk . $buffer;
+				$line_count = substr_count($buffer, "\n");
+				$pos = $seek;
+			}
+
+			fclose($fp);
+			$buffer_lines = explode("\n", trim($buffer));
+			return array_slice($buffer_lines, -$lines);
+		}
 
 		//File Size Monitor Metabox
 		public function file_size_monitor_metabox(){

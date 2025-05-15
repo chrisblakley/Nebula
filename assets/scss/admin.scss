@@ -123,8 +123,7 @@ ul#nebula-performance-metrics li {
 
 	&:has(.todo-nothing-found) .todoresults_title {display: none;}
 
-	.todo_results {font-size: 10px; background: #f6f6f6; padding: 5px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; overflow: auto; white-space: nowrap; height: 350px; resize: vertical;
-		&.height-check {height: 1px;} //For prepping dynamic height in JS
+	.todo_results {font-size: 10px; background: #f6f6f6; padding: 5px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; overflow: auto; white-space: nowrap; max-height: 350px; resize: vertical;
 		.todofilewrap {margin-bottom: 10px;
 			&.todo-theme-parent {display: none;}
 
@@ -160,27 +159,39 @@ ul#nebula-performance-metrics li {
 	pre.actualline {display: table; font-family: monospace; font-size: 10px; margin: 0; color: #666; background: #fff; padding: 2px 5px; border-radius: 5px; resize: none; transition: all 0.25s;}
 }
 
-//Nebula log file table list
+//Nebula Log Viewer
+#nebula_log_viewer {
+	#log-contents {background: #1e1e1e; color: #dcdcdc; padding: 10px; border-radius: 6px; font-size: rem(13px); line-height: 1.5; max-height: 500px; overflow: auto;
+		.log-fatal {color: $danger_color;}
+	}
+
+	#reload-log-viewer {color: $danger_color;}
+
+	label {display: block;}
+	#log-viewer-select {}
+}
+
+//Nebula File Size Monitor
 #nebula_file_size_monitor {
 	&:has(.no-files-to-output) {display: none;}
 
 	[title] {cursor: help;}
 
 	.high-file-count {
-		strong {color: $danger-color;}
+		strong {color: $danger_color;}
 	}
 
 	.filter-row {display: flex; align-items: center; gap: 5px; margin-bottom: 8px;
 		select {font-size: 13px;}
 		input {font-size: 12px; flex-grow: 2;}
 
-		.clear-keywords {color: $danger-color;}
+		.clear-keywords {color: $danger_color;}
 
-		//.highlight {border: 1px solid $danger-color; color: $danger-color;}
+		//.highlight {border: 1px solid $danger_color; color: $danger_color;}
 	}
 
 	.transparent {opacity: 0;}
-	.reset-filters {color: $danger-color;}
+	.reset-filters {color: $danger_color;}
 
 	.table-wrapper {max-height: 400px; overflow-y: auto; border: 1px solid #ddd; transition: max-height 0.5s ease;
 		&.simplify {max-height: 180px;}
