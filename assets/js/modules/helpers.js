@@ -1,14 +1,41 @@
 window.performance.mark('(Nebula) Inside helpers.js (module)');
 
+nebula.updateSessionData = function(){
+	let rawCookie = nebula.readCookie('session');
+	let sessionCookieData = {};
+
+	if ( rawCookie ){
+		let decoded = decodeURIComponent(rawCookie);
+
+		if ( decoded.charAt(0) === '{' && decoded.slice(-1) === '}' ){ //Basic check to test for an object string that can be parsed
+			sessionCookieData = JSON.parse(decoded);
+		}
+	}
+
+	if ( typeof sessionCookieData !== 'object' || sessionCookieData === null ){
+		sessionCookieData = {};
+	}
+
+	let pageCount = parseInt(sessionCookieData['page_count']) || 0;
+	sessionCookieData['page_count'] = pageCount+1;
+
+	let previousPage = sessionCookieData['previous_page'] || '';
+	if ( previousPage != window.location.href ){ //Ignore page reloads
+		sessionCookieData['previous_page'] = window.location.href;
+	}
+
+	nebula.createCookie('session', encodeURIComponent(JSON.stringify(sessionCookieData)), 0.16667); //Update the cookie now
+};
+
 //Miscellaneous helper classes and functions
 nebula.helpers = async function(){
 	if ( typeof window.gtag !== 'function' ){
 		window.gtag = function(){}; //Prevent gtag() calls from erroring if GA is off or blocked. This is supplemental to a similar check in analytics.php
 	}
 
-	//Remove Sass render trigger query
-	if ( nebula.get('sass') && !nebula.get('persistent') ){
-		window.history.replaceState({}, document.title, nebula.removeQueryParameter('sass', window.location.href));
+	//Remove certain trigger query strings
+	if ( (nebula.get('sass') || nebula.get('debug') || nebula.get('clear-transients')) && !nebula.get('persistent') ){
+		window.history.replaceState({}, document.title, nebula.removeQueryParameter(['sass', 'debug', 'clear-transients'], window.location.href));
 	}
 
 	//Empty caches when debugging

@@ -9,9 +9,9 @@ if ( !trait_exists('Warnings') ){
 		public function hooks(){
 			if ( (is_user_logged_in() || $this->is_auditing()) && !$this->is_background_request() && !is_customize_preview() ){
 				add_action('wp_head', array($this, 'console_warnings'));
+				add_action('admin_bar_menu', array($this, 'qm_warnings'));
 				add_filter('nebula_warnings', array($this, 'advanced_warnings'));
 				add_action('wp_footer', array($this, 'advanced_warning_output'), 9999); //Late execution as possible
-				add_action('admin_bar_menu', array($this, 'qm_warnings'));
 			}
 		}
 

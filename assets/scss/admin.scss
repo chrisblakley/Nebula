@@ -161,11 +161,76 @@ ul#nebula-performance-metrics li {
 
 //Nebula Log Viewer
 #nebula_log_viewer {
-	#log-contents {background: #1e1e1e; color: #dcdcdc; padding: 10px; border-radius: 6px; font-size: rem(13px); line-height: 1.5; max-height: 500px; overflow: auto;
-		.log-fatal {color: $danger_color;}
+	#log-scroll-wrapper {position: relative; width: 100%; max-height: 500px; overflow: auto; border-radius: 6px; background: #1a1a1a; z-index: 100; transition: all 0.5s easing(easeOut);
+		&.enlarge {width: 850px; max-height: 650px; translate: -220px; box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);}
 	}
 
-	#reload-log-viewer {color: $danger_color;}
+	#log-contents {list-style: none; margin: 0; padding: 2px 0; display: table; width: 100%; font-family: monospace; color: #dcdcdc; font-size: rem(12px);
+		.log-line {display: block; width: 100%; margin: 0; padding: 4px 6px; white-space: pre; box-sizing: border-box; transition: background 0.25s ease;
+			&:nth-child(even) {background: #3a3a3a;}
+
+			&:hover {background: #3a3100;}
+
+			.log-toggle {cursor: pointer; opacity: 0.6; transition: all 0.25s ease;
+				&:hover {opacity: 1; color: $warning_color;}
+			}
+
+			.log-timestamp {opacity: 0.5; font-size: rem(10.5px);
+				&.today {opacity: 0.9;
+					&::before {content: "🗓️"; margin-left: 2px; margin-right: 2px;}
+				}
+				&.yesterday {opacity: 0.7;}
+
+				&.fallback {}
+				&.customized {
+					.log-timestamp-original {display: none;}
+				}
+
+				.log-date {
+					&::after {content: " ";}
+				}
+
+				.log-time {}
+			}
+
+
+			&:has(.today) {
+				.log-date {display: none;}
+				.log-time {
+					&::before {content: "Today ";}
+				}
+			}
+
+			&:has(.yesterday) {
+				.log-date {display: none;}
+				.log-time {
+					&::before {content: "Yesterday ";}
+				}
+			}
+		}
+
+		.log-fatal {color: $danger_color;}
+		.log-trivial {opacity: 0.5;}
+
+		.highlight-log {opacity: 1; color: $warning_color !important; white-space: normal !important;
+			.log-timestamp, .log-timestamp:has(.today) {opacity: 1; font-size: inherit;
+				.log-timestamp-original {display: inline-block !important;}
+
+				.log-date {display: none;
+					&::after {display: none;}
+				}
+				.log-time {display: none;
+					&::before {display: none;}
+				}
+			}
+
+		}
+	}
+
+	#log-viewer-tools {display: flex; justify-content: space-between; font-size: rem(12px); margin-top: 4px; margin-bottom: 25px;
+		#enlarge-log-viewer {box-shadow: none !important;}
+		#reload-log-viewer {color: $danger_color; box-shadow: none !important;}
+	}
 
 	label {display: block;}
 	#log-viewer-select {}

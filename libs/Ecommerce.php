@@ -21,7 +21,7 @@ if ( !trait_exists('Ecommerce') ){
 
 				add_filter('nebula_brain', array($this, 'ecommerce_nebula_data'));
 
-				//add_action('init', array($this, 'remove_woo_breadcrumbs'));
+				//add_action('template_redirect', array($this, 'remove_woo_breadcrumbs'));
 				add_action('woocommerce_payment_complete', array($this, 'woocommerce_order_data'));
 				add_action('nebula_metadata_end', array($this, 'json_ld_ecommerce'));
 

@@ -130,7 +130,7 @@ if ( !trait_exists('Logs') ){
 				}
 			}
 
-			$message = '[' . date('l, F j, Y - g:i:sa') . '] ' . $message . ' | URL: ' . $this->requested_url() . PHP_EOL; //Add timestamp, URL, and newline
+			$message = '[' . date('l, F j, Y g:i:sa') . '] ' . $message . ' | URL: ' . $this->requested_url() . PHP_EOL; //Add timestamp, URL, and newline
 
 			//Limit the file size of Nebula-based log files
 			if ( !empty($limited) ){

@@ -9,7 +9,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Analytics') ){
 	trait Analytics {
 		public function hooks(){
-			if ( !$this->is_background_request() && !is_customize_preview() ){
+			if ( !$this->is_background_request() && !is_customize_preview() && !$this->is_non_page_request() ){
 				add_action('template_redirect', array($this, 'attribution_tracking'));
 
 				add_filter('the_permalink_rss', array($this, 'add_utm_to_feeds'), 100);
@@ -39,6 +39,10 @@ if ( !trait_exists('Analytics') ){
 				$this->once('is_analytics_allowed', function(){
 					do_action('qm/info', 'Observing "Do Not Track" requests');
 				});
+				return false;
+			}
+
+			if ( $this->is_non_page_request() ){ //Should I include $this->is_background_request() here too?
 				return false;
 			}
 

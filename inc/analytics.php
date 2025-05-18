@@ -101,6 +101,14 @@
 					$pageview_properties['session_page_type'] = 'Subsequent Page';
 				}
 
+				if ( !empty(nebula()->previous_page) ){
+					$pageview_properties['previous_page'] = nebula()->previous_page;
+				}
+
+				if ( !empty(nebula()->page_count) ){
+					$pageview_properties['page_count'] = nebula()->page_count;
+				}
+
 				//Designate any traffic that is at all related to any attribution (current or previous)
 				if ( !empty(nebula()->super->cookie['attribution']) ){ //If the attribution cookie exists
 					$pageview_properties['attribution_related'] = true;

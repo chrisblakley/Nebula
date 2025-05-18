@@ -24,7 +24,7 @@ if ( !trait_exists('Security') ){
 			add_action('wp_footer', array($this, 'cookie_notification'));
 
 			if ( !is_user_logged_in() ){
-				add_action('wp_loaded', array($this, 'spam_domain_prevention'));
+				add_action('template_redirect', array($this, 'spam_domain_prevention'), 10); //This must be *after* the session data is initialized because it updates the cookie (which is why this is triggered on the template_redirect hook and not init)
 			}
 
 			if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ){
@@ -476,7 +476,7 @@ if ( !trait_exists('Security') ){
 
 				//Mark as checked in session cookie
 				$session_cookie_data['spam_domain'] = false;
-				$this->set_cookie('session', json_encode($session_cookie_data), time()+HOUR_IN_SECONDS*4, true); //Needs to be able to be read by JavaScript
+				$this->set_cookie('session', json_encode($session_cookie_data), time()+HOUR_IN_SECONDS*4, false); //Needs to be able to be read by JavaScript
 			}
 
 			do_action('qm/info', 'Spam Domain Check Performed');

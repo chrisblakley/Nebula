@@ -903,44 +903,47 @@ if ( !trait_exists('Admin') ){
 							}
 						}
 
-						$warning_icon = 'fa-info-circle';
-						$warning_bg_class = 'has-warning';
-						if ( array_filter($warnings, function($item){return $item['level'] == 'error'; }) ){ //If the warnings contain an error entry
-							$warning_icon = 'fa-exclamation-triangle';
-							$warning_bg_class = 'has-error';
-						}
-
-						$wp_admin_bar->add_node(array(
-							'id' => 'nebula-warnings',
-							'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $warning_icon . '"></i> ' . count($warnings),
-							'meta' => array(
-								'class' => $warning_bg_class
-							)
-						));
-
-						//Now loop through to display the individual warnings as sub-nodes
-						foreach ( $warnings as $key => $warning ){
-							$warning_icon = 'fa-exclamation-triangle';
-
-							if ( $warning['level'] === 'error' ){
+						//If we have any warnings left after cleanup, output them
+						if ( !empty($warnings) && count($warnings) >= 1 ){
+							$warning_icon = 'fa-info-circle';
+							$warning_bg_class = 'has-warning';
+							if ( array_filter($warnings, function($item){return $item['level'] == 'error'; }) ){ //If the warnings contain an error entry
 								$warning_icon = 'fa-exclamation-triangle';
-							} elseif ( $warning['level'] === 'warning' ){
-								$warning_icon = 'fa-info-circle';
-							} elseif ( $warning['level'] === 'success' ){
-								$warning_icon = 'fa-check';
+								$warning_bg_class = 'has-error';
 							}
 
 							$wp_admin_bar->add_node(array(
-								'parent' => 'nebula-warnings',
-								'id' => 'nebula-warning-' . $key,
-								'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $warning_icon . '" style="margin-left: 5px;"></i> ' . strip_tags($warning['description']),
-								'href' => ( !empty($warning['url']) )? $warning['url'] : '',
+								'id' => 'nebula-warnings',
+								'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $warning_icon . '"></i> ' . count($warnings),
 								'meta' => array(
-									'target' => '_blank',
-									'rel' => 'noopener',
-									'class' => 'nebula-warning level-' . $warning['level'],
+									'class' => $warning_bg_class
 								)
 							));
+
+							//Now loop through to display the individual warnings as sub-nodes
+							foreach ( $warnings as $key => $warning ){
+								$warning_icon = 'fa-exclamation-triangle';
+
+								if ( $warning['level'] === 'error' ){
+									$warning_icon = 'fa-exclamation-triangle';
+								} elseif ( $warning['level'] === 'warning' ){
+									$warning_icon = 'fa-info-circle';
+								} elseif ( $warning['level'] === 'success' ){
+									$warning_icon = 'fa-check';
+								}
+
+								$wp_admin_bar->add_node(array(
+									'parent' => 'nebula-warnings',
+									'id' => 'nebula-warning-' . $key,
+									'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $warning_icon . '" style="margin-left: 5px;"></i> ' . strip_tags($warning['description']),
+									'href' => ( !empty($warning['url']) )? $warning['url'] : '',
+									'meta' => array(
+										'target' => '_blank',
+										'rel' => 'noopener',
+										'class' => 'nebula-warning level-' . $warning['level'],
+									)
+								));
+							}
 						}
 					}
 				}
@@ -1224,7 +1227,7 @@ if ( !trait_exists('Admin') ){
 						$wp_admin_bar->add_node(array(
 							'id' => 'nebula-sass-processed',
 							'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $sass_icon . '"></i> <i class="nebula-admin-fa fa-brands fa-fw fa-sass"></i> ' . $sass_number,
-							'href' => '?sass=true',
+							'href' => esc_url(add_query_arg('sass', 'true')),
 							'meta' => array(
 								'title' => ( $sass_color != 'sass-success' )? $this->sass_process_status : '',
 								'class' => $sass_color,

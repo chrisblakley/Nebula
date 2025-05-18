@@ -1371,6 +1371,10 @@ if ( !trait_exists('Utilities') ){
 				return true;
 			}
 
+			if ( wp_is_json_request() ){
+				return true;
+			}
+
 			//Check for the REST API
 			if ( (defined('REST_REQUEST') && REST_REQUEST) || isset($this->super->get['rest_route']) ){
 				return true;
@@ -1384,7 +1388,7 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			//Check if a CRON is running
-			if ( defined('DOING_CRON') && DOING_CRON ){
+			if ( wp_doing_cron() || (defined('DOING_CRON') && DOING_CRON) ){
 				return true;
 			}
 
@@ -1405,6 +1409,61 @@ if ( !trait_exists('Utilities') ){
 
 			//CLI
 			if ( defined('WP_CLI') && WP_CLI ){
+				return true;
+			}
+
+			return false;
+		}
+
+		//Speculation rules will preload pages in the background, while these are also background requests, they should be treated differently because it does load content the user may soon see
+		//There is currently no guaranteed way to detect predictive loads, so this is a best-effort
+		//Note: The WordPress action "init" will trigger on all asset requests (including things like images), so consider using "template_redirect" as another way to only trigger on page requests
+		public function is_non_page_request(){
+			//Any background request is also a non-page request
+			if ( $this->is_background_request() ){
+				return true;
+			}
+
+			if ( $this->super->server['REQUEST_METHOD'] === 'HEAD' ){
+				return true;
+			}
+
+			//If the asset is loaded via JavaScript (including the service worker and speculation rules)
+			if ( isset($this->super->server['HTTP_REFERER']) && str_contains($this->super->server['HTTP_REFERER'], '.js') ){
+				return true;
+			}
+
+			foreach ( getallheaders() as $header => $value ){
+				if ( strtolower($header) == 'purpose' && strtolower($value) == 'prefetch' ){
+					return true;
+				}
+
+				if ( strtolower($header) == 'sec-purpose' && str_contains(strtolower($value), 'prefetch') ){
+					return true;
+				}
+
+				if ( strtolower($header) == 'sec-fetch-purpose' && strtolower($value) == 'prefetch' ){
+					return true;
+				}
+
+				if ( strtolower($header) == 'x-moz' && strtolower($value) == 'prefetch' ){
+					return true;
+				}
+
+				if ( strtolower($header) == 'x-requested-with' && strtolower($value) == 'xmlhttprequest' ){
+					return true;
+				}
+			}
+
+			$request_uri = $this->super->server['REQUEST_URI'] ?? '';
+
+			//Ignore certain directories
+			if ( str_contains($request_uri, 'wp-content') || str_contains($request_uri, 'wp-includes') || str_contains($request_uri, 'wp-json') ){
+				return true;
+			}
+
+			//Ignore non-page file extensions
+			if ( preg_match('/\.(ico|css|js|mjs|cjs|png|jpe?g|gif|svg|webp|avif|apng|woff2?|ttf|eot|otf|json|xml|txt|map|webmanifest|manifest|mp4|webm|ogg|mp3|wav|pdf|docx?|xlsx?|pptx?|csv|tsv|wasm|zip|rar|7z|tar|gz|bz2|psd|ai|sketch)$/i', $request_uri) ){
 				return true;
 			}
 

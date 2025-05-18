@@ -296,7 +296,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//Failed Login Count
 			if ( $this->get_login_counts('fail') > 0 ){
-				$username_tooltip = implode("\n", $this->get_login_counts('fail', true));
+				$username_tooltip = implode("\n", array_unique($this->get_login_counts('fail', true))); //De-dupe and implode
 				$failed_login_count = $this->get_login_counts('fail');
 				echo '<li class="essential text-danger" title="' . esc_attr($username_tooltip) . '"><i class="fa-solid fa-fw fa-user-xmark"></i> <strong>' . $failed_login_count . '</strong> Failed ' . $this->singular_plural($failed_login_count, 'login') . ' <small>(Within the last week)</small>';
 			}
@@ -1067,8 +1067,17 @@ if ( !trait_exists('Dashboard') ){
 			//Log Files
 			foreach ( $this->get_log_files('all', true) as $types ){ //Always get fresh data here
 				foreach ( $types as $log_file ){
-					if ( !empty($log_file['bytes']) && $log_file['bytes'] > 999 ){ //Only show the file if it has a size and is at least 1kb
-						echo '<li class="essential"><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . admin_url('?log-viewer=' . $log_file['shortpath']) . '"><code title="' . $log_file['shortpath'] . '" style="cursor: help;">' . $log_file['name'] . '</code></a> File: <strong>' . $this->format_bytes($log_file['bytes']) . '</strong></li>';
+					if ( file_exists($log_file['path']) && !empty($log_file['bytes']) && $log_file['bytes'] > 999 ){ //Only show the file if it has a size and is at least 1kb
+						//If it was recently modified, that means there was a recent error/entry
+						$log_file_modified_time = filemtime($log_file['path']);
+						$log_file_classes = '';
+						$log_file_icon = '';
+						if ( time()-$log_file_modified_time <= HOUR_IN_SECONDS*8 ){
+							$log_file_classes .= ' text-caution';
+							$log_file_icon = '<i class="fa-regular fa-fw fa-clock"></i>';
+						}
+
+						echo '<li class="essential"><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . admin_url('?log-viewer=' . $log_file['shortpath']) . '"><code title="' . $log_file['shortpath'] . ' (Click to show in Log Viewer)" style="cursor: help;">' . $log_file['name'] . '</code></a> <strong>' . $this->format_bytes($log_file['bytes']) . '</strong> <small class="' . $log_file_classes . '">(Latest: ' . human_time_diff($log_file_modified_time, time()) . ' ago)</small></li>';
 					}
 				}
 			}
@@ -1221,7 +1230,7 @@ if ( !trait_exists('Dashboard') ){
 				}
 			}
 
-			if ( !file_exists($log_file) ){
+			if ( empty($log_file) || !file_exists($log_file) ){
 				echo '<p><strong>No log file was found:</strong><br /><span>' . $requested_log . '</span></p>';
 				return;
 			}
@@ -1237,27 +1246,87 @@ if ( !trait_exists('Dashboard') ){
 			$lines = $this->tail_file($log_file, 30); //Read the last lines
 			$last_modified = filemtime($log_file);
 
-			echo '<p><strong>/' . str_replace(ABSPATH, '', $log_file) . '</strong> <small>(' . size_format($file_size) . ')</small><br /><em><i class="fa-regular fa-clock"></i> Last modified ' . human_time_diff($last_modified, current_time('timestamp')) . ' ago <small>(' . date('l, F j, Y - g:i:sa', $last_modified) . ')</small></em></p>';
+			$last_entry_icon = '<i class="fa-regular fa-fw fa-calendar"></i>';
+			if ( (time()-$last_modified) <= DAY_IN_SECONDS*2 ){
+				$last_entry_icon = '<i class="fa-regular fa-fw fa-clock"></i>';
+			} elseif ( (time()-$last_modified) > MONTH_IN_SECONDS*6 ){
+				$last_entry_icon = '<i class="fa-regular fa-fw fa-ghost" title="This is a stale log file."></i>';
+			}
+
+			echo '<p><i class="fa-regular fa-fw fa-file-lines"></i> <strong>' . str_replace(ABSPATH, '', $log_file) . '</strong> <small>(' . size_format($file_size) . ')</small><br /><em>' . $last_entry_icon . ' Last entry ' . human_time_diff($last_modified, time()) . ' ago <small>(' . date('l, F j, Y - g:i:sa', $last_modified) . ')</small></em></p>';
 
 			//Output the content
 			if ( empty($lines) || (count($lines) === 1 && trim($lines[0]) === '') ){ //If the lines are empty
 				echo '<p class="text-danger"><strong>No logs found in this file.</strong></p>';
 			} else {
 				//Loop through each of the log lines
-				echo '<pre id="log-contents">';
+				echo '<div id="log-scroll-wrapper"><ul id="log-contents">';
 					foreach ( $lines as $line ){
 						$line = esc_html($line);
 
-						if ( str_contains(strtolower($line), 'fatal') ){ //Highlight lines with fatal errors
-							echo '<span class="log-fatal">' . $line . "</span>\n";
+						$line_classes = array('log-line');
+						if ( str_contains(strtolower($line), 'php fatal') ){
+							$line_classes[] = 'log-fatal';
 						} else {
-							echo $line . "\n";
+							//Check for trivial line entries
+							$update_keywords = array(
+								'automatic updates',
+								'automatic plugin update',
+								'upgrading plugin',
+								'has been upgraded',
+								'inactive and will not be checked'
+							);
+
+							foreach ( $update_keywords as $keyword ){
+								if ( str_contains(strtolower($line), $keyword) ){
+									$line_classes[] = 'log-trivial';
+									break;
+								}
+							}
 						}
+
+						//Replace timestamp with wrapped spans for date, time, and timezone
+						$line = preg_replace_callback(
+							'/^\[([^\]]+)\]/', // Match everything inside the first [...]
+							function( $matches ){
+								$raw_timestamp = $matches[1];
+								$timestamp = strtotime($raw_timestamp);
+
+								//Fallback: return original match wrapped in plain span
+								if ( $timestamp === false ){
+									return '<span class="log-timestamp fallback">[' . esc_html($raw_timestamp) . ']</span>';
+								}
+
+								$date = date('F j, Y', $timestamp);
+								$time = date('g:i:sa', $timestamp);
+
+								$additional_classes = '';
+								if ( date('Y-m-d', $timestamp) == date('Y-m-d') ){
+									$additional_classes .= ' today';
+								} else if ( date('Y-m-d', $timestamp) == date('Y-m-d', strtotime('-1 day')) ){
+									$additional_classes .= ' yesterday';
+								}
+
+								return '<span class="log-timestamp customized' . $additional_classes . '">['
+									. '<span class="log-timestamp-original">' . esc_html($raw_timestamp) . '</span>'
+									. '<span class="log-date">' . esc_html($date) . '</span>'
+									. '<span class="log-time">' . esc_html($time) . '</span>'
+									. ']</span>';
+							},
+							$line
+						);
+
+						$line = preg_replace('/\s+/', ' ', $line); //Collapse multiple spaces into a single space
+
+						//Now escape the rest of the line (excluding the injected HTML)
+						$line = wp_kses_post($line); //keeps your spans but escapes unwanted tags
+
+						echo '<li class="' . implode(' ', $line_classes) . '"><i class="log-toggle fa-regular fa-fw fa-square-plus"></i>' . $line . '</li>';
 					}
-				echo '</pre>';
+				echo '</ul></div>';
 			}
 
-			echo '<p><a id="reload-log-viewer" href="#"><i class="fa-solid fa-rotate"></i> Reload This Log</a></p>';
+			echo '<div id="log-viewer-tools"><a id="enlarge-log-viewer" href="#"><i class="fa-solid fa-square-arrow-up-right"></i> Enlarge Window</a> <a id="reload-log-viewer" href="#"><i class="fa-solid fa-rotate"></i> Reload This Log</a></div>';
 
 			echo '<strong><label for="log-viewer-select">Select another log file:</label></strong>';
 			echo '<select id="log-viewer-select">';
@@ -1701,7 +1770,7 @@ if ( !trait_exists('Dashboard') ){
 				<td>Med: <strong class="median-file-size"></strong></td>
 			</tr></tfoot></table>';
 
-			echo '<div class="totals-row"><small>Showing <span class="total-showing">All</span> of ' . number_format(count($files)) . ' monitored files <small class="relative-date-tooltip" data-date="' . $files_and_groups['timestamp'] . '">(' . $scan_date . ')</small>. <a class="monitor-re-scan" href="' . admin_url('?clear-transients') . '">Re-Scan?</a></small></div>';
+			echo '<div class="totals-row"><small>Showing <span class="total-showing">All</span> of ' . number_format(count($files)) . ' monitored files <small class="relative-date-tooltip" data-date="' . $files_and_groups['timestamp'] . '">(' . $scan_date . ')</small>. <a class="monitor-re-scan" href="' . add_query_arg('clear-transients', 'true') . '">Re-Scan?</a></small></div>';
 			echo '<p class="budget-description hidden">The budget for <strong class="filetype">These</strong> is <strong class="sizebudget">non-applicable</strong>. <a class="show-optimization-tips" href="#">Show Tips <i class="fa-solid fa-caret-down"></i></a></p>';
 			?>
 				<div id="nebula-optimization-tips" style="display: none;">
@@ -1795,7 +1864,7 @@ if ( !trait_exists('Dashboard') ){
 
 				//Check log files for fatal errors
 				$contents = file_get_contents($filepath, false, null, 0, $file_size_content_scan_limit);
-				if ( str_contains($contents, 'fatal') ){
+				if ( str_contains($contents, 'php fatal') ){
 					$notes[] = 'contains-fatal';
 				}
 

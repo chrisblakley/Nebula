@@ -12,8 +12,8 @@ if ( !trait_exists('Sass') ){
 		public $latest_scss_mtime = 0; //Prep a flag to determine the last modified SCSS file time
 
 		public function hooks(){
-			if ( $this->get_option('scss') && !$this->is_background_request() && !is_customize_preview() ){
-				add_action('init', array($this, 'scss_controller'));
+			if ( $this->get_option('scss') && !$this->is_background_request() && !$this->is_non_page_request() && !is_customize_preview() ){
+				add_action('init', array($this, 'scss_controller')); //This must be on init so it happens on front-end and back-end. It must also run before warnings are checked in admin_bar_menu (which happens after template_redirect)
 				add_action('nebula_body_open', array($this, 'output_sass_errors')); //Front-end
 				add_action('admin_notices', array($this, 'output_sass_errors')); //Admin (Do not use Nebula Warnings utility for these errors)
 				add_action('nebula_options_saved', array($this, 'touch_sass_stylesheet'));

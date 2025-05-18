@@ -76,6 +76,26 @@ nebula.developerMetaboxes = function(){
 
 	//Log Viewer
 	if ( jQuery('div#nebula_log_viewer').length ){
+		//Automatically scroll to the bottom so the latest entries are visible
+		jQuery('#log-scroll-wrapper').scrollTop(jQuery('#log-scroll-wrapper')[0].scrollHeight);
+
+		jQuery('#log-contents .log-line .log-toggle').on('click', function(){
+			let $logLine = jQuery(this).parents('.log-line');
+
+			if ( !$logLine.hasClass('highlight-log') ){
+				//Add the highlight (expand)
+				jQuery(this).removeClass('fa-regular fa-square-plus').addClass('fa-solid fa-square-minus');
+				$logLine.addClass('highlight-log');
+				$logLine.css('max-width', jQuery('#log-scroll-wrapper').width());
+			} else {
+				//Remove the highlight (collapse)
+				jQuery(this).removeClass('fa-solid fa-square-minus').addClass('fa-regular fa-square-plus');
+				$logLine.removeClass('highlight-log');
+				$logLine.css('max-width', 'none');
+
+			}
+		});
+
 		jQuery('#log-viewer-select').on('change', function(){
 			if ( jQuery(this).val() ){ //Only reload if it has value
 				const url = new URL(window.location.href);
@@ -83,6 +103,27 @@ nebula.developerMetaboxes = function(){
 				window.location.href = url.toString(); //Reload the dashboard for the selected log file
 			}
 		});
+
+		//Only allow expanding the log viewer window if it is in a middle dashboard column (so it doesn't overflow the sides). This is just a best-effort check as
+		let dashboardColumnId = jQuery('div#nebula_log_viewer').closest('.postbox-container').attr('id');
+		if (
+			(dashboardColumnId === 'postbox-container-2' && jQuery('.postbox-container').length > 2) ||
+			(dashboardColumnId === 'postbox-container-3' && jQuery('.postbox-container').length > 3)
+		){
+			jQuery('#enlarge-log-viewer').on('click', function(){
+				if ( !jQuery('#log-scroll-wrapper').hasClass('enlarge') ){
+					jQuery('#log-scroll-wrapper').addClass('enlarge');
+					jQuery(this).html('<i class="fa-solid fa-square-arrow-up-right fa-flip-both"></i> Reduce Size');
+				} else {
+					jQuery('#log-scroll-wrapper').removeClass('enlarge');
+					jQuery(this).html('<i class="fa-solid fa-square-arrow-up-right"></i> Enlarge Window');
+				}
+
+				return false;
+			});
+		} else {
+			jQuery('#enlarge-log-viewer').css('opacity', 0);
+		}
 
 		jQuery('#reload-log-viewer').on('click', function(){
 			jQuery(this).find('i').addClass('fa-spin');

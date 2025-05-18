@@ -79,6 +79,7 @@ jQuery(window).on('load', function(){
 	nebula.cacheSelectors(); //Just to make sure
 	nebula.lazyLoadAssets(); //Move to (or use) requestIdleCallback when Safari supports it
 	nebula.errorMitigation();
+	nebula.updateSessionData();
 
 	//Navigation
 	nebula.overflowDetector(); //Move to (or use) requestIdleCallback when Safari supports it?

@@ -5,15 +5,19 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Assets') ){
 	trait Assets {
 		public $brain = array();
-		public $referrer = '(No Session Cookie)';
-		public $landing_page = '(No Session Cookie)';
+		public $page_count = 0;
+		public $referrer = '';
+		public $previous_page = '';
+		public $landing_page = '';
 		public $is_landing_page = null;
 		public $default_cid = '';
 
 		public function hooks(){
 			if ( !$this->is_background_request() ){
 				//Prep these before headers are sent
-				add_action('init', array($this, 'init_session_data'));
+				if ( !$this->is_non_page_request() ){
+					add_action('template_redirect', array($this, 'init_session_data'), 1); //This needs to run as early as possible on pages (and not at all on non-pages)
+				}
 
 				//Register styles/scripts
 				add_action('wp_enqueue_scripts', array($this, 'register_scripts'));
@@ -49,9 +53,11 @@ if ( !trait_exists('Assets') ){
 			$memoized_data = array(
 				'sid_key' => uniqid('nebula_', true), //For persistent Session ID
 				'default_cid' => $this->default_cid,
+				'page_count' => 1,
 				'referrer' => $this->referrer,
 				'landing_page' => $this->landing_page,
 				'is_landing_page' => true,
+				'previous_page' => $this->referrer
 			);
 
 			return $memoized_data;
@@ -63,20 +69,44 @@ if ( !trait_exists('Assets') ){
 
 			if ( $this->is_analytics_allowed() ){ //Only store this information if tracking is allowed
 				try {
+					//If the cookie exists, this is a subsequent pageview in the session
 					if ( isset($this->super->cookie['session']) ){
 						$session_cookie_data = json_decode(stripslashes($this->super->cookie['session']), true); //Read values from the cookie to use in PHP variables
 
+						//Update the page count in memory only
+						//We do not update the cookie because preloaded pages (speculation rules, service worker, etc) instantly load from cache where they did not process this data. Page count and Previous Page data can only accurately be tracked via JavaScript, so the cookie is only updated there.
+						if ( isset($session_cookie_data['page_count']) ){
+							$this->page_count = $session_cookie_data['page_count']+1; //Always use this for the data
+						} else {
+							$this->page_count = 2; //We only know it is not the first page
+						}
+
 						//Prep the variables for use elsewhere
-						$this->referrer = $session_cookie_data['referrer'];
-						$this->landing_page = $session_cookie_data['landing_page'];
-						$this->default_cid = $session_cookie_data['default_cid'];
+						if ( isset($session_cookie_data['referrer']) ){
+							$this->referrer = $session_cookie_data['referrer'];
+						}
+
+						if ( isset($session_cookie_data['previous_page']) ){
+							$this->previous_page = $session_cookie_data['previous_page']; //Update the local variable in memory to be the previous page. This is what we use elsewhere for this data!
+						}
+
+						if ( isset($session_cookie_data['landing_page']) ){
+							$this->landing_page = $session_cookie_data['landing_page'];
+						}
+
+						if ( isset($session_cookie_data['default_cid']) ){
+							$this->default_cid = $session_cookie_data['default_cid'];
+						}
+
 						$this->is_landing_page = false;
 
 						//Update the cookie data as well so it persists to the next page load
 						$session_cookie_data['is_landing_page'] = false;
 						$this->set_cookie('session', json_encode($session_cookie_data), time()+HOUR_IN_SECONDS*4, false); //Update the cookie with new data
-					} else {
+					} else { //Otherwise this is the landing page (first page view of the session)
+						$this->page_count = 1;
 						$this->referrer = ( isset($this->super->server['HTTP_REFERER']) )? $this->super->server['HTTP_REFERER'] : false; //Use the referrer header if it exists
+						$this->previous_page = $this->referrer;
 						$this->landing_page = $this->url_components('all'); //Get the full URL including query string
 						$this->is_landing_page = true;
 

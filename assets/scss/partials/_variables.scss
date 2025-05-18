@@ -57,6 +57,7 @@ $easings: (
 	easeOutExpo: 	"0.190, 1.000, 0.220, 1.000",
 	easeOutCirc: 	"0.075, 0.820, 0.165, 1.000",
 	easeOutBack: 	"0.175, 0.885, 0.320, 1.275",
+	easeOutBackSmall:"0.175, 0.885, 0.320, 1.125", //Useful for accentuating big values.
 	easeOutBackBig:	"0.175, 0.885, 0.220, 2.000", //Useful for accentuating small values.
 
 	swing: 			"0.455, 0.005, 0.550, 0.950",
@@ -68,6 +69,7 @@ $easings: (
 	easeInOutExpo: 	"1.000, 0.000, 0.000, 1.000",
 	easeInOutCirc: 	"0.785, 0.135, 0.150, 0.860",
 	easeInOutBack: 	"0.680, -0.550, 0.265, 1.550",
+	easeInOutBackSmall:	"0.680, -0.125, 0.320, 1.200", //Useful for accentuating big values.
 
 	fiftyToHundred: "0.500, 0.000, 0.000, 1.000", //Accelerate with momentum
 

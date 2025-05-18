@@ -35,9 +35,9 @@ jQuery(async function(){
 		nebula.optionsInit();
 	}
 
-	//Remove Sass render trigger query
-	if ( nebula.get('sass') && !nebula.get('persistent') ){
-		window.history.replaceState({}, document.title, nebula.removeQueryParameter('sass', window.location.href));
+	//Remove certain trigger query strings
+	if ( (nebula.get('sass') || nebula.get('debug') || nebula.get('clear-transients')) && !nebula.get('persistent') ){
+		window.history.replaceState({}, document.title, nebula.removeQueryParameter(['sass', 'debug', 'clear-transients'], window.location.href));
 	}
 
 	window.performance.mark('(Nebula) DOM Ready [End]');
