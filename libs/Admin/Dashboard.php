@@ -238,25 +238,28 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//Earliest post
-			$earliest_post = $this->transient('nebula_earliest_post', function($valid_post_types){
-				return new WP_Query(array('post_type' => $valid_post_types, 'post_status' => 'publish', 'showposts' => 1, 'orderby' => 'publish_date', 'order' => 'ASC'));
-			}, YEAR_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long (as long as an expiration exists).
+			if ( $this->is_transients_enabled() ){
+				$earliest_post = $this->transient('nebula_earliest_post', function($valid_post_types){
+					return new WP_Query(array('post_type' => $valid_post_types, 'post_status' => 'publish', 'showposts' => 1, 'orderby' => 'publish_date', 'order' => 'ASC'));
+				}, YEAR_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long (as long as an expiration exists).
 
-			while ( $earliest_post->have_posts() ){ $earliest_post->the_post();
-				echo '<li><i class="fa-regular fa-fw fa-calendar"></i> Earliest: <span title="' . get_the_date() . ' @ ' . get_the_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_date() . ' ' . get_the_time())) . ' ago</strong></span><small style="display: block;"><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => esc_html(get_the_title()), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small></li>';
-			}
-			wp_reset_postdata();
+				while ( $earliest_post->have_posts() ){ $earliest_post->the_post();
+					echo '<li><i class="fa-regular fa-fw fa-calendar"></i> Earliest: <span title="' . get_the_date() . ' @ ' . get_the_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_date() . ' ' . get_the_time())) . ' ago</strong></span><small style="display: block;"><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => esc_html(get_the_title()), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small></li>';
+				}
 
-			//Last updated
-			$latest_post = $this->transient('nebula_latest_post', function($valid_post_types){
-				return new WP_Query(array('post_type' => $valid_post_types, 'post_status' => 'publish', 'showposts' => 1, 'orderby' => 'modified', 'order' => 'DESC'));
-			}, WEEK_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long.
-			while ( $latest_post->have_posts() ){ $latest_post->the_post();
-				echo '<li class="essential"><i class="fa-regular fa-fw fa-calendar"></i> Updated: <span title="' . get_the_modified_date() . ' @ ' . get_the_modified_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_modified_date())) . ' ago</strong></span>
-					<small style="display: block;"><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => esc_html(get_the_title()), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small>
-				</li>';
+				wp_reset_postdata();
+
+				//Last updated
+				$latest_post = $this->transient('nebula_latest_post', function($valid_post_types){
+					return new WP_Query(array('post_type' => $valid_post_types, 'post_status' => 'publish', 'showposts' => 1, 'orderby' => 'modified', 'order' => 'DESC'));
+				}, WEEK_IN_SECONDS); //This transient is deleted when posts are added/updated, so this could be infinitely long.
+				while ( $latest_post->have_posts() ){ $latest_post->the_post();
+					echo '<li class="essential"><i class="fa-regular fa-fw fa-calendar"></i> Updated: <span title="' . get_the_modified_date() . ' @ ' . get_the_modified_time() . '" style="cursor: help;"><strong>' . human_time_diff(strtotime(get_the_modified_date())) . ' ago</strong></span>
+						<small style="display: block;"><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . get_permalink() . '">' . $this->excerpt(array('text' => esc_html(get_the_title()), 'words' => 5, 'more' => false, 'ellipsis' => true)) . '</a> (' . get_the_author() . ')</small>
+					</li>';
+				}
+				wp_reset_postdata();
 			}
-			wp_reset_postdata();
 
 			//Revisions
 			$revision_count = ( WP_POST_REVISIONS == -1 )? 'all' : WP_POST_REVISIONS;
@@ -401,10 +404,12 @@ if ( !trait_exists('Dashboard') ){
 			echo '<li class="essential"><i class="fa-solid fa-fw ' . $fa_role . '"></i> Role: <strong class="admin-user-info admin-user-role">' . $user_role . '</strong></li>';
 
 			//Posts by this user
-			$your_posts = $this->transient('nebula_count_posts_user_' . $user_info->ID, function($data){
-				return count_user_posts($data['id']);
-			}, array('id' => $user_info->ID), DAY_IN_SECONDS);
-			echo '<li class="essential"><i class="fa-solid fa-fw fa-thumbtack"></i> Your posts: <strong>' . $your_posts . '</strong></li>';
+			if ( $this->is_transients_enabled() ){
+				$your_posts = $this->transient('nebula_count_posts_user_' . $user_info->ID, function($data){
+					return count_user_posts($data['id']);
+				}, array('id' => $user_info->ID), DAY_IN_SECONDS);
+				echo '<li class="essential"><i class="fa-solid fa-fw fa-thumbtack"></i> Your posts: <strong>' . $your_posts . '</strong></li>';
+			}
 
 			//Device
 			if ( $this->is_desktop() ){
@@ -543,6 +548,11 @@ if ( !trait_exists('Dashboard') ){
 		public function todo_metabox_content(){
 			$this->timer('Nebula To-Do Dashboard Metabox', 'start', '[Nebula] Dashboard Metaboxes');
 			do_action('nebula_todo_manager');
+
+			//If transients are suspended, don't constantly scan the file system
+			if ( !$this->is_transients_enabled() ){
+				return null;
+			}
 
 			$todo_items = $this->transient('nebula_todo_items', function(){
 				$todo_items = array(
@@ -988,43 +998,48 @@ if ( !trait_exists('Dashboard') ){
 				echo '<li><i class="fa-solid fa-square-binary"></i> <span class="essential text-caution cursor-help" title="' . esc_attr($title_attr) . '"><strong>' . $file_count . '</strong> Parent theme ' . $this->singular_plural($file_count, 'file has', 'files have') . ' been modified</span></li>';
 			}
 
-			//Theme directory size(s)
-			if ( is_child_theme() ){
-				$nebula_parent_size = $this->transient('nebula_directory_size_parent_theme', function(){
-					return $this->foldersize(get_template_directory());
-				}, DAY_IN_SECONDS);
 
-				$nebula_child_size = $this->transient('nebula_directory_size_child_theme', function(){
-					return $this->foldersize(get_stylesheet_directory());
-				}, DAY_IN_SECONDS);
+			if ( $this->is_transients_enabled() ){
+				//Theme directory size(s)
+				if ( is_child_theme() ){
+					$nebula_parent_size = $this->transient('nebula_directory_size_parent_theme', function(){
+						return $this->foldersize(get_template_directory());
+					}, DAY_IN_SECONDS);
 
-				echo '<li><i class="fa-solid fa-code"></i> Parent theme directory size: <strong>' . $this->format_bytes($nebula_parent_size, 1) . '</strong> </li>';
-				echo '<li><i class="fa-solid fa-code"></i> Child theme directory size: <strong>' . $this->format_bytes($nebula_child_size, 1) . '</strong> </li>';
-			} else {
-				$nebula_size = $this->transient('nebula_directory_size_theme', function(){
-					return $this->foldersize(get_stylesheet_directory());
-				}, DAY_IN_SECONDS);
-				echo '<li><i class="fa-solid fa-code"></i> Theme directory size: <strong>' . $this->format_bytes($nebula_size, 1) . '</strong> </li>';
+					$nebula_child_size = $this->transient('nebula_directory_size_child_theme', function(){
+						return $this->foldersize(get_stylesheet_directory());
+					}, DAY_IN_SECONDS);
+
+					echo '<li><i class="fa-solid fa-code"></i> Parent theme directory size: <strong>' . $this->format_bytes($nebula_parent_size, 1) . '</strong> </li>';
+					echo '<li><i class="fa-solid fa-code"></i> Child theme directory size: <strong>' . $this->format_bytes($nebula_child_size, 1) . '</strong> </li>';
+				} else {
+					$nebula_size = $this->transient('nebula_directory_size_theme', function(){
+						return $this->foldersize(get_stylesheet_directory());
+					}, DAY_IN_SECONDS);
+					echo '<li><i class="fa-solid fa-code"></i> Theme directory size: <strong>' . $this->format_bytes($nebula_size, 1) . '</strong> </li>';
+				}
+
+				//Plugins directory size (and count)
+				$plugins_size = $this->transient('nebula_directory_size_plugins', function(){
+					$plugins_dir = WP_CONTENT_DIR . '/plugins';
+					return $this->foldersize($plugins_dir);
+				}, HOUR_IN_SECONDS*36);
+				$all_plugins = $this->transient('nebula_count_plugins', function(){
+					return get_plugins();
+				}, WEEK_IN_SECONDS);
+				$active_plugins = get_option('active_plugins', array());
+				echo '<li><i class="fa-solid fa-plug"></i> Plugins directory size: <strong>' . $this->format_bytes($plugins_size, 1) . '</strong> <small>(' . count($active_plugins) . ' active of ' . count($all_plugins) . ' installed)</small></li>';
 			}
-
-			//Plugins directory size (and count)
-			$plugins_size = $this->transient('nebula_directory_size_plugins', function(){
-				$plugins_dir = WP_CONTENT_DIR . '/plugins';
-				return $this->foldersize($plugins_dir);
-			}, HOUR_IN_SECONDS*36);
-			$all_plugins = $this->transient('nebula_count_plugins', function(){
-				return get_plugins();
-			}, WEEK_IN_SECONDS);
-			$active_plugins = get_option('active_plugins', array());
-			echo '<li><i class="fa-solid fa-plug"></i> Plugins directory size: <strong>' . $this->format_bytes($plugins_size, 1) . '</strong> <small>(' . count($active_plugins) . ' active of ' . count($all_plugins) . ' installed)</small></li>';
 
 			do_action('nebula_dev_dashboard_directories');
 
 			//Uploads directory size (and max upload size)
-			$uploads_size = $this->transient('nebula_directory_size_uploads', function(){
-				$upload_dir = wp_upload_dir();
-				return $this->foldersize($upload_dir['basedir']);
-			}, HOUR_IN_SECONDS*36);
+			if ( $this->is_transients_enabled() ){
+				$uploads_size = $this->transient('nebula_directory_size_uploads', function(){
+					$upload_dir = wp_upload_dir();
+					return $this->foldersize($upload_dir['basedir']);
+				}, HOUR_IN_SECONDS*36);
+			}
 
 			if ( function_exists('wp_max_upload_size') ){
 				$upload_max = '<small>(Max upload: <strong>' . $this->format_bytes(((int) wp_max_upload_size())) . '</strong>)</small>';
@@ -1083,18 +1098,20 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//Fatal error count
-			$fatal_error_count = $this->transient('fatal_error_count', function(){
-				return $this->count_fatal_errors();
-			}, HOUR_IN_SECONDS);
+			if ( $this->is_transients_enabled() ){
+				$fatal_error_count = $this->transient('fatal_error_count', function(){
+					return $this->count_fatal_errors();
+				}, HOUR_IN_SECONDS);
 
-			if ( !empty($fatal_error_count) ){
-				$fatal_error_count_description = '';
+				if ( !empty($fatal_error_count) ){
+					$fatal_error_count_description = '';
 
-				if ( intval($fatal_error_count) ){ //If the result is a number (not a string which represents a problem)
-					$fatal_error_count_description = ' <small>(last 7 days)</small>';
+					if ( intval($fatal_error_count) ){ //If the result is a number (not a string which represents a problem)
+						$fatal_error_count_description = ' <small>(last 7 days)</small>';
+					}
+
+					echo '<li class="essential text-danger"><i class="fa-solid fa-fw fa-bug"></i> Fatal Errors: <strong><a class="text-danger" href="' . ini_get('error_log') . '" target="_blank">' . $fatal_error_count . '</a></strong>' . $fatal_error_count_description . '</li>'; //The <a> tag is just to show the location of the error log file
 				}
-
-				echo '<li class="essential text-danger"><i class="fa-solid fa-fw fa-bug"></i> Fatal Errors: <strong><a class="text-danger" href="' . ini_get('error_log') . '" target="_blank">' . $fatal_error_count . '</a></strong>' . $fatal_error_count_description . '</li>'; //The <a> tag is just to show the location of the error log file
 			}
 
 			//Service Worker
@@ -1387,6 +1404,11 @@ if ( !trait_exists('Dashboard') ){
 
 		public function dashboard_file_size_monitor(){
 			$this->timer('Nebula File Size Monitor Dashboard Metabox', 'start', '[Nebula] Dashboard Metaboxes');
+
+			//If transients are suspended, do no scan the file system every time
+			if ( !$this->is_transients_enabled() ){
+				return null;
+			}
 
 			$files_and_groups = $this->transient('nebula_file_size_monitor_list', function(){
 				$file_limit = apply_filters('nebula_file_size_monitor_limit', 1500); //Allow others to increase the limit if desired
@@ -2293,6 +2315,11 @@ if ( !trait_exists('Dashboard') ){
 		//Add a GitHub metabox for recently updated issues/discussions
 		public function github_metabox(){
 			if ( $this->is_minimal_mode() ){return null;}
+
+			//Don't call the remote API if transients are suspended
+			if ( !$this->is_transients_enabled() ){
+				return null;
+			}
 
 			if ( $this->get_option('github_url') && $this->get_option('github_pat') ){
 				$repo_name = str_replace('https://github.com/', '', $this->get_option('github_url'));

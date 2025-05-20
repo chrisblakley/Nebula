@@ -899,7 +899,7 @@ if ( !trait_exists('Utilities') ){
 		//Handle the caching of the transient and object cache simultaneously
 		//This is best used when assigning a variable from an "expensive" output
 		//When passing parameters they must ALWAYS be passed as an array!
-		public function transient($name, $function, $parameters=array(), $expiration=null, $fresh=false){
+		public function transient($name, $function, $parameters=array(), $expiration=null, $fresh=null){
 			//If the parameters variable is not passed at all, use it as the expiration. This could be avoided by listing the parameters by name when calling this function...
 			if ( is_int($parameters) ){
 				$fresh = $expiration;
@@ -908,12 +908,13 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			//If we are skipping the object cache and transients
-			if ( !$fresh && $this->is_bypass_cache() ){
+			//Pass $fresh as false to ignore cache bypass
+			if ( !isset($fresh) && $this->is_bypass_cache() ){
 				$fresh = true;
 			}
 
 			//First try to get from object cache (fastest)
-			if ( !$fresh && !$this->is_debug() ){
+			if ( !isset($fresh) && !$this->is_debug() ){
 				$data = wp_cache_get($name);
 				if ( $data !== false ){
 					//do_action('qm/info', 'Transient Avoided via object cache (' . $name . ')');
@@ -924,7 +925,7 @@ if ( !trait_exists('Utilities') ){
 			//Fallback to DB transient if object cache missed
 			$data = get_transient($name);
 
-			if ( $fresh || $data === false || $this->is_debug() ){
+			if ( !empty($fresh) || $data === false || $this->is_debug() ){
 				$this->timer('Transient Re-Processing (' . $name . ')', 'start', '[Nebula] Transient Re-Processing');
 
 				//Try object cache again inside this block to avoid reprocessing if another process already set it this load (so no checking $fresh here)
@@ -955,11 +956,49 @@ if ( !trait_exists('Utilities') ){
 
 		//Check if transients are not being suspended
 		public function is_transients_enabled(){
-			if ( class_exists('AM_Transients_Manager') && get_option('pw_tm_suspend') ){
+			if ( class_exists('AM_Transients_Manager') && (bool)get_option('pw_tm_suspend') ){
 				return false; //Transients are suspended
 			}
 
+			if ( defined('WP_TRANSIENTS_DISABLED') && WP_TRANSIENTS_DISABLED ){
+				return false; //Transients are disabled
+			}
+
+			if ( defined('DISABLE_OBJECT_CACHE') && DISABLE_OBJECT_CACHE ){
+				return false; //Transients are disabled
+			}
+
+			//Use this constant to disable larger Nebula transients without disabling all transients across the website
+			if ( defined('NEBULA_DISABLE_MAJOR_TRANSIENTS') && NEBULA_DISABLE_MAJOR_TRANSIENTS ){
+				return false; //We are ignoring some "expensive" Nebula transient functionality
+			}
+
+			$test = apply_filters('pre_set_transient', false, 'test_key', 'test_value', 3600);
+			if ( $test !== false ){
+				return false; //Setting transients is short-circuited
+			}
+
+			$test_site = apply_filters( 'pre_set_site_transient', false, 'test_key', 'test_value', 3600 );
+			if ( $test_site !== false ){
+				return false; //Setting transients is short-circuited
+			}
+
 			return true; //Transients are enabled
+		}
+
+		//If we are allowed to use AI features
+		public function is_ai_features_allowed(){
+			//If the killswitch is engaged
+			if ( defined('NEBULA_DISABLE_AI') && NEBULA_DISABLE_AI ){
+				return false;
+			}
+
+			//If the Nebula Option global setting is disabled
+			if ( !$this->get_option('ai_features') ){
+				return false;
+			}
+
+			return true;
 		}
 
 		//Create a session and cookie
@@ -1116,6 +1155,11 @@ if ( !trait_exists('Utilities') ){
 		//Calculate the file size of the database
 		private function get_database_size(){
 			if ( !$this->is_dev() ){
+				return null;
+			}
+
+			//Do not check this if transients are suspended
+			if ( !$this->is_transients_enabled() ){
 				return null;
 			}
 
@@ -1415,56 +1459,28 @@ if ( !trait_exists('Utilities') ){
 			return false;
 		}
 
-		//Speculation rules will preload pages in the background, while these are also background requests, they should be treated differently because it does load content the user may soon see
-		//There is currently no guaranteed way to detect predictive loads, so this is a best-effort
+		//Check if a request is for a non-page asset. This will ignore speculative or prefetched loads because once activated they will still appear as prefetched (since the server is not sending new headers when the page is activated).
 		//Note: The WordPress action "init" will trigger on all asset requests (including things like images), so consider using "template_redirect" as another way to only trigger on page requests
 		public function is_non_page_request(){
 			//Any background request is also a non-page request
 			if ( $this->is_background_request() ){
-				return true;
+				return 'is background request';
 			}
 
 			if ( $this->super->server['REQUEST_METHOD'] === 'HEAD' ){
-				return true;
-			}
-
-			//If the asset is loaded via JavaScript (including the service worker and speculation rules)
-			if ( isset($this->super->server['HTTP_REFERER']) && str_contains($this->super->server['HTTP_REFERER'], '.js') ){
-				return true;
-			}
-
-			foreach ( getallheaders() as $header => $value ){
-				if ( strtolower($header) == 'purpose' && strtolower($value) == 'prefetch' ){
-					return true;
-				}
-
-				if ( strtolower($header) == 'sec-purpose' && str_contains(strtolower($value), 'prefetch') ){
-					return true;
-				}
-
-				if ( strtolower($header) == 'sec-fetch-purpose' && strtolower($value) == 'prefetch' ){
-					return true;
-				}
-
-				if ( strtolower($header) == 'x-moz' && strtolower($value) == 'prefetch' ){
-					return true;
-				}
-
-				if ( strtolower($header) == 'x-requested-with' && strtolower($value) == 'xmlhttprequest' ){
-					return true;
-				}
+				return 'head request method';
 			}
 
 			$request_uri = $this->super->server['REQUEST_URI'] ?? '';
 
 			//Ignore certain directories
 			if ( str_contains($request_uri, 'wp-content') || str_contains($request_uri, 'wp-includes') || str_contains($request_uri, 'wp-json') ){
-				return true;
+				return 'uri contains ignored directories';
 			}
 
 			//Ignore non-page file extensions
 			if ( preg_match('/\.(ico|css|js|mjs|cjs|png|jpe?g|gif|svg|webp|avif|apng|woff2?|ttf|eot|otf|json|xml|txt|map|webmanifest|manifest|mp4|webm|ogg|mp3|wav|pdf|docx?|xlsx?|pptx?|csv|tsv|wasm|zip|rar|7z|tar|gz|bz2|psd|ai|sketch)$/i', $request_uri) ){
-				return true;
+				return 'uri contains ignored filenames';
 			}
 
 			return false;

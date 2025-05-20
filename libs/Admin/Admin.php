@@ -259,7 +259,7 @@ if ( !trait_exists('Admin') ){
 			//} else {
 				//Clear post/page information and related transients
 				//Note: We purposefully do *not* clear nebula_analytics_* transients to preserve their data. They are self-managed, but can be manually cleared if desired.
-				//Other transients we do *not* need to clear when posts are updated: "nebula_directory_indexing", "nebula_php_timeline", "nebula_spam_domain_public_list"
+				//Other transients we do *not* need to clear when posts are updated: "nebula_directory_indexing", "nebula_php_timeline", "nebula_spam_domain_public_list", "nebula_ai_code_review"
 				$all_transients_to_delete = apply_filters('nebula_delete_transients_on_save', array( //Allow other functions to hook in to delete transients on post save
 					'nebula_autocomplete_menus', //Stores menus for the autocomplete search
 					'nebula_autocomplete_categories', //Stores categories for the autocomplete search
@@ -540,6 +540,14 @@ if ( !trait_exists('Admin') ){
 					'name' => 'Google APIs',
 					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-code"></i>',
 					'url' => 'https://console.developers.google.com/iam-admin/projects'
+				);
+			}
+
+			if ( $this->get_option('openai_api_key') ){
+				$third_party_resources['administrative'][] = array(
+					'name' => 'OpenAI API Usage',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-robot"></i>',
+					'url' => 'https://platform.openai.com/settings/organization/usage'
 				);
 			}
 
@@ -1338,11 +1346,21 @@ if ( !trait_exists('Admin') ){
 							}
 
 							#wp-admin-bar-nebula-sass-processed {color: #fff;
-								&.sass-success > .ab-item {color: #28a745;}
+								&.sass-success > .ab-item {position: relative; color: #28a745; overflow: hidden;
+									&::after {content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background-color: #ffc107; animation: sass-cooldown 10s linear forwards;}
+
+								}
+
 								&.sass-warn > .ab-item {color: #ffc107;}
 								&.sass-danger > .ab-item {background: #dc3545;}
 							}
 						}
+					}
+
+					@keyframes sass-cooldown {
+						0% {background-color: #ffc107; transform: translateX(-100%);}
+						99% {background-color: #ffc107; transform: translateX(0);}
+						100% {background-color: #28a745;}
 					}
 				</style>
 			<?php }
@@ -2706,6 +2724,11 @@ if ( !trait_exists('Admin') ){
 		function add_cf7_menu_badge_count(){
 			if ( $this->is_minimal_mode() ){return null;}
 
+			//If transients are suspended, don't run this every time
+			if ( $this->is_transients_enabled() ){
+				return null;
+			}
+
 			global $submenu;
 
 			$fresh = ( isset( $screen->id ) && $screen->id == 'edit-nebula_cf7_submits' )? true : false; //Update the badge when viewing the submissions listing admin page
@@ -2744,6 +2767,11 @@ if ( !trait_exists('Admin') ){
 		//Test if SMTP is working
 		public function check_smtp_status(){
 			if ( $this->is_minimal_mode() ){return null;}
+
+			//Don't check every time if transients are suspended
+			if ( !$this->is_transients_enabled() ){
+				return 'Unknown';
+			}
 
 			// Retrieve SMTP settings
 			$smtp_host = defined('SMTP_HOST') ? SMTP_HOST : ini_get('SMTP'); // Fallback to php.ini 'SMTP' setting
@@ -3067,6 +3095,12 @@ if ( !trait_exists('Admin') ){
 		//Compare hashes from the current Nebula parent theme to when it was built and committed to detect manual file changes
 		public function check_parent_theme_file_changes(){
 			if ( $this->is_minimal_mode() ){return null;}
+
+
+			//Do not check this if transients are suspended
+			if ( !$this->is_transients_enabled() ){
+				return null;
+			}
 
 			//Only run for administrators in WP Admin
 			if ( is_admin() || current_user_can('update_themes') ){

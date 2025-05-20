@@ -84,6 +84,11 @@ th#id {width: 50px;}
 .postbox[id^="nebula"] [title] {cursor: help;} //Show the question mark on hover of any Nebula dashboard metabox item that has a tooltip
 
 
+#nebula_ataglance {
+	.postbox-header img {border-radius: 4px;}
+}
+
+
 //Dev Metabox
 #nebula_developer_info {
 	.highlight-good {color: $success_color;}
@@ -108,7 +113,7 @@ th#id {width: 50px;}
 	}
 }
 
-img#performance-screenshot {max-width: 100%;}
+img#performance-screenshot {max-width: 100%; border-radius: 8px;}
 
 ul#nebula-performance-metrics li {
 	&.warning i {color: orange;} //Only color the icon for warnings
@@ -258,7 +263,7 @@ ul#nebula-performance-metrics li {
 	.transparent {opacity: 0;}
 	.reset-filters {color: $danger_color;}
 
-	.table-wrapper {max-height: 400px; overflow-y: auto; border: 1px solid #ddd; transition: max-height 0.5s ease;
+	.table-wrapper {max-height: 400px; overflow-y: auto; border: 1px solid #ddd; border-top-left-radius: 6px; border-top-right-radius: 6px; transition: max-height 0.5s ease;
 		&.simplify {max-height: 180px;}
 
 		table {width: 100%; border-collapse: collapse; table-layout: auto;
@@ -314,7 +319,7 @@ ul#nebula-performance-metrics li {
 		.no-files-message {padding: 0 10px 5px 10px;}
 	}
 
-	table.table-footer {width: 100%; background: #efefef; border: 1px solid #ddd; border-top: none; font-size: rem(11px);
+	table.table-footer {width: 100%; background: #efefef; border: 1px solid #ddd; border-top: none; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; font-size: rem(11px);
 		tr {display: flex; justify-content: space-around;
 			td {text-align: center;}
 		}
@@ -334,7 +339,7 @@ ul#nebula-performance-metrics li {
 
 //Design Reference metabox
 .design-reference-col {display: flex; margin-bottom: 15px; margin-right: 20px;
-	.color-block {display: flex; flex-direction: column; width: 50px; padding-top: 10px; padding-bottom: 4px; text-align: center; margin-right: 6px; text-decoration: none;
+	.color-block {display: flex; flex-direction: column; width: 50px; padding-top: 10px; padding-bottom: 4px; text-align: center; margin-right: 6px; text-decoration: none; border-radius: 4px;
 		&.primary {background: $primary_color; color: high-contrast-color($primary_color);}
 		&.secondary {background: $secondary_color; color: high-contrast-color($secondary_color);}
 

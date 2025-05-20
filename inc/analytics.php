@@ -105,8 +105,8 @@
 					$pageview_properties['previous_page'] = nebula()->previous_page;
 				}
 
-				if ( !empty(nebula()->page_count) ){
-					$pageview_properties['page_count'] = nebula()->page_count;
+				if ( !empty(nebula()->session_page_count) ){
+					$pageview_properties['session_page_count'] = nebula()->session_page_count;
 				}
 
 				//Designate any traffic that is at all related to any attribution (current or previous)

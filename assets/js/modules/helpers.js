@@ -1,6 +1,26 @@
 window.performance.mark('(Nebula) Inside helpers.js (module)');
 
+//This is called on window load as well as on visibility change
 nebula.updateSessionData = function(){
+	if ( document.visibilityState !== 'visible' ){
+		return false;
+	}
+
+	//Ignore prerendering (when the browser explicitly says so)
+	if ( document.prerendering ){
+		return false;
+	}
+
+	//Ignore any non-navigation type event such as prerender, reloads, and back/forward
+	let nav = performance.getEntriesByType?.('navigation')?.[0];
+	if ( !nav || nav.type !== 'navigate' ){
+		return false;
+	}
+
+	if ( window.location.search.includes('noga') ){
+		return false;
+	}
+
 	let rawCookie = nebula.readCookie('session');
 	let sessionCookieData = {};
 
@@ -16,15 +36,18 @@ nebula.updateSessionData = function(){
 		sessionCookieData = {};
 	}
 
-	let pageCount = parseInt(sessionCookieData['page_count']) || 0;
-	sessionCookieData['page_count'] = pageCount+1;
+	//Only do this one time per page load
+	nebula.once(function(){
+		let previousPage = sessionCookieData?.previous_page || '';
 
-	let previousPage = sessionCookieData['previous_page'] || '';
-	if ( previousPage != window.location.href ){ //Ignore page reloads
-		sessionCookieData['previous_page'] = window.location.href;
-	}
+		if ( previousPage !== window.location.href ){ //Ignore page reloads
+			let sessionPageCount = parseInt(sessionCookieData?.page_count, 10);
+			sessionCookieData.page_count = ( !isNaN(sessionPageCount) )? sessionPageCount+1 : 1;
+			sessionCookieData.previous_page = window.location.href;
+		}
 
-	nebula.createCookie('session', encodeURIComponent(JSON.stringify(sessionCookieData)), 0.16667); //Update the cookie now
+		nebula.createCookie('session', encodeURIComponent(JSON.stringify(sessionCookieData)), 0.16667); //Update the cookie now
+	}, 'update session data');
 };
 
 //Miscellaneous helper classes and functions

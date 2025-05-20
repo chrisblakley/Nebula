@@ -337,12 +337,13 @@ if ( !trait_exists('Security') ){
 			if ( $this->is_minimal_mode() ){return null;}
 			$override = apply_filters('pre_track_notable_bots', null);
 			if ( isset($override) ){return;}
-			$this->timer('Notable Bot Tracking', 'start', '[Nebula] Security');
 
 			//Ignore logged-in users
 			if ( is_user_logged_in() ){
 				return null;
 			}
+
+			$this->timer('Notable Bot Tracking', 'start', '[Nebula] Security');
 
 			if ( isset($this->super->server['HTTP_USER_AGENT']) ){
 				$user_agent = str_replace(' ', '_', strtolower($this->super->server['HTTP_USER_AGENT'])); //Normalize the user agent for matching against
@@ -489,30 +490,34 @@ if ( !trait_exists('Security') ){
 			$this->timer('Get Spam Domain List', 'start', '[Nebula] Security');
 
 			//First get the latest spam domain list maintained by Matomo or Nebula's cache of the Matomo list
-			$spam_domain_public_file = get_template_directory() . '/inc/data/spam_domain_list.txt'; //Eventually change this to "spam_domain_public_list.txt"
-			$spam_domain_public_list = nebula()->transient('nebula_spam_domain_public_list', function($data){
-				$response = $this->remote_get('https://raw.githubusercontent.com/matomo-org/referrer-spam-list/master/spammers.txt'); //Watch for this to change from "master" to "main" (if ever)
-				if ( !is_wp_error($response) ){
-					$spam_domain_public_list = $response['body'];
-				}
+			$spam_domain_public_list = false; //Default
 
-				//If there was an error or empty response, try my GitHub repo
-				if ( is_wp_error($response) || empty($spam_domain_public_list) ){ //This does not check availability because it is the same hostname as above.
-					$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/spam_domain_list.txt'); //Eventually change this to "spam_domain_public_list.txt"
+			if ( $this->is_transients_enabled() ){
+				$spam_domain_public_file = get_template_directory() . '/inc/data/spam_domain_list.txt'; //Eventually change this to "spam_domain_public_list.txt"
+				$spam_domain_public_list = nebula()->transient('nebula_spam_domain_public_list', function($data){
+					$response = $this->remote_get('https://raw.githubusercontent.com/matomo-org/referrer-spam-list/master/spammers.txt'); //Watch for this to change from "master" to "main" (if ever)
 					if ( !is_wp_error($response) ){
 						$spam_domain_public_list = $response['body'];
 					}
-				}
 
-				//If either of the above remote requests received data, update the local file and store the data in a transient for 36 hours
-				if ( !is_wp_error($response) && !empty($spam_domain_public_list) ){
-					WP_Filesystem();
-					global $wp_filesystem;
-					$wp_filesystem->put_contents($data['spam_domain_public_file'], $spam_domain_public_list);
+					//If there was an error or empty response, try my GitHub repo
+					if ( is_wp_error($response) || empty($spam_domain_public_list) ){ //This does not check availability because it is the same hostname as above.
+						$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/spam_domain_list.txt'); //Eventually change this to "spam_domain_public_list.txt"
+						if ( !is_wp_error($response) ){
+							$spam_domain_public_list = $response['body'];
+						}
+					}
 
-					return $spam_domain_public_list;
-				}
-			}, array('spam_domain_public_file' => $spam_domain_public_file), HOUR_IN_SECONDS*36);
+					//If either of the above remote requests received data, update the local file and store the data in a transient for 36 hours
+					if ( !is_wp_error($response) && !empty($spam_domain_public_list) ){
+						WP_Filesystem();
+						global $wp_filesystem;
+						$wp_filesystem->put_contents($data['spam_domain_public_file'], $spam_domain_public_list);
+
+						return $spam_domain_public_list;
+					}
+				}, array('spam_domain_public_file' => $spam_domain_public_file), HOUR_IN_SECONDS*36);
+			}
 
 			//If neither remote resource worked, get the local file
 			if ( empty($spam_domain_public_list) ){
@@ -534,22 +539,26 @@ if ( !trait_exists('Security') ){
 			}
 
 			//Next get the latest spam domain "manual" list maintained by Nebula or the local cache of the Nebula list
-			$spam_domain_private_file = get_template_directory() . '/inc/data/spam_domain_private_list.txt';
-			$spam_domain_private_list = nebula()->transient('nebula_spam_domain_private_list', function($data){
-				$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/spam_domain_private_list.txt');
-				if ( !is_wp_error($response) ){
-					$spam_domain_private_list = $response['body'];
-				}
+			$spam_domain_private_list = false; //Default
 
-				//If the above remote request received data, update the local file and store the data in a transient for 36 hours
-				if ( !is_wp_error($response) && !empty($spam_domain_private_list) ){
-					WP_Filesystem();
-					global $wp_filesystem;
-					$wp_filesystem->put_contents($data['spam_domain_private_file'], $spam_domain_private_list);
+			if ( $this->is_transients_enabled() ){
+				$spam_domain_private_file = get_template_directory() . '/inc/data/spam_domain_private_list.txt';
+				$spam_domain_private_list = nebula()->transient('nebula_spam_domain_private_list', function($data){
+					$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/spam_domain_private_list.txt');
+					if ( !is_wp_error($response) ){
+						$spam_domain_private_list = $response['body'];
+					}
 
-					return $spam_domain_private_list;
-				}
-			}, array('spam_domain_private_file' => $spam_domain_private_file), HOUR_IN_SECONDS*36);
+					//If the above remote request received data, update the local file and store the data in a transient for 36 hours
+					if ( !is_wp_error($response) && !empty($spam_domain_private_list) ){
+						WP_Filesystem();
+						global $wp_filesystem;
+						$wp_filesystem->put_contents($data['spam_domain_private_file'], $spam_domain_private_list);
+
+						return $spam_domain_private_list;
+					}
+				}, array('spam_domain_private_file' => $spam_domain_private_file), HOUR_IN_SECONDS*36);
+			}
 
 			//If neither remote resource worked, get the local file
 			if ( empty($spam_domain_private_list) ){
@@ -613,31 +622,34 @@ if ( !trait_exists('Security') ){
 			if ( $this->is_minimal_mode() ){return null;}
 			$this->timer('Get Bad Email Domains List', 'start', '[Nebula] Security');
 
-			$bad_email_domains_file = get_template_directory() . '/inc/data/bad_email_domains.csv';
+			$bad_email_domains_list = false; //Default
 
-			$bad_email_domains_list = nebula()->transient('nebula_bad_email_domains', function($data){
-				$response = $this->remote_get('https://f.hubspotusercontent40.net/hubfs/2832391/Marketing/Lead-Capture/free-domains-2.csv'); //Originall found here: https://knowledge.hubspot.com/forms/what-domains-are-blocked-when-using-the-forms-email-domains-to-block-feature
-				if ( !is_wp_error($response) ){
-					$bad_email_domains_list = $response['body'];
-				}
-
-				//If there was an error or empty response, try my GitHub repo
-				if ( is_wp_error($response) || empty($bad_email_domains_list) ){ //This does not check availability because it is the same hostname as above.
-					$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/bad_email_domains.csv');
+			if ( $this->is_transients_enabled() ){
+				$bad_email_domains_file = get_template_directory() . '/inc/data/bad_email_domains.csv';
+				$bad_email_domains_list = nebula()->transient('nebula_bad_email_domains', function($data){
+					$response = $this->remote_get('https://f.hubspotusercontent40.net/hubfs/2832391/Marketing/Lead-Capture/free-domains-2.csv'); //Originall found here: https://knowledge.hubspot.com/forms/what-domains-are-blocked-when-using-the-forms-email-domains-to-block-feature
 					if ( !is_wp_error($response) ){
 						$bad_email_domains_list = $response['body'];
 					}
-				}
 
-				//If either of the above remote requests received data, update the local file and store the data in a transient for 36 hours
-				if ( !is_wp_error($response) && !empty($bad_email_domains_list) ){
-					WP_Filesystem();
-					global $wp_filesystem;
-					$wp_filesystem->put_contents($data['bad_email_domains_file'], $bad_email_domains_list);
+					//If there was an error or empty response, try my GitHub repo
+					if ( is_wp_error($response) || empty($bad_email_domains_list) ){ //This does not check availability because it is the same hostname as above.
+						$response = $this->remote_get('https://raw.githubusercontent.com/chrisblakley/Nebula/main/inc/data/bad_email_domains.csv');
+						if ( !is_wp_error($response) ){
+							$bad_email_domains_list = $response['body'];
+						}
+					}
 
-					return $bad_email_domains_list;
-				}
-			}, array('bad_email_domains_file' => $bad_email_domains_file), HOUR_IN_SECONDS*36);
+					//If either of the above remote requests received data, update the local file and store the data in a transient for 36 hours
+					if ( !is_wp_error($response) && !empty($bad_email_domains_list) ){
+						WP_Filesystem();
+						global $wp_filesystem;
+						$wp_filesystem->put_contents($data['bad_email_domains_file'], $bad_email_domains_list);
+
+						return $bad_email_domains_list;
+					}
+				}, array('bad_email_domains_file' => $bad_email_domains_file), HOUR_IN_SECONDS*36);
+			}
 
 			//If neither remote resource worked, get the local file
 			if ( empty($bad_email_domains_list) ){

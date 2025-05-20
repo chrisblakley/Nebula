@@ -79,9 +79,9 @@ nebula.initCooldowns = function(){
 			timeleft--;
 
 			let units = '';
-			if ( $oThis.attr('data-units').includes('second') ){
+			if ( $oThis.attr('data-units') && $oThis.attr('data-units').includes('second') ){
 				units = ( timeleft === 1 )? ' second' : ' seconds';
-			} else if ( $oThis.attr('data-units') == 's' ){
+			} else if ( $oThis.attr('data-units') && $oThis.attr('data-units') == 's' ){
 				units = 's';
 			}
 

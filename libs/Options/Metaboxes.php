@@ -394,6 +394,15 @@ if ( !trait_exists('Metaboxes') ){
 		public function nebula_back_end_metabox($nebula_options){
 			?>
 				<div class="form-group">
+					<input type="hidden" name="nebula_options[ai_features]" value="<?php echo $nebula_options['ai_features']; ?>">
+					<input id="ai_features" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['ai_features'])); ?>><label for="ai_features">AI Features</label>
+
+					<p class="nebula-help-text short-help form-text text-muted">This is a global toggle for all Nebula AI features. (Default: <?php echo $this->user_friendly_default('ai_features'); ?>)</p>
+					<p class="nebula-help-text more-help form-text text-muted">When disabled, all AI features will be turned off globally.</p>
+					<p class="option-keywords">ai</p>
+				</div>
+
+				<div class="form-group">
 					<input type="hidden" name="nebula_options[block_obvious_bad_requests]" value="<?php echo $nebula_options['block_obvious_bad_requests']; ?>">
 					<input id="block_obvious_bad_requests" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['block_obvious_bad_requests'])); ?>><label for="block_obvious_bad_requests">Block Obvious Bad Requests</label>
 
@@ -544,6 +553,15 @@ if ( !trait_exists('Metaboxes') ){
 
 					<p class="dependent-note hidden">This option is dependent on Developer IPs and/or Developer Email Domains (Administration tab).</p>
 					<p class="nebula-help-text short-help form-text text-muted">Aggregate todo comments in code. (Default: <?php echo $this->user_friendly_default('todo_manager_metabox'); ?>)</p>
+					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group" dependent-or="dev_email_domain dev_ip">
+					<input type="hidden" name="nebula_options[ai_code_review]" value="<?php echo $nebula_options['ai_code_review']; ?>">
+					<input id="ai_code_review" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['ai_code_review'])); ?>><label for="ai_code_review">AI Code Review</label>
+
+					<p class="dependent-note hidden">This option is dependent on Developer IPs and/or Developer Email Domains (Administration tab).</p>
+					<p class="nebula-help-text short-help form-text text-muted">Enable AI code reviews in the Dashboard. (Default: <?php echo $this->user_friendly_default('ai_code_review'); ?>)</p>
 					<p class="option-keywords"></p>
 				</div>
 
@@ -806,6 +824,14 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="nebula-help-text short-help form-text text-muted">The Google Cloud Messaging (GCM) Sender ID from the <a href="https://console.developers.google.com/project" target="_blank" rel="noopener noreferrer">Developers Console</a>.</p>
 					<p class="nebula-help-text more-help form-text text-muted">This is the "Project number" within the project box on the Dashboard. Do not include parenthesis or the "#" symbol. This is used for push notifications. <strong>*Note: This feature is still in development and not currently active!</strong></p>
 					<p class="option-keywords"></p>
+				</div>
+
+				<div class="form-group">
+					<label for="openai_api_key">OpenAI API Key</label>
+					<input type="text" name="nebula_options[openai_api_key]" id="openai_api_key" class="form-control nebula-validate-text" value="<?php echo $nebula_options['openai_api_key']; ?>" placeholder="sk-proj-..." />
+					<p class="nebula-help-text short-help form-text text-muted">The OpenAI API key for use with AI features.</p>
+					<p class="nebula-help-text more-help form-text text-muted"></p>
+					<p class="option-keywords">ai openai</p>
 				</div>
 
 				<div class="form-group">

@@ -5,7 +5,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Assets') ){
 	trait Assets {
 		public $brain = array();
-		public $page_count = 0;
+		public $session_page_count = 0;
 		public $referrer = '';
 		public $previous_page = '';
 		public $landing_page = '';
@@ -76,9 +76,9 @@ if ( !trait_exists('Assets') ){
 						//Update the page count in memory only
 						//We do not update the cookie because preloaded pages (speculation rules, service worker, etc) instantly load from cache where they did not process this data. Page count and Previous Page data can only accurately be tracked via JavaScript, so the cookie is only updated there.
 						if ( isset($session_cookie_data['page_count']) ){
-							$this->page_count = $session_cookie_data['page_count']+1; //Always use this for the data
+							$this->session_page_count = $session_cookie_data['page_count']+1; //Always use this for the data
 						} else {
-							$this->page_count = 2; //We only know it is not the first page
+							$this->session_page_count = 2; //We only know it is not the first page
 						}
 
 						//Prep the variables for use elsewhere
@@ -104,7 +104,7 @@ if ( !trait_exists('Assets') ){
 						$session_cookie_data['is_landing_page'] = false;
 						$this->set_cookie('session', json_encode($session_cookie_data), time()+HOUR_IN_SECONDS*4, false); //Update the cookie with new data
 					} else { //Otherwise this is the landing page (first page view of the session)
-						$this->page_count = 1;
+						$this->session_page_count = 1;
 						$this->referrer = ( isset($this->super->server['HTTP_REFERER']) )? $this->super->server['HTTP_REFERER'] : false; //Use the referrer header if it exists
 						$this->previous_page = $this->referrer;
 						$this->landing_page = $this->url_components('all'); //Get the full URL including query string
@@ -329,9 +329,11 @@ if ( !trait_exists('Assets') ){
 					'adblock' => false,
 				),
 				'geolocation' => false,
+				'page_count' => $this->session_page_count,
 				'referrer' => $this->referrer,
 				'landing_page' => $this->landing_page,
 				'is_landing_page' => $this->is_landing_page,
+				'previous_page' => $this->previous_page
 			);
 
 			//User Data

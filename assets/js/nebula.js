@@ -61,6 +61,7 @@ jQuery(function(){
 	nebula.visibilityChangeActions();
 	nebula.dom.document.on('visibilitychange', function(){
 		nebula.visibilityChangeActions();
+		nebula.updateSessionData(); //Run this again on visibility change in case the window load was during a preload
 	});
 
 	nebula.dom.html.addClass('dom-ready');
