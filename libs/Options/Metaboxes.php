@@ -556,13 +556,13 @@ if ( !trait_exists('Metaboxes') ){
 					<p class="option-keywords"></p>
 				</div>
 
-				<div class="form-group" dependent-or="dev_email_domain dev_ip">
+				<div class="form-group" dependent-of="openai_api_key">
 					<input type="hidden" name="nebula_options[ai_code_review]" value="<?php echo $nebula_options['ai_code_review']; ?>">
 					<input id="ai_code_review" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['ai_code_review'])); ?>><label for="ai_code_review">AI Code Review</label>
 
 					<p class="dependent-note hidden">This option is dependent on Developer IPs and/or Developer Email Domains (Administration tab).</p>
 					<p class="nebula-help-text short-help form-text text-muted">Enable AI code reviews in the Dashboard. (Default: <?php echo $this->user_friendly_default('ai_code_review'); ?>)</p>
-					<p class="option-keywords"></p>
+					<p class="option-keywords">ai openai chatgpt</p>
 				</div>
 
 				<div class="form-group">

@@ -28,6 +28,7 @@ if ( !trait_exists('Dashboard') ){
 						add_action('wp_dashboard_setup', array($this, 'dev_info_metabox'));
 						add_action('wp_dashboard_setup', array($this, 'file_size_monitor_metabox'));
 						add_action('wp_dashboard_setup', array($this, 'log_viewer_metabox'));
+						add_action('wp_dashboard_setup', array($this, 'ai_code_review_metabox'));
 					}
 
 					if ( $this->get_option('performance_metabox') || $this->is_dev() ){ //Devs always see the performance metabox
@@ -130,7 +131,7 @@ if ( !trait_exists('Dashboard') ){
 					$file_count = count($modified_files);
 
 					$title_attr = implode("\n", $modified_files); //Join file names with new lines for the title attribute
-					$time_ago = human_time_diff(get_transient('nebula_theme_file_changes_check'), time());
+					$time_ago = human_time_diff(get_transient('nebula_theme_file_changes_check'));
 					$title_attr .= "\n\n Last checked " . $time_ago . " ago";
 
 					echo '<li><i class="fa-solid fa-square-binary"></i> <span class="text-caution cursor-help" title="' . esc_attr($title_attr) . '"><strong>' . $file_count . '</strong> Parent theme ' . $this->singular_plural($file_count, 'file has', 'files have') . ' been modified</span></li>';
@@ -992,7 +993,7 @@ if ( !trait_exists('Dashboard') ){
 				$file_count = count($modified_files);
 
 				$title_attr = implode("\n", $modified_files); //Join file names with new lines for the title attribute
-				$time_ago = human_time_diff(get_transient('nebula_theme_file_changes_check'), time());
+				$time_ago = human_time_diff(get_transient('nebula_theme_file_changes_check'));
 				$title_attr .= "\n\n Last checked " . $time_ago . " ago";
 
 				echo '<li><i class="fa-solid fa-square-binary"></i> <span class="essential text-caution cursor-help" title="' . esc_attr($title_attr) . '"><strong>' . $file_count . '</strong> Parent theme ' . $this->singular_plural($file_count, 'file has', 'files have') . ' been modified</span></li>';
@@ -1092,7 +1093,7 @@ if ( !trait_exists('Dashboard') ){
 							$log_file_icon = '<i class="fa-regular fa-fw fa-clock"></i>';
 						}
 
-						echo '<li class="essential"><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . admin_url('?log-viewer=' . $log_file['shortpath']) . '"><code title="' . $log_file['shortpath'] . ' (Click to show in Log Viewer)" style="cursor: help;">' . $log_file['name'] . '</code></a> <strong>' . $this->format_bytes($log_file['bytes']) . '</strong> <small class="' . $log_file_classes . '">(Latest: ' . human_time_diff($log_file_modified_time, time()) . ' ago)</small></li>';
+						echo '<li class="essential"><i class="fa-regular fa-fw fa-file-alt"></i> <a href="' . admin_url('?log-viewer=' . $log_file['shortpath']) . '"><code title="' . $log_file['shortpath'] . ' (Click to show in Log Viewer)" style="cursor: help;">' . $log_file['name'] . '</code></a> <strong>' . $this->format_bytes($log_file['bytes']) . '</strong> <small class="' . $log_file_classes . '">(Latest: ' . human_time_diff($log_file_modified_time) . ' ago)</small></li>';
 					}
 				}
 			}
@@ -1270,7 +1271,7 @@ if ( !trait_exists('Dashboard') ){
 				$last_entry_icon = '<i class="fa-regular fa-fw fa-ghost" title="This is a stale log file."></i>';
 			}
 
-			echo '<p><i class="fa-regular fa-fw fa-file-lines"></i> <strong>' . str_replace(ABSPATH, '', $log_file) . '</strong> <small>(' . size_format($file_size) . ')</small><br /><em>' . $last_entry_icon . ' Last entry ' . human_time_diff($last_modified, time()) . ' ago <small>(' . date('l, F j, Y - g:i:sa', $last_modified) . ')</small></em></p>';
+			echo '<p><i class="fa-regular fa-fw fa-file-lines"></i> <strong>' . str_replace(ABSPATH, '', $log_file) . '</strong> <small>(' . size_format($file_size) . ')</small><br /><em>' . $last_entry_icon . ' Last entry ' . human_time_diff($last_modified) . ' ago <small>(' . date('l, F j, Y - g:i:sa', $last_modified) . ')</small></em></p>';
 
 			//Output the content
 			if ( empty($lines) || (count($lines) === 1 && trim($lines[0]) === '') ){ //If the lines are empty
@@ -1777,7 +1778,7 @@ if ( !trait_exists('Dashboard') ){
 				}
 
 				echo '<tr class="' . trim($row_class) . '" data-type="' . esc_attr($file['type']) . '" data-group="' . esc_attr($file['group']) . '" data-budget="' . esc_attr($this->format_bytes($file['budget'])) . '">';
-				echo '<td class="file-name">' . ' <small>' . ($index+1) . '.</small> <span class="file-icons-group">' . $file_icon . '</span> <span title="' . esc_attr($file['path']) . '">' . esc_html($file['name']) . '</span>' . $additional_info . $file_link . '<small class="modified-info hidden"><br />(Modified ' . human_time_diff($file['modified'], time()) . ' ago)</small><small class="file-keywords hidden"><br /><i class="fa-solid fa-fw fa-turn-up fa-rotate-90"></i> ' . $file['group'] . ' ' . $file['notes'] . '</small></td>';
+				echo '<td class="file-name">' . ' <small>' . ($index+1) . '.</small> <span class="file-icons-group">' . $file_icon . '</span> <span title="' . esc_attr($file['path']) . '">' . esc_html($file['name']) . '</span>' . $additional_info . $file_link . '<small class="modified-info hidden"><br />(Modified ' . human_time_diff($file['modified']) . ' ago)</small><small class="file-keywords hidden"><br /><i class="fa-solid fa-fw fa-turn-up fa-rotate-90"></i> ' . $file['group'] . ' ' . $file['notes'] . '</small></td>';
 				echo '<td class="file-group">' . esc_html($file['group']) . '</td>';
 				echo '<td class="file-size" data-file-size="' . $file['size'] . '" title="' . $budget_description . '">' . $this->format_bytes($file['size']) . '</td>';
 				echo '<td class="budget-percent hidden">' . $budget_percent . '</td>';
@@ -2076,6 +2077,470 @@ if ( !trait_exists('Dashboard') ){
 
 			return $file_info;
 		}
+
+		//AI Code Review Metabox
+		public function ai_code_review_metabox(){
+			if ( $this->is_minimal_mode() ){return null;}
+
+			if ( !$this->is_ai_features_allowed() ){
+				return false;
+			}
+
+			//If the Log Viewer metabox is active, do not also show this AI Code Review metabox
+			//Disabling this because it resets the "location" of the AI Code Review metabox
+			// if ( isset($_GET['log-viewer']) ){
+			// 	return false;
+			// }
+
+			if ( $this->is_dev() && $this->get_option('ai_code_review') && $this->get_option('openai_api_key') ){
+				wp_add_dashboard_widget('nebula_ai_code_review', '<i class="fa-solid fa-fw fa-robot"></i> &nbsp;AI Code Review', array($this, 'dashboard_ai_code_review'));
+			}
+		}
+
+		//AI Code Review Metabox content
+		public function dashboard_ai_code_review(){
+			$this->timer('Nebula AI Code Review Metabox', 'start', '[Nebula] Dashboard Metaboxes');
+			do_action('nebula_ai_code_review');
+
+			//Get a fresh result when requested
+			if ( isset($this->super->get['clear-ai-code-review']) ){
+				delete_transient('nebula_ai_code_review');
+			}
+
+			$this->super->globals['nebula_ai_code_review_used_tokens'] = false; //Global because this needs to get updated from inside the transient closure function below
+
+			$code_review_data = $this->transient('nebula_ai_code_review', function(){
+				$function_data = $this->get_random_function();
+
+				if ( !empty($function_data) ){
+					$prompt = $this->ai_prepare_code_review_prompt($function_data['function']);
+
+					//Estimate the number of tokens this prompt would use
+					$token_estimate = $this->ai_estimate_tokens($prompt);
+
+					if ( $token_estimate === false ){
+						echo '<p><strong>Error:</strong> Could not estimate token usage for ' . $function_data['name'] . ' <small>(' . $function_data['filepath'] . ')</small>. <em>Reload the page to try a different function.</em></p>';
+						return;
+					}
+
+					$token_limit = apply_filters('nebula_ai_code_review_token_limit', 3000); //Allow others to modify the local approximate token limit
+
+					if ( $token_estimate >= $token_limit ){
+						echo '<p><strong>High Token Usage.</strong><br/>' . $function_data['name'] . ' <small>(' . $function_data['filename'] . ')</small> was not AI reviewed due to the high token usage (' . $token_estimate . '). <em>Reload the page to try a different function.</em></p>';
+						return;
+					}
+
+					$response = $this->ai_run_prompt($prompt); //Run the prompt
+
+					//If the response is a string (instead of an array), there was probably an error. Output that message and stop without caching.
+					if ( is_string($response) ){
+						echo '<p>' . $response . '</p>';
+						return;
+					}
+
+					$this->super->globals['nebula_ai_code_review_used_tokens'] = true; //This only runs if the cache is not hit
+
+					$code_review_data = array(
+						'token_estimate' => $token_estimate,
+						'function' => $function_data,
+						'response' => $response,
+					);
+
+					return $code_review_data;
+				}
+			}, (strtotime('today 23:59:59', time())-time()), false); //Expire tonight at midnight (false indicates we don't want fresh data on Sass reprocessing or when similar query parameter exist that bypass the transient cache
+
+			if ( empty($code_review_data) ){
+				echo 'No code review response data';
+				return;
+			}
+
+			//If a string response somehow is stored in cache, output it now with the ability to retry the prompt
+			if ( is_string($code_review_data['response']) ){
+				echo $code_review_data['response'];
+				echo ' <a href="' . admin_url('?clear-ai-code-review') . '">Retry?</a>';
+				return;
+			}
+
+			echo '<small class="reviewed-intro">Today, the AI chose to review...</small>';
+			echo '<h3 class="reviewed-function-name">' . esc_html($code_review_data['function']['name']) . '()</h3>';
+
+			$theme_pos = strpos($code_review_data['function']['filepath'], '/themes/');
+			$relative_path = substr($code_review_data['function']['filepath'], $theme_pos+7);
+			echo '<p class="reviewed-file"><i class="fa-brands fa-fw fa-' . $code_review_data['function']['type'] . '"></i> ' . esc_html($relative_path) . '<br /><i class="fa-regular fa-fw fa-file-code"></i></i> Lines ' . number_format($code_review_data['function']['line']) . ' &ndash; ' . number_format($code_review_data['function']['line']+$code_review_data['function']['length']) . ' <small>(' . number_format($code_review_data['function']['length']) . ' lines)</small></p>';
+
+			echo '<div id="nebula-ai-response" class="collapsed"><div class="ai-review-content-wrapper">';
+			echo wp_kses_post(nebula()->simple_markdown_to_html($code_review_data['response']['content']));
+
+			echo '<div id="review-continue-wrapper"><h3>Continue the Review</h3><p>Clicking the following button will <strong>copy the prompt to your clipboard</strong> where you can paste it to continue reviewing this function (with advanced models) and ask follow-up questions.</p><a href="https://chat.openai.com" data-function="' . htmlspecialchars($code_review_data['function']['function']) . '" target="_blank" rel="noopener noreferrer"><i class="fa-regular fa-fw fa-copy"></i> Copy Prompt &amp; Continue &raquo;</a></div><a id="reviewed-expand-code" href="#"><i class="fa-solid fa-fw fa-chevron-down"></i> View Results</a></div></div>';
+
+			echo '<p>';
+				echo '<small><i class="fa-solid fa-fw fa-robot"></i> Model: ' . $code_review_data['response']['model'] . '</small><br/>';
+
+				if ( $this->super->globals['nebula_ai_code_review_used_tokens'] ){
+					$cost_estimate = '$' . number_format(($code_review_data['response']['total_tokens']/1000)*0.001, 4);
+					echo '<small><i class="fa-solid fa-fw fa-coins"></i> <a href="https://platform.openai.com/settings/organization/usage" target="_blank" rel="noopener noreferrer">Token Usage</a>: ' . number_format($code_review_data['response']['total_tokens']) . ' (roughly ' . $cost_estimate . ')</small>';
+				} else {
+					echo '<small><i class="fa-regular fa-fw fa-clock"></i> Generated: ' . date('F j, Y \a\t g:ia', $code_review_data['response']['created']) . ' (' . human_time_diff($code_review_data['response']['created']) . ' ago)</small><br />';
+					echo '<small><i class="fa-solid fa-fw fa-coins"></i> <em>This is a cached response. <a href="https://platform.openai.com/settings/organization/usage" target="_blank" rel="noopener noreferrer">No tokens were used.</a></em></small>';
+				}
+			echo '</p>';
+
+			$this->timer('Nebula AI Code Review Metabox', 'end');
+		}
+
+		//Get a random function to use for AI code review
+		private function get_random_function(){
+			if ( !$this->is_dev() ){
+				return false;
+			}
+
+			$scan_directory = get_template_directory();
+			if ( is_child_theme() ){
+				$scan_directory = get_stylesheet_directory();
+			}
+
+			$scan_directory = apply_filters('nebula_ai_code_review_directory', $scan_directory); //Allow others to manually choose what directory to scan
+
+			$rii = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($scan_directory));
+			$valid_functions = array();
+
+			foreach ( $rii as $file ){
+				if ( $file->isDir() ){ //Skip directories themselves
+					continue;
+				}
+
+				$filepath = $file->getPathname();
+
+				//Ignore file sizes that are too large or small
+				$size = filesize($filepath);
+				if ( filesize($filepath) > MB_IN_BYTES*2 || filesize($filepath) < KB_IN_BYTES ){
+					continue;
+				}
+
+				//Ignore certain files based on the file path/name
+				$ignore_files = apply_filters('nebula_ai_code_review_ignore_files', array('/vendor', '/resources', '.min'));
+				foreach ( $ignore_files as $ignore ){
+					if ( str_contains($filepath, $ignore) ){
+						continue 2; //Skip to the next $file in the outer foreach loop
+					}
+				}
+
+				//Ignore files that are not PHP or JavaScript
+				if ( !str_ends_with($filepath, '.php') && !str_ends_with($filepath, '.js') && !str_ends_with($filepath, '.mjs') ){
+					continue;
+				}
+
+				$lines = file($filepath);
+
+				//Ignore short files
+				if ( count($lines) < 100 ){
+					continue;
+				}
+
+				//Loop through each line of the file
+				foreach ( $lines as $i => $line ){
+					//Skip commented-out lines (// or /* or * or #), even with leading whitespace
+					if ( preg_match('/^\s*(\/\/|\/\*|\*|#)/', $line) ){
+						continue;
+					}
+
+					//Ignore certain lines based on the contents
+					$ignore_lines = apply_filters('nebula_ai_code_review_ignore_lines', array('hooks()'));
+					foreach ( $ignore_lines as $ignore ){
+						if ( str_contains($line, $ignore) ){
+							continue 2; //Skip to the next $line in the outer foreach loop
+						}
+					}
+
+					$func_name = null;
+					$is_function = false;
+					$file_type = null;
+
+					//PHP: function function_name(
+					if ( preg_match('/^\s*(public|protected|private)?\s*function\s+([a-zA-Z0-9_]+)\s*\(/i', $line, $match) ){
+						$is_function = true;
+						$func_name = $match[2];
+						$file_type = 'php';
+					}
+
+					//JS: const name = function( or name: function( or name = () => { or nebula.something = function(
+					elseif ( preg_match('/^\s*(?:const|let|var)?\s*([a-zA-Z0-9_$.]+)\s*[:=]\s*(async\s+)?(function\b|\(.*\)\s*=>)/i', $line, $match) ){
+						$is_function = true;
+						$func_name = $match[1];
+						$file_type = 'js';
+					}
+
+					//If this line did not contain a function declaration, skip it
+					if ( !$is_function ){
+						continue;
+					}
+
+					$start = $i;
+					$brace_count = substr_count($line, '{') - substr_count($line, '}');
+					$func_lines = array($line);
+
+					for ( $j = $i+1; $j < count($lines); $j++ ){
+						$func_lines[] = $lines[$j];
+						$brace_count += substr_count($lines[$j], '{');
+						$brace_count -= substr_count($lines[$j], '}');
+
+						if ( $brace_count <= 0 ){
+							break;
+						}
+					}
+
+					//Ignore short functions
+					if ( count($func_lines) < 30 ){
+						continue;
+					}
+
+					$valid_functions[] = array(
+						'filepath' => $filepath,
+						'filename' => basename($filepath),
+						'type' => $file_type,
+						'line' => $start+1,
+						'length' => count($func_lines),
+						'name' => $func_name,
+						'function' => trim(implode('', $func_lines))
+					);
+				}
+			}
+
+			if ( empty($valid_functions) ){
+				return false;
+			}
+
+			return $valid_functions[array_rand($valid_functions)];
+		}
+
+		//Prepare the prompt for OpenAI API code review
+		private function ai_prepare_code_review_prompt($function_code){
+			$prompt = '';
+
+			$prompt .= "You are a senior WordPress engineer and security consultant. Unless otherwise noted, assume all functions, methods, and variables referenced in the code exist elsewhere in the theme or plugin. Do not worry about modern PHP functions that may not be supported in older versions.\n\n";
+			$prompt .= "Your task is to review the following function used in a WordPress theme or plugin. Critique it with the following structure:\n\n";
+			$prompt .= "## Summary – What the function appears to do including a brief mention of any strenghts. Always output the Summary heading first as a H2 heading tag. All other sections should be output with a H3 heading tag.\n";
+			$prompt .= "### 🚨 Critical Issues – If any catastrophic problems are present call them out here. If no mission critical issues exist do not output this section at all (not even the heading). Do not output this as N/A instead do not ouput this section at all.\n";
+			$prompt .= "### Findings – Describe any concerns about logic, security, performance, and general code quality, clearly identifying the problems. Also consider if serious lack of comments are a problem. Do not worry about trivial issues. Do not worry about code compatibility with older PHP versions.\n";
+			$prompt .= "### Recommendations – Provide specific recommendations or fixes addressing the feindings, including code examples if applicable. Do not reiterate or repeat the findings. Be as brief as possible with these recommendations.\n";
+			$prompt .= "#### WordPress Best Practices – Evaluate functionality where native WordPress functions, constants, patterns, systems, or other native features may reduce redundancy or improve performance. Only provide recommendations if native WordPress functions or APIs exist that can replace or improve the custom functionality; if none apply, do not output this section at all (not even the heading). If the function does not use any native WordPress functions or APIs and would not benefit from them do not output this section at all. Do not output this as N/A instead do not ouput this section at all.\n\n";
+			$prompt .= "### Improved Version – If appropriate, provide a revised version of the function that addresses the issues and follows best practices.\n\n";
+			$prompt .= "Respond in simple markdown format using only basic elements like headings, paragraphs, bold, code, and bullet lists. Do not use italics.\n\n";
+			$prompt .= "Here is the function:\n\n";
+			$prompt .= "```php\n" . $function_code . "\n```";
+
+			return $prompt;
+		}
+
+		//Estimate the number of tokens needed to process a prompt
+		public function ai_estimate_tokens($prompt){
+			$prompt = trim($prompt); // Remove leading/trailing whitespace
+			$char_count = strlen($prompt);
+
+			//Base estimate: 1 token ≈ 4 characters, adjusted with better heuristic
+			$estimated_tokens = ceil($char_count/4);
+
+			//Add a small fixed overhead to account for chat message structure, roles, etc.
+			$estimated_tokens += 4; //Roughly accounts for {"role": "user", "content": ...} structure
+
+			//Clamp to minimum of 1 token (some endpoints reject 0)
+			return max(1, $estimated_tokens);
+		}
+
+		//Run the actual prompt through OpenAI API (spending tokens)
+		private function ai_run_prompt($prompt, $model='gpt-3.5-turbo'){
+			if ( !is_user_logged_in() || !$this->is_dev() || !$this->get_option('ai_features') || !$this->get_option('ai_code_review') ){
+				return false;
+			}
+
+			$api_key = $this->get_option('openai_api_key');
+
+			if ( empty( $api_key ) ){
+				return 'No OpenAI API Key exists.';
+			}
+
+			$ai_model = apply_filters('nebula_ai_gpt_model', $model); //Allow others to change the GPT model. Ex: 'gpt-3.5-turbo' (cheap, lower quality), 'gpt-4' (really expensive), 'gpt-4o' (somewhat expensive)
+
+			$data = array(
+				'model' => $ai_model,
+				'messages' => array(
+					array(
+						'role' => 'user',
+						'content' => $prompt,
+					),
+				),
+				'temperature' => 0.2, //Lower number is more deterministic
+				'user' => 'wp_user_' . get_current_user_id()
+			);
+
+			$response = wp_remote_post('https://api.openai.com/v1/chat/completions', array(
+				'headers' => array(
+					'Content-Type' => 'application/json',
+					'Authorization' => 'Bearer ' . $api_key,
+				),
+				'body' => json_encode($data),
+				'timeout' => 15, //15-20 seconds is often too short, but I don't want to hold up load time for even longer...
+			));
+
+			if ( is_wp_error($response) ){
+				return 'Request failed: ' . $response->get_error_message();
+			}
+
+			$code = wp_remote_retrieve_response_code($response);
+			$body = wp_remote_retrieve_body($response);
+
+			if ( $code !== 200 ){
+				return 'OpenAI API error: HTTP status ' . $code . ' - ' . $body;
+			}
+
+			$response_data = json_decode($body, true);
+			if ( json_last_error() !== JSON_ERROR_NONE ){
+				return 'Failed to decode API response.';
+			}
+
+			if ( isset( $response_data['choices'][0]['message']['content'] ) ){
+				return array(
+					'created' => $response_data['created'],
+					'model' => $response_data['model'],
+					'content' => trim($response_data['choices'][0]['message']['content']),
+					'total_tokens' => $response_data['usage']['total_tokens'],
+				);
+			}
+
+			return 'Unexpected API response structure.';
+		}
+
+		//Convert simple markdown into HTML. For more accurate/flexible results consider a third-party library.
+		public function simple_markdown_to_html($markdown){
+			// Convert code blocks (```lang\ncode```) with escaping
+			$markdown = preg_replace_callback('/```(\w*)\n(.*?)```/s', function($matches){
+				$lang = $matches[1];
+				$code = esc_html($matches[2]);
+				return '<pre><code class="language-' . esc_attr($lang) . '">' . $code . '</code></pre>';
+			}, $markdown);
+
+			// Convert inline code (`code`) with escaping
+			$markdown = preg_replace_callback('/`([^`]+)`/', function($matches){
+				return '<code>' . esc_html($matches[1]) . '</code>';
+			}, $markdown);
+
+			// Convert headings (#, ##, ###, ####, #####)
+			$markdown = preg_replace('/^##### (.+)$/m', '<h5>$1</h5>', $markdown);
+			$markdown = preg_replace('/^#### (.+)$/m', '<h4>$1</h4>', $markdown);
+			$markdown = preg_replace('/^### (.+)$/m', '<h3>$1</h3>', $markdown);
+			$markdown = preg_replace('/^## (.+)$/m', '<h2>$1</h2>', $markdown);
+			$markdown = preg_replace('/^# (.+)$/m', '<h1>$1</h1>', $markdown);
+
+			// Convert bold (**bold** or __bold__)
+			$markdown = preg_replace('/\*\*(.+?)\*\*/s', '<strong>$1</strong>', $markdown);
+			$markdown = preg_replace('/__(.+?)__/s', '<strong>$1</strong>', $markdown);
+
+			// Convert unordered lists (- item or * item)
+			// Wrap consecutive list items in a single <ul>
+			$markdown = preg_replace_callback('/((^- .+(?:\n^- .+)*)+)/m', function($matches){
+				$list = preg_replace('/^- /m', '<li>', $matches[0]);
+				$list = preg_replace('/$/m', '</li>', $list);
+				return '<ul>' . $list . '</ul>';
+			}, $markdown);
+
+			// Convert ordered lists (1. item, 2. item, etc.)
+			$markdown = preg_replace_callback('/((^\d+\.\s.+(?:\n^\d+\.\s.+)*)+)/m', function($matches){
+				$list = preg_replace('/^\d+\. /m', '<li>', $matches[0]);
+				$list = preg_replace('/$/m', '</li>', $list);
+				return '<ol>' . $list . '</ol>';
+			}, $markdown);
+
+			// Break into paragraphs on two or more newlines but avoid breaking inside <pre> or <ul>
+			$blocks = preg_split('/(\n{2,})/', $markdown);
+			$output = '';
+			foreach ($blocks as $block){
+				if (preg_match('/^\s*<(pre|ul|h[1-6]|li|code|strong|em)/', trim($block))){
+					$output .= $block;
+				} else {
+					$output .= '<p>' . trim($block) . '</p>';
+				}
+			}
+
+			return $output;
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		//Get last modified filename and date from a directory
 		public function last_modified($directory=null, $last_date=0, $child=false){

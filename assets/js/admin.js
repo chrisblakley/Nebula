@@ -36,8 +36,8 @@ jQuery(async function(){
 	}
 
 	//Remove certain trigger query strings
-	if ( (nebula.get('sass') || nebula.get('debug') || nebula.get('clear-transients')) && !nebula.get('persistent') ){
-		window.history.replaceState({}, document.title, nebula.removeQueryParameter(['sass', 'debug', 'clear-transients'], window.location.href));
+	if ( (nebula.get('sass') || nebula.get('debug') || nebula.get('clear-transients') || nebula.get('clear-ai-code-review')) && !nebula.get('persistent') ){
+		window.history.replaceState({}, document.title, nebula.removeQueryParameter(['sass', 'debug', 'clear-transients', 'clear-ai-code-review'], window.location.href));
 	}
 
 	window.performance.mark('(Nebula) DOM Ready [End]');
