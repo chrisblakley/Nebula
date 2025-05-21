@@ -2172,7 +2172,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<div id="nebula-ai-response" class="collapsed"><div class="ai-review-content-wrapper">';
 			echo wp_kses_post(nebula()->simple_markdown_to_html($code_review_data['response']['content']));
 
-			echo '<div id="review-continue-wrapper"><h3>Continue the Review</h3><p>Clicking the following button will <strong>copy the prompt to your clipboard</strong> where you can paste it to continue reviewing this function (with advanced models) and ask follow-up questions.</p><a href="https://chat.openai.com" data-function="' . htmlspecialchars($code_review_data['function']['function']) . '" target="_blank" rel="noopener noreferrer"><i class="fa-regular fa-fw fa-copy"></i> Copy Prompt &amp; Continue &raquo;</a></div><a id="reviewed-expand-code" href="#"><i class="fa-solid fa-fw fa-chevron-down"></i> View Results</a></div></div>';
+			echo '<div id="review-continue-wrapper"><h3>Continue the Review</h3><p>Clicking the following button will <strong>copy the prompt to your clipboard</strong> where you can paste it to continue reviewing this function (with advanced models) and ask follow-up questions.</p><a class="nebula-ai-button" href="#" data-function="' . htmlspecialchars($code_review_data['function']['function']) . '" target="_blank" rel="noopener noreferrer"><i class="fa-regular fa-fw fa-copy"></i> Copy Prompt &amp; Continue &raquo;</a></div><a id="reviewed-expand-code" class="nebula-ai-button" href="#"><i class="fa-solid fa-fw fa-chevron-down"></i> View Results</a></div></div>';
 
 			echo '<p>';
 				echo '<small><i class="fa-solid fa-fw fa-robot"></i> Model: ' . $code_review_data['response']['model'] . '</small><br/>';

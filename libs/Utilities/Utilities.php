@@ -993,6 +993,11 @@ if ( !trait_exists('Utilities') ){
 				return false;
 			}
 
+			//Allow AI features to be disabled via PHP theme/plugin functions. Set this to false to disable Nebula AI features.
+			if ( !apply_filters('nebula_ai_features_enabled', true) ){
+				return false;
+			}
+
 			//If the Nebula Option global setting is disabled
 			if ( !$this->get_option('ai_features') ){
 				return false;

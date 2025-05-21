@@ -2868,12 +2868,12 @@ if ( !trait_exists('Admin') ){
 			$avoid_types = array('acf', 'acf-field-group', 'wpcf7_contact_form', 'nebula_cf7_submits');
 
 			foreach ( $builtin_types as $builtin_type ){
-				add_meta_box('nebula-post-data', 'Nebula Post Data', array($this, 'nebula_post_metabox' ), $builtin_type, 'side', 'default');
+				add_meta_box('nebula-post', 'Nebula Post', array($this, 'nebula_post_metabox' ), $builtin_type, 'side', 'default');
 			}
 
 			foreach( $custom_types as $custom_type ){
 				if ( !in_array($custom_type, $avoid_types) ){
-					add_meta_box('nebula-post-data', 'Nebula Post Data', array($this, 'nebula_post_metabox' ), $custom_type, 'side', 'default');
+					add_meta_box('nebula-post', 'Nebula Post', array($this, 'nebula_post_metabox' ), $custom_type, 'side', 'default');
 				}
 			}
 		}
@@ -2883,6 +2883,26 @@ if ( !trait_exists('Admin') ){
 			wp_nonce_field(basename(__FILE__), 'nebula_post_nonce');
 			?>
 			<div>
+				<?php if ( $this->is_ai_features_allowed() ): ?>
+					<p>
+						<strong><i class="fa-solid fa-fw fa-robot"></i> Generate Title</strong>
+						<span class="howto">Copy the prompt to your clipboard and open ChatGPT.</span>
+						<a id="ai-post-title" class="nebula-ai-button" href="#" target="_blank" rel="noopener noreferrer">Copy Prompt & Go &raquo;</a>
+					</p>
+
+					<p>
+						<strong><i class="fa-solid fa-fw fa-robot"></i> Generate Meta Description</strong>
+						<span class="howto">Copy the prompt to your clipboard and open ChatGPT.</span>
+						<a id="ai-post-meta-description" class="nebula-ai-button" href="#" target="_blank" rel="noopener noreferrer">Copy Prompt & Go &raquo;</a>
+					</p>
+
+					<p>
+						<strong><i class="fa-solid fa-fw fa-robot"></i> Generate Content</strong>
+						<span class="howto">Copy the prompt to your clipboard and open ChatGPT.</span>
+						<a id="ai-post-content" class="nebula-ai-button" href="#" target="_blank" rel="noopener noreferrer">Copy Prompt & Go &raquo;</a>
+					</p>
+				<?php endif; ?>
+
 				<p>
 					<strong>Body Classes</strong>
 					<input type="text" id="nebula-body-classes" class="large-text" name="nebula_body_classes" value="<?php echo get_post_meta($object->ID, 'nebula_body_classes', true); ?>" />

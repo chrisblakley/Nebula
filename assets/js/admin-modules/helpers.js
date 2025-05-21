@@ -29,6 +29,68 @@ nebula.uniqueSlugChecker = function(){
 	}
 };
 
+//Copy AI Title and Meta Description Prompts
+if ( jQuery('#ai-post-title').length ){
+	jQuery('#ai-post-title').on('click', function(e){
+		e.preventDefault();
+		nebula.generatePostMetaPrompt('title');
+		return false;
+	});
+
+	jQuery('#ai-post-meta-description').on('click', function(e){
+		e.preventDefault();
+		nebula.generatePostMetaPrompt('description');
+		return false;
+	});
+
+	jQuery('#ai-post-content').on('click', function(e){
+		e.preventDefault();
+		nebula.generatePostMetaPrompt('ideas');
+		return false;
+	});
+
+	//"Tokenless" method of coping a prompt to the clipboard and opening the AI tool in a new tab
+	nebula.generatePostMetaPrompt = function(type='meta description'){
+		if ( window.wp && wp.data && wp.data?.select ){
+			const postTitle = wp.data.select('core/editor').getEditedPostAttribute('title');
+			const blocks = wp.data.select('core/block-editor').getBlocks();
+			const headings = blocks.filter(b => b.name === 'core/heading').map(b => b.attributes.content).filter(Boolean); //Get the headings from the post content
+			const introParagraph = (blocks.find(b => b.name === 'core/paragraph' && b.attributes?.content)?.attributes.content) || ''; //Get the first paragraph from the post content
+
+			let prompt = '';
+
+			if ( type.includes('description') ){
+				type = 'meta description';
+			} else if ( type.includes('title') ){
+				type = 'SEO title';
+			}
+
+			if ( type.includes('idea') ){
+				prompt += 'Give me additional content ideas (such as sections, headings, topics, etc.), focusing on SEO, for a web page post';
+			} else {
+				prompt += 'Create a ' + type + ' for a web page';
+			}
+
+			if ( postTitle ){
+				prompt += ' currently titled "' + postTitle + '"';
+			}
+
+			if ( headings ){
+				prompt += ' with the following headings: ' + headings.join(', ');
+			}
+
+			if ( introParagraph ){
+				prompt += ' with the following intro paragraph: ' + introParagraph;
+			}
+
+			//Copy to the clipboard and open the new tab
+			navigator.clipboard.writeText(prompt).then(function(){
+				window.open('https://chatgpt.com/', '_blank');
+			});
+		}
+	}
+}
+
 //Allow tab character in textareas
 nebula.pasteIntoInput = function(element, text){
 	element.focus();

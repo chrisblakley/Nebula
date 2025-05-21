@@ -807,3 +807,94 @@ ul.simplify {
 		&:has(.error) {display: block;}
 	}
 }
+
+
+
+
+
+#nebula_ai_code_review {
+	.reviewed-intro {display: block; opacity: 0.7; font-size: 10.5px;}
+	i.fa-php {color: #7f7fb2;}
+	i.fa-js {color: #e5bb31;}
+	.reviewed-function-name {font-size: 17px; font-weight: bold; margin-top: 2px; margin-bottom: 3px;}
+	.reviewed-file {margin-top: 0;}
+
+	#nebula-ai-response {position: relative; background: #212121; border-radius: 6px; padding: 2px; color: #fff; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; line-height: 1.5; font-size: 14px; max-height: none; filter: drop-shadow(-2px -2px 6px #5b22e844) drop-shadow(2px 2px 6px #ff236244); animation: nebula-glow 14s linear infinite; transition: all 0.5s ease; z-index: 2;
+		&::before {content: ""; position: absolute; background: linear-gradient(40deg in oklch, #5b22e8, #ff2362); top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 8px; z-index: -1; pointer-events: none; animation: nebula-hue-rotate 10s linear infinite;}
+
+		.ai-review-content-wrapper {background: #212121; border-radius: 6px; padding: 14px; color: #bbb; max-height: 900px; overflow-y: scroll; transition: all 0.5s ease;}
+
+		&.collapsed {max-height: 200px; filter: drop-shadow(-2px -2px 6px #5b22e800) drop-shadow(2px 2px 6px #ff236200); animation: none; overflow: hidden;
+			&:has(a#reviewed-expand-code:hover) {filter: drop-shadow(-2px -2px 6px #5b22e844) drop-shadow(2px 2px 6px #ff236244);}
+
+			&::before {animation: none;}
+			&::after {content: ""; position: absolute; bottom: 0; left: 2px; width: calc(100% - 4px); height: 90%; background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.95) 100%); pointer-events: none; z-index: 10;}
+
+			a#reviewed-expand-code {display: inline-block; position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); margin: 0 auto; text-align: center; color: #fff; font-size: 12px; padding: 2px 10px; background: linear-gradient(to right in oklch, #5b22e8, #ff2362); border-radius: 30px; transition: all 0.75s ease; z-index: 30;
+				&:hover {animation: nebula-hue-rotate 7s linear infinite;}
+			}
+
+			.ai-review-content-wrapper {max-height: 210px; overflow: hidden;}
+		}
+
+
+
+		h1, h2, h3, h4, h5 {color: #fff; margin-top: 1.2em; margin-bottom: 0.6em; font-weight: 600;}
+
+		& :is(h2):first-of-type {margin-top: 0;}
+
+		h1 {font-size: 26px;}
+		h2 {font-size: 22px;}
+		h3 {font-size: 19px;}
+		h4 {font-size: 16px;}
+		h5 {font-size: 14px;}
+
+		p,
+		li,
+		code {font-size: 13px;}
+
+		strong {color: #fff;}
+
+		ul {list-style-type: disc; margin-left: 16px; margin-top: 1em; margin-bottom: 1em;
+			li {margin-bottom: 0.4em;}
+		}
+
+		ol {margin-left: 16px;}
+
+		code,
+		pre {color: #f8f8f2; padding: 2px 6px; border-radius: 4px; font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace; font-size: 13px;}
+
+		code {background: #424242;}
+
+		pre {padding: 15px 10px;}
+		pre,
+		pre code {background: #171717; color: #00a67d; max-width: 100%; overflow-x: scroll;}
+
+		a#reviewed-expand-code {display: none;}
+
+		#review-continue-wrapper {text-align: center; margin-top: 30px; margin-bottom: 10px; border-top: 1px dotted #aaa;
+			h3, p {text-align: left;}
+			a {display: inline-block; margin: 5px auto 0 auto; text-align: center; color: #fff; font-size: 13px; padding: 2px 10px; background: linear-gradient(to right in oklch, #5b22e8, #ff2362); border-radius: 30px; transition: all 0.75s ease;
+				&:hover {animation: nebula-hue-rotate 7s linear infinite;}
+			}
+		}
+	}
+}
+
+@keyframes nebula-hue-rotate {
+	0% {filter: hue-rotate(0deg);}
+	100% {filter: hue-rotate(-360deg);}
+}
+
+@keyframes nebula-glow {
+	0%, 100% {filter: drop-shadow(-2px -2px 6px #5b22e822) drop-shadow(2px 2px 6px #ff236222);}
+	50% {filter: drop-shadow(-2px -2px 6px #5b22e877) drop-shadow(2px 2px 6px #ff236277);}
+}
+
+
+
+
+//Nebula Post Metabox
+.nebula-ai-button {display: inline-block; margin: 5px auto 0 auto; text-align: center; color: #fff !important; padding: 2px 10px; background: linear-gradient(to right in oklch, #5b22e8, #ff2362); border-radius: 30px; transition: all 0.75s ease;
+	&:hover {animation: nebula-hue-rotate 7s linear infinite;}
+}
