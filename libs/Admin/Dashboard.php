@@ -29,7 +29,6 @@ if ( !trait_exists('Dashboard') ){
 						add_action('wp_dashboard_setup', array($this, 'file_size_monitor_metabox'));
 						add_action('wp_dashboard_setup', array($this, 'log_viewer_metabox'));
 						add_action('wp_dashboard_setup', array($this, 'ai_code_review_metabox'));
-
 					}
 
 					if ( $this->get_option('performance_metabox') || $this->is_dev() ){ //Devs always see the performance metabox
@@ -583,7 +582,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//Loop through array of to-do items and echo markup
 			foreach ( $todo_items as $location => $todos ){
-				//If there is no child theme, we do not need to label parent theme to-do- items
+				//If there is no child theme, we do not need to label parent theme to-do items
 				if ( $location === 'parent' && !is_child_theme() ){
 					$location = '';
 				}
@@ -2756,13 +2755,20 @@ if ( !trait_exists('Dashboard') ){
 				echo '<p><i class="fa-solid fa-fw fa-file-image"></i> <a href="' . $this->get_option('design_reference_link') . '" target="_blank">Design File(s) &raquo;</a></p>';
 			}
 
-			$notable_colors = apply_filters('nebula_notable_colors', array('$primary_color', '$secondary_color')); //Allow other themes and plugins to designate notable colors
+			$notable_colors = apply_filters('nebula_notable_colors', array('$primary_color', '$secondary_color')); //Allow other themes and plugins to designate notable colors. Pass these as Sass variable names or a name => hex value pair.
 
 			$notable_colors_data = array();
-			foreach ( $notable_colors as $notable_color ){
-				$sass_color = $this->sass_color($notable_color);
-				$customizer_color = get_theme_mod(str_replace('$', 'nebula_', $notable_color));
-				$hex_color = ( !empty($sass_color) )? rtrim($sass_color, ';') : $customizer_color;
+			foreach ( $notable_colors as $notable_color => $value ){
+				if ( is_string($notable_color) ){ //If a hex value is provided in an associated array
+					$sass_color = '';
+					$customizer_color = '';
+					$hex_color = $value;
+				} else { //Otherwise a Sass variable color was provided
+					$notable_color = $value;
+					$sass_color = $this->sass_color($value);
+					$customizer_color = get_theme_mod(str_replace('$', 'nebula_', $value));
+					$hex_color = ( !empty($sass_color) )? rtrim($sass_color, ';') : $customizer_color;
+				}
 
 				if ( !empty($hex_color) ){
 					$notable_colors_data[$notable_color] = array(
@@ -2793,13 +2799,22 @@ if ( !trait_exists('Dashboard') ){
 							<div class="design-reference-col">
 								<a class="color-block" href="https://www.colorhexa.com/<?php echo ltrim($notable_color_data['hex'], '#'); ?>" target="_blank" style="background-color: <?php echo $notable_color_data['hex']; ?>;">
 									<span class="tee" style="color: <?php echo $notable_color_data['readable']; ?>;">T</span>
-									<span class="color-contrast-ratio light"><?php echo $notable_color_data['ratios']['white']; ?> <i class="fa fa-<?php echo ( $notable_color_data['ratios']['white'] >= 4.5 )? 'check' : 'times'; ?>"></i></span>
-									<span class="color-contrast-ratio dark"><?php echo $notable_color_data['ratios']['black']; ?> <i class="fa fa-<?php echo ( $notable_color_data['ratios']['black'] >= 4.5 )? 'check' : 'times'; ?>"></i></span>
+									<?php
+										$is_readable_against_white = ($notable_color_data['ratios']['white'] >= 4.5);
+										$is_readable_against_black = ($notable_color_data['ratios']['black'] >= 4.5);
+									?>
+									<span class="color-contrast-ratio light"><?php echo $notable_color_data['ratios']['white']; ?> <i class="fa fa-<?php echo ( $is_readable_against_white )? 'check' : 'times'; ?>"></i></span>
+									<span class="color-contrast-ratio dark"><?php echo $notable_color_data['ratios']['black']; ?> <i class="fa fa-<?php echo ( $is_readable_against_black )? 'check' : 'times'; ?>"></i></span>
 								</a>
 								<div>
 									<strong><?php echo $notable_color_data['name']; ?></strong><br />
 									Hex <?php echo $notable_color_data['hex']; ?><br />
 									RGB <?php echo $notable_color_data['rgb']['r'] . ', ' . $notable_color_data['rgb']['g'] . ', ' . $notable_color_data['rgb']['b']; ?><br />
+									<?php if ( str_contains(strtolower($notable_color_data['name']), 'primary') && !$is_readable_against_white ): ?>
+										<small class="white-bg-warning text-danger"><i class="fa-solid fa-fw fa-triangle-exclamation"></i> Primary color cannot be used on light backgrounds!</small>
+									<?php elseif ( ($notable_color_data['ratios']['white'] >= 4.5 && $notable_color_data['ratios']['white'] < 4.7) || ($notable_color_data['ratios']['black'] >= 4.5 && $notable_color_data['ratios']['black'] < 4.7) ): ?>
+										<small class="text-caution" title="This color barely meets minimum with pure white or black."><i class="fa-solid fa-fw fa-circle-info"></i> Limited flexibility!</small>
+									<?php endif; ?>
 								</div>
 							</div>
 						<?php endforeach; ?>
@@ -2807,7 +2822,34 @@ if ( !trait_exists('Dashboard') ){
 						<p>Define a brand color (in the Customizer or Sass) to see contrast ratio information here.</p>
 					<?php endif; ?>
 				</div>
+
+				<div id="nebula-color-tester" class="collapsed">
+					<h4><i class="fa-solid fa-fw fa-adjust"></i> Color Contrast Tester</h4>
+
+					<div id="nebula-contrast-tester-colors">
+						<?php foreach ( array('foreground' => '#ffffff', 'background' => $this->get_color('primary')) as $color => $value ): ?>
+							<div class="color-group">
+								<div>
+									<label><strong><?php echo ucwords($color); ?> Color</strong></label>
+								</div>
+								<div>
+									<input type="color" id="nebula-<?php echo $color; ?>" value="<?php echo $value; ?>" />
+									<input type="text" id="nebula-<?php echo $color; ?>-hex" value="<?php echo $value; ?>" />
+									<input type="number" id="nebula-<?php echo $color; ?>-brightness" min="-100" max="100" step="1" value="0" /> <span title="Use brightness to change the shade without altering the original hue">Brightness <small>(±100)</small></span>
+								</div>
+							</div>
+						<?php endforeach; ?>
+					</div>
+
+					<div id="nebula-contrast-preview" contenteditable>Sample Text</div>
+
+					<div id="nebula-contrast-results-group">Contrast Ratio: <span id="nebula-contrast-result"><strong id="nebula-contrast-ratio"></strong> <span id="nebula-contrast-grade"></span></span></div>
+
+					<ul id="nebula-contrast-warnings" class="nebula-fa-ul hidden text-danger"></ul>
+				</div>
 			<?php
+
+			do_action('nebula_design_reference_metabox');
 
 			if ( $this->get_option('additional_design_references') ){
 				echo '<p><strong>Additional Notes:</strong><br />' . $this->get_option('additional_design_references') . '</p>';

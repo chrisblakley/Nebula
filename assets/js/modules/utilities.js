@@ -938,6 +938,39 @@ nebula.singularPlural = function(value, singular, plural=''){
 	return plural;
 };
 
+nebula.hexToLrgb = function(hex){
+	hex = hex.replace('#', '');
+	let bigint = parseInt(hex, 16);
+	let r = ((bigint >> 16) & 255) / 255;
+	let g = ((bigint >> 8) & 255) / 255;
+	let b = (bigint & 255) / 255;
+
+	let channel = c => (c <= 0.03928)? c/12.92 : Math.pow((c+0.055)/1.055, 2.4);
+	return [channel(r), channel(g), channel(b)];
+};
+
+//Adjust hex color brightness by percent (-100 to +100)
+nebula.adjustBrightness = function(hex, percent){
+	hex = hex.replace('#', '');
+	let r = parseInt(hex.substring(0, 2), 16);
+	let g = parseInt(hex.substring(2, 4), 16);
+	let b = parseInt(hex.substring(4, 6), 16);
+
+	let adjust = (c) => {
+		let adjusted = c + (255 - c)*(percent/100);
+		if ( percent < 0 ){
+			adjusted = c * (1 + percent/100);
+		}
+		return Math.min(255, Math.max(0, Math.round(adjusted)));
+	};
+
+	r = adjust(r);
+	g = adjust(g);
+	b = adjust(b);
+
+	return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+};
+
 //Create desktop notifications
 nebula.desktopNotification = function(title, message = false, clickCallback, showCallback, closeCallback, errorCallback){
 	if ( nebula.checkNotificationPermission() ){

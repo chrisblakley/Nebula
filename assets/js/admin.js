@@ -68,6 +68,7 @@ jQuery(window).on('load', async function(){
 
 		nebula.developerMetaboxes();
 		nebula.simplifiedViewToggle();
+		nebula.designMetaboxes();
 	}
 
 	if ( nebula.screen.base === 'nav-menus' ){

@@ -44,8 +44,8 @@ ul.nebula-fa-ul {margin-left: 1.5em; padding-left: 0;
 }
 
 //Custom Dashboard 2 cols
-.nebula-metabox-row {display: flex; flex-wrap: wrap;
-	.nebula-metabox-col {max-width: calc(50% - 15px); margin-right: 15px;}
+.nebula-metabox-row {display: flex; flex-wrap: wrap; gap: 15px;
+	.nebula-metabox-col {flex: 1 1 calc(50% - 15px);}
 }
 
 //Ensure Dashboard metabox titles are all left-aligned (v5.5+)
@@ -338,19 +338,51 @@ ul#nebula-performance-metrics li {
 
 
 //Design Reference metabox
-.design-reference-col {display: flex; margin-bottom: 15px; margin-right: 20px;
-	.color-block {display: flex; flex-direction: column; width: 50px; padding-top: 10px; padding-bottom: 4px; text-align: center; margin-right: 6px; text-decoration: none; border-radius: 4px;
-		&.primary {background: $primary_color; color: high-contrast-color($primary_color);}
-		&.secondary {background: $secondary_color; color: high-contrast-color($secondary_color);}
+#nebula_design {
+	.nebula-metabox-row {
+		.design-reference-col {display: flex;
+			.nebula-metabox-col:only-child {flex: 1 1 100%; max-width: 100%; margin-right: 0;}
 
-		span {font-size: 10px; line-height: 1;
-			&.tee {font-size: 24px; font-family: serif; padding-bottom: 10px; border-bottom: 1px dotted #fff;}
+			.color-block {display: flex; flex-direction: column; align-self: flex-start; min-width: 50px; padding-top: 10px; padding-bottom: 4px; text-align: center; margin-right: 6px; text-decoration: none; border-radius: 4px;
+				&.primary {background: $primary_color; color: high-contrast-color($primary_color);}
+				&.secondary {background: $secondary_color; color: high-contrast-color($secondary_color);}
+
+				span {font-size: 10px; line-height: 1;
+					&.tee {font-size: 24px; font-family: serif; padding-bottom: 10px; border-bottom: 1px dotted #fff;}
+				}
+			}
+
+			.color-contrast-ratio {display: inline-block; margin-top: 2px; padding: 1px 5px; font-size: 10px;
+				&.light {color: #fff;}
+				&.dark {color: #000;}
+			}
+
+			.white-bg-warning {display: block; margin-top: 3px; line-height: 1.2;}
 		}
 	}
 
-	.color-contrast-ratio {display: inline-block; margin-top: 2px; padding: 1px 5px; font-size: 10px;
-		&.light {color: #fff;}
-		&.dark {color: #000;}
+	#nebula-color-tester {position: relative; height: auto; transition: all 0.5s ease; border: 1px dotted grey; background: #f6f6f6; padding: 10px 15px; border-radius: 6px; overflow: hidden; margin-top: 15px; margin-bottom: 15px;
+		&.collapsed {height: 18px; padding-top: 5px; padding-bottom: 5px; cursor: pointer;
+			&:after {content: "▼"; position: absolute; right: 15px; top: 0; bottom: 0; align-content: center;}
+			&:hover {background: lightgrey;}
+		}
+
+		h4 {font-size: 13px;}
+
+		#nebula-contrast-tester-colors {display: flex; gap: 12px; justify-content: space-between; flex-wrap: wrap; margin: 10px 0;
+			.color-group {display: flex; flex-direction: column; gap: 5px;
+				label {font-size: 14px;}
+			}
+		}
+
+		input[type="color"] {border-color: #8c8f94;}
+		input[type="text"] {width: 80px; min-height: 27px; font-size: 12px;}
+
+		#nebula-contrast-preview {margin-top: 12px; padding: 8px; border-radius: 4px; text-align: center; font-size: 16px;}
+
+		#nebula-contrast-results-group {text-align: center; margin-top: 10px; font-size: 15px;}
+
+		#nebula-contrast-warnings {list-style: none; padding: 0; margin-top: 10px; font-size: 12px;}
 	}
 }
 
