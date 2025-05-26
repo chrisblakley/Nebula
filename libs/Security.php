@@ -96,6 +96,10 @@ if ( !trait_exists('Security') ){
 			if ( $this->is_minimal_mode() ){return null;}
 			$this->timer('Block Obvious Bad Requests', 'start', '[Nebula] Security');
 
+			if ( $this->is_cli() ){
+				return null;
+			}
+
 			if ( $this->get_option('block_obvious_bad_requests') ){ //Only when Nebula option is enabled
 				//Check User Agents
 				$banned_user_agents = apply_filters('nebula_banned_user_agents', array(

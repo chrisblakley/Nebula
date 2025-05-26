@@ -25,7 +25,7 @@ if ( !trait_exists('Utilities') ){
 			$this->DeviceHooks(); //Register Device hooks
 			$this->SassHooks(); //Register Sass hooks
 
-			if ( (is_user_logged_in() || $this->is_auditing()) && !$this->is_background_request() && !is_customize_preview() ){
+			if ( (is_user_logged_in() || $this->is_auditing()) && !$this->is_background_request() && !$this->is_cli() && !is_customize_preview() ){
 				$this->WarningsHooks(); //Register Warnings hooks
 			}
 
@@ -53,6 +53,12 @@ if ( !trait_exists('Utilities') ){
 			static $memoized = array(); //Prepare to memoize the output so it only has to be calculated once or twice (depending on anonymization)
 			$memoize_key = ( $anonymize )? 'anonymized' : 'full';
 			if ( array_key_exists($memoize_key, $memoized) ){
+				return $memoized[$memoize_key];
+			}
+
+			//Return a local IP during WP CLI
+			if ( $this->is_cli() ){
+				$memoized[$memoize_key] = '127.0.0.1';
 				return $memoized[$memoize_key];
 			}
 
@@ -480,7 +486,7 @@ if ( !trait_exists('Utilities') ){
 				return false;
 			}
 
-			if ( $this->get_option('audit_mode') || isset($this->super->get['audit']) ){
+			if ( isset($this->super->get['audit']) ){
 				if ( current_user_can('manage_options') || $this->is_dev() || $this->is_client() ){
 					$this->once('is_auditing', function(){
 						do_action('qm/info', 'Audit Mode is active');
@@ -649,6 +655,10 @@ if ( !trait_exists('Utilities') ){
 		public function requested_url($host="HTTP_HOST"){ //Can use "SERVER_NAME" as an alternative to "HTTP_HOST".
 			$override = apply_filters('pre_nebula_requested_url', null, $host);
 			if ( isset($override) ){return $override;}
+
+			if ( $this->is_cli() ){
+				return null;
+			}
 
 			$protocol = ( is_ssl() )? 'https' : 'http';
 			$full_url = $protocol . '://' . $this->super->server["$host"] . $this->super->server["REQUEST_URI"];
@@ -1413,6 +1423,15 @@ if ( !trait_exists('Utilities') ){
 			return false;
 		}
 
+		//If this request is via WP CLI
+		public function is_cli(){
+			if ( defined('WP_CLI') && WP_CLI ){
+				return true;
+			}
+
+			return false;
+		}
+
 		//If this request is using AJAX, REST API, CRON, or some other type of background request. This can be used to ignore non-essential/visual functionality to speed up those requests.
 		public function is_background_request(){
 			//Check for AJAX (including the WP Heartbeat)
@@ -1456,10 +1475,7 @@ if ( !trait_exists('Utilities') ){
 				return true;
 			}
 
-			//CLI
-			if ( defined('WP_CLI') && WP_CLI ){
-				return true;
-			}
+			//Note: WP CLI is not considered a background request
 
 			return false;
 		}
@@ -1479,8 +1495,19 @@ if ( !trait_exists('Utilities') ){
 			$request_uri = $this->super->server['REQUEST_URI'] ?? '';
 
 			//Ignore certain directories
-			if ( str_contains($request_uri, 'wp-content') || str_contains($request_uri, 'wp-includes') || str_contains($request_uri, 'wp-json') ){
-				return 'uri contains ignored directories';
+			$ignored_directories = array('wp-content', 'wp-includes', 'wp-json');
+			foreach ( $ignored_directories as $ignored_directory ){
+				if ( str_contains($request_uri, $ignored_directory) ){
+					return 'uri contains ignored directory (' . $ignored_directory . ')';
+				}
+			}
+
+			//Ignore any additionally provided rules
+			$additional_uri_ignores = apply_filters('nebula_non_page_request_ignore_rules', array('/offline/')); //Allow others to add or modify these rules
+			foreach ( $additional_uri_ignores as $ignore_rule ){
+				if ( str_contains($request_uri, $ignore_rule) ){
+					return 'uri contains additional rule (' . $ignore_rule . ')';
+				}
 			}
 
 			//Ignore non-page file extensions

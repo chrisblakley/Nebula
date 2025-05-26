@@ -6,7 +6,7 @@ if ( !trait_exists('Dashboard') ){
 	trait Dashboard {
 		public function hooks(){
 			//Exclude AJAX requests
-			if ( !$this->is_background_request() ){
+			if ( !$this->is_background_request() && !$this->is_cli() ){
 				//Remove unnecessary Dashboard metaboxes
 				if ( $this->get_option('unnecessary_metaboxes') ){
 					add_action('wp_dashboard_setup', array($this, 'remove_dashboard_metaboxes'));
@@ -29,6 +29,7 @@ if ( !trait_exists('Dashboard') ){
 						add_action('wp_dashboard_setup', array($this, 'file_size_monitor_metabox'));
 						add_action('wp_dashboard_setup', array($this, 'log_viewer_metabox'));
 						add_action('wp_dashboard_setup', array($this, 'ai_code_review_metabox'));
+
 					}
 
 					if ( $this->get_option('performance_metabox') || $this->is_dev() ){ //Devs always see the performance metabox
@@ -48,6 +49,8 @@ if ( !trait_exists('Dashboard') ){
 					}
 				}
 			}
+
+			add_action('wp_ajax_nebula_ai_code_review', array($this, 'ajax_ai_code_review')); //AJAX endpoint
 
 			if ( current_user_can('edit_others_posts') ){
 				add_action('wp_ajax_search_theme_files', array($this, 'search_theme_files'));
@@ -192,11 +195,10 @@ if ( !trait_exists('Dashboard') ){
 					$post_type_stat_description = '<small> (' . $label . ' Views: ' . number_format($view_count) . ')</small>'; //$this->singular_plural($view_count, 'view')
 				}
 
-				$cache_length = ( is_plugin_active('transients-manager/transients-manager.php') )? WEEK_IN_SECONDS : DAY_IN_SECONDS; //If Transient Monitor (plugin) is active, transients with expirations are deleted when posts are published/updated, so this could be infinitely long (as long as an expiration exists).
 				$count_posts = $this->transient('nebula_count_posts_' . $post_type, function($data){
 					$count_posts = wp_count_posts($data['post_type']);
 					return $count_posts;
-				}, array('post_type' => $post_type), $cache_length);
+				}, array('post_type' => $post_type), WEEK_IN_SECONDS);
 
 				$post_count = $count_posts->publish;
 				switch ( $post_type ){
@@ -581,6 +583,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//Loop through array of to-do items and echo markup
 			foreach ( $todo_items as $location => $todos ){
+				//If there is no child theme, we do not need to label parent theme to-do- items
 				if ( $location === 'parent' && !is_child_theme() ){
 					$location = '';
 				}
@@ -962,10 +965,10 @@ if ( !trait_exists('Dashboard') ){
 				}, HOUR_IN_SECONDS);
 			}
 
-			if ( !empty($nebula_404_count) || !empty($redirection_404_count) ){ //If either 404 counter has data, output it
+			if ( !empty($nebula_404_count) || !empty($redirection_404_count) ){ //If either 404 counter has non-0 data, output it
 				$redirection_404_description = '';
 				$nebula_404_description = '';
-				$need_404_labels = ( !empty($nebula_404_count) && !empty($redirection_404_count) )? true : false; //If both systems are active, we need to label the outputs
+				$need_404_labels = ( isset($nebula_404_count) && !empty($redirection_404_count) )? true : false; //If both systems are active, we need to label the outputs
 
 				if ( !empty($redirection_404_count) ){
 					if ( $redirection_404_count >= 999 ){ //If we reached the limit from the above query, assume there are more that weren't counted
@@ -978,7 +981,7 @@ if ( !trait_exists('Dashboard') ){
 					$redirection_404_description = '<strong title="Total count is from the Redirection plugin."><a href="tools.php?page=redirection.php&sub=404s&groupby=url">' . $redirection_404_count . $total_label . '</a></strong>';
 				}
 
-				if ( !empty($nebula_404_count) ){
+				if ( isset($nebula_404_count) ){ //Even if it is 0
 					$user_label = ( $need_404_labels )? ' user' : '';
 					$output_404_delimiter = ( !empty($redirection_404_count) )? ', ' : ''; //If we also have Redirection 404s we need a delimiter
 					$nebula_404_description = $output_404_delimiter . '<span title="This Nebula count attempts to track only human 404 views.">' . number_format($nebula_404_count) . $user_label . '</span>';
@@ -1474,8 +1477,6 @@ if ( !trait_exists('Dashboard') ){
 					'Other' => array('extensions' => array(), 'linkable' => false)
 				));
 
-
-
 				//Default theme directory to scan
 				$directory = get_template_directory();
 				if ( is_child_theme() ){
@@ -1552,7 +1553,7 @@ if ( !trait_exists('Dashboard') ){
 					'requested' => $initial_theme_files_count+count($all_additional_files),
 					'timestamp' => time(),
 				);
-			}, HOUR_IN_SECONDS*4);
+			}, DAY_IN_SECONDS); //This has a link to re-scan, so this transient can be long
 
 			$groups = $files_and_groups['groups'];
 			$files = $files_and_groups['files'];
@@ -2086,79 +2087,49 @@ if ( !trait_exists('Dashboard') ){
 				return false;
 			}
 
-			//If the Log Viewer metabox is active, do not also show this AI Code Review metabox
-			//Disabling this because it resets the "location" of the AI Code Review metabox
-			// if ( isset($_GET['log-viewer']) ){
-			// 	return false;
-			// }
-
 			if ( $this->is_dev() && $this->get_option('ai_code_review') && $this->get_option('openai_api_key') ){
 				wp_add_dashboard_widget('nebula_ai_code_review', '<i class="fa-solid fa-fw fa-robot"></i> &nbsp;AI Code Review', array($this, 'dashboard_ai_code_review'));
 			}
 		}
 
-		//AI Code Review Metabox content
+		//Initialize the AI Code Review metabox
 		public function dashboard_ai_code_review(){
 			$this->timer('Nebula AI Code Review Metabox', 'start', '[Nebula] Dashboard Metaboxes');
+
 			do_action('nebula_ai_code_review');
 
-			//Get a fresh result when requested
 			if ( isset($this->super->get['clear-ai-code-review']) ){
 				delete_transient('nebula_ai_code_review');
 			}
 
-			$this->super->globals['nebula_ai_code_review_used_tokens'] = false; //Global because this needs to get updated from inside the transient closure function below
+			$cached_code_review_output = get_transient('nebula_ai_code_review');
 
-			$code_review_data = $this->transient('nebula_ai_code_review', function(){
-				$function_data = $this->get_random_function();
+			//If we have the response cached in a transient, just output it without needing JavaScript at all
+			if ( $cached_code_review_output ){
+				$this->render_code_review($cached_code_review_output, false); //false = not AJAX
+			} else { //Otherwise, we need new code via JavaScript (so it does not block page render in PHP)
+				echo '<div id="nebula-ai-review-placeholder"><em>Waiting for JS initialize AI...</em></div>';
+			}
 
-				if ( !empty($function_data) ){
-					$prompt = $this->ai_prepare_code_review_prompt($function_data['function']);
+			$this->timer('Nebula AI Code Review Metabox', 'end');
+		}
 
-					//Estimate the number of tokens this prompt would use
-					$token_estimate = $this->ai_estimate_tokens($prompt);
+		//Render the AI code review output HTML
+		private function render_code_review($code_review_data, $is_ajax){
+			if ( empty($code_review_data) || is_string($code_review_data) ){
+				echo '<span class="text-danger"><i class="fa-solid fa-fw fa-triangle-exclamation"></i> ' . $code_review_data . '</span>';
 
-					if ( $token_estimate === false ){
-						echo '<p><strong>Error:</strong> Could not estimate token usage for ' . $function_data['name'] . ' <small>(' . $function_data['filepath'] . ')</small>. <em>Reload the page to try a different function.</em></p>';
-						return;
-					}
-
-					$token_limit = apply_filters('nebula_ai_code_review_token_limit', 3000); //Allow others to modify the local approximate token limit
-
-					if ( $token_estimate >= $token_limit ){
-						echo '<p><strong>High Token Usage.</strong><br/>' . $function_data['name'] . ' <small>(' . $function_data['filename'] . ')</small> was not AI reviewed due to the high token usage (' . $token_estimate . '). <em>Reload the page to try a different function.</em></p>';
-						return;
-					}
-
-					$response = $this->ai_run_prompt($prompt); //Run the prompt
-
-					//If the response is a string (instead of an array), there was probably an error. Output that message and stop without caching.
-					if ( is_string($response) ){
-						echo '<p>' . $response . '</p>';
-						return;
-					}
-
-					$this->super->globals['nebula_ai_code_review_used_tokens'] = true; //This only runs if the cache is not hit
-
-					$code_review_data = array(
-						'token_estimate' => $token_estimate,
-						'function' => $function_data,
-						'response' => $response,
-					);
-
-					return $code_review_data;
+				if ( $is_ajax ){
+					wp_die();
 				}
-			}, (strtotime('today 23:59:59', time())-time()), false); //Expire tonight at midnight (false indicates we don't want fresh data on Sass reprocessing or when similar query parameter exist that bypass the transient cache
-
-			if ( empty($code_review_data) ){
-				echo 'No code review response data';
 				return;
 			}
 
-			//If a string response somehow is stored in cache, output it now with the ability to retry the prompt
 			if ( is_string($code_review_data['response']) ){
-				echo $code_review_data['response'];
-				echo ' <a href="' . admin_url('?clear-ai-code-review') . '">Retry?</a>';
+				echo $code_review_data['response'] . ' <a href="' . admin_url('?clear-ai-code-review') . '">Retry?</a>';
+				if ( $is_ajax ){
+					wp_die();
+				}
 				return;
 			}
 
@@ -2177,7 +2148,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<p>';
 				echo '<small><i class="fa-solid fa-fw fa-robot"></i> Model: ' . $code_review_data['response']['model'] . '</small><br/>';
 
-				if ( $this->super->globals['nebula_ai_code_review_used_tokens'] ){
+				if ( $is_ajax && isset($code_review_data['response']['total_tokens']) ){
 					$cost_estimate = '$' . number_format(($code_review_data['response']['total_tokens']/1000)*0.001, 4);
 					echo '<small><i class="fa-solid fa-fw fa-coins"></i> <a href="https://platform.openai.com/settings/organization/usage" target="_blank" rel="noopener noreferrer">Token Usage</a>: ' . number_format($code_review_data['response']['total_tokens']) . ' (roughly ' . $cost_estimate . ')</small>';
 				} else {
@@ -2186,7 +2157,54 @@ if ( !trait_exists('Dashboard') ){
 				}
 			echo '</p>';
 
-			$this->timer('Nebula AI Code Review Metabox', 'end');
+			if ( $is_ajax ){
+				wp_die();
+			}
+		}
+
+		//Choose a function to review, generate the prompt, and then call the AI endpoint
+		public function ajax_ai_code_review(){
+			$code_review_data = get_transient('nebula_ai_code_review');
+
+			$this->super->globals['ai_code_review_status'] = '';
+
+			if ( !$code_review_data ){
+				$code_review_data = $this->transient('nebula_ai_code_review', function(){
+					$function_data = $this->get_random_function();
+
+					if ( empty($function_data) ){
+						$this->super->globals['ai_code_review_status'] = 'Could not choose a random function';
+						return;
+					}
+
+					$prompt = $this->ai_prepare_code_review_prompt($function_data['function']);
+					$token_estimate = $this->ai_estimate_tokens($prompt);
+
+					if ( $token_estimate === false || $token_estimate >= apply_filters('nebula_ai_code_review_token_limit', 3000) ){
+						$this->super->globals['ai_code_review_status'] = 'The selected function ("' . $function_data['name'] . '" from ' . $function_data['filename'] . ') would use too many tokens to review. Reload to try a different function.';
+						return;
+					}
+
+					$response = $this->ai_run_prompt($prompt);
+
+					if ( is_string($response) ){
+						$this->super->globals['ai_code_review_status'] = 'AI Response: ' . $response;
+						return;
+					}
+
+					return array(
+						'token_estimate' => $token_estimate,
+						'function' => $function_data,
+						'response' => $response,
+					);
+				}, (strtotime('today 23:59:59', time())-time()), false);
+			}
+
+			if ( empty($code_review_data) ){
+				$code_review_data = 'Error: ' . $this->super->globals['ai_code_review_status'];
+			}
+
+			$this->render_code_review($code_review_data, true);
 		}
 
 		//Get a random function to use for AI code review
@@ -2318,15 +2336,28 @@ if ( !trait_exists('Dashboard') ){
 		private function ai_prepare_code_review_prompt($function_code){
 			$prompt = '';
 
-			$prompt .= "You are a senior WordPress engineer and security consultant. Unless otherwise noted, assume all functions, methods, and variables referenced in the code exist elsewhere in the theme or plugin. Do not worry about modern PHP functions that may not be supported in older versions.\n\n";
-			$prompt .= "Your task is to review the following function used in a WordPress theme or plugin. Critique it with the following structure:\n\n";
-			$prompt .= "## Summary – What the function appears to do including a brief mention of any strenghts. Always output the Summary heading first as a H2 heading tag. All other sections should be output with a H3 heading tag.\n";
-			$prompt .= "### 🚨 Critical Issues – If any catastrophic problems are present call them out here. If no mission critical issues exist do not output this section at all (not even the heading). Do not output this as N/A instead do not ouput this section at all.\n";
-			$prompt .= "### Findings – Describe any concerns about logic, security, performance, and general code quality, clearly identifying the problems. Also consider if serious lack of comments are a problem. Do not worry about trivial issues. Do not worry about code compatibility with older PHP versions.\n";
-			$prompt .= "### Recommendations – Provide specific recommendations or fixes addressing the feindings, including code examples if applicable. Do not reiterate or repeat the findings. Be as brief as possible with these recommendations.\n";
-			$prompt .= "#### WordPress Best Practices – Evaluate functionality where native WordPress functions, constants, patterns, systems, or other native features may reduce redundancy or improve performance. Only provide recommendations if native WordPress functions or APIs exist that can replace or improve the custom functionality; if none apply, do not output this section at all (not even the heading). If the function does not use any native WordPress functions or APIs and would not benefit from them do not output this section at all. Do not output this as N/A instead do not ouput this section at all.\n\n";
-			$prompt .= "### Improved Version – If appropriate, provide a revised version of the function that addresses the issues and follows best practices.\n\n";
-			$prompt .= "Respond in simple markdown format using only basic elements like headings, paragraphs, bold, code, and bullet lists. Do not use italics.\n\n";
+			$prompt .= "You are a senior WordPress engineer and security consultant.\n\n";
+			$prompt .= "Your task is to review the following function used in a WordPress theme or plugin. Unless otherwise noted, assume all functions, methods, and variables referenced in the code exist elsewhere in the theme or plugin.\n";
+			$prompt .= "Focus on feasibility and meaningful concerns rather than being nitpicky. Use a professional, concise tone. Avoid verbosity, filler, or overly academic language.\n";
+			$prompt .= "Consider this a peer code review: be constructive, not pedantic. Assume the developer is skilled and seeking clarity on any significant issues.\n\n";
+
+			$prompt .= "## Summary – Very briefly explain what the function appears to do, including any notable strengths. Aim for 50 words or fewer. Always output this section as a H2 heading tag. All other sections should use H3 tags.\n";
+
+			$prompt .= "### 🚨 Critical Issues – Identify any catastrophic problems. If none exist, do not include this section at all (not even the heading). Do not output 'N/A'.\n";
+
+			$prompt .= "### Findings – Describe concerns about logic, security, performance, or general code quality. Avoid minor stylistic preferences or subjective opinions unless they have a meaningful impact.\n";
+			$prompt .= "Consider whether the function lacks critical comments, but do not comment on trivial issues. Do not worry about a lack of PHPDoc comments.\n";
+			$prompt .= "Ignore compatibility with older PHP versions, older browsers, the global `nebula` object, and the absence of unit or integration tests.\n";
+			$prompt .= "Limit findings to a maximum of 5. If more exist, prioritize only the most important ones. However, do not use an ordered list to output. If listing items, use an unordered list for bullets.\n";
+
+			$prompt .= "### Recommendations – Provide specific improvements or fixes for the findings, including brief code examples if helpful. Be concise. Do not repeat the finding text.\n";
+
+			$prompt .= "#### WordPress Best Practices – Suggest replacing or improving custom functionality with native WordPress functions, constants, or patterns *only if relevant*. If none apply, omit this section entirely (including the heading).\n";
+
+			$prompt .= "### Improved Version – If appropriate, provide a revised version of the function that addresses the issues and follows best practices. Include a brief DocBlock summarizing the function and its parameters.\n\n";
+
+			$prompt .= "Respond in simple markdown format using only basic elements: headings, paragraphs, bold, code, and bullet lists. Do not use italics.\n\n";
+
 			$prompt .= "Here is the function:\n\n";
 			$prompt .= "```php\n" . $function_code . "\n```";
 
@@ -2349,7 +2380,7 @@ if ( !trait_exists('Dashboard') ){
 		}
 
 		//Run the actual prompt through OpenAI API (spending tokens)
-		private function ai_run_prompt($prompt, $model='gpt-3.5-turbo'){
+		private function ai_run_prompt($prompt, $model='gpt-4.1-mini'){
 			if ( !is_user_logged_in() || !$this->is_dev() || !$this->get_option('ai_features') || !$this->get_option('ai_code_review') ){
 				return false;
 			}
@@ -2360,7 +2391,15 @@ if ( !trait_exists('Dashboard') ){
 				return 'No OpenAI API Key exists.';
 			}
 
-			$ai_model = apply_filters('nebula_ai_gpt_model', $model); //Allow others to change the GPT model. Ex: 'gpt-3.5-turbo' (cheap, lower quality), 'gpt-4' (really expensive), 'gpt-4o' (somewhat expensive)
+			//OpenAI Model Comparison: https://platform.openai.com/docs/models
+			$ai_model = apply_filters('nebula_ai_gpt_model', $model); //Allow others to change the GPT model.
+			//Examples:
+				//'gpt-3.5-turbo' (cheap, lower quality. i would avoid it as it is unhelpful.)
+				//'gpt-4' (super expensive. avoid)
+				//'gpt-4o' (somewhat expensive)
+				//'gpt-4o-mini' (smarter than 3.5-turbo but still inexpensive)
+				//'gpt-4.1-mini' (i like the idea of this one, but haven't gotten it to work yet due to timeouts)
+				//'gpt-4.1-nano' (dont love this one)
 
 			$data = array(
 				'model' => $ai_model,
@@ -2380,7 +2419,7 @@ if ( !trait_exists('Dashboard') ){
 					'Authorization' => 'Bearer ' . $api_key,
 				),
 				'body' => json_encode($data),
-				'timeout' => 15, //15-20 seconds is often too short, but I don't want to hold up load time for even longer...
+				'timeout' => 30,
 			));
 
 			if ( is_wp_error($response) ){
@@ -2794,15 +2833,14 @@ if ( !trait_exists('Dashboard') ){
 		}
 
 		public function dashboard_nebula_github(){
-			$this->timer('Nebula Companion GitHub Dashboard', 'start', '[Nebula] Dashboard Metaboxes');
+			$this->timer('Nebula GitHub Dashboard', 'start', '[Nebula] Dashboard Metaboxes');
 			echo '<p><a href="' . $this->get_option('github_url', '') . '" target="_blank">GitHub Repository &raquo;</a></p>';
 
-			$repo_name = str_replace('https://github.com/', '', $this->get_option('github_url', ''));
-			$github_personal_access_token = $this->get_option('github_pat', '');
-
 			//Commits
-			$github_commit_json = get_transient('nebula_github_commits');
-			if ( empty($github_commit_json) || $this->is_debug() ){
+			$github_commit_json = $this->transient('nebula_github_commits', function(){
+				$repo_name = str_replace('https://github.com/', '', $this->get_option('github_url', ''));
+				$github_personal_access_token = $this->get_option('github_pat', '');
+
 				$commits_response = $this->remote_get('https://api.github.com/repos/' . $repo_name . '/commits', array(
 					'headers' => array(
 						'Authorization' => 'token ' . $github_personal_access_token,
@@ -2814,9 +2852,8 @@ if ( !trait_exists('Dashboard') ){
 					return null;
 				}
 
-				$github_commit_json = $commits_response['body'];
-				set_transient('nebula_github_commits', $github_commit_json, HOUR_IN_SECONDS*3); //3 hour expiration
-			}
+				return $commits_response['body'];
+			}, DAY_IN_SECONDS);
 
 			$commits = json_decode($github_commit_json);
 
@@ -2854,8 +2891,10 @@ if ( !trait_exists('Dashboard') ){
 			echo '<div class="nebula-metabox-col">';
 			echo '<strong>Recent Issues, Pull Requests, &amp; Discussions</strong><br />';
 
-			$github_combined_posts = get_transient('nebula_github_posts');
-			if ( empty($github_combined_posts) || $this->is_debug() ){
+			$github_combined_posts = $this->transient('nebula_github_posts', function(){
+				$repo_name = str_replace('https://github.com/', '', $this->get_option('github_url', ''));
+				$github_personal_access_token = $this->get_option('github_pat', '');
+
 				//Get the Issues first https://developer.github.com/v3/issues/
 				//Note: The Issues endpoint also returns pull requests (which is fine because we want that)
 				$issues_response = $this->remote_get('https://api.github.com/repos/' . $repo_name . '/issues?state=open&sort=updated&direction=desc&per_page=3', array(
@@ -2886,10 +2925,8 @@ if ( !trait_exists('Dashboard') ){
 				$github_discussions_json = json_decode($discussions_response['body']);
 
 				//Then combine the issues and discussions by most recent first
-				$github_combined_posts = wp_json_encode($github_issues_json); //Replace this when discussions api is available
-
-				set_transient('nebula_github_posts', $github_combined_posts, MINUTE_IN_SECONDS*30); //30 minute expiration
-			}
+				return wp_json_encode($github_issues_json); //Replace this when discussions api is available
+			}, DAY_IN_SECONDS);
 
 			$github_combined_posts = json_decode($github_combined_posts);
 
@@ -2922,7 +2959,7 @@ if ( !trait_exists('Dashboard') ){
 
 			echo '<p><small>View all <a href="' . $this->get_option('github_url', '') . '/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" target="_blank">issues</a>, <a href="' . $this->get_option('github_url', '') . '/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc" target="_blank">pull requests</a>, or <a href="' . $this->get_option('github_url', '') . '/discussions" target="_blank">discussions &raquo;</a></small></p>';
 			echo '</div></div>';
-			$this->timer('Nebula Companion GitHub Dashboard', 'end');
+			$this->timer('Nebula GitHub Dashboard', 'end');
 		}
 
 		//Hubspot Contacts

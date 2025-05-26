@@ -19,11 +19,6 @@
 <main id="content-section" role="main">
 	<div class="container">
 		<div class="row">
-			<div class="col">
-				<?php nebula()->breadcrumbs(); ?>
-			</div><!--/col-->
-		</div><!--/row-->
-		<div class="row">
 			<div id="top" class="col">
 				<article id="post-0" class="post error404 not-found">
 					<?php if ( get_theme_mod('title_location') === 'content' ): ?>

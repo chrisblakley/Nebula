@@ -9,7 +9,7 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Analytics') ){
 	trait Analytics {
 		public function hooks(){
-			if ( !$this->is_background_request() && !is_customize_preview() && !$this->is_non_page_request() ){
+			if ( !$this->is_background_request() && !$this->is_cli() && !is_customize_preview() && !$this->is_non_page_request() ){
 				add_action('template_redirect', array($this, 'attribution_tracking'));
 
 				add_filter('the_permalink_rss', array($this, 'add_utm_to_feeds'), 100);
@@ -586,7 +586,11 @@ if ( !trait_exists('Analytics') ){
 		public function get_404_count(){
 			$stats = get_transient('nebula_analytics_404_views');
 
-			if ( !is_array($stats) ){
+			if ( !$this->is_transients_enabled() ){
+				return null;
+			}
+
+			if ( !is_array($stats) ){ //If it is empty
 				return 0;
 			}
 

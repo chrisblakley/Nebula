@@ -24,15 +24,15 @@ if ( !trait_exists('Admin') ){
 			$this->UsersHooks(); //Register Users hooks
 
 			//All admin pages (including AJAX requests)
-			if ( $this->is_admin_page() ){
+			if ( $this->is_admin_page() && !$this->is_cli() ){
 				add_filter('nebula_brain', array($this, 'admin_brain'));
 				add_action('save_post', array($this, 'index_now_post'), 10, 2); //When a post is saved (or when *starting* a new post)
 
-				add_action('save_post', array($this, 'clear_transients')); //When a post is saved (or when *starting* a new post)
-				add_action('profile_update', array($this, 'clear_transients'));
+				add_action('save_post', array($this, 'delete_transients')); //When a post is saved (or when *starting* a new post)
+				add_action('profile_update', array($this, 'delete_transients'));
 
 				if ( isset($this->super->get['clear-transients']) ){
-					add_action('init', array($this, 'clear_transients'));
+					add_action('init', array($this, 'delete_transients'));
 				}
 
 				add_action('admin_init', array($this, 'clear_all_w3_caches'));
@@ -64,7 +64,7 @@ if ( !trait_exists('Admin') ){
 			}
 
 			//Non-AJAX admin pages
-			if ( $this->is_admin_page() && !$this->is_background_request() ){
+			if ( $this->is_admin_page() && !$this->is_background_request() && !$this->is_cli() ){
 				add_action('admin_head', array($this, 'admin_favicon'));
 				add_action('admin_head', array($this, 'admin_ga_pageview'));
 				add_filter('admin_body_class', array($this, 'admin_body_classes'));
@@ -248,7 +248,7 @@ if ( !trait_exists('Admin') ){
 		}
 
 		//Force expire query transients when posts/pages are saved
-		public function clear_transients(){
+		public function delete_transients(){
 			if ( $this->is_minimal_mode() ){return null;}
 			$this->timer('Clear Transients');
 
@@ -283,6 +283,7 @@ if ( !trait_exists('Admin') ){
 
 				foreach ( $all_transients_to_delete as $transient_to_delete ){
 					delete_transient($transient_to_delete);
+					$this->cli_output('Deleted transient: ' . $transient_to_delete);
 				}
 			//}
 

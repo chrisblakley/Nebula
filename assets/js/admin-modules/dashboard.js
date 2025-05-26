@@ -220,8 +220,35 @@ nebula.developerMetaboxes = function(){
 		});
 	}
 
-	//Copy AI Code Review Prompt and open the AI tool in a new window
-	if ( jQuery('#review-continue-wrapper').length ){
+
+	//AI Code Review Metabox
+	if ( jQuery('#nebula_ai_code_review').length ){
+		//Call the AI endpoint for new data if the placeholder exists
+		if ( jQuery('#nebula-ai-review-placeholder').length ){
+			jQuery('#nebula-ai-review-placeholder').html('<i class="fa-solid fa-fw fa-spinner fa-spin"></i> <em>Analyzing code with AI...</em>');
+
+			fetch(nebula.site.ajax.url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: new URLSearchParams({
+					action: 'nebula_ai_code_review',
+					security: nebula.site.ajax.nonce
+				})
+			}).then(function(response){
+				return response.text();
+			}).then(function(html){
+				jQuery('#nebula-ai-review-placeholder').html(html);
+			});
+		}
+
+		jQuery('#reviewed-expand-code').on('click', function(){
+			jQuery('#nebula-ai-response').removeClass('collapsed');
+			return false;
+		});
+
+		//Copy AI Code Review Prompt and open the AI tool in a new window
 		jQuery('#review-continue-wrapper a').on('click', function(e){
 			e.preventDefault();
 

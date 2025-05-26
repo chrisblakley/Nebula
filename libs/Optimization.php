@@ -9,14 +9,14 @@ if ( !trait_exists('Optimization') ){
 		public function hooks(){
 			$this->deregistered_assets = array('styles' => array(), 'scripts' => array());
 
-			if ( !$this->is_background_request() && !is_customize_preview() ){
+			if ( !$this->is_background_request() && !$this->is_cli() && !is_customize_preview() ){
 				add_action('send_headers', array($this, 'nebula_early_hints_ob_start'));
 				add_action('wp_print_scripts', array($this, 'styles_early_hints_header'), 9998); //Run this last to get all enqueued scripts
 				add_action('wp_print_scripts', array($this, 'scripts_early_hints_header'), 9999); //Run this last to get all enqueued scripts
 			}
 
 			//Optimizations for the front-end (Not WordPress Admin or BG requests)
-			if ( !$this->is_background_request() ){
+			if ( !$this->is_background_request() && !$this->is_cli() ){
 				if ( !$this->is_admin_page(true) ){
 					add_filter('wp_enqueue_scripts', array($this, 'defer_async_additional_scripts')); //@todo "Nebula" 0: This may no longer be needed as of WP 6.3 for async and defer script attributes
 					add_action('wp_enqueue_scripts', array($this, 'dequeue_lazy_load_styles'));
@@ -36,7 +36,7 @@ if ( !trait_exists('Optimization') ){
 			add_action('wp_head', array($this, 'prebrowsing'));
 
 			//Dequeue assets depending on when they are hooked for output
-			if ( !$this->is_background_request() ){
+			if ( !$this->is_background_request() && !$this->is_cli() ){
 				add_action('wp_enqueue_scripts', array($this, 'scan_assets'), 9000);
 				add_action('wp_enqueue_scripts', array($this, 'dequeues'), 9001); //Dequeue styles and scripts that are hooked into the wp_enqueue_scripts action
 				add_action('wp_print_styles', array($this, 'dequeues'), 9001); //Dequeue styles that are hooked into the wp_print_styles action
@@ -649,7 +649,7 @@ if ( !trait_exists('Optimization') ){
 		public function scan_assets(){
 			if ( $this->is_minimal_mode() ){return null;}
 
-			if ( !is_admin() && current_user_can('manage_options') && (isset($this->super->get['nebula-scan']) || isset($this->super->get['sass']) || isset($this->super->get['debug']) || $this->get_option('audit_mode')) ){ //Only run on front-end for admin users. Also add a query string so this doesn't run every single pageload
+			if ( !is_admin() && current_user_can('manage_options') && (isset($this->super->get['nebula-scan']) || isset($this->super->get['sass']) || isset($this->super->get['debug'])) ){ //Only run on front-end for admin users. Also add a query string so this doesn't run every single pageload
 				$this->timer('Scan Assets', 'start', '[Nebula] Assets');
 
 				if ( isset($this->super->get['nebula-scan']) && $this->super->get['nebula-scan'] === 'reset' ){ //Use this to reset and re-scan from scratch

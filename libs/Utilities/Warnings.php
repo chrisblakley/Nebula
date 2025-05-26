@@ -7,7 +7,7 @@ if ( !trait_exists('Warnings') ){
 		public $warnings = false;
 
 		public function hooks(){
-			if ( (is_user_logged_in() || $this->is_auditing()) && !$this->is_background_request() && !is_customize_preview() ){
+			if ( (is_user_logged_in() || $this->is_auditing()) && !$this->is_background_request() && !$this->is_cli() && !is_customize_preview() ){
 				add_action('wp_head', array($this, 'console_warnings'));
 				add_action('admin_bar_menu', array($this, 'qm_warnings'));
 				add_filter('nebula_warnings', array($this, 'advanced_warnings'));
@@ -76,14 +76,14 @@ if ( !trait_exists('Warnings') ){
 		}
 
 		//Check for Nebula warnings
-		public function check_warnings(){
+		public function check_warnings($force=false){
 			if ( $this->is_minimal_mode() ){return null;}
 
-			if ( $this->is_background_request() ){
+			if ( $this->is_background_request() && !$force ){
 				return null;
 			}
 
-			if ( $this->is_auditing() || $this->is_warning_level('on') ){
+			if ( $this->is_auditing() || $this->is_warning_level('on') || $force ){
 				//Check object cache first
 				$nebula_warnings = wp_cache_get('nebula_warnings', 'nebula');
 
@@ -248,9 +248,9 @@ if ( !trait_exists('Warnings') ){
 				}
 
 				//Check specific directories for indexing (Apache directory listings)
-				if ( $this->is_transients_enabled() ){ //Don't run these checks without transients because they are too time consuming to run every admin page load
+				if ( $this->is_transients_enabled() || nebula()->is_debug() || nebula()->is_auditing() || $force ){ //Don't run these checks without transients because they are too time consuming to run every admin page load
 					$directory_indexing = get_transient('nebula_directory_indexing');
-					if ( empty($directory_indexing) || nebula()->is_debug() || nebula()->is_auditing() ){ //Use the transient unless ?debug or explicitly auditing
+					if ( empty($directory_indexing) || nebula()->is_debug() || nebula()->is_auditing() || $force ){ //Use the transient unless ?debug or explicitly auditing
 						$directories = array(includes_url(), content_url()); //Directories to test
 						$found_problem = false;
 						foreach ( $directories as $directory ){
@@ -293,7 +293,7 @@ if ( !trait_exists('Warnings') ){
 				}
 
 				//Check individual files for anything unusual
-				if ( nebula()->is_auditing() ){ //Only check all files when auditing
+				if ( nebula()->is_auditing() || $force ){ //Only check all files when auditing
 					$directories_to_scan = array(ABSPATH . '/wp-admin', ABSPATH . '/wp-includes', get_template_directory(), get_stylesheet_directory()); //Change this to simply ABSPATH to scan the entire WordPress directory
 					foreach ( $directories_to_scan as $directory ){
 						foreach ( $this->glob_r($directory . '/*') as $file ){
@@ -512,7 +512,7 @@ if ( !trait_exists('Warnings') ){
 					}
 
 					//Check for SSL when using Service Worker
-					if ( !is_ssl() ){
+					if ( !is_ssl() && !$this->is_cli() ){
 						$nebula_warnings['sw_ssl'] = array(
 							'level' => 'warning',
 							'dismissible' => true,
@@ -605,7 +605,7 @@ if ( !trait_exists('Warnings') ){
 			$this->timer('Advanced Warnings', 'start', '[Nebula] Warnings');
 
 			//Only check these when auditing (not on all pageviews) to prevent undesired server load
-			if ( $this->is_auditing() || $this->is_warning_level('strict') ){
+			if ( $this->is_auditing() || $this->is_warning_level('strict') || $force ){
 				//Check contact email address
 				if ( !$this->get_option('contact_email') ){
 					$default_contact_email = get_option('admin_email', $this->get_user_info('user_email', array('id' => 1)));

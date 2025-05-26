@@ -1153,3 +1153,20 @@ nebula.yield = function(){
 
 	return; //Fall back to nothing (no yielding)
 };
+
+//Check if the Chrome Gemini AI API is available in this browser
+nebula.isBrowserAiAvailable = function(){
+	//Old way (probably delete this)
+	if ( window?.ai?.languageModel && typeof window.ai.languageModel.create === 'function' ){
+		return true;
+	}
+
+	//New way as of May 2025 (Google I/O)
+	if ( LanguageModel && typeof LanguageModel.create == 'function' ){
+		return true;
+	}
+
+	//await LanguageModel.availability()
+
+	return false;
+};

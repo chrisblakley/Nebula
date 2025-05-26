@@ -12,7 +12,7 @@ if ( !trait_exists('Sass') ){
 		public $latest_scss_mtime = 0; //Prep a flag to determine the last modified SCSS file time
 
 		public function hooks(){
-			if ( $this->get_option('scss') && !$this->is_background_request() && !$this->is_non_page_request() && !is_customize_preview() ){
+			if ( $this->get_option('scss') && !$this->is_background_request() && !$this->is_cli() && !$this->is_non_page_request() && !is_customize_preview() ){
 				add_action('init', array($this, 'scss_controller')); //This must be on init so it happens on front-end and back-end. It must also run before warnings are checked in admin_bar_menu (which happens after template_redirect)
 				add_action('nebula_body_open', array($this, 'output_sass_errors')); //Front-end
 				add_action('admin_notices', array($this, 'output_sass_errors')); //Admin (Do not use Nebula Warnings utility for these errors)
@@ -39,6 +39,8 @@ if ( !trait_exists('Sass') ){
 			//Ensure Sass option is enabled
 			if ( $this->get_option('scss') ){
 				$this->timer('Sass (Total)', 'start', '[Nebula] Sass');
+				$this->cli_output('Sass processing started');
+
 				global $pagenow;
 
 				$sass_throttle = get_transient('nebula_sass_throttle'); //This prevents Sass from compiling multiple times in quick succession
@@ -57,7 +59,7 @@ if ( !trait_exists('Sass') ){
 						}
 
 						//Check when Sass processing is allowed to happen
-						if ( !current_user_can('publish_posts') ){ //If the role of this user is lower than necessary
+						if ( !current_user_can('publish_posts') && !$this->is_cli() ){ //If the role of this user is lower than necessary
 							$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass was not processed. It can only be processed by logged in users (per Nebula option).' : $this->sass_process_status;
 							$this->timer('Sass (Total)', 'end');
 							return null;
@@ -66,6 +68,7 @@ if ( !trait_exists('Sass') ){
 						if ( !is_writable(get_template_directory()) || !is_writable(get_template_directory() . '/style.css') ){
 							trigger_error('The template directory or files are not writable. Can not compile Sass files!', E_USER_NOTICE);
 							$this->sass_process_status = ( isset($this->super->get['sass']) )? 'Sass was not processed. The template directory or files are not writable.' : $this->sass_process_status;
+							$this->cli_output($this->sass_process_status, 'error');
 							$this->timer('Sass (Total)', 'end');
 							return null;
 						}
@@ -96,11 +99,11 @@ if ( !trait_exists('Sass') ){
 						$all_scss_locations = apply_filters('nebula_scss_locations', $scss_locations);
 
 						//Check if all Sass files should be rendered
-						if ( $this->is_staff() ){ //Forcing all Sass files to process via query string is only allowed by staff
+						if ( $this->is_staff() || $this->is_cli() ){ //Forcing all Sass files to process via query string is only allowed by staff
 							if ( isset($this->super->get['sass']) || isset($this->super->get['scss']) ){
 								$force_all = true;
 								$this->sass_process_status = ( isset($this->super->get['sass']) )? 'All Sass files were processed forcefully via query string.' : $this->sass_process_status;
-								//$this->clear_transients(); //This increases load time when Sass is processed... do we absolutely need to so this? If not, just clear some individually with this: delete_transient('example_transient_name');
+								//$this->delete_transients(); //This increases load time when Sass is processed... do we absolutely need to so this? If not, just clear some individually with this: delete_transient('example_transient_name');
 								$this->add_log('Sass force re-process requested', 1); //Logging this one because it was specifically requested. The other conditions below are otherwise detected.
 							}
 
@@ -135,6 +138,8 @@ if ( !trait_exists('Sass') ){
 								}
 							}
 						}
+
+						$this->cli_output('Passed status checks and okay to begin processing Sass');
 
 						global $sass_errors;
 						$sass_errors = array();
@@ -188,6 +193,7 @@ if ( !trait_exists('Sass') ){
 
 			if ( $this->get_option('scss') && !empty($location_name) && !empty($location_paths) ){
 				$this->timer('Sass (' . $location_name . ')', 'start');
+				$this->cli_output('Sass location found: ' . $location_name);
 
 				//Require SCSSPHP
 				require_once get_template_directory() . '/inc/vendor/scssphp/scss.inc.php'; //Run the autoloader. SCSSPHP is a compiler for SCSS 3.x
@@ -249,6 +255,7 @@ if ( !trait_exists('Sass') ){
 					$scss_file_path_info = pathinfo($scss_file);
 					$debug_name = str_replace(WP_CONTENT_DIR, '', $scss_file_path_info['dirname']) . '/' . $scss_file_path_info['basename'];
 					$this->timer('Sass File (' . $debug_name . ')');
+					$this->cli_output('Sass file found: ' . $debug_name);
 
 					//Skip file conditions (only if not forcing all)
 					if ( empty($force_all) ){
@@ -307,6 +314,7 @@ if ( !trait_exists('Sass') ){
 									$this->was_sass_processed = true;
 									$this->sass_files_processed[] = $css_filepath;
 									$this->sass_files_processed_count++;
+									$this->cli_output('Processed Sass file: ' . $scss_file, 'success');
 								} catch (\Throwable $error){
 									$unprotected_array = (array) $error;
 									$prefix = chr(0) . '*' . chr(0);
@@ -316,6 +324,7 @@ if ( !trait_exists('Sass') ){
 										'message' => $unprotected_array[$prefix . 'message']
 									);
 
+									$this->cli_output('Sass error processing file: ' . $scss_file, 'error', false);
 									do_action('qm/error', $error);
 
 									continue; //Skip the file that contains errors
@@ -397,6 +406,8 @@ if ( !trait_exists('Sass') ){
 						$this->update_sw_js();
 					}
 				}
+
+				$this->cli_output('Sass processing complete', 'success');
 			});
 
 			return $scss;

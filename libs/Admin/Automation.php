@@ -291,26 +291,31 @@ if ( !trait_exists('Automation') ){
 
 		//Nebula Full Initialization
 		public function initialization(){
-			if ( current_user_can('manage_options') ){
+			if ( current_user_can('manage_options') || $this->is_cli() ){
 				$this->timer('Full Initialization');
+				$this->cli_output('Beginning Nebula Initialization');
+
+				if ( !$this->is_initialized_before() ){
+					$this->cli_output('Nebula has not been initialized before for this website');
+					$this->update_data('initialized', time());
+				} else {
+					$this->cli_output('Nebula has been initialized before for this website. Proceeding anyway.', 'warning');
+				}
 
 				$this->usage('initialization');
 				$this->add_log('Theme settings have been re-initialized.', 7);
 				$this->full_automation();
 				$this->initialization_email_prev_settings();
 
-				if ( !$this->get_data('initialized') ){
-					$this->update_data('initialized', time());
-				}
-
 				$activated_child = $this->initialization_activate_child_theme();
 
 				$this->scss_controller(true); //Re-render all SCSS files.
 
-				if ( $activated_child ){
+				if ( $activated_child && !$this->is_cli() ){
 					wp_redirect(admin_url('/themes.php?initialization-success'), 301); //Redirect to show new theme activated
 				}
 
+				$this->cli_output('Nebula initialization complete', 'success');
 				$this->timer('Full Initialization', 'end');
 			}
 		}
@@ -331,10 +336,18 @@ if ( !trait_exists('Automation') ){
 				return;
 			}
 
-			$current_user = wp_get_current_user();
+			$this->cli_output('Emailing previous settings backup file to administrators');
+
+			$user_output = '';
+			if ( $this->is_cli() ){
+				$user_output = 'WP-CLI';
+			} else {
+				$current_user = wp_get_current_user();
+				$user_output = $current_user->display_name . ' <' . $current_user->user_email . '>';
+			}
 
 			$subject = 'Wordpress theme settings reset for ' . get_bloginfo('name');
-			$message = '<p>Wordpress settings have been re-initialized for <strong>' . get_bloginfo('name') . '</strong> by <strong>' . $current_user->display_name . ' <' . $current_user->user_email . '></strong> on <strong>' . date('F j, Y') . '</strong> at <strong> ' . date('g:ia') . '</strong>.</p>';
+			$message = '<p>Wordpress settings have been re-initialized for <strong>' . get_bloginfo('name') . '</strong> by <strong>' . $user_output . '</strong> on <strong>' . date('F j, Y') . '</strong> at <strong> ' . date('g:ia') . '</strong>.</p>';
 
 			global $wpdb;
 			$query_result = $wpdb->query('SELECT * FROM ' . $wpdb->options, ARRAY_A); //DB Query - Query all WP Options and return as an associative array
@@ -348,11 +361,13 @@ if ( !trait_exists('Automation') ){
 			$attachments = array($options_backup_file);
 
 			send_email_to_admins($subject, $message, $attachments);
-			unlink($options_backup_file);
+			unlink($options_backup_file); //Delete the backup file after emailing
 		}
 
 		//Create Homepage
 		public function initialization_create_homepage(){
+			$this->cli_output('Creating a home page');
+
 			$current_front_page = get_option('page_on_front');
 			$sample_page = get_page_by_title('Sample Page');
 			if ( empty($current_front_page) || $current_front_page === $sample_page ){
@@ -371,8 +386,10 @@ if ( !trait_exists('Automation') ){
 			}
 		}
 
-		//Nebula preferred default Wordpress settings
+		//Create Nebula Options and Data with default values
 		public function initialization_nebula_defaults($force=false){
+			$this->cli_output('Creating Nebula Options with default values');
+
 			$nebula_defaults_created_option = $this->get_data('defaults_created');
 
 			//If defaults have not been created or if forcing defaults
@@ -387,7 +404,10 @@ if ( !trait_exists('Automation') ){
 			}
 		}
 
+		//Nebula preferred default Wordpress settings
 		public function initialization_wp_core_preferred_settings(){
+			$this->cli_output('Updating preferred WordPress settings');
+
 			global $wp_rewrite;
 
 			//Update certain Wordpress Core options
@@ -409,6 +429,7 @@ if ( !trait_exists('Automation') ){
 				update_user_option($user->ID, 'managenav-menuscolumnshidden', array(0 => 'xfn', 1 => 'description'), true); //Set "Screen Options" (values in this array are unchecked and hidden)
 			}
 
+			$this->cli_output('Flushing rewrite rules');
 			$wp_rewrite->flush_rules();
 		}
 
@@ -416,17 +437,21 @@ if ( !trait_exists('Automation') ){
 		public function initialization_delete_plugins(){
 			//Remove Hello Dolly plugin if it exists
 			if ( file_exists(WP_PLUGIN_DIR . '/hello.php') ){
+				$this->cli_output('Deleting nonsensical plugins');
 				delete_plugins(array('hello.php'));
 			}
 		}
 
 		//Deactivate default sidebar widgets.
 		public function initialization_deactivate_widgets(){
+			$this->cli_output('Deactivating default sidebar widgets');
 			update_option('sidebars_widgets', array());
 		}
 
 		//Move and activate the Nebula child theme
 		public function initialization_activate_child_theme(){
+			$this->cli_output('Installing the Nebula child theme');
+
 			$theme_name = 'Nebula-Child';
 			$source = get_template_directory() . '/' . $theme_name;
 			$destination = WP_CONTENT_DIR . '/themes/' . $theme_name;
@@ -444,6 +469,7 @@ if ( !trait_exists('Automation') ){
 				if ( file_exists($destination) ){ //Make sure copy was successful
 					$nebula_child_theme = wp_get_theme($theme_name);
 					if ( $nebula_child_theme->exists() ){
+						$this->cli_output('Activating the Nebula Child theme');
 						switch_theme($theme_name); //Activate the child theme
 						return true; //This triggers a refresh to show the new active theme
 					}

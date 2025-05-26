@@ -13,7 +13,7 @@ if ( !trait_exists('Assets') ){
 		public $default_cid = '';
 
 		public function hooks(){
-			if ( !$this->is_background_request() ){
+			if ( !$this->is_background_request() && !$this->is_cli() ){
 				//Prep these before headers are sent
 				if ( !$this->is_non_page_request() ){
 					add_action('template_redirect', array($this, 'init_session_data'), 1); //This needs to run as early as possible on pages (and not at all on non-pages)

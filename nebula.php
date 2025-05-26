@@ -23,9 +23,11 @@ if ( !class_exists('Nebula') ){
 	require_once get_template_directory() . '/libs/Widgets.php';
 	require_once get_template_directory() . '/libs/Admin/Admin.php';
 	require_once get_template_directory() . '/libs/Ecommerce.php';
+	require_once get_template_directory() . '/libs/Utilities/Cli.php';
 
 	//Main Nebula class
 	class Nebula {
+		use Cli; //This does not have hooks
 		use Assets { Assets::hooks as AssetsHooks; }
 		use Options { Options::hooks as OptionsHooks; }
 		use Utilities { Utilities::hooks as UtilitiesHooks; }
@@ -98,6 +100,10 @@ if ( !class_exists('Nebula') ){
 
 			if ( is_plugin_active('woocommerce/woocommerce.php') ){
 				$this->EcommerceHooks(); //Register Ecommerce hooks
+			}
+
+			if ( defined('WP_CLI') && WP_CLI && method_exists($this, 'register_cli_commands') ){
+				$this->register_cli_commands(); //Register commands for WP CLI
 			}
 
 			add_action('nebula_delete_cf7_expired_hook', array($this, 'delete_cf7_expired')); //This must live here so the WP Cron can run it properly

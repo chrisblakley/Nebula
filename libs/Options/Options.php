@@ -46,12 +46,20 @@ if ( !trait_exists('Options') ){
 		public function get_option($option, $fallback=null){
 			$nebula_options = get_option('nebula_options');
 
+			//Always return the exact, unfiltered value for WP-CLI
+			if ( $this->is_cli() ){
+				return $nebula_options[$option];
+			}
+
+			//If the value is not set or false, return the provided fallback value
 			if ( empty($nebula_options[$option]) ){
 				return $fallback;
 			}
 
-			if ( filter_var($nebula_options[$option], FILTER_VALIDATE_BOOLEAN) === 1 ){
-				return true;
+			//Normalize boolean-like strings/numbers to bool type
+			$boolean_value = filter_var($nebula_options[$option], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+			if ( $boolean_value !== null ){ //This means it is a boolean value of true or false
+				return $boolean_value;
 			}
 
 			return $nebula_options[$option];
@@ -60,7 +68,7 @@ if ( !trait_exists('Options') ){
 		//Update Nebula options outside of the Nebula Options page
 		public function set_option($option, $value){return $this->update_option($option, $value);}
 		public function update_option($option, $value){
-			if ( current_user_can('manage_options') ){
+			if ( current_user_can('manage_options') || $this->is_cli() ){
 				$nebula_options = get_option('nebula_options');
 
 				if ( empty($nebula_options[$option]) || $nebula_options[$option] !== $value ){
@@ -74,6 +82,11 @@ if ( !trait_exists('Options') ){
 		public function data($option){return $this->get_data($option);}
 		public function get_data($option){
 			$nebula_data = get_option('nebula_data');
+
+			//Always return the exact, unfiltered value for WP-CLI
+			if ( $this->is_cli() ){
+				return $nebula_data[$option];
+			}
 
 			if ( empty($nebula_data[$option]) ){
 				return null;

@@ -60,7 +60,7 @@ if ( !trait_exists('Functions') ){
 			add_action('template_redirect', array($this, 'redirect_single_search_result'));
 			add_filter('relevanssi_post_ok', array($this, 'exclude_from_relevanssi'), 10, 2);
 
-			if ( !$this->is_background_request() && !$this->is_admin_page() ){
+			if ( !$this->is_background_request() && !$this->is_cli() && !$this->is_admin_page() ){
 				add_action('wp_head', array($this, 'javascript_safety_net'), 10);
 				add_action('wp_head', array($this, 'arbitrary_code_head'), 1000);
 				add_action('nebula_body_open', array($this, 'arbitrary_code_body'), 1000);
