@@ -2503,84 +2503,8 @@ if ( !trait_exists('Dashboard') ){
 			return $output;
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		//Get last modified filename and date from a directory
+		//Reminder: This function calls itself to also scan the child theme. It is not memoized or using a transient to avoid an infinite loop.
 		public function last_modified($directory=null, $last_date=0, $child=false){
 			global $latest_file;
 			if ( empty($latest_file) ){
@@ -2593,9 +2517,18 @@ if ( !trait_exists('Dashboard') ){
 
 			$directory ??= get_template_directory();
 			$dir = $this->glob_r($directory . '/*');
-			$skip_files = array('/cache/', '/includes/data/', 'manifest.json', '.bak'); //Files or directories to skip. Be specific!
+			$skip_files = array('/cache/', '/includes/data/', 'manifest.json', '.bak', '.log', '_log', 'sw.js'); //Files or directories to skip. Be specific!
+
+			//Limit the number of files scanned to ensure speedy dashboard load times
+			$max_files = 750;
+			$scanned_files = 0;
 
 			foreach ( $dir as $file ){
+				$scanned_files++;
+				if ( $scanned_files > $max_files ){
+					break; //Too many files — bail out early
+				}
+
 				if ( is_file($file) ){
 					$mod_date = filemtime($file);
 					if ( $mod_date > $last_date && !$this->contains($file, $skip_files) ){ //Does not check against skip_extensions() functions on purpose.
@@ -2828,14 +2761,18 @@ if ( !trait_exists('Dashboard') ){
 
 					<div id="nebula-contrast-tester-colors">
 						<?php foreach ( array('foreground' => '#ffffff', 'background' => $this->get_color('primary')) as $color => $value ): ?>
-							<div class="color-group">
+							<div class="color-group color-<?php echo $color; ?>">
 								<div>
 									<label><strong><?php echo ucwords($color); ?> Color</strong></label>
 								</div>
+
 								<div>
-									<input type="color" id="nebula-<?php echo $color; ?>" value="<?php echo $value; ?>" />
-									<input type="text" id="nebula-<?php echo $color; ?>-hex" value="<?php echo $value; ?>" />
-									<input type="number" id="nebula-<?php echo $color; ?>-brightness" min="-100" max="100" step="1" value="0" /> <span title="Use brightness to change the shade without altering the original hue">Brightness <small>(±100)</small></span>
+									<input type="color" id="nebula-<?php echo $color; ?>" value="<?php echo $value; ?>" aria-label="Original Color" title="Original Color" />
+									<span> + </span>
+									<div class="number-percent-label"><input type="number" id="nebula-<?php echo $color; ?>-brightness" class="brightness-adjust" min="-100" max="100" step="1" value="0" aria-label="Brightness" title="Brightness (±100%)" /></div>
+									<span> = </span>
+									<input type="text" id="nebula-<?php echo $color; ?>-hex" value="<?php echo $value; ?>" aria-label="Hex Color Result" />
+									<small><a class="text-danger reset-brightness hidden" href="#"><i class="fa-solid fa-times"></i> Reset Brightness</a></small>
 								</div>
 							</div>
 						<?php endforeach; ?>

@@ -242,7 +242,7 @@ nebula.developerMetaboxes = function(){
 			});
 		}
 
-		jQuery('#reviewed-expand-code').on('click', function(){
+		jQuery(document).on('click', '#reviewed-expand-code', function(){
 			jQuery('#nebula-ai-response').removeClass('collapsed');
 			return false;
 		});
@@ -748,88 +748,100 @@ nebula.simplifiedViewToggle = function(){
 //Design related dashboard metaboxes
 nebula.designMetaboxes = function(){
 	if ( jQuery('#nebula_design').length ){
-		updateContrast();
+		nebula.updateContrast();
 
+		//Expand the color contrast tester
 		jQuery('#nebula-color-tester').on('click', function(){
 			jQuery(this).removeClass('collapsed');
 		});
 
-		function getContrast(hex1, hex2){
-			let [r1,g1,b1] = nebula.hexToLrgb(hex1);
-			let [r2,g2,b2] = nebula.hexToLrgb(hex2);
-			let L1 = 0.2126*r1 + 0.7152*g1 + 0.0722*b1;
-			let L2 = 0.2126*r2 + 0.7152*g2 + 0.0722*b2;
-			let ratio = (L1 > L2)? (L1 + 0.05) / (L2 + 0.05) : (L2 + 0.05) / (L1 + 0.05);
-			return ratio;
-		}
-
-		function updateContrast(){
-			jQuery('#nebula-contrast-warnings').addClass('hidden');
-
-			let fg = jQuery('#nebula-foreground').val();
-			let bg = jQuery('#nebula-background').val();
-			let fgBrightness = parseInt(jQuery('#nebula-foreground-brightness').val()) || 0;
-			let bgBrightness = parseInt(jQuery('#nebula-background-brightness').val()) || 0;
-
-			let fgAdjusted = nebula.adjustBrightness(fg, fgBrightness);
-			let bgAdjusted = nebula.adjustBrightness(bg, bgBrightness);
-
-			jQuery('#nebula-foreground-hex').val(fgAdjusted);
-			jQuery('#nebula-background-hex').val(bgAdjusted);
-
-			let ratio = getContrast(fgAdjusted, bgAdjusted);
-			let displayRatio = ratio.toFixed(2);
-			jQuery('#nebula-contrast-ratio').text(displayRatio);
-
-			jQuery('#nebula-contrast-preview').css({
-				'color': fgAdjusted,
-				'background-color': bgAdjusted
-			});
-
-			//Calculate the ratio and output results
-			let result = '(Fail)';
-			let resultClass = 'text-danger';
-
-			if ( ratio >= 4.5 ){
-				result = '(AA Pass)';
-				resultClass = 'text-success';
-			} else if ( ratio >= 3 ){
-				result = '(AA Pass with large text only)';
-				resultClass = 'text-caution';
-			}
-
-			jQuery('#nebula-contrast-result').removeClass().addClass(resultClass);
-			jQuery('#nebula-contrast-grade').html(result);
-
-			//Now check for warnings
-			let warnings = '';
-			if ( (ratio >= 4.5 && ratio < 4.7) || ratio >= 3 && ratio < 3.2 ){
-				if ( fgAdjusted == '#ffffff' || bgAdjusted == '#ffffff' ){
-					warnings = 'This <em>barely</em> meets minimum with pure white! <strong>You will have no flexibility with this color!</strong>';
-				} else if ( fgAdjusted == '#000000' || bgAdjusted == '#000000' ){
-					warnings = 'This <em>barely</em> meets minimum with pure black! <strong>You will have no flexibility with this color!</strong>';
-				}
-			}
-
-			if ( warnings ){
-				jQuery('#nebula-contrast-warnings').html('<li><i class="fa-solid fa-fw fa-triangle-exclamation"></i>' + warnings + '</li>').removeClass('hidden');
-			}
-		}
-
-		// Sync text field edits with color inputs
-		['foreground', 'background'].forEach(id => {
-			document.getElementById('nebula-' + id).addEventListener('input', updateContrast);
-			document.getElementById('nebula-' + id + '-hex').addEventListener('input', e => {
-				let val = e.target.value;
-				if ( /^#?[0-9a-fA-F]{6}$/.test(val) ){
-					if ( val.charAt(0) !== '#' ) val = '#' + val;
-					document.getElementById('nebula-' + id).value = val;
-					updateContrast();
-				}
-			});
-
-			// Brightness stepper interaction
-			document.getElementById('nebula-' + id + '-brightness').addEventListener('input', updateContrast);
+		//Reset brightness value
+		jQuery('.reset-brightness').on('click', function(){
+			jQuery(this).parents('.color-group').find('.brightness-adjust').val(0).trigger('input');
+			return false;
 		});
+
+		//Sync text field edits with color inputs
+		['foreground', 'background'].forEach(function(id){
+			jQuery('#nebula-' + id).on('input', nebula.updateContrast);
+
+			jQuery('#nebula-' + id + '-hex').on('input', function(e){
+				let val = jQuery(this).val();
+				if ( (/^#?[0-9a-fA-F]{6}$/).test(val) ){
+					if ( val.charAt(0) !== '#' ){
+						val = '#' + val;
+					}
+
+					jQuery('#nebula-' + id).val(val);
+					nebula.updateContrast();
+				}
+			});
+
+			//Brightness stepper interaction
+			jQuery('#nebula-' + id + '-brightness').on('input', nebula.updateContrast);
+		});
+	}
+};
+
+nebula.updateContrast = function(){
+	jQuery('#nebula-contrast-warnings').addClass('hidden');
+
+	let fg = jQuery('#nebula-foreground').val();
+	let bg = jQuery('#nebula-background').val();
+	let fgBrightness = parseInt(jQuery('#nebula-foreground-brightness').val()) || 0;
+	let bgBrightness = parseInt(jQuery('#nebula-background-brightness').val()) || 0;
+
+	let fgAdjusted = nebula.adjustBrightness(fg, fgBrightness);
+	let bgAdjusted = nebula.adjustBrightness(bg, bgBrightness);
+
+	jQuery('#nebula-foreground-hex').val(fgAdjusted);
+	jQuery('#nebula-background-hex').val(bgAdjusted);
+
+	jQuery('.reset-brightness').addClass('hidden');
+
+	if ( jQuery('#nebula-foreground-brightness').val() != 0 ){
+		jQuery('#nebula-foreground-brightness').parents('.color-group').find('.reset-brightness').removeClass('hidden');
+	}
+
+	if ( jQuery('#nebula-background-brightness').val() != 0 ){
+		jQuery('#nebula-background-brightness').parents('.color-group').find('.reset-brightness').removeClass('hidden');
+	}
+
+	let ratio = nebula.getContrast(fgAdjusted, bgAdjusted);
+	let displayRatio = ratio.toFixed(2);
+	jQuery('#nebula-contrast-ratio').text(displayRatio);
+
+	jQuery('#nebula-contrast-preview').css({
+		'color': fgAdjusted,
+		'background-color': bgAdjusted
+	});
+
+	//Calculate the ratio and output results
+	let result = '(Fail)';
+	let resultClass = 'text-danger';
+
+	if ( ratio >= 4.5 ){
+		result = '(AA Pass)';
+		resultClass = 'text-success';
+	} else if ( ratio >= 3 ){
+		result = '(AA Pass with large text only)';
+		resultClass = 'text-caution';
+	}
+
+	jQuery('#nebula-contrast-result').removeClass().addClass(resultClass);
+	jQuery('#nebula-contrast-grade').html(result);
+
+	//Now check for warnings
+	let warnings = '';
+	if ( (ratio >= 4.5 && ratio < 4.7) || ratio >= 3 && ratio < 3.2 ){
+		if ( fgAdjusted == '#ffffff' || bgAdjusted == '#ffffff' ){
+			warnings = 'This <em>barely</em> meets minimum with pure white! <strong>You will have no flexibility with this color!</strong>';
+		} else if ( fgAdjusted == '#000000' || bgAdjusted == '#000000' ){
+			warnings = 'This <em>barely</em> meets minimum with pure black! <strong>You will have no flexibility with this color!</strong>';
+		}
+	}
+
+	if ( warnings ){
+		jQuery('#nebula-contrast-warnings').html('<li><i class="fa-solid fa-fw fa-triangle-exclamation"></i>' + warnings + '</li>').removeClass('hidden');
 	}
 };

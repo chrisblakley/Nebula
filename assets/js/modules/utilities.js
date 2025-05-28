@@ -938,6 +938,16 @@ nebula.singularPlural = function(value, singular, plural=''){
 	return plural;
 };
 
+//Calculate the contrast ratio between two hex colors
+nebula.getContrast = function(hex1, hex2){
+	let [r1, g1, b1] = nebula.hexToLrgb(hex1);
+	let [r2, g2, b2] = nebula.hexToLrgb(hex2);
+	let L1 = 0.2126*r1 + 0.7152*g1 + 0.0722*b1;
+	let L2 = 0.2126*r2 + 0.7152*g2 + 0.0722*b2;
+	let ratio = (L1 > L2)? (L1 + 0.05) / (L2 + 0.05) : (L2 + 0.05) / (L1 + 0.05);
+	return ratio;
+};
+
 nebula.hexToLrgb = function(hex){
 	hex = hex.replace('#', '');
 	let bigint = parseInt(hex, 16);
