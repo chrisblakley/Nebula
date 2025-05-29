@@ -156,12 +156,13 @@ nebula.performanceMetrics = async function(){
 					}
 
 					gtag('event', 'load_timings', { //These are sent in seconds (not milliseconds) so create Custom Metrics with the appropriate units
+						timed_views: 1, //Use this as a custom metric (count) for the calculated metrics for the average times. Ex: {DOM Complete Time}/{Timed Views}
 						session_page_type: ( nebula.isLandingPage() )? 'Landing Page' : 'Subsequent Page', //Dimension
 						load_speed_rating: loadSpeedRating, //Dimension
 						server_response: (navigationPerformanceEntry.responseStart/1000).toFixed(3), //Metric
 						dom_interactive: (navigationPerformanceEntry.domInteractive/1000).toFixed(3), //Metric
 						dom_complete: (navigationPerformanceEntry.domComplete/1000).toFixed(3), //Metric
-						fully_loaded: (navigationPerformanceEntry.duration/1000).toFixed(3), //Metric
+						window_loaded: (navigationPerformanceEntry.duration/1000).toFixed(3), //Metric
 						link_url: window.location.href, //Using "link_url" so additional custom dimensions are not needed
 						non_interaction: true
 					});
