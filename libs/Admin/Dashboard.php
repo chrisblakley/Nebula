@@ -843,11 +843,12 @@ if ( !trait_exists('Dashboard') ){
 				$opcode_cache_name = '<strong>OPcache</strong>';
 			}
 
+			$opcache_hit_rate = '';
+
 			if ( function_exists('opcache_get_status') ){
 				$opcache_status = @opcache_get_status(); //Using @ to suppress restriction errors by returning false instead
 
 				if ( is_array($opcache_status) && isset($opcache_status['opcache_enabled']) ){
-					$opcache_hit_rate = '';
 					$opcache_stats = null;
 					if ( isset($opcache_status['statistics']) && is_array($opcache_status['statistics']) ){
 						$opcache_stats = $opcache_status['statistics'];

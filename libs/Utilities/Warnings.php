@@ -605,7 +605,7 @@ if ( !trait_exists('Warnings') ){
 			$this->timer('Advanced Warnings', 'start', '[Nebula] Warnings');
 
 			//Only check these when auditing (not on all pageviews) to prevent undesired server load
-			if ( $this->is_auditing() || $this->is_warning_level('strict') || $force ){
+			if ( $this->is_auditing() || $this->is_warning_level('strict') ){
 				//Check contact email address
 				if ( !$this->get_option('contact_email') ){
 					$default_contact_email = get_option('admin_email', $this->get_user_info('user_email', array('id' => 1)));

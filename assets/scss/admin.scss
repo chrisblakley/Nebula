@@ -340,8 +340,9 @@ ul#nebula-performance-metrics li {
 //Design Reference metabox
 #nebula_design {
 	.nebula-metabox-row {
-		.design-reference-col {display: flex;
-			.nebula-metabox-col:only-child {flex: 1 1 100%; max-width: 100%; margin-right: 0;}
+		.design-reference-col {display: flex; width: calc(50% - 15px);
+			&:last-child:nth-child(odd),
+			&:only-child {flex: 1 1 100%; width: auto; max-width: 100%; margin-right: 0;} //The last odd item or the only item can span the full width
 
 			.color-block {display: flex; flex-direction: column; align-self: flex-start; min-width: 50px; padding-top: 10px; padding-bottom: 4px; text-align: center; margin-right: 6px; text-decoration: none; border-radius: 4px;
 				&.primary {background: $primary_color; color: high-contrast-color($primary_color);}
@@ -361,7 +362,7 @@ ul#nebula-performance-metrics li {
 		}
 	}
 
-	#nebula-color-tester {position: relative; height: auto; transition: all 0.5s ease; border: 1px dotted grey; background: #f6f6f6; padding: 10px 15px; border-radius: 6px; overflow: hidden; margin-top: 15px; margin-bottom: 15px;
+	#nebula-color-tester {position: relative; height: auto; transition: all 0.5s ease; border: 1px dotted #ddd; background: #f6f6f6; padding: 10px 15px; border-radius: 6px; overflow: hidden; margin-top: 15px;
 		&.collapsed {height: 18px; padding-top: 5px; padding-bottom: 5px; cursor: pointer;
 			&:after {content: "▼"; position: absolute; right: 15px; top: 0; bottom: 0; align-content: center;}
 			&:hover {background: lightgrey;}

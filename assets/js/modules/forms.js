@@ -7,8 +7,6 @@ nebula.cf7Functions = async function(){
 
 	//Indicate a form page on all CF7 forms
 	jQuery('.wpcf7').each(async function(){
-		//await nebula.yield();
-
 		let formID = jQuery(this).attr('id');
 		nebula.updateFormFlow(formID, '[Form Page View]');
 	});
@@ -19,8 +17,6 @@ nebula.cf7Functions = async function(){
 
 	//Replace submit input with a button so a spinner icon can be used instead of the CF7 spin gif (unless it has the class "no-button")
 	jQuery('.wpcf7-form input[type=submit]').each(async function(){
-		//await nebula.yield();
-
 		if ( !jQuery(this).hasClass('no-button') ){
 			jQuery(this).replaceWith('<button id="submit" type="submit" class="' + nebula.sanitize(jQuery(this).attr('class')) + '">' + nebula.sanitize(jQuery(this).val()) + '</button>'); //Sanitized to prevent XSS
 		}
@@ -31,8 +27,6 @@ nebula.cf7Functions = async function(){
 		//Observe the entries that are identified and added later (below)
 		let cf7Observer = new IntersectionObserver(function(entries){
 			entries.forEach(async function(entry){
-				//await nebula.yield();
-
 				if ( entry.intersectionRatio > 0 ){
 					let formID = jQuery(entry.target).closest('.wpcf7').attr('id') || jQuery(entry.target).attr('id');
 
@@ -708,8 +702,6 @@ nebula.liveValidator = function(){
 
 //Apply Bootstrap and CF7 appropriate validation classes to appropriate elements
 nebula.applyValidationClasses = async function($element, validation, showFeedback){
-	//await nebula.yield();
-
 	if ( typeof $element === 'string' ){
 		$element = jQuery($element);
 	} else if ( typeof $element !== 'object' ){
