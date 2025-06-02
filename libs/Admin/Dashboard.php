@@ -2155,6 +2155,8 @@ if ( !trait_exists('Dashboard') ){
 					echo '<small><i class="fa-regular fa-fw fa-clock"></i> Generated: ' . date('F j, Y \a\t g:ia', $code_review_data['response']['created']) . ' (' . human_time_diff($code_review_data['response']['created']) . ' ago)</small><br />';
 					echo '<small><i class="fa-solid fa-fw fa-coins"></i> <em>This is a cached response. <a href="https://platform.openai.com/settings/organization/usage" target="_blank" rel="noopener noreferrer">No tokens were used.</a></em></small>';
 				}
+
+				echo '<br /><small><a class="text-danger-hover" href="' . admin_url('?clear-ai-code-review') . '" title="This will use additional tokens"><i class="fa-regular fa-fw fa-lightbulb"></i> Review another function?</a></small>';
 			echo '</p>';
 
 			if ( $is_ajax ){
@@ -2734,21 +2736,51 @@ if ( !trait_exists('Dashboard') ){
 								<a class="color-block" href="https://www.colorhexa.com/<?php echo ltrim($notable_color_data['hex'], '#'); ?>" target="_blank" style="background-color: <?php echo $notable_color_data['hex']; ?>;">
 									<span class="tee" style="color: <?php echo $notable_color_data['readable']; ?>;">T</span>
 									<?php
-										$is_readable_against_white = ($notable_color_data['ratios']['white'] >= 4.5);
-										$is_readable_against_black = ($notable_color_data['ratios']['black'] >= 4.5);
+										$is_readable_against_white_large = ($notable_color_data['ratios']['white'] >= 3); //WCAG large text/icons only
+										$is_readable_against_black_large = ($notable_color_data['ratios']['black'] >= 3); //WCAG large text/icons only
+										$is_readable_against_white_aa = ($notable_color_data['ratios']['white'] >= 4.5); //WCAG AA
+										$is_readable_against_black_aa = ($notable_color_data['ratios']['black'] >= 4.5); //WCAG AA
+										$is_readable_against_white_aaa = ($notable_color_data['ratios']['white'] >= 7); //WCAG AAA
+										$is_readable_against_black_aaa = ($notable_color_data['ratios']['black'] >= 7); //WCAG AAA
+
+										$white_check_x_icon = 'fa-solid fa-times';
+										if ( $is_readable_against_white_aaa ){
+											$white_check_x_icon = 'fa-solid fa-check-double';
+										} elseif ( $is_readable_against_white_aa ){
+											$white_check_x_icon = 'fa-solid fa-check';
+										} elseif ( $is_readable_against_white_large ){
+											$white_check_x_icon = 'fa-solid fa-times'; //fa-asterisk
+										}
+
+										$black_check_x_icon = 'fa-solid fa-times';
+										if ( $is_readable_against_black_aaa ){
+											$black_check_x_icon = 'fa-solid fa-check-double';
+										} elseif ( $is_readable_against_black_aa ){
+											$black_check_x_icon = 'fa-solid fa-check';
+										} elseif ( $is_readable_against_black_large ){
+											$black_check_x_icon = 'fa-solid fa-times'; //fa-asterisk
+										}
 									?>
-									<span class="color-contrast-ratio light"><?php echo $notable_color_data['ratios']['white']; ?> <i class="fa fa-<?php echo ( $is_readable_against_white )? 'check' : 'times'; ?>"></i></span>
-									<span class="color-contrast-ratio dark"><?php echo $notable_color_data['ratios']['black']; ?> <i class="fa fa-<?php echo ( $is_readable_against_black )? 'check' : 'times'; ?>"></i></span>
+									<span class="color-contrast-ratio light"><?php echo $notable_color_data['ratios']['white']; ?> <i class="<?php echo $white_check_x_icon; ?>"></i></span>
+									<span class="color-contrast-ratio dark"><?php echo $notable_color_data['ratios']['black']; ?> <i class="<?php echo $black_check_x_icon; ?>"></i></span>
 								</a>
 								<div>
 									<strong><?php echo $notable_color_data['name']; ?></strong><br />
 									Hex <?php echo $notable_color_data['hex']; ?><br />
 									RGB <?php echo $notable_color_data['rgb']['r'] . ', ' . $notable_color_data['rgb']['g'] . ', ' . $notable_color_data['rgb']['b']; ?><br />
-									<?php if ( str_contains(strtolower($notable_color_data['name']), 'primary') && !$is_readable_against_white ): ?>
-										<small class="white-bg-warning text-danger"><i class="fa-solid fa-fw fa-triangle-exclamation"></i> Primary color cannot be used on light backgrounds!</small>
-									<?php elseif ( ($notable_color_data['ratios']['white'] >= 4.5 && $notable_color_data['ratios']['white'] < 4.7) || ($notable_color_data['ratios']['black'] >= 4.5 && $notable_color_data['ratios']['black'] < 4.7) ): ?>
-										<small class="text-caution" title="This color barely meets minimum with pure white or black."><i class="fa-solid fa-fw fa-circle-info"></i> Limited flexibility!</small>
-									<?php endif; ?>
+
+									<ul class="nebula-fa-ul color-notes">
+										<?php if ( $is_readable_against_white_aa && $is_readable_against_black_aa ): ?>
+											<li class="text-info" title="This color works with both pure black and pure white (but usually have limited flexibility with other shades)."><i class="fa-solid fa-fw fa-yin-yang"></i> Dual Contrast Color</li>
+										<?php endif; ?>
+
+										<?php if ( str_contains(strtolower($notable_color_data['name']), 'primary') && !$is_readable_against_white_aa ): ?>
+											<li class="white-bg-warning text-danger"><i class="fa-solid fa-fw fa-triangle-exclamation"></i> Primary color cannot be used on light backgrounds!</li>
+										<?php elseif ( ($notable_color_data['ratios']['white'] >= 4.5 && $notable_color_data['ratios']['white'] < 4.7) || ($notable_color_data['ratios']['black'] >= 4.5 && $notable_color_data['ratios']['black'] < 4.7) ): ?>
+											<li class="text-caution" title="This color barely meets minimum with pure white or black."><i class="fa-solid fa-fw fa-circle-info"></i> Limited flexibility!</li>
+										<?php endif; ?>
+									</ul>
+
 								</div>
 							</div>
 						<?php endforeach; ?>

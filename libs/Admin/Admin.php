@@ -707,9 +707,12 @@ if ( !trait_exists('Admin') ){
 				$original_date = strtotime(get_post_field('post_date', $current_id));
 				$original_author = get_the_author_meta('display_name', get_post_field('post_author', $current_id));
 				$modified_date = strtotime(get_post_field('post_modified', $current_id));
+				$modified_author = 'Unknown';
 				if ( get_post_meta($current_id, '_edit_last', true) ){
 					$last_user = get_userdata(get_post_meta($current_id, '_edit_last', true));
-					$modified_author = $last_user->display_name;
+					if ( is_object($last_user) ){
+						$modified_author = $last_user->display_name;
+					}
 				}
 
 				$node_id = ( $this->is_admin_page() )? 'view' : 'edit';

@@ -106,6 +106,32 @@
 .text-info,
 .info-color {color: darken($info_color, 11%);}
 
+.text-success-hover,
+.success-color-hover {
+	&:hover,
+	&:focus {color: $success_color;}
+}
+.text-warning-hover,
+.warning-color-hover {
+	&:hover,
+	&:focus {color: $warning_color;}
+}
+.text-caution-hover,
+.caution-color-hover {
+	&:hover,
+	&:focus {color: $caution_color;}
+}
+.text-danger-hover,
+.danger-color-hover {
+	&:hover,
+	&:focus {color: $danger_color;}
+}
+.text-info-hover,
+.info-color-hover {
+	&:hover,
+	&:focus {color: darken($info_color, 11%);}
+}
+
 .cursor-help {cursor: help;}
 
 .nebula-flex-first {order: -1;} //Default flex order is 0. This class forces a column before that.

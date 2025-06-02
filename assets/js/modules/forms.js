@@ -701,7 +701,7 @@ nebula.liveValidator = function(){
 };
 
 //Apply Bootstrap and CF7 appropriate validation classes to appropriate elements
-nebula.applyValidationClasses = async function($element, validation, showFeedback){
+nebula.applyValidationClasses = function($element, validation, showFeedback){
 	if ( typeof $element === 'string' ){
 		$element = jQuery($element);
 	} else if ( typeof $element !== 'object' ){

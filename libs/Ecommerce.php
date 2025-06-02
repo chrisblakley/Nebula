@@ -121,13 +121,13 @@ if ( !trait_exists('Ecommerce') ){
 					$product = wc_get_product(get_the_ID());
 				}
 
-				$variation = wc_get_product($product->get_variation_id()); //If no variation, this will appear the same as the product itself
+				$variation = ( $product->is_type('variation') )? $product : null;
 
 				$product_item = array(
 					'item_id' => $product->get_id(),
 					'item_name' => $product->get_name(),
-					'item_variant' => $variation->get_name(),
-					'currency' => 'USD',
+					'item_variant' => ( $variation )? $variation->get_name() : '',
+					'currency' => get_woocommerce_currency(),
 					'price' => $product->get_price(),
 					'quantity' => 1,
 				);
@@ -137,14 +137,14 @@ if ( !trait_exists('Ecommerce') ){
 					event_action: "View Item",
 					event_label: "Product: ' . $product->get_name() . ' (ID: ' . $product->get_id() . ')",
 					value: "' . $product->get_price() . '",
-					currency: "USD",
+					currency: "' . get_woocommerce_currency() . '",
 					items: [' . wp_json_encode($product_item) . '],
 					non_interaction: true
 				});';
 			}
 
 			//View Cart and Checkout pages
-			if ( is_cart() || is_checkout() && is_dev() ){
+			if ( (is_cart() || is_checkout()) && is_dev() ){ //@todo "Nebula" 0: Why is is_dev() here at all?
 				$page_type = '';
 				if ( is_cart() ){
 					$page_type = 'view_cart';
@@ -162,19 +162,15 @@ if ( !trait_exists('Ecommerce') ){
 				$index = 0;
 				foreach( $cart_items as $cart_item => $item_properties ){ //Loop through all of the items in the cart
 					$product = wc_get_product($item_properties['data']->get_id());
-					$variation = wc_get_product($product->get_variation_id()); //If no variation, this will appear the same as the product itself
-
-					$item_variant = '';
-					if ( !empty($variation) ){
-						$item_variant = $variation->get_name();
-					}
+					$variation = ( $product->is_type('variation') )? $product : null;
+					$item_variant = ( $variation )? $variation->get_name() : '';
 
 					$product_items[] = array(
 						'item_id' => $item_properties['data']->get_id(),
 						'item_name' => $product->get_name(),
 						'item_variant' => $item_variant,
-						'currency' => 'USD',
-						'price' => get_post_meta($item_properties['product_id'], '_price', true),
+						'currency' => get_woocommerce_currency(),
+						'price' => $product->get_price() ?: get_post_meta($item_properties['product_id'], '_price', true), //Null coalescing
 						'quantity' => $item_properties['quantity'],
 						'index' => $index, //This just counts up for each unique item in the cart
 					);
@@ -187,7 +183,7 @@ if ( !trait_exists('Ecommerce') ){
 					event_action: "Checkout: ' . $page_type . '",
 					event_label: "Cart Total: ' . $cart_total . ' (' . count($product_items) . ' items)",
 					value: "' . $cart_total . '",
-					currency: "USD",
+					currency: "' . get_woocommerce_currency() . '",
 					items: ' . wp_json_encode($product_items) . ',
 					non_interaction: true
 				});';
@@ -229,7 +225,7 @@ if ( !trait_exists('Ecommerce') ){
 				$product_items[] = array(
 					'item_id' => $item->get_product_id(),
 					'item_name' => $item->get_name(),
-					'currency' => 'USD',
+					'currency' => get_woocommerce_currency(),
 					'item_variant' => $item_variant,
 					'price' => $item->get_meta('_price', true),
 					'quantity' => $item->get_quantity(),
@@ -308,7 +304,7 @@ if ( !trait_exists('Ecommerce') ){
 
 						"offers": {
 							"@type": "Offer",
-							"priceCurrency": "USD",
+							"priceCurrency": "<?php echo get_woocommerce_currency(); ?>",
 							"price": "<?php echo $product->price; ?>",
 							"itemCondition": "http://schema.org/NewCondition",
 							"availability": "<?php echo ( $product->is_in_stock() )? 'http://schema.org/InStock' : 'http://schema.org/OutOfStock'; ?>",

@@ -267,6 +267,27 @@ nebula.get = function(parameter = false, url = location.search){
 	return queries;
 };
 
+//This removes a preset list of "temporary" query parameters that should not exist past a single page load
+nebula.removeTempQueryParameters = function(additionalParameters=[]){
+	//If we explicitly want them to stay persistent, then exit the function without removing anything
+	if ( nebula.get('persistent') ){
+		return null;
+	}
+
+	//Merge all of the parameters from various sources
+	let mergedParams = ['sass', 'debug', 'clear-transients', 'clear-ai-code-review'].concat(additionalParameters); //Combine the provided params with Nebula default
+	let allParams = wp.hooks.applyFilters('nebulaTemporaryQueryParameters', mergedParams); //Allow others to add their own parameters to Nebula's default list
+	let uniqueParams = Array.from(new Set(allParams.map(param => param.toLowerCase()))); //De-dupe all of the parameters
+
+	jQuery.each(uniqueParams, function(index, queryParameter){
+		//If even one of the parameters exists, remove them all
+		if ( nebula.get(queryParameter) ){
+			window.history.replaceState({}, document.title, nebula.removeQueryParameter(uniqueParams, window.location.href));
+			return false; //Exit the loop if we find even one
+		}
+	});
+};
+
 //Remove an array of parameters from the query string.
 nebula.removeQueryParameter = function(keys, url = location.search){
 	//Convert single key to an array if it is provided as a string

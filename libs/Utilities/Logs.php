@@ -565,6 +565,7 @@ if ( !trait_exists('Logs') ){
 						break; //Stop reading if the timestamp cannot be matched
 					}
 				}
+
 				fclose($file_handle);
 			}
 

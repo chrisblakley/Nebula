@@ -147,7 +147,9 @@ nebula.performanceMetrics = async function(){
 				if ( navigationPerformanceEntry ){
 					//Provide a "rating" of load time based on DOM Ready timing
 					let loadSpeedRating = '';
-					if ( navigationPerformanceEntry.domComplete <= 1500 ){
+					if ( navigationPerformanceEntry.duration <= 750 ){ //Use window load for this one
+						loadSpeedRating = 'instant'; //The load time is so fast that it is unnoticeable
+					} else if ( navigationPerformanceEntry.domComplete <= 1500 ){
 						loadSpeedRating = 'fast';
 					} else if ( navigationPerformanceEntry.domComplete <= 3500 ){
 						loadSpeedRating = 'moderate';

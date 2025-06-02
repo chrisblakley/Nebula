@@ -56,10 +56,7 @@ nebula.helpers = async function(){
 		window.gtag = function(){}; //Prevent gtag() calls from erroring if GA is off or blocked. This is supplemental to a similar check in analytics.php
 	}
 
-	//Remove certain trigger query strings
-	if ( (nebula.get('sass') || nebula.get('debug') || nebula.get('clear-transients')) && !nebula.get('persistent') ){
-		window.history.replaceState({}, document.title, nebula.removeQueryParameter(['sass', 'debug', 'clear-transients'], window.location.href));
-	}
+	nebula.removeTempQueryParameters(); //Remove certain trigger query strings
 
 	//Empty caches when debugging
 	if ( nebula.get('debug') || nebula.dom.html.hasClass('debug') ){

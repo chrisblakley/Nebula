@@ -35,10 +35,7 @@ jQuery(async function(){
 		nebula.optionsInit();
 	}
 
-	//Remove certain trigger query strings
-	if ( (nebula.get('sass') || nebula.get('debug') || nebula.get('clear-transients') || nebula.get('clear-ai-code-review')) && !nebula.get('persistent') ){
-		window.history.replaceState({}, document.title, nebula.removeQueryParameter(['sass', 'debug', 'clear-transients', 'clear-ai-code-review'], window.location.href));
-	}
+	nebula.removeTempQueryParameters(); //Remove certain trigger query strings
 
 	window.performance.mark('(Nebula) DOM Ready [End]');
 	window.performance.measure('(Nebula) DOM Ready Functions', '(Nebula) DOM Ready [Start]', '(Nebula) DOM Ready [End]');
