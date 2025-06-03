@@ -214,19 +214,18 @@ if ( !trait_exists('Logs') ){
 			if ( $this->get_option('administrative_log') ){ //If the Nebula Option is enabled
 				global $wpdb;
 
-				try {
-					$log_insertion = $wpdb->insert($wpdb->nebula_logs, array(
-						'timestamp' => sanitize_text_field(date('U')),
-						'message' => sanitize_text_field($message),
-						'user_id' => intval(get_current_user_id()), //Note: returns 0 in cron jobs
-						'importance' => intval($importance)
-					)); //DB Query
-				} catch(Exception $error){
-					//This could happen if the option was enabled (somehow) by non-staff, and a log was attempted to be added
+				$log_inserted = $wpdb->insert($wpdb->nebula_logs, array(
+					'timestamp' => intval(date('U')),
+					'message' => sanitize_text_field($message),
+					'user_id' => intval(get_current_user_id()), //Note: returns 0 in cron jobs
+					'importance' => intval($importance)
+				)); //DB Query
+
+				if ( $log_inserted === false ){ //This could happen if the option was enabled (somehow) by non-staff, and a log was attempted to be added
 					$this->update_option('administrative_log', 0); //Disable the option just to be safe. Unfortunately this cannot be logged somewhere...
-					do_action('qm/error', $error);
+					do_action('qm/error', 'Failed to insert log into database.');
 					$this->timer('Add Log to Table', 'end');
-					return null;
+					return false; //Log entry was not inserted
 				}
 
 				delete_transient('nebula_logs');
@@ -239,11 +238,14 @@ if ( !trait_exists('Logs') ){
 */
 
 				if ( $this->is_debug(false) || WP_DEBUG || WP_DEBUG_LOG ){
-					$this->debug_log($message . ' [User: ' . get_userdata(intval(get_current_user_id()))->display_name . ']'); //Log the message to a file too when debug mode is active
+					$user = get_userdata(intval(get_current_user_id()));
+					$user_name = ( $user )? $user->display_name : 'Unknown';
+
+					$this->debug_log($message . ' [User: ' . $user_name . ']'); //Log the message to a file too when debug mode is active
 				}
 
 				$this->timer('Add Log to Table', 'end');
-				return is_int($log_insertion); //Boolean return
+				return true; //Log entry was inserted
 			}
 
 			$this->timer('Add Log to Table', 'end');

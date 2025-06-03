@@ -2128,7 +2128,7 @@ if ( !trait_exists('Admin') ){
 						global $wp_query;
 						$latest_submission_id = ( !empty($wp_query->posts) )? $wp_query->posts[0]->ID : null;
 						if ( strtotime(get_the_date('Y-m-d H:i:s', $submission_id)) >= strtotime('-2 days') || $submission_id == $latest_submission_id ){
-							set_transient('smtp_status', 'Recent CF7 Fail Error', DAY_IN_SECONDS*5); //Remember this must contain the word "error" for Dashboard status check
+							set_transient('nebula_smtp_status', 'Recent CF7 Fail Error', DAY_IN_SECONDS*5); //Remember this must contain the word "error" for Dashboard status check
 						}
 					}
 
@@ -2357,7 +2357,7 @@ if ( !trait_exists('Admin') ){
 
 						//If it failed within the last few days, denote that in a transient
 						if ( strtotime(get_the_date('Y-m-d H:i:s', $post->ID)) >= strtotime('-2 days') ){
-							set_transient('smtp_status', 'Recent CF7 Fail Error', DAY_IN_SECONDS*5); //Remember this must contain the word "error" for Dashboard status check
+							set_transient('nebula_smtp_status', 'Recent CF7 Fail Error', DAY_IN_SECONDS*5); //Remember this must contain the word "error" for Dashboard status check
 						}
 					}
 
@@ -2786,7 +2786,7 @@ if ( !trait_exists('Admin') ){
 			}
 
 			//Check for cached status (this also includes recent CF7 Mail Failed errors from elsewhere)
-			$cached_status = get_transient('smtp_status');
+			$cached_status = get_transient('nebula_smtp_status');
 			if ( $cached_status !== false ) {
 				return $cached_status; // Return cached result
 			}
@@ -2810,7 +2810,7 @@ if ( !trait_exists('Admin') ){
 				fclose($connection);
 			}
 
-			set_transient('smtp_status', $status, HOUR_IN_SECONDS*12); //Cache the result for 12 hours
+			set_transient('nebula_smtp_status', $status, HOUR_IN_SECONDS*12); //Cache the result for 12 hours
 
 			return $status;
 		}

@@ -145,6 +145,10 @@ nebula.performanceMetrics = async function(){
 				//Report certain timings to Google Analytics
 				let navigationPerformanceEntry = performance.getEntriesByType('navigation')[0]; //There is typically only ever 1 in this, but we always just want the first one
 				if ( navigationPerformanceEntry ){
+					if ( navigationPerformanceEntry.duration <= 50 || navigationPerformanceEntry.duration > 30_000 ){ //Ignore extreme values to prevent skewing the average in GA4
+						return false;
+					}
+
 					//Provide a "rating" of load time based on DOM Ready timing
 					let loadSpeedRating = '';
 					if ( navigationPerformanceEntry.duration <= 750 ){ //Use window load for this one

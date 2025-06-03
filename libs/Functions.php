@@ -3394,7 +3394,7 @@ if ( !trait_exists('Functions') ){
 
 		//Note when CF7 emails have failed recently
 		public function cf7_note_mail_failed(){
-			set_transient('smtp_status', 'Recent CF7 Fail Error', DAY_IN_SECONDS*5); //Remember this must contain the word "error" for Dashboard status check
+			set_transient('nebula_smtp_status', 'Recent CF7 Fail Error', DAY_IN_SECONDS*5); //Remember this must contain the word "error" for Dashboard status check
 		}
 
 		//Create a custom post type for Contact Form 7 submission storage
