@@ -145,13 +145,20 @@ nebula.performanceMetrics = async function(){
 				//Report certain timings to Google Analytics
 				let navigationPerformanceEntry = performance.getEntriesByType('navigation')[0]; //There is typically only ever 1 in this, but we always just want the first one
 				if ( navigationPerformanceEntry ){
-					if ( navigationPerformanceEntry.duration <= 50 || navigationPerformanceEntry.duration > 30_000 ){ //Ignore extreme values to prevent skewing the average in GA4
+					if ( navigationPerformanceEntry.duration <= 50 || navigationPerformanceEntry.duration > 15_000 ){ //Ignore extreme values to prevent skewing the average in GA4
+						return false;
+					}
+
+					let pageWeightData = nebula.getPageWeightData();
+
+					//Last chance to check if any critical metrics would be empty and skew results. If so, exit without proceeding further.
+					if ( !pageWeightData || pageWeightData?.total_kb <= 1 || !navigationPerformanceEntry?.responseStart ){
 						return false;
 					}
 
 					//Provide a "rating" of load time based on DOM Ready timing
 					let loadSpeedRating = '';
-					if ( navigationPerformanceEntry.duration <= 750 ){ //Use window load for this one
+					if ( navigationPerformanceEntry.duration <= 700 ){ //Use window load for this one
 						loadSpeedRating = 'instant'; //The load time is so fast that it is unnoticeable
 					} else if ( navigationPerformanceEntry.domComplete <= 1500 ){
 						loadSpeedRating = 'fast';
@@ -161,21 +168,59 @@ nebula.performanceMetrics = async function(){
 						loadSpeedRating = 'slow';
 					}
 
-					gtag('event', 'load_timings', { //These are sent in seconds (not milliseconds) so create Custom Metrics with the appropriate units
+					let loadTimingData = { //These are sent in seconds (not milliseconds) so create Custom Metrics with the appropriate units
 						timed_views: 1, //Use this as a custom metric (count) for the calculated metrics for the average times. Ex: {DOM Complete Time}/{Timed Views}
 						session_page_type: ( nebula.isLandingPage() )? 'Landing Page' : 'Subsequent Page', //Dimension
 						load_speed_rating: loadSpeedRating, //Dimension
+						initial_visibility: document?.visibilityState, //Dimension
+						effective_network_type: navigator?.connection?.effectiveType || 'Unknown', //Dimension
+						largest_asset_name: pageWeightData.largest_asset_url.split('/').pop().split('?')[0], //Dimension (just the file name without query string to limit unique values)
+						largest_asset_size: pageWeightData.largest_asset_kb, //Metric (Compressed asset size in KB before lazy loading)
+						total_file_size: pageWeightData.total_kb, //Metric (Compressed Page Weight in KB before lazy loading)
 						server_response: (navigationPerformanceEntry.responseStart/1000).toFixed(3), //Metric
 						dom_interactive: (navigationPerformanceEntry.domInteractive/1000).toFixed(3), //Metric
 						dom_complete: (navigationPerformanceEntry.domComplete/1000).toFixed(3), //Metric
 						window_loaded: (navigationPerformanceEntry.duration/1000).toFixed(3), //Metric
 						link_url: window.location.href, //Using "link_url" so additional custom dimensions are not needed
 						non_interaction: true
-					});
+					};
+
+					gtag('event', 'load_timings', loadTimingData);
 				}
 			}, 'performance idle');
 		});
 	}
+};
+
+//Get the total (compressed) file size of all loaded resources
+nebula.getPageWeightData = function(){
+	let resources = performance.getEntriesByType('resource');
+	let navEntry = performance.getEntriesByType('navigation')[0];
+
+	let totalBytes = 0;
+	let largestAssetSize = 0;
+	let largestAssetUrl = '';
+
+	for ( let resource of resources ){
+		let size = ( resource.transferSize > 0 )? resource.transferSize : resource.encodedBodySize || 0;
+
+		totalBytes += size;
+
+		if ( size > largestAssetSize ){
+			largestAssetSize = size;
+			largestAssetUrl = resource.name;
+		}
+	}
+
+	if ( navEntry?.transferSize ){
+		totalBytes += navEntry.transferSize;
+	}
+
+	return {
+		total_kb: totalBytes/1024,
+		largest_asset_kb: largestAssetSize/1024,
+		largest_asset_url: largestAssetUrl
+	};
 };
 
 //Use Workbox Window to register and communicate with the service worker
