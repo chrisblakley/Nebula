@@ -118,6 +118,10 @@ if ( !trait_exists('Admin') ){
 					add_action('restrict_manage_posts', array($this, 'cf7_submissions_filters'), 10, 1);
 					add_action('manage_posts_extra_tablenav', array($this, 'cf7_submissions_actions'), 10, 1);
 					add_filter('parse_query', array($this, 'cf7_submissions_parse_query'), 10, 1);
+
+					if ( $this->get_option('hubspot_portal') ){
+						add_action('admin_notices', array($this, 'show_hubspot_link'));
+					}
 				}
 
 				//Override some Yoast settings
@@ -552,7 +556,7 @@ if ( !trait_exists('Admin') ){
 				);
 			}
 
-			if ( $this->get_option('hubspot_api') || $this->get_option('hubspot_portal') ){
+			if ( $this->get_option('hubspot_access_token') || $this->get_option('hubspot_portal') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Hubspot',
 					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-hubspot"></i>',
@@ -1782,6 +1786,13 @@ if ( !trait_exists('Admin') ){
 			$this->timer('Admin Notices', 'end');
 		}
 
+		//Show the Hubspot link at the top of the CF7 admin listing page
+		public function show_hubspot_link(){
+			if ( is_admin() && isset($_GET['post_type']) && $_GET['post_type'] === 'nebula_cf7_submits' && get_current_screen()->base === 'edit' ){
+				echo '<div class="nebula-admin-notice notice notice-crm"><p><i class="fa-brands fa-fw fa-hubspot"></i> <a href="https://app.hubspot.com/contacts/' . $this->get_option('hubspot_portal') . '/objects/0-1/views/all/list" target="_blank" rel="noopener noreferrer">View contacts on Hubspot &raquo;</a></p></div>';
+			}
+		}
+
 		//Check the current (or passed) PHP version against the PHP support timeline.
 		public function php_version_support($php_version=PHP_VERSION){
 			if ( $this->is_minimal_mode() ){return null;}
@@ -2502,6 +2513,36 @@ if ( !trait_exists('Admin') ){
 
 						if ( $is_caution ){
 							echo '<div class="nebula-cf7-notice notice-caution"><p>' . $is_caution . '</p></div>';
+						}
+					}
+
+					//If using Hubspot, link to this contact's profile
+					if ( $this->get_option('hubspot_access_token') ){
+						$common_email_field_names = apply_filters('nebula_email_field_names', array('email', 'emailaddress', 'youremail', 'companyemail', 'companyemailaddress', 'workemail', 'workemailaddress')); //Allow others to include other email field names
+
+						$email = null;
+
+						//Search for the email field in the submission data
+						foreach ( $form_data as $key => $value ){
+							if ( empty($value) ){
+								continue;
+							}
+
+							$normalized_key = str_replace(array('_', '-'), '', strtolower($key));
+
+							if ( in_array($normalized_key, $common_email_field_names) ){
+								$email = ( is_array($value) )? $value[0] : $value;
+								break;
+							}
+						}
+
+						if ( $email ){
+							$contact_id = $this->get_hubspot_contact_id($email);
+
+							if ( $contact_id ){
+								$profile_url = 'https://app.hubspot.com/contacts/' . $this->get_option('hubspot_portal') . '/contact/' . $contact_id;
+								echo '<div class="nebula-cf7-notice notice-crm"><p><i class="fa-brands fa-fw fa-hubspot"></i> <a href="' . esc_url($profile_url) . '" target="_blank" rel="noopener noreferrer">View this contact in Hubspot &raquo;</a></p></div>';
+							}
 						}
 					}
 

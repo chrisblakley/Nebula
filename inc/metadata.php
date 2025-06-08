@@ -177,37 +177,41 @@
 
 <?php
 	//Speculation Rules to Prerender next pages
-	$speculative_pages = apply_filters('nebula_speculative_preload_pages', array('/')); //Start with the homepage and then allow child themes to add to this list
+	$speculative_pages = apply_filters('nebula_speculative_preload_pages', array('/')); //Start with homepage, allow others to add pages
+	$basedomain = parse_url(nebula()->url_components('basedomain'), PHP_URL_HOST);
+	$basedomain_regex = '^(\/|https?:\/\/' . $basedomain . '\/)';
+	$basedomain_regex = json_encode($basedomain_regex); //Ensure proper escaping
+	$urls_json = json_encode($speculative_pages); //Prep the output for URLs
 ?>
-<script type="speculationrules" data-theme="nebula-<?php echo $nebula_metadata_file_location; ?>">
-	{
-		"prerender": [{
-			"source": "list",
-			"urls": [<?php echo implode(', ', array_map(function($page){
-				return '"' . $page . '"';
-			}, $speculative_pages)); ?>]
-		}, {
-			"source": "document",
-			"where": {
-				"and": [
-					{"href_matches": "/*"},
-					{"not": {"href_matches": "/wp-admin"}},
-					{"not": {"href_matches": "logout"}},
-					{"not": {"href_matches": "nonce"}},
-					{"not": {"href_matches": "cart"}},
-					{"not": {"href_matches": "#"}},
-					{"not": {"href_matches": "mailto:"}},
-					{"not": {"href_matches": "tel:"}},
-					{"not": {"href_matches": "\\.(pdf|docx?|xlsx?|pptx?|xml|zip|rar|7z|csv|cal|exe|dmg|iso|mp4|mp3|wav|avi|mov|css|js|json)$"}},
-					{"not": {"selector_matches": ".no-prerender"}},
-					{"not": {"selector_matches": "[rel*=nofollow]"}},
-					{"not": {"selector_matches": "[target=_blank]"}}
-				]
-			},
-			"eagerness": "moderate"
-		}]
-	}
+<script type="speculationrules" data-theme="nebula-<?php echo esc_attr($nebula_metadata_file_location); ?>">
+{
+	"prerender": [{
+		"source": "list",
+		"urls": <?php echo $urls_json; ?>
+	}, {
+		"source": "document",
+		"where": {
+			"and": [
+				{"href_matches": <?php echo $basedomain_regex; ?>},
+				{"not": {"href_matches": "/wp-admin"}},
+				{"not": {"href_matches": "logout"}},
+				{"not": {"href_matches": "nonce"}},
+				{"not": {"href_matches": "cart"}},
+				{"not": {"href_matches": "^#"}},
+				{"not": {"href_matches": "\\?"}},
+				{"not": {"href_matches": "mailto:"}},
+				{"not": {"href_matches": "tel:"}},
+				{"not": {"href_matches": "\\.(pdf|docx?|xlsx?|pptx?|xml|zip|rar|7z|csv|cal|exe|dmg|iso|mp4|mp3|wav|avi|mov|css|js|json)$"}},
+				{"not": {"selector_matches": ".no-prerender"}},
+				{"not": {"selector_matches": "[rel*=nofollow]"}},
+				{"not": {"selector_matches": "[target=_blank]"}}
+			]
+		},
+		"eagerness": "moderate"
+	}]
+}
 </script>
+
 
 <?php
 	//JSON-LD Structured Data

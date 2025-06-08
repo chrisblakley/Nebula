@@ -834,16 +834,15 @@ nebula.timeAgo = function(timestamp, raw){ //http://af-design.com/blog/2009/02/1
 //Convert DOM elements into a tree string
 nebula.domTreeToString = function($element){
 	try {
-		//If the element is a selector, convert to a jQuery object
-		if ( typeof $element === 'string' ){
+		//Normalize the element to a jQuery object
+		if ( typeof $element === 'string' || $element instanceof HTMLElement ){
 			$element = jQuery($element);
+		} else if ( Array.isArray($element) || $element[0]?.nodeType ){
+			$element = jQuery($element[0]);
 		}
 
-		//If the element is a native JS object, convert to jQuery
-		if ( $element.nodeType ){
-			$element = jQuery($element);
-		} else if ( $element[0]?.nodeType ){
-			$element = jQuery($element[0]);
+		if ( !$element.length ){
+			return '(Unknown)';
 		}
 
 		//Map the parent elements into an array and concatenate together
@@ -851,15 +850,17 @@ nebula.domTreeToString = function($element){
 			let parentTag = this.tagName.toLowerCase();
 
 			//Append the ID if a parent element has one
-			let parentID = jQuery(this).attr('id');
+			let parentID = this.id;
 			if ( parentID ){
 				parentTag += '#' + parentID;
 			}
 
 			return parentTag;
-		}).get().reverse().concat([this.nodeName]).join(' ');
+		}).get().reverse().join(' ');
 
-		selector += $element[0]?.tagName.toLowerCase(); //changed from .get(0)
+		//Add the last element
+		let tag = $element[0].tagName.toLowerCase();
+		selector += ' ' + tag;
 
 		//Append the ID to the last element
 		let id = $element.attr('id');
@@ -870,10 +871,14 @@ nebula.domTreeToString = function($element){
 		//Add the classnames to the last element
 		let classNames = $element.attr('class');
 		if ( classNames ){
-			selector += '.' + classNames.trim().replaceAll(/\s/gi, '.');
+			classNames = classNames.trim();
+
+			if ( classNames ){
+				selector += '.' + classNames.replace(/\s+/g, '.');
+			}
 		}
 
-		return selector;
+		return selector.trim();
 	} catch {
 		return '(Unknown)';
 	}
@@ -1219,18 +1224,14 @@ nebula.yield = function(){
 };
 
 //Check if the Chrome Gemini AI API is available in this browser
-nebula.isBrowserAiAvailable = function(){
-	//Old way (probably delete this)
-	if ( window?.ai?.languageModel && typeof window.ai.languageModel.create === 'function' ){
-		return true;
-	}
-
+nebula.isBrowserAiAvailable = async function(){
 	//New way as of May 2025 (Google I/O)
 	if ( LanguageModel && typeof LanguageModel.create == 'function' ){
-		return true;
+		let availability = await LanguageModel.availability();
+		if ( availability == 'available' ){
+			return true;
+		}
 	}
-
-	//await LanguageModel.availability()
 
 	return false;
 };

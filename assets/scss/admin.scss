@@ -405,6 +405,10 @@ ul#nebula-performance-metrics li {
 
 .nebula-admin-notice {
 	a {text-decoration: none;}
+
+	&.notice-crm {border-left-color: nth(map-get($brands, hubspot), 1);
+		i {color: nth(map-get($brands, hubspot), 1);}
+	}
 }
 
 //Hide theme activated notices in favor of Nebula activation notices (only on the themes page)
@@ -707,6 +711,9 @@ body.appearance_page_nebula_options {background-color: #f1f1f1;}
 			&.notice-error,
 			&.notice-spam {border-left-color: $spam_color;}
 			&.notice-internal {border-left-color: $internal_color;}
+			&.notice-crm {border-left-color: nth(map-get($brands, hubspot), 1);
+				i {color: nth(map-get($brands, hubspot), 1);}
+			}
 		}
 
 		.nebula-cf7-notice {

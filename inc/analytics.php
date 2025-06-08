@@ -375,8 +375,6 @@
 		?>
 
 		var hubspotIdentify = <?php echo wp_json_encode(apply_filters('nebula_hubspot_identify', $hubspot_identify)); //Allow other functions to hook into Hubspot identifications ?>;
-		hubspotIdentify.cookies = ( window.navigator.cookieEnabled )? '1' : '0';
-		hubspotIdentify.screen = window.screen.width + 'x' + window.screen.height + ' (' + window.screen.colorDepth + ' bits)';
 
 		_hsq.push(["identify", hubspotIdentify]);
 

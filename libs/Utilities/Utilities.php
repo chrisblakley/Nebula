@@ -1859,7 +1859,7 @@ if ( !trait_exists('Utilities') ){
 			if ( $this->is_minimal_mode() ){return null;}
 
 			if ( $this->get_option('hubspot_portal') ){
-				if ( $this->get_option('hubspot_api') ){
+				if ( $this->get_option('hubspot_access_token') ){
 					//Get an array of all existing Hubspot CRM contact properties
 					$existing_nebula_properties = $this->get_nebula_hubspot_properties();
 
@@ -1871,7 +1871,7 @@ if ( !trait_exists('Utilities') ){
 							"displayOrder": 5
 						}';
 
-						$this->hubspot_curl('http://api.hubapi.com/contacts/v2/groups?portalId=' . $this->get_option('hubspot_portal'), $content);
+						$this->hubspot_curl('https://api.hubapi.com/crm/v3/properties/contacts/groups', $content);
 					}
 
 					$custom_nebula_properties = array();
@@ -1931,18 +1931,6 @@ if ( !trait_exists('Utilities') ){
 					);
 
 					$custom_nebula_properties[] = array(
-						'name' => 'cookies',
-						'label' => 'Cookies',
-						'description' => 'Whether this user is allowing/blocking cookies',
-					);
-
-					$custom_nebula_properties[] = array(
-						'name' => 'screen',
-						'label' => 'Screen',
-						'description' => "The screen dimensions (and color depth) of the user's device",
-					);
-
-					$custom_nebula_properties[] = array(
 						'name' => 'device',
 						'label' => 'Device',
 						'description' => 'The device being used',
@@ -1970,12 +1958,6 @@ if ( !trait_exists('Utilities') ){
 						'name' => 'ga_cid',
 						'label' => 'Google Analytics CID',
 						'description' => 'The Google Analytics Client ID to identify this user in GA',
-					);
-
-					$custom_nebula_properties[] = array(
-						'name' => 'facebook_id',
-						'label' => 'Facebook ID',
-						'description' => "The ID of the user's Facebook profile",
 					);
 
 					$custom_nebula_properties[] = array(
@@ -2012,18 +1994,6 @@ if ( !trait_exists('Utilities') ){
 						'name' => 'form_contacted',
 						'label' => 'Form Contacted',
 						'description' => 'The form(s) this user filled out and their success with it',
-					);
-
-					$custom_nebula_properties[] = array(
-						'name' => 'geolocation',
-						'label' => 'Geolocation',
-						'description' => "The latitude/longitude of this user's geolocation (and accuracy)",
-					);
-
-					$custom_nebula_properties[] = array(
-						'name' => 'address_lookup',
-						'label' => 'Address Lookup',
-						'description' => 'An address looked up by the user (may not be their own address)',
 					);
 
 					$custom_nebula_properties[] = array(
@@ -2071,7 +2041,7 @@ if ( !trait_exists('Utilities') ){
 								"options": []
 							}';
 
-							$response = $this->hubspot_curl('https://api.hubapi.com/contacts/v2/properties', $content);
+							$response = $this->hubspot_curl('https://api.hubapi.com/crm/v3/properties/contacts', $content);
 							$properties_created[] = $value['name'];
 						}
 					}
@@ -2087,7 +2057,7 @@ if ( !trait_exists('Utilities') ){
 				} else {
 					?>
 					<div class="updated notice notice-warning">
-						<p><strong>Hubspot API Key Missing!</strong> <a href="https://app.hubspot.com/hapikeys">Get your API Key</a> then <a href="themes.php?page=nebula_options&tab=apis&option=hubspot_api">enter it here</a> and re-save Nebula Options, or <a href="https://app.hubspot.com/property-settings/<?php echo $this->get_option('hubspot_portal', ''); ?>/contact" target="_blank">manually create contact properties</a>.</p>
+						<p><strong>Hubspot API Key Missing!</strong> <a href="https://app.hubspot.com/hapikeys">Get your API Key</a> then <a href="themes.php?page=nebula_options&tab=apis&option=hubspot_access_token">enter it here</a> and re-save Nebula Options, or <a href="https://app.hubspot.com/property-settings/<?php echo $this->get_option('hubspot_portal', ''); ?>/contact" target="_blank">manually create contact properties</a>.</p>
 						<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
 					</div>
 
@@ -2099,34 +2069,75 @@ if ( !trait_exists('Utilities') ){
 
 		//Get all existing Hubspot CRM contact properties in the Nebula group
 		public function get_nebula_hubspot_properties(){
-			$all_hubspot_properties = $this->hubspot_curl('https://api.hubapi.com/contacts/v2/properties');
+			$all_hubspot_properties = $this->hubspot_curl('https://api.hubapi.com/crm/v3/properties/contacts');
 			$all_hubspot_properties = json_decode($all_hubspot_properties, true);
 
 			$existing_nebula_properties = array();
-			foreach ( $all_hubspot_properties as $property ){
-				if ( $property['groupName'] == 'nebula' ){
-					$existing_nebula_properties[] = $property['name'];
+			if ( is_array($all_hubspot_properties) ){
+				foreach ( $all_hubspot_properties['results'] as $property ){
+					if ( isset($property['groupName']) && $property['groupName'] == 'nebula' ){
+						$existing_nebula_properties[] = $property['name'];
+					}
 				}
 			}
 
 			return $existing_nebula_properties;
 		}
 
+		public function get_hubspot_contact_id($email_address){
+			if ( $email_address ){
+				$search_body = json_encode(array(
+					'filterGroups' => array(array(
+						'filters' => array(array(
+							'propertyName' => 'email',
+							'operator' => 'EQ',
+							'value' => $email_address,
+						))
+					)),
+					'properties' => array('email'),
+					'limit' => 1,
+				));
+
+				$response = $this->hubspot_curl('https://api.hubapi.com/crm/v3/objects/contacts/search', $search_body);
+				$decoded = json_decode($response);
+
+				if ( isset($decoded->results[0]->id) ){
+					return $decoded->results[0]->id;
+				}
+			}
+
+			return null;
+		}
+
 		//Send data to Hubspot CRM via PHP curl
 		public function hubspot_curl($url, $content=null){
 			if ( $this->is_minimal_mode() ){return null;}
 
-			$sep = ( !str_contains($url, '?') )? '?' : '&';
-			$get_url = $url . $sep . 'hapikey=' . $this->get_option('hubspot_api', '');
+			$access_token = $this->get_option('hubspot_access_token', '');
 
+			if ( empty($access_token) ){
+				return null;
+			}
+
+			$headers = array(
+				'Content-Type' => 'application/json',
+				'Authorization' => 'Bearer ' . $access_token
+			);
+
+			//If we have content, POST data
 			if ( !empty($content) ){
-				$response = wp_remote_post($get_url, array(
-					'headers' => array('Content-Type' => 'application/json'),
+				$response = wp_remote_post($url, array(
+					'headers' => $headers,
 					'body' => $content,
 				));
-			} else {
-				$response = wp_remote_get($get_url); //Change this to nebula remote_get?
-				do_action('qm/info', 'Hubspot Remote Get: ' . $get_url); //Remove this if changing to nebula remote_get
+
+				do_action('qm/info', 'Hubspot Remote POST: ' . $url);
+			} else { //Otherwise we don't have content so GET data
+				$response = wp_remote_get($url, array(
+					'headers' => $headers,
+				));
+
+				do_action('qm/info', 'Hubspot Remote GET: ' . $url);
 			}
 
 			if ( !is_wp_error($response) ){

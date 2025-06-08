@@ -43,7 +43,7 @@ if ( !trait_exists('Dashboard') ){
 						add_action('wp_dashboard_setup', array($this, 'github_metabox'));
 					}
 
-					if ( $this->get_option('hubspot_portal') && $this->get_option('hubspot_api') ){ //Editor or above (and Hubspot API/Portal)
+					if ( $this->get_option('hubspot_portal') && $this->get_option('hubspot_access_token') ){ //Editor or above (and Hubspot API/Portal)
 						add_action('wp_dashboard_setup', array($this, 'hubspot_metabox'));
 					}
 				}
@@ -1308,7 +1308,7 @@ if ( !trait_exists('Dashboard') ){
 
 						//Replace timestamp with wrapped spans for date, time, and timezone
 						$line = preg_replace_callback(
-							'/^\[([^\]]+)\]/', // Match everything inside the first [...]
+							'/^\[([^\]]+)\]/', //Match everything inside the first [...]
 							function( $matches ){
 								$raw_timestamp = $matches[1];
 								$timestamp = strtotime($raw_timestamp);
@@ -2368,7 +2368,7 @@ if ( !trait_exists('Dashboard') ){
 
 		//Estimate the number of tokens needed to process a prompt
 		public function ai_estimate_tokens($prompt){
-			$prompt = trim($prompt); // Remove leading/trailing whitespace
+			$prompt = trim($prompt); //Remove leading/trailing whitespace
 			$char_count = strlen($prompt);
 
 			//Base estimate: 1 token ≈ 4 characters, adjusted with better heuristic
@@ -2454,45 +2454,45 @@ if ( !trait_exists('Dashboard') ){
 
 		//Convert simple markdown into HTML. For more accurate/flexible results consider a third-party library.
 		public function simple_markdown_to_html($markdown){
-			// Convert code blocks (```lang\ncode```) with escaping
+			//Convert code blocks (```lang\ncode```) with escaping
 			$markdown = preg_replace_callback('/```(\w*)\n(.*?)```/s', function($matches){
 				$lang = $matches[1];
 				$code = esc_html($matches[2]);
 				return '<pre><code class="language-' . esc_attr($lang) . '">' . $code . '</code></pre>';
 			}, $markdown);
 
-			// Convert inline code (`code`) with escaping
+			//Convert inline code (`code`) with escaping
 			$markdown = preg_replace_callback('/`([^`]+)`/', function($matches){
 				return '<code>' . esc_html($matches[1]) . '</code>';
 			}, $markdown);
 
-			// Convert headings (#, ##, ###, ####, #####)
+			//Convert headings (#, ##, ###, ####, #####)
 			$markdown = preg_replace('/^##### (.+)$/m', '<h5>$1</h5>', $markdown);
 			$markdown = preg_replace('/^#### (.+)$/m', '<h4>$1</h4>', $markdown);
 			$markdown = preg_replace('/^### (.+)$/m', '<h3>$1</h3>', $markdown);
 			$markdown = preg_replace('/^## (.+)$/m', '<h2>$1</h2>', $markdown);
 			$markdown = preg_replace('/^# (.+)$/m', '<h1>$1</h1>', $markdown);
 
-			// Convert bold (**bold** or __bold__)
+			//Convert bold (**bold** or __bold__)
 			$markdown = preg_replace('/\*\*(.+?)\*\*/s', '<strong>$1</strong>', $markdown);
 			$markdown = preg_replace('/__(.+?)__/s', '<strong>$1</strong>', $markdown);
 
-			// Convert unordered lists (- item or * item)
-			// Wrap consecutive list items in a single <ul>
+			//Convert unordered lists (- item or * item)
+			//Wrap consecutive list items in a single <ul>
 			$markdown = preg_replace_callback('/((^- .+(?:\n^- .+)*)+)/m', function($matches){
 				$list = preg_replace('/^- /m', '<li>', $matches[0]);
 				$list = preg_replace('/$/m', '</li>', $list);
 				return '<ul>' . $list . '</ul>';
 			}, $markdown);
 
-			// Convert ordered lists (1. item, 2. item, etc.)
+			//Convert ordered lists (1. item, 2. item, etc.)
 			$markdown = preg_replace_callback('/((^\d+\.\s.+(?:\n^\d+\.\s.+)*)+)/m', function($matches){
 				$list = preg_replace('/^\d+\. /m', '<li>', $matches[0]);
 				$list = preg_replace('/$/m', '</li>', $list);
 				return '<ol>' . $list . '</ol>';
 			}, $markdown);
 
-			// Break into paragraphs on two or more newlines but avoid breaking inside <pre> or <ul>
+			//Break into paragraphs on two or more newlines but avoid breaking inside <pre> or <ul>
 			$blocks = preg_split('/(\n{2,})/', $markdown);
 			$output = '';
 			foreach ($blocks as $block){
@@ -2986,8 +2986,21 @@ if ( !trait_exists('Dashboard') ){
 			do_action('nebula_hubspot_contacts');
 
 			$hubspot_contacts_json = $this->transient('nebula_hubspot_contacts', function(){
-				$requested_properties = '&property=' . implode('&property=', apply_filters('nebula_hubspot_metabox_properties', array('firstname', 'lastname', 'full_name', 'email', 'createdate')));
-				$response = $this->remote_get('https://api.hubapi.com/contacts/v1/lists/all/contacts/recent?hapikey=' . $this->get_option('hubspot_api', '') . '&count=4' . $requested_properties);
+				$access_token = $this->get_option('hubspot_access_token', '');
+				if ( empty($access_token) ){return null;}
+
+				$properties = apply_filters('nebula_hubspot_metabox_properties', array('firstname', 'lastname', 'full_name', 'email', 'createdate'));
+				$properties_param = implode(',', $properties);
+
+				$url = 'https://api.hubapi.com/crm/v3/objects/contacts?limit=4&properties=' . urlencode($properties_param) . '&sorts=-createdate';
+
+				$response = wp_remote_get($url, array(
+					'headers' => array(
+						'Authorization' => 'Bearer ' . $access_token,
+						'Content-Type' => 'application/json'
+					)
+				));
+
 				if ( is_wp_error($response) ){
 					return null;
 				}
@@ -2997,24 +3010,28 @@ if ( !trait_exists('Dashboard') ){
 
 			$hubspot_contacts_json = json_decode($hubspot_contacts_json);
 			if ( !empty($hubspot_contacts_json) ){
-				if ( !empty($hubspot_contacts_json->contacts) ){
-					foreach ( $hubspot_contacts_json->contacts as $contact ){
-						//Get contact's email address
-						$identities = $contact->{'identity-profiles'}[0]->identities;
-						foreach ( $identities as $key => $value ){
-							if ( strtolower($value->type) === 'email' ){
-								$contact_email = $value->value;
-							}
-						}
+				if ( !empty($hubspot_contacts_json->results) ){
+					$portal_id = $this->get_option('hubspot_portal', '');
+
+					//Ensure they are sorted by create date (most recent first)
+					usort($hubspot_contacts_json->results, function($a, $b){
+						$adate = ( isset($a->properties->createdate) )? strtotime($a->properties->createdate) : 0;
+						$bdate = ( isset($b->properties->createdate) )? strtotime($b->properties->createdate) : 0;
+						return $bdate - $adate;
+					});
+
+					foreach ( $hubspot_contacts_json->results as $contact ){
+						$contact_email = $contact->properties->email; //Get contact's email address
 
 						//Get contact's name
 						$contact_name = false;
 						$has_name = false;
-						if ( !empty($contact->properties->firstname) && !empty($contact->properties->lastname) ){
-							$contact_name = trim($contact->properties->firstname->value . ' ' . $contact->properties->lastname->value);
+
+						if ( !empty($contact->properties->full_name) ){
+							$contact_name = $contact->properties->full_name;
 							$has_name = true;
-						} elseif ( !empty($contact->properties->full_name) ){
-							$contact_name = $contact->properties->full_name->value;
+						} elseif ( !empty($contact->properties->firstname) && !empty($contact->properties->lastname) ){
+							$contact_name = trim($contact->properties->firstname . ' ' . $contact->properties->lastname);
 							$has_name = true;
 						}
 
@@ -3026,13 +3043,18 @@ if ( !trait_exists('Dashboard') ){
 						}
 						?>
 
-						<li><?php echo ( $has_name )? '<i class="fa-solid fa-fw fa-user"></i> ' : '<i class="fa-regular fa-fw fa-envelope"></i> '; ?><strong><a href="<?php echo $contact->{'profile-url'}; ?>" target="_blank"><?php echo ( $has_name )? $contact_name : $contact_email; ?></a></strong></li>
+						<li><?php echo ( $has_name )? '<i class="fa-solid fa-fw fa-user"></i> ' : '<i class="fa-regular fa-fw fa-envelope"></i> '; ?><strong><a href="<?php echo 'https://app.hubspot.com/contacts/' . $portal_id . '/contact/' . $contact->id; ?>" target="_blank"><?php echo ( $has_name )? $contact_name : $contact_email; ?></a></strong></li>
 
 						<?php if ( $has_name ): ?>
 							<li><i class="fa-regular fa-fw fa-envelope"></i> <?php echo $contact_email; ?><br /></li>
 						<?php endif; ?>
 
-						<li><i class="fa-regular fa-fw fa-<?php echo ( date('Y-m-d', $contact->addedAt/1000) === date('Y-m-d') )? 'clock' : 'calendar'; ?>"></i> <span title="<?php echo date('F j, Y @ g:ia', $contact->addedAt/1000); ?>" style="cursor: help;"><?php echo human_time_diff($contact->addedAt/1000) . ' ago'; ?></span></li>
+						<?php
+							$create_date = new DateTime($contact->properties->createdate);
+							$create_date_timestamp = $create_date->getTimestamp();
+						?>
+
+						<li><i class="fa-regular fa-fw fa-<?php echo ( date('Y-m-d', $create_date_timestamp) === date('Y-m-d') )? 'clock' : 'calendar'; ?>"></i> <span title="<?php echo date('F j, Y @ g:ia', $create_date_timestamp); ?>" style="cursor: help;"><?php echo human_time_diff($create_date_timestamp) . ' ago'; ?></span></li>
 
 						<?php
 						$after_contact = apply_filters('nebula_hubspot_metabox_after_contact', '', $contact);

@@ -842,7 +842,7 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group mb-2">
-					<label for="hubspot_api">IndexNow</label>
+					<label for="index_now">IndexNow</label>
 
 					<div class="form-group">
 						<input type="hidden" name="nebula_options[index_now]" value="<?php echo $nebula_options['index_now']; ?>">
@@ -860,11 +860,11 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group mb-2">
-					<label for="hubspot_api">Hubspot</label>
+					<label for="hubspot_access_token">Hubspot</label>
 
 					<div class="input-group">
-						<div class="input-group-text">API Key</div>
-						<input type="text" name="nebula_options[hubspot_api]" id="hubspot_api" class="form-control nebula-validate-text" value="<?php echo $nebula_options['hubspot_api']; ?>" />
+						<div class="input-group-text">Access Token</div>
+						<input type="text" name="nebula_options[hubspot_access_token]" id="hubspot_access_token" class="form-control nebula-validate-text" value="<?php echo $nebula_options['hubspot_access_token']; ?>" />
 					</div>
 				</div>
 
@@ -874,8 +874,8 @@ if ( !trait_exists('Metaboxes') ){
 						<input type="text" name="nebula_options[hubspot_portal]" id="hubspot_portal" class="form-control nebula-validate-text" value="<?php echo $nebula_options['hubspot_portal']; ?>" />
 					</div>
 
-					<p class="nebula-help-text short-help form-text text-muted">Enter your Hubspot API key and Hubspot Portal ID here.</p>
-					<p class="nebula-help-text more-help form-text text-muted">It can be obtained from your <a href="https://app.hubspot.com/hapikeys">API Keys page under Integrations in your account</a>. Your Hubspot Portal ID (or Hub ID) is located in the upper right of your <a href="https://app.hubspot.com/" target="_blank">account screen</a> (or within the URL itself). The Portal ID is needed to send data to your Hubspot CRM and the API key will allow for Nebula custom contact properties to be automatically created. Note: You'll still be required to <a href="https://app.hubspot.com/property-settings/<?php echo $this->get_option('hubspot_portal', ''); ?>/contact" target="_blank">create any of your own custom properties</a> (non-Nebula) manually. It is recommended to create your own property group for these separate from the Nebula group.</p>
+					<p class="nebula-help-text short-help form-text text-muted">Enter your Hubspot Private App Access Token and Hubspot Portal ID here.</p>
+					<p class="nebula-help-text more-help form-text text-muted">It can be obtained from your <a href="https://app.hubspot.com/private-apps">Private Apps page under Integrations in your account</a>. Your Hubspot Portal ID (or Hub ID) is located in the upper right of your <a href="https://app.hubspot.com/" target="_blank">account screen</a> (or within the URL itself). The Portal ID is needed to send data to your Hubspot CRM and the API key will allow for Nebula custom contact properties to be automatically created. Note: You'll still be required to <a href="https://app.hubspot.com/property-settings/<?php echo $this->get_option('hubspot_portal', ''); ?>/contact" target="_blank">create any of your own custom properties</a> (non-Nebula) manually. It is recommended to create your own property group for these separate from the Nebula group.</p>
 					<p class="option-keywords">remote resource minor page speed impact optimization optimize crm</p>
 				</div>
 			<?php

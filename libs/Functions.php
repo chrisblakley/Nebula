@@ -91,10 +91,10 @@ if ( !trait_exists('Functions') ){
 			add_filter('wpcf7_special_mail_tags', array($this, 'cf7_custom_special_mail_tags'), 10, 3);
 			add_action('wpcf7_mail_failed', array($this, 'cf7_note_mail_failed'));
 
-			if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') && $this->get_option('store_form_submissions') ){ //If CF7 is installed and active and capturing submission data is enabled
+			if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ){ //If CF7 is installed and active
 				add_action('init', array($this, 'cf7_storage_taxonomies')); //Custom Post Type and Custom Status
 				add_filter('wpcf7_posted_data', array($this, 'cf7_enhance_data')); //Add more context for CF7 form submissions
-				add_action('wpcf7_submit', array($this, 'cf7_storage'), 2, 2); //Store CF7 submissions as a CPT (formerly hooked on wpcf7_before_send_mail)
+				add_action('wpcf7_submit', array($this, 'cf7_processing'), 2, 2); //Process CF7 submissions to store as a CPT and/or in Hubspot
 			}
 
 			if ( $this->is_bypass_cache() ){
@@ -3461,7 +3461,7 @@ if ( !trait_exists('Functions') ){
 			));
 		}
 
-		//Modify/add data to CF7 submissions in a way that other themes/plugins can use it as well (remember: cf7_storage calls this function as well)
+		//Modify/add data to CF7 submissions in a way that other themes/plugins can use it as well (remember: cf7_processing calls this function as well)
 		public function cf7_enhance_data($posted_data=array()){
 			$nebula_debug_info = $this->cf7_debug_info($posted_data);
 			foreach ( $nebula_debug_info as $key => $value ){
@@ -3473,7 +3473,7 @@ if ( !trait_exists('Functions') ){
 
 		//Listen for form submissions to store into the DB right before sending the mail
 		//Note: Spam submissions often do not come through this function, so cannot be mitigated/noted here
-		public function cf7_storage($form, $result){
+		public function cf7_processing($form, $result){
 			if ( $this->is_minimal_mode() ){return null;}
 
 			$submission = WPCF7_Submission::get_instance();
@@ -3570,38 +3570,15 @@ if ( !trait_exists('Functions') ){
 				}
 			}
 
-			$submission_title = apply_filters('nebula_cf7_submission_title', get_the_title($form_id) . $unique_identifier, $submission_data); //Allow others to modify the title of the CF7 submissions as they are shown in WP Admin
-
-			//Determine the WP post status and annotate the submission title if necessary
-			$post_status = 'submission'; //"submission" status for success and mail failed
-			$submission_data['message_shown'] = $result['message']; //This is the confirmation or error message the user was shown when submitting
-
-			if ( $status == 'mail_failed' ){
-				$submission_title = $submission_title . ' (Mail Failed)';
-				$submission_data['mail_failed'] = 'CF7 Mail Failed may have been triggered with this submission. The user likely saw an error message that indicated it was not submitted, and administrators likely did not receive an email notifcation about this form submission!'; //Add the new item to the data array
-			} elseif ( $status == 'validation_failed' ){
-				$post_status = 'invalid';
-				$submission_data['invalid_fields'] = addslashes(json_encode($result['invalid_fields'], JSON_PRETTY_PRINT));
-				$submission_title = $submission_title . ' (Invalid)';
-			} elseif ( $status == 'spam' ){
-				$post_status = 'spam';
-				$submission_title = $submission_title . ' (Spam)';
+			//Store the CF7 submission in WordPress
+			if ( $this->get_option('store_form_submissions') ){ //If capturing submission data is enabled
+				$this->cf7_storage($form_id, $unique_identifier, $submission_data, $result, $status);
 			}
 
-			$submission_data = map_deep($submission_data, 'sanitize_text_field'); //Deep sanitization of the full data array
-			$submission_data = apply_filters('nebula_cf7_submission_data', $submission_data); //Allow others to add/modify CF7 submission data before it is stored
-
-			//Store it in a CPT
-			//@todo "Nebula" 0: Consider rate limiting this so the same user cannot inadvertently submit many invalid forms in a short period of time
-			$new_post_id = wp_insert_post(array(
-				'post_title' => sanitize_text_field($submission_title),
-				'post_content' => wp_json_encode($submission_data),
-				'post_status' => $post_status, //submission, invalid, or spam
-				'post_type' => 'nebula_cf7_submits', //This needs to match the CPT slug!
-				'meta_input' => array(
-					'form_id' => intval($form_id), //Associate this submission with its CF7 form ID
-				)
-			));
+			//Send the CF7 submission to Hubspot
+			if ( $this->get_option('hubspot_access_token') ){ //If we are using Hubspot
+			 	$this->cf7_submit_to_hubspot($submission_data, $form_id);
+			}
 		}
 
 		//Build debug info data for CF7 messages and/or Nebula CF7 storage
@@ -3752,6 +3729,173 @@ if ( !trait_exists('Functions') ){
 			$debug_info = map_deep($debug_info, 'sanitize_text_field'); //Deep sanitization of the full data array
 
 			return apply_filters('nebula_cf7_debug_info', $debug_info);
+		}
+
+		//Store contact form data in WordPress
+		public function cf7_storage($form_id, $unique_identifier, $submission_data, $result, $status){
+			$submission_title = apply_filters('nebula_cf7_submission_title', get_the_title($form_id) . $unique_identifier, $submission_data); //Allow others to modify the title of the CF7 submissions as they are shown in WP Admin
+
+			//Determine the WP post status and annotate the submission title if necessary
+			$post_status = 'submission'; //"submission" status for success and mail failed
+			$submission_data['message_shown'] = $result['message']; //This is the confirmation or error message the user was shown when submitting
+
+			if ( $status == 'mail_failed' ){
+				$submission_title = $submission_title . ' (Mail Failed)';
+				$submission_data['mail_failed'] = 'CF7 Mail Failed may have been triggered with this submission. The user likely saw an error message that indicated it was not submitted, and administrators likely did not receive an email notifcation about this form submission!'; //Add the new item to the data array
+			} elseif ( $status == 'validation_failed' ){
+				$post_status = 'invalid';
+				$submission_data['invalid_fields'] = addslashes(json_encode($result['invalid_fields'], JSON_PRETTY_PRINT));
+				$submission_title = $submission_title . ' (Invalid)';
+			} elseif ( $status == 'spam' ){
+				$post_status = 'spam';
+				$submission_title = $submission_title . ' (Spam)';
+			}
+
+			$submission_data = map_deep($submission_data, 'sanitize_text_field'); //Deep sanitization of the full data array
+			$submission_data = apply_filters('nebula_cf7_submission_data', $submission_data); //Allow others to add/modify CF7 submission data before it is stored
+
+			//Store it in a CPT
+			//@todo "Nebula" 0: Consider rate limiting this so the same user cannot inadvertently submit many invalid forms in a short period of time
+			$new_post_id = wp_insert_post(array(
+				'post_title' => sanitize_text_field($submission_title),
+				'post_content' => wp_json_encode($submission_data),
+				'post_status' => $post_status, //submission, invalid, or spam
+				'post_type' => 'nebula_cf7_submits', //This needs to match the CPT slug!
+				'meta_input' => array(
+					'form_id' => intval($form_id), //Associate this submission with its CF7 form ID
+				)
+			));
+		}
+
+		//Send contact form data to Hubspot
+		public function cf7_submit_to_hubspot($submission_data, $form_id){
+			if ( $this->is_minimal_mode() ){return null;}
+
+			//Get known properties from transient or Hubspot itself
+			$existing_hubspot_properties = nebula()->transient('nebula_known_hubspot_properties', function(){
+				$response = $this->hubspot_curl('https://api.hubapi.com/crm/v3/properties/contacts');
+				$existing_properties = array();
+
+				if ( $response ){
+					$decoded = json_decode($response);
+
+					if ( isset($decoded->results) ){
+						foreach ( $decoded->results as $property ){
+							$existing_properties[] = $property->name;
+						}
+					}
+				}
+
+				return $existing_properties;
+			}, YEAR_IN_SECONDS);
+
+			$submission_fields_for_hubspot = array();
+
+			foreach ( $submission_data as $key => $value ){
+				if ( empty($value) ){
+					continue;
+				}
+
+				$sanitized_key = strtolower($key);
+				$sanitized_key = preg_replace('/[^a-z0-9_]/', '_', $sanitized_key); //Replace non-allowed characters with an underscore
+				$sanitized_key = preg_replace('/_+/', '_', $sanitized_key); //Collapse multiple underscores
+
+				if ( str_starts_with($sanitized_key, '_') ){
+					$sanitized_key = 'meta' . $sanitized_key;
+				}
+
+				//Ignore certain fields (do not create Hubspot properties for fields that partially match anything in this array)
+				$ignored_fields = apply_filters('nebula_ignored_hubspot_fields', array('recaptcha', 'turnstile', 'honeypot', 'spam', 'hash', 'nonce')); //Allow others to add terms here
+
+				$skip = false;
+				foreach ( $ignored_fields as $ignore ){
+					if ( str_contains($sanitized_key, $ignore) ){
+						$skip = true;
+						break;
+					}
+				}
+
+				if ( $skip ){
+					continue;
+				}
+
+				//Create property only if it doesn't exist
+				if ( !in_array($sanitized_key, $existing_hubspot_properties) ){
+					$content = json_encode(array(
+						'name' => $sanitized_key,
+						'label' => $sanitized_key,
+						'description' => '',
+						'groupName' => 'CF7', //Remember: You have to make this Group in Hubspot yourself!
+						'type' => 'string',
+						'fieldType' => 'text',
+						'formField' => true,
+						'displayOrder' => 6,
+						'options' => array(),
+					));
+
+					$response = $this->hubspot_curl('https://api.hubapi.com/crm/v3/properties/contacts', $content);
+					$decoded = json_decode($response);
+
+					//If the response is successful, update the array
+					if ( $decoded->status != 'error' ){
+						$existing_hubspot_properties[] = $sanitized_key; //Now add it to the existing properties array so it doesn't get sent multiple times
+					}
+				}
+
+				//Build submission array
+				$submission_fields_for_hubspot[ $sanitized_key ] = ( is_array($value) )? implode(', ', array_map('sanitize_text_field', $value)) : sanitize_text_field($value);
+			}
+
+			//Update the transient again for any newly added properties
+			set_transient('nebula_known_hubspot_properties', $existing_hubspot_properties, YEAR_IN_SECONDS);
+
+			if ( empty($submission_fields_for_hubspot) ){
+				return null;
+			}
+
+			//Check for the required email property
+			$common_email_field_names = apply_filters('nebula_email_field_names', array('email', 'emailaddress', 'youremail', 'companyemail', 'companyemailaddress', 'workemail', 'workemailaddress')); //Allow others to include other email field names
+
+			$has_email = false;
+			foreach ( $submission_fields_for_hubspot as $key => $value ){
+				$normalized_name = str_replace(array('_', '-'), '', strtolower($key));
+
+				if ( in_array($normalized_name, $common_email_field_names) && !empty($value) ){
+					$has_email = true;
+					break;
+				}
+			}
+
+			//If we don't have an email address for identification we cannot send to Hubspot
+			if ( !$has_email ){
+				return null;
+			}
+
+			//Update the contact profile with the CF7 form submission field data
+			$response = $this->hubspot_curl('https://api.hubapi.com/crm/v3/objects/contacts', json_encode(array('properties' => $submission_fields_for_hubspot)));
+
+			$decoded = json_decode($response);
+			$hubspot_contact_id = isset($decoded->id) ? $decoded->id : null; //Try to get the Contact ID
+
+			if ( $hubspot_contact_id ){
+				$form_name = sanitize_text_field(get_the_title($form_id));
+
+				$note = array(
+					'engagement' => array(
+						'active' => true,
+						'type' => 'NOTE',
+						'timestamp' => round(microtime(true)*1000),
+					),
+					'associations' => array(
+						'contactIds' => array($hubspot_contact_id),
+					),
+					'metadata' => array(
+						'body' => 'Form submission received from CF7 (' . $form_name . ').'
+					),
+				);
+
+				$response = $this->hubspot_curl('https://api.hubapi.com/engagements/v1/engagements', json_encode($note));
+			}
 		}
 
 		//Send headers for 404 pages specifically

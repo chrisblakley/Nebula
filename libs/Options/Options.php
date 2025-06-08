@@ -284,7 +284,7 @@ if ( !trait_exists('Options') ){
 				'openai_api_key' => '',
 				'index_now' => 0,
 				'index_now_key' => '',
-				'hubspot_api' => '',
+				'hubspot_access_token' => '',
 				'hubspot_portal' => '',
 				'disqus_shortname' => '',
 				'facebook_app_id' => '',
