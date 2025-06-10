@@ -349,6 +349,12 @@
 				'ipaddress' => nebula()->get_ip_address(),
 				'user_agent' => nebula()->super->server['HTTP_USER_AGENT'],
 				'session_id' => nebula()->nebula_session_id(), //If this hits rate limits, consider removing it
+				'role' => nebula()->user_role(),
+				'bot' => ( nebula()->is_bot() )? 1 : 0,
+				'device' => nebula()->get_device(),
+				'os' => nebula()->get_os(),
+				'browser' => nebula()->get_browser(),
+				'attribution' => $this->super->cookie['attribution'],
 			);
 
 			if ( is_user_logged_in() ){
@@ -367,11 +373,6 @@
 				$hubspot_identify['state'] = get_user_meta(get_current_user_id(), 'userstate', true);
 				$hubspot_identify['phone'] = get_user_meta(get_current_user_id(), 'phonenumber', true);
 			}
-
-			$hubspot_identify['device'] = nebula()->get_device();
-			$hubspot_identify['os'] = nebula()->get_os();
-			$hubspot_identify['browser'] = nebula()->get_browser();
-			$hubspot_identify['bot'] = ( nebula()->is_bot() )? 1 : 0;
 		?>
 
 		var hubspotIdentify = <?php echo wp_json_encode(apply_filters('nebula_hubspot_identify', $hubspot_identify)); //Allow other functions to hook into Hubspot identifications ?>;
@@ -381,12 +382,16 @@
 		<?php do_action('nebula_hubspot_before_send_pageview'); //Hook into for adding more parameters before the pageview is sent. Can override any above identifications too. ?>
 
 		<?php if ( nebula()->get_option('ga_measurement_id') ): //If Google Analytics is used, grab the Client ID before sending the Hubspot pageview ?>
-			gtag('get', '<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>', 'client_id', function(clientId){
-				_hsq.push(["identify", {
-					client_id: clientId,
-				}]);
+			gtag('get', '<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>', 'client_id', function(gaClientId){
+				setTimeout(function(){ //Try to avoid a race condition
+					_hsq.push(["identify", {
+						client_id: nebula.user.cid,
+						ga_cid: nebula.user.cid,
+						session_id: nebula.session.id,
+					}]);
 
-				_hsq.push(['trackPageView']);
+					_hsq.push(['trackPageView']);
+				}, 10);
 			});
 		<?php else: ?>
 			_hsq.push(['trackPageView']);

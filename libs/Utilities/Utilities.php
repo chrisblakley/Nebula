@@ -1997,6 +1997,12 @@ if ( !trait_exists('Utilities') ){
 					);
 
 					$custom_nebula_properties[] = array(
+						'name' => 'attribution',
+						'label' => 'General Attribution',
+						'description' => 'Nebula-detected multi-touch attribution.',
+					);
+
+					$custom_nebula_properties[] = array(
 						'name' => 'utm_campaign',
 						'label' => 'UTM Campaign',
 						'description' => 'The UTM-tagged campaign name.',

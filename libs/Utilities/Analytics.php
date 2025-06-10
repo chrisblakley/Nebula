@@ -67,6 +67,16 @@ if ( !trait_exists('Analytics') ){
 			return false;
 		}
 
+		//If the "Do Not Sell"/"Do Not Share" browser setting is enabled.
+		//https://globalprivacycontrol.org/
+		public function is_gpc_enabled(){
+			if ( isset($this->super->server['HTTP_SEC_GPC']) && $this->super->server['HTTP_SEC_GPC'] == 1 ){
+				return true;
+			}
+
+			return false;
+		}
+
 		//Handle the parsing of the _ga cookie or setting it to a unique identifier
 		public function ga_parse_cookie(){
 			$override = apply_filters('pre_ga_parse_cookie', null);

@@ -94,7 +94,7 @@ if ( !trait_exists('Functions') ){
 			if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ){ //If CF7 is installed and active
 				add_action('init', array($this, 'cf7_storage_taxonomies')); //Custom Post Type and Custom Status
 				add_filter('wpcf7_posted_data', array($this, 'cf7_enhance_data')); //Add more context for CF7 form submissions
-				add_action('wpcf7_submit', array($this, 'cf7_processing'), 2, 2); //Process CF7 submissions to store as a CPT and/or in Hubspot
+				add_action('wpcf7_submit', array($this, 'cf7_processing'), 2, 2); //Process CF7 submissions to store as a CPT
 			}
 
 			if ( $this->is_bypass_cache() ){
@@ -3574,11 +3574,6 @@ if ( !trait_exists('Functions') ){
 			if ( $this->get_option('store_form_submissions') ){ //If capturing submission data is enabled
 				$this->cf7_storage($form_id, $unique_identifier, $submission_data, $result, $status);
 			}
-
-			//Send the CF7 submission to Hubspot
-			if ( $this->get_option('hubspot_access_token') ){ //If we are using Hubspot
-			 	$this->cf7_submit_to_hubspot($submission_data, $form_id);
-			}
 		}
 
 		//Build debug info data for CF7 messages and/or Nebula CF7 storage
@@ -3603,25 +3598,26 @@ if ( !trait_exists('Functions') ){
 
 			if ( !empty($submission_data) && isset($submission_data['_wpcf7_container_post']) ){
 				$current_page_url = get_permalink($submission_data['_wpcf7_container_post']);
-				$current_page_method = ' (via CF7 container post submission data)';
+				$current_page_method = 'via CF7 container post submission data';
 			}
 
 			if ( empty($current_page_url) && !empty($submission) && is_object($submission) ){
 				$current_page_url = esc_url_raw($submission->get_meta('url'));
-				$current_page_method = ' (via CF7 submission object)';
+				$current_page_method = 'via CF7 submission object';
 			}
 
 			if ( empty($current_page_url) && !empty(get_the_ID()) ){
 				$current_page_url = get_permalink(get_the_ID());
-				$current_page_method = ' (via WP Post ID)';
+				$current_page_method = 'via WP Post ID';
 			}
 
 			if ( empty($current_page_url) && get_queried_object_id() ){
 				$current_page_url = get_permalink(get_queried_object_id());
-				$current_page_method = ' (via WP queried object ID)';
+				$current_page_method = 'via WP queried object ID';
 			}
 
-			$debug_info['nebula_current_page'] = sanitize_text_field($current_page_url . $current_page_method);
+			$debug_info['nebula_current_page_url'] = sanitize_text_field($current_page_url);
+			$debug_info['nebula_current_page_method'] = sanitize_text_field($current_page_method);
 
 			$session_cookie_data = json_decode(stripslashes($this->super->cookie['session']), true);
 			if ( isset($session_cookie_data['landing_page']) ){
@@ -3732,6 +3728,7 @@ if ( !trait_exists('Functions') ){
 		}
 
 		//Store contact form data in WordPress
+		//Note: To store CF7 form data in Hubspot, use the Hubspot official plugin
 		public function cf7_storage($form_id, $unique_identifier, $submission_data, $result, $status){
 			$submission_title = apply_filters('nebula_cf7_submission_title', get_the_title($form_id) . $unique_identifier, $submission_data); //Allow others to modify the title of the CF7 submissions as they are shown in WP Admin
 
@@ -3765,137 +3762,6 @@ if ( !trait_exists('Functions') ){
 					'form_id' => intval($form_id), //Associate this submission with its CF7 form ID
 				)
 			));
-		}
-
-		//Send contact form data to Hubspot
-		public function cf7_submit_to_hubspot($submission_data, $form_id){
-			if ( $this->is_minimal_mode() ){return null;}
-
-			//Get known properties from transient or Hubspot itself
-			$existing_hubspot_properties = nebula()->transient('nebula_known_hubspot_properties', function(){
-				$response = $this->hubspot_curl('https://api.hubapi.com/crm/v3/properties/contacts');
-				$existing_properties = array();
-
-				if ( $response ){
-					$decoded = json_decode($response);
-
-					if ( isset($decoded->results) ){
-						foreach ( $decoded->results as $property ){
-							$existing_properties[] = $property->name;
-						}
-					}
-				}
-
-				return $existing_properties;
-			}, YEAR_IN_SECONDS);
-
-			$submission_fields_for_hubspot = array();
-
-			foreach ( $submission_data as $key => $value ){
-				if ( empty($value) ){
-					continue;
-				}
-
-				$sanitized_key = strtolower($key);
-				$sanitized_key = preg_replace('/[^a-z0-9_]/', '_', $sanitized_key); //Replace non-allowed characters with an underscore
-				$sanitized_key = preg_replace('/_+/', '_', $sanitized_key); //Collapse multiple underscores
-
-				if ( str_starts_with($sanitized_key, '_') ){
-					$sanitized_key = 'meta' . $sanitized_key;
-				}
-
-				//Ignore certain fields (do not create Hubspot properties for fields that partially match anything in this array)
-				$ignored_fields = apply_filters('nebula_ignored_hubspot_fields', array('recaptcha', 'turnstile', 'honeypot', 'spam', 'hash', 'nonce')); //Allow others to add terms here
-
-				$skip = false;
-				foreach ( $ignored_fields as $ignore ){
-					if ( str_contains($sanitized_key, $ignore) ){
-						$skip = true;
-						break;
-					}
-				}
-
-				if ( $skip ){
-					continue;
-				}
-
-				//Create property only if it doesn't exist
-				if ( !in_array($sanitized_key, $existing_hubspot_properties) ){
-					$content = json_encode(array(
-						'name' => $sanitized_key,
-						'label' => $sanitized_key,
-						'description' => '',
-						'groupName' => 'CF7', //Remember: You have to make this Group in Hubspot yourself!
-						'type' => 'string',
-						'fieldType' => 'text',
-						'formField' => true,
-						'displayOrder' => 6,
-						'options' => array(),
-					));
-
-					$response = $this->hubspot_curl('https://api.hubapi.com/crm/v3/properties/contacts', $content);
-					$decoded = json_decode($response);
-
-					//If the response is successful, update the array
-					if ( $decoded->status != 'error' ){
-						$existing_hubspot_properties[] = $sanitized_key; //Now add it to the existing properties array so it doesn't get sent multiple times
-					}
-				}
-
-				//Build submission array
-				$submission_fields_for_hubspot[ $sanitized_key ] = ( is_array($value) )? implode(', ', array_map('sanitize_text_field', $value)) : sanitize_text_field($value);
-			}
-
-			//Update the transient again for any newly added properties
-			set_transient('nebula_known_hubspot_properties', $existing_hubspot_properties, YEAR_IN_SECONDS);
-
-			if ( empty($submission_fields_for_hubspot) ){
-				return null;
-			}
-
-			//Check for the required email property
-			$common_email_field_names = apply_filters('nebula_email_field_names', array('email', 'emailaddress', 'youremail', 'companyemail', 'companyemailaddress', 'workemail', 'workemailaddress')); //Allow others to include other email field names
-
-			$has_email = false;
-			foreach ( $submission_fields_for_hubspot as $key => $value ){
-				$normalized_name = str_replace(array('_', '-'), '', strtolower($key));
-
-				if ( in_array($normalized_name, $common_email_field_names) && !empty($value) ){
-					$has_email = true;
-					break;
-				}
-			}
-
-			//If we don't have an email address for identification we cannot send to Hubspot
-			if ( !$has_email ){
-				return null;
-			}
-
-			//Update the contact profile with the CF7 form submission field data
-			$response = $this->hubspot_curl('https://api.hubapi.com/crm/v3/objects/contacts', json_encode(array('properties' => $submission_fields_for_hubspot)));
-
-			$decoded = json_decode($response);
-			$hubspot_contact_id = isset($decoded->id) ? $decoded->id : null; //Try to get the Contact ID
-
-			if ( $hubspot_contact_id ){
-				$form_name = sanitize_text_field(get_the_title($form_id));
-
-				$note = array(
-					'engagement' => array(
-						'active' => true,
-						'type' => 'NOTE',
-						'timestamp' => round(microtime(true)*1000),
-					),
-					'associations' => array(
-						'contactIds' => array($hubspot_contact_id),
-					),
-					'metadata' => array(
-						'body' => 'Form submission received from CF7 (' . $form_name . ').'
-					),
-				);
-
-				$response = $this->hubspot_curl('https://api.hubapi.com/engagements/v1/engagements', json_encode($note));
-			}
 		}
 
 		//Send headers for 404 pages specifically

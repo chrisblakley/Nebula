@@ -2989,16 +2989,21 @@ if ( !trait_exists('Dashboard') ){
 				$access_token = $this->get_option('hubspot_access_token', '');
 				if ( empty($access_token) ){return null;}
 
-				$properties = apply_filters('nebula_hubspot_metabox_properties', array('firstname', 'lastname', 'full_name', 'email', 'createdate'));
-				$properties_param = implode(',', $properties);
+				$body = json_encode(array(
+					'sorts' => array(array(
+						'propertyName' => 'createdate',
+						'direction' => 'DESCENDING'
+					)),
+					'limit' => 4,
+					'properties' => apply_filters('nebula_hubspot_metabox_properties', array('firstname', 'lastname', 'full_name', 'email', 'createdate'))
+				));
 
-				$url = 'https://api.hubapi.com/crm/v3/objects/contacts?limit=4&properties=' . urlencode($properties_param) . '&sorts=-createdate';
-
-				$response = wp_remote_get($url, array(
+				$response = wp_remote_post('https://api.hubapi.com/crm/v3/objects/contacts/search', array(
 					'headers' => array(
 						'Authorization' => 'Bearer ' . $access_token,
 						'Content-Type' => 'application/json'
-					)
+					),
+					'body' => $body
 				));
 
 				if ( is_wp_error($response) ){
@@ -3009,6 +3014,7 @@ if ( !trait_exists('Dashboard') ){
 			}, MINUTE_IN_SECONDS*30);
 
 			$hubspot_contacts_json = json_decode($hubspot_contacts_json);
+
 			if ( !empty($hubspot_contacts_json) ){
 				if ( !empty($hubspot_contacts_json->results) ){
 					$portal_id = $this->get_option('hubspot_portal', '');
@@ -3052,9 +3058,12 @@ if ( !trait_exists('Dashboard') ){
 						<?php
 							$create_date = new DateTime($contact->properties->createdate);
 							$create_date_timestamp = $create_date->getTimestamp();
+
+							$modified_date = new DateTime($contact->properties->lastmodifieddate);
+							$modified_date_timestamp = $modified_date->getTimestamp();
 						?>
 
-						<li><i class="fa-regular fa-fw fa-<?php echo ( date('Y-m-d', $create_date_timestamp) === date('Y-m-d') )? 'clock' : 'calendar'; ?>"></i> <span title="<?php echo date('F j, Y @ g:ia', $create_date_timestamp); ?>" style="cursor: help;"><?php echo human_time_diff($create_date_timestamp) . ' ago'; ?></span></li>
+						<li><i class="fa-regular fa-fw fa-<?php echo ( date('Y-m-d', $create_date_timestamp) === date('Y-m-d') )? 'clock' : 'calendar'; ?>"></i> <span title="<?php echo date('F j, Y @ g:ia', $create_date_timestamp); ?>" style="cursor: help;">Created <?php echo human_time_diff($create_date_timestamp) . ' ago'; ?></span> <small title="<?php echo date('F j, Y @ g:ia', $modified_date_timestamp); ?>" style="cursor: help;">(Modified <?php echo human_time_diff($modified_date_timestamp) . ' ago'; ?>)</small></li>
 
 						<?php
 						$after_contact = apply_filters('nebula_hubspot_metabox_after_contact', '', $contact);
@@ -3071,7 +3080,7 @@ if ( !trait_exists('Dashboard') ){
 				echo '<p><small>Hubspot contacts unavailable.</small></p>';
 			}
 
-			echo '<p><small><a href="https://app.hubspot.com/sales/' . $this->get_option('hubspot_portal', '') . '/contacts/list/view/all/" target="_blank">View on Hubspot &raquo;</a></small></p>';
+			echo '<p><small><a href="https://app.hubspot.com/sales/' . $this->get_option('hubspot_portal', '') . '/contacts/list/view/all/" target="_blank"><i class="fa-brands fa-fw fa-hubspot"></i> View all Hubspot contacts &raquo;</a></small></p>';
 			$this->timer('Nebula Hubspot Dashboard Metabox', 'end');
 		}
 	}

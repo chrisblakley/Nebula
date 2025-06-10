@@ -367,6 +367,7 @@ nebula.eventTracking = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_modal_shown'}));
+			nebula.crm('event', 'Modal Shown (' + thisEvent.event_label + ')');
 		});
 		nebula.dom.document.on('hidden.bs.modal', function(e){
 			let thisEvent = {
@@ -383,6 +384,7 @@ nebula.eventTracking = async function(){
 			nebula.dom.document.trigger('nebula_event', thisEvent);
 			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_modal_hidden'}));
+			nebula.crm('event', 'Modal Hidden (' + thisEvent.event_label + ')');
 		});
 
 		//Bootstrap Carousels (Sliders)
@@ -1888,7 +1890,7 @@ nebula.hj = function(type='event', value=''){
 };
 
 //Send data to the CRM
-nebula.crm = async function(action, data, sendNow = true){
+nebula.crm = async function(action, data, sendNow=true){
 	if ( nebula.isDoNotTrack() ){
 		return false;
 	}
@@ -1944,9 +1946,9 @@ nebula.crm = async function(action, data, sendNow = true){
 
 		_hsq.push(['setPath', window.location.href.replace(nebula.site.directory.root, '') + '#virtual-pageview/' + data]);
 		let oldTitle = document.title;
-		document.title += ' (Virtual)'; //Append to the title
+		document.title = data + ' (Virtual)'; //Change the title for the virtual page view
 		_hsq.push(['trackPageView']);
-		document.title = oldTitle;
+		document.title = oldTitle; //Then revert the title back to what it was
 	}
 
 	nebula.dom.document.trigger('crm_data', data);

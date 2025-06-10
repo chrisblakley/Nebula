@@ -176,6 +176,14 @@ if ( !trait_exists('Automation') ){
 					);
 				}
 
+				if ( $this->get_option('hubspot_portal') ){
+					$bundled_plugins[] = array(
+						'name' => 'leadin',
+						'slug' => 'leadin',
+						'required' => true,
+					);
+				}
+
 				$all_bundled_plugins = apply_filters('nebula_bundled_plugins', $bundled_plugins); //Allow other themes and plugins to bundle additional plugins
 
 				$config = array(
