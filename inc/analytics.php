@@ -354,7 +354,7 @@
 				'device' => nebula()->get_device(),
 				'os' => nebula()->get_os(),
 				'browser' => nebula()->get_browser(),
-				'attribution' => $this->super->cookie['attribution'],
+				'attribution' => nebula()->super->cookie['attribution'],
 			);
 
 			if ( is_user_logged_in() ){
