@@ -354,8 +354,11 @@
 				'device' => nebula()->get_device(),
 				'os' => nebula()->get_os(),
 				'browser' => nebula()->get_browser(),
-				'attribution' => nebula()->super->cookie['attribution'],
 			);
+
+			if ( isset(nebula()->super->cookie['attribution']) ){
+				$hubspot_identify['attribution'] = nebula()->super->cookie['attribution'];
+			}
 
 			if ( is_user_logged_in() ){
 				$user_info = get_userdata(get_current_user_id());

@@ -143,7 +143,7 @@ nebula.performanceMetrics = async function(){
 				}
 
 				//Report certain timings to Google Analytics
-				if ( document?.visibilityState == 'visible' ){ //Don't log times from background page loads (to avoid skewing averages)
+				if ( navigator?.cookieEnabled && document?.visibilityState == 'visible' ){ //Don't log times from background page loads (to avoid skewing averages)
 					let navigationPerformanceEntry = performance.getEntriesByType('navigation')[0]; //There is typically only ever 1 in this, but we always just want the first one
 					if ( navigationPerformanceEntry ){
 						if ( navigationPerformanceEntry.duration <= 50 || navigationPerformanceEntry.duration > 15_000 ){ //Ignore extreme values to prevent skewing the average in GA4

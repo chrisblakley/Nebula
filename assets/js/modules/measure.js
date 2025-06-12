@@ -1107,13 +1107,13 @@ nebula.eventTracking = async function(){
 				clickEvents.splice(0, clickEvents.length - 5); //Remove everything except the latest 5
 			}
 
-			//Detect 3 clicks in 5 seconds
+			//Detect 5 clicks in 3 seconds
 			if ( clickEvents.length >= 5 ){
 				const numberOfClicks = 5; //Number of clicks to detect within the period
-				const period = 3; //The period to listen for the number of clicks
+				const period = 3; //The period to listen for the number of clicks (in seconds)
 
 				let last = clickEvents.length - 1; //The latest click event
-				let timeDiff = (clickEvents[last].time.getTime() - clickEvents[last - numberOfClicks + 1].time.getTime()) / 1000; //Time between the last click and previous click
+				let timeDiff = (clickEvents[last].time.getTime() - clickEvents[last - numberOfClicks + 1].time.getTime()) / 1000; //Time (in seconds) between the last click and previous click
 
 				//Ignore event periods longer than desired
 				if ( timeDiff > period ){

@@ -39,27 +39,32 @@ nebula.isDoNotTrack = function(){
 };
 
 //Check if this page view is the first in a session
-//Note: Always use this function in JS and never read it from the "session" cookie in JS directly because it (inherently) won't get updated for JS
+//Note: Always use this function in JS and never read it from the "session" cookie in JS directly because it gets prepped for upcoming subsequent page views during this page view
 nebula.isLandingPage = function(){
 	if ( nebula.isDoNotTrack() ){
 		return false; //Not tracking this user
 	}
 
-	if ( nebula?.session?.is_landing_page ){
-		jQuery('body').addClass('is-landing-page');
+	if ( nebula.dom.body.hasClass('is-landing-page') ){ //Use this class to memoize if this function is called again on this page
 		return true;
 	}
 
-	if ( jQuery('body').hasClass('is-landing-page') ){ //If this function is called again on this page, detect it this way since the storage method will now think it is false
-		return true;
-	}
-
-	//This method may not be necessary anymore as the PHP detection exists now
-	if ( typeof localStorage !== 'undefined' && localStorage !== null ){ //In some instances localStorage was null for some reason
+	//Preferring this method using local storage to detect LPs
+	try {
 		let lpTimestamp = localStorage.getItem('landing_page');
 
-		if ( !lpTimestamp || Date.now() >= parseInt(lpTimestamp)+60*60*1000 ){ //If the storage item does not exist, or if the timestamp is over an hour ago
+		if ( !lpTimestamp || isNaN(lpTimestamp) || Date.now() >= parseInt(lpTimestamp, 10)+60*60*1000 ){ //If the storage item does not exist, or if the timestamp is over an hour ago
 			localStorage.setItem('landing_page', Date.now().toString()); //Set the (new) timestamp
+			nebula.session.is_landing_page = true;
+			nebula.dom.body.addClass('is-landing-page');
+			return true;
+		} else {
+			nebula.session.is_landing_page = false;
+			return false;
+		}
+	} catch(e){
+		//If localStorage is disabled or had some other kind of problem, fallback to the PHP detection
+		if ( nebula?.session?.is_landing_page ){
 			jQuery('body').addClass('is-landing-page');
 			return true;
 		}

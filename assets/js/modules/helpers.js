@@ -46,6 +46,8 @@ nebula.updateSessionData = function(){
 			sessionCookieData.previous_page = window.location.href;
 		}
 
+		sessionCookieData.is_landing_page = false; //Update the cookie for future pages that they are no longer landing pages
+
 		nebula.createCookie('session', encodeURIComponent(JSON.stringify(sessionCookieData)), 0.16667); //Update the cookie now
 	}, 'update session data');
 };
