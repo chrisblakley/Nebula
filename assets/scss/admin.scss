@@ -171,6 +171,8 @@ ul#nebula-performance-metrics li {
 	}
 
 	#log-contents {list-style: none; margin: 0; padding: 2px 0; display: table; width: 100%; font-family: monospace; color: #dcdcdc; font-size: rem(12px);
+		&.transient-data {font-size: rem(12px); padding-left: 6px; padding-right: 6px; line-height: 17px; background: repeating-linear-gradient(to bottom, #1a1a1a 0, #1a1a1a rem(17px), #3a3a3a rem(17px), #3a3a3a rem(34px));}
+
 		.log-line {display: block; width: 100%; margin: 0; padding: 4px 6px; white-space: pre; box-sizing: border-box; transition: background 0.25s ease;
 			&:nth-child(even) {background: #3a3a3a;}
 

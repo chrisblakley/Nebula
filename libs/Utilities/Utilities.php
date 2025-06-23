@@ -356,9 +356,9 @@ if ( !trait_exists('Utilities') ){
 					$other_internal_domains = explode(',', $other_internal_domains);
 					foreach ( $other_internal_domains as $other_internal_domain ){
 						if ( str_contains($full_referrer, trim($other_internal_domain)) ){
-							$this->once('is_internal_referrer', function(){
+							$this->once('is_internal_referrer', function($full_referrer, $other_internal_domain){
 								do_action('qm/info', 'The referrer (' . $full_referrer . ') is an internal domain (' . $other_internal_domain . ')');
-							});
+							}, $full_referrer, $other_internal_domain);
 
 							return true;
 						}

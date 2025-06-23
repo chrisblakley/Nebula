@@ -984,7 +984,8 @@ if ( !trait_exists('Dashboard') ){
 				if ( isset($nebula_404_count) ){ //Even if it is 0
 					$user_label = ( $need_404_labels )? ' user' : '';
 					$output_404_delimiter = ( !empty($redirection_404_count) )? ', ' : ''; //If we also have Redirection 404s we need a delimiter
-					$nebula_404_description = $output_404_delimiter . '<span title="This Nebula count attempts to track only human 404 views.">' . number_format($nebula_404_count) . $user_label . '</span>';
+					$user_label_color = ( $nebula_404_count > 500 )? 'text-danger' : '';
+					$nebula_404_description = $output_404_delimiter . '<a class="' . $user_label_color . '" href="' . admin_url('?log-viewer=nebula_analytics_404_views') . '" title="This Nebula count attempts to track only human 404 views.">' . number_format($nebula_404_count) . $user_label . '</a>'; //Note that Nebula only performs surface level bot detection, so this metric will likely still include some/many bots
 				}
 
 				echo '<li class="essential"><i class="fa-regular fa-fw fa-file-excel"></i> 404s: ' . $redirection_404_description . $nebula_404_description . ' <small>(Last 24 hours)</small></li>';
@@ -1207,6 +1208,7 @@ if ( !trait_exists('Dashboard') ){
 			$requested_log_lower = strtolower($requested_log);
 			$allowed_log_files = $this->get_log_files();
 			$log_file = null;
+			$transient_data = false;
 
 			//1. Try exact full path match
 			foreach ( $allowed_log_files as $type_group ){
@@ -1242,6 +1244,15 @@ if ( !trait_exists('Dashboard') ){
 				}
 			}
 
+			//4. If still no match, check transient names
+			if ( empty($log_file) && !empty($requested_log) ){
+				$transient_value = get_transient($requested_log);
+				if ( $transient_value !== false ){
+					$transient_data = $transient_value;
+					$log_file = 'transient';
+				}
+			}
+
 			//Default to error_log or fallback (if a specific log file wasn't requested)
 			if ( empty($requested_log) && empty($log_file) ){
 				$log_file = ini_get('error_log');
@@ -1251,100 +1262,118 @@ if ( !trait_exists('Dashboard') ){
 				}
 			}
 
-			if ( empty($log_file) || !file_exists($log_file) ){
-				echo '<p><strong>No log file was found:</strong><br /><span>' . $requested_log . '</span></p>';
-				return;
-			}
+			//If we are outputting a transient's data
+			if ( !empty($transient_data)  ){
+				echo '<p><i class="fa-regular fa-fw fa-file-lines"></i> Transient: <strong>' . $requested_log . '</strong></p>';
+				echo '<div id="log-scroll-wrapper"><pre id="log-contents" class="transient-data">';
 
-			$file_size = filesize($log_file);
+				if ( is_string($transient_data) ){
+					if ( (str_starts_with($transient_data, '{') && str_ends_with($transient_data, '}')) || (str_starts_with($transient_data, '[') && str_ends_with($transient_data, ']')) ){
+						$decoded = json_decode($transient_data);
+						if ( json_last_error() === JSON_ERROR_NONE ){
+							$transient_data = $decoded;
+						}
+					}
+				}
 
-			//Check the file size
-			if ( $file_size > MB_IN_BYTES*50 ){ //We can work with larger files here because we don't load the entire file
-				echo '<p><strong>Log file is too large to display (' . size_format($file_size) . ').</strong></p>';
-				return;
-			}
+				print_r($transient_data);
+				echo '</pre></div>';
+			} else { //Otherwise we are outputting file contents
+				if ( empty($log_file) || !file_exists($log_file) ){
+					echo '<p><strong>No log file was found:</strong><br /><span>' . $requested_log . '</span></p>';
+					return;
+				}
 
-			$lines = $this->tail_file($log_file, 30); //Read the last lines
-			$last_modified = filemtime($log_file);
+				$file_size = filesize($log_file);
 
-			$last_entry_icon = '<i class="fa-regular fa-fw fa-calendar"></i>';
-			if ( (time()-$last_modified) <= DAY_IN_SECONDS*2 ){
-				$last_entry_icon = '<i class="fa-regular fa-fw fa-clock"></i>';
-			} elseif ( (time()-$last_modified) > MONTH_IN_SECONDS*6 ){
-				$last_entry_icon = '<i class="fa-regular fa-fw fa-ghost" title="This is a stale log file."></i>';
-			}
+				//Check the file size
+				if ( $file_size > MB_IN_BYTES*50 ){ //We can work with larger files here because we don't load the entire file
+					echo '<p><strong>Log file is too large to display (' . size_format($file_size) . ').</strong></p>';
+					return;
+				}
 
-			echo '<p><i class="fa-regular fa-fw fa-file-lines"></i> <strong>' . str_replace(ABSPATH, '', $log_file) . '</strong> <small>(' . size_format($file_size) . ')</small><br /><em>' . $last_entry_icon . ' Last entry ' . human_time_diff($last_modified) . ' ago <small>(' . date('l, F j, Y - g:i:sa', $last_modified) . ')</small></em></p>';
+				$lines = $this->tail_file($log_file, 30); //Read the last lines
+				$last_modified = filemtime($log_file);
 
-			//Output the content
-			if ( empty($lines) || (count($lines) === 1 && trim($lines[0]) === '') ){ //If the lines are empty
-				echo '<p class="text-danger"><strong>No logs found in this file.</strong></p>';
-			} else {
-				//Loop through each of the log lines
-				echo '<div id="log-scroll-wrapper"><ul id="log-contents">';
-					foreach ( $lines as $line ){
-						$line = esc_html($line);
+				$last_entry_icon = '<i class="fa-regular fa-fw fa-calendar"></i>';
+				if ( (time()-$last_modified) <= DAY_IN_SECONDS*2 ){
+					$last_entry_icon = '<i class="fa-regular fa-fw fa-clock"></i>';
+				} elseif ( (time()-$last_modified) > MONTH_IN_SECONDS*6 ){
+					$last_entry_icon = '<i class="fa-regular fa-fw fa-ghost" title="This is a stale log file."></i>';
+				}
 
-						$line_classes = array('log-line');
-						if ( str_contains(strtolower($line), 'php fatal') ){
-							$line_classes[] = 'log-fatal';
-						} else {
-							//Check for trivial line entries
-							$update_keywords = array(
-								'automatic updates',
-								'automatic plugin update',
-								'upgrading plugin',
-								'has been upgraded',
-								'inactive and will not be checked'
-							);
+				echo '<p><i class="fa-regular fa-fw fa-file-lines"></i> <strong>' . str_replace(ABSPATH, '', $log_file) . '</strong> <small>(' . size_format($file_size) . ')</small><br /><em>' . $last_entry_icon . ' Last entry ' . human_time_diff($last_modified) . ' ago <small>(' . date('l, F j, Y - g:i:sa', $last_modified) . ')</small></em></p>';
 
-							foreach ( $update_keywords as $keyword ){
-								if ( str_contains(strtolower($line), $keyword) ){
-									$line_classes[] = 'log-trivial';
-									break;
+				//Output the content
+				if ( empty($lines) || (count($lines) === 1 && trim($lines[0]) === '') ){ //If the lines are empty
+					echo '<p class="text-danger"><strong>No logs found in this file.</strong></p>';
+				} else {
+					//Loop through each of the log lines
+					echo '<div id="log-scroll-wrapper"><ul id="log-contents">';
+						foreach ( $lines as $line ){
+							$line = esc_html($line);
+
+							$line_classes = array('log-line');
+							if ( str_contains(strtolower($line), 'php fatal') ){
+								$line_classes[] = 'log-fatal';
+							} else {
+								//Check for trivial line entries
+								$update_keywords = array(
+									'automatic updates',
+									'automatic plugin update',
+									'upgrading plugin',
+									'has been upgraded',
+									'inactive and will not be checked'
+								);
+
+								foreach ( $update_keywords as $keyword ){
+									if ( str_contains(strtolower($line), $keyword) ){
+										$line_classes[] = 'log-trivial';
+										break;
+									}
 								}
 							}
+
+							//Replace timestamp with wrapped spans for date, time, and timezone
+							$line = preg_replace_callback(
+								'/^\[([^\]]+)\]/', //Match everything inside the first [...]
+								function( $matches ){
+									$raw_timestamp = $matches[1];
+									$timestamp = strtotime($raw_timestamp);
+
+									//Fallback: return original match wrapped in plain span
+									if ( $timestamp === false ){
+										return '<span class="log-timestamp fallback">[' . esc_html($raw_timestamp) . ']</span>';
+									}
+
+									$date = date('F j, Y', $timestamp);
+									$time = date('g:i:sa', $timestamp);
+
+									$additional_classes = '';
+									if ( date('Y-m-d', $timestamp) == date('Y-m-d') ){
+										$additional_classes .= ' today';
+									} else if ( date('Y-m-d', $timestamp) == date('Y-m-d', strtotime('-1 day')) ){
+										$additional_classes .= ' yesterday';
+									}
+
+									return '<span class="log-timestamp customized' . $additional_classes . '">['
+										. '<span class="log-timestamp-original">' . esc_html($raw_timestamp) . '</span>'
+										. '<span class="log-date">' . esc_html($date) . '</span>'
+										. '<span class="log-time">' . esc_html($time) . '</span>'
+										. ']</span>';
+								},
+								$line
+							);
+
+							$line = preg_replace('/\s+/', ' ', $line); //Collapse multiple spaces into a single space
+
+							//Now escape the rest of the line (excluding the injected HTML)
+							$line = wp_kses_post($line); //keeps your spans but escapes unwanted tags
+
+							echo '<li class="' . implode(' ', $line_classes) . '"><i class="log-toggle fa-regular fa-fw fa-square-plus"></i>' . $line . '</li>';
 						}
-
-						//Replace timestamp with wrapped spans for date, time, and timezone
-						$line = preg_replace_callback(
-							'/^\[([^\]]+)\]/', //Match everything inside the first [...]
-							function( $matches ){
-								$raw_timestamp = $matches[1];
-								$timestamp = strtotime($raw_timestamp);
-
-								//Fallback: return original match wrapped in plain span
-								if ( $timestamp === false ){
-									return '<span class="log-timestamp fallback">[' . esc_html($raw_timestamp) . ']</span>';
-								}
-
-								$date = date('F j, Y', $timestamp);
-								$time = date('g:i:sa', $timestamp);
-
-								$additional_classes = '';
-								if ( date('Y-m-d', $timestamp) == date('Y-m-d') ){
-									$additional_classes .= ' today';
-								} else if ( date('Y-m-d', $timestamp) == date('Y-m-d', strtotime('-1 day')) ){
-									$additional_classes .= ' yesterday';
-								}
-
-								return '<span class="log-timestamp customized' . $additional_classes . '">['
-									. '<span class="log-timestamp-original">' . esc_html($raw_timestamp) . '</span>'
-									. '<span class="log-date">' . esc_html($date) . '</span>'
-									. '<span class="log-time">' . esc_html($time) . '</span>'
-									. ']</span>';
-							},
-							$line
-						);
-
-						$line = preg_replace('/\s+/', ' ', $line); //Collapse multiple spaces into a single space
-
-						//Now escape the rest of the line (excluding the injected HTML)
-						$line = wp_kses_post($line); //keeps your spans but escapes unwanted tags
-
-						echo '<li class="' . implode(' ', $line_classes) . '"><i class="log-toggle fa-regular fa-fw fa-square-plus"></i>' . $line . '</li>';
-					}
-				echo '</ul></div>';
+					echo '</ul></div>';
+				}
 			}
 
 			echo '<div id="log-viewer-tools"><a id="enlarge-log-viewer" href="#"><i class="fa-solid fa-square-arrow-up-right"></i> Enlarge Window</a> <a id="reload-log-viewer" href="#"><i class="fa-solid fa-rotate"></i> Reload This Log</a></div>';

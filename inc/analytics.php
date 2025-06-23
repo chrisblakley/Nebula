@@ -337,6 +337,16 @@
 	</script>
 <?php endif; ?>
 
+<?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('microsoft_clarity_project_id') && !is_customize_preview() ): //Microsoft Clarity ?>
+	<script type="text/javascript">
+		(function(c,l,a,r,i,t,y){
+			c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+			t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+			y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+		})(window, document, "clarity", "script", "<?php echo nebula()->get_option('microsoft_clarity_project_id'); ?>");
+	</script>
+<?php endif; ?>
+
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('hubspot_portal') ): //Hubspot CRM ?>
 	<!-- Nebula Hubspot <?php echo esc_html(nebula()->get_option('hubspot_portal')); ?> -->
 	<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/<?php echo esc_html(nebula()->get_option('hubspot_portal')); ?>.js"></script>
@@ -347,7 +357,7 @@
 		<?php
 			$hubspot_identify = array(
 				'ipaddress' => nebula()->get_ip_address(),
-				'user_agent' => nebula()->super->server['HTTP_USER_AGENT'],
+				'user_agent' =>  ( isset(nebula()->super->server['HTTP_USER_AGENT']) )? nebula()->super->server['HTTP_USER_AGENT'] : '',
 				'session_id' => nebula()->nebula_session_id(), //If this hits rate limits, consider removing it
 				'role' => nebula()->user_role(),
 				'bot' => ( nebula()->is_bot() )? 1 : 0,

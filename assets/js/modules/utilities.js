@@ -58,10 +58,10 @@ nebula.isLandingPage = function(){
 			nebula.session.is_landing_page = true;
 			nebula.dom.body.addClass('is-landing-page');
 			return true;
-		} else {
-			nebula.session.is_landing_page = false;
-			return false;
 		}
+
+		nebula.session.is_landing_page = false;
+		return false;
 	} catch(e){
 		//If localStorage is disabled or had some other kind of problem, fallback to the PHP detection
 		if ( nebula?.session?.is_landing_page ){
@@ -328,15 +328,15 @@ nebula.removeQueryParameter = function(keys, url = location.search){
 };
 
 //Fetch API simplified wrapper
-nebula.fetch = async function(url = false, headers = {}, type = 'json') {
+nebula.fetch = async function(url = false, options = {}, type = 'json') {
 	if ( !url ){
 		nebula.help('nebula.fetch() requires a URL to retrieve.', '/functions/fetch/');
 		return false;
 	}
 
-	if ( typeof headers !== 'object' ){ //If the type is passed as the second parameter
-		type = headers;
-		headers = {};
+	if ( typeof options !== 'object' ){ //If the type is passed as the second parameter
+		type = options;
+		options = {};
 	}
 
 	const fetchLabel = nebula.sanitize(url);
@@ -344,32 +344,22 @@ nebula.fetch = async function(url = false, headers = {}, type = 'json') {
 
 	await nebula.yield();
 
-	//Create a new promise to handle fetch
-	let fetchPromise = new Promise(async function(resolve, reject){
-		try {
-			let response = await fetch(url, headers);
+	try {
+		let response = await fetch(url, options);
 
-			if ( !response.ok ){
-				throw new Error('Network response was not ok: ' + response.statusText);
-			}
-
-			let data;
-			if ( type === 'json' ){
-				data = await response.json();
-			} else {
-				data = await response.text();
-			}
-
-			window.performance.mark('(Nebula) Fetch End ' + fetchLabel);
-			window.performance.measure('(Nebula) Fetch ' + url, '(Nebula) Fetch Start ' + fetchLabel, '(Nebula) Fetch End ' + fetchLabel);
-
-			resolve(data);
-		} catch(error){
-			reject(error);
+		if ( !response.ok ){
+			throw new Error('Network response was not ok: ' + response.statusText);
 		}
-	});
 
-	return fetchPromise;
+		let data = ( type === 'json' )? await response.json() : await response.text();
+
+		window.performance.mark('(Nebula) Fetch End ' + fetchLabel);
+		window.performance.measure('(Nebula) Fetch ' + url, '(Nebula) Fetch Start ' + fetchLabel, '(Nebula) Fetch End ' + fetchLabel);
+
+		return data;
+	} catch(error){
+		throw error; //Let the caller handle it
+	}
 };
 
 //Trigger a reflow on an element.

@@ -592,7 +592,7 @@ if ( !trait_exists('Analytics') ){
 		}
 
 		//Get the number of 404s from the last 24-hours
-		//Remember: this attempts to only track "human traffic" 404s
+		//Remember: this attempts to only track "human traffic" 404s. However, Nebula only does very basic, surface-level bot detection so the number will likely include some/many bots.
 		public function get_404_count(){
 			$stats = get_transient('nebula_analytics_404_views');
 

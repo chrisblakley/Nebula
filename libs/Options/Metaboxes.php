@@ -759,6 +759,13 @@ if ( !trait_exists('Metaboxes') ){
 				</div>
 
 				<div class="form-group">
+					<label for="google_ads_id">Microsoft Clarity Project ID</label>
+					<input type="text" name="nebula_options[microsoft_clarity_project_id]" id="microsoft_clarity_project_id" class="form-control" value="<?php echo $nebula_options['microsoft_clarity_project_id']; ?>" placeholder="0000000000" />
+					<p class="nebula-help-text short-help form-text text-muted">The ID of your Microsoft Clarity project to collect analytics on that platform.</p>
+					<p class="option-keywords">remote resource minor page speed impact optimization optimize bing microsoft clarity srt hotjar uet universal event tracking ms</p>
+				</div>
+
+				<div class="form-group">
 					<label for="hostnames">Valid Hostnames</label>
 					<input type="text" name="nebula_options[hostnames]" id="hostnames" class="form-control nebula-validate-text" value="<?php echo $nebula_options['hostnames']; ?>" placeholder="<?php echo $this->url_components('domain'); ?>" />
 					<p class="nebula-help-text short-help form-text text-muted">These help generate regex patterns for Google Analytics filters.</p>

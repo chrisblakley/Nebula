@@ -76,8 +76,10 @@ nebula.developerMetaboxes = function(){
 
 	//Log Viewer
 	if ( jQuery('div#nebula_log_viewer').length ){
-		//Automatically scroll to the bottom so the latest entries are visible
-		jQuery('#log-scroll-wrapper').scrollTop(jQuery('#log-scroll-wrapper')[0].scrollHeight);
+		//Automatically scroll to the bottom of file contents so the latest entries are visible
+		if ( !jQuery('#log-contents.transient-data').length ){
+			jQuery('#log-scroll-wrapper').scrollTop(jQuery('#log-scroll-wrapper')[0].scrollHeight);
+		}
 
 		jQuery('#log-contents .log-line .log-toggle').on('click', function(){
 			let $logLine = jQuery(this).parents('.log-line');

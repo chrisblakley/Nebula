@@ -270,6 +270,7 @@ if ( !trait_exists('Options') ){
 				'ga_wpuserid' => 0,
 				'google_ads_id' => '',
 				'microsoft_advertising_id' => '',
+				'microsoft_clarity_project_id' => '',
 				'hostnames' => '',
 				'google_search_console_verification' => '',
 				'facebook_custom_audience_pixel_id' => '',
