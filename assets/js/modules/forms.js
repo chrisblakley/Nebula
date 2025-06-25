@@ -488,7 +488,7 @@ nebula.updateFormFlow = function(formID, field, info = ''){
 		nebula.formFlow[formID] = formID + ': ' + field + info; //Otherwise start a new form flow string beginning with the form ID
 	}
 
-	//Set the user property. @todo "Nebula" 0: When GA4 allows session-scoped custom dimensions, update this to session scope!
+	//Set the user property. This is not entirely necessary since this gets included as an event property with the submission success.
 	gtag('set', 'user_properties', {
 		form_flow: nebula.formFlow[formID]
 	});

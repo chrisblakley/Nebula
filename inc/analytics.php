@@ -237,10 +237,12 @@
 			}
 			nebula.pageviewProperties.prefers_color_scheme = nebula.user.prefersColorScheme;
 
+			nebula.pageviewProperties.event_label = window.location.href; //This is strictly to have page location data in User Explorer reports which is currently missing in native GA4. Remove this line if GA4 ever shows the page location value in the User Explorer details reports. Since this is sent with a config event, it will be the default value for all future events unless they are overwritten, FYI.
+
 			<?php do_action('nebula_ga_before_pageview'); //Simple action for adding/modifying all custom definitions (including JS) before the pageview hit is sent. ?>
 
 			gtag('set', 'user_properties', nebula.userProperties); //Apply the User Properties
-			gtag('config', '<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>', nebula.pageviewProperties); //This sends the page_view
+			gtag('config', '<?php echo esc_html(nebula()->get_option('ga_measurement_id')); ?>', nebula.pageviewProperties); //This sends the page_view and all pageview properties will also be associated with any subsequent events triggered on this page
 
 			window.performance.mark('(Nebula) Analytics Pageview'); //Inexact
 			window.performance.measure('(Nebula) Time to Analytics Pageview', 'navigationStart', '(Nebula) Analytics Pageview');

@@ -1731,7 +1731,7 @@ if ( !trait_exists('Utilities') ){
 
 			$appended_version = apply_filters('nebula_version_appended', ''); //Allow others to append an additional version number at the end of Nebula's. This would assist in clearing caches in the parent theme in certain circumstances.
 			$appended_version_number = '';
-			if ( !empty($appended_version) && substr($appended_version, 0, 1) !== '.' ){ //If it does not start with a dot, add one. //@todo "Nebula" 0: In PHP8 use str_starts_with here
+			if ( !empty($appended_version) && !str_starts_with($appended_version, '.') ){ //If it does not start with a dot, add one
 				$appended_version_number .= '.' . $appended_version;
 			}
 
@@ -1818,7 +1818,7 @@ if ( !trait_exists('Utilities') ){
 
 			$appended_version = apply_filters('nebula_version_appended', ''); //Allow others to append an additional version number at the end of Nebula's. This would assist in clearing caches in the parent theme in certain circumstances.
 			$appended_version_number = '';
-			if ( !empty($appended_version) && substr($appended_version, 0, 1) !== '.' ){ //If it does not start with a dot, add one. //@todo "Nebula" 0: In PHP8 use str_starts_with here
+			if ( !empty($appended_version) && !str_starts_with($appended_version, '.') ){ //If it does not start with a dot, add one
 				$appended_version_number .= '.' . $appended_version;
 			}
 

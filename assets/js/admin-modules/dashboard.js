@@ -77,7 +77,7 @@ nebula.developerMetaboxes = function(){
 	//Log Viewer
 	if ( jQuery('div#nebula_log_viewer').length ){
 		//Automatically scroll to the bottom of file contents so the latest entries are visible
-		if ( !jQuery('#log-contents.transient-data').length ){
+		if ( !jQuery('#log-contents.transient-data').length && jQuery('#log-scroll-wrapper').length ){
 			jQuery('#log-scroll-wrapper').scrollTop(jQuery('#log-scroll-wrapper')[0].scrollHeight);
 		}
 

@@ -2694,7 +2694,7 @@ if ( !trait_exists('Admin') ){
 								$value = '<a href="https://developers.whatismybrowser.com/useragents/parse/" target="_blank" rel="noopener noreferrer">' . $value . '</a>';
 							}
 
-							if ( substr($key, 0, 1) === '_' || substr($key, 0, 3) === 'hp-' ){ //@todo "Nebula" 0: Use str_starts_with in PHP8
+							if ( str_starts_with($key, '_') || str_starts_with($key, 'hp-') ){
 								$classes[] = 'wpcf7-metadata';
 							}
 
