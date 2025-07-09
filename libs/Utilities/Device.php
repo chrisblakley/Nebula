@@ -389,6 +389,27 @@ if ( !trait_exists('Device') ){
 							return $broad_bot_user_agent;
 						}
 					}
+
+					//Check request endpoints that are only meant for bots
+					//Note that when these endpoints don't exist, the 404 template will be used which is where these bots will be designated in analytics and security logs
+					$broad_bot_request_endpoints = array(
+						//'/.', //Should I consider any access to a file that begins with "." to be bot related?
+						'.well-known',
+						'/ads.txt',
+						'/robots.txt',
+						'/sitemap.xml',
+						'.git',
+						'.env',
+						'.aws',
+						'autodiscover',
+						'xmlrpc',
+					);
+
+					foreach( $broad_bot_request_endpoints as $broad_bot_request_endpoint ){
+						if ( str_contains(strtolower($this->requested_url()), $broad_bot_request_endpoint) ){
+							return $broad_bot_request_endpoint;
+						}
+					}
 				}
 			}
 
