@@ -351,7 +351,17 @@
 
 <?php if ( nebula()->is_analytics_allowed() && nebula()->get_option('hubspot_portal') ): //Hubspot CRM ?>
 	<!-- Nebula Hubspot <?php echo esc_html(nebula()->get_option('hubspot_portal')); ?> -->
-	<script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/<?php echo esc_html(nebula()->get_option('hubspot_portal')); ?>.js"></script>
+	<script>
+		window.addEventListener('load', function(){
+			var hs = document.createElement('script');
+			hs.type = 'text/javascript';
+			hs.async = true;
+			hs.src = 'https://js.hs-scripts.com/<?php echo esc_html(nebula()->get_option('hubspot_portal')); ?>.js';
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(hs, s);
+		});
+	</script>
+
 	<script>
 		var _hsq = window._hsq = window._hsq || [];
 		_hsq.push(['setPath', '<?php echo str_replace(get_site_url(), '', get_permalink()); ?>']); //Is this even needed?

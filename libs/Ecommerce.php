@@ -61,12 +61,12 @@ if ( !trait_exists('Ecommerce') ){
 // 			if ( is_plugin_active('woocommerce-google-analytics-integration/woocommerce-google-analytics-integration.php') ){
 // 				$nebula_warnings['ecommerce_bad_ga_plugin'] = array(
 // 					'level' => 'error',
-// 					'description' => '<i class="fa-regular fa-fw fa-credit-card"></i> It is recommended to deactivate and remove the plugin <a href="plugins.php">WooCommerce Google Analytics Integration</a> in favor of the plugin <a href="https://wordpress.org/plugins/enhanced-e-commerce-for-woocommerce-store/" target="_blank" rel="noopener noreferrer">Google Analytics and Google Shopping plugin for WooCommerce</a>. <a href="plugins.php">Manage Plugins &raquo;</a>'
+// 					'description' => '<i class="fa-regular fa-credit-card"></i> It is recommended to deactivate and remove the plugin <a href="plugins.php">WooCommerce Google Analytics Integration</a> in favor of the plugin <a href="https://wordpress.org/plugins/enhanced-e-commerce-for-woocommerce-store/" target="_blank" rel="noopener noreferrer">Google Analytics and Google Shopping plugin for WooCommerce</a>. <a href="plugins.php">Manage Plugins &raquo;</a>'
 // 				);
 // 			} elseif ( file_exists(WP_PLUGIN_DIR . '/woocommerce-google-analytics-integration') ){
 // 				$nebula_warnings['ecommerce_bad_ga_plugin'] = array(
 // 					'level' => 'warn',
-// 					'description' => '<i class="fa-regular fa-fw fa-credit-card"></i> The plugin WooCommerce Google Analytics Integration is deactivated but should be removed entirely! <a href="plugins.php">Manage Plugins &raquo;</a>'
+// 					'description' => '<i class="fa-regular fa-credit-card"></i> The plugin WooCommerce Google Analytics Integration is deactivated but should be removed entirely! <a href="plugins.php">Manage Plugins &raquo;</a>'
 // 				);
 // 			}
 //
@@ -74,12 +74,12 @@ if ( !trait_exists('Ecommerce') ){
 // 			if ( !file_exists(WP_PLUGIN_DIR . '/enhanced-e-commerce-for-woocommerce-store') ){
 // 				$nebula_warnings['ecommerce_good_ga_plugin'] = array(
 // 					'level' => 'warn',
-// 					'description' => '<i class="fa-regular fa-fw fa-credit-card"></i> WooCommerce is active, but the recommended plugin <a href="https://wordpress.org/plugins/enhanced-e-commerce-for-woocommerce-store/" target="_blank" rel="noopener noreferrer">Google Analytics and Google Shopping plugin for WooCommerce</a> is not installed. <a href="themes.php?page=tgmpa-install-plugins">Install Recommended Plugins &raquo;</a>'
+// 					'description' => '<i class="fa-regular fa-credit-card"></i> WooCommerce is active, but the recommended plugin <a href="https://wordpress.org/plugins/enhanced-e-commerce-for-woocommerce-store/" target="_blank" rel="noopener noreferrer">Google Analytics and Google Shopping plugin for WooCommerce</a> is not installed. <a href="themes.php?page=tgmpa-install-plugins">Install Recommended Plugins &raquo;</a>'
 // 				);
 // 			} elseif ( !is_plugin_active('enhanced-e-commerce-for-woocommerce-store/enhanced-ecommerce-google-analytics.php') ){
 // 				$nebula_warnings['ecommerce_good_ga_plugin'] = array(
 // 					'level' => 'warn',
-// 					'description' => '<i class="fa-regular fa-fw fa-credit-card"></i> WooCommerce is active, but while the recommended plugin <a href="plugins.php">Google Analytics and Google Shopping plugin for WooCommerce</a> is installed, it is not activated. <a href="plugins.php">Manage Plugins &raquo;</a>'
+// 					'description' => '<i class="fa-regular fa-credit-card"></i> WooCommerce is active, but while the recommended plugin <a href="plugins.php">Google Analytics and Google Shopping plugin for WooCommerce</a> is installed, it is not activated. <a href="plugins.php">Manage Plugins &raquo;</a>'
 // 				);
 // 			}
 

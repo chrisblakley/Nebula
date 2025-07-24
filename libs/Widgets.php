@@ -187,7 +187,7 @@ if ( !trait_exists('Widgets') ){
 								<div class="col">
 									<ul class="author-social">
 										<?php foreach ( $author_social as $icon => $url ): ?>
-											<li><a href="<?php echo $url; ?>" target="_blank"><i class="<?php echo ( $icon === 'envelope-o' )? 'fa-solid' : 'fa-brands'; ?> fa-fw fa-<?php echo $icon; ?>"></i></a></li>
+											<li><a href="<?php echo $url; ?>" target="_blank"><i class="<?php echo ( $icon === 'envelope-o' )? 'fa-solid' : 'fa-brands'; ?> fa-<?php echo $icon; ?>"></i></a></li>
 										<?php endforeach; ?>
 									</ul>
 								</div><!--/col-->
@@ -590,11 +590,11 @@ if ( !trait_exists('Widgets') ){
 				<?php else: ?>
 					<form id="loginform" class="nebula-login-form" name="loginform" action="<?php echo esc_url(site_url('wp-login.php', 'login_post')); ?>" method="post">
 						<div class="form-group login-username">
-							<label class="form-control-label" for="user_login"><i class="fa-solid fa-fw fa-user"></i> Username or Email Address</label>
+							<label class="form-control-label" for="user_login"><i class="fa-solid fa-user"></i> Username or Email Address</label>
 							<input id="user_login" class="input form-control" type="text" name="log" placeholder="Username" />
 						</div>
 						<div class="form-group login-password">
-							<label class="form-control-label" for="user_pass"><i class="fa-solid fa-fw fa-lock"></i> Password</label>
+							<label class="form-control-label" for="user_pass"><i class="fa-solid fa-lock"></i> Password</label>
 							<input id="user_pass" class="input form-control" type="password" name="pwd" placeholder="Password" />
 						</div>
 						<div class="form-group login-remember">
@@ -676,7 +676,7 @@ if ( !trait_exists('Widgets') ){
 
 							<ul class="about-social">
 								<?php foreach ( $social_pages as $icon => $url ): ?>
-									<li><a href="<?php echo $url; ?>" target="_blank"><i class="fa-brands fa-fw fa-<?php echo $icon; ?>"></i></a></li><?php //fa-brands works for everything except email... ?>
+									<li><a href="<?php echo $url; ?>" target="_blank"><i class="fa-brands fa-<?php echo $icon; ?>"></i></a></li><?php //fa-brands works for everything except email... ?>
 								<?php endforeach; ?>
 							</ul>
 						</div><!--/col-->

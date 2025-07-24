@@ -292,7 +292,7 @@ nebula.workbox = async function(){
 				workbox.addEventListener('waiting', function(event){
 					//A new service worker has installed, but it cannot activate until all tabs running the current version have fully unloaded.
 					//Create an update button to reload the page
-					jQuery('<button id="nebula-sw-update"><i class="fa-solid fa-fw fa-sync-alt"></i> Update available. Click to reload.</button>').appendTo('body').on('click', function(){
+					jQuery('<button id="nebula-sw-update"><i class="fa-solid fa-sync-alt"></i> Update available. Click to reload.</button>').appendTo('body').on('click', function(){
 						window.location.reload();
 						nebula.animate('#nebula-sw-update', 'nebula-zoom-out');
 						return false;

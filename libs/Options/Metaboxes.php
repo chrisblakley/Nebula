@@ -66,7 +66,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="contact_email">Contact Email</label>
 					<div class="input-group">
-						<div class="input-group-text"><i class="fa-regular fa-fw fa-envelope"></i></div>
+						<div class="input-group-text"><i class="fa-regular fa-envelope"></i></div>
 						<input type="email" name="nebula_options[contact_email]" id="contact_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['contact_email']; ?>" placeholder="<?php echo get_option('admin_email', $this->get_user_info('user_email', array('id' => 1))); ?>" autocomplete="email" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The main contact email address <strong>(visible in the frontend and in metadata!)</strong>.</p>
@@ -77,7 +77,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="notification_email">Notification Email</label>
 					<div class="input-group">
-						<div class="input-group-text"><i class="fa-regular fa-fw fa-envelope"></i></div>
+						<div class="input-group-text"><i class="fa-regular fa-envelope"></i></div>
 						<input type="email" name="nebula_options[notification_email]" id="notification_email" class="form-control nebula-validate-email" value="<?php echo $nebula_options['notification_email']; ?>" placeholder="<?php echo get_option('admin_email', $this->get_user_info('user_email', array('id' => 1))); ?>" autocomplete="email" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The email address for Nebula notifications.</p>
@@ -111,7 +111,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="phone_number">Phone Number</label>
 					<div class="input-group">
-						<div class="input-group-text"><i class="fa-solid fa-fw fa-phone"></i></div>
+						<div class="input-group-text"><i class="fa-solid fa-phone"></i></div>
 						<input type="tel" name="nebula_options[phone_number]" id="phone_number" class="form-control nebula-validate-regex" data-valid-regex="\d-\d{3}-\d{3}-\d{4}" value="<?php echo $nebula_options['phone_number']; ?>" placeholder="1-555-555-5555" autocomplete="tel" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The primary phone number used for Open Graph data. Use the format: "1-555-555-5555".</p>
@@ -121,7 +121,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="fax_number">Fax Number</label>
 					<div class="input-group">
-						<div class="input-group-text"><i class="fa-solid fa-fw fa-fax"></i></div>
+						<div class="input-group-text"><i class="fa-solid fa-fax"></i></div>
 						<input type="tel" name="nebula_options[fax_number]" id="fax_number" class="form-control nebula-validate-regex" data-valid-regex="\d-\d{3}-\d{3}-\d{4}" value="<?php echo $nebula_options['fax_number']; ?>" placeholder="1-555-555-5555" autocomplete="tel" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The fax number used for Open Graph data. Use the format: "1-555-555-5555".</p>
@@ -209,7 +209,7 @@ if ( !trait_exists('Metaboxes') ){
 							<div class="col">
 								<div class="form-group">
 									<div class="input-group" dependent-of="business_hours_<?php echo $weekday; ?>_enabled">
-										<div class="input-group-text"><span><i class="fa-regular fa-fw fa-clock"></i> Open</span></div>
+										<div class="input-group-text"><span><i class="fa-regular fa-clock"></i> Open</span></div>
 										<input type="text" name="nebula_options[business_hours_<?php echo $weekday; ?>_open]" id="business_hours_<?php echo $weekday; ?>_open" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" value="<?php echo $nebula_options['business_hours_' . $weekday . '_open']; ?>" />
 									</div>
 								</div>
@@ -217,7 +217,7 @@ if ( !trait_exists('Metaboxes') ){
 							<div class="col">
 								<div class="form-group">
 									<div class="input-group" dependent-of="business_hours_<?php echo $weekday; ?>_enabled">
-										<div class="input-group-text"><span><i class="fa-regular fa-fw fa-clock"></i> Close</span></div>
+										<div class="input-group-text"><span><i class="fa-regular fa-clock"></i> Close</span></div>
 										<input type="text" name="nebula_options[business_hours_<?php echo $weekday; ?>_close]" id="business_hours_<?php echo $weekday; ?>_close" class="form-control nebula-validate-regex" data-valid-regex="<?php echo $time_regex; ?>" value="<?php echo $nebula_options['business_hours_' . $weekday . '_close']; ?>" />
 									</div>
 								</div>
@@ -254,7 +254,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="facebookurl">Facebook</label>
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-facebook"></i> URL</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-facebook"></i> URL</span></div>
 						<input type="text" name="nebula_options[facebook_url]" id="facebook_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['facebook_url']; ?>" placeholder="http://www.facebook.com/Example" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Facebook page (starting with <code>https://</code>).</p>
@@ -263,7 +263,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group" dependent-of="facebook_url">
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-facebook"></i> Page ID</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-facebook"></i> Page ID</span></div>
 						<input type="text" name="nebula_options[facebook_page_id]" id="facebook_page_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_page_id']; ?>" placeholder="000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The ID of your Facebook page.</p>
@@ -272,7 +272,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group" dependent-of="facebook_url">
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-facebook"></i> Admin IDs</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-facebook"></i> Admin IDs</span></div>
 						<input type="text" name="nebula_options[facebook_admin_ids]" id="facebook_admin_ids" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_admin_ids']; ?>" placeholder="0000, 0000, 0000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">IDs of Facebook administrators.</p>
@@ -282,7 +282,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="twitter_username">Twitter</label>
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-twitter"></i> Username</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-twitter"></i> Username</span></div>
 						<input type="text" name="nebula_options[twitter_username]" id="twitter_username" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_username']; ?>" placeholder="@example" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">Your Twitter username <strong>including the @ symbol</strong>.</p>
@@ -292,7 +292,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="linkedin_url">LinkedIn</label>
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-linkedin"></i> URL</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-linkedin"></i> URL</span></div>
 						<input type="text" name="nebula_options[linkedin_url]" id="linkedin_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['linkedin_url']; ?>" placeholder="https://www.linkedin.com/company/example" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your LinkedIn profile (starting with <code>https://</code>).</p>
@@ -302,7 +302,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="youtube_url">Youtube</label>
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-youtube"></i> URL</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-youtube"></i> URL</span></div>
 						<input type="text" name="nebula_options[youtube_url]" id="youtube_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['youtube_url']; ?>" placeholder="https://www.youtube.com/user/example" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Youtube channel (starting with <code>https://</code>).</p>
@@ -312,7 +312,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="instagram_url">Instagram</label>
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-instagram"></i> URL</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-instagram"></i> URL</span></div>
 						<input type="text" name="nebula_options[instagram_url]" id="instagram_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['instagram_url']; ?>" placeholder="https://www.instagram.com/example" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Instagram profile (starting with <code>https://</code>).</p>
@@ -322,7 +322,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="pinterest_url">Pinterest</label>
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-pinterest"></i> URL</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-pinterest"></i> URL</span></div>
 						<input type="text" name="nebula_options[pinterest_url]" id="pinterest_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['pinterest_url']; ?>" placeholder="https://www.pinterest.com/example" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your Pinterest profile (starting with <code>https://</code>).</p>
@@ -332,7 +332,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="tiktok_url">TikTok</label>
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-tiktok"></i> URL</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-tiktok"></i> URL</span></div>
 						<input type="text" name="nebula_options[tiktok_url]" id="tiktok_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['tiktok_url']; ?>" placeholder="https://www.tiktok.com/@example" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of your TikTok profile (starting with <code>https://</code> and including the <code>@</code> symbol).</p>
@@ -342,7 +342,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="wikipedia_url">Wikipedia</label>
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-wikipedia-w"></i> URL</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-wikipedia-w"></i> URL</span></div>
 						<input type="text" name="nebula_options[wikipedia_url]" id="wikipedia_url" class="form-control nebula-validate-url" value="<?php echo $nebula_options['wikipedia_url']; ?>" placeholder="https://en.wikipedia.org/wiki/example" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The full URL of the Wikipedia article associated with your brand (starting with <code>https://</code>).</p>
@@ -636,7 +636,7 @@ if ( !trait_exists('Metaboxes') ){
 						<input type="hidden" name="nebula_options[bundled_plugins_notification]" value="<?php echo $nebula_options['bundled_plugins_notification']; ?>">
 					<input id="bundled_plugins_notification" class="sync-checkbox" value="1" type="checkbox" <?php checked('1', !empty($nebula_options['bundled_plugins_notification'])); ?>><label for="bundled_plugins_notification">Bundled Plugins Notification</label>
 
-						<p class="nebula-help-text short-help form-text text-muted">Control whether or not the <a href="plugins.php?page=tgmpa-install-plugins&plugin_status=install">Nebula bundled plugins</a> notifications appears on admin pages for all users. (Default: <?php echo $this->user_friendly_default('bundled_plugins_notification'); ?>)</p>
+						<p class="nebula-help-text short-help form-text text-muted">Control whether or not the <a href="<?php echo admin_url('plugins.php?page=tgmpa-install-plugins&plugin_status=install'); ?>">Nebula bundled plugins</a> notifications appears on admin pages for all users. (Default: <?php echo $this->user_friendly_default('bundled_plugins_notification'); ?>)</p>
 						<p class="nebula-help-text more-help form-text text-muted">When on, each WP user will need to dismiss the prompt individually. When disabled, it is not shown to any user.</p>
 						<p class="option-keywords">discretionary</p>
 					</div>
@@ -734,7 +734,7 @@ if ( !trait_exists('Metaboxes') ){
 					<label class="cookie-label" for="cookie_notification">Cookie Notification</label>
 					<textarea name="nebula_options[cookie_notification]" id="cookie_notification" class="form-control textarea" rows="3"><?php echo $nebula_options['cookie_notification']; ?></textarea>
 					<p class="nebula-help-text short-help form-text text-muted nebula-adb-reminder-con">The text that will appear in the cookie notification (leave empty to disable).</p>
-					<p class="nebula-help-text more-help form-text text-muted">If a <a href="options-privacy.php">Privacy Policy</a> page is set with WordPress core, a link will appear to that page. This field accepts HTML for cross-linking to additional legal pages.</p>
+					<p class="nebula-help-text more-help form-text text-muted">If a <a href="<?php echo admin_url('options-privacy.php'); ?>">Privacy Policy</a> page is set with WordPress core, a link will appear to that page. This field accepts HTML for cross-linking to additional legal pages.</p>
 					<p class="option-keywords">privacy policy data security legal gdpr ccpa privacy notice usage tracking cookies</p>
 				</div>
 			<?php
@@ -903,7 +903,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="facebook_app_id">Facebook</label>
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-facebook"></i> App ID</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-facebook"></i> App ID</span></div>
 						<input type="text" name="nebula_options[facebook_app_id]" id="facebook_app_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_app_id']; ?>" placeholder="000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The App ID of the associated Facebook page/app.</p>
@@ -913,7 +913,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-facebook"></i> App Secret</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-facebook"></i> App Secret</span></div>
 						<input type="text" name="nebula_options[facebook_app_secret]" id="facebook_app_secret" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_app_secret']; ?>" placeholder="00000000000000000000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The App Secret of the associated Facebook page/app.</p>
@@ -923,7 +923,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-facebook"></i> Access Token</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-facebook"></i> Access Token</span></div>
 						<input type="text" name="nebula_options[facebook_access_token]" id="facebook_access_token" class="form-control nebula-validate-text" value="<?php echo $nebula_options['facebook_access_token']; ?>" placeholder="000000000000000|000000000000000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The Access Token of the associated Facebook page/app.</p>
@@ -934,7 +934,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="twitter_consumer_key">Twitter</label>
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-twitter"></i> Consumer Key</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-twitter"></i> Consumer Key</span></div>
 						<input type="text" name="nebula_options[twitter_consumer_key]" id="twitter_consumer_key" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_consumer_key']; ?>" placeholder="000000000000000000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The Consumer Key key is used for generating a bearer token and/or accessing custom Twitter feeds.</p>
@@ -943,7 +943,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-twitter"></i> Consumer Secret</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-twitter"></i> Consumer Secret</span></div>
 						<input type="text" name="nebula_options[twitter_consumer_secret]" id="twitter_consumer_secret" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_consumer_secret']; ?>" placeholder="000000000000000000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The Consumer Secret key is used for generating a bearer token and/or accessing custom Twitter feeds.</p>
@@ -952,7 +952,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-twitter"></i> Bearer Token</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-twitter"></i> Bearer Token</span></div>
 						<input type="text" name="nebula_options[twitter_bearer_token]" id="twitter_bearer_token" class="form-control nebula-validate-text" value="<?php echo $nebula_options['twitter_bearer_token']; ?>" placeholder="000000000000000000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The bearer token is for creating custom Twitter feeds: <a href="https://nebula.gearside.com/utilities/twitter-bearer-token-generator/?utm_campaign=documentation&utm_medium=options&utm_source=<?php echo urlencode(site_url()); ?>&utm_content=twitter_bearer_token_help" target="_blank" rel="noopener noreferrer">Generate a bearer token here</a></p>
@@ -962,7 +962,7 @@ if ( !trait_exists('Metaboxes') ){
 				<div class="form-group">
 					<label for="instagram_user_id">Instagram</label>
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-instagram"></i> User ID</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-instagram"></i> User ID</span></div>
 						<input type="text" name="nebula_options[instagram_user_id]" id="instagram_user_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['instagram_user_id']; ?>" placeholder="00000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The user ID and access token are used for creating custom Instagram feeds.</p>
@@ -972,7 +972,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-instagram"></i> Access Token</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-instagram"></i> Access Token</span></div>
 						<input type="text" name="nebula_options[instagram_access_token]" id="instagram_access_token" class="form-control nebula-validate-text" value="<?php echo $nebula_options['instagram_access_token']; ?>" placeholder="000000000000000000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">The user ID and access token are used for creating custom Instagram feeds.</p>
@@ -982,7 +982,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-instagram"></i> Client ID</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-instagram"></i> Client ID</span></div>
 						<input type="text" name="nebula_options[instagram_client_id]" id="instagram_client_id" class="form-control nebula-validate-text" value="<?php echo $nebula_options['instagram_client_id']; ?>" placeholder="000000000000000000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">For client ID and client secret, register an application using the Instagram API platform then Register a new Client.</p>
@@ -991,7 +991,7 @@ if ( !trait_exists('Metaboxes') ){
 
 				<div class="form-group">
 					<div class="input-group">
-						<div class="input-group-text"><span><i class="fa-brands fa-fw fa-instagram"></i> Client Secret</span></div>
+						<div class="input-group-text"><span><i class="fa-brands fa-instagram"></i> Client Secret</span></div>
 						<input type="text" name="nebula_options[instagram_client_secret]" id="instagram_client_secret" class="form-control nebula-validate-text" value="<?php echo $nebula_options['instagram_client_secret']; ?>" placeholder="000000000000000000000000000000" />
 					</div>
 					<p class="nebula-help-text short-help form-text text-muted">For client ID and client secret, register an application using the Instagram API platform then Register a new Client.</p>
@@ -1258,9 +1258,9 @@ if ( !trait_exists('Metaboxes') ){
 			?>
 				<div class="option-sub-group">
 					<div class="dequeue-assets-filter-container input-group mb-4">
-						<div class="input-group-text"><i class="fa-solid fa-fw fa-filter"></i> Filter</div>
+						<div class="input-group-text"><i class="fa-solid fa-filter"></i> Filter</div>
 						<input type="text" class="form-control dequeue-assets-filter" />
-						<span class="dequeue-asset-reset hidden" style="display: inline-block; margin-left: 10px;"><a class="btn btn-danger" href="#"><i class="fa-solid fa-fw fa-times"></i> Reset</a></span>
+						<span class="dequeue-asset-reset hidden" style="display: inline-block; margin-left: 10px;"><a class="btn btn-danger" href="#"><i class="fa-solid fa-times"></i> Reset</a></span>
 					</div>
 
 					<p>
@@ -1273,7 +1273,7 @@ if ( !trait_exists('Metaboxes') ){
 					<?php foreach ( $all_registered_assets as $asset ): ?>
 						<div class="form-group no-help <?php echo ( !empty($dequeue_assets[$asset['handle']]) )? 'active' : ''; ?>">
 							<div class="input-group">
-								<div class="input-group-text" title="<?php echo ( !empty($dequeue_assets[$asset['handle']]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fa-brands fa-fw fa-<?php echo $icon; ?>"></i> <?php echo $asset['handle']; ?></div>
+								<div class="input-group-text" title="<?php echo ( !empty($dequeue_assets[$asset['handle']]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fa-brands fa-<?php echo $icon; ?>"></i> <?php echo $asset['handle']; ?></div>
 								<input type="text" name="<?php echo $option_handle; ?>[<?php echo $asset['handle']; ?>]" id="<?php echo $asset['handle'] . '-' . $type; ?>" class="form-control nebula-validate-regex" data-valid-regex="^(\*)$|^(([0-9a-z!_()]+)(,\s?)*)+$" value="<?php echo ( !empty($dequeue_assets[$asset['handle']]) )? $dequeue_assets[$asset['handle']] : ''; ?>" />
 							</div>
 							<p class="nebula-help-text short-help form-text text-muted">Source: <?php echo str_replace(content_url(), '', $asset['src']); ?></p>
@@ -1288,7 +1288,7 @@ if ( !trait_exists('Metaboxes') ){
 						<?php foreach ( $existing_dequeued_assets as $handle => $rule ): ?>
 							<div class="form-group no-help <?php echo ( !empty($dequeue_assets[$handle]) )? 'active' : ''; ?>">
 								<div class="input-group">
-									<div class="input-group-text" title="<?php echo ( !empty($dequeue_assets[$handle]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fa-brands fa-fw fa-js"></i> <?php echo $handle; ?></div>
+									<div class="input-group-text" title="<?php echo ( !empty($dequeue_assets[$handle]) )? 'This handle has active dequeues!' : ''; ?>"><i class="fa-brands fa-js"></i> <?php echo $handle; ?></div>
 									<input type="text" name="<?php echo $option_handle; ?>[<?php echo $handle; ?>]" id="<?php echo $handle . '-' . $type; ?>" class="form-control nebula-validate-regex" data-valid-regex="^(\*)$|^(([0-9a-z!_()]+)(,\s?)*)+$" value="<?php echo ( !empty($dequeue_assets[$handle]) )? $dequeue_assets[$handle] : ''; ?>" />
 								</div>
 							</div>
@@ -1357,7 +1357,7 @@ if ( !trait_exists('Metaboxes') ){
 						<?php endif; ?>
 					</li>
 					<li>Google Analytics is <?php echo ( !empty($nebula_options['ga_require_consent']) )? '<strong class="nebula-disabled">only tracking after user consent</strong>' : '<strong class="nebula-enabled">tracking without needing user consent</strong>'; ?>.</li>
-					<li><a href="plugins.php?page=tgmpa-install-plugins&plugin_status=install">Nebula bundled plugins page</a> can be accessed here.</li>
+					<li><a href="<?php echo admin_url('plugins.php?page=tgmpa-install-plugins&plugin_status=install'); ?>">Nebula bundled plugins page</a> can be accessed here.</li>
 				</ul>
 
 				<a class="button button-primary" href="<?php echo admin_url('update-core.php?force-check=1&force-nebula-theme-update'); ?>" <?php echo ( is_multisite() )? 'disabled' : ''; ?>>Re-Install Nebula from GitHub</a>
@@ -1388,10 +1388,10 @@ if ( !trait_exists('Metaboxes') ){
 						<?php if ( !empty($nebula_data['initialized']) ): ?>
 							<strong><?php echo date('F j, Y \a\t g:ia', $nebula_data['initialized']); ?></strong> (<?php echo human_time_diff($nebula_data['initialized']); ?> ago)
 						<?php else: ?>
-							<strong><a href="/themes.php">Nebula Automation</a> has not been run yet!</strong>
+							<strong><a href="<?php echo admin_url('themes.php'); ?>">Nebula Automation</a> has not been run yet!</strong>
 						<?php endif; ?>
 					</p>
-					<p class="nebula-help-text more-help form-text text-muted">Shows the date of the initial Nebula Automation if it has run yet, otherwise it is empty. To run Nebula Automation, <a href="/themes.php">reactivate the Nebula parent theme here</a>.</p>
+					<p class="nebula-help-text more-help form-text text-muted">Shows the date of the initial Nebula Automation if it has run yet, otherwise it is empty. To run Nebula Automation, <a href="<?php echo admin_url('themes.php'); ?>">reactivate the Nebula parent theme here</a>.</p>
 					<p class="option-keywords">readonly</p>
 				</div>
 
@@ -1446,7 +1446,7 @@ if ( !trait_exists('Metaboxes') ){
 							<br /><strong class="nebula-disabled">Note: Nebula updates have been manually disabled by a developer via Nebula Options (Administration tab).</strong>
 						<?php endif; ?>
 					</p>
-					<p class="nebula-help-text more-help form-text text-muted">Re-checks with <a href="update-core.php">theme update check</a> only when Nebula Child is activated.</p>
+					<p class="nebula-help-text more-help form-text text-muted">Re-checks with <a href="<?php echo admin_url('update-core.php'); ?>">theme update check</a> only when Nebula Child is activated.</p>
 					<p class="option-keywords">readonly</p>
 				</div>
 			<?php
@@ -1464,7 +1464,7 @@ if ( !trait_exists('Metaboxes') ){
 					$rows = $this->get_logs(true);
 				?>
 					<div id="nebula-add-log">
-						<input id="log-message" type="text" placeholder="Log message" /> <input id="log-importance" type="number" min="0" max="10" value="5" /> <a id="submit-log-message" class="button button-primary" href="#"><i id="add-log-progress" class="fa-solid fa-fw fa-calendar-plus"></i> Add Log Message</a>
+						<input id="log-message" type="text" placeholder="Log message" /> <input id="log-importance" type="number" min="0" max="10" value="5" /> <a id="submit-log-message" class="button button-primary" href="#"><i id="add-log-progress" class="fa-solid fa-calendar-plus"></i> Add Log Message</a>
 					</div>
 
 					<div id="nebula-log-reload-container">
@@ -1490,7 +1490,7 @@ if ( !trait_exists('Metaboxes') ){
 														}
 
 														if ( $column === 'timestamp' ){
-															$sanitized_value = '<i class="remove fa-solid fa-fw fa-ban"></i> ' . date('l, F j, Y - g:i:sa', $sanitized_value);
+															$sanitized_value = '<i class="remove fa-solid fa-ban"></i> ' . date('l, F j, Y - g:i:sa', $sanitized_value);
 														}
 
 														echo $sanitized_value;
@@ -1505,16 +1505,27 @@ if ( !trait_exists('Metaboxes') ){
 					</div>
 
 					<p id="nebula-clean-logs">
-						<strong id="log-count"><?php echo count($rows); ?></strong> total logs. <a id="clean-log-messages" href="#"><i id="clean-log-progress" class="fa-solid fa-fw fa-trash-alt"></i> Remove Low Importance Logs?</a>
+						<strong id="log-count"><?php echo count($rows); ?></strong> total logs. <a id="clean-log-messages" href="#"><i id="clean-log-progress" class="fa-solid fa-trash-alt"></i> Remove Low Importance Logs?</a>
 					</p>
 					<?php $this->timer('Nebula Logs Metabox', 'end'); ?>
 				<?php else: ?>
 					<p><strong class="nebula-disabled">Nebula Logs are enabled, but only available to staff.</strong></p>
-					<p><a href="themes.php?page=nebula_options&tab=administration&option=dev_email_domain">Set up staff rules</a> to view the logs.</p>
+					<p><a href="<?php echo admin_url('themes.php?page=nebula_options&tab=administration&option=dev_email_domain'); ?>">Set up staff rules</a> to view the logs.</p>
 				<?php endif; ?>
 			<?php else: ?>
-				<p><strong class="nebula-disabled">The Nebula Logs option is not enabled.</strong></p>
-				<p><a href="themes.php?page=nebula_options&tab=administration&option=logs">Enable it here</a> to begin automatically logging notable events.</p>
+				<?php if ( function_exists('mb_strimwidth') ): ?>
+					<p><strong class="nebula-disabled">The Nebula Logs cannot be enabled because the PHP <code>mb_strimwidth</code> function does not exist.</strong></p>
+				<?php elseif ( empty($nebula_options['administrative_log']) ): ?>
+					<p><strong class="nebula-disabled">The Nebula Logs option is not enabled.</strong></p>
+					<p><a href="<?php echo admin_url('themes.php?page=nebula_options&tab=administration&option=logs'); ?>">Enable it here</a> to begin automatically logging notable events.</p>
+				<?php else: ?>
+					<p><strong class="nebula-disabled">The Nebula Logs are unavailable for an unknown reason...</strong></p>
+				<?php endif; ?>
+
+				<?php if ( is_plugin_active('sucuri-scanner/sucuri.php') ): ?>
+					<?php $sucuri_audit_logs_url = ( is_multisite() )? network_admin_url('admin.php?page=sucuriscan_events_reporting#auditlogs') : admin_url('admin.php?page=sucuriscan_events_reporting#auditlogs'); ?>
+					<p>Nebula sends logs to Sucuri, so you may be able to <a href="<?php echo $sucuri_audit_logs_url; ?>">find them here</a>.</p>
+				<?php endif; ?>
 			<?php endif;
 		}
 

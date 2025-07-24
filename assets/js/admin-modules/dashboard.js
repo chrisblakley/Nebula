@@ -17,7 +17,7 @@ nebula.developerMetaboxes = function(){
 		//Nebula filesystem search
 		jQuery(document).on('submit', '.searchfiles', function(e){
 			if ( jQuery('input.findterm').val().trim().length >= 2 ){
-				jQuery('#searchprogress').removeClass('fa-magnifying-glass').addClass('fa-solid fa-spinner fa-spin fa-fw');
+				jQuery('#searchprogress').removeClass('fa-magnifying-glass').addClass('fa-solid fa-spinner fa-spin');
 
 				fetch(nebula.site.ajax.url, {
 					method: 'POST',
@@ -38,7 +38,7 @@ nebula.developerMetaboxes = function(){
 						return response.text();
 					}
 				}).then(function(response){
-					jQuery('#searchprogress').removeClass('fa-spinner fa-spin').addClass('fa-solid fa-magnifying-glass fa-fw');
+					jQuery('#searchprogress').removeClass('fa-spinner fa-spin').addClass('fa-solid fa-magnifying-glass');
 					jQuery('div.search_results').html(response).addClass('done');
 				}).catch(function(error){
 					jQuery('div.search_results').html(error).addClass('done');
@@ -226,7 +226,7 @@ nebula.developerMetaboxes = function(){
 	if ( jQuery('#nebula_ai_code_review').length ){
 		//Call the AI endpoint for new data if the placeholder exists
 		if ( jQuery('#nebula-ai-review-placeholder').length ){
-			jQuery('#nebula-ai-review-placeholder').html('<i class="fa-solid fa-fw fa-spinner fa-spin"></i> <em>Analyzing code with AI...</em>');
+			jQuery('#nebula-ai-review-placeholder').html('<i class="fa-solid fa-spinner fa-spin"></i> <em>Analyzing code with AI...</em>');
 
 			fetch(nebula.site.ajax.url, {
 				method: 'POST',
@@ -716,17 +716,17 @@ nebula.appendPerformanceMetric = function(data){
 			description = data.description.replace(/( \[.*\]\(.*\)\.?)/ig, '');
 		}
 
-		var icon = '<i class="fa-fw ' + data.icon + '"></i>';
+		var icon = '<i class="' + data.icon + '"></i>';
 		var warningLevel = '';
 
 		//Check to show warning indicators
 		if ( data.value ){
 			if ( data.value > data.error ){
 				warningLevel = 'error';
-				icon = '<i class="fa-fw fa-solid fa-exclamation-triangle"></i>';
+				icon = '<i class="fa-solid fa-exclamation-triangle"></i>';
 			} else if ( data.value > data.warning ){
 				warningLevel = 'warning';
-				icon = '<i class="fa-fw fa-solid fa-exclamation-circle"></i>';
+				icon = '<i class="fa-solid fa-exclamation-circle"></i>';
 			}
 		}
 
@@ -844,6 +844,6 @@ nebula.updateContrast = function(){
 	}
 
 	if ( warnings ){
-		jQuery('#nebula-contrast-warnings').html('<li><i class="fa-solid fa-fw fa-triangle-exclamation"></i>' + warnings + '</li>').removeClass('hidden');
+		jQuery('#nebula-contrast-warnings').html('<li><i class="fa-solid fa-triangle-exclamation"></i>' + warnings + '</li>').removeClass('hidden');
 	}
 };

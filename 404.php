@@ -34,7 +34,7 @@
 								<?php nebula()->error_query->the_post(); ?>
 
 								<h3 class="suggestion-title entry-title">
-									<i class="fa fa-fw fa-chevron-right"></i>
+									<i class="fa fa-chevron-right"></i>
 									<?php if ( str_contains(get_permalink(), nebula()->slug_keywords) ): ?>
 										<strong>
 									<?php endif; ?>

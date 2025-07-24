@@ -401,7 +401,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('cpanel_url') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Server Control Panel',
-					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-cogs"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-cogs"></i>',
 					'url' => $this->get_option('cpanel_url')
 				);
 			}
@@ -409,7 +409,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('hosting_url') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Hosting',
-					'icon' => '<i class="nebula-admin-fa fa-regular fa-fw fa-hdd"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-regular fa-hdd"></i>',
 					'url' => $this->get_option('hosting_url')
 				);
 			}
@@ -417,7 +417,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('dns_url') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'DNS',
-					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-map-signs"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-map-signs"></i>',
 					'url' => $this->get_option('dns_url')
 				);
 			}
@@ -425,7 +425,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('registrar_url') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Domain Registrar',
-					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-globe"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-globe"></i>',
 					'url' => $this->get_option('registrar_url')
 				);
 			}
@@ -433,7 +433,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('github_url') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'GitHub Repository',
-					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-github"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-github"></i>',
 					'url' => $this->get_option('github_url')
 				);
 			}
@@ -441,7 +441,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('ga_measurement_id') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Google Analytics',
-					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-chart-area"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-chart-area"></i>',
 					'url' => $this->google_analytics_url()
 				);
 			}
@@ -449,39 +449,39 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('gtm_id') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Google Tag Manager',
-					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-google"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-google"></i>',
 					'url' => 'https://tagmanager.google.com'
 				);
 			}
 
 			$third_party_resources['administrative'][] = array(
 				'name' => 'Google Search Console',
-				'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-google"></i>',
+				'icon' => '<i class="nebula-admin-fa fa-brands fa-google"></i>',
 				'url' => 'https://search.google.com/search-console'
 			);
 
 			$third_party_resources['administrative'][] = array(
 				'name' => 'Bing Webmaster Tools',
-				'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-microsoft"></i>',
+				'icon' => '<i class="nebula-admin-fa fa-brands fa-microsoft"></i>',
 				'url' => 'https://www.bing.com/toolbox/webmaster'
 			);
 
 			if ( is_plugin_active('wordpress-seo/wp-seo.php') ){ //If Yoast SEO is active link to its sitemap
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Yoast SEO Sitemap',
-					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-sitemap"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-sitemap"></i>',
 					'url' => home_url('/') . 'sitemap_index.xml'
 				);
 			} elseif ( is_plugin_active('autodescription/autodescription.php') ){ //If The SEO Framework is active link to its sitemap
 				$third_party_resources['administrative'][] = array(
 					'name' => 'The SEO Framework Sitemap',
-					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-sitemap"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-sitemap"></i>',
 					'url' => home_url('/') . 'sitemap.xml'
 				);
 			} else { //Otherwise link to the core WordPress sitemap
 				$third_party_resources['administrative'][] = array(
 					'name' => 'WordPress Sitemap',
-					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-sitemap"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-sitemap"></i>',
 					'url' => home_url('/') . 'wp-sitemap.xml'
 				);
 			}
@@ -489,7 +489,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('adwords_remarketing_conversion_id') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Google AdWords',
-					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-magnifying-glass-plus"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-magnifying-glass-plus"></i>',
 					'url' => 'https://adwords.google.com/home/'
 				);
 			}
@@ -497,7 +497,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('facebook_custom_audience_pixel_id') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Facebook Ads Manager',
-					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-facebook-official"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-facebook-official"></i>',
 					'url' => 'https://www.facebook.com/ads/manager/account/campaigns'
 				);
 			}
@@ -505,7 +505,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('google_adsense_url') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Google AdSense',
-					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-money"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-money"></i>',
 					'url' => 'https://www.google.com/adsense'
 				);
 			}
@@ -513,21 +513,21 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('amazon_associates_url') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Amazon Associates',
-					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-amazon"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-amazon"></i>',
 					'url' => 'https://affiliate-program.amazon.com/home'
 				);
 			}
 
 			$third_party_resources['administrative'][] = array(
 				'name' => 'Google My Business',
-				'icon' => '<i class="nebula-admin-fa fa-regular fa-fw fa-building"></i>',
+				'icon' => '<i class="nebula-admin-fa fa-regular fa-building"></i>',
 				'url' => 'https://www.google.com/business/'
 			);
 
 			if ( $this->is_ecommerce() ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Google Merchant Center',
-					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-store"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-store"></i>',
 					'url' => 'https://www.google.com/retail/solutions/merchant-center/'
 				);
 			}
@@ -535,7 +535,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('facebook_app_id') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Facebook For Developers',
-					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-facebook"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-facebook"></i>',
 					'url' => 'https://developers.facebook.com/'
 				);
 			}
@@ -543,7 +543,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('google_server_api_key') || $this->get_option('google_browser_api_key') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Google APIs',
-					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-code"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-code"></i>',
 					'url' => 'https://console.developers.google.com/iam-admin/projects'
 				);
 			}
@@ -551,7 +551,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('openai_api_key') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'OpenAI API Usage',
-					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-robot"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-openai"></i>',
 					'url' => 'https://platform.openai.com/settings/organization/usage'
 				);
 			}
@@ -559,7 +559,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('hubspot_access_token') || $this->get_option('hubspot_portal') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Hubspot',
-					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-hubspot"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-hubspot"></i>',
 					'url' => 'https://app.hubspot.com/reports-dashboard/' . $this->get_option('hubspot_portal')
 				);
 			}
@@ -567,7 +567,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('mention_url') ){
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Mention',
-					'icon' => '<i class="nebula-admin-fa fa-solid fa-fw fa-star"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-solid fa-star"></i>',
 					'url' => 'https://web.mention.com'
 				);
 			}
@@ -576,7 +576,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('facebook_url') ){
 				$third_party_resources['social'][] = array(
 					'name' => 'Facebook',
-					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-facebook-square"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-facebook-square"></i>',
 					'url' => $this->get_option('facebook_url')
 				);
 			}
@@ -584,7 +584,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('twitter_username') ){
 				$third_party_resources['social'][] = array(
 					'name' => 'Twitter',
-					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-twitter-square"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-twitter-square"></i>',
 					'url' => $this->twitter_url()
 				);
 			}
@@ -592,7 +592,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('linkedin_url') ){
 				$third_party_resources['social'][] = array(
 					'name' => 'LinkedIn',
-					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-linkedin"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-linkedin"></i>',
 					'url' => $this->get_option('linkedin_url')
 				);
 			}
@@ -600,7 +600,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('youtube_url') ){
 				$third_party_resources['social'][] = array(
 					'name' => 'Youtube',
-					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-youtube"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-youtube"></i>',
 					'url' => $this->get_option('youtube_url')
 				);
 			}
@@ -608,7 +608,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('instagram_url') ){
 				$third_party_resources['social'][] = array(
 					'name' => 'Instagram',
-					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-instagram"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-instagram"></i>',
 					'url' => $this->get_option('instagram_url')
 				);
 			}
@@ -616,7 +616,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->get_option('disqus_shortname') ){
 				$third_party_resources['social'][] = array(
 					'name' => 'Disqus',
-					'icon' => '<i class="nebula-admin-fa fa-regular fa-fw fa-comments"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-disqus"></i>',
 					'url' => 'https://' . $this->get_option('disqus_shortname') . '.disqus.com/admin/moderate/'
 				);
 			}
@@ -624,7 +624,7 @@ if ( !trait_exists('Admin') ){
 			if ( $this->google_review_url() ){
 				$third_party_resources['social'][] = array(
 					'name' => 'Google Review Link',
-					'icon' => '<i class="nebula-admin-fa fa-brands fa-fw fa-google"></i>',
+					'icon' => '<i class="nebula-admin-fa fa-brands fa-google"></i>',
 					'url' => $this->google_review_url()
 				);
 			}
@@ -725,12 +725,12 @@ if ( !trait_exists('Admin') ){
 					//Note any assets that Nebula is deregistering on this post/page
 					$info_icon = '';
 					if ( !empty($this->deregistered_assets['styles']) || !empty($this->deregistered_assets['scripts']) ){
-						$info_icon = ' <i class="nebula-admin-fa fa-solid fa-fw fa-info-circle deregistered-asset-info"></i>';
+						$info_icon = ' <i class="nebula-admin-fa fa-solid fa-info-circle deregistered-asset-info"></i>';
 
 						$wp_admin_bar->add_node(array(
 							'parent' => $node_id,
 							'id' => 'nebula-deregisters',
-							'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-ban"></i> Nebula is deregistering assets on this page!',
+							'title' => '<i class="nebula-admin-fa fa-solid fa-ban"></i> Nebula is deregistering assets on this page!',
 							'href' => admin_url('themes.php?page=nebula_options&tab=Advanced'),
 							'meta' => array('target' => '_blank', 'rel' => 'noopener')
 						));
@@ -741,7 +741,7 @@ if ( !trait_exists('Admin') ){
 								$wp_admin_bar->add_node(array(
 									'parent' => 'nebula-deregisters',
 									'id' => 'nebula-deregisters-styles-' . $handle,
-									'title' => '<span class="nebula-admin-light"><i class="nebula-admin-fa fa-brands fa-fw fa-css3-alt"></i> CSS:</span> ' . $handle,
+									'title' => '<span class="nebula-admin-light"><i class="nebula-admin-fa fa-brands fa-css3-alt"></i> CSS:</span> ' . $handle,
 									'href' => admin_url('themes.php?page=nebula_options&tab=Advanced'),
 									'meta' => array('target' => '_blank', 'rel' => 'noopener')
 								));
@@ -754,7 +754,7 @@ if ( !trait_exists('Admin') ){
 								$wp_admin_bar->add_node(array(
 									'parent' => 'nebula-deregisters',
 									'id' => 'nebula-deregisters-scripts-' . $handle,
-									'title' => '<span class="nebula-admin-light"><i class="nebula-admin-fa fa-brands fa-fw fa-js"></i> JS:</span> ' . $handle,
+									'title' => '<span class="nebula-admin-light"><i class="nebula-admin-fa fa-brands fa-js"></i> JS:</span> ' . $handle,
 									'href' => admin_url('themes.php?page=nebula_options&tab=Advanced'),
 									'meta' => array('target' => '_blank', 'rel' => 'noopener')
 								));
@@ -792,7 +792,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => $node_id,
 						'id' => 'nebula-created',
-						'title' => '<i class="nebula-admin-fa fa-regular fa-fw fa-calendar"></i> <span title="' . human_time_diff($original_date) . ' ago">Created: ' . date('F j, Y', $original_date) . '</span> <span class="nebula-admin-light">(' . $original_author . ')</span>',
+						'title' => '<i class="nebula-admin-fa fa-regular fa-calendar"></i> <span title="' . human_time_diff($original_date) . ' ago">Created: ' . date('F j, Y', $original_date) . '</span> <span class="nebula-admin-light">(' . $original_author . ')</span>',
 						'href' => get_edit_post_link(),
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					));
@@ -803,7 +803,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => $node_id,
 						'id' => 'nebula-modified',
-						'title' => '<i class="nebula-admin-fa fa-regular fa-fw fa-clock"></i> <span title="' . human_time_diff($modified_date) . ' ago">Modified: ' . date('F j, Y', $modified_date) . '</span> <span class="nebula-admin-light">(' . $modified_author . ')</span>',
+						'title' => '<i class="nebula-admin-fa fa-regular fa-clock"></i> <span title="' . human_time_diff($modified_date) . ' ago">Modified: ' . date('F j, Y', $modified_date) . '</span> <span class="nebula-admin-light">(' . $modified_author . ')</span>',
 						'href' => get_edit_post_link(),
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					));
@@ -814,7 +814,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => $node_id,
 						'id' => 'nebula-status',
-						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-map-marker"></i> Status: ' . ucwords($status),
+						'title' => '<i class="nebula-admin-fa fa-solid fa-map-marker"></i> Status: ' . ucwords($status),
 						'href' => get_edit_post_link(),
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					));
@@ -825,7 +825,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => $node_id,
 						'id' => 'nebula-template',
-						'title' => '<i class="nebula-admin-fa fa-regular fa-fw fa-object-group"></i> Template: ' . basename($this->current_theme_template) . ' <span class="nebula-admin-light">(' . dirname($this->current_theme_template) . ')</span>',
+						'title' => '<i class="nebula-admin-fa fa-regular fa-object-group"></i> Template: ' . basename($this->current_theme_template) . ' <span class="nebula-admin-light">(' . dirname($this->current_theme_template) . ')</span>',
 						'href' => get_edit_post_link(),
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					));
@@ -839,7 +839,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => $node_id,
 						'id' => 'nebula-asset-count',
-						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-cubes-stacked"></i> Assets: ' . $total_assets . ' <span class="nebula-admin-light">(' . $asset_counts['css'] . ' CSS, ' . $asset_counts['js'] . ' JS)</span>',
+						'title' => '<i class="nebula-admin-fa fa-solid fa-cubes-stacked"></i> Assets: ' . $total_assets . ' <span class="nebula-admin-light">(' . $asset_counts['css'] . ' CSS, ' . $asset_counts['js'] . ' JS)</span>',
 					));
 				}
 
@@ -850,14 +850,14 @@ if ( !trait_exists('Admin') ){
 						$wp_admin_bar->add_node(array(
 							'parent' => $node_id,
 							'id' => 'nebula-ancestors',
-							'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-level-up-alt"></i> Ancestor ' . ucwords($post_type_object->labels->name) . ' <small>(' . count($ancestors) . ')</small>',
+							'title' => '<i class="nebula-admin-fa fa-solid fa-level-up-alt"></i> Ancestor ' . ucwords($post_type_object->labels->name) . ' <small>(' . count($ancestors) . ')</small>',
 						));
 
 						foreach ( $ancestors as $parent ){
 							$wp_admin_bar->add_node(array(
 								'parent' => 'nebula-ancestors',
 								'id' => 'nebula-parent-' . $parent,
-								'title' => '<i class="nebula-admin-fa fa-regular fa-fw fa-file"></i> ' . esc_html(get_the_title($parent)),
+								'title' => '<i class="nebula-admin-fa fa-regular fa-file"></i> ' . esc_html(get_the_title($parent)),
 								'href' => ( $this->is_admin_page() )? get_edit_post_link($parent) : get_permalink($parent),
 							));
 						}
@@ -876,7 +876,7 @@ if ( !trait_exists('Admin') ){
 							$wp_admin_bar->add_node(array(
 								'parent' => $node_id,
 								'id' => 'nebula-children',
-								'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-level-down-alt"></i> Children ' . ucwords($post_type_object->labels->name) . ' <small>(' . $child_pages->found_posts . ')</small>',
+								'title' => '<i class="nebula-admin-fa fa-solid fa-level-down-alt"></i> Children ' . ucwords($post_type_object->labels->name) . ' <small>(' . $child_pages->found_posts . ')</small>',
 							));
 
 							while ( $child_pages->have_posts() ){
@@ -884,7 +884,7 @@ if ( !trait_exists('Admin') ){
 								$wp_admin_bar->add_node(array(
 									'parent' => 'nebula-children',
 									'id' => 'nebula-child-' . get_the_id(),
-									'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-file"></i> ' . esc_html(get_the_title()),
+									'title' => '<i class="nebula-admin-fa fa-solid fa-file"></i> ' . esc_html(get_the_title()),
 									'href' => ( $this->is_admin_page() )? get_edit_post_link() : get_permalink(),
 								));
 							}
@@ -898,7 +898,7 @@ if ( !trait_exists('Admin') ){
 				if ( !empty($this->is_known_cache_hit()) ){
 					$wp_admin_bar->add_node(array(
 						'id' => 'nebula-cache-hit',
-						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-server"></i> Cached Load',
+						'title' => '<i class="nebula-admin-fa fa-solid fa-server"></i> Cached Load',
 					));
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-cache-hit',
@@ -930,7 +930,7 @@ if ( !trait_exists('Admin') ){
 
 							$wp_admin_bar->add_node(array(
 								'id' => 'nebula-warnings',
-								'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $warning_icon . '"></i> ' . count($warnings),
+								'title' => '<i class="nebula-admin-fa fa-solid ' . $warning_icon . '"></i> ' . count($warnings),
 								'meta' => array(
 									'class' => $warning_bg_class
 								)
@@ -951,7 +951,7 @@ if ( !trait_exists('Admin') ){
 								$wp_admin_bar->add_node(array(
 									'parent' => 'nebula-warnings',
 									'id' => 'nebula-warning-' . $key,
-									'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $warning_icon . '" style="margin-left: 5px;"></i> ' . strip_tags($warning['description']),
+									'title' => '<i class="nebula-admin-fa fa-solid ' . $warning_icon . '" style="margin-left: 5px;"></i> ' . strip_tags($warning['description']),
 									'href' => ( !empty($warning['url']) )? $warning['url'] : '',
 									'meta' => array(
 										'target' => '_blank',
@@ -977,14 +977,14 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula',
 						'id' => 'nebula-timing-categories',
-						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-stopwatch"></i> Timing Categories'
+						'title' => '<i class="nebula-admin-fa fa-solid fa-stopwatch"></i> Timing Categories'
 					));
 
 					//This empty node ensures the submenu can open. There may be a better way to do this...
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-timing-categories',
 						'id' => 'nebula-timing-category-heading',
-						'title' => '<strong><i class="nebula-admin-fa fa-solid fa-fw fa-arrow-down-9-1"></i> Durations (Desc.)</strong>',
+						'title' => '<strong><i class="nebula-admin-fa fa-solid fa-arrow-down-9-1"></i> Durations (Desc.)</strong>',
 						'meta' => array(
 							'title' => 'Manual timing groups. These are durations (not timestamps) of functionality using Nebula Timers. Remember: Due to overlap, it is impossible to truly time individual functionality. These timings represent best-effort ballparks. Only manually tracked timings will appear here!',
 						)
@@ -995,7 +995,7 @@ if ( !trait_exists('Admin') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula',
 					'id' => 'nebula-documentation',
-					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-file-alt"></i> Nebula Documentation',
+					'title' => '<i class="nebula-admin-fa fa-solid fa-file-alt"></i> Nebula Documentation',
 					'href' => 'https://nebula.gearside.com/?utm_campaign=documentation&utm_medium=admin_bar&utm_source=' . urlencode(site_url()) . '&utm_content=admin_bar_documentation',
 					'meta' => array(
 						'target' => '_blank',
@@ -1006,7 +1006,7 @@ if ( !trait_exists('Admin') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula-documentation',
 					'id' => 'nebula-documentation-functions',
-					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-file-alt"></i> Functions & Variables',
+					'title' => '<i class="nebula-admin-fa fa-solid fa-file-alt"></i> Functions & Variables',
 					'href' => 'https://nebula.gearside.com/documentation/functions/?utm_campaign=documentation&utm_medium=admin_bar&utm_source=' . urlencode(site_url()) . '&utm_content=admin_bar_functions',
 					'meta' => array(
 						'target' => '_blank',
@@ -1017,7 +1017,7 @@ if ( !trait_exists('Admin') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula-documentation',
 					'id' => 'nebula-documentation-examples',
-					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-file-alt"></i> Examples & Tips',
+					'title' => '<i class="nebula-admin-fa fa-solid fa-file-alt"></i> Examples & Tips',
 					'href' => 'https://nebula.gearside.com/documentation/examples-tips/?utm_campaign=documentation&utm_medium=admin_bar&utm_source=' . urlencode(site_url()) . '&utm_content=admin_bar_examples',
 					'meta' => array(
 						'target' => '_blank',
@@ -1028,7 +1028,7 @@ if ( !trait_exists('Admin') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula-documentation',
 					'id' => 'nebula-documentation-faq',
-					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-question"></i> FAQs',
+					'title' => '<i class="nebula-admin-fa fa-solid fa-question"></i> FAQs',
 					'href' => 'https://nebula.gearside.com/faq/?utm_campaign=documentation&utm_medium=admin_bar&utm_source=' . urlencode(site_url()) . '&utm_content=admin_bar_faq',
 					'meta' => array(
 						'target' => '_blank',
@@ -1042,7 +1042,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula',
 						'id' => 'nebula-resources',
-						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-toolbox"></i> Third-Party Resources',
+						'title' => '<i class="nebula-admin-fa fa-solid fa-toolbox"></i> Third-Party Resources',
 					));
 
 					if ( current_user_can('edit_others_posts') && !empty($third_party_resources['administrative']) ){
@@ -1086,7 +1086,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula',
 						'id' => 'nebula-options',
-						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-cog"></i> Options',
+						'title' => '<i class="nebula-admin-fa fa-solid fa-cog"></i> Options',
 						'href' => admin_url('themes.php?page=nebula_options')
 					));
 
@@ -1094,7 +1094,7 @@ if ( !trait_exists('Admin') ){
 						$wp_admin_bar->add_node(array(
 							'parent' => 'nebula-options',
 							'id' => 'nebula-options-' . $category['name'],
-							'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $category['icon'] . '"></i> ' . $category['name'],
+							'title' => '<i class="nebula-admin-fa fa-solid ' . $category['icon'] . '"></i> ' . $category['name'],
 							'href' => admin_url('themes.php?page=nebula_options&tab=' . $category['name']),
 							'meta' => array('target' => '_blank', 'rel' => 'noopener')
 						));
@@ -1103,7 +1103,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-options',
 						'id' => 'nebula-options-help',
-						'title' => '<i class="nebula-admin-fa fa-regular fa-fw fa-question-circle"></i> Help & Documentation',
+						'title' => '<i class="nebula-admin-fa fa-regular fa-question-circle"></i> Help & Documentation',
 						'href' => 'https://nebula.gearside.com/documentation/options/?utm_campaign=documentation&utm_medium=admin_bar&utm_source=' . urlencode(site_url()) . '&utm_content=admin_bar_help',
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					));
@@ -1111,7 +1111,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula',
 						'id' => 'nebula-github',
-						'title' => '<i class="nebula-admin-fa fa-brands fa-fw fa-github"></i> Nebula Github',
+						'title' => '<i class="nebula-admin-fa fa-brands fa-github"></i> Nebula Github',
 						'href' => 'https://github.com/chrisblakley/Nebula',
 						'meta' => array('target' => '_blank', 'rel' => 'noopener')
 					));
@@ -1143,7 +1143,7 @@ if ( !trait_exists('Admin') ){
 						$wp_admin_bar->add_node(array(
 							'parent' => 'nebula-utilities',
 							'id' => 'nebula-scss-reprocess',
-							'title' => '<i class="nebula-admin-fa fa-brands fa-fw fa-sass"></i> Re-process All Sass Files',
+							'title' => '<i class="nebula-admin-fa fa-brands fa-sass"></i> Re-process All Sass Files',
 							'href' => esc_url(add_query_arg('sass', 'true')),
 							'meta' => array('title' => 'Process all Sass files and reload the page. ' . $scss_last_processed_text)
 						));
@@ -1153,7 +1153,7 @@ if ( !trait_exists('Admin') ){
 						$wp_admin_bar->add_node(array(
 							'parent' => 'nebula-utilities',
 							'id' => 'nebula-audit',
-							'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-list-alt"></i> Audit This Page',
+							'title' => '<i class="nebula-admin-fa fa-solid fa-list-alt"></i> Audit This Page',
 							'href' => esc_url(add_query_arg('audit', 'true')),
 							'meta' => array('title' => 'Checks the current page for common issues')
 						));
@@ -1161,7 +1161,7 @@ if ( !trait_exists('Admin') ){
 						$wp_admin_bar->add_node(array(
 							'parent' => 'nebula-utilities',
 							'id' => 'nebula-scan',
-							'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-microscope"></i> Scan This Page for Assets',
+							'title' => '<i class="nebula-admin-fa fa-solid fa-microscope"></i> Scan This Page for Assets',
 							'href' => esc_url(add_query_arg('nebula-scan', 'true')),
 							'meta' => array('title' => 'Scans the current page for registered styles and scripts (for advanced optimization in Nebula Options > Advanced > Dequeues)')
 						));
@@ -1171,14 +1171,14 @@ if ( !trait_exists('Admin') ){
 				$wp_admin_bar->add_node(array(
 					'parent' => 'nebula',
 					'id' => 'nebula-utilities',
-					'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-tools"></i> Utilities & Tools',
+					'title' => '<i class="nebula-admin-fa fa-solid fa-tools"></i> Utilities & Tools',
 				));
 
 				if ( $this->is_dev() ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-utilities',
 						'id' => 'nebula-minimal-mode',
-						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-minimize"></i> Reload with Minimal Functionality',
+						'title' => '<i class="nebula-admin-fa fa-solid fa-minimize"></i> Reload with Minimal Functionality',
 						'href' => esc_url(add_query_arg('minimal', 'true')),
 						'meta' => array('title' => 'Append ?minimal to load this page with only minimal Nebula functionality')
 					));
@@ -1188,7 +1188,7 @@ if ( !trait_exists('Admin') ){
 					$wp_admin_bar->add_node(array(
 						'parent' => 'nebula-utilities',
 						'id' => 'nebula-add-debug',
-						'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-sync"></i> Reload &amp; Clear Caches',
+						'title' => '<i class="nebula-admin-fa fa-solid fa-sync"></i> Reload &amp; Clear Caches',
 						'href' => esc_url(add_query_arg('debug', 'true')),
 						'meta' => array('title' => 'Append ?debug to force clear certain caches')
 					));
@@ -1201,7 +1201,7 @@ if ( !trait_exists('Admin') ){
 						$wp_admin_bar->add_node(array(
 							'parent' => 'nebula-utilities',
 							'id' => 'nebula-allow-qm',
-							'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-toggle-off"></i> Allow QM for this IP for 1hr (' . $this->get_ip_address() . ')',
+							'title' => '<i class="nebula-admin-fa fa-solid fa-toggle-off"></i> Allow QM for this IP for 1hr (' . $this->get_ip_address() . ')',
 							'href' => esc_url(
 								add_query_arg(array(
 									'nebula-temp-qm' => 'start',
@@ -1212,7 +1212,7 @@ if ( !trait_exists('Admin') ){
 						$wp_admin_bar->add_node(array(
 							'parent' => 'nebula-utilities',
 							'id' => 'nebula-allow-qm',
-							'title' => '<i class="nebula-admin-fa fa-solid fa-fw fa-toggle-on"></i> Stop QM for this IP now',
+							'title' => '<i class="nebula-admin-fa fa-solid fa-toggle-on"></i> Stop QM for this IP now',
 							'href' => esc_url(
 								add_query_arg(array(
 									'nebula-temp-qm' => 'stop',
@@ -1242,7 +1242,7 @@ if ( !trait_exists('Admin') ){
 
 						$wp_admin_bar->add_node(array(
 							'id' => 'nebula-sass-processed',
-							'title' => '<i class="nebula-admin-fa fa-solid fa-fw ' . $sass_icon . '"></i> <i class="nebula-admin-fa fa-brands fa-fw fa-sass"></i> ' . $sass_number,
+							'title' => '<i class="nebula-admin-fa fa-solid ' . $sass_icon . '"></i> <i class="nebula-admin-fa fa-brands fa-sass"></i> ' . $sass_number,
 							'href' => esc_url(add_query_arg('sass', 'true')),
 							'meta' => array(
 								'title' => ( $sass_color != 'sass-success' )? $this->sass_process_status : '',
@@ -1280,8 +1280,8 @@ if ( !trait_exists('Admin') ){
 							.ab-label {transition: all 0.25s ease;}
 						}
 
-						.nebula-admin-fa {font-family: "Font Awesome 6 Solid", "Font Awesome 6 Free", "Font Awesome 6 Pro"; font-weight: 900;
-							&.fa-brands {font-family: "Font Awesome 6 Brands", "Font Awesome 6 Free", "Font Awesome 6 Pro"; font-weight: 400;}
+						.nebula-admin-fa {font-family: "Font Awesome 7 Solid", "Font Awesome 7 Free", "Font Awesome 7 Pro"; font-weight: 900;
+							&.fa-brands {font-family: "Font Awesome 7 Brands", "Font Awesome 7 Free", "Font Awesome 7 Pro"; font-weight: 400;}
 						}
 
 						.svg-inline--fa {color: #a0a5aa; color: rgba(240, 245, 250, 0.6); margin-right: 5px;}
@@ -1396,7 +1396,7 @@ if ( !trait_exists('Admin') ){
 						i,
 						svg {-webkit-font-smoothing: antialiased;}
 
-						.ab-sub-wrapper .fa-fw {width: 1.25em;}
+						.ab-sub-wrapper .{width: 1.25em;}
 						.svg-inline--fa {height: 1em;}
 					}
 
@@ -1780,7 +1780,7 @@ if ( !trait_exists('Admin') ){
 			//Now check for non-warnings for minor notes
 			//Check if CF7 spam capture is disabled when attempting to view the spam submission list
 			if ( get_post_type() == 'nebula_cf7_submits' && get_post_status() === 'spam' && !$this->get_option('cf7_spam_submission_capture') ){
-				echo '<div class="nebula-admin-notice notice notice-error notice-emphasize"><p><i class="fa-solid fa-fw fa-triangle-exclamation"></i> <strong><a href="' . admin_url('themes.php?page=nebula_options&tab=functions&option=cf7_spam_submission_capture') . '">Nebula CF7 spam capture</a> is currently disabled!</strong> New spam submissions will not appear here.</p></div>';
+				echo '<div class="nebula-admin-notice notice notice-error notice-emphasize"><p><i class="fa-solid fa-triangle-exclamation"></i> <strong><a href="' . admin_url('themes.php?page=nebula_options&tab=functions&option=cf7_spam_submission_capture') . '">Nebula CF7 spam capture</a> is currently disabled!</strong> New spam submissions will not appear here.</p></div>';
 			}
 
 			$this->timer('Admin Notices', 'end');
@@ -1789,7 +1789,7 @@ if ( !trait_exists('Admin') ){
 		//Show the Hubspot link at the top of the CF7 admin listing page
 		public function show_hubspot_link(){
 			if ( is_admin() && isset($_GET['post_type']) && $_GET['post_type'] === 'nebula_cf7_submits' && get_current_screen()->base === 'edit' ){
-				echo '<div class="nebula-admin-notice notice notice-crm"><p><i class="fa-brands fa-fw fa-hubspot"></i> <a href="https://app.hubspot.com/contacts/' . $this->get_option('hubspot_portal') . '/objects/0-1/views/all/list" target="_blank" rel="noopener noreferrer">View contacts on Hubspot &raquo;</a></p></div>';
+				echo '<div class="nebula-admin-notice notice notice-crm"><p><i class="fa-brands fa-hubspot"></i> <a href="https://app.hubspot.com/contacts/' . $this->get_option('hubspot_portal') . '/objects/0-1/views/all/list" target="_blank" rel="noopener noreferrer">View contacts on Hubspot &raquo;</a></p></div>';
 			}
 		}
 
@@ -2067,20 +2067,20 @@ if ( !trait_exists('Admin') ){
 				if ( $column_name === 'formatted_date' ){
 					$today_text = '';
 					$today_icon = '';
-					$time_diff_icon = '<i class="fa-regular fa-fw fa-calendar"></i>'; //Default for longer than a day ago
+					$time_diff_icon = '<i class="fa-regular fa-calendar"></i>'; //Default for longer than a day ago
 
 					$time_diff = time()-strtotime(get_post_field('post_date', $submission_id));
 
 					if ( $time_diff < HOUR_IN_SECONDS ){ //Within the hour
-						$time_diff_icon = '<i class="fa-solid fa-fw fa-stopwatch"></i>';
+						$time_diff_icon = '<i class="fa-solid fa-stopwatch"></i>';
 						$today_icon = '<span class="cf7-submits-today-color">&rarr;</span> ';
 						$today_text = ( $time_diff < MINUTE_IN_SECONDS*10 )? 'Just Now' : 'Past Hour';
 					} elseif ( date('Y-n-j', strtotime(get_post_field('post_date', $submission_id))) == date('Y-n-j') ){ //Within today's calendar date
-						$time_diff_icon = '<i class="fa-solid fa-fw fa-clock"></i>';
+						$time_diff_icon = '<i class="fa-solid fa-clock"></i>';
 						$today_icon = '<span class="cf7-submits-today-color">&raquo;</span> ';
 						$today_text = 'today';
 					} elseif ( $time_diff < DAY_IN_SECONDS ){ //Within the last 24-hours
-						$time_diff_icon = '<i class="fa-solid fa-fw fa-calendar-day"></i>';
+						$time_diff_icon = '<i class="fa-solid fa-calendar-day"></i>';
 						$today_icon = '<span>&rsaquo;</span> ';
 					}
 
@@ -2090,7 +2090,7 @@ if ( !trait_exists('Admin') ){
 
 				if ( $column_name === 'form_name' ){
 					if ( !empty($form_id) ){
-						echo '<strong><a href="admin.php?page=wpcf7&post=' . $form_id . '&action=edit">' . get_the_title($form_id) . '</a></strong><br /><small><i class="fa-regular fa-fw fa-rectangle-list"></i> Form ID: ' . $form_id . '</small>';
+						echo '<strong><a href="admin.php?page=wpcf7&post=' . $form_id . '&action=edit">' . get_the_title($form_id) . '</a></strong><br /><small><i class="fa-regular fa-rectangle-list"></i> Form ID: ' . $form_id . '</small>';
 					} else {
 						echo '<span class="cf7-submits-possible-spam">Spam?<br /><small>The message could not be decoded.</small></span>';
 					}
@@ -2098,7 +2098,7 @@ if ( !trait_exists('Admin') ){
 
 				if ( $column_name === 'page_title' ){
 					if ( !empty($post_id) ){
-						echo '<a href="' . get_permalink($post_id) . '" target="_blank">' . get_the_title($post_id) . '</a><br /><small><i class="fa-regular fa-fw fa-window-maximize"></i> Post ID: ' . $post_id . '</small>';
+						echo '<a href="' . get_permalink($post_id) . '" target="_blank">' . get_the_title($post_id) . '</a><br /><small><i class="fa-regular fa-window-maximize"></i> Post ID: ' . $post_id . '</small>';
 					} elseif ( !empty($form_data->_detected_page_id) ){ //This is included on spam detected submissions
 						echo '<span class="cf7-submits-possible-spam"><span>' . get_the_title($form_data->_detected_page_id) . '</span><br /><small>Post ID: ' . $form_data->_detected_page_id . '</small></span>';
 					}
@@ -2128,12 +2128,12 @@ if ( !trait_exists('Admin') ){
 				if ( $column_name === 'notes' ){
 					//Originally invalid submissions that were moved to the "successful" submissions listing status
 					if ( get_post_status() == 'submission' && str_contains(strtolower(get_the_title($submission_id)), '(invalid)') ){
-						echo '<p class="cf7-note-invalid"><i class="fa-solid fa-fw fa-triangle-exclamation"></i> <strong>Originally Invalid</strong><br /><small>This submission was originally invalid, but moved to this submissions list by a content manager. No email notification was sent out!</small></p>';
+						echo '<p class="cf7-note-invalid"><i class="fa-solid fa-triangle-exclamation"></i> <strong>Originally Invalid</strong><br /><small>This submission was originally invalid, but moved to this submissions list by a content manager. No email notification was sent out!</small></p>';
 					}
 
 					//Mail failed
 					if ( str_contains(strtolower(get_the_title($submission_id)), 'mail fail') ){
-						echo '<p class="cf7-note-failed"><i class="fa-solid fa-fw fa-triangle-exclamation"></i> <strong>Mail Failed</strong><br /><small>An administrator did not get an email notification of this submission!</small></p>';
+						echo '<p class="cf7-note-failed"><i class="fa-solid fa-triangle-exclamation"></i> <strong>Mail Failed</strong><br /><small>An administrator did not get an email notification of this submission!</small></p>';
 
 						//If it failed within the last few days or if it is the latest submissions even beyond a week old, denote that in a transient
 						global $wp_query;
@@ -2145,21 +2145,21 @@ if ( !trait_exists('Admin') ){
 
 					//Preserved submissions
 					if ( !empty(get_post_field('nebula_cf7_submission_preserve', $submission_id)) ){
-						echo '<p><i class="fa-solid fa-fw fa-shield-halved"></i> Preserved<br /><small>This submission will not be automatically deleted</small></p>';
+						echo '<p><i class="fa-solid fa-shield-halved"></i> Preserved<br /><small>This submission will not be automatically deleted</small></p>';
 					}
 
 					//Internal Staff submissions
 					if ( !empty($form_data->_nebula_staff) ){
-						echo '<p class="cf7-note-internal"><i class="fa-solid fa-fw fa-clipboard-user"></i> Internal Staff<br /><small>This submission was by someone on the internal staff</small></p>';
+						echo '<p class="cf7-note-internal"><i class="fa-solid fa-clipboard-user"></i> Internal Staff<br /><small>This submission was by someone on the internal staff</small></p>';
 					}
 
 					//Check for caution indicators
 					if ( get_post_status() != 'spam' && !empty($form_data->_nebula_spam_detection) ){
-						echo '<p class="cf7-note-caution"><i class="fa-solid fa-fw fa-robot"></i> Possible Spam<br /><small>This submission may be spam</small></p>';
+						echo '<p class="cf7-note-caution"><i class="fa-solid fa-robot"></i> Possible Spam<br /><small>This submission may be spam</small></p>';
 					} elseif ( empty($form_data->_nebula_form_flow) ){ //If the form flow data is missing it means they are not running JavaScript
-						echo '<p class="cf7-note-caution"><i class="fa-solid fa-fw fa-code"></i> No JavaScript<br /><small>This user either has disabled JavaScript or is more likely a spambot</small></p>';
+						echo '<p class="cf7-note-caution"><i class="fa-solid fa-code"></i> No JavaScript<br /><small>This user either has disabled JavaScript or is more likely a spambot</small></p>';
 					} elseif ( ( !empty($form_data->_nebula_ga_cid) && str_contains($form_data->_nebula_ga_cid, '-') ) ){ //If this visitor is using an ad blocker
-						echo '<p class="cf7-note-caution"><i class="fa-regular fa-fw fa-circle-user"></i> Ad-Blocker<br /><small>This user is either blocking analytics or possibly is a spambot</small></p>';
+						echo '<p class="cf7-note-caution"><i class="fa-regular fa-circle-user"></i> Ad-Blocker<br /><small>This user is either blocking analytics or possibly is a spambot</small></p>';
 					}
 
 					echo '<span>' . get_post_meta($submission_id, 'nebula_cf7_submission_notes', true) . '</span>';
@@ -2311,7 +2311,7 @@ if ( !trait_exists('Admin') ){
 					$export_url = 'admin.php?page=pmxe-admin-export';
 				}
 
-				echo '<a class="button" href="' . $export_url . '"><i class="fa-solid fa-fw fa-file-arrow-down"></i> ' . $export_text . '</a>';
+				echo '<a class="button" href="' . $export_url . '"><i class="fa-solid fa-file-arrow-down"></i> ' . $export_text . '</a>';
 			}
 		}
 
@@ -2364,7 +2364,7 @@ if ( !trait_exists('Admin') ){
 				if ( !$is_spam ){
 					//Check if the send mail failed
 					if ( str_contains(strtolower(get_the_title($post->ID)), 'mail fail') ){
-						echo '<div class="nebula-cf7-notice notice-mail-failed"><p><i class="fa-solid fa-fw fa-envelope"></i> <strong>Email notification failed.</strong> The email notification to administators has failed for this submission.</p></div>';
+						echo '<div class="nebula-cf7-notice notice-mail-failed"><p><i class="fa-solid fa-envelope"></i> <strong>Email notification failed.</strong> The email notification to administators has failed for this submission.</p></div>';
 
 						//If it failed within the last few days, denote that in a transient
 						if ( strtotime(get_the_date('Y-m-d H:i:s', $post->ID)) >= strtotime('-2 days') ){
@@ -2377,13 +2377,13 @@ if ( !trait_exists('Admin') ){
 						if ( substr($key, 0, 1) != '_' && is_string($value) ){ //If it is not a metadata field and we have data
 							//Check for unicode character encodings
 							if ( preg_match('/^u[0-9a-fA-F]{4}/', $value) === 1 ){
-								$is_caution = '<i class="fa-solid fa-fw fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> <strong>Unicode encodings were detected in this submission.</strong> This is a high likelyhood of spam!';
+								$is_caution = '<i class="fa-solid fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> <strong>Unicode encodings were detected in this submission.</strong> This is a high likelyhood of spam!';
 								break;
 							}
 
 							//Check for HTML hyperlink tags
 							if ( preg_match("/<a.*href=.*>/i", $value) ){
-								$is_caution = '<i class="fa-solid fa-fw fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> A hyperlink HTML tag was found in the submission. If users are not expected to be including HTML this could imply that this may be a bot or spam.';
+								$is_caution = '<i class="fa-solid fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> A hyperlink HTML tag was found in the submission. If users are not expected to be including HTML this could imply that this may be a bot or spam.';
 								break;
 							}
 						}
@@ -2391,14 +2391,14 @@ if ( !trait_exists('Admin') ){
 
 					if ( empty($is_caution) ){ //If the above checks did not find any problems, continue checking other aspects
 						if ( empty($form_data->_nebula_ga_cid) || str_contains($form_data->_nebula_ga_cid, '-') ){
-							$is_caution = '<i class="fa-solid fa-fw fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> This user has a non-native Google Analytics Client ID (' . $form_data->_nebula_ga_cid . '). This could mean <strong>the user has an ad-blocker active, or that it may be a bot or spam.</strong>';
+							$is_caution = '<i class="fa-solid fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> This user has a non-native Google Analytics Client ID (' . $form_data->_nebula_ga_cid . '). This could mean <strong>the user has an ad-blocker active, or that it may be a bot or spam.</strong>';
 						} elseif ( version_compare($form_data->_nebula_version, '11.10.29') >= 0 && empty($form_data->_nebula_form_flow) ){ //@todo "Nebula 0: After a while the version_compare part of the conditional can be removed. The _nebula_form_flow field was added on March 29, 2024.
-							$is_caution = '<i class="fa-solid fa-fw fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> The Nebula Form Flow field is empty which could mean <strong>the user has disabled JavaScript, or that it may be a bot or spam</strong>.';
+							$is_caution = '<i class="fa-solid fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> The Nebula Form Flow field is empty which could mean <strong>the user has disabled JavaScript, or that it may be a bot or spam</strong>.';
 						} else {
 							//Loop through the form data to look for HTML tags
 							foreach ( $form_data as $key => $value ){
 								if ( substr($key, 0, 1) != '_' && is_string($value) && preg_match("/<a.*href=.*>/i", $value) ){
-									$is_caution = '<i class="fa-solid fa-fw fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> A hyperlink HTML tag was found in the submission. If users are not expected to be including HTML this could imply that this may be a bot or spam.';
+									$is_caution = '<i class="fa-solid fa-circle-question text-info"></i> <strong class="text-info">Caution:</strong> A hyperlink HTML tag was found in the submission. If users are not expected to be including HTML this could imply that this may be a bot or spam.';
 									break;
 								}
 							}
@@ -2419,14 +2419,14 @@ if ( !trait_exists('Admin') ){
 					if ( !empty($form_data->_nebula_staff) ){
 						$staff_type = str_replace('Client', 'Content Manager', $form_data->_nebula_staff); //This will always exist regardless of logged-in state
 						$staff_email = ( !empty($form_data->_nebula_email) )? ' (' . $form_data->_nebula_email . ')' : ''; //This will only exist if the staff member is logged into WordPress (as opposed to IP detection).
-						echo '<div class="nebula-cf7-notice notice-internal"><p><i class="fa-solid fa-fw fa-clipboard-user"></i> <strong>Internal Staff (' . $staff_type . ')</strong> This submission was made by a user on the staff' . $staff_email . '.</p></div>';
+						echo '<div class="nebula-cf7-notice notice-internal"><p><i class="fa-solid fa-clipboard-user"></i> <strong>Internal Staff (' . $staff_type . ')</strong> This submission was made by a user on the staff' . $staff_email . '.</p></div>';
 					}
 
 					if ( $is_spam ){
-						echo '<div class="nebula-cf7-notice notice-spam"><p><i class="fa-solid fa-fw fa-triangle-exclamation text-danger"></i> <strong class="text-danger">This submission has been noted as potential spam.</strong> Any HTML tags have been removed from the data. Do not visit any URLs that may appear in the data.</p></div>';
+						echo '<div class="nebula-cf7-notice notice-spam"><p><i class="fa-solid fa-triangle-exclamation text-danger"></i> <strong class="text-danger">This submission has been noted as potential spam.</strong> Any HTML tags have been removed from the data. Do not visit any URLs that may appear in the data.</p></div>';
 					} else {
 						if ( $is_invalid ){
-							echo '<div class="nebula-cf7-notice notice-invalid"><p><i class="fa-solid fa-fw fa-comment-slash"></i> <strong>This submission was determined to be invalid.</strong> Invalid fields are highlighted below. The user was shown a validation error message when attempting to submit this information (see below). The user may have fixed the invalid fields and attempted to submit again, or they may have abandoned the form without re-submitting.</p><p>Note: If the acceptance checkbox was not checked, form field input data will have been removed from this submission and will not appear below as it was not processed or stored.</p></div>';
+							echo '<div class="nebula-cf7-notice notice-invalid"><p><i class="fa-solid fa-comment-slash"></i> <strong>This submission was determined to be invalid.</strong> Invalid fields are highlighted below. The user was shown a validation error message when attempting to submit this information (see below). The user may have fixed the invalid fields and attempted to submit again, or they may have abandoned the form without re-submitting.</p><p>Note: If the acceptance checkbox was not checked, form field input data will have been removed from this submission and will not appear below as it was not processed or stored.</p></div>';
 						}
 
 						//Check if this submission was associated with any other submissions
@@ -2459,7 +2459,7 @@ if ( !trait_exists('Admin') ){
 
 									$submission_class = 'invalid-submission-item';
 									$submission_label = 'Invalid Submission &raquo;';
-									$submission_icon = '<i class="fa-solid fa-fw fa-xmark"></i>';
+									$submission_icon = '<i class="fa-solid fa-xmark"></i>';
 
 									if ( get_post_status($post->ID) == 'submission' ){ //Only if it was a successful submission originally (and not moved from another status)
 										if ( str_contains(get_the_title($post->ID), '(Invalid)') ){
@@ -2469,12 +2469,12 @@ if ( !trait_exists('Admin') ){
 											//$success_count++;
 											$submission_class = 'error-submission-item'; //Nebula still captures the form, but the email was not sent
 											$submission_label = 'Failed Submission &raquo;';
-											$submission_icon = '<i class="fa-solid fa-fw fa-triangle-exclamation"></i>';
+											$submission_icon = '<i class="fa-solid fa-triangle-exclamation"></i>';
 										} else {
 											$success_count++;
 											$submission_class = 'successful-submission-item';
 											$submission_label = 'Successful Submission &raquo;';
-											$submission_icon = '<i class="fa-solid fa-fw fa-check"></i>';
+											$submission_icon = '<i class="fa-solid fa-check"></i>';
 										}
 									} else {
 										$invalid_count++;
@@ -2485,7 +2485,7 @@ if ( !trait_exists('Admin') ){
 									if ( get_the_ID() == $post->ID ){ //If the post in the list is the submission we are viewing the full details of
 										$submission_class .= ' this-submission';
 										$submission_label = 'This ' . str_replace(' &raquo;', '', $submission_label);
-										$submission_icon = ( get_post_status() == 'submission' && !str_contains(get_the_title(), '(Invalid)') )? '<i class="fa-solid fa-fw fa-circle-check"></i><i class="fa-solid fa-arrow-right"></i>' : '<i class="fa-solid fa-fw fa-circle-xmark"></i><i class="fa-solid fa-arrow-right"></i>';
+										$submission_icon = ( get_post_status() == 'submission' && !str_contains(get_the_title(), '(Invalid)') )? '<i class="fa-solid fa-circle-check"></i><i class="fa-solid fa-arrow-right"></i>' : '<i class="fa-solid fa-circle-xmark"></i><i class="fa-solid fa-arrow-right"></i>';
 									}
 
 									$the_submissions[] = '<li class="' . get_post_status($post->ID) . '-submission-item ' . $submission_class . '" data-id="' . $post->ID . '"><a href="' . get_edit_post_link($post->ID) . '"><strong>' . $submission_icon . ' ' . $submission_label . '</strong></a> <small>(' . get_the_title($invalid_form_data->_wpcf7) . ' on ' . get_the_date('l, F j, Y \a\t g:i:sa', $post->ID) . ')</small></li>';
@@ -2493,17 +2493,17 @@ if ( !trait_exists('Admin') ){
 
 								if ( count($the_submissions) >= 2 ){ //If this user has submitted a form more than once (successfully or not)
 									if ( $invalid_count >= 1 ){ //If any of those submissions were invalid
-										echo '<div class="nebula-cf7-notice notice-warning"><p><i class="fa-solid fa-fw fa-circle-xmark color-invalid"></i> <strong>User had ' . $invalid_count . ' invalid attempt(s)!</strong> This user attempted to submit forms at least <strong>' . $invalid_count . ' time(s)</strong>.<ol>' . implode($the_submissions) . '</ol></p></div>';
+										echo '<div class="nebula-cf7-notice notice-warning"><p><i class="fa-solid fa-circle-xmark color-invalid"></i> <strong>User had ' . $invalid_count . ' invalid attempt(s)!</strong> This user attempted to submit forms at least <strong>' . $invalid_count . ' time(s)</strong>.<ol>' . implode($the_submissions) . '</ol></p></div>';
 									} else { //Otherwise, all submissions were successful
-										echo '<div class="nebula-cf7-notice notice-success"><p><i class="fa-solid fa-fw fa-check-double color-submission"></i> <strong>User submitted multiple times.</strong> This user has submitted at least <strong>' . count($the_submissions) . ' forms</strong> successfully.<ol>' . implode($the_submissions) . '</ol></p></div>';
+										echo '<div class="nebula-cf7-notice notice-success"><p><i class="fa-solid fa-check-double color-submission"></i> <strong>User submitted multiple times.</strong> This user has submitted at least <strong>' . count($the_submissions) . ' forms</strong> successfully.<ol>' . implode($the_submissions) . '</ol></p></div>';
 									}
 								}
 
 								if ( $is_invalid ){
 									if ( $success_count == 0 ){
-										echo '<div class="nebula-cf7-notice notice-error"><p><i class="fa-solid fa-fw fa-user-xmark text-danger"></i> <strong class="text-danger">User may have abandoned after failure!</strong> This user may <strong>not</strong> have submitted successfully after receiving these validation errors.</p></div>'; //"May" because if the email address was the one that was invalid, that may cause the query to return an empty result (since the post title relies on this)
+										echo '<div class="nebula-cf7-notice notice-error"><p><i class="fa-solid fa-user-xmark text-danger"></i> <strong class="text-danger">User may have abandoned after failure!</strong> This user may <strong>not</strong> have submitted successfully after receiving these validation errors.</p></div>'; //"May" because if the email address was the one that was invalid, that may cause the query to return an empty result (since the post title relies on this)
 									} else {
-										echo '<div class="nebula-cf7-notice notice-success"><p><i class="fa-solid fa-fw fa-circle-check text-success"></i> <strong class="text-success">User was eventually successful!</strong> This user was able to fix these validation errors and submit successfully after this. <a href="' . get_edit_post_link(get_the_ID()) . '">View the successful submission &raquo;</a></p></div>';
+										echo '<div class="nebula-cf7-notice notice-success"><p><i class="fa-solid fa-circle-check text-success"></i> <strong class="text-success">User was eventually successful!</strong> This user was able to fix these validation errors and submit successfully after this. <a href="' . get_edit_post_link(get_the_ID()) . '">View the successful submission &raquo;</a></p></div>';
 									}
 								}
 
@@ -2541,7 +2541,7 @@ if ( !trait_exists('Admin') ){
 
 							if ( $contact_id ){
 								$profile_url = 'https://app.hubspot.com/contacts/' . $this->get_option('hubspot_portal') . '/contact/' . $contact_id;
-								echo '<div class="nebula-cf7-notice notice-crm"><p><i class="fa-brands fa-fw fa-hubspot"></i> <a href="' . esc_url($profile_url) . '" target="_blank" rel="noopener noreferrer">View this contact in Hubspot &raquo;</a></p></div>';
+								echo '<div class="nebula-cf7-notice notice-crm"><p><i class="fa-brands fa-hubspot"></i> <a href="' . esc_url($profile_url) . '" target="_blank" rel="noopener noreferrer">View this contact in Hubspot &raquo;</a></p></div>';
 							}
 						}
 					}
@@ -2930,19 +2930,19 @@ if ( !trait_exists('Admin') ){
 			<div>
 				<?php if ( $this->is_ai_features_allowed() ): ?>
 					<p>
-						<strong><i class="fa-solid fa-fw fa-robot"></i> Generate Title</strong>
+						<strong><i class="fa-solid fa-robot"></i> Generate Title</strong>
 						<span class="howto">Copy the prompt to your clipboard and open ChatGPT.</span>
 						<a id="ai-post-title" class="nebula-ai-button" href="#" target="_blank" rel="noopener noreferrer">Copy Prompt & Go &raquo;</a>
 					</p>
 
 					<p>
-						<strong><i class="fa-solid fa-fw fa-robot"></i> Generate Meta Description</strong>
+						<strong><i class="fa-solid fa-robot"></i> Generate Meta Description</strong>
 						<span class="howto">Copy the prompt to your clipboard and open ChatGPT.</span>
 						<a id="ai-post-meta-description" class="nebula-ai-button" href="#" target="_blank" rel="noopener noreferrer">Copy Prompt & Go &raquo;</a>
 					</p>
 
 					<p>
-						<strong><i class="fa-solid fa-fw fa-robot"></i> Generate Content</strong>
+						<strong><i class="fa-solid fa-robot"></i> Generate Content</strong>
 						<span class="howto">Copy the prompt to your clipboard and open ChatGPT.</span>
 						<a id="ai-post-content" class="nebula-ai-button" href="#" target="_blank" rel="noopener noreferrer">Copy Prompt & Go &raquo;</a>
 					</p>
@@ -3023,7 +3023,7 @@ if ( !trait_exists('Admin') ){
 			?>
 			<div>
 				<p>
-					<strong><i class="fa-solid fa-fw fa-pen-to-square"></i> CF7 Submission Notes</strong>
+					<strong><i class="fa-solid fa-pen-to-square"></i> CF7 Submission Notes</strong>
 					<textarea id="nebula-cf7-submission-notes" class="textarea large-text" name="nebula_cf7_submission_notes" placeholder="Notes related to this Contact Form 7 submission..." style="min-height: 250px;"><?php echo get_post_meta($object->ID, 'nebula_cf7_submission_notes', true); ?></textarea>
 					<span class="howto">Keep any notes here to help provide context and information related to this form submission.</span>
 				</p>

@@ -55,7 +55,7 @@
 									<?php if ( is_front_page() ): ?>
 										<a href="<?php echo home_url('/'); ?>" aria-label="<?php bloginfo('name'); ?>"><?php echo $offcanvas_menu_home_text; ?></a>
 									<?php else: ?>
-										<a href="<?php echo home_url('/'); ?>" aria-label="<?php bloginfo('name'); ?>"><i class="fa fa-fw fa-chevron-left"></i> <?php echo $offcanvas_menu_home_text; ?> Home</a>
+										<a href="<?php echo home_url('/'); ?>" aria-label="<?php bloginfo('name'); ?>"><i class="fa fa-chevron-left"></i> <?php echo $offcanvas_menu_home_text; ?> Home</a>
 									<?php endif; ?>
 
 								</li>

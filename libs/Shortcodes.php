@@ -240,7 +240,7 @@ if ( !trait_exists('Shortcodes') ){
 			$extra_style = ( !empty($color) )? 'color:' . $color . ';' :'';
 			$extra_style .= ( !empty($size) )? 'font-size:' . $size . ';' :'';
 
-			return '<i class="nebula-shortcode ' . esc_attr($class . ' nebula-icon-shortcode ' . $mode . ' fa-fw ' . $type) . '" style="' . esc_attr($extra_style) . '"></i>';
+			return '<i class="nebula-shortcode ' . esc_attr($class . ' nebula-icon-shortcode ' . $mode . ' ' . $type) . '" style="' . esc_attr($extra_style) . '"></i>';
 		}
 
 		public function button_shortcode($atts, $content=''){
@@ -254,7 +254,7 @@ if ( !trait_exists('Shortcodes') ){
 				if ( !str_contains($icon, 'fa-') ){
 					$icon = 'fa-' . $icon;
 				}
-				$icon = '<i class="fa-solid fa-fw ' . esc_attr($icon) . '"></i> ';
+				$icon = '<i class="fa-solid ' . esc_attr($icon) . '"></i> ';
 			}
 
 			if ( $size ){

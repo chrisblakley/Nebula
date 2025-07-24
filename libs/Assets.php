@@ -130,7 +130,7 @@ if ( !trait_exists('Assets') ){
 			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
 			wp_register_style('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css', null, '5.3.6', 'all'); //https://www.jsdelivr.com/package/npm/bootstrap
-			wp_register_style('nebula-font_awesome', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css', null, '6.7.2', 'all'); //https://www.jsdelivr.com/package/npm/@fortawesome/fontawesome-free
+			wp_register_style('nebula-font_awesome', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css', null, '7.0.0', 'all'); //https://www.jsdelivr.com/package/npm/@fortawesome/fontawesome-free
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap'), $this->version('full'), 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, $this->version('full'), 'all');
 			wp_register_style('nebula-admin', get_template_directory_uri() . '/assets/css/admin.css', null, $this->version('full'), 'all');
