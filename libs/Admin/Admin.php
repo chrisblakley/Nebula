@@ -61,6 +61,11 @@ if ( !trait_exists('Admin') ){
 					add_filter('puc_request_update_result_theme-Nebula', array($this, 'theme_update_version_store'), 10, 2); //This hook is found in UpdateChecker.php in the filterUpdateResult() function.
 					add_filter('site_transient_update_themes', array($this, 'force_nebula_theme_update'), 99, 1); //This is a core WP hook (not a plugin or library)
 				}
+
+				add_action('load-post.php', array($this, 'post_meta_boxes_setup'));
+				add_action('load-post-new.php', array($this, 'post_meta_boxes_setup'));
+
+				nebula()->log("🤔 inside the same area where the wrapper save hooks exist", 'saving'); //yolo
 			}
 
 			//Non-AJAX admin pages
@@ -159,8 +164,6 @@ if ( !trait_exists('Admin') ){
 
 				add_filter('admin_footer_text', array($this, 'change_admin_footer_left'));
 				add_filter('update_footer', array($this, 'change_admin_footer_right'), 11);
-				add_action('load-post.php', array($this, 'post_meta_boxes_setup'));
-				add_action('load-post-new.php', array($this, 'post_meta_boxes_setup'));
 
 				add_action('debug_information', array($this, 'site_health_info'));
 			}
@@ -2970,7 +2973,13 @@ if ( !trait_exists('Admin') ){
 		}
 
 		public function save_post_custom_meta($post_id, $post){
-			if ( $this->is_minimal_mode() ){return null;}
+			if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ){
+				return;
+			}
+
+			if ( $this->is_minimal_mode() ){
+				return null;
+			}
 
 			if ( !isset($this->super->post['nebula_post_nonce']) || !wp_verify_nonce($this->super->post['nebula_post_nonce'], basename(__FILE__)) ){
 				return $post_id;
@@ -2982,19 +2991,19 @@ if ( !trait_exists('Admin') ){
 			}
 
 			$nebula_post_meta_fields = array('nebula_body_classes', 'nebula_post_classes', 'nebula_internal_search_keywords', 'nebula_cf7_submission_preserve', 'nebula_cf7_submission_notes');
-			foreach ( $nebula_post_meta_fields as $nebula_post_meta_field ){
-				$meta_value = get_post_meta($post_id, $nebula_post_meta_field, true); //Get the meta value of the custom field key.
 
-				if ( !empty($this->super->post[$nebula_post_meta_field]) ){
-					$new_meta_value = sanitize_text_field($this->super->post[$nebula_post_meta_field]); //Get the posted data and sanitize it if needed.
-
-					if ( $new_meta_value && empty($meta_value) ){ //If a new meta value was added and there was no previous value, add it.
-						add_post_meta($post_id, $nebula_post_meta_field, $new_meta_value, true);
-					} elseif ( $new_meta_value && $meta_value !== $new_meta_value ){ //If the new meta value does not match the old value, update it.
-						update_post_meta($post_id, $nebula_post_meta_field, $new_meta_value);
+			foreach ( $nebula_post_meta_fields as $field ){
+				if ( isset($this->super->post[$field]) ){
+					//Get the posted data and sanitize it
+					if ( $field === 'nebula_internal_search_keywords' ){
+						$new_meta_value = sanitize_textarea_field($this->super->post[$field]);
+					} else {
+						$new_meta_value = sanitize_text_field($this->super->post[$field]);
 					}
+
+					update_post_meta($post_id, $field, $new_meta_value);
 				} else {
-					delete_post_meta($post_id, $nebula_post_meta_field, $meta_value);
+					delete_post_meta($post_id, $field);
 				}
 			}
 		}

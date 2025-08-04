@@ -713,6 +713,7 @@ if ( !trait_exists('Dashboard') ){
 			}
 
 			//Domain
+			//Note: It is not currently feasible to check domain expiration dates as all reputable WHOIS services require an API key to retrieve that data.
 			$domain = $this->url_components('domain');
 			$domain ??= '<small>(None)</small>';
 
@@ -2221,7 +2222,7 @@ if ( !trait_exists('Dashboard') ){
 						return;
 					}
 
-					$response = $this->ai_run_prompt($prompt);
+					$response = $this->ai_run_prompt($prompt, 'o4-mini-2025-04-16'); //Use the o4-mini reasoning model (better for code review)
 
 					if ( is_string($response) ){
 						$this->super->globals['ai_code_review_status'] = 'AI Response: ' . $response;
@@ -2405,6 +2406,11 @@ if ( !trait_exists('Dashboard') ){
 			$prompt = trim($prompt); //Remove leading/trailing whitespace
 			$char_count = strlen($prompt);
 
+			//Input Token Pricing (per 1,000,000 tokens)
+			//https://platform.openai.com/docs/pricing
+			//'o4-mini' = $1.10
+			//'gpt-4.1-mini' = $0.40
+
 			//Base estimate: 1 token ≈ 4 characters, adjusted with better heuristic
 			$estimated_tokens = ceil($char_count/4);
 
@@ -2436,6 +2442,7 @@ if ( !trait_exists('Dashboard') ){
 				//'gpt-4o-mini' (smarter than 3.5-turbo but still inexpensive)
 				//'gpt-4.1-mini' (i like the idea of this one, but haven't gotten it to work yet due to timeouts)
 				//'gpt-4.1-nano' (dont love this one)
+				//'o4-mini-2025-04-16' is better for code review. More expensive than 'gpt-4.1-mini'
 
 			$data = array(
 				'model' => $ai_model,
@@ -2445,7 +2452,7 @@ if ( !trait_exists('Dashboard') ){
 						'content' => $prompt,
 					),
 				),
-				'temperature' => 0.2, //Lower number is more deterministic
+				//'temperature' => 0.2, //Lower number is more deterministic. Note o4-mini only supports a temperature of 1
 				'user' => 'wp_user_' . get_current_user_id()
 			);
 

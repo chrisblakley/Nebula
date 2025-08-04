@@ -48,6 +48,12 @@
 				$user_properties['user_role'] = nebula()->user_role(); //User-scoped role property
 				$pageview_properties['role'] = nebula()->user_role(); //Event-scoped user role property
 
+				//Add the utm_content parameter as a custom dimension since GA4 does not provide that in standard reports (only Explorations)
+				//Currently this makes it available for the page view, but possibly not the entire session... Will figure out if that matters and update later.
+				if ( isset(nebula()->super->get['utm_content']) ){
+					$pageview_properties['utm_content'] = nebula()->super->get['utm_content'];
+				}
+
 				//If using GA Linker
 				if ( nebula()->get_option('ga_linker_domains') ){
 					$linker_domains = explode(',', nebula()->get_option('ga_linker_domains')); //Conver the string into an array
