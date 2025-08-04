@@ -64,8 +64,6 @@ if ( !trait_exists('Admin') ){
 
 				add_action('load-post.php', array($this, 'post_meta_boxes_setup'));
 				add_action('load-post-new.php', array($this, 'post_meta_boxes_setup'));
-
-				nebula()->log("🤔 inside the same area where the wrapper save hooks exist", 'saving'); //yolo
 			}
 
 			//Non-AJAX admin pages
