@@ -940,7 +940,7 @@ if ( !trait_exists('Optimization') ){
 			if ( isset($override) ){return;}
 
 			//Wordpress SEO (Yoast)
-			if ( is_plugin_active('wordpress-seo/wp-seo.php') ){
+			if ( $this->is_plugin_active('wordpress-seo/wp-seo.php') ){
 				remove_submenu_page('wpseo_dashboard', 'wpseo_files'); //Remove the ability to edit files.
 				$wpseo = get_option('wpseo');
 				$wpseo['ignore_meta_description_warning'] = true; //Disable the meta description warning.
@@ -960,7 +960,7 @@ if ( !trait_exists('Optimization') ){
 		//Override existing functions (typcially from plugins)
 		public function remove_actions(){ //Note: Priorities much MATCH (not exceed) [default if undeclared, it is 10]
 			if ( $this->is_admin_page() ){ //WP Admin
-				if ( is_plugin_active('event-espresso/espresso.php') ){
+				if ( $this->is_plugin_active('event-espresso/espresso.php') ){
 					remove_filter('admin_footer_text', 'espresso_admin_performance'); //Event Espresso - Prevent adding text to WP Admin footer
 					remove_filter('admin_footer_text', 'espresso_admin_footer'); //Event Espresso - Prevent adding text to WP Admin footer
 				}

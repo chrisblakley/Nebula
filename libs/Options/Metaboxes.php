@@ -1522,7 +1522,7 @@ if ( !trait_exists('Metaboxes') ){
 					<p><strong class="nebula-disabled">The Nebula Logs are unavailable for an unknown reason...</strong></p>
 				<?php endif; ?>
 
-				<?php if ( is_plugin_active('sucuri-scanner/sucuri.php') ): ?>
+				<?php if ( $this->is_plugin_active('sucuri-scanner/sucuri.php') ): ?>
 					<?php $sucuri_audit_logs_url = ( is_multisite() )? network_admin_url('admin.php?page=sucuriscan_events_reporting#auditlogs') : admin_url('admin.php?page=sucuriscan_events_reporting#auditlogs'); ?>
 					<p>Nebula sends logs to Sucuri, so you may be able to <a href="<?php echo $sucuri_audit_logs_url; ?>">find them here</a>.</p>
 				<?php endif; ?>

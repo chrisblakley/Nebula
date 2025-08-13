@@ -31,9 +31,9 @@ nebula.uniqueSlugChecker = function(){
 
 //Copy AI Title and Meta Description Prompts
 if ( jQuery('#ai-post-title').length ){
-	if ( nebula.isBrowserAiAvailable() ){ //If the Gemini API is available in this browser
-		jQuery('#nebula-post .nebula-ai-button').html('Generate <small>(On-Device)</small>');
-	}
+	//if ( nebula.isBrowserAiAvailable() ){ //If the Gemini API is available in this browser
+	//	jQuery('#nebula-post .nebula-ai-button').html('Generate <small>(On-Device)</small>');
+	//}
 
 	jQuery('#ai-post-title').on('click', function(e){
 		e.preventDefault();
@@ -60,6 +60,12 @@ if ( jQuery('#ai-post-title').length ){
 			const blocks = wp.data.select('core/block-editor').getBlocks();
 			const headings = blocks.filter(b => b.name === 'core/heading').map(b => b.attributes.content).filter(Boolean); //Get the headings from the post content
 			const introParagraph = (blocks.find(b => b.name === 'core/paragraph' && b.attributes?.content)?.attributes.content) || ''; //Get the first paragraph from the post content
+
+			//This gets the rest of the content
+			const cleanContent = wp.blocks.parse(wp.data.select('core/editor').getEditedPostAttribute('content'))
+				.map(b => b.attributes?.content)
+				.filter(Boolean)
+				.join('\n\n');
 
 			let prompt = '';
 
@@ -88,10 +94,10 @@ if ( jQuery('#ai-post-title').length ){
 			}
 
 			//If the Gemini API is available in this browser
-			if ( nebula.isBrowserAiAvailable() ){
+			//if ( nebula.isBrowserAiAvailable() ){
 				//@todo "Nebula" 0: Run the prompt and show the result (somewhere... modal? textarea?)
 				//return;
-			}
+			//}
 
 			//Otherwise, no API is available, so copy the prompt to the clipboard and open ChatGPT
 			navigator.clipboard.writeText(prompt).then(function(){

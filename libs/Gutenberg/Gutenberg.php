@@ -20,6 +20,20 @@ if ( !trait_exists('Gutenberg') ){
 				add_action('init', array($this, 'gutenberg_style_test_block'));
 				add_action('init', array($this, 'gutenberg_latest_posts_block'));
 */
+
+				if ( $this->get_option('openai_api_key') ){
+					add_action('init', array($this, 'ai_content_gutenberg_block'));
+					add_action('rest_api_init', function(){
+						register_rest_route('nebula/v1', '/generate-content', array(
+							'methods'  => 'POST',
+							'callback' => array($this, 'nebula_generate_ai_content'),
+							'permission_callback' => function(){
+								return current_user_can('edit_posts');
+							}
+						));
+					});
+				}
+
 			}
 		}
 
@@ -169,6 +183,84 @@ if ( !trait_exists('Gutenberg') ){
 				));
 			}
 		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+		//Nebula AI Content Block
+		public function ai_content_gutenberg_block(){
+			if ( function_exists('register_block_type') ){
+				wp_register_script(
+					'nebula-ai-content-block',
+					get_template_directory_uri() . '/libs/Gutenberg/blocks/ai-content/ai-content.js?ver=' . $this->version('full'),
+					array('wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-block-editor', 'wp-api-fetch'),
+					'1.0.0',
+					true
+				);
+
+				register_block_type('nebula/aicontent', array(
+					'editor_script' => 'nebula-ai-content-block',
+					'render_callback' => array($this, 'render_nebula_aicontent_block'),
+				));
+			}
+		}
+
+		//Actually generate the AI content from the WP editor
+		public function nebula_generate_ai_content($request){
+			$prompt = sanitize_text_field($request->get_param('prompt'));
+
+			if ( empty($prompt) ){
+				return new WP_Error('no_prompt', 'Prompt is required', ['status' => 400]);
+			}
+
+			$post_title = sanitize_text_field($request->get_param('post_title'));
+			$post_content = wp_strip_all_tags($request->get_param('post_content'));
+
+			$system_prompt = 'You are writing content for a website. Be sure to consider SEO. Output only the generated content. Do not include any preamble, explanation, or commentary. Do not wrap the generated content in fencing. The post title is "' . $post_title . '". Here is the rest of the post content: ' . $post_content;
+
+			$estimated_tokens = $this->openai_estimate_tokens($prompt);
+
+			if ( $estimated_tokens > 5000 ){
+				return new WP_Error('exceeds_token_limit', 'This prompt (' . $estimated_tokens . ') exceeds the token limit (5000).', ['status' => 400]);
+			}
+
+			$response = $this->openai_prompt(array(
+				'prompt' =>$prompt,
+				'system_prompt' => $system_prompt
+			));
+
+			return rest_ensure_response([
+				'data' => $response['content']
+			]);
+		}
+
+		//Output the AI content on the front-end
+		public function render_nebula_aicontent_block($attributes){
+			$content = ( isset($attributes['content']) )? $attributes['content'] : '';
+
+			if ( empty($content) ){
+				return '';
+			}
+
+			$formatted_content = nl2br(esc_html($content));
+
+			return sprintf(
+				'<p class="wp-block-nebula-aicontent ai-content-output">%s</p>',
+				$formatted_content
+			);
+		}
+
+
+
 
 
 

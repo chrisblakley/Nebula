@@ -593,7 +593,7 @@ if ( !trait_exists('Utilities') ){
 
 		//Check if the site is an ecommerce website
 		public function is_ecommerce(){
-			if ( is_plugin_active('woocommerce/woocommerce.php') ){
+			if ( $this->is_plugin_active('woocommerce/woocommerce.php') ){
 				return true;
 			}
 
@@ -994,6 +994,24 @@ if ( !trait_exists('Utilities') ){
 			}
 
 			return true; //Transients are enabled
+		}
+
+		//This wraps the core WordPress function and caches the result (the WP core function is "expensive" because it loads the entire plugin list each call)
+		public function is_plugin_active($plugin_name){
+			static $cache = [];
+
+			if ( isset($cache[$plugin_name]) ){
+				return $cache[$plugin_name];
+			}
+
+			//Ensure the core function is available
+			if ( !function_exists('is_plugin_active') ){
+				include_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+
+			//Cache the result and return
+			$cache[$plugin_name] = is_plugin_active($plugin_name);
+			return $cache[$plugin_name];
 		}
 
 		//If we are allowed to use AI features
@@ -1585,7 +1603,7 @@ if ( !trait_exists('Utilities') ){
 
 			//Ignore all timers for non-Developers
 			if ( !$this->is_dev() ){
-				if ( is_plugin_active('query-monitor/query-monitor.php') && !current_user_can('view_query_monitor') ){
+				if ( $this->is_plugin_active('query-monitor/query-monitor.php') && !current_user_can('view_query_monitor') ){
 					return null;
 				}
 			}

@@ -777,6 +777,8 @@ table.nebula-cf7-submissions {border-collapse: collapse; width: 100%; margin-top
 	}
 }
 
+#toplevel_page_cf7apps .wp-menu-image img {filter: grayscale(1);} //Force this full-color logo to be grey
+
 //Nebula Logs Table
 #nebula_logs_metabox {
 	.inside {max-height: 500px; overflow: auto;}
@@ -948,6 +950,6 @@ ul.simplify {
 
 
 //Nebula Post Metabox
-.nebula-ai-button {display: inline-block; margin: 5px auto 0 auto; text-align: center; color: #fff !important; padding: 2px 10px; background: linear-gradient(to right in oklch, #5b22e8, #ff2362); border-radius: 30px; transition: all 0.75s ease;
+.nebula-ai-button {display: inline-block; margin: 5px auto 0 auto; text-align: center; color: #fff !important; padding: 2px 15px; background: linear-gradient(to right in oklch, #5b22e8, #ff2362) !important; border-radius: 30px; transition: all 0.75s ease;
 	&:hover {animation: nebula-hue-rotate 7s linear infinite;}
 }

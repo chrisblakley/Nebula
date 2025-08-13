@@ -22,6 +22,7 @@ if ( !class_exists('Nebula') ){
 	require_once get_template_directory() . '/libs/Gutenberg/Gutenberg.php';
 	require_once get_template_directory() . '/libs/Widgets.php';
 	require_once get_template_directory() . '/libs/Admin/Admin.php';
+	require_once get_template_directory() . '/libs/Utilities/Ai.php';
 	require_once get_template_directory() . '/libs/Ecommerce.php';
 	require_once get_template_directory() . '/libs/Utilities/Cli.php';
 
@@ -40,6 +41,7 @@ if ( !class_exists('Nebula') ){
 		use Gutenberg { Gutenberg::hooks as GutenbergHooks; }
 		use Widgets { Widgets::hooks as WidgetsHooks; }
 		use Admin { Admin::hooks as AdminHooks; }
+		use Ai { Ai::hooks as AiHooks; }
 		use Ecommerce { Ecommerce::hooks as EcommerceHooks; }
 
 		//Designate all future properties here first (to avoid dynamic properties). Preferably, this is done in the trait to keep everything together.
@@ -93,12 +95,13 @@ if ( !class_exists('Nebula') ){
 			$this->ShortcodesHooks(); //Register Shortcodes hooks
 			$this->GutenbergHooks(); //Register Gutenberg hooks
 			$this->WidgetsHooks(); //Register Widgets hooks
+			$this->AiHooks(); //Register AI hooks
 
 			if ( $this->is_admin_page() || is_admin_bar_showing() || $this->is_login_page() ){
 				$this->AdminHooks(); //Register Admin hooks
 			}
 
-			if ( is_plugin_active('woocommerce/woocommerce.php') ){
+			if ( $this->is_plugin_active('woocommerce/woocommerce.php') ){
 				$this->EcommerceHooks(); //Register Ecommerce hooks
 			}
 

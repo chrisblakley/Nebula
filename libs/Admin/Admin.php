@@ -105,7 +105,7 @@ if ( !trait_exists('Admin') ){
 				add_action('pre_get_posts', array($this, 'id_column_orderby')); //Handles the order when the ID column is sorted
 
 				//CF7 Submissions Columns
-				if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') && $this->get_option('store_form_submissions') ){ //If CF7 is installed and active and capturing submission data is enabled
+				if ( $this->is_plugin_active('contact-form-7/wp-contact-form-7.php') && $this->get_option('store_form_submissions') ){ //If CF7 is installed and active and capturing submission data is enabled
 					add_filter('views_edit-nebula_cf7_submits', array($this, 'cf7_submissions_status_list_cleanup'));
 					add_filter('manage_posts_columns', array($this, 'cf7_submissions_columns_head'));
 					add_filter('manage_edit-nebula_cf7_submits_sortable_columns', array($this, 'cf7_submissions_columns_sortable'));
@@ -128,7 +128,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				//Override some Yoast settings
-				if ( is_plugin_active('wordpress-seo/wp-seo.php') ){
+				if ( $this->is_plugin_active('wordpress-seo/wp-seo.php') ){
 					//Move Yoast post metabox to the bottom
 					add_action('wpseo_metabox_prio', array($this, 'lower_yoast_post_metabox'));
 
@@ -467,13 +467,13 @@ if ( !trait_exists('Admin') ){
 				'url' => 'https://www.bing.com/toolbox/webmaster'
 			);
 
-			if ( is_plugin_active('wordpress-seo/wp-seo.php') ){ //If Yoast SEO is active link to its sitemap
+			if ( $this->is_plugin_active('wordpress-seo/wp-seo.php') ){ //If Yoast SEO is active link to its sitemap
 				$third_party_resources['administrative'][] = array(
 					'name' => 'Yoast SEO Sitemap',
 					'icon' => '<i class="nebula-admin-fa fa-solid fa-sitemap"></i>',
 					'url' => home_url('/') . 'sitemap_index.xml'
 				);
-			} elseif ( is_plugin_active('autodescription/autodescription.php') ){ //If The SEO Framework is active link to its sitemap
+			} elseif ( $this->is_plugin_active('autodescription/autodescription.php') ){ //If The SEO Framework is active link to its sitemap
 				$third_party_resources['administrative'][] = array(
 					'name' => 'The SEO Framework Sitemap',
 					'icon' => '<i class="nebula-admin-fa fa-solid fa-sitemap"></i>',
@@ -673,7 +673,7 @@ if ( !trait_exists('Admin') ){
 				//Include the TTFB in the Nebula admin bar title if Query Monitor is not active
 				$ttfb_description = '';
 				if ( !empty($this->super->server['REQUEST_TIME_FLOAT']) ){
-					if ( !is_plugin_active('query-monitor/query-monitor.php') || $this->is_minimal_mode() ){ //If QM is not active or show it during minimal mode
+					if ( !$this->is_plugin_active('query-monitor/query-monitor.php') || $this->is_minimal_mode() ){ //If QM is not active or show it during minimal mode
 						$ttfb_description = ' <small>(<span class="nebula-ttfb-time">~' . number_format((microtime(true)-$this->super->server['REQUEST_TIME_FLOAT']), 2) . '</span>s)</small>'; //This subtracts current time from when PHP first started processing
 					}
 				}
@@ -1196,7 +1196,7 @@ if ( !trait_exists('Admin') ){
 				}
 
 				//Temporarily enables or disable Query Monitor for this IP when not logged in
-				if ( is_plugin_active('query-monitor/query-monitor.php') ){
+				if ( $this->is_plugin_active('query-monitor/query-monitor.php') ){
 					$nebula_temp_qm_ip = get_transient('nebula_temp_qm_ip');
 					if ( empty($nebula_temp_qm_ip) || $this->get_ip_address() !== $nebula_temp_qm_ip ){
 						$wp_admin_bar->add_node(array(
@@ -2298,16 +2298,16 @@ if ( !trait_exists('Admin') ){
 				//Determine where the export button should link to
 				$export_text = 'Export <small>(WP Core)</small>';
 				$export_url = 'export.php';
-				if ( is_plugin_active('flamingo/flamingo.php') ){ //https://wordpress.org/plugins/flamingo/
+				if ( $this->is_plugin_active('flamingo/flamingo.php') ){ //https://wordpress.org/plugins/flamingo/
 					$export_text = 'Export <small>(Flamingo)</small>';
 					$export_url = 'admin.php?page=flamingo_inbound';
-				} elseif ( is_plugin_active('advanced-cf7-db/advanced-cf7-db.php') ){ //https://wordpress.org/plugins/advanced-cf7-db/
+				} elseif ( $this->is_plugin_active('advanced-cf7-db/advanced-cf7-db.php') ){ //https://wordpress.org/plugins/advanced-cf7-db/
 					$export_text = 'Export <small>(Advanced CF7 DB)</small>';
 					$export_url = 'admin.php?page=contact-form-listing&cf7_id=' . $filtered_id;
-				} elseif ( is_plugin_active('contact-form-cfdb7/contact-form-cfdb-7.php') ){ //https://wordpress.org/plugins/contact-form-cfdb7/
+				} elseif ( $this->is_plugin_active('contact-form-cfdb7/contact-form-cfdb-7.php') ){ //https://wordpress.org/plugins/contact-form-cfdb7/
 					$export_text = 'Export <small>(Contact Form CFDB7)</small>';
 					$export_url = 'admin.php?page=cfdb7-list.php&fid=' . $filtered_id;
-				} elseif ( is_plugin_active('wp-all-export-pro/wp-all-export-pro.php') ){
+				} elseif ( $this->is_plugin_active('wp-all-export-pro/wp-all-export-pro.php') ){
 					$export_text = 'Export <small>(WP All Export)</small>';
 					$export_url = 'admin.php?page=pmxe-admin-export';
 				}
@@ -2943,8 +2943,8 @@ if ( !trait_exists('Admin') ){
 					</p>
 
 					<p>
-						<strong><i class="fa-solid fa-robot"></i> Generate Content</strong>
-						<span class="howto">Copy the prompt to your clipboard and open ChatGPT.</span>
+						<strong><i class="fa-solid fa-robot"></i> Additional Content Ideas</strong>
+						<span class="howto">Click the button to copy the prompt to your clipboard and open ChatGPT.</span>
 						<a id="ai-post-content" class="nebula-ai-button" href="#" target="_blank" rel="noopener noreferrer">Copy Prompt & Go &raquo;</a>
 					</p>
 				<?php endif; ?>

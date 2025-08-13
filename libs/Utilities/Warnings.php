@@ -163,7 +163,7 @@ if ( !trait_exists('Warnings') ){
 						$sitemap_transient = get_transient('nebula_check_sitemap');
 						if ( empty($sitemap_transient) || $this->is_debug() ){
 							$sitemap_warning = false;
-							if ( is_plugin_active('wordpress-seo/wp-seo.php') ){ //Yoast
+							if ( $this->is_plugin_active('wordpress-seo/wp-seo.php') ){ //Yoast
 								if ( !$this->is_available(home_url('/') . 'sitemap_index.xml', false, true) ){
 									$sitemap_warning = true;
 									$nebula_warnings['missing_sitemap'] = array(
@@ -172,7 +172,7 @@ if ( !trait_exists('Warnings') ){
 										'description' => '<i class="fa-solid fa-sitemap"></i> Missing sitemap XML. Yoast is enabled, but <a href="' . home_url('/') . 'sitemap_index.xml" target="_blank">sitemap_index.xml</a> is unavailable.'
 									);
 								}
-							} elseif ( is_plugin_active('autodescription/autodescription.php') ){ //The SEO Framework
+							} elseif ( $this->is_plugin_active('autodescription/autodescription.php') ){ //The SEO Framework
 								if ( !$this->is_available(home_url('/') . 'sitemap.xml', false, true) ){
 									$sitemap_warning = true;
 									$nebula_warnings['missing_sitemap'] = array(
@@ -394,7 +394,7 @@ if ( !trait_exists('Warnings') ){
 				}
 
 				//If Enhanced Ecommerce Plugin is missing Google Analytics Tracking ID
-				if ( is_plugin_active('enhanced-e-commerce-for-woocommerce-store/woocommerce-enhanced-ecommerce-google-analytics-integration.php') ){
+				if ( $this->is_plugin_active('enhanced-e-commerce-for-woocommerce-store/woocommerce-enhanced-ecommerce-google-analytics-integration.php') ){
 					$ee_ga_settings = get_option('woocommerce_enhanced_ecommerce_google_analytics_settings');
 					if ( empty($ee_ga_settings['ga_id']) ){
 						$nebula_warnings['enhanced_ecommerce'] = array(
@@ -468,7 +468,7 @@ if ( !trait_exists('Warnings') ){
 				}
 
 				//Check if Relevanssi has built an index for search
-				if ( is_plugin_active('relevanssi/relevanssi.php') ){
+				if ( $this->is_plugin_active('relevanssi/relevanssi.php') ){
 					if ( !get_option('relevanssi_indexed') ){
 						$nebula_warnings['relevanssi_index'] = array(
 							'level' => 'error',
@@ -766,7 +766,7 @@ if ( !trait_exists('Warnings') ){
 				}
 
 				//Check for Yoast or The SEO Framework plugins
-				if ( !is_plugin_active('wordpress-seo/wp-seo.php') && !is_plugin_active('autodescription/autodescription.php') ){
+				if ( !$this->is_plugin_active('wordpress-seo/wp-seo.php') && !$this->is_plugin_active('autodescription/autodescription.php') ){
 					$nebula_warnings['seo_plugin_missing'] = array(
 						'level' => 'warning',
 						'dismissible' => true,

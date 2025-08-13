@@ -1230,3 +1230,20 @@ nebula.isBrowserAiAvailable = async function(){
 
 	return false;
 };
+
+//Prompt the AI
+// nebula.aiPrompt = async function(){
+	// //@todo "Nebula" 0: Maybe parameters include local or remote?
+//
+	// if ( nebula.isBrowserAiAvailable() ){
+	// 	nebula.localAiPrompt()
+	// }
+// };
+//
+// nebula.localAiPrompt = async function(){
+	// //
+// };
+//
+// nebula.remoteAiPrompt = async function(){
+	// //
+// };

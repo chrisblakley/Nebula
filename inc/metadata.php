@@ -58,13 +58,13 @@
 	<meta name="google-site-verification" content="<?php echo esc_attr(nebula()->get_option('google_search_console_verification')); ?>" />
 <?php endif; ?>
 
-<?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') && !is_plugin_active('autodescription/autodescription.php') ): //If Yoast SEO and SEO Framework is not active ?>
+<?php if ( !nebula()->is_plugin_active('wordpress-seo/wp-seo.php') && !nebula()->is_plugin_active('autodescription/autodescription.php') ): //If Yoast SEO and SEO Framework is not active ?>
 	<meta name="description" content="<?php echo esc_attr(nebula()->meta_description()); ?>" />
 	<link rel="canonical" href="<?php the_permalink(); ?>" />
 <?php endif; ?>
 
 <?php $wpseo_social = get_option('wpseo_social'); ?>
-<?php if ( (!is_plugin_active('wordpress-seo/wp-seo.php') && !is_plugin_active('autodescription/autodescription.php')) || (!empty($wpseo_social) && !$wpseo_social['opengraph']) ): //If Yoast SEO is not active, or if it is and the Open Graph settings are disabled ?>
+<?php if ( (!nebula()->is_plugin_active('wordpress-seo/wp-seo.php') && !nebula()->is_plugin_active('autodescription/autodescription.php')) || (!empty($wpseo_social) && !$wpseo_social['opengraph']) ): //If Yoast SEO is not active, or if it is and the Open Graph settings are disabled ?>
 	<meta property="og:type" content="business.business" />
 	<meta property="og:locale" content="<?php echo str_replace('-', '_', get_bloginfo('language')); ?>" />
 	<meta property="og:title" content="<?php echo esc_html(get_the_title()); ?>" />
@@ -97,7 +97,7 @@
 
 <?php //Open Graph Thumbnails ?>
 <?php if ( !empty($post) && has_post_thumbnail($post->ID) ): //If this post has a featured image, use it for Open Graph (OG) ?>
-	<?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): //Only output if Yoast is not handling post thumbnails ?>
+	<?php if ( !nebula()->is_plugin_active('wordpress-seo/wp-seo.php') ): //Only output if Yoast is not handling post thumbnails ?>
 		<?php if ( get_the_post_thumbnail($post->ID, 'open_graph_large') ): ?>
 			<meta property="og:image" content="<?php echo nebula()->get_thumbnail_src($post->ID, 'open_graph_large'); ?>" />
 		<?php else: ?>
@@ -152,7 +152,7 @@
 		<meta name="twitter:image" content="<?php echo $image_meta_directory . '/twitter-card.png' . $cache_query; ?>" />
 	<?php endif; ?>
 <?php endif; ?>
-<?php if ( !is_plugin_active('wordpress-seo/wp-seo.php') ): ?>
+<?php if ( !nebula()->is_plugin_active('wordpress-seo/wp-seo.php') ): ?>
 	<meta name="twitter:title" content="<?php echo esc_html(get_the_title()); ?>" />
 	<meta name="twitter:description" content="<?php echo esc_attr(nebula()->meta_description(false, 200)); ?>" />
 <?php endif; ?>

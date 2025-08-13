@@ -80,7 +80,7 @@ if ( !trait_exists('Functions') ){
 
 			add_filter('acf/settings/google_api_key', array($this, 'acf_google_api_key')); //ACF hook
 
-			if ( is_plugin_active('wordpress-seo/wp-seo.php') ){ //If Yoast is active
+			if ( $this->is_plugin_active('wordpress-seo/wp-seo.php') ){ //If Yoast is active
 				add_filter('wpseo_metadesc', array($this, 'meta_description')); //Yoast hook
 			}
 
@@ -91,7 +91,7 @@ if ( !trait_exists('Functions') ){
 			add_filter('wpcf7_special_mail_tags', array($this, 'cf7_custom_special_mail_tags'), 10, 3);
 			add_action('wpcf7_mail_failed', array($this, 'cf7_note_mail_failed'));
 
-			if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ){ //If CF7 is installed and active
+			if ( $this->is_plugin_active('contact-form-7/wp-contact-form-7.php') ){ //If CF7 is installed and active
 				add_action('init', array($this, 'cf7_storage_taxonomies')); //Custom Post Type and Custom Status
 				add_filter('wpcf7_posted_data', array($this, 'cf7_enhance_data')); //Add more context for CF7 form submissions
 				add_action('wpcf7_submit', array($this, 'cf7_processing'), 2, 2); //Process CF7 submissions to store as a CPT
@@ -134,15 +134,16 @@ if ( !trait_exists('Functions') ){
 
 		//Check if the Nebula Companion plugin is installed and active
 		//Note: As of 2021 the companion plugin has been deprecated.
+		//Eventually remove this function (nothing calls it anymore. This is the only instance of this function name in Nebula now)
 		public function is_companion_active(){
-			if ( $this->is_minimal_mode() ){return null;}
-
-			include_once ABSPATH . 'wp-admin/includes/plugin.php'; //Needed to use is_plugin_active() outside of WP admin
-			if ( is_plugin_active('nebula-companion/nebula-companion.php') || is_plugin_active('Nebula-Companion-main/nebula-companion.php') ){
-				return true;
-			}
-
 			return false;
+
+			//if ( $this->is_minimal_mode() ){return null;}
+			//include_once ABSPATH . 'wp-admin/includes/plugin.php'; //Needed to use is_plugin_active() outside of WP admin
+			//if ( $this->is_plugin_active('nebula-companion/nebula-companion.php') || $this->is_plugin_active('Nebula-Companion-main/nebula-companion.php') ){
+			//	return true;
+			//}
+			//return false;
 		}
 
 		//Prep custom theme support

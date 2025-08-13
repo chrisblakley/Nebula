@@ -27,7 +27,7 @@ if ( !trait_exists('Security') ){
 				add_action('template_redirect', array($this, 'spam_domain_prevention'), 10); //This must be *after* the session data is initialized because it updates the cookie (which is why this is triggered on the template_redirect hook and not init)
 			}
 
-			if ( is_plugin_active('contact-form-7/wp-contact-form-7.php') ){
+			if ( $this->is_plugin_active('contact-form-7/wp-contact-form-7.php') ){
 				add_filter('wpcf7_validate_email', array($this, 'ignore_invalid_email_addresses'), 10, 2);
 				add_filter('wpcf7_validate_email*', array($this, 'ignore_invalid_email_addresses'), 10, 2);
 				add_filter('wpcf7_spam', array($this, 'nebula_cf7_spam_detection_agent'), 10, 2);

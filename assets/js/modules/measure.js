@@ -1598,8 +1598,10 @@ nebula.ecommerceTracking = async function(){
 				event_name: 'remove_from_cart',
 				event_category: 'Ecommerce',
 				event_action: 'Remove This Item',
-				event_label: jQuery(this).attr('data-product_id'),
+				event_label: jQuery(this).attr('aria-label'),
+				text: jQuery(this).attr('aria-label'),
 				item_id: jQuery(this).attr('data-product_id'),
+				sku: jQuery(this).attr('data-product_sku'),
 				product: jQuery(this).attr('data-product_id')
 			};
 

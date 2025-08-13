@@ -83,7 +83,7 @@ if ( !trait_exists('Widgets') ){
 			register_widget('nebula_twitter_tweets');
 			register_widget('nebula_video');
 
-			if ( is_plugin_active('advanced-custom-fields-pro/acf.php') ){ //Advanced Custom Fields v5
+			if ( $this->is_plugin_active('advanced-custom-fields-pro/acf.php') ){ //Advanced Custom Fields v5
 				register_widget('nebula_acf');
 			}
 		}
