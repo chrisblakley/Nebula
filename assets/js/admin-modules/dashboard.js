@@ -226,7 +226,9 @@ nebula.developerMetaboxes = function(){
 	if ( jQuery('#nebula_ai_code_review').length ){
 		//Call the AI endpoint for new data if the placeholder exists
 		if ( jQuery('#nebula-ai-review-placeholder').length ){
-			jQuery('#nebula-ai-review-placeholder').html('<i class="fa-solid fa-spinner fa-spin"></i> <em>Analyzing code with AI...</em>');
+			jQuery('#nebula-ai-review-placeholder').html('<i class="fa-solid fa-spinner fa-spin"></i> <em>Analyzing code with AI... <span id="ai-timer">(0s)</span></em>');
+
+			let aiTimer = nebula.countUp(jQuery('#ai-timer'), {maxSeconds: 61, showUnits: true, parenthesis: true});
 
 			fetch(nebula.site.ajax.url, {
 				method: 'POST',
@@ -241,6 +243,8 @@ nebula.developerMetaboxes = function(){
 				return response.text();
 			}).then(function(html){
 				jQuery('#nebula-ai-review-placeholder').html(html);
+			}).finally(function(){
+				aiTimer.stop();
 			});
 		}
 
@@ -437,6 +441,9 @@ nebula.checkFileRowsResult = function(){
 //Check the page speed using (in this priority) Google Lighthouse, or a rudimentary iframe timing
 nebula.checkPageSpeed = function(){
 	jQuery('#performance_metabox h2 i').removeClass('fa-stopwatch').addClass('fa-spinner fa-spin');
+	jQuery('#performance_metabox h2').append('&nbsp;<small id="performance-metabox-timer">(0s)</small>');
+
+	nebula.pageSpeedTimer = nebula.countUp(jQuery('#performance-metabox-timer'), {maxSeconds: 61, showUnits: true, parenthesis: true, end: 'hide'});
 
 	if ( location.hostname === 'localhost' || location.hostname === '127.0.0.1' || jQuery('#nebula_log_viewer').length ){ //If localhost or other "invalid" URL. This doesn't catch local TLDs, but the logic below will figure it out eventually. Also, if the log viewer is showing, just run an iframe test to avoid using up the Lighthouse rate limit.
 		jQuery('#performance-sub-status strong').text('Using iframe test due to local development.');
@@ -642,6 +649,8 @@ nebula.getLighthouseResults = function(){
 		console.warn('Google Lighthouse failed. Reverting to iframe test.', error);
 		jQuery('#performance-sub-status strong').text('Google Lighthouse failed. Reverting to iframe test.');
 		nebula.runIframeSpeedTest('Google Lighthouse Failed'); //If Google Lighthouse check fails, time with an iframe instead...
+	}).finally(function(){
+		nebula.pageSpeedTimer.stop();
 	});
 };
 

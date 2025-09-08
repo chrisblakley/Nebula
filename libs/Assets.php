@@ -129,7 +129,7 @@ if ( !trait_exists('Assets') ){
 		public function register_scripts(){
 			//Stylesheets
 			//wp_register_style($handle, $src, $dependencies, $version, $media);
-			wp_register_style('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css', null, '5.3.6', 'all'); //https://www.jsdelivr.com/package/npm/bootstrap
+			wp_register_style('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css', null, '5.3.8', 'all'); //https://www.jsdelivr.com/package/npm/bootstrap
 			wp_register_style('nebula-font_awesome', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css', null, '7.0.0', 'all'); //https://www.jsdelivr.com/package/npm/@fortawesome/fontawesome-free
 			wp_register_style('nebula-main', get_template_directory_uri() . '/style.css', array('nebula-bootstrap'), $this->version('full'), 'all');
 			wp_register_style('nebula-login', get_template_directory_uri() . '/assets/css/login.css', null, $this->version('full'), 'all');
@@ -147,7 +147,7 @@ if ( !trait_exists('Assets') ){
 			//Scripts
 			//Use jsDelivr to pull common libraries: https://www.jsdelivr.com/
 			//nebula()->register_script($handle, $src, $exec, $dependencies, $version, $in_footer);
-			$this->register_script('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '5.3.6', true);
+			$this->register_script('nebula-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js', array('defer', 'crossorigin'), array('jquery-core'), '5.3.8', true);
 			$this->register_script('nebula-jquery_ui', 'https://cdn.jsdelivr.net/npm/jquery-ui@1.14.1/dist/jquery-ui.min.js', array('defer', 'crossorigin'), null, '1.14.1', true); //https://www.jsdelivr.com/package/npm/jquery-ui
 			$this->register_script('nebula-vimeo', 'https://cdn.jsdelivr.net/npm/@vimeo/player@2.27.1/dist/player.min.js', null, null, '2.27.1', true); //https://www.jsdelivr.com/package/npm/@vimeo/player
 			$this->register_script('nebula-datatables', 'https://cdn.jsdelivr.net/npm/datatables.net@2.3.0/js/dataTables.min.js', array('defer', 'crossorigin'), null, '2.3.0', true); //Nebula registers this asset, but does not init the JS. https://www.jsdelivr.com/package/npm/datatables.net

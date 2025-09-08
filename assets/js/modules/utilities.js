@@ -1218,6 +1218,75 @@ nebula.yield = function(){
 	return; //Fall back to nothing (no yielding)
 };
 
+//Efficient count up timer
+nebula.countUp = function($element, options){
+	var step = ( options && options.step )? options.step : 1000;
+	var maxSeconds = ( options && options.maxSeconds )? options.maxSeconds : 120;
+	var units = ( options && options.showUnits )? 's' : '';
+	var parenthesis = ( options && options.parenthesis )? true : false;
+	var end = ( options && options.end )? options.end : 'hide';
+	var intervalId = null;
+	var startTime = 0;
+
+	function render(milliseconds){
+		var seconds;
+
+		if ( milliseconds == 'max' ){
+			seconds = '>' + maxSeconds;
+		} else {
+			seconds = Math.floor(milliseconds/1000);
+		}
+
+		var output = seconds + units;
+
+		if ( parenthesis ){
+			output = '(' + output + ')';
+		}
+
+		$element.text(output);
+	}
+
+	var timer = {
+		start: function(){
+			if ( intervalId ){
+				return; //Already running
+			}
+
+			startTime = performance.now();
+			render(0);
+			intervalId = setInterval(function(){
+				var elapsed = performance.now()-startTime;
+				var seconds = Math.floor(elapsed/1000);
+
+				if ( seconds >= maxSeconds ) {
+					render('max'); //Show max
+					this.stop(); //Auto-stop at max
+					return;
+				}
+
+				render(elapsed);
+			}.bind(this), step);
+		},
+		stop: function(){
+			if ( !intervalId ){
+				return;
+			}
+
+			clearInterval(intervalId);
+			intervalId = null;
+
+			if ( end == 'hide' ){
+				$element.remove();
+			}
+		}
+	};
+
+	timer.start(); //Auto-start right away
+
+	return timer;
+};
+
+
 //Check if the Chrome Gemini AI API is available in this browser
 nebula.isBrowserAiAvailable = async function(){
 	//New way as of May 2025 (Google I/O)

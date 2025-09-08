@@ -1872,6 +1872,60 @@ if ( !trait_exists('Utilities') ){
 			}
 		}
 
+		//Convert simple markdown into HTML. For more accurate/flexible results consider a third-party library.
+		public function simple_markdown_to_html($markdown){
+			//Convert code blocks (```lang\ncode```) with escaping
+			$markdown = preg_replace_callback('/```(\w*)\n(.*?)```/s', function($matches){
+				$lang = $matches[1];
+				$code = esc_html($matches[2]);
+				return '<pre><code class="language-' . esc_attr($lang) . '">' . $code . '</code></pre>';
+			}, $markdown);
+
+			//Convert inline code (`code`) with escaping
+			$markdown = preg_replace_callback('/`([^`]+)`/', function($matches){
+				return '<code>' . esc_html($matches[1]) . '</code>';
+			}, $markdown);
+
+			//Convert headings (#, ##, ###, ####, #####)
+			$markdown = preg_replace('/^##### (.+)$/m', '<h5>$1</h5>', $markdown);
+			$markdown = preg_replace('/^#### (.+)$/m', '<h4>$1</h4>', $markdown);
+			$markdown = preg_replace('/^### (.+)$/m', '<h3>$1</h3>', $markdown);
+			$markdown = preg_replace('/^## (.+)$/m', '<h2>$1</h2>', $markdown);
+			$markdown = preg_replace('/^# (.+)$/m', '<h1>$1</h1>', $markdown);
+
+			//Convert bold (**bold** or __bold__)
+			$markdown = preg_replace('/\*\*(.+?)\*\*/s', '<strong>$1</strong>', $markdown);
+			$markdown = preg_replace('/__(.+?)__/s', '<strong>$1</strong>', $markdown);
+
+			//Convert unordered lists (- item or * item)
+			//Wrap consecutive list items in a single <ul>
+			$markdown = preg_replace_callback('/((^- .+(?:\n^- .+)*)+)/m', function($matches){
+				$list = preg_replace('/^- /m', '<li>', $matches[0]);
+				$list = preg_replace('/$/m', '</li>', $list);
+				return '<ul>' . $list . '</ul>';
+			}, $markdown);
+
+			//Convert ordered lists (1. item, 2. item, etc.)
+			$markdown = preg_replace_callback('/((^\d+\.\s.+(?:\n^\d+\.\s.+)*)+)/m', function($matches){
+				$list = preg_replace('/^\d+\. /m', '<li>', $matches[0]);
+				$list = preg_replace('/$/m', '</li>', $list);
+				return '<ol>' . $list . '</ol>';
+			}, $markdown);
+
+			//Break into paragraphs on two or more newlines but avoid breaking inside <pre> or <ul>
+			$blocks = preg_split('/(\n{2,})/', $markdown);
+			$output = '';
+			foreach ($blocks as $block){
+				if (preg_match('/^\s*<(pre|ul|h[1-6]|li|code|strong|em)/', trim($block))){
+					$output .= $block;
+				} else {
+					$output .= '<p>' . trim($block) . '</p>';
+				}
+			}
+
+			return $output;
+		}
+
 		//Create Custom Properties
 		public function create_hubspot_properties(){
 			if ( $this->is_minimal_mode() ){return null;}

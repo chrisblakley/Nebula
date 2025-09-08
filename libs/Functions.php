@@ -723,12 +723,12 @@ if ( !trait_exists('Functions') ){
 			$post_icon_img = false;
 
 			if ( get_theme_mod('search_result_post_types', true) ){
-				global $wp_post_types;
 				$post_type = get_post_type();
-				$post_type_labels = get_post_type_object( $post_type )->labels;
+				$post_type_object = get_post_type_object($post_type);
+				$post_type_labels = $post_type_object->labels;
 
 				if ( $data['icon'] ){
-					$post_icon = $wp_post_types[$post_type]->menu_icon;
+					$post_icon = ( $post_type_object->menu_icon )? $post_type_object->menu_icon : '';
 					$post_icon_img = '<i class="fa-solid fa-thumbtack"></i>';
 
 					if ( !empty($post_icon) ){
@@ -749,11 +749,13 @@ if ( !trait_exists('Functions') ){
 				}
 
 				if ( $data['linked'] ){
-					return '<span class="meta-item post-type"><a href="' . esc_url(get_post_type_archive_link($post_type)) . '" title="See all ' . $post_type_labels->name . '">' . $post_icon_img . esc_html($post_type_labels->singular_name) . '</a></span>';
+					return '<span class="meta-item post-type"><a href="' . esc_url(get_post_type_archive_link($post_type)) . '" title="See all ' . esc_attr($post_type_labels->name) . '">' . $post_icon_img . esc_html($post_type_labels->singular_name) . '</a></span>';
 				}
 
 				return '<span class="meta-item post-type">' . $post_icon_img . esc_html($post_type_labels->singular_name) . '</span>';
 			}
+
+			return '';
 		}
 
 		//Categories post meta
@@ -788,7 +790,7 @@ if ( !trait_exists('Functions') ){
 					$cat_plural = ( count($the_categories) > 1 )? __('categories', 'nebula') : __('category', 'nebula');
 
 					if ( $data['label'] === 'icon' ){
-						$label = '<i class="nebula-post-categories-label fa-solid fa-' . $cat_plural . '"></i> ';
+						$label = '<i class="nebula-post-categories-label fa-solid fa-list"></i> ';
 					} elseif ( $data['label'] === 'text' ){
 						$label = '<span class="nebula-post-categories-label">' . ucwords($cat_plural) . ' </span>';
 					}

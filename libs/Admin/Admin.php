@@ -2914,14 +2914,51 @@ if ( !trait_exists('Admin') ){
 			$avoid_types = array('acf', 'acf-field-group', 'wpcf7_contact_form', 'nebula_cf7_submits');
 
 			foreach ( $builtin_types as $builtin_type ){
-				add_meta_box('nebula-post', 'Nebula Post', array($this, 'nebula_post_metabox' ), $builtin_type, 'side', 'default');
+				add_meta_box('nebula-post', 'Nebula Post', array($this, 'nebula_post_metabox'), $builtin_type, 'side', 'default');
+
+				if ( $this->is_ai_features_allowed() ){
+					add_meta_box('nebula-ai', '<i class="fa-solid fa-robot"></i>&nbsp;Nebula AI', array($this, 'nebula_ai_metabox'), $builtin_type, 'side', 'default');
+				}
 			}
 
 			foreach( $custom_types as $custom_type ){
 				if ( !in_array($custom_type, $avoid_types) ){
-					add_meta_box('nebula-post', 'Nebula Post', array($this, 'nebula_post_metabox' ), $custom_type, 'side', 'default');
+					add_meta_box('nebula-post', 'Nebula Post', array($this, 'nebula_post_metabox'), $custom_type, 'side', 'default');
+
+					if ( $this->is_ai_features_allowed() ){
+						add_meta_box('nebula-ai', '<i class="fa-solid fa-robot"></i>&nbsp;Nebula AI', array($this, 'nebula_ai_metabox'), $custom_type, 'side', 'default');
+					}
 				}
 			}
+		}
+
+		//Nebula Prompt Helpers post metabox content
+		function nebula_ai_metabox($object, $box){
+			?>
+			<div>
+				<strong><i class="fa-solid fa-rocket"></i> Prompt Launchpad</strong><br />
+				<p class="howto">Select a pre-made prompt and automatically launch ChatGPT where you can paste it.</p>
+
+				<select id="ai-prompt-selection">
+					<option val="" disabled>Select a pre-made prompt...</option>
+					<option value="content-review" selected>Content Review</option>
+					<option value="generate-title">Generate Title</option>
+					<option value="generate-meta-description">Generate Meta Description</option>
+					<option value="keyword-suggestions">Keyword Suggestions</option>
+					<option value="content-ideas">Additional Content Ideas</option>
+				</select>
+
+				<a id="ai-prompt-launcher" class="nebula-ai-button" href="#" target="_blank" rel="noopener noreferrer"><i class="fa-regular fa-copy"></i> Copy Prompt & Go &raquo;</a>
+
+				<p id="ai-prompt-explanation">
+					<small id="ai-content-review">This prompt will review your existing content for quality, SEO, user experience, and engagement.</small>
+					<small id="ai-generate-title" class="hidden">This prompt will generate an effective title.</small>
+					<small id="ai-generate-meta-description" class="hidden">This prompt will generate an effective meta description.</small>
+					<small id="ai-keyword-suggestions" class="hidden">This prompt will review your content and suggest priority keywords to consider targeting.</small>
+					<small id="ai-content-ideas" class="hidden">This prompt suggests additional content to write about to expand on the current copy.</small>
+				</p>
+			</div>
+			<?php
 		}
 
 		//Internal Search Keywords post metabox content
@@ -2929,26 +2966,6 @@ if ( !trait_exists('Admin') ){
 			wp_nonce_field(basename(__FILE__), 'nebula_post_nonce');
 			?>
 			<div>
-				<?php if ( $this->is_ai_features_allowed() ): ?>
-					<p>
-						<strong><i class="fa-solid fa-robot"></i> Generate Title</strong>
-						<span class="howto">Copy the prompt to your clipboard and open ChatGPT.</span>
-						<a id="ai-post-title" class="nebula-ai-button" href="#" target="_blank" rel="noopener noreferrer">Copy Prompt & Go &raquo;</a>
-					</p>
-
-					<p>
-						<strong><i class="fa-solid fa-robot"></i> Generate Meta Description</strong>
-						<span class="howto">Copy the prompt to your clipboard and open ChatGPT.</span>
-						<a id="ai-post-meta-description" class="nebula-ai-button" href="#" target="_blank" rel="noopener noreferrer">Copy Prompt & Go &raquo;</a>
-					</p>
-
-					<p>
-						<strong><i class="fa-solid fa-robot"></i> Additional Content Ideas</strong>
-						<span class="howto">Click the button to copy the prompt to your clipboard and open ChatGPT.</span>
-						<a id="ai-post-content" class="nebula-ai-button" href="#" target="_blank" rel="noopener noreferrer">Copy Prompt & Go &raquo;</a>
-					</p>
-				<?php endif; ?>
-
 				<p>
 					<strong>Body Classes</strong>
 					<input type="text" id="nebula-body-classes" class="large-text" name="nebula_body_classes" value="<?php echo get_post_meta($object->ID, 'nebula_body_classes', true); ?>" />

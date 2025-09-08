@@ -864,6 +864,18 @@ ul.simplify {
 }
 
 
+select#ai-prompt-selection {margin-bottom: 5px; border: 2px solid transparent;
+	background:
+		url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%206l5%205%205-5%202%201-7%207-7-7%202-1z%22%20fill%3D%22%23555%22%2F%3E%3C%2Fsvg%3E') no-repeat right 5px top 55%,
+		linear-gradient(white, white) padding-box,
+		linear-gradient(to right, #5b22e8, #ff2362) border-box; //The down arrow SVG is just copied from native WordPress CSS
+	background-clip: border-box, padding-box, border-box;
+
+	&:focus {animation: nebula-hue-rotate 7s linear infinite;}
+}
+
+#ai-prompt-explanation {margin-top: 5px; line-height: 1.2;}
+
 
 
 
