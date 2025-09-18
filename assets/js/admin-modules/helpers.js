@@ -191,7 +191,7 @@ Also, include **any other ideas** that could improve the post’s performance, e
 
 **Title:** ` + postTitle + `
 **Body:** ` + cleanContent;
-	}
+		}
 
 		else {
 			prompt += `Create an improved, SEO-friendly ` + type + ` based on the following title and body copy. The ` + type + ` should be clear, engaging, and encourage clicks while accurately reflecting the content.  If helpful, incorporate relevant keywords and trending search terms without sounding forced.

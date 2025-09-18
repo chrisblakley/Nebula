@@ -353,8 +353,9 @@ if ( !trait_exists('Device') ){
 			//Now check for other generic bot-related strings
 			if ( !empty($this->super->server['HTTP_USER_AGENT']) ){
 				$user_agent = strtolower($this->super->server['HTTP_USER_AGENT']);
+				$user_agent = str_replace('_', '-', $user_agent); //Normalize all underscores to hyphens
 
-				$bot_regexes = array('silktide', 'netcraft', 'w3c_validator', 'redditbot', 'discordbot', 'screaming_frog', 'archive.org_bot', 'seositecheckup', 'gtmetrix', 'semrushbot', 'ahrefsbot', 'microsoft_office', 'structured-data-testing-tool', 'chrome-lighthouse', 'coda', 'favicon', 'curl', 'http', 'tracker', 'slurp', 'feed', 'spider', 'crawl', 'bot'); //Arrange from least common (most specific) to most common (least specific)
+				$bot_regexes = array('silktide', 'netcraft', 'w3c-validator', 'redditbot', 'discordbot', 'screaming-frog', 'archive.org-bot', 'seositecheckup', 'gtmetrix', 'semrushbot', 'ahrefsbot', 'microsoft-office', 'structured-data-testing-tool', 'chrome-lighthouse', 'curl', 'slurp', 'spider', 'crawl', 'bot'); //Arrange from least common (most specific) to most common (least specific)
 				$all_bot_regexes = apply_filters('nebula_bot_regex', $bot_regexes);
 
 				//Loop through each of the bot regex patterns

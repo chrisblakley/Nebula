@@ -576,10 +576,10 @@ nebula.cookieNotification = async function(){
 				security_storage: 'granted' //Explicitly allows storage related to security such as authentication functionality, fraud prevention, and other user protection
 			});
 
-			if ( typeof window.clarity == 'function' ){
-				window.clarity('consentv2',{
-				   ad_storage: 'granted',
-				   analytics_storage: 'granted'
+			if ( typeof window.clarity === 'function' ){
+				window.clarity('consentv2', {
+					ad_storage: 'granted',
+					analytics_storage: 'granted'
 				});
 			}
 

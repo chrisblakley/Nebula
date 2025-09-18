@@ -1593,9 +1593,9 @@ if ( !trait_exists('Admin') ){
 
 		//Log when a plugin is updated
 		public function log_plugin_updated($upgrader_object, $options){
-			if ( $options['type'] == 'plugin' && $options['action'] == 'update' ){
+			if ( $options['type'] == 'plugin' && $options['action'] == 'update' && !empty($options['plugins']) ){
 				// Loop through each plugin being updated
-				foreach ($options['plugins'] as $plugin) {
+				foreach ( $options['plugins'] as $plugin ){
 					$plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin);
 					$plugin_name = $plugin_data['Name'];
 					$plugin_version = $plugin_data['Version'];
