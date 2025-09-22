@@ -260,7 +260,7 @@ nebula.developerMetaboxes = function(){
 			let prompt = 'Please review the following WordPress function:\n\n```php\n' + jQuery(this).attr('data-function') + '\n```';
 
 			navigator.clipboard.writeText(prompt).then(function(){
-				window.open('https://chatgpt.com/', '_blank');
+				window.open(nebula.user.preferred_ai_url, '_blank');
 			});
 
 			return false;

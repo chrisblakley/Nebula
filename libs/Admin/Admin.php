@@ -3230,8 +3230,12 @@ if ( !trait_exists('Admin') ){
 		}
 
 		//Scan through the theme directories to generate hashes to represent each file for comparisons
-		public function generate_hashes($directory, &$results=[]){
-			if ( $this->is_minimal_mode() ){return null;}
+		public function generate_hashes($directory, &$results=null){
+			if ( $this->is_minimal_mode() ){return array();}
+
+			if ( $results === null ){
+				$results = array();
+			}
 
 			$files = scandir($directory);
 

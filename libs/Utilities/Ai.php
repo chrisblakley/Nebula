@@ -9,6 +9,23 @@ if ( !trait_exists('Ai') ){
 			add_action('wp_ajax_nopriv_nebula_openai_prompt', array($this, 'openai_prompt'));
 		}
 
+		//Get the preferred AI URL from the individual user's setting (not global Nebula Options)
+		public function get_preferred_ai_url(){
+			$preferred_ai_name = strtolower($this->get_user_info('preferred_ai')); //Get the user's setting
+
+			$ai_platforms = array(
+				'chatgpt' => 'https://chatgpt.com/',
+				'gemini' => 'https://gemini.google.com/app',
+				'claude' => 'https://claude.ai/new'
+			);
+
+			if ( isset($ai_platforms[$preferred_ai_name]) ){
+				return $ai_platforms[$preferred_ai_name];
+			}
+
+			return $ai_platforms['chatgpt']; //Default to ChatGPT if user preference is not set
+		}
+
 		public function openai_ajax_prompt(){
 			if ( empty($this->get_option('openai_api_key')) ){
 				return false;

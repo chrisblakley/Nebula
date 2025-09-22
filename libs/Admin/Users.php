@@ -290,6 +290,18 @@ if ( !trait_exists('Users') ){
 						<input id="phonenumber" class="regular-text" type="text" name="phonenumber" value="<?php echo esc_attr(get_the_author_meta('phonenumber', $user->ID)); ?>" autocomplete="postal-code" /><br />
 					</td>
 				</tr>
+				<tr class="nebula-preferred-ai-wrap">
+					<th><label for="preferred_ai">Preferred AI</label></th>
+					<td>
+						<select id="preferred_ai" name="preferred_ai">
+							<option value="chatgpt" <?php selected(get_the_author_meta('preferred_ai', $user->ID) ?: 'chatgpt', 'chatgpt'); ?>>ChatGPT (OpenAI)</option>
+							<option value="gemini" <?php selected(get_the_author_meta('preferred_ai', $user->ID), 'gemini'); ?>>Gemini (Google)</option>
+							<option value="claude" <?php selected(get_the_author_meta('preferred_ai', $user->ID), 'claude'); ?>>Claude (Anthropic)</option>
+						</select>
+						<p class="description" id="preferred-ai-description">This is used for Nebula Prompt Launchpad features. This does not affect Nebula built-in AI API features.</p>
+					</td>
+				</tr>
+
 			</table>
 			<?php
 		}
@@ -306,6 +318,7 @@ if ( !trait_exists('Users') ){
 			update_user_meta($user_id, 'usercity', sanitize_text_field($this->super->post['usercity']));
 			update_user_meta($user_id, 'userstate', sanitize_text_field($this->super->post['userstate']));
 			update_user_meta($user_id, 'phonenumber', sanitize_text_field($this->super->post['phonenumber']));
+			update_user_meta($user_id, 'preferred_ai', sanitize_text_field($this->super->post['preferred_ai']));
 		}
 
 		//Remove Yoast SEO user roles

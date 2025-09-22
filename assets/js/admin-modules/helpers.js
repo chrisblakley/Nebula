@@ -200,9 +200,9 @@ Also, include **any other ideas** that could improve the post’s performance, e
 **Body:** ` + cleanContent;
 		}
 
-		//Copy the prompt to the clipboard and open ChatGPT
+		//Copy the prompt to the clipboard and open the user's preferred AI platform
 		navigator.clipboard.writeText(prompt).then(function(){
-			window.open('https://chatgpt.com/', '_blank');
+			window.open(nebula.user.preferred_ai_url, '_blank');
 		});
 	}
 }
