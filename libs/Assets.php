@@ -374,6 +374,7 @@ if ( !trait_exists('Assets') ){
 				),
 				'address' => false,
 				'facebook' => false,
+				'preferred_ai' => esc_html($this->get_preferred_ai()),
 				'preferred_ai_url' => esc_html($this->get_preferred_ai_url()),
 				'flags' => array(
 					'fbconnect' => false,

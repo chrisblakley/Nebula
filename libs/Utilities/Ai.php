@@ -9,9 +9,20 @@ if ( !trait_exists('Ai') ){
 			add_action('wp_ajax_nopriv_nebula_openai_prompt', array($this, 'openai_prompt'));
 		}
 
+		//Get the preferred AI Name from the individual user's setting (not global Nebula Options)
+		public function get_preferred_ai(){
+			$preferred_ai_name = $this->get_user_info('preferred_ai'); //Get the user's setting
+
+			if ( isset($preferred_ai_name) ){
+				return $preferred_ai_name;
+			}
+
+			return 'ChatGPT'; //Default to ChatGPT if user preference is not set
+		}
+
 		//Get the preferred AI URL from the individual user's setting (not global Nebula Options)
 		public function get_preferred_ai_url(){
-			$preferred_ai_name = strtolower($this->get_user_info('preferred_ai')); //Get the user's setting
+			$preferred_ai_name = strtolower($this->get_preferred_ai()); //Get the user's setting
 
 			$ai_platforms = array(
 				'chatgpt' => 'https://chatgpt.com/',

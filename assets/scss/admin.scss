@@ -895,7 +895,11 @@ select#ai-prompt-selection {margin-bottom: 5px; border: 2px solid transparent;
 			&::before {animation: none;}
 			&::after {content: ""; position: absolute; bottom: 0; left: 2px; width: calc(100% - 4px); height: 90%; background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.95) 100%); pointer-events: none; z-index: 10;}
 
-			a#reviewed-expand-code {display: inline-block; position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); margin: 0 auto; text-align: center; color: #fff; font-size: 12px; padding: 2px 10px; background: linear-gradient(to right in oklch, #5b22e8, #ff2362); border-radius: 30px; transition: all 0.75s ease; z-index: 30;
+			#reviewed-code-buttons-overlay {display: flex; justify-content: center; gap: 15px; position: absolute; left: 0; bottom: 15px; width: 100%; z-index: 30;
+				a {color: #fff; font-size: 12px; padding: 2px 10px;}
+			}
+
+			a#reviewed-expand-code {display: inline-block; background: linear-gradient(to right in oklch, #5b22e8, #ff2362); border-radius: 30px; transition: all 0.75s ease;
 				&:hover {animation: nebula-hue-rotate 7s linear infinite;}
 			}
 
@@ -935,7 +939,7 @@ select#ai-prompt-selection {margin-bottom: 5px; border: 2px solid transparent;
 		pre,
 		pre code {background: #171717; color: #00a67d; max-width: 100%; overflow-x: scroll;}
 
-		a#reviewed-expand-code {display: none;}
+		#reviewed-code-buttons-overlay {display: none;}
 
 		#review-continue-wrapper {text-align: center; margin-top: 30px; margin-bottom: 10px; border-top: 1px dotted #aaa;
 			h3, p {text-align: left;}
@@ -960,6 +964,6 @@ select#ai-prompt-selection {margin-bottom: 5px; border: 2px solid transparent;
 
 
 //Nebula Post Metabox
-.nebula-ai-button {display: inline-block; margin: 5px auto 0 auto; text-align: center; color: #fff !important; padding: 2px 15px; background: linear-gradient(to right in oklch, #5b22e8, #ff2362) !important; border-radius: 30px; transition: all 0.75s ease;
+.nebula-ai-button {display: inline-block; text-align: center; color: #fff !important; padding: 2px 15px; background: linear-gradient(to right in oklch, #5b22e8, #ff2362) !important; border-radius: 30px; transition: all 0.75s ease;
 	&:hover {animation: nebula-hue-rotate 7s linear infinite;}
 }

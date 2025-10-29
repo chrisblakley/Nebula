@@ -294,9 +294,9 @@ if ( !trait_exists('Users') ){
 					<th><label for="preferred_ai">Preferred AI</label></th>
 					<td>
 						<select id="preferred_ai" name="preferred_ai">
-							<option value="chatgpt" <?php selected(get_the_author_meta('preferred_ai', $user->ID) ?: 'chatgpt', 'chatgpt'); ?>>ChatGPT (OpenAI)</option>
-							<option value="gemini" <?php selected(get_the_author_meta('preferred_ai', $user->ID), 'gemini'); ?>>Gemini (Google)</option>
-							<option value="claude" <?php selected(get_the_author_meta('preferred_ai', $user->ID), 'claude'); ?>>Claude (Anthropic)</option>
+							<option value="ChatGPT" <?php selected(get_the_author_meta('preferred_ai', $user->ID) ?: 'ChatGPT', 'ChatGPT'); ?>>ChatGPT (OpenAI)</option>
+							<option value="Gemini" <?php selected(get_the_author_meta('preferred_ai', $user->ID), 'Gemini'); ?>>Gemini (Google)</option>
+							<option value="Claude" <?php selected(get_the_author_meta('preferred_ai', $user->ID), 'Claude'); ?>>Claude (Anthropic)</option>
 						</select>
 						<p class="description" id="preferred-ai-description">This is used for Nebula Prompt Launchpad features. This does not affect Nebula built-in AI API features.</p>
 					</td>

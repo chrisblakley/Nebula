@@ -2937,7 +2937,7 @@ if ( !trait_exists('Admin') ){
 			?>
 			<div>
 				<strong><i class="fa-solid fa-rocket"></i> Prompt Launchpad</strong><br />
-				<p class="howto">Select a pre-made prompt and automatically launch ChatGPT where you can paste it.</p>
+				<p class="howto">Select a pre-made prompt and automatically launch <?php echo nebula()->get_preferred_ai(); ?> where you can paste it.</p>
 
 				<select id="ai-prompt-selection">
 					<option val="" disabled>Select a pre-made prompt...</option>
@@ -2948,7 +2948,7 @@ if ( !trait_exists('Admin') ){
 					<option value="content-ideas">Additional Content Ideas</option>
 				</select>
 
-				<a id="ai-prompt-launcher" class="nebula-ai-button" href="#" target="_blank" rel="noopener noreferrer"><i class="fa-regular fa-copy"></i> Copy Prompt & Go &raquo;</a>
+				<a id="ai-prompt-launcher" class="nebula-ai-button" href="#" target="_blank" rel="noopener noreferrer"><i class="fa-regular fa-copy"></i> Copy for <?php echo nebula()->get_preferred_ai(); ?> &raquo;</a>
 
 				<p id="ai-prompt-explanation">
 					<small id="ai-content-review">This prompt will review your existing content for quality, SEO, user experience, and engagement.</small>

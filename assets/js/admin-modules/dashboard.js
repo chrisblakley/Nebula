@@ -254,7 +254,7 @@ nebula.developerMetaboxes = function(){
 		});
 
 		//Copy AI Code Review Prompt and open the AI tool in a new window
-		jQuery('#review-continue-wrapper a').on('click', function(e){
+		jQuery('.prompt-launchpad-function-review').on('click', function(e){
 			e.preventDefault();
 
 			let prompt = 'Please review the following WordPress function:\n\n```php\n' + jQuery(this).attr('data-function') + '\n```';
