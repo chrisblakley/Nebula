@@ -82,10 +82,6 @@ if ( !trait_exists('Utilities') ){
 						$ip = trim($ip);
 
 						if ( filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) ){
-							$this->once('get_ip_address', function($ip_key){
-								do_action('qm/info', $ip_key . ' was used to determine IP address');
-							}, $ip_key);
-
 							$memoized[$memoize_key] = ( !empty($anonymize) )? wp_privacy_anonymize_ip($ip) : $ip;
 							return $memoized[$memoize_key];
 						}
@@ -446,17 +442,28 @@ if ( !trait_exists('Utilities') ){
 		//If Nebula Minimal Mode is currently active
 		//Minimal Mode runs only absolutely essential functionality and bypasses all others. Note that this does *not* reduce functionality of WP Core, or other plugins or themes; it is meant strictly to reduce Nebula-specific functionality. Also note that this includes Nebula optimization functions, so load times can possibly increase during Minimal Mode.
 		public function is_minimal_mode(){
-			if ( $this->is_dev() ){ //Minimal Mode is only available to developers
-				if ( isset($this->super->get['minimal']) ){
-					$this->once('is_minimal_mode', function(){
-						do_action('qm/info', 'Minimal Mode is active (Nebula will run only bare minimum functionality)');
-					});
-
-					return true;
-				}
+			//Memoize result so this logic only needs to ever run once
+			static $cached = null;
+			if ( $cached !== null ){
+				return $cached;
 			}
 
-			return false;
+			$cached = false; //Start with a default value
+
+			//If there is no query string flag, ignore the rest
+			if ( !isset($this->super->get['minimal']) ){
+				return $cached = false;
+			}
+
+			if ( $this->is_dev() ){ //Minimal Mode is only available to developers
+				$this->once('is_minimal_mode', function(){
+					do_action('qm/info', 'Minimal Mode is active (Nebula will run only bare minimum functionality)');
+				});
+
+				return $cached = true;
+			}
+
+			return $cached = false;
 		}
 
 		//If Nebula Safe Mode is currently active
