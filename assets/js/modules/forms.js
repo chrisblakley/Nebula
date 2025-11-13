@@ -39,7 +39,7 @@ nebula.cf7Functions = async function(){
 						non_interaction: true
 					};
 
-					thisEvent.form_flow = nebula.updateFormFlow(formID, '[Impression]');
+					thisEvent.form_flow = nebula.updateFormFlow(formID, '[Impression]'); //When a CF7 form is scrolled into view
 
 					nebula.dom.document.trigger('nebula_event', thisEvent);
 					if ( typeof gaEventObject === 'function' ){ //If the page is loaded pre-scrolled this may not be available for the very first intersection
@@ -71,50 +71,76 @@ nebula.cf7Functions = async function(){
 	});
 
 	//Form starts and field focuses
-	nebula.dom.document.on('focus', '.wpcf7-form input, .wpcf7-form select, .wpcf7-form button, .wpcf7-form textarea', function(e){
-		let formID = jQuery(this).closest('div.wpcf7').attr('id'); //This wraps the form element
+	nebula.dom.document.on('focusin', '.wpcf7-form :input', function(e){
+		var $target = jQuery(e.target);
 
-		let thisField = e.target.name || jQuery(this).closest('.form-group').find('label').text() || e.target.id || 'Unknown';
-		let fieldInfo = '';
-		if ( jQuery(this).attr('type') === 'checkbox' || jQuery(this).attr('type') === 'radio' ){
-			fieldInfo = jQuery(this).attr('value');
+		//If we are ignoring this form, exit early
+		if ( $target.hasClass('ignore-form') || $target.closest('.ignore-form').length ){
+			return;
 		}
 
-		if ( !jQuery(this).hasClass('.ignore-form') && !jQuery(this).find('.ignore-form').length && !jQuery(this).parents('.ignore-form').length ){
-			let thisEvent = {
-				event: e,
-				event_category: 'CF7 Form',
-				event_action: 'Started Form (Focus)',
-				event_label: formID,
-				form_id: formID, //Actual ID (not Unit Tag)
-				form_field: thisField,
-				form_field_info: fieldInfo
-			};
+		var formID = $target.closest('.wpcf7').prop('id') || $target.closest('.wpcf7-form').prop('id') || $target.closest('form').prop('id') || '';
 
-			thisEvent.form_flow = nebula.updateFormFlow(thisEvent.form_id, thisEvent.form_field, thisEvent.form_field_info);
+		//Get the name of the field that was focused
+		var thisField = e.target.name //If the name attribute exists for this field, just use that
+		|| ($target.closest('.form-group').find('label').first().text() || '').trim() //Standard Input Fields
+		|| ($target.closest('.wpcf7-list-item').find('.wpcf7-list-item-label').first().text() || '').trim() //Checkboxes and Radios
+		|| e.target.id
+		|| 'Unknown';
 
-			//Form starts
-			if ( typeof formStarted[formID] === 'undefined' || !formStarted[formID] ){
-				thisEvent.event_name = 'form_start';
-				thisEvent.event_label = 'Began filling out form ID: ' + thisEvent.form_id + ' (' + thisEvent.form_field + ')';
+		thisField = thisField.replace(/\[\]/g, '').trim(); //Remove square brackets (from inputs like checkboxes)
 
-				nebula.dom.document.trigger('nebula_event', thisEvent);
-				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-				nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.form_id + ') Started'}, false);
-				nebula.crm('event', 'Contact Form (' + thisEvent.form_id + ') Started (' + thisEvent.form_field + ')');
-				window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_started'})); //This is the event name to use in the GTM custom event trigger
-				formStarted[formID] = true;
-			}
+		//Add checked/unchecked note for checkboxes
+		if ( $target.is(':checkbox') ){
+			thisField += ' (checkbox)';
+		} else if ( $target.is(':radio') ){
+			thisField += ' (radio)';
+		}
 
-			//Track each individual field focuses
-			if ( !jQuery(this).is('button') ){
-				thisEvent.event_name = 'form_field_focus';
-				thisEvent.event_action = 'Individual Field Focused';
-				thisEvent.event_label = 'Focus into ' + thisEvent.form_field + ' (Form ID: ' + thisEvent.form_id + ')';
+		//Get the specific value that was selected in this field (if applicable)
+		var fieldInfo = '';
+		if ( $target.is(':checkbox') || $target.is(':radio') ){
+			fieldInfo = $target.val() || '';
+		} else if ( $target.is('select') ){
+			var selectedValue = $target.val();
+			fieldInfo = ( Array.isArray(selectedValue) )? selectedValue.join(', ') : (selectedValue || ''); //This is for multi-select fields
+		} else {
+			fieldInfo = ($target.val && $target.val()) || '';
+		}
 
-				nebula.dom.document.trigger('nebula_event', thisEvent);
-				gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
-			}
+		let thisEvent = {
+			event: e,
+			event_category: 'CF7 Form',
+			event_action: 'Started Form (Focus)',
+			event_label: formID,
+			form_id: formID, //Actual ID (not Unit Tag)
+			form_field: thisField,
+			form_field_info: fieldInfo
+		};
+
+		thisEvent.form_flow = nebula.updateFormFlow(thisEvent.form_id, thisEvent.form_field);
+
+		//Form starts
+		if ( typeof formStarted[formID] === 'undefined' || !formStarted[formID] ){
+			thisEvent.event_name = 'form_start';
+			thisEvent.event_label = 'Began filling out form ID: ' + thisEvent.form_id + ' (' + thisEvent.form_field + ')';
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			nebula.crm('identify', {'form_contacted': 'CF7 (' + thisEvent.form_id + ') Started'}, false);
+			nebula.crm('event', 'Contact Form (' + thisEvent.form_id + ') Started (' + thisEvent.form_field + ')');
+			window.dataLayer.push(Object.assign(thisEvent, {'event': 'nebula_form_started'})); //This is the event name to use in the GTM custom event trigger
+			formStarted[formID] = true;
+		}
+
+		//Track each individual field focuses
+		if ( !jQuery(this).is('button') ){
+			thisEvent.event_name = 'form_field_focus';
+			thisEvent.event_action = 'Individual Field Focused';
+			thisEvent.event_label = 'Focus into ' + thisEvent.form_field + ' (Form ID: ' + thisEvent.form_id + ')';
+
+			nebula.dom.document.trigger('nebula_event', thisEvent);
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
 		}
 
 		nebula.timer(formID, 'start', thisField);
@@ -465,7 +491,7 @@ nebula.cf7Functions = async function(){
 };
 
 //Note: formID is the wrapping div ID. Ex: "wpcf7-f1962-p905-o1"
-nebula.updateFormFlow = function(formID, field, info = ''){
+nebula.updateFormFlow = function(formID, field='unknown', info=''){
 	if ( typeof nebula.formFlow === 'undefined' ){
 		nebula.formFlow = {};
 	}
