@@ -186,7 +186,9 @@ nebula.performanceMetrics = async function(){
 							non_interaction: true
 						};
 
-						gtag('event', 'load_timings', loadTimingData);
+						if ( typeof gtag === 'function' ){ //In case GA4 is not being used, avoid errors
+							gtag('event', 'load_timings', loadTimingData);
+						}
 					}
 				}
 			}, 'performance idle');

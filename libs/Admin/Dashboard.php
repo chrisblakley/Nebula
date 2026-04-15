@@ -755,6 +755,11 @@ if ( !trait_exists('Dashboard') ){
 			$public_local_ip = ( preg_match('/^(127\.|192\.168|172\.|10\.)/', $this->super->server['SERVER_ADDR']) )? 'Local' : 'Public'; //Check if the server IP is likely local (private) or public (this is not perfectly exact)
 			echo '<li><i class="fa-solid fa-upload"></i> ' . $public_local_ip . ' Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $this->super->server['SERVER_ADDR'] . '" target="_blank" rel="noopener noreferrer">' . apply_filters('nebula_dashboard_server_ip', $this->super->server['SERVER_ADDR']) . '</a></strong> ' . $secure_server . '</li>';
 
+			//SSL Connection
+			if ( !is_ssl() ){
+				echo '<li><i class="fa-solid fa-unlock"></i> <strong class="essential text-danger">Non-SSL Connection!</strong></li>';
+			}
+
 			//Server Time Zone
 			if ( !empty(get_option('timezone_string')) && date_default_timezone_get() === get_option('timezone_string') && wp_timezone_string() === get_option('timezone_string') ){
 				echo '<li><i class="fa-solid fa-globe-americas"></i> Timezone: <strong>' . date_default_timezone_get() . '</strong></li>';
@@ -1732,7 +1737,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//Output the table
 			echo '<div class="table-wrapper ' . $this->get_simplify_dashboard_class() . '"><table>';
-			echo '<thead><tr><th class="file-name">File Name</th><th class="file-group">Group</th><th class="file-size">Size<i class="fa-solid fa-caret-down"></i></th><th class="budget-percent hidden">% Budget</th><th class="hidden">Keywords</th></tr></thead>';
+			echo '<thead><tr><th class="file-name">File Name</th><th class="file-group">Group</th><th class="file-size">Size<i class="fa-solid fa-caret-down"></i></th><th class="modified-timestamp hidden">Modified<i class="fa-solid fa-caret-down"></i></th><th class="budget-percent hidden">% Budget</th><th class="hidden">Keywords</th></tr></thead>';
 			echo '<tbody>';
 			foreach ( $files as $index => $file ){
 				//Row Classes
@@ -1817,6 +1822,7 @@ if ( !trait_exists('Dashboard') ){
 				echo '<td class="file-name">' . ' <small>' . ($index+1) . '.</small> <span class="file-icons-group">' . $file_icon . '</span> <span title="' . esc_attr($file['path']) . '">' . esc_html($file['name']) . '</span>' . $additional_info . $file_link . '<small class="modified-info hidden"><br />(Modified ' . human_time_diff($file['modified']) . ' ago)</small><small class="file-keywords hidden"><br /><i class="fa-solid fa-turn-up fa-rotate-90"></i> ' . $file['group'] . ' ' . $file['notes'] . '</small></td>';
 				echo '<td class="file-group">' . esc_html($file['group']) . '</td>';
 				echo '<td class="file-size" data-file-size="' . $file['size'] . '" title="' . $budget_description . '">' . $this->format_bytes($file['size']) . '</td>';
+				echo '<td class="modified-timestamp hidden" data-modified-time="' . $file['modified'] . '">' . human_time_diff($file['modified']) . '</td>';
 				echo '<td class="budget-percent hidden">' . $budget_percent . '</td>';
 				echo '<td class="file-path hidden">' . $file['path'] . '</td>';
 				echo '</tr>';

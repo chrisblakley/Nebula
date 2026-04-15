@@ -124,7 +124,7 @@ if ( !trait_exists('Users') ){
 
 			if ( $column_name === 'registered' ){
 				$user_data = get_userdata($id);
-				return date('F j, Y', strtotime($user_data->user_registered));
+				return date('l, F j, Y \a\t g:ia', strtotime($user_data->user_registered)); //Include the weekday and time for security reference
 			}
 
 			if ( $column_name === 'status' ){

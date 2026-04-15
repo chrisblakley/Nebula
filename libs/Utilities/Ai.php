@@ -217,9 +217,9 @@ if ( !trait_exists('Ai') ){
 
 			$prompt .= "## Summary – Always format this section exactly as follows:\n";
 			$prompt .= "<h2>Summary</h2>\n";
-			$prompt .= "<p>[Priority line: e.g., 'Moderate Priority: <strong>3 issues</strong> <small>(0 critical, 1 major, 2 minor)</small>']</p>\n";
+			$prompt .= "<p>[Priority line: e.g., 'Moderate Priority: <strong>3 issues</strong> <small>(0 critical, 1 notable, 2 minor)</small>']</p>\n";
 			$prompt .= "<p>[Very short paragraph description of what the function does, including notable strengths. Aim for 50 words or fewer.]</p>\n";
-			$prompt .= "Do not combine the priority line with the descriptive sentence. Each must be in its own <p> tag. Do not include the priority line inside the <h2> tag. Priorities should be 'High' if any critical issues are found, 'Moderate' if any major issues, or 'Low' if only minor issues are found.\n";
+			$prompt .= "Do not combine the priority line with the descriptive sentence. Each must be in its own <p> tag. Do not include the priority line inside the <h2> tag. Priorities should be 'High' if any critical issues are found, 'Moderate' if any notable issues, or 'Low' if only minor issues are found.\n";
 
 			$prompt .= "### 🚨 Critical Issues – Identify any catastrophic problems. If none exist, do not include this section at all (not even the heading). Do not output 'N/A'.\n";
 

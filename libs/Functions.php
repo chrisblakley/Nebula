@@ -51,8 +51,6 @@ if ( !trait_exists('Functions') ){
 
 			add_action('admin_init', array($this, 'disable_trackbacks'));
 			add_action('template_include', array($this, 'define_current_template'), 1000);
-			add_action('wp_ajax_nebula_twitter_cache', array($this, 'twitter_cache'));
-			add_action('wp_ajax_nopriv_nebula_twitter_cache', array($this, 'twitter_cache'));
 			add_filter('get_search_form', array($this, 'search_form'), 100, 1);
 			add_filter('the_password_form', array($this, 'password_form_simplify'));
 			add_filter('the_posts', array($this, 'always_get_post_custom'));
@@ -1763,7 +1761,7 @@ if ( !trait_exists('Functions') ){
 					$post_type = get_post_type_object(get_post_type());
 					echo $data['before'] . '<span itemprop="name">' . $post_type->labels->name . '</span><meta itemprop="position" content="' . $position . '" />' . $data['after'];
 				} elseif ( is_attachment() ){ //@TODO "Nebula" 0: Check for gallery pages? If so, it should be Home > Parent(s) > Gallery > Attachment
-					if ( !empty($post->post_parent) ){ //@TODO "Nebula" 0: What happens if the page parent is a child of another page?
+					if ( !empty($post->post_parent) ){ //@TODO "Nebulla" 0: What happens if the page parent is a child of another page?
 						echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_permalink($post->post_parent) . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title($post->post_parent)) . '</span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ' . strip_tags(get_the_title());
 						$position++;
 					} else {
@@ -2525,110 +2523,6 @@ if ( !trait_exists('Functions') ){
 			}
 		}
 
-		//Twitter cached feed
-		public function twitter_cache($options=array()){
-			if ( $this->is_minimal_mode() ){return null;}
-
-			$defaults = apply_filters('nebula_twitter_cache_defaults', array(
-				'user' => 'Great_Blakes',
-				'list' => null,
-				'number' => 5,
-				'retweets' => 1,
-			));
-
-			$options = ( is_array($options) )? $options : array(); //Ensure the provided options is an array (and assign an empty array if it does not exist). Remember, this function may be called via WP hook.
-
-			$data = array_merge($defaults, $options);
-			$post = $this->super->post; //Get the $_POST data
-
-			if ( !empty($post['data']) ){
-				if ( !wp_verify_nonce($post['nonce'], 'nebula_ajax_nonce') ){ die('Permission Denied.'); }
-				$data['user'] = ( isset($post['data']['user']) )? sanitize_text_field($post['data']['user']) : $defaults['user'];
-				$data['list'] = ( isset($post['data']['list']) )? sanitize_text_field($post['data']['list']) : $defaults['list']; //Only used for list feeds
-				$data['number'] = ( isset($post['data']['number']) )? sanitize_text_field($post['data']['number']) : $defaults['number'];
-				$data['retweets'] = ( isset($post['data']['retweets']) )? sanitize_text_field($post['data']['retweets']) : $defaults['retweets']; //1: Yes, 0: No
-			}
-
-			$twitter_timing_id = $this->timer('Twitter Cache (' . $data['user'] . ')', 'start', '[Nebula] Social');
-
-			error_reporting(0); //Prevent PHP errors from being cached.
-
-			if ( !empty($data['list']) ){
-				$feed = 'https://api.twitter.com/1.1/lists/statuses.json?slug=' . $data['list'] . '&owner_screen_name=' . $data['user'] . '&count=' . $data['number'] . '&include_rts=' . $data['retweets'] . '&tweet_mode=extended';
-			} else {
-				$feed = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=' . $data['user'] . '&count=' . $data['number'] . '&include_rts=' . $data['retweets'] . '&tweet_mode=extended';
-			}
-
-			$bearer = $this->get_option('twitter_bearer_token', '');
-			if ( empty($bearer) ){
-				trigger_error('A Twitter bearer token is required to get tweets', E_USER_WARNING);
-
-				if ( !empty($post['data']) ){
-					echo false;
-					wp_die();
-				} else {
-					return null;
-				}
-			}
-
-			$tweets = nebula()->transient('nebula_twitter_' . $data['user'], function($data){
-				$args = array('headers' => array('Authorization' => 'Bearer ' . $data['bearer']));
-
-				$response = $this->remote_get($data['feed'], $args);
-				if ( is_wp_error($response) ){
-					return null;
-				}
-
-				$tweets = json_decode($response['body']);
-
-				//If there are no tweets -or- if an error is return (for example if an account does not exist)
-				if ( empty($tweets) || !empty($tweets->errors) || !empty($tweets->error) ){
-					trigger_error('No tweets were retrieved. Verify all options are correct, the requested Twitter account exists, and that an active bearer token is being used.', E_USER_NOTICE);
-
-					if ( !empty($data['post']['data']) ){
-						echo null;
-						wp_die(); //Exit AJAX
-					} else {
-						return null;
-					}
-				}
-
-				//Add convenient data to the tweet object
-				foreach ( $tweets as $tweet ){
-					$tweet->tweet_url = 'http://twitter.com/' . $tweet->user->screen_name . '/status/' . $tweet->id; //Add Tweet URL
-
-					//Convert times
-					$tweet->time_ago = human_time_diff(strtotime($tweet->created_at)); //Relative time
-					$tweet->time_formatted = date('l, F j, Y \a\t g:ia', strtotime($tweet->created_at)); //Human readable time
-					$tweet->time_ago_raw = date('U')-strtotime($tweet->created_at);
-
-					//Convert usernames, hashtags, and URLs into clickable links and add other markup
-					$tweet->markup = preg_replace(array(
-						"/(http\S+)/i", //URLs (must be first)
-						"/@([a-z0-9_]+)/i", //Usernames
-						"/#([a-z0-9_]+)/i", //Hashtags
-						"/(\d+\/(\d+)?)$/i", //Series numbers
-					), array(
-						"<a class='tweet-embedded-link' href='$1' target='_blank' rel='noopener'>$1</a>",
-						"<a class='tweet-embedded-username' href='https://twitter.com/$1' target='_blank' rel='noopener'>@$1</a>",
-						"<a class='tweet-embedded-hashtag' href='https://twitter.com/hashtag/$1' target='_blank' rel='noopener'>#$1</a>",
-						"<small class='tweet-embedded-series-number'>$1</small>",
-					), trim($tweet->full_text));
-				}
-
-				return $tweets;
-			}, array('bearer' => $bearer, 'feed' => $feed, 'post' => $post), MINUTE_IN_SECONDS*5);
-
-			$this->timer($twitter_timing_id, 'end');
-
-			if ( !empty($post['data']) ){
-				echo wp_json_encode($tweets);
-				wp_die();
-			} else {
-				return $tweets;
-			}
-		}
-
 		//Replace text on password protected posts to be more minimal
 		public function password_form_simplify(){
 			$output = '<form class="ignore-form" action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" method="post">
@@ -3063,7 +2957,10 @@ if ( !trait_exists('Functions') ){
 				$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, $this->get_browser('full'))); //Browser name and version
 				$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, $this->get_browser('name'))); //Browser name
 				$classes[] = strtolower(str_replace($spaces_and_dots, $underscores_and_hyphens, $this->get_browser('engine'))); //Rendering engine
-				$classes[] = ( $this->is_bot() )? 'bot bot-visitor device-bot' : '';
+
+				if ( $this->is_bot() ){
+					$classes[] = 'bot bot-visitor device-bot';
+				}
 
 				//Website language
 				$classes[] = 'lang-blog-' . strtolower(get_bloginfo('language'));
@@ -3073,16 +2970,16 @@ if ( !trait_exists('Functions') ){
 
 				//Preferred browser language
 				if ( !empty($this->super->server['HTTP_ACCEPT_LANGUAGE']) ){
-					$classes[] = 'lang-user-' . strtolower(explode(",", $this->super->server['HTTP_ACCEPT_LANGUAGE'])[0]); //Example: fr-fr,en-us;q=0.7,en;q=0.3
+					$classes[] = sanitize_html_class('lang-user-' . strtolower(explode(",", $this->super->server['HTTP_ACCEPT_LANGUAGE'])[0])); //Example: fr-fr,en-us;q=0.7,en;q=0.3
 				}
 
 				//Geo data if available
 				if ( !empty($this->get_geo_data('country')) ){
-					$classes[] = 'country-' . strtolower($this->get_geo_data('country'));
+					$classes[] = sanitize_html_class('country-' . strtolower($this->get_geo_data('country')));
 					do_action('qm/info', 'Geo Country: ' . $this->get_geo_data('country'));
 				}
 				if ( !empty($this->get_geo_data('region')) ){
-					$classes[] = 'region-' . str_replace(' ', '-', strtolower($this->get_geo_data('region')));
+					$classes[] = sanitize_html_class('region-' . str_replace(' ', '-', strtolower($this->get_geo_data('region'))));
 					do_action('qm/info', 'Geo Region: ' . $this->get_geo_data('region'));
 				}
 
@@ -3095,11 +2992,11 @@ if ( !trait_exists('Functions') ){
 				$current_user = wp_get_current_user();
 				if ( is_user_logged_in() ){
 					$classes[] = 'user-logged-in';
-					$classes[] = 'user-' . $current_user->user_login;
+					$classes[] = sanitize_html_class('user-' . $current_user->user_login);
 
 					$user_info = get_userdata(get_current_user_id());
 					if ( !empty($user_info->roles) ){
-						$classes[] = 'user-role-' . $user_info->roles[0];
+						$classes[] = sanitize_html_class('user-role-' . $user_info->roles[0]);
 					} else {
 						$classes[] = 'user-role-unknown';
 					}
@@ -3121,7 +3018,6 @@ if ( !trait_exists('Functions') ){
 				if ( !is_search() && !is_archive() && !is_front_page() && !is_404() ){
 					global $post;
 					if ( isset($post) ){
-						$segments = explode('/', trim(parse_url($this->super->server['REQUEST_URI'], PHP_URL_PATH), '/'));
 						$parents = get_post_ancestors($post->ID);
 						foreach ( $parents as $parent ){
 							if ( !empty($parent) ){
@@ -3129,6 +3025,7 @@ if ( !trait_exists('Functions') ){
 							}
 						}
 
+						$segments = explode('/', trim(parse_url($this->super->server['REQUEST_URI'], PHP_URL_PATH), '/'));
 						foreach ( $segments as $segment ){
 							if ( !empty($segment) ){
 								$classes[] = 'ancestor-of-' . $segment;
@@ -3176,7 +3073,7 @@ if ( !trait_exists('Functions') ){
 
 				$nebula_theme_info = wp_get_theme();
 				$classes[] = 'nebula';
-				$classes[] = 'nebula_' . str_replace('.', '-', $this->version('primary'));
+				$classes[] = sanitize_html_class('nebula_' . str_replace('.', '-', $this->version('primary')));
 
 				//Time of Day
 				if ( $this->has_business_hours() ){
@@ -3196,40 +3093,44 @@ if ( !trait_exists('Functions') ){
 				if ( $this->get_option('latitude') && $this->get_option('longitude') ){
 					$latitude = floatval($this->get_option('latitude'));
 					$longitude = floatval($this->get_option('longitude'));
-					global $sunrise, $sunset;
+
 					$suninfo = date_sun_info(strtotime('today'), $latitude, $longitude); //Civil twilight = 96deg, Nautical twilight = 102deg, Astronomical twilight = 108deg - these are already accounted for in this PHP function
-					$sunrise = strtotime($suninfo['sunrise']); //The timestamp of the sunrise (zenith angle = 90deg 35min)
-					$sunset  = strtotime($suninfo['sunset']); //The timestamp of the sunset (zenith angle = 90deg 35min)
+
+					$sunrise = $suninfo['sunrise']; //The timestamp of the sunrise (zenith angle = 90deg 35min)
+					$sunset  = $suninfo['sunset']; //The timestamp of the sunset (zenith angle = 90deg 35min)
+
 					$length_of_daylight = $sunset-$sunrise;
 					$length_of_darkness = DAY_IN_SECONDS-$length_of_daylight;
 
+					$now = strtotime('now'); //Current time
+
 					if ( time() >= $sunrise && time() <= $sunset ){
 						$classes[] = 'time-daylight';
-						if ( strtotime('now') < $sunrise+($length_of_daylight/2) ){
+						if ( $now < $sunrise+($length_of_daylight/2) ){
 							$classes[] = 'time-waxing-gibbous'; //Before solar noon
-							$classes[] = ( strtotime('now') < ($length_of_daylight/4)+$sunrise )? 'time-narrow' : 'time-wide';
+							$classes[] = ( $now < ($length_of_daylight/4)+$sunrise )? 'time-narrow' : 'time-wide';
 						} else {
 							$classes[] = 'time-waning-gibbous'; //After solar noon
-							$classes[] = ( strtotime('now') < ((3*$sunset)+$sunrise)/4 )? 'time-wide' : 'time-narrow';
+							$classes[] = ( $now < ((3*$sunset)+$sunrise)/4 )? 'time-wide' : 'time-narrow';
 						}
 					} else {
 						$classes[] = 'time-darkness';
 						$previous_sunset_modifier = ( date('H') < 12 )? DAY_IN_SECONDS : 0; //Times are in UTC, so if it is after actual midnight (before noon) we need to use the sunset minus 1 day in formulas
 						$solar_midnight = (($sunset-$previous_sunset_modifier)+($length_of_darkness/2)); //Calculate the appropriate solar midnight (either yesterday's or tomorrow's) [see above]
-						if ( strtotime('now') < $solar_midnight ){
+						if ( $now < $solar_midnight ){
 							$classes[] = 'time-waning-crescent'; //Before solar midnight
-							$classes[] = ( strtotime('now') < ($length_of_darkness/4)+($sunset-$previous_sunset_modifier) )? 'time-wide' : 'time-narrow';
+							$classes[] = ( $now < ($length_of_darkness/4)+($sunset-$previous_sunset_modifier) )? 'time-wide' : 'time-narrow';
 						} else {
 							$classes[] = 'time-waxing-crescent'; //After solar midnight
-							$classes[] = ( strtotime('now') < ($sunrise+$solar_midnight)/2 )? 'time-narrow' : 'time-wide';
+							$classes[] = ( $now < ($sunrise+$solar_midnight)/2 )? 'time-narrow' : 'time-wide';
 						}
 					}
 
 					$sunrise_sunset_length = 35; //Length of sunrise/sunset in minutes.
-					if ( strtotime('now') >= $sunrise-(60*$sunrise_sunset_length) && strtotime('now') <= $sunrise+(60*$sunrise_sunset_length) ){ //X minutes before and after true sunrise
+					if ( $now >= $sunrise-(60*$sunrise_sunset_length) && $now <= $sunrise+(60*$sunrise_sunset_length) ){ //X minutes before and after true sunrise
 						$classes[] = 'time-sunrise';
 					}
-					if ( strtotime('now') >= $sunset-(60*$sunrise_sunset_length) && strtotime('now') <= $sunset+(60*$sunrise_sunset_length) ){ //X minutes before and after true sunset
+					if ( $now >= $sunset-(60*$sunrise_sunset_length) && $now <= $sunset+(60*$sunrise_sunset_length) ){ //X minutes before and after true sunset
 						$classes[] = 'time-sunset';
 					}
 				}
@@ -3237,6 +3138,8 @@ if ( !trait_exists('Functions') ){
 				$classes[] = 'date-day-' . strtolower(date('l'));
 				$classes[] = 'date-ymd-' . strtolower(date('Y-m-d'));
 				$classes[] = 'date-month-' . strtolower(date('F'));
+
+				$classes = array_values(array_unique(array_filter($classes))); //De-dupe and clean up the classes array
 
 				$this->timer('Nebula Body Classes', 'end');
 			}

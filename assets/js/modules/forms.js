@@ -82,11 +82,11 @@ nebula.cf7Functions = async function(){
 		var formID = $target.closest('.wpcf7').prop('id') || $target.closest('.wpcf7-form').prop('id') || $target.closest('form').prop('id') || '';
 
 		//Get the name of the field that was focused
-		var thisField = e.target.name //If the name attribute exists for this field, just use that
-		|| ($target.closest('.form-group').find('label').first().text() || '').trim() //Standard Input Fields
-		|| ($target.closest('.wpcf7-list-item').find('.wpcf7-list-item-label').first().text() || '').trim() //Checkboxes and Radios
-		|| e.target.id
-		|| 'Unknown';
+		var thisField = e.target.name || //If the name attribute exists for this field, just use that
+		($target.closest('.form-group').find('label').first().text() || '').trim() || //Standard Input Fields
+		($target.closest('.wpcf7-list-item').find('.wpcf7-list-item-label').first().text() || '').trim() || //Checkboxes and Radios
+		e.target.id ||
+		'Unknown';
 
 		thisField = thisField.replace(/\[\]/g, '').trim(); //Remove square brackets (from inputs like checkboxes)
 
