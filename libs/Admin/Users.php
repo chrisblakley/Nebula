@@ -5,10 +5,10 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Users') ){
 	trait Users {
 		public function hooks(){
-			add_action('init', array($this, 'users_status_init')); //This happens on all pages (front-end and admin)
-
 			//Exclude AJAX and REST requests
 			if ( !$this->is_background_request() ){
+				add_action('init', array($this, 'users_status_init')); //This happens on all pages (front-end and admin), but not on background requests
+
 				add_action('user_register', array($this, 'log_new_user'), 10, 1);
 				add_action('delete_user', array($this, 'log_delete_user'), 10, 3);
 				add_action('password_reset', array($this, 'log_password_reset'), 10, 1);
@@ -90,7 +90,9 @@ if ( !trait_exists('Users') ){
 					}
 				}
 
-				update_user_meta($current_user->ID, 'gacid', sanitize_text_field($this->ga_parse_cookie())); //Add last known GA Client ID to user
+				if ( !user_can($current_user->ID, 'manage_options') ){ //Don't do this for admins so that it does not update every single admin page view
+					update_user_meta($current_user->ID, 'gacid', sanitize_text_field($this->ga_parse_cookie())); //Add last known GA Client ID to user
+				}
 			}
 		}
 
