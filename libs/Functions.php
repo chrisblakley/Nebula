@@ -3256,7 +3256,7 @@ if ( !trait_exists('Functions') ){
 					$field_name_pos = str_contains(strtolower($content), ' name="' . strtolower($find) . '"'); //The space before name= prevents data-name= attributes from matching
 
 					if ( !empty($field_name_pos) ){
-						$content = substr_replace($content, ' autocomplete="' . $autocomplete_value . '" ', $field_name_pos, 0);
+						$content = substr_replace($content, 'autocomplete="' . $autocomplete_value . '" ', $field_name_pos, 0);
 					}
 				}
 			}
