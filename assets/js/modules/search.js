@@ -258,6 +258,8 @@ nebula.autocompleteSearch = async function($element, types = ''){
 						event_name: 'autocomplete_search',
 						event_category: 'Internal Search',
 						event_action: 'Autocomplete Search' + noSearchResults,
+						event_label: request.term.toLowerCase(),
+						link_text: request.term.toLowerCase(),
 						search_term: request.term.toLowerCase(),
 						no_search_results: ( noSearchResults )? true : false,
 					};
@@ -291,6 +293,7 @@ nebula.autocompleteSearch = async function($element, types = ''){
 					event_category: 'Internal Search',
 					event_action: 'Autocomplete Click',
 					event_label: ui.item.label,
+					link_text: ui.item.label,
 					search_term: ui.item.label,
 					external: ( typeof ui.item.external !== 'undefined' )? true : false,
 				};
