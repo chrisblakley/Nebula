@@ -1979,7 +1979,7 @@ if ( !trait_exists('Functions') ){
 								});
 
 								if ( pageNumber >= maxPages ){
-									document.querySelector('.loadmorecon').classList.add('disabled').querySelector('a').innerHTML = '<?php __('No more', 'nebula'); ?> <?php echo $post_type_label; ?>.';
+									document.querySelector('.loadmorecon').classList.add('disabled').querySelector('a').innerHTML = '<?php echo __('No more', 'nebula'); ?> <?php echo $post_type_label; ?>.';
 								}
 
 								var newQueryStrings = '';
