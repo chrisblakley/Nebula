@@ -162,7 +162,7 @@ trait Comments {
 
 				if ( isset($this->super->cookie['comment_author_' . COOKIEHASH]) ){
 					echo 'cookieAuthorName = "' . $this->super->cookie['comment_author_' . COOKIEHASH] . '";';
-					echo 'cookieAuthorEmail = "' . $this->super->cookie['comment_author_email_' . COOKIEHASH] . '";';
+					echo 'cookieAuthorEmail = "' . ($this->super->cookie['comment_author_email_' . COOKIEHASH] ?? '') . '";';
 				}
 			echo '</script>';
 		}
