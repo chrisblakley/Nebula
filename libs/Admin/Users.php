@@ -5,10 +5,10 @@ if ( !defined('ABSPATH') ){ die(); } //Exit if accessed directly
 if ( !trait_exists('Users') ){
 	trait Users {
 		public function hooks(){
-			add_action('init', array($this, 'users_status_init')); //This happens on all pages (front-end and admin)
-
 			//Exclude AJAX and REST requests
 			if ( !$this->is_background_request() ){
+				add_action('init', array($this, 'users_status_init')); //This happens on all pages (front-end and admin), but not on background requests
+
 				add_action('user_register', array($this, 'log_new_user'), 10, 1);
 				add_action('delete_user', array($this, 'log_delete_user'), 10, 3);
 				add_action('password_reset', array($this, 'log_password_reset'), 10, 1);
@@ -90,7 +90,9 @@ if ( !trait_exists('Users') ){
 					}
 				}
 
-				update_user_meta($current_user->ID, 'gacid', sanitize_text_field($this->ga_parse_cookie())); //Add last known GA Client ID to user
+				if ( !user_can($current_user->ID, 'manage_options') ){ //Don't do this for admins so that it does not update every single admin page view
+					update_user_meta($current_user->ID, 'gacid', sanitize_text_field($this->ga_parse_cookie())); //Add last known GA Client ID to user
+				}
 			}
 		}
 
@@ -124,7 +126,7 @@ if ( !trait_exists('Users') ){
 
 			if ( $column_name === 'registered' ){
 				$user_data = get_userdata($id);
-				return date('F j, Y', strtotime($user_data->user_registered));
+				return date('l, F j, Y \a\t g:ia', strtotime($user_data->user_registered)); //Include the weekday and time for security reference
 			}
 
 			if ( $column_name === 'status' ){
@@ -294,9 +296,9 @@ if ( !trait_exists('Users') ){
 					<th><label for="preferred_ai">Preferred AI</label></th>
 					<td>
 						<select id="preferred_ai" name="preferred_ai">
-							<option value="chatgpt" <?php selected(get_the_author_meta('preferred_ai', $user->ID) ?: 'chatgpt', 'chatgpt'); ?>>ChatGPT (OpenAI)</option>
-							<option value="gemini" <?php selected(get_the_author_meta('preferred_ai', $user->ID), 'gemini'); ?>>Gemini (Google)</option>
-							<option value="claude" <?php selected(get_the_author_meta('preferred_ai', $user->ID), 'claude'); ?>>Claude (Anthropic)</option>
+							<option value="ChatGPT" <?php selected(get_the_author_meta('preferred_ai', $user->ID) ?: 'ChatGPT', 'ChatGPT'); ?>>ChatGPT (OpenAI)</option>
+							<option value="Gemini" <?php selected(get_the_author_meta('preferred_ai', $user->ID), 'Gemini'); ?>>Gemini (Google)</option>
+							<option value="Claude" <?php selected(get_the_author_meta('preferred_ai', $user->ID), 'Claude'); ?>>Claude (Anthropic)</option>
 						</select>
 						<p class="description" id="preferred-ai-description">This is used for Nebula Prompt Launchpad features. This does not affect Nebula built-in AI API features.</p>
 					</td>

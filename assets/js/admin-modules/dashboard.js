@@ -196,6 +196,13 @@ nebula.developerMetaboxes = function(){
 			}
 		});
 
+		//Toggle between Size and Last Modified columns
+		jQuery(document).on('click', 'th.file-size, th.modified-timestamp', function(e){
+			jQuery('#nebula_file_size_monitor table .file-size').toggleClass('hidden');
+			jQuery('#nebula_file_size_monitor table .modified-timestamp').toggleClass('hidden');
+			//@todo "Nebula" 0: sort by filesize or modified column depending on which is active. would need a new function for this. would also need to be javascript... the default file size sort happens in php before output.
+		});
+
 		jQuery(document).on('click', '.show-optimization-tips', function(){
 			jQuery('#nebula-optimization-tips').slideDown();
 			jQuery('.show-optimization-tips').remove(); //Once it is clicked it stays open
@@ -254,7 +261,7 @@ nebula.developerMetaboxes = function(){
 		});
 
 		//Copy AI Code Review Prompt and open the AI tool in a new window
-		jQuery('#review-continue-wrapper a').on('click', function(e){
+		jQuery('.prompt-launchpad-function-review').on('click', function(e){
 			e.preventDefault();
 
 			let prompt = 'Please review the following WordPress function:\n\n```php\n' + jQuery(this).attr('data-function') + '\n```';

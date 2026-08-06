@@ -1442,7 +1442,7 @@ nebula.eventTracking = async function(){
 		function sendPrintEvent(action, trigger){
 			let thisEvent = {
 				event_name: 'print',
-				event_category: 'Category',
+				event_category: 'Print',
 				event_label: 'User triggered print via ' + trigger,
 				event_action: action,
 				description: 'User triggered print via ' + trigger,
@@ -1463,6 +1463,22 @@ nebula.eventTracking = async function(){
 			} else {
 				sendPrintEvent('After Print', '!mql.matches');
 			}
+		});
+
+		//AI Tool Activation
+		nebula.dom.window.on('toolactivated', function(toolName){
+			let thisEvent = {
+				event_name: 'tool_activated',
+				event_category: 'Tool Activated',
+				event_action: toolName,
+				event_label: toolName,
+				description: 'The tool ' + toolName + ' execution was activated',
+			};
+
+			gtag('event', thisEvent.event_name, nebula.gaEventObject(thisEvent));
+			if ( typeof clarity === 'function' ){clarity('set', thisEvent.event_category, thisEvent.event_action);}
+			nebula.hj('event', thisEvent.event_name);
+			nebula.crm('event', thisEvent.event_category);
 		});
 
 		//DataTables Filter

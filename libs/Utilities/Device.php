@@ -294,7 +294,11 @@ if ( !trait_exists('Device') ){
 		//Check if this traffic is coming from an AI website
 		//Note: This is a helper function only until Google Analytics introduces an "Organic AI" default channel group
 		public function is_ai_channel(){
-			$ai_tools = array('chatgpt.com', 'openai.com', 'gemini.google.com', 'deepseek.com', 'claude.ai', 'anthropic.com', 'mistral.ai', 'copilot.microsoft.com', 'perplexity', 'pi.ai', 'huggingface.co', 'stability.ai', 'midjourney.com', 'runwayml.com', 'grok.com', 'grok.x.com', 'janitorai.com');
+			if ( $this->is_bot() ){ //We only care about real users here
+				return false;
+			}
+
+			$ai_tools = array('chatgpt.com', 'openai.com', 'gemini.google.com', 'deepseek.com', 'claude.ai', 'anthropic.com', 'mistral.ai', 'copilot.microsoft.com', 'perplexity', 'grok.com', 'grok.x.com');
 
 			foreach( $ai_tools as $ai_tool ){
 				//Check the referrer

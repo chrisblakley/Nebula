@@ -271,17 +271,24 @@
 				});
 			});
 
+			var currentPage = window.location.href;
+			var previousPage = sessionStorage.getItem('previous_page') || '(entrance)';
+
 			<?php if ( is_404() ): //Track 404 Errors ?>
 				var lastReferrer = nebula.session?.referrer || document.referrer || '(Unknown Referrer)';
+
 				gtag('event', '404_not_found', {
 					event_category: '404 Not Found',
 					event_action: '<?php echo esc_url(nebula()->requested_url()); ?>',
-					event_label: 'Referrer: ' + lastReferrer,
+					event_label: 'Previous Page: ' + previousPage + ' | Referrer: ' + lastReferrer,
 					requested_url: '<?php echo esc_url(nebula()->requested_url()); ?>',
+					previous_page: previousPage,
 					referrer: lastReferrer,
 					non_interaction: true
 				});
 			<?php endif; ?>
+
+			sessionStorage.setItem('previous_page', currentPage);
 
 			<?php do_action('nebula_ga_after_pageview'); ?>
 		</script>

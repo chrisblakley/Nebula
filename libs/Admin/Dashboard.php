@@ -755,6 +755,11 @@ if ( !trait_exists('Dashboard') ){
 			$public_local_ip = ( preg_match('/^(127\.|192\.168|172\.|10\.)/', $this->super->server['SERVER_ADDR']) )? 'Local' : 'Public'; //Check if the server IP is likely local (private) or public (this is not perfectly exact)
 			echo '<li><i class="fa-solid fa-upload"></i> ' . $public_local_ip . ' Server IP: <strong><a href="http://whatismyipaddress.com/ip/' . $this->super->server['SERVER_ADDR'] . '" target="_blank" rel="noopener noreferrer">' . apply_filters('nebula_dashboard_server_ip', $this->super->server['SERVER_ADDR']) . '</a></strong> ' . $secure_server . '</li>';
 
+			//SSL Connection
+			if ( !is_ssl() ){
+				echo '<li><i class="fa-solid fa-unlock"></i> <strong class="essential text-danger">Non-SSL Connection!</strong></li>';
+			}
+
 			//Server Time Zone
 			if ( !empty(get_option('timezone_string')) && date_default_timezone_get() === get_option('timezone_string') && wp_timezone_string() === get_option('timezone_string') ){
 				echo '<li><i class="fa-solid fa-globe-americas"></i> Timezone: <strong>' . date_default_timezone_get() . '</strong></li>';
@@ -1732,7 +1737,7 @@ if ( !trait_exists('Dashboard') ){
 
 			//Output the table
 			echo '<div class="table-wrapper ' . $this->get_simplify_dashboard_class() . '"><table>';
-			echo '<thead><tr><th class="file-name">File Name</th><th class="file-group">Group</th><th class="file-size">Size<i class="fa-solid fa-caret-down"></i></th><th class="budget-percent hidden">% Budget</th><th class="hidden">Keywords</th></tr></thead>';
+			echo '<thead><tr><th class="file-name">File Name</th><th class="file-group">Group</th><th class="file-size">Size<i class="fa-solid fa-caret-down"></i></th><th class="modified-timestamp hidden">Modified<i class="fa-solid fa-caret-down"></i></th><th class="budget-percent hidden">% Budget</th><th class="hidden">Keywords</th></tr></thead>';
 			echo '<tbody>';
 			foreach ( $files as $index => $file ){
 				//Row Classes
@@ -1817,6 +1822,7 @@ if ( !trait_exists('Dashboard') ){
 				echo '<td class="file-name">' . ' <small>' . ($index+1) . '.</small> <span class="file-icons-group">' . $file_icon . '</span> <span title="' . esc_attr($file['path']) . '">' . esc_html($file['name']) . '</span>' . $additional_info . $file_link . '<small class="modified-info hidden"><br />(Modified ' . human_time_diff($file['modified']) . ' ago)</small><small class="file-keywords hidden"><br /><i class="fa-solid fa-turn-up fa-rotate-90"></i> ' . $file['group'] . ' ' . $file['notes'] . '</small></td>';
 				echo '<td class="file-group">' . esc_html($file['group']) . '</td>';
 				echo '<td class="file-size" data-file-size="' . $file['size'] . '" title="' . $budget_description . '">' . $this->format_bytes($file['size']) . '</td>';
+				echo '<td class="modified-timestamp hidden" data-modified-time="' . $file['modified'] . '">' . human_time_diff($file['modified']) . '</td>';
 				echo '<td class="budget-percent hidden">' . $budget_percent . '</td>';
 				echo '<td class="file-path hidden">' . $file['path'] . '</td>';
 				echo '</tr>';
@@ -2178,7 +2184,7 @@ if ( !trait_exists('Dashboard') ){
 			echo '<div id="nebula-ai-response" class="collapsed"><div class="ai-review-content-wrapper">';
 			echo wp_kses_post(nebula()->simple_markdown_to_html($code_review_data['response']['content']));
 
-			echo '<div id="review-continue-wrapper"><h3>Continue the Review</h3><p>Clicking the following button will <strong>copy the prompt to your clipboard</strong> where you can paste it to continue reviewing this function (with advanced models) and ask follow-up questions.</p><a class="nebula-ai-button" href="#" data-function="' . htmlspecialchars($code_review_data['function']['function']) . '"><i class="fa-regular fa-copy"></i> Copy Prompt &amp; Continue &raquo;</a></div><a id="reviewed-expand-code" class="nebula-ai-button" href="#"><i class="fa-solid fa-chevron-down"></i> View Results</a></div></div>';
+			echo '<div id="review-continue-wrapper"><h3>Continue the Review</h3><p>Clicking the following button will <strong>copy the prompt to your clipboard</strong> where you can paste it to continue reviewing this function (with advanced models) and ask follow-up questions.</p><a class="nebula-ai-button prompt-launchpad-function-review" href="#" data-function="' . htmlspecialchars($code_review_data['function']['function']) . '"><i class="fa-regular fa-copy"></i> Copy Prompt for ' . nebula()->get_preferred_ai() . ' &raquo;</a></div><div id="reviewed-code-buttons-overlay"><a id="reviewed-expand-code" class="nebula-ai-button" href="#"><i class="fa-solid fa-chevron-down"></i> View Results Here</a><a class="nebula-ai-button prompt-launchpad-function-review" href="#" data-function="' . htmlspecialchars($code_review_data['function']['function']) . '"><i class="fa-regular fa-copy"></i> Copy for ' . nebula()->get_preferred_ai() . ' &raquo;</a></div></div></div>';
 
 			echo '<p>';
 				echo '<small><i class="fa-brands fa-openai"></i> Model: ' . $code_review_data['response']['model'] . '</small><br/>';
@@ -2595,7 +2601,7 @@ if ( !trait_exists('Dashboard') ){
 										<?php if ( str_contains(strtolower($notable_color_data['name']), 'primary') && !$is_readable_against_white_aa ): ?>
 											<li class="white-bg-warning text-danger"><i class="fa-solid fa-triangle-exclamation"></i> Primary color cannot be used on light backgrounds!</li>
 										<?php elseif ( ($notable_color_data['ratios']['white'] >= 4.5 && $notable_color_data['ratios']['white'] < 4.7) || ($notable_color_data['ratios']['black'] >= 4.5 && $notable_color_data['ratios']['black'] < 4.7) ): ?>
-											<li class="text-caution" title="This color barely meets minimum with pure white or black."><i class="fa-solid fa-circle-info"></i> Limited flexibility!</li>
+											<li class="text-caution" title="This color barely meets minimum with pure white or black, so it cannot be used with even slightly off-white, near-black, or any shades of grey."><i class="fa-solid fa-circle-info"></i> Limited flexibility!</li>
 										<?php endif; ?>
 									</ul>
 

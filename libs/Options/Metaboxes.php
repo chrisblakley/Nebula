@@ -1356,6 +1356,15 @@ if ( !trait_exists('Metaboxes') ){
 							Nebula is <strong class="nebula-disabled">moving jQuery to the &lt;footer&gt;</strong>.
 						<?php endif; ?>
 					</li>
+					<li>
+						<?php if ( !$this->is_dev() ): //Nebula disallows the file editor for non-developers ?>
+							Nebula is <strong class="nebula-disabled">disallowing</strong> the WP File Editor for non-developers.
+						<?php elseif ( defined('DISALLOW_FILE_EDIT') ): //If something else (Sucuri, WordFence, etc.) is disallowing the file editor ?>
+							Something else (not Nebula) is <strong class="nebula-disabled">disallowing</strong> the WP File Editor.
+						<?php else: ?>
+							The WP file editor is <strong class="nebula-disabled">allowed</strong>.
+						<?php endif; ?>
+					</li>
 					<li>Google Analytics is <?php echo ( !empty($nebula_options['ga_require_consent']) )? '<strong class="nebula-disabled">only tracking after user consent</strong>' : '<strong class="nebula-enabled">tracking without needing user consent</strong>'; ?>.</li>
 					<li><a href="<?php echo admin_url('plugins.php?page=tgmpa-install-plugins&plugin_status=install'); ?>">Nebula bundled plugins page</a> can be accessed here.</li>
 				</ul>
