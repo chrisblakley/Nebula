@@ -217,17 +217,17 @@ if ( !trait_exists('Widgets') ){
 				</p>
 
 				<p>
-					<input class="checkbox" type="checkbox" <?php checked($instance['show_job_info'], 'on'); ?> id="<?php echo $this->get_field_id('show_job_info'); ?>" name="<?php echo $this->get_field_name('show_job_info'); ?>" />
+					<input class="checkbox" type="checkbox" <?php checked($instance['show_job_info'] ?? '', 'on'); ?> id="<?php echo $this->get_field_id('show_job_info'); ?>" name="<?php echo $this->get_field_name('show_job_info'); ?>" />
 					<label for="<?php echo $this->get_field_id('show_job_info'); ?>"> Show Job Title and Company</label>
 				</p>
 
 				<p>
-					<input class="checkbox" type="checkbox" <?php checked($instance['show_location'], 'on'); ?> id="<?php echo $this->get_field_id('show_location'); ?>" name="<?php echo $this->get_field_name('show_location'); ?>" />
+					<input class="checkbox" type="checkbox" <?php checked($instance['show_location'] ?? '', 'on'); ?> id="<?php echo $this->get_field_id('show_location'); ?>" name="<?php echo $this->get_field_name('show_location'); ?>" />
 					<label for="<?php echo $this->get_field_id('show_location'); ?>"> Show Location</label>
 				</p>
 
 				<p>
-					<input class="checkbox" type="checkbox" <?php checked($instance['show_social_links'], 'on'); ?> id="<?php echo $this->get_field_id('show_social_links'); ?>" name="<?php echo $this->get_field_name('show_social_links'); ?>" />
+					<input class="checkbox" type="checkbox" <?php checked($instance['show_social_links'] ?? '', 'on'); ?> id="<?php echo $this->get_field_id('show_social_links'); ?>" name="<?php echo $this->get_field_name('show_social_links'); ?>" />
 					<label for="<?php echo $this->get_field_id('show_social_links'); ?>"> Show Social Media Links</label>
 				</p>
 
@@ -391,11 +391,11 @@ if ( !trait_exists('Widgets') ){
 				<p>
 					<label for="<?php echo $this->get_field_id('map_mode'); ?>">Mode</label>
 					<select id="<?php echo $this->get_field_id('map_mode'); ?>" name="<?php echo $this->get_field_name('map_mode'); ?>" class="widefat map_mode_select" style="width:100%;">
-						<option <?php selected($instance['map_mode'], 'place'); ?> value="place">Place Mode</option>
-						<option <?php selected($instance['map_mode'], 'search'); ?> value="search">Search Mode</option>
-						<option <?php selected($instance['map_mode'], 'directions'); ?> value="directions">Directions Mode</option>
-						<option <?php selected($instance['map_mode'], 'view'); ?> value="view">View Mode</option>
-						<option <?php selected($instance['map_mode'], 'streetview'); ?> value="streetview">Street View Mode</option>
+						<option <?php selected($instance['map_mode'] ?? '', 'place'); ?> value="place">Place Mode</option>
+						<option <?php selected($instance['map_mode'] ?? '', 'search'); ?> value="search">Search Mode</option>
+						<option <?php selected($instance['map_mode'] ?? '', 'directions'); ?> value="directions">Directions Mode</option>
+						<option <?php selected($instance['map_mode'] ?? '', 'view'); ?> value="view">View Mode</option>
+						<option <?php selected($instance['map_mode'] ?? '', 'streetview'); ?> value="streetview">Street View Mode</option>
 					</select>
 				</p>
 
@@ -419,12 +419,12 @@ if ( !trait_exists('Widgets') ){
 				<p class="mode_required" data-for="mode-directions">
 					<label for="<?php echo $this->get_field_id('travel_mode'); ?>">Travel Mode</label>
 					<select id="<?php echo $this->get_field_id('travel_mode'); ?>" name="<?php echo $this->get_field_name('travel_mode'); ?>" class="widefat" style="width:100%;">
-						<option <?php selected($instance['travel_mode'], ''); ?> value="">Default</option>
-						<option <?php selected($instance['travel_mode'], 'driving'); ?> value="driving">Driving</option>
-						<option <?php selected($instance['travel_mode'], 'walking'); ?> value="walking">Walking</option>
-						<option <?php selected($instance['travel_mode'], 'bicycling'); ?> value="bicycling">Bicycling</option>
-						<option <?php selected($instance['travel_mode'], 'transit'); ?> value="transit">Transit</option>
-						<option <?php selected($instance['travel_mode'], 'flying'); ?> value="flying">Flying</option>
+						<option <?php selected($instance['travel_mode'] ?? '', ''); ?> value="">Default</option>
+						<option <?php selected($instance['travel_mode'] ?? '', 'driving'); ?> value="driving">Driving</option>
+						<option <?php selected($instance['travel_mode'] ?? '', 'walking'); ?> value="walking">Walking</option>
+						<option <?php selected($instance['travel_mode'] ?? '', 'bicycling'); ?> value="bicycling">Bicycling</option>
+						<option <?php selected($instance['travel_mode'] ?? '', 'transit'); ?> value="transit">Transit</option>
+						<option <?php selected($instance['travel_mode'] ?? '', 'flying'); ?> value="flying">Flying</option>
 					</select>
 				</p>
 				<p class="mode_required" data-for="mode-directions">
@@ -434,9 +434,9 @@ if ( !trait_exists('Widgets') ){
 				<p class="mode_required" data-for="mode-directions">
 					<label for="<?php echo $this->get_field_id('units'); ?>">Units</label>
 					<select id="<?php echo $this->get_field_id('units'); ?>" name="<?php echo $this->get_field_name('units'); ?>" class="widefat" style="width:100%;">
-						<option <?php selected($instance['units'], ''); ?> value="">Match Origin</option>
-						<option <?php selected($instance['units'], 'imperial'); ?> value="imperial">Imperial</option>
-						<option <?php selected($instance['units'], 'metric'); ?> value="metric">Metric</option>
+						<option <?php selected($instance['units'] ?? '', ''); ?> value="">Match Origin</option>
+						<option <?php selected($instance['units'] ?? '', 'imperial'); ?> value="imperial">Imperial</option>
+						<option <?php selected($instance['units'] ?? '', 'metric'); ?> value="metric">Metric</option>
 					</select>
 				</p>
 
@@ -464,8 +464,8 @@ if ( !trait_exists('Widgets') ){
 				<p class="mode_required" data-for="mode-place|mode-directions|mode-search|mode-view">
 					<label for="<?php echo $this->get_field_id('map_type'); ?>">Map Type</label>
 					<select id="<?php echo $this->get_field_id('map_type'); ?>" name="<?php echo $this->get_field_name('map_type'); ?>" class="widefat" style="width:100%;">
-						<option <?php selected($instance['map_type'], 'roadmap'); ?> value="roadmap">Roadmap</option>
-						<option <?php selected($instance['map_type'], 'satellite'); ?> value="satellite">Satellite</option>
+						<option <?php selected($instance['map_type'] ?? '', 'roadmap'); ?> value="roadmap">Roadmap</option>
+						<option <?php selected($instance['map_type'] ?? '', 'satellite'); ?> value="satellite">Satellite</option>
 					</select>
 				</p>
 				<p class="mode_required" data-for="mode-place|mode-directions|mode-search|mode-view">

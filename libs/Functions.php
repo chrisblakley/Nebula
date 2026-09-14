@@ -3532,10 +3532,12 @@ if ( !trait_exists('Functions') ){
 			$debug_info['nebula_current_page_url'] = sanitize_text_field($current_page_url);
 			$debug_info['nebula_current_page_method'] = sanitize_text_field($current_page_method);
 
-			$session_cookie_data = json_decode(stripslashes($this->super->cookie['session']), true);
-			if ( isset($session_cookie_data['landing_page']) ){
-				$debug_info['nebula_referrer'] = sanitize_text_field($session_cookie_data['referrer']); //This is the original referrer (not just the previous page)
-				$debug_info['nebula_landing_page'] = sanitize_text_field($session_cookie_data['landing_page']); //This is the first page view of the session
+			if ( isset($this->super->cookie['session']) ){
+				$session_cookie_data = json_decode(stripslashes($this->super->cookie['session']), true);
+				if ( isset($session_cookie_data['landing_page']) ){
+					$debug_info['nebula_referrer'] = sanitize_text_field($session_cookie_data['referrer']); //This is the original referrer (not just the previous page)
+					$debug_info['nebula_landing_page'] = sanitize_text_field($session_cookie_data['landing_page']); //This is the first page view of the session
+				}
 			}
 
 			if ( $this->get_option('attribution_tracking') ){ //Don't output this unless this option is enabled (to prevent empty values from appearing like a lack of activity)

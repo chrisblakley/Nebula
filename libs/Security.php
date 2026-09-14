@@ -604,7 +604,7 @@ if ( !trait_exists('Security') ){
 		function ignore_invalid_email_addresses($result, $tag){ //$result is an instance of WPCF7_Validation class that manages a sequence of validation processes. $tag is an instance of WPCF7_FormTag.
 			//$input_type = $tag['type']; //The type of tag (either "email" or "email*") - this function only runs on email types so this is not needed
 			$field_name = $tag->name; //The name of this input itself by the form creator (such as "email" or "your-email")
-			$field_value = $this->super->post[$field_name]; //The value of this input field provided by the user (the actual email address)
+			$field_value = isset($this->super->post[$field_name])? $this->super->post[$field_name] : ''; //The value of this input field provided by the user (the actual email address)
 
 			if ( empty($field_value) ){
 				return $result; //Exit as we are missing data
