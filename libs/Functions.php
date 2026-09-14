@@ -1607,6 +1607,11 @@ if ( !trait_exists('Functions') ){
 			));
 
 			$data = array_merge($defaults, $options);
+			
+			if ( get_query_var('paged') ){
+				$data['after'] = apply_filters('nebula_breadcrumbs_paged', '&nbsp;(Page ' . get_query_var('paged') . ')', $data) . $data['after'];
+			}
+
 			$data['delimiter_html'] = '<li class="delimiter">' . $data['delimiter'] . '</li>';
 			$data['current_node'] = $data['before'] . '<a class="current-breadcrumb-link" href="' . get_the_permalink() . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title()) . '</span></a>';
 			$position = 1; //Incrementer for each node (for schema tags)
@@ -1626,16 +1631,19 @@ if ( !trait_exists('Functions') ){
 					}
 
 					if ( !empty($node_text) ){
+						echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">';
+						
 						if ( !empty($node_url) ){
-							echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . $node_url . '" itemprop="item">';
+							echo '<a href="' . $node_url . '" itemprop="item">';
 						}
 
 						echo '<span itemprop="name">' . $node_text . '</span>';
 
 						if ( !empty($node_url) ){
-							echo '</a><meta itemprop="position" content="' . $position . '" /></li>';
+							echo '</a>';
 						}
-
+						
+						echo '<meta itemprop="position" content="' . $position . '" /></li>';
 						echo ' ' . $data['delimiter_html'] . ' ';
 					}
 
@@ -1764,10 +1772,10 @@ if ( !trait_exists('Functions') ){
 					}
 				} elseif ( is_attachment() ){ //@TODO "Nebula" 0: Check for gallery pages? If so, it should be Home > Parent(s) > Gallery > Attachment
 					if ( !empty($post->post_parent) ){ //@TODO "Nebulla" 0: What happens if the page parent is a child of another page?
-						echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_permalink($post->post_parent) . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title($post->post_parent)) . '</span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ' . strip_tags(get_the_title());
+						echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="' . get_permalink($post->post_parent) . '" itemprop="item"><span itemprop="name">' . strip_tags(get_the_title($post->post_parent)) . '</span></a><meta itemprop="position" content="' . $position . '" /></li> ' . $data['delimiter_html'] . ' ' . $data['before'] . strip_tags(get_the_title()) . $data['after'];
 						$position++;
 					} else {
-						echo strip_tags(get_the_title());
+						echo $data['before'] . strip_tags(get_the_title()) . $data['after'];
 					}
 				} elseif ( is_page() && !$post->post_parent ){ //Page without ancestors/parents
 					if ( !empty($data['current']) ){
@@ -1806,9 +1814,6 @@ if ( !trait_exists('Functions') ){
 					echo apply_filters('nebula_breadcrumbs_error', $data['before'] . '<span itemprop="name">Error 404</span>' . $data['after'], $data);
 				}
 
-				if ( get_query_var('paged') ){
-					echo apply_filters('nebula_breadcrumbs_paged', '&nbsp;(Page ' . get_query_var('paged') . ')', $data); //nbsp is needed here because something is stripping out the first space
-				}
 				echo '</ol>';
 			}
 
