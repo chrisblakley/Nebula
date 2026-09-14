@@ -9,7 +9,7 @@
 			</div>
 		</article>
 	<?php else: //Begin the loop. ?>
-		<?php $text_fragment = ( is_search() )? '#:~:text=' . rawurlencode(get_search_query()) : ''; //Add a scroll-to-text-fragment on search listings ?>
+		<?php $text_fragment = ( 1==2 && is_search() )? '#:~:text=' . rawurlencode(get_search_query()) : ''; //Add a scroll-to-text-fragment on search listings. Disabled in July 2026. ?>
 		<?php while ( have_posts() ): the_post(); ?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 				<div class="row">

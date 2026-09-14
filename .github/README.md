@@ -21,7 +21,7 @@ Nebula follows [WordPress recommended requirements](https://wordpress.org/about/
 
 To take full advantage of Nebula's features, the following are recommended:
 + WordPress Latest
-+ PHP 8.0+
++ PHP 8.1+
 + MySQL 5.6+
 + SSL
 

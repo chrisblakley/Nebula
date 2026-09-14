@@ -1607,7 +1607,7 @@ if ( !trait_exists('Functions') ){
 			));
 
 			$data = array_merge($defaults, $options);
-			
+
 			if ( get_query_var('paged') ){
 				$data['after'] = apply_filters('nebula_breadcrumbs_paged', '&nbsp;(Page ' . get_query_var('paged') . ')', $data) . $data['after'];
 			}
@@ -1632,7 +1632,7 @@ if ( !trait_exists('Functions') ){
 
 					if ( !empty($node_text) ){
 						echo '<li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">';
-						
+
 						if ( !empty($node_url) ){
 							echo '<a href="' . $node_url . '" itemprop="item">';
 						}
@@ -1642,7 +1642,7 @@ if ( !trait_exists('Functions') ){
 						if ( !empty($node_url) ){
 							echo '</a>';
 						}
-						
+
 						echo '<meta itemprop="position" content="' . $position . '" /></li>';
 						echo ' ' . $data['delimiter_html'] . ' ';
 					}

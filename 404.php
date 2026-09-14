@@ -39,7 +39,7 @@
 										<strong>
 									<?php endif; ?>
 
-									<a class="internal-suggestion" href="<?php echo esc_url( get_permalink() ); ?>"><?php echo esc_html(get_the_title()); ?></a>
+									<a class="internal-suggestion" href="<?php echo esc_url(get_permalink()); ?>"><?php echo esc_html(get_the_title()); ?></a>
 
 									<?php if ( str_contains(get_permalink(), nebula()->slug_keywords) ): ?>
 										</strong>
