@@ -1070,15 +1070,14 @@ if ( !trait_exists('Utilities') ){
 			$this->super->cookie[$name] = $string_value; //Manually update the cookie memory data for this runtime (since this does not automatically happen)
 
 			if ( !headers_sent() ){
-				setcookie(
-					$name,
-					$string_value,
-					$expiration, //Note: Do not let this cookie expire past 2038 or it instantly expires. http://en.wikipedia.org/wiki/Year_2038_problem
-					COOKIEPATH,
-					COOKIE_DOMAIN,
-					is_ssl(), //Secure (HTTPS)
-					$httponly //HTTP only (not available in JavaScript)
-				);
+				setcookie($name, $string_value, [
+					'expires' => $expiration, //Note: Do not let this cookie expire past 2038 or it instantly expires. http://en.wikipedia.org/wiki/Year_2038_problem
+					'path' => '/', //Force a root path to prevent duplicate cookies in browsers. Don't bother using Wordpress's COOKIEPATH constant anymore.
+					'domain' => COOKIE_DOMAIN,
+					'secure' => is_ssl(), //Secure (HTTPS)
+					'httponly' => $httponly, //HTTP only (not available in JavaScript)
+					'samesite' => 'Lax',
+				]);
 			}
 		}
 
